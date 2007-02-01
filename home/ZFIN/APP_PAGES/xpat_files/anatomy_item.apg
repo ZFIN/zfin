@@ -880,36 +880,6 @@ auditory (tympanal or flagellar) organs, which may be in a variety of anatomical
 <?/MICOMMENT>
 
 
-<?MICOMMENT>================================================================
-    This code below doesn't have effect since fish_image_anatomy table 
-    is empty.
-
-<!-- start image relationships -->
-
-<?MISQL SQL="
-	SELECT count(fimganat_fimg_zdb_id)::integer
-	FROM fish_image_anatomy
-	WHERE fimganat_anat_item_zdb_id = '$OID'
-;">
-<?MIBLOCK COND="$(>,$1,0)">
-<?MIVAR><STRONG> $1 Image(s) </STRONG> <BR><?/MIVAR>
-<?/MIBLOCK>
-<?/MISQL>
-
-<?MISQL SQL="
-	SELECT fimganat_fimg_zdb_id, fimg_thumbnail
-	FROM fish_image_anatomy, fish_image
-	WHERE fimganat_anat_item_zdb_id = '$OID'
-	  and fimganat_fimg_zdb_id = fimg_zdb_id
-;">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$1">
-<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$2&MItypeObj=image/gif">
-</A>
-<?/MISQL>
-<BR>
-     ===================================================================
-<?/MICOMMENT>
-
 
 <?MICOMMENT>========================================================
             == PUBLICATION
