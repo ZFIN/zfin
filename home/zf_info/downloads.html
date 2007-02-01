@@ -67,10 +67,12 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <tr><td><a HREF="#orthology"> Orthology Data</a></td></tr>
 <tr><td><a HREF="#go"> Gene Ontology Data</a></td></tr>
 <tr><td><a HREF="#expression"> Gene Expression</a></td></tr>
+<tr><td><a HREF="#phenotype"> Phenotype Data</a></td></tr>
 <tr><td><a HREF="#genotype"> Genotype Data</a></td></tr>
 <tr><td><a HREF="#wildtypes"> Wildtype Lines</a></td></tr>
 <tr><td><a HREF="#ad"> Anatomical Ontologies</a></td></tr>
 <tr><td><a HREF="#mo"> Morpholino Data</a></td></tr>
+<tr><td><a HREF="#ot"> Ontology Translations</a></td></tr>
 </table>
 
 <!-- -->
@@ -221,7 +223,7 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Genotype Data</th></tr></table>
 
 <p><b> Genotype Features</b>
-<table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Genotype Display Name</td><td>Genotype Unique Name</td><td>Allele Name</td><td>Allele Abbreviation</td><td>Allele Type</td><td>Gene or Construct Symbol</td><td>Corresponding ZFIN Gene ID/Construct ID</td></tr></table>
+<table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Genotype Name</td><td>Genotype Unique Name</td><td>Allele ID</td><td>Allele Name</td><td>Allele Abbreviation</td><td>Allele Type</td><td>Gene or Construct Symbol</td><td>Corresponding ZFIN Gene ID/Construct ID</td></tr></table>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/genotype_features.txt">Download</a>
 
 <p><b> Genotype Backgrounds </b>
@@ -235,6 +237,13 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <p><b> Wildtype Lines </b>
 <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Genotype Name</td><td>Genotype Abbreviation</td></tr></table>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/wildtypes.txt">Download</a>
+
+<a NAME="phenotype"></a><br><br>
+<table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Phenotype Data</th></tr></table>
+
+<p><b> Genotypes with Phenotypes</b>
+<table BORDER CELLPADDING=2><tr><td>Genotype ID</td><td>Affected Structure or Process 1</td><td>Affected Structure or Process 2</td><td>Phenotype Keyword</td><td>Phenotype Modifier</td><td>Publication ID</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/phenotype.txt">Download</a>
 
 <!-- -->
 
@@ -273,6 +282,25 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <p><b> Morpholino </b>
 <table BORDER CELLPADDING=2><tr> <td>Gene ID</td><td>Gene Symbol</td><td>MO ID</td><td>MO Symbol</td><td>MO Sequence</td><td>Note</td></tr></table>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/Morpholinos.txt">Download</a>
+
+<a NAME="ot"></a><br><br>
+<table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Ontology Translations</th></tr></table>
+
+<p><b> Gene Ontology IDs: ZFIN to GO ids </b>
+<br>(<i>see also</i> <a HREF="http://www.geneontology.org/ontology/gene_ontology_edit.obo">GO in OBO format</a> at the Gene Ontology Consortium)</b>
+<table BORDER CELLPADDING=2><tr> <td>GO term ZFIN ID</td><td>GO term GO ID</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/gene_ontology_translation.txt">Download</a>
+
+<p><b> Anatomy Ontology IDs: ZFIN to AO ids </b>
+<br>(<i>see also</i> <a HREF="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo">AO File in OBO format </a> at the OBO foundry )</b><br>
+<table BORDER CELLPADDING=2><tr> <td>AO term ZFIN ID</td><td>AO term AO ID</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/anatomy_ontology_translation.txt">Download</a>
+
+<p><b> Quality Ontology IDs: ZFIN to Quality ids </b>
+<br>(<i>see also</i> <a HREF="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo">Quality file in OBO format</a>at the OBO foundry</b><br>
+<table BORDER CELLPADDING=2><tr> <td>Quality term ZFIN ID</td><td>Quality term Quality ID</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/phenotype_quality_ontology_translation.txt">Download</a>
+
 
 </div>
 
