@@ -74,7 +74,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/aliases.txt'
 
 -- Create the orthologues files - mouse, human, fly and yeast
 
-create table ortho_exp (
+create temp table ortho_exp (
   gene_id varchar(50),
   ortho_id varchar(50),
   zfish_name varchar(120),
@@ -87,7 +87,7 @@ create table ortho_exp (
   mgi varchar(50),
   omim varchar(50),
   sgd varchar(50)   
-);
+) with no log;
 
 insert into ortho_exp 
   select distinct c_gene_id, zdb_id, mrkr_name, mrkr_abbrev, organism, ortho_name, 
@@ -185,6 +185,42 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
  
 ! echo "Inserted data into file xpat.txt"
 
+-- generate a file with genes and associated expression experiment
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
+ DELIMITER "	"  
+ select geno_zdb_id, apato_entity_a_zdb_id, 
+			apato_entity_b_zdb_id,
+			apato_quality_zdb_id,
+			apato_tag,
+			apato_pub_zdb_id
+ from atomic_phenotype, genotype, genotype_experiment
+      where apato_genox_zdb_id = genox_zdb_id
+	and genox_geno_zdb_id = geno_zdb_id
+ order by geno_zdb_id, apato_pub_zdb_id; 
+ 
+! echo "Inserted data into file phenotype.txt"
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_ontology_translation.txt'
+ DELIMITER "	"  
+ select goterm_zdb_id, "GO:"||goterm_go_id
+   from go_term
+   where goterm_is_obsolete = 'f'
+   and goterm_is_secondary = 'f'; 
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_ontology_translation.txt'
+ DELIMITER "	"  
+ select anatitem_zdb_id, anatitem_obo_id
+   from anatomy_item
+   where anatitem_is_obsolete = 'f'; 
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype_quality_ontology_translation.txt'
+ DELIMITER "	"  
+ select term_zdb_id, term_ont_id
+   from term
+   where term_is_obsolete = 'f'
+   and term_is_secondary = 'f'; 
+
 -- Create mapping data file
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'
  DELIMITER "	" select marker_id, mrkr_abbrev, p.abbrev,or_lg, lg_location, p.metric 
@@ -256,28 +292,29 @@ foreign_db_contains
           and fdbcont_zdb_id = dblink_fdbcont_zdb_id
           and fdbcont_fdb_db_name = 'Vega_Trans' order by 1;
 
--- Generate alleles file
+-- Generate genotype_feature file
 
-create table geno_data (
+create temp table geno_data (
   genotype_id varchar(50),
   geno_display_name varchar(255),
   geno_handle varchar(255),
-  allele varchar(255),
-  allele_abbrev varchar(30),
-  type varchar(30),
+  feature_name varchar(255),
+  feature_abbrev varchar(30),
+  feature_type varchar(30),
   gene_abbrev varchar(40), 
-  gene_id varchar(50)
-);
+  gene_id varchar(50),
+  feature_zdb_id varchar(50)
+) with no log ;
 
-insert into geno_data
+insert into geno_data (genotype_id, geno_display_name, geno_handle, 
+		feature_name, feature_abbrev, feature_type, feature_zdb_id)
   select genofeat_geno_zdb_id, 
 	        geno_display_name,
 		geno_handle,
 		feature_name,
 		feature_abbrev,
-		lower(feature_type),
-		'', 
-		''
+		lower(feature_type), 
+		feature_zdb_id
     from genotype_feature, feature, genotype
    where genofeat_feature_zdb_id = feature_zdb_id
     and geno_zdb_id = genofeat_geno_zdb_id;
@@ -285,21 +322,23 @@ insert into geno_data
 update geno_data set (gene_id, gene_abbrev) = 
 	    (( select mrkr_zdb_id, mrkr_abbrev 
 		     from marker, feature_marker_relationship, feature
-		    where geno_data.allele = feature_name
+		    where geno_data.feature_name = feature_name
 		      and fmrel_ftr_zdb_id = feature_zdb_id 
 		      and fmrel_mrkr_zdb_id = mrkr_zdb_id
 		      and fmrel_type = "is allele of"));
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features.txt'
- DELIMITER "	" select distinct genotype_id, 
+ DELIMITER "	" select distinct genotype_id,
 				geno_display_name,
 				geno_handle,
-				allele, 
-				allele_abbrev,
-				type, 
+				feature_zdb_id,
+				feature_name, 
+				feature_abbrev,
+				feature_type, 
 				gene_abbrev, 
 				gene_id
-			from geno_data order by 1, 2;
+			from geno_data order by genotype_id, geno_display_name;
+
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_backgrounds.txt'
  DELIMITER "	" select distinct geno_zdb_id, 
@@ -320,8 +359,8 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zdb_history.txt'
  DELIMITER "	" select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data;
  
 -- clean up
-drop table ortho_exp;
-drop table geno_data;
+--drop table ortho_exp;
+--drop table geno_data;
 
 
 -- indirect sequence links for genes
