@@ -151,9 +151,10 @@ PREFIX:   genocursum_
       
     </tr>
 
-    </table>
+
     
   <?/MISQL>
-
+  </tbody>
+  </table>
 
 <?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>
