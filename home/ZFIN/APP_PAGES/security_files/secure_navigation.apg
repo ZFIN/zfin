@@ -193,7 +193,10 @@
         -- ID column.  There are a few exceptions, however.  Catch them.
 	------------------------------------------------------------------------
       <?/MICOMMENT>
-      <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype),$(XST,$permission),$(EC,$permission,owns))">
+
+
+     <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
+       <?MIBLOCK COND="$(OR,$(AND,$(XST,$permission),$(EC,$permission,owns)),$(EC,$rtype,person),$(EC,$rtype,lab))">
         <?MIVAR NAME=$ownerColumn>owner<?/MIVAR>
         <?MIVAR NAME=$zdbIdColumn>zdb_id<?/MIVAR>
         <?MIBLOCK COND="$(EC,$rtype,marker)">
@@ -211,7 +214,8 @@
         <?MIVAR COND="$(AND,$(XST,$ZDB_ident),$(EC,$1,$ZDB_ident))">
 	    $(SETVAR,$AUTHORIZED,owner)
         <?/MIVAR>
-      <?/MIBLOCK> <?MICOMMENT>-- end of record ownership check --<?/MICOMMENT>
+       <?/MIBLOCK><?MICOMMENT>-- end of if permission=owns or person,lab types --<?/MICOMMENT>
+     <?/MIBLOCK> <?MICOMMENT>-- end of if xst OID, rtype--<?/MICOMMENT>
 
 
       <?MICOMMENT>
