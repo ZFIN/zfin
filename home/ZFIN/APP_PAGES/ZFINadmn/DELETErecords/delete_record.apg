@@ -50,7 +50,7 @@ Message: $MI_ERRORMSG
 	
 	 var merge_oid = oid;
          if (oid == "none")  {
-		var actionType = "deletion";
+		var actionType = "delete";
 	 }else {
 		var actionType = "merge";
    	 }
@@ -75,7 +75,14 @@ Message: $MI_ERRORMSG
 		alert("Sorry, the genotype <?MIVAR>$checker_id<?/MIVAR> has expression/pato data and cannot be deleted or merged.");
 		return false;
             <?MIELSE>
-		var agree = confirm ("Warning: related feature records with this genotype would be merged or deleted too.");
+		<?MISQL SQL="
+  		    select geno_display_name
+                      from genotype
+                     where geno_zdb_id = '$checker_id'">
+		   <?MIVAR NAME=$checker_name>$1<?/MIVAR>
+		<?/MISQL>
+                
+		var agree = confirm ("You are about to "+actionType+" <?MIVAR>$checker_id [$checker_name]<?/MIVAR>. Do you wish to take this action?");
 	        if (agree) {
 		   return true;
 		}else {
@@ -86,7 +93,7 @@ Message: $MI_ERRORMSG
 
         <?MICOMMENT> ------- Gene/Marker (restrictions only to deletion)------- <?/MICOMMENT>
 
-	if (actionType == "deletion") {
+	if (actionType == "delete") {
           <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,5,4),GENE)">
 
 	    <?MICOMMENT> no deletion if exists expression data<?/MICOMMENT>
