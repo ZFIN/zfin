@@ -218,7 +218,13 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 		 where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   
   <?MISQL COND="$(NXST,$UPDATE)"  SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
-  <?MISQL COND="$(XST,$UPDATE)"  SQL="select WebExplode(object,'permission=owns&rtype=$rtype') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+  <?MICOMMENT>since genotype records are not like markers or images, they do not
+              have record owner. Only root could edit.
+  <?/MICOMMENT>
+  <?MIVAR NAME=$perm_level>$(IF,$(EC,$rtype,genotype),root,owns)<?/MIVAR>
+  
+  <?MISQL COND="$(XST,$UPDATE)"  SQL="select WebExplode(object,'permission=$perm_level&rtype=$rtype') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
