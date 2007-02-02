@@ -62,7 +62,7 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       p_new_person_address.sql \
 	       p_update_person_address.sql \
 
-REGEN_GNRCS  = regen_oevdisp.sql \
+REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql \
 	       regen_panelcount.sql regen_maps.sql
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
 ZDB_GNRCS    = table_exists.sql
