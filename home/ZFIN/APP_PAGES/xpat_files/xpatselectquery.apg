@@ -655,18 +655,18 @@ DEBUGGING:
   <?MICOMMENT> *** use all_name_ends depending on search type *** <?/MICOMMENT>
   <?MIBLOCK COND="$(EC,$xpatselqry_genoSearchType,begins)">
     <?MIVAR NAME=$xpatselqry_nameCond>
-      geno_display_name like '$(LOWER,$xpatselqry_genoName)%'
+      lower(geno_display_name) like '$(LOWER,$xpatselqry_genoName)%'
     <?/MIVAR>
   <?MIELSE COND="$(EC,$xpatselqry_genoSearchType,equals)">
    <?MICOMMENT> when "=", no escape character<?/MICOMMENT>
    <?MIVAR>$(SETVAR,$xpatselqry_genoName,$(REPLACE,$xpatselqry_genoName,\_,_))<?/MIVAR>
    <?MIVAR NAME=$xpatselqry_nameCond>
-      geno_display_name = '$(LOWER,$xpatselqry_genoName)'
+      lower(geno_display_name) = '$(LOWER,$xpatselqry_genoName)'
     <?/MIVAR>
   <?MIELSE>
  
     <?MIVAR NAME=$xpatselqry_nameCond>
-      geno_display_name like '%$(LOWER,$xpatselqry_genoName)%'
+      lower(geno_display_name) like '%$(LOWER,$xpatselqry_genoName)%'
     <?/MIVAR>
   <?/MIBLOCK>
  
