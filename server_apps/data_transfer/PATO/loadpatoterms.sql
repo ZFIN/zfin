@@ -277,7 +277,7 @@ update term
 
 --create a table for unload to report 
 
-insert into sec_unload
+insert into sec_unload (sec_id, prim_id)
   select sec_id, prim_id
     from sec_oks
     where exists (select 'x' from
