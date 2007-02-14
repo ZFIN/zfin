@@ -10,7 +10,7 @@ attr -- the column to be updated
 attr_type -- textarea,text,or pic
 new_value -- the new value to stick in the column
 old_value -- the previous value
-comments -- reasons for doing update 
+comments -- reasons for doing update
 no_record -- optional. Passed when you don't want the update recorded
 
 
@@ -33,8 +33,8 @@ modified to support I.E.  call to location.replace replaced with location.href
 <?/MICOMMENT>
 
 <?MISQL SQL="
-  select WebExplode(object,'permission=owns&rtype=person') 
-    from webPages 
+  select WebExplode(object,'permission=owns&rtype=person')
+    from webPages
     where ID='aa-secure_navigation.apg';">
   $1
 <?/MISQL>
@@ -59,23 +59,23 @@ modified to support I.E.  call to location.replace replaced with location.href
 
   <?MICOMMENT> *** insert update record for the update! *** <?/MICOMMENT>
   <?MISQL COND="$(NXST,$no_record)" SQL="
-    insert into updates 
-        ( submitter_id,submitter_name, rec_id, field_name,  old_value, 
+    insert into updates
+        ( submitter_id,submitter_name, rec_id, field_name,  old_value,
           comments, when )
-      values 
-        ( '$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', 
+      values
+        ( '$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value',
           $comments, current );">
   <?/MISQL>
 
   <?MICOMMENT>
     *** OK, NOW UPDATE THE  ACTUAL DATA RECORD. HAVE TO DO THINGS SLIGHTLY
     *** DIFFERENT FOR IMAGES, SO FIRST FIND OUT WHETHER YOU'RE UPDATING AN
-    *** IMAGE FIELD, THEN ACT ACCORDINGLY 
+    *** IMAGE FIELD, THEN ACT ACCORDINGLY
   <?/MICOMMENT>
 
   <?MIBLOCK COND="$(EC,$attr_type,pic)">
     <?MISQL COND="$(NXST,$null_image)" SQL="
-      update person 
+      update person
         set $attr=FILETOBLOB('$new_value', 'client')
         where zdb_id='$OID';">
     <?/MISQL>
@@ -89,6 +89,8 @@ modified to support I.E.  call to location.replace replaced with location.href
 
 
   <?MIVAR COND="$(EC,$attr_type,subscription)" NAME=$new_value>$(IF,$(EC,$old_value,f),t,f)<?/MIVAR>
+
+  <?MIVAR COND="$(EC,$new_value,NULL)" NAME=$new_value><?/MIVAR>
 
   <?MISQL COND="$(NC,$attr_type,pic)" SQL="
     update person
@@ -105,7 +107,7 @@ modified to support I.E.  call to location.replace replaced with location.href
 <?/MIBLOCK> <?MICOMMENT> *** ends cond authorized *** <?/MICOMMENT>
 
 <?MICOMMENT>
-  *** okay, now just bail back to the persupdate to view results 
+  *** okay, now just bail back to the persupdate to view results
 <?/MICOMMENT>
 <?MIVAR>
   <SCRIPT>
