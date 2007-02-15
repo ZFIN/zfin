@@ -47,8 +47,8 @@ chdir "<!--|ROOT_PATH|-->/server_apps/Reports/ZGC";
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> zgcCount.sql > zgcStatistics 2> err");
 
-&sendResult("Monthly ZGC statistics", "sramacha\@uoneuro.uoregon.edu, van_slyke\@uoneuro.uoregon.edu", "./zgcStatistics");
-&sendResult("Monthly ZGC statistics Err", "peirans\@cs.uoregon.edu", "./err");
+&sendResult("Monthly ZGC statistics","<!--|COUNT_ZGC_OUT|-->", "./zgcStatistics");
+&sendResult("Monthly ZGC statistics Err", "<!--|COUNT_ZGC_ERR|-->", "./err");
 
 #-----------------------------------------------------------------------
 
@@ -59,16 +59,22 @@ chdir "<!--|ROOT_PATH|-->/server_apps/Reports/Vega";
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> vega_thisse_report.sql 2> err");
 
-&sendResult("Monthly Vega-Thisse statistics", "van_slyke\@uoneuro.uoregon.edu", "./vega_thisse_report.unl");
-&sendResult("Vega-Thisse statistics Err", "bsprunge\@cs.uoregon.edu", "./err");
+&sendResult("Monthly Vega-Thisse statistics", "<!--|COUNT_THISSE_VEGA_OUT|-->", "./vega_thisse_report.unl");
+&sendResult("Vega-Thisse statistics Err", "<!--|COUNT_THISSE_VEGA_ERR|-->", "./err");
 
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> VegaCount.sql > VegaStatistics 2> err");
 
-&sendResult("Monthly Vega statistics", "sramacha\@uoneuro.uoregon.edu, ksf\@cs.uoregon.edu","./VegaStatistics");
-&sendResult("Monthly Vega statistics Err", "tomc\@cs.uoregon.edu", "./err");
+&sendResult("Monthly Vega statistics", "<!--|COUNT_VEGA_OUT|-->","./VegaStatistics");
+&sendResult("Monthly Vega statistics Err", "<!--|COUNT_VEGA_ERR|-->", "./err");
 
 
 #--------------------------------------------------------------------------
+chdir "<!--|ROOT_PATH|-->/server_apps/Reports/PATO";
+
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> PhenoytpeCount.sql > PhenotypeStatistics 2> err");
+
+&sendResult("Monthly Phenotype statistics", "<!--|COUNT_PATO_OUT|-->","./PhenotypeStatistics");
+&sendResult("Monthly Phenotype statistics Err", "<!--|COUNT_VEGA_ERR|-->", "./err");
 
 exit;
