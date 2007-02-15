@@ -14,16 +14,13 @@
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../..
+TOP = ../../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/server_apps/Reports
+TARGETDIR = $(TARGETROOT)/server_apps/Reports/PATO
 
-SUBDIRS = ZGC Vega PATO
-
-
-GENERICS = Count.pl
-STATICS  =  
+GENERICS = 
+STATICS = PhenoytpeCount.sql
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -32,9 +29,7 @@ STATICS  =
 
 include $(TOP)/make.default.rules
 
-
 # ---------------  Misc Targets  ----------------------------------------
 
-run : $(TARGETDIR)/Count.pl
-	$(TARGETDIR)/Count.pl
-
+run : $(TARGETDIR)/../Count.pl
+	$(TARGETDIR)/../Count.pl
