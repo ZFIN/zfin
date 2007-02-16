@@ -6,8 +6,8 @@
 # want to avoid curators being able to rename a zgc clone before
 # ncbi has had a chance to attach our zdb_id to their zgc-clone-name
 
-echo "ZGC Pull:"
-<!--|ROOT_PATH|-->/server_apps/data_transfer/ZGC/zgc.pl 
+echo "ZGC Pull: ### IS DISABLED ###"
+#<!--|ROOT_PATH|-->/server_apps/data_transfer/ZGC/zgc.pl 
 echo "#########################################################################"
 echo "MEOW Push:"   #(whether the ZGC failed or not)
 <!--|ROOT_PATH|-->/server_apps/data_transfer/MEOW/meow.pl
