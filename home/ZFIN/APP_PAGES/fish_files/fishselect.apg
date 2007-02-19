@@ -929,7 +929,6 @@ Message: $MI_ERRORMSG
       <?MISQL SQL=$sqlStr2><?/MISQL>
     <?/MIBLOCK>
 
-
 <?MISQL COND=$(EC,$debug_timing,t) SQL="
     execute function get_time()">
     <br>... $1 Search end, Display results start ... <br>
