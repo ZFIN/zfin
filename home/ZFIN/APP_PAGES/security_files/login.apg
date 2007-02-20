@@ -1,8 +1,16 @@
-<?MICOMMENT>
-    <!-- This page is Webexploded onto the home page 
-    requires chromoscripts.apg to be exploded for vet_pw()
-    -->
-<?/MICOMMENT>
+
+
+<?MISQL SQL="
+  select WebExplode(object,'')
+    from webPages
+    where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+
+
+<?MISQL SQL="
+  select WebExplode(object,'')
+    from webPages
+    where ID='aa-chromoscripts.apg';">$1<?/MISQL>
 
 <?MISQL SQL="
   select WebExplode(object,'')
@@ -10,6 +18,8 @@
     where ID='aa-vet_input.apg';">
   $1
 <?/MISQL>
+
+
 
 <SCRIPT>
 function check_login(){
@@ -50,15 +60,26 @@ function validate(){
 }
 </SCRIPT>
     
-    
-	<!-- table class login req's zfin_style.css -->
-<FORM name=login_form method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"  onsubmit="return validate();">
-    <INPUT TYPE=hidden name=MIval value=aa-process-login.apg>
-    <b>Login:</b>   <input type=text     size=12 maxlength=12 name=login    onChange="check_login();">
-    <b>Password:</b><input type=password size=8  maxlength=8  name=password onChange="check_passw();">
-    &nbsp;&nbsp;    <input type=submit           name=s_user value="Log in" > <!-- onClick="onsubmit();"-->
-    <br><font size=1>(Login required only to update personal records)</font>
-</FORM>
-<!-- Put the cursor in the login name box -->
-<SCRIPT>document.login_form.login.focus();</SCRIPT>
 
+<div style="width: 40em; margin: 3em auto; padding-top: 1em;">
+
+     <?MISQL SQL="select WebExplode(object, '&spif_open=1') 
+                    from webPages where ID='aa-spiffy_corners.apg';">$1<?/MISQL>
+     <div style="padding: 2em;">
+     <form name="login_form" method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"  onsubmit="return validate();">
+         <input TYPE=hidden name=MIval value=aa-process-login.apg>
+         <b>Login:</b>   <input type="text" size="12" maxlength="12" name="login" onChange="check_login();">
+         <b>Password:</b><input type="password" size="8" maxlength="8" name="password" onChange="check_passw();">
+         &nbsp;&nbsp;    <input type="submit" name="s_user" value="Log in" >
+     </form>
+     <?MICOMMENT> * Put the cursor in the login name box * <?/MICOMMENT>
+     <script>document.login_form.login.focus();</script>
+     </div>
+     <?MISQL SQL="select WebExplode(object, '&spif_close=1') 
+                    from webPages where ID='aa-spiffy_corners.apg';">$1<?/MISQL>
+</div>
+
+<?MISQL SQL="
+  select WebExplode(object,'')
+    from webPages
+    where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

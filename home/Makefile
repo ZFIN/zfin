@@ -22,7 +22,7 @@ TARGETDIR = $(TARGETROOT)/home
 # of this directory.  However they are not stored as subdirectories in the
 # file system.
 
-SUBDIRS  = ZFIN zf_info javascript images unavailable
+SUBDIRS  = ZFIN zf_info javascript css images unavailable
 MIRROR_SUBDIRS = zf_info images
 POSTLOADDB_SUBDIRS = ZFIN
 

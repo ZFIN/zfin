@@ -29,9 +29,9 @@
 TOP = ../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/home/javascript
+TARGETDIR = $(TARGETROOT)/home/css
 
-STATICS = patocuration.js ncbo-term-info.js term_completer.js dichty-term-info.js json.js sessionstate.js prototype.js
+GENERICS = header.css zdbhome.css zfin.css
 
 
 

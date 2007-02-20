@@ -97,7 +97,7 @@ to display the "Additional figures" link
     <?/MIBLOCK>
 <?/MIBLOCK><?MICOMMENT>end figure record/probe condition<?/MICOMMENT>
 
-<table width = 100%>
+<table>
   <?MIVAR>
   <tr><td><big><b><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$fxpubdis_zdb_id">$fxpubdis_mini_ref </b></a> - $fxpubdis_title. $fxpubdis_source 
     <?MICOMMENT>Display Additional Figures link only if multiple figures<?/MICOMMENT>

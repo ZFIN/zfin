@@ -1,0 +1,174 @@
+
+#hdr-banner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 80px;
+        margin-left: 0;
+        margin-right: 0;
+
+        min-width: 580px;
+	background: <!--|HEADER_BACKGROUND|-->;
+
+}
+
+
+#logo-img, #logo-text {
+  border: 0px;
+  margin: 0px;
+}
+
+#logo-img {
+  position: absolute;
+  top:  0px;
+  left: 0px;
+  z-index: 5;
+}
+
+#logo-text {
+  position: absolute;
+  left: 56px;
+  top: 19px;
+  z-index: 5;
+}
+
+#quicksearchBox {
+   position: absolute;
+   top: 5px;
+   right: 5px;
+   height: 1.5em;
+   z-index: 4;
+
+   margin:0px;
+   padding: 0px;
+
+}
+
+#quicksearchBox a { 
+  text-decoration: none;
+  font-weight: bold;
+  font-size: .8em;
+  color: #044;
+}
+
+#quicksearchBox a:hover {
+  text-decoration: underline;
+}
+
+#noscriptWarningBox { 
+  font-size: .8em;
+  color: red;
+  white-space: nowrap;
+
+  border: 1px solid red;
+  background: #f5e7e7;
+  position: absolute;
+  top: 5px;
+  left: 190px;
+  padding: .2em .5em;
+
+  z-index: 10;
+
+}
+
+#hdr-tabs {
+        float: left;
+	clear: both;
+	margin-top: 33px;   /* this lowers and raises the green tabs and linkbar */
+        margin-left: 190px;  /* set smaller for ie in header javascript */
+        z-index: 5;
+        width: 30em;
+	}
+#hdr-tabs #researchtab {
+	float: left;
+	width: 8em;
+	margin-right: 6px;
+        cursor: pointer;
+	}
+#hdr-tabs #generaltab {
+	float: left;
+	width: 12em;
+	margin-right: 6px;
+        cursor: pointer;
+	}
+
+#hdr-tabs #zirctab {
+	float: left;
+	width: 8em;
+        cursor: pointer;
+
+	}
+
+#hdr-tabs .tabContent { 
+	height: 1.4em;  /* this controls the height of the tab above the linkbar */
+	padding: 0px 5px;
+	background: #e0e7e0;  /* has to match spiffy code in main css */
+	text-align: center;
+        font-size: .8em;
+        color: #000;
+}
+
+#hdr-tabs .selectedTabContent {
+        height: 1.4em; /* this controls the height of the tab above the linkbar */
+        padding: 0px 5px;
+        background: #006666;  /* has to match spiffy code in main css */
+        text-align: center;
+        font-size: .8em;
+        color: #fff;
+}
+
+
+
+#hdr-tabs a{  /* this is nothing right now */
+        font-size: 1.1em;
+        color: #000;
+        display: inline;
+        text-decoration: none;
+        position: relative;
+        bottom: 5px;
+}
+
+#hdr-tabs .selected { 
+  background: #066;
+  color: #fff;
+}
+
+#hdr-navlinks { 
+  clear: both;
+  background-color: #066;
+  color: #fff;
+  font-size: .8em;
+}
+
+#hdr-navlinks, #hdr-navlinks a {
+
+  color: #fff;
+  
+  margin-left: 0;
+  margin-right: 0;
+
+  font-weight: normal;
+  text-decoration: none;
+  
+
+}
+
+#hdr-navlinks a:hover {
+  text-decoration: underline;
+}
+
+.hdr-linkbar { 
+  background-color: #066;
+  white-space: nowrap; 
+  padding: .3em .3em;  
+  z-index = 5;
+}
+
+/* #hdr-zfinlinks {
+  display: block;
+}
+
+#hdr-generallinks, #hdr-zirclinks, #hdr-motto {
+  display: none;
+} */

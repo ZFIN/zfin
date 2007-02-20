@@ -65,24 +65,27 @@ function updateInnerHTML(element_id,html_to_display) {
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <?MISQL SQL="select WebExplode(object,'rtype=fxfig') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
-<!----------- Input welcome button --------->
+
+<?MICOMMENT> ** Your Input Welcome ** <?/MICOMMENT>
 <?MIVAR>
-          <table width = 15% align=right><tr>
-           <form method=post
-                 action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
-                 target=comments>
-           <input type=hidden name=subject value=" ">
-           <input type=hidden name=marker_id value="$OID">
-           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
-           <input type=hidden name=page_id value="$OID">
-          <td>
-           <input type=submit value="Your Input Welcome">
-          </td>
-           </form></tr></table>
-         <?/MIVAR>
-     <!---------------------------------------->
-<p>
+   <div class="yourinputwelcome">
+      <form method=post
+            action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+            target="comments">
+         <input type=hidden name=subject value=" ">
+         <input type=hidden name=marker_id value="$OID">
+         <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+         <input type=hidden name=page_id value="$OID">
+         <input type=submit value="Your Input Welcome">
+      </form>
+   </div>
+<?/MIVAR>
+<?MICOMMENT> ** end Your Input Welcome ** <?/MICOMMENT>
+
+
+
 <?MISQL SQL="select WebExplode(object,'fxpubdis_source_zdb_id=$OID&fxpubdis_fig_zdb_id=test&fxpubdis_probe_zdb_id=$fxallfig_probe_zdb_id') from webPages where ID='aa-fxpubdisplay.apg';">$1<?/MISQL>
+
 <?MISQL SQL="execute function pub_xpat_curation_status('$OID')">
             <?MIVAR NAME=fxallfig_pub_status>$1<?/MIVAR>
 <?/MISQL>

@@ -1,0 +1,41 @@
+<?MICOMMENT>
+
+FILE:    spiffy_corners.apg
+PREFIX:   spif_
+
+Strictly for looks.  Puts rounded corners around a div using some html & css magic
+
+Requires zfin.css
+
+Taken from http://spiffycorners.com
+
+INPUT VARS:
+   spif_open		boolean, if exists, the opening chunk is written
+   spif_close	boolean, if exists, the closing chunk is written
+
+EFFECTS:
+   draws a pretty rounded corner box around whatever it encapsulates.
+
+
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(XST,$spif_open)">
+   <?MICOMMENT> ** spiffy corners opening code ** <?/MICOMMENT>
+
+     <div><b class="spiffy"><b class="spiffy1"><b></b></b><b class="spiffy2"><b></b></b><b class="spiffy3"></b><b class="spiffy4"></b><b class="spiffy5"></b></b>
+     <div class="spiffy_content">
+
+<?MIELSE COND="$(XST,$spif_close)">
+    <?MICOMMENT> ** spiffy corners closing code ** <?/MICOMMENT>
+        <br class="spiffy-bottom-fix">
+     </div>
+    <b class="spiffy"><b class="spiffy5"></b><b class="spiffy4"></b><b class="spiffy3"></b><b class="spiffy2"><b></b></b><b class="spiffy1"><b></b></b></b></div>
+
+<?/MIBLOCK>
+
+<?MICOMMENT> ** Input vars need to be cleared each time, otherwise when closing gets
+                called the open var will still exist.                 ** <?/MICOMMENT>
+<?MIVAR>
+  $(UNSETVAR, $spif_open)
+  $(UNSETVAR, $spif_close)
+<?/MIVAR>

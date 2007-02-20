@@ -36,6 +36,12 @@ Peiran's edit on adding this.div.onmouseout
 and this.div.onmouseover to enable the suggestion list
 be hidden when mouse out, but keep the list when mouse is out
 over to the list. 
+
+Kevin's edit - replaced for (i in Array) loops with standard
+for loops that depend on Array.length.  The for _ in syntax
+is not array specific and will return methods attached to
+the array class as well as elements in the array.
+
 *******************************************************/    
 
 /********************************************************
@@ -351,7 +357,7 @@ function AutoSuggest(elem, suggestions)
 		var ul = document.createElement('ul');
 	
 		//Create an array of LI's for the words.
-		for (i in this.eligible)
+		for (var i=0 ; i < this.eligible.length ; i++)
 		{
 			var word = this.eligible[i];
 	
@@ -423,8 +429,8 @@ function AutoSuggest(elem, suggestions)
 	this.getEligible = function()
 	{
 		this.eligible = new Array();
-		for (i in this.suggestions) 
-		{
+
+		for (var i=0 ; i < this.suggestions.length ; i++) {
 			var suggestion = this.suggestions[i];
 			
 			// add the second condition to enable individual word match to a 

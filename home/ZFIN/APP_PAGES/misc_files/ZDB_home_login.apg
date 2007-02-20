@@ -1,0 +1,27 @@
+<?MICOMMENT>
+
+FILE:     ZDB_home_login.apg
+
+Used only by ZDB_home.apg
+
+INPUT VARS:
+  $AUTHORIZED
+
+<?/MICOMMENT>
+
+
+<div class="zdbhome-list" id="zdbhome-login">
+ <?MISQL SQL="select WebExplode(object, '&spif_open=1') 
+                 from webPages where ID='aa-spiffy_corners.apg';">$1<?/MISQL>
+
+ <?MIBLOCK COND="$(EC,$AUTHORIZED,guest)">
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-login.apg"><b>Visit the login page</b></a>
+      to update person and lab records.
+ <?MIELSE>
+      Logged in to ZFIN as: <?MIVAR><span style="color: red;">$ZDB_name</span><?/MIVAR>
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-process-login.apg">[<em>Logout</em>]</a>
+ <?/MIBLOCK>  
+
+ <?MISQL SQL="select WebExplode(object, '&spif_close=1') 
+                 from webPages where ID='aa-spiffy_corners.apg';">$1<?/MISQL>
+</div>

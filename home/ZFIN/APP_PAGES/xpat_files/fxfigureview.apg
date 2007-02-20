@@ -110,26 +110,24 @@ get source zdb id, comments, label and caption of figure to determine type of FX
 
 </a>
 
-<!----------- Input welcome button --------->
+<?MICOMMENT> ** Your Input Welcome ** <?/MICOMMENT>
 <?MIVAR>
-  <table width = 15% align=right><tr>
-     <form method=post
+  <div class="yourinputwelcome">
+     <form method="post"
            action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
-           target=comments>
-           <input type=hidden name=subject value=" ">
-           <input type=hidden name=marker_id value="$OID">
-           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
-           <input type=hidden name=page_id value="$OID">
-          <td>
-           <input type=submit value="Your Input Welcome">
-          </td>
-      </form></tr>
-    </table>
+           target="comments">
+        <input type=hidden name=subject value=" ">
+        <input type=hidden name=marker_id value="$OID">
+        <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+        <input type=hidden name=page_id value="$OID">
+        <input type=submit value="Your Input Welcome">
+      </form>
+  </div>
 <?/MIVAR>
-<p>	 
-<p>
-<p>
+<?MICOMMENT> ** end Your Input Welcome ** <?/MICOMMENT>
+
 <?MISQL SQL="select WebExplode(object,'fxpubdis_source_zdb_id=$fxfigview_source_zdb_id&fxpubdis_is_figure=yes&fxpubdis_fig_zdb_id=$fxfigview_fig_zdb_id') from webPages where ID='aa-fxpubdisplay.apg';">$1<?/MISQL>
+
 <?MIVAR>
     <TITLE>ZFIN: Figure: $(REPLACE,$fxfigview_miniref,"<i>et al.</i>","et al."), $fxfigview_label </TITLE>
 <?/MIVAR>
