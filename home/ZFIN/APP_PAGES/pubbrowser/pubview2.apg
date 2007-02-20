@@ -138,8 +138,6 @@ displays a publication record, or many publication records if > 1 returned.
 
      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=publication') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
-     <BODY BASEFONT=2>
-
 
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$MI_NULL> <?/MIVAR>
