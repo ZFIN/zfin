@@ -101,9 +101,7 @@ function jump(form_select){
 
 
 <!------------------------------------------------------>
-<BODY>
 
-<basefont size=2>
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>

@@ -20,8 +20,6 @@
 <!--app page to enter gene ontology info-->
 <?MISQL SQL="select WebExplode(object,'') from webPages 
 		where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-<body>
-<basefont size = 2>
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR name=$highlighter><!--|HIGHLIGHTER_COLOR|--><?/MIVAR>
 <?MIVAR name=$white>#ffffff<?/MIVAR>
