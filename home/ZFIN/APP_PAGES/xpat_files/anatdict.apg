@@ -75,9 +75,6 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 <?/MISQL>
 
 
-<BODY vlink="blue" bgcolor="<!--|BACKGROUND_COLOR|-->" border=0>
-<basefont size=2>
-
 <?MIVAR COND="$(NXST,$resolution)" NAME="resolution">9<?/MIVAR>
 <?MIVAR COND="$(NXST,$highlight_text)" NAME="highlight_text"><?/MIVAR>
 <?MIVAR COND="$(NXST,$mode)" NAME="mode">none<?/MIVAR>

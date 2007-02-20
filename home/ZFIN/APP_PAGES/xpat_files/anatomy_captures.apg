@@ -12,10 +12,6 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 
 <TITLE>xpatselect: failed searches</TITLE>
 
-<BODY vlink="blue" bgcolor="#FFFFFF" border=0>
-<basefont size=2>
-
-
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
