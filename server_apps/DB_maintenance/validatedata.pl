@@ -1562,7 +1562,92 @@ sub orthologyOrganismMatchesForeignDBContains ($) {
   &recordResult($routineName, $nRecords); 
 }
 
+#======================= DB Link =======================================
+#----------------------------------------------
+# Parameter
+# $      Email Address for recipients
+#
+# Note: The check could be more specific, such as if the db type is
+# cDNA, then the RefSeq accession would be [NX]M_####, if the db type
+# is Polypeptide, then would be [NX]P_####. We do this specific check 
+# at the curator interface. 
+#
+sub refSeqAccessionInWrongFormat ($) {
+    my $routineName = "refSeqAccessionInWrongFormat";
+    my $sql = '
+               select dblink_linked_recid, "RefSeq", dblink_acc_num
+                 from db_link, foreign_db_contains
+                where fdbcont_zdb_id = dblink_fdbcont_zdb_id
+                  and fdbcont_fdb_db_name = "RefSeq"
+                  and fdbcont_fdbdt_super_type = "sequence"
+                  and dblink_acc_num[3] <> "_"
+               UNION 
+               select dblink_linked_recid, fdbcont_fdb_db_name, dblink_acc_num
+                 from db_link, foreign_db_contains
+                where fdbcont_zdb_id = dblink_fdbcont_zdb_id
+                  and fdbcont_fdb_db_name <> "RefSeq"
+                  and fdbcont_fdbdt_super_type = "sequence"
+                  and dblink_acc_num[3] = "_"
+                   ';
 
+    my @colDesc =("Data zdb id",
+		  "Db name    ",
+                  "Acc number ");
+
+    my $nRecords = execSql ($sql, undef, @colDesc);
+
+    if ( $nRecords > 0 ) {
+
+	my $sendToAddress = $_[0];
+	my $subject = "RefSeq accession number in wrong format";
+	my $errMsg = "In db_link, $nRecords RefSeq accession numbers are in wrong format";
+	
+	logError ($errMsg); 
+	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    }
+    &recordResult($routineName, $nRecords);
+} 
+
+#----------------------------------------------
+# Parameter
+# $      Email Address for recipients
+#
+# 
+sub vegaAccessionInWrongFormat ($) {
+    my $routineName = "vegaAccessionInWrongFormat";
+    my $sql = '
+               select dblink_linked_recid, "Vega_Trans", dblink_acc_num
+                 from db_link, foreign_db_contains
+                where fdbcont_zdb_id = dblink_fdbcont_zdb_id
+                  and fdbcont_fdb_db_name = "Vega_Trans"
+                  and fdbcont_fdbdt_super_type = "sequence"
+                  and dblink_acc_num[1,3] <> "OTT"
+               UNION 
+               select dblink_linked_recid, fdbcont_fdb_db_name, dblink_acc_num
+                 from db_link, foreign_db_contains
+                where fdbcont_zdb_id = dblink_fdbcont_zdb_id
+                  and fdbcont_fdb_db_name <> "Vega_Trans"
+                  and fdbcont_fdbdt_super_type = "sequence"
+                  and dblink_acc_num[1,3] = "OTT"
+                   ';
+
+    my @colDesc =("Data zdb id",
+		  "Db name    ",
+                  "Acc number ");
+
+    my $nRecords = execSql ($sql, undef, @colDesc);
+
+    if ( $nRecords > 0 ) {
+
+	my $sendToAddress = $_[0];
+	my $subject = "Vega Transcript accession number in wrong format";
+	my $errMsg = "In db_link, $nRecords Vega accession numbers are in wrong format";
+	
+	logError ($errMsg); 
+	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    }
+    &recordResult($routineName, $nRecords);
+}
 
 #======================= ZDB Object Type ================================
 #---------------------------------------------------------
@@ -2490,6 +2575,10 @@ if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
   orthologyOrganismMatchesForeignDBContains($dbaEmail);
+
+  refSeqAccessionInWrongFormat($geneEmail);
+  vegaAccessionInWrongFormat($geneEmail);
+
 }
 if($monthly) {
   orthologueHasDblink($geneEmail);
@@ -2506,7 +2595,7 @@ if($monthly) {
   mrkrgoevInfgrpDuplicatesFound($goEmail);
 }
 if($yearly) {
-  print "run yearly check. \n\n";
+    print "run yearly check. \n\n";
 }
 
 	   
