@@ -13,9 +13,6 @@ top.helpcontent.location="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showdetail
 
 <?MIVAR NAME=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
-<?MIVAR><BODY bgcolor="$highlight"><?/MIVAR>
-<basefont size=2>
-
 
 <form name=detailselect method=post>
 
