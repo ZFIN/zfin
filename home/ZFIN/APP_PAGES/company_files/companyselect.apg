@@ -38,8 +38,6 @@ document.critform.START.value = "";
 
 
 
-<basefont size=2>
-
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 
