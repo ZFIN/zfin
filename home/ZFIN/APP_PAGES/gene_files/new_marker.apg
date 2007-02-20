@@ -59,8 +59,6 @@ marker table.
   -- newmrkrSource -- if exists, must be a pub_zdb_id
 <?/MICOMMENT>
 
-<basefont size=2>
-
 <?MISQL SQL="
   select WebExplode(object,'page_title=New Marker&permission=root') 
     from webPages 

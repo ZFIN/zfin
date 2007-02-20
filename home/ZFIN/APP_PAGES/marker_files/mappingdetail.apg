@@ -243,7 +243,6 @@ marker = '';
 </HEAD>
 
 
-<basefont size=2>
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 <?MIBLOCK COND="$(NXST,$OID)">

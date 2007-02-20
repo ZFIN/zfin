@@ -114,7 +114,6 @@ ERROR -- something bad happened -- no OID passed in!
       <?MIVAR><TITLE>ZFIN: Mapping Panel: $name </TITLE><?/MIVAR>
 
 
-      <basefont COLOR="#000000" size=3>
       <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
 

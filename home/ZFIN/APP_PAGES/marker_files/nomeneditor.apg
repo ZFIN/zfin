@@ -24,7 +24,6 @@ delattrib,delpub -- to delete an attribution, delpub holds the accession of the 
 ===========================================================
 <?/MICOMMENT>
 
-<basefont size=2>
 
 <?MISQL SQL="
   select WebExplode(object,'')

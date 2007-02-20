@@ -56,8 +56,6 @@ function start_help(anchor) {
 
 </SCRIPT>
 
-<basefont size=2>
-
 <?MIBLOCK COND="$(NXST,$accession)">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 <?/MIBLOCK>

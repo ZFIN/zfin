@@ -18,8 +18,6 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
     </SCRIPT>
   <?/MIVAR>
 
-<basefont size=2>
-
 <?MISQL SQL="
   select WebExplode(object,'permission=owns') 
     from webPages 

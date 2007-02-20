@@ -27,9 +27,6 @@ EFFECTS: Edits a feature/marker
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 
 
-
-<basefont size=2>
-
 <?MISQL SQL="
   select WebExplode(object,'page_title=New Marker&permission=root') 
     from webPages 

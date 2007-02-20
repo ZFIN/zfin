@@ -12,7 +12,6 @@ VARIABLES:
 <HEAD>
 </HEAD>
 
-<basefont size=2>
 
 <?MISQL SQL="
   select WebExplode(object,'permission=root') 

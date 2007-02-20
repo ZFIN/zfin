@@ -63,7 +63,6 @@ calls journalview.apg when clicking on a found-journal link.
 
 <?MICOMMENT> *** -------------results---------- *** <?/MICOMMENT>
 
-  <basefont size=2>
 
 	<?MIBLOCK COND="$(XST,$jrnlsel_query_results)">
 

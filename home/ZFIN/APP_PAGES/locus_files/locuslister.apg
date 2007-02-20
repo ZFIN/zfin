@@ -43,7 +43,6 @@ function show_doc(title,docpath) {
 }
 </SCRIPT>
 
-<basefont size=2>
 </HEAD>
 
 <?MIVAR NAME=$MI_NULL><?/MIVAR>

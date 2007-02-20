@@ -27,8 +27,6 @@ Expected vars:  None.
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-<basefont COLOR="#000000" size=2>
-
 <?MISQL SQL="select WebExplode(object,'') 
 		from webPages 
 		where ID='aa-secure_navigation.apg';">$1<?/MISQL>

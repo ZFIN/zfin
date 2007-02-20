@@ -48,8 +48,6 @@ document.getcrits.submit();
 </SCRIPT>
 
 
-<basefont size=2>
-
 <form name=getcrits method=post TARGET="updates" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <TABLE width=100%>

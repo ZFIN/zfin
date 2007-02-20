@@ -10,8 +10,6 @@ OID:  the markrgoev id
 <TITLE>GO notes</TITLE>
 </HEAD>
 
-<basefont size=2>
-
 <?MISQL SQL="
   select WebExplode(object,'permission=root') 
     from webPages 

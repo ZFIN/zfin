@@ -11,7 +11,7 @@ OID:  		the marker go evidence zdb id
 <TITLE>GO Annotation Editor</TITLE>
 </HEAD>
 
-<basefont size=2>
+
 <?MIVAR COND=$(NXST,$OID)>
  	<p>
 	ERROR: No OID (mrkrgoev zdb id) is provided.

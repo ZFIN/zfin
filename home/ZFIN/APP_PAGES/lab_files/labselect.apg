@@ -34,8 +34,6 @@ function start_help(anchor) {
 <title>$(IF,$(XST,$query_results),ZFIN Lab List,ZFIN Lab Select)</title>
 <?/MIVAR> 
 
-<basefont size=2>
-
 <?MIBLOCK COND="$(NXST,$accession)">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 <?/MIBLOCK>

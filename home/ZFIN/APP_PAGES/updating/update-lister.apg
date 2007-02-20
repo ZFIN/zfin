@@ -1,8 +1,6 @@
 
 <HTML>
 
-<basefont size=2>
-
 <?MICOMMENT> No $UPDATE passed in, but it is always at update mode 
              when this page is called.
 <?/MICOMMENT>

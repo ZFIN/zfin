@@ -11,8 +11,6 @@
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-<basefont size=2>
-
 <?MIVAR NAME=$accession>exists<?/MIVAR>
 
 <?MIBLOCK COND="$(XST,$query_results)">

@@ -36,7 +36,6 @@ EFFECTS:
 <?MIVAR NAME=MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=MI_NULL><?/MIVAR>
 <?MIVAR NAME=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-<basefont size=2>
 
 <?MIVAR NAME=$cdp_hasMo><?/MIVAR>
 <?MIVAR NAME=$cdp_hasOth><?/MIVAR>

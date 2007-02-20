@@ -53,8 +53,6 @@ function setAssayDisplay(featureValue) {
 
 
 
-<basefont size=2>
-
 <?MISQL SQL="
   select WebExplode(object,'page_title=New Marker&permission=root') 
     from webPages 
