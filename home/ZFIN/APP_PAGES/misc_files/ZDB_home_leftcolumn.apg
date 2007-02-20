@@ -109,6 +109,8 @@
      <li class="divider-above"><a href="/zf_info/dbase/db.html">About ZFIN</a></li>
      <li><a href="/zf_info/citation.html">Citing ZFIN</a></li> 
   </ul>
+  <br>
+  <br>
 
   <span style="font-size: .8em;">
   <?MIBLOCK COND="$(EC,$AUTHORIZED,guest)">
