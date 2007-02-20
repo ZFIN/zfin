@@ -230,18 +230,21 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'
 
 -- Generate sequence data files for GenBank, RefSeq, Entrez, UniGene, SWISS-PROT, Interpro and GenPept
 
+-- the last condition is added to filter out mis-placed acc
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genbank.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev, dblink_acc_num from marker, db_link, foreign_db_contains
 	where mrkr_zdb_id = dblink_linked_recid
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'GenBank' order by 1;
+	  and fdbcont_fdb_db_name = 'GenBank' 
+          and dblink_acc_num[3] <> "_" order by 1;
 
-
+-- the last condition is added to filter out mis-placed acc
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/refseq.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
 	where mrkr_zdb_id = dblink_linked_recid
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'RefSeq' order by 1;
+	  and fdbcont_fdb_db_name = 'RefSeq' 
+          and dblink_acc_num[3] = "_" order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/entrezgene.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
