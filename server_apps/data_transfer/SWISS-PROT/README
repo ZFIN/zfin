@@ -1,21 +1,23 @@
 ================== Readme =======================================
 
 This readme is intended to explain the process of loading SWISS-PROT 
-report into ZFIN.   by Peiran Song,  Sep 2002.
+report into ZFIN.   
+
 
 =================================================================
 by Peiran, Aug 2004
 
-To test run Swiss-Prot at test enviornment, get a fresh load with ACCESSION_BANK table. 
+If there has been some code changes, please first run the SwissProt load in a developer test environment. To do so, get a fresh load with ACCESSION_BANK table.
+ 
     % loaddb.pl -e defline dbname inputdir
 
-Most of the time, we run the test at almost db which should always has last night's dump. Informix user is required.
+If there hasn't been any code changes, it is generally safe to run the pre-load at almost db which should always has last night's dump. The pre-load is required to take place at a database rather than production because during the pre-load, data from previous SwissProt load would all be wiped off and there would be time gaps when curators need to do some manual work before the real load could happen. To run SwissProt load on almost or production, user "Informix" is required.
 
 At source dir
 
 	%gmake runpre
 
-You would receive emails of the statistics, and allproblems.txt file. Forward those to Ken. Ken would send back some full records which are also ok records, and he would also send a list of ok SP accession. Run the following script to get the full records, and make sure Ken doesn't have any modification to the original records. 
+You would receive emails of the statistics, and allproblems.txt file. Forward those to Ken. Ken would send back some full records which are also ok records, and if he also send a list of ok SP accession. Run the following script to get the full original records, and make sure Ken doesn't need to make any modification to them. 
 
 	% sp_match.pl <acc file name>
 
@@ -52,13 +54,11 @@ sp_load.sql.
  
 Follow loadsp.pl, it will work you through the process. ;)
 
-----------------------------------------------------------------
 
 =================================================================
 To create file for export to SWISS-PROT
                % gmake create
    
----------------------------------------------------------------
 
 =================================================================
 by Peiran Song,  Sep 2002.
@@ -67,7 +67,7 @@ To run the SWISS-PROT loading process:
 
                % gmake run
    
----------------------------------------------------------------
+-------------
 -- loadsp.pl
   This is the script that calls all the subroutines to do the 
 SWISS-PROT loading.   
