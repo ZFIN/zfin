@@ -113,7 +113,7 @@ sub sendRunningResult {
 
  #----- Another mail send out accession numbers that are not attributed ----
 
-  my $SUBJECT="Auto: PubMed not in ZFIN";
+  my $SUBJECT="Auto: Accession w/o attribution";
   my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";     
   my $ATTFILE = "accession_with_no_attribution";
 
