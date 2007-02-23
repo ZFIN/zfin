@@ -62,7 +62,12 @@ EFFECTS
 
   <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
-<?MIBLOCK COND="$(EC,$AUTHORIZED,root)"> <!--,$(EC,$ZDB_ident,ZDB-PERS-010716-1))">  -->
+<?MISQL SQL="select jtype from publication where zdb_id = '$OID';">
+  <?MIVAR NAME="pubcur_is_safe_jtype" COND="$(OR,$(EC,$1,Journal),$(EC,$1,Review))">1<?/MIVAR>
+<?/MISQL>
+
+
+<?MIBLOCK COND="$(AND,$(EC,$AUTHORIZED,root),$(XST,$pubcur_is_safe_jtype))"> 
   <?MISQL SQL="SELECT title FROM publication WHERE zdb_id='$OID'">
     <?MIVAR NAME=$title>$1<?/MIVAR>
   <?/MISQL>
@@ -840,6 +845,8 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   <p>Authorization for this page failed.
   <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
+  <p>This error may also come up when trying to edit publications that this page wasn't meant to edit.   
+
 <?/MIBLOCK> <?MICOMMENT> not authorized <?/MICOMMENT>
 
 <?MIELSE>
