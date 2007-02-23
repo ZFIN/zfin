@@ -12,11 +12,7 @@
          <strong>BLAST</strong> at ZFIN</a> </li>
      <li><a href="/zf_info/nomen.html" 
             title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li> 
-
-     <?MICOMMENT> ** Was /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_gene.apg **
-                  ** disabled because it's getting hijacked to send spam,
-                     pointing link at nomenclature tutorial instead ** <?/MICOMMENT>
-     <li><a href="/zf_info/nomen_tutorial.html" 
+     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_gene.apg" 
             title="Contact the Nomenclature Committee">Obtain approval for gene names</a>
     </ul>
 
@@ -28,10 +24,8 @@
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-wtlist.apg" 
             title="Zebrafish wild-type lines">Wild-Type Lines</a></li>
      <li><a href="/zf_info/zfbook/lab_desig.html">Lab Allele Designations</a></li>
-     <?MICOMMENT> *** disabled because it's getting used to send spam ****
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_line.apg">
          Obtain approval for mutant names</a>
-     <?/MICOMMENT>
    </ul>
 
 

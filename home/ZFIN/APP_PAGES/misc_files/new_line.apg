@@ -53,6 +53,24 @@ function clearPubStatus() {
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
+<?MISQL SQL="
+  select WebExplode(object,'') 
+    from webPages 
+    where ID='aa-secure_navigation.apg';">
+  $1
+<?/MISQL>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,GUEST)">
+<div style="border: 1px solid black; width: 80%; margin: 0 2em; padding: 1em;">
+
+Unfortunately, we had to disable anonymous submissions of new lines names.<br>
+<br>
+If you have a ZFIN <a href="<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIVal=aa-login.apg">login</a>, this page will be accessible after logging in.<br><br>  If you don't have a ZFIN account, contact <a href="mailto:zfinadmin@zfin.org">Jonathan Knight</a> to set one up.  You will need to provide your name, lab or institution affiliation and address,email address and phone number. You will be able to update your record using your new account name and password.
+</div>
+<?MIELSE>
+
+
+
 <?MIVAR>
 <FORM NAME=input
       METHOD=post
@@ -207,5 +225,6 @@ Before proposing and reserving a name, review the current guidelines and search 
 </body>
 
 <br>
+<?/MIBLOCK>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
