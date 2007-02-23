@@ -306,11 +306,12 @@ Quality:
 Tag:
          <select name="patoup_tag" id="patobldrTag"
                 onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
-
-
-         <?MISQL SQL="select apatotag_name from apato_tag;">
-           <option>$1</option>
-         <?/MISQL>
+           <?MICOMMENT> ** KLUDGE: This should come from the database, but for now
+                           we're only offering a limited set, once everything but
+                           normal and abnormal go away, we can go back to using 
+                           the db **<?/MICOMMENT>
+           <option>abnormal</option>
+	   <option>normal</option>
          </select>
 
 <?MICOMMENT>
