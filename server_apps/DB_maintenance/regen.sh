@@ -12,10 +12,13 @@ setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->
 setenv LD_LIBRARY_PATH ${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
 setenv PATH <!--|INFORMIX_DIR|-->/bin:$PATH
 
-echo "Starting regen_maps at `date`"
-echo 'execute function regen_maps(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
-echo "Starting regen_names at `date`"
-echo 'execute function regen_names(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 echo "Starting regen_anatomy at `date`"
 echo 'execute function regen_anatomy(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
+
+echo "Starting regen_maps at `date`"
+echo 'execute function regen_maps(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
+
+echo "Starting regen_names at `date`"
+echo 'execute function regen_names(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
+
 echo "Finished at `date`"
