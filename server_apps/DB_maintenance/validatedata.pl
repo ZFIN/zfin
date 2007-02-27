@@ -340,6 +340,48 @@ sub featureAssociatedWithGenotype($) {
 }
 
 #---------------------------------------------------------------
+# morpholinoAbbrevContainsGeneAbbrev
+#
+# Parameter
+# $ Email Address for recipients
+
+sub morpholinoAbbrevContainsGeneAbbrev($) {
+  my $routineName = "morpholinoAbbrevContainsGeneAbbrev";
+	
+  my $sql = "select a.mrkr_abbrev, b.mrkr_abbrev
+               from marker a, marker b, marker_relationship
+               where a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+               and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+               and get_obj_type(a.mrkr_zdb_id) = 'MRPHLNO'
+                and b.mrkr_abbrev !=
+               (substring(a.mrkr_abbrev 
+                            from
+                             (length(a.mrkr_abbrev)-length(b.mrkr_abbrev)+1)
+                            for
+                             (length(b.mrkr_abbrev))
+                          )
+                )
+              order by b.mrkr_abbrev";
+
+  my @colDesc = ("Morpholino abbrev         ",
+		 "Gene abbrev       ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Morpholino abbrev not like gene_abbrev";
+    my $errMsg = "There are $nRecords morpholinos without corresponding gene abbrevs. ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+
+}
+
+
+#---------------------------------------------------------------
 # featureIsAlleleOfOrMrkrAbsent
 #
 # features can either be alleles of markers or have markers absent
@@ -405,6 +447,7 @@ sub genotypesHaveNoNames($) {
   &recordResult($routineName, $nRecords);
 
 }
+
 
 #======================== PUB Attribution ========================
 #
@@ -2526,6 +2569,7 @@ my $mutantEmail  = "<!--|VALIDATION_EMAIL_MUTANT|-->";
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
 my $goEmail      = "<!--|GO_EMAIL_CURATOR|-->";
 my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
+my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 
 if($daily) {
   expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
@@ -2578,6 +2622,7 @@ if($weekly) {
 
   refSeqAccessionInWrongFormat($geneEmail);
   vegaAccessionInWrongFormat($geneEmail);
+  morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
 
 }
 if($monthly) {
