@@ -1,0 +1,81 @@
+<?MICOMMENT> 
+FILE: alleleDesigNums.apg 
+Prefix: adn_
+
+This file displays all already used allele designation numbers for a particular lab.
+
+Variables Expected: 
+ -- adn_beginningLetter        -- from lab_desig.html 
+ 
+<?/MICOMMENT>
+
+<?MIERROR>
+<?MIVAR COND=$(XST,$MI_SQL)>
+SQL: $MI_SQL
+<?/MIVAR>
+Code: $MI_ERRORCODE
+State: $MI_ERRORSTATE
+Message: $MI_ERRORMSG 
+<?/MIERROR>
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>
+    Existing allele designation starting with <?MIVAR>$adn_beginningLetter<?/MIVAR>
+    </title>
+  </head>
+  
+  <body>
+    <h3>Existing allele designation starting with "<?MIVAR>$adn_beginningLetter<?/MIVAR>"</h3>
+
+    <?MICOMMENT>==================================================================
+            ==  Create adn_temp_sorted temp table if it does not already exist.
+            ==========================================================================
+    <?/MICOMMENT>
+
+    <?MISQL SQL="
+      select dbinfo('sessionid') 
+        from single;">
+      <?MIVAR NAME=$adn_session_id>$1<?/MIVAR>
+      <?MIVAR NAME=$adn_temp_sorted>$(CONCAT,adn_temp_sorted,$adn_session_id)<?/MIVAR>
+    <?/MISQL>
+
+    <?MISQL SQL="execute function table_exists('$adn_temp_sorted')">
+      <?MISQL COND=$(EC,$1,f) SQL="
+	create temp table $adn_temp_sorted (adn_desig int) with NO LOG;">
+      <?/MISQL>
+    <?/MISQL>
+    
+    <?MIVAR NAME=adn_beginningLetter_lenth>$(STRLEN,$adn_beginningLetter)<?/MIVAR>
+    
+    <?MIVAR NAME=adn_count>0<?/MIVAR>
+    
+    <?MISQL SQL="select feature_abbrev
+                   from feature
+                  where feature_abbrev like '$adn_beginningLetter%'
+               order by feature_abbrev;">
+       <?MIVAR NAME=adn_desigNum>$(SUBSTR,$1,$(+,$adn_beginningLetter_lenth,1))<?/MIVAR>
+       <?MIBLOCK COND="$(ISNUM,$adn_desigNum)">
+         <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+         <?MISQL SQL="insert into $adn_temp_sorted (adn_desig) values ('$adn_desigNum');">	    
+         <?/MISQL> 
+       <?/MIBLOCK>
+    <?/MISQL>
+ 
+    <?MIBLOCK COND="$(>,$adn_count,0)">
+      <?MICOMMENT> ** display each designation <?/MICOMMENT>
+      <?MISQL SQL="select * from $adn_temp_sorted order by adn_desig;">
+        <?MIVAR>$adn_beginningLetter$1<?/MIVAR> <br/>
+      <?/MISQL> 
+    <?MIELSE>
+       None
+    <?/MIBLOCK>
+ 
+    <?MISQL SQL="delete from $adn_temp_sorted;"><?/MISQL>
+  </body>
+
+  <?MICOMMENT> ** the following could be useful after lab_desig.html is changed into an apg page <?/MICOMMENT>
+  <?MIVAR NAME=adn_popupwindowHeight>$(+,$adn_count,5)<?/MIVAR>
+
+</html>
