@@ -194,26 +194,31 @@
 	------------------------------------------------------------------------
       <?/MICOMMENT>
 
-
+     <?MICOMMENT> this section of code is not clean. It used to list the rtype that do not have owner column. The result of that is whenever we add a new rtype, we potentially need to update the code here. So I changed the code to check if permission=owns is passed in. We later learned that is not enough to cover all cases. More later, we learned update-vframeset.apg which is called by data-mgr.apg is calling this page with permission=owns for all rtypes. The patches made this section not easy to follow. We are eager for the Java to come along and clean it for good. Bear with me for now. <?/MICOMMENT> 
      <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
        <?MIBLOCK COND="$(OR,$(AND,$(XST,$permission),$(EC,$permission,owns)),$(EC,$rtype,person),$(EC,$rtype,lab))">
-        <?MIVAR NAME=$ownerColumn>owner<?/MIVAR>
-        <?MIVAR NAME=$zdbIdColumn>zdb_id<?/MIVAR>
+        
         <?MIBLOCK COND="$(EC,$rtype,marker)">
 	  <?MIVAR NAME=$ownerColumn>mrkr_owner<?/MIVAR>
 	  <?MIVAR NAME=$zdbIdColumn>mrkr_zdb_id<?/MIVAR>
         <?MIELSE COND="$(EC,$rtype,image)">
 	  <?MIVAR NAME=$ownerColumn>img_owner_zdb_id<?/MIVAR>
 	  <?MIVAR NAME=$zdbIdColumn>img_zdb_id<?/MIVAR>
+        <?MIELSE COND="$(OR,$(EC,$rtype,person),$(EC,$rtype,lab),$(EC,$rtype,company))">
+          <?MIVAR NAME=$ownerColumn>owner<?/MIVAR>
+          <?MIVAR NAME=$zdbIdColumn>zdb_id<?/MIVAR>
         <?/MIBLOCK>
-        <?MISQL SQL="
+        
+        <?MIBLOCK COND="$(XST,$ownerColumn)">
+          <?MISQL SQL="
 	    select $ownerColumn
 	      from $rtype 
 	     where $zdbIdColumn = '$OID';">
-        <?/MISQL>
-        <?MIVAR COND="$(AND,$(XST,$ZDB_ident),$(EC,$1,$ZDB_ident))">
-	    $(SETVAR,$AUTHORIZED,owner)
-        <?/MIVAR>
+          <?/MISQL>
+          <?MIVAR COND="$(AND,$(XST,$ZDB_ident),$(EC,$1,$ZDB_ident))">
+	      $(SETVAR,$AUTHORIZED,owner)
+          <?/MIVAR>
+        <?/MIBLOCK> <?MICOMMENT>--end of if exists owner column--<?/MICOMMENT>
        <?/MIBLOCK><?MICOMMENT>-- end of if permission=owns or person,lab types --<?/MICOMMENT>
      <?/MIBLOCK> <?MICOMMENT>-- end of if xst OID, rtype--<?/MICOMMENT>
 
