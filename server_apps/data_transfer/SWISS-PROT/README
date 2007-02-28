@@ -7,6 +7,9 @@ report into ZFIN.
 =================================================================
 by Peiran, Aug 2004
 
+First of all, check ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat to see when is the file last updated!
+Doesn't hurt to check http://www.geneontology.org/external2go/spkw2go, interpro2go, and ec2go too.
+
 If there has been some code changes, please first run the SwissProt load in a developer test environment. To do so, get a fresh load with ACCESSION_BANK table.
  
     % loaddb.pl -e defline dbname inputdir
