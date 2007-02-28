@@ -1041,6 +1041,8 @@ Message: $MI_ERRORMSG
       
       <?MIVAR>$(VECAPPEND,$fsel_unique_list,$genotypeid_u)<?/MIVAR>
       
+      <?MIVAR>$(SETVAR,$text_u,$(REPLACE,$text_u,',''))<?/MIVAR>
+      
       <?MISQL SQL="insert into $fishselect_temp_match_unique (fmatch_zdb_id_u,fmatch_order_u,fmatch_precedence_u,fmatch_matchtext_u,fmatch_matchtype_u)
                    values ('$genotypeid_u','$order_u','$pref_u','$text_u','$type_u');">
       <?/MISQL>
