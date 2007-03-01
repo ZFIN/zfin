@@ -2080,7 +2080,10 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
 
   my $routineName = "mrkrgoevInfgrpDuplicatesFound";
 
-  my $sql = 'select a.mrkrgoev_zdb_id, b.mrkrgoev_zdb_id, count(*)
+  my $sql = 'select a.mrkrgoev_zdb_id, 
+                    a.mrkrgoev_mrkr_zdb_id,
+                    b.mrkrgoev_zdb_id,
+                    count(*)
 	       from marker_go_term_evidence a, inference_group_member ia,
 		    marker_go_Term_evidence b, inference_group_member ib
 	      where a.mrkrgoev_mrkr_zdb_id =  b.mrkrgoev_mrkr_zdb_id
@@ -2091,10 +2094,13 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
                 and b.mrkrgoev_zdb_id = ib.infgrmem_mrkrgoev_zdb_id
                 and a.mrkrgoev_zdb_id > b.mrkrgoev_zdb_id
                 and ia.infgrmem_inferred_from = ib.infgrmem_inferred_from
-             group by a.mrkrgoev_zdb_id, b.mrkrgoev_zdb_id';
+             group by a.mrkrgoev_zdb_id, b.mrkrgoev_zdb_id,
+                      a.mrkrgoev_mrkr_zdb_id, b.mrkrgoev_mrkr_zdb_id';
   
-  my @colDesc = ("mrkrgoev_zdb_id_1", 
+  my @colDesc = ("mrkrgoev_zdb_id_1",
+                 "mrkrgoev_mrkr_zdb_id_1", 
 		 "mrkrgoev_zdb_id_2",
+                 "mrkrgoev_mrkr_zdb_id_2",
 		 "infgrmem_count   ");
 
   my $nRecords = execSql ($sql, subMrkrgoevInfgrpDuplicatesFound, @colDesc);
@@ -2110,16 +2116,18 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
 } 
 
 #----------------------
-# Parameter
-#     $     mrkrgoev zdb id
-#     $     mrkrgoev zdb id
+# Parameters
+#     $     mrkrgoev zdb id  1
+#     $     mrkrgoev_mrkr_zdb_id 1
+#     $     mrkrgoev zdb id 2
 #     $     count of how many identical inference members the two mrkrgoev id have
 
 sub subMrkrgoevInfgrpDuplicatesFound($) {
     my @input = @_;
     my $mrkrgoev1 = $input[0];
-    my $mrkrgoev2 = $input[1];
-    my $infgrmem_count = $input[2];
+    my $mrkrgoev1_mrkr = $input[1];
+    my $mrkrgoev2 = $input[2];
+    my $infgrmem_count = $input[3];
 
     my $sql = "select count(*) 
                from inference_group_member   
