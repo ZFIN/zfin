@@ -173,18 +173,18 @@
        </li>
        <?/MICOMMENT>
        <li>
-         <a href="/zf_info/news/siteNews.html">
+         <a href="/zf_info/news/siteNews.html#genetools">
          January 26 - Quality control testing of Gene Tools morpholinos
          </a>
        </li>
 
        <li>
-         <a href="/zf_info/news/siteNews.html">
+         <a href="/zf_info/news/siteNews.html#hgnc">
            January 25 - Zebrafish genes now included in HGNC Comparison of Orthology Predictions (HCOP), January 2007"
          </a>
        </li>
 
-       <li><a href="/zf_info/news/siteNews.html">Zebrafish News Archive</a></li>
+       <li><a href="/zf_info/news/siteNews.html">All News</a></li>
    
      </ul>
 
