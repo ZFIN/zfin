@@ -70,9 +70,11 @@
 	  <?MIVAR NAME=$done_mseg>t<?/MIVAR>
         <?MIELSE COND="$(AND,$(EC,$done_mseg,f),$(>,$(POSITION,$1,EST),0))">
 	  <?MIVAR NAME=$todo_mseg>t<?/MIVAR>
+        <?MIELSE COND="$(AND,$(EC,$done_mseg,f),$(>,$(POSITION,$1,CDNA),0))">
+	  <?MIVAR NAME=$todo_mseg>t<?/MIVAR>
         <?MIELSE COND="$(AND,$(EC,$done_mrkr,f),
-			    $(=,$(POSITION,$1,EST),0),
-		            $(=,$(POSITION,$1,BAC),0),
+			    $(=,$(POSITION,$1,EST),0),		            
+			    $(=,$(POSITION,$1,BAC),0),
 		   	    $(=,$(POSITION,$1,PAC),0))">
 	  
           <?MIBLOCK COND="$(EC,$done_mseg,t)">
