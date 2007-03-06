@@ -586,7 +586,6 @@ Message: $MI_ERRORMSG
   <?MIVAR>$(SETVAR,$constraint,$(CONCAT,$constraint,$moreConstraint))<?/MIVAR>
 <?/MIBLOCK>
 
-
     <?MICOMMENT> =================================================================
                           if Mutation type is searched
          ==============================================================================
