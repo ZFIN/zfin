@@ -167,6 +167,7 @@ Message: $MI_ERRORMSG
   ============================================================================
 <?/MICOMMENT>
 
+<?MIVAR COND="$(XST,$fsel_inputname)" NAME="$fsel_ori_inputname">$fsel_inputname<?/MIVAR>
 <?MIVAR COND="$(XST,$fsel_inputname)" NAME="$fsel_inputname">$(LOWER,$(TRIM,$fsel_inputname))<?/MIVAR>
 <?MIVAR COND="$(XST,$WINSIZE)" NAME="$WINSIZE">$(TRIM,$WINSIZE)<?/MIVAR>
 
@@ -327,13 +328,13 @@ Message: $MI_ERRORMSG
   <?MIVAR NAME=$percentage>%<?/MIVAR>
   <?MIBLOCK COND="$(EC,$compare,starts)">
     <?MIVAR NAME=$table_all_name_ends> <?/MIVAR>
-    <?MIVAR NAME=$target_col>allmapnm_name<?/MIVAR>
+    <?MIVAR NAME=$target_col>allmapnm_name_lower<?/MIVAR>
     <?MIVAR NAME=$connecting_2_tables> <?/MIVAR>
     <?MIVAR NAME=$like_or_equal>like<?/MIVAR>
     <?MIVAR NAME=$input>$(CONCAT,$fsel_inputname,$percentage)<?/MIVAR>   
   <?MIELSE COND="$(EC,$compare,equals)">    
     <?MIVAR NAME=$table_all_name_ends> <?/MIVAR>
-    <?MIVAR NAME=$target_col>allmapnm_name<?/MIVAR>
+    <?MIVAR NAME=$target_col>allmapnm_name_lower<?/MIVAR>
     <?MIVAR NAME=$connecting_2_tables> <?/MIVAR>
     <?MIVAR NAME=$like_or_equal>=<?/MIVAR> 
     <?MIVAR NAME=$input>$fsel_inputname<?/MIVAR>
@@ -1565,7 +1566,7 @@ Message: $MI_ERRORMSG
           <option $(IF,$(EC,$compare,equals),selected) value=equals>equals
        </select>    
        
-       <input type=text name=fsel_inputname size=18 value="$(IF,$(XST,$fsel_inputname),$fsel_inputname)">
+       <input type=text name=fsel_inputname size=18 value="$(IF,$(XST,$fsel_inputname),$fsel_ori_inputname)">
        <?/MIVAR>
      </td>
 
