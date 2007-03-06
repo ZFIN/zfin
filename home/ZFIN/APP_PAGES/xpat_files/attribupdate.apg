@@ -80,12 +80,19 @@ EFFECTS
         where recattrib_data_zdb_id = '$xpcurup_attrib_mrkr_zdb'
           and recattrib_source_zdb_id = '$OID'
         ;">
-      <?/MISQL>
-    
-      <?MISQL COND=$(=,$1,0) SQL="
-        insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
-        values ('$xpcurup_attrib_mrkr_zdb','$OID');">
-      <?/MISQL>    
+    <?/MISQL>
+      
+      <?MIBLOCK COND=$(=,$1,0)>
+        <?MISQL SQL="
+          insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
+          values ('$xpcurup_attrib_mrkr_zdb','$OID');">
+        <?/MISQL>    
+      
+        <?MISQL SQL="
+          select WebExplode(object,'permission=root&recweb_rec_id= $xpcurup_attrib_fish_zdb&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=record_attribution&recweb_new_value=$OID&recweb_comments=create+new+record') 
+          from webPages where ID='aa-record_web_update.apg';">
+        <?/MISQL>
+      <?/MIBLOCK>
       
       <?MIBLOCK COND="$(AND,$(XST,$xpcur_c_auto_on),$(EC,$xpcur_c_auto_on,on))">
         <?MIVAR NAME=xpcur_c_gene_only>$xpcurup_attrib_mrkr_zdb<?/MIVAR>
@@ -125,10 +132,17 @@ EFFECTS
         ;">
       <?/MISQL>
     
-      <?MISQL COND=$(EC,$1,0) SQL="
-        insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
-        values ('$xpcurup_attrib_fish_zdb','$OID');">
-      <?/MISQL>   
+      <?MIBLOCK COND=$(EC,$1,0)>
+        <?MISQL SQL="
+          insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
+          values ('$xpcurup_attrib_fish_zdb','$OID');">
+        <?/MISQL>   
+      
+        <?MISQL SQL="
+          select WebExplode(object,'permission=root&recweb_rec_id=$xpcurup_attrib_fish_zdb&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=record_attribution&recweb_new_value=$OID&recweb_comments=create+new+record') 
+          from webPages where ID='aa-record_web_update.apg';">
+        <?/MISQL>
+      <?/MIBLOCK>
       
       <?MIVAR NAME=xpcur_G_xpatex_fish>$xpcurup_attrib_fish_zdb<?/MIVAR>
       
@@ -144,7 +158,7 @@ EFFECTS
   
     <?MICOMMENTS>
        ================================================
-         Check that the feature_record exists. 
+         Check that the record exists. 
          Then, add a record to record attribution
        ================================================
     <?/MICOMMENTS>
@@ -170,7 +184,11 @@ EFFECTS
         values ('$pubcur_G_attrib_data_zdb','$OID');">
       <?/MISQL>   
       
-      
+      <?MISQL SQL="
+        select WebExplode(object,'permission=root&recweb_rec_id=$pubcur_G_attrib_data_zdb&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=record_attribution&recweb_new_value=$OID&recweb_comments=create+new+record') 
+        from webPages where ID='aa-record_web_update.apg';">
+      <?/MISQL>
+    
     <?MIELSE>
       <?MIVAR NAME=xpcurup_alert>Could not find $pubcur_G_attrib_data_zdb in $pubcur_G_attrib_table .<?/MIVAR>    
     <?/MIBLOCK>
@@ -201,6 +219,11 @@ EFFECTS
       <?MIBLOCK COND="$(AND,$(EC,$citlink_total_count,$citlink_total_count_before),$(!=,$citlink_total_count,0))">
         <?MIVAR NAME=xpcurup_alert>The data is still connected through other types of data.<?/MIVAR>
       <?/MIBLOCK>  
+
+      <?MISQL SQL="
+        select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=record_attribution&recweb_old_value=$pub_OID&recweb_new_value=none&recweb_comments=delete+record') 
+        from webPages where ID='aa-record_web_update.apg';">
+      <?/MISQL>      
   
   
       <?MIVAR NAME=OID>$pub_OID<?/MIVAR>
