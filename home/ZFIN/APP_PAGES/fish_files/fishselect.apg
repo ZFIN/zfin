@@ -386,7 +386,7 @@ Message: $MI_ERRORMSG
                                       where g_zdb_id = genofeat_geno_zdb_id)
 	              and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
 	              and mrel_mrkr_1_zdb_id = fmrel_mrkr_zdb_id
-	              and mrel_type = 'coding sequence of'
+	              and mrel_type in ('promoter of','coding sequence of')
 	              and mrel_mrkr_2_zdb_id = junior_gene_zdb_id;">	    
     <?/MISQL>    
     
@@ -397,7 +397,7 @@ Message: $MI_ERRORMSG
                                       where g_zdb_id = genofeat_geno_zdb_id)
 	              and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
 	              and mrel_mrkr_2_zdb_id = fmrel_mrkr_zdb_id
-	              and mrel_type = 'coding sequence of'
+	              and mrel_type in ('promoter of','coding sequence of')
 	              and mrel_mrkr_1_zdb_id = junior_gene_zdb_id;">	    
     <?/MISQL>        
     
