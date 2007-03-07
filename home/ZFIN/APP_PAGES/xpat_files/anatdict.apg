@@ -69,6 +69,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 	select dalias_alias, dalias_alias_lower as name_lower_column
           from data_alias
          where dalias_data_zdb_id[1,9] = 'ZDB-ANAT-'
+	   and dalias_group <> 'secondary id'
       order by name_lower_column;">
    <?MIVAR NAME=anatdict_curAnat>"$1"<?/MIVAR>
    <?MIVAR>$(SETVAR,$anatdict_anatList,$(IF,$(NC,$MI_CURRENTROW,1),$anatdict_anatList",")$anatdict_curAnat)<?/MIVAR>
@@ -246,6 +247,7 @@ function updateParent(AOname, AOid) {
 			           ( select 1
 			               from data_alias 
 		                       where dalias_data_zdb_id = anatitem_zdb_id 
+                                         and dalias_group <> 'secondary id'
 			                 and dalias_alias_lower like lower ('%$searchterm%') ) ) )
 	          ORDER BY anatitem_name_order
      		;">
@@ -290,7 +292,8 @@ function updateParent(AOname, AOid) {
                     (<?MISQL SQL="
 		 	 SELECT dalias_alias
 		           FROM data_alias
-		          WHERE dalias_data_zdb_id = '$item_zdb_id';">
+		          WHERE dalias_data_zdb_id = '$item_zdb_id'
+                            and dalias_group <> 'secondary id';">
 			
 	 		<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">synonym(s): <?MIELSE>, <?/MIBLOCK> 
 		    	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A>
@@ -418,7 +421,9 @@ function updateParent(AOname, AOid) {
 			  <?MISQL SQL="
 			          SELECT dalias_alias
 				    FROM data_alias
-				    WHERE dalias_data_zdb_id = '$item_zdb_id';"><?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">synonym(s): <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A>
+				    WHERE dalias_data_zdb_id = '$item_zdb_id'
+                                      and dalias_group <> 'secondary id';">
+                               <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">synonym(s): <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A>
                            <?/MISQL>
  			   ) </I> </font>
 		        <?/MIBLOCK> <?MICOMMENT> end if synonym exists <?/MICOMMENT>
@@ -494,7 +499,9 @@ function updateParent(AOname, AOid) {
 		    (<?MISQL SQL="
 		       SELECT dalias_alias
 			 FROM data_alias
-			 WHERE dalias_data_zdb_id = '$item_zdb_id';"><?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">synonym(s): <?MIELSE>, <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A><?/MISQL> ) 
+			 WHERE dalias_data_zdb_id = '$item_zdb_id'
+                           and dalias_group <> 'secondary_id' ;">
+                       <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">synonym(s): <?MIELSE>, <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A><?/MISQL> ) 
 		  </font></I>
 	      <?/MIBLOCK> <?MICOMMENT> end of if synonym exists <?/MICOMMENT>
 	      
