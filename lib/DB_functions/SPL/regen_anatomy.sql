@@ -680,7 +680,8 @@ create dba function "informix".regen_anatomy()
 	select count(*)
 	  into nSynonyms
 	  from data_alias
-	  where dalias_data_zdb_id = anatomyId;
+	  where dalias_data_zdb_id = anatomyId
+	    and dalias_group <> 'secondary id';
 
 	-- get list of genes that have expression patterns for this
 	-- anatomy item
