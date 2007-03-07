@@ -5,11 +5,7 @@
 # obo format ZFIN anatomy file.
 #
 # Input:
-#   share flag :: optional. If share is specified, the file output goes
-#                 goes to OBO site, otherwise, to curators. This gets
-#                 passed into anatitem_2_obo.pl to decide if 
-#                 anatitem_description will be outputed to obo file as Comment.
-#                
+#   None               
 #
 # Output:
 #   OBO format AO file sent by email
@@ -39,10 +35,7 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 #
 sub sendResult {
 
-    my $input_shareFlag = $_[0];
-    my $file_domain = $input_shareFlag ? "for public" : "for ZFIN";
-
-    my $SUBJECT="Auto: OBO file ".$file_domain;
+    my $SUBJECT="Auto: OBO file ";
     my $MAILTO="<!--|AO_EMAIL_CURATOR|-->";   
     my $ATTFILE ="./zebrafish_anatomy.obo";
     
@@ -94,7 +87,6 @@ sub unloadOboFromDB (){
 
 #--------------- Main --------------------------------
 #
-my $shareFlag = $ARGV[0] ? $ARGV[0] : "";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Anatomy/";
 
@@ -139,7 +131,7 @@ print OUT "$typedef";
 
 #-- invoke scripts to generate anatomy items and stage items
 
-print OUT `./anatitem_2_obo.pl $shareFlag`;
+print OUT `./anatitem_2_obo.pl`;
 
 print OUT `./stg_2_obo.pl`;
 
@@ -170,6 +162,6 @@ system ("/bin/chmod 654 <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_tran
 system ("/bin/chgrp fishadmin <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/*") and die "could not chmod data_Transfer files";
 
 
-&sendResult($shareFlag);
+&sendResult();
 
 exit;

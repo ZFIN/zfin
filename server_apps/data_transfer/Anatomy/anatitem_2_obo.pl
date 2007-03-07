@@ -5,9 +5,7 @@
 #
 # Input: 
 #        dbname
-#        share flag : optional. If share is specified,
-#                     the file output goes to OBO site,
-#                     otherwise, to curators.
+#   
 #
 # Output: STDOUT
 #
@@ -34,10 +32,6 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 		      )
     || &reportError("Failed while connecting to <!--|DB_NAME|--> "); 
 
-#this variable is global, used in sub getParents() too
-my $shareVersion;
-$shareVersion = 't' if ( $ARGV[0] && $ARGV[0] eq "share") ;
-
 # In dagedit the root cann't have any relationship attribution.
 # Since zfin anatomy terms always have start stage and end stage,
 # we need to make up a fake root. 
@@ -51,18 +45,18 @@ print "namespace: zebrafish_anatomy\n";
 
 # ---- query anatomy table ----
 
-my $condition = '';
-$condition = "where anatitem_obo_id[1,3] = 'ZFA' " if $shareVersion;
 
 my $anat_sql = "select anatitem_zdb_id, anatitem_name, 
                        str.stg_obo_id, stp.stg_obo_id,
                        anatitem_definition, anatitem_obo_id, 
-                       anatitem_description, anatitem_is_obsolete
-                  from anatomy_item join
-                       stage str on str.stg_zdb_id = anatitem_start_stg_zdb_id
-                       join stage stp on stp.stg_zdb_id = anatitem_end_stg_zdb_id "
-               .$condition
-               ." order by anatitem_obo_id ";
+                       anatitem_description, anatitem_is_obsolete,
+                       anatitem_is_cell, dblink_acc_num
+                  from anatomy_item, stage str, stage stp,
+                       outer db_link 
+                 where str.stg_zdb_id = anatitem_start_stg_zdb_id
+                   and stp.stg_zdb_id = anatitem_end_stg_zdb_id
+                   and anatitem_zdb_id = dblink_linked_recid
+                 order by anatitem_obo_id ";
 
 
 my $anat_sth = $dbh->prepare($anat_sql) 
@@ -80,18 +74,34 @@ while (my @data = $anat_sth->fetchrow_array()) {
 	my $anatOboId    = $data[5];
 	my $anatDesc     = $data[6];
 	my $anatIsObsolete = $data[7];
+	my $anatIsCell   = $data[8];
+	my $anatClNum    = $data[9];
 	$anatDef =~ s/\n/ /g if $anatDef;  # '\n' would break the OBO parse
 	$anatDef =~ s/\"/\'/g if $anatDef;
 	
 	#--------------------------------
-	#-- Basic information
+	#-- Id
         #--------------------------------
 	print "\n";
 	print "[Term]\n";
 	print "id: $anatOboId\n";
+
+        #----------------------------------
+        #-- Alternative ZFA ids
+        #-- 
+	#-----------------------------------
+	foreach my $anatAltId (&getAltId ($anatId)) {
+	    print "alt_id: $anatAltId\n";
+	}
+
+	#--------------------------------
+	#-- Name & ZDB id
+        #--------------------------------
+
 	print "name: $anatName\n";
 	print "namespace: zebrafish_anatomy\n";
        	print "xref: ZFIN:$anatId\n";
+	print "xref: $anatClNum\n" if $anatClNum;
 
         #----------------------------------
         #-- Obsolete term
@@ -117,13 +127,21 @@ while (my @data = $anat_sth->fetchrow_array()) {
 	#--------------------------------
 	#-- Definition
         #--------------------------------
-	print "def: \"$anatDef\" [ZFIN:curator]\n" if $anatDef;
+	my $anatDefAttr = "";
+	$anatDefAttr = join (", ZFIN:", &getDefAttrib ($anatId));
+	if ($anatDefAttr) {
+	    $anatDefAttr = "[ZFIN:".$anatDefAttr."]" if $anatDefAttr;
+	}else {
+	    $anatDefAttr = ($anatIsCell eq "t") ? "[CL:curator]" :"[ZFIN:curator]";
+	}
+
+	print "def: \"$anatDef\" $anatDefAttr\n" if $anatDef;
 
 	#--------------------------------
 	#-- Comment 
         #-- not included in the version sent to OBO
         #--------------------------------
-	print "comment: $anatDesc \n" if (! $shareVersion && $anatDesc); 
+	print "comment: $anatDesc \n" if ($anatDesc); 
 
 	#--------------------------------
 	#-- Stage
@@ -168,7 +186,8 @@ sub getSynonyms ($){
     my $alias_sql = "select dalias_alias, dalias_group, recattrib_source_zdb_id
                        from data_alias left outer join record_attribution
                             on dalias_zdb_id = recattrib_data_zdb_id
-                      where dalias_data_zdb_id = ?";
+                      where dalias_data_zdb_id = ?
+                        and dalias_group in ('alias','plural')";
     my $alias_sth = $dbh->prepare($alias_sql)
 	    or &reportError("Couldn't prepare the statement:$!\n");
     $alias_sth->execute($anatZdbId) or &reportError( "Couldn't execute the statement:$!\n");
@@ -181,6 +200,55 @@ sub getSynonyms ($){
 }
 
 #===============================================
+# sub getAltId
+#
+# input:  anatitemZdbId
+# ouput:  anatomy ZFA alt id array      
+#
+sub getAltId ($){
+    my $anatZdbId = $_[0];
+    my @altid_array = ();
+
+    my $altid_sql = "select dalias_alias
+                       from data_alias 
+                      where dalias_data_zdb_id = ?
+                        and dalias_group = 'secondary id'";
+    my $altid_sth = $dbh->prepare($altid_sql)
+	    or &reportError("Couldn't prepare the statement:$!\n");
+    $altid_sth->execute($anatZdbId) or &reportError( "Couldn't execute the statement:$!\n");
+
+    while (my $alt_id = $altid_sth->fetchrow_array()) {
+	push @altid_array,  $alt_id;
+    }
+    return @altid_array;
+}
+
+#===============================================
+# sub getDefAttrib
+#
+# input:  anatitemZdbId
+# ouput:  definition attribution
+#
+sub getDefAttrib ($) {
+   my $anatZdbId = $_[0];
+   my @attrib_array = ();
+   
+   my $defattrib_sql = "select recattrib_source_zdb_id
+                       from record_attribution
+                      where recattrib_data_zdb_id = ?
+                        and recattrib_source_type = 'anatomy definition'";
+    my $defattrib_sth = $dbh->prepare($defattrib_sql)
+	    or &reportError("Couldn't prepare the statement:$!\n");
+    $defattrib_sth->execute($anatZdbId) or &reportError( "Couldn't execute the statement:$!\n");
+
+    while (my $attrib_id = $defattrib_sth->fetchrow_array()) {
+	push @attrib_array,  $attrib_id;
+    }
+    return @attrib_array;
+}
+
+
+#===============================================
 # sub getParents
 #
 # input:  anatitemZdbId
@@ -189,14 +257,11 @@ sub getSynonyms ($){
 sub getParents ($){
     my $anatZdbId = $_[0];
     my @arel_array = ();
-    my $condition = '';
-    $condition = "and anatitem_obo_id[1,3] = 'ZFA' " if $shareVersion;
-
+  
     my $arel_sql = "select anatitem_obo_id, anatrel_dagedit_id
                       from anatomy_relationship join 
                            anatomy_item on anatrel_anatitem_1_zdb_id = anatitem_zdb_id 
-                     where anatrel_anatitem_2_zdb_id = ? "
-                     .$condition;
+                     where anatrel_anatitem_2_zdb_id = ? ";
 
     my $arel_sth = $dbh->prepare($arel_sql)
 	    or  &reportError("Couldn't prepare the statement:$!\n");
