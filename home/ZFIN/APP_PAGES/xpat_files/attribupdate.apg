@@ -89,7 +89,7 @@ EFFECTS
         <?/MISQL>    
       
         <?MISQL SQL="
-          select WebExplode(object,'permission=root&recweb_rec_id= $xpcurup_attrib_fish_zdb&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=record_attribution&recweb_new_value=$OID&recweb_comments=create+new+record') 
+          select WebExplode(object,'permission=root&recweb_rec_id= $xpcurup_attrib_mrkr_zdb&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=record_attribution&recweb_new_value=$OID&recweb_comments=create+new+record') 
           from webPages where ID='aa-record_web_update.apg';">
         <?/MISQL>
       <?/MIBLOCK>
