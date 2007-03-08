@@ -219,10 +219,10 @@ $1</A>
 <br>
 
 <?MIVAR COND="$(XST,$UPDATE)">
-  <INPUT TYPE=button value=Update onClick="doit('allele_prefix','text','Allele+Designation')">
+  <INPUT TYPE=button value=Update onClick="doit('allele_prefix','text','Line+Designation')">
 <?/MIVAR> 
 <?MIVAR COND="$(OR,$(NC,$allele_prefix,NULL),$(XST,$UPDATE))">
-  <b>Allele Designation: </b>
+  <b>Line Designation: </b>
   $allele_prefix
 <?/MIVAR>
 
