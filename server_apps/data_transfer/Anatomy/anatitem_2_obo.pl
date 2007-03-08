@@ -36,6 +36,7 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 # Since zfin anatomy terms always have start stage and end stage,
 # we need to make up a fake root. 
 my $rootAnatId = "ZFA:0100000";  #this constant is also referred by parseOBO.pl
+my $rootAnatName = "zebrafish anatomical entity";
 print "\n";
 print "[Term]\n";
 print "id: $rootAnatId \n";
@@ -50,7 +51,8 @@ my $anat_sql = "select anatitem_zdb_id, anatitem_name,
                        str.stg_obo_id, stp.stg_obo_id,
                        anatitem_definition, anatitem_obo_id, 
                        anatitem_description, anatitem_is_obsolete,
-                       anatitem_is_cell, dblink_acc_num
+                       anatitem_is_cell, dblink_acc_num,
+                       str.stg_name, stp.stg_name
                   from anatomy_item, stage str, stage stp,
                        outer db_link 
                  where str.stg_zdb_id = anatitem_start_stg_zdb_id
@@ -76,6 +78,9 @@ while (my @data = $anat_sth->fetchrow_array()) {
 	my $anatIsObsolete = $data[7];
 	my $anatIsCell   = $data[8];
 	my $anatClNum    = $data[9];
+	my $anatStartStgName = $data[10];
+	my $anatEndStgName = $data[11];
+
 	$anatDef =~ s/\n/ /g if $anatDef;  # '\n' would break the OBO parse
 	$anatDef =~ s/\"/\'/g if $anatDef;
 	
@@ -146,8 +151,8 @@ while (my @data = $anat_sth->fetchrow_array()) {
 	#--------------------------------
 	#-- Stage
         #--------------------------------
-  	print "relationship: start $anatStartStg\n";
-	print "relationship: end $anatEndStg\n";
+  	print "relationship: start $anatStartStg ! $anatStartStgName\n";
+	print "relationship: end $anatEndStg ! $anatEndStgName\n";
 
 	#--------------------------------
 	#-- Relationship
@@ -155,15 +160,15 @@ while (my @data = $anat_sth->fetchrow_array()) {
 	my @anatParent_Type_array = &getParents ($anatId);
 	if (! @anatParent_Type_array) {
 	    # fake a parent "Zebrafish Anatomy" to first level terms
-	    print "is_a: $rootAnatId\n";
+	    print "is_a: $rootAnatId ! $rootAnatName\n";
 	}
 	else {
 	    foreach my $anatParent_Type (@anatParent_Type_array) {
-		my($anatParentId, $anatDageditId) = split(/\|/, $anatParent_Type);
+		my($anatParentId,  $anatParentName, $anatDageditId) = split(/\|/, $anatParent_Type);
 		if ($anatDageditId eq "is_a") {
-		    print "$anatDageditId: $anatParentId \n";
+		    print "$anatDageditId: $anatParentId ! $anatParentName\n";
 		}else {
-		    print "relationship: $anatDageditId $anatParentId \n";
+		    print "relationship: $anatDageditId $anatParentId  ! $anatParentName\n";
 		}
 	    }
 	}  #---------- end of if exists anatomy relationship 
@@ -258,9 +263,10 @@ sub getParents ($){
     my $anatZdbId = $_[0];
     my @arel_array = ();
   
-    my $arel_sql = "select anatitem_obo_id, anatrel_dagedit_id
+    my $arel_sql = "select anatitem_obo_id, anatitem_name, anatrel_dagedit_id
                       from anatomy_relationship join 
-                           anatomy_item on anatrel_anatitem_1_zdb_id = anatitem_zdb_id 
+                           anatomy_item a1 
+                             on anatrel_anatitem_1_zdb_id = a1.anatitem_zdb_id 
                      where anatrel_anatitem_2_zdb_id = ? ";
 
     my $arel_sth = $dbh->prepare($arel_sql)
@@ -269,7 +275,7 @@ sub getParents ($){
     $arel_sth->execute($anatZdbId) or &reportError("Couldn't execute the statement:$!\n");
 
     while (my @row = $arel_sth->fetchrow_array()) {
-	push @arel_array, $row[0]."|".$row[1];
+	push @arel_array, join("|",@row);
     }
     return @arel_array;
 }
