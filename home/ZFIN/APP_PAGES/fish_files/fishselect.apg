@@ -222,12 +222,6 @@ Message: $MI_ERRORMSG
     <?MIVAR COND="$(NXST,$target_tables)" NAME=$target_tables>genotype<?/MIVAR>
     <?MIVAR COND="$(NXST,$target_cols)" NAME=$target_cols>distinct geno_zdb_id,'1',geno_name_order,' ',' '<?/MIVAR>
     <?MIVAR COND="$(NXST,$target_cols2)" NAME=$target_cols>geno_zdb_id,'1',geno_name_order,' ',' '<?/MIVAR>
-    
-    <?MICOMMENT>------------------------------------------------------------
-               -- This next part builds up a query piece by piece, based on which 
-               -- criteria were passed in
-	       ------------------------------------------------------------
-    <?/MICOMMENT>
 
     <?MICOMMENT>==================================================================
             ==  Create fishselect_temp_match temp table if it does not already exist.
@@ -912,9 +906,10 @@ Message: $MI_ERRORMSG
                        (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype)
                      select $target_cols
                        from genotype,record_attribution,publication
-                       where zdb_id = '$pubId'
-                         and recattrib_source_zdb_id = zdb_id
-                         and recattrib_data_zdb_id = geno_zdb_id;
+                      where geno_is_wildtype = "f" 
+                        and zdb_id = '$pubId'
+                        and recattrib_source_zdb_id = zdb_id
+                        and recattrib_data_zdb_id = geno_zdb_id;
   <?/MIVAR>
   
 <?MIELSE COND="$(AND,$(NXST,$pubId),$(XST,$fsel_cnstrct_id))">
