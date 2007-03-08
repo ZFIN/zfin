@@ -30,7 +30,7 @@ GENERICS = siteNews.html siteNews_2006.html siteNews_2005.html usersurvey2005.ht
 
 
 
-STATICS =  Newsletter_Summer04.pdf Madison_2004_poster.jpg RegistrationForm.pdf newsgroup.html funding_opps.html ISDB2005.pdf Newsletter_Winter05.pdf Newsletters.html Newsletter_Summer05.pdf Newsletter_Winter06.pdf Newsletter_Summer2006.pdf ANZZFWksp2007RegForm.doc
+STATICS =  Newsletter_Summer04.pdf Madison_2004_poster.jpg RegistrationForm.pdf newsgroup.html funding_opps.html ISDB2005.pdf Newsletter_Winter05.pdf Newsletters.html Newsletter_Summer05.pdf Newsletter_Winter06.pdf Newsletter_Summer2006.pdf ANZZFWksp2007RegForm.doc ZFIN_news_Spring_07.pdf
 
  
 
