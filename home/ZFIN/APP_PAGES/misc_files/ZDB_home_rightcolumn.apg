@@ -173,17 +173,17 @@
        </li>
        <?/MICOMMENT>
 
-       <li>
-         <a href="/zf_info/news/siteNews.html">
+ 
+      <li>
+         <a href="/zf_info/news/siteNews.html#newsletter">
+         March 8 - ZFIN Newsletter Spring Edition Released
+         </a>
+       </li>
+      <li>
+         <a href="/zf_info/news/siteNews.html#amster">
            March 7 - Upcoming Deadlines for the 5th European Zebrafish Genetics and Development Meeting
          </a>
        </li>
-       <li>
-         <a href="/zf_info/news/siteNews.html#genetools">
-         January 26 - Quality control testing of Gene Tools morpholinos
-         </a>
-       </li>
-
 
        <li><a href="/zf_info/news/siteNews.html">All News</a></li>
    
