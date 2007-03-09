@@ -440,7 +440,8 @@ displays a publication record, or many publication records if > 1 returned.
 	select distinct geno_zdb_id
 	from   record_attribution, genotype
 	where  recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id = geno_zdb_id;">
+	  and  recattrib_data_zdb_id = geno_zdb_id
+	  and  geno_is_wildtype = 'f';">
   <?/MISQL>
   
   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
