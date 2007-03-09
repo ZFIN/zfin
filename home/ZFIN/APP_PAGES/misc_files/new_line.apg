@@ -65,7 +65,7 @@ function clearPubStatus() {
 
 Unfortunately, we had to disable anonymous submissions of new lines names.<br>
 <br>
-If you have a ZFIN <a href="<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-login.apg">login</a>, this page will be accessible after logging in.<br><br>  If you don't have a ZFIN account, contact <a href="mailto:zfinadmin@zfin.org">Jonathan Knight</a> to set one up.  You will need to provide your name, lab or institution affiliation and address,email address and phone number. You will be able to update your record using your new account name and password.
+If you have a ZFIN <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-login.apg">login</a>, this page will be accessible after logging in.<br><br>  If you don't have a ZFIN account, contact <a href="mailto:zfinadmin@zfin.org">Jonathan Knight</a> to set one up.  You will need to provide your name, lab or institution affiliation and address,email address and phone number. You will be able to update your record using your new account name and password.
 </div>
 <?MIELSE>
 
