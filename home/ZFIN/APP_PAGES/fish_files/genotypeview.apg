@@ -445,7 +445,7 @@ Datablade documentation.
          <tr bgcolor=<?MIVAR>$highlight<?/MIVAR>>
           <td>&nbsp;&nbsp;&nbsp;
 
-            <?MIVAR COND="$(>,$genovw_num_of_xpat_fig,1)"> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant=$genovw_display_name">$genovw_num_of_xpat_fig figure(s)</a> from $genovw_xpat_source_desc <?/MIVAR>
+            <?MIVAR COND="$(>,$genovw_num_of_xpat_fig,1)"> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=$OID">$genovw_num_of_xpat_fig figure(s)</a> from $genovw_xpat_source_desc <?/MIVAR>
 
 	    <?MIVAR COND="$(=,$genovw_num_of_xpat_fig,1)"> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$1">1 figure(s)</a> from $genovw_xpat_source_desc <?/MIVAR>
        
