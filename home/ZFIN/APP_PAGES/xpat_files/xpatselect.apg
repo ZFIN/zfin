@@ -54,6 +54,7 @@ INPUT VARS:
 
 
     mutant		Exists if user entered a mutant/background string.
+    mutant_id		Exists when calling from genotype page
     mutsearchtype	Specifies if mutant name should 'begins' with
 			'contains' or 'equals' the string in mutant.
     author		Exists if user entered an author string
@@ -236,6 +237,12 @@ function openChild(childWinUrl,childWinName) {
   ==========  CLEAN UP INPUT FIELDS
   ============================================================================
 <?/MICOMMENT>
+<?MISQL COND="$(XST,$mutant_id)" SQL="
+	select geno_display_name
+          from genotype
+         where geno_zdb_id = '$mutant_id'";>
+   <?MIVAR NAME=mutant>$1<?/MIVAR>
+<?/MISQL>	
 
 <?MIVAR COND="$(XST,$gene_name)" NAME="$gene_name">$(TRIM,$gene_name)<?/MIVAR>
 <?MIVAR COND="$(XST,$mutant)" NAME="$mutant">$(TRIM,$mutant)<?/MIVAR>
