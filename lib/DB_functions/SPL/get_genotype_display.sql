@@ -47,7 +47,11 @@ create function get_genotype_display( genoZdbId varchar(50) )
           and genofeat_zygocity = zyg_zdb_id
           and feature_type = ftrtype_name
        order by 1
-     
+
+        if (featAbbrev like "un\_%") then
+          let featAbbrev = "unspecified";    
+        end if
+        
         if (zygAllele == '/allele') then
           let zygAllele = '/' || featAbbrev;
         end if
