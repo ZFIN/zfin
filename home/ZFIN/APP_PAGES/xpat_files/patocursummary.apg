@@ -10,6 +10,11 @@ PREFIX:   patosum_
    $xpcur_G_geno_attrib_csv :: csv list of genotypes for the OID
    $xpcur_G_env_attrib_csv :: csv list of enviornments for the OID
 
+  INPUT_VARS:
+   $pubcur_c_figure_only ::to specify display of data only relating to a single figure
+			  passed in as a zdb_id
+   $xpcur_c_fish_only ::to specificy display of data only relating to a single genotype,
+			passed in as a zdb_id
 
 
 <?/MICOMMENT>
@@ -26,9 +31,47 @@ PREFIX:   patosum_
 <?/MIERROR> 
 
 <?MIBLOCK COND="$(XST,$OID)">
- 
 
-<?MICOMMENT> *** FIXME *** this should get a different css class than searchresults *** <?/MICOMMENT>
+
+<?MICOMMENT> ** display filter bar ** <?/MICOMMENT>
+
+<?MISQL SQL="select WebExplode(object,'curfil_hide_gene=1&curfil_hide_auto=1') 
+             from webPages where ID='aa-curation_filters.apg';">$1<?/MISQL>
+
+
+<?MICOMMENT> *** process filters ** <?/MICOMMENT>
+
+<?MICOMMENT> ** copy from cookie to local var, because I coded it to local vars originally,
+                but not a terrible idea, since the cookie is global and shared and I don't
+                want too many references to it ** <?/MICOMMENT>
+   <?MIVAR COND="$(XST,$pubcur_c_figure_only)" NAME="$patosum_filter_fig">$pubcur_c_figure_only<?/MIVAR>
+   <?MIVAR COND="$(XST,$xpcur_c_fish_only)" NAME="$patosum_filter_genotype">$xpcur_c_fish_only<?/MIVAR>
+
+<?MICOMMENT> ** create empty sql segments that will get included in the where clause
+                in any necessary tables below ** <?/MICOMMENT>
+
+<?MIVAR NAME="$patosum_filter_fig_sql"><?/MIVAR>
+<?MIVAR NAME="$patosum_filter_genotype_sql"><?/MIVAR>
+
+
+<?MIBLOCK COND="$(XST,$patosum_filter_fig)">
+   <?MICOMMENT> ** be sure it's valid, this might be 
+                   wasteful overhead once everything is working ** <?/MICOMMENT>
+   <?MISQL SQL="select first 1 zactvd_zdb_id from zdb_active_data where zactvd_zdb_id = '$patosum_filter_fig'">
+	<?MIVAR NAME="$patosum_filter_fig_sql"> and fig_zdb_id = '$patosum_filter_fig' <?/MIVAR>
+    <?/MISQL>
+
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$patosum_filter_genotype)">
+   <?MICOMMENT> ** be sure it's valid, this might be 
+                   wasteful overhead once everything is working ** <?/MICOMMENT>
+   <?MISQL SQL="select first 1 zactvd_zdb_id from zdb_active_data where zactvd_zdb_id = '$patosum_filter_genotype'">
+	<?MIVAR NAME="$patosum_filter_genotype_sql"> and geno_zdb_id = '$patosum_filter_genotype' <?/MIVAR>
+   <?/MISQL>
+<?/MIBLOCK>
+
+<?MICOMMENT> ** TODO: this should get a different css class than searchresults ** <?/MICOMMENT>
 
  <h3>Mutants:</h3>
 
@@ -45,7 +88,9 @@ PREFIX:   patosum_
             document.getElementById('patosum-noscrollylink').style.display = 'inline';">scrollbars</a>
 
 
+
  <div id="patosum-mutants" style="overflow: auto; height: 300px; border: 1px solid black; width: 98%; margin-left: 1%;">
+ 
  <table class="searchresults">
   <thead class="searchresults">
     <tr>
@@ -69,6 +114,7 @@ PREFIX:   patosum_
                      join genotype on geno_zdb_id = genox_geno_zdb_id
                      join experiment on genox_exp_zdb_id = exp_zdb_id 
                    where fig_source_zdb_id = '$OID'
+			 $patosum_filter_fig_sql $patosum_filter_genotype_sql 
                    order by fig_full_label;"> 
       <?MIVAR NAME="$patosum_fig_label">$1<?/MIVAR>
       <?MIVAR NAME="$patosum_fig_zdb_id">$2<?/MIVAR>
@@ -132,10 +178,10 @@ PREFIX:   patosum_
                                  3 events and you move on to the other state.  it's goofy, but simple ** <?/MICOMMENT>
         </td> 
         <td style="white-space: nowrap"> <?MICOMMENT> ** Fig Column ** <?/MICOMMENT>
-          $patosum_fig_label
+          $patosum_fig_label 
         </td>
         <td> <?MICOMMENT> ** Genotype Column ** <?/MICOMMENT>
-          $patosum_geno_nickname
+          $patosum_geno_nickname 
         </td>
         <td>  <?MICOMMENT> ** Enviornment Column ** <?/MICOMMENT>
           $patosum_exp_name
@@ -217,7 +263,11 @@ PREFIX:   patosum_
         <select name="patoup_fig_zdb_id" id="patosumFig"
                 onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
    
-        <?MISQL SQL="select fig_zdb_id, fig_label from figure where fig_source_zdb_id = '$OID' order by fig_full_label;">   
+        <?MISQL SQL="select fig_zdb_id, fig_label 
+                     from figure 
+                     where fig_source_zdb_id = '$OID' 
+			   $patosum_filter_fig_sql
+                     order by fig_full_label;">   
           <option value="$1">$2</option>
         <?/MISQL>
         </select>
@@ -229,23 +279,33 @@ PREFIX:   patosum_
           <?MISQL SQL="select distinct geno_zdb_id, geno_nickname
                        from genotype
                        where geno_is_wildtype = 't'
-                         and geno_nickname = 'WT';"> 
+                         and geno_nickname = 'WT'
+                         $patosum_filter_genotype_sql;"> 
             <option value="$1">$2</option>
           <?/MISQL>
-            <option> ----- </option>
+            <?MIBLOCK COND="$(NXST,$patosum_filter_genotype)">
+              <option> ----- </option>
+            <?/MIBLOCK>
+          <?MICOMMENT> ** KLUDGE: that '1 <> 2' bit is just because that bit of sql
+			  for the filter is expecting there to already be a where clause ** <?/MICOMMENT>
           <?MISQL SQL="select distinct geno_zdb_id, geno_nickname
                        from genotype
                          join record_attribution 
                            on     recattrib_data_zdb_id = geno_zdb_id
-                              and recattrib_source_zdb_id = '$OID'
+                              and recattrib_source_zdb_id = '$OID'			 
+		       where 1 <> 2
+                         $patosum_filter_genotype_sql
                        order by geno_nickname;">
             <option value="$1">$2</option>
           <?/MISQL>
-            <option> ----- </option>
+            <?MIBLOCK COND="$(NXST,$patosum_filter_genotype)">
+               <option> ----- </option>
+            <?/MIBLOCK>
           <?MISQL SQL="select distinct geno_zdb_id, geno_nickname
                        from genotype
                        where geno_is_wildtype = 't'
                          and geno_nickname <> 'WT'
+		         $patosum_filter_genotype_sql
                        order by geno_nickname;"> 
             <option value="$1">$2</option>
           <?/MISQL>
