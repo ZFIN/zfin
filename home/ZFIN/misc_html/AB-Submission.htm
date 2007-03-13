@@ -1,0 +1,396 @@
+<HTML>
+<HEAD> 
+
+  <TITLE>ZFIN Antibody Search</TITLE>
+
+
+  <SCRIPT>
+
+    function call_reset() {
+
+	document.critform.input_name.value = "";
+	document.critform.input_acc.value = "";
+	document.critform.START.value = "";
+	document.critform.lg.selectedIndex = 0;
+	document.critform.compare.selectedIndex = 0;
+	document.critform.marker_type.selectedIndex = 0;
+	document.critform.WINSIZE.value = 20;
+
+     }
+   </SCRIPT>
+
+   
+       <!-- The setup jscript necessary to open chromoviewer windows. Webexploded where needed. eg markerview, markerlister
+<?MIVAR><?/MIVAR>    for benefit of clifs filters
+-->
+
+
+<SCRIPT>
+function view_scores(refcross,lg,marker,abbrev) {
+
+if (!top.lglist) {
+  top.lglist=new Array(25);
+  top.lgindex=1;
+  }
+
+homewin=top;
+newindex=homewin.lgindex;
+
+    top.lgwin=open("/cgi-bin/webdriver?MIval=aa-scoresframe.apg&panel="+refcross+"&lg="+lg+"&marker_id="+marker+"&marker_abbrev="+abbrev,"scoreswindow"+newindex,"scrollbars=yes,resizable=yes,width=400,height=550");
+
+     top.lgwin.ztarget=window;
+     top.lgwin.lghomewin=homewin;
+
+     top.lglist[top.lgindex]=top.lgwin;
+
+     homewin.lgindex++;
+     top.lgwin.myindex=newindex;
+}
+
+
+
+function show_detail(link_id,marker_id,marker_abbrev,marker2_abbrev) {
+
+if (marker2_abbrev == "") {
+	marker2_abbrev = null;
+}
+if (!top.lglist) {
+  top.lglist=new Array(25);
+  top.lgindex=1;
+  }
+
+homewin=top;
+newindex=homewin.lgindex;
+
+    top.lgwin=open("/cgi-bin/webdriver?MIval=aa-detailframe.apg&link_id="+link_id+"&marker_id="+marker_id+"&marker_abbrev="+marker_abbrev+"&marker2_abbrev="+marker2_abbrev,"detailwindow"+newindex,"scrollbars=yes,resizable=yes,width=400,height=550");
+
+     top.lgwin.ztarget=window;
+     top.lgwin.lghomewin=homewin;
+
+     top.lglist[top.lgindex]=top.lgwin;
+
+     homewin.lgindex++;
+     top.lgwin.myindex=newindex;
+}
+
+</SCRIPT>
+
+   
+
+</HEAD>
+ 
+<BODY> <!-------------------------------------------------------------------------->
+
+
+ 
+<script language="JavaScript" src="http://zfin.org/client_sniff.js"></script>
+
+<SCRIPT> 
+if (is_nav4) {
+document.write('<LINK rel=stylesheet type="text/css" href="/nn4_zfin_style.css">');
+} else {
+document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
+}
+</SCRIPT>
+
+<BODY bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<basefont size=2>
+
+
+<table width=100% cellspacing=0 border=0 cellpadding=0 class="header">
+  <tr>
+     <td rowspan=2  bgcolor="#006666" width=80 align=left valign=bottom>
+	    <a href="/cgi-bin/webdriver?MIval=aa-ZDB_home.apg"> 
+	     <IMG src="/images/zfinlogo.gif" border=0>   
+	    </a>
+     </td>
+     <td>
+	    <a href="/cgi-bin/webdriver?MIval=aa-ZDB_home.apg"> <IMG src="/images/zfintxt.gif" border=0></a>
+
+     </td>
+     <td align="center" valign="bottom" bgcolor="#FFFFFF">
+	 
+           <div class="content" align="right" style="padding-right:10px;">
+            <form method="GET" action="/SearchApp/category_search.jsp" name="quicksearch">
+                 <nobr><a href="/SearchApp/syntax_help.jsp"><b>Site Search: </b></a><input type="text" name="query" size="25"></nobr>
+            </form>
+           </div>
+        
+	   <DIV class="header">
+
+	    <A HREF="/cgi-bin/webdriver?MIval=aa-blast.apg"><font color="#006666">BLAST</font></a>&nbsp;&nbsp;
+            <A HREF="/cgi-bin/webdriver?MIval=aa-anatdict.apg&mode=search"><font color="#006666">Anatomy</font></a>&nbsp;&nbsp;
+            <A HREF="/cgi-bin/webdriver?MIval=aa-pubselect2.apg"><font color="#006666">Publications</font></a>&nbsp;&nbsp;
+            <A HREF="/cgi-bin/webdriver?MIval=aa-quickfindpers.apg"><font color="#006666">People</font></a> &nbsp;&nbsp;
+            <A HREF="/cgi-bin/webdriver?MIval=aa-labselect.apg"><font color="#006666">Labs</font></a> &nbsp;&nbsp;
+
+            <A HREF="/cgi-bin/webdriver?MIval=aa-companyselect.apg"><font color="#006666">Companies </font></a> &nbsp;&nbsp;
+            <A HREF="/cgi-bin/webdriver?MIval=aa-accessionselect.apg"><font color="#006666">Acc # </font></a>	  
+            </DIV>
+          </td>
+    </tr>
+ 
+  <tr bgcolor=#006666>
+    <td colspan=2 width=100%>
+      <table width=100% border=0 height=20 cellspacing=0 cellpadding=0>
+
+        <tr>
+	  <td align=center>
+	   <DIV class="header">
+            <A HREF="/index.html">Home</a>
+	   </DIV>
+          </td>
+	  <td align=center>
+	   <DIV class="header">
+
+            <A HREF="/cgi-bin/webdriver?MIval=aa-fishselect.apg&line_type=mutant">Mutants / Transgenics</a>
+	   </DIV>
+          </td>
+          <td align=center>
+	   <DIV class="header">
+            <A HREF="/cgi-bin/webdriver?MIval=aa-wtlist.apg">Wild-Types</a>
+	   </DIV>
+          </td>
+
+          <td align=center>
+	   <DIV class="header">
+            <A HREF="/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg">Genes / Markers / Clones</a>
+	   </DIV>
+          </td>
+	  <td align=center>
+	   <DIV class="header">
+            <A HREF="/cgi-bin/webdriver?MIval=aa-xpatselect.apg">Expression</a>
+
+	   </DIV>
+          </td>
+          <td align=center>
+	   <DIV class="header">
+            <A HREF="mapper_select.cgi">Maps</a>
+	   </DIV>
+          </td>
+
+<!--          <td  align=center>
+	   <DIV class="header">
+            <A HREF="/cgi-bin/webdriver?MIval=aa-pubselect2.apg">Publications</a>
+	   </DIV>
+          </td>
+          <td  align=center>
+	   <DIV class="header">
+            <A HREF="/cgi-bin/webdriver?MIval=aa-quickfindpers.apg">People</a>
+	   </DIV>
+          </td>
+          <td  align=center>
+	   <DIV class="header">
+            <A HREF="/cgi-bin/webdriver?MIval=aa-labselect.apg">Labs</a>
+	   </DIV>
+          </td>
+          <td  align=center>
+	   <DIV class="header">
+            <A HREF="/cgi-bin/webdriver?MIval=aa-companyselect.apg">Companies</a>
+	   </DIV>
+          </td> -->
+
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellpadding=5 width=100%><tr><td>
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+
+
+
+<!---------------this part is executed after a search is submitted ---------------->
+
+<!------------- end xst $query_result---->
+
+
+<!----------------  Query Form -------------------------------------->
+
+<!-- Display the form for Genes/Markers/Clones search page
+Input:
+   page:  either searchpage or resultpage
+-->
+
+  
+  <TABLE class="search" width=100% border=0 cellpadding=1 cellspacing=0>
+    <TR>
+      
+        <TD class=titlebar>
+	  &nbsp;&nbsp;
+	  <h2>Community Submission Form, page 1</h2><font size=+1>
+	  </font></strong>
+       </TD>
+       <TD class=titlebar align=right> 
+ 	 <table leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"
+         border="0" cellspacing="0" cellpadding="0">
+    <form method=post 
+          action="/cgi-bin/webdriver" 
+          target=comments>
+      <input type=hidden name=MIval value="aa-input_welcome_generic.apg">
+      <input type=hidden name=page_name value="ZFIN Search Markers">
+    
+    <tr>
+      <td>
+
+        <input type=submit value="Your Input Welcome">
+      </td>
+    </tr>
+
+    </form>
+  </table>
+
+       </TD>
+     
+
+    </TR>
+     <FORM name="critform" method="post" action="/cgi-bin/webdriver" >
+
+      
+      
+      
+  
+      <TR>
+      <TD valign=top>
+	<table><tr><td align=top>
+	 <b>Welcome to the ZFIN antibody community resource.
+	 </b>
+	</td>
+	<td>&nbsp;
+	</td>
+       </tr></table>
+      </TD>
+    
+     </TR>
+
+       <TR>
+      <TD valign=top>
+	<table><tr>
+	  <td align=top>
+	 Would you like to:
+	</td>
+	  <td>&nbsp;
+	</td>
+       </tr></table>
+      </TD>
+    
+     </TR>
+
+        <TD>
+
+
+	      <p>-submit data for an antibody already in ZFIN: </p>
+	      <p>antibody name contains 
+	        <input type="text" name="textfield">
+            <input type="submit" name="Submit" value="Search">
+            <input type="submit" name="Submit" value="Reset">
+          <p>or
+          <p>-submit a new antibody?
+          <p>Enter new antibody name 
+            <input type="text" name="textfield">
+            <input type="submit" name="Submit" value="Search">
+            <input type="submit" name="Submit" value="Reset">
+          <p>&nbsp;</p></TD>
+     </TR>
+     <TR>
+       <TD class=submitbar colspan=2 align="right">
+       
+        <input type=hidden name=MIval value=aa-newmrkrselect.apg>
+        <input type=hidden name=query_results value="exist">
+	<input type=hidden NAME="START" value=1>
+       
+
+  	<!-- This next little block executes only if we are using the browser as a
+  	selector. That is we want user to ultimately CHOOSE a browsed value. All
+  	we have to do at this point is pass the return record along to the markerlister.
+  	-->
+
+  	
+
+	<input type=submit name=action value="SEARCH";">
+	<input type=submit name=getTop value="BEST MATCH";">
+	<input type=button value="RESET" onClick="call_reset()";>  
+      </TD></form>
+    </TR>
+ </TABLE>
+
+
+
+ 
+    </td></tr></table>
+
+<table width=100% class="header">
+  <tr>
+    <td class="footer">
+      <table valign=center width=100%>
+        <tr>
+          <td align=center class="footer">
+	   <DIV class="header">
+            <A HREF="/index.html">Home</a>
+	   </DIV>
+
+          </td>
+          <td align=center class="footer">
+	   <DIV class="header">
+	     <a href="mailto:zfinadmn@zfin.org">Email ZFIN</a>
+	   </DIV>
+          </td>
+          <td align=center class="footer">
+	   <DIV class="header">
+
+            <A HREF="/zf_info/dbase/db.html">About ZFIN</a>
+	   </DIV>
+          </td>
+          <td align=center class="footer">
+	   <DIV class="header">
+            <A HREF="/ZFIN/misc_html/tips.html">Helpful Hints</a>
+	   </DIV>
+          </td>
+
+          <td align=center >
+	   <DIV class="header" class="footer" >
+            <A HREF="/zf_info/citation.html">Citing ZFIN</a>
+	   </DIV>
+          </td>
+        </tr>
+      </table>
+    </td>
+
+  </tr>
+  <tr>
+    <DIV class="ack">
+    <td align=center  class="ack">
+      <A HREF="/warranty.html">Copyright</a> &copy 
+      <A HREF="http://www.uoregon.edu">University of Oregon</a>, 1994-2006, 
+      <A HREF="http://www.ci.eugene.or.us/">Eugene</a>, Oregon.
+    </td>
+
+    </DIV>
+  </tr>  
+  <tr>
+    <DIV class="ack">
+    <td align=center class="ack">
+      <font size="-2">ZFIN logo design by Kari Pape, </font><A HREF="http://www.uoregon.edu"><font size="-2">University of Oregon</font></a>
+    </td>
+    </DIV>
+
+  </tr>  
+</table>
+</body>
+</html>
+
+ 
+
+
