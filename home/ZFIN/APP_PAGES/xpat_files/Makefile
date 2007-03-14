@@ -39,7 +39,7 @@ GENERICS = xpatview.apg xpatselect.apg anatdict.apg anatomy_item.apg \
 	patocuration.apg patocursummary.apg patocurbuilder.apg patoupdate.apg \
 	fxphenoinfo.apg fxfiggenolist.apg fxfigphenoanatlist.apg fxfigphenostgrng.apg \
 	figurecuration.apg experimentcuration.apg xpatcurreset.apg fxfigphenogenolist.apg \
-	fxfigphenogolist.apg pheno_summary.apg pheno_summary_sql.apg patoupdateUnitTest.apg \
+	fxfigphenogolist.apg pheno_summary.apg pheno_summary_sql.apg \
 	curation_filters.apg
 
 
