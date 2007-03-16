@@ -75,9 +75,21 @@ EFFECTS
     <?MIVAR NAME=pubackn_pub_ack><?/MIVAR>
     <?MIVAR NAME=pubackn_jrnl_zdb_id><?/MIVAR>
 
+    
+      <?MISQL SQL="select pub_jrnl_zdb_id, jrnl_name, title, authors, pub_volume, 
+                          pub_pages, year(pub_date), jrnl_publisher
+                     from publication, journal
+                    where zdb_id = '$pubackn_pub_zdb_id'
+                      and pub_jrnl_zdb_id = jrnl_zdb_id;">
 
-      <?MISQL SQL="select pub_jrnl_zdb_id from publication where zdb_id = '$pubackn_pub_zdb_id';">
         <?MIVAR NAME=pubackn_jrnl_zdb_id>$1<?/MIVAR>
+        <?MIVAR NAME=pubackn_jrnl_name>$2<?/MIVAR>
+	<?MIVAR NAME=pubackn_pub_name>$3<?/MIVAR>
+	<?MIVAR NAME=pubackn_pub_authors>$4<?/MIVAR>
+	<?MIVAR NAME=pubackn_pub_volume>$5<?/MIVAR>
+	<?MIVAR NAME=pubackn_pub_pages>$6<?/MIVAR>
+	<?MIVAR NAME=pubackn_copyrt_year>$7<?/MIVAR>
+	<?MIVAR NAME=pubackn_jrnl_publisher>$8<?/MIVAR>
       <?/MISQL>
 
       <?MISQL SQL="execute function jrnl_acknowledgment('$pubackn_jrnl_zdb_id');">
@@ -105,8 +117,12 @@ EFFECTS
             <td>
       <?/MIBLOCK>
       
-            <?MIVAR COND=$(NC,$pubackn_journal_ack,)>$pubackn_journal_ack<?/MIVAR>
-            <?MIVAR COND=$(AND,$(NC,$pubackn_pub_ack,NULL),$(NC,$pubackn_pub_ack,))><br><br>$pubackn_pub_ack<?/MIVAR>
+      <?MIVAR COND=$(NC,$pubackn_journal_ack,)>$pubackn_journal_ack<?/MIVAR>
+      <?MIVAR COND=$(NC,$pubackn_pub_ack,)><br><br>$pubackn_pub_ack<?/MIVAR>
+      <?MIVAR COND=$(EC,$pubackn_jrnl_publisher,Elsevier)><br><br>Reprinted from $pubackn_jrnl_name, 
+         $pubackn_pub_volume, $pubackn_pub_authors, $pubackn_pub_name, $pubackn_pub_pages, Copyright 
+         ($pubackn_copyrt_year) with permission from Elsevier.
+      <?/MIVAR>
 
       <?MIBLOCK COND=$(NC,$pubackn_display,text)>
             </td>
