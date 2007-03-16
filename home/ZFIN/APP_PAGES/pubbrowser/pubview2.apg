@@ -62,9 +62,6 @@ displays a publication record, or many publication records if > 1 returned.
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
-<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
-<?MIVAR NAME=$MI_NULL><?/MIVAR>
-
 <?MIBLOCK COND="$(XST,$OID)">
 
 <?MISQL SQL="select WebExplode(object,'page_title=View Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
@@ -80,7 +77,8 @@ displays a publication record, or many publication records if > 1 returned.
 <?MISQL SQL="
   select title, authors, year(pub_date), jrnl_abbrev, keywords, pub_abstract, 
          accession_no, pub_errata_and_notes, jtype, pub_file, 
-	 pub_completion_date, pub_volume, pub_pages, status, pub_mini_ref
+	 pub_completion_date, pub_volume, pub_pages, status, pub_mini_ref,
+	 pub_doi
     from publication, journal where zdb_id='$OID'
      and jrnl_zdb_id = pub_jrnl_zdb_id;">
 <?/MISQL>
@@ -100,6 +98,7 @@ displays a publication record, or many publication records if > 1 returned.
    <?MIVAR NAME=$pubview2_pub_pages>$13<?/MIVAR>
    <?MIVAR NAME=$pubview2_pub_status>$14<?/MIVAR>
    <?MIVAR NAME=$pubview2_pub_miniref>$15<?/MIVAR>
+   <?MIVAR NAME=$pubview2_doi_no>$16<?/MIVAR>
    
    <?MIVAR NAME=$pubview_source>$pubview2_jrnl_abbrev<?/MIVAR>   
    
@@ -138,9 +137,6 @@ displays a publication record, or many publication records if > 1 returned.
 
      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=publication') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
-
-<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
-<?MIVAR NAME=$MI_NULL> <?/MIVAR>
 
 
 <?MICOMMENT>
@@ -212,10 +208,10 @@ displays a publication record, or many publication records if > 1 returned.
 
 </TABLE>
 
-<?MIVAR COND="$(NC,$keywords,NULL)"><B>KEYWORDS:</B> $keywords <p><?/MIVAR>
+<?MIVAR COND="$(NC,$keywords,)"><B>KEYWORDS:</B> $keywords <p><?/MIVAR>
 
-<?MIVAR COND="$(NC,$accession_no,NULL)">
-  <b>PubMed:</B> 
+<?MIVAR COND="$(NC,$accession_no,)">
+  <b>PubMed:</b> 
   <?MIBLOCK COND="$(ISINT,$accession_no)">
     <?MIVAR>
       <A HREF=http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=search&db=PubMed&dopt=Abstract&term=$accession_no>$accession_no</A>
@@ -223,8 +219,16 @@ displays a publication record, or many publication records if > 1 returned.
   <?MIELSE>
     <?MIVAR>$accession_no<?/MIVAR>
   <?/MIBLOCK>
-  <p>
+  &nbsp;&nbsp;&nbsp;  
 <?/MIVAR>
+
+<?MIVAR COND="$(NC,$pubview2_doi_no,)">
+  <b>DOI: </b>
+  <?MIVAR>
+    <A HREF=http://dx.doi.org/$pubview2_doi_no>$pubview2_doi_no</A>
+  <?/MIVAR>
+<?/MIVAR>
+<p> 
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
   <B>FILE:</B>
@@ -263,7 +267,7 @@ displays a publication record, or many publication records if > 1 returned.
 <?MICOMMENT> ============  ABSTRACT  ================= 
 <?/MICOMMENT>
 <B>ABSTRACT:</B> 
-<?MIVAR COND="$(NC,$pub_abstract,NULL)"><br>  $pub_abstract  <?/MIVAR>
+<?MIVAR COND="$(NC,$pub_abstract,)"><br>  $pub_abstract  <?/MIVAR>
 
 <?MIBLOCK COND="$(AND,$(NC,$abbrev,$MI_NOVALUE),$(NC,$fdbname,$MI_NOVALUE),$(NC,$geneid,$MI_NOVALUE))">
   <p>
