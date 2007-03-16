@@ -161,7 +161,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 	      from db_link, foreign_db_contains
 	      where dblink_linked_recid = '$ortho_id'
 	        and dblink_fdbcont_zdb_id = fdbcont_zdb_id;">
-	    <option value=$1:$2>$1:$2
+	    <option value="$1:$2">$1:$2
 	  <?/MISQL>
          </SELECT>
          </TD> 
