@@ -72,7 +72,7 @@ a new or updated existing pub
 
     <?MISQL SQL="
       select authors, pub_date, title, keywords, pub_abstract, 
-	     pub_errata_and_notes, accession_no, num_auths, status, jtype, jrnl_abbrev, jrnl_zdb_id, pub_volume, pub_pages
+	     pub_errata_and_notes, accession_no, num_auths, status, jtype, jrnl_abbrev, jrnl_zdb_id, pub_volume, pub_pages, pub_doi
 	from publication, journal
         where pub_jrnl_zdb_id = jrnl_zdb_id
 	and zdb_id='$OID';">
@@ -91,6 +91,7 @@ a new or updated existing pub
     <?MIVAR NAME=$editpub_jrnl_zdb_id>$12<?/MIVAR>
     <?MIVAR NAME=$editpub_pub_volume>$13<?/MIVAR>
     <?MIVAR NAME=$editpub_pub_pages>$14<?/MIVAR>
+    <?MIVAR NAME=$q_doi_no>$15<?/MIVAR>	
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(NXST,$OID)">
@@ -110,6 +111,7 @@ a new or updated existing pub
     <?MIVAR NAME=$q_pub_abstract><?/MIVAR>
     <?MIVAR NAME=$q_pub_errata_and_notes><?/MIVAR>
     <?MIVAR NAME=$q_accession_no><?/MIVAR>
+    <?MIVAR NAME=$q_doi_no><?/MIVAR>
     <?MIVAR NAME=$q_num_auths><?/MIVAR>
     <?MIVAR NAME=$q_status>Epub ahead of print<?/MIVAR>
     <?MIVAR NAME=$q_jtype>Unknown<?/MIVAR>
@@ -157,6 +159,12 @@ a new or updated existing pub
     Leave it blank if you don't know.
     <input type=text name="q_accession_no" $(IF,$(NC,$q_accession_no,NULL),"value="$q_accession_no) > 
     <p>
+    <b>DOI:</B>
+    <br>
+    Leave it blank if you don't know.
+    <input type=text name="q_doi_no" $(IF,$(NC,$q_doi_no,NULL),"value="$q_doi_no) > 
+    <p>
+
     <b>AUTHORS:</b><br>
     Authors should be listed <b>exactly</b> as you wish them to show up in the reference, i.e., use the standard format:
     <font size=-1>

@@ -170,6 +170,7 @@ OUTPUT:
     <?MIVAR COND=$(XST,$q_keywords) NAME=$setvalues>$setvalues,keywords='$q_keywords'<?/MIVAR>
     <?MIVAR COND=$(XST,$q_pub_abstract) NAME=$setvalues>$setvalues,pub_abstract='$q_pub_abstract'<?/MIVAR>
     <?MIVAR COND=$(XST,$q_accession_no) NAME=$setvalues>$setvalues,accession_no='$q_accession_no'<?/MIVAR>
+    <?MIVAR COND=$(XST,$q_doi_no) NAME=$setvalues>$setvalues,pub_doi='$q_doi_no'<?/MIVAR>
     <?MIVAR COND=$(XST,$editpub_pub_volume) NAME=$setvalues>$setvalues,pub_volume='$editpub_pub_volume'<?/MIVAR>
      <?MIVAR COND=$(XST,$editpub_pub_pages) NAME=$setvalues>$setvalues,pub_pages='$editpub_pub_pages'<?/MIVAR>
 <?MIVAR COND=$(XST,$q_pub_errata_and_notes) NAME=$setvalues>$setvalues,pub_errata_and_notes='$q_pub_errata_and_notes'<?/MIVAR>
