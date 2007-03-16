@@ -362,11 +362,11 @@ marker.<?/MIVAR>
         
     <?/MISQL>
 
-    <?MIBLOCK COND=$(NXST,$fdbcont_zdb_id)>
-	    <?MIVAR>
-		  <SCRIPT>
-   			  window.alert('$old_value of type $fdbcont_data is not valid.');
-	      </SCRIPT>
+    <?MIBLOCK COND="$(NXST,$fdbcont_zdb_id)">
+	<?MIVAR>
+           <SCRIPT>
+   	      window.alert('$old_value of type $fdbcont_data is not valid.');
+	   </SCRIPT>
         <?/MIVAR>
     <?MIELSE>
 
@@ -897,46 +897,23 @@ marker.<?/MIVAR>
             <?/MISQL>
 
             <?MIBLOCK COND=$(NXST,$fdbcont_zdb_id)>
-             <?MISQL SQL="
-               execute function get_id('FDBCONT');">
-             <?/MISQL>
-             <?MIVAR NAME=$fdbcont_zdb_id>$1<?/MIVAR>
-             <?MISQL SQL="
-               insert into zdb_active_data
-                   ( zactvd_zdb_id )
-                 values
-                  ( '$fdbcont_zdb_id' );">
-             <?/MISQL>
-             <?MISQL SQL="
-               insert into foreign_db_contains 
-                  ( fdbcont_zdb_id, 
-                    fdbcont_fdb_db_name, 
-                    fdbcont_fdbdt_super_type, 
-                    fdbcont_fdbdt_data_type, 
-                    fdbcont_organism_common_name
-                  ) 
-                 values 
-        	  ( '$fdbcont_zdb_id', 
-        	    '$newdb', 
-        	    '$fdbcont_super', 
-        	    '$fdbcont_data', 
-        	    '$fdbcont_organism'
-        	  )
-               ;">
-             <?/MISQL>
-            <?/MIBLOCK>
-
-            <?MISQL SQL="
-              execute function get_id('DBLINK');">
-            <?/MISQL>
-            <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
-            <?MISQL SQL="
-              insert into zdb_active_data
+	      <?MIVAR>
+ 		<SCRIPT>
+	    	  window.alert('The organism and foreign db combination is not valid.');
+	        </SCRIPT>
+              <?/MIVAR>
+            <?MIELSE>
+              <?MISQL SQL="
+                execute function get_id('DBLINK');">
+              <?/MISQL>
+              <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
+              <?MISQL SQL="
+                insert into zdb_active_data
                   ( zactvd_zdb_id )
-                values
+                  values
                  ( '$dblink_zdb_id' );">
-            <?/MISQL>
-            <?MISQL SQL="
+              <?/MISQL>
+              <?MISQL SQL="
               insert into db_link 
                  ( dblink_linked_recid, 
                    dblink_acc_num, 
@@ -951,9 +928,10 @@ marker.<?/MIVAR>
               	    '$ZDB_name'||' '||TODAY,
               	    '$fdbcont_zdb_id'
               	  );">
-	    <?/MISQL>
-          <?/MIBLOCK>
-        <?MIELSE>
+	      <?/MISQL>
+             <?/MIBLOCK> <?MICOMMENT>--- end of (NXST,$fdbcont_zdb_id)---<?/MICOMMENT>
+          <?/MIBLOCK><?MICOMMENT>--- end of (NXST,$newacc)---<?/MICOMMENT>
+        <?MIELSE><?MICOMMENT>--- if $MI_ROWCOUNT > 1---<?/MICOMMENT>
 	  <SCRIPT>
 	    window.alert('The db link already exist. Please check, and resubmit.\n Any other changes are committing.');
 	  </SCRIPT>
@@ -1015,7 +993,7 @@ marker.<?/MIVAR>
 		      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
 		      and fdbcont_fdb_db_name = '$deldb'
 		      and dblink_acc_num = '$delacc' ) ;">
-        <?/MISQL>     
+        <?/MISQL>    
       <?/MIBLOCK>
 
       <?MIBLOCK COND="$(AND,$(XST,$delevi),$(XST,$delpub))">
