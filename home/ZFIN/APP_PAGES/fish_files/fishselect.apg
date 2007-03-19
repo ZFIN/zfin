@@ -346,7 +346,7 @@ Message: $MI_ERRORMSG
 	            where $target_col $like_or_equal '$input'
 	              $connecting_2_tables
 	              and allmapnm_precedence in ('Genetic feature name','Genetic feature abbreviation','Genetic feature alias');">	    
-    <?/MISQL>    
+    <?/MISQL>     
 
     <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
   	           select genofeat_geno_zdb_id,junior_m_text,junior_m_order,junior_m_type
@@ -361,8 +361,9 @@ Message: $MI_ERRORMSG
                      from all_map_names$table_all_name_ends
 	            where $target_col $like_or_equal '$input'
 	              $connecting_2_tables
+	              and allmapnm_zdb_id not like 'ZDB-TG%'
 	              and allmapnm_precedence in ('Current symbol','Current name','Previous name');">	    
-    <?/MISQL> 
+    <?/MISQL>   
     
     <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
 	           select genofeat_geno_zdb_id,junior_m_text,junior_m_order,junior_m_type
