@@ -14,7 +14,8 @@ create procedure p_check_pato_entities (vPatoZdbId varchar(50),
 				      where goterm_Zdb_id = vEntityAZdbId);
 
 
-	          if (vATermType = 'Biological Process')
+	          if (vATermType = 'Biological Process' 
+		                     and vEntityBZdbID is not null)
 		        then
 		           raise exception -746,0,"FAIL!: no post-coordination with Biological Process terms";
 
