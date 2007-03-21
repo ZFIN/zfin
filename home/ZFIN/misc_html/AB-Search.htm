@@ -226,16 +226,17 @@ Input:
 
   
   <TABLE class="search" width=100% border=0 cellpadding=1 cellspacing=0>
+    <!--DWLayoutTable-->
     <TR>
       
-        <TD class=titlebar>
+        <TD width="569" class=titlebar>
 	  &nbsp;&nbsp;
 	  <font size=+1>
 	  <b>Search for Antibodies</b>
 
 	   </font>
        </TD>
-       <TD class=titlebar align=right> 
+       <TD width="465" align=right class=titlebar> 
  	 <table leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"
          border="0" cellspacing="0" cellpadding="0">
     <form method=post 
@@ -258,7 +259,8 @@ Input:
      
 
     </TR>
-     <FORM name="critform" method="post" action="/cgi-bin/webdriver" >
+     <tr><FORM name="critform" method="post" action="/cgi-bin/webdriver" >
+       <td>&nbsp;</td>
 
       
       
@@ -280,7 +282,8 @@ Input:
        </tr></table>
       </TD>
     
-     </TR>
+      <td>&nbsp;</td>
+      </TR>
 
        <TR>
       <TD valign=top>
@@ -299,113 +302,184 @@ Input:
        </tr></table>
       </TD>
     
-     </TR>
+      <td>&nbsp;</td>
+       </TR>
 
-        <TD>
+          <TD height="309" colspan="2" valign="top">          
 
 
-	      <p>labels anatomical part
-	          <SELECT name=lg>
-                <option value="0" SELECTED >Zebrafish
-	       
-	         <option value="1"  >Mouse
-	       
-	         <option value="2"  >Rat
-	       
-	         <option value="3"  >Rabbit
-	       
-	         <option value="4"  >Chicken
-	       
-	         <option value="5"  >Guinea Pig
-	       
-	         <option value="6"  >Pig
-	       
-	         <option value="7"  >Goat
-	       
-	         <option value="8"  >Sheep
-	       
-	         <option value="9"  >Horse
-	       
-	         <option value="10"  >Cow 
-	       
-	         <option value="11"  >Llama
-	       
-	     
-	      
-           </SELECT>
-	      </p>
-	      <p>and/or substructures </p>
-	      <form name="form1" method="post" action="">
-	        <p>
-    <input name="radiobutton" type="radio" value="radiobutton">
-  yes (default)	</p>
-	        <p>
-	          <input name="radiobutton" type="radio" value="radiobutton"> 
-	          no
-</p>
-	      </form>
-	      <p>during stage range </p>
+	      <p>[<strong>Search</strong>]</p>	      <p>Labels Anatomical Part	</p>	      
+	      <form name="form3" method="post" action="">
+	        <input type="text" name="textfield">
+            <input type="submit" name="Submit" value="Search">
+          </form>	      <p>and/or substructures </p>	      
+          <form name="form1" method="post" action="">
+	          <p>
+      <input name="radiobutton" type="radio" value="radiobutton">
+    yes (default)	</p>
+	          <p>
+	            <input name="radiobutton" type="radio" value="radiobutton"> 
+	            no
+  </p>
+          </form>	      <p>during stage range </p>
+          <p>Beginning Stage
+              <select name="OID" onChange="document.dictform.searchterm.value='';document.dictform.mode.value='search'; document.dictform.submit();">
+                <option value="">Select a stage</option>
+                <option value="ZDB-STAGE-010723-4">Zygote:1-cell (0.00h-0.75h)</option>
+                <option value="ZDB-STAGE-010723-15">Cleavage:2-cell (0.75h-1.00h)</option>
+                <option value="ZDB-STAGE-010723-11">Cleavage:4-cell (1.00h-1.25h)</option>
+                <option value="ZDB-STAGE-010723-33">Cleavage:8-cell (1.25h-1.50h)</option>
+                <option value="ZDB-STAGE-010723-20">Cleavage:16-cell (1.50h-1.75h)</option>
+                <option value="ZDB-STAGE-010723-25">Cleavage:32-cell (1.75h-2.00h)</option>
+                <option value="ZDB-STAGE-010723-28">Cleavage:64-cell (2.00h-2.25h)</option>
+                <option value="ZDB-STAGE-010723-7">Blastula:128-cell (2.25h-2.50h)</option>
+                <option value="ZDB-STAGE-010723-1">Blastula:256-cell (2.50h-2.75h)</option>
+                <option value="ZDB-STAGE-010723-14">Blastula:512-cell (2.75h-3.00h)</option>
+                <option value="ZDB-STAGE-010723-22">Blastula:1k-cell (3.00h-3.33h)</option>
+                <option value="ZDB-STAGE-010723-27">Blastula:High (3.33h-3.66h)</option>
+                <option value="ZDB-STAGE-010723-24">Blastula:Oblong (3.66h-4.00h)</option>
+                <option value="ZDB-STAGE-010723-21">Blastula:Sphere (4.00h-4.33h)</option>
+                <option value="ZDB-STAGE-010723-19">Blastula:Dome (4.33h-4.66h)</option>
+                <option value="ZDB-STAGE-010723-17">Blastula:30%-epiboly (4.66h-5.25h)</option>
+                <option value="ZDB-STAGE-010723-6">Gastrula:50%-epiboly (5.25h-5.66h)</option>
+                <option value="ZDB-STAGE-010723-3">Gastrula:Germ-ring (5.66h-6.00h)</option>
+                <option value="ZDB-STAGE-010723-2">Gastrula:Shield (6.00h-8.00h)</option>
+                <option value="ZDB-STAGE-010723-18">Gastrula:75%-epiboly (8.00h-9.00h)</option>
+                <option value="ZDB-STAGE-010723-29">Gastrula:90%-epiboly (9.00h-10.00h)</option>
+                <option value="ZDB-STAGE-010723-12">Gastrula:Bud (10.00h-10.33h)</option>
+                <option value="ZDB-STAGE-010723-23">Segmentation:1-4 somites (10.33h-11.66h)</option>
+                <option value="ZDB-STAGE-010723-5">Segmentation:5-9 somites (11.66h-14.00h)</option>
+                <option value="ZDB-STAGE-020626-1">Segmentation:10-13 somites (14.00h-16.00h)</option>
+                <option value="ZDB-STAGE-010723-30">Segmentation:14-19 somites (16.00h-19.00h)</option>
+                <option value="ZDB-STAGE-010723-16">Segmentation:20-25 somites (19.00h-22.00h)</option>
+                <option value="ZDB-STAGE-010723-34">Segmentation:26+ somites (22.00h-24.00h)</option>
+                <option value="ZDB-STAGE-010723-10">Pharyngula:Prim-5 (24.00h-30.00h)</option>
+                <option value="ZDB-STAGE-010723-32">Pharyngula:Prim-15 (30.00h-36.00h)</option>
+                <option value="ZDB-STAGE-010723-13">Pharyngula:Prim-25 (36.00h-42.00h)</option>
+                <option value="ZDB-STAGE-010723-31">Pharyngula:High-pec (42.00h-48.00h)</option>
+                <option value="ZDB-STAGE-010723-9">Hatching:Long-pec (48.00h-60.00h)</option>
+                <option value="ZDB-STAGE-010723-26">Hatching:Pec-fin (60.00h-72.00h)</option>
+                <option value="ZDB-STAGE-010723-8">Larval:Protruding-mouth (72.00h-96.00h, 3.5mm)</option>
+                <option value="ZDB-STAGE-010723-35">Larval:Day 4 (96.00h-120.00h)</option>
+                <option value="ZDB-STAGE-010723-36">Larval:Day 5 (120.00h-144.00h, 3.9mm, 6 teeth)</option>
+                <option value="ZDB-STAGE-010723-37">Larval:Day 6 (144.00h-168.00h)</option>
+                <option value="ZDB-STAGE-010723-47">Larval:Days 7-13 (168.00h-14d, 4.5mm, 8 teeth)</option>
+                <option value="ZDB-STAGE-010723-48">Larval:Days 14-20 (14d-21d, 6.2mm, 10 teeth)</option>
+                <option value="ZDB-STAGE-010723-49">Larval:Days 21-29 (21d-30d, 7.8mm, 10 teeth)</option>
+                <option value="ZDB-STAGE-010723-51">Juvenile:Days 30-44 (30d-45d, 10 mm, adult fins/pigment)</option>
+                <option value="ZDB-STAGE-010723-52">Juvenile:Days 45-89 (45d-90d, 14 mm, 12 teeth)</option>
+                <option value="ZDB-STAGE-010723-39">Adult (90d-730d, breeding adult)</option>
+                                          </select>
+              End Stage
+              <select name="OID" onChange="document.dictform.searchterm.value='';document.dictform.mode.value='search'; document.dictform.submit();">
+      <option value="">Select a stage</option>
+      <option value="ZDB-STAGE-010723-4">Zygote:1-cell (0.00h-0.75h)</option>
+      <option value="ZDB-STAGE-010723-15">Cleavage:2-cell (0.75h-1.00h)</option>
+      <option value="ZDB-STAGE-010723-11">Cleavage:4-cell (1.00h-1.25h)</option>
+      <option value="ZDB-STAGE-010723-33">Cleavage:8-cell (1.25h-1.50h)</option>
+      <option value="ZDB-STAGE-010723-20">Cleavage:16-cell (1.50h-1.75h)</option>
+      <option value="ZDB-STAGE-010723-25">Cleavage:32-cell (1.75h-2.00h)</option>
+      <option value="ZDB-STAGE-010723-28">Cleavage:64-cell (2.00h-2.25h)</option>
+      <option value="ZDB-STAGE-010723-7">Blastula:128-cell (2.25h-2.50h)</option>
+      <option value="ZDB-STAGE-010723-1">Blastula:256-cell (2.50h-2.75h)</option>
+      <option value="ZDB-STAGE-010723-14">Blastula:512-cell (2.75h-3.00h)</option>
+      <option value="ZDB-STAGE-010723-22">Blastula:1k-cell (3.00h-3.33h)</option>
+      <option value="ZDB-STAGE-010723-27">Blastula:High (3.33h-3.66h)</option>
+      <option value="ZDB-STAGE-010723-24">Blastula:Oblong (3.66h-4.00h)</option>
+      <option value="ZDB-STAGE-010723-21">Blastula:Sphere (4.00h-4.33h)</option>
+      <option value="ZDB-STAGE-010723-19">Blastula:Dome (4.33h-4.66h)</option>
+      <option value="ZDB-STAGE-010723-17">Blastula:30%-epiboly (4.66h-5.25h)</option>
+      <option value="ZDB-STAGE-010723-6">Gastrula:50%-epiboly (5.25h-5.66h)</option>
+      <option value="ZDB-STAGE-010723-3">Gastrula:Germ-ring (5.66h-6.00h)</option>
+      <option value="ZDB-STAGE-010723-2">Gastrula:Shield (6.00h-8.00h)</option>
+      <option value="ZDB-STAGE-010723-18">Gastrula:75%-epiboly (8.00h-9.00h)</option>
+      <option value="ZDB-STAGE-010723-29">Gastrula:90%-epiboly (9.00h-10.00h)</option>
+      <option value="ZDB-STAGE-010723-12">Gastrula:Bud (10.00h-10.33h)</option>
+      <option value="ZDB-STAGE-010723-23">Segmentation:1-4 somites (10.33h-11.66h)</option>
+      <option value="ZDB-STAGE-010723-5">Segmentation:5-9 somites (11.66h-14.00h)</option>
+      <option value="ZDB-STAGE-020626-1">Segmentation:10-13 somites (14.00h-16.00h)</option>
+      <option value="ZDB-STAGE-010723-30">Segmentation:14-19 somites (16.00h-19.00h)</option>
+      <option value="ZDB-STAGE-010723-16">Segmentation:20-25 somites (19.00h-22.00h)</option>
+      <option value="ZDB-STAGE-010723-34">Segmentation:26+ somites (22.00h-24.00h)</option>
+      <option value="ZDB-STAGE-010723-10">Pharyngula:Prim-5 (24.00h-30.00h)</option>
+      <option value="ZDB-STAGE-010723-32">Pharyngula:Prim-15 (30.00h-36.00h)</option>
+      <option value="ZDB-STAGE-010723-13">Pharyngula:Prim-25 (36.00h-42.00h)</option>
+      <option value="ZDB-STAGE-010723-31">Pharyngula:High-pec (42.00h-48.00h)</option>
+      <option value="ZDB-STAGE-010723-9">Hatching:Long-pec (48.00h-60.00h)</option>
+      <option value="ZDB-STAGE-010723-26">Hatching:Pec-fin (60.00h-72.00h)</option>
+      <option value="ZDB-STAGE-010723-8">Larval:Protruding-mouth (72.00h-96.00h, 3.5mm)</option>
+      <option value="ZDB-STAGE-010723-35">Larval:Day 4 (96.00h-120.00h)</option>
+      <option value="ZDB-STAGE-010723-36">Larval:Day 5 (120.00h-144.00h, 3.9mm, 6 teeth)</option>
+      <option value="ZDB-STAGE-010723-37">Larval:Day 6 (144.00h-168.00h)</option>
+      <option value="ZDB-STAGE-010723-47">Larval:Days 7-13 (168.00h-14d, 4.5mm, 8 teeth)</option>
+      <option value="ZDB-STAGE-010723-48">Larval:Days 14-20 (14d-21d, 6.2mm, 10 teeth)</option>
+      <option value="ZDB-STAGE-010723-49">Larval:Days 21-29 (21d-30d, 7.8mm, 10 teeth)</option>
+      <option value="ZDB-STAGE-010723-51">Juvenile:Days 30-44 (30d-45d, 10 mm, adult fins/pigment)</option>
+      <option value="ZDB-STAGE-010723-52">Juvenile:Days 45-89 (45d-90d, 14 mm, 12 teeth)</option>
+      <option value="ZDB-STAGE-010723-39">Adult (90d-730d, breeding adult)</option>
+              </select>
+          </p>
+          <p>&nbsp;</p>
+          </TR>
+	  </TABLE>
 	      <form name="form2" method="post" action="">
-	        <p>Zygote:1 cell 
-	            <input type="text" name="textfield">
-  to	
-  Adult
-  <input type="text" name="textfield"> 
-	        </p>
-	        <p>labels cell structure	     
-			<SELECT name=lg>
-             <option value="0" SELECTED >Zebrafish
-	   
-	       <option value="1"  >Mouse
-	   
-	       <option value="2"  >Rat
-	   
-	       <option value="3"  >Rabbit
-	   
-	       <option value="4"  >Chicken
-	   
-	       <option value="5"  >Guinea Pig
-	   
-	       <option value="6"  >Pig
-	   
-	       <option value="7"  >Goat
-	   
-	       <option value="8"  >Sheep
-	   
-	       <option value="9"  >Horse
-	   
-	       <option value="10"  >Cow 
-	   
-	       <option value="11"  >Llama
-	   
-	     
-	  
-         </SELECT> 
-			(pop up search terms from GO cellular component ontology) </p>
+	        
+	        <p>labels cell structure	
+	          <input type="text" name="textfield">
+</p>
 	        <p>Protein product family/domain name (Pfam/Interpro) 
 	          <SELECT name="compare" onChange='document.critform.START.value = "";'>
                 <option SELECTED value=contains>contains
 	            <option  value=starts>begins with
               </SELECT>
-(pop	up search terms from Pfam/Interpro.)</p>
+              <input type="text" name="textfield">
+	        </p>
 	        <p>Works in: 
-	          <SELECT name="compare" onChange='document.critform.START.value = "";'>
+	          <SELECT name="compare" size="1" onChange='document.critform.START.value = "";'>
                 <option SELECTED value=contains>species
-	            <option  value=starts>begins with
-              </SELECT>
+	            <option value="starts">Zebrafish</option>
+	            <option>Fugu</option>
+	            <option>Medaka</option>
+	            <option>Goldfish</option>
+	            <option>Salmon</option>
+	            <option>Trout</option>
+	            <option>Sticklebacks</option>
+	            <option>Lobe-finned fish</option>
+	            <option>Cartilaginous fish</option>
+	            <option>Xenopus laevis</option>
+	            <option>Xenopus tropicalis</option>
+	            <option>Ascidians</option>
+	            <option>Larvaceans</option>
+	            <option>Amphioxus</option>
+	            <option>Hagfish</option>
+	            <option>Lampreys</option>
+	          </SELECT>
 using	
 <SELECT name="compare" onChange='document.critform.START.value = "";'>
   <option SELECTED value=contains>assay
-	       <option  value=starts>begins with
-          </SELECT>
+	       <option value="starts">Fixed tissue
+	       <option>Unfixed tissue
+	       <option>Western blot (reducing)
+	       <option>Western blot (non-reducing)
+	       <option>Immunoprecipitation
+	       </SELECT>
 </p>
 	        <p>&nbsp;</p>
 	        <p>Antibody produced in species: 
 	          <SELECT name="compare" onChange='document.critform.START.value = "";'>
-                <option SELECTED value=contains>any
-	            <option  value=starts>begins with
+	            <option value="contains">                
+	            <option value="starts">Rat
+	            <option>Rabbit
+	            <option>Chicken
+	            <option>Guinea pig
+	            <option>Goat
+	            <option>Sheep
+	            <option>Horse
+	            <option>Cow
+	            <option>Camelidae (camels and llamas)
+                <option>Mouse
               </SELECT>
-(default)	</p>
+</p>
 	        <p>antibody type:</p>
 	        <p>
 	          <input name="radiobutton" type="radio" value="radiobutton"> 
@@ -419,11 +493,18 @@ using
 (default)	</p>
 	        <p>antibody subtype: 
 	          <SELECT name="compare" onChange='document.critform.START.value = "";'>
-                <option SELECTED value=contains>any
-	            <option  value=starts>begins with
+	            <option value="contains">IgG
+	            <option value="starts">IgG1
+	            <option>IgG2
+	            <option>IgM
               </SELECT>
 </p>
-	        <p>available at ZIRC? </p>
+	        <p>restrict to antibodies available at ZIRC? 
+	          <input type="checkbox" name="checkbox" value="checkbox">
+Yes	
+<input type="checkbox" name="checkbox" value="checkbox"> 
+No
+</p>
 	        <p>
 	          <input type="submit" name="Submit" value="Submit">
 	          <input type="Reset" name="Reset" value="Reset">
