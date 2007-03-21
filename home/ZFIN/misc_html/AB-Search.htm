@@ -315,7 +315,7 @@ Input:
           </form>	      <p>and/or substructures </p>	      
           <form name="form1" method="post" action="">
 	          <p>
-      <input name="radiobutton" type="radio" value="radiobutton">
+      <input name="radiobutton" type="radio" value="radiobutton" checked>
     yes (default)	</p>
 	          <p>
 	            <input name="radiobutton" type="radio" value="radiobutton"> 
@@ -436,7 +436,7 @@ Input:
 	        </p>
 	        <p>Works in: 
 	          <SELECT name="compare" size="1" onChange='document.critform.START.value = "";'>
-                <option SELECTED value=contains>species
+                <option SELECTED value=contains>zebrafish
 	            <option value="starts">Zebrafish</option>
 	            <option>Fugu</option>
 	            <option>Medaka</option>
@@ -456,7 +456,7 @@ Input:
 	          </SELECT>
 using	
 <SELECT name="compare" onChange='document.critform.START.value = "";'>
-  <option SELECTED value=contains>assay
+  <option SELECTED value=contains>any assay
 	       <option value="starts">Fixed tissue
 	       <option>Unfixed tissue
 	       <option>Western blot (reducing)
@@ -467,7 +467,7 @@ using
 	        <p>&nbsp;</p>
 	        <p>Antibody produced in species: 
 	          <SELECT name="compare" onChange='document.critform.START.value = "";'>
-	            <option value="contains">                
+	            <option value="contains">Any
 	            <option value="starts">Rat
 	            <option>Rabbit
 	            <option>Chicken
@@ -481,6 +481,9 @@ using
               </SELECT>
 </p>
 	        <p>antibody type:</p>
+			<p>
+	          <input name="radiobutton" type="radio" value="radiobutton" checked> 
+	          any</p>
 	        <p>
 	          <input name="radiobutton" type="radio" value="radiobutton"> 
 	          monoclonal</p>
@@ -502,7 +505,7 @@ using
 	        <p>restrict to antibodies available at ZIRC? 
 	          <input type="checkbox" name="checkbox" value="checkbox">
 Yes	
-<input type="checkbox" name="checkbox" value="checkbox"> 
+<input name="checkbox" type="checkbox" value="checkbox" checked> 
 No
 </p>
 	        <p>
