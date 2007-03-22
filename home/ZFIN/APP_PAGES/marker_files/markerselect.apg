@@ -563,6 +563,11 @@ DEBUGGING:
                ===========================================================
   <?/MICOMMENT>
 
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+       execute function get_time()">
+       <br>$1 Done database searching, start display
+  <?/MISQL>
+
   <?MISQL SQL="
 	select distinct mstmrkr_zdb_id,mstmrkr_type
 	  from $markerselect_temp_marker;">
@@ -657,11 +662,13 @@ DEBUGGING:
 
     <?MICOMMENT>============ Query Database ==================== <?/MICOMMENT>
  
+    <?MICOMMENT>the master sql for non-MO types with two placeholder columns<?/MICOMMENT>
     <?MIVAR NAME=$mrkrsel_master_sql> 
 	      select distinct mstmrkr_name, mstmrkr_abbrev, mstmrkr_type, 
 		      mrkrtype_type_display, mstmrkr_zdb_id, 
 		      mstmrkr_abbrev_order, mstmrkr_match_name, 
-		      mstmrkr_significance, mstmrkr_precedence
+		      mstmrkr_significance, mstmrkr_precedence, '', ''
+
 		from $markerselect_temp_marker, marker_types mt
                where mstmrkr_type = mt.marker_type
             order by mstmrkr_significance, mstmrkr_type, mstmrkr_abbrev_order;
@@ -676,7 +683,8 @@ DEBUGGING:
 	       select distinct mstmrkr_name, mstmrkr_abbrev, mstmrkr_type, 
 		      mt.mrkrtype_type_display, mstmrkr_zdb_id, 
 		      mg.mrkr_abbrev_order, mstmrkr_match_name, 
-		      mstmrkr_significance, mstmrkr_precedence
+		      mstmrkr_significance, mstmrkr_precedence, 
+		      mg.mrkr_zdb_id, mg.mrkr_abbrev	
 		from $markerselect_temp_marker, marker_types mt,
 		     outer (marker_relationship, marker mg)
                where mstmrkr_type = mt.marker_type
@@ -697,12 +705,14 @@ DEBUGGING:
       <?MIVAR name=$OID>$5<?/MIVAR>
       <?MIVAR name=$match_name>$(URLDECODE,$7)<?/MIVAR>
       <?MIVAR name=$match_text>$9<?/MIVAR>
+      <?MIVAR name=$mrkrsel_mo_gene_zdb_id>$10<?/MIVAR>
+      <?MIVAR name=$mrkrsel_mo_gene_sym>$11<?/MIVAR>
  
       <?MIBLOCK COND="$(EC,$displayTitle,f)"> 
         <?MICOMMENT> == display the "Show genes with known loci" button ==
         <?/MICOMMENT>
         <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EC,$type_of_genedom,t))">
-	  <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$input_name)$(IF,$(XST,$input_acc),&input_acc=$input_acc)$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)<?/MIVAR>
+	  <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$(URLENCODE,$input_name))$(IF,$(XST,$input_acc),&input_acc=$(URLENCODE,$input_acc))$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)<?/MIVAR>
 
           <?MIBLOCK COND="$(NXST,$knownmutant)"> 
 	    <?MIVAR><input type=button 
@@ -768,35 +778,28 @@ DEBUGGING:
       <?MIBLOCK COND="$(>,$(POSITION,$OID,MRPHLNO),0)">
 
 	 <?MIVAR NAME=$display_target_gene><?/MIVAR>
-         <?MISQL SQL=" 
-                      select mrkr_abbrev, mrkr_zdb_id
-                        from marker left outer join marker_relationship
-                             on mrkr_zdb_id = mrel_mrkr_2_zdb_id
-                       where mrel_mrkr_1_zdb_id = '$OID'
-                         and mrel_type = 'knockdown reagent targets gene';">
 
-             <?MICOMMENT>== when starts MOs on a new gene ==<?/MICOMMENT>
-             <?MIBLOCK COND="$(OR,$(NXST,$target_gene_zdb_id),$(AND,$(XST,$target_gene_zdb_id),$(NC,$2,$target_gene_zdb_id)))">
+         <?MICOMMENT>== when starts MOs on a new gene ==<?/MICOMMENT>
+         <?MIBLOCK COND="$(OR,$(NXST,$target_gene_zdb_id),$(AND,$(XST,$target_gene_zdb_id),$(NC,$mrkrsel_mo_gene_zdb_id,$target_gene_zdb_id)))">
 
-	       <?MIVAR NAME=$display_target_gene><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2> $1 </A><?/MIVAR>
+	     <?MIVAR NAME=$display_target_gene><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrsel_mo_gene_zdb_id> $mrkrsel_mo_gene_sym </A><?/MIVAR>
                    
-               <?MIBLOCK COND="$(NC,$rowNUM,1)">
+             <?MIBLOCK COND="$(NC,$rowNUM,1)">
                  <?MIBLOCK COND="$(EC,$row_color,$highlight)">   
 		    <?MIVAR>$(SETVAR,$row_color,#FFFFFF)<?/MIVAR>
                  <?MIELSE>
 		    <?MIVAR>$(SETVAR,$row_color,$highlight)<?/MIVAR>
                  <?/MIBLOCK> 
-               <?/MIBLOCK>
+             <?/MIBLOCK>
 
-             <?MICOMMENT>== when MOs continue on the same gene ==<?/MICOMMENT>
-             <?MIELSE>
-                 <?MIVAR NAME=$display_target_gene> &nbsp; <?/MIVAR>
+         <?MICOMMENT>== when MOs continue on the same gene ==<?/MICOMMENT>
+         <?MIELSE>
+              <?MIVAR NAME=$display_target_gene> &nbsp; <?/MIVAR>
 
-             <?/MIBLOCK> <?MICOMMENT> end of line display difference <?/MICOMMENT>
+          <?/MIBLOCK> <?MICOMMENT> end of line display difference <?/MICOMMENT>
 
-             <?MIVAR NAME=$target_gene_zdb_id>$2<?/MIVAR>
+          <?MIVAR NAME=$target_gene_zdb_id>$mrkrsel_mo_gene_zdb_id<?/MIVAR>
 
-        <?/MISQL>
       <?/MIBLOCK> 
 
       <?MICOMMENT> start new row and column <?/MICOMMENT>
@@ -973,6 +976,7 @@ DEBUGGING:
 	  </TD>
             <?/MIBLOCK>
   
+	  <?MICOMMENT>------ Matching Text ------<?/MICOMMENT>
             <?MIBLOCK COND="$(XST,$input_name)">
 	  <TD width=20%>
 	      <?MIVAR NAME=start_pos>$(POSITION,$(LOWER,$match_name),$(LOWER,$input_name))<?/MIVAR>
@@ -1115,6 +1119,11 @@ DEBUGGING:
   <?/MISQL>
 
   <?/MIBLOCK> <?MICOMMENT> no simultanious name and acc search <?/MICOMMENT>
+
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+       execute function get_time()">
+       <br>$1, Done display results
+  <?/MISQL>
 
 <?/MIBLOCK> <?MICOMMENT> query results <?/MICOMMENT>
 
