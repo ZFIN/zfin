@@ -1,4 +1,3 @@
-
 <HTML>
 <head>
 <?MICOMMENT>this variable is needed for input_button_generic.apg<?/MICOMMENT>
@@ -89,13 +88,13 @@
 <?MICOMMENT>note: there is open body tag in the header, but for the onload
             function, we need to duplicate it here. Good thing is the new
             home page redo would get the body tag out of header file.
-<?/MICOMMENT> 
+<?/MICOMMENT>
 <BODY onload="setOption(); setFocus()">
 
 <?MICOMMENT> Now check authorization <?/MICOMMENT>
 <?MISQL SQL="
-  select WebExplode(object,'') 
-    from webPages 
+  select WebExplode(object,'')
+    from webPages
     where ID='aa-secure_navigation.apg';">
   $1
 <?/MISQL>
@@ -109,15 +108,15 @@
        </font>
        <?MIVAR COND=$(EC,$systemUnavail,t)>
 	  <font color=red>System under maintenance ...</font>
-       <?/MIVAR>   
+       <?/MIVAR>
      </TD>
-     <TD class=titlebar align=right> 
+     <TD class=titlebar align=right>
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
      </TD>
   </TR>
 </TABLE>
 
-<?MICOMMENT> ===== Main Page ======== 
+<?MICOMMENT> ===== Main Page ========
 
 <font color=red> <p> (The function is currently unavailable for maintenance. Please check back later. )<p></font>
 <?/MICOMMENT>
@@ -128,7 +127,7 @@
 <B>Choose program and database:</B>
 <TABLE>
 <TR>
-  <TD> <a href="/zf_info/blast_info.html">Program</a>: 
+  <TD> <a href="/zf_info/blast_info.html">Program</a>:
        <select name = "PROGRAM" onChange="setOption()">
          <?MIVAR>
          <option VALUE="blastn" $(IF,$(AND,$(XST,$PROGRAM),$(EQ,$PROGRAM,blastn)),selected)> Nucleotide - Nucleotide
@@ -142,9 +141,9 @@
   <TD>&nbsp;</TD>
   <TD><a href="/zf_info/blast_info.html#blast_dbs">Database</a>: </TD>
   <TD>
-   <?MICOMMENT> Zfin curators have access to more datasets than the general public. 
+   <?MICOMMENT> Zfin curators have access to more datasets than the general public.
                 Since the order of the datasets are important, instead of many small condition
-                blocks clauses within the option list, we use two big blocks.  
+                blocks clauses within the option list, we use two big blocks.
    <?/MICOMMENT>
    <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
      <select multiple name = "DATALIB" size=11>
@@ -161,7 +160,7 @@
          <option VALUE = "zfin_mrph"> ZFIN Morpholino Sequences
          <option VALUE = "zfin_microRNA"> ZFIN MicroRNA Sequences
          <option VALUE = "vega_zfin"> ZFIN Vega Transcripts
-         <option VALUE = "repbase_zf"> Zebrafish Repeats 
+         <option VALUE = "repbase_zf"> Zebrafish Repeats
          <option VALUE = "gbk_zf_mrna"> Zebrafish mRNA
          <option VALUE = "gbk_hs_mrna"> Human mRNA
          <option VALUE = "gbk_ms_mrna"> Mouse mRNA
@@ -252,14 +251,15 @@ Upload a free-text file:
 
 <B>Options: </B> <br>
 
- Expect: <input type=text name="EXPECT" value="1e-25" size="5">
+<?MIVAR>
+ Expect: <input type=text name="EXPECT" value=$(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt)),"1e-25","10") size="5">
           &nbsp;
- Word Size: <input type=text name="WORD" value="11" size="2">
+ Word Size: <input type=text name="WORD" value=$(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt)),"11","3") size="2">
           &nbsp;
  Matrix:
     <select name = "MATRIX">
          <option value=""> -------
-         <option> BLOSUM62
+         <option $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),selected)> BLOSUM62
          <option> BLOSUM45
          <option> BLOSUM80
          <option> PAM30
@@ -267,16 +267,21 @@ Upload a free-text file:
      </select>
      <P>
 
+<?/MIVAR>
+
  Filter options for DNA Queries: &nbsp;
-    <input type=checkbox name="DUST" checked> Low complexity
-    <input type=checkbox name="POLY_A" checked> Poly-A's filter
+
+<?MIVAR>
+    <input type=checkbox name="DUST"  $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt)), checked)> Low complexity
+    <input type=checkbox name="POLY_A"  $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt)),checked)> Poly-A's filter
     <BR>
 
  Filter options for Protein Queries: <BR>
-  &nbsp;&nbsp;&nbsp;<INPUT type=checkbox name="SEG">
+  &nbsp;&nbsp;&nbsp;<INPUT type=checkbox name="SEG"  $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),checked)>
          SEG - filter low compositional complexity regions <br>
-  &nbsp;&nbsp;&nbsp;<INPUT type=checkbox name="XNU">
+  &nbsp;&nbsp;&nbsp;<INPUT type=checkbox name="XNU"  $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),checked)>
          XNU - filter short-periodicity repeats
+<?/MIVAR>
 
 <p>
 <b>Format: </b><br>
