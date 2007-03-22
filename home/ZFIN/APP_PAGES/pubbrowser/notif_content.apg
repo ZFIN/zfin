@@ -26,6 +26,8 @@ OUTPUT VARS:
 <?/MIERROR>
 
 
+
+
 <SCRIPT>
 
       function isEmpty(string) {
@@ -234,16 +236,28 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 <?/MIVAR>
 <?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
+<?MICOMMENT> ** for 'mutants' I'm using the abbrev space to show the wild type line ** <?/MICOMMENT>
+
 <?MIVAR NAME=mysql>
-             select distinct 'Mutant',
-		    feature_zdb_id,
-		    feature_name,
-		    feature_abbrev,
-       	            feature_name_order
-               from record_attribution, feature
+             select distinct 
+                    'Genotype',
+		    this.geno_zdb_id,
+		    this.geno_display_name,
+		    background.geno_handle,
+       	            this.geno_name_order
+               from record_attribution
+		    join genotype as this 
+                      on recattrib_data_zdb_id = this.geno_zdb_id
+                    left outer join genotype_background
+                      on this.geno_zdb_id = genoback_geno_zdb_id 
+                    left outer join genotype as background
+                      on genoback_background_zdb_id = background.geno_zdb_id
+                    join genotype_feature
+                      on this.geno_zdb_id = genofeat_geno_zdb_id
+                    join feature
+                      on genofeat_feature_zdb_id = feature_zdb_id
               where recattrib_source_zdb_id = '$OID'
-	        and recattrib_data_zdb_id   = feature_zdb_id
-           order by feature_name_order;
+           order by this.geno_name_order;
 <?/MIVAR>
 <?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
@@ -292,7 +306,10 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
              </td></tr></table>
            <?/MIVAR>
            <INPUT TYPE=checkbox NAME=notif_item VALUE="$attrib_data_id_distinct" $(IF,$(AND,$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id_distinct),0)), CHECKED)>
-           $attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
+           $attrib_data_title: <i>$attrib_data_name</i>
+           <?MIBLOCK COND="$(>,$(STRLEN,$attrib_data_abbrev),0)">  <?MICOMMENT> ** KLUDGE: not the best empty check ** <?/MICOMMENT>
+             <?MIVAR>(<i>$attrib_data_abbrev</i>)<?/MIVAR>
+           <?/MIBLOCK>
            <br>
            <?MICOMMENT> let's hide the link and see how curators think about it
 	     <?MIBLOCK COND="$(NC,$attrib_data_title,Gene Expression)">
@@ -335,14 +352,20 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
                  $(SETVAR,gene_expression_checked,t)
               <?/MIVAR>
               <?MIVAR>
-                  <div style="border: thin solid white; margin-left: 8em;"><i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)</div>
+                  <div style="border: thin solid white; margin-left: 8em;">
+                    <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>) 
+                  </div>
               <?/MIVAR>
 
            <?MIELSE>
               <?MICOMMENT> ==| format for the rest |== <?/MICOMMENT>
 
 	      <?MIVAR>
-	  	$attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
+	  	$attrib_data_title: <i>$attrib_data_name</i>
+                <?MIBLOCK COND="$(>,$(STRLEN,$attrib_data_abbrev),0)">  <?MICOMMENT> ** KLUDGE: not the best empty check ** <?/MICOMMENT>
+                  <?MIVAR>(<i>$attrib_data_abbrev</i>)<?/MIVAR>
+                <?/MIBLOCK>
+
            	<br>
                 <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a>
                 <br>
