@@ -111,7 +111,7 @@ DEBUGGING:
    <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
 
    <!-- build up the parameter. the $return_rec is passed in from start_select.apg for update selecting -->    
-   <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$input_name)$(IF,$(XST,$input_acc),&input_acc=$input_acc)$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)$(IF,$(XST,$WINSIZE),&WINSIZE=$WINSIZE)$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
+   <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$(URLENCODE,$input_name))$(IF,$(XST,$input_acc),&input_acc=$(URLENCODE,$input_acc))$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)$(IF,$(XST,$WINSIZE),&WINSIZE=$WINSIZE)$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
     <?MIVAR NAME=$mseg_param_list>$mrkr_param_list$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
    
    <?MIVAR COND="$(XST,$return_rec)" NAME=$update_mode>yes<?/MIVAR>
