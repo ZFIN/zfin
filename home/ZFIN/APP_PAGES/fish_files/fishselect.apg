@@ -683,7 +683,18 @@ Message: $MI_ERRORMSG
 	           where genofeat_feature_zdb_id = feature_zdb_id
 	             and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                      and feature_type = 'INSERTION'
-                     and fmrel_type = 'is allele of';">
+                     and fmrel_type = 'is allele of'
+                     ">
+    <?/MISQL>
+
+    <?MISQL SQL="insert into $fishselect_temp_on_filter (g_zdb_id)
+	          select genofeat_geno_zdb_id  
+                    from genotype_feature,feature,feature_marker_relationship
+	           where genofeat_feature_zdb_id = feature_zdb_id
+	             and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                     and feature_type = 'TRANSGENIC_INSERTION'
+                     and fmrel_type = 'is allele of'
+                     ;">
     <?/MISQL>
     
   <?MIELSE>
