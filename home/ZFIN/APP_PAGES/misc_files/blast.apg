@@ -251,10 +251,16 @@ Upload a free-text file:
 
 <B>Options: </B> <br>
 
+<?MICOMMENT> SEQ_TYPE is introduced to identify the query sequence type and distinguish nt or pt
+    for input sequence ID when querying NCBI database. Here it is used to distinguish two query type.
+   (note, query type is not defined by query sequence type, a nucleotide sequence when participate in
+    blastx, tblastx would be requiring protein query prameter) However, it is fine for now to mix use
+    these two concepts. I will come back to it after the emergence fix. 
+<?/MICOMMENT>
 <?MIVAR>
- Expect: <input type=text name="EXPECT" value=$(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt)),"1e-25","10") size="5">
+ Expect: <input type=text name="EXPECT" value=$(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),"10","1e-25") size="5">
           &nbsp;
- Word Size: <input type=text name="WORD" value=$(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt)),"11","3") size="2">
+ Word Size: <input type=text name="WORD" value=$(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),"3", "11") size="2">
           &nbsp;
  Matrix:
     <select name = "MATRIX">
@@ -272,8 +278,8 @@ Upload a free-text file:
  Filter options for DNA Queries: &nbsp;
 
 <?MIVAR>
-    <input type=checkbox name="DUST"  $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt)), checked)> Low complexity
-    <input type=checkbox name="POLY_A"  $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt)),checked)> Poly-A's filter
+    <input type=checkbox name="DUST"  $(IF,$(OR,$(NXST,$SEQ_TYPE),$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt))), checked)> Low complexity
+    <input type=checkbox name="POLY_A"  $(IF,$(OR,$(NXST,$SEQ_TYPE), $(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt))),checked)> Poly-A's filter
     <BR>
 
  Filter options for Protein Queries: <BR>
