@@ -45,11 +45,10 @@
 </table>
 
 <p>
-ZFIN data reports are updated daily, except Gene Ontology Data,
-which is updated once during the week.  Please see the file header for
-the Gene Ontology file date. The format for each file is described below.
+ZFIN data reports are updated every day of the week at 10:10pm.
+The format for each file is described below.
 Each record contains a ZFIN ID which may be used to link data between files.
-All files use tab as the field delimiter and are ordered by ZFIN ID.
+All files use tab as the field delimiter.
 The 'download' links will display the file on your browser.  Use your browser
 'save as' feature to make a local copy of the file.  If you choose to link to
 a ZFIN data page from your web site, append the ZFIN ID to the URL
@@ -73,6 +72,7 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <tr><td><a HREF="#ad"> Anatomical Ontologies</a></td></tr>
 <tr><td><a HREF="#mo"> Morpholino Data</a></td></tr>
 <tr><td><a HREF="#ot"> Ontology Translations</a></td></tr>
+<tr><td><a HREF="#pmt"> PubMed Translations</a></td></tr>
 </table>
 
 <!-- -->
@@ -242,7 +242,24 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Phenotype Data</th></tr></table>
 
 <p><b> Genotypes with Phenotypes</b>
-<table BORDER CELLPADDING=2><tr><td>Genotype ID</td><td>Affected Structure or Process 1</td><td>Affected Structure or Process 2</td><td>Phenotype Keyword</td><td>Phenotype Modifier</td><td>Publication ID</td></tr></table>
+<table BORDER CELLPADDING=2><tr>
+<td>Genotype ID</td>
+<td>Genotype Name</td>
+<td>Start Stage ID</td>
+<td>Start Stage Name</td>
+<td>End Stage ID</td>
+<td>End Stage Name</td>
+<td>Affected Structure or Process 1 ID</td>
+<td>Affected Structure or Process 1 Name</td>
+<td>Affected Structure or Process 2 ID</td>
+<td>Affected Structure or Process 2 Name</td>
+<td>Phenotype Keyword ID</td>
+<td>Phenotype Keyword Name</td>
+<td>Phenotype Modifier</td>
+<td>Publication ZFIN ID</td>
+<td>Publication PubMed ID</td>
+</tr>
+</table>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/phenotype.txt">Download</a>
 
 <!-- -->
@@ -297,14 +314,25 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/anatomy_ontology_translation.txt">Download</a>
 
 <p><b> Quality Ontology IDs: ZFIN to Quality ids </b>
-<br>(<i>see also</i> <a HREF="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo">Quality file in OBO format</a>at the OBO foundry</b><br>
+<br>(<i>see also</i> <a HREF="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo">Quality file in OBO format</a> at the OBO foundry</b><br>
 <table BORDER CELLPADDING=2><tr> <td>Quality term ZFIN ID</td><td>Quality term Quality ID</td></tr></table>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/phenotype_quality_ontology_translation.txt">Download</a>
+
+<a NAME="pmt"></a><br><br>
+<table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>PubMed Translations</th></tr></table>
+
+<p><b> ZFIN Publication IDs: ZFIN IDs to PubMed ids </b>
+<br>
+<table BORDER CELLPADDING=2><tr> <td>Publication ZFIN ID</td><td>PubMed ID or None when not available</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/pub_to_pubmed_id_translation.txt">Download</a>
+
 
 
 </div>
 
-
+<table>
+<tr>
+<td>
 
 <script language="JavaScript" src="/footer.js"></script> 
 </HTML>
