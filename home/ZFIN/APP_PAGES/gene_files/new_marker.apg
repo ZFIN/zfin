@@ -475,7 +475,8 @@ marker table.
           insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
           values ('$newmrkrMrkrSeqId','$newmrkrSource');">
       <?/MISQL>
-           
+      
+    <?/MIBLOCK>           
 
       <?MIBLOCK COND=$(XST,$newmrkrCuratorNote)>
         <?MISQL SQL="execute function get_id('DNOTE')">
@@ -495,23 +496,17 @@ marker table.
           values (
             '$newmrkrDataNoteId',
             '$newmrkrNoteSql',
-            '$newmrkrMrkrSeqId',
+            '$new_id',
             '$ZDB_ident',
             TODAY);">
         <?/MISQL>                       
       <?/MIBLOCK>    
-    
-    <?/MIBLOCK>
-
                       
     <?MIBLOCK COND=$(XST,$seqdata_CuratorNote)>
         <?MIVAR NAME=newmrkr_encoded_note>$(URLENCODE,$seqdata_CuratorNote)<?/MIVAR>
         <?MISQL SQL="select WebExplode(object,'dnotenew_DATA=$new_id&dnotenew_CUR=$ZDB_ident&dnotenew_NOTE=$newmrkr_encoded_note') from webPages where ID='aa-dnote_new.apg';">$1<?/MISQL>
     <?/MIBLOCK>
     
-    
-    
-      
     <?MIVAR>
       <h1>Confirmation: $marker_type_display record added</h1>
 
