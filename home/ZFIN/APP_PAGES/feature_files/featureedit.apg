@@ -205,7 +205,7 @@ EFFECTS: Edits a feature/marker
 
 <!--      <tr><td><b>Alias</b>:
       <td> <input type=text name=featedit_feature_alias size=15 value=<?MIVAR COND="$(XST,$featcur_feat_alias)">'$featcur_feat_alias'<?/MIVAR>>-->
-      <tr><td><b>Discoverer</b>
+      <tr><td><b>Lab of Origin</b>
       <td> <select name=featedit_feature_lab>
              <?MIVAR COND="$(XST,$featcur_feat_lab)"><option select value='$featcur_feat_lab'>$featcur_feat_lab<?/MIVAR>
              <?MISQL SQL="select distinct name from lab">

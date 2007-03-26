@@ -90,7 +90,7 @@ function setAssayDisplay(featureValue) {
             <td> <input type=text name=featcur_feature_add_abbrev size=15>
             <tr><td><b>Alias</b>:
             <td> <input type=text name=featcur_feature_add_alias size=15>
-            <tr><td><b>Discoverer</b>
+            <tr><td><b>Lab of Origin</b>
             <td> <select name=featcur_feature_add_lab>
                  <option value=''>
                  <?MISQL SQL="select distinct name from lab">
