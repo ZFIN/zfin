@@ -72,8 +72,11 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 	   and dalias_group <> 'secondary id'
       order by name_lower_column;">
    <?MIVAR NAME=anatdict_curAnat>"$1"<?/MIVAR>
-   <?MIVAR>$(SETVAR,$anatdict_anatList,$(IF,$(NC,$MI_CURRENTROW,1),$anatdict_anatList",")$anatdict_curAnat)<?/MIVAR>
+   <?MIVAR>$(VECAPPEND,$anatdict_anatList,$anatdict_curAnat)<?/MIVAR>
 <?/MISQL>
+
+<?MIVAR NAME=anatdict_anatList>$(SEPARATE,$anatdict_anatList,",")<?/MIVAR>
+<?MIVAR NAME=anatdict_anatList>$(SUBSTR,$anatdict_anatList,2)<?/MIVAR>
 
 
 <?MIVAR COND="$(NXST,$resolution)" NAME="resolution">9<?/MIVAR>

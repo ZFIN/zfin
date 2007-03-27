@@ -725,7 +725,6 @@ function openChild(childWinUrl,childWinName) {
   ============================================================================
   ==========  Prepare anatomy suggestion List
   ============================================================================
-<?/MICOMMENT>
 
 <?MIVAR NAME=xpatsel_anatList><?/MIVAR>
 
@@ -737,9 +736,12 @@ function openChild(childWinUrl,childWinName) {
           from data_alias
          where dalias_data_zdb_id[1,9] = 'ZDB-ANAT-'
       order by name_lower_column ; ">
-	   <?MIVAR NAME=xpatsel_curAnat>"$1"<?/MIVAR>
-	   <?MIVAR>$(SETVAR,$xpatsel_anatList,$(IF,$(NC,$MI_CURRENTROW,1),$xpatsel_anatList",")$xpatsel_curAnat)<?/MIVAR>
+     <?MIVAR NAME=anatdict_curAnat>"$1"<?/MIVAR>
+     <?MIVAR>$(VECAPPEND,$xpatsel_anatList,$anatdict_curAnat)<?/MIVAR>
 <?/MISQL>
+
+<?MIVAR NAME=xpatsel_anatList>$(SEPARATE,$xpatsel_anatList,",")<?/MIVAR>
+<?MIVAR NAME=xpatsel_anatList>$(SUBSTR,$xpatsel_anatList,2)<?/MIVAR>
 
 
 
