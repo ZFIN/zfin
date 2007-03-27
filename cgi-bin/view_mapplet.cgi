@@ -76,7 +76,7 @@
   my $g_zoom = 30;
   my $zoom  = 30;		### the target number of markers for any one backbone
   my %zooms;                    ### hash of zoom values
-  my $lg;			### the linkgage group containing $marker
+  my $lg = -73;			### the linkgage group containing $marker
   my $lgs;                      ### hash of linkage groups
   my $loc = -1;			### the location of $marker
   my $lo;			### name above $loc on map
@@ -91,7 +91,7 @@
   my $lines ;			### all the rows returned from a paticular sql query with fields terminated with '|'
   my $g_data ='';		### all the $lines returned from all the sql queries --- param to the applet
   my $g_printdata ='';		### all the $lines returned from all the sql queries --- param to the applet
-  my $print_type =0;            ### a code for types to print --1 gene, 2 est, 4 anon, 8 fish (0 == 15)
+  my $print_type = 0;            ### a code for types to print --1 gene, 2 est, 4 anon, 8 fish (0 == 15)
   my $g_height = 1;		### the maximum number of rows returned by any query --- anticipated heigth of the applet
   my $g_width =  0;		### the number of $panels $marker is found on * bbw ---  anticipated width of the applet
   my $g_zdbid;		    # global ID
@@ -110,8 +110,8 @@
   my $sm_m = '';
   my $sm_lg = '';
   my $sm_panel = '';
-  my $sm_loc = '';
-  my $sm_refresh = '';
+  my $sm_loc = '-73';
+  my $sm_refresh = '-73';
 
   ### incase we want the mapplet to open somewhere particular some day
   my $frame = '_top';
@@ -297,8 +297,11 @@
       $g_zdbid =  $Q->param("OID");
       #$sm_refresh = 1;
     }
-    $note =  $note ."@panels and ". $Q->param("loc_lg")." <p>\n";
-
+    if (defined $Q->param("loc_lg")){
+        $note =  $note ."@panels and ". $Q->param("loc_lg")." <p>\n";
+    }else{
+        $note =  $note ."@panels and LG not defined <p>\n";
+    }
     ### We now know that there are not multiple interperations of $marker
     ### because there is a OID otherwise
     ### they would have been shunted off to either redo or search results page.
