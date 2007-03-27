@@ -661,6 +661,17 @@ DEBUGGING:
     <?MIVAR NAME=$curviewer><?/MIVAR>
 
     <?MICOMMENT>============ Query Database ==================== <?/MICOMMENT>
+              
+    <?MICOMMENT> create a temp table holding feature records for phenotype display<?/MICOMMENT>
+    <?MIVAR NAME=mrkrselect_temp_allele>$(CONCAT,"mrkrselect_temp_allel",$mrkrsel_session_id)<?/MIVAr>
+    <?MISQL SQL="
+       execute function table_exists('$mrkrselect_temp_allele')">
+       <?MISQL COND=$(EC,$1,f) SQL="
+	   create temp table $mrkrselect_temp_allele (
+	          mta_ftr_zdb_id varchar(50)
+	   ) with NO LOG;">
+       <?/MISQL>
+    <?/MISQL>
  
     <?MICOMMENT>the master sql for non-MO types with two placeholder columns<?/MICOMMENT>
     <?MIVAR NAME=$mrkrsel_master_sql> 
@@ -831,23 +842,13 @@ DEBUGGING:
           <?MIBLOCK COND=$(AND,$(EC,$type_of_genedom,t),$(NC,$show_xpat_pato,f))>
 
 	      <?MICOMMENT>------    Expression  ---------------------- 
-                       -- tmp table is used to save a duplicate effort
-                       -- when query for image.
+                          --
               <?/MICOMMENT>
 
-              <?MIVAR NAME=mrkrselect_temp_fig>$(CONCAT,"mrkrselect_temp_fig",$mrkrsel_session_id)<?/MIVAr>
-   	      <?MISQL SQL="
-      		execute function table_exists('$mrkrselect_temp_fig')">
-     	        <?MISQL COND=$(EC,$1,f) SQL="
-		  create temp table $mrkrselect_temp_fig (
-	  	     mtf_fig_zdb_id varchar(50)
-		  ) with NO LOG;">
-                <?/MISQL>
-              <?/MISQL>
+	      <?MIVAR NAME=$mrkrsel_xpat_fig_count>0<?/MIVAR>
 
 	      <?MISQL SQL="
-		 insert into $mrkrselect_temp_fig (mtf_fig_zdb_id)
-          	  select distinct xpatfig_fig_zdb_id
+         	  select distinct xpatfig_fig_zdb_id
           	    from expression_experiment, expression_result,
                          expression_pattern_figure
           	   where '$OID' = xpatex_gene_zdb_id
@@ -855,37 +856,34 @@ DEBUGGING:
                      and xpatres_zdb_id = xpatfig_xpatres_zdb_id;">
       	      <?/MISQL>
 	      <?MIVAR NAME=$mrkrsel_xpat_fig_count>$MI_ROWCOUNT<?/MIVAR>
+	      <?MIVAR NAME=$mrkrsel_xpat_fig_zdb_id>$1<?/MIVAR>
 
-	      <?MISQL SQL="
-          	  select mtf_fig_zdb_id
-          	    from $mrkrselect_temp_fig;">
-		<?MIVAR NAME=$mrkrsel_xpat_fig_zdb_id>$1<?/MIVAR>
-      	      <?/MISQL>
-
-	      <?MISQL SQL="
-          	  select img_zdb_id
-          	    from $mrkrselect_temp_fig, image
-          	   where img_fig_zdb_id = mtf_fig_zdb_id;">
-		<?MIVAR NAME=$mrkrsel_xpat_fig_img_zdb_id>$1<?/MIVAR>
-      	      <?/MISQL>
-	      
               <TD nowrap>
-              <?MIBLOCK COND="$(>,$mrkrsel_xpat_fig_count,0)">
-                <?MIVAR COND="$(>,$mrkrsel_xpat_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>$mrkrsel_xpat_fig_count figure(s) </A>
-		<?/MIVAR>
-                <?MIVAR COND="$(=,$mrkrsel_xpat_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_xpat_fig_zdb_id>1 figure </A>
-		<?/MIVAR>
 
-                <?MIVAR COND=$(XST,$mrkrsel_xpat_fig_img_zdb_id)>
-		   <img src="/images/camera_icon.gif" border=0 alt="with image(s)">
-		<?/MIVAR>
-                              
-              <?/MIBLOCK>&nbsp;		
+              <?MIVAR COND="$(=,$mrkrsel_xpat_fig_count,1)">
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_xpat_fig_zdb_id>1 figure </A>
+              <?/MIVAR>
+
+              <?MIVAR COND="$(>,$mrkrsel_xpat_fig_count,1)">
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>$mrkrsel_xpat_fig_count figure(s) </A>
+	      <?/MIVAR>
+           
+	      <?MISQL SQL="
+         	  select img_zdb_id
+          	    from expression_experiment, expression_result,
+                         expression_pattern_figure, image
+          	   where '$OID' = xpatex_gene_zdb_id
+		     and xpatex_zdb_id = xpatres_xpatex_zdb_id
+                     and xpatres_zdb_id = xpatfig_xpatres_zdb_id
+                     and xpatfig_fig_zdb_id = img_fig_zdb_id;">
+		
+      	      <?/MISQL>
+              <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+ 		   <img src="/images/camera_icon.gif" border=0 alt="with image(s)">
+              <?/MIVAR>                     
+         
+              &nbsp;	
               </TD>
-              <?MISQL SQL="delete from $mrkrselect_temp_fig"><?/MISQL>
-              <?MIVAR>$(UNSETVAR,$mrkrsel_xpat_fig_img)<?/MIVAR>
 
 	      <?MICOMMENT>------    Phenotype  ---------------------- 
                        -- gene is related to allele by feature_marker_relationship
@@ -893,16 +891,6 @@ DEBUGGING:
                        -- to store allele data, then re-use the pre-empted 
                        -- $mrkrselect_temp_fig to store distinct fig zdb id
               <?/MICOMMENT>
-
-              <?MIVAR NAME=mrkrselect_temp_allele>$(CONCAT,"mrkrselect_temp_allel",$mrkrsel_session_id)<?/MIVAr>
-   	      <?MISQL SQL="
-      		execute function table_exists('$mrkrselect_temp_allele')">
-     	        <?MISQL COND=$(EC,$1,f) SQL="
-		  create temp table $mrkrselect_temp_allele (
-	  	     mta_ftr_zdb_id varchar(50)
-		  ) with NO LOG;">
-                <?/MISQL>
-              <?/MISQL>
 
 
 	      <?MISQL SQL="
@@ -920,9 +908,8 @@ DEBUGGING:
 			 and present_t = 'f';">
               <?/MISQL>
 
-
+	      <?MIVAR NAME=mrkrsel_pheno_fig_count>0<?/MIVAR>
 	      <?MISQL SQL="
-		 insert into $mrkrselect_temp_fig (mtf_fig_zdb_id)
           	  select distinct apatofig_fig_zdb_id
           	    from $mrkrselect_temp_allele, genotype_feature,
 		         genotype_experiment, atomic_phenotype, apato_figure
@@ -932,36 +919,36 @@ DEBUGGING:
                      and apatofig_apato_zdb_id = apato_zdb_id ;">
       	      <?/MISQL>
 	      <?MIVAR NAME=mrkrsel_pheno_fig_count>$MI_ROWCOUNT<?/MIVAR>
-	      <?MISQL SQL="
-          	  select mtf_fig_zdb_id
-          	    from $mrkrselect_temp_fig;">
-		<?MIVAR NAME=mrkrsel_pheno_fig_zdb_id>$1<?/MIVAR>
-      	      <?/MISQL>
+              <?MIVAR NAME=mrkrsel_pheno_fig_zdb_id>$1<?/MIVAR>
 
+              <TD nowrap>
+
+              <?MIVAR COND="$(=,$mrkrsel_pheno_fig_count,1)">
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_pheno_fig_zdb_id>1 figure </A>
+              <?/MIVAR>
+
+              <?MIVAR COND="$(>,$mrkrsel_pheno_fig_count,1)">	
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figure(s) </A>
+              <?/MIVAR>
+               
 	      <?MISQL SQL="
           	  select img_zdb_id
-          	    from $mrkrselect_temp_fig, image
-          	   where img_fig_zdb_id = mtf_fig_zdb_id;">
-		<?MIVAR NAME=mrkrsel_pheno_fig_img_zdb_id>$1<?/MIVAR>
-      	      <?/MISQL>
-	      
-              <TD nowrap>
-              <?MIBLOCK COND="$(>,$mrkrsel_pheno_fig_count,0)">	
-                <?MIVAR COND="$(>,$mrkrsel_pheno_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figure(s) </A>
-                <?/MIVAR>
-                <?MIVAR COND="$(=,$mrkrsel_pheno_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_pheno_fig_zdb_id>1 figure </A>
-		<?/MIVAR>
+          	    from $mrkrselect_temp_allele, genotype_feature, image,
+		         genotype_experiment, atomic_phenotype, apato_figure
+                   where mta_ftr_zdb_id = genofeat_feature_zdb_id
+                     and genofeat_geno_zdb_id = genox_geno_zdb_id
+                     and genox_zdb_id = apato_genox_zdb_id
+                     and apatofig_apato_zdb_id = apato_zdb_id
+                     and apatofig_fig_zdb_id = img_fig_zdb_id ;">
 
-                <?MIVAR COND=$(XST,$mrkrsel_pheno_fig_img_zdb_id)>
+      	      <?/MISQL>
+              <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
 		   <img src="/images/camera_icon.gif" border=0 alt="with image(s)">
-		<?/MIVAR>
-                
-              <?/MIBLOCK>&nbsp;	
+	      <?/MIVAR>
+              &nbsp;	
               </TD>
+
               <?MISQL SQL="delete from $mrkrselect_temp_allele"><?/MISQL>
-              <?MISQL SQL="delete from $mrkrselect_temp_fig"><?/MISQL>
               <?MIVAR>$(UNSETVAR,$mrkrsel_xpat_fig_img_zdb_id)<?/MIVAR>
               <?MIVAR>$(UNSETVAR,$mrkrsel_pheno_fig_img_zdb_id)<?/MIVAR>
 
