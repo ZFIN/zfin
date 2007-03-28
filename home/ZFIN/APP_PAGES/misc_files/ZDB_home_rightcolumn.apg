@@ -80,7 +80,7 @@
           Find <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalselect.apg"><em>Existing Journal</em></a>
         <li>
           Generate <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list.apg" TARGET=NEW_WIN><em>dist. list</em></a>, 
-	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list_usa.apg" TARGET=NEW_WIN><em>USA dist. list</em></a>
+	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list_usa.apg" TARGET=NEW_WIN><em>USA dist. list</em></a>, <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list_PI.apg" TARGET=NEW_WIN><em>PI dist. list</em></a>
         </li>
       </ul>
 
