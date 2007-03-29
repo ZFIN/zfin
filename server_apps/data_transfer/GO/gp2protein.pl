@@ -1,6 +1,6 @@
 #!/private/bin/perl 
 #  This script creates a file that ZFIN sends to Stanford. The file is tab 
-#  delimitted with 2 columns, each gene that has a GO annotations and its corresponding SWISS PROT#  ID.
+#  delimitted with 2 columns, each gene that has a GO annotations and its corresponding UniProt#  ID.
 #  We must send the file via email to GO after running the script. A reminder
 #  email, containing the path to the file, is sent to a member of ZFIN. 
 
@@ -47,7 +47,7 @@ sub gp2proteinReport()
                              from   marker,db_link, foreign_db_contains
                              where  mrkr_zdb_id = dblink_linked_recid
                                and  dblink_fdbcont_zdb_id = fdbcont_zdb_id 
-                               and  fdbcont_fdb_db_name = "SWISS-PROT"
+                               and  fdbcont_fdb_db_name = "UniProt"
                              order by mrkr_zdb_id;'
 			   );
     $cur->execute;

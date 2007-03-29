@@ -89,16 +89,11 @@ sub goMod()
 sub goInf()
   {
     $inf =$_[0];
-    # $inf = substr($inf,3,length($inf)) if (index($inf,'GO:')==0);
-    $inf =~ s/GenBank:/EMBL:/g;
-    if (index($inf,'SWISS-PROT:')==0) {
-       $inf=~s/SWISS-PROT:/SPTR:/;
-     }
 
+    $inf =~ s/GenBank:/EMBL:/g;
     $inf =~ s/GenPept:/protein_id:/;
     $inf =~ s/RefSeq:NM_/NCBI_NM:NM_/;
     $inf =~ s/RefSeq:NP_/NCBI_NP:NP_/;
-    $inf =~ s/SPTR/UniProt/;
 
     if (index($inf,'\ ')==0) {
        $inf=~s/\\ //;

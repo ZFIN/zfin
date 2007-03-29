@@ -31,7 +31,7 @@
 --	zfin id, symbol, panel symbol, LG, loc, metric
 --
 -- Sequence data - separate files for GenBank, RefSeq, Entrez Gene, Unigene, 
--- SWISS-PROT, Interpro, GenPept and Vega (genes and transcripts)
+-- UniProt, Interpro, GenPept and Vega (genes and transcripts)
 -- as well as sequences indirectly associated with genes
 --	zfin id, symbol, accession number
 --	
@@ -276,7 +276,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'
  where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id 
  order by 1;
 
--- Generate sequence data files for GenBank, RefSeq, Entrez, UniGene, SWISS-PROT, Interpro and GenPept
+-- Generate sequence data files for GenBank, RefSeq, Entrez, UniGene, UniProt, Interpro and GenPept
 
 -- the last condition is added to filter out mis-placed acc
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genbank.txt'
@@ -306,11 +306,11 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/unigene.txt'
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
 	  and fdbcont_fdb_db_name = 'UniGene' order by 1;
 
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/swissprot.txt'
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
 	where mrkr_zdb_id = dblink_linked_recid
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'SWISS-PROT' order by 1;
+	  and fdbcont_fdb_db_name = 'UniProt' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/interpro.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains

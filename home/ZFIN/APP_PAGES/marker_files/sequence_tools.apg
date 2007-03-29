@@ -16,10 +16,10 @@
     CALLED FROM: markerview.apg and sequence.apg
 
 NCBI BLAST (25000 bp for BLAST)    PBLAST for SP
-UCSC BLAT  (25000 bp for BLAT)    GenBank SwissProt,RefProt, 
+UCSC BLAT  (25000 bp for BLAT)    GenBank UniProt,RefProt, 
 
 ENSEMBL    50,000 bp for SSAHA ,200,000 bp for BLASTN & TBLASTX 
-           GenBank, SwissProt, RefSeq (set flag for protiens)
+           GenBank, UniProt, RefSeq (set flag for protiens)
 
 
 
@@ -76,7 +76,7 @@ function jump(form_select){
             <OPTION VALUE=$(CONCAT,$fdb_url_blastp,$seqt_acc)>NCBI BLAST</OPTION>
             <OPTION VALUE=$(CONCAT,$fdb_url_pblast,$seqt_acc)> SIB BLAST</OPTION>
 	    <?/MIVAR>
-	  <?MIELSE COND=$(EQ,$seqt_acc_db,SWISS-PROT)>
+	  <?MIELSE COND=$(EQ,$seqt_acc_db,UniProt)>
 	    <?MIVAR>
 	    <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastp,$seqt_acc),&DATALIB=sptr_zf)>ZFIN BLAST</OPTION>
 	    <OPTION VALUE=$(CONCAT,$fdb_url_pblast,$seqt_acc)> SIB BLAST</OPTION>

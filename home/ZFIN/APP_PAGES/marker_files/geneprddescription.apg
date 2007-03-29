@@ -89,7 +89,7 @@
 	
 	<table border=0 width=100% bgcolor=$highlight>
 	  <tr>
-	    <td>Swiss-Prot ID: $sp_acc</td>
+	    <td>UniProt ID: $sp_acc</td>
           </tr>
 	  <tr>
 	    <td><KBD>$comments</KBD></td>
@@ -99,7 +99,7 @@
 <?/MISQL>
 
 <table> <tr>
-   <td> This information was provided by Swiss-Prot through a collaboration with ZFIN. (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=ZDB-PUB-020723-2">1</a>)
+   <td> This information was provided by UniProt through a collaboration with ZFIN. (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=ZDB-PUB-020723-2">1</a>)
    </td>
   </tr>
 </table>
