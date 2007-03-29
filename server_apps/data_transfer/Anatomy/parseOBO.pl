@@ -95,6 +95,7 @@ while (<>) {
 	# ignore the dbxref for now
 	if ( /^def:\s+\"(.+)\"/ ) {
 	    $termDef = &stringTrim($1);
+	    $termDef =~ s/\'/\"/g;   # double quotes are preferred in table storage
 	    $termDef =~ s/\\n/ /g;   # replace '\n' to a space character
 	    next;
 	}
@@ -106,8 +107,8 @@ while (<>) {
 	}
 	if ( /^comment:\s+(.+)/ ) {
 	    $termComment = $1;
-	    $termDef =~ s/\'/\"/g;   # double quotes are preferred in table storage
-	    $termDef =~ s/\\n/ /g;   # replace '\n' to a space character
+	    $termComment =~ s/\'/\"/g;   # double quotes are preferred in table storage
+	    $termComment =~ s/\\n/ /g;   # replace '\n' to a space character
 	    next;
 	}
 
