@@ -262,6 +262,7 @@ sub Embl_Match ($$) {
       $sql = "  select distinct dblink_linked_recid 
                   from db_link 
                   where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-42'
+                    and dblink_linked_recid like 'ZDB-GENE-%'
                     and dblink_acc_num = ?
                   union
                   select mrel_mrkr_1_zdb_id 
@@ -277,6 +278,7 @@ sub Embl_Match ($$) {
                   from db_link 
                   where dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-36',
                                                   'ZDB-FDBCONT-040412-37')
+                    and dblink_linked_recid like 'ZDB-GENE-%'
                     and dblink_acc_num = ?
                   union
                   select mrel_mrkr_1_zdb_id 
