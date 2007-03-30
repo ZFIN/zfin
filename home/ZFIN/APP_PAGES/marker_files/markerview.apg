@@ -1270,7 +1270,7 @@ function jump(form_select){
             == Phenotype
             ==========================================================
   <?/MICOMMENT>
-<?MIBLOCK COND="$(EQ,$marker_type,GENE)">
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,GENE),$(EQ,$marker_type,MRPHLNO))">
  <?MISQL SQL="
   	select dbinfo('sessionid') 
   	  from single;">
@@ -1292,7 +1292,8 @@ function jump(form_select){
   	  ) with NO LOG;">
  <?/MISQL>  
 
- <?MISQL SQL="
+ <?MIBLOCK COND="$(EQ,$marker_type,GENE)">
+   <?MISQL SQL="
 	insert into $mrkrview_temp_pato
             select apato_zdb_id
               from feature_marker_relationship, genotype_feature,
@@ -1302,8 +1303,9 @@ function jump(form_select){
       	       and fmrel_type = 'is allele of'
                and genofeat_geno_zdb_id = genox_geno_zdb_id
                and genox_zdb_id = apato_genox_zdb_id ;">
- <?/MISQL>
- <?MISQL SQL="
+   <?/MISQL>
+ 
+   <?MISQL SQL="
 	insert into $mrkrview_temp_pato
             select apato_zdb_id
               from mapped_deletion, feature, genotype_feature,
@@ -1314,13 +1316,47 @@ function jump(form_select){
                and feature_zdb_id = genofeat_feature_zdb_id
                and genofeat_geno_zdb_id = genox_geno_zdb_id
                and genox_zdb_id = apato_genox_zdb_id ;">
- <?/MISQL>
+   <?/MISQL>
 
- <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
+   <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
      <hr width=80%>
      <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>    
      $(SETVAR,$display_mut_trg_title,t)
- <?/MIVAR> 
+   <?/MIVAR> 
+
+   <?MIBLOCK COND="$(XST,$type_of_genedom)">
+     <?MISQL SQL="select count(*)::integer
+	       from marker_relationship
+	      where mrel_mrkr_2_zdb_id = '$OID'
+		and mrel_type = 'knockdown reagent targets gene';">
+
+       <?MIVAR NAME=$mrkrview_agt_plural_pheno>$(IF,$(>,$1,0),t,f)<?/MIVAR>
+     <?/MISQL>
+     <?MIBLOCK COND="$(EQ,$mrkrview_agt_plural_pheno,t)">
+       <?MISQL SQL="
+	  insert into $mrkrview_temp_pato
+            select apato_zdb_id 
+              from marker_relationship, experiment_condition, genotype_experiment, atomic_phenotype 
+             where mrel_mrkr_2_zdb_id = '$OID'
+               and mrel_type = 'knockdown reagent targets gene' 
+               and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id 
+               and expcond_exp_zdb_id = genox_exp_zdb_id 
+               and genox_zdb_id = apato_genox_zdb_id ;">
+       <?/MISQL> 
+     <?/MIBLOCK>
+   <?/MIBLOCK>
+ <?MIELSE>
+   <?MISQL SQL="
+	insert into $mrkrview_temp_pato
+            select apato_zdb_id
+              from experiment_condition, genotype_experiment, atomic_phenotype
+             where expcond_mrkr_zdb_id = '$OID'
+	       and expcond_exp_zdb_id = genox_exp_zdb_id
+               and genox_zdb_id = apato_genox_zdb_id ;">
+   <?/MISQL> 
+   <br/>
+ <?/MIBLOCK>
+
  <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
     <tr><td> 
        <b> Phenotype: </b><font size=-1>(<a href="javascript:start_note('phenotype_note')">current status</a></font>)
