@@ -30,8 +30,8 @@ OUTPUT:
 <?MIVAR NAME=xpanatv_index>0<?/MIVAR>
 <?MIVAR NAME=xpanatv_strCount>1<?/MIVAR>
 
-<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
-<?MIVAR NAME=MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MICOMMENT> *** iterates through each term *** <?/MICOMMENT>
 <?MIBLOCK WHILE=$(NE,$(INDEX,$xpanatv_index,$xpanatv_processed_selected_structures),)>     
@@ -239,4 +239,3 @@ where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
     <?/MIBLOCK> <?MICOMMENT> *** close 'nothing returned' miblock *** <?/MICOMMENT> 
   <?/MIBLOCK> <?MICOMMENT> *** close 'foreach anatitem' miblock *** <?/MICOMMENT>
 </table>     
-<br>

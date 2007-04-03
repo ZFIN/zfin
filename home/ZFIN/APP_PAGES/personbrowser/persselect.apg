@@ -17,7 +17,7 @@
 
 
 <HTML>
-<?MIVAR NAME=MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MIVAR>
   <title>ZFIN Person $(IF,$(XST,$query_results),List,Select)</title>

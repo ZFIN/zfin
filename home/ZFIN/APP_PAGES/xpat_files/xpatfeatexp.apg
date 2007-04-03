@@ -31,8 +31,8 @@ OUPUT:
   Message: $MI_ERRORMSG <br>
 
 <?/MIERROR>
-<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
-<?MIVAR NAME=MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MIBLOCK COND="$(NXST,$fxp_zdb_id)">
     ERROR: Genotype experiment zdb id is not passed in.

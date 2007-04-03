@@ -32,8 +32,8 @@ OUPUT:
   Message: $MI_ERRORMSG <br>
 
 <?/MIERROR>
-<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
-<?MIVAR NAME=MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MIVAR NAME=cds_display><?/MIVAR>
 <?MIVAR NAME=cds_delimiter>,<?/MIVAR>
@@ -132,4 +132,3 @@ OUPUT:
 
   <?/MIBLOCK> <?MICOMMENT>display condition only if non-standard<?/MICOMMENT>
  
-<?/MIBLOCK> <?MICOMMENT> end if experiment zdb id is passed in <?/MICOMMENT>

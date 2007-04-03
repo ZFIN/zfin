@@ -11,8 +11,8 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <TITLE>ZFIN</TITLE>
 </HEAD>
 
-<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
-<?MIVAR NAME=MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MIVAR NAME=$start_page>MIval=aa-ZDB_home.apg<?/MIVAR>
 --

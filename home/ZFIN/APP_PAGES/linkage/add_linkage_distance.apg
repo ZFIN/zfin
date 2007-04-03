@@ -49,7 +49,7 @@ Possible vars:  update
 
 <?/MIVAR>
 
-   <?MIVAR NAME=MI_NOVALUE><?/MIVAR>
+   <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <center>
   <B>
     <font size="+2"> Add Distance for Linkage: <?MIVAR> $link_id <?/MIVAR>  </font>

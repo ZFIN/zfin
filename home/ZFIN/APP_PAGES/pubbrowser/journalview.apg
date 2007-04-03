@@ -70,8 +70,8 @@ Check permissions, set MINULL, MINOVALUE
   
    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   
-  <?MIVAR NAME=MI_NULL><?/MIVAR>
-  <?MIVAR NAME=MI_NOVALUE><?/MIVAR>
+  <?MIVAR NAME=$MI_NULL><?/MIVAR>
+  <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 
   <?MIBLOCK COND="$(NXST,$OID)">
      ERROR -- something bad happened -- no OID passed in!

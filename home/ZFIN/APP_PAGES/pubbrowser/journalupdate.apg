@@ -51,8 +51,8 @@ EFFECTS:
     	ERROR -- you are not authorized to view this page.
 <?/MIBLOCK>
 
-<?MIVAR NAME=MI_NULL><?/MIVAR>
-<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
  <?MIVAR COND="$(EC,$AUTHORIZED,root)">
@@ -146,4 +146,3 @@ EFFECTS:
 
  <?/MIVAR>  <?MICOMMENT> *** ends if user is root *** <?/MICOMMENT>
 
-<?/MIBLOCK> <?MICOMMENT> *** ends if user is authorized *** <?/MICOMMENT>

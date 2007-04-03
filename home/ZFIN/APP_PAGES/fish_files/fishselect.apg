@@ -155,8 +155,8 @@ Message: $MI_ERRORMSG
 <?/MICOMMENT>
   
 <?MIVAR name=highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-<?MIVAR NAME=MI_NULL><?/MIVAR>
-<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=comma>,<?/MIVAR>  
 <?MIVAR NAME=single_quote>'<?/MIVAR>
 <?MIVAR NAME=debug_timing>f<?/MIVAR>  
