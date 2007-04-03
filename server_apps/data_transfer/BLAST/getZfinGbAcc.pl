@@ -41,7 +41,7 @@ insert into tmp_xpatmrkr_zdb_id_list
      select distinct xpatex_gene_zdb_id 
        from expression_experiment, marker 
       where xpatex_gene_zdb_id =  mrkr_zdb_id
-        and mrkr_name not like 'microRNA%' 
+        and mrkr_name[1,8] <> \"microRNA\"
         and exists (select xpatres_zdb_id from expression_result where xpatres_xpatex_zdb_id = xpatex_zdb_id);
 
 insert into tmp_xpatmrkr_zdb_id_list 
