@@ -151,18 +151,12 @@ DBACCESS = $(INFORMIXDIR)/bin/dbaccess
 WEBLINTIFMX = $(INFORMIXDIR)/extend/web.4.13.FC2/utils/weblint 2 <
 
 # --- Java
-JAVAHOME_11   = /private/apps/java1.1
-JAVAC_11      = $(JAVAHOME_11)/bin/javac
 
-JAVAHOME_14  = /private/apps/java1.4
-JAVAC_14      = $(JAVAHOME_14)/bin/javac
-
-JAVAHOME_50  = /private/apps/java5.0
-JAVAC_50      = $(JAVAHOME_50)/bin/javac
+JAVAHOME  = /private/apps/java
+JAVAC      = $(JAVAHOME)/bin/sparcv9/javac
 
 # --- Make JDBC 3.0 the default JDBC
 
-JDBCHOME_221 = /private/apps/jdbc2.21
 JDBCHOME     = /private/apps/jdbc3
 
 JAVACFLAGS =
