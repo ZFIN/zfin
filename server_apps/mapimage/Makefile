@@ -30,7 +30,7 @@ TARGETIMAGES = $(foreach IMG, $(IMAGES), $(FINALTARGETDIR)/$(IMG))
 
 # ---- Misc Java varaibles
 
-# Use the standard JAVAC_14, and JAVACFLAGS.  Still need to define classpath.
+# Use the standard JAVAC, and JAVACFLAGS.  Still need to define classpath.
 
 CLASSPATH = $(STAGINGDIR):$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
 
@@ -93,7 +93,7 @@ $(ZMSTAGINGSTATICS) : $(STAGINGZMDIR)/% : $(ZMSRCDIR)/%
 # When any class file needs to be remade, remake all of them.
 
 $(STAGINGCLASSES) : $(STAGINGJAVAS)
-	$(JAVAC_14) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
+	$(JAVAC) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
 
 
 # ----- Rules for creating the JAR file.
@@ -102,6 +102,5 @@ $(NETSCAPESYMLINK) :
 	ln -s $(NETSCAPEPATH) $(NETSCAPESYMLINK)
 
 $(JAR) : $(STAGINGCLASSES) $(NETSCAPESYMLINK)
-	cd $(STAGINGDIR); $(JAVAHOME_14)/bin/jar -cvf $(JAR) $(CLASSES) netscape
+	cd $(STAGINGDIR); $(JAVAHOME)/bin/jar -cvf $(JAR) $(CLASSES) netscape
 	chmod o+r $@
-
