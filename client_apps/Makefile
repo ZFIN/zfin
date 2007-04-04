@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/client_apps
 
-SUBDIRS = Browser Map ListSelector
+SUBDIRS = Map ListSelector
 
 
 # ---------------  Production Rules  ------------------------------------

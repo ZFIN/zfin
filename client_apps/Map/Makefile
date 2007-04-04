@@ -29,9 +29,9 @@ TARGETIMAGES = $(foreach IMG, $(IMAGES), $(FINALTARGETDIR)/$(IMG))
 
 # ---- Misc Java varaibles
 
-# Use the standard JAVAC_11, and JAVACFLAGS.  Still need to define classpath.
+# Use the standard JAVAC, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = $(STAGINGDIR):$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java
+CLASSPATH = $(STAGINGDIR):$(JAVAHOME)/lib/classes.zip:$(TOP)/lib/Java
 
 IMPORTPATH = $(TARGETROOT)/lib/Java
 NETSCAPEPATH = $(IMPORTPATH)/netscape
@@ -79,7 +79,7 @@ $(TARGETIMAGES) : $(FINALTARGETDIR)/% : %
 # When any class file needs to be remade, remake all of them.
 
 $(STAGINGCLASSES) : $(STAGINGJAVAS)
-	$(JAVAC_11) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
+	$(JAVAC) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
 
 
 # ----- Rules for creating the JAR file.
@@ -88,5 +88,5 @@ $(NETSCAPESYMLINK) :
 	ln -s $(NETSCAPEPATH) $(NETSCAPESYMLINK)
 
 $(JAR) : $(STAGINGCLASSES) $(NETSCAPESYMLINK)
-	cd $(STAGINGDIR); $(JAVAHOME_11)/bin/jar -cvf $(JAR) $(CLASSES) netscape
+	cd $(STAGINGDIR); $(JAVAHOME)/bin/jar -cvf $(JAR) $(CLASSES) netscape
 	chmod o+r $@
