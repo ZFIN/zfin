@@ -119,7 +119,43 @@ Datablade documentation.
         <?/MIBLOCK> <?MICOMMENT> if note is not empty <?/MICOMMENT>
   <?/MIBLOCK> <?MICOMMENT> if exist update_note  <?/MICOMMENT>
 
-  <?MICOMMENT>=== Query Data === <?/MICOMMENT>
+<?MICOMMENT>Added the ability to add an alias for a feature FB 1577<?/MICOMMENT>
+<?MIBLOCK COND="$(XST,$new_value)">
+    <?MISQL SQL="
+      execute function get_id('DALIAS');">
+      <?MIVAR NAME=$dalias_zdb_id>$1<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="
+      insert into zdb_active_data
+          (zactvd_zdb_id)
+        values
+          ('$dalias_zdb_id');">
+    <?/MISQL>
+    <?MISQL SQL="
+      insert into data_alias
+          (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group,
+                dalias_alias_lower)
+        values
+          ('$dalias_zdb_id', '$genovw_ftr_zdb_id', '$new_value', 'alias',
+                lower('$new_value'));">
+    <?/MISQL>
+
+    <?MICOMMENT>Run regen feature/marker to make the aliases searchable.first determine if feature or marker<?/MICOMMENT>
+    <?MIBLOCK COND="$(=,5,$(POSITION,$genovw_ftr_zdb_id,ALT))">
+       <?MISQL SQL="
+       execute procedure regen_names_feature('$genovw_ftr_zdb_id');">
+       <?/MISQL>
+     <?MIELSE>
+       <?MISQL SQL="
+       execute procedure regen_names_marker('$genovw_ftr_zdb_id');">
+     <?/MISQL>
+    <?/MIBLOCK>
+<?/MIBLOCK>
+<?MICOMMENT>ened update alias block<?/MICOMMENT>
+  
+   <?MICOMMENT>query data<?/MICOMMENT>
+
+
   <?MISQL SQL="
 	select geno_display_name, geno_handle, 
                geno_supplier_stock_number, geno_is_wildtype,
@@ -683,7 +719,16 @@ Datablade documentation.
         <td align=top>
           <table border="0" cellpadding=2> 
 
-          <?MICOMMENT> -------  Previous Name(s) --------<?/MICOMMENT>
+          <?MICOMMENT> -------  Previous Name(s) added ability to add an alias (FB 1577)--------<?/MICOMMENT>
+          <?MIVAR COND="$(XST,$UPDATE)">
+          <form name=updatealias method=get action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+    <input type=hidden name=genovw_ftr_zdb_id value=$genovw_ftr_zdb_id>
+              <b>Add Previous Name:</b>
+             <INPUT TYPE=text name=new_value SIZE=50>
+            <INPUT TYPE=submit
+             value=Add
+          <?/MIVAR>
+          </form>
 
           <?MISQL SQL="
 	      select dalias_alias, dalias_zdb_id
