@@ -647,7 +647,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 
       <?/MISQL>
 
-      <?MIVAR COND="$(XST,$contained_zdb_id)"></TABLE><?/MIVAR>
+      <?MIVAR COND="$(XST,$contains_zdb_id)"></TABLE><?/MIVAR>
 
     </form>
 
