@@ -1,0 +1,4 @@
+<ul>
+<?MISQL SQL="select $wcomp_cn from $wcomp_t where LOWER($wcomp_cn) like LOWER('$wcomp_q%') order by $wcomp_order_col"><li>$1</li><?/MISQL>
+<?MISQL SQL="select $wcomp_cn from $wcomp_t where LOWER($wcomp_cn) like LOWER('%$wcomp_q%') and LOWER($wcomp_cn) not like LOWER('$wcomp_q%') order by $wcomp_order_col"><li>$1</li><?/MISQL>
+</ul>
