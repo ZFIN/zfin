@@ -49,7 +49,7 @@
      <li>Find <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75" 
                  title="Search for zebrafish researchers by name or address">
                 <strong>People</strong></a><?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">, 
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$ZDB_ident&UPDATE=1"><em>Update Your ZFIN Record</em></a>
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$ZDB_ident"><em>Update Your ZFIN Record</em></a>
     <?/MIVAR>
     </li>
      <li>Find <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg&select_from=LAB" 
