@@ -238,8 +238,28 @@ DEBUGGING:
            from all_map_names $mrkrsel_nameTable
 	  where allmapnm_precedence <> 'Accession number'
             $mrkrsel_nameTest
+	UNION
+	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, 
+                allmapnm_significance, allmapnm_precedence
+	  from marker_relationship, all_map_names $mrkrsel_nameTable
+	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id 
+ 	   and mrel_type in ('promoter of','coding sequence of')
+           and allmapnm_precedence <> 'Accession number'
+           $mrkrsel_nameTest 
+	UNION
+	 select mrel_mrkr_2_zdb_id as allmapnm_zdb_id, allmapnm_name, 
+                allmapnm_significance, allmapnm_precedence
+	  from marker_relationship, all_map_names $mrkrsel_nameTable
+	 where mrel_mrkr_1_zdb_id = allmapnm_zdb_id 
+ 	   and mrel_type in ('promoter of','coding sequence of')
+           and allmapnm_precedence <> 'Accession number'
+           $mrkrsel_nameTest                      
           order by allmapnm_zdb_id, allmapnm_significance, allmapnm_name;">
 	 <?MIVAR NAME=geneMchId>$1<?/MIVAR>
+	 <?MIVAR NAME=geneMchName>$2<?/MIVAR>
+	 <?MIVAR NAME=geneMchSig>$3<?/MIVAR>
+	 <?MIVAR NAME=geneMchPrec>$4<?/MIVAR>
+	 
          <?MISQL COND="$(NC,$geneMchId,$geneMchIdLast)" SQL="
            insert into $markerselect_temp_match
 	       ( mstmatch_zdb_id, mstmatch_name, 
@@ -248,6 +268,7 @@ DEBUGGING:
 	   <?MICOMMENT> the URLENCODE encodes "'" which is problematic<?/MICOMMENT>
  	   $(SETVAR,$geneMchIdLast,$geneMchId)          	
          <?/MISQL>
+ 
       <?/MISQL>
      	
       <?MIVAR NAME=$mrkrsel_optional_match_table>,$markerselect_temp_match<?/MIVAR>
@@ -771,7 +792,10 @@ DEBUGGING:
            <?/MIVAR>
 
            <?MIBLOCK COND="$(XST,$input_name)">
-	     <TD align=left><b>Matching Text</b></TD>
+             <?MIBLOCK COND="$(AND,$(XST,$mtype),$(EC,$mtype,TGCONSTRCT))">
+               <TD align=left>&nbsp;</TD>
+             <?/MIBLOCK>
+	     <TD align=left><b>Matching Text</b></TD>	    
            <?/MIBLOCK>
          </TR>
       <?/MIBLOCK><?MICOMMENT>===== end of title display ===<?/MICOMMENT>
