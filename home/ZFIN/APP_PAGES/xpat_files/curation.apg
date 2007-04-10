@@ -730,19 +730,35 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   </ul>
 </div>
 
-<script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
 
 
 <br>
-<p>
 <a name=attrib>
+<p>
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#attrib" method=post name=attribution onSubmit="setCookie('attribution_update','update','pubcur_c_');setCookie('anchor','attrib','pubcur_c_');">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 
-    
-  Attribute Mrkr: 
-     <input type=textbox name=pubcur_G_mrkr_attrib id=MRKRterm size=10>             
+  <link href="/phenote/css/control.css" type="text/css" rel="stylesheet">
+  <!-- Ajax stuff (prototype library and friends)-->
+
+  <script src="/phenote/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
+  <script src="/phenote/javascript/ajax-lib/effects.js"   type="text/javascript"></script>
+  <script src="/phenote/javascript/ajax-lib/dragdrop.js"  type="text/javascript"></script>
+  <script src="/phenote/javascript/ajax-lib/controls.js"  type="text/javascript"></script>
+  <!-- /Ajax stuff -->
+
+       
+  *Attribute Mrkr: 
+     <input type="textbox" name="pubcur_G_mrkr_attrib" id="curApgMrkrCompleter" size="10" autocomplete="off">             
+          <span id="pubcurMrkrAutoCompleterIndicator" style="display: none; color: red;">working...</span>
+
+          <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="mrkr_abbrev_auto_complete"></div>
+
+<script type="text/javascript">
+     var patoApgGoCompleter = new Ajax.Autocompleter( 'curApgMrkrCompleter', 'mrkr_abbrev_auto_complete', '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',{parameters:'MIval=aa-wordcompletion.apg&wcomp_t=marker&wcomp_cn=mrkr_abbrev&wcomp_order_col=mrkr_abbrev_order', tokens: ',', paramName: 'wcomp_q', indicator: 'pubcurMrkrAutoCompleterIndicator', minChars: 3});
+</script>  
+
      <input type=submit value=Submit>
 
   &nbsp;&nbsp;&nbsp;
@@ -750,8 +766,15 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 
-  Attribute Feature: 
-     <input type=textbox name=pubcur_G_fish_attrib size=10> 
+  *Attribute Feature: 
+     <input type="textbox" name="pubcur_G_fish_attrib" id="curApgFishCompleter" size="15" autocomplete="off">             
+          <span id="pubcurFishAutoCompleterIndicator" style="display: none; color: red;">working...</span>
+
+          <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="fish_abbrev_auto_complete"></div>
+
+<script type="text/javascript">
+     var patoApgGoCompleter = new Ajax.Autocompleter( 'curApgFishCompleter', 'fish_abbrev_auto_complete', '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',{parameters:'MIval=aa-wordcompletion.apg&wcomp_t=feature&wcomp_cn=feature_abbrev&wcomp_order_col=feature_abbrev_order', tokens: ',', paramName: 'wcomp_q', indicator: 'pubcurFishAutoCompleterIndicator', minChars: 3});
+</script> 
      <input type=submit value=Submit>
 
   &nbsp;&nbsp;&nbsp;  
@@ -788,6 +811,9 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
     <input type=submit value=Submit>
 
 <br>    
+<font size="-1">*Auto complete requires three characters. Use '%' as a wildcard. </font>
+<br>
+
 </form>
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
@@ -845,8 +871,6 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   <p>Authorization for this page failed.
   <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
-  <p>This error may also come up when trying to edit publications that this page wasn't meant to edit.   
-
 <?/MIBLOCK> <?MICOMMENT> not authorized <?/MICOMMENT>
 
 <?MIELSE>
