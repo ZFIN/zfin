@@ -42,15 +42,6 @@ function getCookie(name) {
   </script>
 
 
-  <link href="/phenote/css/control.css" type="text/css" rel="stylesheet">
-  <!-- Ajax stuff (prototype library and friends)-->
-
-  <script src="/phenote/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
-  <script src="/phenote/javascript/ajax-lib/effects.js"   type="text/javascript"></script>
-  <script src="/phenote/javascript/ajax-lib/dragdrop.js"  type="text/javascript"></script>
-  <script src="/phenote/javascript/ajax-lib/controls.js"  type="text/javascript"></script>
-  <!-- /Ajax stuff -->
-
   <script type="text/javascript" src="/phenote/javascript/phenote-state.js"></script>
   <script type="text/javascript"> phenoteState.setTermInfoUrl('/phenote/Phenote/'); </script>
   <script src="/phenote/javascript/ncbo-term-info.js" type="text/javascript"></script>
