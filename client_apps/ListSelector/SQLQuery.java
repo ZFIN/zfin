@@ -14,8 +14,7 @@ import com.informix.jdbc.*;
    @author Arthur Kirkpatrick
    @version 1.0, Jan. 10, 1998.
 
-   @see SQLResultBuilder
-   @see QueryMarkers
+
  */
 public class SQLQuery
 {
@@ -58,7 +57,10 @@ public class SQLQuery
 		catch (Exception e) { System.err.println("ERROR: failed to load Informix JDBC driver. - " + e);	}
 
 		try {  conn = DriverManager.getConnection(newUrl);  } 
-		catch (SQLException e) { System.err.println("ERROR: failed to connect! - " + e); } 
+		catch (SQLException e) {
+            System.err.println("ERROR: failed to connect!\n url:" + newUrl + "\n");
+            e.printStackTrace();
+        }
 
 		return conn;
 
@@ -175,8 +177,6 @@ public class SQLQuery
 	       are not supported---every row must have exactly this number of fields.
 	   @param request The SQL SELECT statement to be executed.  The terminating ";" should
 	       be included.
-	   @param builder An instance of a class which can parse the delimited String returned
-	       by the query and break it up into units which are meaningful to the caller.
 	   @return A Vector of Objects, each Object representing a row returned by the
 	       Select statement.
 	*/
@@ -242,8 +242,6 @@ public class SQLQuery
 	       are not supported---every row must have exactly this number of fields.
 	   @param request The SQL SELECT statement to be executed.  The terminating ";" should
 	       be included.
-	   @param builder An instance of a class which can parse the delimited String returned
-	       by the query and break it up into units which are meaningful to the caller.
 	   @return A Vector of Objects, each Object representing a row returned by the
 	       Select statement.
 	*/
