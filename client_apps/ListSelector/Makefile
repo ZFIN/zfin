@@ -28,10 +28,9 @@ FINALTARGETDIR = $(TARGETROOT)/client_apps/ListSelector
 
 # Use the standard JAVAC_50, and JAVACFLAGS.  Still need to define classpath.
 
-JAVAC	= $(JAVAC_50)
+JDBCHOME_221  = /private/apps/jdbc2.21
 
-
-#using old jdbc till the applet works with current jdbc
+#old jdbc till the applet works with current jdbc
 
 SRCIFMXPATH   = $(JDBCHOME_221)/lib
 IFMXJARS      = ifxjdbc.jar ifxlsupp.jar
