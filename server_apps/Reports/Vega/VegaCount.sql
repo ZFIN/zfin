@@ -3,15 +3,41 @@
 !echo    '---------------------------------------------------------------------'
 !echo    '# of sequence accession numbers Sanger has submitted to us'
 
-select count(distinct dblink_acc_num)OTTDARGS
+select count(distinct dblink_acc_num)OTTDAR_G
  from db_link
- where dblink_acc_num[1,6] = 'OTTDAR'
+ where dblink_acc_num[1,7] = 'OTTDARG'
 ;
 
 select count(distinct dblink_linked_recid)GENES
  from db_link
- where dblink_acc_num[1,6] = 'OTTDAR'
+ where dblink_acc_num[1,7] = 'OTTDARG'
 ;
+
+! echo " same for transcripts"
+
+select count(distinct dblink_acc_num)OTTDAR_T  
+ from db_link
+ where dblink_acc_num[1,7] = 'OTTDART'
+;
+
+select count(distinct dblink_linked_recid)TRANSCRIPTS
+ from db_link
+ where dblink_acc_num[1,7] = 'OTTDART'
+;
+
+
+! echo "number of haploid transcripts"
+
+select count (t.dblink_linked_recid) haploid_tscript
+ from db_link t
+ where t.dblink_acc_num[1,7] = 'OTTDART'
+ and  t.dblink_linked_recid not in (
+	select dblink_linked_recid
+	 from db_link g
+	 where g.dblink_acc_num[1,7] = 'OTTDARG'
+ )
+;
+
 
 !echo    '---------------------------------------------------------------------'
 !echo    '# of si genes renamed to informative gene nomenclature'
@@ -207,8 +233,7 @@ select count(*) si_genes
 !echo    '---------------------------------------------------------------------'
 !echo 'Genes with a Vega link and no Thisse expression'
 
-create temp table tmp_vega_thisse_report
-  (
+create temp table tmp_vega_thisse_report (
     veth_significance  integer,
     veth_mrkr_abbrev   varchar(50),
     veth_acc_num       varchar(40),
@@ -226,9 +251,8 @@ select count(*) named_genes from tmp_vega_thisse_report where veth_mrkr_abbrev n
 !echo    '---------------------------------------------------------------------'
 !echo '# of zgc genes'
 select count(*) zgc_genes
-  from tmp_vega_thisse_report
- where exists
-     (
+ from tmp_vega_thisse_report
+ where exists (
        select *
          from marker_relationship, marker gene, marker clone
         where gene.mrkr_abbrev = veth_mrkr_abbrev
