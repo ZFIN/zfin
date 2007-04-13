@@ -10,7 +10,6 @@
 use Getopt::Long qw(:config bundling);
 use DBI;
 
-
 #------------------------------------------------------------------------
 # Log an error message.
 #
@@ -194,6 +193,10 @@ sub recordResult(@) {
 
 #######################  Checking  ##################################
 
+
+
+
+
 #=================== Anatomy Item  =================================
 
 #----------------------------------------------------------------
@@ -297,6 +300,65 @@ sub expressionResultStageWindowOverlapsAnatomyItem ($) {
   }
   &recordResult($routineName, $nRecords);
 }
+
+
+#----------------------------------------------------------------
+#Parameter
+# $      Email Address for recipients
+#
+# For fx interface, we store the source (pub) zdb_id in both the figure
+# table and in the expression_experiment table.
+# We then relate the two, figure and expression, in fx_expression_pattern_figure
+# We want the two sources to match--otherwise, we'd have figures from 
+# one paper associated with expression_patterns from other papers.  This 
+# would be incorrect. 
+# These attributions are also stored in record_attribution, but that
+# table is not verified here.
+
+sub checkElsevierFigureNoExpressions($) {
+	
+  my $routineName = "checkElsevierFigureNoExpressions";
+	
+  my $sql = '
+				select i.img_zdb_id, p.zdb_id, p.title, f.fig_label, j.jrnl_name
+				from 
+					image i , figure f, publication p, journal j
+				where 
+					j.jrnl_publisher like "Elsevier%"
+					and j.jrnl_zdb_id=p.pub_jrnl_zdb_id
+					and f.fig_source_zdb_id=p.zdb_id 
+					and i.img_fig_zdb_id=f.fig_zdb_id
+					and not exists
+					(
+					select *
+						from expression_pattern_figure expr
+						where f.fig_zdb_id=expr.xpatfig_fig_zdb_id
+					)
+		'
+						;
+		
+  	
+  my @colDesc = (
+		 "Image ID:          ",
+		 "Publication ID: ",
+		 "Publication title: ",
+		 "Figure label:      ",
+		 "Journal name:      ",
+		);
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+
+    my $sendToAddress = $_[0];
+    my $subject = "Contains Elsevier images with no expression pattern";
+    my $errMsg = "$nRecords records use Elsevier images with no expression patterns." ; 
+      		       
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+} 
 
 
 #========================  Features  ================================
@@ -2536,7 +2598,7 @@ GetOptions (
 #
 # Define GLOBALS
 #
-
+			
 $globalDbName = $ARGV[0]; #"<!--|DB_NAME|-->";
 $globalUsername = "";
 $globalPassword = "";
@@ -2580,29 +2642,30 @@ my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
 my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 
 if($daily) {
-  expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
-  xpatHasConsistentMarkerRelationship($xpatEmail);
-  checkFigXpatexSourceConsistant($dbaEmail);
+	expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
+	xpatHasConsistentMarkerRelationship($xpatEmail);
+	checkFigXpatexSourceConsistant($dbaEmail);
+	checkElsevierFigureNoExpressions($dbaEmail);
 
-  featureAssociatedWithGenotype($mutantEmail);
-  featureIsAlleleOfOrMrkrAbsent($mutantEmail);
-  genotypesHaveNoNames($mutantEmail);
-  linkageHasMembers($linkageEmail);
-  linkagePairHas2Members($linkageEmail);
+	featureAssociatedWithGenotype($mutantEmail);
+	featureIsAlleleOfOrMrkrAbsent($mutantEmail);
+	genotypesHaveNoNames($mutantEmail);
+	linkageHasMembers($linkageEmail);
+	linkagePairHas2Members($linkageEmail);
 
-  foreigndbNotInFdbcontains($otherEmail);
+	foreigndbNotInFdbcontains($otherEmail);
 
-  zdbObjectHomeTableColumnExist($dbaEmail);
-  zdbObjectIsSourceDataCorrect($dbaEmail);
-  zdbObjectHandledByGetObjName($dbaEmail);
+	zdbObjectHomeTableColumnExist($dbaEmail);
+	zdbObjectIsSourceDataCorrect($dbaEmail);
+	zdbObjectHandledByGetObjName($dbaEmail);
 
-  pubTitlesAreUnique($otherEmail);
-  zdbReplacedDataIsReplaced($dbaEmail);
+	pubTitlesAreUnique($otherEmail);
+	zdbReplacedDataIsReplaced($dbaEmail);
 
-  mrkrgoevDuplicatesFound($goEmail);
-  mrkrgoevGoevflagDuplicatesFound($goEmail);
-  mrkrgoevObsoleteAnnotationsFound($goEmail);
-  mrkrgoevSecondaryAnnotationsFound($goEmail);
+	mrkrgoevDuplicatesFound($goEmail);
+	mrkrgoevGoevflagDuplicatesFound($goEmail);
+	mrkrgoevObsoleteAnnotationsFound($goEmail);
+	mrkrgoevSecondaryAnnotationsFound($goEmail);
 }
 if($orphan) {
   
