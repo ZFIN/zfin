@@ -244,7 +244,7 @@ Number exists
 Number does not exist
 <?/MICOMMENT>
 
-<?MIVAR COND="$(AND, $(EC,$pubview2_doi_no,), $(POSITION,$(UPPER,$jrnl_publisher),ELSEVIER), $( EC , $AUTHORIZED , submit ) ) ">
+<?MIVAR COND="$(AND, $(EC,$pubview2_doi_no,), $(POSITION,$(UPPER,$jrnl_publisher),ELSEVIER), $( EC , $AUTHORIZED , root ) ) ">
   <b>DOI: </b>
   <font color=red>DOI tag not given for Elsevier publication.</font>
 <?/MIVAR>
