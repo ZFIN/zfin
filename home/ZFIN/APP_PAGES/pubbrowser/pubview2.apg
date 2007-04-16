@@ -78,7 +78,7 @@ displays a publication record, or many publication records if > 1 returned.
   select title, authors, year(pub_date), jrnl_abbrev, keywords, pub_abstract, 
          accession_no, pub_errata_and_notes, jtype, pub_file, 
 	 pub_completion_date, pub_volume, pub_pages, status, pub_mini_ref,
-	 pub_doi
+	 pub_doi, jrnl_publisher
     from publication, journal where zdb_id='$OID'
      and jrnl_zdb_id = pub_jrnl_zdb_id;">
 <?/MISQL>
@@ -99,6 +99,7 @@ displays a publication record, or many publication records if > 1 returned.
    <?MIVAR NAME=$pubview2_pub_status>$14<?/MIVAR>
    <?MIVAR NAME=$pubview2_pub_miniref>$15<?/MIVAR>
    <?MIVAR NAME=$pubview2_doi_no>$16<?/MIVAR>
+   <?MIVAR NAME=$jrnl_publisher>$17<?/MIVAR>
    
    <?MIVAR NAME=$pubview_source>$pubview2_jrnl_abbrev<?/MIVAR>   
    
@@ -121,7 +122,6 @@ displays a publication record, or many publication records if > 1 returned.
 	<b>Requested ID not found in ZFIN.</font>
 	</form>
   <?/MIBLOCK>
-
 
   <?MIBLOCK COND="$(NC,$title,$MI_NOVALUE)">
 
@@ -148,7 +148,6 @@ displays a publication record, or many publication records if > 1 returned.
 <?/MICOMMENT>
 
 <?MIVAR>
-
 <center> 
   <p>  
    <FONT SIZE=+2> $title 
@@ -222,12 +221,34 @@ displays a publication record, or many publication records if > 1 returned.
   &nbsp;&nbsp;&nbsp;  
 <?/MIVAR>
 
+<?MICOMMENT>
+If DOI exists  -> list.
+If DOI does not exist:
+	if Elvesier and role is developer -> list with error
+    else -> do not list
+<?/MICOMMENT>
+
+
+<?MICOMMENT>
+Number exists
+<?/MICOMMENT>
+
 <?MIVAR COND="$(NC,$pubview2_doi_no,)">
   <b>DOI: </b>
   <?MIVAR>
     <A HREF=http://dx.doi.org/$pubview2_doi_no>$pubview2_doi_no</A>
   <?/MIVAR>
 <?/MIVAR>
+
+<?MICOMMENT>
+Number does not exist
+<?/MICOMMENT>
+
+<?MIVAR COND="$(AND, $(EC,$pubview2_doi_no,), $(POSITION,$(UPPER,$jrnl_publisher),ELSEVIER), $( EC , $AUTHORIZED , submit ) ) ">
+  <b>DOI: </b>
+  <font color=red>DOI tag not given for Elsevier publication.</font>
+<?/MIVAR>
+
 <p> 
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
