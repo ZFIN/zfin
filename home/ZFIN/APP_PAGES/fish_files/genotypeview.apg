@@ -63,7 +63,9 @@ Datablade documentation.
 <?MICOMMENT> If updating, only let owner update anything <?/MICOMMENT>
 <?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'page_title=Update Genotype&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
-
+<SCRIPT>
+<?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-genotypeview.apg&jsdelatt_page_var=__') from webpages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
+</SCRIPT>
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
   <?MICOMMENT>=== Update Action === 
@@ -150,8 +152,32 @@ Datablade documentation.
        execute procedure regen_names_marker('$genovw_ftr_zdb_id');">
      <?/MISQL>
     <?/MIBLOCK>
+<?MIBLOCK COND="$(XST,$genovw_alias_pubid)">
+
+    <?MISQL SQL="
+      insert into record_attribution
+          (recattrib_data_zdb_id, recattrib_source_zdb_id)
+        values
+          ('$dalias_zdb_id', '$genovw_alias_pubid');">
+    <?/MISQL>
+
+
 <?/MIBLOCK>
-<?MICOMMENT>ened update alias block<?/MICOMMENT>
+
+<?/MIBLOCK>
+
+ <?MIBLOCK COND="$(XST,$attr)">
+      <?MISQL SQL="
+        delete from record_attribution
+          where recattrib_data_zdb_id = '$dataOID'
+            and recattrib_source_zdb_id = '$old_value';">
+      <?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(XST,$prev_name)">
+
+
+<?/MIBLOCK>
+<?MICOMMENT>end update alias block<?/MICOMMENT>
   
    <?MICOMMENT>query data<?/MICOMMENT>
 
@@ -725,6 +751,8 @@ Datablade documentation.
     <input type=hidden name=genovw_ftr_zdb_id value=$genovw_ftr_zdb_id>
               <b>Add Previous Name:</b>
              <INPUT TYPE=text name=new_value SIZE=50>
+      <p><b>Add Reference:</b>
+      <input type=text name=genovw_alias_pubid>
             <INPUT TYPE=submit
              value=Add
           <?/MIVAR>
