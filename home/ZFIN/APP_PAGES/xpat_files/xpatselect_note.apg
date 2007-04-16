@@ -15,7 +15,7 @@ A more complete incorporation of figures from the older literature is
 a long-term goal.</p>
 
 <p>
-To find transgenic fish with GFP expression, go to the <a href="<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishsearch.apg"> Mutants/Transgenics</a> search page,
+To find transgenic fish with GFP expression, go to the <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg"> Mutants/Transgenics</a> search page,
 <ol>
 <li> enter GFP (or RFP, YFP etc.) in the Gene/Allele name field
 <li> select "Show only transgenics" under Filters
@@ -23,6 +23,6 @@ To find transgenic fish with GFP expression, go to the <a href="<!--|WEBDRIVER_P
 </ol>
 
 <p>If you have questions or suggestions or would like to submit
-expression pattern images to ZFIN, please <a href="/zf_info/contact_us.html">contact us</a>. </p>
+expression pattern images to ZFIN, please <a href="mailto:zfinadmn@zfin.org">contact us</a>. </p>
 </body>
 </html>
