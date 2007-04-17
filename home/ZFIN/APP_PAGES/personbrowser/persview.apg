@@ -132,7 +132,7 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<
 <br>
 <?/MIVAR>
 
-<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$ZDB_access,adminasst))">
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 <TABLE width=100% border cellpadding=3>
 <TR><TD bgcolor="<!--|HIGHLIGHT_COLOR|-->">
 <b>Admin info:</b><br>
