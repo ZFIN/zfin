@@ -53,12 +53,12 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
 <?MICOMMENT>
   -----------------------------------------------
-  -- root, owner and adminasst are able to see/use
+  -- root, owner  are able to see/use
   -- the update links
   ------------------------------------------------
 <?/MICOMMENT>
 
-<?MIBLOCK COND="$(AND,$(XST,$AUTHORIZED),$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,owner),$(EC,$AUTHORIZED,adminasst)))">
+<?MIBLOCK COND="$(AND,$(XST,$AUTHORIZED),$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,owner)))">
 
 <?MIBLOCK COND="$(NC,$rtype,publication)">  <!-- dont show second row for pubs -->
 
