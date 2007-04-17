@@ -222,18 +222,6 @@
        <?/MIBLOCK><?MICOMMENT>-- end of if permission=owns or person,lab types --<?/MICOMMENT>
      <?/MIBLOCK> <?MICOMMENT>-- end of if xst OID, rtype--<?/MICOMMENT>
 
-
-      <?MICOMMENT>
-        ------------------------------------------------
-        -- adminasst scenario
-        ------------------------------------------------
-      <?/MICOMMENT>        
-      <?MIBLOCK COND="$(AND,$(EC,$ZDB_access,adminasst),$(XST,$rtype))">
-         <?MIVAR COND="$(OR,$(EC,$rtype,person),$(EC,$rtype,lab))">
-	   $(SETVAR,$AUTHORIZED,owner)
-         <?/MIVAR>
-      <?/MIBLOCK>
-
       <?MICOMMENT>
 	------------------------------------------------
 	-- root user got authorized
