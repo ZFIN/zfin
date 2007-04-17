@@ -215,11 +215,6 @@ function submit_delete () {
 	  $(IF,$(EC,$AUTHORIZED,root),
 	    "<SELECT name=access>
 	      <option "$(IF,$(EC,$access,submit),SELECTED)">submit
-	      <option "$(IF,$(EC,$access,betatest),SELECTED)">betatest
-	      <option "$(IF,$(EC,$access,preview),SELECTED)">preview
-	      <option "$(IF,$(EC,$access,fishauth),SELECTED)">fishauth
-	      <option "$(IF,$(EC,$access,adminasst),SELECTED)">adminasst
- 	      <option "$(IF,$(EC,$access,zirc),SELECTED)">zirc
 	      "$(IF,$(EC,$access,root),<option SELECTED>root)"
 	    </SELECT>",$access)
 	</TD>
