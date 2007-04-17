@@ -639,7 +639,6 @@ marker = '';
 
   <?MICOMMENT>----------Reference Panel Mapping ----------------<?/MICOMMENT>
 
-  <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR> 
    <?MISQL SQL="
 	select a.owner, lg_location, refcross_id as panel_id, or_lg, c.abbrev as panel_abbrev, b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order 
 	from mapped_marker a, outer person b, panels c  
