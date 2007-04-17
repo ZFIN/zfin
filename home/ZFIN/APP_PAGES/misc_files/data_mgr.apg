@@ -83,7 +83,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   tools for editting the person's ZFIN account.  7/12/00 added add/update access for administrative asst.  -->
 <?MIBLOCK COND="$(EC,$rtype,person)">
 
-<?MIVAR COND="$(OR,$(EC,$AUTHORIZED,owner),$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,adminasst))">
+<?MIVAR COND="$(OR,$(EC,$AUTHORIZED,owner),$(EC,$AUTHORIZED,root))">
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID"><font size=-1 color=red> Update this Record</font></A> 
 <?/MIVAR>
 </TD>
