@@ -27,6 +27,8 @@ TRIGGERS = \
 	anatomy_items_update_trigger.sql \
 	anatomy_relationship_insert_trigger.sql \
 	anatomy_relationship_update_trigger.sql \
+	apato_genox_stage_insert_trigger.sql \
+	apato_genox_stage_update_trigger.sql \
 	atomic_phenotype_insert_trigger.sql \
 	atomic_phenotype_update_trigger.sql \
 	apatoinf_insert_trigger.sql \
@@ -89,6 +91,7 @@ TRIGGERS = \
 	record_attribution_insert_trigger.sql \
 	stage_insert_trigger.sql \
 	stage_update_trigger.sql \
+	updates_insert_trigger.sql \
 	zdb_object_type_insert_trigger.sql \
 	zdb_object_type_update_trigger.sql \
 	zdb_submitters_insert_trigger.sql
