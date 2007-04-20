@@ -748,6 +748,24 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   <script src="/phenote/javascript/ajax-lib/controls.js"  type="text/javascript"></script>
   <!-- /Ajax stuff -->
 
+<?MICOMMENT>
+Number does not exist
+<?/MICOMMENT>
+
+<?MISQL SQL="
+  select pub_doi, jrnl_publisher
+    from publication, journal where zdb_id='$OID'
+     and jrnl_zdb_id = pub_jrnl_zdb_id;">
+<?/MISQL>
+
+   <?MIVAR NAME=$pubview2_doi_no>$1<?/MIVAR>
+   <?MIVAR NAME=$jrnl_publisher>$2<?/MIVAR>
+
+
+<?MIVAR COND="$(AND, $(NC,$pubview2_doi_no,), $(POSITION,$(UPPER,$jrnl_publisher),ELSEVIER), $( EC , $AUTHORIZED , root ) ) ">
+  <font color=red>DOI tag not given for Elsevier publication.</font>
+	<p>
+<?/MIVAR>
        
   *Attribute Mrkr: 
      <input type="textbox" name="pubcur_G_mrkr_attrib" id="curApgMrkrCompleter" size="10" autocomplete="off">             

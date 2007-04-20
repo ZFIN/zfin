@@ -240,15 +240,6 @@ Number exists
   <?/MIVAR>
 <?/MIVAR>
 
-<?MICOMMENT>
-Number does not exist
-<?/MICOMMENT>
-
-<?MIVAR COND="$(AND, $(EC,$pubview2_doi_no,), $(POSITION,$(UPPER,$jrnl_publisher),ELSEVIER), $( EC , $AUTHORIZED , root ) ) ">
-  <b>DOI: </b>
-  <font color=red>DOI tag not given for Elsevier publication.</font>
-<?/MIVAR>
-
 <p> 
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
