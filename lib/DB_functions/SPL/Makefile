@@ -65,7 +65,8 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql \
 	       regen_panelcount.sql regen_maps.sql
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
-ZDB_GNRCS    = table_exists.sql
+ZDB_GNRCS    = table_exists.sql  
+ZDB_AGGR    = concatenate.sql
 ZDB_STATS    = get_obj_name.sql get_obj_abbrev.sql get_date_from_id.sql \
 	       p_check_zdb_object_table.sql syscall.sql zdb_date.sql \
 	       p_check_submitter_is_root.sql set_session_params.sql
@@ -92,11 +93,13 @@ ANAT_GNRCS = get_entity_name_html.sql
 MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql clone_2_sanger.sql \
 		 get_genofeat_mp_zyg_html_display.sql
 
+GENERIC_AGGR = $(ZDB_AGGR) 
 GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) $(ANAT_GNRCS) \
 		get_mrkr_name_html_link.sql get_mutants_html_link.sql \
 	        get_mrkr_abbrev_html_link.sql get_geno_name_html_link.sql \
 		get_geno_name_with_bg_html_link.sql \
-		get_genotype_backgrounds_html_link.sql
+		get_genotype_backgrounds_html_link.sql \
+		concat_init.sql concat_iter.sql concat_combine.sql concat_final.sql 
 STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
 		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS) $(ANAT_STATS) \
 		$(LOAD_STATS) $(XPAT_STATS)
@@ -104,9 +107,10 @@ STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))
 MULTIPLE_PROC_TARGETS = $(foreach SPEC, $(MULTIPLE_PROCS), $(TARGETDIR)/$(SPEC))
+SPECIFIC_AGGR_TARGETS = $(foreach SPEC, $(GENERIC_AGGR), $(TARGETDIR)/$(SPEC))
 
 ENDEMICTARGETS_POSTTARGETS = $(SPECIFIC_PROC_TARGETS) $(STATIC_PROC_TARGETS) \
-			     $(MULTIPLE_PROC_TARGETS)
+			     $(MULTIPLE_PROC_TARGETS) $(SPECIFIC_AGGR_TARGETS) 
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -128,3 +132,9 @@ $(STATIC_PROC_TARGETS) : $(TARGETDIR)/% : %
 $(MULTIPLE_PROC_TARGETS) : $(TARGETDIR)/% : %
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
 	-$(DBACCESS) $(DBNAME) $@
+
+$(SPECIFIC_AGGR_TARGETS) : $(TARGETDIR)/% : %
+	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+	-echo 'drop aggregate $(patsubst %.sql,%,$^)' | $(DBACCESS) $(DBNAME) > /dev/null 2>&1
+	$(DBACCESS) $(DBNAME) $@
+

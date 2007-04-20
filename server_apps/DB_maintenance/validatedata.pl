@@ -101,6 +101,73 @@ sub execSql {
   return ($nRecords);
 }
 
+
+#------------------------------------------------------------------------
+#
+# Orders column value.  A helper function for orderResults.
+#
+# Params
+#   $		Name of column effect.
+#   $   Column data.
+# 
+# Returns 
+#   data string formatted or unformatted. 
+sub checkInput(@){
+
+	my $columnLabel = shift  ;
+	my $columnData = shift  ;
+
+	my @returnArray  ; 
+
+# if $input starts with $columnLabel
+	if( "$columnData" =~ /^$columnLabel/ ){
+#    parse tokens around ' ' ; 
+		@tokens = split(/ /,$columnData) ; 
+		foreach $token (@tokens){
+			 if( "$token" =~ /^[0-9]/){
+					push(@returnArray,scalar($token)) ; 
+			 }
+		}
+		@returnArray= sort(@returnArray) ;   
+		@returnArray = sort { $a <=> $b } @returnArray ; 
+		$columnData = $columnLabel . "@returnArray" ; 
+	}
+	return $columnData ; 
+}
+
+
+#------------------------------------------------------------------------
+#
+# Orders array data. 
+#
+# Params
+#   $		Name of column effect.
+#   @   Sql result rows.
+# 
+# Returns 
+#   rows from the original query, ordered in the specified column. 
+# 
+sub orderResults(@) {
+
+	 my $columnLabel = shift ; 
+	 my $formattedData = "" ; 
+
+	 open RESULT, "$globalResultFile" or die "Cannot open the result file for read.\n";
+	 while ($input =  <RESULT>) {
+		 $input = checkInput( $columnLabel, $input) ; 
+		 $formattedData = $formattedData . $input ; 
+	 }
+	 close (RESULT);
+
+	 print "$formattedData" ; 
+
+
+	 open FORMATTED, ">$globalResultFile" or die "Cannot open the result file for read.\n";
+	 print FORMATTED $formattedData ; 
+	 close(FORMATTED) ; 
+
+}
+
 #------------------------------------------------------------------------    
 # Send the check result 
 #
@@ -306,21 +373,18 @@ sub expressionResultStageWindowOverlapsAnatomyItem ($) {
 #Parameter
 # $      Email Address for recipients
 #
-# For fx interface, we store the source (pub) zdb_id in both the figure
-# table and in the expression_experiment table.
-# We then relate the two, figure and expression, in fx_expression_pattern_figure
-# We want the two sources to match--otherwise, we'd have figures from 
-# one paper associated with expression_patterns from other papers.  This 
-# would be incorrect. 
-# These attributions are also stored in record_attribution, but that
-# table is not verified here.
+# Finds figures with images from Elseview publications which have not finished
+# being reviewed (are open) and have PATO data but have no expression patterns.  
+# This raises a flag that we should look at these again as they have been checked
+# already (because there is PATO data), but no expression data was found.
+# Per our agreement with Elsevier we are not supposed to show these images.
 
-sub checkElsevierFigureNoExpressions($) {
+sub checkOpenElsevierFigureNoExpresWithPATO($) {
 	
-  my $routineName = "checkElsevierFigureNoExpressions";
+  my $routineName = "checkOpenElsevierFigureNoExpresWithPATO";
 	
   my $sql = '
-				select i.img_zdb_id, p.zdb_id, p.title, f.fig_label, j.jrnl_name
+			select p.zdb_id as Pub_Id, j.jrnl_name as Journal, p.title as Title, concatenate( replace( f.fig_label ,"Fig. ","" ) ) as Figures
 				from 
 					image i , figure f, publication p, journal j
 				where 
@@ -328,31 +392,97 @@ sub checkElsevierFigureNoExpressions($) {
 					and j.jrnl_zdb_id=p.pub_jrnl_zdb_id
 					and f.fig_source_zdb_id=p.zdb_id 
 					and i.img_fig_zdb_id=f.fig_zdb_id
+					and p.pub_completion_date is null 
 					and not exists
 					(
 					select *
 						from expression_pattern_figure expr
 						where f.fig_zdb_id=expr.xpatfig_fig_zdb_id
 					)
+					and exists
+					(
+					select * 
+						from apato_figure a
+						where 
+						a.apatofig_fig_zdb_id=f.fig_zdb_id 
+					 )
+				 group by p.zdb_id, j.jrnl_name, p.title ;
 		'
 						;
 		
   	
   my @colDesc = (
-		 "Image ID:          ",
-		 "Publication ID: ",
-		 "Publication title: ",
-		 "Figure label:      ",
+		 "Publication ID:    ",
 		 "Journal name:      ",
+		 "Publication title: ",
+		 "Figures:                        ",
 		);
 
   my $nRecords = execSql ($sql, undef, @colDesc);
 
-  if ( $nRecords > 0 ) {
+	orderResults($colDesc[3],$nRecords) ; 
 
+  if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Contains Elsevier images with no expression pattern";
-    my $errMsg = "$nRecords records use Elsevier images with no expression patterns." ; 
+    my $subject = "Contains Elsevier images from open publications with no expression pattern but existing PATO.";
+    my $errMsg = "$nRecords open publications use Elsevier images with no expression patterns but existing PATO values." ; 
+      		       
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+} 
+
+
+#----------------------------------------------------------------
+#Parameter
+# $      Email Address for recipients
+# Finds figures with images from Elseview publications which have been 
+# reviewed (are closed) and have no expression patterns.  Per our agreement
+# with Elsevier we are not supposed to show these images.
+#
+#
+#----------------------------------------------------------------
+sub checkClosedElsevierFigureNoExpressions($) {
+	
+  my $routineName = "checkClosedElsevierFigureNoExpressions";
+	
+  my $sql = '
+		select  p.zdb_id as Pub_Id, j.jrnl_name as Journal, p.title as Title, concatenate( replace(f.fig_label ,"Fig. ","") ) as Figures
+			from 
+				image i , figure f, publication p, journal j
+			where 
+				j.jrnl_publisher like "Elsevier%"
+				and j.jrnl_zdb_id=p.pub_jrnl_zdb_id
+				and f.fig_source_zdb_id=p.zdb_id 
+				and i.img_fig_zdb_id=f.fig_zdb_id
+				and p.pub_completion_date is not null 
+				and not exists
+				(
+				select *
+					from expression_pattern_figure expr
+					where f.fig_zdb_id=expr.xpatfig_fig_zdb_id
+				)
+			 group by p.zdb_id, j.jrnl_name, p.title ;
+		'
+						;
+		
+  	
+  my @colDesc = (
+		 "Publication ID:    ",
+		 "Journal name:      ",
+		 "Publication title: ",
+		 "Figures:                        ",
+		);
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+	orderResults($colDesc[3],$nRecords) ; 
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Contains Elsevier images from closed publications with no expression pattern";
+    my $errMsg = "$nRecords closed publications use Elsevier images with no expression patterns." ; 
       		       
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
@@ -2645,7 +2775,7 @@ if($daily) {
 	expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
 	xpatHasConsistentMarkerRelationship($xpatEmail);
 	checkFigXpatexSourceConsistant($dbaEmail);
-	checkElsevierFigureNoExpressions($dbaEmail);
+	checkClosedElsevierFigureNoExpressions($xpatEmail);
 
 	featureAssociatedWithGenotype($mutantEmail);
 	featureIsAlleleOfOrMrkrAbsent($mutantEmail);
@@ -2675,25 +2805,26 @@ if($orphan) {
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
-  estsHave1Gene($estEmail);
-  prefixedGenesHave1Est($estEmail);
-  estsWithoutClonesHaveXxGenes($estEmail);
-  xxGenesHaveNoClones($estEmail);
+  checkOpenElsevierFigureNoExpresWithPATO($xpatEmail);
+	estsHave1Gene($estEmail);
+	prefixedGenesHave1Est($estEmail);
+	estsWithoutClonesHaveXxGenes($estEmail);
+	xxGenesHaveNoClones($estEmail);
 
-  # these are curatorial errors (case219)
-  # however, errors returned are difficult to
-  # return to curators without dba
-  associatedDataforPUB030905_1($dbaEmail);
-  associatedDataforPUB030508_1($dbaEmail);
-  associatedDataforPUB030905_2($dbaEmail);
+	# these are curatorial errors (case219)
+	# however, errors returned are difficult to
+	# return to curators without dba
+	associatedDataforPUB030905_1($dbaEmail);
+	associatedDataforPUB030508_1($dbaEmail);
+	associatedDataforPUB030905_2($dbaEmail);
 
-  # put these here until we get them down to 0 records.  Then move them to 
-  # daily.
-  orthologyOrganismMatchesForeignDBContains($dbaEmail);
+	# put these here until we get them down to 0 records.  Then move them to 
+	# daily.
+	orthologyOrganismMatchesForeignDBContains($dbaEmail);
 
-  refSeqAccessionInWrongFormat($geneEmail);
-  vegaAccessionInWrongFormat($geneEmail);
-  morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
+	refSeqAccessionInWrongFormat($geneEmail);
+	vegaAccessionInWrongFormat($geneEmail);
+	morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
 
 }
 if($monthly) {
