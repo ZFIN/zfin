@@ -130,7 +130,7 @@ sub checkInput(@){
 		}
 		@returnArray= sort(@returnArray) ;   
 		@returnArray = sort { $a <=> $b } @returnArray ; 
-		$columnData = $columnLabel . "@returnArray" ; 
+		$columnData = $columnLabel . "@returnArray" . "\n" ; 
 	}
 	return $columnData ; 
 }
@@ -384,7 +384,7 @@ sub checkOpenElsevierFigureNoExpresWithPATO($) {
   my $routineName = "checkOpenElsevierFigureNoExpresWithPATO";
 	
   my $sql = '
-			select p.zdb_id as Pub_Id, j.jrnl_name as Journal, p.title as Title, concatenate( replace( f.fig_label ,"Fig. ","" ) ) as Figures
+			select p.zdb_id as Pub_Id, j.jrnl_name as Journal, p.title as Title, p.pub_date as Pub_Date, concatenate( replace( f.fig_label ,"Fig. ","" ) ) as Figures
 				from 
 					image i , figure f, publication p, journal j
 				where 
@@ -406,7 +406,8 @@ sub checkOpenElsevierFigureNoExpresWithPATO($) {
 						where 
 						a.apatofig_fig_zdb_id=f.fig_zdb_id 
 					 )
-				 group by p.zdb_id, j.jrnl_name, p.title ;
+				 group by p.zdb_id, j.jrnl_name, p.title, p.pub_date  
+				 order by p.pub_date desc ;
 		'
 						;
 		
@@ -415,12 +416,13 @@ sub checkOpenElsevierFigureNoExpresWithPATO($) {
 		 "Publication ID:    ",
 		 "Journal name:      ",
 		 "Publication title: ",
+		 "Publication date:  ",
 		 "Figures:                        ",
 		);
 
   my $nRecords = execSql ($sql, undef, @colDesc);
 
-	orderResults($colDesc[3],$nRecords) ; 
+	orderResults($colDesc[4],$nRecords) ; 
 
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
@@ -448,7 +450,7 @@ sub checkClosedElsevierFigureNoExpressions($) {
   my $routineName = "checkClosedElsevierFigureNoExpressions";
 	
   my $sql = '
-		select  p.zdb_id as Pub_Id, j.jrnl_name as Journal, p.title as Title, concatenate( replace(f.fig_label ,"Fig. ","") ) as Figures
+		select  p.zdb_id as Pub_Id, j.jrnl_name as Journal, p.title as Title, p.pub_date as Pub_Date, concatenate( replace(f.fig_label ,"Fig. ","") ) as Figures 
 			from 
 				image i , figure f, publication p, journal j
 			where 
@@ -463,7 +465,9 @@ sub checkClosedElsevierFigureNoExpressions($) {
 					from expression_pattern_figure expr
 					where f.fig_zdb_id=expr.xpatfig_fig_zdb_id
 				)
-			 group by p.zdb_id, j.jrnl_name, p.title ;
+			 group by p.zdb_id, j.jrnl_name, p.title, p.pub_date 
+			 order by p.pub_date desc
+			 ;
 		'
 						;
 		
@@ -472,12 +476,13 @@ sub checkClosedElsevierFigureNoExpressions($) {
 		 "Publication ID:    ",
 		 "Journal name:      ",
 		 "Publication title: ",
+		 "Publication date:  ",
 		 "Figures:                        ",
 		);
 
   my $nRecords = execSql ($sql, undef, @colDesc);
 
-	orderResults($colDesc[3],$nRecords) ; 
+	orderResults($colDesc[4],$nRecords) ; 
 
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
@@ -2772,10 +2777,10 @@ my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
 my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 
 if($daily) {
+	checkClosedElsevierFigureNoExpressions($xpatEmail);
 	expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
 	xpatHasConsistentMarkerRelationship($xpatEmail);
 	checkFigXpatexSourceConsistant($dbaEmail);
-	checkClosedElsevierFigureNoExpressions($xpatEmail);
 
 	featureAssociatedWithGenotype($mutantEmail);
 	featureIsAlleleOfOrMrkrAbsent($mutantEmail);
