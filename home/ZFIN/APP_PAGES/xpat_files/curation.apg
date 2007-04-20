@@ -762,7 +762,7 @@ Number does not exist
    <?MIVAR NAME=$jrnl_publisher>$2<?/MIVAR>
 
 
-<?MIVAR COND="$(AND, $(NC,$pubview2_doi_no,), $(POSITION,$(UPPER,$jrnl_publisher),ELSEVIER), $( EC , $AUTHORIZED , root ) ) ">
+<?MIVAR COND="$(AND, $(EC,$pubview2_doi_no,null), $(POSITION,$(UPPER,$jrnl_publisher),ELSEVIER), $( EC , $AUTHORIZED , root ) ) ">
   <font color=red>DOI tag not given for Elsevier publication.</font>
 	<p>
 <?/MIVAR>
