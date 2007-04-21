@@ -407,7 +407,7 @@ sub checkOpenElsevierFigureNoExpresWithPATO($) {
 						a.apatofig_fig_zdb_id=f.fig_zdb_id 
 					 )
 				 group by p.zdb_id, j.jrnl_name, p.title, p.pub_date  
-				 order by p.pub_date desc ;
+				 order by p.zdb_id desc ;
 		'
 						;
 		
@@ -466,7 +466,7 @@ sub checkClosedElsevierFigureNoExpressions($) {
 					where f.fig_zdb_id=expr.xpatfig_fig_zdb_id
 				)
 			 group by p.zdb_id, j.jrnl_name, p.title, p.pub_date 
-			 order by p.pub_date desc
+			 order by p.zdb_id desc
 			 ;
 		'
 						;
