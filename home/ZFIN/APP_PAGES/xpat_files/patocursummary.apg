@@ -44,8 +44,10 @@ PREFIX:   patosum_
 <?MICOMMENT> ** copy from cookie to local var, because I coded it to local vars originally,
                 but not a terrible idea, since the cookie is global and shared and I don't
                 want too many references to it ** <?/MICOMMENT>
-   <?MIVAR COND="$(XST,$pubcur_c_figure_only)" NAME="$patosum_filter_fig">$pubcur_c_figure_only<?/MIVAR>
-   <?MIVAR COND="$(XST,$xpcur_c_fish_only)" NAME="$patosum_filter_genotype">$xpcur_c_fish_only<?/MIVAR>
+   <?MIVAR COND="$(XST,$pubcur_c_figure_only)" 
+           NAME="$patosum_filter_fig">$pubcur_c_figure_only<?/MIVAR>
+   <?MIVAR COND="$(XST,$xpcur_c_fish_only)" 
+           NAME="$patosum_filter_genotype">$xpcur_c_fish_only<?/MIVAR>
 
 <?MICOMMENT> ** create empty sql segments that will get included in the where clause
                 in any necessary tables below ** <?/MICOMMENT>
@@ -57,8 +59,12 @@ PREFIX:   patosum_
 <?MIBLOCK COND="$(XST,$patosum_filter_fig)">
    <?MICOMMENT> ** be sure it's valid, this might be 
                    wasteful overhead once everything is working ** <?/MICOMMENT>
-   <?MISQL SQL="select first 1 zactvd_zdb_id from zdb_active_data where zactvd_zdb_id = '$patosum_filter_fig'">
-	<?MIVAR NAME="$patosum_filter_fig_sql"> and fig_zdb_id = '$patosum_filter_fig' <?/MIVAR>
+   <?MISQL SQL="select first 1 zactvd_zdb_id 
+                  from zdb_active_data 
+                  where zactvd_zdb_id = '$patosum_filter_fig'">
+	<?MIVAR NAME="$patosum_filter_fig_sql"> 
+          and fig_zdb_id = '$patosum_filter_fig' 
+        <?/MIVAR>
     <?/MISQL>
 
 <?/MIBLOCK>
@@ -66,12 +72,17 @@ PREFIX:   patosum_
 <?MIBLOCK COND="$(XST,$patosum_filter_genotype)">
    <?MICOMMENT> ** be sure it's valid, this might be 
                    wasteful overhead once everything is working ** <?/MICOMMENT>
-   <?MISQL SQL="select first 1 zactvd_zdb_id from zdb_active_data where zactvd_zdb_id = '$patosum_filter_genotype'">
-	<?MIVAR NAME="$patosum_filter_genotype_sql"> and geno_zdb_id = '$patosum_filter_genotype' <?/MIVAR>
+   <?MISQL SQL="select first 1 zactvd_zdb_id 
+                  from zdb_active_data 
+                  where zactvd_zdb_id = '$patosum_filter_genotype'">
+	<?MIVAR NAME="$patosum_filter_genotype_sql"> 
+          and geno_zdb_id = '$patosum_filter_genotype' 
+        <?/MIVAR>
    <?/MISQL>
 <?/MIBLOCK>
 
-<?MICOMMENT> ** TODO: this should get a different css class than searchresults ** <?/MICOMMENT>
+<?MICOMMENT> ** TODO: this should get a different css 
+                class than searchresults ** <?/MICOMMENT>
 
  <h3>Mutants:</h3>
 
@@ -89,7 +100,9 @@ PREFIX:   patosum_
 
 
 
- <div id="patosum-mutants" style="overflow: auto; height: 300px; border: 1px solid black; width: 98%; margin-left: 1%;">
+ <div id="patosum-mutants" 
+      style="overflow: auto; height: 300px; 
+             border: 1px solid black; width: 98%; margin-left: 1%;">
  
  <table class="searchresults">
   <thead class="searchresults">
@@ -105,8 +118,8 @@ PREFIX:   patosum_
   </thead>
   <tbody class="searchresults">
     <?MISQL SQL="select distinct fig_label, fig_zdb_id, geno_nickname, geno_zdb_id, 
-                        exp_name, exp_zdb_id, apato_start_stg_zdb_id, apato_end_stg_zdb_id, fig_full_label, 
-			genox_zdb_id
+                        exp_name, exp_zdb_id, apato_start_stg_zdb_id, apato_end_stg_zdb_id, 
+                        fig_full_label, genox_zdb_id
                    from figure
                      join apato_figure on apatofig_fig_zdb_id = fig_zdb_id
                      left outer join atomic_phenotype on apato_zdb_id = apatofig_apato_zdb_id
@@ -153,29 +166,38 @@ PREFIX:   patosum_
 
       <?MICOMMENT> ** Build corresponding javascript object ** <?/MICOMMENT>
       <script type="text/javascript">
-      patoCuration.mutants[$(-,$patosum_recordIndex,1)] = new Mutant("$patosum_fig_label", "$patosum_fig_zdb_id", "$patosum_geno_nickname",
-							"$patosum_geno_zdb_id", "$patosum_exp_name", "$patosum_exp_zdb_id",
-							"$patosum_start_stg_zdb_id", "$patosum_start_stg_abbrev",
-							"$patosum_end_stg_zdb_id", "$patosum_end_stg_abbrev","$patosum_genox_zdb_id", 
-							"false",
-							"$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id");
+      patoCuration.mutants[$(-,$patosum_recordIndex,1)] = new Mutant("$patosum_fig_label", 
+                                                                     "$patosum_fig_zdb_id", 
+                                                                     "$patosum_geno_nickname",
+                                                                     "$patosum_geno_zdb_id", 
+                                                                     "$patosum_exp_name", 
+                                                                     "$patosum_exp_zdb_id",
+                                                                     "$patosum_start_stg_zdb_id", 
+                                                                     "$patosum_start_stg_abbrev",
+                                                                     "$patosum_end_stg_zdb_id", 
+                                                                     "$patosum_end_stg_abbrev",
+                                                                     "$patosum_genox_zdb_id", 
+                                                                     "false",
+    "$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id");
 
       </script>
 
 
       <tr <?MIBLOCK COND="$(EC,1,$(MOD,$patosum_recordIndex,2))">class="odd"<?/MIBLOCK>
-        onclick="document.getElementById('$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id').click();"
-       >
+        onClick="document.getElementById('$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id').click();
+                 patoCuration.updateMutantForm('$patosum_fig_zdb_id', '$patosum_geno_zdb_id', '$patosum_exp_zdb_id', '$patosum_start_stg_zdb_id', '$patosum_end_stg_zdb_id'); ">
         <td> <?MICOMMENT> ** Select column ** <?/MICOMMENT>
           <input type="checkbox" 
                  id="$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id" 
                  onclick="this.click();" 
                  onChange="patoCuration.updateMutants();
                            sessionState.storeObjectAttribute(this.id, 'checked', this.checked);
-                           sessionState.getAttribute(this.id, 'checked');">
-                 <?MICOMMENT> ** about that onclick="click()" above.. if you click the checkbox, you get an event 
-                                 in both the tr and the checkbox - so two events means you return to the same state.
-                                 3 events and you move on to the other state.  it's goofy, but simple ** <?/MICOMMENT>
+                           /* sessionState.getAttribute(this.id, 'checked'); */ ">
+                           
+                 <?MICOMMENT> ** about that onclick="click()" above.. if you click the checkbox, 
+                                 you get an event in both the tr and the checkbox - so two events 
+                                 means you return to the same state.  3 events and you move on to 
+                                 the other state.  it's goofy, but simple ** <?/MICOMMENT>
         </td> 
         <td style="white-space: nowrap"> <?MICOMMENT> ** Fig Column ** <?/MICOMMENT>
           $patosum_fig_label 
@@ -221,13 +243,14 @@ PREFIX:   patosum_
             <?MIBLOCK COND="$(NE,$patosum_entity_b_zdb_id,NULL)">
                <?MIVAR>$patosum_entity_b_name<?/MIVAR>:
              <?/MIBLOCK> 
-             $patosum_entity_a_name 
+             $patosum_entity_a_name
              - $patosum_quality_name [$patosum_tag] <br>
              <script type="text/javascript">
                patoCuration.mutants[$(-,$patosum_recordIndex,1)].phenotypes[$(-,$MI_CURRENTROW,1)] = "$patosum_pheno_key";
              </script>
              <?MIVAR COND="$(EC,$MI_CURRENTROW,1)" NAME="$patosum_first_apato_zdb_id">$patosum_apato_zdb_id<?/MIVAR>
           <?/MISQL>
+
          </small>
         </td>
         <td>
