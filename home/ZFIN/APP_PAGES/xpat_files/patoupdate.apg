@@ -42,7 +42,8 @@ INPUT VARS:
 
   updatephenos
     patoup_updatephenos                  :: flag to update phenotype / mutant connections
-    patoup_updatephenos_selectedmutants  :: 'mutants' to update, fig|example_api_zdb_id, get genox & stages from api 
+    patoup_updatephenos_selectedmutants  :: 'mutants' to update, fig|example_api_zdb_id, 
+                                             get genox & stages from api 
     patoup_updatephenos_selectedmutants_count :: number of mutants
     patoup_updatephenos_add              :: | seperated api_zdb_id's to add 
     patoup_updatephenos_add_count        :: # to add
@@ -80,8 +81,9 @@ EFFECTS
       setCookie('pato_update','no','pubcur_c_')
   </script>
 
-  <?MICOMMENT> *** Set some globals to define the contents of a 'default' apato record
-                   that will be used as a placeholder when new apato records are created *** <?/MICOMMENT> 
+  <?MICOMMENT> *** Set some globals to define the contents of a 
+                   'default' apato record that will be used as a 
+                    placeholder when new apato records are created *** <?/MICOMMENT> 
 
     <?MICOMMENT> ** get default quality id ** <?/MICOMMENT>
     <?MISQL SQL="select term_zdb_id 
@@ -108,7 +110,8 @@ EFFECTS
 
     <?MICOMMENT> ** process entity and quality names for single quotes ** <?/MICOMMENT>
     <?MIVAR NAME="$patoup_entity_a_name" DELIMIT="'" REPLACE="''">$patoup_entity_a_name<?/MIVAR>
-    <?MIVAR COND="$(XST,$patoup_entity_b_name)" NAME="$patoup_entity_b_name" DELIMIT="'" REPLACE="''">$patoup_entity_b_name<?/MIVAR>
+    <?MIVAR COND="$(XST,$patoup_entity_b_name)" 
+            NAME="$patoup_entity_b_name" DELIMIT="'" REPLACE="''">$patoup_entity_b_name<?/MIVAR>
     <?MIVAR NAME="$patoup_quality_name" DELIMIT="'" REPLACE="''">$patoup_quality_name<?/MIVAR>
 
 
@@ -466,21 +469,6 @@ EFFECTS
 
                 
          
-                <?MICOMMENT> ** if this record has a default placeholder record, delete it now ** <?/MICOMMENT>
-                <?MICOMMENT> ** REMOVE: this can go, removing the placeholder happens in the 
-                                javascript radiobuttons now ** <?/MICOMMENT>
-                <?MISQL COND="$(EQ,pigs,flying)" SQL="delete from atomic_phenotype
-                             where apato_entity_a_zdb_id = '$patoup_default_entity_zdb_id'
-                               and apato_entity_b_zdb_id is null
-                               and apato_quality_zdb_id = '$patoup_default_quality_zdb_id'
-                               and apato_tag = '$patoup_default_tag'
-                               and apato_genox_zdb_id = '$patoup_genox_zdb_id'
-                               and apato_pub_zdb_id = '$OID'
-                               and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
-                               and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id';">
-                <?/MISQL>
-
-
         <?/MIBLOCK>
 
         <?MICOMMENT> * link to the figure if isn't already * <?/MICOMMENT>
@@ -505,9 +493,11 @@ EFFECTS
 
 
       <?MICOMMENT> ** foreach structure to remove... ** <?/MICOMMENT>
+
       <?MISQL SQL="select api_entity_a_zdb_id, api_entity_b_zdb_id, api_quality_zdb_id, api_tag
                   from apato_infrastructure 
                   where api_zdb_id in ($patoup_updatephenos_remove_csv);">       
+
         <?MIVAR NAME="patoup_entity_a_zdb_id">$1<?/MIVAR>
         <?MIVAR NAME="patoup_entity_b_zdb_id">$2<?/MIVAR>
         <?MIVAR NAME="patoup_quality_zdb_id">$3<?/MIVAR>
@@ -558,9 +548,11 @@ EFFECTS
 
 
         <?/MISQL> <?MICOMMENT> ** end pato exists sql 'if' statement ** <?/MICOMMENT>
-        
-        <?MICOMMENT> ** if we deleted everything attached to this mutant, re-insert the default ** <?/MICOMMENT>
+   
 
+        <?MICOMMENT> ** if we deleted everything attached to this mutant, re-insert a default entry ** <?/MICOMMENT>
+
+        <?MIVAR>$(UNSETVAR,$patoup_mutant_has_phenotypes)<?/MIVAR>
         <?MISQL SQL="select first 1 apato_zdb_id
                      from atomic_phenotype
                        join apato_figure
@@ -570,26 +562,57 @@ EFFECTS
                        and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
                        and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id'
                        and apatofig_fig_zdb_id = '$patoup_fig_zdb_id';">
-          <?MIVAR NAME="$patoup_still_has_phenotypes">exists<?/MIVAR>
+          <?MIVAR NAME="$patoup_mutant_has_phenotypes">exists<?/MIVAR>
         <?/MISQL>
 
-        <?MIBLOCK COND="$(NXST,$patoup_still_has_phenotypes)">
-          <?MISQL SQL="execute function get_id('APATO');">
+        <?MIBLOCK COND="$(NXST,$patoup_mutant_has_phenotypes)">
+
+          <?MICOMMENT> * clear apato_zdb_id var to use it's existence as a flag * <?/MICOMMENT>
+          <?MIVAR>$(UNSETVAR,$patoup_apato_zdb_id)<?/MIVAR>
+
+          <?MICOMMENT> * does a default record exist already (attached to 
+                         another figure?) * <?/MICOMMENT>
+          <?MISQL SQL="select first 1 apato_zdb_id
+                     from atomic_phenotype
+                     where apato_pub_zdb_id = '$OID'
+                       and apato_genox_zdb_id = '$patoup_genox_zdb_id'
+                       and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
+                       and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id'
+                       and apato_quality_zdb_id = '$patoup_default_quality_zdb_id'
+                       and apato_entity_a_zdb_id = '$patoup_default_entity_zdb_id'
+                       and apato_entity_b_zdb_id is null
+                       and apato_tag = '$patoup_default_tag';">
             <?MIVAR NAME="$patoup_apato_zdb_id">$1<?/MIVAR>
           <?/MISQL>
 
-          <?MISQL SQL="insert into zdb_active_data values ('$patoup_apato_zdb_id');"><?/MISQL>
 
-          <?MISQL SQL="insert into atomic_phenotype  (apato_zdb_id, apato_genox_zdb_id, apato_start_stg_zdb_id, 
+          <?MICOMMENT> ** if we have a default record attached to another fig, attach it to this fig ** <?/MICOMMENT>
+          <?MIBLOCK COND="$(XST,$patoup_apato_zdb_id)">
+
+            <?MISQL SQL="insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id) 
+                         values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id');"><?/MISQL>
+
+
+          <?MIELSE> <?MICOMMENT> ** need to make a new default record ** <?/MICOMMENT>
+
+
+            <?MISQL SQL="execute function get_id('APATO');">
+              <?MIVAR NAME="$patoup_apato_zdb_id">$1<?/MIVAR>
+            <?/MISQL>
+
+            <?MISQL SQL="insert into zdb_active_data values ('$patoup_apato_zdb_id');"><?/MISQL>
+
+            <?MISQL SQL="insert into atomic_phenotype  (apato_zdb_id, apato_genox_zdb_id, apato_start_stg_zdb_id, 
                                                       apato_end_stg_zdb_id, apato_pub_zdb_id, apato_entity_a_zdb_id, 
                                                       apato_quality_zdb_id, apato_tag)
                                               values ('$patoup_apato_zdb_id', '$patoup_genox_zdb_id', '$patoup_start_stg_zdb_id', 
                                                       '$patoup_end_stg_zdb_id', '$OID', '$patoup_default_entity_zdb_id', 
                                                       '$patoup_default_quality_zdb_id', '$patoup_default_tag');">
-            <?MISQL SQL="insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id) 
-                         values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id');"><?/MISQL>
-          <?/MISQL>
-          <script>alert('All phenotypes were removed from a mutant, so unspecified was added as a placeholder');</script>
+              <?MISQL SQL="insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id) 
+                           values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id');"><?/MISQL>
+            <?/MISQL>
+            <script>alert('All phenotypes were removed from a mutant, so unspecified was added as a placeholder');</script>
+          <?/MIBLOCK>
         <?/MIBLOCK>
 
         <?MICOMMENT> * clean up for the next pass through the loop * <?/MICOMMENT>
