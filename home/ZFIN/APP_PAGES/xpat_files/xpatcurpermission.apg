@@ -73,9 +73,27 @@ EFFECTS
   <?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">
     <?MIVAR NAME=xpcurperm_can_show_image>$1<?/MIVAR>
   <?/MISQL>
+
+
+<?MISQL SQL="select pub_doi,jrnl_is_nice from publication, journal where zdb_id='$OID' and jrnl_publisher like '$elsevierName' and jrnl_zdb_id = pub_jrnl_zdb_id;"><?/MISQL>
+
+   <?MIVAR NAME=$pubview2_doi_no>$1<?/MIVAR>
+   <?MIVAR NAME=$jrnl_is_nice>$2<?/MIVAR>
+
   
-  <?MIVAR>    
-    Display Images:  
+    Display Images:  <br/>
+  <?MIBLOCK COND="$(AND,$(EC,$pubview2_doi_no,NULL),$(EC,$jrnl_is_nice,t))">    
+  <font color=red>
+	This Elsevier publication requires a DOI to enable figure permissions.  
+	 Please 
+	</font>
+	<?MIVAR>
+	<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$OID">enter the DOI</a>. 
+	<?/MIVAR>
+	<br/>
+	<p>
+
+	<?MIELSE>
     <br>Yes: <input type=radio name=xpcur_G_can_show_image value="t" $(IF,$(EC,$xpcurperm_can_show_image,t),CHECKED)>
     <br>No: <input type=radio name=xpcur_G_can_show_image value="f"  $(IF,$(EC,$xpcurperm_can_show_image,f),CHECKED) 
               <?MIVAR COND=$(EC,$xpcurperm_can_set_permission_false,false)>
@@ -84,9 +102,11 @@ EFFECTS
             >
     <br>
     <br>Acknowledgment:
+		<?MIVAR>
     <br><textarea name=xpcur_G_pub_ack cols=50 rows=5>$xpcurperm_ackn</textarea>
+		<?/MIVAR>
     <br><input type=submit value=Update>
-  <?/MIVAR>
+  <?/MIBLOCK>
 </form>
 
 <?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>
