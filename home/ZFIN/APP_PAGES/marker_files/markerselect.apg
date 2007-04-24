@@ -231,13 +231,10 @@ DEBUGGING:
 	  and allnmend_name_end_lower like '$(LOWER,$input_name)%' 
 	<?/MIVAR>
       <?/MIBLOCK>
-      <?MIVAR NAME=geneMchIdLast><?/MIVAR>	
-      <?MISQL SQL="
-	 select allmapnm_zdb_id, allmapnm_name, 
-		allmapnm_significance, allmapnm_precedence 
-           from all_map_names $mrkrsel_nameTable
-	  where allmapnm_precedence <> 'Accession number'
-            $mrkrsel_nameTest
+      <?MIVAR NAME=geneMchIdLast><?/MIVAR>
+      <?MIVAR NAME=mrkrsel_union><?/MIVAR>
+      <?MIBLOCK COND="$(EQ,$marker_type,TGCONSTRCT)">
+        <?MIVAR NAME=mrkrsel_union>
 	UNION
 	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, 
                 allmapnm_significance, allmapnm_precedence
@@ -253,7 +250,30 @@ DEBUGGING:
 	 where mrel_mrkr_1_zdb_id = allmapnm_zdb_id 
  	   and mrel_type in ('promoter of','coding sequence of')
            and allmapnm_precedence <> 'Accession number'
-           $mrkrsel_nameTest                      
+           $mrkrsel_nameTest   
+        <?/MIVAR>
+      <?/MIBLOCK>
+      
+      <?MIBLOCK COND="$(EQ,$marker_type,MRPHLNO)">
+        <?MIVAR NAME=mrkrsel_union>
+	UNION
+	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, 
+                allmapnm_significance, allmapnm_precedence
+	  from marker_relationship, all_map_names $mrkrsel_nameTable
+	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id 
+ 	   and mrel_type = 'knockdown reagent targets gene'
+           and allmapnm_precedence <> 'Accession number'
+           $mrkrsel_nameTest 
+        <?/MIVAR>
+      <?/MIBLOCK>      
+
+      <?MISQL SQL="
+	 select allmapnm_zdb_id, allmapnm_name, 
+		allmapnm_significance, allmapnm_precedence 
+           from all_map_names $mrkrsel_nameTable
+	  where allmapnm_precedence <> 'Accession number'
+            $mrkrsel_nameTest
+            $mrkrsel_union   
           order by allmapnm_zdb_id, allmapnm_significance, allmapnm_name;">
 	 <?MIVAR NAME=geneMchId>$1<?/MIVAR>
 	 <?MIVAR NAME=geneMchName>$2<?/MIVAR>

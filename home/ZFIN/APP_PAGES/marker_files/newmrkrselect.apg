@@ -195,6 +195,7 @@ DEBUGGING:
 	  from marker_relationship, all_map_names $newmrkrsel_nameTable
 	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id 
  	   and mrel_type in ('promoter of','coding sequence of')
+ 	   and mrel_mrkr_1_zdb_id like 'ZDB-TG%'
            and allmapnm_precedence <> 'Accession number'
            $newmrkrsel_nameTest 
 	UNION
@@ -203,8 +204,17 @@ DEBUGGING:
 	  from marker_relationship, all_map_names $newmrkrsel_nameTable
 	 where mrel_mrkr_1_zdb_id = allmapnm_zdb_id 
  	   and mrel_type in ('promoter of','coding sequence of')
+ 	   and mrel_mrkr_2_zdb_id like 'ZDB-TG%'
            and allmapnm_precedence <> 'Accession number'
-           $newmrkrsel_nameTest            
+           $newmrkrsel_nameTest       
+	UNION
+	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, 
+                allmapnm_significance
+	  from marker_relationship, all_map_names $newmrkrsel_nameTable
+	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id 
+ 	   and mrel_type = 'knockdown reagent targets gene'
+           and allmapnm_precedence <> 'Accession number'
+           $newmrkrsel_nameTest                  
          order by 1, 3, 2;">
 
 	<?MIVAR NAME=mchId>$1<?/MIVAR>
