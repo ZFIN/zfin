@@ -184,27 +184,23 @@ create dba function "informix".regen_names() returning integer
     -- for the threee types of names.  This data comes from the name_precedence
     -- table.
 
-    
-    --Genetic feature name|1|Name of a Feature.|
-    --Genetic feature alias|2|Previous name of a Feature.|
-    --Current symbol|3|Current symbol for a marker.  Used only with markers.|
-    --Current name|4|Current name of a marker.  Used only with markers.|
-    --Clone name|5|Current name of a marker where marker is a clone.  Used only
- 	--with markers.|
-    --Marker relations|6|Used on some app pages where we want to pull in 
-	--marker_relationships.  Used only with markers.|
-    --Previous name|7|Marker alias.  Used only with markers.|
-    --Orthologue|8|Orthologue names/symbols.  Used only with markers.|
-    --Accession number|9|Accession numbers from other databases associated with
-	--this marker.  Used only with markers.|
-    --Sequence similarity|10|Accession number for a sequence similarity in 
-	--another database.  Used only with markers.|
-    --Clone contains gene|11|This one is not used in regen_genomics, but it is 
-	--used in at least one app page (as of 2005/01) to associate the names
- 	--of genes that are contained in clones, with the clones.  I do not
-	-- know why it is done this way. (Dave C)|
-    --Genetic feature abbreviation|102|Abbreviation of a Feature.|
-    --Genotype alias|202|Previous name of a Genotype.|
+     --   1 Current symbol            Marker
+     --   2 Current name              Marker
+     --   3 Clone name                Marker
+     --   4 Marker relations          Marker (not used in regen_names)
+     --   5 Previous name             Marker
+     --   6 Orthologue                Marker
+     --   7 Accession number          Marker
+     --   8 Sequence similarity       Marker
+     --   9 Clone contains gene       Marker (not used in regen_names)
+ 
+     -- 101 Genetic feature name               Genotype
+     -- 102 Genetic feature abbreviation       Genotype
+     -- 103 Genetic feature alias              Genotype
+     -- 105 Gene symbol                        Genotype 
+     -- 106 Gene name                          Genotype
+     -- 107 Gene alias                         Genotype
+     -- 110 Genotype alias                     Genotype
 
     let errorHint = "all_map_names";
 
@@ -278,19 +274,22 @@ create dba function "informix".regen_names() returning integer
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
     --   Get Feature into all_m_names_new
+    --  take this part out of the current regen as we do not have 
+    --  feature centric search yet. But we leave it in as we might
+    --  need it someday.
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
 
-    let errorHint = "Feature";
-    -- gather names
-    insert into regen_zdb_id_temp
-        ( rgnz_zdb_id )
-      select feature_zdb_id from feature;
+    --let errorHint = "Feature";
+    ---- gather names
+    -- insert into regen_zdb_id_temp
+    --    ( rgnz_zdb_id )
+    --  select feature_zdb_id from feature;
 
-    -- takes regen_zdb_id_temp as input, adds recs to regen_all_names_temp
-    execute procedure regen_names_feature_list();
+    ---- takes regen_zdb_id_temp as input, adds recs to regen_all_names_temp
+    --execute procedure regen_names_feature_list();
 
-    delete from regen_zdb_id_temp;
+    --delete from regen_zdb_id_temp;
 
 
     -- -------------------------------------------------------------------
