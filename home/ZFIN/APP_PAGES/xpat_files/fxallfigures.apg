@@ -105,7 +105,7 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
 <?/MICOMMENT>
 <?MIBLOCK COND="$(NE,$fxallfig_probe_zdb_id,)">
      <?MIVAR NAME=AUTH_HTML><?/MIVAR>
-          
+         <?MICOMMENT> 
           <?MIVAR NAME=AUTH_HTML>$AUTH_HTML
           
           &nbsp;<b>Submitted by:</b>
@@ -125,7 +125,7 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
           
          <?/MIVAR>
          <?MIVAR COND="$(!=,0,$MI_ROWCOUNT)">$AUTH_HTML<?/MIVAR>
-     
+    <?/MICOMMENT> 
      <?MISQL SQL="select mrkr_abbrev 
                  from marker
                  where mrkr_zdb_id='$fxallfig_probe_zdb_id'
