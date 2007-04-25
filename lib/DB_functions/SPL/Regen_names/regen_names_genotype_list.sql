@@ -3,10 +3,13 @@ create procedure regen_names_genotype_list()
   -- ---------------------------------------------------------------------
   -- regen_names_genotype_list generates all names for the genotype identified by 
   -- the ZDB IDs in the regen_zdb_id_temp table and adds the names to the
-  -- regen_all_names_temp table. Though for now we only collect name from 
-  -- alias table, for consistence and extensibility, we create this function.
-  -- because we regen for marker, feature as well, we don't have to regen
-  -- for genotype name specifically.
+  -- regen_all_names_temp table. 
+  --
+  -- We collect feature name, abbrev, alias, gene name, symbol and alias as well
+  -- genotype alias. Name matching to genotypes are happening both at the current
+  -- mutant search page and at the expression search for background. Though it is 
+  -- duplicate to store the gene related names, we weight the search performance
+  -- over the stretches of regen execution time and more records. 
   --
   -- PRECONDITIONS:
   --   regen_zdb_id_temp table exists and contains a list of genotype ZDB IDs
@@ -41,7 +44,11 @@ create procedure regen_names_genotype_list()
 
   set pdqpriority high;
 
- let namePrecedence = "Genotype alias";
+  ----------------------------------------
+  -- Feature names/abbrev/alias
+  ----------------------------------------
+
+  let namePrecedence = "Genetic feature name";
   select nmprec_significance 
     into nameSignificance
     from name_precedence 
@@ -50,7 +57,165 @@ create procedure regen_names_genotype_list()
   insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
         rgnallnm_precedence, rgnallnm_name_lower )
-    select dalias_alias, dalias_data_zdb_id, nameSignificance, namePrecedence, 
+    select feature_name, rgnz_zdb_id, nameSignificance, namePrecedence, 
+           lower(feature_name)
+      from feature, regen_zdb_id_temp, genotype_feature
+     where genofeat_geno_zdb_id = rgnz_zdb_id
+       and genofeat_feature_zdb_id = feature_zdb_id;
+
+
+  let namePrecedence = "Genetic feature abbreviation";
+  select nmprec_significance 
+    into nameSignificance
+    from name_precedence 
+    where nmprec_precedence = namePrecedence;
+
+  insert into regen_all_names_temp
+      ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
+        rgnallnm_precedence, rgnallnm_name_lower )
+    select feature_abbrev, rgnz_zdb_id, nameSignificance, namePrecedence, 
+           lower(feature_abbrev)
+      from feature, regen_zdb_id_temp, genotype_feature
+     where genofeat_geno_zdb_id = rgnz_zdb_id
+       and genofeat_feature_zdb_id = feature_zdb_id;
+
+  -- get aliases
+  -- note: we use "select distinct" to eliminates
+  -- the odds that different features of the same genotype
+  -- has the same previous names
+
+  let namePrecedence = "Genetic feature alias";
+  select nmprec_significance 
+    into nameSignificance
+    from name_precedence 
+    where nmprec_precedence = namePrecedence;
+
+  insert into regen_all_names_temp
+      ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
+        rgnallnm_precedence, rgnallnm_name_lower )
+    select distinct dalias_alias, rgnz_zdb_id, nameSignificance, namePrecedence, 
+           dalias_alias_lower
+      from data_alias, regen_zdb_id_temp, genotype_feature
+     where genofeat_geno_zdb_id = rgnz_zdb_id
+       and genofeat_feature_zdb_id = dalias_data_zdb_id;
+
+  
+
+  ----------------------------------------
+  -- GENE 
+  ----------------------------------------
+
+  -- Collect related gene id
+
+  -- this temp table only applies here, thus not defined
+  -- in regen_names_create_temp_tables.sql
+  create temp table regen_geno_related_gene_zdb_id_temp
+    (
+        rgnrgz_gene_zdb_id      varchar(50),
+	rgnrgz_geno_zdb_id	varchar(50)
+    )with NO LOG;
+
+  insert into regen_geno_related_gene_zdb_id_temp
+       select fmrel_mrkr_zdb_id, rgnz_zdb_id
+         from regen_zdb_id_temp, feature_marker_relationship, genotype_feature
+        where genofeat_geno_zdb_id = rgnz_zdb_id
+          and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+          and fmrel_type = "is allele of";
+
+  insert into regen_geno_related_gene_zdb_id_temp
+       select mrel_mrkr_2_zdb_id, rgnz_zdb_id
+         from regen_zdb_id_temp, feature_marker_relationship, genotype_feature,
+              marker_relationship
+        where genofeat_geno_zdb_id = rgnz_zdb_id
+          and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+          and fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id
+          and mrel_type in ("promoter of", "coding sequence of");
+
+  insert into regen_geno_related_gene_zdb_id_temp
+       select marker_id, rgnz_zdb_id
+         from regen_zdb_id_temp, feature, genotype_feature,mapped_deletion         
+        where genofeat_geno_zdb_id = rgnz_zdb_id
+          and genofeat_feature_zdb_id = feature_zdb_id
+          and feature_name = allele
+          and present_t = "f";
+
+  create temp table regen_geno_related_gene_zdb_id_distinct_temp
+    (
+        rgnrgzd_gene_zdb_id      varchar(50),
+	rgnrgzd_geno_zdb_id	varchar(50)
+    )with NO LOG;
+
+  insert into regen_geno_related_gene_zdb_id_distinct_temp
+       select distinct rgnrgz_gene_zdb_id, rgnrgz_geno_zdb_id
+         from regen_geno_related_gene_zdb_id_temp;
+
+
+    ----------------------------------------
+    -- Gene names/abbrev/alias
+    ----------------------------------------
+
+  let namePrecedence = "Gene symbol";
+  select nmprec_significance 
+    into nameSignificance
+    from name_precedence 
+    where nmprec_precedence = namePrecedence;
+
+  insert into regen_all_names_temp
+      ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
+	rgnallnm_precedence, rgnallnm_name_lower )
+    select mrkr_abbrev, rgnz_zdb_id, nameSignificance, namePrecedence, 
+           lower(mrkr_abbrev)
+      from marker, regen_zdb_id_temp, regen_geno_related_gene_zdb_id_distinct_temp
+      where rgnrgzd_geno_zdb_id = rgnz_zdb_id
+        and rgnrgzd_gene_zdb_id= mrkr_zdb_id;
+
+
+  let namePrecedence = "Gene name";
+  select nmprec_significance 
+    into nameSignificance
+    from name_precedence 
+    where nmprec_precedence = namePrecedence;
+
+  insert into regen_all_names_temp
+      ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
+	rgnallnm_precedence, rgnallnm_name_lower )
+    select mrkr_name, rgnz_zdb_id, nameSignificance, namePrecedence, 
+           lower(mrkr_name)
+      from marker, regen_zdb_id_temp, regen_geno_related_gene_zdb_id_distinct_temp
+      where rgnrgzd_geno_zdb_id = rgnz_zdb_id
+        and rgnrgzd_gene_zdb_id= mrkr_zdb_id;
+
+
+  let namePrecedence = "Gene alias";
+  select nmprec_significance 
+    into nameSignificance
+    from name_precedence 
+    where nmprec_precedence = namePrecedence;
+
+  insert into regen_all_names_temp
+      ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
+	rgnallnm_precedence, rgnallnm_name_lower )
+    select dalias_alias, rgnz_zdb_id, nameSignificance, namePrecedence, 
+           lower(dalias_alias)
+      from data_alias, regen_zdb_id_temp, regen_geno_related_gene_zdb_id_distinct_temp
+      where rgnrgzd_geno_zdb_id = rgnz_zdb_id
+        and rgnrgzd_gene_zdb_id = dalias_data_zdb_id;
+
+
+  ----------------------------------------
+  -- Genotype alias
+  ----------------------------------------
+
+  let namePrecedence = "Genotype alias";
+  select nmprec_significance 
+    into nameSignificance
+    from name_precedence 
+    where nmprec_precedence = namePrecedence;
+
+  insert into regen_all_names_temp
+      ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
+        rgnallnm_precedence, rgnallnm_name_lower )
+    select dalias_alias, rgnz_zdb_id, nameSignificance, namePrecedence, 
            dalias_alias_lower
       from data_alias, regen_zdb_id_temp
      where dalias_data_zdb_id = rgnz_zdb_id;
