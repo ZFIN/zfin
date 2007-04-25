@@ -35,8 +35,54 @@ OUTPUT VARS:
 
 <br>
 
+<?MICOMMENT>$xpsumres_resultTable is $xpatselect_temp_match with the following def:
+ 
+    create temp table $xpatselect_temp_match (
+      xpat_fig_zdb_id 		varchar(50),
+      xpat_gene_zdb_id          varchar(50),
+      xpat_xpatex_zdb_id	varchar(50),
+      xpat_matching_text 	varchar(255),
+      xpat_matching_precedence	varchar(80),
+      xpat_matching_significance integer
+    ) with NO LOG;
 
+   we found that one gene could have several match with different matching
+   significance, matching text. Yet each gene would be used in multiple xpat experiment 
+   and each experiment generates multiple figures. 
+   It would be a lots of work to re-engineer this table with less redundance. I tried but
+   had to give up with limited time for the bug. So I am limiting the modification to 
+   this file and introducing a second temp table. 
+<?/MICOMMENT>
 
+<?MIVAR NAME=xpsumres_gene_resultTable>$(CONCAT,xpsumres_gene_result,$xpatsel_session_id)<?/MIVAR>
+
+<?MISQL SQL="
+  execute function table_exists('$xpsumres_gene_resultTable')">
+
+  <?MISQL COND="$(EC,$1,f)" SQL="
+    create temp table $xpsumres_gene_resultTable (
+      xpatdg_fig_count		integer,
+      xpatdg_gene_zdb_id        varchar(50),
+      xpatdg_matching_significance integer
+    ) with NO LOG;">
+  <?/MISQL>  
+
+<?/MISQL>
+
+<?MISQL SQL="
+    insert into $xpsumres_gene_resultTable
+		(xpatdg_gene_zdb_id, xpatdg_fig_count)
+        select xpat_gene_zdb_id, count(unique xpat_fig_zdb_id)::integer
+          from $xpsumres_resultTable
+        group by xpat_gene_zdb_id;">
+<?/MISQL>
+
+<?MISQL SQL="
+    update $xpsumres_gene_resultTable
+       set xpatdg_matching_significance = (select min(xpat_matching_significance)
+                                             from $xpsumres_resultTable
+                                            where xpat_gene_zdb_id = xpatdg_gene_zdb_id);">
+<?/MISQL>
 
 <table class="searchresults"> <!-- open summary results table -->
   <caption class="searchresults">  
@@ -58,69 +104,63 @@ OUTPUT VARS:
 
 
   <?MICOMMENT> *** zebra striping variables *** <?/MICOMMENT>
-  <?MIVAR NAME="xpsumres_lastGeneZdbId"><?/MIVAR>
+
   <?MIVAR NAME="xpsumres_recordIndex">0<?/MIVAR>
+
   <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-select mrkr_zdb_id, mrkr_abbrev, count(unique xpat_fig_zdb_id)::Integer, 
-       mrkr_abbrev_order, mrkr_type, xpat_matching_significance,
-       get_mrkr_abbrev_html_link(mrkr_zdb_id)
-from $xpsumres_resultTable
-     join marker on mrkr_zdb_id = xpat_gene_zdb_id
-     join figure on fig_zdb_id = xpat_fig_zdb_id
-group by xpat_matching_significance, mrkr_abbrev_order, mrkr_abbrev, mrkr_zdb_id, mrkr_type
-order by xpat_matching_significance, mrkr_abbrev_order
+select mrkr_zdb_id, mrkr_abbrev, xpatdg_fig_count,
+       get_mrkr_abbrev_html_link(mrkr_zdb_id), 
+       xpatdg_matching_significance, mrkr_abbrev_order
+from $xpsumres_gene_resultTable
+     join marker on mrkr_zdb_id = xpatdg_gene_zdb_id
+order by xpatdg_matching_significance, mrkr_abbrev_order
 ;">
     <?MIVAR NAME="xpsumres_geneZdbId">$1<?/MIVAR>
     <?MIVAR NAME="xpsumres_geneAbbrev">$2<?/MIVAR>
     <?MIVAR NAME="xpsumres_figCount">$3<?/MIVAR>
-    <?MIVAR NAME="xpsumres_geneAbbrevLink">$7<?/MIVAR>
- 
+    <?MIVAR NAME="xpsumres_geneAbbrevLink">$4<?/MIVAR>
+    <?MIVAR NAME=xpsumres_matching_significance>$5<?/MIVAR>
+
+    <?MICOMMENT>
+      <?MISQL SQL=" select count(distinct xpat_fig_zdb_id)::Integer
+                    from $xpsumres_resultTable
+                    where xpat_gene_zdb_id = '$xpsumres_geneZdbId'">
+        <?MIVAR NAME="xpsumres_figCount">$1<?/MIVAR>
+      <?/MISQL>      
+    <?/MICOMMENT>
+
     <?MISQL SQL="
-select count(distinct publication.zdb_id)::Integer
-from $xpsumres_resultTable
-     join figure on xpat_fig_zdb_id = fig_zdb_id
-     join publication on fig_source_zdb_id = publication.zdb_id
-where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
-    ;">
-      <?MIVAR NAME="xpsumres_pubCount">$1<?/MIVAR>
+	select distinct publication.zdb_id, publication.pub_mini_ref
+	from $xpsumres_resultTable
+             join figure on xpat_fig_zdb_id = fig_zdb_id
+             join publication on fig_source_zdb_id = publication.zdb_id
+	where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
+        ;">
+        <?MIVAR NAME="xpsumres_pub_zdb_id">$1<?/MIVAR>
+        <?MIVAR NAME="xpsumres_pubMiniRef">$2<?/MIVAR>
 
     <?/MISQL>
- 
-    <?MISQL COND="$(EC,$xpsumres_pubCount,1)" 
-            SQL="select pub_mini_ref 
-                 from publication 
-                      join expression_experiment
-                        on xpatex_source_zdb_id = publication.zdb_id
-                      join $xpsumres_resultTable
-                        on xpat_xpatex_zdb_id = xpatex_zdb_id
-                 where xpatex_gene_zdb_id = '$xpsumres_geneZdbId';">
-       <?MIVAR NAME="xpsumres_pubMiniRef">$1<?/MIVAR>
-    <?/MISQL>
- 
+    <?MIVAR NAME="xpsumres_pubCount">$MI_ROWCOUNT<?/MIVAR>
 
-    <?MICOMMENT> *** zebra stripe, is this a new row, or more stuff from the last one? *** <?/MICOMMENT>
-    <?MIBLOCK COND="$(NE,$xpsumres_lastGeneZdbId,$xpsumres_geneZdbId)">
-      <?MIVAR NAME="xpsumres_recordIndex">$(+,$xpsumres_recordIndex,1)<?/MIVAR>
-    <?/MIBLOCK>
-
+    
+    <?MIVAR NAME="xpsumres_recordIndex">$(+,$xpsumres_recordIndex,1)<?/MIVAR>
+ 
     <tr <?MIBLOCK COND="$(EC,1,$(MOD,$xpsumres_recordIndex,2))">class="odd"<?/MIBLOCK> > 
 
       <?MICOMMENT> *** gene column *** <?/MICOMMENT>
       <td>
-        <?MIBLOCK COND="$(NE,$xpsumres_lastGeneZdbId,$xpsumres_geneZdbId)">
-          <?MIVAR>$xpsumres_geneAbbrevLink<?/MIVAR>
-        <?/MIBLOCK>
+           <?MIVAR>$xpsumres_geneAbbrevLink<?/MIVAR>
       </td>
 
       <?MICOMMENT> *** figcount/pubcount data link column *** <?/MICOMMENT>     
       <td nowrap> 
-        <?MICOMMENT> **NOTE** this is gonna take some thought, I really want these to be real links, that you can open in a tab,
-                     not just javascripts to force submits.  That means that we might need to pass the whole url in with this and
-                     just add the gene part of it...<?/MICOMMENT>
-        <?MIVAR>
+          <?MICOMMENT>**NOTE**this is gonna take some thought, I really want these to be real links, that you can open in a tab,
+                   not just javascripts to force submits.  That means that we might need to pass the whole url in with this and
+                   just add the gene part of it...<?/MICOMMENT>
+       
           <?MICOMMENT> When it's just one pub, use the pub mini ref instead of saying that there's only one.  For multiple thisse
-                       "pubs" (pub / probe combos) it wll still just say one pub.  This is probably correct, even though it doesn't
-                       necessarily follow the scheme of pretending that they're each a different pub. <?/MICOMMENT>
+                    "pubs" (pub / probe combos) it wll still just say one pub.  This is probably correct, even though it doesn't
+                     necessarily follow the scheme of pretending that they're each a different pub. <?/MICOMMENT>
 
           <?MIBLOCK COND="$(EC,$xpsumres_pubCount,1)">
             <?MIVAR NAME="$xpsumres_figsFrom">$xpsumres_pubMiniRef<?/MIVAR>
@@ -147,15 +187,15 @@ where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
        	     <?MIVAR COND="$(!=,$1,0)" NAME="$xpsumres_cameraTag"><img src="/images/camera_icon.gif" border=0 alt="with image(s)"><?/MIVAR>
          <?/MISQL> 
           
- 
+         <?MIVAR>
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&xpatsel_geneZdbId=$xpsumres_geneZdbId&gene_name=$xpsumres_geneAbbrev&$xpsumres_baseUrl">
             $xpsumres_figCount figure(s)</a>
           from $xpsumres_figsFrom $(IF,$(XST,$xpsumres_cameraTag),$xpsumres_cameraTag) $(UNSETVAR,$xpsumres_cameraTag)  
           
-        <?/MIVAR>
-      </td>
+         <?/MIVAR>
+       </td>
 
-      <?MICOMMENT> *** stage range column *** <?/MICOMMENT>
+       <?MICOMMENT> *** stage range column *** <?/MICOMMENT>
         <td>
           <?MISQL SQL="
             select WebExplode(object, 'fxgensr_gene_zdb_id=$xpsumres_geneZdbId&fxgensr_resultTable=$xpsumres_resultTable')
@@ -165,18 +205,15 @@ where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
 
       <?MICOMMENT> *** matching text column *** <?/MICOMMENT>
       <?MIBLOCK COND="$(EC,$xpsumres_displayMatchingColumn,t)">
-        <td>         
-          <?MISQL SQL="select first 1 xpat_matching_precedence, xpat_matching_significance, xpat_matching_text
-                       from $xpsumres_resultTable 
-                       where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
-                       group by xpat_matching_precedence, xpat_matching_significance, xpat_matching_text
-                       order by xpat_matching_significance asc;">
-            <?MIVAR NAME=xpsumres_matching_output>$3<?/MIVAR>
-            <?MIVAR NAME=xpsumres_matching_qualification>$1<?/MIVAR>
-          <?/MISQL>
-                    
-          <?MICOMMENT> *** Calculate positions for highlighting matching text *** <?/MICOMMENT>
-          
+        <td>
+          <?MISQL SQL="select first 1 xpat_matching_precedence, xpat_matching_text 
+                       from $xpsumres_resultTable
+                      where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
+                        and xpat_matching_significance = '$xpsumres_matching_significance';">	
+		<?MIVAR NAME=xpsumres_matching_qualification>$1<?/MIVAR>
+		<?MIVAR NAME=xpsumres_matching_output>$2<?/MIVAR>
+	   <?/MISQL>
+
           <?MIVAR NAME=$xpsumres_start_pos>$(POSITION,$(LOWER,$xpsumres_matching_output),$(LOWER,$xpsumres_matchedText))<?/MIVAR>
 	  <?MIVAR NAME=$xpsumres_str_length>$(STRLEN,$xpsumres_matchedText)<?/MIVAR>
 	  
@@ -187,11 +224,15 @@ where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
 	  <?/MIVAR>
       
         </td>
-      <?/MIBLOCK>
-    </tr>
-    <?MIVAR NAME="xpsumres_lastGeneZdbId">$xpsumres_geneZdbId<?/MIVAR>
+       <?/MIBLOCK>
+      </tr>
 
   <?/MISQL>
+  
+  <?MISQL SQL="
+       delete from  $xpsumres_gene_resultTable; ">
+  <?/MISQL>
+  
   </tbody>
 </table> <!-- close summary results table -->
 
