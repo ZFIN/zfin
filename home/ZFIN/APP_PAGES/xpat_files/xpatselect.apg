@@ -529,10 +529,11 @@ function openChild(childWinUrl,childWinName) {
     <?MICOMMENT> --- summary results --- <?/MICOMMENT>
 
 
-
     <?MISQL SQL="select WebExplode(object,'&xpsumres_resultTable=$xpatselect_temp_match$xpatsel_summaryMatchString&xpsumres_baseUrl=$xpatsel_baseUrl') 
              from webPages where ID='aa-xpatselect_summaryresults.apg';">$1<?/MISQL>
     <?MIVAR NAME="xpatsel_nResults">$xpsumres_geneCount<?/MIVAR>
+
+
 
   <?MIELSE COND="$(EC,$xpatsel_geneCount,1)">
 
@@ -882,7 +883,11 @@ function openChild(childWinUrl,childWinName) {
 	    <label for="xpatselMutant" class="namesearchLabel">Genotype or Background</label>
 	      <SELECT name=mutsearchtype>
 		<option value="contains" $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,contains)),SELECTED)>contains
-		<option value="begins"  $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,begins)),SELECTED) >begins with
+                <?MICOMMENT> change "begins" to "starts" to be consistant with
+                  marker search and fish search, especially required as it 
+                  shares module with fish search
+                <?/MICOMMENT>
+		<option value="starts"  $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,starts)),SELECTED) >begins with
                 <option value="equals" $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,equals)),SELECTED) >equals
 	    </select>
 	      </SELECT>
