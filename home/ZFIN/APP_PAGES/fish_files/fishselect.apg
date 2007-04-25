@@ -155,8 +155,8 @@ Message: $MI_ERRORMSG
 <?/MICOMMENT>
   
 <?MIVAR name=highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-<?MIVAR NAME=$MI_NULL><?/MIVAR>
-<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=MI_NULL><?/MIVAR>
+<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=comma>,<?/MIVAR>  
 <?MIVAR NAME=single_quote>'<?/MIVAR>
 <?MIVAR NAME=debug_timing>f<?/MIVAR>  
@@ -228,6 +228,7 @@ Message: $MI_ERRORMSG
             ==========================================================================
     <?/MICOMMENT>
 
+
   <?MISQL SQL="
       select dbinfo('sessionid') 
         from single;">
@@ -277,148 +278,10 @@ Message: $MI_ERRORMSG
   <?MIVAR NAME=$fsel_inputname DELIMIT="'" REPLACE="''">$fsel_inputname<?/MIVAR>
   <?MIVAR NAME=$fsel_inputname DELIMIT="_" REPLACE="\_">$fsel_inputname<?/MIVAR>
 
-  <?MICOMMENT> *** Create or reuse temp tables *** <?/MICOMMENT>
-  <?MIVAR NAME=$fishselect_temp_on_name>$(CONCAT,fishselect_temp_on_name_,$fsel_session_id)<?/MIVAR>
-  <?MISQL SQL="
-    execute function table_exists('$fishselect_temp_on_name')">
-    <?MISQL COND=$(EC,$1,f) SQL="
-      create temp table $fishselect_temp_on_name (
-        g_zdb_id	 	varchar(50),
-        m_order	 	        varchar(10),
-        m_text                  varchar(80),
-        m_type                  varchar(80)
-      ) with NO LOG;">
-    <?/MISQL>
-  <?/MISQL>
+  <?MISQL SQL="select WebExplode(object,'genonm_inputname=$fsel_inputname&genonm_session_id=$fsel_session_id&compare=$compare') from webPages where ID='aa-genotype_name_match.apg';">$1<?/MISQL> 
 
-    <?MICOMMENT> in order to improve performance, extra level of temp tables are used instead of doing join
-    <?/MICOMMENT>
-  <?MIVAR NAME=$fishselect_temp_on_allele_junior>$(CONCAT,fishselect_temp_on_allele_junior_,$fsel_session_id)<?/MIVAR>    
-  <?MISQL SQL="
-    execute function table_exists('$fishselect_temp_on_allele_junior')">
-    <?MISQL COND=$(EC,$1,f) SQL="
-        create temp table $fishselect_temp_on_allele_junior (
-          junior_allele_zdb_id 		varchar(50),
-          junior_m_order	 	varchar(10),
-          junior_m_text                 varchar(80),
-          junior_m_type                 varchar(80)
-        ) with NO LOG;">
-    <?/MISQL>
-  <?/MISQL>  
-
-  <?MIVAR NAME=$fishselect_temp_on_gene_junior>$(CONCAT,fishselect_temp_on_gene_junior_,$fsel_session_id)<?/MIVAR>    
-  <?MISQL SQL="
-    execute function table_exists('$fishselect_temp_on_gene_junior')">
-    <?MISQL COND=$(EC,$1,f) SQL="
-        create temp table $fishselect_temp_on_gene_junior (
-          junior_gene_zdb_id 		varchar(50),
-          junior_m_order	 	varchar(10),
-          junior_m_text                 varchar(80),
-          junior_m_type                 varchar(80)
-        ) with NO LOG;">
-    <?/MISQL>
-  <?/MISQL>
-
-  <?MIVAR NAME=$percentage>%<?/MIVAR>
-  <?MIBLOCK COND="$(EC,$compare,starts)">
-    <?MIVAR NAME=$table_all_name_ends> <?/MIVAR>
-    <?MIVAR NAME=$target_col>allmapnm_name_lower<?/MIVAR>
-    <?MIVAR NAME=$connecting_2_tables> <?/MIVAR>
-    <?MIVAR NAME=$like_or_equal>like<?/MIVAR>
-    <?MIVAR NAME=$input>$(CONCAT,$fsel_inputname,$percentage)<?/MIVAR>   
-  <?MIELSE COND="$(EC,$compare,equals)">    
-    <?MIVAR NAME=$table_all_name_ends> <?/MIVAR>
-    <?MIVAR NAME=$target_col>allmapnm_name_lower<?/MIVAR>
-    <?MIVAR NAME=$connecting_2_tables> <?/MIVAR>
-    <?MIVAR NAME=$like_or_equal>=<?/MIVAR> 
-    <?MIVAR NAME=$input>$fsel_inputname<?/MIVAR>
-  <?MIELSE>
-    <?MIVAR NAME=$table_all_name_ends>,all_name_ends<?/MIVAR>
-    <?MIVAR NAME=$target_col>allnmend_name_end_lower<?/MIVAR>
-    <?MIVAR NAME=$connecting_2_tables>and allmapnm_serial_id = allnmend_allmapnm_serial_id<?/MIVAR>
-    <?MIVAR NAME=$like_or_equal>like<?/MIVAR> 
-    <?MIVAR NAME=$input>$(CONCAT,$fsel_inputname,$percentage)<?/MIVAR>
-  <?/MIBLOCK>
-
-    <?MISQL SQL="insert into $fishselect_temp_on_allele_junior (junior_allele_zdb_id,junior_m_text,junior_m_order,junior_m_type)
-	           select allmapnm_zdb_id,allmapnm_name,allmapnm_significance,allmapnm_precedence 
-                     from all_map_names$table_all_name_ends
-	            where $target_col $like_or_equal '$input'
-	              $connecting_2_tables
-	              and allmapnm_precedence in ('Genetic feature name','Genetic feature abbreviation','Genetic feature alias');">	    
-    <?/MISQL>     
-
-    <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
-  	           select genofeat_geno_zdb_id,junior_m_text,junior_m_order,junior_m_type
-                     from genotype_feature,$fishselect_temp_on_allele_junior
-	            where genofeat_feature_zdb_id = junior_allele_zdb_id;">	    
-    <?/MISQL>   
-
-    <?MISQL SQL="delete from $fishselect_temp_on_allele_junior;"><?/MISQL>
-
-    <?MISQL SQL="insert into $fishselect_temp_on_gene_junior (junior_gene_zdb_id,junior_m_text,junior_m_order,junior_m_type)
-	           select allmapnm_zdb_id,allmapnm_name,allmapnm_significance,allmapnm_precedence 
-                     from all_map_names$table_all_name_ends
-	            where $target_col $like_or_equal '$input'
-	              $connecting_2_tables
-	              and allmapnm_zdb_id like 'ZDB-GENE-%'
-	              and allmapnm_precedence in ('Current symbol','Current name','Previous name');">	    
-    <?/MISQL>   
-    
-    <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
-	           select genofeat_geno_zdb_id,junior_m_text,junior_m_order,junior_m_type
-                     from genotype_feature,feature_marker_relationship,$fishselect_temp_on_gene_junior
-	            where not exists (select 'x' from $fishselect_temp_on_name
-                                      where g_zdb_id = genofeat_geno_zdb_id)
-	              and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
-	              and fmrel_mrkr_zdb_id = junior_gene_zdb_id;">	    
-    <?/MISQL>   
-    
-    <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
-	           select genofeat_geno_zdb_id,junior_m_text,junior_m_order,junior_m_type
-                     from genotype_feature,feature_marker_relationship,marker_relationship,$fishselect_temp_on_gene_junior
-	            where not exists (select 'x' from $fishselect_temp_on_name
-                                      where g_zdb_id = genofeat_geno_zdb_id)
-	              and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
-	              and mrel_mrkr_1_zdb_id = fmrel_mrkr_zdb_id
-	              and mrel_type in ('promoter of','coding sequence of')
-	              and mrel_mrkr_2_zdb_id = junior_gene_zdb_id;">	    
-    <?/MISQL>    
-    
-    <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
-	           select genofeat_geno_zdb_id,junior_m_text,junior_m_order,junior_m_type
-                     from genotype_feature,feature_marker_relationship,marker_relationship,$fishselect_temp_on_gene_junior
-	            where not exists (select 'x' from $fishselect_temp_on_name
-                                      where g_zdb_id = genofeat_geno_zdb_id)
-	              and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
-	              and mrel_mrkr_2_zdb_id = fmrel_mrkr_zdb_id
-	              and mrel_type in ('promoter of','coding sequence of')
-	              and mrel_mrkr_1_zdb_id = junior_gene_zdb_id;">	    
-    <?/MISQL>        
-    
-    <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
-	           select genofeat_geno_zdb_id,junior_m_text,junior_m_order,junior_m_type
-                     from genotype_feature,feature,mapped_deletion,$fishselect_temp_on_gene_junior
-	            where not exists (select 'x' from $fishselect_temp_on_name
-                                      where g_zdb_id = genofeat_geno_zdb_id)
-	              and genofeat_feature_zdb_id = feature_zdb_id
-	              and junior_gene_zdb_id = marker_id
-	              and feature_name = allele
-	              and present_t = 'f';">	    
-    <?/MISQL>   
- 
-    <?MISQL SQL="delete from $fishselect_temp_on_gene_junior;"><?/MISQL>      
- 
-    <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
-         	   select distinct allmapnm_zdb_id,allmapnm_name,allmapnm_significance,allmapnm_precedence 
-                     from all_map_names$table_all_name_ends
-	            where not exists (select 'x' from $fishselect_temp_on_name
-                                      where g_zdb_id = allmapnm_zdb_id)
-	              and $target_col $like_or_equal '$input'
-	              $connecting_2_tables
-	              and allmapnm_precedence = 'Genotype alias';">	    
-    <?/MISQL>       
-
+  <?MIVAR NAME=$fishselect_temp_on_name>$genonm_temp_on_name<?/MIVAR>
+  
   <?MIVAR NAME=$moreConstraint> and geno_zdb_id = g_zdb_id 
   <?/MIVAR>    
 
@@ -1323,18 +1186,8 @@ Message: $MI_ERRORMSG
 	     <?MIVAR><TD align=left width=$widthMatching><?/MIVAR>
 	      <?MIVAR NAME=start_pos>$(POSITION,$(LOWER,$matchedText),$fsel_inputname)<?/MIVAR>
 	      <?MIVAR NAME=str_length>$(STRLEN,$fsel_inputname)<?/MIVAR>
-
-	      <?MIBLOCK COND="$(EC,$matchedType,Current name)">
-	        <?MIVAR name=matchedTypeDisplay>Gene name<?/MIVAR>
-	      <?MIELSE COND="$(EC,$matchedType,Current symbol)"> 
-	        <?MIVAR name=matchedTypeDisplay>Gene symbol<?/MIVAR>
-	      <?MIELSE COND="$(EC,$matchedType,Previous name)">
-	        <?MIVAR name=matchedTypeDisplay>Gene alias<?/MIVAR>  
-	      <?MIELSE>
-	        <?MIVAR name=matchedTypeDisplay>$matchedType<?/MIVAR>
-	      <?/MIBLOCK>
 	      
-	      <?MIVAR>$matchedTypeDisplay: $(SUBSTR,$matchedText,1,$(-,$start_pos,1))<b>$(SUBSTR,$matchedText,$start_pos,$str_length)</b>$(SUBSTR,$matchedText,$(+,$start_pos,$str_length))<?/MIVAR>	
+	      <?MIVAR>$matchedType: $(SUBSTR,$matchedText,1,$(-,$start_pos,1))<b>$(SUBSTR,$matchedText,$start_pos,$str_length)</b>$(SUBSTR,$matchedText,$(+,$start_pos,$str_length))<?/MIVAR>	
              </TD>   
 	          
            <?/MIBLOCK>           
