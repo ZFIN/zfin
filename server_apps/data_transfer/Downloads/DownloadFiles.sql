@@ -258,7 +258,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_ontology_tran
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype_quality_ontology_translation.txt'
  DELIMITER "	"  
- select term_zdb_id, term_ont_id
+ select term_zdb_id, term_ont_id, term_name
    from term
    where term_is_obsolete = 'f'
    and term_is_secondary = 'f'; 
