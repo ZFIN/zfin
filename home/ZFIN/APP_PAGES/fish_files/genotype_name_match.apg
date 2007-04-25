@@ -1,0 +1,74 @@
+<?MICOMMENT>
+
+  file: genotype_name_match.apg
+  prefiex: genonm_
+
+  INPUT:
+     genonm_inputname:  the input search string for genotype
+     genonm_session_id:  the current session
+
+  OUTPUT:
+
+     temp table genonm_temp_on_name_<session_id>
+
+  This page is created to be used by both the fishselect.apg
+  and 
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+
+  <?MICOMMENT> --- Create or reuse temp tables --- <?/MICOMMENT>
+  <?MIVAR NAME=$genonm_temp_on_name>$(CONCAT,genonm_temp_on_name_,$genonm_session_id)<?/MIVAR>
+
+  <?MISQL SQL="
+    execute function table_exists('$genonm_temp_on_name')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $genonm_temp_on_name (
+        g_zdb_id	 	varchar(50),
+        m_order	 	        varchar(10),
+        m_text                  varchar(80),
+        m_type                  varchar(80)
+      ) with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>
+
+  <?MIVAR NAME=$percentage>%<?/MIVAR>
+  <?MIBLOCK COND="$(EC,$compare,starts)">
+    <?MIVAR NAME=$table_all_name_ends> <?/MIVAR>
+    <?MIVAR NAME=$target_col>allmapnm_name_lower<?/MIVAR>
+    <?MIVAR NAME=$connecting_2_tables> <?/MIVAR>
+    <?MIVAR NAME=$like_or_equal>like<?/MIVAR>
+    <?MIVAR NAME=$input>$(CONCAT,$genonm_inputname,$percentage)<?/MIVAR>   
+  <?MIELSE COND="$(EC,$compare,equals)">    
+    <?MIVAR NAME=$table_all_name_ends> <?/MIVAR>
+    <?MIVAR NAME=$target_col>allmapnm_name_lower<?/MIVAR>
+    <?MIVAR NAME=$connecting_2_tables> <?/MIVAR>
+    <?MIVAR NAME=$like_or_equal>=<?/MIVAR> 
+    <?MIVAR NAME=$input>$genonm_inputname<?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=$table_all_name_ends>,all_name_ends<?/MIVAR>
+    <?MIVAR NAME=$target_col>allnmend_name_end_lower<?/MIVAR>
+    <?MIVAR NAME=$connecting_2_tables>and allmapnm_serial_id = allnmend_allmapnm_serial_id<?/MIVAR>
+    <?MIVAR NAME=$like_or_equal>like<?/MIVAR> 
+    <?MIVAR NAME=$input>$(CONCAT,$genonm_inputname,$percentage)<?/MIVAR>
+  <?/MIBLOCK>
+
+    <?MISQL SQL="
+	insert into $genonm_temp_on_name 
+	    select allmapnm_zdb_id,allmapnm_significance,allmapnm_name, allmapnm_precedence 
+              from all_map_names$table_all_name_ends
+             where $target_col $like_or_equal '$input'
+                   $connecting_2_tables
+               and allmapnm_zdb_id like 'ZDB-GENO-%';">	    
+    <?/MISQL>     
+
