@@ -1,0 +1,180 @@
+<?MICOMMENT>
+
+FILE:     fxfiganatlist.apg
+PREFIX:   fxfiganat_
+
+This displays a list of anatomy terms separated by ';'.
+
+Copy this javascript function into the top-level page.
+
+<script>
+function updateInnerHTML(element_id,html_to_display) {
+    var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+}
+</script>
+
+INPUT VARS:
+  $fxfiganat_gene_zdb_id	optional gene to constrain to, requires a resultTable right now 
+				(would need new join SQL otherwise)
+  $fxfiganat_Label		optional label to replace default.
+  $fxfiganat_condensed_count	optional, how many to show on a condensed list
+  $fxfiganat_max_count		optional, how many can we show before condensing
+  $fxfiganat_hide_unspecified	optional, display nothing if all that comes back is an 
+				unspecified anat record
+
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+  A single row of display and a javascript function.
+
+EFFECTS  
+  None.
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MICOMMENT> The distinct is necessary. The same Anatomy item might vary by 
+stage range, experiment, or expression_found in the same figure.
+<?/MICOMMENT>
+
+
+<?MIVAR NAME="$fxfiganat_condensed_count" COND="$(NXST,$fxfiganat_condensed_count)">5<?/MIVAR>		
+<?MIVAR NAME="$fxfiganat_max_count" COND="$(NXST,$fxfiganat_max_count)">9<?/MIVAR>
+
+<?MIVAR NAME="$fxfiganat_unspecified_constraint"><?/MIVAR>
+<?MIBLOCK COND="$(AND,$(XST,$fxfiganat_hide_unspecified),$(EC,$fxfiganat_hide_unspecified,t))">
+  <?MIVAR NAME="$fxfiganat_unspecified_constraint">and anatitem_name <> 'unspecified'<?/MIVAR>
+<?/MIBLOCK>
+
+
+
+<?MICOMMENT> *** If a gene id is passed in, constrain against it, otherwise...don't **** <?/MICOMMENT>
+<?MIVAR NAME="$fxfiganat_gene_constraint"><?/MIVAR>
+<?MIVAR COND="$(XST,$fxfiganat_gene_zdb_id)" NAME="$fxfiganat_gene_constraint"> and xpat_gene_zdb_id = '$fxfiganat_gene_zdb_id' <?/MIVAR>
+
+
+<?MIVAR NAME="$fxfiganat_result_constraint_table"><?/MIVAR>
+<?MIVAR NAME="$fxfiganat_result_constraint_where"><?/MIVAR>
+
+
+<?MICOMMENT> 
+    =========================================================
+    =  Display two variations: 
+    =    1. A complete list of all anatomy for the figure
+    =    2. The first 4 anatomy items.
+    =
+    =  Use javascript to allow the user to flip between the
+    =  two lists.
+    =========================================================
+<?/MICOMMENT>
+    
+<?MIVAR NAME=$fxfiganat_short_list><?/MIVAR>
+<?MIVAR NAME=$fxfiganat_long_list><?/MIVAR>
+
+<?MICOMMENT> *** set default label *** <?/MICOMMENT>
+<?MIVAR NAME="$fxfiganat_defaultLabel"><strong>Anatomical Terms: </strong><?/MIVAR>
+
+<?MIBLOCK COND="$(NXST,$fxfiganat_Label)">
+  <?MIVAR NAME="$fxfiganat_Label">$fxfiganat_defaultLabel<?/MIVAR>
+<?/MIBLOCK>
+
+<?MISQL SQL="
+	SELECT distinct anatitem_name, anatitem_zdb_id, anatitem_name_order
+	FROM 
+	expression_result , expression_experiment, anatomy_item, genotype_experiment, experiment , genotype
+	WHERE
+	xpatex_gene_zdb_id = '$fxfiganat_gene_zdb_id'
+	AND  xpatres_xpatex_zdb_id = xpatex_zdb_id 
+	AND xpatres_expression_found='t'
+	AND xpatres_anat_item_zdb_id = anatitem_zdb_id 
+	AND xpatex_genox_zdb_id = genox_zdb_id 
+	AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  
+	AND geno_zdb_id  = genox_geno_zdb_id 
+	AND geno_is_wildtype = 't' 
+	ORDER BY anatitem_name_order asc;">
+    <?MIVAR NAME="$fxfiganat_anatitem_html"><span nowrap><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$2>$1</a></span><?/MIVAR>
+
+    <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+      <?MIVAR NAME=fxfiganat_short_list>$fxfiganat_Label $fxfiganat_anatitem_html<?/MIVAR>
+      <?MIVAR NAME=fxfiganat_long_list>$fxfiganat_Label $fxfiganat_anatitem_html<?/MIVAR>
+    <?MIELSE COND=$(<,$MI_CURRENTROW,$fxfiganat_condensed_count)>
+      <?MIVAR>$(VECAPPEND,fxfiganat_long_list,$fxfiganat_anatitem_html)
+      <?/MIVAR>
+      <?MIVAR>$(VECAPPEND,fxfiganat_short_list,$fxfiganat_anatitem_html)
+      <?/MIVAR>
+    <?MIELSE>
+      <?MIVAR>$(VECAPPEND,fxfiganat_long_list,$fxfiganat_anatitem_html)
+      <?/MIVAR>
+    <?/MIBLOCK>
+<?/MISQL>
+
+
+  <?MIVAR NAME=fxfiganat_separate_short_list SEPARATE=", ">$fxfiganat_short_list<?/MIVAR>
+  <?MIVAR NAME=fxfiganat_separate_long_list SEPARATE=", ">$fxfiganat_long_list<?/MIVAR>
+  
+  <?MIVAR NAME=fxfiganat_escape_short_list>$(REPLACE,$fxfiganat_separate_short_list,"'","")<?/MIVAR>
+  <?MIVAR NAME=fxfiganat_escape_long_list>$(REPLACE,$fxfiganat_separate_long_list,"'","")<?/MIVAR>
+  
+
+<?MIVAR NAME=$fxfiganat_left_arrow><img border=0 onClick=updateAnatomyList('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$fxfiganat_right_arrow><img onClick=updateAnatomyList('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+
+  
+<script>
+  <?MIVAR>
+function updateAnatomyList(display_option) {
+    var long_display = "$fxfiganat_escape_long_list  <a href=\"javascript:updateAnatomyList('short');\">$fxfiganat_left_arrow</a>";
+    var short_display = "$fxfiganat_escape_short_list ... <a href=javascript:onClick=updateAnatomyList('long')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow";
+
+    if (display_option == "long") {
+        updateInnerHTML('anatomyList',long_display)
+    }
+    else {
+        updateInnerHTML('anatomyList',short_display)    
+    }
+}
+  <?/MIVAR>
+</script>
+<?MIBLOCK COND="$(EQ,$fxfiganat_escape_short_list,)">
+     <?MIVAR NAME=$fxfignanat_escape_short_list>$fxfiganat_Label $fxfiganat_escape_short_list<?/MIVAR>
+<?/MIBLOCK>
+<?MIVAR><span id="anatomyList"><?/MIVAR>
+<?MIBLOCK COND="$(<,$(VECSIZE,$fxfiganat_long_list),$fxfiganat_max_count)">
+  <?MIVAR>
+    $fxfiganat_escape_long_list
+  <?/MIVAR>
+<?MIELSE>
+  <?MIVAR>
+    $fxfiganat_escape_short_list ... <a href=javascript:onClick=updateAnatomyList('long')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow
+  <?/MIVAR>
+<?/MIBLOCK>
+
+</span>
+
+<?MICOMMENT>
+  ============================================================================
+  ==========  Unset any existence vars, before the next call of this page
+  ============================================================================
+<?/MICOMMENT>
+
+<?MIVAR>
+  $(UNSETVAR,$fxfiganat_Label)
+  $(UNSETVAR,$fxfiganat_short_list)  
+  $(UNSETVAR,$fxfiganat_long_list)  
+  $(UNSETVAR,$fxfiganat_separate_short_list)
+  $(UNSETVAR,$fxfiganat_separate_long_list)
+  $(UNSETVAR,$fxfiganat_escape_short_list)
+  $(UNSETVAR,$fxfiganat_escape_long_list)
+<?/MIVAR>
