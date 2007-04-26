@@ -39,7 +39,7 @@ sub sendLoadReport ($) { # send email on error or completion
     
 }
 $filename = "weekly_report_reminder.txt" ;
-$emailAddress = "bsprunge\@cs.uoregon.edu,cmpich\@cs.uoregon.edu,judys\@cs.uoregon.edu,kschaper\@cs.uoregon.edu,peirans\@cs.uoregon.edu,pm\@cs.uoregon.edu,tomc\@cs.uoregon.edu,xshao\@cs.uoregon.edu,staylor\@cs.uoregon.edu";
+$emailAddress = "bsprunge\@cs.uoregon.edu,cmpich\@cs.uoregon.edu,judys\@cs.uoregon.edu,kschaper\@cs.uoregon.edu,peirans\@cs.uoregon.edu,pm\@cs.uoregon.edu,tomc\@cs.uoregon.edu,xshao\@cs.uoregon.edu,staylor\@cs.uoregon.edu,ndunn\@uoregon.edu";
 
 $emailHeader = "Weekly status report due";
 
