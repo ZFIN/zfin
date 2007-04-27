@@ -69,7 +69,7 @@ if ($labname == "Talbot") then
     set submitter = "ZDB-PERS-980223-5"
     set genox     = "ZDB-GENOX-041102-546"   
     set pubId     = "ZDB-PUB-031103-24"
-    set sourceId  = "ZDB-LAB-040914-1"    # RZPD 
+    set sourceId  = "ZDB-COMPANY-051101-1"    # RZPD 
     set genePrefix = "wu:"
 
 endif
