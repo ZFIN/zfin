@@ -256,15 +256,24 @@ update expression_tmp set exp_sstop =
 -- Post adjustment error check
 --------------------------------
 
-UNLOAD TO 'keywords_undef.err' 
-   select exp_clone_name, exp_sstart, exp_sstop, exp_keyword 
-     from expression_tmp
-    where exp_keyword not in (select anatitem_name from anatomy_item);
+update expression_tmp 
+   set exp_keyword = 
+           (select anatitem_zdb_id from anatomy_item where anatitem_name = exp_keyword)
+ where exp_keyword in  (select anatitem_name from anatomy_item);
 
-update expression_tmp set exp_keyword = 
-    (select anatitem_zdb_id from anatomy_item where anatitem_name = exp_keyword);
-unload to 'noid'
-    select * from expression_tmp where exp_keyword is null;
+update expression_tmp 
+   set exp_keyword = 
+        (select dalias_data_zdb_id from data_alias 
+          where dalias_alias = exp_keyword
+            and dalias_data_zdb_id like "ZDB-ANAT-%"
+         )
+  where exp_keyword in
+        (select dalias_alias from data_alias where dalias_data_zdb_id like "ZDB-ANAT-%") ;
+
+UNLOAD TO 'keywords_undef.err' 
+   select distinct  exp_keyword, exp_sstart, exp_sstop
+     from expression_tmp
+    where exp_keyword not like "ZDB-ANAT-%";
 
 UNLOAD TO 'keywords_stgerr.err' 
 	select exp_clone_name, 
@@ -321,16 +330,6 @@ update images_tmp
 update images_tmp
 	  set imgt_preparation = "whole-mount"
 	where imgt_preparation is null;
-
--- the defaul img_preparation is "whole-mount"
-update images_tmp
-	  set img_preparation = "whole-mount"
-	where img_preparation is null;
-
--- the defaul img_preparation is "whole-mount"
-update images_tmp
-	  set img_preparation = "whole-mount"
-	where img_preparation is null;
 
 -- prepare for image renaming
 ALTER TABLE images_tmp add imgt_zdb_id varchar(50);
