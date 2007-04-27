@@ -695,10 +695,6 @@ if (sbm_lab_name = "Talbot") then
     update images_tmp set img_comments = "CEG load";
 end if 
 
-if (sbm_lab_name = "Talbot") then
-    update images_tmp set img_comments = "CEG load";
-end if 
-
 -- images with annotation need a slightly different SQL
 -- if modify, check both SQLs.
 if (sbm_lab_name = "Thisse" AND sbm_release_type = "cb") then 
