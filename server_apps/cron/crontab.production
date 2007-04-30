@@ -182,7 +182,7 @@
 # -------------------------------------------------------------
 #
 # W      3am  Consolidate shared memory segment
-00 03 * * 3 onmode -F
+00 03 * * 3 /private/apps/Informix/informix/bin/onmode -F
 #
 #
 #
