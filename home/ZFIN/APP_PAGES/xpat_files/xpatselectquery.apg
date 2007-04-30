@@ -35,6 +35,7 @@ INPUT VARS:
   xpatselqry_genoSearchType	Specifies if mutant name should 'starts' with or
 				'contains' the string in mutant.
 
+  xpatselqry_genoZdbId		Exists if called from genotype page.
   xpatselqry_MOgene		Exists if user entered a MO knockdown string.
   xpatselqry_MOsearchtype	Specifies if gene name should 'begins' with or
 				'contains' the string.
@@ -624,26 +625,14 @@ DEBUGGING:
 
 
 
-<?MIBLOCK COND="$(XST,$xpatselqry_genoName)">
+<?MIBLOCK COND="$(OR,$(XST,$xpatselqry_genoName),$(XST,$xpatselqry_genoZdbId))">
   <?MICOMMENT>
     ============================================================================
-    ==========  GENOTYPE NAME TESTS
+    ==========  GENOTYPE NAME or ID TESTS
     ============================================================================
 
-    This section orignially use all_map_names for matching, then genotype names 
-    are taked out of the regen function, we instead use genotype table only matching
-    on genotype display name. Then curators requested that inputting gene alias
-    or gene fullname into the Background box should also generate the result. 
   <?/MICOMMENT>
 
-
-  <?MIVAR NAME=$xpatselqry_genoName DELIMIT="'" REPLACE="''">$xpatselqry_genoName<?/MIVAR>
-  <?MIVAR NAME=$xpatselqry_genoName  DELIMIT="_" REPLACE="\_">$xpatselqry_genoName<?/MIVAR>
-
-  <?MISQL SQL="select WebExplode(object,'genonm_inputname=$xpatselqry_genoName&genonm_session_id=$xpatselqry_session_id&compare=$xpatselqry_genoSearchType') from webPages where ID='aa-genotype_name_match.apg';">$1<?/MISQL>   
-
-  <?MIVAR NAME=xpatselqry_temp_geno_on_name>$genonm_temp_on_name<?/MIVAR>
- 
   <?MIVAR NAME=$xpatselectquery_temp_geno>$(CONCAT,xpatselectquery_temp_geno_,$xpatselqry_session_id)<?/MIVAR>
   <?MISQL SQL="
     execute function table_exists('$xpatselectquery_temp_geno')">
@@ -660,27 +649,51 @@ DEBUGGING:
       ) with NO LOG;">
     <?/MISQL>
   <?/MISQL>
-  <?MISQL SQL="
+
+ <?MIBLOCK COND="$(XST,$xpatselqry_genoZdbId)">
+    <?MISQL SQL="
+         insert into $xpatselectquery_temp_geno (xpatex_zdb_id, xpatex_source_zdb_id,
+                    xpatex_assay_name, xpatex_gene_zdb_id, xpatex_genox_zdb_id)
+             select xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+                    xpatex_gene_zdb_id, xpatex_genox_zdb_id
+               from $xpatselqry_matchTable, genotype_experiment
+              where genox_geno_zdb_id = '$xpatselqry_genoZdbId'
+                and xpatex_genox_zdb_id = genox_zdb_id;">
+    <?/MISQL>
+ <?MIELSE>  <?MICOMMENT> we should never have both id and name passed in. If any, 
+                         use the id only. <?/MICOMMENT>
+
+    <?MIVAR NAME=$xpatselqry_genoName DELIMIT="'" REPLACE="''">$xpatselqry_genoName<?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_genoName  DELIMIT="_" REPLACE="\_">$xpatselqry_genoName<?/MIVAR>
+
+    <?MISQL SQL="select WebExplode(object,'genonm_inputname=$xpatselqry_genoName&genonm_session_id=$xpatselqry_session_id&compare=$xpatselqry_genoSearchType') from webPages where ID='aa-genotype_name_match.apg';">$1<?/MISQL>   
+
+    <?MIVAR NAME=xpatselqry_temp_geno_on_name>$genonm_temp_on_name<?/MIVAR>
+ 
+    <?MISQL SQL="
 	insert into $xpatselectquery_temp_geno
              select xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
                     xpatex_gene_zdb_id, xpatex_genox_zdb_id, m_text, 'Background:'||m_type, m_order
                from $xpatselqry_matchTable
                     join genotype_experiment on xpatex_genox_zdb_id = genox_zdb_id
                     join $xpatselqry_temp_geno_on_name on g_zdb_id = genox_geno_zdb_id;">
-  <?/MISQL>
+    <?/MISQL>
 
-  <?MICOMMENT>-- clean up the helper temp table -- <?/MICOMMENT>
-  <?MISQL SQL="delete from $xpatselqry_temp_geno_on_name";><?/MISQL>
+    <?MICOMMENT>-- clean up the helper temp table -- <?/MICOMMENT>
+    <?MISQL SQL="delete from $xpatselqry_temp_geno_on_name";><?/MISQL>
  
-  <?MIBLOCK COND="$(NXST,$xpatselqry_matchedText)">
-    <?MIVAR NAME=$xpatselqry_matchedText>$xpatselqry_genoName<?/MIVAR>
-    <?MIVAR NAME=$xpatselqry_matchedTextSearchType>$xpatselqry_genoSearchType<?/MIVAR>
+    <?MIBLOCK COND="$(NXST,$xpatselqry_matchedText)">
+      <?MIVAR NAME=$xpatselqry_matchedText>$xpatselqry_genoName<?/MIVAR>
+      <?MIVAR NAME=$xpatselqry_matchedTextSearchType>$xpatselqry_genoSearchType<?/MIVAR>
 
-  <?/MIBLOCK>
+    <?/MIBLOCK>
+
+
+  <?/MIBLOCK> <?MICOMMENT> close if-else for Id or Name <?/MICOMMENT>
 
   <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
   <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
-    delete from $xpatselqry_matchTable">
+       delete from $xpatselqry_matchTable">
   <?/MISQL>
   <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_geno<?/MIVAR>
   <?MIVAR NAME=$xpatselqry_matchingCols>

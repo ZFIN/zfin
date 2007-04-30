@@ -237,12 +237,6 @@ function openChild(childWinUrl,childWinName) {
   ==========  CLEAN UP INPUT FIELDS
   ============================================================================
 <?/MICOMMENT>
-<?MISQL COND="$(XST,$mutant_id)" SQL="
-	select geno_display_name
-          from genotype
-         where geno_zdb_id = '$mutant_id'";>
-   <?MIVAR NAME=mutant>$1<?/MIVAR>
-<?/MISQL>	
 
 <?MIVAR COND="$(XST,$gene_name)" NAME="$gene_name">$(TRIM,$gene_name)<?/MIVAR>
 <?MIVAR COND="$(XST,$mutant)" NAME="$mutant">$(TRIM,$mutant)<?/MIVAR>
@@ -402,6 +396,7 @@ function openChild(childWinUrl,childWinName) {
     $(IF,$(XST,$xpatsel_probeSearchType),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_probeSearchType=$xpatsel_probeSearchType))
     $(IF,$(XST,$mutant),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_genoName=$(URLENCODE,$(REPLACE,$mutant,_,\_))))
     $(IF,$(XST,$mutsearchtype),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_genoSearchType=$mutsearchtype))
+    $(IF,$(XST,$mutant_id),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_genoZdbId=$mutant_id))
     $(IF,$(XST,$MOgene),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_MOgene=$(URLENCODE,$MOgene)))
     $(IF,$(XST,$MOsearchtype),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_MOsearchtype=$MOsearchtype))
     $(IF,$(XST,$author),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_author=$(URLENCODE,$author)))
@@ -492,6 +487,7 @@ function openChild(childWinUrl,childWinName) {
     $(IF,$(XST,$xpatsel_probeSearchType),$(VECAPPEND,$xpatsel_urlVec,xpatsel_probeSearchType=$xpatsel_probeSearchType))
     $(IF,$(XST,$mutant),$(VECAPPEND,$xpatsel_urlVec,mutant=$(URLENCODE,$mutant)))
     $(IF,$(XST,$mutsearchtype),$(VECAPPEND,$xpatsel_urlVec,mutsearchtype=$mutsearchtype))
+    $(IF,$(XST,$mutant_id),$(VECAPPEND,$xpatsel_urlVec,mutant_id=$mutant_id))
     $(IF,$(XST,$author),$(VECAPPEND,$xpatsel_urlVec,author=$(URLENCODE,$author)))
     $(IF,$(XST,$MOgene),$(VECAPPEND,$xpatsel_urlVec,MOgene=$(URLENCODE,$MOgene)))
     $(IF,$(XST,$MOsearchtype),$(VECAPPEND,$xpatsel_urlVec,MOsearchtype=$(URLENCODE,$MOsearchtype)))
@@ -611,7 +607,8 @@ function openChild(childWinUrl,childWinName) {
       <?MIVAR name=$UserInput COND=$(XST,$gene_name)>$UserInput&gene_name=$(URLENCODE,$gene_name)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_geneZdbId)>$UserInput&xpatsel_geneZdbId=$(URLENCODE,$xpatsel_geneZdbId)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_probeName)>$UserInput&xpatsel_probeName=$(URLENCODE,$xpatsel_probeName)<?/MIVAR>
-      <?MIVAR name=$UserInput COND=$(XST,$mutant)>$UserInput&mutant=$(URLENCODE,$mutant)<?/MIVAR>
+      <?MIVAR name=$UserInput COND=$(XST,$mutant)>$UserInput&mutant=$(URLENCODE,$mutant)<?/MIVAR>      
+      <?MIVAR name=$UserInput COND=$(XST,$mutant_id)>$UserInput&mutant_id=$mutant_id<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$author)>$UserInput&author=$(URLENCODE,$author)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$assay)>$UserInput&assay=$(URLENCODE,$assay)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_jtypeDirect)>$UserInput&xpatsel_jtypeDirect=$xpatsel_jtypeDirect<?/MIVAR>
