@@ -2,7 +2,6 @@
 # 
 # Read in: gene.txt
 #          expression.txt
-#          keywords.txt
 #          images.txt
 #          stage_codes.txt
 #          view_codes.txt
@@ -51,7 +50,6 @@ my $probe_acc  = "acc4blast.txt";
 my $author_out = "authors.unl";
 my $expression_in  = "expression.txt";
 my $expression_out = "expression.unl";
-my $keyword_in  = "keywords.txt";
 my $image_in    = "images.txt";
 my $image_out   = "images.unl";
 
@@ -298,7 +296,6 @@ close (AUTHOR_OUT);
 #########################################
 
 open EXPR_IN, "<$expression_in" or die "Cannot open $expression_in to read";
-open KEYWD_IN, "<$keyword_in" or die "Cannot open $keyword_in to read";
 open EXPR_OUT, ">$expression_out" or die "Cannot open $expression_out to write";
 
 my ($exp_key, $exp_stage, $exp_desc, $exp_found, $exp_desc_pre, @keyword_list, $keyword);
@@ -336,7 +333,7 @@ while (<EXPR_IN>) {
 	    
 	    if ($keyword eq "ubiquitously expressed") {
 		
-		$keyword = "unspecified";
+		$keyword = "whole organism";
 		$exp_desc_pre = "ubiquitously expressed";
 		$exp_desc = $exp_desc_pre.($exp_desc ? "<br>".$exp_desc: ""); 
 	    }
