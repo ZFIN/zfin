@@ -369,6 +369,49 @@ sub expressionResultStageWindowOverlapsAnatomyItem ($) {
 }
 
 
+#====================== Expression ================================
+# Parameter
+# $      Email Address for recipients
+#
+# Check if any expression annotation has a non-gene & non-EFG
+# object in xpatex_gene_zdb_id field
+
+sub xpatObjectNotGeneOrEFG ($) {
+
+    my $routineName = "xpatObjectNotGeneOrEFG";
+    my $sql = '
+         select xpatex_source_zdb_id, xpatex_gene_zdb_id, mrkr_abbrev
+           from expression_experiment, marker, marker_type_group_member
+          where xpatex_gene_zdb_id = mrkr_zdb_id 
+            and not exists (
+                  select "t"
+                    from marker_type_group_member
+                   where mtgrpmem_mrkr_type_group = "GENEDOM_AND_EFG"
+                     and mtgrpmem_mrkr_type = mrkr_type)' ;
+
+  my @colDesc = (
+		 "Publication ID:     ",
+		 "Xpat object ID:     ",
+		 "Xpat object name:   "
+		);
+
+  my $nRecords = execSql($sql, undef, @colDesc);
+  
+  if ( $nRecords > 0 ) {
+      
+      my $sendToAddress = $_[0];
+      my $subject = "Gene expression object is not GENE or EFG";
+      my $errMsg = "In expression_experiment, $nRecords records with objects  "
+	  ."that are neither gene or engineered foreign gene.";
+      
+      logError ($errMsg);	
+      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);   
+  }
+  &recordResult($routineName, $nRecords);
+}
+
+
+
 #----------------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
@@ -2815,6 +2858,7 @@ if($weekly) {
 	prefixedGenesHave1Est($estEmail);
 	estsWithoutClonesHaveXxGenes($estEmail);
 	xxGenesHaveNoClones($estEmail);
+        xpatObjectNotGeneOrEFG ($xpatEmail);
 
 	# these are curatorial errors (case219)
 	# however, errors returned are difficult to
@@ -2847,7 +2891,7 @@ if($monthly) {
   mrkrgoevInfgrpDuplicatesFound($goEmail);
 }
 if($yearly) {
-    print "run yearly check. \n\n";
+
 }
 
 	   
