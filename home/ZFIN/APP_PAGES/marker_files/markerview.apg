@@ -1143,17 +1143,37 @@ function jump(form_select){
 	<tr>
 	<td width="30%"><b>Wild Type Stages, Structures:</b></td>
 	<td width="70%">
+	<?MIVAR>
 					 <?MISQL SQL=" 
-					 select  first 1  get_stg_name_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage WHERE xpatex_gene_zdb_id = 'ZDB-GENE-990603-6' AND xpatres_start_stg_zdb_id = stg_zdb_id AND xpatres_xpatex_zdb_id = xpatex_zdb_id AND  xpatex_genox_zdb_id = genox_zdb_id and exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  and geno_zdb_id  = genox_geno_zdb_id and geno_is_wildtype = 't' ORDER BY stg_hours_start asc ;
+					 SELECT  first 1  get_stg_name_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
+					 WHERE xpatex_gene_zdb_id = '$OID' 
+					 AND xpatres_start_stg_zdb_id = stg_zdb_id 
+					 AND xpatres_expression_found='t'
+					 AND xpatres_xpatex_zdb_id = xpatex_zdb_id 
+					 AND  xpatex_genox_zdb_id = genox_zdb_id 
+					 AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  
+					 AND geno_zdb_id  = genox_geno_zdb_id and geno_is_wildtype = 't' 
+					 ORDER BY stg_hours_start asc 
+					 ;
 					 ">
 					 $1
 					 <?/MISQL>
-					 to 
+					 to  
 					 <?MISQL SQL=" 
-					 select  first 1 get_stg_name_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage WHERE xpatex_gene_zdb_id = 'ZDB-GENE-990603-6' AND xpatres_start_stg_zdb_id = stg_zdb_id AND xpatres_xpatex_zdb_id = xpatex_zdb_id AND  xpatex_genox_zdb_id = genox_zdb_id and exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  and geno_zdb_id  = genox_geno_zdb_id and geno_is_wildtype = 't' ORDER BY stg_hours_start desc;
+					 SELECT  first 1  get_stg_name_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
+					 WHERE xpatex_gene_zdb_id = '$OID' 
+					 AND xpatres_start_stg_zdb_id = stg_zdb_id 
+					 AND xpatres_expression_found='t'
+					 AND xpatres_xpatex_zdb_id = xpatex_zdb_id 
+					 AND  xpatex_genox_zdb_id = genox_zdb_id 
+					 AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  
+					 AND geno_zdb_id  = genox_geno_zdb_id and geno_is_wildtype = 't' 
+					 ORDER BY stg_hours_start desc 
+					 ;
 					 ">
 					 $1
 					 <?/MISQL>
+	<?/MIVAR>
 		</td>
 		</tr>
 	
