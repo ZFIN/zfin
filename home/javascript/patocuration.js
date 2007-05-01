@@ -31,6 +31,28 @@ function deselectDefault() {
 
 }
 
+function updateSelectElement(element, value) {
+    var i;
+
+    for (i=0 ; i < element.options.length ; i++) {
+      if (element.options[i].value == value) {
+        element.selectedIndex = i;
+        if (element.onChange != null) { element.onChange(); }
+        break;
+      }
+    }
+
+}
+
+function updateMutantForm(fig_zdb_id, geno_zdb_id, exp_zdb_id, start_stg_zdb_id, end_stg_zdb_id ) {
+    updateSelectElement($('patosumFig'), fig_zdb_id); 
+    updateSelectElement($('patosumGenotype'), geno_zdb_id);
+    updateSelectElement($('patosumEnv'), exp_zdb_id);
+    updateSelectElement($('patosumStartStage'), start_stg_zdb_id);
+    updateSelectElement($('patosumEndStage'), end_stg_zdb_id);
+}
+
+
 
 function PatoCuration() {
   this.mutants = new Array();
@@ -48,7 +70,7 @@ function PatoCuration() {
   this.updateMutants = updateMutants;
   this.submitMutants = submitMutants;
   this.updatePhenotypes = updatePhenotypes;
-
+  this.updateMutantForm = updateMutantForm;
 
 }
 
@@ -282,6 +304,7 @@ function submitMutants() {
     document.getElementById('patobldrUpdatePhenosForm').appendChild(input);
   }
 }
+
 
 
 

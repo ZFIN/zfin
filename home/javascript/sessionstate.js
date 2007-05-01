@@ -1,3 +1,14 @@
+/** 
+
+FILE:  sessionstate.js
+
+Uses a single cookie to act as a "session" and store state
+information of form elements.
+
+
+
+**/
+
 
 var sessionState =  {
   stateData : {},
@@ -16,7 +27,11 @@ var sessionState =  {
     var value = this.getAttribute(id, attribute);
     if (document.getElementById(id) != null) {
       document.getElementById(id)[attribute] = value;
-      document.getElementById(id).onchange();
+
+/**  commenting this out because sometimes we
+     want the onchange to actually be when the user changed it **/
+
+/*      document.getElementById(id).onchange(); */
     } else {
       /* we'll end up here if element doesn't have an id,
          but it could also happen if an element is deleted  */
