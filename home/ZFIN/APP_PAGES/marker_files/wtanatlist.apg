@@ -128,21 +128,21 @@ stage range, experiment, or expression_found in the same figure.
   <?MIVAR NAME=fxfiganat_escape_long_list>$(REPLACE,$fxfiganat_separate_long_list,"'","")<?/MIVAR>
   
 
-<?MIVAR NAME=$fxfiganat_left_arrow><img border=0 onClick=updateAnatomyList('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
-<?MIVAR NAME=$fxfiganat_right_arrow><img onClick=updateAnatomyList('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$fxfiganat_left_arrow><img border=0 onClick=updateWTAnatomyList('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$fxfiganat_right_arrow><img onClick=updateWTAnatomyList('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
 
   
 <script>
   <?MIVAR>
-function updateAnatomyList(display_option) {
-    var long_display = "$fxfiganat_escape_long_list  <a href=\"javascript:updateAnatomyList('short');\">$fxfiganat_left_arrow</a>";
-    var short_display = "$fxfiganat_escape_short_list ... <a href=javascript:onClick=updateAnatomyList('long')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow";
+function updateWTAnatomyList(display_option) {
+    var long_display = "$fxfiganat_escape_long_list  <a href=\"javascript:updateWTAnatomyList('short');\">$fxfiganat_left_arrow</a>";
+    var short_display = "$fxfiganat_escape_short_list ... <a href=javascript:onClick=updateWTAnatomyList('long')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow";
 
     if (display_option == "long") {
-        updateInnerHTML('anatomyList',long_display)
+        updateInnerHTML('wtAnatomyList',long_display)
     }
     else {
-        updateInnerHTML('anatomyList',short_display)    
+        updateInnerHTML('wtAnatomyList',short_display)    
     }
 }
   <?/MIVAR>
@@ -150,14 +150,14 @@ function updateAnatomyList(display_option) {
 <?MIBLOCK COND="$(EQ,$fxfiganat_escape_short_list,)">
      <?MIVAR NAME=$fxfignanat_escape_short_list>$fxfiganat_Label $fxfiganat_escape_short_list<?/MIVAR>
 <?/MIBLOCK>
-<?MIVAR><span id="anatomyList"><?/MIVAR>
+<?MIVAR><span id="wtAnatomyList"><?/MIVAR>
 <?MIBLOCK COND="$(<,$(VECSIZE,$fxfiganat_long_list),$fxfiganat_max_count)">
   <?MIVAR>
     $fxfiganat_escape_long_list
   <?/MIVAR>
 <?MIELSE>
   <?MIVAR>
-    $fxfiganat_escape_short_list ... <a href=javascript:onClick=updateAnatomyList('long')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow
+    $fxfiganat_escape_short_list ... <a href=javascript:onClick=updateWTAnatomyList('long')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow
   <?/MIVAR>
 <?/MIBLOCK>
 
