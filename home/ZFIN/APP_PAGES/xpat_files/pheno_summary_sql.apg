@@ -32,7 +32,40 @@
        and feature_name = allele
        and present_t = 'f'
        and marker_id = '$OID'
+
+       UNION
+       
+       $phenosum_sql_select
+       from marker_relationship, experiment_condition, genotype_experiment, atomic_phenotype,
+       apato_figure, figure, publication, genotype
+       where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
+       and expcond_exp_zdb_id = genox_exp_zdb_id 
+       and genox_zdb_id = apato_genox_zdb_id
+       and mrel_type = 'knockdown reagent targets gene'
+       and mrel_mrkr_2_zdb_id = '$OID'
+       and apato_zdb_id = apatofig_apato_zdb_id
+       and apatofig_fig_zdb_id = fig_zdb_id
+       and fig_source_zdb_id = zdb_id 
+
   <?/MIVAR>  
+
+  <?MIBLOCK COND=$(EC,$(SUBSTR,$OID,1,11),ZDB-MRPHLNO)>
+    <?MIVAR NAME=phenosum_sql_where>
+       $phenosum_sql_where
+       
+       UNION
+       
+       $phenosum_sql_select
+       from experiment_condition, genotype_experiment, atomic_phenotype,
+       apato_figure, figure, publication, genotype
+       where expcond_exp_zdb_id = genox_exp_zdb_id 
+       and genox_zdb_id = apato_genox_zdb_id
+       and expcond_mrkr_zdb_id = '$OID'
+       and apato_zdb_id = apatofig_apato_zdb_id
+       and apatofig_fig_zdb_id = fig_zdb_id
+       and fig_source_zdb_id = zdb_id        
+    <?/MIVAR>
+  <?/MIBLOCK>
   
   <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from, feature_marker_relationship
   <?/MIVAR>  
