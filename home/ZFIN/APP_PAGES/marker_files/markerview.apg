@@ -1158,9 +1158,9 @@ function jump(form_select){
 	 ORDER BY stg_hours_start asc 
 	 ;
 	 ">
-	 $1
+	 <?MIVAR NAME=$FIRSTSTAGE>$1<?/MIVAR>
 	 <?/MISQL>
-	 to  
+
 	 <?MISQL SQL=" 
 	 SELECT  first 1  get_stg_name_long_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
 	 WHERE xpatex_gene_zdb_id = '$OID' 
@@ -1173,11 +1173,18 @@ function jump(form_select){
 	 ORDER BY stg_hours_start desc 
 	 ;
 	 ">
-	 $1
+	 <?MIVAR NAME=$LASTSTAGE>$1<?/MIVAR>
 	 <?/MISQL>
+
+	 <?MIVAR COND="$(EQ,$FIRSTSTAGE,$LASTSTAGE)">
+	 $FIRSTSTAGE
+	 <?/MIVAR>
+	 <?MIVAR COND="$(NE,$FIRSTSTAGE,$LASTSTAGE)">
+     $FIRSTSTAGE to $LASTSTAGE
+	 <?/MIVAR>
+	 
 	</td>
 	</tr>
-	<?/MIVAR>
 	
 	<td><b></b></td>
 	<td>
@@ -1186,6 +1193,7 @@ function jump(form_select){
 	<?/MIVAR>
 	</td>
 	</tr>
+	<?/MIVAR>
 	</table>
 
 		 
