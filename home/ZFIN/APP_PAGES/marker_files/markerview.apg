@@ -1140,50 +1140,53 @@ function jump(form_select){
 <?/MISQL>	
      <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
 
+
+     <?MICOMMENT>Show only if OID is a GENE and contains expression<?/MICOMMENT>
+	<?MIVAR COND="$(>,$(POSITION,$OID,GENE),0)">
 	<tr>
 	<td width="30%"><b>Wild Type Stages, Structures:</b></td>
 	<td width="70%">
-	<?MIVAR>
-					 <?MISQL SQL=" 
-					 SELECT  first 1  get_stg_name_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
-					 WHERE xpatex_gene_zdb_id = '$OID' 
-					 AND xpatres_start_stg_zdb_id = stg_zdb_id 
-					 AND xpatres_expression_found='t'
-					 AND xpatres_xpatex_zdb_id = xpatex_zdb_id 
-					 AND  xpatex_genox_zdb_id = genox_zdb_id 
-					 AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  
-					 AND geno_zdb_id  = genox_geno_zdb_id and geno_is_wildtype = 't' 
-					 ORDER BY stg_hours_start asc 
-					 ;
-					 ">
-					 $1
-					 <?/MISQL>
-					 to  
-					 <?MISQL SQL=" 
-					 SELECT  first 1  get_stg_name_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
-					 WHERE xpatex_gene_zdb_id = '$OID' 
-					 AND xpatres_start_stg_zdb_id = stg_zdb_id 
-					 AND xpatres_expression_found='t'
-					 AND xpatres_xpatex_zdb_id = xpatex_zdb_id 
-					 AND  xpatex_genox_zdb_id = genox_zdb_id 
-					 AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  
-					 AND geno_zdb_id  = genox_geno_zdb_id and geno_is_wildtype = 't' 
-					 ORDER BY stg_hours_start desc 
-					 ;
-					 ">
-					 $1
-					 <?/MISQL>
+	 <?MISQL SQL=" 
+	 SELECT  first 1  get_stg_name_long_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
+	 WHERE xpatex_gene_zdb_id = '$OID' 
+	 AND xpatres_start_stg_zdb_id = stg_zdb_id 
+	 AND xpatres_expression_found='t'
+	 AND xpatres_xpatex_zdb_id = xpatex_zdb_id 
+	 AND  xpatex_genox_zdb_id = genox_zdb_id 
+	 AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  
+	 AND geno_zdb_id  = genox_geno_zdb_id and geno_is_wildtype = 't' 
+	 ORDER BY stg_hours_start asc 
+	 ;
+	 ">
+	 $1
+	 <?/MISQL>
+	 to  
+	 <?MISQL SQL=" 
+	 SELECT  first 1  get_stg_name_long_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
+	 WHERE xpatex_gene_zdb_id = '$OID' 
+	 AND xpatres_start_stg_zdb_id = stg_zdb_id 
+	 AND xpatres_expression_found='t'
+	 AND xpatres_xpatex_zdb_id = xpatex_zdb_id 
+	 AND  xpatex_genox_zdb_id = genox_zdb_id 
+	 AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  
+	 AND geno_zdb_id  = genox_geno_zdb_id and geno_is_wildtype = 't' 
+	 ORDER BY stg_hours_start desc 
+	 ;
+	 ">
+	 $1
+	 <?/MISQL>
+	</td>
+	</tr>
 	<?/MIVAR>
-		</td>
-		</tr>
 	
 	<td><b></b></td>
 	<td>
 	<?MIVAR>
           <?MISQL SQL="select WebExplode(object,'fxfiganat_gene_zdb_id=$OID&fxfiganat_Label=  &fxfiganat_hide_unspecified=t&fxfiganat_condensed_count=3&fxfiganat_max_count=5') from webPages where ID='aa-wtanatlist.apg';">$1<?/MISQL>  
 	<?/MIVAR>
-		</td>
-		 </table>
+	</td>
+	</tr>
+	</table>
 
 		 
      
