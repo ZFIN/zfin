@@ -61,7 +61,7 @@ Input:
 	<td>
 	<?MIVAR COND="$(NXST,$marker_type)" NAME=marker_type><?/MIVAR>
 	<?MIVAR COND="$(NXST,$mlist)" NAME=mlist><?/MIVAR>
-	<select multiple size=18 name=marker_type> 
+	<select multiple size=19 name=marker_type> 
 	  <?MIVAR>
 	  <option $(IF,$(OR,$(EC,$marker_type,),$(EC,$marker_type,all)),SELECTED) value="all">All 
 	  <?/MIVAR>
