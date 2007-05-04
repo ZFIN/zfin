@@ -234,7 +234,7 @@ Number exists
 <?/MICOMMENT>
 
 <?MIVAR COND="$(NC,$pubview2_doi_no,)">
-  <b>DOI: </b>
+  <b>View: </b>
   <?MIVAR>
     <A HREF=http://dx.doi.org/$pubview2_doi_no>$pubview2_doi_no</A>
   <?/MIVAR>
