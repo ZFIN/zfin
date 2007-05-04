@@ -77,7 +77,7 @@ EFFECTS
 
     
       <?MISQL SQL="select pub_jrnl_zdb_id, jrnl_name, title, authors, pub_volume, 
-                          pub_pages, year(pub_date), jrnl_publisher
+                          pub_pages, year(pub_date), jrnl_publisher, pub_doi
                      from publication, journal
                     where zdb_id = '$pubackn_pub_zdb_id'
                       and pub_jrnl_zdb_id = jrnl_zdb_id;">
@@ -90,6 +90,7 @@ EFFECTS
 	<?MIVAR NAME=pubackn_pub_pages>$6<?/MIVAR>
 	<?MIVAR NAME=pubackn_copyrt_year>$7<?/MIVAR>
 	<?MIVAR NAME=pubackn_jrnl_publisher>$8<?/MIVAR>
+	<?MIVAR NAME=pubackn_doi>$9<?/MIVAR>
       <?/MISQL>
 
       <?MISQL SQL="execute function jrnl_acknowledgment('$pubackn_jrnl_zdb_id');">
@@ -119,8 +120,9 @@ EFFECTS
       
       <?MIVAR COND=$(NC,$pubackn_journal_ack,)>$pubackn_journal_ack<?/MIVAR>
       <?MIVAR COND=$(NC,$pubackn_pub_ack,)><br><br>$pubackn_pub_ack<?/MIVAR>
-      <?MIVAR COND=$(EC,$pubackn_jrnl_publisher,Elsevier)><br><br>Reprinted from $pubackn_jrnl_name, 
-         $pubackn_pub_volume, $pubackn_pub_authors, $pubackn_pub_name, $pubackn_pub_pages, Copyright 
+      <?MIVAR COND=$(EC,$pubackn_jrnl_publisher,Elsevier)><br><br>Reprinted from  
+         <A HREF=http://dx.doi.org/$pubackn_doi>$pubackn_jrnl_name, 
+         $pubackn_pub_volume, $pubackn_pub_authors, $pubackn_pub_name, $pubackn_pub_pages</a>, Copyright 
          ($pubackn_copyrt_year) with permission from Elsevier.
       <?/MIVAR>
 
