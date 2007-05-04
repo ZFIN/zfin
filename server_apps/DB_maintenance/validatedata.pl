@@ -311,6 +311,50 @@ sub checkFigXpatexSourceConsistant ($) {
   &recordResult($routineName, $nRecords);
 } 
 
+#----------------------------------------------------------------
+#Parameter
+# $      Email Address for recipients
+#
+# For apato interface, we store the source (pub) zdb_id in both the figure
+# table and in the atomic_phenotype table.
+# We then relate the two, figure and phenotype, in apato_figure
+# We want the two sources to match--otherwise, we'd have figures from 
+# one paper associated with phenotypes from other papers.  This 
+# would be incorrect. 
+# These attributions are also stored in record_attribution, but that
+# table is not verified here.
+
+sub checkFigApatoSourceConsistant ($) {
+	
+  my $routineName = "checkFigXpatexSourceConsistant";
+	
+  my $sql = 'select apatofig_fig_zdb_id,apato_zdb_id 
+      from atomic_phenotype
+      join apato_figure
+        on apato_zdb_id = apatofig_apato_zdb_id
+      join figure
+        on apatofig_fig_zdb_id = fig_zdb_id
+      where apato_pub_zdb_id <> fig_source_zdb_id';
+
+  	
+  my @colDesc = ("apatofig_fig_zdb_id ",
+		 "apato_zdb_id "
+		);
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+
+    my $sendToAddress = $_[0];
+    my $subject = "FigPato Source Inconsistant";
+    my $errMsg = "$nRecords records' use different sources for apato
+                   records and figure/apato records";
+      		       
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+} 
 
 #---------------------------------------------------------------
 #Parameter
@@ -2824,6 +2868,7 @@ if($daily) {
 	expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
 	xpatHasConsistentMarkerRelationship($xpatEmail);
 	checkFigXpatexSourceConsistant($dbaEmail);
+	checkFigApatoSourceConsistant($dbaEmail);
 
 	featureAssociatedWithGenotype($mutantEmail);
 	featureIsAlleleOfOrMrkrAbsent($mutantEmail);
