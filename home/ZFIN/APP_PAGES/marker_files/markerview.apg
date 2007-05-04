@@ -1142,12 +1142,9 @@ function jump(form_select){
 
 
      <?MICOMMENT>Show only if OID is a GENE and contains expression<?/MICOMMENT>
-	<?MIVAR COND="$(>,$(POSITION,$OID,GENE),0)">
-	<tr>
-	<td width="30%"><b>Wild Type Stages, Structures:</b></td>
-	<td width="70%">
+
 	 <?MISQL SQL=" 
-	 SELECT  first 1  get_stg_name_long_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
+	 SELECT  get_stg_name_long_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
 	 WHERE xpatex_gene_zdb_id = '$OID' 
 	 AND xpatres_start_stg_zdb_id = stg_zdb_id 
 	 AND xpatres_expression_found='t'
@@ -1158,23 +1155,20 @@ function jump(form_select){
 	 ORDER BY stg_hours_start asc 
 	 ;
 	 ">
-	 <?MIVAR NAME=$FIRSTSTAGE>$1<?/MIVAR>
+		 <?MIVAR COND="$(EQ,$MI_CURRENTROW,1)">
+			 <?MIVAR NAME=$FIRSTSTAGE>$1<?/MIVAR>
+	     <?/MIVAR>
+		  
 	 <?/MISQL>
 
-	 <?MISQL SQL=" 
-	 SELECT  first 1  get_stg_name_long_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
-	 WHERE xpatex_gene_zdb_id = '$OID' 
-	 AND xpatres_start_stg_zdb_id = stg_zdb_id 
-	 AND xpatres_expression_found='t'
-	 AND xpatres_xpatex_zdb_id = xpatex_zdb_id 
-	 AND  xpatex_genox_zdb_id = genox_zdb_id 
-	 AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  
-	 AND geno_zdb_id  = genox_geno_zdb_id and geno_is_wildtype = 't' 
-	 ORDER BY stg_hours_start desc 
-	 ;
-	 ">
+	 <?MIVAR NAME=$NUM_STAGES>$MI_ROWCOUNT<?/MIVAR>
 	 <?MIVAR NAME=$LASTSTAGE>$1<?/MIVAR>
-	 <?/MISQL>
+
+	<?MIVAR COND="$(AND,$(>,$(POSITION,$OID,GENE),0),$(>,$NUM_STAGES,0))">
+	<tr>
+	<td width="30%"><b>Wild Type Stages, Structures:</b></td>
+	<td width="70%">
+
 
 	 <?MIVAR COND="$(EQ,$FIRSTSTAGE,$LASTSTAGE)">
 	 $FIRSTSTAGE
