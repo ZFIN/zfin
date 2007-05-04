@@ -42,6 +42,8 @@
 --
 -- Morpholino data
 --      zfin id of gene, gene symbol, zfin id of MO, MO symbol, public note
+-- Marker Relationship data
+--	marker1 id, marker1 symbol, marker 2 id, marker 2 symbol, relationship
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genetic_markers.txt' 
   DELIMITER "	" 
@@ -70,6 +72,28 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/aliases.txt'
 				  current_abbrev, alias 
                     from tmp_alias
 		    order by current_id, alias;
+
+
+-- Create marker realtionship file
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_marker_relationship.txt'
+ DELIMITER "	"  select gene.mrkr_zdb_id, gene.mrkr_abbrev, 
+			  seq.mrkr_zdb_id, seq.mrkr_abbrev,
+			  mrel_type
+		     from marker_relationship, marker gene, marker seq	
+		     where gene.mrkr_type[1,4] = 'GENE'
+			and seq.mrkr_type[1,4] != 'GENE'
+			and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
+			and mrel_mrkr_2_zdb_id = seq.mrkr_zdb_id
+		   union
+		     select gene.mrkr_zdb_id, gene.mrkr_abbrev, 
+			  seq.mrkr_zdb_id, seq.mrkr_abbrev,
+			  mrel_type
+		     from marker_relationship, marker gene, marker seq	
+		     where gene.mrkr_type[1,4] = 'GENE'
+			and seq.mrkr_type[1,4] != 'GENE'
+			and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
+			and mrel_mrkr_1_zdb_id = seq.mrkr_zdb_id;	
 
 
 -- Create the orthologues files - mouse, human, fly and yeast
