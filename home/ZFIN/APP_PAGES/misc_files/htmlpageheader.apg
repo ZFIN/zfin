@@ -4,6 +4,7 @@ prefix: hdr_
 INPUT VARS:
   hdr_showmotto		exists if all 3 tabs should be deselected and motto should be displayed.
   hrd_nomargins		exists when we don't want margins on the content of the page.
+  G_hideHeaderAndFooter   exists for indexing, if called, the header links won't show up
 <?/MICOMMENT>
 
 
@@ -233,6 +234,7 @@ function hdrSetTabs() {
 
 <body id="body" onload="hdrSetTabs();">
 
+
   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">
    <img id="logo-img" src="/images/zfinlogo.png"> 
    <img id="logo-text" src="/images/zfintxt.png">
@@ -256,6 +258,7 @@ function hdrSetTabs() {
     </form>
   </div>
 
+<?MIBLOCK COND="$(NXST,$g_hideHeaderAndFooter)">
 <div id="hdr-banner">
 
   <div id="hdr-tabs">    
@@ -302,7 +305,7 @@ function hdrSetTabs() {
 
 
 
-
+ 
 
 
   <div id="hdr-navlinks">
@@ -315,7 +318,7 @@ function hdrSetTabs() {
       &nbsp; <a href="/zirc/orders/buyBookQ.php?item=Book&amp;id=book&amp;detail=The%20Zebrafish%20Book"><span style="font-style:italic;">ZF Book</span></a>,
       &nbsp; <a href="/zirc/orders/buyParaQ.php?item=Paramecia&amp;id=para&amp;detail=Paramecia%20Starter%20Culture" >Paramecia</a>&nbsp;
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-      <a href="/zirc/documents/fees.php">Fees</a>
+      <a href="/zirc/documents/fees.php">Prices</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
       <a href="/zirc/documents/payment.php">Payment Help</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
@@ -373,4 +376,8 @@ function hdrSetTabs() {
 
   </div> <!-- navlinks -->
 </div>
+
+<?/MIBLOCK> <?MICOMMENT> ** hide header & footer ** <?/MICOMMENT>
+
+
 <div <?MIBLOCK COND="$(NXST,$hdr_nomargins)">class="allcontent"<?/MIBLOCK> >

@@ -294,7 +294,7 @@ document.write("       &nbsp; <a href=\"/zirc/abs/absAll.php\">Antibodies</a>,")
  document.write("      &nbsp; <a href=\"/zirc/orders/buyBookQ.php?item=Book&amp;id=book&amp;detail=The%20Zebrafish%20Book\"><span style=\"font-style:italic;\">ZF Book</span></a>,");
 document.write("       &nbsp; <a href=\"/zirc/orders/buyParaQ.php?item=Paramecia&amp;id=para&amp;detail=Paramecia%20Starter%20Culture\" >Paramecia</a>&nbsp;");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
- document.write("      <a href=\"/zirc/documents/fees.php\">Fees</a>");
+ document.write("      <a href=\"/zirc/documents/fees.php\">Prices</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/zirc/documents/payment.php\">Payment Help</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
