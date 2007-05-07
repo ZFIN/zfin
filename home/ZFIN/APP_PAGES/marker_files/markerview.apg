@@ -1144,9 +1144,15 @@ function jump(form_select){
      <?MICOMMENT>Show only if OID is a GENE and contains expression<?/MICOMMENT>
 
 	 <?MISQL SQL=" 
-	 SELECT  get_stg_name_long_html(stg_zdb_id), stg_hours_start  from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
+	 SELECT  get_stg_name_long_html(stg_zdb_id) from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
 	 WHERE xpatex_gene_zdb_id = '$OID' 
-	 AND xpatres_start_stg_zdb_id = stg_zdb_id 
+	 AND 
+     (
+         xpatres_start_stg_zdb_id = stg_zdb_id 
+         OR
+         xpatres_end_stg_zdb_id = stg_zdb_id 
+     )
+
 	 AND xpatres_expression_found='t'
 	 AND xpatres_xpatex_zdb_id = xpatex_zdb_id 
 	 AND  xpatex_genox_zdb_id = genox_zdb_id 
