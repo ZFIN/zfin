@@ -3,9 +3,11 @@ FILE: alleleDesigNums.apg
 Prefix: adn_
 
 This file displays all already used allele designation numbers for a particular lab.
+the page is poped up from links on the Designation column (1st column) of the 
+table under "Allocated laboratory line designations: " on lab_desig.html page.
 
 Variables Expected: 
- -- adn_beginningLetter        -- from lab_desig.html 
+  adn_beginningLetter        -- from lab_desig.html 
  
 <?/MICOMMENT>
 
@@ -45,124 +47,85 @@ Message: $MI_ERRORMSG
     Existing allele designation starting with "<?MIVAR>$adn_beginningLetter<?/MIVAR>"
     <?/MIBLOCK>
     </h3>
-
-    <?MICOMMENT>==================================================================
-            ==  Create adn_temp_sorted temp table if it does not already exist.
-            ==========================================================================
-    <?/MICOMMENT>
-
-    <?MISQL SQL="
-      select dbinfo('sessionid') 
-        from single;">
-      <?MIVAR NAME=$adn_session_id>$1<?/MIVAR>
-      <?MIVAR NAME=$adn_temp_sorted>$(CONCAT,adn_temp_sorted,$adn_session_id)<?/MIVAR>
-      <?MIVAR NAME=$adn_temp_sorted2>$(CONCAT,adn_temp_sorted2,$adn_session_id)<?/MIVAR>
-    <?/MISQL>
-
-    <?MISQL SQL="execute function table_exists('$adn_temp_sorted')">
-      <?MISQL COND=$(EC,$1,f) SQL="
-	create temp table $adn_temp_sorted (adn_desig int) with NO LOG;">
-      <?/MISQL>
-    <?/MISQL>
- 
-     <?MISQL SQL="execute function table_exists('$adn_temp_sorted2')">
-       <?MISQL COND=$(EC,$1,f) SQL="
- 	create temp table $adn_temp_sorted2 (adn_desig varchar(50)) with NO LOG;">
-       <?/MISQL>
-    <?/MISQL>
  
     <?MIVAR NAME=adn_beginningLetter_lenth>$(STRLEN,$adn_beginningLetter)<?/MIVAR>
     
     <?MIVAR NAME=adn_count>0<?/MIVAR>
-    <?MIVAR NAME=adn_count2>0<?/MIVAR>
-    
+
     <?MISQL SQL="select feature_abbrev
                    from feature
-                  where feature_abbrev like '$adn_beginningLetter%'
-               order by feature_abbrev;">      
-      <?MIVAR NAME=adn_desigNum>$(SUBSTR,$1,$(+,$adn_beginningLetter_lenth,1))<?/MIVAR>
-      <?MIVAR NAME=adn_firstNum>$(SUBSTR,$1,$(+,$adn_beginningLetter_lenth,1),1)<?/MIVAR>
-      <?MIBLOCK COND="$(ISNUM,$adn_desigNum)">
-        <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
-        <?MISQL SQL="insert into $adn_temp_sorted (adn_desig) values ('$adn_desigNum');">	    
-        <?/MISQL> 
-      <?MIELSE COND="$(ISNUM,$adn_firstNum)">
-        <?MIVAR>$(SETVAR,$adn_count2,$(+,$adn_count2,1))<?/MIVAR>
-        <?MISQL SQL="insert into $adn_temp_sorted2 (adn_desig) values ('$adn_desigNum');">	    
-        <?/MISQL> 
+                  where feature_abbrev like 'd$adn_beginningLetter%'
+               order by feature_abbrev_order;">  
+      <?MIVAR NAME=adn_desigNumD>$(SUBSTR,$1,$(+,$adn_beginningLetter_lenth,2))<?/MIVAR>
+      <?MIVAR NAME=adn_firstNumD>$(SUBSTR,$1,$(+,$adn_beginningLetter_lenth,2),1)<?/MIVAR>
+      
+    <?MICOMMENT>================================================================
+            == first 'd' stands for "dominant"
+            == All Tubingen alleles do not begin with just 't'.  
+            == All alleles that begin with 't' and are not 'tsu' or 'twu' 
+            == should be listed for Tubingen.  
+            == Similarly 'ut', former Parichy designation, should find 'utr'
+            == And 'sb' should be finding sb13fixe
+            ====================================================================
+    <?/MICOMMENT>      
+      <?MIBLOCK COND="$(EQ,$adn_beginningLetter,t)">
+        <?MIVAR NAME=adn_firstNumD2>$(SUBSTR,$1,$(+,$adn_beginningLetter_lenth,2),2)<?/MIVAR>
+        <?MIBLOCK COND="$(AND,$(NE,$adn_firstNumD2,su),$(NE,$adn_firstNumD2,wu))">
+          <?MIVAR>$1<?/MIVAR> <br/>
+          <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+        <?/MIBLOCK>
+      <?MIELSE COND="$(EQ,$adn_beginningLetter,ut)">        
+        <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNumD),$(EQ,$adn_firstNumD,r))">
+          <?MIVAR>$1<?/MIVAR> <br/>
+          <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+        <?/MIBLOCK>        
+      <?MIELSE>
+        <?MIBLOCK COND="$(OR,$(ISNUM,$adn_desigNumD),$(ISNUM,$adn_firstNumD))">
+          <?MIVAR>$1<?/MIVAR> <br/>
+          <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+        <?/MIBLOCK>        
       <?/MIBLOCK>
     <?/MISQL>
 
-    <?MIBLOCK COND="$(EQ,$adn_beginningLetter,ut)">     
+    <?MISQL SQL="select feature_abbrev
+                   from feature
+                  where feature_abbrev like '$adn_beginningLetter%'
+               order by feature_abbrev_order;">  
+      <?MIVAR NAME=adn_desigNum>$(SUBSTR,$1,$(+,$adn_beginningLetter_lenth,1))<?/MIVAR>
+      <?MIVAR NAME=adn_firstNum>$(SUBSTR,$1,$(+,$adn_beginningLetter_lenth,1),1)<?/MIVAR>  
       
-      <?MISQL SQL="select feature_abbrev
-                     from feature
-                    where feature_abbrev like 'ut%' 
-                 order by feature_abbrev;">      
-        <?MIVAR NAME=adn_desigNumUT>$(SUBSTR,$1,3)<?/MIVAR>
-        <?MIVAR NAME=adn_secondNumUT>$(SUBSTR,$1,3,1)<?/MIVAR>
-        <?MIVAR NAME=adn_thirdNumUT>$(SUBSTR,$1,4,1)<?/MIVAR>
-      
-        <?MIBLOCK COND="$(NOT,$(ISNUM,$adn_secondNumUT))">
-          <?MIBLOCK COND="$(ISNUM,$adn_desigNumUT)">
-            <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
-            <?MISQL SQL="insert into $adn_temp_sorted (adn_desig) values ('$adn_desigNumUT');">	    
-            <?/MISQL> 
-          <?MIELSE COND="$(ISNUM,$adn_thirdNumUT)">
-            <?MIVAR>$(SETVAR,$adn_count2,$(+,$adn_count2,1))<?/MIVAR>
-            <?MISQL SQL="insert into $adn_temp_sorted2 (adn_desig) values ('$adn_desigNumUT');">	    
-            <?/MISQL> 
-          <?/MIBLOCK>
+    <?MICOMMENT>================================================================
+            == display of all non-dominant alleles
+            == All Tubingen alleles do not begin with just 't'.  
+            == All alleles that begin with 't' and are not 'tsu' or 'twu' 
+            == should be listed for Tubingen.  
+            == Similarly 'ut', former Parichy designation, should find 'utr'
+            == And 'sb' should be finding sb13fixe
+            ====================================================================
+    <?/MICOMMENT>      
+      <?MIBLOCK COND="$(EQ,$adn_beginningLetter,t)">
+        <?MIVAR NAME=adn_firstNum2>$(SUBSTR,$1,$(+,$adn_beginningLetter_lenth,1),2)<?/MIVAR>
+        <?MIBLOCK COND="$(AND,$(NE,$adn_firstNum2,su),$(NE,$adn_firstNum2,wu))">
+          <?MIVAR>$1<?/MIVAR> <br/>
+          <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
         <?/MIBLOCK>
-          
-      <?/MISQL>          
-      
-      
-    <?MIELSE COND="$(EQ,$adn_beginningLetter,t)">
-    
-      <?MISQL SQL="select feature_abbrev
-                     from feature
-                    where feature_abbrev like 't%' 
-                 order by feature_abbrev;">      
-        <?MIVAR NAME=adn_desigNumT>$(SUBSTR,$1,2)<?/MIVAR>
-        <?MIVAR NAME=adn_secondNumT>$(SUBSTR,$1,2,1)<?/MIVAR>
-        <?MIVAR NAME=adn_thirdNumT>$(SUBSTR,$1,3,1)<?/MIVAR>
-        <?MIVAR NAME=adn_first3NumT>$(SUBSTR,$1,1,3)<?/MIVAR>
-      
-        <?MIBLOCK COND="$(AND,$(NOT,$(ISNUM,$adn_secondNumT)),$(NE,$adn_first3NumT,twn))">
-          <?MIBLOCK COND="$(ISNUM,$adn_desigNumT)">
-            <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
-            <?MISQL SQL="insert into $adn_temp_sorted (adn_desig) values ('$adn_desigNumT');">	    
-            <?/MISQL> 
-          <?MIELSE COND="$(ISNUM,$adn_thirdNumT)">
-            <?MIVAR>$(SETVAR,$adn_count2,$(+,$adn_count2,1))<?/MIVAR>
-            <?MISQL SQL="insert into $adn_temp_sorted2 (adn_desig) values ('$adn_desigNumT');">	    
-            <?/MISQL> 
-          <?/MIBLOCK>
-        <?/MIBLOCK>
-          
-      <?/MISQL>    
-      
-    <?/MIBLOCK>
+      <?MIELSE COND="$(EQ,$adn_beginningLetter,ut)">        
+        <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNum),$(EQ,$adn_firstNum,r))">
+          <?MIVAR>$1<?/MIVAR> <br/>
+          <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+        <?/MIBLOCK>        
+      <?MIELSE>
+        <?MIBLOCK COND="$(OR,$(ISNUM,$adn_desigNum),$(ISNUM,$adn_firstNum))">
+          <?MIVAR>$1<?/MIVAR> <br/>
+          <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+        <?/MIBLOCK>        
+      <?/MIBLOCK>
+    <?/MISQL>
  
-    <?MIBLOCK COND="$(OR,$(>,$adn_count,0),$(>,$adn_count2,0))">
-      <?MIBLOCK COND="$(>,$adn_count,0)">
-        <?MICOMMENT> ** display each designation <?/MICOMMENT>
-        <?MISQL SQL="select * from $adn_temp_sorted order by adn_desig;">
-          <?MIVAR>$adn_beginningLetter$1<?/MIVAR> <br/>
-        <?/MISQL> 
-      <?/MIBLOCK>
-      <?MIBLOCK COND="$(>,$adn_count2,0)">
-        <?MISQL SQL="select * from $adn_temp_sorted2 order by adn_desig;">
-          <?MIVAR>$adn_beginningLetter$1<?/MIVAR> <br/>
-        <?/MISQL> 
-      <?/MIBLOCK>
-    <?MIELSE>
+    <?MIBLOCK COND="$(=,$adn_count,0)">
        None
     <?/MIBLOCK>
  
-    <?MISQL SQL="delete from $adn_temp_sorted;"><?/MISQL>
-    <?MISQL SQL="delete from $adn_temp_sorted2;"><?/MISQL>
   </body>
 
   <?MICOMMENT> ** the following could be useful after lab_desig.html is changed into an apg page <?/MICOMMENT>
