@@ -64,6 +64,32 @@ EFFECTS
 
   
 <script language="javascript">
+
+     function sendToPato(URL, linkid) {
+	document.getElementById(linkid).innerHTML = "<small>updating...</small>";
+        var xmlHttpReq = false;
+        var self = this;
+        // Mozilla/Safari
+        if (window.XMLHttpRequest) {
+           self.xmlHttpReq = new XMLHttpRequest();
+        }
+        // IE
+        else if (window.ActiveXObject) {
+           self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        self.xmlHttpReq.open('GET', URL, true);
+        self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        self.xmlHttpReq.onreadystatechange = function() {
+           if (self.xmlHttpReq.readyState == 4) {
+	      document.getElementById(linkid).innerHTML = "<small>pushed</small>";
+           }
+        }
+          self.xmlHttpReq.send('');
+    }
+
+
+
+
     <?MIVAR NAME=xpcurpnlOB>[<?/MIVAR>
     <?MIVAR NAME=xpcurpnlCB>]<?/MIVAR>
     
@@ -386,6 +412,7 @@ EFFECTS
     <td>Stage Range</td>
     <td width=25%>Expressed in</td>
     <td>Delete</td>
+    <td>Push</td>
   </tr>  
 
 <form name="xpcur_exp">
@@ -400,9 +427,11 @@ EFFECTS
                     xpatex_gene_zdb_id, 
                     geno_zdb_id,
                     xpatassay_display_order,
-                    zero_pad(exp_name)
+                    zero_pad(exp_name),
+                    exp_zdb_id,
+                    genox_zdb_id
     from figure, expression_pattern_figure, expression_result, expression_experiment, marker, stage, genotype_experiment, genotype, expression_pattern_assay, experiment
-    where fig_source_zdb_id = '$OID'
+      where fig_source_zdb_id = '$OID'
       and xpatfig_fig_zdb_id = fig_zdb_id
       and xpatfig_xpatres_zdb_id = xpatres_zdb_id
       and xpatres_xpatex_zdb_id = xpatex_zdb_id 
@@ -425,6 +454,9 @@ EFFECTS
       <?MIVAR NAME=xpcurpnl_delete>panel,$1,$5,$3,$4<?/MIVAR>
       <?MIVAR NAME=xpcurpnl_fish>$9<?/MIVAR>
       <?MIVAR NAME=xpcurpnl_gene>$8<?/MIVAR>
+      <?MIVAR NAME=xpcurpnl_exp_zdb_id>$13<?/MIVAR>
+      <?MIVAR NAME=xpcurpnl_geno_zdb_id>$10<?/MIVAR>
+      <?MIVAR NAME=xpcurpnl_genox_zdb_id>$14<?/MIVAR>      
 
       <?MICOMMENT> The panel ID format is Fig,xpatex,sstg,estg. <?/MICOMMENT>
       <?MIVAR NAME=xpcurpnl_id>$xpcurpnl_fig_zdb_id$xpcurpnl_xpatex_zdb_id$xpcurpnl_start_stg_zdb_id$xpcurpnl_end_stg_zdb_id<?/MIVAR>
@@ -486,7 +518,35 @@ EFFECTS
       
       <td valign=top>
         <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurpnl_delete','panel')"><?/MIVAR>
+
       </td>           
+      <td>
+ 
+        <?MICOMMENT> ** only show the push option for things that aren't already in pato ** <?/MICOMMENT>       
+
+        <?MIVAR COND="$(XST,$xpcurpnl_pato_exists)">$(UNSETVAR,$xpcurpnl_pato_exists)<?/MIVAR>
+	<?MISQL SQL="select first 1 'x' 
+                     from atomic_phenotype
+                          join apato_figure on apato_zdb_id = apatofig_apato_zdb_id
+                     where apatofig_fig_zdb_id = '$xpcurpnl_fig_zdb_id'
+                       and apato_genox_zdb_id = '$xpcurpnl_genox_zdb_id'
+                       and apato_start_stg_zdb_id = '$xpcurpnl_start_stg_zdb_id'
+                       and apato_end_stg_zdb_id = '$xpcurpnl_end_stg_zdb_id';">
+           <?MIVAR NAME="$xpcurpnl_pato_exists">1<?/MIVAR>
+           <small>in pato</small>
+        <?/MISQL>
+        
+	<?MIBLOCK COND="$(NXST,$xpcurpnl_pato_exists)">
+
+           <?MICOMMENT> ** I need unique ids, but they don't have to mean anything, so I'm using a count
+                           rather than concatenating all of the ids ** <?/MICOMMENT>
+           <?MIVAR COND="$(NXST,$xpcurpnl_sendToPatoLinkCount)" NAME="$xpcurpnl_sendToPatoLinkCount">0<?/MIVAR> 
+   	   <?MIVAR NAME="$xpcurpnl_sendToPatoLinkCount">$(+,$xpcurpnl_sendToPatoLinkCount,1)<?/MIVAR>
+           <?MIVAR><span id="$(CONCAT,sendtopato,$xpcurpnl_sendToPatoLinkCount)"><a href="javascript:;" style="color: blue;" onclick="sendToPato('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-patoupdate_addmutant.apg&OID=$OID&puaddmu_add_mutant=1&puaddmu_fig_zdb_id=$xpcurpnl_fig_zdb_id&puaddmu_geno_zdb_id=$xpcurpnl_geno_zdb_id&puaddmu_exp_zdb_id=$xpcurpnl_exp_zdb_id&puaddmu_start_stg_zdb_id=$xpcurpnl_start_stg_zdb_id&puaddmu_end_stg_zdb_id=$xpcurpnl_end_stg_zdb_id', '$(CONCAT,sendtopato,$xpcurpnl_sendToPatoLinkCount)');"><small>to pato</small></a></span><?/MIVAR>
+
+	<?/MIBLOCK>
+
+      </td>
     </tr>
 
     <?MIVAR NAME=xpcurpnl_prev_fish>$xpcurpnl_fish<?/MIVAR>
