@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
 SUBDIRS = EDITpubs
 
-GENERICS = REFERinfo.apg enterpubs.apg link_authors.apg \
+GENERICS = REFERinfo.apg enterpubs.apg link_authors.apg link_authors_update.apg \
 	pubprintable.apg pubselect2.apg pubview2.apg \
 	showpubs.apg miniref_display.apg curate_ortho_select.apg pubcuration.apg \
 	pubtopic_close.apg pubtopic_open.apg pubtopic_unclaim.apg pubtopic_found.apg \
