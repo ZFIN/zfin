@@ -200,92 +200,19 @@ EFFECTS
 
 
 
-
+    
 
 
     <?MICOMMENT> *** Add new figure / genox / stages set  [add new mutant] *** <?/MICOMMENT>
 
-
     <?MIBLOCK COND="$(XST,$patoup_add_mutant)">
       
-      <?MICOMMENT> ** Get or make genox_zdb_id ** <?/MICOMMENT>
-      
-      <?MISQL SQL="select genox_zdb_id 
-                   from genotype_experiment 
-                   where genox_geno_zdb_id = '$patoup_geno_zdb_id'
-                     and genox_exp_zdb_id = '$patoup_exp_zdb_id';">
-        <?MIVAR NAME="$patoup_genox_zdb_id">$1<?/MIVAR>
-      <?/MISQL>
-
-      <?MICOMMENT> ** if the last query didnt get a genox id, make one ** <?/MICOMMENT>
-
-      <?MIBLOCK COND="$(NXST,$patoup_genox_zdb_id)">
-        <?MISQL SQL="execute function get_id('GENOX');">
-          <?MIVAR NAME="$patoup_genox_zdb_id">$1<?/MIVAR>
-        <?/MISQL>
-        <?MISQL SQL="insert into zdb_active_data values ('$patoup_genox_zdb_id');"><?/MISQL>
-        <?MISQL SQL="insert into genotype_experiment (genox_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id)
-                                 values ('$patoup_genox_zdb_id', '$patoup_geno_zdb_id', '$patoup_exp_zdb_id');"><?/MISQL>
-      <?/MIBLOCK>
+    <?MISQL SQL="select WebExplode(object, 'puaddmu_add_mutant=1&puaddmu_fig_zdb_id=$patoup_fig_zdb_id&puaddmu_geno_zdb_id=$patoup_geno_zdb_id&puaddmu_exp_zdb_id=$patoup_exp_zdb_id&puaddmu_start_stg_zdb_id=$patoup_start_stg_zdb_id&puaddmu_end_stg_zdb_id=$patoup_end_stg_zdb_id')
+      from webpages 
+      where id = 'aa-patoupdate_addmutant.apg';">
+    <?/MISQL>
 
 
-      <?MICOMMENT> ** When these sets get made, they're always 'empty', meaning that
-                      they're created with a concrete figure, genox and a pair of stages
-                      (which could be unknown), and the entity, quality,
-                      and tag are all set to defaults:
-                        entity:  the unspecified anatomy item  (could be from any ontology)
-                        quality:  quality   (the root term)
-                        tags:     abnormal
-      <?/MICOMMENT>
-
-
- 
-
-
-      <?MICOMMENT> *** Check and see if there's already an default pato record with these stages 
-                       for this genox id *** <?/MICOMMENT>
- 
-      <?MISQL SQL="select first 1 apato_zdb_id 
-                   from atomic_phenotype 
-                   where apato_entity_a_zdb_id = '$patoup_default_entity_zdb_id'
-                     and apato_quality_zdb_id = '$patoup_default_quality_zdb_id'
-                     and apato_genox_zdb_id = '$patoup_genox_zdb_id'
-                     and apato_tag = 'abnormal'
-                     and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
-                     and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id';">
-        <?MIVAR NAME="$patoup_preexisting_apato_zdb_id">$1<?/MIVAR>
-      <?/MISQL>
-
-
-
-      <?MIBLOCK COND="$(NXST,$patoup_preexisting_apato_zdb_id)">
-
-        <?MISQL SQL="execute function get_id('APATO');">
-          <?MIVAR NAME="$patoup_apato_zdb_id">$1<?/MIVAR>
-        <?/MISQL>
-
-        <?MISQL SQL="insert into zdb_active_data values ('$patoup_apato_zdb_id');"><?/MISQL>
-
-        <?MISQL SQL="insert into atomic_phenotype  (apato_zdb_id, apato_genox_zdb_id, apato_start_stg_zdb_id, 
-                                                    apato_end_stg_zdb_id, apato_pub_zdb_id, apato_entity_a_zdb_id, 
-                                                    apato_quality_zdb_id, apato_tag)
-                                            values ('$patoup_apato_zdb_id', '$patoup_genox_zdb_id', '$patoup_start_stg_zdb_id', 
-                                                    '$patoup_end_stg_zdb_id', '$OID', '$patoup_default_entity_zdb_id', 
-                                                    '$patoup_default_quality_zdb_id', '$patoup_default_tag');">
-        <?/MISQL>
-
-      <?/MIBLOCK> <?MICOMMENT> ** end preexisting pato record check ** <?/MICOMMENT>
-
-      <?MICOMMENT> ** now tie the new phenotype record to the figure,
-                      first copying the preexisting pato record if there
-                      was one ** <?/MICOMMENT>
-
-      <?MIVAR COND="$(XST,$patoup_preexisting_apato_zdb_id)" 
-              NAME="$patoup_apato_zdb_id">$patoup_preexisting_apato_zdb_id<?/MIVAR>
-
-      <?MISQL SQL="insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id) 
-                                    values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id');">
-      <?/MISQL>
 
     <?/MIBLOCK> <?MICOMMENT> end new figure / genox / stages set (new mutant) <?/MICOMMENT>
 
