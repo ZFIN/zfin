@@ -1,0 +1,155 @@
+<?MICOMMENT>
+
+FILE:     patoupdate_addmutant.apg
+PREFIX:   puaddmu_
+
+Handles additions of fig + genox + start_stage + end_stage sets (aka 'mutants'
+in the interface) to the database.
+
+
+INPUT VARS:
+
+  REQUIRED:
+    $OID :: publication zdb-id
+
+    puaddmu_add_mutant      :: flag for new fig-genox set [new mutant]
+    puaddmu_fig_zdb_id        :: figure id
+
+    puaddmu_geno_zdb_id       :: genotype id
+    puaddmu_exp_zdb_id        :: experiment id (aka enviornment)
+
+    puaddmu_start_stg_zdb_id  :: start stage id
+    puaddmu_end_stg_zdb_id    :: end stage id
+
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+  None
+
+EFFECTS  
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+
+<?MICOMMENT> ** This page can get called either by patoupdate.apg, or on it's own, so if 
+                secure_navigation hasn't been called yet, I'll call it ** <?/MICOMMENT>
+<?MISQL COND="$(NXST,$AUTHORIZED)" SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+  <?MIBLOCK COND="$(XST,$puaddmu_add_mutant)">
+
+  <?MICOMMENT> *** Set some globals to define the contents of a 
+                   'default' apato record that will be used as a 
+                    placeholder when new apato records are created *** <?/MICOMMENT> 
+
+    <?MICOMMENT> ** get default quality id ** <?/MICOMMENT>
+    <?MISQL SQL="select term_zdb_id 
+                   from term 
+                   where term_name = 'quality'
+                     and term_is_obsolete = 'f';">
+      <?MIVAR NAME="$puaddmu_default_quality_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MICOMMENT> ** get default entity id ** <?/MICOMMENT>
+      
+    <?MISQL SQL="select anatitem_zdb_id 
+                  from anatomy_item 
+                  where anatitem_name = 'unspecified';">
+      <?MIVAR NAME="$puaddmu_default_entity_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MIVAR NAME="$puaddmu_default_tag">abnormal<?/MIVAR>
+
+    <?MICOMMENT> ** Get or make genox_zdb_id ** <?/MICOMMENT>
+      
+    <?MISQL SQL="select genox_zdb_id 
+                 from genotype_experiment 
+                 where genox_geno_zdb_id = '$puaddmu_geno_zdb_id'
+                   and genox_exp_zdb_id = '$puaddmu_exp_zdb_id';">
+      <?MIVAR NAME="$puaddmu_genox_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MICOMMENT> ** if the last query didnt get a genox id, make one ** <?/MICOMMENT>
+
+    <?MIBLOCK COND="$(NXST,$puaddmu_genox_zdb_id)">
+      <?MISQL SQL="execute function get_id('GENOX');">
+        <?MIVAR NAME="$puaddmu_genox_zdb_id">$1<?/MIVAR>
+      <?/MISQL>
+      <?MISQL SQL="insert into zdb_active_data values ('$puaddmu_genox_zdb_id');"><?/MISQL>
+      <?MISQL SQL="insert into genotype_experiment (genox_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id)
+                               values ('$puaddmu_genox_zdb_id', '$puaddmu_geno_zdb_id', '$puaddmu_exp_zdb_id');"><?/MISQL>
+    <?/MIBLOCK>
+
+    <?MICOMMENT> ** When these sets get made, they're always 'empty', meaning that
+                    they're created with a concrete figure, genox and a pair of stages
+                    (which could be unknown), and the entity, quality,
+                    and tag are all set to defaults:
+                      entity:  the unspecified anatomy item  (could be from any ontology)
+                      quality:  quality   (the root term)
+                      tags:     abnormal
+    <?/MICOMMENT>
+
+
+    <?MICOMMENT> *** Check and see if there's already an default pato record with these stages 
+                     for this pub & genox id *** <?/MICOMMENT>
+
+    <?MISQL SQL="select first 1 apato_zdb_id 
+                 from atomic_phenotype 
+                 where apato_entity_a_zdb_id = '$puaddmu_default_entity_zdb_id'
+                   and apato_quality_zdb_id = '$puaddmu_default_quality_zdb_id'
+                   and apato_genox_zdb_id = '$puaddmu_genox_zdb_id'
+                   and apato_tag = 'abnormal'
+                   and apato_start_stg_zdb_id = '$puaddmu_start_stg_zdb_id'
+                   and apato_end_stg_zdb_id = '$puaddmu_end_stg_zdb_id'
+                   and apato_pub_zdb_id = '$OID';">
+      <?MIVAR NAME="$puaddmu_apato_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MIBLOCK COND="$(NXST,$puaddmu_apato_zdb_id)">
+      <?MISQL SQL="execute function get_id('APATO');">
+        <?MIVAR NAME="$puaddmu_apato_zdb_id">$1<?/MIVAR>
+      <?/MISQL>
+
+      <?MISQL SQL="insert into zdb_active_data values ('$puaddmu_apato_zdb_id');"><?/MISQL>
+
+      <?MISQL SQL="insert into atomic_phenotype  (apato_zdb_id, apato_genox_zdb_id, apato_start_stg_zdb_id, 
+                                                  apato_end_stg_zdb_id, apato_pub_zdb_id, apato_entity_a_zdb_id, 
+                                                  apato_quality_zdb_id, apato_tag)
+                                          values ('$puaddmu_apato_zdb_id', '$puaddmu_genox_zdb_id', '$puaddmu_start_stg_zdb_id', 
+                                                  '$puaddmu_end_stg_zdb_id', '$OID', '$puaddmu_default_entity_zdb_id', 
+                                                  '$puaddmu_default_quality_zdb_id', '$puaddmu_default_tag');">
+      <?/MISQL>
+
+    <?/MIBLOCK> <?MICOMMENT> ** end preexisting pato record check, 
+                                puaddmu_apato_zdb_id will now be filled
+                                in either case ** <?/MICOMMENT>
+
+    <?MISQL SQL="insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id) 
+                                  values ('$puaddmu_apato_zdb_id','$puaddmu_fig_zdb_id');">
+    <?/MISQL>
+
+
+    <?MICOMMENT> ** unset any vars used as flags, incase this code is ever
+                    called more than once in a single datablade call ** <?/MICOMMENT>
+    <?MIVAR> 
+             $(UNSETVAR,$puaddmu_genox_zdb_id)
+             $(UNSETVAR,$puaddmu_apato_zdb_id)
+    <?/MIVAR>
+
+
+  <?/MIBLOCK> <?MICOMMENT> end new figure / genox / stages set (new mutant) <?/MICOMMENT>
+
+<?/MIBLOCK>  <?MICOMMENT> end authorize == root <?/MICOMMENT>
