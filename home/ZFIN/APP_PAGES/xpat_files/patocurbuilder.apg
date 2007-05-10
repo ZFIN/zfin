@@ -78,9 +78,7 @@ PREFIX:   patobldr_
      <?MIVAR NAME="$patobldr_pile_entity_columns">api_entity_a_zdb_id, api_entity_b_zdb_id <?/MIVAR>
      <?MIVAR NAME="$patobldr_pile_entity_values">$patobldr_pile_entity_a_zdb_id', '$patobldr_pile_entity_b_zdb_id<?/MIVAR>
    <?/MIBLOCK>
-   
 
-   Inserting: $1 - $2 - $3 - $4 <br>
    <?MISQL SQL="execute function get_id('API');"><?MIVAR NAME="$patobldr_pile_api_zdb_id">$1<?/MIVAR><?/MISQL>
    <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$patobldr_pile_api_zdb_id');"><?/MISQL>
 
