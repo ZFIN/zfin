@@ -53,7 +53,8 @@ TARGETDIRS = $(TARGETDIR) $(foreach SDIR, $(SRCDIRS), $(TARGETDIR)/$(SDIR))
 # The redirect of standard error discards error messages when the directory
 # doesn't contain any class files.
 
-STATICS := $(foreach SDIR, $(SRCDIRS), $(shell ls $(SDIR)/*.class 2>/dev/null))
+STATICS := $(foreach SDIR, $(SRCDIRS), $(shell ls $(SDIR)/*.class 2>/dev/null)) \
+	$(foreach SDIR, $(SRCDIRS), $(shell ls $(SDIR)/*.jar 2>/dev/null))
 STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
 
 
