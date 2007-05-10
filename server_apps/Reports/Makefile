@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/Reports
 
-SUBDIRS = ZGC Vega PATO
+SUBDIRS = ZGC Vega PATO GO
 
 
 GENERICS = Count.pl
