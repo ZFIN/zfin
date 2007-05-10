@@ -1,0 +1,47 @@
+<?MICOMMENT>
+
+FILE: link_authors_update.apg
+prefix: authupdate_
+
+Add or remove a author from a pub.
+
+This page is called via ajax (xmlhttprequest) from link_authors.apg
+
+INPUT VARS:
+  authupdate_action        :: 'add' or 'remove'
+  authupdate_pers_zdb_id   :: author zdb_id
+  authupdate_pub_zdb_id    :: publication zdb_id
+
+<?/MICOMMENT>
+
+
+  <?MISQL SQL="select WebExplode(object,'page_title=LINK Publication Authors&permission=root')
+                 from webPages
+                 where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+  <?MISQL SQL="select full_name from person where zdb_id = '$authupdate_pers_zdb_id';">
+    <?MIVAR NAME="$authupdate_full_name">$1<?/MIVAR>
+  <?/MISQL>
+
+
+  <?MIBLOCK COND="$(EQ,$authupdate_action,add)">
+     
+      <?MISQL SQL="insert into int_person_pub (source_id, target_id)
+                   values ('$authupdate_pers_zdb_id', '$authupdate_pub_zdb_id');">
+        <small>last action: "add <b>$authupdate_full_name</b>"</small>
+      <?/MISQL>
+
+  <?MIELSE COND="$(EQ,$authupdate_action,remove)">
+
+    <?MISQL SQL="delete from int_person_pub 
+                   where source_id = '$authupdate_pers_zdb_id' 
+                     and target_id = '$authupdate_pub_zdb_id';">
+        <small>last action: "delete <b>$authupdate_full_name</b>"</small>
+    <?/MISQL>
+  <?/MIBLOCK>
+
+
+<?/MIBLOCK>  
