@@ -176,6 +176,11 @@
 #
 00 02 * * 2-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o <!--|DB_NAME|-->
 #
+#  MTWT     2:00am   Populate DOIS with pmid, daily
+#
+00 02 * * 2-5 <!--|ROOT_PATH|-->/server_apps/data_transfer/CiteXploreDOI/updatedoi.sh -d 
+#
+#
 #
 # ------------------------------------------------------------
 # ------ 3 AM   DATABASE MAINTENANCE         --------
