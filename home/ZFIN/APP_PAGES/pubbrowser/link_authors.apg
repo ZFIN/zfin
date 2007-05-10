@@ -1,33 +1,167 @@
+<?MICOMMENT>
+FILE: link_authors.apg
 
-<!-- FILE: link_authors.apg
+prefix: linkauth_
 
 This page is used by root to link authors to a publications
 one. 
 Variables expected:  OID  -- the OID of a publication to link 
 		     authors  -- the list of authors input for this publication
 
--->
+
+<?/MICOMMENT>
 
 <HTML>
+
+
+<script>
+
+function updateAuthor(strURL) {
+
+    document.getElementById('ajaxstatus').innerHTML="";
+    var xmlHttpReq = false;
+    var self = this;
+    // Mozilla/Safari
+    if (window.XMLHttpRequest) {
+        self.xmlHttpReq = new XMLHttpRequest();
+    }
+    // IE
+    else if (window.ActiveXObject) {
+        self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    self.xmlHttpReq.open('GET', strURL, true);
+    self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    self.xmlHttpReq.onreadystatechange = function() {
+        if (self.xmlHttpReq.readyState == 4) {
+	   document.getElementById('ajaxstatus').innerHTML = self.xmlHttpReq.responseText;
+        }
+    }
+    self.xmlHttpReq.send('');
+}
+
+</script>
 
 
 
   <TITLE>ZFIN Link Authors to a Publication</TITLE>
 
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <?MISQL SQL="select WebExplode(object,'') 
+                 from webPages 
+                 where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-  <?MISQL COND="$(XST,$OID)" SQL="select WebExplode(object,'page_title=LINK Publication Authors&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+  <?MISQL COND="$(XST,$OID)" 
+          SQL="select WebExplode(object,'page_title=LINK Publication Authors&permission=root') 
+                 from webPages 
+                 where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 
   <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+
+    <?MICOMMENT> ** First, convert the author list into an array of name parts ** <?/MICOMMENT>
  
-    <?MISQL SQL="select authors from publication where zdb_id='$OID';"><?/MISQL>
-    <?MIVAR NAME=$q_authors>$1<?/MIVAR>
+    <?MISQL SQL="select authors from publication where zdb_id='$OID';">
+      <?MIVAR NAME="linkauth_rawAuthorList">$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MIVAR NAME="linkauth_authorList"><?/MIVAR>
+
+    <?MIVAR NAME="$i">0<?/MIVAR>
+
+    <?MICOMMENT> ** Look, a datablade loop! The INDEX function takes a comma separated list
+                    and gives you the ith element in the list.  So here we're looping through
+                    the comma separate entries until we get nothing back.  ** <?/MICOMMENT> 
+
+    <?MIBLOCK WHILE=$(NOT,$(EQ,$(INDEX,$i,$linkauth_rawAuthorList),))>
+      <?MIVAR NAME="linkauth_author">$(TRIM,$(INDEX,$i,$linkauth_rawAuthorList))<?/MIVAR>
+
+      <?MICOMMENT> * some pubs stick parens in the name, lets fix those * <?/MICOMMENT>
+      <?MIVAR NAME="linkauth_author">$(REPLACE,$linkauth_author,"(",)<?/MIVAR>
+      <?MIVAR NAME="linkauth_author">$(REPLACE,$linkauth_author,")",)<?/MIVAR>
+
+      <?MICOMMENT> * the arrays start at 1 - wild! * <?/MICOMMENT>
+      <?MIVAR>$(SETVAR,$linkauth_authorList[$(+,$i,1)],$linkauth_author)<?/MIVAR>
+ 
+      <?MICOMMENT> * i++ * <?/MICOMMENT>
+      <?MIVAR NAME="$i">$(+,$i,1)<?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MICOMMENT> ** a little more cleanup, the last person in the list might
+                    look like "and Westerfield, M." - so we need to chop off
+                    that leading "and "  ** <?/MICOMMENT>
+      <?MIBLOCK COND="$(EQ,$(SUBSTR,$linkauth_authorList[$(-,$i,1)],1,4),and )">
+      <?MIVAR NAME="$linkauth_authorList[$(-,$i,1)]">$(SUBSTR,$linkauth_authorList[$(-,$i,1)],5,$(STRLEN,$linkauth_authorList[$(-,$i,1)]))<?/MIVAR>
+      <?/MIBLOCK>
+
+    <?MIVAR NAME=$q_authors>$linkauth_rawAuthorList<?/MIVAR>
 
     <?MIVAR>
     <b>AUTHORS:</b><br> $q_authors
     <?/MIVAR>
     <p>
+
+    <div style="width: 500px; height: 500px; overflow: auto; border: 1px solid black; margin: 0 auto ; background: #EFEFEF">
+
+    <form>
+
+    <?MICOMMENT> ** Half of the entries in the linkauth_authorList array will be first
+                    intials that won't return anything.  It's a little bit wasteful, but
+                    doesn't add junk results and a lot easier than filtering them out with
+                    datablade code ** <?/MICOMMENT>
+
+    <?MIBLOCK INDEX=$linkauth_author FOREACH=$linkauth_authorList>
+     
+     <?MISQL SQL="select person.zdb_id, full_name,
+                     case
+                       when source_id is not null
+                       then 'CHECKED'
+                     else
+                       '' end as is_checked
+                     from person 
+                       left outer join int_person_pub
+                         on target_id = '$OID' and source_id = person.zdb_id
+                     where full_name like '$linkauth_author%'
+                     order by full_name;">
+
+        <?MIVAR NAME="linkauth_pers_zdb_id">$1<?/MIVAR>
+        <?MIVAR NAME="linkauth_full_name">$2<?/MIVAR>
+        <?MIVAR NAME="linkauth_isChecked">$3<?/MIVAR>
+         
+        <?MIVAR NAME="linkauth_checkboxID">$(REPLACE,$linkauth_pers_zdb_id,-,)<?/MIVAR> 
+        <?MIVAR NAME="linkauth_labelID">$(CONCAT,$linkauth_checkboxID,label)<?/MIVAR>
+        <?MIBLOCK COND="$(EQ,$linkauth_isChecked,CHECKED)">
+          <?MIVAR NAME="linkauth_initialStyle">style="font-weight: bold ; margin-left: 250px "<?/MIVAR>
+        <?MIELSE>
+          <?MIVAR NAME="linkauth_initialStyle">style="font-weight: normal "<?/MIVAR>
+        <?/MIBLOCK>
+
+        <?MIVAR>
+          <input type="checkbox" id="$linkauth_checkboxID" 
+                 value="$linkauth_pers_zdb_id" $linkauth_isChecked
+                 onChange="
+                   if (this.checked == true) { 
+                     document.getElementById('$linkauth_labelID').style.fontWeight = 'bold'; 
+                     document.getElementById('$linkauth_labelID').style.marginLeft = '250px';
+                     updateAuthor('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors_update.apg&authupdate_pers_zdb_id=$linkauth_pers_zdb_id&authupdate_pub_zdb_id=$OID&authupdate_action=add');
+                   } else {
+                     document.getElementById('$linkauth_labelID').style.fontWeight = 'normal'; 
+                     document.getElementById('$linkauth_labelID').style.marginLeft = '0px';
+                     updateAuthor('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors_update.apg&authupdate_pers_zdb_id=$linkauth_pers_zdb_id&authupdate_pub_zdb_id=$OID&authupdate_action=remove');
+                   } "  >
+
+          <label for="$linkauth_checkboxID" id="$linkauth_labelID" 
+                 $linkauth_initialStyle>$linkauth_full_name</label> <br>
+
+        <?/MIVAR>
+
+      <?/MISQL>
+    <?/MIBLOCK>
+
+    </form>
+    </div>
+    <div id="ajaxstatus" style="width: 500px; border: 1px solid black; margin: 0 auto ; background: #EFEFEF">
+    no updates yet. 
+    </div>
 
 
     <FORM METHOD=post ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" ENCTYPE="multipart/form-data">
@@ -35,21 +169,9 @@ Variables expected:  OID  -- the OID of a publication to link
     <table border=2 width=100% cols=2>
 
 
-    <APPLET ARCHIVE="ifxlsupp.jar, ifxjdbc.jar, listselector.jar" codebase="/client_apps/ListSelector" CODE="ListSelector.class" WIDTH=400 HEIGHT=170 NAME="phenoselect">
-      <param name="selectableLabel" value="Potential Authors">
-      <param name="selectedLabel" value="Linked Authors">
-      <?MIVAR>
-	<param name="authorlist" value="$q_authors">
-      <?/MIVAR>
-      <param name="use_item_labels" value = "true">
-      <param name=format_pre value=" zdb_id like '%" >
-      <param name=format_post value="%'" >
-      <param name="separator" value = " or ">
-      <?MIVAR>
-	<param name="liveupdate" value="int_person_pub:source_id:target_id:$OID">
-	<param name="pub_id" value="$OID">
-      <?/MIVAR>
-    </applet>
+    <?MICOMMENT> ** This huge mess of copy & paste vars is related to pubselect, after you hit
+                    submit, it goes back to the pub page with the search options all filled in ** <?/MICOMMENT>
+
 
     <?MIVAR COND="$(NXST,$BEGIN)" NAME=$BEGIN>1<?/MIVAR>
     <?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE>10<?/MIVAR>
