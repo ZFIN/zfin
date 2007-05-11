@@ -1,18 +1,14 @@
-#!/local/bin/perl 
+#!/private/bin/perl 
 
-# FILE: loadgo.pl
-# PREFIX: lgo_ (none added as of Feb. 2005)
+# FILE: goreport.pl
 
-# DESCRIPTION: script that controls parsing and sql scripts for 
-# loading and updating status of go_terms in the go_Term table at ZFIN.
-# calls test.pl, parse_defs.r, and loadgoterms.sql.  Emails are generated
-# under conditions of error or obsolete or secondary term additions to 
-# the go_term table
+# DESCRIPTION: FB 1608/1609. Reports attributions for a gene and also reports
+# status of curation.
+# calls goreport.sql
 
 # INPUT VARS: none
 # OUTPUT VARS: 
 
-# OUTPUT: unload files from the database, emails to GO-team
 
 
 use MIME::Lite;
@@ -63,21 +59,11 @@ sub sendResults {
 
 #-----------------------MAIN--------------------#
 
-print "loading...\n";
 
-# loadgoterms.sql is a sql routine that checks for obsolete, secondary, and
-# new go terms from the 3 flat files and the OBO file.  It updates flags
-# in ZFIN to reflect secondary or obsolete terms, and adds new terms to the
-# go_term table.  It also produces unload files with terms
-# annotated to secondary or obsolete terms for curators to fix.
-#
-# Added on 7/13/2005: an addition to the loadgoterms.sql script to check for
-# obsolete or secondary GO terms in the with field
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> goreport.sql") and die "goreport.sql did not complete successfully";
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> goreport.sql") and die "loadgoterms.sql did not complete successfully";
-
-system ("rm -rf golist.txt.gz");
-system ("gzip golist.txt > golist.txt.gz");
+system ("/bin/rm -rf golist.txt.gz");
+system ("/bin/gzip golist.txt > golist.txt.gz");
 
 sendResults();
 exit;
