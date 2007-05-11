@@ -56,53 +56,7 @@ Reset the cookies and infrastructure tables for pub curation.
 
       setCookie('permission','','xpcur_c_')
       setCookie('has_permission','<?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">$1<?/MISQL>','xpcur_c_');
-      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID");
-
-      <?MICOMMENT> Keep the table clean. Delete all entries for this pub that were not entered today. <?/MICOMMENT>
-      <?MISQL SQL="SELECT xpatinf_zdb_id FROM expression_pattern_infrastructure WHERE xpatinf_curator_zdb_id = '$ZDB_ident' and xpatinf_date != TODAY;">
-        <?MIVAR NAME=xpatinf_zdb_id>$1<?/MIVAR>
-        <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$xpatinf_zdb_id';"><?/MISQL>
-      <?/MISQL>
-
-      <?MICOMMENT> Generate the list <?/MICOMMENT>
-      <?MISQL SQL="  
-          SELECT distinct xpatres_anat_item_zdb_id, xpatres_expression_found
-          FROM expression_experiment, expression_result
-          WHERE xpatex_source_zdb_id = '$OID'
-            AND xpatex_zdb_id = xpatres_xpatex_zdb_id
-            AND NOT EXISTS
-               (
-                 select *
-                 from expression_pattern_infrastructure
-                 where xpatinf_pub_zdb_id = '$OID'
-                   and xpatinf_anatitem_zdb_id = xpatres_anat_item_zdb_id
-                   and xpatinf_expressed = xpatres_expression_found
-               );">
-            
-          <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
-          <?MISQL SQL="execute function get_id('XPATINF');">$(SETVAR,$xpatinf_zdb_id,$1)<?/MISQL>
-     
-          <?MICOMMENT> ==| Add New XPATINF |== <?/MICOMMENT>  
-          <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpatinf_zdb_id');"><?/MISQL>   
-          
-          <?MISQL SQL="    
-              INSERT INTO expression_pattern_infrastructure (
-                  xpatinf_zdb_id,
-                  xpatinf_curator_zdb_id,
-                  xpatinf_pub_zdb_id,
-                  xpatinf_anatitem_zdb_id,
-                  xpatinf_expressed,
-                  xpatinf_date )
-              VALUES (
-                  '$xpatinf_zdb_id',
-                  '$ZDB_ident', 
-                  '$OID', 
-                  '$1',
-                  '$2',
-                  TODAY);">
-          <?/MISQL>
-            
-      <?/MISQL>
+      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID");            
     
     <?/MIVAR>
 
@@ -134,5 +88,45 @@ Reset the cookies and infrastructure tables for pub curation.
   
 
   </SCRIPT>
+
+       <?MICOMMENT> Generate the list <?/MICOMMENT>
+       <?MISQL SQL="  
+           SELECT distinct xpatres_anat_item_zdb_id, xpatres_expression_found
+           FROM expression_experiment, expression_result
+           WHERE xpatex_source_zdb_id = '$OID'
+             AND xpatex_zdb_id = xpatres_xpatex_zdb_id
+             AND NOT EXISTS
+                (
+                  select *
+                  from expression_pattern_infrastructure
+                  where xpatinf_pub_zdb_id = '$OID'
+                    and xpatinf_anatitem_zdb_id = xpatres_anat_item_zdb_id
+                    and xpatinf_expressed = xpatres_expression_found
+                );">
+             
+           <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+           <?MISQL SQL="execute function get_id('XPATINF');">$(SETVAR,$xpatinf_zdb_id,$1)<?/MISQL>
+      
+           <?MICOMMENT> ==| Add New XPATINF |== <?/MICOMMENT>  
+           <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpatinf_zdb_id');"><?/MISQL>   
+           
+           <?MISQL SQL="    
+               INSERT INTO expression_pattern_infrastructure (
+                   xpatinf_zdb_id,
+                   xpatinf_curator_zdb_id,
+                   xpatinf_pub_zdb_id,
+                   xpatinf_anatitem_zdb_id,
+                   xpatinf_expressed,
+                   xpatinf_date )
+               VALUES (
+                   '$xpatinf_zdb_id',
+                   '$ZDB_ident', 
+                   '$OID', 
+                   '$1',
+                   '$2',
+                   TODAY);">
+           <?/MISQL>
+             
+       <?/MISQL>
 
 <?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>

@@ -68,6 +68,15 @@ OPTIONAL VARS:
       <?MISQL SQL="select WebExplode(object,'pubtopclose_PUB=$OID&pubtopclose_CUR=$ZDB_ident&pubtopclose_TOP=$topic') from webPages where ID='aa-pubtopic_close.apg';">$1<?/MISQL>
     <?/MISQL>
     <?MISQL SQL="UPDATE publication SET pub_completion_date = TODAY WHERE zdb_id = '$OID';"><?/MISQL>
+
+      <?MICOMMENT>  Delete all entries for this pub in temp_infrastructure tables <?/MICOMMENT>
+      <?MISQL SQL="SELECT xpatinf_zdb_id 
+                   FROM expression_pattern_infrastructure
+                   WHERE xpatinf_pub_zdb_id = '$OID';">
+        <?MIVAR NAME=xpatinf_zdb_id>$1<?/MIVAR>
+        <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$xpatinf_zdb_id';"><?/MISQL>
+      <?/MISQL>
+    
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(AND,$(XST,$paper_status),$(EC,$paper_status,open))>
