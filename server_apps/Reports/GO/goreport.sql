@@ -17,9 +17,9 @@ from marker,
 	curation,
 	publication
 where mrkr_Zdb_id = recattrib_data_zdb_id
- and cur_pub_zdb_id = zdb_id
- and recattrib_source_zdb_id = cur_pub_zdb_id
- and recattrib_source_zdb_id = zdb_id
+and cur_pub_zdb_id = zdb_id
+and recattrib_source_zdb_id = cur_pub_zdb_id
+and recattrib_source_zdb_id = zdb_id
 and jtype not in ('Curation', 'Unpublished')
 and mrkr_type = 'GENE'
 and cur_topic ='GO'
@@ -46,9 +46,9 @@ from marker,
 where mrkr_Zdb_id = fmrel_mrkr_zdb_id
 and recattrib_data_zdb_id=genofeat_zdb_id
 and genofeat_feature_zdb_id=fmrel_ftr_zdb_id
- and cur_pub_zdb_id = zdb_id
- and recattrib_source_zdb_id = cur_pub_zdb_id
- and recattrib_source_zdb_id = zdb_id
+and cur_pub_zdb_id = zdb_id
+and recattrib_source_zdb_id = cur_pub_zdb_id
+and recattrib_source_zdb_id = zdb_id
 and jtype not in ('Curation', 'Unpublished')
 and mrkr_type = 'GENE'
 and cur_topic ='GO'
@@ -67,7 +67,7 @@ from marker,
 	record_Attribution,
 	publication
 where mrkr_Zdb_id = recattrib_data_zdb_id
- and recattrib_source_zdb_id = zdb_id
+and recattrib_source_zdb_id = zdb_id
 and jtype not in ('Curation', 'Unpublished')
 and mrkr_type = 'GENE'
 and not exists (Select 'x'
@@ -93,14 +93,13 @@ from marker,
 where mrkr_Zdb_id = fmrel_mrkr_zdb_id
 and recattrib_data_zdb_id=genofeat_zdb_id
 and genofeat_feature_zdb_id=fmrel_ftr_zdb_id
- and recattrib_source_zdb_id = zdb_id
+and recattrib_source_zdb_id = zdb_id
 and jtype not in ('Curation', 'Unpublished')
 and mrkr_type = 'GENE'
 and not exists (Select 'x'
 		  from curation
 		  where cur_topic = 'GO'
 		  and cur_pub_zdb_id = zdb_id)
-
 union
 select distinct mrkr_abbrev,
 	mrkr_zdb_id, 
@@ -122,9 +121,9 @@ from marker,
         feature_marker_relationship
 where mrkr_Zdb_id = fmrel_mrkr_zdb_id
 and recattrib_data_zdb_id=fmrel_ftr_zdb_id
- and cur_pub_zdb_id = zdb_id
- and recattrib_source_zdb_id = cur_pub_zdb_id
- and recattrib_source_zdb_id = zdb_id
+and cur_pub_zdb_id = zdb_id
+and recattrib_source_zdb_id = cur_pub_zdb_id
+and recattrib_source_zdb_id = zdb_id
 and (jtype='Journal' or jtype='Review')
 and mrkr_type = 'GENE'
 and cur_topic ='GO'
@@ -145,7 +144,7 @@ from marker,
         feature_marker_relationship
 where mrkr_Zdb_id = fmrel_mrkr_zdb_id
 and recattrib_data_zdb_id=fmrel_ftr_zdb_id
- and recattrib_source_zdb_id = zdb_id
+and recattrib_source_zdb_id = zdb_id
 and jtype not in ('Curation', 'Unpublished')
 and mrkr_type = 'GENE'
 and not exists (Select 'x'
