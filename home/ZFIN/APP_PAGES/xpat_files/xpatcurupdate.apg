@@ -548,6 +548,37 @@ EFFECTS
     <?/MISQL>       
   <?/MIBLOCK>
 
+  <?MICOMMENT>
+  *** COPY existing conditions to another environemnt 
+  <?/MICOMMENT>
+  <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_cond_copy_env_zdb),$(XST,$xpcur_G_cond_copy_conditions))>
+        
+    <?MIVAR NAME=$xpcur_G_cond_add_exp>$xpcur_G_cond_copy_env_zdb<?/MIVAR>
+
+    <?MIVAR NAME=i>0<?/MIVAR>
+    <?MIBLOCK WHILE=$(NE,$(INDEX,$i,$xpcur_G_cond_copy_conditions),)>    	
+
+        <?MIVAR NAME=xpcurup_copy_cond_id>$(INDEX,$i,$xpcur_G_cond_copy_conditions)<?/MIVAR>
+        
+        <?MISQL SQL="select expcond_cdt_zdb_id,
+                            expcond_value,
+                            expcond_expunit_zdb_id,
+                            expcond_comments,
+                            expcond_mrkr_zdb_id
+                     from experiment_condition
+                     where expcond_zdb_id = '$xpcurup_copy_cond_id';">           
+            <?MIVAR NAME=$xpcur_G_cond_add_cond_type>$1<?/MIVAR>
+            <?MIVAR NAME=$xpcur_G_cond_add_value>$2<?/MIVAR>
+            <?MIVAR NAME=$xpcur_G_cond_add_unit>$3<?/MIVAR>
+            <?MIVAR NAME=$xpcur_G_cond_add_comments>$4<?/MIVAR> 
+            <?MIVAR NAME=$xpcur_G_cond_add_attribute COND=$(AND,$(NE,$5,NULL),$(NE,$5,))>$5<?/MIVAR>
+
+            <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurupdatecondition.apg';">$1<?/MISQL>            
+        <?/MISQL>
+
+        <?MIVAR NAME=i>$(+,$i,1)<?/MIVAR>
+    <?/MIBLOCK>	    
+  <?/MIBLOCK>
 
   
   <?MICOMMENT> ================| Figure |================ <?/MICOMMENT>

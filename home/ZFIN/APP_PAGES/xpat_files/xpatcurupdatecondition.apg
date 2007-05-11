@@ -1,0 +1,75 @@
+  <?MICOMMENT> ================| Condition |================ <?/MICOMMENT>
+
+    <?MIVAR COND=$(NXST,$xpcur_G_cond_add_comments) NAME=xpcur_G_cond_add_comments><?/MIVAR>
+    <?MIVAR COND=$(NXST,$xpcur_G_cond_add_value) NAME=xpcur_G_cond_add_value><?/MIVAR>
+  
+    <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+    <?MISQL SQL="execute function get_id('EXPCOND');">$(SETVAR,$xpcurup_expcond_zdb_id,$1)<?/MISQL>
+    
+    <?MICOMMENT> ==| Add New ZDB-ID |== <?/MICOMMENT>  
+    <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpcurup_expcond_zdb_id');"><?/MISQL>
+    
+    <?MIVAR NAME=xpcur_G_expcond_insert_columns>
+            expcond_zdb_id,
+            expcond_exp_zdb_id,
+            expcond_cdt_zdb_id,
+            expcond_value,
+            expcond_expunit_zdb_id,
+            expcond_comments
+    <?/MIVAR>
+    <?MIVAR NAME=xpcur_G_expcond_insert_values>
+            '$xpcurup_expcond_zdb_id',
+            '$xpcur_G_cond_add_exp',
+            '$xpcur_G_cond_add_cond_type',
+            '$xpcur_G_cond_add_value',
+            '$xpcur_G_cond_add_unit',
+            '$xpcur_G_cond_add_comments'
+    <?/MIVAR>
+    <?MIVAR COND=$(AND,$(XST,$xpcur_G_cond_add_attribute),$(NE,$xpcur_G_cond_add_attribute,))>
+        <?MIVAR NAME=xpcur_G_expcond_insert_columns>$xpcur_G_expcond_insert_columns, expcond_mrkr_zdb_id<?/MIVAR>
+        <?MIVAR NAME=xpcur_G_expcond_insert_values>$xpcur_G_expcond_insert_values, '$xpcur_G_cond_add_attribute'<?/MIVAR>
+    <?/MIVAR>
+    
+    <?MISQL SQL="
+        SELECT * 
+        FROM experiment_condition
+        WHERE expcond_exp_zdb_id = '$xpcur_G_cond_add_exp'
+          AND  expcond_cdt_zdb_id = '$xpcur_G_cond_add_cond_type'
+          AND  expcond_value = '$xpcur_G_cond_add_value'
+          AND  expcond_expunit_zdb_id = '$xpcur_G_cond_add_unit'
+          <?MIVAR COND=$(AND,$(XST,$xpcur_G_cond_add_attribute),$(NE,$xpcur_G_cond_add_attribute,))>
+          AND  expcond_mrkr_zdb_id = '$xpcur_G_cond_add_attribute'
+          <?/MIVAR>
+        ;">
+        <?MIVAR NAME=xpcur_cond_exists>$1<?/MIVAR>
+    <?/MISQL>
+    
+    <?MIBLOCK COND=$(NXST,$xpcur_cond_exists)>
+      <?MISQL SQL="
+        INSERT into experiment_condition($xpcur_G_expcond_insert_columns)
+        VALUES ($xpcur_G_expcond_insert_values)
+        ;">
+      <?/MISQL> 
+
+      <?MISQL SQL="
+        select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expcond_zdb_id&recweb_new_value=$xpcurup_expcond_zdb_id&recweb_comments=create+new+record') 
+        from webPages where ID='aa-record_web_update.apg';">
+      <?/MISQL>
+      
+      <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+                 values('$xpcurup_expcond_zdb_id','$OID');">
+      <?/MISQL>
+    <?MIELSE>
+      <script>
+        alert('A selected condition was ommitted to avoid duplication.');
+      </script>
+    <?/MIBLOCK>
+      
+    <?MIVAR>   
+      $(UNSETVAR,$xpcur_G_cond_add_cond_type)
+      $(UNSETVAR,$xpcur_G_cond_add_value)
+      $(UNSETVAR,$xpcur_G_cond_add_unit)
+      $(UNSETVAR,$xpcur_G_cond_add_comments)
+      $(UNSETVAR,$xpcur_G_cond_add_attribute)
+      $(UNSETVAR,$xpcur_cond_exists)
+    <?/MIVAR> 

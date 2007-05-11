@@ -69,24 +69,16 @@ PREFIX:   genosrcht_
 
 <table border=0 cellspacing=0 width="100%">
 <tr bgcolor="#CCCCCC">
-<!--<div class="resultTable">
-  <div style="float:left;width:60px;font-size:1.0em;">Select</div>
-  <div style="float:left;width:350px;font-size:1.0em;">Handle</div>
-  <div style="float:left;width:200px;font-size:1.0em;">Display</div>
-  <div style="float:left;width:100px;font-size:1.0em;">Background</div>
-  <div class="breaker"> </div>
-</div> -->
 
-  <th>Select</th>
-  <th>Nickname</th>
-  <th>Display</th>
-  <th>Background</th>
+  <td><b>Select</b></td>
+  <td><b>Nickname</b></td>
+  <td><b>Display</b></td>
 
 </tr>
 
 
 <?MISQL SQL="
-  select g1.geno_zdb_id, g1.geno_nickname, g1.geno_display_name
+  select g1.geno_zdb_id, g1.geno_nickname, g1.geno_display_name, get_genotype_backgrounds(g1.geno_zdb_id)
   from   genotype g1 $genosrcht_tables
   where  $genosrcht_constraint 
   order by g1.geno_nickname;">
@@ -102,9 +94,8 @@ PREFIX:   genosrcht_
       $2
   </td>
   <td>
-      $3
+      $3 <?MIVAR COND="$(NE,$4,)">($4)<?/MIVAR>
   </td>
-  <td> </td>
 </tr>
 <?/MISQL>
 

@@ -336,6 +336,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
               from experiment
               where exp_zdb_id in ('$pubcur_G_exp_attrib_csv') 
                  or exp_name = '$pubcur_G_exp_standard_name'
+                 or exp_name = '$pubcur_G_exp_generic_name'
               order by zero_pad(exp_name);">
             <option value="$1" $(IF,$(EC,$xpcurxprss_old_xpatex_exp,$1),SELECTED)>$2</option>
           <?/MISQL>

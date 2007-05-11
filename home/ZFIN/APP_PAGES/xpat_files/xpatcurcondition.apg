@@ -314,11 +314,40 @@ EFFECTS
       loadUnitSelectBox();
       loadCDTSelectBox();
     }
+    
+  function selected_condition_copy()
+  {    
+    var condition_checkbox = document.forms['condition'].elements ;
+
+    var c_checked_condition = "";
+    var xpcurcond_num_checked = 0;
+              
+      for (j=0; j<condition_checkbox.length; j++) {
+    
+        if(condition_checkbox[j].checked == true) 
+        {
+          xpcurcond_num_checked++;
+          c_checked_condition = condition_checkbox[j].value+","+c_checked_condition ;
+
+        }          
+      } //j loop
+    
+    document.condition.xpcur_G_cond_copy_conditions.value=c_checked_condition;
+    setCookie('xpatcuration_update','update','xpcur_c_');
+    document.condition.submit();      
+  }
+
+  function set_condition_form()
+  {
+      document.condition_new.xpcur_G_cond_add_value.value = "";
+      document.condition_new.xpcur_G_cond_add_attribute.value = "";
+      document.condition_new.cond_morph_select.selectedIndex = 0;    
+  }
 </SCRIPT>
 
+
+    
 <table width=100% border=0 cellspacing=0 cellpadding=3>
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
   <tr bgcolor=#CCCCCC>    
     <td colspan=2>Env.</td>
     <td>Condition</td>
@@ -331,6 +360,14 @@ EFFECTS
     <td>Delete</td>
   </tr>  
 
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','condition','xpcur_c_');">
+
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_expcond_zdb_id>
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_expcond_comments>
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_cond_copy_conditions>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    
 <?MIVAR NAME=xpcurcond_prev_exp_name><?/MIVAR>
 <?MIVAR NAME=xpcurcond_row_color>#FFFFFF<?/MIVAR>
 
@@ -346,9 +383,6 @@ EFFECTS
       and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
     order by exp_name, 3;">
     
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','condition','xpcur_c_');">
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <?MIVAR NAME="xpcurcond_exp_name">$1<?/MIVAR>
     <?MIVAR NAME="xpcurcond_expcond_zdb_id">$2<?/MIVAR>
     <?MIVAR NAME="xpcurcond_cdt">$3<?/MIVAR>
@@ -359,13 +393,17 @@ EFFECTS
     <?MIVAR NAME="xpcurcond_gene_abbrev">$8<?/MIVAR>
     <?MIVAR NAME="xpcurcond_morph_abbrev">$9<?/MIVAR>
     <?MIVAR NAME="xpcurcond_gene_zdb_id">$10<?/MIVAR>
+    <?MIVAR NAME="xpcurcond_expcond_minus_dash">$(REPLACE,$xpcurcond_expcond_zdb_id,-,)<?/MIVAR>
+    
     
     <?MIBLOCK COND=$(NE,$xpcurcond_prev_exp_name,$xpcurcond_exp_name)>
       <?MIVAR NAME=xpcurcond_row_color>$(IF,$(EC,$xpcurcond_row_color,#FFFFFF),<!--|HIGHLIGHT_COLOR|-->,#FFFFFF)<?/MIVAR>     
     <?/MIBLOCK>
   <tr bgcolor=$xpcurcond_row_color>
     
-    <td colspan=2> $(IF,$(NE,$xpcurcond_prev_exp_name,$xpcurcond_exp_name),$xpcurcond_exp_name,&nbsp;)
+    <td> $(IF,$(NE,$xpcurcond_prev_exp_name,$xpcurcond_exp_name),$xpcurcond_exp_name,&nbsp;)
+    </td>
+    <td> <input type=checkbox name=$xpcurcond_expcond_minus_dash value=$xpcurcond_expcond_zdb_id>
     </td>
     <td> $(SUBSTR,$xpcurcond_cdt,1,30)
     </td>
@@ -378,16 +416,35 @@ EFFECTS
     <td> $xpcurcond_expunit_name
     </td>
     <td>
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_expcond_zdb_id VALUE="<?MIVAR>$2<?/MIVAR>">
-<input name="xpcur_G_expcond_comments" type=textbox size=20 value="$6"><input name="xpcur_G_expcond_update" type=submit value="Update Comments">
+          <input name="comments$xpcurcond_expcond_minus_dash" type=textbox size=20 value="$6">
+          <input name="xpcur_G_expcond_update" type=button value="Update Comments" 
+                 onClick=document.condition.xpcur_G_expcond_zdb_id.value="$xpcurcond_expcond_zdb_id";document.condition.xpcur_G_expcond_comments.value=document.condition.comments$xpcurcond_expcond_minus_dash.value;setCookie('xpatcuration_update','update','xpcur_c_');document.condition.submit();>
     </td>    
     <td align=center>
         <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurcond_expcond_zdb_id','condition')"><?/MIVAR>
     </td> 
   </tr>
-</form>
   <?MIVAR NAME=xpcurcond_prev_exp_name>$xpcurcond_exp_name<?/MIVAR>
-<?/MISQL>    
+<?/MISQL>  
+
+  <tr>
+    <td colspan=8>
+      Copy selected conditions to environment:
+        <select name="xpcur_G_cond_copy_env_zdb">
+          <?MISQL SQL="
+              select exp_zdb_id, exp_name
+              from experiment 
+              where exp_zdb_id in ('$pubcur_G_exp_attrib_csv') 
+              order by 2;">
+            <option value="$1"
+                    $(IF,$(AND,$(XST,$xpcur_G_cond_add_exp),$(EC,$xpcur_G_cond_add_exp,$1)),SELECTED)>$2</option>
+          <?/MISQL>
+        </select>
+      <br>
+      <input type=button value="Execute Copy" onClick="selected_condition_copy();"> 
+    </td>
+  </tr>
+</form>  
 
   <tr>
     <td colspan=8>
