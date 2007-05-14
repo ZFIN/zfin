@@ -6,7 +6,7 @@
     <property name="deploy.dir" value="${env.TARGETROOT}/server_apps/data_transfer/CitexploreDOI/"/>
     <property name="jar.dir" value="${env.TARGETROOT}/lib/Java/jaxws"/>
     <property name="jaxws.dir" value="${basedir}/lib"/>
-    <property name="jdbc.lib" value="${env.CATALINA_HOME}/common/lib/ifxjdbc.jar"/>
+    <property name="jdbc.lib" value="/private/apps/tomcat/common/lib/ifxjdbc.jar"/>
     <property name="target.lib" value="citexploredoi.jar"/>
 
 
