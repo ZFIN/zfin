@@ -408,8 +408,8 @@ Number exists
      <?MIVAR NAME=pbv_fig_page_link_id>$OID<?/MIVAR>	
   <?MIELSE COND="$(OR,$(AND,$(=,$pbv_fig_count,1),$(<,$pbv_fig_count2,1)),$(AND,$(=,$pbv_fig_count2,1),$(<,$pbv_fig_count,1)))">
      <?MISQL SQL="select fig_zdb_id
-                  from figure
-                  where fig_source_zdb_id='$OID';">
+                  from figure,expression_pattern_figure
+                  where fig_source_zdb_id='$OID'and fig_zdb_id=xpatfig_fig_zdb_id;">
       <?/MISQL> 
       <?MIVAR NAME=pbv_fig_page_link_id>$1<?/MIVAR>
       <?MIVAR NAME=pbv_fig_page>fxfigureview.apg<?/MIVAR>
