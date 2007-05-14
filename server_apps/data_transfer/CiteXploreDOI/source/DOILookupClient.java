@@ -1,7 +1,5 @@
 package org.zfin.datatransfer ; 
 
-//import javax.xml.ws.WebServiceRef;
-//import uk.ac.ebi.cdb.webservice.*;
 import java.util.List;
 import java.util.Vector;
 import java.util.HashMap;
@@ -14,10 +12,21 @@ public class DOILookupClient {
 
 	private JDBCIfxConnect jdbcClient ;
 	private CitexploreWSDLConnect wsdlConnect ; 
+    private Integer maxQuery = Integer.MAX_VALUE ; 
+    private static final String MAX_QUERY_PROPERTY = "MAX_QUERY_PROPERTY" ; 
 
     public DOILookupClient(){
         jdbcClient = new JDBCIfxConnect() ; 
         wsdlConnect = new CitexploreWSDLConnect() ; 
+        String maxQueryProperty = System.getProperty( MAX_QUERY_PROPERTY) ; 
+        if(maxQueryProperty!=null){
+            try{
+                maxQuery = new Integer(maxQueryProperty) ; 
+            }
+            catch(Exception e){
+                e.printStackTrace() ; 
+            }
+        }
     }
 		
 
@@ -32,7 +41,11 @@ public class DOILookupClient {
         while(e.hasMoreElements()){
             pubmedIds.put( e.nextElement().toString(), e.nextElement().toString() ) ; 
             ++count ; 
-//if(count > 10 ) return pubmedIds ; 
+            // for debugging
+           if(count > maxQuery.intValue() ){
+               System.out.println("number of dois to populate:  " + count) ; 
+               return pubmedIds  ; 
+           }
         }
         System.out.println("number of dois to populate:  " + count) ; 
 

@@ -58,14 +58,14 @@ public class CitexploreWSDLConnect {
                     urlString = doc2LocResultBean.getUrl() ; 
                     if(urlString.contains( doiURLString ) ){
                         doiValue = urlString.substring( doiURLString.length()+1 ) ; 
-                        System.out.println("replaced pmid[" + pmid  + "]  doi["+ doiValue  +"]") ; 
+                        System.out.println("added doi[" + doiValue + "]  for pmid["+ pmid+"]") ; 
                         doiList.put(key,doiValue) ; 
                         hasDOI = true ; 
                     }
                 }
 
                 if(hasDOI == false ){
-                    System.out.println("pmid not found [" + pmid  + "]") ; 
+                    System.out.println("doi not found for pmid[" + pmid  + "]") ; 
                     iter.remove() ; 
                 }
 
