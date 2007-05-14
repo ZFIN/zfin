@@ -176,9 +176,9 @@
 #
 00 02 * * 2-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o <!--|DB_NAME|-->
 #
-#  MTWT     2:00am   Populate DOIS with pmid, daily
+#  MTWT     2:00am   Populate DOIS with pmid only reporting thise added, daily 
 #
-00 02 * * 2-5 <!--|ROOT_PATH|-->/server_apps/data_transfer/CiteXploreDOI/updatedoi.sh -d 
+00 02 * * 2-5 <!--|ROOT_PATH|-->/server_apps/data_transfer/CiteXploreDOI/lightdois.sh  
 #
 #
 #
@@ -229,9 +229,14 @@
 25 03 1 * * <!--|ROOT_PATH|-->/server_apps/DB_maintenance/fx_permission_check.pl
 #
 #
-# 0         3:27am   CURATOR SUPPORT: monthly PNAs report for Dave F.
+# 0         3:27am   curator support: monthly pnas report for dave f.
 #
-27 03 1 * * <!--|ROOT_PATH|-->/server_apps/DB_maintenance/pnas_report.pl
+27 03 1 * * <!--|root_path|-->/server_apps/db_maintenance/pnas_report.pl
+#
+#
+#  MTWT     4:00am   Populate DOIS with pmid only reporting thise added, daily 
+#
+00 04 1 * * <!--|root_path|-->/server_apps/data_transfer/CiteXploreDOI/fulldois.sh 
 #
 #  1       10:50pm   DATA TRANSFER OUT: Monthly file to Swiss-Prot
 #
