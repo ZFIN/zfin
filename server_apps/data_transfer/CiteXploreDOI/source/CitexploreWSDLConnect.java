@@ -45,6 +45,7 @@ public class CitexploreWSDLConnect {
             String doiValue ; 
             int counter = 0 ; 
             boolean hasDOI ; 
+            int initSize = doiList.size() ; 
             NumberFormat nf = NumberFormat.getPercentInstance() ; 
             while(iter.hasNext()){
                 key = iter.next().toString() ; 
@@ -65,15 +66,15 @@ public class CitexploreWSDLConnect {
                 }
 
                 if(hasDOI == false ){
-                    System.out.println("doi not found for pmid[" + pmid  + "]") ; 
+                    System.err.println("doi not found for pmid[" + pmid  + "]") ; 
                     iter.remove() ; 
                 }
 
                 ++counter ; 
 
                 if( counter%100==0){
-                    double percent =  (( (double) counter / ( (double) doiList.size()-1.0 ) )) ; 
-                    System.out.println( counter + " of " + doiList.size() + " = " + nf.format(percent) ) ; 
+                    double percent =  (( (double) counter / ( (double) initSize-1.0 ) )) ; 
+                    System.out.println( counter + " of " + initSize  + " = " + nf.format(percent) ) ; 
                 }
             }
         }catch (QueryException_Exception qex) {
