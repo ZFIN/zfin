@@ -70,6 +70,8 @@
 10 20 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/unload_production.sh
 #
 #
+# F 12:30pm
+01 12 * * 5 /research/zprod/www_homes/zfin.org/server_apps/Reports/GO/goreport.pl
 #
 # ------------------------------------------------------------------------
 # ----  9 PM - 10 PM : DATA GENERATION                                ----
@@ -185,7 +187,6 @@
 #
 # W      3am  Consolidate shared memory segment
 00 03 * * 3 /private/apps/Informix/informix/bin/onmode -F
-#
 #
 #
 # ========================================================================
