@@ -15,7 +15,6 @@
 
     <!-- Source Path. -->
     <property name="source.dir" value="source"/>
-    <property name="working.dir" value="work"/>
 
     <path id="lib.classpath">
         <pathelement location="${jdbc.lib}"/>
@@ -87,7 +86,6 @@ TARGETS
                target="1.5">
             <!-- Classpath definitions -->
         </javac>
-        <!-- <delete dir="${working.dir}" /> -->
     </target>
 
 
@@ -100,7 +98,6 @@ TARGETS
     <target name="clean" description="Remove java classes directory contents. ">
         <delete includeemptydirs="true" quiet="true">
             <fileset dir="${classbin.dir}" includes="**/*" />
-            <fileset dir="${working.dir}"  />
             <fileset file="${target.lib}"  />
             <fileset file="${deploy.dir}" includes="**/*"  />
         </delete>
