@@ -75,6 +75,10 @@ function updateAuthor(strURL) {
     <?MIBLOCK WHILE=$(NOT,$(EQ,$(INDEX,$i,$linkauth_rawAuthorList),))>
       <?MIVAR NAME="linkauth_author">$(TRIM,$(INDEX,$i,$linkauth_rawAuthorList))<?/MIVAR>
 
+      <?MICOMMENT> ** Names with single quotes in them need to informix style escaping ** <?/MICOMMENT>
+      <?MIVAR NAME="linkauth_author">$(REPLACE,$linkauth_author,','')<?/MIVAR>
+
+
       <?MICOMMENT> * some pubs stick parens in the name, lets fix those * <?/MICOMMENT>
       <?MIVAR NAME="linkauth_author">$(REPLACE,$linkauth_author,"(",)<?/MIVAR>
       <?MIVAR NAME="linkauth_author">$(REPLACE,$linkauth_author,")",)<?/MIVAR>
