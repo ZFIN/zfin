@@ -51,13 +51,11 @@ my $anat_sql = "select anatitem_zdb_id, anatitem_name,
                        str.stg_obo_id, stp.stg_obo_id,
                        anatitem_definition, anatitem_obo_id, 
                        anatitem_description, anatitem_is_obsolete,
-                       anatitem_is_cell, dblink_acc_num,
+                       anatitem_is_cell, 
                        str.stg_name, stp.stg_name
-                  from anatomy_item, stage str, stage stp,
-                       outer db_link 
+                  from anatomy_item, stage str, stage stp
                  where str.stg_zdb_id = anatitem_start_stg_zdb_id
                    and stp.stg_zdb_id = anatitem_end_stg_zdb_id
-                   and anatitem_zdb_id = dblink_linked_recid
                  order by anatitem_obo_id ";
 
 
@@ -77,9 +75,8 @@ while (my @data = $anat_sth->fetchrow_array()) {
 	my $anatDesc     = $data[6];
 	my $anatIsObsolete = $data[7];
 	my $anatIsCell   = $data[8];
-	my $anatClNum    = $data[9];
-	my $anatStartStgName = $data[10];
-	my $anatEndStgName = $data[11];
+	my $anatStartStgName = $data[9];
+	my $anatEndStgName = $data[10];
 
 	$anatDef =~ s/\n/ /g if $anatDef;  # '\n' would break the OBO parse
 	$anatDef =~ s/\"/\'/g if $anatDef;
@@ -106,7 +103,13 @@ while (my @data = $anat_sth->fetchrow_array()) {
 	print "name: $anatName\n";
 	print "namespace: zebrafish_anatomy\n";
        	print "xref: ZFIN:$anatId\n";
-	print "xref: $anatClNum\n" if $anatClNum;
+
+	#--------------------------------
+	#-- Dblink ids
+        #--------------------------------
+	foreach my $anatDblinkAcc (&getDblinkAcc ($anatId)) {
+	    print "xref: $anatDblinkAcc\n";
+	}
 
         #----------------------------------
         #-- Obsolete term
@@ -226,6 +229,28 @@ sub getAltId ($){
 	push @altid_array,  $alt_id;
     }
     return @altid_array;
+}
+#===============================================
+# sub getDblinkAcc
+#
+# input:  anatitemZdbId
+# ouput:  anatomy ZFA dblink accession array      
+#
+sub getDblinkAcc ($){
+    my $anatZdbId = $_[0];
+    my @dblinkacc_array = ();
+
+    my $dblinkacc_sql = "select dblink_acc_num
+                       from db_link
+                      where dblink_linked_recid = ?";
+    my $dblinkacc_sth = $dbh->prepare($dblinkacc_sql)
+	    or &reportError("Couldn't prepare the statement:$!\n");
+    $dblinkacc_sth->execute($anatZdbId) or &reportError( "Couldn't execute the statement:$!\n");
+
+    while (my $dblink_acc = $dblinkacc_sth->fetchrow_array()) {
+	push @dblinkacc_array,  $dblink_acc;
+    }
+    return @dblinkacc_array;
 }
 
 #===============================================
