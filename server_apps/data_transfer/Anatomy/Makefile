@@ -22,9 +22,9 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Anatomy
 
 GENERICS = unloadAO.pl anatitem_2_obo.pl stg_2_obo.pl err_report.pl \
-	loadMaster.sh unloadAOFile.sql
+	loadMaster.sh unloadAOFile.sql parseOBO.pl
 
-STATICS = README parseOBO.pl loadAO.sql make_annot_translation.sql \
+STATICS = README loadAO.sql make_annot_translation.sql \
 	batch_xpat_annot_adjust.sql parse_stage_keywords.pl \
 	check_thisse_keywords.sql check_annotation.sql 
 
