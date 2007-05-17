@@ -13,13 +13,22 @@
 #         anatitem_merged.unl: term has alt_id:xxxxx
 #         anatalias.unl: term and each of its synonym
 #         anatrel.unl: parentTerm|childTerm|relType
-#         cell_ids.unl: ZFC and CL id pairs
+#         dblink_ids.unl: ZFA and CL/CARO id pairs
 # 
 use strict;
+use DBI;
 
-my ($termId, $termName,$termXref,$termCL, @mergedTerms, @termXrefs, $termStartStg, $termEndStg, @termPartOf,@termDevelopsFrom,@termIsA,$termDef, $termComment, @termSynonym);
+my ($termId, $termName,$termZdbId,@termCLs, @termCAROs,@secondIds, @termZdbIds, $termStartStg, $termEndStg, @termPartOf,@termDevelopsFrom,@termIsA,$termDef, $termComment, @termSynonym, $term_zdb_id);
 
 &initiateVar ();
+
+my $dbname = "<!--|DB_NAME|-->";
+my $username = "";
+my $password = "";
+
+my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
+    or die "Cannot connect to Informix database: $DBI::errstr\n";
+
 
 open ANATNEW, ">anatitem_new.unl" or die "Cannot open anatitem_new.unl file for write \n";
 open ANATEXT, ">anatitem_exist.unl" or die "Cannot open anatitem_exist.unl file for write \n";
@@ -28,7 +37,7 @@ open ANATREL, ">anatrel.unl" or die "Cannot open anatrel.unl file for write \n";
 open ANATALIAS, ">anatalias.unl" or die "Cannot open anatalias.unl file for write \n";
 open ANATMERG, ">anatitem_merged.unl" or die "Cannot open anatmerge.unl file for write \n";
 
-open CELLIDS, ">cell_ids.unl" or die "Cannot open cell_ids.unl file for write \n";
+open DBLINKIDS, ">dblink_ids.unl" or die "Cannot open cell_ids.unl file for write \n";
 
 $/ = "\n\n[";
 while (<>) {
@@ -60,23 +69,31 @@ while (<>) {
 	if ( /^id:\s+(\S+)/ ) {
 	    $termId = $1; 
 	    next;
+	}
+	if ( /^alt_id:\s+(\S+)/ ) {
+	    push @secondIds, $1; 
+	    push @termSynonym, $1;
+	    push @termSynonym, "secondary id";
+	    push @termSynonym, "";
+	    next;
 	}	
 	if ( /^name:\s+(.+)/ ) {
 	    $termName = $1; 
 	    next;
 	}
        	if ( /^xref:\s+ZFIN:(\S+)/ ) {
-	    push @termXrefs, $1; 
+	    push @termZdbIds, $1; 
 	    next;
 	}
 	if (/^xref:\s+(CL:\d+)/) {
-	    $termCL = $1;
+	    push @termCLs, $1;
 	    next;
 	}
-	if ( /^alt_id:\s+(\S+)/ ) {
-	    push @mergedTerms, $1; 
+	if (/^xref:\s+(CARO:\d+)/) {
+	    push @termCAROs, $1;
 	    next;
 	}
+
 	if ( /^relationship:\s+(\S+)\s+(\S+)/ ) {
 	    $termStartStg = $2 if ($1 eq "start");
 	    $termEndStg = $2 if ($1 eq "end");
@@ -101,7 +118,7 @@ while (<>) {
 	}
 	if ( /^synonym:\s+\"(.+)\"/ ) {
 	    push @termSynonym, &stringTrim($1);
-	    push @termSynonym, /RELATED\s+PLURAL/ ? "plural" : "alias";
+	    push @termSynonym, /[RELATED|EXACT]\s+PLURAL/ ? "plural" : "alias";
 	    push @termSynonym, /\[ZFIN:(\S+)\]/ ? $1 : "";
 	    next;
 	}
@@ -114,19 +131,9 @@ while (<>) {
 
     } # end foreach term attribute processing
     
-    # the xref of the merged term would became a xref line for the 
-    # merged-into term, inserting before any existing xref line. Curators 
-    # should only merge an existing term to either a brand new term or
-    # another existing term. If to a brand new term, the xref line would
-    # be ignored; if to an existing term, the last xrefline should be used.
-    for (my $numOfMergs = @mergedTerms; $numOfMergs > 0; $numOfMergs--) {
-	shift @termXrefs;
-    }
-    $termXref = shift @termXrefs;
 
     #-----------------------------------------------
-    # Anatomy term Continue (non-obsolete)
-    # verification work
+    # Verification work
     #----------------------------------------------- 
 
     # Warning if both start and end stages are undefined
@@ -144,30 +151,58 @@ while (<>) {
     # Warning if obo id is not exactly 7 digits
     print "OBO id not 7 digits: $termId\n" unless ($termId =~ /\d{7}/) && ($termId !~ /\d{8}/) ;
 
-    #-----------------------------------------------
-    # Anatomy term Continue (non-obsolete)
-    # write information to different files for loading
-    #-----------------------------------------------    
-    if ( $termXref )  {
 
-	print ANATEXT join("|", $termXref, $termName, $termStartStg, $termEndStg, $termDef, $termComment,"\n");
+    #------------------------------------------------------------
+    # Analyze data and put information to different load files 
+    #------------------------------------------------------------    
+
+    # when terms merge, the multiple alt_id and xref lines are in alphabetic order.
+    # the only way to figure out which is the primary, which is/are the merged
+    # ones is to query the database. Also a new term could have one or more old 
+    # terms merged into it, this is again the only way to figure out if the term
+    # with one alt_id, one xref zdb id line is new or not.  
+ 
+    if ( @termZdbIds > 1 || (@termZdbIds == 1 && @secondIds > 0) ) {
+	($termZdbId) = $dbh->selectrow_array ("
+                                     select anatitem_zdb_id 
+                                       from anatomy_item
+                                      where anatitem_obo_id = '$termId'");
+
+	# put the zdb id pairs into the output file
+	foreach (@termZdbIds) {
+	    if ($_ ne $termZdbId) {
+		print ANATMERG join("|", $termId, $_)."|\n";  
+	    }
+	}
+	
+    }elsif (@termZdbIds == 1) {
+	$termZdbId = pop @termZdbIds;
+    }
+    
+    if ( $termZdbId )  {
+	
+	print ANATEXT join("|", $termZdbId, $termName, $termStartStg, $termEndStg, $termDef, $termComment,"\n");
     }
     else {
 	# the last column is saved for new zdb id
 	print ANATNEW join("|", $termId, $termName, $termStartStg, $termEndStg, $termDef, $termComment)."||\n";
     }
 
-    print CELLIDS  join("|", $termId, $termCL, "\n") if $termCL; 
-
-    # the last column is saved for new zdb id
-    foreach (@mergedTerms) {
-	print ANATMERG join("|", $termId, $_)."|\n";
-    }    
+ 
     # shift out synonym, type and attribution
     # the last column is saved for new zdb id
     while (@termSynonym) {
 	print ANATALIAS join("|", $termId, shift @termSynonym, shift @termSynonym, shift @termSynonym )."||\n";
     }
+
+    foreach (@termCLs) {
+	print DBLINKIDS join("|", $_, $termId, "EBI-Cell")."||\n";
+    }
+    foreach (@termCAROs) {
+	print DBLINKIDS join("|", $_, $termId, "NCBO-CARO")."||\n";
+    }
+
+
     foreach (@termPartOf) {
 	print ANATREL join("|", $_, $termId, "part_of")."|\n";
     }
@@ -188,7 +223,9 @@ close ANATOBS;
 close ANATREL;
 close ANATALIAS;
 close ANATMERG;
-close CELLIDS;
+close DBLINKIDS;
+
+$dbh->disconnect();
 
 exit;
 
@@ -212,11 +249,13 @@ sub initiateVar  {
     @termDevelopsFrom = ();
     @termIsA = ();
     @termSynonym = ();
-    @mergedTerms = ();
+    @secondIds = ();
     $termDef = "";
     $termComment = "";
-    $termXref = "";
-    $termCL = "";
+    $termZdbId = "";
+    @termCLs = ();
+    @termCAROs = ();
+    @termZdbIds = ();
 }
 #=====================================
 # sub stringTrim
