@@ -1188,8 +1188,7 @@ unload to "annotationViolates.err"
                                      ) = "f";
 
 
---
-rollback work;
+--rollback work;
 
 --if no error from the screen, numbers looks right, and except 
 --annotationViolates.err the other three .err files are with zero length,
@@ -1197,5 +1196,6 @@ rollback work;
 --ask for a file AO_translation.unl from one of them with file format
 -- ZDB-ANAT-XXXX|ZDB-STAGE-XXXX|ZDB-STAGE-XXXX|ZDB-ANAT-XXXX
 
---commit work;
+--
+commit work;
  
