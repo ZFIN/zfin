@@ -749,6 +749,28 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   <script src="/phenote/javascript/ajax-lib/dragdrop.js"  type="text/javascript"></script>
   <script src="/phenote/javascript/ajax-lib/controls.js"  type="text/javascript"></script>
   <!-- /Ajax stuff -->
+      <?MICOMMENT>
+      If number does not exist and is a nice publication.
+      <?/MICOMMENT>
+      
+         <?MIVAR NAME=elsevierName>Elsevier%<?/MIVAR>
+      
+      <?MISQL SQL="select pub_doi, jrnl_publisher,jrnl_is_nice from publication, journal where zdb_id='$OID' and jrnl_publisher like '$elsevierName' and jrnl_zdb_id = pub_jrnl_zdb_id;"><?/MISQL>
+      
+         <?MIVAR NAME=$pubview2_doi_no>$1<?/MIVAR>
+         <?MIVAR NAME=$jrnl_publisher>$2<?/MIVAR>
+         <?MIVAR NAME=$jrnl_is_nice>$3<?/MIVAR>
+      
+      
+             
+      <?MIVAR COND="$(AND,$(NC,$pubview2_doi_no,NULL),$(EC,$jrnl_publisher,Elsevier),$(EC,$jrnl_is_nice,t),$(OR,$(EC,$pubcur_c_tab,Figure),$(EC,$pubcur_c_tab,FX)))">
+        <font color=green>
+            Curator Reminder:  For this Elsevier publication, image permission is granted only for figures with gene expression data  (e.g. in situs, antibodies, blots, GFP patterns).  Please remove images/captions from any figures without gene expression.
+            </font>
+            <br/>
+            <p>
+      <?/MIVAR>
+
 
        
   *Attribute Mrkr: 
