@@ -90,8 +90,5 @@ public class CitexploreWSDLConnect {
 
 } 
 
-// -*- java -*-
-
-// (C) 2007 by Nathan Dunn, <ndunn@mac.com>
 
 
