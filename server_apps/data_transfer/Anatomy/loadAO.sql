@@ -6,11 +6,11 @@
 -- INPUT:
 --      anatitem_new.unl  : terms without xref_analog line
 --      anatitem_exist.unl: terms with xref_analog line
---      anatitem_merged.unl: ZFA:#######|ZFA:#######|
+--      anatitem_merged.unl: ZDB-ANAT-######-##|ZDB-ANAT-######-##
 --      anatitem_obsolete.unl: ZDB-ANAT-######-##|
 --      anatrel.unl  : ZFA:#######(parent)|ZFA:#######(child)|rel_type|
 --      anatalias.unl: ZFA:#######|synonym|ZDB-PUB-######-##|
---      cell_ids.unl    : ZFC:#######|CL:#######|
+--      dblink_ids.unl    : ZFA:#######|CL/CARO:#######|
 --
 -- OUTPUT:
 --     start_startInconsistent.err
@@ -37,21 +37,6 @@
 !echo '====================================================='
 !echo '===== Load data into temp table and Prepare       ==='
 !echo '====================================================='
-
------------------------------------------------------
--- Cell Ontology ZFC id and CL id translation table
------------------------------------------------------
-!echo '===== cell ontology id translation ====='
-create temp table cl_id_translation (
-	cit_obo_id	char(11),
-	cit_cl_id	char(10)
-)with no log;
-create unique index cl_id_translation_primary_key
-	on cl_id_translation (cit_obo_id);
-create unique index cl_id_translation_index 
-	on cl_id_translation (cit_cl_id);
-
-load from "cell_ids.unl" insert into cl_id_translation;
 
 
 ------------------------------------------------------
@@ -164,13 +149,6 @@ update merged_anatomy_item
 	where m_anatitem_new_zdb_id in (select n_anatitem_obo_id
 					  from new_anatomy_item);
 
-!echo '== update obo id to zdb id on merged old term =='
-update merged_anatomy_item
-	set m_anatitem_old_zdb_id = (select anatitem_zdb_id 
-			               from anatomy_item
-				      where m_anatitem_old_zdb_id = anatitem_obo_id)
-      where m_anatitem_old_zdb_id in (select anatitem_obo_id
-					from anatomy_item);
 
 -------------------------------------------------------------------
 -- Obsolete anatomy items
@@ -242,6 +220,39 @@ create temp table alias_attribution_temp (
 	a_source_zdb_id	varchar(50)
 )with no log;
 
+-------------------------------------------------------------------
+-- Anatomy term dblinks  (CL:## or CARO:##)
+--
+-- create input_db_link table, load dblink_ids.unl. 
+-------------------------------------------------------------------
+!echo '===== new_anatomy_alias ====='
+create temp table input_db_link (
+	i_dblink_acc_num	varchar(30),
+	i_dblink_data_zdb_id	varchar(30),
+	i_dblink_fdb_name	varchar(30),
+	i_dblink_zdb_id		varchar(30)
+
+) with no log;
+
+!echo '== load dblink_ids.unl =='
+load from "dblink_ids.unl" insert into input_db_link;
+
+!echo '== update obo id to zdb id on anat term =='
+update input_db_link
+	set i_dblink_data_zdb_id = (select anatitem_zdb_id
+			              from anatomy_item
+				     where i_dblink_data_zdb_id = anatitem_obo_id)
+      where i_dblink_data_zdb_id in (select anatitem_obo_id
+				       from anatomy_item);
+
+!echo '== update new anatomy term zdb id =='
+update input_db_link set i_dblink_data_zdb_id = 
+			(select n_anatitem_zdb_id
+			   from new_anatomy_item
+		 	  where n_anatitem_obo_id = i_dblink_data_zdb_id)
+	where  i_dblink_data_zdb_id in 
+			(select n_anatitem_obo_id
+			   from new_anatomy_item);
 
 -------------------------------------------------------------------
 -- Anatomy relationship
@@ -356,6 +367,12 @@ insert into tmp_ao_updates(t_rec_id,t_field_name,t_new_value,t_old_value,t_when)
 	       on anatitem_zdb_id = u_anatitem_zdb_id
          where anatitem_name <> u_anatitem_name;
 
+-- in case the update statement gives non-unique error, uncomment the
+-- two "set ... disabled" and "select" statements to diagnose
+
+--set constraints anatitem_name_unique disabled;
+--set indexes anatitem_name_index, anatitem_name_lower_index disabled;
+
 update anatomy_item
    set anatitem_name = (select u_anatitem_name
 			  from updated_anatomy_item
@@ -364,6 +381,11 @@ update anatomy_item
 		  from updated_anatomy_item
 	         where anatitem_zdb_id = u_anatitem_zdb_id
 		   and anatitem_name <> u_anatitem_name);
+
+--select anatitem_name
+--  from anatomy_item
+-- group by anatitem_name
+--having count(anatitem_name) > 1;
 
 !echo '== update anatitem_start_stg_zdb_id =='
 
@@ -737,8 +759,12 @@ insert into tmp_pato_merge_record (tpm_genox_zdb_id, tpm_start_stg_zdb_id,
 	 join atomic_phenotype
 		on m_anatitem_old_zdb_id = apato_entity_a_zdb_id;
 
+insert into tmp_pato_merge_record (tpm_genox_zdb_id, tpm_start_stg_zdb_id, 
+                                   tpm_end_stg_zdb_id, tpm_entity_a_zdb_id, 
+                                   tpm_entity_b_zdb_id, tpm_quality_zdb_id, 
+                                   tpm_pub_zdb_id, tpm_tag )
   select distinct apato_genox_zdb_id, apato_start_stg_zdb_id,
-         apato_end_stg_zdb_id,m_anatitem_new_zdb_id, apato_entity_b_zdb_id,
+         apato_end_stg_zdb_id,apato_entity_a_zdb_id, m_anatitem_new_zdb_id,
          apato_quality_zdb_id, apato_pub_zdb_id, apato_tag
     from merged_anatomy_item
 	 join atomic_phenotype
@@ -762,7 +788,10 @@ insert into tmp_pato_merge_pair_diff_annotation
        where tpm_genox_zdb_id = apato_genox_zdb_id
          and tpm_start_stg_zdb_id =  apato_start_stg_zdb_id
          and tpm_end_stg_zdb_id = apato_end_stg_zdb_id
-         and tpm_entity_b_zdb_id = apato_entity_b_zdb_id
+         and (tpm_entity_b_zdb_id = apato_entity_b_zdb_id
+              or (apato_entity_b_zdb_id is null
+                  and tpm_entity_b_zdb_id is null )
+             )
          and tpm_quality_zdb_id = apato_quality_zdb_id
          and tpm_pub_zdb_id = apato_pub_zdb_id
          and tpm_tag = apato_tag
@@ -798,7 +827,21 @@ insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id)
 	select tpd_old_apato_zdb_id, tpd_new_apato_zdb_id
           from tmp_pato_merge_pair_diff_annotation;
 
--- delete annotation on old terms and that cascade to pato figures  
+-- the cascade deletion from atomic_phenotype to apato_figure
+-- was not there any more, so delete the apato_figure first
+delete from apato_figure 
+      where exists (select 't'
+                      from tmp_pato_merge_pair_diff_annotation
+                     where tpd_old_apato_zdb_id = apatofig_apato_zdb_id);
+
+select  apato_zdb_id, m_anatitem_old_zdb_id, m_anatitem_new_zdb_id
+from merged_anatomy_item join 
+     atomic_phenotype on m_anatitem_old_zdb_id = apato_entity_a_zdb_id
+     join apato_figure  on apato_zdb_id = apatofig_apato_zdb_id
+where  apato_zdb_id not in (select tpd_old_apato_zdb_id from tmp_pato_merge_pair_diff_annotation);
+
+
+-- delete annotation on old terms
 delete from zdb_active_data 
 	where exists 
 	       (select 'x'
@@ -855,7 +898,7 @@ delete from zdb_active_data
 
 				
 -----------------------------------------------------------------
--- Delete dead alias/synonym, Keep zdb id on unchanged alias
+-- Delete dead Alias/Synonym, Keep zdb id on unchanged alias
 -- Load in new ones. 
 -----------------------------------------------------------------
 
@@ -942,6 +985,64 @@ insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 	select i_dalias_zdb_id, i_dalias_attribution
           from input_data_alias
 	 where i_dalias_attribution is not null;
+				
+-----------------------------------------------------------------
+-- Delete dead Dblink on CL or CARO, Keep zdb id on unchanged alias
+-- Load in new ones. 
+-----------------------------------------------------------------
+
+!echo '== delete dead synonym from zdb_active_data =='
+-- we didn't use all the AK fields, sloppy, but we don't need to.
+select dblink_zdb_id t_dblink_id, dblink_linked_recid t_dblink_data_id,
+       dblink_acc_num t_dblink_acc_num
+  from db_link
+ where dblink_linked_recid like "ZDB-ANAT-%"
+   and not exists 
+	(select 't'
+	   from input_db_link
+	  where dblink_linked_recid = i_dblink_data_zdb_id
+	    and dblink_acc_num = i_dblink_acc_num )
+into temp tmp_obsolete_dblink with no log;
+
+
+insert into tmp_ao_updates(t_rec_id, t_field_name, t_old_value, t_when, t_comments)
+      select t_dblink_data_id, "dblink "||t_dblink_id, t_dblink_acc_num, 
+	     CURRENT, "Deleted."
+        from tmp_obsolete_dblink;
+
+-- delete dead synonym, cascade to record_attribution 
+delete from zdb_active_data 
+      where zactvd_zdb_id in 
+		(select t_dblink_id
+		   from tmp_obsolete_dblink);
+
+!echo '== delete unchanged ones from the new input =='
+-- we didn't use all the AK fields, sloppy, but we don't need to.
+delete from input_db_link
+      where exists (select 't'
+                      from db_link
+		     where dblink_linked_recid = i_dblink_data_zdb_id
+	   	       and dblink_acc_num = i_dblink_acc_num);
+
+!echo '== get db link zdb id and load =='
+update input_db_link set i_dblink_zdb_id = get_id("DBLINK");
+
+insert into zdb_active_data(zactvd_zdb_id) 
+	select i_dblink_zdb_id
+	  from input_db_link;
+select *
+  from input_db_link
+ where i_dblink_data_zdb_id not in (select anatitem_zdb_id from anatomy_item);
+
+insert into db_link (dblink_zdb_id, dblink_linked_recid, dblink_acc_num, dblink_fdbcont_zdb_id)
+	select i_dblink_zdb_id, i_dblink_data_zdb_id, i_dblink_acc_num, fdbcont_zdb_id
+	  from input_db_link, foreign_db_contains
+         where i_dblink_fdb_name = fdbcont_fdb_db_name;
+
+insert into tmp_ao_updates(t_rec_id, t_field_name, t_new_value, t_when, t_comments)
+      select i_dblink_data_zdb_id, "dblink "||i_dblink_zdb_id, i_dblink_acc_num, 
+	     CURRENT, "New."
+	from input_db_link;
 
 ----------------------------------------------------------------
 -- Flag obsolete anatomy term
@@ -960,16 +1061,6 @@ update anatomy_item set anatitem_is_obsolete = 't'
 		      from obsolete_anatomy_item
 		     where anatitem_zdb_id = o_anatitem_zdb_id);
 
-----------------------------------------------------------------
--- Update obo id on cell ontology terms
---
----------------------------------------------------------------
-!echo '== update obo id on cell terms =='
-update anatomy_item set anatitem_obo_id = (select cit_cl_id
-                                             from cl_id_translation
-                                            where cit_obo_id = anatitem_obo_id)
-                  where anatitem_obo_id in (select cit_obo_id
-					      from cl_id_translation);
 
 -----------------------------------------------------------------
 -- Load anatomy_relationship
@@ -1096,13 +1187,15 @@ unload to "annotationViolates.err"
                                      xpatres_end_stg_zdb_id
                                      ) = "f";
 
---rollback work;
+
+--
+rollback work;
 
 --if no error from the screen, numbers looks right, and except 
 --annotationViolates.err the other three .err files are with zero length,
 --then send content in annotationViolates.err to Ceri and Melissa, and 
 --ask for a file AO_translation.unl from one of them with file format
 -- ZDB-ANAT-XXXX|ZDB-STAGE-XXXX|ZDB-STAGE-XXXX|ZDB-ANAT-XXXX
--- 
-commit work;
+
+--commit work;
  
