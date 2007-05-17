@@ -175,9 +175,6 @@
 #
 00 02 * * 2-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o <!--|DB_NAME|-->
 #
-#  MTWT     2:00am   Populate DOIS with pmid only reporting thise added, daily 
-#
-00 02 * * 2-5 <!--|ROOT_PATH|-->/server_apps/data_transfer/CitexploreDOI/lightdois.sh  
 #
 #
 #
@@ -232,9 +229,6 @@
 27 03 1 * * <!--|root_path|-->/server_apps/db_maintenance/pnas_report.pl
 #
 #
-#  MTWT     4:00am   Populate DOIS with pmid only reporting thise added, daily 
-#
-00 04 1 * * <!--|root_path|-->/server_apps/data_transfer/CitexploreDOI/fulldois.sh 
 #
 #  1       10:50pm   DATA TRANSFER OUT: Monthly file to Swiss-Prot
 #
