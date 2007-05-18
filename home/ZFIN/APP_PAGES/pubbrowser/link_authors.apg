@@ -83,19 +83,29 @@ function updateAuthor(strURL) {
       <?MIVAR NAME="linkauth_author">$(REPLACE,$linkauth_author,"(",)<?/MIVAR>
       <?MIVAR NAME="linkauth_author">$(REPLACE,$linkauth_author,")",)<?/MIVAR>
 
-      <?MICOMMENT> * the arrays start at 1 - wild! * <?/MICOMMENT>
-      <?MIVAR>$(SETVAR,$linkauth_authorList[$(+,$i,1)],$linkauth_author)<?/MIVAR>
- 
+      <?MICOMMENT> * trim the "and " from "and Lastname" * <?/MICOMMENT>
+      <?MIBLOCK COND="$(EQ,$(SUBSTR,$linkauth_author,1,4),and )">
+        <?MIVAR NAME="$linkauth_author">$(SUBSTR,$linkauth_author,5,$(STRLEN,$linkauth_author))<?/MIVAR>
+      <?/MIBLOCK>
+
+      <?MICOMMENT> * exclude this author if the last name is already in the list 
+                     - the NOT function is because if it finds a term, it'll be the
+                       location in the string, which will evaluate to true
+                     - I'm surrounding both the list and single name with |'s to get
+                       an exact match.
+                     - sadly, I can still get duplicates if one author name is a subset
+                       of another author name and the shorter one is second.. using
+                       a temp table would fix this, but I dunno if it's necessary, since
+                       it's a single user app..   * <?/MICOMMENT>
+
+      <?MIBLOCK COND="$(NOT,$(POSITION,|$(SEPARATE,$linkauth_authorList,|)|,|$linkauth_author|,1))"> <?/MIVAR> 
+        <?MICOMMENT> * the arrays start at 1 - wild! * <?/MICOMMENT>
+        <?MIVAR>$(SETVAR,$linkauth_authorList[$(+,$i,1)],$linkauth_author)<?/MIVAR>
+      <?/MIBLOCK> 
+
       <?MICOMMENT> * i++ * <?/MICOMMENT>
       <?MIVAR NAME="$i">$(+,$i,1)<?/MIVAR>
     <?/MIBLOCK>
-
-    <?MICOMMENT> ** a little more cleanup, the last person in the list might
-                    look like "and Westerfield, M." - so we need to chop off
-                    that leading "and "  ** <?/MICOMMENT>
-      <?MIBLOCK COND="$(EQ,$(SUBSTR,$linkauth_authorList[$(-,$i,1)],1,4),and )">
-      <?MIVAR NAME="$linkauth_authorList[$(-,$i,1)]">$(SUBSTR,$linkauth_authorList[$(-,$i,1)],5,$(STRLEN,$linkauth_authorList[$(-,$i,1)]))<?/MIVAR>
-      <?/MIBLOCK>
 
     <?MIVAR NAME=$q_authors>$linkauth_rawAuthorList<?/MIVAR>
 
