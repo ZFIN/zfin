@@ -203,6 +203,35 @@ create procedure regen_names_genotype_list()
 
 
   ----------------------------------------
+  -- Wildtype name
+  ----------------------------------------
+
+  let namePrecedence = "Wildtype name";
+  select nmprec_significance 
+    into nameSignificance
+    from name_precedence 
+    where nmprec_precedence = namePrecedence;
+
+  insert into regen_all_names_temp
+      ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
+        rgnallnm_precedence, rgnallnm_name_lower )
+	select geno_display_name, geno_zdb_id, nameSignificance,
+	       namePrecedence, lower(geno_display_name)
+          from genotype 
+         where geno_is_wildtype = "t";
+
+ insert into regen_all_names_temp
+      ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
+        rgnallnm_precedence, rgnallnm_name_lower )
+	select geno_handle, geno_zdb_id, nameSignificance,
+	       namePrecedence, lower(geno_handle)
+          from genotype 
+         where geno_is_wildtype = "t"
+           and geno_display_name <> geno_handle;
+
+
+
+  ----------------------------------------
   -- Genotype alias
   ----------------------------------------
 

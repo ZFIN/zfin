@@ -200,7 +200,8 @@ create dba function "informix".regen_names() returning integer
      -- 105 Gene symbol                        Genotype 
      -- 106 Gene name                          Genotype
      -- 107 Gene alias                         Genotype
-     -- 110 Genotype alias                     Genotype
+     -- 120 Wildtype name		       Genotype
+     -- 121 Genotype alias                     Genotype
 
     let errorHint = "all_map_names";
 
