@@ -62,12 +62,12 @@
     <?MIVAR NAME=$like_or_equal>like<?/MIVAR> 
     <?MIVAR NAME=$input>$(CONCAT,$genonm_inputname,$percentage)<?/MIVAR>
   <?/MIBLOCK>
-
+  
     <?MISQL SQL="
 	insert into $genonm_temp_on_name 
 	    select allmapnm_zdb_id,allmapnm_significance,allmapnm_name, allmapnm_precedence 
               from all_map_names$table_all_name_ends
-             where $target_col $like_or_equal '$input'
+             where $target_col $like_or_equal '$(LOWER,$input)'
                    $connecting_2_tables
                and allmapnm_zdb_id like 'ZDB-GENO-%';">	    
     <?/MISQL>     
