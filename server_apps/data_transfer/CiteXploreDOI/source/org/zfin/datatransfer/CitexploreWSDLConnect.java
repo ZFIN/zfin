@@ -1,5 +1,5 @@
 /**
- *  Class CitexploreWSDLConnect.
+ *  Class CitexploreWSDLConnect.  Collects DOIs from the CiteXplorer webservice.
  */
 package org.zfin.datatransfer ; 
 
@@ -7,85 +7,78 @@ import javax.xml.ws.WebServiceRef;
 import uk.ac.ebi.cdb.webservice.*;
 
 import java.util.List;
-import java.util.Vector;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.text.NumberFormat;
 
 public class CitexploreWSDLConnect {
 
 	@WebServiceRef(wsdlLocation="http://www.ebi.ac.uk/webservices/citexplore/v1.0/service?wsdl")
 	static WSCitationImplService service = new WSCitationImplService();
+    private final String PMID_TOKEN = "pmid" ; 
+    private final String DOI_URL = "http://dx.doi.org" ;
 
 
-    public CitexploreWSDLConnect(){
 
-    }
-
-
-    /** getDOIsForPubmedID: 
-     * @INPUT HashMap<ZDB_ID,PUBMEDID>
-     * @OUTPUT HashMap<ZDB_ID,DOI>
+    /** getDoisForPubmedID.
+     * @INPUT List<Publication>
+     * @OUTPUT List<Publication>
+     * Note:  This is a destructive method which changes the input structure.
+     * Iterates through the Publication list and updates the DOI, if it exists, from the CiteXplorer Webservice.
+     * The DOI is the key and doc2loc is the webservice method from the compiled client-side webservice code.
+     * Many IDs are returned, one of which may be the DOI, which always contains the DOI_URL link.
      *
     */
-    public HashMap<String,String> getDOIsForPubmedID(HashMap<String,String> pubmedIds){
-        // ZDBID,DOI
-        HashMap<String,String> doiList = new HashMap<String,String>(pubmedIds) ; 
+    public List<Publication> getDOIsForPubmedID(List<Publication> publicationList){
         try {
-            WSCitationImpl port = service.getWSCitationImplPort();
-
-            System.out.println(" Invoking doc2loc operation on wscitationImpl port ");
-            Iterator iter = doiList.keySet().iterator() ; 
-            Doc2LocResultListBean doc2LocResultListBean ; 
+            System.err.println(" Invoking doc2loc operation on wscitationImpl port ");
+            Doc2LocResultListBean doc2LocResultListBean ;
             List<Doc2LocResultBean> doc2LocResultBeanCollection ; 
-            String key ; 
-            String pmid ; 
-            String urlString  ; 
-            String doiURLString = "http://dx.doi.org" ;
-            String doiValue ; 
+            String urlString , doiValue ;
             int counter = 0 ; 
             boolean hasDOI ; 
-            int initSize = doiList.size() ; 
-            NumberFormat nf = NumberFormat.getPercentInstance() ; 
-            while(iter.hasNext()){
-                key = iter.next().toString() ; 
-                pmid = doiList.get(key).toString()  ; 
-                doc2LocResultListBean = port.doc2Loc("pmid", pmid );
+            int initSize = publicationList.size() ; 
+
+            WSCitationImpl port = service.getWSCitationImplPort();
+            for( Publication publication: publicationList  ){
+                doc2LocResultListBean = port.doc2Loc(PMID_TOKEN, publication.getAccessionNumber() );
                 doc2LocResultBeanCollection = doc2LocResultListBean.getDoc2LocResultBeanCollection();
-
-
                 hasDOI = false ; 
                 for (Doc2LocResultBean doc2LocResultBean: doc2LocResultBeanCollection) {
                     urlString = doc2LocResultBean.getUrl() ; 
-                    if(urlString.contains( doiURLString ) ){
-                        doiValue = urlString.substring( doiURLString.length()+1 ) ; 
-                        System.out.println("added doi[" + doiValue + "]  for pmid["+ pmid+"]") ; 
-                        doiList.put(key,doiValue) ; 
+                    if(urlString.contains( DOI_URL ) ){
+                        doiValue = urlString.substring( DOI_URL.length()+1 ) ; 
+                        System.out.println("added doi[" + doiValue + "]  for pmid["+ publication.getAccessionNumber() +"]") ; 
+                        publication.setPubDOI(doiValue) ; 
                         hasDOI = true ; 
                     }
                 }
 
                 if(hasDOI == false ){
-                    System.err.println("doi not found for pmid[" + pmid  + "]") ; 
-                    iter.remove() ; 
+                    System.err.println("doi not found for pmid[" + publication.getAccessionNumber() + "]") ; 
+                    publication.setPubDOI(null) ; 
                 }
 
                 ++counter ; 
-
                 if( counter%100==0){
-                    double percent =  (( (double) counter / ( (double) initSize-1.0 ) )) ; 
-                    System.out.println( counter + " of " + initSize  + " = " + nf.format(percent) ) ; 
+                    printStatus( counter,initSize) ; 
                 }
             }
         }catch (QueryException_Exception qex) {
             System.out.printf("Caught QueryException_Exception: %s\n", qex.getFaultInfo().getMessage());
         }
         catch(Exception e) {
-            e.printStackTrace();
+            System.out.println("Unable to access dois.  Exiting application: \n"+ e.getMessage() ) ; 
+            System.exit(1) ; 
         }
 
+        return publicationList; 
+    }
 
-        return doiList ; 
+
+
+    public void printStatus( int counter, int initSize){
+        NumberFormat nf = NumberFormat.getPercentInstance() ; 
+        double percent =  (( (double) counter / ( (double) initSize-1.0 ) )) ; 
+        System.out.println( counter + " of " + initSize  + " = " + nf.format(percent) ) ; 
     }
 
 } 
