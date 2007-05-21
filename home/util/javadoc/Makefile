@@ -13,7 +13,7 @@
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ..
+TOP = ../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home
@@ -22,32 +22,13 @@ TARGETDIR = $(TARGETROOT)/home
 # of this directory.  However they are not stored as subdirectories in the
 # file system.
 
-SUBDIRS  = ZFIN zf_info javascript css images unavailable util
-MIRROR_SUBDIRS = zf_info images
-POSTLOADDB_SUBDIRS = ZFIN
+SUBDIRS  =   
+ 
+POSTLOADDB_SUBDIRS = 
 
-GENERICS = index.html robots.txt zfin_style.css header.js footer.js autosuggest.js warranty.html zfin_is_down.html
+GENERICS = 
 
-STATICS  = favicon.ico 
-
-# This also creates a symbolic link to to an FTP directory to provide an 
-# http interface to the FTP directory.
-
-FTPTARGET = $(TARGETDIR)/transfer
-
-# It also creates a sym link to the client_apps directory.  This is to
-# overcome a bug in apache.
-
-CLIENTAPPSTARGET = $(TARGETDIR)/client_apps
-
-ENDEMICTARGETS_POSTTARGETS = $(FTPTARGET) $(CLIENTAPPSTARGET)
-
-# If we are building a mirror then disable calling gmake with no target.
-
-ifeq ($(INFORMIXSERVER),bogus.informix.server.for.mirrors)
-InvokingMirrorWithoutTarget:
-	ERROR: Reinvoke gmake with a mirror target.
-endif
+STATICS  =  
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -58,12 +39,6 @@ include $(TOP)/make.default.rules
 
 
 # Rules that are endemic to this makefile
-
-$(FTPTARGET) : 
-	if [ ! -h $(FTPTARGET) ] ; then ln -s $(TARGETFTPROOT)/pub/transfer $(FTPTARGET); fi
-
-$(CLIENTAPPSTARGET) :
-	if [ ! -h $(CLIENTAPPSTARGET) ] ; then ln -s $(TARGETDIR)/../client_apps $(CLIENTAPPSTARGET); fi
 
 
 
@@ -83,11 +58,9 @@ $(CLIENTAPPSTARGET) :
 # Therefore we strip all of the MI tags from the ZDB_home.apg and make it
 # into index.html for the mirror sites.
 
-mirror : $(TARGETDIR) $(MIRROR_SUBDIRS) $(SPECIFICTARGETS) $(STATICTARGETS)
-	stripmicode.pl < ZFIN/APP_PAGES/misc_files/ZDB_home.apg > mirror_index.html
-	chmod 644 mirror_index.html
-	$(MAKESPECIFIC) mirror_index.html $(TRANSLATETABLE) $(TARGETDIR)/index.html
-	rm -f mirror_index.html
+
+run : 
+	 $(foreach DIR,$(SUBDIRS), $(MAKE) -C $(DIR) $@)
 
 
 postloaddb :
