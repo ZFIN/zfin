@@ -375,10 +375,6 @@ function openChild(childWinUrl,childWinName) {
     ) with NO LOG;">
   <?/MISQL>  
 <?/MISQL>
-<?MISQL SQL="
-    create index geneid$xpatselect_temp_match on $xpatselect_temp_match(xpat_gene_zdb_id)
-    in idxdbs3;">
-<?/MISQL>
 
 <?MICOMMENT>
   ============================================================================
@@ -719,7 +715,6 @@ function openChild(childWinUrl,childWinName) {
 
     <?MICOMMENT> ** done with temp table, nuke it ** <?/MICOMMENT>
     <?MISQL SQL="delete from $xpatselect_temp_match;"><?/MISQL>
-
 
 <?/MIBLOCK>  <?MICOMMENT> --- end new query_results exists -- <?/MICOMMENT>
 
