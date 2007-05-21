@@ -118,7 +118,7 @@ order by xpatdg_matching_significance, mrkr_abbrev_order
     <?MIVAR NAME="xpsumres_geneZdbId">$1<?/MIVAR>
     <?MIVAR NAME="xpsumres_geneAbbrev">$2<?/MIVAR>
     <?MIVAR NAME="xpsumres_figCount">$3<?/MIVAR>
-    <?MIVAR NAME="xpsumres_geneAbbrevLink">$4<?/MIVAR>
+    <?MIVAR NAME="xpsumres_geneAbbrevLink">$4<?/MIVAR>  
     <?MIVAR NAME=xpsumres_matching_significance>$5<?/MIVAR>
 
     <?MICOMMENT>
@@ -220,13 +220,18 @@ order by xpatdg_matching_significance, mrkr_abbrev_order
            <?MICOMMENT> *** restore single apostrophe matching text column *** <?/MICOMMENT>
           <?MIVAR NAME=$xpsumres_matchedText COND="$(XST,$xpsumres_matchedText)" DELIMIT="''" REPLACE="'">$xpsumres_matchedText<?/MIVAR>
 
-	  <?MIVAR>$xpsumres_matching_qualification: $(SUBSTR,$xpsumres_matching_output,1,$(-,$xpsumres_start_pos,1))<b>$xpsumres_matchedText</b>$(SUBSTR,$xpsumres_matching_output,$(+,$xpsumres_start_pos,$xpsumres_str_length))
-	  <?/MIVAR>
+	  <?MICOMMENT> currently, we only handle one matching text case,  <?/MICOMMENT>
+          <?MIBLOCK COND="$(>,$xpsumres_start_pos,0)"> 
+	    <?MIVAR>$xpsumres_matching_qualification: $(SUBSTR,$xpsumres_matching_output,1,$(-,$xpsumres_start_pos,1))<b>$xpsumres_matchedText</b>$(SUBSTR,$xpsumres_matching_output,$(+,$xpsumres_start_pos,$xpsumres_str_length))
+	    <?/MIVAR>
+          <?MIELSE>
+  	    <?MIVAR>$xpsumres_matching_qualification: $xpsumres_matching_output  <?/MIVAR>
+          <?/MIBLOCK>
       
         </td>
        <?/MIBLOCK>
       </tr>
-
+ 
   <?/MISQL>
   
   <?MISQL SQL="

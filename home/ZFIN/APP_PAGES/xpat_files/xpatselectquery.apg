@@ -669,11 +669,17 @@ DEBUGGING:
     <?MISQL SQL="select WebExplode(object,'genonm_inputname=$xpatselqry_genoName&genonm_session_id=$xpatselqry_session_id&compare=$xpatselqry_genoSearchType') from webPages where ID='aa-genotype_name_match.apg';">$1<?/MISQL>   
 
     <?MIVAR NAME=xpatselqry_temp_geno_on_name>$genonm_temp_on_name<?/MIVAR>
+
+    <?MIBLOCK COND="$(NXST,$xpatselqry_matchedText)">
+      <?MIVAR NAME=$xpatselqry_matchedText>$xpatselqry_genoName<?/MIVAR>
+      <?MIVAR NAME=$xpatselqry_matchedTextSearchType>$xpatselqry_genoSearchType<?/MIVAR>
+      <?MIVAR NAME="$xpatselqry_matchingCols">m_text, 'Background:'||m_type, m_order<?/MIVAR>
+    <?/MIBLOCK>
  
     <?MISQL SQL="
 	insert into $xpatselectquery_temp_geno
              select xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
-                    xpatex_gene_zdb_id, xpatex_genox_zdb_id, m_text, 'Background:'||m_type, m_order
+                    xpatex_gene_zdb_id, xpatex_genox_zdb_id, $xpatselqry_matchingCols
                from $xpatselqry_matchTable
                     join genotype_experiment on xpatex_genox_zdb_id = genox_zdb_id
                     join $xpatselqry_temp_geno_on_name on g_zdb_id = genox_geno_zdb_id;">
@@ -682,19 +688,14 @@ DEBUGGING:
     <?MICOMMENT>-- clean up the helper temp table -- <?/MICOMMENT>
     <?MISQL SQL="delete from $xpatselqry_temp_geno_on_name";><?/MISQL>
  
-    <?MIBLOCK COND="$(NXST,$xpatselqry_matchedText)">
-      <?MIVAR NAME=$xpatselqry_matchedText>$xpatselqry_genoName<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_matchedTextSearchType>$xpatselqry_genoSearchType<?/MIVAR>
-
-    <?/MIBLOCK>
-
-
   <?/MIBLOCK> <?MICOMMENT> close if-else for Id or Name <?/MICOMMENT>
 
   <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
   <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
        delete from $xpatselqry_matchTable">
   <?/MISQL>
+
+  <?MICOMMENT> redefind variables <?/MICOMMENT>
   <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_geno<?/MIVAR>
   <?MIVAR NAME=$xpatselqry_matchingCols>
    xpatex_matching_text, xpatex_matching_precedence, xpatex_matching_significance 
