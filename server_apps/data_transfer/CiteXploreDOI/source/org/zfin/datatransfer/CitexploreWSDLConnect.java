@@ -66,8 +66,8 @@ public class CitexploreWSDLConnect {
             System.out.printf("Caught QueryException_Exception: %s\n", qex.getFaultInfo().getMessage());
         }
         catch(Exception e) {
-            System.out.println("Unable to access dois.  Exiting application: \n"+ e.getMessage() ) ; 
-            System.exit(1) ; 
+            System.out.println("Unable to access dois:\n"+ e.getMessage() ) ; 
+            return publicationList ; 
         }
 
         return publicationList; 
