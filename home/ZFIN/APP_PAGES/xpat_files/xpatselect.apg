@@ -354,14 +354,16 @@ function openChild(childWinUrl,childWinName) {
   webexploded pages.
 <?/MICOMMENT>
 
-<?MISQL SQL="
+<?MIBLOCK COND="$(AND,$(XST,$query_results),$(EC,$xpatsel_anatomy_error_occured,f))">
+
+ <?MISQL SQL="
   select dbinfo('sessionid') 
     from single;">
   <?MIVAR NAME=$xpatsel_session_id>$1<?/MIVAR>
   <?MIVAR NAME=$xpatselect_temp_match>$(CONCAT,xpatselect_temp_match_,$xpatsel_session_id)<?/MIVAR>
-<?/MISQL>
+ <?/MISQL>
 
-<?MISQL SQL="
+ <?MISQL SQL="
   execute function table_exists('$xpatselect_temp_match')">
   <?MIVAR NAME="$xpatsel_tableExists">$1<?/MIVAR>
   <?MISQL COND=$(EC,$xpatsel_tableExists,f) SQL="
@@ -374,15 +376,19 @@ function openChild(childWinUrl,childWinName) {
       xpat_matching_significance integer
     ) with NO LOG;">
   <?/MISQL>  
-<?/MISQL>
+ <?/MISQL>
+ <?MISQL SQL="
+     create index geneid$xpatselect_temp_match on $xpatselect_temp_match(xpat_gene_zdb_id)
+     in idxdbs3;">
+ <?/MISQL>
 
-<?MICOMMENT>
+ <?MICOMMENT>
   ============================================================================
   ==========  Invoke correct selection query/app page
   ============================================================================
-<?/MICOMMENT>
+ <?/MICOMMENT>
 
-<?MIBLOCK COND="$(AND,$(XST,$query_results),$(EC,$xpatsel_anatomy_error_occured,f))">
+
   <?MICOMMENT>
     Page Called from itself.  Pass any query form variables, if they exist,
     to the form handling page.
@@ -715,8 +721,16 @@ function openChild(childWinUrl,childWinName) {
 
     <?MICOMMENT> ** done with temp table, nuke it ** <?/MICOMMENT>
     <?MISQL SQL="delete from $xpatselect_temp_match;"><?/MISQL>
-
+    
 <?/MIBLOCK>  <?MICOMMENT> --- end new query_results exists -- <?/MICOMMENT>
+
+<?MICOMMENT> ok, I am paranoid to put the sql here instead of two lines above. 
+             because I don't understand the usage of $xpatsel_anatomy_error_occured
+             and no time at this minute to fully understand and test. 
+<?/MICOMMENT>
+<?MIBLOCK COND="$(AND,$(XST,$query_results),$(EC,$xpatsel_anatomy_error_occured,f))">
+   <?MISQL SQL="drop index geneid$xpatselect_temp_match;"><?/MISQL>
+<?/MIBLOCK>
 
 <?MICOMMENT>
   ============================================================================
