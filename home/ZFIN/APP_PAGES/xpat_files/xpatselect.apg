@@ -375,6 +375,10 @@ function openChild(childWinUrl,childWinName) {
     ) with NO LOG;">
   <?/MISQL>  
 <?/MISQL>
+<?MISQL SQL="
+    create index geneid$xpatselect_temp_match on $xpatselect_temp_match(xpat_gene_zdb_id)
+    in idxdbs3;">
+<?/MISQL>
 
 <?MICOMMENT>
   ============================================================================
