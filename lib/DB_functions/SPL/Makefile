@@ -41,6 +41,7 @@ FISH_STATS   = get_image_stats.sql \
 	       get_genotype_display.sql \
 	       get_genotype_handle.sql \
 	       p_check_pato_entities.sql \
+	       p_update_geno_nickname.sql \
 	       get_feature_type.sql
 LOAD_STATS   = p_zgc_load.sql
 XPAT_STATS   = populate_direct_submission_date.sql
