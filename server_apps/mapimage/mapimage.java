@@ -1,19 +1,11 @@
 import java.io.*;
 import java.awt.*;
 import java.util.*;
-import cgi.*;
 
 import java.sql.*;
 
 import java.awt.image.*;
-//import javax.imageio.*;  //1.4 leftovers
 
-//pdf imports
-//import com.lowagie.text.*;
-//import com.lowagie.text.pdf.PdfWriter;
-//import com.lowagie.text.pdf.PdfContentByte;
-
-//import com.sun.jimi.core.*;
 
 import zmapper.*;
 
@@ -99,7 +91,7 @@ public class mapimage {
 		else
 			table = "paneled_markers";
 
-		System.err.println("data: " + data);
+		//System.err.println("data: " + data);
 		Hashtable SM = new Hashtable();
 
 		StringTokenizer sTok = new StringTokenizer(data,"|");
@@ -131,7 +123,7 @@ public class mapimage {
 		String zpan_where = "";
 	   
 		if (zmap_panels != null) {
-			System.err.println("panels? --- " + zmap_panels + " ---");
+		        //System.err.println("panels? --- " + zmap_panels + " ---");
 			zmap_panels = zmap_panels.substring(0, zmap_panels.length()-1);
 			StringTokenizer zTok = new StringTokenizer(zmap_panels,"|");
 			while (zTok.hasMoreTokens()) {
@@ -148,7 +140,7 @@ public class mapimage {
 		while(sTok.hasMoreTokens()) {
 			panel = sTok.nextToken();
 			if (panel.startsWith("\n")) {
-				System.err.println("starts with \\n");
+			        //System.err.println("starts with \\n");
 				panel = panel.substring(1, panel.length()); //starts with a return..
 			}
 			
@@ -209,7 +201,7 @@ public class mapimage {
 			else
 				or = " or ";
 			panel = panel.trim();
-			System.err.println("target_abbrev: " + panel);	
+			//System.err.println("target_abbrev: " + panel);	
 			query_string = query_string + or + " (target_abbrev = '" + panel + "' and OR_lg = '" + lg + "' and lg_location >= '" + low + "' and lg_location <= '" + high + "' and (" + type_string + ") )";
 			first = false;
 		}
@@ -232,20 +224,15 @@ public class mapimage {
 
 		String panel_order = (String)form.get("panel_order");
 
-		System.err.println("SQL: " + query_string);
+		//System.err.println("SQL: " + query_string);
 
-        System.err.println("HOST: " + (String)form.get("host"));
+		//System.err.println("HOST: " + (String)form.get("host"));
 		
 		String marker_data = getMarkers(query_string, (String)form.get("host"), (String)form.get("port"));
 
 		
 		//MV = new MapViewer(query_string, (String)form.get("host"), (String)form.get("port"), SM, panel_order);
 		MV = new MapViewer(marker_data, SM, panel_order);
-
-		
-		
-
-		//System.err.println("YO: " + form.get("height") + " - " + form.get("width"));
 
 		if (form.get("height") != null)
 			h = (new Integer((String)form.get("height"))).intValue();
@@ -258,7 +245,7 @@ public class mapimage {
 			System.err.println("WIDTH IS NULL");
 		
 
-		System.err.println("getImage");
+		//System.err.println("getImage");
 		java.awt.Image img =  MV.getImage(w,h);
 
 
@@ -289,11 +276,11 @@ public class mapimage {
 		
 				
 		try	{
-			System.err.println("make encoder");
+		        //System.err.println("make encoder");
 			Acme.JPM.Encoders.GifEncoder ie = new Acme.JPM.Encoders.GifEncoder(img , System.out);
-			System.err.println("start encoding");
+			//System.err.println("start encoding");
 			ie.encode();	
-			System.err.println("done encoding");
+			//System.err.println("done encoding");
 			
 		}
         catch ( Exception e )
@@ -319,7 +306,7 @@ public class mapimage {
 			}
 */		
 	 
-		System.err.println("cgi applet finished");
+		//System.err.println("cgi applet finished");
 		System.exit(0);
 	}	
 
