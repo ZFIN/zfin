@@ -4,6 +4,8 @@
 
  my $Q = new CGI();
 
+ 
+
  sub mapper_select() {
 
    my $JSCRIPT=<<ENDJS;
@@ -182,6 +184,7 @@ ENDJS
  print $Q->checkbox(-name=>'MOP',-value=>'1',-label=>'MOP',-checked=>'checked');
  print $Q->checkbox(-name=>'GAT',-value=>'1',-label=>'GAT',-checked=>'checked');
 
+ print "<A HREF=\"/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-refcrosslist.apg\" style=\"margin-left:4em;\"><B>Mapping panels summary</B></A>"; 
  print "\n</font></TD></TR></TABLE>\n";
 
  print $Q->hidden(-name=>'refresh_map',-value=>'1');
