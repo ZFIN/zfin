@@ -125,11 +125,23 @@ TARGETS
         <echo>${basedir}/common.sh</echo>
         <echo>${env.TRANSLATETABLE}</echo>
         <echo>${deploy.dir}/common.sh</echo>
-        <exec executable="perl" output="output.log">
+        <exec executable="perl" output="makespecific-light.log">
           <arg value="/private/ZfinLinks/Commons/bin/makespecific.pl"/>  
-          <arg value="${basedir}/common.sh"/> 
+          <arg value="${basedir}/lightdois.sh"/> 
           <arg value="${env.TRANSLATETABLE}"/> 
-          <arg value="${deploy.dir}/common.sh"/> 
+          <arg value="${deploy.dir}/lightdois.sh"/> 
+        </exec>
+        <exec executable="perl" output="makespecific-full.log">
+          <arg value="/private/ZfinLinks/Commons/bin/makespecific.pl"/>  
+          <arg value="${basedir}/fulldois.sh"/> 
+          <arg value="${env.TRANSLATETABLE}"/> 
+          <arg value="${deploy.dir}/fulldois.sh"/> 
+        </exec>
+        <exec executable="perl" output="makespecific-debug.log">
+          <arg value="/private/ZfinLinks/Commons/bin/makespecific.pl"/>  
+          <arg value="${basedir}/debugdois.sh"/> 
+          <arg value="${env.TRANSLATETABLE}"/> 
+          <arg value="${deploy.dir}/debugdois.sh"/> 
         </exec>
         <chmod perm="+x">
             <fileset dir="${deploy.dir}">
