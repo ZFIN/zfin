@@ -375,13 +375,13 @@ function openChild(childWinUrl,childWinName) {
       xpat_matching_precedence	varchar(80),
       xpat_matching_significance integer
     ) with NO LOG;">
-  <?/MISQL>  
- <?/MISQL>
- <?MISQL SQL="
-     create index geneid$xpatselect_temp_match on $xpatselect_temp_match(xpat_gene_zdb_id)
+  <?/MISQL>
+  <?MISQL COND=$(EC,$xpatsel_tableExists,f) SQL="
+    create index geneid$xpatselect_temp_match on $xpatselect_temp_match(xpat_gene_zdb_id)
      in idxdbs3;">
+  <?/MISQL> 
  <?/MISQL>
-
+ 
  <?MICOMMENT>
   ============================================================================
   ==========  Invoke correct selection query/app page
@@ -721,16 +721,8 @@ function openChild(childWinUrl,childWinName) {
 
     <?MICOMMENT> ** done with temp table, nuke it ** <?/MICOMMENT>
     <?MISQL SQL="delete from $xpatselect_temp_match;"><?/MISQL>
-    
-<?/MIBLOCK>  <?MICOMMENT> --- end new query_results exists -- <?/MICOMMENT>
 
-<?MICOMMENT> ok, I am paranoid to put the sql here instead of two lines above. 
-             because I don't understand the usage of $xpatsel_anatomy_error_occured
-             and no time at this minute to fully understand and test. 
-<?/MICOMMENT>
-<?MIBLOCK COND="$(AND,$(XST,$query_results),$(EC,$xpatsel_anatomy_error_occured,f))">
-   <?MISQL SQL="drop index geneid$xpatselect_temp_match;"><?/MISQL>
-<?/MIBLOCK>
+<?/MIBLOCK>  <?MICOMMENT> --- end new query_results exists -- <?/MICOMMENT>
 
 <?MICOMMENT>
   ============================================================================
