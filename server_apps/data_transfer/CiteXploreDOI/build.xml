@@ -122,9 +122,7 @@ TARGETS
                 <exclude name="**/CVS/"/>
             </fileset>
         </copy>
-        <echo>${basedir}/common.sh</echo>
-        <echo>${env.TRANSLATETABLE}</echo>
-        <echo>${deploy.dir}/common.sh</echo>
+        <!-- <echo>${env.TRANSLATETABLE}</echo> -->
         <exec executable="perl" output="makespecific-light.log">
           <arg value="/private/ZfinLinks/Commons/bin/makespecific.pl"/>  
           <arg value="${basedir}/lightdois.sh"/> 
@@ -136,12 +134,6 @@ TARGETS
           <arg value="${basedir}/fulldois.sh"/> 
           <arg value="${env.TRANSLATETABLE}"/> 
           <arg value="${deploy.dir}/fulldois.sh"/> 
-        </exec>
-        <exec executable="perl" output="makespecific-debug.log">
-          <arg value="/private/ZfinLinks/Commons/bin/makespecific.pl"/>  
-          <arg value="${basedir}/debugdois.sh"/> 
-          <arg value="${env.TRANSLATETABLE}"/> 
-          <arg value="${deploy.dir}/debugdois.sh"/> 
         </exec>
         <chmod perm="+x">
             <fileset dir="${deploy.dir}">

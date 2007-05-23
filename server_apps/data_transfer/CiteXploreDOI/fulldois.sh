@@ -8,6 +8,7 @@ BASEDIR=$TARGETROOT/server_apps/data_transfer/CitexploreDOI
 THISCLASSPATH=$BASEDIR/citexploredoi.jar:$TARGETROOT/lib/Java/jaxws/jaxws-rt.jar
 REPORTEREMAIL=<!--|VALIDATION_EMAIL_DBA|-->
 LOGNAME=doiupdate`date '+%y.%m.%d'`-full.log  
+DEBUG=-DMAX_DOI_PROCESS=$1
 
 
 
