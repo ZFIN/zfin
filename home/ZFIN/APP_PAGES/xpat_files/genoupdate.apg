@@ -127,8 +127,12 @@ EFFECTS
     <?MISQL COND=$(EC,$genoup_geno_exists,) SQL="
           UPDATE genotype
           SET geno_display_name = '$genoup_display_name',
-              geno_handle = '$genoup_handle',
-              geno_nickname = '$pubcur_c_geno_nickname'
+              geno_handle = '$genoup_handle'
+          where geno_zdb_id = '$pubcur_c_finalize_genotype';">
+    <?/MISQL> 
+    <?MISQL COND=$(EC,$genoup_geno_exists,) SQL="
+          UPDATE genotype
+           SET geno_nickname = '$pubcur_c_geno_nickname'
           where geno_zdb_id = '$pubcur_c_finalize_genotype';">
     <?/MISQL> 
 
