@@ -57,12 +57,12 @@
 #
 #  MTWT     2:00am   Populate DOIS with pmid only reporting thise added, daily 
 #
-30 10 * * 2-5 <!--|ROOT_PATH|-->/server_apps/data_transfer/CitexploreDOI/lightdois.sh  
+58 10 * * 2-5 <!--|ROOT_PATH|-->/server_apps/data_transfer/CitexploreDOI/lightdois.sh  
 #
 #
 #  MTWT     4:00am   Populate DOIS with pmid only reporting thise added, monthly
 #
-40 10 23 * * <!--|root_path|-->/server_apps/data_transfer/CitexploreDOI/fulldois.sh 
+05 11 23 * * <!--|root_path|-->/server_apps/data_transfer/CitexploreDOI/fulldois.sh 
 #
 # -------------------------------------------------------------------------------------------------------
 # ------  Reminders to staff
