@@ -3,7 +3,8 @@
 
 [ -a 'logs' ] || mkdir logs ; 
 
-THISCLASSPATH=.:citexploredoi.jar:lib/jaxws-rt.jar
+BASEDIR=$TARGETROOT/server_apps/data_transfer/CitexploreDOI
+THISCLASSPATH=$TARGETROOT:$TARGETROOT/citexploredoi.jar:$TARGETROOT/lib/Java/jaxws/jaxws-rt.jar
 REPORTEREMAIL=<!--|VALIDATION_EMAIL_DBA|-->
 LOGNAME=doiupdate`date '+%y.%m.%d'`-light.log  
 echo "running:  java  -DINFORMIXSERVER=$INFORMIXSERVER -DDBNAME=$DBNAME $DEBUG -cp $THISCLASSPATH org.zfin.datatransfer.DOILookupClient 2>/dev/null  | tee logs/$LOGNAME" ;

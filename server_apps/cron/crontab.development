@@ -62,7 +62,7 @@
 #
 #  MTWT     4:00am   Populate DOIS with pmid only reporting thise added, monthly
 #
-12 10 23 * * <!--|root_path|-->/server_apps/data_transfer/CitexploreDOI/fulldois.sh 
+40 10 23 * * <!--|root_path|-->/server_apps/data_transfer/CitexploreDOI/fulldois.sh 
 #
 # -------------------------------------------------------------------------------------------------------
 # ------  Reminders to staff
