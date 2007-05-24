@@ -14,7 +14,8 @@ DEBUG=-DMAX_DOI_PROCESS=$1
 
 
 
-$JAVA -DINFORMIXSERVER=$INFORMIXSERVER -DDBNAME=$DBNAME $DEBUG -cp $THISCLASSPATH org.zfin.datatransfer.DOILookupClient 2>&1  | tee logs/$LOGNAME ;
+$JAVA -DINFORMIXSERVER=<!--|INFORMIX_SERVER|--> -DDBNAME=<!--|DB_NAME|--> $DEBUG -cp $THISCLASSPATH org.zfin.datatransfer.DOILookupClient 2>/dev/null  | tee logs/$LOGNAME >> logs/$LOGNAME ;
+echo "$JAVA -DINFORMIXSERVER=<!--|INFORMIX_SERVER|--> -DDBNAME=<!--|DB_NAME|--> $DEBUG -cp $THISCLASSPATH org.zfin.datatransfer.DOILookupClient 2>/dev/null  | tee logs/$LOGNAME >> logs/$LOGNAME " ; 
 echo $THISCLASSPATH >> logs/$LOGNAME ; 
 mailx -s "$LOGNAME"  $REPORTEREMAIL < logs/$LOGNAME 
 
