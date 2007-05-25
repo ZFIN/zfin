@@ -58,11 +58,11 @@
 #
 ## 1  4:30am   Populate DOIS with pmid only reporting thise added, monthly
 #
-30 4 * * * /research/zcentral/www_homes/yoyo/server_apps/data_transfer/CitexploreDOI/lightdois.sh
+30 9 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/CitexploreDOI/lightdois.sh
 #
 ## 1  4:50am   Populate DOIS with pmid only reporting thise added, monthly
 #
-50 4 25 * * /research/zcentral/www_homes/yoyo/server_apps/data_transfer/CitexploreDOI/fulldois.sh 
+00 10 25 * * <!--|ROOT_PATH|-->/server_apps/data_transfer/CitexploreDOI/fulldois.sh 
 #
 #
 # -------------------------------------------------------------------------------------------------------
