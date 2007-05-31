@@ -22,7 +22,8 @@ SUBDIRS = loadUp/
 
 GENERICS = regen.sh scrubscan.pl unload_production.sh validatedata.pl \
 	   load_and_index_almost.pl dumpServer.pl dumpLogsContinuous.pl \
-           fx_permission_check.pl pnas_report.pl updatePNAS.sql 
+           fx_permission_check.pl pnas_report.pl updatePNAS.sql \
+	   performance.pl
 
 STATICS = postloaddb_almost.csh \
 
