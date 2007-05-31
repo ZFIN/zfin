@@ -136,8 +136,8 @@ public class InformixPublicationAccessor {
 
             for( Publication publication : publicationList  ){ 
                 if(publication.getPubDOI()!=null){
-                    updateDOIStatement.setString(1,publication.getPubDOI()) ; 
-                    updateDOIStatement.setString(2,publication.getZdbID()) ; 
+                    updateDOIStatement.setString(1,publication.getPubDOI().trim()) ; 
+                    updateDOIStatement.setString(2,publication.getZdbID().trim()) ; 
                     result = updateDOIStatement.executeUpdate();
                     if(result <= 0){
                         System.err.println(  "failed to update: zdbid["+ publication.getZdbID()+ "] doi[" + publication.getPubDOI() +"]" ) ; 
