@@ -35,10 +35,14 @@
 # Nights   When      Comments
 # MTWT    10:00pm   Reload almdb, remake web site.
 #
-00 22 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl
+#00 22 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl
 # Th    10:00pm   Reload almdb, remake web site.
 #
-15,20,25,30,35,40,45,50,55,59 22 * * 4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/performance.pl
+15,30,45,59 22,23,24 * * 4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/performance.pl
+# F    10:00pm   Reload almdb, remake web site.
+#
+15,30,45,59 1,2,3,4,5,6,7 * * 5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/performance.pl
+
 #
 #
 #  Sat     1:00am   Reload almdb, remake web site, generate quick search
