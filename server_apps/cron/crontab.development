@@ -56,7 +56,7 @@
 #
 # SMTWT    10:30pm   Generate fasta file of zfin morpholino and microRNA for genomix
 #
-30 22 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/BLAST/getShortSeq.pl
+#30 22 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/BLAST/getShortSeq.pl
 #
 # M        10:40pm   Generate zfin GB accession and cDNA accession lists for genomix
 #
