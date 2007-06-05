@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 
-[ -a 'logs' ] || mkdir logs ; 
-
 JAVA=/local/apps/java/bin/java
 
 
