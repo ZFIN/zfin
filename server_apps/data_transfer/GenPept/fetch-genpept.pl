@@ -26,11 +26,11 @@ $ts=time;
 #2005-01-03 
 #download records in one request. 
 #subsequent requests receive an error message from the ncbi server.
-$retmax=$nrecords;
+#$retmax=$nrecords;
 
 for($retstart=0;$retstart<$nrecords;$retstart+=$retmax){
 
-    #$t=time-$ts;if(3-$t>0){sleep(4-$t);}   #max one call per 3 seconds for scripts at NCBI
+    $t=time-$ts;if(3-$t>0){sleep(4-$t);}   #max one call per 3 seconds for scripts at NCBI
     $p=int($retstart/$nrecords*10000)/100; #calculate percentage of records downloaded
 
     ## uncomment to view download progress
@@ -45,7 +45,7 @@ close OUT;
 
 sub init(){
   $ebase="http://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
-  $retmax=500;
+  $retmax=300;
 
 }
 
