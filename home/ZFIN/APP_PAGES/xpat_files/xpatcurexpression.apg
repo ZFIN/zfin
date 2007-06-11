@@ -331,12 +331,22 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
       </select></td>
     <td>
         <select name="xpcur_G_xpatex_exp">
+          <?MICOMMENT> ** KLUDGE: why order by name descending?  because that way _standard comes
+                                  before _Generic-control.  Otherwise it's two queries, if this
+                                  goes bad when we add some other standard/generic, we'll either
+                                  have to have some decent infrastructure, or just hard code each
+                                  query one after the other                                    **  <?/MICOMMENT>
+          <?MISQL SQL="select exp_zdb_id, exp_name
+              from experiment
+              where exp_name in ('$pubcur_G_exp_standard_name','$pubcur_G_exp_generic_name')
+	      order by exp_name desc;">
+            <option value="$1" $(IF,$(EC,$xpcurxprss_old_xpatex_exp,$1),SELECTED)>$2</option>
+          <?/MISQL>
+
           <?MISQL SQL="
               select exp_zdb_id, exp_name, zero_pad(exp_name)
               from experiment
               where exp_zdb_id in ('$pubcur_G_exp_attrib_csv') 
-                 or exp_name = '$pubcur_G_exp_standard_name'
-                 or exp_name = '$pubcur_G_exp_generic_name'
               order by zero_pad(exp_name);">
             <option value="$1" $(IF,$(EC,$xpcurxprss_old_xpatex_exp,$1),SELECTED)>$2</option>
           <?/MISQL>
