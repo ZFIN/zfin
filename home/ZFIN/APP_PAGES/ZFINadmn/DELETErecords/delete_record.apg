@@ -75,6 +75,16 @@ Message: $MI_ERRORMSG
 		alert("Sorry, the genotype <?MIVAR>$checker_id<?/MIVAR> has expression/pato data and cannot be deleted or merged.");
 		return false;
             <?MIELSE>
+            <?MISQL SQL="
+  		select infgrmem_inferred_from
+                  from inference_group_member
+                 where 'ZFIN:$checker_id'= infgrmem_inferred_from
+			 ;">
+            <?/MISQL>         
+            <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+		alert("Sorry, the genotype <?MIVAR>$checker_id<?/MIVAR> is used as a GO inference and cannot be deleted or merged.");
+		return false;
+                   <?MIELSE>
 		<?MISQL SQL="
   		    select geno_display_name
                       from genotype
@@ -90,6 +100,7 @@ Message: $MI_ERRORMSG
 	       }
 	    <?/MIBLOCK>
         <?/MIBLOCK>
+<?/MIBLOCK>
 
         <?MICOMMENT> ------- Gene/Marker (restrictions only to deletion)------- <?/MICOMMENT>
 
