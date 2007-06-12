@@ -82,7 +82,16 @@ Message: $MI_ERRORMSG
 			 ;">
             <?/MISQL>         
             <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-		alert("Sorry, the genotype <?MIVAR>$checker_id<?/MIVAR> is used as a GO inference and cannot be deleted or merged.");
+            <?MISQL SQL="
+  		select mrkr_abbrev 
+                  from inference_group_member, marker_go_term_evidence, marker
+                 where 'ZFIN:$checker_id'= infgrmem_inferred_from
+                 and infgrmem_mrkrgoev_zdb_id=mrkrgoev_zdb_id
+                 and mrkrgoev_mrkr_zdb_id=mrkr_zdb_id
+			 ;">
+            <?/MISQL>         
+             <?MIVAR NAME=delrec_mrkr_abbrev>$1<?/MIVAR>
+		alert("Sorry, the genotype <?MIVAR>$checker_id<?/MIVAR> is used as a GO inference for <?MIVAR>$delrec_mrkr_abbrev<?/MIVAR> and cannot be deleted or merged.");
 		return false;
                    <?MIELSE>
 		<?MISQL SQL="
