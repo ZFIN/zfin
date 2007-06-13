@@ -217,16 +217,18 @@ create procedure regen_names_genotype_list()
         rgnallnm_precedence, rgnallnm_name_lower )
 	select geno_display_name, geno_zdb_id, nameSignificance,
 	       namePrecedence, lower(geno_display_name)
-          from genotype 
-         where geno_is_wildtype = "t";
+          from genotype, regen_zdb_id_temp
+         where geno_is_wildtype = "t"
+           and geno_zdb_id = rgnz_zdb_id;
 
  insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
         rgnallnm_precedence, rgnallnm_name_lower )
 	select geno_handle, geno_zdb_id, nameSignificance,
 	       namePrecedence, lower(geno_handle)
-          from genotype 
+          from genotype, regen_zdb_id_temp
          where geno_is_wildtype = "t"
+           and geno_zdb_id = rgnz_zdb_id
            and geno_display_name <> geno_handle;
 
 
