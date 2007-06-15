@@ -49,6 +49,14 @@ create function get_mrkr_name_html( mrkrZdbId varchar(50) )
       -- we have something else, display it as such
       let mrkrNameHtml = '<span class="nongenedommarker"' || title || '>' || mrkrName || '</span>';
     end if
+    if exists 
+         ( select 'x'
+             from marker_type_group_member
+             where mtgrpmem_mrkr_type = mrkrType
+               and mtgrpmem_mrkr_type_group = "CONSTRUCT") then
+      -- we have a genedom marker, display it as such
+      let mrkrNameHtml = '<span class="construct"' || title || '>' || mrkrName || '</span>';
+    end if
   end if  -- marker exists
 
   return mrkrNameHtml;
