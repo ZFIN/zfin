@@ -160,6 +160,7 @@ function jump(form_select){
 	">
   <?/MISQL>
   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=type_of_genedom>t<?/MIVAR>
+  <?MIVAR COND="$(>,$(POSITION,$marker_type,CONSTRCT),0)" NAME=type_of_construct>t<?/MIVAR>
 
   <?MICOMMENT>For now, curators are not permitted to update SNP's, so setting a flag here <?/MICOMMENT>
   <?MIVAR COND="$(EC,$marker_type,SNP)" NAME=mrkrview_no_update>t<?/MIVAR>
@@ -487,7 +488,12 @@ function jump(form_select){
 
     <?MIVAR NAME=$title>$marker_type_display Name<?/MIVAR>
     <FONT size=+1><b>
-      <?MIVAR>$title: $(IF,$(XST,$type_of_genedom),<i>$name</i>,$name)<?/MIVAR>
+<?MIBLOCK COND="$(OR,$(XST,$type_of_genedom),$(XST,$type_of_construct))">
+      <?MIVAR>$title:<i>$name</i><?/MIVAR>
+<?MIELSE>
+      <?MIVAR>$title:$name<?/MIVAR>
+
+<?/MIBLOCK>
     </b></FONT>
    </td>
    <?MIBLOCK COND="$(NXST,$UPDATE)">
@@ -993,7 +999,7 @@ function jump(form_select){
           Coding Sequence(s):
         </td>
         <td>
-          $1<?MISQL SQL="select WebExplode(object,'dataId=$2&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+          <i>$1</i><?MISQL SQL="select WebExplode(object,'dataId=$2&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
         </td>
       <tr>
     <?/MISQL>
