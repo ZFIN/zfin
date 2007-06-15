@@ -170,6 +170,11 @@ tr.odd {
 
 .genedom { font-style: italic; } 
 
+/*** construct name & abbrev ***/
+
+.construct { font-style: italic; } 
+
+
 /*** non-gene name & abbrev - just a placeholder for now ***/
 
 .nongenedommarker {font-style: normal;}
