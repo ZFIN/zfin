@@ -40,18 +40,60 @@ Message: $MI_ERRORMSG
   </head>
   
   <body>
-    <h3>
-    <?MIBLOCK COND="$(AND,$(NC,$adn_lab,),$(NC,$adn_beginningLetter,wp))">
-    Existing allele designation with <?MIVAR>$adn_lab<?/MIVAR>
-    <?MIELSE> 
-    Existing allele designation starting with "<?MIVAR>$adn_beginningLetter<?/MIVAR>"
-    <?/MIBLOCK>
-    </h3>
+  <h3>
+  <?MIBLOCK COND="$(AND,$(NC,$adn_lab,),$(NC,$adn_beginningLetter,wp))">
+  Existing allele designation with <?MIVAR>$adn_lab<?/MIVAR>
+  <?MIELSE> 
+  Existing allele designation starting with "<?MIVAR>$adn_beginningLetter<?/MIVAR>"
+  <?/MIBLOCK>
+  </h3>
  
-    <?MIVAR NAME=adn_beginningLetter_lenth>$(STRLEN,$adn_beginningLetter)<?/MIVAR>
+  <?MIVAR NAME=adn_beginningLetter_lenth>$(STRLEN,$adn_beginningLetter)<?/MIVAR>
     
-    <?MIVAR NAME=adn_count>0<?/MIVAR>
+  <?MIVAR NAME=adn_count>0<?/MIVAR>
 
+  <?MIBLOCK COND="$(EQ,$adn_beginningLetter,zf)">
+
+    <?MISQL SQL="
+      select dbinfo('sessionid') from single;">
+      <?MIVAR NAME=$adn_session_id>$1<?/MIVAR>
+      <?MIVAR NAME=$adn_temp_sorted>$(CONCAT,adn_temp_sorted,$adn_session_id)<?/MIVAR>
+    <?/MISQL>
+  
+    <?MISQL SQL="execute function table_exists('$adn_temp_sorted')">
+      <?MISQL COND=$(EC,$1,f) SQL="create temp table $adn_temp_sorted (adn_desig varchar(50),adn_desig_order varchar(50)) 
+        with NO LOG;">
+      <?/MISQL>
+    <?/MISQL>
+  
+    <?MISQL SQL="select feature_abbrev,feature_abbrev_order
+                   from feature
+                  where feature_abbrev like 'zf%'"> 
+      <?MISQL SQL="insert into $adn_temp_sorted (adn_desig,adn_desig_order) values ('$1','$2');">	    
+      <?/MISQL>
+    <?/MISQL>
+
+    <?MISQL SQL="select dalias_alias from data_alias 
+                  where dalias_alias like '%)zf%' 
+                  and dalias_data_zdb_id like 'ZDB-ALT-%'";>
+                  
+      <?MIVAR NAME=$posOfParth>$(POSITION,$1,")")<?/MIVAR>
+      <?MIVAR NAME=$prevZf>$(SUBSTR,$1,$(+,$posOfParth,1))<?/MIVAR>
+
+      <?MISQL SQL="insert into $adn_temp_sorted (adn_desig,adn_desig_order) values ('$prevZf','$prevZf');">	    
+      <?/MISQL>
+    <?/MISQL>
+    
+    <?MISQL SQL="select distinct adn_desig,adn_desig_order
+                   from $adn_temp_sorted
+               order by adn_desig_order;"> 
+       $1 <br/> 
+    <?/MISQL>   
+    <?MIVAR>$(SETVAR,$adn_count,$MI_ROWCOUNT)<?/MIVAR>
+
+    <?MISQL SQL="delete from $adn_temp_sorted;"><?/MISQL>
+  <?MIELSE>
+   
     <?MISQL SQL="select feature_abbrev
                    from feature
                   where feature_abbrev like 'd$adn_beginningLetter%'
@@ -121,11 +163,13 @@ Message: $MI_ERRORMSG
         <?/MIBLOCK>        
       <?/MIBLOCK>
     <?/MISQL>
- 
-    <?MIBLOCK COND="$(=,$adn_count,0)">
-       None
-    <?/MIBLOCK>
- 
+    
+  <?/MIBLOCK> <?MICOMMENT> ** end of if starting Letter == zf <?/MICOMMENT>
+  
+  <?MIBLOCK COND="$(=,$adn_count,0)">
+     None
+  <?/MIBLOCK>
+   
   </body>
 
   <?MICOMMENT> ** the following could be useful after lab_desig.html is changed into an apg page <?/MICOMMENT>
