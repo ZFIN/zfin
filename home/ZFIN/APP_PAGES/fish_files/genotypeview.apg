@@ -937,7 +937,7 @@ Datablade documentation.
              <tr>
                 <td><b>Construct: </b></td>
 
-                <td>$1</td>
+                <td><i>$1</i></td>
              </tr>
 	  <?/MISQL>
 	  <?MICOMMENT> ------ end  construct  ------<?/MICOMMENT>
