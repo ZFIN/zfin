@@ -75,6 +75,10 @@ DEBUGGING:
 
 <?/MIBLOCK><?MICOMMENT> end XST accession which means it is called by Accession Search <?/MICOMMENT>
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+<!--        <br>$1 Page Start  --> 
+<?/MISQL>
 
   <?MISQL SQL="
     select WebExplode(object,'') 
@@ -1167,7 +1171,10 @@ DEBUGGING:
 
 <?/MIBLOCK>
 
-<?MICOMMENT><?MISQL SQL="execute function get_time();">ENd: $1<?/MISQL><?/MICOMMENT>
+<?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+<!--        <br>$1 Page End  --> 
+<?/MISQL>
 
 <?MIBLOCK COND="$(NXST,$accession)">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

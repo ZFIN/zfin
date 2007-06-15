@@ -93,6 +93,11 @@ DEBUGGING:
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$update_mode><?/MIVAR>
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 Page Start  
+<?/MISQL>
+
 <!---------------this part is executed after a search is submitted ---------------->
 
 <?MIBLOCK COND="$(XST,$query_results)">
@@ -504,7 +509,7 @@ DEBUGGING:
 		select count(distinct mrkr_zdb_id)::integer
 		  from bigselect_temp_markers
 		 where mrkr_type = '$mtype_in_db'
- 		   and mrkr_zdb_id in (select fmrel_mrkr_zdb_id from feature_marker_relationship)">
+ 		   and mrkr_zdb_id in (select fmrel_mrkr_zdb_id from feature_marker_relationship);">
 		<?MIVAR NAME=knownmutant_count>$1<?/MIVAR>
 		<?MIVAR COND="$(!=,$knownmutant_count,0)" NAME=gene_extra>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam&knownmutant=t">$1 with mutants</A>)<?/MIVAR>
 	   <?/MISQL>
@@ -553,6 +558,10 @@ DEBUGGING:
 
 <?MISQL SQL="select WebExplode(object,'page=newmrkrselect') from webPages where ID='aa-searchform.apg';">$1<?/MISQL>
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 Page End  
+<?/MISQL>
 
 
  <?MIBLOCK>

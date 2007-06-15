@@ -106,7 +106,6 @@ function jump(form_select){
 
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
-<?MIVAR NAME=debug_timing>f<?/MIVAR>
 
 <?MIBLOCK COND="$(NXST,$OID)">
   <p>
@@ -126,6 +125,16 @@ function jump(form_select){
 
   <!-- default user as GUEST---------------------->
   <?MIVAR NAME=$userid>GUEST<?/MIVAR>
+
+  <!-- page header display ----------------->
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 Page Start  
+  <?/MISQL>
+
 
   <!-- NOW a slight ugliness that would go away if/when we re-implement the MAP_MARKER stuff as hierarchical classes: we don't know what type up marker we are trying to view, and yet we need to know exactly that in order to know what table to select from. So we first look at ZFIN id to determine type, which determines table
   -->
@@ -165,8 +174,6 @@ function jump(form_select){
 
   <!-- if no match for the entered ID, display not found msg ------>
   <?MIBLOCK COND="$(OR,$(EC,$name,$MI_NOVALUE),$(NXST,$id_exist))">
-     <!-- page header display ----------------->
-     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
      <!-- look to see if replaced zdb_id -->
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
 
@@ -425,9 +432,6 @@ function jump(form_select){
 		<?/MIVAR>
           <?/MIBLOCK>
 
-	  <!-- page header display ----------------->
-  	  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-
 	  <!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
 	  <!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
         <?MIBLOCK COND="$(NXST,$mrkrview_no_update)">
@@ -446,6 +450,11 @@ function jump(form_select){
         <?/MIBLOCK>
 
 	  <!----- OKAY, NOW  THROW UP THE  MARKER INFO ------------------>
+
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 Page Display ...  
+  <?/MISQL>
 
 <!----------------------------------------------------------->
 <p>
@@ -916,6 +925,12 @@ function jump(form_select){
    <?/MIVAR>
 <?/MIVAR>
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 End name/note section 
+<?/MISQL>
+
+
 
 <?MICOMMENT>=========================================================
             ==    Clone box
@@ -1001,6 +1016,11 @@ function jump(form_select){
     </table>
 <?/MIBLOCK>
 
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 Start expression section 
+<?/MISQL>
 
 
 <?MICOMMENT>=========================================================
@@ -1202,6 +1222,12 @@ function jump(form_select){
 
 <?/MIBLOCK> <?MICOMMENT>block for gene xpat if exist<?/MICOMMENT>
 <?/MIBLOCK> <?MICOMMENT>block for marker type=gene<?/MICOMMENT>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 End Expression section,Start Geno/Mutant section
+<?/MISQL>
+
 
 
 <?MICOMMENT>=========================================================
@@ -1478,6 +1504,12 @@ function jump(form_select){
     </td></tr></table>
   <?/MIBLOCK>
 <?/MIBLOCK><?MICOMMENT>end of type_of_genedom<?/MICOMMENT>
+
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 End Geno/Mutant section
+<?/MISQL>
 
 
 <?MICOMMENT>=========================================================
@@ -1765,6 +1797,10 @@ function jump(form_select){
    </table>
 <?/MIBLOCK>
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 End GO/Protein, Start Mrel section
+<?/MISQL>
 
 
 <?MICOMMENT>=========================================================
@@ -2272,6 +2308,10 @@ function jump(form_select){
 
 <!------------   ends   OTHER MARKER PAGES   ------------------------>
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 End Mrel, Sequence section, Start Mapping
+<?/MISQL>
 
 
 <?MICOMMENT>=========================================================
@@ -2335,6 +2375,11 @@ function jump(form_select){
 <?/MIBLOCK> <!-- name NC novalue and romwcount > 0 -->
 
 <?/MIBLOCK> <!-- ends cond oid exists -->
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 Page End  
+<?/MISQL>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
