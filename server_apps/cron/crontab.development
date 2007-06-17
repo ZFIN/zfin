@@ -50,9 +50,9 @@
 #
 30 22 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/BLAST/getShortSeq.pl
 #
-# M        10:40pm   Generate zfin GB accession and cDNA accession lists for genomix
+# S        10:40pm   Generate zfin GB accession and cDNA accession lists for genomix 06/2007 moved from Monday to Sunday to be close to pull4genomix.pl run on production. 
 #
-40 22 * * 1 <!--|ROOT_PATH|-->/server_apps/data_transfer/BLAST/getZfinGbAcc.pl
+40 22 * * 0 <!--|ROOT_PATH|-->/server_apps/data_transfer/BLAST/getZfinGbAcc.pl
 #
 #
 #
