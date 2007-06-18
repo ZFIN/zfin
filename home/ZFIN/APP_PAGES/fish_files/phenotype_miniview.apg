@@ -61,21 +61,28 @@
         </td>
       </tr>
 
- 
       <?MIVAR NAME=phmview_anat_counter>0<?/MIVAR>
       <?MIVAR NAME=phmview_anat_short_list_cap>5<?/MIVAR>
       <?MISQL SQL="
-	     select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
+	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
                from $phmview_input_table, atomic_phenotype, anatomy_item
               where t_pato_zdb_id = apato_zdb_id
-	        and (apato_entity_a_zdb_id = anatitem_zdb_id 
-		  or apato_entity_b_zdb_id = anatitem_zdb_id)
-           UNION
-            select goterm_go_id, goterm_name, zero_pad(goterm_name), 'go'
+	        and apato_entity_a_zdb_id = anatitem_zdb_id 
+	  UNION
+	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
+               from $phmview_input_table, atomic_phenotype, anatomy_item
+              where t_pato_zdb_id = apato_zdb_id
+	        and apato_entity_b_zdb_id = anatitem_zdb_id
+          UNION
+            select goterm_go_id, goterm_name, lower(goterm_name), 'go'
                 from $phmview_input_table, atomic_phenotype, go_term
                where t_pato_zdb_id = apato_zdb_id
-               and (apato_entity_a_zdb_id = goterm_zdb_id 
-                    or apato_entity_b_zdb_id = goterm_zdb_id)
+               and apato_entity_a_zdb_id = goterm_zdb_id 
+          UNION
+            select goterm_go_id, goterm_name, lower(goterm_name), 'go'
+                from $phmview_input_table, atomic_phenotype, go_term
+               where t_pato_zdb_id = apato_zdb_id
+               and apato_entity_b_zdb_id = goterm_zdb_id 
            order by 3	; ">
      
           <?MIBLOCK COND=$(EC,$4,anatomy)>
