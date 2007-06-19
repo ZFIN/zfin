@@ -109,11 +109,12 @@ create procedure regen_names_genotype_list()
 
   -- this temp table only applies here, thus not defined
   -- in regen_names_create_temp_tables.sql
-  create temp table regen_geno_related_gene_zdb_id_temp
-    (
-        rgnrgz_gene_zdb_id      varchar(50),
-	rgnrgz_geno_zdb_id	varchar(50)
-    )with NO LOG;
+--  create temp table regen_geno_related_gene_zdb_id_temp
+--    (
+--        rgnrgz_gene_zdb_id      varchar(50),
+--	rgnrgz_geno_zdb_id	varchar(50)
+--    )with NO LOG;
+--
 
   insert into regen_geno_related_gene_zdb_id_temp
        select fmrel_mrkr_zdb_id, rgnz_zdb_id
@@ -139,11 +140,11 @@ create procedure regen_names_genotype_list()
           and feature_name = allele
           and present_t = "f";
 
-  create temp table regen_geno_related_gene_zdb_id_distinct_temp
-    (
-        rgnrgzd_gene_zdb_id      varchar(50),
-	rgnrgzd_geno_zdb_id	varchar(50)
-    )with NO LOG;
+--  create temp table regen_geno_related_gene_zdb_id_distinct_temp
+--    (
+--        rgnrgzd_gene_zdb_id      varchar(50),
+--	rgnrgzd_geno_zdb_id	varchar(50)
+--    )with NO LOG;
 
   insert into regen_geno_related_gene_zdb_id_distinct_temp
        select distinct rgnrgz_gene_zdb_id, rgnrgz_geno_zdb_id

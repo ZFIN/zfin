@@ -50,6 +50,7 @@ create procedure regen_names_create_temp_tables()
     -- -------------------------------------------------------------------
     --   create regen_zdb_id_temp
     -- -------------------------------------------------------------------
+
     create temp table regen_zdb_id_temp  
       (
 	rgnz_zdb_id		varchar(50),
@@ -80,8 +81,24 @@ create procedure regen_names_create_temp_tables()
         rgnnmend_name_end_lower    	varchar(255),
         rgnnmend_rgnallnm_serial_id	integer
       ) with no log;
-  end
+ 
+  -- Collect related gene id
 
+  -- this temp table only applies here, thus not defined
+  -- in regen_names_create_temp_tables.sql
+
+  create temp table regen_geno_related_gene_zdb_id_temp
+    (
+        rgnrgz_gene_zdb_id      varchar(50),
+	rgnrgz_geno_zdb_id	varchar(50)
+    )with NO LOG;
+
+  create temp table regen_geno_related_gene_zdb_id_distinct_temp
+    (
+        rgnrgzd_gene_zdb_id      varchar(50),
+	rgnrgzd_geno_zdb_id	varchar(50)
+    )with NO LOG;
+end
   -- Paranoid code to delete records from the newly created tables.  Why?
   -- 
   -- The tables are not necessarily newly created.  They may have existed
@@ -98,5 +115,6 @@ create procedure regen_names_create_temp_tables()
   delete from regen_zdb_id_temp;
   delete from regen_all_names_temp;
   delete from regen_all_name_ends_temp;
-
+  delete from regen_geno_related_gene_zdb_id_temp;
+  delete from regen_geno_related_gene_zdb_id_distinct_temp;
 end procedure;

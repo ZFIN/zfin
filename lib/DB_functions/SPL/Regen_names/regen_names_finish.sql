@@ -68,5 +68,8 @@ create procedure regen_names_finish()
   delete from regen_zdb_id_temp;
   delete from regen_all_names_temp;
   delete from regen_all_name_ends_temp;
+  delete from regen_geno_related_gene_zdb_id_temp;
+  delete from regen_geno_related_gene_zdb_id_distinct_temp ;
+
 
 end procedure;
