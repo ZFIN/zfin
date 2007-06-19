@@ -39,7 +39,8 @@ create procedure p_update_related_genotype_names (vZDBid varchar(50))
 			 
 			execute function get_genotype_display(vGenotypeZDB) into vGenoDisplay;
 			execute function get_genotype_handle(vGenotypeZDB) into vGenoHandle;
-						
+			execute function regen_names_genotype(vGenotypeZDB);					
+	
 			update genotype
 			   set geno_display_name = vGenoDisplay,
 			       geno_handle = vGenoHandle
@@ -70,7 +71,8 @@ create procedure p_update_related_genotype_names (vZDBid varchar(50))
 			 
 			execute function get_genotype_display(vGenotypeZDB) into vGenoDisplay;
 			execute function get_genotype_handle(vGenotypeZDB) into vGenoHandle;
-						
+			execute function regen_names_genotype(vGenotypeZDB);	
+		
 			update genotype
 			   set geno_display_name = vGenoDisplay,
 			       geno_handle = vGenoHandle
