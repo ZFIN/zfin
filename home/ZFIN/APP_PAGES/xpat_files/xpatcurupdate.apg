@@ -1160,7 +1160,15 @@ EFFECTS
 		;">
 	    <?/MISQL>
 
-	    <?MIBLOCK COND="$(EC,$1,0)">  
+	    <?MIBLOCK COND="$(EC,$1,0)"> 
+	    
+	      <?MISQL SQL="select anatitem_is_obsolete, anatitem_name
+	                   from anatomy_item
+	                   where anatitem_zdb_id = '$xpcurup_structure_add_id';">
+	          <?MIVAR NAME=xpatcurup_anat_name>$2<?/MIVAR>
+	      <?/MISQL>
+	      
+	      <?MIBLOCK COND="$(EC,$1,f)">
 
 		<?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
 		<?MISQL SQL="execute function get_id('XPATINF');">$(SETVAR,$xpcurup_xpatinf_zdb_id,$1)<?/MISQL>
@@ -1184,6 +1192,12 @@ EFFECTS
 			'$structure_expressed',
 			TODAY);">
 		<?/MISQL>
+	      <?MIELSE>
+  	        <SCRIPT>
+		  alert("The structure  '<?MIVAR>$xpatcurup_anat_name<?/MIVAR>' is obsolete.")
+	        </SCRIPT>	      
+	        
+	      <?/MIBLOCK>
 
 	    <?MIELSE>
 	      <?MISQL SQL="SELECT anatitem_name FROM anatomy_item WHERE anatitem_zdb_id = '$xpcurup_structure_add_id';"><?/MISQL>
