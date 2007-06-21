@@ -20,19 +20,30 @@ public class InformixPublicationAccessor {
         String CC = "sswo";
         String password = cook("st4mwtR") ;
         String informixServer = System.getProperty("INFORMIXSERVER") ; 
+        String informixPort = System.getProperty("INFORMIXPORT") ; 
+        String sqlHostsHost = System.getProperty("SQLHOSTSHOST") ; 
         String dbName = System.getProperty("DBNAME") ; 
 
 
         // from client_app/BrowserSQLQuery
-		String newUrl = "jdbc:informix-sqli://embryonix.cs.uoregon.edu:2002/"+dbName+":INFORMIXSERVER="+informixServer+";user=zfinner;pa"+CC + "r" + "d="+ password ;
+//        String newUrl = "jdbc:informix-sqli://embryonix.cs.uoregon.edu:2002/"+dbName+":INFORMIXSERVER="+informixServer+";user=zfinner;pa"+CC + "r" + "d="+ password ;
+		String newUrl = "jdbc:informix-sqli://"+sqlHostsHost+":"+informixPort+"/"+dbName+":INFORMIXSERVER="+informixServer+";user=zfinner;pa"+CC + "r" + "d="+ password ;
 		
 		Connection conn = null;
 		
-		try { Class.forName("com.informix.jdbc.IfxDriver"); } 
-		catch (Exception e) { System.err.println("ERROR: failed to load Informix JDBC driver. - " + e);	}
+		try {
+            Class.forName("com.informix.jdbc.IfxDriver"); 
+        } 
+		catch (Exception e) { 
+            System.err.println("ERROR: failed to load Informix JDBC driver. - " + e);
+        }
 
-		try {  conn = DriverManager.getConnection(newUrl);  } 
-		catch (SQLException e) { System.err.println("ERROR: failed to connect! - " + e); } 
+		try {
+            conn = DriverManager.getConnection(newUrl);  
+        } 
+        catch (SQLException e) {
+            System.err.println("ERROR: failed to connect with URL["+newUrl+"] - " + e); 
+        } 
 
 		return conn;
 	}
