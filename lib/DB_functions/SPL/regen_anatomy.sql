@@ -473,7 +473,7 @@ create dba function "informix".regen_anatomy()
       create table anatomy_stats_new 
 	(
 	  anatstat_anatitem_zdb_id          varchar(50),
-	  anatstat_object_type              char(32),
+	  anatstat_object_type              varchar(32),
 	  anatstat_synonym_count	    integer
 	     not null,
 	  anatstat_object_count           integer
@@ -690,7 +690,8 @@ create dba function "informix".regen_anatomy()
 	  select distinct xpatex_gene_zdb_id
 	    from expression_experiment, expression_result
 	    where xpatres_anat_item_zdb_id = anatomyId 
-	      and xpatres_xpatex_zdb_id = xpatex_zdb_id;
+	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
+	      and xpatres_expression_found = 't';
 
 	let nGenesForThisItem = DBINFO('sqlca.sqlerrd2');
 
@@ -703,7 +704,8 @@ create dba function "informix".regen_anatomy()
 		 expression_experiment, expression_result
 	    where allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
 	      and allanatcon_container_zdb_id = anatomyId
-	      and xpatres_xpatex_zdb_id = xpatex_zdb_id;
+	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
+	      and xpatres_expression_found = 't';
 
 	let nGenesForChildItems = DBINFO('sqlca.sqlerrd2');
 
@@ -752,7 +754,8 @@ create dba function "informix".regen_anatomy()
 	      and end.stg_zdb_id = xpatres_end_stg_zdb_id
 	      and mystage.stg_zdb_id = stageId
 	      and mystage.stg_hours_start >= start.stg_hours_start
-	      and mystage.stg_hours_end <= end.stg_hours_end;
+	      and mystage.stg_hours_end <= end.stg_hours_end
+	      and xpatres_expression_found = 't';
 
 	let nGenesForThisItem = DBINFO('sqlca.sqlerrd2');
 
@@ -771,7 +774,8 @@ create dba function "informix".regen_anatomy()
 	      and end.stg_zdb_id = xpatres_end_stg_zdb_id
 	      and mystage.stg_zdb_id = stageId
 	      and mystage.stg_hours_start >= start.stg_hours_start
-	      and mystage.stg_hours_end <= end.stg_hours_end;
+	      and mystage.stg_hours_end <= end.stg_hours_end
+	      and xpatres_expression_found = 't';
 
 	let nGenesForChildItems = DBINFO('sqlca.sqlerrd2');
 
