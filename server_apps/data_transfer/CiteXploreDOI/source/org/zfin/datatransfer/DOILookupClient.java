@@ -52,10 +52,18 @@ public class DOILookupClient {
      */
     public void findAndUpdateDOIs(){
         try{
+            System.out.println("START - getting publication list") ; 
 			List<Publication> publicationList = getPubmedIdsWithNoDOIs() ; 
+            System.out.println("END - getting publication list") ; 
+            System.out.println("START - connect to CiteXploreWSDL") ; 
             CitexploreWSDLConnect wsdlConnect = new CitexploreWSDLConnect() ; 
+            System.out.println("END - connect to CiteXploreWSDL") ; 
+            System.out.println("START - receive updates from wsdl client") ; 
             publicationList = wsdlConnect.getDOIsForPubmedID(publicationList) ; 
+            System.out.println("END - receive updates from wsdl client") ; 
+            System.out.println("START - update pubmed DOIS in DB") ; 
             jdbcClient.updateDOIs(publicationList) ; 
+            System.out.println("END - update pubmed DOIS in DB") ; 
         }
         catch(Exception e){
             System.err.println(e) ; 
