@@ -1092,6 +1092,7 @@ DEBUGGING:
                    JOIN all_anatomy_contains
                      ON allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
 	      WHERE allanatcon_container_zdb_id in ('$xpatselqry_anatitem_constraint')
+                AND xpatres_expression_found = 't'
                 $xpatselqry_stage_overlap_sql;">
           <?/MISQL>
         <?/MIBLOCK>
@@ -1111,6 +1112,7 @@ DEBUGGING:
                  JOIN expression_pattern_figure
                    ON xpatres_zdb_id = xpatfig_xpatres_zdb_id
             WHERE xpatres_anat_item_zdb_id in ('$xpatselqry_anatitem_constraint') 
+                 AND xpatres_expression_found = 't'
 	      $xpatselqry_stage_overlap_sql;">
       <?/MISQL>
 
@@ -1189,6 +1191,7 @@ DEBUGGING:
                  on xpatres_zdb_id = xpatfig_xpatres_zdb_id
 	       $xpatselqry_container_join
         WHERE (xpatres_anat_item_zdb_id in ('$xpatselqry_anatitem_constraint')
+               AND xpatres_expression_found = 't'
 	       $xpatselqry_container_or )
 	  $xpatselqry_stage_overlap_sql
       ;">

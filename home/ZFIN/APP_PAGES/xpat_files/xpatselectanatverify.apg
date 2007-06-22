@@ -112,6 +112,7 @@ from expression_experiment
        on xpatex_zdb_id = xpatres_xpatex_zdb_id
      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
 where xpatres_anat_item_zdb_id = '$xpanatv_item_zdb_id'
+     AND xpatres_expression_found = 't'
 UNION
 select distinct xpatex_gene_zdb_id
 from expression_experiment
@@ -121,6 +122,7 @@ from expression_experiment
      join all_anatomy_contains
        on allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
 where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
+     AND xpatres_expression_found = 't'
               ;">
               <?/MISQL>
               <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>
