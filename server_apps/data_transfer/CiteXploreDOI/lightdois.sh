@@ -5,7 +5,7 @@ JAVA=/local/apps/java/bin/java
 
 
 BASEDIR=<!--|ROOT_PATH|-->/server_apps/data_transfer/CitexploreDOI
-THISCLASSPATH=$BASEDIR/citexploredoi.jar:<!--|ROOT_PATH|-->/lib/Java/jaxws/jaxws-rt.jar:/private/apps/tomcat/common/lib/ifxjdbc.jar 
+THISCLASSPATH=$BASEDIR/citexploredoi.jar:<!--|ROOT_PATH|-->/lib/Java/jaxws/jaxws-rt.jar:/private/apps/tomcat/common/lib/ifxjdbc.jar:/private/apps/tomcat/common/lib/ifxjdbcx.jar  
 #REPORTEREMAIL=<!--|VALIDATION_EMAIL_DBA|-->
 REPORTEREMAIL=ndunn@uoregon.edu
 LOGNAME=/tmp/doiupdate`date '+%y.%m.%d'`-light.log  
