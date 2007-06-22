@@ -42,5 +42,5 @@ include $(TOP)/make.default.rules
 
 # Target to make the class files if we need to
 $(CLASSES) : $(CLASS_DIR)/%.class : $(SOURCE_DIR)/%.java
-	/local/bin/ant -Dwebinf.dir=$(WEBINFDIR)
+	/local/apps/ant/bin/ant -Dwebinf.dir=$(WEBINFDIR)
 	/bin/chmod o+r $(CLASSES)

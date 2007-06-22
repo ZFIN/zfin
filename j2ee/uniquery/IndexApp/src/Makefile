@@ -56,4 +56,4 @@ run :
 # run the searcher (and what is that?)
 
 run_searcher :
-	/local/bin/ant -Dbase.dir=$(TARGETDIRPARENT) runsearcher
+	/local/apps/ant/bin/ant -Dbase.dir=$(TARGETDIRPARENT) runsearcher

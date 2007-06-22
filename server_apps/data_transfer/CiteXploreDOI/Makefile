@@ -13,15 +13,16 @@
 # JAR gets put.
 
 # ---------------  Variable Definitions  --------------------------------
+ANT = /usr/local/apps/ant/bin/ant
 
 default:  
-	ant deploy
+	$(ANT) deploy
 
 clean:
-	ant clean 
+	$(ANT) clean
 
 clobber:
-	ant clean 
+	$(ANT) clean
 
 
 
