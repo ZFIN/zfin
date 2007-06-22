@@ -14,6 +14,9 @@ DEBUG=-DMAX_DOI_PROCESS=$1
 
 #$JAVA -DINFORMIXSERVER=<!--|INFORMIX_SERVER|--> -DDBNAME=<!--|DB_NAME|--> $DEBUG -cp $THISCLASSPATH org.zfin.datatransfer.DOILookupClient 2>/dev/null  | tee $LOGNAME >> $LOGNAME ;
 $JAVA -DSQLHOSTSHOST=<!--|SQLHOSTS_HOST|--> -DINFORMIXPORT=<!--|INFORMIX_PORT|--> -DINFORMIXSERVER=<!--|INFORMIX_SERVER|--> -DDBNAME=<!--|DB_NAME|--> $DEBUG -cp $THISCLASSPATH org.zfin.datatransfer.DOILookupClient 2>/dev/null  | tee $LOGNAME >> $LOGNAME ;
-mailx -s "$LOGNAME"  $REPORTEREMAIL < $LOGNAME 
+# only email if we added some DOIs
+if [ `grep added $LOGNAME` ]; then 
+    mailx -s "$LOGNAME"  $REPORTEREMAIL < $LOGNAME  ; 
+fi
 
 
