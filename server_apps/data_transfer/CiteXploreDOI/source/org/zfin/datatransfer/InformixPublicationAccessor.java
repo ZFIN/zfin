@@ -17,6 +17,7 @@ public class InformixPublicationAccessor {
      *
      */
     public Connection getConnection(){
+        System.out.println("START - get Connection") ; 
         String CC = "sswo";
         String password = cook("st4mwtR") ;
         String informixServer = System.getProperty("INFORMIXSERVER") ; 
@@ -26,7 +27,6 @@ public class InformixPublicationAccessor {
 
 
         // from client_app/BrowserSQLQuery
-//        String newUrl = "jdbc:informix-sqli://embryonix.cs.uoregon.edu:2002/"+dbName+":INFORMIXSERVER="+informixServer+";user=zfinner;pa"+CC + "r" + "d="+ password ;
 		String newUrl = "jdbc:informix-sqli://"+sqlHostsHost+":"+informixPort+"/"+dbName+":INFORMIXSERVER="+informixServer+";user=zfinner;pa"+CC + "r" + "d="+ password ;
 		
 		Connection conn = null;
@@ -41,9 +41,10 @@ public class InformixPublicationAccessor {
 		try {
             conn = DriverManager.getConnection(newUrl);  
         } 
-        catch (SQLException e) {
+        catch (Exception e) {
             System.err.println("ERROR: failed to connect with URL["+newUrl+"] - " + e); 
         } 
+        System.out.println("END - get Connection") ; 
 
 		return conn;
 	}
@@ -88,6 +89,7 @@ public class InformixPublicationAccessor {
         ResultSet resultSet =  null ; 
         Statement select = null ; 
 
+        System.out.println("START - selecting publications") ; 
         try {
             select = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             select.setFetchSize(200);
