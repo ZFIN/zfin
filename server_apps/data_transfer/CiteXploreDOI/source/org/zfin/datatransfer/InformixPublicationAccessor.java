@@ -18,8 +18,7 @@ public class InformixPublicationAccessor {
      */
     public Connection getConnection(){
         System.out.println("START - get Connection") ; 
-        String CC = "sswo";
-        String password = cook("st4mwtR") ;
+        String password = "Rtwm4ts"  ; 
         String informixServer = System.getProperty("INFORMIXSERVER") ; 
         String informixPort = System.getProperty("INFORMIXPORT") ; 
         String sqlHostsHost = System.getProperty("SQLHOSTSHOST") ; 
@@ -27,7 +26,8 @@ public class InformixPublicationAccessor {
 
 
         // from client_app/BrowserSQLQuery
-		String newUrl = "jdbc:informix-sqli://"+sqlHostsHost+":"+informixPort+"/"+dbName+":INFORMIXSERVER="+informixServer+";user=zfinner;pa"+CC + "r" + "d="+ password ;
+//        String newUrl = "jdbc:informix-sqli://"+sqlHostsHost+":"+informixPort+"/"+dbName+":INFORMIXSERVER="+informixServer+";user=zfinner;pa"+CC + "r" + "d="+ password ;
+		String newUrl = "jdbc:informix-sqli://"+sqlHostsHost+":"+informixPort+"/"+dbName+":INFORMIXSERVER="+informixServer+";user=zfinner;password="+password ;
 		
 		Connection conn = null;
 		
