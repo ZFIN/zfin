@@ -78,7 +78,7 @@ public class CitexploreWSDLConnect {
     public void printStatus( int counter, int initSize){
         NumberFormat nf = NumberFormat.getPercentInstance() ; 
         double percent =  (( (double) counter / ( (double) initSize-1.0 ) )) ; 
-        System.out.println( counter + " of " + initSize  + " = " + nf.format(percent) ) ; 
+        System.err.println( counter + " of " + initSize  + " = " + nf.format(percent) ) ; 
     }
 
 } 

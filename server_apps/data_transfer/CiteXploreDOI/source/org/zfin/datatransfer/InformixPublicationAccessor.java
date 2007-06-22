@@ -17,7 +17,7 @@ public class InformixPublicationAccessor {
      *
      */
     public Connection getConnection(){
-        System.out.println("START - get Connection") ; 
+        System.err.println("START - get Connection") ; 
         String password = "Rtwm4ts"  ; 
         String informixServer = System.getProperty("INFORMIXSERVER") ; 
         String informixPort = System.getProperty("INFORMIXPORT") ; 
@@ -46,7 +46,7 @@ public class InformixPublicationAccessor {
             System.err.println("ERROR: failed to connect with URL["+newUrl+"] - " + e); 
             e.printStackTrace() ; 
         } 
-        System.out.println("END - get Connection") ; 
+        System.err.println("END - get Connection") ; 
 
 		return conn;
 	}
@@ -91,7 +91,6 @@ public class InformixPublicationAccessor {
         ResultSet resultSet =  null ; 
         Statement select = null ; 
 
-        System.out.println("START - selecting publications") ; 
         try {
             select = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             select.setFetchSize(200);
@@ -105,7 +104,7 @@ public class InformixPublicationAccessor {
                 publicationList.add(publication) ; 
             }
         } catch (SQLException e) {
-            System.err.println("ERROR: Fetch statement failed: " + e.getMessage());
+            System.out.println("ERROR: Fetch statement failed: " + e.getMessage());
         }
         finally{
             try{
@@ -136,7 +135,7 @@ public class InformixPublicationAccessor {
     public boolean updateDOIs(List<Publication> publicationList){
 
         if(publicationList==null || publicationList.size()==0 ){
-            System.out.println("No publications to udpate") ; 
+            System.err.println("No publications to udpate") ; 
             return true ; 
         }
 

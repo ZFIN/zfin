@@ -41,7 +41,7 @@ public class DOILookupClient {
 
         List<Publication> publicationList = jdbcClient.selectPublications(queryString) ; 
 
-        System.out.println("number of dois to populate:  " + publicationList.size() ) ; 
+        System.err.println("number of dois to populate:  " + publicationList.size() ) ; 
         return publicationList ; 
     }
 
@@ -52,21 +52,21 @@ public class DOILookupClient {
      */
     public void findAndUpdateDOIs(){
         try{
-            System.out.println("START - getting publication list") ; 
+            System.err.println("START - getting publication list") ; 
 			List<Publication> publicationList = getPubmedIdsWithNoDOIs() ; 
-            System.out.println("END - getting publication list") ; 
-            System.out.println("START - connect to CiteXploreWSDL") ; 
+            System.err.println("END - getting publication list") ; 
+            System.err.println("START - connect to CiteXploreWSDL") ; 
             CitexploreWSDLConnect wsdlConnect = new CitexploreWSDLConnect() ; 
-            System.out.println("END - connect to CiteXploreWSDL") ; 
-            System.out.println("START - receive updates from wsdl client") ; 
+            System.err.println("END - connect to CiteXploreWSDL") ; 
+            System.err.println("START - receive updates from wsdl client") ; 
             publicationList = wsdlConnect.getDOIsForPubmedID(publicationList) ; 
-            System.out.println("END - receive updates from wsdl client") ; 
-            System.out.println("START - update pubmed DOIS in DB") ; 
+            System.err.println("END - receive updates from wsdl client") ; 
+            System.err.println("START - update pubmed DOIS in DB") ; 
             jdbcClient.updateDOIs(publicationList) ; 
-            System.out.println("END - update pubmed DOIS in DB") ; 
+            System.err.println("END - update pubmed DOIS in DB") ; 
         }
         catch(Exception e){
-            System.err.println(e) ; 
+            System.out.println(e) ; 
         }
 
     }
