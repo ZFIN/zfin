@@ -36,6 +36,7 @@ public class InformixPublicationAccessor {
         } 
 		catch (Exception e) { 
             System.err.println("ERROR: failed to load Informix JDBC driver. - " + e);
+            e.printStackTrace() ; 
         }
 
 		try {
@@ -43,6 +44,7 @@ public class InformixPublicationAccessor {
         } 
         catch (Exception e) {
             System.err.println("ERROR: failed to connect with URL["+newUrl+"] - " + e); 
+            e.printStackTrace() ; 
         } 
         System.out.println("END - get Connection") ; 
 
