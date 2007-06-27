@@ -223,7 +223,9 @@ patoCuration.distinctPhenotypes = {
         </td>
         <td onclick="rotateRadio('$patobldr_radio_id');">$patobldr_quality_name</td>
         <td onclick="rotateRadio('$patobldr_radio_id');">$patobldr_tag</td>
-        <td onclick="rotateRadio('$patobldr_radio_id');"><input type="button" value=" X " onClick="deleteZDB('$patobldr_api_zdb_id','patopile');"></td>
+        <td onclick="rotateRadio('$patobldr_radio_id');">
+          <input type="button" value=" X " onClick="deleteZDB('$patobldr_api_zdb_id','patopile');">
+        </td>
         </form>
       </tr>
 
@@ -231,7 +233,8 @@ patoCuration.distinctPhenotypes = {
   </tbody>
 </table>
 </div>
-<input type="button" onclick="document.getElementById('updatePhenoButton').click();" value="Update Phenotype for Mutant(s)">
+<input type="button" onclick="document.getElementById('updatePhenoButton').click();" 
+       value="Update Phenotype for Mutant(s)">
 <br>
 <?MICOMMENT> *** this css will need to be done a bit better *** <?/MICOMMENT>
 
@@ -272,7 +275,8 @@ Entity A:
             <option value="GO">GO</option>
           </select>
           <input type="text" size="45" name="patoup_entity_a_name" id="patobldrEntityAName" autocomplete="off"
-                 onChange=" phenoteState.setActiveField(this);    ">
+                 onchange="phenoteState.setActiveField(this);"
+                 onkeypress="document.getElementById('patobldrEntityAOntology').onchange();">
           <span id="patobldrEntityAAutoCompleterIndicator" style="display: none; color: red;">working...</span>
 
           <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="entity_a_auto_complete"></div>
@@ -289,7 +293,8 @@ Entity B:
 
 
           <input type="text" size="45" name="patoup_entity_b_name" id="patobldrEntityBName" autocomplete="off"
-                 onChange="phenoteState.setActiveField(this);">
+                 onchange="phenoteState.setActiveField(this);"
+                 onkeypress="document.getElementById('patobldrEntityBOntology').onchange();">
           <span id="patobldrEntityBAutoCompleterIndicator" style="display: none; color: red;">working...</span>
           <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="entity_b_auto_complete"></div>
 <br><br>
@@ -312,18 +317,7 @@ Tag:
 	   <option>normal</option>
          </select>
 
-<?MICOMMENT>
 
-<br>
-goterms from apg:
-        <input type="text" size="45" name="patobldr_apg_go_completer" id="patobldrApgGoCompleter" autocomplete="off">
-        <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="pato_apg_go_auto_complete"></div>
-<br>
-anatomy from apg:
-        <input type="text" size="45" name="patobldr_apg_ao_completer" id="patobldrApgAoCompleter" autocomplete="off">
-        <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="pato_apg_ao_auto_complete"></div>
-
-<?/MICOMMENT>
 <br>
 <br>
 
@@ -340,16 +334,14 @@ anatomy from apg:
 
   <br>
 
+   
+
    <script type="text/javascript">
 
-     var entityAAutoCompleter = new Ajax.Autocompleter( 'patobldrEntityAName', 'entity_a_auto_complete', '/phenote/Phenote/',{parameters:'ontologyName=ZF&field=ENTITY',paramName: "userInput", indicator: 'patobldrEntityAAutoCompleterIndicator', minChars: 3});
+     var entityAAutoCompleter = new Ajax.Autocompleter( 'patobldrEntityAName', 'entity_a_auto_complete', '/phenote/Phenote/',{parameters:'ontologyName=GO&field=ENTITY',paramName: "userInput", indicator: 'patobldrEntityAAutoCompleterIndicator', minChars: 3});
      var entityBAutoCompleter = new Ajax.Autocompleter( 'patobldrEntityBName', 'entity_b_auto_complete', '/phenote/Phenote/',{parameters:'ontologyName=ZF&field=ENTITY',paramName: "userInput", indicator: 'patobldrEntityBAutoCompleterIndicator', minChars: 3});
      var patoAutoCompleter = new Ajax.Autocompleter( 'patobldrQuality', 'pato_auto_complete', '/phenote/Phenote/',{parameters:'ontologyName=quality&field=QUALITY',paramName: "userInput", indicator: 'patobldrQualityAutoCompleterIndicator', minChars: 3});
 
-<?MICOMMENT>
-     var patoApgGoCompleter = new Ajax.Autocompleter( 'patobldrApgGoCompleter', 'pato_apg_go_auto_complete', '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',{parameters:'MIval=aa-wordcompletion.apg&wcomp_t=go_term&wcomp_cn=goterm_name', paramName: "wcomp_q"});
-    var patoApgAoCompleter = new Ajax.Autocompleter( 'patobldrApgAoCompleter', 'pato_apg_ao_auto_complete', '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',{parameters:'MIval=aa-wordcompletion.apg&wcomp_t=anatomy_item&wcomp_cn=anatitem_name', paramName: "wcomp_q"});
-<?/MICOMMENT>
 
    </script>
 
