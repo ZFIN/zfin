@@ -223,7 +223,7 @@
 #
 # 0         3:27am   curator support: monthly pnas report for dave f.
 #
-27 03 1 * * <!--|root_path|-->/server_apps/db_maintenance/pnas_report.pl
+27 03 1 * * <!--|root_path|-->/server_apps/DB_maintenance/pnas_report.pl
 #
 # 1         3:50am   Populate DOIS with pmid only reporting thise added, monthly
 #
