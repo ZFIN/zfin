@@ -263,8 +263,12 @@
 		 where mrkr_zdb_id = '$accID'">
 	      <?MIVAR NAME=inf_mem_sym>$1<?/MIVAR>	
 	   <?/MISQL>
-           <?MIVAR NAME=$currinflink><a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$accID"><i>$inf_mem_sym</i></a><?/MIVAR>
-
+           <?MIBLOCK COND="$(=,$(POSITION,$accID,MRPHLNO),0)">
+	      <?MIVAR NAME=inf_mem_sym><i>$inf_mem_sym</i><?/MIVAR>	
+           <?MIELSE>
+	      <?MIVAR NAME=inf_mem_sym>$inf_mem_sym<?/MIVAR>	
+           <?/MIBLOCK>
+           <?MIVAR NAME=$currinflink><a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$accID">$inf_mem_sym</a><?/MIVAR>
     	<?MIELSE COND="$(EC,$dbase,GO)">
          	<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name ='QuickGO'"><?/MISQL>
           	<?MIVAR NAME=query>$1<?/MIVAR>
