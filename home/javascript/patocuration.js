@@ -206,7 +206,7 @@ function PatoCuration() {
 
   }
   
-  this.updateMutantForm = function() {
+  this.updateMutantForm = function(fig_zdb_id, geno_zdb_id, exp_zdb_id, start_stg_zdb_id, end_stg_zdb_id) {
     updateSelectElement($('patosumFig'), fig_zdb_id); 
     updateSelectElement($('patosumGenotype'), geno_zdb_id);
     updateSelectElement($('patosumEnv'), exp_zdb_id);
