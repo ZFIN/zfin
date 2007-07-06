@@ -50,6 +50,6 @@ $(HTTP_DATA_TRANSFER_DIR) :
 run : $(TARGETDIR)/DownloadFiles.pl
 	$(TARGETDIR)/DownloadFiles.pl
 	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*
-	rm $(HTTP_DATA_TRANSFER_DIR)/swissprot.txt
+	rm -f $(HTTP_DATA_TRANSFER_DIR)/swissprot.txt
 	ln -s $(HTTP_DATA_TRANSFER_DIR)/uniprot.txt $(HTTP_DATA_TRANSFER_DIR)/swissprot.txt
 
