@@ -724,15 +724,19 @@ and  clone_rating=4
      <?MISQL SQL="
 	insert into $temp_on_anat(g_zdb_id)
 	     select genox_geno_zdb_id
-	       from genotype_experiment, atomic_phenotype 
+	       from genotype_experiment, atomic_phenotype, genotype 
               where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
                 and apato_entity_a_zdb_id = '$OID';">
      <?/MISQL>
      <?MISQL SQL="
 	insert into $temp_on_anat(g_zdb_id)
 	     select genox_geno_zdb_id
-	       from genotype_experiment, atomic_phenotype 
+	       from genotype_experiment, atomic_phenotype, genotype
               where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
                 and apato_entity_b_zdb_id = '$OID';">
      <?/MISQL>   
 
@@ -747,16 +751,20 @@ and  clone_rating=4
        <?MISQL SQL="
 	insert into $temp_on_anat(g_zdb_id)
 	     select genox_geno_zdb_id
-	       from genotype_experiment, atomic_phenotype, all_anatomy_contains
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains, genotype
               where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
                 and apato_entity_a_zdb_id = allanatcon_contained_zdb_id
                 and allanatcon_container_zdb_id = '$OID';">
        <?/MISQL>
        <?MISQL SQL="
 	insert into $temp_on_anat(g_zdb_id)
 	     select genox_geno_zdb_id
-	       from genotype_experiment, atomic_phenotype, all_anatomy_contains
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains, genotype
               where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
                 and apato_entity_b_zdb_id = allanatcon_contained_zdb_id
                 and allanatcon_container_zdb_id = '$OID';">
        <?/MISQL>  
