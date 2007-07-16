@@ -141,8 +141,7 @@ function start_help(anchor) {
           <TR>
             <TD align=center>
 	      <input type=button name=mailmerge value="Create Mail merge file" 
-		 onClick="parent.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkmailmerge.apg&constraint=$(URLENCODE,$constraint)'">
-              <input type=button name=printable value="Add new Person" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=person&MIval=aa-new_person.apg');">  
+		 onClick="parent.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkmailmerge.apg&constraint=$(URLENCODE,$constraint)'">  
             </TD>
           </TR>
         <?/MIBLOCK>
@@ -159,8 +158,7 @@ function start_help(anchor) {
 	<?MIVAR> (<b>$num_recs</b> records found)</font> <?/MIVAR>
       </TD>
       <TD align=center>
-        <a href=#modify>Modify Search</a><br>
-	<input type=submit value="Printable listing"> <br>
+        <a href=#modify>Modify Search</a>
       </TD>
     </TR>
   </TABLE>
