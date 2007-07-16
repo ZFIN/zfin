@@ -69,3 +69,6 @@
 # 20th of each month reminder for curator project reports
 00 10 20 * * /research/zcentral/Commons/bin/monthly_report.pl
 # 
+# 20th of each month reminder to restart ontape on production
+00 10 20 * * /research/zcentral/Commons/bin/monthly_ontape.pl
+# 
