@@ -61,7 +61,7 @@ Message: $MI_ERRORMSG
     <?/MISQL>
   
     <?MISQL SQL="execute function table_exists('$adn_temp_sorted')">
-      <?MISQL COND=$(EC,$1,f) SQL="create temp table $adn_temp_sorted (adn_desig varchar(50),adn_desig_order varchar(50)) 
+      <?MISQL COND=$(EC,$1,f) SQL="create temp table $adn_temp_sorted (adn_desig varchar(50),adn_alias varchar(50), adn_desig_order varchar(50)) 
         with NO LOG;">
       <?/MISQL>
     <?/MISQL>
@@ -69,25 +69,33 @@ Message: $MI_ERRORMSG
     <?MISQL SQL="select feature_abbrev,feature_abbrev_order
                    from feature
                   where feature_abbrev like 'zf%'"> 
-      <?MISQL SQL="insert into $adn_temp_sorted (adn_desig,adn_desig_order) values ('$1','$2');">	    
+      <?MISQL SQL="insert into $adn_temp_sorted (adn_desig,adn_alias,adn_desig_order) values ('$1','','$2');">	    
       <?/MISQL>
     <?/MISQL>
 
-    <?MISQL SQL="select dalias_alias from data_alias 
+    <?MISQL SQL="select dalias_alias,feature_abbrev
+                   from data_alias, feature
                   where dalias_alias like '%)zf%' 
-                  and dalias_data_zdb_id like 'ZDB-ALT-%'";>
+                  and dalias_data_zdb_id like 'ZDB-ALT-%'
+                  and dalias_data_zdb_id=feature_zdb_id;">
                   
       <?MIVAR NAME=$posOfParth>$(POSITION,$1,")")<?/MIVAR>
       <?MIVAR NAME=$prevZf>$(SUBSTR,$1,$(+,$posOfParth,1))<?/MIVAR>
+      <?MIVAR NAME=$prevZfOrderNum>$(SUBSTR,$prevZf,3)<?/MIVAR>
+      <?MIVAR NAME=$prevZfOrder>zf00000000$prevZfOrderNum<?/MIVAR>
 
-      <?MISQL SQL="insert into $adn_temp_sorted (adn_desig,adn_desig_order) values ('$prevZf','$prevZf');">	    
+      <?MISQL COND="$(NE,$2,$prevZf)" SQL="insert into $adn_temp_sorted (adn_desig,adn_alias,adn_desig_order) values ('$prevZf','$2','$prevZfOrder');">	    
       <?/MISQL>
     <?/MISQL>
     
-    <?MISQL SQL="select distinct adn_desig,adn_desig_order
+    <?MISQL SQL="select adn_desig,adn_alias,adn_desig_order
                    from $adn_temp_sorted
                order by adn_desig_order;"> 
-       $1 <br/> 
+       <?MIBLOCK COND="$(EQ,$2,)">
+         <?MIVAR>$1        <br/> <?/MIVAR>
+       <?MIELSE>
+         <?MIVAR>$1 ($2)   <br/>  <?/MIVAR>
+       <?/MIBLOCK>
     <?/MISQL>   
     <?MIVAR>$(SETVAR,$adn_count,$MI_ROWCOUNT)<?/MIVAR>
 
