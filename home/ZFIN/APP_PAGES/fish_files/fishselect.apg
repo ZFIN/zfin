@@ -10,7 +10,7 @@ Variables THAT MIGHT BE Expected:
  -- fsel_allele_id        -- from jump_to.apg
  -- fsel_marker_id        -- from markerview.apg
  -- fsel_anatomy_item_id  -- from anatomy_item.apg
- -- $fsel_inputname     -- from search form and markerview and markerselect page
+ -- fsel_inputname     -- from search form and markerview and markerselect page
  -- fsel_cnstrct_id
  -- pubId     
  
@@ -683,7 +683,7 @@ Message: $MI_ERRORMSG
 	       from genotype_experiment, atomic_phenotype 
               where genox_zdb_id = apato_genox_zdb_id
                 and apato_entity_b_zdb_id in ($anatIDs);">
-     <?/MISQL>    
+     <?/MISQL> 
 
      <?MICOMMENT> -------------------------------------------------------------
              -- if include substructure
@@ -709,7 +709,7 @@ Message: $MI_ERRORMSG
        <?/MISQL>    <?MICOMMENT>-- end of if include substructures --<?/MICOMMENT>
 
     <?/MIBLOCK> 
-
+    
     <?MICOMMENT> -------------------------------------------------------------
              -- "and" search vs. "or" search 
              ---------------------------------------------------------------------
@@ -731,7 +731,6 @@ Message: $MI_ERRORMSG
                 from $fishselect_temp_on_anat_junior;">
        <?/MISQL>   
     <?/MIBLOCK>
-
 
     <?MICOMMENT> ------- Clean up temp table---------------<?/MICOMMENT> 
     <?MISQL SQL="delete from $fishselect_temp_on_anat_junior;"><?/MISQL>
@@ -1215,6 +1214,9 @@ Message: $MI_ERRORMSG
 	  <?MIVAR name=UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$compare)>$UserInput&compare=$compare<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$fsel_inputname)>$UserInput&fsel_inputname=$fsel_inputname<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$fsel_allele_id)>$UserInput&fsel_allele_id=$fsel_allele_id<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$fsel_marker_id)>$UserInput&fsel_marker_id=$fsel_marker_id<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$fsel_cnstrct_id)>$UserInput&fsel_cnstrct_id=$fsel_cnstrct_id<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$fsel_anatomy_item_id)>$UserInput&fsel_anatomy_item_id=$fsel_anatomy_item_id<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$fsel_anatomy_include)>$UserInput&fsel_anatomy_include=$fsel_anatomy_include<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$fsel_cnstrct_id)>$UserInput&fsel_cnstrct_id=$fsel_cnstrct_id<?/MIVAR>
