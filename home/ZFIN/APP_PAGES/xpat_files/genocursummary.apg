@@ -64,8 +64,10 @@ PREFIX:   genocursum_
   
   <?MISQL SQL="
         select geno_zdb_id, geno_name_order, get_geno_name_html_link(geno_zdb_id), geno_nickname
-        from genotype
-        where geno_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        from genotype, record_attribution
+        where recattrib_source_zdb_id = '$OID'
+	  and recattrib_source_type = 'standard'
+          and geno_zdb_id = recattrib_data_zdb_id
         order by geno_nickname;">
 
       <?MIVAR NAME=genocursum_geno_zdb_id>$1<?/MIVAR> 

@@ -45,8 +45,10 @@ EFFECTS:
       <option value="">ALL</option>
       <?MISQL SQL="
         select fig_zdb_id, fig_label, zero_pad(fig_label)
-        from figure 
-        where fig_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        from figure, record_attribution
+        where recattrib_source_zdb_id = '$OID'
+	  and recattrib_source_type = 'standard'
+          and fig_zdb_id = recattrib_data_zdb_id
         order by 3
         ;">
       <option value="$1"

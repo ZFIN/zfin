@@ -17,7 +17,6 @@ GLOBALS (value set by pubcuration.apg) :
 
     pubcur_G_active_row_color :: font color 
     
-    pubcur_G_oid_attrib_csv :: list of ZDBs attributed to OID; seperator="','"
     pubcur_G_fish_attrib_csv :: list of fish ZDBs attributed to OID; seperator="','"
     pubcur_G_gene_attrib_csv :: list of gene ZDBs attributed to OID; seperator="','"
     pubcur_G_est_attrib_csv :: list of est ZDBs attributed to OID; seperator="','"
@@ -478,22 +477,12 @@ function setMarkerTarget(featreli,anchor){
     <?MIVAR NAME=pubcur_G_exp_standard_name>_Standard<?/MIVAR>
     <?MIVAR NAME=pubcur_G_exp_generic_name>_Generic-control<?/MIVAR>
 
-    <?MIVAR NAME=pubcur_oid_attrib><?/MIVAR>
-    <?MISQL SQL="
-        select recattrib_data_zdb_id
-        from record_attribution 
-        where recattrib_source_zdb_id = '$OID'
-        ;">
-        <?MIVAR> $(VECAPPEND,$pubcur_oid_attrib,$1)<?/MIVAR>
-    <?/MISQL>
-      <?MIVAR NAME=pubcur_G_oid_attrib_csv SEPARATE="','">$pubcur_oid_attrib<?/MIVAR>
-
-
     <?MIVAR NAME=pubcur_fish_attrib><?/MIVAR>
     <?MISQL SQL="
         select feature_zdb_id
-        from feature
-        where feature_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        from feature, record_attribution
+        where recattrib_source_zdb_id = '$OID' and recattrib_source_type = 'standard'
+          and feature_zdb_id = recattrib_data_zdb_id
         ;">
         <?MIVAR> $(VECAPPEND,$pubcur_fish_attrib,$1)<?/MIVAR>
     <?/MISQL>
@@ -503,8 +492,10 @@ function setMarkerTarget(featreli,anchor){
     <?MIVAR NAME=pubcur_geno_attrib><?/MIVAR>
     <?MISQL SQL="
         select geno_zdb_id
-        from genotype
-        where geno_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        from genotype, record_attribution
+        where recattrib_source_zdb_id = '$OID' 
+	  and recattrib_source_type = 'standard'
+          and geno_zdb_id = recattrib_data_zdb_id
         ;">
         <?MIVAR> $(VECAPPEND,$pubcur_geno_attrib,$1)<?/MIVAR>
     <?/MISQL>
@@ -514,9 +505,12 @@ function setMarkerTarget(featreli,anchor){
     <?MIVAR NAME=pubcur_gene_attrib><?/MIVAR>
     <?MISQL SQL="
         select mrkr_zdb_id
-        from marker 
-        where mrkr_zdb_id in ('$pubcur_G_oid_attrib_csv')
-          and mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group = 'GENEDOM')
+        from marker, record_attribution, marker_type_group_member
+        where recattrib_source_zdb_id = '$OID' 
+	  and recattrib_source_type = 'standard'
+          and mrkr_zdb_id = recattrib_data_zdb_id
+	  and mtgrpmem_mrkr_type_group = 'GENEDOM'
+          and mrkr_type = mtgrpmem_mrkr_type 
          ;">
         <?MIVAR> $(VECAPPEND,$pubcur_gene_attrib,$1)<?/MIVAR>
     <?/MISQL>
@@ -529,7 +523,8 @@ function setMarkerTarget(featreli,anchor){
         from marker_relationship, record_attribution
         where mrel_mrkr_1_zdb_id in ('$pubcur_G_gene_attrib_csv')
           and mrel_mrkr_2_zdb_id = recattrib_data_zdb_id
-          and recattrib_source_zdb_id = '$OID'
+          and recattrib_source_zdb_id = '$OID' 
+	  and recattrib_source_type = 'standard'
         ;">
         <?MIVAR> $(VECAPPEND,$pubcur_est_attrib,$1)<?/MIVAR>
     <?/MISQL>
@@ -539,8 +534,13 @@ function setMarkerTarget(featreli,anchor){
     <?MIVAR NAME=pubcur_dblink_genbank><?/MIVAR>
     <?MISQL SQL="
         select dblink_zdb_id
-        from db_link, foreign_db_contains
-        where dblink_linked_recid in ('$pubcur_G_gene_attrib_csv','$pubcur_G_est_attrib_csv')
+        from db_link, foreign_db_contains, record_attribution, marker, marker_type_group_member
+        where recattrib_source_zdb_id = '$OID' 
+	  and recattrib_source_type = 'standard'
+          and dblink_linked_recid  = recattrib_data_zdb_id
+          and dblink_linked_recid = mrkr_zdb_id
+          and mrkr_type =  mtgrpmem_mrkr_type 
+          and mtgrpmem_mrkr_type_group in ('GENEDOM', 'EST')
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcont_fdb_db_name = 'GenBank'
         ;">
@@ -552,8 +552,10 @@ function setMarkerTarget(featreli,anchor){
     <?MIVAR NAME=pubcur_dblink_attrib><?/MIVAR>
     <?MISQL SQL="
         select dblink_zdb_id
-        from db_link
-        where dblink_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        from db_link, record_attribution
+        where recattrib_source_zdb_id = '$OID' 
+	  and recattrib_source_type = 'standard'
+          and dblink_zdb_id = recattrib_data_zdb_id
         ;">
         <?MIVAR> $(VECAPPEND,$pubcur_dblink_attrib,$1)<?/MIVAR>
     <?/MISQL>
@@ -563,8 +565,10 @@ function setMarkerTarget(featreli,anchor){
     <?MIVAR NAME=pubcur_exp_attrib><?/MIVAR>
     <?MISQL SQL="
         select exp_zdb_id
-        from experiment 
-        where exp_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        from experiment, record_attribution
+        where recattrib_source_zdb_id = '$OID' 
+	  and recattrib_source_type = 'standard'
+	  and exp_zdb_id = recattrib_data_zdb_id
         ;">
         <?MIVAR> $(VECAPPEND,$pubcur_exp_attrib,$1)<?/MIVAR>
     <?/MISQL>
@@ -574,8 +578,10 @@ function setMarkerTarget(featreli,anchor){
     <?MIVAR NAME=pubcur_fig_attrib><?/MIVAR>
     <?MISQL SQL="
         select fig_zdb_id
-        from figure
-        where fig_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        from figure, record_attribution
+        where recattrib_source_zdb_id = '$OID' 
+	  and recattrib_source_type = 'standard'
+          and fig_zdb_id = recattrib_data_zdb_id
         $(IF,$(XST,$pubcur_c_figure_only),and fig_zdb_id = '$pubcur_c_figure_only')
         ;">
         <?MIVAR> $(VECAPPEND,$pubcur_fig_attrib,$1)<?/MIVAR>
@@ -586,9 +592,13 @@ function setMarkerTarget(featreli,anchor){
     <?MIVAR NAME=pubcur_image_attrib><?/MIVAR>
     <?MISQL SQL="
         select img_zdb_id
-        from image
-        where img_zdb_id in ('$pubcur_G_oid_attrib_csv')
-          and img_fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
+        from image, record_attribution r1, record_attribution r2
+        where r1.recattrib_source_zdb_id = '$OID' 
+	  and r1.recattrib_source_type = 'standard'
+	  and img_zdb_id = r1.recattrib_data_zdb_id
+          and r2.recattrib_source_zdb_id = '$OID' 
+	  and r2.recattrib_source_type = 'standard'
+          and img_fig_zdb_id = r2.recattrib_data_zdb_id
         ;">
         <?MIVAR> $(VECAPPEND,$pubcur_image_attrib,$1)<?/MIVAR>
     <?/MISQL>
@@ -606,10 +616,13 @@ function setMarkerTarget(featreli,anchor){
     <?/MISQL>
     
     <?MISQL SQL="
-        select max(LENGTH(exp_name))::integer from experiment 
-        where exp_zdb_id in ('$pubcur_G_exp_attrib_csv')
-              or exp_name = '$pubcur_G_exp_standard_name'
-              or exp_name = '$pubcur_G_exp_generic_name';">
+        select max(LENGTH(exp_name))::integer 
+         from experiment
+        where exp_zdb_id in (select recattrib_data_zdb_id 
+                               from  record_attribution
+                              where recattrib_source_zdb_id = '$OID' 
+                                and recattrib_source_type = 'standard') 
+          or exp_name in ('$pubcur_G_exp_standard_name','$pubcur_G_exp_generic_name');">
         <?MIVAR NAME=pubcur_G_max_exp_name>$1<?/MIVAR>
     <?/MISQL>
   
@@ -809,7 +822,8 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
       select distinct mrkr_zdb_id, mrkr_abbrev, mrkr_abbrev_order
         from marker, record_attribution
        where recattrib_data_zdb_id = mrkr_zdb_id
-         and recattrib_source_zdb_id = '$OID'
+         and recattrib_source_zdb_id = '$OID' 
+	 and recattrib_source_type = 'standard'
        order by mrkr_abbrev_order;">
       <option value=$1>$2</option>
     <?/MISQL> 
@@ -818,7 +832,8 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
       select distinct feature_zdb_id, feature_abbrev, feature_abbrev_order
         from feature, record_attribution
        where recattrib_data_zdb_id = feature_zdb_id
-         and recattrib_source_zdb_id = '$OID'
+         and recattrib_source_zdb_id = '$OID' 
+	 and recattrib_source_type = 'standard'
        order by feature_abbrev_order;">
       <option value=$1>$2</option>
     <?/MISQL>
@@ -827,7 +842,8 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
       select distinct geno_zdb_id, geno_nickname, zero_pad(geno_nickname)
         from genotype, record_attribution
        where recattrib_data_zdb_id = geno_zdb_id
-         and recattrib_source_zdb_id = '$OID'
+         and recattrib_source_zdb_id = '$OID' 
+	 and recattrib_source_type = 'standard'
        order by 3;">
       <option value=$1>$2</option>
     <?/MISQL>

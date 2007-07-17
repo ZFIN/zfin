@@ -96,12 +96,11 @@ the genotype is finalized and committed, the staging area is reset.
 <?MICOMMENT> *** Is the staging area occupied?  <?/MICOMMENT>
 
 <?MISQL SQL="select geno_zdb_id 
-               from genotype 
+               from genotype, record_attribution
               where geno_handle like 'ZDB-GENO%'
-                and geno_zdb_id in 
-                    (
-                      select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id = '$OID'
-                    );">
+                and recattrib_source_zdb_id = '$OID'
+		and recattrib_source_type = 'standard'
+                and geno_zdb_id = recattrib_data_zdb_id;">
     <?MIVAR NAME=genocur_staging_zdb>$1<?/MIVAR>
 <?/MISQL>
                    
@@ -150,8 +149,10 @@ the genotype is finalized and committed, the staging area is reset.
 
       <?MISQL SQL="
         select feature_zdb_id, feature_name
-        from feature
-        where feature_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        from feature, record_attribution
+        where recattrib_source_zdb_id = '$OID'
+	  and recattrib_source_type = 'standard'
+          and feature_zdb_id = recattrib_data_zdb_id
         order by feature_abbrev_order
         ;">
       <option value="$1">Feature - $2</option>     

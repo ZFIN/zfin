@@ -24,7 +24,7 @@ PREFIX:   genosrcht_
 	  ============
 <?/MICOMMENT>
 
-<?MIVAR NAME=genosrcht_constraint>g1.geno_zdb_id not in ('$pubcur_G_oid_attrib_csv')<?/MIVAR>
+<?MIVAR NAME=genosrcht_constraint>g1.geno_zdb_id not in (select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id = '$OID' and recattrib_source_type = 'standard')<?/MIVAR>
 <?MIVAR NAME=genosrcht_tables><?/MIVAR>
 <?MIVAR NAME=genosrcht_feature_substring)>$(SUBSTR,$genocursrch_feat_zdb_id,1,7)<?/MIVAR>
 
