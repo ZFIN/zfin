@@ -6,6 +6,8 @@ create trigger publication_update_trigger
         into title,
       execute function scrub_char(new_publication.accession_no)
         into accession_no,
+      execute function scrub_char(new_publication.pub_doi)
+        into pub_doi,
       execute function scrub_char(new_publication.pubmed_authors)
         into pubmed_authors,
       execute function lower(new_publication.authors)
