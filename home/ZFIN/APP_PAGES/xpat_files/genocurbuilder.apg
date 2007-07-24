@@ -221,15 +221,7 @@ the genotype is finalized and committed, the staging area is reset.
     </td>
     <td>
     <select name=genocurbldWTbckgrd>
-  <?MISQL SQL="
-        select geno_zdb_id, geno_handle
-        from genotype
-        where geno_is_wildtype = 't'
-          and geno_handle = 'WT'
-        order by geno_display_name">
 
-      <option value="$1">$2</option>         
-  <?/MISQL>
   <?MISQL SQL="
         select geno_zdb_id, geno_handle
         from genotype
