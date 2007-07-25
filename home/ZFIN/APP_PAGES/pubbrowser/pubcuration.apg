@@ -76,7 +76,15 @@ OPTIONAL VARS:
         <?MIVAR NAME=xpatinf_zdb_id>$1<?/MIVAR>
         <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$xpatinf_zdb_id';"><?/MISQL>
       <?/MISQL>
-    
+      
+      <?MICOMMENT>  Set all genotype nicknames to the handle <?/MICOMMENT>
+      <?MISQL SQL="SELECT distinct geno_zdb_id, get_genotype_handle(geno_zdb_id) 
+                   FROM genotype, record_attribution
+                   WHERE recattrib_source_zdb_id = '$OID'
+                     AND recattrib_data_zdb_id = geno_zdb_id;">
+        <?MISQL SQL="update genotype set geno_handle = '$2' where geno_zdb_id = '$1';"><?/MISQL>
+      <?/MISQL>
+      
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(AND,$(XST,$paper_status),$(EC,$paper_status,open))>
