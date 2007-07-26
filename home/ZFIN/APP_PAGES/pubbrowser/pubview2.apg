@@ -235,7 +235,7 @@ Number exists
 
 <?MIVAR COND="$(NC,$pubview2_doi_no,)">
   <?MIVAR>
-    <A HREF="http://dx.doi.org/$pubview2_doi_no">Link to article</A>
+    <A HREF="http://dx.doi.org/$pubview2_doi_no">Full text (when available)</A>
   <?/MIVAR>
 <?/MIVAR>
 
