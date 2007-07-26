@@ -910,7 +910,9 @@ function jump(form_select){
 
   <?MIVAR NAME=$mrkrview_mrkr_comments>$1<?/MIVAR>
 
-  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITION,$OID,PAC),0)))">
+  <?MIVAR 
+COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITION,$OID,PAC),0),$(>,$(POSITION,$OID,FOSMID),0) 
+))">
     <b>EMBL:</b>
   <?/MIVAR>
 
@@ -1835,7 +1837,7 @@ function jump(form_select){
   <?MIBLOCK COND="$(XST,$type_of_genedom)">
     SEGMENT (CLONE AND PROBE) RELATIONSHIPS:
   <?MIELSE>
-    MARKER RELATIONSHIPS
+    MARKER RELATIONSHIPS:
   <?/MIBLOCK>
   </b>
 <?/MIBLOCK>
