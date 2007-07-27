@@ -316,16 +316,14 @@ ahead and look for it -- convert to OID if necessary -->
     <?MIVAR NAME=$cv_pub_volume>$6<?/MIVAR>
     <?MIVAR NAME=$cv_pub_pages>$7<?/MIVAR>
     <?MIVAR NAME=$cv_pub_authors_lower>$8<?/MIVAR>
-      <ul plain>
       <TR>
 	<TD colspan=1 align=left>
 	 <font size=3>
 	  <DIV class="show_pubs"> 
-	<li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$cv_pub_zdb_id">$cv_authors ($cv_pub_pyear) $cv_pub_title. $cv_jrnl_abbrev. $cv_pub_volume$cv_pub_pages.</A>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$cv_pub_zdb_id">$cv_authors ($cv_pub_pyear) $cv_pub_title. $cv_jrnl_abbrev. $cv_pub_volume$cv_pub_pages.</A>
 	  </DIV>
 	</TD>
       </TR>
-      </ul>
       <p>
     <?/MISQL>
     </TABLE>
