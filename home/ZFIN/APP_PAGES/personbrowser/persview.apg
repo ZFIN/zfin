@@ -311,7 +311,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 
 <?MIVAR NAME=$medline DELIMIT="'" REPLACE="''">$name<?/MIVAR>
 
-
+<TABLE>
 <?MISQL SQL="select a.title, 
 			year(pub_date) as pyear, 
 			a.zdb_id, 
@@ -349,12 +349,13 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 
 <TR><TD colspan=1 align=left><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pv_pub_authors ($pv_pub_year) $pv_pub_title. $pv_jrnl_abbrev. $pv_pub_volume$pv_pub_pages</A></DIV></TD></TR>
 <?/MISQL>
-
+</TABLE>
 
 <TR><TD>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value=Update onClick="doit('nonZF_pubs','textarea')">
 <?/MIVAR> 
+<BR>
 <B> Publications not related to Zebrafish:</B></TD></TR> <p>
 <?MIVAR COND=$(NE,$nonZF_pubs,NULL)><TR><TD>$nonZF_pubs</TD></TR>
 <p>
