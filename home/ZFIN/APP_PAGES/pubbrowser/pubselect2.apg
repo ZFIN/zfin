@@ -433,7 +433,7 @@ function list_all(user_access) {
   </TR>
 </TABLE>
 
-<table cellpadding=5 bgcolor=#FFFFFF width=100%><tr><td>  <!-   begin table to create left margin -->
+<table  bgcolor=#FFFFFF width=100%><tr><td>  <!-   begin table to create left margin -->
 </form>
 
 
