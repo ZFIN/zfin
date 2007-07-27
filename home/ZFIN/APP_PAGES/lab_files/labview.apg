@@ -328,7 +328,7 @@ $1</A>
 
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
-
+<TABLE>
 <?MISQL SQL="select distinct a.title, 
 				year(pub_date) as pyear, 
 				a.zdb_id, a.authors, 
@@ -368,14 +368,14 @@ $1</A>
 
   <TR>
      <TD align=left>
-     <DIV class="show_pubs"> 
+       <DIV class="show_pubs">
         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$lv_pub_zdb_id">$lv_pub_authors ($lv_pub_year) $lv_pub_title. $lv_jrnl_abbrev. $lv_pub_volume$lv_pub_pages</A>
-     </DIV>
+       </DIV>
      </TD>
  </TR>
 
 <?/MISQL>
-
+</TABLE>
 
 </form>
 
