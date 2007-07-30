@@ -11,7 +11,8 @@ create table elsevier_statistics (
 				  es_figure_zdb_id varchar(50)
 				        not null constraint 
 					es_figure_zdb_id_not_null,
-				  es_external_link varchar(255))
+				  es_external_link varchar(255),
+				  es_date datetime year to second)
 
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 4096 next size 4096
