@@ -182,7 +182,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
         <TD colspan=3><b>Source:</b>&nbsp; $SOURCE </TD>
       </TR>
      <?/MIVAR>
-    <?MIELSE COND="$$(EC,$mrkr_type,PAC)">
+    <?MIELSE COND="$(EC,$mrkr_type,PAC)">
      <?MIVAR>
        <TR>
          <TD><b>Species:</b> $probelib_species</TD>
