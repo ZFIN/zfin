@@ -1,0 +1,43 @@
+
+
+<html>
+<body>
+<?MIVAR NAME=$pubZdbID>$pubID<?/MIVAR>
+<?MIVAR NAME=$externallink>http://dx.doi.org/$newurl<?/MIVAR>
+<?MIVAR NAME=$sourcelink>$referenceurl<?/MIVAR>
+
+<?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
+<?MIVAR>
+
+
+<?MICOMMENT> 
+$pubZdbID
+$externallink
+$sourcelink
+<?/MICOMMENT> 
+
+<?MISQL SQL="
+    insert into elsevier_statistics 
+    ( es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_external_link, es_date )
+    values
+    ( '$REMOTE_ADDR','$sourcelink' , '$pubZdbID',  '$externallink' , CURRENT) 
+    ;">
+<?/MISQL>
+<?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
+
+Redirecting to <a href="$externallink">$externallink</a>.
+
+<meta http-equiv="refresh" content="0;url=$externallink">
+
+<?/MIVAR>
+
+
+
+
+
+</body>
+
+</html>
+
+
+    
