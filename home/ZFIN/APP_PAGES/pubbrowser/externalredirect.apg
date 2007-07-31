@@ -25,11 +25,48 @@ $sourcelink
 <?/MISQL>
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
-Redirecting to <a href="$externallink">$externallink</a>.
+<?MIVAR NAME="redirecttime">20<?/MIVAR>
 
-<meta http-equiv="refresh" content="0;url=$externallink">
+Redirecting to <a href="$externallink">$externallink</a> in <?MIVAR>$redirecttime<?/MIVAR> seconds.
+<br/> <br/>
+
+<meta http-equiv="refresh" content="$redirecttime;url=$externallink">
 
 <?/MIVAR>
+
+<br/> <br/>
+<h2>LOG</h2>
+<br/> <br/>
+<table border=1>
+    <tr>
+    <th>incoming_ip </th>
+    <th>url </th>
+    <th>zdb_id </th>
+    <th>externallink </th>
+    <th>time</th>
+    </tr>
+<?MISQL SQL="
+    select es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_external_link, es_date  from elsevier_statistics  ; 
+    ">
+    <tr>
+    <td>$1 </td>
+    <td>$2 </td>
+    <td>$3 </td>
+    <td>$4 </td>
+    <td>$5 </td>
+    </tr>
+<?MICOMMENT> 
+   <?MIVAR NAME=$incoming_ip>$1<?/MIVAR>
+   <?MIVAR NAME=$url>$2<?/MIVAR>
+   <?MIVAR NAME=$zdb_id>$3<?/MIVAR>
+   <?MIVAR NAME=$external_link>$4<?/MIVAR>
+   <?MIVAR NAME=$date>$5<?/MIVAR>
+<?/MICOMMENT> 
+<?/MISQL>
+</table>
+
+
+
 
 
 
