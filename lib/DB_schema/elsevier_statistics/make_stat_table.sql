@@ -26,6 +26,12 @@ alter table elsevier_statistics
   add constraint primary key (es_pk_id)
   constraint elsevier_statistics_primary_key ;
 
+--  Exposes necessary variables for doing insertions from web pages.
+--  Needs to be added significantly in the past.
+insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','QUERY_STRING','N','+','N',DATE('12/06/1998') ) ; 
+insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','REMOTE_ADDR','N','+','N',DATE('12/06/1998') ) ; 
+insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','HTTP_REFERER','N','+','N',DATE('12/06/1998') ) ; 
+
 commit work ;
 
 --rollback work;

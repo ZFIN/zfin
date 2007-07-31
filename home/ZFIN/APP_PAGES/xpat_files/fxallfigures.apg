@@ -83,6 +83,21 @@ function updateInnerHTML(element_id,html_to_display) {
 <?MICOMMENT> ** end Your Input Welcome ** <?/MICOMMENT>
 
 
+<?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
+   <?MICOMMENT>
+REMOTE_ADDR[<?MIVAR>$REMOTE_ADDR<?/MIVAR>]
+QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
+   <?/MICOMMENT>
+
+<?MISQL SQL="
+    insert into elsevier_statistics 
+    ( es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_date )
+    values
+    ( '$REMOTE_ADDR','$QUERY_STRING' , '$OID',CURRENT) 
+    ;">
+<?/MISQL>
+<?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
+
 
 <?MISQL SQL="select WebExplode(object,'fxpubdis_source_zdb_id=$OID&fxpubdis_fig_zdb_id=test&fxpubdis_probe_zdb_id=$fxallfig_probe_zdb_id') from webPages where ID='aa-fxpubdisplay.apg';">$1<?/MISQL>
 
@@ -95,6 +110,29 @@ function updateInnerHTML(element_id,html_to_display) {
 <?MIELSE>
   <?MIVAR NAME=fxallfig_is_lite>no<?/MIVAR>
 <?/MIBLOCK>
+
+
+<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+
+<?MISQL SQL="
+  select jrnl_abbrev, pub_doi
+    from publication, journal where zdb_id='$OID'
+     and jrnl_zdb_id = pub_jrnl_zdb_id;">
+<?/MISQL>
+
+   <?MIVAR NAME=$pubview2_jrnl_abbrev>$1<?/MIVAR>
+   <?MIVAR NAME=$pubview2_doi_no>$2<?/MIVAR>
+
+<?MIVAR COND="$(NC,$pubview2_doi_no,)">
+  <?MIVAR>
+<?MICOMMENT>
+    <A HREF="http://dx.doi.org/$pubview2_doi_no">Full text @ $pubview2_jrnl_abbrev</A>
+<?/MICOMMENT>
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
+  <?/MIVAR>
+<?/MIVAR>
+<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
+
 
 <?MIBLOCK COND="$(EQ,$fxallfig_is_lite,yes)">
  <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$OID') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
@@ -261,6 +299,19 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
  <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fxallfig_source_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 <?/MIBLOCK> <?MICOMMENT>end no probe condition <?/MICOMMENT>
+
+
+<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+<?MIVAR COND="$(NC,$pubview2_doi_no,)">
+  <?MIVAR>
+<?MICOMMENT>
+    <A HREF="http://dx.doi.org/$pubview2_doi_no">Full text @ $pubview2_jrnl_abbrev</A>
+<?/MICOMMENT>
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
+  <?/MIVAR>
+  <?/MIVAR>
+<?/MIVAR>
+<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 <p>
 
