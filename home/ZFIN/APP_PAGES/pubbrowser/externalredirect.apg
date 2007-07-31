@@ -25,15 +25,16 @@ $sourcelink
 <?/MISQL>
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
-<?MIVAR NAME="redirecttime">20<?/MIVAR>
+<?MIVAR NAME="redirecttime">0<?/MIVAR>
 
-Redirecting to <a href="$externallink">$externallink</a> in <?MIVAR>$redirecttime<?/MIVAR> seconds.
+Redirecting to <a href="$externallink">$externallink</a>.
 <br/> <br/>
 
 <meta http-equiv="refresh" content="$redirecttime;url=$externallink">
 
 <?/MIVAR>
 
+<?MICOMMENT> 
 <br/> <br/>
 <h2>LOG</h2>
 <br/> <br/>
@@ -65,6 +66,7 @@ Redirecting to <a href="$externallink">$externallink</a> in <?MIVAR>$redirecttim
 <?/MISQL>
 </table>
 
+<?/MICOMMENT> 
 
 
 
