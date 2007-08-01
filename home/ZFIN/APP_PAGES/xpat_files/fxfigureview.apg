@@ -80,26 +80,6 @@ function updateInnerHTML(element_id,html_to_display) {
 get source zdb id, comments, label and caption of figure to determine type of FX record (GELI, TOD, or light curated)
 <?/MICOMMENT>
 
-<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-
-<?MISQL SQL="
-  select jrnl_abbrev, pub_doi
-    from publication, journal where zdb_id='$OID'
-     and jrnl_zdb_id = pub_jrnl_zdb_id;">
-<?/MISQL>
-
-   <?MIVAR NAME=$pubview2_jrnl_abbrev>$1<?/MIVAR>
-   <?MIVAR NAME=$pubview2_doi_no>$2<?/MIVAR>
-
-   <?MIVAR>$2<?/MIVAR>
-<?MIVAR COND="$(NC,$pubview2_doi_no,)">
-  <?MIVAR>
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
-    <br/>
-    <br/>
-  <?/MIVAR>
-<?/MIVAR>
-<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 
 <?MISQL SQL="
@@ -156,11 +136,17 @@ REMOTE_ADDR[<?MIVAR>$REMOTE_ADDR<?/MIVAR>]
 QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
    <?/MICOMMENT>
 
+<?MIBLOCK COND="$(XST,$HTTP_REFERER)">
+<?MIVAR NAME="CALLING_HOST">$HTTP_REFERER<?/MIVAR>
+<?MIELSE>
+<?MIVAR NAME="CALLING_HOST">NOHOST<?/MIVAR>
+<?/MIBLOCK>
+
 <?MISQL SQL="
     insert into elsevier_statistics 
     ( es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_date )
     values
-    ( '$REMOTE_ADDR','$QUERY_STRING' , '$OID',CURRENT) 
+    ( '$REMOTE_ADDR','$CALLING_HOST?$QUERY_STRING' , '$OID',CURRENT) 
     ;">
 <?/MISQL>
 <br/>
@@ -170,6 +156,34 @@ QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
 
 
 <?MISQL SQL="select WebExplode(object,'fxpubdis_source_zdb_id=$fxfigview_source_zdb_id&fxpubdis_is_figure=yes&fxpubdis_fig_zdb_id=$fxfigview_fig_zdb_id') from webPages where ID='aa-fxpubdisplay.apg';">$1<?/MISQL>
+
+<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+
+<?MISQL SQL="
+  select jrnl_abbrev, pub_doi
+    from publication, journal, figure  
+    where fig_zdb_id='$OID'
+     and jrnl_zdb_id = pub_jrnl_zdb_id
+     and fig_source_zdb_id = zdb_id
+     ;">
+<?/MISQL>
+
+   <?MIVAR NAME=$pubview2_jrnl_abbrev>$1<?/MIVAR>
+   <?MIVAR NAME=$pubview2_doi_no>$2<?/MIVAR>
+
+<?MIVAR COND="$(NC,$pubview2_doi_no,)">
+  <?MIVAR>
+  <table>
+  <tr>
+  <td>
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
+  </td>
+  </tr>
+  </table>
+  <?/MIVAR>
+<?/MIVAR>
+<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
+
 
 <?MIVAR>
     <TITLE>ZFIN: Figure: $(REPLACE,$fxfigview_miniref,"<i>et al.</i>","et al."), $fxfigview_label </TITLE>
@@ -502,6 +516,22 @@ and display them one after the other horizontally
    <?MICOMMENT>End unpublished condition<?/MICOMMENT>
 <?/MIBLOCK>
 <p>
+
+<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+
+<?MIVAR COND="$(NC,$pubview2_doi_no,)">
+  <?MIVAR>
+  <table>
+  <tr>
+  <td>
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
+  </td>
+  </tr>
+  </table>
+  <?/MIVAR>
+<?/MIVAR>
+<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
+
 
 <?/MIBLOCK><?MICOMMENT>End fig source id (fig id) exists<?/MICOMMENT>
 
