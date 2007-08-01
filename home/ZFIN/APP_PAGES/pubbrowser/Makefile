@@ -27,7 +27,8 @@ GENERICS = REFERinfo.apg enterpubs.apg link_authors.apg link_authors_update.apg 
 	pubtopic_reassign.apg pnote_new.apg pnote_editor.apg notif_frame.apg \
 	notif_content.apg journalselect.apg journalview.apg journalupdate.apg pubacknowledgement.apg \
 	js-delete_attrib.apg pub_rowdisplay.apg citselectlist.apg citfish.apg \
-	citjtypeoption.apg citlink.apg citgeneric.apg cittotalcount.apg externalredirect.apg 
+	citjtypeoption.apg citlink.apg citgeneric.apg cittotalcount.apg \
+	externalredirect.apg  externallink.apg insertelsevierstat.apg 
 
 
 # use default rules for app page directories.

@@ -131,38 +131,20 @@ get source zdb id, comments, label and caption of figure to determine type of FX
 <?MICOMMENT> ** end Your Input Welcome ** <?/MICOMMENT>
 
 <?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
-   <?MICOMMENT>
-REMOTE_ADDR[<?MIVAR>$REMOTE_ADDR<?/MIVAR>]
-QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
-   <?/MICOMMENT>
-
-<?MIBLOCK COND="$(XST,$HTTP_REFERER)">
-<?MIVAR NAME="CALLING_HOST">$HTTP_REFERER<?/MIVAR>
-<?MIELSE>
-<?MIVAR NAME="CALLING_HOST">NOHOST<?/MIVAR>
-<?/MIBLOCK>
-
-<?MISQL SQL="
-    insert into elsevier_statistics 
-    ( es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_date )
-    values
-    ( '$REMOTE_ADDR','$CALLING_HOST?$QUERY_STRING' , '$OID',CURRENT) 
-    ;">
-<?/MISQL>
+<?MIVAR NAME=trackZdbID>$OID<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
 <br/>
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
-
 
 
 
 <?MISQL SQL="select WebExplode(object,'fxpubdis_source_zdb_id=$fxfigview_source_zdb_id&fxpubdis_is_figure=yes&fxpubdis_fig_zdb_id=$fxfigview_fig_zdb_id') from webPages where ID='aa-fxpubdisplay.apg';">$1<?/MISQL>
 
 <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-
 <?MISQL SQL="
   select jrnl_abbrev, pub_doi
     from publication, journal, figure  
-    where fig_zdb_id='$OID'
+    where fig_zdb_id='$trackZdbID'
      and jrnl_zdb_id = pub_jrnl_zdb_id
      and fig_source_zdb_id = zdb_id
      ;">
@@ -171,17 +153,7 @@ QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
    <?MIVAR NAME=$pubview2_jrnl_abbrev>$1<?/MIVAR>
    <?MIVAR NAME=$pubview2_doi_no>$2<?/MIVAR>
 
-<?MIVAR COND="$(NC,$pubview2_doi_no,)">
-  <?MIVAR>
-  <table>
-  <tr>
-  <td>
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
-  </td>
-  </tr>
-  </table>
-  <?/MIVAR>
-<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 
@@ -517,21 +489,13 @@ and display them one after the other horizontally
 <?/MIBLOCK>
 <p>
 
+
 <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-
-<?MIVAR COND="$(NC,$pubview2_doi_no,)">
-  <?MIVAR>
-  <table>
-  <tr>
-  <td>
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
-  </td>
-  </tr>
-  </table>
-  <?/MIVAR>
+<?MIVAR>
+A OID: $trackZdbID
 <?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
-
 
 <?/MIBLOCK><?MICOMMENT>End fig source id (fig id) exists<?/MICOMMENT>
 

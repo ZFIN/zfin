@@ -103,25 +103,9 @@ displays a publication record, or many publication records if > 1 returned.
 
 
 <?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
-   <?MICOMMENT>
-REMOTE_ADDR[<?MIVAR>$REMOTE_ADDR<?/MIVAR>]
-QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
-   <?/MICOMMENT>
-
-<?MIBLOCK COND="$(XST,$HTTP_REFERER)">
-<?MIVAR NAME="CALLING_HOST">$HTTP_REFERER<?/MIVAR>
-<?MIELSE>
-<?MIVAR NAME="CALLING_HOST">NOHOST<?/MIVAR>
-<?/MIBLOCK>
-
-
-<?MISQL SQL="
-    insert into elsevier_statistics 
-    ( es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_date )
-    values
-    ( '$REMOTE_ADDR','$CALLING_HOST?$QUERY_STRING' , '$OID',CURRENT) 
-    ;">
-<?/MISQL>
+<?MIVAR NAME=trackZdbID>$OID<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
+<br/>
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
 
@@ -258,11 +242,11 @@ If DOI does not exist:
 Number exists
 <?/MICOMMENT>
 
-<?MIVAR COND="$(NC,$pubview2_doi_no,)">
-  <?MIVAR>
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
-  <?/MIVAR>
-<?/MIVAR>
+
+<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+<?MISQL SQL="select WebExplode(object,'OID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
+
 
 <p> 
 

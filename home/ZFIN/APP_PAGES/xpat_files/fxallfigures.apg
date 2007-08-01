@@ -84,25 +84,8 @@ function updateInnerHTML(element_id,html_to_display) {
 
 
 <?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
-   <?MICOMMENT>
-REMOTE_ADDR[<?MIVAR>$REMOTE_ADDR<?/MIVAR>]
-QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
-   <?/MICOMMENT>
-
-<?MIBLOCK COND="$(XST,$HTTP_REFERER)">
-<?MIVAR NAME="CALLING_HOST">$HTTP_REFERER<?/MIVAR>
-<?MIELSE>
-<?MIVAR NAME="CALLING_HOST">NOHOST<?/MIVAR>
-<?/MIBLOCK>
-
-
-<?MISQL SQL="
-    insert into elsevier_statistics 
-    ( es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_date )
-    values
-    ( '$REMOTE_ADDR','$CALLING_HOST?$QUERY_STRING' , '$OID',CURRENT) 
-    ;">
-<?/MISQL>
+<?MIVAR NAME=trackZdbID>$OID<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
 <br/>
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
@@ -131,13 +114,7 @@ QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
    <?MIVAR NAME=$pubview2_jrnl_abbrev>$1<?/MIVAR>
    <?MIVAR NAME=$pubview2_doi_no>$2<?/MIVAR>
 
-<?MIVAR COND="$(NC,$pubview2_doi_no,)">
-  <?MIVAR>
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
-    <br/>
-    <br/>
-  <?/MIVAR>
-<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'OID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 
@@ -308,15 +285,7 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
 <?/MIBLOCK> <?MICOMMENT>end no probe condition <?/MICOMMENT>
 
 <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-<table>
-<tr><td>
-<?MIVAR COND="$(NC,$pubview2_doi_no,)">
-  <?MIVAR>
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
-  <?/MIVAR>
-<?/MIVAR>
-</td></tr>
-<table>
+<?MISQL SQL="select WebExplode(object,'OID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 <p>

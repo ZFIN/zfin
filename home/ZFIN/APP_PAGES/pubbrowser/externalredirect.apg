@@ -28,7 +28,6 @@ $sourcelink
 <?MIVAR NAME="redirecttime">0<?/MIVAR>
 
 Redirecting to <a href="$externallink">$externallink</a>.
-<br/> <br/>
 
 <meta http-equiv="refresh" content="$redirecttime;url=$externallink">
 

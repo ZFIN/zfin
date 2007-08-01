@@ -1,0 +1,7 @@
+<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+
+<?MIVAR COND="$(NC,$pubview2_doi_no,)">
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$trackZdbID&newurl=$pubview2_doi_no&referenceurl=$referenceurl">Full text @ $pubview2_jrnl_abbrev</A>
+<?/MIVAR>
+<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
+
