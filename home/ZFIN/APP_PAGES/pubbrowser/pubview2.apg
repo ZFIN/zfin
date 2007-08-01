@@ -112,7 +112,7 @@ QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
     insert into elsevier_statistics 
     ( es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_date )
     values
-    ( '$REMOTE_ADDR','$QUERY_STRING' , '$OID',CURRENT) 
+    ( '$REMOTE_ADDR','$HTTP_REFERER?$QUERY_STRING' , '$OID',CURRENT) 
     ;">
 <?/MISQL>
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>

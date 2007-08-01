@@ -96,6 +96,7 @@ QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
     ( '$REMOTE_ADDR','$QUERY_STRING' , '$OID',CURRENT) 
     ;">
 <?/MISQL>
+<br/>
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
 
@@ -125,10 +126,9 @@ QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
 
 <?MIVAR COND="$(NC,$pubview2_doi_no,)">
   <?MIVAR>
-<?MICOMMENT>
-    <A HREF="http://dx.doi.org/$pubview2_doi_no">Full text @ $pubview2_jrnl_abbrev</A>
-<?/MICOMMENT>
     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
+    <br/>
+    <br/>
   <?/MIVAR>
 <?/MIVAR>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
@@ -300,17 +300,16 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
 <?/MIBLOCK>
 <?/MIBLOCK> <?MICOMMENT>end no probe condition <?/MICOMMENT>
 
-
 <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+<table>
+<tr><td>
 <?MIVAR COND="$(NC,$pubview2_doi_no,)">
   <?MIVAR>
-<?MICOMMENT>
-    <A HREF="http://dx.doi.org/$pubview2_doi_no">Full text @ $pubview2_jrnl_abbrev</A>
-<?/MICOMMENT>
     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-externalredirect.apg&pubID=$OID&newurl=$pubview2_doi_no&referenceurl=$QUERY_STRING">Full text @ $pubview2_jrnl_abbrev</A>
   <?/MIVAR>
-  <?/MIVAR>
 <?/MIVAR>
+</td></tr>
+<table>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 <p>
