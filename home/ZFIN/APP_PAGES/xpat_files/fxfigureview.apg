@@ -153,7 +153,9 @@ get source zdb id, comments, label and caption of figure to determine type of FX
    <?MIVAR NAME=$pubview2_jrnl_abbrev>$1<?/MIVAR>
    <?MIVAR NAME=$pubview2_doi_no>$2<?/MIVAR>
 
+<table><tr><td>
 <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+</td></tr></table>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 

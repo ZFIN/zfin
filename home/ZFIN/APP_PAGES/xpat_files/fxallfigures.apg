@@ -113,8 +113,9 @@ function updateInnerHTML(element_id,html_to_display) {
 
    <?MIVAR NAME=$pubview2_jrnl_abbrev>$1<?/MIVAR>
    <?MIVAR NAME=$pubview2_doi_no>$2<?/MIVAR>
-
+<table><tr><td>
 <?MISQL SQL="select WebExplode(object,'OID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+</td></tr></table>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 
