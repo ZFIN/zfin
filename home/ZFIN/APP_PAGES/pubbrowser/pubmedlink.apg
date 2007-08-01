@@ -1,0 +1,15 @@
+<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+
+<?MIVAR COND="$(NC,$accession_no,)">
+  <b>PubMed:</b> 
+  <?MIBLOCK COND="$(ISINT,$accession_no)">
+    <?MIVAR>
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubmedredirect.apg&pubID=$trackZdbID&accession_no=$accession_no&referenceurl=$referenceurl">$accession_no</A>
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR>$accession_no<?/MIVAR>
+  <?/MIBLOCK>
+  &nbsp;&nbsp;&nbsp;  
+<?/MIVAR>
+<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
+

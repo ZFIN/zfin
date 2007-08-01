@@ -218,17 +218,11 @@ displays a publication record, or many publication records if > 1 returned.
 
 <?MIVAR COND="$(NC,$keywords,)"><B>KEYWORDS:</B> $keywords <p><?/MIVAR>
 
-<?MIVAR COND="$(NC,$accession_no,)">
-  <b>PubMed:</b> 
-  <?MIBLOCK COND="$(ISINT,$accession_no)">
-    <?MIVAR>
-      <A HREF=http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=search&db=PubMed&dopt=Abstract&term=$accession_no>$accession_no</A>
-    <?/MIVAR>
-  <?MIELSE>
-    <?MIVAR>$accession_no<?/MIVAR>
-  <?/MIBLOCK>
-  &nbsp;&nbsp;&nbsp;  
-<?/MIVAR>
+
+<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+<?MISQL SQL="select WebExplode(object,'OID=$OID&accession_no=$accession_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-pubmedlink.apg';">$1<?/MISQL>
+<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
+
 
 <?MICOMMENT>
 If DOI exists  -> list.
