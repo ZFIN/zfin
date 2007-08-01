@@ -132,7 +132,7 @@ get source zdb id, comments, label and caption of figure to determine type of FX
 
 <?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
 <?MIVAR NAME=trackZdbID>$OID<?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'sourceURL=$QUERY_STRING') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
 <br/>
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
@@ -492,9 +492,17 @@ and display them one after the other horizontally
 
 <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
 <?MIVAR>
-A OID: $trackZdbID
+A OID: $trackZdbID 
+<br/>
+HTTP_HOST: $HTTP_HOST
+<br/>
+HTTP_URI: $HTTP_URI
+<br/>
+<br/>
+QUERY_STRING: $QUERY_STRING
+<br/>
 <?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 <?/MIBLOCK><?MICOMMENT>End fig source id (fig id) exists<?/MICOMMENT>

@@ -85,7 +85,7 @@ function updateInnerHTML(element_id,html_to_display) {
 
 <?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
 <?MIVAR NAME=trackZdbID>$OID<?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'sourceURL=$QUERY_STRING') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
 <br/>
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
