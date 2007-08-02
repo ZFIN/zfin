@@ -98,8 +98,38 @@ to display the "Additional figures" link
 <?/MIBLOCK><?MICOMMENT>end figure record/probe condition<?/MICOMMENT>
 
 <table>
+    <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+    <?MIBLOCK COND="$(>,$(POSITION,$OID,FIG),0)">
+        <?MISQL SQL="
+          select jrnl_abbrev, pub_doi
+            from publication, journal, figure  
+            where fig_zdb_id='$OID'
+             and jrnl_zdb_id = pub_jrnl_zdb_id
+             and fig_source_zdb_id = zdb_id
+             ;">
+        <?/MISQL>
+    <?MIELSE>
+        <?MISQL SQL="
+          select jrnl_abbrev, pub_doi
+            from publication, journal
+            where zdb_id='$OID'
+             and jrnl_zdb_id = pub_jrnl_zdb_id
+             ;">
+        <?/MISQL>
+    <?/MIBLOCK>
+    <?MIVAR NAME=pubview2_jrnl_abbrev>$1<?/MIVAR>
+    <?MIVAR NAME=pubview2_doi_no>$2<?/MIVAR>
+    <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
+
   <?MIVAR>
-  <tr><td><big><b><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$fxpubdis_zdb_id">$fxpubdis_mini_ref </b></a> - $fxpubdis_title. $fxpubdis_source 
+  <tr><td><big><b><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$fxpubdis_zdb_id">$fxpubdis_mini_ref </b></a> - $fxpubdis_title. $fxpubdis_source  
+    
+
+    <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+    <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+    <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
+
+   
     <?MICOMMENT>Display Additional Figures link only if multiple figures<?/MICOMMENT>
     <?MIBLOCK COND="$(XST,$fxpubdis_morefig)">
       <?MICOMMENT>Pass probe id to Additional Figures link if exists<?/MICOMMENT>

@@ -140,23 +140,6 @@ get source zdb id, comments, label and caption of figure to determine type of FX
 
 <?MISQL SQL="select WebExplode(object,'fxpubdis_source_zdb_id=$fxfigview_source_zdb_id&fxpubdis_is_figure=yes&fxpubdis_fig_zdb_id=$fxfigview_fig_zdb_id') from webPages where ID='aa-fxpubdisplay.apg';">$1<?/MISQL>
 
-<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-<?MISQL SQL="
-  select jrnl_abbrev, pub_doi
-    from publication, journal, figure  
-    where fig_zdb_id='$trackZdbID'
-     and jrnl_zdb_id = pub_jrnl_zdb_id
-     and fig_source_zdb_id = zdb_id
-     ;">
-<?/MISQL>
-
-   <?MIVAR NAME=$pubview2_jrnl_abbrev>$1<?/MIVAR>
-   <?MIVAR NAME=$pubview2_doi_no>$2<?/MIVAR>
-
-<table><tr><td>
-<?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
-</td></tr></table>
-<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 
 <?MIVAR>
@@ -492,21 +475,7 @@ and display them one after the other horizontally
 <p>
 
 
-<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-<?MIVAR>
-A OID: $trackZdbID 
-<br/>
-HTTP_HOST: $HTTP_HOST
-<br/>
-HTTP_URI: $HTTP_URI
-<br/>
-<br/>
-QUERY_STRING: $QUERY_STRING
-<br/>
-<?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
-<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
-
-<?/MIBLOCK><?MICOMMENT>End fig source id (fig id) exists<?/MICOMMENT>
+<?/MIBLOCK>
+<?MICOMMENT>End fig source id (fig id) exists<?/MICOMMENT>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

@@ -103,20 +103,6 @@ function updateInnerHTML(element_id,html_to_display) {
 <?/MIBLOCK>
 
 
-<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-
-<?MISQL SQL="
-  select jrnl_abbrev, pub_doi
-    from publication, journal where zdb_id='$OID'
-     and jrnl_zdb_id = pub_jrnl_zdb_id;">
-<?/MISQL>
-
-   <?MIVAR NAME=$pubview2_jrnl_abbrev>$1<?/MIVAR>
-   <?MIVAR NAME=$pubview2_doi_no>$2<?/MIVAR>
-<table><tr><td>
-<?MISQL SQL="select WebExplode(object,'OID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
-</td></tr></table>
-<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 
 <?MIBLOCK COND="$(EQ,$fxallfig_is_lite,yes)">
@@ -285,9 +271,6 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
 <?/MIBLOCK>
 <?/MIBLOCK> <?MICOMMENT>end no probe condition <?/MICOMMENT>
 
-<?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-<?MISQL SQL="select WebExplode(object,'OID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
-<?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 <p>
 
