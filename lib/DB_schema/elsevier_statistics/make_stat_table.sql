@@ -31,6 +31,8 @@ alter table elsevier_statistics
 insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','QUERY_STRING','N','+','N',DATE('12/06/1998') ) ; 
 insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','REMOTE_ADDR','N','+','N',DATE('12/06/1998') ) ; 
 insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','HTTP_REFERER','N','+','N',DATE('12/06/1998') ) ; 
+insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','HTTP_URI','N','+','N',DATE('12/06/1998') ) ; 
+insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','HTTP_HOST','N','+','N',DATE('12/06/1998') ) ; 
 
 commit work ;
 
