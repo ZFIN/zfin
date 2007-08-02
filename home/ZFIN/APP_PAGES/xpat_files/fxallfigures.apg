@@ -268,6 +268,10 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
   <?/MISQL>
 <?MIBLOCK COND="$(EQ,$fxallfig_is_lite,no)">
  <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fxallfig_source_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
+<?MIELSE>
+        <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+        <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+        <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 <?/MIBLOCK>
 <?/MIBLOCK> <?MICOMMENT>end no probe condition <?/MICOMMENT>
 

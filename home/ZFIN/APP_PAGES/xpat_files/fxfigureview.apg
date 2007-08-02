@@ -469,7 +469,15 @@ and display them one after the other horizontally
   <?MICOMMENT>Display acknowledgement only if it is a full figure<?/MICOMMENT>
    <?MIBLOCK COND="$(AND,$(EQ,$fxfigview_is_lite,no),$(EQ,$fxfigview_is_geli,),$(EQ,$fxfigview_is_text,no))">
       <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fxfigview_source_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
+   <?MIELSE>
+        <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+        <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+        <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
    <?/MIBLOCK><?MICOMMENT>End full figure condition<?/MICOMMENT>
+   <?MIELSE>
+        <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+        <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+        <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
    <?MICOMMENT>End unpublished condition<?/MICOMMENT>
 <?/MIBLOCK>
 <p>
