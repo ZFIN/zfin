@@ -68,6 +68,7 @@ $fxpubdis_probe_zdb_id (probe zdb id for unpublished pubs)
 <?MIVAR NAME=$fxpubdis_source COND="$(NC,$fxpubdis_pages,)">$fxpubdis_source$fxpubdis_colon$fxpubdis_pages<?/MIVAR>
 <?MIVAR NAME=$fxpubdis_source COND="$(AND,$(NC,$fxpubdis_jtype,Unpublished),$(NC,$fxpubdis_jtype,Journal))">$fxpubdis_source($fxpubdis_jtype)<?/MIVAR>
 
+<?MICOMMENT> ZDB-PUB-060503-2 Mutant Data Curated from Older Literature <?/MICOMMENT>
 <?MIVAR NAME=$fxpubdis_source COND="$(EC,$fxpubdis_zdb_id,ZDB-PUB-060503-2)"><?/MIVAR>
 <?MICOMMENT>
 Determine if the pub has multiple figures. This is used to determine if we need
@@ -122,7 +123,8 @@ to display the "Additional figures" link
     <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
   <?MIVAR>
-  <tr><td><big><b><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$fxpubdis_zdb_id">$fxpubdis_mini_ref </b></a> - $fxpubdis_title. $fxpubdis_source  
+
+  <tr><td><big><b><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$fxpubdis_zdb_id">$fxpubdis_mini_ref </b></a> - $fxpubdis_title. $fxpubdis_source </big>
     
 
     <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
@@ -132,7 +134,6 @@ to display the "Additional figures" link
     <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
     <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
-   
     <?MICOMMENT>Display Additional Figures link only if multiple figures<?/MICOMMENT>
     <?MIBLOCK COND="$(XST,$fxpubdis_morefig)">
       <?MICOMMENT>Pass probe id to Additional Figures link if exists<?/MICOMMENT>
@@ -157,9 +158,15 @@ to display the "Additional figures" link
              <?/MIVAR>
              $(SETVAR,$fxpubdis_auth[$MI_CURRENTROW],$1)
           <?/MISQL>
-          </td>
          <?/MIVAR>
          <?MIVAR COND="$(!=,0,$MI_ROWCOUNT)">$fxpubdis_auth_html<?/MIVAR>
+           <?MIBLOCK COND="$(EQ, $fxpubdis_source, ZFIN Direct Data Submission)">
+              <?MIVAR>
+               $(IF,$(=,0,$MI_ROWCOUNT),<TD>)
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubprintable.apg&OID=$fxpubdis_zdb_id&printable=yes>(Citing this work)</a>
+              <?/MIVAR>
+           <?/MIBLOCK> 
+	  </td>
          </tr>
          <?MIBLOCK COND="$(NE,$fxpubdis_notes,NULL)"><?MICOMMENT>display disclaimer for Thisse FR clones pub<?/MICOMMENT>
              <tr><td><?MIVAR>$fxpubdis_notes<?/MIVAR>
