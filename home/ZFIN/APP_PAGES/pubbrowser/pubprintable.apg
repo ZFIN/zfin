@@ -45,7 +45,12 @@ This page simply generates a REFER format file for the selected pubs. Since we d
 
 <?MIVAR NAME=$pubprint_orderClause>$(IF,$(XST,$order_clause),$order_clause,)<?/MIVAR>
 
-<?MIVAR NAME=$pubprint_constraint>$(IF,$(XST,$constraint),$constraint,)<?/MIVAR>
+<?MIBLOCK COND="$(NXST,$constraint)">
+  <?MIVAR NAME=$pubprint_constraint>where zdb_id = '$OID'<?/MIVAR>
+<?MIELSE>  
+  <?MIVAR NAME=$pubprint_constraint>$(IF,$(XST,$constraint),$constraint,$from_clause)<?/MIVAR>
+<?/MIBLOCK>
+
 
 <?MIBLOCK COND="$(XST,$refer)">
 <?MIVAR>$(HTTPHEADER,CONTENT-TYPE,APPLICATION/RTF)<?/MIVAR>
@@ -114,7 +119,8 @@ This page simply generates a REFER format file for the selected pubs. Since we d
 		jrnl_abbrev, 
 		pub_volume, 
 		pub_pages,
-		year(pub_date) as pyear
+		year(pub_date) as pyear,
+                zdb_id
     from publication, journal 
     $pubprint_constraint 
     $pubprint_pubJrnlJoin 
@@ -126,12 +132,17 @@ This page simply generates a REFER format file for the selected pubs. Since we d
   <?MIVAR NAME=$pubprint_pub_volume>$4<?/MIVAR>
   <?MIVAR NAME=$pubprint_pub_pages>$5<?/MIVAR>
   <?MIVAR NAME=$pubprint_pyear>$6<?/MIVAR>
+  <?MIVAR NAME=$pubprint_zdb_id>$7<?/MIVAR>
 
+<TABLE>
+ <TR><TD colspan=1 align=left><DIV class="show_pubs"> $pubprint_authors ($pubprint_pyear) $pubprint_title. $pubprint_jrnl_abbrev $(IF,$(NC,$pubprint_pub_volume,),$pubprint_pub_volume:,$pubprint_pub_volume) $(IF,$(NC,$pubprint_pub_pages,),$pubprint_pub_pages,$pubprint_pub_pages)
+<?MIBLOCK COND="$(EQ,$pubprint_jrnl_abbrev,ZFIN Direct Data Submission)">
+ (http://zfin.org) 
+<?/MIBLOCK>
+</DIV></TD></TR>
 
-  $pubprint_authors ($pubprint_pyear) $pubprint_title. $pubprint_jrnl_abbrev $(IF,$(NC,$pubprint_pub_volume,),$pubprint_pub_volume:,$pubprint_pub_volume) $(IF,$(NC,$pubprint_pub_pages,),$pubprint_pub_pages,$pubprint_pub_pages)
-
-  <hr width=80%>
 <?/MISQL>
+</TABLE>
 </html>
 
 <?/MIBLOCK>
