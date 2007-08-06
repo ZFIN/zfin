@@ -93,11 +93,8 @@ EFFECTS
 	<?MIVAR NAME=pubackn_doi>$9<?/MIVAR>
       <?/MISQL>
 
-      <?MISQL SQL="execute function jrnl_acknowledgment('$pubackn_jrnl_zdb_id');">
-        <?MIVAR NAME=pubackn_journal_link>$1<?/MIVAR>
-      <?/MISQL>    
       
-      <?MIVAR NAME=pubackn_journal_ack>ZFIN wishes to thank the journal $pubackn_journal_link 
+      <?MIVAR NAME=pubackn_journal_ack>ZFIN wishes to thank the journal $pubackn_jrnl_name
          for permission to reproduce figures from this article. Please note that 
          this material may be protected by copyright.<?/MIVAR>
 
@@ -121,8 +118,8 @@ EFFECTS
       <?MIVAR COND=$(NC,$pubackn_journal_ack,)>$pubackn_journal_ack<?/MIVAR>
       <?MIVAR COND=$(NC,$pubackn_pub_ack,)><br><br>$pubackn_pub_ack<?/MIVAR>
       <?MIVAR COND=$(EC,$pubackn_jrnl_publisher,Elsevier)><br><br>Reprinted from  
-         <A HREF=http://dx.doi.org/$pubackn_doi>$pubackn_jrnl_name, 
-         $pubackn_pub_volume, $pubackn_pub_authors, $pubackn_pub_name, $pubackn_pub_pages</a>, Copyright 
+         $pubackn_jrnl_name, 
+         $pubackn_pub_volume, $pubackn_pub_authors, $pubackn_pub_name, $pubackn_pub_pages, Copyright 
          ($pubackn_copyrt_year) with permission from Elsevier.
       <?/MIVAR>
 
