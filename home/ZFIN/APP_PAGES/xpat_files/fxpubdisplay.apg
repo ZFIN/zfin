@@ -128,9 +128,9 @@ to display the "Additional figures" link
     
 
     <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-    <?MIBLOCK COND="$(XST,$pubview2_doi_no)">
-    - 
-    <?/MIBLOCK>
+    <?MIVAR COND="$(NC,$pubview2_doi_no,)">
+    -  
+    <?/MIVAR>
     <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
     <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
