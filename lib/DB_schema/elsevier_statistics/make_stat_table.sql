@@ -16,7 +16,7 @@ create table elsevier_statistics (
 
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 4096 next size 4096
-lock mode page;
+lock mode row;
 
 create unique index elsevier_statistics_primary_key_index
   on elsevier_statistics (es_pk_id)
