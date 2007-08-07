@@ -124,7 +124,9 @@ EFFECTS
       <?/MIVAR>
 
         <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
+        <?MIVAR COND="$(XST,$trackZdbID)">
         <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+        <?/MIVAR>
         <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
       <?MIBLOCK COND=$(NC,$pubackn_display,text)>
             </td>
