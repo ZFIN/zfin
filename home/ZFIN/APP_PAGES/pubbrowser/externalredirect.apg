@@ -11,11 +11,7 @@
 
 
 <?MICOMMENT> 
-$pubZdbID
-$externallink
-$sourcelink
-<?/MICOMMENT> 
-
+Removing comment.
 <?MISQL SQL="
     insert into elsevier_statistics 
     ( es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_external_link, es_date )
@@ -23,6 +19,7 @@ $sourcelink
     ( '$REMOTE_ADDR','$sourcelink' , '$pubZdbID',  '$externallink' , CURRENT) 
     ;">
 <?/MISQL>
+<?/MICOMMENT> 
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
 <?MIVAR NAME="redirecttime">0<?/MIVAR>
