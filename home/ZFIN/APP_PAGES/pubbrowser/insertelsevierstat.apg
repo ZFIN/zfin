@@ -16,8 +16,6 @@ QUERY_STRING[<?MIVAR>$QUERY_STRING<?/MIVAR>]
 <?/MIBLOCK>
 
 
-<?MICOMMENT> 
-Removing comment.
 <?MISQL SQL="
     insert into elsevier_statistics 
     ( es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_date )
@@ -25,6 +23,5 @@ Removing comment.
     ( '$REMOTE_ADDR','$CALLING_HOST' , '$OID',CURRENT) 
     ;">
 <?/MISQL>
-<?/MICOMMENT> 
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
