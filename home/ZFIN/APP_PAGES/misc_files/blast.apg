@@ -178,9 +178,9 @@
 
          <option> ==========  Protein Db  ===========
          <option VALUE = "refseq_zf_aa" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,refseq_zf_aa)),selected)> RefSeq Zebrafish Protein
-         <option VALUE = "sptr_zf" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,sptr_zf)),selected)> SwissProt/TrEMBL Zebrafish
-         <option VALUE = "sptr_hs"> SwissProt/TrEMBL Human
-         <option VALUE = "sptr_ms"> SwissProt/TrEMBL Mouse
+         <option VALUE = "sptr_zf" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,sptr_zf)),selected)> UniProt Zebrafish
+         <option VALUE = "sptr_hs"> UniProt Human
+         <option VALUE = "sptr_ms"> UniProt Mouse
       <?/MIVAR>
     </select>
 
@@ -207,7 +207,7 @@
 
          <option> ==========  Protein Db  ============
          <option VALUE = "refseq_zf_aa" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,refseq_zf_aa)),selected)> RefSeq Zebrafish Protein
-         <option VALUE = "sptr_zf" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,sptr_zf)),selected)> SwissProt/TrEMBL Zebrafish
+         <option VALUE = "sptr_zf" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,sptr_zf)),selected)> UniProt Zebrafish
       <?/MIVAR>
     </select>
   <?/MIBLOCK>
