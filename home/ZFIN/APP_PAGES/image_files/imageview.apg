@@ -119,7 +119,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 <?MISQL SQL="select img_fig_zdb_id from image where img_zdb_id='$OID'"><?/MISQL>
 <?MIVAR NAME=fig_zdb_id>$1<?/MIVAR>
 
-<?MISQL SQL="select pub_mini_ref, fig_label from publication, figure where fig_zdb_id='$fig_zdb_id' and fig_source_zdb_id=zdb_id ">
+<?MISQL SQL="select pub_mini_ref, fig_label , pub_doi from publication, figure where fig_zdb_id='$fig_zdb_id' and fig_source_zdb_id=zdb_id ">
 <?/MISQL>
 <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
   <?MIVAR NAME=$fimgview_miniref>$1<?/MIVAR>
@@ -706,6 +706,18 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	      
 	    <?MIVAR NAME=fimgview_pub_zdb_id>$1<?/MIVAR>
 	  <?/MISQL>
+       
+        <?MIVAR NAME=trackZdbID>$OID<?/MIVAR>
+        <?MISQL SQL="select  pub_doi, jrnl_abbrev from publication, figure, journal where fig_zdb_id='$fig_zdb_id' and fig_source_zdb_id=zdb_id and pub_jrnl_zdb_id=jrnl_zdb_id">
+        <?/MISQL>
+        <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+          <?MIVAR NAME=pubview2_doi_no>$1<?/MIVAR>
+          <?MIVAR NAME=pubview2_jrnl_abbrev>$2<?/MIVAR>
+        <?/MIBLOCK>
+
+<?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
+<?MISQL SQL="select WebExplode(object,'sourceURL=$QUERY_STRING') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
+<?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
           <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fimgview_pub_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>	
         <?/MIBLOCK>
