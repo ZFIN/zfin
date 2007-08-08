@@ -29,12 +29,20 @@ create function get_genotype_display( genoZdbId varchar(50) )
   define zygPrefix       like zygocity.zyg_gene_prefix;
   define zygAllele       lvarchar;
   define featSig         like feature_type.ftrtype_name;
+  define startName       like genotype.geno_display_name;
+  define wildtype        like genotype.geno_is_wildtype;
+  
+  select geno_display_name, geno_is_wildtype 
+  into startName, wildtype 
+  from genotype where geno_zdb_id = genoZdbId;
 
-  let genoDisplayHtml = '';
-  let zygPrefix = '';
+  if ( wildtype != 't') then  
+  
+    let genoDisplayHtml = '';
+    let zygPrefix = '';
       
   
-  foreach
+    foreach
        select distinct get_feature_abbrev_display(feature_zdb_id), 
               zyg_gene_prefix, 
               zyg_allele_display, 
@@ -84,9 +92,15 @@ create function get_genotype_display( genoZdbId varchar(50) )
         
         end if
         
-  end foreach
+    end foreach
 
-  let genoDisplayHTML = replace(genoDisplayHTML,'</sup><sup>','');          
+    let genoDisplayHTML = replace(genoDisplayHTML,'</sup><sup>','');          
+
+  else
+  
+    let genoDisplayHTML = startName;
+  
+  end if
 
   return genoDisplayHtml;
 

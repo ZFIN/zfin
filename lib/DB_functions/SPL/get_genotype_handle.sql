@@ -29,10 +29,18 @@ create function get_genotype_handle( genoZdbId varchar(50) )
   define zygMom 	 like zygocity.zyg_abbrev;
   define zygDad 	 like zygocity.zyg_abbrev;
   define featDisplay     lvarchar;
+  define startHandle     like genotype.geno_handle;
+  define wildtype        like genotype.geno_is_wildtype;
+  
+  select geno_handle, geno_is_wildtype 
+  into startHandle, wildtype 
+  from genotype where geno_zdb_id = genoZdbId;
 
-  let genoHandle = '';
+  if ( wildtype != 't') then
+  
+    let genoHandle = '';
 
-  foreach
+    foreach
        select distinct feature_abbrev, z1.zyg_abbrev, z2.zyg_abbrev, z3.zyg_abbrev
          into featAbbrev, zygFish, zygMom, zygDad
          from feature, genotype_feature, zygocity z1, zygocity z2, zygocity z3
@@ -53,18 +61,23 @@ create function get_genotype_handle( genoZdbId varchar(50) )
         
         end if
         
-  end foreach
+    end foreach
 
-  select get_genotype_backgrounds(genoZdbId) 
-  into genoBackground
-  from single;
+    select get_genotype_backgrounds(genoZdbId) 
+    into genoBackground
+    from single;
   
-  if (genoBackground != '') then
+    if (genoBackground != '') then
      
-     let genoHandle = genoHandle || genoBackground ;
+      let genoHandle = genoHandle || genoBackground ;
      
+    end if
+  
+  else
+  
+    let genoHandle = startHandle;
+  
   end if
-  
 
   return genoHandle;
 
