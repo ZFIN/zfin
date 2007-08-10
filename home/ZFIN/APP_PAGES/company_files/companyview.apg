@@ -19,6 +19,7 @@ ahead and look for it -- convert to OID if necessary -->
 <?MIVAR COND="$(XST,$temp_oid)" NAME=$OID>$temp_oid<?/MIVAR>
 
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 
 <?MIBLOCK COND="$(NXST,$OID)">
   <p>
@@ -131,12 +132,12 @@ ahead and look for it -- convert to OID if necessary -->
     <TD valign=middle>
     <TABLE border=6 cellpadding=0 cellspacing=0>
       <TR>
-      <?MIVAR COND="$(NC,$snapshot,NULL)">
+      <?MIVAR COND="$(NC,$snapshot,$MI_NULL)">
 	  <TD><IMG align=center SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$snapshot&type=image/gif"></TD>
-	<?/MIVAR>
-	<?MIVAR COND="$(EC,$snapshot,NULL)">
+      <?/MIVAR>
+      <?MIVAR COND="$(EC,$snapshot,$MI_NULL)">
 	  <TD><IMG align=center SRC="/images/LOCAL/smallogo.gif"></TD>
-	<?/MIVAR>
+      <?/MIVAR>
       </TR>
     </TABLE>
 
