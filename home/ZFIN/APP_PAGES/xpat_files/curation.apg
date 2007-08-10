@@ -775,7 +775,8 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
          <?MIVAR NAME=$jrnl_is_nice>$3<?/MIVAR>
       
       
-             
+
+         <?MICOMMENT> Elsevier is momentarily allowing this so there is no reason to report this way.
       <?MIVAR COND="$(AND,$(NC,$pubview2_doi_no,NULL),$(EC,$jrnl_publisher,Elsevier),$(EC,$jrnl_is_nice,t),$(OR,$(EC,$pubcur_c_tab,Figure),$(EC,$pubcur_c_tab,FX)))">
         <font color=green>
             Curator Reminder:  For this Elsevier publication, image permission is granted only for figures with gene expression data  (e.g. in situs, antibodies, blots, GFP patterns).  Please remove images/captions from any figures without gene expression.
@@ -783,6 +784,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
             <br/>
             <p>
       <?/MIVAR>
+         <?/MICOMMENT>
 
 
        

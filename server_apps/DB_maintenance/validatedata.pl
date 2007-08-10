@@ -2864,7 +2864,7 @@ my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
 my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 
 if($daily) {
-	checkClosedElsevierFigureNoExpressions($xpatEmail);
+#    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
 	expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
 	xpatHasConsistentMarkerRelationship($xpatEmail);
 	checkFigXpatexSourceConsistant($dbaEmail);
@@ -2898,7 +2898,7 @@ if($orphan) {
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
-  checkOpenElsevierFigureNoExpresWithPATO($xpatEmail);
+#  checkOpenElsevierFigureNoExpresWithPATO($xpatEmail); # elsevier is allowing this for now
 	estsHave1Gene($estEmail);
 	prefixedGenesHave1Est($estEmail);
 	estsWithoutClonesHaveXxGenes($estEmail);
