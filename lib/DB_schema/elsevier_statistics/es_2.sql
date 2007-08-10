@@ -2,7 +2,12 @@ begin work ;
 
 create table excluded_ip (ei_ip varchar(30) not null constraint
        ei_ip_not_null, ei_ip_type varchar(30) not null constraint
-       ei_ip_type_not_null) 
+       ei_ip_type_not_null,
+       check(
+		(ei_ip_type='external') or (ei_ip_type='internal')
+	    ) 
+       	constraint exclude_ip_type_is_either_external_or_internal 
+ )
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
   extent size 256 next size 256 ;
 
