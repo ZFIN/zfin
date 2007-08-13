@@ -61,9 +61,9 @@ public class DOILookupClient {
             System.err.println("START - receive updates from wsdl client") ; 
             publicationList = wsdlConnect.getDOIsForPubmedID(publicationList) ; 
             System.err.println("END - receive updates from wsdl client") ; 
-            System.err.println("START - ") ; 
+            System.err.println("START - HTTP check") ; 
             publicationList = (new DOIHTTPTester()).testDOIList(publicationList) ; 
-            System.err.println("END - ") ; 
+            System.err.println("END - HTTP check") ; 
             System.err.println("START - update pubmed DOIS in DB") ; 
             for(Publication publication: publicationList){
                 System.out.println("added doi["+publication.getPubDOI()+"] for publication["+publication.getZdbID()+"]") ; 
