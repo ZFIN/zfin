@@ -33,10 +33,10 @@ public class DOILookupClient {
     public List<Publication> getPubmedIdsWithNoDOIs(){
         String queryString ; 
         if(maxProcesses >=0){
-            queryString = "select first " + maxProcesses + " zdb_id,accession_no,pub_doi from publication where accession_no is not null and pub_doi is null and accession_no !='none'" ; 
+            queryString = "select first " + maxProcesses + " zdb_id,accession_no,pub_doi from publication where accession_no is not null and pub_doi is null and accession_no !='none' order by pub_date desc" ; 
         }
         else{
-            queryString = "select zdb_id,accession_no,pub_doi from publication where accession_no is not null and pub_doi is null and accession_no !='none'" ; 
+            queryString = "select zdb_id,accession_no,pub_doi from publication where accession_no is not null and pub_doi is null and accession_no !='none' order by pub_date desc" ; 
         }
 
         List<Publication> publicationList = jdbcClient.selectPublications(queryString) ; 
@@ -61,7 +61,13 @@ public class DOILookupClient {
             System.err.println("START - receive updates from wsdl client") ; 
             publicationList = wsdlConnect.getDOIsForPubmedID(publicationList) ; 
             System.err.println("END - receive updates from wsdl client") ; 
+            System.err.println("START - ") ; 
+            publicationList = (new DOIHTTPTester()).testDOIList(publicationList) ; 
+            System.err.println("END - ") ; 
             System.err.println("START - update pubmed DOIS in DB") ; 
+            for(Publication publication: publicationList){
+                System.out.println("added doi["+publication.getPubDOI()+"] for publication["+publication.getZdbID()+"]") ; 
+            }
             jdbcClient.updateDOIs(publicationList) ; 
             System.err.println("END - update pubmed DOIS in DB") ; 
         }

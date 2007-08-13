@@ -7,6 +7,7 @@ import javax.xml.ws.WebServiceRef;
 import uk.ac.ebi.cdb.webservice.*;
 
 import java.util.List;
+import java.util.Iterator;
 import java.text.NumberFormat;
 
 public class CitexploreWSDLConnect {
@@ -14,7 +15,7 @@ public class CitexploreWSDLConnect {
 	@WebServiceRef(wsdlLocation="http://www.ebi.ac.uk/webservices/citexplore/v1.0/service?wsdl")
 	static WSCitationImplService service = new WSCitationImplService();
     private final String PMID_TOKEN = "pmid" ; 
-    private final String DOI_URL = "http://dx.doi.org" ;
+    public static final String DOI_URL = "http://dx.doi.org" ;
 
 
 
@@ -38,7 +39,10 @@ public class CitexploreWSDLConnect {
             int initSize = publicationList.size() ; 
 
             WSCitationImpl port = service.getWSCitationImplPort();
-            for( Publication publication: publicationList  ){
+            Iterator<Publication> pubIter = publicationList.iterator() ; 
+
+            while( pubIter.hasNext()  ){
+                Publication publication = pubIter.next() ; 
                 doc2LocResultListBean = port.doc2Loc(PMID_TOKEN, publication.getAccessionNumber() );
                 doc2LocResultBeanCollection = doc2LocResultListBean.getDoc2LocResultBeanCollection();
                 hasDOI = false ; 
@@ -46,7 +50,7 @@ public class CitexploreWSDLConnect {
                     urlString = doc2LocResultBean.getUrl() ; 
                     if(urlString.contains( DOI_URL ) ){
                         doiValue = urlString.substring( DOI_URL.length()+1 ) ; 
-                        System.out.println("added doi[" + doiValue + "]  for pmid["+ publication.getAccessionNumber() +"]") ; 
+                        System.err.println("added doi[" + doiValue + "]  for pmid["+ publication.getAccessionNumber() +"]") ; 
                         publication.setPubDOI(doiValue) ; 
                         hasDOI = true ; 
                     }
@@ -55,6 +59,7 @@ public class CitexploreWSDLConnect {
                 if(hasDOI == false ){
                     System.err.println("doi not found for pmid[" + publication.getAccessionNumber() + "]") ; 
                     publication.setPubDOI(null) ; 
+                    pubIter.remove() ; 
                 }
 
                 ++counter ; 
