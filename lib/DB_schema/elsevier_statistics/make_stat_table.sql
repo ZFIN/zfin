@@ -33,7 +33,7 @@ insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_s
 insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','HTTP_REFERER','N','+','N',DATE('12/06/1998') ) ; 
 insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','HTTP_URI','N','+','N',DATE('12/06/1998') ) ; 
 insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','HTTP_HOST','N','+','N',DATE('12/06/1998') ) ; 
-insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','USER_AGENT','N','+','N',DATE('12/06/1998') ) ; 
+insert into webconfigs (config_name,variable_name,overwrite,value,disable,time_stamp) values ('zfin','HTTP_USER_AGENT','N','+','N',DATE('12/06/1998') ) ; 
 
 commit work ;
 
