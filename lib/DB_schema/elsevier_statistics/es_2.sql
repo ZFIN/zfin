@@ -21,6 +21,6 @@ alter table excluded_ip
 alter table elsevier_statistics 
   add (es_http_user_agent varchar(255)) ;
 
---commit work ;
+commit work ;
 
-rollback work ;
+--rollback work ;
