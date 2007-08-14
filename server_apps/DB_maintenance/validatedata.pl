@@ -2711,6 +2711,25 @@ sub oldOrphanDataCheck($) {
 
 #-------------------
 #Parameter
+# $      Email
+# count the initial, final, deleted and mail all and the percentage delete from the previous day
+sub scrubElsevierStatistics($){
+#    $initcountsql = "select count(*) from elsevier_statistics where es_incoming_ip in (select ei_ip from excluded_ip ) ; " ; 
+    $sql = "begin work ;  delete from elsevier_statistics where es_incoming_ip in (select ei_ip from excluded_ip ) ; rollback work;" ; 
+    $sth = $dbh->prepare($sql) or die "Prepare fails";  
+    my $processresult = $sth -> execute();
+#    $finalcount = "select count(*) from elsevier_statistics where es_incoming_ip in (select ei_ip from excluded_ip ) ; " ; 
+
+#    my $sendToAddress = $_[0];
+#    my $subject = "elsevier statistics ";
+#    my $routineName = "scrubElsevierStatistics";
+#    my $msg = "Actions on the orphans detected last time.";
+#    &sendMail($sendToAddress, $subject,$routineName, $msg, );     
+}
+
+
+#-------------------
+#Parameter
 # $      Email Address for recipients
 # 
 sub oldOrphanSourceCheck($) {
@@ -2864,31 +2883,32 @@ my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
 my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 
 if($daily) {
-#    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
-	expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
-	xpatHasConsistentMarkerRelationship($xpatEmail);
-	checkFigXpatexSourceConsistant($dbaEmail);
-	checkFigApatoSourceConsistant($dbaEmail);
+    scrubElsevierStatistics($xpatEmail) ; 
+    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
+    expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
+    xpatHasConsistentMarkerRelationship($xpatEmail);
+    checkFigXpatexSourceConsistant($dbaEmail);
+    checkFigApatoSourceConsistant($dbaEmail);
 
-	featureAssociatedWithGenotype($mutantEmail);
-	featureIsAlleleOfOrMrkrAbsent($mutantEmail);
-	genotypesHaveNoNames($mutantEmail);
-	linkageHasMembers($linkageEmail);
-	linkagePairHas2Members($linkageEmail);
+    featureAssociatedWithGenotype($mutantEmail);
+    featureIsAlleleOfOrMrkrAbsent($mutantEmail);
+    genotypesHaveNoNames($mutantEmail);
+    linkageHasMembers($linkageEmail);
+    linkagePairHas2Members($linkageEmail);
 
-	foreigndbNotInFdbcontains($otherEmail);
+    foreigndbNotInFdbcontains($otherEmail);
 
-	zdbObjectHomeTableColumnExist($dbaEmail);
-	zdbObjectIsSourceDataCorrect($dbaEmail);
-	zdbObjectHandledByGetObjName($dbaEmail);
+    zdbObjectHomeTableColumnExist($dbaEmail);
+    zdbObjectIsSourceDataCorrect($dbaEmail);
+    zdbObjectHandledByGetObjName($dbaEmail);
 
-	pubTitlesAreUnique($otherEmail);
-	zdbReplacedDataIsReplaced($dbaEmail);
+    pubTitlesAreUnique($otherEmail);
+    zdbReplacedDataIsReplaced($dbaEmail);
 
-	mrkrgoevDuplicatesFound($goEmail);
-	mrkrgoevGoevflagDuplicatesFound($goEmail);
-	mrkrgoevObsoleteAnnotationsFound($goEmail);
-	mrkrgoevSecondaryAnnotationsFound($goEmail);
+    mrkrgoevDuplicatesFound($goEmail);
+    mrkrgoevGoevflagDuplicatesFound($goEmail);
+    mrkrgoevObsoleteAnnotationsFound($goEmail);
+    mrkrgoevSecondaryAnnotationsFound($goEmail);
 }
 if($orphan) {
   
