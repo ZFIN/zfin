@@ -33,6 +33,6 @@ insert into excluded_ip values( '128.223.57.253' ,'internal' ) ;
 
 
 
-rollback work ; 
---commit work ; 
+--rollback work ; 
+commit work ; 
 
