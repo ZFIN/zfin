@@ -12,9 +12,9 @@
 
 <?MISQL SQL="
     insert into elsevier_statistics 
-    ( es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_external_link, es_date )
+    ( es_incoming_ip, es_zfin_url, es_figure_zdb_id,  es_external_link, es_date ,es_http_user_agent)
     values
-    ( '$REMOTE_ADDR','$sourcelink' , '$pubZdbID',  '$externallink' , CURRENT) 
+    ( '$REMOTE_ADDR','$sourcelink' , '$pubZdbID',  '$externallink' , CURRENT,'$HTTP_USER_AGENT') 
     ;">
 <?/MISQL>
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
