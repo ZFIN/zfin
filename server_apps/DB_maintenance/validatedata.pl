@@ -2714,26 +2714,58 @@ sub oldOrphanDataCheck($) {
 # $      Email
 # count the initial, final, deleted and mail all and the percentage delete from the previous day
 sub scrubElsevierStatistics($){
-    # needed for email program
+
     open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write." ; 
+
+    # START - this scrubs all of the static ips
     $sql = "delete from elsevier_statistics where es_incoming_ip in (select ei_ip from excluded_ip ) ; " ; 
     my $allsql = "" ; 
     $allsql = $allsql . $sql . "\n" ; 
-    $sth = $dbh->prepare($sql) or die "Prepare fails";  
-    my $ipsscrubbed = $sth -> execute();
+    my $preparedStmt1 = $dbh->prepare($sql) or die "Prepare fails";  
+    my $ipsscrubbed = $preparedStmt1-> execute();
     if($ipsscrubbed>0){
-        print RESULTFILE "Deleted $ipsscrubbed rows from elsevier_statistics according to the excluded_ip.\n" ; 
+        print RESULTFILE "Deleted $ipsscrubbed rows from elsevier_statistics according to static ips from the excluded_ip table.\n" ; 
     }
+    # END - this scrubs all of the static ips
+
+
+    # START - this scrubs all of the dynamic ips
+    $sql = 'select ei_ip from excluded_ip where ei_ip not like "%.%.%.%"  ; ' ; 
+    $allsql = "" ; 
+    $allsql = $allsql . $sql . "\n" ; 
+    my $preparedStmt2 = $dbh->prepare($sql) or die "Prepare fails";  
+    $preparedStmt2->execute()  ;  
+
+    my $didScrubDynamicIPs = 0 ; 
+    while (my @row = $preparedStmt2->fetchrow_array()) {
+#        print "$row[0]\n" ; 
+        my $subSQL = "delete from elsevier_statistics where es_incoming_ip like '$row[0]%'" ; 
+        my $preparedStmt4 = $dbh->prepare($subSQL) or die "Prepare fails";  
+        my $dynamicscrubbed =  $preparedStmt4->execute();
+
+        if($dynamicscrubbed>0){
+            print RESULTFILE "Deleted $dynamicscrubbed rows from elsevier_statistics according to subnet is $row[0].*.\n" ; 
+            $didScrubDynamicIPs = 1 ; 
+        }
+
+    }
+    # END - this scrubs all of the dynamic ips
+
+
+
+
+
     $sql = "delete from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' ; " ; 
     $allsql = $allsql . $sql . "\n" ; 
-    my $agentsscrubbed = $sth -> execute();
+    my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
+    my $agentsscrubbed = $preparedStmt3-> execute();
     if($agentsscrubbed >0){
         print RESULTFILE "Deleted $agentsscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
     }
     $sql = "$allsql" ; 
 
     close(RESULTFILE) ; 
-    if($ipsscrubbed>0 || $agentsscrubbed >0 ){
+    if($ipsscrubbed>0 || $agentsscrubbed >0 || $didScrubDynamicIPs > 0){
         my $sendToAddress = $_[0];
         my $subject = "elsevier scrub statistics";
         my $routineName = "scrubElsevierStatistics";
@@ -2900,30 +2932,30 @@ my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 if($daily) {
     scrubElsevierStatistics($xpatEmail) ; 
 #    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
-    expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
-    xpatHasConsistentMarkerRelationship($xpatEmail);
-    checkFigXpatexSourceConsistant($dbaEmail);
-    checkFigApatoSourceConsistant($dbaEmail);
-
-    featureAssociatedWithGenotype($mutantEmail);
-    featureIsAlleleOfOrMrkrAbsent($mutantEmail);
-    genotypesHaveNoNames($mutantEmail);
-    linkageHasMembers($linkageEmail);
-    linkagePairHas2Members($linkageEmail);
-
-    foreigndbNotInFdbcontains($otherEmail);
-
-    zdbObjectHomeTableColumnExist($dbaEmail);
-    zdbObjectIsSourceDataCorrect($dbaEmail);
-    zdbObjectHandledByGetObjName($dbaEmail);
-
-    pubTitlesAreUnique($otherEmail);
-    zdbReplacedDataIsReplaced($dbaEmail);
-
-    mrkrgoevDuplicatesFound($goEmail);
-    mrkrgoevGoevflagDuplicatesFound($goEmail);
-    mrkrgoevObsoleteAnnotationsFound($goEmail);
-    mrkrgoevSecondaryAnnotationsFound($goEmail);
+#    expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
+#    xpatHasConsistentMarkerRelationship($xpatEmail);
+#    checkFigXpatexSourceConsistant($dbaEmail);
+#    checkFigApatoSourceConsistant($dbaEmail);
+#
+#    featureAssociatedWithGenotype($mutantEmail);
+#    featureIsAlleleOfOrMrkrAbsent($mutantEmail);
+#    genotypesHaveNoNames($mutantEmail);
+#    linkageHasMembers($linkageEmail);
+#    linkagePairHas2Members($linkageEmail);
+#
+#    foreigndbNotInFdbcontains($otherEmail);
+#
+#    zdbObjectHomeTableColumnExist($dbaEmail);
+#    zdbObjectIsSourceDataCorrect($dbaEmail);
+#    zdbObjectHandledByGetObjName($dbaEmail);
+#
+#    pubTitlesAreUnique($otherEmail);
+#    zdbReplacedDataIsReplaced($dbaEmail);
+#
+#    mrkrgoevDuplicatesFound($goEmail);
+#    mrkrgoevGoevflagDuplicatesFound($goEmail);
+#    mrkrgoevObsoleteAnnotationsFound($goEmail);
+#    mrkrgoevSecondaryAnnotationsFound($goEmail);
 }
 if($orphan) {
   
