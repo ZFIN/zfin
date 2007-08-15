@@ -2895,31 +2895,31 @@ my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 
 if($daily) {
     scrubElsevierStatistics($xpatEmail) ; 
-##    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
-#    expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
-#    xpatHasConsistentMarkerRelationship($xpatEmail);
-#    checkFigXpatexSourceConsistant($dbaEmail);
-#    checkFigApatoSourceConsistant($dbaEmail);
-#
-#    featureAssociatedWithGenotype($mutantEmail);
-#    featureIsAlleleOfOrMrkrAbsent($mutantEmail);
-#    genotypesHaveNoNames($mutantEmail);
-#    linkageHasMembers($linkageEmail);
-#    linkagePairHas2Members($linkageEmail);
-#
-#    foreigndbNotInFdbcontains($otherEmail);
-#
-#    zdbObjectHomeTableColumnExist($dbaEmail);
-#    zdbObjectIsSourceDataCorrect($dbaEmail);
-#    zdbObjectHandledByGetObjName($dbaEmail);
-#
-#    pubTitlesAreUnique($otherEmail);
-#    zdbReplacedDataIsReplaced($dbaEmail);
-#
-#    mrkrgoevDuplicatesFound($goEmail);
-#    mrkrgoevGoevflagDuplicatesFound($goEmail);
-#    mrkrgoevObsoleteAnnotationsFound($goEmail);
-#    mrkrgoevSecondaryAnnotationsFound($goEmail);
+#    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
+    expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
+    xpatHasConsistentMarkerRelationship($xpatEmail);
+    checkFigXpatexSourceConsistant($dbaEmail);
+    checkFigApatoSourceConsistant($dbaEmail);
+
+    featureAssociatedWithGenotype($mutantEmail);
+    featureIsAlleleOfOrMrkrAbsent($mutantEmail);
+    genotypesHaveNoNames($mutantEmail);
+    linkageHasMembers($linkageEmail);
+    linkagePairHas2Members($linkageEmail);
+
+    foreigndbNotInFdbcontains($otherEmail);
+
+    zdbObjectHomeTableColumnExist($dbaEmail);
+    zdbObjectIsSourceDataCorrect($dbaEmail);
+    zdbObjectHandledByGetObjName($dbaEmail);
+
+    pubTitlesAreUnique($otherEmail);
+    zdbReplacedDataIsReplaced($dbaEmail);
+
+    mrkrgoevDuplicatesFound($goEmail);
+    mrkrgoevGoevflagDuplicatesFound($goEmail);
+    mrkrgoevObsoleteAnnotationsFound($goEmail);
+    mrkrgoevSecondaryAnnotationsFound($goEmail);
 }
 if($orphan) {
   
