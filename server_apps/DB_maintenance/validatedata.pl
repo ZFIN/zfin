@@ -460,7 +460,7 @@ sub xpatObjectNotGeneOrEFG ($) {
 #Parameter
 # $      Email Address for recipients
 #
-# Finds figures with images from Elseview publications which have not finished
+# Finds figures with images from Elsevier publications which have not finished
 # being reviewed (are open) and have PATO data but have no expression patterns.  
 # This raises a flag that we should look at these again as they have been checked
 # already (because there is PATO data), but no expression data was found.
@@ -2714,17 +2714,28 @@ sub oldOrphanDataCheck($) {
 # $      Email
 # count the initial, final, deleted and mail all and the percentage delete from the previous day
 sub scrubElsevierStatistics($){
-#    $initcountsql = "select count(*) from elsevier_statistics where es_incoming_ip in (select ei_ip from excluded_ip ) ; " ; 
-    $sql = "begin work ;  delete from elsevier_statistics where es_incoming_ip in (select ei_ip from excluded_ip ) ; rollback work;" ; 
+    # needed for email program
+    open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write." ; 
+    $sql = "delete from elsevier_statistics where es_incoming_ip in (select ei_ip from excluded_ip ) ; " ; 
     $sth = $dbh->prepare($sql) or die "Prepare fails";  
-    my $processresult = $sth -> execute();
-#    $finalcount = "select count(*) from elsevier_statistics where es_incoming_ip in (select ei_ip from excluded_ip ) ; " ; 
+    my $ipsscrubbed = $sth -> execute();
+    if($ipsscrubbed>0){
+        print RESULTFILE "Deleted $ipsscrubbed rows from elsevier_statistics according to the excluded_ip.\n" ; 
+    }
+    $sql = "delete from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' ; " ; 
+    my $agentsscrubbed = $sth -> execute();
+    if($agentsscrubbed >0){
+        print RESULTFILE "Deleted $agentsscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
+    }
 
-#    my $sendToAddress = $_[0];
-#    my $subject = "elsevier statistics ";
-#    my $routineName = "scrubElsevierStatistics";
-#    my $msg = "Actions on the orphans detected last time.";
-#    &sendMail($sendToAddress, $subject,$routineName, $msg, );     
+    close(RESULTFILE) ; 
+    if($ipsscrubbed>0 || $agentsscrubbed >0 ){
+        my $sendToAddress = $_[0];
+        my $subject = "elsevier scrub statistics";
+        my $routineName = "scrubElsevierStatistics";
+        my $msg = "Scrubbed ips from elsevier_statistics table.";
+        &sendMail($sendToAddress, $subject,$routineName, $msg, $sql);     
+    }
 }
 
 
@@ -2884,31 +2895,31 @@ my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 
 if($daily) {
     scrubElsevierStatistics($xpatEmail) ; 
-    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
-    expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
-    xpatHasConsistentMarkerRelationship($xpatEmail);
-    checkFigXpatexSourceConsistant($dbaEmail);
-    checkFigApatoSourceConsistant($dbaEmail);
-
-    featureAssociatedWithGenotype($mutantEmail);
-    featureIsAlleleOfOrMrkrAbsent($mutantEmail);
-    genotypesHaveNoNames($mutantEmail);
-    linkageHasMembers($linkageEmail);
-    linkagePairHas2Members($linkageEmail);
-
-    foreigndbNotInFdbcontains($otherEmail);
-
-    zdbObjectHomeTableColumnExist($dbaEmail);
-    zdbObjectIsSourceDataCorrect($dbaEmail);
-    zdbObjectHandledByGetObjName($dbaEmail);
-
-    pubTitlesAreUnique($otherEmail);
-    zdbReplacedDataIsReplaced($dbaEmail);
-
-    mrkrgoevDuplicatesFound($goEmail);
-    mrkrgoevGoevflagDuplicatesFound($goEmail);
-    mrkrgoevObsoleteAnnotationsFound($goEmail);
-    mrkrgoevSecondaryAnnotationsFound($goEmail);
+##    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
+#    expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
+#    xpatHasConsistentMarkerRelationship($xpatEmail);
+#    checkFigXpatexSourceConsistant($dbaEmail);
+#    checkFigApatoSourceConsistant($dbaEmail);
+#
+#    featureAssociatedWithGenotype($mutantEmail);
+#    featureIsAlleleOfOrMrkrAbsent($mutantEmail);
+#    genotypesHaveNoNames($mutantEmail);
+#    linkageHasMembers($linkageEmail);
+#    linkagePairHas2Members($linkageEmail);
+#
+#    foreigndbNotInFdbcontains($otherEmail);
+#
+#    zdbObjectHomeTableColumnExist($dbaEmail);
+#    zdbObjectIsSourceDataCorrect($dbaEmail);
+#    zdbObjectHandledByGetObjName($dbaEmail);
+#
+#    pubTitlesAreUnique($otherEmail);
+#    zdbReplacedDataIsReplaced($dbaEmail);
+#
+#    mrkrgoevDuplicatesFound($goEmail);
+#    mrkrgoevGoevflagDuplicatesFound($goEmail);
+#    mrkrgoevObsoleteAnnotationsFound($goEmail);
+#    mrkrgoevSecondaryAnnotationsFound($goEmail);
 }
 if($orphan) {
   
