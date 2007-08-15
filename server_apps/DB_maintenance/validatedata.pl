@@ -2717,16 +2717,20 @@ sub scrubElsevierStatistics($){
     # needed for email program
     open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write." ; 
     $sql = "delete from elsevier_statistics where es_incoming_ip in (select ei_ip from excluded_ip ) ; " ; 
+    my $allsql = "" ; 
+    $allsql = $allsql . $sql . "\n" ; 
     $sth = $dbh->prepare($sql) or die "Prepare fails";  
     my $ipsscrubbed = $sth -> execute();
     if($ipsscrubbed>0){
         print RESULTFILE "Deleted $ipsscrubbed rows from elsevier_statistics according to the excluded_ip.\n" ; 
     }
     $sql = "delete from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' ; " ; 
+    $allsql = $allsql . $sql . "\n" ; 
     my $agentsscrubbed = $sth -> execute();
     if($agentsscrubbed >0){
         print RESULTFILE "Deleted $agentsscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
     }
+    $sql = "$allsql" ; 
 
     close(RESULTFILE) ; 
     if($ipsscrubbed>0 || $agentsscrubbed >0 ){
