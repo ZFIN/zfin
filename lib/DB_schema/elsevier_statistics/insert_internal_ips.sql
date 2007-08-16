@@ -38,9 +38,9 @@ insert into excluded_ip values( '128.223.56.155' ,'internal' ) ;
 
 
 -- Start - external MS ips
-insert into excluded_ip values( '65.55.213.*' ,'external' ) ; 
-insert into excluded_ip values( '65.54.188.*' ,'external' ) ; 
-insert into excluded_ip values( '65.55.209.*' ,'external' ) ; 
+insert into excluded_ip values( '65.55.213' ,'external' ) ; 
+insert into excluded_ip values( '65.54.188' ,'external' ) ; 
+insert into excluded_ip values( '65.55.209' ,'external' ) ; 
 -- End - external MS ips
 
 -- Start - external bot IP
