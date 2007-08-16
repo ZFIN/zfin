@@ -38,6 +38,10 @@ function updateInnerHTML(element_id,html_to_display) {
     var c1 = document.getElementById(element_id);
     c1.innerHTML = html_to_display;
 }
+function updateInnerHTMLAnat(element_id,html_to_display) {
+    var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+}
 </script>
 
 <HTML>
@@ -53,8 +57,8 @@ function updateInnerHTML(element_id,html_to_display) {
 
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
-<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
-<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=MI_NULL><?/MIVAR>
 
 <?MIVAR NAME=$fxfigview_fig_zdb_id>$OID<?/MIVAR>
 <?MIVAR NAME=fxfigview_is_geli><?/MIVAR>
@@ -245,7 +249,7 @@ patterns associated with the figure
    <tr><td> <b>PHENOTYPE:</b>
     <tr><td><b>Genotype(s): </b><?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$OID&fxfiggeno_display_option=anchor') from webPages where ID='aa-fxfigphenogenolist.apg';">$1<?/MISQL>
 
-    <tr><td><?MISQL SQL="select WebExplode(object,'fxfiganat_fig_zdb_id=$OID&fxfigge_display_option=anchor') from webPages where ID='aa-fxfigphenoanatlist.apg';">$1<?/MISQL>
+    <tr><td><?MISQL SQL="select WebExplode(object,'fxfigphenoanat_fig_zdb_id=$OID&fxfigge_display_option=anchor') from webPages where ID='aa-fxfigphenoanatlist.apg';">$1<?/MISQL>
 
 
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfigst_fig_zdb_id=$OID&fxfigst_is_displayed=t') from webPages where ID='aa-fxfigphenostgrng.apg';">$1<?/MISQL>
