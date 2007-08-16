@@ -1,7 +1,7 @@
 <?MICOMMENT>
 
-FILE:     fxfiganatlist.apg
-PREFIX:   fxfiganat_
+FILE:     fxfigphenoanatlist.apg
+PREFIX:   fxfigphenoanat_
 
 This displays a list of anatomy terms separated by ';'.
 
@@ -15,14 +15,14 @@ function updateInnerHTML(element_id,html_to_display) {
 </script>
 
 INPUT VARS:
-  $fxfiganat_fig_zdb_id		figure zdb-id.      	
-  $fxfiganat_gene_zdb_id	optional gene to constrain to, requires a resultTable right now 
+  $fxfigphenoanat_fig_zdb_id		figure zdb-id.      	
+  $fxfigphenoanat_gene_zdb_id	optional gene to constrain to, requires a resultTable right now 
 				(would need new join SQL otherwise)
-  $fxfiganat_resultTable	optional result table to join against
-  $fxfiganat_Label		optional label to replace default.
-  $fxfiganat_condensed_count	optional, how many to show on a condensed list
-  $fxfiganat_max_count		optional, how many can we show before condensing
-  $fxfiganat_hide_unspecified	optional, display nothing if all that comes back is an 
+  $fxfigphenoanat_resultTable	optional result table to join against
+  $fxfigphenoanat_Label		optional label to replace default.
+  $fxfigphenoanat_condensed_count	optional, how many to show on a condensed list
+  $fxfigphenoanat_max_count		optional, how many can we show before condensing
+  $fxfigphenoanat_hide_unspecified	optional, display nothing if all that comes back is an 
 				unspecified anat record
 
 
@@ -52,29 +52,29 @@ stage range, experiment, or expression_found in the same figure.
 <?/MICOMMENT>
 
 
-<?MIVAR NAME="$fxfiganat_condensed_count" COND="$(NXST,$fxfiganat_condensed_count)">5<?/MIVAR>		
-<?MIVAR NAME="$fxfiganat_max_count" COND="$(NXST,$fxfiganat_max_count)">9<?/MIVAR>
+<?MIVAR NAME="$fxfigphenoanat_condensed_count" COND="$(NXST,$fxfigphenoanat_condensed_count)">5<?/MIVAR>		
+<?MIVAR NAME="$fxfigphenoanat_max_count" COND="$(NXST,$fxfigphenoanat_max_count)">9<?/MIVAR>
 
-<?MIVAR NAME="$fxfiganat_unspecified_constraint"><?/MIVAR>
-<?MIBLOCK COND="$(AND,$(XST,$fxfiganat_hide_unspecified),$(EC,$fxfiganat_hide_unspecified,t))">
-  <?MIVAR NAME="$fxfiganat_unspecified_constraint">and anatitem_name <> 'unspecified'<?/MIVAR>
+<?MIVAR NAME="$fxfigphenoanat_unspecified_constraint"><?/MIVAR>
+<?MIBLOCK COND="$(AND,$(XST,$fxfigphenoanat_hide_unspecified),$(EC,$fxfigphenoanat_hide_unspecified,t))">
+  <?MIVAR NAME="$fxfigphenoanat_unspecified_constraint">and anatitem_name <> 'unspecified'<?/MIVAR>
 <?/MIBLOCK>
 
 
 
 <?MICOMMENT> *** If a gene id is passed in, constrain against it, otherwise...don't **** <?/MICOMMENT>
-<?MIVAR NAME="$fxfiganat_gene_constraint"><?/MIVAR>
-<?MIVAR COND="$(XST,$fxfiganat_gene_zdb_id)" NAME="$fxfiganat_gene_constraint"> and xpat_gene_zdb_id = '$fxfiganat_gene_zdb_id' <?/MIVAR>
+<?MIVAR NAME="$fxfigphenoanat_gene_constraint"><?/MIVAR>
+<?MIVAR COND="$(XST,$fxfigphenoanat_gene_zdb_id)" NAME="$fxfigphenoanat_gene_constraint"> and xpat_gene_zdb_id = '$fxfigphenoanat_gene_zdb_id' <?/MIVAR>
 
 <?MICOMMENT> *** if a resultTable is passed in, join on it so that we only get figures & genes 
                  that are in the query (this applies when called from xpatselect_detailedresults *** <?/MICOMMENT>
 
-<?MIVAR NAME="$fxfiganat_result_constraint_table"><?/MIVAR>
-<?MIVAR NAME="$fxfiganat_result_constraint_where"><?/MIVAR>
+<?MIVAR NAME="$fxfigphenoanat_result_constraint_table"><?/MIVAR>
+<?MIVAR NAME="$fxfigphenoanat_result_constraint_where"><?/MIVAR>
 
-<?MIBLOCK COND="$(XST,$fxfiganat_resultTable)">
-  <?MIVAR NAME="$fxfiganat_result_constraint_table">, $fxfiganat_resultTable<?/MIVAR>
-  <?MIVAR NAME="$fxfiganat_result_constraint_where">
+<?MIBLOCK COND="$(XST,$fxfigphenoanat_resultTable)">
+  <?MIVAR NAME="$fxfigphenoanat_result_constraint_table">, $fxfigphenoanat_resultTable<?/MIVAR>
+  <?MIVAR NAME="$fxfigphenoanat_result_constraint_where">
     and xpat_xpatex_zdb_id = xpatres_xpatex_zdb_id
     and xpatfig_fig_zdb_id = xpat_fig_zdb_id
   <?/MIVAR>
@@ -91,14 +91,14 @@ stage range, experiment, or expression_found in the same figure.
     =========================================================
 <?/MICOMMENT>
     
-<?MIVAR NAME=$fxfiganat_short_list><?/MIVAR>
-<?MIVAR NAME=$fxfiganat_long_list><?/MIVAR>
+<?MIVAR NAME=$fxfigphenoanat_short_list><?/MIVAR>
+<?MIVAR NAME=$fxfigphenoanat_long_list><?/MIVAR>
 
 <?MICOMMENT> *** set default label *** <?/MICOMMENT>
-<?MIVAR NAME="$fxfiganat_defaultLabel"><strong>Observed In: </strong><?/MIVAR>
+<?MIVAR NAME="$fxfigphenoanat_defaultLabel"><strong>Observed In: </strong><?/MIVAR>
 
-<?MIBLOCK COND="$(NXST,$fxfiganat_Label)">
-  <?MIVAR NAME="$fxfiganat_Label">$fxfiganat_defaultLabel<?/MIVAR>
+<?MIBLOCK COND="$(NXST,$fxfigphenoanat_Label)">
+  <?MIVAR NAME="$fxfigphenoanat_Label">$fxfigphenoanat_defaultLabel<?/MIVAR>
 <?/MIBLOCK>
 
      <?MISQL SQL="select fdb_db_query
@@ -109,74 +109,75 @@ stage range, experiment, or expression_found in the same figure.
 <?MISQL SQL="
     SELECT distinct anatitem_name, anatitem_zdb_id,''
       FROM apato_figure, atomic_phenotype, anatomy_item 
-     WHERE apatofig_fig_zdb_id = '$fxfiganat_fig_zdb_id'
+     WHERE apatofig_fig_zdb_id = '$fxfigphenoanat_fig_zdb_id'
        AND apatofig_apato_zdb_id = apato_zdb_id
                      and (apato_entity_a_zdb_id= anatitem_zdb_id or apato_entity_b_zdb_id=anatitem_zdb_id)
     UNION
     SELECT distinct goterm_name, goterm_zdb_id,goterm_go_id
       FROM apato_figure, atomic_phenotype, go_term 
-     WHERE apatofig_fig_zdb_id = '$fxfiganat_fig_zdb_id'
+     WHERE apatofig_fig_zdb_id = '$fxfigphenoanat_fig_zdb_id'
        AND apatofig_apato_zdb_id = apato_zdb_id
                      and (apato_entity_a_zdb_id= goterm_zdb_id or apato_entity_b_zdb_id=goterm_zdb_id)">
  <?MIVAR NAME=$zdbType>$(SUBSTR,$2,1,8)<?/MIVAR>
    <?MIBLOCK COND="$(EC,$zdbType,ZDB-ANAT)">
-    <?MIVAR NAME="$fxfiganat_anatitem_html"><span nowrap><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$2>$1</a></span><?/MIVAR>
+    <?MIVAR NAME="$fxfigphenoanat_anatitem_html"><span nowrap><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$2>$1</a></span><?/MIVAR>
    <?MIELSE>
-    <?MIVAR NAME="$fxfiganat_anatitem_html"><span nowrap><a href=$fxfigphenogo_url$3>$1</a></span><?/MIVAR>
+    <?MIVAR NAME="$fxfigphenoanat_anatitem_html"><span nowrap><a href=$fxfigphenogo_url$3>$1</a></span><?/MIVAR>
 <?/MIBLOCK>
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-      <?MIVAR NAME=fxfiganat_short_list>$fxfiganat_Label $fxfiganat_anatitem_html<?/MIVAR>
-      <?MIVAR NAME=fxfiganat_long_list>$fxfiganat_Label $fxfiganat_anatitem_html<?/MIVAR>
-    <?MIELSE COND=$(<,$MI_CURRENTROW,$fxfiganat_condensed_count)>
-      <?MIVAR>$(VECAPPEND,fxfiganat_long_list,$fxfiganat_anatitem_html)
+      <?MIVAR NAME=fxfigphenoanat_short_list>$fxfigphenoanat_Label $fxfigphenoanat_anatitem_html<?/MIVAR>
+      <?MIVAR NAME=fxfigphenoanat_long_list>$fxfigphenoanat_Label $fxfigphenoanat_anatitem_html<?/MIVAR>
+    <?MIELSE COND=$(<,$MI_CURRENTROW,$fxfigphenoanat_condensed_count)>
+      <?MIVAR>$(VECAPPEND,fxfigphenoanat_long_list,$fxfigphenoanat_anatitem_html)
       <?/MIVAR>
-      <?MIVAR>$(VECAPPEND,fxfiganat_short_list,$fxfiganat_anatitem_html)
+      <?MIVAR>$(VECAPPEND,fxfigphenoanat_short_list,$fxfigphenoanat_anatitem_html)
       <?/MIVAR>
     <?MIELSE>
-      <?MIVAR>$(VECAPPEND,fxfiganat_long_list,$fxfiganat_anatitem_html)
+      <?MIVAR>$(VECAPPEND,fxfigphenoanat_long_list,$fxfigphenoanat_anatitem_html)
       <?/MIVAR>
     <?/MIBLOCK>
 <?/MISQL>
 
 
-  <?MIVAR NAME=fxfiganat_separate_short_list SEPARATE=", ">$fxfiganat_short_list<?/MIVAR>
-  <?MIVAR NAME=fxfiganat_separate_long_list SEPARATE=", ">$fxfiganat_long_list<?/MIVAR>
+  <?MIVAR NAME=fxfigphenoanat_separate_short_list SEPARATE=", ">$fxfigphenoanat_short_list<?/MIVAR>
+  <?MIVAR NAME=fxfigphenoanat_separate_long_list SEPARATE=", ">$fxfigphenoanat_long_list<?/MIVAR>
   
-  <?MIVAR NAME=fxfiganat_escape_short_list>$(REPLACE,$fxfiganat_separate_short_list,"'","")<?/MIVAR>
-  <?MIVAR NAME=fxfiganat_escape_long_list>$(REPLACE,$fxfiganat_separate_long_list,"'","")<?/MIVAR>
+  <?MIVAR NAME=fxfigphenoanat_escape_short_list>$(REPLACE,$fxfigphenoanat_separate_short_list,"'","")<?/MIVAR>
+  <?MIVAR NAME=fxfigphenoanat_escape_long_list>$(REPLACE,$fxfigphenoanat_separate_long_list,"'","")<?/MIVAR>
   
-  <?MIVAR NAME=fxfiganat_zdb_minus>$(REPLACE,$fxfiganat_fig_zdb_id,"-","")<?/MIVAR>
+  <?MIVAR NAME=fxfigphenoanat_zdb_minus>$(REPLACE,$fxfigphenoanat_fig_zdb_id,"-","")<?/MIVAR>
 
-<?MIVAR NAME=$fxfiganat_left_arrow><img border=0 onClick=updateAnatomyList$fxfiganat_zdb_minus('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
-<?MIVAR NAME=$fxfiganat_right_arrow><img onClick=updateAnatomyList$fxfiganat_zdb_minus('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$fxfigphenoanat_left_arrow><img border=0 onClick=updatePhenoAnatomyList$fxfigphenoanat_zdb_minus('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$fxfigphenoanat_right_arrow><img onClick=updatePhenoAnatomyList$fxfigphenoanat_zdb_minus('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
 
   
 <script>
   <?MIVAR>
-function updateAnatomyList$fxfiganat_zdb_minus(display_option) {
-    var long_display = "$fxfiganat_escape_long_list  <a href=\"javascript:updateAnatomyList$fxfiganat_zdb_minus('short');\">$fxfiganat_left_arrow</a>";
-    var short_display = "$fxfiganat_escape_short_list ... <a href=javascript:onClick=updateAnatomyList$fxfiganat_zdb_minus('long')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow";
+function updatePhenoAnatomyList$fxfigphenoanat_zdb_minus(display_option) {
+    
+    var long_display = "$fxfigphenoanat_escape_long_list  <a href=\"javascript:updatePhenoAnatomyList$fxfigphenoanat_zdb_minus('short');\">$fxfigphenoanat_left_arrow</a>";
+    var short_display = "$fxfigphenoanat_escape_short_list ... <a href=javascript:onClick=updatePhenoAnatomyList$fxfigphenoanat_zdb_minus('long')>(all $(VECSIZE,$fxfigphenoanat_long_list))</a> $fxfigphenoanat_right_arrow";
 
     if (display_option == "long") {
-        updateInnerHTML('anatomyList$fxfiganat_zdb_minus',long_display)
+        updateInnerHTMLAnat('phenoanatomyList$fxfigphenoanat_zdb_minus',long_display)
     }
     else {
-        updateInnerHTML('anatomyList$fxfiganat_zdb_minus',short_display)    
+        updateInnerHTMLAnat('phenoanatomyList$fxfigphenoanat_zdb_minus',short_display)    
     }
 }
   <?/MIVAR>
 </script>
-<?MIBLOCK COND="$(EQ,$fxfiganat_escape_short_list,)">
-     <?MIVAR NAME=$fxfignanat_escape_short_list>$fxfiganat_Label $fxfiganat_escape_short_list<?/MIVAR>
+<?MIBLOCK COND="$(EQ,$fxfigphenoanat_escape_short_list,)">
+     <?MIVAR NAME=$fxfignanat_escape_short_list>$fxfigphenoanat_Label $fxfigphenoanat_escape_short_list<?/MIVAR>
 <?/MIBLOCK>
-<?MIVAR><span id="anatomyList$fxfiganat_zdb_minus"><?/MIVAR>
-<?MIBLOCK COND="$(<,$(VECSIZE,$fxfiganat_long_list),$fxfiganat_max_count)">
+<?MIVAR><span id="phenoanatomyList$fxfigphenoanat_zdb_minus"><?/MIVAR>
+<?MIBLOCK COND="$(<,$(VECSIZE,$fxfigphenoanat_long_list),$fxfigphenoanat_max_count)">
   <?MIVAR>
-    $fxfiganat_escape_long_list
+    $fxfigphenoanat_escape_long_list
   <?/MIVAR>
 <?MIELSE>
   <?MIVAR>
-    $fxfiganat_escape_short_list ... <a href=javascript:onClick=updateAnatomyList$fxfiganat_zdb_minus('long')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow
+    $fxfigphenoanat_escape_short_list ... <a href=javascript:onClick=updatePhenoAnatomyList$fxfigphenoanat_zdb_minus('long')>(all $(VECSIZE,$fxfigphenoanat_long_list))</a> $fxfigphenoanat_right_arrow
   <?/MIVAR>
 <?/MIBLOCK>
 
@@ -189,12 +190,12 @@ function updateAnatomyList$fxfiganat_zdb_minus(display_option) {
 <?/MICOMMENT>
 
 <?MIVAR>
-  $(UNSETVAR,$fxfiganat_Label)
-  $(UNSETVAR,$fxfiganat_fig_zdb_id)
-  $(UNSETVAR,$fxfiganat_short_list)  
-  $(UNSETVAR,$fxfiganat_long_list)  
-  $(UNSETVAR,$fxfiganat_separate_short_list)
-  $(UNSETVAR,$fxfiganat_separate_long_list)
-  $(UNSETVAR,$fxfiganat_escape_short_list)
-  $(UNSETVAR,$fxfiganat_escape_long_list)
+  $(UNSETVAR,$fxfigphenoanat_Label)
+  $(UNSETVAR,$fxfigphenoanat_fig_zdb_id)
+  $(UNSETVAR,$fxfigphenoanat_short_list)  
+  $(UNSETVAR,$fxfigphenoanat_long_list)  
+  $(UNSETVAR,$fxfigphenoanat_separate_short_list)
+  $(UNSETVAR,$fxfigphenoanat_separate_long_list)
+  $(UNSETVAR,$fxfigphenoanat_escape_short_list)
+  $(UNSETVAR,$fxfigphenoanat_escape_long_list)
 <?/MIVAR>
