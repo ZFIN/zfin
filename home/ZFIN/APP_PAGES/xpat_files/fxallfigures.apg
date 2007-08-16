@@ -29,6 +29,10 @@ function updateInnerHTML(element_id,html_to_display) {
     var c1 = document.getElementById(element_id);
     c1.innerHTML = html_to_display;
 }
+function updateInnerHTMLAnat(element_id,html_to_display) {
+    var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+}
 </script>
 
 <HTML>
@@ -258,7 +262,7 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
        <table width = 100%  cellspacing = 0 cellpadding = 5 bgcolor="#EEEEEE">
     <tr><td> <b>PHENOTYPE : </b>
     <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigfi_is_displayed=t') from webPages where ID='aa-fxfigphenogenolist.apg';">$1<?/MISQL></tr>
-    <tr><td><?MISQL SQL="select WebExplode(object,'fxfiganat_fig_zdb_id=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfigphenoanatlist.apg';">$1<?/MISQL>
+    <tr><td><?MISQL SQL="select WebExplode(object,'fxfigphenoanat_fig_zdb_id=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfigphenoanatlist.apg';">$1<?/MISQL>
     <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigst_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigst_is_displayed=t') from webPages where ID='aa-fxfigphenostgrng.apg';">$1<?/MISQL>
                   <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Phenotype details</a></td>
 </table>
