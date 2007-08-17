@@ -359,7 +359,8 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?MIBLOCK COND="$(NC,$rtype,xpat)">
 <?MICOMMENT>  ==================== value= will not change value with Safari need special case ============== <?/MICOMMENT>
 <?MIVAR>
-    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,authors),'pyear desc','authors'),'$total_count','$count_of_real_pub','$evidence')"
+    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder
+,authors),'pyear desc','authors_lower'),'$total_count','$count_of_real_pub','$evidence')"
            value="$(IF,$(EC,$pubOrder,authors),Order By Date,Order By Author)"> 
     <script>
       if (navigator.userAgent.indexOf('Safari') != -1) {
@@ -445,11 +446,17 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
   <?MIBLOCK COND="$(NXST,$attribtype)">
 
+<?MICOMMENT> authors_lower not authors must be sent to citgeneric.apg for correct ordering <?/MICOMMENT>
+    <?MIBLOCK COND=$(EC,$pubOrder,authors)>
+      <?MIVAR NAME=$citpubOrder>p.pub_authors_lower<?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME=$citpubOrder<$pubOrder><?/MIVAR>
+    <?/MIBLOCK>
 
     <?MIBLOCK COND="$(>,$(POSITION,$OID,ALT),0)">
 
       <?MISQL SQL="
-        select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
+        select WebExplode(object,'&sp_G_orderby=order by $citpubOrder$pubOrderType&sp_G_jtype_option=published') 
         from webPages where ID='aa-citgeneric.apg';">
           <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
       <?/MISQL>
@@ -466,7 +473,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?/MISQL>
 
       <?MISQL SQL="
-        select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
+        select WebExplode(object,'&sp_G_orderby=order by $citpubOrder$pubOrderType&sp_G_jtype_option=published') 
         from webPages where ID='aa-citgeneric.apg';">
           <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
       <?/MISQL>
@@ -488,7 +495,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
   <?MIBLOCK COND="$(>,$(POSITION,$OID,GENO),0)">
 
-    <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
+    <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $citpubOrder$pubOrderType&sp_G_jtype_option=published') 
                  from webPages where ID='aa-citgeneric.apg';">
         <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
     <?/MISQL>
