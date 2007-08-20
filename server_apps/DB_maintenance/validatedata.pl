@@ -2755,7 +2755,7 @@ sub scrubElsevierStatistics($){
 
 
 
-    $sql = "delete from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' ; " ; 
+    $sql = "delete from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' or es_http_user_agent is null ; " ; 
     $allsql = $allsql . $sql . "\n" ; 
     my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
     my $agentsscrubbed = $preparedStmt3-> execute();
