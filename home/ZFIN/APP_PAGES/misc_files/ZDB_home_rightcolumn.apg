@@ -171,17 +171,19 @@
          </a>
        </li>
        <?/MICOMMENT>
+       
+       <li>
+         <a href="/zf_info/news/siteNews.html#zv7-8-07">
+         August 20 - Zv7 Released in Ensembl 
+         </a>
+       </li>
 
        <li>
          <a href="/zf_info/news/siteNews.html#Vega0718">
            July 18 - New Vega release
          </a>
        </li>
-       <li>
-         <a href="/zf_info/news/siteNews.html#zv7">
-           July 18 - Seventh Zebrafish Genome Assembly (Zv7) Released
-         </a>
-       </li>      
+      
 
        <li><a href="/zf_info/news/siteNews.html">All News</a></li>
    
