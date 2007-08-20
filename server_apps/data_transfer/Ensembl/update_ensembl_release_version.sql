@@ -6,7 +6,7 @@ set constraints for foreign_db.foreign_db_primary_key deferred;
 
 UPDATE foreign_db
 SET fdb_db_name = 'Ensembl(Zv7)'
-WHERE fdb_db_name = 'Ensembl'
+WHERE fdb_db_name[1,8] = 'Ensembl('
 ;
 
 UPDATE foreign_db_contains
