@@ -1,4 +1,4 @@
-!echo 'doi accesses from pub page'
+!echo 'total doi accesses from pubs'
 select count(distinct es_pk_id) as num_doi_allpub
     from 
     elsevier_statistics ,figure ,publication 
@@ -9,7 +9,7 @@ select count(distinct es_pk_id) as num_doi_allpub
     and jtype not in ("Unpublished", "Curation")
     ;
 
-!echo 'doi accesses from pub page with image'
+!echo 'total doi accesses from pubs with images only'
 select count(distinct es_pk_id) as num_doi_imgonly
     from 
     elsevier_statistics ,figure ,publication 
