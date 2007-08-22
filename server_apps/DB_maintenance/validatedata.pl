@@ -2731,7 +2731,6 @@ sub scrubElsevierStatistics($){
 
     # START - this scrubs all of the dynamic ips
     $sql = 'select ei_ip from excluded_ip where ei_ip not like "%.%.%.%"  ; ' ; 
-    $allsql = "" ; 
     $allsql = $allsql . $sql . "\n" ; 
     my $preparedStmt2 = $dbh->prepare($sql) or die "Prepare fails";  
     $preparedStmt2->execute()  ;  
