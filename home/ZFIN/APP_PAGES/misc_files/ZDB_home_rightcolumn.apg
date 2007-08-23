@@ -172,17 +172,19 @@
        </li>
        <?/MICOMMENT>
        
+              
+       <li>
+         <a href="/zf_info/news/siteNews.html#ZFIQ">
+         August 23 -Zebrafish Image Quantitator available 
+         </a>
+       </li>
+       
               <li>
          <a href="/zf_info/news/siteNews.html#fishnet">
            August 21 - FishNet database now available
          </a>
        </li>
-       
-       <li>
-         <a href="/zf_info/news/siteNews.html#zv7-8-07">
-         August 20 - Zv7 Released in Ensembl 
-         </a>
-       </li>
+
 
 
       
