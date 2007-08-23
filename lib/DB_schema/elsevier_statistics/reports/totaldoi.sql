@@ -28,8 +28,8 @@ select count(distinct es_pk_id) as num_doi_imgonly
 select count(distinct es_pk_id) as num_doi_imgonly
     from 
     elsevier_statistics ,figure ,publication , image
-    where 
-    fig_source_zdb_id = zdb_id
+    where fig_source_zdb_id = zdb_id
+    and pub_doi is not null 
     and es_figure_zdb_id = zdb_id
     and es_external_link is not null
     and jtype not in ("Unpublished", "Curation")
@@ -37,13 +37,16 @@ select count(distinct es_pk_id) as num_doi_imgonly
     ;
 
 
-!echo 'total external doi accesses'
+!echo 'total external doi accesses from pub'
 select count(distinct es_pk_id) 
-    from elsevier_statistics 
+    from elsevier_statistics , publication
     where es_external_link is not null
+    and pub_doi is not  null 
+    and es_figure_zdb_id = zdb_id
+    and jtype not in ("Unpublished", "Curation")
     ;
 
-!echo 'total external doi access with no images'
+!echo 'total external doi access from pub with no images'
 select count(distinct es_pk_id )
     from 
     elsevier_statistics ,publication 
