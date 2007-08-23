@@ -2815,7 +2815,10 @@ sub oldOrphanSourceCheck($) {
   }
 }
 
-
+#-------------------
+#Parameter
+# $      Email Address for recipients
+# 
 sub countTopPubHits($){
 
   my $routineName = "countTopPubHits";
@@ -2843,6 +2846,53 @@ sub countTopPubHits($){
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
   }
   &recordResult($routineName, $nRecords);
+
+}
+
+
+#-------------------
+#Parameter
+# $      Email Address for recipients
+# 
+sub trackElsevierStatistics($){
+
+  my $routineName = "countTopPubHits";
+
+  # All w/o image pub searches need to be normalized by date.  
+
+  # Normalization date
+  my $normalDate = '6/1/04' ; 
+  my $allsql = "" ; 
+
+  # SUMMARY
+  # Effectiveness of images for doi access = funnel WITH image / funnel w\/o image
+  # funnel WITH image = pub WITH image  / total DOI access of pubs WITH image 
+  
+  my $sql = "select count(distinct zdb_id) , DATE( avg(pub_date) ) 
+    from publication 
+    where jtype not in ('Unpublished','Curation') 
+    and pub_doi is not null 
+    and pub_date > DATE( '6/1/04')  
+    ; " ;
+  $allsql = $allsql . $sql . "\n" ; 
+  my $preparedStmt1 = $dbh->prepare($sql) or die "Prepare fails";  
+  my $ipsscrubbed = $preparedStmt1-> execute();
+   
+  # funnel w/o image  = pub w/o image  / total DOI access of pubs w/o image = funnel w/o image
+
+  # STATS
+  # access versus image to:
+  #  - all DOIS
+  #  - all pubs
+  #  - pubview2
+  #  - pubview2
+  #  - fxfigure
+  #  - allfigure
+  #  - imageview 
+  # conversions versus image from:
+  #   - pubview2
+  #   - fxfigure
+  #   - allfigure
 
 }
 
