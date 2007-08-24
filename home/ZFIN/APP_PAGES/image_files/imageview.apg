@@ -273,15 +273,15 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 		    if (($fimgview_fimg_width > frameWidth)||$fimgview_fimg_width==0) {   
 		      document.write(
 			  '<IMG width="' + frameWidth + '"' +
-			  '  SRC="/imageLoadUp/$fimgview_imageToShow">' +
+			  '  SRC="<!--|IMAGE_LOAD|-->/$fimgview_imageToShow">' +
 			  '<br>'); 
 		      document.write(
 			  '<INPUT TYPE=button ' +
 			  '  value="View image at high resolution"' +
-			  '  onClick="popup_image(' + "'/imageLoadUp/$fimgview_imageToShow'" + ')">');
+			  '  onClick="popup_image(' + "'<!--|IMAGE_LOAD|-->/$fimgview_imageToShow'" + ')">');
 		    } 
 		    else {
-		      document.write('<IMG SRC="/imageLoadUp/$fimgview_imageToShow">');
+		      document.write('<IMG SRC="<!--|IMAGE_LOAD|-->/$fimgview_imageToShow">');
 		    }
 		  </script>
 		<?/MIVAR>
