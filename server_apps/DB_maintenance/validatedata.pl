@@ -280,7 +280,7 @@ sub recordResult(@) {
 
 sub checkFigXpatexSourceConsistant ($) {
 	
-  my $countTopPubHitsroutineName = "checkFigXpatexSourceConsistant";
+  my $routineName = "checkFigXpatexSourceConsistant";
 	
   my $sql = 'select xpatfig_fig_zdb_id, xpatfig_xpatres_zdb_id
                from figure, expression_pattern_figure,
@@ -2818,7 +2818,8 @@ sub oldOrphanSourceCheck($) {
 #Parameter
 # $      Email Address for recipients
 # 
-sub countTopPubHits($){
+sub countTopPubHits
+{
 
   my $routineName = "countTopPubHits";
 
@@ -2837,9 +2838,10 @@ sub countTopPubHits($){
 
   if ( $nRecords > 0 ) {
 
-    my $sendToAddress = $_[0];
-    my $subject = "Top 5 accesses for the previous day";
-    my $errMsg = "Top $nRecords' ips for the previous day";
+    my $status = $_[0];
+    my $sendToAddress = $_[1];
+    my $subject = "$status: Top 5 accesses for the previous day";
+    my $errMsg = "$status: Top $nRecords' ips for the previous day";
       		       
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
@@ -3166,10 +3168,10 @@ my $elsevierStatEmail = "<!--|ELSEVIER_STAT_EMAIL|-->";
 my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 
 if($daily) {
-    countTopPubHits($webAdminEmail) ; 
+    countTopPubHits("Pre-scrub", $webAdminEmail) ; 
     scrubElsevierStatistics($webAdminEmail) ; 
     trackElsevierStatistics($elsevierStatEmail) ; 
-    countTopPubHits($webAdminEmail) ; 
+    countTopPubHits("Post-scrub",$webAdminEmail) ; 
 #    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
     xpatHasConsistentMarkerRelationship($xpatEmail);
