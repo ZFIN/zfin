@@ -1,6 +1,5 @@
 #! /private/bin/perl -w 
 
-
 ##
 # validatedata.pl
 #
@@ -2856,43 +2855,197 @@ sub countTopPubHits($){
 # 
 sub trackElsevierStatistics($){
 
-  my $routineName = "countTopPubHits";
+  my $routineName = "trackElsevierStatistics";
 
   # All w/o image pub searches need to be normalized by date.  
 
   # Normalization date
-  my $normalDate = '6/1/04' ; 
+  my $normalDate = '6/15/04' ; 
   my $allsql = "" ; 
+  my $sql = "" ; 
+  my @colDesc = ("count");
+  my $msg = "" ; 
+
 
   # SUMMARY
   # Effectiveness of images for doi access = funnel WITH image / funnel w\/o image
   # funnel WITH image = pub WITH image  / total DOI access of pubs WITH image 
   
-  my $sql = "select count(distinct zdb_id) , DATE( avg(pub_date) ) 
-    from publication 
-    where jtype not in ('Unpublished','Curation') 
-    and pub_doi is not null 
-    and pub_date > DATE( '6/1/04')  
+  $sql = "
+    select distinct zdb_id
+        from publication , figure , image
+        where fig_zdb_id = img_fig_zdb_id 
+        and fig_source_zdb_id = zdb_id 
+        and jtype not in('Unpublished','Curation')
+        and pub_doi is not null 
     ; " ;
   $allsql = $allsql . $sql . "\n" ; 
-  my $preparedStmt1 = $dbh->prepare($sql) or die "Prepare fails";  
-  my $ipsscrubbed = $preparedStmt1-> execute();
-   
-  # funnel w/o image  = pub w/o image  / total DOI access of pubs w/o image = funnel w/o image
+  my $pubswithimg = execSql ($sql, undef, @colDesc);
+  $msg = $msg .  "Pubs with image: " . $pubswithimg . "\n" ; 
 
-  # STATS
-  # access versus image to:
-  #  - all DOIS
-  #  - all pubs
-  #  - pubview2
-  #  - pubview2
-  #  - fxfigure
-  #  - allfigure
-  #  - imageview 
-  # conversions versus image from:
-  #   - pubview2
-  #   - fxfigure
-  #   - allfigure
+  $sql="
+select distinct es_pk_id 
+    from 
+    elsevier_statistics ,figure ,publication , image
+    where fig_source_zdb_id = zdb_id
+    and pub_doi is not null 
+    and es_figure_zdb_id = zdb_id
+    and es_external_link is not null
+    and jtype not in ('Unpublished', 'Curation')
+    and fig_zdb_id = img_fig_zdb_id
+    ; " ; 
+  $allsql = $allsql . $sql . "\n" ; 
+  my $totaldoiwithimagefrompub = execSql ($sql, undef, @colDesc);
+  $msg = $msg .  "External DOI access from pub OID with image: " . $totaldoiwithimagefrompub. "\n" ; 
+
+  $sql="
+select distinct es_pk_id 
+    from 
+    elsevier_statistics ,figure ,publication , image 
+    where es_figure_zdb_id = fig_zdb_id
+    and fig_source_zdb_id = zdb_id
+    and pub_doi is not  null 
+    and es_external_link is not null
+    and jtype not in ('Unpublished', 'Curation')
+    and fig_zdb_id = img_fig_zdb_id 
+    ; " ; 
+  $allsql = $allsql . $sql . "\n" ; 
+  my $totaldoiwithimagefromfig= execSql ($sql, undef, @colDesc);
+  $msg = $msg .  "External DOI access from figure OID with image: " . $totaldoiwithimagefromfig . "\n" ; 
+
+  $sql="
+select distinct es_pk_id 
+    from 
+    elsevier_statistics ,figure ,publication , image
+    where es_figure_zdb_id = img_fig_zdb_id 
+    and es_external_link is not null
+    and zdb_id = fig_zdb_id
+    and fig_source_zdb_id = zdb_id
+    and fig_zdb_id = img_fig_zdb_id
+    ; " ; 
+  $allsql = $allsql . $sql . "\n" ; 
+  my $totaldoiwithimagefromimg = execSql ($sql, undef, @colDesc);
+  $msg = $msg .  "External DOI access from image OID: " . $totaldoiwithimagefromimg . "\n" ; 
+
+  $msg = $msg .  "Total DOI access for pubs with images: " . ($totaldoiwithimagefromfig+$totaldoiwithimagefrompub) . "\n\n" ; 
+
+  $msg = $msg .  "% DOI access for pubs with images: " . substr((($totaldoiwithimagefromfig+$totaldoiwithimagefrompub+$totaldoiwithimagefromimg)/$pubswithimg),0,7) . "\n\n" ; 
+
+  $sql = "
+select distinct zdb_id
+    from publication 
+    where jtype not in('Unpublished','Curation')
+    and pub_doi is not null 
+    and pub_date > DATE( '$normalDate')  
+    and not exists(
+select *
+    from  figure , image
+    where fig_zdb_id = img_fig_zdb_id 
+    and fig_source_zdb_id = zdb_id 
+    )
+    ; " ;
+  $allsql = $allsql . $sql . "\n" ; 
+  my $pubswoimg = execSql ($sql, undef, @colDesc);
+  $msg = $msg .  "Pubs w/o images - after 6/15/04: " . $pubswoimg . "\n" ; 
+
+
+  $sql = "
+    select distinct es_pk_id 
+    from 
+    elsevier_statistics ,publication 
+    where jtype not in ('Unpublished', 'Curation')
+    and pub_doi is not null 
+    and es_figure_zdb_id = zdb_id
+    and es_external_link is not null
+    and not exists(
+        select * from figure, image 
+        where fig_zdb_id = img_fig_zdb_id
+        and fig_source_zdb_id = zdb_id 
+    )  
+    ; " ;
+
+  my $totaldoiwoimagefrompub = execSql ($sql, undef, @colDesc);
+
+  $msg = $msg .  "External DOI access from pub OID w/o image: " . $totaldoiwoimagefrompub . "\n" ; 
+
+
+  $sql = "
+select es_pk_id 
+    from 
+    elsevier_statistics ,figure ,publication 
+    where es_figure_zdb_id = fig_zdb_id
+    and fig_source_zdb_id = zdb_id
+    and pub_doi is not  null 
+    and es_external_link is not null
+    and jtype not in ('Unpublished', 'Curation')
+    and not exists (
+        select distinct es_pk_id 
+            from 
+            image
+            where es_figure_zdb_id = fig_zdb_id
+            and fig_source_zdb_id = zdb_id
+            and pub_doi is not  null 
+            and es_external_link is not null
+            and jtype not in ('Unpublished', 'Curation')
+            and fig_zdb_id = img_fig_zdb_id
+            )
+    ; " ;
+  my $totaldoiwoimagefromfigure = execSql ($sql, undef, @colDesc);
+
+  $msg = $msg .  "External DOI access from figure OID w/o image: " . $totaldoiwoimagefromfigure . "\n" ; 
+
+
+  $msg = $msg .  "Total DOI access for pubs w/o images: " . ($totaldoiwoimagefromfigure+$totaldoiwoimagefrompub) . "\n\n" ; 
+
+  $msg = $msg .  "% DOI access for pubs w/o images: " . substr((($totaldoiwoimagefrompub+$totaldoiwoimagefromfigure)/$pubswoimg),0,7) . "\n\n" ; 
+
+  $sql = " 
+    select distinct es_pk_id
+        from 
+        elsevier_statistics ,figure ,publication , image
+        where jtype not in ('Unpublished', 'Curation')
+        and es_figure_zdb_id = zdb_id
+        and es_external_link is null 
+        and pub_doi is not null 
+        and fig_source_zdb_id = zdb_id
+        and fig_zdb_id = img_fig_zdb_id
+        ; " ; 
+  $allsql = $allsql . $sql . "\n" ; 
+  my $pubaccesswithimage = execSql ($sql, undef, @colDesc);
+  $msg = $msg .  "Access of pubs with images: " . ($pubaccesswithimage) . "\n" ; 
+  $msg = $msg .  "Access per pub with image: " . substr(($pubaccesswithimage / $pubswithimg),0,7) . "\n\n" ; 
+
+
+  $sql = " 
+    select es_pk_id
+    from 
+    elsevier_statistics ,publication 
+    where jtype not in ('Unpublished', 'Curation')
+    and es_figure_zdb_id = zdb_id
+    and es_external_link is null 
+    and pub_doi is not null 
+    and pub_date > date('6/15/04')
+    and not exists(
+        select *
+        from figure , image
+        where fig_zdb_id = img_fig_zdb_id
+        and fig_source_zdb_id = zdb_id 
+        )
+    ; " ;
+  $allsql = $allsql . $sql . "\n" ; 
+  my $pubaccesswoimage = execSql ($sql, undef, @colDesc);
+  $msg = $msg .  "Access of pubs w/o images after 6/15/04: " . ($pubaccesswoimage) . "\n" ; 
+  $msg = $msg .  "Access per pub w/o image after 6/15/04: " . substr(($pubaccesswoimage / $pubswoimg),0,7) . "\n\n" ; 
+
+
+  $sql = $allsql ; 
+
+  my $sendToAddress = $_[0];
+  my $subject = "elsevier statistics";
+
+  open STATS, ">$globalResultFile" or die "Cannot open the file to write statistics." ;
+  close(STATS) ; 
+  &sendMail($sendToAddress, $subject,$routineName, $msg, $sql);     
 
 }
 
@@ -3008,11 +3161,15 @@ my $mutantEmail  = "<!--|VALIDATION_EMAIL_MUTANT|-->";
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
 my $goEmail      = "<!--|GO_EMAIL_CURATOR|-->";
 my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
+my $webAdminEmail = "<!--|WEB_ADMIN_EMAIL|-->";
+my $elsevierStatEmail = "<!--|ELSEVIER_STAT_EMAIL|-->";
 my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 
 if($daily) {
-    scrubElsevierStatistics($xpatEmail) ; 
-    countTopPubHits($otherEmail) ; 
+    countTopPubHits($webAdminEmail) ; 
+    scrubElsevierStatistics($webAdminEmail) ; 
+    trackElsevierStatistics($elsevierStatEmail) ; 
+    countTopPubHits($webAdminEmail) ; 
 #    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
     xpatHasConsistentMarkerRelationship($xpatEmail);
