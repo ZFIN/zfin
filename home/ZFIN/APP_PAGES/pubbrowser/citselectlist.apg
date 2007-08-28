@@ -13,7 +13,7 @@
           ''
       end,		 
       p.pub_pages,
-      p.pub_authors_lower, 
+      p.pub_authors_lower as authors_lower, 
       p.pub_date,
       recattrib_source_type,
       recattrib_data_zdb_id
