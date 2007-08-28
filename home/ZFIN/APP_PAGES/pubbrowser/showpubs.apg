@@ -65,7 +65,7 @@ OUTPUT VARS:
 
 <?MIVAR COND="$(NXST,$orgOID)" NAME=$orgOID>$OID<?/MIVAR>
 <?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
-<?MIVAR COND="$(NXST,$pubOrder)" NAME=$pubOrder>authors<?/MIVAR>
+<?MIVAR COND="$(NXST,$pubOrder)" NAME=$pubOrder>authors_lower<?/MIVAR>
 <?MIVAR NAME=$pubOrderType>, recattrib_source_type desc<?/MIVAR>
 
 <?MIVAR COND="$(NXST,$add_cit_count)" NAME=$add_cit_count>0<?/MIVAR>
@@ -279,7 +279,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
                                         where genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                           and fmrel_mrkr_zdb_id = mrkr_zdb_id
                                           and mrkr_name = '$OID')
-    or 
+   or 
       recattrib_data_zdb_id in (select genofeat_geno_zdb_id 
                                         from genotype_feature, feature
                                         where genofeat_feature_zdb_id = feature_zdb_id
@@ -359,9 +359,8 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?MIBLOCK COND="$(NC,$rtype,xpat)">
 <?MICOMMENT>  ==================== value= will not change value with Safari need special case ============== <?/MICOMMENT>
 <?MIVAR>
-    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder
-,authors),'pyear desc','authors_lower'),'$total_count','$count_of_real_pub','$evidence')"
-           value="$(IF,$(EC,$pubOrder,authors),Order By Date,Order By Author)"> 
+    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,authors_lower),'pyear desc','authors_lower'),'$total_count','$count_of_real_pub','$evidence')"
+           value="$(IF,$(EC,$pubOrder,authors_lower),Order By Date,Order By Author)"> 
     <script>
       if (navigator.userAgent.indexOf('Safari') != -1) {
         resultOrder.value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)";
@@ -446,17 +445,11 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
   <?MIBLOCK COND="$(NXST,$attribtype)">
 
-<?MICOMMENT> authors_lower not authors must be sent to citgeneric.apg for correct ordering <?/MICOMMENT>
-    <?MIBLOCK COND=$(EC,$pubOrder,authors)>
-      <?MIVAR NAME=$citpubOrder>p.pub_authors_lower<?/MIVAR>
-    <?MIELSE>
-      <?MIVAR NAME=$citpubOrder<$pubOrder><?/MIVAR>
-    <?/MIBLOCK>
 
     <?MIBLOCK COND="$(>,$(POSITION,$OID,ALT),0)">
 
       <?MISQL SQL="
-        select WebExplode(object,'&sp_G_orderby=order by $citpubOrder$pubOrderType&sp_G_jtype_option=published') 
+        select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
         from webPages where ID='aa-citgeneric.apg';">
           <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
       <?/MISQL>
@@ -473,7 +466,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?/MISQL>
 
       <?MISQL SQL="
-        select WebExplode(object,'&sp_G_orderby=order by $citpubOrder$pubOrderType&sp_G_jtype_option=published') 
+        select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
         from webPages where ID='aa-citgeneric.apg';">
           <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
       <?/MISQL>
@@ -495,7 +488,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
   <?MIBLOCK COND="$(>,$(POSITION,$OID,GENO),0)">
 
-    <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $citpubOrder$pubOrderType&sp_G_jtype_option=published') 
+    <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
                  from webPages where ID='aa-citgeneric.apg';">
         <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
     <?/MISQL>
