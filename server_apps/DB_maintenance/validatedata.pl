@@ -2843,7 +2843,7 @@ sub countTopPubHits
     my $subject = "$status: Top 5 accesses for the previous day";
     my $errMsg = "$status: Top $nRecords' ips for the previous day";
       		       
-    logError ($errMsg);
+#   logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
   }
   &recordResult($routineName, $nRecords);
