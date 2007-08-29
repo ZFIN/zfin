@@ -18,5 +18,13 @@ document.write("    </center>  ");
 document.write("   </div> ");
 document.write(" </div>  ");
 
+<!-- Start GOOGLE Analytics -->
+document.write('<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">') ; 
+document.write("</script>");
+document.write('<script type="text/javascript">');
+document.write('_uacct = "UA-2417927-1";');
+document.write("urchinTracker();");
+document.write("</script>");
+<!-- End GOOGLE Analytics -->
 
 
