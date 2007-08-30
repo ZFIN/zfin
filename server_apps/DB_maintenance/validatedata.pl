@@ -2755,7 +2755,6 @@ sub trackElsevierStatistics($){
     ; " ;
   $allsql = $allsql . $sql . "\n" ; 
   my $pubswithimg = execSql ($sql, undef, @colDesc);
-  $msg = $msg .  "Pubs with image: " . $pubswithimg . "\n" ; 
 
   $sql="
 select distinct es_pk_id 
@@ -2770,7 +2769,6 @@ select distinct es_pk_id
     ; " ; 
   $allsql = $allsql . $sql . "\n" ; 
   my $totaldoiwithimagefrompub = execSql ($sql, undef, @colDesc);
-  $msg = $msg .  "External DOI access from pub OID with image: " . $totaldoiwithimagefrompub. "\n" ; 
 
   $sql="
 select distinct es_pk_id 
@@ -2785,7 +2783,6 @@ select distinct es_pk_id
     ; " ; 
   $allsql = $allsql . $sql . "\n" ; 
   my $totaldoiwithimagefromfig= execSql ($sql, undef, @colDesc);
-  $msg = $msg .  "External DOI access from figure OID with image: " . $totaldoiwithimagefromfig . "\n" ; 
 
   $sql="
 select distinct es_pk_id 
@@ -2799,11 +2796,6 @@ select distinct es_pk_id
     ; " ; 
   $allsql = $allsql . $sql . "\n" ; 
   my $totaldoiwithimagefromimg = execSql ($sql, undef, @colDesc);
-  $msg = $msg .  "External DOI access from image OID: " . $totaldoiwithimagefromimg . "\n" ; 
-
-  $msg = $msg .  "Total DOI access for pubs with images: " . ($totaldoiwithimagefromfig+$totaldoiwithimagefrompub) . "\n\n" ; 
-
-  $msg = $msg .  "% DOI access for pubs with images: " . substr((($totaldoiwithimagefromfig+$totaldoiwithimagefrompub+$totaldoiwithimagefromimg)/$pubswithimg),0,7) . "\n\n" ; 
 
   $sql = "
 select distinct zdb_id
@@ -2820,7 +2812,6 @@ select *
     ; " ;
   $allsql = $allsql . $sql . "\n" ; 
   my $pubswoimg = execSql ($sql, undef, @colDesc);
-  $msg = $msg .  "Pubs w/o images - after 6/15/04: " . $pubswoimg . "\n" ; 
 
 
   $sql = "
@@ -2840,7 +2831,6 @@ select *
 
   my $totaldoiwoimagefrompub = execSql ($sql, undef, @colDesc);
 
-  $msg = $msg .  "External DOI access from pub OID w/o image: " . $totaldoiwoimagefrompub . "\n" ; 
 
 
   $sql = "
@@ -2866,12 +2856,6 @@ select es_pk_id
     ; " ;
   my $totaldoiwoimagefromfigure = execSql ($sql, undef, @colDesc);
 
-  $msg = $msg .  "External DOI access from figure OID w/o image: " . $totaldoiwoimagefromfigure . "\n" ; 
-
-
-  $msg = $msg .  "Total DOI access for pubs w/o images: " . ($totaldoiwoimagefromfigure+$totaldoiwoimagefrompub) . "\n\n" ; 
-
-  $msg = $msg .  "% DOI access for pubs w/o images: " . substr((($totaldoiwoimagefrompub+$totaldoiwoimagefromfigure)/$pubswoimg),0,7) . "\n\n" ; 
 
   $sql = " 
     select distinct es_pk_id
@@ -2886,8 +2870,6 @@ select es_pk_id
         ; " ; 
   $allsql = $allsql . $sql . "\n" ; 
   my $pubaccesswithimage = execSql ($sql, undef, @colDesc);
-  $msg = $msg .  "Access of pubs with images: " . ($pubaccesswithimage) . "\n" ; 
-  $msg = $msg .  "Access per pub with image: " . substr(($pubaccesswithimage / $pubswithimg),0,7) . "\n\n" ; 
 
 
   $sql = " 
@@ -2898,7 +2880,7 @@ select es_pk_id
     and es_figure_zdb_id = zdb_id
     and es_external_link is null 
     and pub_doi is not null 
-    and pub_date > date('6/15/04')
+    and pub_date > date('$normalDate')
     and not exists(
         select *
         from figure , image
@@ -2908,11 +2890,46 @@ select es_pk_id
     ; " ;
   $allsql = $allsql . $sql . "\n" ; 
   my $pubaccesswoimage = execSql ($sql, undef, @colDesc);
-  $msg = $msg .  "Access of pubs w/o images after 6/15/04: " . ($pubaccesswoimage) . "\n" ; 
-  $msg = $msg .  "Access per pub w/o image after 6/15/04: " . substr(($pubaccesswoimage / $pubswoimg),0,7) . "\n\n" ; 
-
 
   $sql = $allsql ; 
+
+  $msg = $msg .  "All pubs have DOIs, are published, and have been curated.\n" ; 
+  $msg = $msg .  "Pubs w/o images are all after $normalDate\n\n" ; 
+
+  $msg = $msg .  "DOI access for pubs with images per number of pubs: " . substr((($totaldoiwithimagefromfig+$totaldoiwithimagefrompub+$totaldoiwithimagefromimg)/$pubswithimg),0,7) . "\n" ; 
+  $msg = $msg .  "DOI access for pubs w/o images per number of pubs w/o images: " . substr((($totaldoiwoimagefrompub+$totaldoiwoimagefromfigure)/$pubswoimg),0,7) . "\n\n" ; 
+
+  $msg = $msg .  "% DOI Access per pub access with image: " . substr(( $totaldoiwithimagefrompub/ $pubaccesswithimage),0,7) . "\n" ; 
+  $msg = $msg .  "% DOI Access per pub access w/o image: " . substr(($totaldoiwoimagefrompub/ $pubaccesswoimage),0,7) . "\n\n" ; 
+
+  $msg = $msg .  "Pub access per pub with image: " . substr(($pubaccesswithimage / $pubswithimg),0,7) . "\n" ; 
+  $msg = $msg .  "Pub access per pub w/o image after $normalDate: " . substr(($pubaccesswoimage / $pubswoimg),0,7) . "\n\n\n\n" ; 
+
+
+
+  $msg = $msg .  "Pubs with image: " . $pubswithimg . "\n" ; 
+  $msg = $msg .  "Pubs w/o images: " . $pubswoimg . "\n\n" ; 
+  $msg = $msg .  "Access of pubs with images: " . ($pubaccesswithimage) . "\n" ; 
+  $msg = $msg .  "Access of pubs w/o images after $normalDate: " . ($pubaccesswoimage) . "\n\n" ; 
+
+  $msg = $msg .  "Total DOI access for pubs with images: " . ($totaldoiwithimagefromfig+$totaldoiwithimagefrompub) . "\n\n" ; 
+  $msg = $msg .  "Total DOI access for pubs w/o images: " . ($totaldoiwoimagefromfigure+$totaldoiwoimagefrompub) . "\n\n" ; 
+
+  $msg = $msg .  "External DOI access from pub OID with image: " . $totaldoiwithimagefrompub. "\n" ; 
+  $msg = $msg .  "External DOI access from figure OID with image: " . $totaldoiwithimagefromfig . "\n" ; 
+  $msg = $msg .  "External DOI access from image OID: " . $totaldoiwithimagefromimg . "\n\n" ; 
+
+
+  $msg = $msg .  "External DOI access from pub OID w/o image: " . $totaldoiwoimagefrompub . "\n" ; 
+  $msg = $msg .  "External DOI access from figure OID w/o image: " . $totaldoiwoimagefromfigure . "\n" ; 
+
+
+
+
+
+
+
+
 
   my $sendToAddress = $_[0];
   my $subject = "elsevier statistics";
