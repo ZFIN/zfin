@@ -454,134 +454,6 @@ sub xpatObjectNotGeneOrEFG ($) {
 }
 
 
-
-#----------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-#
-# Finds figures with images from Elsevier publications which have not finished
-# being reviewed (are open) and have PATO data but have no expression patterns.  
-# This raises a flag that we should look at these again as they have been checked
-# already (because there is PATO data), but no expression data was found.
-# Per our agreement with Elsevier we are not supposed to show these images.
-
-sub checkOpenElsevierFigureNoExpresWithPATO($) {
-	
-  my $routineName = "checkOpenElsevierFigureNoExpresWithPATO";
-	
-  my $sql = '
-			select p.zdb_id as Pub_Id, j.jrnl_name as Journal, p.title as Title, p.pub_date as Pub_Date, concatenate( replace( f.fig_label ,"Fig. ","" ) ) as Figures
-				from 
-					image i , figure f, publication p, journal j
-				where 
-					j.jrnl_publisher like "Elsevier%"
-					and j.jrnl_zdb_id=p.pub_jrnl_zdb_id
-					and f.fig_source_zdb_id=p.zdb_id 
-					and i.img_fig_zdb_id=f.fig_zdb_id
-					and p.pub_completion_date is null 
-					and not exists
-					(
-					select *
-						from expression_pattern_figure expr
-						where f.fig_zdb_id=expr.xpatfig_fig_zdb_id
-					)
-					and exists
-					(
-					select * 
-						from apato_figure a
-						where 
-						a.apatofig_fig_zdb_id=f.fig_zdb_id 
-					 )
-				 group by p.zdb_id, j.jrnl_name, p.title, p.pub_date  
-				 order by p.zdb_id desc ;
-		'
-						;
-		
-  	
-  my @colDesc = (
-		 "Publication ID:    ",
-		 "Journal name:      ",
-		 "Publication title: ",
-		 "Publication date:  ",
-		 "Figures:                        ",
-		);
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-	orderResults($colDesc[4],$nRecords) ; 
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Contains Elsevier images from open publications with no expression pattern but existing PATO.";
-    my $errMsg = "$nRecords open publications use Elsevier images with no expression patterns but existing PATO values." ; 
-      		       
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
-
-#----------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# Finds figures with images from Elseview publications which have been 
-# reviewed (are closed) and have no expression patterns.  Per our agreement
-# with Elsevier we are not supposed to show these images.
-#
-#
-#----------------------------------------------------------------
-sub checkClosedElsevierFigureNoExpressions($) {
-	
-  my $routineName = "checkClosedElsevierFigureNoExpressions";
-	
-  my $sql = '
-		select  p.zdb_id as Pub_Id, j.jrnl_name as Journal, p.title as Title, p.pub_date as Pub_Date, concatenate( replace(f.fig_label ,"Fig. ","") ) as Figures 
-			from 
-				image i , figure f, publication p, journal j
-			where 
-				j.jrnl_publisher like "Elsevier%"
-				and j.jrnl_zdb_id=p.pub_jrnl_zdb_id
-				and f.fig_source_zdb_id=p.zdb_id 
-				and i.img_fig_zdb_id=f.fig_zdb_id
-				and p.pub_completion_date is not null 
-				and not exists
-				(
-				select *
-					from expression_pattern_figure expr
-					where f.fig_zdb_id=expr.xpatfig_fig_zdb_id
-				)
-			 group by p.zdb_id, j.jrnl_name, p.title, p.pub_date 
-			 order by p.zdb_id desc
-			 ;
-		'
-						;
-		
-  	
-  my @colDesc = (
-		 "Publication ID:    ",
-		 "Journal name:      ",
-		 "Publication title: ",
-		 "Publication date:  ",
-		 "Figures:                        ",
-		);
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-	orderResults($colDesc[4],$nRecords) ; 
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Contains Elsevier images from closed publications with no expression pattern";
-    my $errMsg = "$nRecords closed publications use Elsevier images with no expression patterns." ; 
-      		       
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
-
 #========================  Features  ================================
 #
 #---------------------------------------------------------------
@@ -2717,7 +2589,7 @@ sub scrubElsevierStatistics($){
     open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write." ; 
 
     # START - this scrubs all of the static ips
-    $sql = "delete from elsevier_statistics where es_incoming_ip in (select ei_ip from excluded_ip ) ; " ; 
+    $sql = "delete from elsevier_statistics where exists (select 'x' from excluded_ip where es_incoming_ip = ei_ip) ; " ; 
     my $allsql = "" ; 
     $allsql = $allsql . $sql . "\n" ; 
     my $preparedStmt1 = $dbh->prepare($sql) or die "Prepare fails";  
