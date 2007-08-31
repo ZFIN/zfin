@@ -2894,7 +2894,7 @@ select es_pk_id
   $sql = $allsql ; 
 
   $msg = $msg .  "All pubs have DOIs, are published, and have been curated.\n" ; 
-  $msg = $msg .  "Pubs w/o images are all after $normalDate\n\n" ; 
+  $msg = $msg .  "Pubs w/o images are all published after $normalDate in order to normalize the average publication date versus pubs with images.\n\n" ; 
 
   $msg = $msg .  "DOI access for pubs with images per number of pubs: " . substr((($totaldoiwithimagefromfig+$totaldoiwithimagefrompub+$totaldoiwithimagefromimg)/$pubswithimg),0,7) . "\n" ; 
   $msg = $msg .  "DOI access for pubs w/o images per number of pubs w/o images: " . substr((($totaldoiwoimagefrompub+$totaldoiwoimagefromfigure)/$pubswoimg),0,7) . "\n\n" ; 
@@ -2903,16 +2903,17 @@ select es_pk_id
   $msg = $msg .  "% DOI Access per pub access w/o image: " . substr(($totaldoiwoimagefrompub/ $pubaccesswoimage),0,7) . "\n\n" ; 
 
   $msg = $msg .  "Pub access per pub with image: " . substr(($pubaccesswithimage / $pubswithimg),0,7) . "\n" ; 
-  $msg = $msg .  "Pub access per pub w/o image after $normalDate: " . substr(($pubaccesswoimage / $pubswoimg),0,7) . "\n\n\n\n" ; 
+  $msg = $msg .  "Pub access per pub w/o image: " . substr(($pubaccesswoimage / $pubswoimg),0,7) . "\n\n\n\n" ; 
 
 
 
   $msg = $msg .  "Pubs with image: " . $pubswithimg . "\n" ; 
   $msg = $msg .  "Pubs w/o images: " . $pubswoimg . "\n\n" ; 
-  $msg = $msg .  "Access of pubs with images: " . ($pubaccesswithimage) . "\n" ; 
-  $msg = $msg .  "Access of pubs w/o images after $normalDate: " . ($pubaccesswoimage) . "\n\n" ; 
 
-  $msg = $msg .  "Total DOI access for pubs with images: " . ($totaldoiwithimagefromfig+$totaldoiwithimagefrompub) . "\n\n" ; 
+  $msg = $msg .  "Access of pubs with images: " . ($pubaccesswithimage) . "\n" ; 
+  $msg = $msg .  "Access of pubs w/o images: " . ($pubaccesswoimage) . "\n\n" ; 
+
+  $msg = $msg .  "Total DOI access for pubs with images: " . ($totaldoiwithimagefromfig+$totaldoiwithimagefrompub) . "\n" ; 
   $msg = $msg .  "Total DOI access for pubs w/o images: " . ($totaldoiwoimagefromfigure+$totaldoiwoimagefrompub) . "\n\n" ; 
 
   $msg = $msg .  "External DOI access from pub OID with image: " . $totaldoiwithimagefrompub. "\n" ; 
