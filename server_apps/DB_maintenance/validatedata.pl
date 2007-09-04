@@ -2588,30 +2588,39 @@ sub scrubElsevierStatistics($){
 
     open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write." ; 
 
+
     # START - this scrubs all of the static ips
     $sql = "delete from elsevier_statistics where exists (select 'x' from excluded_ip where es_incoming_ip = ei_ip) ; " ; 
     my $allsql = "" ; 
     $allsql = $allsql . $sql . "\n" ; 
-    my $preparedStmt1 = $dbh->prepare($sql) or die "Prepare fails";  
-    my $ipsscrubbed = $preparedStmt1-> execute();
+    my $ipsscrubbed  = 0 ;
+    my $preparedStmt1 ; 
+    eval{
+    $preparedStmt1 = $dbh->prepare($sql) or die "Prepare fails $sql\n";  
+    $ipsscrubbed = $preparedStmt1-> execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
     if($ipsscrubbed>0){
         print RESULTFILE "Deleted $ipsscrubbed rows from elsevier_statistics according to static ips from the excluded_ip table.\n" ; 
     }
+    } ;
     # END - this scrubs all of the static ips
 
 
     # START - this scrubs all of the dynamic ips
     $sql = 'select ei_ip from excluded_ip where ei_ip not like "%.%.%.%"  ; ' ; 
     $allsql = $allsql . $sql . "\n" ; 
-    my $preparedStmt2 = $dbh->prepare($sql) or die "Prepare fails";  
-    $preparedStmt2->execute()  ;  
-
+    my $preparedStmt2 ; 
+    my $dynamicscrubbed ; 
     my $didScrubDynamicIPs = 0 ; 
+    eval{
+    $preparedStmt2 = $dbh->prepare($sql) or die "Prepare fails";  
+    $preparedStmt2->execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
+
     while (my @row = $preparedStmt2->fetchrow_array()) {
 #        print "$row[0]\n" ; 
         my $subSQL = "delete from elsevier_statistics where es_incoming_ip like '$row[0]%'" ; 
         my $preparedStmt4 = $dbh->prepare($subSQL) or die "Prepare fails";  
-        my $dynamicscrubbed =  $preparedStmt4->execute();
+         
+        $dynamicscrubbed =  $preparedStmt4->execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
 
         if($dynamicscrubbed>0){
             print RESULTFILE "Deleted $dynamicscrubbed rows from elsevier_statistics according to subnet is $row[0].*.\n" ; 
@@ -2619,13 +2628,17 @@ sub scrubElsevierStatistics($){
         }
 
     }
+    };
     # END - this scrubs all of the dynamic ips
 
 
     $sql = "delete from elsevier_statistics where es_http_user_agent is null ; " ; 
     $allsql = $allsql . $sql . "\n" ; 
+    my $agentsscrubbed = 0 ; 
+    eval{
     my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
-    my $agentsscrubbed = $preparedStmt3-> execute();
+    $agentsscrubbed = $preparedStmt3-> execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
+    };
     if($agentsscrubbed >0){
         print RESULTFILE "Deleted $agentsscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
     }
