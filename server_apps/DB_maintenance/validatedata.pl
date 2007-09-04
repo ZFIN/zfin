@@ -2631,17 +2631,6 @@ sub scrubElsevierStatistics($){
     }
 
 
-#    $sql = "select es_http_user_agent,count(es_pk_id) from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' group by es_http_user_agent; " ; 
-#    $allsql = $allsql . $sql . "\n" ; 
-##    my $preparedStmt5 = $dbh->prepare($sql) or die "Prepare fails";  
-#
-#    my @colDesc = ("agent", "count");
-#    my $nRecords = execSql($sql,undef,@colDesc);
-#    if($nRecords >0){
-#        print RESULTFILE "Bots found $nRecords rows from elsevier_statistics according to user_agent.\n" ; 
-#    }
-#    $sql = "$allsql" ; 
-
     close(RESULTFILE) ; 
     if($ipsscrubbed>0 || $agentsscrubbed >0 || $didScrubDynamicIPs > 0){
         my $sendToAddress = $_[0];
@@ -2650,6 +2639,23 @@ sub scrubElsevierStatistics($){
         my $msg = "Scrubbed ips from elsevier_statistics table.";
         &sendMail($sendToAddress, $subject,$routineName, $msg, $sql);     
     }
+}
+
+sub countBots($){
+
+ 
+    my $sql = "select es_http_user_agent,count(es_pk_id) from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' group by es_http_user_agent; " ; 
+    my @colDesc = ("agent", "count");
+    my $nRecords = execSql($sql,undef,@colDesc);
+    if($nRecords >0){
+        print RESULTFILE "Bots found $nRecords rows from elsevier_statistics according to user_agent.\n" ; 
+    }
+    my $sendToAddress = $_[0];
+    my $subject = "elsevier scrub statistics";
+    my $routineName = "scrubElsevierStatistics";
+    my $msg = "Top bot/crawler user agents.";
+    &sendMail($sendToAddress, $subject,$routineName, $msg, $sql);     
+
 }
 
 
@@ -3104,6 +3110,7 @@ if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
 #  checkOpenElsevierFigureNoExpresWithPATO($xpatEmail); # elsevier is allowing this for now
+    countBots($webAdminEmail) ; 
     trackElsevierStatistics($elsevierStatEmail) ; 
 	estsHave1Gene($estEmail);
 	prefixedGenesHave1Est($estEmail);
