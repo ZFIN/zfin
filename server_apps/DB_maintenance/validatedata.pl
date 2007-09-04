@@ -2622,17 +2622,25 @@ sub scrubElsevierStatistics($){
     # END - this scrubs all of the dynamic ips
 
 
-
-
-
-    $sql = "delete from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' or es_http_user_agent is null ; " ; 
+    $sql = "delete from elsevier_statistics where es_http_user_agent is null ; " ; 
     $allsql = $allsql . $sql . "\n" ; 
     my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
     my $agentsscrubbed = $preparedStmt3-> execute();
     if($agentsscrubbed >0){
         print RESULTFILE "Deleted $agentsscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
     }
-    $sql = "$allsql" ; 
+
+
+#    $sql = "select es_http_user_agent,count(es_pk_id) from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' group by es_http_user_agent; " ; 
+#    $allsql = $allsql . $sql . "\n" ; 
+##    my $preparedStmt5 = $dbh->prepare($sql) or die "Prepare fails";  
+#
+#    my @colDesc = ("agent", "count");
+#    my $nRecords = execSql($sql,undef,@colDesc);
+#    if($nRecords >0){
+#        print RESULTFILE "Bots found $nRecords rows from elsevier_statistics according to user_agent.\n" ; 
+#    }
+#    $sql = "$allsql" ; 
 
     close(RESULTFILE) ; 
     if($ipsscrubbed>0 || $agentsscrubbed >0 || $didScrubDynamicIPs > 0){
