@@ -2709,7 +2709,7 @@ sub countTopPubHits
 
   my $routineName = "countTopPubHits";
 
-  my $sql="select first 5 TODAY-1, count(*) thecount ,es_incoming_ip,es_http_user_agent 
+  my $sql="select first 10 TODAY-1, count(*) thecount ,es_incoming_ip,es_http_user_agent 
             from elsevier_statistics  
             where es_date >=  TODAY-1
             and es_date <=  TODAY
