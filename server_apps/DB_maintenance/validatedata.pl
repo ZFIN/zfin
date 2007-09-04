@@ -3060,7 +3060,6 @@ my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 if($daily) {
     countTopPubHits("Pre-scrub", $webAdminEmail) ; 
     scrubElsevierStatistics($webAdminEmail) ; 
-    trackElsevierStatistics($elsevierStatEmail) ; 
     countTopPubHits("Post-scrub",$webAdminEmail) ; 
 #    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
@@ -3097,6 +3096,7 @@ if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
 #  checkOpenElsevierFigureNoExpresWithPATO($xpatEmail); # elsevier is allowing this for now
+    trackElsevierStatistics($elsevierStatEmail) ; 
 	estsHave1Gene($estEmail);
 	prefixedGenesHave1Est($estEmail);
 	estsWithoutClonesHaveXxGenes($estEmail);
