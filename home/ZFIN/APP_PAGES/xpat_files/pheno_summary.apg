@@ -56,11 +56,24 @@ DEBUGGING:
 
 <?MIVAR NAME=phenosum_sql_select>select count(distinct zdb_id)<?/MIVAR>
 
+
+  
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
 
+
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 get pub count
+  <?/MISQL>
+  
 <?MISQL SQL="$phenosum_sql;"><?/MISQL>
+    
 <?MIVAR NAME=phenosum_pub_count>$1<?/MIVAR>
 
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 get fig count
+  <?/MISQL>
 
 <?MIVAR NAME=phenosum_sql_select>select count(distinct fig_zdb_id)<?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
@@ -68,7 +81,10 @@ DEBUGGING:
 <?MISQL SQL="$phenosum_sql;"><?/MISQL>
 
 <?MIVAR NAME=phenosum_fig_count>$1<?/MIVAR>
-
+  
+  <?MIVAR COND=$(XST,$debug_timing)>
+    <br>$MI_SQL
+  <?/MIVAR>
 
 <table bgcolor=<?MIVAR>$highlight<?/MIVAR> width=100%>
   <tr>
@@ -220,6 +236,11 @@ DEBUGGING:
   
 <?/MIBLOCK>
 
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 begin loop
+  <?/MISQL>
+
 <?MISQL SQL="$phenosum_sql
     order by pub_mini_ref, fig_full_label, 4;">
 
@@ -290,17 +311,31 @@ DEBUGGING:
                 and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
                 and apatofig_apato_zdb_id = apato_zdb_id
                 and genox_geno_zdb_id = '$phenosum_geno_zdb'
-	        and (apato_entity_a_zdb_id = anatitem_zdb_id 
-		  or apato_entity_b_zdb_id = anatitem_zdb_id)
+	        and apato_entity_a_zdb_id = anatitem_zdb_id 
 	UNION
+	     select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
+               from atomic_phenotype, anatomy_item, genotype_experiment, apato_figure
+              where apato_genox_zdb_id = genox_zdb_id
+                and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
+                and apatofig_apato_zdb_id = apato_zdb_id
+                and genox_geno_zdb_id = '$phenosum_geno_zdb'
+	        and apato_entity_b_zdb_id = anatitem_zdb_id
+	UNION		  
 	     select distinct goterm_go_id, goterm_name, zero_pad(goterm_name), 'go'
                from atomic_phenotype, go_term, genotype_experiment, apato_figure
               where apato_genox_zdb_id = genox_zdb_id
                 and genox_geno_zdb_id = '$phenosum_geno_zdb'
                 and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
                 and apatofig_apato_zdb_id = apato_zdb_id
-	        and (apato_entity_a_zdb_id = goterm_zdb_id 
-		  or apato_entity_b_zdb_id = goterm_zdb_id)
+	        and apato_entity_a_zdb_id = goterm_zdb_id 
+	UNION		  
+	     select distinct goterm_go_id, goterm_name, zero_pad(goterm_name), 'go'
+               from atomic_phenotype, go_term, genotype_experiment, apato_figure
+              where apato_genox_zdb_id = genox_zdb_id
+                and genox_geno_zdb_id = '$phenosum_geno_zdb'
+                and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
+                and apatofig_apato_zdb_id = apato_zdb_id
+	        and apato_entity_b_zdb_id = goterm_zdb_id
            order by 3	; ">
            
           <?MIBLOCK COND=$(EC,$4,anatomy)>
