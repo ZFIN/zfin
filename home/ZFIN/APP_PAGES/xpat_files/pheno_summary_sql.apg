@@ -37,7 +37,7 @@
        
        $phenosum_sql_select
        from marker_relationship, experiment_condition, genotype_experiment, atomic_phenotype,
-       apato_figure, figure, publication, genotype
+       apato_figure, figure, publication
        where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
        and expcond_exp_zdb_id = genox_exp_zdb_id 
        and genox_zdb_id = apato_genox_zdb_id
