@@ -47,7 +47,7 @@ if ($email eq 'Unknown') {$email=''};
 
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP";
-To: mhaendel\@uoneuro.uoregon.edu
+To: van_slyke\@uoneuro.uoregon.edu
 From: $email
 Subject: Gene Submission: $data{gene_symbol}
 
@@ -83,7 +83,7 @@ close(MAIL) || die "pipe exited $?";
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP1";
 To: $email
-From: mhaendel\@uoneuro.uoregon.edu
+From: van_slyke\@uoneuro.uoregon.edu
 Subject: Thank You For Your Submission
 
 
