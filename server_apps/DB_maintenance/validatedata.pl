@@ -3104,7 +3104,6 @@ if($daily) {
     countTopPubHits("Pre-scrub", $webAdminEmail) ; 
     scrubElsevierStatistics($webAdminEmail) ; 
     countTopPubHits("Post-scrub",$webAdminEmail) ; 
-    exit ; 
 #    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
     xpatHasConsistentMarkerRelationship($xpatEmail);
