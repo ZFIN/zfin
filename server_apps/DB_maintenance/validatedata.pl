@@ -2632,16 +2632,60 @@ sub scrubElsevierStatistics($){
     # END - this scrubs all of the dynamic ips
 
 
+    # START - scrub based on user_agent
     $sql = "delete from elsevier_statistics where es_http_user_agent is null ; " ; 
     $allsql = $allsql . $sql . "\n" ; 
-    my $agentsscrubbed = 0 ; 
+    my $nullagentsscrubbed = 0 ; 
     eval{
     my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
-    $agentsscrubbed = $preparedStmt3-> execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
+    $nullagentsscrubbed = $preparedStmt3-> execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
     };
-    if($agentsscrubbed >0){
-        print RESULTFILE "Deleted $agentsscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
+    if($nullagentsscrubbed >0){
+        print RESULTFILE "Deleted $nullagentsscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
     }
+    my $agentsscrubbed = $nullagentsscrubbed ; 
+
+    #------------
+    $sql = "delete from elsevier_statistics where es_http_user_agent like 'msnbot%'; " ; 
+    $allsql = $allsql . $sql . "\n" ; 
+    my $msnbotscrubbed = 0 ; 
+    eval{
+    my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
+    $msnbotscrubbed = $preparedStmt3-> execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
+    };
+    if($msnbotscrubbed >0){
+        print RESULTFILE "Deleted $msnbotscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
+    }
+    $agentsscrubbed = $agentsscrubbed + $msnbotscrubbed ; 
+
+    #------------
+    $sql = "delete from elsevier_statistics where es_http_user_agent like 'FAST Enterprise Crawler%'; " ; 
+    $allsql = $allsql . $sql . "\n" ; 
+    my $fastscrubbed= 0 ; 
+    eval{
+    my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
+    $fastscrubbed= $preparedStmt3-> execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
+    };
+    if($fastscrubbed>0){
+        print RESULTFILE "Deleted $fastscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
+    }
+    $agentsscrubbed = $agentsscrubbed + $fastscrubbed ; 
+
+
+    #------------
+    $sql = "delete from elsevier_statistics where es_http_user_agent like 'Yeti%'; " ; 
+    $allsql = $allsql . $sql . "\n" ; 
+    my $yetiscrubbed= 0 ; 
+    eval{
+    my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
+    $yetiscrubbed= $preparedStmt3-> execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
+    };
+    if($yetiscrubbed >0){
+        print RESULTFILE "Deleted $yetiscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
+    }
+    $agentsscrubbed = $agentsscrubbed + $yetiscrubbed; 
+
+    # END - scrub based on user_agent
 
 
     close(RESULTFILE) ; 
@@ -2665,7 +2709,7 @@ sub countBots($){
     }
     my $sendToAddress = $_[0];
     my $subject = "elsevier scrub statistics";
-    my $routineName = "scrubElsevierStatistics";
+    my $routineName = "countBots";
     my $msg = "Top bot/crawler user agents.";
     &sendMail($sendToAddress, $subject,$routineName, $msg, $sql);     
 
@@ -2721,8 +2765,9 @@ sub countTopPubHits
 {
 
   my $routineName = "countTopPubHits";
+  my $recordsToHit = 20 ;
 
-  my $sql="select first 10 TODAY-1, count(*) thecount ,es_incoming_ip,es_http_user_agent 
+  my $sql="select first $recordsToHit TODAY-1, count(*) thecount ,es_incoming_ip,es_http_user_agent 
             from elsevier_statistics  
             where es_date >=  TODAY-1
             and es_date <=  TODAY
@@ -2739,7 +2784,7 @@ sub countTopPubHits
 
     my $status = $_[0];
     my $sendToAddress = $_[1];
-    my $subject = "$status: Top 5 accesses for the previous day";
+    my $subject = "$status: Top $recordsToHit accesses for the previous day";
     my $errMsg = "$status: Top $nRecords' ips for the previous day";
       		       
 #   logError ($errMsg);
