@@ -2582,6 +2582,24 @@ sub oldOrphanDataCheck($) {
 
 #-------------------
 #Parameter
+# $    Input:  SQL 
+# $   Output:  Number of deletions
+# Executes the SQL, returning the number of deletions
+sub executeScrub($){
+    my $executeScrubCount = 0 ; 
+    eval{
+        my $preparedStmt = $dbh->prepare($_[0]) or die "Prepare fails";  
+        $executeScrubCount = $preparedStmt-> execute() or die "Failed to execute executeScrub:\n $sql \n";
+        print RESULTFILE "Deleted $executeScrubCount rows from elsevier_statistics according to user_agent:\n $_[0]\n" ; 
+    };
+    return $executeScrubCount ; 
+
+
+}
+
+
+#-------------------
+#Parameter
 # $      Email
 # count the initial, final, deleted and mail all and the percentage delete from the previous day
 sub scrubElsevierStatistics($){
@@ -2633,58 +2651,11 @@ sub scrubElsevierStatistics($){
 
 
     # START - scrub based on user_agent
-    $sql = "delete from elsevier_statistics where es_http_user_agent is null ; " ; 
-    $allsql = $allsql . $sql . "\n" ; 
-    my $nullagentsscrubbed = 0 ; 
-    eval{
-    my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
-    $nullagentsscrubbed = $preparedStmt3-> execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
-    };
-    if($nullagentsscrubbed >0){
-        print RESULTFILE "Deleted $nullagentsscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
-    }
-    my $agentsscrubbed = $nullagentsscrubbed ; 
-
-    #------------
-    $sql = "delete from elsevier_statistics where es_http_user_agent like 'msnbot%'; " ; 
-    $allsql = $allsql . $sql . "\n" ; 
-    my $msnbotscrubbed = 0 ; 
-    eval{
-    my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
-    $msnbotscrubbed = $preparedStmt3-> execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
-    };
-    if($msnbotscrubbed >0){
-        print RESULTFILE "Deleted $msnbotscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
-    }
-    $agentsscrubbed = $agentsscrubbed + $msnbotscrubbed ; 
-
-    #------------
-    $sql = "delete from elsevier_statistics where es_http_user_agent like 'FAST Enterprise Crawler%'; " ; 
-    $allsql = $allsql . $sql . "\n" ; 
-    my $fastscrubbed= 0 ; 
-    eval{
-    my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
-    $fastscrubbed= $preparedStmt3-> execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
-    };
-    if($fastscrubbed>0){
-        print RESULTFILE "Deleted $fastscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
-    }
-    $agentsscrubbed = $agentsscrubbed + $fastscrubbed ; 
-
-
-    #------------
-    $sql = "delete from elsevier_statistics where es_http_user_agent like 'Yeti%'; " ; 
-    $allsql = $allsql . $sql . "\n" ; 
-    my $yetiscrubbed= 0 ; 
-    eval{
-    my $preparedStmt3 = $dbh->prepare($sql) or die "Prepare fails";  
-    $yetiscrubbed= $preparedStmt3-> execute() or die "Failed to execute in scrubElsevierStatistics:\n $sql \n";
-    };
-    if($yetiscrubbed >0){
-        print RESULTFILE "Deleted $yetiscrubbed rows from elsevier_statistics according to user_agent.\n" ; 
-    }
-    $agentsscrubbed = $agentsscrubbed + $yetiscrubbed; 
-
+    my $agentsscrubbed = 0 ; 
+    $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent is null ; ") ; 
+    $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'msnbot%'; ") ; 
+    $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'FAST Enterprise Crawler%'; ") ; 
+    $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'Yeti%'; ") ; 
     # END - scrub based on user_agent
 
 
@@ -3133,6 +3104,7 @@ if($daily) {
     countTopPubHits("Pre-scrub", $webAdminEmail) ; 
     scrubElsevierStatistics($webAdminEmail) ; 
     countTopPubHits("Post-scrub",$webAdminEmail) ; 
+    exit ; 
 #    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
     xpatHasConsistentMarkerRelationship($xpatEmail);
