@@ -153,24 +153,24 @@
 # ------------------------------------------------------------------------
 #
 # Nights   When      Comments
-# SMTWT     1:00am   Scan of char/varchar fields for bad stuff
+# SMTWT     1:30am   Scan of char/varchar fields for bad stuff
 #
-00 01 * * 1-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/scrubscan.pl
-#
-#
-# S         2:00am   Validate data, daily + orphans + weekly
-#
-00 02 * * 1 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o -w <!--|DB_NAME|--> 
+30 01 * * 1-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/scrubscan.pl
 #
 #
-#  MTWT     2:00am   Validate data, daily + orphans
+# S         2:30am   Validate data, daily + orphans + weekly
 #
-00 02 * * 2-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o <!--|DB_NAME|-->
+30 02 * * 1 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o -w <!--|DB_NAME|--> 
 #
 #
-# MTWTFSaSu  2:30am   Populate DOIS with pmid only reporting thise added, daily
+#  MTWT     2:30am   Validate data, daily + orphans
 #
-30 2 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/CitexploreDOI/lightdois.sh
+30 02 * * 2-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o <!--|DB_NAME|-->
+#
+#
+# MTWTFSaSu  3:00am   Populate DOIS with pmid only reporting thise added, daily
+#
+00 3 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/CitexploreDOI/lightdois.sh
 #
 #
 #
@@ -203,9 +203,9 @@
 #
 30 02 1 * * <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -m <!--|DB_NAME|-->
 #
-# 0         3:00am   CURATOR SUPPORT: monthly zgc related statistics email
+# 0         3:15am   CURATOR SUPPORT: monthly zgc related statistics email
 #
-00 03 1 * * <!--|ROOT_PATH|-->/server_apps/Reports/Count.pl
+15 03 1 * * <!--|ROOT_PATH|-->/server_apps/Reports/Count.pl
 #
 # 0         3:25am   CURATOR SUPPORT: monthly figure permission check
 #
