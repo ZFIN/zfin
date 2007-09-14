@@ -27,7 +27,7 @@
 
 // If you use pslogger.php to generate your log, you can change this line with
 // var awstatsmisctrackerurl="pslogger.php?loc=/js/awstats_misc_tracker.js";
-var awstatsmisctrackerurl="/js/awstats_misc_tracker.js";
+var awstatsmisctrackerurl="/javacripts/awstats_misc_tracker.js";
 
 function awstats_setCookie(TRKNameOfCookie, TRKvalue, TRKexpirehours) {
 	var TRKExpireDate = new Date ();
