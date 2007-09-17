@@ -119,16 +119,17 @@ PREFIX:   patosum_
   <tbody class="searchresults">
     <?MISQL SQL="select distinct fig_label, fig_zdb_id, geno_nickname, geno_zdb_id, 
                         exp_name, exp_zdb_id, apato_start_stg_zdb_id, apato_end_stg_zdb_id, 
-                        fig_full_label, genox_zdb_id
+                        fig_full_label, genox_zdb_id, stg_hours_start
                    from figure
                      join apato_figure on apatofig_fig_zdb_id = fig_zdb_id
                      left outer join atomic_phenotype on apato_zdb_id = apatofig_apato_zdb_id
                      join genotype_experiment on genox_zdb_id = apato_genox_zdb_id
                      join genotype on geno_zdb_id = genox_geno_zdb_id
                      join experiment on genox_exp_zdb_id = exp_zdb_id 
+                     join stage on stg_zdb_id = apato_start_stg_zdb_id
                    where fig_source_zdb_id = '$OID'
 			 $patosum_filter_fig_sql $patosum_filter_genotype_sql 
-                   order by fig_full_label;"> 
+                   order by fig_full_label, geno_nickname, exp_name, stg_hours_start;"> 
       <?MIVAR NAME="$patosum_fig_label">$1<?/MIVAR>
       <?MIVAR NAME="$patosum_fig_zdb_id">$2<?/MIVAR>
       <?MIVAR NAME="$patosum_geno_nickname">$3<?/MIVAR>
