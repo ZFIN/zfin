@@ -153,9 +153,9 @@
 # ------------------------------------------------------------------------
 #
 # Nights   When      Comments
-# SMTWT     1:30am   Scan of char/varchar fields for bad stuff
+# SMTWT     2:20am   Scan of char/varchar fields for bad stuff
 #
-30 01 * * 1-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/scrubscan.pl
+20 02 * * 1-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/scrubscan.pl
 #
 #
 # S         2:30am   Validate data, daily + orphans + weekly
