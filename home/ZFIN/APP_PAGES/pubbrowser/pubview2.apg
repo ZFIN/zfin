@@ -104,8 +104,7 @@ displays a publication record, or many publication records if > 1 returned.
 
 <?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
 <?MIVAR NAME=trackZdbID>$OID<?/MIVAR>
-<?MIVAR NAME=theurl>$HTTP_HOST$HTTP_URI$(REPLACE,$QUERY_STRING,"'","")<?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'sourceURL=$theurl') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'sourceURL=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
 <br/>
 <?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
@@ -221,7 +220,7 @@ displays a publication record, or many publication records if > 1 returned.
 
 
 <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-<?MISQL SQL="select WebExplode(object,'OID=$OID&accession_no=$accession_no&referenceurl=$theurl') from webPages where ID='aa-pubmedlink.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'OID=$OID&accession_no=$accession_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-pubmedlink.apg';">$1<?/MISQL>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 
@@ -239,7 +238,7 @@ Number exists
 
 
 <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-<?MISQL SQL="select WebExplode(object,'OID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$theurl') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'OID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
 

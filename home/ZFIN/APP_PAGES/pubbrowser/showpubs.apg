@@ -793,7 +793,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">
-		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2&$rtype='publication'">$4 ($3) $1. $5.</A>
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2&$rtype=publication">$4 ($3) $1. $5.</A>
         </DIV>
     	</TD>
   	</TR>
@@ -828,7 +828,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">
-		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2&$rtype='publication'">$4 ($3) $1. $5.</A>
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2&$rtype=publication">$4 ($3) $1. $5.</A>
         </DIV>
     	</TD>
   	</TR>
