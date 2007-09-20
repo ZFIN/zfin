@@ -68,6 +68,12 @@ function updateInnerHTMLAnat(element_id,html_to_display) {
              <?MIVAR NAME=$fxallfig_has_patoresults>no<?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
+<?MICOMMENT>
+***** Exclude pubs that could crash the site
+<?/MICOMMENT>
+<?MISQL SQL="select jtype from publication where zdb_id = '$OID'"><?/MISQL>
+<?MIBLOCK COND=$(AND,$(NE,$1,Curation),$(NE,$1,Unpublished))>
+
 <?MISQL SQL="select WebExplode(object,'rtype=fxfig') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 <?MICOMMENT> ** Your Input Welcome ** <?/MICOMMENT>
@@ -282,4 +288,11 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
 
 <p>
 
+<?MIELSE>
+<br>
+You have reached this page because of an incorrect link to directly-submitted ZFIN figure data. <br>
+<br>
+Please use the the <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Mutants/Transgenics</a> search page or <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Gene Expression</a> search page.
+<br>
+<?/MIBLOCK>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
