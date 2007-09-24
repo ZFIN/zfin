@@ -53,9 +53,7 @@ function updateInnerHTMLAnat(element_id,html_to_display) {
 <?MIVAR NAME=$fxallfig_probe_image><?/MIVAR>
 <?MIVAR NAME=$fxallfig_probe_key><?/MIVAR>
 <?MIVAR NAME=$fxallfig_probe_rating><?/MIVAR>
-<?MIBLOCK COND="$(NXST,$fxallfig_probe_zdb_id)">
-  <?MIVAR NAME=$fxallfig_probe_zdb_id><?/MIVAR>
-<?/MIBLOCK>
+
 <?MIVAR>
     <TITLE>ZFIN View Publication:$fxallfig_pub_zdb_id </TITLE>
 <?/MIVAR>
@@ -72,7 +70,11 @@ function updateInnerHTMLAnat(element_id,html_to_display) {
 ***** Exclude pubs that could crash the site
 <?/MICOMMENT>
 <?MISQL SQL="select jtype from publication where zdb_id = '$OID'"><?/MISQL>
-<?MIBLOCK COND=$(AND,$(NE,$1,Curation),$(NE,$1,Unpublished))>
+<?MIBLOCK COND="$(OR,$(XST,$fxallfig_probe_zdb_id),$(AND,$(NE,$1,Curation),$(NE,$1,Unpublished)))">
+
+<?MIBLOCK COND="$(NXST,$fxallfig_probe_zdb_id)">
+  <?MIVAR NAME=$fxallfig_probe_zdb_id><?/MIVAR>
+<?/MIBLOCK>
 
 <?MISQL SQL="select WebExplode(object,'rtype=fxfig') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
