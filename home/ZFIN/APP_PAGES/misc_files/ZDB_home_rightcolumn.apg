@@ -172,6 +172,12 @@
        </li>
        <?/MICOMMENT>
        
+       <li>
+         <a href="/zf_info/news/siteNews.html#vega">
+           September 27 - New Vega Update
+         </a>
+       </li>
+       
               
        <li>
          <a href="/zf_info/news/siteNews.html#ZFIQ">
@@ -179,11 +185,7 @@
          </a>
        </li>
        
-              <li>
-         <a href="/zf_info/news/siteNews.html#fishnet">
-           August 21 - FishNet database now available
-         </a>
-       </li>
+              
 
 
 
