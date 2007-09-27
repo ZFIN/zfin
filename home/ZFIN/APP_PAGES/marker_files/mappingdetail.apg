@@ -831,8 +831,12 @@ marker = '';
 
     <?MIBLOCK COND="$(AND,$(NC,$map_comments,NULL),$(NC,$map_comments,""))">
       <?MIVAR>
-    
-        <TD><A HREF="$curviewer$member_zdb_id">$member_abbrev</A> ($member_type_display)</TD>
+      <?MIBLOCK COND="$(=,$(POSITION,$member_zdb_id,ALT),0)")> 
+<?MIVAR>
+        <TD><A HREF="$curviewer$member_zdb_id">$member_abbrev</A> ($member_type_display)</TD><?/MIVAR>
+      <?MIELSE>
+      <?MIVAR>  <TD>$member_abbrev ($member_type_display)</TD><?/MIVAR>
+       <?/MIBLOCK>
         <TD> LG $lg $(IF,$(NC,$distance,),;) $distance $metric $(IF,$(NC,$lod,),;) $lod</TD>
 	<TD>$source_display</TD><TD>&nbsp; &nbsp;</TD>
         <TD><A HREF=javascript:show_detail("$link_id","$member_zdb_id","$member_abbrev","$(IF,$(XST,$abbrev),$abbrev)");>Details</A></TD>
