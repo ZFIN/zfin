@@ -80,7 +80,7 @@ update new_anatomy_item
 		(select stg_zdb_id
 		   from stage
 		  where n_anatitem_end_stg_zdb_id = stg_obo_id);
-
+ 
 --------------------------------------------------------
 -- Existing/Updated anatomy items
 -- 
@@ -367,6 +367,16 @@ insert into tmp_ao_updates(t_rec_id,t_field_name,t_new_value,t_old_value,t_when)
 	       on anatitem_zdb_id = u_anatitem_zdb_id
          where anatitem_name <> u_anatitem_name;
 
+-- unload anatomy terms with newly updated name for case2059
+!echo 'unload anatomy terms with newly updated name for case2059'
+ unload to "name_updated_anatitem.rpt"
+   select anatitem_name, anatitem_zdb_id, ss.stg_abbrev, se.stg_abbrev
+     from anatomy_item join updated_anatomy_item
+	       on anatitem_zdb_id = u_anatitem_zdb_id
+          join stage ss on anatitem_start_stg_zdb_id = ss.stg_zdb_id
+          join stage se on anatitem_end_stg_zdb_id = se.stg_zdb_id
+    where anatitem_name <> u_anatitem_name;
+
 -- in case the update statement gives non-unique error, uncomment the
 -- two "set ... disabled" and "select" statements to diagnose
 
@@ -495,10 +505,18 @@ update anatomy_item
          	 where anatitem_zdb_id = u_anatitem_zdb_id
            	   and u_anatitem_description is not null );
 
-
 ------------------------------------------------------------
 -- Load new anatomy_item
 -------------------------------------------------------------
+-- unload new anatomy terms for case2059
+!echo 'unload new anatomy terms for case2059'
+
+unload to "new_name_anatitem.rpt"
+select n_anatitem_name, n_anatitem_zdb_id, ss.stg_abbrev, se.stg_abbrev
+  from new_anatomy_item 
+       join stage ss on n_anatitem_start_stg_zdb_id = ss.stg_zdb_id
+       join stage se on n_anatitem_end_stg_zdb_id = se.stg_zdb_id;
+
 !echo '== add new anatomy_item =='
 insert into zdb_active_data (zactvd_zdb_id)
      select n_anatitem_zdb_id
@@ -648,6 +666,14 @@ insert into expression_result (xpatres_zdb_id, xpatres_xpatex_zdb_id,
 			xpatres_comments)
      select * 
        from tmp_xpatres_merge_record;
+
+-- delete the xpat figures that already exists
+delete from tmp_xpat_figure
+ where exists 
+       (select 't' 
+          from expression_pattern_figure
+         where txf_xpatres_zdb_id = xpatfig_xpatres_zdb_id
+           and txf_xpatfig_zdb_id = xpatfig_fig_zdb_id);
 
 -- restore xpat figures with a distinct select
 insert into expression_pattern_figure(xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id)
