@@ -26,7 +26,8 @@ GENERICS = unloadAO.pl anatitem_2_obo.pl stg_2_obo.pl err_report.pl \
 
 STATICS = README loadAO.sql make_annot_translation.sql \
 	batch_xpat_annot_adjust.sql parse_stage_keywords.pl \
-	check_thisse_keywords.sql check_annotation.sql 
+	check_thisse_keywords.sql check_annotation.sql \
+	verify_stage_abbrev.sql
 
 # ---------------  Production Rules  ------------------------------------
 
