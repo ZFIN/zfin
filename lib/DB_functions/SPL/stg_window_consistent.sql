@@ -55,7 +55,9 @@ stg_window_consistent (
 
   if (startStgZdbId = endStgZdbId) then
 	let consistent = 't';
-  elif (endStart > startStart OR endEnd > startEnd) then
+  -- we allow same start stage, e.g. unknown starts from 0.0, 
+  -- same as 1-cell
+  elif (endStart >= startStart OR endEnd > startEnd) then
         let consistent = 't';
   end if
 
