@@ -38,10 +38,6 @@ include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
 
-# Run script to create file for OBO site
-unloadshare : 
-	$(TARGETDIR)/unloadAO.pl share
-
 # Run script to create file for continous curation
 unload : 
 	$(TARGETDIR)/unloadAO.pl
