@@ -222,7 +222,6 @@ EFFECTS
                        <option value="$1"
                          $(IF,$(AND,$(XST,$featcur_reln_add_relation),$(EC,$featcur_reln_add_relation,$1)),SELECTED)>$1</option>
              <?/MISQL>
-           <?MIVAR>$MI_SQL<?/MIVAR>  
             </td>
              <td>
              <select name="featcur_reln_add_marker">

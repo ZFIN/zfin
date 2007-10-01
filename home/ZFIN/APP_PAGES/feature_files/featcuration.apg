@@ -30,7 +30,9 @@ PREFIX:
 <?/MICOMMENT>
 
 <?MIBLOCK COND=$(AND,$(XST,$featcur_featcurupdate),$(EC,$featcur_featcurupdate,update))>
+<?MICOMMENT>
     <?MIVAR COND=$(XST,$featcur_reln_feat_zdb_id)>$featcur_reln_feat_zdb_id<?/MIVAR>
+<?/MICOMMENT>
     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featcurupdate.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
