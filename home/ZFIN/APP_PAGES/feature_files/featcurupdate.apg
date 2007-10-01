@@ -405,6 +405,14 @@ PREFIX:   featcurup_
                   where featassay_feature_zdb_id='$featcur_featedit_feature_zdb_id'">
       <?/MISQL>
    <?/MIBLOCK>
+<?MICOMMENT>
+   <?MIBLOCK COND="$(XST,$featedit_feature_alias)">
+      <?MISQL SQL="update data_alias 
+                  set dalias_alias='$featedit_feature_alias' 
+                  where dalias_zdb_id='$featcur_feat_alias_zdbid'">
+      <?/MISQL>
+   <?/MIBLOCK>
+<?/MICOMMENT>
 
    <?MIBLOCK COND="$(NE,$featedit_feature_public_note,)">
       <?MICOMMENT>First format note text <?/MICOMMENT>
@@ -417,10 +425,18 @@ PREFIX:   featcurup_
       <?MIVAR NAME=$featedit_feature_public_note>$(REPLACE,$featedit_feature_public_note,++,&nbsp;&nbsp;)<?/MIVAR>
       <?MIVAR NAME=$featedit_feature_public_note>$(URLDECODE,$featedit_feature_public_note)<?/MIVAR>
      <?/MIVAR>
+   <?MIBLOCK COND="$(=,5,$(POSITION,$featcur_featedit_feature_zdb_id,ALT))">
      <?MISQL SQL="update feature 
                   set feature_comments='$featedit_feature_public_note' 
                   where feature_zdb_id='$featcur_featedit_feature_zdb_id'">
      <?/MISQL>
+  <?MIELSE>
+
+     <?MISQL SQL="update marker 
+                  set mrkr_comments='$featedit_feature_public_note' 
+                  where mrkr_zdb_id='$featcur_featedit_feature_zdb_id'">
+     <?/MISQL>
+  <?/MIBLOCK>
   <?/MIBLOCK>
 
 
@@ -464,6 +480,12 @@ PREFIX:   featcurup_
           <?/MISQL> 
       <?/MIBLOCK>
   <?/MIBLOCK>
+<SCRIPT>
+<?MIVAR>
+      location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID");
+<?/MIVAR>
+</SCRIPT>
+
 <?/MIBLOCK>
 <?MICOMMENT>***end of if feature edit zdb id exists block*** <?/MICOMMENT>
 
