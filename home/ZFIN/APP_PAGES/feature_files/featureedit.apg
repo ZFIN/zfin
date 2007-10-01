@@ -43,7 +43,8 @@ EFFECTS: Edits a feature/marker
 
         <input type=hidden name=MIval value="aa-curation.apg">
         <input type=hidden name=OID value="<?MIVAR>$OID<?/MIVAR>">
-        <input type=hidden name=anchor value=featediting>
+        <input type=hidden name=anchor value=attrib>
+       <input type=hidden name=anchor value=featediting>
 
             <?MIVAR NAME=featcur_feat_zdb_id><?/MIVAR>
             <?MIVAR NAME=featcur_feat_typedb><?/MIVAR>
@@ -134,10 +135,11 @@ EFFECTS: Edits a feature/marker
 <?MICOMMENT> end of if marker/feature block <?/MICOMMENT>
 
   <?MISQL SQL="
-            select dalias_alias from data_alias
+            select dalias_alias,dalias_zdb_id from data_alias
             where dalias_data_zdb_id='$featcur_feat_zdb_id'">
 
             <?MIVAR NAME=featcur_feat_alias>$1<?/MIVAR>
+            <?MIVAR NAME=featcur_feat_alias_zdbid>$2<?/MIVAR>
 
    <?/MISQL>
 <?/MIBLOCK>
@@ -170,9 +172,14 @@ EFFECTS: Edits a feature/marker
 
 
        <tr><td><B>Change Feature Name</b>:
+       <?MICOMMENT>
        <td><INPUT TYPE=textbox size=50 NAME=featedit_feature_newname VALUE=<?MIVAR COND="$(NE,$featcur_feat_name,$featcur_feat_abbrev)">$featcur_feat_name<?/MIVAR>>
        &nbsp;&nbsp;&nbsp;<B>Change Feature Abbrev</b>:
        &nbsp;&nbsp;&nbsp;<INPUT TYPE=textbox NAME=featedit_feature_newabbrev VALUE=<?MIVAR COND="$(NE,$featcur_feat_name,$featcur_feat_abbrev)">$featcur_feat_abbrev<?/MIVAR>>
+       <?/MICOMMENT>
+       <td><INPUT TYPE=textbox size=50 NAME=featedit_feature_newname VALUE=<?MIVAR>$featcur_feat_name<?/MIVAR>>
+       &nbsp;&nbsp;&nbsp;<B>Change Feature Abbrev</b>:
+       &nbsp;&nbsp;&nbsp;<INPUT TYPE=textbox NAME=featedit_feature_newabbrev VALUE=<?MIVAR>$featcur_feat_abbrev<?/MIVAR>>
        <tr><td><B>Feature type</b>:
        <td> <select name=featedit_feature_type>
       <?MIBLOCK COND="$(EC,$featcur_feat_isfeature,yes)">
@@ -203,8 +210,8 @@ EFFECTS: Edits a feature/marker
       &nbsp;
       <input name="featedit_delete_typeattr" type=submit value="Delete">
 
-<!--      <tr><td><b>Alias</b>:
-      <td> <input type=text name=featedit_feature_alias size=15 value=<?MIVAR COND="$(XST,$featcur_feat_alias)">'$featcur_feat_alias'<?/MIVAR>>-->
+      <tr><td><b>Alias</b>:
+      <td> <input type=text name=featedit_feature_alias size=15 value=<?MIVAR COND="$(XST,$featcur_feat_alias)">'$featcur_feat_alias'<?/MIVAR>>
       <tr><td><b>Lab of Origin</b>
       <td> <select name=featedit_feature_lab>
              <?MIVAR COND="$(XST,$featcur_feat_lab)"><option select value='$featcur_feat_lab'>$featcur_feat_lab<?/MIVAR>
