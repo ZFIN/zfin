@@ -21,15 +21,11 @@ Scripts:
 
 Execution:
 ----------
-  To generate OBO for curators
+  To generate OBO 
 
 	% gmake unload
      
-  To generate OBO for OBO site
-	
-	% gmake unloadshare
-
-  With both execution, the OBO file would be emailed to curators. Curators would re-save them in DagEdit to re-order the items, and commit the internal version into CVS, and send the external one to OBO site and collaborators. 
+  the OBO file would be emailed to curators. Curators would re-save them in DagEdit to re-order the items, and commit it into CVS, and send to OBO site and collaborators. 
 
 ---------------------------------------------------
 -- Load AO
@@ -131,12 +127,25 @@ Execution:
 
         Then either run the following function to adjust one by one:   
  
-	execute function xpat_annot_adjust(oldAnatZdbId, startStgZdbId, endStgZdbId, newAnatZdbId)
+  	  execute function xpat_annot_adjust(oldAnatZdbId, startStgZdbId, endStgZdbId, newAnatZdbId)
    
-        Or create the AO_translation.unl file as the above format and run make_annot_translation.sql.
+        Or 
+
+          create the AO_translation.unl file as the above format and run make_annot_translation.sql.
+
+   6) Save the anatomy.obo file
+  
+      When the anatomy.obo file is ready to be loaded, place it to the cvs
+      directory, and make a commit.
+
+      If it is a big/complicated AO changes, you may unload AO and have curators
+      check it with OBO-edit before load it to production.
+
+      If it has been a tough load for you, then DO a test load on almdb! You may
+      have made some local changes that by now slipped off your mind.
 
 
-   6) Load Production
+   7) Load Production
       At zfindb TARGET dir (MUST be user informix), copy over
       (anatomy.obo,) AO_translation.unl and stageKeyword.csv.
 
@@ -144,23 +153,20 @@ Execution:
 
 	% loadMaster.sh
 
+   8) Finish up
+
       Send two .rpt files to Melissa for Stephen Moormen.
 
-      Currently for statistics, we make notes from the SQL output. When it gets regular and stable, we should automate this :
+      Send statistics to curators: (currently, we make notes from the SQL output. When it gets regular and stable, we should automate this) :
+
           how many new anatomy terms 
           how many merges 
           how many stages changed
           how many new definitions, updated definitions
           how many more relationships
-
-
-
-Postload
----------
-
-   Commit the anatomy.obo file, which is used for the load(normally with some corrections), into CVS. 
-   Unload AO, refer to the first half of this file.
  
+      Then run an unload. Output would be emailed to curators directly.
+      
 
 ------------------------------
 -- Future Improvement?
