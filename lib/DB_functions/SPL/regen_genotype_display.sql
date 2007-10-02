@@ -82,7 +82,7 @@ create dba function "informix".regen_genotype_display()
 
 	create unique index tg_index
   		on tmp_genotype(genotype_id)
-	  using btree in idxdbs4; 
+	  using btree in idxdbs3; 
 
 	update statistics high for table tmp_genotype ;
 
