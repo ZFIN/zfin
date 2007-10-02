@@ -35,11 +35,11 @@ insert into tmp_term_onto_no_dups
 
 create index rterm_name_index 
   on tmp_term_onto_no_dups (term_name)
-  using btree in idxdbs4 ;
+  using btree in idxdbs3 ;
 
 create index rterm_id_index 
   on tmp_term_onto_no_dups (term_id)
-  using btree in idxdbs4 ;
+  using btree in idxdbs2 ;
 
 update statistics high for table tmp_term_onto_no_dups ;
 
@@ -327,11 +327,11 @@ create temp table tmp_rels (
 
 create index rtermrels_term_1_id_index
   on tmp_rels (termrel_term_1_id)
-  using btree in idxdbs4 ;
+  using btree in idxdbs1 ;
 
 create index rtermrels_term_2_id_index
   on tmp_rels (termrel_term_2_id)
-  using btree in idxdbs4 ;
+  using btree in idxdbs2 ;
 
 load from patoterm_relationships.unl
   insert into tmp_rels ;
