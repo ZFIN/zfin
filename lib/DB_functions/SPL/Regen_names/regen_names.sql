@@ -400,7 +400,7 @@ create dba function "informix".regen_names() returning integer
     create unique index all_name_ends_primary_key_index_transient
       on all_name_ends_new (allnmend_name_end_lower, allnmend_allmapnm_serial_id)
       fillfactor 100
-      in idxdbs4;
+      in idxdbs1;
 
     let errorHint = "all_name_ends serial id index";
     create index allnmend_allmapnm_serial_id_index_transient
