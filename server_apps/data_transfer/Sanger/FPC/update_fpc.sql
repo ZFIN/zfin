@@ -6,7 +6,7 @@ fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 ;
 load from 'fpc_zdb.unl' insert into fpc_marker;
 update fpc_marker set fpm_mrkr = lower(fpm_mrkr) where fpm_mrkr[1,4] <> 'ZDB-';
-create index fpm_acc_ndx on fpc_marker(fpm_acc) in idxdbs4;
+create index fpm_acc_ndx on fpc_marker(fpm_acc) in idxdbs1;
 create index fpm_mrkr_ndx on fpc_marker(fpm_mrkr)in idxdbs3;
 update statistics medium for table fpc_marker;
 ---------------------------------------------------
@@ -27,7 +27,7 @@ extent size 4096 next size 4096
 ;
 load from 'fpc_contig.unl' insert into fpc_contig;
 create index fpct_ctg_ndx on fpc_contig(fpct_ctg)in idxdbs3;
-create index fpct_cln_ndx on fpc_contig(fpct_cln)in idxdbs4;
+create index fpct_cln_ndx on fpc_contig(fpct_cln)in idxdbs2;
 alter table fpc_contig drop fpct_junk;
 update statistics medium for table fpc_contig;
 ---------------------------------------------------
