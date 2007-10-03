@@ -1395,7 +1395,8 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
       	       and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
       	       and fmrel_type = 'is allele of'
                and genofeat_geno_zdb_id = genox_geno_zdb_id
-               and genox_zdb_id = apato_genox_zdb_id ;">
+               and genox_zdb_id = apato_genox_zdb_id
+               and apato_tag not like 'normal%' ;">
    <?/MISQL>
  
    <?MISQL SQL="
@@ -1408,7 +1409,8 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
                and present_t = 'f'
                and feature_zdb_id = genofeat_feature_zdb_id
                and genofeat_geno_zdb_id = genox_geno_zdb_id
-               and genox_zdb_id = apato_genox_zdb_id ;">
+               and genox_zdb_id = apato_genox_zdb_id
+               and apato_tag not like 'normal%' ;">
    <?/MISQL>
 
    <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
@@ -1434,7 +1436,8 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
                and mrel_type = 'knockdown reagent targets gene' 
                and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id 
                and expcond_exp_zdb_id = genox_exp_zdb_id 
-               and genox_zdb_id = apato_genox_zdb_id ;">
+               and genox_zdb_id = apato_genox_zdb_id 
+               and apato_tag not like 'normal%';">
        <?/MISQL> 
      <?/MIBLOCK>
    <?/MIBLOCK>
@@ -1445,7 +1448,8 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
               from experiment_condition, genotype_experiment, atomic_phenotype
              where expcond_mrkr_zdb_id = '$OID'
 	       and expcond_exp_zdb_id = genox_exp_zdb_id
-               and genox_zdb_id = apato_genox_zdb_id ;">
+               and genox_zdb_id = apato_genox_zdb_id 
+               and apato_tag not like 'normal%';">
    <?/MISQL> 
    <br/>
  <?/MIBLOCK>
