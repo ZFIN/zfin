@@ -1,0 +1,14 @@
+Status: 301 Now where did I leave that URL
+Location: http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg
+Content-type: text/html
+
+<HTML>
+<HEAD>
+<TITLE>ZFIN: The Zebrafish Model Organism Database</TITLE>
+</HEAD>
+<BODY>
+Somehow, you didn't get redirected properly. 
+Click <A HREF="http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">here</A>
+to get to ZFIN.
+</BODY>
+</HTML>
