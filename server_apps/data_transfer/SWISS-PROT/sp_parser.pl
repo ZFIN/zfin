@@ -174,12 +174,12 @@ while (<>) {
 
    foreach $gene (@gene_array) {
 
-	print DBLINK "$gene|SWISS-PROT|$prm_ac|$len|\n";
+	print DBLINK "$gene|UniProt|$prm_ac|$len|\n";
     }
 
     if (length($ecnumber)>0){
 	foreach $gene (@gene_array) {
-	    print DBLINK "$gene|EC-ENZYME|$ecnumber||\n"; 
+	    print DBLINK "$gene|EC|$ecnumber||\n"; 
 	}
     }
 
