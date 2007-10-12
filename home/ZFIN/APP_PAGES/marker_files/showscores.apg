@@ -15,23 +15,26 @@ as of $3<?/MIVAR>
 <table width=100% cellpadding=0 cols=3>
 <TH><font size=2 face="Courier"> NAME</TH>	   <TH><font size=2 face="Courier">LOCATION</TH>	<TH><font size=2 face="Courier">SCORING VECTOR</TH>
 
-<?MIVAR NAME=$previous> <?/MIVAR>
-<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
-<?MIVAR NAME=$constraint> where (( refcross_id='$panel') and <?/MIVAR>
-<?MIVAR NAME=$constraint COND="$(NC,$lg,NULL)">$constraint (or_lg= '$lg')<?/MIVAR>
-<?MIVAR NAME=$previous COND="$(NC,$lg,NULL)"> and <?/MIVAR>
-<?MIVAR NAME=$constraint COND="$(AND,$(NC,$marker_id,undefined),$(NC,$marker_id,None))">$constraint $previous (marker_id= '$marker_id')<?/MIVAR>
-<?MIVAR NAME=$constraint>$constraint )<?/MIVAR>
-
-<?MISQL SQL="select scoring_data,lg_location,metric from mapped_marker $constraint order by lg_location;">
+<?MIBLOCK COND="$(AND,$(NC,$marker_id,undefined),$(NC,$marker_id,None))">
+<?MISQL SQL="select scoring_data,lg_location,metric from mapped_marker where refcross_id = '$panel' and or_lg = '$lg' and marker_id = '$marker_id' order by lg_location;">
 <TR>
 <TD width=10%><font size=2 face="Courier">$marker_abbrev</TD>
 <TD width=10%><font size=2 face="Courier">$2$3</TD>
 <TD width=80%><font size=2 face="Courier"><nobr>$1</nobr></TD>
 </TR>
 <?/MISQL>
+<?MIELSE>
+<?MISQL SQL="select mrkr_abbrev,scoring_data,lg_location,metric from mapped_marker,marker where refcross_id = '$panel' and or_lg = '$lg' and mrkr_zdb_id = marker_id order by lg_location;">
+<TR>
+<TD width=10%><font size=2 face="Courier">$1</TD>
+<TD width=10%><font size=2 face="Courier">$3$4</TD>
+<TD width=80%><font size=2 face="Courier"><nobr>$2</nobr></TD>
+</TR>
+<?/MISQL>
+<?/MIBLOCK>
 
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><b>Sorry, no publicly scoring data.</B>
+
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><b>Sorry, no available scoring data.</B>
 <?/MIVAR>
 
 </table>
