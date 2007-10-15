@@ -2638,6 +2638,8 @@ sub scrubElsevierStatistics($){
     $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'msnbot%'; ") ; 
     $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'FAST Enterprise Crawler%'; ") ; 
     $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'Yeti%'; ") ; 
+    $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'MSRBOT%'; ") ; 
+    $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'MJ12bot%'; ") ; 
     # END - scrub based on user_agent
 
 
@@ -2654,14 +2656,14 @@ sub scrubElsevierStatistics($){
 sub countBots($){
 
  
-    my $sql = "select es_http_user_agent,count(es_pk_id) from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' group by es_http_user_agent; " ; 
+    my $sql = "select es_http_user_agent,count(es_pk_id) as accesscount from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' group by es_http_user_agent order by accesscount desc; " ; 
     my @colDesc = ("agent", "count");
     my $nRecords = execSql($sql,undef,@colDesc);
     if($nRecords >0){
         print RESULTFILE "Bots found $nRecords rows from elsevier_statistics according to user_agent.\n" ; 
     }
     my $sendToAddress = $_[0];
-    my $subject = "elsevier scrub statistics";
+    my $subject = "Top bots";
     my $routineName = "countBots";
     my $msg = "Top bot/crawler user agents.";
     &sendMail($sendToAddress, $subject,$routineName, $msg, $sql);     
