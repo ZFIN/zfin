@@ -24,7 +24,7 @@ as of $3<?/MIVAR>
 </TR>
 <?/MISQL>
 <?MIELSE>
-<?MISQL SQL="select mrkr_abbrev,scoring_data,lg_location,metric from mapped_marker,marker where refcross_id = '$panel' and or_lg = '$lg' and mrkr_zdb_id = marker_id order by lg_location;">
+<?MISQL SQL="select mrkr_abbrev,scoring_data,lg_location,metric from mapped_marker,marker where refcross_id = '$panel' and or_lg = '$lg' and mrkr_zdb_id = marker_id union select feature_abbrev,scoring_data,lg_location,metric from mapped_marker,feature where refcross_id = '$panel' and or_lg = '$lg' and feature_zdb_id = marker_id order by lg_location;">
 <TR>
 <TD width=10%><font size=2 face="Courier">$1</TD>
 <TD width=10%><font size=2 face="Courier">$3$4</TD>
