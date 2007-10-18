@@ -31,7 +31,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info
 
-SUBDIRS = anatomy catch dbase images monitor movies news stckctr \
+SUBDIRS = anatomy catch dbase images monitor movies news \
 	zfbook sequence 2006_tutorial
 
 GENERICS = defs.html genome.html nomen.html nomen_comm.html \
