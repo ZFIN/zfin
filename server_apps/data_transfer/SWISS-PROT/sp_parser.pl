@@ -12,7 +12,7 @@ use Cwd;
 my $cwd = getcwd();
 my $first = 1;       #indicate the beginning of DR(the end of CC)
 
-my (@ext_dr, @cc, $cc, @de, $de, @sp_ac, $sp_ac, $sp_ac_list, $embl, $gene, $single_gene, @gene_array, $kw);
+my (@ext_dr, @cc, $cc, @sp_ac, $sp_ac, $sp_ac_list, $embl, $gene, $single_gene, @gene_array, $kw);
    
 
 # Files to be loaded into zfin.
@@ -69,17 +69,14 @@ while (<>) {
   
   #DE   Tyrosine-protein kinase Jak1 (EC 2.7.1.112) (Janus kinase 1) (Jak-1).q
   if (/^DE\s+(.*)/) {   
-    push (@de, $de);    #put each item of the comments into array     
-    $de = $de.' '.$1;
-	if (/.* \(EC ([\d\.\-]*)\)/){ # see http://www.chem.qmul.ac.uk/iubmb/enzyme/ 
-		$ecnumber=$1;  
+      if (/.* \(EC ([\d\.\-]*)\)/){ # see http://www.chem.qmul.ac.uk/iubmb/enzyme/ 
+	  $ecnumber=$1;  
 
-		# we want to use the full EC# for link out
-                # don't know what does it mean that "zfin does not allow -"
-                # let try to see what it breaks. 
-		#$ecnumber=~s/[\.\-]*$//; # chop trailing dot dash(s) because zfin does not allow -
-	}
-    next;
+	  # we want to use the full EC# for link out
+          # comment out the previous expression
+	  #$ecnumber=~s/[\.\-]*$//; # chop trailing dot dash(s) because zfin does not allow -
+      }
+      next;
   }
   
   #CC   -!- SUBCELLULAR LOCATION: Nuclear (By similarity).
@@ -186,7 +183,7 @@ while (<>) {
     # reinitiate the variables for loop
     $cc=''; $kw='';  $prm_ac = '';
     $gene=''; $single_gene = ''; @gene_array = (); $embl = '';
-    @cc = ();  @dr = (); @de=();$de='';
+    @cc = ();  @dr = (); 
     @sp_ac=(); $sp_ac=''; $sp_ac_list=''; $ecnumber = ''; $acc_num = '';
     $first = 1;$one = 1;
   }
