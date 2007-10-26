@@ -2,10 +2,11 @@
 
 This readme is intended to explain the process of loading SWISS-PROT 
 report into ZFIN.   
-
-
 =================================================================
-by Peiran, Aug 2004
+
+-> NOTE: Uniprot was to update DE line format post Feb 1st, 2008. Please check 
+http://ca.expasy.org/sprot/relnotes/sp_soon.html and make change to sp_parse.pl 
+accordingly.
 
 First of all, check ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat to see when is the file last updated!
 Doesn't hurt to check http://www.geneontology.org/external2go/spkw2go, interpro2go, and ec2go too.
