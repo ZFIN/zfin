@@ -2,7 +2,11 @@
 
 
 # find the name of the most current core database
-/local/bin/curl -slo cur_ens_db.txt ftp://ftp.ensembl.org/pub/current_danio_rerio/data/mysql/
+
+# changed old 2007 October 
+#ftp://ftp.ensembl.org/pub/current_danio_rerio/data/mysql/
+
+/local/bin/curl -slo cur_ens_db.txt ftp://ftp.ensembl.org/pub/current_mysql/
 
 # strip/convert non-unix line endings
 /private/ZfinLinks/Commons/bin/reline cur_ens_db.txt
