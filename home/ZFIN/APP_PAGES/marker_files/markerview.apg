@@ -1549,13 +1549,13 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
 <?/MISQL>
 <?MIBLOCK INDEX=$ontology FOREACH=$ontologies>
     <?MISQL SQL="
-      select first 1 mrkrgoev_zdb_id
+      select first 1 mrkrgoev_zdb_id, go_term
         from go_term,go_evidence_code, marker_go_term_evidence
         where mrkrgoev_mrkr_zdb_id = '$OID'
           and mrkrgoev_go_term_zdb_id = goterm_zdb_id
           and mrkrgoev_evidence_code = goev_code
           and goterm_ontology = '$ontology'
-        order by goev_display_order">
+        order by goev_display_order, goterm_name">
     <?/MISQL>
    <?MIVAR NAME=$evid>$1<?/MIVAR>
    <?MISQL SQL="select count(*) from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$evid'">
