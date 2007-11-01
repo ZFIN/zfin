@@ -78,8 +78,9 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 <?MIVAR NAME=anatdict_anatList>$(SEPARATE,$anatdict_anatList,",")<?/MIVAR>
 <?MIVAR NAME=anatdict_anatList>$(SUBSTR,$anatdict_anatList,2)<?/MIVAR>
 
-
-<?MIVAR COND="$(NXST,$resolution)" NAME="resolution">9<?/MIVAR>
+<?MICOMMENT>
+  <?MIVAR COND="$(NXST,$resolution)" NAME="resolution">9<?/MIVAR>
+<?/MICOMMENT>
 <?MIVAR COND="$(NXST,$highlight_text)" NAME="highlight_text"><?/MIVAR>
 <?MIVAR COND="$(NXST,$mode)" NAME="mode">none<?/MIVAR>
 <?MIVAR COND="$(NXST,$type)" NAME="type"><?/MIVAR>
@@ -362,7 +363,6 @@ function updateParent(AOname, AOid) {
 			 and anatitem_zdb_id = anatstat_anatitem_zdb_id
 			 and anatitem_zdb_id not in ('ZDB-ANAT-041102-1', 'ZDB-ANAT-010921-520')
 			 and anatstat_object_type = 'GENE'
-		         and anatdisp_indent <= '$resolution'
 		         and anatdisp_stg_zdb_id = '$OID' 
 		      order by anatdisp_seq_num
 		      ;">
