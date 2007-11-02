@@ -370,7 +370,7 @@ insert into tmp_ao_updates(t_rec_id,t_field_name,t_new_value,t_old_value,t_when)
 -- unload anatomy terms with newly updated name for case2059
 !echo 'unload anatomy terms with newly updated name for case2059'
  unload to "name_updated_anatitem.rpt"
-   select anatitem_name, anatitem_zdb_id, ss.stg_abbrev, se.stg_abbrev
+   select u_anatitem_name, anatitem_name, anatitem_zdb_id, ss.stg_abbrev, se.stg_abbrev
      from anatomy_item join updated_anatomy_item
 	       on anatitem_zdb_id = u_anatitem_zdb_id
           join stage ss on anatitem_start_stg_zdb_id = ss.stg_zdb_id
