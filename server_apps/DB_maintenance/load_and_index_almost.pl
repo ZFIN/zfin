@@ -203,6 +203,12 @@ $ENV{"INFORMIXSERVER"}   = "<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}         = "<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"} = "<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
+# PRS: since this script is specific to almost,
+# hardcode the stable path instead of editing 30 tt files.
+$ENV{"DOMAIN_NAME"} = "almost.zfin.org";
+$ENV{"JAVA_HOME"} = "/private/apps/java"; 
+$ENV{"CATALINA_HOME"} = "/private/apps/tomcat"; 
+
 # Get argument
 my $indexing = 0;
 my $nArgs = @ARGV;
