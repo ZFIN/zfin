@@ -2655,12 +2655,14 @@ sub scrubElsevierStatistics($){
 
 sub countBots($){
 
+    open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write." ; 
  
     my $sql = "select es_http_user_agent,count(es_pk_id) as accesscount from elsevier_statistics where es_http_user_agent like '%bot%' or es_http_user_agent like '%crawl%' group by es_http_user_agent order by accesscount desc; " ; 
     my @colDesc = ("agent", "count");
     my $nRecords = execSql($sql,undef,@colDesc);
     if($nRecords >0){
         print RESULTFILE "Bots found $nRecords rows from elsevier_statistics according to user_agent.\n" ; 
+        close(RESULTFILE) ; 
     }
     my $sendToAddress = $_[0];
     my $subject = "Top bots";
