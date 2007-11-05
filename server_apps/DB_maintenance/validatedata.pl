@@ -2721,12 +2721,12 @@ sub oldOrphanSourceCheck($) {
 sub countTopPubHits
 {
 
-  my $routineName = "countTopPubHits";
+  my $routineName = "countTopWeeklyPubHits";
   my $recordsToHit = 20 ;
 
-  my $sql="select first $recordsToHit TODAY-1, count(*) thecount ,es_incoming_ip,es_http_user_agent 
+  my $sql="select first $recordsToHit TODAY-7, count(*) thecount ,es_incoming_ip,es_http_user_agent 
             from elsevier_statistics  
-            where es_date >=  TODAY-1
+            where es_date >=  TODAY-7
             and es_date <=  TODAY
             group by es_incoming_ip,es_http_user_agent  
             order by thecount desc ; " ; 
@@ -2741,8 +2741,8 @@ sub countTopPubHits
 
     my $status = $_[0];
     my $sendToAddress = $_[1];
-    my $subject = "$status: Top $recordsToHit accesses for the previous day";
-    my $errMsg = "$status: Top $nRecords' ips for the previous day";
+    my $subject = "$status: Top $recordsToHit accesses for the previous week";
+    my $errMsg = "$status: Top $nRecords' ips for the previous week";
       		       
 #   logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
