@@ -33,7 +33,7 @@
 
 <?MIBLOCK COND="$(>,$phmview_pato_fig_count,0)">
     <?MISQL SQL="
-	select distinct pub_mini_ref
+	select distinct pub_mini_ref,zdb_id
           from $phmview_input_table, apato_figure, figure, publication
          where t_pato_zdb_id = apatofig_apato_zdb_id
  	   and apatofig_fig_zdb_id = fig_zdb_id
@@ -45,8 +45,11 @@
     <?MIVAR NAME=phmview_pato_source_desc>$phmview_pato_source_count publications<?/MIVAR>
     <?MIVAR NAME=phmview_pato_link>pheno_summary.apg&OID=$OID<?/MIVAR>
 
-    <?MIVAR COND="$(=,$phmview_pato_source_count,1)">      
+    <?MIVAR COND="$(=,$phmview_pato_source_count,1)"> 
           $(SETVAR,$phmview_pato_source_desc,$1)
+          <?MIVAR NAME=$phmview_pato_source_desc><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2>$1
+          </a><?/MIVAR>
+
     <?/MIVAR>
     <?MIVAR COND="$(=,$phmview_pato_fig_count,1)">      
 	  $(SETVAR,$phmview_pato_link,fxfigureview.apg&OID=$phmview_pato_fig_zdb_id)
