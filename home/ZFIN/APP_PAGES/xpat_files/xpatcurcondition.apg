@@ -529,15 +529,16 @@ EFFECTS
       <select name=cond_morph_select onChange="setCondAttrib(this.value);">
         <option value=" "></option>
         <?MISQL SQL="
-          select recattrib_data_zdb_id, gene.mrkr_abbrev, morph.mrkr_abbrev 
+          select distinct recattrib_data_zdb_id,  morph.mrkr_abbrev 
             from record_attribution, marker gene, marker_relationship, marker morph
            where recattrib_data_zdb_id[1,9] = 'ZDB-MRPHL' 
              and recattrib_source_zdb_id = '$OID'
              and recattrib_data_zdb_id = mrel_mrkr_1_zdb_id
              and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
              and mrel_mrkr_1_zdb_id = morph.mrkr_zdb_id
-             order by gene.mrkr_abbrev, morph.mrkr_abbrev;">
-           <option value="$1">$1, $2 -> $3</option>
+             order by  morph.mrkr_abbrev;">
+           <!--<option value="$1">$1, $2 -> $3</option>-->
+           <option value="$1">$1  -> $2</option>
         <?/MISQL>
       </select>
     </td>
