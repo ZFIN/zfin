@@ -420,6 +420,7 @@ marker table.
       <?MISQL SQL="execute function get_id('NOMEN');"><?/MISQL>
       <?MIVAR NAME=$mhist_id>$1<?/MIVAR>
       <?MIVAR NAME=$rsrvComment COND=$(NXST,$rsrvComment)><?/MIVAR>
+      <?MIVAR NAME=$rsrvComment>$(REPLACE,$rsrvComment,','')<?/MIVAR>
     
       <?MISQL SQL="
         INSERT INTO zdb_active_data VALUES('$mhist_id');
@@ -484,6 +485,8 @@ marker table.
         <?/MISQL>
         
         <?MIVAR NAME=$newmrkrNoteSql>$(REPLACE,$newmrkrCuratorNote,','')<?/MIVAR>
+
+
         
         <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$newmrkrDataNoteId');"><?/MISQL>
         <?MISQL SQL="
