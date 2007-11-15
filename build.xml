@@ -429,8 +429,8 @@
     <target name="construct-xsd-classes" description="Run xsd to generate Java files for DX jobs">
         <echo message="Generating Properties source files ..."/>
         <echo message="${web.conf}"/>
-        <xjc schema="${web.conf}/properties.xsd" binding="${web.conf}/properties.xjb" target="source">
-            <produces dir="source" includes="**/*.java"/>
+       <xjc schema="${web.conf}/properties.xsd" binding="${web.conf}/properties.xjb" target="source" package="org.zfin.properties" >
+            <produces dir="source" includes="org.zfin.properties/*.java"/>
         </xjc>
     </target>
 
