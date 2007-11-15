@@ -1,0 +1,729 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+  <meta http-equiv="EXPIRES" content="-2d"><title>ZFIN: The Zebrafish Model Organism Database</title>
+  
+  <link rel="stylesheet" type="text/css" href="/css/zfin.css">
+  <link rel="stylesheet" type="text/css" href="/css/header.css">
+
+  <script type="text/javascript" src="/javascript/prototype.js"></script>
+
+<script type="text/javascript">
+
+/** mostly this kind of thing is bad, but thers a 
+    tiny bit of css we want for IE only  **/
+
+if (navigator.appName == 'Microsoft Internet Explorer') {
+  document.write("<style type='text/css'>"); 
+  //document.write("body { width:expression(document.body.clientWidth < 600? '600px': 'auto' );}  ");
+  //document.write("#hdr-banner {   width:expression(document.body.clientWidth < 580? '580px': 'auto' );  } "); 
+
+  /** if (IE version > 7) **/
+  if (!window.XMLHttpRequest) {
+    document.write("#hdr-tabs { margin-left: 95px; } ");  
+  } 
+  document.write("</style>");
+  
+} 
+
+function hdrSetCookie(name,value,expires,path,domain,secure) {
+   document.cookie = name + "=" +escape(value) +
+          ( (expires) ? ";expires=" + expires.toGMTString() : "") +
+          ( (path) ? ";path=" + path : "") +
+          ( (domain) ? ";domain=" + domain : "") +
+          ( (secure) ? ";secure" : "");
+   var cookieVal = document.cookie;
+  }
+
+function hdrGetCookie(name) {
+   var allcookies = document.cookie;
+   if (allcookies == "") return false;
+   var start = allcookies.indexOf(name + '=');
+   if (start == -1) return false;
+   start += name.length + 1;
+   var end = allcookies.indexOf(';', start);
+   if (end == -1) end = allcookies.length;
+   return allcookies.substring(start, end);
+	}
+
+function hdrDeleteCookie(name, path, domain) {
+  var today = new Date();
+  var expired = new Date(today.getTime() - 28 * 24 * 60 * 60 * 1000); // less 28 days
+   if (hdrGetCookie(name)) {
+      document.cookie = name + "=" +
+              ((path) ? "; path=" + path : "") +
+              ((domain) ? "; domain=" + domain : "") +
+              "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+   }
+}
+
+
+
+function deselectTabs(tab_id) {
+
+  $('researchspiffy').className = "spiffy";
+  $('researchspiffy1').className = "spiffy1";
+  $('researchspiffy2').className = "spiffy2";
+  $('researchspiffy3').className = "spiffy3";
+  $('researchspiffy4').className = "spiffy4";
+  $('researchspiffy5').className = "spiffy5";
+  $('researchTabContent').className = "tabContent";
+
+  $('generalspiffy').className = "spiffy";
+  $('generalspiffy1').className = "spiffy1";
+  $('generalspiffy2').className = "spiffy2";
+  $('generalspiffy3').className = "spiffy3";
+  $('generalspiffy4').className = "spiffy4";
+  $('generalspiffy5').className = "spiffy5";
+  $('generalTabContent').className = "tabContent";
+
+
+  $('productspiffy').className = "spiffy";
+  $('productspiffy1').className = "spiffy1";
+  $('productspiffy2').className = "spiffy2";
+  $('productspiffy3').className = "spiffy3";
+  $('productspiffy4').className = "spiffy4";
+  $('productspiffy5').className = "spiffy5";
+  $('productTabContent').className = "tabContent";
+
+
+}
+
+
+function showZFINLinks() {
+  hdrSetCookie("tabCookie","Research","","/");
+
+  deselectTabs();
+
+  $('researchspiffy').className = "selectedspiffy";
+  $('researchspiffy1').className = "selectedspiffy1";
+  $('researchspiffy2').className = "selectedspiffy2";
+  $('researchspiffy3').className = "selectedspiffy3";
+  $('researchspiffy4').className = "selectedspiffy4";
+  $('researchspiffy5').className = "selectedspiffy5";
+  $('researchTabContent').className = "selectedTabContent";
+
+
+
+  document.getElementById("hdr-zirclinks").style.display = "none";
+  document.getElementById("hdr-generallinks").style.display = "none";
+  document.getElementById("hdr-motto").style.display = "none";
+  document.getElementById("hdr-zfinlinks").style.display = "block";
+
+  document.getElementsByTagName("head")[0].blur();
+
+
+}
+
+function showGeneralLinks() {
+  hdrSetCookie("tabCookie","General","","/");
+
+  deselectTabs();
+
+  $('generalspiffy').className = "selectedspiffy";
+  $('generalspiffy1').className = "selectedspiffy1";
+  $('generalspiffy2').className = "selectedspiffy2";
+  $('generalspiffy3').className = "selectedspiffy3";
+  $('generalspiffy4').className = "selectedspiffy4";
+  $('generalspiffy5').className = "selectedspiffy5";
+  $('generalTabContent').className = "selectedTabContent";
+
+
+
+  document.getElementById("hdr-zfinlinks").style.display = "none";
+  document.getElementById("hdr-zirclinks").style.display = "none";
+  document.getElementById("hdr-motto").style.display = "none";
+  document.getElementById("hdr-generallinks").style.display = "block";
+
+  document.getElementsByTagName("head")[0].blur();
+}
+
+
+
+
+function showZIRCLinks() {
+  
+  hdrSetCookie("tabCookie","Products","","/");
+
+  deselectTabs();
+
+  $('productspiffy').className = "selectedspiffy";
+  $('productspiffy1').className = "selectedspiffy1";
+  $('productspiffy2').className = "selectedspiffy2";
+  $('productspiffy3').className = "selectedspiffy3";
+  $('productspiffy4').className = "selectedspiffy4";
+  $('productspiffy5').className = "selectedspiffy5";
+  $('productTabContent').className = "selectedTabContent";
+
+
+  document.getElementById("hdr-zfinlinks").style.display = "none";
+  document.getElementById("hdr-generallinks").style.display = "none";
+  document.getElementById("hdr-motto").style.display = "none";
+  document.getElementById("hdr-zirclinks").style.display = "block";
+
+  document.getElementsByTagName("head")[0].blur();
+}
+
+function showMotto() {
+  /* for some reason, one of these is coming up null in IE */
+
+  if (document.getElementById("hdr-zfinlinks") != null) {
+    document.getElementById("hdr-zfinlinks").style.display = "none";
+  } else { alert('hdr-zfinlinks is null'); }
+
+  if (document.getElementById("hdr-zirclinks") != null) {
+    document.getElementById("hdr-zirclinks").style.display = "none";
+  } else { alert('hdr-zirclinks is null'); }
+
+  if (document.getElementById("hdr-generallinks") != null) {
+    document.getElementById("hdr-generallinks").style.display = "none";
+  } else { alert('hdr-generallinks is null'); }
+
+  if (document.getElementById("hdr-motto") != null) {
+    document.getElementById("hdr-motto").style.display = "block";
+  } else { alert('hdr-motto is null'); }
+}
+
+
+
+
+function hdrSetTabs() {
+
+   
+   
+     var hdr_showmotto = true;
+     hdrDeleteCookie("tabCookie","/","");
+   
+
+   if (hdr_showmotto) {
+     showMotto();
+   } else {
+
+     tabCookie = hdrGetCookie("tabCookie");
+
+     if (!tabCookie) {
+       hdrSetCookie("tabCookie","Research","","/");
+       tabCookie = hdrGetCookie("tabCookie");
+     }
+     if (tabCookie == "Research") {
+       showZFINLinks();
+     }
+     if (tabCookie == "Products") {
+       showZIRCLinks();
+     }
+     if (tabCookie == "General") {
+       showGeneralLinks();
+     }
+   }
+}
+
+
+
+</script> 
+
+
+
+  <link rel="stylesheet" type="text/css" href="/css/zdbhome.css"></head><body id="body" onload="hdrSetTabs();">
+
+
+  <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-ZDB_home.apg">
+   <img id="logo-img" src="webdriver_files/zfinlogo.png"> 
+   <img id="logo-text" src="webdriver_files/zfintxt.png">
+  </a>
+
+  <noscript>
+   <div id="noscriptWarningBox">
+     Many ZFIN features require that javascript be enabled.
+   </div>
+  </noscript>
+
+
+  <div id="quicksearchBox">
+    <form method="get" action="/SearchApp/category_search.jsp" name="quicksearch">
+      <label for="qsearch" id="quicksearchLabel">
+        <a href="http://localhost:2008/SearchApp/syntax_help.jsp">
+          Site Search:
+        </a>
+      </label>
+      <input size="25" name="query" id="qsearch" type="text">
+    </form>
+  </div>
+
+
+<div id="hdr-banner">
+
+  <div id="hdr-tabs">    
+
+     <div id="researchtab">
+     <b class="spiffy" id="researchspiffy"><b class="spiffy1" id="researchspiffy1"><b></b></b><b class="spiffy2" id="researchspiffy2"><b></b></b><b class="spiffy3" id="researchspiffy3"></b><b class="spiffy4" id="researchspiffy4"></b><b class="spiffy5" id="researchspiffy5"></b></b>
+     <div class="tabContent" id="researchTabContent">
+       Research
+     </div>
+     </div>
+
+     <div id="generaltab"> 
+     <b class="spiffy" id="generalspiffy"><b class="spiffy1" id="generalspiffy1"><b></b></b><b class="spiffy2" id="generalspiffy2"><b></b></b><b class="spiffy3" id="generalspiffy3"></b><b class="spiffy4" id="generalspiffy4"></b><b class="spiffy5" id="generalspiffy5"></b></b>
+     <div class="tabContent" id="generalTabContent">
+       General Information
+     </div>
+     </div>
+
+     <div id="zirctab">
+     <b class="spiffy" id="productspiffy"><b class="spiffy1" id="productspiffy1"><b></b></b><b class="spiffy2" id="productspiffy2"><b></b></b><b class="spiffy3" id="productspiffy3"></b><b class="spiffy4" id="productspiffy4"></b><b class="spiffy5" id="productspiffy5"></b></b>
+     <div class="tabContent" id="productTabContent">
+      ZIRC
+     </div>
+     </div>
+
+
+
+     <script type="text/javascript">
+     if (document.addEventListener) {  
+       document.getElementById("researchtab").addEventListener("click",showZFINLinks,true);
+       document.getElementById("generaltab").addEventListener("click",showGeneralLinks,true);
+       document.getElementById("zirctab").addEventListener("click",showZIRCLinks,true);
+
+     } else {
+       document.getElementById("researchtab").onclick = showZFINLinks;
+       document.getElementById("generaltab").onclick = showGeneralLinks;
+       document.getElementById("zirctab").onclick = showZIRCLinks;
+
+     }
+     </script>
+
+
+  </div>
+
+
+
+ 
+
+
+  <div id="hdr-navlinks">
+    <div id="hdr-zirclinks" class="hdr-linkbar" style="display: none;"> 
+      <a href="http://localhost:2008/zirc/">ZIRC Home</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <strong> Request: </strong> &nbsp; <a href="http://localhost:2008/zirc/fish/lineAll.php">Fish</a>,
+      &nbsp; <a href="http://localhost:2008/zirc/est/estAll.php">ESTs/cDNAs</a>,
+      &nbsp; <a href="http://localhost:2008/zirc/abs/absAll.php">Antibodies</a>,
+      &nbsp; <a href="http://localhost:2008/zirc/orders/buyBookQ.php?item=Book&amp;id=book&amp;detail=The%20Zebrafish%20Book"><span style="font-style: italic;">ZF Book</span></a>,
+      &nbsp; <a href="http://localhost:2008/zirc/orders/buyParaQ.php?item=Paramecia&amp;id=para&amp;detail=Paramecia%20Starter%20Culture">Paramecia</a>&nbsp;
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://localhost:2008/zirc/documents/fees.php">Prices</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://localhost:2008/zirc/documents/payment.php">Payment Help</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://localhost:2008/zirc/documents/health.php">Health Services</a>
+
+    </div>
+    <div id="hdr-zfinlinks" class="hdr-linkbar" style="display: none;">
+      <a href="http://localhost:2008/">Home</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-newmrkrselect.apg">Genes / Markers / Clones</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-xpatselect.apg">Expression</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+       <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-blast.apg" title="Search for sequence alignment against ZFIN datasets and Zebrafish datasets">BLAST</a> 
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-fishselect.apg&amp;line_type=mutant">Mutants / Tg</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://localhost:2008/action/anatomy/search">Anatomy</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://localhost:2008/cgi-bin_frost/mapper_select.cgi" title="View genetic, radiation hybrid or consolidated maps">Maps</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-pubselect2.apg&amp;select_from=PUBLICATION">Publications</a>
+    </div>
+
+    <div id="hdr-generallinks" class="hdr-linkbar" style="display: none;">
+     <a href="http://localhost:2008/">Home</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-quickfindpers.apg&amp;select_from=PERSON&amp;frame_size=75">People</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-labselect.apg&amp;select_from=LAB" title="Search for laboratories by name, address or research interests">Laboratories</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-companyselect.apg&amp;select_from=COMPANY&amp;frame_size=230" title="Search for companies supplying zebrafish reagents">Companies</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://localhost:2008/zf_info/news/jobs.html">Jobs</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://localhost:2008/zf_info/news/mtgs.html">Meetings</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://localhost:2008/zf_info/zfbook/zfbk.html" title="Browse the Zebrafish Book">View <em>ZF Book</em></a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://localhost:2008/zf_info/news/newsgroup.html" title="a moderated, online discussion group for anyone interested in zebrafish research">ZF Newsgroup</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://localhost:2008/zf_info/contact_us.html">Contact ZFIN</a>
+    </div>
+    <div id="hdr-motto" class="hdr-linkbar" style="display: block;">     
+      The Zebrafish Model Organism Database
+    </div>
+
+    
+
+
+
+  </div> <!-- navlinks -->
+</div>
+
+ 
+
+
+<div>
+
+
+ 
+
+ <div id="zdbhome-container">
+
+  
+
+  <table id="zdbhome-container-inner">
+   <tbody><tr>
+   <td id="zdbhome-primary">
+       <ul>	
+     <li>Search <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-newmrkrselect.apg" title="Search by name, accession number, LG, vector or sequence type">
+         <strong>Genes / Markers / Clones</strong></a></li>
+     <li>Search <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-xpatselect.apg" title="Search by gene, developmental stage, anatomy or process">
+         <strong>Gene Expression</strong></a></li>
+     <li><a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-blast.apg" title="Search for sequence alignment against ZFIN datasets and Zebrafish datasets">
+         <strong>BLAST</strong> at ZFIN</a> </li>
+     <li><a href="http://localhost:2008/zf_info/nomen.html" title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li> 
+     <li><a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-new_gene.apg" title="Contact the Nomenclature Committee">Obtain approval for gene names</a>
+    </li></ul>
+
+
+   <ul>
+     <li>Search <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-fishselect.apg&amp;line_type=mutant" title="Search by allele, locus, phenotype keywords or map location">
+         <strong>Mutants / Transgenics</strong></a></li>
+     <li><a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-wtlist.apg" title="Zebrafish wild-type lines">Wild-Type Lines</a></li>
+     <li><a href="http://localhost:2008/zf_info/zfbook/lab_desig.html">Laboratory Line Designations</a></li>
+     <li><a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-new_line.apg">
+         Obtain approval for mutant names</a>
+   </li></ul>
+
+
+   <ul>
+      <li>Search <a href="http://localhost:2008/action/anatomy/search" title="Search the zebrafish anatomical ontology"><strong>Anatomy</strong></a></li>
+       <li>Search <a href="http://localhost:2008/antibody/search_result.html" title="Search the zebrafish anatomical ontology"><strong>Antibodies</strong></a></li>
+      <li><a href="http://localhost:2008/zf_info/anatomy/dict/sum.html">Atlases and Resources</a></li>
+   </ul>
+
+
+   <ul>
+      <li>Search <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-pubselect2.apg&amp;select_from=PUBLICATION" title="Search for zebrafish research publications by author, title or citation">
+                   <strong>Publications</strong></a>
+      </li>
+   </ul>
+
+
+
+   <ul>
+     <li>Find <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-quickfindpers.apg&amp;select_from=PERSON&amp;frame_size=75" title="Search for zebrafish researchers by name or address">
+                <strong>People</strong></a>, 
+      <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-persview.apg&amp;OID=ZDB-PERS-060413-1"><em>Update Your ZFIN Record</em></a>
+    
+    </li>
+     <li>Find <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-labselect.apg&amp;select_from=LAB" title="Search for laboratories by name, address or research interests">
+                <strong>Laboratories</strong></a>, 
+
+     
+
+     
+       
+         
+         
+           
+           <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-labview.apg&amp;OID=ZDB-LAB-000914-1"><em>View Lab Record</em></a>
+         
+
+       
+     
+
+     </li>
+     <li>Find <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-companyselect.apg&amp;select_from=COMPANY&amp;frame_size=230" title="Search for companies supplying zebrafish reagents">
+                    <strong>Companies</strong></a> </li>
+   </ul>
+   <ul>
+
+     <li>
+        <a href="http://localhost:2008/zf_info/news/jobs.html"><strong>Jobs</strong></a>,
+ 	<a href="http://localhost:2008/zf_info/news/ZFIN_jobs.html"><strong>ZFIN Jobs</strong></a>,
+        <a href="http://localhost:2008/zf_info/news/mtgs.html"><strong>Meetings</strong></a>  
+     </li>
+  </ul>
+  <ul>
+
+     <li>
+       <a href="http://localhost:2008/zf_info/downloads.html" title="Download bulk data files generated from the ZFIN database">Download Data</a>
+     </li>
+  </ul>
+  <ul>
+     <li><a href="http://localhost:2008/zf_info/zfbook/zfbk.html" title="View the Zebrafish Book">View <i>The Zebrafish Book</i></a></li>
+     <li><a href="http://localhost:2008/zf_info/news/newsgroup.html" title="a moderated, online discussion group for anyone interested in zebrafish research">Zebrafish Newsgroup</a></li>
+     <li><a href="http://www.neuro.uoregon.edu/k12/zfk12.html">Zebrafish for K-12</a></li>
+  </ul>
+  <ul>
+     <li class="divider-above"><a href="http://localhost:2008/zf_info/dbase/db.html">About ZFIN</a></li>
+     <li><a href="http://localhost:2008/zf_info/citation.html">Citing ZFIN</a></li> 
+  </ul>
+  <br>
+  <br>
+
+  <span style="font-size: 0.8em;">
+  
+      Logged in to ZFIN as: <span style="color: red;">Christian Pich</span>
+      <a href="http://localhost:2008/action/j_acegi_logout">[<em>Logout</em>]</a>
+    
+  </span>
+   </td>
+   <td id="zdbhome-sidebar">
+     <div>
+      <h3>Curation</h3>
+      <ul>
+        
+        <li>View <a href="http://localhost:2008/cgi-bin_frost/webdriver?MIval=aa-pubselect2.apg&amp;query_results=exist&amp;curator=ZDB-PERS-060413-1&amp;cur_status=is"><em>my open pubs</em></a></li>
+        
+        <li>
+          Add 
+          <a href="/cgi-bin_frost/webdriver?MIval=aa-new_marker.apg&amp;marker_type=GENE"><em>gene</em></a>,
+          <a href="/cgi-bin_frost/webdriver?MIval=aa-new_marker.apg&amp;marker_type=GENEP"><em>pseudogene</em></a>,
+          <a href="/cgi-bin_frost/webdriver?MIval=aa-new_marker.apg&amp;marker_type=EFG"><em>foreign gene</em></a>,
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="/cgi-bin_frost/webdriver?MIval=aa-new_marker.apg&amp;marker_type=MRPHLNO"><em>morpholino</em></a>,
+          <a href="/cgi-bin_frost/webdriver?MIval=aa-add_linkage.apg"><em>linkages</em></a>,
+          <a href="/antibody/create_antibody.html"><em>antibody</em></a>
+
+        </li>
+        <li>
+            Surf <a href="/action/reno/run-list"><em>ReNo pipeline</em></a>
+        </li>
+
+        <li>
+          Regen
+                        <a href="javascript:document.maps.submit();"><em>Maps</em></a>,
+                        <a href="javascript:document.orthologue.submit();"><em>Orthologue</em></a>
+
+            <form name="fishsearch" action="/cgi-bin_frost/runSPL.cgi" method="post">
+
+			<input name="run" value="regen_fishsearch" type="hidden">
+		      </form>
+
+		      <form name="maps" action="/cgi-bin_frost/runSPL.cgi" method="get">
+
+			<input name="run" value="regen_maps" type="hidden">
+
+
+		      </form>
+
+
+		      <form name="orthologue" action="/cgi-bin_frost/runSPL.cgi" method="post">
+			<input name="run" value="regen_oevdisp" type="hidden">
+		      </form>
+        </li>
+        <li> <form name="quickpub" action="/cgi-bin_frost/webdriver" method="get">
+               <input name="MIval" value="aa-curation.apg" type="hidden">
+               <input name="OID" type="hidden">
+               <label for="OIDpart"> Curate ZDB-PUB-</label><input name="OIDpart" id="OIDpart" size="15" onchange="document.quickpub.OID.value = 'ZDB-PUB-' + document.quickpub.OIDpart.value;">
+             </form>
+        </li>
+        <li> <form name="quickacc" action="/cgi-bin_frost/webdriver" method="get">
+                  <input name="MIval" value="aa-accessionselect.apg" type="hidden">
+                  <input name="query_results" value="exists" type="hidden">
+                  Search Acc# <input name="aname" size="20" type="text"></form>
+        </li>
+      </ul>
+
+      <h3>Administration</h3>
+      <ul>
+	<li> Add
+	  <a href="/cgi-bin_frost/webdriver?rtype=person&amp;MIval=aa-new_person.apg"><em>person</em></a>,
+          <a href="/cgi-bin_frost/webdriver?rtype=lab&amp;MIval=aa-new_lab.apg"><em>lab</em></a>,
+          <a href="/cgi-bin_frost/webdriver?rtype=company&amp;MIval=aa-new_company.apg"><em>company</em></a>,
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="/cgi-bin_frost/webdriver?MIval=aa-image-upload.apg"><em>image</em></a>,
+          <a href="/cgi-bin_frost/webdriver?rtype=publication&amp;MIval=aa-edit_pub.apg"><em>pub</em></a>,
+	  <a href="/cgi-bin_frost/webdriver?MIval=aa-new_journal.apg"><em>journal</em></a>
+        </li>
+        <li> 
+          Find <a href="/cgi-bin_frost/webdriver?MIval=aa-journalselect.apg"><em>Existing Journal</em></a>
+        </li><li>
+          Generate <a href="/cgi-bin_frost/webdriver?MIval=aa-mkdist_list.apg" target="NEW_WIN"><em>dist. list</em></a>,
+	  <a href="/cgi-bin_frost/webdriver?MIval=aa-mkdist_list_usa.apg" target="NEW_WIN"><em>USA dist. list</em></a>, <a href="/cgi-bin_frost/webdriver?MIval=aa-mkdist_list_PI.apg" target="NEW_WIN"><em>PI dist. list</em></a>
+        </li>
+      </ul>
+
+
+  
+
+
+
+  <h3>Zebrafish International Resource Center</h3> 
+  <ul>
+    <li>
+        Request:         
+        <a href="/zirc/fish/lineAll.php">Fish Lines</a>,
+        <a href="/zirc/est/estAll.php">ESTs/cDNAs</a>,
+        <a href="/zirc/abs/absAll.php">Monoclonal Antibodies</a>,
+        <a href="/zirc/orders/buyBookQ.php?item=Book&amp;id=book&amp;detail=The%20Zebrafish%20Book"><span style="font-style: italic;">The Zebrafish Book</span></a>,
+        <a href="/zirc/orders/buyParaQ.php?item=Paramecia&amp;id=para&amp;detail=Paramecia%20Starter%20Culture">Paramecia</a>
+      </li>
+      <li class="divider-above">
+        Submit: <a href="/zirc/submissions/submitTerms.php">Fish Lines</a>
+      </li><li class="divider-above">
+        <a href="/zirc/health/index.php" class="novisited">Health Services</a>
+      </li>
+
+      <li class="divider-above">
+        <a href="/zirc/"><strong>ZIRC Home</strong></a>
+      </li>
+ </ul>
+
+
+
+  <h3>Genomics</h3>
+  <ul>
+    <li>Browse the genome at
+      <a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a>,
+      <a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a>,
+      <a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&amp;clade=vertebrate&amp;org=Zebrafish&amp;db=0">UCSC</a>
+    </li>
+    <li>
+      View <a href="/cgi-bin_frost/mapper_select.cgi" title="View genetic, radiation hybrid or consolidated maps">
+           <strong>Genetic Maps</strong></a>
+    </li>
+
+    <li>BLAST at 
+      <a href="/cgi-bin_frost/webdriver?MIval=aa-blast.apg">ZFIN</a>,
+      <a href="http://www.ensembl.org/Danio_rerio/blastview">Ensembl</a>, 
+      <a href="http://vega.sanger.ac.uk/Multi/blastview?species=Danio_rerio">Vega</a>,
+      <a href="http://danio.mgh.harvard.edu/blast/blast_grp.html">MGH</a>
+    </li>
+
+    <li>Find cDNAs and ESTs at
+      <a href="http://zgc.nci.nih.gov/">ZGC</a>,  
+      <a href="http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/gimain.pl?gudb=zfish">ZGI</a>
+    </li>
+
+    <li>
+      Microarray expression at <a href="http://zf-espresso.tuebingen.mpg.de/search.php">ZF-Espresso</a>
+    </li>
+
+    <li class="divider-above">
+      <a href="/zf_info/catch/catch.html">More Zebrafish Genome Resources</a>
+    </li>
+
+    <li>
+      <a href="/zf_info/genome.html">Other Fish Genomes</a>
+    </li>
+
+  </ul>
+ 
+  <h3>Zebrafish Programs</h3>
+  <ul>
+    <li>
+      <a href="http://www.nih.gov/science/models/zebrafish/">Trans-NIH Zebrafish Initiative</a>,<br>
+      <a href="http://www.zf-models.org/">ZF-MODELS</a>,
+      <a href="/zf_info/catch/zebrafish_programs.html">more...</a>
+    </li>
+  </ul>
+
+
+
+
+   <h3> News </h3>
+   <ul>
+       
+       
+       <li>
+         <a href="/zf_info/news/siteNews.html#vega">
+           September 27 - New Vega Update
+         </a>
+       </li>
+       
+              
+       <li>
+         <a href="/zf_info/news/siteNews.html#ZFIQ">
+         August 23 -Zebrafish Image Quantitator available 
+         </a>
+       </li>
+       
+              
+
+
+
+      
+
+       <li><a href="/zf_info/news/siteNews.html">All News</a></li>
+   
+     </ul>
+
+   <br>
+     <img id="zdbhome-fishimg" src="webdriver_files/betterfish.jpg">
+
+
+     
+
+
+   </div></td>
+   </tr>
+  </tbody></table>
+ </div>
+
+
+</div> <!-- allcontent -->
+
+<div id="footer">
+
+  <div id="footerlinks">
+    <a href="/cgi-bin_frost/webdriver?MIval=aa-ZDB_home.apg">Home</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider"> 
+
+    <a href="/zf_info/dbase/db.html">About ZFIN</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider"> 
+
+    <a href="/zf_info/citation.html">Citing ZFIN</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider"> 
+
+    <a href="/zf_info/glossary.html">Glossary</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider"> 
+
+    <a href="/ZFIN/misc_html/tips.html">Help and Tips</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider"> 
+
+    <a href="/zf_info/contact_us.html">Contact ZFIN</a>
+  </div>
+
+  <div id="footercredits">
+      <center>
+      <span id="footer-generous-support">Development of the Zebrafish Database is generously supported by the NIH (P41 HG002659). <br> </span> 
+      <a href="/warranty.html">Disclaimer, limitations, copyright ©  </a> <a href="http://www.uoregon.edu/">
+      University of Oregon</a>, 1994-2007,<a href="http://www.ci.eugene.or.us/"> Eugene</a>, Oregon. <br>
+      <small>ZFIN logo design by Kari Pape, <a href="http://www.uoregon.edu/">University of Oregon</a></small><br>
+
+      
+      </center>
+  </div>
+
+</div>
+
+<!-- start AWStats -->
+<script src="webdriver_files/awstats_misc_tracker.js" type="text/javascript">' ;
+</script>
+<script type="text/javascript/">;
+<noscript><img src="/javascript/awstats_misc_tracker.js?nojs=y" height=0 width=0 border=0 style="display: none"></noscript>;
+</script>
+<!-- End AWStats -->
+
+
+<!-- Start GOOGLE Analytics -->
+<script src="webdriver_files/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-2417927-1";
+urchinTracker();
+</script>
+<!-- End GOOGLE Analytics -->
+
+
+
+
+
+</body></html>

@@ -63,15 +63,15 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       p_new_person_address.sql get_sortable_authors_lower.sql \
 	       p_update_person_address.sql \
 
-REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql \
+REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
 	       regen_panelcount.sql regen_maps.sql
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
 ZDB_GNRCS    = table_exists.sql  
 ZDB_AGGR    = concatenate.sql
 ZDB_STATS    = get_obj_name.sql get_obj_abbrev.sql get_date_from_id.sql \
 	       p_check_zdb_object_table.sql syscall.sql zdb_date.sql \
-	       p_check_submitter_is_root.sql set_session_params.sql
-
+	       p_check_submitter_is_root.sql set_session_params.sql \
+	       getWebexplode.sql		
 # Some of the stage functions call other stage functions.  Therefore
 # the order they are listed matters.
 STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \

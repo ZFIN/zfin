@@ -1,0 +1,24 @@
+<!--
+    Context configuration file for @MUTANT@ Tomcat instance
+-->
+
+
+
+<Context path="/" docBase="/research/zcentral/www_homes/@MUTANT@/home"
+         antiResourceLocking="false" antiJARLocking="false" swallowOutput="true" privileged="true">
+
+<Resource name="jdbc/zfin" auth="Container"
+                type="javax.sql.DataSource" username="zfinner" password="Rtwm4ts"
+                driverClassName="com.informix.jdbc.IfxDriver" 
+                url="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@MUTANTDB@:INFORMIXSERVER=@INFORMIXSERVER@"
+                maxActive="8" maxIdle="4"/>
+
+<Valve className="org.apache.catalina.valves.AccessLogValve"
+                 fileDateFormat="yyyy-MM"
+                 directory="logs"  prefix="@MUTANT@_zfin_access_log." 
+                 suffix=".txt"
+                 pattern="common" resolveHosts="false"/>
+
+</Context>
+
+

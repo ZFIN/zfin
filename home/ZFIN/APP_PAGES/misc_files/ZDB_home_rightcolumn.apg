@@ -18,7 +18,9 @@
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg"><em>linkages</em></a>
 
         </li>
-
+        <li>
+            Surf <a href="/action/reno/run-list"><em>ReNo pipeline</em></a>
+        </li>
 
         <li>
           Regen
@@ -53,7 +55,7 @@
         <li> <form name="quickpub" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="get">
                <input type="hidden" name="MIval" value="aa-curation.apg">
                <input type="hidden" name="OID">
-               <label for="OIDpart"> Curate ZDB-PUB-</label><input name="OIDpart" size="15" 
+               <label for="OIDpart"> Curate ZDB-PUB-</label><input name="OIDpart" id="OIDpart" size="15" 
                               onChange="document.quickpub.OID.value = 'ZDB-PUB-' + document.quickpub.OIDpart.value;">
              </form>
         </li>

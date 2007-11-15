@@ -81,6 +81,6 @@ INPUT VARS:    anatomy_item_zdb_id
        <?/MIBLOCK>
 <?/MIBLOCK>
 <SCRIPT><?MIVAR>
-     window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$OID");
+     window.location.replace("/action/anatomy/term-detail?anatomyItem.zdbID=$OID");
         <?/MIVAR>
 </SCRIPT>

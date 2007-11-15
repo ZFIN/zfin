@@ -1,0 +1,315 @@
+<table width="100%" border="0">
+<tr bgcolor="#cccccc">
+    <td class="titlebar">
+        &nbsp;&nbsp;
+        <font size="+1">
+            <a name="modify"></a><b>Search for Antibody Data</b>
+        </font>
+    </td>
+    <td width=10% align="right" bgcolor="#cccccc">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <form method=post action="/cgi-bin/webdriver" target=comments>
+                <input type=hidden name=MIval value="aa-input_welcome_generic.apg">
+                <input type=hidden name=page_name value="ZFIN Antibody Search">
+                <tr>
+                    <td>
+                        <input type=submit value="Your Input Welcome">
+                    </td>
+                </tr>
+            </form>
+        </table>
+    </td>
+</tr>
+<tr>
+<td valign="top">
+    <table>
+        <tr>
+            <td align="top">
+                <b>Name:</b>
+            </td>
+            <td>
+                <select name="compare">
+                    <option selected="selected" value="contains">contains
+                    </option>
+                    <option value="starts">begins with
+                    </option>
+                </select>
+                <input name="input_name" size="30" value="ab" type="text">
+            </td>
+        </tr>
+        <tr>
+            <td align="top">
+                <b>Gene:</b>
+            </td>
+            <td>
+                <select name="compare">
+                    <option selected="selected" value="contains">contains
+                    </option>
+                    <option value="starts">begins with
+                    </option>
+                </select>
+                <input name="input_name" size="30" value="" type="text">
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td align="top" colspan="2">
+                <span style="float: left;">
+                    <a href="/action/anatomy/search">Anatomy</a>
+                                </span>
+                                <span style="float: right;">
+                                  <label class="accessoryLabel">[Enter one anatomical term per line]</label>
+                                </span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <textarea cols="46" rows="3" name="anatomyTerms"
+                          id="aoTerms"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" colspan="2">
+                <table>
+                    <tr>
+                        <td valign="top" width="60%">
+                            <input id="includeSubstructure" name="include_substructures" value="checked"
+                                   type="checkbox">
+                            <label for="includeSubstructure" class="accessoryLabel">Include substructures</label>
+                        </td>
+                        <td>
+                            <label class="accessoryLabel">Expression in: </label>
+                            <br>
+                            <input id="everyTerm" name="structure_bool" value="and" checked="checked" type="radio">
+                            <label for="everyTerm" class="accessoryLabel"><b>Every</b> term entered <br></label>
+                            <input id="anyTerm" name="structure_bool" value="or" type="radio">
+                            <label for="anyTerm" class="accessoryLabel"><b>Any</b> term entered </label>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</td>
+<td valign="top">
+<table>
+<tr>
+    <td>
+        <b>Accession Number:</b>
+    </td>
+    <td>
+        <input name="zdbID" size="25" type="text"/>
+    </td>
+</tr>
+<tr>
+<td valign="top">
+    <label for="startStage" class="selectLabel"><b>Between Stages:</b>
+    </label>
+    <br>
+</td>
+<td>
+<select id="startStage" name="stage_start" size="1">
+    <option selected="selected" value="ZDB-STAGE-010723-4"> Zygote:1-cell
+    </option>
+    <option value="ZDB-STAGE-010723-15"> Cleavage:2-cell
+    </option>
+    <option value="ZDB-STAGE-010723-11"> Cleavage:4-cell
+    </option>
+    <option value="ZDB-STAGE-010723-33"> Cleavage:8-cell
+    </option>
+    <option value="ZDB-STAGE-010723-20"> Cleavage:16-cell
+    </option>
+    <option value="ZDB-STAGE-010723-25"> Cleavage:32-cell
+    </option>
+    <option value="ZDB-STAGE-010723-28"> Cleavage:64-cell
+    </option>
+    <option value="ZDB-STAGE-010723-7"> Blastula:128-cell
+    </option>
+    <option value="ZDB-STAGE-010723-1"> Blastula:256-cell
+    </option>
+    <option value="ZDB-STAGE-010723-14"> Blastula:512-cell
+    </option>
+    <option value="ZDB-STAGE-010723-22"> Blastula:1k-cell
+    </option>
+    <option value="ZDB-STAGE-010723-27"> Blastula:High
+    </option>
+    <option value="ZDB-STAGE-010723-24"> Blastula:Oblong
+    </option>
+    <option value="ZDB-STAGE-010723-21"> Blastula:Sphere
+    </option>
+    <option value="ZDB-STAGE-010723-19"> Blastula:Dome
+    </option>
+    <option value="ZDB-STAGE-010723-17"> Blastula:30%-epiboly
+    </option>
+    <option value="ZDB-STAGE-010723-6"> Gastrula:50%-epiboly
+    </option>
+    <option value="ZDB-STAGE-010723-3"> Gastrula:Germ-ring
+    </option>
+    <option value="ZDB-STAGE-010723-2"> Gastrula:Shield
+    </option>
+    <option value="ZDB-STAGE-010723-18"> Gastrula:75%-epiboly
+    </option>
+    <option value="ZDB-STAGE-010723-29"> Gastrula:90%-epiboly
+    </option>
+    <option value="ZDB-STAGE-010723-12"> Gastrula:Bud
+    </option>
+    <option value="ZDB-STAGE-010723-23"> Segmentation:1-4 somites
+    </option>
+    <option value="ZDB-STAGE-010723-5"> Segmentation:5-9 somites
+    </option>
+    <option value="ZDB-STAGE-020626-1"> Segmentation:10-13 somites
+    </option>
+    <option value="ZDB-STAGE-010723-30"> Segmentation:14-19 somites
+    </option>
+    <option value="ZDB-STAGE-010723-16"> Segmentation:20-25 somites
+    </option>
+    <option value="ZDB-STAGE-010723-34"> Segmentation:26+ somites
+    </option>
+    <option value="ZDB-STAGE-010723-10"> Pharyngula:Prim-5
+    </option>
+    <option value="ZDB-STAGE-010723-32"> Pharyngula:Prim-15
+    </option>
+    <option value="ZDB-STAGE-010723-13"> Pharyngula:Prim-25
+    </option>
+    <option value="ZDB-STAGE-010723-31"> Pharyngula:High-pec
+    </option>
+    <option value="ZDB-STAGE-010723-9"> Hatching:Long-pec
+    </option>
+    <option value="ZDB-STAGE-010723-26"> Hatching:Pec-fin
+    </option>
+    <option value="ZDB-STAGE-010723-8"> Larval:Protruding-mouth
+    </option>
+    <option value="ZDB-STAGE-010723-35"> Larval:Day 4
+    </option>
+    <option value="ZDB-STAGE-010723-36"> Larval:Day 5
+    </option>
+    <option value="ZDB-STAGE-010723-37"> Larval:Day 6
+    </option>
+    <option value="ZDB-STAGE-010723-47"> Larval:Days 7-13
+    </option>
+    <option value="ZDB-STAGE-010723-48"> Larval:Days 14-20
+    </option>
+    <option value="ZDB-STAGE-010723-49"> Larval:Days 21-29
+    </option>
+    <option value="ZDB-STAGE-010723-51"> Juvenile:Days 30-44
+    </option>
+    <option value="ZDB-STAGE-010723-52"> Juvenile:Days 45-89
+    </option>
+    <option value="ZDB-STAGE-010723-39"> Adult
+    </option>
+</select>
+<label for="endStage" class="selectLabel">&amp;
+</label>
+<br/>
+<select id="endStage" name="stage_start" size="1">
+    <option selected="selected" value="ZDB-STAGE-010723-4"> Zygote:1-cell
+    </option>
+    <option value="ZDB-STAGE-010723-15"> Cleavage:2-cell
+    </option>
+    <option value="ZDB-STAGE-010723-11"> Cleavage:4-cell
+    </option>
+    <option value="ZDB-STAGE-010723-33"> Cleavage:8-cell
+    </option>
+    <option value="ZDB-STAGE-010723-20"> Cleavage:16-cell
+    </option>
+    <option value="ZDB-STAGE-010723-25"> Cleavage:32-cell
+    </option>
+    <option value="ZDB-STAGE-010723-28"> Cleavage:64-cell
+    </option>
+    <option value="ZDB-STAGE-010723-7"> Blastula:128-cell
+    </option>
+    <option value="ZDB-STAGE-010723-1"> Blastula:256-cell
+    </option>
+    <option value="ZDB-STAGE-010723-14"> Blastula:512-cell
+    </option>
+    <option value="ZDB-STAGE-010723-22"> Blastula:1k-cell
+    </option>
+    <option value="ZDB-STAGE-010723-27"> Blastula:High
+    </option>
+    <option value="ZDB-STAGE-010723-24"> Blastula:Oblong
+    </option>
+    <option value="ZDB-STAGE-010723-21"> Blastula:Sphere
+    </option>
+    <option value="ZDB-STAGE-010723-19"> Blastula:Dome
+    </option>
+    <option value="ZDB-STAGE-010723-17"> Blastula:30%-epiboly
+    </option>
+    <option value="ZDB-STAGE-010723-6"> Gastrula:50%-epiboly
+    </option>
+    <option value="ZDB-STAGE-010723-3"> Gastrula:Germ-ring
+    </option>
+    <option value="ZDB-STAGE-010723-2"> Gastrula:Shield
+    </option>
+    <option value="ZDB-STAGE-010723-18"> Gastrula:75%-epiboly
+    </option>
+    <option value="ZDB-STAGE-010723-29"> Gastrula:90%-epiboly
+    </option>
+    <option value="ZDB-STAGE-010723-12"> Gastrula:Bud
+    </option>
+    <option value="ZDB-STAGE-010723-23"> Segmentation:1-4 somites
+    </option>
+    <option value="ZDB-STAGE-010723-5"> Segmentation:5-9 somites
+    </option>
+    <option value="ZDB-STAGE-020626-1"> Segmentation:10-13 somites
+    </option>
+    <option value="ZDB-STAGE-010723-30"> Segmentation:14-19 somites
+    </option>
+    <option value="ZDB-STAGE-010723-16"> Segmentation:20-25 somites
+    </option>
+    <option value="ZDB-STAGE-010723-34"> Segmentation:26+ somites
+    </option>
+    <option value="ZDB-STAGE-010723-10"> Pharyngula:Prim-5
+    </option>
+    <option value="ZDB-STAGE-010723-32"> Pharyngula:Prim-15
+    </option>
+    <option value="ZDB-STAGE-010723-13"> Pharyngula:Prim-25
+    </option>
+    <option value="ZDB-STAGE-010723-31"> Pharyngula:High-pec
+    </option>
+    <option value="ZDB-STAGE-010723-9"> Hatching:Long-pec
+    </option>
+    <option value="ZDB-STAGE-010723-26"> Hatching:Pec-fin
+    </option>
+    <option value="ZDB-STAGE-010723-8"> Larval:Protruding-mouth
+    </option>
+    <option value="ZDB-STAGE-010723-35"> Larval:Day 4
+    </option>
+    <option value="ZDB-STAGE-010723-36"> Larval:Day 5
+    </option>
+    <option value="ZDB-STAGE-010723-37"> Larval:Day 6
+    </option>
+    <option value="ZDB-STAGE-010723-47"> Larval:Days 7-13
+    </option>
+    <option value="ZDB-STAGE-010723-48"> Larval:Days 14-20
+    </option>
+    <option value="ZDB-STAGE-010723-49"> Larval:Days 21-29
+    </option>
+    <option value="ZDB-STAGE-010723-51"> Juvenile:Days 30-44
+    </option>
+    <option value="ZDB-STAGE-010723-52"> Juvenile:Days 45-89
+    </option>
+    <option value="ZDB-STAGE-010723-39"> Adult
+    </option>
+</select>
+<br/>
+<a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+<table width=100%>
+    <tr>
+        <form action="search_result.html" >
+        <td colspan="3" align="right" bgcolor="#cccccc">
+            <input accesskey="s" value="Search" type="submit">
+        </td>
+        </form>
+    </tr>
+</table>
+
+        

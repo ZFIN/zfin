@@ -47,8 +47,7 @@
 
     <?MIVAR COND="$(=,$phmview_pato_source_count,1)"> 
           $(SETVAR,$phmview_pato_source_desc,$1)
-          <?MIVAR NAME=$phmview_pato_source_desc><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2>$1
-          </a><?/MIVAR>
+          <?MIVAR NAME=$phmview_pato_source_desc><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2>$1</a><?/MIVAR>
 
     <?/MIVAR>
     <?MIVAR COND="$(=,$phmview_pato_fig_count,1)">      
@@ -60,7 +59,7 @@
       <tr> <td>&nbsp;</td>
         <td><b> Data: </b>
         <td>
-          <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$phmview_pato_link"> $phmview_pato_fig_count figure(s)</a> from $phmview_pato_source_desc<?/MIVAR>
+          <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$phmview_pato_link">$phmview_pato_fig_count figure(s)</a> from $phmview_pato_source_desc<?/MIVAR>
         </td>
       </tr>
 
@@ -89,7 +88,7 @@
            order by 3	; ">
      
           <?MIBLOCK COND=$(EC,$4,anatomy)>
-              <?MIVAR NAME=phmview_anatitem_html><span nowrap><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1>$2</a></span><?/MIVAR>
+              <?MIVAR NAME=phmview_anatitem_html><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$1>$2</a></span><?/MIVAR>
           <?MIELSE>
               <?MIVAR NAME=phmview_anatitem_html><span nowrap><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:$1>$2</a></span><?/MIVAR>          
           <?/MIBLOCK>

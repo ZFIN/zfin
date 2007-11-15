@@ -1,0 +1,26 @@
+<!--
+    Context configuration file for @MUTANT@ Tomcat instance for quicksearch
+-->
+  
+<Context 
+   path="/SearchApp"
+   docBase="/research/zcentral/www_homes/@MUTANT@/j2ee/uniquery/SearchApp"
+   privileged="false">
+   <!-- To use your own index, change path below -->
+   <Parameter 
+       name="path_to_index"
+       value="/research/zcentral/www_homes/almost/j2ee/uniquery/indexes"
+       override="true"/>
+   <Parameter 
+       name="db_name"
+       value="@MUTANTDB@"
+       override="true"/>
+
+    <Resource name="jdbc/zfinDatabase" auth="Container"
+                type="javax.sql.DataSource" username="zfinner" password="Rtwm4ts"
+                driverClassName="com.informix.jdbc.IfxDriver"
+                url="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@MUTANTDB@:INFORMIXSERVER=@INFORMIXSERVER@"
+                maxActive="8" maxIdle="4" />
+
+
+</Context>

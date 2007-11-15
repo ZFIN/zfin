@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definitions for the anatomy pages
+  -->
+<beans>
+
+    <!--  URL mappings -->
+    <bean id="anatomyUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/anatomy/term-detail">anatomyTermDetail</prop>
+                <prop key="/anatomy/search">anatomySearch</prop>
+                <prop key="/anatomy/high-quality-probes">highQualityProbes</prop>
+                <prop key="/anatomy/all-expressed-genes">allExpressedGenes</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean name="anatomyTermDetail" class="org.zfin.anatomy.presentation.AnatomyTermDetailController" autowire="byName"/>
+
+    <bean name="anatomySearch" class="org.zfin.anatomy.presentation.AnatomySearchController" autowire="byName">
+        <property name="redirectUrlIfSingleResult">
+            <value>redirect:/action/anatomy/term-detail</value>
+        </property>
+    </bean>
+
+    <bean name="addCanonicalGene" class="org.zfin.anatomy.presentation.AnatomyTermDetailController" autowire="byName"/>
+
+    <bean name="highQualityProbes" class="org.zfin.anatomy.presentation.HighQualityProbesController" autowire="byName"/>
+
+    <bean name="allExpressedGenes" class="org.zfin.anatomy.presentation.AllExpressedGenesController" autowire="byName"/>
+
+    <bean name="auditLogDetails" class="org.zfin.audit.presentation.DetailsController" autowire="byName"/>
+
+    <!-- Designates to use the repository using hibernate -->
+    <bean id="anatomyRepository" class="org.zfin.anatomy.repository.HibernateAnatomyRepository" />
+
+    <bean id="mutantRepository" class="org.zfin.mutant.repository.HibernateMutantRepository" />
+
+
+</beans>

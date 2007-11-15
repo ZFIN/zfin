@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <!--  URL mappings -->
+    <bean id="renoUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/reno/run-list">runList</prop>
+                <prop key="/reno/candidate-inqueue">candidatesInQueue</prop>
+                <prop key="/reno/candidate-view">candidateBean</prop>
+                <prop key="/reno/candidate-pending">candidatesPending</prop>
+                <prop key="/reno/alignment-list">alignmentList</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean name="runList" class="org.zfin.sequence.reno.presentation.RunController" autowire="byName">
+        <property name="successView" value="run-list.page"/>
+    </bean>
+
+    <bean name="alignmentList" class="org.zfin.sequence.reno.presentation.AlignmentsController">
+        <property name="successView" value="alignments-list.page"/>
+    </bean>
+
+
+    <bean name="candidatesInQueue" class="org.zfin.sequence.reno.presentation.SingleRunController" autowire="byName">
+
+        <property name="candidateType" value="inqueue"/>
+        <property name="commandName">
+            <value>formBean</value>
+        </property>
+        <property name="commandClass" value="org.zfin.sequence.reno.presentation.RunBean"/>
+        <property name="validator">
+          <bean class="org.zfin.sequence.reno.presentation.RunBeanValidator"/>
+        </property>
+        <property name="validateOnBinding" value="true" />
+        <property name="bindOnNewForm">
+            <value>true</value>
+        </property>
+        <property name="successView" value="candidate-inqueue.page"/>
+        <property name="formView" value="candidate-inqueue.page"/>
+    </bean>
+
+
+    <bean name="candidatesPending" class="org.zfin.sequence.reno.presentation.SingleRunController" autowire="byName">
+        <property name="successView" value="candidate-pending.page"/>
+        <property name="commandClass" value="org.zfin.sequence.reno.presentation.RunBean"/>
+        <property name="candidateType" value="pending"/>
+        <property name="validateOnBinding" value="true" />
+        <property name="bindOnNewForm" value="true" />
+        <property name="formView" value="candidate-pending.page"/>
+    </bean>
+
+
+    <bean name="candidateBean" class="org.zfin.sequence.reno.presentation.CandidateController" autowire="byName">
+        <property name="commandName">
+            <value>formBean</value>
+        </property>
+        <property name="commandClass">
+            <value>org.zfin.sequence.reno.presentation.CandidateBean</value>
+        </property>
+
+        <property name="bindOnNewForm">
+            <value>true</value>
+        </property>
+        <property name="validateOnBinding">
+            <value>true</value>
+        </property>
+
+        <property name="validator">
+            <bean class="org.zfin.sequence.reno.presentation.CandidateBeanValidator"/>
+        </property>
+        <property name="formView" value="candidate-view.page"/>
+        <property name="successView" value="candidate-inqueue.page"/>
+    </bean>
+
+
+
+
+    <bean id="renoRepository" class="org.zfin.sequence.reno.repository.HibernateRenoRepository"/>
+    <bean id="publicationRepository" class="org.zfin.publication.repository.HibernatePublicationRepository"/>
+
+</beans>

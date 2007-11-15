@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+ <!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+
+<tiles-definitions>
+
+    <definition name="dev_layout" path="/tiles/layout.jsp">
+        <put name="header" value="/tiles/header_dev_tools.jsp" />
+        <put name="footer" value="/tiles/footer.jsp" />
+        <put name="title"  value="Please provide Title"/>
+        <put name="body" value="" />
+     </definition>
+
+    <definition name="home_layout" path="/tiles/layout.jsp">
+        <put name="header" value="/tiles/header.jsp" />
+        <put name="footer" value="/tiles/footer.jsp" />
+        <put name="body" value="" />
+     </definition>
+
+    <definition name="home" extends="dev_layout">
+        <put name="body" value="/WEB-INF/jsp/dev-tools/home.jsp"/>
+    </definition>
+
+    <definition name="login" extends="home_layout">
+        <put name="body" value="/WEB-INF/jsp/login_form.jsp"/>
+    </definition>
+
+    <definition name="access-denied" extends="home_layout">
+        <put name="body" value="/WEB-INF/jsp/access_denied.jsp"/>
+    </definition>
+
+    <definition name="java-properties" extends="dev_layout">
+        <put name="body" value="/WEB-INF/jsp/dev-tools/java_properties.jsp"/>
+    </definition>
+
+    <definition name="metadata" extends="dev_layout">
+        <put name="body" value="/WEB-INF/jsp/dev-tools/view_database_info.jsp"/>
+    </definition>
+
+    <definition name="jdbc-metadata" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/view_database_driver_info.jsp"/>
+    </definition>
+
+    <definition name="thread-info" extends="dev_layout">
+        <put name="body" value="/WEB-INF/jsp/dev-tools/thread_info.jsp"/>
+    </definition>
+
+    <definition name="file-content" extends="dev_layout">
+        <put name="body" value="/WEB-INF/jsp/dev-tools/view_property_file.jsp"/>
+    </definition>
+
+    <definition name="log4j-configuration" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/log4j_configuration.jsp"/>
+    </definition>
+
+    <definition name="classpath-info" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/classpath_info.jsp"/>
+    </definition>
+
+    <definition name="view-thread-info.page" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/dev/view_thread_info.jsp"/>
+    </definition>
+
+    <definition name="view-database-info.page" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/dev/view_database_info.jsp"/>
+    </definition>
+
+    <definition name="tiles-configuration" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/tiles_configuration.jsp"/>
+    </definition>
+
+    <definition name="test-browser" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/test_browser.jsp"/>
+    </definition>
+
+    <definition name="view-session-info" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/view_session_info.jsp"/>
+    </definition>
+
+    <definition name="view-global-session-info" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/view_global_session_info.jsp"/>
+    </definition>
+
+    <definition name="serlvet-context-info" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/servlet_context_info.jsp"/>
+    </definition>
+
+    <definition name="application-context-info" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/application_context_info.jsp"/>
+    </definition>
+
+    <definition name="user-request-tracking" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/user_request_tracking.jsp"/>
+    </definition>
+
+    <definition name="single-user-request-tracking" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/view_single_user_request.jsp"/>
+    </definition>
+
+    <definition name="hibernate-statistics-view" extends="dev_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/hibernate_statistics_view.jsp"/>
+    </definition>
+
+    <definition name="zfin-statistics-view" extends="dev_layout">
+        <put name="title" value="ZFIN Statistics"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/zfin_statistics_view.jsp"/>
+    </definition>
+
+    <definition name="error-page" extends="main_layout">
+        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="body" value="/WEB-INF/jsp/error_page.jsp"/>
+    </definition>
+    
+</tiles-definitions>
+

@@ -30,7 +30,7 @@
 
 
    <ul>
-      <li>Search <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search" 
+      <li>Search <a href="/action/anatomy/search" 
                     title="Search the zebrafish anatomical ontology"><strong>Anatomy</strong></a></li>
       <li><a href="/zf_info/anatomy/dict/sum.html">Atlases and Resources</a></li>
    </ul>
@@ -114,10 +114,10 @@
 
   <span style="font-size: .8em;">
   <?MIBLOCK COND="$(EC,$AUTHORIZED,guest)">
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-login.apg"><b>Visit the login page</b></a>
+      <a href="/action/login"><b>Visit the login page</b></a>
       to update person and lab records.
   <?MIELSE>
       Logged in to ZFIN as: <?MIVAR><span style="color: red;">$ZDB_name</span><?/MIVAR>
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-process-login.apg">[<em>Logout</em>]</a>
+      <a href="/action/j_acegi_logout">[<em>Logout</em>]</a>
   <?/MIBLOCK>  
   </span>

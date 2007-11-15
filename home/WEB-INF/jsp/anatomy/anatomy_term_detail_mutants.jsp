@@ -1,0 +1,71 @@
+<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<table width="100%">
+    <tbody>
+        <TR class="search-result-table-header">
+            <TD width="40%" colspan="2">
+                Genotype (Background)
+            </TD>
+            <TD width="60%">
+                Figures
+            </TD>
+        </TR>
+        <c:if test="${!formBean.mutantsExist}">
+            <tr>
+                <td colspan="3">No data available</td>
+            </tr>
+        </c:if>
+        <c:forEach var="genoStat" items="${formBean.genotypeStatistics}">
+            <tr class="search-result-table-entries">
+                <td colspan="2">
+                    <zfin:link entity="${genoStat.genotype}"/>
+                    <c:if test="${genoStat.genotype.background ne null}">
+                        (${genoStat.genotype.background.name})
+                    </c:if>
+
+                </td>
+                <td>
+                    <c:if test="${genoStat.numberOfFigures > 0}">
+                        <c:if test="${genoStat.numberOfFigures > 1}">
+                            <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pheno_summary.apg&OID=${genoStat.genotype.zdbID}'>
+                                <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
+                                             integerEntity="${genoStat.numberOfFigures}" includeNumber="true"/></a>
+                        </c:if>
+                        <c:if test="${genoStat.numberOfFigures == 1 }">
+                            <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${genoStat.figure.zdbID}'>
+                                <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
+                                             integerEntity="${genoStat.numberOfFigures}" includeNumber="true"/>
+                            </a>
+                        </c:if>
+                        from
+                        <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
+                                     integerEntity="${genoStat.numberOfPublications}" includeNumber="true"/>
+                    </c:if>
+                    <c:if test="${genoStat.numberOfFigures == 0}">
+                        --
+                    </c:if>
+                </td>
+            </tr>
+        </c:forEach>
+    </tbody>
+</table>
+<c:if test="${!formBean.allGenotypesAreDisplayed}">
+    <table width="100%">
+        <tbody>
+            <tr align="left">
+                <td>
+                    Show all
+                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20">
+                            ${formBean.genotypeCount}
+                        <zfin:choice choicePattern="0#genotypes| 1#genotype| 2#genotypes"
+                                     integerEntity="${formBean.genotypeCount}"/>
+                    </a> &nbsp;
+                    (including substructures
+                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20">
+                        ${formBean.anatomyStatisticsMutant.numberOfObjects} genotypes</a>)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</c:if>

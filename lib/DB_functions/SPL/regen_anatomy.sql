@@ -196,7 +196,9 @@ create dba function "informix".regen_anatomy()
 
   -- populates anatomy fast search tables:
   --  anatomy_display: term's position in a dag display of a certain stage
-  --  anatomy_stats: term's gene count and synonyms count 
+  --  anatomy_stats: term's gene count and synonyms for gene count for
+			--expression patterns and term's genotype count
+			--and synonyms count for phenotype.
   --  anatomy_stage_stats: terms gene count and synonyms count of a certain stage
   --  all_anatomy_contains: each and every ancestor and descendant
 
@@ -228,6 +230,9 @@ create dba function "informix".regen_anatomy()
     define nGenesForThisItem int;
     define nGenesForChildItems int;
     define nDistinctGenes int;
+    define nGenosForThisItem int;
+    define nGenosForChildItems int;
+    define nDistinctGenos int;
 
     on exception
       set sqlError, isamError, errorText
@@ -726,7 +731,76 @@ create dba function "informix".regen_anatomy()
 	
       end foreach;
 
-      
+      let errorhint = "Populating anatomy_stats_new with genotypes and related phenotypes instead of genes and expression patterns";
+
+      -- a temp table to hold genotypes that have phenotype in an anatomy term
+      -- and all its child terms, and to count the distinct number.
+
+      create temp table genos_with_phenos
+	(
+	  geno_zdb_id	varchar(50)
+	);
+
+      foreach
+	select anatitem_zdb_id
+	  into anatomyId
+	  from anatomy_item
+
+	-- get # of synonyms the anatomy item has.
+
+	select count(*)
+	  into nSynonyms
+	  from data_alias
+	  where dalias_data_zdb_id = anatomyId
+	    and dalias_group <> 'secondary id';
+
+	-- get list of genes that have expression patterns for this
+	-- anatomy item. Suppress wildtype genos in this list.
+
+	insert into genos_with_phenos
+	  select distinct genox_geno_Zdb_id
+	    from atomic_phenotype, genotype_experiment, genotype
+	    where (apato_entity_a_zdb_id = anatomyId or
+		   apato_entity_b_zdb_id = anatomyId)
+	      and genox_zdb_id = apato_genox_zdb_id
+	      and genox_geno_zdb_id = geno_zdb_id
+	      and geno_is_wildtype = 'f';
+
+	let nGenosForThisItem = DBINFO('sqlca.sqlerrd2');
+
+	-- get list of genes that have expression patterns for this
+	-- anatomy item's children. Suppress wildtype genos.
+
+	insert into genos_with_phenos
+	  select distinct genox_geno_zdb_id
+	    from all_anatomy_contains_new,
+		 atomic_phenotype, genotype_Experiment, genotype
+	    where (allanatcon_contained_zdb_id = apato_entity_A_zdb_id or
+			allanatcon_contained_zdb_id = apato_entity_b_zdb_id)
+	      and allanatcon_container_zdb_id = anatomyId
+	      and apato_genox_Zdb_id = genox_Zdb_id
+	      and genox_geno_zdb_id = geno_zdb_id
+	      and geno_is_wildtype = 'f';
+
+	let nGenosForChildItems = DBINFO('sqlca.sqlerrd2');
+
+	select count (distinct geno_zdb_id)
+	  into nDistinctGenos
+	  from genos_with_phenos;
+
+	insert into anatomy_stats_new
+	    ( anatstat_anatitem_zdb_id, anatstat_object_type,
+	      anatstat_synonym_count,
+	      anatstat_object_count, anatstat_contains_object_count,
+	      anatstat_total_distinct_count )
+	  values
+	    ( anatomyId, 'GENO', nSynonyms, nGenosForThisItem,
+	      nGenosForChildItems, nDistinctGenos ) ;
+
+	delete from genos_with_phenos;
+
+      end foreach;
+
 
       -- -----------------------------------------------------------------------
       --    ANATOMY_STAGE_STATS_NEW
@@ -793,6 +867,7 @@ create dba function "informix".regen_anatomy()
 	      nGenesForChildItems, nDistinctGenes ) ;
 
 	delete from genes_with_xpats;
+
 	
       end foreach;
 

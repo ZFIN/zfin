@@ -77,7 +77,7 @@
     execute function conc('GUEST',get_random_cookie());">
   <?/MISQL>  
   <?MIVAR>
-    $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)
+    $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/)
   <?/MIVAR>
   <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
 
@@ -154,7 +154,7 @@
       execute function conc('GUEST',get_random_cookie());">
      <?/MISQL>
      <?MIVAR>
-      $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)
+      $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/)
      <?/MIVAR>
 
      <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>

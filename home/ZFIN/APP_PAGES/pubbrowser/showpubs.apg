@@ -359,7 +359,8 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?MIBLOCK COND="$(NC,$rtype,xpat)">
 <?MICOMMENT>  ==================== value= will not change value with Safari need special case ============== <?/MICOMMENT>
 <?MIVAR>
-    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,authors_lower),'pyear desc','authors_lower'),'$total_count','$count_of_real_pub','$evidence')"
+    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder
+,authors_lower),'pyear desc','authors_lower'),'$total_count','$count_of_real_pub','$evidence')"
            value="$(IF,$(EC,$pubOrder,authors_lower),Order By Date,Order By Author)"> 
     <script>
       if (navigator.userAgent.indexOf('Safari') != -1) {
@@ -445,6 +446,12 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
   <?MIBLOCK COND="$(NXST,$attribtype)">
 
+<?MICOMMENT> authors_lower not authors must be sent to citgeneric.apg for correct ordering <?/MICOMMENT>
+    <?MIBLOCK COND=$(EC,$pubOrder,authors)>
+      <?MIVAR NAME=$citpubOrder>p.pub_authors_lower<?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME=$citpubOrder>$pubOrder<?/MIVAR>
+    <?/MIBLOCK>
 
     <?MIBLOCK COND="$(>,$(POSITION,$OID,ALT),0)">
 

@@ -1,0 +1,74 @@
+<%@ page import="java.util.Date" %>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<table cellpadding="2" cellspacing="1" border="0" width="50%">
+
+    <tr><td colspan="3" class="sectionTitle">Request/Session Information</td></tr>
+    <tr>
+        <td width="100" class="sectionTitle">Request Attribute Key</td>
+        <td class="sectionTitle">Request Attribute Value</td>
+    </tr>
+    <c:forEach var="item" items="${formBean.requestAttributes}">
+        <tr>
+            <td class="listContentBold">
+                <c:out value='${item.key}'/>
+            </td>
+            <td class="listContent">
+                <c:out value='${item.value}'/>
+            </td>
+        </tr>
+    </c:forEach>
+    <tr>
+        <td width="100" colspan="2" class="sectionTitle">Indiviudal Session Info</td>
+    </tr>
+    <tr>
+        <td valign=top class="listContentBold">
+            Session ID: </td>
+        <td colspan="2" class="listContent">
+            <%= request.getSession().getId() %>
+        </td>
+    </tr>
+    <tr>
+        <td valign=top class="listContentBold">
+            Session Expiration Time: </td>
+        <td colspan="2" class="listContent">
+            <%= request.getSession().getMaxInactiveInterval() %> seconds
+            (<%= request.getSession().getMaxInactiveInterval()/60 %> minutes) 
+        </td>
+    </tr>
+    <tr>
+        <td valign=top class="listContentBold">
+            Date of Session Creation: </td>
+        <td colspan="2" class="listContent">
+            <%= new Date(request.getSession().getCreationTime()) %>
+        </td>
+    </tr>
+    <tr>
+        <td valign=top class="listContentBold">
+            Date last accessed Session: </td>
+        <td colspan="2" class="listContent">
+            <%= new Date(request.getSession().getLastAccessedTime()) %>
+        </td>
+    </tr>
+    <tr>
+        <td valign=top class="listContentBold">
+            Session size: </td>
+        <td colspan="2" class="listContent">
+            <c:out value="${formBean.sessionSize}" />
+        </td>
+    </tr>
+    <tr>
+        <td width="100" colspan="2" class="sectionTitle">Session Contents</td>
+    </tr>
+    <c:forEach var="item" items="${formBean.sessionAttributes}">
+        <tr>
+            <td class="listContentBold">
+                <c:out value='${item.key}'/>
+            </td>
+            <td class="listContent">
+                <c:out value='${item.value}'/>
+            </td>
+        </tr>
+    </c:forEach>
+
+</table>

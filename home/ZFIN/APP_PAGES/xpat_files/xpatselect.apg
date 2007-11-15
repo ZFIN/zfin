@@ -969,7 +969,7 @@ function openChild(childWinUrl,childWinName) {
 	      <TD colspan="2">
 		<span style="float: left;">
                   <label for="TA_selected_structures" class="multisearchLabel">
-		    <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">Anatomy</A>
+		    <A href="/action/anatomy/search">Anatomy</A>
                   </label>
                 </span>
                 <span style="float: right;">

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+ <!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+
+<tiles-definitions>
+
+    <definition name="anatomy-search.page" extends="main_layout">
+        <put name="staticTitle" value="Anatomical Ontology Browser" />
+        <put name="body" value="/WEB-INF/jsp/anatomy/anatomy_search.jsp"/>
+    </definition>
+
+    <definition name="anatomy-item.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Anatomical Structure: " />
+        <put name="body" value="/WEB-INF/jsp/anatomy/anatomy_term_detail.jsp"/>
+    </definition>
+
+    <definition name="high-quality-probes.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: High Quality Probes: " />
+        <put name="body" value="/WEB-INF/jsp/anatomy/high_quality_probes.jsp"/>
+    </definition>
+
+    <definition name="all-expressed-genes.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: All Expressed Genes: " />
+        <put name="body" value="/WEB-INF/jsp/anatomy/all_expressed_genes.jsp"/>
+    </definition>
+
+    <definition name="publication-search_result.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Publication search Result: " />
+        <put name="body" value="/WEB-INF/jsp/publication/publication_search_result.jsp"/>
+    </definition>
+
+    <!-- Needs to go into a more generic file -->
+    <definition name="audit-log-details" extends="main_layout">
+        <put name="staticTitle" value="Audit Log: " />
+        <put name="body" value="/WEB-INF/jsp/auditLog/audit_log_details.jsp"/>
+    </definition>
+
+</tiles-definitions>
+

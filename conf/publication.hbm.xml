@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zfin.publication">
+
+    <class name="org.zfin.publication.Publication" table="publication">
+        <id name="zdbID" type="string">
+            <column name="zdb_id" not-null="true"/>
+            <generator class="native"/>
+        </id>
+
+        <property name="title" lazy="false">
+            <column name="title" not-null="true"/>
+        </property>
+
+        <property name="authors">
+            <column name="authors" not-null="true"/>
+        </property>
+
+        <property name="shortAuthorList">
+            <column name="pub_mini_ref" not-null="true"/>
+        </property>
+
+        <property name="abstractText" lazy="true">
+            <column name="pub_abstract" not-null="false"/>
+        </property>
+
+        <property name="publicationDate">
+            <column name="pub_date"/>
+        </property>
+
+        <property name="volume" lazy="true">
+            <column name="pub_volume"/>
+        </property>
+
+        <property name="pages" lazy="true">
+            <column name="pub_pages"/>
+        </property>
+
+        <property name="type">
+            <column name="jtype"/>
+        </property>
+
+        <property name="accessionNumber" lazy="true">
+            <column name="accession_no"/>
+        </property>
+
+        <property name="fileName" lazy="true">
+            <column name="pub_file"/>
+        </property>
+
+        <property name="doi" lazy="true">
+            <column name="pub_doi"/>
+        </property>
+
+        <many-to-one name="journal" class="org.zfin.publication.Journal" column="pub_jrnl_zdb_id" insert="false"
+                     update="false"/>
+
+        <set name="expressionExperiments" lazy="true">
+            <key column="xpatex_source_zdb_id"/>
+            <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
+        </set>
+
+        <set name="figures" lazy="true">
+            <key column="fig_source_zdb_id" update="false"/>
+            <one-to-many class="org.zfin.expression.Figure" />
+        </set>
+    </class>
+
+    <class name="org.zfin.publication.Journal" table="journal">
+        <id name="zdbID" type="string">
+            <column name="jrnl_zdb_id" not-null="true"/>
+            <generator class="native"/>
+        </id>
+
+        <property name="name">
+            <column name="jrnl_name" not-null="true"/>
+        </property>
+
+        <property name="abbreviation">
+            <column name="jrnl_abbrev" not-null="true"/>
+        </property>
+
+        <property name="publisher">
+            <column name="jrnl_publisher" not-null="true"/>
+        </property>
+    </class>
+
+</hibernate-mapping>

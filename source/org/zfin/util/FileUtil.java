@@ -1,0 +1,278 @@
+package org.zfin.util;
+
+import org.apache.log4j.Logger;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.framework.presentation.ZfinFilenameFilter;
+
+import java.io.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.ArrayList;
+import java.nio.channels.FileChannel;
+import java.nio.ByteBuffer;
+
+/**
+ * Utility class for creating file path names and other things.
+ */
+public final class FileUtil {
+
+    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+    public static final String DASH = "-";
+    public static final String UNDERSCORE = "_";
+    public static final String DOT = ".";
+
+    public static final Logger LOG = Logger.getLogger(FileUtil.class);
+
+    /**
+     * Create an absolute path for a given directory and a file within in.
+     * This way to generate the name does not need to know about what path
+     * separator is being used. This is done automatically via the File
+     * object.
+     *
+     * @param dir
+     * @param fileName
+     */
+    public static String createAbsolutePath(String dir, String fileName) {
+        File file = new File(dir);
+        File confFile = new File(file, fileName);
+        return confFile.getAbsolutePath();
+    }
+
+    /**
+     * Create an absolute path for a given directory and a file within in.
+     * This way to generate the name does not need to know about what path
+     * separator is being used. This is done automatically via the File
+     * object.
+     *
+     * @param dir1
+     * @param dir2
+     * @param fileName
+     */
+    public static String createAbsolutePath(String dir1, String dir2, String fileName) {
+        File file1 = new File(dir1);
+        File file2 = new File(file1, dir2);
+        File confFile = new File(file2, fileName);
+        return confFile.getAbsolutePath();
+    }
+
+    public static File createFile(String dir1, String dir2, String fileName) {
+        File file1 = new File(dir1);
+        File file2 = new File(file1, dir2);
+        return new File(file2, fileName);
+    }
+
+    public static File createFileFromDirAndName(String dir, String fileName) {
+        File file = new File(dir);
+        return new File(file, fileName);
+    }
+
+    /**
+     * Read content of a file.
+     *
+     * @param file
+     */
+    public static String readFile(File file) {
+        StringBuffer sb = new StringBuffer();
+        BufferedReader lnr = null;
+        FileReader fw = null;
+        try {
+            fw = new FileReader(file);
+            lnr = new BufferedReader(fw);
+            String s;
+            while ((s = lnr.readLine()) != null) {
+                sb.append(s);
+                sb.append("\r\n");
+            }
+        } catch (IOException ioe) {
+            String message = "Error while reading the file " + file.getAbsolutePath();
+            LOG.error(message, ioe);
+            throw new RuntimeException(ioe);
+        } finally {
+            try {
+                if (fw != null)
+                    fw.close();
+                if (lnr != null)
+                    lnr.close();
+            } catch (IOException e) {
+                String message = "Error while closing a stream";
+                LOG.error(message, e);
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String getCatalinaLogFileName(String logFileName) {
+        return FileUtil.createAbsolutePath(getCatalinaLogDirectory(), logFileName);
+    }
+
+    public static String getCatalinaLogDirectory() {
+        return FileUtil.createAbsolutePath(getCatalinaHomeDirectory(), "logs");
+    }
+
+    public static String getCatalinaHomeDirectory() {
+        return System.getProperty("catalina.base");
+    }
+
+
+    /**
+     * This method moves (renames) a given file into an archive directory.
+     * The file name is changed to include a time stamp.
+     *
+     * @param file
+     * @param archiveFolderPath
+     * @param archiveFolderName
+     */
+    public static File archiveFile(File file, String archiveFolderPath, String archiveFolderName) {
+        File dir = new File(archiveFolderPath, archiveFolderName);
+        return archiveFile(file, dir);
+    }
+
+    /**
+     * This method moves (renames) a given file into an archive directory.
+     * The file name is changed to include a time stamp:
+     * original file name: <file_name.txt>
+     * archived file name: <file_name-yyyy-MM-dd_HH_MI_ss.txt>
+     * <p/>
+     * The archive file is returned.
+     * The original file is removed.
+     * The archive directory is created if it does not exist.
+     *
+     * @param file             file that should be archived
+     * @param archiveDirectory
+     * @return File archive file
+     */
+    public static File archiveFile(File file, File archiveDirectory) {
+        // Create the directory if it does not exist yet.
+        if (!archiveDirectory.exists()) {
+            boolean success = archiveDirectory.mkdirs();
+            if (!success)
+                LOG.error("Error while creating the archive directory '" + archiveDirectory.getAbsolutePath());
+        }
+
+        GregorianCalendar cal = new GregorianCalendar();
+        String fileName = file.getName();
+        int indexOfLastDot = fileName.lastIndexOf(DOT);
+        String extension = fileName.substring(indexOfLastDot + 1);
+
+        StringBuilder archiveFileName = new StringBuilder(file.getName().substring(0, indexOfLastDot));
+        archiveFileName.append(DASH);
+        archiveFileName.append(cal.get(Calendar.YEAR));
+        archiveFileName.append(cal.get(Calendar.MONTH));
+        archiveFileName.append(DASH);
+        archiveFileName.append(cal.get(Calendar.DAY_OF_MONTH));
+        archiveFileName.append(UNDERSCORE);
+        archiveFileName.append(cal.get(Calendar.HOUR));
+        archiveFileName.append(UNDERSCORE);
+        archiveFileName.append(cal.get(Calendar.MINUTE));
+        archiveFileName.append(UNDERSCORE);
+        archiveFileName.append(cal.get(Calendar.SECOND));
+        archiveFileName.append(DOT);
+        archiveFileName.append(extension);
+        File archiveFile = new File(archiveDirectory, archiveFileName.toString());
+        if (archiveFile.exists())
+            LOG.info("Archive file " + archiveFile.getAbsolutePath() + " already exists. Cannot overwrite it.");
+        else {
+            boolean success = copyFileIntoArchive(file, archiveFile);
+            if (!success)
+                LOG.error("Error while renaming the file '" + file.getAbsolutePath());
+        }
+        return archiveFile;
+    }
+
+    private static boolean copyFileIntoArchive(File file, File archiveFile) {
+        boolean success = true;
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+        try {
+            fis = new FileInputStream(file);
+            fos = new FileOutputStream(archiveFile);
+            FileChannel inChannel = fis.getChannel();
+            ByteBuffer buffer = ByteBuffer.allocate(48);
+            FileChannel outChannel = fos.getChannel();
+            while (inChannel.read(buffer) != -1) {
+                outChannel.write(buffer);
+            }
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return false;
+        } finally {
+            try {
+                if (fis != null)
+                    fis.close();
+                if (fos != null)
+                    fos.close();
+            } catch (IOException e) {
+                LOG.error(e.getMessage(), e);
+                success = false;
+            }
+        }
+        return success;
+    }
+
+    /**
+     * Purge an archive directory for files that are older than the purge time.
+     *
+     * @param archiveDirectory
+     * @param purgeTime        in milliseconds
+     */
+    public static void purgeArchiveDirectory(File archiveDirectory, long purgeTime) {
+        File[] files = archiveDirectory.listFiles();
+        long time = System.currentTimeMillis();
+        for (File file : files) {
+            long fileModified = file.lastModified();
+            long fileAge = time - fileModified;
+            if (fileAge > purgeTime) {
+                boolean success = file.delete();
+                if (!success)
+                    LOG.error("Error while purging archive file '" + file.getAbsolutePath());
+            }
+        }
+    }
+
+    public static List<File> countApgFiles() {
+        File dir = new File(ZfinProperties.getWebRootDirectory(), "ZFIN");
+        File appDir = new File(dir, "APP_PAGES");
+        FilenameFilter filter = new ZfinFilenameFilter(".apg");
+        return getAllFiles(appDir, filter);
+    }
+
+    public static List<File> countJspFiles() {
+        File dir = new File(ZfinProperties.getWebRootDirectory());
+        FilenameFilter filter = new ZfinFilenameFilter(".jsp");
+        return getAllFiles(dir, filter);
+    }
+
+    public static List<File> countClassFiles() {
+        File web = new File(ZfinProperties.getWebRootDirectory());
+        File webInf = new File(web, "WEB-INF");
+        File classesDir = new File(webInf, "classes");
+        File org = new File(classesDir, "org");
+        File zfin = new File(org, "zfin");
+        FilenameFilter filter = new ZfinFilenameFilter(".class");
+        return getAllFiles(zfin, filter);
+    }
+
+    public static List<File> getAllFiles(File dir, FilenameFilter filter) {
+        if (dir == null)
+            return null;
+
+        List<File> list = new ArrayList<File>();
+        File[] files = dir.listFiles(filter);
+        if (files == null)
+            return null;
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                List<File> filesFromSubDir = getAllFiles(file, filter);
+                if (filesFromSubDir != null)
+                    list.addAll(filesFromSubDir);
+            } else {
+                list.add(file);
+            }
+
+        }
+        return list;
+    }
+
+}

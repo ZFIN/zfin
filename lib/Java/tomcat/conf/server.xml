@@ -1,0 +1,41 @@
+<Server port="@SERVER-SHUTDOWN-PORT@" shutdown="SHUTDOWN">
+
+  <!-- Comment these entries out to disable JMX MBeans support used for the 
+       administration web application -->
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" />
+  <Listener className="org.apache.catalina.mbeans.ServerLifecycleListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.storeconfig.StoreConfigLifecycleListener"/>
+
+  <!-- Define the Tomcat Stand-Alone Service -->
+  <Service name="Catalina">
+
+    <!-- Define a non-SSL HTTP/1.1 Connector -->
+    <Connector port="@Non-SECUREPORT@" maxHttpHeaderSize="8192" 
+	       proxyPort="80" proxyName="@DOMAIN-NAME@"
+               maxThreads="150" minSpareThreads="5" maxSpareThreads="75"
+               enableLookups="false" redirectPort="8843" acceptCount="100"
+               connectionTimeout="20000" disableUploadTimeout="true" compression="on"/>
+
+    <!-- Define a SSL HTTP/1.1 Connector  -->
+    <Connector port="@SECUREPORT@" maxHttpHeaderSize="8192"
+	       proxyPort="443" proxyName="@DOMAIN-NAME@"
+               maxThreads="100" minSpareThreads="5" maxSpareThreads="50"
+               enableLookups="false" disableUploadTimeout="true"
+               acceptCount="100" scheme="https" secure="true"
+               clientAuth="false" sslProtocol="TLS" compression="on" keystoreFile="/private/apps/tomcat/conf/keystore"/>
+    
+
+    <Engine name="Catalina" defaultHost="@MUTANT@.zfin.org">
+
+      <Host name="@MUTANT@.zfin.org" appBase="webapps"
+       unpackWARs="true" autoDeploy="false"
+       xmlValidation="false" xmlNamespaceAware="false">
+
+      </Host>
+
+    </Engine>
+
+  </Service>
+
+</Server>

@@ -1,0 +1,70 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jxb="http://java.sun.com/xml/ns/jaxb">
+
+    <xs:element name="ApplicationProperties">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Web" />
+                <xs:element ref="Path" />
+                <xs:element ref="Email" />
+                <xs:element ref="Logging" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Web">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="backgroundColor" type="xs:string"/>
+                <xs:element name="headerColor" type="xs:string"/>
+                <xs:element name="highlightColor" type="xs:string"/>
+                <xs:element name="highlighterColor" type="xs:string"/>
+                <xs:element name="linkbarColor" type="xs:string"/>
+                <xs:element name="sidebarColor" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Path">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Server" />
+                <xs:element name="cookiePath" type="xs:string"/>
+                <xs:element name="Webdriver" type="xs:string"/>
+                <xs:element name="FtpRootPath" type="xs:string"/>
+                <xs:element name="imageLoadPath" type="xs:string"/>
+                <xs:element name="loadUpFull" type="xs:string"/>
+                <xs:element name="PdfPath" type="xs:string"/>
+                <xs:element name="IndexPath" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Email">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="adminEmailAddress" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Logging">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="logFileName" type="xs:string"/>
+                <xs:element name="logFileSize" type="xs:string"/>
+                <xs:element name="MaxLogFiles" type="xs:int"/>
+                <xs:element name="logPattern" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Server" >
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+            <xs:attribute name="port" type="xs:int" />
+            <xs:attribute name="securePort" type="xs:int" />
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

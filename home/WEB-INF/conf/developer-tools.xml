@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definitions for the developer tools
+  -->
+<beans>
+
+    <!--  URL mappings -->
+    <bean id="developerUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/dev-tools/home">devToolsHomePage</prop>
+                <prop key="/dev-tools/database-info">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/jdbc-driver-info">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/java-properties">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/thread-info">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/zfin-properties">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/log4j-configuration">log4jConfiguration</prop>
+                <prop key="/dev-tools/classpath-info">classpathInfo</prop>
+                <prop key="/dev-tools/tiles-configuration">tilesConfiguration</prop>
+                <prop key="/dev-tools/file-content">displayFileContent</prop>
+                <prop key="/dev-tools/test-browser">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/view-session-info">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/view-global-session-info">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/view-hibernate-info">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/view-hibernate-statistics">hibernateStistics</prop>
+                <prop key="/dev-tools/servlet-context">servletContext</prop>
+                <prop key="/dev-tools/application-context">applicationContext</prop>
+                <prop key="/dev-tools/view-user-request-tracks">userRequestTrack</prop>
+                <prop key="/dev-tools/view-single-user-request-tracking">singleUserRequestTrack</prop>
+                <prop key="/dev-tools/zfin-statistics">zfinStatistics</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean name="log4jConfiguration" class="org.zfin.framework.presentation.Log4jConfigurationController"/>
+
+    <bean name="login" class="org.zfin.framework.presentation.LoginController"/>
+
+    <bean name="classpathInfo" class="org.zfin.framework.presentation.ClasspathInfoController"/>
+
+    <bean name="devToolsHomePage" class="org.zfin.framework.presentation.HomeController"/>
+
+    <bean name="tilesConfiguration" class="org.zfin.framework.presentation.TilesConfigurationController"/>
+
+    <bean name="displayFileContent" class="org.zfin.framework.presentation.FileContentController"/>
+
+    <bean name="servletContext" class="org.zfin.framework.presentation.ServletContextController"/>
+
+    <bean name="applicationContext" class="org.zfin.framework.presentation.ApplicationContextController"/>
+
+    <bean name="userRequestTrack" class="org.zfin.framework.presentation.UserRequestTrackController"/>
+
+    <bean name="singleUserRequestTrack" class="org.zfin.framework.presentation.SingleUserRequestTrackController"/>
+
+    <bean name="hibernateStistics" class="org.zfin.framework.presentation.HibernateStatisticsController"/>
+
+    <bean name="zfinStatistics" class="org.zfin.framework.presentation.ZfinStatisticsController"/>
+
+    <bean name="devToolsDatabaseInfo" class="org.zfin.framework.presentation.DatabaseInfoController">
+        <property name="methodNameResolver" ref="devToolsResolver"/>
+    </bean>
+    <!--
+      - This bean is a MethodNameResolver definition for a MultiActionController.
+      - It maps URLs to methods for the "devToolsDatabaseInfo" bean.
+      -->
+    <bean id="devToolsResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+        <property name="mappings">
+            <props>
+                <prop key="/dev-tools/database-info">databaseInfoHandler</prop>
+                <prop key="/dev-tools/jdbc-driver-info">jdbcDriverHandler</prop>
+                <prop key="/dev-tools/java-properties">javaPropertiesHandler</prop>
+                <prop key="/dev-tools/thread-info">threadInfoHandler</prop>
+                <prop key="/dev-tools/zfin-properties">zfinPropertyHandler</prop>
+                <prop key="/dev-tools/test-browser">testBrowserHandler</prop>
+                <prop key="/dev-tools/view-session-info">viewSessionInfoHandler</prop>
+                <prop key="/dev-tools/view-global-session-info">viewGlobalSessionInfoHandler</prop>
+                <prop key="/dev-tools/view-hibernate-info">viewHibernateInfoHandler</prop>
+            </props>
+        </property>
+    </bean>
+
+
+</beans>

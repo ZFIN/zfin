@@ -1,0 +1,728 @@
+<script type="text/javascript">
+
+var gref = "Def-Pub";
+var grefReq = "gref-requirement";
+var grefReqMessage = "Please enter a publication.";
+
+// populate the G-Ref field with the zdb id from the curator publication list.
+function populateGRef(curPub, GRef) {
+    var zdbID = document.getElementById(curPub).value;
+    if (zdbID != 'Select Curator Pub')
+        document.getElementById(GRef).value = zdbID;
+    enableDisableGRefButtons();
+}
+
+// set the end stage field to the same value as
+// the start field value
+// passed in are the ids
+function setEndStage(start, end) {
+    var startStage = document.getElementById(start).value;
+    document.getElementById(end).value = startStage;
+    document.getElementById(end).style.color = 'red';
+}
+
+// submit a form and check if the global reference is being set.
+// If not, focus on the G-Ref and display an note.
+function submitFormWithRequiredGRef(form) {
+    var zdbID = document.getElementById(gref).value;
+    if (zdbID == '') {
+        document.getElementById(gref).focus();
+        document.getElementById(grefField).style.color = 'red';
+        document.getElementById(grefReq).style.visibility = 'visible';
+        return;
+    }
+    form.submit();
+}
+
+// submit a form and check if the global reference is being set.
+// If not, focus on the G-Ref and display an note.
+function submitFormWithRequiredGRef(form, formID) {
+    var zdbID = document.getElementById(gref).value;
+    if (zdbID == '') {
+        document.getElementById(gref).focus();
+        document.getElementById(grefField).style.color = 'red';
+        document.getElementById(grefReq).style.visibility = 'visible';
+        return;
+    }
+    var val = document.getElementById(formID).value;
+    if (val == '') {
+        alert("Value reuqired. Please enter a name.");
+        document.getElementById(formID).focus();
+        return;
+    }
+
+    form.submit();
+}
+
+function addGRef() {
+    document.getElementById(grefReq).style.visibility = 'hidden';
+    getPubDetail();
+}
+
+// change the color of entries that were changed from the unchanged state
+function changeColor(element, button) {
+    element.style.color = 'red';
+    document.getElementById(button).style.color = 'red';
+}
+
+// only if a valid publication ZDB ID is provided enable buttons to add
+// global reference
+function enableDisableGRefButtons() {
+
+    var zdbID = document.getElementById(gref).value;
+    if (zdbID != '') {
+        document.getElementById(grefField).style.color = 'black';
+        document.getElementById(grefReq).style.visibility = 'hidden';
+        grefReqMessage = '';
+    }
+}
+
+function markAsChanged(element) {
+    document.getElementById(element).style.color = 'red';
+}
+
+function editNote(elementName, saveButton, cancelButton, editButton) {
+    document.getElementById(elementName).disabled = false;
+    document.getElementById(saveButton).disabled = false;
+    document.getElementById(cancelButton).disabled = false;
+    document.getElementById(editButton).disabled = true;
+}
+
+function cancelNote(form, textArea) {
+    document.getElementById(textArea).style.color = 'black';
+    form.reset();
+}
+
+</script>
+
+<script src="/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
+<script src="/javascript/ajax-lib/effects.js" type="text/javascript"></script>
+<script src="/javascript/ajax-lib/dragdrop.js" type="text/javascript"></script>
+<script src="/javascript/ajax-lib/controls.js" type="text/javascript"></script>
+
+<table width=100%>
+    <tr bgcolor="#CCCCCC">
+        <td class="titlebar" valign="top">
+            <span style="font-size:larger; margin-left:0.5em; font-weight:bold;">
+            Antibody Marker Update
+            </span>
+        </td>
+    </tr>
+</table>
+
+<center>
+    <font size="+2">
+        <input value=" DONE UPDATING. Back to Viewing! "
+               onclick="document.location.replace('/antibody/antibody-detail.html')"
+               type="button">
+    </font>
+
+</center>
+
+<p/>
+
+<table width=100% cellspacing=0>
+<tr>
+    <td width="15%">
+        <font size=+1><b>
+            Antibody Name:
+        </b></font>
+    </td>
+    <form action="update_antibody_name.html">
+        <td width="45%" nowrap=nowrap>
+            zhx1138
+            <input value="Update" type="submit" title="Change the Antibody Name">
+        </td>
+    </form>
+    <td width="35%" rowspan="4" valign="top">
+        <table style="background-color:#bbbbbb">
+            <tr>
+                <td></td>
+                <td>
+                    <font size=+1><b title="This page is publication centric. Enter a pub id and cklick 'Set' and the
+                    Pub ID will be used in all instances on this page where a publication is added. The publication
+                    entered here is called Global Reference, or short Def-Pub.">Default Publication (Def-Pub)</b></font>
+                    <hr>
+                </td>
+            </tr>
+            <tr>
+                <td nowrap=nowrap valign="top">
+                    <b title="Global Reference used on this page" id="Def-Pub-field">Enter Pub ID:</b>
+                </td>
+                <td>
+                    <input type="text" size="20" id="Def-Pub" title="Type in a ZDB-PUB id or select a curator pub"
+                           onblur="addGRef()" />
+<!--
+                    <input value="Set" type="button" title="Look up this Pub ID and display the info below"
+                           onclick="addGRef(this)" style="color:red" id="Def-Pub-Set-button">
+-->
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" align="right"><b>or:</b> </td>
+                <td>
+                    <p/>
+                    <select onchange="populateGRef(this.id, 'Def-Pub')" id="curatorPubs"
+                            style="font-weight:bold; color:blue;">
+                        <option>
+                            Select Curator Pub
+                        </option>
+                        <option value="ZDB-PUB-030508-1">
+                            Gene Ontology Annotation
+                        </option>
+                        <option value="ZDB-PUB-030703-3">
+                            Curation of NCBI Nucleotide
+                        </option>
+                    </select>
+                    <br/>
+                    <script type="text/javascript">
+                        function getPubDetail() {
+                            var pars = "hello";
+                            new Ajax.Updater('pub-detail', "/antibody/publication_detail.html", {method:"get", parameters: pars});
+                        }
+                    </script>
+                    <div id="pub-detail"/>
+                    <br>
+
+                    <div style="visibility:visible; color:red; font-weight:bold;" id="gref-requirement">
+                        <script type="text/javascript">document.writeln(grefReqMessage);</script>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td valign="top">
+        <b> Previous Name: </b>
+    </td>
+    <td>
+        <table border="0">
+            <tr>
+                <td width="120" bgcolor="#dddddd">
+                    <b>z113</b>:
+                </td>
+                <form action="">
+                    <td>
+                        <input type="button" value="delete name"/>
+                        <select>
+                            <option>ZDB-PUB-020723-1</option>
+                        </select>
+                        <input type="button" value="Del Ref"
+                               title="Delete the selected Publication from this previous name"/>
+                    </td>
+                </form>
+            </tr>
+            <tr>
+                <form>
+                    <td bgcolor="#dddddd">
+                        <b>antiPax</b>:
+                    </td>
+                    <td>
+                        <input type="button" value="delete name"/>
+                        <select>
+                            <option>ZDB-PUB-020723-1</option>
+                            <option>ZDB-PUB-061010-9</option>
+                        </select>
+                        <input type="button" value="Del Ref"
+                               title="Delete the selected Publication from this previous name"/>
+                    </td>
+                </form>
+            </tr>
+            <tr>
+                <form>
+                    <td colspan="2">
+                        Add Previous Name: <input type="text" size="15" style="color:red" id="previousName"/>
+                        <input value="Add with Def-Pub" type="button" id="addPreviousName"
+                               onclick="submitFormWithRequiredGRef(this, 'previousName')"
+                               title="Create a new Previous Name and associate the global reference to it. ">
+
+                    </td>
+                </form>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+    <td valign="top">
+        <b> Recognized Genes: </b>
+    </td>
+    <td>
+        <table border="0">
+            <tr>
+                <td bgcolor="#dddddd" width="120">
+                    <b>pax6a</b>:
+                </td>
+                <td>
+                    <input type="button" value="delete gene"/>
+                    <select onchange="changeColor(this)">
+                        <option>ZDB-PUB-020723-1</option>
+                    </select>
+                    <input type="button" value="Del Ref"/>
+                </td>
+            </tr>
+            <tr>
+                <td bgcolor="#dddddd">
+                    <b>pax6b</b>:
+                </td>
+                <td>
+                    <input type="button" value="delete gene"/>
+                    <select onchange="changeColor(this)">
+                        <option>ZDB-PUB-061010-35</option>
+                        <option> ZDB-PUB-020724-1</option>
+                    </select>
+                    <input type="button" value="Del Ref"/>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <form>
+        <td>&nbsp;</td>
+        <td>
+            Add Gene: <input type="text" size="15" id="recognizedGene" style="color:red"/>
+            <input value="Add with Def-Pub" type="button" id="addRecognizedGene"
+                   onclick="submitFormWithRequiredGRef(this,'recognizedGene')"
+                   title="Create a new Recognized Gene Symbol and associate the global reference to it. ">
+        </td>
+    </form>
+</tr>
+<tr>
+    <td>
+        &nbsp;
+    </td>
+    <td>
+    </td>
+</tr>
+<tr>
+    <form>
+        <td>
+            <b> Immunogen Organism: </b>
+        </td>
+        <td>
+            <select onchange="changeColor(this, 'immunogen-organism-save')">
+                <option selected="selected">Unspecified</option>
+                <option>Zebrafish</option>
+            </select>
+            <input value="Save" type="button" id="immunogen-organism-save">
+        </td>
+    </form>
+</tr>
+<tr>
+    <form>
+        <td>
+            <b title="Orgnism in which the antibody was induced."> Host Organism: </b>
+        </td>
+        <td>
+            <select onchange="changeColor(this, 'host-organism-save')">
+                <option>Unspecified</option>
+                <option selected="selected">Mouse</option>
+                <option selected="selected">Rat</option>
+            </select>
+            <input value="Save" type="button" id="host-organism-save">
+        </td>
+    </form>
+</tr>
+<tr>
+    <form>
+        <td>
+            <b> Isotype: </b>
+        </td>
+        <td>
+            <select onchange="changeColor(this, 'isotype')">
+                <option>Unspecified</option>
+                <option selected="selected">IgA</option>
+                <option selected="selected">IgM</option>
+            </select>
+            <input value="Save" type="button" id="isotype">
+        </td>
+    </form>
+</tr>
+<tr>
+    <form>
+        <td>
+            <b> Type: </b>
+        </td>
+        <td>
+            <select onchange="changeColor(this, 'type')">
+                <option>Unspecified</option>
+                <option selected="selected">monoclonal</option>
+                <option selected="selected">polyclonal</option>
+            </select>
+            <input value="Save" type="button" id="type">
+        </td>
+    </form>
+</tr>
+<tr>
+    <td valign="top">
+        <b> Assays: </b>
+    </td>
+    <td>
+        <table border="0">
+            <tr>
+                <td bgcolor="#dddddd" width="120">
+                    <b>whole mount</b>:
+                </td>
+                <td>
+                    <input type="button" value="delete assay"/>
+                    <select>
+                        <option>ZDB-PUB-020723-1</option>
+                    </select>
+                    <input type="button" value="Del Ref"/>
+                </td>
+            </tr>
+            <tr>
+                <td bgcolor="#dddddd">
+                    <b>western blot</b>:
+                </td>
+                <td>
+                    <input type="button" value="delete assay"/>
+                    <select>
+                        <option>ZDB-PUB-061010-35</option>
+                        <option> ZDB-PUB-020724-1</option>
+                    </select>
+                    <input type="button" value="Del Ref"/>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <form>
+        <td>&nbsp;</td>
+        <td>
+            Add Assay:
+            <select onchange="changeColor(this, 'addAssay')">
+                <option>Select Assay</option>
+                <option>western blot</option>
+                <option> whole mount</option>
+            </select>
+            <input value="Add with Def-Pub" type="button" id="addAssay" onclick="submitFormWithRequiredGRef(this)"
+                   title="Create a new Recognized Gene Symbol and associate the global reference to it. ">
+        </td>
+    </form>
+</tr>
+</table>
+
+<hr width="80%">
+<br>
+
+<b title="List of anatomical structures in which the antibody is labelled">ANATOMICAL LABELING:</b>
+<table width="100%" border="0" bgcolor="#EEEEEE">
+<tr bgcolor="#cccccc">
+    <td width="200"><b>Structure</b></td>
+    <td><b>Stages</b></td>
+</tr>
+<tr>
+    <td valign="top">
+        <a href="/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-449">liver and biliary system</a>
+    </td>
+    <td bgcolor="#eeeeee">
+        <table border="0" width="100%">
+            <tr>
+                <td width="180" bgcolor="#dddddd">
+                    <b>Prim-5</b>:
+                </td>
+                <td width="100">
+                    <input type="button" value="delete stage"/>
+                </td>
+                <td width="100">
+                    <select>
+                        <option>ZDB-PUB-020723-1</option>
+                    </select>
+                </td>
+                <td align="left">
+                    <input type="button" value="Del Ref"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="150" bgcolor="#dddddd">
+                    <b>Adult</b>:
+                </td>
+                <td width="100">
+                    <input type="button" value="delete stage"/>
+                </td>
+                <td width="100">
+                    <select onchange="changeColor(this)">
+                        <option>ZDB-PUB-020723-1</option>
+                        <option>ZDB-PUB-061010-9</option>
+                        <option>ZDB-PUB-006755-14</option>
+                    </select>
+                </td>
+                <td align="left">
+                    <input type="button" value="Del Ref"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    Add Start Stage:
+                    <select id="startStage1" onchange="setEndStage(this.id, 'endStage2'); changeColor(this)">
+                        <option>Select a stage</option>
+                        <option>Prim-5</option>
+                        <option>Sphere</option>
+                        <option>Bud</option>
+                        <option>Adult</option>
+                    </select>
+                    End Stage:
+                    <select id="endStage2" onchange="changeColor(this)">
+                        <option>Select a stage</option>
+                        <option>Prim-5</option>
+                        <option>Sphere</option>
+                        <option>Bud</option>
+                        <option>Adult</option>
+                    </select>
+                    <input type="button" value="Add with Def-Pub" onclick="submitFormWithRequiredGRef(this)" id="addStage"/>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td valign="top"><a href="/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-011113-308">lymphatic system</a>
+    </td>
+    <td bgcolor="#eeeeee">
+        <table border="0" width="100%">
+            <tr>
+                <td width="180" bgcolor="#dddddd">
+                    <b>Unknown</b>:
+                </td>
+                <td width="100">
+                    <input type="button" value="delete stage"/>
+                </td>
+                <td width="100">
+                    <select>
+                        <option>ZDB-PUB-020723-1</option>
+                    </select>
+                </td>
+                <td align="left">
+                    <input type="button" value="Del Ref"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    Add Start Stage:
+                    <select id="startStage3" onchange="setEndStage(this.id, 'endStage3'); changeColor(this)">
+                        <option>Select a stage</option>
+                        <option>Prim-5</option>
+                        <option>Sphere</option>
+                        <option>Bud</option>
+                        <option>Adult</option>
+                    </select>
+                    End Stage:
+                    <select id="endStage3">
+                        <option>Select a stage</option>
+                        <option>Prim-5</option>
+                        <option>Sphere</option>
+                        <option>Bud</option>
+                        <option>Adult</option>
+                    </select>
+                    <input type="button" value="Add with Def-Pub"/>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td valign="top">
+        <a href="/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-011113-343">presumptive spinal cord</a></td>
+    <td bgcolor="#eeeeee">
+        <table border="0" width="100%">
+            <tr>
+                <td width="180" bgcolor="#dddddd">
+                    <b>64-cell - Protruding-mouth</b>:
+                </td>
+                <td width="100">
+                    <input type="button" value="delete stage"/>
+                </td>
+                <td width="100">
+                    <select>
+                        <option>ZDB-PUB-020723-1</option>
+                    </select>
+                </td>
+                <td align="left">
+                    <input type="button" value="Del Ref"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    Add Start Stage:
+                    <select id="startStage4" onchange="setEndStage(this.id, 'endStage4'); changeColor(this)">
+                        <option>Select a stage</option>
+                        <option>Prim-5</option>
+                        <option>Sphere</option>
+                        <option>Bud</option>
+                        <option>Adult</option>
+                    </select>
+                    End Stage:
+                    <select id="endStage4">
+                        <option>Select a stage</option>
+                        <option>Prim-5</option>
+                        <option>Sphere</option>
+                        <option>Bud</option>
+                        <option>Adult</option>
+                    </select>
+                    <input type="button" value="Add with Def-Pub"/>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+</table>
+
+<form action="">
+    <table width="100%">
+        <tr width="100%">
+            <td colspan="2">
+                <b>Add Pattern:</b> <br/>
+
+                Structure: <input type="text" size="30" id="searchTerm" style="color:red"
+                                  onblur="changeColor(this, 'addLabel')"/>
+
+                <div style="overflow: auto; height: 200px; width: 400px; opacity:0;" class="auto_complete"
+                     id="anatomyTermAutoComplete">
+                    <script type="text/javascript">
+                        new Ajax.Autocompleter('searchTerm', 'anatomyTermAutoComplete', '/action/autocomplete/anatomy-term', {paramName: "query", minChars: 1});
+                    </script>
+                </div>
+
+                Start Stage:
+                <select id="startStage" onchange="setEndStage(this.id, 'endStage'); changeColor(this, 'addLabel')">
+                    <option>Select a stage</option>
+                    <option>Prim-5</option>
+                    <option>Sphere</option>
+                    <option>Bud</option>
+                    <option>Adult</option>
+                </select>
+                End Stage:
+                <select id="endStage" onchange="changeColor(this, 'addLabel')">
+                    <option>Select a stage</option>
+                    <option>Prim-5</option>
+                    <option>Sphere</option>
+                    <option>Bud</option>
+                    <option>Adult</option>
+                </select>
+                <input type="button" value="Add with Def-Pub" onclick="submitFormWithRequiredGRef(this)" id="addLabel"/>
+
+            </td>
+        </tr>
+    </table>
+</form>
+<hr width="80%">
+<p/>
+
+<p/>
+<b>AVAILABLE FROM:</b>
+<form action="">
+    <table width="100%" border="0" bgcolor="#EEEEEE">
+        <tr bgcolor="#cccccc">
+            <td width="200"><b>Resource</b></td>
+            <td width="65%">&nbsp;</td>
+        </tr>
+        <tr>
+            <td valign="top"><a href="http://zebrafish.org/zirc/abs/absAll.php">Order at ZIRC</a></td>
+            <td>
+                This link is maintained automatically via an upload script.
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <a href="http://www.uiowa.edu/%7Edshbwwwithdoyou.html">Developmental Studies Hybridoma Bank, University of
+                    Iowa</a>
+            </td>
+            <td>
+                <input type="button" value="Delete"/>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <a href="http://www.sigmaaldrich.com/Area_of_Interest/Life_Science/Antibody_Explorer.html%20">Sigma-Aldrich</a>
+            </td>
+            <td>
+                <input type="button" value="Delete"/>
+            </td>
+        </tr>
+    </table>
+    <table>
+        <form>
+            <tr>
+                <td colspan="2">
+                    Add Resource:
+                    Name: <input type="text" size="15" style="color:red" onchange="changeColor(this, 'addResource')"/>
+                    URL: <input type="text" size="15" style="color:red" onchange="changeColor(this, 'addResource')"/>
+                    <input value="Add with Def-Pub" type="button" onclick="submitFormWithRequiredGRef(this)"
+                           id="addResource"/>
+                </td>
+            </tr>
+        </form>
+    </table>
+</form>
+<hr width="80%">
+<p/>
+<b>
+    NOTES ON USAGE:
+</b>
+<table width="100%" border="0" bgcolor="#EEEEEE">
+    <tr bgcolor="#cccccc">
+        <td width="200"><b>Reference</b></td>
+        <td width="450"><b>Comment</b></td>
+        <td></td>
+    </tr>
+    <tr valign="top">
+        <form>
+            <td><a href="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-020724-1">Fashena 1975</a></td>
+            <td><textarea rows="2" cols="50" onkeypress="markAsChanged('comment-1')" id="comment-1"
+                          title="Click to modify the comment" disabled=disabled onchange="changeColor(this, 'comment-save-1')">
+                Really good
+                antibody..</textarea>
+            </td>
+            <td>
+                <input value="Edit" type="button"
+                       onclick="editNote('comment-1','comment-save-1','comment-cancel-1', 'comment-edit-1')"
+                       id="comment-edit-1">
+                <input value="Save" type="button" disabled=disabled id="comment-save-1">
+                <input value="Cancel" type="button" disabled=disabled id="comment-cancel-1"
+                       onclick="cancelNote(this.form, 'comment-1')">
+                <input value="Delete Note" type="button">
+            </td>
+        </form>
+    </tr>
+    <tr valign="top">
+        <form>
+            <td><a href="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-060616-34">Westerfield et al. 1006</a>
+            </td>
+            <td><textarea rows="2" cols="50" onkeypress="markAsChanged('comment-2')" id="comment-2"
+                          title="Click to modify the comment" disabled=disabled onchange="changeColor(this, 'comment-save-2')">
+                Requires non-reducing
+                conditions for western-blot.</textarea>
+            </td>
+            <td>
+                <input value="Edit" type="button"
+                       onclick="editNote('comment-2','comment-save-2','comment-cancel-2', 'comment-edit-2')"
+                       id="comment-edit-2">
+                <input value="Save" type="button" disabled=disabled id="comment-save-2">
+                <input value="Cancel" type="button" disabled=disabled id="comment-cancel-2"
+                       onclick="cancelNote(this.form, 'comment-2')">
+                <input value="Delete Note" type="button">
+            </td>
+        </form>
+    </tr>
+</table>
+<table width="100%">
+    <tr valign="top">
+        <td width="200">Add Note:
+        </td>
+        <td width="450">
+            <textarea rows="2" cols="50" style="color:red" title="Click to enter a new comment"
+                      id="comment-new" onchange="changeColor(this, 'addNote')"></textarea>
+        </td>
+        <td title="To enable this button please provide a valid global reference. ">
+            <div title="jkjh">
+                <input value="Add with Def-Pub" type="button" id="addNote" onclick="submitFormWithRequiredGRef(this)">
+            </div>
+        </td>
+    </tr>
+</table>

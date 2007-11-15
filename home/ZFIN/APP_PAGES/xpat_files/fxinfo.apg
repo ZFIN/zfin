@@ -164,7 +164,7 @@ EFFECTS
                         <?/MIBLOCK>
                     <?/MIBLOCK> 
                     <?MIBLOCK COND="$(EQ,$fxinfo_is_geli,)"> 
-                        <?MIVAR NAME=$fxinfo_anat_link><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$fxinfo_anatzdbid">$fxinfo_anat_item</a><?/MIVAR>
+                        <?MIVAR NAME=$fxinfo_anat_link><a href="/action/anatomy/term-detail?anatomyItem.zdbID=$fxinfo_anatzdbid">$fxinfo_anat_item</a><?/MIVAR>
                         <?MIBLOCK COND=$(NE,$fxinfo_samefish,f)>
                            <?MIBLOCK COND=$(NE,$fxinfo_laststage,$fxinfo_stage)> 
                               <td><?MIVAR>$fxinfo_anat_link<?/MIVAR></td>

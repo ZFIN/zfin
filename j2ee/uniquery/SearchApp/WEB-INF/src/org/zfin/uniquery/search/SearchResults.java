@@ -87,9 +87,22 @@ public class SearchResults
 	    // if searchResultURL starts with "/cgi-bin_hostname/", 
             // get rid of the hostname
 	    if ( searchResultURL.indexOf("cgi-bin_") > 0 ) {
+
 	    	int pos = searchResultURL.substring(1).indexOf("/");
-	    	searchResultURL = "/cgi-bin" +  searchResultURL.substring(pos+1);
-	    }
+
+		String envWebdriverPathFromRoot =  System.getenv("MUTANT_NAME");
+
+		// there is no mutant name for production, and we want to redirect to cgi-bin/
+
+		if (envWebdriverPathFromRoot==null) {
+		     searchResultURL = "/" +"cgi-bin" + searchResultURL.substring(pos+1);
+		}
+		else {
+		   		    
+		    searchResultURL = "/" + envWebdriverPathFromRoot + searchResultURL.substring(pos+1);
+	  
+		}
+       	    }
 	   
 	    htmlOutputBuffer.append("<p>\n");
 	    htmlOutputBuffer.append("<a href='" + searchResultURL + "'>" + pageTitle + "</a><br>\n");

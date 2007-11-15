@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+        This is the dafault properties file. If you need to adjust the parameters
+        you want to copy this file into zfin-properties.xml which then takes
+        precedence. This file lives only on your instance and should not be checked into CVS.
+-->
+<ApplicationProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="conf/properties.xsd">
+    <Web>
+        <backgroundColor><!--|BACKGROUND_COLOR|--></backgroundColor>
+        <headerColor><!--|HEADER_COLOR|--></headerColor>
+        <highlightColor><!--|HIGHLIGHT_COLOR|--></highlightColor>
+        <highlighterColor><!--|HIGHLIGHTER_COLOR|--></highlighterColor>
+        <linkbarColor><!--|LINKBAR_COLOR|--></linkbarColor>
+        <sidebarColor><!--|SIDEBAR_COLOR|--></sidebarColor>
+    </Web>
+    <Path>
+        <Server name="localhost" port="80" securePort="443"></Server>
+        <cookiePath>/</cookiePath>
+        <Webdriver><!--|WEBDRIVER_PATH_FROM_ROOT|--></Webdriver>
+        <FtpRootPath>/ftp/zfin</FtpRootPath>
+        <imageLoadPath>/image/load</imageLoadPath>
+        <loadUpFull>/image/full</loadUpFull>
+        <PdfPath>/pdf/</PdfPath>
+        <IndexPath>../j2ee/uniquery/indexes</IndexPath>
+    </Path>
+    <Email>
+        <adminEmailAddress>info@zfin.org</adminEmailAddress>
+    </Email>
+    <Logging>
+        <logFileName>zfin_logger.log</logFileName>
+        <logFileSize>1</logFileSize>
+        <MaxLogFiles>10</MaxLogFiles>
+        <logPattern>%d [%t] %-5p %c{2} - %m%n</logPattern>
+    </Logging>
+</ApplicationProperties>

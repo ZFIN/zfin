@@ -1,0 +1,317 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zfin.sequence" default-access="field">
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="foreignDatabaseSuperType">
+        <param name="enumClassname">org.zfin.sequence.ReferenceDatabase$SuperType</param>
+    </typedef>
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="foreignDatabaseDataType">
+        <param name="enumClassname">org.zfin.sequence.ReferenceDatabase$Type</param>
+    </typedef>
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="organism">
+        <param name="enumClassname">org.zfin.orthology.Species</param>
+    </typedef>
+
+    <class name="org.zfin.sequence.AccessionRelationship" table="accession_relationship">
+        <id name="zdbID" type="string">
+            <column name="accrel_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">ACCREL</param>
+            </generator>
+        </id>
+        <many-to-one name="accession" column="accrel_accbk_pk_id_1" class="org.zfin.sequence.Accession" not-null="true"
+                     lazy="no-proxy"/>
+
+        <many-to-one name="relatedAccession" column="accrel_accbk_pk_id_2" class="org.zfin.sequence.Accession"
+                     not-null="true" lazy="no-proxy"/>
+
+        <many-to-one name="relationshipType" column="accrel_accrelt_type"
+                     class="org.zfin.sequence.AccessionRelationshipType" not-null="true" lazy="no-proxy"/>
+    </class>
+
+    <class name="org.zfin.sequence.Accession" table="accession_bank">
+        <id name="ID" type="long">
+            <column name="accbk_pk_id" not-null="true"/>
+            <generator class="increment"/>
+
+        </id>
+        <property name="number" column="accbk_acc_num"/>
+        <property name="defline" column="accbk_defline"/>
+        <property name="abbreviation" column="accbk_abbreviation"/>
+        <property name="length" column="accbk_length" type="integer"/>
+        <many-to-one name="referenceDatabase" column="accbk_fdbcont_zdb_id" class="org.zfin.sequence.ReferenceDatabase" not-null="true" lazy="no-proxy"/>
+
+
+       <!-- <set name="relatedEntrezAccessions" table="entrez_to_protein" lazy="true">
+            <key column="ep_protein_acc_num"/>
+            <one-to-many class="EntrezProtRelation"/>
+        </set>-->
+        <set name="relatedEntrezAccessions" inverse="false" lazy="true">
+            <key column="accbk_pk_id"/>
+            <one-to-many class="EntrezProtRelation"/>
+            <loader query-ref="loadEntrezForProtein"/>
+        </set>
+
+
+        <set name="dbLinks" inverse="false" lazy="true">
+            <key column="accbk_pk_id"/>
+            <one-to-many class="org.zfin.sequence.DBLink"/>
+            <loader query-ref="loadDBLinksForAccession"/>
+        </set>
+
+        <set name="blastableMarkerDBLinks" inverse="false" lazy="true">
+            <key column="accbk_pk_id"/>
+            <one-to-many class="org.zfin.sequence.MarkerDBLink"/>
+            <loader query-ref="loadBlastableDBLinksForAccession"/>
+        </set>
+
+    </class>
+
+
+
+
+
+
+    <class name="org.zfin.sequence.ReferenceDatabase" table="foreign_db_contains">
+        <id name="zdbID" type="string">
+            <column name="fdbcont_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">FDBCONT</param>
+            </generator>
+        </id>
+        <!--Perhaps the class column should change; species is really common name, we don't want to display "Homo Sapiens", human rather-->
+        <property name="organism" column="fdbcont_organism_common_name" type="organism"/>
+        <property name="type" column="fdbcont_fdbdt_data_type" type="foreignDatabaseDataType"/>
+        <property name="superType" column="fdbcont_fdbdt_super_type" type="foreignDatabaseSuperType"/>
+
+        <many-to-one name="foreignDB" column="fdbcont_fdb_db_name" class="org.zfin.sequence.ForeignDB" not-null="true"
+                     lazy="no-proxy"/>
+
+    </class>
+
+
+    <class name="org.zfin.sequence.ForeignDB" table="foreign_db">
+        <id name="dbName" type="string">
+            <column name="fdb_db_name" not-null="true"/>
+            <generator class="native"/>
+        </id>
+        <!--<property name="baseURL" column=""/> -->
+        <property name="dbUrlPrefix" column="fdb_db_query"/>
+        <property name="dbUrlSuffix" column="fdb_url_suffix"/>
+
+        <property name="significance" column="fdb_db_significance"/>
+    </class>
+
+    <class name="org.zfin.sequence.AccessionRelationshipType" table="accrel_type">
+        <id name="accessionRelationshipType" type="string">
+            <column name="accrelt_type" not-null="true"/>
+            <generator class="native"/>
+        </id>
+    </class>
+    <!--<class name="org.zfin.sequence.AccessionRelationship" table="accession_relationship">
+        <id name="zdbID" type="string">
+            <column name="accrel_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">ACCREL</param>
+            </generator>
+        </id>
+        --><!--<property name="baseURL" column=""/> --><!--
+
+       <many-to-one name="accession" column="accrel_accbk_zdb_id_1" class="org.zfin.sequence.Accession" not-null="true" lazy="no-proxy" />
+       <many-to-one name="relatedAccession" column="accrel_accbk_zdb_id_2" class="org.zfin.sequence.Accession" not-null="true" lazy="no-proxy" />
+
+       <many-to-one name="relationshipType" column="accrel_accrelt_type" class="org.zfin.sequence.AccessionRelationshipType" not-null="true" lazy="no-proxy" />
+
+
+    </class>-->
+
+
+    <class name="org.zfin.sequence.DBLink" table="db_link" abstract="true">
+        <id name="zdbID" type="string">
+            <column name="dblink_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">DBLINK</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+<!--        The types for dblink are orthology, anatomy or marker.-->
+<!--        These are guaranteed by the different procedures.-->
+        <!--CASE substr(dblink_linked_recid,0,9)-->
+        <discriminator type="string"
+                       formula="(
+                    CASE dblink_linked_recid[1,9]
+                    WHEN 'ORTHO' THEN 'Orthology'
+                    WHEN 'ANAT' THEN 'Anatomy'
+                    ELSE  'Marker'
+                  END
+                )"
+                />
+        
+        <property name="accessionNumber" column="dblink_acc_num" not-null="true"/>
+        <property name="length" column="dblink_length"/>
+        <many-to-one name="referenceDatabase" column="dblink_fdbcont_zdb_id"
+                     class="org.zfin.sequence.ReferenceDatabase" not-null="true" lazy="no-proxy"/>
+
+        <set name="attributions">
+            <key column="recattrib_data_zdb_id"/>
+            <one-to-many class="org.zfin.infrastructure.RecordAttribution"/>            
+        </set>
+
+        <subclass name="org.zfin.sequence.MarkerDBLink" extends="org.zfin.sequence.DBLink" discriminator-value="Marker">
+            <many-to-one name="marker" column="dblink_linked_recid" class="org.zfin.marker.Marker" not-null="true"/>
+        </subclass>
+        <subclass name="org.zfin.sequence.OrthologueDBLink" extends="org.zfin.sequence.DBLink" discriminator-value="Orthology">
+            <many-to-one name="orthologue" column="dblink_linked_recid" class="org.zfin.orthology.Orthologue" not-null="true"/>
+        </subclass>
+        <subclass name="org.zfin.anatomy.AnatomyDBLink" extends="org.zfin.sequence.DBLink" discriminator-value="Anatomy">
+            <many-to-one name="anatomyItem" column="dblink_linked_recid" class="org.zfin.anatomy.AnatomyItem" not-null="true"/>
+        </subclass>
+
+    </class>
+
+    <class name="org.zfin.sequence.Entrez" table="entrez_gene">
+        <id name="entrezAccNum" type="string">
+            <column name="eg_acc_num" not-null="true"/>
+            <generator class="native"/>
+         </id>
+        <!--Perhaps the class column should change; species is really common name, we don't want to display "Homo Sapiens", human rather-->
+        <property name="abbreviation" column="eg_symbol" type="string"/>
+        <property name="name" column="eg_name" type="string"/>
+        <set name="relatedProteinAccessions" table="entrez_to_protein" lazy="true">
+            <key column="ep_entrez_acc_num"/>
+            <one-to-many class="EntrezProtRelation"/>
+        </set>
+        <set name="relatedOMIMAccessions" table="entrez_to_xref" lazy="true">
+            <key column="ex_entrez_acc_num"/>
+            <one-to-many class="EntrezOMIM"/>
+        </set>
+        <set name="relatedMGIAccessions" table="entrez_to_xref" lazy="true">
+            <key column="ex_entrez_acc_num"/>
+            <one-to-many class="EntrezMGI"/>
+        </set>
+    </class>
+
+    <class name="org.zfin.sequence.EntrezProtRelation" table="entrez_to_protein">
+        <id name="epID" type="long">
+            <column name="ep_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+
+        <property name="organism" column="ep_organism_common_name" type="organism"/>
+        <!--TODO:write comment -->
+        <!--<many-to-one name="proteinAccNum" column="ep_protein_acc_num" class="org.zfin.sequence.Accession"
+                     not-null="true" lazy="no-proxy"/>-->
+        <property name="proteinAccNum" column="ep_protein_acc_num" not-null="true"/>
+        <many-to-one name="entrezAccession" column="ep_entrez_acc_num"
+                             class="org.zfin.sequence.Entrez" not-null="true" lazy="no-proxy"/>
+
+    </class>
+
+    <class name="org.zfin.sequence.EntrezOMIM" table="entrez_to_xref">
+
+        <composite-id>
+            <key-property name="entrezAccessionNum" column="ex_entrez_acc_num" type="string"/>
+            <key-property name="omimAccession" column="ex_xref" type="string"/>
+        </composite-id>
+        <many-to-one name="entrezAccession" class="org.zfin.sequence.Entrez"
+                     column="ex_entrez_acc_num" lazy="no-proxy" not-null="true" insert="false" update="false"/>
+
+    </class>
+
+    <class name="org.zfin.sequence.EntrezMGI" table="entrez_to_xref">
+
+        <composite-id>
+            <key-property name="entrezAccessionNum" column="ex_entrez_acc_num" type="string"/>
+            <key-property name="mgiAccession" column="ex_xref" type="string"/>
+        </composite-id>
+        <many-to-one name="entrezAccession" class="org.zfin.sequence.Entrez"
+                     column="ex_entrez_acc_num" lazy="no-proxy" not-null="true" insert="false" update="false"/>
+
+    </class>
+
+    <!--       <set name="linkageGroups" lazy="true">-->
+    <!--            <key column="linkage_group_id"/>-->
+    <!--            <one-to-many class="org.zfin.sequence.LinkageGroup"/>-->
+    <!--        </set>-->
+    <!--        <set name="relatedAccessions" lazy="true">-->
+    <!--            <key column="accession_id"/>-->
+    <!--            <one-to-many class="org.zfin.sequence.LinkageGroup"/>-->
+    <!--        </set>-->
+
+
+    <!--    Sierra may  or may not be adding this: No, lets get this from existing mappings/Sierra-->
+    <!--    <class name="org.zfin.sequence.LinkageGroup" table="linkagegrouop">-->
+    <!--        <id name="zdbID" type="string">-->
+    <!--            <column name="linkagegroup_zdb_id" not-null="true"/>-->
+    <!--            <generator class="org.zfin.database.ZdbIdGenerator">-->
+    <!--                <param name="type">LINK</param>-->
+    <!--            </generator>-->
+    <!--        </id>-->
+    <!--    </class>-->
+  <sql-query name="loadEntrezForProtein">
+        <return alias="acc" class="org.zfin.sequence.Accession"/>
+        <return-join alias="entrez" property="acc.relatedEntrezAccessions"/>
+        select
+        acc.accbk_pk_id ,
+        entrez.ep_pk_id ,
+        entrez.ep_organism_common_name ,
+        entrez.ep_protein_acc_num ,
+        entrez.ep_entrez_acc_num
+        from
+        entrez_to_protein  entrez
+        left outer join accession_bank acc
+            on entrez.ep_protein_acc_num=acc.accbk_acc_num
+        where
+            acc.accbk_pk_id=?
+    </sql-query>
+
+    <sql-query name="loadDBLinksForAccession">
+        <return alias="acc" class="org.zfin.sequence.Accession"/>
+        <return-join alias="link" property="acc.dbLinks"/>
+        select
+        acc.accbk_pk_id ,
+        link.dblink_zdb_id ,
+        link.dblink_acc_num ,
+        link.dblink_length ,
+        link.dblink_fdbcont_zdb_id ,
+        link.dblink_linked_recid
+        from
+        db_link link
+        join accession_bank acc
+            on link.dblink_acc_num=acc.accbk_acc_num
+            and link.dblink_fdbcont_zdb_id=acc.accbk_fdbcont_zdb_id
+        where
+            acc.accbk_pk_id=?
+    </sql-query>
+
+
+<!--    Note:  this should go away when the types are properly discriminated-->
+    <sql-query name="loadBlastableDBLinksForAccession">
+        <return alias="acc" class="org.zfin.sequence.Accession"/>
+        <return-join alias="link" property="acc.blastableMarkerDBLinks"/>
+         select
+           acc.accbk_pk_id ,
+           link.dblink_zdb_id ,
+           link.dblink_acc_num ,
+           link.dblink_length ,
+           link.dblink_fdbcont_zdb_id ,
+           link.dblink_linked_recid
+         from
+           db_link link, accession_bank acc, foreign_db_contains fdbc
+         where
+           acc.accbk_pk_id=?
+           and link.dblink_acc_num=acc.accbk_acc_num
+           <!--and link.dblink_fdbcont_zdb_id=acc.accbk_fdbcont_zdb_id-->
+           and fdbc.fdbcont_zdb_id = link.dblink_fdbcont_zdb_id
+           and fdbc.fdbcont_fdbdt_super_type = 'sequence'
+           and fdbc.fdbcont_fdbdt_data_type in ('cDNA','Polypeptide','Vega Transcript')
+    </sql-query>
+
+</hibernate-mapping>
+

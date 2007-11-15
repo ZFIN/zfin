@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+        <!--  URL mappings -->
+    <bean id="markerUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/marker/expression-summary">expressionSummaryBean</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <bean name="expressionSummaryBean"
+          class="org.zfin.expression.presentation.ExpressionSummaryController"
+          autowire="byName"/>
+
+</beans>

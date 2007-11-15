@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definitions for the site wide framework presentation stuff
+  -->
+<beans>
+
+    <bean id="frameworkUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/autocomplete/gene-family">autoComplete</prop>
+                <prop key="/autocomplete/anatomy-term">autoComplete</prop>
+            </props>
+        </property>
+
+    </bean>
+
+
+    <bean name="autoComplete" class="org.zfin.framework.presentation.AutoCompleteController">
+        <property name="methodNameResolver" ref="autoCompleteResolver"/>
+    </bean>
+
+    <bean id="autoCompleteResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+        <property name="mappings">
+            <props>
+                <prop key="/autocomplete/gene-family">geneFamilyHandler</prop>
+                <prop key="/autocomplete/anatomy-term">anatomyTermHandler</prop>
+            </props>
+         </property>
+    </bean>
+
+
+</beans>

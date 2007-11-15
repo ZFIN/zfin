@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Alwyas include the full package in each class.name attribute. This allows refactoring to identify
+     the class and include them. Otherwise a refactoring of a class reference here is not recognized and
+     could potentially break the code (e.g. moving a clas  into a different package. -->
+<hibernate-mapping package="org.zfin.sequence.reno">
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="runType">
+        <param name="enumClassname">org.zfin.sequence.reno.Run$Type</param>
+    </typedef>
+
+    <class name="org.zfin.sequence.reno.Run" table="run" abstract="true">
+        <id name="zdbID" type="string">
+            <column name="run_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">RUN</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <!--If we use a column discriminator, we need to get rid of the type property -->
+        <discriminator type="string" column="run_type"/>
+
+        <property name="name" column="run_name" not-null="true"/>
+        <property name="program" column="run_program" not-null="true"/>
+        <property name="date" column="run_date" type="date" not-null="true"/>
+        <property name="blastDatabase" column="run_blastdb" not-null="true"/>
+
+        <many-to-one name="nomenclaturePublication" column="run_nomen_pub_zdb_id" class="org.zfin.publication.Publication" not-null="true" lazy="no-proxy" />
+
+        <set name="candidates" lazy="true" inverse="true">
+            <key column="runcan_run_zdb_id"/>
+            <one-to-many class="org.zfin.sequence.reno.RunCandidate"/>
+        </set>
+
+
+        <subclass name="org.zfin.sequence.reno.RedundancyRun" extends="org.zfin.sequence.reno.Run" discriminator-value="Redundancy">
+            <many-to-one name="relationPublication" column="run_relation_pub_zdb_id" class="org.zfin.publication.Publication" not-null="false" lazy="no-proxy" />
+        </subclass>
+
+        <subclass name="org.zfin.sequence.reno.NomenclatureRun" extends="org.zfin.sequence.reno.Run" discriminator-value="Nomenclature">
+            <many-to-one name="orthologyPublication" column="run_relation_pub_zdb_id" class="org.zfin.publication.Publication" not-null="false" lazy="no-proxy" />
+        </subclass>
+
+    </class>
+
+    <class name="org.zfin.sequence.reno.RunCandidate" table="run_candidate">
+        <id name="zdbID" type="string">
+            <column name="runcan_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">RUNCAN</param>
+            </generator>
+        </id>
+
+        <property name="done" column="runcan_done" type="boolean" not-null="true"/>
+        <property name="occurrenceOrder" column="runcan_occurrence_order" not-null="true"/>
+
+        <many-to-one name="candidate" column="runcan_cnd_zdb_id" class="org.zfin.sequence.reno.Candidate" not-null="true" lazy="false" fetch="join" />
+
+        <many-to-one name="lockPerson" column="runcan_locked_by" class="org.zfin.people.Person" />
+
+        <!--<many-to-one name="run" column="runcan_run_zdb_id" class="org.zfin.sequence.reno.Run" not-null="true" lazy="no-proxy" />-->
+        <many-to-one name="run" column="runcan_run_zdb_id" class="org.zfin.sequence.reno.Run" not-null="true" lazy="false" />
+
+
+<!--        NOTE:  inverse = true is added to provide for a single insertion instead of an insertion and an update, but RunCandidate must be specified in Query object.-->
+        <set name="candidateQueries"  lazy="true" inverse="true">
+            <key column="bqry_runcan_zdb_id"/>
+            <one-to-many class="org.zfin.sequence.blast.Query"/>
+        </set>
+    </class>
+
+
+    <class name="org.zfin.sequence.reno.Candidate" table="candidate">
+        <id name="zdbID" type="string">
+            <column name="cnd_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">CND</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <property name="note" column="cnd_note" length="1500"/>
+
+        <property name="problem" column="cnd_is_problem" type="boolean" not-null="true"/>
+
+        <property name="runCount" column="cnd_run_count" type="integer" insert="false" update="false" generated="always" not-null="true"/>
+
+        <property name="lastFinishedDate" column="cnd_last_done_date" type="date"  not-null="false"/>
+
+        <property name="suggestedName" column="cnd_suggested_name" not-null="false"/>
+
+        <property name="markerType" column="cnd_mrkr_type"/>
+
+<!--        <many-to-one name="identifiedMarker" column="cnd_mrkr_zdb_id" class="org.zfin.marker.Marker" not-null="false" lazy="no-proxy" />-->
+
+      <!--  <many-to-one name="accession" column="cnd_accbk_pk_id" class="org.zfin.sequence.Accession" not-null="true" lazy="no-proxy" />-->
+    </class>
+
+</hibernate-mapping>

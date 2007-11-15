@@ -1,0 +1,244 @@
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
+<?MICOMMENT>
+***
+FILE: orthoviewbrief.apg
+PREFIX: orthoviewbrief_ (not all have this prefix)
+
+INPUT VARS:
+$OID: the zdb_id of the marker record
+
+OUTPUT VARS:
+
+OUTPUT:
+
+EFFECTS:
+
+display summarized orthology data on gene page.
+***
+<?/MICOMMENT>
+
+<?MIVAR>
+  <TABLE width="100%" border=0 bgcolor="$highlight">
+<?/MIVAR>
+
+<?MIVAR NAME=$countEvForEvcode><?/MIVAR>
+<?MIVAR NAME=$unknown>UN<?/MIVAR>
+<?MIVAR NAME=$CURROW>0<?/MIVAR>
+<?MIVAR NAME=$EXIST>0<?/MIVAR>
+<?MIVAR NAME=$hasEv>0<?/MIVAR>
+<?MIVAR NAME=$indx>1<?/MIVAR>
+<?MIVAR NAME=$countRef>0<?/MIVAR>
+<?MIVAR NAME=$drawball><?/MIVAR>
+<?MIVAR NAME=$oevcount><?/MIVAR>
+<?MIVAR NAME=$oevcode><?/MIVAR>
+<?MIVAR NAME=$refcount><?/MIVAR>
+<?MIVAR NAME=$ball_img><img src="/images/fill_green_ball.gif" border=0 height=10><?/MIVAR>
+
+<?MICOMMENT> *** Get the number of orthologue organisms in order to know the number of rows to display
+<?/MICOMMENT>
+<?MISQL SQL="
+          select count(distinct organism)
+            from orthologue
+            where c_gene_id = '$OID'
+           ;"
+>
+<?/MISQL>
+<?MIVAR NAME=$orthoNum>$1<?/MIVAR>
+
+<?MIBLOCK COND="$(>,$orthoNum,0)">
+  <?MICOMMENT> ***  Get the number of evidence and number of distinct codes<?/MICOMMENT>
+  <?MISQL SQL="select count(*), count(distinct oevdisp_evidence_code)
+          	 from orthologue_evidence_display
+		 where oevdisp_gene_zdb_id = '$OID'
+             ;"
+  >
+  <?/MISQL>
+  <?MIVAR NAME=$evNum>$1<?/MIVAR>
+  <?MIVAR NAME=$codeNum>$2<?/MIVAR>
+
+  <?MIVAR>
+    <TR>
+      <TD colspan=4></TD>
+      <TD bgcolor=#ccccccc colspan=$codeNum align=left><b>Evidence</b></TD>
+    </TR>
+  <?/MIVAR>
+
+  <TR bgcolor=#ccccccc>
+    <TD><b>Species</b></TD>
+    <TD><b>Symbol</b></TD>
+    <TD><b>Chromosome (Position)</b></TD>
+    <TD><b>Accession #</b></TD>
+    <?MISQL SQL="select count(*), oevdisp_evidence_code, oevcode_order
+		   from orthologue_evidence_display, orthologue_evidence_code
+		   where oevdisp_gene_zdb_id = '$OID'
+	 	     and oevdisp_evidence_code = oevcode_code
+		   group by oevdisp_evidence_code, oevcode_order
+		   order by oevcode_order
+	       ;"
+    >
+      $(SETVAR,$oevcount[$MI_CURRENTROW],$1)
+      $(SETVAR,$oevcode[$MI_CURRENTROW],$2)
+      $(SETVAR,$refcount[$MI_CURRENTROW],0)
+    <?/MISQL>
+
+    <?MIBLOCK INDEX=$item FOREACH=$oevcode>
+      <?MIVAR>
+	<TD align=center><b><a href="/zf_info/oev.html">$item</a></b></TD>
+      <?/MIVAR>
+    <?/MIBLOCK>
+  </TR>
+
+  <TR>
+    <TD><b>Zebrafish</b></TD>
+    <?MIVAR><TD>$abbrev</TD><?/MIVAR>
+
+    <?MICOMMENT> *** Displaying zebrafish chromosome info begins here *** <?/MICOMMENT>
+    <?MISQL NAME=$longChrString
+            SQL="
+              select WebExplode(object,'&mapdetails_mode=mini&oID=$OID')
+                from webPages where ID='aa-mappingdetail.apg'
+               ;"
+    >
+      $1
+    <?/MISQL>
+
+    <?MIVAR NAME=$noLGChrString>$(TRIM,$(REPLACE,$longChrString,"LG:",""))<?/MIVAR>
+    <?MIVAR NAME=$posOfSpace>$(POSITION,$noLGChrString," ")<?/MIVAR>
+    <?MIVAR NAME=$shortChrString>$(SUBSTR,$noLGChrString,1,$posOfSpace)<?/MIVAR>
+    <?MIVAR NAME=$restChrString>$(SUBSTR,$noLGChrString,$(+,$posOfSpace,1))<?/MIVAR>
+
+    <?MIVAR NAME=$posOfCommer>$(POSITION,$restChrString,",")<?/MIVAR>
+    <?MIBLOCK COND="$(>,$posOfCommer,0)">
+      <?MIVAR NAME=$noCommerString>$(TRIM,$(REPLACE,$restChrString,",",""))<?/MIVAR>
+      <?MIVAR NAME=$posOfSpace>$(POSITION,$noCommerString," ")<?/MIVAR>
+      <?MIVAR NAME=$secondChrString>$(SUBSTR,$noCommerString,1,$posOfSpace)<?/MIVAR>
+      <?MIVAR NAME=$shortChrString>$shortChrString, $secondChrString<?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIVAR NAME=$posOfNone>$(POSITION,$shortChrString,"None")<?/MIVAR>
+    <TD><?MIVAR>$(IF,$(=,$posOfNone,0),$shortChrString,&nbsp;Unknown)<?/MIVAR></TD>
+    <?MICOMMENT> *** Displaying zebrafish chromosome info ends here *** <?/MICOMMENT>
+
+    <TD></TD> <?MICOMMENT> *** empty for zebrafish's Accession # column *** <?/MICOMMENT>
+    <?MIBLOCK COND="$(>,$codeNum,0)" INDEX=$subitem TO=$codeNum FROM=1 STEP=1>
+      <TD align=center><b><?MIVAR>$ball_img<?/MIVAR></b></TD>
+    <?/MIBLOCK>
+  </TR>
+  <?MICOMMENT> *** first 3 rows end here *** <?/MICOMMENT>
+
+  <?MICOMMENT> *** start to display each orthologue data *** <?/MICOMMENT>
+  <?MISQL SQL="
+            select zdb_id, ortho_abbrev, organism, ortho_chromosome, ortho_position, organism_display_order
+              from orthologue, organism
+              where c_gene_id = '$OID'
+                and organism = organism_common_name
+              group by zdb_id, ortho_abbrev, organism, ortho_chromosome, ortho_position, organism_display_order
+              order by organism_display_order
+             ;"
+  >
+    <?MIVAR NAME=$zdbID>$1<?/MIVAR>
+    <?MIVAR NAME=$symbol>$2<?/MIVAR>
+    <?MIVAR NAME=$organism>$3<?/MIVAR>
+    <?MIVAR NAME=$chromosome>$4<?/MIVAR>
+    <?MIVAR NAME=$position>$5<?/MIVAR>
+    <TR>
+      <?MIVAR>
+        <TD><b>$organism</b></TD>
+        <TD>$symbol</TD>
+      <?/MIVAR>
+      <?MIBLOCK COND="$(OR,$(EC,$organism,Human),$(EC,$organism,Mouse))">
+        <?MIBLOCK COND="$(OR,$(EC,$MI_NOVALUE,$chromosome),$(EC,$MI_NULL,$chromosome),$(EC,$unknown,$chromosome))">
+          <?MIVAR><TD>&nbsp;Unknown</TD><?/MIVAR>
+        <?MIELSE>
+          <?MIVAR><TD>&nbsp;$chromosome ($position)</TD><?/MIVAR>
+        <?/MIBLOCK>
+      <?MIELSE>
+        <?MIBLOCK COND="$(OR,$(EC,$MI_NOVALUE,$chromosome),$(EC,$MI_NULL,$chromosome),$(EC,$unknown,$chromosome))">
+          <?MIVAR><TD>&nbsp;Unknown</TD><?/MIVAR>
+        <?MIELSE>
+          <?MIVAR><TD>&nbsp;$chromosome</TD><?/MIVAR>
+        <?/MIBLOCK>
+      <?/MIBLOCK>
+
+      <TD align="left">
+        <?MICOMMENT> *** display AccIds and links to foreign DBs <?/MICOMMENT>
+        <?MISQL SQL="
+                  select fdb_DB_name, fdb_DB_query || dblink_acc_num, dblink_acc_num_display, fdb_db_significance
+                    from db_link,foreign_db_contains,foreign_DB
+                    where dblink_linked_recid = '$zdbID'
+                      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                      and fdbcont_fdb_db_name = fdb_db_name
+                      and fdb_db_significance < 10
+                      and fdbcont_organism_common_name = '$organism'
+                    order by fdb_db_significance
+                   ;"
+        >
+          <?MIVAR NAME=$DB_name>$1<?/MIVAR>
+          <?MIVAR NAME=$hyperlink>$2<?/MIVAR>
+          <?MIVAR NAME=$dblink_acc_num_display>$3<?/MIVAR>
+          <?MIVAR>
+            $(IF,$(NC,$dblink_acc_num_display,),"<li><A HREF="$hyperlink">"$DB_name":"$dblink_acc_num_display"</a>")
+          <?/MIVAR>
+        <?/MISQL>
+      </TD>
+
+      <?MICOMMENT> *** display the ball only when there's evidence for the organism and zebrafish <?/MICOMMENT>
+      <?MIBLOCK COND="$(>,$codeNum,0)">
+        <?MIBLOCK INDEX=$item FOREACH=$oevcode>
+          <?MIVAR>$(SETVAR,$hasEv,0)<?/MIVAR>
+          <TD align=center><b>
+          <?MISQL SQL="select oevdisp_organism_list, oevdisp_evidence_code, oevcode_order
+		       from orthologue_evidence_display, orthologue_evidence_code
+		       where oevdisp_gene_zdb_id = '$OID'
+	 	         and oevdisp_evidence_code = '$item'
+	 	         group by oevdisp_organism_list, oevdisp_evidence_code, oevcode_order
+		       order by oevcode_order,oevdisp_organism_list
+	           ;"
+          >
+            <?MIVAR>
+            $(IF,$(>,$(POSITION,$1,$organism),0),$(SETVAR,$hasEv,1),)
+            <?/MIVAR>
+          <?/MISQL>
+          <?MIVAR>$(IF,$(=,$hasEv,1),$ball_img,)<?/MIVAR>
+          </b></TD>
+        <?/MIBLOCK>
+      <?/MIBLOCK>
+
+    </TR>
+  <?/MISQL>
+
+  <?MIBLOCK COND="$(>,$codeNum,0)">
+  <?MICOMMENT> *** link to detailed display for orthologue data <?/MICOMMENT>
+  <TR>
+    <?MIVAR>
+    <TD colspan=$codeNum align="left">
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoviewdetailed.apg&OID=$OID&abbrev=$abbrev&userid=$userid">
+        <b>Orthology Details</b>
+      </A>
+    </TD>
+    <?/MIVAR>
+    <TD colspan=4></TD>
+  </TR>
+  <?/MIBLOCK>
+
+  <?MIVAR>
+    $(UNSETVAR,$oevcount)
+    $(UNSETVAR,$oevcode)
+    $(UNSETVAR,$refcount)
+  <?/MIVAR>
+
+<?MIELSE> <?MICOMMENT> *** if no orthologue data *** <?/MICOMMENT>
+  <TR><TD>&nbsp None submitted.</TD></TR>
+<?/MIBLOCK>
+
+</TABLE>

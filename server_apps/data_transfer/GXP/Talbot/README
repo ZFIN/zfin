@@ -130,6 +130,8 @@
 	** Watch out **: make sure the last blast exit code is 0. If not, diagnose.
         It is highly recommended that before the loading, take a look at the probes.unl file and identify gene names that stay in the clone name column. Those should be cases where the gb accession number is in ZFIN only associated with a gene. Send that to a curator for a proper clone name. If this step is not taken, the loading process would probably fail with mrkr_abbrev_unique constraint violated error. 
 
+        It is highly recommended that before the loading, take a look at the probes.unl file and identify gene names that stay in the clone name column. Those should be cases where the gb accession number is in ZFIN only associated with a gene. Send that to a curator for a proper clone name. If this step is not taken, the loading process would probably fail with mrkr_abbrev_unique constraint violated error. 
+
 
 ----------------
 -- Loading

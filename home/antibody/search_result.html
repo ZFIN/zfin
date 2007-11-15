@@ -1,0 +1,404 @@
+<script type="text/javascript">
+    // populate the G-Ref field with the zdb id from the curator publication list.
+    function populateGRef(curPub, GRef) {
+        var zdbID = document.getElementById(curPub).value;
+        if (zdbID != 'Select Curator Pub')
+            document.getElementById(GRef).value = zdbID;
+    }
+
+    // set the end stage field to the same value as
+    // the start field value
+    // passed in are the ids
+    function setEndStage(start, end) {
+        var startStage = document.getElementById(start).value;
+        document.getElementById(end).value = startStage;
+    }
+
+    function addGRef(x) {
+        var gref = document.getElementById('G-Ref').value;
+        if (gref == '') {
+            alert("Please enter a Global Reference first.")
+            document.getElementById('G-Ref').focus()
+        }
+    }
+
+    function markAsChanged(element) {
+        document.getElementById(element).style.color = 'red';
+    }
+</script>
+<table width=100%>
+    <tr bgcolor="#cccccc">
+        <td class="titlebar" colspan="5">
+            &nbsp;&nbsp;
+            <font size="+1">
+                <b>Antibody Search Results</b>
+            </font>
+        </td>
+    </tr>
+    <tr>
+        <td width=90%>
+            <a href="/antibody/search_result.html#searchForm"> Modify search</a>
+        </td>
+        <td width=10%>
+            <table border="0" cellspacing="0" cellpadding="0">
+                <form method=post action="/cgi-bin/webdriver" target=comments>
+                    <input type=hidden name=MIval value="aa-input_welcome_generic.apg">
+                    <input type=hidden name=page_name value="ZFIN Marker Search Results">
+                    <tr>
+                        <td>
+                            <input type=submit value="Your Input Welcome">
+                        </td>
+                    </tr>
+                </form>
+            </table>
+        </TD>
+    </TR>
+</table>
+
+<p/>
+<table width=100% border=0 cellspacing=0>
+    <tr align=left>
+        <td align=left width=10%>
+            <b>Name</b> <a href="" style="text-decoration:none;" title="Click to sort in descending order">&dArr;</a>
+        </td>
+        <td align=left width=15%><b>Gene</b></td>
+        <td align=left width=25%><b>Anatomy</b></td>
+        <td align=left width="20%"><b>Stage Range</b></td>
+        <td align=left><b>Matching Text</b></td>
+    </tr>
+    <tr bgcolor="#EEEEEE">
+        <td valign=top>
+            <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-040426-1729"> <i>Ab12</i></a>
+        </td>
+        <td>
+            <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-990415-8">
+                pax2a
+            </a>
+        </td>
+        <td>
+            <a href="/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-549">
+                liver
+            </a>,
+            <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-ANAT-010921-570">
+                pancreas
+            </a>
+        </td>
+        <td>
+            <a href="/zf_info/zfbook/stages/index.html#Pharyngula">
+                prim-5
+            </a>-
+            <a href="/zf_info/zfbook/stages/index.html#Pharyngula">
+                prim-25
+            </a>
+        </td>
+        <td>
+            Name: <b>Ab</b>12
+        </td>
+    </tr>
+    <tr>
+        <td valign=top>
+            <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-040426-1729"> <i>Ab15</i></a>
+        </td>
+        <td>
+        </td>
+        <td>
+            <a href="/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-587">
+                retina
+            </a>,
+            <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-ANAT-010921-591">
+                somite
+            </a>
+        </td>
+        <td>
+            <a href="/zf_info/zfbook/stages/index.html#Pharyngula">
+                prim-15
+            </a>
+        </td>
+        <td>
+            Name: <b>Ab</b>15
+        </td>
+    </tr>
+    <tr bgcolor="#EEEEEE">
+        <td valign=top>
+            <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-040426-1729"> <i>zhx1138</i></a>
+        </td>
+        <td>
+            <a href="/cgi-bin_frost/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-980526-166">
+                shha
+            </a>,
+            <a href="/cgi-bin_frost/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-980526-41">
+                shhb
+            </a>
+        </td>
+        <td>
+            <a href="/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-011113-451">
+                kidney
+            </a>
+        </td>
+        <td>
+            <a href="/zf_info/zfbook/stages/index.html#Pharyngula">
+                prim-5
+            </a>-
+            <a href="/zf_info/zfbook/stages/index.html#Larval">
+                Protruding-mouth
+            </a>
+        </td>
+        <td>
+            Previous Name: WQ<b>Ab</b>gg75
+        </td>
+    </tr>
+</table>
+
+<hr width="80%"/>
+<form action="" method="post" name="pagination">
+    <input name="page" type="hidden">
+    <table width="100%" align="center">
+        <tbody>
+            <tr>
+                <td align="left" width="30%">
+                    <a href="/antibody/search_result.html#searchForm"> Modify search</a>
+                </td>
+                <td align="center" nowrap="true" width="200">
+                    Pages: &nbsp;&nbsp;&nbsp;
+                    <a href="javascript:submitForm(2);"> &lt;&nbsp; Previous</a> &nbsp;
+                    &nbsp; <a href="javascript:submitForm(2);">1</a>
+                    ...
+                    &nbsp; <a href="javascript:submitForm(4);">4</a>
+                    &nbsp;<b style="color:red;font-weight:bold;">5</b>
+                    &nbsp; <a href="javascript:submitForm(3);">6</a>
+                    &nbsp; ...&nbsp;<a href="javascript:submitForm(9);">9</a> &nbsp; &nbsp;
+                    <a href="javascript:submitForm(2);">Next&nbsp;&gt;</a> &nbsp;
+                </td>
+                <td align="left" width="10%">
+                </td>
+                <td width="20%" align="right">
+                    Results per page: <input type="text" value="3" size="4" maxlength="4"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+
+<p/>
+
+<form action="">
+<table width="100%" cellpadding="1">
+<tr>
+    <td width="15%"/>
+    <td width="10%"/>
+    <td width="25%"/>
+    <td width="20%"/>
+    <td width="30%"/>
+</tr>
+<tr bgcolor="#cccccc">
+    <td class="titlebar" colspan="5">
+        <a name="searchForm"/>
+        &nbsp;&nbsp;
+        <font size="+1">
+            <b>Modify your search</b>
+        </font>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="top">
+        <b>Antibody Name:</b>
+    </td>
+    <td>
+        <select name="compare">
+            <option selected="selected" value="contains">contains
+            </option>
+            <option value="starts">begins with
+            </option>
+        </select>
+    </td>
+    <td>
+        <input name="input_name" size="30" value="ab" type="text">
+    </td>
+    <td colspan="2"></td>
+</tr>
+<tr valign="top">
+    <td align="top">
+        <b title="Name of gene whose products the antibody recognizes">Recognized Gene:</b>
+    </td>
+    <td>
+        <select name="compare" title="Recognized Gene">
+            <option selected="selected" value="contains">contains
+            </option>
+            <option value="starts">begins with
+            </option>
+        </select>
+    </td>
+    <td>
+        <input name="input_name" size="30" value="ab" type="text">
+    </td>
+    <td colspan="2"/>
+</tr>
+<tr>
+    <td colspan="5">&nbsp;</td>
+</tr>
+<tr valign="top" bgcolor="#eeeeee">
+    <td align="top" colspan="3">
+        <b>Labeled Anatomical Structures:</b>
+
+        <br/>
+
+        <div align="left">[Enter one structure per line]</div>
+
+        <textarea cols="46" rows="3" name="anatomyTerms"
+                  id="aoTerms"></textarea>
+        <br>
+        <table>
+            <tr>
+                <td valign="top" width="60%">
+                    <input id="includeSubstructure" name="includeSubstructures" checked
+                           type="checkbox">
+                    <label for="includeSubstructure" class="accessoryLabel">Include substructures</label>
+                </td>
+                <td>
+                    <input id="everyTerm" name="structure_bool" value="and" checked="checked" type="radio">
+                    <label for="everyTerm" class="accessoryLabel"><b>Every</b> term entered <br></label>
+                    <input id="anyTerm" name="structure_bool" value="or" type="radio">
+                    <label for="anyTerm" class="accessoryLabel"><b>Any</b> term entered </label>
+                </td>
+            </tr>
+        </table>
+
+    </td>
+    <td align="right">
+        <label for="startStage" class="selectLabel"><b>Start Stage:
+            <p/>End Stage: </b>
+        </label>
+    </td>
+    <td align="left">
+        <select id="startStage" name="stageStart" onchange="setEndStage(this.id, 'endStage')" size="1">
+            <option value="ZDB-STAGE-010723-4"> Zygote:1-cell
+            </option>
+            <option value="ZDB-STAGE-010723-15"> Cleavage:2-cell
+            </option>
+            <option value="ZDB-STAGE-010723-11"> Cleavage:4-cell
+            </option>
+            <option value="ZDB-STAGE-010723-33"> Cleavage:8-cell
+            </option>
+            <option value="ZDB-STAGE-010723-20"> Cleavage:16-cell
+            </option>
+            <option value="ZDB-STAGE-010723-25"> Cleavage:32-cell
+            </option>
+            <option value="ZDB-STAGE-010723-28"> Cleavage:64-cell
+            </option>
+            <option value="ZDB-STAGE-010723-39" selected=selected> Adult
+            </option>
+        </select>
+
+        <p/>
+        <select id="endStage" name="endStage" size="1">
+            <option selected="selected" value="ZDB-STAGE-010723-4"> Zygote:1-cell
+            </option>
+            <option value="ZDB-STAGE-010723-15"> Cleavage:2-cell
+            </option>
+            <option value="ZDB-STAGE-010723-11"> Cleavage:4-cell
+            </option>
+            <option value="ZDB-STAGE-010723-33"> Cleavage:8-cell
+            </option>
+            <option value="ZDB-STAGE-010723-20"> Cleavage:16-cell
+            </option>
+            <option value="ZDB-STAGE-010723-25"> Cleavage:32-cell
+            </option>
+            <option value="ZDB-STAGE-010723-28"> Cleavage:64-cell
+            </option>
+            <option value="ZDB-STAGE-010723-7"> Blastula:128-cell
+            </option>
+            <option value="ZDB-STAGE-010723-1"> Blastula:256-cell
+            </option>
+            <option value="ZDB-STAGE-010723-39"> Adult
+            </option>
+        </select>
+
+        <p/>
+
+        <div align="right">
+            <a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
+        </div>
+    </td>
+</tr>
+<tr>
+    <td colspan="5"/>
+</tr>
+<tr valign="top">
+    <td>
+        <b>Immunogen Organism:</b>
+    </td>
+    <td colspan="2" align="left">
+        <select name="immunogenOrganism">
+            <option value="">Any
+            </option>
+            <option value="">Zebrafish
+            </option>
+            <option value="">Coelacanth
+            </option>
+        </select>
+    </td>
+    <td colspan="2"/>
+</tr>
+<tr>
+    <td valign="top">
+        <b> Host Organism:</b>
+    </td>
+    <td colspan="2">
+        <select name="hostOrganism">
+            <option value="">Any
+            </option>
+            <option value="">Mouse
+            </option>
+            <option value="">Rat
+            </option>
+            <option value="">Horse
+            </option>
+        </select>
+    </td>
+    <td align="right">
+        <b>Type:</b>
+    </td>
+    <td align="left">
+        <input id="anyClonality" name="clonality" value="" checked="checked" type="radio">
+        Any &nbsp;
+        <input id="monoClonality" name="clonality" value="" type="radio">
+        Monoclonal&nbsp;
+        <input id="polyClonality" name="clonality" value="" type="radio">
+        Polyclonal
+    </td>
+</tr>
+<tr valign="top">
+    <td>
+        <b>Assay: </b>
+    </td>
+    <td colspan="2">
+        <select name="assay">
+            <option value="">Any
+            </option>
+            <option value="">Western Blot
+            </option>
+        </select>
+    </td>
+    <td align="right">
+        <b>Show only ZIRC Antibodies:</b>
+    </td>
+    <td align="left">
+        <input id="showZIRCYes" name="zirc" value="" type="radio">
+        Yes &nbsp;
+        <input id="showZIRCNo" name="zirc" value="" checked=checked type="radio">
+        No
+    </td>
+</tr>
+</table>
+
+<table width=100%>
+    <tr>
+        <td align="right" bgcolor="#cccccc">
+            <input accesskey="s" value="Search" onclick="call_submit();" type="button" style="color:red">
+            <input accesskey="s" value="Reset" onclick="call_submit();" type="button">
+        </td>
+    </tr>
+</table>
+</form>
+
+        

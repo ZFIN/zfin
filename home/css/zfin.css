@@ -4,388 +4,438 @@
       }
 */
 
-
-.sidebar, .content, .header .acknowledgement{
-	font-family:arial, sans-serif;
+.sidebar, .content, .header .acknowledgement {
+    font-family: arial, sans-serif;
 }
-      
+
 body {
-	font-family: arial, sans-serif;
-        min-width: 600px;
-        margin-top: 81px;  
-        margin-left: 0;
-        margin-right: 0;   
+    font-family: arial, sans-serif;
+    min-width: 600px;
+    margin-top: 81px;
+    margin-left: 0;
+    margin-right: 0;
 
-	background: <!--|SITE_BACKGROUND|-->; 
+    background: <!-- | SITE_BACKGROUND | -->;
 
 }
-
 
 .allcontent {
-	margin-left: 5px;
-	margin-right: 5px;
-        padding-top: 4px;
-	padding-bottom: 1em;
-	background: white;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-top: 4px;
+    padding-bottom: 1em;
+    background: white;
 }
 
 .staticcontent {
-        /* this isn't the best, but it keeps all the static pages behaving properly */
-	font-size: 9pt;
+/* this isn't the best, but it keeps all the static pages behaving properly */
+    font-size: 9pt;
 }
-
 
 .show_pubs a {
-	text-decoration:none;
+    text-decoration: none;
 
 }
 
-.show_pubs  {
-        padding-top: 3px;
-	padding-bottom: 3px;
-        padding-left: 1em;
-	text-indent: -1em;
+.show_pubs {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 1em;
+    text-indent: -1em;
 }
 
 table.header {
-	vertical-align:top;
-	text-align:left;
+    vertical-align: top;
+    text-align: left;
 }
 
 table.search {
-	vertical-align:top;
-	text-align:left;
-	background-color:#FFFFFF;
-	border:0;
+    vertical-align: top;
+    text-align: left;
+    background-color: #FFFFFF;
+    border: 0;
 }
 
 td.half_width {
-	vertical-align:top;
-	background-color:#FFFFFF;
+    vertical-align: top;
+    background-color: #FFFFFF;
 }
 
 td.full_width {
-	vertical-align:top;
-	background-color:#FFFFFF;
+    vertical-align: top;
+    background-color: #FFFFFF;
 }
 
 td.resultcount {
-	vertical-align:top;
-	align: right;
-	background-color:#FFFFFF;
+    vertical-align: top;
+    align: right;
+    background-color: #FFFFFF;
 }
 
 td.titlebar {
-	vertical-align:middle;
-	align:left;
-	background-color:#CCCCCC;
+    vertical-align: middle;
+    align: left;
+    background-color: #CCCCCC;
 
 }
 
 td.submitbar {
-	vertical-align:top;
-	align:right;
-	background-color:#CCCCCC;
+    vertical-align: top;
+    align: right;
+    background-color: #CCCCCC;
 
 }
 
-
 /** style for auto suggestion **/
 
- .suggestion_list
- {
- font-size: 9pt;	
- background: white;
- border: 1px solid;
- padding: 4px;
- }
+.suggestion_list {
+    font-size: 9pt;
+    background: white;
+    border: 1px solid;
+    padding: 4px;
+}
 
- .suggestion_list ul
- {
- padding: 0;
- margin: 0;
- list-style-type: none;
- }
+.suggestion_list ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
 
- .suggestion_list a
- {
- text-decoration: none;
- color: navy;
- }
+.suggestion_list a {
+    text-decoration: none;
+    color: navy;
+}
 
- .suggestion_list .selected
- {
- background: navy;
- color: white;
- }
+.suggestion_list .selected {
+    background: navy;
+    color: white;
+}
 
- .suggestion_list .selected a
- {
- color: white;
- }
+.suggestion_list .selected a {
+    color: white;
+}
 
- #autosuggest
- {
- display: none;
- }
-
+#autosuggest {
+    display: none;
+}
 
 /**** style declaration for zfin return results class *****/
 
 table.searchresults {
-  width:100%;  
-  border-collapse:collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
-table.searchresults th { 
-  text-align:left;
-  vertical-align:bottom;
-  padding-left: 5px;
-  padding-right: 5px;
- }
-
-table.searchresults td { 
-  text-align:left;
-  vertical-align:top;
-  padding: 3px;
-
- }
-
-table.searchresults caption { 
-  font-weight:bold;
-  text-align:center;
-  vertical-align:top;
-  padding-bottom: 15px;
+table.searchresults th {
+    text-align: left;
+    vertical-align: bottom;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
-td.anatomy { 
-  font-size: small;
-  vertical-align:top;
- }
+table.searchresults td {
+    text-align: left;
+    vertical-align: top;
+    padding: 3px;
 
-td.thumbnail { 
-  text-align: right;  
 }
 
-td.small { 
-  font-size: small;
- }
+table.searchresults caption {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: top;
+    padding-bottom: 15px;
+}
 
-tr.odd { 
-  background-color: #EEEEEE; 
+td.anatomy {
+    font-size: small;
+    vertical-align: top;
+}
+
+td.thumbnail {
+    text-align: right;
+}
+
+td.small {
+    font-size: small;
+}
+
+tr.odd {
+    background-color: #EEEEEE;
 }
 
 /*** gene name & abbrev ***/
 
-.genedom { font-style: italic; } 
+.genedom {
+    font-style: italic;
+}
 
 /*** construct name & abbrev ***/
 
-.construct { font-style: italic; } 
-
+.construct {
+    font-style: italic;
+}
 
 /*** non-gene name & abbrev - just a placeholder for now ***/
 
-.nongenedommarker {font-style: normal;}
+.nongenedommarker {
+    font-style: normal;
+}
 
 /*** mutant name & abbrev  ***/
 
-.mutant { font-style: italic; }
+.mutant {
+    font-style: italic;
+}
 
 /*** wildtype name & abbrev ***/
 
-.wildtype { font-style: normal; }
+.wildtype {
+    font-style: normal;
+}
 
 /*** for pure text, to put it in a column that doesn't stretch
      across the entire display - since that's a pain to read ***/
 
-.generic-text-column { max-width: 600px; }
+.generic-text-column {
+    max-width: 600px;
+}
 
 /*** Your Input Welcome form ***/
 .yourinputwelcome {
-  float: right;
-  margin: .3em;
+    float: right;
+    margin: .3em;
 }
 
-
+/** error messages for forms **/
+.error {
+    color: red;
+    display: block;
+}
 
 /*** Rounded Corner CSS from spiffycorners.com ***/
 
+.spiffy {
+    display: block;
+}
 
-.spiffy{
-display:block;
+.spiffy * {
+    display: block;
+    height: 1px;
+    overflow: hidden;
+    background: #e0e7e0;
 }
-.spiffy *{
-display:block;
-height:1px;
-overflow:hidden;
-background:#e0e7e0;
-}
-.spiffy1{
-border-right:1px solid #f1f4f1;
-padding-right:1px;
-margin-right:3px;
-border-left:1px solid #f1f4f1;
-padding-left:1px;
-margin-left:3px;
-background:#e7ede7;
-}
-.spiffy2{
-border-right:1px solid #fbfcfb;
-border-left:1px solid #fbfcfb;
-padding:0px 1px;
-background:#e5ebe5;
-margin:0px 1px;
-}
-.spiffy3{
-border-right:1px solid #e5ebe5;
-border-left:1px solid #e5ebe5;
-margin:0px 1px;
-}
-.spiffy4{
-border-right:1px solid #f1f4f1;
-border-left:1px solid #f1f4f1;
-}
-.spiffy5{
-border-right:1px solid #e7ede7;
-border-left:1px solid #e7ede7;
-}
-.spiffy_content{
-padding:0px 5px;
-background:#e0e7e0;
 
-} 
+.spiffy1 {
+    border-right: 1px solid #f1f4f1;
+    padding-right: 1px;
+    margin-right: 3px;
+    border-left: 1px solid #f1f4f1;
+    padding-left: 1px;
+    margin-left: 3px;
+    background: #e7ede7;
+}
+
+.spiffy2 {
+    border-right: 1px solid #fbfcfb;
+    border-left: 1px solid #fbfcfb;
+    padding: 0px 1px;
+    background: #e5ebe5;
+    margin: 0px 1px;
+}
+
+.spiffy3 {
+    border-right: 1px solid #e5ebe5;
+    border-left: 1px solid #e5ebe5;
+    margin: 0px 1px;
+}
+
+.spiffy4 {
+    border-right: 1px solid #f1f4f1;
+    border-left: 1px solid #f1f4f1;
+}
+
+.spiffy5 {
+    border-right: 1px solid #e7ede7;
+    border-left: 1px solid #e7ede7;
+}
+
+.spiffy_content {
+    padding: 0px 5px;
+    background: #e0e7e0;
+
+}
 
 /** selected spiffy corner, for tabs in header **/
 
-.selectedspiffy{
-display:block;
+.selectedspiffy {
+    display: block;
 }
-.selectedspiffy *{
-display:block;
-height:1px;
-overflow:hidden;
-background:#006666;
-}
-.selectedspiffy1{
-border-right:1px solid #91bdbd;
-padding-right:1px;
-margin-right:3px;
-border-left:1px solid #91bdbd;
-padding-left:1px;
-margin-left:3px;
-background:#3f8c8c;
-}
-.selectedspiffy2{
-border-right:1px solid #e5efef;
-border-left:1px solid #e5efef;
-padding:0px 1px;
-background:#308383;
-margin:0px 1px;
-}
-.selectedspiffy3{
-border-right:1px solid #308383;
-border-left:1px solid #308383;
-margin:0px 1px;
-}
-.selectedspiffy4{
-border-right:1px solid #91bdbd;
-border-left:1px solid #91bdbd;
-}
-.selectedspiffy5{
-border-right:1px solid #3f8c8c;
-border-left:1px solid #3f8c8c;
-}
-.selectedspiffy_content{
-padding:0px 5px;
-background:#006666;
-} 
 
+.selectedspiffy * {
+    display: block;
+    height: 1px;
+    overflow: hidden;
+    background: #006666;
+}
+
+.selectedspiffy1 {
+    border-right: 1px solid #91bdbd;
+    padding-right: 1px;
+    margin-right: 3px;
+    border-left: 1px solid #91bdbd;
+    padding-left: 1px;
+    margin-left: 3px;
+    background: #3f8c8c;
+}
+
+.selectedspiffy2 {
+    border-right: 1px solid #e5efef;
+    border-left: 1px solid #e5efef;
+    padding: 0px 1px;
+    background: #308383;
+    margin: 0px 1px;
+}
+
+.selectedspiffy3 {
+    border-right: 1px solid #308383;
+    border-left: 1px solid #308383;
+    margin: 0px 1px;
+}
+
+.selectedspiffy4 {
+    border-right: 1px solid #91bdbd;
+    border-left: 1px solid #91bdbd;
+}
+
+.selectedspiffy5 {
+    border-right: 1px solid #3f8c8c;
+    border-left: 1px solid #3f8c8c;
+}
+
+.selectedspiffy_content {
+    padding: 0px 5px;
+    background: #006666;
+}
 
 /*** spiffy corners seems to break without some kind of inline element at the end, so
-     here's a class for a very short inline element ***/
+here's a class for a very short inline element ***/
 
 .spiffy-bottom-fix {
-  line-height: .001em;
+    line-height: .001em;
 }
-
-
 
 /*** end Rounded Corner CSS ***/
 
-
 /*** new footer ***/
 
-
-
 .clearfix:after {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
     visibility: hidden;
 }
 
-
 /* Hides  from IE-mac \*/
-* html .clearfix { height: 1%;} 
+* html .clearfix {
+    height: 1%;
+}
+
 /* End hide from IE-mac */
 
+#footer {
 
-#footer { 
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0px;
+    margin-bottom: 3px;
+    clear: both;
+    font-size: .8em;
 
-  margin-left: 0;
-  margin-right: 0;
-  margin-top: 0px;
-  margin-bottom: 3px;
-  clear: both;
-  font-size: .8em;
-
- }
+}
 
 #footer-generous-support {
-  display: none;
+    display: none;
 }
 
 #footer a, #footer a:visited {
-        color: #066;
-        text-decoration: none;
+    color: #066;
+    text-decoration: none;
 }
 
-#footerlinks { 
+#footerlinks {
 
+    white-space: nowrap;
 
- white-space: nowrap;
- 
- padding-left: 1em;
- padding-right: 1em;
- padding-top: .4em;
- padding-bottom: .4em;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: .4em;
+    padding-bottom: .4em;
 
- margin-left: 0;
- margin-right: 0;
+    margin-left: 0;
+    margin-right: 0;
 
-
-  background-color: #066;
-  color: white; 
-
-
+    background-color: #066;
+    color: white;
 
 }
 
-#footerlinks  a, #footerlinks a:visited { 
-  color: white; 
+#footerlinks  a, #footerlinks a:visited {
+    color: white;
 
 }
 
-#footerlinks a:hover { 
-  text-decoration: underline;
+#footerlinks a:hover {
+    text-decoration: underline;
 }
 
-#footercredits { 
- white-space: nowrap;
- margin: 0 auto;
-
+#footercredits {
+    white-space: nowrap;
+    margin: 0 auto;
 
 }
 
+/* generated by HTML::Prototype library */
+div.auto_complete {
+    width: 350px;
+    height: 400px;
+    overflow: auto;
+    background: #fff;
+    border: 1px solid #888;
+    opacity:0;
+}
+
+div.auto_complete ul {
+
+    margin: 0;
+    padding: 0;
+    width: 99%;
+    list-style-type: none;
+}
+
+div.auto_complete ul li {
+    margin: 0;
+    padding: 3px;
+    font-size: .7em;
+}
+
+div.auto_complete ul li.selected {
+    background-color: #ffb;
+}
+
+div.auto_complete ul strong.highlight {
+    color: #800;
+    margin: 0;
+    padding: 0;
+}
+
+.search-result-table-header {
+    background: rgb( 204, 204, 204 ) none repeat scroll 0%;
+    font-weight:bold;
+}
+
+.search-result-table-entries {
+    background: #EEEEEE;
+    font-weight:normal;
+}

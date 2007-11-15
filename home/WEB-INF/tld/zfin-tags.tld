@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<!-- a tag library descriptor -->
+
+<taglib>
+    <tlibversion>1.0</tlibversion>
+    <jspversion>1.1</jspversion>
+    <shortname>first</shortname>
+    <uri></uri>
+    <info>Tab library for recurring ZFIN properties</info>
+
+    <tag>
+        <name>username</name>
+        <tagclass>org.zfin.framework.presentation.tags.UsernameTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <info>Printout the user name of web user</info>
+    </tag>
+
+    <tag>
+        <name>authorize</name>
+        <tagclass>org.zfin.framework.presentation.tags.AuthorizedTag</tagclass>
+        <info>Check a users privileges</info>
+        <attribute>
+            <name>role</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>owner</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>entityZdbID</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>className</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>markerRelationLink</name>
+        <tagclass>org.zfin.framework.presentation.tags.MarkerRelationLinkTag</tagclass>
+        <info>Create hyperlinks for the associated Marker if a GENE or through the MarkerRelations if not a GENE</info>
+        <attribute>
+            <name>accession</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>showParent</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>createFiguresLink</name>
+        <tagclass>org.zfin.framework.presentation.tags.CreateFiguresLinkTag</tagclass>
+        <info>Create widely used hyperlinks, such as a link to the gene page, AO page, etc...</info>
+        <attribute>
+            <name>marker</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>anatomyItem</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>numberOfFigures</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>numberOfFiguresCollection</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>author</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>useGeneZdbID</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>hightlight</name>
+        <tagclass>org.zfin.framework.presentation.tags.HightlightTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <info>Hightlight a sub string within a given string</info>
+        <attribute>
+            <name>highlightEntity</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>hightlightString</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>choice</name>
+        <tagclass>org.zfin.framework.presentation.tags.ChoiceTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <info>Create the correct plural form for a word</info>
+        <attribute>
+            <name>integerEntity</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>collectionEntity</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>choicePattern</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>includeNumber</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>scope</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>collectionSize</name>
+        <tagclass>org.zfin.framework.presentation.tags.CollectionSizeTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <info>Outputs the size of the collection</info>
+        <attribute>
+            <name>collectionEntity</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>createDelimitedList</name>
+        <tagclass>org.zfin.framework.presentation.tags.CreateDelimitedListTag</tagclass>
+        <info>Outputs string value of each of the items in the provided collection, separated by the provided delimiter</info>
+        <attribute>
+            <name>collectionEntity</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>delimiter</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>alternating-tr</name>
+        <tagclass>org.zfin.framework.presentation.tags.CreateAlternateTRTag</tagclass>
+        <info>Create the TR tag for alternating colors in a table</info>
+        <attribute>
+            <name>loopName</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>printDebugInfo</name>
+        <tagclass>org.zfin.framework.presentation.tags.DebugTag</tagclass>
+        <info>Add Session-related debugging info on a JSP page.</info>
+    </tag>
+    
+    <tag>
+        <name>link</name>
+        <tagclass>org.zfin.framework.presentation.tags.CreateLinkTag</tagclass>
+        <info>Create a hyperlink for an object of a given type</info>
+        <attribute>
+            <name>entity</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    
+
+    <tag>
+        <name>name</name>
+        <tagclass>org.zfin.framework.presentation.tags.CreateNameTag</tagclass>
+        <info>Create an HTML output string for an object</info>
+        <attribute>
+            <name>entity</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>abbrev</name>
+        <tagclass>org.zfin.framework.presentation.tags.CreateAbbrevTag</tagclass>
+        <info>Create an HTML output string for an object</info>
+        <attribute>
+            <name>entity</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+</taglib>

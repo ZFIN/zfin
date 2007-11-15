@@ -29,12 +29,9 @@ TARGETIMAGES = $(foreach IMG, $(IMAGES), $(FINALTARGETDIR)/$(IMG))
 
 # ---- Misc Java varaibles
 
-# Use the ancient java - hardcode path to java 1.1 
+# Use the standard JAVAC, and JAVACFLAGS.  Still need to define classpath.
 
-JAVA_HOME  = /private/apps/jdk1.1.8
-JAVAC     = $(JAVA_HOME)/bin/javac
-
-CLASSPATH = $(STAGINGDIR):$(JAVA_HOME)/lib/classes.zip:$(TOP)/lib/Java
+CLASSPATH = $(STAGINGDIR):$(JAVAHOME)/lib/classes.zip:$(TOP)/lib/Java
 
 IMPORTPATH = $(TARGETROOT)/lib/Java
 NETSCAPEPATH = $(IMPORTPATH)/netscape
@@ -91,5 +88,5 @@ $(NETSCAPESYMLINK) :
 	ln -s $(NETSCAPEPATH) $(NETSCAPESYMLINK)
 
 $(JAR) : $(STAGINGCLASSES) $(NETSCAPESYMLINK)
-	cd $(STAGINGDIR); $(JAVA_HOME)/bin/jar -cvf $(JAR) $(CLASSES) netscape
+	cd $(STAGINGDIR); $(JAVAHOME)/bin/jar -cvf $(JAR) $(CLASSES) netscape
 	chmod o+r $@

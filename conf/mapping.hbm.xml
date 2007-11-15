@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="org.zfin.mapping">
+
+    <class name="Linkage" table="linkage">
+        <id name="zdbID" type="string">
+            <column name="lnkg_zdb_id" not-null="true"/>
+        </id>
+
+        <property name="lg">
+            <column name="lnkg_or_lg" not-null="true"/>
+        </property>
+
+        <set name="linkageMemberMarkers" lazy="true" table="linkage_member">
+            <key column="lnkgmem_linkage_zdb_id"/>
+            <many-to-many class="org.zfin.marker.Marker" column="lnkgmem_member_zdb_id"/>
+        </set>
+
+        <set name="linkageMemberFeatures" lazy="true" table="linkage_member">
+            <key column="lnkgmem_linkage_zdb_id"/>
+            <many-to-many class="org.zfin.mutant.Feature" column="lnkgmem_member_zdb_id"/>
+        </set>
+    </class>
+
+    <class name="MappedMarker" table="mapped_marker">
+        <id name="zdbID" type="string">
+            <column name="zdb_id" not-null="true"/>
+        </id>
+
+        <property name="markerId" column="marker_id" not-null="true"/>
+        <property name="refcrossId">
+            <column name="refcross_id" not-null="true"/>
+        </property>
+
+        <many-to-one name="submitter" class="org.zfin.people.Person" column="submitter" insert="false" update="false"/>
+
+        <many-to-one name="lab" class="org.zfin.people.Lab" column="lab" insert="false" update="false"/>
+
+        <many-to-one name="owner" class="org.zfin.people.Person" column="owner" insert="false" update="false"/>
+
+        <property name="comments">
+            <column name="comments"/>
+        </property>
+
+        <property name="lg">
+            <column name="or_lg" not-null="true"/>
+        </property>
+
+        <property name="lgLocation">
+            <column name="lg_location"/>
+        </property>
+
+    </class>
+
+    <class name="MappedDeletion" table="mapped_deletion">
+        <id name="zdbID" type="string" column="mapdel_zdb_id"/>
+        <many-to-one name="marker" column="marker_id" class="org.zfin.marker.Marker" not-null="true"/>
+        <property name="allele" column="allele" type="string" not-null="true"/>
+        <property name="present" column="present_t" type="boolean"/>
+        <many-to-one name="submitter" column="submitter" class="org.zfin.people.Person"/>
+        <many-to-one name="owner" column="owner" class="org.zfin.people.Person"/>
+        <property name="lg" column="or_lg" type="string"/>
+    </class>
+
+</hibernate-mapping>
+

@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zfin.infrastructure">
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="recordAttributionSourceType">
+        <param name="enumClassname">org.zfin.infrastructure.RecordAttribution$SourceType</param>
+    </typedef>
+
+    <class name="org.zfin.infrastructure.ActiveData" table="zdb_active_data">
+        <id name="zdbID" type="string">
+            <column name="zactvd_zdb_id" not-null="true"/>
+         </id>
+
+    </class>
+
+    <class name="org.zfin.infrastructure.ActiveSource" table="zdb_active_source">
+        <id name="zdbID" type="string">
+            <column name="zactvs_zdb_id" not-null="true"/>
+         </id>
+    </class>
+
+    <class name="org.zfin.infrastructure.RecordAttribution" table="record_attribution">
+        <composite-id>
+            <key-property name="dataZdbID" column="recattrib_data_zdb_id" type="string"/>
+            <key-property name="sourceZdbID" column="recattrib_source_zdb_id" type="string"/>
+        </composite-id>
+        <property name="sourceType" column="recattrib_source_type" type="string"/>
+    </class>
+    <class name="org.zfin.infrastructure.Updates" table="updates">
+            <id name="ID"  type="long">
+                <column name="upd_pk_id" not-null="true"/>
+                <generator class="increment"/>
+            </id>
+            <property name="submitterID" column="submitter_id" type="string"/>
+            <property name="recID" column="rec_id" type="string"/>
+            <property name="fieldName" column="field_name" type="string"/>
+            <property name="newValue" column="new_value" type="string"/>
+            <property name="oldValue" column="old_value" type="string"/>
+            <property name="comments" column="comments" type="string"/>
+            <property name="submitterName" column="submitter_name" type="string"/>
+            <property name="whenUpdated" column="when" type="date"/>
+        </class>
+
+    <class name="org.zfin.infrastructure.DataNote" table="data_note">
+        <id name="zdbID">
+            <column name="dnote_zdb_id"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">DNOTE</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+        <property name="dataZdbID">
+            <column name="dnote_data_zdb_id"/>
+        </property>
+        <property name="note">
+            <column name="dnote_text"/>
+        </property>
+         <property name="date">
+             <column name="dnote_date"/>
+         </property>
+        <many-to-one name="curator" column="dnote_curator_zdb_id"
+                     class="org.zfin.people.Person"/>
+    </class>
+    <!--    <class name="org.zfin.infrastructure.AttributionSourceType" table="attribution_type">-->
+<!--        <id name="type" type="string">-->
+<!--            <column name="attype_type" not-null="true"/>-->
+<!--            <generator class="native"/>-->
+<!--         </id>-->
+
+<!--    </class>-->
+
+<!--    <class name="org.zfin.infrastructure.AttributionSourceType" table="attribution_type">-->
+
+<!--    <query name="insert_record_attribution"><![CDATA[
+        insert into RecordAttribution (dataZdbID, sourceZdbID)
+        values (:dataZdbID, :sourceZdbID);
+        ]]>
+    </query>-->
+
+    <class name="org.zfin.infrastructure.DataAliasGroup" table="alias_group" >
+        <id name="name" column="aliasgrp_name" />
+        <property name="significance" column="aliasgrp_significance" />
+    </class>
+
+</hibernate-mapping>

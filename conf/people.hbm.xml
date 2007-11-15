@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Alwyas include the full package in each class.name attribute. This allows refactoring to identify
+     the class and include them. Otherwise a refactoring of a class reference here is not recognized and
+     could potentially break the code (e.g. moving a clas  into a different package. -->
+<hibernate-mapping package="org.zfin.people">
+
+    <class name="org.zfin.people.Person" table="person">
+        <id name="zdbID" type="string">
+            <column name="zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">PERS</param>
+                <param name="insertActiveSource">true</param>
+            </generator>
+        </id>
+
+        <property name="fullName">
+            <column name="full_name"/>
+        </property>
+
+        <property name="name"/>
+
+        <property name="url"/>
+
+        <property name="email"/>
+
+        <property name="fax"/>
+
+        <property name="phone"/>
+
+        <property name="address"/>
+
+        <property name="ownerID">
+            <column name="owner"/>
+        </property>
+
+        <property name="nonZfinPublications">
+            <column name="nonzf_pubs"/>
+        </property>
+
+        <property name="emailList">
+            <column name="on_dist_list"/>
+        </property>
+
+        <one-to-one name="user" class="org.zfin.people.User"  cascade="save-update"/>
+
+        <set name="labs" lazy="true" table="int_person_lab" >
+            <key column="source_id"/>
+            <many-to-many class="org.zfin.people.Lab" column="target_id" />
+        </set>
+
+        <set name="publications" lazy="true" table="int_person_pub">
+            <key column="source_id"/>
+            <many-to-many class="org.zfin.publication.Publication" column="target_id" />
+        </set>
+
+    </class>
+
+    <class name="org.zfin.people.Lab" table="lab">
+        <id name="zdbID" type="string">
+            <column name="zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">LAB</param>
+            </generator>
+        </id>
+
+        <property name="name" />
+
+        <property name="url"/>
+
+        <property name="email"/>
+
+        <property name="fax"/>
+
+        <property name="phone"/>
+
+        <property name="address"/>
+    </class>
+
+    <class name="org.zfin.people.User" table="zdb_submitters">
+
+        <id name="zdbID">
+            <column name="zdb_id"/>
+            <generator class="foreign">
+                <param name="property">person</param>
+            </generator>
+        </id>
+
+        <property name="login" not-null="true"/>
+
+        <property name="password" >
+            <column name="password" />
+        </property>
+
+        <property name="role">
+            <column name="access" not-null="true"/>
+        </property>
+
+        <property name="name">
+            <column name="name" not-null="true"/>
+        </property>
+
+        <property name="cookie">
+            <column name="cookie" />
+        </property>
+
+        <property name="loginDate">
+            <column name="issue_time" not-null="true"/>
+        </property>
+
+        <property name="previousLoginDate">
+            <column name="previous_login"/>
+        </property>
+
+        <property name="accountCreationDate">
+            <column name="create_date" not-null="true"/>
+        </property>
+
+        <one-to-one name="person" class="org.zfin.people.Person" constrained="true"/>
+        
+    </class>
+
+    <class name="org.zfin.framework.ZfinSession" table="session">
+        <id name="zdbID" type="long">
+            <column name="session_zdb_id" not-null="true"/>
+            <generator class="sequence">
+                <param name="sequence">session_id_seq</param>
+            </generator>
+        </id>
+
+        <property name="sessionID">
+            <column name="session_id" not-null="true"/>
+        </property>
+
+        <property name="userID">
+            <column name="session_user_id" />
+        </property>
+
+        <property name="userName">
+            <column name="session_user_name" />
+        </property>
+
+        <property name="status">
+            <column name="session_status" not-null="true"/>
+        </property>
+
+        <property name="dateCreated" type="timestamp">
+            <column name="session_created" not-null="true"/>
+        </property>
+
+        <property name="dateModified" type="timestamp">
+            <column name="session_modified"/>
+        </property>
+
+<!--
+        <many-to-one name="person" class="org.zfin.people.Person" column="user_session_id" insert="false"
+                     update="false"/>
+-->
+
+    </class>
+
+</hibernate-mapping>
+

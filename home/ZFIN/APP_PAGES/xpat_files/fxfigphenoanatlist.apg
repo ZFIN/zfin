@@ -120,7 +120,7 @@ stage range, experiment, or expression_found in the same figure.
                      and (apato_entity_a_zdb_id= goterm_zdb_id or apato_entity_b_zdb_id=goterm_zdb_id)">
  <?MIVAR NAME=$zdbType>$(SUBSTR,$2,1,8)<?/MIVAR>
    <?MIBLOCK COND="$(EC,$zdbType,ZDB-ANAT)">
-    <?MIVAR NAME="$fxfigphenoanat_anatitem_html"><span nowrap><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$2>$1</a></span><?/MIVAR>
+    <?MIVAR NAME="$fxfigphenoanat_anatitem_html"><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$2>$1</a></span><?/MIVAR>
    <?MIELSE>
     <?MIVAR NAME="$fxfigphenoanat_anatitem_html"><span nowrap><a href=$fxfigphenogo_url$3>$1</a></span><?/MIVAR>
 <?/MIBLOCK>

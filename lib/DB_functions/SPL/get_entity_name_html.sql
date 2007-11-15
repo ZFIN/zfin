@@ -35,7 +35,7 @@ create function get_entity_name_html ( entityZdbId varchar(50) )
   let entityNameHtml = entityName;
 
   if (objType = "ANAT") then
-    let entityNameHtml = '<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=' || entityZdbId || '">' || entityName || '</a>';
+    let entityNameHtml = '<a href="/action/anatomy/term-detail?anatomyItem.zdbID=' || entityZdbId || '">' || entityName || '</a>';
 
   elif (objType = "GOTERM") then
     

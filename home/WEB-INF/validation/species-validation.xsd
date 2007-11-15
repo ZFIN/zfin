@@ -1,0 +1,51 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:jxb="http://java.sun.com/xml/ns/jaxb">
+
+    <xs:element name="SpeciesValidation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Species" type="SpeciesType" maxOccurs="99"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="SpeciesType">
+        <xs:sequence>
+            <xs:element name="CommonName" type="xs:string"/>
+            <xs:element ref="Classification"/>
+            <xs:element ref="Chromosomes"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="Classification">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Kingdom" type="xs:string"/>
+                <xs:element name="Phylum" type="xs:string"/>
+                <xs:element name="Class" type="xs:string"/>
+                <xs:element name="Order" type="xs:string"/>
+                <xs:element name="Family" type="xs:string"/>
+                <xs:element name="Genus" type="xs:string"/>
+                <xs:element name="Species" type="xs:string"/>
+                <xs:element name="BinomialName" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Chromosomes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Mapping"/>
+            </xs:sequence>
+            <xs:attribute name="number"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Mapping">
+        <xs:complexType>
+            <xs:attribute name="name"/>
+            <xs:attribute name="number"/>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

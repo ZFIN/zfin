@@ -48,7 +48,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
 
         case when probelib_tissue_zdb_id is not null
         then 
-             '<a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=' || probelib_tissue_zdb_id ||'>' ||
+             '<a href=/action/anatomy/term-detail?anatomyItem.zdbID=' || probelib_tissue_zdb_id ||'>' ||
             (select anatitem_name from anatomy_item where anatitem_zdb_id = probelib_tissue_zdb_id) 
         else
             probelib_non_zfin_tissue_name

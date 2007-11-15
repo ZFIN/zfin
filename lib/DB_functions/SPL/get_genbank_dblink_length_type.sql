@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------
 --This function checks on insert or update of db_link, the length of the
---sequence and the type (represented by the dblink_fdbcont_zdb_id) are 
+--sequence and the type (represented by the dblink_fdbcont_zdb_id) are
 --consistant with those values in the table accession_bank (accession_bank
 --holds sequence records updated daily from NCBI/GenBank).  In fact,
 --it replaces dblink_fdbcont_zdb_id, and dblink_length if the accession_number
@@ -12,58 +12,64 @@
 					 	  vDblinkFdbcontZdbId varchar(50))
   returning varchar(50), integer ;
 
-    define vAccbkLength 	integer ;
-    define vAccbkType   	varchar(40) ;
-    define vFdbcontType 	varchar(20) ;
-    define vFdbcontZdbID	varchar(50) ;
+    define vAccbkLength 	like accession_bank.accbk_length;
+    define vFdbcontType 	like foreign_db_contains.fdbcont_fdbdt_data_type;
+    define vFdbcontZdbID	like db_link.dblink_fdbcont_zdb_id;
+    define vUpdateLength	like db_link.dblink_length ;
 
-      if exists (select * 
-        	       	from accession_bank 
-  		       	where accbk_acc_num = vDblinkAccNum 
-                       	and accbk_db_name = 'GenBank') 
+      if exists (select *
+        	       	from accession_bank, foreign_db_contains
+  		       	where accbk_acc_num = vDblinkAccNum
+                       	and accbk_fdbcont_zdb_id = fdbcont_zdb_id
+			and fdbcont_fdb_db_name = 'GenBank')
 
-	then
+      then
 		if vDblinkFdbcontZdbId is not null then
 
-        		select fdbcont_fdbdt_data_type 
+        		select fdbcont_fdbdt_data_type
 	  		  into vFdbcontType
           		  from foreign_db_contains
           		  where fdbcont_zdb_id = vDblinkFdbcontZdbId ;
 
 			if vFdbcontType = 'other' then
-              
+
  	 			return vDblinkFdbcontZdbId, vDblinkLength ;
 
-			end if ; 
-		end if ;        
-
-             	select accbk_length, accbk_data_type
-	       	  into vAccbkLength, vAccbkType
-    	       	  from accession_bank
-     	       	  where accbk_acc_num = vDblinkAccNum 
-    	       	  and accbk_db_name = 'GenBank' ;
-
-	     	if vAccbkType = 'mRNA' then 
-		     	let vAccbkType = 'cDNA' ;
-   	     	end if ;
-   
-   	     	if vAccbkType = 'DNA' then 
-		    	let vAccbkType = 'Genomic' ;
+			end if ;
 		end if ;
-       
-             	select fdbcont_zdb_id
-    	       	  into vFdbcontZdbId
-    	       	  from foreign_db_contains
-    	       	  where fdbcont_fdbdt_data_type = vAccbkType
-      	       	  and fdbcont_fdbdt_super_type = 'sequence'
-      	       	  and fdbcont_organism_common_name = 'Zebrafish'
-               	  and fdbcont_fdb_db_name =  'GenBank' ;
+
+             	select accbk_length, accbk_fdbcont_zdb_id
+    	       	  into vAccbkLength, vFdbcontZdbId
+    	       	  from accession_bank, foreign_db_contains
+    	       	  where accbk_acc_num = vDblinkAccNum
+		            and accbk_fdbcont_zdb_id = fdbcont_zdb_id
+      	       	    and fdbcont_fdbdt_super_type = 'sequence'
+      	       	    and fdbcont_organism_common_name = 'Zebrafish'
+		            and fdbcont_fdb_db_name = 'GenBank' ;
 
 	        return vFdbcontZdbId, vAccbkLength ;
 
-      else  
-          
-	  return vDblinkFdbcontZdbId, vDblinkLength ;
+      else
+      
+          let vUpdateLength = (select accbk_length
+        	       	      	 from accession_bank, foreign_db_contains
+  		       		      where accbk_acc_num = vDblinkAccNum
+                       		      and accbk_fdbcont_zdb_id = fdbcont_zdb_id
+				      and fdbcont_fdb_db_name != 'GenBank'
+				      and accbk_length is not null);
+
+          if vDbLinkLength is null and vUpdateLength is not null
+
+          then 
+
+               let vDbLinkLength = vUpdateLength;
+	       return vDblinkFdbcontZdbId, vDblinkLength ;
+
+	  else 
+
+	      return vDblinkFdbcontZdbId, vDblinkLength ;
+
+	  end if ;
 
       end if ;
 

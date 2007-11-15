@@ -1,0 +1,299 @@
+package org.zfin.publication.repository;
+
+import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.CanonicalMarker;
+import org.zfin.expression.Figure;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerStatistic;
+import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.Morpholino;
+import org.zfin.publication.Publication;
+import org.zfin.repository.PaginationParameter;
+
+import java.util.List;
+
+/**
+ * Persistence class that deals with Publication objects.
+ */
+public interface PublicationRepository extends PaginationParameter {
+
+    /**
+     * Retrieve the number of publications that contain the
+     * a term 'abstractText' in its abstract. This count is
+     * done case insensitive.
+     *
+     * @param abstractText
+     */
+    int getNumberOfPublications(String abstractText);
+
+    /**
+     * Retrieve all distinct publications that contain a high quality probe
+     * with a rating of 4.
+     *
+     * @param anatomyTerm Anatomy Term
+     * @return list of publications
+     */
+    List<Publication> getHighQualityProbePublications(AnatomyItem anatomyTerm);
+
+    /**
+     * Retrieve all publication for a given geneID and anatomical structure.
+     *
+     * @param geneID
+     * @param anatomyItemID
+     */
+    List<Publication> getExpressedGenePublications(String geneID, String anatomyItemID);
+
+    /**
+     * retrieve the total number of publications for a given geneID and anatomical structure.
+     *
+     * @param geneID        gene zdbID
+     * @param anatomyItemID anatomy ID
+     * @return number
+     */
+    int getNumberOfExpressedGenePublications(String geneID, String anatomyItemID);
+
+    /**
+     * Retrieve the total number of publications for a given geneID and anatomical structure
+     * that contain figures.
+     *
+     * @param geneID        gene zdbID
+     * @param anatomyItemID anatomy ID
+     * @return number
+     */
+    int getNumberOfExpressedGenePublicationsWithFigures(String geneID, String anatomyItemID);
+
+    /**
+     * Retrieve all publication that are annoted to genes expressed in a given
+     * anatomical structure.
+     *
+     * @param anatomyItemID
+     */
+    List<Publication> getExpressedGenePublications(String anatomyItemID);
+
+    /**
+     * Retrieve the genes and CDNA/EST for the high-quality probes with
+     * rating of 4.
+     *
+     * @param term anatomy term
+     * @return list of High quality probes.
+     */
+    List<HighQualityProbe> getHighQualityProbeNames(AnatomyItem term);
+
+    /**
+     * Retrieve the genes and CDNA/EST for the high-quality probes with
+     * rating of 4 (which equals 5 stars) associate to an anatomical structure.
+     * Only return n records.
+     *
+     * @param term   anatomy term
+     * @param maxRow max number of records
+     * @return list of HighqQualityProbes
+     */
+    List<HighQualityProbe> getHighQualityProbeNames(AnatomyItem term, int maxRow);
+
+    /**
+     * Retrieve marker records that have a gene expression in the
+     * anatomy term, identified by the zdbID. The maxRow number
+     * limits the result set.
+     *
+     * @param zdbID  of the anatomy term.
+     * @param maxRow
+     */
+    List<Marker> getAllExpressedMarkers(String zdbID, int maxRow);
+
+    List<MarkerStatistic> getAllExpressedMarkers(AnatomyItem anatomyTerm, int firstRow, int maxRow);
+
+    /**
+     * Retrieve the total number of markers expressed in a specified structure.
+     *
+     * @param anatomyTerm Anatomy Term
+     * @return number
+     */
+    int getAllExpressedMarkersCount(AnatomyItem anatomyTerm);
+
+    /**
+     * Count the number of figures from all publications that have a gene
+     * expression in a given anatomy structure.
+     *
+     * @param anatomyTerm
+     * @return number
+     */
+    int getTotalNumberOfFiguresPerAnatomyItem(AnatomyItem anatomyTerm);
+
+    /**
+     * Count the number of images from all publications that have a gene
+     * expression in a given anatomy structure.
+     *
+     * @param anatomyTerm  Anatomy Term
+     * @return number
+     */
+    int getTotalNumberOfImagesPerAnatomyItem(AnatomyItem anatomyTerm);
+
+    /**
+     * Retrieve a publication by its primary key.
+     *
+     * @param zdbID
+     */
+    Publication getPublication(String zdbID);
+
+    /**
+     * Retrieve a marker (gene) by its symbol name. If it is not unique a Hibernate runtime exception is thrown.
+     *
+     * @param symbol
+     */
+    Marker getMarker(String symbol);
+
+    /**
+     * Retrieve a marker by its zdbID
+     *
+     * @param zdbID
+     */
+    Marker getMarkerByZdbID(String zdbID);
+
+    /**
+     * Save a canonical marker.
+     *
+     * @param canon
+     */
+    void insertCanonicalMarker(CanonicalMarker canon);
+
+    /**
+     * Check if a publication with the specified primary key exists.
+     *
+     * @param canonicalPublicationZdbID
+     */
+    boolean publicationExists(String canonicalPublicationZdbID);
+
+    /**
+     * Check if a canonical marker already exists.
+     *
+     * @param canon
+     */
+    boolean canonicalMarkerExists(CanonicalMarker canon);
+
+    /**
+     * Retrieve the number of all high quality probes for a particular anatomy term.
+     *
+     * @param anatomyTerm AnatomyTerm
+     * @return number
+     */
+    int getNumberOfHighQualityProbes(AnatomyItem anatomyTerm);
+
+    /**
+     * Retrieve the figures that can be found for a given publication and gene.
+     *
+     * @param geneID
+     * @param publicationID
+     */
+    List<Figure> getFiguresByGeneID(String geneID, String publicationID);
+
+    List<Figure> getFiguresByGeneAndPublication(String geneID, String publicationID);
+
+    /**
+     * Return all figures for a specified gene, probe and anatommical structure.
+     * Clone information is not required.
+     *
+     * @param gene   Gene
+     * @param clone  Probe
+     * @param aoTerm anatomical structure
+     * @return list of figures
+     */
+    List<Figure> getFiguresPerProbeAndAnatomy(Marker gene, Marker clone, AnatomyItem aoTerm);
+
+    /**
+     * Return all Publications for a specified gene, probe and anatommical structure with figures associated.
+     *
+     * @param gene    Gene
+     * @param subGene Probe
+     * @param aoTerm  anatomical structure
+     * @return list of figures
+     */
+    List<Publication> getPublicationsWithFiguresPerProbeAndAnatomy(Marker gene, Marker subGene, AnatomyItem aoTerm);
+
+    /**
+     * Retrieve the figures that can be found for a given publication and probe.
+     *
+     * @param probeID
+     * @param publicationID
+     */
+    List<Figure> getFiguresByProbeAndPublication(String probeID, String publicationID);
+
+
+    /**
+     * Retrieve all publications that are associate to a given gene.
+     *
+     * @param zdbID
+     */
+    List<Publication> getPublicationsByGene(String zdbID);
+
+    /**
+     * Used to add a sorting string onto the query.
+     *
+     * @param orderVariable
+     */
+    void addOrdering(String orderVariable);
+
+    void removeOrderByFields();
+
+
+    /**
+     * Retrieves publications with Accession Number's (pubmed Ids) but with null or 'none' DOIs.
+     *
+     * @param maxResults number
+     * @return list
+     */
+    List<Publication> getPublicationsWithAccessionButNoDOI(int maxResults);
+
+
+    /**
+     * Saves a list of publications in one transaction.
+     *
+     * @param publicationList List of publication
+     * @return boolean
+     */
+    boolean updatePublications(List<Publication> publicationList);
+
+    /**
+     * Retrieve list of figures for a given morpholino and anatomy term
+     *
+     * @param morpholino morpholino
+     * @param term       anatomy term
+     * @return list of figures.
+     */
+    List<Figure> getFiguresByMorpholinoAndAnatomy(Morpholino morpholino, AnatomyItem term);
+
+    /**
+     * Retrieve list of figures for a given genotype and anatomy term
+     *
+     * @param geno genotype
+     * @param term anatomy term
+     * @return list of figures.
+     */
+    List<Figure> getFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term);
+
+    /**
+     * Retrieve the publication of the figures for a given genotype and anatomy term
+     *
+     * @param genotype Genotype
+     * @param aoTerm   anatomy Term
+     * @return List of publications
+     */
+    List<Publication> getPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, AnatomyItem aoTerm);
+
+    /**
+     * Retrieve the publications for the figures for a given morpholino and anatomy term
+     *
+     * @param morpholino  Morpholino
+     * @param aoTerm anatomy Term
+     * @return List of publications
+     */
+    List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(Morpholino morpholino, AnatomyItem aoTerm);
+
+    /**
+     * Retrieve figures for a given gene and anatomy term.
+     * @param gene Gene
+     * @param anatomyTerm anatomy
+     * @return a set of figures
+     */
+    List<Figure> getFiguresByGeneAndAnatomy(Marker gene, AnatomyItem anatomyTerm);
+}

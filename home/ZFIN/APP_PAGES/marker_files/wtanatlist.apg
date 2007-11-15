@@ -104,7 +104,7 @@ stage range, experiment, or expression_found in the same figure.
 	AND geno_zdb_id  = genox_geno_zdb_id 
 	AND geno_is_wildtype = 't' 
 	ORDER BY anatitem_name_order asc;">
-    <?MIVAR NAME="$fxfiganat_anatitem_html"><span nowrap><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$2>$1</a></span><?/MIVAR>
+    <?MIVAR NAME="$fxfiganat_anatitem_html"><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$2>$1</a></span><?/MIVAR>
 
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
       <?MIVAR NAME=fxfiganat_short_list>$fxfiganat_Label $fxfiganat_anatitem_html<?/MIVAR>

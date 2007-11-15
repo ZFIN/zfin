@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="order">
+            <value>0</value>
+        </property>
+        <property name="mappings">
+            <props>
+                <prop key="/login">login</prop>
+                <prop key="/audit-log/details">auditLogDetails</prop>
+                <prop key="/people/view-person-detail">peopleViewDetail</prop>
+                <!--
+                                <prop key="/people/update-address">peopleUpdateAddress</prop>
+                -->
+                <prop key="/publication/view-publication-detail">publicationViewDetail</prop>
+                <prop key="/publication/publication-search-result">publicationSearchResult</prop>
+                <prop key="/category_search.jsp">viewSearchDetail</prop>
+            </props>
+        </property>
+    </bean>
+    <!-- This needs to go into the developer-tools.xml -->
+    <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles.TilesConfigurer">
+        <property name="definitions">
+            <list>
+                <value>/WEB-INF/conf/tiles-defs-anatomy.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-reno.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-dev-tools.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-framework.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-orthology.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-profile.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-webdriver.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-quicksearch.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-marker.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass">
+            <value>org.springframework.web.servlet.view.tiles.TilesView</value>
+        </property>
+    </bean>
+
+    <!--
+    <bean id="log4jInterceptor" class="org.zfin.framework.AutomaticMethodLogging"/>
+
+    <bean id="log4jProxyCreator" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <ref bean="anatomySearch" />
+        </property>
+        <property name="interceptorNames">
+            <value>log4jInterceptor</value>
+        </property>
+    </bean>
+-->
+
+<!--    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">-->
+<!--        <property name="exceptionMappings">-->
+<!--            <props>-->
+<!--                <prop key="java.lang.Exception">error-page</prop>-->
+<!--            </props>-->
+<!--        </property>-->
+<!--    </bean>-->
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename">
+            <value>zfin-messages</value>
+        </property>
+    </bean>
+
+
+    <!-- TEST FOR QUARTZ SCHEDULER
+        should go into a separate config file.
+    -->
+    <!--
+    <bean id="ontologyJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+            <property name="jobClass" >
+                <value>org.zfin.jobs.OntologyUpdateJob</value>
+            </property>
+        </bean>
+
+        <bean id="cronOntologyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean" >
+            <property name="jobDetail">
+                <ref bean="ontologyJob"/>
+            </property>
+            <property name="cronExpression">
+                <value> 20 * * * * ?</value>
+            </property>
+        </bean>
+
+        <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+            <property name="triggers">
+                <list>
+                    <ref bean="cronOntologyTrigger" />
+                </list>
+            </property>
+        </bean>
+    -->
+</beans>

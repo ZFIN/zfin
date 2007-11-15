@@ -94,7 +94,7 @@ ORDER BY 1
 
             <?MIVAR>
               <font size=-1 style="font-family:arial; font-weight:bold;">
-                <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$xpanatv_item_zdb_id">$xpanatv_item_name</A>
+                <A HREF="/action/anatomy/term-detail?anatomyItem.zdbID=$xpanatv_item_zdb_id">$xpanatv_item_name</A>
               </font> 
             <?/MIVAR>
           </td>
@@ -239,7 +239,7 @@ where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
             <?MICOMMENT> ---- not in dictionary ---- <?/MICOMMENT>
             <?MIVAR>
               <B>does not exactly match a dictionary term, or synonym.<br>You can browse the dictionary
-              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages">by stage</a> 
+              <A HREF="/action/anatomy/search?action=term-by-stage-search">by stage</a> 
               or see the 
               <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha">complete list</a>.
             <?/MIVAR>

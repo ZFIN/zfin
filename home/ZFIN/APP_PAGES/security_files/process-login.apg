@@ -21,7 +21,7 @@ Don't record this event as a 'login' in the login count!
 <?MIBLOCK COND="$(NXST,$login)">
     
     <?MISQL SQL="execute function conc('GUEST',get_random_cookie());"><?/MISQL>
-    <?MIVAR>$(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)<?/MIVAR>
+    <?MIVAR>$(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/)<?/MIVAR>
 
     <!-- Close any aux windows user may have open -->
     <SCRIPT>
@@ -56,7 +56,7 @@ Don't record this event as a 'login' in the login count!
         <?MIVAR NAME=$user_access>$3<?/MIVAR>
         <?MISQL SQL="update ZDB_submitters set cookie='$new_cookie',previous_login=issue_time::datetime year to fraction,issue_time=current where zdb_id='$user_id' and login='$login';"><?/MISQL>
         <?MIVAR>
-            $(HTTPHEADER,set-cookie,ZDB_authorize=$new_cookie;path=/<!--|CGI_BIN_DIR_NAME|-->)
+            $(HTTPHEADER,set-cookie,ZDB_authorize=$new_cookie;path=/)
         <?/MIVAR>
 
         <?MIBLOCK COND="$(OR,$(NXST,$ZDB_authorize),$(EC,$ZDB_authorize,GUEST))">

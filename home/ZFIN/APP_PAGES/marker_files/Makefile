@@ -28,7 +28,9 @@ GENERICS = chromoscripts.apg crossview.apg clonebox.apg do-markerupdate.apg \
 	newmrkrselect.apg searchform.apg sequence.apg geneprddescription.apg \
 	attrib_check.apg do-oevdispupdate.apg showscores.apg sequence_tools.apg \
 	markerrelationship.apg cloneorderlink.apg sequence_disclaimer.apg sequence_data_entry.apg \
-	orthoviewbrief.apg orthoviewdetailed.apg markerrel_onetype.apg mrkrgenolist.apg wtanatlist.apg
+	orthoviewbrief.apg orthoviewdetailed.apg markerrel_onetype.apg mrkrgenolist.apg wtanatlist.apg \
+	markerview_placeholder_note.apg
+
 
 #STATICS = attrib_check.apg do-oevdispupdate.apg showscores.apg sequence_tools.apg\
 

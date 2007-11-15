@@ -338,7 +338,7 @@ function hdrSetTabs() {
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Mutants / Tg</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">Anatomy</a>
+      <a href="/action/anatomy/search">Anatomy</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
       <a href="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi" title="View genetic, radiation hybrid or consolidated maps">Maps</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 

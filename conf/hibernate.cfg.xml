@@ -1,0 +1,51 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.isolation">1</property>
+
+
+        <property name="hibernate.query.substitutions">true 't', false 'f'</property>
+        <property name="dialect">org.hibernate.dialect.InformixDialect</property>
+        <property name="connection.datasource">java:comp/env/jdbc/zfin</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+
+        <!-- Connection Pooling parameters -->
+<!--
+        <property name="c3p0.initialPoolSize">2</property>
+        <property name="c3p0.minPoolSize">2</property>
+        <property name="c3p0.maxPoolSize">20</property>
+        <property name="c3p0.acquire_increment">1</property>
+-->
+        <!-- seconds -->
+<!--
+        <property name="c3p0.idle_test_period">100</property>
+        <property name="c3p0.max_size">20</property>
+        <property name="c3p0.max_statements">0</property>
+        <property name="c3p0.min_size">10</property>
+-->
+        <!-- seconds -->
+<!--
+        <property name="c3p0.timeout">100</property>
+-->
+
+        <!-- Mappings -->
+        <mapping resource="org/zfin/anatomy.hbm.xml"/>
+        <mapping resource="org/zfin/blast.hbm.xml"/>
+        <mapping resource="org/zfin/expression.hbm.xml"/>
+        <mapping resource="org/zfin/infrastructure.hbm.xml"/>
+        <mapping resource="org/zfin/marker.hbm.xml"/>
+        <mapping resource="org/zfin/mapping.hbm.xml"/>
+        <mapping resource="org/zfin/mutant.hbm.xml"/>
+        <mapping resource="org/zfin/orthology.hbm.xml"/>
+        <mapping resource="org/zfin/people.hbm.xml"/>
+        <mapping resource="org/zfin/publication.hbm.xml"/>
+        <mapping resource="org/zfin/sequence.hbm.xml"/>
+        <mapping resource="org/zfin/reno.hbm.xml"/>
+
+
+    </session-factory>
+</hibernate-configuration>

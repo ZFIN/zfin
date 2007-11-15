@@ -1,0 +1,286 @@
+To: aprilm@uoneuro.uoregon.edu, zfinadmn@zfin.org, jmatthews@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, mhaendel@uoneuro.uoregon.edu, dfashena@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu, zoltan@uoneuro.uoregon.edu, andrzej@uoneuro.uoregon.edu
+From: zirc@zfin.org
+Subject: SUB: [lineName] [mutantAlleles] [transgeneName] for [required_submitterName]
+
+
+
+***for JON ************************************* 
+
+SUBMITTER CONTACT INFORMATION
+Submitter Name:
+[required_submitterName]
+---
+Submitter Email:
+[required_submitterEMail]
+---
+Submitter Telephone:
+[required_submitterTelephone]
+---
+Submitter Fax:
+[required_submitterFax]
+---
+Submitter Institution/Lab:
+[required_submitterLab]
+---
+Submitter Position:
+[required_submitterPosition]
+---
+Submitter Address:
+[required_submitterAddress]
+---
+
+PI CONTACT INFORMATION
+PI Name:
+[PIName]
+---
+PI Email:
+[PIEMail]
+---
+PI Telephone:
+[PITelephone]
+---
+PI Fax:
+[PIFax]
+---
+PI Institution/Lab:
+[PILab]
+---
+PI Address:
+[PIAddress]
+---
+NIH grant number or other grant number:
+[required_grantNumber]
+---
+organization responsible for funding:
+[required_grantOrganization]
+---
+
+
+***for MELISSA ************************************* 
+
+LINE/MUTANT INFORMATION
+Allele(s):
+[mutantAlleles]
+---
+Line/Mutant Name:
+[lineName]
+---
+Previous/Other Names:
+[lineNamePrevious]
+---
+Mutated Gene:
+[mutatedGene]
+---
+Transgene--Transgene Name:
+[transgeneName]
+---
+
+
+***for ERIK ************************************* 
+
+LINE/MUTANT INFORMATION
+Line/Mutant Name:
+[lineName]
+---
+Previous/Other Names:
+[lineNamePrevious]
+---
+Phenotype:
+[linePhenotype]
+---
+Mutagenesis Protocol:
+[mutagenProtocol]
+---
+Mutation Type:
+[mutationType] [mutationTypeOther]
+---
+Mutated Gene:
+[mutatedGene]
+---
+Linkage Group:
+[linkageGroup]
+---
+Linked Markers--Marker Name and Distance:
+[markerNameDistance]
+---
+Transgene--Transgene Name:
+[transgeneName]
+---
+Transgene--Transgene Description:
+[transgeneDescription]
+---
+Line Discoverer:
+[lineDiscoverer]
+---
+PUBLICATIONS
+Primary Publication:
+[publications1]
+---
+Secondary Publications:
+[publications2]
+---
+
+
+***for APRIL ************************************* 
+
+CONTACT INFO
+NIH grant number or other grant number:
+[required_grantNumber]
+---
+organization responsible for funding:
+[required_grantOrganization]
+------
+Provider:
+[required_lineProvider]
+---
+Type of Line:
+[lineType]
+---
+Proposing to send:
+[statusAdults] [statusEmbryos] [statusFrozenSperm]
+---
+Phenotype:
+[linePhenotype]
+---
+
+GENETICS AND BACKGROUND
+Segregation:
+[required_segregation]
+---
+Segregation Mutant Percentage:
+[geneticsSegregationPercentage]
+---
+Maternal Genetic Background:
+[required_lineageMaternal]
+---
+Paternal Genetic Background:
+[required_lineagePaternal]
+---
+Move to a different background:
+[required_considerationsBackground]
+---
+Submitter's Comments:
+[geneticsComments]
+---
+
+HUSBANDRY
+Special Husbandry Requirements:
+[husbandrySpecial]
+---
+Mutant/Transgene Identification Techniques
+Describe in detail the technique you use to identify carriers. 
+What kind of technique?:
+[mutantIDvisual] [mutantIDPCR] [mutantIDinSitu] [mutantIDother]
+---
+Protocol:
+for visual technique:
+[mutantIDvisDesc]
+---
+for in situ technique:
+[mutantIDinsituDesc] 
+---
+for other technique:
+[mutantIDotherDesc]
+---
+ID at what stage? 
+for visual technique:
+[mutantIDvisualStage]
+---
+for in situ technique:
+[mutantIDinsituStage] 
+---
+for other technique:
+[mutantIDotherStage] 
+---
+PCR questionnaire
+summary:
+[protocolSummary]
+---
+forward primer sequence:
+[fprimerSequence]
+---
+forward primer exonic/intronic:
+[fprimerExIn]
+---
+reverse primer sequence:
+[rprimerSequence]
+---
+reverse primer exonic/intronic:
+[rprimerExIn]
+---
+reaction conditions pH:
+[reaction_pH]
+---
+reaction conditions mM MgCl2:
+[reaction_mMMgCl]
+---
+reaction conditions mM KCL:
+[reaction_mMKCL]
+---
+reaction conditions mM NaCl:
+[reaction_mMNaCl]
+---
+reaction conditions other:
+[reaction_other]
+---
+thermocycler program:
+[thermocycler]
+---
+product size (mutant):
+[productSizeMutant]
+---
+product size (wild-type):
+[productSizeWildtype]
+---
+product size difference (agarose):
+[productSizeDiffAgarose] %
+---
+product size difference (other):
+[productSizeDiffOther]
+---
+restriction enzyme(s):
+[resDigEnzymes]
+---
+restriction digestion fragments (mutant):
+mutant fragment1: [resDigMutFrag1]
+mutant fragment2: [resDigMutFrag2]
+mutant fragment3: [resDigMutFrag3]
+---
+restriction digestion fragments (wild-type):
+WT fragment1: [resDigWTFrag1]
+WT fragment2: [resDigWTFrag2]
+WT fragment3: [resDigWTFrag3]
+---
+restriction digestion difference visualized using agarose:
+[resDigVisAgarose] %
+---
+restriction digestion difference visualized using other:
+[resDigVisOther]
+---
+background AFLPs:
+[backgroundAFLPs]
+---
+background AFLPs described:
+[backgroundAFLPsDescription]
+---
+pcr protcol additional comments:
+[PCRadditionalComments]
+---
+
+CONSIDERATIONS AND INFORMATION
+Why ZIRC should take the line:
+[required_considerationsWhy]
+---
+Is there an MTA?:
+[considerationsMTA]
+---
+Other considerations or information:
+[considerationsOther]
+---
+End of Mutant Submission Form
+
+
+
+
+
+

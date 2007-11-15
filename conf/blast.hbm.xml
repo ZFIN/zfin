@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zfin.sequence.blast">
+
+    <class name="org.zfin.sequence.blast.Hit" table="blast_hit">
+        <id name="zdbID" type="string">
+            <column name="bhit_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">BHIT</param>
+            </generator>
+        </id>
+        <property name="hitNumber" column="bhit_hit_number" not-null="true"/>
+        <property name="score" column="bhit_score" not-null="true"/>
+        <property name="expectValue" column="bhit_expect_value" type="double" not-null="true" />
+        <property name="positivesNumerator" column="bhit_positives_numerator" not-null="true"/>
+        <property name="positivesDenominator" column="bhit_positives_denominator" not-null="true"/>
+        <many-to-one name="targetAccession" column="bhit_target_accbk_pk_id" class="org.zfin.sequence.Accession" not-null="true" lazy="no-proxy" />
+        <!--<many-to-one name="zfinAccession" column="bhit_mrkr_zdb_id" not-null="false" lazy="no-proxy" class="org.zfin.marker.Marker" />-->
+<!--        <property name="alignment" column="bhit_alignment" type="blob"/>-->
+        <property name="alignment" column="bhit_alignment" />
+        <!-- this class links into another class in the anatomy package --> 
+<!--        <many-to-one name="zfinAccession" column="dblink" class="org.zfin.sequence.DBLink" not-null="true" lazy="no-proxy" />-->
+
+<!--        <property name="queryZdbId" column="bhit_bqry_zdb_id" not-null="true"/>-->
+        <many-to-one name="query" column="bhit_bqry_zdb_id" not-null="true" lazy="no-proxy" class="org.zfin.sequence.blast.Query" />
+    </class>
+
+    <class name="org.zfin.sequence.blast.Query" table="blast_query">
+        <id name="zdbID" type="string">
+            <column name="bqry_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">BQRY</param>
+            </generator>
+        </id>
+
+        <many-to-one name="accession" column="bqry_accbk_pk_id" class="org.zfin.sequence.Accession" not-null="true" lazy="no-proxy" />
+        <many-to-one name="runCandidate" column="bqry_runcan_zdb_id" class="org.zfin.sequence.reno.RunCandidate" not-null="true" lazy="no-proxy" />
+        
+<!--        NOTE:  inverse = true is added to provide for a single insertion instead of an insertion and an update, but Query must be specified in Hit object.-->
+        <set name="blastHits" lazy="true" order-by="bhit_score desc, bhit_expect_value" inverse="true">
+            <key column="bhit_bqry_zdb_id"/>
+            <one-to-many class="org.zfin.sequence.blast.Hit"/>
+        </set>
+    </class>           
+
+</hibernate-mapping>
+

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<!--
+  - Application context definitions for the orthology pages
+  -->
+<beans>
+
+    <!--  URL mappings -->
+    <bean id="orhtologyUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/orthology/search">orthologySearch</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean name="orthologySearch" class="org.zfin.orthology.presentation.OrthologySearchController">
+        <property name="orthologyRepository">
+            <ref bean="orthologyRepository"/>
+        </property>
+        <property name="formView">
+            <value>orthology-search.page</value>
+        </property>
+        <property name="successView">
+            <value>orthology-searchresult.page</value>
+        </property>
+        <property name="sessionForm">
+            <value>true</value>
+        </property>
+        <property name="bindOnNewForm">
+            <value>true</value>
+        </property>
+        <property name="validator">
+            <bean class="org.zfin.orthology.presentation.OrthologyWebSearchFormValidator"/>
+        </property>
+    </bean>
+
+    <!-- Designates to use the repository using hibernate -->
+    <bean id="orthologyRepository" class="org.zfin.orthology.repository.HibernateOrthologyRepository"/>
+</beans>
