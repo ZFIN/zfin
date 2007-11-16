@@ -546,37 +546,48 @@
     </target>
 
 
+
+
+
+    <!-- todo: the location of the commons tree should probably come from the env -->
+    <property name="tomcat-script" value="/private/ZfinLinks/Commons/bin/tomcat.sh"/>
+
+    
     <target name="tomcat-start">
-        <exec executable="${env.CATALINA_HOME}/bin/catalina.sh">
-            <arg value="start"/>
+        <exec executable="${tomcat-script}">
+         <arg value="start"/>
         </exec>
     </target>
 
-    <target name="tomcat-start-debug">
-        <exec executable="${env.CATALINA_HOME}/bin/catalina.sh">
-            <arg value="jpda"/>
-	    <arg value="start"/>
-        </exec>
-    </target>
-
-
-
-    <target name="tomcat-kill">
-        <exec executable="${env.CATALINA_HOME}/bin/catalina.sh" failifexecutionfails="false" error="tomcat-force-stop-error.log">
-            <arg value="stop"/>
-            <arg value="-force"/>
-        </exec>
-    </target>
 
     <target name="tomcat-stop">
-        <exec executable="${env.CATALINA_HOME}/bin/catalina.sh" failifexecutionfails="false">
-            <arg value="stop"/>
+        <exec executable="${tomcat-script}" failifexecutionfails="false">
+         <arg value="stop"/>
         </exec>
     </target>
 
+
+
+    <target name="tomcat-debug-start">
+        <exec executable="${tomcat-script}">
+            <arg value="debug-start"/>
+        </exec>
+    </target>
+
+
+    <target name="tomcat-debug-stop">
+         <exec executable="${tomcat-script}">
+            <arg value="debug-stop"/>
+        </exec>
+    </target>
+
+
+
     <target name="tomcat-restart" depends="tomcat-stop,tomcat-start"/>
-    <!-- just a wrapper -->
+    <target name="tomcat-debug-restart" depends="tomcat-debug-stop,tomcat-debug-start"/>
     <target name="restart" depends="tomcat-restart"/>
+    <target name="debug-restart" depends="tomcat-debug-restart"/>
+
 
     <target name="clobber-all" depends="gmakeClobber,gmake,deploy"/>
     <target name="clean-all" depends="gmakeClean,clean"/>
