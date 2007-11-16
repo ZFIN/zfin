@@ -170,7 +170,7 @@
 #
 # MTWTFSaSu  3:00am   Populate DOIS with pmid only reporting thise added, daily
 #
-00 3 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/CitexploreDOI/lightdois.sh
+00 3 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/DOI/daily-doi-update.sh
 #
 #
 #
@@ -218,7 +218,7 @@
 #
 # 1         3:50am   Populate DOIS with pmid only reporting thise added, monthly
 #
-50 03 21 * * <!--|ROOT_PATH|-->/server_apps/data_transfer/CitexploreDOI/fulldois.sh 
+50 03 21 * * <!--|ROOT_PATH|-->/server_apps/data_transfer/DOI/monthly-doi-update.sh 
 #
 #  1       10:50pm   DATA TRANSFER OUT: Monthly file to Swiss-Prot
 #
