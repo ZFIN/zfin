@@ -51,6 +51,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (Marker) criteria.uniqueResult();
     }
 
+    public Marker getMarkerByName(String name) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Marker.class);
+        criteria.add(Restrictions.eq("name", name));
+        return (Marker) criteria.uniqueResult();
+    }
+
     public MarkerRelationship getSpecificMarkerRelationship(Marker firstMarker, Marker secondMarker, MarkerRelationship.Type type) {
         Session session = currentSession();
         Criteria criteria = session.createCriteria(MarkerRelationship.class);

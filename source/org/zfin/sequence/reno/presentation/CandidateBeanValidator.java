@@ -87,9 +87,8 @@ public class CandidateBeanValidator implements Validator {
             }
 
             //make sure it isn't going to try to create an existing marker..
-            Marker m = mr.getMarkerByAbbreviation(suggestedName);
             //if we got a marker back, that name is in use, and novel is a bad choice..
-            if (m != null) {
+            if (mr.getMarkerByAbbreviation(suggestedName) != null) {
                 errors.rejectValue("associatedGeneField", "code", suggestedName + " already exists in ZFIN");
             }
 
@@ -235,6 +234,14 @@ public class CandidateBeanValidator implements Validator {
 
             }
 
+        }
+        
+        if (mr.getMarkerByAbbreviation(newAbbreviation) != null) {
+            errors.rejectValue(CandidateBean.NEW_ABBREVIATION, "code", "Gene with the abbreviation " + newAbbreviation+ " already exists in ZFIN");
+        }
+
+        if (mr.getMarkerByName(candidateBean.getGeneName()) != null) {
+            errors.rejectValue(CandidateBean.NEW_GENE_NAME, "code", "Gene with the name " + newGeneName+ " already exists in ZFIN");
         }
 
     }

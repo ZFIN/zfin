@@ -15,6 +15,7 @@ public interface MarkerRepository {
     public Marker getMarker(Marker marker);
     public Marker getMarkerByID(String zdbID);
     public Marker getMarkerByAbbreviation(String abbreviation);
+    public Marker getMarkerByName(String name);
     //Todo: should this move to another class?
     public MarkerRelationship getSpecificMarkerRelationship(Marker firstMarker,
                                                             Marker secondMarker,
