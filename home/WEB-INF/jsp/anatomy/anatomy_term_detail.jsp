@@ -169,10 +169,9 @@
 <!-- Number of Publications with an abstract that contains the anatomical structure -->
 
 <c:if test="${formBean.numberOfPublications > 0}">
-    <STRONG>(<A
-            HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.name}&anon1textAllOneWord=1&query_results=exists'>
-            ${formBean.numberOfPublications}
-    </A>)
+    <STRONG>
+        (<A HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.name}&anon1textAllOneWord=1&query_results=exists'>${formBean.numberOfPublications}
+        </A>)
         <zfin:choice choicePattern="0#Publications| 1#Publication| 2#Publications"
                      integerEntity="${formBean.numberOfPublications}"/>
     </STRONG> with "<i>
