@@ -3,7 +3,6 @@ package org.zfin;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.zfin.Marker.repository.MarkerRepositoryTest;
 import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.mutant.MutantRepositoryTest;
@@ -18,6 +17,7 @@ import org.zfin.sequence.reno.OrthologyTest;
 import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.MultiRunTest;
 import org.zfin.publication.PublicationRepositoryTest;
+import org.zfin.marker.repository.MarkerRepositoryTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite)
