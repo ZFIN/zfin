@@ -100,6 +100,17 @@ public final class ZfinProperties {
         return props.getEmail().getAdminEmailAddress();
     }
 
+    
+
+    public static String getValidationEmailOther(boolean stripBackslash){
+        checkValidProperties();
+        String returnString = props.getEmail().getValidationEmailOther();
+        if(stripBackslash){
+            returnString = returnString.replaceAll("\\\\@","@")  ;
+        }
+        return returnString ;
+    }
+
     public static String getHighlighterColor() {
         checkValidProperties();
         return props.getWeb().getHighlighterColor();

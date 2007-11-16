@@ -9,6 +9,8 @@ import org.zfin.infrastructure.EnumValidationException;
 import org.zfin.infrastructure.EnumValidationService;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.util.FileUtil;
+import org.zfin.framework.mail.MailSender;
+import static org.junit.Assert.fail;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -55,7 +57,16 @@ public class ZfinActionServlet extends DispatcherServlet {
         }
         catch (RuntimeException rte) {
             logger.fatal("catastrophic error, exiting", rte);
-            
+            Throwable rootCause = rte; // set a default
+            while(rootCause.getCause()!=null){
+                rootCause = rootCause.getCause() ;
+            }
+            java.lang.StackTraceElement[] elements = rootCause.getStackTrace();
+            String errorString = rootCause.getMessage() + "\n";
+            for (StackTraceElement element : elements) {
+                errorString += element + "\n";
+            }
+            logger.fatal("notification sent: "+ MailSender.sendMail("Tomcat Startup Failure","Tomcat failed to startup.\n"+errorString,ZfinProperties.getValidationEmailOther(true)));
             destroy();
             throw rte;
         }

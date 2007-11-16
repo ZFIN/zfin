@@ -26,6 +26,7 @@
     </Path>
     <Email>
         <adminEmailAddress>info@zfin.org</adminEmailAddress>
+        <validationEmailOther><!--|VALIDATION_EMAIL_OTHER|--></validationEmailOther>
     </Email>
     <Logging>
         <logFileName>zfin_logger.log</logFileName>

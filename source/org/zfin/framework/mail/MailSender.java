@@ -1,22 +1,23 @@
 package org.zfin.framework.mail;
 
 import org.apache.log4j.Logger;
+import org.zfin.properties.ZfinProperties;
 
 import java.io.*;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MailSender extends Thread{
+public class MailSender{
     static Logger logger = Logger.getLogger(MailSender.class) ;
 
-    static boolean sendMail(String subject, String message, String... recipients) {
+    public static boolean sendMail(String subject, String message, String... recipients) {
         try{
             List<String> commandList = new ArrayList<String>() ;
             commandList.add("mailx") ;
 //            commandList.add("-v");
             commandList.add("-s");
-            commandList.add("'"+subject+"'")  ;
+            commandList.add(subject)  ;
             for(String recipientEmail: recipients){
                 commandList.add(recipientEmail) ;
             }
@@ -33,6 +34,7 @@ public class MailSender extends Thread{
             BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream())) ;
             BufferedReader stdout = new BufferedReader(new InputStreamReader(process.getInputStream())) ;
             BufferedWriter processInput = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+            System.out.println("flushing message: "+message) ;
             processInput.write(message+"\n");
             processInput.close();
             int exitValue = process.waitFor() ;
@@ -67,7 +69,8 @@ public class MailSender extends Thread{
 
     public static void main(String args[]){
         System.out.println("send a mail message") ;
-        boolean status = MailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), "ndunn@uoregon.edu","ndunn@mac.com");
+        boolean status = MailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), ZfinProperties.getValidationEmailOther(true));
+//        boolean status = MailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), "ndunn@uoregon.edu","ndunn@mac.com");
         System.out.println("sent: "+ status) ;
     }
 }

@@ -39,7 +39,8 @@ public class EnumValidationService {
                     logger.info("running method: " + method.getName());
                     method.invoke(this,new Object[0]);
                     ++count;
-                } catch (IllegalAccessException iae) {
+                }
+                catch (IllegalAccessException iae) {
                     logger.fatal("bad method exception", iae);
                     throw new EnumValidationException("failed to called EnumValidationService: ", iae);
                 }
