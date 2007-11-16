@@ -3,10 +3,12 @@ package org.zfin.datatransfer ;
 import org.apache.log4j.Logger;
 import org.zfin.datatransfer.webservice.Citexplore;
 import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.HibernatePublicationRepository;
 import org.zfin.publication.repository.PublicationRepository;
+import org.hibernate.Session;
 
 import java.util.List;
 
@@ -39,6 +41,10 @@ public class UpdateDOIMain {
                "orthology.hbm.xml",
                "mutant.hbm.xml",
                 "people.hbm.xml",
+                "sequence.hbm.xml",
+                "infrastructure.hbm.xml",
+                "mapping.hbm.xml",
+
         };
         new HibernateSessionCreator(false, confFiles) ;
 
@@ -102,12 +108,15 @@ public class UpdateDOIMain {
             fullLogger.info("No publications to udpate") ;
             return ;
         }
-
+        Session session = HibernateUtil.currentSession() ;
+        session.beginTransaction() ;
         try{
             publicationRepository.updatePublications( publicationList) ;
+            session.getTransaction().commit();
         }
         catch(Exception e){
-            fullLogger.error(e) ; 
+            fullLogger.error(e) ;
+            session.getTransaction().rollback();
         }
 
     }
@@ -115,8 +124,8 @@ public class UpdateDOIMain {
 
 	public static void main(String[] args) {
 		try {
-			UpdateDOIMain client = new UpdateDOIMain();
-            client.findAndUpdateDOIs() ; 
+			UpdateDOIMain driver = new UpdateDOIMain();
+            driver.findAndUpdateDOIs() ;
 		}
 		catch(Exception e) {
 			e.printStackTrace();
