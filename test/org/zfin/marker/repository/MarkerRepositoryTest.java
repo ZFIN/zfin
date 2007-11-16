@@ -1,4 +1,4 @@
-package org.zfin.Marker.repository;
+package org.zfin.marker.repository;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;

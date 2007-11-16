@@ -55,6 +55,7 @@ public class ZfinActionServlet extends DispatcherServlet {
         }
         catch (RuntimeException rte) {
             logger.fatal("catastrophic error, exiting", rte);
+            
             destroy();
             throw rte;
         }

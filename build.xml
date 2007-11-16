@@ -737,6 +737,13 @@
         </java>
     </target>
 
+    <target name="testMail" depends="compile"
+            description="Runs the mail testing code.">
+        <java classname="org.zfin.framework.mail.MailSender"
+              fork="yes"
+              classpathref="classpath">
+        </java>
+    </target>
 
 </project>
 
