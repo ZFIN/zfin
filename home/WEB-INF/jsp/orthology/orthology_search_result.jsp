@@ -52,13 +52,13 @@
                                 </c:if>
                             </TD>
                             <TD>
-                                <bean:write name="speciesItem" property="species"/>
+                                ${speciesItem.species}
                             </TD>
                             <logic:iterate name="speciesItem" property="items" id="orthItem"
                                            type="org.zfin.orthology.OrthologyItem">
                                 <td>
                                     <logic:notEmpty name="orthItem" property="symbol">
-                                        <bean:write name="orthItem" property="symbol"/>
+                                        ${orthItem.symbol}
                                     </logic:notEmpty>
                                     <logic:empty name="orthItem" property="symbol">
                                         &nbsp;

@@ -30,7 +30,7 @@
             <logic:notEmpty name="logger" property="level">
                 <tr>
                     <td class="item">
-                        <bean:write name="logger" property="name"/>
+                        ${logger.name}
                     </td>
                     <input type="hidden" name="loggerName" value="<c:out value='${logger.name}' />" />
                     <td class="item">

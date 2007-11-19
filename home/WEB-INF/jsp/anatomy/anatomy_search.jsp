@@ -123,7 +123,7 @@
                                  choicePattern="0#structures| 1#structure| 2#structures" scope="Request"/>
                     at stage
                     <b>
-                        <bean:write name="formBean" property="currentDisplayStageString"/>
+                        ${formBean.currentDisplayStageString}
                     </b>
                 </TD>
                 <td>

@@ -30,8 +30,8 @@
             </c:otherwise>
         </c:choose>
         <TD>
-            <bean:write name="pub" property="publicationDate.time" format="yyyy"/>
-        </TD>
+            <fmt:formatDate value="${pub.publicationDate.time}" type="Date" dateStyle="yyyy" />
+                    </TD>
         <td>
 <!--
             Maybe here we need the autho long list???

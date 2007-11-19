@@ -25,7 +25,7 @@
 <TABLE width=90%>
     <TR>
         <TD>
-            <B>DATE:</B> <bean:write name="formBean" property="publication.publicationDate.time" format="yyyy"/>
+            <B>DATE:</B> <fmt:formatDate value="${formBean.publicationDate.time}" type="Date" dateStyle="yyyy"/>
         </TD>
         <TD><B>SOURCE:</B> <c:out value="${formBean.publication.journal.name}"/> <c:out
                 value="${formBean.publication.volume}"/>:
@@ -63,7 +63,7 @@ Create Publication accession
 
 <p>
     <B>FILE:</B>
-Create Publication File name from publication pdf file
+    Create Publication File name from publication pdf file
 
     Upload a PDF from the
     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Curation</a>

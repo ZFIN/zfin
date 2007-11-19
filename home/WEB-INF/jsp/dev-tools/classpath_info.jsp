@@ -40,7 +40,7 @@
 <table cellpadding="2" cellspacing="1" border="0" width="95%">
     <tr>
         <td colspan="2" class="sectionTitle">
-            Successfully loaded class: <bean:write name="classpathForm" property="fullClassName"/>
+            Successfully loaded class: ${classpathForm.fullClassName}
         </td>
     </tr>
     <tr>
@@ -48,7 +48,7 @@
             ClassLoader:
         </td>
         <td class="listContent">
-            <bean:write name="classpathForm" property="classLoaderName"/>
+           ${classpathForm.classLoaderName}
         </td>
     </tr>
 
@@ -57,7 +57,7 @@
         <tr>
             <td class="listContent">Parent:</td>
             <td class="listContent">
-                <bean:write name="library" property="libaryFileName"/>
+                ${library.libaryFileName}
             </td>
         </tr>
     </logic:iterate>
@@ -65,7 +65,7 @@
         Class loaded from file:
     </td>
     <td class="listContent">
-        <bean:write name="classpathForm" property="classFileName"/>
+        ${classpathForm.classFileName}
     </td>
 
 </table>
@@ -129,7 +129,7 @@
                            type="org.zfin.framework.presentation.ClassLibraryWrapper">
                 <tr>
                     <td class="listContent">
-                        <bean:write name="library" property="libaryFileName"/>
+                        ${library.libaryFileName}
                         <logic:equal value="false" name="library" property="libraryFileExists">
                             not found
                         </logic:equal>
@@ -150,7 +150,7 @@
                            type="org.zfin.framework.presentation.ClassLibraryWrapper">
                 <tr>
                     <td class="listContent">
-                        <bean:write name="library" property="libaryFileName"/>
+                        ${library.libaryFileName}
                     </td>
                 </tr>
             </logic:iterate>
@@ -169,17 +169,11 @@
                            type="org.zfin.framework.presentation.ClassLibraryWrapper">
                 <tr>
                     <td class="listContent">
-                        <bean:write name="library" property="libaryFileName"/>
+                        ${library.libaryFileName}
                         <logic:equal value="false" name="library" property="libraryFileExists">
                             not found
                         </logic:equal>
                     </td>
-<%--
-                    <td class="listContent">
-                        <bean:write name="library" property="version"/>
-                    </td>
---%>
-
                 </tr>
             </logic:iterate>
         </table>
@@ -196,7 +190,7 @@
                            type="org.zfin.framework.presentation.ClassLibraryWrapper">
                 <tr>
                     <td class="listContent">
-                        <bean:write name="library" property="libaryFileName"/>
+                        ${library.libaryFileName}
                     </td>
                 </tr>
             </logic:iterate>
