@@ -79,7 +79,6 @@ public class ForeignDB {
         SNPBLAST("SNPBLAST"),
         SP_KW("SP_KW"),
         SANGER_CLONE("Sanger_Clone"),
-        SANGER_FPC("Sanger_FPC"),
         TRACEVIEW("TraceView"),
         UNIGENE("UniGene"),
         UNIPROT("UniProt"),
