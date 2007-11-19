@@ -123,14 +123,13 @@
                                  choicePattern="0#structures| 1#structure| 2#structures" scope="Request"/>
                     at stage
                     <b>
-                        ${formBean.currentDisplayStageString}
+                            ${formBean.currentDisplayStageString}
                     </b>
                 </TD>
                 <td>
                     <FONT size=2> Highlight terms containing: </FONT> <BR>
-                    <html:text name="formBean" property="highlightText" size="20"
-                               onchange="document.formBean.action.value='term-by-stage-search';
-                                                                          document.formBean.submit();"/>
+                    <form:input path="highlightText" size="20"
+                                onchange="document.formBean.action.value='term-by-stage-search'; document.formBean.submit();" />
                 </TD>
             </TR>
         </tbody>
