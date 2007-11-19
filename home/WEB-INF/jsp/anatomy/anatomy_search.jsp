@@ -83,7 +83,7 @@
     </TR>
 </TABLE>
 
-<logic:equal value="term-search" property="action" name="formBean">
+<c:if test="${formBean.termSearch}">
     <CENTER>
         <TABLE width="98%">
             <TR>
@@ -94,9 +94,9 @@
             </TR>
         </TABLE>
     </CENTER>
-</logic:equal>
+</c:if>
 
-<logic:equal value="complete-search" property="action" name="formBean">
+<c:if test="${formBean.completeSearch}">
     <CENTER>
         <TABLE width="98%">
             <TR>
@@ -109,9 +109,9 @@
             </TR>
         </TABLE>
     </CENTER>
-</logic:equal>
+</c:if>
 
-<logic:equal value="term-by-stage-search" property="action" name="formBean">
+<c:if test="${formBean.stageSearch}">
     <TABLE width="100%">
         <tbody>
             <TR>
@@ -129,7 +129,7 @@
                 <td>
                     <FONT size=2> Highlight terms containing: </FONT> <BR>
                     <form:input path="highlightText" size="20"
-                                onchange="document.formBean.action.value='term-by-stage-search'; document.formBean.submit();" />
+                                onchange="document.formBean.action.value='term-by-stage-search'; document.formBean.submit();"/>
                 </TD>
             </TR>
         </tbody>
@@ -145,5 +145,5 @@
             </TD>
         </TR>
     </TABLE>
-</logic:equal>
+</c:if>
 </form:form>
