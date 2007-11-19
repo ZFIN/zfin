@@ -36,16 +36,16 @@
                         </c:if>
                     </td>
                     <td class="listContent">
-                        <bean:write name="item" property="dateCreated" format="yyyy-MM-dd"/>
+                        <fmt:formatDate value="${item.dateCreated}" type="Date" dateStyle="yyyy-MM-dd"/>
                     </td>
                     <td class="listContent">
-                        <bean:write name="item" property="dateCreated" format="HH:mm:ss"/>
+                        <fmt:formatDate value="${item.dateCreated}" type="Time" timeStyle="HH:mm:ss"/>
                     </td>
                     <td class="listContent">
-                        <bean:write name="item" property="dateModified" format="yyyy-MM-dd"/>
+                        <fmt:formatDate value="${item.dateModified}" type="Date" dateStyle="yyyy-MM-dd"/>
                     </td>
                     <td class="listContent">
-                        <bean:write name="item" property="dateModified" format="HH:mm:ss"/>
+                        <fmt:formatDate value="${item.dateModified}" type="Time" timeStyle="HH:mm:ss"/>
                     </td>
                     <td class="listContent">
                         <c:out value='${item.sessionID}'/>

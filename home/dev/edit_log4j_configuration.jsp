@@ -33,11 +33,11 @@
         <logic:notEmpty name="logger" property="level" >
         <tr>
             <td class="item">
-                <bean:write name="logger" property="name" />
+                ${logger.name}
             </td>
                 <input type="hidden" name="loggerName" value="<%=logger.getName()%>"/>
             <td class="item">
-                <bean:write name="logger" property="level" />
+               ${logger.level}
             </td>
             <td class="item">
                 <html:select name="logger" property="level" >
