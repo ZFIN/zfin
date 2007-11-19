@@ -41,54 +41,56 @@ This include expects a bean in request scope with the name <formBean>
         <table width="=300">
             <tr>
                 <td width="40" align="right">
-                    <logic:notEqual value="true" name="formBean" property="isFirstPage">
-                        <a href="javascript:submitForm(<c:out value="${formBean.previousPage}"/>)">Previous</a>&nbsp;
-                    </logic:notEqual>
-                    <logic:equal value="true" name="formBean" property="isFirstPage">
+                    <c:if test="${!formBean.firstPage}">
+                        <a href="javascript:submitForm(${formBean.previousPage})">Previous</a>&nbsp;
+                    </c:if>
+                    <c:if test="${!formBean.firstPage}">
                         &nbsp;
-                    </logic:equal>
+                    </c:if>
                 </td>
                 <td align="center" nowrap="true">
-                    <logic:iterate id="currentPage" name="formBean" property="pageList" type="java.lang.Integer">
-                        <logic:notEqual value="<%=currentPage.toString() %>" name="formBean" property="page">
-                            &nbsp; <a href="javascript:submitForm(<c:out value="${currentPage}"/>);"><c:out
-                                value="${currentPage}"/></a>
-                        </logic:notEqual>
-                        <logic:equal value="<%=currentPage.toString() %>" name="formBean" property="page">
-                            <c:out value="${currentPage}"/>&nbsp;
-                        </logic:equal>
-                    </logic:iterate>
+                    <c:forEach var="currentPage" items="${formBean.pageList}">
+                        <c:if test="${currentPage != formBean.page}">
+                            &nbsp;
+                            <a href="javascript:submitForm(${currentPage})">
+                                    ${currentPage}
+                            </a>
+                        </c:if>
+                        <c:if test="${currentPage == formBean.page}">
+                            &nbsp; ${currentPage}
+                        </c:if>
+                    </c:forEach>
                 </td>
                 <td width="40" align="left">
-                    <logic:notEqual value="true" name="formBean" property="isLastPage">
-                        <a href="javascript:submitForm(<c:out value="${formBean.nextPage}"/>);">Next</a>
-                    </logic:notEqual>
-                    <logic:equal value="true" name="formBean" property="isLastPage">
+                    <c:if test="${!formBean.lastPage}">
+                        <a href="javascript:submitForm(${formBean.nextPage});">Next</a>
+                    </c:if>
+                    <c:if test="${!formBean.lastPage}">
                         &nbsp;
-                    </logic:equal>
+                    </c:if>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <logic:notEqual value="true" name="formBean" property="isFirstPage">
+                    <c:if test="${!formBean.firstPage}">
                         <a href="javascript:submitForm(1)"> First </a>
-                    </logic:notEqual>
-                    <logic:equal value="true" name="formBean" property="isFirstPage">
+                    </c:if>
+                    <c:if test="${formBean.firstPage}">
                         &nbsp;
-                    </logic:equal>
+                    </c:if>
                 </td>
                 <td>
                     &nbsp;
                 </td>
                 <td>
-                    <logic:notEqual value="true" name="formBean" property="isLastPage">
+                    <c:if test="${!formBean.lastPage}">
                         <a href="javascript:submitForm(<c:out value="${formBean.totalNumPages}"/>);">
                             Last
                         </a>
-                    </logic:notEqual>
-                    <logic:equal value="true" name="formBean" property="isLastPage">
+                    </c:if>
+                    <c:if test="${formBean.lastPage}">
                         &nbsp;
-                    </logic:equal>
+                    </c:if>
                 </td>
             </tr>
         </table>

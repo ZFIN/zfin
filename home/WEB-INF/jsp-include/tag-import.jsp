@@ -1,5 +1,3 @@
-<%@ taglib prefix="logic"    uri="/WEB-INF/tld/struts-logic.tld"%>
-<%@ taglib prefix="nested"   uri="/WEB-INF/tld/struts-nested.tld"%>
 <%@ taglib prefix="tiles"    uri="/WEB-INF/tld/struts-tiles.tld"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>

@@ -6,14 +6,6 @@
         <td class="item">Loggers that default to an inherited value are not shown.
         </td>
         <td align="right" class="item">
-            <%--
-                                <logic:equal value="true" property="showAllLevels" name="loggerForm">
-                                    <a href="/spring/dev-tools/log4j-configuration?showAllLevels=false">Hide Default Loggers</a>
-                                </logic:equal>
-                                <logic:equal value="false" property="showAllLevels" name="loggerForm">
-                                    <a href="/spring/dev-tools/log4j-configuration?showAllLevels=true">Show All Loggers</a>
-                                </logic:equal>
-            --%>
         </td>
     </tr>
 </table>
@@ -27,22 +19,22 @@
         </tr>
 
         <c:forEach var="logger" items="${loggerForm.allLoggers}">
-            <logic:notEmpty name="logger" property="level">
+            <c:if test="${logger.level != null}">
                 <tr>
                     <td class="item">
-                        ${logger.name}
+                            ${logger.name}
                     </td>
-                    <input type="hidden" name="loggerName" value="<c:out value='${logger.name}' />" />
+                    <input type="hidden" name="loggerName" value="<c:out value='${logger.name}' />"/>
                     <td class="item">
-                        <c:out value="${logger.level}" />
+                        <c:out value="${logger.level}"/>
                     </td>
                     <td class="item">
                         <form:select path="level" multiple="single">
-                            <form:options items="${loggerForm.loggerValues}" itemLabel="value" itemValue="key" />
+                            <form:options items="${loggerForm.loggerValues}" itemLabel="value" itemValue="key"/>
                         </form:select>
                     </td>
                 </tr>
-            </logic:notEmpty>
+            </c:if>
         </c:forEach>
     </table>
 
@@ -58,7 +50,7 @@
             </td>
             <td class="item">
                 <form:select path="newLoggerLevel" multiple="single">
-                    <form:options items="${loggerForm.loggerValues}" itemLabel="value" itemValue="key" />
+                    <form:options items="${loggerForm.loggerValues}" itemLabel="value" itemValue="key"/>
                 </form:select>
             <td><input type="submit" name="type" value="create"/></td>
         </tr>

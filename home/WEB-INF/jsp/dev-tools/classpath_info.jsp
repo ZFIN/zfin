@@ -38,7 +38,7 @@
 <tr>
     <td align="center">
 
-        <logic:notEmpty name="classpathForm" property="fullClassName">
+        <c:if test="${classpathForm.fullClassName != null}">
         <table cellpadding="2" cellspacing="1" border="0" width="95%">
             <tr>
                 <td colspan="2" class="sectionTitle">
@@ -54,15 +54,14 @@
                 </td>
             </tr>
 
-            <logic:iterate id="library" name="classpathForm" property="classLoaderParents"
-                           type="org.zfin.framework.presentation.ClassLibraryWrapper">
+            <c:forEach var="library" items="${classpathForm.classLoaderParents}">
                 <tr>
                     <td class="listContent">Parent:</td>
                     <td class="listContent">
                             ${library.libaryFileName}
                     </td>
                 </tr>
-            </logic:iterate>
+            </c:forEach>
             <td class="listContent">
                 Class loaded from file:
             </td>
@@ -71,7 +70,7 @@
             </td>
 
         </table>
-        </logic:notEmpty>
+        </c:if>
 <tr>
     <td align="center">
         <table cellpadding="2" cellspacing="1" border="0" width="95%">
@@ -98,10 +97,24 @@
 
 
 
+
+
+
+                
+
+
+
                     while (loader != null) {
                         if (firstTime) {
                             firstTime = false;
                         } else {
+
+
+
+                
+
+
+
 
 
 
@@ -135,18 +148,16 @@
                 <td class="sectionTitle">Boot Classes <i>(from
                     sun.boot.class.path)</i></td>
             </tr>
-
-            <logic:iterate id="library" name="classpathForm" property="bootLibraries"
-                           type="org.zfin.framework.presentation.ClassLibraryWrapper">
+            <c:forEach var="library" items="${classpathForm.bootLibraries}">
                 <tr>
                     <td class="listContent">
                             ${library.libaryFileName}
-                        <logic:equal value="false" name="library" property="libraryFileExists">
+                        <c:if test="${!library.libraryFileExists}">
                             not found
-                        </logic:equal>
+                        </c:if>
                     </td>
                 </tr>
-            </logic:iterate>
+            </c:forEach>
         </table>
     </td>
 </tr>
@@ -157,14 +168,13 @@
                 <td class="sectionTitle">Extension Classes <i>(from
                     java.ext.dirs)</i></td>
             </tr>
-            <logic:iterate id="library" name="classpathForm" property="extensionLibraries"
-                           type="org.zfin.framework.presentation.ClassLibraryWrapper">
+            <c:forEach var="library" items="${classpathForm.extensionLibraries}">
                 <tr>
                     <td class="listContent">
                             ${library.libaryFileName}
                     </td>
                 </tr>
-            </logic:iterate>
+            </c:forEach>
         </table>
     </td>
 </tr>
@@ -176,17 +186,16 @@
                 <td class="sectionTitle">Application Classes <i>(from
                     java.class.path)</i></td>
             </tr>
-            <logic:iterate id="library" name="classpathForm" property="applicationLibraries"
-                           type="org.zfin.framework.presentation.ClassLibraryWrapper">
+            <c:forEach var="library" items="${classpathForm.applicationLibraries}">
                 <tr>
                     <td class="listContent">
                             ${library.libaryFileName}
-                        <logic:equal value="false" name="library" property="libraryFileExists">
+                        <c:if test="${!library.libraryFileExists}">
                             not found
-                        </logic:equal>
+                        </c:if>
                     </td>
                 </tr>
-            </logic:iterate>
+            </c:forEach>
         </table>
     </td>
 </tr>
@@ -197,14 +206,13 @@
             <tr>
                 <td class="sectionTitle">WEB-INF Classes</td>
             </tr>
-            <logic:iterate id="library" name="classpathForm" property="classesLibraries"
-                           type="org.zfin.framework.presentation.ClassLibraryWrapper">
+            <c:forEach var="library" items="${classpathForm.classesLibraries}">
                 <tr>
                     <td class="listContent">
                             ${library.libaryFileName}
                     </td>
                 </tr>
-            </logic:iterate>
+            </c:forEach>
         </table>
     </td>
 </tr>

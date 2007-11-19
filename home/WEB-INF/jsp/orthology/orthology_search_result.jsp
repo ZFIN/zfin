@@ -1,13 +1,14 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <table width="100%" bgcolor="#CCCCCC">
-    <tbody><tr>
-        <td class="titlebar">
+    <tbody>
+        <tr>
+            <td class="titlebar">
                 <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
                 Orthology Search Results
             </span>
-        </td>
-    </tr>
+            </td>
+        </tr>
     </tbody>
 </table>
 
@@ -35,8 +36,7 @@
                         <TD><b>Details</b></TD>
                     </TR>
                     <c:forEach var="orth" items="${formBean.orthologies}" varStatus="rowCounter">
-                        <logic:iterate name="orth" property="orthologSpecies" id="speciesItem"
-                                       type="org.zfin.orthology.OrthologySpecies">
+                        <c:forEach var="speciesItem" items="${orth.orthologSpecies}">
                             <c:choose>
                                 <c:when test="${rowCounter.count % 2 != 0}">
                                     <tr class="odd">
@@ -46,39 +46,37 @@
                                 </c:otherwise>
                             </c:choose>
                             <TD>
-<%--                                <c:if test="${speciesItem.species.name == 'Zebrafish'}">--%>
+                                    <%--                                <c:if test="${speciesItem.species.name == 'Zebrafish'}">--%>
                                 <c:if test="${speciesItem.species == 'Zebrafish'}">
-                                    <zfin:link entity="${speciesItem.marker}" />
+                                    <zfin:link entity="${speciesItem.marker}"/>
                                 </c:if>
                             </TD>
                             <TD>
-                                ${speciesItem.species}
+                                    ${speciesItem.species}
                             </TD>
-                            <logic:iterate name="speciesItem" property="items" id="orthItem"
-                                           type="org.zfin.orthology.OrthologyItem">
+                            <c:forEach var="orthItem" items="${speciesItem.items}">
                                 <td>
-                                    <logic:notEmpty name="orthItem" property="symbol">
+                                    <c:if test="${orthItem.symbol != null}">
                                         ${orthItem.symbol}
-                                    </logic:notEmpty>
-                                    <logic:empty name="orthItem" property="symbol">
+                                    </c:if>
+                                    <c:if test="${orthItem.symbol == null}">
                                         &nbsp;
-                                    </logic:empty>
+                                    </c:if>
                                 </td>
                                 <td>
-                                    <logic:notEmpty name="orthItem" property="accessionItems">
-                                        <logic:iterate id="accessionItem" name="orthItem" property="accessionItems"
-                                                       type="org.zfin.orthology.AccessionItem">
-                                            <a href="<c:out value="${accessionItem.url}"/>"><c:out
-                                                    value="${accessionItem.name}"/></a>
-                                        </logic:iterate>
-                                    </logic:notEmpty>
-                                    <logic:empty name="orthItem" property="accessionItems">
+                                    <c:if test="${orthItem.accessionItems != null}">
+                                        <c:forEach var="accessionItem" items="${orthItem.accessionItems}">
+                                            <a href="${accessionItem.url}">
+                                                    ${accessionItem.name}
+                                            </a>
+                                        </c:forEach>
+                                    </c:if>
+                                    <c:if test="${orthItem.accessionItems == null}">
                                         &nbsp;
-                                    </logic:empty>
+                                    </c:if>
                                 </td>
                                 <td>
-                                    <logic:notEmpty name="orthItem" property="chromosomes">
-
+                                    <c:if test="${orthItem.chromosomes != null}">
                                         <zfin:createDelimitedList collectionEntity="${orthItem.chromosomes}"
                                                                   delimiter=","/>
 
@@ -91,19 +89,19 @@
                                              */
                                         %>
 
-                                    </logic:notEmpty>
-                                    <logic:empty name="orthItem" property="chromosomes">
+                                    </c:if>
+                                    <c:if test="${orthItem.chromosomes == null}">
                                         &nbsp;
-                                    </logic:empty>
+                                    </c:if>
                                 </td>
                                 <td>
                                     <c:if test="${speciesItem.species == 'Zebrafish'}">
-                                        <zfin:link entity="${speciesItem}" />
+                                        <zfin:link entity="${speciesItem}"/>
                                     </c:if>
                                 </td>
                                 </tr>
-                            </logic:iterate>
-                        </logic:iterate>
+                            </c:forEach>
+                        </c:forEach>
                     </c:forEach>
                 </TABLE>
                 <hr/>
