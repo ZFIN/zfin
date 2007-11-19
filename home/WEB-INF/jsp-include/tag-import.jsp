@@ -1,4 +1,3 @@
-<%@ taglib prefix="html"     uri="/WEB-INF/tld/struts-html.tld" %>
 <%@ taglib prefix="logic"    uri="/WEB-INF/tld/struts-logic.tld"%>
 <%@ taglib prefix="nested"   uri="/WEB-INF/tld/struts-nested.tld"%>
 <%@ taglib prefix="tiles"    uri="/WEB-INF/tld/struts-tiles.tld"%>
