@@ -13,7 +13,7 @@
 </tr>
 <tr>
     <td align="center">
-        <form action="/action/dev-tools/classpath-info" method="POST">
+        <form:form method="GET" action="/action/dev-tools/classpath-info" commandName="classpathForm">
             <table cellpadding="2" cellspacing="1" border="0"
                    bgcolor="#003366">
                 <tr>
@@ -21,7 +21,9 @@
                         <table cellpadding="1" cellspacing="0" border="0">
                             <tr>
                                 <td><b>Class to load:</b></td>
-                                <td><html:text name="classpathForm" property="className"/></td>
+                                <td>
+                                    <form:input path="className" size="60"/>
+                                </td>
                                 <td><INPUT TYPE="submit" name="type" VALUE="Submit"></td>
                             </tr>
                         </table>
@@ -29,47 +31,47 @@
                     </td>
                 </tr>
             </table>
-        </form>
+        </form:form>
     </td>
 </tr>
 
 <tr>
-<td align="center">
+    <td align="center">
 
-    <logic:notEmpty name="classpathForm" property="fullClassName">
-<table cellpadding="2" cellspacing="1" border="0" width="95%">
-    <tr>
-        <td colspan="2" class="sectionTitle">
-            Successfully loaded class: ${classpathForm.fullClassName}
-        </td>
-    </tr>
-    <tr>
-        <td class="listContent">
-            ClassLoader:
-        </td>
-        <td class="listContent">
-           ${classpathForm.classLoaderName}
-        </td>
-    </tr>
+        <logic:notEmpty name="classpathForm" property="fullClassName">
+        <table cellpadding="2" cellspacing="1" border="0" width="95%">
+            <tr>
+                <td colspan="2" class="sectionTitle">
+                    Successfully loaded class: ${classpathForm.fullClassName}
+                </td>
+            </tr>
+            <tr>
+                <td class="listContent">
+                    ClassLoader:
+                </td>
+                <td class="listContent">
+                        ${classpathForm.classLoaderName}
+                </td>
+            </tr>
 
-    <logic:iterate id="library" name="classpathForm" property="classLoaderParents"
-                   type="org.zfin.framework.presentation.ClassLibraryWrapper">
-        <tr>
-            <td class="listContent">Parent:</td>
+            <logic:iterate id="library" name="classpathForm" property="classLoaderParents"
+                           type="org.zfin.framework.presentation.ClassLibraryWrapper">
+                <tr>
+                    <td class="listContent">Parent:</td>
+                    <td class="listContent">
+                            ${library.libaryFileName}
+                    </td>
+                </tr>
+            </logic:iterate>
             <td class="listContent">
-                ${library.libaryFileName}
+                Class loaded from file:
             </td>
-        </tr>
-    </logic:iterate>
-    <td class="listContent">
-        Class loaded from file:
-    </td>
-    <td class="listContent">
-        ${classpathForm.classFileName}
-    </td>
+            <td class="listContent">
+                    ${classpathForm.classFileName}
+            </td>
 
-</table>
-</logic:notEmpty>
+        </table>
+        </logic:notEmpty>
 <tr>
     <td align="center">
         <table cellpadding="2" cellspacing="1" border="0" width="95%">
@@ -90,29 +92,38 @@
                 ClassLoader loader = this.getClass().getClassLoader().getParent();
                 boolean firstTime = true;
             %>
-            <tr><td class="listContent">Parent(s):</td>
+            <tr>
+                <td class="listContent">Parent(s):</td>
                 <%
 
-              while (loader != null) {
-                  if (firstTime) {
-                  firstTime = false;
-                  } else {
+
+
+                    while (loader != null) {
+                        if (firstTime) {
+                            firstTime = false;
+                        } else {
+
+
 
                 %>
-                <tr><td class="listContent"></td>
-                    <% } %>
-                    <td class="listContent">
-                        <%= loader.getClass().getName() %>
-                    </td></tr>
-                <%
+            <tr>
+                <td class="listContent"></td>
+                <% } %>
+                <td class="listContent">
+                    <%= loader.getClass().getName() %>
+                </td>
+            </tr>
+            <%
 
-            loader = loader.getParent();
-            }
-            if (!firstTime) {
-                %>
-                <tr><td class="listContent"></td>
-                    <% } %>
-                    <td class="listContent">Bootstrap classloader</td></tr>
+                    loader = loader.getParent();
+                }
+                if (!firstTime) {
+            %>
+            <tr>
+                <td class="listContent"></td>
+                <% } %>
+                <td class="listContent">Bootstrap classloader</td>
+            </tr>
         </table>
     </td>
 </tr>
@@ -129,7 +140,7 @@
                            type="org.zfin.framework.presentation.ClassLibraryWrapper">
                 <tr>
                     <td class="listContent">
-                        ${library.libaryFileName}
+                            ${library.libaryFileName}
                         <logic:equal value="false" name="library" property="libraryFileExists">
                             not found
                         </logic:equal>
@@ -150,7 +161,7 @@
                            type="org.zfin.framework.presentation.ClassLibraryWrapper">
                 <tr>
                     <td class="listContent">
-                        ${library.libaryFileName}
+                            ${library.libaryFileName}
                     </td>
                 </tr>
             </logic:iterate>
@@ -169,7 +180,7 @@
                            type="org.zfin.framework.presentation.ClassLibraryWrapper">
                 <tr>
                     <td class="listContent">
-                        ${library.libaryFileName}
+                            ${library.libaryFileName}
                         <logic:equal value="false" name="library" property="libraryFileExists">
                             not found
                         </logic:equal>
@@ -190,7 +201,7 @@
                            type="org.zfin.framework.presentation.ClassLibraryWrapper">
                 <tr>
                     <td class="listContent">
-                        ${library.libaryFileName}
+                            ${library.libaryFileName}
                     </td>
                 </tr>
             </logic:iterate>
