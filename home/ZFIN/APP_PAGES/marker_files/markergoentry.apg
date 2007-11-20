@@ -163,7 +163,7 @@ function call_reset() {
     <td align=right><b>Evidence Code </b></td> 
     
     <td><select name=evidence>
-	<?MISQL SQL="select goev_code from go_evidence_code">
+	<?MISQL SQL="select goev_code from go_evidence_code where goev_code <> "TAS"">
   	  <option value="$(TRIM,$1)" $(IF,$(EC,$evidence_code,$(TRIM,$1)),SELECTED)>$1
         <?/MISQL>
         </select>

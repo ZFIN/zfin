@@ -166,7 +166,8 @@ function call_done() {
    <?MISQL SQL="
      select goev_code 
      from go_evidence_code 
-     where goev_code <> '$evidence_code' 
+     where goev_code <> '$evidence_code'
+       and goev_code <> 'TAS' 
      order by goev_code;">
      <option value = "$1">$1
    <?/MISQL>
