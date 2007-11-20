@@ -1,0 +1,4887 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+  <meta http-equiv="EXPIRES" content="Wed Sep 11 09:35:25 PDT 1996">
+
+  <script>
+
+
+  function updateInnerHTML(element_id,html_to_display) {
+    var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+   }
+
+  function start_note(ref_page) {
+    top.zfinhelp=open("/cgi-bin_frost/webdriver?MIval=aa-"+ref_page+".apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
+  }
+
+  function call_mapplet() {
+	document.mapper.submit();
+  }
+
+  function call_zmapplet() {
+	document.mapper.action='/cgi-bin_frost/view_zmapplet.cgi';
+	document.mapper.submit();
+  }
+
+  function edit_linkage(link_id,oid) {
+	window.location.replace('/cgi-bin_frost/webdriver?MIval=aa-edit_linkage.apg&link_id='+link_id+'&OID='+oid)
+  }
+
+  function edit_go(oid) {
+	window.location.replace('/cgi-bin_frost/webdriver?MIval=aa-markergoentry.apg&OID='+oid)
+  }
+
+  function get_spdesc(oid) {
+	window.location.replace('/cgi-bin_frost/webdriver?MIval=aa-markerspcomments.apg&OID='+oid)
+  }
+  function start_help() {
+   top.zfinhelp=open('/cgi-bin_frost/webdriver?MIval=aa-helpframes.html&calling_page=sequence_tools_help.html',"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=800,height=600");
+  }
+
+  </script><!-- The setup jscript necessary to open chromoviewer windows. Webexploded where needed. eg markerview, markerlister
+<?MIVAR><?/MIVAR>    for benefit of clifs filters
+-->
+
+  
+
+  
+
+
+<script>
+function view_scores(refcross,lg,marker,abbrev) {
+
+if (!top.lglist) {
+  top.lglist=new Array(25);
+  top.lgindex=1;
+  }
+
+homewin=top;
+newindex=homewin.lgindex;
+
+    top.lgwin=open("/cgi-bin_frost/webdriver?MIval=aa-scoresframe.apg&panel="+refcross+"&lg="+lg+"&marker_id="+marker+"&marker_abbrev="+abbrev,"scoreswindow"+newindex,"scrollbars=yes,resizable=yes,width=400,height=550");
+
+     top.lgwin.ztarget=window;
+     top.lgwin.lghomewin=homewin;
+
+     top.lglist[top.lgindex]=top.lgwin;
+
+     homewin.lgindex++;
+     top.lgwin.myindex=newindex;
+}
+
+
+
+function show_detail(link_id,marker_id,marker_abbrev,marker2_abbrev) {
+
+if (marker2_abbrev == "") {
+	marker2_abbrev = null;
+}
+if (!top.lglist) {
+  top.lglist=new Array(25);
+  top.lgindex=1;
+  }
+
+homewin=top;
+newindex=homewin.lgindex;
+
+    top.lgwin=open("/cgi-bin_frost/webdriver?MIval=aa-detailframe.apg&link_id="+link_id+"&marker_id="+marker_id+"&marker_abbrev="+marker_abbrev+"&marker2_abbrev="+marker2_abbrev,"detailwindow"+newindex,"scrollbars=yes,resizable=yes,width=400,height=550");
+
+     top.lgwin.ztarget=window;
+     top.lgwin.lghomewin=homewin;
+
+     top.lglist[top.lgindex]=top.lgwin;
+
+     homewin.lgindex++;
+     top.lgwin.myindex=newindex;
+}
+
+</script>
+
+  
+
+<script type="text/javascript" language="JavaScript">
+function jump(form_select){
+    if (0 != form_select.selectedIndex){
+        window.open(form_select.options[form_select.selectedIndex].value,parseInt(Math.random()*2000000000));
+    }
+    return true;
+}
+</script>
+
+  <script>
+   function info() {
+	window.alert('ANONYMOUS LINKAGE:\n This linkage has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
+   }
+  //  initialize view_mapplet parameters
+   marker = '';
+
+  </script><!------------------------------------------------------><!-- One block till </body> ----------------------------><!-- set default value for variables -----------------><!-- default user as GUEST----------------------><!-- page header display ----------------->
+
+  <link rel="stylesheet" type="text/css" href="/css/zfin.css">
+<link rel="stylesheet" type="text/css" href="/css/header.css">
+
+<script type="text/javascript" src="/javascript/prototype.js"></script>
+
+<script type="text/javascript">
+
+/** mostly this kind of thing is bad, but thers a 
+    tiny bit of css we want for IE only  **/
+
+if (navigator.appName == 'Microsoft Internet Explorer') {
+  document.write("<style type='text/css'>"); 
+  //document.write("body { width:expression(document.body.clientWidth < 600? '600px': 'auto' );}  ");
+  //document.write("#hdr-banner {   width:expression(document.body.clientWidth < 580? '580px': 'auto' );  } "); 
+
+  /** if (IE version > 7) **/
+  if (!window.XMLHttpRequest) {
+    document.write("#hdr-tabs { margin-left: 95px; } ");  
+  } 
+  document.write("</style>");
+  
+} 
+
+function hdrSetCookie(name,value,expires,path,domain,secure) {
+   document.cookie = name + "=" +escape(value) +
+          ( (expires) ? ";expires=" + expires.toGMTString() : "") +
+          ( (path) ? ";path=" + path : "") +
+          ( (domain) ? ";domain=" + domain : "") +
+          ( (secure) ? ";secure" : "");
+   var cookieVal = document.cookie;
+  }
+
+function hdrGetCookie(name) {
+   var allcookies = document.cookie;
+   if (allcookies == "") return false;
+   var start = allcookies.indexOf(name + '=');
+   if (start == -1) return false;
+   start += name.length + 1;
+   var end = allcookies.indexOf(';', start);
+   if (end == -1) end = allcookies.length;
+   return allcookies.substring(start, end);
+	}
+
+function hdrDeleteCookie(name, path, domain) {
+  var today = new Date();
+  var expired = new Date(today.getTime() - 28 * 24 * 60 * 60 * 1000); // less 28 days
+   if (hdrGetCookie(name)) {
+      document.cookie = name + "=" +
+              ((path) ? "; path=" + path : "") +
+              ((domain) ? "; domain=" + domain : "") +
+              "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+   }
+}
+
+
+
+function deselectTabs(tab_id) {
+
+  $('researchspiffy').className = "spiffy";
+  $('researchspiffy1').className = "spiffy1";
+  $('researchspiffy2').className = "spiffy2";
+  $('researchspiffy3').className = "spiffy3";
+  $('researchspiffy4').className = "spiffy4";
+  $('researchspiffy5').className = "spiffy5";
+  $('researchTabContent').className = "tabContent";
+
+  $('generalspiffy').className = "spiffy";
+  $('generalspiffy1').className = "spiffy1";
+  $('generalspiffy2').className = "spiffy2";
+  $('generalspiffy3').className = "spiffy3";
+  $('generalspiffy4').className = "spiffy4";
+  $('generalspiffy5').className = "spiffy5";
+  $('generalTabContent').className = "tabContent";
+
+
+  $('productspiffy').className = "spiffy";
+  $('productspiffy1').className = "spiffy1";
+  $('productspiffy2').className = "spiffy2";
+  $('productspiffy3').className = "spiffy3";
+  $('productspiffy4').className = "spiffy4";
+  $('productspiffy5').className = "spiffy5";
+  $('productTabContent').className = "tabContent";
+
+
+}
+
+
+function showZFINLinks() {
+  hdrSetCookie("tabCookie","Research","","/");
+
+  deselectTabs();
+
+  $('researchspiffy').className = "selectedspiffy";
+  $('researchspiffy1').className = "selectedspiffy1";
+  $('researchspiffy2').className = "selectedspiffy2";
+  $('researchspiffy3').className = "selectedspiffy3";
+  $('researchspiffy4').className = "selectedspiffy4";
+  $('researchspiffy5').className = "selectedspiffy5";
+  $('researchTabContent').className = "selectedTabContent";
+
+
+
+  document.getElementById("hdr-zirclinks").style.display = "none";
+  document.getElementById("hdr-generallinks").style.display = "none";
+  document.getElementById("hdr-motto").style.display = "none";
+  document.getElementById("hdr-zfinlinks").style.display = "block";
+
+  document.getElementsByTagName("head")[0].blur();
+
+
+}
+
+function showGeneralLinks() {
+  hdrSetCookie("tabCookie","General","","/");
+
+  deselectTabs();
+
+  $('generalspiffy').className = "selectedspiffy";
+  $('generalspiffy1').className = "selectedspiffy1";
+  $('generalspiffy2').className = "selectedspiffy2";
+  $('generalspiffy3').className = "selectedspiffy3";
+  $('generalspiffy4').className = "selectedspiffy4";
+  $('generalspiffy5').className = "selectedspiffy5";
+  $('generalTabContent').className = "selectedTabContent";
+
+
+
+  document.getElementById("hdr-zfinlinks").style.display = "none";
+  document.getElementById("hdr-zirclinks").style.display = "none";
+  document.getElementById("hdr-motto").style.display = "none";
+  document.getElementById("hdr-generallinks").style.display = "block";
+
+  document.getElementsByTagName("head")[0].blur();
+}
+
+
+
+
+function showZIRCLinks() {
+  
+  hdrSetCookie("tabCookie","Products","","/");
+
+  deselectTabs();
+
+  $('productspiffy').className = "selectedspiffy";
+  $('productspiffy1').className = "selectedspiffy1";
+  $('productspiffy2').className = "selectedspiffy2";
+  $('productspiffy3').className = "selectedspiffy3";
+  $('productspiffy4').className = "selectedspiffy4";
+  $('productspiffy5').className = "selectedspiffy5";
+  $('productTabContent').className = "selectedTabContent";
+
+
+  document.getElementById("hdr-zfinlinks").style.display = "none";
+  document.getElementById("hdr-generallinks").style.display = "none";
+  document.getElementById("hdr-motto").style.display = "none";
+  document.getElementById("hdr-zirclinks").style.display = "block";
+
+  document.getElementsByTagName("head")[0].blur();
+}
+
+function showMotto() {
+  /* for some reason, one of these is coming up null in IE */
+
+  if (document.getElementById("hdr-zfinlinks") != null) {
+    document.getElementById("hdr-zfinlinks").style.display = "none";
+  } else { alert('hdr-zfinlinks is null'); }
+
+  if (document.getElementById("hdr-zirclinks") != null) {
+    document.getElementById("hdr-zirclinks").style.display = "none";
+  } else { alert('hdr-zirclinks is null'); }
+
+  if (document.getElementById("hdr-generallinks") != null) {
+    document.getElementById("hdr-generallinks").style.display = "none";
+  } else { alert('hdr-generallinks is null'); }
+
+  if (document.getElementById("hdr-motto") != null) {
+    document.getElementById("hdr-motto").style.display = "block";
+  } else { alert('hdr-motto is null'); }
+}
+
+
+
+
+function hdrSetTabs() {
+
+   
+   
+     var hdr_showmotto = false;
+   
+
+   if (hdr_showmotto) {
+     showMotto();
+   } else {
+
+     tabCookie = hdrGetCookie("tabCookie");
+
+     if (!tabCookie) {
+       hdrSetCookie("tabCookie","Research","","/");
+       tabCookie = hdrGetCookie("tabCookie");
+     }
+     if (tabCookie == "Research") {
+       showZFINLinks();
+     }
+     if (tabCookie == "Products") {
+       showZIRCLinks();
+     }
+     if (tabCookie == "General") {
+       showGeneralLinks();
+     }
+   }
+}
+
+
+
+</script>
+  <title>ZFIN: Gene: shha</title></head><body id="body" onload="hdrSetTabs();">
+
+
+  <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-ZDB_home.apg">
+   <img id="logo-img" src="webdriver_files/zfinlogo.png"> 
+   <img id="logo-text" src="webdriver_files/zfintxt.png">
+  </a>
+
+  <noscript>
+   <div id="noscriptWarningBox">
+     Many ZFIN features require that javascript be enabled.
+   </div>
+  </noscript>
+
+
+  <div id="quicksearchBox">
+    <form method="get" action="/SearchApp/category_search.jsp" name="quicksearch">
+      <label for="qsearch" id="quicksearchLabel">
+        <a href="http://frost.zfin.org/SearchApp/syntax_help.jsp">
+          Site Search:
+        </a>
+      </label>
+      <input size="25" name="query" id="qsearch" type="text">
+    </form>
+  </div>
+
+
+<div id="hdr-banner">
+
+  <div id="hdr-tabs">    
+
+     <div id="researchtab">
+     <b class="selectedspiffy" id="researchspiffy"><b class="selectedspiffy1" id="researchspiffy1"><b></b></b><b class="selectedspiffy2" id="researchspiffy2"><b></b></b><b class="selectedspiffy3" id="researchspiffy3"></b><b class="selectedspiffy4" id="researchspiffy4"></b><b class="selectedspiffy5" id="researchspiffy5"></b></b>
+     <div class="selectedTabContent" id="researchTabContent">
+       Research
+     </div>
+     </div>
+
+     <div id="generaltab"> 
+     <b class="spiffy" id="generalspiffy"><b class="spiffy1" id="generalspiffy1"><b></b></b><b class="spiffy2" id="generalspiffy2"><b></b></b><b class="spiffy3" id="generalspiffy3"></b><b class="spiffy4" id="generalspiffy4"></b><b class="spiffy5" id="generalspiffy5"></b></b>
+     <div class="tabContent" id="generalTabContent">
+       General Information
+     </div>
+     </div>
+
+     <div id="zirctab">
+     <b class="spiffy" id="productspiffy"><b class="spiffy1" id="productspiffy1"><b></b></b><b class="spiffy2" id="productspiffy2"><b></b></b><b class="spiffy3" id="productspiffy3"></b><b class="spiffy4" id="productspiffy4"></b><b class="spiffy5" id="productspiffy5"></b></b>
+     <div class="tabContent" id="productTabContent">
+      ZIRC
+     </div>
+     </div>
+
+
+
+     <script type="text/javascript">
+     if (document.addEventListener) {  
+       document.getElementById("researchtab").addEventListener("click",showZFINLinks,true);
+       document.getElementById("generaltab").addEventListener("click",showGeneralLinks,true);
+       document.getElementById("zirctab").addEventListener("click",showZIRCLinks,true);
+
+     } else {
+       document.getElementById("researchtab").onclick = showZFINLinks;
+       document.getElementById("generaltab").onclick = showGeneralLinks;
+       document.getElementById("zirctab").onclick = showZIRCLinks;
+
+     }
+     </script>
+
+
+  </div>
+
+
+
+ 
+
+
+  <div id="hdr-navlinks">
+    <div id="hdr-zirclinks" class="hdr-linkbar" style="display: none;"> 
+      <a href="http://frost.zfin.org/zirc/">ZIRC Home</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <strong> Request: </strong> &nbsp; <a href="http://frost.zfin.org/zirc/fish/lineAll.php">Fish</a>,
+      &nbsp; <a href="http://frost.zfin.org/zirc/est/estAll.php">ESTs/cDNAs</a>,
+      &nbsp; <a href="http://frost.zfin.org/zirc/abs/absAll.php">Antibodies</a>,
+      &nbsp; <a href="http://frost.zfin.org/zirc/orders/buyBookQ.php?item=Book&amp;id=book&amp;detail=The%20Zebrafish%20Book"><span style="font-style: italic;">ZF Book</span></a>,
+      &nbsp; <a href="http://frost.zfin.org/zirc/orders/buyParaQ.php?item=Paramecia&amp;id=para&amp;detail=Paramecia%20Starter%20Culture">Paramecia</a>&nbsp;
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://frost.zfin.org/zirc/documents/fees.php">Prices</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://frost.zfin.org/zirc/documents/payment.php">Payment Help</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://frost.zfin.org/zirc/documents/health.php">Health Services</a>
+
+    </div>
+    <div id="hdr-zfinlinks" class="hdr-linkbar" style="display: block;">
+      <a href="http://frost.zfin.org/">Home</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-newmrkrselect.apg">Genes / Markers / Clones</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-xpatselect.apg">Expression</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+       <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-blast.apg" title="Search for sequence alignment against ZFIN datasets and Zebrafish datasets">BLAST</a> 
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-fishselect.apg&amp;line_type=mutant">Mutants / Tg</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://frost.zfin.org/action/anatomy/search">Anatomy</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://frost.zfin.org/cgi-bin_frost/mapper_select.cgi" title="View genetic, radiation hybrid or consolidated maps">Maps</a>
+      <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubselect2.apg&amp;select_from=PUBLICATION">Publications</a>
+    </div>
+
+    <div id="hdr-generallinks" class="hdr-linkbar" style="display: none;">
+     <a href="http://frost.zfin.org/">Home</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-quickfindpers.apg&amp;select_from=PERSON&amp;frame_size=75">People</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-labselect.apg&amp;select_from=LAB" title="Search for laboratories by name, address or research interests">Laboratories</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-companyselect.apg&amp;select_from=COMPANY&amp;frame_size=230" title="Search for companies supplying zebrafish reagents">Companies</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://frost.zfin.org/zf_info/news/jobs.html">Jobs</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://frost.zfin.org/zf_info/news/mtgs.html">Meetings</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://frost.zfin.org/zf_info/zfbook/zfbk.html" title="Browse the Zebrafish Book">View <em>ZF Book</em></a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://frost.zfin.org/zf_info/news/newsgroup.html" title="a moderated, online discussion group for anyone interested in zebrafish research">ZF Newsgroup</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="http://frost.zfin.org/zf_info/contact_us.html">Contact ZFIN</a>
+    </div>
+    <div id="hdr-motto" class="hdr-linkbar" style="display: none;">     
+      The Zebrafish Model Organism Database
+    </div>
+
+    
+
+
+
+  </div> <!-- navlinks -->
+</div>
+
+ 
+
+
+<div class="allcontent">
+
+
+
+  
+
+
+  <!-- NOW a slight ugliness that would go away if/when we re-implement the MAP_MARKER stuff as hierarchical classes: we don't know what type up marker we are trying to view, and yet we need to know exactly that in order to know what table to select from. So we first look at ZFIN id to determine type, which determines table
+  -->
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+
+  
+
+  <!-- if no match for the entered ID, display not found msg ------>
+   <!-- if entered ID has an entry in ZFIN------------------------>
+
+      <script> <!-- functions for update--------------------->
+  
+      
+      </script>
+
+     <!-- user authorization check------------------------------->
+
+      
+      
+
+      <!-- If updating, only let owner update anything -->
+      
+
+
+       <!-- if authorized---------->
+
+	  <!-- title for webpage history ----------->
+          
+		
+ 			
+		
+          
+
+	  <!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
+	  <!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+        
+  	   <!-- First find out the last modification date of the record in question. -->
+  <table bgcolor="#eeeeee" border="0" width="100%">
+
+
+
+
+<tbody><tr align="center">
+<td><font size="-1"> <b>ZFIN ID:</b> ZDB-GENE-980526-166 </font>
+</td>
+
+
+
+
+
+
+ <!-- ends if authorized and not guest -->
+
+
+
+</tr></tbody></table>
+
+
+	   
+        
+
+	  <!----- OKAY, NOW  THROW UP THE  MARKER INFO ------------------>
+
+  
+
+<!----------------------------------------------------------->
+<p>
+
+
+
+
+
+
+
+<table cellspacing="0" width="100%">
+  <tbody><tr>
+   <td width="85%">
+    
+
+    
+    <font size="+1"><b>
+
+      Gene Name:<i>sonic hedgehog a</i>
+
+    </b></font>
+   </td>
+   
+    <td align="right" width="15%">
+     
+        <form method="post" action="/cgi-bin_frost/webdriver" target="comments">
+           <input name="subject" value="shha" type="hidden">
+           <input name="marker_id" value="ZDB-GENE-980526-166" type="hidden">
+           <input name="MIval" value="aa-your_input_welcome.apg" type="hidden">
+           <input name="page_id" value="ZDB-GENE-980526-166" type="hidden">
+           </form></td><td><input value="Your Input Welcome" type="submit"></td>
+         
+      
+    
+   
+  </tr>
+  
+    <tr><td colspan="2">
+      
+      <font size="+1"><b>
+	Gene Symbol:&nbsp;<i>shha</i>
+      </b></font>
+    </td></tr>
+ 
+
+
+
+
+</tbody></table>
+
+
+
+
+
+
+
+  
+  
+    
+    
+
+    
+      <b>Previous Names:</b>
+    
+
+  
+
+
+
+  
+
+    
+    
+  
+
+
+
+  
+
+    
+    
+  
+
+
+
+  
+
+    
+    
+  
+
+
+
+  
+
+    
+    
+  
+
+
+
+  
+
+    
+    
+  
+
+
+
+
+
+
+
+  
+  
+
+  
+
+    vhh1(<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-961014-945">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+,
+
+    
+
+  
+
+
+  
+  
+
+  
+
+    shh,
+
+    
+
+  
+
+
+  
+  
+
+  
+
+    syu,
+
+    
+
+  
+
+
+  
+  
+
+  
+
+    sonic-you(<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-030508-1">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+,
+
+    
+
+  
+
+
+  
+  
+
+  
+
+    vertebrate hedgehog homolog(<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-961014-945">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+,
+
+    
+
+  
+
+
+  
+  
+
+  
+
+    sonic you
+
+    
+
+  
+
+
+
+    <br>
+
+
+
+
+
+
+
+  
+
+
+ 
+
+
+ 
+        
+ 
+   
+
+ 
+ 
+ 
+ 
+    
+
+
+ 
+ 
+        
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+    <font size="-1"><a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-nomenview.apg&amp;OID=ZDB-GENE-980526-166&amp;abbrev=shha">Nomenclature History</a>
+    </font>
+    <br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</p><hr width="80%">
+<b>GENE EXPRESSION:</b><font size="-1">(<a href="javascript:start_note('xpatselect_note')">current status</a></font>)
+
+
+    <table bgcolor="#eeeeee" border="0" width="100%">
+
+    
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+    
+
+	
+        
+    
+    
+
+        
+           
+
+      
+       
+            
+         <tbody><tr><td><b>All expression data: </b> </td>
+
+           <td>  
+     	       <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-xpatselect.apg&amp;query_results=true&amp;gene_name=shha&amp;xpatsel_geneZdbId=ZDB-GENE-980526-166">143 figure(s)</a> from 
+		113 publications
+      
+	        	
+           </td>
+         </tr>
+     
+
+     
+     
+
+
+     
+
+	 
+		 
+			 
+	     
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+		 
+		  
+	 
+
+	 
+	 
+
+	
+	<tr>
+	<td width="30%"><b>Wild Type Stages, Structures:</b></td>
+	<td width="70%">
+
+
+	 
+	 
+     <a href="http://frost.zfin.org/zf_info/zfbook/stages/index.html#Gastrula">Gastrula:50%-epiboly</a> (5.25h-5.66h) to <a href="http://frost.zfin.org/zf_info/zfbook/stages/index.html#Adult">Adult</a> (90d-730d, breeding adult)
+	 
+	 
+	</td>
+	</tr>
+	
+	<tr><td><b></b></td>
+	<td>
+	
+          <script>
+  
+function updateWTAnatomyList(display_option) {
+    var long_display = "   <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-512>axial chorda mesoderm</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050711-19>axial mesoderm</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-513>axis</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-020309-139>basal plate midbrain</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050711-79>blastema</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-415>brain</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-420>central nervous system</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-524>diencephalon</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050420-26>epidermal basal stratum</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-532>eye</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-433>floor plate</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-020309-24>floor plate diencephalon</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050711-68>floor plate hindbrain</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-020309-254>floor plate neural rod</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-060331-58>floor plate neural tube</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-020309-257>floor plate spinal cord</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-534>forebrain</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-537>gut</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-440>hindbrain</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-443>hypothalamus</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050711-66>lateral floor plate</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050711-67>medial floor plate</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-060131-32>mesencephalic tegmentum</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-020309-49>mesenchyme pectoral fin</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-454>mesoderm</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-020309-164>mesoderm pectoral fin bud</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-555>midbrain</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-560>neural plate</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-561>neural rod</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050228-33>neuroectoderm</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-564>notochord</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-566>optic stalk</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-020309-189>oral epithelium</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050304-1>pectoral fin</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-571>pectoral fin bud</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-011113-484>pectoral fin musculature</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050420-20>pharyngeal epithelium</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-477>prechordal plate</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-578>presumptive brain</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-011113-195>presumptive dorsal mesoderm</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050711-31>presumptive floor plate</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-479>presumptive forebrain</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050228-34>presumptive shield</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-011113-344>pretectum</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050711-78>regenerating fin</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-587>retina</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-496>tail bud</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-598>tegmentum</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-498>telencephalon</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050711-29>thalamus</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-041102-1>unspecified</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050228-1>whole organism</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-060131-22>zona limitans intrathalamica</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-060816-20>zone of polarizing activity pectoral fin bud</a></span>  <a href=\"javascript:updateWTAnatomyList('short');\"><img border=0 onClick=updateWTAnatomyList('short') src=http://frost.zfin.org/images/left_arrow.gif></a>";
+    var short_display = "   <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-512>axial chorda mesoderm</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050711-19>axial mesoderm</a></span> ... <a href=javascript:onClick=updateWTAnatomyList('long')>(all 54)</a> <img onClick=updateWTAnatomyList('long') src=http://frost.zfin.org/images/right_arrow.gif>";
+
+    if (display_option == "long") {
+        updateInnerHTML('wtAnatomyList',long_display)
+    }
+    else {
+        updateInnerHTML('wtAnatomyList',short_display)    
+    }
+}
+  
+</script>
+
+<span id="wtAnatomyList">
+
+  
+       <span nowrap=""><a href="http://frost.zfin.org/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-512">axial chorda mesoderm</a></span>, <span nowrap=""><a href="http://frost.zfin.org/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050711-19">axial mesoderm</a></span> ... <a href="javascript:onClick=updateWTAnatomyList('long')">(all 54)</a> <img onclick="updateWTAnatomyList('long')" src="webdriver_files/right_arrow.gif">
+  
+
+
+</span>
+
+
+
+
+  
+    
+    
+  
+  
+  
+  
+
+  
+	
+	</td>
+	</tr>
+	
+	</tbody></table>
+
+		 
+     
+      
+
+ 
+ 
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+
+
+
+
+
+
+   
+
+   
+
+       	 
+   
+   
+
+     
+       <hr width="80%">
+       <b>
+	MUTANTS AND TARGETED KNOCKDOWNS: 
+       </b> <br>
+       
+      
+     
+       <table bgcolor="#eeeeee" border="0" width="100%">
+     
+     <tbody><tr>
+     <td>
+       <b>Mutant line(s): &nbsp; </b>
+ 		 	 
+       
+	<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-fishselect.apg&amp;query_results=exist&amp;fsel_marker_id=ZDB-GENE-980526-166">12 genotypes (6 alleles)</a>
+      
+    </td></tr>
+    </tbody></table>
+  
+
+
+  
+
+ 
+    
+    
+ 
+
+ 
+  	
+ 
+ 
+   
+
+ 
+   
+   
+ 
+   
+   
+
+    
+
+   
+     
+
+       
+     
+     
+       
+        
+     
+   
+ 
+
+ <table bgcolor="#eeeeee" border="0" width="100%">
+    <tbody><tr><td> 
+       <b> Phenotype: </b><font size="-1">(<a href="javascript:start_note('phenotype_note')">current status</a></font>)
+    </td></tr>
+ </tbody></table>
+ <table bgcolor="#eeeeee" border="0" width="100%">
+      <tbody><tr> <td>&nbsp;</td>
+        <td><b> Data: </b>
+        </td><td>
+          <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pheno_summary.apg&amp;OID=ZDB-GENE-980526-166">6 figure(s)</a> from 2 publications
+        </td>
+      </tr>
+
+      
+      
+      
+     
+          
+              
+          
+
+          
+  	  
+     	    
+      	             
+	  
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+	       
+            
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+	       
+            
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+	       
+            
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+	       
+            
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+                        
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+                        
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+     
+          
+              
+          
+
+          
+  	  
+	    
+            
+              
+            
+          
+
+    
+
+    
+    
+    
+    
+    
+
+    <tr><td>&nbsp;</td>
+      <td><b>Observed in: </b></td>
+      <td> 
+        <script>
+           
+   	   function expandAnatomyList() {
+     	       var elem = document.getElementById("anatomyList");
+               elem.innerHTML = "<span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-060816-8>anatomical system</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-415>brain</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-532>eye</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-533>fin</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-433>floor plate</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-539>heart</a></span>, <span nowrap><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:0050881>musculoskeletal movement</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-031211-5>myoseptum</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-011113-319>nervous system</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-564>notochord</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050304-1>pectoral fin</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-011113-211>sensory system</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-031211-15>slow muscle cell</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-591>somite</a></span>, <span nowrap><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:0055002>striated muscle cell development</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-011113-220>surface structure</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050228-30>tail</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-050228-1>whole organism</a></span> <a href=javascript:onClick=shrinkAnatomyList()><img border=0 src=http://frost.zfin.org/images/left_arrow.gif></a>";	
+	   }
+
+   	   function shrinkAnatomyList() {
+     	       var elem = document.getElementById("anatomyList");
+               elem.innerHTML = "<span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-060816-8>anatomical system</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-415>brain</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-532>eye</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-533>fin</a></span>, <span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-433>floor plate</a></span> ... <a href=javascript:onClick=expandAnatomyList()>(all 18) <img border=0 src=http://frost.zfin.org/images/right_arrow.gif></a>";	
+	   }
+
+	   
+        </script> 
+
+        <span id="anatomyList">
+         <span nowrap=""><a href="http://frost.zfin.org/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-060816-8">anatomical system</a></span>, <span nowrap=""><a href="http://frost.zfin.org/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-415">brain</a></span>, <span nowrap=""><a href="http://frost.zfin.org/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-532">eye</a></span>, <span nowrap=""><a href="http://frost.zfin.org/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-533">fin</a></span>, <span nowrap=""><a href="http://frost.zfin.org/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-433">floor plate</a></span>
+
+            
+	   ... <a href="javascript:onClick=expandAnatomyList()">(all 18) <img src="webdriver_files/right_arrow.gif" border="0"></a>
+         
+       </span>
+
+     </td>
+    </tr>
+
+  </tbody></table>
+
+
+
+
+
+
+
+
+    
+
+  
+
+     
+  
+
+  
+
+    
+    
+    
+    
+         
+	 
+	  <table bgcolor="#eeeeee" border="0" width="100%">
+           <tbody><tr><td>
+  	     <b> Knockdown reagent: </b>
+	
+    
+
+    
+
+    <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-markerview.apg&amp;OID=ZDB-MRPHLNO-050204-6">
+	MO1-shha
+    </a>
+    (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-001019-12">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+	
+  
+  
+    </td></tr></tbody></table>
+  
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
+
+
+  
+  
+     
+  
+
+<!-- use vector storing the three ontology and loop through -->
+
+
+	
+
+	
+
+	
+
+
+    
+    
+   
+   
+   
+  
+
+    
+    
+   
+   
+   
+  
+
+    
+    
+   
+   
+   
+  
+
+
+  
+  
+
+
+ 
+ 
+	<hr width="80%">
+  	<b>GENE PRODUCTS: </b>
+        
+    
+	<p><b>Gene Ontology</b>
+      
+ 
+
+    
+    <table bgcolor="#eeeeee" border="0" width="100%">
+    <tbody><tr bgcolor="#ccccc0">
+         <td align="left" width="15%"><b><a href="http://frost.zfin.org/zf_info/GO.html">Ontology</a></b></td>
+        
+         <td><b>GO Term</b></td>
+
+
+<!-- use vector storing the three ontology and loop through for display -->
+
+
+
+    
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+    
+    
+    
+
+    
+   
+  	
+   
+   
+	</tr><tr><td nowrap="nowrap">Molecular Function</td>
+   
+   
+     
+   
+
+   
+       <td align="left"><a href="http://www.ebi.ac.uk/ego/QuickGO?mode=display&amp;entry=GO:0004866">endopeptidase inhibitor activity</a>
+     (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-markergoview.apg&amp;OID=ZDB-GENE-980526-166"><i>more</i></a>)</td>
+   
+
+   
+   </tr>
+
+
+    
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+    
+    
+    
+
+    
+   
+  	
+   
+   
+	<tr><td nowrap="nowrap">Biological Process</td>
+   
+   
+     
+   
+
+   
+       <td align="left"><a href="http://www.ebi.ac.uk/ego/QuickGO?mode=display&amp;entry=GO:0043010">camera-type eye development</a>
+     (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-markergoview.apg&amp;OID=ZDB-GENE-980526-166"><i>more</i></a>)</td>
+   
+
+   
+   </tr>
+
+
+    
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+    
+    
+    
+
+    
+   
+  	
+   
+   
+	<tr><td nowrap="nowrap">Cellular Component</td>
+   
+   
+     
+   
+
+   
+       <td align="left"><a href="http://www.ebi.ac.uk/ego/QuickGO?mode=display&amp;entry=GO:0016020">membrane</a>
+     (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-markergoview.apg&amp;OID=ZDB-GENE-980526-166"><i>more</i></a>)</td>
+   
+
+   
+   </tr>
+  
+
+</tbody></table>
+  
+    <table bgcolor="#eeeeee" border="0" width="100%">
+	<tbody><tr><td><a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-markergoview.apg&amp;OID=ZDB-GENE-980526-166">All GO Terms (38)</a></td>
+</tr></tbody></table>
+  
+ 
+  <!--------------- end of Gene Ontology --------------->
+
+
+  <!-----------------  Protein Sequence  -------------->
+  
+  
+
+    
+
+    
+
+        
+	</p><p><b>Protein Families, Domains and Sites: </b>
+  	
+	  
+	<table bgcolor="#eeeeee" border="0" width="100%">
+ 	 
+        <tbody><tr>
+      
+    
+    <td align="left">
+    <li>
+
+    
+    <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=IPR000320">InterPro:IPR000320</a> (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-2">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+
+    
+ 
+
+    
+
+      
+    
+    
+    </li><li>
+
+    
+    <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=IPR001657">InterPro:IPR001657</a> (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-2">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+
+    
+ 
+
+    
+
+      
+    
+    
+    </li><li>
+
+    
+    <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=IPR001767">InterPro:IPR001767</a> (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-2">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+
+    
+ 
+
+    
+
+      
+    
+    
+    </li><li>
+
+    
+    <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=IPR003586">InterPro:IPR003586</a> (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-2">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+
+    
+ 
+
+    
+
+      
+    
+    
+    </li><li>
+
+    
+    <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=IPR003587">InterPro:IPR003587</a> (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-2">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+
+    
+ 
+
+    
+
+      
+    
+    
+    </li><li>
+
+    
+    <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=IPR006141">InterPro:IPR006141</a> (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-2">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+
+    
+ 
+
+    
+
+      
+    
+    
+    </li><li>
+
+    
+    <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=IPR009045">InterPro:IPR009045</a> (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-2">1</a>)
+                
+
+
+      
+    </li></td>
+    <td align="left">
+    <li>
+
+    
+    <a href="http://www.expasy.ch/cgi-bin/nicesite.pl?PS50817">PROSITE:PS50817</a> (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-2">1</a>)
+
+    </li></td>
+    <td align="left">
+    <li>
+
+    
+    <a href="http://www.sanger.ac.uk/cgi-bin/Pfam/getacc?PF01079">Pfam:PF01079</a> (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-2">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+
+    
+ 
+
+    
+
+      
+    
+    
+    </li><li>
+
+    
+    <a href="http://www.sanger.ac.uk/cgi-bin/Pfam/getacc?PF01085">Pfam:PF01085</a> (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-2">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+
+    
+ 
+ 
+   </li></td></tr></tbody></table>
+ 
+
+  <!--------------end of Protein Sequences --------->
+
+  <!--------------- Gene Product Description ------->
+  
+  
+  
+        
+	</p><p><a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-geneprddescription.apg&amp;OID=ZDB-GENE-980526-166"><b>Gene Product Description</b></a>
+
+</p><hr width="80%">
+  </p>
+    <b>
+     ANTIBODIES
+    </b>
+<table bgcolor="#eeeeee" cols="2" width="100%">
+<tbody><tr>
+ <td>
+<span nowrap="">
+     <a href="antibody-detail.html">Ab12</a>,
+     <a href="antibody-detail.html">Ab15</a>,
+    <a href="antibody-detail.html">zhx1138</a>
+ </span>
+</td>
+</tr>
+</tbody></table>
+    
+
+
+  <!-----------end of Gene Product Description ------->
+
+ 
+
+<!------------------ end of GENE PRODUCT ---------------------->
+
+
+
+
+
+  
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   	
+  	</p><hr width="80%">
+  	  <b> 
+	     CONSTRUCTS WITH SEQUENCE FROM <i>shha</i>: 
+  	  </b>
+   <table bgcolor="#eeeeee" cols="2" width="100%"> 
+    <tbody><tr>
+     <td>
+<span id="TGList">
+     <span nowrap=""><a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-markerview.apg&amp;OID=ZDB-TGCONSTRCT-070117-7">Tg(-2.7shh:GFP)</a></span>, <span nowrap=""><a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-markerview.apg&amp;OID=ZDB-TGCONSTRCT-070607-8">Tg(-2.4shha-BC:GFP)</a></span>, <span nowrap=""><a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-markerview.apg&amp;OID=ZDB-TGCONSTRCT-070607-3">Tg(-2.4shha-A:GFP)</a></span>, <span nowrap=""><a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-markerview.apg&amp;OID=ZDB-TGCONSTRCT-070607-4">Tg(-2.4shha-B:GFP)</a></span> ... <a href="javascript:onClick=updateTGList('long')">(all 9)</a> <img onclick="updateTGList('long')" src="webdriver_files/right_arrow.gif">
+</span>
+     </td>
+    </tr>	 
+   </tbody></table>
+
+
+
+
+
+
+
+
+
+
+
+
+     
+
+
+  <hr width="80%">
+  <b>
+  
+    SEGMENT (CLONE AND PROBE) RELATIONSHIPS:
+  
+  </b>
+
+
+  
+
+<table border="0" width="100%">
+	
+       <tbody><tr>
+        <td bgcolor="#eeeeee">       			
+	      
+			shha Contained in
+	      
+        </td>
+  	    <td align="left" bgcolor="#eeeeee" width="80%">
+      
+	  
+       
+
+    
+        
+        
+		    <font size="-1">[BAC]</font>
+		 
+    
+  
+    
+
+	<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-markerview.apg&amp;OID=ZDB-BAC-050218-1103">
+	    CH211-150E22
+	</a>
+
+	(<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020822-1">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+
+	<font size="-1">
+
+    
+
+      
+		&nbsp;&nbsp;
+		(<a href="http://bacpac.chori.org/order_clones.php?cloneList=CH211-150E22">order this</a>)
+      
+
+    
+    </font>
+
+       
+
+		
+		
+
+	
+
+  </td>
+</tr> 
+
+
+    
+	
+       
+ 
+
+
+    
+</tbody></table>
+
+
+
+ 
+
+<!------------------ end of MARKER RELATIONSHIP --------------->
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <hr width="80%">
+    <a name="sequence"><b>SEQUENCE INFORMATION:</b></a>
+
+
+  
+
+
+
+  <table bgcolor="#eeeeee" border="0" width="100%">
+    <tbody><tr>
+      <td bgcolor="#ccccc0" width="30%"><b>Type</b></td>
+      <td bgcolor="#ccccc0" width="40%"><b>Accession #</b></td>
+      <td align="right" bgcolor="#ccccc0" width="10%"><b>Length</b></td>
+      <td align="center" bgcolor="#ccccc0" width="20%"><a href="javascript:start_help()"><b>Analysis</b></a></td>
+    </tr>
+    
+    
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+          <tr>
+            <td>
+              cDNA:
+            </td>
+            <td>
+              
+              <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=NM_131063">RefSeq:NM_131063</a>
+
+              
+                (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-3">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+              
+            </td>
+            <td align="right">
+              <nobr>
+                2600
+                
+                    bp
+                   
+                
+              </nobr>
+            </td>
+            <td align="center">
+              <script type="text/javascript" language="JavaScript">
+function jump(form_select){
+    if (0 != form_select.selectedIndex){
+        window.open(form_select.options[form_select.selectedIndex].value,parseInt(Math.random()*2000000000));
+    }
+    return true;
+}
+</script>
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+            
+   
+
+    <form name="cdna_seq_tool" method="get"><div>
+      <select name="select_cdna" onchange="return jump(this);">
+        <option value="none" selected="selected">- Select Tool -</option>
+        
+           
+            
+	    <option value="/cgi-bin_frost/webdriver?MIval=aa-blast.apg&amp;PROGRAM=blastn&amp;SEQ_TYPE=nt&amp;SEQ_ID=NM_131063&amp;DATALIB=zfin_cdna_seq">ZFIN BLAST</option>
+            <option value="http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?DATABASE=nr&amp;PAGE=Nucleotides&amp;PROGRAM=blastn&amp;QUERY=NM_131063">NCBI BLAST</option>
+            <option value="http://www.ensembl.org/Multi/blastview?species=Danio_rerio&amp;_pfetch_accession=NM_131063">Ensembl</option>
+            <option value="http://genome.ucsc.edu/cgi-bin/hgTracks?org=Zebrafish&amp;db=danRer4&amp;position=NM_131063">UCSC BLAT</option>
+            
+        
+    </select><div>
+    
+
+    
+
+
+
+            </div></div></form></td>
+          </tr>
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+          <tr>
+            <td>
+              Genomic:
+            </td>
+            <td>
+              
+              <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&amp;db=Nucleotide&amp;doptcmdl=GenBank&amp;term=AL929206">GenBank:AL929206</a>
+
+              
+                (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-030703-1">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+              
+            </td>
+            <td align="right">
+              <nobr>
+                153126
+                
+                    bp
+                   
+                
+              </nobr>
+            </td>
+            <td align="center">
+              <script type="text/javascript" language="JavaScript">
+function jump(form_select){
+    if (0 != form_select.selectedIndex){
+        window.open(form_select.options[form_select.selectedIndex].value,parseInt(Math.random()*2000000000));
+    }
+    return true;
+}
+</script>
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+            
+   
+
+    
+            
+      <form name="genomic_seq_tool"><div>
+        <select name="select_genomic" onchange="return jump(this);">
+          <option value="none" selected="selected">- Select Tool -</option>
+
+	    
+              
+              <option value="http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?DATABASE=nr&amp;PAGE=Nucleotides&amp;PROGRAM=blastn&amp;QUERY=AL929206">MegaBLAST</option>
+              <option value="http://www.ensembl.org/Multi/blastview?species=Danio_rerio&amp;_pfetch_accession=AL929206">Ensembl</option>
+              
+	    
+        </select><div>
+      
+
+    
+
+
+
+            </div></div></form></td>
+          </tr>
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+          <tr>
+            <td>
+              Polypeptide:
+            </td>
+            <td>
+              
+              <a href="http://www.uniprot.org/entry/Q1MTB5">UniProt:Q1MTB5</a>
+
+              
+                (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-2">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+              
+            </td>
+            <td align="right">
+              <nobr>
+                418
+                
+                    aa
+                   
+                
+              </nobr>
+            </td>
+            <td align="center">
+              <script type="text/javascript" language="JavaScript">
+function jump(form_select){
+    if (0 != form_select.selectedIndex){
+        window.open(form_select.options[form_select.selectedIndex].value,parseInt(Math.random()*2000000000));
+    }
+    return true;
+}
+</script>
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+            
+   
+
+    
+    <form name="prot_seq_tool" method="get"><div>
+       <select name="select_prot" onchange="return jump(this);">
+          <option value="none" selected="selected">- Select Tool -</option>
+	  
+          
+	    
+	    <option value="/cgi-bin_frost/webdriver?MIval=aa-blast.apg&amp;PROGRAM=blastp&amp;DATALIB=sptr_zf&amp;SEQ_TYPE=pt&amp;SEQ_ID=Q1MTB5&amp;DATALIB=sptr_zf">ZFIN BLAST</option>
+	    <option value="http://us.expasy.org/cgi-bin/blast.pl?sequence=Q1MTB5"> SIB BLAST</option>
+            <option value="http://www.ensembl.org/Multi/blastview?species=Danio_rerio&amp;_pfetch_accession=Q1MTB5&amp;query=peptide&amp;database=peptide">Ensembl</option>
+	    	
+	  
+        
+       </select><div>
+   
+
+       
+
+
+
+            </div></div></form></td>
+          </tr>
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+          <tr>
+            <td>
+              Vega Transcript:
+            </td>
+            <td>
+              
+              <a href="http://vega.sanger.ac.uk/Danio_rerio/transview?db=core;transcript=OTTDART00000022325">Vega_Trans:OTTDART00000022325</a>
+
+              
+                (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-030703-1">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+              
+            </td>
+            <td align="right">
+              <nobr>
+                2608
+                
+                    bp
+                   
+                
+              </nobr>
+            </td>
+            <td align="center">
+              <script type="text/javascript" language="JavaScript">
+function jump(form_select){
+    if (0 != form_select.selectedIndex){
+        window.open(form_select.options[form_select.selectedIndex].value,parseInt(Math.random()*2000000000));
+    }
+    return true;
+}
+</script>
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+            
+   
+
+
+
+            </td>
+          </tr>
+        
+        
+        
+       
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+        
+        
+          <tr>
+            <td>
+              Sequence Clusters:
+            </td>
+            <td>
+              
+              <a href="http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=Dr&amp;CID=36074">UniGene:36074</a>
+
+              
+                (<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-3">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+              
+            </td>
+            <td align="right">
+              <nobr>
+                
+                
+              </nobr>
+            </td>
+            <td align="center">
+              <script type="text/javascript" language="JavaScript">
+function jump(form_select){
+    if (0 != form_select.selectedIndex){
+        window.open(form_select.options[form_select.selectedIndex].value,parseInt(Math.random()*2000000000));
+    }
+    return true;
+}
+</script>
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+            
+   
+
+
+
+            </td>
+          </tr>
+        
+        
+        
+    
+
+    
+      <tr>
+        <td colspan="4">
+          
+            <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-sequence.apg&amp;OID=ZDB-GENE-980526-166">All Sequence Information (23)</a>
+          
+        </td>
+      </tr>
+    
+  </tbody></table>
+ 
+
+
+
+
+
+
+<!------------   OTHER MARKER PAGES   ------------------------------->
+    
+
+   
+    
+    
+    
+    
+    
+
+    
+
+    
+
+    
+      
+    
+
+  
+
+   
+    
+    
+    
+    
+    
+
+    
+
+    
+    
+      
+    
+      
+    
+
+    
+      
+    
+
+  
+
+  
+
+    
+    
+      
+        
+      
+    
+    
+
+  
+    <hr width="80%">
+    <b>OTHER &nbsp;<i>shha</i>&nbsp; GENE / MARKER PAGES:</b>
+
+  
+
+    
+        
+        
+            <table bgcolor="#eeeeee" border="0" width="100%"><tbody><tr><td>
+        
+         <nobr><li>
+        
+       <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene&amp;cmd=Retrieve&amp;dopt=Graphics&amp;list_uids=30269">Entrez Gene:30269</a>&nbsp;(<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-020723-3">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+        </li></nobr>
+      
+      </td><td>
+         <nobr><li>
+        
+       <a href="http://vega.sanger.ac.uk/Danio_rerio/geneview?gene=OTTDARG00000018404">VEGA:OTTDARG00000018404</a>&nbsp;(<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-pubview2.apg&amp;OID=ZDB-PUB-030703-1">1</a>)
+                
+	      		
+       
+	
+    
+   
+   
+     
+   
+
+ 
+
+        </li></nobr>
+      </td></tr>
+            </tbody></table>
+        
+    
+
+  
+
+
+<!------------   ends   OTHER MARKER PAGES   ------------------------>
+
+
+
+
+
+
+
+  <hr align="center" width="80%">
+  <b>MAPPING INFORMATION:  </b>
+
+  <table bgcolor="#eeeeee" width="100%">
+   <tbody><tr>
+    <td>
+       &nbsp;&nbsp;LG:
+     
+     
+
+     
+	&nbsp;7
+     
+     
+  
+  
+  
+
+
+  
+
+  
+    &nbsp;
+  	
+  
+
+
+
+
+
+ &nbsp;<a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-mappingdetail.apg&amp;OID=ZDB-GENE-980526-166">Details</a>
+
+
+
+    
+	</td><td>
+	   &nbsp; View Map:
+  	   
+	   	
+		
+		 
+		
+		 
+		
+		 
+		
+		 
+		
+		 
+		
+		 
+		
+		 
+		
+	      <a href="http://frost.zfin.org/cgi-bin_frost/view_zmapplet.cgi?&amp;userid=GUEST&amp;OID=ZDB-GENE-980526-166&amp;view_map=view_map&amp;ZMAP=1&amp;LN54=1&amp;T51=1&amp;MGH=1&amp;HS=1&amp;MOP=1&amp;GAT=1">Merged</a>&nbsp;
+	      <a href="http://frost.zfin.org/cgi-bin_frost/view_mapplet.cgi?&amp;userid=GUEST&amp;OID=ZDB-GENE-980526-166&amp;view_map=view_map&amp;ZMAP=1&amp;LN54=1&amp;T51=1&amp;MGH=1&amp;HS=1&amp;MOP=1&amp;GAT=1">Individual Panels</a>
+	  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </td>
+   </tr>
+  </tbody></table>
+
+
+
+<form name="updater1">
+
+<!------------ ORTHOLOGY ------------------------------------>
+
+
+ <hr width="80%">
+ <a name="orthologue"><b>ORTHOLOGY:</b></a>
+ 
+ 
+
+ <table bgcolor="#eeeeee" border="0" width="100%">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+
+  
+    <tbody><tr>
+      <td colspan="4"></td>
+      <td colspan="2" align="left" bgcolor="#ccccc0"><b>Evidence</b></td>
+    </tr>
+  
+  
+  <tr bgcolor="#ccccc0">
+    <td><b>Species</b></td>
+    <td><b>Symbol</b></td>
+    <td><b>Chromosome (Position)</b></td>
+    <td><b>Accession #</b></td>
+    
+      
+      
+      
+    
+      
+      
+      
+    
+	
+    
+      
+	<td align="center"><b><a href="http://frost.zfin.org/zf_info/oev.html">AA</a></b></td>
+               
+    
+      
+	<td align="center"><b><a href="http://frost.zfin.org/zf_info/oev.html">CL</a></b></td>
+               
+    
+  </tr>  
+
+  <tr>
+    <td><b>Zebrafish</b></td>
+    <td>shha</td>
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        
+           
+    <td>&nbsp;7
+ </td> 
+         
+        
+    <td></td> 
+    
+      <td align="center"><b><img src="webdriver_files/fill_green_ball.gif" border="0" height="10"></b></td>	   
+    
+      <td align="center"><b><img src="webdriver_files/fill_green_ball.gif" border="0" height="10"></b></td>	   
+    
+  </tr>
+  
+  
+  
+  
+    
+    
+    
+    
+     
+    <tr>
+      
+        <td><b>Human</b></td>
+        <td>SHH</td>   
+         
+      
+        
+          <td>&nbsp;7 (q36)</td>
+         
+       
+      
+      <td align="left">
+        
+        	
+          
+          
+          
+          
+            <li><a href="http://www.ncbi.nlm.nih.gov/entrez/dispomim.cgi?id=600725">OMIM:600725</a>
+          
+        	
+          
+          
+          
+          
+            </li><li><a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene&amp;cmd=Retrieve&amp;dopt=Graphics&amp;list_uids=6469">Entrez Gene:6469</a>
+          
+         
+      </li></td>
+
+      
+      
+        
+          
+          <td align="center"><b>
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+            
+          <img src="webdriver_files/fill_green_ball.gif" border="0" height="10">
+          </b></td>
+        
+          
+          <td align="center"><b>
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+            
+          <img src="webdriver_files/fill_green_ball.gif" border="0" height="10">
+          </b></td>
+        
+               
+       
+    </tr>
+  
+    
+    
+    
+    
+     
+    <tr>
+      
+        <td><b>Mouse</b></td>
+        <td>Shh</td>   
+         
+      
+        
+          <td>&nbsp;5 (16.00 cM)</td>
+         
+       
+      
+      <td align="left">
+        
+        	
+          
+          
+          
+          
+            <li><a href="http://www.informatics.jax.org/searches/accession_report.cgi?id=MGI:98297">MGI:98297</a>
+          
+        	
+          
+          
+          
+          
+            </li><li><a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene&amp;cmd=Retrieve&amp;dopt=Graphics&amp;list_uids=20423">Entrez Gene:20423</a>
+          
+         
+      </li></td>
+
+      
+      
+        
+          
+          <td align="center"><b>
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+            
+          <img src="webdriver_files/fill_green_ball.gif" border="0" height="10">
+          </b></td>
+        
+          
+          <td align="center"><b>
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+          
+            
+            
+                      
+            
+          <img src="webdriver_files/fill_green_ball.gif" border="0" height="10">
+          </b></td>
+        
+               
+       
+    </tr>
+    
+  
+  
+     
+  <tr>
+    
+    <td colspan="2" align="left">
+      <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-orthoviewdetailed.apg&amp;OID=ZDB-GENE-980526-166&amp;abbrev=shha&amp;userid=GUEST">
+        <b>Orthology Details</b>
+      </a>
+    </td>
+      
+    <td colspan="4"></td> 
+  </tr>
+  
+
+  
+    
+    
+    
+  	  
+    
+
+  
+</tbody></table>
+
+
+
+<!-------------- ends ORTHOLOGY ------------------------------------>
+
+
+<!------------------ PUBLICATION ------------------------------------>
+
+
+
+
+
+
+    
+<hr width="80%">
+    
+
+    
+
+	
+	
+  	  
+  	  <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-showpubs.apg&amp;OID=ZDB-GENE-980526-166&amp;rtype=marker&amp;title=Gene+Name&amp;name=sonic+hedgehog+a&amp;abbrev=shha&amp;total_count=263"><b>CITATIONS</b></a>
+  	  
+	
+		
+ 	 &nbsp; (263)
+	
+
+    
+        
+        
+        
+    
+
+
+
+
+  
+
+
+
+
+<!----------------- ends PUBLICATION ----------------->
+
+</form> 
+
+
+ <!-- ends cond authorize exists -->
+
+ <!-- name NC novalue and romwcount > 0 -->
+
+ <!-- ends cond oid exists -->
+
+
+
+</div> <!-- allcontent -->
+
+<div id="footer">
+
+  <div id="footerlinks">
+    <a href="http://frost.zfin.org/cgi-bin_frost/webdriver?MIval=aa-ZDB_home.apg">Home</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider"> 
+
+    <a href="http://frost.zfin.org/zf_info/dbase/db.html">About ZFIN</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider"> 
+
+    <a href="http://frost.zfin.org/zf_info/citation.html">Citing ZFIN</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider"> 
+
+    <a href="http://frost.zfin.org/zf_info/glossary.html">Glossary</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider"> 
+
+    <a href="http://frost.zfin.org/ZFIN/misc_html/tips.html">Help and Tips</a>
+     <img src="webdriver_files/research-dot.png" class="hdr-linkbar-divider"> 
+
+    <a href="http://frost.zfin.org/zf_info/contact_us.html">Contact ZFIN</a>
+  </div>
+
+  <div id="footercredits">
+      <center>
+      <span id="footer-generous-support">Development of the Zebrafish Database is generously supported by the NIH (P41 HG002659). <br> </span> 
+      <a href="http://frost.zfin.org/warranty.html">Disclaimer, limitations, copyright ©  </a> <a href="http://www.uoregon.edu/">
+      University of Oregon</a>, 1994-2007,<a href="http://www.ci.eugene.or.us/"> Eugene</a>, Oregon. <br>
+      <small>ZFIN logo design by Kari Pape, <a href="http://www.uoregon.edu/">University of Oregon</a></small><br>
+
+      
+      </center>
+  </div>
+
+</div>
+
+<!-- start AWStats -->
+<script src="webdriver_files/awstats_misc_tracker.js" type="text/javascript">' ;
+</script>
+<script type="text/javascript/">;
+<noscript><img src="/javascript/awstats_misc_tracker.js?nojs=y" height=0 width=0 border=0 style="display: none"></noscript>;
+</script>
+<!-- End AWStats -->
+
+
+<!-- Start GOOGLE Analytics -->
+<script src="webdriver_files/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-2417927-1";
+urchinTracker();
+</script>
+<!-- End GOOGLE Analytics -->
+
+
+
+
+</body></html>
