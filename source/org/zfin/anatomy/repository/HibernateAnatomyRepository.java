@@ -177,14 +177,22 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
     public List<AnatomyRelationship> getAnatomyRelationships(AnatomyItem anatomyItem) {
         List<AnatomyRelationship> allRelationships = new ArrayList<AnatomyRelationship>();
         Session session = HibernateUtil.currentSession();
-        Criteria criteriaOne = session.createCriteria(AnatomyRelationshipOne.class)
-                .add(Restrictions.eq("anatomyItemOne", anatomyItem));
-        List<AnatomyRelationship> list = criteriaOne.list();
+        String hqlOne = "select rel from AnatomyRelationshipOne rel, AnatomyItem term " +
+                " where rel.anatomyItemOne = term AND" +
+                "       term = :aoTerm  " +
+                "       order by rel.anatomyItemTwo.nameOrder asc ";
+        Query queryOne = session.createQuery(hqlOne);
+        queryOne.setParameter("aoTerm", anatomyItem);
+        List<AnatomyRelationship> list = queryOne.list();
         allRelationships.addAll(list);
 
-        Criteria criteriaTwo = session.createCriteria(AnatomyRelationshipTwo.class)
-                .add(Restrictions.eq("anatomyItemTwo", anatomyItem));
-        List<AnatomyRelationship> list2 = criteriaTwo.list();
+        String hqlTwo = "select rel from AnatomyRelationshipTwo rel, AnatomyItem term " +
+                " where rel.anatomyItemTwo = term AND" +
+                "       term = :aoTerm  " +
+                "       order by rel.anatomyItemOne.nameOrder asc ";
+        Query queryTwo = session.createQuery(hqlTwo);
+        queryTwo.setParameter("aoTerm", anatomyItem);
+        List<AnatomyRelationship> list2 = queryTwo.list();
         allRelationships.addAll(list2);
 
         return allRelationships;
