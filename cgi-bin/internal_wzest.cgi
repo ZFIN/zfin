@@ -13,7 +13,7 @@ The Fasta record(s) for $key are:<P><P><pre>
 _END_
 ;
 
-system "/private/apps/wublast/xdget -n /research/zblastdb/db/Current/wz_estO $key";
+system "/private/apps/wublast/xdget -n /research/zblastdb/db/Current/wz_est $key";
 print  "</pre>\n";
 print "<script language='JavaScript1.2' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";
 
