@@ -31,6 +31,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/javascript
 
+SUBDIRS  = ajax-lib
+
 STATICS = patocuration.js ncbo-term-info.js term_completer.js \
 	dichty-term-info.js json.js sessionstate.js prototype.js \
 	awstats_misc_tracker.js
