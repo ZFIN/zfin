@@ -933,6 +933,18 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
    <?/MIVAR>
 <?/MIVAR>
 
+<?MICOMMENT> =============================================
+             ==    placeholder gene disclaimer
+             =============================================
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(POSITION,$abbrev,:)">
+    <?MIVAR NAME="mvphnote_mrkr_abbrev">$abbrev<?/MIVAR>
+    <?MIVAR NAME="mvphnote_mrkr_type">$marker_type<?/MIVAR>
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-markerview_placeholder_note.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+
 <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
         <br>$1 End name/note section 
