@@ -303,7 +303,8 @@ public class Marker implements Serializable, Comparable {
         SNP("SNP"),
         SSLP("SSLP"),
         STS("STS"),
-        TGCONSTRCT("TGCONSTRCT");
+	TGCONSTRCT("TGCONSTRCT"),
+	INDEL("INDEL");
 
         private final String value;
 
