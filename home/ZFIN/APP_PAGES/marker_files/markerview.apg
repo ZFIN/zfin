@@ -1792,6 +1792,20 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
 <?/MIBLOCK> <?MICOMMENT> marker is a gene ($type_of_genedom exists) <?/MICOMMENT>
 
 <!------------------ end of GENE PRODUCT ---------------------->
+<?MIVAR NAME=mrkrview_mrkr_fam><?/MIVAR>
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+        <?MISQL SQL="select
+                     * from marker_family_member
+                     where mfammem_mrkr_zdb_id='$OID'">
+        <?MIVAR NAME=$mrkrview_mrkr_fam>$1<?/MIVAR>
+        <?/MISQL>
+        <?MIBLOCK COND="$(NC,$mrkrview_mrkr_fam,)">
+<p>
+          <b>Gene Family:</b>
+            <?MIVAR>$mrkrview_mrkr_fam<?/MIVAR>
+
+        <?/MIBLOCK>
+<?/MIBLOCK>
 
 
 
