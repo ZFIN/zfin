@@ -139,11 +139,11 @@ public class CandidateBeanValidator implements Validator {
                 && candidateBean.isRename()) {
             errors.rejectValue("geneAbbreviation", "code", "Can't rename a novel gene");
         }
-        if (candidateBean.isRename()){
-                if (candidateBean.getGeneAbbreviation().equals(suggestedName)) {
-                 errors.rejectValue("geneAbbreviation", "code", "Cannot rename a gene to an exisiting gene name.");
-            }
-        }
+//        if (candidateBean.isRename()){
+//                if (candidateBean.getGeneAbbreviation().equals(suggestedName)) {
+//                 errors.rejectValue("geneAbbreviation", "code", "Cannot rename a gene to an exisiting gene name.");
+//            }
+//        }
     }
 
     //todo: do we need to deal with genes directly associated with accessions for nomenclature?  or is that how it always happens?
