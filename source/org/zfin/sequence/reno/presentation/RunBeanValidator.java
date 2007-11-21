@@ -34,7 +34,7 @@ public class RunBeanValidator implements Validator {
 
         // if Redundancy, also validate Relations attribution zdb id
         if (run.isRedundancy()) {
-            PublicationValidator.validatePublicationID(runBean.getOrthologyPublicationZdbID(), RunBean.RELATION_PUBLICATION_ZDB_ID, errors);
+            PublicationValidator.validatePublicationID(runBean.getRelationPublicationZdbID(), RunBean.RELATION_PUBLICATION_ZDB_ID, errors);
         }
     }
 
