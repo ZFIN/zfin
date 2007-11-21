@@ -188,6 +188,11 @@
         <property name="passwordEncoder">
             <bean class="org.acegisecurity.providers.encoding.Md5PasswordEncoder"/>
         </property>
+        <property name="saltSource">
+            <bean class="org.acegisecurity.providers.dao.salt.SystemWideSaltSource" >
+                <property name="systemWideSalt" value="dedicated to George Streisinger" />
+            </bean>
+        </property>
     </bean>
 
 
