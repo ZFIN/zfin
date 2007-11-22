@@ -369,17 +369,17 @@ public class mapplet extends Applet  {
 		String target_frame;
 
 		if (ZDB_ID.indexOf("GENO") > -1) {
-			if (getParameter("geno_url") != null)
-				marker_url = getParameter("geno_url");
-			else
-                marker_url = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=";
+		    if (getParameter("geno_url") != null)
+			marker_url = getParameter("geno_url");
+		    else
+			marker_url = "/cgi-bin/ZFIN_jump?record=";
 		} else {
-			if (getParameter("marker_url") != null)
-				marker_url = getParameter("marker_url");
-			else
-				marker_url = "/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=";
-		}
-
+		    if (getParameter("marker_url") != null)
+			marker_url = getParameter("marker_url");
+		    else
+			marker_url = "/cgi-bin/ZFIN_jump?record=";
+				}
+		
 		if (getParameter("target_frame") != null)
 			target_frame = getParameter("target_frame");
 		else
@@ -390,7 +390,9 @@ public class mapplet extends Applet  {
 
 
 		URL U = null;
-		try { U = new URL("http", getDocumentBase().getHost(),marker_url + ZDB_ID); } catch (MalformedURLException e) { System.err.println(e); }
+		try { 
+		    U = new URL("http", getDocumentBase().getHost(),getDocumentBase().getPort(),marker_url + ZDB_ID); 
+                } catch (MalformedURLException e) { System.err.println(e); }
 		System.err.println("opening: " + U + ", in: " + target_frame);
 		this.getAppletContext().showDocument(U, target_frame);
 
