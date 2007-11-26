@@ -93,9 +93,6 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         int markerCount = pr.getAllExpressedMarkersCount(anatomyTerm);
         form.setTotalNumberOfExpressedGenes(markerCount);
 
-        AnatomyStatistics statisticsMutant = anatomyRepository.getAnatomyStatisticsForMutants(anatomyTerm.getZdbID());
-        form.setAnatomyStatisticsMutant(statisticsMutant);
-
         AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getZdbID());
         form.setAnatomyStatistics(statistics);
     }
@@ -109,6 +106,9 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         form.setGenotypes(genotypes);
         List<GenotypeStatistics> genoStats = createGenotypeStats(genotypes, ai);
         form.setGenotypeStatistics(genoStats);
+
+        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(ai.getZdbID());
+        form.setAnatomyStatisticsMutant(statistics);
     }
 
     private void retrieveMorpholinoData(AnatomyItem ai, AnatomySearchBean form) {
