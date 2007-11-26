@@ -4,12 +4,14 @@
 
 
 
-<% if(request.getParameter("error") != null){ %>
-Wrong credentials. Please try again.
-<% } %>
 
 <div style="width: 30em; margin: 3em auto; padding-top: 1em;">
 
+    <% if(request.getParameter("error") != null){ %>
+    <span style="color:red">
+        Wrong Login/Password. Please try again or contact <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>
+        </span>
+    <% } %><br/>
     <zfin2:spiffyCorners>
      <div style="padding: 2em;">
          <form id="login" name="login" action="/action/security-check"
