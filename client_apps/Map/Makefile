@@ -29,9 +29,10 @@ TARGETIMAGES = $(foreach IMG, $(IMAGES), $(FINALTARGETDIR)/$(IMG))
 
 # ---- Misc Java varaibles
 
-# Use the standard JAVAC, and JAVACFLAGS.  Still need to define classpath.
+# Use JAVAC14 & JAVAHOME14 because it's an applet and we want clients to be able to
+# run it with older java plugins.  Still need to define classpath.
 
-CLASSPATH = $(STAGINGDIR):$(JAVAHOME)/lib/classes.zip:$(TOP)/lib/Java
+CLASSPATH = $(STAGINGDIR):$(JAVAHOME14)/lib/classes.zip:$(TOP)/lib/Java
 
 IMPORTPATH = $(TARGETROOT)/lib/Java
 NETSCAPEPATH = $(IMPORTPATH)/netscape
@@ -79,7 +80,7 @@ $(TARGETIMAGES) : $(FINALTARGETDIR)/% : %
 # When any class file needs to be remade, remake all of them.
 
 $(STAGINGCLASSES) : $(STAGINGJAVAS)
-	$(JAVAC) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
+	$(JAVAC14) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
 
 
 # ----- Rules for creating the JAR file.
