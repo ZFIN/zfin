@@ -155,6 +155,10 @@ WEBLINTIFMX = $(INFORMIXDIR)/extend/web.4.13.FC2/utils/weblint 2 <
 JAVAHOME  = /private/apps/java
 JAVAC      = $(JAVAHOME)/bin/sparcv9/javac
 
+JAVAHOME14 = /private/apps/java1.4
+JAVAC14    = $(JAVAHOME14)/bin/javac
+
+
 # --- Make JDBC 3.0 the default JDBC
 
 JDBCHOME     = /private/apps/jdbc3
