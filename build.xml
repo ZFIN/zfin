@@ -487,6 +487,7 @@
         </exec>
         <delete file="${basedir}/home/WEB-INF/zfin-change-properties.xml"/>
         <antcall target="jsp-compile"/>
+        <antcall target="set-deploy-permissions"/>
     </target>
 
     <target name="dirtydeploy" depends="compile"
@@ -526,6 +527,7 @@
             <arg value="${env.TRANSLATETABLE}"/>
             <arg value="${env.TARGETROOT}/home/WEB-INF/zfin-properties.xml"/>
         </exec>
+        <antcall target="set-deploy-permissions"/>
     </target>
 
 
@@ -546,16 +548,36 @@
     </target>
 
 
+    <target name="am-i-informix">
+        <condition property="i.am.informix">
+            <equals arg1="${env.USER}" arg2="informix"/>
+        </condition>
+    </target>
+
+    <target name="set-deploy-permissions" depends="am-i-informix" if="i.am.informix">
+        <!--<echo message="Running as informix, doing chmod of jsp-compile and java deploy dirs"/>-->
+        <echo message="chmod a+rX for $TARGETROOT and $CATALINA_BASE:"/>
+        <chmod perm="a+rX" type="both" verbose="true" >
+            <fileset dir="${env.TARGETROOT}">
+              <exclude name="**/CurrentDataModel/**"/>
+            </fileset>
+            <fileset dir="${env.CATALINA_BASE}"/>
+        </chmod>
+        <echo message="chmod a+rwX for $CATALINA_BASE/work: "/>
+        <chmod perm="a+rwX" type="both"  verbose="true" >
+            <fileset dir="${env.CATALINA_BASE}/work"/>
+        </chmod>
+    </target>
+
 
 
 
     <!-- todo: the location of the commons tree should probably come from the env -->
     <property name="tomcat-script" value="/private/ZfinLinks/Commons/bin/tomcat.sh"/>
-
     
     <target name="tomcat-start">
         <exec executable="${tomcat-script}">
-         <arg value="start"/>
+            <arg value="start"/>
         </exec>
     </target>
 
@@ -646,8 +668,23 @@
                 <filter token="INFORMIXPORT" value="${informixport}"/>
             </filterset>
         </copy>
+        <antcall target="set-catalina-base-perms"/>
     </target>
 
+    <target name="set-catalina-base-perms" depends="am-i-informix" if="i.am.informix">
+        <echo message="chmod a+rX for $CATALINA_BASE"/>
+        <chmod perm="a+rX" type="both" verbose="true">
+            <fileset dir="${env.CATALINA_BASE}"/>
+        </chmod>
+
+        <echo message="chmod a+rwX for $CATALINA_BASE/work"/>
+        <chmod perm="a+rwX" type="both" verbose="true">
+            <fileset dir="${env.CATALINA_BASE}/work"/>
+        </chmod>
+        <echo message="************************************************************************************"/>
+        <echo message="* As yourself, please do: 'sudo chown -R zfishweb /private/etc/tomcat/almost/logs' *"/>
+        <echo message="************************************************************************************"/>
+    </target>
 
     <target name="jsp-compile"> 
         <taskdef classname="org.apache.jasper.JspC" name="jasper2" > 
