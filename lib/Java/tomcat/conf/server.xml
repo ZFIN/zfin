@@ -26,9 +26,9 @@
                clientAuth="false" sslProtocol="TLS" compression="on" keystoreFile="/private/apps/tomcat/conf/keystore"/>
     
 
-    <Engine name="Catalina" defaultHost="@MUTANT@.zfin.org">
+    <Engine name="Catalina" defaultHost="@DOMAIN-NAME@">
 
-      <Host name="@MUTANT@.zfin.org" appBase="webapps"
+      <Host name="@DOMAIN-NAME@" appBase="webapps"
        unpackWARs="true" autoDeploy="false"
        xmlValidation="false" xmlNamespaceAware="false">
 

@@ -3,12 +3,12 @@
 -->
 
 
-<Context docBase="/research/zcentral/www_homes/@MUTANT@/j2ee/phenote/deploy"
+<Context docBase="@TARGETROOT@/j2ee/phenote/deploy"
          privileged="false" antiResourceLocking="false" antiJARLocking="false" swallowOutput="true">
 
 <Valve className="org.apache.catalina.valves.AccessLogValve"
                  fileDateFormat="yyyy-MM"
-                 directory="logs"  prefix="@MUTANT@_phenote_access_log." suffix=".txt"
+                 directory="logs"  prefix="@DOMAIN-NAME@_phenote_access_log." suffix=".txt"
                  pattern="common" resolveHosts="false"/>
  
  <Parameter name="lazy-load" value="true" override="true"/>
