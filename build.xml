@@ -20,6 +20,7 @@
 
     <!-- The destination directory for all the compiled classes. -->
     <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+
     <!-- The destination directory for all the compiled classes. -->
     <property name="home.target" value="${env.TARGETROOT}/home"/>
     <property name="web-inf.target" value="${home.target}/WEB-INF"/>
@@ -74,21 +75,21 @@
 
     <!-- Tomcat related environment variables -->
     <property name="mutant-name" value="${env.MUTANT_NAME}"/>
-    <property name="mutantdb" value="${env.DBNAME}"/>
+    <property name="dbname" value="${env.DBNAME}"/>
     <property name="domain-name" value="${env.DOMAIN_NAME}"/>
     <property name="non-secureport" value="${env.NON_SECUREPORT}"/>
     <property name="secureport" value="${env.SECUREPORT}"/>
     <property name="shutdownport" value="${env.SHUTDOWNPORT}"/>
     <property name="tomcat-conf" value="${env.CATALINA_BASE}/conf"/>
-    <property name="mutant-conf" value="${env.CATALINA_BASE}/conf/Catalina/${env.DOMAIN_NAME}"/>
-    <property name="mutant-work" value="${env.CATALINA_BASE}/work/Catalina/${env.DOMAIN_NAME}/_/"/>
+    <property name="domain-conf" value="${env.CATALINA_BASE}/conf/Catalina/${env.DOMAIN_NAME}"/>
+    <property name="domain-work" value="${env.CATALINA_BASE}/work/Catalina/${env.DOMAIN_NAME}/_/"/>
     <property name="informixserver" value="${env.INFORMIXSERVER}"/>
     <property name="informixport" value="${env.INFORMIX_PORT}"/>
     <property name="sqlhosts-host" value="${env.SQLHOSTS_HOST}"/>
 
     <property name="template-dir" value="lib/Java/tomcat"/>
     <property name="host-dir" value="${template-dir}/conf/Catalina"/>
-    <property name="mutant-host-dir" value="${env.CATALINA_BASE}/conf/Catalina"/>
+    <property name="domain-host-dir" value="${env.CATALINA_BASE}/conf/Catalina"/>
 
     <!-- javadoc diectory -->
     <property name="zfin-javadoc" value="home/util/javadoc/zfin"/>
@@ -224,7 +225,7 @@
             <fileset dir="${jsp-src.target}" includes="**/*"/>
         </delete>
         <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${mutant-work}" includes="**/*"/>
+            <fileset dir="${domain-work}" includes="**/*"/>
         </delete>
     </target>
 
@@ -344,7 +345,7 @@
             <jvmarg line="${junit.jvmargs}"/>
             <!-- <arg value="${junit.test.class.name}"/>-->
 
-            <jvmarg value="-DDBNAME=${mutantdb}"/>
+            <jvmarg value="-DDBNAME=${dbname}"/>
             <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
             <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
             <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
@@ -375,7 +376,7 @@
             <arg value="${junit.test.class.name}"/>
             <classpath refid="extended.classpath"/>
 
-            <jvmarg value="-DDBNAME=${mutantdb}"/>
+            <jvmarg value="-DDBNAME=${dbname}"/>
             <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
             <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
             <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
@@ -393,7 +394,7 @@
             <arg value="${junit.test.class.name}"/>
             <classpath refid="extended.classpath"/>
 
-            <jvmarg value="-DDBNAME=${mutantdb}"/>
+            <jvmarg value="-DDBNAME=${dbname}"/>
             <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
             <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
             <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
@@ -646,26 +647,27 @@
                 <exclude name="Catalina/**"/>
             </fileset>
             <filterset>
-                <filter token="MUTANT" value="${mutant-name}"/>
-                <filter token="MUTANTDB" value="${mutantdb}"/>
+                <filter token="TARGETROOT" value="${env.TARGETROOT}"/>
+                <filter token="DBNAME" value="${dbname}"/>
                 <filter token="SERVER-SHUTDOWN-PORT" value="${shutdownport}"/>
                 <filter token="Non-SECUREPORT" value="${non-secureport}"/>
                 <filter token="SECUREPORT" value="${secureport}"/>
-		<filter token="DOMAIN-NAME" value="${domain-name}"/>
+		        <filter token="DOMAIN-NAME" value="${domain-name}"/>
             </filterset>
         </copy>
         <!--        Copy the  context files-->
-        <copy todir="${mutant-conf}">
+        <copy todir="${domain-conf}">
             <fileset dir="${template-dir}/conf/Catalina/mutant"/>
             <filterset>
-                <filter token="MUTANT" value="${mutant-name}"/>
-                <filter token="MUTANTDB" value="${mutantdb}"/>
+                <filter token="TARGETROOT" value="${env.TARGETROOT}"/>
+                <filter token="DBNAME" value="${dbname}"/>
                 <filter token="SERVER-SHUTDOWN-PORT" value="${shutdownport}"/>
                 <filter token="Non-SECUREPORT" value="${non-secureport}"/>
                 <filter token="SECUREPORT" value="${secureport}"/>
                 <filter token="SQLHOSTSHOST" value="${sqlhosts-host}"/>
                 <filter token="INFORMIXSERVER" value="${informixserver}"/>
                 <filter token="INFORMIXPORT" value="${informixport}"/>
+                <filter token="DOMAIN-NAME" value="${domain-name}"/>
             </filterset>
         </copy>
         <antcall target="set-catalina-base-perms"/>
@@ -703,7 +705,7 @@
           </classpath> 
         </taskdef> 
         <jasper2 validateXml="false" 
-                 uriroot="${home.target}" 
+                 uriroot="${home.target}"
                  outputDir="${jsp-src.target}" 
                  classpath="${jspc.classpath}"
                  failOnError="false"
@@ -713,8 +715,8 @@
                  compilerSourceVM="1.5"
                  compilerTargetVM="1.5"
                  /> 
-              <mkdir dir="${mutant-work}"/>
-              <javac destdir="${mutant-work}"
+              <mkdir dir="${domain-work}"/>
+              <javac destdir="${domain-work}"
                    failonerror="false"
                    srcdir="${jsp-src.target}" 
                    classpathref="extended.classpath"
@@ -766,7 +768,7 @@
         <mkdir dir="${env.CATALINA_BASE}"/>
         <mkdir dir="${env.CATALINA_BASE}/conf"/>
         <mkdir dir="${env.CATALINA_BASE}/conf/Catalina"/>
-        <mkdir dir="${mutant-conf}"/>
+        <mkdir dir="${domain-conf}"/>
         <mkdir dir="${env.CATALINA_BASE}/logs"/>
         <mkdir dir="${env.CATALINA_BASE}/webapps"/>
         <mkdir dir="${env.CATALINA_BASE}/work"/>
@@ -777,7 +779,7 @@
         <java classname="org.zfin.repository.HibernateStandaloneUtil"
               fork="yes"
               classpathref="extended.classpath">
-            <jvmarg value="-DDBNAME=${mutantdb}"/>
+            <jvmarg value="-DDBNAME=${dbname}"/>
             <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
             <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
             <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
