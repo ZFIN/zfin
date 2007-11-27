@@ -556,14 +556,14 @@
 
     <target name="set-deploy-permissions" depends="am-i-informix" if="i.am.informix">
         <!--<echo message="Running as informix, doing chmod of jsp-compile and java deploy dirs"/>-->
-        <echo message="chmod a+rX for $TARGETROOT and $CATALINA_BASE:"/>
+        <echo message="chmod a+rX for ${env.TARGETROOT} and ${env.CATALINA_BASE}:"/>
         <chmod perm="a+rX" type="both" verbose="true" >
             <fileset dir="${env.TARGETROOT}">
               <exclude name="**/CurrentDataModel/**"/>
             </fileset>
             <fileset dir="${env.CATALINA_BASE}"/>
         </chmod>
-        <echo message="chmod a+rwX for $CATALINA_BASE/work: "/>
+        <echo message="chmod a+rwX for ${env.CATALINA_BASE}/work: "/>
         <chmod perm="a+rwX" type="both"  verbose="true" >
             <fileset dir="${env.CATALINA_BASE}/work"/>
         </chmod>
@@ -672,18 +672,18 @@
     </target>
 
     <target name="set-catalina-base-perms" depends="am-i-informix" if="i.am.informix">
-        <echo message="chmod a+rX for $CATALINA_BASE"/>
+        <echo message="chmod a+rX for ${env.CATALINA_BASE}"/>
         <chmod perm="a+rX" type="both" verbose="true">
             <fileset dir="${env.CATALINA_BASE}"/>
         </chmod>
 
-        <echo message="chmod a+rwX for $CATALINA_BASE/work"/>
+        <echo message="chmod a+rwX for ${env.CATALINA_BASE}/work"/>
         <chmod perm="a+rwX" type="both" verbose="true">
             <fileset dir="${env.CATALINA_BASE}/work"/>
         </chmod>
-        <echo message="************************************************************************************"/>
-        <echo message="* As yourself, please do: 'sudo chown -R zfishweb /private/etc/tomcat/almost/logs' *"/>
-        <echo message="************************************************************************************"/>
+        <echo message="****************************************************************************************"/>
+        <echo message=" As yourself, please do: 'sudo chown -R zfishweb ${env.CATALINA_BASE}/logs' "/>
+        <echo message="****************************************************************************************"/>
     </target>
 
     <target name="jsp-compile"> 
