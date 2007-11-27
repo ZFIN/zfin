@@ -5,8 +5,5 @@ $ENV{PATH} = "/bin:<!--|ROOT_PATH|-->/server_apps/sysexecs/encryptpass/";
 $ARGV[0] =~  m/([A-Za-z\d\-\_\$\+\=\~\.\,\ ]+)/;
 my $pw = substr("$1",0,8);
 
-# old crypt
-#system("/bin/echo $pw | /bin/crypt 'dedicated to George Streisinger' | encode");
-#new crypt
-use Digest::MD5 qw(md5_hex) ; 
-print md5_hex($pw)  ; 
+use Digest::MD5 qw(md5_hex); 
+print md5_hex($pw.'{dedicated to George Streisinger}');
