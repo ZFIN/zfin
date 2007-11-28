@@ -685,7 +685,7 @@
         </chmod>
         <echo message="***********************************************************************"/>
         <echo message=" As yourself, please do: "/>
-        <echo message="    sudo chown -R zfishweb ${env.CATALINA_BASE}/logs' "/>
+        <echo message="    sudo chown -R zfishweb ${env.CATALINA_BASE}/logs "/>
 	<echo message="    sudo -u zfishweb touch ${env.CATALINA_BASE}/logs/catalina.out "/> 
         <echo message="************************************************************************"/>
     </target>
