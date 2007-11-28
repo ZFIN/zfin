@@ -204,7 +204,7 @@ sub confirmLogin () {
 	$cookie = $ENV{'HTTP_COOKIE'};
 
 	# split the cookie into 2 parts, its cookie name (at ZFIN, that's
-	# ZDB_authorize, and its value).
+	# zfin_login, and its value).
 
 	my $semicolon = ";";
 	my $space = " ";
@@ -218,7 +218,7 @@ sub confirmLogin () {
           $find_cookie{$name} = $value;
         }
 
-        $ZDB_cookie = $find_cookie{"ZDB_authorize"};
+        $ZDB_cookie = $find_cookie{"zfin_login"};
 
 	#($name, $value) = split (/=/, $cookie);
 	#$ZDB_cookie = $value ;

@@ -10,7 +10,7 @@
   So just give them a new GUEST cookie for now.
 <?/MICOMMENT>
 <?MISQL SQL="execute function conc('GUEST',get_random_cookie());"><?/MISQL>
-<?MIVAR>$(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/)<?/MIVAR>
+<?MIVAR>$(HTTPHEADER,set-cookie,zfin_login=$1;path=/)<?/MIVAR>
 
 
 <HTML>

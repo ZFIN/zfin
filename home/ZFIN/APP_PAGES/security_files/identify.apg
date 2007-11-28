@@ -11,13 +11,13 @@ This file is a weak cousin of secure_navigation that you can call when you just 
 
 <?MICOMMENT>If authorize cookie passed in, pull out the info for it<?/MICOMMENT>
 
-<?MIBLOCK COND="$(XST,$ZDB_authorize)">
+<?MIBLOCK COND="$(XST,$zfin_login)">
 
   <?MICOMMENT>If you get an entry, set name and ident<?/MICOMMENT>
   <?MISQL SQL="
     select zdb_id, name, access
       from ZDB_submitters 
-      where cookie = '$ZDB_authorize';">
+      where cookie = '$zfin_login';">
     <?MIVAR NAME=$ZDB_name>$2<?/MIVAR>
     <?MIVAR NAME=$ZDB_ident>$1<?/MIVAR>
     <?MIVAR NAME=$AUTHORIZED>$3<?/MIVAR>

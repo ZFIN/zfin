@@ -227,7 +227,7 @@
                 MIval=> 'aa-newmrkrselect.apg',
                 query_results=> 'exist',
                 input_name=> "$marker",
-                ZDB_authorize=> $Q->cookie('ZDB_authorize')
+                zfin_login=> $Q->cookie('zfin_login')
                 ];
                 print "Content-Type: text/html; charset=ISO-8859-1\r\n\r\n";
                 my $res = $bot->request($req);
@@ -1606,7 +1606,7 @@ sub  get_OIDs_abbrev{
       $Q->hidden('OID',$Q->param('OID') )."\n".
 	$Q->hidden('lg',$Q->param('lg'))."\n".
 	  #$Q->hidden('userid',$Q->param('userid'))."\n".
-	  $Q->hidden('userid',$Q->param('ZDB_authorize'))."\n".
+	  $Q->hidden('userid',$Q->param('zfin_login'))."\n".
 	    $Q->hidden('refresh_map','1')."\n".
 	      $Q->hidden('edit_panel','')."\n"
 		;

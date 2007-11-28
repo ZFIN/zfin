@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
 
-    public static final String ZDB_AUTHORIZE = "ZDB_authorize";
+    public static final String ZFIN_LOGIN = "zfin_login";
     public static final String JSESSIONID = "JSESSIONID";
 
     // Used to keep track of authenticated sessions.
@@ -50,7 +50,7 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
                     if (cookie.getName().equals(JSESSIONID)) {
                         String id = cookie.getValue();
                         String value = id.substring(0, 19);
-                        Cookie zfinCookie = new Cookie(ZDB_AUTHORIZE, value);
+                        Cookie zfinCookie = new Cookie(ZFIN_LOGIN, value);
                         zfinCookie.setPath(ZfinProperties.getCookiePath());
                         response.addCookie(zfinCookie);
                         String login = authResult.getName();

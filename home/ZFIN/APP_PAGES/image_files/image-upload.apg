@@ -26,7 +26,7 @@ EFFECTS: Passes filehandle, and login-cookie to upload.cgi for upload
 The upload filehandle is actually a temp file stored by perl's cgi 
 module. The cgi, upload.cgi uses this filehandle to store the actual
 file in our filesystem, then removes this temporary file.  
-The login-cookieat ZFIN is ZDB_authorize, and this cookie is passed to 
+The login-cookieat ZFIN is zfin_login, and this cookie is passed to 
 upload.cgi to confirm permissions.  The redirect_url is passed in a hidden
 variable to upload.cgi and upload.cgi takes the user to this redirection
 point upon successful completion.

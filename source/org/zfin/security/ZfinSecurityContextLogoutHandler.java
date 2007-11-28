@@ -31,7 +31,7 @@ public class ZfinSecurityContextLogoutHandler extends SecurityContextLogoutHandl
 
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(ZfinAuthenticationProcessingFilter.ZDB_AUTHORIZE)) {
+            if (cookie.getName().equals(ZfinAuthenticationProcessingFilter.ZFIN_LOGIN)) {
                 String id = GUEST + cookie.getValue();
                 String value = id.substring(0, 19);
                 cookie.setValue(value);

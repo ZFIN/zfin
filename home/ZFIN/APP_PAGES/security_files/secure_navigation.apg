@@ -25,7 +25,7 @@
  Is that so? 
 
  INPUT VARS:
-   ZDB_authorize  -- cookie
+   zfin_login  -- cookie
    permission (optional) -- only owns and root have been used 
    OID (optional) -- OID of the record being displayed, along with permission=owns
    rtype (optional) -- record type, along with permission=owns
@@ -71,13 +71,13 @@
   ============================================================
 <?/MICOMMENT>
 
-<?MIBLOCK COND="$(NXST,$ZDB_authorize)">
-  <?MIVAR NAME=ZDB_authorize><?/MIVAR>	
+<?MIBLOCK COND="$(NXST,$zfin_login)">
+  <?MIVAR NAME=zfin_login><?/MIVAR>	
   <?MISQL SQL="
     execute function conc('GUEST',get_random_cookie());">
   <?/MISQL>  
   <?MIVAR>
-    $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/)
+    $(HTTPHEADER,set-cookie,zfin_login=$1;path=/)
   <?/MIVAR>
   <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
 
@@ -100,8 +100,8 @@
   ============================================================
 <?/MICOMMENT>
 
-<?MIBLOCK COND="$(AND,$(XST,$ZDB_authorize),$(EC,$(SUBSTR,$ZDB_authorize,1,5),GUEST))">
-  <?MIVAR NAME=$ZDB_name>$ZDB_authorize<?/MIVAR>
+<?MIBLOCK COND="$(AND,$(XST,$zfin_login),$(EC,$(SUBSTR,$zfin_login,1,5),GUEST))">
+  <?MIVAR NAME=$ZDB_name>$zfin_login<?/MIVAR>
 
   <?MICOMMENT>
     -------------------------------------
@@ -122,7 +122,7 @@
   ============================================================
 <?/MICOMMENT>
 
-<?MIBLOCK COND=$(NC,$(SUBSTR,$ZDB_authorize,1,5),GUEST)>
+<?MIBLOCK COND=$(NC,$(SUBSTR,$zfin_login,1,5),GUEST)>
 
   <?MICOMMENT> 
        ----------------------------
@@ -154,7 +154,7 @@
       execute function conc('GUEST',get_random_cookie());">
      <?/MISQL>
      <?MIVAR>
-      $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/)
+      $(HTTPHEADER,set-cookie,zfin_login=$1;path=/)
      <?/MIVAR>
 
      <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
@@ -178,7 +178,7 @@
      <?MISQL SQL="
            select zdb_id, access, name
      	     from ZDB_submitters 
-	    where cookie='$ZDB_authorize';">
+	    where cookie='$zfin_login';">
        <?MIVAR NAME=$ZDB_ident>$1<?/MIVAR>
        <?MIVAR NAME=$ZDB_access>$2<?/MIVAR>
        <?MIVAR NAME=$ZDB_name>$3<?/MIVAR>

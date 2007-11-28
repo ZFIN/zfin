@@ -112,12 +112,6 @@
   <br>
   <br>
 
-  <?MICOMMENT> ** Remove the old zfin login cookie ** <?/MICOMMENT>
-  <script type="text/javascript">
-      hdrDeleteCookie("ZDB_authorize", "/<!--|CGI_BIN_DIR_NAME|-->");
-  </script>
-
-          
   <span style="font-size: .8em;">
   <?MIBLOCK COND="$(EC,$AUTHORIZED,guest)">
       <a href="/action/login"><b>Visit the login page</b></a>
