@@ -18,7 +18,7 @@ create temp table passwordTemp (
  password varchar(40)
  ) with no log;
 
-load from 'zdb_md5.unl' insert into passwordTemp;
+load from '/research/zusers/tomc/Projects/ZFIN_WWW/server_apps/sysexecs/encryptpass/zdb_md5.unl' insert into passwordTemp;
 
 alter table zdb_submitters add (password_old varchar(20));
 
