@@ -24,7 +24,7 @@ GENERICS = SangerFiles.pl SangerFiles.sql
 
 STATICS  = readme
 
-SUBDIRS = FPC
+SUBDIRS = 
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
