@@ -683,9 +683,11 @@
         <chmod perm="a+rwX" type="both" verbose="true">
             <fileset dir="${env.CATALINA_BASE}/work"/>
         </chmod>
-        <echo message="****************************************************************************************"/>
-        <echo message=" As yourself, please do: 'sudo chown -R zfishweb ${env.CATALINA_BASE}/logs' "/>
-        <echo message="****************************************************************************************"/>
+        <echo message="***********************************************************************"/>
+        <echo message=" As yourself, please do: "/>
+        <echo message="    sudo chown -R zfishweb ${env.CATALINA_BASE}/logs' "/>
+	<echo message="    sudo -u zfishweb touch ${env.CATALINA_BASE}/logs/catalina.out "/> 
+        <echo message="************************************************************************"/>
     </target>
 
     <target name="jsp-compile"> 
