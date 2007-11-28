@@ -3,80 +3,79 @@ begin work ;
 --------------------------------------------
 --ACCESSION BANK CHANGES--
 
-alter table accession_bank
-  drop constraint accession_bank_primary_key ;
 
-drop index accession_bank_primary_key_index ;
+create table accession_bank_temp
+  (
+    accbk_acc_num varchar(30),
+    accbk_length integer,
+    accbk_pk_id serial,
+    accbk_fdbcont_zdb_id varchar(50),
+    accbk_defline lvarchar,
+    accbk_abbreviation varchar(30),
+    accbk_name varchar(255),
+    accbk_data_type varchar(40),
+    accbk_db_name varchar(30)
+  ) 
+  fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+  extent size 16384 next size 16384 lock mode page;
 
-update accession_bank
-  set accbk_db_name = 'GenBank'
-  where accbk_db_name = 'Genbank' ;
 
-alter table accession_bank
-  add (accbk_pk_id int) ;
+insert into accession_bank_temp (accbk_acc_num,
+       accbk_length,
+       accbk_data_type,
+       accbk_db_name)
+  select accbk_acc_num,
+       accbk_length,
+       accbk_data_type,
+       accbk_db_name
+    from accession_bank ;
 
-alter table accession_bank
-  add (accbk_fdbcont_zdb_id varchar(50));
 
-alter table accession_bank
-  add (accbk_defline lvarchar);
-
-update accession_bank
+update accession_bank_temp
   set accbk_fdbcont_zdb_id = (select fdbcont_zdb_id
       			        from foreign_db_contains
 				where fdbcont_fdbdt_data_type = accbk_data_type
   				and fdbcont_fdb_db_name = accbk_db_name
 				and fdbcont_organism_common_name = 'Zebrafish') ;
 
-alter table accession_bank
+
+create unique index accbk_alternate_key_index on 
+    accession_bank_temp (accbk_acc_num,accbk_fdbcont_zdb_id) using 
+    btree  in idxdbs3 ;
+
+create index accbk_fdbcont_foreign_key_index on
+    accession_bank_temp (accbk_fdbcont_zdb_id) using btree  in idxdbs2 
+    ;
+create unique index accbk_primary_key_index on 
+    accession_bank_temp (accbk_pk_id) using btree  in idxdbs1 ;
+
+
+alter table accession_bank_temp
   drop accbk_db_name ;
 
-alter table accession_bank
+alter table accession_bank_temp
   drop accbk_data_type ;
 
-create temp table tmp_accbk (zdb_id serial, acc_num varchar(30))
-with no log ;
+drop table accession_bank;
 
---!echo "inserting into tmp_accbk" ;
+rename table accession_bank_temp to accession_bank ;
 
-insert into tmp_accbk (acc_num)
- select accbk_acc_num
-  from accession_bank ;
+alter table accession_bank add constraint unique (accbk_acc_num,
+    accbk_fdbcont_zdb_id) constraint accession_bank_alternate_key ;
 
-create unique index acc_index
-  on tmp_accbk (acc_num)
-  using btree in idxdbs2;
-
-update statistics high for table tmp_accbk;
-update statistics high for table accession_bank ;
-
-update accession_bank
-  set accbk_pk_id = (select zdb_id from tmp_accbk where acc_num = accbk_acc_num);
+alter table accession_bank add constraint primary 
+    key (accbk_pk_id) constraint accession_bank_primary_key ;
 
 alter table accession_bank
  modify (accbk_pk_id serial not null constraint accbk_pk_id_not_null);
 
+alter table accession_bank
+  modify (accbk_acc_num varchar(30) not null constraint accbk_acc_num_not_nul);
 
-create unique index accbk_primary_key_index
-  on accession_bank (accbk_pk_id)
-  using btree in idxdbs3 ;
-
-
-create unique index accbk_alternate_key_index
-  on accession_bank (accbk_acc_num, accbk_fdbcont_zdb_id)
-  using btree in idxdbs4 ;
-
-create index accbk_fdbcont_foreign_key_index
-  on accession_bank (accbk_fdbcont_zdb_id)
-  using btree in idxdbs2 ;
 
 alter table accession_bank
   add constraint primary key (accbk_pk_id)
   constraint accession_bank_primary_key ;
-
-alter table accession_bank
-  add constraint unique (accbk_acc_num, accbk_fdbcont_zdb_id)
-  constraint accession_bank_alternate_key ;
 
 alter table accession_bank
   add constraint (foreign key (accbk_fdbcont_zdb_id)
@@ -84,9 +83,7 @@ alter table accession_bank
   accbk_fdbcont_foreign_key_odc) ;
 
 
-alter table accession_bank add (accbk_abbreviation varchar(30));
 
-alter table accession_bank add (accbk_name varchar(255));
 
 -----------------------------------------
 
@@ -665,7 +662,7 @@ create table run_type (
 
 create unique index runtype_name_primary_key_index
   on run_type(runtype_name)
-  using btree in idxdbs4 ;
+  using btree in idxdbs3 ;
 
 alter table run_type
   add constraint primary key (runtype_name) constraint
@@ -726,7 +723,7 @@ create index run_nomen_pub_foreign_key_index
 
 create index run_relation_pub_foreign_key_index
   on run (run_relation_pub_zdb_id)
-  using btree in idxdbs4 ;
+  using btree in idxdbs2 ;
 
 create index run_type_foreign_key_index
   on run (run_type)
@@ -734,7 +731,7 @@ create index run_type_foreign_key_index
 
 create index run_program_foreign_key_index
   on run (run_program)
-  using btree in idxdbs4 ;
+  using btree in idxdbs3 ;
 
 alter table run
   add constraint primary key (run_zdb_id)
@@ -938,7 +935,7 @@ create unique index blast_query_primary_key_index
 
 create unique index blast_query_alternate_key_index
   on blast_query (bqry_runcan_zdb_id, bqry_accbk_pk_id)
-  using btree in idxdbs4 ;
+  using btree in idxdbs3 ;
 
 create index bqry_accbk_pk_id_foreign_key_index
   on blast_query (bqry_accbk_pk_id)
@@ -1034,7 +1031,7 @@ create unique index blast_hit_primary_key_index
 
 --create unique index blast_hit_alternate_key_index
 --  on blast_hit (bhit_bqry_zdb_id, bhit_target_accbk_pk_id)
---  using btree in idxdbs4;
+--  using btree in idxdbs1;
 
 --create index blast_hit_target_accbk_pk_id_foreign_key_index
 --  on blast_hit(bhit_target_accbk_pk_id)
