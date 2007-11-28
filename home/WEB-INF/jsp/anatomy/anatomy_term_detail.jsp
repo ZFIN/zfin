@@ -137,41 +137,49 @@
 <p/>
 <b>EXPRESSION</b> <br>
 <b>
-    <div title="Genes with Most Figures, annotated to ${formBean.anatomyItem.name}, substructures excluded">Genes with
-        Most Figures
-    </div>
-    <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_expressed_genes.jsp" flush="false"/>
+    <c:if test="${formBean.expressedGenesExist}">
+        <div title="Genes with Most Figures, annotated to ${formBean.anatomyItem.name}, substructures excluded">Genes
+            with
+            Most Figures
+        </div>
+        <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_expressed_genes.jsp" flush="false"/>
+    </c:if>
 </b>
 
 <p/>
 
 <p/>
 <!-- In situ Probes -->
-<b>In Situ Probes</b>: <a href="/zf_info/stars.html"> Recommended </a> by
-<a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
-    Thisse lab</a>
-<tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_insitu_probes.jsp" flush="false"/>
+<c:if test="${formBean.inSituProbesExist}">
 
+    <b>In Situ Probes</b>: <a href="/zf_info/stars.html"> Recommended </a> by
+    <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
+        Thisse lab</a>
+    <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_insitu_probes.jsp" flush="false"/>
+</c:if>
 <hr width="80%">
 <p/>
 <!-- All mutants -->
-<b>PHENOTYPE</b>
-<br/>
-<b>Mutant and Transgenic Lines</b>
-<tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_mutants.jsp" flush="false"/>
-
-<p/>
-<b>Morpholinos</b>
-<tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_morpholinos.jsp" flush="false"/>
-
-<hr width="80%">
-
+<c:if test="${formBean.mutantsExist ||formBean.morpholinoExist }">
+    <b>PHENOTYPE</b>
+    <br/>
+    <c:if test="${formBean.mutantsExist}">
+        <b>Mutant and Transgenic Lines</b>
+        <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_mutants.jsp" flush="false"/>
+    </c:if>
+    <p/>
+    <c:if test="${formBean.morpholinoExist}">
+        <b>Morpholinos</b>
+        <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_morpholinos.jsp" flush="false"/>
+    </c:if>
+    <hr width="80%">
+</c:if>
 <!-- Number of Publications with an abstract that contains the anatomical structure -->
 
 <c:if test="${formBean.numberOfPublications > 0}">
     <STRONG>
         (<A HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.name}&anon1textAllOneWord=1&query_results=exists'>${formBean.numberOfPublications}
-        </A>)
+    </A>)
         <zfin:choice choicePattern="0#Publications| 1#Publication| 2#Publications"
                      integerEntity="${formBean.numberOfPublications}"/>
     </STRONG> with "<i>
