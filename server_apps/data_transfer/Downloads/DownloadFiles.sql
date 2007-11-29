@@ -209,6 +209,26 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
  
 ! echo "Inserted data into file xpat.txt"
 
+
+-- generate a file to map experiment id to environment condition description
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/environment.txt'
+ DELIMITER "	"  
+ select exp_zdb_id, cdt_group, 
+        case when expcond_mrkr_zdb_id is not null 
+
+             then expcond_mrkr_zdb_id
+	     else cdt_name
+ 	end
+   from experiment, experiment_condition, condition_data_type
+  where exp_zdb_id = expcond_exp_zdb_id
+    and expcond_cdt_zdb_id = cdt_zdb_id
+    and exists (select 't' 
+                  from genotype_experiment, expression_experiment
+                 where exp_zdb_id = genox_exp_zdb_id
+                   and genox_zdb_id = genox_zdb_id)
+order by exp_zdb_id, cdt_group;
+ 
+
 -- generate a file with genes and associated expression experiment
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
@@ -500,7 +520,8 @@ unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_stage_anatomy.t
 select xpatres_xpatex_zdb_id,
        xpatres_start_stg_zdb_id,
        xpatres_end_stg_zdb_id,
-       xpatres_anat_item_zdb_id 
+       xpatres_anat_item_zdb_id,
+       xpatres_expression_found
   from expression_result;
 
 
