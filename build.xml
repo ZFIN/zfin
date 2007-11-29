@@ -128,7 +128,8 @@
             tomcat-start-debug: Start tomcat and allow remote debugging on port $JPDA_ADDRESS
             tomcat-stop: Stop tomcat
             tomcat-kill: Forced tomcat stop
-            create-mutant-instance: Build tomcat instance in CATALINA_BASE
+            deploy-catalina-base: Build/update tomcat instance in CATALINA_BASE 
+                                  (used to be called create-mutant-instance)
             generate-wsdl-doi-client:  Generates wsdl java client code for the DOI
             jsp-compile:  Precompile jsp files and generate appropriate web.xml servlert reference.
 
@@ -638,6 +639,8 @@
         </exec>
     </target>
 
+    <!-- an alias to create-mutant-instance with a more explanatory name -->
+    <target name="deploy-catalina-base" depends="create-mutant-instance"/>
 
     <target name="create-mutant-instance" depends="create-tomcat-dirs"
             description="Target to create a Tomcat tree for a given mutant">
