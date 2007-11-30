@@ -225,10 +225,10 @@ $latestDump = `/bin/ls -1t $dumpDir | head -1`;
 chop($latestDump);
 print(LOG "Using dump $dumpDir/$latestDump\n");
 
-# restart Tomcat to get rid of open session
-$status = system("/private/ZfinLinks/Commons/bin/restarttomcat.pl");
+# stop Tomcat to get rid of open session
+$status = system("/private/ZfinLinks/Commons/bin/stoptomcat.pl");
 if ($status) {
-    abort("/private/ZfinLinks/Commons/bin/restarttomcat.pl failed.\n");
+    abort("/private/ZfinLinks/Commons/bin/stoptomcat.pl failed.\n");
 }
 
 # load it
@@ -242,6 +242,12 @@ if ($status) {
 $status = system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/postloaddb_almost.csh $zfinWwwDir $makeEnvFile >> $logFile 2>&1");
 if ($status) {
     abort("gmake postloaddb failed.\n");
+}
+
+#start Tomcat before indexing
+$status = system("/private/ZfinLinks/Commons/bin/starttomcat.pl");
+if ($status) {
+    abort("/private/ZfinLinks/Commons/bin/starttomcat.pl failed.\n");
 }
 
 # Index the web site, if requested.  This takes many hours.
