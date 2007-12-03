@@ -22,6 +22,7 @@ php
 select.apg
 select2.apg
 anatdict.apg
+anatomy
 
 # The following are all the app pages included by the fixed-list 
 # described above.  We do not want to crawl them.  Instead
@@ -44,3 +45,7 @@ aa-zirclist.apg
 aa-ZDB_home.apg
 aa-showpubs.apg
 aa-ortholist.apg
+aa-externalredirect.apg
+aa-externallink.apg
+aa-pubmedredirect.apg
+aa-pubmedlink.apg
