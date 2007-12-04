@@ -218,10 +218,11 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/environment.txt'
 
              then expcond_mrkr_zdb_id
 	     else cdt_name
- 	end
-   from experiment, experiment_condition, condition_data_type
+ 	end, expcond_value, expunit_name, expcond_comments	
+   from experiment, experiment_condition, condition_data_type, experiment_unit
   where exp_zdb_id = expcond_exp_zdb_id
     and expcond_cdt_zdb_id = cdt_zdb_id
+    and expcond_expunit_zdb_id = expunit_zdb_id
     and exists (select 't' 
                   from genotype_experiment, expression_experiment
                  where exp_zdb_id = genox_exp_zdb_id
