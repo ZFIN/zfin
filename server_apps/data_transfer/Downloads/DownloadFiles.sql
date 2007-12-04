@@ -225,7 +225,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/environment.txt'
     and exists (select 't' 
                   from genotype_experiment, expression_experiment
                  where exp_zdb_id = genox_exp_zdb_id
-                   and genox_zdb_id = genox_zdb_id)
+                   and genox_zdb_id = xpatex_genox_zdb_id)
 order by exp_zdb_id, cdt_group;
  
 
