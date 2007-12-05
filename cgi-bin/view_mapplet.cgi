@@ -817,7 +817,7 @@
     " document.optform.submit();\">";
 
 	print "<br><font size=-1><b>&nbsp;&nbsp;".
-    "<a href=\"http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&".
+    "<a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&".
     "OID=" . $allpanels_id[$order_increment]."\"".
     ">". $panel . "</a>".
     " panel, LG: " . $lg . ", units: " . $allpanels_metric[$order_increment] .
