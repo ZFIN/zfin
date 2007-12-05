@@ -15,10 +15,10 @@ vet_input.apg is webexploded on
 <SCRIPT>
 <!-- vet_input.apg -->
 function vet_pw(str) {
-    var optout = /[^\!\#\-\.0123456789\@ABCDEFGHIJKLMNOPRSTUVWZ\_abcdefghijklmnopqrstuvwxyz]/;
+    var optout = /[^\-\.0123456789ABCDEFGHIJKLMNOPRSTUVWZ\_abcdefghijklmnopqrstuvwxyz]/;
     //window.alert(str);
     if(optout.test(str)) {
-        window.alert("Acceptable chars are:\n\tAa - Zz\n\t0123456789\n\t!#-._");
+        window.alert("Acceptable chars are:\n\tA-Za-z\n\t0123456789\n\t-._");
         str = '';
     }
     //window.alert(str);
