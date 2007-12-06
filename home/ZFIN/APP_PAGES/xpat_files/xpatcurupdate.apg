@@ -423,6 +423,8 @@ EFFECTS
   <?MICOMMENT> ================| Environment |================ <?/MICOMMENT>
   <?MIBLOCK COND=$(XST,$xpcur_G_environment_add)>
   
+    <?MIVAR NAME=xpcur_G_exp_add_name>$(REPLACE,$xpcur_G_exp_add_name,"'","''")<?/MIVAR>
+  
   <?MISQL SQL="
       select count(*) 
       from experiment 
@@ -453,6 +455,7 @@ EFFECTS
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_update_exp_zdb_id),$(XST,$xpcur_G_exp_name))>
+    <?MIVAR NAME=xpcur_G_exp_name>$(REPLACE,$xpcur_G_exp_name,"'","''")<?/MIVAR>
 
     <?MISQL SQL="
         select exp_name
