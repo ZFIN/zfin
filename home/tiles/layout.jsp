@@ -8,6 +8,8 @@
 <html>
 <head>
     <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
     <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8"/>
     <title>
         <tiles:getAsString ignore="true" name="staticTitle"/> ${dynamicTitle}
