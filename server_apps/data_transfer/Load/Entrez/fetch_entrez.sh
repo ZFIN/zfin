@@ -58,6 +58,9 @@ gunzip -f gene_info.gz
 # put in pipe terminated feilds
 #
 
+setenv PATH="/usr/bin/"
+
+
 egrep "^9606|^10090" gene2accession | cut -f 1,2,4,6, | grep -v "\-.\-" | \
 sed 's/\([0-9]*\).\([0-9]*\).\([A-Z 0-9 _\-]*\)[\.0-9]*.\([A-Z 0-9 - _]*\).*/\1	\2	\4/g' |\
 tr -d \- | sort -n | sort -u | tr '	' \| | grep -v '|$' | sed 's/\(.*\)/\1|/g' >! entrez_orth_prot.unl
@@ -83,3 +86,13 @@ cut -f 2,3 < HM_gene_info | grep "MIM:[0-9]*" | \
 cut -f 2,3 < HM_gene_info | grep "MGI:[0-9]*" | \
     sed 's/\([0-9]*\).*\(MGI:[0-9]*\).*/\1|\2|/g' | sort -u >> entrez_orth_xref.unl
 
+
+#################################################################
+setenv INFORMIX_SERVER="<!--|INFORMIX_SERVER|-->"  #    wanda
+setenv ONCONFIG_FILE="<!--|ONCONFIG_FILE|-->"      #    onconfig
+setenv SQLHOSTS_FILE="<!--|SQLHOSTS_FILE|-->"      #    sqlhosts
+setenv INFORMIX_PORT="<!--|INFORMIX_PORT|-->"      #    2002
+
+#setenv INFORMIX_DIR="<!--|INFORMIX_DIR|-->"        #   /private/apps/Informix/informix
+
+<!--|INFORMIX_DIR|-->/bin/dbaccess <--|DB_NAME|--> load_entrez_orth.sql
