@@ -239,7 +239,7 @@ function submit_delete () {
 	existing ZFIN user, leaving these fields blank leaves current 
 	password unchanged.","To change your password, simply type (and 
 	re-type) your new password.") 
-	Acceptable password characters are: <b>A-Za-z0-9-_.</b>
+	Acceptable password characters are: <b>A-Za-z0-9!#-._</b> Passwords are limited to 8 characters.
 	
     Note that characters in passwords are displayed as asterisks for security 
     reasons.</font>
