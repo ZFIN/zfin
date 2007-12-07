@@ -1,8 +1,11 @@
 #! /bin/tcsh
 # fetch_entrez.sh
+
+setenv PATH "/usr/bin/:/local/bin/"
+cd  <!--|ROOT_PATH|-->/server_apps/data_transfer/Load/Entrez/
+
 # get human and mouse entrez-id related  nt & aa accessions, symbol and name
 #output is 
-
 
 #taxid|entrez_id|aa_acc|nt_acc|
 wget -q ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz
@@ -58,9 +61,6 @@ gunzip -f gene_info.gz
 # put in pipe terminated feilds
 #
 
-setenv PATH="/usr/bin/"
-
-
 egrep "^9606|^10090" gene2accession | cut -f 1,2,4,6, | grep -v "\-.\-" | \
 sed 's/\([0-9]*\).\([0-9]*\).\([A-Z 0-9 _\-]*\)[\.0-9]*.\([A-Z 0-9 - _]*\).*/\1	\2	\4/g' |\
 tr -d \- | sort -n | sort -u | tr '	' \| | grep -v '|$' | sed 's/\(.*\)/\1|/g' >! entrez_orth_prot.unl
@@ -78,7 +78,7 @@ egrep "^9606|^10090"  gene_info | cut -f 1,2,6,11,12 | \
 
 # split the symbol file off from the dbxref(s)
 cut -f 2,4,5 < HM_gene_info | sort -u | \
-    tr '	' \| | tailpipe >! entrez_orth_name.unl
+    tr '	' \| | sed 's/\(.*\)/\1|/g' >! entrez_orth_name.unl
 
 cut -f 2,3 < HM_gene_info | grep "MIM:[0-9]*" | \
     sed 's/\([0-9]*\).*\(MIM:[0-9]*\).*/\1|\2|/g' | sort -u >! entrez_orth_xref.unl
@@ -88,11 +88,13 @@ cut -f 2,3 < HM_gene_info | grep "MGI:[0-9]*" | \
 
 
 #################################################################
-setenv INFORMIX_SERVER="<!--|INFORMIX_SERVER|-->"  #    wanda
-setenv ONCONFIG_FILE="<!--|ONCONFIG_FILE|-->"      #    onconfig
-setenv SQLHOSTS_FILE="<!--|SQLHOSTS_FILE|-->"      #    sqlhosts
-setenv INFORMIX_PORT="<!--|INFORMIX_PORT|-->"      #    2002
 
-#setenv INFORMIX_DIR="<!--|INFORMIX_DIR|-->"        #   /private/apps/Informix/informix
+source /research/zcentral/Commons/env/<!--|INFORMIX_SERVER|-->
 
-<!--|INFORMIX_DIR|-->/bin/dbaccess <--|DB_NAME|--> load_entrez_orth.sql
+setenv INFORMIX_SERVER "<!--|INFORMIX_SERVER|-->"
+setenv   ONCONFIG_FILE "<!--|ONCONFIG_FILE|-->"
+setenv   SQLHOSTS_FILE "<!--|SQLHOSTS_FILE|-->"
+setenv   INFORMIX_PORT "<!--|INFORMIX_PORT|-->"
+setenv    INFORMIX_DIR "<!--|INFORMIX_DIR|-->"
+
+<!--|INFORMIX_DIR|-->/bin/dbaccess <!--|DB_NAME|--> load_entrez_orth.sql

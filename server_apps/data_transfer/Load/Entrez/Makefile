@@ -19,9 +19,9 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Load/Entrez
 
 SUBDIRS = 
 
-GENERICS =
+GENERICS = fetch_entrez.sh
 
-STATICS =
+STATICS =  load_entrez_orth.sql
 
 # ---------------  Production Rules  ------------------------------------
 
