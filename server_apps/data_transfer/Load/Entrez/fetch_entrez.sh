@@ -1,6 +1,9 @@
 #! /bin/tcsh
 # fetch_entrez.sh
 
+# define pointless prompt
+test ${?prompt} -eq 1 && set prompt = "cron %c2$Prompt"
+
 setenv PATH "/usr/bin/:/local/bin/"
 cd  <!--|ROOT_PATH|-->/server_apps/data_transfer/Load/Entrez/
 
