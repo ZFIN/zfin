@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, ReNo run load directory
+# Makefile for ZFIN_WWW CVS Project, ReNo Nomenclature run generator directory
 #
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -12,19 +12,16 @@
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../../../..
+TOP = ../../../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Load/ReNo
 
-SUBDIRS = Nomenclature
+SUBDIRS =
 
-GENERICS = load_run_report_hit.sh
+GENERICS = 
 
-STATICS =  write-run-report-hit.r load_run_report_hit.sql
-
-# trying to pick the most current blast run context file
-RUN_CTX = ls -1t *.ctx | head -1
+STATICS =  
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -37,9 +34,5 @@ include $(TOP)/make.default.rules
 # ---------------  Misc Targets  ----------------------------------------
 
 run	:
-	write-run-report-hit.r run.ctx 
-	cp -f *.unl $(TARGETDIR)
-	$(TARGETDIR)/load_run_report_hit.sh
-	rm -f *.unl
-	rm -f run.ctx
+	generate_UniProt_Nomenclature_run.sh
 
