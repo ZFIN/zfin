@@ -70,7 +70,7 @@
       Links to all members of the hox gene family (<b>hox</b>a1a, <b>hox</b>a2b, <b>hox</b>a3a, etc.)</p>
 
     <h3>Multiple Word Searches</h3>
-      <p>Searches may include one or more words separated by spaces.  A search for <b>inner ear</b> will return instances of <b>inner ear</b> as well as matches to root words <b>inner</b> and <b>ear</b> such as <b>inner</b>vating, <b>ear</b>ly, and <b>ear</b>ly <b>ear</b>.</p>
+      <p>Searches may include one or more words separated by spaces. Results will only include pages containing all search words.  Matches may be to the complete search string, to individual words in the search string, or to words having words from the search string as their root.  For example, a search for <b>inner ear</b> will return pages containing the string <b>inner ear</b> as well as pages containing  the words <b>inner</b> and <b>ear</b> or words with those roots such as <b>inner</b>vating and <b>ear</b>ly.</p>
 
    <h3>Excluded Words</h3>
       <p>Commonly occurring words such as <b>from</b>, <b>any</b>, <b>but</b>, <b>some</b>, <b>were</b>, <b>what</b> and <b>when</b> that are specified in a query are not included in search results.</p>
