@@ -134,6 +134,10 @@
             jsp-compile:  Precompile jsp files and generate appropriate web.xml servlert reference.
 
             TESTS
+
+            test: Always run this before comitting.  Seriously. 
+                  (currently just points to runtests-quiet)
+
             runtests:  Runs non-db test suites in org.zfin.UnitTests
             runDBtests:  Runs db test suites in org.zfin.DbUnitTests
             runtests-quiet:  Runs all test suites in org.zfin.UnitTests but only gives a summary
@@ -326,6 +330,11 @@
         <tagunit url="http://localhost:8081/" ignorewarnings="true" />
     </target>
 
+
+    <!-- an easy to remember tag that should always be kept up to date to match whatever
+         test(s) need to be run before committing changes or pushing files to production -->
+    <target name="test" depends="runtests-quiet"/>
+    
     <target name="runtests-quiet" depends="dirtydeploy,build-tests">
         <junit fork="yes" 
            printsummary="yes" 
