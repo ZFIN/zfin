@@ -25,7 +25,7 @@ if (@ARGV==0 || $opt_h) {
     exit;
 }
 
-my ($locus, $bp, $type, $d_type, $division,  $definition, $organism, $accession, $gi, $dbsource, $condition1, $condition2, $condition);
+my ($locus, $bp, $type, $division,  $definition, $organism, $accession, $gi, $dbsource, $condition1, $condition2, $condition);
 
 while (my $gbfile = shift @ARGV) {
    
@@ -90,12 +90,10 @@ while (my $gbfile = shift @ARGV) {
 	    print ZF "$seq\n";
 
 	    if ($type eq "mRNA") {
-		$d_type = "cDNA";
-		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|$d_type|GenBank|\n";
+		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|ZDB-FDBCONT-040412-37|\n";
 	    }
 	    elsif ($type eq "DNA") {
-		$d_type = "Genomic";
-		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|$d_type|GenBank|\n";
+		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|ZDB-FDBCONT-040412-36|\n";
 	    }
 	    else {
 		print "Attention: $accession has type $type";
