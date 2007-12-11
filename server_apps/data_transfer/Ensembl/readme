@@ -1,3 +1,12 @@
+Dec 2007
+
+reminder that when a new assembly is released the foreign DB
+name changes to reflect the new assembly.
+
+care must be taken to look for sql that uses 
+ fdbcont_fdb_db_name = 'Ensembl(zV7)'
+
+############################################################
 Nov 2006
 
 there is a script that pings Ensembl looking for updates.
