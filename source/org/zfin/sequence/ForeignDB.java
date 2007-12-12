@@ -64,6 +64,7 @@ public class ForeignDB {
         MEGA_BLAST("MEGA BLAST"),
         MGI("MGI"),
         MGI_ANATOMY("MGI-Anatomy"),
+        MODB("MODB"),
         NCBO_CARO("NCBO-CARO"),
         NOVELGENE("NovelGene"),
         OMIM("OMIM"),
