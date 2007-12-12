@@ -25,7 +25,7 @@ rm -f $TEMPFILE ;
 SUBJECT="doi updates for `date '+%y.%m'`-monthly.log"
 LOGNAME=/tmp/monthly-fulldoi.log
 DEBUG=-DMAX_DOI_PROCESS=$1
-$JAVA -DCONFIGURATION_DIRECTORY="../../../home/WEB-INF/classes/org/zfin" -DDBNAME=<!--|DB_NAME|-->  -DSQLHOSTS_HOST=<!--|SQLHOSTS_HOST|--> -DINFORMIX_SERVER=<!--|INFORMIX_SERVER|--> -DINFORMIX_PORT=<!--|INFORMIX_PORT|--> $DEBUG -cp $THISCLASSPATH org.zfin.datatransfer.UpdateDOIMain ;
+$JAVA -Dlog4j.configuration=file://<!--|ROOT_PATH|-->/server_apps/data_transfer/DOI/log4j.properties -DCONFIGURATION_DIRECTORY="<!--|ROOT_PATH|-->/home/WEB-INF/classes/org/zfin" -DDBNAME=<!--|DB_NAME|-->  -DSQLHOSTS_HOST=<!--|SQLHOSTS_HOST|--> -DINFORMIX_SERVER=<!--|INFORMIX_SERVER|--> -DINFORMIX_PORT=<!--|INFORMIX_PORT|--> $DEBUG -cp $THISCLASSPATH org.zfin.datatransfer.UpdateDOIMain ;
 if [ "`cat $LOGNAME`" ] ; then 
 mailx -s "$SUBJECT"  $REPORTEREMAIL < $LOGNAME
 else
