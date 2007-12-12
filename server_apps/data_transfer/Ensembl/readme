@@ -6,6 +6,18 @@ name changes to reflect the new assembly.
 care must be taken to look for sql that uses 
  fdbcont_fdb_db_name = 'Ensembl(zV7)'
 
+*** NOTE ***
+
+it is also very important to do 'gmake run' first
+as it can happen a new ensembl release (danio_rerio_core_xx_x)
+is in ftp://ftp.ensembl.org/pub/current_mysql/
+
+before it is available in
+
+ mysql:// ensembldb.ensembl.org:3306  
+
+
+
 ############################################################
 Nov 2006
 
@@ -14,6 +26,7 @@ when one is found an email alert goes out and
 someone comes to this dir and types:
 
 > gmake run
+> gmake run_commit
 
 which executes fetch_ensdarg.sh
 
