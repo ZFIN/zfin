@@ -414,7 +414,6 @@ PREFIX:   featcurup_
    <?/MIBLOCK>
 <?/MICOMMENT>
 
-   <?MIBLOCK COND="$(NE,$featedit_feature_public_note,)">
       <?MICOMMENT>First format note text <?/MICOMMENT>
       <?MIVAR NAME=$featedit_feature_public_note>$(TRIM,$featedit_feature_public_note)<?/MIVAR>
       <?MIVAR NAME=$featedit_feature_public_note DELIMIT="'" REPLACE="''">$featedit_feature_public_note<?/MIVAR>
@@ -436,7 +435,6 @@ PREFIX:   featcurup_
                   set mrkr_comments='$featedit_feature_public_note' 
                   where mrkr_zdb_id='$featcur_featedit_feature_zdb_id'">
      <?/MISQL>
-  <?/MIBLOCK>
   <?/MIBLOCK>
 
 
