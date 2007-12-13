@@ -1,3 +1,4 @@
+! echo "begin sql load `date`"
 begin work;
 {
 drop table tmp_entrez_orth_prot;
@@ -31,7 +32,7 @@ create index  tmp_entrez_orth_prot_eop_protein_acc_idx
 
 update statistics high for table tmp_entrez_orth_prot;
 
-
+! echo "entrez_orth_prot loaded `date`"
 ---------------------------------------------------------------------
 -- entrez_gene
 
@@ -73,6 +74,8 @@ create unique index tmp_entrez_orth_name_eon_entrez_idx
 
 update statistics high for table tmp_entrez_orth_name ;
 
+! echo "entrez_orth_name loaded `date`"
+
 ---------------------------------------------------------------------
 -- entrez_to_xref
 
@@ -95,6 +98,8 @@ delete from tmp_entrez_orth_xref
 );
 update statistics high for table tmp_entrez_orth_xref ;
 
+! echo "entrez_orth_xref loaded `date`"
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -105,10 +110,10 @@ delete from entrez_gene where not exists (
    select 1 from tmp_entrez_orth_prot
     where teop_protein_acc = eg_acc_num
 );
+! echo "orphaned orth in ZFIN dropped `date`"
 
 
-
-! echo " existing symbols may have changed"
+! echo "existing symbols may have changed"
 update entrez_gene set eg_symbol = (
     select teon_symbol
      from tmp_entrez_orth_name
@@ -118,6 +123,8 @@ update entrez_gene set eg_symbol = (
      where teon_entrez_id = eg_acc_num
      and teon_symbol != eg_symbol
 );
+! echo "fixed entrez gene orth symbols in zfin updated `date`"
+
 
 ! echo " existing names may have changed"
 update entrez_gene set eg_name = (
@@ -129,6 +136,7 @@ update entrez_gene set eg_name = (
      where teon_entrez_id = eg_acc_num
      and teon_name != eg_name
 );
+! echo "fixed entrez gene orth names in zfin updated `date`"  
 
 ! echo "existing xrefs may have changed"
 update entrez_to_xref set ex_xref = (
@@ -140,7 +148,7 @@ update entrez_to_xref set ex_xref = (
      where teox_entrez_id = ex_entrez_acc_num
      and teox_xref != ex_xref
 );
-
+! echo "fixed entrez gene orth xrefs in zfin updated `date`"  
 
 --------------------------------------------------------------------------
 
@@ -151,6 +159,8 @@ delete from tmp_entrez_orth_prot where exists (
       and teop_protein_acc = ep_protein_acc_num
       and teop_taxid = ep_organism_common_name
 );
+! echo "existing entrez gene in update dropped `date`"  
+
 
 ! echo "delete the entrez_name associations that already exist"
 delete from tmp_entrez_orth_name where exists (
@@ -160,6 +170,7 @@ delete from tmp_entrez_orth_name where exists (
       and teon_name = eg_name
 );
 
+
 ! echo "delete the entrez_xref associations that already exist"
 delete from tmp_entrez_orth_xref where exists (
    select 1 from entrez_to_xref
@@ -167,6 +178,7 @@ delete from tmp_entrez_orth_xref where exists (
       and teox_xref = ex_xref
 );
 
+! echo "bulk load filtered `date`"
 --------------------------------------------------------------------
 -- whatever is left is new
 
@@ -177,6 +189,7 @@ insert into entrez_gene (
 )
 select  * from  tmp_entrez_orth_name
 ;
+! echo "entrez gene name  updated `date`"  
 
 insert into entrez_to_protein (
 	ep_organism_common_name,
@@ -185,6 +198,7 @@ insert into entrez_to_protein (
 )
 select distinct * from  tmp_entrez_orth_prot
 ;
+! echo "entrez gene prot  updated `date`"  
 
 insert into entrez_to_xref (
 	ex_entrez_acc_num,
@@ -192,13 +206,14 @@ insert into entrez_to_xref (
 )
 select distinct * from  tmp_entrez_orth_xref
 ;
-
+! echo "entrez gene xref updated `date`"  
 
 --------------------------------------------------------------------------
 drop table tmp_entrez_orth_prot;
 drop table tmp_entrez_orth_name;
 drop table tmp_entrez_orth_xref;
 
+! echo "sql update finished `date`"
 
 --rollback work;
 --
