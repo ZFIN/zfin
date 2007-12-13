@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/client_apps
 
-SUBDIRS = Map ListSelector
+SUBDIRS = Map
 
 
 # ---------------  Production Rules  ------------------------------------
