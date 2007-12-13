@@ -108,7 +108,7 @@
         </property>
 
         <property name="loginDate">
-            <column name="issue_time" not-null="true"/>
+            <column name="issue_time"/>
         </property>
 
         <property name="previousLoginDate">
