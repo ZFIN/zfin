@@ -56,19 +56,18 @@ public class ZfinActionServlet extends DispatcherServlet {
             startupTests();
         }
         catch (RuntimeException rte) {
-            logger.fatal("catastrophic error, exiting", rte);
+            logger.error("error in enumeration validation.", rte);
             Throwable rootCause = rte; // set a default
             while(rootCause.getCause()!=null){
                 rootCause = rootCause.getCause() ;
             }
-            java.lang.StackTraceElement[] elements = rootCause.getStackTrace();
+            StackTraceElement[] elements = rootCause.getStackTrace();
             String errorString = rootCause.getMessage() + "\n";
             for (StackTraceElement element : elements) {
                 errorString += element + "\n";
             }
-            logger.fatal("notification sent: "+ MailSender.sendMail("Tomcat Startup Failure","Tomcat failed to startup.\n"+errorString,ZfinProperties.getValidationEmailOther(true)));
-            destroy();
-            throw rte;
+            logger.error("notification sent: "+ MailSender.sendMail("Tomcat Startup Failure","Tomcat failed to startup." +
+                    "\n"+errorString,ZfinProperties.getValidationEmailOther(true)));
         }
     }
 
