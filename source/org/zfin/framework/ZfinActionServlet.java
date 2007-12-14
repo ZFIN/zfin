@@ -66,7 +66,7 @@ public class ZfinActionServlet extends DispatcherServlet {
             for (StackTraceElement element : elements) {
                 errorString += element + "\n";
             }
-            logger.error("notification sent: "+ MailSender.sendMail("Tomcat Startup Failure","Tomcat failed to startup." +
+            logger.error("notification sent: "+ MailSender.sendMail("Enumeration Mapping Failure","Enumeration mapping failure." +
                     "\n"+errorString,ZfinProperties.getValidationEmailOther(true)));
         }
     }
