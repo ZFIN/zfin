@@ -53,10 +53,10 @@ public class UpdateDOIMain {
         try{
 //            maxProcesses = (new Integer(maxDOIProcesses)).intValue()  ;
             maxProcesses = new Integer(maxDOIProcesses)  ;
-            lightLogger.info("Max processes:"  + maxProcesses) ;
+            fullLogger.info("Max processes:"  + maxProcesses) ;
         }
         catch(NumberFormatException e){
-            lightLogger.info("Scanning All Available Dois") ; 
+            fullLogger.info("Scanning All Available Dois") ; 
         }
     }
 
@@ -64,6 +64,7 @@ public class UpdateDOIMain {
         fullLogger = Logger.getLogger( ZfinProperties.FULL_UPDATE_DOI) ; 
         lightLogger = Logger.getLogger( ZfinProperties.LIGHT_UPDATE_DOI ) ; 
     }
+
 
     /**  Gets publications that have pubmedIds with no IDS from the database.
      * @return List<Publication> Returns list of publications without a DOI.
