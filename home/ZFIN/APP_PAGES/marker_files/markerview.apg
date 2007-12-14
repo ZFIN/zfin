@@ -1229,7 +1229,7 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
 	<td><b></b></td>
 	<td>
 	<?MIVAR>
-          <?MISQL SQL="select WebExplode(object,'fxfiganat_gene_zdb_id=$OID&fxfiganat_Label=  &fxfiganat_hide_unspecified=t&fxfiganat_condensed_count=3&fxfiganat_max_count=5') from webPages where ID='aa-wtanatlist.apg';">$1<?/MISQL>  
+          <?MISQL SQL="select WebExplode(object,'wtanatlst_gene_zdb_id=$OID&wtanatlst_Label=  &wtanatlst_hide_unspecified=t&wtanatlst_condensed_count=3&wtanatlst_max_count=5') from webPages where ID='aa-wtanatlist.apg';">$1<?/MISQL>  
 	<?/MIVAR>
 	</td>
 	</tr>

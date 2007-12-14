@@ -1,7 +1,7 @@
 <?MICOMMENT>
 
-FILE:     fxfiganatlist.apg
-PREFIX:   fxfiganat_
+FILE:     wtanatlist.apg
+PREFIX:   wtanatlst_
 
 This displays a list of anatomy terms separated by ';'.
 
@@ -15,12 +15,12 @@ function updateInnerHTML(element_id,html_to_display) {
 </script>
 
 INPUT VARS:
-  $fxfiganat_gene_zdb_id	optional gene to constrain to, requires a resultTable right now 
+  $wtanatlst_gene_zdb_id	optional gene to constrain to, requires a resultTable right now 
 				(would need new join SQL otherwise)
-  $fxfiganat_Label		optional label to replace default.
-  $fxfiganat_condensed_count	optional, how many to show on a condensed list
-  $fxfiganat_max_count		optional, how many can we show before condensing
-  $fxfiganat_hide_unspecified	optional, display nothing if all that comes back is an 
+  $wtanatlst_Label		optional label to replace default.
+  $wtanatlst_condensed_count	optional, how many to show on a condensed list
+  $wtanatlst_max_count		optional, how many can we show before condensing
+  $wtanatlst_hide_unspecified	optional, display nothing if all that comes back is an 
 				unspecified anat record
 
 
@@ -50,23 +50,23 @@ stage range, experiment, or expression_found in the same figure.
 <?/MICOMMENT>
 
 
-<?MIVAR NAME="$fxfiganat_condensed_count" COND="$(NXST,$fxfiganat_condensed_count)">5<?/MIVAR>		
-<?MIVAR NAME="$fxfiganat_max_count" COND="$(NXST,$fxfiganat_max_count)">9<?/MIVAR>
+<?MIVAR NAME="$wtanatlst_condensed_count" COND="$(NXST,$wtanatlst_condensed_count)">5<?/MIVAR>		
+<?MIVAR NAME="$wtanatlst_max_count" COND="$(NXST,$wtanatlst_max_count)">9<?/MIVAR>
 
-<?MIVAR NAME="$fxfiganat_unspecified_constraint"><?/MIVAR>
-<?MIBLOCK COND="$(AND,$(XST,$fxfiganat_hide_unspecified),$(EC,$fxfiganat_hide_unspecified,t))">
-  <?MIVAR NAME="$fxfiganat_unspecified_constraint">and anatitem_name <> 'unspecified'<?/MIVAR>
+<?MIVAR NAME="$wtanatlst_unspecified_constraint"><?/MIVAR>
+<?MIBLOCK COND="$(AND,$(XST,$wtanatlst_hide_unspecified),$(EC,$wtanatlst_hide_unspecified,t))">
+  <?MIVAR NAME="$wtanatlst_unspecified_constraint">and anatitem_name <> 'unspecified'<?/MIVAR>
 <?/MIBLOCK>
 
 
 
 <?MICOMMENT> *** If a gene id is passed in, constrain against it, otherwise...don't **** <?/MICOMMENT>
-<?MIVAR NAME="$fxfiganat_gene_constraint"><?/MIVAR>
-<?MIVAR COND="$(XST,$fxfiganat_gene_zdb_id)" NAME="$fxfiganat_gene_constraint"> and xpat_gene_zdb_id = '$fxfiganat_gene_zdb_id' <?/MIVAR>
+<?MIVAR NAME="$wtanatlst_gene_constraint"><?/MIVAR>
+<?MIVAR COND="$(XST,$wtanatlst_gene_zdb_id)" NAME="$wtanatlst_gene_constraint"> and xpat_gene_zdb_id = '$wtanatlst_gene_zdb_id' <?/MIVAR>
 
 
-<?MIVAR NAME="$fxfiganat_result_constraint_table"><?/MIVAR>
-<?MIVAR NAME="$fxfiganat_result_constraint_where"><?/MIVAR>
+<?MIVAR NAME="$wtanatlst_result_constraint_table"><?/MIVAR>
+<?MIVAR NAME="$wtanatlst_result_constraint_where"><?/MIVAR>
 
 
 <?MICOMMENT> 
@@ -80,14 +80,14 @@ stage range, experiment, or expression_found in the same figure.
     =========================================================
 <?/MICOMMENT>
     
-<?MIVAR NAME=$fxfiganat_short_list><?/MIVAR>
-<?MIVAR NAME=$fxfiganat_long_list><?/MIVAR>
+<?MIVAR NAME=$wtanatlst_short_list><?/MIVAR>
+<?MIVAR NAME=$wtanatlst_long_list><?/MIVAR>
 
 <?MICOMMENT> *** set default label *** <?/MICOMMENT>
-<?MIVAR NAME="$fxfiganat_defaultLabel"><strong>Anatomical Terms: </strong><?/MIVAR>
+<?MIVAR NAME="$wtanatlst_defaultLabel"><strong>Anatomical Terms: </strong><?/MIVAR>
 
-<?MIBLOCK COND="$(NXST,$fxfiganat_Label)">
-  <?MIVAR NAME="$fxfiganat_Label">$fxfiganat_defaultLabel<?/MIVAR>
+<?MIBLOCK COND="$(NXST,$wtanatlst_Label)">
+  <?MIVAR NAME="$wtanatlst_Label">$wtanatlst_defaultLabel<?/MIVAR>
 <?/MIBLOCK>
 
 <?MISQL SQL="
@@ -95,7 +95,7 @@ stage range, experiment, or expression_found in the same figure.
 	FROM 
 	expression_result , expression_experiment, anatomy_item, genotype_experiment, experiment , genotype
 	WHERE
-	xpatex_gene_zdb_id = '$fxfiganat_gene_zdb_id'
+	xpatex_gene_zdb_id = '$wtanatlst_gene_zdb_id'
 	AND  xpatres_xpatex_zdb_id = xpatex_zdb_id 
 	AND xpatres_expression_found='t'
 	AND xpatres_anat_item_zdb_id = anatitem_zdb_id 
@@ -104,39 +104,39 @@ stage range, experiment, or expression_found in the same figure.
 	AND geno_zdb_id  = genox_geno_zdb_id 
 	AND geno_is_wildtype = 't' 
 	ORDER BY anatitem_name_order asc;">
-    <?MIVAR NAME="$fxfiganat_anatitem_html"><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$2>$1</a></span><?/MIVAR>
+    <?MIVAR NAME="$wtanatlst_anatitem_html"><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$2>$1</a></span><?/MIVAR>
 
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-      <?MIVAR NAME=fxfiganat_short_list>$fxfiganat_Label $fxfiganat_anatitem_html<?/MIVAR>
-      <?MIVAR NAME=fxfiganat_long_list>$fxfiganat_Label $fxfiganat_anatitem_html<?/MIVAR>
-    <?MIELSE COND=$(<,$MI_CURRENTROW,$fxfiganat_condensed_count)>
-      <?MIVAR>$(VECAPPEND,fxfiganat_long_list,$fxfiganat_anatitem_html)
+      <?MIVAR NAME=wtanatlst_short_list>$wtanatlst_Label $wtanatlst_anatitem_html<?/MIVAR>
+      <?MIVAR NAME=wtanatlst_long_list>$wtanatlst_Label $wtanatlst_anatitem_html<?/MIVAR>
+    <?MIELSE COND=$(<,$MI_CURRENTROW,$wtanatlst_condensed_count)>
+      <?MIVAR>$(VECAPPEND,wtanatlst_long_list,$wtanatlst_anatitem_html)
       <?/MIVAR>
-      <?MIVAR>$(VECAPPEND,fxfiganat_short_list,$fxfiganat_anatitem_html)
+      <?MIVAR>$(VECAPPEND,wtanatlst_short_list,$wtanatlst_anatitem_html)
       <?/MIVAR>
     <?MIELSE>
-      <?MIVAR>$(VECAPPEND,fxfiganat_long_list,$fxfiganat_anatitem_html)
+      <?MIVAR>$(VECAPPEND,wtanatlst_long_list,$wtanatlst_anatitem_html)
       <?/MIVAR>
     <?/MIBLOCK>
 <?/MISQL>
 
 
-  <?MIVAR NAME=fxfiganat_separate_short_list SEPARATE=", ">$fxfiganat_short_list<?/MIVAR>
-  <?MIVAR NAME=fxfiganat_separate_long_list SEPARATE=", ">$fxfiganat_long_list<?/MIVAR>
+  <?MIVAR NAME=wtanatlst_separate_short_list SEPARATE=", ">$wtanatlst_short_list<?/MIVAR>
+  <?MIVAR NAME=wtanatlst_separate_long_list SEPARATE=", ">$wtanatlst_long_list<?/MIVAR>
   
-  <?MIVAR NAME=fxfiganat_escape_short_list>$(REPLACE,$fxfiganat_separate_short_list,"'","")<?/MIVAR>
-  <?MIVAR NAME=fxfiganat_escape_long_list>$(REPLACE,$fxfiganat_separate_long_list,"'","")<?/MIVAR>
+  <?MIVAR NAME=wtanatlst_escape_short_list>$(REPLACE,$wtanatlst_separate_short_list,"'","")<?/MIVAR>
+  <?MIVAR NAME=wtanatlst_escape_long_list>$(REPLACE,$wtanatlst_separate_long_list,"'","")<?/MIVAR>
   
 
-<?MIVAR NAME=$fxfiganat_left_arrow><img border=0 onClick=updateWTAnatomyList('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
-<?MIVAR NAME=$fxfiganat_right_arrow><img onClick=updateWTAnatomyList('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$wtanatlst_left_arrow><img border=0 onClick=updateWTAnatomyList('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$wtanatlst_right_arrow><img onClick=updateWTAnatomyList('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
 
   
 <script>
   <?MIVAR>
 function updateWTAnatomyList(display_option) {
-    var long_display = "$fxfiganat_escape_long_list  <a href=\"javascript:updateWTAnatomyList('short');\">$fxfiganat_left_arrow</a>";
-    var short_display = "$fxfiganat_escape_short_list ... <a href=javascript:onClick=updateWTAnatomyList('long')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow";
+    var long_display = "$wtanatlst_escape_long_list  <a href=\"javascript:updateWTAnatomyList('short');\">$wtanatlst_left_arrow</a>";
+    var short_display = "$wtanatlst_escape_short_list ... <a href=javascript:onClick=updateWTAnatomyList('long')>(all $(VECSIZE,$wtanatlst_long_list))</a> $wtanatlst_right_arrow";
 
     if (display_option == "long") {
         updateInnerHTML('wtAnatomyList',long_display)
@@ -147,17 +147,17 @@ function updateWTAnatomyList(display_option) {
 }
   <?/MIVAR>
 </script>
-<?MIBLOCK COND="$(EQ,$fxfiganat_escape_short_list,)">
-     <?MIVAR NAME=$fxfignanat_escape_short_list>$fxfiganat_Label $fxfiganat_escape_short_list<?/MIVAR>
+<?MIBLOCK COND="$(EQ,$wtanatlst_escape_short_list,)">
+     <?MIVAR NAME=$fxfignanat_escape_short_list>$wtanatlst_Label $wtanatlst_escape_short_list<?/MIVAR>
 <?/MIBLOCK>
 <?MIVAR><span id="wtAnatomyList"><?/MIVAR>
-<?MIBLOCK COND="$(<,$(VECSIZE,$fxfiganat_long_list),$fxfiganat_max_count)">
+<?MIBLOCK COND="$(<,$(VECSIZE,$wtanatlst_long_list),$wtanatlst_max_count)">
   <?MIVAR>
-    $fxfiganat_escape_long_list
+    $wtanatlst_escape_long_list
   <?/MIVAR>
 <?MIELSE>
   <?MIVAR>
-    $fxfiganat_escape_short_list ... <a href=javascript:onClick=updateWTAnatomyList('long')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow
+    $wtanatlst_escape_short_list ... <a href=javascript:onClick=updateWTAnatomyList('long')>(all $(VECSIZE,$wtanatlst_long_list))</a> $wtanatlst_right_arrow
   <?/MIVAR>
 <?/MIBLOCK>
 
@@ -170,11 +170,11 @@ function updateWTAnatomyList(display_option) {
 <?/MICOMMENT>
 
 <?MIVAR>
-  $(UNSETVAR,$fxfiganat_Label)
-  $(UNSETVAR,$fxfiganat_short_list)  
-  $(UNSETVAR,$fxfiganat_long_list)  
-  $(UNSETVAR,$fxfiganat_separate_short_list)
-  $(UNSETVAR,$fxfiganat_separate_long_list)
-  $(UNSETVAR,$fxfiganat_escape_short_list)
-  $(UNSETVAR,$fxfiganat_escape_long_list)
+  $(UNSETVAR,$wtanatlst_Label)
+  $(UNSETVAR,$wtanatlst_short_list)  
+  $(UNSETVAR,$wtanatlst_long_list)  
+  $(UNSETVAR,$wtanatlst_separate_short_list)
+  $(UNSETVAR,$wtanatlst_separate_long_list)
+  $(UNSETVAR,$wtanatlst_escape_short_list)
+  $(UNSETVAR,$wtanatlst_escape_long_list)
 <?/MIVAR>
