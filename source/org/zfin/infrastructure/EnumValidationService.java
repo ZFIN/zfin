@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import sun.reflect.Reflection;
+
 /**
  * Service validates java Enumerations versus their database counterparts for controlled vocabulary clases.
  */
@@ -28,6 +30,8 @@ public class EnumValidationService {
 
     protected static String ENUM_NOT_FOUND = "Java enum not found in database: " ; 
     protected static String DATABASE_VALUE_NOT_FOUND = "Database value not mapped to java enum: " ; 
+    protected static String DOMAIN = "Domain: " ;
+    protected static String DOMAIN_NAME = "DOMAIN_NAME" ; 
 
     Logger logger = Logger.getLogger(EnumValidationService.class);
 
@@ -43,8 +47,12 @@ public class EnumValidationService {
                     ++count;
                 }
                 catch (IllegalAccessException iae) {
+                    if(iae.getCause() instanceof EnumValidationException){
+                        throw new EnumValidationException("test failed"+ method.getName() + "\n"
+                                + iae.getCause().getMessage()  , iae);                         
+                    }
                     logger.fatal("bad method exception", iae);
-                    throw new EnumValidationException("failed to called EnumValidationService: ", iae);
+                    throw new EnumValidationException("exception from EnumValidationService on method "+ method.getName() , iae);
                 }
                 catch (InvocationTargetException ite) {
                     logger.fatal("bad method exception", ite);
@@ -226,8 +234,10 @@ public class EnumValidationService {
             enumList.add(type.toString()) ;
         }
 
+
         String message = getCollectionDifferenceReport(enumList, list);
         if (message != null){
+            message += "Enum that fails to map: " + enumValues.getClass().getName() + "\n"; 
             throw new EnumValidationException(message);
         }
 
@@ -269,10 +279,10 @@ public class EnumValidationService {
             }
         }
 
-        String domain = System.getProperty("DOMAIN_NAME",null) ; 
+        String domain = System.getenv(DOMAIN_NAME) ;
         if(sb.length()>0){
             if(domain != null){
-                sb.insert(0,domain) ; 
+                sb.insert(0,DOMAIN + domain + "\n") ;
             }
             return sb.toString(); 
         }else{
