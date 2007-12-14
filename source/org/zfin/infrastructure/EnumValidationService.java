@@ -267,6 +267,7 @@ public class EnumValidationService {
             if (source != null && source.contains(name)) {
                 sb.append(ENUM_NOT_FOUND);
                 sb.append(name);
+                sb.append("You may wish to add "+ name + " to the java code.");
                 sb.append(System.getProperty("line.separator"));
             }
         }
@@ -275,6 +276,8 @@ public class EnumValidationService {
             if (target != null && target.contains(name)) {
                 sb.append(DATABASE_VALUE_NOT_FOUND);
                 sb.append(name);
+                sb.append(System.getProperty("line.separator"));
+                sb.append("You may wish to remove "+ name + " from the java code.");
                 sb.append(System.getProperty("line.separator"));
             }
         }
