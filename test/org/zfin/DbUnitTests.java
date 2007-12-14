@@ -27,22 +27,22 @@ import org.zfin.infrastructure.EnumValidationTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-//        AlignmentsControllerTest.class,
-//        AnatomyRepositoryTest.class,
-//        BlastRepositoryTest.class,
-//        InfrastructureRepositoryTest.class,
-//        MarkerRepositoryTest.class,
-//        MutantRepositoryTest.class,
-//        OrthologyTest.class,
-//        PeopleRepositoryTest.class,
-//        PublicationRepositoryTest.class,
-//        RedundancyCandidateControllerTest.class,
-//        NomenclatureCandidateControllerTest.class,
-//        RenoRepositoryTest.class,
-//        SequenceRepositoryTest.class,
-//        MapAccessionDbLinkTest.class,
-        EnumValidationTest.class
-//        MultiRunTest.class
+        AlignmentsControllerTest.class,
+        AnatomyRepositoryTest.class,
+        BlastRepositoryTest.class,
+        InfrastructureRepositoryTest.class,
+        MarkerRepositoryTest.class,
+        MutantRepositoryTest.class,
+        OrthologyTest.class,
+        PeopleRepositoryTest.class,
+        PublicationRepositoryTest.class,
+        RedundancyCandidateControllerTest.class,
+        NomenclatureCandidateControllerTest.class,
+        RenoRepositoryTest.class,
+        SequenceRepositoryTest.class,
+        MapAccessionDbLinkTest.class,
+        EnumValidationTest.class,
+        MultiRunTest.class
         })
 
 public class DbUnitTests {
