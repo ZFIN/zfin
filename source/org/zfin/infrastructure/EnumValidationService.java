@@ -26,6 +26,8 @@ import java.lang.reflect.Method;
  */
 public class EnumValidationService {
 
+    protected static String ENUM_NOT_FOUND = "Java enum not found in database: " ; 
+    protected static String DATABASE_VALUE_NOT_FOUND = "Database value not mapped to java enum: " ; 
 
     Logger logger = Logger.getLogger(EnumValidationService.class);
 
@@ -253,7 +255,7 @@ public class EnumValidationService {
         // add unmatched source entries to report
         for (String name : difference) {
             if (source != null && source.contains(name)) {
-                sb.append("Source collection has unmatched String: ");
+                sb.append(ENUM_NOT_FOUND);
                 sb.append(name);
                 sb.append(System.getProperty("line.separator"));
             }
@@ -261,12 +263,21 @@ public class EnumValidationService {
         // add unmatched target entries to report
         for (String name : difference) {
             if (target != null && target.contains(name)) {
-                sb.append("Target collection has unmatched String: ");
+                sb.append(DATABASE_VALUE_NOT_FOUND);
                 sb.append(name);
                 sb.append(System.getProperty("line.separator"));
             }
         }
-        return sb.toString();
+
+        String domain = System.getProperty("DOMAIN_NAME",null) ; 
+        if(sb.length()>0){
+            if(domain != null){
+                sb.insert(0,domain) ; 
+            }
+            return sb.toString(); 
+        }else{
+            return null ; 
+        }
 
     }
 

@@ -18,6 +18,7 @@ import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.MultiRunTest;
 import org.zfin.publication.PublicationRepositoryTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
+import org.zfin.infrastructure.EnumValidationTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite)
@@ -26,22 +27,22 @@ import org.zfin.marker.repository.MarkerRepositoryTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        AlignmentsControllerTest.class,
-        AnatomyRepositoryTest.class,
-        BlastRepositoryTest.class,
-        InfrastructureRepositoryTest.class,
-        MarkerRepositoryTest.class,
-        MutantRepositoryTest.class,
-        OrthologyTest.class,
-        PeopleRepositoryTest.class,
-        PublicationRepositoryTest.class,
-        RedundancyCandidateControllerTest.class,
-        NomenclatureCandidateControllerTest.class,
-        RenoRepositoryTest.class,
-        SequenceRepositoryTest.class,
-        MapAccessionDbLinkTest.class,
-        EnumValidationTest.class,
-        MultiRunTest.class
+//        AlignmentsControllerTest.class,
+//        AnatomyRepositoryTest.class,
+//        BlastRepositoryTest.class,
+//        InfrastructureRepositoryTest.class,
+//        MarkerRepositoryTest.class,
+//        MutantRepositoryTest.class,
+//        OrthologyTest.class,
+//        PeopleRepositoryTest.class,
+//        PublicationRepositoryTest.class,
+//        RedundancyCandidateControllerTest.class,
+//        NomenclatureCandidateControllerTest.class,
+//        RenoRepositoryTest.class,
+//        SequenceRepositoryTest.class,
+//        MapAccessionDbLinkTest.class,
+        EnumValidationTest.class
+//        MultiRunTest.class
         })
 
 public class DbUnitTests {
