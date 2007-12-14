@@ -47,7 +47,7 @@ public class EnumValidationTest {
     @Test
     public void validateAllServices(){
         try{
-            enumValidationService.validateMarkerTypes();
+            enumValidationService.checkAllEnums();
         }
         catch(EnumValidationException eve){
             logger.fatal(eve);
@@ -73,7 +73,7 @@ public class EnumValidationTest {
         namesTwo.add("Ingrid");
         errorReport = EnumValidationService.getCollectionDifferenceReport(namesOne, namesTwo);
         assertNotNull(errorReport );
-        assertTrue( errorReport.startsWith(EnumValidationService.DATABASE_VALUE_NOT_FOUND  +  "Ingrid"));
+        assertTrue( errorReport.contains(EnumValidationService.DATABASE_VALUE_NOT_FOUND  +  "Ingrid"));
 
 
 
