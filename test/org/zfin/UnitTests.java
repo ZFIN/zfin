@@ -3,7 +3,7 @@ package org.zfin;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.zfin.Marker.presentation.MarkerPresentationTest;
+import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.anatomy.presentation.*;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.orthology.OrthologyRepositoryTest;

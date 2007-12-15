@@ -1,4 +1,4 @@
-package org.zfin.Marker.presentation;
+package org.zfin.marker.presentation;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
