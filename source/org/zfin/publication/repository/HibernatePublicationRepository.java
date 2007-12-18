@@ -18,7 +18,9 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
 import org.zfin.publication.Publication;
+import org.zfin.publication.Journal;
 import org.zfin.repository.RepositoryFactory;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,8 @@ import java.util.List;
  * ToDO: include documentation
  */
 public class HibernatePublicationRepository extends PaginationUtil implements PublicationRepository {
+
+    Logger logger = Logger.getLogger(HibernatePublicationRepository.class) ;
 
     public int getNumberOfPublications(String abstractText) {
 
@@ -622,5 +626,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Figure>) query.list();
     }
 
+
+    public Journal getJournalByTitle(String journalTitle) {
+        try{
+            Session session = HibernateUtil.currentSession() ;
+            Criteria criteria = session.createCriteria(Journal.class) ;
+            criteria.add(Restrictions.eq("name",journalTitle)) ;
+            return (Journal) criteria.uniqueResult() ;
+        }
+        catch(Exception e){
+            logger.error("failed to get journal title["+journalTitle+"] returning null",e);
+            return null ; 
+        }
+    }
 
 }

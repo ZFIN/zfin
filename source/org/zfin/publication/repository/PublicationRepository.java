@@ -9,6 +9,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
 import org.zfin.publication.Publication;
+import org.zfin.publication.Journal;
 import org.zfin.repository.PaginationParameter;
 
 import java.util.List;
@@ -296,4 +297,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @return a set of figures
      */
     List<Figure> getFiguresByGeneAndAnatomy(Marker gene, AnatomyItem anatomyTerm);
+
+
+    Journal getJournalByTitle(String journalTitle) ;
 }
