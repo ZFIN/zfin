@@ -72,3 +72,6 @@
 # 20th of each month reminder to restart ontape on production
 00 10 20 * * /research/zcentral/Commons/bin/monthly_ontape.pl
 # 
+#
+# Daily 3:30am   Populate dblink microarrays.
+30 3 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray.sh
