@@ -8,6 +8,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.ChoiceFormat;
 import java.util.Collection;
 
@@ -40,10 +42,17 @@ public class CreateFiguresLinkTag extends TagSupport {
         }
 
         hyperLink.append("&TA_selected_structures=");
-        hyperLink.append(anatomyItem.getName());
+        String aoName = anatomyItem.getName();
+        String aoTermUrlEncoded;
+        try {
+            aoTermUrlEncoded = URLEncoder.encode(aoName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            aoTermUrlEncoded = URLEncoder.encode(aoName);
+        }
+        hyperLink.append(aoTermUrlEncoded);
 
         hyperLink.append("&xpatsel_processed_selected_structures=");
-        hyperLink.append(anatomyItem.getName());
+        hyperLink.append(aoTermUrlEncoded);
 
         if (author != null) {
             hyperLink.append("&authsearchtype=contains&author=");
