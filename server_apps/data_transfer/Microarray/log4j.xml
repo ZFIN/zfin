@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%-4r %-5p %c %x - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="MICROARRAY_ERROR" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/tmp/microarray_error.log"/>
+        <param name="Append" value="false"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
+        </layout>
+    </appender>
+
+
+    <appender name="MICROARRAY_NOT_FOUND" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/tmp/microarray_notfound.log"/>
+        <param name="Append" value="false"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="MICROARRAY_INFO" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/tmp/microarray_info.log"/>
+        <param name="Append" value="false"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="MAIN" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="./microarray_all.log"/>
+        <param name="Append" value="true"/>
+        <param name="MaxFileSize" value="1MB"/>
+        <param name="MaxBackupIndex" value="10"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
+        </layout>
+    </appender>
+
+    <category name="org.zfin.properties" additivity="true">
+        <priority value="INFO"/>
+    </category>
+
+    <category name="MICROARRAY_ERROR" additivity="true">
+        <priority value="INFO"/>
+        <appender-ref  ref="MICROARRAY_ERROR" />
+    </category>
+
+    <category name="MICROARRAY_INFO" additivity="true">
+        <priority value="INFO"/>
+        <appender-ref  ref="MICROARRAY_INFO" />
+    </category>
+
+    <category name="MICROARRAY_NOT_FOUND" additivity="true">
+        <priority value="INFO"/>
+        <appender-ref ref="MICROARRAY_NOT_FOUND" />
+    </category>
+
+
+    <category name="org.zfin" additivity="false">
+<!--        <priority value="DEBUG"/>-->
+        <priority value="INFO"/>
+        <appender-ref ref="stdout"/>
+    </category>
+
+    <!-- Log the actual Hibernate Query Language (HQL) expression -->
+    <category name="org.hibernate.impl.SessionImpl">
+<!--        <priority value="DEBUG"/>-->
+        <priority value="INFO"/>
+    </category>
+
+    <!-- Log the substitution parameters in the HQL expression -->
+    <category name="org.hibernate.engine.QueryParameters">
+        <priority value="trace"/>
+    </category>
+
+    <!-- Log the real SQL -->
+    <category name="org.hibernate.SQL">
+<!--        <priority value="DEBUG"/>-->
+        <priority value="INFO"/>
+    </category>
+
+    <!-- Log the parameter substitutions in the SQL statement. Unfortunately logging org.hibernate gives a lot of other junk as well -->
+    <category name="org.hibernate">
+<!--        <priority value="DEBUG"/>-->
+        <priority value="INFO"/>
+    </category>
+    
+    <root>
+        <priority value="info"/>
+<!--        <appender-ref ref="stdout"/>-->
+        <appender-ref ref="MAIN" />
+    </root>
+</log4j:configuration>
