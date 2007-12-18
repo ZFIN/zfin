@@ -44,9 +44,11 @@ public class ForeignDB {
 
     public static enum AvailableName {
 
+//        ARRAY_EXPRESS("ArrayExpress"),
         BLAST("BLAST"),
         BLASTP("BLASTP"),
         BLAT("BLAT"),
+        DBSNP("dbSNP"),
         EBI_CELL("EBI-Cell"),
         EC("EC"),
         ENSEMBL("ENSEMBL"),
@@ -59,6 +61,7 @@ public class ForeignDB {
         GDB("GDB"),
         GENBANK("GenBank"),
         GENPEPT("GenPept"),
+        GEO("GEO"),
         INTVEGA("INTVEGA"),
         INTERPRO("InterPro"),
         MEGA_BLAST("MEGA BLAST"),
@@ -88,8 +91,9 @@ public class ForeignDB {
         VEGA_CLONE("VEGA_Clone"),
         VEGA_TRANS("Vega_Trans"),
         WASHU("WashU"),
-        WASHUZ("WashUZ"),
-        DBSNP("dbSNP");
+        WASHUZ("WashUZ")
+//        ZF_ESPRESSO("ZF-Espresso")
+            ;
 
 
         private final String value;

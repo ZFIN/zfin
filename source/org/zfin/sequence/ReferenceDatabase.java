@@ -59,6 +59,7 @@ public class ReferenceDatabase {
     private Species organism;
     private Type type;
     private SuperType superType;
+
     
     public ForeignDB getForeignDB() {
         return foreignDB;
@@ -106,6 +107,19 @@ public class ReferenceDatabase {
     public void setSuperType(SuperType superType) {
         this.superType = superType;
     }
+
+    public String toString(){
+        String returnString = "" ; 
+        returnString += zdbID + " " ; 
+        returnString += organism + " " ; 
+        returnString += type + " " ; 
+        returnString += superType + " " ; 
+        if(foreignDB!=null){
+            returnString += foreignDB.getDbName() + " " ; 
+        }
+        return returnString ; 
+    }
+
 }
 
 

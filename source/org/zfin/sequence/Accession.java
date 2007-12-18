@@ -30,7 +30,7 @@ public class Accession implements Comparable, Serializable {
     private List<LinkageGroup> linkageGroups;
     private ReferenceDatabase referenceDatabase;
     private Set<EntrezProtRelation> relatedEntrezAccessions;
-    private Set<Accession> relatedAccessions;
+//    private Set<Accession> relatedAccessions;
     private Set<DBLink> dbLinks;
     private Set<MarkerDBLink> blastableMarkerDBLinks;
 
@@ -137,7 +137,12 @@ public class Accession implements Comparable, Serializable {
     }
 
     public int compareTo(Object o) {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        if(o instanceof Accession){
+            Accession a = (Accession) o ;
+            return a.getNumber().compareTo(getNumber()) ; 
+        }else{
+            return 0;              
+        }
     }
 
     public Set<DBLink> getDbLinks() {
@@ -186,6 +191,18 @@ public class Accession implements Comparable, Serializable {
         return species;
     }
 
+    public boolean equals(Object o) {
+        if(o instanceof Accession){
+            Accession a = (Accession) o ;
+            if( a.getNumber().equals(getNumber())
+                    &&
+                  a.getReferenceDatabase().getForeignDB().getDbName().equals(getReferenceDatabase().getForeignDB().getDbName())
+                    ) {                
+                return true ;
+            }
+        }
+        return false ;
+    }
 }
 
 
