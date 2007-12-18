@@ -4,21 +4,22 @@
  */
 package org.zfin.infrastructure.repository ;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
-import org.zfin.marker.Marker;
 import org.zfin.people.Person;
+import org.zfin.marker.Marker;
+import org.apache.log4j.Logger;
 
 import java.util.Date;
 import java.util.List;
 
 public class HibernateInfrastructureRepository implements InfrastructureRepository{
 
-    private static Logger log = Logger.getLogger(HibernateInfrastructureRepository.class);
+    private static Logger logger = Logger.getLogger(HibernateInfrastructureRepository.class);
 
 
     public void insertActiveData(String zdbID){
@@ -36,7 +37,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     public void deleteActiveData(ActiveData activeData){
-        log.info("Deleting " + activeData.getZdbID() + " from zdb_active_data");
+        logger.info("Deleting " + activeData.getZdbID() + " from zdb_active_data");
         Session session = HibernateUtil.currentSession();
         session.delete(activeData);
     }
@@ -44,6 +45,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public void deleteActiveDataByZdbID(String zdbID) {
         ActiveData a = getActiveData(zdbID);
         deleteActiveData(a);
+    }
+
+    public int deleteActiveDataByZdbID(List<String> zdbIDs) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("delete from ActiveData ad where ad.zdbID in (:zdbIDs)");
+        query.setParameterList("zdbIDs",zdbIDs) ;
+        return query.executeUpdate() ;
     }
 
     public ActiveData getActiveData(String zdbID){
@@ -63,38 +71,18 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         ra.setSourceZdbID(sourceZdbID);
         ra.setSourceType(RecordAttribution.SourceType.STANDARD.toString());
 
-        log.info("dataZdbID: "+dataZdbID) ;
-        log.info("sourceZdbID: "+sourceZdbID) ;
-        log.info("ra.getSourceType: "+ra.getSourceType()) ;
-
         session.save(ra);
-        session.flush();
+//        session.flush();
     }
 
-  /**
-   * Retrieve a dataNote by its zdb id
-   * @param zdbID zdb ID
-   * @return DataNote
-   */
+  //retrieve a dataNote by its zdb_id
     public DataNote getDataNoteByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(DataNote.class);
         criteria.add(Restrictions.eq("zdbID", zdbID));
         return (DataNote) criteria.uniqueResult() ;
     }
-
-    /**
-     * Retrieve the Updates flag that indicates if the db is disabled for updates.
-     * @return zdbFlag
-     */
-    public ZdbFlag getUpdatesFlag() {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(ZdbFlag.class);
-        criteria.add(Restrictions.eq("type", ZdbFlag.Type.DISABLE_UPDATES));
-        return (ZdbFlag) criteria.uniqueResult();
-    }
-
-    //retrieve a set of dataNotes by its data_zdb_id
+   //retrieve a set of dataNotes by its data_zdb_id
     public DataNote getDataNoteByDataID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(DataNote.class);
@@ -168,7 +156,59 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         up.setNewValue(marker.getAbbreviation());
         up.setWhenUpdated(new Date());
         session.save(up);
-        session.flush();    }
+        session.flush();    
+    }
+
+    public int deleteRecordAttributionForPub(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:zdbID");
+        query.setParameter("zdbID",zdbID) ;
+        return query.executeUpdate() ; 
+    }
+
+
+    public int deleteRecordAttributionByDataZdbID(List<String> dataZdbIDs) {
+        for(String zdbID: dataZdbIDs){
+            logger.debug("zdbID: " + zdbID) ; 
+        }
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(RecordAttribution.class) ;
+        criteria.add(Restrictions.in("dataZdbID",dataZdbIDs )) ;
+        List<RecordAttribution> recordAttributions = criteria.list() ;
+
+        for(RecordAttribution recordAttribution : recordAttributions){
+             logger.info("deleting recordAttribution: " + recordAttribution) ; 
+             session.delete(recordAttribution);
+             logger.info("DELETED recordAttribution: " + recordAttribution) ; 
+        }
+        session.flush();
+        return recordAttributions.size() ; 
+         
+//        Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID in (:dataZdbIDs)");
+//        query.setParameterList("dataZdbIDs",dataZdbIDs) ;
+//        int deletedRecords = query.executeUpdate() ;
+//        return deletedRecords ;
+    }
+
+
+    public int removeRecordAttributionForPub(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:zdbID");
+        query.setParameter("zdbID",zdbID) ;
+        return query.executeUpdate() ; 
+    }
+
+    /**
+     * Retrieve the Updates flag that indicates if the db is disabled for updates.
+     * @return zdbFlag
+     */
+    public ZdbFlag getUpdatesFlag() {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(ZdbFlag.class);
+        criteria.add(Restrictions.eq("type", ZdbFlag.Type.DISABLE_UPDATES));
+        return (ZdbFlag) criteria.uniqueResult();
+    }
+
 } 
 
 
