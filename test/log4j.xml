@@ -25,6 +25,12 @@
         <priority value="INFO"/>
     </category>
 
+
+    <category name="MICROARRAY_INFO" additivity="true">
+        <priority value="DEBUG"/>
+<!--        <priority value="INFO"/>-->
+    </category>
+
     <category name="org.zfin" additivity="false">
 <!--        <priority value="DEBUG"/>-->
         <priority value="INFO"/>
@@ -44,6 +50,11 @@
 
     <!-- Log the real SQL -->
     <category name="org.hibernate.SQL">
+<!--        <priority value="DEBUG"/>-->
+        <priority value="INFO"/>
+    </category>
+
+    <category name="org.hibernate.type">
 <!--        <priority value="DEBUG"/>-->
         <priority value="INFO"/>
     </category>
