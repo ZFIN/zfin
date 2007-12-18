@@ -18,6 +18,7 @@ import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.MultiRunTest;
 import org.zfin.publication.PublicationRepositoryTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
+import org.zfin.datatransfer.MicroArrayTest;
 import org.zfin.infrastructure.EnumValidationTest;
 
 /**
@@ -43,6 +44,7 @@ import org.zfin.infrastructure.EnumValidationTest;
         MapAccessionDbLinkTest.class,
         EnumValidationTest.class,
         MultiRunTest.class
+        ,MicroArrayTest.class     // Takes 1.5 min to run, but works.
         })
 
 public class DbUnitTests {
