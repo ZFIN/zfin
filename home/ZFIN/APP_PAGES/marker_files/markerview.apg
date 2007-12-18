@@ -1225,8 +1225,9 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
 	 
 	</td>
 	</tr>
-	
-	<td><b></b></td>
+
+    <tr>
+	<td>&nbsp;</td>
 	<td>
 	<?MIVAR>
           <?MISQL SQL="select WebExplode(object,'wtanatlst_gene_zdb_id=$OID&wtanatlst_Label=  &wtanatlst_hide_unspecified=t&wtanatlst_condensed_count=3&wtanatlst_max_count=5') from webPages where ID='aa-wtanatlist.apg';">$1<?/MISQL>  
@@ -1234,14 +1235,167 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
 	</td>
 	</tr>
 	<?/MIVAR>
-	</table>
 
-		 
      
-     </table> <?MICOMMENT>close xpat section table<?/MICOMMENT>
+     <?MICOMMENT>
+     close xpat section table<?/MICOMMENT>
 
 <?/MIBLOCK> <?MICOMMENT>block for gene xpat if exist<?/MICOMMENT>
+
+<?MICOMMENT>Start MICROARRAY block here<?/MICOMMENT>
+     <?MIVAR NAME=accession_sum><?/MIVAR>
+     <?MISQL SQL="
+ select distinct fdb_db_name, fdb_db_query ,  dblink_acc_num,dblink_zdb_id,
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end)
+   from db_link dbl, foreign_db fdb, foreign_db_contains fdbc, marker m
+     where 
+     dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+     and fdbc.fdbcont_fdb_db_name = fdb.fdb_db_name
+     and m.mrkr_zdb_id=dbl.dblink_linked_recid
+     and fdb.fdb_db_name = 'GEO' 
+     and m.mrkr_zdb_id='$OID'
+union
+ select distinct fdb_db_name, fdb_db_query ,  dblink_acc_num,dblink_zdb_id,
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end)
+   from db_link dbl, foreign_db fdb, foreign_db_contains fdbc,marker_relationship mr
+     where 
+     dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+     and fdbc.fdbcont_fdb_db_name = fdb.fdb_db_name
+     and fdb.fdb_db_name = 'GEO' 
+     and mr.mrel_mrkr_2_zdb_id=dbl.dblink_linked_recid
+     and mr.mrel_mrkr_1_zdb_id='$OID'
+     and mr.mrel_type='gene encodes small segment' 
+     ">
+      <?MIVAR NAME=mrkrview_microarray_db>$1<?/MIVAR>
+  <?MIVAR NAME=mrkrview_microarray_link>$2<?/MIVAR>
+  <?MIVAR NAME=dblink_acc>$3<?/MIVAR>
+  <?MIVAR NAME=dataId>$4<?/MIVAR>
+  <?MIVAR NAME=mrkrview_microarray_suffix>$5<?/MIVAR>
+   
+	 <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
+     <?MIVAR NAME=accession_sum>$dblink_acc* OR $dblink_acc.*<?/MIVAR>
+     <?MIELSE>
+     <?MIVAR NAME=accession_sum>$accession_sum OR $dblink_acc* or $dblink_acc.*<?/MIVAR>
+     <?/MIBLOCK>
+     <?/MISQL>
+
+
+	 <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
+         <?MIVAR COND="$(EQ,$mrkrview_xpatsource_count,0)">
+             <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
+         <?/MIVAR>
+         <?MICOMMENT>
+         If GEO does not have this accession, then none of the other databases will have it either, so this is safe to do here
+         <?/MICOMMENT>
+         <tr>
+         <td><b>Curated microarray expression:</b></td>
+         <td>
+     <?MICOMMENT> They will all have the same dataId, so just using the last one will be okay <?/MICOMMENT>
+        <?MIVAR NAME=mini_ref><?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
+         <a href="$mrkrview_microarray_link$accession_sum$mrkrview_microarray_suffix">$mrkrview_microarray_db</a> &nbsp;$mini_ref
+
+         <?MICOMMENT>Start ZF-Espresso<?/MICOMMENT>
+
+         <?MIVAR NAME=accession_sum><?/MIVAR>
+             <?MISQL SQL="
+ select distinct fdb_db_name, fdb_db_query ,  dblink_acc_num,dblink_zdb_id,
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end)
+   from db_link dbl, foreign_db fdb, foreign_db_contains fdbc, marker m
+     where 
+     dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+     and fdbc.fdbcont_fdb_db_name = fdb.fdb_db_name
+     and m.mrkr_zdb_id=dbl.dblink_linked_recid
+     and fdb.fdb_db_name = 'ZF-Espresso' 
+     and m.mrkr_zdb_id='$OID'
+union
+ select distinct fdb_db_name, fdb_db_query ,  dblink_acc_num,dblink_zdb_id,
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end)
+   from db_link dbl, foreign_db fdb, foreign_db_contains fdbc,marker_relationship mr
+     where 
+     dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+     and fdbc.fdbcont_fdb_db_name = fdb.fdb_db_name
+     and fdb.fdb_db_name = 'ZF-Espresso' 
+     and mr.mrel_mrkr_2_zdb_id=dbl.dblink_linked_recid
+     and mr.mrel_mrkr_1_zdb_id='$OID'
+     and mr.mrel_type='gene encodes small segment' 
+             ">
+              <?MIVAR NAME=mrkrview_microarray_db>$1<?/MIVAR>
+          <?MIVAR NAME=mrkrview_microarray_link>$2<?/MIVAR>
+          <?MIVAR NAME=dblink_acc>$3<?/MIVAR>
+          <?MIVAR NAME=dataId>$4<?/MIVAR>
+          <?MIVAR NAME=mrkrview_microarray_suffix>$5<?/MIVAR>
+           
+             <?MIVAR NAME=accession_sum>$dblink_acc $accession_sum<?/MIVAR>
+             <?/MISQL>
+
+	 <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
+        <?MIVAR NAME=mini_ref><?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
+         <a href="$mrkrview_microarray_link$accession_sum$mrkrview_microarray_suffix">$mrkrview_microarray_db</a> &nbsp;$mini_ref
+     <?/MIVAR>
+
+
+
+         <?MICOMMENT>End ZF-ESPRESSO<?/MICOMMENT>
+
+         <?MICOMMENT>Start ArrayExpress<?/MICOMMENT>
+
+         <?MIVAR NAME=accession_sum><?/MIVAR>
+             <?MISQL SQL="
+ select distinct fdb_db_name, fdb_db_query ,  dblink_acc_num,dblink_zdb_id,
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end)
+   from db_link dbl, foreign_db fdb, foreign_db_contains fdbc, marker m
+     where 
+     dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+     and fdbc.fdbcont_fdb_db_name = fdb.fdb_db_name
+     and m.mrkr_zdb_id=dbl.dblink_linked_recid
+     and fdb.fdb_db_name = 'ArrayExpress' 
+     and m.mrkr_zdb_id='$OID'
+union
+ select distinct fdb_db_name, fdb_db_query ,  dblink_acc_num,dblink_zdb_id,
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end)
+   from db_link dbl, foreign_db fdb, foreign_db_contains fdbc,marker_relationship mr
+     where 
+     dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+     and fdbc.fdbcont_fdb_db_name = fdb.fdb_db_name
+     and fdb.fdb_db_name = 'ArrayExpress' 
+     and mr.mrel_mrkr_2_zdb_id=dbl.dblink_linked_recid
+     and mr.mrel_mrkr_1_zdb_id='$OID'
+     and mr.mrel_type='gene encodes small segment' 
+             ">
+              <?MIVAR NAME=mrkrview_microarray_db>$1<?/MIVAR>
+          <?MIVAR NAME=mrkrview_microarray_link>$2<?/MIVAR>
+          <?MIVAR NAME=dblink_acc>$3<?/MIVAR>
+          <?MIVAR NAME=dataId>$4<?/MIVAR>
+          <?MIVAR NAME=mrkrview_microarray_suffix>$5<?/MIVAR>
+             <?MIVAR NAME=accession_sum>$dblink_acc $accession_sum<?/MIVAR>
+             <?/MISQL>
+
+	 <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
+        <?MIVAR NAME=mini_ref><?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
+         <a href="$mrkrview_microarray_link$accession_sum$mrkrview_microarray_suffix">$mrkrview_microarray_db</a> &nbsp;$mini_ref
+     <?/MIVAR>
+         <?MICOMMENT>End ArrayExpress<?/MICOMMENT>
+         </td>
+         </tr>
+         <?MIVAR COND="$(EQ,$mrkrview_xpatsource_count,0)">
+             </table>
+         <?/MIVAR>
+     <?/MIVAR>
+     </table> <?MICOMMENT>close xpat section table<?/MICOMMENT>
+      
+<?MICOMMENT>End MICROARRAY block here<?/MICOMMENT>
+
+
+
+
+
+
 <?/MIBLOCK> <?MICOMMENT>block for marker type=gene<?/MICOMMENT>
+
+
+
+
+
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
@@ -2222,7 +2376,9 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
 <?/MICOMMENT>
 
 
-<!------------   OTHER MARKER PAGES   ------------------------------->
+<?MICOMMENT>
+------------   OTHER MARKER PAGES   -------------------------------
+<?/MICOMMENT>
   <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>  
 
   <?MISQL SQL="
@@ -2234,6 +2390,8 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id
       and fdbcont_fdb_db_name = fdb_db_name
       and fdbcont_fdbdt_data_type = 'other'
+      and fdb_db_name != 'GEO'
+      and fdb_db_name != 'ZF-ESPRESSO'
     order by 6,1,5
   ;"> 
     <?MIVAR NAME=db_name>$1<?/MIVAR>
@@ -2333,7 +2491,7 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
     <?MIBLOCK COND="$(XST,$dblink_other)">
         <?MIVAR NAME=dblink_other_table_row><TR><TD>$(SEPARATE,$dblink_other,</TD><TD>)</TD></TR><?/MIVAR>
         <?MIVAR>
-            <TABLE  width="100%" border=0 bgcolor="$highlight"
+            <TABLE  width="100%" border=0 bgcolor="$highlight">
                 $dblink_other_table_row
             </TABLE>
         <?/MIVAR>
