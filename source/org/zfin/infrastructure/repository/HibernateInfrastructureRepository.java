@@ -4,18 +4,16 @@
  */
 package org.zfin.infrastructure.repository ;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
-import org.zfin.people.Person;
-import org.zfin.publication.Publication;
 import org.zfin.marker.Marker;
-import org.apache.log4j.Logger;
+import org.zfin.people.Person;
 
 import java.util.Date;
-import java.util.Set;
 import java.util.List;
 
 public class HibernateInfrastructureRepository implements InfrastructureRepository{
@@ -73,14 +71,30 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         session.flush();
     }
 
-  //retrieve a dataNote by its zdb_id
+  /**
+   * Retrieve a dataNote by its zdb id
+   * @param zdbID zdb ID
+   * @return DataNote
+   */
     public DataNote getDataNoteByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(DataNote.class);
         criteria.add(Restrictions.eq("zdbID", zdbID));
         return (DataNote) criteria.uniqueResult() ;
     }
-   //retrieve a set of dataNotes by its data_zdb_id
+
+    /**
+     * Retrieve the Updates flag that indicates if the db is disabled for updates.
+     * @return zdbFlag
+     */
+    public ZdbFlag getUpdatesFlag() {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(ZdbFlag.class);
+        criteria.add(Restrictions.eq("type", ZdbFlag.Type.DISABLE_UPDATES));
+        return (ZdbFlag) criteria.uniqueResult();
+    }
+
+    //retrieve a set of dataNotes by its data_zdb_id
     public DataNote getDataNoteByDataID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(DataNote.class);

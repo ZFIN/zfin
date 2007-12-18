@@ -3,10 +3,10 @@
 
 <script language="JavaScript" type="text/javascript" src="/autosuggest.js">
 </script>
-<script src="/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
-<script src="/javascript/ajax-lib/effects.js" type="text/javascript"></script>
-<script src="/javascript/ajax-lib/dragdrop.js" type="text/javascript"></script>
-<script src="/javascript/ajax-lib/controls.js" type="text/javascript"></script>
+<script src="/phenote/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
+<script src="/phenote/javascript/ajax-lib/effects.js" type="text/javascript"></script>
+<script src="/phenote/javascript/ajax-lib/dragdrop.js" type="text/javascript"></script>
+<script src="/phenote/javascript/ajax-lib/controls.js" type="text/javascript"></script>
 
 
 <TABLE width=100%>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+        "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
 <!-- a tag library descriptor -->
 
 <taglib>
@@ -158,7 +159,9 @@
     <tag>
         <name>createDelimitedList</name>
         <tagclass>org.zfin.framework.presentation.tags.CreateDelimitedListTag</tagclass>
-        <info>Outputs string value of each of the items in the provided collection, separated by the provided delimiter</info>
+        <info>Outputs string value of each of the items in the provided collection, separated by the provided
+            delimiter
+        </info>
         <attribute>
             <name>collectionEntity</name>
             <required>true</required>
@@ -187,7 +190,20 @@
         <tagclass>org.zfin.framework.presentation.tags.DebugTag</tagclass>
         <info>Add Session-related debugging info on a JSP page.</info>
     </tag>
-    
+
+    <tag>
+        <name>databaseLock</name>
+        <tagclass>org.zfin.framework.presentation.tags.CheckUpdatesTag</tagclass>
+        <info>Check if the database is currently locked for updates.
+            If so login sessions are disabled.
+        </info>
+        <attribute>
+            <name>locked</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
     <tag>
         <name>link</name>
         <tagclass>org.zfin.framework.presentation.tags.CreateLinkTag</tagclass>
@@ -199,7 +215,6 @@
         </attribute>
     </tag>
 
-    
 
     <tag>
         <name>name</name>

@@ -9,6 +9,10 @@
         <param name="enumClassname">org.zfin.infrastructure.RecordAttribution$SourceType</param>
     </typedef>
 
+    <typedef class="org.zfin.database.StringEnumUserType" name="zdbFlagType">
+        <param name="enumClassname">org.zfin.infrastructure.ZdbFlag$Type</param>
+    </typedef>
+
     <class name="org.zfin.infrastructure.ActiveData" table="zdb_active_data">
         <id name="zdbID" type="string">
             <column name="zactvd_zdb_id" not-null="true"/>
@@ -84,5 +88,12 @@
         <id name="name" column="aliasgrp_name" />
         <property name="significance" column="aliasgrp_significance" />
     </class>
+
+    <class name="org.zfin.infrastructure.ZdbFlag" table="zdb_flag" >
+        <id name="type" column="zflag_name" type="zdbFlagType"/>
+        <property name="systemUpdateDisabled" column="zflag_is_on" />
+        <property name="dateLastModified" column="zflag_last_modified" />
+    </class>
+
 
 </hibernate-mapping>

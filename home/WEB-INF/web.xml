@@ -50,6 +50,13 @@
         </init-param>
     </filter>
 
+<!--
+    <filter>
+        <filter-name>Check Database Updates</filter-name>
+        <filter-class>org.zfin.framework.filter.UpdatesCheckFilter</filter-class>
+    </filter>
+
+-->
     <!-- Filter to cleanup the HTML response before it is sent out to the client -->
 <!--
     <filter>
@@ -74,6 +81,13 @@
         <filter-name>Hibernate Session Request</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+<!--
+
+    <filter-mapping>
+        <filter-name>Check Database Updates</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+-->
 
     <filter-mapping>
         <filter-name>Acegi Filter Chain Proxy</filter-name>

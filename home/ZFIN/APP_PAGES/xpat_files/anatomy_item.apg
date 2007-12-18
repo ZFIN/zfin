@@ -677,6 +677,7 @@ and  clone_rating=4
 	 WHERE xpatres_anat_item_zdb_id = '$OID'
 	   and xpatex_zdb_id = xpatres_xpatex_zdb_id
 	   and xpatex_gene_zdb_id = mrkr_zdb_id
+           and xpatres_expression_found = 't'
 	ORDER BY mrkr_abbrev_order
 ;">
   <?MIVAR NAME="gene_abbrev">$1<?/MIVAR>

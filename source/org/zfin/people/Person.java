@@ -193,7 +193,11 @@ public class Person implements UserDetails {
         Authentication authentication = context.getAuthentication();
         if (authentication == null)
             return null;
-        return (Person) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        // ToDo: Annonymous user should also be a Person object opposed to a String object
+        if (principal instanceof String)
+            return null;
+        return (Person) principal;
     }
 
     public int hashCode() {

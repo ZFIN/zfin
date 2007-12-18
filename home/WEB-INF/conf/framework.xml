@@ -11,11 +11,13 @@
             <props>
                 <prop key="/autocomplete/gene-family">autoComplete</prop>
                 <prop key="/autocomplete/anatomy-term">autoComplete</prop>
+                <prop key="/http-redirect/">httpRedirect</prop>
             </props>
         </property>
 
     </bean>
 
+    <bean name="httpRedirect" class="org.zfin.framework.presentation.RedirectController"/>
 
     <bean name="autoComplete" class="org.zfin.framework.presentation.AutoCompleteController">
         <property name="methodNameResolver" ref="autoCompleteResolver"/>

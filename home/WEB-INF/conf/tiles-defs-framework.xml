@@ -7,4 +7,5 @@
 <tiles-definitions>
    <definition name="gene-family-autocomplete.page" path="/WEB-INF/jsp/autocomplete/gene_family_autocomplete.jsp"/>
    <definition name="anatomy-terms-autocomplete.page" path="/WEB-INF/jsp/autocomplete/anatomy_terms_autocomplete.jsp"/>
+   <definition name="home-page-redirect.page" path="/"/>
 </tiles-definitions>
