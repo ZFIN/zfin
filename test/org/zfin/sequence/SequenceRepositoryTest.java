@@ -2,27 +2,32 @@ package org.zfin.sequence ;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull ;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.zfin.TestConfiguration;
+import org.zfin.marker.Marker;
 import org.zfin.orthology.Species;
+import org.zfin.orthology.repository.OrthologyRepository;
 
 import org.zfin.sequence.repository.SequenceRepository  ; 
 import org.zfin.sequence.repository.HibernateSequenceRepository  ;
 import org.zfin.sequence.Accession ;
 
-import org.hibernate.SessionFactory ;
-import org.hibernate.Session;
-import org.hibernate.Query;
-import org.hibernate.Criteria ;
+import org.hibernate.*;
 
 
-
-import org.zfin.framework.HibernateSessionCreator ; 
-import org.zfin.framework.HibernateUtil ; 
+import org.zfin.framework.HibernateSessionCreator ;
+import org.zfin.framework.HibernateUtil ;
+import org.zfin.framework.ExceptionFormatter;
 import org.zfin.repository.RepositoryFactory ;
+import org.apache.log4j.Logger;
+
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  *  Class SequenceRepositoryTest.
@@ -30,7 +35,9 @@ import org.zfin.repository.RepositoryFactory ;
 
 public class SequenceRepositoryTest {
 
-    private static SessionFactory sessionFactory ; 
+    Logger logger = Logger.getLogger(SequenceRepositoryTest.class) ;
+
+    private static SessionFactory sessionFactory ;
     private static SequenceRepository repository ; 
 
     static{
@@ -50,6 +57,11 @@ public class SequenceRepositoryTest {
         TestConfiguration.configure();
         // TODO: this should load a specific database instance for testing purposes
          
+    }
+
+    @After
+    public void closeSession(){
+        HibernateUtil.closeSession();
     }
 
 
@@ -127,43 +139,6 @@ public class SequenceRepositoryTest {
     }
 
 
-
-    @Test
-    public void testGetAccessionByPrimaryKey(){
-        SequenceRepository sr = RepositoryFactory.getSequenceRepository();
-        Long longId = new Long("3");
-        Accession accession = sr.getAccessionByPrimaryKey(longId);
-        assertTrue("Accession is returned",accession.getID().equals(longId));
-    }
-
-
-
-
-//    @Test
-//    public void testAccessionRelationshipTypeEntity(){
-//        Session session = HibernateUtil.currentSession();
-//        Criteria criteria = session.createCriteria(AccessionRelationshipType.class);
-//        criteria.setMaxResults(1) ; 
-//        AccessionRelationshipType accessionRelationshipType = (AccessionRelationshipType) criteria.uniqueResult();
-//        assertNotNull("database contains at least one accessionRelationshipType ", accessionRelationshipType) ; 
-//    }
-//    @Test
-//    public void testAccessionRelationshipEntity(){
-//        Session session = HibernateUtil.currentSession();
-//        Criteria criteria = session.createCriteria(AccessionRelationship.class);
-//        criteria.setMaxResults(1) ; 
-//        AccessionRelationship accessionRelationship = (AccessionRelationship) criteria.uniqueResult();
-//        assertNotNull("database contains at least one accessionRelationship ", accessionRelationship) ; 
-//    }
-
-/*    @Test
-    public void testDBLinkEntity(){
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(DBLink.class);
-        criteria.setMaxResults(1) ; 
-        DBLink dbLink = (DBLink) criteria.uniqueResult();
-        assertNotNull("database contains at least one dbLink ", dbLink ) ; 
-    }*/
 
 
 
