@@ -239,9 +239,15 @@ public class Marker implements Serializable, Comparable {
 
     public String toString() {
         StringBuilder sb = new StringBuilder("MARKER");
+        sb.append("\n");
+        sb.append("zdbID: " + zdbID);
+        sb.append("\n");
         sb.append("name: " + name);
-        sb.append("\r\n");
+        sb.append("\n");
         sb.append("symbol: " + abbreviation);
+        sb.append("\n");
+        sb.append("type: " + markerType);
+        sb.append("\n");
         return sb.toString();
     }
 
@@ -332,6 +338,7 @@ public class Marker implements Serializable, Comparable {
         BAC_END("BAC_END"),
         CAN_HAVE_MRPHLN("CAN_HAVE_MRPHLN"),
         CDNA("CDNA"),
+        CDNA_AND_EST("CDNA_AND_EST"),
         CLONE("CLONE"),
         CONSTRUCT("CONSTRUCT"),
         EFG("EFG"),
