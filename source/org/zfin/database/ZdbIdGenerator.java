@@ -20,6 +20,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Creates a smart ZDB id as in the web datablade implementation.
@@ -40,6 +42,60 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
     private boolean insertActiveSource = false;
     private boolean isMarker = false;
     private String query = null;
+
+    /**
+     * Precreates ZdbIDs in a single session database access.
+     *
+     * @param session
+     * @param number
+     * @param type
+     * @return
+     */
+    public Set<String> generateZdbIDs(SessionImplementor session,int number, String type,
+                                       boolean customInsertActiveData, boolean customInsertActvieSource)
+            throws HibernateException, SQLException
+    {
+
+        if (!session.isTransactionInProgress()) {
+            throw new HibernateException("Generating ZdbID without a transaction: " + type);
+        }
+
+        objectType = type ; 
+        setQueryToRetrieveID();
+
+
+
+        InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+
+        Set<String> zdbIDs = new HashSet<String>(number) ;
+        long startTime  = System.currentTimeMillis() ;
+        long lastTime = startTime ;
+        long currentTime = 0 ;
+        LOG.debug("generating zdbIDS: "+number) ;
+        for(int i = 0 ; i <  number ; i++){
+            String zdbID = (String) doWorkInCurrentTransaction(session.connection(), query);
+            if (customInsertActiveData) {
+                LOG.debug("insertActiveData: " + customInsertActiveData + " for ZdbID[" + zdbID + "]");
+                infrastructureRepository.insertActiveData(zdbID);
+            }
+            if (customInsertActvieSource) {
+                LOG.debug("insertActiveSource: " + customInsertActvieSource+ " for ZdbID[" + zdbID + "]");
+                infrastructureRepository.insertActiveSource(zdbID);
+            }
+            zdbIDs.add(zdbID) ;
+            if(i%1000==0){
+                currentTime = System.currentTimeMillis() ;
+                LOG.debug("zdbIDS generated: "+i + " "+ (i/(number*1.0f)*100.0f)+"% time["+ ((currentTime - lastTime)/1000.0f) +"]")  ;
+                lastTime = currentTime ; 
+            }
+        }
+       LOG.debug("time to generate ZdbIDs: "+ (currentTime- startTime)) ;
+
+
+        return zdbIDs ;
+    }
+
+
 
     /**
      * This is a convenience method for getting the generated zdbid for a specific type.
@@ -63,14 +119,14 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
 
         try {
             String zdbID = (String) doWorkInCurrentTransaction(session.connection(), query);
-            LOG.info("Sequence for <" + objectType + "> is [" + zdbID + "]");
+            LOG.debug("Sequence for <" + objectType + "> is [" + zdbID + "]");
             if (insertActiveData) {
-                LOG.info("insertActiveData: " + insertActiveData + " for ZdbID[" + zdbID + "]");
+                LOG.debug("insertActiveData: " + insertActiveData + " for ZdbID[" + zdbID + "]");
                 InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
                 infrastructureRepository.insertActiveData(zdbID);
             }
             if (insertActiveSource) {
-                LOG.info("insertActiveSource: " + insertActiveSource + " for ZdbID[" + zdbID + "]");
+                LOG.debug("insertActiveSource: " + insertActiveSource + " for ZdbID[" + zdbID + "]");
                 InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
                 infrastructureRepository.insertActiveSource(zdbID);
             }
