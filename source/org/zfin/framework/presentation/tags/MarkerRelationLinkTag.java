@@ -30,7 +30,7 @@ public class MarkerRelationLinkTag extends TagSupport {
         StringBuilder sb = new StringBuilder();
         try {
             if (this.accession!= null) {
-//                Set<MarkerDBLink> markerLinks = accession.getMarkerDBLinks();
+//                Set<MarkerDBLink> markerLinks = accession.getMarkerDBLinksForMarkerTypes();
                 Set<MarkerDBLink> markerLinks = accession.getBlastableMarkerDBLinks();
                 List<Marker> markers = new ArrayList<Marker>() ;
                 for(MarkerDBLink link : markerLinks){
