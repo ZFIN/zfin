@@ -6,8 +6,14 @@ package org.zfin.sequence.repository ;
 import org.zfin.sequence.*;
 import org.zfin.orthology.Species;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
+import org.zfin.publication.Publication;
 
 import java.util.List;
+import java.util.Set;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public interface SequenceRepository {
 
@@ -25,10 +31,10 @@ public interface SequenceRepository {
 
     Accession getAccessionByAlternateKey(String number, ReferenceDatabase referenceDatabase);
 
-    public Accession getAccessionByPrimaryKey(Long id);
-    
-    public AccessionRelationship getAccessionRelationshipByPrimaryKey(String zdbID);
-//    public List<MarkerDBLink> getMarkerDBLinksByAccession(Accession accession) ;
+    Map<String, MarkerDBLink > getUniqueMarkerDBLinks(ReferenceDatabase... referenceDatabases) throws Exception ;
+    Map<String, Set<MarkerDBLink> > getMarkerDBLinks(ReferenceDatabase... referenceDatabases) throws Exception ;
+    void addDBLinks(Collection<MarkerDBLink> dbLinksToAdd, Publication attributionPub, int commitChunk);
+    public void removeDBLinks(Set<MarkerDBLink> dbLinksToRemove) ;
 }
 
 
