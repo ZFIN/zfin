@@ -222,7 +222,7 @@
 	if( $unique > 1) {	#defined @$rowref[1] ){ # # not unique shunt off to search result page
 	 ### $note = $note . $unique . " ->Too Many Choices  <p>\n";
 	  my $bot = LWP::UserAgent->new();
-	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
+	  my $req = POST '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
 	  [   compare=> 'contains',
 	      marker_type=> 'all',
 	      lg=> 0,
@@ -249,12 +249,12 @@
 	elsif($unique < 1) { #! defined $rowref ){ #
 	  print $Q->header(). "\n".
 		 $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white')."\n".
-		 "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>" ."\n";
+		 "<script type=\"text/javascript\" src=\"/header.js\"></script>" ."\n";
       mapper_select(Q);
       print
 	     "<p><p><p><p>No mapping data is available for ".
 		 "\"<font color=red><i><b>$marker</b></i></font>\"\n<p><p><p>".
-		 "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";
+		 "<script type=\"text/javascript\"' src=\"/footer.js\"></script>";
 	  exit 1;
 	}
 	###
@@ -712,7 +712,7 @@
   $note = $note . " <p> END NOTE <P>\n";
   print $Q->header . "\n";
   print $Q->start_html(-TITLE => "ZFIN View Map", -bgcolor=> 'white')."\n";
-  print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>";
+  print "<script type=\"text/javascript\" src=\"/header.js\"></script>";
 
   ### based on error codes emit the dynamic part of the page
   if ($g_error == 0 && $g_data) {
@@ -900,7 +900,7 @@
 #    print "\n<SCRIPT> document.selectform.submit()</SCRIPT>\n";
 #  }
 
-  print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";
+  print "<script type=\"text/javascript\" src=\"/footer.js\"></script>";
   print  $Q->end_html."\n";
   $dbh->disconnect;
 
