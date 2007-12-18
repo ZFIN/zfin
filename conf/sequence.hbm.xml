@@ -38,7 +38,6 @@
         <id name="ID" type="long">
             <column name="accbk_pk_id" not-null="true"/>
             <generator class="increment"/>
-
         </id>
         <property name="number" column="accbk_acc_num"/>
         <property name="defline" column="accbk_defline"/>
@@ -82,15 +81,15 @@
             <column name="fdbcont_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <param name="type">FDBCONT</param>
+                <param name="insertActiveData">true</param>
             </generator>
         </id>
         <!--Perhaps the class column should change; species is really common name, we don't want to display "Homo Sapiens", human rather-->
-        <property name="organism" column="fdbcont_organism_common_name" type="organism"/>
-        <property name="type" column="fdbcont_fdbdt_data_type" type="foreignDatabaseDataType"/>
-        <property name="superType" column="fdbcont_fdbdt_super_type" type="foreignDatabaseSuperType"/>
+        <property name="organism" column="fdbcont_organism_common_name" type="organism" not-null="true" />
+        <property name="type" column="fdbcont_fdbdt_data_type" type="foreignDatabaseDataType"/> <!-- this can be null according to the schema -->
+        <property name="superType" column="fdbcont_fdbdt_super_type" type="foreignDatabaseSuperType" not-null="true"/>
 
-        <many-to-one name="foreignDB" column="fdbcont_fdb_db_name" class="org.zfin.sequence.ForeignDB" not-null="true"
-                     lazy="no-proxy"/>
+        <many-to-one name="foreignDB" column="fdbcont_fdb_db_name" class="org.zfin.sequence.ForeignDB" not-null="true" lazy="no-proxy"/>
 
     </class>
 
@@ -157,11 +156,6 @@
         <property name="length" column="dblink_length"/>
         <many-to-one name="referenceDatabase" column="dblink_fdbcont_zdb_id"
                      class="org.zfin.sequence.ReferenceDatabase" not-null="true" lazy="no-proxy"/>
-
-        <set name="attributions">
-            <key column="recattrib_data_zdb_id"/>
-            <one-to-many class="org.zfin.infrastructure.RecordAttribution"/>            
-        </set>
 
         <subclass name="org.zfin.sequence.MarkerDBLink" extends="org.zfin.sequence.DBLink" discriminator-value="Marker">
             <many-to-one name="marker" column="dblink_linked_recid" class="org.zfin.marker.Marker" not-null="true"/>
