@@ -71,4 +71,16 @@ public class RecordAttribution implements Serializable {
     public int hashCode() {
         return getCompositeKey().hashCode();
     }
+
+    public String toString(){
+        String returnString = "" ; 
+        returnString += getDataZdbID()  ; 
+        returnString += " "  ; 
+        returnString += getSourceZdbID() ; 
+        returnString += " "  ; 
+        returnString += getSourceType() ; 
+
+        return returnString ; 
+    }
+
 }
