@@ -11,6 +11,7 @@ import org.zfin.database.ZdbIdGenerator;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
+import org.zfin.properties.ZfinProperties;
 import org.hibernate.Session;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -74,13 +75,21 @@ public class HibernateSequenceRepository implements SequenceRepository {
         List<MarkerDBLink> dbLinks = criteria.list() ;
 
         HashMap<String,MarkerDBLink> returnMap = new HashMap<String,MarkerDBLink>() ;
+
+        // todo: this should be logged somewhere else possible and not be tied directly to microarray
+        Logger microArrayErrorLog = Logger.getLogger(ZfinProperties.MICROARRAY_ERROR) ;
         for(MarkerDBLink markerDBLink : dbLinks ) {
             if(false==returnMap.containsKey( markerDBLink.getAccessionNumber())){
                 returnMap.put(markerDBLink.getAccessionNumber(),markerDBLink) ;
             }
             else
             {
-                logger.warn("Accession references >1 links: "+ markerDBLink.getAccessionNumber());
+                if(markerDBLink.getMarker().isInTypeGroup(Marker.TypeGroup.CDNA_AND_EST)){
+                    microArrayErrorLog.warn("CDNA/EST accession references more than 1 link:" + markerDBLink.getAccessionNumber());
+                }
+                else{ // if is in genedom or otherwise, we don't really care
+                    logger.debug("Accession references >1 links: "+ markerDBLink.getAccessionNumber());
+                }
             }
 
         }
@@ -126,18 +135,18 @@ public class HibernateSequenceRepository implements SequenceRepository {
         if(dbLinksToAdd!=null){
             InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository() ;
             int size = dbLinksToAdd.size() ;
-            ZdbIdGenerator generator = new ZdbIdGenerator() ;
+//            ZdbIdGenerator generator = new ZdbIdGenerator() ;
             try{
 
                 long startTime ;
                 long currentTime  ;
 
 //                Set<String> zdbIDs = generator.generateZdbIDs( (SessionImplementor) session,dbLinksToAdd.size(),"DBLINK",true,false);
-                Set<String> zdbIDs = new HashSet<String>() ; 
+//                Set<String> zdbIDs = new HashSet<String>() ;
 
 //                Iterator<String> zdbIDIter = zdbIDs.iterator() ;
 //                String currentZdbID ;
-                Iterator<String> zdbIDIter = zdbIDs.iterator() ;
+//                Iterator<String> zdbIDIter = zdbIDs.iterator() ;
                 long totalStartTime = System.currentTimeMillis() ;
                 long totalFinishTime ;
 
