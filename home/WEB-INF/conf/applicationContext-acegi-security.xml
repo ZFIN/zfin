@@ -39,13 +39,9 @@
             <value>
                 CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
                 PATTERN_TYPE_APACHE_ANT
-                /action/dev-tools/**=REQUIRES_SECURE_CHANNEL
-                /action/audit-log/**=REQUIRES_SECURE_CHANNEL
-                /action/security-check=REQUIRES_SECURE_CHANNEL
-                /action/login=REQUIRES_SECURE_CHANNEL
                 /**=REQUIRES_INSECURE_CHANNEL
             </value>
-            <!-- above should include these, when we want to use ssl:
+        <!-- above should include these, when we want to use ssl:
                 /action/dev-tools/**=REQUIRES_SECURE_CHANNEL
                 /action/audit-log/**=REQUIRES_SECURE_CHANNEL
                 /action/security-check=REQUIRES_SECURE_CHANNEL
