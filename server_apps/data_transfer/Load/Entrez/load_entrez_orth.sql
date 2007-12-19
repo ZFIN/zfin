@@ -65,16 +65,18 @@ select distinct teop_entrez_id
      from  tmp_entrez_orth_name
  )into temp tmp_eg_id with no log
 ;
+select 2 * count(*) AK_nulls from tmp_eg_id;
 insert into tmp_entrez_orth_name(teon_entrez_id)
 select distinct teop_entrez_id from tmp_eg_id
 ;
 drop table tmp_eg_id;
 
-! echo "forget names not associated with proteins"
+! echo "forget incomming names not associated with incomming proteins"
 delete from tmp_entrez_orth_name
  where teon_entrez_id not in (
     select teop_entrez_id from tmp_entrez_orth_prot
 );
+select count(*) remaining_tname from tmp_entrez_orth_name;
 
 
 update statistics high for table tmp_entrez_orth_name ;
@@ -100,10 +102,12 @@ create index tmp_entrez_orth_xref_eox_entrez_idx
 
 update statistics high for table tmp_entrez_orth_xref ;
 
+! echo "forget incomming xrefs not associated with incomming proteins"
 delete from tmp_entrez_orth_xref
  where teox_entrez_id not in (
     select teop_entrez_id from tmp_entrez_orth_prot
 );
+select count(*) remaining_txref from tmp_entrez_orth_xref;
 
 create index tmp_entrez_orth_xref_eox_xref_idx
  on tmp_entrez_orth_xref(teox_xref)
@@ -124,9 +128,10 @@ delete from entrez_gene where not exists (
    select 1 from tmp_entrez_orth_prot
     where teop_entrez_id = eg_acc_num
 );
+select count(*) remaining_name from entrez_gene;
+
 ! echo "orphaned orth in ZFIN dropped `date`"
-
-
+! echo ""
 ! echo "existing symbol may have changed"
 update entrez_gene set eg_symbol = (
     select teon_symbol
@@ -149,8 +154,8 @@ update entrez_gene set eg_name = (
      and teon_name != eg_name
 );
 
-! echo "fixed entrez gene orth symbols & names in zfin updated `date`"
-
+! echo "updated any changed entrez gene orth symbols & names in zfin `date`"
+! echo ""
 ! echo "existing xrefs may have changed"
 update entrez_to_xref set ex_xref = (
     select teox_xref
@@ -161,28 +166,48 @@ update entrez_to_xref set ex_xref = (
      where teox_entrez_id = ex_entrez_acc_num
      and teox_xref != ex_xref
 );
-! echo "fixed entrez gene orth xrefs in zfin updated `date`"
+! echo "updated any changed entrez gene orth xrefs in zfin  `date`"
+! echo ""
 
 --------------------------------------------------------------------------
 
-! echo "delete the entrez_protein associations that already exist"
+! echo "delete the incomming protein associations that already exist"
 delete from tmp_entrez_orth_prot where exists (
    select 1 from entrez_to_protein
     where teop_entrez_id = ep_entrez_acc_num
       and teop_protein_acc = ep_protein_acc_num
       and teop_taxid = ep_organism_common_name
 );
-! echo "existing entrez gene in update dropped `date`"
+select count(*) remaining_tprot from tmp_entrez_orth_prot;
 
-! echo "delete the entrez_name associations that already exist"
+! echo "delete the incomming names that no longer have an incomming protein"
+delete from tmp_entrez_orth_name
+ where teon_entrez_id not in (
+    select teop_entrez_id from tmp_entrez_orth_prot
+);
+select count(*) remaining_tname from tmp_entrez_orth_name;
+
+! echo "delete the incomming xrefs that no longer have an incomming protein"
+delete from tmp_entrez_orth_xref
+ where teox_entrez_id not in (
+    select teop_entrez_id from tmp_entrez_orth_prot
+);
+select count(*) remaining_txref from tmp_entrez_orth_xref;
+
+! echo "existing entrez gene/prot/xref in update dropped `date`"
+! echo ""
+
+! echo "delete the incomming name/symbol associations that already exist"
 delete from tmp_entrez_orth_name where exists (
    select 1 from entrez_gene
     where teon_entrez_id = eg_acc_num
       and teon_symbol = eg_symbol
       and teon_name = eg_name
 );
+select count(*) remaining_tprot from tmp_entrez_orth_name;
 
-! echo "delete the entrez_name associations that are all NULL"
+! echo "delete the incomming  name/symbol associations that are also NULL in ZFIN"
+! echo "note: this might fail if only name OR symbol are NULL"
 delete from tmp_entrez_orth_name where exists (
    select 1 from entrez_gene
     where teon_entrez_id = eg_acc_num
@@ -191,19 +216,20 @@ delete from tmp_entrez_orth_name where exists (
       and teon_name is NULL
       and   eg_name is NULL
 );
+select count(*) remaining_tname from tmp_entrez_orth_name;
 
-
-! echo "delete the entrez_xref associations that already exist"
+! echo "delete the incomming xref associations that already exist"
 delete from tmp_entrez_orth_xref where exists (
    select 1 from entrez_to_xref
     where teox_entrez_id = ex_entrez_acc_num
       and teox_xref = ex_xref
 );
+select count(*) remaining_txref from tmp_entrez_orth_xref;
 
 ! echo "bulk load filtered `date`"
 --------------------------------------------------------------------
 -- whatever is left is new
-{
+
 select count(*) dup_check
  from tmp_entrez_orth_name
  where exists (
@@ -212,11 +238,10 @@ select count(*) dup_check
  	   and eg_symbol = teon_symbol
  	   and eg_name = teon_name
  );
+--select count(*) new_names from tmp_entrez_orth_name;
+--select first 40 * from tmp_entrez_orth_name order by 1;
 
-select count(*) from tmp_entrez_orth_name;
-
-select first 40 * from tmp_entrez_orth_name;
-}
+-------------
 
 insert into entrez_gene (
 	eg_acc_num,
@@ -249,8 +274,10 @@ drop table tmp_entrez_orth_prot;
 drop table tmp_entrez_orth_name;
 drop table tmp_entrez_orth_xref;
 
-! echo "sql update finished `date`"
+
 
 --rollback work;
 --
 commit work;
+
+! echo "sql update finished `date`"
