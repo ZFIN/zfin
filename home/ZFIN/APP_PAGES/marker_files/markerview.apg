@@ -1287,10 +1287,13 @@ union
          <?MICOMMENT>
          If GEO does not have this accession, then none of the other databases will have it either, so this is safe to do here
          <?/MICOMMENT>
-         <tr>
-         <td><b>Curated microarray expression:</b></td>
-         <td>
-     <?MICOMMENT> They will all have the same dataId, so just using the last one will be okay <?/MICOMMENT>
+         <tr >
+         <td width="30%"><b>Curated microarray expression:</b>
+         </td>
+         <td align=left>
+     <?MICOMMENT> 
+     They will all have the same dataId, so just using the last one will be okay 
+     <?/MICOMMENT>
         <?MIVAR NAME=mini_ref><?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
          <a href="$mrkrview_microarray_link$accession_sum$mrkrview_microarray_suffix">$mrkrview_microarray_db</a> &nbsp;$mini_ref
 
@@ -1335,7 +1338,7 @@ union
 
 
 
-         <?MICOMMENT>End ZF-ESPRESSO<?/MICOMMENT>
+         <?MICOMMENT>End ZF-Espresso<?/MICOMMENT>
 
          <?MICOMMENT>Start ArrayExpress<?/MICOMMENT>
 
@@ -2391,7 +2394,8 @@ union
       and fdbcont_fdb_db_name = fdb_db_name
       and fdbcont_fdbdt_data_type = 'other'
       and fdb_db_name != 'GEO'
-      and fdb_db_name != 'ZF-ESPRESSO'
+      and fdb_db_name != 'ZF-Espresso'
+     and fdb_db_name != 'ArrayExpress' 
     order by 6,1,5
   ;"> 
     <?MIVAR NAME=db_name>$1<?/MIVAR>
