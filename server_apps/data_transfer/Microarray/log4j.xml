@@ -11,7 +11,7 @@
     </appender>
 
     <appender name="MICROARRAY_ERROR" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="/tmp/microarray_error.log"/>
+        <param name="File" value="<!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray_error.log"/>
         <param name="Append" value="false"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
@@ -20,7 +20,7 @@
 
 
     <appender name="MICROARRAY_NOT_FOUND" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="/tmp/microarray_notfound.log"/>
+        <param name="File" value="<!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray_notfound.log"/>
         <param name="Append" value="false"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
@@ -28,7 +28,7 @@
     </appender>
 
     <appender name="MICROARRAY_INFO" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="/tmp/microarray_info.log"/>
+        <param name="File" value="<!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray_info.log"/>
         <param name="Append" value="false"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
@@ -36,7 +36,7 @@
     </appender>
 
     <appender name="MAIN" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="./microarray_all.log"/>
+        <param name="File" value="<!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray_all.log"/>
         <param name="Append" value="true"/>
         <param name="MaxFileSize" value="1MB"/>
         <param name="MaxBackupIndex" value="10"/>

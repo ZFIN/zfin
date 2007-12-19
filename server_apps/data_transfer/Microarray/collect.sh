@@ -13,7 +13,7 @@ TOUCH=/usr/bin/touch
 
 FILENAME=GPL1319
 $CP -f $MICROARRAY_PATH/${FILENAME}_family.soft $MICROARRAY_PATH/old.${FILENAME}_family.soft 2>&1 | > $COLLECT_LOG
-$CURL -o  $MICROARRAY_PATH/${FILENAME}_family.soft.gz ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SOFT/by_platform/${FILENAME}/${FILENAME}_family.soft.gz 2>&1 | > $COLLECT_LOG 
+#$CURL -o  $MICROARRAY_PATH/${FILENAME}_family.soft.gz ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SOFT/by_platform/${FILENAME}/${FILENAME}_family.soft.gz 2>&1 | > $COLLECT_LOG 
 $GUNZIP -f $MICROARRAY_PATH/${FILENAME}_family.soft.gz 
 
 # make sure that this file always exists
