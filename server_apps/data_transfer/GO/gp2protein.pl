@@ -88,10 +88,10 @@ sub gp2proteinReport()
     }
     
     foreach $k (sort keys %zdbIDs) {
-      $v1 = $zdbPids{$k} if exists $zdbPids{$k};
-      $v2 = $zdbRefSeqs{$k} if exists $zdbRefSeqs{$k};
+      $v1 = $zdbPids{$k}.";" if exists $zdbPids{$k};
+      $v2 = $zdbRefSeqs{$k}.";" if exists $zdbRefSeqs{$k};
       $v3 = $zdbGenPepts{$k} if exists $zdbGenPepts{$k};
-      print REPORT "ZFIN:$k\t$v1;$v2;$v3\n";     
+      print REPORT "ZFIN:$k\t$v1$v2$v3\n";     
     }
     
     close(REPORT);
