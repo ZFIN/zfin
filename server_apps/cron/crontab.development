@@ -74,4 +74,4 @@
 # 
 #
 # Daily 3:30am   Populate dblink microarrays.
-30 3 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray.sh
+40 12 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray.sh
