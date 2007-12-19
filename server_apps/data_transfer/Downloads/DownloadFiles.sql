@@ -390,7 +390,12 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega_transcript.txt'
 -- the changing assembly version number in db_name
 -- is apt to come back to bite us so I am opting for the zdb_id
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/ensembl_1_to_1.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link
+ DELIMITER "	" 
+select  "#    ZDBID          ","SYMBOL",fdbcont_fdb_db_name
+ from foreign_db_contains
+ where fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
+union
+select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link
 	where mrkr_zdb_id = dblink_linked_recid
 	  and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1' order by 1;
 
