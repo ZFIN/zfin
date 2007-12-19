@@ -54,7 +54,7 @@ public final class UpdateMicroArrayMain {
 
 
     //    final String referencePubZdbID ="ZDB-PUB-071101-1" ;
-    String referencePubZdbID = "ZDB-PUB-071119-15" ;
+    String referencePubZdbID = "ZDB-PUB-071218-1" ;
     Publication refPub ;
 
     
@@ -88,8 +88,6 @@ public final class UpdateMicroArrayMain {
                     ReferenceDatabase.Type.CDNA,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
             logger.debug("genBankCDNADatabase: " + genBankCDNADatabase) ;
 
-
-//            referencePubZdbID = FakePubInserter.insertFakePub();
             refPub = RepositoryFactory.getPublicationRepository().getPublication(referencePubZdbID) ;
 
         }
