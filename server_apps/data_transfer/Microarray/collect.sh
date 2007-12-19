@@ -9,13 +9,17 @@ THISCLASSPATH=$WEBINFDIR/classes:$WEBINFJARS:/private/apps/tomcat/common/lib/ifx
 CP=/usr/bin/cp
 CURL=/usr/local/bin/curl
 GUNZIP=/usr/local/bin/gunzip
+TOUCH=/usr/bin/touch
 
 FILENAME=GPL1319
 $CP -f $MICROARRAY_PATH/${FILENAME}_family.soft $MICROARRAY_PATH/old.${FILENAME}_family.soft 2>&1 | > $COLLECT_LOG
 $CURL -o  $MICROARRAY_PATH/${FILENAME}_family.soft.gz ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SOFT/by_platform/${FILENAME}/${FILENAME}_family.soft.gz 2>&1 | > $COLLECT_LOG 
-$GUNZIP -f $MICROARRAY_PATH/${FILENAME}_family.soft.gz 2>&1 | > $COLLECT_LOG
-CHK1=`cksum $MICROARRAY_PATH/old.${FILENAME}_family.soft | cut -f1`
-CHK2=`cksum $MICROARRAY_PATH/${FILENAME}_family.soft | cut -f1`
+$GUNZIP -f $MICROARRAY_PATH/${FILENAME}_family.soft.gz 
+
+# make sure that this file always exists
+$TOUCH $MICROARRAY_PATH/old.${FILENAME}_family.soft
+CHK1=`cksum $MICROARRAY_PATH/old.${FILENAME}_family.soft`
+CHK2=`cksum $MICROARRAY_PATH/${FILENAME}_family.soft`
 # read from !platform_table_begin
 # grep "^Dr\..*Consensus" small.GPL1319_family.soft  | cut -f2 | uniq >  ids.txt
 # read to !platform_table_end
