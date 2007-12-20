@@ -589,6 +589,7 @@ update statistics high for table tmp_hit;
 -------------------------------
 ! echo "Finally make blast_hit"
 
+
 alter table tmp_hit add thit_zad varchar(50);
 update tmp_hit set thit_zad = get_id('BHIT');
 insert into zdb_active_data select thit_zad from tmp_hit;
@@ -609,7 +610,11 @@ insert into blast_hit (
     bhit_strand,
     bhit_alignment
 )
-select --distinct
+-- this DISTINCT really slows down espedially large nomenclature loads 
+-- where so far it has not been needed. nor has it been needed for Vega or ZGC
+-- loads to date.  *BUT* it has been needed for at least one 'paper' load of cDNA
+-- for now I am going to enable it only if need be for a particular load 
+select --DISTINCT -- ***
     thit_zad,
     tbqry_zad,
     thit_target_id,
