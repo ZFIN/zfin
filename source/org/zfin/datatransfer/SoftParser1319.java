@@ -27,17 +27,17 @@ public class SoftParser1319 extends SoftParser{
 
         Set<String> accessionNumbers = new HashSet<String>() ;
 
-//        String gpl1319Directory = System.getProperty("GPL1319",null) ;
-//        if(gpl1319Directory==null){
-//            return accessionNumbers ; 
-//        }
+        String gpl1319Directory = System.getProperty("GPL1319",null) ;
+        if(gpl1319Directory==null){
+            return accessionNumbers ;
+        }
 
 
         // copy file to temp
         File file = null ;
         BufferedReader reader = null ;
         try{
-            file = new File("GPL1319_family.soft") ;
+            file = new File(gpl1319Directory) ;
             reader = new BufferedReader(new FileReader(file)) ;
             String buffer ;
 
