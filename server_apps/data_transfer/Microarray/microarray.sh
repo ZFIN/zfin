@@ -6,7 +6,7 @@ VALUE=`$MICROARRAY_PATH/collect.sh`
 #echo ": '$VALUE'"
 
 if [ "$VALUE" = "1" ] ; then
-echo "No new data, exiting" ; 
+#echo "No new data, exiting" ; 
 exit ; 
 #else
 #echo "New data, running!" ; 
@@ -37,9 +37,18 @@ THISCLASSPATH=$WEBINFDIR/classes:<!--|ROOT_PATH|-->/lib/Java/jaxws/jaxws-rt.jar:
 
 MICROARRAY_PATH=<!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray
 
-$JAVA -Dlog4j.configuration=file://$MICROARRAY_PATH/log4j.xml -DCONFIGURATION_DIRECTORY="<!--|ROOT_PATH|-->/home/WEB-INF/classes/org/zfin" -DDBNAME=<!--|DB_NAME|--> -DSQLHOSTS_HOST=<!--|SQLHOSTS_HOST|--> -DINFORMIX_SERVER=<!--|INFORMIX_SERVER|--> -DINFORMIX_PORT=<!--|INFORMIX_PORT|--> $DEBUG -cp $THISCLASSPATH org.zfin.datatransfer.UpdateMicroArrayMain;
+$JAVA -DGPL1319=$MICROARRAY_PATH/GPL1319_family.soft -Dlog4j.configuration=file://$MICROARRAY_PATH/log4j.xml -DCONFIGURATION_DIRECTORY="<!--|ROOT_PATH|-->/home/WEB-INF/classes/org/zfin" -DDBNAME=<!--|DB_NAME|--> -DSQLHOSTS_HOST=<!--|SQLHOSTS_HOST|--> -DINFORMIX_SERVER=<!--|INFORMIX_SERVER|--> -DINFORMIX_PORT=<!--|INFORMIX_PORT|--> $DEBUG -cp $THISCLASSPATH org.zfin.datatransfer.UpdateMicroArrayMain;
 
 REPORTEREMAIL=<!--|VALIDATION_EMAIL_DBA|-->
+
+# start fix email
+TEMPFILE=/tmp/tmpemail.txt  ;
+echo $REPORTEREMAIL > $TEMPFILE ;
+FIX_EMAIL=`sed -e 's/\\\@/@/g;s/ /\\\ /g' $TEMPFILE` ;
+REPORTEREMAIL=$FIX_EMAIL ; 
+rm -f $TEMPFILE ; 
+# end fix email
+
 
 DATESTRING="`date '+%y.%m.%d'`"
 
