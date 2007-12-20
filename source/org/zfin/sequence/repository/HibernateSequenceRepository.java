@@ -208,7 +208,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Session session = HibernateUtil.currentSession() ;
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository() ;
         List<String> dbLinkZdbIdsToDelete = new ArrayList<String>() ;
-        logger.info("dbLinksToRemove.size: " + dbLinksToRemove.size()) ; 
+        logger.debug("dbLinksToRemove.size: " + dbLinksToRemove.size()) ; 
         session.flush();  // without this, it fails
 
 
