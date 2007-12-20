@@ -21,7 +21,8 @@ SUBDIRS = Nomenclature
 
 GENERICS = load_run_report_hit.sh
 
-STATICS =  write-run-report-hit.r load_run_report_hit.sql
+STATICS =  write-run-report-hit.r load_run_report_hit.sql \
+	   commit.sql rollback.sql
 
 # trying to pick the most current blast run context file
 RUN_CTX = ls -1t *.ctx | head -1
@@ -41,5 +42,10 @@ run	:
 	cp -f *.unl $(TARGETDIR)
 	$(TARGETDIR)/load_run_report_hit.sh
 	rm -f *.unl
-	rm -f run.ctx
 
+run_commit	:
+	write-run-report-hit.r run.ctx
+	cp -f *.unl $(TARGETDIR)
+	$(TARGETDIR)/load_run_report_hit.sh commit
+	rm -f *.unl
+	rm -f run.ctx

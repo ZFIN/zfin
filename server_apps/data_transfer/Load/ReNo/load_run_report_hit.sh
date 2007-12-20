@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/tcsh
 ### load_run_report_hit.sh
 ### is a wrapper around the sql to choose the database
 
@@ -10,4 +10,8 @@ setenv ONCONFIG <!--|ONCONFIG_FILE|-->
 setenv INFORMIXSQLHOSTS <!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->
 
 ###
-<!--|INFORMIX_DIR|-->/bin/dbaccess  <!--|DB_NAME|-->  load_run_report_hit.sql
+if ("commit" =~ $1) then
+	cat load_run_report_hit.sql commit.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess  <!--|DB_NAME|-->
+else
+        cat load_run_report_hit.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess  <!--|DB_NAME|-->
+end

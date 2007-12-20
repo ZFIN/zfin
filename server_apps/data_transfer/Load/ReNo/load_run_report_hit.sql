@@ -402,7 +402,7 @@ insert into tmp_blast_query (
     tbqry_runcan_zdb_id,
     tbqry_accbk_pk_id
 )
-select truncan_zad, trpt_query_id
+select distinct truncan_zad, trpt_query_id
  from tmp_report, tmp_run_cnd
  where truncan_cnd_zdb_id =  trpt_cnd_zdbid -- ? sufficent ?
    and trpt_query_id is not NULL
@@ -411,6 +411,7 @@ select truncan_zad, trpt_query_id
 update tmp_blast_query set tbqry_zad = get_id('BQRY');
 
 insert into zdb_active_data select tbqry_zad from tmp_blast_query;
+
 
 insert into blast_query (
     bqry_zdb_id,
@@ -694,6 +695,4 @@ drop table tmp_blast_query;
 --drop table ;
 
 
---rollback work;
---
-commit work;
+--rollback/commit applied externally
