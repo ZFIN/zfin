@@ -161,11 +161,11 @@ public class HibernateSequenceRepository implements SequenceRepository {
                             dbLink.getReferenceDatabase().getForeignDB().getDbName() + "["+counter +"/"+ (size-1)+"]") ;
                      
                     if(counter%commitChunk==0 && counter !=0){
-                        logger.info("flushing links["+commitChunk+"]"+" ["+counter +"/"+ (size-1)+"]") ;
+                        logger.debug("flushing links["+commitChunk+"]"+" ["+counter +"/"+ (size-1)+"]") ;
                         startTime = System.currentTimeMillis() ;
                         session.flush();
                         currentTime = System.currentTimeMillis() ;
-                        logger.info("flushing link time["+((currentTime-startTime)/(1000.0f))+"]"+" ["+counter +"/"+ (size-1)+"]") ;
+                        logger.debug("flushing link time["+((currentTime-startTime)/(1000.0f))+"]"+" ["+counter +"/"+ (size-1)+"]") ;
                     }
                     ++counter ;
                 }
@@ -177,15 +177,15 @@ public class HibernateSequenceRepository implements SequenceRepository {
                         ir.insertRecordAttribution(dbLink.getZdbID(),attributionPub.getZdbID());
                     }
                 }
-                logger.info("flushing links["+commitChunk+"]"+" ["+counter +"/"+ (size)+"]") ;
+                logger.debug("flushing links["+commitChunk+"]"+" ["+counter +"/"+ (size)+"]") ;
                 startTime = System.currentTimeMillis() ;
                 session.flush();
                 currentTime = System.currentTimeMillis() ;
-                logger.info("flushing link time["+((currentTime-startTime)/(1000.0f))+"]"+" ["+counter +"/"+ (size)+"]") ;
+                logger.debug("flushing link time["+((currentTime-startTime)/(1000.0f))+"]"+" ["+counter +"/"+ (size)+"]") ;
 
 
                 totalFinishTime = System.currentTimeMillis() ;
-                logger.info("total process time:" + ((totalFinishTime-totalStartTime)/1000.0f) ) ;
+                logger.debug("total process time:" + ((totalFinishTime-totalStartTime)/1000.0f) ) ;
 
 
             } catch(Exception e){
