@@ -1036,6 +1036,7 @@ public class Indexer implements Runnable
             // add default MIME types
             mimeTypes.put("text/html", Boolean.TRUE);
             mimeTypes.put("text/plain", Boolean.TRUE);
+	    mimeTypes.put("text/html;charset=ISO-8859-1", Boolean.TRUE);
             }
         }
         
