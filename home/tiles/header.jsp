@@ -347,7 +347,7 @@ function hdrSetTabs() {
      <a href="/zf_info/contact_us.html">Contact ZFIN</A>
     </div>
     <div id="hdr-motto" class="hdr-linkbar"
-         style="display: block;">
+         style="display: none;">
       The Zebrafish Model Organism Database
     </div>
 
