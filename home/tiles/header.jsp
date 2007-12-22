@@ -58,30 +58,30 @@ function hdrDeleteCookie(name, path, domain) {
 
 function deselectTabs(tab_id) {
 
-  $('researchspiffy').className = "spiffy";
-  $('researchspiffy1').className = "spiffy1";
-  $('researchspiffy2').className = "spiffy2";
-  $('researchspiffy3').className = "spiffy3";
-  $('researchspiffy4').className = "spiffy4";
-  $('researchspiffy5').className = "spiffy5";
-  $('researchTabContent').className = "tabContent";
+  document.getElementById('researchspiffy').className = "spiffy";
+  document.getElementById('researchspiffy1').className = "spiffy1";
+  document.getElementById('researchspiffy2').className = "spiffy2";
+  document.getElementById('researchspiffy3').className = "spiffy3";
+  document.getElementById('researchspiffy4').className = "spiffy4";
+  document.getElementById('researchspiffy5').className = "spiffy5";
+  document.getElementById('researchTabContent').className = "tabContent";
 
-  $('generalspiffy').className = "spiffy";
-  $('generalspiffy1').className = "spiffy1";
-  $('generalspiffy2').className = "spiffy2";
-  $('generalspiffy3').className = "spiffy3";
-  $('generalspiffy4').className = "spiffy4";
-  $('generalspiffy5').className = "spiffy5";
-  $('generalTabContent').className = "tabContent";
+  document.getElementById('generalspiffy').className = "spiffy";
+  document.getElementById('generalspiffy1').className = "spiffy1";
+  document.getElementById('generalspiffy2').className = "spiffy2";
+  document.getElementById('generalspiffy3').className = "spiffy3";
+  document.getElementById('generalspiffy4').className = "spiffy4";
+  document.getElementById('generalspiffy5').className = "spiffy5";
+  document.getElementById('generalTabContent').className = "tabContent";
 
 
-  $('productspiffy').className = "spiffy";
-  $('productspiffy1').className = "spiffy1";
-  $('productspiffy2').className = "spiffy2";
-  $('productspiffy3').className = "spiffy3";
-  $('productspiffy4').className = "spiffy4";
-  $('productspiffy5').className = "spiffy5";
-  $('productTabContent').className = "tabContent";
+  document.getElementById('productspiffy').className = "spiffy";
+  document.getElementById('productspiffy1').className = "spiffy1";
+  document.getElementById('productspiffy2').className = "spiffy2";
+  document.getElementById('productspiffy3').className = "spiffy3";
+  document.getElementById('productspiffy4').className = "spiffy4";
+  document.getElementById('productspiffy5').className = "spiffy5";
+  document.getElementById('productTabContent').className = "tabContent";
 
 
 }
@@ -92,13 +92,13 @@ function showZFINLinks() {
 
   deselectTabs();
 
-  $('researchspiffy').className = "selectedspiffy";
-  $('researchspiffy1').className = "selectedspiffy1";
-  $('researchspiffy2').className = "selectedspiffy2";
-  $('researchspiffy3').className = "selectedspiffy3";
-  $('researchspiffy4').className = "selectedspiffy4";
-  $('researchspiffy5').className = "selectedspiffy5";
-  $('researchTabContent').className = "selectedTabContent";
+  document.getElementById('researchspiffy').className = "selectedspiffy";
+  document.getElementById('researchspiffy1').className = "selectedspiffy1";
+  document.getElementById('researchspiffy2').className = "selectedspiffy2";
+  document.getElementById('researchspiffy3').className = "selectedspiffy3";
+  document.getElementById('researchspiffy4').className = "selectedspiffy4";
+  document.getElementById('researchspiffy5').className = "selectedspiffy5";
+  document.getElementById('researchTabContent').className = "selectedTabContent";
 
 
 
@@ -117,13 +117,13 @@ function showGeneralLinks() {
 
   deselectTabs();
 
-  $('generalspiffy').className = "selectedspiffy";
-  $('generalspiffy1').className = "selectedspiffy1";
-  $('generalspiffy2').className = "selectedspiffy2";
-  $('generalspiffy3').className = "selectedspiffy3";
-  $('generalspiffy4').className = "selectedspiffy4";
-  $('generalspiffy5').className = "selectedspiffy5";
-  $('generalTabContent').className = "selectedTabContent";
+  document.getElementById('generalspiffy').className = "selectedspiffy";
+  document.getElementById('generalspiffy1').className = "selectedspiffy1";
+  document.getElementById('generalspiffy2').className = "selectedspiffy2";
+  document.getElementById('generalspiffy3').className = "selectedspiffy3";
+  document.getElementById('generalspiffy4').className = "selectedspiffy4";
+  document.getElementById('generalspiffy5').className = "selectedspiffy5";
+  document.getElementById('generalTabContent').className = "selectedTabContent";
 
 
 
@@ -144,13 +144,13 @@ function showZIRCLinks() {
 
   deselectTabs();
 
-  $('productspiffy').className = "selectedspiffy";
-  $('productspiffy1').className = "selectedspiffy1";
-  $('productspiffy2').className = "selectedspiffy2";
-  $('productspiffy3').className = "selectedspiffy3";
-  $('productspiffy4').className = "selectedspiffy4";
-  $('productspiffy5').className = "selectedspiffy5";
-  $('productTabContent').className = "selectedTabContent";
+  document.getElementById('productspiffy').className = "selectedspiffy";
+  document.getElementById('productspiffy1').className = "selectedspiffy1";
+  document.getElementById('productspiffy2').className = "selectedspiffy2";
+  document.getElementById('productspiffy3').className = "selectedspiffy3";
+  document.getElementById('productspiffy4').className = "selectedspiffy4";
+  document.getElementById('productspiffy5').className = "selectedspiffy5";
+  document.getElementById('productTabContent').className = "selectedTabContent";
 
 
   document.getElementById("hdr-zfinlinks").style.display = "none";
