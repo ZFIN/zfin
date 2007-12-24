@@ -11,15 +11,17 @@ CURL=/usr/local/bin/curl
 GUNZIP=/usr/local/bin/gunzip
 TOUCH=/usr/bin/touch
 
+cd $MICROARRAY_PATH ;
+
 FILENAME=GPL1319
-$CP -f $MICROARRAY_PATH/${FILENAME}_family.soft $MICROARRAY_PATH/old.${FILENAME}_family.soft 2>&1 | > $COLLECT_LOG
-#$CURL -o  $MICROARRAY_PATH/${FILENAME}_family.soft.gz ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SOFT/by_platform/${FILENAME}/${FILENAME}_family.soft.gz 2>&1 | > $COLLECT_LOG 
-$GUNZIP -f $MICROARRAY_PATH/${FILENAME}_family.soft.gz 
+$CP -f ${FILENAME}_family.soft old.${FILENAME}_family.soft 2>&1 | > $COLLECT_LOG
+$CURL -o  ${FILENAME}_family.soft.gz ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SOFT/by_platform/${FILENAME}/${FILENAME}_family.soft.gz 2>&1 | > $COLLECT_LOG 
+$GUNZIP -f ${FILENAME}_family.soft.gz 
 
 # make sure that this file always exists
-$TOUCH $MICROARRAY_PATH/old.${FILENAME}_family.soft
-CHK1=`cksum $MICROARRAY_PATH/old.${FILENAME}_family.soft`
-CHK2=`cksum $MICROARRAY_PATH/${FILENAME}_family.soft`
+$TOUCH old.${FILENAME}_family.soft
+CHK1=`cksum old.${FILENAME}_family.soft`
+CHK2=`cksum ${FILENAME}_family.soft`
 # read from !platform_table_begin
 # grep "^Dr\..*Consensus" small.GPL1319_family.soft  | cut -f2 | uniq >  ids.txt
 # read to !platform_table_end

@@ -1,7 +1,10 @@
 #!/bin/sh
 #- load SOFT format from NCBI using curl for platforms GPL_1319 and GPL2715
 MICROARRAY_PATH=<!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray
-VALUE=`$MICROARRAY_PATH/collect.sh`
+
+cd $MICROARRAY_PATH ;
+
+VALUE=`./collect.sh`
 
 #echo ": '$VALUE'"
 
