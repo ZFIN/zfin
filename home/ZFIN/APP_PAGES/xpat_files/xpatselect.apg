@@ -332,11 +332,10 @@ function openChild(childWinUrl,childWinName) {
     $1
     <?/MISQL> <?MICOMMENT> returns xpanatv_anatomy_zdb_id_list & xpatanv_anatomy_error_occured <?/MICOMMENT>
 
-    <?MIVAR NAME="$xpatsel_anatomy_error_occured">$xpanatv_anatomy_error_occured<?/MIVAR>
-
-  
+    <?MIVAR NAME=xpatsel_anatomy_error_occured>$xpanatv_anatomy_error_occured<?/MIVAR>
 
 <?/MIBLOCK>
+
 
 <?MICOMMENT>
   ============================================================================
@@ -355,7 +354,6 @@ function openChild(childWinUrl,childWinName) {
 <?/MICOMMENT>
 
 <?MIBLOCK COND="$(AND,$(XST,$query_results),$(EC,$xpatsel_anatomy_error_occured,f))">
-
  <?MISQL SQL="
   select dbinfo('sessionid') 
     from single;">
@@ -438,16 +436,16 @@ function openChild(childWinUrl,childWinName) {
     <?MIVAR NAME="$xpatsel_matchedText">$xpatselqry_matchedText<?/MIVAR>
     <?MIVAR NAME="$xpatsel_matchedTextSearchType">$xpatselqry_matchedTextSearchType<?/MIVAR>
   <?/MIBLOCK>
-<?/MIBLOCK>
 
 
-<?MICOMMENT> 
+
+  <?MICOMMENT> 
   ============================================================================
   ==========  BRAND SPANKING NEW RESULTS DISPLAY =============================
   ============================================================================
-<?/MICOMMENT>
+  <?/MICOMMENT>
 
-<?MIBLOCK COND="$(XST,$query_results)">
+
 
   <?MICOMMENT> ** Walking Windows Code ** <?/MICOMMENT>
 
@@ -723,6 +721,8 @@ function openChild(childWinUrl,childWinName) {
     <?MISQL SQL="delete from $xpatselect_temp_match;"><?/MISQL>
 
 <?/MIBLOCK>  <?MICOMMENT> --- end new query_results exists -- <?/MICOMMENT>
+
+<?/MICOMMENT>
 
 <?MICOMMENT>
   ============================================================================
