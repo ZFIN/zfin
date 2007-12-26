@@ -225,9 +225,8 @@ where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
     <?MIBLOCK COND="$(EQ,$MI_ROWCOUNT,0)">  <?MICOMMENT> *** open 'nothing returned' miblock *** <?/MICOMMENT>
       <tr>
         <td bgcolor="#EEEEEE" valign=top> 
-          <?MICOMMENT> *** not in dictionary *** <?/MICOMMENT>
           <?MICOMMENT> - set anatomy error to 't' so we won't get any query results - <?/MICOMMENT>
-          <?MIVAR NAME="$xpanatv_anatomy_error_occured">t<?/MIVAR>
+          <?MIVAR NAME=xpanatv_anatomy_error_occured>t<?/MIVAR>
           <FONT size=-1 style="font-family:arial;"> 
             <?MIVAR> "$xpanatv_part" <?/MIVAR>
             <?MICOMMENT> ---- capturing failed searches for use as possible synonyms ---- <?/MICOMMENT>
@@ -236,7 +235,6 @@ where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
         </td>
         <td bgcolor="#EEEEEE">
           <FONT size=-1 style="font-family:arial;"> 
-            <?MICOMMENT> ---- not in dictionary ---- <?/MICOMMENT>
             <?MIVAR>
               <B>does not exactly match a dictionary term, or synonym.<br>You can browse the dictionary
               <A HREF="/action/anatomy/search?action=term-by-stage-search">by stage</a> 
