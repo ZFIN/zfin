@@ -74,8 +74,8 @@
 01 12 * * 5 /research/zprod/www_homes/zfin.org/server_apps/Reports/GO/goreport.pl
 # 
 #
-# W 3:15pm
-15 15 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray.sh
+# R 3:15pm
+15 15 * * 4 <!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray.sh
 # ------------------------------------------------------------------------
 # ---- 10 PM - 11 PM : DATA TRANSFER OUT                              ----
 # ------------------------------------------------------------------------
