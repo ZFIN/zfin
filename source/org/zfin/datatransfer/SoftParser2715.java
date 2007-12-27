@@ -24,11 +24,16 @@ public class SoftParser2715 extends SoftParser{
 
     public Set<String> parseUniqueNumbers() {
         Set<String> accessionNumbers = new HashSet<String>() ;
+
+        String gpl2715Directory = System.getProperty("GPL2715",null) ;
+        if(gpl2715Directory==null){
+            return accessionNumbers ;
+        }
                 // copy file to temp
         File file = null ;
         BufferedReader reader = null ;
         try{
-            file = new File("GPL2715_family.soft") ;
+            file = new File(gpl2715Directory) ;
             reader = new BufferedReader(new FileReader(file)) ;
             String buffer ;
 
