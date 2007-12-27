@@ -75,7 +75,7 @@
 # 
 #
 # R 3:15pm
-15 15 * * 4 <!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray.sh
+45 15 * * 4 <!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray.sh
 # ------------------------------------------------------------------------
 # ---- 10 PM - 11 PM : DATA TRANSFER OUT                              ----
 # ------------------------------------------------------------------------

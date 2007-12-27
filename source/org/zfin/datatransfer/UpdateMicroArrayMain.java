@@ -199,7 +199,7 @@ public final class UpdateMicroArrayMain {
 
             // Process 2715 and 1319 chipsets for GEO only
             Set<String> newGEOAccessions = new HashSet<String>() ;
-//            newGEOAccessions.addAll(   (new SoftParser2715()).parseUniqueNumbers() );
+            newGEOAccessions.addAll(   (new SoftParser2715()).parseUniqueNumbers() );
             newGEOAccessions.addAll(   (new SoftParser1319()).parseUniqueNumbers() );
             Map<String,Set<MarkerDBLink>> microarrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
             processNewLinks(newGEOAccessions,microarrayLinks,geoDatabase) ; // 2
