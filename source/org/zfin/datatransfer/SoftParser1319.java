@@ -11,11 +11,7 @@ import java.io.FileReader;
 import java.util.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: nathandunn
- * Date: Oct 17, 2007
- * Time: 4:15:20 PM
- * To change this template use File | Settings | File Templates.
+* To parse the GEO 1319 file.
  */
 public class SoftParser1319 extends SoftParser{
 
