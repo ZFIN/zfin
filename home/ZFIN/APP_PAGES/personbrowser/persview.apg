@@ -285,7 +285,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <INPUT TYPE=button value=Update onClick="doit('url','text')">
 <?/MIVAR>
  <b>URL: </b> </TD> 
-<TD><?MIVAR COND=$(NE,$url,NULL)> <A TARGET="new_window" HREF="$url">$url</A> <?/MIVAR>
+<TD><?MIVAR COND=$(NE,$url,NULL)> <A TARGET="new_window" HREF="http://$url">$url</A> <?/MIVAR>
 </TD>
 </TR>
 </TABLE>
