@@ -79,13 +79,22 @@ public final class UpdateMicroArrayMain {
 //                    ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
 //            logger.debug("zfEspressoDatabase: " + zfEspressoDatabase) ;
 
-            ForeignDB geneBankForeignDB = sequenceRepository.getForeignDBByName("GenBank");
-            genBankGenomicDatabase = sequenceRepository.getReferenceDatabaseByAlternateKey(geneBankForeignDB,
+//            ForeignDB geneBankForeignDB = sequenceRepository.getForeignDBByName("GenBank");
+//            genBankGenomicDatabase = sequenceRepository.getReferenceDatabaseByAlternateKey(geneBankForeignDB,
+//                    ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
+//            logger.debug("genBankGenomicDatabase: " + genBankGenomicDatabase) ;
+//
+//            genBankCDNADatabase = sequenceRepository.getReferenceDatabaseByAlternateKey(geneBankForeignDB,
+//                    ReferenceDatabase.Type.CDNA,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
+
+            genBankGenomicDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(),
                     ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
             logger.debug("genBankGenomicDatabase: " + genBankGenomicDatabase) ;
 
-            genBankCDNADatabase = sequenceRepository.getReferenceDatabaseByAlternateKey(geneBankForeignDB,
-                    ReferenceDatabase.Type.CDNA,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
+
+            genBankCDNADatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(),
+                    ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
+
             logger.debug("genBankCDNADatabase: " + genBankCDNADatabase) ;
 
             refPub = RepositoryFactory.getPublicationRepository().getPublication(referencePubZdbID) ;
@@ -204,7 +213,7 @@ public final class UpdateMicroArrayMain {
             Map<String,Set<MarkerDBLink>> microarrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
             processNewLinks(newGEOAccessions,microarrayLinks,geoDatabase) ; // 2
 
-
+                                                                                                                                                        
 
             // Process the 1319 chipset for all.  
 //            Set<String> newOtherAccessions = new HashSet<String>() ;
