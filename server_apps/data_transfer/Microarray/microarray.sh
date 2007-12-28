@@ -42,7 +42,7 @@ MICROARRAY_PATH=<!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray
 
 $JAVA -DGPL1319=$MICROARRAY_PATH/GPL1319_family.soft -DGPL2715=$MICROARRAY_PATH/GPL2715_family.soft -Dlog4j.configuration=file://$MICROARRAY_PATH/log4j.xml -DCONFIGURATION_DIRECTORY="<!--|ROOT_PATH|-->/home/WEB-INF/classes/org/zfin" -DDBNAME=<!--|DB_NAME|--> -DSQLHOSTS_HOST=<!--|SQLHOSTS_HOST|--> -DINFORMIX_SERVER=<!--|INFORMIX_SERVER|--> -DINFORMIX_PORT=<!--|INFORMIX_PORT|--> $DEBUG -cp $THISCLASSPATH org.zfin.datatransfer.UpdateMicroArrayMain;
 
-REPORTEREMAIL=<!--|VALIDATION_EMAIL_DBA|-->
+REPORTEREMAIL="<!--|VALIDATION_EMAIL_DBA|-->" ;
 
 # start fix email
 TEMPFILE=./tmpemail.txt  ;
