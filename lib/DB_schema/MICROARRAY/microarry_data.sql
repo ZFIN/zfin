@@ -11,11 +11,11 @@ insert into zdb_active_data (zactvd_zdb_id) VALUES('ZDB-FDBCONT-070919-1');
 insert into foreign_db_contains (fdbcont_zdb_id,fdbcont_fdbdt_data_type,fdbcont_fdb_db_name,fdbcont_organism_common_name,fdbcont_fdbdt_super_type) VALUES('ZDB-FDBCONT-070919-1','other','GEO','Zebrafish','summary page'); 
 
 
---insert into foreign_db (fdb_db_name,fdb_db_query,fdb_url_suffix,fdb_db_significance) VALUES('ZF-Espresso','http://zf-espresso.tuebingen.mpg.de/webservice.php?page=graph.php&pf=pftxt&pst=',null,2);
+insert into foreign_db (fdb_db_name,fdb_db_query,fdb_url_suffix,fdb_db_significance) VALUES('ZF-Espresso','http://zf-espresso.tuebingen.mpg.de/webservice.php?page=graph.php&cf=cfgene&cgene=','&pf=pfgene&pgene=',2);
 
---insert into zdb_active_data (zactvd_zdb_id) VALUES('ZDB-FDBCONT-071107-1');
+insert into zdb_active_data (zactvd_zdb_id) VALUES('ZDB-FDBCONT-071228-1');
 
---insert into foreign_db_contains (fdbcont_zdb_id,fdbcont_fdbdt_data_type,fdbcont_fdb_db_name,fdbcont_organism_common_name,fdbcont_fdbdt_super_type) VALUES('ZDB-FDBCONT-071107-1','other','ZF-Espresso','Zebrafish','summary page'); 
+insert into foreign_db_contains (fdbcont_zdb_id,fdbcont_fdbdt_data_type,fdbcont_fdb_db_name,fdbcont_organism_common_name,fdbcont_fdbdt_super_type) VALUES('ZDB-FDBCONT-071228-1','other','ZF-Espresso','Zebrafish','summary page'); 
 
 
 
