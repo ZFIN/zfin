@@ -3,10 +3,10 @@ package org.zfin.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 /**
  * This class is used to create a URL by adding request parameters
@@ -16,7 +16,7 @@ import java.io.UnsupportedEncodingException;
 public class URLCreator {
 
     private StringBuilder url = new StringBuilder();
-    private HashMap<String, String> nameValuePairs = new HashMap<String, String>();
+    private LinkedHashMap<String, String> nameValuePairs = new LinkedHashMap<String, String>();
 
     private static final Log LOG = LogFactory.getLog(URLCreator.class);
 

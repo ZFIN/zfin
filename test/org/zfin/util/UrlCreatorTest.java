@@ -1,14 +1,7 @@
 package org.zfin.util;
 
-import org.junit.Test;
 import org.junit.Assert;
-import org.zfin.anatomy.AnatomyStatistics;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.presentation.SortAnatomyResults;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+import org.junit.Test;
 
 /**
  * Test class for anatomy search results.
@@ -21,7 +14,7 @@ public class UrlCreatorTest {
         String url1 = "http://zfin.org/";
         URLCreator url = new URLCreator(url1);
         String fullUrl = url.getFullURL();
-        Assert.assertEquals("No request params added", url1, fullUrl);
+        Assert.assertEquals("No request params added. URL encoded", "http%3A%2F%2Fzfin.org%2F", fullUrl);
     }
 
     @Test
@@ -33,7 +26,7 @@ public class UrlCreatorTest {
         String value = "value";
         url.addNamevaluePair(name, value);
         String fullUrl = url.getFullURL();
-        Assert.assertEquals("No request params added", url1+"?"+name+"="+value, fullUrl);
+        Assert.assertEquals("No request params added", "http%3A%2F%2Fzfin.org%2F%3Fname%3Dvalue", fullUrl);
     }
 
     @Test
@@ -48,7 +41,7 @@ public class UrlCreatorTest {
         String value2 = "value2";
         url.addNamevaluePair(name2, value2);
         String fullUrl = url.getFullURL();
-        Assert.assertEquals("No request params added", "http://zfin.org/?name2=value2&name=value", fullUrl);
+        Assert.assertEquals("No request params added", "http%3A%2F%2Fzfin.org%2F%3Fname%3Dvalue%26name2%3Dvalue2", fullUrl);
     }
 
     @Test
@@ -61,7 +54,7 @@ public class UrlCreatorTest {
         url.addNamevaluePair(name, value);
         url.addNamevaluePair(name, value);
         String fullUrl = url.getFullURL();
-        Assert.assertEquals("No request params added", url1+"?"+name+"="+value, fullUrl);
+        Assert.assertEquals("No request params added", "http%3A%2F%2Fzfin.org%2F%3Fname%3Dvalue", fullUrl);
     }
 
 }
