@@ -56,15 +56,13 @@ public class URLCreator {
             url.append(value);
         }
 
-/*
         String encodedUrl;
         try {
-            encodedUrl = URLEncoder.encode(sb.toString(), "ISO-8859-1");
+            encodedUrl = URLEncoder.encode(url.toString(), "ISO-8859-1");
         } catch (UnsupportedEncodingException e) {
             LOG.error(e);
-            return null;
+            encodedUrl = URLEncoder.encode(url.toString());
         }
-*/
-        return url.toString();
+        return encodedUrl;
     }
 }
