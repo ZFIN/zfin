@@ -79,21 +79,17 @@ public final class UpdateMicroArrayMain {
 //                    ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
 //            logger.debug("zfEspressoDatabase: " + zfEspressoDatabase) ;
 
-//            ForeignDB geneBankForeignDB = sequenceRepository.getForeignDBByName("GenBank");
-//            genBankGenomicDatabase = sequenceRepository.getReferenceDatabaseByAlternateKey(geneBankForeignDB,
-//                    ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
-//            logger.debug("genBankGenomicDatabase: " + genBankGenomicDatabase) ;
 //
-//            genBankCDNADatabase = sequenceRepository.getReferenceDatabaseByAlternateKey(geneBankForeignDB,
-//                    ReferenceDatabase.Type.CDNA,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
 
-            genBankGenomicDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(),
-                    ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
+//            ForeignDB geneBankForeignDB = sequenceRepository.getForeignDBByName("GenBank");
+//            genBankGenomicDatabase = sequenceRepository.getReferenceDatabaseByAlternateKey(geneBankForeignDB, ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
+            genBankGenomicDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(), ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
             logger.debug("genBankGenomicDatabase: " + genBankGenomicDatabase) ;
 
 
+//            genBankCDNADatabase = sequenceRepository.getReferenceDatabaseByAlternateKey(geneBankForeignDB, ReferenceDatabase.Type.CDNA,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
             genBankCDNADatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(),
-                    ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                    ReferenceDatabase.Type.CDNA,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
 
             logger.debug("genBankCDNADatabase: " + genBankCDNADatabase) ;
 
