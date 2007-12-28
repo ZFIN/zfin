@@ -52,7 +52,7 @@ REPORTEREMAIL=$FIX_EMAIL ;
 rm -f $TEMPFILE ; 
 # end fix email
 
-echo "Reporter email: $REPORTEREMAIL" ; 
+#echo "Reporter email: $REPORTEREMAIL" ; 
 
 DATESTRING="`date '+%y.%m.%d'`"
 
