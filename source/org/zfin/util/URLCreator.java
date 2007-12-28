@@ -53,16 +53,16 @@ public class URLCreator {
             }
             url.append(name);
             url.append("=");
-            url.append(value);
+            String urlEncodedValue;
+            try {
+                urlEncodedValue = URLEncoder.encode(value, "ISO-8859-1");
+            } catch (UnsupportedEncodingException e) {
+                LOG.error(e);
+                urlEncodedValue = URLEncoder.encode(value);
+            }
+            url.append(urlEncodedValue);
         }
 
-        String encodedUrl;
-        try {
-            encodedUrl = URLEncoder.encode(url.toString(), "ISO-8859-1");
-        } catch (UnsupportedEncodingException e) {
-            LOG.error(e);
-            encodedUrl = URLEncoder.encode(url.toString());
-        }
-        return encodedUrl;
+        return url.toString();
     }
 }
