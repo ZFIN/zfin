@@ -29,7 +29,7 @@ SUBDIRS = Regen_names
 
 DBLINK_STATS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
 	       p_check_caps_acc_num.sql p_one_ortho_per_db.sql \
-	       get_genbank_dblink_length_type.sql
+	       get_genbank_dblink_length_type.sql increment_candidate_occurrences.sql
 FISH_STATS   = get_image_stats.sql \
 	       p_update_related_genotype_names.sql \
 	       p_update_fmrel_genotype_names.sql \
