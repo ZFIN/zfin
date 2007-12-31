@@ -1332,7 +1332,7 @@ union
              <?/MISQL>
 
 	 <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
-        <?MIVAR NAME=mini_ref><?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
+        ,&nbsp;&nbsp; <?MIVAR NAME=mini_ref><?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
          <a href="$mrkrview_microarray_link$dblink_acc$mrkrview_microarray_suffix$dblink_acc">$mrkrview_microarray_db</a> &nbsp;$mini_ref
      <?/MIVAR>
 
@@ -1375,7 +1375,7 @@ union
 
 	 <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
         <?MIVAR NAME=mini_ref><?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
-         <a href="$mrkrview_microarray_link$accession_sum$mrkrview_microarray_suffix">$mrkrview_microarray_db</a> &nbsp;$mini_ref
+         ,&nbsp;&nbsp; <a href="$mrkrview_microarray_link$accession_sum$mrkrview_microarray_suffix">$mrkrview_microarray_db</a> &nbsp;$mini_ref
      <?/MIVAR>
          <?MICOMMENT>End ArrayExpress<?/MICOMMENT>
          </td>
