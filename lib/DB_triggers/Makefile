@@ -87,6 +87,7 @@ TRIGGERS = \
 	publication_insert_trigger.sql \
 	publication_update_trigger.sql \
 	record_attribution_insert_trigger.sql \
+	run_candidate_insert_trigger.sql \
 	stage_insert_trigger.sql \
 	stage_update_trigger.sql \
 	updates_insert_trigger.sql \
