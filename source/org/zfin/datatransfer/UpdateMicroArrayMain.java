@@ -29,7 +29,7 @@ public final class UpdateMicroArrayMain {
     final Logger errorLogger = Logger.getLogger(ZfinProperties.MICROARRAY_ERROR);
     final Logger infoLogger  = Logger.getLogger(ZfinProperties.MICROARRAY_INFO);
     ReferenceDatabase geoDatabase = null ;
-//    ReferenceDatabase zfEspressoDatabase = null ;
+    ReferenceDatabase zfEspressoDatabase = null ;
 
     Map<String,MarkerDBLink> genBankLinks = null ; 
     Map<String,MarkerDBLink> microarrayLinks = null ; 
@@ -52,9 +52,7 @@ public final class UpdateMicroArrayMain {
     };
 
 
-
-    //    final String referencePubZdbID ="ZDB-PUB-071101-1" ;
-    String referencePubZdbID = "ZDB-PUB-071218-1" ;
+    final String referencePubZdbID = "ZDB-PUB-071218-1" ;
     Publication refPub ;
 
     
@@ -71,26 +69,24 @@ public final class UpdateMicroArrayMain {
                 new HibernateSessionCreator(false, confFiles) ;
             }
             sequenceRepository = RepositoryFactory.getSequenceRepository() ;
+
+
             geoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GEO.toString(),
                     ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
             logger.debug("geoDatabase: " + geoDatabase) ;
 
-//            zfEspressoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ZF_ESPRESSO.toString(),
-//                    ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
-//            logger.debug("zfEspressoDatabase: " + zfEspressoDatabase) ;
+            zfEspressoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ZF_ESPRESSO.toString(),
+                    ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
+            logger.debug("zfEspressoDatabase: " + zfEspressoDatabase) ;
 
-//
 
-//            ForeignDB geneBankForeignDB = sequenceRepository.getForeignDBByName("GenBank");
-//            genBankGenomicDatabase = sequenceRepository.getReferenceDatabaseByAlternateKey(geneBankForeignDB, ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
-            genBankGenomicDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(), ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
+            genBankGenomicDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(),
+                    ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
             logger.debug("genBankGenomicDatabase: " + genBankGenomicDatabase) ;
 
 
-//            genBankCDNADatabase = sequenceRepository.getReferenceDatabaseByAlternateKey(geneBankForeignDB, ReferenceDatabase.Type.CDNA,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
             genBankCDNADatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(),
                     ReferenceDatabase.Type.CDNA,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
-
             logger.debug("genBankCDNADatabase: " + genBankCDNADatabase) ;
 
             refPub = RepositoryFactory.getPublicationRepository().getPublication(referencePubZdbID) ;
@@ -212,12 +208,12 @@ public final class UpdateMicroArrayMain {
                                                                                                                                                         
 
             // Process the 1319 chipset for all.  
-//            Set<String> newOtherAccessions = new HashSet<String>() ;
-//            newOtherAccessions.addAll(   (new SoftParser1319()).parseUniqueNumbers() );
+            Set<String> newOtherAccessions = new HashSet<String>() ;
+            newOtherAccessions.addAll(   (new SoftParser1319()).parseUniqueNumbers() );
 //            //okay if it only returns one
-//            microarrayLinks.clear();
-//            microarrayLinks = sequenceRepository.getMarkerDBLinks(null, geoDatabase, zfEspressoDatabase ) ;   // 0 - load microarray
-//            processNewLinks( newOtherAccessions , microarrayLinks,geoDatabase, zfEspressoDatabase) ;  // 2
+            microarrayLinks.clear();
+            microarrayLinks = sequenceRepository.getMarkerDBLinks(null, zfEspressoDatabase ) ;   // 0 - load microarray
+            processNewLinks( newOtherAccessions , microarrayLinks,zfEspressoDatabase) ;  // 2
 //
 //
 //            newOtherAccessions.addAll(newGEOAccessions) ;

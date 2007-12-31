@@ -1242,7 +1242,7 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
 
 <?/MIBLOCK> <?MICOMMENT>block for gene xpat if exist<?/MICOMMENT>
 
-<?MICOMMENT>Start MICROARRAY block here<?/MICOMMENT>
+<?MICOMMENT>Start MICROARRAY block here.  Only show others if GEO.<?/MICOMMENT>
      <?MIVAR NAME=accession_sum><?/MIVAR>
      <?MISQL SQL="
  select distinct fdb_db_name, fdb_db_query ,  dblink_acc_num,dblink_zdb_id,
@@ -1328,12 +1328,12 @@ union
           <?MIVAR NAME=dataId>$4<?/MIVAR>
           <?MIVAR NAME=mrkrview_microarray_suffix>$5<?/MIVAR>
            
-             <?MIVAR NAME=accession_sum>$dblink_acc $accession_sum<?/MIVAR>
+             <?MICOMMENT><?MIVAR NAME=accession_sum>$dblink_acc $accession_sum<?/MIVAR><?/MICOMMENT>
              <?/MISQL>
 
 	 <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
         <?MIVAR NAME=mini_ref><?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
-         <a href="$mrkrview_microarray_link$accession_sum$mrkrview_microarray_suffix">$mrkrview_microarray_db</a> &nbsp;$mini_ref
+         <a href="$mrkrview_microarray_link$dblink_acc$mrkrview_microarray_suffix$dblink_acc">$mrkrview_microarray_db</a> &nbsp;$mini_ref
      <?/MIVAR>
 
 
