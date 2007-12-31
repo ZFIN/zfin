@@ -50,7 +50,7 @@ system("/local/bin/wget -q ftp://ftp.informatics.jax.org/pub/reports/HMD_Rat1.rp
 print "\nDownloading from MGI is done\n";
 
 # download data file from FlyBase for updating fly chromosome info 
-system("/local/bin/wget -q ftp://flybase.net/genomes/Drosophila_melanogaster/current/fasta/dmel-all-gene-r5.3.fasta.gz -O FlyBase.data.gz") and &emailError("Cannot download data file from FlyBase.");
+system("/local/bin/wget -q ftp://flybase.net/genomes/Drosophila_melanogaster/current/fasta/dmel-all-gene-r5.4.fasta.gz -O FlyBase.data.gz") and &emailError("Cannot download data file from FlyBase.");
 system("/local/bin/gunzip FlyBase.data.gz") and &emailError("Cannot decompress data file of FlyBase.");
 print "\nDownloading and decompressing FlyBase file is done.\n";
 
