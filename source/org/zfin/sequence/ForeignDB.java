@@ -66,8 +66,8 @@ public class ForeignDB {
         INTERPRO("InterPro"),
         MEGA_BLAST("MEGA BLAST"),
         MGI("MGI"),
-	MGI_ANATOMY("MGI-Anatomy"),
-	MODB("MODB"),
+        MGI_ANATOMY("MGI-Anatomy"),
+        MODB("MODB"),
         NCBO_CARO("NCBO-CARO"),
         NOVELGENE("NovelGene"),
         OMIM("OMIM"),
@@ -91,8 +91,8 @@ public class ForeignDB {
         VEGA_CLONE("VEGA_Clone"),
         VEGA_TRANS("Vega_Trans"),
         WASHU("WashU"),
-        WASHUZ("WashUZ")
-//        ZF_ESPRESSO("ZF-Espresso")
+        WASHUZ("WashUZ"),
+        ZF_ESPRESSO("ZF-Espresso")
             ;
 
 

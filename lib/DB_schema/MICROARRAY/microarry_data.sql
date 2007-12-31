@@ -4,6 +4,8 @@ insert into marker_type_group_member ( mtgrpmem_mrkr_type , mtgrpmem_mrkr_type_g
 
 insert into marker_type_group_member ( mtgrpmem_mrkr_type , mtgrpmem_mrkr_type_group) values ('EST','CDNA_AND_EST') ;
 
+alter table foreign_db modify (fdb_url_suffix varchar(20)) ;
+
 insert into foreign_db (fdb_db_name,fdb_db_query,fdb_url_suffix,fdb_db_significance) VALUES('GEO','http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=search&db=geo&term=txid7955%20(',')',2);
 
 insert into zdb_active_data (zactvd_zdb_id) VALUES('ZDB-FDBCONT-070919-1');
