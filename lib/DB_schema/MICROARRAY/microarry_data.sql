@@ -23,8 +23,8 @@ insert into foreign_db_contains (fdbcont_zdb_id,fdbcont_fdbdt_data_type,fdbcont_
 
 --insert into foreign_db (fdb_db_name,fdb_db_query,fdb_url_suffix,fdb_db_significance) VALUES('ArrayExpress','http://www.ebi.ac.uk/microarray-as/aew/DW?queryFor=gene&species=Danio%20Rerio&gene_query=',null,2);
 
---insert into zdb_active_data (zactvd_zdb_id) VALUES('ZDB-FDBCONT-071107-2');
+--insert into zdb_active_data (zactvd_zdb_id) VALUES('ZDB-FDBCONT-081201-1');
 
---insert into foreign_db_contains (fdbcont_zdb_id,fdbcont_fdbdt_data_type,fdbcont_fdb_db_name,fdbcont_organism_common_name,fdbcont_fdbdt_super_type) VALUES('ZDB-FDBCONT-071107-2','other','ArrayExpress','Zebrafish','summary page'); 
+--insert into foreign_db_contains (fdbcont_zdb_id,fdbcont_fdbdt_data_type,fdbcont_fdb_db_name,fdbcont_organism_common_name,fdbcont_fdbdt_super_type) VALUES('ZDB-FDBCONT-081201-1','other','ArrayExpress','Zebrafish','summary page'); 
 
 
