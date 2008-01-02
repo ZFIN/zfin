@@ -18,6 +18,7 @@ public class HibernateAuditLogRepository implements AuditLogRepository {
         Session session = HibernateUtil.currentSession();
         Criteria query = session.createCriteria(AuditLogItem.class);
         query.add(Restrictions.eq("zdbID", recordID));
+        query.addOrder(Order.desc("dateUpdated"));
         query.setMaxResults(1);
 
         List<AuditLogItem> items = (List<AuditLogItem>) query.list();
