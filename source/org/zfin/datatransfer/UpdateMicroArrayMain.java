@@ -30,6 +30,7 @@ public final class UpdateMicroArrayMain {
     final Logger infoLogger  = Logger.getLogger(ZfinProperties.MICROARRAY_INFO);
     ReferenceDatabase geoDatabase = null ;
     ReferenceDatabase zfEspressoDatabase = null ;
+//    ReferenceDatabase arrayExpressDatabase = null ;
 
     Map<String,MarkerDBLink> genBankLinks = null ; 
     Map<String,MarkerDBLink> microarrayLinks = null ; 
@@ -78,6 +79,11 @@ public final class UpdateMicroArrayMain {
             zfEspressoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ZF_ESPRESSO.toString(),
                     ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
             logger.debug("zfEspressoDatabase: " + zfEspressoDatabase) ;
+
+
+//            arrayExpressDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ARRAY_EXPRESS.toString(),
+//                    ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
+//            logger.debug("arrayExpressDatabase: " + arrayExpressDatabase) ;
 
 
             genBankGenomicDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(),
@@ -204,6 +210,7 @@ public final class UpdateMicroArrayMain {
             newGEOAccessions.addAll(   (new SoftParser1319()).parseUniqueNumbers() );
             Map<String,Set<MarkerDBLink>> microarrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
             processNewLinks(newGEOAccessions,microarrayLinks,geoDatabase) ; // 2
+            cleanupOldLinks(newGEOAccessions,geoDatabase) ; // 3
 
                                                                                                                                                         
 
@@ -214,10 +221,13 @@ public final class UpdateMicroArrayMain {
             microarrayLinks.clear();
             microarrayLinks = sequenceRepository.getMarkerDBLinks(null, zfEspressoDatabase ) ;   // 0 - load microarray
             processNewLinks( newOtherAccessions , microarrayLinks,zfEspressoDatabase) ;  // 2
-//
-//
-//            newOtherAccessions.addAll(newGEOAccessions) ;
-            cleanupOldLinks(newGEOAccessions,geoDatabase) ; // 3
+            cleanupOldLinks(newOtherAccessions,zfEspressoDatabase) ; // 3
+
+//            microarrayLinks = sequenceRepository.getMarkerDBLinks(null, zfEspressoDatabase ,arrayExpressDatabase) ;   // 0 - load microarray
+//            processNewLinks( newOtherAccessions , microarrayLinks,zfEspressoDatabase,arrayExpressDatabase) ;  // 2
+//            cleanupOldLinks(newOtherAccessions,zfEspressoDatabase,arrayExpressDatabase) ; // 3
+
+
 
             session.getTransaction().commit() ;
         }
