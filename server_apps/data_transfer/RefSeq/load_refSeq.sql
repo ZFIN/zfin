@@ -367,7 +367,7 @@ INSERT INTO tmp_db_link
   WHERE gbacc_ll = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
     AND fdbcont_fdb_db_name = 'GenBank'
-    AND fdbcont_fdbdt_data_type = accbk_data_type
+    AND fdbcont_zdb_id = accbk_fdbcont_zdb_id
     AND gbacc_acc = accbk_acc_num
     AND accbk_db_name = 'GenBank'
     AND gbacc_acc != "-"

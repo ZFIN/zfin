@@ -263,7 +263,7 @@ sub sendReport()
       print MAIL "To: $email\n";
     }
     else {
-      print MAIL "To: bsprunge\@cs.uoregon.edu\n";
+      print MAIL "To: <!--|DB_OWNER|-->\@cs.uoregon.edu, bsprunge\@cs.uoregon.edu\n";
     }
     
     print MAIL "Subject: refseq/ortho report\n";
