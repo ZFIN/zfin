@@ -369,7 +369,7 @@ INSERT INTO tmp_db_link
     AND fdbcont_fdb_db_name = 'GenBank'
     AND fdbcont_zdb_id = accbk_fdbcont_zdb_id
     AND gbacc_acc = accbk_acc_num
-    AND accbk_db_name = 'GenBank'
+    AND fdbcont_fdb_db_name = 'GenBank'
     AND gbacc_acc != "-"
 ;
 
@@ -753,9 +753,10 @@ UPDATE db_link
 SET dblink_length = 
   (
     SELECT accbk_length 
-    FROM accession_bank 
+    FROM accession_bank, foreign_db_contains 
     WHERE dblink_acc_num = accbk_acc_num 
-      AND accbk_db_name = 'GenBank'
+      AND fdbcont_fdb_db_name = 'GenBank'
+      AND fdbcont_zdb_id = accbk_fdbcont_zdb_id
   )
 WHERE dblink_acc_num IN 
   (
