@@ -35,13 +35,14 @@ http://<!--|DOMAIN_NAME|-->/images/darrow.gif
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
-<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
-<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=MI_NULL><?/MIVAR>
 
 <?MIVAR COND=$(NXST,$fxfigge_display_option) NAME=$fxfigge_display_option><?/MIVAR>
 <?MIVAR NAME=$fxfigge_list_items><?/MIVAR>
 <?MIVAR NAME=$fxprobefig_image><?/MIVAR>
 <?MIVAR NAME=$fxprobefig_key><?/MIVAR>
+<?MIVAR NAME=$fxprobe_rating><?/MIVAR>
 <?MIVAR NAME=$fxfigge_down_arrow>http://<!--|DOMAIN_NAME|-->/images/darrow.gif<?/MIVAR>
 <?MISQL SQL="
     SELECT distinct mrkr_abbrev, mrkr_zdb_id, mrkr_name_order
