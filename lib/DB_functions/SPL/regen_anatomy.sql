@@ -478,7 +478,8 @@ create dba function "informix".regen_anatomy()
       create table anatomy_stats_new 
 	(
 	  anatstat_anatitem_zdb_id          varchar(50),
-	  anatstat_object_type              varchar(32),
+	  anatstat_object_type              varchar(32)
+             not null,
 	  anatstat_synonym_count	    integer
 	     not null,
 	  anatstat_object_count           integer
