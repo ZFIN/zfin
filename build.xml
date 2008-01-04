@@ -110,7 +110,7 @@
         <echo>
             TARGETS
             all: Clean, compile and build entire WEB-INF environmet
-            deploy: Deploys entire WEB-INF ernvironment after cleaning
+            deploy/install: Deploys entire WEB-INF ernvironment after cleaning
             dirtydeploy: Deploys entire WEB-INF environment changes without cleaning
             deploy-all: Deploys entire environment
 	        deploy-javadoc: Create the JavaDoc and deploy it into the targetroot
@@ -191,6 +191,7 @@
         <copy file="${conf.dir}/hibernate.properties" tofile="${classbin.dir}/hibernate.properties"
               failonerror="false"/>
     </target>
+
 
     <target name="all" depends="clean, construct-xsd-classes, compile, prepare-properties"
             description="Everything to compile excluding jsp files."/>
@@ -453,6 +454,9 @@
             </fileset>
         </copy>
     </target>
+
+    <target name="install" depends="deploy"
+            description="Same as deploy."/>
 
     <target name="deploy" depends="all,prepareDeploy"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
