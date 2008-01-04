@@ -103,13 +103,16 @@ public final class ZfinProperties {
         return props.getEmail().getAdminEmailAddress();
     }
 
+    public static String stripEmailBackslash(String inputString){
+        return inputString.replaceAll("\\\\@","@")  ;
+    }
     
 
     public static String getValidationEmailOther(boolean stripBackslash){
         checkValidProperties();
         String returnString = props.getEmail().getValidationEmailOther();
         if(stripBackslash){
-            returnString = returnString.replaceAll("\\\\@","@")  ;
+            returnString = stripEmailBackslash(returnString);
         }
         return returnString ;
     }
