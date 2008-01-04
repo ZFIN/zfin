@@ -9,7 +9,9 @@ import org.zfin.infrastructure.EnumValidationException;
 import org.zfin.infrastructure.EnumValidationService;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.util.FileUtil;
+import org.zfin.framework.mail.MailXMailSender;
 import org.zfin.framework.mail.MailSender;
+import org.zfin.framework.mail.IntegratedJavaMailSender;
 import static org.junit.Assert.fail;
 
 import javax.servlet.ServletConfig;
@@ -66,7 +68,7 @@ public class ZfinActionServlet extends DispatcherServlet {
             for (StackTraceElement element : elements) {
                 errorString += element + "\n";
             }
-            logger.error("notification sent: "+ MailSender.sendMail("Enumeration Mapping Failure","Enumeration mapping failure." +
+            logger.error("notification sent: "+ (new IntegratedJavaMailSender()).sendMail("Enumeration Mapping Failure","Enumeration mapping failure." +
                     "\n"+errorString,ZfinProperties.getValidationEmailOther(true)));
         }
     }
@@ -76,7 +78,7 @@ public class ZfinActionServlet extends DispatcherServlet {
             (new EnumValidationService()).checkAllEnums();
         }
         catch (EnumValidationException eve) {
-            throw new RuntimeException("EnumValidationException caught, exiting servlet.", eve);
+            throw new RuntimeException("EnumValidationException caught", eve);
         }
     }
 
