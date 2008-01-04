@@ -71,6 +71,16 @@
         </property>
     </bean>
 
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+    </bean>
+
+    <bean id="zfinMailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender">
+        <property name="mailHost">
+            <value>mailhost.cs.uoreogn.edu"</value>
+        </property>
+        <property name="mailSender"><ref bean="mailSender"/></property>
+    </bean>
+
 
     <!-- TEST FOR QUARTZ SCHEDULER
         should go into a separate config file.

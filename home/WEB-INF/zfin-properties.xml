@@ -25,7 +25,7 @@
         <IndexPath>../j2ee/uniquery/indexes</IndexPath>
     </Path>
     <Email>
-        <adminEmailAddress>info@zfin.org</adminEmailAddress>
+        <adminEmailAddress><!--|ZFIN_ADMIN|--></adminEmailAddress>
         <validationEmailOther><!--|VALIDATION_EMAIL_OTHER|--></validationEmailOther>
     </Email>
     <Logging>
