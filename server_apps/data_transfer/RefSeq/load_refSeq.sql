@@ -193,7 +193,8 @@ GROUP BY 1,2
 HAVING COUNT(*) > 1; 
 
 DELETE FROM acc_length
-WHERE acclen_acc IN (SELECT mAcclen_acc from tmp_multiple_acclength);
+WHERE exists (SELECT 'x' from tmp_multiple_acclength
+      		    	    WHERE mAcclen_acc = acclen_acc);
 
 INSERT INTO acc_length ( acclen_acc, acclen_length )
 SELECT mAcclen_acc, mAcclen_length
@@ -398,7 +399,8 @@ group by 1
 having count(*) > 1;
 
 delete from tmp_put_genpept_on_segment
-where pept_acc in (select mPept_acc from tmp_non_unique_pept_acc);
+where exists (select 'x' from tmp_non_unique_pept_acc
+      	       	  	  where mPept_acc = pept_acc);
       
 !echo 'insert GenPept INTO temp_db_link'
 INSERT INTO tmp_db_link
@@ -475,11 +477,12 @@ SELECT dblink_zdb_id
       SELECT count (*) 
       FROM record_attribution r1
       WHERE r1.recattrib_data_zdb_id = dblink_zdb_id
-        AND r1.recattrib_data_zdb_id in 
+        AND exists
         (
-          SELECT r2.recattrib_data_zdb_id
+          SELECT 'x'
           FROM record_attribution r2
           WHERE r2.recattrib_source_zdb_id = "ZDB-PUB-020723-3"
+	  AND  r1.recattrib_data_zdb_id = r2.recattrib_data_zdb_id
         )
      )
 ;
@@ -531,11 +534,19 @@ WHERE dblink_zdb_id = link_id
   AND xpatex_dblink_zdb_id = link_id;
 
 DELETE FROM automated_dblink 
-WHERE EXISTS (SELECT * FROM tmp_xpat_dblink WHERE link_id = tmpfx_dblink_zdb_id);
+WHERE EXISTS (SELECT * 
+      	     	     FROM tmp_xpat_dblink 
+		     WHERE link_id = tmpfx_dblink_zdb_id);
 
-Unload to "xpat_dblink.unl" Select tmpfx_dblink_zdb_id from tmp_xpat_dblink;
+Unload to "xpat_dblink.unl" 
+  Select tmpfx_dblink_zdb_id 
+    from tmp_xpat_dblink;
 
-DELETE FROM zdb_active_data WHERE zactvd_zdb_id in (SELECT link_id FROM automated_dblink);
+DELETE FROM zdb_active_data 
+  WHERE exists (
+  	SELECT link_id 
+	FROM automated_dblink 
+        WHERE link_id = zactvd_zdb_id);
 
       
 
@@ -552,11 +563,12 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
 -- Conflicting GenPepts should be deleted.
 
     delete from zdb_active_data
-    where zactvd_zdb_id in
+    where exists
       (
-        select dblink_zdb_id
+        select 'x'
         from db_link, tmp_put_genpept_on_segment, record_attribution
         where pept_acc = dblink_acc_num
+	  and zactvd_zdb_id = dblink_zdb_id
           and dblink_zdb_id = recattrib_data_zdb_id
           and recattrib_source_zdb_id = "ZDB-PUB-030924-6"      
       );
@@ -744,8 +756,12 @@ WHERE exists
 
 -- RefSeq Lengths
 UPDATE db_link
-SET dblink_length = (SELECT acclen_length FROM acc_length WHERE dblink_acc_num = acclen_acc)
-WHERE dblink_acc_num IN (SELECT acclen_acc FROM acc_length);
+SET dblink_length = (SELECT acclen_length 
+    		    	    FROM acc_length 
+    			    WHERE dblink_acc_num = acclen_acc)
+WHERE EXISTS (SELECT acclen_acc 
+     	    	FROM acc_length
+		WHERE acclen_acc = dblink_acc_num);
 
 
 -- GenBank Lengths
@@ -758,11 +774,12 @@ SET dblink_length =
       AND fdbcont_fdb_db_name = 'GenBank'
       AND fdbcont_zdb_id = accbk_fdbcont_zdb_id
   )
-WHERE dblink_acc_num IN 
+WHERE exists
   (
-    SELECT tmp_acc_num 
+    SELECT 'x' 
     FROM tmp_db_link
     WHERE tmp_db_name = 'GenBank'
+    AND tmp_acc_num = dblink_acc_num
   );
 
 
@@ -883,7 +900,10 @@ WHERE genpept.dblink_fdbcont_zdb_id = fdbcont1.fdbcont_zdb_id
         AND refseq.dblink_acc_num = genpept.dblink_acc_num
       );
         
-DELETE FROM zdb_active_data WHERE zactvd_zdb_id IN (SELECT * FROM overlapping_acc_num);
+DELETE FROM zdb_active_data 
+    WHERE EXISTS (SELECT 'x' 
+    	  	     FROM overlapping_acc_num
+		     WHERE dblink_zdb_id = zactvd_zdb_id);
 
 
 -- ------------------  UNI_GENE  ------------------- --
@@ -925,16 +945,19 @@ with no log;
   INSERT INTO unigene_link
   SELECT * 
   FROM db_link
-  WHERE dblink_fdbcont_zdb_id in 
+  WHERE EXISTS
     (
-      SELECT fdbcont_zdb_id
+      SELECT 'x'
       FROM foreign_db_contains
       WHERE fdbcont_fdb_db_name = "UniGene"
+      AND dblink_fdbcont_zdb_id = fdbcont_zdb_id
     );
 
 --only keep new links
 DELETE FROM tmp_db_link
-WHERE tmp_acc_num IN (SELECT dblink_acc_num FROM unigene_link);
+WHERE EXISTS (SELECT 'x' 
+      		    FROM unigene_link
+		    WHERE dblink_acc_num = tmp_acc_num);
 
 !echo 'add active source AND active data'
 UPDATE tmp_db_link
@@ -967,6 +990,6 @@ INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 ;
 
 
---rollback work;
-commit work;
+rollback work;
+--commit work;
 
