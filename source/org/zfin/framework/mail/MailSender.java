@@ -11,12 +11,21 @@ import java.util.List;
 public class MailSender{
     static Logger logger = Logger.getLogger(MailSender.class) ;
 
-    public static boolean sendMail(String subject, String message, String... recipients) {
+
+    public static boolean sendMail(String subject, String message, String... recipients) {        
+        return sendMail(subject,message,true,recipients) ;
+    }
+
+
+    public static boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String... recipients) {
         try{
             List<String> commandList = new ArrayList<String>() ;
             commandList.add("mailx") ;
 //            commandList.add("-v");
             commandList.add("-s");
+            if(doDefaultSubjectHeader){
+                subject = "From [" + System.getenv("DOMAIN_NAME") + "] on [" + System.getenv("HOST") + "]: " + subject;
+            }
             commandList.add(subject)  ;
             for(String recipientEmail: recipients){
                 commandList.add(recipientEmail) ;
@@ -69,8 +78,7 @@ public class MailSender{
 
     public static void main(String args[]){
         System.out.println("send a mail message") ;
-        boolean status = MailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), ZfinProperties.getValidationEmailOther(true));
-//        boolean status = MailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), "ndunn@uoregon.edu","ndunn@mac.com");
-        System.out.println("sent: "+ status) ;
+//        boolean status = MailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), ZfinProperties.getValidationEmailOther(true));
+        boolean status = MailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), "ndunn@uoregon.edu","ndunn@mac.com");
     }
 }
