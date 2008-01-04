@@ -108,12 +108,9 @@ public final class ZfinProperties {
     }
     
 
-    public static String getValidationEmailOther(boolean stripBackslash){
+    public static String getValidationEmailOther(){
         checkValidProperties();
         String returnString = props.getEmail().getValidationEmailOther();
-        if(stripBackslash){
-            returnString = stripEmailBackslash(returnString);
-        }
         return returnString ;
     }
 

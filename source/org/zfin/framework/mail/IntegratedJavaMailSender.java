@@ -83,6 +83,6 @@ public class IntegratedJavaMailSender extends MailSender{
         ZfinProperties.init(dir, file);
 
         MailSender sender = new IntegratedJavaMailSender() ;
-        sender.sendMail("test email from IntegratedJavaMailSender: "+new Date(),"javamail message of test email: "+new Date(), "ndunn@uoregon.edu","ndunn@mac.com");
+        sender.sendMail("test email from IntegratedJavaMailSender: "+new Date(),"javamail message of test email: "+new Date(), ZfinProperties.stripEmailBackslash(ZfinProperties.getAdminEmailAddress()), ZfinProperties.stripEmailBackslash(ZfinProperties.getValidationEmailOther()));
     }
 }
