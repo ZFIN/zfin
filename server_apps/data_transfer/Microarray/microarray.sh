@@ -56,20 +56,21 @@ rm -f $TEMPFILE ;
 
 DATESTRING="`date '+%y.%m.%d'`"
 
-
+SUBJECT_PREPEND="From [ <!--|DOMAIN_NAME|-->  ] on [ <!--|MACHINE_NAME|--> ]: " ; 
 LOG="$MICROARRAY_PATH/microarray_info.log" ; 
-SUBJECT="Microarray processing information for $DATESTRING.log"
+#SUBJECT="Microarray processing information for $DATESTRING.log"
+SUBJECT="$SUBJECT_PREPEND Microarray processing information for $DATESTRING.log"
 mailx -s "$SUBJECT"  $REPORTEREMAIL < $LOG 
 
 LOG="$MICROARRAY_PATH/microarray_error.log" ; 
 if [ "`cat $LOG`" ] ; then 
-    SUBJECT="Microarray error information for $DATESTRING.log"
+    SUBJECT="$SUBJECT_PREPEND Microarray error information for $DATESTRING.log"
     mailx -s "$SUBJECT"  $REPORTEREMAIL < $LOG
 fi;
 
 LOG="$MICROARRAY_PATH/microarray_notfound.log" ; 
 if [ "`cat $LOG`" ] ; then 
-    NOTFOUND_SUBJECT="Microarray markers not found in genbank for $DATESTRING.log"
+    NOTFOUND_SUBJECT="$SUBJECT_PREPEND Microarray markers not found in genbank for $DATESTRING.log"
 #    mailx -s "$NOTFOUND_SUBJECT"  $REPORTEREMAIL < $LOG
 fi ; 
 
