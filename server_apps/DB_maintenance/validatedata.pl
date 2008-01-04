@@ -603,6 +603,39 @@ sub genotypesHaveNoNames($) {
 
 }
 
+#---------------------------------------------------------------
+# pubClosedGenoHandleDoesNotEqualGenoNickname
+#
+# Parameter
+# $ Email Address for recipients
+
+sub pubClosedGenoHandleDoesNotEqualGenoNickname($) {
+  my $routineName = "pubClosedGenoHandleDoesNotEqualGenoNickname";
+	
+  my $sql = 'select distinct geno_nickname, geno_handle, zdb_id
+               from genotype, publication, record_attribution
+               where geno_handle !=  geno_nickname
+               and geno_zdb_id = recattrib_data_zdb_id
+                            and zdb_id = recattrib_source_zdb_id
+                            and pub_completion_date is not null';
+
+  my @colDesc = ("Genotype nickname         ",
+		 "Genotype handle       ",
+                 "Pub id                ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Genotype(s) have handles that do not equal nicknames";
+    my $errMsg = "There are $nRecords genotype records where handle != nickname and pub is closed . ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+
+}
 
 #======================== PUB Attribution ========================
 #
@@ -3097,6 +3130,7 @@ if($daily) {
     featureAssociatedWithGenotype($mutantEmail);
     featureIsAlleleOfOrMrkrAbsent($mutantEmail);
     genotypesHaveNoNames($mutantEmail);
+    pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     linkageHasMembers($linkageEmail);
     linkagePairHas2Members($linkageEmail);
 
