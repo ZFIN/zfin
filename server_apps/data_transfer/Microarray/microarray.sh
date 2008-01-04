@@ -70,7 +70,7 @@ fi;
 LOG="$MICROARRAY_PATH/microarray_notfound.log" ; 
 if [ "`cat $LOG`" ] ; then 
     NOTFOUND_SUBJECT="Microarray markers not found in genbank for $DATESTRING.log"
-    mailx -s "$NOTFOUND_SUBJECT"  $REPORTEREMAIL < $LOG
+#    mailx -s "$NOTFOUND_SUBJECT"  $REPORTEREMAIL < $LOG
 fi ; 
 
 
