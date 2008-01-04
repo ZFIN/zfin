@@ -20,7 +20,8 @@
         <IndexPath>/werter</IndexPath>
     </Path>
     <Email>
-        <adminEmailAddress>zfin@zfin.org</adminEmailAddress>
+        <adminEmailAddress>ndunn@uoregon.edu</adminEmailAddress>
+        <validationEmailOther>ndunn@uoregon.edu</validationEmailOther>
     </Email>
     <Logging>
         <logFileName>zfin_logger.log</logFileName>
