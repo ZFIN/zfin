@@ -109,7 +109,7 @@ while( !(
 $sys_status = system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_refSeq.sql");
 if ($sys_status > 0)
 {
-    &emailError("Failure in load_refseq.pl", "<!--|VALIDATION_EMAIL_AD|-->, <!--|DB_OWNER|-->");
+    &emailError("Failure in load_refseq.pl", "<!--|VALIDATION_EMAIL_AD|-->, <!--|DB_OWNER|-->\@cs.uoregon.edu");
 }
 
 
