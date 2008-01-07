@@ -167,7 +167,7 @@
 	}
     %>
     <span class="results_header">
-        <%= categorySearch %> results for '<%=queryTerm%>' (<%= searchBean.getSearchResultsCount(indexPath, queryTerm, categoryTerm)%>). 
+        <%= categorySearch %> results for '<%=queryTerm%>.   '
     </span>
     <span class="search_tip">
         <a href="/SearchApp/syntax_help.jsp"> Tips </a>
@@ -203,6 +203,7 @@
 </table>
 
 <!--- Display Category List (as a TABLE) --->
+<i><fond size=-1>(Each category displays the first 5000 results)</font><i> 
 <center>
     <%= searchBean.getCategoryListingHTML(indexPath, queryTerm, categoryTerm, pageSize) %>
 </center>
