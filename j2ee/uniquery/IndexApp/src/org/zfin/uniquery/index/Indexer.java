@@ -655,7 +655,7 @@ public class Indexer implements Runnable
             {
             return SearchCategory.EXPRESSION_FXFIGVIEW;
             }
-        else if (url.indexOf("anatomy_item.apg") != -1)
+        else if (url.indexOf("anatomy/term-detail") != -1)
             {
             return SearchCategory.ANATOMY_ITEM;
             }
