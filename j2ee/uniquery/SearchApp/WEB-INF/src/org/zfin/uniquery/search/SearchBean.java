@@ -47,6 +47,7 @@ public class SearchBean
     public static final String TITLE = "title";
     public static final String BODY = "body";
     public static final String TYPE = "type";
+    public static final int MAX_RESULTS_PER_CATEGORY = 5000;
 
     private ArrayList allCategoryHitsList;
     private String categoryId;
@@ -113,7 +114,7 @@ public class SearchBean
                     hits = searcher.search(fullQuery);
 
                     // save the hits for this category in a category-specific results object
-                    CategoryHits catHits = new CategoryHits(category, hits, query);
+                    CategoryHits catHits = new CategoryHits(category, hits, query, MAX_RESULTS_PER_CATEGORY);
 
                     // for each category, store the resulting hits in a list
                     allCategoryHitsList.add(catHits);
@@ -525,7 +526,9 @@ public class SearchBean
 	    returnResults += "<TD nowrap class='category_item'>";
 	    returnResults += cellSelected;
 	    returnResults += categoryHtml;
-	    returnResults += " (" + numberOfResults  + ")";
+	    if (!currentCategoryId.equalsIgnoreCase("All")) { 
+		returnResults += " (" + numberOfResults  + ")";
+	    }
 	    returnResults += "</TD> \n";
         }
         returnResults += "</TABLE> \n";
