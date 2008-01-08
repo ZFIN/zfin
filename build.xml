@@ -125,7 +125,7 @@
             runHibernate: Run the HibernateStandaloneUtil class to check your Persistence
             tomcat-restart: Restarts tomcat 
             tomcat-start: Start tomcat
-            tomcat-start-debug: Start tomcat and allow remote debugging on port $JPDA_ADDRESS
+            tomcat-debug-start: Start tomcat and allow remote debugging on port $JPDA_ADDRESS
             tomcat-stop: Stop tomcat
             tomcat-kill: Forced tomcat stop
             deploy-catalina-base: Build/update tomcat instance in CATALINA_BASE 
