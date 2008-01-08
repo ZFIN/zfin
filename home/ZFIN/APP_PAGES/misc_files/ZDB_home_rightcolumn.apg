@@ -173,21 +173,18 @@
          </a>
        </li>
        <?/MICOMMENT>
-       
+              
        <li>
+         <a href="/zf_info/news/siteNews.html#zfmtg">
+         January 8 - Suggestions for workshops at 2008 meeting
+         </a>
+       </li>
+       
+           <li>
          <a href="/zf_info/news/siteNews.html#vega">
            September 27 - New Vega Update
          </a>
-       </li>
-       
-              
-       <li>
-         <a href="/zf_info/news/siteNews.html#ZFIQ">
-         August 23 -Zebrafish Image Quantitator available 
-         </a>
-       </li>
-       
-              
+       </li>     
 
 
 
