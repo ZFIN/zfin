@@ -45,9 +45,8 @@ public class MailTest {
         initRealApplicationProperties() ;
         TestConfiguration.initApplicationProperties();
         IntegratedJavaMailSender mailSender = new IntegratedJavaMailSender() ;
-        assertTrue(mailSender.sendMail("test subject","test message","ndunn@uoregon.edu")) ;                
+        assertTrue(mailSender.sendMail("test subject","test message",new String[]{"ndunn@uoregon.edu"})) ;                
     }
-
 
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(MailTest.class);
