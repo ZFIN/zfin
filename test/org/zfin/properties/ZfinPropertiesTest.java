@@ -27,7 +27,7 @@ public class ZfinPropertiesTest {
         assertEquals("Highlight Color", "#4437", ZfinProperties.getHighlightColor());
         assertEquals("Highlighter Color", "#7743", ZfinProperties.getHighlighterColor());
         assertEquals("Link Color", "#9980", ZfinProperties.getLinkbarColor());
-        assertEquals("Email Address", "zfin@zfin.org", ZfinProperties.getAdminEmailAddress());
+        assertEquals("Email Address", "zfin@zfin.org", ZfinProperties.getAdminEmailAddressString());
         assertEquals("FTP Path", "/ftp/zfin", ZfinProperties.getFtpPath());
         assertEquals("Image Load Path", "/image/load", ZfinProperties.getImageLoadPath());
         assertEquals("Load Up Path", "/image/full", ZfinProperties.getLoadUpFull());
