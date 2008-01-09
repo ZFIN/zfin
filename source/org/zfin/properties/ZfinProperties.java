@@ -99,7 +99,7 @@ public final class ZfinProperties {
     }
 
     public static String[] getAdminEmailAddresses() {
-        return getValidationEmailOther().split(" ") ;
+        return getAdminEmailAddress().split(" ") ;
     }
 
     public static String getAdminEmailAddress() {
@@ -110,7 +110,12 @@ public final class ZfinProperties {
     protected static String stripEmailBackslash(String inputString){
         return inputString.replaceAll("\\\\@","@")  ;
     }
-    
+
+    public static String[] getValidationOtherEmailAddresses(){
+        checkValidProperties();
+        return getValidationEmailOther().split(" ");
+    }
+
     public static String getValidationEmailOther(){
         checkValidProperties();
         return stripEmailBackslash(props.getEmail().getValidationEmailOther());
