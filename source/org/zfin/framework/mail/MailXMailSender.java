@@ -1,6 +1,7 @@
 package org.zfin.framework.mail;
 
 import org.apache.log4j.Logger;
+import org.zfin.properties.ZfinProperties;
 
 import java.io.*;
 import java.util.Date;
@@ -11,11 +12,13 @@ public class MailXMailSender extends MailSender {
     static Logger logger = Logger.getLogger(MailXMailSender.class) ;
 
 
-    public boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String... recipients) {
+    public boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,String... recipients) {
         try{
             List<String> commandList = new ArrayList<String>() ;
             commandList.add("mailx") ;
 //            commandList.add("-v");
+            commandList.add("-r");
+            commandList.add(fromEmail)  ;
             commandList.add("-s");
             if(doDefaultSubjectHeader){
                 subject = prependSubject(subject) ;
@@ -71,9 +74,19 @@ public class MailXMailSender extends MailSender {
     }
 
     public static void main(String args[]){
-        System.out.println("send a mail message") ;
-//        boolean status = MailXMailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), ZfinProperties.getValidationEmailOther(true));
+//        System.out.println("send a mail message") ;
+////        boolean status = MailXMailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), ZfinProperties.getValidationEmailOther(true));
+//        MailSender sender = new MailXMailSender() ;
+//        sender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), "ndunn@uoregon.edu","ndunn@mac.com");
+
+        String file = "zfin-properties.xml";
+        String dirRel = System.getenv("TARGETROOT"); ;
+        String dir = dirRel + "/" + "home/WEB-INF/" ;
+        ZfinProperties.init(dir, file);
+
         MailSender sender = new MailXMailSender() ;
-        sender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), "ndunn@uoregon.edu","ndunn@mac.com");
+        sender.sendMail("test email from MailXMailSender: "+new Date(),"javamail message of test email: "+
+                new Date(), ZfinProperties.getAdminEmailAddresses());
+
     }
 }

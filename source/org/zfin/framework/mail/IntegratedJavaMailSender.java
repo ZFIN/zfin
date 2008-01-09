@@ -24,7 +24,7 @@ public class IntegratedJavaMailSender extends MailSender{
     private String mailHost = DEFAULT_MAILHOST ;
 
 
-    public boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String... recipients) {
+    public boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,String... recipients) {
 
         MimeMessage mimeMessage = mailSender.createMimeMessage() ;
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
@@ -32,7 +32,8 @@ public class IntegratedJavaMailSender extends MailSender{
         try{
             helper.setTo(recipients);
             // can only handle first
-            helper.setFrom(ZfinProperties.getAdminEmailAddresses()[0]);
+            helper.setFrom(fromEmail);
+//            helper.setFrom(ZfinProperties.getAdminEmailAddresses()[0]);
 
             if(doDefaultSubjectHeader){
                 subject = prependSubject(subject) ;
