@@ -807,7 +807,8 @@
 
     <target name="testMail" depends="dirtydeploy"
             description="Runs the mail testing code.">
-        <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
+        <!-- <java classname="org.zfin.framework.mail.MailXMailSender" -->
+        <java classname="org.zfin.framework.mail.IntegratedJavaMailSender" 
               fork="yes"
               classpathref="classpath">
         </java>
