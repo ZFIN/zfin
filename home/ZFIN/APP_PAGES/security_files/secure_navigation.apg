@@ -141,14 +141,10 @@
      <?MICOMMENT>
          ----------------------------------------------------------
          --     Updates are disabled. 
-         --  Display alert and set user level to Guest.
+         --  Set user level to Guest (with no alert).
          --  User may be on a page which allows updates so set page to homepage.
 	 ----------------------------------------------------------
      <?/MICOMMENT>
-
-     <SCRIPT>
-	alert('The Database is currently locked for administrative operations and will not allow logins. Please try again later or contact <judys@cs.uoregon.edu> for further information.');
-     </SCRIPT>
 
      <?MISQL SQL="
       execute function conc('GUEST',get_random_cookie());">
