@@ -31,7 +31,8 @@ public class IntegratedJavaMailSender extends MailSender{
 
         try{
             helper.setTo(recipients);
-            helper.setFrom(ZfinProperties.stripEmailBackslash(ZfinProperties.getAdminEmailAddress()));
+            // can only handle first
+            helper.setFrom(ZfinProperties.getAdminEmailAddresses()[0]);
 
             if(doDefaultSubjectHeader){
                 subject = prependSubject(subject) ;
@@ -49,6 +50,7 @@ public class IntegratedJavaMailSender extends MailSender{
             return true ;
         }
         catch(Exception e){
+            System.out.println("Failed to send mail with subject[" + subject+"]\n"+e);
             logger.error("Failed to send mail with subject[" + subject+"]",e);
             return false ;
         }
@@ -83,6 +85,7 @@ public class IntegratedJavaMailSender extends MailSender{
         ZfinProperties.init(dir, file);
 
         MailSender sender = new IntegratedJavaMailSender() ;
-        sender.sendMail("test email from IntegratedJavaMailSender: "+new Date(),"javamail message of test email: "+new Date(), ZfinProperties.stripEmailBackslash(ZfinProperties.getAdminEmailAddress()), ZfinProperties.stripEmailBackslash(ZfinProperties.getValidationEmailOther()));
+        sender.sendMail("test email from IntegratedJavaMailSender: "+new Date(),"javamail message of test email: "+
+                new Date(), ZfinProperties.getAdminEmailAddresses());
     }
 }

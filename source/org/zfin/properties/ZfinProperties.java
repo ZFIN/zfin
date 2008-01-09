@@ -98,20 +98,22 @@ public final class ZfinProperties {
         return props.getWeb().getHighlightColor();
     }
 
-    public static String getAdminEmailAddress() {
-        checkValidProperties();
-        return props.getEmail().getAdminEmailAddress();
+    public static String[] getAdminEmailAddresses() {
+        return getValidationEmailOther().split(" ") ;
     }
 
-    public static String stripEmailBackslash(String inputString){
+    public static String getAdminEmailAddress() {
+        checkValidProperties();
+        return stripEmailBackslash(props.getEmail().getAdminEmailAddress()) ;
+    }
+
+    protected static String stripEmailBackslash(String inputString){
         return inputString.replaceAll("\\\\@","@")  ;
     }
     
-
     public static String getValidationEmailOther(){
         checkValidProperties();
-        String returnString = props.getEmail().getValidationEmailOther();
-        return returnString ;
+        return stripEmailBackslash(props.getEmail().getValidationEmailOther());
     }
 
     public static String getHighlighterColor() {
