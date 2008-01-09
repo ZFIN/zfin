@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MailXMailSender extends MailSender {
+public class MailXMailSender extends AbstractZfinMailSender {
     static Logger logger = Logger.getLogger(MailXMailSender.class);
 
 

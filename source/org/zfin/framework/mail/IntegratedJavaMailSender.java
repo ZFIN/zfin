@@ -12,7 +12,7 @@ import java.util.Date;
 /**
  * Uses JavaMail integrated with Spring to send email.
  */
-public class IntegratedJavaMailSender extends MailSender {
+public class IntegratedJavaMailSender extends AbstractZfinMailSender {
 
     static Logger logger = Logger.getLogger(IntegratedJavaMailSender.class);
 
@@ -79,7 +79,7 @@ public class IntegratedJavaMailSender extends MailSender {
      * Just a hacky test.
      *
      * @param args Main arguments
-     * Note: Set email to the one you want it to go to.
+     *             Note: Set email to the one you want it to go to.
      */
     public static void main(String args[]) {
         String file = "zfin-properties.xml";

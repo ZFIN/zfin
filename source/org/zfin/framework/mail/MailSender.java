@@ -1,20 +1,14 @@
 package org.zfin.framework.mail;
 
-import org.zfin.properties.ZfinProperties;
-
 /**
  */
-public abstract class MailSender {
+public interface MailSender {
 
-    public abstract boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,
-                                     String[] recipients);
+    boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,
+                     String[] recipients);
 
-    public boolean sendMail(String subject, String message, String[] recipients) {
-        return sendMail(subject, message, true, ZfinProperties.getAdminEmailAddresses()[0], recipients);
-    }
+    boolean sendMail(String subject, String message, String[] recipients);
 
-    protected String prependSubject(String initialSubject) {
-        return "From [" + System.getenv("DOMAIN_NAME") + "] on [" + System.getenv("HOST") + "]: " + initialSubject;
-    }
+    String prependSubject(String initialSubject);
 
 }
