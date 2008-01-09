@@ -69,7 +69,7 @@ public class ZfinActionServlet extends DispatcherServlet {
                 errorString += element + "\n";
             }
             logger.error("notification sent: "+ (new IntegratedJavaMailSender()).sendMail("Enumeration Mapping Failure","Enumeration mapping failure." +
-                    "\n"+errorString, ZfinProperties.stripEmailBackslash(ZfinProperties.getValidationEmailOther())));
+                    "\n"+errorString, ZfinProperties.getValidationOtherEmailAddresses()));
         }
     }
 
