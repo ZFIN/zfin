@@ -137,7 +137,7 @@ EFFECTS
         <?MIVAR NAME="$patoup_entity_a_zdb_id">$1<?/MIVAR>
       <?/MISQL>
     <?MIELSE COND="$(EC,$patoup_entity_a_ontology,GO)"> 
-      <?MISQL SQL="select goterm_zdb_id from go_term where goterm_name = '$patoup_entity_a_name';">
+      <?MISQL SQL="select goterm_zdb_id from go_term where goterm_name = '$patoup_entity_a_name' and goterm_is_secondary = 'f';">
         <?MIVAR NAME="$patoup_entity_a_zdb_id">$1<?/MIVAR>
       <?/MISQL>
     <?/MIBLOCK>
@@ -156,7 +156,7 @@ EFFECTS
           <?MIVAR NAME="$patoup_entity_b_zdb_id">$1<?/MIVAR>
         <?/MISQL>
       <?MIELSE COND="$(EC,$patoup_entity_b_ontology,GO)"> 
-        <?MISQL SQL="select goterm_zdb_id from go_term where goterm_name = '$patoup_entity_b_name';">
+        <?MISQL SQL="select goterm_zdb_id from go_term where goterm_name = '$patoup_entity_b_name' and goterm_is_secondary = 'f';">
           <?MIVAR NAME="$patoup_entity_b_zdb_id">$1<?/MIVAR>
         <?/MISQL>
       <?/MIBLOCK> 
