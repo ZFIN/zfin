@@ -29,8 +29,8 @@ public final class ZfinProperties {
     public static final String ZFIN_DEFAULT_PROPERTIES_XML = "zfin-properties.xml";
     public static final String CATALINA_BASE = System.getProperty("catalina.base");
 
-    public  static final String FULL_UPDATE_DOI = "org.zfin.datatransfer.DOI" ; 
-    public  static final String LIGHT_UPDATE_DOI = "org.zfin.datatransfer.DOI.light" ; 
+    public static final String FULL_UPDATE_DOI = "org.zfin.datatransfer.DOI";
+    public static final String LIGHT_UPDATE_DOI = "org.zfin.datatransfer.DOI.light";
     public static final String MICROARRAY_NOT_FOUND = "MICROARRAY_NOT_FOUND";
     public static final String MICROARRAY_ERROR = "MICROARRAY_ERROR";
     public static final String MICROARRAY_INFO = "MICROARRAY_INFO";
@@ -47,15 +47,15 @@ public final class ZfinProperties {
     /**
      * Pass in the path to the property file.
      *
-     * @param dir
-     * @param propFile
+     * @param dir Directory where property file exists.
+     * @param propFile  The name of  the property file.
      */
     public static void init(String dir, String propFile) {
         propertyFile = FileUtil.createFileFromDirAndName(dir, propFile);
-        if(!propertyFile.exists()){
+        if (!propertyFile.exists()) {
             LOG.info("Property file " + propertyFile.getAbsolutePath() + " not found. Use default file.");
             propertyFile = FileUtil.createFileFromDirAndName(dir, ZFIN_DEFAULT_PROPERTIES_XML);
-            if(!propertyFile.exists()){
+            if (!propertyFile.exists()) {
                 String message = "No default Property file " + propertyFile.getAbsolutePath() + " found!";
                 LOG.error(message);
                 throw new RuntimeException(message);
@@ -99,24 +99,24 @@ public final class ZfinProperties {
     }
 
     public static String[] getAdminEmailAddresses() {
-        return getAdminEmailAddress().split(" ") ;
+        return getAdminEmailAddressString().split(" ");
     }
 
-    public static String getAdminEmailAddress() {
+    public static String getAdminEmailAddressString() {
         checkValidProperties();
-        return stripEmailBackslash(props.getEmail().getAdminEmailAddress()) ;
+        return stripEmailBackslash(props.getEmail().getAdminEmailAddress());
     }
 
-    protected static String stripEmailBackslash(String inputString){
-        return inputString.replaceAll("\\\\@","@")  ;
+    protected static String stripEmailBackslash(String inputString) {
+        return inputString.replaceAll("\\\\@", "@");
     }
 
-    public static String[] getValidationOtherEmailAddresses(){
+    public static String[] getValidationOtherEmailAddresses() {
         checkValidProperties();
-        return getValidationEmailOther().split(" ");
+        return getValidationEmailOtherString().split(" ");
     }
 
-    public static String getValidationEmailOther(){
+    public static String getValidationEmailOtherString() {
         checkValidProperties();
         return stripEmailBackslash(props.getEmail().getValidationEmailOther());
     }
@@ -254,9 +254,11 @@ public final class ZfinProperties {
      */
     private static void checkValidServerName(String url) {
         if (url == null)
-            throw new RuntimeException("Server name is null! Please correct the <Server> tag in the zfin-properties.xml file.");
+            throw new RuntimeException(
+                    "Server name is null! Please correct the <Server> tag in the zfin-properties.xml file.");
         if (!url.startsWith(SECURE_HTTP) && !url.startsWith(NON_SECURE_HTTP))
-            throw new RuntimeException("Server name '" + url + "' is not valid! Please correct the <Server> tag in the zfin-properties.xml file.");
+            throw new RuntimeException("Server name '" + url +
+                    "' is not valid! Please correct the <Server> tag in the zfin-properties.xml file.");
     }
 
     /**

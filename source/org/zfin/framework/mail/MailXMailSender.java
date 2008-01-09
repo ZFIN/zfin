@@ -3,89 +3,92 @@ package org.zfin.framework.mail;
 import org.apache.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
 
-import java.io.*;
-import java.util.Date;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MailXMailSender extends MailSender {
-    static Logger logger = Logger.getLogger(MailXMailSender.class) ;
+    static Logger logger = Logger.getLogger(MailXMailSender.class);
 
 
-    public boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,String... recipients) {
-        try{
-            List<String> commandList = new ArrayList<String>() ;
-            commandList.add("mailx") ;
+    public boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,
+                            String[] recipients) {
+        try {
+            List<String> commandList = new ArrayList<String>();
+            commandList.add("mailx");
 //            commandList.add("-v");
             commandList.add("-r");
-            commandList.add(fromEmail)  ;
+            commandList.add(fromEmail);
             commandList.add("-s");
-            if(doDefaultSubjectHeader){
-                subject = prependSubject(subject) ;
+            if (doDefaultSubjectHeader) {
+                subject = prependSubject(subject);
             }
-            commandList.add(subject)  ;
-            for(String recipientEmail: recipients){
-                commandList.add(recipientEmail) ;
+            commandList.add(subject);
+            for (String recipientEmail : recipients) {
+                commandList.add(recipientEmail);
             }
 
-            String[] commands = new String[commandList.size()] ;
+            String[] commands = new String[commandList.size()];
             commands = commandList.toArray(commands); // redundant, but . . .
-            for(String command: commands){
+            for (String command : commands) {
                 System.out.print(command + " ");
             }
-            System.out.println() ;
+            System.out.println();
 
-            Process process = Runtime.getRuntime().exec(commands) ;
+            Process process = Runtime.getRuntime().exec(commands);
 //            todo: add buffer output onto process . .. may need to use threading
-            BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream())) ;
-            BufferedReader stdout = new BufferedReader(new InputStreamReader(process.getInputStream())) ;
+            BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            BufferedReader stdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedWriter processInput = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-            System.out.println("flushing message: "+message) ;
-            processInput.write(message+"\n");
+            System.out.println("flushing message: " + message);
+            processInput.write(message + "\n");
             processInput.close();
-            int exitValue = process.waitFor() ;
-
+            int exitValue = process.waitFor();
 
             // dump output
-            String line ;
-            String errorOutput = "" ;
-            while( (line = stderr.readLine())!=null){
+            String line;
+            String errorOutput = "";
+            while ((line = stderr.readLine()) != null) {
                 errorOutput += line + "\n";
-                logger.fatal("Failed to send mail due to process failure: "+ errorOutput);
-                System.out.println("Failed to send mail due to process failure: "+ errorOutput);
+                logger.fatal("Failed to send mail due to process failure: " + errorOutput);
+                System.out.println("Failed to send mail due to process failure: " + errorOutput);
             }
 
             // dump output 
-            String standardOutput = "" ;
-            while( (line = stdout.readLine())!=null){
+            String standardOutput = "";
+            while ((line = stdout.readLine()) != null) {
                 standardOutput += line + "\n";
-                logger.fatal("Mail output: "+ standardOutput);
-                System.out.println("Mail output: "+ standardOutput);
+                logger.fatal("Mail output: " + standardOutput);
+                System.out.println("Mail output: " + standardOutput);
             }
 
-            return exitValue==0 ;
+            return exitValue == 0;
         }
-        catch(Exception e){
-            logger.fatal("Failed to send mail because of error.",e);
-            System.out.println("Failed to send mail because of error\n"+e);
-            return false ;
+        catch (Exception e) {
+            logger.fatal("Failed to send mail because of error.", e);
+            System.out.println("Failed to send mail because of error\n" + e);
+            return false;
         }
 
     }
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
 //        System.out.println("send a mail message") ;
-////        boolean status = MailXMailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), ZfinProperties.getValidationEmailOther(true));
+////        boolean status = MailXMailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), ZfinProperties.getValidationEmailOtherString(true));
 //        MailSender sender = new MailXMailSender() ;
 //        sender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), "ndunn@uoregon.edu","ndunn@mac.com");
 
         String file = "zfin-properties.xml";
-        String dirRel = System.getenv("TARGETROOT"); ;
-        String dir = dirRel + "/" + "home/WEB-INF/" ;
+        String dirRel = System.getenv("TARGETROOT");
+        String dir = dirRel + "/" + "home/WEB-INF/";
         ZfinProperties.init(dir, file);
 
-        MailSender sender = new MailXMailSender() ;
-        sender.sendMail("test email from MailXMailSender: "+new Date(),"javamail message of test email: "+
+        MailSender sender = new MailXMailSender();
+        sender.sendMail("test email from MailXMailSender: " + new Date(), "javamail message of test email: " +
                 new Date(), ZfinProperties.getAdminEmailAddresses());
 
     }
