@@ -209,7 +209,7 @@ sub generateAccMrkrRelationshipFile() {
                          and mrel_mrkr_2_zdb_id = mrkr_zdb_id  ";
 	    &queryGeneAndDisplay ($acc_num, $mrkr_zdb_id, $mrkr_abbrev, $sql);
 	}		
-	elsif ( $mrkr_zdb_id =~ /EST|CDNA/ ) {	   
+	elsif ( $mrkr_zdb_id =~ /EST|CDNA|STS/ ) {	   
 	    
 	    my $sql = "select mrel_mrkr_1_zdb_id, mrkr_abbrev
                         from marker_relationship, marker
