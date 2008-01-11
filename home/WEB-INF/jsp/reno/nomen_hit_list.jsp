@@ -13,7 +13,13 @@
 
 <c:forEach var="query" items="${formBean.runCandidate.candidateQueryList}" varStatus="queryloop">
 
-    <b>GENE:</b> <zfin:markerRelationLink accession="${query.accession}" />  <br>
+    <b>GENE:</b>
+    <zfin:markerRelationLink accession="${query.accession}">
+    <font color="red">
+        No zfin gene associated with this accession ${query.accession.number}.
+    </font>
+    </zfin:markerRelationLink>
+    <br>
 
     <b>Query:</b> <zfin:link entity="${query.accession}"/> <zfin:markerRelationLink accession="${query.accession}" showParent="true"/><br>
 

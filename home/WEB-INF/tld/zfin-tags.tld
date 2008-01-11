@@ -46,7 +46,11 @@
     <tag>
         <name>markerRelationLink</name>
         <tagclass>org.zfin.framework.presentation.tags.MarkerRelationLinkTag</tagclass>
-        <info>Create hyperlinks for the associated Marker if a GENE or through the MarkerRelations if not a GENE</info>
+        <bodycontent>JSP</bodycontent>
+        <info>
+            Create hyperlinks for the associated Marker if a GENE or through the MarkerRelations if not a GENE.
+            If not found, then the body-content is displayed as an error.
+        </info>
         <attribute>
             <name>accession</name>
             <required>true</required>

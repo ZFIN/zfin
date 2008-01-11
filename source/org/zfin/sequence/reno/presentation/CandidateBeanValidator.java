@@ -53,14 +53,27 @@ public class CandidateBeanValidator implements Validator {
         //we need to be sure that the RunCandidate is in a state that the controller
         //can work with.   (more documentation below)
         if (StringUtils.equals(candidateBean.getAssociatedGeneField(), CandidateBean.IGNORE)
-                || (candidateBean.getAssociatedGeneField() == null))
+                || (candidateBean.getAssociatedGeneField() == null)){
             candidateGene = validateRunCandidate(candidateBean, errors);
+        }
 
+        RunCandidate runCandidate = candidateBean.getRunCandidate() ;
+        
+        if(runCandidate.getIdentifiedMarker()==null){
+            Set<Query> queries = runCandidate.getCandidateQueries() ;
+            // just grab the first query and report the error if there is one query
+            Object[] args = new Object[1] ;
+            args[0] = queries.iterator().next().getAccession().getNumber() ;
+            errors.reject("code note used",args,"Can not resolve because accession {1} has no corresponding zfin gene." +
+                    "  Either manually fix or wait for GenBank to fix and to be subsequently loaded.") ;
+        }
 
-        if (candidateBean.getRunCandidate().getRun().isRedundancy())
+        if (runCandidate.getRun().isRedundancy()){
             validateRedundancy(candidateBean, candidateGene, errors);
-        else
+        }
+        else{
             validateNomenclature(candidateBean, candidateGene, errors);
+        }
 
 
     }
