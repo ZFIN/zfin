@@ -47,7 +47,7 @@ public class CandidateBeanValidator implements Validator {
         //if there is an accession associated with a gene, it will go here.
         Marker candidateGene = null;
 
-        LOG.info("starting validation");
+        LOG.debug("starting validation");
 
         //if they didn't select ignore, we're going to do real work, and
         //we need to be sure that the RunCandidate is in a state that the controller
@@ -64,8 +64,8 @@ public class CandidateBeanValidator implements Validator {
             // just grab the first query and report the error if there is one query
             Object[] args = new Object[1] ;
             args[0] = queries.iterator().next().getAccession().getNumber() ;
-            errors.reject("code note used",args,"Can not resolve because accession {1} has no corresponding zfin gene." +
-                    "  Either manually fix or wait for GenBank to fix and to be subsequently loaded.") ;
+            errors.rejectValue("action","code note used",args,"Can not resolve because accession {0} has no corresponding zfin gene." +
+                    "  Either manually fix or wait for GenBank to fix and to be subsequently loaded."); ;
         }
 
         if (runCandidate.getRun().isRedundancy()){

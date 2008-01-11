@@ -8,11 +8,8 @@ import org.zfin.sequence.MarkerDBLink;
 import org.apache.log4j.Logger;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-import javax.servlet.jsp.tagext.BodyContent;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -26,8 +23,6 @@ import java.util.ArrayList;
 public class MarkerRelationLinkTag extends BodyTagSupport {
 
     Logger logger = Logger.getLogger(MarkerRelationLinkTag.class) ;
-
-    private final static String DEFAULT_ERROR_STRING = "DEFAULT: No marker associated with accession {1}." ;
 
     private Accession accession ;
     private boolean showParent;
