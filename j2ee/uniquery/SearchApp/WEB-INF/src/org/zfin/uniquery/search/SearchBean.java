@@ -670,7 +670,7 @@ public class SearchBean
 		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
 	    }
 	    else if (theMatchId.startsWith("ZDB-ANAT")) {
-		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-anatomy_item.apg&OID=" + theMatchId;
+		viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + theMatchId;
 	    }
 	    else {
 		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=" + theMatchId;
