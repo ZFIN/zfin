@@ -222,7 +222,7 @@
 	if( $unique > 1) {	#defined @$rowref[1] ){ # # not unique shunt off to search result page
 	 ### $note = $note . $unique . " ->Too Many Choices  <p>\n";
 	  my $bot = LWP::UserAgent->new();
-	  my $req = POST '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
+	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
 	  [   compare=> 'contains',
 	      marker_type=> 'all',
 	      lg=> 0,
@@ -238,6 +238,7 @@
 	  ];
 	  print "Content-Type: text/html; charset=ISO-8859-1\r\n\r\n";
 	  my $res = $bot->request($req);
+
       # check the outcome
       if ($res->is_success) {print $res->content . "\n";}
       else { print "Error: " . $res->status_line . "\n";}
