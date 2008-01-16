@@ -82,7 +82,7 @@
             Acegi Security Configuration:
         </td>
         <td colspan="2" class="listContent">
-            <a href="/action/dev-tools/file-content?fileName=/WEB-INF/applicationContext-acegi-security.xml">Acegi Security</a>
+            <a href="/action/dev-tools/file-content?fileName=/WEB-INF/conf/applicationContext-acegi-security.xml">Acegi Security</a>
         </td>
     </tr>
     <tr>
