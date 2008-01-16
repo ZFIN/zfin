@@ -564,6 +564,7 @@
 
 
     <target name="am-i-informix">
+        <echo message="am-i-informix user: [${env.USER}]"/>
         <condition property="i.am.informix">
             <equals arg1="${env.USER}" arg2="informix"/>
         </condition>
