@@ -42,7 +42,7 @@ public class MarkerRelationLinkTag extends BodyTagSupport {
                 }
                 if(markers.size()>0){
 
-                    if (showParent==true) {
+                    if (showParent) {
                         sb.append("(");
                     }
                     for(Marker marker: markers){
@@ -57,14 +57,14 @@ public class MarkerRelationLinkTag extends BodyTagSupport {
                             sb.append(MarkerPresentation.getLink(marker));
                         }
                     }
-                    if (showParent==true) {
+                    if (showParent) {
                         sb.append(")");
                     }
                     pageContext.getOut().print(sb);
                     release();
                 }
                 else{
-                    logger.warn("an error is going to occur");
+                    logger.info("No blastable marker found for this accession so displaying error text, instead: "+accession.getNumber());
                     return EVAL_BODY_INCLUDE;
                 }
             }
