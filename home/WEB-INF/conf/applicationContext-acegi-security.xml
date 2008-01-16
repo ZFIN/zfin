@@ -95,7 +95,7 @@
 
     <bean id="logoutFilter" class="org.acegisecurity.ui.logout.LogoutFilter">
         <!-- URL redirected to after logout -->
-        <constructor-arg value="/action/webdriver?MIval=aa-ZDB_home.apg"/>
+        <constructor-arg value="/action/http-redirect"/>
         <constructor-arg>
             <list>
                 <ref bean="logoutHandler"/>
