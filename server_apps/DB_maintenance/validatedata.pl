@@ -2673,6 +2673,7 @@ sub scrubElsevierStatistics($){
     $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'Yeti%'; ") ; 
     $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'MSRBOT%'; ") ; 
     $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'MJ12bot%'; ") ; 
+    $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent = 'Mozilla/5.0 (compatible; MJ12bot/v1.2.1; http://www.majestic12.co.uk/bot.php?+)'; ") ; 
     $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'Ocelli%'; ") ; 
     # END - scrub based on user_agent
 
