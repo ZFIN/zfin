@@ -37,6 +37,23 @@ exit;
 sub gp2proteinReport()
 {
     system("/bin/rm -f $outFile");
+    
+    system("wget -q ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat -O zfin.dat");
+    open (INP, "zfin.dat") || die "Can't open zfin.dat : $!\n";
+    @lines=<INP>;
+    close(INP);
+
+    %lengths = ();
+    $ct1 = 0;
+    foreach $line (@lines) {
+      $ct1++;
+      if ($line =~ m/^ID\s+(\w.+)_DANRE.*\s+(\d+)\sAA/) {
+        $id = $1;
+        $len = $2;
+        $lengths{$id};
+      } 
+     } 
+    
     open (REPORT, ">$outFile") or die "cannot open report";
     ###open (ERRREPORT, ">invalid_id_gp2protein.zfin") or die "cannot open invalid_id_gp2protein.zfin";
     print REPORT "!Version: \$"."Revision\$ \n";
@@ -49,7 +66,7 @@ sub gp2proteinReport()
                               where mrkr_zdb_id = dblink_linked_recid
                                 and dblink_fdbcont_zdb_id = fdbcont_zdb_id
                                 and mrkr_zdb_id like "ZDB-GENE-%"
-                                and fdbcont_fdb_db_name in ("UniProt","RefSeq","GenPept");'
+                                and fdbcont_fdb_db_name = "UniProt";'
 			   );
     $cur->execute;
     my($mrkr_id,$db_name,$acc_num);
@@ -57,41 +74,26 @@ sub gp2proteinReport()
     
     my %zdbIDs = ();
     my %zdbPids = ();
-    my %zdbRefSeqs = ();
-    my %zdbGenPepts = ();
     ###my %invalidIDs = ();
     while ($cur->fetch) {
       $zdbIDs{$mrkr_id} = 1;
       if($db_name eq "UniProt") {
    ### if(exists $validPids{$acc_num}) {
 	  if (!exists $zdbPids{$mrkr_id}) {
-	    $zdbPids{$mrkr_id} = "UniProt:$acc_num";
+	    $zdbPids{$mrkr_id} = $acc_num;
 	  } else {
-            $zdbPids{$mrkr_id} = "$zdbPids{$mrkr_id};UniProt:$acc_num";
+	    $uniprotId = $zdbPids{$mrkr_id};
+            $zdbPids{$mrkr_id} = $acc_num if ($lengths{$uniprotId} <= $lengths{$acc_num});
 	  }
    ### } else {
    ###     $invalidIDs{$acc_num} = 1;
    ### }
-      } elsif($db_name eq "RefSeq" && $acc_num =~ m/^NP_\d+$/) {
-          if (!exists $zdbRefSeqs{$mrkr_id}) {  
-            $zdbRefSeqs{$mrkr_id} = "NCBI_NP:$acc_num";
-          } else {
-            $zdbRefSeqs{$mrkr_id} = "$zdbRefSeqs{$mrkr_id};NCBI_NP:$acc_num";
-          }
-      } elsif($db_name eq "GenPept") {
-          if (!exists $zdbGenPepts{$mrkr_id}) {  
-            $zdbGenPepts{$mrkr_id} = "NCBI_GP:$acc_num";
-          } else {
-            $zdbGenPepts{$mrkr_id} = "$zdbGenPepts{$mrkr_id};NCBI_GP:$acc_num";
-          }
       }
     }
     
     foreach $k (sort keys %zdbIDs) {
-      $v1 = $zdbPids{$k}.";" if exists $zdbPids{$k};
-      $v2 = $zdbRefSeqs{$k}.";" if exists $zdbRefSeqs{$k};
-      $v3 = $zdbGenPepts{$k} if exists $zdbGenPepts{$k};
-      print REPORT "ZFIN:$k\t$v1$v2$v3\n";     
+      $v1 = "UniProt:" . $zdbPids{$k} if exists $zdbPids{$k};
+      print REPORT "ZFIN:$k\t$v1\n";     
     }
     
     close(REPORT);
