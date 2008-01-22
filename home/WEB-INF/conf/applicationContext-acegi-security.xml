@@ -35,7 +35,15 @@
         <property name="channelDecisionManager">
             <ref bean="channelDecisionManager"/>
         </property>
-        <property name="filterInvocationDefinitionSource">
+	<property name="filterInvocationDefinitionSource">
+            <value>
+                CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+                PATTERN_TYPE_APACHE_ANT
+                /**=REQUIRES_INSECURE_CHANNEL
+            </value>
+
+        </property>
+     <!--    <property name="filterInvocationDefinitionSource">
             <value>
                 CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
                 PATTERN_TYPE_APACHE_ANT
@@ -45,7 +53,7 @@
                 /action/login=REQUIRES_SECURE_CHANNEL
                 /**=REQUIRES_INSECURE_CHANNEL
             </value>
-         </property>
+         </property>-->
     </bean>
 
     <bean id="channelDecisionManager" class="org.acegisecurity.securechannel.ChannelDecisionManagerImpl">
