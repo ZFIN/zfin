@@ -90,18 +90,13 @@ public class SearchResults
 
 	    	int pos = searchResultURL.substring(1).indexOf("/");
 
-		String envWebdriverPathFromRoot =  System.getenv("MUTANT_NAME");
+		String envWebdriverLoc =  System.getenv("WEBDRIVER_LOC");
 
 		// there is no mutant name for production, and we want to redirect to cgi-bin/
 		//System.out.println(envWebdriverPathFromRoot);
-		//if (envWebdriverPathFromRoot==null || envWebdriverPathFromRoot=="almost") {
-		     searchResultURL = "/" +"cgi-bin" + searchResultURL.substring(pos+1);
-		     //}
-		     //else {
-		   		    
-		     //searchResultURL = "/" + envWebdriverPathFromRoot + searchResultURL.substring(pos+1);
+				   		    
+		searchResultURL = "/" + envWebdriverLoc + searchResultURL.substring(pos+1);
 	  
-		     //}
        	    }
 	   
 	    htmlOutputBuffer.append("<p>\n");

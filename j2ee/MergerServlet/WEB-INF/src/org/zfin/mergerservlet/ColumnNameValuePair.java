@@ -142,7 +142,7 @@ class ColumnNameValuePair
 	}
 	else {
 	    outString = 
-		"<a href=\"/cgi-bin/webdriver?MIval=" + 
+		"<a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->/webdriver?MIval=" + 
 		objectType.getAppPage() +
 		"&OID=" + columnValue.toString() + "\">" +
 		valueName + " (" + columnValue.toString() +")</a>";

@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
@@ -37,8 +38,10 @@ public class MarkerPresentationTest {
     @Test
     public void markerLink() {
         String link = MarkerPresentation.getLink(marker);
-        assertEquals("Hyperlink", "<a href=\"/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-081507-1\"><span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span></a>", link);
+	    assertTrue(link.endsWith("?MIval=aa-markerview.apg&OID=ZDB-GENE-081507-1\"><span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span></a>"));
+
     }
+
 
     /**
      * Create a span-tag for marker.

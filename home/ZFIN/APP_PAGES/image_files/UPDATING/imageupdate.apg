@@ -78,7 +78,7 @@ to a browser -->
     <?/MIVAR>
     <p>
 
-    <FORM ACTION="upload.cgi" 
+    <FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/upload.cgi" 
       METHOD=post ENCTYPE="multipart/form-data">
       <?MIVAR>
 	<INPUT TYPE=hidden name=MIval Value=aa-do-imageupdate.apg>

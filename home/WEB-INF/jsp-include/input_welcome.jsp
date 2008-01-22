@@ -3,7 +3,7 @@
 <table align="right" width="100%">
     <tbody>
         <tr>
-            <form method="post" action="http://zfin.org/cgi-bin/webdriver" target="comments">
+            <form method="post" action="/@WEBDRIVER_LOC@/webdriver" target="comments">
                 <!---- define Input Welcome button---->
                 <input name="subject" value='<tiles:getAsString name="subjectName" />' type="hidden">
                 <input value="aa-your_input_welcome.apg" name="MIval" type="hidden">

@@ -101,7 +101,7 @@ EFFECTS
 </form>
 <?/MISQL>    
 
-  <FORM ACTION="./upload.cgi" method=post NAME=new_image ENCTYPE="multipart/form-data">
+  <FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/upload.cgi" method=post NAME=new_image ENCTYPE="multipart/form-data">
     <?MIVAR>
       <INPUT TYPE=HIDDEN NAME=redirect_url VALUE="">
       <INPUT TYPE=HIDDEN NAME=redirect_OID VALUE="$OID"> 

@@ -74,6 +74,7 @@
 
 
     <!-- Tomcat related environment variables -->
+    <property name="webdriver-loc" value="${env.WEBDRIVER_LOC}"/>
     <property name="mutant-name" value="${env.MUTANT_NAME}"/>
     <property name="dbname" value="${env.DBNAME}"/>
     <property name="domain-name" value="${env.DOMAIN_NAME}"/>
@@ -319,6 +320,9 @@
             <fileset dir="test/jsp-tags" defaultexcludes="true">
                 <include name="**"/>
             </fileset>
+	    <filterset>
+                <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
+            </filterset>	    
         </copy>
     </target>
 
@@ -475,16 +479,27 @@
             <filterset>
                 <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
             </filterset>
+            <filterset>
+              <filter token="WEBDRIVER_LOC" value="${env.WEBDRIVER_LOC}"/>
+            </filterset>
         </copy>
         <copy todir="${env.TARGETROOT}">
             <fileset dir="${basedir}">
                 <include name="home/*.jsp"/>
                 <include name="home/WEB-INF/**"/>
                 <include name="home/dev/**"/>
-                <include name="home/tiles/**"/>
                 <include name="home/anatomy/**"/>
                 <exclude name="**/CVS/"/>
             </fileset>
+        </copy>
+	<copy todir="${env.TARGETROOT}">
+            <fileset dir="${basedir}">
+                <include name="home/tiles/**"/>
+                <exclude name="**/CVS/"/>
+            </fileset>
+	    <filterset>
+                <filter token="WEBDRIVER_LOC" value="${env.WEBDRIVER_LOC}"/>
+            </filterset>
         </copy>
         <copy file="${basedir}/home/WEB-INF/zfin-properties.xml"
               tofile="${basedir}/home/WEB-INF/zfin-change-properties.xml">

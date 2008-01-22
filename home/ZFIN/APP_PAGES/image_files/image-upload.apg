@@ -57,7 +57,7 @@ the form below to select the image file, and specify its type.
 </UL>
 <p>
 
-<form METHOD=post ENCTYPE="multipart/form-data" ACTION="upload.cgi">
+<form METHOD=post ENCTYPE="multipart/form-data" ACTION="/<!--|CGI_BIN_DIR_NAME|-->/upload.cgi">
 
  <TABLE border=4 width=100%>
   <TR align=center>

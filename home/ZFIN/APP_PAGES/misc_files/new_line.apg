@@ -87,7 +87,7 @@ Before proposing and reserving a name, review the current guidelines and search 
 
   <li><a href="../../zf_info/zfbook/lab_desig.html">Laboratory Allele
       Designations</a></li>
-  <li><a href="../../../cgi-bin/webdriver?MIval=aa-fishselect.apg&line_type=mutant">Search
+  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Search
       Existing Lines in ZFIN</a></li>
 </ul>
 <hr>

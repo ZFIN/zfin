@@ -4,7 +4,7 @@
 <div id="footer">
 
   <div id="footerlinks">
-    <a href="/cgi-bin/webdriver?MIval=aa-ZDB_home.apg">Home</a>
+    <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-ZDB_home.apg">Home</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider">
 
     <a href="/zf_info/dbase/db.html">About ZFIN</A>

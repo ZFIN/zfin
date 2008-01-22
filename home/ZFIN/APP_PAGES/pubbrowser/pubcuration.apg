@@ -258,7 +258,7 @@ OPTIONAL VARS:
   <?MIVAR NAME=$pub_completion_date>$1<?/MIVAR>
   
     
-  <FORM ACTION="upload.cgi" METHOD=post NAME=upload  
+  <FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/upload.cgi" METHOD=post NAME=upload  
         ENCTYPE="multipart/form-data">
     <?MIVAR>
       <INPUT TYPE=HIDDEN NAME=redirect_url VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">
