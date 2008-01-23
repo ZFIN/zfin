@@ -298,8 +298,11 @@
 		    and mrkrgoev_mrkr_zdb_id='$OID'
 		    and mrkrgoev_go_term_zdb_id ='$gozdbid'
 		    and mrkrgoev_zdb_id <> '$markergoevid'
-		    and (mrkrgoev_zdb_id in (select infgrmem_mrkrgoev_zdb_id from inference_group_member)
-		       or mrkrgoev_zdb_id in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag))">
+                    and exists (select 'x' from inference_group_member
+     where mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
+      union
+    select 'x' from go_evidence_flag
+      where mrkrgoev_zdb_id = goevflag_mrkrgoev_zdb_id) ;
        <?/MISQL>
        <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="
 		 select count(distinct mrkrgoev_source_zdb_id) 
