@@ -222,16 +222,29 @@ function jump(form_select){
   		}
 	}
 
+    function trim(stringToTrim) {
+        return stringToTrim.replace(/^\s+|\s+$/g,"");
+    }
+
+
 	function new_seqnum() {
 		var dbind=document.updateseq.seqdb.selectedIndex;
-		var dbname=document.updateseq.seqdb[dbind].value;
+		var dbfull=document.updateseq.seqdb[dbind].text;
+         
+        var pattern = /-/ ; 
+        var dbname = trim(dbfull.split(pattern)[0]) ; 
+        var seq_type = trim(dbfull.split(pattern)[1]) ; 
+
+        // this is required for the form processing for some reason
+        seq_type='sequence&fdbcont_data='+seq_type ; 
 		var seq_acc=document.updateseq.seq_acc.value;
-		var dbind=document.updateseq.seq_super.selectedIndex;
-		var seq_type=document.updateseq.seq_super[dbind].value;
+		var fdb_id =document.updateseq.seqdb.value;
+        // alert('dbname: '+ dbname+ ' seq_type: '+seq_type) ; 
+        // alert('fdb_id: '+ fdb_id+ ' seq_acc: '+seq_acc) ; 
 
-                // the following checks enforce correct accession# format
-                // per curator, we check RefSeq and Vega for now
 
+        // the following checks enforce correct accession# format
+        // per curator, we check RefSeq and Vega for now
 		if ( ( dbname == 'RefSeq' && /cDNA/.test(seq_type) &&  ! /[NX]M[_]/.test(seq_acc) )
                    ||( dbname == 'RefSeq' && /Polypeptide/.test(seq_type) &&  ! /[NX]P[_]/.test(seq_acc) )             ){
 	            
@@ -264,7 +277,7 @@ function jump(form_select){
 			var attribution_type = "special-check-newseqnum";
 		   }
 
-  		   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&ancor=sequence&OID=$OID&attr=seqnum&attr_type='+attribution_type+'&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type);
+  		   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&ancor=sequence&OID=$OID&attr=seqnum&attr_type='+attribution_type+'&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type+'&xtra_param='+fdb_id);
   		}
 	
 	}
@@ -381,8 +394,9 @@ function jump(form_select){
 	function new_attrib_seq() {
 		var seq_acc = document.updateseq.attrib_seq_acc.value;
 		var pub_id = document.updateseq.attrib_seq_pubid.value.toUpperCase();
+		var fdb_id = document.updateseq.attrib_seq_fdb.value.toUpperCase();
 		if((seq_acc != '')&&(pub_id != '')) {
-			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc&xtra_param='+fdb_id);
 		}
 	}
 	function new_attrib_other() {
@@ -2153,25 +2167,15 @@ union
   <b>Link to Seq DB:</b> &nbsp;
   DBname:<SELECT name=seqdb>
   <?MISQL SQL="
-    select distinct fdbcont_fdb_db_name
+    select fdbcont_fdb_db_name, fdbcont_fdbdt_data_type, fdbcont_zdb_id
       from foreign_db_contains
      where fdbcont_fdbdt_super_type = 'sequence'
      order by fdbcont_fdb_db_name;">
-    <option value="$1" $(IF,$(EC,$1,GenBank),SELECTED)>$1</option>
+    <option value="$3" $(IF,$(EC,$1,GenBank),SELECTED)>$1 - $2</option>
   <?/MISQL>
-  </SELECT>
-  Type:<SELECT name=seq_super>
-    <?MISQL SQL="
-      select distinct fdbdt_data_type, fdbdt_super_type
-        from foreign_db_data_type
-       where fdbdt_super_type = 'sequence'
-      order by fdbdt_data_type;">
-    <option value="$2&fdbcont_data=$1" $(IF,$(EC,$1,cDNA),SELECTED)>$1</option>
-    <?/MISQL>
   </SELECT>
   Accession:<input type=text size=15 name=seq_acc>
   <input type=button value="Add it!" onClick=new_seqnum();>
-
   <br>
   <?MIVAR>$seq_tab<?/MIVAR>
   <b>Update Sequence:</b> &nbsp;
@@ -2201,6 +2205,15 @@ union
   <br>
   <?MIVAR>$seq_tab<?/MIVAR>
   <b>Add reference:</b> &nbsp;
+  DBname:<SELECT name=attrib_seq_fdb>
+  <?MISQL SQL="
+    select fdbcont_fdb_db_name, fdbcont_fdbdt_data_type, fdbcont_zdb_id
+      from foreign_db_contains
+     where fdbcont_fdbdt_super_type = 'sequence'
+     order by fdbcont_fdb_db_name;">
+    <option value="$3" $(IF,$(EC,$1,GenBank),SELECTED)>$1 - $2</option>
+  <?/MISQL>
+  </SELECT>
   Accession: <input type=text size=15 name=attrib_seq_acc>
   Reference: <input type=text size=15 name=attrib_seq_pubid>
   <input type=button value="Add it!" onClick=new_attrib_seq();>

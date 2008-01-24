@@ -296,6 +296,7 @@ marker.<?/MIVAR>
     <?/MISQL>  
   <?/MIBLOCK>
 
+	<?MIVAR NAME=$fdbcont_zdb_id>$xtra_param<?/MIVAR>
 
   <!-- Special case for checking new sequence db link -->
   <?MIBLOCK COND="$(EC,$attr_type,special-check-newseqnum)">
@@ -303,18 +304,28 @@ marker.<?/MIVAR>
 	<?MISQL SQL="
 	       select dblink_zdb_id
              from marker_relationship, db_link
-	        where mrel_mrkr_1_zdb_id ='$OID'
-              and mrel_mrkr_2_zdb_id = dblink_linked_recid
-              and dblink_acc_num = '$new_value' 
+	          where 
+            mrel_mrkr_1_zdb_id ='$OID'
+              and 
+            mrel_mrkr_2_zdb_id = dblink_linked_recid
+              and 
+            dblink_acc_num = '$new_value' 
+              and
+	        dblink_fdbcont_zdb_id = '$fdbcont_zdb_id'
 	  UNION
            select dblink_zdb_id
              from db_link
-	        where dblink_linked_recid = '$OID'
-              and dblink_acc_num = '$new_value'; ">
+	         where 
+            dblink_linked_recid = '$OID'
+              and 
+            dblink_acc_num = '$new_value'
+              and
+	        dblink_fdbcont_zdb_id = '$fdbcont_zdb_id'
+              ">
        <?/MISQL>
        <?MIBLOCK COND="$(NC,$1,)">
            <SCRIPT>
- 	   			window.alert('The GenBank accession is already associated with the marker.');
+ 	   			window.alert('The GenBank accession is already associated with a marker.');
 	       </SCRIPT>
        <?MIELSE>  
 	
@@ -337,7 +348,7 @@ marker.<?/MIVAR>
    
               <SCRIPT>          
                 var msg="The GenBank accession is already associated with\n"+
-                         "[$markerlist]. Are you sure to process?";
+                         "[$markerlist] in another database. Do you want to proceed?";
 	        	if (confirm(msg))
 		   			location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table&fdbcont_super=$fdbcont_super&fdbcont_data=$fdbcont_data');
 		
@@ -516,11 +527,14 @@ marker.<?/MIVAR>
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
       <?/MISQL>
 
+	<?MIVAR NAME=$fdbcont_zdb_id>$xtra_param<?/MIVAR>
+
       <?MISQL COND="$(EC,$info,seqacc)" SQL="
 	   select dblink_zdb_id 
 	     from db_link
 	    where dblink_linked_recid = '$OID'
 	      and dblink_acc_num = '$old_value'
+	      and dblink_fdbcont_zdb_id = '$fdbcont_zdb_id'
 	    ;">
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
       <?/MISQL>	
