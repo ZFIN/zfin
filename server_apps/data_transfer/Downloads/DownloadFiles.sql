@@ -290,7 +290,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
 
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_obo.txt'
-select geno_zdb_id, geno_display_name,
+select "ZDB:"||geno_zdb_id, geno_display_name,
 			(select stg_obo_id from stage 
 			   where stg_zdb_id = apato_Start_stg_zdb_id),
 			(select stg_obo_id from stage
@@ -329,7 +329,7 @@ select geno_zdb_id, geno_display_name,
 					   where goterm_zdb_id = apato_entity_b_zdb_id)
 				  end,
 			apato_tag,
-			apato_pub_zdb_id
+			"ZDB:"||apato_pub_zdb_id
  from atomic_phenotype, genotype, genotype_experiment
       where apato_genox_zdb_id = genox_zdb_id
 	and genox_geno_zdb_id = geno_zdb_id
