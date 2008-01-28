@@ -290,6 +290,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
 
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_obo.txt'
+ DELIMITER "	"
 select "ZDB:"||geno_zdb_id, geno_display_name,
 			(select stg_obo_id from stage 
 			   where stg_zdb_id = apato_Start_stg_zdb_id),
