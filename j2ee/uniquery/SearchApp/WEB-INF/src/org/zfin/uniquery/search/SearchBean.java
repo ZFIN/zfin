@@ -495,19 +495,20 @@ public class SearchBean
 		    }
 		}
                 // if searchResultURL starts with "/cgi-bin_hostname/",
+
                 // get rid of the hostname
-		if ( searchResultURL.indexOf("cgi-bin_") > 0 ) {
+		System.out.println("searchResultURL");
 
-		    int pos = searchResultURL.substring(1).indexOf("/");
+		//	if ( searchResultURL.indexOf("almost") == 0 ) {
 
-		    String envWebdriverPathFromRoot =  System.getenv("WEBDRIVER_LOC");
+		int pos = searchResultURL.substring(1).indexOf("/");
 
-		  
-			
-		    searchResultURL =  "/" +envWebdriverPathFromRoot + searchResultURL.substring(pos+1);
+		String envWebdriverLoc =  System.getenv("WEBDRIVER_LOC");
+
+		searchResultURL =  searchResultURL.replaceFirst("almost",envWebdriverLoc);
 		       
 		    
-		}
+		    //}
 
 		categoryHtml = "<a href='" + searchResultURL + "'><b>" + category.getDescription() + "</b></a>";
 
