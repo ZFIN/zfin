@@ -307,7 +307,7 @@ select "ZDB:"||geno_zdb_id, geno_display_name,
 				  when
 				  get_obj_type(apato_entity_a_zdb_id)='GOTERM'
 				  then
-					(select goterm_go_id
+					(select "GO:"||goterm_go_id
 					   from go_term
 					   where goterm_zdb_id = apato_entity_a_zdb_id)
 				  end,
