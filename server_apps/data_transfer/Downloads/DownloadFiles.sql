@@ -288,6 +288,53 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
 
 ! echo "Inserted data into file phenotype.txt"
 
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_obo.txt'
+select geno_zdb_id, geno_display_name,
+			(select stg_obo_id from stage 
+			   where stg_zdb_id = apato_Start_stg_zdb_id),
+			(select stg_obo_id from stage
+                           where stg_zdb_id = apato_end_Stg_zdb_id),
+				case
+				  when
+				  get_obj_type(apato_Entity_a_zdb_id) = 'ANAT'
+				  then
+					(select anatitem_obo_id
+					  from anatomy_item
+					  where anatitem_zdb_id =
+						apato_entity_a_zdb_id)
+				  when
+				  get_obj_type(apato_entity_a_zdb_id)='GOTERM'
+				  then
+					(select goterm_go_id
+					   from go_term
+					   where goterm_zdb_id = apato_entity_a_zdb_id)
+				  end,
+				(select term_ont_id
+					from term
+					where term_Zdb_id = apato_quality_zdb_id),
+				case
+				  when
+				  get_obj_type(apato_Entity_b_zdb_id) = 'ANAT'
+				  then
+					(select anatitem_obo_id
+					  from anatomy_item
+					  where anatitem_zdb_id =
+						apato_entity_b_zdb_id)
+				  when
+				  get_obj_type(apato_entity_b_zdb_id)='GOTERM'
+				  then
+					(select goterm_go_id
+					   from go_term
+					   where goterm_zdb_id = apato_entity_b_zdb_id)
+				  end,
+			apato_tag,
+			apato_pub_zdb_id
+ from atomic_phenotype, genotype, genotype_experiment
+      where apato_genox_zdb_id = genox_zdb_id
+	and genox_geno_zdb_id = geno_zdb_id
+ order by geno_zdb_id, apato_pub_zdb_id ;
+
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_ontology_translation.txt'
  DELIMITER "	"
  select goterm_zdb_id, "GO:"||goterm_go_id
