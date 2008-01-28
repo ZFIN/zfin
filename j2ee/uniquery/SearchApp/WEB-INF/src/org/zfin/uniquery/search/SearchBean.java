@@ -500,19 +500,12 @@ public class SearchBean
 
 		    int pos = searchResultURL.substring(1).indexOf("/");
 
-		    String envWebdriverPathFromRoot =  System.getenv("MUTANT_NAME");
+		    String envWebdriverPathFromRoot =  System.getenv("WEBDRIVER_LOC");
 
-		    // there is no mutant name for production, and we want to redirect to cgi-bin/
-		    //System.out.println(envWebdriverPathFromRoot);
-		    if (envWebdriverPathFromRoot==null) {
-			searchResultURL =  "/" + "cgi-bin" + searchResultURL.substring(pos+1);
-			}
-
-		    else {
+		  
 			
-			searchResultURL =  "/" +envWebdriverPathFromRoot + searchResultURL.substring(pos+1);
-			
-		    }
+		    searchResultURL =  "/" +envWebdriverPathFromRoot + searchResultURL.substring(pos+1);
+		       
 		    
 		}
 
