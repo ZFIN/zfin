@@ -439,3 +439,34 @@ div.auto_complete ul strong.highlight {
     background: #EEEEEE;
     font-weight:normal;
 }
+
+ .small-curation-box {
+    overflow: auto;
+    height: 150;
+    border: 1px solid black; 
+    width: 98%; 
+    margin-left: 1%;
+  }
+
+  .medium-curation-box {
+    overflow: auto;
+    height: 350;
+    border: 1px solid black; 
+    width: 98%; 
+    margin-left: 1%;
+  }
+
+  .large-curation-box {
+    overflow: auto;
+    height: 650;
+    border: 1px solid black; 
+    width: 98%; 
+    margin-left: 1%;
+  }
+
+  .unlimited-curation-box {
+    overflow: hidden;
+    border: 1px solid black; 
+    width: 98%; 
+    margin-left: 1%;
+  }
