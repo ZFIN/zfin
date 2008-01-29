@@ -73,6 +73,14 @@ EFFECTS
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
 
+
+<?MICOMMENT> *** trim all free text inputs *** <?/MICOMMENT>
+
+<?MIVAR COND="$(XST,$patoup_entity_a_name)" NAME="$patoup_entity_a_name">$(TRIM,$patoup_entity_a_name)<?/MIVAR>
+<?MIVAR COND="$(XST,$patoup_entity_b_name)" NAME="$patoup_entity_b_name">$(TRIM,$patoup_entity_b_name)<?/MIVAR>
+<?MIVAR COND="$(XST,$patoup_quality_name)" NAME="$patoup_quality_name">$(TRIM,$patoup_quality_name)<?/MIVAR>
+
+
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
   <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_pato_update),$(EC,$pubcur_c_pato_update,update))">
 
