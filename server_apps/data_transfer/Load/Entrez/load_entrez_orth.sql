@@ -140,7 +140,7 @@ update entrez_gene set eg_symbol = (
 )where exists (
     select 1 from tmp_entrez_orth_name
      where teon_entrez_id = eg_acc_num
-     and teon_symbol != eg_symbol
+     and (teon_symbol != eg_symbol or( eg_symbol is NULL and teon_symbol is not NULL))
 );
 
 ! echo "existing name may have changed"
@@ -151,8 +151,9 @@ update entrez_gene set eg_name = (
 )where exists (
     select 1 from tmp_entrez_orth_name
      where teon_entrez_id = eg_acc_num
-     and teon_name != eg_name
+     and (teon_name != eg_name  or( eg_name is NULL and teon_name is not NULL))
 );
+
 
 ! echo "updated any changed entrez gene orth symbols & names in zfin `date`"
 ! echo ""
@@ -197,7 +198,9 @@ select count(*) remaining_txref from tmp_entrez_orth_xref;
 ! echo "existing entrez gene/prot/xref in update dropped `date`"
 ! echo ""
 
-! echo "delete the incomming name/symbol associations that already exist"
+-------------------------------------------------------------------------
+! echo "delete the incomming name/symbol associations that already exist WATCH FOR NULLs"
+
 delete from tmp_entrez_orth_name where exists (
    select 1 from entrez_gene
     where teon_entrez_id = eg_acc_num
@@ -228,8 +231,23 @@ select count(*) remaining_txref from tmp_entrez_orth_xref;
 
 ! echo "bulk load filtered `date`"
 --------------------------------------------------------------------
--- whatever is left is new
 
+! echo "double check the incomming is self unique"
+select teon_entrez_id from tmp_entrez_orth_name
+ group by 1 having count(*) > 1
+into temp tmp_dyp_name with no log
+;
+select * from tmp_entrez_orth_name
+ where teon_entrez_id in (
+ 	select * from  tmp_dyp_name
+ )
+ order by teon_entrez_id
+;
+
+drop table tmp_dyp_name;
+
+-- whatever is left is new
+! echo "double check the incomming vs the existing"
 select count(*) dup_check
  from tmp_entrez_orth_name
  where exists (
@@ -238,9 +256,20 @@ select count(*) dup_check
  	   and eg_symbol = teon_symbol
  	   and eg_name = teon_name
  );
+
+! echo "triple check the incomming vs the existing"
+select  * --count(*) dup_check
+ from tmp_entrez_orth_name
+ where exists (
+ 	select 1 from entrez_gene
+ 	 where eg_acc_num = teon_entrez_id
+);
+
+
+
+
 --select count(*) new_names from tmp_entrez_orth_name;
 --select first 40 * from tmp_entrez_orth_name order by 1;
-
 -------------
 
 insert into entrez_gene (
