@@ -126,7 +126,7 @@ patoCuration.distinctPhenotypes = {
 </script>
 
 
-<a name="patopile"><h3>Phenotype: </h3></a>
+<h3>Phenotype: </h3></a>
 
 <form name="patobldrupdatephenos" id="patobldrUpdatePhenosForm" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="post"
       onSubmit="setCookie('pato_update','update','pubcur_c_');">
@@ -148,7 +148,7 @@ patoCuration.distinctPhenotypes = {
   <input type="submit" value="Update Phenotype for Mutant(s)"
          id="updatePhenoButton" 
          onClick="patoCuration.updatePhenotypes();
-                  patoCuration.deselectMutants();">
+                  patoCuration.clearMutantsFromSession();">
 
   <fieldset style="border: 1px solid black; padding: .3em; margin: .3em auto; width: 96%;">
     <legend>selected<legend>
@@ -159,27 +159,45 @@ patoCuration.distinctPhenotypes = {
 
 <?MICOMMENT> *** FIXME *** this should get a different css class than searchresults *** <?/MICOMMENT>
 
-<a id="patobldr-noscrollylink" href="javascript:;" 
-   onClick="document.getElementById('patobldr-phenotypes').style.overflow = 'hidden';
-            document.getElementById('patobldr-phenotypes').style.height = null;
-            this.style.display = 'none';
-            document.getElementById('patobldr-scrollylink').style.display = 'inline';">no scrollbars</a>
+<a name="patopile"></a>
 
-<a id="patobldr-scrollylink" href="javascript:;" style="display: none;"
-   onClick="document.getElementById('patobldr-phenotypes').style.overflow = 'auto';
-            document.getElementById('patobldr-phenotypes').style.height = '300';
-            this.style.display = 'none';
-            document.getElementById('patobldr-noscrollylink').style.display = 'inline';">scrollbars</a>
+<span style="float: right; margin-right: 2em;">
+
+<span class="curation-box-control-text"> size: </span>
+
+<a href="javascript:;" class="curation-box-control-text"
+   onClick="document.getElementById('patobldr-phenotypes').className = 'small-curation-box';
+            sessionState.storeObjectAttribute('patobldr-phenotypes','className','small-curation-box');">
+small
+</a>
+<a href="javascript:;" class="curation-box-control-text"
+   onClick="document.getElementById('patobldr-phenotypes').className = 'medium-curation-box';
+            sessionState.storeObjectAttribute('patobldr-phenotypes','className','medium-curation-box');">
+medium
+</a>
+<a href="javascript:;" class="curation-box-control-text"
+   onClick="document.getElementById('patobldr-phenotypes').className = 'large-curation-box';
+            sessionState.storeObjectAttribute('patobldr-phenotypes','className','large-curation-box');">
+large
+</a>
+
+<a href="javascript:;" class="curation-box-control-text"
+   onClick="document.getElementById('patobldr-phenotypes').className = 'unlimited-curation-box';
+            sessionState.storeObjectAttribute('patobldr-phenotypes','className','unlimited-curation-box');">
+unlimited
+</a>
+</span><br>
 
 
-<div id="patobldr-phenotypes" style="overflow: auto; height: 300px; border: 1px solid black; width: 98%; margin-left: 1%;">
+
+<div id="patobldr-phenotypes" class="medium-curation-box">
 
 <table class="searchresults">
   <thead>
     <tr>
-      <th style="width: 1.5em;">&Phi;</th>
-      <th style="width: 1.6em; color: red;">&otimes;</th>
-      <th style="width: 1.5em; color: green;">+</th>
+      <th style="width: 1.5em;" title="no change for this phenotype">&Phi;</th>
+      <th style="width: 1.6em; color: red;" title="remove this phenotype">&otimes;</th>
+      <th style="width: 1.5em; color: green;" title="add this phenotype">+</th>
       <th>Entity</th>
       <th>Quality</th>
       <th>Tags</th>
@@ -259,7 +277,7 @@ patoCuration.distinctPhenotypes = {
 <tr>
 <td valign="top">
 
-<form name="patobldraddtopile" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="post" 
+<form name="patobldraddtopile" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#patopile" method="post" 
       onSubmit="setCookie('pato_update','update','pubcur_c_');">
 
     <input type="hidden" name="MIval" value="aa-curation.apg">

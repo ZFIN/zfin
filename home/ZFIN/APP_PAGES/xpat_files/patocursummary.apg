@@ -84,25 +84,59 @@ PREFIX:   patosum_
 <?MICOMMENT> ** TODO: this should get a different css 
                 class than searchresults ** <?/MICOMMENT>
 
- <h3>Mutants:</h3>
+<h3>Mutants:</h3>
 
-<a id="patosum-noscrollylink" href="javascript:;" 
-   onClick="document.getElementById('patosum-mutants').style.overflow = 'hidden';
-            document.getElementById('patosum-mutants').style.height = null;
-            this.style.display = 'none';
-            document.getElementById('patosum-scrollylink').style.display = 'inline';">no scrollbars</a>
+<a name="mutants"></a>
 
-<a id="patosum-scrollylink" href="javascript:;" style="display: none;"
-   onClick="document.getElementById('patosum-mutants').style.overflow = 'auto';
-            document.getElementById('patosum-mutants').style.height = '300';
-            this.style.display = 'none';
-            document.getElementById('patosum-noscrollylink').style.display = 'inline';">scrollbars</a>
+<style type="text/css">
+
+.curation-box-control-text {
+ text-decoration: none;
+ font-size: 75%;
+}
 
 
+</style>
 
- <div id="patosum-mutants" 
-      style="overflow: auto; height: 300px; 
-             border: 1px solid black; width: 98%; margin-left: 1%;">
+<span style="margin-left: 1em; float: left;">
+<span class="curation-box-control-text">check:</span>
+<a href="javascript:;" onclick="patoCuration.selectAllMutants();" class="curation-box-control-text">all</a>
+<a href="javascript:;" onclick="patoCuration.deselectMutants();" class="curation-box-control-text">none</a>
+</span>
+
+<span style="float: right; margin-right: 1em;">
+
+<span class="curation-box-control-text">size: </span>
+<a href="javascript:;" class="curation-box-control-text"
+   onClick="document.getElementById('patosum-mutants').className = 'small-curation-box';
+            sessionState.storeObjectAttribute('patosum-mutants','className','small-curation-box');">
+small
+</a>
+
+<a href="javascript:;" class="curation-box-control-text"
+   onClick="document.getElementById('patosum-mutants').className = 'medium-curation-box';
+            sessionState.storeObjectAttribute('patosum-mutants','className','medium-curation-box');">
+medium
+</a>
+
+
+<a href="javascript:;"  class="curation-box-control-text"
+   onClick="document.getElementById('patosum-mutants').className = 'large-curation-box';
+            sessionState.storeObjectAttribute('patosum-mutants','className','large-curation-box');">
+large
+</a>
+<a href="javascript:;"  class="curation-box-control-text"
+   onClick="document.getElementById('patosum-mutants').className = 'unlimited-curation-box';
+            sessionState.storeObjectAttribute('patosum-mutants','className','unlimited-curation-box');">
+unlimited
+</a>
+
+
+</span><br>
+
+
+ <div id="patosum-mutants" class="medium-curation-box">
+
  
  <table class="searchresults">
   <thead class="searchresults">
@@ -272,18 +306,18 @@ PREFIX:   patosum_
 
 <?MICOMMENT> *** Form to add Mutants (Fig + Genotype + Env combinations) to mutant summary table *** <?/MICOMMENT>
 
-<form name="patosum_addmutant" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+<form name="patosum_addmutant" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#mutants" 
       method="post" onSubmit="setCookie('pato_update','update','pubcur_c_');">
 
     <input type="hidden" name="MIval" value="aa-curation.apg">
     <input type="hidden" name="OID" value="<?MIVAR>$OID<?/MIVAR>">
     <input type="hidden" name="patoup_add_mutant" value="1">
-    <table>
+    <table style="margin-top: .5em; margin-left: .5em;">
     <tr>
-      <td>
-        <input type="submit" value="Add">
+      <td valign="top">
+        <input id="patosum-addMutantButton" name="addMutantButton" type="submit" value="Add">
       </td>
-      <td>
+      <td valign="top">
         <select name="patoup_fig_zdb_id" id="patosumFig"
                 onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
    
@@ -296,7 +330,7 @@ PREFIX:   patosum_
         <?/MISQL>
         </select>
       </td>
-      <td>
+      <td valign="top">
         <select name="patoup_geno_zdb_id" id="patosumGenotype"
                 onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
 
@@ -335,7 +369,7 @@ PREFIX:   patosum_
           <?/MISQL>
         </select>
       </td>
-      <td>
+      <td valign="top">
         <select name="patoup_exp_zdb_id" id="patosumEnv"
                 onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
            <?MISQL SQL="select distinct exp_zdb_id, exp_name
@@ -354,7 +388,7 @@ PREFIX:   patosum_
            <?/MISQL>
         </select>
       </td>
-      <td>
+      <td valign="top">
         start: <select name="patoup_start_stg_zdb_id" id="patosumStartStage"
                        onChange="setEndStage('patosum_addmutant','patoup_start_stg_zdb_id','patoup_end_stg_zdb_id');
                                  sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);
@@ -367,7 +401,7 @@ PREFIX:   patosum_
           <?/MISQL>
       </select>
       <br>
-      end: <select name="patoup_end_stg_zdb_id" id="patosumEndStage"
+      end: <select style="margin-top: 1em;" name="patoup_end_stg_zdb_id" id="patosumEndStage"
                    onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
           <?MISQL SQL="
             select stg_zdb_id, stg_abbrev, stg_name_ext
@@ -376,6 +410,9 @@ PREFIX:   patosum_
             <option value="$1">$2 $3</option>
           <?/MISQL>
       </select>
+      </td>
+      <td valign="bottom">
+        <input type="button" onclick="document.getElementById('patosum-addMutantButton').click();" value="Add">
       </td>
      </tr>
     </table>
