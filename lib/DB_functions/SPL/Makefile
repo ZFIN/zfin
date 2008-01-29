@@ -34,6 +34,7 @@ FISH_STATS   = get_image_stats.sql \
 	       p_update_related_genotype_names.sql \
 	       p_update_fmrel_genotype_names.sql \
                fhist_event.sql \
+	       p_update_unspecified_alleles.sql \
 	       p_fmrel_grpmem_correct.sql \
 	       get_feature_abbrev_display.sql \
 	       get_feature_abbrev_html.sql \
