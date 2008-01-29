@@ -65,14 +65,54 @@ function PatoCuration() {
       }
   }
 
-  this.deselectMutants = function() {
+
+  /*
+   Delete sessionState information about all of the mutant checkboxes
+
+   Like deselect, except that it's clearing the boxes for the next time
+   the page loads rather than clearing it for now.  It gets called right
+   before submitting.
+   */
+  this.clearMutantsFromSession = function() {
       var mutants = this.mutants;
       for (var i = 0 ; i < mutants.length ; i++) {
 	  if (document.getElementById(mutants[i].checkbox_id).checked == true) { 
 	      sessionState.deleteAttributes(mutants[i].checkbox_id);
+          }
+      }
+
+  }
+
+
+  /*
+   Uncheck mutants and update the state of the whole system
+   */
+  this.deselectMutants = function() {
+      var mutants = this.mutants;
+      for (var i = 0 ; i < mutants.length ; i++) {
+	  if (document.getElementById(mutants[i].checkbox_id).checked == true) { 
+              document.getElementById(mutants[i].checkbox_id).checked = false;
+	      sessionState.deleteAttributes(mutants[i].checkbox_id);
 	  }
       }
+      //once they're all unchecked, update the radio buttons
+      this.updateMutants();
+
   }
+
+
+  this.selectAllMutants = function() {
+      var mutants = this.mutants;
+      for (var i = 0 ; i < mutants.length ; i++) {
+	  if (document.getElementById(mutants[i].checkbox_id).checked == false) { 
+              document.getElementById(mutants[i].checkbox_id).checked = true;
+	      sessionState.storeObjectAttribute(mutants[i].checkbox_id, 'checked','true');
+	  }
+      }
+      //because the checkbox values change, we need to update the radio buttons
+      this.updateMutants();
+  }
+
   this.updateMutants = function() {
       var infospan = document.getElementById('patobldrSelectedMutants');
       var mutants = this.mutants;
@@ -291,6 +331,7 @@ function mutantToString(m) {
 
   return m.fig_label + " &nbsp; &nbsp; " 
        + m.geno_handle + " &nbsp; &nbsp;"
+       + m.exp_name + "&nbsp; &nbsp;"
        + m.start_stg_abbrev  + " &nbsp; &nbsp;"
        + m.end_stg_abbrev  + " &nbsp; &nbsp;"   ;   
 
