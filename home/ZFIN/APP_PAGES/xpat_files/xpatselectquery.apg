@@ -686,7 +686,7 @@ DEBUGGING:
     <?/MISQL>
 
     <?MICOMMENT>-- clean up the helper temp table -- <?/MICOMMENT>
-    <?MISQL SQL="delete from $xpatselqry_temp_geno_on_name";><?/MISQL>
+    <?MISQL SQL="delete from $xpatselqry_temp_geno_on_name;"><?/MISQL>
  
   <?/MIBLOCK> <?MICOMMENT> close if-else for Id or Name <?/MICOMMENT>
 
@@ -1071,80 +1071,32 @@ DEBUGGING:
     <?/MIVAR>
 
 
-    <?MICOMMENT> =================== 'or' search =========== <?/MICOMMENT>
-
-    <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_structureBool),$(EC,$xpatselqry_structureBool,or))">
-
-        <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_includeSubstructures),$(NE,$xpatselqry_includeSubstructures,))">
-          <?MISQL SQL="
-            INSERT INTO $xpatselectquery_temp_anatomy_junior 
-                ( junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,
-                  junior_xpatex_zdb_id, junior_xpatres_zdb_id,
-                  junior_xpatex_matching_text, junior_xpatex_matching_precedence,
-                  junior_xpatex_matching_significance )
-              SELECT xpatfig_fig_zdb_id, xpatex_gene_zdb_id, xpatex_zdb_id, 
-                     xpatres_zdb_id, $xpatselqry_matchingCols
-	      FROM $xpatselqry_matchTable               
-                   JOIN expression_result
-                     ON xpatres_xpatex_zdb_id = xpatex_zdb_id
-                   JOIN expression_pattern_figure
-                     ON xpatres_zdb_id = xpatfig_xpatres_zdb_id
-                   JOIN all_anatomy_contains
-                     ON allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
-	      WHERE allanatcon_container_zdb_id in ('$xpatselqry_anatitem_constraint')
-                AND xpatres_expression_found = 't'
-                $xpatselqry_stage_overlap_sql;">
-          <?/MISQL>
-        <?/MIBLOCK>
-
-      
-      <?MISQL SQL="
-	INSERT INTO $xpatselectquery_temp_anatomy_junior 
-            ( junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,
-              junior_xpatex_zdb_id, junior_xpatres_zdb_id,
-              junior_xpatex_matching_text, junior_xpatex_matching_precedence,
-              junior_xpatex_matching_significance )
-    	  SELECT distinct xpatfig_fig_zdb_id, xpatex_gene_zdb_id, xpatex_zdb_id, 
-                          xpatres_zdb_id, $xpatselqry_matchingCols
-	    FROM $xpatselqry_matchTable
-                 JOIN expression_result
-                   ON xpatres_xpatex_zdb_id = xpatex_zdb_id
-                 JOIN expression_pattern_figure
-                   ON xpatres_zdb_id = xpatfig_xpatres_zdb_id
-            WHERE xpatres_anat_item_zdb_id in ('$xpatselqry_anatitem_constraint') 
-                 AND xpatres_expression_found = 't'
-	      $xpatselqry_stage_overlap_sql;">
-      <?/MISQL>
+    <?MICOMMENT> ** for an 'and' search, this join statement will be filled,
+                    for an 'or' search, it will be left empty    ** <?/MICOMMENT>
+    <?MIVAR NAME="xpatselqry_gwas_join_sql"><?/MIVAR>
 
 
-    <?MICOMMENT> ---- copy into the 'real' temp table ---- <?/MICOMMENT>
-  
+
+    <?MICOMMENT> TODO: if it's an 'and' search, built a temp table of gene_zdb_ids,
+                       then stuff that into a the join statement variable      <?/MICOMMENT>
+
+
+    <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_structureBool),$(EC,$xpatselqry_structureBool,and),
+                          $(>,$xpatselqry_item_count,1))">
+
+  <?MICOMMENT> --- This temp table is only used for 'and' queries between structures
+                   the result will be a list of gene_zdb_ids that match all of the 
+                   structures, across any of their xpat records     --- <?/MICOMMENT>
+
+    <?MIVAR NAME=$xpatselectquery_temp_anatomy_genes_with_all_structures>$(CONCAT,xpatselectquery_temp_anatomy_genes_with_all_structures,$xpatselqry_session_id)<?/MIVAR>    
     <?MISQL SQL="
-      INSERT INTO $xpatselectquery_temp_anatomy 
-          ( xpatex_fig_zdb_id, xpatex_gene_zdb_id, 
-            xpatex_zdb_id, 
-            xpatex_matching_text, xpatex_matching_precedence, 
-            xpatex_matching_significance )
-	SELECT distinct junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id, 
-                        junior_xpatex_zdb_id, 
-                        junior_xpatex_matching_text, junior_xpatex_matching_precedence,
-                        junior_xpatex_matching_significance
-	  FROM $xpatselectquery_temp_anatomy_junior;">
+      execute function table_exists('$xpatselectquery_temp_anatomy_genes_with_all_structures')">
+      <?MISQL COND=$(EC,$1,f) SQL="
+        create temp table $xpatselectquery_temp_anatomy_genes_with_all_structures (
+          gwas_gene_zdb_id      		varchar(50)
+        ) with NO LOG;">
+      <?/MISQL>
     <?/MISQL>
-
-    <?/MIBLOCK> <?MICOMMENT> end 'or' query <?/MICOMMENT>
-
-   <?MICOMMENT> ------ this is for the "and" search, or "every selected structure", 
-		      it populates a different temp table than above, with all of the
-		      temp table zdb_id's that are kosher with the anatomy part of the
-		      query.   This is Brock's SQL logic, and he's a smarty pants, 
-	              the combination of the GROUP BY and HAVING create an 'and' from 
-		      the anatomy list.  On first glance, I thought it would only return
-		      expression records with exactly those two items, because it's "= $item_count", 
-	              but any more items that the expression record has are irrelevant, because they
-	 	      don't show up in the list.                                 ----       <?/MICOMMENT>
-
-   <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_structureBool),$(EC,$xpatselqry_structureBool,and))">
 
 
     <?MICOMMENT> -- default the variables to substructures not included -- <?/MICOMMENT>
@@ -1153,7 +1105,8 @@ DEBUGGING:
     <?MIVAR NAME="$xpatselqry_container_join"> <?/MIVAR>
     <?MIVAR NAME="$xpatselqry_container_or"> <?/MIVAR>
 
-    <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_includeSubstructures),$(EC,$xpatselqry_includeSubstructures,checked))">
+    <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_includeSubstructures),
+                          $(EC,$xpatselqry_includeSubstructures,checked))">
       <?MIVAR NAME=$xpatselqry_case>
          case
            when xpatres_anat_item_zdb_id in ('$xpatselqry_anatitem_constraint')  
@@ -1174,53 +1127,125 @@ DEBUGGING:
 
     <?/MIBLOCK> <?MICOMMENT> end include subbies checked <?/MICOMMENT>
 
+
+  
+    <?MICOMMENT> ** now fill the outer temp table ** <?/MICOMMENT>
     <?MISQL SQL="
-	INSERT INTO $xpatselectquery_temp_anatomy_junior
+    	INSERT INTO $xpatselectquery_temp_anatomy_junior
              (junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,  
               junior_xpatex_zdb_id,
-              junior_xpatex_matching_text, junior_xpatex_matching_precedence,
-              junior_xpatex_matching_significance, junior_parent_zdb_id)
+              junior_parent_zdb_id)
 	SELECT distinct xpatfig_fig_zdb_id, xpatex_gene_zdb_id,
                         xpatex_zdb_id,
-                        $xpatselqry_matchingCols, 
        	                $xpatselqry_case as junior_parent_zdb_id
           FROM $xpatselqry_matchTable
                join expression_result 
                  on xpatres_xpatex_zdb_id = xpatex_zdb_id 
                join expression_pattern_figure 
                  on xpatres_zdb_id = xpatfig_xpatres_zdb_id
-	       $xpatselqry_container_join
+               $xpatselqry_container_join
         WHERE (xpatres_anat_item_zdb_id in ('$xpatselqry_anatitem_constraint')
                AND xpatres_expression_found = 't'
-	       $xpatselqry_container_or )
-	  $xpatselqry_stage_overlap_sql
-      ;">
+                   $xpatselqry_container_or )
+          $xpatselqry_stage_overlap_sql 
+        ;">
     <?/MISQL>
 
-   <?MICOMMENT> *** After this point, the temp table doesn't have xpatres records anymore.
-                    That doesn't hurt anything below this point in xpatselectquery, and
-                    any display page should be sure not to expect it *** <?/MICOMMENT>
+    <?MICOMMENT> ** fill the temp table of genes ** <?/MICOMMENT>
 
-
-   <?MISQL SQL="  
-     insert into $xpatselectquery_temp_anatomy 
-         ( xpatex_fig_zdb_id, xpatex_gene_zdb_id, 
-           xpatex_zdb_id, xpatex_matching_text, 
-           xpatex_matching_precedence, xpatex_matching_significance)
-       select junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,
-              junior_xpatex_zdb_id, junior_xpatex_matching_text, 
-              junior_xpatex_matching_precedence, 
-              junior_xpatex_matching_significance
+    <?MISQL SQL="
+     insert into $xpatselectquery_temp_anatomy_genes_with_all_structures
+              (gwas_gene_zdb_id)
+       select junior_xpatex_gene_zdb_id
        from $xpatselectquery_temp_anatomy_junior
-       group by junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,
-                junior_xpatex_zdb_id, junior_xpatex_matching_text, 
-                junior_xpatex_matching_precedence, 
-                junior_xpatex_matching_significance
+       group by junior_xpatex_gene_zdb_id
        having count (distinct junior_parent_zdb_id) = $xpatselqry_item_count
-     ;">
-   <?/MISQL>
+      ; ">
+    <?/MISQL>
 
-    <?/MIBLOCK> <?MICOMMENT> end structurebool = and <?/MICOMMENT>
+    <?MICOMMENT> ** clear the 'junior' temp table to be used in the next
+                    section                                            ** <?/MICOMMENT>
+
+    <?MISQL SQL="delete from $xpatselectquery_temp_anatomy_junior ;"><?/MISQL>
+   
+
+    <?MICOMMENT> ** setup the join statement to use below ** <?/MICOMMENT>
+
+    <?MIVAR NAME="xpatselqry_gwas_join_sql">
+        JOIN $xpatselectquery_temp_anatomy_genes_with_all_structures
+          ON xpatex_gene_zdb_id = gwas_gene_zdb_id
+    <?/MIVAR>
+
+
+    <?/MIBLOCK> <?MICOMMENT> ** end structureBool == 'and' ** <?/MICOMMENT>
+
+
+    <?MICOMMENT> ** this was the 'or' section, but now it always run, because even in
+                    an 'and' search, we'll still want to see figures that have only one
+                    of the anatomy terms (from genes that have both)        ** <?/MICOMMENT>
+
+
+    <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_includeSubstructures),$(NE,$xpatselqry_includeSubstructures,))">
+      <?MISQL SQL="
+        INSERT INTO $xpatselectquery_temp_anatomy_junior 
+            ( junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,
+              junior_xpatex_zdb_id, junior_xpatres_zdb_id,
+              junior_xpatex_matching_text, junior_xpatex_matching_precedence,
+              junior_xpatex_matching_significance )
+          SELECT xpatfig_fig_zdb_id, xpatex_gene_zdb_id, xpatex_zdb_id, 
+                 xpatres_zdb_id, $xpatselqry_matchingCols
+          FROM $xpatselqry_matchTable               
+               JOIN expression_result
+                 ON xpatres_xpatex_zdb_id = xpatex_zdb_id
+               JOIN expression_pattern_figure
+                 ON xpatres_zdb_id = xpatfig_xpatres_zdb_id
+               JOIN all_anatomy_contains
+                 ON allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
+               $xpatselqry_gwas_join_sql
+          WHERE allanatcon_container_zdb_id in ('$xpatselqry_anatitem_constraint')
+           AND xpatres_expression_found = 't'
+              $xpatselqry_stage_overlap_sql;">
+      <?/MISQL>
+    <?/MIBLOCK>
+
+      
+    <?MISQL SQL="
+        INSERT INTO $xpatselectquery_temp_anatomy_junior 
+            ( junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,
+              junior_xpatex_zdb_id, junior_xpatres_zdb_id,
+              junior_xpatex_matching_text, junior_xpatex_matching_precedence,
+              junior_xpatex_matching_significance )
+    	  SELECT distinct xpatfig_fig_zdb_id, xpatex_gene_zdb_id, xpatex_zdb_id, 
+                          xpatres_zdb_id, $xpatselqry_matchingCols
+	    FROM $xpatselqry_matchTable
+                 JOIN expression_result
+                   ON xpatres_xpatex_zdb_id = xpatex_zdb_id
+                 JOIN expression_pattern_figure
+                   ON xpatres_zdb_id = xpatfig_xpatres_zdb_id
+               $xpatselqry_gwas_join_sql
+            WHERE xpatres_anat_item_zdb_id in ('$xpatselqry_anatitem_constraint') 
+                 AND xpatres_expression_found = 't'
+	      $xpatselqry_stage_overlap_sql;">
+    <?/MISQL>
+
+
+    <?MICOMMENT> ---- copy into the 'real' temp table ---- <?/MICOMMENT>
+  
+    <?MISQL SQL="
+      INSERT INTO $xpatselectquery_temp_anatomy 
+          ( xpatex_fig_zdb_id, xpatex_gene_zdb_id, 
+            xpatex_zdb_id, 
+            xpatex_matching_text, xpatex_matching_precedence, 
+            xpatex_matching_significance )
+	SELECT distinct junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id, 
+                        junior_xpatex_zdb_id, 
+                        junior_xpatex_matching_text, junior_xpatex_matching_precedence,
+                        junior_xpatex_matching_significance
+	  FROM $xpatselectquery_temp_anatomy_junior;">
+    <?/MISQL>
+
+
+
 
   <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
   <?MIVAR COND=$(XST,$debug_sql)>
