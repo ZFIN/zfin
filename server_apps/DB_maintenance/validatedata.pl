@@ -494,6 +494,73 @@ sub featureAssociatedWithGenotype($) {
 
 }
 
+#========================  Features  ================================
+#
+#---------------------------------------------------------------
+# unFeatureNameAbbrevUpdate
+#
+# features with names like un_* related to genes, must be kept up to 
+# date.  feature_names/abbrevs should equal current gene abbrev plus un_* prefix
+#
+# Parameter
+# $ Email Address for recipients
+
+sub unFeatureNameAbbrevUpdate($) {
+  my $routineName = "unFeatureNameAbbrevUpdate";
+  
+ my $sql = "select feature_name, mrkr_abbrev
+               from feature, marker, feature_marker_relationship
+               where feature_zdb_id = fmrel_ftr_zdb_id
+               and mrkr_zdb_id = fmrel_mrkr_zdb_id
+               and feature_name like 'un_%'
+               and feature_name != 'un_'||mrkr_abbrev;";
+
+  my @colDesc = ("Feature name         ",
+		 "Feature mrkr_abbrev      ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+  
+  my $sth = $dbh->do("update feature
+                        set feature_name = (select 'un_'||mrkr_abbrev
+                                                  from marker, 
+		       	    feature_marker_relationship
+                       where mrkr_zdb_id = fmrel_mrkr_zdb_id
+                       and feature_zdb_id = fmrel_ftr_zdb_id
+                       and feature_name like 'un_%')
+                 where feature_name like 'un_%' 
+                 and not exists (Select 'x'
+     	 		           from feature_marker_relationship,
+			                marker
+			           where mrkr_Zdb_id = fmrel_mrkr_Zdb_id
+			           and feature_zdb_id = fmrel_ftr_zdb_id
+			           and feature_name = 'un_'||mrkr_abbrev);" );
+
+  $sth = $dbh->do("update feature
+                set feature_abbrev = 
+		    (select 'un_'||mrkr_abbrev
+                       from marker, 
+		       	    feature_marker_relationship
+                       where mrkr_zdb_id = fmrel_mrkr_zdb_id
+                       and feature_zdb_id = fmrel_ftr_zdb_id
+                       and feature_abbrev like 'un_%')
+                 where feature_name like 'un_%' 
+                 and not exists (Select 'x'
+     	 		           from feature_marker_relationship,
+			                marker
+			           where mrkr_Zdb_id = fmrel_mrkr_Zdb_id
+			           and feature_zdb_id = fmrel_ftr_zdb_id
+			           and feature_abbrev = 'un_'||mrkr_abbrev);" );
+  
+ if ( $nRecords > 0 ) {
+  my $sendToAddress = $_[0];
+  my $subject = "unAlleles have been updates";
+  my $errMsg = "There are $nRecords unAllele record(s) whose names have been updated to reflect gene name changes. ";
+    
+  logError ($errMsg);
+  &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  &recordResult($routineName, $nRecords);
+ }
+}
 #---------------------------------------------------------------
 # morpholinoAbbrevContainsGeneAbbrev
 #
@@ -3123,6 +3190,7 @@ my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 
 if($daily) {
 #    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
+    unFeatureNameAbbrevUpdate($dbaEmail);
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
     xpatHasConsistentMarkerRelationship($xpatEmail);
     checkFigXpatexSourceConsistant($dbaEmail);
