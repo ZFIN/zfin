@@ -75,19 +75,35 @@ SELECT anatitem_name, anatitem_zdb_id,'<I>(synonym match)</I> '
 FROM data_alias, anatomy_item 
 WHERE dalias_data_zdb_id = anatitem_zdb_id
   and dalias_alias_lower = lower('$xpanatv_part')
+  and dalias_alias not in (select anatitem_name from anatomy_item where anatitem_name = dalias_alias)
 
-ORDER BY 1
+ORDER BY 3,1
     ;">
 
-      <?MICOMMENT> I only want the first result, incase the lowering causes it to match both a name and synonym  <?/MICOMMENT>
-      <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">  <?MICOMMENT> *** open 'first row only' miblock *** <?/MICOMMENT> 
+      <?MIVAR NAME="$xpanatv_item_name">$1<?/MIVAR>
+      <?MIVAR NAME="$xpanatv_item_zdb_id">$2<?/MIVAR>
+      <?MIVAR NAME="$xpanatv_matchingText">$3<?/MIVAR>
+
+      <?MICOMMENT> ** flag to keep structures from being added twice     ** <?/MICOMMENT>
+      <?MIVAR>$(UNSETVAR,$xpanatv_anat_zdb_id_already_in_vector)<?/MIVAR>
+
+      <?MIBLOCK INDEX=$xpanatv_loop_item_zdb_id FOREACH=$xpanatv_anatomy_zdb_id_list>
+        <?MIBLOCK COND="$(EC,$xpanatv_loop_item_zdb_id,$xpanatv_item_zdb_id)">
+           <?MICOMMENT> ** if the id that was found by the query matches the id
+                           from this iteration of the loop, that means it's already
+                           in the list, and we set a flag so that it won't be
+                           added in the block below                      ** <?/MICOMMENT>
+           <?MIVAR NAME="$xpanatv_anat_zdb_id_already_in_vector">1<?/MIVAR>
+        <?/MIBLOCK>
+      <?/MIBLOCK>
+
+
+      <?MICOMMENT> ** open 'no duplicates' block ** <?/MICOMMENT>
+      <?MIBLOCK COND="$(NXST,$xpanatv_anat_zdb_id_already_in_vector)"> 
+
         <tr>
           <td bgcolor="#EEEEEE" valign=top> 
-            <?MICOMMENT> ----- exact match --- <?/MICOMMENT>
-            <?MIVAR NAME="$xpanatv_item_name">$1<?/MIVAR>
-            <?MIVAR NAME="$xpanatv_item_zdb_id">$2<?/MIVAR>
-            <?MIVAR NAME="$xpanatv_matchingText">$3<?/MIVAR>
-
+            
             <?MIVAR>$(VECAPPEND,$xpanatv_anatomy_zdb_id_list,$xpanatv_item_zdb_id)<?/MIVAR>
             <?MIVAR NAME="$xpanatv_item_name_safe">$(REPLACE,$xpanatv_item_name,"'","''")<?/MIVAR>
             <?MIVAR NAME="$xpanatv_processed_item_name">$(REPLACE,$xpanatv_item_name,",","|")<?/MIVAR>
@@ -218,7 +234,7 @@ where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
             </FONT>
           </td>
         </tr>
-      <?/MIBLOCK> <?MICOMMENT> *** close 'first row only' miblock *** <?/MICOMMENT> 
+	<?/MIBLOCK> <?MICOMMENT> ** close 'no duplicates' block ** <?/MICOMMENT>
     <?/MISQL>
 
 
