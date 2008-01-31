@@ -141,6 +141,10 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     
 <table width=100% border=0 cellpadding=3 cellspacing=0>
+
+<?MIBLOCK COND=$(AND,$(XST,$xpcur_c_experiment),$(EC,$xpcur_c_experiment,show))>
+
+
   <tr bgcolor=#CCCCCC>
     <td>Select</td>
     <td>
@@ -266,6 +270,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
     </td>
   </tr>
 
+<?/MIBLOCK> <?MICOMMENT> Show Hide Toggle <?/MICOMMENT>
 
 <?MICOMMENT> ==| Enter a New Experiment |== <?/MICOMMENT>
   <tr>

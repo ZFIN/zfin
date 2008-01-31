@@ -253,10 +253,13 @@ EFFECTS
 
   <?MIVAR><a href="javascript:onClick=urlSetCookie('experiment','hide','xpcur_c_')">$hide</a><?/MIVAR>
   <br>
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurexpression.apg';">$1<?/MISQL>
 
 <?/MIBLOCK>
 
+  <?MICOMMENT> Always call this page. Display the Add New Experiment form even when hidden<?/MICOMMENT>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurexpression.apg';">$1<?/MISQL>
+  
+  
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
   <br>$1 Starting Filters
