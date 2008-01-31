@@ -255,7 +255,7 @@ where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
               <B>does not exactly match a dictionary term, or synonym.<br>You can browse the dictionary
               <A HREF="/action/anatomy/search?action=term-by-stage-search">by stage</a> 
               or see the 
-              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha">complete list</a>.
+              <A HREF="/action/anatomy/search?action=complete-search">complete list</a>.
             <?/MIVAR>
           </FONT>
         </td>
