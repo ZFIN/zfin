@@ -181,12 +181,13 @@ public class Publication {
 
 
     public String toString() {
+        String newline = System.getProperty("line.separator");
         StringBuilder sb = new StringBuilder("Publication");
-        sb.append("\r");
+        sb.append(newline);
         sb.append("Title: " + title);
-        sb.append("\r");
+        sb.append(newline);
         sb.append("Authors: " + authors);
-        sb.append("\r");
+        sb.append(newline);
         sb.append("ZDB ID: " + zdbID);
         return sb.toString();
     }

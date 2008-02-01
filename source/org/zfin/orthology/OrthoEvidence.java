@@ -42,11 +42,12 @@ public class OrthoEvidence implements Serializable {
     }
 
     public String toString() {
+        String newline = System.getProperty("line.separator");
         StringBuilder sb = new StringBuilder("ORHTOLOGY EVIDENCE");
         sb.append("orthologueZdbID: ").append(orthologueZdbID);
-        sb.append("\r\n");
+        sb.append(newline);
         sb.append("orthologueEvidenceCode: ").append(orthologueEvidenceCode);
-        sb.append("\r\n");
+        sb.append(newline);
         sb.append("Publication: ").append(publication);
         return sb.toString();
     }

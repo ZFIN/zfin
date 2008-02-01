@@ -73,6 +73,7 @@ public final class FileUtil {
      * @param file
      */
     public static String readFile(File file) {
+        String newline = System.getProperty("line.separator");
         StringBuffer sb = new StringBuffer();
         BufferedReader lnr = null;
         FileReader fw = null;
@@ -82,7 +83,7 @@ public final class FileUtil {
             String s;
             while ((s = lnr.readLine()) != null) {
                 sb.append(s);
-                sb.append("\r\n");
+                sb.append(newline);
             }
         } catch (IOException ioe) {
             String message = "Error while reading the file " + file.getAbsolutePath();

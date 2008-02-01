@@ -278,8 +278,9 @@ public class CandidateController extends SimpleFormController {
         LOG.info("novelGene is set");
         MarkerType mt = mr.getMarkerTypeByName(rc.getCandidate().getMarkerType());
         if (mt == null){
+            String newline = System.getProperty("line.separator");
             String message = "No Marker Type with name " + rc.getCandidate().getMarkerType() + " found for " +
-                    " Candidate: \r" + rc.getCandidate();
+                    " Candidate: " + newline + rc.getCandidate();
             throw new NullPointerException(message);
         }
         // if a new gene is created make sure the abbreviation is lower case according to
