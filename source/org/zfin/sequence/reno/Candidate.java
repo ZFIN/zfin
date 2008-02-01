@@ -147,6 +147,23 @@ public class Candidate {
     public void setSuggestedName(String suggestedName) {
         this.suggestedName = suggestedName;
     }
+
+    public String toString(){
+		String newline = System.getProperty("line.separator");
+        StringBuilder sb = new StringBuilder();
+        sb.append("zdbID: " + zdbID);
+        sb.append(newline);
+        sb.append("Suggested name: " + suggestedName);
+        sb.append(newline);
+        sb.append("Marker type: " + markerType);
+        sb.append(newline);
+        sb.append("Date last finished: " + lastFinishedDate);
+        sb.append(newline);
+        sb.append("Problem: " + problem);
+        sb.append(newline);
+        sb.append("Note: " + note);
+        return sb.toString();
+    }
 }
 
 

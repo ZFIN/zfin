@@ -274,10 +274,21 @@ public class CandidateController extends SimpleFormController {
         Marker novelGene = new Marker();
 
         novelGene.setName(rc.getCandidate().getSuggestedName());
-        novelGene.setAbbreviation(rc.getCandidate().getSuggestedName());
         novelGene.setOwner(rc.getLockPerson());
         LOG.info("novelGene is set");
         MarkerType mt = mr.getMarkerTypeByName(rc.getCandidate().getMarkerType());
+        if (mt == null){
+            String message = "No Marker Type with name " + rc.getCandidate().getMarkerType() + " found for " +
+                    " Candidate: \r" + rc.getCandidate();
+            throw new NullPointerException(message);
+        }
+        // if a new gene is created make sure the abbreviation is lower case according to
+        // nomenclature conventions.
+        String suggestedAbbreviation = rc.getCandidate().getSuggestedName();
+        if (mt.getType() == Marker.Type.GENE) {
+            suggestedAbbreviation = suggestedAbbreviation.toLowerCase();
+        }
+        novelGene.setAbbreviation(suggestedAbbreviation);
         novelGene.setMarkerType(mt);
         mr.createMarker(novelGene, ((RedundancyRun) rc.getRun()).getRelationPublication());
         LOG.info("novelGene zdb_id: "+ novelGene.getZdbID());
