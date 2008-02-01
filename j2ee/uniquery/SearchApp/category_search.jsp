@@ -203,7 +203,7 @@
 </table>
 
 <!--- Display Category List (as a TABLE) --->
-<i><fond size=-1>(Each category displays the first 5000 results)</font><i> 
+<font size=-1>(Each category displays the first 5000 results)</font> 
 <center>
     <%= searchBean.getCategoryListingHTML(indexPath, queryTerm, categoryTerm, pageSize) %>
 </center>
