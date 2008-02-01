@@ -64,6 +64,16 @@ alter table snp_download
   references marker on delete cascade constraint
   snpd_mrkr_zdb_id_foreign_key_odc);
 
+create index snpd_variation_index 
+ on snp_download (snpd_variation)
+ using btree in idxdbs3 ;
+ 
+alter table snp_download
+  add constraint (foreign key (snpd_variation)
+  references sequence_ambiguity_code constraint 
+  snpd_variation_foreign_key) ;
+  
+
 
 rollback work ;
 
