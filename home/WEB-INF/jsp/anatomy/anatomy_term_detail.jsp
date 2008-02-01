@@ -145,6 +145,15 @@
         <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_expressed_genes.jsp" flush="false"/>
     </c:if>
 </b>
+    <c:if test="${!formBean.expressedGenesExist && formBean.anatomyStatistics.numberOfTotalDistinctObjects > 0}">
+        No genes directly annotated to this structure.<br/>
+    Show <a href='/${formBean.expressionSearchLinkSubstructures}'>
+                   <zfin:choice choicePattern="0#genes| 1#gene| 2#genes"
+                                integerEntity="${formBean.anatomyStatistics.numberOfTotalDistinctObjects}"
+                                includeNumber="true"/>
+             </a> in substructures.
+    </c:if>
+
 
 <p/>
 
