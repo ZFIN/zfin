@@ -2076,7 +2076,7 @@ union
              need to send values as parameters. There possibly is nicer
              solution...
  <?/MICOMMENT>
- <input type=button value="Add it!" onClick=new_mrkrrel(this.form.relship.options[this.form.relship.selectedIndex].value,this.form.mrkr_abbrev.value);>
+ <input type=button value="Add it!" onClick=new_mrkrrel(this.form.relship.options[this.form.relship.selectedIndex].value,this.form.mrkr_abbrev.value.strip());>
 
   <?MIVAR COND="$(AND,$(>,$mrel_count,0),$(XST,$UPDATE))">
      <br><b>Add Reference:</b>
