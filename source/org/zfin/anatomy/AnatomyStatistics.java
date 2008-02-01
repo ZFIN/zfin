@@ -23,7 +23,7 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     // ToDo: move into a formatting class for presentation layer
     private static final ChoiceFormat geneChoice = new ChoiceFormat("0#genes| 1#gene| 2#genes");
     private static final ChoiceFormat synonymChoice = new ChoiceFormat("0#synonyms| 1#synonym| 2#synonyms");
-    private static final String NEWLINE = "\r";
+    private static final String NEWLINE = System.getProperty("line.separator");
     private static final String TAB = "\t";
 
     public String getZdbID() {

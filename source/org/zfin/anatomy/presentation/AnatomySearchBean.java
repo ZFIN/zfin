@@ -45,7 +45,7 @@ public class AnatomySearchBean extends PaginationBean {
     private List<ExpressedGeneDisplay> allExpressedMarkers;
     private AnatomyStatistics anatomyStatistics;
     private AnatomyStatistics anatomyStatisticsMutant;
-    private static final String NEWLINE = "\r";
+    private static final String NEWLINE = System.getProperty("line.separator");
     private int numberOfHighQualityProbes;
     private int markerCount;
 

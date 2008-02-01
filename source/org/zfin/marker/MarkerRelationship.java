@@ -107,15 +107,16 @@ public class MarkerRelationship {
     }
 
      public String toString(){
+         String newline = System.getProperty("line.separator");
         StringBuilder sb = new StringBuilder("MARKER_RELATIONSHIP");
         sb.append("zdbID: " + zdbID);
-        sb.append("\r\n");
+        sb.append(newline);
         sb.append("type: " + type);
-        sb.append("\r\n");
+         sb.append(newline);
         sb.append("firstMarker: " + firstMarker);
-        sb.append("\r\n");
+         sb.append(newline);
         sb.append("secondMarker: " + secondMarker);
-        sb.append("\r\n");
+         sb.append(newline);
         return sb.toString();
 
      }

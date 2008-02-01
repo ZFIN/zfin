@@ -13,7 +13,7 @@ public class DevelopmentStage {
     private float hoursEnd;
     private String otherFeature;
     private String abbreviation;
-    public static final String NEWLINE_PLUS_INDENT = "\r    ";
+    public static final String NEWLINE_PLUS_INDENT = System.getProperty("line.separator") + "    ";
 
 
     public long getStageID() {
