@@ -222,9 +222,6 @@ function jump(form_select){
   		}
 	}
 
-    function trim(stringToTrim) {
-        return stringToTrim.replace(/^\s+|\s+$/g,"");
-    }
 
 
 	function new_seqnum() {
@@ -232,13 +229,13 @@ function jump(form_select){
 		var dbfull=document.updateseq.seqdb[dbind].text;
          
         var pattern = /-/ ; 
-        var dbname = trim(dbfull.split(pattern)[0]) ; 
-        var seq_type = trim(dbfull.split(pattern)[1]) ; 
+        var dbname = dbfull.split(pattern)[0].strip() ; 
+        var seq_type = dbfull.split(pattern)[1].strip() ; 
 
         // this is required for the form processing for some reason
         seq_type='sequence&fdbcont_data='+seq_type ; 
-		var seq_acc=document.updateseq.seq_acc.value;
-		var fdb_id =document.updateseq.seqdb.value;
+		var seq_acc=document.updateseq.seq_acc.value.strip();
+		var fdb_id =document.updateseq.seqdb.value.strip();
         // alert('dbname: '+ dbname+ ' seq_type: '+seq_type) ; 
         // alert('fdb_id: '+ fdb_id+ ' seq_acc: '+seq_acc) ; 
 
@@ -284,8 +281,8 @@ function jump(form_select){
 
 	function update_seqnum() {
 		var dbind=document.updateseq.upd_seq_zdb.selectedIndex;
-		var seq_zdb=document.updateseq.upd_seq_zdb[dbind].value;
-		var seq_len=document.updateseq.upd_seq_length.value;
+		var seq_zdb=document.updateseq.upd_seq_zdb[dbind].value.strip();
+		var seq_len=document.updateseq.upd_seq_length.value.strip();
 		var dbind=document.updateseq.upd_seq_type.selectedIndex;
 		var seq_type=document.updateseq.upd_seq_type[dbind].value;
 		if (seq_zdb != '') {
@@ -295,9 +292,9 @@ function jump(form_select){
 	function new_othernum() {
 		var dbind=document.updateother.seqdb.selectedIndex;
 		var dbname=document.updateother.seqdb[dbind].value;
-		var seq_acc=document.updateother.seq_acc.value;
+		var seq_acc=document.updateother.seq_acc.value.strip();
 		var dbind=document.updateother.seq_super.selectedIndex;
-		var seq_type=document.updateother.seq_super[dbind].value;
+		var seq_type=document.updateother.seq_super[dbind].value.strip();
 		if (seq_acc != '') {
 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&ancor=other&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type);
 		}
@@ -318,13 +315,13 @@ function jump(form_select){
 	function new_proseqnum() {
 		var dbind=document.updateps.prt_seqdb.selectedIndex;
 		var dbname=document.updateps.prt_seqdb[dbind].value;
-		var seq_acc=document.updateps.prt_seq_acc.value;
+		var seq_acc=document.updateps.prt_seq_acc.value.strip() ;
 		if (seq_acc != ''){
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super=protein&fdbcont_data=domain');
   		}
 	}
 	function new_mrkrrel(mrkrrel_type, mrkr_abbrev_value) {
-		var mrkr_abbrev = escape(mrkr_abbrev_value);
+		var mrkr_abbrev = escape(mrkr_abbrev_value.strip());
 		mrkrrel_type.replace(/ /,"%20");
 		if (mrkr_abbrev != '') {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrrel&attr_type=special-newmrkrrel&old_value='+mrkrrel_type+'&new_value='+mrkr_abbrev+'&target_table=marker');
@@ -353,31 +350,31 @@ function jump(form_select){
 
 
 	function new_attrib_nomen(nomen_zdb,pub_obj) {
-        	var pub_id = escape(pub_obj.value);
+        	var pub_id = escape(pub_obj.value.strip());
 		if ((nomen_zdb != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+nomen_zdb+'&new_value='+pub_id+'&target_table=marker&info=nomen');
   		}
 	}
 
 	function new_attrib_mrel(attrmrelform) {
-		var mrkr_abbrev=escape(attrmrelform.attrib_mrkr_abbrev.value);
-		var pub_id=attrmrelform.attrib_mrel_pubid.value.toUpperCase();
+		var mrkr_abbrev=escape(attrmrelform.attrib_mrkr_abbrev.value.strip());
+		var pub_id=attrmrelform.attrib_mrel_pubid.value.toUpperCase().strip();
 		if ((mrkr_abbrev != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+mrkr_abbrev+'&new_value='+pub_id+'&target_table=marker&info=mrel');
   		}
 	}
 
 	function new_attrib_ssprevname(objform) {
-		var prev_name=escape(objform.attrib_ssprevname.value);
-		var pub_id=objform.attrib_ssprevname_pubid.value.toUpperCase();
+		var prev_name=escape(objform.attrib_ssprevname.value.strip());
+		var pub_id=objform.attrib_ssprevname_pubid.value.toUpperCase().strip();
 		if ((prev_name != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
   		}
 	}
 
 	function new_attrib_prevname(objform) {
-		var prev_name=escape(objform.attrib_prevname.value);
-		var pub_id=objform.attrib_prevname_pubid.value.toUpperCase();
+		var prev_name=escape(objform.attrib_prevname.value.strip());
+		var pub_id=objform.attrib_prevname_pubid.value.toUpperCase().strip() ;
 
 		if ((prev_name != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
@@ -385,37 +382,37 @@ function jump(form_select){
 	}
 
 	function new_attrib_prtnseq() {
-		var seq_acc = document.updateps.attrib_prtn_seqacc.value;
-		var pub_id = document.updateps.attrib_prtn_pubid.value.toUpperCase();
+		var seq_acc = document.updateps.attrib_prtn_seqacc.value.strip() ;
+		var pub_id = document.updateps.attrib_prtn_pubid.value.toUpperCase().strip() ;
 		if((seq_acc != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
 		}
 	}
 	function new_attrib_seq() {
-		var seq_acc = document.updateseq.attrib_seq_acc.value;
-		var pub_id = document.updateseq.attrib_seq_pubid.value.toUpperCase();
-		var fdb_id = document.updateseq.attrib_seq_fdb.value.toUpperCase();
+		var seq_acc = document.updateseq.attrib_seq_acc.value.strip();
+		var pub_id = document.updateseq.attrib_seq_pubid.value.toUpperCase().strip();
+		var fdb_id = document.updateseq.attrib_seq_fdb.value.toUpperCase().strip();
 		if((seq_acc != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc&xtra_param='+fdb_id);
 		}
 	}
 	function new_attrib_other() {
-		var seq_acc = document.updateother.attrib_seq_acc.value;
-		var pub_id = document.updateother.attrib_seq_pubid.value.toUpperCase();
+		var seq_acc = document.updateother.attrib_seq_acc.value.strip();
+		var pub_id = document.updateother.attrib_seq_pubid.value.toUpperCase().strip();
 		if((seq_acc != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
 		}
 	}
 
 	function new_attrib_mutant(dataid, objform) {
-		var pub_id = objform.attrib_mutant_pubid.value.toUpperCase();
+		var pub_id = objform.attrib_mutant_pubid.value.toUpperCase().strip();
 		if((dataid != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=cloned_gene');
 		}
 	}
 
  	function new_attrib_mrkrseq(dataid) {
- 		var pub_id = document.newdata.mrkrview_seq_pubid.value.toUpperCase();
+ 		var pub_id = document.newdata.mrkrview_seq_pubid.value.toUpperCase().strip();
  		if((dataid != '')&&(pub_id != '')) {
  			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=marker_sequence');
  		}
