@@ -133,7 +133,7 @@ public class AnatomyItem {
         this.nameOrder = nameOrder;
     }
 
-    private static final String NEWLINE = "\r";
+    private static final String NEWLINE = System.getProperty("line.separator");
     private static final String NEWLINE_PLUS_INDENT = NEWLINE + "    ";
 
     public String toString() {
