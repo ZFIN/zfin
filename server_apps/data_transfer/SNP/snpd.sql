@@ -15,9 +15,12 @@ create table snp_download(
         snpd_rs_acc_num varchar(40),
         snpd_ss_acc_num varchar(40) not null constraint
                 snpd_ss_acc_num_not_null,
-        snpd_pub_zdb_id varchar(50), --Jeff Smith attribution
+        snpd_pub_zdb_id varchar(50) not null constraint
+                snpd_pub_zdb_id_not_null,
+		 --Jeff Smith attribution needs to be a
+		--default here at some point.
 	snpd_chromosome_number varchar(4),
-	snpd_variation varchar(10),
+	snpd_variation varchar(20),
 	snpd_left_end varchar(3),
 	snpd_seq_type varchar(20)
 )
@@ -38,27 +41,19 @@ create unique index snp_download_alternate_key_index
   using btree in idxdbs2 ;
 
 create unique index snpd_name_alternate_key_index
- on snp_download (snpd_name)
+ on snp_download (snpd_name,snpd_ss_acc_num, snpd_abbrev)
  using btree in idxdbs1;
 
-create unique index snpd_abbrev_alternate_key_index
- on snp_download (snpd_abbrev)
- using btree in idxdbs1;
- 
 --these two constraints allow us to mimic marker for the
 --time when snps go into marker, or equivalent table.
 
 alter table snp_download
-  add constraint unique (snpd_name)
-  constraint snpd_name_alternate_key ;
-
-alter table snp_download
-  add constraint unique (snpd_abbrev)
-  constraint snpd_abbrev_alternate_key ;
-
-alter table snp_download
   add constraint unique (snpd_ss_acc_num)
-  constraint snpd_ss_acc_num_alternate_key ;
+  constraint snpd_alternate_ss_acc_num_key ;
+
+alter table snp_download
+  add constraint unique (snpd_name, snpd_abbrev, snpd_ss_acc_num)
+  constraint snpd_alternate_key ;
 
 alter table snp_download  
   add constraint primary key (snpd_pk_id)
@@ -68,6 +63,7 @@ alter table snp_download
   add constraint (foreign key (snpd_mrkr_Zdb_id)
   references marker on delete cascade constraint
   snpd_mrkr_zdb_id_foreign_key_odc);
+
 
 rollback work ;
 
