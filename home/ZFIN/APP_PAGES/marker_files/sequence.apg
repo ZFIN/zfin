@@ -38,32 +38,26 @@
         from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
 
 	function new_attrib_seq() {
-		var seq_acc = document.updater.attrib_seq_acc.value;
-		var pub_id = document.updater.attrib_seq_pubid.value.toUpperCase();
-		var fdb_id = document.updater.attrib_seq_fdb.value.toUpperCase();
+		var seq_acc = document.updater.attrib_seq_acc.value.strip() ;
+		var pub_id = document.updater.attrib_seq_pubid.value.toUpperCase().strip() ;
+		var fdb_id = document.updater.attrib_seq_fdb.value.toUpperCase().strip() ;
 		if((seq_acc != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=$target_table&info=seqacc&caller=sequence.apg&xtra_param='+fdb_id);
 		}
 	}
-
-    function trim(stringToTrim) {
-        return stringToTrim.replace(/^\s+|\s+$/g,"");
-    }
 
 	function new_seqnum() {
 		var dbind=document.updater.seqdb.selectedIndex;
 		var dbfull=document.updater.seqdb[dbind].text;
          
         var pattern = /-/ ; 
-        var dbname = trim(dbfull.split(pattern)[0]) ; 
-        var seq_type = trim(dbfull.split(pattern)[1]) ; 
+        var dbname = dbfull.split(pattern)[0].strip() ; 
+        var seq_type = dbfull.split(pattern)[1].strip() ; 
 
         // this is required for the form processing for some reason
         seq_type='sequence&fdbcont_data='+seq_type ; 
-		var seq_acc=document.updater.seq_acc.value;
-		var fdb_id =document.updater.seqdb.value;
-        // alert('dbname: '+ dbname+ ' seq_type: '+seq_type) ; 
-        // alert('fdb_id: '+ fdb_id+ ' seq_acc: '+seq_acc) ; 
+		var seq_acc=document.updater.seq_acc.value.strip();
+		var fdb_id =document.updater.seqdb.value.strip();
 
 
         // the following checks enforce correct accession# format
@@ -108,7 +102,7 @@
 	function update_seqnum() {
 		var dbind=document.updater.upd_seq_zdb.selectedIndex;
 		var seq_zdb=document.updater.upd_seq_zdb[dbind].value;
-		var seq_len=document.updater.upd_seq_length.value;
+		var seq_len=document.updater.upd_seq_length.value.strip() ;
 		var dbind=document.updater.upd_seq_type.selectedIndex;
 		var seq_type=document.updater.upd_seq_type[dbind].value;
 		if (seq_zdb != '') {
