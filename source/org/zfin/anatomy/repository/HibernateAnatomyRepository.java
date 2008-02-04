@@ -3,7 +3,6 @@ package org.zfin.anatomy.repository;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -127,6 +126,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
     public List<AnatomyStatistics> getAllAnatomyItemStatistics() {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(AnatomyStatistics.class);
+        criteria.add(Restrictions.eq("type", AnatomyStatistics.Type.GENE));
         //ToDO: find a way to sort by the joint table anatomyItem.name
 /*
         criteria.addOrder(Order.asc("orderNames"));
