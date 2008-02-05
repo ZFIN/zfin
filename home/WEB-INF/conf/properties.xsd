@@ -45,6 +45,7 @@
             <xs:sequence>
                 <xs:element name="adminEmailAddress" type="xs:string"/>
                 <xs:element name="validationEmailOther" type="xs:string"/>
+                <xs:element name="requestNewAnatomyTerm" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

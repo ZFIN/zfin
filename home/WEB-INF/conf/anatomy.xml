@@ -14,6 +14,7 @@
                 <prop key="/anatomy/search">anatomySearch</prop>
                 <prop key="/anatomy/high-quality-probes">highQualityProbes</prop>
                 <prop key="/anatomy/all-expressed-genes">allExpressedGenes</prop>
+                <prop key="/anatomy/request-new-term">requestNewAnatomyTerm</prop>
             </props>
         </property>
     </bean>
@@ -33,6 +34,16 @@
     <bean name="allExpressedGenes" class="org.zfin.anatomy.presentation.AllExpressedGenesController" autowire="byName"/>
 
     <bean name="auditLogDetails" class="org.zfin.audit.presentation.DetailsController" autowire="byName"/>
+
+    <bean name="requestNewAnatomyTerm" class="org.zfin.anatomy.presentation.RequestNewAnatomyTermController" autowire="byName">
+        <property name="successView" value="request-term-feedback.page"/>
+        <property name="formView" value="request-new-anatomy-term.page"/>
+        <property name="mailSender">
+            <ref bean="mailSender"/>
+        </property>
+    </bean>
+
+    <bean name="mailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender"/>
 
     <!-- Designates to use the repository using hibernate -->
     <bean id="anatomyRepository" class="org.zfin.anatomy.repository.HibernateAnatomyRepository" />

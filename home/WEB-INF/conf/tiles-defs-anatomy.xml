@@ -26,9 +26,14 @@
         <put name="body" value="/WEB-INF/jsp/anatomy/all_expressed_genes.jsp"/>
     </definition>
 
-    <definition name="publication-search_result.page" extends="main_layout">
-        <put name="staticTitle" value="ZFIN: Publication search Result: " />
-        <put name="body" value="/WEB-INF/jsp/publication/publication_search_result.jsp"/>
+    <definition name="request-term-feedback.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Request new Anatomical Term: Thank you." />
+        <put name="body" value="/WEB-INF/jsp/anatomy/request_term_feedback.jsp"/>
+    </definition>
+
+    <definition name="request-new-anatomy-term.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Request new Anatomical Term: " />
+        <put name="body" value="/WEB-INF/jsp/anatomy/request_term.jsp"/>
     </definition>
 
     <!-- Needs to go into a more generic file -->
