@@ -527,17 +527,25 @@ marker.<?/MIVAR>
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
       <?/MISQL>
 
-	<?MIVAR NAME=$fdbcont_zdb_id>$xtra_param<?/MIVAR>
+      <?MIVAR NAME=$fdbcont_zdb_id>$xtra_param<?/MIVAR>
 
+      <?MIBLOCK COND=$(EC,$fdbcont_zdb_id,)>
       <?MISQL COND="$(EC,$info,seqacc)" SQL="
 	   select dblink_zdb_id 
 	     from db_link
 	    where dblink_linked_recid = '$OID'
-	      and dblink_acc_num = '$old_value'
-	      and dblink_fdbcont_zdb_id = '$fdbcont_zdb_id'
-	    ;">
+	      and dblink_acc_num = '$old_value';">
+	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
+      <?/MISQL>
+      <?MIELSE>
+      <?MISQL COND="$(EC,$info,seqacc)" SQL="
+	   select dblink_zdb_id 
+	     from db_link
+	    where dblink_linked_recid = '$OID'
+	      and dblink_acc_num = '$old_value';">
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
       <?/MISQL>	
+      <?/MIBLOCK>
    
       <?MIBLOCK COND="$(EC,$info,deletionmarker)">
          <?MISQL SQL="
