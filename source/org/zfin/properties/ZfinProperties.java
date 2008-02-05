@@ -107,6 +107,10 @@ public final class ZfinProperties {
         return stripEmailBackslash(props.getEmail().getAdminEmailAddress());
     }
 
+    public static String[] getRequestNewAnatomyTermEmailAddresses() {
+        return getRequestNewAnatomyTermEmail().split(" ");
+    }
+
     protected static String stripEmailBackslash(String inputString) {
         return inputString.replaceAll("\\\\@", "@");
     }
