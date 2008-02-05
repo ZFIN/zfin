@@ -111,6 +111,11 @@ public final class ZfinProperties {
         return getRequestNewAnatomyTermEmail().split(" ");
     }
 
+    public static String getRequestNewAnatomyTermEmail() {
+        checkValidProperties();
+        return stripEmailBackslash(props.getEmail().getRequestNewAnatomyTerm());
+    }
+
     protected static String stripEmailBackslash(String inputString) {
         return inputString.replaceAll("\\\\@", "@");
     }

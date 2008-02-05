@@ -26,7 +26,8 @@
     </Path>
     <Email>
         <adminEmailAddress><!--|ZFIN_ADMIN|--></adminEmailAddress>
-        <validationEmailOther><!--|VALIDATION_EMAIL_OTHER|--></validationEmailOther>
+        <validationEmailOther><!--|VALIDATION_EMAIL_OTHER|--></validationEmailOther>        
+	<requestNewAnatomyTerm><!--|REQUEST_NEW_ANATOMY_EMAIL|--></requestNewAnatomyTerm>
     </Email>
     <Logging>
         <logFileName>zfin_logger.log</logFileName>
