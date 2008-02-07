@@ -11,14 +11,34 @@ cd  <!--|ROOT_PATH|-->/server_apps/data_transfer/Load/Entrez/
 #output is 
 
 #taxid|entrez_id|aa_acc|nt_acc|
+rm -f gene2accession.gz
 wget -q ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz
+
+cp gene2accession.gz gene2accession.gz.hold
 
 #entrez_id|symbol|name|
 #entrez_id|xref|
-wget -q ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz
 
+rm -f gene_info.gz
+wget -q ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz
+cp gene_info.gz gene_info.gz.hold
+
+# bail if gunzip fails
 gunzip -f gene2accession.gz
+if($status != "0") then
+	echo "ERROR gunzip gene2accession failed" 
+	rm -f gene2accession.gz
+	exit 1
+endif 
+
 gunzip -f gene_info.gz
+if($status != "0") then     
+        echo "ERROR gunzip gene_info failed"
+        rm -f gene_ino.gz
+	exit 1  
+endif
+
+
 
 #Homo sapiens (Human)	 [TaxID: 9606]
 #Mus musculus (Mouse)	 [TaxID: 10090]
@@ -100,4 +120,5 @@ setenv   SQLHOSTS_FILE "<!--|SQLHOSTS_FILE|-->"
 setenv   INFORMIX_PORT "<!--|INFORMIX_PORT|-->"
 setenv    INFORMIX_DIR "<!--|INFORMIX_DIR|-->"
 
+# double check the load files have content
 <!--|INFORMIX_DIR|-->/bin/dbaccess <!--|DB_NAME|--> load_entrez_orth.sql
