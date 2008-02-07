@@ -20,6 +20,10 @@
   <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where 
        and genox_exp_zdb_id = '$envID'
        and (apato_entity_a_zdb_id = '$anatID' or apato_entity_b_zdb_id = '$anatID')
+       and not exists  (
+               select * from experiment_condition 
+               where expcond_exp_zdb_id = genox_exp_zdb_id
+                 and expcond_mrkr_zdb_id = '' )
   <?/MIVAR>
 <?/MIBLOCK>
 
