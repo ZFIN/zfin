@@ -350,15 +350,17 @@ public class AnatomySearchBean extends PaginationBean {
     public String getExpressionSearchLink(boolean includeSubstructures) {
         URLCreator url = new URLCreator(ZfinProperties.getWebDriver());
         url.addNamevaluePair("MIval", "aa-xpatselect.apg");
-        url.addNamevaluePair("query_results", "true");
+        url.addNamevaluePair("query_results", "exist");
         url.addNamevaluePair("START", "0");
-        url.addNamevaluePair("WINSIZE", "25");
         url.addNamevaluePair("TA_selected_structures", getAnatomyItem().getName());
         url.addNamevaluePair("xpatsel_processed_selected_structures", getAnatomyItem().getName());
         if (includeSubstructures)
             url.addNamevaluePair("include_substructures", "checked");
-        else
-            url.addNamevaluePair("include_substructures", "unchecked");
+        url.addNamevaluePair("structure_bool","and");
+        url.addNamevaluePair("xpatsel_jtypeDirect","checked");
+        url.addNamevaluePair("xpatsel_jtypePublished","checked");
+        url.addNamevaluePair("WINSIZE", "25");
+        url.addNamevaluePair("xpatsel_calledBySelf","true");
         return url.getFullURL();
     }
 
