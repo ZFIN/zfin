@@ -470,3 +470,27 @@ div.auto_complete ul strong.highlight {
     width: 98%; 
     margin-left: 1%;
   }
+
+  .curation-box-control-text {
+    text-decoration: none;
+    font-size: 75%;
+  }
+
+
+    a.small-new-link:link{
+    text-decoration: none;
+    font-size: 75%;
+    color:blue ; 
+    }
+    a.small-new-link:visited{
+    text-decoration: none;
+    font-size: 75%;
+    color:blue ; 
+    }
+
+    a.small-new-link:hover{
+    text-decoration: none;
+    font-size: 75%;
+    color:green ; 
+    }
+

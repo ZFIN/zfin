@@ -747,7 +747,6 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
 
 
-<br>
 <a name=attrib>
 <p>
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#attrib" method=post name=attribution onSubmit="setCookie('attribution_update','update','pubcur_c_');setCookie('anchor','attrib','pubcur_c_');">
@@ -786,6 +785,15 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
       <?/MIVAR>
          <?/MICOMMENT>
 
+ <?MIVAR>
+  <a class="small-new-link" href="" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE&newmrkrSource=\'$OID\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Gene</a> 
+  &nbsp;
+  <a class="small-new-link" href="" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=MRPHLNO&newmrkrSource='$OID'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Morpholino</a> 
+  &nbsp;
+  <a class="small-new-link" href="" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg&calling_form=linkage&pub_source=$OID&source_specified=true","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add Linkages</a> 
+ <?/MIVAR>
+
+  <br/>
 
        
   *Attribute Mrkr: 

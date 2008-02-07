@@ -88,15 +88,6 @@ PREFIX:   patosum_
 
 <a name="mutants"></a>
 
-<style type="text/css">
-
-.curation-box-control-text {
- text-decoration: none;
- font-size: 75%;
-}
-
-
-</style>
 
 <span style="margin-left: 1em; float: left;">
 <span class="curation-box-control-text">check:</span>
