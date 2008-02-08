@@ -44,7 +44,7 @@ import org.zfin.infrastructure.EnumValidationTest;
         MapAccessionDbLinkTest.class,
         EnumValidationTest.class,
         MultiRunTest.class
-        ,MicroArrayTest.class     // Takes 1.5 min to run, but works.
+//        ,MicroArrayTest.class     // Takes 1.5 min to run, but works.
         })
 
 public class DbUnitTests {

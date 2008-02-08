@@ -38,10 +38,10 @@ public class AlignmentsController extends AbstractCommandController {
         String runCandidateZdbID = request.getParameter(RUNCANDIDATE_ZDBID) ;
         RunCandidate runCandidate =   RepositoryFactory.getRenoRepository().getRunCandidateByID( runCandidateZdbID ) ;
         CandidateBean candidateBean = new CandidateBean() ;
-        logger.info("ZdbID[" +runCandidateZdbID + "] runCandidate[" + runCandidate+"]") ;
+        logger.debug("ZdbID[" +runCandidateZdbID + "] runCandidate[" + runCandidate+"]") ;
 
         if(runCandidate!=null){
-            logger.info("ZdbID[" +runCandidateZdbID + "] runCandidate queries.size()["+runCandidate.getCandidateQueries() +"]") ;
+            logger.debug("ZdbID[" +runCandidateZdbID + "] runCandidate queries.size()["+runCandidate.getCandidateQueries() +"]") ;
             candidateBean.setRunCandidate(runCandidate) ;
         }
         else{

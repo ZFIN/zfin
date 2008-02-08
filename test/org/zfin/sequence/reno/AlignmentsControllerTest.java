@@ -79,7 +79,7 @@ public class AlignmentsControllerTest {
         session.beginTransaction();
         try {
             String runCandidateZdbID = insertRunCandidate();
-            logger.info("inserted runCandidate: " + runCandidateZdbID);
+            logger.debug("inserted runCandidate: " + runCandidateZdbID);
             RunCandidate runCandidate = renoRepository.getRunCandidateByID(runCandidateZdbID);
             assertNotNull("RunCandidate is NOT NULL following insert", runCandidate);
             Run run = runCandidate.getRun();
