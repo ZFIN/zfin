@@ -1,0 +1,303 @@
+<?MICOMMENT>
+FILE:     gocuration.apg
+PREFIX:   gocur_
+
+This page is the GO tab. 
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR> 
+
+<SCRIPT>
+
+ function edit_rec(mrkrgoevid) {
+     helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-gomodify.apg&OID="+mrkrgoevid,"helpwindow","scrollbars=yes,height=850,width=550,resizable=yes");
+ }
+
+ function view_notes(mrkrgoevid) {
+     helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-gonotes.apg&OID="+mrkrgoevid,"helpwindow","scrollbars=yes,height=200,width=300,resizable=yes");
+ }
+
+ function delete_rec(mrkrgoevid) {
+    var answer = confirm("Delete GO annotation?")
+    if(answer){
+        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+mrkrgoevid+'&attr=delall'); 
+    }
+ }
+
+function new_clone(pubid,mrkrzdbid,goid,goterm,evidencecode,infdb,mgte_id,isnot,contributes,infmem){
+     helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&pub_id="+pubid+"&OID="+mrkrzdbid+"&go_id="+goid+"&go_term="+goterm+"&evidence_code="+evidencecode+"&inf_db="+infdb+"&clone_note_id="+mgte_id+"&contributes="+contributes+"&is_not="+isnot+"&inf_mem="+infmem,"helpwindow","scrollbars=yes,height=850,width=850,resizable=yes");
+}
+
+
+function new_GO(pubid,mrkrzdbid){
+     helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&pub_id="+pubid+"&OID="+mrkrzdbid+"","helpwindow","scrollbars=yes,height=850,width=850,resizable=yes");
+}
+
+</SCRIPT>  
+
+
+
+
+
+<?MICOMMENT>Setting initial values<?/MICOMMENT>
+<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name ='QuickGO'">
+<?MIVAR NAME=fdbname>$1<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR name=$highlighter><!--|HIGHLIGHTER_COLOR|--><?/MIVAR>
+<?MIVAR name=$white>#ffffff<?/MIVAR>
+<?MIVAR name=$highlighter>odd<?/MIVAR>
+<?MIVAR name=$white>none<?/MIVAR>
+<?MIVAR name=$row_color>$white<?/MIVAR>
+<?MIVAR name=$dbase><?/MIVAR>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+  <p>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+
+<?MICOMMENT>New GO Button<?/MICOMMENT>
+<br>
+<form name=newgo method=query action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-markergoentry.apg">
+<?MIVAR>
+    <INPUT TYPE=HIDDEN NAME=pub_id VALUE="'$OID'"> 
+<?/MIVAR>
+    <a href="" onClick=new_GO(document.newgo.pub_id.value,document.newgo.OID.value) >[Add New GO]</a>:
+    <select name=OID>
+    <?MISQL SQL="
+      select distinct mrkr_zdb_id, mrkr_abbrev, mrkr_abbrev_order
+        from marker, record_attribution
+       where recattrib_data_zdb_id = mrkr_zdb_id
+         and recattrib_source_zdb_id = '$OID' 
+         and recattrib_source_type = 'standard'
+         and mrkr_zdb_id like 'ZDB-GENE%'
+       order by mrkr_abbrev_order;">
+      <option value=$1>$2</option>
+    <?/MISQL> 
+    </select>
+</form>
+
+
+<?MICOMMENT>Assess qualifier for genes in pub<?/MICOMMENT>
+<?MIVAR NAME=qualifier>false<?/MIVAR>
+<?MISQL SQL="
+select count(*)
+from 
+publication p,
+marker_go_term_evidence mgte,
+go_evidence_flag gf
+where
+p.zdb_id=mgte.mrkrgoev_source_zdb_id
+and
+gf.goevflag_mrkrgoev_zdb_id=mgte.mrkrgoev_zdb_id
+and 
+p.zdb_id = '$OID'
+">
+ <?MIBLOCK COND="$(>,$1,0)">
+    <?MIVAR NAME=qualifier>true<?/MIVAR>
+ <?/MIBLOCK>    
+<?/MISQL>
+
+
+
+<table  cellspacing=0 cellpadding=0 width=100%>
+
+<tr  height=25 align=left bgcolor=#cccccc> 
+<th> Gene </th>
+<?MIVAR COND="$(EC,$qualifier,true)">
+<th nowrap> Contributes to </th>
+<?/MIVAR>
+<th> GO Term </th>
+<th> Evidence </th>
+<th nowrap> Inferred From </th>
+<th> Notes </th>
+<th> Annotation Actions </th>
+</tr>
+
+<?MIVAR NAME="$gocur_lastgene"><?/MIVAR>
+
+<?MISQL SQL="
+select 
+mgte.mrkrgoev_mrkr_zdb_id,mgte.mrkrgoev_go_term_zdb_id, mgte.mrkrgoev_evidence_code,
+gt.goterm_name,gt.goterm_go_id,
+m.mrkr_abbrev,
+goevflag_gflag_name,
+mgte.mrkrgoev_zdb_id,
+mgte.mrkrgoev_notes
+ from marker_go_term_evidence mgte, go_term gt, marker m, outer go_evidence_flag 
+where 
+m.mrkr_zdb_id=mgte.mrkrgoev_mrkr_zdb_id
+and
+gt.goterm_zdb_id=mgte.mrkrgoev_go_term_zdb_id
+and
+mgte.mrkrgoev_source_zdb_id='$OID'
+and 
+mgte.mrkrgoev_zdb_id = goevflag_mrkrgoev_zdb_id
+order by
+m.mrkr_abbrev,
+gt.goterm_name
+">
+<?MIVAR NAME="$gocur_mrkr_zdb_id">$1<?/MIVAR>
+<?MIVAR NAME="$gocur_go_term_zdb_id">$2<?/MIVAR>
+<?MIVAR NAME="$gocur_evidence_code">$3<?/MIVAR>
+<?MIVAR NAME="$gocur_term_name">$4<?/MIVAR>
+<?MIVAR NAME="$goid">$5<?/MIVAR>
+<?MIVAR NAME="$gocur_mrkr_abbrev">$6<?/MIVAR>
+<?MIVAR NAME="$gocur_gflagname">$7<?/MIVAR>
+<?MIVAR NAME="$gocur_mrkrgoevid_zdb_id">$8<?/MIVAR>
+<?MIVAR NAME="$gocur_mrkrgoev_notes">$9<?/MIVAR>
+<?MIVAR NAME=isnot>f<?/MIVAR>
+<?MIVAR NAME=contribs>f<?/MIVAR>
+<?MIVAR COND="$(EC,$gocur_gflagname,not)" NAME=$isnot>t<?/MIVAR>
+<?MIVAR COND="$(EC,$gocur_gflagname,contributes to)" NAME=$contribs>t<?/MIVAR>
+
+
+<?MIBLOCK COND="$(EC,$isnot,t)">
+ <?MIVAR NAME=not>NOT<?/MIVAR>
+<?MIELSE>
+<?MIVAR NAME=not><?/MIVAR>
+<?/MIBLOCK>
+
+
+<?MIVAR COND="$(NE,$gocur_mrkr_abbrev,$gocur_lastgene)">
+<tr bgcolor=#aaaaaa>
+<?MIVAR COND="$(EC,$qualifier,true)"><td colspan=7><img src="/images/transp.gif" width="1" height="1"></td><?/MIVAR>
+<?MIVAR COND="$(NC,$qualifier,true)"><td colspan=6><img src="/images/transp.gif" width="1" height="1"></td><?/MIVAR>
+</tr>
+<?/MIVAR>
+<?MIVAR>
+<tr height=28 class=$row_color>
+<?/MIVAR>
+<td>
+<?MIVAR COND="$(NE,$gocur_mrkr_abbrev,$gocur_lastgene)">
+<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gocur_mrkr_zdb_id">$gocur_mrkr_abbrev</a>
+<a href="" onClick=new_GO('$OID','$gocur_mrkr_zdb_id') >[new GO]</a>
+<?/MIVAR>
+<?MIVAR COND="$(NE,$gocur_lastgene,$gocur_mrkr_abbrev)" NAME="$gocur_lastgene">$gocur_mrkr_abbrev<?/MIVAR>
+</td>
+
+<?MIBLOCK COND="$(EC,$qualifier,true)">
+    <?MIBLOCK COND="$(EC,$contribs,t)">
+        <td align=left nowrap><i><?MIVAR><i>$not</i><?/MIVAR> Contributes to</td>
+    <?MIELSE>
+        <td align=left nowrap><i><?MIVAR><i>$not</i><?/MIVAR></td>
+    <?/MIBLOCK>
+<?/MIBLOCK>
+
+<td>
+<?MIVAR>
+<a href="$fdbname$goid">$gocur_term_name</a>
+<?/MIVAR>
+</td>
+
+
+
+<td>
+<?MIVAR>
+<a href="http://www.geneontology.org/doc/GO.evidence.html#$(LOWER,$gocur_evidence_code)">$gocur_evidence_code</a>
+<?/MIVAR>
+</td>
+
+
+<td nowrap>
+
+<?MIVAR NAME=$infs><?/MIVAR>
+<?MIVAR NAME=$inf_comma><?/MIVAR>
+ <?MISQL SQL="select count(*) from inference_group_member where infgrmem_mrkrgoev_zdb_id='$gocur_mrkrgoevid_zdb_id'">
+ <?MIVAR NAME=infcount>$1<?/MIVAR>
+ <?/MISQL>
+ <?MISQL SQL="select infgrmem_inferred_from 
+        from inference_group_member 
+       where infgrmem_mrkrgoev_zdb_id='$gocur_mrkrgoevid_zdb_id'">
+    <?MIVAR NAME=$infername>$1<?/MIVAR>
+
+<?MICOMMENT>Parse Name<?/MICOMMENT>
+<?MIVAR NAME=$colon>:<?/MIVAR>
+<?MIVAR NAME=$comma>,<?/MIVAR>
+<?MIVAR NAME=$pos>$(POSITION,$infername,$colon)<?/MIVAR>
+<?MIVAR NAME=$posn>$(-,$pos,1)<?/MIVAR>
+<?MIVAR NAME=$dbase>$(SUBSTR,$infername,1,$posn)<?/MIVAR>
+<?MIVAR NAME=$currinflength>$(STRLEN,$infername)<?/MIVAR>
+<?MIVAR NAME=$position>$(+,$pos,1)<?/MIVAR>
+<?MIVAR NAME=$accID>$(SUBSTR,$infername,$position,$currinflength)<?/MIVAR>
+
+<?MICOMMENT>Process only if inference from ZFIN.  See what dbase it should link.<?/MICOMMENT>
+<?MIBLOCK COND="$(EC,$dbase,ZFIN)">
+   <?MIVAR NAME=inf_mem_sym><?/MIVAR>
+   <?MISQL COND="$(>,$(POSITION,$accID,GENO),0)" SQL="
+    select geno_display_name
+      from genotype
+     where geno_zdb_id = '$accID'">
+      <?MIVAR NAME=inf_mem_sym>$1<?/MIVAR>	
+   <?/MISQL>
+   <?MISQL COND="$(=,$(POSITION,$accID,GENO),0)" 
+       SQL="
+    select mrkr_abbrev
+      from marker
+     where mrkr_zdb_id = '$accID'">
+      <?MIVAR NAME=inf_mem_sym>$1<?/MIVAR>	
+   <?/MISQL>
+   <?MIBLOCK COND="$(=,$(POSITION,$accID,MRPHLNO),0)">
+      <?MIVAR NAME=inf_mem_sym><i>$inf_mem_sym</i><?/MIVAR>	
+   <?MIELSE>
+      <?MIVAR NAME=inf_mem_sym>$inf_mem_sym<?/MIVAR>	
+   <?/MIBLOCK>
+       <?MIVAR NAME=$currinflink><a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$accID">$inf_mem_sym</a><?/MIVAR>
+<?MIELSE COND="$(EC,$dbase,GO)">
+        <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name ='QuickGO'"><?/MISQL>
+        <?MIVAR NAME=query>$1<?/MIVAR>
+      
+        <?MIVAR NAME=$link>$query$accID<?/MIVAR>
+        <?MIVAR NAME=$currinflink><a href=$link>GO:$accID</a><?/MIVAR>
+<?MIELSE>
+      <?MISQL SQL="select a.fdb_db_query from foreign_db a where a.fdb_db_name='$dbase'"><?/MISQL>
+      <?MIVAR NAME=query>$1<?/MIVAR>
+      <?MIVAR NAME=$link>$query$accID<?/MIVAR>
+      <?MIVAR NAME=$currinflink><a href=$link>$dbase:$accID</a><?/MIVAR>
+<?/MIBLOCK>
+
+<?MIVAR NAME=infs>$(IF,$(>,$infcount,1),$currinflink<br>$infs,$(TRIM,$infs)$currinflink)<?/MIVAR>
+<?MIVAR NAME=inf_comma>$(IF,$(>,$infcount,1),$accID$comma$inf_comma,$(TRIM,$inf_comma)$accID)<?/MIVAR>
+
+<?/MISQL>
+
+
+<?MIVAR>
+ $infs
+<?/MIVAR>
+</td>
+
+
+<td>
+<?MIVAR COND="$(AND,$(NE,$gocur_mrkrgoev_notes,NULL),$(NE,$gocur_mrkrgoev_notes,))">
+<a href="" onClick=view_notes('$gocur_mrkrgoevid_zdb_id')>[note]</a>
+<?/MIVAR>
+</td>
+
+<td>
+<?MIVAR>
+<?MIVAR NAME=gocur_term_name_encode>$(REPLACE,$gocur_term_name," ","%20")<?/MIVAR>
+<a href="" onClick=new_clone('$OID','$gocur_mrkr_zdb_id','GO:$goid','$gocur_term_name_encode','$gocur_evidence_code','$dbase','$gocur_mrkrgoevid_zdb_id','$not','$contribs',escape('$inf_comma')) >[clone Annotation]</a>
+<a href="" onClick=edit_rec('$gocur_mrkrgoevid_zdb_id')>[edit]</a>
+<a href="" onClick=delete_rec('$gocur_mrkrgoevid_zdb_id')>[delete]</a>
+<?/MIVAR>
+</td>
+
+
+
+</tr>
+    <?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlighter),$white,$highlighter)<?/MIVAR>
+<?/MISQL>
+</table>
+

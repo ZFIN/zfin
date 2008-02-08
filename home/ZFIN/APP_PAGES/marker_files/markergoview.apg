@@ -230,7 +230,7 @@
        <?/MIBLOCK>
      <?/MIBLOCK>
      <td><A HREF=$dbquery$goid>$goterm</A></TD>
-     <td nowrap><A HREF="http://www.geneontology.org/doc/GO.evidence.html">$evidence</A></TD>
+     <td nowrap><A HREF="http://www.geneontology.org/doc/GO.evidence.html#$(LOWER,$evidence)">$evidence</A></TD>
 
      <?MIVAR NAME=currinfs><?/MIVAR>
      <?MIVAR NAME=$infs><?/MIVAR>

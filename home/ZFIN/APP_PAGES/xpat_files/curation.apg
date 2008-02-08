@@ -85,6 +85,7 @@ EFFECTS
   $(VECAPPEND,$pubcur_category,Environment)
   $(VECAPPEND,$pubcur_category,FX)
   $(VECAPPEND,$pubcur_category,PATO)
+  $(VECAPPEND,$pubcur_category,GO)
 <?/MIVAR>
 
 <style type="text/css">
@@ -886,6 +887,9 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   <br>$1 Begin Tab
 <?/MISQL>
 
+<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,GO))">
+   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-gocuration.apg';">$1<?/MISQL>
+<?/MIBLOCK>
 <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,FX))">
    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcuration.apg';">$1<?/MISQL>
 <?/MIBLOCK>

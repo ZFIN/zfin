@@ -120,10 +120,22 @@ function call_reset() {
   <p>
   <center> <input type=button align = "center" value ="Done updating. Back to Viewing!" onclick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"></center>
 
-  <?MIVAR NAME=$inf_db COND="$(NXST,$inf_db)"><?/MIVAR>
+  <?MIVAR COND="$(NXST,$inf_db)" NAME=$inf_db><?/MIVAR>
   <?MIVAR COND="$(NXST,$evidence_code)" NAME=$evidence_code><?/MIVAR>
   <?MIVAR COND="$(NXST,$go_term)" NAME=$go_term><?/MIVAR>
   <?MIVAR COND="$(NXST,$pub_id)" NAME=$pub_id><?/MIVAR>
+  <?MIVAR NAME=$notes><?/MIVAR>
+  <?MIVAR COND="$(NXST,$is_not)" NAME=$is_not><?/MIVAR>
+  <?MIVAR COND="$(NXST,$contributes)" NAME=$contributes><?/MIVAR>
+  <?MISQL COND="$(XST,$clone_note_id)" NAME=$clone_note_id SQL="
+  select mgte.mrkrgoev_notes from 
+  marker_go_term_evidence mgte
+  where mgte.mrkrgoev_zdb_id='$clone_note_id'
+  ">
+  <?MIVAR NAME=$notes>$1<?/MIVAR>
+  <?/MISQL>
+  <?MIVAR COND="$(NXST,$clone_note_id)" NAME=$clone_note_id><?/MIVAR>
+
   <p>
   <p> 
   <p>
@@ -181,16 +193,28 @@ function call_reset() {
 
   <tr>
   <td align=right><b>Notes</b></br></td>
-  <td><textarea rows=5 cols=40 tabindex = 6 name=comments></textarea>
+  <?MIVAR>
+  <td><textarea rows=5 cols=40 tabindex = 6 name=comments>$notes</textarea>
+  <?/MIVAR>
   </td>
  
   <td><table border=0 width = 50% cellspacing = 5>
   <caption><b>Qualifiers</b></caption>
     <tr>
     <td align=right>NOT
-    <td><inPut type=checkbox name=isnot></td></tr>
+    <?MIVAR COND=$(EC,NOT,$is_not)>
+    <td><input type=checkbox name=isnot checked></td></tr>
+    <?/MIVAR>
+    <?MIVAR COND=$(NC,NOT,$is_not)>
+    <td><input type=checkbox name=isnot></td></tr>
+    <?/MIVAR>
     <tr><td nowrap align=right>Contributes to</td>
+    <?MIVAR COND=$(EC,"contributes to",$contributes)>
+    <td nowrap><input type=checkbox name=contributes checked>&nbsp;(<i>For Mol. Func. ONLY</i>)</td>
+    <?/MIVAR>
+    <?MIVAR COND=$(EC,"contributes to",$contributes)>
     <td nowrap><input type=checkbox name=contributes>&nbsp;(<i>For Mol. Func. ONLY</i>)</td>
+    <?/MIVAR>
     </tr>
    </table>
   </td>
@@ -316,7 +340,7 @@ function call_reset() {
      <?/MIBLOCK>
      <?MIVAR><td><A HREF=$dbquery$goid>$goterm</A></TD><?/MIVAR>
 
-     <TD><A HREF="http://www.geneontology.org/doc/GO.evidence.html">$evidence</A></TD>
+     <TD><A HREF="http://www.geneontology.org/doc/GO.evidence.html#$(LOWER,$evidence)">$evidence</A></TD>
      <?MIVAR NAME=currinfs><?/MIVAR>
      <?MIVAR NAME=inferid><?/MIVAR>
 
