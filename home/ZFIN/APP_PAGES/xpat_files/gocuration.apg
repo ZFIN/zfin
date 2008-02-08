@@ -286,8 +286,8 @@ gt.goterm_name
 </td>
 
 <td>
-<?MIVAR>
 <?MIVAR NAME=gocur_term_name_encode>$(REPLACE,$gocur_term_name," ","%20")<?/MIVAR>
+<?MIVAR>
 <a href="" onClick=new_clone('$OID','$gocur_mrkr_zdb_id','GO:$goid','$gocur_term_name_encode','$gocur_evidence_code','$dbase','$gocur_mrkrgoevid_zdb_id','$not','$contribs',escape('$inf_comma')) >[clone Annotation]</a>
 <a href="" onClick=edit_rec('$gocur_mrkrgoevid_zdb_id')>[edit]</a>
 <a href="" onClick=delete_rec('$gocur_mrkrgoevid_zdb_id')>[delete]</a>

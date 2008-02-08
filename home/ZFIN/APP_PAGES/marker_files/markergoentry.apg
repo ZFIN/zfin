@@ -126,7 +126,6 @@ function call_reset() {
   <?MIVAR COND="$(NXST,$pub_id)" NAME=$pub_id><?/MIVAR>
   <?MIVAR NAME=$notes><?/MIVAR>
   <?MIVAR COND="$(NXST,$is_not)" NAME=$is_not><?/MIVAR>
-  <?MIVAR COND="$(NXST,$contributes)" NAME=$contributes><?/MIVAR>
   <?MISQL COND="$(XST,$clone_note_id)" NAME=$clone_note_id SQL="
   select mgte.mrkrgoev_notes from 
   marker_go_term_evidence mgte
@@ -202,19 +201,18 @@ function call_reset() {
   <caption><b>Qualifiers</b></caption>
     <tr>
     <td align=right>NOT
-    <?MIVAR COND=$(EC,NOT,$is_not)>
+    <?MIVAR COND="$(EC,NOT,$is_not)">
     <td><input type=checkbox name=isnot checked></td></tr>
     <?/MIVAR>
-    <?MIVAR COND=$(NC,NOT,$is_not)>
+    <?MIVAR COND="$(NC,NOT,$is_not)">
     <td><input type=checkbox name=isnot></td></tr>
     <?/MIVAR>
-    <tr><td nowrap align=right>Contributes to</td>
-    <?MIVAR COND=$(EC,"contributes to",$contributes)>
-    <td nowrap><input type=checkbox name=contributes checked>&nbsp;(<i>For Mol. Func. ONLY</i>)</td>
-    <?/MIVAR>
-    <?MIVAR COND=$(EC,"contributes to",$contributes)>
-    <td nowrap><input type=checkbox name=contributes>&nbsp;(<i>For Mol. Func. ONLY</i>)</td>
-    <?/MIVAR>
+    <tr><td nowrap align=right>Contributes to
+    <?MIVAR COND="$(NXST,$contributes)" NAME=$contributes><?/MIVAR>
+    </td>
+    <td nowrap><input type=checkbox name=contributes 
+    <?MIVAR COND="$(EC,t,$contributes)">checked<?/MIVAR>
+    >&nbsp;(<i>For Mol. Func. ONLY</i>)</td> 
     </tr>
    </table>
   </td>
