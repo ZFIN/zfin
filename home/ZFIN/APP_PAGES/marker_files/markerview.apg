@@ -1569,81 +1569,31 @@ union
  <?/MISQL>  
 
  <?MIBLOCK COND="$(EQ,$marker_type,GENE)">
-   <?MICOMMENT>=======  specified in FB case 1795
-     Gene: displays entity if:
-      it is from an EQ line where the genotype only contains alleles of this gene 
-        and NO MO's in the environment.
-      OR it is from an EQ line where the genotype is wild type (WT, WIK, AB, etc.) 
-        and the environment only contains MOs from this gene.
-      =======
-   <?/MICOMMENT>
-
-   <?MICOMMENT>======= get all alleles of this gene and concatinate them =======
-   <?/MICOMMENT>
-   <?MIVAR NAME=mrkrview_allel_ids><?/MIVAR>
-   <?MISQL SQL="select fmrel_ftr_zdb_id
-	          from feature_marker_relationship
-	         where fmrel_mrkr_zdb_id = '$OID'
-		   and fmrel_type = 'is allele of'
-            union
-                select genofeat_feature_zdb_id
-		  from mapped_deletion, feature, genotype_feature
-		 where marker_id='$OID'
-		   and allele = feature_name
-		   and present_t = 'f'
-                   and feature_zdb_id = genofeat_feature_zdb_id;">
-      $(SETVAR,$mrkrview_allel_ids,$(CONCAT,$mrkrview_allel_ids,$1))
-   <?/MISQL>
-
    <?MISQL SQL="
-            select genofeat_geno_zdb_id
-              from feature_marker_relationship, genotype_feature
-             where fmrel_mrkr_zdb_id = '$OID'
-               and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-      	       and fmrel_type = 'is allele of';">
-     <?MIVAR NAME=mrkrview_genofeat_ID>$1<?/MIVAR>
-
-     <?MIVAR NAME=mrkrview_add_apatoID>t<?/MIVAR>      	       
-     <?MISQL SQL="  
-            select genofeat_feature_zdb_id
-              from genotype_feature
-             where genofeat_geno_zdb_id = '$mrkrview_genofeat_ID';">
-
-       <?MICOMMENT>=======
-          do NOT displays entity if it is from an EQ line where the genotype 
-          contains any allele that has nothing to do with this gene 
-          =======
-       <?/MICOMMENT>
-       <?MIBLOCK COND="$(=,$(POSITION,$mrkrview_allel_ids,$1),0)">
-          <?MIVAR>$(SETVAR,$mrkrview_add_apatoID,f)<?/MIVAR>
-       <?/MIBLOCK>
-     <?/MISQL>   
-
-     <?MICOMMENT>=======
-          do NOT displays entity if there is any MO with this genotype in the environment.
-         =======
-     <?/MICOMMENT>
-     <?MISQL SQL="
-             select count(expcond_mrkr_zdb_id)::integer
-               from experiment_condition, genotype_experiment
-              where expcond_exp_zdb_id = genox_exp_zdb_id
- 	        and genox_geno_zdb_id = '$mrkrview_genofeat_ID';">
-          <?MIBLOCK COND="$(>,$1,0)">
-            <?MIVAR>$(SETVAR,$mrkrview_add_apatoID,f)<?/MIVAR> 
-          <?/MIBLOCK>
-     <?/MISQL>    
-
-     <?MIBLOCK COND="$(EQ,$mrkrview_add_apatoID,t)">             
-       <?MISQL SQL="
-	 insert into $mrkrview_temp_pato
+	insert into $mrkrview_temp_pato
             select apato_zdb_id
-              from genotype_experiment, atomic_phenotype
-             where genox_geno_zdb_id = '$mrkrview_genofeat_ID'
+              from feature_marker_relationship, genotype_feature,
+		   genotype_experiment, atomic_phenotype
+             where fmrel_mrkr_zdb_id='$OID'
+      	       and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+      	       and fmrel_type = 'is allele of'
+               and genofeat_geno_zdb_id = genox_geno_zdb_id
                and genox_zdb_id = apato_genox_zdb_id
-               and apato_tag not like 'normal%' 
-               and apato_entity_a_zdb_id <> 'ZDB-ANAT-050228-1';">
-       <?/MISQL>
-     <?/MIBLOCK>
+               and apato_tag not like 'normal%' ;">
+   <?/MISQL>
+ 
+   <?MISQL SQL="
+	insert into $mrkrview_temp_pato
+            select apato_zdb_id
+              from mapped_deletion, feature, genotype_feature,
+		   genotype_experiment, atomic_phenotype
+             where marker_id='$OID'
+      	       and allele = feature_name
+               and present_t = 'f'
+               and feature_zdb_id = genofeat_feature_zdb_id
+               and genofeat_geno_zdb_id = genox_geno_zdb_id
+               and genox_zdb_id = apato_genox_zdb_id
+               and apato_tag not like 'normal%' ;">
    <?/MISQL>
 
    <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
@@ -1661,84 +1611,28 @@ union
        <?MIVAR NAME=$mrkrview_agt_plural_pheno>$(IF,$(>,$1,0),t,f)<?/MIVAR>
      <?/MISQL>
      <?MIBLOCK COND="$(EQ,$mrkrview_agt_plural_pheno,t)">
-       <?MICOMMENT>======= get all MOs of this gene and concatinate them =======
-       <?/MICOMMENT>
-       <?MIVAR NAME=mrkrview_MO_ids><?/MIVAR>
-       <?MISQL SQL="select mrkr_zdb_id
-	       from marker_relationship
-		    join marker on mrel_mrkr_1_zdb_id = mrkr_zdb_id
-	      where mrel_mrkr_2_zdb_id = '$OID'
-		and mrel_type = 'knockdown reagent targets gene';">
-          $(SETVAR,$mrkrview_MO_ids,$(CONCAT,$mrkrview_MO_ids,$1))
-       <?/MISQL>
-
        <?MISQL SQL="
+	  insert into $mrkrview_temp_pato
             select apato_zdb_id 
-              from marker_relationship, experiment_condition, genotype_experiment, atomic_phenotype, genotype 
+              from marker_relationship, experiment_condition, genotype_experiment, atomic_phenotype 
              where mrel_mrkr_2_zdb_id = '$OID'
                and mrel_type = 'knockdown reagent targets gene' 
                and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id 
                and expcond_exp_zdb_id = genox_exp_zdb_id 
                and genox_zdb_id = apato_genox_zdb_id 
-               and genox_geno_zdb_id = geno_zdb_id
-               and geno_is_wildtype = 't'
-               and apato_tag not like 'normal%'
-               and apato_entity_a_zdb_id <> 'ZDB-ANAT-050228-1';">
-
-         <?MIVAR NAME=$mrkrview_apatoID_g>$1<?/MIVAR>
-
-         <?MIVAR NAME=mrkrview_add_apatoID>t<?/MIVAR>
-         <?MISQL SQL="
-             select expcond_mrkr_zdb_id
-               from experiment_condition, genotype_experiment, atomic_phenotype
-              where expcond_exp_zdb_id = genox_exp_zdb_id
- 	        and genox_zdb_id = apato_genox_zdb_id
-                and apato_zdb_id = '$mrkrview_apatoID_g';">
-           <?MICOMMENT>=======
-             do NOT displays entity if there are MO(s) that not of this gene 
-             =======
-           <?/MICOMMENT>
-           <?MIBLOCK COND="$(=,$(POSITION,$mrkrview_MO_ids,$1),0)">
-             <?MIVAR>$(SETVAR,$mrkrview_add_apatoID,f)<?/MIVAR>
-           <?/MIBLOCK>
-         <?/MISQL>   
-         <?MIBLOCK COND="$(EQ,$mrkrview_add_apatoID,t)">
-           <?MISQL SQL="insert into $mrkrview_temp_pato values ('$mrkrview_apatoID_g');"><?/MISQL> 
-         <?/MIBLOCK>
+               and apato_tag not like 'normal%';">
        <?/MISQL> 
      <?/MIBLOCK>
    <?/MIBLOCK>
-
  <?MIELSE>
-
-    <?MICOMMENT> ======= MO: Only display Entity if the genotype is wild type (WT, WIK, AB, etc.) 
-          and the environment only contains the specific MO whose page you are on. 
-          And don't display Entities from EQ lines that have the 'normal' tag.
-          And don't display 'whole organism', of which the ZDB-ID is ZDB-ANAT-050228-1 =======
-    <?/MICOMMENT>
- 
    <?MISQL SQL="
+	insert into $mrkrview_temp_pato
             select apato_zdb_id
-              from experiment_condition, genotype_experiment, atomic_phenotype, genotype 
+              from experiment_condition, genotype_experiment, atomic_phenotype
              where expcond_mrkr_zdb_id = '$OID'
 	       and expcond_exp_zdb_id = genox_exp_zdb_id
                and genox_zdb_id = apato_genox_zdb_id 
-               and apato_tag not like 'normal%'
-               and genox_geno_zdb_id = geno_zdb_id
-               and geno_is_wildtype = 't'
-               and apato_entity_a_zdb_id <> 'ZDB-ANAT-050228-1';">
-       <?MIVAR NAME=$mrkrview_apatoID>$1<?/MIVAR>
-
-       <?MISQL SQL="
-             select count(expcond_mrkr_zdb_id)::integer
-               from experiment_condition, genotype_experiment, atomic_phenotype
-              where expcond_exp_zdb_id = genox_exp_zdb_id
- 	        and genox_zdb_id = apato_genox_zdb_id
-                and apato_zdb_id = '$mrkrview_apatoID';">
-          <?MIBLOCK COND="$(=,$1,1)">
-            <?MISQL SQL="insert into $mrkrview_temp_pato values ('$mrkrview_apatoID');"><?/MISQL> 
-          <?/MIBLOCK>
-       <?/MISQL>          
+               and apato_tag not like 'normal%';">
    <?/MISQL> 
    <br/>
  <?/MIBLOCK>
@@ -1751,6 +1645,7 @@ union
  <?MISQL SQL="select WebExplode(object,'phmview_input_table=$mrkrview_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
 
 <?/MIBLOCK>
+
 
     <?MICOMMENT>================================
                 ==    Knockdown Reagent
