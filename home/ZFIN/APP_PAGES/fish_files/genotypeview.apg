@@ -432,34 +432,11 @@ Datablade documentation.
    <?/MISQL>  
 
    <?MISQL SQL="
+	insert into $genovw_temp_pato
             select distinct apato_zdb_id
               from atomic_phenotype, genotype_experiment
              where genox_zdb_id = apato_genox_zdb_id 
-               and genox_geno_zdb_id = '$OID' 
-               and apato_tag not like 'normal%'
-               and apato_entity_a_zdb_id <> 'ZDB-ANAT-050228-1';">
-          
-       <?MIVAR NAME=$genovw_apatoID>$1<?/MIVAR>
-               
-       <?MISQL SQL="
-             select count(expcond_mrkr_zdb_id)::integer
-               from experiment_condition, genotype_experiment, atomic_phenotype
-              where expcond_exp_zdb_id = genox_exp_zdb_id
- 	        and genox_zdb_id = apato_genox_zdb_id
-                and apato_zdb_id = '$genovw_apatoID';">
-    
-       <?MICOMMENT> ======
-         Only display Entities from EQ lines using the genotype of this page 
-         AND NO MOs in environment.
-         ====== 
-       <?/MICOMMENT>  
-       
-          <?MIBLOCK COND="$(=,$1,0)">
-            <?MISQL SQL="insert into $genovw_temp_pato values ('$genovw_apatoID');"><?/MISQL> 
-          <?/MIBLOCK>
-          
-       <?/MISQL>       
-       
+               and genox_geno_zdb_id = '$OID' ;">
    <?/MISQL>
 
    <hr width=80%>
@@ -469,6 +446,7 @@ Datablade documentation.
    <?MISQL SQL="select WebExplode(object,'phmview_input_table=$genovw_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
  
   <?/MIBLOCK> <?MICOMMENT> end of if mutant <?/MICOMMENT>
+
 
 
 
