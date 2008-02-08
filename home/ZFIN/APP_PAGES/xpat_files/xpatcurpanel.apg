@@ -580,7 +580,7 @@ EFFECTS
       </select>
     </td>
     <td>
-        <select name="xpcur_G_panel_add_xpatex">
+        <select name="xpcur_G_panel_add_xpatex" MULTIPLE SIZE=5>
           <?MISQL SQL="
             select xpatex_zdb_id, mrkr_abbrev_order, geno_nickname, xpatassay_display_order, zero_pad(exp_name)
 	    from expression_experiment, marker, genotype_experiment, genotype, expression_pattern_assay, experiment

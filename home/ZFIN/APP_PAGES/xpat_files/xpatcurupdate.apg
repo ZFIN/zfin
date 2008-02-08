@@ -796,7 +796,9 @@ EFFECTS
          <?MIVAR NAME=xpcurup_panel_add_expressed>$2<?/MIVAR>
       <?/MISQL>
     
-      <?MISQL SQL="select WebExplode(object,'gPSLitem_xpatex_zdb_id=$xpcur_G_panel_add_xpatex&gPSLitem_anatitem_zdb_id=$xpcurup_panel_add_anatitem&gPSLitem_expressed=$xpcurup_panel_add_expressed&gPSLitem_stg_start_zdb_id=$xpcur_G_panel_add_start_stg&gPSLitem_stg_end_zdb_id=$xpcur_G_panel_add_end_stg') from webPages where ID='aa-getPubStructureListItem.apg';">$1<?/MISQL>
+      <?MIBLOCK INDEX=$xpcurUP_panel_xpatex FOREACH=$xpcur_G_panel_add_xpatex>
+    
+      <?MISQL SQL="select WebExplode(object,'gPSLitem_xpatex_zdb_id=$xpcurUP_panel_xpatex&gPSLitem_anatitem_zdb_id=$xpcurup_panel_add_anatitem&gPSLitem_expressed=$xpcurup_panel_add_expressed&gPSLitem_stg_start_zdb_id=$xpcur_G_panel_add_start_stg&gPSLitem_stg_end_zdb_id=$xpcur_G_panel_add_end_stg') from webPages where ID='aa-getPubStructureListItem.apg';">$1<?/MISQL>
 
       <?MISQL SQL="
          SELECT count(*)
@@ -831,6 +833,8 @@ EFFECTS
         </SCRIPT>
         
       <?/MIBLOCK> 
+      
+      <?/MIBLOCK> <?MICOMMENT> Multi select expressions<?/MICOMMENT>
   
   <?/MIBLOCK>  
 
