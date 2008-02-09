@@ -1064,6 +1064,12 @@ Message: $MI_ERRORMSG
            <?/MISQL> 
            <?MIVAR>$(SETVAR,$fsel_img_count,$(+,$fsel_img_count,$fsel_img_count_per_fig))<?/MIVAR>
       <?/MISQL>  
+      
+
+<?MIVAR NAME=phenosum_sql_select>select distinct fig_zdb_id<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'OID=$genotypeid') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
+
+<?MISQL SQL="$phenosum_sql;"><?/MISQL>
       <?MIVAR NAME=fsel_fig_count>$MI_ROWCOUNT<?/MIVAR>
       <?MIBLOCK COND="$(>,$fsel_fig_count,0)"> 
           <?MIVAR NAME=fsel_anat_list><?/MIVAR>

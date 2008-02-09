@@ -20,26 +20,30 @@
 
 <?/MICOMMENT>
 
-<?MISQL SQL="
-	select distinct fig_zdb_id
-          from $phmview_input_table, apato_figure, figure
-         where t_pato_zdb_id = apatofig_apato_zdb_id
- 	   and apatofig_fig_zdb_id = fig_zdb_id; ">
 
-    <?MIVAR NAME=phmview_pato_fig_zdb_id>$1<?/MIVAR>
-<?/MISQL>
+<?MICOMMENT> *** from pheno_summary.sql.  count the figures and publications. <?/MICOMMENT>
 
-<?MIVAR NAME=phmview_pato_fig_count>$MI_ROWCOUNT<?/MIVAR>
+
+
+<?MIVAR NAME=phenosum_sql_select>select distinct fig_zdb_id<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
+
+<?MISQL SQL="$phenosum_sql;"><?/MISQL>
+
+<?MIVAR NAME=phmview_pato_fig_count>$MI_CURRENTROW<?/MIVAR>
+<?MIVAR NAME=phmview_pato_fig_zdb_id>$1<?/MIVAR>
+
+<?MICOMMENT> *** END from pheno_summary.sql.  count the figures and publications. <?/MICOMMENT>
+
 
 <?MIBLOCK COND="$(>,$phmview_pato_fig_count,0)">
-    <?MISQL SQL="
-	select distinct pub_mini_ref,zdb_id
-          from $phmview_input_table, apato_figure, figure, publication
-         where t_pato_zdb_id = apatofig_apato_zdb_id
- 	   and apatofig_fig_zdb_id = fig_zdb_id
-              and fig_source_zdb_id = zdb_id; ">
 
-    <?/MISQL>
+  <?MIVAR NAME=phenosum_sql_select>select distinct pub_mini_ref, zdb_id<?/MIVAR>
+  
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
+
+  <?MISQL SQL="$phenosum_sql;"><?/MISQL>
+    
     <?MIVAR NAME=phmview_pato_source_count>$MI_ROWCOUNT<?/MIVAR>
 
     <?MIVAR NAME=phmview_pato_source_desc>$phmview_pato_source_count publications<?/MIVAR>

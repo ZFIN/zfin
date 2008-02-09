@@ -4,8 +4,9 @@
 <?/MIVAR>
 
 <?MIVAR NAME=phenosum_sql_from>
-      from figure, publication, apato_figure, atomic_phenotype, genotype_experiment, genotype, OUTER(genotype_feature)
+      from figure, publication, apato_figure, atomic_phenotype, genotype_experiment, genotype
 <?/MIVAR>
+
 
 <?MIVAR NAME=phenosum_sql_where>
      where fig_source_zdb_id = zdb_id
@@ -17,6 +18,9 @@
 <?/MIVAR>
 
 <?MIBLOCK COND=$(XST,$envID)>
+
+  <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from , OUTER(genotype_feature)  <?/MIVAR>
+  
   <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where 
        and genox_exp_zdb_id = '$envID'
        and (apato_entity_a_zdb_id = '$anatID' or apato_entity_b_zdb_id = '$anatID')
@@ -25,6 +29,10 @@
                where expcond_exp_zdb_id = genox_exp_zdb_id
                  and expcond_mrkr_zdb_id = '' )
   <?/MIVAR>
+
+<?MIELSE>
+  <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from , genotype_feature  <?/MIVAR>
+  
 <?/MIBLOCK>
 
 
@@ -48,7 +56,7 @@
        
        $phenosum_sql_select
        from marker_relationship, experiment_condition, genotype_experiment, atomic_phenotype,
-       apato_figure, figure, publication
+       apato_figure, figure, publication, genotype, OUTER(genotype_feature)
        where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
        and expcond_exp_zdb_id = genox_exp_zdb_id 
        and genox_zdb_id = apato_genox_zdb_id
@@ -57,6 +65,8 @@
        and apato_zdb_id = apatofig_apato_zdb_id
        and apatofig_fig_zdb_id = fig_zdb_id
        and fig_source_zdb_id = zdb_id 
+       and genox_geno_zdb_id = geno_zdb_id
+       and geno_zdb_id = genofeat_geno_zdb_id
 
   <?/MIVAR>  
 
@@ -68,13 +78,15 @@
        
        $phenosum_sql_select
        from experiment_condition, genotype_experiment, atomic_phenotype,
-       apato_figure, figure, publication, genotype
+       apato_figure, figure, publication, genotype, OUTER(genotype_feature)
        where expcond_exp_zdb_id = genox_exp_zdb_id 
        and genox_zdb_id = apato_genox_zdb_id
        and expcond_mrkr_zdb_id = '$OID'
        and apato_zdb_id = apatofig_apato_zdb_id
        and apatofig_fig_zdb_id = fig_zdb_id
-       and fig_source_zdb_id = zdb_id        
+       and fig_source_zdb_id = zdb_id   
+       and genox_geno_zdb_id = geno_zdb_id
+       and genofeat_geno_zdb_id = geno_zdb_id
     <?/MIVAR>
   <?/MIBLOCK>
   

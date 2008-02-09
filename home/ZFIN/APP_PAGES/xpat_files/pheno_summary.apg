@@ -4,7 +4,12 @@ PREFIX: phenosum_
 
 Display a list of genotypes by publication, for a gene or genotype.
 
+2008-02-04: Linked to by the anatomy page. Filter for morpholinos with phenotype data for an anatomy item.
+
 INPUT VARS:  
+	$OID:    ZDB ID for a Genotype
+	$envID:  ZDB ID for an experiment.
+	$anatID: ZDB ID for an anatomy_item. 
 
 OUTPUT VARS: 
 
@@ -75,12 +80,12 @@ DEBUGGING:
     <br>$1 get fig count
   <?/MISQL>
 
-<?MIVAR NAME=phenosum_sql_select>select count(distinct fig_zdb_id)<?/MIVAR>
+<?MIVAR NAME=phenosum_sql_select>select distinct fig_zdb_id<?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
 
 <?MISQL SQL="$phenosum_sql;"><?/MISQL>
 
-<?MIVAR NAME=phenosum_fig_count>$1<?/MIVAR>
+<?MIVAR NAME=phenosum_fig_count>$MI_CURRENTROW<?/MIVAR>
   
   <?MIVAR COND=$(XST,$debug_timing)>
     <br>$MI_SQL
@@ -149,92 +154,17 @@ DEBUGGING:
     <b>Observed in</b>
   </td>
 
-<?MIBLOCK COND=$(NC,$(SUBSTR,$OID,1,8),ZDB-GENO)>
-  <?MIVAR NAME=phenosum_sql>
-    select distinct zdb_id, pub_mini_ref, fig_zdb_id, 
+
+
+<?MIVAR NAME=phenosum_sql_select>    select distinct zdb_id, pub_mini_ref, fig_zdb_id, 
            get_geno_name_with_bg_html_link(geno_zdb_id), 
            fig_label, fig_full_label, geno_zdb_id, 
-           get_genofeat_mp_zyg_html_display(genofeat_zdb_id) 
-      from figure, publication, apato_figure, atomic_phenotype, genotype_experiment, genotype, genotype_feature, feature_marker_relationship
-     where fig_source_zdb_id = zdb_id
-       and fig_zdb_id = apatofig_fig_zdb_id
-       and apatofig_apato_zdb_id = apato_zdb_id
-       and apato_genox_zdb_id = genox_zdb_id
-       and genox_geno_zdb_id = geno_zdb_id
-       and geno_zdb_id = genofeat_geno_zdb_id
-       and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
-       and fmrel_mrkr_zdb_id = '$OID' 
-
-     UNION 
-     
-    select distinct zdb_id, pub_mini_ref, fig_zdb_id, 
-           get_geno_name_with_bg_html_link(geno_zdb_id), 
-           fig_label, fig_full_label, geno_zdb_id, 
-           get_genofeat_mp_zyg_html_display(genofeat_zdb_id) 
-      from figure, publication, apato_figure, atomic_phenotype, genotype_experiment, genotype, genotype_feature,
-           feature, mapped_deletion
-     where fig_source_zdb_id = zdb_id
-       and fig_zdb_id = apatofig_fig_zdb_id
-       and apatofig_apato_zdb_id = apato_zdb_id
-       and apato_genox_zdb_id = genox_zdb_id
-       and genox_geno_zdb_id = geno_zdb_id
-       and geno_zdb_id = genofeat_geno_zdb_id
-       and genofeat_feature_zdb_id = feature_zdb_id
-       and feature_name = allele
-       and present_t = 'f'
-       and marker_id = '$OID' 
-
-     UNION 
-     
-    select distinct zdb_id, pub_mini_ref, fig_zdb_id, 
-           get_geno_name_with_bg_html_link(geno_zdb_id), 
-           fig_label, fig_full_label, geno_zdb_id, ' ' 
-      from figure, publication, apato_figure, atomic_phenotype, genotype_experiment, genotype,
-           experiment_condition, marker_relationship
-     where fig_source_zdb_id = zdb_id
-       and fig_zdb_id = apatofig_fig_zdb_id
-       and apatofig_apato_zdb_id = apato_zdb_id
-       and apato_genox_zdb_id = genox_zdb_id
-       and genox_geno_zdb_id = geno_zdb_id
-       and expcond_exp_zdb_id = genox_exp_zdb_id        
-       and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
-       and mrel_type = 'knockdown reagent targets gene'
-       and mrel_mrkr_2_zdb_id = '$OID'   
+           get_genofeat_mp_zyg_html_display(genofeat_zdb_id) <?/MIVAR>
            
-  <?/MIVAR>
-  
-  <?MIBLOCK COND=$(EC,$(SUBSTR,$OID,1,11),ZDB-MRPHLNO)>
-    <?MIVAR NAME=phenosum_sql>
-       $phenosum_sql
-       
-     UNION 
-     
-    select distinct zdb_id, pub_mini_ref, fig_zdb_id, 
-           get_geno_name_with_bg_html_link(geno_zdb_id), 
-           fig_label, fig_full_label, geno_zdb_id, ' ' 
-      from figure, publication, apato_figure, atomic_phenotype, genotype_experiment, genotype,
-           experiment_condition
-     where fig_source_zdb_id = zdb_id
-       and fig_zdb_id = apatofig_fig_zdb_id
-       and apatofig_apato_zdb_id = apato_zdb_id
-       and apato_genox_zdb_id = genox_zdb_id
-       and genox_geno_zdb_id = geno_zdb_id
-       and expcond_exp_zdb_id = genox_exp_zdb_id        
-       and expcond_mrkr_zdb_id = '$OID'         
-    <?/MIVAR>
-  <?/MIBLOCK>
-  
-<?MIELSE>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
 
-  <?MIVAR NAME=phenosum_sql_select>
-    select distinct zdb_id, pub_mini_ref, fig_zdb_id, 
-           get_geno_name_with_bg_html_link(geno_zdb_id), 
-           fig_label, fig_full_label, geno_zdb_id, 
-           get_genofeat_mp_zyg_html_display(genofeat_zdb_id)
-  <?/MIVAR>
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
-  
-<?/MIBLOCK>
+
+
 
   <?MISQL COND=$(XST,$debug_timing) SQL="
     execute function get_time()">

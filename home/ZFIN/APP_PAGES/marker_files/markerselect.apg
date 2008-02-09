@@ -961,16 +961,11 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 			 and present_t = 'f';">
               <?/MISQL>
 
-	      <?MIVAR NAME=mrkrsel_pheno_fig_count>0<?/MIVAR>
-	      <?MISQL SQL="
-          	  select distinct apatofig_fig_zdb_id
-          	    from $mrkrselect_temp_allele, genotype_feature,
-		         genotype_experiment, atomic_phenotype, apato_figure
-                   where mta_ftr_zdb_id = genofeat_feature_zdb_id
-                     and genofeat_geno_zdb_id = genox_geno_zdb_id
-                     and genox_zdb_id = apato_genox_zdb_id
-                     and apatofig_apato_zdb_id = apato_zdb_id ;">
-      	      <?/MISQL>
+<?MIVAR NAME=phenosum_sql_select>select distinct fig_zdb_id<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
+
+<?MISQL SQL="$phenosum_sql;"><?/MISQL>
+
 	      <?MIVAR NAME=mrkrsel_pheno_fig_count>$MI_ROWCOUNT<?/MIVAR>
               <?MIVAR NAME=mrkrsel_pheno_fig_zdb_id>$1<?/MIVAR>
 
