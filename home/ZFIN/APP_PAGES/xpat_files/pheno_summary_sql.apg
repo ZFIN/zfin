@@ -2,6 +2,10 @@
 <?MIVAR>
   $(UNSETVAR,$phenosum_sql)
 <?/MIVAR>
+<?MIVAR>
+  $(UNSETVAR,$phenosum_sql_from)
+  $(UNSETVAR,$phenosum_sql_from_outer_genofeat)
+<?/MIVAR>
 
 <?MIVAR NAME=phenosum_sql_from>
       from figure, publication, apato_figure, atomic_phenotype, genotype_experiment, genotype, genotype_feature
@@ -52,6 +56,8 @@
 
 <?MIBLOCK COND=$(NC,$(SUBSTR,$OID,1,8),ZDB-GENO)>
 
+  <?MIVAR NAME=phenosum_sql_where_mrphlno>$phenosum_sql_where<?/MIVAR>
+  
   <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where
        and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
        and fmrel_mrkr_zdb_id = '$OID'  
@@ -79,6 +85,7 @@
   <?/MIVAR>  
 
   <?MIBLOCK COND=$(EC,$(SUBSTR,$OID,1,11),ZDB-MRPHLNO)>
+  
     <?MIVAR NAME=phenosum_sql_where>
        $phenosum_sql_where
        
@@ -86,14 +93,15 @@
        
        $phenosum_sql_select
        $phenosum_sql_from_outer_genofeat , experiment_condition
-       $phenosum_sql_where
+       $phenosum_sql_where_mrphlno
        and expcond_exp_zdb_id = genox_exp_zdb_id 
        and expcond_mrkr_zdb_id = '$OID'
     <?/MIVAR>
   <?/MIBLOCK>
-  
-  <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from, feature_marker_relationship
-  <?/MIVAR>  
+
+  <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from, feature_marker_relationship<?/MIVAR> 
+  <?MIVAR NAME=phenosum_sql_from_outer_genofeat>$phenosum_sql_from_outer_genofeat, feature_marker_relationship<?/MIVAR> 
+   
 <?MIELSE>
 
   <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where
@@ -111,4 +119,6 @@
 <?MIVAR>
   $(UNSETVAR,$phenosum_sql_select)
   $(UNSETVAR,$phenosum_img_count)
+  $(UNSETVAR,$phenosum_sql_from)
+  $(UNSETVAR,$phenosum_sql_from_outer_genofeat)
 <?/MIVAR>
