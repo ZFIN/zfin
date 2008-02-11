@@ -1,7 +1,7 @@
 package org.zfin.database;
 
 import org.zfin.framework.HibernateUtil;
-import org.hibernate.Session;
+import org.apache.log4j.Logger;
 
 import javax.servlet.*;
 import java.io.IOException;
@@ -16,6 +16,8 @@ import java.io.IOException;
  */
 public class HibernateSessionRequestFilter implements Filter {
 
+    private static final Logger LOG = Logger.getLogger(HibernateSessionRequestFilter.class);
+
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
@@ -24,8 +26,15 @@ public class HibernateSessionRequestFilter implements Filter {
     // to handle exceptions: how does this filter know where to redirect if
     // a transaction fails. Maybe back to the previous page?
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        chain.doFilter(request, response);
-        HibernateUtil.closeSession();
+        try {
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            LOG.error("Unhandled Exception in Servlet Filter found: ", e);
+        } finally {
+            // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
+            // the current threadLocal
+            HibernateUtil.closeSession();
+        }
     }
 
     public void destroy() {
