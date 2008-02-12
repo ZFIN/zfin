@@ -264,10 +264,20 @@
 <b>Add link to Seq DB:</b> &nbsp;
   DBname:<SELECT name=seqdb>
   <?MISQL SQL="
-    select fdbcont_fdb_db_name, fdbcont_fdbdt_data_type, fdbcont_zdb_id
-      from foreign_db_contains
-     where fdbcont_fdbdt_super_type = 'sequence'
-     order by fdbcont_fdb_db_name;">
+  select fdbcont_fdb_db_name, fdbcont_fdbdt_data_type, fdbcont_zdb_id
+      from foreign_db_contains fdbc
+     where 
+     fdbc.fdbcont_zdb_id in 
+(
+ 'ZDB-FDBCONT-040412-37', --GenBank (cDNA)
+'ZDB-FDBCONT-040412-36', -- GenBank (Genomic)
+'ZDB-FDBCONT-040412-42', -- GenPept (Polypeptide)
+'ZDB-FDBCONT-040412-47', --UniProt (Polypeptide) 
+'ZDB-FDBCONT-060417-1' -- Vega_Trans
+)
+order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
+;
+     ">
     <option value="$3" $(IF,$(EC,$1,GenBank),SELECTED)>$1 - $2</option>
   <?/MISQL>
   </SELECT>
@@ -304,10 +314,20 @@ Length: <input type=text size=10 name=upd_seq_length>
 <b>Add reference to Sequence:</b> &nbsp;
   DBname:<SELECT name=attrib_seq_fdb>
   <?MISQL SQL="
-    select fdbcont_fdb_db_name, fdbcont_fdbdt_data_type, fdbcont_zdb_id
-      from foreign_db_contains
-     where fdbcont_fdbdt_super_type = 'sequence'
-     order by fdbcont_fdb_db_name;">
+  select fdbcont_fdb_db_name, fdbcont_fdbdt_data_type, fdbcont_zdb_id
+      from foreign_db_contains fdbc
+     where 
+     fdbc.fdbcont_zdb_id in 
+(
+ 'ZDB-FDBCONT-040412-37', --GenBank (cDNA)
+'ZDB-FDBCONT-040412-36', -- GenBank (Genomic)
+'ZDB-FDBCONT-040412-42', -- GenPept (Polypeptide)
+'ZDB-FDBCONT-040412-47', --UniProt (Polypeptide) 
+'ZDB-FDBCONT-060417-1' -- Vega_Trans
+)
+order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
+;
+     ">
     <option value="$3" $(IF,$(EC,$1,GenBank),SELECTED)>$1 - $2</option>
   <?/MISQL>
   </SELECT>
