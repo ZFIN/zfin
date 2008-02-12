@@ -73,7 +73,7 @@ function new_GO(pubid,mrkrzdbid){
 <?MIVAR>
     <INPUT TYPE=HIDDEN NAME=pub_id VALUE="'$OID'"> 
 <?/MIVAR>
-    <a href="" onClick=new_GO(document.newgo.pub_id.value,document.newgo.OID.value) >[Add New GO]</a>:
+    <a href="javascript:;" onClick=new_GO(document.newgo.pub_id.value,document.newgo.OID.value) >[Add New GO]</a>:
     <select name=OID>
     <?MISQL SQL="
       select distinct mrkr_zdb_id, mrkr_abbrev, mrkr_abbrev_order
@@ -182,7 +182,7 @@ gt.goterm_name
 <td>
 <?MIVAR COND="$(NE,$gocur_mrkr_abbrev,$gocur_lastgene)">
 <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gocur_mrkr_zdb_id">$gocur_mrkr_abbrev</a>
-<a href="" onClick=new_GO('$OID','$gocur_mrkr_zdb_id') >[new GO]</a>
+<a href="javascript:;" onClick=new_GO('$OID','$gocur_mrkr_zdb_id') >[new GO]</a>
 <?/MIVAR>
 <?MIVAR COND="$(NE,$gocur_lastgene,$gocur_mrkr_abbrev)" NAME="$gocur_lastgene">$gocur_mrkr_abbrev<?/MIVAR>
 </td>
@@ -281,15 +281,15 @@ gt.goterm_name
 
 <td>
 <?MIVAR COND="$(AND,$(NE,$gocur_mrkrgoev_notes,NULL),$(NE,$gocur_mrkrgoev_notes,))">
-<a href="" onClick=view_notes('$gocur_mrkrgoevid_zdb_id')>[note]</a>
+<a href="javascript:;" onClick=view_notes('$gocur_mrkrgoevid_zdb_id')>[note]</a>
 <?/MIVAR>
 </td>
 
 <td>
 <?MIVAR NAME=gocur_term_name_encode>$(REPLACE,$gocur_term_name," ","%20")<?/MIVAR>
 <?MIVAR>
-<a href="" onClick=new_clone('$OID','$gocur_mrkr_zdb_id','GO:$goid','$gocur_term_name_encode','$gocur_evidence_code','$dbase','$gocur_mrkrgoevid_zdb_id','$not','$contribs',escape('$inf_comma')) >[clone Annotation]</a>
-<a href="" onClick=edit_rec('$gocur_mrkrgoevid_zdb_id')>[edit]</a>
+<a href="javascript:;" onClick=new_clone('$OID','$gocur_mrkr_zdb_id','GO:$goid','$gocur_term_name_encode','$gocur_evidence_code','$dbase','$gocur_mrkrgoevid_zdb_id','$not','$contribs',escape('$inf_comma')) >[clone Annotation]</a>
+<a href="javascript:;" onClick=edit_rec('$gocur_mrkrgoevid_zdb_id')>[edit]</a>
 <a href="" onClick=delete_rec('$gocur_mrkrgoevid_zdb_id')>[delete]</a>
 <?/MIVAR>
 </td>
