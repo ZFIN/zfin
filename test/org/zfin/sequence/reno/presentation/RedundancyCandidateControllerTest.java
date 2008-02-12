@@ -675,7 +675,6 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
         }
     }
 
-    //test that the NomenBean is set up correctly
 
 
     /**

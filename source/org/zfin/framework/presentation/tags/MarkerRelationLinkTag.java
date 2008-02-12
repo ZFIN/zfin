@@ -49,10 +49,13 @@ public class MarkerRelationLinkTag extends BodyTagSupport {
                         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                             sb.append(MarkerPresentation.getLink(marker));
                         } else {
-                            Marker gene = MarkerService.getRelatedGeneFromClone(marker);
-                            if(gene!=null){
-                                sb.append(MarkerPresentation.getLink(gene));
-                                sb.append(",");
+//                            Marker gene = MarkerService.getRelatedGeneFromClone(marker);
+                            Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(marker);
+                            if(genes!=null){
+                                for(Marker gene: genes){
+                                    sb.append(MarkerPresentation.getLink(gene));
+                                    sb.append(",");
+                                }
                             }
                             sb.append(MarkerPresentation.getLink(marker));
                         }

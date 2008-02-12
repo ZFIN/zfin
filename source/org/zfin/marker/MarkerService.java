@@ -78,12 +78,38 @@ public class MarkerService {
         return getRelatedMarker(marker, types);
     }
 
+
+    /**
+     * Retrieves 0 or more genes associated with a clone that contains or encodes a small segment.
+     *
+     * @param clone Marker object
+     * @return Set<Marker> object
+     */
+    public static Set<Marker> getRelatedSmallSegmentGenesFromClone(Marker clone) {
+        Set<MarkerRelationship.Type> types = new HashSet<MarkerRelationship.Type>();
+        types.add(MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT);
+        types.add(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+
+        Set<Marker> genes = getRelatedMarker(clone, types);
+
+        if (CollectionUtils.isEmpty(genes)) {
+            return genes ;
+        }
+
+        if(genes.size()>1){
+            logger.info("clone "+clone.toString()+" \n has more than one genes associated [" + genes.size()+"]");
+        }
+        return genes ;
+    }
+
+
     /**
      * Retrieve an associated gene (of type genedom).
      * If there are more than one gene found it throws a Runtime Exception.
      *
      * @param clone Clone object
      * @return Marker object
+     * @deprecated Use getRelatedSmallSegmentGenesFromClone if in RENO interface.
      */
     public static Marker getRelatedGeneFromClone(Marker clone) {
         Set<MarkerRelationship.Type> types = new HashSet<MarkerRelationship.Type>();
@@ -111,13 +137,17 @@ public class MarkerService {
     /**
      * Retrieve LG for clone or gene.
      *
+     * If a clone it returns all LinkageGroups contained by or encoded by the clone's small segments.
+     *
      * @param marker Marker
      * @return list of LinkageGroups
      */
     public static List<LinkageGroup> getLinkageGroups(Marker marker) {
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-        if (marker == null)
+        if (marker == null){
             return null;
+        }
+        
         List<LinkageGroup> groups = new ArrayList<LinkageGroup>();
         // if it is a clone (non-gene) check lg for clone first then the gene.
         Set<String> linkageGroups = mr.getLG(marker);
@@ -125,9 +155,13 @@ public class MarkerService {
             // if no linkage group found for clone
             // check the associated gene
             if (CollectionUtils.isEmpty(linkageGroups)) {
-                Marker gene = getRelatedGeneFromClone(marker);
-                if (gene != null) {
-                    linkageGroups = mr.getLG(gene);
+//                Marker gene = getRelatedGeneFromClone(marker);
+                Set<Marker> genes = getRelatedSmallSegmentGenesFromClone(marker);
+                for(Marker gene: genes){
+                    if (gene != null) {
+//                        linkageGroups = mr.getLG(gene);
+                        linkageGroups.addAll(mr.getLG(gene));
+                    }
                 }
             }
         }

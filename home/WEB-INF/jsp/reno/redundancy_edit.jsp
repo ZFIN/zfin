@@ -20,7 +20,7 @@
     <form:select path="associatedGeneField">
         <form:option value="<%=CandidateBean.NOVEL%>"
                      label="${formBean.runCandidate.candidate.suggestedName} (novel)"></form:option>
-        <form:options items="${formBean.runCandidate.allGenesFromQueries}"
+        <form:options items="${formBean.runCandidate.allSingleAssociatedGenesFromQueries}"
                       itemLabel="abbreviation" itemValue="zdbID"/>
         <form:option value="IGNORE">IGNORE</form:option>
     </form:select>

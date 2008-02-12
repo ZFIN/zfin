@@ -10,6 +10,7 @@ import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.security.Md5PasswordEncoderTest;
 import org.zfin.sequence.reno.presentation.RunCandidatePresentationTest;
 import org.zfin.sequence.reno.presentation.RunPresentationTest;
+import org.zfin.sequence.reno.presentation.SingleAssociatedGenesFromQueryTest;
 import org.zfin.util.FileUtilTest;
 import org.zfin.util.ListFormatterTest;
 import org.zfin.util.UrlCreatorTest;
@@ -30,6 +31,7 @@ import org.zfin.util.UrlCreatorTest;
         Md5PasswordEncoderTest.class,
         RelationshipTypeSortingTest.class,
         RunCandidatePresentationTest.class,
+        SingleAssociatedGenesFromQueryTest.class,
         RunPresentationTest.class,
         StagePresentationTest.class,
         SortAnatomyResultsTest.class,

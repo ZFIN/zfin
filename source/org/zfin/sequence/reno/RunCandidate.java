@@ -123,26 +123,58 @@ public class RunCandidate {
      *
      * @return Marker objects for genes found in list of blast hits
      */
-    public Collection<Marker> getAllGenesFromQueries() {
+    public Collection<Marker> getAllSingleAssociatedGenesFromQueries() {
         List<Marker> genes = new ArrayList<Marker>();
 
+        LOG.debug("enter getAllAssociatedGenesFromQueries: " + getCandidateQueries().size());
+
         for (Query q : getCandidateQueries()) {
-            LOG.debug("I've got a query: " + q.getAccession().getNumber());
+            LOG.debug("I've got a query: " + q.getAccession().getNumber() + " num hits: " + q.getBlastHits().size());
             for (Hit h : q.getBlastHits()) {
                 LOG.debug("I've got a hit: " + h.getTargetAccession().getNumber());
                 Accession a = h.getTargetAccession();
+                List<Marker> genesToAdd= new ArrayList<Marker>() ;
+                LOG.debug("number of genes for hit: " + genes.size());
                 for (Marker m : a.getMarkers()) {
-                    LOG.debug("I've got a marker: " + m.getAbbreviation());
+                    LOG.debug("I've got a Marker: " + m.getAbbreviation()+ " of type: "+ m.getType());
+                    LOG.debug("genes.contains(m): " + genes.contains(m));
+                    LOG.debug("is in type group genedom: " + m.isInTypeGroup(Marker.TypeGroup.GENEDOM));
+                    // if the hit is a gene, then add directly
                     if ((m.isInTypeGroup(Marker.TypeGroup.GENEDOM))
                             && (!genes.contains(m))) {
-                        LOG.debug("m group: " + m.getType().toString());
-                        genes.add(m);
-                    } else {
+                        LOG.debug("ADDING genedom gene: " + m.getAbbreviation());
+                        genesToAdd.add(m) ;
+//                        genes.add(m);
+                    }
+                    // if the hit is not a gene, then add any genes that encode it
+                    else {
+                        Set<MarkerRelationship> secondMarkerRelationships = m.getSecondMarkerRelationships() ;
+                        LOG.debug(m.getAbbreviation()+ (secondMarkerRelationships!=null ? " number of second marker relationships: "+ secondMarkerRelationships.size() : "null" ));
                         for (MarkerRelationship rel : m.getSecondMarkerRelationships()) {
                             Marker gene = rel.getFirstMarker();
-                            if (gene.isInTypeGroup(Marker.TypeGroup.GENEDOM) && !genes.contains(gene))
-                                genes.add(gene);
+                            LOG.debug("gene: "+ (gene==null ? "null" : gene.getAbbreviation())  ) ; 
+                            LOG.debug("encoding gene is in type group genedom: " + gene.isInTypeGroup(Marker.TypeGroup.GENEDOM));
+                            LOG.debug("genes to add size: " + genesToAdd.size());
+                            LOG.debug("genes to add contains: " + genesToAdd.contains(gene));
+
+                            if (gene.isInTypeGroup(Marker.TypeGroup.GENEDOM) && !genesToAdd.contains(gene) && rel.getType().equals(
+                                    MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT)){
+                                LOG.debug("ADDING encoding gene: "+ gene.getAbbreviation());
+                                genesToAdd.add(gene) ;
+                            }
+                            else{
+                                LOG.debug("NOT adding encoding gene: "+ gene.getAbbreviation());
+                            }
                         }
+                        // only add if a single encoded relationship
+                    }
+                }
+                LOG.debug("genes to add "+genesToAdd.size() + " for hit accession " + a.getNumber());
+                if(genesToAdd.size()==1){
+                    LOG.debug("adding one gene: " + genesToAdd.get(0).getAbbreviation()); ;
+                    Marker geneToAdd = genesToAdd.get(0) ;
+                    if(!genes.contains(geneToAdd)){
+                        genes.add(genesToAdd.get(0));
                     }
                 }
             }
