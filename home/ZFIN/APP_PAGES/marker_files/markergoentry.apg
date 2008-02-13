@@ -107,7 +107,31 @@ function call_reset() {
 
  function call_validate(geneid) {
     var GOid=document.newdata.goterm.value;
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergovalidate.apg&attr=goid&value='+GOid+'&return_page=markergoentry.apg&return_id='+geneid); 
+    var evind = document.newdata.evidence.selectedIndex;
+    var evi_code = document.newdata.evidence[evind].value; 
+    var infind = document.newdata.infdb.selectedIndex;
+    var infdbase = document.newdata.infdb[infind].value; 
+    var pub = document.newdata.pub.value;
+    var notes = document.newdata.comments.value;
+    var inf = document.newdata.inf.value;
+    var mod='new';
+           if ( document.newdata.isnot.checked == true )
+           {
+              var isnot = 'true';
+           }
+           else
+           {
+             var isnot='false';
+           }
+           if ( document.newdata.contributes.checked == true )
+           {
+              var contributes = 'true';
+           }
+           else
+           {
+             var contributes='false';
+           }
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergovalidate.apg&attr=goid&value='+GOid+'&pub_id='+pub+'&evidence_code='+evi_code+'&inf_db='+infdbase+'&inf_mem='+inf+'&notes='+notes+'&contributes='+contributes+'&is_not='+isnot+'&return_page=markergoentry.apg&return_id='+geneid);
  }
 
 </SCRIPT>  
@@ -119,13 +143,13 @@ function call_reset() {
   <center><b>GO annotations for <i><?MIVAR>$mrkr_sym<?/MIVAR></i></b></center>
   <p>
   <center> <input type=button align = "center" value ="Done updating. Back to Viewing!" onclick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"></center>
-
   <?MIVAR COND="$(NXST,$inf_db)" NAME=$inf_db><?/MIVAR>
   <?MIVAR COND="$(NXST,$evidence_code)" NAME=$evidence_code><?/MIVAR>
   <?MIVAR COND="$(NXST,$go_term)" NAME=$go_term><?/MIVAR>
   <?MIVAR COND="$(NXST,$pub_id)" NAME=$pub_id><?/MIVAR>
-  <?MIVAR NAME=$notes><?/MIVAR>
+  <?MIVAR COND="$(NXST,$notes)" NAME=$notes><?/MIVAR>
   <?MIVAR COND="$(NXST,$is_not)" NAME=$is_not><?/MIVAR>
+  <?MIBLOCK COND="$(NXST,$notes)">
   <?MISQL COND="$(XST,$clone_note_id)" NAME=$clone_note_id SQL="
   select mgte.mrkrgoev_notes from 
   marker_go_term_evidence mgte
@@ -133,6 +157,7 @@ function call_reset() {
   ">
   <?MIVAR NAME=$notes>$1<?/MIVAR>
   <?/MISQL>
+  <?/MIBLOCK>
   <?MIVAR COND="$(NXST,$clone_note_id)" NAME=$clone_note_id><?/MIVAR>
 
   <p>
