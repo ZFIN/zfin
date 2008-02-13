@@ -26,6 +26,9 @@ PREFIX:   featcurup_
   <?MIVAR NAME=$featcurup_feature_zdb_id><?/MIVAR>
   <?MIVAR NAME=$featcurup_feature_lab_zdb_id><?/MIVAR>
   <?MIVAR NAME=$featcurup_marker_zdb_id><?/MIVAR>
+  <?MIVAR NAME=$allele_exists><?/MIVAR>
+  <?MIVAR NAME=$unspallele_exists><?/MIVAR>
+  <?MIVAR NAME=$unspallele_abbrev><?/MIVAR>
 
   <?MICOMMENT>
   Add data to feature/marker tables from Create New Feature section
@@ -53,6 +56,16 @@ PREFIX:   featcurup_
             alert("The marker  '<?MIVAR>$featcur_feature_add_name<?/MIVAR>' - already exists")
          </SCRIPT> 
        <?MIELSE> 
+        <?MIBLOCK COND="$(AND,$(EC,$featcur_feature_add_type,unspecified),$(NE,$(SUBSTR,$featcur_feature_add_name,1,3),un_))">
+              <SCRIPT>
+                 alert("A feature of type unspecified must always be named un_")
+              </SCRIPT> 
+       <?MIELSE>
+        <?MIBLOCK COND="$(AND,$(EC,$(SUBSTR,$featcur_feature_add_name,1,3),un_),$(NE,$featcur_feature_add_type,UNSPECIFIED))">
+              <SCRIPT>
+                 alert("An un_allele must always be of type unspecified")
+              </SCRIPT> 
+             <?MIELSE>
          <?MIVAR COND=$(NXST,$featcur_feature_add_name) NAME=featcur_feature_add_name><?/MIVAR>
          <?MIVAR COND=$(NXST,$featcur_feature_add_abbrev) NAME=featcur_feature_add_abbrev><?/MIVAR>
          <?MIVAR COND=$(NXST,$featcur_feature_add_alias) NAME=featcur_feature_add_alias><?/MIVAR>
@@ -296,7 +309,8 @@ PREFIX:   featcurup_
      </SCRIPT> 
    <?/MIBLOCK> <?MICOMMENT> End if feature/marker exists block <?/MICOMMENT>
   <?/MIBLOCK> <?MICOMMENT> End if featcur_add_name variable exists <?/MICOMMENT>
-
+<?/MIBLOCK>
+<?/MIBLOCK>
 <?/MIBLOCK>  <?MICOMMENT>End if "Create Marker/Feature" block <?/MICOMMENT>
 
 <?MICOMMENT> *****start edit feature block****** <?/MICOMMENT>
@@ -413,7 +427,6 @@ PREFIX:   featcurup_
       <?/MISQL>
    <?/MIBLOCK>
 <?/MICOMMENT>
-
       <?MICOMMENT>First format note text <?/MICOMMENT>
       <?MIVAR NAME=$featedit_feature_public_note>$(TRIM,$featedit_feature_public_note)<?/MIVAR>
       <?MIVAR NAME=$featedit_feature_public_note DELIMIT="'" REPLACE="''">$featedit_feature_public_note<?/MIVAR>
@@ -498,11 +511,34 @@ PREFIX:   featcurup_
         <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) values('$featcurup_mkrmkr_reln_zdb_id', '$OID')"><?/MISQL>
         <?MISQL SQL="insert into marker_relationship  values('$featcurup_mkrmkr_reln_zdb_id', '$featcur_reln_add_relation', '$featcur_reln_feat_zdb_id', '$featcur_reln_add_marker','')"><?/MISQL>
    <?MIELSE>
+          <?MISQL SQL="select feature_type from feature
+                       where
+                       feature_zdb_id='$featcur_reln_feat_zdb_id' 
+            ">
+                <?MIVAR NAME=$allele_exists>$1<?/MIVAR>
+           <?/MISQL>
+             <?MIBLOCK COND="$(EC,UNSPECIFIED,$allele_exists)">
+                <?MISQL SQL="select feature_type,feature_abbrev from feature, feature_marker_relationship
+                              where fmrel_type='is allele of'
+                              and fmrel_mrkr_zdb_id='$featcur_reln_add_marker'
+                              and fmrel_ftr_zdb_id=feature_zdb_id
+                              and feature_type like 'UNSPECIFIED%'">
+               
+                <?MIVAR NAME=$unspallele_exists>$1<?/MIVAR>
+                <?MIVAR NAME=$unspallele_abbrev>$2<?/MIVAR>
+                <?/MISQL>
+              <?/MIBLOCK>
+                 <?MIBLOCK COND="$(EC,UNSPECIFIED,$unspallele_exists)">
+                  <SCRIPT>
+                   alert('An un_ allele (<?MIVAR>$unspallele_abbrev<?/MIVAR>) already exists for this gene. You cannot create another one')
+                  </SCRIPT>
+                 <?MIELSE>
+       
         <?MISQL SQL="execute function get_id('FMREL');">$(SETVAR,$featcurup_ftrmkr_reln_zdb_id,$1)<?/MISQL>
         <?MISQL SQL="insert into zdb_active_data values('$featcurup_ftrmkr_reln_zdb_id')"><?/MISQL>
         <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) values('$featcurup_ftrmkr_reln_zdb_id', '$OID')"><?/MISQL>
         <?MISQL SQL="insert into feature_marker_relationship (fmrel_zdb_id, fmrel_type, fmrel_ftr_zdb_id, fmrel_mrkr_zdb_id) values('$featcurup_ftrmkr_reln_zdb_id', '$featcur_reln_add_relation', '$featcur_reln_feat_zdb_id', '$featcur_reln_add_marker')"><?/MISQL>
    <?/MIBLOCK>
 <?/MIBLOCK>
-
+<?/MIBLOCK>
 <?/MIBLOCK>  <?MICOMMENT> authorize = root <?/MICOMMENT>
