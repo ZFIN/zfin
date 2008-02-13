@@ -46,6 +46,7 @@ optional:
 
 
 <?MIVAR COND="$(NXST,$attr)" NAME=$attr><?/MIVAR>
+<?MIVAR COND="$(NXST,$closeafterload)" NAME=$closeafterload><?/MIVAR>
 <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value><?/MIVAR>
 <?MIVAR COND="$(NXST,$new_valuedb)" NAME=$new_valuedb><?/MIVAR>
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value><?/MIVAR>
@@ -251,8 +252,15 @@ optional:
       insert into updates (submitter_id,submitter_name, rec_id, old_value,field_name, comments,when)
      		   values ('$ZDB_ident','$ZDB_name','$mrkrzdbid', '$OID','go annotation','delete this annotation',current);">
   <?/MISQL>
+
+
+
   <SCRIPT><?MIVAR>
      window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$mrkrzdbid");
+
+     if(closeafterload='true'){
+        window.close() ; 
+     }
         <?/MIVAR>
   </SCRIPT>
 

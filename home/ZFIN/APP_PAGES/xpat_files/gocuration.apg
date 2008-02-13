@@ -29,7 +29,7 @@ This page is the GO tab.
  function delete_rec(mrkrgoevid) {
     var answer = confirm("Delete GO annotation?")
     if(answer){
-        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+mrkrgoevid+'&attr=delall'); 
+         helpwin=open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+mrkrgoevid+'&attr=delall&closeafterload=true');
     }
  }
 
