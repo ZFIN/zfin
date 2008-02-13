@@ -10,6 +10,7 @@
         <property name="mappings">
             <props>
                 <prop key="/login">login</prop>
+                <prop key="/login-redirect">login</prop>
                 <prop key="/audit-log/details">auditLogDetails</prop>
                 <prop key="/people/view-person-detail">peopleViewDetail</prop>
                 <!--
