@@ -303,6 +303,7 @@ Type:<SELECT name=upd_seq_type>
     select distinct fdbdt_data_type
       from foreign_db_data_type
      where fdbdt_super_type = 'sequence'
+     and fdbdt_data_type != 'Sequence Clusters'
      order by fdbdt_data_type;">
     <option value="$1" $(IF,$(EC,$1,cDNA),SELECTED)>$1</option>
   <?/MISQL>
