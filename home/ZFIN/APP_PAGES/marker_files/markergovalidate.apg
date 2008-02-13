@@ -35,7 +35,10 @@ used URLENCODE
 <?MIVAR COND="$(NXST,$return_info)" NAME=$return_info><?/MIVAR>
   <!----- validate the go id exist in ZFIN and is not obsolete or secondary,this is called when create a new annotation ----->
   <?MIBLOCK COND="$(EC,$attr,goid)">
-      
+<?MIVAR COND="$(NXST,$notes)" NAME=$notes><?/MIVAR>
+   <?MIVAR COND="$(NXST,$pub_id)" NAME=$pub_id><?/MIVAR>
+   <?MIVAR COND="$(NXST,$inf_mem)" NAME=$inf_mem><?/MIVAR>
+      <?MIVAR NAME=return_info>&evidence_code=$evidence_code&pub_id=$pub_id&inf_db=$inf_db&inf_mem=$inf_mem&notes=$notes<?/MIVAR>
       <?MIVAR NAME=goterm_id>$(SUBSTR,$value,4)<?/MIVAR>
 
       <?MISQL SQL="select goterm_name, goterm_is_obsolete, goterm_is_secondary
@@ -71,7 +74,7 @@ used URLENCODE
       <?MIVAR COND="$(OR,$(EC,$goterm_id,0005554),$(EC,$goterm_id,0000004),$(EC,$goterm_id,0008372))">
      	<script>
        		window.alert("Please use the corresponding root term instead of the unknown term."); 
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id&go_id=$value'); 
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info&go_id=$value'); 
 
      	</script>   
       <?/MIVAR>
@@ -107,7 +110,7 @@ used URLENCODE
       <?MIELSE>
       <?MIVAR NAME=$goterm_name>$(URLENCODE,$goterm_name)<?/MIVAR>
         <script><?MIVAR>
-	   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id&go_id=$value&go_term=$goterm_name'); <?/MIVAR>
+	   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info&go_id=$value&go_term=$goterm_name'); <?/MIVAR>
         </script>
       <?/MIBLOCK>	
 
