@@ -29,7 +29,7 @@ This page is the GO tab.
  function delete_rec(mrkrgoevid) {
     var answer = confirm("Delete GO annotation?")
     if(answer){
-         helpwin=open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+mrkrgoevid+'&attr=delall&closeafterload=true');
+        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+mrkrgoevid+'&attr=delall'); 
     }
  }
 
@@ -290,7 +290,7 @@ gt.goterm_name
 <?MIVAR>
 <a href="javascript:;" onClick=new_clone('$OID','$gocur_mrkr_zdb_id','GO:$goid','$gocur_term_name_encode','$gocur_evidence_code','$dbase','$gocur_mrkrgoevid_zdb_id','$not','$contribs',escape('$inf_comma')) >[clone Annotation]</a>
 <a href="javascript:;" onClick=edit_rec('$gocur_mrkrgoevid_zdb_id')>[edit]</a>
-<a href="" onClick=delete_rec('$gocur_mrkrgoevid_zdb_id')>[delete]</a>
+<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID" onClick=delete_rec('$gocur_mrkrgoevid_zdb_id')>[delete]</a>
 <?/MIVAR>
 </td>
 
