@@ -17,7 +17,7 @@
                  fileDateFormat="yyyy-MM"
                  directory="logs"  prefix="@DOMAIN-NAME@_zfin_access_log." 
                  suffix=".txt"
-                 pattern="common" resolveHosts="false"/>
+                 pattern="combined" resolveHosts="false"/>
 
 </Context>
 
