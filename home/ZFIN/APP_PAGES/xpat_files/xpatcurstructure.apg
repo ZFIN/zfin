@@ -377,8 +377,6 @@ EFFECTS
     }
   </script>
 
-<script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
-
 <?MIVAR NAME=anatdict_anatList><?/MIVAR>
 
 <?MISQL SQL="
@@ -512,33 +510,52 @@ EFFECTS
     <td colspan=6><HR></td>
   </tr>
 <?MICOMMENT> ==| Enter a New Structure |== <?/MICOMMENT>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#structure" method=post name=structure2 onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','structure','xpcur_c_');">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#structure" method="post" name="structure2" onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','structure','xpcur_c_');">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
   <tr>
-    <td colspan=2 valign=top>
-      <input name="xpcur_G_structure_add_button" type=submit value="Add">
-    </td>
-    <td colspan=3 align=left>
-        <input type=textbox name="xpcur_G_structure_add_name" size=80
-               onFocus="this.blur();alert('This field is not editable. Use the \'Add Term\' field below.');">
-        <input type=hidden name="xpcur_G_structure_add">   
-        <br>
-        
-	<input name="structure_expressed" value=t type=radio CHECKED> Detected 
-        <input name="structure_expressed" value=f type=radio> <font color=red>not</font>
-    </td>
-  </tr>
-  <tr>
     <td colspan=5>&nbsp;</td>
   </tr>
-  <tr>
-    <td colspan=4>
-        <a href="javascript:onClick=openAO('stage');">Open AO to stage</a>
-    </td>
-    <td>
+
+  <tr><td colspan="5" valign="top">
+
+  <table>
+   <tr>
+     <td valign="top" >
+        <input type=hidden name="xpcur_G_structure_add">   
+
+
+  Add Term:
+
+
+  <input type="text" size="45" name="xpcur_G_AO_term" id="xpcurstr_AOterm" autocomplete="off">
+  <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="xpcurstr_AOterm_autocomplete"></div>
+
+  <br>
+  <span style="margin-left: 5em;">
+  	<input id="xpcurstrDetected" name="structure_expressed" value=t type=radio CHECKED> <label for="xpcurstrDetected">Detected</label> 
+        <input id="xpcurstrNotDetected" name="structure_expressed" value=f type=radio> <label for="xpcurstrNotDetected" style="color: red">not</label>
         
-          <select name=stage_id>
+        <input name="xpcur_G_structure_add_button" type="submit" value="Add" style="margin-left: 9em;">
+  </span>
+
+  <script type="text/javascript" src="/phenote/javascript/phenote-state.js"></script>
+  <script type="text/javascript"> 
+      phenoteState.setTermInfoUrl('/phenote/Phenote/'); 
+      phenoteState.setActiveField(document.getElementById('xpcurstr_AOterm'));
+  </script>
+  <script src="/phenote/javascript/ncbo-term-info.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    new Ajax.Autocompleter( 'xpcurstr_AOterm', 'xpcurstr_AOterm_autocomplete', '/phenote/Phenote/', {parameters:'ontologyName=ZF&field=ENTITY',paramName: "userInput", minChars: 2} );
+  </script>
+
+  <br><br>
+
+<br>
+
+  <a href="javascript:;" onClick="openAO('stage');">Open AO to stage</a>
+  <br>
+  <select name="stage_id" 
             <?MISQL SQL="
               select stg_zdb_id, stg_abbrev, stg_name_ext
   	      from stage
@@ -546,27 +563,29 @@ EFFECTS
               order by stg_hours_start;">
               <option value="$1" $(IF,$(AND,$(XST,$xpcur_G_panel_add_start_stg),$(EC,$xpcur_G_panel_add_start_stg,$1)),SELECTED)>$2 $3</option>
             <?/MISQL>        
-          </select>
-    </td>
-  </tr>
-  <tr>
-    <td colspan=4>
-        <?MIVAR>
-        Add Term: 
-    </td>
-    <td>
-            <input type=textbox name="xpcur_G_AO_term" id=AOterm size=30>
-            <DIV id="autosuggest"><ul></ul></DIV>
+  </select>
+  <input type="text" name="xpcur_G_structure_add_name" size="60" disabled="true">
 
-	    <script>
-		  var anatomyList = new Array($xpcurstr_anatList);
-		  new AutoSuggest(document.getElementById("AOterm"),anatomyList);
-            </script>        
-        <?/MIVAR>    
-    </td>
-    <td>&nbsp;</td>
+  <br>
+
+
+  </td>
+  <td>
+  <div style="width:400px; overflow: auto; height: 400px;" id="termInfo"></div>
+     <input
+        type="button"
+        value="Use Term"
+        name="use_term_info"
+        onClick="phenoteState.useTermInfo()"
+      >
+
+
+  </td>
   </tr>
-  
+  </table>
+  </td></tr>
+
+
   </form>
   
 </table>
