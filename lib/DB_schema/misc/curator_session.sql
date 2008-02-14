@@ -73,5 +73,5 @@ create trigger publication_completion_date_update_trigger
       new_publication.pub_completion_date)
 );
 
-rollback work ;
---commit work ;
+--rollback work ;
+commit work ;
