@@ -2,6 +2,7 @@ package org.zfin.framework.presentation.tags;
 
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerService;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.MarkerDBLink;
@@ -16,16 +17,18 @@ import java.util.Set;
 import java.util.ArrayList;
 
 /**
- * Creates a hyperlink for a specific type. Supported types are:
- * 1) Anatomy term page
- * 2) Gene page
+ * Creates a hyperlink for any sort of relation from a gene. FB 2385.
+ * @link http://zfinwinserver1/FogBUGZ/default.asp?2385
  */
-public class MarkerRelationLinkTag extends BodyTagSupport {
+public class AllMarkerRelationLinkTag extends BodyTagSupport {
 
-    Logger logger = Logger.getLogger(MarkerRelationLinkTag.class) ;
+    transient Logger logger = Logger.getLogger(AllMarkerRelationLinkTag.class) ;
 
     private Accession accession ;
     private boolean showParent;
+    private boolean doAbbrev;
+
+    public AllMarkerRelationLinkTag(){}
 
     public int doStartTag() throws JspException {
 
@@ -49,15 +52,8 @@ public class MarkerRelationLinkTag extends BodyTagSupport {
                         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                             sb.append(MarkerPresentation.getLink(marker));
                         } else {
-//                            Marker gene = MarkerService.getRelatedGeneFromClone(marker);
-                            Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(marker);
-                            if(genes!=null){
-                                for(Marker gene: genes){
-                                    sb.append(MarkerPresentation.getLink(gene));
-                                    sb.append(",");
-                                }
-                            }
-                            sb.append(MarkerPresentation.getLink(marker));
+                            Set<MarkerRelationship> markerRelationships = MarkerService.getRelatedGenedomMarkerRelations(marker);
+                            sb.append(MarkerPresentation.getRelationLinks(markerRelationships,doAbbrev));
                         }
                     }
                     if (showParent) {
@@ -97,6 +93,11 @@ public class MarkerRelationLinkTag extends BodyTagSupport {
     }
 
 
+    public boolean getDoAbbrev() {
+        return doAbbrev;
+    }
 
-
+    public void setDoAbbrev(boolean doAbbrev) {
+        this.doAbbrev = doAbbrev;
+    }
 }

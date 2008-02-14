@@ -23,6 +23,27 @@ public class MarkerService {
     static Logger logger = Logger.getLogger(MarkerService.class);
 
     /**
+     * Looks for firstMarkers in Genedom and returns the entire relation.
+     *
+     * @param marker
+     * @return
+     */
+    public static Set<MarkerRelationship> getRelatedGenedomMarkerRelations(Marker marker) {
+        Set<MarkerRelationship> markerRelationships= new HashSet<MarkerRelationship>();
+        Set<MarkerRelationship> relationTwo = marker.getSecondMarkerRelationships();
+        
+        if (relationTwo != null){
+            for (MarkerRelationship rel : relationTwo){
+                if(rel.getFirstMarker().isInTypeGroup(Marker.TypeGroup.GENEDOM)){
+                    markerRelationships.add(rel);
+                }
+            }
+        }
+
+        return markerRelationships;
+    }
+
+    /**
      * Retrieve a target marker that is related to the source marker
      * via one or more marker relationship types.
      * <p/>

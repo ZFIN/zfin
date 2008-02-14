@@ -9,7 +9,7 @@
     <zfin:name entity="${query.runCandidate}"/> 
     <br>
     <b>Query:</b> <zfin:link entity="${query.accession}"/>
-    <zfin:markerRelationLink accession="${query.accession}" showParent="true"/><br>
+    <geneRelationLink accession="${query.accession}" showParent="true"/><br>
     ${query.accession.defline} <br>
     <c:choose>
         <c:when test="${query.validBlastHit}">
@@ -53,7 +53,8 @@
 
                 <td>${hit.expectValue}</td>
                 <td>
-                    <zfin:markerRelationLink accession="${hit.targetAccession}"/>
+                    <%--<zfin:geneRelationLink accession="${hit.targetAccession}"/>--%>
+                    <zfin:allMarkerRelationLink accession="${hit.targetAccession}" doAbbrev="true"/>
                 </td>
             </zfin:alternating-tr>
         </c:forEach>
