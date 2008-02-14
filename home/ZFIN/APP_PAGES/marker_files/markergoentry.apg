@@ -149,7 +149,7 @@ function call_reset() {
   <?MIVAR COND="$(NXST,$pub_id)" NAME=$pub_id><?/MIVAR>
   <?MIVAR COND="$(NXST,$notes)" NAME=$notes><?/MIVAR>
   <?MIVAR COND="$(NXST,$is_not)" NAME=$is_not><?/MIVAR>
-  <?MIBLOCK COND="$(NXST,$notes)">
+  <?MIBLOCK COND="$(EC,$notes,)">
   <?MISQL COND="$(XST,$clone_note_id)" NAME=$clone_note_id SQL="
   select mgte.mrkrgoev_notes from 
   marker_go_term_evidence mgte
