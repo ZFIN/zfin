@@ -9,7 +9,6 @@ import org.zfin.mutant.MutantRepositoryTest;
 import org.zfin.people.repository.PeopleRepositoryTest;
 import org.zfin.sequence.MapAccessionDbLinkTest;
 import org.zfin.sequence.SequenceRepositoryTest;
-import org.zfin.sequence.blast.BlastRepositoryTest;
 import org.zfin.sequence.reno.AlignmentsControllerTest;
 import org.zfin.sequence.reno.presentation.RedundancyCandidateControllerTest;
 import org.zfin.sequence.reno.presentation.NomenclatureCandidateControllerTest;
@@ -30,7 +29,6 @@ import org.zfin.infrastructure.EnumValidationTest;
 @Suite.SuiteClasses({
         AlignmentsControllerTest.class,
         AnatomyRepositoryTest.class,
-        BlastRepositoryTest.class,
         InfrastructureRepositoryTest.class,
         MarkerRepositoryTest.class,
         MutantRepositoryTest.class,
