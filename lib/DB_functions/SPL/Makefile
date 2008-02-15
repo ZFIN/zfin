@@ -63,6 +63,7 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       get_pub_default_permissions.sql p_check_state_country.sql \
 	       p_new_person_address.sql get_sortable_authors_lower.sql \
 	       p_update_person_address.sql \
+	       p_delete_curator_session.sql	\
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
 	       regen_panelcount.sql regen_maps.sql
