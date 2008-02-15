@@ -19,7 +19,6 @@
 
 <a name="top"></a>
 
-<link rel="stylesheet" type="text/css" href="/css/dev_tools.css"/>
 <tiles:insert attribute="header">
 </tiles:insert>
 

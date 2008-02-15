@@ -23,7 +23,7 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/home.jsp"/>
     </definition>
 
-    <definition name="login" extends="home_layout">
+    <definition name="login" extends="main_layout">
         <put name="body" value="/WEB-INF/jsp/login_form.jsp"/>
     </definition>
 
