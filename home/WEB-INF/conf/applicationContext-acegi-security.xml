@@ -109,7 +109,7 @@
 
     <bean id="authenticationProcessingFilter" class="org.zfin.security.ZfinAuthenticationProcessingFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="authenticationFailureUrl" value="/action/login?error=true"/>
+        <property name="authenticationFailureUrl" value="/action/login-redirect?error=true"/>
         <property name="defaultTargetUrl" value="/action/http-redirect"/>
         <property name="filterProcessesUrl" value="/action/security-check"/>
     </bean>
