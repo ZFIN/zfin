@@ -200,7 +200,7 @@ public class CandidateController extends SimpleFormController {
             tx = session.beginTransaction();
             handleDone(candidateBean);
             tx.commit();
-        } catch (HibernateException e) {
+        } catch (Exception e) {
             tx.rollback();
             LOG.error(e);
             throw e;
