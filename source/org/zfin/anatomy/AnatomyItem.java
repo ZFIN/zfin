@@ -22,6 +22,7 @@ public class AnatomyItem {
     private String oboID;
     private DevelopmentStage start;
     private DevelopmentStage end;
+    private String lowerCaseName;
     private String definition;
     private String description;
     private boolean obsolete;
@@ -104,6 +105,14 @@ public class AnatomyItem {
 
     public List<AnatomyRelationship> getRelatedItems() {
         return relatedItems;
+    }
+
+    public String getLowerCaseName() {
+        return lowerCaseName;
+    }
+
+    public void setLowerCaseName(String lowerCaseName) {
+        this.lowerCaseName = lowerCaseName;
     }
 
     public Set<AnatomySynonym> getSynonyms() {

@@ -110,11 +110,11 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         Session session = HibernateUtil.currentSession();
         String hql = "select term from AnatomyItem term  " +
                 "where  " +
-                "   (upper(term.name) like :name or exists (from AnatomySynonym syn where syn.item = term " +
-                "                                           and upper(syn.name) like :name )) " +
+                "   (term.lowerCaseName like :name or exists (from AnatomySynonym syn where syn.item = term " +
+                "                                           and syn.aliasLowerCase like :name )) " +
                 "order by term.name";
         Query query = session.createQuery(hql);
-        query.setString("name", "%" + searchString.toUpperCase() + "%");
+        query.setString("name", "%" + searchString.toLowerCase() + "%");
         List<AnatomyItem> items = query.list();
 
         if (items != null) {

@@ -26,6 +26,7 @@ public abstract class DataAlias {
     private String zdbID;
     protected String alias;
     private Group group;
+    private String aliasLowerCase;
 
 
     public String getZdbID() {
@@ -50,5 +51,13 @@ public abstract class DataAlias {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public String getAliasLowerCase() {
+        return aliasLowerCase;
+    }
+
+    public void setAliasLowerCase(String aliasLowerCase) {
+        this.aliasLowerCase = aliasLowerCase;
     }
 }

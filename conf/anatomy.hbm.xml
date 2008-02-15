@@ -70,6 +70,10 @@
             <column name="anatitem_is_obsolete" not-null="false"/>
         </property>
 
+        <property name="lowerCaseName">
+            <column name="anatitem_name_lower" not-null="false"/>
+        </property>
+
         <property name="nameOrder">
             <column name="anatitem_name_order"/>
         </property>
@@ -182,6 +186,9 @@
         </id>
         <property name="name">
             <column name="dalias_alias"/>
+        </property>
+        <property name="aliasLowerCase">
+            <column name="dalias_alias_lower"/>
         </property>
         <property name="group" type="dataAliasGroup">
             <column name="dalias_group"/>
