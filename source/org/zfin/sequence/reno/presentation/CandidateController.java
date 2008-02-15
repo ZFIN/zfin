@@ -81,8 +81,12 @@ public class CandidateController extends SimpleFormController {
             handleView(candidateBean);
 
             tx.commit();
-        } catch (HibernateException e) {
-            tx.rollback();
+        } catch (Exception e) {
+            try {
+                tx.rollback();
+            } catch (HibernateException he) {
+                LOG.error("Error during roll back of transaction", he);
+            }
             LOG.error("Error in Transaction", e);
         }
 
