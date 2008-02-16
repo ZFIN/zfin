@@ -219,6 +219,7 @@
 FASTA or free-text format:
 <br>
 <textarea name= "SEQUENCE" rows=6 cols=60>
+<?MIVAR>$(IF,$(XST,$SEQUENCE),$SEQUENCE)<?/MIVAR>
 </textarea>
 <BR>
 Set subsequence:
@@ -235,10 +236,11 @@ Sequence ID:
 
 <BR>
 Sequence Type:
+<?MIVAR NAME=SEQ_TYPE>$(IF,$(NXST,$SEQ_TYPE),nt)<?/MIVAR>
 <select name="SEQ_TYPE">
   <?MIVAR>
-    <option value="nt" $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt)),selected)>Nucleotide
-    <option value="pt" $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),selected)>Protein
+    <option value="nt" $(IF,$(EQ,$SEQ_TYPE,nt),selected)>Nucleotide
+    <option value="pt" $(IF,$(EQ,$SEQ_TYPE,pt),selected)>Protein
   <?/MIVAR>
 </select>
 <P>
@@ -257,15 +259,22 @@ Upload a free-text file:
     blastx, tblastx would be requiring protein query prameter) However, it is fine for now to mix use
     these two concepts. I will come back to it after the emergence fix. 
 <?/MICOMMENT>
-<?MIVAR>
- Expect: <input type=text name="EXPECT" value=$(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),"10","1e-25") size="5">
-          &nbsp;
- Word Size: <input type=text name="WORD" value=$(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),"3", "11") size="2">
+
+ Expect: 
+  <?MIBLOCK COND="$(XST,$EXPECT)">
+    <?MIVAR><input type=text name="EXPECT" value="$EXPECT" size="5"><?/MIVAR>
+  <?MIELSE> 
+    <?MIVAR><input type=text name="EXPECT" value=$(IF,$(EQ,$SEQ_TYPE,pt),"10","1e-25") size="5"><?/MIVAR>
+  <?/MIBLOCK>
+  &nbsp;
+
+ <?MIVAR>
+ Word Size: <input type=text name="WORD" value=$(IF,$(EQ,$SEQ_TYPE,pt),3,11) size="2">
           &nbsp;
  Matrix:
     <select name = "MATRIX">
          <option value=""> -------
-         <option $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),selected)> BLOSUM62
+         <option $(IF,$(EQ,$SEQ_TYPE,pt),selected)> BLOSUM62
          <option> BLOSUM45
          <option> BLOSUM80
          <option> PAM30
@@ -278,14 +287,14 @@ Upload a free-text file:
  Filter options for DNA Queries: &nbsp;
 
 <?MIVAR>
-    <input type=checkbox name="DUST"  $(IF,$(OR,$(NXST,$SEQ_TYPE),$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt))), checked)> Low complexity
-    <input type=checkbox name="POLY_A"  $(IF,$(OR,$(NXST,$SEQ_TYPE), $(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt))),checked)> Poly-A's filter
+    <input type=checkbox name="DUST"  $(IF,$(EQ,$SEQ_TYPE,nt), checked)> Low complexity
+    <input type=checkbox name="POLY_A"  $(IF,$(EQ,$SEQ_TYPE,nt),checked)> Poly-A's filter
     <BR>
 
  Filter options for Protein Queries: <BR>
-  &nbsp;&nbsp;&nbsp;<INPUT type=checkbox name="SEG"  $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),checked)>
+  &nbsp;&nbsp;&nbsp;<INPUT type=checkbox name="SEG"  $(IF,$(EQ,$SEQ_TYPE,pt),checked)>
          SEG - filter low compositional complexity regions <br>
-  &nbsp;&nbsp;&nbsp;<INPUT type=checkbox name="XNU"  $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),checked)>
+  &nbsp;&nbsp;&nbsp;<INPUT type=checkbox name="XNU"  $(IF,$(EQ,$SEQ_TYPE,pt),checked)>
          XNU - filter short-periodicity repeats
 <?/MIVAR>
 
