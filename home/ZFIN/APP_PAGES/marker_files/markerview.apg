@@ -759,7 +759,7 @@ function jump(form_select){
 	     where fdb_db_name ='SNPBLAST';">
        <?MIVAR NAME=fdb_url_snpblast>$1<?/MIVAR>
      <?/MISQL>
-    <?MIVAR NAME=zfin_url_blastn>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg&PROGRAM=blastn&SEQ_TYPR=nt&SEQ_ID=<?/MIVAR>
+    <?MIVAR NAME=zfin_url_blastn>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg&PROGRAM=blastn&SEQ_TYPR=nt&EXPECT=e-10&SEQUENCE=<?/MIVAR>
     <td>&nbsp;</td>
     </tr>
     <tr><td>&nbsp;</td>
@@ -784,7 +784,7 @@ function jump(form_select){
             <?MIVAR>
             <OPTION VALUE=$(CONCAT,$fdb_url_blast,$mrkrview_sequence)>NCBI BLAST            </OPTION>
             <OPTION VALUE=$fdb_url_snpblast> SNP BLAST</OPTION>
-            <OPTION VALUE=$zfin_url_blastn> ZFIN BLAST</OPTION>
+            <OPTION VALUE=$(CONCAT,$zfin_url_blastn,$mrkrview_sequence)> ZFIN BLAST</OPTION>
             <?/MIVAR>
        </SELECT>
      </td>
