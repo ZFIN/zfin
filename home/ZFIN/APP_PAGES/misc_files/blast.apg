@@ -1,5 +1,4 @@
-<HTML>
-<head>
+<HTML><head>
 <?MICOMMENT>this variable is needed for input_button_generic.apg<?/MICOMMENT>
 <?MIVAR name=page_name>ZFIN BLAST<?/MIVAR>
 <title><?MIVAR>$page_name<?/MIVAR></title>
@@ -218,7 +217,7 @@
 <p>
 FASTA or free-text format:
 <br>
-<textarea name= "SEQUENCE" rows=6 cols=60>
+<textarea name="SEQUENCE" rows=6 cols=60>
 <?MIVAR>$(IF,$(XST,$SEQUENCE),$SEQUENCE)<?/MIVAR>
 </textarea>
 <BR>
@@ -236,7 +235,7 @@ Sequence ID:
 
 <BR>
 Sequence Type:
-<?MIVAR NAME=SEQ_TYPE>$(IF,$(NXST,$SEQ_TYPE),nt)<?/MIVAR>
+<?MIVAR COND="$(NXST,$SEQ_TYPE)" NAME=SEQ_TYPE>nt<?/MIVAR>
 <select name="SEQ_TYPE">
   <?MIVAR>
     <option value="nt" $(IF,$(EQ,$SEQ_TYPE,nt),selected)>Nucleotide
@@ -287,7 +286,7 @@ Upload a free-text file:
  Filter options for DNA Queries: &nbsp;
 
 <?MIVAR>
-    <input type=checkbox name="DUST"  $(IF,$(EQ,$SEQ_TYPE,nt), checked)> Low complexity
+    <input type=checkbox name="DUST"  $(IF,$(EQ,$SEQ_TYPE,nt),checked)> Low complexity
     <input type=checkbox name="POLY_A"  $(IF,$(EQ,$SEQ_TYPE,nt),checked)> Poly-A's filter
     <BR>
 
