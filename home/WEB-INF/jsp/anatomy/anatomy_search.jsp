@@ -46,7 +46,7 @@
                 <TR bgcolor="">
                     <TD width=45%>
                         <label for="searchTerm" class="indented-label">Anatomical Term</label><br>
-                        <form:input path="searchTerm" size="30" id="searchTerm"/>
+                        <form:input autocomplete="off" path="searchTerm" size="30" id="searchTerm"/>
                         <div style="overflow: auto; height: 200px; width: 400px; " class="auto_complete"
                              id="anatomyTermAutoComplete">
                             <script type="text/javascript">
