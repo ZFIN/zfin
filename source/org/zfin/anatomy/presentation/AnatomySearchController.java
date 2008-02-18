@@ -8,6 +8,7 @@ import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.AnatomySynonym;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.presentation.LookupStrings;
 
@@ -89,6 +90,18 @@ public class AnatomySearchController extends AbstractCommandController {
         String searchTerm = anatomyForm.getSearchTerm();
         AnatomyItem term = anatomyRepository.getAnatomyItem(searchTerm);
         if (term != null) {
+            AnatomyStatistics stat = new AnatomyStatistics();
+            stat.setAnatomyItem(term);
+            List<AnatomyStatistics> stats = new ArrayList<AnatomyStatistics>();
+            stats.add(stat);
+            anatomyForm.setStatisticItems(stats);
+            return;
+        }
+
+        // check if there is an exact match for a synonym
+        List<AnatomySynonym> synonyms = anatomyRepository.getAnatomyTermsBySynonymName(searchTerm);
+        if (synonyms != null && synonyms.size() == 1) {
+            term = synonyms.get(0).getItem();
             AnatomyStatistics stat = new AnatomyStatistics();
             stat.setAnatomyItem(term);
             List<AnatomyStatistics> stats = new ArrayList<AnatomyStatistics>();

@@ -74,7 +74,15 @@ public interface AnatomyRepository extends CachedRepository {
      */
     List<AnatomyStatistics> getAllAnatomyItemStatistics();
 
-    List<AnatomyStatistics> getAnatomyItemStatistics(java.lang.String searchTerm);
+    /**
+     * Retrieve statistics for all anatomy terms that match the
+     * search term name. The search is case-insensitive.
+     *
+     * @param searchTerm search term string
+     * @return list of AnatomyStatistics object. Null if no term was found or the search
+     * term is null.
+     */
+    List<AnatomyStatistics> getAnatomyItemStatistics(String searchTerm);
 
     /**
      * Retrieve an AnatomyItem identified by one of the IDs. The provided
@@ -135,8 +143,21 @@ public interface AnatomyRepository extends CachedRepository {
 
     /**
      * Retrieve an anatomy term for a given name.
+     * The lookup is case-insensitive.
+     * Returns null if no term is found or the search name is null
+
      * @param name ao term name
      * @return AnatomyItem
      */
     AnatomyItem getAnatomyItem(String name);
+
+    /**
+     * Retrieve a list of anatomy terms for a given synonym name
+     * The lookup is case-insensitive.
+     * Returns null if no term is found or the search name is null.
+
+     * @param name ao synonym name
+     * @return AnatomyItem
+     */
+    List<AnatomySynonym> getAnatomyTermsBySynonymName(String name);
 }

@@ -139,16 +139,27 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         return items;
     }
 
+    /**
+     * Retrieve statistics for all anatomy terms that match the
+     * search term name. The search is case-insensitive.
+     *
+     * @param searchTerm search term string
+     * @return list of AnatomyStatistics object. Null if no term was found or the search
+     *         term is null.
+     */
     public List<AnatomyStatistics> getAnatomyItemStatistics(String searchTerm) {
+        if (searchTerm == null)
+            return null;
+
         Session session = HibernateUtil.currentSession();
         String hql = "select stats from AnatomyStatistics stats join stats.anatomyItem as anatItem " +
                 "where  " +
-                "   (anatItem.name like :name or exists (from AnatomySynonym syn where anatItem = syn.item " +
-                "                                           and syn.name like :name )) " +
+                "   (anatItem.lowerCaseName like :name or exists (from AnatomySynonym syn where anatItem = syn.item " +
+                "                                           and syn.aliasLowerCase like :name )) " +
                 "   AND stats.type = :type " +
                 "order by anatItem.name";
         Query query = session.createQuery(hql);
-        query.setString("name", "%" + searchTerm + "%");
+        query.setString("name", "%" + searchTerm.toLowerCase() + "%");
         query.setParameter("type", AnatomyStatistics.Type.GENE);
 //        query.setParameter("group", DataAlias.Group.ALIAS);
 
@@ -356,11 +367,38 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         return stat;
     }
 
+    /**
+     * Retrieve an anatomy term for a given name.
+     * The lookup is case-insensitive.
+     * Returns null if no term is found or the search name is null
+     *
+     * @param name ao term name
+     * @return AnatomyItem
+     */
     public AnatomyItem getAnatomyItem(String name) {
+        if (name == null)
+            return null;
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(AnatomyItem.class);
-        criteria.add(Restrictions.eq("name", name));
+        criteria.add(Restrictions.eq("lowerCaseName", name.toLowerCase()));
         return (AnatomyItem) criteria.uniqueResult();
+    }
+
+    /**
+     * Retrieve an anatomy term for a given synonym name
+     * The lookup is case-insensitive.
+     * Returns null if no term is found or the search name is null
+
+     * @param name ao synonym name
+     * @return AnatomyItem
+     */
+    public List<AnatomySynonym> getAnatomyTermsBySynonymName(String name) {
+        if (name == null)
+            return null;
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(AnatomySynonym.class);
+        criteria.add(Restrictions.eq("aliasLowerCase", name.toLowerCase()));
+        return (List<AnatomySynonym>) criteria.list();
     }
 
     /*
