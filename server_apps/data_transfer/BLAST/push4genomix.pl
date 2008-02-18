@@ -10,7 +10,7 @@
   
 use DBI;
 
-my ($dbh, $output_acc_num, $output_mrkr_1_display, $output_mrkr_1_oid, $output_mrkr_2_display, $output_mrkr_2_oid); 
+my ($dbh, $output_acc_num, $output_mrkr_1_display, $output_mrkr_1_oid, $output_mrkr_2_display, $output_mrkr_2_oid,%is_clone,%is_smallseg, $mtype); 
 
 # define environment variable
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
@@ -25,6 +25,33 @@ my $password = "";
 
 my $dbh = DBI->connect("DBI:Informix:$dbname", $username, $password) 
 	or die "Cannot connect to Informix database: $DBI::errstr\n" ;
+   
+# put CLONE marker types into a hash    
+my $sql = " 
+               select mtgrpmem_mrkr_type
+                 from marker_type_group_member 
+                where mtgrpmem_mrkr_type_group = 'CLONE'
+              ";
+my $sth = $dbh->prepare($sql);
+$sth -> execute();
+undef %is_clone;
+
+while (($mtype) = $sth->fetchrow_array) { 
+       $is_clone{$mtype} =1;
+}
+
+# put SMALLSEG marker types into a hash        
+my $sql = " 
+               select mtgrpmem_mrkr_type
+                 from marker_type_group_member 
+                where mtgrpmem_mrkr_type_group = 'SMALLSEG'
+              ";
+my $sth = $dbh->prepare($sql);
+$sth -> execute();
+undef %is_smallseg;
+while (($mtype) = $sth->fetchrow_array) { 
+    $is_smallseg{$mtype} =1;
+}
 
 &generateAccMrkrRelationshipFile();
 &generateGeneDataFile();
@@ -142,12 +169,12 @@ sub generateGeneDataFile () {
 # GenPept, SwissProt, RefSeq, VEGA_clone
 
 sub generateAccMrkrRelationshipFile() {
-       
+
     # gether 1) accession info 
     #        2) morpholino info 
-    #        3)microRNA info
+    #        3) microRNA info
     my $sql = "
-        select dblink_acc_num as acc_num, mrkr_zdb_id, mrkr_abbrev
+        select dblink_acc_num as acc_num, mrkr_zdb_id, mrkr_abbrev, mrkr_type
           from db_link, marker
          where dblink_linked_recid = mrkr_zdb_id 
            and dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-14',
@@ -159,14 +186,14 @@ sub generateAccMrkrRelationshipFile() {
                                          'ZDB-FDBCONT-060417-1','ZDB-FDBCONT-050210-1')
        union
 
-        select mrkrseq_mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev
+        select mrkrseq_mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev, mrkr_type
           from marker_sequence, marker_relationship, marker
          where mrkrseq_mrkr_zdb_id = mrel_mrkr_1_zdb_id
            and mrel_mrkr_2_zdb_id = mrkr_zdb_id
            and mrel_type = 'knockdown reagent targets gene'
        union
 
-        select mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev
+        select mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev, mrkr_type
           from marker_sequence, marker
          where mrkrseq_mrkr_zdb_id = mrkr_zdb_id
            and mrkrseq_mrkr_zdb_id like 'ZDB-GENE-%'
@@ -184,8 +211,9 @@ sub generateAccMrkrRelationshipFile() {
     my $acc_num = '';
     my $mrkr_zdb_id = '';
     my $mrkr_abbrev = '';
+    my $mrkr_type = '';
 
-    while (($acc_num, $mrkr_zdb_id, $mrkr_abbrev) = $sth->fetchrow_array) {
+    while (($acc_num, $mrkr_zdb_id, $mrkr_abbrev, $mrkr_type) = $sth->fetchrow_array) {
 	
 	if ($acc_num ne $last_acc_num) {
 	    
@@ -200,7 +228,7 @@ sub generateAccMrkrRelationshipFile() {
 	    $output_mrkr_2_oid = '';
 	}
 	
-	if ( $mrkr_zdb_id =~ /-BAC-|-PAC-/ ) {
+	if ( $is_clone{$mrkr_type} ) {
 	    
 	    my $sql = "select mrel_mrkr_2_zdb_id, mrkr_abbrev
                         from marker_relationship, marker
@@ -209,7 +237,7 @@ sub generateAccMrkrRelationshipFile() {
                          and mrel_mrkr_2_zdb_id = mrkr_zdb_id  ";
 	    &queryGeneAndDisplay ($acc_num, $mrkr_zdb_id, $mrkr_abbrev, $sql);
 	}		
-	elsif ( $mrkr_zdb_id =~ /EST|CDNA|STS/ ) {	   
+	elsif ( $is_smallseg{$mrkr_type} ) {	   
 	    
 	    my $sql = "select mrel_mrkr_1_zdb_id, mrkr_abbrev
                         from marker_relationship, marker
