@@ -212,10 +212,12 @@ $1</A>
 <?MIVAR COND="$(XST,$UPDATE)">
   <INPUT TYPE=button value=Update onClick="doit('url','text','WWW+URL')">
 <?/MIVAR> 
-<b>WWW URL: </b> 
-<?MIVAR COND="$(NC,$url,NULL)">
-  <A HREF="$url">$url</A>
-<?/MIVAR>
+<b>URL: </b> 
+<?MIBLOCK COND="$(=,$(POSITION,$url,http),1)">
+  <?MIVAR> <A TARGET="new_window" HREF="$url">$url</A> <?/MIVAR>
+<?MIELSE COND="$(NC,$url,NULL)">
+  <?MIVAR> <A TARGET="new_window" HREF="http://$url">$url</A><?/MIVAR>
+<?/MIBLOCK>
 <br>
 
 <?MIVAR COND="$(XST,$UPDATE)">
