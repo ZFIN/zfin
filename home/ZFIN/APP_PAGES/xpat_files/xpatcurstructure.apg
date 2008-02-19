@@ -522,13 +522,14 @@ EFFECTS
   <table>
    <tr>
      <td valign="top" >
+     <small>Add a single term</small><br>
         <input type=hidden name="xpcur_G_structure_add">   
 
 
-  Add Term:
+  Term:
 
 
-  <input type="text" size="45" name="xpcur_G_AO_term" id="xpcurstr_AOterm" autocomplete="off">
+  <input type="text" size="50" name="xpcur_G_AO_term" id="xpcurstr_AOterm" autocomplete="off">
   <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="xpcurstr_AOterm_autocomplete"></div>
 
   <br>
@@ -549,12 +550,14 @@ EFFECTS
     new Ajax.Autocompleter( 'xpcurstr_AOterm', 'xpcurstr_AOterm_autocomplete', '/phenote/Phenote/', {parameters:'ontologyName=ZF&field=ENTITY',paramName: "userInput", minChars: 2} );
   </script>
 
-  <br><br>
 
-<br>
 
-  <a href="javascript:;" onClick="openAO('stage');">Open AO to stage</a>
-  <br>
+  <div style="height: 5em;">&nbsp;</div>
+
+  <small>Add multiple terms</small><br>
+
+  <a href="javascript:;" onClick="openAO('stage');">Open AO:</a>
+  
   <select name="stage_id" 
             <?MISQL SQL="
               select stg_zdb_id, stg_abbrev, stg_name_ext
@@ -564,10 +567,13 @@ EFFECTS
               <option value="$1" $(IF,$(AND,$(XST,$xpcur_G_panel_add_start_stg),$(EC,$xpcur_G_panel_add_start_stg,$1)),SELECTED)>$2 $3</option>
             <?/MISQL>        
   </select>
-  <input type="text" name="xpcur_G_structure_add_name" size="60" disabled="true">
 
   <br>
+  <textarea name="xpcur_G_structure_add_name" cols="50" rows="5" 
+            disabled="true" style="color: black; background-color: #EFEFEF;"></textarea>
 
+  <br>
+  <input name="xpcur_G_structure_add_button" type="submit" value="Add" style="margin-left: 30em;">
 
   </td>
   <td>
