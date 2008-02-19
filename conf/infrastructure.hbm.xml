@@ -36,7 +36,7 @@
     <class name="org.zfin.infrastructure.Updates" table="updates">
             <id name="ID"  type="long">
                 <column name="upd_pk_id" not-null="true"/>
-                <generator class="increment"/>
+                <generator class="identity"/>
             </id>
             <property name="submitterID" column="submitter_id" type="string"/>
             <property name="recID" column="rec_id" type="string"/>
