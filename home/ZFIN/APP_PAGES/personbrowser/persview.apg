@@ -20,6 +20,8 @@ ahead and look for it -- convert to OID if necessary -->
 ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
+<?MIVAR NAME=MI_NULL><?/MIVAR>
+<?MIVAR NAME=MI_NOVAULE><?/MIVAR>
 
 <?MIBLOCK COND="$(XST,$OID)">
 
@@ -223,18 +225,18 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 
 <?MIVAR NAME=$pers_old_address>$1<?/MIVAR>
 <br>
-<?MIVAR COND="$(AND,$(EC,$AUTHORIZED,root),$(OR,$(EC,$pers_old_address,$MI_NULL),$(EC,$pers_old_address,$MI_NOVALUE)))">
+<?MIVAR COND="$(AND,$(EC,$AUTHORIZED,root),$(OR,$(EC,$pers_old_address,),$(EC,$pers_old_address,)))">
 	<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-updateaddress.apg&OID=$OID"><font color=red>Address Change Required</font></a>
 <?/MIVAR>
 
-<?MIVAR COND="$(AND,$(EC,$AUTHORIZED,root),$(NC,$pers_old_address,$MI_NULL))">
+<?MIVAR COND="$(AND,$(EC,$AUTHORIZED,root),$(NC,$pers_old_address,))">
 	<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-updateaddress.apg&OID=$OID">Update Address</a>
 <?/MIVAR>
 
 </TD> 
 
 <TD>
-<?MIBLOCK COND="$(EC,$snapshot,NULL)">
+<?MIBLOCK COND="$(EC,$snapshot,)">
   <IMG SRC="/images/LOCAL/smallogo.gif">
 <?MIELSE>
   <?MIVAR>
@@ -254,38 +256,43 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <TABLE  width=100%>
 
 <TR> 
-<TD align=right> 
+<TD align=middle> 
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value=Update onClick="doit('phone','text')">
 <?/MIVAR> 
-<b>Phone: </b> </TD>
-<TD><?MIVAR COND=$(NE,$phone,NULL)>$phone<?/MIVAR>
+<b>Phone: </b> 
+<?MIVAR COND=$(NE,$phone,)>$phone<?/MIVAR>
 </TD>
 
-<TD align=right>
+<TD>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value=Update onClick="doit('email','text')">
 <?/MIVAR>
- <b>Email: </b> </TD>
-<TD><?MIVAR COND=$(NE,$email,NULL)>
+ <b>Email: </b>
+ <?MIVAR COND=$(NE,$email,)>
  <A HREF="mailto:$email">$email</A> <?/MIVAR> 
 </TD>
 </TR>
 
 <TR>
-<TD align=right> 
+<TD align=middle> 
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value=Update onClick="doit('fax','text')">
 <?/MIVAR>
-<b>FAX: </b> </TD>
-<TD><?MIVAR COND=$(NE,$fax,NULL)> $fax <?/MIVAR> </TD>
+<b>FAX: </b>
+<?MIVAR COND=$(NE,$fax,)> $fax <?/MIVAR> </TD>
 
-<TD align=right>
+<TD>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value=Update onClick="doit('url','text')">
 <?/MIVAR>
- <b>URL: </b> </TD> 
-<TD><?MIVAR COND=$(NE,$url,NULL)> <A TARGET="new_window" HREF="$url">$url</A> <?/MIVAR>
+ <b>URL: </b>
+
+<?MIBLOCK COND="$(=,$(POSITION,$url,http),1)">
+  <?MIVAR> <A TARGET="new_window" HREF="$url">$url</A> <?/MIVAR>
+<?MIELSE>
+  <?MIVAR> <A TARGET="new_window" HREF="http://$url">$url</A><?/MIVAR>
+<?/MIBLOCK>
 </TD>
 </TR>
 </TABLE>
@@ -295,7 +302,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <INPUT TYPE=button value=Update onClick="doit('pers_bio','textarea')">
 <?/MIVAR>
 <B>Biography and Research Interests:</B><p>
-<?MIVAR COND=$(NE,$pers_bio,NULL)>$pers_bio<?/MIVAR>
+<?MIVAR COND=$(NE,$pers_bio,)>$pers_bio<?/MIVAR>
 
 <HR>
 
@@ -357,7 +364,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <?/MIVAR> 
 <BR>
 <B> Publications not related to Zebrafish:</B></TD></TR> <p>
-<?MIVAR COND=$(NE,$nonZF_pubs,NULL)><TR><TD>$nonZF_pubs</TD></TR>
+<?MIVAR COND=$(NE,$nonZF_pubs,)><TR><TD>$nonZF_pubs</TD></TR>
 <p>
 <?/MIVAR>
 </form>
