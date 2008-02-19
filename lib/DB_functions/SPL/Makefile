@@ -73,7 +73,7 @@ ZDB_AGGR    = concatenate.sql
 ZDB_STATS    = get_obj_name.sql get_obj_abbrev.sql get_date_from_id.sql \
 	       p_check_zdb_object_table.sql syscall.sql zdb_date.sql \
 	       p_check_submitter_is_root.sql set_session_params.sql \
-	       getWebexplode.sql		
+	       getWebexplode.sql get_curator_session_value.sql
 # Some of the stage functions call other stage functions.  Therefore
 # the order they are listed matters.
 STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
