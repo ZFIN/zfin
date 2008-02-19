@@ -1,0 +1,103 @@
+<?MICOMMENT>
+
+FILE: curator_session_update.apg
+prefix: csupdate_
+
+Update the value of a particular row in the curator session table.
+
+This page is called via ajax (xmlhttprequest) from curation.apg and
+the tree of pages underneath it.
+
+INPUT VARS:
+
+  csupdate_person_zdb_id      ::   Required.  curator to save this pref for  
+  csupdate_data_zdb_id        ::   Optional.  If it's a value which should be 
+                                   saved for when they're on the page for a
+                                   particular zfin object, use this.
+  csupdate_field_name         ::   name of the field, should be a datablade variable name
+  csupdate_field_name_value   ::   value to store.
+
+<?/MICOMMENT>
+<html>
+<body>
+  <?MISQL SQL="select WebExplode(object,'page_title=Update Curator Preferences&permission=root')
+                 from webPages
+                 where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+  <?MICOMMENT> ** Trim, for safety ** <?/MICOMMENT>
+
+  <?MIVAR COND="$(XST,$csupdate_person_zdb_id)" 
+          NAME="$csupdate_person_zdb_id">$(TRIM,$csupdate_person_zdb_id)<?/MIVAR>
+  <?MIVAR COND="$(XST,$csupdate_data_zdb_id)" 
+          NAME="$csupdate_data_zdb_id">$(TRIM,$csupdate_data_zdb_id)<?/MIVAR>
+  <?MIVAR COND="$(XST,$csupdate_field_name)" 
+          NAME="$csupdate_field_name">$(TRIM,$csupdate_field_name)<?/MIVAR>
+  <?MIVAR COND="$(XST,$csupdate_field_name_value)" 
+          NAME="$csupdate_field_name_value">$(TRIM,$csupdate_field_name_value)<?/MIVAR>
+
+
+  <?MICOMMENT> ** since csupdate_data_zdb_id is optional, we need to make empty
+                  vars to use in the sql, and fill them only if there's a value ** <?/MICOMMENT>
+  
+  <?MICOMMENT> ** the "empties".. ** <?/MICOMMENT>
+  <?MIVAR NAME="$csupdate_data_sql_where"><?/MIVAR>
+  <?MIVAR NAME="$csupdate_data_sql_col"><?/MIVAR>
+  <?MIVAR NAME="$csupdate_data_sql_value"><?/MIVAR>
+
+  <?MICOMMENT> ** fill them up if necessary ** <?/MICOMMENT>
+  <?MIBLOCK COND="$(XST,$csupdate_data_zdb_id)">
+    <?MIVAR NAME="$csupdate_data_sql_where">and cs_data_zdb_id = '$csupdate_data_zdb_id'<?/MIVAR>
+    <?MIVAR NAME="$csupdate_data_sql_col">cs_data_zdb_id,<?/MIVAR>
+    <?MIVAR NAME="$csupdate_data_sql_value">'$csupdate_data_zdb_id',<?/MIVAR>
+  <?/MIBLOCK>
+
+
+  <?MICOMMENT> ** To figure out if it's an insert or update, get the existing
+                  value.                                         ** <?/MICOMMENT>
+
+
+  <?MISQL SQL="select cs_field_name_value from curator_session 
+               where cs_person_zdb_id = '$csupdate_person_zdb_id'
+                 $csupdate_data_sql_where
+                 and cs_field_name = '$csupdate_field_name';">
+    <?MIVAR NAME="$csupdate_existing_value">$1<?/MIVAR>
+  <?/MISQL>
+
+
+
+  <?MICOMMENT> ** If the value hasn't been set, do an insert.. ** <?/MICOMMENT>
+  <?MIBLOCK COND="$(NXST, $csupdate_existing_value)">
+
+  <?MISQL SQL="insert into curator_session (cs_person_zdb_id, $csupdate_data_sql_col
+                                            cs_field_name, cs_field_name_value)
+               values('$csupdate_person_zdb_id', $csupdate_data_sql_value
+                      '$csupdate_field_name','$csupdate_field_name_value');">insert<?/MISQL>
+
+  <?MIELSE> <?MICOMMENT> ** if the value does already exist, do an update ** <?/MICOMMENT>
+
+  <?MISQL SQL="update curator_session 
+               set cs_field_name_value = '$csupdate_field_name_value'
+               where cs_person_zdb_id = '$csupdate_person_zdb_id'
+                 $csupdate_data_sql_where
+                 and cs_field_name = '$csupdate_field_name';">update<?/MISQL>
+
+
+  <?/MIBLOCK>
+
+
+
+  <?MIBLOCK COND="$(XST,$debug)">
+    <br>
+    <?MISQL SQL="select cs_person_zdb_id, cs_data_zdb_id, 
+                        cs_field_name, cs_field_name_value
+                 from curator_session
+                 order by 1,2,3 desc;">$1 - $2 - $3 - $4 <br><?/MISQL>
+  <?/MIBLOCK>
+<?/MIBLOCK>
+
+
+</body>
+</html>

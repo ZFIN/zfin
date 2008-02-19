@@ -1,0 +1,50 @@
+<?MICOMMENT>
+
+FILE:     curator_session.apg
+PREFIX:   cs_
+
+INPUT VARS:
+  cs_person	user to save this preference for
+  cs_data	optional, save the preference for a specific data page
+  cs_field      name of field to save
+  cs_default    optional, default value to use if the database returns NULL.
+
+OUTPUT: 
+  contents of the cs_field_name_value from curator session table
+    (might need to be trimmed to deal with datablade whitespace)
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR> 
+
+<?MIVAR NAME="$cs_output"><?/MIVAR>
+<?MIVAR COND="$(XST,$cs_default)" NAME="$cs_output">$cs_default<?/MIVAR>
+
+<?MIBLOCK COND="$(NXST,$cs_data)">
+  <?MISQL SQL="execute function get_curator_session_value('$cs_person',NULL,'$cs_field');">
+    <?MIVAR NAME="$cs_output">$1<?/MIVAR>
+  <?/MISQL>
+<?MIELSE>
+  <?MISQL SQL="execute function get_curator_session_value('$cs_person','$cs_data','$cs_field');">
+    <?MIVAR NAME="$cs_output">$1<?/MIVAR>
+  <?/MISQL>
+<?/MIBLOCK>
+
+<?MICOMMENT> ** unset vars, other than cs_output, which is always cleared at the start ** <?/MICOMMENT>
+<?MIVAR>
+$(UNSETVAR,$cs_default)
+$(UNSETVAR,$cs_person)
+$(UNSETVAR,$cs_data)
+$(UNSETVAR,$cs_field)
+<?/MIVAR>
+
+<?MICOMMENT> ** 'print' the output ** <?/MICOMMENT>
+<?MIVAR>$cs_output<?/MIVAR>
