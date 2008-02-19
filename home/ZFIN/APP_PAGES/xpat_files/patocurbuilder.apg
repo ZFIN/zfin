@@ -27,11 +27,44 @@ PREFIX:   patobldr_
 </style>
 
 
+<?MICOMMENT> ** get session variables from database ** <?/MICOMMENT>
+
+<?MIVAR NAME="$cs_field">patobldr_curation_box_class<?/MIVAR>
+<?MIVAR NAME="$cs_default">small-curation-box<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patobldr_curation_box_class">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR NAME="$cs_field">patobldr_entity_a_ontology<?/MIVAR>
+<?MIVAR NAME="$cs_default">AO<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patobldr_entity_a_ontology">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR NAME="$cs_field">patobldr_entity_b_ontology<?/MIVAR>
+<?MIVAR NAME="$cs_default">AO<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patobldr_entity_b_ontology">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR NAME="$cs_field">patobldr_tag<?/MIVAR>
+<?MIVAR NAME="$cs_default">abnormal<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patobldr_tag_cs">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+
 
 <?MICOMMENT> ** FIXME ** apato_infrastructure needs to have all of the phenotypes already
                 associated with the pub, but eventually, they need to go away.  Right now,
                 every time this loads, it's going to make sure that happens.  Probably with
-                a cookie it could get double checked once per session.  *** <?/MICOMMENT>
+                a cookie it could get double checked once per session.  
+
+                Update, Feb 2008 - this hasn't turned out to cause much slowdown yet *** <?/MICOMMENT>
 
 
   <?MISQL SQL="select distinct apato_entity_a_zdb_id, apato_entity_b_zdb_id, 
@@ -152,12 +185,14 @@ patoCuration.distinctPhenotypes = {
 
   <fieldset style="border: 1px solid black; padding: .3em; margin: .3em auto; width: 96%;">
     <legend>selected<legend>
-  <span id="patobldrSelectedMutants" style="font-size: 1.5em;"></span>
+  <span id="patobldrSelectedMutants"></span>
   </fieldset>  
 
 </form>
 
 <?MICOMMENT> *** FIXME *** this should get a different css class than searchresults *** <?/MICOMMENT>
+
+<?MIVAR>
 
 <a name="patopile"></a>
 
@@ -167,30 +202,35 @@ patoCuration.distinctPhenotypes = {
 
 <a href="javascript:;" class="curation-box-control-text"
    onClick="document.getElementById('patobldr-phenotypes').className = 'small-curation-box';
-            sessionState.storeObjectAttribute('patobldr-phenotypes','className','small-curation-box');">
+            storeSession('$ZDB_ident','$OID','patobldr_curation_box_class','small-curation-box');">
 small
 </a>
 <a href="javascript:;" class="curation-box-control-text"
    onClick="document.getElementById('patobldr-phenotypes').className = 'medium-curation-box';
-            sessionState.storeObjectAttribute('patobldr-phenotypes','className','medium-curation-box');">
+            storeSession('$ZDB_ident','$OID','patobldr_curation_box_class','medium-curation-box');">
 medium
 </a>
 <a href="javascript:;" class="curation-box-control-text"
    onClick="document.getElementById('patobldr-phenotypes').className = 'large-curation-box';
-            sessionState.storeObjectAttribute('patobldr-phenotypes','className','large-curation-box');">
+            storeSession('$ZDB_ident','$OID','patobldr_curation_box_class','large-curation-box');">
+
 large
 </a>
-
-<a href="javascript:;" class="curation-box-control-text"
+<a href="javascript:;"
+   class="curation-box-control-text"
    onClick="document.getElementById('patobldr-phenotypes').className = 'unlimited-curation-box';
-            sessionState.storeObjectAttribute('patobldr-phenotypes','className','unlimited-curation-box');">
-unlimited
+            storeSession('$ZDB_ident','$OID','patobldr_curation_box_class','unlimited-curation-box');">
+fitted
 </a>
 </span><br>
 
+<?/MIVAR>
 
 
-<div id="patobldr-phenotypes" class="medium-curation-box">
+<?MIVAR>
+<div id="patobldr-phenotypes" class="$patobldr_curation_box_class">
+<?/MIVAR>
+
 
 <table class="searchresults">
   <thead>
@@ -285,12 +325,17 @@ unlimited
     <input type="hidden" name="patoup_addtopile" value="1">
 
 <br>
+<?MIVAR>
 Entity A:
           <select name="patoup_entity_a_ontology" id="patobldrEntityAOntology" 
                   onChange="setEntityOntology(this.options[this.selectedIndex].value, entityAAutoCompleter);
-                            sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
-            <option value="AO">AO</option> 
-            <option value="GO">GO</option>
+                            storeSession('$ZDB_ident','$OID',
+                                         'patobldr_entity_a_ontology',
+                                          this.options[this.selectedIndex].value);">
+            <option value="AO" 
+              <?MIBLOCK COND="$(EC,$patobldr_entity_a_ontology,AO)">selected="true"<?/MIBLOCK>  >AO</option> 
+            <option value="GO"
+              <?MIBLOCK COND="$(EC,$patobldr_entity_a_ontology,GO)">selected="true"<?/MIBLOCK>  >GO</option>
           </select>
           <input type="text" size="45" name="patoup_entity_a_name" id="patobldrEntityAName" autocomplete="off"
                  onchange="phenoteState.setActiveField(this);"
@@ -304,9 +349,13 @@ Entity B:
 
           <select name="patoup_entity_b_ontology" id="patobldrEntityBOntology" 
                   onChange="setEntityOntology(this.options[this.selectedIndex].value, entityBAutoCompleter);
-                            sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
-            <option value="AO">AO</option> 
-            <option value="GO">GO</option>
+                            storeSession('$ZDB_ident','$OID',
+                                         'patobldr_entity_b_ontology',
+                                          this.options[this.selectedIndex].value);">
+            <option value="AO" 
+              <?MIBLOCK COND="$(EC,$patobldr_entity_b_ontology,AO)">selected="true"<?/MIBLOCK>  >AO</option> 
+            <option value="GO"
+              <?MIBLOCK COND="$(EC,$patobldr_entity_b_ontology,GO)">selected="true"<?/MIBLOCK>  >GO</option>
           </select>
 
 
@@ -326,13 +375,16 @@ Quality:
 <br>
 Tag:
          <select name="patoup_tag" id="patobldrTag"
-                onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
+                onChange="storeSession('$ZDB_ident','$OID',
+                                        'patobldr_tag',
+                                         this.options[this.selectedIndex].value);">
+
            <?MICOMMENT> ** KLUDGE: This should come from the database, but for now
                            we're only offering a limited set, once everything but
                            normal and abnormal go away, we can go back to using 
                            the db **<?/MICOMMENT>
-           <option>abnormal</option>
-	   <option>normal</option>
+           <option $(IF,$(EC,$patobldr_tag_cs,abnormal),selected="true")>abnormal</option>
+	   <option $(IF,$(EC,$patobldr_tag_cs,normal),selected="true")>normal</option>
          </select>
 
 
@@ -362,7 +414,7 @@ Tag:
 
 
    </script>
-
+   <?/MIVAR>
 
    <?MICOMMENT>
    
