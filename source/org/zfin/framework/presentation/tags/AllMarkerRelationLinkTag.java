@@ -53,7 +53,15 @@ public class AllMarkerRelationLinkTag extends BodyTagSupport {
                             sb.append(MarkerPresentation.getLink(marker));
                         } else {
                             Set<MarkerRelationship> markerRelationships = MarkerService.getRelatedGenedomMarkerRelations(marker);
-                            sb.append(MarkerPresentation.getRelationLinks(markerRelationships,doAbbrev));
+                            String markerPresentationLink =   MarkerPresentation.getRelationLinks(markerRelationships,doAbbrev) ; 
+                            // the very rare case where there is no gene associated with a marker
+                            if(markerPresentationLink==null){
+                                markerPresentationLink = MarkerPresentation.getLink(marker) ; 
+                                if(markerPresentationLink!=null){
+                                    markerPresentationLink+="[none]";
+                                }
+                            }
+                            sb.append(markerPresentationLink);
                         }
                     }
                     if (showParent) {
