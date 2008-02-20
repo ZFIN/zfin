@@ -123,7 +123,7 @@ public class RunCandidate {
      *
      * @return Marker objects for genes found in list of blast hits
      */
-    public Collection<Marker> getAllSingleAssociatedGenesFromQueries() {
+    public List<Marker> getAllSingleAssociatedGenesFromQueries() {
         List<Marker> genes = new ArrayList<Marker>();
 
         LOG.debug("enter getAllAssociatedGenesFromQueries: " + getCandidateQueries().size());

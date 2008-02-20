@@ -49,7 +49,7 @@ public class CandidateController extends SimpleFormController {
     private static RenoRepository rr = RepositoryFactory.getRenoRepository();
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private static OrthologyRepository or = RepositoryFactory.getOrthologyRepository();
-    private static InfrastructureRepository ir=RepositoryFactory.getInfrastructureRepository();
+    private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
 
 
     //override POST vs GET distinction and make it explicitly all about the "done" boolean
@@ -96,6 +96,7 @@ public class CandidateController extends SimpleFormController {
     /**
      * Does all the work for referenceData method, handles loading up the runCandidate for viewing,
      * locking, unlocking, note saving and toggling problem status
+     *
      * @param candidateBean bean...with data
      */
     public void handleView(CandidateBean candidateBean) {
@@ -114,20 +115,18 @@ public class CandidateController extends SimpleFormController {
 
         candidateBean.setRunCandidate(rc);
 
+        Run run = rc.getRun();
 
-
-        Run run = rc.getRun() ;
-
-        LOG.debug("instance of RedundancyRun: "+ (run instanceof RedundancyRun)) ;
-        LOG.debug("instance of NomenclatureRun: "+ (run instanceof NomenclatureRun)) ;
-        LOG.debug("Run.isRedundancy: "+ run.isRedundancy()) ;
-        LOG.debug("Run.isNomenclature: "+ run.isNomenclature()) ;
+        LOG.debug("instance of RedundancyRun: " + (run instanceof RedundancyRun));
+        LOG.debug("instance of NomenclatureRun: " + (run instanceof NomenclatureRun));
+        LOG.debug("Run.isRedundancy: " + run.isRedundancy());
+        LOG.debug("Run.isNomenclature: " + run.isNomenclature());
 
         //populate fields as necessary..
 
-        if (run.isNomenclature() ) {
+        if (run.isNomenclature()) {
             if (((NomenclatureRun) rc.getRun()).getOrthologyPublication() != null)
-                candidateBean.setOrthologyPublicationZdbID( ((NomenclatureRun) rc.getRun()).getOrthologyPublication().getZdbID());
+                candidateBean.setOrthologyPublicationZdbID(((NomenclatureRun) rc.getRun()).getOrthologyPublication().getZdbID());
             if (rc.getRun().getNomenclaturePublication() != null)
                 candidateBean.setNomenclaturePublicationZdbID(rc.getRun().getNomenclaturePublication().getZdbID());
         }
@@ -136,7 +135,6 @@ public class CandidateController extends SimpleFormController {
             candidateBean.setGeneAbbreviation(rc.getCandidate().getSuggestedName());
         }
 
-
         handleNote(candidateBean);
 
         Person currentUser = Person.getCurrentSecurityUser();
@@ -144,10 +142,61 @@ public class CandidateController extends SimpleFormController {
         if (rc.getLockPerson() != null && !currentUser.equals(rc.getLockPerson()))
             LOG.debug(" Person records are not equal.. ");
 
-
         LOG.debug("action: " + candidateBean.getAction());
 
+        // check that this candidate is not already related to any of the
+        // associated markers 
+        List<Marker> associatedMarkers = checkForExistingRelationships(candidateBean, rc);
+        candidateBean.setAllSingleAssociatedGenesFromQueries(associatedMarkers);
+
         //handle locking & unlocking
+        handleLock(candidateBean, rc, currentUser);
+
+        //handle problem toggling
+        if (StringUtils.equals(candidateBean.getAction(), CandidateBean.SET_PROBLEM)) {
+            LOG.debug("acqui, senior?");
+            rc.getCandidate().setProblem(candidateBean.isCandidateProblem());
+            LOG.info(currentUser.getZdbID()
+                    + " set " + rc.getCandidate().getZdbID()
+                    + " problem status to " + rc.getCandidate().isProblem());
+
+        }
+        //if problem was set or not, copy the value from the candidate to the field in the bean
+        candidateBean.setCandidateProblem(rc.getCandidate().isProblem());
+    }
+
+    private List<Marker> checkForExistingRelationships(CandidateBean candidateBean, RunCandidate rc) {
+        List<Marker> associatedMarkers = rc.getAllSingleAssociatedGenesFromQueries();
+        List<Marker> identifiedMarkers = rc.getIdentifiedMarkers();
+        List<Marker> smallSegments = getSmallSegementClones(identifiedMarkers);
+
+        if (associatedMarkers != null) {
+            for (Marker associatedMarker : associatedMarkers) {
+                MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+                for (Marker smallSegment : smallSegments) {
+                    boolean hasRelationship = markerRepository.hasSmallSegmentRelationship(associatedMarker, smallSegment);
+                    if(hasRelationship){
+                        candidateBean.addMessage("This candidate has already a small-segment-relationship to " +
+                        associatedMarker.getName());
+                    }
+                }
+            }
+        }
+        return associatedMarkers;
+    }
+
+    /**
+     * Handle a lock or unlock request.
+     * Obtain a lock if:
+     * 1) action code is lock
+     * 2) if runcandidate is not already locked
+     * Unlock if action code is unlock
+     *
+     * @param candidateBean Candidate Bean
+     * @param rc            RunCandidate
+     * @param currentUser   Person
+     */
+    private void handleLock(CandidateBean candidateBean, RunCandidate rc, Person currentUser) {
         if (StringUtils.equals(candidateBean.getAction(), CandidateBean.LOCK_RECORD)) {
             boolean success = rr.lock(currentUser, rc);
             if (success)
@@ -159,21 +208,6 @@ public class CandidateController extends SimpleFormController {
             rr.unlock(currentUser, rc);
             LOG.info(currentUser.getZdbID() + " is unlocking " + rc.getZdbID());
         }
-
-
-
-
-        //handle problem toggling
-        if(StringUtils.equals(candidateBean.getAction(), CandidateBean.SET_PROBLEM)) {
-            LOG.debug("acqui, senior?");
-            rc.getCandidate().setProblem(candidateBean.isCandidateProblem());
-            LOG.info(currentUser.getZdbID()
-                    + " set " + rc.getCandidate().getZdbID()
-                    + " problem status to " + rc.getCandidate().isProblem());
-
-        }
-        //if problem was set or not, copy the value from the candidate to the field in the bean
-        candidateBean.setCandidateProblem(rc.getCandidate().isProblem());
     }
 
 
@@ -190,8 +224,8 @@ public class CandidateController extends SimpleFormController {
         candidateBean.setRunCandidate(rc);
 
         // don't try to process it, just send it to the end.
-        if(candidateBean.isCandidateProblem()){
-            return new ModelAndView(new RedirectView("candidate-inqueue?zdbID="+rc.getRun().getZdbID()));
+        if (candidateBean.isCandidateProblem()) {
+            return new ModelAndView(new RedirectView("candidate-inqueue?zdbID=" + rc.getRun().getZdbID()));
         }
 
         if (rc == null) {
@@ -205,7 +239,11 @@ public class CandidateController extends SimpleFormController {
             handleDone(candidateBean);
             tx.commit();
         } catch (Exception e) {
-            tx.rollback();
+            try {
+                tx.rollback();
+            } catch (HibernateException he) {
+                LOG.error("Error during roll back of transaction", he);
+            }
             LOG.error(e);
             throw e;
         }
@@ -269,9 +307,9 @@ public class CandidateController extends SimpleFormController {
 
         RunCandidate rc = candidateBean.getRunCandidate();
 
-        if(!rc.getRun().isRedundancy()){
+        if (!rc.getRun().isRedundancy()) {
             LOG.info("run should be redundancy");
-            return ;
+            return;
         }
 
         //Create a Marker object
@@ -281,7 +319,7 @@ public class CandidateController extends SimpleFormController {
         novelGene.setOwner(rc.getLockPerson());
         LOG.info("novelGene is set");
         MarkerType mt = mr.getMarkerTypeByName(rc.getCandidate().getMarkerType());
-        if (mt == null){
+        if (mt == null) {
             String newline = System.getProperty("line.separator");
             String message = "No Marker Type with name " + rc.getCandidate().getMarkerType() + " found for " +
                     " Candidate: " + newline + rc.getCandidate();
@@ -296,7 +334,7 @@ public class CandidateController extends SimpleFormController {
         novelGene.setAbbreviation(suggestedAbbreviation);
         novelGene.setMarkerType(mt);
         mr.createMarker(novelGene, ((RedundancyRun) rc.getRun()).getRelationPublication());
-        LOG.info("novelGene zdb_id: "+ novelGene.getZdbID());
+        LOG.info("novelGene zdb_id: " + novelGene.getZdbID());
         //update marker history reason
         MarkerHistory mhist = mr.getLastMarkerHistory(novelGene, MarkerHistory.Event.ASSIGNED);
 
@@ -321,9 +359,9 @@ public class CandidateController extends SimpleFormController {
 
         RunCandidate rc = candidateBean.getRunCandidate();
 
-        if(!rc.getRun().isRedundancy()){
+        if (!rc.getRun().isRedundancy()) {
             LOG.info("run should be redundancy");
-            return ;
+            return;
         }
 
 
@@ -387,72 +425,72 @@ public class CandidateController extends SimpleFormController {
     private void handleOrthology(CandidateBean candidateBean, Marker zebrafishMarker) {
         LOG.debug("enter handleOrthology");
 
-                RunCandidate rc = candidateBean.getRunCandidate();
-                PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-                String zdbID = candidateBean.getOrthologyPublicationZdbID();
-                Publication orthologyPub = pr.getPublication(zdbID);
-                //first get the human ortholog from the from
-                Set<Orthologue> orthologies = new HashSet<Orthologue>();
-                String humanAccessionNumber = candidateBean.getHumanOrthologueAbbrev().getEntrezAccession().getEntrezAccNum();
-                if (!StringUtils.isEmpty(humanAccessionNumber)) {
-                    LOG.info(" Working on Human Orthologs ...: ");
-                    Orthologue humanOrtholog = new Orthologue();
-                    humanOrtholog.setGene(zebrafishMarker);
-                    EntrezProtRelation targetHumanAccession = candidateBean.getTargetAccessionHuman(rc, humanAccessionNumber);
-                    LOG.debug("humanOrthology accession: "+ targetHumanAccession);
+        RunCandidate rc = candidateBean.getRunCandidate();
+        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
+        String zdbID = candidateBean.getOrthologyPublicationZdbID();
+        Publication orthologyPub = pr.getPublication(zdbID);
+        //first get the human ortholog from the from
+        Set<Orthologue> orthologies = new HashSet<Orthologue>();
+        String humanAccessionNumber = candidateBean.getHumanOrthologueAbbrev().getEntrezAccession().getEntrezAccNum();
+        if (!StringUtils.isEmpty(humanAccessionNumber)) {
+            LOG.info(" Working on Human Orthologs ...: ");
+            Orthologue humanOrtholog = new Orthologue();
+            humanOrtholog.setGene(zebrafishMarker);
+            EntrezProtRelation targetHumanAccession = candidateBean.getTargetAccessionHuman(rc, humanAccessionNumber);
+            LOG.debug("humanOrthology accession: " + targetHumanAccession);
 
-                    humanOrtholog.setAbbreviation(targetHumanAccession.getEntrezAccession().getAbbreviation());
-                    humanOrtholog.setAccession(targetHumanAccession);
-                    humanOrtholog.setOrganism(Species.HUMAN);
+            humanOrtholog.setAbbreviation(targetHumanAccession.getEntrezAccession().getAbbreviation());
+            humanOrtholog.setAccession(targetHumanAccession);
+            humanOrtholog.setOrganism(Species.HUMAN);
 
-                    Set<OrthoEvidence> orthoEvidences = createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub);
-                    humanOrtholog.setEvidence(orthoEvidences);
-                    LOG.info("Orthology: " + humanOrtholog);
-                    Updates up = new Updates();
-                    Date date = new Date();
-                    Person currentUser = Person.getCurrentSecurityUser();
-                    up.setRecID(zebrafishMarker.getZdbID());
-                    up.setFieldName("orthologue");
-                    up.setNewValue("Human");
-                    up.setSubmitterID(currentUser.getZdbID());
-                    up.setSubmitterName(currentUser.getUsername());
-                    up.setComments("Created a new orthologue record for species=Human for this record.");
-                    up.setWhenUpdated(date);
-                    or.saveOrthology(humanOrtholog, orthologyPub,up);
-                    orthologies.add(humanOrtholog);
-                    //ir.insertUpdatesTable(zebrafishMarker.getZdbID(),"orthologue","Human","Created a new orthologue record for species=Human for this record.",rc.getLockPerson().getZdbID(),rc.getLockPerson().getName());
-                }
+            Set<OrthoEvidence> orthoEvidences = createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub);
+            humanOrtholog.setEvidence(orthoEvidences);
+            LOG.info("Orthology: " + humanOrtholog);
+            Updates up = new Updates();
+            Date date = new Date();
+            Person currentUser = Person.getCurrentSecurityUser();
+            up.setRecID(zebrafishMarker.getZdbID());
+            up.setFieldName("orthologue");
+            up.setNewValue("Human");
+            up.setSubmitterID(currentUser.getZdbID());
+            up.setSubmitterName(currentUser.getUsername());
+            up.setComments("Created a new orthologue record for species=Human for this record.");
+            up.setWhenUpdated(date);
+            or.saveOrthology(humanOrtholog, orthologyPub, up);
+            orthologies.add(humanOrtholog);
+            //ir.insertUpdatesTable(zebrafishMarker.getZdbID(),"orthologue","Human","Created a new orthologue record for species=Human for this record.",rc.getLockPerson().getZdbID(),rc.getLockPerson().getName());
+        }
 
-                //get the mouse ortholog from the form
-                String mouseAccessionNumber = candidateBean.getMouseOrthologueAbbrev().getEntrezAccession().getEntrezAccNum();
-                if (!StringUtils.isEmpty(mouseAccessionNumber)) {
-                    LOG.info(" Working on Mouse Orthologs ...: " + candidateBean.getMouseOrthologueAbbrev());
-                    Orthologue mouseOrtholog = new Orthologue();
-                    mouseOrtholog.setGene(zebrafishMarker);
-                    EntrezProtRelation targetMouseAccession = candidateBean.getTargetAccessionMouse(rc, mouseAccessionNumber);
-                    mouseOrtholog.setAbbreviation(targetMouseAccession.getEntrezAccession().getAbbreviation());
-                    mouseOrtholog.setAccession(targetMouseAccession);
-                    mouseOrtholog.setOrganism(Species.MOUSE);
-                    Set<OrthoEvidence> orthoEvidences = createEvidenceCollection(candidateBean.getMouseOrthologyEvidence(), orthologyPub);
-                    mouseOrtholog.setEvidence(orthoEvidences);
-                    Updates up = new Updates();
-                    Date date = new Date();
-                    Person currentUser = Person.getCurrentSecurityUser();
-                    up.setRecID(zebrafishMarker.getZdbID());
-                    up.setFieldName("orthologue");
-                    up.setNewValue("Mouse");
-                    up.setSubmitterID(currentUser.getZdbID());
-                    up.setSubmitterName(currentUser.getUsername());
-                    up.setComments("Created a new orthologue record for species=Mouse for this record.");
-                    up.setWhenUpdated(date);
-                    or.saveOrthology(mouseOrtholog, orthologyPub, up);
-                    orthologies.add(mouseOrtholog);
-                //    ir.insertUpdatesTable(zebrafishMarker.getZdbID(),"orthologue","Mouse","Created a new orthologue record for species=Mouse for this record.",rc.getLockPerson().getZdbID(),rc.getLockPerson().getName());
-                }
-                LOG.info("Update Fast Search Evidence Codes");
-                or.updateFastSearchEvidenceCodes(orthologies);
-                LOG.debug("exit handleOrthology");
-            }
+        //get the mouse ortholog from the form
+        String mouseAccessionNumber = candidateBean.getMouseOrthologueAbbrev().getEntrezAccession().getEntrezAccNum();
+        if (!StringUtils.isEmpty(mouseAccessionNumber)) {
+            LOG.info(" Working on Mouse Orthologs ...: " + candidateBean.getMouseOrthologueAbbrev());
+            Orthologue mouseOrtholog = new Orthologue();
+            mouseOrtholog.setGene(zebrafishMarker);
+            EntrezProtRelation targetMouseAccession = candidateBean.getTargetAccessionMouse(rc, mouseAccessionNumber);
+            mouseOrtholog.setAbbreviation(targetMouseAccession.getEntrezAccession().getAbbreviation());
+            mouseOrtholog.setAccession(targetMouseAccession);
+            mouseOrtholog.setOrganism(Species.MOUSE);
+            Set<OrthoEvidence> orthoEvidences = createEvidenceCollection(candidateBean.getMouseOrthologyEvidence(), orthologyPub);
+            mouseOrtholog.setEvidence(orthoEvidences);
+            Updates up = new Updates();
+            Date date = new Date();
+            Person currentUser = Person.getCurrentSecurityUser();
+            up.setRecID(zebrafishMarker.getZdbID());
+            up.setFieldName("orthologue");
+            up.setNewValue("Mouse");
+            up.setSubmitterID(currentUser.getZdbID());
+            up.setSubmitterName(currentUser.getUsername());
+            up.setComments("Created a new orthologue record for species=Mouse for this record.");
+            up.setWhenUpdated(date);
+            or.saveOrthology(mouseOrtholog, orthologyPub, up);
+            orthologies.add(mouseOrtholog);
+            //    ir.insertUpdatesTable(zebrafishMarker.getZdbID(),"orthologue","Mouse","Created a new orthologue record for species=Mouse for this record.",rc.getLockPerson().getZdbID(),rc.getLockPerson().getName());
+        }
+        LOG.info("Update Fast Search Evidence Codes");
+        or.updateFastSearchEvidenceCodes(orthologies);
+        LOG.debug("exit handleOrthology");
+    }
 
     /**
      * Creates a set of Evidence Codes from a set of evidence code strings coming from the submission form.
@@ -486,18 +524,18 @@ public class CandidateController extends SimpleFormController {
             return;
 
         List<Query> queries = rc.getCandidateQueryList();
-        LOG.info("popularLinkageGroups rc: "+rc.getZdbID()) ;
-        LOG.info("popularLinkageGroups queries.size: "+queries.size()) ;
+        LOG.info("popularLinkageGroups rc: " + rc.getZdbID());
+        LOG.info("popularLinkageGroups queries.size: " + queries.size());
         for (Query query : queries) {
             Set<Hit> hits = query.getBlastHits();
-            LOG.info("popularLinkageGroups hits.size: "+hits.size()) ;
+            LOG.info("popularLinkageGroups hits.size: " + hits.size());
             for (Hit hit : hits) {
-                LOG.info("popularLinkageGroups hit: "+hit.getZdbID()) ;
-                LOG.info("popularLinkageGroups hit.getTargetAccession: "+hit.getTargetAccession().getID()) ;
-                Set<MarkerDBLink> markerDBLinks = hit.getTargetAccession().getBlastableMarkerDBLinks() ;
-                LOG.info("popularLinkageGroups markerDBLinks.size: "+markerDBLinks.size()) ;
-                for(MarkerDBLink markerDBLink:markerDBLinks){
-                    LOG.info("popularLinkageGroups markerDBLink: "+markerDBLink.getZdbID()) ;
+                LOG.info("popularLinkageGroups hit: " + hit.getZdbID());
+                LOG.info("popularLinkageGroups hit.getTargetAccession: " + hit.getTargetAccession().getID());
+                Set<MarkerDBLink> markerDBLinks = hit.getTargetAccession().getBlastableMarkerDBLinks();
+                LOG.info("popularLinkageGroups markerDBLinks.size: " + markerDBLinks.size());
+                for (MarkerDBLink markerDBLink : markerDBLinks) {
+                    LOG.info("popularLinkageGroups markerDBLink: " + markerDBLink.getZdbID());
                     hit.getTargetAccession().setLinkageGroups(MarkerService.getLinkageGroups(markerDBLink.getMarker()));
                 }
             }
@@ -507,66 +545,54 @@ public class CandidateController extends SimpleFormController {
     /**
      * Creates marker relationships (or DBLinks) to connect markers (or accessions)
      * to the gene that the curator chose.
-     *
+     * <p/>
      * the basic case is, for one est, or more than one est, we just make a marker relationship.
-     *
+     * <p/>
      * if there are genes and ests both, it's a cleanup issue.  that's not handled yet
-     *
+     * <p/>
      * if there is only a gene, then there's no new relationships to add, because that gene
      * came in because it already had a link to the query accession
-     *
+     * <p/>
      * if there are no markers at all associated with the query accessions, then we link
      * them to the gene that the curators chose.
      *
-     *
-     * @param rc the RunCandidate
+     * @param rc   the RunCandidate
      * @param gene the gene chosen by the curators (could be newly created)
      */
     public void createRedundancyRelationships(RunCandidate rc, Marker gene) {
         LOG.info("createRelationsips gene: " + gene);
         LOG.info("createRelationsips runCanZdbID: " + rc.getZdbID());
 
-        if(!rc.getRun().isRedundancy()){
+        if (!rc.getRun().isRedundancy()) {
             LOG.info("run should be redundancy");
-            return ;
+            return;
         }
-        String attributionZdbID = ((RedundancyRun)rc.getRun()).getRelationPublication().getZdbID();
+        String attributionZdbID = ((RedundancyRun) rc.getRun()).getRelationPublication().getZdbID();
 
         List<Marker> markers = rc.getIdentifiedMarkers();
         LOG.debug("createRelationships markers.size(): " + markers.size());
-        List<Marker> segments = new ArrayList<Marker>();
-
-        //pull the ESTs from from the candidate
-        for (Marker m : markers ) {
-            if (m.isInTypeGroup(Marker.TypeGroup.SMALLSEG)
-                    && !segments.contains(m)) {
-                segments.add(m);
-            }
-        }
-        LOG.debug("createRelationships segments.size(): " + segments.size());
+        List<Marker> segments = getSmallSegementClones(markers);
 
         //pull the single gene from the collection, if there is one.
         Marker candidateGene = null;
         for (Marker m : markers) {
             if (m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-                LOG.debug("createRelationships marker type: " + m.getType()) ;
-                LOG.debug("createRelationships is in type group genedom") ;
+                LOG.debug("createRelationships marker type: " + m.getType());
+                LOG.debug("createRelationships is in type group genedom");
                 candidateGene = m;
                 break;
-            }
-            else{
-                LOG.debug("createRelationships NOT in type group genedom") ;
+            } else {
+                LOG.debug("createRelationships NOT in type group genedom");
 
             }
         }
         LOG.debug("createRelationships rc.getCandidateQueries().size(): " + rc.getCandidateQueries().size());
         //pull the query accessions from the runCandidate
         Set<Accession> accessions = new HashSet<Accession>();
-        for (Query q : rc.getCandidateQueries()){
+        for (Query q : rc.getCandidateQueries()) {
             accessions.add(q.getAccession());
-            LOG.debug("adding accessions" );
+            LOG.debug("adding accessions");
         }
-
 
         //if there are segments, we associate them with the gene,
         //if there are not, we make dblinks connecting the query
@@ -574,7 +600,7 @@ public class CandidateController extends SimpleFormController {
         //if there is a gene associated with the query accessions, ignore it,
         //because the association we would make already exists
         if (!segments.isEmpty()) {
-            LOG.debug("createRelationships segments are not empty" );
+            LOG.debug("createRelationships segments are not empty");
             for (Marker segment : segments) {
                 LOG.info("adding small segment to gene: " + segment);
                 mr.addSmallSegmentToGene(segment, gene, attributionZdbID);
@@ -583,31 +609,43 @@ public class CandidateController extends SimpleFormController {
             //relationships from those segments to the gene that the curator chose
             //now, if there is a dblink from the accession directly to that gene,
             //we delete it.  (unless it's directly attributed to a journal article)
-            MarkerService.removeRedundantDBLinks(gene,accessions);
+            MarkerService.removeRedundantDBLinks(gene, accessions);
 
         } else if (candidateGene == null) {
             //no segments & no genes means that we have an accession that
             //has yet to be linked to any marker at all, so we link it to whatever
             //gene the curators chose.
-            createRedundancyDBLinks(rc,gene);
+            createRedundancyDBLinks(rc, gene);
         }
+    }
 
+    private List<Marker> getSmallSegementClones(List<Marker> markers) {
+        List<Marker> segments = new ArrayList<Marker>();
 
-
+        //pull the ESTs from the candidate
+        for (Marker m : markers) {
+            if (m.isInTypeGroup(Marker.TypeGroup.SMALLSEG)
+                    && !segments.contains(m)) {
+                segments.add(m);
+            }
+        }
+        LOG.debug("createRelationships segments.size(): " + segments.size());
+        return segments;
     }
 
     /**
      * Associate the query accessions directly to the gene, because we don't
      * have an EST to put in between them
-     * @param rc Runcandidate
+     *
+     * @param rc   Runcandidate
      * @param gene Gene object
      */
     private void createRedundancyDBLinks(RunCandidate rc, Marker gene) {
         LOG.info("creating DBLinks");
 
-        if(!rc.getRun().isRedundancy()){
+        if (!rc.getRun().isRedundancy()) {
             LOG.info("run should be redundancy");
-            return ;
+            return;
         }
         //create DBLinks for all queries
         String attributionZdbID = ((RedundancyRun) rc.getRun()).getRelationPublication().getZdbID();
@@ -622,9 +660,9 @@ public class CandidateController extends SimpleFormController {
         Publication pub = new Publication();
         pub.setZdbID(attributionZdbID);
         mr.renameMarker(gene, pub, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
-        ir.insertUpdatesTable(gene,"data_alias","",currentUser) ;
+        ir.insertUpdatesTable(gene, "data_alias", "", currentUser);
 //        ir.insertUpdatesTable(geneToRename.getZdbID(),"dalias_alias",geneToRename.getAbbreviation(),"",rc.getLockPerson().getZdbID(),rc.getLockPerson().getName());
-        
+
     }
 
     private void handleNote(CandidateBean candidateBean) {
@@ -656,7 +694,7 @@ public class CandidateController extends SimpleFormController {
         //to candidateBean.candidateNote, since that's what the textarea is bound to
         LOG.debug("candidatebean sets candidateNote to rc.candidate.note");
         candidateBean.setCandidateNote(rc.getCandidate().getNote());
-        LOG.debug("candidateNote is: "+ rc.getCandidate().getNote());
+        LOG.debug("candidateNote is: " + rc.getCandidate().getNote());
         LOG.debug("exit handleNote");
     }
 
@@ -669,10 +707,10 @@ public class CandidateController extends SimpleFormController {
     private void moveNoteToGene(RunCandidate rc, Marker gene) {
 
         LOG.info("enter moveNoteToGene");
-        LOG.info("existingGene abbrev: "+ gene.getAbbreviation());
+        LOG.info("existingGene abbrev: " + gene.getAbbreviation());
         if (!StringUtils.isEmpty(rc.getCandidate().getNote())) {
             LOG.debug("attach a data note to the gene");
-            mr.addMarkerDataNote(gene, rc.getCandidate().getNote(),rc.getLockPerson());
+            mr.addMarkerDataNote(gene, rc.getCandidate().getNote(), rc.getLockPerson());
             rc.getCandidate().setNote(null);
         }
         LOG.info("exit moveNoteToGene");

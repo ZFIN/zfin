@@ -1,16 +1,16 @@
 package org.zfin.sequence.reno.presentation;
 
-import org.zfin.sequence.Accession;
-import org.zfin.sequence.EntrezProtRelation;
-import org.zfin.sequence.Entrez;
-import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.people.Person;
-import org.zfin.orthology.OrthoEvidence;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.Authentication;
+import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.log4j.Logger;
+import org.zfin.marker.Marker;
+import org.zfin.orthology.OrthoEvidence;
+import org.zfin.people.Person;
+import org.zfin.sequence.Entrez;
+import org.zfin.sequence.EntrezProtRelation;
+import org.zfin.sequence.reno.RunCandidate;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 public class CandidateBean {
@@ -36,10 +36,12 @@ public class CandidateBean {
     RunCandidate runCandidate;
 
     private String associatedGeneField;
+    private Collection<Marker> allSingleAssociatedGenesFromQueries;
     private String geneName;
     private String geneAbbreviation;
     private String geneFamilyName;
     private String geneZdbID;
+    private String message;
 
     //flag for to signal that the gene is being renamed
     private boolean rename;
@@ -117,7 +119,7 @@ public class CandidateBean {
         this.mouseOrthologyEvidence = mouseOrthologyEvidence;
     }
 
-   public EntrezProtRelation getMouseOrthologueAbbrev() {
+    public EntrezProtRelation getMouseOrthologueAbbrev() {
         if (mouseOrthologueAbbrev == null) {
             mouseOrthologueAbbrev = new EntrezProtRelation();
             Entrez mouseEntrez = new Entrez();
@@ -137,8 +139,6 @@ public class CandidateBean {
     public void setNomenclaturePublicationZdbID(String nomenclaturePublicationZdbID) {
         this.nomenclaturePublicationZdbID = nomenclaturePublicationZdbID;
     }
-
-   
 
 
     public String getOrthologyPublicationZdbID() {
@@ -242,6 +242,25 @@ public class CandidateBean {
         return DONE;
     }
 
+    public Collection<Marker> getAllSingleAssociatedGenesFromQueries() {
+        return allSingleAssociatedGenesFromQueries;
+    }
+
+    public void setAllSingleAssociatedGenesFromQueries(Collection<Marker> allSingleAssociatedGenesFromQueries) {
+        this.allSingleAssociatedGenesFromQueries = allSingleAssociatedGenesFromQueries;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void addMessage(String message) {
+        if (this.message == null)
+            this.message = message;
+        else
+            this.message += message;
+        this.message += " ";
+    }
 
     /**
      * Is this candidate selected as a novel gene?
@@ -253,7 +272,7 @@ public class CandidateBean {
     }
 
 
-   public EntrezProtRelation getTargetAccessionHuman(RunCandidate rc, String accName) {
+    public EntrezProtRelation getTargetAccessionHuman(RunCandidate rc, String accName) {
         LOG.debug("enter getTargetAccessionHuman");
         Set<EntrezProtRelation> humanAccOrthologs = rc.getHumanOrthologuesFromQueries();
         LOG.debug("returned humanAccOrthologues: ");

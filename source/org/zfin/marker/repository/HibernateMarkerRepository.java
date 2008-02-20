@@ -1,29 +1,27 @@
 package org.zfin.marker.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.infrastructure.RecordAttribution;
+import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.infrastructure.DataNote;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.*;
 import org.zfin.mutant.FeatureMarkerRelationship;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
+import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
-import org.zfin.sequence.EntrezMGI;
-import org.zfin.sequence.EntrezOMIM;
-import org.zfin.people.Person;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -450,6 +448,29 @@ public class HibernateMarkerRepository implements MarkerRepository {
         runMarkerNameFastSearchUpdate(marker);
     }
 
+    /**
+     * Checks if a gene has a small segment relationship with a given small segment.
+     *
+     * @param associatedMarker Gene
+     * @param smallSegment     small segment marker
+     * @return boolean
+     */
+    @SuppressWarnings("unchecked")
+    public boolean hasSmallSegmentRelationship(Marker associatedMarker, Marker smallSegment) {
+        Session session = currentSession();
+
+        String hql = "from MarkerRelationship where firstMarker = :firstMarker AND secondMarker = :secondMarker " +
+                " AND (type = :type1 or type = :type2 or type = :type3) ";
+        Query query = session.createQuery(hql);
+        query.setParameter("firstMarker", associatedMarker);
+        query.setParameter("secondMarker", smallSegment);
+        query.setParameter("type1", MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT);
+        query.setParameter("type2", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+        query.setParameter("type3", MarkerRelationship.Type.GENE_HYBRIDIZED_BY_SMALL_SEGMENT);
+        List<MarkerRelationship> rels = (List<MarkerRelationship>) query.list();
+        return !CollectionUtils.isEmpty(rels);
+    }
+
 
     public MarkerType getMarkerTypeByName(String name) {
         Session session = currentSession();
@@ -457,7 +478,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (type == null || type.getName() == null) {
             return null;
         }
-
         return type;
     }
 

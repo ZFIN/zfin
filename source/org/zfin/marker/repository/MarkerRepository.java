@@ -48,4 +48,12 @@ public interface MarkerRepository {
     void runMarkerNameFastSearchUpdate(Marker marker);
 
     void createMarker(Marker marker, Publication publication);
+
+    /**
+     * Checks if a gene has a small segment relationship with a given small segment.
+     * @param associatedMarker Gene
+     * @param smallSegment small segment marker
+     * @return boolean
+     */
+    boolean hasSmallSegmentRelationship(Marker associatedMarker, Marker smallSegment);
 }
