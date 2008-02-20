@@ -173,6 +173,12 @@
          </a>
        </li>
        <?/MICOMMENT>
+       
+                  <li>
+         <a href="/zf_info/news/siteNews.html#madmtg">
+           February 19 - The meeting website for the 2008 International Zebrafish meeting has now gone live
+         </a>
+       </li>    
               
        <li>
          <a href="/zf_info/news/siteNews.html#zfmtg">
@@ -180,11 +186,7 @@
          </a>
        </li>
        
-           <li>
-         <a href="/zf_info/news/siteNews.html#vega">
-           September 27 - New Vega Update
-         </a>
-       </li>     
+ 
 
 
 
