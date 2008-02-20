@@ -51,6 +51,8 @@ public class MarkerPresentation extends EntityPresentation {
      * XXX is a hit on a cDNA or EST assumed to be a secondMarker
      * e.g.
      * estZ[enc]geneA,[hyb]geneBsecondmarker [rel] gene1
+     * if no hit on gene then:
+     * estZ[none]
      *
      * @param markerRelationships Set<MarkerRelationship>
      * @return html for marker link
