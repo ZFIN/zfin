@@ -1111,114 +1111,20 @@ EFFECTS
 
   <?/MIBLOCK>
   
-  <?MIVAR NAME=xpcur_c_checked_expression><?/MIVAR>
-  <script>
-    setCookie("checked_expression",'','xpcur_c_');    
-  </script>
+  <?MIBLOCK COND=$(NXST,$gPSLitem_stage_not_overlap)>
+    <?MIVAR NAME=xpcur_c_checked_expression><?/MIVAR>
+    <script>
+      setCookie("checked_expression",'','xpcur_c_');    
+    </script>
+  <?/MIBLOCK>
+  
   <?/MIBLOCK>  
 
 
   <?MICOMMENT> ================| Structure |================ <?/MICOMMENT>
   <?MIBLOCK COND=$(XST,$xpcur_G_structure_add_button)>
-  
-    <?MICOMMENTS>
-       ================================================          
-         Add a record to table expression_pattern_infrastructure
-       ================================================
-    <?/MICOMMENTS>
 
-    <?MICOMMENTS>
-       ================================================          
-         Allow the user to enter multiple structures, seperated by bars.
-         Bars is the delimiter instead of comma because commas are in
-         anatomy item names.
-         
-         Translate the commas into # and the delimiter to comma. Select
-         items useing the INDEX function. Back Translate # to comma.
-       ================================================
-    <?/MICOMMENTS>
-    
-    <?MIBLOCK COND=$(XST,$xpcur_G_AO_term)>
-      
-      <?MIVAR NAME=xpcur_G_AO_term>$(REPLACE,$xpcur_G_AO_term,"'","''")<?/MIVAR>
-      
-      <?MISQL SQL="
-        select anatitem_zdb_id
-        from anatomy_item
-        where anatitem_name = '$xpcur_G_AO_term';">
-        
-        <?MIVAR NAME=xpcur_G_structure_add>$1<?/MIVAR>
-        
-      <?/MISQL>      
-      
-    <?/MIBLOCK>  
-
-    <?MIVAR NAME=i>0<?/MIVAR>
-    <?MIBLOCK WHILE=$(NE,$(INDEX,$i,$xpcur_G_structure_add),)>    	
-
-	    <?MIVAR NAME=xpcurup_structure_add_id>$(INDEX,$i,$xpcur_G_structure_add)<?/MIVAR>
-	    
-	    <?MISQL SQL="
-		select count(*)
-		from expression_pattern_infrastructure
-		where xpatinf_pub_zdb_id = '$OID'
-		  and xpatinf_anatitem_zdb_id = '$xpcurup_structure_add_id'
-		  and xpatinf_expressed = '$structure_expressed'
-		;">
-	    <?/MISQL>
-
-	    <?MIBLOCK COND="$(EC,$1,0)"> 
-	    
-	      <?MISQL SQL="select anatitem_is_obsolete, anatitem_name
-	                   from anatomy_item
-	                   where anatitem_zdb_id = '$xpcurup_structure_add_id';">
-	          <?MIVAR NAME=xpatcurup_anat_name>$2<?/MIVAR>
-	      <?/MISQL>
-	      
-	      <?MIBLOCK COND="$(EC,$1,f)">
-
-		<?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
-		<?MISQL SQL="execute function get_id('XPATINF');">$(SETVAR,$xpcurup_xpatinf_zdb_id,$1)<?/MISQL>
-
-		<?MICOMMENT> ==| Add New XPATINF |== <?/MICOMMENT>  
-		<?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpcurup_xpatinf_zdb_id');"><?/MISQL>   
-
-		<?MISQL SQL="    
-		    INSERT INTO expression_pattern_infrastructure (
-			xpatinf_zdb_id,
-			xpatinf_curator_zdb_id,
-			xpatinf_pub_zdb_id,
-			xpatinf_anatitem_zdb_id,
-			xpatinf_expressed,
-			xpatinf_date )
-		    VALUES (
-			'$xpcurup_xpatinf_zdb_id',
-			'$ZDB_ident', 
-			'$OID', 
-			'$xpcurup_structure_add_id',
-			'$structure_expressed',
-			TODAY);">
-		<?/MISQL>
-	      <?MIELSE>
-  	        <SCRIPT>
-		  alert("The structure  '<?MIVAR>$xpatcurup_anat_name<?/MIVAR>' is obsolete.")
-	        </SCRIPT>	      
-	        
-	      <?/MIBLOCK>
-
-	    <?MIELSE>
-	      <?MISQL SQL="SELECT anatitem_name FROM anatomy_item WHERE anatitem_zdb_id = '$xpcurup_structure_add_id';"><?/MISQL>
-	      <SCRIPT>
-		alert("The structure  '<?MIVAR>$1<?/MIVAR>' - already exists for this publication.")
-	      </SCRIPT>
-	    <?/MIBLOCK> <?MICOMMENT> end xpatres count != 0 <?/MICOMMENT>  
-	    
-	    <?MIVAR NAME=i>$(+,$i,1)<?/MIVAR>
-    <?/MIBLOCK>
-
-    <script>
-      setCookie('xpcur_form_variables','<?MIVAR>$xpcur_G_structure_add<?/MIVAR>','pubcur_c_');
-    </script>    
+      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-structure_pile_add.apg';">$1<?/MISQL>   
 
   <?/MIBLOCK> 
 

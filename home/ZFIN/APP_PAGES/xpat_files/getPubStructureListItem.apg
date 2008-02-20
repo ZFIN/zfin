@@ -146,10 +146,113 @@ EFFECTS
   <?/MIBLOCK>
 
 <?MIELSE>
+  <?MICOMMENT>
+     *** Use the anatomy ontology to find anatomy that does overlap the stage range.
+         Construct an informative alert message that groups the anatomy terms by their
+         relationship.
+  <?/MICOMMENT>
+
   <?MISQL SQL="select anatitem_name from anatomy_item where anatitem_zdb_id = '$gPSLitem_anatitem_zdb_id';"><?/MISQL>
-  <SCRIPT>
-    alert("The stage range selected does not overlap with the defined range for item <?MIVAR>'$1'.<?/MIVAR>")
-  </SCRIPT>
+
+  <?MIVAR NAME=gPSLitem_alert>The stage range selected does not overlap with the defined range for item '$1'.<?/MIVAR> 
+
+
+  <?MIVAR NAME=gPSLitem_prev_anatrel_id><?/MIVAR>  
+  <?MISQL SQL="
+      select anatitem_name, anatitem_zdb_id, anatrel_dagedit_id
+      from anatomy_item, anatomy_relationship 
+      where anatrel_anatitem_2_zdb_id = '$gPSLitem_anatitem_zdb_id'
+        and anatrel_anatitem_1_zdb_id = anatitem_zdb_id
+        and anatitem_overlaps_stg_window(anatitem_zdb_id,'$gPSLitem_stg_start_zdb_id','$gPSLitem_stg_end_zdb_id')
+        and anatrel_dagedit_id = 'develops_from'
+      order by 3;">
+      
+      <?MIVAR NAME=gPSLitem_anatrel_id>>>$3<?/MIVAR>
+      <?MIVAR NAME=gPSLitem_anatitem_name>$1<?/MIVAR>
+
+      <?MISQL SQL="select WebExplode(object,'xpcur_G_structure_add=$2&structure_expressed=$gPSLitem_expressed') from webPages where ID='aa-structure_pile_add.apg';"><?/MISQL>   
+      
+      <?MIBLOCK COND=$(EC,$gPSLitem_prev_anatrel_id,)>
+      
+          <?MIVAR NAME=gPSLitem_alert>$gPSLitem_alert \n\n Adding to the Structure Pile: \n\n$gPSLitem_anatrel_id \n$gPSLitem_anatitem_name<?/MIVAR>
+          
+      <?MIELSE COND=$(EC,$gPSLitem_anatrel_id,$gPSLitem_prev_anatrel_id)>
+         
+          <?MIVAR NAME=gPSLitem_alert>$gPSLitem_alert \n$gPSLitem_anatitem_name<?/MIVAR>
+          
+      <?MIELSE>
+      
+          <?MIVAR NAME=gPSLitem_alert>$gPSLitem_alert \n\n$gPSLitem_anatrel_id \n$gPSLitem_anatitem_name<?/MIVAR>      
+         
+      <?/MIBLOCK>
+  
+      <?MIVAR NAME=gPSLitem_prev_anatrel_id>$gPSLitem_anatrel_id<?/MIVAR>
+      
+  <?/MISQL>
+  
+  <?MICOMMENT> Only show other parents if the develops_from doesn't exist <?/MICOMMENT>
+  <?MIBLOCK COND=$(EC,$gPSLitem_prev_anatrel_id,)>
+    <?MISQL SQL="
+      select anatitem_name, anatitem_zdb_id, ar2.anatrel_dagedit_id
+      from anatomy_item, anatomy_relationship ar1, anatomy_relationship ar2
+      where ar1.anatrel_anatitem_2_zdb_id = '$gPSLitem_anatitem_zdb_id'
+        and ar1.anatrel_anatitem_1_zdb_id = ar2.anatrel_anatitem_2_zdb_id
+        and ar2.anatrel_anatitem_1_zdb_id = anatitem_zdb_id
+        and anatitem_overlaps_stg_window(anatitem_zdb_id,'$gPSLitem_stg_start_zdb_id','$gPSLitem_stg_end_zdb_id')
+        and ar1.anatrel_dagedit_id = 'is_a'
+        and ar2.anatrel_dagedit_id = 'develops_from'
+      UNION
+      select anatitem_name, anatitem_zdb_id, anatrel_dagedit_id
+      from anatomy_item, anatomy_relationship 
+      where anatrel_anatitem_2_zdb_id = '$gPSLitem_anatitem_zdb_id'
+        and anatrel_anatitem_1_zdb_id = anatitem_zdb_id
+        and anatitem_overlaps_stg_window(anatitem_zdb_id,'$gPSLitem_stg_start_zdb_id','$gPSLitem_stg_end_zdb_id')
+        and anatrel_dagedit_id != 'develops_from'
+      UNION
+      select anatitem_name, anatitem_zdb_id, 'develops_into'
+      from anatomy_item, anatomy_relationship 
+      where anatrel_anatitem_1_zdb_id = '$gPSLitem_anatitem_zdb_id'
+        and anatrel_anatitem_2_zdb_id = anatitem_zdb_id
+        and anatitem_overlaps_stg_window(anatitem_zdb_id,'$gPSLitem_stg_start_zdb_id','$gPSLitem_stg_end_zdb_id')
+        and anatrel_dagedit_id = 'develops_from'
+      order by 3;">
+      
+      <?MIVAR NAME=gPSLitem_anatrel_id>>>$3<?/MIVAR>
+      <?MIVAR NAME=gPSLitem_anatitem_name>$1<?/MIVAR>
+
+      <?MISQL SQL="select WebExplode(object,'xpcur_G_structure_add=$2&structure_expressed=$gPSLitem_expressed') from webPages where ID='aa-structure_pile_add.apg';"><?/MISQL>   
+      
+      <?MIBLOCK COND=$(EC,$gPSLitem_prev_anatrel_id,)>
+      
+          <?MIVAR NAME=gPSLitem_alert>$gPSLitem_alert \n\n Adding to the Structure Pile: \n\n$gPSLitem_anatrel_id \n$gPSLitem_anatitem_name<?/MIVAR>
+          
+      <?MIELSE COND=$(EC,$gPSLitem_anatrel_id,$gPSLitem_prev_anatrel_id)>
+         
+          <?MIVAR NAME=gPSLitem_alert>$gPSLitem_alert \n$gPSLitem_anatitem_name<?/MIVAR>
+          
+      <?MIELSE>
+      
+          <?MIVAR NAME=gPSLitem_alert>$gPSLitem_alert \n\n$gPSLitem_anatrel_id \n$gPSLitem_anatitem_name<?/MIVAR>      
+         
+      <?/MIBLOCK>
+  
+      <?MIVAR NAME=gPSLitem_prev_anatrel_id>$gPSLitem_anatrel_id<?/MIVAR>
+      
+    <?/MISQL>  
+  <?/MIBLOCK>
+
+  
+    <SCRIPT>
+      alert("<?MIVAR>$gPSLitem_alert<?/MIVAR>");
+    </SCRIPT>
 
   <?MIVAR NAME=gPSLitem_xpatres_zdb_id><?/MIVAR>
+  <?MIVAR NAME=gPSLitem_stage_not_overlap>true<?/MIVAR>
 <?/MIBLOCK>
+
+<?MIVAR>
+  $(UNSETVAR,gPSLitem_anatrel_id)
+  $(UNSETVAR,gPSLitem_anatitem_name)
+  $(UNSETVAR,gPSLitem_alert)
+  $(UNSETVAR,gPSLitem_prev_anatrel_id)
+<?/MIVAR>
