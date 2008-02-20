@@ -23,33 +23,17 @@ OUTPUT VAR
 
 <?/MIERROR>
 
-<HTML>
-
-<script language="JavaScript" src="http://zfin.org/client_sniff.js"></script>
-
-<SCRIPT> 
-if (is_nav4) {
-document.write('<LINK rel=stylesheet type="text/css" href="/nn4_zfin_style.css">');
-} else {
-document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
-}
-</SCRIPT>
 
 <?MIVAR NAME=anatdict_title_ext><?/MIVAR>
 <?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,search),$(XST,$OID))">
-   
   <?MISQL SQL="
       select stg_abbrev, stg_name_ext
       from stage
       where stg_zdb_id = '$OID';">
-
       <?MIVAR NAME=anatdict_title_ext>- $1 $2<?/MIVAR>
   <?/MISQL>
 <?/MIBLOCK>
 
-<?MIVAR>        
-<TITLE>Anatomical Ontology Browser $anatdict_title_ext</TITLE>
-<?/MIVAR>
 
 <?MICOMMENT>
   ============================================================================
@@ -128,20 +112,63 @@ function updateParent(AOname, AOid) {
   }
 }
 </script>
-<script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
+<script src="/autosuggest.js"></script>
 
 
+<?MIVAR>        
+<head>
+<TITLE>Anatomical Ontology Browser $anatdict_title_ext</TITLE>
+<?MICOMMENT>
+Providing explicitly, because problems with zfin.css.  FB2428.
+<?/MICOMMENT>
+<style>
+ .suggestion_list
+ {
+ background: white;
+ border: 1px solid;
+ padding: 4px;
+ }
+
+ .suggestion_list ul
+ {
+ padding: 0;
+ margin: 0;
+ list-style-type: none;
+ }
+
+ .suggestion_list a
+ {
+ text-decoration: none;
+ color: navy;
+ }
+
+ .suggestion_list .selected
+ {
+ background: navy;
+ color: white;
+ }
+
+ .suggestion_list .selected a
+ {
+ color: white;
+ }
+
+ #autosuggest
+ {
+ display: none;
+ }
+</style>
+</head>
+<?/MIVAR>
+<body>
 <?MISQL SQL="select WebExplode(object, '') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <FORM name="dictform" method="GET" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
   <INPUT type="hidden" name="MIval" value="aa-anatdict.apg">
-
   <?MIVAR>
     <INPUT type="hidden" name="mode" value="$mode">
     <INPUT type="hidden" name="type" value="$type">
   <?/MIVAR>
-
-
   <TABLE width=100%>
     <TR>
       <TD valign=top bgcolor="#CCCCCC">
