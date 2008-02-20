@@ -194,15 +194,18 @@ sub sendMail(@) {
 
      print MAIL "$msg\n";
 
-     # get the checking result from last run
-     my $query = "select vldcheck_count, vldcheck_date
-                   from validate_check_history
-                  where vldcheck_name = '$rtnName' ";
+     # add stats from last run, conditionally
+     if ($rtnName ne "void") {
+	 # get the checking result from last run
+	 my $query = "select vldcheck_count, vldcheck_date
+                        from validate_check_history
+                       where vldcheck_name = '$rtnName' ";
 
-     my ($preNum,$preDate) = $dbh->selectrow_array($query);
+	 my ($preNum,$preDate) = $dbh->selectrow_array($query);
 
-     if ($preNum) {
-       print MAIL "(Last run at $preDate got $preNum records.)";
+	 if ($preNum) {
+	     print MAIL "(Last run at $preDate got $preNum records.)";
+	 }
      }
      print MAIL "\n\n";
 
@@ -309,7 +312,48 @@ sub checkFigXpatexSourceConsistant ($) {
   }
   &recordResult($routineName, $nRecords);
 } 
+#----------------------------------------------------------------
+#Parameter
+#  $ - Email Address for recipient
+#  $ - Curator first name
+#
+# For each zfin curator, query if there are any close papers by the curator
+# having 'unspecified' as an entity in phenotype annotation.
 
+sub phenotypeAnnotationUnspecified ($$) {
+	
+  my $routineName = "phenotypeAnnotationUnspecified";
+       
+  my $sql = "select distinct apato_pub_zdb_id
+      from atomic_phenotype
+      join curation
+        on apato_pub_zdb_id = cur_pub_zdb_id
+      join person 
+        on cur_curator_zdb_id = zdb_id
+      where cur_topic='Phenotype'
+        and cur_closed_date is not null
+        and apato_entity_a_zdb_id = 'ZDB-ANAT-041102-1'
+        and email = '$_[0]'
+      order by apato_pub_zdb_id ";
+
+  my @colDesc = ("Publication zdb id ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+
+    my $sendToAddress = $_[0]; 
+    my $curatorFirstName = $_[1];
+    my $subject = "Phenotype annotation to 'unspecified' entity";
+    my $errMsg = "Dear $curatorFirstName, please check the use of 'unspecified' as an entity in phenotype annotation in the following publication(s).";
+      		       
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, "void", $errMsg, $sql);
+  }
+  
+} 
+
+#
 #----------------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
@@ -3267,6 +3311,22 @@ if($monthly) {
   encodesRelationshipsInBACorPAC($geneEmail);
   addressStillNeedsUpdate($adminEmail);
   mrkrgoevInfgrpDuplicatesFound($goEmail);
+
+  # for each zfin curator, run phenotypeAnnotationUnspecified() check
+  my $sql = " select email, full_name
+                from int_person_lab join person
+                     on source_id = zdb_id
+               where target_id = 'ZDB-LAB-000914-1'
+                 and position = 'Research Staff'";
+  my $sth = $dbh->prepare ($sql) or die "Prepare fails";
+  $sth->execute();
+
+  while (my ($curatorEmail, $curatorName) = $sth->fetchrow_array()) {
+      my @curatorName = split(/,/,$curatorName);
+      my $curatorFirstName = $curatorName[$#curatorName];
+      $curatorFirstName =~ s/^\s+//;
+      phenotypeAnnotationUnspecified ($curatorEmail, $curatorFirstName);
+  }
 }
 if($yearly) {
 
