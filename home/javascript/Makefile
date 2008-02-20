@@ -34,8 +34,8 @@ TARGETDIR = $(TARGETROOT)/home/javascript
 SUBDIRS  = ajax-lib
 
 STATICS = patocuration.js ncbo-term-info.js term_completer.js \
-	dichty-term-info.js json.js sessionstate.js prototype-1.6.0.2.js \
-	awstats_misc_tracker.js
+	dichty-term-info.js json.js sessionstate.js awstats_misc_tracker.js  \
+	 prototype.js prototype-1.6.0.2.js 
 
 
 

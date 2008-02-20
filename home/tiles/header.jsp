@@ -1,7 +1,5 @@
 
 
-<link rel="stylesheet" type="text/css" href="/css/zfin.css">
-<link rel="stylesheet" type="text/css" href="/css/header.css">
 
 <script type="text/javascript" src="/javascript/prototype.js"></script>
 

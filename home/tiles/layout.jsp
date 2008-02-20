@@ -14,6 +14,8 @@
         <tiles:getAsString ignore="true" name="staticTitle"/> ${dynamicTitle}
     </title>
 
+<link rel="stylesheet" type="text/css" href="/css/zfin.css">
+<link rel="stylesheet" type="text/css" href="/css/header.css">
 
 </head>
 
