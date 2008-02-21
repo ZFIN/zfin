@@ -176,7 +176,7 @@ public class CandidateController extends SimpleFormController {
                 for (Marker smallSegment : smallSegments) {
                     boolean hasRelationship = markerRepository.hasSmallSegmentRelationship(associatedMarker, smallSegment);
                     if(hasRelationship){
-                        candidateBean.addMessage("This candidate has already a small-segment-relationship to " +
+                        candidateBean.addMessage("This candidate already has a small-segment relationship to " +
                         associatedMarker.getName());
                     }
                 }
