@@ -440,6 +440,7 @@ public class CandidateController extends SimpleFormController {
             LOG.debug("humanOrthology accession: " + targetHumanAccession);
 
             humanOrtholog.setAbbreviation(targetHumanAccession.getEntrezAccession().getAbbreviation());
+            humanOrtholog.setName(targetHumanAccession.getEntrezAccession().getName());
             humanOrtholog.setAccession(targetHumanAccession);
             humanOrtholog.setOrganism(Species.HUMAN);
 
@@ -469,6 +470,7 @@ public class CandidateController extends SimpleFormController {
             mouseOrtholog.setGene(zebrafishMarker);
             EntrezProtRelation targetMouseAccession = candidateBean.getTargetAccessionMouse(rc, mouseAccessionNumber);
             mouseOrtholog.setAbbreviation(targetMouseAccession.getEntrezAccession().getAbbreviation());
+            mouseOrtholog.setName(targetMouseAccession.getEntrezAccession().getName());
             mouseOrtholog.setAccession(targetMouseAccession);
             mouseOrtholog.setOrganism(Species.MOUSE);
             Set<OrthoEvidence> orthoEvidences = createEvidenceCollection(candidateBean.getMouseOrthologyEvidence(), orthologyPub);
