@@ -22,8 +22,10 @@
         <form:select path="associatedGeneField">
             <form:option value="<%=CandidateBean.NOVEL%>"
                          label="${formBean.runCandidate.candidate.suggestedName} (novel)"></form:option>
-            <form:options items="${formBean.allSingleAssociatedGenesFromQueries}"
-                          itemLabel="abbreviation" itemValue="zdbID"/>
+            <c:if test="${!formBean.alreadyAssociatedGenes}">
+                <form:options items="${formBean.allSingleAssociatedGenesFromQueries}"
+                              itemLabel="abbreviation" itemValue="zdbID"/>
+            </c:if>
             <form:option value="IGNORE">IGNORE</form:option>
         </form:select>
         <form:errors path="associatedGeneField" cssClass="error indented-error"/>

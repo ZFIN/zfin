@@ -250,16 +250,32 @@ public class CandidateBean {
         this.allSingleAssociatedGenesFromQueries = allSingleAssociatedGenesFromQueries;
     }
 
+    /**
+     * Warning message that the candidate is already related to any of the associated genes
+     * @return message
+     */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * Warning message that the candidate is already related to any of the associated genes 
+     * @param message string
+     */
     public void addMessage(String message) {
         if (this.message == null)
             this.message = message;
         else
             this.message += message;
         this.message += " ";
+    }
+
+    /**
+     * Check if there is a message used in case the candidate is laready related to any of the associated genes.
+     * @return boolean
+     */
+    public boolean isAlreadyAssociatedGenes(){
+        return message != null;
     }
 
     /**
