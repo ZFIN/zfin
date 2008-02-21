@@ -169,6 +169,7 @@ public class CandidateController extends SimpleFormController {
         List<Marker> associatedMarkers = rc.getAllSingleAssociatedGenesFromQueries();
         List<Marker> identifiedMarkers = rc.getIdentifiedMarkers();
         List<Marker> smallSegments = getSmallSegementClones(identifiedMarkers);
+        candidateBean.setSmallSegments(smallSegments);
 
         if (associatedMarkers != null) {
             for (Marker associatedMarker : associatedMarkers) {
@@ -177,7 +178,7 @@ public class CandidateController extends SimpleFormController {
                     boolean hasRelationship = markerRepository.hasSmallSegmentRelationship(associatedMarker, smallSegment);
                     if(hasRelationship){
                         candidateBean.addMessage("This candidate already has a small-segment relationship to " +
-                        associatedMarker.getName());
+                        associatedMarker.getAbbreviation());
                     }
                 }
             }

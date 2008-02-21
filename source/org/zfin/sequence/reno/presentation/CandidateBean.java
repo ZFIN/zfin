@@ -11,6 +11,7 @@ import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.reno.RunCandidate;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public class CandidateBean {
@@ -42,6 +43,7 @@ public class CandidateBean {
     private String geneFamilyName;
     private String geneZdbID;
     private String message;
+    private List<Marker> smallSegments;
 
     //flag for to signal that the gene is being renamed
     private boolean rename;
@@ -268,6 +270,14 @@ public class CandidateBean {
         else
             this.message += message;
         this.message += " ";
+    }
+
+    public List<Marker> getSmallSegments() {
+        return smallSegments;
+    }
+
+    public void setSmallSegments(List<Marker> smallSegments) {
+        this.smallSegments = smallSegments;
     }
 
     /**
