@@ -67,17 +67,17 @@ function PatoCuration() {
 
 
   /*
-   Delete sessionState information about all of the mutant checkboxes
+   Delete curator session information about all of the mutant checkboxes
 
    Like deselect, except that it's clearing the boxes for the next time
    the page loads rather than clearing it for now.  It gets called right
    before submitting.
    */
-  this.clearMutantsFromSession = function() {
+  this.clearMutantsFromSession = function(person,OID) {
       var mutants = this.mutants;
       for (var i = 0 ; i < mutants.length ; i++) {
 	  if (document.getElementById(mutants[i].checkbox_id).checked == true) { 
-	      sessionState.deleteAttributes(mutants[i].checkbox_id);
+              storeSession(person,OID,mutants[i].checkbox_id, 'false');
           }
       }
 
@@ -87,12 +87,12 @@ function PatoCuration() {
   /*
    Uncheck mutants and update the state of the whole system
    */
-  this.deselectMutants = function() {
+  this.deselectMutants = function(person,OID) {
       var mutants = this.mutants;
       for (var i = 0 ; i < mutants.length ; i++) {
 	  if (document.getElementById(mutants[i].checkbox_id).checked == true) { 
               document.getElementById(mutants[i].checkbox_id).checked = false;
-	      sessionState.deleteAttributes(mutants[i].checkbox_id);
+              storeSession(person,OID,mutants[i].checkbox_id, 'false');
 	  }
       }
       //once they're all unchecked, update the radio buttons
@@ -101,12 +101,15 @@ function PatoCuration() {
   }
 
 
-  this.selectAllMutants = function() {
+  /** it's a little silly that this method needs to take the person 
+      and OID, but it's for saving the stage **/
+
+  this.selectAllMutants = function(person,OID) {
       var mutants = this.mutants;
       for (var i = 0 ; i < mutants.length ; i++) {
 	  if (document.getElementById(mutants[i].checkbox_id).checked == false) { 
               document.getElementById(mutants[i].checkbox_id).checked = true;
-	      sessionState.storeObjectAttribute(mutants[i].checkbox_id, 'checked','true');
+              storeSession(person,OID,mutants[i].checkbox_id, 'true');
 	  }
       }
       //because the checkbox values change, we need to update the radio buttons
@@ -247,11 +250,13 @@ function PatoCuration() {
   }
   
   this.updateMutantForm = function(fig_zdb_id, geno_zdb_id, exp_zdb_id, start_stg_zdb_id, end_stg_zdb_id) {
+
     updateSelectElement($('patosumFig'), fig_zdb_id); 
     updateSelectElement($('patosumGenotype'), geno_zdb_id);
     updateSelectElement($('patosumEnv'), exp_zdb_id);
     updateSelectElement($('patosumStartStage'), start_stg_zdb_id);
     updateSelectElement($('patosumEndStage'), end_stg_zdb_id);
+
   }
   
 
