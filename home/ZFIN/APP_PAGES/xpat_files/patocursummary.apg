@@ -33,6 +33,52 @@ PREFIX:   patosum_
 <?MIBLOCK COND="$(XST,$OID)">
 
 
+<?MICOMMENT> ** get session variables from database ** <?/MICOMMENT>
+
+<?MIVAR NAME="$cs_field">patosum_curation_box_class<?/MIVAR>
+<?MIVAR NAME="$cs_default">unlimited-curation-box<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patosum_curation_box_class">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR NAME="$cs_field">patosum_fig<?/MIVAR>
+<?MIVAR NAME="$cs_default"><?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patosum_fig">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR NAME="$cs_field">patosum_genotype<?/MIVAR>
+<?MIVAR NAME="$cs_default">WT<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patosum_genotype">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR NAME="$cs_field">patosum_env<?/MIVAR>
+<?MIVAR NAME="$cs_default">_Standard<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patosum_env">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR NAME="$cs_field">patosum_start_stage<?/MIVAR>
+<?MIVAR NAME="$cs_default"><?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patosum_start_stage">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR NAME="$cs_field">patosum_end_stage<?/MIVAR>
+<?MIVAR NAME="$cs_default"><?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patosum_end_stage">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+
+
 <?MICOMMENT> ** display filter bar ** <?/MICOMMENT>
 
 <?MISQL SQL="select WebExplode(object,'curfil_hide_gene=1&curfil_hide_auto=1') 
@@ -88,37 +134,41 @@ PREFIX:   patosum_
 
 <a name="mutants"></a>
 
+<?MIVAR>
 
 <span style="margin-left: 1em; float: left;">
 <span class="curation-box-control-text">check:</span>
-<a href="javascript:;" onclick="patoCuration.selectAllMutants();" class="curation-box-control-text">all</a>
-<a href="javascript:;" onclick="patoCuration.deselectMutants();" class="curation-box-control-text">none</a>
+<a href="javascript:;" onclick="patoCuration.selectAllMutants('$ZDB_ident','$OID');" class="curation-box-control-text">all</a>
+<a href="javascript:;" onclick="patoCuration.deselectMutants('$ZDB_ident','$OID');" class="curation-box-control-text">none</a>
 </span>
+
 
 <span style="float: right; margin-right: 1em;">
 
 <span class="curation-box-control-text">size: </span>
+
 <a href="javascript:;" class="curation-box-control-text"
    onClick="document.getElementById('patosum-mutants').className = 'small-curation-box';
-            sessionState.storeObjectAttribute('patosum-mutants','className','small-curation-box');">
+            storeSession('$ZDB_ident','$OID','patosum_curation_box_class','small-curation-box');">
 small
 </a>
 
 <a href="javascript:;" class="curation-box-control-text"
    onClick="document.getElementById('patosum-mutants').className = 'medium-curation-box';
-            sessionState.storeObjectAttribute('patosum-mutants','className','medium-curation-box');">
+            storeSession('$ZDB_ident','$OID','patosum_curation_box_class','medium-curation-box');">
 medium
 </a>
 
 
 <a href="javascript:;"  class="curation-box-control-text"
    onClick="document.getElementById('patosum-mutants').className = 'large-curation-box';
-            sessionState.storeObjectAttribute('patosum-mutants','className','large-curation-box');">
+            storeSession('$ZDB_ident','$OID','patosum_curation_box_class','large-curation-box');">
 large
 </a>
 <a href="javascript:;"  class="curation-box-control-text"
    onClick="document.getElementById('patosum-mutants').className = 'unlimited-curation-box';
-            sessionState.storeObjectAttribute('patosum-mutants','className','unlimited-curation-box');">
+            storeSession('$ZDB_ident','$OID','patosum_curation_box_class','unlimited-curation-box');">
+
 fitted
 </a>
 
@@ -126,8 +176,9 @@ fitted
 </span><br>
 
 
- <div id="patosum-mutants" class="medium-curation-box">
 
+ <div id="patosum-mutants" class="$patosum_curation_box_class">
+<?/MIVAR>
  
  <table class="searchresults">
   <thead class="searchresults">
@@ -213,17 +264,38 @@ fitted
         onClick="document.getElementById('$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id').click();
                  patoCuration.updateMutantForm('$patosum_fig_zdb_id', '$patosum_geno_zdb_id', '$patosum_exp_zdb_id', '$patosum_start_stg_zdb_id', '$patosum_end_stg_zdb_id'); ">
         <td> <?MICOMMENT> ** Select column ** <?/MICOMMENT>
+ 
+       <?MIVAR NAME="$cs_field">$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id<?/MIVAR>
+       <?MIVAR NAME="$cs_default">false<?/MIVAR>
+       <?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
+             from webPages where ID='aa-curator_session.apg';">
+       <?MIVAR NAME="$patosum_is_checked">$(TRIM,$1)<?/MIVAR>
+       <?/MISQL>
+ 
+       <?MICOMMENT> * in html, checked="false" is the same as checked="true", because it's an existence check,
+                      so instead of what we stored, use the checked string or use an empty string <?/MICOMMENT>
+       <?MIBLOCK COND="$(EC,$patosum_is_checked,true)">
+         <?MIVAR NAME="$patosum_checked">checked="true"<?/MIVAR>
+       <?MIELSE>
+         <?MIVAR NAME="$patosum_checked"><?/MIVAR>
+       <?/MIBLOCK>
+
+
+        <?MIVAR>
           <input type="checkbox" 
+                 $patosum_checked
                  id="$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id" 
                  onclick="this.click();" 
                  onChange="patoCuration.updateMutants();
-                           sessionState.storeObjectAttribute(this.id, 'checked', this.checked);
-                           /* sessionState.getAttribute(this.id, 'checked'); */ ">
+                           storeSession('$ZDB_ident','$OID','$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id',
+                                         this.checked);">
+
                            
                  <?MICOMMENT> ** about that onclick="click()" above.. if you click the checkbox, 
                                  you get an event in both the tr and the checkbox - so two events 
                                  means you return to the same state.  3 events and you move on to 
                                  the other state.  it's goofy, but simple ** <?/MICOMMENT>
+        <?/MIVAR>
         </td> 
         <td style="white-space: nowrap"> <?MICOMMENT> ** Fig Column ** <?/MICOMMENT>
           $patosum_fig_label 
@@ -309,28 +381,32 @@ fitted
         <input id="patosum-addMutantButton" name="addMutantButton" type="submit" value="Add">
       </td>
       <td valign="top">
+      <?MIVAR>
         <select name="patoup_fig_zdb_id" id="patosumFig"
-                onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
+                onChange="storeSession('$ZDB_ident','$OID','patosum_fig',this.options[this.selectedIndex].value);">
+      <?/MIVAR>
    
         <?MISQL SQL="select fig_zdb_id, fig_label 
                      from figure 
                      where fig_source_zdb_id = '$OID' 
 			   $patosum_filter_fig_sql
                      order by fig_full_label;">   
-          <option value="$1">$2</option>
+           <?MIVAR> <option value="$1" $(IF,$(EC,$patosum_fig,$1),selected="true")>$2</option> <?/MIVAR>
         <?/MISQL>
         </select>
       </td>
       <td valign="top">
+        <?MIVAR>
         <select name="patoup_geno_zdb_id" id="patosumGenotype"
-                onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
+                onChange="storeSession('$ZDB_ident','$OID','patosum_genotype',this.options[this.selectedIndex].value);">
+        <?/MIVAR>
 
           <?MISQL SQL="select distinct geno_zdb_id, geno_nickname
                        from genotype
                        where geno_is_wildtype = 't'
                          and geno_nickname = 'WT'
                          $patosum_filter_genotype_sql;"> 
-            <option value="$1">$2</option>
+            <?MIVAR> <option value="$1" $(IF,$(EC,$patosum_genotype,$1),selected="true")>$2</option> <?/MIVAR>
           <?/MISQL>
             <?MIBLOCK COND="$(NXST,$patosum_filter_genotype)">
               <option> ----- </option>
@@ -345,7 +421,7 @@ fitted
 		       where 1 <> 2
                          $patosum_filter_genotype_sql
                        order by geno_nickname;">
-            <option value="$1">$2</option>
+            <?MIVAR> <option value="$1" $(IF,$(EC,$patosum_genotype,$1),selected="true")>$2</option> <?/MIVAR>
           <?/MISQL>
             <?MIBLOCK COND="$(NXST,$patosum_filter_genotype)">
                <option> ----- </option>
@@ -356,18 +432,20 @@ fitted
                          and geno_nickname <> 'WT'
 		         $patosum_filter_genotype_sql
                        order by geno_nickname;"> 
-            <option value="$1">$2</option>
+            <?MIVAR> <option value="$1" $(IF,$(EC,$patosum_genotype,$1),selected="true")>$2</option> <?/MIVAR>
           <?/MISQL>
         </select>
       </td>
       <td valign="top">
+        <?MIVAR>
         <select name="patoup_exp_zdb_id" id="patosumEnv"
-                onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
+                onChange="storeSession('$ZDB_ident','$OID','patosum_env',this.options[this.selectedIndex].value);">
+        <?/MIVAR>
            <?MISQL SQL="select distinct exp_zdb_id, exp_name
                          from experiment
                          where exp_name in ('$pubcur_G_exp_standard_name','$pubcur_G_exp_generic_name')
                          order by exp_name desc;">
-             <option value="$1">$2</option>
+            <?MIVAR> <option value="$1" $(IF,$(EC,$patosum_env,$1),selected="true")>$2</option> <?/MIVAR>
            <?/MISQL>
            <?MISQL SQL="select distinct exp_zdb_id, exp_name, zero_pad(exp_name) as exp_name_order
                          from experiment
@@ -375,30 +453,35 @@ fitted
                             on     recattrib_data_zdb_id = exp_zdb_id
                                and recattrib_source_zdb_id = '$OID'
                         order by exp_name_order;">
-             <option value="$1">$2</option>
+             <?MIVAR> <option value="$1" $(IF,$(EC,$patosum_env,$1),selected="true")>$2</option> <?/MIVAR>
            <?/MISQL>
         </select>
       </td>
       <td valign="top">
+        <?MIVAR>
         start: <select name="patoup_start_stg_zdb_id" id="patosumStartStage"
                        onChange="setEndStage('patosum_addmutant','patoup_start_stg_zdb_id','patoup_end_stg_zdb_id');
-                                 sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);
-                                 sessionState.storeObjectAttribute('patosumEndStage','selectedIndex',this.selectedIndex);">
+                                 storeSession('$ZDB_ident','$OID','patosum_start_stage',this.options[this.selectedIndex].value);
+                                 storeSession('$ZDB_ident','$OID','patosum_end_stage',this.options[this.selectedIndex].value);">
+        <?/MIVAR>
           <?MISQL SQL="
             select stg_zdb_id, stg_abbrev, stg_name_ext
 	      from stage
             order by stg_hours_start;">
-            <option value="$1">$2 $3</option>
+            <?MIVAR> <option value="$1" $(IF,$(EC,$patosum_start_stage,$1),selected="true")>$2 $3</option> <?/MIVAR>
           <?/MISQL>
       </select>
       <br>
+      <?MIVAR>
       end: <select style="margin-top: 1em;" name="patoup_end_stg_zdb_id" id="patosumEndStage"
-                   onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
+                   onChange="storeSession('$ZDB_ident','$OID','patosum_end_stage',this.options[this.selectedIndex].value);">
+      <?/MIVAR>
           <?MISQL SQL="
             select stg_zdb_id, stg_abbrev, stg_name_ext
 	      from stage
             order by stg_hours_start;">
-            <option value="$1">$2 $3</option>
+            <?MIVAR> <option value="$1" $(IF,$(EC,$patosum_end_stage,$1),selected="true")>$2 $3</option> <?/MIVAR>
+
           <?/MISQL>
       </select>
       </td>
