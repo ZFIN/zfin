@@ -30,11 +30,11 @@ OUTPUT:
 
 <?MIBLOCK COND="$(NXST,$cs_data)">
   <?MISQL SQL="execute function get_curator_session_value('$cs_person',NULL,'$cs_field');">
-    <?MIVAR NAME="$cs_output">$1<?/MIVAR>
+    <?MIVAR COND="$(NE,$1,NULL)"  NAME="$cs_output">$1<?/MIVAR>
   <?/MISQL>
 <?MIELSE>
   <?MISQL SQL="execute function get_curator_session_value('$cs_person','$cs_data','$cs_field');">
-    <?MIVAR NAME="$cs_output">$1<?/MIVAR>
+    <?MIVAR COND="$(NE,$1,NULL)" NAME="$cs_output">$1<?/MIVAR>
   <?/MISQL>
 <?/MIBLOCK>
 
