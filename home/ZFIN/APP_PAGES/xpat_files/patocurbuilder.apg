@@ -30,7 +30,7 @@ PREFIX:   patobldr_
 <?MICOMMENT> ** get session variables from database ** <?/MICOMMENT>
 
 <?MIVAR NAME="$cs_field">patobldr_curation_box_class<?/MIVAR>
-<?MIVAR NAME="$cs_default">small-curation-box<?/MIVAR>
+<?MIVAR NAME="$cs_default">unlimited-curation-box<?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
              from webPages where ID='aa-curator_session.apg';">
   <?MIVAR NAME="$patobldr_curation_box_class">$(TRIM,$1)<?/MIVAR>
@@ -161,6 +161,7 @@ patoCuration.distinctPhenotypes = {
 
 <h3>Phenotype: </h3></a>
 
+<?MIVAR>
 <form name="patobldrupdatephenos" id="patobldrUpdatePhenosForm" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="post"
       onSubmit="setCookie('pato_update','update','pubcur_c_');">
 
@@ -181,7 +182,7 @@ patoCuration.distinctPhenotypes = {
   <input type="submit" value="Update Phenotype for Mutant(s)"
          id="updatePhenoButton" 
          onClick="patoCuration.updatePhenotypes();
-                  patoCuration.clearMutantsFromSession();">
+                  patoCuration.clearMutantsFromSession('$ZDB_ident','$OID');">
 
   <fieldset style="border: 1px solid black; padding: .3em; margin: .3em auto; width: 96%;">
     <legend>selected<legend>
@@ -189,6 +190,8 @@ patoCuration.distinctPhenotypes = {
   </fieldset>  
 
 </form>
+
+<?/MIVAR>
 
 <?MICOMMENT> *** FIXME *** this should get a different css class than searchresults *** <?/MICOMMENT>
 
