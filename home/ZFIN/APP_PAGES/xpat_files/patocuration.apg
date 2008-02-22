@@ -46,12 +46,6 @@ function getCookie(name) {
   <script type="text/javascript"> phenoteState.setTermInfoUrl('/phenote/Phenote/'); </script>
   <script src="/phenote/javascript/ncbo-term-info.js" type="text/javascript"></script>
 
-  <?MICOMMENT> ** req'd by sessionstate.js ** <?/MICOMMENT>
-  <script type="text/javascript" src="/javascript/json.js"></script>
-
-  <script type="text/javascript" src="/javascript/sessionstate.js"></script>
-  <script type="text/javascript">sessionState.loadState(); </script>
-
   <script type="text/javascript" src="/javascript/patocuration.js"></script>
   <script type="text/javascript"> var patoCuration = new PatoCuration(); </script>
 
@@ -63,11 +57,12 @@ function getCookie(name) {
 
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-patocurbuilder.apg';">$1<?/MISQL>
 
+
   <script type="text/javascript">
-    sessionState.loadState();
-    sessionState.applyAllAttributes();
     patoCuration.updateMutants();
+    $('patobldrEntityAName').focus();
   </script>
+
 
 <?MIELSE>
   <P>
