@@ -658,16 +658,18 @@ public class SearchBean
 	String theMatchId = term.getBestMatchId(queryTerm);
 	String viewPageUrl = "";
 	String returnResults = "";
+	String envWebdriverLoc =  System.getenv("WEBDRIVER_LOC");
 
 	if (theMatchId.length() > 0) {
 	    if (theMatchId.startsWith("ZDB-GENO")) {
-		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
+
+		viewPageUrl = "/"+envWebdriverLoc+"/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
 	    }
 	    else if (theMatchId.startsWith("ZDB-ANAT")) {
 		viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + theMatchId;
 	    }
 	    else {
-		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=" + theMatchId;
+		viewPageUrl = "/"+ envWebdriverLoc + "/webdriver?MIval=aa-markerview.apg&OID=" + theMatchId;
 	    }
 	    returnResults += "<br><span class='best_match'>Exact Match: ";
             returnResults += "<a href='" + viewPageUrl + "'><b>" + queryTerm + "</b></a> ";
