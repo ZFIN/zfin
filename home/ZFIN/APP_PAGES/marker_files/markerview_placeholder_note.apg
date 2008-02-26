@@ -13,6 +13,7 @@ OUTPUT VARS: none
 
 SIDE EFFECTS: none
 
+****Added new prefix cs: (FB 2448)*****
 <?/MICOMMENT>
 
 
@@ -45,6 +46,7 @@ where mrkr_abbrev like '%:%'
   and mrkr_abbrev not like 'wu:%'
   and mrkr_abbrev not like 'xx:%'
   and mrkr_abbrev not like 'zgc:%'
+  and mrkr_abbrev not like 'cs:%'
   ; 
 
 
@@ -212,6 +214,16 @@ based on the EST name will be replaced with more traditional
 zebrafish gene nomenclature. The prefix wu: indicates this gene
 is represented by an EST generated at Washington University School
 of Medicine.
+<?/MIBLOCK>
+
+<?MICOMMENT> ** cs: ** <?/MICOMMENT>
+<?MIBLOCK COND="$(EC,$(POSITION,$mvphnote_mrkr_abbrev,cs:),1)">
+This gene is characterized solely by a cDNA or collection of cDNAs.
+When more is known about the gene, the current gene nomenclature
+based on the EST name will be replaced with more traditional
+zebrafish gene nomenclature. The prefix cs: indicates this gene
+is represented by a cDNA generated at a lab at the Sanger Institute,
+Cambridge
 <?/MIBLOCK>
 
 <?MICOMMENT> ** xx: ** <?/MICOMMENT>
