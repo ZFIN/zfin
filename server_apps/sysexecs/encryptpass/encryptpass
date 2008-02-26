@@ -1,4 +1,4 @@
-#! /usr/local/bin/perl -wT
+#! /private/bin/perl -wT
 # opt in A-Za-z0-9-_$+=~.,
 $ENV{PATH} = "/bin:<!--|ROOT_PATH|-->/server_apps/sysexecs/encryptpass/";
 
