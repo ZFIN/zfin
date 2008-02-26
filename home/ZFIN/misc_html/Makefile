@@ -21,8 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/misc_html
 GENERICS  = error.html intro1.html intro_mapper.html tips.html \
-            wrong_browser.html AB-Search.htm AB-Submission_2.htm \
-            AB-Submission.htm antibody4.htm antibody5.htm 
+            wrong_browser.html 
 STATICS   = blank.html saycomposing.html saysearching.html
 
 
