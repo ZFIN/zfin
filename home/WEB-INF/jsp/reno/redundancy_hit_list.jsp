@@ -8,7 +8,7 @@
     <b>GENE:</b>
     <zfin:name entity="${query.runCandidate}"/>
     <br>
-    <b>Clones:</b>
+    <b>Sequence:</b>
     <c:forEach var="clone" items="${formBean.smallSegments}" varStatus="loop">
         <zfin:link entity="${clone}"/>
         <c:if test="${!loop.last}">, </c:if>
