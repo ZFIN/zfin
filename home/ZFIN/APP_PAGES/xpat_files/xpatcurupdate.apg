@@ -604,7 +604,15 @@ EFFECTS
       <?MIVAR NAME=xpcur_G_fig_add_caption>$xpcur_G_light_fig_text<?/MIVAR>
 
     <?/MIBLOCK>
-    
+
+   <?MISQL SQL="select 't' from figure 
+                 where fig_source_zdb_id = '$OID'
+                   and lower(fig_label) = lower('$xpcur_G_fig_add_label') ">
+         <?MIVAR NAME=xpcur_fig_exists>t<?/MIVAR>
+   <?/MISQL>
+   <?MIBLOCK COND="$(XST,$xpcur_fig_exists)">
+      <script>alert('This figure label is already added to this publication.')</script>
+   <?MIELSE>
       <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
       <?MISQL SQL="execute function get_id('FIG');">$(SETVAR,$xpcurup_fig_zdb_id,$1)<?/MISQL>
     
@@ -638,7 +646,7 @@ EFFECTS
           <?MIVAR>setCookie('figure_only','$xpcurup_fig_zdb_id','pubcur_c_');<?/MIVAR>
         </SCRIPT>
       <?/MIBLOCK>
-    
+    <?/MIBLOCK>
   <?/MIBLOCK>
   
   <?MIBLOCK COND=$(XST,$xpcur_G_fig_label)>
