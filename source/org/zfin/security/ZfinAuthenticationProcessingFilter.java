@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 /**
  * This class is needed to add a new cookie to the response object when the
@@ -75,6 +76,7 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
         Person person = ur.getPersonByLoginName(login);
         User user = person.getUser();
         user.setCookie(value);
+        user.setPreviousLoginDate(new Date());
 
         ZfinSession newSession = new ZfinSession();
         newSession.setUserName(login);
