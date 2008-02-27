@@ -141,7 +141,7 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<
 
 <?MISQL COND="$(NXST,$UPDATE)" SQL="select login,
 					access, 
-					issue_time::datetime year to fraction 
+					previous_login::datetime year to fraction 
 					from ZDB_submitters 
 					where zdb_id='$OID';"> 
 	<?MIVAR NAME=$persv_login>$1<?/MIVAR>
