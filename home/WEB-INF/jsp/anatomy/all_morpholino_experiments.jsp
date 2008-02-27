@@ -1,6 +1,18 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<table border="0" width="100%">
+    <tbody>
+        <tr align="left">
+            <td><b>All ${formBean.wildtypeMorpholinoCount} Morpholino Experiments (<c:if test="${formBean.wildtype}">wildt-type</c:if>
+                <c:if test="${!formBean.wildtype}">mutant</c:if>)
+             for:</b>
+                <a href="term-detail?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}">${formBean.anatomyItem.name}</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
 <table width="100%">
     <tbody>
         <TR class="search-result-table-header">
@@ -26,7 +38,7 @@
             </tr>
         </c:if>
         <c:forEach var="morpholinoStat" items="${formBean.allMorpholinos}">
-            <tr class="search-result-table-entries" valign="top">
+            <tr class="search-result-table-entries">
                 <td>
                     <zfin:link entity="${morpholinoStat.morpholinoMarkers}"/>
                 </td>
@@ -80,19 +92,3 @@
         </c:forEach>
     </tbody>
 </table>
-<c:if test="${!formBean.allWildtypeMorpholinosAreDisplayed}">
-    <table width="100%">
-        <tbody>
-            <tr align="left">
-                <td>
-                    Show all
-                    <a href="show-all-morpholino-experiments?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}&wildtype=true">
-                            ${formBean.wildtypeMorpholinoCount}
-                        <zfin:choice choicePattern="0# experiments| 1# experiment| 2# experiments"
-                                     integerEntity="${formBean.wildtypeMorpholinoCount}"/>
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</c:if>

@@ -15,7 +15,7 @@ import java.util.Iterator;
  */
 public class MarkerPresentation extends EntityPresentation {
 
-    private static final String uri = "?MIval=aa-markerview.apg&OID=";
+    public static final String uri = "?MIval=aa-markerview.apg&OID=";
 
     /**
      * Generates an html formatted marker name

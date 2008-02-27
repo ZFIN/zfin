@@ -1,5 +1,6 @@
 package org.zfin.mutant;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
@@ -53,12 +54,37 @@ public class MutantRepositoryTest {
     public void checkMorpholinoRecords() {
 
         //  ao term: otic placode
-        String name = "otic placode";
+        String name = "neural plate";
         AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
         AnatomyItem ai = ar.getAnatomyItem(name);
         List<Morpholino> morphs =
                 mutantRepository.getPhenotypeMorhpolinosByAnatomy(ai, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         Assert.assertNotNull("morphs exist", morphs);
+
+    }
+
+    @Test
+    public void checkPhenotypeDescriptions(){
+        //  ao term: otic placode
+        String name = "otic placode";
+        AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
+        AnatomyItem ai = ar.getAnatomyItem(name);
+        List<GenotypeExperiment> morphs =
+                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, true);
+        Assert.assertNotNull("morphs exist", morphs);
+
+/*
+        Session session = HibernateUtil.currentSession();
+        GenotypeExperiment exper = (GenotypeExperiment) session.load(GenotypeExperiment.class, "ZDB-GENOX-041102-1010");
+
+*/
+        for(GenotypeExperiment exp: morphs){
+            for(Phenotype pheno: exp.getPhenotypes()){
+                System.out.println("Tag: " +pheno.getTag());
+                System.out.println("Term: " +pheno.getTerm().getName());
+
+            }
+        }
 
     }
 

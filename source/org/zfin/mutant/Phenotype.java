@@ -1,8 +1,9 @@
 package org.zfin.mutant;
 
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.ontology.OntologyTerm;
 import org.zfin.expression.Figure;
+import org.zfin.ontology.OntologyTerm;
+import org.zfin.publication.Publication;
 
 import java.util.Set;
 
@@ -41,6 +42,8 @@ public class Phenotype {
     // ToDo: Needs to be of type Tag once the tag field in the atomic_phenotype table is being cleaned up
     private String tag;
     private Set<Figure> figures;
+    private Publication publication;
+    private Term term;
 
     public String getZdbID() {
         return zdbID;
@@ -122,5 +125,21 @@ public class Phenotype {
 
     public void setFigures(Set<Figure> figures) {
         this.figures = figures;
+    }
+
+    public Term getTerm() {
+        return term;
+    }
+
+    public void setTerm(Term term) {
+        this.term = term;
+    }
+
+    public Publication getPublication() {
+        return publication;
+    }
+
+    public void setPublication(Publication publication) {
+        this.publication = publication;
     }
 }

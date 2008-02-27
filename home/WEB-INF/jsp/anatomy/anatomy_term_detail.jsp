@@ -170,17 +170,15 @@
 <p/>
 <!-- All mutants -->
 <c:if test="${formBean.mutantsExist ||formBean.morpholinoExist }">
-    <b>PHENOTYPE</b>
+    <b>PHENOTYPE</b> affecting</b> ${formBean.anatomyItem.name}
     <br/>
     <c:if test="${formBean.mutantsExist}">
         <b>Mutant and Transgenic Lines</b>
         <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_mutants.jsp" flush="false"/>
     </c:if>
     <c:if test="${!formBean.mutantsExist && formBean.anatomyStatisticsMutant.numberOfObjects > 0}">
-        <b>Mutant and Transgenic Lines</b><br/>
         No genotypes directly annotated to this structure.<br/>
-        Show <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out 
-value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20">
+        Show <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20">
                    <zfin:choice choicePattern="0#genotypes| 1#genotype| 2#genotypes"
                                 integerEntity="${formBean.anatomyStatisticsMutant.numberOfObjects}"
                                 includeNumber="true"/>
@@ -188,8 +186,13 @@ value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20">
     </c:if>
     <p/>
     <c:if test="${formBean.morpholinoExist}">
-        <b>Morpholinos</b>
+        <b>Morpholino Experiments in wild-type fish</b>
         <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_morpholinos.jsp" flush="false"/>
+    </c:if>
+    <p/>
+    <c:if test="${formBean.morpholinoExist}">
+        <b>Morpholino Experiments in mutant fish</b>
+        <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_non_wildtype_morpholinos.jsp" flush="false"/>
     </c:if>
     <hr width="80%">
 </c:if>

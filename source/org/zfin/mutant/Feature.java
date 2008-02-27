@@ -1,6 +1,7 @@
 package org.zfin.mutant;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,6 +17,7 @@ public class Feature {
     private Zygosity maleZygosity;
     private Zygosity femaleZygosity;
     private Date dateEntered;
+    private Set<FeatureMarkerRelationship> featureMarkerRelations;
 
     public String getZdbID() {
         return zdbID;
@@ -73,4 +75,11 @@ public class Feature {
         }
     }
 
+    public Set<FeatureMarkerRelationship> getFeatureMarkerRelations() {
+        return featureMarkerRelations;
+    }
+
+    public void setFeatureMarkerRelations(Set<FeatureMarkerRelationship> featureMarkerRelations) {
+        this.featureMarkerRelations = featureMarkerRelations;
+    }
 }

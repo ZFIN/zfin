@@ -2,6 +2,8 @@ package org.zfin.framework.presentation.tags;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
+import org.zfin.expression.ExperimentCondition;
+import org.zfin.expression.presentation.ExperimentConditionPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.GenotypePresentation;
@@ -21,6 +23,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Set;
 
 /** This tag class needs to be expanded to support a "type" attribute which allows it to be used for any
  bean
@@ -36,7 +40,31 @@ public class CreateLinkTag extends TagSupport {
     public int doStartTag() throws JspException {
 
         Object o = getEntity();
+        StringBuilder linkBuffer = new StringBuilder();
 
+        if (o instanceof Collection) {
+            Collection collection = (Collection) o;
+            int numberOfItems = collection.size();
+            int index = 1;
+            for (Object ob : collection) {
+                linkBuffer.append(createLinkFromSingleDomainObject(ob));
+                if (index < numberOfItems)
+                    linkBuffer.append(", ");
+                index++;
+            }
+        } else {
+            linkBuffer.append(createLinkFromSingleDomainObject(o));
+        }
+
+        try {
+            pageContext.getOut().print(linkBuffer.toString());
+        } catch (IOException ioe) {
+            throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
+        }
+        return SKIP_BODY;
+    }
+
+    private String createLinkFromSingleDomainObject(Object o) throws JspException {
         String link;
         if (o instanceof Marker)
             link = MarkerPresentation.getLink((Marker) o);
@@ -54,15 +82,11 @@ public class CreateLinkTag extends TagSupport {
             link = OrthologyPresentation.getLink((OrthologySpecies) o);
         else if (o instanceof Genotype)
             link = GenotypePresentation.getLink((Genotype) o);
+        else if (o instanceof ExperimentCondition)
+            link = ExperimentConditionPresentation.getLink((ExperimentCondition) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
-
-        try {
-            pageContext.getOut().print(link);
-        } catch (IOException ioe) {
-            throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
-        }
-        return SKIP_BODY;
+        return link;
     }
 
     public int doEndTag() throws JspException {

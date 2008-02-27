@@ -2,17 +2,16 @@ package org.zfin.mutant;
 
 import org.zfin.expression.Experiment;
 
+import java.util.Set;
+
 /**
- * Created by IntelliJ IDEA.
- * User: Xiang Shao
- * Date: Jun 15, 2007
- * Time: 5:02:46 PM
- * To change this template use File | Settings | File Templates.
+ * Domain object.
  */
 public class GenotypeExperiment {
     private String zdbID;
     private Experiment experiment;
     private Genotype genotype;
+    private Set<Phenotype> phenotypes;
 
 
     public String getZdbID() {
@@ -37,5 +36,13 @@ public class GenotypeExperiment {
 
     public void setGenotype(Genotype genotype) {
         this.genotype = genotype;
+    }
+
+    public Set<Phenotype> getPhenotypes() {
+        return phenotypes;
+    }
+
+    public void setPhenotypes(Set<Phenotype> phenotypes) {
+        this.phenotypes = phenotypes;
     }
 }

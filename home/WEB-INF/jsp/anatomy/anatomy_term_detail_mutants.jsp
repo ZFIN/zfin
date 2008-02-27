@@ -4,10 +4,16 @@
 <table width="100%">
     <tbody>
         <TR class="search-result-table-header">
-            <TD width="40%" colspan="2">
+            <TD width="20%">
                 Genotype (Background)
             </TD>
-            <TD width="60%">
+            <TD width="20%">
+                Affected Genes
+            </TD>
+            <TD width="20%">
+                Phenotype
+            </TD>
+            <TD width="40%">
                 Figures
             </TD>
         </TR>
@@ -18,12 +24,20 @@
         </c:if>
         <c:forEach var="genoStat" items="${formBean.genotypeStatistics}">
             <tr class="search-result-table-entries">
-                <td colspan="2">
+                <td>
                     <zfin:link entity="${genoStat.genotype}"/>
                     <c:if test="${genoStat.genotype.background ne null}">
                         (${genoStat.genotype.background.name})
                     </c:if>
 
+                </td>
+                <td>
+                    <zfin:link entity="${genoStat.affectedMarkers}"/>
+                </td>
+                <td>
+                    <c:forEach var="phenotype" items="${genoStat.phenotypeDescriptions}" varStatus="loop">
+                        ${phenotype}<c:if test="${!loop.last}">, </c:if>
+                    </c:forEach>
                 </td>
                 <td>
                     <c:if test="${genoStat.numberOfFigures > 0}">
@@ -57,8 +71,8 @@
                 <td>
                     Show all
                     <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20">
-                            ${formBean.genotypeCount}
-                        <zfin:choice choicePattern="0#genotypes| 1#genotype| 2#genotypes"
+                            ${formBean.genotypeCount} 
+                        <zfin:choice choicePattern="0# genotypes| 1# genotype| 2# genotypes"
                                      integerEntity="${formBean.genotypeCount}"/>
                     </a> &nbsp;
                     (including substructures

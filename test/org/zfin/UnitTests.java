@@ -2,9 +2,10 @@ package org.zfin;
 
 import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
-import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.presentation.*;
+import org.zfin.marker.presentation.MarkerPresentationTest;
+import org.zfin.mutant.PhenotypeServiceTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.security.Md5PasswordEncoderTest;
@@ -25,10 +26,11 @@ import org.zfin.util.UrlCreatorTest;
         FileUtilTest.class,
         ListFormatterTest.class,
         MarkerPresentationTest.class,
+        Md5PasswordEncoderTest.class,
         OrthologyEvidenceFastSearchTest.class,
         OrthologyValidationTest.class,
         OrthologyRepositoryTest.class,
-        Md5PasswordEncoderTest.class,
+        PhenotypeServiceTest.class,
         RelationshipTypeSortingTest.class,
         RunCandidatePresentationTest.class,
         SingleAssociatedGenesFromQueryTest.class,

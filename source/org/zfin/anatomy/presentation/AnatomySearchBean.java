@@ -51,10 +51,14 @@ public class AnatomySearchBean extends PaginationBean {
 
     private List<Genotype> genotypes;
     private int genotypeCount;
+    private int wildtypeMorpholinoCount;
+    private int mutantMorpholinoCount;
     private int totalNumberOfFiguresPerAnatomyItem;
     private int totalNumberOfImagesPerAnatomyItem;
     private List<GenotypeStatistics> genoStats;
     private List<MorpholinoStatistics> allMorpholinos;
+    private List<MorpholinoStatistics> nonWildtypeMorpholinos;
+    private boolean wildtype;
 
     public List getStages() {
         return stages;
@@ -253,6 +257,14 @@ public class AnatomySearchBean extends PaginationBean {
         return allMorpholinos;
     }
 
+    public List<MorpholinoStatistics> getNonWildtypeMorpholinos() {
+        return nonWildtypeMorpholinos;
+    }
+
+    public void setNonWildtypeMorpholinos(List<MorpholinoStatistics> nonWildtypeMorpholinos) {
+        this.nonWildtypeMorpholinos = nonWildtypeMorpholinos;
+    }
+
     public enum Action {
         TERM_SEARCH("term-search"),
         COMPLETE_SEARCH("complete-search"),
@@ -347,6 +359,22 @@ public class AnatomySearchBean extends PaginationBean {
         this.genotypeCount = genotypeCount;
     }
 
+    public int getWildtypeMorpholinoCount() {
+        return wildtypeMorpholinoCount;
+    }
+
+    public void setWildtypeMorpholinoCount(int wildtypeMorpholinoCount) {
+        this.wildtypeMorpholinoCount = wildtypeMorpholinoCount;
+    }
+
+    public int getMutantMorpholinoCount() {
+        return mutantMorpholinoCount;
+    }
+
+    public void setMutantMorpholinoCount(int mutantMorpholinoCount) {
+        this.mutantMorpholinoCount = mutantMorpholinoCount;
+    }
+
     public String getExpressionSearchLink(boolean includeSubstructures) {
         URLCreator url = new URLCreator(ZfinProperties.getWebDriver());
         url.addNamevaluePair("MIval", "aa-xpatselect.apg");
@@ -362,6 +390,14 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("WINSIZE", "25");
         url.addNamevaluePair("xpatsel_calledBySelf","true");
         return url.getFullURL();
+    }
+
+    public boolean isWildtype() {
+        return wildtype;
+    }
+
+    public void setWildtype(boolean wildtype) {
+        this.wildtype = wildtype;
     }
 
     public String getExpressionSearchLink() {
@@ -385,6 +421,14 @@ public class AnatomySearchBean extends PaginationBean {
         return genotypeCount <= MAX_NUMBER_GENOTYPES;
     }
 
+    public boolean isAllWildtypeMorpholinosAreDisplayed() {
+        return wildtypeMorpholinoCount <= MAX_NUMBER_GENOTYPES;
+    }
+
+    public boolean isAllMutantMorpholinosAreDisplayed() {
+        return mutantMorpholinoCount <= MAX_NUMBER_GENOTYPES;
+    }
+
     public boolean isExpressedGenesExist(){
         return !CollectionUtils.isEmpty(allExpressedMarkers);
     }
@@ -399,5 +443,9 @@ public class AnatomySearchBean extends PaginationBean {
 
     public boolean isMorpholinoExist(){
         return !CollectionUtils.isEmpty(allMorpholinos);
+    }
+
+    public boolean isNonWildtypeMorpholinoExist(){
+        return !CollectionUtils.isEmpty(nonWildtypeMorpholinos);
     }
 }

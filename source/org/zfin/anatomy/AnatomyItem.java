@@ -26,7 +26,8 @@ public class AnatomyItem {
     private String definition;
     private String description;
     private boolean obsolete;
-    // used to do the order by 
+    private boolean cellTerm;
+    // used to do the order by
     private String nameOrder;
     private List<AnatomyRelationship> relatedItems;
     private Set<AnatomySynonym> synonyms;
@@ -168,4 +169,11 @@ public class AnatomyItem {
         return sb.toString();
     }
 
+    public boolean isCellTerm() {
+        return cellTerm;
+    }
+
+    public void setCellTerm(boolean cellTerm) {
+        this.cellTerm = cellTerm;
+    }
 }

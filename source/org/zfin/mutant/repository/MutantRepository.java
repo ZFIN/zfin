@@ -2,7 +2,9 @@ package org.zfin.mutant.repository;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.CachedRepository;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Morpholino;
 
 import java.util.List;
@@ -48,7 +50,7 @@ public interface MutantRepository extends CachedRepository {
     int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(AnatomyItem item, Genotype genotype);
 
     /**
-     * Retrieve all morpholinos that have a phenotype annotation for a given
+     * Retrieve all genotypes that have a phenotype annotation for a given
      * anatomical structure. Gene expressions are not included in this list.
      *
      * @param item            anatomical structure
@@ -72,5 +74,39 @@ public interface MutantRepository extends CachedRepository {
      * @return genotype
      */
     Genotype getGenotypeByID(String genoteypZbID);
+
+    /**
+     * Retrieve the genotype objects that are assoicated to a morpholino.
+     * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
+     * attached.
+
+     * @param item anatomy structure
+     * @param isWildtype wildtype of genotype
+     * @return list of genotype object
+     */
+    List<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype);
+
+    /**
+     * Retrieve the list of morpholinos for a given genotype.
+     * @param genotype Genotype
+     * @param item Anatomy Structure
+     * @param isWildtype genotype is wild type or not
+     * @return list of morpholinos
+     */
+    List<Morpholino> getMorpholinosByGenotype(Genotype genotype, AnatomyItem item, boolean isWildtype);
+
+    /**
+     * Retrieve the number of Morpholino Experiments for a given anatomy term.
+     * @param item AO term
+     * @param isWildtype wildtyep or not
+     * @return number of morpholinos
+     */
+    int getNumberOfMorpholinoExperiments(AnatomyItem item, boolean isWildtype);
+
+    /**
+     * Method to set pagination-related parameters.
+     * @param paginationBean Pagination Bean
+     */
+    void setPaginationParameters(PaginationBean paginationBean);
 }
 

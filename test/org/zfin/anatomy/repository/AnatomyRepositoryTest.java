@@ -5,21 +5,26 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomySynonym;
 import org.zfin.anatomy.AnatomyRelationship;
+import org.zfin.anatomy.AnatomySynonym;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 public class AnatomyRepositoryTest {
 
     private static AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
+    private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
 
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -95,5 +100,21 @@ public class AnatomyRepositoryTest {
 
         List<AnatomyItem> terms = aoRepository.getAnatomyItemsByName(searchTerm);
         assertNotNull(terms);
+    }
+
+    @Test
+    public void getWildtypeMorpholinos(){
+        // String neuralPlateZdbID = "ZDB-ANAT-010921-560";
+        AnatomyItem item = aoRepository.getAnatomyItem("neural plate");
+        List<GenotypeExperiment> genos = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true);
+        assertTrue(genos != null && genos.size() > 0);
+        //assertEquals(2, genos.size());
+        for(GenotypeExperiment genotypeExperiment: genos){
+            Genotype geno = genotypeExperiment.getGenotype();
+            System.out.println(genotypeExperiment.getZdbID());
+            System.out.println(geno.getZdbID() + "\r");
+        }
+
+        assertEquals(2, genos.size());
     }
 }

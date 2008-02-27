@@ -1,16 +1,19 @@
 package org.zfin.expression;
 
+import java.util.Set;
+import java.util.HashSet;
+
 /**
- * Created by IntelliJ IDEA.
- * User: Xiang Shao
- * Date: Jun 15, 2007
- * Time: 5:06:12 PM
- * To change this template use File | Settings | File Templates.
+ * Domain object.
  */
 public class Experiment {
+
+    public static final String STANDARD_ONE = "_Standard";
+    public static final String STANDARD_TWO = "_Generic-control";
+
     private String zdbID;
     private String name;
-
+    private Set<ExperimentCondition> experimentConditions;
 
     public String getZdbID() {
         return zdbID;
@@ -26,5 +29,25 @@ public class Experiment {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<ExperimentCondition> getExperimentConditions() {
+        return experimentConditions;
+    }
+
+    public void setExperimentConditions(Set<ExperimentCondition> experimentConditions) {
+        this.experimentConditions = experimentConditions;
+    }
+
+    public Set<ExperimentCondition> getMorpholinoConditions() {
+        if (experimentConditions == null)
+            return null;
+
+        Set<ExperimentCondition> morpholinoConditions = new HashSet<ExperimentCondition>();
+        for (ExperimentCondition cond : experimentConditions) {
+            if(cond.getMorpholino() != null)
+                 morpholinoConditions.add(cond);
+        }
+        return morpholinoConditions;
     }
 }

@@ -20,12 +20,12 @@
                 Data
             </TD>
         </TR>
-        <c:if test="${!formBean.morpholinoExist}">
+        <c:if test="${!formBean.nonWildtypeMorpholinoExist}">
             <tr>
                 <td colspan="3">No data available</td>
             </tr>
         </c:if>
-        <c:forEach var="morpholinoStat" items="${formBean.allMorpholinos}">
+        <c:forEach var="morpholinoStat" items="${formBean.nonWildtypeMorpholinos}">
             <tr class="search-result-table-entries" valign="top">
                 <td>
                     <zfin:link entity="${morpholinoStat.morpholinoMarkers}"/>
@@ -80,17 +80,16 @@
         </c:forEach>
     </tbody>
 </table>
-<c:if test="${!formBean.allWildtypeMorpholinosAreDisplayed}">
+<c:if test="${!formBean.allMutantMorpholinosAreDisplayed}">
     <table width="100%">
         <tbody>
             <tr align="left">
                 <td>
                     Show all
                     <a href="show-all-morpholino-experiments?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}&wildtype=true">
-                            ${formBean.wildtypeMorpholinoCount}
-                        <zfin:choice choicePattern="0# experiments| 1# experiment| 2# experiments"
-                                     integerEntity="${formBean.wildtypeMorpholinoCount}"/>
-                    </a>
+                            ${formBean.mutantMorpholinoCount}
+                            <zfin:choice choicePattern="0# experiments| 1# experiment| 2# experiments"
+                                         integerEntity="${formBean.mutantMorpholinoCount}"/>
                 </td>
             </tr>
         </tbody>

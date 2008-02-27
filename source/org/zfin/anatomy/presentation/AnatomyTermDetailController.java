@@ -11,11 +11,11 @@ import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
 import org.zfin.mutant.repository.MutantRepository;
@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Controller class that serves the anatomy term detail page.
@@ -103,6 +104,16 @@ public class AnatomyTermDetailController extends AbstractCommandController {
 
         List<Genotype> genotypes =
                 mutantRepository.getGenotypesByAnatomyTerm(ai, false, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+        for(Genotype geno: genotypes){
+            Set<GenotypeFeature> features = geno.getGenotypeFeatures();
+            for(GenotypeFeature feat: features){
+                Feature feature = feat.getFeature();
+                Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
+                for(FeatureMarkerRelationship rel: rels){
+                    System.out.println(rel.getMarker());
+                }
+            }
+        }
         form.setGenotypes(genotypes);
         List<GenotypeStatistics> genoStats = createGenotypeStats(genotypes, ai);
         form.setGenotypeStatistics(genoStats);
@@ -112,10 +123,24 @@ public class AnatomyTermDetailController extends AbstractCommandController {
     }
 
     private void retrieveMorpholinoData(AnatomyItem ai, AnatomySearchBean form) {
-        List<Morpholino> morphs =
-                mutantRepository.getPhenotypeMorhpolinosByAnatomy(ai, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+
+        int wildtypeMorphCount = mutantRepository.getNumberOfMorpholinoExperiments(ai, true);
+        PaginationBean pagination = new PaginationBean();
+        pagination.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+        mutantRepository.setPaginationParameters(pagination);
+        
+        form.setWildtypeMorpholinoCount(wildtypeMorphCount);
+        List<GenotypeExperiment> morphs =
+                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, true);
         List<MorpholinoStatistics> morpholinoStats = createMorpholinoStats(morphs, ai);
         form.setAllMorpholinos(morpholinoStats);
+
+        int mutantMorphCount = mutantRepository.getNumberOfMorpholinoExperiments(ai, false);
+        form.setMutantMorpholinoCount(mutantMorphCount);
+        List<GenotypeExperiment> nonWiltypeMorphs =
+                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, false);
+        List<MorpholinoStatistics> mutantMorphStats = createMorpholinoStats(nonWiltypeMorphs, ai);
+        form.setNonWildtypeMorpholinos(mutantMorphStats);
     }
 
     /**
@@ -152,13 +177,13 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         return stats;
     }
 
-    private List<MorpholinoStatistics> createMorpholinoStats(List<Morpholino> morpholinos, AnatomyItem ai) {
+    protected static List<MorpholinoStatistics> createMorpholinoStats(List<GenotypeExperiment> morpholinos, AnatomyItem ai) {
         if (morpholinos == null || ai == null)
             return null;
 
         List<MorpholinoStatistics> stats = new ArrayList<MorpholinoStatistics>();
-        for (Morpholino genoType : morpholinos) {
-            MorpholinoStatistics stat = new MorpholinoStatistics(genoType, ai);
+        for (GenotypeExperiment genoExp : morpholinos) {
+            MorpholinoStatistics stat = new MorpholinoStatistics(genoExp, ai);
             stats.add(stat);
         }
         return stats;

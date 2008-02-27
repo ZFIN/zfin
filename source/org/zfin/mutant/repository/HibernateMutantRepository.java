@@ -4,13 +4,13 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Morpholino;
 import org.zfin.mutant.Phenotype;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,9 @@ import java.util.Set;
  *
  */
 public class HibernateMutantRepository implements MutantRepository {
+
+    // Use this bean to set pagination parameters.
+    private PaginationBean paginationBean;
 
     public List<Genotype> getGenotypesByAnatomyTerm(AnatomyItem item, boolean wildtype, int numberOfRecords) {
         Session session = HibernateUtil.currentSession();
@@ -101,6 +104,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * anatomical structure. Gene expressions are not included in this list.
      * ToDo: number of Records is not used yet until an overview page of all
      * morpholinos is working.
+     *
      * @param item            anatomical structure
      * @param numberOfRecords number
      * @return list of statistics
@@ -109,17 +113,19 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         // This returns morpholinos by phenote annotations
-        StringBuilder hql = new StringBuilder("SELECT distinct marker ");
-        hql.append(getMorpholinosByAnatomyTermQueryBlock());
-        hql.append(" order by marker.abbreviation ");
+        StringBuilder hql = new StringBuilder("SELECT distinct genotype ");
+        hql.append(getMorpholinoGenotypeByAnatomyTermQueryBlock());
+        hql.append(" order by genotype.name ");
         Query query = session.createQuery(hql.toString());
         // ToDo: MOs are not yet linked to an overview page where all all them are listed.
         //. Thus, we need to list them all here.
 //        query.setMaxResults(numberOfRecords);
         query.setString("aoZdbID", item.getZdbID());
-        List<Marker> markers = query.list();
+        query.setBoolean("isWildtype", true);
+
+        List<Genotype> genotypes = query.list();
         List<Morpholino> morphs = new ArrayList<Morpholino>();
-        morphs.addAll(getMorpholinoRecords(markers));
+        morphs.addAll(getMorpholinoRecords(null));
 
         //retrieve morpholinos annotated through the expression section
 /*
@@ -135,6 +141,108 @@ public class HibernateMutantRepository implements MutantRepository {
                 "       marker = con.morpholino ";
 */
         return morphs;
+    }
+
+    /**
+     * Retrieve the genotype objects that are assoicated to a morpholino.
+     * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
+     * attached.
+     *
+     * @param item            anatomy structure
+     * @param isWildtype      wildtype of genotype
+     * @return list of genotype object
+     */
+    public List<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype) {
+        Session session = HibernateUtil.currentSession();
+
+        StringBuilder hql = new StringBuilder("SELECT distinct genotypeExperiment ");
+        morpholinoExperimentsPerAnatomyTermQuery(hql);
+        Query query = session.createQuery(hql.toString());
+        query.setString("aoZdbID", item.getZdbID());
+        query.setBoolean("isWildtype", isWildtype);
+        setPaginationParameters(query);
+        List<GenotypeExperiment> genotypes = query.list();
+
+/*
+        List<GenotypeExperiment> genotypes = new ArrayList<GenotypeExperiment>();
+        List<Object[]> objects = query.list();
+        if(objects!= null){
+            for(Object[] o :objects){
+                genotypes.add((GenotypeExperiment) o[0]);
+            }
+        }
+*/
+        return genotypes;
+    }
+
+    private void setPaginationParameters(Query query) {
+        if (paginationBean != null) {
+            query.setMaxResults(paginationBean.getMaxDisplayRecords());
+            query.setFirstResult(paginationBean.getFirstRecord());
+        }
+    }
+
+    private void morpholinoExperimentsPerAnatomyTermQuery(StringBuilder hql) {
+        hql.append("FROM  GenotypeExperiment genotypeExperiment, Experiment exp, Genotype geno, ");
+        hql.append("      Phenotype pheno, ExperimentCondition con, Marker marker ");
+        hql.append("WHERE   ");
+        hql.append("      genotypeExperiment.experiment = exp AND ");
+        hql.append("       (pheno.patoEntityAzdbID = :aoZdbID or pheno.patoEntityBzdbID = :aoZdbID) AND ");
+        hql.append("       pheno.genotypeExperiment = genotypeExperiment AND ");
+        hql.append("       con.experiment = exp AND ");
+        hql.append("       genotypeExperiment.genotype = geno AND");
+        hql.append("       marker = con.morpholino AND ");
+        hql.append("       geno.wildtype = :isWildtype AND ");
+        hql.append("       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
+                "                             expCon.morpholino is null ) ");
+    }
+
+    public List<Morpholino> getMorpholinosByGenotype(Genotype genotype, AnatomyItem item, boolean isWildtype) {
+        Session session = HibernateUtil.currentSession();
+
+        StringBuilder hql = new StringBuilder("SELECT distinct marker ");
+        hql.append("FROM  Marker marker, Experiment exp, Genotype geno, ");
+        hql.append("      Phenotype pheno, ExperimentCondition con, GenotypeExperiment genox ");
+        hql.append("WHERE   ");
+        hql.append("       genox.experiment = exp AND ");
+        hql.append("       genox member of geno.genotypeExperiments AND ");
+        hql.append("       pheno.genotypeExperiment = genox AND ");
+        hql.append("       pheno.patoEntityAzdbID = :aoZdbID AND ");
+        hql.append("       geno = :genotype AND ");
+        hql.append("       con.experiment = exp AND ");
+        hql.append("       geno.wildtype = :isWildtype AND ");
+        hql.append("       marker = con.morpholino ");
+        hql.append(" order by marker.name ");
+        Query query = session.createQuery(hql.toString());
+        query.setBoolean("isWildtype", isWildtype);
+        query.setString("aoZdbID", item.getZdbID());
+        query.setParameter("genotype", genotype);
+
+        List<Morpholino> morpholinos = query.list();
+        return morpholinos;
+    }
+
+    /**
+     * Retrieve the number of Morpholino Experiments for a given anatomy term.
+     *
+     * @param item       AO term
+     * @param isWildtype wildtyep or not
+     * @return number of morpholinos
+     */
+    public int getNumberOfMorpholinoExperiments(AnatomyItem item, boolean isWildtype) {
+        Session session = HibernateUtil.currentSession();
+
+        StringBuilder hql = new StringBuilder("SELECT count (distinct genotypeExperiment) ");
+        morpholinoExperimentsPerAnatomyTermQuery(hql);
+        Query query = session.createQuery(hql.toString());
+        query.setString("aoZdbID", item.getZdbID());
+        query.setBoolean("isWildtype", isWildtype);
+
+        return (Integer) query.uniqueResult();
+    }
+
+    public void setPaginationParameters(PaginationBean paginationBean) {
+        this.paginationBean = paginationBean;
     }
 
     private List<Morpholino> getMorpholinoRecords(List<Marker> markers) {
@@ -170,6 +278,19 @@ public class HibernateMutantRepository implements MutantRepository {
                 "       pheno.genotypeExperiment = geno AND " +
                 "       con.experiment = exp AND " +
                 "       marker = con.morpholino ";
+        return hql;
+    }
+
+    private String getMorpholinoGenotypeByAnatomyTermQueryBlock() {
+        String hql = "FROM  Genotype genotype, Experiment exp, " +
+                "      Phenotype pheno, ExperimentCondition con, GenotypeExperiment geno " +
+                "WHERE   " +
+                "       geno.experiment = exp AND " +
+                "       pheno.patoEntityAzdbID = :aoZdbID AND " +
+                "       pheno.genotypeExperiment = geno AND " +
+                "       con.experiment = exp AND " +
+                "       geno.genotype = genotype AND" +
+                "       genotype.wildtype = :isWildtype";
         return hql;
     }
 

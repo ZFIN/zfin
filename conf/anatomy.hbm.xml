@@ -70,6 +70,10 @@
             <column name="anatitem_is_obsolete" not-null="false"/>
         </property>
 
+        <property name="cellTerm">
+            <column name="anatitem_is_cell"/>
+        </property>
+
         <property name="lowerCaseName">
             <column name="anatitem_name_lower" not-null="false"/>
         </property>

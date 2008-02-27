@@ -144,6 +144,10 @@
             <column name="exp_name"/>
         </property>
 
+        <set name="experimentConditions" lazy="true">
+            <key column="expcond_exp_zdb_id"/>
+            <one-to-many class="org.zfin.expression.ExperimentCondition"/>
+        </set>
     </class>
 
     <query name="stageanatomyfigure"><![CDATA[

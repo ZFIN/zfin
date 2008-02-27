@@ -25,6 +25,7 @@ public class Genotype {
     // This attribute is used only for storage purposes.
     // as the background is stored as a many-to-many relationship.
     private Set<Genotype> associatedGenotypes;
+    private Set<GenotypeFeature> genotypeFeatures;
 
     public String getZdbID() {
         return zdbID;
@@ -93,4 +94,11 @@ public class Genotype {
         associatedGenotypes.add(background);
     }
 
+    public Set<GenotypeFeature> getGenotypeFeatures() {
+        return genotypeFeatures;
+    }
+
+    public void setGenotypeFeatures(Set<GenotypeFeature> genotypeFeatures) {
+        this.genotypeFeatures = genotypeFeatures;
+    }
 }
