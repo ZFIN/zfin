@@ -1,5 +1,9 @@
 begin work ;
 
+delete from marker_type_group_member
+ where mtgrpmem_mrkr_type = 'SNP'
+ and mtgrpmem_mrkr_type_group = 'SEARCH_MKSEG';
+
 create table snp_download(
         snpd_pk_id serial not null constraint 
 		   	  snpd_pk_id_not_null,
