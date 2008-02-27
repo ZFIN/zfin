@@ -112,7 +112,7 @@ EFFECTS
             alert('Enter a label.');
             return false;
           }
-          document.figure_new.xpcur_G_fig_add_label.value = 'Fig. '+document.figure_new.xpcur_G_fig_add_label.value ;
+          document.figure_new.xpcur_G_fig_add_label.value = 'Fig. '+ label.replace(/^[^0-9a-zA-Z]+|[^0-9a-zA-Z]$/g, '') ;
           return true;
         }
       }
