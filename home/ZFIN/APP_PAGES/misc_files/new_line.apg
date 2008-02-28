@@ -1,6 +1,6 @@
 <HTML>
 <head>
-<title>Submit a Proposed Locus/Line Name</title>
+<title>Submit a Proposed Mutant/Transgenic Line Name</title>
 
 <SCRIPT>
 
@@ -79,7 +79,7 @@ If you have a ZFIN <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-login.ap
 <?/MIVAR>
 
 <body onload="clearPubStatus();">
-<h1 align="center">Submit a Proposed Locus/Line Name</h1>
+<h1 align="center">Submit a Proposed Mutant/Transgenic Line Name</h1>
 <p><strong>Nomenclature Resources</strong></p>
 Before proposing and reserving a name, review the current guidelines and search existing records in ZFIN for possible naming conflicts
 <ul style="line-height:1.5">
