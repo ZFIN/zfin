@@ -88,6 +88,7 @@ public class CandidateController extends SimpleFormController {
                 LOG.error("Error during roll back of transaction", he);
             }
             LOG.error("Error in Transaction", e);
+            throw new RuntimeException("Error during transaction. Rolled back.", e);
         }
 
         return map;
