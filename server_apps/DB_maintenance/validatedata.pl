@@ -693,11 +693,18 @@ sub featureIsAlleleOfOrMrkrAbsent($) {
 sub genotypesHaveNoNames($) {
   my $routineName = "genotypesHaveNoNames";
 	
-  my $sql = 'select geno_display_name, geno_handle
-               from genotype
-               where geno_display_name = geno_zdb_id';
+  my $sql = "select recattrib_source_zdb_id, geno_zdb_id,geno_display_name, geno_handle, geno_nickname
+               from genotype, record_attribution
+               where (geno_display_name = geno_zdb_id
+                 or geno_nickname = geno_zdb_id
+                      or geno_handle = geno_zdb_id)
+               and recattrib_data_zdb_id=geno_zdb_id
+             ";
 
-  my @colDesc = ("Genotype name         ",
+  my @colDesc = ("Publication          ",
+                 "Genotype ID          ",
+                 "Genotype Nickname    ",
+                 "Genotype Display name         ",
 		 "Genotype handle       ");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
@@ -705,7 +712,7 @@ sub genotypesHaveNoNames($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Genotypes are incomplete";
-    my $errMsg = "There are $nRecords genotype records with ZDB-ids for names. ";
+    my $errMsg = "The following genotypes have not been completed and are visible to the public using the ZDB ID as the name.  If you curated any of the pubs shown below please delete or complete these genotypes as necessary. ";
     
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
@@ -3232,6 +3239,8 @@ my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
 my $webAdminEmail = "<!--|WEB_ADMIN_EMAIL|-->";
 my $elsevierStatEmail = "<!--|ELSEVIER_STAT_EMAIL|-->";
 my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
+my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
+
 
 if($daily) {
 #    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
@@ -3243,7 +3252,7 @@ if($daily) {
 
     featureAssociatedWithGenotype($mutantEmail);
     featureIsAlleleOfOrMrkrAbsent($mutantEmail);
-    genotypesHaveNoNames($mutantEmail);
+    genotypesHaveNoNames($genoEmail);
     pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     linkageHasMembers($linkageEmail);
     linkagePairHas2Members($linkageEmail);
