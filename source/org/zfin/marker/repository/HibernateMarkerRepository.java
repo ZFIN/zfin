@@ -121,7 +121,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         query = session.createQuery(
                 "select mm.lg" +
                         "  from MappedMarker mm, FeatureMarkerRelationship fmr " +
-                        " where fmr.markerZdbId = :zdbId " +
+                        " where fmr.marker.zdbID = :zdbId " +
                         "   and fmr.featureZdbId = mm.markerId " +
                         "   and fmr.type = :relationship ");
 
@@ -172,7 +172,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         query = session.createQuery(
                 "select l.lg" +
                         "  from Linkage l join l.linkageMemberFeatures as lf, FeatureMarkerRelationship fmr " +
-                        " where fmr.markerZdbId = :zdbId " +
+                        " where fmr.marker.zdbID = :zdbId " +
                         "   and fmr.featureZdbId = lf.zdbID " +
                         "   and fmr.type = :relationship ");
 

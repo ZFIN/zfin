@@ -150,10 +150,6 @@
         <id name="zdbID" column="fmrel_zdb_id"/>
         <property name="type" column="fmrel_type" not-null="true"/>
         <property name="featureZdbId" column="fmrel_ftr_zdb_id" not-null="true"/>
-<!--
-        <property name="markerZdbId" column="fmrel_mrkr_zdb_id" not-null="true"/>
--->
-
         <many-to-one name="marker" class="org.zfin.marker.Marker">
             <column name="fmrel_mrkr_zdb_id"/>
         </many-to-one>
