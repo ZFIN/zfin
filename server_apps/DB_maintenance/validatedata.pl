@@ -514,15 +514,17 @@ sub xpatObjectNotGeneOrEFG ($) {
 sub featureAssociatedWithGenotype($) {
   my $routineName = "featureAssociatedWithGenotype";
 	
-  my $sql = 'select feature_name, feature_zdb_id
-               from feature
+  my $sql = 'select feature_name, feature_zdb_id, recattrib_source_zdb_id
+               from feature, record_attribution
               where not exists
                     (select "t"
                        from genotype_feature
-                      where genofeat_feature_zdb_id = feature_zdb_id)';
+                      where genofeat_feature_zdb_id = feature_zdb_id)
+              and recattrib_data_zdb_id = feature_zdb_id';
 
   my @colDesc = ("Feature name         ",
-		 "Feature zdb id       ");
+		 "Feature zdb id       ",
+                 "Publication zdb id   ");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
 
