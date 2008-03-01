@@ -4,7 +4,7 @@
 <table border="0" width="100%">
     <tbody>
         <tr align="left">
-            <td><b>All ${formBean.wildtypeMorpholinoCount} Morpholino Experiments (<c:if test="${formBean.wildtype}">wildt-type</c:if>
+            <td><b>All ${formBean.wildtypeMorpholinoCount} Morpholino Experiments (<c:if test="${formBean.wildtype}">wild-type</c:if>
                 <c:if test="${!formBean.wildtype}">mutant</c:if>)
              for:</b>
                 <a href="term-detail?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}">${formBean.anatomyItem.name}</a>

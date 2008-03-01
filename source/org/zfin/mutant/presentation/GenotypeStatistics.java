@@ -8,10 +8,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.List;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * ToDo: Please add documentation for this class.
@@ -71,21 +68,11 @@ public class GenotypeStatistics {
         return markers;
     }
 
-    public Set<String> getPhenotypeDescriptions() {
-        Set<String> phenotypes = new HashSet<String>();
+    public Map<String, Set> getPhenotypeDescriptions() {
+        Map<String, Set> phenotypes = new HashMap<String, Set>();
         Set<GenotypeExperiment> genotypeExperiments = genotype.getGenotypeExperiments();
         for (GenotypeExperiment genoExperiment : genotypeExperiments) {
-            for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
-                if (phenotype.getPatoEntityAzdbID() != null && phenotype.getPatoEntityAzdbID().equals(anatomyItem.getZdbID())) {
-                    String termName = phenotype.getTerm().getName();
-                    StringBuilder buffer = new StringBuilder(termName);
-                    String tag = phenotype.getTag();
-                    if (termName.equals(Term.QUALITY) && tag.equals(Term.TAG_ABNORMAL))
-                        phenotypes.add(Term.TAG_ABNORMAL);
-                    else
-                        phenotypes.add(buffer.toString());
-                }
-            }
+            phenotypes.putAll(PhenotypeService.getPhenotypesGroupedByOntology(genoExperiment, anatomyItem));
         }
         return phenotypes;
     }

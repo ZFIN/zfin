@@ -35,9 +35,22 @@
                     <zfin:link entity="${genoStat.affectedMarkers}"/>
                 </td>
                 <td>
-                    <c:forEach var="phenotype" items="${genoStat.phenotypeDescriptions}" varStatus="loop">
-                        ${phenotype}<c:if test="${!loop.last}">, </c:if>
-                    </c:forEach>
+                    <c:forEach var="phenotypes" items="${genoStat.phenotypeDescriptions}"
+                               varStatus="ontologyLoop">
+                    <c:if test="${phenotypes.key != 'ANATOMY'}">
+                    [${phenotypes.key}]:
+                    <div style="margin-left:20px">
+                        </c:if>
+                        <c:if test="${phenotypes.key == 'ANATOMY'}">
+                        <div style="margin-left:0px">
+                            </c:if>
+                            <c:forEach var="phenotype" items="${phenotypes.value}" varStatus="loop">
+                                ${phenotype}<c:if test="${!loop.last}">, </c:if>
+                            </c:forEach>
+                            <c:if test="${!ontologyLoop.last}">
+                        </div>
+                        </c:if>
+                        </c:forEach>
                 </td>
                 <td>
                     <c:if test="${genoStat.numberOfFigures > 0}">
@@ -76,7 +89,7 @@
                                      integerEntity="${formBean.genotypeCount}"/>
                     </a> &nbsp;
                     (including substructures
-                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20">
+                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20&include_substructures=checked">
                         ${formBean.anatomyStatisticsMutant.numberOfObjects} genotypes</a>)
                 </td>
             </tr>

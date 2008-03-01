@@ -86,7 +86,7 @@
             <tr align="left">
                 <td>
                     Show all
-                    <a href="show-all-morpholino-experiments?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}&wildtype=true">
+                    <a href="show-all-morpholino-experiments?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}&wildtype=false">
                             ${formBean.mutantMorpholinoCount}
                             <zfin:choice choicePattern="0# experiments| 1# experiment| 2# experiments"
                                          integerEntity="${formBean.mutantMorpholinoCount}"/>

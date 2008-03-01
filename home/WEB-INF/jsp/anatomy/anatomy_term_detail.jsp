@@ -190,8 +190,8 @@
         <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_morpholinos.jsp" flush="false"/>
     </c:if>
     <p/>
-    <c:if test="${formBean.morpholinoExist}">
-        <b>Morpholino Experiments in mutant fish</b>
+    <c:if test="${formBean.nonWildtypeMorpholinoExist}">
+        <b>Morpholino Experiments in mutant & transgenic fish</b>
         <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_non_wildtype_morpholinos.jsp" flush="false"/>
     </c:if>
     <hr width="80%">
