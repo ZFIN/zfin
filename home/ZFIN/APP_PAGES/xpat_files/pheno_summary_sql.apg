@@ -38,21 +38,6 @@
 
 <?/MIBLOCK>
 
-<?MICOMMENT> *** Link from the anatomy page. Only find Morpholinos with a specified environment <?/MICOMMENT>
-<?MIBLOCK COND=$(XST,$envID)>
-
-  
-  <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where 
-       and genox_exp_zdb_id = '$envID'
-       and (apato_entity_a_zdb_id = '$anatID' or apato_entity_b_zdb_id = '$anatID')
-       and not exists  (
-               select * from experiment_condition 
-               where expcond_exp_zdb_id = genox_exp_zdb_id
-                 and expcond_mrkr_zdb_id = '' )
-  <?/MIVAR>
-  
-<?/MIBLOCK>
-
 
 <?MIBLOCK COND=$(NC,$(SUBSTR,$OID,1,8),ZDB-GENO)>
 
@@ -103,6 +88,23 @@
   <?MIVAR NAME=phenosum_sql_from_outer_genofeat>$phenosum_sql_from_outer_genofeat, feature_marker_relationship<?/MIVAR> 
    
 <?MIELSE>
+
+  <?MICOMMENT> *** Link from the anatomy page. Only find Morpholinos with a specified environment <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$envID)>
+
+  
+    <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where 
+       and genox_exp_zdb_id = '$envID'
+       and (apato_entity_a_zdb_id = '$anatID' or apato_entity_b_zdb_id = '$anatID')
+       and not exists  (
+               select * from experiment_condition 
+               where expcond_exp_zdb_id = genox_exp_zdb_id
+                 and expcond_mrkr_zdb_id = '' )
+    <?/MIVAR>
+    
+    <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from_outer_genofeat<?/MIVAR>
+  
+  <?/MIBLOCK>
 
   <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where
        and geno_zdb_id = '$OID'  
