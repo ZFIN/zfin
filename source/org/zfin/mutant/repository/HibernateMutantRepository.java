@@ -178,7 +178,8 @@ public class HibernateMutantRepository implements MutantRepository {
     private void setPaginationParameters(Query query) {
         if (paginationBean != null) {
             query.setMaxResults(paginationBean.getMaxDisplayRecords());
-            query.setFirstResult(paginationBean.getFirstRecord());
+            // Hibernate ecxpects a '0' for the first record.
+            query.setFirstResult(paginationBean.getFirstRecord()-1);
         }
     }
 
