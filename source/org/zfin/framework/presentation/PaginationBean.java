@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 /**
  * Basic bean object that can be used for any form bean to include pagination.
- * Inheirat from this Bean and you get all the relevant request parameters from a
+ * Inherit from this Bean and you get all the relevant request parameters from a
  * a web page. The JSP part can be found in the pagination.jsp tiles. 
  */
 
