@@ -137,65 +137,50 @@
 <p/>
 <b>EXPRESSION</b> <br>
 <b>
-    <c:if test="${formBean.expressedGenesExist}">
-        <div title="Genes with Most Figures, annotated to ${formBean.anatomyItem.name}, substructures excluded">Genes
-            with
-            Most Figures
-        </div>
-        <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_expressed_genes.jsp" flush="false"/>
-    </c:if>
+    <div title="Genes with Most Figures, annotated to ${formBean.anatomyItem.name}, substructures excluded">Genes
+        with Most Figures
+    </div>
+    <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_expressed_genes.jsp" flush="false"/>
 </b>
-    <c:if test="${!formBean.expressedGenesExist && formBean.anatomyStatistics.numberOfTotalDistinctObjects > 0}">
-        No genes directly annotated to this structure.<br/>
+<c:if test="${!formBean.expressedGenesExist && formBean.anatomyStatistics.numberOfTotalDistinctObjects > 0}">
     Show <a href='/${formBean.expressionSearchLinkSubstructures}'>
-                   <zfin:choice choicePattern="0#genes| 1#gene| 2#genes"
-                                integerEntity="${formBean.anatomyStatistics.numberOfTotalDistinctObjects}"
-                                includeNumber="true"/>
-             </a> in substructures.
-    </c:if>
+    <zfin:choice choicePattern="0#genes| 1#gene| 2#genes"
+                 integerEntity="${formBean.anatomyStatistics.numberOfTotalDistinctObjects}"
+                 includeNumber="true"/>
+</a> in substructures.
+</c:if>
 
 
 <p/>
 
 <p/>
 <!-- In situ Probes -->
-<c:if test="${formBean.inSituProbesExist}">
-
-    <b>In Situ Probes</b>: <a href="/zf_info/stars.html"> Recommended </a> by
-    <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
-        Thisse lab</a>
-    <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_insitu_probes.jsp" flush="false"/>
-</c:if>
+<b>In Situ Probes</b>: <a href="/zf_info/stars.html"> Recommended </a> by
+<a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
+    Thisse lab</a>
+<tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_insitu_probes.jsp" flush="false"/>
 <hr width="80%">
 <p/>
 <!-- All mutants -->
-<c:if test="${formBean.mutantsExist ||formBean.morpholinoExist }">
-    <b>PHENOTYPE</b> affecting</b> ${formBean.anatomyItem.name}
-    <br/>
-    <c:if test="${formBean.mutantsExist}">
-        <b>Mutant and Transgenic Lines</b>
-        <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_mutants.jsp" flush="false"/>
-    </c:if>
-    <c:if test="${!formBean.mutantsExist && formBean.anatomyStatisticsMutant.numberOfObjects > 0}">
-        No genotypes directly annotated to this structure.<br/>
-        Show <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20">
-                   <zfin:choice choicePattern="0#genotypes| 1#genotype| 2#genotypes"
-                                integerEntity="${formBean.anatomyStatisticsMutant.numberOfObjects}"
-                                includeNumber="true"/>
-             </a> in substructures.
-    </c:if>
-    <p/>
-    <c:if test="${formBean.morpholinoExist}">
-        <b>Morpholino Experiments in wild-type fish</b>
-        <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_morpholinos.jsp" flush="false"/>
-    </c:if>
-    <p/>
-    <c:if test="${formBean.nonWildtypeMorpholinoExist}">
-        <b>Morpholino Experiments in mutant & transgenic fish</b>
-        <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_non_wildtype_morpholinos.jsp" flush="false"/>
-    </c:if>
-    <hr width="80%">
+<b>PHENOTYPE</b> affecting</b> ${formBean.anatomyItem.name}
+<br/>
+    <b>Mutant and Transgenic Lines</b>
+    <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_mutants.jsp" flush="false"/>
+<c:if test="${!formBean.mutantsExist && formBean.anatomyStatisticsMutant.numberOfObjects > 0}">
+    Show <a
+        href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20">
+    <zfin:choice choicePattern="0#genotypes| 1#genotype| 2#genotypes"
+                 integerEntity="${formBean.anatomyStatisticsMutant.numberOfObjects}"
+                 includeNumber="true"/>
+</a> in substructures.
 </c:if>
+<p/>
+<b>Morpholino Experiments in wild-type fish</b>
+<tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_morpholinos.jsp" flush="false"/>
+<p/>
+<b>Morpholino Experiments in mutant & transgenic fish</b>
+<tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_non_wildtype_morpholinos.jsp" flush="false"/>
+<hr width="80%">
 <!-- Number of Publications with an abstract that contains the anatomical structure -->
 
 <c:if test="${formBean.numberOfPublications > 0}">

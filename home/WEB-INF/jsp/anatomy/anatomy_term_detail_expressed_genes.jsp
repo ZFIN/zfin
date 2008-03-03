@@ -22,12 +22,13 @@
                             <zfin:createFiguresLink marker="${expressedGene.markerStat.gene}"
                                                     anatomyItem="${formBean.anatomyItem}"
                                                     numberOfFigures="${expressedGene.markerStat.numberOfFigures}"
-                                    useGeneZdbID="true"/>
+                                                    useGeneZdbID="true"/>
                         </c:if>
                         <c:if test="${expressedGene.markerStat.numberOfFigures == 1 }">
                             <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${expressedGene.markerStat.figure.zdbID}'>
                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                                             integerEntity="${expressedGene.markerStat.numberOfFigures}" includeNumber="true"/>
+                                             integerEntity="${expressedGene.markerStat.numberOfFigures}"
+                                             includeNumber="true"/>
                             </a>
                         </c:if>
                     </c:if>
@@ -45,37 +46,24 @@
         <c:if test="${formBean.expressedGenesExist}">
             <tr>
                 <td colspan="4" align="left">
-                    Show  all
+                    Show all
                     <a href='/<c:out value="${formBean.expressionSearchLink}"/>'>
                         <zfin:choice choicePattern="0#genes| 1#gene| 2#genes"
                                      integerEntity="${formBean.totalNumberOfExpressedGenes}" includeNumber="true"/>,
                         <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                                     integerEntity="${formBean.totalNumberOfFiguresPerAnatomyItem}" includeNumber="true"/> </a>
-                                      &nbsp;
+                                     integerEntity="${formBean.totalNumberOfFiguresPerAnatomyItem}"
+                                     includeNumber="true"/> </a>
+                    &nbsp;
                     (including substructures
                     <a href='/${formBean.expressionSearchLinkSubstructures}'>
-                                            <zfin:choice choicePattern="0#genes| 1#gene| 2#genes"
-                                                         integerEntity="${formBean.anatomyStatistics.numberOfTotalDistinctObjects}"
-                                                         includeNumber="true"/>
-                                            </a>)
+                        <zfin:choice choicePattern="0#genes| 1#gene| 2#genes"
+                                     integerEntity="${formBean.anatomyStatistics.numberOfTotalDistinctObjects}"
+                                     includeNumber="true"/>
+                    </a>)
                 </td>
             </tr>
             <tr>
                 <td colspan="4" align="left ">
-                        <%--
-                                            <a href='/${formBean.expressionSearchLinkSubstructures}'>
-                        --%>
-                        <%--
-                                                Show all
-                                                <zfin:choice choicePattern="0#genes| 1#gene| 2#genes"
-                                                             integerEntity="${formBean.anatomyStatistics.numberOfTotalDistinctObjects}" includeNumber="true"/>
-                        --%>
-                        <%--
-                                            </a>
-                        --%>
-                        <%--
-                                            including substructures
-                        --%>
                 </td>
             </tr>
         </c:if>
