@@ -55,7 +55,7 @@ EFFECTS:
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
- <?MIVAR COND="$(EC,$AUTHORIZED,root)">
+ <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
   <?MIBLOCK COND="$(NXST,$OID)">
 	ERROR in UPDATE! No OID passed in!
@@ -90,7 +90,7 @@ EFFECTS:
     <?MIVAR>
       <title>
 	ZFIN Updating: $updjrnl_column: $print_name
-      </title>
+     </title>
 
       <center>
 	<font size=6>Update $updjrnl_column: $current_value 
@@ -144,5 +144,6 @@ EFFECTS:
   <?/MIBLOCK>  <?MICOMMENT> *** ends cond attr_type not= selection *** 
 			<?/MICOMMENT>
 
- <?/MIVAR>  <?MICOMMENT> *** ends if user is root *** <?/MICOMMENT>
+ <?/MIBLOCK>  <?MICOMMENT> *** ends if user is root *** <?/MICOMMENT>
 
+<?/MIBLOCK>
