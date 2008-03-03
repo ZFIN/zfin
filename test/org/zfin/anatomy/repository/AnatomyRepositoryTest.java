@@ -115,6 +115,6 @@ public class AnatomyRepositoryTest {
             System.out.println(geno.getZdbID() + "\r");
         }
 
-        assertEquals(2, genos.size());
+        assertTrue(genos.size()> 1);
     }
 }
