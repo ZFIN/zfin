@@ -500,10 +500,29 @@ update accession_bank set accbk_defline = (
 );
 
 ! echo "how many distinct Hit still need to be added to accession bank? (mind the dups)"
-select count(distinct thit_acc) howmany from tmp_hit where thit_target_id is NULL;
+select count(thit_acc) all_told,count(distinct thit_acc) howmany from tmp_hit where thit_target_id is NULL;
 
 
--- TODO: swap the selects for the hardcoded FDBCONT afrer it is stabalized
+-- DEBUG
+select thit_acc,accbk_fdbcont_zdb_id,thit_target_id
+ from tmp_hit, accession_bank
+ where thit_acc =  accbk_acc_num
+   and (thit_target_id IS NULL OR accbk_pk_id != thit_target_id)
+ ;
+
+select thit_acc,thit_acc_len, thit_defline
+ from tmp_hit
+ where thit_acc in (
+ 	select thit_acc
+ 	 from tmp_hit
+ 	  where thit_target_id IS NULL
+ 	 group by 1 having count(*) > 1
+) order by 1,2;
+
+
+
+
+-- TODO: swap the selects for the hardcoded FDBCONT after it is stabalized
 
 ! echo "add new *TARGETS* to accession_bank"
 insert into  accession_bank (
@@ -514,8 +533,8 @@ insert into  accession_bank (
 )
 select distinct
     thit_acc,      -- BC146618
-    thit_acc_len,  -- 3498
-    case  -- HITs
+    max(thit_acc_len),  -- 3498
+    max(case  -- HITs
         when thit_acc_type = 'protein'
          and thit_acc_db = 'ref'           then 'ZDB-FDBCONT-040412-39'
         when thit_acc_type = 'protein'
@@ -547,14 +566,17 @@ select distinct
         when thit_acc_type = 'nucleotide'
          and thit_acc_db = 'ref'           then 'ZDB-FDBCONT-040412-38'
         when thit_acc_type = 'nucleotide'
+         and thit_acc_db = 'wz'            then 'ZDB-FDBCONT-040412-31'
+        when thit_acc_type = 'nucleotide'
          and thit_acc_db = 'gb'            then 'ZDB-FDBCONT-040412-37'
         when thit_acc_type = 'transcript'
          and thit_acc_db = 'tpe'           then 'ZDB-FDBCONT-060417-1' -- vega at sanger
         else trun_target_fdbcont
-    end,
-    thit_defline
+    end ),
+    max(thit_defline)
  from tmp_hit, tmp_run
  where thit_target_id is NULL
+ group by thit_acc
 ;
 
 update statistics high for table accession_bank;
@@ -610,10 +632,10 @@ insert into blast_hit (
     bhit_strand,
     bhit_alignment
 )
--- this DISTINCT really slows down espedially large nomenclature loads 
--- where so far it has not been needed. nor has it been needed for Vega or ZGC
+-- this DISTINCT really slows things down, especially large nomenclature loads
+-- where so far, it has not been needed. nor has it been needed for Vega or ZGC
 -- loads to date.  *BUT* it has been needed for at least one 'paper' load of cDNA
--- for now I am going to enable it only if need be for a particular load 
+-- for now I am going to enable it only if need be for a particular load
 select --DISTINCT -- ***
     thit_zad,
     tbqry_zad,
