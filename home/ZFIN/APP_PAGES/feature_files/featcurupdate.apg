@@ -225,7 +225,7 @@ PREFIX:   featcurup_
           <?/MISQL> 
         <?/MIBLOCK>
         <?MISQL SQL="
-          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=feature_zdb_id&recweb_new_value=$featcurup_feature_zdb_id&recweb_comments=create+new+record') 
+          select WebExplode(object,'permission=root&recweb_rec_id=$featcurup_feature_zdb_id&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=feature_zdb_id&recweb_new_value=$featcurup_feature_zdb_id&recweb_comments=create+new+record') 
                  from webPages where ID='aa-record_web_update.apg';">
         <?/MISQL>
         <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
@@ -273,7 +273,7 @@ PREFIX:   featcurup_
           <?/MISQL> 
         <?/MIBLOCK>
         <?MISQL SQL="
-          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=mrkr_zdb_id&recweb_new_value=$featcurup_marker_zdb_id&recweb_comments=create+new+record') 
+          select WebExplode(object,'permission=root&recweb_rec_id=$featcurup_marker_zdb_id&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=mrkr_zdb_id&recweb_new_value=$featcurup_marker_zdb_id&recweb_comments=create+new+record') 
                  from webPages where ID='aa-record_web_update.apg';">
         <?/MISQL>
         <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
