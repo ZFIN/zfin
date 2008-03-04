@@ -511,30 +511,32 @@ sub xpatObjectNotGeneOrEFG ($) {
 # Parameter
 # $ Email Address for recipients
 
-sub featureAssociatedWithGenotype($) {
+sub featureAssociatedWithGenotype($$$) {
   my $routineName = "featureAssociatedWithGenotype";
 	
-  my $sql = 'select feature_name, feature_zdb_id, recattrib_source_zdb_id
-               from feature, record_attribution
+  my $sql = "select feature_name, feature_zdb_id, recattrib_source_zdb_id
+               from feature, updates,record_attribution
               where not exists
-                    (select "t"
+                    (select 't'
                        from genotype_feature
                       where genofeat_feature_zdb_id = feature_zdb_id)
-              and recattrib_data_zdb_id = feature_zdb_id';
+              and rec_id=feature_zdb_id
+              and feature_zdb_id=recattrib_data_zdb_id
+              and submitter_id='$_[1]'";
 
   my @colDesc = ("Feature name         ",
 		 "Feature zdb id       ",
-                 "Publication zdb id   ");
-
+		 "Publication zdb id   ");
   my $nRecords = execSql ($sql, undef, @colDesc);
 
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
+    my $curatorFirstName = $_[2];
     my $subject = "Features not in any genotype";
-    my $errMsg = "There are $nRecords feature record(s) that are not associated with any genotype. ";
+    my $errMsg = "Dear $curatorFirstName. there are $nRecords feature record(s) that were created by you that are not associated with any genotype. Please add it to a genotype or delete it ";
     
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+    &sendMail($sendToAddress, $subject, "void", $errMsg, $sql);
   }
   &recordResult($routineName, $nRecords);
 
@@ -3251,8 +3253,22 @@ if($daily) {
     xpatHasConsistentMarkerRelationship($xpatEmail);
     checkFigXpatexSourceConsistant($dbaEmail);
     checkFigApatoSourceConsistant($dbaEmail);
+  # for each zfin curator, run phenotypeAnnotationUnspecified() check
+    
+    my $sql = " select email, zdb_id,full_name
+                from int_person_lab join person
+                     on source_id = zdb_id
+               where target_id = 'ZDB-LAB-000914-1'
+                 and position = 'Research Staff'";
+    my $sth = $dbh->prepare ($sql) or die "Prepare fails";
+    $sth->execute();
 
-    featureAssociatedWithGenotype($mutantEmail);
+    while (my ($curatorEmail, $curatorId, $curatorName) = $sth->fetchrow_array()) {
+      my @curatorName = split(/,/,$curatorName);
+      my $curatorFirstName = $curatorName[$#curatorName];
+      $curatorFirstName =~ s/^\s+//;
+      featureAssociatedWithGenotype ($curatorEmail, $curatorId, $curatorFirstName);
+     }
     featureIsAlleleOfOrMrkrAbsent($mutantEmail);
     genotypesHaveNoNames($genoEmail);
     pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
