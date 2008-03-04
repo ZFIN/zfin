@@ -75,7 +75,7 @@ EFFECTS
       var amped = unescape(figCap.replace(/;;;/g, ";&"));
       amped = amped.replace(/;;/g, "&");
       amped = amped.replace(/'/g, "&prime;");
-      window.document.figureUpdate.xpcur_G_fig_caption.value=amped;      
+      window.document.figureUpdate.xpcur_G_fig_caption.value=amped;    
     }
 
     function validCaption(figCap) {    
@@ -148,7 +148,7 @@ EFFECTS
   <?MIVAR name=xpcurfig_fig_caption>$2<?/MIVAR>
   <?MIVAR name=xpcurfig_fig_comment>$3<?/MIVAR>
   <?MIVAR name=xpcurfig_fig_label>$4<?/MIVAR>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figureUpdate> 
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=get name=figureUpdate> 
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_fig_zdb_id VALUE="<?MIVAR>$xpcurfig_fig_zdb_id<?/MIVAR>"> 
@@ -197,7 +197,8 @@ EFFECTS
     <td valign=top colspan=2>  $xpcurfig_fig_caption <br>
             <?MIVAR NAME=$delimiter>&<?/MIVAR>
             <?MIVAR NAME=$xpcur_G_fig_caption>$(REPLACE,$xpcurfig_fig_caption,&,;;)<?/MIVAR>
-       <TEXTAREA name="xpcur_G_fig_caption" cols=85 rows=5
+
+<TEXTAREA name="xpcur_G_fig_caption" cols=85 rows=5
           <?MIBLOCK COND=$(EC,$xpcur_c_has_permission,f)>
             onClick="alert('No Legend Permission. Please update pub permissions.');this.blur();";
           <?/MIBLOCK>
