@@ -514,7 +514,7 @@ sub xpatObjectNotGeneOrEFG ($) {
 sub featureAssociatedWithGenotype($$$) {
   my $routineName = "featureAssociatedWithGenotype";
 	
-  my $sql = "select feature_name, feature_zdb_id, recattrib_source_zdb_id
+  my $sql = "select distinct feature_name, feature_zdb_id, recattrib_source_zdb_id
                from feature, updates,record_attribution
               where not exists
                     (select 't'
