@@ -32,7 +32,7 @@ TARGETIMAGES = $(foreach IMG, $(IMAGES), $(FINALTARGETDIR)/$(IMG))
 
 # Use the standard JAVAC, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = $(STAGINGDIR):$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
+CLASSPATH = $(STAGINGDIR):$(TOP)/lib/Java/Acme.jar:$(JDBCHOME)/lib/ifxjdbc.jar
 
 ZMSRCDIR = ../../client_apps/Map/zmapper
 NETSCAPEPATH = $(TARGETROOT)/lib/Java/netscape
