@@ -1,7 +1,7 @@
 #!/private/bin/perl 
 
 ########################################################################
-#       
+# Comments
 # This script sends an email notification to curators@zfin.org listing
 # the publication entered TODAY. 
 #
