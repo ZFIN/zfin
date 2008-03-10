@@ -8,7 +8,6 @@
 #------------------------------------------------------------------------
 
 # ----------------  Sanity Checks  --------------------------------------
-# t1 in 
 # The following error checks will abort make and print a nice explanatory
 # message.
 
