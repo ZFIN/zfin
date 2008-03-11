@@ -144,7 +144,7 @@ where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
               <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>
 
               <?MIBLOCK COND="$(>,$xpanatv_totalcount,0)"> 
-                <?MIVAR>has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_processed_item_name" target="_parent"><B>($xpanatv_totalcount)</B></A> gene(s), total, expressed in all stages <?/MIVAR>
+                <?MIVAR>has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_processed_item_name" target="_parent"><B>($xpanatv_totalcount)</B></A> gene(s), including substructures, expressed in all stages <?/MIVAR>
               <?MIELSE>
 	        has no expression data.
               <?/MIBLOCK>
