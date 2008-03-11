@@ -42,9 +42,7 @@ OUTPUT VARS:
       xpat_gene_zdb_id          varchar(50),
       xpat_xpatex_zdb_id	varchar(50),
       xpat_matching_text 	varchar(255),
-      xpat_matching_precedence	varchar(80),
-      xpat_matching_significance integer
-    ) with NO LOG;
+      xpat_matching_precedence	varchar(80)
 
    we found that one gene could have several match with different matching
    significance, matching text. Yet each gene would be used in multiple xpat experiment 
@@ -53,36 +51,6 @@ OUTPUT VARS:
    had to give up with limited time for the bug. So I am limiting the modification to 
    this file and introducing a second temp table. 
 <?/MICOMMENT>
-
-<?MIVAR NAME=xpsumres_gene_resultTable>$(CONCAT,xpsumres_gene_result,$xpatsel_session_id)<?/MIVAR>
-
-<?MISQL SQL="
-  execute function table_exists('$xpsumres_gene_resultTable')">
-
-  <?MISQL COND="$(EC,$1,f)" SQL="
-    create temp table $xpsumres_gene_resultTable (
-      xpatdg_fig_count		integer,
-      xpatdg_gene_zdb_id        varchar(50),
-      xpatdg_matching_significance integer
-    ) with NO LOG;">
-  <?/MISQL>  
-
-<?/MISQL>
-
-<?MISQL SQL="
-    insert into $xpsumres_gene_resultTable
-		(xpatdg_gene_zdb_id, xpatdg_fig_count)
-        select xpat_gene_zdb_id, count(unique xpat_fig_zdb_id)::integer
-          from $xpsumres_resultTable
-        group by xpat_gene_zdb_id;">
-<?/MISQL>
-
-<?MISQL SQL="
-    update $xpsumres_gene_resultTable
-       set xpatdg_matching_significance = (select min(xpat_matching_significance)
-                                             from $xpsumres_resultTable
-                                            where xpat_gene_zdb_id = xpatdg_gene_zdb_id);">
-<?/MISQL>
 
 <table class="searchresults"> <!-- open summary results table -->
   <caption class="searchresults">  
@@ -108,26 +76,23 @@ OUTPUT VARS:
   <?MIVAR NAME="xpsumres_recordIndex">0<?/MIVAR>
 
   <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-select mrkr_zdb_id, mrkr_abbrev, xpatdg_fig_count,
+select distinct mrkr_zdb_id, mrkr_abbrev,
        get_mrkr_abbrev_html_link(mrkr_zdb_id), 
-       xpatdg_matching_significance, mrkr_abbrev_order
-from $xpsumres_gene_resultTable
-     join marker on mrkr_zdb_id = xpatdg_gene_zdb_id
-order by xpatdg_matching_significance, mrkr_abbrev_order
+       mrkr_abbrev_order
+from $xpsumres_resultTable
+     join marker on mrkr_zdb_id = xpat_gene_zdb_id
+order by mrkr_abbrev_order
 ;">
     <?MIVAR NAME="xpsumres_geneZdbId">$1<?/MIVAR>
     <?MIVAR NAME="xpsumres_geneAbbrev">$2<?/MIVAR>
-    <?MIVAR NAME="xpsumres_figCount">$3<?/MIVAR>
-    <?MIVAR NAME="xpsumres_geneAbbrevLink">$4<?/MIVAR>  
-    <?MIVAR NAME=xpsumres_matching_significance>$5<?/MIVAR>
-
-    <?MICOMMENT>
+    <?MIVAR NAME="xpsumres_geneAbbrevLink">$3<?/MIVAR>  
+    
       <?MISQL SQL=" select count(distinct xpat_fig_zdb_id)::Integer
                     from $xpsumres_resultTable
                     where xpat_gene_zdb_id = '$xpsumres_geneZdbId'">
         <?MIVAR NAME="xpsumres_figCount">$1<?/MIVAR>
       <?/MISQL>      
-    <?/MICOMMENT>
+   
 
     <?MISQL SQL="
 	select distinct publication.zdb_id, publication.pub_mini_ref
@@ -208,8 +173,7 @@ order by xpatdg_matching_significance, mrkr_abbrev_order
         <td>
           <?MISQL SQL="select first 1 xpat_matching_precedence, xpat_matching_text 
                        from $xpsumres_resultTable
-                      where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
-                        and xpat_matching_significance = '$xpsumres_matching_significance';">	
+                      where xpat_gene_zdb_id = '$xpsumres_geneZdbId';">	
 		<?MIVAR NAME=xpsumres_matching_qualification>$1<?/MIVAR>
 		<?MIVAR NAME=xpsumres_matching_output>$2<?/MIVAR>
 	   <?/MISQL>
@@ -234,10 +198,7 @@ order by xpatdg_matching_significance, mrkr_abbrev_order
  
   <?/MISQL>
   
-  <?MISQL SQL="
-       delete from  $xpsumres_gene_resultTable; ">
-  <?/MISQL>
-  
+
   </tbody>
 </table> <!-- close summary results table -->
 
