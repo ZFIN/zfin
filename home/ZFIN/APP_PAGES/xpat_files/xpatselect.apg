@@ -205,7 +205,7 @@ function openChild(childWinUrl,childWinName) {
 
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-
+<?MISQL SQL="select WebExplode(object,'page_title=Expression Search') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <?MICOMMENT> 
   ============================================================================
@@ -214,22 +214,11 @@ function openChild(childWinUrl,childWinName) {
 <?/MICOMMENT>
 
 <?MISQL SQL="
-  select stg_zdb_id
+  select min(stg_hours_start), max(stg_hours_end)
     from stage
-    where stg_hours_start = 
-	  ( select min(stg_hours_start) 
-	      from stage )
-      and stg_name <> 'Unknown'; ">
+    where stg_name <> 'Unknown'; ">
   <?MIVAR NAME=$xpatsel_minStage>$1<?/MIVAR>
-<?/MISQL>
-<?MISQL SQL="
-  select stg_zdb_id
-    from stage
-    where stg_hours_start = 
-	  ( select max(stg_hours_start) 
-	      from stage )
-      and stg_name <> 'Unknown'; ">
-  <?MIVAR NAME=$xpatsel_maxStage>$1<?/MIVAR>
+  <?MIVAR NAME=$xpatsel_maxStage>$2<?/MIVAR>
 <?/MISQL>
 
 <?MICOMMENT>
@@ -357,27 +346,27 @@ function openChild(childWinUrl,childWinName) {
  <?MISQL SQL="
   select dbinfo('sessionid') 
     from single;">
-  <?MIVAR NAME=$xpatsel_session_id>$1<?/MIVAR>
-  <?MIVAR NAME=$xpatselect_temp_match>$(CONCAT,xpatselect_temp_match_,$xpatsel_session_id)<?/MIVAR>
+  <?MIVAR NAME=xpatsel_session_id>$1<?/MIVAR>
+  <?MIVAR NAME=xpatselect_temp_match>$(CONCAT,xpatselect_temp_match_,$xpatsel_session_id)<?/MIVAR>
  <?/MISQL>
 
  <?MISQL SQL="
   execute function table_exists('$xpatselect_temp_match')">
-  <?MIVAR NAME="$xpatsel_tableExists">$1<?/MIVAR>
-  <?MISQL COND=$(EC,$xpatsel_tableExists,f) SQL="
+  <?MIVAR NAME=xpatsel_tableExists>$1<?/MIVAR>
+  <?MISQL COND="$(EC,$xpatsel_tableExists,f)" SQL="
     create temp table $xpatselect_temp_match (
       xpat_fig_zdb_id 		varchar(50),
       xpat_gene_zdb_id          varchar(50),
       xpat_xpatex_zdb_id	varchar(50),
       xpat_matching_text 	varchar(255),
-      xpat_matching_precedence	varchar(80),
-      xpat_matching_significance integer
-    ) with NO LOG;">
+      xpat_matching_precedence	varchar(80)
+    ) with NO LOG;
+   ">
   <?/MISQL>
-  <?MISQL COND=$(EC,$xpatsel_tableExists,f) SQL="
-    create index geneid$xpatselect_temp_match on $xpatselect_temp_match(xpat_gene_zdb_id)
-     in idxdbs3;">
-  <?/MISQL> 
+  <?MISQL COND="$(EC,$xpatsel_tableExists,t)" SQL="
+     delete from $xpatselect_temp_match ;">
+  <?/MISQL>
+ 
  <?/MISQL>
  
  <?MICOMMENT>
@@ -464,23 +453,6 @@ function openChild(childWinUrl,childWinName) {
   <?/MISQL>
 
 
-
-   <?MICOMMENT> --- results test, show everything organized by gene --- 
-   <?MISQL SQL="select WebExplode(object,'&xpresbg_resultTable=$xpatselect_temp_match')
-             from webPages where ID='aa-xpatselect_resultsbygene.apg';">$1<?/MISQL>
-   <?MIVAR NAME="xpatsel_nResults">$xpresbg_geneCount<?/MIVAR>
-   <?/MICOMMENT>
-  
-
-   <?MICOMMENT>
-   <?MISQL SQL="select WebExplode(object,'&xpresimg_resultTable=$xpatselect_temp_match')
-             from webPages where ID='aa-xpatselect_resultsasimages.apg';">$1<?/MISQL>
-   <?MIVAR NAME="xpatsel_nResults">$xpresimg_imgCount<?/MIVAR>
-   <?/MICOMMENT>
-
-
-
- 
 
     <?MICOMMENT> ** build url to pass in ** <?/MICOMMENT>
     
@@ -722,7 +694,6 @@ function openChild(childWinUrl,childWinName) {
 
 <?/MIBLOCK>  <?MICOMMENT> --- end new query_results exists -- <?/MICOMMENT>
 
-<?/MICOMMENT>
 
 <?MICOMMENT>
   ============================================================================
@@ -746,8 +717,6 @@ function openChild(childWinUrl,childWinName) {
 
 <?MIVAR NAME=xpatsel_anatList>$(SEPARATE,$xpatsel_anatList,",")<?/MIVAR>
 <?MIVAR NAME=xpatsel_anatList>$(SUBSTR,$xpatsel_anatList,2)<?/MIVAR>
-
-
 
 <?MICOMMENT>
   ============================================================================
@@ -836,21 +805,21 @@ function openChild(childWinUrl,childWinName) {
                           be an option on xpatselect page.
               <?/MICOMMENT>
 	      <SELECT id="xpatselStageStart" NAME="stage_start" SIZE=1>
-		<?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id
+		<?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end
 			       from stage
 			      where stg_name <> 'Unknown'	
-			      order by stg_hours_start, stg_hours_end desc;">
-		  <OPTION $(IF,$(EC,$stage_start,$4),SELECTED) VALUE="$4"> $1 
+			      order by stg_hours_start;">
+		  <OPTION $(IF,$(EC,$stage_start,$2),SELECTED) VALUE="$2"> $1 
 		<?/MISQL>
 	      </SELECT>
 	      <label for="xpatselStageEnd" class="selectLabel">&</label><br>
 	      <SELECT id="xpatselStageEnd" NAME="stage_end" SIZE=1>
 		<?MISQL SQL="
-		  	select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id
+		  	select stg_name,stg_hours_start, stg_hours_end
 			  from stage
 			 where stg_name <> 'Unknown'	
-			order by stg_hours_start, stg_hours_end desc">
-		  <OPTION $(IF,$(EC,$stage_end,$4), SELECTED) VALUE="$4")> $1 
+			order by stg_hours_start">
+		  <OPTION $(IF,$(EC,$stage_end,$3), SELECTED) VALUE="$3")> $1 
 		<?/MISQL>
 	      </SELECT>
 	    </FONT>
@@ -858,27 +827,7 @@ function openChild(childWinUrl,childWinName) {
 	    <!-- end stage -->
 	  </td>
 	</tr>
-        <?MICOMMENT>
-        <tr>
-          <td valign="top" align="left">
-          <?MIVAR>
-            <label for="xpatselProbe" class="namesearchLabel">EST/CDNA name</label>
-	      <SELECT name="xpatsel_probeSearchType">
-	        <option value="contains" $(IF, $(AND,$(XST,$xpatsel_probeSearchtype),$(EC,$xpatsel_probeSearchType,contains)),SELECTED) >contains
-	        <option value="begins"  $(IF, $(AND,$(XST,$xpatsel_probeSearchtype),$(EC,$xpatsel_probeSearchType,begins)),SELECTED)  >begins with
-                <option value="equals"  $(IF, $(AND,$(XST,$xpatsel_probeSearchtype),$(EC,$xpatsel_probeSearchType,equals)),SELECTED)  >equals
-	      </select>
-	      <input type="text" id="xpatselProbe" name="xpatsel_probeName" size="27"
-  		   onKeyDown="
-	  	     k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
-		       if (k == 13 ) { 
-		         call_submit(); 
-		       }  "  value="$(IF,$(XST,$xpatsel_probeName),$xpatsel_probeName)"  >
-          <?/MIVAR>
-          </td>
-
-        </tr>
-        <?/MICOMMENT>
+ 
 	<tr>
 	  <td>
 	    <!-- begin mutant -->
@@ -893,10 +842,10 @@ function openChild(childWinUrl,childWinName) {
                 <option value="equals" $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,equals)),SELECTED) >equals
 	    </select>
 	      </SELECT>
-	      <INPUT type=text id="xpatselMutant" name=mutant size=15
+	      <INPUT type=text id="xpatselMutant" name=mutant value="$(IF,$(XST,$mutant),$mutant)" size=15
 		     onKeyDown="
 		        k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
-		       if (k == 13 ) { call_submit(); }  " value="$(IF,$(XST,$mutant),$mutant)">
+		       if (k == 13 ) { call_submit(); }  ">
 	      <!-- end mutant -->
 	    </FONT>
 	  </td>
@@ -1025,10 +974,8 @@ function openChild(childWinUrl,childWinName) {
 
            <fieldset>
 
-             <legend>Filters:</legend>                    
-
              <?MICOMMENT> *** Images Only Checkbox *** <?/MICOMMENT>
-
+               <p>
                <input type="checkbox" id="xpatselImagesOnly"
                       name="xpatsel_imagesOnly" value="checked" 
                       <?MIVAR> $(IF,$(AND,$(XST,$xpatsel_imagesOnly),$(EC,$xpatsel_imagesOnly,checked)),checked="checked") <?/MIVAR> > 
@@ -1060,16 +1007,15 @@ function openChild(childWinUrl,childWinName) {
 
              </div> <?MICOMMENT> ** end jtype box div ** <?/MICOMMENT>
 
-            <?MICOMMENT> ** start recent xpats ** <?/MICOMMENT>
-
-            <?MIVAR>
-            <label for="xpatselRecentRecords">Added in last </label>
-            <input name="xpatsel_recentRecords" id="xpatselRecentRecords" size="3" $(IF,$(XST,$xpatsel_recentRecords),value='$xpatsel_recentRecords')>
-            <?/MIVAR>
-            <label for="xpatselRecentRecords">days</label>
-
-            
-            <?MICOMMENT> ** end recent xpats ** <?/MICOMMENT>
+            <?MICOMMENT> ** start recent xpats (only for root user)** <?/MICOMMENT>
+            <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">             
+              <?MIVAR>
+              <label for="xpatselRecentRecords">Added in last </label>
+              <input name="xpatsel_recentRecords" id="xpatselRecentRecords" size="3" $(IF,$(XST,$xpatsel_recentRecords),value='$xpatsel_recentRecords')>
+              <?/MIVAR>
+              <label for="xpatselRecentRecords">days</label>
+            <?/MIBLOCK>       
+            <?MICOMMENT>  ** end recent xpats ** <?/MICOMMENT>
             <br> 
 
             <?MIVAR>
@@ -1107,22 +1053,5 @@ function openChild(childWinUrl,childWinName) {
     </table>
   </form>
 <?/MIBLOCK> <!--*** end nxst pubId -->
-<?MICOMMENT>
-<SCRIPT LANGUAGE="JavaScript1.1">
-  function keyDown(DnEvents) { 
-
-     t = (navigator.appName == "Netscape") ? DnEvents.target : window.event.formElement.formElement;
-     alert('formElement: ' + t);
-     if (t != document.critform.TA_selected_structures) {
-       k = (navigator.appName == "Netscape") ? DnEvents.which : window.event.keyCode;
-       if (k == 13 ) { 
-         call_submit();
-       }
-     }
-  }
-document.onkeydown = keyDown; 
-if (navigator.appName == "Netscape") document.captureEvents(Event.KEYDOWN|Event.KEYUP);
-</SCRIPT>
-<?/MICOMMENT>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
