@@ -46,18 +46,17 @@ function updateInnerHTML(element_id,html_to_display) {
  
 <?MISQL SQL=" 
 select first 1 mrkr_zdb_id, get_mrkr_abbrev_html_link(mrkr_zdb_id),
-               xpat_matching_text, xpat_matching_significance, xpat_matching_precedence, mrkr_abbrev
+               xpat_matching_text, xpat_matching_precedence, mrkr_abbrev
 from $xpdetres_resultTable
      join marker on mrkr_zdb_id = xpat_gene_zdb_id
 group by mrkr_zdb_id, mrkr_abbrev, xpat_matching_text, 
-         xpat_matching_significance, xpat_matching_precedence
-order by xpat_matching_significance
+        xpat_matching_precedence
 ;">
   <?MIVAR NAME="xpdetres_geneZdbId">$1<?/MIVAR>
   <?MIVAR NAME="xpdetres_geneAbbrev">$2<?/MIVAR>
   <?MIVAR NAME="xpdetres_geneAbbrevNotHtml">$6<?/MIVAR>
   <?MIVAR NAME="xpdetres_matching_output">$3<?/MIVAR>
-  <?MIVAR NAME="xpdetres_matching_qualification">$5<?/MIVAR>
+  <?MIVAR NAME="xpdetres_matching_qualification">$4<?/MIVAR>
 <?/MISQL>
 
 <?MICOMMENT> **** get figure count **** <?/MICOMMENT>
