@@ -107,6 +107,7 @@ stage range, experiment, or expression_found in the same figure.
      WHERE xpatfig_fig_zdb_id = '$fxfiganat_fig_zdb_id'
        AND xpatfig_xpatres_zdb_id = xpatres_zdb_id
        AND xpatres_anat_item_zdb_id = anatitem_zdb_id
+       AND xpatres_expression_found = 't'
        $fxfiganat_unspecified_constraint
        $fxfiganat_gene_constraint
        $fxfiganat_result_constraint_where
