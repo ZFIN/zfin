@@ -9,6 +9,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.*;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.DataAlias;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +42,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      *
      * @return a list of DevelopmentStage objects
      */
+    @SuppressWarnings("unchecked")
     public List<DevelopmentStage> getAllStages() {
 
         Session session = HibernateUtil.currentSession();
@@ -49,6 +51,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         return criteria.list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<DevelopmentStage> getAllStagesWithoutUnknown() {
         if (allStagesWithoutUnknown != null) {
             return allStagesWithoutUnknown;
@@ -63,6 +66,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         return allStagesWithoutUnknown;
     }
 
+    @SuppressWarnings("unchecked")
     public List<AnatomyItem> getAllAnatomyItems() {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(AnatomyItem.class);
@@ -79,6 +83,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      *
      * @return String
      */
+    @SuppressWarnings("unchecked")
     public List<String> getAllAnatomyNamesAndSynonyms() {
         if (itemAndSynonymNames != null)
             return itemAndSynonymNames;
@@ -88,8 +93,9 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         Query query = session.createQuery(hql);
         itemAndSynonymNames = query.list();
 
-        String synsHql = "select name from AnatomySynonym where item.zdbID like 'ZDB-ANAT-%' ";
+        String synsHql = "select alias from AnatomySynonym where group != :groupAlias";
         Query querySyn = session.createQuery(synsHql);
+        querySyn.setParameter("groupAlias", DataAlias.Group.SECONDARY_ID.toString());
         List<String> syns = querySyn.list();
         itemAndSynonymNames.addAll(syns);
         Collections.sort(itemAndSynonymNames);
@@ -106,6 +112,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      * @param searchString string
      * @return list of anatomy terms
      */
+    @SuppressWarnings("unchecked")
     public List<AnatomyItem> getAnatomyItemsByName(String searchString) {
         Session session = HibernateUtil.currentSession();
         String hql = "select term from AnatomyItem term  " +
@@ -123,6 +130,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         return items;
     }
 
+    @SuppressWarnings("unchecked")
     public List<AnatomyStatistics> getAllAnatomyItemStatistics() {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(AnatomyStatistics.class);
@@ -147,6 +155,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      * @return list of AnatomyStatistics object. Null if no term was found or the search
      *         term is null.
      */
+    @SuppressWarnings("unchecked")
     public List<AnatomyStatistics> getAnatomyItemStatistics(String searchTerm) {
         if (searchTerm == null)
             return null;
@@ -185,6 +194,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      * @param anatomyItem Anatomy Term
      * @return list of AnatomyRelationship objects
      */
+    @SuppressWarnings("unchecked")
     public List<AnatomyRelationship> getAnatomyRelationships(AnatomyItem anatomyItem) {
         List<AnatomyRelationship> allRelationships = new ArrayList<AnatomyRelationship>();
         Session session = HibernateUtil.currentSession();
@@ -209,6 +219,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         return allRelationships;
     }
 
+    @SuppressWarnings("unchecked")
     private List<AnatomyRelationshipTypePersistence> getAllAnatomyRelationshipTypesPersist() {
         if (relationshipTypesPersist != null) {
             return relationshipTypesPersist;
@@ -253,7 +264,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      * available. Lastly, it tries to search by name if available. Each of them needs to
      * find a unique record otherwise a Runtime exception is being thrown.
      *
-     * @param stage
+     * @param stage Stage
      */
     public DevelopmentStage getStage(DevelopmentStage stage) {
         Session session = HibernateUtil.currentSession();
@@ -296,7 +307,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
     /**
      * Precondition for a method that takes a development stage object.
      *
-     * @param stage
+     * @param stage Stage
      */
     private void validateStage(DevelopmentStage stage) {
         if (stage == null) {
@@ -308,6 +319,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public List<AnatomyStatistics> getAnatomyItemStatisticsByStage(DevelopmentStage stage) {
         java.lang.String zdbID = stage.getZdbID();
 
@@ -392,6 +404,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      * @param name ao synonym name
      * @return AnatomyItem
      */
+    @SuppressWarnings("unchecked")
     public List<AnatomySynonym> getAnatomyTermsBySynonymName(String name) {
         if (name == null)
             return null;

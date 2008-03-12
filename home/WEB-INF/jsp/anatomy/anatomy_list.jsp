@@ -5,7 +5,7 @@
 
         <caption class="searchresults">
             <zfin:collectionSize collectionEntity="${formBean.statisticItems}"/>
-            <zfin:choice collectionEntity="${formBean.statisticItems}" choicePattern="0#Results| 1#Result| 2#Results"
+            <zfin:choice collectionEntity="${formBean.statisticItems}" choicePattern="0# Results| 1# Result| 2# Results"
                          scope="Request"/>
 
             <!-- use only for term search. If all structures are listed leave it out -->

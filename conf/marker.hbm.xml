@@ -247,6 +247,7 @@
         <many-to-one name="marker" column="mhist_mrkr_zdb_id" class="org.zfin.marker.Marker"/>
     </class>
 
+<!--
     <class name="org.zfin.marker.MarkerAlias" table="data_alias">
         <id name="zdbID">
             <column name="dalias_zdb_id"/>
@@ -264,6 +265,7 @@
         <many-to-one name="marker" column="dalias_data_zdb_id" class="org.zfin.marker.Marker"/> 
     </class>
 
+-->
     <sql-query name="markerNamesFastSearchUpdate" callable="true" >
         {call regen_names_marker(:markerZdbID)}
     </sql-query>

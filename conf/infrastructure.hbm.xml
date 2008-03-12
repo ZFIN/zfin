@@ -95,5 +95,41 @@
         <property name="dateLastModified" column="zflag_last_modified" />
     </class>
 
+    <class name="org.zfin.infrastructure.DataAlias" table="data_alias">
+        <id name="zdbID">
+            <column name="dalias_zdb_id"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">DALIAS</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <discriminator type="string"
+                       formula="(CASE dalias_data_zdb_id[5,8]
+                                    WHEN 'ANAT' THEN 'Anatomy'
+                                    WHEN 'GENE' THEN 'Gene'
+                                    ELSE             'other'
+                                 END)"/>
+
+        <property name="alias">
+            <column name="dalias_alias"/>
+        </property>
+        <property name="aliasLowerCase">
+            <column name="dalias_alias_lower"/>
+        </property>
+        <property name="group" type="dataAliasGroup">
+            <column name="dalias_group"/>
+        </property>
+
+        <subclass name="org.zfin.anatomy.AnatomySynonym" discriminator-value="Anatomy">
+            <many-to-one name="item" column="dalias_data_zdb_id" class="org.zfin.anatomy.AnatomyItem">
+            </many-to-one>
+        </subclass>
+
+        <subclass name="org.zfin.marker.MarkerAlias" discriminator-value="Gene">
+            <many-to-one name="marker" column="dalias_data_zdb_id" class="org.zfin.marker.Marker"/>
+        </subclass>
+
+    </class>
 
 </hibernate-mapping>

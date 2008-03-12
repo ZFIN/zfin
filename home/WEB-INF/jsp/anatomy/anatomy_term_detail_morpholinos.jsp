@@ -17,7 +17,7 @@
                 Phenotype
             </TD>
             <TD width="20%">
-                Data
+                Figures
             </TD>
         </TR>
         <c:if test="${!formBean.morpholinoExist}">

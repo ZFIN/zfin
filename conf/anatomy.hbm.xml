@@ -180,28 +180,6 @@
 
     </class>
 
-    <class name="org.zfin.anatomy.AnatomySynonym" table="data_alias">
-        <id name="zdbID">
-            <column name="dalias_zdb_id"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">DALIAS</param>
-                <param name="insertActiveData">true</param>
-            </generator>
-        </id>
-        <property name="name">
-            <column name="dalias_alias"/>
-        </property>
-        <property name="aliasLowerCase">
-            <column name="dalias_alias_lower"/>
-        </property>
-        <property name="group" type="dataAliasGroup">
-            <column name="dalias_group"/>
-        </property>
-        <many-to-one name="item" column="dalias_data_zdb_id" class="org.zfin.anatomy.AnatomyItem"/>
-        <filter name="noSecondaryAliasesForAO"/>
-    </class>
-
-
     <class name="org.zfin.anatomy.AnatomyTreeInfo" table="anatomy_display">
         <composite-id>
             <key-property name="zdbID" column="anatdisp_stg_zdb_id"/>
