@@ -199,9 +199,7 @@ DEBUGGING:
 <?MIBLOCK COND="$(XST,$xpatselqry_recentRecords)">
 
   <?MIVAR NAME=xpatselqry_join COND="$(AND,$(NXST,$xpatselqry_author),$(NXST,$xpatselqry_jtype))">$xpatselqry_join join publication on xpatex_source_zdb_id = zdb_id <?/MIVAR>
-  <?MIVAR NAME=xpatselqry_cond>$xpatselqry_cond and case when publication.jtype = 'Unpublished' 
-                                                    then xpatex_direct_submission_date::datetime year to day
-                                                    else pub_date::datetime year to day end > current - $xpatselqry_recentRecords units day<?/MIVAR>
+  <?MIVAR NAME=xpatselqry_cond>$xpatselqry_cond and xpatex_direct_submission_date::datetime year to day > current - $xpatselqry_recentRecords units day<?/MIVAR>
 <?/MIBLOCK>
 
 <?MICOMMENT>
