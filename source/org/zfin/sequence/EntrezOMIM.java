@@ -1,11 +1,8 @@
 package org.zfin.sequence;
 
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.Entrez;
-import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.repository.SequenceRepository;
 
 import java.io.Serializable;
 
@@ -13,8 +10,7 @@ import java.io.Serializable;
 public class EntrezOMIM implements Serializable {
 
     private Entrez entrezAccession;
-    private String  omimAccession;
-    private ReferenceDatabase refDB;
+    private String omimAccession;
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
     private String entrezAccessionNum;
 
@@ -44,20 +40,55 @@ public class EntrezOMIM implements Serializable {
     }
 
 
-
     public ReferenceDatabase getRefDB() {
-           ForeignDB omimForeignDB = sequenceRepository.getForeignDBByName("OMIM");
-           ReferenceDatabase refDB =sequenceRepository.getReferenceDatabaseByAlternateKey(
-                   omimForeignDB,
-                   ReferenceDatabase.Type.ORTHOLOGUE,
-                   ReferenceDatabase.SuperType.ORTHOLOGUE,
-                   Species.HUMAN);
-            return refDB;
-       }
-
-
-    public void setRefDB(ReferenceDatabase refDB) {
-        this.refDB = refDB;
+        ForeignDB omimForeignDB = sequenceRepository.getForeignDBByName("OMIM");
+        return sequenceRepository.getReferenceDatabaseByAlternateKey(
+                omimForeignDB,
+                ReferenceDatabase.Type.ORTHOLOGUE,
+                ReferenceDatabase.SuperType.ORTHOLOGUE,
+                Species.HUMAN);
     }
-    
+
+    public int hashCode() {
+        int num = 39;
+        if (omimAccession != null)
+            num += omimAccession.hashCode();
+        if (entrezAccessionNum != null)
+            num += entrezAccessionNum.hashCode();
+        if (entrezAccession != null)
+            num += entrezAccession.hashCode();
+        return num;
+    }
+
+    /**
+     * This method assumes that omimAccession, omimAccessionNum and entrezAccession are not null.
+     * Otherwise this method throws an exception.
+     *
+     * @param o Object
+     * @return boolean
+     */
+    public boolean equals(Object o) {
+        if (o == null)
+            return false;
+        if (!(o instanceof EntrezOMIM))
+            return false;
+        EntrezOMIM omim = (EntrezOMIM) o;
+
+        if (omimAccession == null)
+            throw new RuntimeException("omimAccession is null but should not!");
+        if (omim.omimAccession == null)
+            throw new RuntimeException("omimAccession is null but should not!");
+        if (entrezAccessionNum == null)
+            throw new RuntimeException("entrezAccessionNum is null but should not!");
+        if (omim.entrezAccessionNum == null)
+            throw new RuntimeException("entrezAccessionNum is null but should not!");
+        if (entrezAccession == null)
+            throw new RuntimeException("entrezAccession is null but should not!");
+        if (omim.entrezAccession == null)
+            throw new RuntimeException("entrezAccession is null but should not!");
+
+        return omimAccession.equals(omim.omimAccession) &&
+                (entrezAccessionNum.equals(omim.entrezAccessionNum)) &&
+                (entrezAccession.equals(omim.entrezAccession));
+    }
 }

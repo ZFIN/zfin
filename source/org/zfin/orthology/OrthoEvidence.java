@@ -52,6 +52,37 @@ public class OrthoEvidence implements Serializable {
         return sb.toString();
     }
 
+    public int hashCode() {
+        int num = 39;
+        if (orthologueZdbID != null)
+            num += orthologueZdbID.hashCode();
+        if (orthologueEvidenceCode != null)
+            num += orthologueEvidenceCode.hashCode();
+        if (publication != null)
+            num += publication.hashCode();
+        return num;
+    }
+
+    /**
+     * Assumes that orthologueZdbID, orthologueEvidenceCode and publication are not null.
+     *
+     * @param o object
+     * @return boolean
+     */
+    public boolean equals(Object o) {
+        if (o == null)
+            return false;
+
+        if (!(o instanceof OrthoEvidence))
+            return false;
+        OrthoEvidence ortho = (OrthoEvidence) o;
+
+        return orthologueZdbID.equals(ortho.orthologueZdbID) &&
+                orthologueEvidenceCode == ortho.orthologueEvidenceCode &&
+                publication.equals(ortho.publication);
+    }
+
+
     public enum Code {
         AA,
         CE,
@@ -67,8 +98,8 @@ public class OrthoEvidence implements Serializable {
         SU,
         XH;
 
-        public String toString(){
-            return name() ; 
+        public String toString() {
+            return name();
         }
 
     }
