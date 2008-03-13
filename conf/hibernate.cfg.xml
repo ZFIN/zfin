@@ -9,7 +9,7 @@
         <property name="hibernate.query.substitutions">true 't', false 'f'</property>
         <property name="dialect">org.hibernate.dialect.InformixDialect</property>
         <property name="connection.datasource">java:comp/env/jdbc/zfin</property>
-        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.show_sql">false</property>
         <property name="hibernate.format_sql">true</property>
 
 
