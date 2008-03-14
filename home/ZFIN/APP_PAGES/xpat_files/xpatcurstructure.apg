@@ -507,16 +507,16 @@ EFFECTS
       <?/MICOMMENT>
       <td onClick="increment_radio_button(document.forms['panel_structures'].elements['$xpcurstr_xpatinf_zdb_id']);">
         <?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
-          <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus">
-          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><b>$xpcurstr_anatitem_name</b></a>
-          </span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
+          <?MIVAR>
+          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><b><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></b></a>
+           ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
         <?MIELSE>
           <?MICOMMENT>
           <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
           <?/MICOMMENT>
-          <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus">
-          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")>$xpcurstr_anatitem_name</a>
-          </span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
+          <?MIVAR>
+          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></a>
+           ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
         <?/MIBLOCK>
       </td>
       <td>
