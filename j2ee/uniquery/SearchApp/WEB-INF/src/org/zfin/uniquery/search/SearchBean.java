@@ -497,7 +497,6 @@ public class SearchBean
                 // if searchResultURL starts with "/cgi-bin_hostname/",
 
                 // get rid of the hostname
-		System.out.println("searchResultURL");
 
 		//	if ( searchResultURL.indexOf("almost") == 0 ) {
 
