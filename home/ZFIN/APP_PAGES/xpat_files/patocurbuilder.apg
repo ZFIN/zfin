@@ -158,6 +158,24 @@ patoCuration.distinctPhenotypes = {
 
 </script>
 
+<script type="text/javascript" src="/javascript/control.modal.js"></script>
+<script type="text/javascript">
+// used as part of control.modal.js.  
+// Needs to be out here because functions weird if within MIVAR apg calls.
+function addcontrol(referencId){
+new Control.Modal(referencId,{
+                // hover: true,
+                // position: 'relative',
+                opacity: 0.3,
+                //offsetLeft: 20,
+                //offsetTop: -200,
+                width: 400,
+                height: 600,
+                iframe: true,
+        });
+}
+
+</script>
 
 <h3>Phenotype: </h3></a>
 
@@ -251,9 +269,10 @@ fitted
 
     <?MISQL SQL="select distinct api_zdb_id, api_entity_a_zdb_id, api_entity_b_zdb_id, api_quality_zdb_id, 
                         api_tag, get_obj_name(api_entity_a_zdb_id), get_obj_name(api_entity_b_zdb_id), 
-                        term_name, lower(get_obj_name(api_entity_a_zdb_id)) as entity_name_order
+                        term_name, lower(get_obj_name(api_entity_a_zdb_id)) as entity_name_order, anatitem_obo_id
                  from apato_infrastructure
                       join term on api_quality_zdb_id = term_zdb_id
+                    join anatomy_item on api_entity_a_zdb_id = anatitem_zdb_id
                  where api_pub_zdb_id = '$OID'
                  order by 9;">
       <?MIVAR NAME="patobldr_api_zdb_id">$1<?/MIVAR>
@@ -265,6 +284,7 @@ fitted
       <?MIVAR NAME="patobldr_entity_b_name_html">$7<?/MIVAR>
       <?MIVAR NAME="patobldr_quality_name">$8<?/MIVAR>
       <?MIVAR NAME="patobldr_radio_id">$2$3$4$5<?/MIVAR>
+      <?MIVAR NAME="patobldr_obo_id">$10<?/MIVAR>
 
       <tr <?MIBLOCK COND="$(EC,1,$(MOD,$MI_CURRENTROW,2))">class="odd"<?/MIBLOCK>>
 
@@ -278,9 +298,18 @@ fitted
                        deselectDefault(); }"> </td>
         <td onclick="rotateRadio('$patobldr_radio_id');">
           <?MIBLOCK COND="$(NE,$patobldr_entity_b_name_html,NULL)">   
-            <?MIVAR>$patobldr_entity_b_name_html<?/MIVAR>:
+            <?MIVAR>
+             <a id="$patobldr_api_zdb_id" href="/phenote/Phenote/?termId=$patobldr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$patobldr_api_zdb_id")>$patobldr_entity_b_name_html</a>
+            <?MICOMMENT>
+            $patobldr_entity_b_name_html
+            <?/MICOMMENT>
+            <?/MIVAR>:
           <?/MIBLOCK>
+             <a id="$patobldr_api_zdb_id" href="/phenote/Phenote/?termId=$patobldr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$patobldr_api_zdb_id")>$patobldr_entity_a_name_html</a>
+            <?MICOMMENT>
           $patobldr_entity_a_name_html 
+            <?/MICOMMENT>
+             <div id="$patosum_apato_zdb_id"></div>
         </td>
         <td onclick="rotateRadio('$patobldr_radio_id');">$patobldr_quality_name</td>
         <td onclick="rotateRadio('$patobldr_radio_id');">$patobldr_tag</td>

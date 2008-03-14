@@ -477,20 +477,43 @@ div.auto_complete ul strong.highlight {
   }
 
 
-    a.small-new-link:link{
+a.small-new-link:link {
     text-decoration: none;
     font-size: 75%;
     color:blue ; 
-    }
-    a.small-new-link:visited{
-    text-decoration: none;
-    font-size: 75%;
-    color:blue ; 
-    }
+}
 
-    a.small-new-link:hover{
+a.small-new-link:visited {
+    text-decoration: none;
+    font-size: 75%;
+    color:blue ; 
+}
+
+a.small-new-link:hover {
     text-decoration: none;
     font-size: 75%;
     color:green ; 
-    }
+}
+
+#modal_container {
+    padding:5px;
+    background-color:#fff;
+    border:1px solid #666;
+    overflow:auto;
+    font-family:"Lucida Grande",Verdana;
+    font-size:12px;
+    color:#333;
+    text-align:left;
+}
+
+#modal_container.test {
+    background-color:#900;
+    color:#fff;
+    padding:30px;
+    text-align:center
+}
+
+#modal_overlay {
+    background-color:#000;
+}
 

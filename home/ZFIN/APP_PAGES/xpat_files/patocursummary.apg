@@ -30,6 +30,12 @@ PREFIX:   patosum_
 
 <?/MIERROR> 
 
+<?MICOMMENT>
+Control.modal needs specific css calls.  If used other places, should be added to css file.
+<?/MICOMMENT>
+
+
+
 <?MIBLOCK COND="$(XST,$OID)">
 
 
@@ -132,7 +138,6 @@ PREFIX:   patosum_
 
 <h3>Mutants:</h3>
 
-<a name="mutants"></a>
 
 <?MIVAR>
 
@@ -314,11 +319,13 @@ fitted
          <small>
           <?MISQL SQL="select distinct apato_entity_a_zdb_id, get_obj_name(apato_entity_a_zdb_id), 
                                        apato_entity_b_zdb_id, get_obj_name(apato_entity_b_zdb_id),
-                                       apato_quality_zdb_id, term_name, apato_tag, apato_zdb_id
+                                       apato_quality_zdb_id, term_name, apato_tag, apato_zdb_id,
+                                       anatitem_obo_id
                        from atomic_phenotype
                             join term on term_zdb_id = apato_quality_zdb_id
                             join apato_figure on apatofig_apato_zdb_id = apato_zdb_id
                             join genotype_experiment on apato_genox_zdb_id = genox_zdb_id
+                            join anatomy_item on apato_entity_a_zdb_id = anatitem_zdb_id
                        where apatofig_fig_zdb_id = '$patosum_fig_zdb_id'
                          and genox_geno_zdb_id = '$patosum_geno_zdb_id'
                          and genox_exp_zdb_id = '$patosum_exp_zdb_id'
@@ -334,6 +341,7 @@ fitted
              <?MIVAR    NAME="$patosum_quality_name">$6<?/MIVAR>
              <?MIVAR             NAME="$patosum_tag">$7<?/MIVAR>
              <?MIVAR    NAME="$patosum_apato_zdb_id">$8<?/MIVAR>
+             <?MIVAR    NAME="$anatitem_obo_id">$9<?/MIVAR>
             
              <?MIVAR NAME="$patosum_pheno_key">$patosum_entity_a_zdb_id$patosum_entity_b_zdb_id$patosum_quality_zdb_id$patosum_tag<?/MIVAR>
              
@@ -341,7 +349,7 @@ fitted
             <?MIBLOCK COND="$(NE,$patosum_entity_b_zdb_id,NULL)">
                <?MIVAR>$patosum_entity_b_name<?/MIVAR>:
              <?/MIBLOCK> 
-             $patosum_entity_a_name
+              $patosum_entity_a_name
              - $patosum_quality_name [$patosum_tag] <br>
              <script type="text/javascript">
                patoCuration.mutants[$(-,$patosum_recordIndex,1)].phenotypes[$(-,$MI_CURRENTROW,1)] = "$patosum_pheno_key";

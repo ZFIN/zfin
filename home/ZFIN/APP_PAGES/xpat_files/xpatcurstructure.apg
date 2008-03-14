@@ -60,7 +60,24 @@ EFFECTS
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
+<script type="text/javascript" src="/javascript/control.modal.js"></script>
   <script type="text/javascript" language="javascript">
+
+
+  // used as part of control.modal.js.  
+  // Needs to be out here because functions weird if within MIVAR apg calls.
+  function addcontrol(referencId){
+    new Control.Modal(referencId,{
+           //     hover: true,
+           //     position: 'relative',
+                opacity: 0.3,
+                // offsetLeft: 20,
+                //offsetTop: -200,
+                width: 400,
+                height: 600,
+                iframe: true,
+            });
+  }
 
     function updateInnerHTML(element_id,html_to_display) {
         var c1 = document.getElementById(element_id);
@@ -440,7 +457,8 @@ EFFECTS
              else anatitem_name
            end,
            xpatinf_expressed, anatitem_name_order, xpatinf_zdb_id, 
-           s1.stg_abbrev, s2.stg_abbrev 
+           s1.stg_abbrev, s2.stg_abbrev, 
+           anatitem_obo_id
     from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2
     where xpatinf_anatitem_zdb_id = anatitem_zdb_id
       and xpatinf_pub_zdb_id = '$OID'
@@ -455,6 +473,8 @@ EFFECTS
     <?MIVAR NAME=xpcurstr_xpatinf_zdb_minus>$(REPLACE,$5,"-","")<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_start_stg_name>$6<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_end_stg_name>$7<?/MIVAR>
+    <?MIVAR NAME=$xpcurstr_obo_id>$8<?/MIVAR>
+    <?MIVAR NAME=$row_id>$5<?/MIVAR>
     <?MIVAR>
 
     <tr bgcolor="$xpcurstr_row_color" 
@@ -481,12 +501,22 @@ EFFECTS
       </td>
       
       <td align=center onClick="increment_radio_button(document.forms['panel_structures'].elements['$xpcurstr_xpatinf_zdb_id']);"> $(IF,$(EC,$xpcurstr_expression_found,t),,<font color=red>not</font>) </td>
-      
+     
+      <?MICOMMENT>
+      *** Structure ***
+      <?/MICOMMENT>
       <td onClick="increment_radio_button(document.forms['panel_structures'].elements['$xpcurstr_xpatinf_zdb_id']);">
         <?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
-          <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus"><b>$xpcurstr_anatitem_name</b></span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
+          <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus">
+          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><b>$xpcurstr_anatitem_name</b></a>
+          </span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
         <?MIELSE>
+          <?MICOMMENT>
           <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
+          <?/MICOMMENT>
+          <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus">
+          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")>$xpcurstr_anatitem_name</a>
+          </span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
         <?/MIBLOCK>
       </td>
       <td>
