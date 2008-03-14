@@ -1,4 +1,4 @@
-#! /local/bin/perl
+#! /private/bin/perl
 
 
 open (CUT, "cut -f 1,2 loc2UG |") or die "cut loc2UG failed";

@@ -1,4 +1,4 @@
-#! /local/bin/perl
+#! /private/bin/perl
 
 system("parseLLintoUNL.pl");
 system("parseloc2UG.pl");

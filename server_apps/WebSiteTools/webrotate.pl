@@ -1,12 +1,12 @@
-#!/local/bin/perl
+#!/private/bin/perl
 #
 # Hacked up web log rotate script by Clif Cox 11/30/98
 # 2001/01/02, clements.  Modified to use httpd in new location.
 #
 
 #	Files
-$prefix		=	"/private/httpd";
-$logs		=	"$prefix/logs/zfin.org";
+$prefix		=	"/private/apps/apache";
+$logs		=	"$prefix/logs/zfin_";
 $old_dir	=	"old";
 $pidfile	=	"$prefix/logs/httpd.pid";
 $DOMLU		=	"<!--|ROOT_PATH|-->/server_apps/WebSiteTools/domainlookup.pl";

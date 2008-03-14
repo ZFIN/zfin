@@ -1,4 +1,4 @@
-#! /local/bin/perl
+#! /private/bin/perl
 
 
 open (CUT, "cut -f 1,2,3,4,5,6 gene_info |") or die "cut LL.out_dr failed";

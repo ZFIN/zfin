@@ -1,4 +1,4 @@
-#!/local/bin/perl 
+#!/private/bin/perl 
 
 # FILE: loadgo.pl
 # PREFIX: lgo_ (none added as of Feb. 2005)

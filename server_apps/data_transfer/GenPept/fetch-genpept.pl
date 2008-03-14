@@ -1,4 +1,4 @@
-#! /local/bin/perl
+#! /private/bin/perl
 
 use Socket;
 init();

@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -w
+#!/private/bin/perl -w
 #
 # user_comments.cgi
 #
@@ -50,7 +50,7 @@ if ($email eq 'Unknown') {$email=''};
 
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP";
-To: curators\@zfin.org
+To: <!--|CURATORS_AT_ZFIN|-->
 From: $email
 Subject: $data{subject}
 
@@ -71,7 +71,7 @@ close(MAIL) || die "pipe exited $?";
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP1";
 To: $email
-From: curators\@zfin.org
+From: <!--|CURATORS_AT_ZFIN|-->
 Subject: ZFIN Thanks You For Your Input
 
 

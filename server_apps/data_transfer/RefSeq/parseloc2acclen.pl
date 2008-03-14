@@ -1,4 +1,4 @@
-#! /local/bin/perl
+#! /private/bin/perl
 
 
 open (FILE_nM, "zebrafish.gbff") or die "open z.gbff failed";

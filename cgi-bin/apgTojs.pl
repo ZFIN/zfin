@@ -1,4 +1,4 @@
-#! /local/bin/perl
+#! /private/bin/perl
 
 # This files translates an .apg page into a comperable .js file. All Datablade
 # tags and coding are removed. Datablade tags must be at the start of lines

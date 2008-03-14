@@ -1,4 +1,4 @@
-#!/local/bin/perl 
+#!/private/bin/perl 
 #  Script to create zebrafish library load file.
 #  delimiter = |
 

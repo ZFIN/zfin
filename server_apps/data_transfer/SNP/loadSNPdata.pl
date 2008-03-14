@@ -28,8 +28,8 @@ $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $ENV{"DATABASE"}="<!--|DB_NAME|-->";
 
-system("/local/bin/perl snp.pl") and &emailError("Unable to download or sth wrong with initial parsing.");
-system("/local/bin/perl sortSNPs.pl") and &emailError("sth wrong with initial parsing.");
+system("/private/bin/perl snp.pl") and &emailError("Unable to download or sth wrong with initial parsing.");
+system("/private/bin/perl sortSNPs.pl") and &emailError("sth wrong with initial parsing.");
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DATABASE'} loadSNPs.sql >out 2> errReport.txt") and &emailError("Failed to load SNP data");
 print "SNP data loaded\n";
 

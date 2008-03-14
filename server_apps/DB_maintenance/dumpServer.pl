@@ -1,4 +1,4 @@
-#!/local/bin/perl -s
+#!/private/bin/perl -s
 #
 # Does an Informix dump of the database.  ZFIN typically runs this once a
 # night.  The dump produced by this script can be used in conjunction with

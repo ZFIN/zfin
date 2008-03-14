@@ -1,4 +1,4 @@
-#! /local/bin/perl
+#! /private/bin/perl
 
 
 open (CUT, "cut -f 1,9 LL.out_mm |") or die "cut LL.out_mm failed";

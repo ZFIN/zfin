@@ -1,4 +1,4 @@
-#! /local/bin/perl
+#! /private/bin/perl
 #	This perl utility processes the web log files on the command line,
 #	and attempts to lookup the domain names for all the IP addresses in
 #	the logs. An associative array is kept to speed things up.

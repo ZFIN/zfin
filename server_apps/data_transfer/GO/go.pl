@@ -1,6 +1,5 @@
 #!/private/bin/perl 
 #
-# have to use /local/bin/perl for MIME::Lite module
 #
 #  This script creates a file that ZFIN sends to Stanford. The file is tab 
 #  delimitted with 14 columns, each GO term/gene association on a seperate  

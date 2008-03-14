@@ -1,4 +1,4 @@
-#!/local/bin/perl
+#!/private/bin/perl
 
 # FILE: parseGOobo.pl
 # PREFIX: none

@@ -63,11 +63,11 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DATABASE'} unloadOrthoData.sql") 
 print "\nUnloading fly and yeast orthology data from ZFIN orthologue table is done.\n";
 
 # excecute the Perl scripts to do parsing and prepare .unl files for updating orthologue table
-system("/local/bin/perl parseMGIdata.pl") and &emailError("Can not parse MGI data file");
+system("/private/bin/perl parseMGIdata.pl") and &emailError("Can not parse MGI data file");
 print "\nParsing MGI data file is done.\n";
-system("/local/bin/perl parseFlyBaseData.pl") and &emailError("Can not parse FlyBase data file");
+system("/private/bin/perl parseFlyBaseData.pl") and &emailError("Can not parse FlyBase data file");
 print "\nParsing FlyBase data file is done.\n";
-system("/local/bin/perl parseSGDdata.pl") and &emailError("Can not parse SGD data file");
+system("/private/bin/perl parseSGDdata.pl") and &emailError("Can not parse SGD data file");
 print "Parsing SGD data file is done.\n";
 
 # update orthologue table with the chromosome info

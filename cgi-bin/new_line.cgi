@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -w
+#!/private/bin/perl -w
 #
 # user_comments.cgi
 #
@@ -47,7 +47,7 @@ if ($email eq 'Unknown') {$email=''};
 
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP";
-To: van_slyke\@uoneuro.uoregon.edu
+To: <!--|NOMEN_COORDINATOR|-->
 From: $email
 Subject: Mutant Submission: $data{lab_desig_1} $data{lab_desig_2} $data{lad_desig_3}
 
@@ -78,7 +78,7 @@ close(MAIL) || die "pipe exited $?";
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP1";
 To: $email
-From: van_slyke\@uoneuro.uoregon.edu
+From: <!--|NOMEN_COORDINATOR|-->
 Subject: Thank You For Your Submission
 
 
