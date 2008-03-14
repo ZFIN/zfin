@@ -110,18 +110,21 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      * 3) Case insensitive in both cases
      *
      * @param searchString string
+     * @param includeObsoletes include obsolete terms
      * @return list of anatomy terms
      */
     @SuppressWarnings("unchecked")
-    public List<AnatomyItem> getAnatomyItemsByName(String searchString) {
+    public List<AnatomyItem> getAnatomyItemsByName(String searchString, boolean includeObsoletes) {
         Session session = HibernateUtil.currentSession();
         String hql = "select term from AnatomyItem term  " +
                 "where  " +
                 "   (term.lowerCaseName like :name or exists (from AnatomySynonym syn where syn.item = term " +
-                "                                           and syn.aliasLowerCase like :name )) " +
-                "order by term.name";
+                "                                           and syn.aliasLowerCase like :name )) "+
+                " AND obsolete = :obsolete " +
+                " order by term.name";
         Query query = session.createQuery(hql);
         query.setString("name", "%" + searchString.toLowerCase() + "%");
+        query.setBoolean("obsolete", includeObsoletes);
         List<AnatomyItem> items = query.list();
 
         if (items != null) {

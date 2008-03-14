@@ -33,7 +33,7 @@ public class MockAnatomyRepository implements AnatomyRepository {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public List<AnatomyItem> getAnatomyItemsByName(String searchString) {
+    public List<AnatomyItem> getAnatomyItemsByName(String searchString, boolean includeObsoletes) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

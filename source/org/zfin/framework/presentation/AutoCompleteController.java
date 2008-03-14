@@ -47,7 +47,7 @@ public class AutoCompleteController extends MultiActionController {
         
         AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
 
-        List<AnatomyItem> anatomyTerms = ar.getAnatomyItemsByName(query);
+        List<AnatomyItem> anatomyTerms = ar.getAnatomyItemsByName(query, false);
         Collections.sort(anatomyTerms, new SortAnatomySearchTerm(query));
 
         LOG.info("anatomy terms, query: '"

@@ -13,7 +13,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.Morpholino;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -98,7 +97,7 @@ public class AnatomyRepositoryTest {
     public void getAnatomyTermsSearchResult(){
         String searchTerm = "bra";
 
-        List<AnatomyItem> terms = aoRepository.getAnatomyItemsByName(searchTerm);
+        List<AnatomyItem> terms = aoRepository.getAnatomyItemsByName(searchTerm, true);
         assertNotNull(terms);
     }
 

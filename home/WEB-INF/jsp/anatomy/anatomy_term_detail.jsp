@@ -41,6 +41,7 @@
             <FONT SIZE=+1><STRONG>
                 ${formBean.anatomyItem.name}
             </STRONG></FONT>
+            <c:if test="${formBean.anatomyItem.obsolete}"><span style="color:red">(obsolete)</span> </c:if>
         </td>
     </tr>
     <c:if test="${formBean.anatomyItem.synonyms != null  }">

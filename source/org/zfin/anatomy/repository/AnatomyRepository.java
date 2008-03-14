@@ -64,9 +64,10 @@ public interface AnatomyRepository extends CachedRepository {
      * 3) Case insensitive in both cases
      *  
      * @param searchString string
+     * @param includeObsoletes include obsolete terms
      * @return list of anatomy terms
      */
-    List<AnatomyItem> getAnatomyItemsByName(String searchString);
+    List<AnatomyItem> getAnatomyItemsByName(String searchString, boolean includeObsoletes);
     /**
      * Retrieves the statistics for all anatomy items.
      * See the BO for more info.
