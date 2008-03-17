@@ -176,6 +176,17 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+
+    <servlet>
+        <servlet-name>AnatomyLookupService</servlet-name>
+        <servlet-class>org.zfin.anatomy.presentation.server.AnatomyLookupServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AnatomyLookupService</servlet-name>
+        <url-pattern>/ajax/anatomylookup</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>zfin</servlet-name>
         <url-pattern>/SearchApp/*</url-pattern>

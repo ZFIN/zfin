@@ -77,7 +77,7 @@
 
     <bean id="zfinMailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender">
         <property name="mailHost">
-            <value>mailhost.cs.uoreogn.edu"</value>
+            <value>mailhost.cs.uoregon.edu"</value>
         </property>
         <property name="mailSender"><ref bean="mailSender"/></property>
     </bean>

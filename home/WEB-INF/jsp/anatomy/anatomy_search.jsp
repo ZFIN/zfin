@@ -1,8 +1,6 @@
 <%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<script language="JavaScript" type="text/javascript" src="/autosuggest.js">
-</script>
 <script src="/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
 <script src="/javascript/ajax-lib/effects.js" type="text/javascript"></script>
 <script src="/javascript/ajax-lib/dragdrop.js" type="text/javascript"></script>
@@ -26,6 +24,8 @@
 
 <form:form method="GET" action="/action/anatomy/search" commandName="formBean" name="formBean">
 
+
+
 <input type="hidden" name="action" value="<%= AnatomySearchBean.Action.TERM_SEARCH.toString() %>">
 <TABLE width=100%>
     <TR>
@@ -46,16 +46,11 @@
                 <TR bgcolor="">
                     <TD width=45%>
                         <label for="searchTerm" class="indented-label">Anatomical Term</label><br>
-                        <form:input autocomplete="off" path="searchTerm" size="30" id="searchTerm"/>
-                        <div style="overflow: auto; height: 200px; width: 400px; " class="auto_complete"
-                             id="anatomyTermAutoComplete">
-                            <script type="text/javascript">
-                                new Ajax.Autocompleter('searchTerm', 'anatomyTermAutoComplete', '/action/autocomplete/anatomy-term', {paramName: "query", minChars: 1});
-                            </script>
-                        </div>
-                        <input type="button" value="Search"
-                               onclick="document.formBean.action.value='<%= AnatomySearchBean.Action.TERM_SEARCH.toString() %>';
-						                                             document.formBean.submit();"/>
+
+
+                        <script language="javascript" src="/gwt/org.zfin.anatomy.presentation.AnatomyLookup/org.zfin.anatomy.presentation.AnatomyLookup.nocache.js"></script>
+                        <div id="anatomyTerm"></div>
+                        <%--<input type="button" value="Search" onclick="document.formBean.action.value='<%= AnatomySearchBean.Action.TERM_SEARCH.toString() %>'; document.formBean.submit();"/>--%>
                     </TD>
                     <TD width=10%>
                         <b>or</b>
@@ -152,3 +147,7 @@
     </TABLE>
 </c:if>
 </form:form>
+
+
+
+

@@ -31,7 +31,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/sysexecs
 
-SUBDIRS = encryptpass image_stats make_thumbnail unix_commands
+SUBDIRS = image_stats make_thumbnail unix_commands
 
 # There are no local targets
 

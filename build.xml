@@ -8,6 +8,7 @@
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="web.conf" value="${web-inf.dir}/conf"/>
     <property name="lib" value="${basedir}/lib/Java"/>
+    <property name="gwt.lib" value="${lib}/gwt"/>
     <property name="doi.dir" value="${basedir}/server_apps/data_transfer/DOI"/>
     <!-- path to servlet jar file -->
     <property name="servlet.jar" value="${lib}/servlet-api-2.4.jar"/>
@@ -23,6 +24,7 @@
 
     <!-- The destination directory for all the compiled classes. -->
     <property name="home.target" value="${env.TARGETROOT}/home"/>
+    <property name="gwt.target" value="${home.target}/gwt"/>
     <property name="web-inf.target" value="${home.target}/WEB-INF"/>
     <property name="classes.target" value="${web-inf.target}/classes"/>
     <property name="jsp-src.target" value="${web-inf.target}/jsp-src"/>
@@ -44,6 +46,9 @@
             <include name="*.zip"/>
         </fileset>
         <fileset dir="${lib}/jaxws">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${gwt.lib}">
             <include name="*.jar"/>
         </fileset>
         <fileset dir="${env.CATALINA_HOME}/common/lib">
@@ -107,6 +112,38 @@
         </condition>
     </target>
 
+    <target name="gwt" description="Compile gwt classes to javascript" depends="compile">
+      <java fork="true" className="com.google.gwt.dev.GWTCompiler" classpathref="extended.classpath">
+          <classpath>
+              <dirset dir="${source.dir}" defaultexcludes="true">
+                <include name="**"/>
+                  <exclude name="**/CVS"/>
+              </dirset>
+              <!--<fileset dir="${source.dir}">-->
+                  <!--<include name="**/**"/>-->
+              <!--</fileset>-->
+              <!--<pathelement path="${source.dir}" def>-->
+              <!--</pathelement>-->
+          </classpath>
+            <arg value="-out"/>
+            <arg value="${gwt.target}"/>
+            <arg value="org.zfin.anatomy.presentation.AnatomyLookup"/>
+                <!-- <arg value="add additional classes"/> -->
+            <jvmarg value="-Xms256m"  />
+            <jvmarg value="-Xmx512m"  />
+        </java>
+
+        <!-- 
+        <move todir="${home.target}">
+            <fileset dir="${gwt.target}">
+                <include name="**"/>
+            </fileset>
+        </move>
+        -->
+
+    </target>
+
+
     <target name="usage">
         <echo>
             TARGETS
@@ -121,6 +158,7 @@
             clean-all: Cleans all targets
             compile: Compile WEB-INF target only
             compile-all: Compile all targets
+            gwt: Compile gwt targets
             echoProps: Print out all java properties
             jversion: Print out the used JVM
             javadocs: Create JavaDoc for ZFIN API
@@ -205,7 +243,14 @@
             description="Target to compile all classes, excluding jsp files."/>
 
     <target name="compile" depends="prepare"
-            description="Target to compile all classes, excluding test files and jsp files.">
+            description="Target to compile all classes, excluding test files, and moving anything from the source
+            folder to the class folder.">
+        <copy  todir="${classbin.dir}">
+            <fileset dir="${source.dir}">
+            <include name="**/*.xml"/>
+            <exclude name="**/CVS/"/>
+            </fileset>
+        </copy>
         <javac srcdir="source"
                destdir="${classbin.dir}"
                classpathref="extended.classpath"
@@ -467,7 +512,7 @@
     <target name="install" depends="deploy"
             description="Same as deploy."/>
 
-    <target name="deploy" depends="do,prepareDeploy"
+    <target name="deploy" depends="do,prepareDeploy,gwt"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <copy todir="${env.TARGETROOT}/lib/Java/jaxws">
             <fileset dir="${lib}/jaxws">
@@ -531,6 +576,7 @@
             <fileset dir="${basedir}">
                 <include name="home/WEB-INF/web.xml"/>
                 <include name="home/WEB-INF/**/*.jsp"/>
+                <include name="${source.dir}/**/*.gwt.xml"/>
                 <include name="home/index-java.html"/>
                 <exclude name="**/CVS/"/>
             </fileset>

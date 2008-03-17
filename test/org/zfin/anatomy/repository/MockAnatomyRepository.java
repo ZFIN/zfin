@@ -37,6 +37,15 @@ public class MockAnatomyRepository implements AnatomyRepository {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @SuppressWarnings("unchecked")
+    public List<AnatomyItem> getAnatomyItemsByName(String searchString, int limit) {
+        if(limit<=0){
+            return getAnatomyItemsByName(searchString,false) ;
+        }
+        return null ; 
+    }
+
+
     public List<AnatomyStatistics> getAllAnatomyItemStatistics() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
