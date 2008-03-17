@@ -244,13 +244,22 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
   <?/MIVAR>
 <?/MIBLOCK>
 
+<?MICOMMENT>
+**take this away b/c broken with apache2
+**will replace with image upload functionality from FX/PATO.
 <?MIVAR COND="$(XST,$UPDATE)">
 <br><INPUT TYPE=button value=Update onClick="doit('snapshot','pic')">
+<?/MIVAR>
+<?/MICOMMENT>
+
+<?MIVAR COND="$(XST,$UPDATE)">
+<br>
+If you would like to change the image on this page, <br>
+please email your .jpg or .gif file to: <a href="mailto:zfinadmn@zfin.org">Jonathan Knight</a><br><br>
 <?/MIVAR>
 </TD> 
 </TR>
 </TABLE>
-
 <hr>
 
 <TABLE  width=100%>

@@ -73,6 +73,9 @@ modified to support I.E.  call to location.replace replaced with location.href
     *** IMAGE FIELD, THEN ACT ACCORDINGLY
   <?/MICOMMENT>
 
+<?MICOMMENT>
+** disable this feature b/c broken with apache2 
+** instead, send email to zfinadmn@zfin.org
   <?MIBLOCK COND="$(EC,$attr_type,pic)">
     <?MISQL COND="$(NXST,$null_image)" SQL="
       update person
@@ -86,7 +89,7 @@ modified to support I.E.  call to location.replace replaced with location.href
         where zdb_id='$OID';">
     <?/MISQL>
   <?/MIBLOCK> <?MICOMMENT> *** ends if its an image *** <?/MICOMMENT>
-
+<?/MICOMMENT>
 
   <?MIVAR COND="$(EC,$attr_type,subscription)" NAME=$new_value>$(IF,$(EC,$old_value,f),t,f)<?/MIVAR>
 

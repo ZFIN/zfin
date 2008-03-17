@@ -48,6 +48,8 @@ print_name -- The human-understandable name (vs. the database column name) of
     <TABLE width=100%>
     <TR>
 
+<?MICOMMENT>
+**disable b/c broken with apache2, replace with image-upload like FX/PATO
     <!-- If youre replacing the companys snapshot -->
     <?MIBLOCK COND="$(EC,$attr_type,pic)">
       <TD valign=middle><b>Current Snapshot:</B></TD>
@@ -72,6 +74,7 @@ print_name -- The human-understandable name (vs. the database column name) of
 	Or check here (<input type=checkbox name=null_image>) to simply delete the current image without submitting a replacement.
 	</TD>
       <?/MIVAR>
+<?/MICOMMENT>
 
     <?/MIBLOCK>
 

@@ -39,7 +39,9 @@ attr_type -- the type of attr being updated. Either 'text','textarea','pic' or '
 <FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post ENCTYPE="multipart/form-data">
 
 
-
+<?MICOMMENT>
+**disable b/c broken with apache2
+**
 <!-- If youre replacing the persons snapshot -->
 <?MIBLOCK COND="$(EC,$attr_type,pic)">
 <TABLE width=100%>
@@ -54,6 +56,7 @@ No image currently specified.
 <?/MIVAR>
 </TD></TR>
 </TABLE>
+<?/MICOMMENT>
 
 <hr>
 <big>Select a new image</big>
@@ -75,6 +78,7 @@ Or check here (<input type=checkbox name=null_image>) to simply delete the curre
 
 </TABLE>
 <?/MIBLOCK>
+<?/MICOMMENT>
 
 <!-- If you are replacing a TEXTAREA field -->
 <?MIBLOCK COND="$(EC,$attr_type,textarea)">
