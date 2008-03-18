@@ -790,41 +790,15 @@
         </taskdef>
         <jasper2 validateXml="false"
                  uriroot="${home.target}"
-                 outputDir="${jsp-src.target}"
+                 outputDir="${domain-work}"
                  classpath="${jspc.classpath}"
                  failOnError="false"
-                 verbose="0"
+                 verbose="1"
                  listErrors="true"
-                 compile="false"
+                 compile="true"
                  compilerSourceVM="1.5"
                  compilerTargetVM="1.5"
                 />
-        <mkdir dir="${domain-work}"/>
-        <javac destdir="${domain-work}"
-               failonerror="false"
-               srcdir="${jsp-src.target}"
-               classpathref="extended.classpath"
-               nowarn="true"
-                >
-            <classpath>
-                <pathelement path="${extended.classpath}"/>
-                <pathelement location="${classes.target}"/>
-                <pathelement location="${tomcat.home}/common/classes"/>
-                <fileset dir="${env.CATALINA_HOME}/common/lib">
-                    <include name="*.jar"/>
-                </fileset>
-                <pathelement location="${tomcat.home}/server/classes"/>
-                <fileset dir="${env.CATALINA_HOME}/server/lib">
-                    <include name="*.jar"/>
-                </fileset>
-                <fileset dir="${env.CATALINA_HOME}/bin">
-                    <include name="*.jar"/>
-                </fileset>
-            </classpath>
-            <include name="**"/>
-            <exclude name="tags/**"/>
-        </javac>
-
     </target>
 
 
