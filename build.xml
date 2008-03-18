@@ -60,6 +60,9 @@
     <!-- where all of the static xml data files are -->
     <property name="conf.dir" value="${basedir}/conf"/>
 
+    <!-- directory of the hibernate configuration files. -->
+    <property name="hibernate.conf.dir" value="${basedir}/source/org/zfin"/>
+
     <!-- JVM args for all forked processes relating to unit tests -->
     <property name="junit.jvmargs" value="-Xmx128m"/>
 
@@ -214,7 +217,7 @@
         <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/log4j.xml" todir="${classbin.dir}" failonerror="false"/>
         <copy todir="${classbin.dir}/org/zfin">
-            <fileset dir="${conf.dir}">
+            <fileset dir="${hibernate.conf.dir}">
                 <include name="*.hbm.xml"/>
             </fileset>
         </copy>
