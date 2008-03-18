@@ -309,7 +309,9 @@ fitted
             <?MICOMMENT>
           $patobldr_entity_a_name_html 
             <?/MICOMMENT>
+             <?MIBLOCK COND="$(XST,$patosum_apato_zdb_id)">
              <div id="$patosum_apato_zdb_id"></div>
+              <?/MIBLOCK>
         </td>
         <td onclick="rotateRadio('$patobldr_radio_id');">$patobldr_quality_name</td>
         <td onclick="rotateRadio('$patobldr_radio_id');">$patobldr_tag</td>
