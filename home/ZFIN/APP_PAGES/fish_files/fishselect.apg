@@ -1538,9 +1538,12 @@ Message: $MI_ERRORMSG
 	        <DIV id="autosuggest"><ul></ul></DIV>
                 <script>
 		  var agt = navigator.userAgent;
-                  var is_safari = ((agt.indexOf('Safari')!=-1)&&(agt.indexOf('Mac')!=-1))? 1 : 0 ;
-		  if (is_safari == 0 ) 
+          var is_safari2 = ((agt.indexOf('Safari/4')!=-1))? 1 : 0 ;
+		  if (is_safari2 == 1 ) 
 		  {
+              alert("Anatomy lookup not supported for Safari 2.  Please upgrade to Safari 3 or use Firefox.") ; 
+          }
+          else{
 		    <?MIVAR>
 		    var anatomyList = new Array($fsel_anatList);
 		    <?/MIVAR>
