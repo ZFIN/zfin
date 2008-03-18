@@ -46,8 +46,7 @@
                 <TR bgcolor="">
                     <TD width=45%>
                         <label for="searchTerm" class="indented-label">Anatomical Term</label><br>
-
-
+                        <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.anatomy.presentation.AnatomyLookup/AnatomyLookup.css"/>
                         <script language="javascript" src="/gwt/org.zfin.anatomy.presentation.AnatomyLookup/org.zfin.anatomy.presentation.AnatomyLookup.nocache.js"></script>
                         <div id="anatomyTerm"></div>
                         <%--<input type="button" value="Search" onclick="document.formBean.action.value='<%= AnatomySearchBean.Action.TERM_SEARCH.toString() %>'; document.formBean.submit();"/>--%>

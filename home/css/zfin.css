@@ -495,28 +495,6 @@ a.small-new-link:hover {
     color:green ; 
 }
 
-.gwt-SuggestBox { 
-   border: 1x solid #666; 
-   text-align: left; 
-}
-
-.gwt-SuggestBoxPopup {
-  border: 1px solid black;
-  background-color: white;
-  overflow: auto; height: 400px;
-}
-
-.gwt-SuggestBoxPopup .item {
-  padding: 2px;
-  font-size:0.9em;
-  margin:0pt;
-}
-
-.gwt-SuggestBoxPopup .item-selected {
-  background-color: #FFFFBB;
-  padding: 2px;
-}
-
 
 #modal_container {
     padding:5px;
