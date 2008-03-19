@@ -1,34 +1,25 @@
 package org.zfin.anatomy.presentation.client;
 
 import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  */
 public class ItemSuggestOracle extends SuggestOracle {
-       public boolean isDisplayStringHTML() { return true; }
+    private CallbackTimer timer = new CallbackTimer() ;
+    private final int DEFAULT_DELAY_TIME = 200 ;
+    private int delayTime = DEFAULT_DELAY_TIME ;
 
-    public void requestSuggestions(SuggestOracle.Request req,
-SuggestOracle.Callback callback) {
-        ItemSuggestCallback itemSuggestCallback = new ItemSuggestCallback(req,callback) ; 
-        AnatomyLookupService.App.getInstance().getSuggestions(req, itemSuggestCallback );
+    public boolean isDisplayStringHTML() { return true; }
+
+    public void requestSuggestions(SuggestOracle.Request req, SuggestOracle.Callback callback) {
+        timer.scheduleCallback(req,callback,delayTime);
     }
 
-    class ItemSuggestCallback implements AsyncCallback {
-        private SuggestOracle.Request request;
-        private SuggestOracle.Callback callback;
+    public int getDelayTime() {
+        return delayTime;
+    }
 
-        public ItemSuggestCallback(SuggestOracle.Request req, SuggestOracle.Callback call) {
-            request = req;
-            callback = call;
-        }
-
-        public void onFailure(Throwable error) {
-            callback.onSuggestionsReady(request, new SuggestOracle.Response());
-        }
-
-        public void onSuccess(Object retValue) {
-            callback.onSuggestionsReady(request, (SuggestOracle.Response)retValue);
-        }
+    public void setDelayTime(int delayTime) {
+        this.delayTime = delayTime;
     }
 }
