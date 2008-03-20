@@ -1,0 +1,296 @@
+1: AL662861
+Zebrafish DNA sequence from clone RP71-1H5, complete sequence
+gi|23953925|emb|AL662861.9|[23953925]
+
+2: BX511217
+Danio rerio clone RP71-30M8, WORKING DRAFT SEQUENCE, 2 unordered pieces
+gi|55467295|emb|BX511217.13|[55467295]
+
+3: AL954721
+Zebrafish DNA sequence from clone BUSM1-119J18 in linkage group 20 Contains a novel gene for a protein with helix-loop-helix DNA-binding domain, a novel gene similar to rat KIDINS220 (kinase D-interacting substance of 220 kDa) and two CpG islands, complete sequence
+gi|28372079|emb|AL954721.4|[28372079]
+
+4: AL672009
+Zebrafish DNA sequence from clone BUSM1-137H13 in linkage group 1, complete sequence
+gi|29825607|emb|AL672009.19|[29825607]
+
+5: AL672139
+Zebrafish DNA sequence from clone XX-198H22, complete sequence
+gi|20069487|emb|AL672139.6|[20069487]
+
+6: AL928945
+Zebrafish DNA sequence from clone BUSM1-203G9 in linkage group 1, complete sequence
+gi|25167318|emb|AL928945.5|[25167318]
+
+7: AL591596
+Zebrafish DNA sequence from clone XX-205M23, complete sequence
+gi|16973943|emb|AL591596.5|[16973943]
+
+8: AL591388
+Zebrafish DNA sequence from clone BUSM1-255P14 in linkage group 7, complete sequence
+gi|30314919|emb|AL591388.9|[30314919]
+
+9: AL928815
+Zebrafish DNA sequence from clone BUSM1-257N2 in linkage group 2, complete sequence
+gi|38568118|emb|AL928815.15|[38568118]
+
+10: AL672171
+Zebrafish DNA sequence from clone BUSM1-270G24 in linkage group 3 Contains a CpG island, complete sequence
+gi|22552831|emb|AL672171.8|[22552831]
+
+11: AL929169
+Zebrafish DNA sequence from clone BUSM1-30C14 in linkage group 1, complete sequence
+gi|28300532|emb|AL929169.7|[28300532]
+
+12: AL592077
+Zebrafish DNA sequence from clone XX-DZ35C18, complete sequence
+gi|18135082|emb|AL592077.8|[18135082]
+
+14: AL672058
+Zebrafish DNA sequence from clone BUSM1-47J20 in linkage group 1, complete sequence
+gi|20975484|emb|AL672058.5|[20975484]
+
+15: AL672016
+Zebrafish DNA sequence from clone BUSM1-63M10 in linkage group 1 Contains three novel genes for MHC class I antigens, a novel gene similar to human C21orf18 (chromosome 21 open reading frame 18) and a novel gene similar to human CRYZL1 (crystallin, zeta (quinone reductase)-like 1), complete sequence
+gi|29824799|emb|AL672016.11|[29824799]
+
+16: AL606481
+Zebrafish DNA sequence from clone BUSM1-99M4 Contains a novel gene for a protein with an immunoglobulin domain, complete sequence
+gi|24415617|emb|AL606481.8|[24415617]
+
+17: BX248494
+Zebrafish DNA sequence from clone XXyac-67H7_L, complete sequence
+gi|51035960|emb|BX248494.25|[51035960]
+
+18: BX942840
+Danio rerio clone CH211-106A13, WORKING DRAFT SEQUENCE, 3 unordered pieces
+gi|54792575|emb|BX942840.11|[54792575]
+
+19: CR376800
+Danio rerio clone CH211-117I7, WORKING DRAFT SEQUENCE, 4 unordered pieces
+gi|55700676|emb|CR376800.5|[55700676]
+
+20: CR352292
+Danio rerio clone CH211-120J21, WORKING DRAFT SEQUENCE
+gi|52694543|emb|CR352292.5|[52694543]
+
+21: BX649243
+Zebrafish DNA sequence from clone CH211-127E19 in linkage group 20, complete sequence
+gi|37988045|emb|BX649243.2|[37988045]
+
+22: BX324196
+Zebrafish DNA sequence from clone CH211-142A12 in linkage group 23, complete sequence
+gi|47550474|emb|BX324196.4|[47550474]
+
+23: BX470137
+Danio rerio clone CH211-158H16, WORKING DRAFT SEQUENCE, 3 unordered pieces
+gi|52075529|emb|BX470137.5|[52075529]
+
+24: BX649616
+Zebrafish DNA sequence from clone CH211-165K17 in linkage group 18, complete sequence
+gi|38707379|emb|BX649616.5|[38707379]
+
+25: BX901877
+Danio rerio clone CH211-173P17, WORKING DRAFT SEQUENCE, 3 unordered pieces
+gi|54969749|emb|BX901877.7|[54969749]
+
+26: BX322628
+Danio rerio clone CH211-177P17, WORKING DRAFT SEQUENCE, 25 unordered pieces
+gi|44844488|emb|BX322628.8|[44844488]
+
+27: CR450244
+Zebrafish DNA sequence from clone CH211-196O21 in linkage group 4, complete sequence
+gi|48374114|emb|CR450244.2|[48374114]
+
+28: CR751565
+Danio rerio clone CH211-209H21, WORKING DRAFT SEQUENCE, 6 unordered pieces
+gi|54306018|emb|CR751565.5|[54306018]
+
+29: AL953915
+Zebrafish DNA sequence from clone CH211-210F6, complete sequence
+gi|27899726|emb|AL953915.4|[27899726]
+
+30: BX324109
+Zebrafish DNA sequence from clone CH211-212E4, complete sequence
+gi|54304259|emb|BX324109.8|[54304259]
+
+31: BX293568
+Zebrafish DNA sequence from clone CH211-215F13 in linkage group 20, complete sequence
+gi|35209016|emb|BX293568.7|[35209016]
+
+32: BX324223
+Zebrafish DNA sequence from clone CH211-217F24 in linkage group 21, complete sequence
+gi|55725628|emb|BX324223.23|[55725628]
+
+33: BX629344
+Danio rerio clone CH211-231D1, WORKING DRAFT SEQUENCE
+gi|55700740|emb|BX629344.13|[55700740]
+
+34: AL953895
+Zebrafish DNA sequence from clone CH211-231M14 in linkage group 7, complete sequence
+gi|28144715|emb|AL953895.8|[28144715]
+
+35: CR759794
+Danio rerio clone CH211-232K9, WORKING DRAFT SEQUENCE, 4 unordered pieces
+gi|54287364|emb|CR759794.4|[54287364]
+
+36: BX510660
+Danio rerio clone CH211-236A3, WORKING DRAFT SEQUENCE, 2 unordered pieces
+gi|54114845|emb|BX510660.11|[54114845]
+
+37: BX323823
+Danio rerio clone CH211-248G20, WORKING DRAFT SEQUENCE
+gi|42820945|emb|BX323823.13|[42820945]
+
+38: BX547931
+Zebrafish DNA sequence from clone CH211-256N19 in linkage group 1, complete sequence
+gi|47824851|emb|BX547931.10|[47824851]
+
+39: BX649532
+Zebrafish DNA sequence from clone CH211-260H3 in linkage group 20, complete sequence
+gi|38564116|emb|BX649532.7|[38564116]
+
+40: BX510933
+Zebrafish DNA sequence from clone CH211-271G16 in linkage group 4, complete sequence
+gi|37719072|emb|BX510933.4|[37719072]
+
+41: BX927323
+Danio rerio clone CH211-46E8, WORKING DRAFT SEQUENCE, 7 unordered pieces
+gi|55467222|emb|BX927323.4|[55467222]
+
+42: CR457446
+Danio rerio clone CH211-74F19, WORKING DRAFT SEQUENCE, 2 unordered pieces
+gi|55468980|emb|CR457446.3|[55468980]
+
+43: BX927084
+Danio rerio clone CH211-9O17, WORKING DRAFT SEQUENCE
+gi|44845086|emb|BX927084.6|[44845086]
+
+44: BX323808
+Zebrafish DNA sequence from clone DKEY-117N4, complete sequence
+gi|40994810|emb|BX323808.7|[40994810]
+
+45: BX548006
+Zebrafish DNA sequence from clone DKEY-127P11, complete sequence
+gi|40353184|emb|BX548006.10|[40353184]
+
+46: BX571671
+Zebrafish DNA sequence from clone DKEY-153O22 in linkage group 20, complete sequence
+gi|34996446|emb|BX571671.3|[34996446]
+
+47: CR392040
+Zebrafish DNA sequence from clone DKEY-157H10 in linkage group 22, complete sequence
+gi|54144338|emb|CR392040.6|[54144338]
+
+48: CR555299
+Danio rerio clone DKEY-158B1, WORKING DRAFT SEQUENCE
+gi|53143861|emb|CR555299.8|[53143861]
+
+49: BX072534
+Zebrafish DNA sequence from clone DKEY-16C1, complete sequence
+gi|35209093|emb|BX072534.9|[35209093]
+
+50: CR376753
+Zebrafish DNA sequence from clone DKEY-182P15 in linkage group 20, complete sequence
+gi|50788519|emb|CR376753.8|[50788519]
+
+51: BX908766
+Zebrafish DNA sequence from clone DKEY-188C7 in linkage group 18, complete sequence
+gi|47076212|emb|BX908766.5|[47076212]
+
+52: CR762473
+Zebrafish DNA sequence from clone DKEY-189I24 in linkage group 13, complete sequence
+gi|56550466|emb|CR762473.7|[56550466]
+
+53: BX537355
+Zebrafish DNA sequence from clone DKEY-18H6 in linkage group 20, complete sequence
+gi|41222933|emb|BX537355.13|[41222933]
+
+54: BX510368
+Zebrafish DNA sequence from clone DKEY-190P19 in linkage group 20, complete sequence
+gi|38304124|emb|BX510368.7|[38304124]
+
+55: CR759820
+Danio rerio clone DKEY-208C7, WORKING DRAFT SEQUENCE, 2 unordered pieces
+gi|55469020|emb|CR759820.5|[55469020]
+
+56: BX004868
+Zebrafish DNA sequence from clone DKEY-209F8, complete sequence
+gi|38524389|emb|BX004868.9|[38524389]
+
+57: BX005018
+Zebrafish DNA sequence from clone DKEY-209K18, complete sequence
+gi|37496322|emb|BX005018.8|[37496322]
+
+58: CR812798
+Danio rerio clone DKEY-218N7, WORKING DRAFT SEQUENCE, 5 unordered pieces
+gi|55666033|emb|CR812798.3|[55666033]
+
+59: CR762398
+Danio rerio clone DKEY-237J10, WORKING DRAFT SEQUENCE
+gi|55666085|emb|CR762398.4|[55666085]
+
+60: BX072571
+Zebrafish DNA sequence from clone DKEY-238F24, complete sequence
+gi|34495118|emb|BX072571.9|[34495118]
+
+61: BX649521
+Danio rerio clone DKEY-238G7, WORKING DRAFT SEQUENCE, 12 unordered pieces
+gi|55666144|emb|BX649521.6|[55666144]
+
+62: CR388386
+Zebrafish DNA sequence from clone DKEY-253N6 in linkage group 22, complete sequence
+gi|52137689|emb|CR388386.12|[52137689]
+
+63: CR753869
+Danio rerio clone DKEY-286N21, WORKING DRAFT SEQUENCE, 8 unordered pieces
+gi|55666030|emb|CR753869.3|[55666030]
+
+64: BX901915
+Danio rerio clone DKEY-287M11, WORKING DRAFT SEQUENCE
+gi|55700657|emb|BX901915.4|[55700657]
+
+65: BX322617
+Zebrafish DNA sequence from clone DKEY-33D4, complete sequence
+gi|45725462|emb|BX322617.9|[45725462]
+
+66: BX571732
+Zebrafish DNA sequence from clone DKEY-49H7 in linkage group 20, complete sequence
+gi|38229967|emb|BX571732.6|[38229967]
+
+67: BX942816
+Zebrafish DNA sequence from clone DKEY-50I15 in linkage group 5, complete sequence
+gi|54888678|emb|BX942816.7|[54888678]
+
+68: CR457454
+Danio rerio clone DKEY-61N11, WORKING DRAFT SEQUENCE
+gi|55468998|emb|CR457454.4|[55468998]
+
+69: BX511136
+Danio rerio clone DKEY-71E3, WORKING DRAFT SEQUENCE
+gi|32812687|emb|BX511136.3|[32812687]
+
+70: CR376781
+Danio rerio clone DKEY-87F2, WORKING DRAFT SEQUENCE
+gi|55469042|emb|CR376781.7|[55469042]
+
+71: CR388361
+Zebrafish DNA sequence from clone DKEY-87J1 in linkage group 22, complete sequence
+gi|49206964|emb|CR388361.6|[49206964]
+
+72: BX901884
+Zebrafish DNA sequence from clone DKEY-89E13 in linkage group 4, complete sequence
+gi|48374125|emb|BX901884.7|[48374125]
+
+73: CR626876
+Danio rerio clone DKEY-95J14, WORKING DRAFT SEQUENCE, 3 unordered pieces
+gi|55468513|emb|CR626876.5|[55468513]
+
+74: CR812808
+Danio rerio clone DKEY-99A2, WORKING DRAFT SEQUENCE, 2 unordered pieces
+gi|55468986|emb|CR812808.3|[55468986]
+
+75: AL954166
+Zebrafish DNA sequence from clone DKEYP-120B11 in linkage group 20, complete sequence
+gi|28974675|emb|AL954166.9|[28974675]
+
