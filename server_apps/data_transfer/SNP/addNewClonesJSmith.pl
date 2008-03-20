@@ -110,7 +110,6 @@ undef @lines;
 
 close(OUTPUT1);
 close(OUTPUT2);
-
 print "ct1: $ct1\tct2: $ct2\tctNew: $ctNew\n";
 
 if ($ctNew > 0) {
