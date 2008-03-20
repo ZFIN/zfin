@@ -19,7 +19,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/SNP
 
-GENERICS = loadSNPdata.pl snp.pl sortSNPs.pl loadSNPs.sql downloadListSNPncbi.txt downloadListSNPncbiRS.txt snp2.unl
+GENERICS = dbSNP.pl addNewClonesJSmith.pl  \
+           loadNewSNPs.sql loadNewSNPAttrs.sql addTalbotSNPAttr.sql loadClonesJSmith.sql  \
+           downloadListSNPncbi.txt JSmithSNPCloneInfo.txt newClonesJSmith.txt
 
 
 # Define targets that require special handling.
