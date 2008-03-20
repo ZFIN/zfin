@@ -1,6 +1,6 @@
 -- loadClonesJSmith.sql
 -- one time use script
--- load the clone associated with Smith SNPs and that ZFIN doesn't have
+-- add the clones associated with Smith SNPs and that ZFIN doesn't have
 
 begin work;
 
