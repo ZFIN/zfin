@@ -1,5 +1,5 @@
 -- addTalbotSNPAttr.sql
--- add attribution (pub for J. Smith and/or Johson SNP, if shared common dbSNP rs id) to Talbot SNPs
+-- add attribution (publication of J. Smith and/or Johson SNP) to Talbot SNPs, if shared common dbSNP rs id
 begin work;
 
 create temp table tmp_record_attribution (tmp_snp_id varchar(50), tmp_pub_id varchar(50)) with no log;
