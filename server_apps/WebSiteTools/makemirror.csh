@@ -7,7 +7,7 @@ cd /private/ZfinLinks/mirror_src/ZFIN_WWW
 source /private/ZfinLinks/Commons/env/mirror.env
 
 # get updates from CVS. Send stdout to /dev/null. Only care about errors.
-/local/bin/cvs -q update -dP > /dev/null
+/local/bin/svn up > /dev/null
 
 # Push updates to web site.  Send stdout to dev/null.  Only care about errors
 /local/bin/gmake mirror > /dev/null
