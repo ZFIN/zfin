@@ -296,6 +296,12 @@ order by 9
       <?MIVAR NAME="patobldr_radio_id">$2$3$4$5<?/MIVAR>
       <?MIVAR NAME="patobldr_obo_id">$10<?/MIVAR>
 
+      <?MIVAR NAME="patobldr_ontology">ZF<?/MIVAR>
+     <?MIVAR COND=$(EQ,GO:,$(SUBSTR,$patobldr_obo_id,1,3))>
+     <?MIVAR NAME=patobldr_ontology>GO<?/MIVAR>
+     <?/MIVAR> 
+
+
       <tr <?MIBLOCK COND="$(EC,1,$(MOD,$MI_CURRENTROW,2))">class="odd"<?/MIBLOCK>>
 
         <form name="patobldrpanelstructures">
@@ -309,13 +315,13 @@ order by 9
         <td onclick="rotateRadio('$patobldr_radio_id');">
           <?MIBLOCK COND="$(NE,$patobldr_entity_b_name_html,NULL)">   
             <?MIVAR>
-             <a id="$patobldr_api_zdb_id" href="/phenote/Phenote/?termId=$patobldr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$patobldr_api_zdb_id")>$patobldr_entity_b_name_html</a>
+             <a id="$patobldr_api_zdb_id" href="/phenote/Phenote/?termId=$patobldr_obo_id&ontologyName=$patobldr_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$patobldr_api_zdb_id")>$patobldr_entity_b_name_html</a>
             <?MICOMMENT>
             $patobldr_entity_b_name_html
             <?/MICOMMENT>
             <?/MIVAR>:
           <?/MIBLOCK>
-             <a id="$patobldr_api_zdb_id" href="/phenote/Phenote/?termId=$patobldr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$patobldr_api_zdb_id")>$patobldr_entity_a_name_html</a>
+             <a id="$patobldr_api_zdb_id" href="/phenote/Phenote/?termId=$patobldr_obo_id&ontologyName=$patobldr_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$patobldr_api_zdb_id")>$patobldr_entity_a_name_html</a>
             <?MICOMMENT>
           $patobldr_entity_a_name_html 
             <?/MICOMMENT>
