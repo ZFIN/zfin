@@ -130,6 +130,8 @@
           </classpath>
             <arg value="-out"/>
             <arg value="${gwt.target}"/>
+            <arg value="-style"/>
+            <arg value="PRETTY"/>
             <arg value="org.zfin.anatomy.presentation.AnatomyLookup"/>
                 <!-- <arg value="add additional classes"/> -->
             <jvmarg value="-Xms256m"  />
