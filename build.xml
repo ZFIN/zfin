@@ -288,6 +288,9 @@
         <delete includeemptydirs="true" quiet="true">
             <fileset dir="${domain-work}" includes="**/*"/>
         </delete>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${gwt.target}" includes="**/*"/>
+        </delete>
     </target>
 
     <target name="clean-javadoc">
