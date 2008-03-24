@@ -308,8 +308,7 @@ sub Embl_Genomic_Check () {
 	($isGenomic) = $dbh->selectrow_array("select 1
                                          from accession_bank
                                         where accbk_acc_num = '$gb_acc'
-                                          and accbk_db_name = 'GenBank'
-                                          and accbk_data_type = 'Genomic'");
+                                          and accbk_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-36'");
         if (!$isGenomic) {
 	    $all_genomic = 0;
 	    last;
