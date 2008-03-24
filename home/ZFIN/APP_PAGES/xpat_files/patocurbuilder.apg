@@ -267,14 +267,24 @@ fitted
   </thead>
   <tbody>
 
-    <?MISQL SQL="select distinct api_zdb_id, api_entity_a_zdb_id, api_entity_b_zdb_id, api_quality_zdb_id, 
+    <?MISQL SQL="
+select distinct api_zdb_id, api_entity_a_zdb_id, api_entity_b_zdb_id, api_quality_zdb_id, 
                         api_tag, get_obj_name(api_entity_a_zdb_id), get_obj_name(api_entity_b_zdb_id), 
-                        term_name, lower(get_obj_name(api_entity_a_zdb_id)) as entity_name_order, anatitem_obo_id
+                        term_name, lower(get_obj_name(api_entity_a_zdb_id)) as entity_name_order , anatitem_obo_id as term_id
                  from apato_infrastructure
                       join term on api_quality_zdb_id = term_zdb_id
-                    join anatomy_item on api_entity_a_zdb_id = anatitem_zdb_id
+                      join anatomy_item on api_entity_a_zdb_id = anatitem_zdb_id
                  where api_pub_zdb_id = '$OID'
-                 order by 9;">
+union
+select distinct api_zdb_id, api_entity_a_zdb_id, api_entity_b_zdb_id, api_quality_zdb_id, 
+                        api_tag, get_obj_name(api_entity_a_zdb_id), get_obj_name(api_entity_b_zdb_id), 
+                        term_name, lower(get_obj_name(api_entity_a_zdb_id)) as entity_name_order , 'GO:'||goterm_go_id as term_id
+                 from apato_infrastructure
+                      join term on api_quality_zdb_id = term_zdb_id
+                      join go_term on api_entity_a_zdb_id = goterm_zdb_id
+                 where api_pub_zdb_id = '$OID'
+order by 9
+                 ;">
       <?MIVAR NAME="patobldr_api_zdb_id">$1<?/MIVAR>
       <?MIVAR NAME="patobldr_entity_a_zdb_id">$2<?/MIVAR>
       <?MIVAR NAME="patobldr_entity_b_zdb_id">$3<?/MIVAR>
