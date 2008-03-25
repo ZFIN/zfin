@@ -347,13 +347,13 @@ order by 9
         <td onclick="rotateRadio('$patobldr_radio_id');">
           <?MIBLOCK COND="$(NE,$patobldr_entity_b_name_html,NULL)">   
             <?MIVAR>
-             <a id="$(CONCAT,patobldr_api_zdb_id,_b)" href="/phenote/Phenote/?termId=$patobldr_B_obo_id&ontologyName=$patobldr_B_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$(CONCAT,patobldr_api_zdb_id,_b)")>$patobldr_entity_b_name_html</a>
+             <a id="$(CONCAT,patobldr_api_zdb_id,_b$MI_CURRENTROW)" href="/phenote/Phenote/?termId=$patobldr_B_obo_id&ontologyName=$patobldr_B_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$(CONCAT,patobldr_api_zdb_id,_b$MI_CURRENTROW)")>$patobldr_entity_b_name_html</a>
             <?MICOMMENT>
             $patobldr_entity_b_name_html
             <?/MICOMMENT>
             <?/MIVAR>:
           <?/MIBLOCK>
-             <a id="$patobldr_api_zdb_id" href="/phenote/Phenote/?termId=$patobldr_A_obo_id&ontologyName=$patobldr_A_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$patobldr_api_zdb_id")>$patobldr_entity_a_name_html</a>
+             <a id="$patobldr_api_zdb_id$MI_CURRENTROW" href="/phenote/Phenote/?termId=$patobldr_A_obo_id&ontologyName=$patobldr_A_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$patobldr_api_zdb_id$MI_CURRENTROW")>$patobldr_entity_a_name_html</a>
             <?MICOMMENT>
           $patobldr_entity_a_name_html 
             <?/MICOMMENT>
