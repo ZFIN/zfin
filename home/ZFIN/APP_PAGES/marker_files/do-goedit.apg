@@ -105,14 +105,12 @@ optional:
 
 
 <?MIBLOCK COND="$(EC,$attr,evidence)">
- 
    <?MISQL SQL="
        update marker_go_term_evidence set mrkrgoev_evidence_code = '$new_value',
 					  mrkrgoev_date_modified = CURRENT,
 					  mrkrgoev_modified_by   = '$ZDB_name'	
 				where mrkrgoev_zdb_id = '$OID' 	">    
    <?/MISQL>
-
 <?/MIBLOCK>
 
 
@@ -258,7 +256,7 @@ optional:
   <SCRIPT><?MIVAR>
      window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$mrkrzdbid");
 
-     if(closeafterload='true'){
+     if(closeafterload=='true'){
         window.close() ; 
      }
         <?/MIVAR>
