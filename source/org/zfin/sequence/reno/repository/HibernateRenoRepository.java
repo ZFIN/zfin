@@ -80,18 +80,17 @@ public class HibernateRenoRepository implements RenoRepository {
 
     /**
      * This is a hack to overcome deficiencies in cglib.
+     *
      * @return Impl of Run class.
      */
-    public Run castRun(Run run){
+    public Run castRun(Run run) {
 
-        if(run.isRedundancy() && !(run instanceof RedundancyRun)){
-            return (RedundancyRun) HibernateUtil.currentSession().load(RedundancyRun.class,run.getZdbID()) ;
-        }
-        else if(run.isNomenclature() && !(run instanceof NomenclatureRun)){
-            return (NomenclatureRun) HibernateUtil.currentSession().load(NomenclatureRun.class,run.getZdbID()) ;
-        }
-        else{
-            LOG.warn("run type was not recast: \n"+this);
+        if (run.isRedundancy() && !(run instanceof RedundancyRun)) {
+            return (RedundancyRun) HibernateUtil.currentSession().load(RedundancyRun.class, run.getZdbID());
+        } else if (run.isNomenclature() && !(run instanceof NomenclatureRun)) {
+            return (NomenclatureRun) HibernateUtil.currentSession().load(NomenclatureRun.class, run.getZdbID());
+        } else {
+            LOG.warn("run type was not recast: \n" + this);
             return run;
         }
 
@@ -123,31 +122,32 @@ public class HibernateRenoRepository implements RenoRepository {
      * comes form the best blast hit results, i.e. no hit.zdbID (to save an extra
      * db call to get all the bests hits since we obtain them right here.
      * We only want to see the problem ones when there are no more records left.
-     *
+     * <p/>
      * Additionally, we want to make sure that we go directly to the database and update the cache
      * as triggers may have run in the background effecting sorting.
-     * @param runZdbId run zdbID
+     *
+     * @param runZdbId   run zdbID
      * @param comparator Order by statement
      * @return list of RunCandidates
      */
     public List<RunCandidate> getSortedRunCandidates(String runZdbId, String comparator, int maxNumRecords) {
         Session session = HibernateUtil.currentSession();
-        CacheMode oldCacheMode =  session.getCacheMode() ;
+        CacheMode oldCacheMode = session.getCacheMode();
         LOG.info("old cache mode: " + oldCacheMode);
 
         session.setCacheMode(CacheMode.REFRESH);
 
         String orderBy;
 
-        List<RunCandidate> list = new ArrayList<RunCandidate> ();
+        List<RunCandidate> list = new ArrayList<RunCandidate>();
 
-        if ( comparator.equals(RunBean.SORT_BY_OCCURRENCE_DSC)) {
+        if (comparator.equals(RunBean.SORT_BY_OCCURRENCE_DSC)) {
             orderBy = "runCandidate.candidate.problem asc, runCandidate.occurrenceOrder desc, hit.expectValue asc, max(hit.score) desc";
         } else if (comparator.equals(RunBean.SORT_BY_OCCURRENCE_ASC)) {
             orderBy = "runCandidate.candidate.problem asc, runCandidate.occurrenceOrder asc, hit.expectValue asc, max(hit.score) desc";
-        } else if ( comparator.equals(RunBean.SORT_BY_LASTDONE_ASC) ) {
+        } else if (comparator.equals(RunBean.SORT_BY_LASTDONE_ASC)) {
             orderBy = "runCandidate.candidate.problem asc, runCandidate.candidate.lastFinishedDate asc, hit.expectValue asc, max(hit.score) desc";
-        } else if ( comparator.equals(RunBean.SORT_BY_LASTDONE_DSC) )  {
+        } else if (comparator.equals(RunBean.SORT_BY_LASTDONE_DSC)) {
             orderBy = "runCandidate.candidate.problem asc, runCandidate.candidate.lastFinishedDate desc, hit.expectValue asc, max(hit.score) desc";
         } else {
             orderBy = "runCandidate.candidate.problem asc, hit.expectValue asc, max(hit.score) desc";
@@ -173,25 +173,28 @@ public class HibernateRenoRepository implements RenoRepository {
         List runs = query.list();
         for (Object run : runs) {
             Object[] tuple = (Object[]) run;
-/*
-            String hitHql = "FROM Hit hit " +
-                    "        WHERE hit.query.runCandidate.zdbID = :zdbID AND " +
-                    "              hit.expectValue = :expectValue AND " +
-                    "              hit.score = :score ";
-            Query hitQuery = session.createQuery(hitHql);
-            hitQuery.setString("zdbID", (String) tuple[0]);
-            hitQuery.setDouble("expectValue", (Double)tuple[1]);
-            hitQuery.setInteger("score", (Integer)tuple[2]);
-            // Only get the first one for our purpose here.
-            hitQuery.setMaxResults(1);
-            Hit bestHit = (Hit) hitQuery.uniqueResult();
-*/
             Hit bestHit1 = new Hit();
-            bestHit1.setExpectValue((Double)tuple[1]);
-            bestHit1.setScore((Integer)tuple[2]);
+            bestHit1.setExpectValue((Double) tuple[1]);
+            bestHit1.setScore((Integer) tuple[2]);
             list.add(getRunCandidateByID((String) tuple[0], bestHit1));
         }
 
+        if (runs == null || runs.size() < maxNumRecords) {
+            String hql1 = "select runCandidate from RunCandidate runCandidate, Query query " +
+                    "WHERE runCandidate.run.zdbID = :zdbID AND " +
+                    "      query.runCandidate = runCandidate AND " +
+                    "      runCandidate.done = :done AND " +
+                    "      runCandidate.lockPerson is null  AND " +
+                    "      not exists (select 1 from Hit hit where hit.query = query) ";
+            Query nonHitQuery = session.createQuery(hql1);
+            nonHitQuery.setString("zdbID", runZdbId);
+            nonHitQuery.setBoolean("done", false);
+            nonHitQuery.setMaxResults(maxNumRecords - runs.size());
+            List<RunCandidate> nonHitRuns = nonHitQuery.list();
+            for (RunCandidate cand : nonHitRuns) {
+                list.add(cand);
+            }
+        }
         session.setCacheMode(oldCacheMode);
 
         return list;
@@ -209,11 +212,12 @@ public class HibernateRenoRepository implements RenoRepository {
     /**
      * Load RunCandidate objects and then add the best Hit object.
      * This object is needed for the Candidate in queue page.
-     * @param zdbID RunCandidate ZDB ID
+     *
+     * @param zdbID   RunCandidate ZDB ID
      * @param bestHit The best Hit object
      * @return RunCandidate
      */
-    private RunCandidate getRunCandidateByID(String zdbID, Hit bestHit ) {
+    private RunCandidate getRunCandidateByID(String zdbID, Hit bestHit) {
 
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(RunCandidate.class);
