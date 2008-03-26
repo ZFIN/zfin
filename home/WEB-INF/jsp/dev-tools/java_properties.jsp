@@ -1,3 +1,4 @@
+<%@ page import="java.util.TimeZone" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <table width="100%" border="0" cellpadding="4" cellspacing="0">
@@ -26,6 +27,14 @@
         </td>
         <td class="listContent">
             <%= Runtime.getRuntime().freeMemory()/1024/1024 %> MB
+        </td>
+    </tr>
+    <tr>
+        <td class="listContent">
+            Time Zone Info
+        </td>
+        <td class="listContent">
+            <%= TimeZone.getDefault() %> 
         </td>
     </tr>
     <tr>
