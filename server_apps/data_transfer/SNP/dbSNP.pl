@@ -119,11 +119,21 @@ while ($cur->fetch) {
   $pkAndPubIDs{"$pk"."$pubIdZFIN"} = 1;
   $ct++;
 }
-    
-$dbh->disconnect();   
 
 print "Number of rows in snp_download_attribution: $ct\n\n";
 
+### clean up mapped_marker table
+$cur = $dbh->prepare('delete from mapped_marker
+                            where marker_type = "SNP"
+                              and marker_id in (select mrel_mrkr_2_zdb_id
+                                                  from marker_relationship
+                                                 where mrel_type = "contains polymorphism"
+                                                   and mrel_mrkr_2_zdb_id[1,8] = "ZDB-SNP-");
+                     ');
+$cur->execute;
+
+$dbh->disconnect();  
+    
 ### the datafile sent from J. Smith, which contains SNP name, clone name, etc.
 open (JSMITH, "JSmithSNPCloneInfo.txt") || die "Cannot open JSmithSNPCloneInfo.txt : $!\n";
 @lines=<JSMITH>;
@@ -426,7 +436,7 @@ if ($ctNew2 > 0) {
 if ($ctNew3 > 0) {
   system( "$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DATABASE'} addTalbotSNPAttr.sql" ) and &emailError("Failed to insert record_attribution table");
   &emailSuccess("$ctNew3 new records inserted into record_attribution table for Talbot SNPs");
-}
+} 
 
 print "Done\n";
 
