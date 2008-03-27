@@ -89,7 +89,8 @@ create temp table acc_clone_tmp (
 !echo "ok to have file not found if acc_imClone.unl not exists"
 load from './acc_imClone.unl' insert into acc_clone_tmp;
 
-update probes_tmp set prb_clone_name = (select accl_image_clone
+unload to 'dupacc.unl' select * from acc_clone_tmp,probes_tmp where accl_accession=prb_gb5p;
+update probes_tmp set prb_clone_name = (select distinct accl_image_clone
 					  from acc_clone_tmp
 					 where accl_accession = prb_gb5p
                                             or accl_accession = prb_gb3p
@@ -119,7 +120,7 @@ create temp table is_gene_tmp (
 !echo 'ok to have file not found if is_gene.unl not exists'
 load from './is_gene.unl' insert into is_gene_tmp;
 
-update probes_tmp set prb_gene_zdb_id = (select isgn_gene_zdb_id 
+update probes_tmp set prb_gene_zdb_id = (select distinct isgn_gene_zdb_id 
 					   from is_gene_tmp
 					  where isgn_accession = prb_gb5p 
 					     or isgn_accession = prb_gb3p)
@@ -171,7 +172,7 @@ UNLOAD TO 'exist_same_xpat_experiment_from_directsub.err'
          from probes_tmp, expression_experiment, marker
         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
           and mrkr_name = prb_clone_name
-          and xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-031103-24", "ZDB-PUB-051025-1");
+          and xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-031103-24", "ZDB-PUB-051025-1", "ZDB-PUB-080227-22");
 
 
 -- use the "unknown" if probe library is not provided.
@@ -215,7 +216,8 @@ create table expression_tmp(
 ALTER TABLE expression_tmp add constraint (foreign key (exp_clone_name) references probes_tmp constraint exp_clone_name_foreign_key);
 
 load from './expression.unl' insert into expression_tmp;
-
+unload to 'prbkeywd.unl' select prb_keyvalue,prb_clone_name from probes_tmp;
+unload to 'expkeywd.unl' select distinct exp_clone_name from expression_tmp;
 -- Check data error 
 -----------------------
 UNLOAD TO 'prb_without_xpat.err' 
