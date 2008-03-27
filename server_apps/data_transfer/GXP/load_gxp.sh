@@ -58,6 +58,11 @@ if ($labname == "Thisse") then
 	set sourceId = ""    
 	set genePrefix = "sb:" 
 
+    else if ( $datatype == "sc") then
+    	set pubId    = "ZDB-PUB-080227-22"     
+	set sourceId = "ZDB-LAB-060808-1"    
+	set genePrefix = "sc:" 
+
     else   # fr
    	set pubId    = "ZDB-PUB-040907-1"
 	set sourceId = "ZDB-LAB-040907-1"     # I.M.A.G.E. consortium
