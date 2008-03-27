@@ -63,6 +63,7 @@ begin work;
 				(select fdbcont_zdb_id 
 				   from foreign_db_contains 
 				  where lower(db_name)=lower(fdbcont_fdb_db_name)
+                                    and fdbcont_organism_common_name = "Zebrafish"
                     and (  (fdbcont_fdbdt_super_type = "protein" 
                             and fdbcont_fdbdt_data_type = "domain")
                         or (fdbcont_fdbdt_super_type = "sequence" 
