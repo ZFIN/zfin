@@ -18,7 +18,8 @@ select count(distinct mrkr_zdb_id)
  from expression_experiment, marker
 where xpatex_direct_submission_date = TODAY
   and (xpatex_source_zdb_id = "ZDB-PUB-040907-1"
-       or xpatex_source_zdb_id = "ZDB-PUB-051025-1" )
+       or xpatex_source_zdb_id = "ZDB-PUB-051025-1"
+       or xpatex_source_zdb_id="ZDB-PUB-080227-22" )
   and xpatex_gene_zdb_id = mrkr_zdb_id
   and mrkr_name <> mrkr_abbrev;
 
@@ -29,8 +30,9 @@ select count(p1.xpatex_gene_zdb_id)
        on p1.xpatex_gene_zdb_id = p2.xpatex_gene_zdb_id
  where p1.xpatex_direct_submission_date = TODAY
    and (p1.xpatex_source_zdb_id = "ZDB-PUB-040907-1"
-        or p1.xpatex_source_zdb_id = "ZDB-PUB-051025-1" )
-   and p2.xpatex_source_zdb_id in ("ZDB-PUB-040907-1","ZDB-PUB-010810-1","ZDB-PUB-051025-1")
+        or p1.xpatex_source_zdb_id = "ZDB-PUB-051025-1"
+        or p1.xpatex_source_zdb_id = "ZDB-PUB-080227-22")
+   and p2.xpatex_source_zdb_id in ("ZDB-PUB-040907-1","ZDB-PUB-010810-1","ZDB-PUB-051025-1","ZDB-PUB-080227-22")
    and exists       -- an experiment in this send with general xpat
 	      (select xpatres_zdb_id
                  from expression_result
@@ -52,13 +54,13 @@ select count(p1.xpatex_gene_zdb_id)
 !echo 'genes have more than 1 Thisse expression experiments'
 select xpatex_gene_zdb_id
   from expression_experiment
- where xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-051025-1")
+ where xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-051025-1","ZDB-PUB-080227-22")
 group by xpatex_gene_zdb_id
 having count(xpatex_zdb_id) > 1;
 
 !echo 'genes have more than 2 Thisse expression experiments'			
 select xpatex_gene_zdb_id
   from expression_experiment
- where xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-051025-1")
+ where xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-051025-1","ZDB-PUB-080227-22")
 group by xpatex_gene_zdb_id
 having count(xpatex_zdb_id) > 2;
