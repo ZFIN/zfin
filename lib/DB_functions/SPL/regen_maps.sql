@@ -158,6 +158,21 @@ create dba function "informix".regen_maps()
 
   into temp tmp_gene_id with no log;
 
+  -- prepare genes whose associated est is mapped into tmp_snp_id
+  -- considering the huge number (>600,000) of Jeff Smith snps that are associated with clones,
+  -- only those snps associated with ESTs or genes are prepared 
+
+   select mrel_mrkr_2_zdb_id as snp_zdb_id,
+          or_lg, lg_location, refcross_id, metric
+     from marker_relationship, mapped_marker m
+    where mrel_mrkr_1_zdb_id = m.marker_id
+      and (mrel_mrkr_1_zdb_id[1,8] = 'ZDB-EST-'
+        or mrel_mrkr_1_zdb_id[1,8] = 'ZDB-GENE')
+      and mrel_mrkr_2_zdb_id[1,8] = 'ZDB-SNP-'
+      and mrel_type = 'contains polymorphism'
+      and m.scoring_data is not null
+     into temp tmp_snp_id with no log;
+
   -----------------------------------------
   -- Markers
   -----------------------------------------
@@ -170,19 +185,27 @@ create dba function "informix".regen_maps()
             'f'::boolean frame, mm.refcross_id refcross_id, mm.map_name map_name
        from marker, mapped_marker mm, panels pn
       where mm.marker_id = mrkr_zdb_id
-        and mm.refcross_id = pn.zdb_id
-    UNION
+        and mm.refcross_id = pn.zdb_id       
+    UNION   
      select mrkr_zdb_id, mrkr_abbrev, mrkr_type, or_lg,
             lg_location, t.metric as metric, p.abbrev as panel,
             'f'::boolean as frame, refcross_id, mrkr_abbrev map_name
-       from  tmp_gene_id t, marker m, panels p
+       from tmp_gene_id t, marker m, panels p
       where gene_zdb_id = m.mrkr_zdb_id
         and refcross_id = p.zdb_id
-    into temp tmp_paneled_markers;
+    UNION  
+     select mrkr_zdb_id, mrkr_abbrev, mrkr_type, ts.or_lg as or_lg, 
+            ts.lg_location as lg_location, ts.metric as metric, p.abbrev as panel,
+            'f'::boolean as frame, refcross_id, mrkr_abbrev map_name
+       from tmp_snp_id ts, marker m, panels p
+      where snp_zdb_id = m.mrkr_zdb_id
+        and refcross_id = p.zdb_id
+     into temp tmp_paneled_markers;
 
    insert into paneled_m_new
     select * from tmp_paneled_markers;
 
+   drop table tmp_snp_id;
    drop table tmp_gene_id;
    drop table tmp_paneled_markers;
 
@@ -210,8 +233,6 @@ create dba function "informix".regen_maps()
         where mm.marker_type = 'SNP'
           and mm.refcross_id = pn.zdb_id
       and mrkr_zdb_id = mm.marker_id;
-
-
 
   --------------------------------------
   -- Create a temporary index
@@ -371,8 +392,6 @@ create dba function "informix".regen_maps()
       -- however, there are no constraints on this table.
 
       grant select on paneled_markers to "public";
-
-
 
      --trace off;
     end -- Local exception handler
