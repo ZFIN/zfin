@@ -48,13 +48,6 @@ while (<>) {
    
     init_var ();     # Initialize the variables and arrays 
 
-    # record in tempfile contains ID, AC, DE, GN, DR, CC, KW, 
-    # it goes to "okfile" and "problemfile". Some record from problemfile
-    # would be matched out and appended to the okfile for parsing.
-
-    $temprecd = "temp$$.txt"; 
-    open TMP, ">$temprecd" or die "Cannot create the temporary file: $!";
-
     # records in probfile contains AC, RX, DR EMBL lines
     # they go to one of the prob# files for curator review. 
     $probrecd= "prob$$.txt";
@@ -79,6 +72,14 @@ while (<>) {
 	$num_prob ++;
 	next;
     }
+
+    # record in tempfile contains ID, AC, DE, GN, DR, CC, KW, 
+    # it goes to "okfile" and "problemfile". Some record from problemfile
+    # would be matched out and appended to the okfile for parsing.
+
+    $temprecd = "temp$$.txt"; 
+    open TMP, ">$temprecd" or die "Cannot create the temporary file: $!";
+
 
     foreach (split /\n/) {
 	$_ = $_."\n";
@@ -219,12 +220,12 @@ while (<>) {
 		system ("cat '$temprecd' >> problemfile");		
 		$num_prob ++;
 	    }	   
-    
-	    unlink $temprecd;
-	    unlink $probrecd;	
-	}
+ 	}
     } # foreach loop for one record
- 
+     
+    unlink $temprecd;
+    unlink $probrecd;	
+
 }   # while loop for the whole SP file
 close PUB;
 
