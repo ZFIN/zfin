@@ -36,6 +36,7 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,BAC_END),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PAC_END),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,RAPD),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SNP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REFCROSS),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,IMAGE),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,COMPANY),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR>
