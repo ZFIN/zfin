@@ -5,9 +5,16 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 /**
  */
 public class ItemSuggestOracle extends SuggestOracle {
-    private CallbackTimer timer = new CallbackTimer() ;
+
+
+    private CallbackTimer timer = null ; 
     private final int DEFAULT_DELAY_TIME = 200 ;
     private int delayTime = DEFAULT_DELAY_TIME ;
+
+
+    public ItemSuggestOracle(AnatomyLookup anatomyLookup){
+        timer = new CallbackTimer(anatomyLookup) ;
+    }
 
     public boolean isDisplayStringHTML() { return true; }
 

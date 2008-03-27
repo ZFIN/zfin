@@ -11,7 +11,6 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 import java.util.Collections;
 
 
@@ -31,22 +30,28 @@ public class AnatomyLookupServiceImpl
     public SuggestOracle.Response getSuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery() ;
+
+        if(query.equals("xxx333")){
+            throw new RuntimeException("this is a test error") ; 
+        }
+
+
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         List<AnatomyItem> anatomyItems = new ArrayList<AnatomyItem>(); 
         if(query.length()>2){
             anatomyItems = ar.getAnatomyItemsByName(query,false) ;
             Collections.sort(anatomyItems, new SortAnatomySearchTerm(query));
         }
-
-//        suggestions.add(new ItemSuggestion("-----",null)) ;
-        suggestions.add(new ItemSuggestion("*"+query+"*",null)) ; 
+        suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
         for(AnatomyItem anatomyItem : anatomyItems){
             String term = anatomyItem.getName() ;
             suggestions.add(new ItemSuggestion(term.replaceAll(query,"<strong>"+query+"</strong>"),term)) ;
         }
 
-
         resp.setSuggestions(suggestions);
+
+
+
         return resp ;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

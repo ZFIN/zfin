@@ -1,6 +1,6 @@
 .gwt-SuggestBox { 
    border: 1x solid #666; 
-   text-align: left; 
+   text-align: left;
 }
 
 .gwt-SuggestBoxPopup {
@@ -18,5 +18,11 @@
 .gwt-SuggestBoxPopup .item-selected {
   background-color: #FFFFBB;
   padding: 2px;
+}
+
+/*same as zfin one, maybe should go there instead*/
+.gwt-lookup-error{
+    color: red;
+    display: block;
 }
 

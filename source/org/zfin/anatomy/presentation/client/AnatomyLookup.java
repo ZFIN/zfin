@@ -1,19 +1,17 @@
 package org.zfin.anatomy.presentation.client;
 
-import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.DOM;
-
 
 /**
  * The structure of this SuggestBox is used in order to capture the extra "Enter" event.
  * As this uses a "GET" encoding we can be a bit more
  */
-public class AnatomyLookup implements EntryPoint {
+public class AnatomyLookup extends ErrorAssociable {
 
-    HorizontalPanel panel = new HorizontalPanel();
-    ItemSuggestOracle oracle = new ItemSuggestOracle();
+    HorizontalPanel lookupPanel = new HorizontalPanel();
+    ItemSuggestOracle oracle = new ItemSuggestOracle(this);
     TextBox textBox = new TextBox();
     SuggestBox suggestBox;
     SuggestOracle.Suggestion suggestion = null;
@@ -24,7 +22,8 @@ public class AnatomyLookup implements EntryPoint {
 
     public void onModuleLoad() {
 
-        formPanel.setWidget(panel);
+        rootPanel.add(formPanel);
+        formPanel.setWidget(lookupPanel);
 
         // eventual code
         textBox.setName("searchTerm");
@@ -77,9 +76,9 @@ public class AnatomyLookup implements EntryPoint {
         });
 
 
-        panel.add(suggestBox);
-        panel.add(submitButton);
-        RootPanel.get("anatomyTerm").add(formPanel);
+        lookupPanel.add(suggestBox);
+        lookupPanel.add(submitButton);
+        RootPanel.get("anatomyTerm").add(rootPanel);
     }
 
     private void submitSearch(String text) {
@@ -88,5 +87,6 @@ public class AnatomyLookup implements EntryPoint {
                     "");
         }
     }
+
 
 }
