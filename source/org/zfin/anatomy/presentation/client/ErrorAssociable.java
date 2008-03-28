@@ -17,8 +17,7 @@ public abstract class ErrorAssociable implements EntryPoint {
 
     public ErrorAssociable(){
         rootPanel = new VerticalPanel() ;
-        errorLabel = new Label() ;
-        loadErrorPanel();
+        errorLabel = new Label("") ;
     }
 
     public void setErrorString(String error) {
@@ -33,6 +32,9 @@ public abstract class ErrorAssociable implements EntryPoint {
 
     public void clearError(){
         errorString = "" ; 
+    }
+
+    public void hideError(){
         errorLabel.setVisible(false);
     }
 

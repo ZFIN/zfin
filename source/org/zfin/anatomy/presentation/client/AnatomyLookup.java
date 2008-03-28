@@ -78,6 +78,7 @@ public class AnatomyLookup extends ErrorAssociable {
 
         lookupPanel.add(suggestBox);
         lookupPanel.add(submitButton);
+        loadErrorPanel();
         RootPanel.get("anatomyTerm").add(rootPanel);
     }
 
