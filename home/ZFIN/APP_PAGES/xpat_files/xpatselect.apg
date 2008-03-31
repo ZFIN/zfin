@@ -73,11 +73,7 @@ INPUT VARS:
 			last stage if user did not set it.
     assay		Set to assay name if user specified one, otherwise "ANY"
     xpatsel_jtype       Default value of "ANY", otherwise restricts to only	 
-                        journal ("published") or direct submission ("unpublished"),
-			not set directly by a form element, translated from the stuff
-			below.
-    xpatsel_jtypeDirect		'checked' if the user wants to see direct submission data (default on)
-    xpatsel_jtypePublished	'checked' if the user wants to see published data (default on)
+                        journal ("Published") or direct submission ("Unpublished")
     xpatsel_recentRecords	empty by default, if a number of days is entered, the search
 				will only return records from today less that number of days.
 
@@ -173,9 +169,8 @@ function call_reset() {
   document.critform.assay.value=document.critform.assay[0].value;
   document.critform.MOgene.value = '';
   document.critform.MOsearchtype.selectedIndex = 0;
-  document.critform.xpatsel_jtypeDirect.checked = true;
-  document.critform.xpatsel_jtypePublished.checked = true;
   document.critform.xpatsel_imagesOnly.checked = false;
+  document.critform.xpatsel_jtype[2].checked = true;
   document.critform.TA_selected_structures.value = '';
   document.critform.include_substructures.checked = true;
   document.critform.structure_bool[0].checked = true;
@@ -183,7 +178,9 @@ function call_reset() {
   document.critform.mutsearchtype.selectedIndex = 0;
   document.critform.authsearchtype.selectedIndex = 0;
   document.critform.WINSIZE.value = 25;
-  document.critform.xpatsel_recentRecords.value = '';
+  if (document.critform.xpatsel_recentRecords != null) {
+     document.critform.xpatsel_recentRecords.value = '';
+  }
 }
 
 // we decided to take off this function. Doesn't hurt to keep
@@ -253,30 +250,7 @@ function openChild(childWinUrl,childWinName) {
    <?MIVAR NAME="include_substructures">checked<?/MIVAR>
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(AND,$(NXST,$xpatsel_jtypeDirect),$(NXST,$xpatsel_calledBySelf))">
-  <?MIVAR NAME="$xpatsel_jtypeDirect">checked<?/MIVAR>
-<?/MIBLOCK>
-
-
-<?MIBLOCK COND="$(AND,$(NXST,$xpatsel_jtypePublished),$(NXST,$xpatsel_calledBySelf))">
-  <?MIVAR NAME="$xpatsel_jtypePublished">checked<?/MIVAR>
-<?/MIBLOCK>
-
-
-<?MIVAR NAME="$xpatsel_jtype">ANY<?/MIVAR>
-
-<?MIBLOCK COND="$(AND,$(XST,$xpatsel_jtypeDirect),$(XST,$xpatsel_jtypePublished))">
-  <?MIVAR NAME="$xpatsel_jtype">ANY<?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(AND,$(NXST,$xpatsel_jtypeDirect),$(XST,$xpatsel_jtypePublished))">
-  <?MIVAR NAME="$xpatsel_jtype">Published<?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(AND,$(XST,$xpatsel_jtypeDirect),$(NXST,$xpatsel_jtypePublished))">
-  <?MIVAR NAME="$xpatsel_jtype">Unpublished<?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(AND,$(NXST,$xpatsel_jtypeDirect),$(NXST,$xpatsel_jtypePublished))">
-  <?MIVAR NAME="$xpatsel_jtype">Unpublished<?/MIVAR>
-<?/MIBLOCK>
+<?MIVAR NAME="$xpatsel_jtype" COND="$(NXST,$xpatsel_jtype)">ANY<?/MIVAR>
 
 
 
@@ -472,8 +446,6 @@ function openChild(childWinUrl,childWinName) {
      $(IF,$(XST,$xpatsel_processed_selected_structures),$(VECAPPEND,$xpatsel_urlVec,xpatsel_processed_selected_structures=$xpatsel_processed_selected_structures))
     $(IF,$(XST,$include_substructures),$(VECAPPEND,$xpatsel_urlVec,include_substructures=$include_substructures))
     $(IF,$(XST,$xpatsel_jtype),$(VECAPPEND,$xpatsel_urlVec,xpatsel_jtype=$xpatsel_jtype))
-    $(IF,$(XST,$xpatsel_jtypeDirect),$(VECAPPEND,$xpatsel_urlVec,xpatsel_jtypeDirect=$xpatsel_jtypeDirect))
-    $(IF,$(XST,$xpatsel_jtypePublished),$(VECAPPEND,$xpatsel_urlVec,xpatsel_jtypePublished=$xpatsel_jtypePublished))
     $(IF,$(XST,$xpatsel_imagesOnly),$(VECAPPEND,$xpatsel_urlVec,xpatsel_imagesOnly=$xpatsel_imagesOnly))
     $(IF,$(XST,$xpatsel_recentRecords),$(VECAPPEND,$xpatsel_urlVec,xpatsel_recentRecords=$xpatsel_recentRecords))
     $(IF,$(XST,$structure_bool),$(VECAPPEND,$xpatsel_urlVec,structure_bool=$structure_bool))
@@ -587,8 +559,6 @@ function openChild(childWinUrl,childWinName) {
       <?MIVAR name=$UserInput COND=$(XST,$mutant_id)>$UserInput&mutant_id=$mutant_id<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$author)>$UserInput&author=$(URLENCODE,$author)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$assay)>$UserInput&assay=$(URLENCODE,$assay)<?/MIVAR>
-      <?MIVAR name=$UserInput COND=$(XST,$xpatsel_jtypeDirect)>$UserInput&xpatsel_jtypeDirect=$xpatsel_jtypeDirect<?/MIVAR>
-      <?MIVAR name=$UserInput COND=$(XST,$xpatsel_jtypePublished)>$UserInput&xpatsel_jtypePublished=$xpatsel_jtypePublished<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_jtype)>$UserInput&xpatsel_jtype=$xpatsel_jtype<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_imagesOnly)>$UserInput&xpatsel_imagesOnly=$xpatsel_imagesOnly<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_recentRecords)>$UserInput&xpatsel_recentRecords=$xpatsel_recentRecords<?/MIVAR>
@@ -975,8 +945,6 @@ function openChild(childWinUrl,childWinName) {
         </TD>
         <td valign="top">
 
-           <fieldset>
-
              <?MICOMMENT> *** Images Only Checkbox *** <?/MICOMMENT>
                <p>
                <input type="checkbox" id="xpatselImagesOnly"
@@ -989,29 +957,25 @@ function openChild(childWinUrl,childWinName) {
              
              <div id="xpatselJtypeBox">
 
-             <?MICOMMENT> *** start direct submission checkbox *** <?/MICOMMENT>
+	     <?MIVAR> 
+	     <input id="xpatselJtypeDirect" name="xpatsel_jtype" value="Unpublished" 
+                    type="radio" $(IF,$(EC,$xpatsel_jtype,Unpublished),checked)>
+	     <label for="xpatselJtypeDirect">Show only direct submission data</label><br>
 
-             <input id="xpatselJtypeDirect" name="xpatsel_jtypeDirect" type="checkbox" value="checked"
-                    <?MIVAR> $(IF,$(AND,$(XST,$xpatsel_jtypeDirect),$(EC,$xpatsel_jtypeDirect,checked)),checked="checked") <?/MIVAR> > 
-             <label for="xpatselJtypeDirect">Show direct submission data</label>
+	     <input id="xpatselJtypePublished" name="xpatsel_jtype" value="Published" 
+                    type="radio" $(IF,$(EC,$xpatsel_jtype,Published),checked)>
+  	     <label for="xpatselJtypePublished">Show only published literature</label><br>
 
-             <?MICOMMENT> *** end direct submission checbkox *** <?/MICOMMENT>
+	     <input id="xpatselJtypeANY" name="xpatsel_jtype" value="ANY" 
+                    type="radio" $(IF,$(EC,$xpatsel_jtype,ANY),checked) >
+	     <label for="xpatselJtypeANY">Show all</label><br>
 
-             <br> 
+	     <?/MIVAR>
 
-             <?MICOMMENT> *** start published checkbox *** <?/MICOMMENT>
-
-             
-             <input id="xpatselJtypePublished" name="xpatsel_jtypePublished" type="checkbox" value="checked"
-                    <?MIVAR> $(IF,$(AND,$(XST,$xpatsel_jtypePublished),$(EC,$xpatsel_jtypePublished,checked)),checked="checked") <?/MIVAR> > 
-             <label for="xpatselJtypePublished">Show published literature</label>
-
-             <?MICOMMENT> *** end published checkbox *** <?/MICOMMENT>
-
-             </div> <?MICOMMENT> ** end jtype box div ** <?/MICOMMENT>
 
             <?MICOMMENT> ** start recent xpats (only for root user)** <?/MICOMMENT>
             <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">             
+	      
               <?MIVAR>
               <label for="xpatselRecentRecords">Added in last </label>
               <input name="xpatsel_recentRecords" id="xpatselRecentRecords" size="3" $(IF,$(XST,$xpatsel_recentRecords),value='$xpatsel_recentRecords')>
@@ -1037,8 +1001,6 @@ function openChild(childWinUrl,childWinName) {
 	        </SCRIPT>
 	      <?/MIVAR> 
 	    <?/MIBLOCK> 
-
-          </fieldset>
 
         </td>
       </TR>
