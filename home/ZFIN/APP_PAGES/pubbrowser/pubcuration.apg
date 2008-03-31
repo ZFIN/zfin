@@ -282,6 +282,11 @@ OPTIONAL VARS:
           $(IF,$(NE,$pub_completion_date,NULL),<FONT color=red>Closed: $pub_completion_date</FONT>)
         <?/MIVAR>
       </td>
+      <td>
+        <?MIVAR>
+          $(IF,$(EC,$ZDB_access,root),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate Paper</A>")
+        <?/MIVAR>
+      </td>
     </tr>
     <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
       <td>
@@ -289,6 +294,8 @@ OPTIONAL VARS:
           <b>Title:</b>
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">$title</a>
         <?/MIVAR>
+      </td>
+      <td>
       </td>
     </tr>
 
@@ -340,8 +347,6 @@ OPTIONAL VARS:
     <input type=button value="ReOpen Paper" onClick="openPaper()";>
   <?/MIBLOCK>
   </form> 
-  
-  
   
 <?MICOMMENT> 
   ======================
