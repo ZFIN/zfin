@@ -31,7 +31,7 @@ public abstract class ErrorAssociable implements EntryPoint {
     }
 
     public void clearError(){
-        errorString = "" ; 
+        setErrorString("") ; 
     }
 
     public void hideError(){
