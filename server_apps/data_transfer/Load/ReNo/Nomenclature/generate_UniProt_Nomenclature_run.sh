@@ -10,6 +10,7 @@ set bin_pth="/private/apps/wublast";
 set current="/research/zblastdb/db/Current";
 set timestamp="`date +%Y%m%d`"
 set here="`pwd`"
+set quote='"'
 
 dbaccess $DBNAME select_nomemclature_candidates.sql;
 cat nomenclature_candidate_pp.unl | cut -f 4,5 -d \| | sort -u > ! keys.txt
@@ -46,6 +47,7 @@ end # foreach
 
 echo "on EMBRYONIX blast the nomenclature set against Human & mouse & zebrafish proteins"
 
-ssh embryonix "cd $here;nice +10 $bin_pth/blastp \"$current/sptr_hs $current/sptr_ms $current/sptr_zf\" accession.pp -E e-50 >! UniProt_$timestamp.out"
+ssh embryonix "cd $here;nice +10 $bin_pth/blastp $quote$current/sptr_hs $current/sptr_ms $current/sptr_zf$quote accession.pp -E e-50 >! 
+UniProt_$timestamp.out"
 
 /research/zcentral/Commons/bin/parse-blast-reno.r UniProt_$timestamp.out "UniProt_$timestamp" 
