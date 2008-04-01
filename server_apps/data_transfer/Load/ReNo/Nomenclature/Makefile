@@ -21,7 +21,7 @@ SUBDIRS =
 
 GENERICS = 
 
-STATICS =  
+STATICS =  select_nomemclature_candidates.sql generate_UniProt_Nomenclature_run.sh
 
 # ---------------  Production Rules  ------------------------------------
 
