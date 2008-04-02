@@ -20,15 +20,14 @@ public class AnatomyLookup extends ErrorAssociable {
 
     String currentText = null;
 
+
     public void onModuleLoad() {
 
         rootPanel.add(formPanel);
         formPanel.setWidget(lookupPanel);
 
-        // eventual code
         textBox.setName("searchTerm");
         textBox.setTitle("searchTerm");
-        textBox.setFocus(true);
         textBox.setVisibleLength(30);
         DOM.setElementAttribute(textBox.getElement(), "autocomplete", "off");
         suggestBox = new SuggestBox(oracle, textBox);
@@ -36,7 +35,14 @@ public class AnatomyLookup extends ErrorAssociable {
         suggestBox.addEventHandler(new SuggestionHandler() {
             public void onSuggestionSelected(SuggestionEvent event) {
                 suggestion = event.getSelectedSuggestion();
+//                Window.alert("suggest selected" +
+//                        " replace["+ suggestion.getReplacementString()+"] " +
+//                        " display["+suggestion.getDisplayString()+"] " +
+//                        " currentText["+currentText+"] " +
+//                        " suggestBox["+suggestBox.getText()+"] " +
+//                        " textBox["+textBox.getText()+"]") ;
                 if (suggestion.getReplacementString() == null) {
+                    suggestBox.setText(currentText);
                     submitSearch(currentText);
                 } else if (suggestion.getReplacementString() != null) {
                     submitSearch(suggestion.getReplacementString());
@@ -49,18 +55,33 @@ public class AnatomyLookup extends ErrorAssociable {
         suggestBox.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress(Widget w, char c, int i) {
                 if (textBox.getText() != null & textBox.getText().length() > 0) {
-                    currentText = textBox.getText();
+                    currentText = textBox.getText()  ;
+                    if( Character.isLetterOrDigit(c)){
+                       currentText += c ;  
+                    }
+//                    Window.alert("keypress on w: "+ w.getTitle()+ " c: "+c+" " +
+//                            "currentText["+currentText+"] " +
+//                            "textBox["+textBox.getText()+"] " +
+//                            "suggestBox["+suggestBox.getText()+"]") ;
                 }
             }
+
         });
 
 
         formPanel.addFormHandler(new FormHandler() {
+
             public void onSubmitComplete(FormSubmitCompleteEvent event) {
 //                Window.alert("error");
             }
 
             public void onSubmit(FormSubmitEvent event) {
+//                Window.alert("onsubmit" +
+//                        " replace["+ suggestion.getReplacementString()+"] " +
+//                        " display["+suggestion.getDisplayString()+"] " +
+//                        " currentText["+currentText+"] " +
+//                        " suggestBox["+suggestBox.getText()+"] " +
+//                        " textBox["+textBox.getText()+"]") ;
                 if (suggestion.getReplacementString() != null) {
                     submitSearch(suggestion.getReplacementString());
                 } else if (suggestion.getReplacementString() == null && currentText != null) {
@@ -80,6 +101,11 @@ public class AnatomyLookup extends ErrorAssociable {
         lookupPanel.add(submitButton);
         loadErrorPanel();
         RootPanel.get("anatomyTerm").add(rootPanel);
+        textBox.setFocus(true);
+    }
+
+    public void setText(String newText){
+        textBox.setText(newText);
     }
 
     private void submitSearch(String text) {
