@@ -167,12 +167,12 @@ UNLOAD TO 'probe_without_encoding_gene.err'
 --When there exists an xpat using the same probe and is from direct submission,
 --it is highly possible that the data is from the same submission, which is 
 -- problematic. Flag it.
-UNLOAD TO 'exist_same_xpat_experiment_from_directsub.err'
-       select prb_clone_name, xpatex_zdb_id, xpatex_genox_zdb_id, xpatex_assay_name, xpatex_source_zdb_id
-         from probes_tmp, expression_experiment, marker
-        where mrkr_zdb_id = xpatex_probe_feature_zdb_id
-          and mrkr_name = prb_clone_name
-          and xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-031103-24", "ZDB-PUB-051025-1", "ZDB-PUB-080227-22");
+--UNLOAD TO 'exist_same_xpat_experiment_from_directsub.err'
+--       select prb_clone_name, xpatex_zdb_id, xpatex_genox_zdb_id, xpatex_assay_name, xpatex_source_zdb_id
+--         from probes_tmp, expression_experiment, marker
+--        where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+--          and mrkr_name = prb_clone_name
+--          and xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-031103-24", "ZDB-PUB-051025-1", "ZDB-PUB-080227-22");
 
 
 -- use the "unknown" if probe library is not provided.
@@ -216,8 +216,7 @@ create table expression_tmp(
 ALTER TABLE expression_tmp add constraint (foreign key (exp_clone_name) references probes_tmp constraint exp_clone_name_foreign_key);
 
 load from './expression.unl' insert into expression_tmp;
-unload to 'prbkeywd.unl' select prb_keyvalue,prb_clone_name from probes_tmp;
-unload to 'expkeywd.unl' select distinct exp_clone_name from expression_tmp;
+
 -- Check data error 
 -----------------------
 UNLOAD TO 'prb_without_xpat.err' 
@@ -263,6 +262,16 @@ update expression_tmp
            (select anatitem_zdb_id from anatomy_item where anatitem_name = exp_keyword)
  where exp_keyword in  (select anatitem_name from anatomy_item);
 
+UNLOAD TO "keyword_is_alias_to_multiple_ao.err"
+   select exp_clone_name, exp_sstart, dalias_alias
+     from data_alias, expression_tmp 
+    where dalias_alias = exp_keyword
+      and dalias_data_zdb_id like "ZDB-ANAT-%"
+  group by exp_clone_name, exp_sstart, dalias_alias
+  having count(*) > 1;
+
+-- if got 284 error, check the keyword_is_alias_to_multiple_ao.err
+-- and fix the keyword in the expression.unl file.
 update expression_tmp 
    set exp_keyword = 
         (select dalias_data_zdb_id from data_alias 

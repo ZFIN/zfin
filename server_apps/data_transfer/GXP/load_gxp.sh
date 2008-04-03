@@ -44,36 +44,53 @@ endif
 
 set assayname = "mRNA in situ hybridization";
 
+# we had one case that the owner of the clone is different
+# from the owner of the expression, as well as the publication
+# attribution. Thus we have two owners and two pubs defined now.
 if ($labname == "Thisse") then
-    set submitter = "ZDB-PERS-960805-556"
+    set mrkrOwnerId = "ZDB-PERS-960805-556"
+    set imgOwnerId = "ZDB-PERS-960805-556"
     set genox     = "ZDB-GENOX-041102-1429"  
 
     if ($datatype == "cb") then 
-    	set pubId    = "ZDB-PUB-010810-1"
+    	set mrkrPubId    = "ZDB-PUB-010810-1"
+    	set xpatPubId    = "ZDB-PUB-010810-1"
 	set sourceId = "ZDB-LAB-991005-53"    # ZIRC
 	set genePrefix = "sb:"
 
     else if ( $datatype == "eu" || $datatype == "eu_nm" ) then
-    	set pubId    = "ZDB-PUB-051025-1"     
+    	set mrkrPubId    = "ZDB-PUB-051025-1" 
+	set xpatPubId    = "ZDB-PUB-051025-1" 
 	set sourceId = ""    
 	set genePrefix = "sb:" 
 
     else if ( $datatype == "sc") then
-    	set pubId    = "ZDB-PUB-080227-22"     
+    	set mrkrPubId    = "ZDB-PUB-080227-22"  
+       	set xpatPubId    = "ZDB-PUB-080227-22"  
 	set sourceId = "ZDB-LAB-060808-1"    
 	set genePrefix = "sc:" 
 
+    else if ( $datatype == "nr") then
+        set mrkrOwnerId = "ZDB-PERS-010213-1"
+    	set mrkrPubId    = "ZDB-PUB-071118-46"   
+      	set xpatPubId    = "ZDB-PUB-080220-1"   
+	set sourceId = "ZDB-LAB-010213-1"    
+	set genePrefix = "gb:" 
+
     else   # fr
-   	set pubId    = "ZDB-PUB-040907-1"
+   	set mrkrPubId    = "ZDB-PUB-040907-1"
+   	set xpatPubId    = "ZDB-PUB-040907-1"
 	set sourceId = "ZDB-LAB-040907-1"     # I.M.A.G.E. consortium
 	set genePrefix = "im:"
     endif
 endif
 
 if ($labname == "Talbot") then
-    set submitter = "ZDB-PERS-980223-5"
+    set mrkrOwnerId = "ZDB-PERS-980223-5"
+    set imgOwnerId = "ZDB-PERS-980223-5"
     set genox     = "ZDB-GENOX-041102-546"   
-    set pubId     = "ZDB-PUB-031103-24"
+    set mrkrPubId     = "ZDB-PUB-031103-24"
+    set xpatPubId     = "ZDB-PUB-031103-24"
     set sourceId  = "ZDB-COMPANY-051101-1"    # RZPD 
     set genePrefix = "wu:"
 
@@ -115,7 +132,7 @@ $INFORMIXDIR/bin/dbaccess $dbname gxp_load_quantity_check.sql >& preload_quantit
 
 $INFORMIXDIR/bin/dbaccess $dbname gxp_load_func.sql
 
-echo "execute function gxp_load_func('$labname', '$datatype', '$submitter','$pubId','$sourceId','$genox', '$genePrefix','$assayname')" | $INFORMIXDIR/bin/dbaccess $dbname
+echo "execute function gxp_load_func('$labname', '$datatype', '$mrkrOwnerId','$imgOwnerId','$mrkrPubId','$xpatPubId','$sourceId','$genox', '$genePrefix','$assayname')" | $INFORMIXDIR/bin/dbaccess $dbname
 
 # when we get a little more confidence on the stableness of the function,
 # we will move it to lib/DB_function, and get rid of the creation and 

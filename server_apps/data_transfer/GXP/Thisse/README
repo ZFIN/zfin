@@ -7,7 +7,7 @@
 -- File collection
 ---------------------
 
-   * Use a MAC machine to download data package (.sitx file) from ftp://ftp-igbmc.u-strasbg.fr/pub/Thisse/, and expand it with STUFFITS (www.stuffit.com). 
+   * Get new data set from /research/zarchive3/stopgap/bthisse/ 
 
    * Use FileMaker Pro to open the files with user "Thisse" and password "thisse". From 'File' pulldown menu, choose Export, give names as defined below. Note, before exporting DATA_FRX file, go to "Records", click "Show All Records" to make sure all is included. 
 
@@ -84,7 +84,9 @@
 
     $command$    :
 
-	   > thisseData2Unl.sh <your_db_name>
+	   > thisseData2Unl.sh <your_db_name> [release_type]
+
+               release_type:    fr/cb/eu/eu_nm/sc/nr, default is "fr"
 
     $result files$:   
 			probes.unl
@@ -106,11 +108,11 @@
 ----------------
 
     $NOTE$ : This is the only step to run for ALMOST or PRODUCTION load. 
-             To load data into ALMOST or PRODUCTION, you need resource permission
+             To load data into ALMOST or PRODUCTION, you need RESOURCE level permission
         to create tables and drop tables, yet you better not be informix because
         informix do not have the permission to load images into imageLoadUp directory.
-        I know I(Peiran) have the needed resource permission, and I am sure Sierra
-        has it. So ask one of us to load production when you are ready. 
+        Peiran, Sierra, Judy, Tom as themselves has RESOURCE or DBA level permissions. 
+        So ask one of us to load production when you are ready. 
 
 	     For GIS load, when you get the is_gene.txt file from curator, 
 	make sure to go over the file checking the format and then append
@@ -126,7 +128,7 @@
 	  > load_gxp.sh <db_name> <lab_name> [release_type]
 
           lab_name   :     Thisse /Talbot
-          release_type:    fr/cb/eu/eu_nm
+          release_type:    fr/cb/eu/eu_nm/sc/nr
 
     $input files$   :
 			probes.unl

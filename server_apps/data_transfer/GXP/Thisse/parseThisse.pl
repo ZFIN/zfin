@@ -128,7 +128,7 @@ while (<PROBE_IN>) {
     
     my @probe = processCsvRow ($_); 
 
-    $probe[1] =~ s/EU/eu/;       # EST name has to be lower in zfin
+    $probe[1] =~ tr/[A-Z]/[a-z]/;       # EST name has to be lower in zfin
 
     $probe[8] =~ s/\222/\' /g;     #\222 is for windows single quote
     $probe[8] =~ s/3\'\s+5\'/3\'<br>5\'/;

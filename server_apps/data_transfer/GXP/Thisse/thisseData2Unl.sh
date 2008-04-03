@@ -13,7 +13,7 @@
 
 if ($#argv < 1) then 
     echo ""
-    echo "Usage: thisseData2Unl.sh <dbname>"
+    echo "Usage: thisseData2Unl.sh <dbname> [release_type]"
     exit;
 endif
 
@@ -21,6 +21,11 @@ setenv PATH    "/private/apps/wublast:"$PATH
 setenv BLASTDB "/research/zblastdb/db/wu-db";
 
 set dbname = $1
+if ($2) then
+  set rtype = $2
+else 
+  set rtype = "fr"
+endif
 
 #=========== Parsing =================
 echo "== parseing Thisse files ..."
@@ -50,7 +55,7 @@ if (-e acc_imClone.unl) then
 endif
 
 echo "== naming clone, interact with zfin db and blast db  ..."
-./nameClone.pl $dbname
+./nameClone.pl $dbname $rtype
 
 if (-z nameClone.err)  then # file of zero length
     /bin/rm -f nameClone.err
