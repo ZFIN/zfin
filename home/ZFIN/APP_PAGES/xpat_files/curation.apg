@@ -745,6 +745,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
         <li id="pub_id">ZFIN ID: <?MIVAR>$OID<?/MIVAR></li>
         <?MIVAR>
         <li id="mod_date"><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-vframeset.apg&OID=$OID&rtype=fish">Updated: $mod_date</a></li>
+        <li id="track_curation"><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Track Curation</a></li>
         <?/MIVAR>
     </ul>
 </div>
