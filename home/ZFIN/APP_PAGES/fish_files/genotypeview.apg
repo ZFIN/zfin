@@ -410,14 +410,13 @@ Datablade documentation.
          <?MIVAR NAME=mrkrview_maxlength>100<?/MIVAR>
              <?MIBLOCK COND="$(>,$(STRLEN,$mrkrview_datanote),$mrkrview_maxlength)">
                  <?MIVAR>
-                 $(SUBSTR,$mrkrview_datanote,1,$mrkrview_maxlength)
+                 $(SUBSTR,$mrkrview_datanote,1,$mrkrview_maxlength) . . . 
                  <?/MIVAR>
              <?MIELSE>
                  <?MIVAR>
                  $mrkrview_datanote  
                  <?/MIVAR>
              <?/MIBLOCK>
-      . . .
          <?/MISQL>
       <?/MIBLOCK>
     <?/MISQL>
