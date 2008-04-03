@@ -333,7 +333,8 @@ function openChild(childWinUrl,childWinName) {
       xpat_gene_zdb_id          varchar(50),
       xpat_xpatex_zdb_id	varchar(50),
       xpat_matching_text 	varchar(255),
-      xpat_matching_precedence	varchar(80)
+      xpat_matching_precedence	varchar(80),
+      xpat_matching_signif	integer
     ) with NO LOG;
    ">
   <?/MISQL>

@@ -135,7 +135,7 @@ DEBUGGING:
 
 <?MIVAR NAME=xpatselqry_join><?/MIVAR>
 <?MIVAR NAME=xpatselqry_cond><?/MIVAR>
-<?MIVAR NAME=xpatselqry_cols>, null::varchar(255), null::varchar(80)<?/MIVAR>
+<?MIVAR NAME=xpatselqry_cols>, null::varchar(255), null::varchar(80), 0<?/MIVAR>
 
 <?MICOMMENT>
     =========================================================
@@ -171,7 +171,7 @@ DEBUGGING:
    
   <?MIVAR NAME=xpatselqry_join>$xpatselqry_join join publication on xpatex_source_zdb_id = zdb_id <?/MIVAR>
   <?MIVAR NAME=xpatselqry_cond>$xpatselqry_cond AND  lower(authors) like '$xpatselqry_likeString' <?/MIVAR>
-  <?MIVAR NAME=xpatselqry_cols>, authors, 'Author'<?/MIVAR>
+  <?MIVAR NAME=xpatselqry_cols>, authors, 'Author', 500<?/MIVAR>
   <?MIVAR NAME=$xpatselqry_matchedText>$xpatselqry_author<?/MIVAR>
   <?MIVAR NAME=$xpatselqry_matchedTextSearchType>$xpatselqry_authorSearchType<?/MIVAR>
 
@@ -251,7 +251,8 @@ DEBUGGING:
         create temp table $xselqry_tmp_mo_name (
                     xtmg_genox_zdb_id		varchar(50),
 		    xtmg_match_name		varchar(255),
-		    xtmg_match_name_precedence	varchar(80)
+		    xtmg_match_name_precedence	varchar(80),
+		    xtmg_match_name_signif	integer
 		    )with no log;">
       <?/MISQL>
       <?MISQL COND="$(EC,$1,t)" SQL="
@@ -264,7 +265,7 @@ DEBUGGING:
                         case allmapnm_precedence
                              when 'Current symbol' then 'MO symbol'
                              when 'Current name' then 'MO name'
-                        end
+                        end, xtmn_name_significance
                    from $xselqry_tmp_mo_sig, marker_relationship,experiment_condition,
 		        genotype_experiment, all_map_names $xpatselqry_nameEndsTable
                   where $xpatselqry_nameCond
@@ -278,7 +279,7 @@ DEBUGGING:
   <?MIVAR NAME=xpatselqry_join>
      $xpatselqry_join join $xselqry_tmp_mo_name on xpatex_genox_zdb_id = xtmg_genox_zdb_id
   <?/MIVAR>
-  <?MIVAR NAME=xpatselqry_cols>, xtmg_match_name, xtmg_match_name_precedence<?/MIVAR>
+  <?MIVAR NAME=xpatselqry_cols>, xtmg_match_name, xtmg_match_name_precedence,xtmg_match_name_signif<?/MIVAR>
   <?MIVAR NAME=xpatselqry_matchedText>$xpatselqry_MOgene<?/MIVAR>
   <?MIVAR NAME=xpatselqry_matchedTextSearchType>$xpatselqry_MOsearchtype<?/MIVAR>
 
@@ -303,7 +304,7 @@ DEBUGGING:
    <?MIVAR NAME=xpatselqry_cond>
        $xpatselqry_cond AND xpatex_genox_zdb_id = genox_zdb_id and g_zdb_id = genox_geno_zdb_id
    <?/MIVAR>
-   <?MIVAR NAME=xpatselqry_cols>, m_text, 'Background:'||m_type<?/MIVAR>
+   <?MIVAR NAME=xpatselqry_cols>, m_text, 'Background:'||m_type, m_order<?/MIVAR>
    <?MIVAR NAME=xpatselqry_matchedText>$xpatselqry_genoName<?/MIVAR>
    <?MIVAR NAME=xpatselqry_matchedTextSearchType>$xpatselqry_genoSearchType<?/MIVAR>
 
@@ -334,7 +335,8 @@ DEBUGGING:
         create temp table $xselqry_tmp_name (
                     xtn_mrkr_zdb_id		varchar(50),
 		    xtn_match_name		varchar(255),
-		    xtn_match_name_precedence	varchar(80)
+		    xtn_match_name_precedence	varchar(80),
+		    xtn_match_name_signif	integer
 		    )with no log;">
       <?/MISQL>
       <?MISQL COND="$(EC,$1,f)" SQL="
@@ -427,7 +429,7 @@ DEBUGGING:
               
     <?MISQL SQL="
     	    insert into $xselqry_tmp_name
-    	    select xtg_mrkr_zdb_id, min(xtg_name_match),min(xtg_name_precedence)
+    	    select xtg_mrkr_zdb_id, min(xtg_name_match),min(xtg_name_precedence), xtf_name_significance
               from $xselqry_tmp_sig, $xselqry_tmp_g_mth, name_precedence
              where xtg_mrkr_zdb_id = xtf_mrkr_zdb_id
                and xtg_name_significance = xtf_name_significance 
@@ -437,7 +439,7 @@ DEBUGGING:
     <?MIVAR NAME=xpatselqry_gene_probe_count>$MI_ROWCOUNT<?/MIVAR>
 
     <?MIVAR NAME=xpatselqry_join>$xpatselqry_join, $xselqry_tmp_name<?/MIVAR>
-    <?MIVAR NAME=xpatselqry_cols>, xtn_match_name, xtn_match_name_precedence<?/MIVAR>
+    <?MIVAR NAME=xpatselqry_cols>, xtn_match_name, xtn_match_name_precedence, xtn_match_name_signif<?/MIVAR>
     <?MIVAR NAME=xpatselqry_matchedText>$xpatselqry_geneName<?/MIVAR>
     <?MIVAR NAME=xpatselqry_matchedTextSearchType>$xpatselqry_geneSearchType<?/MIVAR>
 
@@ -630,7 +632,8 @@ DEBUGGING:
 
 <?MIVAR NAME=xpatselqry_final_sql>
      insert into $xpatselqry_resultTable
-          (xpat_gene_zdb_id, xpat_fig_zdb_id, xpat_xpatex_zdb_id, xpat_matching_text,xpat_matching_precedence)
+          (xpat_gene_zdb_id, xpat_fig_zdb_id, xpat_xpatex_zdb_id, xpat_matching_text,
+           xpat_matching_precedence, xpat_matching_signif)
 	select distinct xpatex_gene_zdb_id, xpatfig_fig_zdb_id, xpatex_zdb_id
                $xpatselqry_cols
           from expression_result,

@@ -42,7 +42,8 @@ OUTPUT VARS:
       xpat_gene_zdb_id          varchar(50),
       xpat_xpatex_zdb_id	varchar(50),
       xpat_matching_text 	varchar(255),
-      xpat_matching_precedence	varchar(80)
+      xpat_matching_precedence	varchar(80),
+      xpat_matching_signif	integer
 
    we found that one gene could have several match with different matching
    significance, matching text. Yet each gene would be used in multiple xpat experiment 
@@ -76,13 +77,12 @@ OUTPUT VARS:
   <?MIVAR NAME="xpsumres_recordIndex">0<?/MIVAR>
 
   <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-select distinct mrkr_zdb_id, mrkr_abbrev,
-       get_mrkr_abbrev_html_link(mrkr_zdb_id), 
-       mrkr_abbrev_order
-from $xpsumres_resultTable
-     join marker on mrkr_zdb_id = xpat_gene_zdb_id
-order by mrkr_abbrev_order
-;">
+     select distinct mrkr_zdb_id, mrkr_abbrev,
+       	    get_mrkr_abbrev_html_link(mrkr_zdb_id), 
+            mrkr_abbrev_order,xpat_matching_signif
+       from $xpsumres_resultTable
+            join marker on mrkr_zdb_id = xpat_gene_zdb_id
+     order by xpat_matching_signif, mrkr_abbrev_order;">
     <?MIVAR NAME="xpsumres_geneZdbId">$1<?/MIVAR>
     <?MIVAR NAME="xpsumres_geneAbbrev">$2<?/MIVAR>
     <?MIVAR NAME="xpsumres_geneAbbrevLink">$3<?/MIVAR>  
