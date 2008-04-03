@@ -76,13 +76,32 @@ function new_GO(pubid,mrkrzdbid){
     <a href="javascript:;" onClick=new_GO(document.newgo.pub_id.value,document.newgo.OID.value) >[Add New GO]</a>:
     <select name=OID>
     <?MISQL SQL="
-      select distinct mrkr_zdb_id, mrkr_abbrev, mrkr_abbrev_order
-        from marker, record_attribution
-       where recattrib_data_zdb_id = mrkr_zdb_id
-         and recattrib_source_zdb_id = '$OID' 
-         and recattrib_source_type = 'standard'
-         and mrkr_zdb_id like 'ZDB-GENE%'
-       order by mrkr_abbrev_order;">
+      select m.mrkr_zdb_id, m.mrkr_abbrev, m.mrkr_abbrev_order
+        from marker m, record_attribution ra
+       where ra.recattrib_source_zdb_id = '$OID' 
+         and ra.recattrib_data_zdb_id = m.mrkr_zdb_id
+         and ra.recattrib_source_type = 'standard'
+         and m.mrkr_zdb_id like 'ZDB-GENE%'
+         union
+      select m.mrkr_zdb_id, m.mrkr_abbrev, m.mrkr_abbrev_order
+        from marker m, record_attribution ra, feature_marker_relationship fmr
+       where ra.recattrib_source_zdb_id = '$OID' 
+         and ra.recattrib_data_zdb_id = fmr.fmrel_ftr_zdb_id
+         and fmr.fmrel_mrkr_zdb_id = m.mrkr_zdb_id
+         and fmr.fmrel_type = 'is allele of'
+       union 
+     select m.mrkr_zdb_id, m.mrkr_abbrev, m.mrkr_abbrev_order
+        from marker_relationship mr, record_attribution ra, marker m
+        where
+        mr.mrel_type='knockdown reagent targets gene'
+        and 
+        m.mrkr_zdb_id=mr.mrel_mrkr_2_zdb_id
+        and 
+        ra.recattrib_data_zdb_id=mr.mrel_mrkr_1_zdb_id
+        and
+        ra.recattrib_source_zdb_id='$OID'
+       order by m.mrkr_abbrev_order
+       ;">
       <option value=$1>$2</option>
     <?/MISQL> 
     </select>
