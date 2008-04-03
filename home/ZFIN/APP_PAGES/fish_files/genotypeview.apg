@@ -395,9 +395,33 @@ Datablade documentation.
 		 from data_note
 		where dnote_data_zdb_id = '$OID' ;">
     <?/MISQL>  
-    <?MIVAR COND="$(NC,$1,0)">
+    <?MIBLOCK COND="$(NC,$1,0)">
+    <?MIVAR>
       <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&OID_page=genotypeview.apg">Notes</A>
     <?/MIVAR>
+    <?MISQL SQL="select count(*)
+		from data_note
+		where dnote_data_zdb_id = '$OID' ;">
+       <?MIBLOCK COND="$(NC,$1,0)">
+        <?MISQL SQL="select dnote_text from data_note
+                     where dnote_data_zdb_id='$OID'
+                    order by dnote_date desc">
+         <?MIVAR NAME=$mrkrview_datanote>$1<?/MIVAR>
+         <?MIVAR NAME=mrkrview_maxlength>100<?/MIVAR>
+             <?MIBLOCK COND="$(>,$(STRLEN,$mrkrview_datanote),$mrkrview_maxlength)">
+             <?MIVAR>
+             $(SUBSTR,$mrkrview_datanote,1,$mrkrview_maxlength)
+             <?/MIVAR>
+             <?MIELSE>
+             <?MIVAR>
+             $mrkrview_datanote  
+             <?/MIVAR>
+             <?/MIBLOCK>
+         <?/MISQL>
+      <?/MIBLOCK>
+      ...
+    <?/MISQL>
+    <?/MIBLOCK>
 
     <?MIVAR COND="$(EC,$1,0)">
       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&OID_page=genotypeview.apg">Add Notes</a> 
@@ -405,7 +429,7 @@ Datablade documentation.
     <br>
   <?/MIBLOCK>
 
-  <p>
+  <p> 
 
 
 
