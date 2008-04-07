@@ -75,6 +75,7 @@ If you have a ZFIN <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-login.ap
       ACTION="/<!--|CGI_BIN_DIR_NAME|-->/new_gene.cgi"
       ONSUBMIT="return validateForm();">
 <?/MIVAR>
+
 <body onload="clearPubStatus();">
 <h1 align="center">Submit a Proposed Gene Name</h1>
 <p><strong>Nomenclature Resources</strong></p>
@@ -90,7 +91,7 @@ Before proposing and reserving a name, review the current guidelines and search 
 </ul>
 <hr>
 <p><em>* required information</em></p>
-<form method="post" action="mailto:van_slyke@uoneuro.uoregon.edu">
+<form method="post" action="mailto:<!--|NOMEN_COORDINATOR|-->">
   <p><strong>Contact Information</strong></p>
   <table border="0" cellspacing="8" cellpadding="0">
     <tr>
