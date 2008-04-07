@@ -3,6 +3,6 @@
 -->
 
 <PRE>
-<?MISQL SQL="select email from person where on_dist_list='t'and email is not null and email <> 'NULL';">$1
+<?MISQL SQL="select distinct email from person where on_dist_list='t' and email is not null and email <> 'NULL' and email <> '';">$1
 <?/MISQL>
 </PRE>
