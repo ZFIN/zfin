@@ -530,6 +530,26 @@ DEBUGGING:
            and mrkr_type <> 'MRPHLNO'
        ;">             
     <?/MISQL>
+
+    <?MISQL SQL="
+     insert into $markerselect_temp_marker 
+             (mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev, 
+	     mstmrkr_abbrev_order,  mstmrkr_type )		
+    select m.mrkr_zdb_id, m.mrkr_name, m.mrkr_abbrev, m.mrkr_abbrev_order, m.mrkr_type
+    from marker m
+    where
+    m.mrkr_zdb_id in
+    (
+     select mr.mrel_mrkr_2_zdb_id
+    from record_attribution ra, marker_relationship mr
+    where ra.recattrib_source_zdb_id = '$pubId' 
+    and ra.recattrib_data_zdb_id = mr.mrel_mrkr_1_zdb_id 
+    and mr.mrel_type =  'knockdown reagent targets gene' 
+    )
+    ;">
+    <?/MISQL>
+
+
     <?MIVAR> $(SETVAR,$type_of_genedom,t) <?/MIVAR>
 
   <?MIELSE COND="$(EC,$type,pub_mo)" >     

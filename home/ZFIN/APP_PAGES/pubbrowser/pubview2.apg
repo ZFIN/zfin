@@ -343,7 +343,18 @@ Number exists
 	         from marker_type_group_member
                 where mtgrpmem_mrkr_type_group = 'SEARCH_MK'
              )
-         and mrkr_type <> 'MRPHLNO'; ">
+         and mrkr_type <> 'MRPHLNO' 
+
+         UNION
+
+        select mr.mrel_mrkr_2_zdb_id
+from record_attribution ra, marker m, marker_relationship mr
+where recattrib_source_zdb_id = '$OID' 
+and recattrib_data_zdb_id = mrkr_zdb_id 
+and m.mrkr_zdb_id=mr.mrel_mrkr_1_zdb_id
+and mrkr_type = 'MRPHLNO' 
+
+         ;">
   <?/MISQL>
   
   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
