@@ -18,7 +18,7 @@ public class HighQualityProbe {
     private Publication publication;
     private List<Figure> figures;
     private List<Publication> publications;
-    private int numberOfImages =-1;
+    private int numberOfImages = -1;
 
     private ChoiceFormat cf = new ChoiceFormat("0#figures|1#figure|2#figures");
     private ChoiceFormat cimages = new ChoiceFormat("0#images|1#image|2#images");
@@ -49,10 +49,10 @@ public class HighQualityProbe {
 
     public String getNumberOfImages() {
         // calculate if the number is not set.
-        if(numberOfImages == -1){
+        if (numberOfImages == -1) {
             numberOfImages = 0;
-            if (figures != null){
-                for(Figure fig : figures){
+            if (figures != null) {
+                for (Figure fig : figures) {
                     numberOfImages += fig.getImages().size();
                 }
             }
@@ -64,11 +64,17 @@ public class HighQualityProbe {
         return publication;
     }
 
-    public Publication getProbePublication(){
-        if(publications == null)
-        return null;
+    public int getNumberOfPublications() {
+        if (publications == null)
+            return 0;
+        return publications.size();
+    }
 
-        if(publications.size() != 1)
+    public Publication getProbePublication() {
+        if (publications == null)
+            return null;
+
+        if (publications.size() != 1)
             throw new RuntimeException("Found more than one publication for probe: " + subGene.getAbbreviation());
 
         return publications.get(0);
@@ -93,11 +99,11 @@ public class HighQualityProbe {
         return figures;
     }
 
-    public Figure getFigure(){
-        if(figures == null || figures.size() != 1)
-        throw new RuntimeException("Can call this method only when there is exactly one figure");
+    public Figure getFigure() {
+        if (figures == null || figures.size() != 1)
+            throw new RuntimeException("Can call this method only when there is exactly one figure");
         return figures.get(0);
     }
 
-    
+
 }

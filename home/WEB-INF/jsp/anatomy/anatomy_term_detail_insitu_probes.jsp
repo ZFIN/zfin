@@ -45,7 +45,14 @@
                                 </a>
                             </c:if>
                             from
-                            <zfin:link entity="${gene.probePublication}"/>
+                            <c:if test="${gene.numberOfPublications ==1}">
+                                <zfin:link entity="${gene.probePublication}"/>
+                            </c:if>
+                            <c:if test="${gene.numberOfPublications > 1}">
+                                <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
+                                             collectionEntity="${gene.publications}"
+                                             includeNumber="true"/>
+                            </c:if>
                         </c:if>
                     </td>
                 </tr>
