@@ -167,12 +167,12 @@ UNLOAD TO 'probe_without_encoding_gene.err'
 --When there exists an xpat using the same probe and is from direct submission,
 --it is highly possible that the data is from the same submission, which is 
 -- problematic. Flag it.
---UNLOAD TO 'exist_same_xpat_experiment_from_directsub.err'
---       select prb_clone_name, xpatex_zdb_id, xpatex_genox_zdb_id, xpatex_assay_name, xpatex_source_zdb_id
---         from probes_tmp, expression_experiment, marker
---        where mrkr_zdb_id = xpatex_probe_feature_zdb_id
---          and mrkr_name = prb_clone_name
---          and xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-031103-24", "ZDB-PUB-051025-1", "ZDB-PUB-080227-22");
+UNLOAD TO 'exist_same_xpat_experiment_from_directsub.err'
+       select prb_clone_name, xpatex_zdb_id, xpatex_genox_zdb_id, xpatex_assay_name, xpatex_source_zdb_id
+         from probes_tmp, expression_experiment, marker
+        where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+          and mrkr_name = prb_clone_name
+          and xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-031103-24", "ZDB-PUB-051025-1", "ZDB-PUB-080227-22");
 
 
 -- use the "unknown" if probe library is not provided.
