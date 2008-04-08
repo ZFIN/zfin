@@ -831,7 +831,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
        
   *Attribute Mrkr: 
-     <input type="textbox" name="pubcur_G_mrkr_attrib" id="curApgMrkrCompleter" size="10" autocomplete="off">             
+     <input type="textbox" name="pubcur_G_mrkr_attrib" id="curApgMrkrCompleter" size="20" autocomplete="off">             
           <span id="pubcurMrkrAutoCompleterIndicator" style="display: none; color: red;">working...</span>
 
           <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="mrkr_abbrev_auto_complete"></div>
@@ -848,7 +848,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 
   *Attribute Feature: 
-     <input type="textbox" name="pubcur_G_fish_attrib" id="curApgFishCompleter" size="15" autocomplete="off">             
+     <input type="textbox" name="pubcur_G_fish_attrib" id="curApgFishCompleter" size="20" autocomplete="off">             
           <span id="pubcurFishAutoCompleterIndicator" style="display: none; color: red;">working...</span>
 
           <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="fish_abbrev_auto_complete"></div>
