@@ -1,11 +1,25 @@
 <html>
 <head>
     <title>AnatomyLookup Application</title>
-    <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.anatomy.presentation.AnatomyLookup/AnatomyLookup.css"/>
+    <link rel="stylesheet" type="text/css" href="/org.zfin.anatomy.presentation.AnatomyLookup/AnatomyLookup.css"/>
+    <!--                                           -->
+    <!-- The module reference below is the link    -->
+    <!-- between html and your Web Toolkit module  -->
+    <!--                                           -->
+    <meta name='gwt:module' content='org.zfin.anatomy.presentation.AnatomyLookup'>
 </head>
 <body>
-<script language="javascript" src="/gwt/org.zfin.anatomy.presentation.AnatomyLookup/org.zfin.anatomy.presentation.AnatomyLookup.nocache.js"></script>
+<!--<script language="javascript" src="/gwt/org.zfin.anatomy.presentation.AnatomyLookup/org.zfin.anatomy.presentation.AnatomyLookup.nocache.js"></script>-->
 
+<!--                                            -->
+<!-- This script is required bootstrap stuff.   -->
+<!-- You can put it in the HEAD, but startup    -->
+<!-- is slightly faster if you include it here. -->
+<!--                                            -->
+<script language="javascript" src="gwt.js"></script>
+
+<!-- OPTIONAL: include this if you want history support -->
+<iframe id="__gwt_historyFrame" style="width:0;height:0;border:0"></iframe>
 
 <h1>AnatomyLookup Application</h1>
 <div id="anatomyTerm"> </div>

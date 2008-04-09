@@ -8,6 +8,8 @@ import org.zfin.anatomy.presentation.SortAnatomySearchTerm;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.repository.SessionCreator;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -22,6 +24,9 @@ public class AnatomyLookupServiceImpl
         implements AnatomyLookupService {
 
     private transient AnatomyRepository ar = RepositoryFactory.getAnatomyRepository() ;
+    private transient Logger logger = Logger.getLogger(AnatomyLookupServiceImpl.class) ; 
+
+
 
     /**  Gets suggestions from the anatomy repository.  
      * Note that we do not use limits on the request for this implementation.
@@ -35,9 +40,11 @@ public class AnatomyLookupServiceImpl
             throw new RuntimeException("this is a test error") ; 
         }
 
+        SessionCreator.instantiateDBForHostedMode() ; 
+
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
-        List<AnatomyItem> anatomyItems = new ArrayList<AnatomyItem>(); 
+        List<AnatomyItem> anatomyItems = new ArrayList<AnatomyItem>();
         if(query.length()>2){
             anatomyItems = ar.getAnatomyItemsByName(query,false) ;
             Collections.sort(anatomyItems, new SortAnatomySearchTerm(query));

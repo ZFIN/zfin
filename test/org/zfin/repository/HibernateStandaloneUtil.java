@@ -34,23 +34,15 @@ import java.util.HashSet;
  */
 public class HibernateStandaloneUtil {
 
+
+    public static boolean createSession(){
+        return SessionCreator.createSession() ; 
+    }
+
     public static void main(String[] arguments){
-        String[] confFiles = {
-            "anatomy.hbm.xml",
-            "mutant.hbm.xml",
-            "orthology.hbm.xml",
-            "people.hbm.xml",
-            "sequence.hbm.xml",
-            "blast.hbm.xml",
-            "reno.hbm.xml",
-            "publication.hbm.xml",
-            "marker.hbm.xml",
-            "mapping.hbm.xml",
-            "infrastructure.hbm.xml",
-            "expression.hbm.xml"
-        };
-        new HibernateSessionCreator(false, confFiles);
-        callPersistence();
+        HibernateStandaloneUtil standalone = new HibernateStandaloneUtil() ;
+        standalone.createSession();
+        standalone.callPersistence();
         HibernateUtil.closeSession();
     }
 
