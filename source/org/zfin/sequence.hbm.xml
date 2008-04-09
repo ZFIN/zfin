@@ -17,22 +17,6 @@
         <param name="enumClassname">org.zfin.orthology.Species</param>
     </typedef>
 
-    <class name="org.zfin.sequence.AccessionRelationship" table="accession_relationship">
-        <id name="zdbID" type="string">
-            <column name="accrel_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">ACCREL</param>
-            </generator>
-        </id>
-        <many-to-one name="accession" column="accrel_accbk_pk_id_1" class="org.zfin.sequence.Accession" not-null="true"
-                     lazy="no-proxy"/>
-
-        <many-to-one name="relatedAccession" column="accrel_accbk_pk_id_2" class="org.zfin.sequence.Accession"
-                     not-null="true" lazy="no-proxy"/>
-
-        <many-to-one name="relationshipType" column="accrel_accrelt_type"
-                     class="org.zfin.sequence.AccessionRelationshipType" not-null="true" lazy="no-proxy"/>
-    </class>
 
     <class name="org.zfin.sequence.Accession" table="accession_bank">
         <id name="ID" type="long">
@@ -106,28 +90,6 @@
         <property name="significance" column="fdb_db_significance"/>
     </class>
 
-    <class name="org.zfin.sequence.AccessionRelationshipType" table="accrel_type">
-        <id name="accessionRelationshipType" type="string">
-            <column name="accrelt_type" not-null="true"/>
-            <generator class="native"/>
-        </id>
-    </class>
-    <!--<class name="org.zfin.sequence.AccessionRelationship" table="accession_relationship">
-        <id name="zdbID" type="string">
-            <column name="accrel_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">ACCREL</param>
-            </generator>
-        </id>
-        --><!--<property name="baseURL" column=""/> --><!--
-
-       <many-to-one name="accession" column="accrel_accbk_zdb_id_1" class="org.zfin.sequence.Accession" not-null="true" lazy="no-proxy" />
-       <many-to-one name="relatedAccession" column="accrel_accbk_zdb_id_2" class="org.zfin.sequence.Accession" not-null="true" lazy="no-proxy" />
-
-       <many-to-one name="relationshipType" column="accrel_accrelt_type" class="org.zfin.sequence.AccessionRelationshipType" not-null="true" lazy="no-proxy" />
-
-
-    </class>-->
 
 
     <class name="org.zfin.sequence.DBLink" table="db_link" abstract="true">

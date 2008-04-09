@@ -37,11 +37,11 @@
         </set>
 
 
-        <subclass name="org.zfin.sequence.reno.RedundancyRun" extends="org.zfin.sequence.reno.Run" discriminator-value="Redundancy">
+        <subclass name="org.zfin.sequence.reno.RedundancyRun"  discriminator-value="Redundancy">
             <many-to-one name="relationPublication" column="run_relation_pub_zdb_id" class="org.zfin.publication.Publication" not-null="false" lazy="no-proxy" />
         </subclass>
 
-        <subclass name="org.zfin.sequence.reno.NomenclatureRun" extends="org.zfin.sequence.reno.Run" discriminator-value="Nomenclature">
+        <subclass name="org.zfin.sequence.reno.NomenclatureRun"  discriminator-value="Nomenclature">
             <many-to-one name="orthologyPublication" column="run_relation_pub_zdb_id" class="org.zfin.publication.Publication" not-null="false" lazy="no-proxy" />
         </subclass>
 

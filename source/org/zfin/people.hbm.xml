@@ -123,44 +123,6 @@
         
     </class>
 
-    <class name="org.zfin.framework.ZfinSession" table="session">
-        <id name="zdbID" type="long">
-            <column name="session_zdb_id" not-null="true"/>
-            <generator class="sequence">
-                <param name="sequence">session_id_seq</param>
-            </generator>
-        </id>
-
-        <property name="sessionID">
-            <column name="session_id" not-null="true"/>
-        </property>
-
-        <property name="userID">
-            <column name="session_user_id" />
-        </property>
-
-        <property name="userName">
-            <column name="session_user_name" />
-        </property>
-
-        <property name="status">
-            <column name="session_status" not-null="true"/>
-        </property>
-
-        <property name="dateCreated" type="timestamp">
-            <column name="session_created" not-null="true"/>
-        </property>
-
-        <property name="dateModified" type="timestamp">
-            <column name="session_modified"/>
-        </property>
-
-<!--
-        <many-to-one name="person" class="org.zfin.people.Person" column="user_session_id" insert="false"
-                     update="false"/>
--->
-
-    </class>
 
 </hibernate-mapping>
 

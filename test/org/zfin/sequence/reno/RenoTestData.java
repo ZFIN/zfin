@@ -263,13 +263,13 @@ public class RenoTestData {
 
         //create an accessionRelationship for Human
 
-        AccessionRelationship arelNomenHuman = new AccessionRelationship();
-        arelNomenHuman.setAccession(accessionNomenHit2);
-        arelNomenHuman.setRelatedAccession(accessionNomenRelHuman);
-        AccessionRelationshipType areltype = new AccessionRelationshipType();
-        areltype.setAccessionRelationshipType("Human Protein hit to Entrez Ac");
-        arelNomenHuman.setRelationshipType(areltype);
-        session.save(arelNomenHuman);
+//        AccessionRelationship arelNomenHuman = new AccessionRelationship();
+//        arelNomenHuman.setAccession(accessionNomenHit2);
+//        arelNomenHuman.setRelatedAccession(accessionNomenRelHuman);
+//        AccessionRelationshipType areltype = new AccessionRelationshipType();
+//        areltype.setAccessionRelationshipType("Human Protein hit to Entrez Ac");
+//        arelNomenHuman.setRelationshipType(areltype);
+//        session.save(arelNomenHuman);
 /*
         logger.debug("the related human accession number: "+accessionNomenRelHuman.getID()+" "+accessionNomenRelHuman.getNumber());
         logger.debug("the related accession is not null :" +accessionNomenRelHuman);

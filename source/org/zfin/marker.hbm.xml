@@ -180,30 +180,6 @@
 
 
 
-    <class name="org.zfin.marker.MarkerStatistic" table="gene_anatomy_statistics" >
-        <id name="zdbID" type="long">
-            <column name="gas_pk_id" not-null="true"/>
-            <generator class="sequence">
-                <param name="sequence">gene_anatomy_stat_seq_id</param>
-            </generator>
-        </id>
-
-        <property name="numberOfPublications">
-            <column name="gas_number_of_pubs"/>
-        </property>
-
-        <property name="numberOfFigures">
-            <column name="gas_number_of_figs"/>
-        </property>
-
-        <many-to-one name="gene" class="org.zfin.marker.Marker" column="gas_gene_zdb_id" insert="false"
-                     update="false"/>
-
-        <many-to-one name="anatomyTerm" class="org.zfin.anatomy.AnatomyItem" column="gas_anat_item_zdb_id"
-                     insert="false"
-                     update="false"/>
-    </class>
-
     <!-- this should be replaced with a full fledged mapping of gene or go away -->
     <class name="org.zfin.marker.Gene" table="marker">
         <id name="zdbID">

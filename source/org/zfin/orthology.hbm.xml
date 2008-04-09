@@ -47,7 +47,7 @@
     </class>
 
     <class name="org.zfin.orthology.repository.OrthologyHelper" table="orthology_view">
-        <id name="ZdbID" type="string">
+        <id name="zdbID" type="string">
             <column name="vorthy_orthologue_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <param name="type">ORTHO</param>
@@ -74,16 +74,16 @@
             <column name="vorthy_position"/>
         </property>
 
-        <set name="evidence" lazy="true" table="ortho_evidence">
-            <key column="zdb_id"/>
-            <many-to-many class="org.zfin.orthology.EvidenceCode" column="evidence_code"/>
+        <set name="evidence" lazy="true" table="orthologue_evidence">
+            <key column="oev_ortho_zdb_id"/>
+            <many-to-many class="org.zfin.orthology.EvidenceCode" column="oev_evidence_code"/>
         </set>
 
 
     </class>
 
     <class name="org.zfin.orthology.repository.ZebrafishOrthologyHelper" table="orthology_view">
-        <id name="ZdbID" type="string">
+        <id name="zdbID" type="string">
             <column name="vorthy_orthologue_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <param name="type">ORTHO</param>
@@ -110,9 +110,9 @@
             <column name="vorthy_position"/>
         </property>
 
-        <set name="evidence" lazy="true" table="ortho_evidence">
-            <key column="zdb_id"/>
-            <many-to-many class="org.zfin.orthology.EvidenceCode" column="evidence_code"/>
+        <set name="evidence" lazy="true" table="orthologue_evidence">
+            <key column="oev_ortho_zdb_id"/>
+            <many-to-many class="org.zfin.orthology.EvidenceCode" column="oev_evidence_code"/>
         </set>
 
         <set name="orthologies" lazy="false">
