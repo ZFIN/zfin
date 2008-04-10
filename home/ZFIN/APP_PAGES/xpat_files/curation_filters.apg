@@ -65,7 +65,7 @@ EFFECTS:
         select mrkr_zdb_id, mrkr_abbrev
         from marker 
         where mrkr_zdb_id in ('$pubcur_G_gene_attrib_csv')
-          and mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group = 'GENEDOM')
+          and mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group = 'GENEDOM_AND_EFG')
         order by mrkr_abbrev
         ;">
       <option value="$1"
