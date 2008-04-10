@@ -31,7 +31,7 @@ public class Marker implements Serializable, Comparable {
     private Set<Publication> publications;
     private HashMap<String, List<Publication>> pubsPerAnatomy;
     private Set<Figure> figures;
-    private MarkerFamilyName geneFamilyName;
+    private Set<MarkerFamilyName> familyName;
     private Set<Orthologue> orthologues;
     private Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
     private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel 
@@ -169,14 +169,6 @@ public class Marker implements Serializable, Comparable {
 
     public Set<Figure> getFigures() {
         return figures;
-    }
-
-    public void setGeneFamilyName(MarkerFamilyName geneFamilyName) {
-        this.geneFamilyName = geneFamilyName;
-    }
-
-    public MarkerFamilyName getGeneFamilyName() {
-        return geneFamilyName;
     }
 
     public void setFigures(Set<Figure> figures) {
@@ -400,4 +392,21 @@ public class Marker implements Serializable, Comparable {
         this.dataNotes = dataNotes;
     }
 
+    /**
+     * Only be used because family names are stored in a separate tabel.
+     * Todo: Better to have subclass Gene
+     * @return set of family names
+     */
+    public Set<MarkerFamilyName> getFamilyName() {
+        return familyName;
+    }
+
+    /**
+     * Only be used because family names are stored in a separate tabel.
+     * Todo: Better to have subclass Gene
+     * @param familyName family names
+     */
+    public void setFamilyName(Set<MarkerFamilyName> familyName) {
+        this.familyName = familyName;
+    }
 }

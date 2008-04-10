@@ -12,8 +12,8 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.infrastructure.Updates;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.OrthoEvidence;
@@ -405,7 +405,9 @@ public class CandidateController extends SimpleFormController {
             Marker gene = rc.getIdentifiedMarker();
             MarkerFamilyName mf = new MarkerFamilyName();
             mf.setMarkerFamilyName(candidateBean.getGeneFamilyName());
-            gene.setGeneFamilyName(mf);
+            Set<MarkerFamilyName> families = new HashSet<MarkerFamilyName>();
+            families.add(mf);
+            gene.setFamilyName(families);
         }
         handleOrthology(candidateBean, geneToRename);
         moveNoteToGene(rc, geneToRename);
