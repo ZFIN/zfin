@@ -239,7 +239,7 @@ DEBUGGING:
     	    select allmapnm_zdb_id, min(allmapnm_significance)
               from all_map_names $xpatselqry_nameEndsTable
              where $xpatselqry_nameCond
-               and allmapnm_zdb_id like 'ZDB-GENE%'  
+               and (allmapnm_zdb_id like 'ZDB-GENE%' or allmapnm_zdb_id like 'ZDB-EFG%') 
                and allmapnm_precedence in ('Current symbol', 'Current name')                
             group by allmapnm_zdb_id;">
   <?/MISQL>
@@ -385,7 +385,7 @@ DEBUGGING:
     	    select allmapnm_zdb_id, allmapnm_significance, allmapnm_name, allmapnm_precedence
               from all_map_names $xpatselqry_nameEndsTable
              where $xpatselqry_nameCond
-               and allmapnm_zdb_id like 'ZDB-GENE%' ;">	    
+               and (allmapnm_zdb_id like 'ZDB-GENE%' or allmapnm_zdb_id like 'ZDB-EFG%') ;">	    
     <?/MISQL>
     
     <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
