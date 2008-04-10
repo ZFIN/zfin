@@ -72,21 +72,6 @@
         <many-to-one name="curator" column="dnote_curator_zdb_id"
                      class="org.zfin.people.Person"/>
     </class>
-    <!--    <class name="org.zfin.infrastructure.AttributionSourceType" table="attribution_type">-->
-<!--        <id name="type" type="string">-->
-<!--            <column name="attype_type" not-null="true"/>-->
-<!--            <generator class="native"/>-->
-<!--         </id>-->
-
-<!--    </class>-->
-
-<!--    <class name="org.zfin.infrastructure.AttributionSourceType" table="attribution_type">-->
-
-<!--    <query name="insert_record_attribution"><![CDATA[
-        insert into RecordAttribution (dataZdbID, sourceZdbID)
-        values (:dataZdbID, :sourceZdbID);
-        ]]>
-    </query>-->
 
     <class name="org.zfin.infrastructure.DataAliasGroup" table="alias_group" >
         <id name="name" column="aliasgrp_name" />
