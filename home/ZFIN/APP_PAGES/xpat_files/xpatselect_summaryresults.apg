@@ -153,7 +153,7 @@ OUTPUT VARS:
          <?/MISQL> 
           
          <?MIVAR>
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&xpatsel_geneZdbId=$xpsumres_geneZdbId&gene_name=$xpsumres_geneAbbrev&$xpsumres_baseUrl">
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&xpatsel_geneZdbId=$xpsumres_geneZdbId&gene_name=$xpsumres_geneAbbrev&searchtype=equals&$xpsumres_baseUrl">
             $xpsumres_figCount figure(s)</a>
           from $xpsumres_figsFrom $(IF,$(XST,$xpsumres_cameraTag),$xpsumres_cameraTag) $(UNSETVAR,$xpsumres_cameraTag)  
           

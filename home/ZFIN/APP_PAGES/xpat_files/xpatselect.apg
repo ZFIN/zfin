@@ -433,7 +433,7 @@ function openChild(childWinUrl,childWinName) {
     
   <?MIVAR>
     $(VECAPPEND,$xpatsel_urlVec,xpatsel_calledBySelf=true)
-    $(IF,$(XST,$searchtype),$(VECAPPEND,$xpatsel_urlVec,searchtype=$searchtype))
+    <?MICOMMENT>$(IF,$(XST,$searchtype),$(VECAPPEND,$xpatsel_urlVec,searchtype=$searchtype))<?/MICOMMENT>
     $(IF,$(XST,$xpatsel_probeName),$(VECAPPEND,$xpatsel_urlVec,xpatsel_probeName=$(URLENCODE,$xpatsel_probeName)))
     $(IF,$(XST,$xpatsel_probeSearchType),$(VECAPPEND,$xpatsel_urlVec,xpatsel_probeSearchType=$xpatsel_probeSearchType))
     $(IF,$(XST,$mutant),$(VECAPPEND,$xpatsel_urlVec,mutant=$(URLENCODE,$mutant)))

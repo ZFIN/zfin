@@ -74,6 +74,7 @@ OUTPUT VARS:
 				showing up in the matching text column)
   xpatselqry_matchedTextSearchType	'contains' / 'begins' / 'equals' for above
 
+   edited on 10th april 2008 to accomodate EFG's: (Prita)
 OUTPUT:
   This file does not produce any HTML.
 
