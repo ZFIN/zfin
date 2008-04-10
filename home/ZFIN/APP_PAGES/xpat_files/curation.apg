@@ -542,7 +542,7 @@ function setMarkerTarget(featreli,anchor){
         where recattrib_source_zdb_id = '$OID' 
 	  and recattrib_source_type = 'standard'
           and mrkr_zdb_id = recattrib_data_zdb_id
-	  and mtgrpmem_mrkr_type_group = 'GENEDOM'
+	  and mtgrpmem_mrkr_type_group = 'GENEDOM_AND_EFG'
           and mrkr_type = mtgrpmem_mrkr_type 
          ;">
         <?MIVAR> $(VECAPPEND,$pubcur_gene_attrib,$1)<?/MIVAR>
@@ -573,7 +573,7 @@ function setMarkerTarget(featreli,anchor){
           and dblink_linked_recid  = recattrib_data_zdb_id
           and dblink_linked_recid = mrkr_zdb_id
           and mrkr_type =  mtgrpmem_mrkr_type 
-          and mtgrpmem_mrkr_type_group in ('GENEDOM', 'EST')
+          and mtgrpmem_mrkr_type_group in ('GENEDOM_AND_EFG', 'EST')
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcont_fdb_db_name = 'GenBank'
         ;">
