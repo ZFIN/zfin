@@ -131,7 +131,7 @@
           <classpath>
               <dirset dir="${source.dir}" defaultexcludes="true">
                 <include name="**"/>
-                  <exclude name="**/CVS"/>
+                <exclude name="**/.svn"/>
               </dirset>
           </classpath>
             <arg value="-out"/>
@@ -249,7 +249,7 @@
         <copy  todir="${classbin.dir}">
             <fileset dir="${source.dir}">
             <include name="**/*.xml"/>
-            <exclude name="**/CVS/"/>
+            <exclude name="**/.svn"/>
             </fileset>
         </copy>
         <javac srcdir="source"
@@ -520,7 +520,7 @@
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <copy todir="${env.TARGETROOT}/lib/Java/jaxws">
             <fileset dir="${lib}/jaxws">
-                <exclude name="**/CVS/"/>
+                <exclude name="**/.svn"/>
             </fileset>
         </copy>
         <copy todir="${env.TARGETROOT}">
@@ -528,7 +528,7 @@
                 <include name="home/WEB-INF/web.xml"/>
                 <include name="home/WEB-INF/**/*.jsp"/>
                 <include name="home/index-java.html"/>
-                <exclude name="**/CVS/"/>
+                <exclude name="**/.svn"/>
             </fileset>
             <filterset>
                 <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
@@ -543,13 +543,13 @@
                 <include name="home/WEB-INF/**"/>
                 <include name="home/dev/**"/>
                 <include name="home/anatomy/**"/>
-                <exclude name="**/CVS/"/>
+                <exclude name="**/.svn"/>
             </fileset>
         </copy>
         <copy todir="${env.TARGETROOT}">
             <fileset dir="${basedir}">
                 <include name="home/tiles/**"/>
-                <exclude name="**/CVS/"/>
+                <exclude name="**/.svn"/>
             </fileset>
             <filterset>
                 <filter token="WEBDRIVER_LOC" value="${env.WEBDRIVER_LOC}"/>
@@ -582,7 +582,7 @@
                 <include name="home/WEB-INF/**/*.jsp"/>
                 <include name="${source.dir}/**/*.gwt.xml"/>
                 <include name="home/index-java.html"/>
-                <exclude name="**/CVS/"/>
+                <exclude name="**/.svn"/>
             </fileset>
             <filterset>
                 <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
@@ -595,7 +595,7 @@
                 <include name="home/dev/**"/>
                 <include name="home/tiles/**"/>
                 <include name="home/anatomy/**"/>
-                <exclude name="**/CVS/"/>
+                <exclude name="**/.svn"/>
             </fileset>
         </copy>
         <copy file="${basedir}/home/WEB-INF/zfin-properties.xml"
