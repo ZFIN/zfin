@@ -123,14 +123,14 @@ while ($cur->fetch) {
 print "Number of rows in snp_download_attribution: $ct\n\n";
 
 ### clean up mapped_marker table
-$cur = $dbh->prepare('delete from mapped_marker
-                            where marker_type = "SNP"
-                              and marker_id in (select mrel_mrkr_2_zdb_id
-                                                  from marker_relationship
-                                                 where mrel_type = "contains polymorphism"
-                                                   and mrel_mrkr_2_zdb_id[1,8] = "ZDB-SNP-");
-                     ');
-$cur->execute;
+## $cur = $dbh->prepare('delete from mapped_marker
+#                            where marker_type = "SNP"
+#                              and marker_id in (select mrel_mrkr_2_zdb_id
+#                                                  from marker_relationship
+#                                                 where mrel_type = "contains polymorphism"
+#                                                   and mrel_mrkr_2_zdb_id[1,8] = "ZDB-SNP-");
+#                     ');
+#  $cur->execute;
 
 $dbh->disconnect();  
     
