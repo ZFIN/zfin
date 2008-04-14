@@ -1,0 +1,205 @@
+<?MICOMMENT>
+***
+FILE: SHOWPUBS.HTML
+
+Within the viewers for all of the data types, you always want to do the same 
+thing when it comes to pubs. This file factors out the commonality; everything 
+just webexplodes this file. It assumes the existence of OID, which should be 
+the zdb_id of the data record that you want the pubs for.ECK 8/30/97. Added 
+sensitivity to UPDATE flag: If UPDATE exists, it tosses up a "Delete" button 
+next to each pub. And added a "Add pub" to both primary and secondary pubs. 
+THESE ASSUME THE EXISTENCE OF "Delete-listitem"  and "doit" functions (see 
+fishview for example) in the viewing page! Obviously these functions should 
+be connected to the "do-<class>update" script.
+
+NOTE:
+Because this page drops temporary tables it cannot be webexploded from
+inside a select statement.  This page must first be retrieved with a 
+select statement and then passed to webexplode from an execute function 
+statement.  See discussion of the MIqry2pass variable in the Web
+Datablade documentation.
+
+INPUT VARS:
+OID  -- the zdb_id of the rec
+rtype -- return type,decide the return page,
+         especially useful since different attributed items
+         of one OID also use this file
+title  --
+name   --
+abbrev -- for title display
+
+orgOID -- OID for a gene, or fish or locus... record when
+         OID is used for some specific item like 'DALIAS'
+info  -- record attribution source type
+pubOrder -- the column # to order results by (must be a number because of 'union')
+OUTPUT VARS:
+
+***        
+<?/MICOMMENT>
+
+<html>
+<head>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+<p> ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+	
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Dropping fish table
+<?/MISQL>
+
+
+
+
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+
+<?MICOMMENT> *** ----------------------- *** <?/MICOMMENT>
+
+      		<TITLE>ZFIN Publication list </TITLE>
+
+  <?MISQL SQL="select WebExplode(object,'') 
+		 from webPages 
+		 where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  
+  <?MISQL COND="$(NXST,$UPDATE)"  SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Page Header
+<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+  <?MISQL COND="$(AND,$(NXST,$UPDATE),$(NC,$rtype,goview))" SQL="select WebExplode(object,'rtype=$rtype') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+
+<?MIVAR NAME=snp_select>
+      select distinct p.title,
+      p.zdb_id,
+      year(p.pub_date) as pyear,
+      p.authors,
+      jrnl_abbrev,
+      case
+        when p.pub_volume is not null
+          then p.pub_volume || ':'
+        else
+          ''
+      end,
+      p.pub_pages,
+      get_sortable_authors_lower(p.zdb_id) as authors_lower,
+      p.pub_date
+    <?/MIVAR>
+
+<?MIVAR NAME=snp_from>
+       from snp_download, snp_download_attribution, publication p, journal j
+       where snpd_pk_id=snpdattr_snpd_pk_id
+       and snpd_mrkr_zdb_id='$OID'
+       and snpdattr_pub_zdb_id=p.zdb_id
+       and jrnl_zdb_id=pub_jrnl_zdb_id
+ <?/MIVAR>
+ 
+ <?MIVAR NAME=snppub_sql>
+        $snp_select
+        $snp_from
+<?/MIVAR>  
+
+   
+
+<TABLE width=100%><TR><TD bgcolor=#ccccccc>
+<font size=+2><b>CITATIONS</b></font>
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Citation Count
+<?/MISQL>
+<?MICOMMENT> *** 
+	want to include pubs associated with alleles of the locus and 
+	with locus itself.  
+	marker, locus and fish page will pass along total_count. Only for 
+	the attribution list, need to recalculate the pubs 
+	for the data items. *** <?/MICOMMENT>
+
+<?MIBLOCK COND="$(XST,$snppubs)">
+   <?MIVAR>($snppubs total)<?/MIVAR>
+<?/MIBLOCK>
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Citation Count End
+<?/MISQL>
+</TD></TR></TABLE>
+<p>
+
+<?MICOMMENT> *** ------------- Title display------------ *** <?/MICOMMENT>
+<?MISQL SQL="select mrkr_name, mrkr_type from marker where mrkr_zdb_id='$OID'">
+   <?MIVAR NAME=$marker_type>$2<?/MIVAR>
+   <?MIVAR NAME=$name>$1<?/MIVAR>
+<?/MISQL>
+<font size=+1><b><?MIVAR>
+  $marker_type Name: $name<?/MIVAR>
+    <p>
+
+</b></font>	
+<?MICOMMENT>
+<?MIVAR>
+    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,authors_lower),'pyear desc','authors_lower'),'$total_count','$count_of_real_pub','$evidence')" value="$(IF,$(EC,$pubOrder,authors_lower),Order By Date,Order By Author)"> 
+    <script>
+      if (navigator.userAgent.indexOf('Safari') != -1) {
+        resultOrder.value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)";
+      }
+    </script>
+<?/MIVAR>
+<?/MICOMMENT>
+
+
+
+
+<?MIBLOCK COND=$(XST,$cellpad)>
+  <?MIVAR NAME=$showpubs_cellPadding>cellpadding="2"<?/MIVAR>
+<?MIELSE>
+  <?MIVAR NAME=$showpubs_cellPadding><?/MIVAR>
+<?/MIBLOCK>
+
+<?MIVAR NAME=showpubs_tr_color><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+<?MIVAR NAME=showpubs_tr_bg>$showpubs_tr_color<?/MIVAR>
+
+
+<TABLE cellspacing = 0 <?MIVAR>$showpubs_cellPadding<?/MIVAR>>
+
+
+<?MICOMMENT>  *** for GO annotation reference, deal separate *** <?/MICOMMENT> 
+
+
+      <?MISQL SQL="$snppub_sql">
+
+      <TR bgcolor="$showpubs_tr_bg">
+
+    	<TD align=left>
+      	<DIV class="show_pubs">
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2&$rtype=publication">$4 ($3) $1. $5.</A>
+        </DIV>
+    	</TD>
+  	</TR>
+
+        <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
+
+  	<?/MISQL>
+  <TR><TD>&nbsp;</TD><TR>
+</TABLE>
+<?/MIBLOCK>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+</HTML>
+
