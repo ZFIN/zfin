@@ -179,7 +179,7 @@
 
     <servlet>
         <servlet-name>AnatomyLookupService</servlet-name>
-        <servlet-class>org.zfin.anatomy.presentation.server.AnatomyLookupServiceImpl</servlet-class>
+        <servlet-class>org.zfin.framework.presentation.server.LookupServiceImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>

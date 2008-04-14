@@ -1,4 +1,4 @@
-package org.zfin.anatomy.presentation.client;
+package org.zfin.framework.presentation.client;
 
 import com.google.gwt.user.client.ui.SuggestOracle;
 
@@ -12,7 +12,7 @@ public class ItemSuggestOracle extends SuggestOracle {
     private int delayTime = DEFAULT_DELAY_TIME ;
 
 
-    public ItemSuggestOracle(AnatomyLookup anatomyLookup){
+    public ItemSuggestOracle(LookupComposite anatomyLookup){
         timer = new CallbackTimer(anatomyLookup) ;
     }
 

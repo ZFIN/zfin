@@ -1,11 +1,11 @@
-package org.zfin.anatomy.presentation.client;
+package org.zfin.framework.presentation.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 
 /**
  */
-public interface AnatomyLookupServiceAsync {
+public interface LookupServiceAsync {
 
     public void getSuggestions(SuggestOracle.Request req, AsyncCallback callback); 
 }

@@ -1,4 +1,4 @@
-package org.zfin.anatomy.presentation.client;
+package org.zfin.framework.presentation.client;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;

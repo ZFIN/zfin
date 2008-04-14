@@ -1,9 +1,9 @@
-package org.zfin.anatomy.presentation.server;
+package org.zfin.framework.presentation.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import org.zfin.anatomy.presentation.client.AnatomyLookupService;
-import org.zfin.anatomy.presentation.client.ItemSuggestion;
+import org.zfin.framework.presentation.client.LookupService;
+import org.zfin.framework.presentation.client.ItemSuggestion;
 import org.zfin.anatomy.presentation.SortAnatomySearchTerm;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.anatomy.AnatomyItem;
@@ -19,12 +19,12 @@ import java.util.Collections;
 /**
  *
  */
-public class AnatomyLookupServiceImpl
+public class LookupServiceImpl
         extends RemoteServiceServlet
-        implements AnatomyLookupService {
+        implements LookupService {
 
     private transient AnatomyRepository ar = RepositoryFactory.getAnatomyRepository() ;
-    private transient Logger logger = Logger.getLogger(AnatomyLookupServiceImpl.class) ; 
+    private transient Logger logger = Logger.getLogger(LookupServiceImpl.class) ;
 
 
 

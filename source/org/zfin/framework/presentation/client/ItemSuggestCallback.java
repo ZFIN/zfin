@@ -1,18 +1,14 @@
-package org.zfin.anatomy.presentation.client;
+package org.zfin.framework.presentation.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.Label;
-
-import java.util.List ;
-import java.util.ArrayList ; 
 
 class ItemSuggestCallback implements AsyncCallback {
     private SuggestOracle.Request request;
     private SuggestOracle.Callback callback;
-    private AnatomyLookup anatomyLookup ;
+    private LookupComposite anatomyLookup ;
 
-    public ItemSuggestCallback(SuggestOracle.Request req, SuggestOracle.Callback call,AnatomyLookup anatomyLookup) {
+    public ItemSuggestCallback(SuggestOracle.Request req, SuggestOracle.Callback call,LookupComposite anatomyLookup) {
         request = req;
         callback = call;
         this.anatomyLookup = anatomyLookup ;

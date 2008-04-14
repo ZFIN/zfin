@@ -117,12 +117,12 @@
 
 
     <target name="gwt" description="Compiles all gwt targets">
-        <antcall target="anatomylookup-gwt"/>
+        <antcall target="lookup-gwt"/>
     </target>
 
-    <target name="anatomylookup-gwt" description="Compiles anatomylookup gwt">
+    <target name="lookup-gwt" description="Compiles lookup gwt">
         <antcall target="gwt-compile">
-            <param name="gwt.module" value="org.zfin.anatomy.presentation.AnatomyLookup"/>
+            <param name="gwt.module" value="org.zfin.framework.presentation.Lookup"/>
         </antcall>
     </target>
 

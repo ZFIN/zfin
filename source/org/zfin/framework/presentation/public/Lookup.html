@@ -1,27 +1,43 @@
 <html>
 <head>
-    <title>AnatomyLookup Application</title>
-    <link rel="stylesheet" type="text/css" href="/org.zfin.anatomy.presentation.AnatomyLookup/AnatomyLookup.css"/>
+    <title>Lookup Application</title>
+    <link rel="stylesheet" type="text/css" href="/org.zfin.framework.presentation.Lookup/Lookup.css"/>
     <!--                                           -->
     <!-- The module reference below is the link    -->
     <!-- between html and your Web Toolkit module  -->
     <!--                                           -->
-    <meta name='gwt:module' content='org.zfin.anatomy.presentation.AnatomyLookup'>
+    <meta name='gwt:module' content='org.zfin.framework.presentation.Lookup'>
 </head>
 <body>
-<!--<script language="javascript" src="/gwt/org.zfin.anatomy.presentation.AnatomyLookup/org.zfin.anatomy.presentation.AnatomyLookup.nocache.js"></script>-->
 
 <!--                                            -->
 <!-- This script is required bootstrap stuff.   -->
 <!-- You can put it in the HEAD, but startup    -->
 <!-- is slightly faster if you include it here. -->
 <!--                                            -->
+
+<script type="text/javascript">
+    var LookupProperties = {
+        divName: "anatomyTerm",
+        inputName: "searchTerm",
+        showError: true,
+        showButton: true,
+        type: "ANATOMY_ONTOLOGY"
+    };
+</script>
+
 <script language="javascript" src="gwt.js"></script>
 
 <!-- OPTIONAL: include this if you want history support -->
 <iframe id="__gwt_historyFrame" style="width:0;height:0;border:0"></iframe>
 
-<h1>AnatomyLookup Application</h1>
-<div id="anatomyTerm"> </div>
+<h1>Lookup Application</h1>
+<form action="run">
+<table>
+    <tr> <td> Above term </td> </tr>
+<tr> <td> <div id="anatomyTerm"> </div> </td> </tr>
+    <tr> <td> Below term </td> </tr>
+</table>
+    </form>
 </body>
 </html>

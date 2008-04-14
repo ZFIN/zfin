@@ -46,10 +46,21 @@
                 <TR bgcolor="">
                     <TD width=45%>
                         <label for="searchTerm" class="indented-label">Anatomical Term</label><br>
-                        <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.anatomy.presentation.AnatomyLookup/AnatomyLookup.css"/>
-                        <script language="javascript" src="/gwt/org.zfin.anatomy.presentation.AnatomyLookup/org.zfin.anatomy.presentation.AnatomyLookup.nocache.js"></script>
+                        <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.Lookup/Lookup.css"/>
+
+                        <script type="text/javascript">
+                            var LookupProperties = {
+                                divName: "anatomyTerm",
+                                inputName: "searchTerm",
+                                showError: true,
+                                showButton: true,
+                                type: "ANATOMY_ONTOLOGY"
+                            };
+
+                        </script>
+
+                        <script language="javascript" src="/gwt/org.zfin.framework.presentation.Lookup/org.zfin.framework.presentation.Lookup.nocache.js"></script>
                         <div id="anatomyTerm"></div>
-                        <%--<input type="button" value="Search" onclick="document.formBean.action.value='<%= AnatomySearchBean.Action.TERM_SEARCH.toString() %>'; document.formBean.submit();"/>--%>
                     </TD>
                     <TD width=10%>
                         <b>or</b>
