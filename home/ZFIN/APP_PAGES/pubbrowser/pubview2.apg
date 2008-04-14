@@ -343,7 +343,7 @@ Number exists
 	         from marker_type_group_member
                 where mtgrpmem_mrkr_type_group = 'SEARCH_MK'
              )
-         and mrkr_type <> 'MRPHLNO' 
+         and (mrkr_type <> 'MRPHLNO' and mrkr_type <> 'EFG')
 
          UNION
 
@@ -375,6 +375,23 @@ and mrkr_type = 'MRPHLNO'
   <?MIVAR COND="$(>,$1,0)">
   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mo">Morpholino</a> &nbsp; ($1)
   <?/MIVAR> 
+
+
+<?MICOMMENT> ======== EFG  ============ <?/MICOMMENT>
+   <?MISQL SQL="
+       select count(recattrib_data_zdb_id)::integer
+       from  record_attribution, marker
+       where recattrib_source_zdb_id = '$OID'
+         and recattrib_data_zdb_id = mrkr_zdb_id
+         and mrkr_type = 'EFG'
+       ; ">
+   <?/MISQL> 
+   <?MIVAR COND="$(>,$1,0)">
+   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_efg">Engineered Foreign Genes</a> &nbsp; ($1)
+   <?/MIVAR> 
+
+
+
 
   <?MICOMMENT> ======== Clones / Probes  ============ <?/MICOMMENT>
   <?MISQL SQL="
