@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+</head>
+<!--app page to enter gene ontology info-->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+<script>
+function start_note(ref_page) {
+    top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-"+ref_page+".apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
+}
+
+function popUp(cloneID) {
+  open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-snpids.apg&markerID="+cloneID,"","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500");
+}
+</script>
+<?MICOMMENT>
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+<?/MICOMMENT>
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>  
+<?MIVAR name=$highlighter><!--|HIGHLIGHTER_COLOR|--><?/MIVAR>
+<?MIVAR name=$white>#ffffff<?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIBLOCK COND="$(NXST,$OID)">
+  <p>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+ 
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1
+<?/MISQL>
+
+<?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'permission=owns&rtype=marker') from webPages where ID='aa-secure_navigation.apg';">$1
+<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+<?MISQL SQL="select mrkr_zdb_id from marker where mrkr_zdb_id='$OID'"><?/MISQL>
+<?MIVAR NAME=$geneid>$1<?/MIVAR>
+<?mivar name=$caller>$(SUBSTR,$OID,5,3)<?/mivar>
+<?MISQL SQL="select mrkr_name,mrkr_abbrev from marker where mrkr_zdb_id='$OID'"><?/MISQL>
+<?MIVAR NAME=$name>$1<?/MIVAR>
+<?MIVAR NAME=$gene>$2<?/MIVAR>
+
+<head>
+<title>ZFIN: SNP Retrieval Details: <?MIVAR> $name <?/MIVAR>
+</title>
+</head>
+
+<?MIBLOCK COND="$(XST,$OID)">
+ <?MIBLOCK COND="$(NC,PUB,$caller)">
+     <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=snp') from webpages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+
+<?MIVAR name=left_tab>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?/MIVAR>
+    <TABLE width=100%>
+      <TR bgcolor=#cccccc>
+        <TD>
+          <FONT SIZE=+1><b>SNP Details</b></FONT>
+        </TD>
+      </TR>
+    </TABLE>
+<?MIVAR NAME=link_backto_OID><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID"><i>$gene</i></a><?/MIVAR>
+<!------------- Title display------------>
+    <table border=0 width=100%>
+      <tr>
+        <td>
+          <font><b>
+          <?MIVAR>
+              Clone Name: <i>$name</i><br>
+
+          <?/MIVAR>
+          </b></font>
+        </td>
+        <td>
+          <?MIBLOCK COND="$(NXST,$UPDATE)">
+            <table width="15%" align=right>
+             <tr>
+<?MIVAR>
+                  <form method=post
+                        action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+                        target=comments>
+                     <input type=hidden name=subject value="$gene">
+                     <input type=hidden name=marker_id value="$OID">
+                     <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+                     <input type=hidden name=page_id value="$OID">
+                     <td><input type=submit value="Your Input Welcome"></td>
+
+                   </form>
+              <?/MIVAR>
+              </tr>
+             </table>
+          <?/MIBLOCK>
+        </td>
+      </tr>
+    </table>
+
+
+<p>
+<p>
+<p>
+<b>Note:</b>
+ The list of reference SNPs mapped on this genomic clone has been retrieved through data exchange between NCBI and ZFIN. These reference SNP identifiers are created by NCBI during periodic 'builds' of the dbSNP database. 
+ 
+
+<!--creating table to display added GO annotations-->
+<p><p>
+
+  <table border = 0 cellspacing = 0 width = 100% cellpadding=0>
+<?MISQL SQL="select count(snpd_rs_acc_num) from snp_download where snpd_mrkr_zdb_id='$OID'">
+      <?MIVAR NAME=snpcount>$1 <?/MIVAR>
+    <?/MISQL>
+  <tr bgcolor=#cccccc height=25><td><b>SNP Retrieval</b> <font size=-1>(<a href="javascript:start_note('snp_note')">current status)</a></font></td></td>
+  <tr>
+<td>Retrieve <?MIVAR>$snpcount<?/MIVAR>  reference SNP IDs<?MIVAR><a href="javascript:popUp('$OID')"><?/MIVAR>(text)</a></tr></td>
+  </table>
+<p>
+<?MIVAR NAME=snpids><?/MIVAR>
+  <table border = 0 cellspacing = 0 width = 100% cellpadding=0>
+  <tr bgcolor=#cccccc height=25><td><b>Batch Query:</b></td>
+<?MISQL SQL="select snpd_rs_acc_num from snp_download where snpd_mrkr_zdb_id='$OID';">
+      <?MIVAR NAME=snpids>$(CONCAT,$snpids,$1%0D)<?/MIVAR>
+<?/MISQL>
+<tr><td>
+Detailed information for the list of reference SNPs on this clone can be obtained through a batch query at dbSNP. To launch a dbSNP batch query, click the "Batch Query" button below.
+</tr></td>
+<tr><td>
+<form ACTION="http://www.ncbi.nlm.nih.gov/projects/SNP/dbSNP.cgi" method=post target ="_blank">
+<input type=hidden name=organism value="zebrafish_7955">
+<input type=hidden name=result_option value="RSR">
+<input type=hidden name=list value="rslist">
+<INPUT TYPE=HIDDEN NAME=subnum VALUE="<?MIVAR>$(URLDECODE,$snpids)<?/MIVAR>">
+<input name="query" type=Submit value="Batch Query">
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="javascript:start_note('snp_batch')">Instructions</a>
+</form></td></tr>
+</table>
+<?MICOMMENT> ----- Citation Link ----- <?/MICOMMENT>
+
+<hr>
+<?MIVAR>
+ <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showsnppubs.apg&OID=$OID&rtype=SNP&total_count=$snppubs&name=$name">CITATIONS</a></b> (<?MIVAR>$snppubs<?/MIVAR>)
+<?/MIVAR>
+<hr>
+<p>
+<?/MIBLOCK>
+<?/MIBLOCK>
+<?/MIBLOCK>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
