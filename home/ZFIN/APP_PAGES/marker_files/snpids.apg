@@ -1,0 +1,33 @@
+<?MICOMMENT> 
+FILE: snpids.apg 
+Prefix: snp_
+
+This file displays all already used allele designation numbers for a particular lab.
+the page is poped up from links on the Designation column (1st column) of the 
+table under "Allocated laboratory line designations: " on lab_desig.html page.
+
+Variables Expected: 
+  markerID        -- from lab_desig.html 
+ 
+
+<?MIERROR>
+<?MIVAR COND=$(XST,$MI_SQL)>
+SQL: $MI_SQL
+<?/MIVAR>
+Code: $MI_ERRORCODE
+State: $MI_ERRORSTATE
+Message: $MI_ERRORMSG 
+<?/MIERROR>
+<?/MICOMMENT>
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <?MIVAR NAME=snpids><?/MIVAR>
+    <?MIVAR NAME=comma>, <?/MIVAR>
+    <?MISQL SQL="select snpd_rs_acc_num from snp_download where snpd_mrkr_zdb_id='$markerID' order by snpd_rs_acc_num;">
+      <?MIVAR NAME=snpids>$1 <?/MIVAR>
+    <?MIVAR>$snpids<?/MIVAR>
+    <?/MISQL>
+  </head>
+</html>
