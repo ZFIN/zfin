@@ -568,6 +568,19 @@ DEBUGGING:
      <?MIVAR NAME=$type_of_knockdown_reagent>t<?/MIVAR>
      <?MIVAR NAME=$type_of_genedom>f<?/MIVAR>
 	
+  <?MIELSE COND="$(EC,$type,pub_efg)" >     
+     <?MISQL SQL="
+       insert into $markerselect_temp_marker
+	   ( mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev, 
+	     mstmrkr_abbrev_order,  mstmrkr_type )
+	select mrkr_zdb_id, mrkr_name, mrkr_abbrev, 
+	       mrkr_abbrev_order, mrkr_type
+	from  record_attribution, marker 
+	where recattrib_source_zdb_id = '$pubId'
+	  and recattrib_data_zdb_id = mrkr_zdb_id 
+	  and mrkr_type = 'EFG';
+	">
+     <?/MISQL>	
   <?MIELSE COND="$(EC,$type,pub_mapped)" >     
      <?MISQL SQL="
        insert into $markerselect_temp_marker
@@ -668,6 +681,8 @@ DEBUGGING:
                 Genes / Markers
             <?MIELSE COND="$(EC,$type,pub_mo)">
                 Morpholino 
+            <?MIELSE COND="$(EC,$type,pub_efg)">
+                Engineered Foreign Genes 
             <?MIELSE>
  	        Mapping Data
             <?/MIBLOCK>
