@@ -21,16 +21,6 @@ Recent changes:
 for SNP display
 <?/MICOMMENT>
 
-<?MIERROR>
-  <?MIVAR COND=$(XST,$MI_SQL)>
-    SQL: $MI_SQL<br><br>
-  <?/MIVAR>
-
-  Code:    $MI_ERRORCODE <br>
-  State:   $MI_ERRORSTATE <br>
-  Message: $MI_ERRORMSG <br>
-
-<?/MIERROR>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
@@ -1062,7 +1052,7 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
             ==========================================================
 <?/MICOMMENT>
 <?MICOMMENT> check data existence, and count total pubs<?/MICOMMENT>
-<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA),$(EQ,$marker_type,GENE))">
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA),$(EQ,$marker_type,GENE),$(EQ,$marker_type,EFG))">
 
 <?MISQL SQL="
     select count(distinct xpatex_source_zdb_id)::integer
@@ -2011,7 +2001,6 @@ union
         <br>$1 End GO/Protein, Start Mrel section
 <?/MISQL>
 
-
 <?MICOMMENT>=========================================================
             ==    MARKER RELATIONSHIP
 	    =========================================================
@@ -2042,7 +2031,13 @@ union
   <?/MIBLOCK>
   </b>
 <?/MIBLOCK>
-
+<?MIVAR NAME=snpexists><?/MIVAR>
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,BAC),$(EQ,$marker_type,PAC),$(EQ,$marker_type,FOSMID))">
+    <?MISQL SQL="select first 1 snpd_mrkr_zdb_id from snp_download
+                 where snpd_mrkr_zdb_id='$OID'">
+             <?MIVAR NAME=$snpexists>$1<?/MIVAR>
+    <?/MISQL>
+<?/MIBLOCK>
 <?MIBLOCK COND="$(XST,$UPDATE)">
  <br><form name=updaterrel>
  <b>Add relationship:</b> &nbsp;
@@ -2099,6 +2094,13 @@ union
              	  where ID='aa-markerrelationship.apg' ;">
        $1
     <?/MISQL>
+    <?MIBLOCK COND="$(NE,$snpexists,)">
+
+	<?MISQL SQL="select WebExplode(object,'snp_mrkr_zdb_id=$OID') from webPages
+             	  where ID='aa-snpdetails.apg' ;">
+       $1
+    <?/MISQL>
+   <?/MIBLOCK>
 </TABLE>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
@@ -2108,7 +2110,6 @@ union
 <?/MIBLOCK> <?MICOMMENT>end of not type_of_knockdown_reagent<?/MICOMMENT>
 
 <!------------------ end of MARKER RELATIONSHIP --------------->
-
 
 <?MICOMMENT> ceate a list of chimeric clones <?/MICOMMENT>
 <?MIVAR NAME=chimeric_clone_list><?/MIVAR>
@@ -2418,6 +2419,8 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
 <?/MICOMMENT>
   <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>  
 
+              <?MIVAR NAME=$snp_ensembl_accnum><?/MIVAR>
+              <?MIVAR NAME=$type_of_clone><?/MIVAR>
   <?MISQL SQL="
     select fdb_db_name, fdb_db_query || dblink_acc_num ||
 	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
@@ -2459,6 +2462,28 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
         $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
        <A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref
         </LI></nobr>
+        <?MISQL SQL="select mtgrpmem_mrkr_type_group from marker_type_group_member where mtgrpmem_mrkr_type_group='CLONE' and mtgrpmem_mrkr_type='$marker_type'">
+           <?MIVAR COND="$(EC,$1,CLONE)" NAME=type_of_clone>t<?/MIVAR>
+        <?/MISQL>
+        <?MIBLOCK COND="$(EC,t,$type_of_clone)">
+          <?MISQL SQL="select dblink_acc_num_display 
+                       from db_link 
+                       where dblink_linked_recid='$OID' 
+                       and dblink_fdbcont_zdb_id='ZDB-FDBCONT-040412-36'">
+              <?MIVAR NAME=$snp_ensembl_accnum>$1<?/MIVAR>
+          <?/MISQL>
+
+          <?MISQL SQL="select fdb_db_name,fdb_db_query from foreign_db where fdb_db_name ='Ensembl_Clone'">
+           <?MIVAR NAME=$snp_db_name>$1<?/MIVAR>
+           <?MIVAR NAME=$snp_db_query>$2<?/MIVAR> 
+          <?/MISQL>
+          <?MIBLOCK COND="$(NE,$snp_ensembl_accnum,)">
+             <td><nobr><li>
+            <?MIVAR> <A HREF="$snp_db_query$snp_ensembl_accnum">$snp_db_name:$snp_ensembl_accnum</a><?/MIVAR>
+    (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=ZDB-PUB-080313-1">1</a>)
+</li></nobr></td>
+          <?/MIBLOCK>   
+        <?/MIBLOCK> 
       <?/MIVAR>
     <?MIELSE>
       <?MIVAR NAME=vDBnameColumn>
