@@ -1966,8 +1966,8 @@ union
 <?MIVAR NAME=mrkrview_mrkr_fam><?/MIVAR>
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
         <?MISQL SQL="select
-                     * from marker_family_member
-                     where mfammem_mrkr_zdb_id='$OID'">
+                     * from genedom_family_member
+                     where gfammem_mrkr_zdb_id='$OID'">
         <?MIVAR NAME=$mrkrview_mrkr_fam>$1<?/MIVAR>
         <?/MISQL>
         <?MIBLOCK COND="$(NC,$mrkrview_mrkr_fam,)">
