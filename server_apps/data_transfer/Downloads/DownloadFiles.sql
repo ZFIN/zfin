@@ -280,7 +280,8 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
 					   where goterm_zdb_id = apato_entity_b_zdb_id)
 				  end,
 			apato_tag,
-			apato_pub_zdb_id
+			apato_pub_zdb_id,
+			genox_exp_zdb_id
  from atomic_phenotype, genotype, genotype_experiment
       where apato_genox_zdb_id = genox_zdb_id
 	and genox_geno_zdb_id = geno_zdb_id
@@ -330,7 +331,8 @@ select "ZDB:"||geno_zdb_id, geno_display_name,
 					   where goterm_zdb_id = apato_entity_b_zdb_id)
 				  end,
 			apato_tag,
-			"ZDB:"||apato_pub_zdb_id
+			"ZDB:"||apato_pub_zdb_id,
+			"ZDB:"||genox_exp_zdb_id
  from atomic_phenotype, genotype, genotype_experiment
       where apato_genox_zdb_id = genox_zdb_id
 	and genox_geno_zdb_id = geno_zdb_id
