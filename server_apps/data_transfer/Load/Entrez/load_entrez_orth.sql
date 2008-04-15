@@ -256,6 +256,13 @@ select count(*) dup_check
  	   and eg_symbol = teon_symbol
  	   and eg_name = teon_name
  );
+delete from  tmp_entrez_orth_name   
+ where exists (
+        select 1 from entrez_gene
+         where eg_acc_num = teon_entrez_id
+           and eg_symbol = teon_symbol
+           and eg_name = teon_name
+ );
 
 ! echo "triple check the incomming vs the existing"
 select  * --count(*) dup_check
@@ -263,6 +270,11 @@ select  * --count(*) dup_check
  where exists (
  	select 1 from entrez_gene
  	 where eg_acc_num = teon_entrez_id
+);
+delete from tmp_entrez_orth_name
+ where exists (
+        select 1 from entrez_gene
+         where eg_acc_num = teon_entrez_id
 );
 
 
