@@ -40,6 +40,9 @@
         m_type                  varchar(80)
       ) with NO LOG;">
     <?/MISQL>
+    <?MISQL COND="$(EC,$1,t)" SQL="
+      	    delete from  $genonm_temp_on_name;">
+    <?/MISQL> 
   <?/MISQL>
 
   <?MIVAR NAME=$percentage>%<?/MIVAR>
