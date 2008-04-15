@@ -7,13 +7,14 @@ import org.zfin.framework.presentation.client.ItemSuggestion;
 import org.zfin.anatomy.presentation.SortAnatomySearchTerm;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.AnatomySynonym;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.repository.SessionCreator;
 import org.apache.log4j.Logger;
+import org.apache.commons.collections.CollectionUtils;
+import org.geneontology.oboedit.datamodel.Synonym;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
 
 /**
@@ -52,7 +53,21 @@ public class LookupServiceImpl
         suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
         for(AnatomyItem anatomyItem : anatomyItems){
             String term = anatomyItem.getName() ;
-            suggestions.add(new ItemSuggestion(term.replaceAll(query,"<strong>"+query+"</strong>"),term)) ;
+            String suggestion = new String(term) ;
+
+            Set<AnatomySynonym> synonyms = anatomyItem.getSynonyms( ) ;
+            if(synonyms!=null){
+                Iterator<AnatomySynonym> synonymIterator = synonyms.iterator() ;
+                boolean notFound = false ;
+                while(synonymIterator.hasNext() && notFound==false){
+                    AnatomySynonym anatomySynonym = synonymIterator.next() ;
+                    if( anatomySynonym.getName().contains(query)){
+                       suggestion +=  " ["+ anatomySynonym.getName() +"]"  ;
+                       notFound = true ;
+                    }
+                }
+            }
+            suggestions.add(new ItemSuggestion(suggestion.replaceAll(query,"<strong>"+query+"</strong>"),term)) ;
         }
 
         resp.setSuggestions(suggestions);
