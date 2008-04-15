@@ -438,6 +438,12 @@ if ($ctNew3 > 0) {
   &emailSuccess("$ctNew3 new records inserted into record_attribution table for Talbot SNPs");
 } 
 
+### remove the datafiles files after loading the tables
+system("/bin/rm -f *.xml") and die "can not rm xml data file";
+system("/bin/rm -f *.gz") and die "can not rm .gz files";
+system("/bin/rm -f *.bcp") and die "can not rm .bcp files";
+system("/bin/rm -f *.unl") and die "can not rm .unl files";
+
 print "Done\n";
 
 exit;
