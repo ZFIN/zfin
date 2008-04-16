@@ -211,11 +211,10 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
 
 
 -- generate a file to map experiment id to environment condition description
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/environment.txt'
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_environment.txt'
  DELIMITER "	"
  select exp_zdb_id, cdt_group,
         case when expcond_mrkr_zdb_id is not null
-
              then expcond_mrkr_zdb_id
 	     else cdt_name
  	end, expcond_value, expunit_name, expcond_comments
@@ -337,6 +336,25 @@ select "ZDB:"||geno_zdb_id, geno_display_name,
       where apato_genox_zdb_id = genox_zdb_id
 	and genox_geno_zdb_id = geno_zdb_id
  order by geno_zdb_id, apato_pub_zdb_id ;
+
+-- generate a file to map experiment id to environment condition description
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_environment.txt'
+ DELIMITER "	"
+ select exp_zdb_id, cdt_group,
+        case when expcond_mrkr_zdb_id is not null
+             then expcond_mrkr_zdb_id
+	     else cdt_name
+ 	end, expcond_value, expunit_name, expcond_comments
+   from experiment, experiment_condition, condition_data_type, experiment_unit
+  where exp_zdb_id = expcond_exp_zdb_id
+    and expcond_cdt_zdb_id = cdt_zdb_id
+    and expcond_expunit_zdb_id = expunit_zdb_id
+    and exists (select 't'
+                  from genotype_experiment, atomic_phenotype
+                 where exp_zdb_id = genox_exp_zdb_id
+                   and genox_zdb_id = apato_genox_zdb_id)
+order by exp_zdb_id, cdt_group;
+
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_ontology_translation.txt'
  DELIMITER "	"
