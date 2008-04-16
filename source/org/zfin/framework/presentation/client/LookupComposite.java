@@ -185,5 +185,11 @@ public class LookupComposite extends Composite {
     }
 
 
+	public String getCurrentText(){
+		return currentText ; 
+	}
 
+    public TextBox getTextBox() {
+        return textBox;
+    }
 }

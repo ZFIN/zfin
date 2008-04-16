@@ -72,6 +72,7 @@ public class LookupServiceImpl
 
         resp.setSuggestions(suggestions);
 
+        logger.info("returned with no error: "+ req + " "  +  suggestions.size() + " suggestions ");
 
 
         return resp ;  //To change body of implemented methods use File | Settings | File Templates.

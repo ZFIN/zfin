@@ -18,11 +18,17 @@ public class CallbackTimer extends Timer {
     public void scheduleCallback(SuggestOracle.Request req, SuggestOracle.Callback callback,int time){
         this.cancel();
         this.request = req ;
-        this.callback = new ItemSuggestCallback(req,callback,anatomyLookup) ; 
+        if(this.callback==null){
+            this.callback = new ItemSuggestCallback(req,callback,anatomyLookup) ;
+        }
+        else{
+            this.callback.setRequest(req);
+        }
         this.schedule(time);
     }
 
     public void run(){
         LookupService.App.getInstance().getSuggestions(request , callback);
+        this.callback = null ;
     }
 }

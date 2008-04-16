@@ -6,20 +6,31 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 class ItemSuggestCallback implements AsyncCallback {
     private SuggestOracle.Request request;
     private SuggestOracle.Callback callback;
-    private LookupComposite anatomyLookup ;
+    private LookupComposite lookup ;
 
-    public ItemSuggestCallback(SuggestOracle.Request req, SuggestOracle.Callback call,LookupComposite anatomyLookup) {
+    public ItemSuggestCallback(SuggestOracle.Request req, SuggestOracle.Callback call,LookupComposite lookup) {
         request = req;
         callback = call;
-        this.anatomyLookup = anatomyLookup ;
+        this.lookup = lookup ;
     }
 
     public void onFailure(Throwable error) {
-        anatomyLookup.setErrorString("error contacting server . . .\n"+error.toString());
+//        lookup.setErrorString("error contacting server . . .\n"+error.toString());
     }
 
     public void onSuccess(Object retValue) {
-        anatomyLookup.clearError();
-        callback.onSuggestionsReady(request, (SuggestOracle.Response)retValue);
+        lookup.clearError();
+
+        if(true==lookup.getTextBox().getText().equalsIgnoreCase(request.getQuery())){
+            callback.onSuggestionsReady(request, (SuggestOracle.Response)retValue);
+        }
+    }
+
+    public SuggestOracle.Request getRequest() {
+        return request;
+    }
+
+    public void setRequest(SuggestOracle.Request request) {
+        this.request = request;
     }
 }
