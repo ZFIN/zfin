@@ -170,7 +170,7 @@ while (<>) {
 
 	# put the zdb id pairs into the output file
 	foreach (@termZdbIds) {
-	    if ($_ ne $termZdbId) {
+	    if (! $termZdbId || ($_ ne $termZdbId) ) {
 		print ANATMERG join("|", $termId, $_)."|\n";  
 	    }
 	}
