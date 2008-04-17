@@ -64,7 +64,7 @@ function popUp(cloneID) {
     <TABLE width=100%>
       <TR bgcolor=#cccccc>
         <TD>
-          <FONT SIZE=+1><b>SNP Details</b></FONT>
+          <FONT SIZE=+1><b>SNP Retrieval Details</b></FONT>
         </TD>
       </TR>
     </TABLE>
@@ -148,7 +148,7 @@ Detailed information for the list of reference SNPs on this clone can be obtaine
 
 <hr>
 <?MIVAR>
- <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showsnppubs.apg&OID=$OID&rtype=SNP&total_count=$snppubs&name=$name">CITATIONS</a></b> (<?MIVAR>$snppubs<?/MIVAR>)
+ <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showsnppubs.apg&OID=$OID&rtype=SNP&snppubs=$snppubs&name=$name">CITATIONS</a></b> (<?MIVAR>$snppubs<?/MIVAR>)
 <?/MIVAR>
 <hr>
 <p>
