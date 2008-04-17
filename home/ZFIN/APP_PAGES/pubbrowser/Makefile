@@ -29,7 +29,7 @@ GENERICS = REFERinfo.apg enterpubs.apg link_authors.apg link_authors_update.apg 
 	js-delete_attrib.apg pub_rowdisplay.apg citselectlist.apg citfish.apg \
 	citjtypeoption.apg citlink.apg citgeneric.apg cittotalcount.apg \
 	externalredirect.apg  externallink.apg insertelsevierstat.apg  \
-	pubmedredirect.apg pubmedlink.apg 
+	pubmedredirect.apg pubmedlink.apg showsnppubs.apg
 
 
 # use default rules for app page directories.
