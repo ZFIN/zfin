@@ -62,6 +62,6 @@ alter table snp_download_attribution
   constraint snpd_download_attribution_primary_key ;
 
 
-rollback work ;
+--rollback work ;
 
---commit work ;
+commit work ;
