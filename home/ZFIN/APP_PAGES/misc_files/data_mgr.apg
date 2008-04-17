@@ -67,6 +67,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   <?MIBLOCK COND="$(NC,$rtype,geli)">  <!-- dont show second row for pubs -->
 
   <?MIBLOCK COND="$(NC,$rtype,xpat)">  <!-- dont show second row for pubs -->
+  <?MIBLOCK COND="$(NC,$rtype,snp)">  <!-- dont show second row for pubs -->
 <TD> 
 <!-- Only allow auth users to update. For non-person records, allow any registered submitter -->
 
@@ -154,6 +155,9 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <?/MIVAR>
 </TD>
 <?/MIBLOCK> <!-- ends if not a pub record -->
+<?MIELSE>
+
+<?/MIBLOCK>
 <?/MIBLOCK> <!-- ends if authorized and not guest -->
 
 
