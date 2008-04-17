@@ -1,0 +1,53 @@
+<?MICOMMENT>
+
+FILE:     snpdetails.apg
+PREFIX:   snpdet_ 
+
+Display the SNPs
+
+INPUT VARS:
+                         The original marker comes first. 
+
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+
+<?/MICOMMENT>
+
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIVAR NAME=snpdet_snppubcount>0<?/MIVAR>
+<?MIVAR NAME=snpdet_prevpub><?/MIVAR>
+
+<tr> 
+        <td bgcolor=#EEEEEE>       			
+	      <?MIVAR>
+			$name Contains
+	      <?/MIVAR>
+        </td>
+  	    <td align=left width=80% bgcolor=#EEEEEE>
+                              <?MISQL SQL="select distinct snpdattr_pub_zdb_id 
+                                           from snp_download_attribution, snp_download 
+                                           where snpd_mrkr_zdb_id='$OID'
+                                           and snpd_pk_id=snpdattr_snpd_pk_id 
+                                           order by snpdattr_pub_zdb_id">
+                                           <?MIVAR NAME=snpdet_snppub>$1<?/MIVAR>
+                                           <?MIBLOCK COND="$(NE,$snpdet_prevpub,$snpdet_snppub)">
+                           <?MIVAR NAME=snpdet_snppubcount>$(+,1,$snpdet_snppubcount)<?/MIVAR>
+                         <?/MIBLOCK>
+                        <?MIVAR NAME=snpdet_prevpub>$1<?/MIVAR>
+                 <?/MISQL>
+                 <?MIVAR>  <font size=-1>[SNP]</font> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-snpview.apg&OID=$snp_mrkr_zdb_id&snppubs=$snpdet_snppubcount">
+        Retrieval Details</a> <?/MIVAR> 
+                 <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showsnppubs.apg&OID=$snp_mrkr_zdb_id&snppubs=$snpdet_snppubcount&rtype=SNP">($snpdet_snppubcount)<?/MIVAR></a>
