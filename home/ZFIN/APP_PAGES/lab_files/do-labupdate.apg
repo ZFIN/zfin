@@ -50,16 +50,13 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. HAVE TO DO THINGS SLIGHTLY
      DIFFERENT FOR IMAGES, SO FIRST FIND OUT WHETHER YOU'RE UPDATING AN
      IMAGE FIELD, THEN ACT ACCORDINGLY -->
-<?MICOMMENT>
-**took out b/c broken with apache2
-**replace with image upload function.
+
 <?MIBLOCK COND="$(EC,$attr_type,pic)">
 <?MISQL COND="$(NXST,$null_image)" SQL="update lab set $attr=FILETOBLOB('$new_value', 'client') where zdb_id='$OID';"><?/MISQL>
 
 <?MISQL COND="$(XST,$null_image)" SQL="update lab set $attr=NULL where zdb_id='$OID';"><?/MISQL>
 <?/MIBLOCK> <!-- ends if its an image -->
 
-<?/MICOMMENT>
 <?MISQL COND="$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea))" SQL="update lab set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
 
 <!-- Special case for updating contact person also changes owner Informix won't allow trigger used in Illustra -->

@@ -52,6 +52,9 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
      IMAGE FIELD, THEN ACT ACCORDINGLY -->
 
 <?MIBLOCK COND="$(EC,$attr_type,pic)">
+<?MISQL COND="$(NXST,$null_image)" SQL="update company set $attr=FILETOBLOB('$new_value', 'client') where zdb_id='$OID';"><?/MISQL>
+
+<?MISQL COND="$(XST,$null_image)" SQL="update company set $attr=NULL where zdb_id='$OID';"><?/MISQL>
 <?/MIBLOCK> <!-- ends if its an image -->
 
 <?MISQL COND="$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea))" SQL="update company set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
