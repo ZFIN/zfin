@@ -48,7 +48,31 @@ print_name -- The human-understandable name (vs. the database column name) of
     <TABLE width=100%>
     <TR>
 
+    <!-- If youre replacing the labs snapshot -->
     <?MIBLOCK COND="$(EC,$attr_type,pic)">
+      <TD valign=middle><b>Current Snapshot:</B></TD>
+      <TD>
+      <?MIVAR COND="$(NC,$current_value,NULL)">
+        <IMG align=center hspace=5 SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$current_value&type=image/gif">
+      <?/MIVAR>
+      <?MIVAR COND="$(EC,$current_value,NULL)">
+        No image currently specified.
+      <?/MIVAR>
+      </TD></TR>
+      <TR><TD colspan=2>
+      <HR>
+      <p>
+      <BIG>Specify a new image:</BIG><p>
+      <font size=-1><b>Snapshot Format:</b> You must submit a GIF image file. For the most aesthetic result, we strongly recommend an image no larger than about 3 inches wide and 1.5 inch tall, at a resolution of 72dpi. Larger images tend to displace the other information associated with your lab. </font> <br>
+      <INPUT type="file" size=50 name=new_value>
+      </TD>
+
+      <?MIVAR COND="$(NC,$current_value,NULL)">
+        </TR><TR><TD colspan=2>
+	Or check here (<input type=checkbox name=null_image>) to simply delete the current image without submitting a replacement.
+	</TD>
+      <?/MIVAR>
+
     <?/MIBLOCK>
 
     <!-- If you are replacing a TEXTAREA field -->
