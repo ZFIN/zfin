@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
- <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
-       "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+        "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
 
 <tiles-definitions>
-   <definition name="gene-family-autocomplete.page" path="/WEB-INF/jsp/autocomplete/gene_family_autocomplete.jsp"/>
-   <definition name="anatomy-terms-autocomplete.page" path="/WEB-INF/jsp/autocomplete/anatomy_terms_autocomplete.jsp"/>
-   <definition name="home-page-redirect.page" path="/"/>
+    <definition name="gene-family-autocomplete.page" path="/WEB-INF/jsp/autocomplete/gene_family_autocomplete.jsp"/>
+    <definition name="anatomy-terms-autocomplete.page" path="/WEB-INF/jsp/autocomplete/anatomy_terms_autocomplete.jsp"/>
+    <definition name="home-page-redirect.page" path="/"/>
+
+    <definition name="record-not-found.page" extends="main_layout">
+        <put name="staticTitle" value="Record Not Found"/>
+        <put name="body" value="/WEB-INF/jsp/record_not_found.jsp"/>
+    </definition>
+
 </tiles-definitions>

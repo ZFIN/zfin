@@ -95,6 +95,15 @@ public interface AnatomyRepository extends CachedRepository {
      */
     AnatomyItem loadAnatomyItem(AnatomyItem anatomyItem);
 
+    /**
+     * Retrtieve an anatomical term by ID.
+     * This is not a load but a get in Hibernate, i.e. no proxy.
+     * Returns null if no term found.
+     * @param aoZdbID AO term
+     * @return ao term
+     */
+    AnatomyItem getAnatomyTermByID(String aoZdbID);
+
     List<AnatomyRelationship> getAnatomyRelationships(AnatomyItem anatomyItem);
 
     /**

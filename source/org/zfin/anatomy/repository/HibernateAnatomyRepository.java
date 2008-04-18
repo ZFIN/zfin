@@ -189,6 +189,11 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         return anatomyItem;
     }
 
+    public AnatomyItem getAnatomyTermByID(String aoZdbID) {
+        Session session = HibernateUtil.currentSession();
+        return (AnatomyItem) session.get(AnatomyItem.class, aoZdbID);
+    }
+
     /**
      * To retrieve the relationship of an anatomical item we need to search two
      * columns in the table anatomy_relationship: anatrel_anatitem_1_zdb_id and anatrel_anatitem_2_zdb_id.

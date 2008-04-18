@@ -48,6 +48,8 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         LOG.info("Start Anatomy Term Detail Controller");
         AnatomySearchBean form = (AnatomySearchBean) command;
         AnatomyItem term = retrieveAnatomyTermData(form);
+        if (term == null)
+            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAnatomyItem().getZdbID());
 
         retrieveExpressedGenesData(term, form);
         retrieveHighQualityProbeData(term, form);
@@ -67,7 +69,9 @@ public class AnatomyTermDetailController extends AbstractCommandController {
     }
 
     private AnatomyItem retrieveAnatomyTermData(AnatomySearchBean form) {
-        AnatomyItem ai = anatomyRepository.loadAnatomyItem(form.getAnatomyItem());
+        AnatomyItem ai = anatomyRepository.getAnatomyTermByID(form.getAnatomyItem().getZdbID());
+        if (ai == null)
+            return null;
         List<AnatomyRelationship> relationships = anatomyRepository.getAnatomyRelationships(ai);
         ai.setRelatedItems(relationships);
         form.setAnatomyItem(ai);
@@ -104,12 +108,12 @@ public class AnatomyTermDetailController extends AbstractCommandController {
 
         List<Genotype> genotypes =
                 mutantRepository.getGenotypesByAnatomyTerm(ai, false, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        for(Genotype geno: genotypes){
+        for (Genotype geno : genotypes) {
             Set<GenotypeFeature> features = geno.getGenotypeFeatures();
-            for(GenotypeFeature feat: features){
+            for (GenotypeFeature feat : features) {
                 Feature feature = feat.getFeature();
                 Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
-                for(FeatureMarkerRelationship rel: rels){
+                for (FeatureMarkerRelationship rel : rels) {
                     System.out.println(rel.getMarker());
                 }
             }
@@ -128,7 +132,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         mutantRepository.setPaginationParameters(pagination);
-        
+
         form.setWildtypeMorpholinoCount(wildtypeMorphCount);
         List<GenotypeExperiment> morphs =
                 mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, true);

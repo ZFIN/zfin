@@ -58,6 +58,10 @@ public class MockAnatomyRepository implements AnatomyRepository {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    public AnatomyItem getAnatomyTermByID(String aoZdbID) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public List<AnatomyRelationship> getAnatomyRelationships(AnatomyItem anatomyItem) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
