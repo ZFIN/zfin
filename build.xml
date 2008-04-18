@@ -618,18 +618,9 @@
 
     <target name="prepareDeploy" depends="deleteDeployDirs">
         <mkdir dir="${env.TARGETROOT}/home/WEB-INF"/>
-        <mkdir dir="${env.TARGETROOT}/home/tiles"/>
-        <mkdir dir="${env.TARGETROOT}/home/dev"/>
-        <mkdir dir="${env.TARGETROOT}/home/anatomy"/>
-        <mkdir dir="${env.TARGETROOT}/home/quicksearch"/>
     </target>
     <target name="deleteDeployDirs">
         <delete dir="${env.TARGETROOT}/home/WEB-INF"/>
-        <delete dir="${env.TARGETROOT}/home/tiles"/>
-        <delete dir="${env.TARGETROOT}/home/dev"/>
-        <delete dir="${env.TARGETROOT}/home/anatomy"/>
-        <delete dir="${env.TARGETROOT}/home/quicksearch"/>
-        <delete file="${env.TARGETROOT}/home/index-java.html"/>
     </target>
 
 

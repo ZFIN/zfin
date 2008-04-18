@@ -6,10 +6,10 @@
 
 <tiles-definitions>
 
-    <definition name="main_layout" path="/tiles/layout.jsp">
+    <definition name="main_layout" path="/WEB-INF/tiles/layout.jsp">
         <put name="staticTitle" value="" />
-        <put name="header" value="/tiles/header.jsp" />
-        <put name="footer" value="/tiles/footer.jsp" />
+        <put name="header" value="/WEB-INF/tiles/header.jsp" />
+        <put name="footer" value="/WEB-INF/tiles/footer.jsp" />
     </definition>
 
     <definition name="view-person-detail" extends="main_layout">

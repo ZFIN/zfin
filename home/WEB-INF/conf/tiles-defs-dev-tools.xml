@@ -6,16 +6,16 @@
 
 <tiles-definitions>
 
-    <definition name="dev_layout" path="/tiles/layout.jsp">
-        <put name="header" value="/tiles/header_dev_tools.jsp" />
-        <put name="footer" value="/tiles/footer.jsp" />
+    <definition name="dev_layout" path="/WEB-INF/tiles/layout.jsp">
+        <put name="header" value="/WEB-INF/tiles/header_dev_tools.jsp" />
+        <put name="footer" value="/WEB-INF/tiles/footer.jsp" />
         <put name="title"  value="Please provide Title"/>
         <put name="body" value="" />
      </definition>
 
-    <definition name="home_layout" path="/tiles/layout.jsp">
-        <put name="header" value="/tiles/header.jsp" />
-        <put name="footer" value="/tiles/footer.jsp" />
+    <definition name="home_layout" path="/WEB-INF/tiles/layout.jsp">
+        <put name="header" value="/WEB-INF/tiles/header.jsp" />
+        <put name="footer" value="/WEB-INF/tiles/footer.jsp" />
         <put name="body" value="" />
      </definition>
 
@@ -23,7 +23,7 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/home.jsp"/>
     </definition>
 
-    <definition name="login" extends="main_layout">
+    <definition name="login" extends="home_layout">
         <put name="body" value="/WEB-INF/jsp/login_form.jsp"/>
     </definition>
 
@@ -122,7 +122,7 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/zfin_statistics_view.jsp"/>
     </definition>
 
-    <definition name="error-page" extends="main_layout">
+    <definition name="error-page" extends="home_layout">
         <put name="title" value="Edit Log4J Appenders"/>
         <put name="body" value="/WEB-INF/jsp/error_page.jsp"/>
     </definition>
