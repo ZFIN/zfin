@@ -227,8 +227,21 @@ print(LOG "Using dump $dumpDir/$latestDump\n");
 
 # stop Tomcat to get rid of open session
 $status = system("/private/ZfinLinks/Commons/bin/stoptomcat.pl");
-if ($status) {
-    abort("/private/ZfinLinks/Commons/bin/stoptomcat.pl failed.\n");
+# check whether jsvc processes are terminated, 
+# if not, explicitly kill the process as root. 
+# (We don't handle the return code from the system call.)
+my $jsvc_pid = `ps -ef | egrep 'jsvc.*almost' | egrep -v grep | awk '{print \$2}'`;
+$jsvc_pid =~ s/\n/ /g;
+if ( $jsvc_pid ) {
+    print (STDERR "Explicitly kill orphan jsvc processes: $jsvc_pid \n");
+
+    my @userData = getpwnam("root");
+    $REAL_USER_ID = $userData[2];
+    $EFFECTIVE_USER_ID = $userData[2];
+    $REAL_GROUP_ID = $userData[3];
+    $EFFECTIVE_GROUP_ID = $userData[3];
+
+    system("kill $jsvc_pid");
 }
 
 # load it
