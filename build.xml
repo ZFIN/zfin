@@ -118,12 +118,19 @@
 
     <target name="gwt" description="Compiles all gwt targets">
         <antcall target="lookup-gwt"/>
+        <antcall target="lookuptable-gwt"/>
         <antcall target="sessionsave-gwt"/>
     </target>
 
     <target name="lookup-gwt" description="Compiles lookup gwt">
         <antcall target="gwt-compile">
             <param name="gwt.module" value="org.zfin.framework.presentation.Lookup"/>
+        </antcall>
+    </target>
+
+    <target name="lookuptable-gwt" description="Compiles lookup gwt">
+        <antcall target="gwt-compile">
+            <param name="gwt.module" value="org.zfin.framework.presentation.LookupTable"/>
         </antcall>
     </target>
 

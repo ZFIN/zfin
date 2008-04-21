@@ -9,7 +9,6 @@ public class ItemSuggestOracle extends SuggestOracle {
 
     private CallbackTimer timer = null ; 
     private final int DEFAULT_DELAY_TIME = 200 ;
-//    private final int DEFAULT_DELAY_TIME = 100 ;
     private int delayTime = DEFAULT_DELAY_TIME ;
     private LookupComposite lookup ;
 
@@ -23,7 +22,7 @@ public class ItemSuggestOracle extends SuggestOracle {
 
     public void requestSuggestions(SuggestOracle.Request req, SuggestOracle.Callback callback) {
         timer.scheduleCallback(req,callback,delayTime);
-        lookup.setErrorString("working . . .");
+        lookup.setNoteString("working . . .");
     }
 
     public int getDelayTime() {
@@ -33,4 +32,5 @@ public class ItemSuggestOracle extends SuggestOracle {
     public void setDelayTime(int delayTime) {
         this.delayTime = delayTime;
     }
+
 }

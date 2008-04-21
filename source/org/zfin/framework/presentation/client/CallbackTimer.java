@@ -9,17 +9,17 @@ public class CallbackTimer extends Timer {
 
     private SuggestOracle.Request request;
     private ItemSuggestCallback callback;
-    private LookupComposite anatomyLookup ;
+    private LookupComposite lookup;
 
-    public CallbackTimer(LookupComposite anatomyLookup){
-       this.anatomyLookup = anatomyLookup ;
+    public CallbackTimer(LookupComposite lookup){
+       this.lookup = lookup;
     }
 
     public void scheduleCallback(SuggestOracle.Request req, SuggestOracle.Callback callback,int time){
         this.cancel();
         this.request = req ;
         if(this.callback==null){
-            this.callback = new ItemSuggestCallback(req,callback,anatomyLookup) ;
+            this.callback = new ItemSuggestCallback(req,callback, lookup) ;
         }
         else{
             this.callback.setRequest(req);
@@ -28,7 +28,7 @@ public class CallbackTimer extends Timer {
     }
 
     public void run(){
-        LookupService.App.getInstance().getSuggestions(request , callback);
+        LookupService.App.getInstance().getSuggestions(request , lookup.isWildCard(),callback);
         this.callback = null ;
     }
 }

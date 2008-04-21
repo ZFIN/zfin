@@ -6,7 +6,9 @@
 .gwt-SuggestBoxPopup {
   border: 1px solid black;
   background-color: white;
-  overflow: auto; height: 400px;
+  overflow: auto; 
+  height: auto;
+  max-height: 400px ;
 }
 
 .gwt-SuggestBoxPopup .item {
@@ -24,5 +26,18 @@
 .gwt-lookup-error{
     color: red;
     display: block;
+}
+
+.gwt-lookup-note{
+    color: blue;
+    display: block;
+}
+
+.gwt-PushButton-up{
+    background-color: #eee;
+}
+
+.gwt-PushButton-down{
+    background-color: white
 }
 

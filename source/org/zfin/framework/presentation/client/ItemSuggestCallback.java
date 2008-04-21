@@ -22,6 +22,10 @@ class ItemSuggestCallback implements AsyncCallback {
         lookup.clearError();
 
         if(true==lookup.getTextBox().getText().equalsIgnoreCase(request.getQuery())){
+            SuggestOracle.Response response = (SuggestOracle.Response)retValue ;
+            if(response.getSuggestions().size()==0){
+                lookup.setNoteString("No matches for '"+request.getQuery()+"'");
+            }
             callback.onSuggestionsReady(request, (SuggestOracle.Response)retValue);
         }
     }

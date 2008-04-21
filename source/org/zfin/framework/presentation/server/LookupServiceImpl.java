@@ -33,7 +33,7 @@ public class LookupServiceImpl
      * Note that we do not use limits on the request for this implementation.
      *
      */
-    public SuggestOracle.Response getSuggestions(SuggestOracle.Request req) {
+    public SuggestOracle.Response getSuggestions(SuggestOracle.Request req,boolean wildCard) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery() ;
 
@@ -50,7 +50,9 @@ public class LookupServiceImpl
             anatomyItems = ar.getAnatomyItemsByName(query,false) ;
             Collections.sort(anatomyItems, new SortAnatomySearchTerm(query));
         }
-        suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
+        if(wildCard==true){
+            suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
+        }
         for(AnatomyItem anatomyItem : anatomyItems){
             String term = anatomyItem.getName() ;
             String suggestion = new String(term) ;
