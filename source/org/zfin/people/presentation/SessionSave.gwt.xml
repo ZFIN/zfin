@@ -1,0 +1,14 @@
+<module>
+
+    <!-- Inherit the core Web Toolkit stuff.                  -->
+    <inherits name='com.google.gwt.user.User'/>
+
+    <!-- Specify the app entry point class.                   -->
+    <entry-point class='org.zfin.people.presentation.client.SessionSave'/>
+
+
+    <!-- Specify the app servlets.                   -->
+    <servlet path="/ajax/session-save"
+             class='org.zfin.people.presentation.server.SessionSaveServiceImpl'/>
+
+</module>

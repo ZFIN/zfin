@@ -119,12 +119,20 @@ EFFECTS
     }
   </script>
 
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_figure_only';">
+        <?MIVAR NAME=xpcur_c_figure_only>$1<?/MIVAR>
+    <?/MISQL>
+
   <?MIVAR NAME=xpcurfig_row_color><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
   
   <table width=100% border=0 cellspacing=0 cellpadding=3>
     <tr bgcolor=#CCCCCC>
 
-  <?MIBLOCK COND=$(NXST,$pubcur_c_figure_only)>
+  <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,))>
       <td></td>
       <td>Label</td>
       <td>Caption</td>
@@ -148,16 +156,17 @@ EFFECTS
   <?MIVAR name=xpcurfig_fig_caption>$2<?/MIVAR>
   <?MIVAR name=xpcurfig_fig_comment>$3<?/MIVAR>
   <?MIVAR name=xpcurfig_fig_label>$4<?/MIVAR>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=get name=figureUpdate> 
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figureUpdate> 
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_fig_zdb_id VALUE="<?MIVAR>$xpcurfig_fig_zdb_id<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update"> 
 
-<?MIBLOCK COND=$(NXST,$pubcur_c_figure_only)>
+<?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,))>
   <?MIVAR>
   <tr bgcolor=$xpcurfig_row_color>
     <td valign=top>
-      <a href="javascript:onClick=urlSetCookie('figure_only','$xpcurfig_fig_zdb_id','pubcur_c_');"><font color=blue>Only</font></a>
+      <a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_figure_only','$xpcurfig_fig_zdb_id','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"><font color=blue>Only</font></a>
     </td>
     <td valign=top> 
        $xpcurfig_fig_label
@@ -188,8 +197,8 @@ EFFECTS
   <?MIVAR>
   <tr bgcolor=$xpcurfig_row_color>
     <td valign=top>
-      <input name="xpcur_G_fig_update" type=button value="Update" onClick="if (document.figureUpdate.xpcur_G_fig_label.value != '' && validCaption((this.form).xpcur_G_fig_caption.value)){uninterpretCaption();setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','figure','xpcur_c_');document.figureUpdate.submit();}"><br>
-      <a href="javascript:onClick=urlSetCookie('figure_only','','pubcur_c_');"><font color=blue>Show All</font></a>
+      <input name="xpcur_G_fig_update" type=button value="Update" onClick="if (document.figureUpdate.xpcur_G_fig_label.value != '' && validCaption((this.form).xpcur_G_fig_caption.value)){uninterpretCaption();document.figureUpdate.submit();}"><br>
+      <a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_figure_only','','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"><font color=blue>Show All</font></a>
     </td>
     <td valign=top> 
         <input name="xpcur_G_fig_label" type=textbox size=5 value="$xpcurfig_fig_label">
@@ -238,9 +247,10 @@ EFFECTS
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figure_new>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update">
   <tr>
     <td>
-      <input name="xpcur_G_fig_add" type=button value="Add" onClick="if (validateFigLabel() && validCaption((this.form).xpcur_G_fig_add_caption.value)){setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','figure','xpcur_c_');document.figure_new.submit();}">
+      <input name="xpcur_G_fig_add" type=button value="Add" onClick="if (validateFigLabel() && validCaption((this.form).xpcur_G_fig_add_caption.value)){document.figure_new.submit();}">
     </td>
     <td> 
         <select name="xpcur_G_fig_add_prefix_label">

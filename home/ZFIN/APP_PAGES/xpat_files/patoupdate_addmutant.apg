@@ -49,6 +49,37 @@ EFFECTS
 
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+   <?MICOMMENT> ** Get the genox id, if it exists ** <?/MICOMMENT>
+
+    <?MISQL SQL="select genox_zdb_id 
+                 from genotype_experiment 
+                 where genox_geno_zdb_id = '$puaddmu_geno_zdb_id'
+                   and genox_exp_zdb_id = '$puaddmu_exp_zdb_id';">
+      <?MIVAR NAME="$puaddmu_genox_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+
+
+  <?MICOMMENT> ** Check to see if this would be a duplicate add, unset $puaddmu_add_mutant
+                  if there's no reason to actually add anything.  At some point, we could
+                  give an error message to let the user know, but doing it with an alert
+                  would be obnoxious.  Also, only execute this bit if a genox id was found,
+                  if it wasn't, this can't be a duplicate record              ** <?/MICOMMENT>
+  <?MIBLOCK COND="$(XST,$puaddmu_genox_zdb_id)">
+
+    <?MISQL SQL="select first 1 apato_zdb_id 
+                 from atomic_phenotype
+                      join apato_figure on apatofig_apato_zdb_id = apato_zdb_id
+                 where apato_genox_zdb_id = '$puaddmu_genox_zdb_id'
+                   and apato_start_stg_zdb_id = '$puaddmu_start_stg_zdb_id'
+                   and apato_end_stg_zdb_id = '$puaddmu_end_stg_zdb_id'
+                   and apato_pub_zdb_id = '$OID'
+                   and apatofig_fig_zdb_id = '$puaddmu_fig_zdb_id'">
+      <?MIVAR>$(UNSETVAR, $puaddmu_add_mutant)<?/MIVAR>
+    <?/MISQL>
+  <?/MIBLOCK>
+  
+
   <?MIBLOCK COND="$(XST,$puaddmu_add_mutant)">
 
   <?MICOMMENT> *** Set some globals to define the contents of a 
@@ -73,16 +104,7 @@ EFFECTS
 
     <?MIVAR NAME="$puaddmu_default_tag">abnormal<?/MIVAR>
 
-    <?MICOMMENT> ** Get or make genox_zdb_id ** <?/MICOMMENT>
-      
-    <?MISQL SQL="select genox_zdb_id 
-                 from genotype_experiment 
-                 where genox_geno_zdb_id = '$puaddmu_geno_zdb_id'
-                   and genox_exp_zdb_id = '$puaddmu_exp_zdb_id';">
-      <?MIVAR NAME="$puaddmu_genox_zdb_id">$1<?/MIVAR>
-    <?/MISQL>
-
-    <?MICOMMENT> ** if the last query didnt get a genox id, make one ** <?/MICOMMENT>
+    <?MICOMMENT> ** if we didn't get a genox id up at the top, make one now ** <?/MICOMMENT>
 
     <?MIBLOCK COND="$(NXST,$puaddmu_genox_zdb_id)">
       <?MISQL SQL="execute function get_id('GENOX');">

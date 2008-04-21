@@ -7,6 +7,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.Set;
 import java.util.GregorianCalendar;
+import java.io.Serializable;
 
 /**
  * ToDo:

@@ -123,6 +123,31 @@
         
     </class>
 
+    <class name="org.zfin.people.CuratorSession" table="curator_session">
+        <id name="ID" type="long">
+            <column name="cs_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
 
+        <many-to-one name="curator"
+                     column="cs_person_zdb_id"
+                     class="org.zfin.people.Person"
+                     lazy="no-proxy"/>
+
+        <many-to-one name="publication"
+                     column="cs_data_zdb_id"
+                     class="org.zfin.publication.Publication"
+                     lazy="no-proxy"
+                     not-null="false"/>
+
+        <property name="field">
+            <column name="cs_field_name"/>
+        </property>
+        <property name="value">
+            <column name="cs_field_name_value"/>
+        </property>
+        
+    </class>
+    
 </hibernate-mapping>
 

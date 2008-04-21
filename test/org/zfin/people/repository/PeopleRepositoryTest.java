@@ -8,10 +8,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.publication.Publication;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.people.Person;
 import org.zfin.people.User;
+import org.zfin.people.CuratorSession;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.repository.UserRepository;
 
@@ -22,8 +24,11 @@ import java.util.Date;
  */
 
 public class PeopleRepositoryTest {
+    private static String REAL_PERSON_1_ZDB_ID = "ZDB-PERS-960805-676"; //Monte;
+    private static String REAL_PERSON_2_ZDB_ID = "ZDB-PERS-970321-3"; //George S.
 
     private static UserRepository userRepository = RepositoryFactory.getUserRepository();
+    private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -37,12 +42,81 @@ public class PeopleRepositoryTest {
         TestConfiguration.configure();
     }
 
-
+ 
     @After
     public void closeSession() {
         HibernateUtil.closeSession();
     }
 
+
+    @Test
+    public void createAndUpdateCuratorSession() {
+
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+
+            Person person = profileRepository.getPerson(REAL_PERSON_1_ZDB_ID);
+            Person person2 = profileRepository.getPerson(REAL_PERSON_2_ZDB_ID);
+            Publication pub = person.getPublications().iterator().next();
+
+            String field = "This is my field";
+            String value = "This is my value";
+            String value2 = "This is my other value";
+
+            CuratorSession cs1 = profileRepository.createCuratorSession(person.getZdbID(), pub.getZdbID(), field, value);
+            CuratorSession cs2 = profileRepository.createCuratorSession(person2.getZdbID(), pub.getZdbID(), field, value);
+
+            CuratorSession databaseCS = profileRepository.getCuratorSession(person.getZdbID(),pub.getZdbID(),field);
+
+            assertNotNull("curator session created successfully", databaseCS);
+            assertNotNull("curator session created with PK id", databaseCS.getID());
+            assertEquals("curator session value is correct", databaseCS.getValue(),value);
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        finally {
+            // rollback on success or exception to leave no new records in the database
+            session.getTransaction().rollback();
+        }
+
+    }
+
+    @Test
+    public void createAndUpdateCuratorSessionWithNoPublication() {
+
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+
+            Person person = profileRepository.getPerson(REAL_PERSON_1_ZDB_ID);
+            String field = "This is my field";
+            String value = "This is my value";
+
+            profileRepository.createCuratorSession(REAL_PERSON_1_ZDB_ID, null, field, value); 
+
+            CuratorSession databaseCS = profileRepository.getCuratorSession(person.getZdbID(),null,field);
+
+            assertNotNull("curator session created successfully", databaseCS);
+            assertNotNull("curator session created with PK id", databaseCS.getID());
+            assertEquals("curator session value is correct", databaseCS.getValue(),value);
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        finally {
+            // rollback on success or exception to leave no new records in the database
+            session.getTransaction().rollback();
+        }
+
+    }
 
     @Test
     /**

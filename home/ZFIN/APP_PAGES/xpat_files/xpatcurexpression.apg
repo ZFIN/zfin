@@ -47,7 +47,7 @@ EFFECTS
 <SCRIPT>
 function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
 {
-   var fish = document.experiment.xpcur_G_xpatex_fish;
+   var fish = document.new_experiment.xpcur_G_xpatex_fish;
    for (i=0; i<fish.length; i++)
    {
       if (fish[i].value == fishid)
@@ -55,7 +55,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
         fish.selectedIndex = i;
       }
     }
-   var gene = document.experiment.xpcur_G_xpatex_gene;
+   var gene = document.new_experiment.xpcur_G_xpatex_gene;
    for (i=0; i<gene.length; i++)
    {
       if (gene[i].value == geneid)
@@ -63,7 +63,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
         gene.selectedIndex = i;
       }
     }
-   var env = document.experiment.xpcur_G_xpatex_exp;
+   var env = document.new_experiment.xpcur_G_xpatex_exp;
    for (i=0; i<env.length; i++)
    {
       if (env[i].value == envid)
@@ -71,7 +71,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
         env.selectedIndex = i;
       }
     }
-   var assay = document.experiment.xpcur_G_xpatex_assay;
+   var assay = document.new_experiment.xpcur_G_xpatex_assay;
    for (i=0; i<assay.length; i++)
    {
       if (assay[i].value == assayid)
@@ -79,7 +79,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
         assay.selectedIndex = i;
       }
     }
-   var genbank = document.experiment.xpcur_G_xpatex_genbank;
+   var genbank = document.new_experiment.xpcur_G_xpatex_genbank;
    for (i=0; i<genbank.length; i++)
    {
       if (genbank[i].value == genbankid)
@@ -87,7 +87,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
         genbank.selectedIndex = i;
       }
     }
-   experiment.xpcur_G_xpatex_zdb_id.value = exptid;
+   document.new_experiment.xpcur_G_xpatex_zdb_id.value = exptid;
    xpcur_G_panel_add.xpcur_G_panel_add_xpatex.value = exptid;
    <?MIVAR NAME=$xpcur_G_xpatex_zdb_id>exptid<?/MIVAR>
 
@@ -136,9 +136,10 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
 <?MIVAR NAME=xpcurxprss_prev_fig><?/MIVAR>
 <?MIVAR NAME=xpcurxprss_radio_index>0<?/MIVAR>
   
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','experiment','xpcur_c_');">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment >
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update">
     
 <table width=100% border=0 cellpadding=3 cellspacing=0>
 
@@ -178,8 +179,8 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
       and xpatex_gene_zdb_id = mrkr_zdb_id
       and genox_exp_zdb_id = exp_zdb_id
       and xpatex_assay_name = xpatassay_name
-      $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
-      $(IF,$(XST,$xpcur_c_fish_only),and geno_zdb_id = '$xpcur_c_fish_only')
+      $(IF,$(AND,$(XST,$xpcur_c_gene_only),$(NE,$xpcur_c_gene_only,)),and mrkr_zdb_id = '$xpcur_c_gene_only')
+      $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(NE,$xpcur_c_fish_only,)),and geno_zdb_id = '$xpcur_c_fish_only')
     order by mrkr_abbrev_order,geno_nickname,xpatassay_display_order,12;">
 
 <?MIVAR COND=$(EC,$debugg,true)><p>Experiment Select:<br> $MI_SQL <?/MIVAR>
@@ -272,10 +273,21 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
 
 <?/MIBLOCK> <?MICOMMENT> Show Hide Toggle <?/MICOMMENT>
 
+</form>
+
+
 <?MICOMMENT> ==| Enter a New Experiment |== <?/MICOMMENT>
+
+
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=new_experiment >
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update">
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="Add">
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_zdb_id VALUE="">
   <tr>
     <td>
-      <input name="button" type=submit value="Add"  onClick="setCookie('xpatex','Add','xpcur_G_');">
+      <input name="button" type=submit value="Add">
     </td>
     <td> 
         <select name="xpcur_G_xpatex_gene">
@@ -385,10 +397,8 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
         </select>
       </td>
 
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_zdb_id VALUE="<?MIVAR>$xpcur_G_xpatex_zdb_id<?/MIVAR>">
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="update"> 
     <td>
-      <input name="button" type=submit value="update" onClick="setCookie('xpatex','update','xpcur_G_');">
+      <input name="button" type=submit value="update" onClick="document.new_experiment.xpcur_G_xpatex.value='update';">
     </td>
   </tr>
   

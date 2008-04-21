@@ -66,14 +66,14 @@ EFFECTS
       <?MIVAR NAME=xpcurperm_cur_note>$(IF,$(EC,$2,NULL),,$2)<?/MIVAR>
   <?/MISQL>
   
-  <form name=permission action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#permission" onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','permission','');" method=post>
+  <form name=permission action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#permission" method=post>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update"> 
 
   <?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">
     <?MIVAR NAME=xpcurperm_can_show_image>$1<?/MIVAR>
   <?/MISQL>
-
 
 <?MISQL SQL="select pub_doi,jrnl_is_nice from publication, journal where zdb_id='$OID' and jrnl_publisher like '$elsevierName' and jrnl_zdb_id = pub_jrnl_zdb_id;"><?/MISQL>
 
@@ -93,10 +93,13 @@ EFFECTS
 	<br/>
 	<p>
 
-	<?MIELSE>
+  <?MIELSE>
+    <?MIVAR>
     <br>Yes: <input type=radio name=xpcur_G_can_show_image value="t" $(IF,$(EC,$xpcurperm_can_show_image,t),CHECKED)>
     <br>No: <input type=radio name=xpcur_G_can_show_image value="f"  $(IF,$(EC,$xpcurperm_can_show_image,f),CHECKED) 
-              <?MIVAR COND=$(EC,$xpcurperm_can_set_permission_false,false)>
+    <?/MIVAR>
+    
+            <?MIVAR COND=$(EC,$xpcurperm_can_set_permission_false,false)>
                 onClick="alert('Remove Images, Non-TOD Figure Captions, and acknowledgements before changing permission.');document.forms['permission'].elements['xpcur_G_can_show_image'][0].click();"
               <?/MIVAR>
             >

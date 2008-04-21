@@ -216,6 +216,8 @@ background: #AAE;
 </style>
 
 
+<script language="javascript" src="/gwt/org.zfin.people.presentation.SessionSave/org.zfin.people.presentation.SessionSave.nocache.js"></script>
+
 
 
   <script type="text/javascript" language="javascript">
@@ -238,6 +240,12 @@ background: #AAE;
 
     }
     
+    function replaceLocationAnchor(name) {
+      <?MIVAR>
+    	replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum="+Math.random()+"#"+name);
+      <?/MIVAR>       
+
+    }    
 
     function setCookie(name,value,prefix) {
       var thisCookie = prefix+name;
@@ -246,36 +254,6 @@ background: #AAE;
 
     }
 
-
-    function storeSession(person,data,field,value) {  
-
-        var URL = "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curator_session_update.apg";
-        URL = URL + "&csupdate_person_zdb_id=" + person;
-        URL = URL + "&csupdate_field_name=" + field;
-        URL = URL + "&csupdate_field_name_value=" + value;
-        if (data != null) {
-          URL = URL + "&csupdate_data_zdb_id=" + data;
-        }    
-
-        var xmlHttpReq = false;
-        var self = this;
-        // Mozilla/Safari
-        if (window.XMLHttpRequest) {
-           self.xmlHttpReq = new XMLHttpRequest();
-        }
-        // IE
-        else if (window.ActiveXObject) {
-           self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        self.xmlHttpReq.open('GET', URL, true);
-        self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        self.xmlHttpReq.onreadystatechange = function() {
-           if (self.xmlHttpReq.readyState == 4) {
-	      	   ;
-           }
-       }
-       self.xmlHttpReq.send('');
-    }
 
     
     function urlSetCookie(name,value,prefix) {
@@ -450,12 +428,53 @@ function setMarkerTarget(featreli,anchor){
      
   <?/MIBLOCK>
 
+
+<?MICOMMENT> 
+  ==========================
+  =    Retrieve Filters    =
+  ==========================
+<?/MICOMMENT>
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpbcur_c_figure_only';">
+        <?MIVAR NAME=xpcur_c_figure_only>$1<?/MIVAR>
+    <?/MISQL> 
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_gene_only';">
+        <?MIVAR NAME=xpcur_c_gene_only>$1<?/MIVAR>
+    <?/MISQL>     
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_fish_only';">
+        <?MIVAR NAME=xpcur_c_fish_only>$1<?/MIVAR>
+    <?/MISQL> 
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_auto_on';">
+        <?MIVAR NAME=xpcur_c_auto_on>$1<?/MIVAR>
+    <?/MISQL> 
+ 
 <?MICOMMENT> 
   =====================
   =    Update Data    =
   =====================
 <?/MICOMMENT>
+ 
 
+<?MIVAR NAME=pubcur_onload><?/MIVAR>
 
 <?MIVAR NAME=xpcur_G_light_fig_text><?/MIVAR>
 <?MIVAR NAME=xpcur_G_TO_fig_text>unillustrated text statements<?/MIVAR>
@@ -608,6 +627,14 @@ function setMarkerTarget(featreli,anchor){
       <?MIVAR NAME=pubcur_G_exp_attrib_csv SEPARATE="','">$pubcur_exp_attrib<?/MIVAR>
 
 
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_figure_only';">
+        <?MIVAR NAME=xpcur_c_figure_only>$1<?/MIVAR>
+    <?/MISQL> 
+    
     <?MIVAR NAME=pubcur_fig_attrib><?/MIVAR>
     <?MISQL SQL="
         select fig_zdb_id
@@ -615,7 +642,7 @@ function setMarkerTarget(featreli,anchor){
         where recattrib_source_zdb_id = '$OID' 
 	  and recattrib_source_type = 'standard'
           and fig_zdb_id = recattrib_data_zdb_id
-        $(IF,$(XST,$pubcur_c_figure_only),and fig_zdb_id = '$pubcur_c_figure_only')
+        $(IF,$(AND,$(XST,$xpcur_c_figure_only),$(NE,$xpcur_c_figure_only,)),and fig_zdb_id = '$xpcur_c_figure_only')
         ;">
         <?MIVAR> $(VECAPPEND,$pubcur_fig_attrib,$1)<?/MIVAR>
     <?/MISQL>
@@ -682,18 +709,44 @@ function setMarkerTarget(featreli,anchor){
   
 <?/MICOMMENT>
 
-<?MIVAR NAME=pubcur_onload><?/MIVAR>
-<?MIBLOCK COND=$(AND,$(XST,$xpcur_c_checked_expression),$(XST,$xpcur_c_panel),$(EC,$xpcur_c_panel,show))>
-  <?MIVAR NAME=pubcur_onload>rememberCheckedExpression();<?/MIVAR>
+  <?MISQL COND=$(NXST,$xpcur_c_checked_expression) SQL="
+    select cs_field_name_value 
+    from curator_session 
+    where cs_data_zdb_id = '$OID' 
+      and cs_field_name = 'xpcur_c_checked_expression';">
+    <?MIVAR NAME=xpcur_c_checked_expression>$1<?/MIVAR>
+  <?/MISQL>
+
+  <?MISQL SQL="
+    select cs_field_name_value 
+    from curator_session 
+    where cs_data_zdb_id = '$OID' 
+      and cs_field_name = 'xpcur_c_panel';">
+    <?MIVAR NAME=xpcur_c_panel>$1<?/MIVAR>
+  <?/MISQL>
+
+  <?MISQL SQL="
+    select cs_field_name_value 
+    from curator_session 
+    where cs_data_zdb_id = '$OID' 
+      and cs_field_name = 'xpcur_c_condition';">
+    <?MIVAR NAME=xpcur_c_condition>$1<?/MIVAR>
+  <?/MISQL>
+
+<?MIVAR NAME=pubcur_onload>$pubcur_onload setDefaultSession();<?/MIVAR>
+    
+<?MIBLOCK COND=$(AND,$(XST,$xpcur_c_checked_expression),$(NE,$xpcur_c_checked_expression,),$(XST,$xpcur_c_panel),$(EC,$xpcur_c_panel,show))>
+  <?MIVAR NAME=pubcur_onload>$pubcur_onload rememberCheckedExpression();<?/MIVAR>
 <?/MIBLOCK>
+
 <?MIBLOCK COND=$(AND,$(XST,$xpcur_c_condition),$(EC,$xpcur_c_condition,show))>
   <?MIVAR NAME=pubcur_onload>$pubcur_onload resetCondForm();<?/MIVAR>
 <?/MIBLOCK>
 
+
 <?MIVAR COND=$(NE,$pubcur_onload,)>
   <body onLoad="$pubcur_onload">
 <?/MIVAR>
-
 
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 </td></tr>
@@ -986,4 +1039,6 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
     <?/MISQL>
 <?/MIBLOCK>
 <?/MIBLOCK>
+
+
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

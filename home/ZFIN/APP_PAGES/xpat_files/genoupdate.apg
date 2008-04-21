@@ -43,9 +43,16 @@ EFFECTS
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
 
-  <?MICOMMENT> ================| New Genotype |================ <?/MICOMMENT>
-  <?MIBLOCK COND=$(XST,$pubcur_c_new_genotype)>
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'pubcur_c_new_genotype';">
+        <?MIVAR NAME=pubcur_c_new_genotype>$1<?/MIVAR>
+    <?/MISQL>    
 
+  <?MICOMMENT> ================| New Genotype |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(AND,$(XST,$pubcur_c_new_genotype),$(NE,$pubcur_c_new_genotype,))>
 
   
     <?MICOMMENTS>
@@ -59,9 +66,11 @@ EFFECTS
          name will be applied.
        ================================================
     <?/MICOMMENTS>
-    <script>
-      setCookie('new_genotype','','pubcur_c_');
-    </script>
+    <?MIVAR>
+      <script>
+        storeSession('$ZDB_ident','$OID','pubcur_c_new_genotype','');
+      </script>
+    <?/MIVAR>
     
     <?MISQL SQL="execute function get_id('GENO');">$(SETVAR,$genoup_geno_zdb_id,$1)<?/MISQL>
     
@@ -86,15 +95,14 @@ EFFECTS
       
   <?/MIBLOCK> <?MICOMMENT> xst $pubcur_G_new_genotype <?/MICOMMENT>
 
-  <?MICOMMENT> ================| New Genotype |================ <?/MICOMMENT>
-  <?MIBLOCK COND=$(XST,$pubcur_c_finalize_genotype)>
 
-    <script>
-      setCookie('geno_nickname','','pubcur_c_');
-    </script>
-    <script>
-      setCookie('finalize_genotype','','pubcur_c_');
-    </script>
+
+
+              
+
+  <?MICOMMENT> ================| Finalize Genotype |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(AND,$(XST,$pubcur_c_finalize_genotype),$(NE,$pubcur_c_finalize_genotype,))>
+
     
     <?MIVAR NAME=genoup_display_name><?/MIVAR>
     <?MIVAR NAME=genoup_handle><?/MIVAR>
@@ -140,81 +148,87 @@ EFFECTS
         select WebExplode(object,'permission=root&recweb_rec_id=$pubcur_c_finalize_genotype&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=geno_handle&recweb_new_value=$genoup_handle&recweb_comments=finalize+genotype+name.') 
         from webPages where ID='aa-record_web_update.apg';">
     <?/MISQL>
-     
+
+   
       
   <?/MIBLOCK> <?MICOMMENT> xst $pubcur_G_new_genotype <?/MICOMMENT>
 
 
 
-  <?MICOMMENT> ================| Add Background |================ <?/MICOMMENT>
-  <?MIBLOCK COND=$(AND,$(XST,$pubcur_c_geno_background),$(XST,$pubcur_c_geno_zdb_id))>
 
-    <script>
-      setCookie('geno_zdb_id','','pubcur_c_');
-      setCookie('geno_background','','pubcur_c_');
-    </script>    
+   
+    
+  <?MICOMMENT> ================| Add Background |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(AND,$(XST,$addGenoBackground),$(XST,$genocurbldWTbckgrd),$(NE,$genocurbldWTbckgrd,))>  
     
     <?MISQL SQL="select count(*) 
                    from genotype_background 
-                  where genoback_geno_zdb_id = '$pubcur_c_geno_zdb_id'
-                    and genoback_background_zdb_id = '$pubcur_c_geno_background';">
+                  where genoback_geno_zdb_id = '$genocur_staging_zdb'
+                    and genoback_background_zdb_id = '$genocurbldWTbckgrd';">
     <?/MISQL>
     
     <?MIBLOCK COND="$(EC,$1,0)">
         <?MISQL SQL="insert into genotype_background (genoback_geno_zdb_id,genoback_background_zdb_id)
-                     values ('$pubcur_c_geno_zdb_id','$pubcur_c_geno_background');">
+                     values ('$genocur_staging_zdb','$genocurbldWTbckgrd');">
         <?/MISQL>
     <?MIELSE>
         <script>
           alert('Background already attached to this Genotype!');
         </script>
     <?/MIBLOCK>
-  
+
+
   <?/MIBLOCK> <?MICOMMENT> xst $geno_background & geno_zdb_id <?/MICOMMENT>
 
 
-  <?MICOMMENT> ================| Remove Background |================ <?/MICOMMENT>
-  <?MIBLOCK COND=$(AND,$(XST,$pubcur_c_remGeno_background),$(XST,$pubcur_c_remGeno_zdb_id))>
 
-    <script>
-      setCookie('remGeno_zdb_id','','pubcur_c_');
-      setCookie('remGeno_background','','pubcur_c_');
-    </script>
+ 
+
+  <?MICOMMENT> ================| Remove Background |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(AND,$(XST,$removeGenoBackground),$(XST,$genocurbldWTbckgrd),$(NE,$genocurbldWTbckgrd,))>
+
     <?MISQL SQL="select count(*)::integer
                    from genotype_background 
-                  where genoback_geno_zdb_id = '$pubcur_c_remGeno_zdb_id'
-                    and genoback_background_zdb_id = '$pubcur_c_remGeno_background';">
+                  where genoback_geno_zdb_id = '$genocur_staging_zdb'
+                    and genoback_background_zdb_id = '$genocurbldWTbckgrd';">
     <?/MISQL>
 
     <?MIBLOCK COND="$(NC,$1,0)">    
       <?MISQL SQL="delete from genotype_background 
-                   where genoback_geno_zdb_id = '$pubcur_c_remGeno_zdb_id'
-                     and genoback_background_zdb_id = '$pubcur_c_remGeno_background';">
+                   where genoback_geno_zdb_id = '$genocur_staging_zdb'
+                     and genoback_background_zdb_id = '$genocurbldWTbckgrd';">
       <?/MISQL> 
     <?MIELSE>
         <script>
           alert('The Background selected is not attached to this Genotype!');
         </script>
     <?/MIBLOCK>
- 
+    
     
   <?/MIBLOCK> 
 
 
-  <?MICOMMENT> ================| Remove Genotype Feature |================ <?/MICOMMENT>
-  <?MIBLOCK COND=$(AND,$(XST,$pubcur_c_remGenoFeat_zdb_id),$(XST,$pubcur_c_remGeno_zdb_id))>
 
-    <script>
-      setCookie('remGeno_zdb_id','','pubcur_c_');
-      setCookie('remGenoFeat_zdb_id','','pubcur_c_');
-    </script>
+
+
+
+  <?MICOMMENT> ================| Remove Genotype Feature |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(AND,$(XST,$removeGenoFeat),$(XST,$genocurbld_feat_zdb_id),$(NE,$genocurbld_feat_zdb_id,))>
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'genocur_staging_zdb';">
+        <?MIVAR NAME=genocur_staging_zdb>$1<?/MIVAR>
+    <?/MISQL>    
     
     <?MIVAR NAME=genoup_delete_zdb_id><?/MIVAR>
     
     <?MISQL SQL="select genofeat_zdb_id
                    from genotype_feature
-                  where genofeat_geno_zdb_id = '$pubcur_c_remGeno_zdb_id'
-                    and genofeat_feature_zdb_id = '$pubcur_c_remGenoFeat_zdb_id';">
+                  where genofeat_geno_zdb_id = '$genocur_staging_zdb'
+                    and genofeat_feature_zdb_id = '$genocurbld_feat_zdb_id';">
            <?MIVAR NAME=genoup_delete_zdb_id>$1<?/MIVAR>
     <?/MISQL>
 
@@ -228,16 +242,16 @@ EFFECTS
 
 
   <?MICOMMENT> ================| Add Genotype Feature |================ <?/MICOMMENT>
-  <?MIBLOCK COND=$(AND,$(XST,$pubcur_c_geno_zdb_id),$(XST,$pubcur_c_genofeat_zdb_id))>
+  <?MIBLOCK COND=$(AND,$(XST,$addGenoFeat),$(XST,$genocurbld_feat_zdb_id),$(NE,$genocurbld_feat_zdb_id,))>
 
-    <script>
-      setCookie('genofeat_zdb_id','','pubcur_c_');
-      setCookie('zyg_zdb_id','','pubcur_c_');
-      setCookie('maternal_zdb_id','','pubcur_c_');
-      setCookie('paternal_zdb_id','','pubcur_c_');
-      setCookie('geno_zdb_id','','pubcur_c_');
-    </script>
-    
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'genocur_staging_zdb';">
+        <?MIVAR NAME=genocur_staging_zdb>$1<?/MIVAR>
+    <?/MISQL>     
+
     <?MICOMMENT> 
          The original design had multiple tables connecting markers to genotypes.
          This code remains if the tables should return.    
@@ -255,8 +269,8 @@ EFFECTS
     <?MIVAR NAME=genoup_SQL>
         select count(*) 
           from $genoup_new_item_base_table
-         where $(CONCAT,$genoup_table_prefix,geno_zdb_id) = '$pubcur_c_geno_zdb_id'
-           and $genoup_table_column = '$pubcur_c_genofeat_zdb_id';
+         where $(CONCAT,$genoup_table_prefix,geno_zdb_id) = '$genocur_staging_zdb'
+           and $genoup_table_column = '$genocurbld_feat_zdb_id';
     <?/MIVAR>
     
     <?MISQL SQL="$genoup_SQL">
@@ -267,7 +281,8 @@ EFFECTS
     
       <?MICOMMENT> ==| Add New ZDB-ID |== <?/MICOMMENT>  
       <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$genoup_genofeat_zdb_id');"><?/MISQL>
-    
+
+   
       <?MISQL SQL="
           INSERT into $genoup_new_item_base_table(
             $(CONCAT,$genoup_table_prefix,zdb_id),
@@ -279,29 +294,52 @@ EFFECTS
           )
           VALUES(
             '$genoup_genofeat_zdb_id',
-            '$pubcur_c_geno_zdb_id',
-            '$pubcur_c_genofeat_zdb_id',
-            '$pubcur_c_zyg_zdb_id',
-            '$pubcur_c_maternal_zdb_id',
-            '$pubcur_c_paternal_zdb_id');">
+            '$genocur_staging_zdb',
+            '$genocurbld_feat_zdb_id',
+            '$genocurbld_zyg_zdb_id',
+            '$genocurbld_maternal_zdb_id',
+            '$genocurbld_paternal_zdb_id');">
       <?/MISQL> 
 
       <?MISQL SQL="
-          select WebExplode(object,'permission=root&recweb_rec_id=$pubcur_c_geno_zdb_id&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=$genoup_table_column&recweb_new_value=$genoup_genofeat_zdb_id<br>$pubcur_c_geno_zdb_id<br>$pubcur_c_genofeat_zdb_id<br>$pubcur_c_zyg_zdb_id<br>$pubcur_c_maternal_zdb_id<br>$pubcur_c_paternal_zdb_id&recweb_comments=create+new+record') 
+          select WebExplode(object,'permission=root&recweb_rec_id=$genocur_staging_zdb&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=$genoup_table_column&recweb_new_value=$genoup_genofeat_zdb_id<br>$genocur_staging_zdb<br>$genocurbld_feat_zdb_id<br>$genocurbld_zyg_zdb_id<br>$genocurbld_maternal_zdb_id<br>$genocurbld_paternal_zdb_id&recweb_comments=create+new+record') 
           from webPages where ID='aa-record_web_update.apg';">
       <?/MISQL>  
 
     <?/MIBLOCK>  
+
+        
+    
   <?/MIBLOCK> <?MICOMMENT> xst $geno_background & geno_zdb_id <?/MICOMMENT>
   
 
-  <?MIBLOCK COND=$(AND,$(XST,$pubcur_c_geno_attrib_count),$(XST,$pubcur_c_geno_attrib_list))>
 
-    <script>
-      setCookie('geno_attrib_count','','pubcur_c_');
-      setCookie('geno_attrib_list','','pubcur_c_');
-    </script>
-        
+
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'pubcur_c_geno_attrib_count';">
+        <?MIVAR NAME=pubcur_c_geno_attrib_count>$1<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'pubcur_c_geno_attrib_list';">
+        <?MIVAR NAME=pubcur_c_geno_attrib_list>$1<?/MIVAR>
+    <?/MISQL>    
+            
+  <?MIBLOCK COND=$(AND,$(XST,$pubcur_c_geno_attrib_count),$(NE,$pubcur_c_geno_attrib_count,),$(XST,$pubcur_c_geno_attrib_list))>
+  
+    <?MIVAR>
+      <script>
+        storeSession('$ZDB_ident','$OID','pubcur_c_geno_attrib_count','');
+        storeSession('$ZDB_ident','$OID','pubcur_c_geno_attrib_list','');
+      </script>
+    <?/MIVAR>
+    
     <?MIBLOCK WHILE=$pubcur_c_geno_attrib_count>
       <?MIVAR>
         <?MIVAR NAME=genoup_pipe_char_at>$(POSITION,$pubcur_c_geno_attrib_list,|)<?/MIVAR>
@@ -326,8 +364,11 @@ EFFECTS
   <?/MIBLOCK>
 
   
-    <SCRIPT>
-      setCookie('geno_update','no','pubcur_c_')
-    </SCRIPT>   
+    <?MIVAR>
+      <script>
+        storeSession('$ZDB_ident','$OID','pubcur_c_geno_update','');
+        storeSession('$ZDB_ident','$OID','pubcur_c_geno_attrib_list','');
+      </script>
+    <?/MIVAR>   
      
 <?/MIBLOCK>  <?MICOMMENT> authorize = root <?/MICOMMENT>

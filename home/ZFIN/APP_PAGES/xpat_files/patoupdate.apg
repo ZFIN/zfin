@@ -80,14 +80,11 @@ EFFECTS
 <?MIVAR COND="$(XST,$patoup_entity_b_name)" NAME="$patoup_entity_b_name">$(TRIM,$patoup_entity_b_name)<?/MIVAR>
 <?MIVAR COND="$(XST,$patoup_quality_name)" NAME="$patoup_quality_name">$(TRIM,$patoup_quality_name)<?/MIVAR>
 
-
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
   <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_pato_update),$(EC,$pubcur_c_pato_update,update))">
 
   <?MICOMMENT> *** we hit the update section, unset the update flag *** <?/MICOMMENT>
-  <script type="text/javascript">
-      setCookie('pato_update','no','pubcur_c_')
-  </script>
+  <?MIVAR>$(UNSETVAR,$pubcur_c_pato_update)<?/MIVAR>
 
   <?MICOMMENT> *** Set some globals to define the contents of a 
                    'default' apato record that will be used as a 
@@ -129,16 +126,6 @@ EFFECTS
       <?MIVAR NAME="$patoup_quality_zdb_id">$1<?/MIVAR>
     <?/MISQL>
 
-    <?MIBLOCK COND="$(NXST,$patoup_quality_zdb_id)">
-      <?MIVAR><script>alert("No match for quality '$patoup_quality_name' in PATO, using 'quality' instead.");</script><?/MIVAR>
-      <?MISQL SQL="select first 1 term_zdb_id 
-                   from term
-                   where term_name = 'quality'
-                     and term_is_obsolete = 'f';">
-        <?MIVAR NAME="$patoup_quality_zdb_id">$1<?/MIVAR>
-      <?/MISQL>
-    <?/MIBLOCK>
-
     <?MICOMMENT> ** convert entity_a_name to entity_id ** <?/MICOMMENT>
     <?MIBLOCK COND="$(EC,$patoup_entity_a_ontology,AO)">
       <?MISQL SQL="select anatitem_zdb_id from anatomy_item where anatitem_name = '$patoup_entity_a_name';">
@@ -148,12 +135,6 @@ EFFECTS
       <?MISQL SQL="select goterm_zdb_id from go_term where goterm_name = '$patoup_entity_a_name' and goterm_is_secondary = 'f';">
         <?MIVAR NAME="$patoup_entity_a_zdb_id">$1<?/MIVAR>
       <?/MISQL>
-    <?/MIBLOCK>
-
-    <?MICOMMENT> ** if we have a name and we didn't get an id, set the error to abort ** <?/MICOMMENT>
-    <?MIBLOCK COND="$(AND, $(NXST,$patoup_entity_a_zdb_id), $(XST,$patoup_entity_a_name) )">
-      <?MIVAR><script>alert("No match for entity a, '$patoup_entity_a_name' in '$patoup_entity_a_ontology'");</script><?/MIVAR>
-      <?MIVAR NAME="$patoup_addtopile_error">entity a failed<?/MIVAR>
     <?/MIBLOCK>
 
     <?MICOMMENT> ** convert entity_b_name to entity_id if not null ** <?/MICOMMENT>
@@ -170,13 +151,57 @@ EFFECTS
       <?/MIBLOCK> 
     <?/MIBLOCK>
 
-    <?MICOMMENT> ** if we have a name and we didn't get an id, set the error to abort ** <?/MICOMMENT>
-    <?MIBLOCK COND="$(AND, $(NXST,$patoup_entity_b_zdb_id), $(XST,$patoup_entity_b_name) )">
-      <?MIVAR><script>alert("No match for entity b, '$patoup_entity_b_name' in '$patoup_entity_b_ontology'");</script><?/MIVAR>
-      <?MIVAR NAME="$patoup_addtopile_error">entity b failed<?/MIVAR>
+    <?MICOMMENT> ****** error checking section ****** <?/MICOMMENT>
+
+    <?MICOMMENT> *** set up the empty error variable *** <?/MICOMMENT>
+    <?MIVAR NAME="$patoup_addtopile_error"><?/MIVAR>
+
+    <?MICOMMENT> ** if we have an entity a name and we didn't get an id, set the error to abort ** <?/MICOMMENT>
+    <?MIBLOCK COND="$(AND,$(NXST,$patoup_entity_a_zdb_id),$(XST,$patoup_entity_a_name) )">
+      <?MIVAR NAME="$patoup_addtopile_error"> $patoup_addtopile_error 
+        Entity A: <b>$patoup_entity_a_name</b> not found in $patoup_entity_a_ontology <br>
+      <?/MIVAR>
     <?/MIBLOCK>
 
-    <?MIBLOCK COND="$(NXST,$patoup_addtopile_error)">
+    <?MICOMMENT> ** if we have an entity b name and we didn't get an id, set the error to abort ** <?/MICOMMENT>
+    <?MIBLOCK COND="$(AND,$(NXST,$patoup_entity_b_zdb_id),$(XST,$patoup_entity_b_name))">
+      <?MIVAR NAME="$patoup_addtopile_error">$patoup_addtopile_error
+        Entity B: <b>$patoup_entity_b_name</b> not found in $patoup_entity_b_ontology <br> <?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MICOMMENT> ** if we have a quality name and we didn't get an id, set the error to abort ** <?/MICOMMENT>
+    <?MIBLOCK COND="$(AND,$(NXST,$patoup_quality_zdb_id),$(XST,$patoup_quality_name) )">
+      <?MIVAR NAME="$patoup_addtopile_error"> $patoup_addtopile_error 
+        Quality: <b>$patoup_quality_name</b> not found in PATO <br>
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MICOMMENT> ** if there have been no errors up to now, check to see if this is a duplicate addition ** <?/MICOMMENT>
+    <?MIBLOCK COND="$(NOT,$(STRLEN,$patoup_addtopile_error))">
+
+      <?MICOMMENT> ** check to see if this set is already in the pile ** <?/MICOMMENT>
+      <?MIVAR NAME="$patoup_duplicate_pile_sql">
+                     select api_zdb_id from apato_infrastructure 
+                     where api_entity_a_zdb_id = '$patoup_entity_a_zdb_id'
+                       $(IF,$(XST,$patoup_entity_b_zdb_id), and api_entity_b_zdb_id = '$patoup_entity_b_zdb_id')
+                       and api_quality_zdb_id = '$patoup_quality_zdb_id'
+                       and api_tag = '$patoup_tag'
+                       and api_pub_zdb_id = '$OID';
+      <?/MIVAR>
+
+      <?MISQL SQL="$patoup_duplicate_pile_sql">
+        <?MIVAR NAME="$patoup_addtopile_error"> $patoup_addtopile_error 
+          $patoup_entity_a_name 
+          $(IF,$(XST,$patoup_entity_b_name),<small>part of</small> $patoup_entity_b_name)
+          - $patoup_quality_name
+          [$patoup_tag]
+          was already in the pile.  <br>
+        <?/MIVAR>
+      <?/MISQL>
+    <?/MIBLOCK>
+
+    
+    <?MIBLOCK COND="$(NOT,$(STRLEN,$patoup_addtopile_error))">
 
       <?MICOMMENT> ** generalize the sql for one or two entities into a single variable ** <?/MICOMMENT>
 
@@ -300,7 +325,7 @@ EFFECTS
    <?MICOMMENT> *** Update phenotype values for mutants (create or delete apato records) *** <?/MICOMMENT>
 
    <?MIBLOCK COND="$(XST,$patoup_updatephenos)">
- 
+
      <?MICOMMENT> ** make an empty list, incase there happen to be none being added or none
                      being removed ** <?/MICOMMENT>
      <?MIVAR COND="$(NXST,$patoup_updatephenos_add)" NAME="patoup_updatephenos_add">''<?/MIVAR>
@@ -562,7 +587,13 @@ EFFECTS
       <?MIVAR NAME="patoup_i">$(-,$patoup_i,4)<?/MIVAR> 
     <?/MIBLOCK> <?MICOMMENT> ** end mutant loop ** <?/MICOMMENT>
 
+    <?MICOMMENT> ** remove checkbox state information for this 
+                    person + pub in curator_session table ** <?/MICOMMENT>
 
+    <?MISQL SQL="delete from curator_session 
+                 where cs_person_zdb_id = '$ZDB_ident'
+                   and cs_data_zdb_id = '$OID'
+                   and cs_field_name like 'patosum_checkbox_%';"><?/MISQL>
 
    <?/MIBLOCK> <?MICOMMENT> ** end update_phenos ** <?/MICOMMENT>
 

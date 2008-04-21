@@ -208,8 +208,6 @@ EFFECTS
         window.document.hidden_panel.xpcur_G_structures_add.value = structures_add;
         window.document.hidden_panel.xpcur_G_structures_remove.value = structures_remove;
         window.document.hidden_panel.xpcur_G_fig_xpat_stg.value = fig_xpat_stg;
-        setCookie('xpatcuration_update','update','xpcur_c_');
-        setCookie('anchor','structure','xpcur_c_');
 
         window.document.hidden_panel.submit();
 
@@ -412,6 +410,7 @@ EFFECTS
   <input type=hidden name=xpcur_G_exp_count value=""> 
   <input type=hidden name=MIval value="aa-curation.apg">
   <input type=hidden name=OID value="<?MIVAR>$OID<?/MIVAR>">
+  <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update"> 
 </form>
 
 <?MIVAR NAME=xpcurstr_row_color><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
@@ -540,9 +539,10 @@ EFFECTS
     <td colspan=6><HR></td>
   </tr>
 <?MICOMMENT> ==| Enter a New Structure |== <?/MICOMMENT>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#structure" method="post" name="structure2" onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','structure','xpcur_c_');">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#structure" method="post" name="structure2">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update"> 
   <tr>
     <td colspan=5>&nbsp;</td>
   </tr>

@@ -65,11 +65,12 @@ EFFECTS
       <?MIVAR name=xpcurimg_image_zdb_id>$4<?/MIVAR>
       <?MIVAR name=xpcurimg_image_label>$5<?/MIVAR>
       
-<form name=image action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#image" onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','image','xpcur_c_');" method=post ENCTYPE="multipart/form-data"> 
+<form name=image action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#image" method=post ENCTYPE="multipart/form-data"> 
 
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">     
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_image_OID VALUE="<?MIVAR>$xpcurimg_image_zdb_id<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_image_OID VALUE="<?MIVAR>$xpcurimg_image_zdb_id<?/MIVAR>">
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update"> 
   <tr>
     <td>
       <input name="image_update" type=submit value="Update">
@@ -116,7 +117,7 @@ EFFECTS
 <?MICOMMENT> ==| Enter a New Image |== <?/MICOMMENT>
   <tr>
     <td>
-      <input name="image_add" type=button value="Add" onClick="if(setRedirectUrl()){setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','image','xpcur_c_');document.new_image.submit();}">
+      <input name="image_add" type=button value="Add" onClick="if(setRedirectUrl()){document.new_image.submit();}">
     </td>
     <td>
       Fig: <select name="xpcur_G_image_fig">

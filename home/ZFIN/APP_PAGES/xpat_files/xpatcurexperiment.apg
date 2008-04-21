@@ -59,10 +59,12 @@ EFFECTS
        or exp_name = '_Generic-control'
     order by 3;">
 
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=env onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','environment','xpcur_c_');">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=env >
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_update_exp_zdb_id VALUE="$1"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update">
+    
   <tr>
     <?MIBLOCK COND="$(AND,$(NE,$2,$pubcur_G_exp_standard_name),$(NE,$2,_Generic-control))">
       <?MIVAR>
@@ -91,9 +93,10 @@ EFFECTS
   </tr>
   
 <?MICOMMENT> ==| Enter a New Env |== <?/MICOMMENT>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=environment_new onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','environment','xpcur_c_');">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=environment_new >
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update">
   <tr>
     <td>
       <input name="xpcur_G_environment_add" type=submit value="Add">

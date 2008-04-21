@@ -242,16 +242,26 @@ EFFECTS
 	  =  Experiments  =
 	  =================
 <?/MICOMMENT>
+
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_experiment';">
+        <?MIVAR NAME=xpcur_c_experiment>$1<?/MIVAR>
+    <?/MISQL>
+    
 <a name=experiment>
 
 <p><b><font size=3>Experiments:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_experiment),$(EC,$xpcur_c_experiment,hide))>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('experiment','show','xpcur_c_')">$unhide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_experiment','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide</a><?/MIVAR>
   <br>
   
 <?MIELSE>
 
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('experiment','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_experiment','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide</a><?/MIVAR>
   <br>
 
 <?/MIBLOCK>
@@ -279,15 +289,33 @@ EFFECTS
 	  =  PANELS  =
 	  ============
 <?/MICOMMENT>
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_panel';">
+        <?MIVAR NAME=xpcur_c_panel>$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_structure';">
+        <?MIVAR NAME=xpcur_c_structure>$1<?/MIVAR>
+    <?/MISQL>
+    
+    
 <a name=panel>
 <p><b><font size=3>Expression:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_panel),$(EC,$xpcur_c_panel,hide))>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('panel','show','xpcur_c_')">$unhide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_panel','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#panel');">$unhide</a><?/MIVAR>
   <br>
   
 <?MIELSE>
 
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('panel','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_panel','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
   <br>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurpanel.apg';">$1<?/MISQL>
 
@@ -303,15 +331,18 @@ EFFECTS
 	  =  STRUCTURES  =
 	  ================
 <?/MICOMMENT>
+
+
+    
 <a name=structure>
 <p>
 <b><font size=3>Structure:</font></b>
-<?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_structure),$(EC,$xpcur_c_structure,hide))>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('structure','show','xpcur_c_')">$unhide</a><?/MIVAR>
+<?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_structure),$(NC,$xpcur_c_structure,show))>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_structure','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#structure');">$unhide</a><?/MIVAR>
   <br>
   
 <?MIELSE>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('structure','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_structure','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide</a><?/MIVAR>
   <br>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurstructure.apg';">$1<?/MISQL>
 

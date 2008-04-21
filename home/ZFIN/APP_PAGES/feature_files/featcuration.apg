@@ -23,10 +23,10 @@ PREFIX:
 <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 
-<?MICOMMENT> ^M
-  =====================^M
-  =    Update Data    =^M
-  =====================^M
+<?MICOMMENT> 
+  =====================
+  =    Update Data    =
+  =====================
 <?/MICOMMENT>
 
 <?MIBLOCK COND=$(AND,$(XST,$featcur_featcurupdate),$(EC,$featcur_featcurupdate,update))>
@@ -59,19 +59,62 @@ FILTERs section
 <?/MISQL>
 <?MIVAR NAME=featcur_mrkr_type_csv SEPARATE="','">$featcur_mrkr_type<?/MIVAR>
 
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'featcur_featcreation';">
+        <?MIVAR NAME=featcur_featcreation>$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'featcur_featediting';">
+        <?MIVAR NAME=featcur_featediting>$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'featcur_featrel';">
+        <?MIVAR NAME=featcur_featrel>$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'featcur_feature_only';">
+        <?MIVAR NAME=featcur_feature_only>$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'featcur_feature_type_only';">
+        <?MIVAR NAME=featcur_feature_type_only>$1<?/MIVAR>
+    <?/MISQL>
+
+    
 <?MICOMMENT> 
 	  =================
 	  =  Feature creation  =
 	  =================
 <?/MICOMMENT>
+
 <a name=featcreation>
 <p><b><font size=3>Feature Builder:</font></b>
 <p><b><font size=3>Create New Feature:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$featcur_featcreation),$(EC,$featcur_featcreation,hide))>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('featcreation','show','featcur_')">$unhide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$unhide</a><?/MIVAR>
   <br>
 <?MIELSE>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('featcreation','hide','featcur_')">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
   <p>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-new_feature.apg';">$1<?/MISQL>
 <?/MIBLOCK>
@@ -91,10 +134,10 @@ FILTERs section
 <a name=featediting>
 <p><b><font size=3>Edit Feature:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$featcur_featediting),$(EC,$featcur_featediting,hide))>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('featediting','show','featcur_')">$unhide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&filler=#featediting');">$unhide</a><?/MIVAR>
   <br>
 <?MIELSE>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('featediting','hide','featcur_')">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&filler=#featediting');">$hide</a><?/MIVAR>
   <p>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featureedit.apg';">$1<?/MISQL>
 <?/MIBLOCK>
@@ -117,7 +160,9 @@ FILTER  section
 <TD><b>SHOW: </b></td>
   <td>
     <b>Feature Name:</b>
-    <select onChange="urlSetCookie('feature_only',this.value,'featcur_')">
+    <?MIVAR>
+    <select onChange="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_feature_only',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#feature_only');">
+    <?/MIVAR>
       <option value="">ALL</option>
       <?MISQL SQL="
         select feature_zdb_id, feature_name
@@ -139,7 +184,9 @@ FILTER  section
   <td>
 
   <b>Feature Type:</b>
-  <select onChange="urlSetCookie('feature_type_only',this.value,'featcur_')">
+  <?MIVAR>
+  <select onChange="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_feature_type_only',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#feature_type_only');">
+  <?/MIVAR>
       <option value="">ALL</option>
         <?MISQL SQL="
           select distinct feature_type, ftrtype_type_display
@@ -173,10 +220,10 @@ Feature Relationship section
 <a name=featrelation>
 <br><b><font size=3>Add Relationships:</font> </b>
 <?MIBLOCK COND=$(OR,$(NXST,$featcur_featrel),$(EC,$featcur_featrel,hide))>
-     <?MIVAR><a href="javascript:onClick=urlSetCookie('featrel','show','featcur_')">$unhide<a><?/MIVAR>
+     <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featrel','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&featfiller=#featrelationship');">$unhide<a><?/MIVAR>
      <br>
 <?MIELSE>
-     <?MIVAR><a href="javascript:onClick=urlSetCookie('featrel','hide','featcur_')">$hide</a><?/MIVAR>
+     <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featrel','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
      <br>
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featrelationships.apg';">$1<?/MISQL>
 <?/MIBLOCK> 

@@ -187,6 +187,16 @@
         <url-pattern>/ajax/anatomylookup</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>SessionSaveService</servlet-name>
+        <servlet-class>org.zfin.people.presentation.server.SessionSaveServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SessionSaveService</servlet-name>
+        <url-pattern>/ajax/session-save</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>zfin</servlet-name>
         <url-pattern>/SearchApp/*</url-pattern>

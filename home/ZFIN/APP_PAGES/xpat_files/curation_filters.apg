@@ -14,7 +14,7 @@ EFFECTS:
 
    sets filter cookies
  
-   $pubcur_c_figure_only :: limit to a specific fig_zdb_id
+   $xpcur_c_figure_only :: limit to a specific fig_zdb_id
    $xpcur_c_gene_only    :: limit to a specific mrkr_zdb_id
    $xpcur_c_fish_only    :: limit to a specific geno_zdb_id
    $xpcur_c_auto_on      :: turns on auto filtering after some curation actions
@@ -28,6 +28,37 @@ EFFECTS:
 	  =============
 <?/MICOMMENT>
 
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpbcur_c_figure_only';">
+        <?MIVAR NAME=xpcur_c_figure_only>$1<?/MIVAR>
+    <?/MISQL> 
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_gene_only';">
+        <?MIVAR NAME=xpcur_c_gene_only>$1<?/MIVAR>
+    <?/MISQL>     
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'cpcur_c_fish_only';">
+        <?MIVAR NAME=cpcur_c_fish_only>$1<?/MIVAR>
+    <?/MISQL> 
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_auto_on';">
+        <?MIVAR NAME=xpcur_c_auto_on>$1<?/MIVAR>
+    <?/MISQL> 
 
 <form>
 <a name=gene_only>
@@ -41,7 +72,7 @@ EFFECTS:
   </td>
   <td>
     Only Fig:
-    <select onChange="urlSetCookie('figure_only',this.value,'pubcur_c_')">
+    <select <?MIVAR>onChange="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_figure_only',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"<?/MIVAR>>
       <option value="">ALL</option>
       <?MISQL SQL="
         select fig_zdb_id, fig_label, zero_pad(fig_label)
@@ -52,14 +83,14 @@ EFFECTS:
         order by 3
         ;">
       <option value="$1"
-        $(IF,$(AND,$(XST,$pubcur_c_figure_only),$(EC,$pubcur_c_figure_only,$1)),SELECTED)>$2</option>     
+        $(IF,$(AND,$(XST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,$1)),SELECTED)>$2</option>     
       <?/MISQL>
     </select>
   </td>
   <?MIBLOCK COND="$(NXST,$curfil_hide_gene)">
   <td>
     Only GENE:
-    <select onChange="urlSetCookie('gene_only',this.value,'xpcur_c_')">
+    <select <?MIVAR>onChange="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_gene_only',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"<?/MIVAR>>
       <option value="">ALL</option>
       <?MISQL SQL="
         select mrkr_zdb_id, mrkr_abbrev
@@ -77,7 +108,7 @@ EFFECTS:
 
   <td>
     Only FISH:
-    <select onChange="urlSetCookie('fish_only',this.value,'xpcur_c_')">
+    <select <?MIVAR>onChange="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_fish_only',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"<?/MIVAR>>
       <option value="">ALL</option>
       <?MISQL SQL="
         select geno_zdb_id, geno_nickname
@@ -115,7 +146,7 @@ EFFECTS:
   <td>
     <?MIVAR>
     auto on: <input type=checkbox name=auto_on $(IF,$(AND,$(XST,$xpcur_c_auto_on),$(EC,$xpcur_c_auto_on,on)),CHECKED)
-                    onClick="if(this.checked==true){setCookie('auto_on','on','xpcur_c_');}else{setCookie('auto_on','off','xpcur_c_');}">  
+                    onClick="if(this.checked==true){storeSession('$ZDB_ident','$OID','xpcur_c_auto_on','on');}else{storeSession('$ZDB_ident','$OID','xpcur_c_auto_on','off');}">  
     <?/MIVAR>
   </td>  
   <?/MIBLOCK>

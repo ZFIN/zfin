@@ -31,14 +31,28 @@ PREFIX:   figcur_
 	  =============
 <?/MICOMMENT>
 <a name=figure>
-
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_has_permission';">
+        <?MIVAR NAME=xpcur_c_has_permission>$1<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_figure';">
+        <?MIVAR NAME=xpcur_c_figure>$1<?/MIVAR>
+    <?/MISQL>
+    
 <p><b><font size=3>Figure:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_figure),$(EC,$xpcur_c_figure,hide))>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('figure','show','xpcur_c_')">$unhide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_figure','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$unhide</a><?/MIVAR>
   <br>
   
 <?MIELSE>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('figure','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_figure','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
   <br>  
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurfigure.apg';">$1<?/MISQL>
 
@@ -49,19 +63,32 @@ PREFIX:   figcur_
 	  =  IMAGES  =
 	  ============
 <?/MICOMMENT>
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_image';">
+        <?MIVAR NAME=xpcur_c_image>$1<?/MIVAR>
+    <?/MISQL>
+    
 <a name=image>
 <p><b><font size=3>Image:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_image),$(EC,$xpcur_c_image,hide))>
 
+  <?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">
+    <?MIVAR NAME=xpcur_c_has_permission>$1<?/MIVAR>
+  <?/MISQL>
+  
   <?MIBLOCK COND=$(AND,$(XST,$xpcur_c_has_permission),$(EC,$xpcur_c_has_permission,t))>  
-    <?MIVAR><a href="javascript:onClick=urlSetCookie('image','show','xpcur_c_')">$unhide</a><?/MIVAR>
+    <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_image','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$unhide</a><?/MIVAR>
     <br>
   <?MIELSE>
-    <?MIVAR><a href="javascript:onClick=alert('Please change permission before adding images.')">$unhide</a><?/MIVAR>  
+    <?MIVAR><a href="javascript:;" onClick="alert('Please change permission before adding images.')">$unhide</a><?/MIVAR>  
   <?/MIBLOCK>
   
 <?MIELSE>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('image','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:onClick=storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_image','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
   <br>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurimage.apg';">$1<?/MISQL>
 
@@ -73,16 +100,24 @@ PREFIX:   figcur_
 	  =  Permission  =
 	  ================
 <?/MICOMMENT>
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_permission';">
+        <?MIVAR NAME=xpcur_c_permission>$1<?/MIVAR>
+    <?/MISQL>
+    
 <a name=permission>
 <p>
 <b><font size=3>Permission:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_permission),$(EC,$xpcur_c_permission,hide))>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('permission','show','xpcur_c_')">$unhide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_permission','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&filler=#permission');">$unhide</a><?/MIVAR>
   <br>
   
 <?MIELSE>
 
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('permission','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_permission','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
   <br>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurpermission.apg';">$1<?/MISQL>
 

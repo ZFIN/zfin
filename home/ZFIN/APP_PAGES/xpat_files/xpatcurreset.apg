@@ -22,68 +22,75 @@ Reset the cookies and infrastructure tables for pub curation.
 
   <script type="text/javascript" language="javascript">
   
-    
     <?MICOMMENT>
        Do housecleaning whenever the user visits a new pub.
        
-       1. reset cookies
+       1. set default values for curator_expression
        2. clean table expression_pattern_infrastructure
        3. insert records for the structure list
     <?/MICOMMENT>
-    <?MIVAR COND=$(OR,$(NXST,$pubcur_c_pubCuration),$(NC,$OID,$pubcur_c_pubCuration))>
 
-      setCookie('pubCuration','$OID','pubcur_c_')
-      setCookie('figure_only','','pubcur_c_')
-      setCookie('gene_only','','pubcur_c_')
-      setCookie('fish_only','','pubcur_c_')
-      <?MIVAR COND=$(NXST,$pubcur_c_auto_on)>
-        setCookie('auto_on','on','pubcur_c_')
-      <?/MIVAR>
-
-         
-      setCookie('environment','','xpcur_c_')
-      setCookie('condition','','xpcur_c_')
-      setCookie('experiment','','xpcur_c_')
-      setCookie('figure','','xpcur_c_')
-      setCookie('image','','xpcur_c_')
-      setCookie('panel','','xpcur_c_')
-      setCookie('structure','','xpcur_c_')
-      setCookie('anatitem_add_csv','','xpcur_c_')
-      setCookie('anatitem_remove_csv','','xpcur_c_')
-      setCookie('figure_only','','xpcur_c_')
-      setCookie('tod','','xpcur_c_')
-      setCookie('show_all','false','xpcur_c_')
-
-      setCookie('permission','','xpcur_c_')
-      setCookie('has_permission','<?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">$1<?/MISQL>','xpcur_c_');
-      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID");            
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'pubcur_c_pubCuration';">
+        <?MIVAR NAME=pubcur_c_pubCuration>$1<?/MIVAR>
+    <?/MISQL>
     
-    <?/MIVAR>
+    
+    function setDefaultSession() {
+      ;
+      <?MIVAR COND=$(OR,$(NXST,$pubcur_c_pubCuration),$(NC,$OID,$pubcur_c_pubCuration))>
+
+      storeSession('$ZDB_ident','$OID','pubcur_c_pubCuration','$OID');
+      storeSession('$ZDB_ident','$OID','pubcur_c_auto_on','on');
+      storeSession('$ZDB_ident','$OID','xpcur_c_show_all','false');
+
+      storeSession('$ZDB_ident','$OID','xpcur_c_has_permission','<?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">$1<?/MISQL>');            
+    
+      <?/MIVAR>
+    }
+
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_show_all';">
+        <?MIVAR NAME=xpcur_c_show_all>$1<?/MIVAR>
+    <?/MISQL>
 
     <?MIVAR COND=$(AND,$(XST,$xpcur_c_show_all),$(EC,$xpcur_c_show_all,t))>
-      setCookie('environment','show','xpcur_c_')
-      setCookie('condition','show','xpcur_c_')
-      setCookie('experiment','show','xpcur_c_')
-      setCookie('figure','show','xpcur_c_')
-      setCookie('image','show','xpcur_c_')
-      setCookie('panel','show','xpcur_c_')
-      setCookie('structure','show','xpcur_c_')
-      setCookie('tod','show','xpcur_c_')
-      setCookie('show_all','true','xpcur_c_')
-      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID");          
+       storeSession('$ZDB_ident','$OID','xpcur_c_environment','show')
+       <?MIVAR NAME=xpcur_c_environment>show<?/MIVAR>
+       storeSession('$ZDB_ident','$OID','xpcur_c_condition','show')
+       <?MIVAR NAME=xpcur_c_condition>show<?/MIVAR>
+       storeSession('$ZDB_ident','$OID','xpcur_c_experiment','show')
+       <?MIVAR NAME=xpcur_c_experiment>show<?/MIVAR>
+       storeSession('$ZDB_ident','$OID','xpcur_c_figure','show')
+       <?MIVAR NAME=xpcur_c_figure>show<?/MIVAR>
+       storeSession('$ZDB_ident','$OID','xpcur_c_image','show')
+       <?MIVAR NAME=xpcur_c_image>show<?/MIVAR>
+       storeSession('$ZDB_ident','$OID','xpcur_c_panel','show')
+       <?MIVAR NAME=xpcur_c_panel>show<?/MIVAR>
+       storeSession('$ZDB_ident','$OID','xpcur_c_structure','show')
+       <?MIVAR NAME=xpcur_c_structure>show<?/MIVAR>
+       storeSession('$ZDB_ident','$OID','xpcur_c_tod','show')
+       <?MIVAR NAME=xpcur_c_tod>show<?/MIVAR>
+       storeSession('$ZDB_ident','$OID','xpcur_c_show_all','t')
     <?/MIVAR>    
 
     <?MIVAR COND=$(AND,$(XST,$xpcur_c_show_all),$(EC,$xpcur_c_show_all,f))>
-      setCookie('environment','','xpcur_c_')
-      setCookie('condition','','xpcur_c_')
-      setCookie('experiment','','xpcur_c_')
-      setCookie('figure','','xpcur_c_')
-      setCookie('image','','xpcur_c_')
-      setCookie('panel','','xpcur_c_')
-      setCookie('structure','','xpcur_c_')
-      setCookie('tod','','xpcur_c_')
-      setCookie('show_all','false','xpcur_c_')
-      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID");          
+       storeSession('$ZDB_ident','$OID','xpcur_c_environment','')
+       storeSession('$ZDB_ident','$OID','xpcur_c_condition','')
+       storeSession('$ZDB_ident','$OID','xpcur_c_experiment','')
+       storeSession('$ZDB_ident','$OID','xpcur_c_figure','')
+       storeSession('$ZDB_ident','$OID','xpcur_c_image','')
+       storeSession('$ZDB_ident','$OID','xpcur_c_panel','')
+       storeSession('$ZDB_ident','$OID','xpcur_c_structure','')
+       storeSession('$ZDB_ident','$OID','xpcur_c_tod','')
+       storeSession('$ZDB_ident','$OID','xpcur_c_show_all','f')
     <?/MIVAR> 
   
 
@@ -120,7 +127,7 @@ Reset the cookies and infrastructure tables for pub curation.
                    xpatinf_date )
                VALUES (
                    '$xpatinf_zdb_id',
-                   '$ZDB_ident', 
+                   ''$ZDB_ident'', 
                    '$OID', 
                    '$1',
                    '$2',

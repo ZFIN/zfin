@@ -122,6 +122,7 @@ EFFECTS
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
+
   <?MICOMMENT> ============================================================
                  Form Variables that should be persistant after the form
                  is submitted are added to xpatcurup_form_variables. 
@@ -139,9 +140,6 @@ EFFECTS
   <?MICOMMENT> ================| Experiment |================ <?/MICOMMENT>
   <?MIBLOCK COND=$(XST,$xpcur_G_xpatex)>
   
-    <script>
-      setCookie('xpatex','','xpcur_G_');
-    </script>
   
     <?MICOMMENT>
       required: xpcur_G_xpatex_add_gene, xpcur_G_xpatex_add_fish, xpcur_G_xpatex_add_assay, xpcur_G_xpatex_add_exp
@@ -374,7 +372,7 @@ EFFECTS
             <?MIVAR NAME=xpcur_c_gene_only>$xpcur_G_xpatex_gene<?/MIVAR>
             <?MIVAR>
               <SCRIPT>
-                setCookie('gene_only','$xpcur_G_xpatex_gene','xpcur_c_');
+                <?MIVAR NAME=pubcur_onload>$pubcur_onload storeSession('$ZDB_ident','$OID','xpcur_c_checked_expression',c_checked_expression);<?/MIVAR>
               </SCRIPT> 
             <?/MIVAR>
           <?/MIBLOCK>
@@ -585,7 +583,14 @@ EFFECTS
 
   
   <?MICOMMENT> ================| Figure |================ <?/MICOMMENT>
-  
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_has_permission';">
+        <?MIVAR NAME=xpcur_c_has_permission>$1<?/MIVAR>
+    <?/MISQL>
+    
   <?MIBLOCK COND=$(XST,$xpcur_G_fig_add_label)>  
 
     <?MIVAR COND=$(NXST,$xpcur_G_fig_add_comments) NAME=xpcur_G_fig_add_comments><?/MIVAR>
@@ -604,15 +609,7 @@ EFFECTS
       <?MIVAR NAME=xpcur_G_fig_add_caption>$xpcur_G_light_fig_text<?/MIVAR>
 
     <?/MIBLOCK>
-
-   <?MISQL SQL="select 't' from figure 
-                 where fig_source_zdb_id = '$OID'
-                   and lower(fig_label) = lower('$xpcur_G_fig_add_label') ">
-         <?MIVAR NAME=xpcur_fig_exists>t<?/MIVAR>
-   <?/MISQL>
-   <?MIBLOCK COND="$(XST,$xpcur_fig_exists)">
-      <script>alert('This figure label is already added to this publication.')</script>
-   <?MIELSE>
+    
       <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
       <?MISQL SQL="execute function get_id('FIG');">$(SETVAR,$xpcurup_fig_zdb_id,$1)<?/MISQL>
     
@@ -640,13 +637,11 @@ EFFECTS
       <?/MISQL>
     
       <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_auto_on),$(EC,$pubcur_c_auto_on,on))">
-        <?MIVAR NAME=pubcur_c_figure_only>$xpcurup_fig_zdb_id<?/MIVAR>
+        <?MIVAR NAME=xpcur_c_figure_only>$xpcurup_fig_zdb_id<?/MIVAR>
        
-        <SCRIPT>
-          <?MIVAR>setCookie('figure_only','$xpcurup_fig_zdb_id','pubcur_c_');<?/MIVAR>
-        </SCRIPT>
+          <?MIVAR NAME=pubcur_onload>$pubcur_onload storeSession('$ZDB_ident','$OID','xpcur_c_figure_only','$xpcurup_fig_zdb_id');<?/MIVAR>
       <?/MIBLOCK>
-    <?/MIBLOCK>
+    
   <?/MIBLOCK>
   
   <?MIBLOCK COND=$(XST,$xpcur_G_fig_label)>
@@ -904,9 +899,7 @@ EFFECTS
     <?/MISQL>
     <?MIVAR NAME=xpcurup_anatitem_add_csv SEPARATE="','">$xpcurup_anatitem_add<?/MIVAR>
     <?MIVAR NAME=xpcur_c_anatitem_add_csv>$xpcurup_anatitem_add_csv<?/MIVAR>
-    <SCRIPT>
-      setCookie("anatitem_add_csv","<?MIVAR>$(URLENCODE,$xpcur_c_anatitem_add_csv)<?/MIVAR>","pubcur_c_");
-    </SCRIPT>
+      <?MIVAR NAME=pubcur_onload>$pubcur_onload storeSession('$ZDB_ident','$OID','pubcur_c_anatitem_add_csv','$(URLENCODE,$xpcur_c_anatitem_add_csv)');<?/MIVAR>
 
 
     <?MIVAR NAME=xpcurup_xpatinf_remove_csv DELIMIT="|" REPLACE="','">$xpcur_G_structures_remove<?/MIVAR>
@@ -922,9 +915,8 @@ EFFECTS
     <?MIVAR NAME=xpcurup_anatitem_remove_csv SEPARATE="','">$xpcurup_anatitem_remove<?/MIVAR>
     <?MIVAR NAME=url_anatitem_remove_csv>$xpcurup_anatitem_remove_csv<?/MIVAR>
     <?MIVAR NAME=url_anatitem_remove_csv DELIMIT="'" REPLACE="">$url_anatitem_remove_csv<?/MIVAR>  
-    <SCRIPT>
-      setCookie('anatitem_remove_csv','<?MIVAR>$(URLENCODE,$url_anatitem_remove_csv)<?/MIVAR>','pubcur_c_')
-    </SCRIPT>
+
+      <?MIVAR NAME=pubcur_onload>$pubcur_onload storeSession('$ZDB_ident','$OID','pubcur_c_anatitem_remove_csv','$(URLENCODE,$url_anatitem_remove_csv)');<?/MIVAR>
     
     
     <?MICOMMENT> =============================================================== 
@@ -1121,9 +1113,9 @@ EFFECTS
   
   <?MIBLOCK COND=$(NXST,$gPSLitem_stage_not_overlap)>
     <?MIVAR NAME=xpcur_c_checked_expression><?/MIVAR>
-    <script>
-      setCookie("checked_expression",'','xpcur_c_');    
-    </script>
+
+      <?MIVAR NAME=pubcur_onload>$pubcur_onload storeSession('$ZDB_ident','$OID','xpcur_c_checked_expression','');<?/MIVAR>
+
   <?/MIBLOCK>
   
   <?/MIBLOCK>  
@@ -1138,8 +1130,10 @@ EFFECTS
 
 
   <?MICOMMENT> ================| Permission |================ <?/MICOMMENT>
-  <?MIBLOCK COND=$(XST,$xpcur_G_can_show_image)>
-  
+
+
+  <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_can_show_image),$(NE,$xpcur_G_can_show_image,))>
+
     <?MICOMMENTS>
        ================================================          
          Change the can_show_image value. 
@@ -1171,11 +1165,11 @@ EFFECTS
       from webPages where ID='aa-record_web_update.apg';">
     <?/MISQL>      
     
-    <script>
-      <?MIVAR>setCookie('has_permission','$xpcur_G_can_show_image','xpcur_c_');<?/MIVAR>
-    </script>
+           
+    <?MIVAR NAME=pubcur_onload>$pubcur_onload storeSession('$ZDB_ident','$OID','xpcur_c_has_permission','$xpcur_G_can_show_image');<?/MIVAR>
     
-      <?MIVAR NAME="xpcur_c_has_permission">$xpcur_G_can_show_image<?/MIVAR>
+    
+    <?MIVAR NAME="xpcur_c_has_permission">$xpcur_G_can_show_image<?/MIVAR>
 
   <?/MIBLOCK>
 
@@ -1186,9 +1180,6 @@ EFFECTS
         alert('$xpcurup_alert');
       </script>
     <?/MIVAR>    
-  
-    <SCRIPT>
-      setCookie('xpatcuration_update','no','xpcur_c_')
-    </SCRIPT>   
+   
      
 <?/MIBLOCK>  <?MICOMMENT> authorize = root <?/MICOMMENT>

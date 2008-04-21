@@ -499,8 +499,10 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 	    }
 
 	    $redirect_new_OID_param = $xpcur_G_image_OID_param ;
+	    
+	    $update_param = "&xpcur_c_xpatcuration_update=update"; 
 
-	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_xpcurup_suffix_param.$suffix.$redirect_xpcurup_height_param.$height.$redirect_xpcurup_width_param.$width.$xpcur_G_fig_param.$xpcur_G_fig.$xpcur_G_image_label_param.$xpcur_G_image_label;
+	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_xpcurup_suffix_param.$suffix.$redirect_xpcurup_height_param.$height.$redirect_xpcurup_width_param.$width.$xpcur_G_fig_param.$xpcur_G_fig.$xpcur_G_image_label_param.$xpcur_G_image_label.$update_param;
 	    
 	    if ($attr_type ne "text" &&
 		$attr_type ne "textarea" &&

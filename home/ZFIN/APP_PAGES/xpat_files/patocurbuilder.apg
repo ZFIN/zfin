@@ -180,11 +180,12 @@ new Control.Modal(referencId,{
 <h3>Phenotype: </h3></a>
 
 <?MIVAR>
-<form name="patobldrupdatephenos" id="patobldrUpdatePhenosForm" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="post"
-      onSubmit="setCookie('pato_update','update','pubcur_c_');">
+<form name="patobldrupdatephenos" id="patobldrUpdatePhenosForm" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="post">
 
   <input type="hidden" name="MIval" value="aa-curation.apg">
   <input type="hidden" name="OID" value="<?MIVAR>$OID<?/MIVAR>">
+
+  <input type="hidden" name="pubcur_c_pato_update" value="update">
 
   <input type="hidden" name="patoup_updatephenos" value="1">
 
@@ -199,8 +200,8 @@ new Control.Modal(referencId,{
 
   <input type="submit" value="Update Phenotype for Mutant(s)"
          id="updatePhenoButton" 
-         onClick="patoCuration.updatePhenotypes();
-                  patoCuration.clearMutantsFromSession('$ZDB_ident','$OID');">
+         onClick="patoCuration.updatePhenotypes();">
+
 
   <fieldset style="border: 1px solid black; padding: .3em; margin: .3em auto; width: 96%;">
     <legend>selected<legend>
@@ -334,6 +335,14 @@ order by 9
 
       <?MIVAR NAME="patobldr_B_ontology">ZF<?/MIVAR>
 
+      <?MICOMMENT> ** if entity_a is "unspecified" - make it orange ** <?/MICOMMENT>
+
+      <?MIVAR COND="$(POSITION,$patobldr_entity_a_name_html,unspecified,1)"
+              NAME="$patobldr_entity_a_name_html">
+        <span style="color: orange;">$patobldr_entity_a_name_html</span>
+      <?/MIVAR>
+
+
       <tr <?MIBLOCK COND="$(EC,1,$(MOD,$MI_CURRENTROW,2))">class="odd"<?/MIBLOCK>>
 
         <form name="patobldrpanelstructures">
@@ -399,11 +408,11 @@ order by 9
 <tr>
 <td valign="top">
 
-<form name="patobldraddtopile" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#patopile" method="post" 
-      onSubmit="setCookie('pato_update','update','pubcur_c_');">
-
+<form name="patobldraddtopile" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#patopile" method="post">
+  
     <input type="hidden" name="MIval" value="aa-curation.apg">
     <input type="hidden" name="OID" value="<?MIVAR>$OID<?/MIVAR>">
+    <input type="hidden" name="pubcur_c_pato_update" value="update">
     <input type="hidden" name="patoup_addtopile" value="1">
 
 <br>
@@ -421,7 +430,11 @@ Entity A:
           </select>
           <input type="text" size="45" name="patoup_entity_a_name" id="patobldrEntityAName" autocomplete="off"
                  onchange="phenoteState.setActiveField(this);"
-                 onkeypress="document.getElementById('patobldrEntityAOntology').onchange();">
+                 onkeypress="document.getElementById('patobldrEntityAOntology').onchange();"
+		 <?MIBLOCK COND="$(AND,$(XST,$patoup_addtopile_error),$(>,$(STRLEN,$patoup_addtopile_error),0),$(XST,$patoup_entity_a_name))">
+                 <?MIVAR>value="$patoup_entity_a_name"<?/MIVAR>
+                 <?/MIBLOCK>
+                 >
           <span id="patobldrEntityAAutoCompleterIndicator" style="display: none; color: red;">working...</span>
 
           <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="entity_a_auto_complete"></div>
@@ -443,14 +456,22 @@ Entity B:
 
           <input type="text" size="45" name="patoup_entity_b_name" id="patobldrEntityBName" autocomplete="off"
                  onchange="phenoteState.setActiveField(this);"
-                 onkeypress="document.getElementById('patobldrEntityBOntology').onchange();">
+                 onkeypress="document.getElementById('patobldrEntityBOntology').onchange();"
+		 <?MIBLOCK COND="$(AND,$(XST,$patoup_addtopile_error),$(>,$(STRLEN,$patoup_addtopile_error),0),$(XST,$patoup_entity_b_name))">
+                 <?MIVAR>value="$patoup_entity_b_name"<?/MIVAR>
+                 <?/MIBLOCK>
+                 >
           <span id="patobldrEntityBAutoCompleterIndicator" style="display: none; color: red;">working...</span>
           <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="entity_b_auto_complete"></div>
 <br><br>
 Quality:
 
          <input type="text" size="50" name="patoup_quality_name" id="patobldrQuality" autocomplete="off"
-                 onChange="phenoteState.setActiveField(this);">
+                 onChange="phenoteState.setActiveField(this);"
+		 <?MIBLOCK COND="$(AND,$(XST,$patoup_addtopile_error),$(>,$(STRLEN,$patoup_addtopile_error),0),$(XST,$patoup_quality_name))">
+                 <?MIVAR>value="$patoup_quality_name"<?/MIVAR>
+                 <?/MIBLOCK>
+                 >
          <span id="patobldrQualityAutoCompleterIndicator" style="display: none; color: red;">working...</span>
          <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="pato_auto_complete"></div>
 <br>
@@ -486,8 +507,6 @@ Tag:
 
   <br>
 
-   
-
    <script type="text/javascript">
 
      var entityAAutoCompleter = new Ajax.Autocompleter( 'patobldrEntityAName', 'entity_a_auto_complete', '/phenote/Phenote/',{parameters:'ontologyName=GO&field=ENTITY',paramName: "userInput", indicator: 'patobldrEntityAAutoCompleterIndicator', minChars: 3});
@@ -496,7 +515,14 @@ Tag:
 
 
    </script>
+
    <?/MIVAR>
+
+   <?MIBLOCK COND="$(XST,$patoup_addtopile_error)">
+     <br><div class="error"><?MIVAR>$patoup_addtopile_error<?/MIVAR></div>
+   <?/MIBLOCK>
+
+
 
    <?MICOMMENT>
    
@@ -520,23 +546,6 @@ Tag:
   </tr>
   </table>
 
-<?MICOMMENT>
-  <select multiple="true" size="10" style="display: block;">
-      <?MISQL SQL="select anatitem_name
-                   from anatomy_item
-                     join expression_pattern_infrastructure 
-                       on xpatinf_anatitem_zdb_id = anatitem_zdb_id
-                   where xpatinf_pub_zdb_id = '$OID';">         
-        <option onMouseOver="document.getElementById('body').setBackground('#dea');">$1</option>
-      <?/MISQL>
-  </select>
-
-  <ul>
-    <li>one
-    <li>two
-    <li>three
-  </ul>
-<?/MICOMMENT>
 
 </form>
 

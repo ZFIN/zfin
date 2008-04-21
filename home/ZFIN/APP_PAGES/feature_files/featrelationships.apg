@@ -68,8 +68,8 @@ EFFECTS
               and recattrib_source_zdb_id='$OID'
               and fmrel_ftr_zdb_id=feature_zdb_id
               and fmrel_mrkr_zdb_id=mrkr_zdb_id
-              $(IF,$(XST,$featcur_feature_only),and feature_zdb_id = '$featcur_feature_only')
-              $(IF,$(XST,$featcur_feature_type_only),and feature_type = '$featcur_feature_type_only')
+              $(IF,$(AND,$(XST,$featcur_feature_only),$(NE,$featcur_feature_only,)),and feature_zdb_id = '$featcur_feature_only')
+              $(IF,$(AND,$(XST,$featcur_feature_type_only),$(NE,$featcur_feature_type_only,)),and feature_type = '$featcur_feature_type_only')
               and feature_type=ftrtype_name
            UNION
                select 
@@ -83,15 +83,17 @@ EFFECTS
                  and recattrib_source_zdb_id='$OID'
                  and mrel_mrkr_1_zdb_id=m1.mrkr_zdb_id
                  and mrel_mrkr_2_zdb_id=m2.mrkr_zdb_id
-                 $(IF,$(XST,$featcur_feature_only),and m1.mrkr_zdb_id = '$featcur_feature_only')
-                 $(IF,$(XST,$featcur_feature_type_only),and m1.mrkr_type = '$featcur_feature_type_only')
+                 $(IF,$(AND,$(XST,$featcur_feature_only),$(NE,$featcur_feature_only,)),and m1.mrkr_zdb_id = '$featcur_feature_only')
+                 $(IF,$(AND,$(XST,$featcur_feature_type_only),$(NE,$featcur_feature_type_only,)),and m1.mrkr_type = '$featcur_feature_type_only')
                  and m1.mrkr_type=marker_type
                  and m1.mrkr_type like '%CONST%'
               ;">
 
-              <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featrelation" method=post name=relation onSubmit="setCookie('featcurupdate','update','featcur_');">
+              <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featrelation" method=post name=relation >
               <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
               <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+              <INPUT TYPE=HIDDEN NAME=featcur_featcurupdate VALUE="update">
+              
               <?MIVAR NAME="featrel_feature_name">$4<?/MIVAR>
               <?MIVAR NAME="featrel_feat_zdb_id">$1<?/MIVAR>
               <?MIVAR NAME="featrel_mrkr_zdb_id">$2<?/MIVAR>
@@ -120,7 +122,7 @@ EFFECTS
 <?MICOMMENT> end of relationships table <?/MICOMMENT>
 
 
-<?MIBLOCK COND="$(XST,$featcur_feature_only)">
+<?MIBLOCK COND="$(AND,$(XST,$featcur_feature_only),$(NE,$featcur_feature_only,))">
    <?MISQL SQL="select feature_name,ftrtype_type_display from feature, feature_type where feature_zdb_id='$featcur_feature_only' and feature_type=ftrtype_name">
     <?MIVAR NAME=$featonly>$1<?/MIVAR>
     <?MIVAR NAME=$feattype>$2<?/MIVAR>
@@ -164,10 +166,11 @@ EFFECTS
            <?/MIBLOCK>
 
            <tr><td>
-           <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featrelation" method=post name=new_relation onSubmit="setCookie('featcurupdate','update','featcur_');setCookie('anchor','featrelation','featcur_reln_');">
+           <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featrelation" method=post name=new_relation >
            <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg"> 
            <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">
            <INPUT TYPE=HIDDEN NAME=featcur_reln_feat_zdb_id VALUE="<?MIVAR COND="$(XST,$featrel_feature_zdb_id')">$featrel_feature_zdb_id<?/MIVAR>">
+           <INPUT TYPE=HIDDEN NAME=featcur_featcurupdate VALUE="update">
 
            <tr>
            <td>
@@ -178,16 +181,16 @@ EFFECTS
                   from feature, record_attribution
                   where feature_zdb_id = recattrib_data_zdb_id
                   and recattrib_source_zdb_id='$OID'
-              $(IF,$(XST,$featcur_feature_only),and feature_zdb_id = '$featcur_feature_only')
-              $(IF,$(XST,$featcur_feature_type_only),and feature_type = '$featcur_feature_type_only')
+              $(IF,$(AND,$(XST,$featcur_feature_only),$(NE,$featcur_feature_only,)),and feature_zdb_id = '$featcur_feature_only')
+              $(IF,$(AND,$(XST,$featcur_feature_type_only),$(NE,$featcur_feature_type_only,)),and feature_type = '$featcur_feature_type_only')
                  UNION
                   select mrkr_zdb_id, mrkr_name, mrkr_type
                   from marker, record_attribution
                   where mrkr_zdb_id = recattrib_data_zdb_id
                   and recattrib_source_zdb_id='$OID'
                   and mrkr_type like '%CONSTRCT%'
-              $(IF,$(XST,$featcur_feature_only),and mrkr_zdb_id = '$featcur_feature_only')
-              $(IF,$(XST,$featcur_feature_type_only),and mrkr_type = '$featcur_feature_type_only')
+              $(IF,$(AND,$(XST,$featcur_feature_only),$(NE,$featcur_feature_only,)),and mrkr_zdb_id = '$featcur_feature_only')
+              $(IF,$(AND,$(XST,$featcur_feature_type_only),$(NE,$featcur_feature_type_only,)),and mrkr_type = '$featcur_feature_type_only')
                  ;">
                 <option value="$2"
                     $(IF,$(AND,$(XST,$featcur_reln_add_ftr),$(EC,$featcur_reln_add_ftr,$2)),SELECTED)>$2</option>

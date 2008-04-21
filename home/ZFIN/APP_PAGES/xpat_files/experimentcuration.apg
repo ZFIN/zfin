@@ -30,14 +30,24 @@ PREFIX:   expcur_
 	  =  ENVIRONMENT  =
 	  =================
 <?/MICOMMENT>
+
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_environment';">
+        <?MIVAR NAME=xpcur_c_environment>$1<?/MIVAR>
+    <?/MISQL>
+    
 <a name=environment>
 <p><b><font size=3>Environment:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_environment),$(EC,$xpcur_c_environment,hide))>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('environment','show','xpcur_c_')">$unhide</a><?/MIVAR>
-  <br>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_environment','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$unhide</a><?/MIVAR>
+  <br>  
   
 <?MIELSE>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('environment','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_environment','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
   <br>
    
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurexperiment.apg';">$1<?/MISQL>
@@ -49,16 +59,25 @@ PREFIX:   expcur_
 	  =  Condition  =
 	  ===============
 <?/MICOMMENT>
-<a name=condition>
 
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_condition';">
+        <?MIVAR NAME=xpcur_c_condition>$1<?/MIVAR>
+    <?/MISQL>
+    
+<a name=condition>
     
 <p><b><font size=3>Define Environments:</font> </b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_condition),$(EC,$xpcur_c_condition,hide))>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('condition','show','xpcur_c_')">$unhide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_condition','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&filler=#condition');">$unhide</a><?/MIVAR>
   <br>
   
 <?MIELSE>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('condition','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_condition','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
   <br>
   
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurcondition.apg';">$1<?/MISQL>

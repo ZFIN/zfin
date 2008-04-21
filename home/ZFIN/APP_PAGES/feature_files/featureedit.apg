@@ -39,12 +39,13 @@ EFFECTS: Edits a feature/marker
     <?MIVAR NAME=featcur_feat_isfeature>yes<?/MIVAR>
 
     <?MIVAR>
-      <form method=get action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featediting" name=feature_edit onSubmit=setCookie('featcurupdate','update','featcur_')>
+      <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featediting" name=feature_edit>
 
         <input type=hidden name=MIval value="aa-curation.apg">
         <input type=hidden name=OID value="<?MIVAR>$OID<?/MIVAR>">
         <input type=hidden name=anchor value=attrib>
        <input type=hidden name=anchor value=featediting>
+        <INPUT TYPE=HIDDEN NAME=featcur_featcurupdate VALUE="update">
 
             <?MIVAR NAME=featcur_feat_zdb_id><?/MIVAR>
             <?MIVAR NAME=featcur_feat_typedb><?/MIVAR>

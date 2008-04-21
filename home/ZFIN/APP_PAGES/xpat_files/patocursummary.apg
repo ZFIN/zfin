@@ -11,7 +11,7 @@ PREFIX:   patosum_
    $xpcur_G_env_attrib_csv :: csv list of enviornments for the OID
 
   INPUT_VARS:
-   $pubcur_c_figure_only ::to specify display of data only relating to a single figure
+   $xpcur_c_figure_only ::to specify display of data only relating to a single figure
 			  passed in as a zdb_id
    $xpcur_c_fish_only ::to specificy display of data only relating to a single genotype,
 			passed in as a zdb_id
@@ -96,8 +96,8 @@ Control.modal needs specific css calls.  If used other places, should be added t
 <?MICOMMENT> ** copy from cookie to local var, because I coded it to local vars originally,
                 but not a terrible idea, since the cookie is global and shared and I don't
                 want too many references to it ** <?/MICOMMENT>
-   <?MIVAR COND="$(XST,$pubcur_c_figure_only)" 
-           NAME="$patosum_filter_fig">$pubcur_c_figure_only<?/MIVAR>
+   <?MIVAR COND="$(XST,$xpcur_c_figure_only)" 
+           NAME="$patosum_filter_fig">$xpcur_c_figure_only<?/MIVAR>
    <?MIVAR COND="$(XST,$xpcur_c_fish_only)" 
            NAME="$patosum_filter_genotype">$xpcur_c_fish_only<?/MIVAR>
 
@@ -220,6 +220,7 @@ fitted
       <?MIVAR NAME="$patosum_start_stg_zdb_id">$7<?/MIVAR>
       <?MIVAR NAME="$patosum_end_stg_zdb_id">$8<?/MIVAR>
       <?MIVAR NAME="$patosum_genox_zdb_id">$10<?/MIVAR>
+      <?MIVAR NAME="$patosum_checkbox_id">$(CONCAT,patosum_checkbox_,$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id)<?/MIVAR>
 
       <?MICOMMENT> ** Process for unknowns, replace NULL with something nicer ** <?/MICOMMENT>
       <?MIBLOCK COND="$(EQ,$patosum_start_stg_zdb_id,NULL)">
@@ -260,17 +261,16 @@ fitted
                                                                      "$patosum_end_stg_abbrev",
                                                                      "$patosum_genox_zdb_id", 
                                                                      "false",
-    "$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id");
+                                                                     "$patosum_checkbox_id");
 
       </script>
 
 
-      <tr <?MIBLOCK COND="$(EC,1,$(MOD,$patosum_recordIndex,2))">class="odd"<?/MIBLOCK>
-        onClick="document.getElementById('$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id').click();
-                 patoCuration.updateMutantForm('$patosum_fig_zdb_id', '$patosum_geno_zdb_id', '$patosum_exp_zdb_id', '$patosum_start_stg_zdb_id', '$patosum_end_stg_zdb_id'); ">
+      <tr <?MIBLOCK COND="$(EC,1,$(MOD,$patosum_recordIndex,2))">class="odd"<?/MIBLOCK> >
+
         <td> <?MICOMMENT> ** Select column ** <?/MICOMMENT>
  
-       <?MIVAR NAME="$cs_field">$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id<?/MIVAR>
+       <?MIVAR NAME="$cs_field">$patosum_checkbox_id<?/MIVAR>
        <?MIVAR NAME="$cs_default">false<?/MIVAR>
        <?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID') 
              from webPages where ID='aa-curator_session.apg';">
@@ -289,11 +289,9 @@ fitted
         <?MIVAR>
           <input type="checkbox" 
                  $patosum_checked
-                 id="$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id" 
-                 onclick="this.click();" 
+                 id="$patosum_checkbox_id"                  
                  onChange="patoCuration.updateMutants();
-                           storeSession('$ZDB_ident','$OID','$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id',
-                                         this.checked);">
+                           storeSession('$ZDB_ident','$OID','$patosum_checkbox_id',String(this.checked));">
 
                            
                  <?MICOMMENT> ** about that onclick="click()" above.. if you click the checkbox, 
@@ -302,20 +300,36 @@ fitted
                                  the other state.  it's goofy, but simple ** <?/MICOMMENT>
         <?/MIVAR>
         </td> 
-        <td style="white-space: nowrap"> <?MICOMMENT> ** Fig Column ** <?/MICOMMENT>
+	<?MICOMMENT> ** Fig Column ** <?/MICOMMENT>
+        <td style="white-space: nowrap" 
+          onClick="document.getElementById('$patosum_checkbox_id').click();
+                   patoCuration.updateMutantForm('$patosum_fig_zdb_id', '$patosum_geno_zdb_id', '$patosum_exp_zdb_id', 
+                                                 '$patosum_start_stg_zdb_id', '$patosum_end_stg_zdb_id');"> 
           $patosum_fig_label 
         </td>
-        <td> <?MICOMMENT> ** Genotype Column ** <?/MICOMMENT>
+        <?MICOMMENT> ** Genotype Column ** <?/MICOMMENT>
+        <td onClick="document.getElementById('$patosum_checkbox_id').click();
+                   patoCuration.updateMutantForm('$patosum_fig_zdb_id', '$patosum_geno_zdb_id', '$patosum_exp_zdb_id', 
+                                                 '$patosum_start_stg_zdb_id', '$patosum_end_stg_zdb_id');"> 
           $patosum_geno_nickname 
         </td>
-        <td>  <?MICOMMENT> ** Enviornment Column ** <?/MICOMMENT>
+        <?MICOMMENT> ** Enviornment Column ** <?/MICOMMENT>
+        <td onClick="document.getElementById('$patosum_checkbox_id').click();
+                   patoCuration.updateMutantForm('$patosum_fig_zdb_id', '$patosum_geno_zdb_id', '$patosum_exp_zdb_id', 
+                                                 '$patosum_start_stg_zdb_id', '$patosum_end_stg_zdb_id');">         
           $patosum_exp_name
         </td>
-        <td>  <?MICOMMENT> ** Stage Column ** <?/MICOMMENT>
+        <?MICOMMENT> ** Stage Column ** <?/MICOMMENT>
+        <td onClick="document.getElementById('$patosum_checkbox_id').click();
+                   patoCuration.updateMutantForm('$patosum_fig_zdb_id', '$patosum_geno_zdb_id', '$patosum_exp_zdb_id', 
+                                                 '$patosum_start_stg_zdb_id', '$patosum_end_stg_zdb_id');"> 
           $patosum_start_stg_abbrev 
           <?MIBLOCK COND="$(NE,$patosum_start_stg_abbrev,$patosum_end_stg_abbrev)"> - <?MIVAR>$patosum_end_stg_abbrev<?/MIVAR> <?/MIBLOCK>
         </td>
-        <td>  <?MICOMMENT> ** Phenotype Column ** <?/MICOMMENT>
+        <?MICOMMENT> ** Phenotype Column ** <?/MICOMMENT>
+        <td onClick="document.getElementById('$patosum_checkbox_id').click();
+                   patoCuration.updateMutantForm('$patosum_fig_zdb_id', '$patosum_geno_zdb_id', '$patosum_exp_zdb_id', 
+                                                 '$patosum_start_stg_zdb_id', '$patosum_end_stg_zdb_id');"> 
          <small>
           <?MISQL SQL="select distinct apato_entity_a_zdb_id, get_obj_name(apato_entity_a_zdb_id), 
                                        apato_entity_b_zdb_id, get_obj_name(apato_entity_b_zdb_id),
@@ -342,7 +356,13 @@ fitted
             
              <?MIVAR NAME="$patosum_pheno_key">$patosum_entity_a_zdb_id$patosum_entity_b_zdb_id$patosum_quality_zdb_id$patosum_tag<?/MIVAR>
              
-             
+             <?MICOMMENT> ** If entity a is unspecified, make it orange ** <?/MICOMMENT>             
+             <?MIVAR COND="$(POSITION,$patosum_entity_a_name,unspecified,1)"
+                     NAME="$patosum_entity_a_name">
+               <span style="color: orange;">$patosum_entity_a_name</span>
+             <?/MIVAR>
+
+
             <?MIBLOCK COND="$(NE,$patosum_entity_b_zdb_id,NULL)">
                <?MIVAR>$patosum_entity_b_name<?/MIVAR>:
              <?/MIBLOCK> 
@@ -357,10 +377,11 @@ fitted
          </small>
         </td>
         <td>
-          <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="post" onSubmit="setCookie('pato_update','update','pubcur_c_');">
+          <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="post">
            <?MIVAR>
             <input type="hidden" name="MIval" value="aa-curation.apg">
             <input type="hidden" name="OID" value="$OID">
+            <input type="hidden" name="pubcur_c_pato_update" value="update">
             <input type="hidden" name="patoup_delete_mutant" value="1">
             <input type="hidden" name="patoup_fig_zdb_id" value="$patosum_fig_zdb_id">
             <input type="hidden" name="patoup_example_apato_zdb_id" value="$patosum_first_apato_zdb_id">
@@ -375,10 +396,11 @@ fitted
 <?MICOMMENT> *** Form to add Mutants (Fig + Genotype + Env combinations) to mutant summary table *** <?/MICOMMENT>
 
 <form name="patosum_addmutant" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#mutants" 
-      method="post" onSubmit="setCookie('pato_update','update','pubcur_c_');">
+      method="post">
 
     <input type="hidden" name="MIval" value="aa-curation.apg">
     <input type="hidden" name="OID" value="<?MIVAR>$OID<?/MIVAR>">
+    <input type="hidden" name="pubcur_c_pato_update" value="update">
     <input type="hidden" name="patoup_add_mutant" value="1">
     <table style="margin-top: .5em; margin-left: .5em;">
     <tr>

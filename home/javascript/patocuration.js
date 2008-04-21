@@ -67,24 +67,6 @@ function PatoCuration() {
 
 
   /*
-   Delete curator session information about all of the mutant checkboxes
-
-   Like deselect, except that it's clearing the boxes for the next time
-   the page loads rather than clearing it for now.  It gets called right
-   before submitting.
-   */
-  this.clearMutantsFromSession = function(person,OID) {
-      var mutants = this.mutants;
-      for (var i = 0 ; i < mutants.length ; i++) {
-	  if (document.getElementById(mutants[i].checkbox_id).checked == true) { 
-              storeSession(person,OID,mutants[i].checkbox_id, 'false');
-          }
-      }
-
-  }
-
-
-  /*
    Uncheck mutants and update the state of the whole system
    */
   this.deselectMutants = function(person,OID) {

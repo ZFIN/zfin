@@ -18,10 +18,6 @@ PREFIX:   featcurup_
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
-  <script>
-    setCookie('featcur_form_variables','');
-  </script>
-
   <?MICOMMENT> set variables <?/MICOMMENT>  
   <?MIVAR NAME=$featcurup_feature_zdb_id><?/MIVAR>
   <?MIVAR NAME=$featcurup_feature_lab_zdb_id><?/MIVAR>

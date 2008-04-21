@@ -333,8 +333,7 @@ EFFECTS
       } //j loop
     
     document.condition.xpcur_G_cond_copy_conditions.value=c_checked_condition;
-    setCookie('xpatcuration_update','update','xpcur_c_');
-    document.condition.submit();      
+    document.condition.submit();
   }
 
   function set_condition_form()
@@ -360,13 +359,14 @@ EFFECTS
     <td>Delete</td>
   </tr>  
 
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','condition','xpcur_c_');">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition ">
 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_expcond_zdb_id>
     <INPUT TYPE=HIDDEN NAME=xpcur_G_expcond_comments>
     <INPUT TYPE=HIDDEN NAME=xpcur_G_cond_copy_conditions>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update">
     
 <?MIVAR NAME=xpcurcond_prev_exp_name><?/MIVAR>
 <?MIVAR NAME=xpcurcond_row_color>#FFFFFF<?/MIVAR>
@@ -418,7 +418,7 @@ EFFECTS
     <td>
           <input name="comments$xpcurcond_expcond_minus_dash" type=textbox size=20 value="$6">
           <input name="xpcur_G_expcond_update" type=button value="Update Comments" 
-                 onClick=document.condition.xpcur_G_expcond_zdb_id.value="$xpcurcond_expcond_zdb_id";document.condition.xpcur_G_expcond_comments.value=document.condition.comments$xpcurcond_expcond_minus_dash.value;setCookie('xpatcuration_update','update','xpcur_c_');document.condition.submit();>
+                 onClick=document.condition.xpcur_G_expcond_zdb_id.value="$xpcurcond_expcond_zdb_id";document.condition.xpcur_G_expcond_comments.value=document.condition.comments$xpcurcond_expcond_minus_dash.value;document.condition.submit();>
     </td>    
     <td align=center>
         <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurcond_expcond_zdb_id','condition')"><?/MIVAR>
@@ -453,13 +453,14 @@ EFFECTS
   </tr>
 
 <?MICOMMENT> ==| Enter a New Condition |== <?/MICOMMENT>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=get name=condition_new onSubmit=setCookie('xpatcuration_update','update','xpcur_c_')>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition_new >
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg"> 
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_cond_add VALUE="Add"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update">
   <tr>
     <td>
-      <input name="xpcur_G_cond_add" type=button value="Add" onClick="if (validateConditionForm(document.condition_new.xpcur_G_cond_add_attribute.value)){setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','condition','xpcur_c_');document.condition_new.submit()}">
+      <input name="xpcur_G_cond_add" type=button value="Add" onClick="if (validateConditionForm(document.condition_new.xpcur_G_cond_add_attribute.value)){document.condition_new.submit()}">
     </td>
     <td>
         <select name="xpcur_G_cond_add_exp">

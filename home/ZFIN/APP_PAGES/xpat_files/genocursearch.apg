@@ -23,7 +23,7 @@ PREFIX:   genocursrch_
 
 
 <div id="headertwo">Search for Existing Genotypes Containing:</div>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=existingGenoSearch>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=POST name="existingGenoSearch">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 <table>
@@ -109,12 +109,12 @@ from the 'Existing Genotype' Search. Order by display name.
 <?/MICOMMENT>
 
 <?MIBLOCK COND=$(XST,$genocursrch_feat_zdb_id)>
-
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=selectExistingGeno>
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     
 <div id="headerthree">Search Results:</div>
+
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=POST name="selectExistingGeno">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
@@ -123,9 +123,12 @@ from the 'Existing Genotype' Search. Order by display name.
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-genosearchresulttable.apg';">$1<?/MISQL>
 
-<input type=button value=Select name=select onClick="attachGenotypes();">
+<input type=button value="Select" name="select" onClick="if (attachGenotypes() > 0){document.selectExistingGeno.submit();}">
  [The select button places the checked genotypes in the Available table.]
 
+<input type=hidden name=pubcur_c_geno_attrib_count value="">
+<input type=hidden name=pubcur_c_geno_attrib_list value="">
+<input type=hidden name=pubcur_c_geno_update value="update">
 </form>
 
 
@@ -167,22 +170,25 @@ from the 'Existing Genotype' Search. Order by display name.
         //alert(genotype_form_elements[i+2].name);
         if (genotype_form_elements[i+2].checked == true) {
           checked_geno_search_zdb = genocursrchArray[i] +"|"+checked_geno_search_zdb;
+          genotype_form_elements[i+2].checked = false;
           geno_count++;
         }        
       }
       //alert(checked_geno_search_zdb);
-      setCookie('geno_attrib_count',geno_count,'pubcur_c_');
+      document.forms['selectExistingGeno'].elements['pubcur_c_geno_attrib_count'].value = geno_count;
+      //alert(geno_count);
+      document.forms['selectExistingGeno'].elements['pubcur_c_geno_attrib_list'].value = checked_geno_search_zdb;
+      //alert(checked_geno_search_zdb);
       
-      return checked_geno_search_zdb;
+      return geno_count;
     }
     
     
     function attachGenotypes () {
     
-      var geno_zdb_ids = selectGenotypes();
-            
-      setCookie('geno_attrib_list',geno_zdb_ids,'pubcur_c_');
-      urlSetCookie('geno_update','update','pubcur_c_');
+      var count = selectGenotypes();            
+      
+      return count;
         
     }
 </script>  

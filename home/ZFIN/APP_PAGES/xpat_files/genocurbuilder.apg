@@ -23,71 +23,6 @@ the genotype is finalized and committed, the staging area is reset.
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
 
-<script>
-
-  function addBackground(geno_zdb_id) {
-    var background_index = document.forms['genoBuilder'].elements['genocurbldWTbckgrd'].selectedIndex;
-    var background_id = document.forms['genoBuilder'].elements['genocurbldWTbckgrd'][background_index].value;
-    
-    setCookie('geno_background',background_id,'pubcur_c_');
-    setCookie('geno_zdb_id',geno_zdb_id,'pubcur_c_');
-    urlSetCookie('geno_update','update','pubcur_c_');
-  }
-
-  function removeBackground(geno_zdb_id) {
-    var background_index = document.forms['genoBuilder'].elements['genocurbldWTbckgrd'].selectedIndex;
-    var background_id = document.forms['genoBuilder'].elements['genocurbldWTbckgrd'][background_index].value;
-    
-    setCookie('remGeno_background',background_id,'pubcur_c_');
-    setCookie('remGeno_zdb_id',geno_zdb_id,'pubcur_c_');
-    urlSetCookie('geno_update','update','pubcur_c_');
-  }
-
-  function addGenoFeature(geno_zdb_id) {
-    var index = document.forms['genoBuilder'].elements['genocurbld_feat_zdb_id'].selectedIndex;
-    var feature_id = document.forms['genoBuilder'].elements['genocurbld_feat_zdb_id'][index].value;
-    var index = document.forms['genoBuilder'].elements['genocurbld_zyg_zdb_id'].selectedIndex;
-    var zyg_id = document.forms['genoBuilder'].elements['genocurbld_zyg_zdb_id'][index].value;
-    var index = document.forms['genoBuilder'].elements['genocurbld_maternal_zdb_id'].selectedIndex;
-    var mat_id = document.forms['genoBuilder'].elements['genocurbld_maternal_zdb_id'][index].value;
-    var index = document.forms['genoBuilder'].elements['genocurbld_paternal_zdb_id'].selectedIndex;
-    var pat_id = document.forms['genoBuilder'].elements['genocurbld_paternal_zdb_id'][index].value;
-    
-    setCookie('genofeat_zdb_id',feature_id,'pubcur_c_');
-    setCookie('zyg_zdb_id',zyg_id,'pubcur_c_');
-    setCookie('maternal_zdb_id',mat_id,'pubcur_c_');
-    setCookie('paternal_zdb_id',pat_id,'pubcur_c_');
-    setCookie('geno_zdb_id',geno_zdb_id,'pubcur_c_');
-    
-    urlSetCookie('geno_update','update','pubcur_c_');
-  }
-
-
-  function removeGenoFeature(geno_zdb_id) {
-    var index = document.forms['genoBuilder'].elements['genocurbld_feat_zdb_id'].selectedIndex;
-    var feature_id = document.forms['genoBuilder'].elements['genocurbld_feat_zdb_id'][index].value;
-    
-    setCookie('remGenoFeat_zdb_id',feature_id,'pubcur_c_');
-    setCookie('remGeno_zdb_id',geno_zdb_id,'pubcur_c_');
-    
-    urlSetCookie('geno_update','update','pubcur_c_');
-  }
-
-  function finalizeGenotype(geno_zdb_id) {
-
-    var genoNickname = document.forms['genoBuilder'].elements['genocurbld_nickname'].value;
-    
-    setCookie('geno_nickname',genoNickname,'pubcur_c_');
-    setCookie('finalize_genotype',geno_zdb_id,'pubcur_c_');
-    urlSetCookie('geno_update','update','pubcur_c_');
-  }
-
-
-</script>
-
-
-<form name=genoBuilder>
-
 <br><br>
 <span id="headertwo">Genotype Staging Area:</span>
 <br>
@@ -106,11 +41,23 @@ the genotype is finalized and committed, the staging area is reset.
                    
 
 <?MIBLOCK COND=$(NXST,$genocur_staging_zdb)>
+<form name=newGenotype action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post>
 
-  <input type=button value="New Genotype Handle" onClick="setCookie('new_genotype','new','pubcur_c_');urlSetCookie('geno_update','update','pubcur_c_');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=pubcur_c_geno_update VALUE="update">   
+    <INPUT TYPE=HIDDEN NAME=pubcur_c_new_genotype VALUE="new">  
 
+  <input type=submit value="New Genotype Handle">
+</form>
 
 <?MIELSE>
+<form name=newGenotypeFeature action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=genocur_staging_zdb VALUE="<?MIVAR>$genocur_staging_zdb<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=pubcur_c_geno_update VALUE="update"> 
+
 <p>
 
     <table>
@@ -133,13 +80,13 @@ the genotype is finalized and committed, the staging area is reset.
             Paternal
         </td>
         <td valign=bottom rowspan=2>
-            <input type=button 
+            <input type=submit 
                    value=Add 
-                   onClick="addGenoFeature('<?MIVAR>$genocur_staging_zdb<?/MIVAR>');">
+                   name=addGenoFeat>
                    
-            <input type=button 
+            <input type=submit 
                    value=Remove 
-                   onClick="removeGenoFeature('<?MIVAR>$genocur_staging_zdb<?/MIVAR>');">
+                   name=removeGenoFeat>
         </td>
       </tr>
       <tr>
@@ -207,6 +154,14 @@ the genotype is finalized and committed, the staging area is reset.
       </tr>
     
     </table>
+</form>
+
+<form name=newGenotypeBackground action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=genocur_staging_zdb VALUE="<?MIVAR>$genocur_staging_zdb<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=pubcur_c_geno_update VALUE="update"> 
+
 <br>
 <table>
   <tr>
@@ -233,18 +188,21 @@ the genotype is finalized and committed, the staging area is reset.
   <?/MISQL>
     </select>
 
-    <input type=button 
+    <input type=submit 
            value=Add 
-           onClick="addBackground('<?MIVAR>$genocur_staging_zdb<?/MIVAR>');">  
+           name=addGenoBackground>  
            
-    <input type=button 
+    <input type=submit 
            value=Remove 
-           onClick="removeBackground('<?MIVAR>$genocur_staging_zdb<?/MIVAR>');">  
+           name=removeGenoBackground>  
 
     </td>
   </tr>
 </table> 
 
+</form>
+
+<form name=finalizeGenotype action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post>
     <p>
     <?MISQL SQL="
        execute function get_genotype_display('$genocur_staging_zdb');">
@@ -263,16 +221,22 @@ the genotype is finalized and committed, the staging area is reset.
 
     <br>
     
-    <span id="headerthree">Nickname: </span><?MIVAR><input type=text size=50 name=genocurbld_nickname value="$genocurbld_geno_display"><?/MIVAR>
+    <span id="headerthree">Nickname: </span><?MIVAR><input type=text size=50 name=pubcur_c_geno_nickname value="$genocurbld_geno_display"><?/MIVAR>
 
 
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=pubcur_c_finalize_genotype VALUE="<?MIVAR>$genocur_staging_zdb<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=pubcur_c_geno_update VALUE="update"> 
+    
     <p>
     <input type=button value="Submit Genotype"
-           onClick="if(confirm('Submit Genotype?')){finalizeGenotype('<?MIVAR>$genocur_staging_zdb<?/MIVAR>')};">
-<?/MIBLOCK>
-
+           onClick="if(confirm('Submit Genotype?')){document.finalizeGenotype.submit();};">
 
 </form>
+
+<?/MIBLOCK>
+
 
   <script>
     // Enforce Zygocity constraints 
@@ -292,13 +256,13 @@ the genotype is finalized and committed, the staging area is reset.
       
       var errorMsg = '';
       
-      var childZygIndex = document.genoBuilder.genocurbld_zyg_zdb_id.selectedIndex;
-      var momZygIndex = document.genoBuilder.genocurbld_maternal_zdb_id.selectedIndex;
-      var dadZygIndex = document.genoBuilder.genocurbld_paternal_zdb_id.selectedIndex;
+      var childZygIndex = document.newGenotypeFeature.genocurbld_zyg_zdb_id.selectedIndex;
+      var momZygIndex = document.newGenotypeFeature.genocurbld_maternal_zdb_id.selectedIndex;
+      var dadZygIndex = document.newGenotypeFeature.genocurbld_paternal_zdb_id.selectedIndex;
 
-      var childZyg = document.genoBuilder.genocurbld_zyg_zdb_id[childZygIndex].value;
-      var momZyg = document.genoBuilder.genocurbld_maternal_zdb_id[momZygIndex].value;
-      var dadZyg = document.genoBuilder.genocurbld_paternal_zdb_id[dadZygIndex].value;
+      var childZyg = document.newGenotypeFeature.genocurbld_zyg_zdb_id[childZygIndex].value;
+      var momZyg = document.newGenotypeFeature.genocurbld_maternal_zdb_id[momZygIndex].value;
+      var dadZyg = document.newGenotypeFeature.genocurbld_paternal_zdb_id[dadZygIndex].value;
       
       // maternal constraint
       if (childZyg == maternal_zygotic)
@@ -308,7 +272,7 @@ the genotype is finalized and committed, the staging area is reset.
            errorMsg = "Maternal Zygotic Enforced: Mother zygocity set to homozygous.";
          }
          
-         setSelectedIndex( "genoBuilder", "genocurbld_maternal_zdb_id", homozygous);
+         setSelectedIndex( "newGenotypeFeature", "genocurbld_maternal_zdb_id", homozygous);
       
       }
       

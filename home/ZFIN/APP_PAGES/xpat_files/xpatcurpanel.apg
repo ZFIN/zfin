@@ -115,9 +115,9 @@ EFFECTS
           and xpatex_genox_zdb_id = genox_zdb_id
           and genox_geno_zdb_id = geno_zdb_id
           and fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
-          $(IF,$(XST,$xpcur_c_figure_only),and fig_zdb_id = '$xpcur_c_figure_only')
-          $(IF,$(XST,$xpcur_c_gene_only),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
-          $(IF,$(XST,$xpcur_c_fish_only),and geno_zdb_id = '$xpcur_c_fish_only')
+          $(IF,$(AND,$(XST,$xpcur_c_figure_only),$(NE,$xpcur_c_figure_only,)),and fig_zdb_id = '$xpcur_c_figure_only')
+          $(IF,$(AND,$(XST,$xpcur_c_gene_only),$(NE,$xpcur_c_gene_only,)),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
+          $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(NE,$xpcur_c_fish_only,)),and geno_zdb_id = '$xpcur_c_fish_only')
         order by 8,9,10,11;">
         
         <?MIVAR NAME=xpcurpnl_figexp_name>xpcurpnl_figexp_$xpcurpnl_index<?/MIVAR>
@@ -255,7 +255,9 @@ EFFECTS
       } //j loop
     } // i loop
     
-    setCookie("checked_expression",c_checked_expression,'xpcur_c_');
+    <?MIVAR>
+    storeSession('$ZDB_ident','$OID','xpcur_c_checked_expression',c_checked_expression);
+    <?/MIVAR>
     setExpressionStage() ;
 
     <?MIBLOCK COND=$(AND,$(XST,$xpcur_c_structure),$(EC,$xpcur_c_structure,show))>
@@ -321,12 +323,20 @@ EFFECTS
     Function: rememberCheckedExpression() reads cookie c_checked_expression
     and clicks the checkboxes.
   <?/MICOMMENT>
-  
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_checked_expression';">
+    <?/MISQL>
+        <?MIVAR NAME=xpcur_c_checked_expression>$1<?/MIVAR>
+      
   function rememberCheckedExpression ()
   {
     var expression_elements = document.forms['xpcur_exp'].elements ;
     
-    var checkedMemory = getCookie("xpcur_c_checked_expression");
+    var checkedMemory = "<?MIVAR>$xpcur_c_checked_expression<?/MIVAR>";
     var expId = "";
 
     var pos2 = checkedMemory.indexOf('|');
@@ -350,10 +360,20 @@ EFFECTS
     
   }
   
+
+    <?MISQL SQL="
+        select cs_field_name_value 
+        from curator_session 
+        where cs_data_zdb_id = '$OID' 
+          and cs_field_name = 'xpcur_c_structure';">
+    <?/MISQL>
+        <?MIVAR NAME=xpcur_c_structure>$1<?/MIVAR>
+
+
     function setAOStage ()
     {
     
-      if (getCookie('xpcur_c_structure') != 'hide')
+      if ('<?MIVAR>$xpcur_c_structure<?/MIVAR>' != 'hide')
       {
         var stage_id;
         var stage_array = new Array();
@@ -442,8 +462,8 @@ EFFECTS
       and fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
       and xpatex_assay_name = xpatassay_name
       and genox_exp_zdb_id = exp_zdb_id
-      $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
-      $(IF,$(XST,$xpcur_c_fish_only),and geno_zdb_id = '$xpcur_c_fish_only')
+      $(IF,$(AND,$(XST,$xpcur_c_gene_only),$(NE,$xpcur_c_gene_only,)),and mrkr_zdb_id = '$xpcur_c_gene_only')
+      $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(NE,$xpcur_c_fish_only,)),and geno_zdb_id = '$xpcur_c_fish_only')
     order by fig_label, mrkr_abbrev_order, geno_nickname, xpatassay_display_order, 12, stg_hours_start;">
 
       <?MIVAR NAME=xpcurpnl_fig_zdb_id>$1<?/MIVAR>
@@ -561,9 +581,10 @@ EFFECTS
       <hr>
     </td>
   </tr>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#panel" method=post name="xpcur_G_panel_add" onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','panel','xpcur_c_');">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#panel" method=post name="xpcur_G_panel_add">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg"> 
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update">
   <tr>
     <td colspan=2>
       <input name="xpcur_G_panel_add" type=submit value="Add">
@@ -590,8 +611,8 @@ EFFECTS
 	      and genox_geno_zdb_id = geno_zdb_id
 	      and xpatex_assay_name = xpatassay_name
               and genox_exp_zdb_id = exp_zdb_id
-              $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
-              $(IF,$(XST,$xpcur_c_fish_only),and geno_zdb_id = '$xpcur_c_fish_only')
+              $(IF,$(AND,$(XST,$xpcur_c_gene_only),$(NE,$xpcur_c_gene_only,)),and mrkr_zdb_id = '$xpcur_c_gene_only')
+              $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(NE,$xpcur_c_fish_only,)),and geno_zdb_id = '$xpcur_c_fish_only')
             order by mrkr_abbrev_order, geno_nickname, xpatassay_display_order, zero_pad(exp_name);">
             <?MIVAR NAME=xpcurpnl_xpatex_zdb_id>$1<?/MIVAR>  
             <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
