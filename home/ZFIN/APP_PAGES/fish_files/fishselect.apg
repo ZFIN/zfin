@@ -36,6 +36,9 @@ Message: $MI_ERRORMSG
   <?/MICOMMENT>
   <script>
 
+function call_submit() {
+  document.BrowserForm.submit();
+}
 
   function call_reset() {   
   	 document.BrowserForm.lg.selectedIndex = 0;
@@ -1421,7 +1424,12 @@ Message: $MI_ERRORMSG
           <option $(IF,$(EC,$compare,equals),selected) value=equals>equals
        </select>    
        
-       <input type=text name=fsel_inputname size=18 value="$(IF,$(XST,$fsel_inputname),$fsel_ori_inputname)">
+       <input type=text name=fsel_inputname size=18 value="$(IF,$(XST,$fsel_inputname),$fsel_ori_inputname)" 
+		   onKeyDown="
+		     k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
+		     if (k == 13 ) { 
+		       call_submit(); 
+             };">
        <?/MIVAR>
      </td>
 
@@ -1612,7 +1620,8 @@ we have to do at this point is pass the return record along to the fishlister.
   <TR>
    <TD class="submitbar" colspan=2 align="right">
     <input name="fishsel_calledBySelf" type="hidden" value="true">
-    <input type=submit name=search value="SEARCH"> 
+    <!-- <input type=submit name=search value="SEARCH">  -->
+    <input type=button name=search value="SEARCH" onClick="call_submit();"> 
     <input type=button onClick="call_reset();" value="RESET">  
    </TD>
   </TR>
