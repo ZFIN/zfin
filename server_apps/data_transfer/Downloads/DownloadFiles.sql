@@ -606,6 +606,20 @@ select xpatres_xpatex_zdb_id,
   from expression_result;
 
 
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_synonyms.txt'
+ DELIMITER "	"
+ select dalias_data_zdb_id, 
+ 	anatitem_name,
+ 	dalias_alias 
+  from data_alias, anatomy_item
+  where dalias_data_zdb_id = anatitem_zdb_id 
+    and dalias_data_zdb_id like 'ZDB-ANAT%'  
+    and dalias_alias not like 'ZFA:%' 
+    and dalias_group != 'plural'
+    and dalias_group != 'secondary id'
+  order by anatitem_name;
+
+
 -- Morpholino data
 -- unloaded Morpholino data would have HTML tags in public note column,
 -- which will be removed by Perl script
