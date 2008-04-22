@@ -2,6 +2,9 @@ package org.zfin.framework.presentation.client;
 
 import com.google.gwt.user.client.ui.SuggestOracle;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  */
 public class ItemSuggestOracle extends SuggestOracle {
@@ -21,8 +24,18 @@ public class ItemSuggestOracle extends SuggestOracle {
     public boolean isDisplayStringHTML() { return true; }
 
     public void requestSuggestions(SuggestOracle.Request req, SuggestOracle.Callback callback) {
-        timer.scheduleCallback(req,callback,delayTime);
-        lookup.setNoteString("working . . .");
+        String query = req.getQuery() ;
+        if(query.length()>=lookup.getMinLookupLenth()){
+            timer.scheduleCallback(req,callback,delayTime);
+            lookup.setNoteString("working . . .");
+        }
+        else{
+            StringBuffer noteString = new StringBuffer(query) ;
+            while(noteString.length()<lookup.getMinLookupLenth()){
+               noteString.append('-');
+            }
+            lookup.setNoteString(noteString.toString());
+        }
     }
 
     public int getDelayTime() {

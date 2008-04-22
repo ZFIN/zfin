@@ -43,6 +43,9 @@ public class LookupComposite extends Composite {
     protected String type = TYPE_ANATOMY_ONTOLOGY ;
     protected boolean wildCard = true ;
 
+    // later option
+    protected int minLookupLenth = 3 ;
+
     public LookupComposite(){
         types.add(TYPE_ANATOMY_ONTOLOGY) ;
         types.add(TYPE_GENE_ONTOLOGY) ;
@@ -222,4 +225,11 @@ public class LookupComposite extends Composite {
         this.wildCard = wildCard;
     }
 
+    public int getMinLookupLenth() {
+        return minLookupLenth;
+    }
+
+    public void setMinLookupLenth(int minLookupLenth) {
+        this.minLookupLenth = minLookupLenth;
+    }
 }
