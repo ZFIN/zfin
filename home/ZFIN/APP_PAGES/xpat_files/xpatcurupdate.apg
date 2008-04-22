@@ -493,7 +493,6 @@ EFFECTS
             expcond_zdb_id,
             expcond_exp_zdb_id,
             expcond_cdt_zdb_id,
-            expcond_value,
             expcond_expunit_zdb_id
     <?/MIVAR>
     
@@ -501,7 +500,6 @@ EFFECTS
             '$xpcurup_expcond_zdb_id',
             '$xpcur_G_cond_add_exp',
             '$xpcur_G_cond_add_cond_type',
-            '$xpcur_G_cond_add_value',
             '$xpcur_G_cond_add_unit'
     <?/MIVAR>
 
@@ -513,6 +511,16 @@ EFFECTS
         <?MIVAR NAME=xpcur_G_expcond_insert_columns>$xpcur_G_expcond_insert_columns , expcond_comments<?/MIVAR>
         
         <?MIVAR NAME=xpcur_G_expcond_insert_values>$xpcur_G_expcond_insert_values ,'$xpcur_G_cond_add_comments'<?/MIVAR>
+        
+    <?/MIBLOCK>
+
+    <?MICOMMENT> *** ONLY insert non null values.   <?/MICOMMENT>    
+
+    <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_cond_add_value),$(NC,$xpcur_G_cond_add_value,))>
+        
+        <?MIVAR NAME=xpcur_G_expcond_insert_columns>$xpcur_G_expcond_insert_columns , expcond_value<?/MIVAR>
+        
+        <?MIVAR NAME=xpcur_G_expcond_insert_values>$xpcur_G_expcond_insert_values ,'$xpcur_G_cond_add_value'<?/MIVAR>
         
     <?/MIBLOCK>
 
