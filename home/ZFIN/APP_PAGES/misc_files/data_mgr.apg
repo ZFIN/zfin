@@ -130,34 +130,34 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 </form>
 
 </TR>
-<?MIELSE>
 <?/MIBLOCK>
-<?MIELSE>
-
-<TD>
-
 <?/MIBLOCK>
+<?/MIBLOCK>
+
+
   <?MIELSE> <!--GO records-->
 
 <TD>
     <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$OID"><font size=-1>Add/Update GO annotations</a><?/MIVAR>
 </TD>
 <?/MIBLOCK>
+
 <?MIELSE> <!-- pub records -->
+
+
   <TD>
     <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Track Curation</a><?/MIVAR>
   </TD>
   <TD>
     Status: <?MIVAR>$(IF,$(EC,$pub_completion_date,),Open,Closed $pub_completion_date)<?/MIVAR>
   </TD>
+
 <TD>
 <?MIVAR>
 <?/MIVAR>
 </TD>
 <?/MIBLOCK> <!-- ends if not a pub record -->
-<?MIELSE>
 
-<?/MIBLOCK>
 <?/MIBLOCK> <!-- ends if authorized and not guest -->
 
 
