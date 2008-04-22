@@ -494,17 +494,29 @@ EFFECTS
             expcond_exp_zdb_id,
             expcond_cdt_zdb_id,
             expcond_value,
-            expcond_expunit_zdb_id,
-            expcond_comments
+            expcond_expunit_zdb_id
     <?/MIVAR>
+    
     <?MIVAR NAME=xpcur_G_expcond_insert_values>
             '$xpcurup_expcond_zdb_id',
             '$xpcur_G_cond_add_exp',
             '$xpcur_G_cond_add_cond_type',
             '$xpcur_G_cond_add_value',
-            '$xpcur_G_cond_add_unit',
-            '$xpcur_G_cond_add_comments'
+            '$xpcur_G_cond_add_unit'
     <?/MIVAR>
+
+
+    <?MICOMMENT> *** ONLY insert non null comments.   <?/MICOMMENT>    
+
+    <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_cond_add_comments),$(NC,$xpcur_G_cond_add_comments,))>
+        
+        <?MIVAR NAME=xpcur_G_expcond_insert_columns>$xpcur_G_expcond_insert_columns , expcond_comments<?/MIVAR>
+        
+        <?MIVAR NAME=xpcur_G_expcond_insert_values>$xpcur_G_expcond_insert_values ,'$xpcur_G_cond_add_comments'<?/MIVAR>
+        
+    <?/MIBLOCK>
+
+
     <?MIVAR COND=$(XST,$xpcur_G_cond_add_attribute)>
         <?MIVAR NAME=xpcur_G_expcond_insert_columns>$xpcur_G_expcond_insert_columns, expcond_mrkr_zdb_id<?/MIVAR>
         <?MIVAR NAME=xpcur_G_expcond_insert_values>$xpcur_G_expcond_insert_values, '$xpcur_G_cond_add_attribute'<?/MIVAR>
@@ -1111,7 +1123,7 @@ EFFECTS
 
   <?/MIBLOCK>
   
-  <?MIBLOCK COND=$(NXST,$gPSLitem_stage_not_overlap)>
+  <?MIBLOCK COND=$(NXST,$xpatcurup_do_not_reset_checked)>
     <?MIVAR NAME=xpcur_c_checked_expression><?/MIVAR>
 
       <?MIVAR NAME=pubcur_onload>$pubcur_onload storeSession('$ZDB_ident','$OID','xpcur_c_checked_expression','');<?/MIVAR>
