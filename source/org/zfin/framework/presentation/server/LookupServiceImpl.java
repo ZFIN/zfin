@@ -13,6 +13,7 @@ import org.zfin.repository.SessionCreator;
 import org.apache.log4j.Logger;
 import org.apache.commons.collections.CollectionUtils;
 import org.geneontology.oboedit.datamodel.Synonym;
+import org.geneontology.util.CollectionUtil;
 
 import java.util.*;
 
@@ -45,12 +46,9 @@ public class LookupServiceImpl
 
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
-        List<AnatomyItem> anatomyItems = new ArrayList<AnatomyItem>();
-        if(query.length()>2){
-            anatomyItems = ar.getAnatomyItemsByName(query,false) ;
-            Collections.sort(anatomyItems, new SortAnatomySearchTerm(query));
-        }
-        if(wildCard==true){
+        List<AnatomyItem> anatomyItems= ar.getAnatomyItemsByName(query,false) ;
+        Collections.sort(anatomyItems, new SortAnatomySearchTerm(query));
+        if(wildCard==true && anatomyItems!=null && anatomyItems.size()>0){
             suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
         }
         for(AnatomyItem anatomyItem : anatomyItems){
