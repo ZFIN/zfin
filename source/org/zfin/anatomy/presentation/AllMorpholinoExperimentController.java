@@ -27,9 +27,10 @@ public class AllMorpholinoExperimentController extends AbstractCommandController
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         AnatomySearchBean form = (AnatomySearchBean) command;
 
-        AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem ai = anatomyRepository.loadAnatomyItem(form.getAnatomyItem());
-        form.setAnatomyItem(ai);
+        AnatomyItem term = retrieveAnatomyTerm(form.getAnatomyItem());
+        if (term == null)
+            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAnatomyItem().getZdbID());
+        form.setAnatomyItem(term);
 
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
         AnatomyItem anatomyItem = form.getAnatomyItem();
@@ -41,5 +42,10 @@ public class AllMorpholinoExperimentController extends AbstractCommandController
         List<MorpholinoStatistics> morpholinoStats = AnatomyTermDetailController.createMorpholinoStats(morphs, anatomyItem);
         form.setAllMorpholinos(morpholinoStats);
         return new ModelAndView("all-morpholino-experiments.page", LookupStrings.FORM_BEAN, form);
+    }
+
+    public static AnatomyItem retrieveAnatomyTerm(AnatomyItem anatomyItem) {
+        AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
+        return anatomyRepository.getAnatomyTermByID(anatomyItem.getZdbID());
     }
 }
