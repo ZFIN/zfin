@@ -207,7 +207,7 @@ EFFECTS
             <?MIVAR NAME=$delimiter>&<?/MIVAR>
             <?MIVAR NAME=$xpcur_G_fig_caption>$(REPLACE,$xpcurfig_fig_caption,&,;;)<?/MIVAR>
 
-<TEXTAREA name="xpcur_G_fig_caption" cols=85 rows=5
+<TEXTAREA name="xpcur_G_fig_caption" cols=80 rows=10
           <?MIBLOCK COND=$(EC,$xpcur_c_has_permission,f)>
             onClick="alert('No Legend Permission. Please update pub permissions.');this.blur();";
           <?/MIBLOCK>
@@ -260,7 +260,7 @@ EFFECTS
         <input name="xpcur_G_fig_add_label" type=textbox size=5>
     </td>
     <td>
-        <TEXTAREA name="xpcur_G_fig_add_caption" cols=50 rows=3
+        <TEXTAREA name="xpcur_G_fig_add_caption" cols=70 rows=10
           <?MIBLOCK COND=$(EC,$xpcur_c_has_permission,f)>
             onClick="alert('No Legend Permission. Please update pub permissions.');this.blur();";
           <?/MIBLOCK>
