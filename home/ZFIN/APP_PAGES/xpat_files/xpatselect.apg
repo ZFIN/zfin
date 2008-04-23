@@ -60,6 +60,7 @@ INPUT VARS:
     author		Exists if user entered an author string
     authsearchtype	Specifies if the author should 'begins' with or
 			'contains' the string in author.
+    TA_selected_structures	  Exists if user entered any anatomical structures.
     xpatsel_processed_selected_structures Exists if user entered any anatomical structres.
 					  Called from anatdict.apg & anatomy_item.apg
 
@@ -119,9 +120,29 @@ function start_note() {
   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
 
+function process_structures(list) {
+
+  matchcomma = /\,/g;
+  list = list.replace(matchcomma,"|");
+
+  matchreturn = /\n/g;
+  list = list.replace(matchreturn,",");
+
+  matchmulticomma = /,{1,}/g;
+  list = list.replace(matchmulticomma,",");
+
+  matchfirstcomma = /^,/g;
+  list = list.replace(matchfirstcomma,"");  
+
+  matchlastcomma = /,$/g;
+  list = list.replace(matchlastcomma,"");
+
+  document.critform.xpatsel_processed_selected_structures.value = list;
+}
 
 function call_submit() {
   
+  process_structures(document.critform.TA_selected_structures.value);
   if (document.critform.stage_start.selectedIndex > document.critform.stage_end.selectedIndex) {
     //swap it so that the earlier stage is first.. after all, the user isn't "wrong" in saying
     //that they want all the stages between Adult & Zygote instead of Zygote & Adult..
@@ -131,9 +152,10 @@ function call_submit() {
     document.critform.stage_start.selectedIndex = tempindex;
   }
 
-  // Added for backward compliants.  TA_selected_structures no longer necessary.
-  document.critform.TA_selected_structures = document.critform.xpatsel_processed_selected_structures ;  
+  //remove double quotes
+  document.critform.TA_selected_structures.value=document.critform.TA_selected_structures.value.replace(/"/g,"");
   document.critform.submit();
+  return true;
 }
 
 
@@ -147,9 +169,9 @@ function call_reset() {
   document.critform.assay.value=document.critform.assay[0].value;
   document.critform.MOgene.value = '';
   document.critform.MOsearchtype.selectedIndex = 0;
-  document.critform.xpatsel_processed_selected_structures = '';
   document.critform.xpatsel_imagesOnly.checked = false;
   document.critform.xpatsel_jtype[2].checked = true;
+  document.critform.TA_selected_structures.value = '';
   document.critform.include_substructures.checked = true;
   document.critform.structure_bool[0].checked = true;
   document.critform.searchtype.selectedIndex = 0;
@@ -159,7 +181,6 @@ function call_reset() {
   if (document.critform.xpatsel_recentRecords != null) {
      document.critform.xpatsel_recentRecords.value = '';
   }
- clearTable() ;
 }
 
 // we decided to take off this function. Doesn't hurt to keep
@@ -245,8 +266,10 @@ function openChild(childWinUrl,childWinName) {
   ==========  CONVERT STRUCTURE NAMES TO ZDB_IDs, DISPLAY FEEDBACK
   ============================================================================
   If the user entered structures in the Anatomy text area, it will populate
-  two variables.  xpatsel_processed_selected_structures hidden variable has terms 
-  commas separated.
+  two variables.  The direct variable (TA_selected_structures) and via 
+  javascript, xpatsel_processed_selected_structures, which has commas replaced with
+  pipes, so that it can be comma seperated (webblade likes comma seperation,
+  and not much else). 
   
   xpatselectanatverify.apg will handle this, xpatsel_processed_selected_structures
   goes in, anatomy_zdb_id_list and xpatsel_anatomy_error_occured come out.
@@ -256,7 +279,7 @@ function openChild(childWinUrl,childWinName) {
 
 <?/MICOMMENT>
 
-<?MIBLOCK COND="$(XST,$xpatsel_processed_selected_structures)">
+<?MIBLOCK COND="$(AND,$(XST,$TA_selected_structures),$(XST,$xpatsel_processed_selected_structures))">
 
   <?MISQL COND=$(XST,$debug_timing) SQL="
     execute function get_time()">
@@ -420,6 +443,7 @@ function openChild(childWinUrl,childWinName) {
     $(IF,$(XST,$MOgene),$(VECAPPEND,$xpatsel_urlVec,MOgene=$(URLENCODE,$MOgene)))
     $(IF,$(XST,$MOsearchtype),$(VECAPPEND,$xpatsel_urlVec,MOsearchtype=$(URLENCODE,$MOsearchtype)))
     $(IF,$(XST,$authsearchtype),$(VECAPPEND,$xpatsel_urlVec,authsearchtype=$authsearchtype))
+     $(IF,$(XST,$TA_selected_structures),$(VECAPPEND,$xpatsel_urlVec,TA_selected_structures=$(URLENCODE,$TA_selected_structures)))    
      $(IF,$(XST,$xpatsel_processed_selected_structures),$(VECAPPEND,$xpatsel_urlVec,xpatsel_processed_selected_structures=$xpatsel_processed_selected_structures))
     $(IF,$(XST,$include_substructures),$(VECAPPEND,$xpatsel_urlVec,include_substructures=$include_substructures))
     $(IF,$(XST,$xpatsel_jtype),$(VECAPPEND,$xpatsel_urlVec,xpatsel_jtype=$xpatsel_jtype))
@@ -550,6 +574,7 @@ function openChild(childWinUrl,childWinName) {
       <?MIVAR name=$UserInput COND=$(XST,$structure_bool)>$UserInput&structure_bool=$structure_bool<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$include_substructures)>$UserInput&include_substructures=$include_substructures<?/MIVAR>
+      <?MIVAR name=UserInput COND=$(XST,$TA_selected_structures)>$UserInput&TA_selected_structures=$(URLENCODE,$TA_selected_structures)<?/MIVAR>
       <?MIVAR name=UserInput COND=$(XST,$xpatsel_processed_selected_structures)>$UserInput&xpatsel_processed_selected_structures=$(URLENCODE,$xpatsel_processed_selected_structures)<?/MIVAR>
       
     <?/MIBLOCK>
@@ -691,6 +716,12 @@ function openChild(childWinUrl,childWinName) {
     </tr>
   </table>
 
+  <form name=critform 
+        method=get
+        action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+    <input type=hidden name=MIval value=aa-xpatselect.apg>
+    <input type=hidden name=query_results value="exist">
+    <input type=hidden name=START value="0">
 
     <?MIVAR COND="$(NXST,$stage_start)" NAME=$stage_start>$xpatsel_minStage<?/MIVAR>
     <?MIVAR COND="$(NXST,$stage_end)" NAME=$stage_end>$xpatsel_maxStage<?/MIVAR>
@@ -717,15 +748,6 @@ function openChild(childWinUrl,childWinName) {
 
 
     <table border=0 width=100% cellpadding=3 cellspacing=0>
-    <?MICOMMENT>
-    This is here in order to increase javascript reliability.  Otherwise, we get form submits when not appropriate.
-    <?/MICOMMENT>
-  <form name=critform 
-        method=get
-        action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-    <input type=hidden name=MIval value=aa-xpatselect.apg>
-    <input type=hidden name=query_results value="exist">
-    <input type=hidden name=START value="0">
       <?MIVAR>
 	<tr>
 	  <td nowrap>
@@ -738,7 +760,7 @@ function openChild(childWinUrl,childWinName) {
 	        <option value="contains" $(IF,$(AND,$(XST,$searchtype),$(EC,$searchtype,contains)),SELECTED) >contains
   	        <option value="begins" $(IF,$(AND,$(XST,$searchtype),$(EC,$searchtype,begins)),SELECTED) >begins with
                 <option value="equals" $(IF,$(AND,$(XST,$searchtype),$(EC,$searchtype,equals)),SELECTED) >equals
-	    </SELECT>
+	    </select>
 	    <input id="xpatselGene" type=text name=gene_name size="27"
 		   onKeyDown="
 		     k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
@@ -771,6 +793,7 @@ function openChild(childWinUrl,childWinName) {
 		  <OPTION $(IF,$(EC,$stage_end,$3), SELECTED) VALUE="$3")> $1 
 		<?/MISQL>
 	      </SELECT>
+	    </FONT>
 	    <br><a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
 	    <!-- end stage -->
 	  </td>
@@ -788,12 +811,14 @@ function openChild(childWinUrl,childWinName) {
                 <?/MICOMMENT>
 		<option value="starts"  $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,starts)),SELECTED) >begins with
                 <option value="equals" $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,equals)),SELECTED) >equals
+	    </select>
 	      </SELECT>
 	      <INPUT type=text id="xpatselMutant" name=mutant value="$(IF,$(XST,$mutant),$mutant)" size=15
 		     onKeyDown="
 		        k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		       if (k == 13 ) { call_submit(); }  ">
 	      <!-- end mutant -->
+	    </FONT>
 	  </td>
 	</tr>
 
@@ -812,6 +837,7 @@ function openChild(childWinUrl,childWinName) {
 		       if (k == 13 ) { call_submit(); }  " value="$(IF,$(XST,$MOgene),$MOgene)">
 	      <!-- end morpholino -->
 	      
+	    </FONT>
 	  </td>
           <td>
             &nbsp;
@@ -830,6 +856,7 @@ function openChild(childWinUrl,childWinName) {
 	      <input type=text id="xpatselAuthor" name="author" size=25  onKeyDown="
 		     k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		     if (k == 13 ) { call_submit(); }" value="$(IF,$(XST,$author),$author)">
+	    </FONT>
 	    <!-- end author -->
 	  </td>
 	  <td>
@@ -845,6 +872,7 @@ function openChild(childWinUrl,childWinName) {
 		  <OPTION $(IF,$(EC,$assay,$1),SELECTED) value='$1'>$1
 		<?/MISQL>
 	      </SELECT>
+	    </FONT>
 	    <!-- end assay type -->
  
 	   
@@ -860,38 +888,35 @@ function openChild(childWinUrl,childWinName) {
             <TR>
 	      <TD colspan="2">
 		<span style="float: left;">
-                  <label for="xpatsel_processed_selected_structures" class="multisearchLabel">
-		    <b>Anatomy</b>
+                  <label for="TA_selected_structures" class="multisearchLabel">
+		    <A href="/action/anatomy/search">Anatomy</A>
                   </label>
                 </span>
                 <span style="float: right;">
-                  <label class="accessoryLabel">[Enter terms to search]</label>
+                  <label class="accessoryLabel">[Enter one anatomical term per line]</label>
                 </span>
 	     </TD>
 	     </TR>
 	     <TR>
 	     <TD colspan="2">
+		<TEXTAREA cols="46" rows="3" name="TA_selected_structures" id="TA_selected_structures"><?MIVAR COND="$(XST,$TA_selected_structures)">$TA_selected_structures<?/MIVAR></TEXTAREA>
+	        <DIV id="autosuggest"><ul></ul></DIV>
+                <script>
+		  var agt = navigator.userAgent;
+          var is_safari2 = ((agt.indexOf('Safari/4')!=-1))? 1 : 0 ;
+		  if (is_safari2 == 1 ) 
+		  {
+              alert("Anatomy lookup not supported for Safari 2.  Please upgrade to Safari 3 or use Firefox.") ; 
+          }
+          else{
+		    <?MIVAR>
+		    var anatomyList = new Array($xpatsel_anatList);
+		    <?/MIVAR>
+		    new AutoSuggest(document.getElementById("TA_selected_structures"),anatomyList);
+          }
+                </script>
 
-		<input type="hidden"  id="xpatsel_processed_selected_structures" name="xpatsel_processed_selected_structures" <?MIVAR COND=$(XST,$xpatsel_processed_selected_structures)>value=$xpatsel_processed_selected_structures<?/MIVAR>>
-<script type="text/javascript">
-    var LookupProperties = {
-        divName: "anatomyTerm",
-        inputName: "searchTerm",
-        showError: true,
-        imageURL: "/gwt/org.zfin.framework.presentation.LookupTable/",
-        <?MIVAR COND=$(XST,$xpatsel_processed_selected_structures)>previousTableValues: "$xpatsel_processed_selected_structures",<?/MIVAR>
-        hiddenName: "xpatsel_processed_selected_structures",
-        type: "ANATOMY_ONTOLOGY",
-        wildcard: false
-    };
-</script>
-
-
-    <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.LookupTable/Lookup.css"/>
-    <script language="javascript" src="/gwt/org.zfin.framework.presentation.LookupTable/org.zfin.framework.presentation.LookupTable.nocache.js"></script>
-
-    <div id="anatomyTerm"> </div> 
-
+		<input type="hidden" name="xpatsel_processed_selected_structures" <?MIVAR COND=$(XST,$xpatsel_processed_selected_structures)>value=$xpatsel_processed_selected_structures<?/MIVAR>>
 		
 	      </TD> <?MICOMMENT> end new selected structures textarea <?/MICOMMENT>
             </TR>

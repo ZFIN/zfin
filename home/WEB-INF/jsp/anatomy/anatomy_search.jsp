@@ -53,7 +53,7 @@
                                 divName: "anatomyTerm",
                                 inputName: "searchTerm",
                                 showError: true,
-                                buttonText: "Search",
+                                showButton: true,
                                 type: "ANATOMY_ONTOLOGY"
                             };
 

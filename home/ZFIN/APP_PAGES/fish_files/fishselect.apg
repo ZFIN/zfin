@@ -36,9 +36,38 @@ Message: $MI_ERRORMSG
   <?/MICOMMENT>
   <script>
 
-function call_submit() {
-  document.BrowserForm.submit();
-}
+  function process_structures(list) {
+  	list = list.replace(/^\s+|\s+$/g,'');
+  	spc = " ";
+ 	 list = list.replace(/spc{2,}/g,' ');
+ 	 document.BrowserForm.TA_selected_structures.value = list;  
+ 	 //window.alert(list);
+  	matchcomma = /\,/g;
+  	list = list.replace(matchcomma,"|");
+
+ 	 matchreturn = /\n/g;
+ 	 list = list.replace(matchreturn,",");
+
+ 	 matchmulticomma = /,{1,}/g;
+ 	 list = list.replace(matchmulticomma,",");
+
+ 	 matchfirstcomma = /^,/g;
+ 	 list = list.replace(matchfirstcomma,"");  
+
+  	matchlastcomma = /,$/g;
+  	list = list.replace(matchlastcomma,"");
+
+  	document.BrowserForm.fsel_processed_selected_structures.value = list;
+  	//window.alert(document.BrowserForm.fsel_processed_selected_structures.value);
+  }
+
+  function form_submit() { 
+ 
+	  process_structures(document.BrowserForm.TA_selected_structures.value);
+	  //remove double quotes
+	  document.BrowserForm.TA_selected_structures.value=document.BrowserForm.TA_selected_structures.value.replace(/"/g,"");  
+	  document.BrowserForm.submit();
+  }
 
   function call_reset() {   
   	 document.BrowserForm.lg.selectedIndex = 0;
@@ -47,14 +76,13 @@ function call_submit() {
  	 document.BrowserForm.chrom_change.selectedIndex = 0;
  	 document.BrowserForm.mutagen.selectedIndex = 0;
  	 document.BrowserForm.START.value = "";  
- 	 document.BrowserForm.fsel_processed_selected_structures.value = '';
+ 	 document.BrowserForm.TA_selected_structures.value = '';
  	 document.BrowserForm.include_substructures.checked = true;
  	 document.BrowserForm.structure_bool[0].checked = true;
 	 document.BrowserForm.fselFilterValue[0].checked = false;
 	 document.BrowserForm.fselFilterValue[1].checked = false;
   	 document.BrowserForm.fselFilterValue[2].checked = true;
   	 document.BrowserForm.WINSIZE.value = 20;  
-     clearTable() ;
   }
 
 
@@ -74,6 +102,15 @@ function call_submit() {
   <?/MICOMMENT>
 
   <?MIBLOCK COND="$(OR,$(XST,$fsel_cnstrct_id),$(XST,$fsel_allele_id),$(XST,$fsel_marker_id))">
+    <?MIVAR NAME=query_results>f<?/MIVAR>
+  <?MIELSE COND="$(XST,$fsel_anatomy_item_id)">  
+    <?MISQL SQL="select anatitem_name from anatomy_item 
+       	          where anatitem_zdb_id = '$fsel_anatomy_item_id';">
+      <?MIVAR NAME=TA_selected_structures>$1<?/MIVAR>        
+    <?/MISQL>  
+    <?MIBLOCK COND="$(XST,$fsel_anatomy_include)">
+      <?MIVAR NAME=include_substructures>checked<?/MIVAR>
+    <?/MIBLOCK> 
     <?MIVAR NAME=query_results>f<?/MIVAR>
   <?/MIBLOCK>
 
@@ -555,7 +592,7 @@ function call_submit() {
          There are two cases that triggers anatomy search:
 
          1) from fishselect.apg itself, when user typed terms into the anatomy box.
-            In this case, $fsel_processed_selected_structures is populated as
+            In this case, $TA_selected_structures is populated and then converted to
             a comma separated list stored in $fsel_processed_selected_structures. Variable
             $include_substructures defines whether substructures need to be included,variable
             $structure_bool defines whether is a "or" or "and" search for multi-terms.
@@ -835,12 +872,6 @@ function call_submit() {
 	    <?MIVAR>
 	      <font size="+1">Mutant / Transgenic Lines Search Results (<b>$num_recs</b> $(IF,$(<,$num_recs,2),record found,records found))
 	      </font>
-  <form name=critform 
-        method=get
-        action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-    <input type=hidden name=MIval value=aa-xpatselect.apg>
-    <input type=hidden name=query_results value="exist">
-    <input type=hidden name=START value="0">
 	    <?/MIVAR>
 	  </td>
 	  <td width=20% align=center>
@@ -1198,6 +1229,7 @@ function call_submit() {
 	  <?MIVAR name=UserInput COND=$(XST,$pubId)>$UserInput&pubId=$pubId<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$mutagen)>$UserInput&mutagen=$mutagen<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$chrom_change)>$UserInput&chrom_change=$chrom_change<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$TA_selected_structures)>$UserInput&TA_selected_structures=$(URLENCODE,$TA_selected_structures)<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$include_substructures)>$UserInput&include_substructures=$include_substructures<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$structure_bool)>$UserInput&structure_bool=$structure_bool<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$fselFilterValue)>$UserInput&fselFilterValue=$fselFilterValue<?/MIVAR>
@@ -1424,12 +1456,7 @@ function call_submit() {
           <option $(IF,$(EC,$compare,equals),selected) value=equals>equals
        </select>    
        
-       <input type=text name=fsel_inputname size=18 value="$(IF,$(XST,$fsel_inputname),$fsel_ori_inputname)" 
-		   onKeyDown="
-		     k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
-		     if (k == 13 ) { 
-		       call_submit(); 
-             };">
+       <input type=text name=fsel_inputname size=18 value="$(IF,$(XST,$fsel_inputname),$fsel_ori_inputname)">
        <?/MIVAR>
      </td>
 
@@ -1496,46 +1523,37 @@ function call_submit() {
             <TR>
 	      <TD colspan="2">
 		<span style="float: left;">
-                  <label for="searchTerm" class="multisearchLabel">
+                  <label for="TA_selected_structures" class="multisearchLabel">
 		    <b>Affected Anatomy</b>
                   </label>
                 </span>
                 <span style="float: right;">
-                  <label class="accessoryLabel">[Enter terms to search]</label>
+                  <label class="accessoryLabel">[Enter one anatomical term per line]</label>
                 </span>
 	     </TD>
 	     </TR>
 	     <TR>
 	     <TD colspan="2">
+		<TEXTAREA cols="46" rows="3" name="TA_selected_structures" id="TA_selected_structures"><?MIVAR COND="$(XST,$TA_selected_structures)">$TA_selected_structures<?/MIVAR></TEXTAREA>
+	        <DIV id="autosuggest"><ul></ul></DIV>
+                <script>
+		  var agt = navigator.userAgent;
+          var is_safari2 = ((agt.indexOf('Safari/4')!=-1))? 1 : 0 ;
+		  if (is_safari2 == 1 ) 
+		  {
+              alert("Anatomy lookup not supported for Safari 2.  Please upgrade to Safari 3 or use Firefox.") ; 
+          }
+          else{
+		    <?MIVAR>
+		    var anatomyList = new Array($fsel_anatList);
+		    <?/MIVAR>
+		    new AutoSuggest(document.getElementById("TA_selected_structures"),anatomyList);
+		  }
+                </script>
 
-
-		<input type="hidden" id="fsel_processed_selected_structures" name="fsel_processed_selected_structures" <?MIVAR COND=$(XST,$fsel_processed_selected_structures)>value=$fsel_processed_selected_structures<?/MIVAR> >		
-
-
-<script type="text/javascript">
-    var LookupProperties = {
-        divName: "anatomyTerm",
-        inputName: "searchTerm",
-        showError: true,
-        //buttonText: "Add Term",
-        imageURL: "/gwt/org.zfin.framework.presentation.LookupTable/",
-        <?MIVAR COND=$(XST,$fsel_processed_selected_structures)>previousTableValues: "$fsel_processed_selected_structures",<?/MIVAR>
-        hiddenName: "fsel_processed_selected_structures",
-        type: "ANATOMY_ONTOLOGY",
-        wildcard: false
-    };
-</script>
-
-
-    <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.LookupTable/Lookup.css"/>
-    <script language="javascript" src="/gwt/org.zfin.framework.presentation.LookupTable/org.zfin.framework.presentation.LookupTable.nocache.js"></script>
-
-    <div id="anatomyTerm"> </div> 
-
-
+		<input type="hidden" name="fsel_processed_selected_structures" <?MIVAR COND=$(XST,$fsel_processed_selected_structures)>value=$fsel_processed_selected_structures<?/MIVAR> >		
 	      </TD> <?MICOMMENT> end new selected structures textarea <?/MICOMMENT>
             </TR>
-
             <TR>
 	      <TD valign="top">
 		<?MICOMMENT>
@@ -1620,9 +1638,8 @@ we have to do at this point is pass the return record along to the fishlister.
   <TR>
    <TD class="submitbar" colspan=2 align="right">
     <input name="fishsel_calledBySelf" type="hidden" value="true">
-    <!-- <input type=submit name=search value="SEARCH">  -->
-    <input type=button name=search value="SEARCH" onClick="call_submit();"> 
-    <input type=button onClick="call_reset();" value="RESET">  
+    <input type=submit name=search value="SEARCH" onClick="form_submit();">
+    <input type=button onClick="call_reset();" value="RESET">  </font>
    </TD>
   </TR>
 

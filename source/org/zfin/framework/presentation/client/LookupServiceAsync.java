@@ -7,5 +7,5 @@ import com.google.gwt.user.client.ui.SuggestOracle;
  */
 public interface LookupServiceAsync {
 
-    public void getSuggestions(SuggestOracle.Request req,boolean doWildCard, AsyncCallback callback); 
+    public void getSuggestions(SuggestOracle.Request req, AsyncCallback callback); 
 }
