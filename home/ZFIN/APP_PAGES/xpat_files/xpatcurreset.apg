@@ -127,7 +127,7 @@ Reset the cookies and infrastructure tables for pub curation.
                    xpatinf_date )
                VALUES (
                    '$xpatinf_zdb_id',
-                   ''$ZDB_ident'', 
+                   '$ZDB_ident', 
                    '$OID', 
                    '$1',
                    '$2',
