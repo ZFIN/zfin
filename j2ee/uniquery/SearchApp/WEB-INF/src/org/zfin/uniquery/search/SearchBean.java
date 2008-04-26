@@ -7,6 +7,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -294,7 +295,7 @@ public class SearchBean
         Token tok = null;
         while ((tok = tokenStream.next()) != null)
             {
-            query.add(new PrefixQuery(new Term(field, tok.termText())), true, false);
+		query.add(new PrefixQuery(new Term(field, new String(tok.termBuffer(), 0, tok.termLength()))), BooleanClause.Occur.MUST);
             }
         return query;
         }
@@ -335,20 +336,20 @@ public class SearchBean
 	    if(token == null){
 		break;
 	    }
-	    TermQuery termQuery = new TermQuery(new Term("type", token.termText()));
+	    TermQuery termQuery = new TermQuery(new Term("type", new String(token.termBuffer(),0,token.termLength())));
 
 	    if(termQuery == null)
 		throw new RuntimeException("termQuery is null [" + i +"]");
 	    // the huge boost values are to get terms to sort properly
 	    int boostValue = (int) Math.pow((types.length - i), 8);
 	    termQuery.setBoost(boostValue);
-	    prefixQuery.add(termQuery, false, false);
+	    prefixQuery.add(termQuery, BooleanClause.Occur.SHOULD);
 	}
 
         BooleanQuery fullQuery = new BooleanQuery();
         fullQuery.setMaxClauseCount(32000);
-        fullQuery.add(prefixQuery, true, false);
-        fullQuery.add(query, true, false);
+        fullQuery.add(prefixQuery, BooleanClause.Occur.MUST);
+        fullQuery.add(query, BooleanClause.Occur.MUST);
 
 	return fullQuery;
         }
@@ -381,12 +382,12 @@ public class SearchBean
                 }
             else
                 {
-                nextQueryTerm = nextQueryToken.termText();
+		    nextQueryTerm = new String (nextQueryToken.termBuffer(), 0, nextQueryToken.termLength());
                 }
 
             while ((nextNonStoppedToken = nonStoppedTokenStream.next()) != null)
                 {
-                nextNonStoppedTerm = nextNonStoppedToken.termText();
+		    nextNonStoppedTerm =  new String (nextNonStoppedToken.termBuffer(), 0, nextNonStoppedToken.termLength());
                 if (nextNonStoppedTerm.equals(nextQueryTerm))
                     {
                     break;
@@ -714,7 +715,7 @@ public class SearchBean
              Iterator anatkeysIter = anatkeys.iterator();
              while (anatkeysIter.hasNext()) {
                 String anatTerm = (String) anatkeysIter.next();
-                specificSearchURL += URLEncoder.encode(anatTerm) + "%0D%0A"; // %0D%0A = CR-LF
+                specificSearchURL += URLEncoder.encode(anatTerm,"UTF-8") + "%0D%0A"; // %0D%0A = CR-LF
              }
            }else {
 	       specificSearchURL += "&gene_name=" + queryTerm;
@@ -728,7 +729,7 @@ public class SearchBean
              Iterator anatkeysIter = anatkeys.iterator();
              while (anatkeysIter.hasNext()) {
                 String anatTerm = (String) anatkeysIter.next();
-                specificSearchURL += URLEncoder.encode(anatTerm) + " ";
+                specificSearchURL += URLEncoder.encode(anatTerm,"UTF-8") + " ";
              }
            }
         } else if (categoryDescription.toLowerCase().equals("people")) {

@@ -23,7 +23,7 @@ STATICS = cvu.jar
 
 # Also need to get libs from support directory into target directory.
 
-SUPPORTJARS = commons-lang-2.0.jar lucene-1.3.jar UniquerySupport.jar
+SUPPORTJARS = commons-lang-2.3.jar lucene-core-2.3.1.jar UniquerySupport.jar
 SUPPORTJARSRCPATHS = $(foreach SUPPORTJAR,$(SUPPORTJARS),$(SUPPORTDIR)/$(SUPPORTJAR))
 SUPPORTJARDESTPATHS = $(foreach SUPPORTJAR,$(SUPPORTJARS),$(TARGETDIR)/$(SUPPORTJAR))
 

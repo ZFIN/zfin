@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/j2ee/uniquery/Support/lib
 
-STATICS = commons-lang-2.0.jar lucene-1.3.jar
+STATICS = commons-lang-2.3.jar lucene-core-2.3.1.jar 
 
 
 # ---------------  Production Rules  ------------------------------------

@@ -14,12 +14,12 @@ import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.WhitespaceTokenizer;
 import org.apache.lucene.analysis.PorterStemFilter;
 import java.io.Reader;
-import java.util.Hashtable;
+import java.util.Set;
 
 
 public class ZfinAnalyzer extends Analyzer
     {
-    private static Hashtable stopWords;
+    private static Set stopWords;
 
     public static final String[] STOP_WORDS =
         {
@@ -67,7 +67,7 @@ public class ZfinAnalyzer extends Analyzer
         
     public ZfinAnalyzer(String[] words)
         {
-        stopWords = StopFilter.makeStopTable(words);
+	    stopWords = StopFilter.makeStopSet(words);
         }
 
 

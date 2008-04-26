@@ -4,6 +4,7 @@ import org.zfin.uniquery.ZfinAnalyzer;
 import org.zfin.uniquery.SearchCategory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.document.Field;
 import org.apache.commons.lang.StringUtils;
 import cvu.html.HTMLTokenizer;
@@ -482,20 +483,20 @@ public class Indexer implements Runnable
     			if (u != null) {
     				if (u.getFile() != null && u.getFile().length() > 0)
     				{
-    					doc.add(Field.Text("url", u.getFile())); // store relative URLs
+				    doc.add(new Field("url", u.getFile(), Field.Store.YES,Field.Index.TOKENIZED)); // store relative URLs
     				}
     				else
     				{
-    					doc.add(Field.Text("url", u.toString()));
+    					doc.add(new Field("url", u.toString(), Field.Store.YES,Field.Index.TOKENIZED));
     				}
     				
     				if (summary.text != null && summary.text.length() > 0)
     				{
-    					doc.add(Field.Text("body", summary.text));
+    					doc.add(new Field("body", summary.text, Field.Store.YES,Field.Index.TOKENIZED));
     				}
     				else
     				{
-    					doc.add(Field.Text("body", ""));
+				        doc.add(new Field("body", "", Field.Store.YES,Field.Index.TOKENIZED));
     					log.println(Thread.currentThread().getName() + ": no body text for URL: " + url);
     				}
     				
@@ -514,16 +515,16 @@ public class Indexer implements Runnable
     					{
     						str = str.substring(1);
     					}
-    					doc.add(Field.Text("title", str));
+    					doc.add(new Field("title", str, Field.Store.YES,Field.Index.TOKENIZED));
     				}
     				else
     				{
-    					doc.add(Field.Text("title", "Untitled"));
+    					doc.add(new Field("title", "Untitled", Field.Store.YES,Field.Index.TOKENIZED));
     				}
     			}
     			
     			String docType = getDocType(url, summary);
-    			doc.add(Field.Text("type", docType));
+    			doc.add(new Field("type", docType, Field.Store.YES,Field.Index.TOKENIZED));
     			
     			synchronized (this)
     			{

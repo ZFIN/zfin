@@ -88,9 +88,9 @@ $status =
       " -classpath " .
          "$indexAppDir/classes:" .
          "$indexAppDir/lib/UniquerySupport.jar:" .
-         "$indexAppDir/lib/commons-lang-2.0.jar:" .
+         "$indexAppDir/lib/commons-lang-2.3.jar:" .
          "$indexAppDir/lib/cvu.jar:" .
-         "$indexAppDir/lib/lucene-1.3.jar" .
+         "$indexAppDir/lib/lucene-core-2.3.1.jar" .
       " org.zfin.uniquery.index.Indexer " .
       " -d $newIndexDir " .
       " -u $indexAppDir/etc/searchurls.txt " .

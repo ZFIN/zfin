@@ -23,6 +23,10 @@ while (my $inputLine = <INPUT>)
         {
         $category{$1}++;
         }
+    elsif ($inputLine =~ /action\/([a-zA-Z1-9_]+)/)
+        {
+        $category{$1}++;
+        }
     else
         {
         $category{$inputLine}++;

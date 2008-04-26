@@ -320,7 +320,7 @@ public class RelatedTerms
       TokenStream tokenStream = analyzer.tokenStream(field, new StringReader(queryString));
       Token token = null;
       while ((token = tokenStream.next()) != null) {
-         String tokenText = token.termText();
+	  String tokenText = new String(token.termBuffer(), 0, token.termLength());
           if (!results.contains(tokenText)) {
              results.add(tokenText);
           }
