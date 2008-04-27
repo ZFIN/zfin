@@ -14,12 +14,12 @@ import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.WhitespaceTokenizer;
 import org.apache.lucene.analysis.PorterStemFilter;
 import java.io.Reader;
-import java.util.Hashtable;
+import java.util.Set;
 
 
 public class ZfinAnalyzer extends Analyzer
     {
-    private static Hashtable stopWords;
+    private static Set stopWords;
 
     public static final String[] STOP_WORDS =
         {
@@ -39,12 +39,17 @@ public class ZfinAnalyzer extends Analyzer
         "under", "up", "use", "very", "want", "was",
         "way", "we", "well", "were", "what", "when",
         "where", "which", "while", "who", "will",
-        "with", "would", "you", "your", "zfin",
+        "with", "would", "you", "your", "zfin", "fish",
         "anatomy", "publication", "people", "lab", "companies",
         "acc", "email", "home", "mutant", "transgenic", "wild", 
         "type", "gene", "marker", "clone", "expression", "map",
         "about", "helpful", "hint", "citing", "copyright", 
         "university", "oregon", "eugene", "logo", "design",
+	"name", "names", "symbol", "blast", "data","zdb","all",
+        "bp", "aa", "ab", "citation", "mo", "go", "term", "terms",
+        "input", "welcome", "more", "image", "images","information",
+	"page", "pages", "length", "view", "other", "development",
+	"zebrafish", "book", "protocol", "meeting", "meetings","job", "jobs",
         "a", "b", "c", "d", "e", "f", "g", "h", "i",
         "j", "k", "l", "m", "n", "o", "p", "q", "r",
         "s", "t", "u", "v", "w", "x", "y", "z"
@@ -62,7 +67,7 @@ public class ZfinAnalyzer extends Analyzer
         
     public ZfinAnalyzer(String[] words)
         {
-        stopWords = StopFilter.makeStopTable(words);
+	    stopWords = StopFilter.makeStopSet(words);
         }
 
 

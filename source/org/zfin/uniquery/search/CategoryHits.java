@@ -38,7 +38,7 @@ public class CategoryHits {
     private Hits hits; // the hits related to the given category
     private ArrayList hitsAsHTML; // the list of hits transformed into the HTML String
  
-    public CategoryHits (SearchCategory category, Hits hits, Query query) throws Exception {
+    public CategoryHits (SearchCategory category, Hits hits, Query query, int max_hits) throws Exception {
         
         this.category = category;
         this.hits = hits;
@@ -51,7 +51,7 @@ public class CategoryHits {
          * hits objects into the HTML string that will be displayed on the screen.
          * We use the highlighter and query term to provide additional string formatting.
          */
-        for (int i=0; i < hits.length(); i++) {
+        for (int i=0; i < (hits.length() > max_hits ? max_hits : hits.length()); i++) {
             String text = hits.doc(i).get(SearchBean.BODY);
             String highlightedText = "";
             if (text != null)
