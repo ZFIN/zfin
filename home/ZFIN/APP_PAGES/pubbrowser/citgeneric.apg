@@ -47,6 +47,14 @@
       and jrnl_zdb_id = pub_jrnl_zdb_id")
 
   $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, marker_relationship
+      where recattrib_data_zdb_id = mrel_mrkr_1_zdb_id 
+      and mrel_mrkr_2_zdb_id = '"$OID"'
+      and recattrib_source_zdb_id = p.zdb_id
+      and mrel_mrkr_1_zdb_id[1,8] = 'ZDB-MRPH'
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citfish_fromwhere,"
       from record_attribution, publication p, journal, data_alias
       where recattrib_data_zdb_id = dalias_zdb_id
       and dalias_data_zdb_id = '"$OID"'
