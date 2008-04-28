@@ -1,8 +1,0 @@
-*********************************************************************
-* This folder is used to store schema changes.  It should probably 
-* be stored in its own CVS repository, or cleanded out periodically.
-* So far, the convention is to create a directory for the project 
-* that needs schema changes and store any .sql files for that project
-* in that folder.
-
-*********************************************************************
