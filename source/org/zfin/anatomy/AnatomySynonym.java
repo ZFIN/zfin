@@ -2,10 +2,12 @@ package org.zfin.anatomy;
 
 import org.zfin.infrastructure.DataAlias;
 
+import java.io.Serializable;
+
 /**
  * This class holds the info about aliases for a specific anatomy item.
  */
-public class AnatomySynonym extends DataAlias {
+public class AnatomySynonym extends DataAlias  implements Serializable {
 
     private AnatomyItem item;
 

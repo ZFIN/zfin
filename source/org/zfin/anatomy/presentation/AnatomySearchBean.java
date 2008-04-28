@@ -392,6 +392,28 @@ public class AnatomySearchBean extends PaginationBean {
         return url.getFullURL();
     }
 
+    public String getMutantSearchLink(boolean includeSubstructures) {
+        URLCreator url = new URLCreator(ZfinProperties.getWebDriver());
+        url.addNamevaluePair("MIval", "aa-fishselect.apg");
+        url.addNamevaluePair("query_results", "exist");
+        url.addNamevaluePair("START", "1");
+        url.addNamevaluePair("TA_selected_structures", getAnatomyItem().getName());
+        url.addNamevaluePair("fsel_processed_selected_structures", getAnatomyItem().getName());
+        if (includeSubstructures)
+            url.addNamevaluePair("include_substructures", "checked");
+        url.addNamevaluePair("structure_bool","and");
+        url.addNamevaluePair("mutagen","any");
+        url.addNamevaluePair("lg","0");
+        url.addNamevaluePair("WINSIZE", "20");
+        url.addNamevaluePair("fishsel_calledBySelf","true");
+        url.addNamevaluePair("fselFilterValue","all");
+        url.addNamevaluePair("chrom_change","any");
+        url.addNamevaluePair("search","SEARCH");
+        url.addNamevaluePair("fsel_inputname","");
+        url.addNamevaluePair("compare","contains");
+        return url.getFullURL();
+    }
+
     public boolean isWildtype() {
         return wildtype;
     }
@@ -406,6 +428,10 @@ public class AnatomySearchBean extends PaginationBean {
 
     public String getExpressionSearchLinkSubstructures() {
         return getExpressionSearchLink(true);
+    }
+
+    public String getMutantSearchLinkSubstructures() {
+        return getMutantSearchLink(true);
     }
 
 

@@ -89,8 +89,11 @@
                                      integerEntity="${formBean.genotypeCount}"/>
                     </a> &nbsp;
                     (including substructures
-                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20&include_substructures=checked">
-                        ${formBean.anatomyStatisticsMutant.numberOfObjects} genotypes</a>)
+                    <a href='/${formBean.mutantSearchLinkSubstructures}'>
+                        <zfin:choice choicePattern="0#genotypes| 1#genotype| 2#genotypes"
+                                     integerEntity="${formBean.anatomyStatisticsMutant.numberOfTotalDistinctObjects}"
+                                     includeNumber="true"/>
+                    </a>)
                 </td>
             </tr>
         </tbody>

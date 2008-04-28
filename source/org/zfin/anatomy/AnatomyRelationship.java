@@ -1,5 +1,7 @@
 package org.zfin.anatomy;
 
+import java.io.Serializable;
+
 /**
  * This object constitutes a relationship of two anatomical items.
  * This object is a composite on the a AnatomyItem object,
@@ -7,7 +9,7 @@ package org.zfin.anatomy;
  * The relationship is read as follows: the parent item relates to the
  * item in this obejcts via the relationship attribute.
  */
-public class AnatomyRelationship {
+public class AnatomyRelationship  implements Serializable {
 
     private AnatomyItem anatomyItem;
     private String relationship;

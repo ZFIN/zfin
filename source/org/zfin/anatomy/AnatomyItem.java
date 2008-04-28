@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 import java.util.Set;
+import java.io.Serializable;
 
 /**
  * This business object defines an anatomical structure, aka anatomy item or anatomy term.
@@ -13,7 +14,7 @@ import java.util.Set;
  *
  * ToDo: This class needs to be refactored to allow for a common interface for a term in any ontology.
  */
-public class AnatomyItem {
+public class AnatomyItem implements Serializable {
 
     public static final String UNKNOWN = "unknown";
     private long itemID;

@@ -1,6 +1,8 @@
 package org.zfin.anatomy;
 
-public class DevelopmentStage {
+import java.io.Serializable;
+
+public class DevelopmentStage  implements Serializable {
 
     public static final String UNSPECIFIED = "unspecified";
     public static final String UNKNOWN = "unknown";
@@ -82,6 +84,7 @@ public class DevelopmentStage {
 
     /**
      * The name of a stage is a concatenation of a short name and an additional description.
+     * @return string
      */
     public String abbreviation() {
         if (name == null)
