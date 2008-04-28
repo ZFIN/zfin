@@ -33,7 +33,10 @@ public class HighQualityProbesController extends AbstractCommandController {
         AnatomySearchBean anatomyForm = (AnatomySearchBean) command;
 
         HighQualityProbesController.LOG.info("Start High Quality Probes  Controller");
-        AnatomyItem anatomyTerm = HighQualityProbesController.ar.loadAnatomyItem(anatomyForm.getAnatomyItem());
+        AnatomyItem anatomyTerm = ar.getAnatomyTermByID(anatomyForm.getAnatomyItem().getZdbID());
+        if (anatomyTerm == null)
+            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, anatomyForm.getAnatomyItem().getZdbID());
+
         anatomyForm.setAnatomyItem(anatomyTerm);
 
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
