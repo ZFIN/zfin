@@ -34,7 +34,7 @@ $phenote_dir = "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/";
 
 sub downloadGOtermFiles () { # download the obo file from GO
 
-    system("/local/bin/wget -q ftp://ftp.geneontology.org/go/ontology/gene_ontology.obo -O gene_ontology.obo") and die "can not download gene_ontology.obo";
+    system("/local/bin/curl -q http://www.geneontology.org/ontology/obo_format_1_0/gene_ontology.1_0.obo -o gene_ontology.obo") and die "can not download gene_ontology.obo";
 
     print "download done.\n" ;
 
