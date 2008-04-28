@@ -21,7 +21,6 @@ TARGETDIR = $(TARGETROOT)/lib
 SUBDIRS = DB_functions DB_triggers Java
 POSTLOADDB_SUBDIRS = DB_functions DB_triggers
 
-
 # ---------------  Production Rules  ------------------------------------
 
 # use default rules for directories without app pages in them
