@@ -9,7 +9,7 @@ rebol [
 feed-link: http://<!--|DOMAIN_NAME|-->/zf_info/news/siteNews.html
 
 ;;; url the logo is found
-feed-logo: http://<!--|DOMAIN_NAME|-->/images/zfinlogo.png"
+feed-logo: http://<!--|DOMAIN_NAME|-->/images/zfinlogo.png
 
 ;;; who owns the lawers
 feed-copyright: "University of Oregon"
