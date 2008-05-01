@@ -72,7 +72,7 @@ sub execSql {
  
   my $sth = $dbh->prepare($sql) or die "Prepare fails";
   
-  $sth -> execute();
+  $sth -> execute() or die "Could not execute $sql";
   
   open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result."
     if @colDesc; 
@@ -2797,7 +2797,7 @@ sub scrubElsevierStatistics($){
     $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'MJ12bot%'; ") ; 
     $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent = 'Mozilla/5.0 (compatible; MJ12bot/v1.2.1; http://www.majestic12.co.uk/bot.php?+)'; ") ; 
     $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'Ocelli%'; ") ; 
-    $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'holmes%") ; 
+    $agentsscrubbed += executeScrub("delete from elsevier_statistics where es_http_user_agent like 'holmes%'") ; 
     # END - scrub based on user_agent
 
 
