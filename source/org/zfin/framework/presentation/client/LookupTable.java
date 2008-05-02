@@ -1,0 +1,275 @@
+package org.zfin.framework.presentation.client;
+
+import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.i18n.client.Dictionary;
+
+import java.util.*;
+
+
+/**
+ * The structure of this SuggestBox is used in order to capture the extra "Enter" event.
+ * As this uses a "GET" encoding we can be a bit more
+ */
+public class LookupTable extends Lookup{
+
+    private FlexTable table = new FlexTable() ;
+    private Label testLabel = new Label() ;
+    private Element hiddenList = null ;
+    private String separator = "," ;
+    private List termList = new ArrayList() ;
+    public static final String JSREF_HIDDEN_NAME ="hiddenName" ;
+    public static final String JSREF_PREVIOUS_TABLE_VALUES ="previousTableValues" ;
+    public static final String JSREF_IMAGE_URL ="imageURL" ;
+
+    private String hiddenName = "hiddenName";
+    private String imageURL = "/gwt/org.zfin.framework.presentation.LookupTable/";
+    private TermStatus termStatus = new TermStatus();
+    private String noTerms = "Enter search terms" ;
+
+    public void onModuleLoad() {
+
+        lookup = new LookupInTableComposite(this) ;
+        handleProperties() ; 
+        Dictionary lookupProperties = Dictionary.getDictionary("LookupProperties") ;
+        // set options
+        Set keySet = lookupProperties.keySet() ;
+        if(keySet.contains(JSREF_HIDDEN_NAME)){
+            setHiddenName(lookupProperties.get(JSREF_HIDDEN_NAME));
+        }
+
+        // init gui
+        lookup.initGui();
+
+
+        hiddenList = DOM.getElementById(hiddenName) ;
+
+        initTable() ;
+
+//        table.setBorderWidth(1);
+        RootPanel.get(getDivName()).add(table);
+
+        HorizontalPanel horizPanel = new HorizontalPanel() ;
+        horizPanel.add(lookup) ;
+        horizPanel.add(testLabel) ;
+//        horizPanel.add(hiddenList) ;
+        RootPanel.get(getDivName()).add(horizPanel);
+
+        if(keySet.contains(JSREF_IMAGE_URL)){
+            setImageURL(lookupProperties.get(JSREF_IMAGE_URL));
+        }
+
+        if(keySet.contains(JSREF_PREVIOUS_TABLE_VALUES)){
+            setPreviousTableNames(lookupProperties.get(JSREF_PREVIOUS_TABLE_VALUES));
+        }
+
+        lookup.handleNoText();
+
+        exposeMethodToJavascript(this);
+    }
+
+    private void initTable(){
+        table.setStyleName("gwt-table-empty");
+        table.insertRow(0) ;
+        table.setText(0,0,noTerms);
+    }
+
+    public void addTermToTable(String term){
+        if(false==termList.contains(term)){
+            if(termList.size()==0 && table.getRowCount()>0){
+                table.removeRow(0);
+                table.setStyleName("gwt-table-full");
+            }
+            termList.add(term) ;
+            table.insertRow( table.getRowCount()) ;
+            int currentRow = table.getRowCount() -1 ;
+            table.setText(currentRow,1,term);
+            Image removeImage = new Image(getImageURL()+"action_delete.png") ;
+            table.setWidget(currentRow,0,new RemoveButton(removeImage,this,term));
+            DOM.setElementProperty(hiddenList, "value", generateListValues());
+            lookup.getTextBox().setText("");
+            lookup.clearError();
+            lookup.clearNote();
+            lookup.handleNoText();
+        }
+        // if contained, need to mention
+        else{
+            lookup.setErrorString("Term '"+term+"' already added");
+        }
+    }
+
+
+    /**
+     * Exposed javascript method to remove table contents and reflect in hidden.
+     */
+    public void clearTable(){
+        termList.clear();
+        while(table.getRowCount()>0){
+            table.removeRow(0);
+        }
+        DOM.setElementProperty(hiddenList, "value", "");
+        lookup.clearError();
+        lookup.clearNote();
+        lookup.setText("");
+        initTable();
+        lookup.handleNoText();
+    }
+
+    /**
+     * Exposed javascript method to remove table contents.
+     */
+    public String validateLookup(){
+        String term = lookup.getTextBox().getText() ;
+        if(term != null && term.length()>=lookup.getMinLookupLenth()){
+            LookupService.App.getInstance().validateTerm( term, new AsyncCallback(){
+                public void onFailure(Throwable throwable) {
+//                    lookup.setErrorString(throwable.toString());
+                    termStatus.setStatus(TermStatus.TERM_STATUS_FAILURE);
+                    //To change body of implemented mvn st -qthods use File | Settings | File Templates.
+                }
+
+                public void onSuccess(Object o) {
+                    termStatus = (TermStatus) o ;
+                    String textBoxTerm = lookup.getTextBox().getText() ;
+                    // checking length catching any asynchronous updates
+                    if(termStatus.isExactMatch() && textBoxTerm.length()>0){
+                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_EXACT);
+                        addTermToTable(textBoxTerm);
+                    }
+                    else
+                    if(termStatus.isFoundMany()){
+                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_MANY);
+                        lookup.setErrorString("Multiple terms match '"+textBoxTerm+"'" +
+                                "<br>Please select a single term");
+                    }
+                    else
+                    if(termStatus.isNotFound()){
+                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_NONE);
+                        lookup.setErrorString("No match for term '"+textBoxTerm+"'");
+                    }
+                }
+            });
+        }
+        else{
+            lookup.getTextBox().setText("");
+            termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_NONE);
+        }
+
+        if(termStatus!=null){
+            return termStatus.getStatus();
+        }
+        else {
+            return null ;
+        }
+    }
+
+
+    /**
+     * Terms show be on the same row
+     * @param term
+     */
+    public void removeTermFromTable(String term){
+
+        int rowIndex = getRowIndexForTerm(term) ;
+        if(rowIndex<0){
+            Window.alert("term not found to delete: "+term);
+        }
+        else{
+            table.removeRow(rowIndex);
+            termList.remove(rowIndex) ;
+        }
+
+        DOM.setElementAttribute(hiddenList, "value", generateListValues());
+        if(termList.size()==0){
+            initTable();
+        }
+    }
+
+    private int getRowIndexForTerm(String term){
+
+        int selectedRow = -1 ;
+        for(int i = 0 ; i < table.getRowCount() ; i++){
+            if(table.getText(i,1).equalsIgnoreCase(term)){
+                return i ;
+            }
+        }
+        return selectedRow ;
+
+    }
+
+    public String generateListValues(){
+
+        String returnList = "" ;
+
+        Iterator iter = termList.iterator() ;
+        String value ;
+        while(iter.hasNext()){
+            value = iter.next().toString() ;
+            returnList += value ;
+            if(iter.hasNext()){
+                returnList += separator ;
+            }
+        }
+        return returnList ;
+    }
+
+    private native void exposeMethodToJavascript(LookupTable lookupTable)/*-{
+        $wnd.clearTable = function(){
+            lookupTable.@org.zfin.framework.presentation.client.LookupTable::clearTable()();
+            return ; 
+        }
+
+        $wnd.validateLookup = function(){
+            lookupTable.@org.zfin.framework.presentation.client.LookupTable::validateLookup()();
+            return ;
+        }
+
+        $wnd.getValidationStatus = function(){
+            return lookupTable.@org.zfin.framework.presentation.client.LookupTable::getValidationStatus()();
+        }
+
+    }-*/;
+
+    public String getValidationStatus(){
+        if(termStatus==null){
+            return null ;
+        }
+        else{
+            return termStatus.getStatus() ; 
+        }
+    };
+
+    /**
+     * A comma separated list of terms
+     * @param termList
+     */
+    private void setPreviousTableNames(String termList){
+        String[] terms  = termList.split(",") ;
+        String term ;
+        for(int i = 0 ; i < terms.length ; i++){
+            term = terms[i] ;
+            addTermToTable(term);
+        }
+    }
+
+
+
+    public String getHiddenName() {
+        return hiddenName;
+    }
+
+    public void setHiddenName(String hiddenName) {
+        this.hiddenName = hiddenName;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+}

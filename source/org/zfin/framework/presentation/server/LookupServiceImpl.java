@@ -4,6 +4,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import org.zfin.framework.presentation.client.LookupService;
 import org.zfin.framework.presentation.client.ItemSuggestion;
+import org.zfin.framework.presentation.client.TermStatus;
 import org.zfin.anatomy.presentation.SortAnatomySearchTerm;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.anatomy.AnatomyItem;
@@ -13,6 +14,7 @@ import org.zfin.repository.SessionCreator;
 import org.apache.log4j.Logger;
 import org.apache.commons.collections.CollectionUtils;
 import org.geneontology.oboedit.datamodel.Synonym;
+import org.geneontology.util.CollectionUtil;
 
 import java.util.*;
 
@@ -33,7 +35,7 @@ public class LookupServiceImpl
      * Note that we do not use limits on the request for this implementation.
      *
      */
-    public SuggestOracle.Response getSuggestions(SuggestOracle.Request req) {
+    public SuggestOracle.Response getSuggestions(SuggestOracle.Request req,boolean wildCard) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery() ;
 
@@ -45,12 +47,11 @@ public class LookupServiceImpl
 
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
-        List<AnatomyItem> anatomyItems = new ArrayList<AnatomyItem>();
-        if(query.length()>2){
-            anatomyItems = ar.getAnatomyItemsByName(query,false) ;
-            Collections.sort(anatomyItems, new SortAnatomySearchTerm(query));
+        List<AnatomyItem> anatomyItems= ar.getAnatomyItemsByName(query,false) ;
+        Collections.sort(anatomyItems, new SortAnatomySearchTerm(query));
+        if(wildCard==true && anatomyItems!=null && anatomyItems.size()>0){
+            suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
         }
-        suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
         for(AnatomyItem anatomyItem : anatomyItems){
             String term = anatomyItem.getName() ;
             String suggestion = new String(term) ;
@@ -67,15 +68,31 @@ public class LookupServiceImpl
                     }
                 }
             }
-            suggestions.add(new ItemSuggestion(suggestion.replaceAll(query,"<strong>"+query+"</strong>"),term)) ;
+            suggestions.add(new ItemSuggestion(suggestion.replaceAll("(?i)"+query,"<strong>$0</strong>"),term)) ;
         }
-
         resp.setSuggestions(suggestions);
-
         logger.info("returned with no error: "+ req + " "  +  suggestions.size() + " suggestions ");
-
-
         return resp ;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
+    public TermStatus validateTerm(String term) {
+        List<AnatomyItem> anatomyItems= ar.getAnatomyItemsByName(term,false) ;
+        int foundInexactMatch = 0 ; 
+        for(AnatomyItem anatomyItem : anatomyItems){
+            String name = anatomyItem.getName() ;
+            if(name.equals(term)){
+                return new TermStatus(TermStatus.TERM_STATUS_FOUND_EXACT);
+            }
+            else
+            if(foundInexactMatch < 1 || name.contains(term)){
+                ++foundInexactMatch ;
+            }
+        }
+        if(foundInexactMatch > 1){
+           return new TermStatus(TermStatus.TERM_STATUS_FOUND_MANY);
+        }
+        return new TermStatus(TermStatus.TERM_STATUS_FOUND_NONE);
     }
 }
 

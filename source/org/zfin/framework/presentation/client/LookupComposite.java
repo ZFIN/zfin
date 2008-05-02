@@ -1,6 +1,8 @@
 package org.zfin.framework.presentation.client;
 
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 
@@ -19,28 +21,36 @@ import java.util.Iterator;
 public class LookupComposite extends Composite {
 
     // gui components
-    private HorizontalPanel lookupPanel = new HorizontalPanel();
-    private ItemSuggestOracle oracle = new ItemSuggestOracle(this);
-    private TextBox textBox = new TextBox();
-    private SuggestBox suggestBox;
-    private SuggestOracle.Suggestion suggestion = null;
-    private Button submitButton ;
-    private String currentText = null;
-    private Label errorLabel = new Label();
-    private VerticalPanel rootPanel = new VerticalPanel() ;
-    private String errorString = "" ;
+    protected HorizontalPanel lookupPanel = new HorizontalPanel();
+    protected ItemSuggestOracle oracle = new ItemSuggestOracle(this);
+    protected TextBox textBox = new TextBox();
+    protected SuggestBox suggestBox;
+    protected SuggestOracle.Suggestion suggestion = null;
+    protected Button submitButton ;
+    protected String currentText = null;
+//    protected Label noteLabel = new Label();
+    protected HTML noteLabel = new HTML("",true);
+    protected VerticalPanel rootPanel = new VerticalPanel() ;
+    protected String noteString = "" ;
+    protected String errorString = "" ;
 
     // lookup types
     public final static String TYPE_ANATOMY_ONTOLOGY = "ANATOMY_ONTOLOGY" ;
     public final static String TYPE_GENE_ONTOLOGY= "GENE_ONTOLOGY" ;
     public final static String TYPE_QUALITY = "QUALITY" ;
     private List types = new ArrayList() ;
+    private String EMPTY_STRING  = "&nbsp;" ;
 
     // options
-    private String inputName = "search";
-    private boolean showError = true;
-    private boolean showButton = false ;
-    private String type = TYPE_ANATOMY_ONTOLOGY ;
+    protected String inputName = "search";
+    protected boolean showError = true;
+    protected String buttonText = null ;
+    protected String type = TYPE_ANATOMY_ONTOLOGY ;
+    protected boolean wildCard = true ;
+    private int suggestBoxWidth = 30 ;
+
+    // later option
+    protected int minLookupLenth = 3 ;
 
     public LookupComposite(){
         types.add(TYPE_ANATOMY_ONTOLOGY) ;
@@ -51,60 +61,109 @@ public class LookupComposite extends Composite {
     public void initGui(){
         textBox.setName(inputName);
         textBox.setTitle(inputName);
-        textBox.setVisibleLength(30);
+        DOM.setElementProperty(textBox.getElement(), "id", inputName); 
+        textBox.setVisibleLength(suggestBoxWidth);
         DOM.setElementAttribute(textBox.getElement(), "autocomplete", "off");
         suggestBox = new SuggestBox(oracle, textBox);
-        suggestBox.setLimit(60);
-        suggestBox.addEventHandler(new SuggestionHandler() {
-            public void onSuggestionSelected(SuggestionEvent event) {
-                suggestion = event.getSelectedSuggestion();
-                if (suggestion.getReplacementString() == null) {
-                    suggestBox.setText(currentText);
-                    submitSearch(currentText);
-                } else if (suggestion.getReplacementString() != null) {
-                    submitSearch(suggestion.getReplacementString());
-                }
-            }
-        });
 
-
-        suggestBox.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyPress(Widget w, char c, int i) {
-                if (textBox.getText() != null & textBox.getText().length() > 0) {
-                    currentText = textBox.getText()  ;
-                    if( Character.isLetterOrDigit(c)){
-                        currentText += c ;
-                    }
-                }
-            }
-        });
+        addSuggestBoxHandlers() ;
 
 
         lookupPanel.add(suggestBox);
 
-        if(showButton){
-            submitButton = new Button("search") ;
-            submitButton.addClickListener(new ClickListener() {
-                public void onClick(Widget sender) {
-                    submitSearch(textBox.getText());
-                }
-            });
-
+        if(buttonText!=null){
+            submitButton = new Button(buttonText) ;
+            addSubmitButtonHandler();
             lookupPanel.add(submitButton);
         }
         rootPanel.add(lookupPanel);
         if(showError){
-            initErrorGui();
+            initNoteGui();
         }
         textBox.setFocus(true);
         initWidget(rootPanel);
     }
 
-    protected void initErrorGui(){
-        errorLabel.setStyleName("gwt-lookup-error");
-        errorLabel.setVisible(false);
-        errorLabel.setWordWrap(true);
-        rootPanel.add(errorLabel);
+    protected void addSubmitButtonHandler(){
+        submitButton.addClickListener(new ClickListener() {
+            public void onClick(Widget sender) {
+                doSubmit(textBox.getText());
+            }
+        });
+
+    }
+
+    protected void addSuggestBoxHandlers(){
+        suggestBox.addEventHandler(new SuggestionHandler() {
+            public void onSuggestionSelected(SuggestionEvent event) {
+                suggestion = event.getSelectedSuggestion();
+                if (suggestion.getReplacementString() == null) {
+                    suggestBox.setText(currentText);
+                    doSubmit(currentText);
+                } else if (suggestion.getReplacementString() != null) {
+                    doSubmit(suggestion.getReplacementString());
+                }
+            }
+        });
+
+        suggestBox.addKeyboardListener(new KeyboardListenerAdapter() {
+            public void onKeyDown(Widget w, char c, int i) {
+                if(c== KeyboardListener.KEY_ESCAPE){
+                    suggestBox.setText("");
+                }
+                if (textBox.getText() != null && textBox.getText().length() > 0 &&
+                        (
+                            c != KeyboardListener.KEY_DELETE
+                            &&
+                            c != KeyboardListener.KEY_BACKSPACE
+                        )
+                ){
+                    currentText = textBox.getText()  ;
+                    if( Character.isLetterOrDigit(c)){
+                        currentText += c ;
+                    }
+
+                    if( c == KeyboardListener.KEY_ENTER
+                            &&
+                            textBox.getText().length()>= getMinLookupLenth()){
+                           doSubmit(textBox.getText());
+                    }
+                }
+                else
+                if (textBox.getText() == null || textBox.getText().length() == 0 ||
+                    ( textBox.getText().length()==1
+                            &&
+                            (c== KeyboardListener.KEY_DELETE || c== KeyboardListener.KEY_BACKSPACE)
+                      )
+                   )
+                {
+                    handleNoText();
+                }
+            }
+        });
+
+        suggestBox.addFocusListener(new FocusListener(){
+            public void onLostFocus(Widget widget) {
+                clearNote();
+            }
+
+            public void onFocus(Widget widget) {
+                clearError();
+            }
+        });
+
+
+    }
+
+    protected void handleNoText(){
+        setNoteString("Enter "+getMinLookupLenth()+" or more letters");
+    }
+
+    protected void initNoteGui(){
+        noteLabel.setVisible(true);
+        noteLabel.setWordWrap(true);
+        rootPanel.add(noteLabel);
+        handleNoText();
     }
 
 
@@ -112,34 +171,51 @@ public class LookupComposite extends Composite {
         textBox.setText(newText);
     }
 
-    private void submitSearch(String text) {
+    protected void doSubmit(String text) {
         if (text != null) {
             Window.open("/action/anatomy/search?action=term-search&searchTerm=" + text.replaceAll(" ", "%20"), "_self",
                     "");
         }
     }
 
-
-    public void setErrorString(String error) {
-        this.errorString = error ;
-        errorLabel.setText(errorString);
-        errorLabel.setVisible(true);
+    public void setErrorString(String text){
+        noteLabel.setStyleName("gwt-lookup-error");
+        errorString = text ;
+        noteString="" ;
+        noteLabel.setHTML(errorString);
+        noteLabel.setVisible(true);
     }
 
-    public String getErrorString() {
-        return errorString ;
+    public void setNoteString(String note) {
+        noteLabel.setStyleName("gwt-lookup-note");
+        noteString = note;
+        errorString= "" ;
+        noteLabel.setHTML(noteString);
+        noteLabel.setVisible(true);
+    }
+
+    public String getNoteString() {
+        return noteString;
     }
 
     public void clearError(){
-        setErrorString("") ;
+        if(errorString.length()>0 && false==errorString.equals(EMPTY_STRING)){
+            setErrorString(EMPTY_STRING) ;
+        }
+    }
+
+    public void clearNote(){
+        if(noteString.length()>0 && false==noteString.equals(EMPTY_STRING)){
+            setNoteString(EMPTY_STRING) ;
+        }
     }
 
     public void hideError(){
-        errorLabel.setVisible(false);
+        noteLabel.setVisible(false);
     }
 
     public void showError(){
-        errorLabel.setVisible(true);
+        noteLabel.setVisible(true);
     }
 
 
@@ -160,12 +236,12 @@ public class LookupComposite extends Composite {
         this.type = type;
     }
 
-    public boolean isShowButton() {
-        return showButton;
+    public String getButtonText() {
+        return buttonText;
     }
 
-    public void setShowButton(boolean showButton) {
-        this.showButton = showButton;
+    public void setButtonText(String buttonText) {
+        this.buttonText = buttonText;
     }
 
     public boolean isShowError() {
@@ -192,4 +268,33 @@ public class LookupComposite extends Composite {
     public TextBox getTextBox() {
         return textBox;
     }
+
+    public Button getSubmitButton() {
+        return submitButton;
+    }
+
+    public boolean isWildCard() {
+        return wildCard;
+    }
+
+    public void setWildCard(boolean wildCard) {
+        this.wildCard = wildCard;
+    }
+
+    public int getMinLookupLenth() {
+        return minLookupLenth;
+    }
+
+    public void setMinLookupLenth(int minLookupLenth) {
+        this.minLookupLenth = minLookupLenth;
+    }
+
+    public int getSuggestBoxWidth() {
+        return suggestBoxWidth;
+    }
+
+    public void setSuggestBoxWidth(int suggestBoxWidth) {
+        this.suggestBoxWidth = suggestBoxWidth;
+    }
+
 }
