@@ -17,8 +17,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/news
 
-# Subdirectories come and go as meetings come and go.
+# path to the rss generators
+GENERATOR = $(TARGETROOT)/server_apps/WebSiteTools
 
+# Subdirectories come and go as meetings come and go.
 
 # List permanent files first -- files that will stay around no matter what
 # announcements come and go.  Follow that list with files that will disappear
@@ -35,40 +37,49 @@ STATICS =  Newsletter_Summer04.pdf Madison_2004_poster.jpg RegistrationForm.pdf 
  jobs.html mtgs.html siteNews.html
 
 
+# ---- Define endemic targets so we can use make.default.rules.
+
+ENDEMICTARGETS_POST =  $(TARGETDIR)/jobs.rss $(TARGETDIR)/siteNews.rss $(TARGETDIR)/mtgs.rss
+ENDEMICTARGETS_CLEAN =  $(ENDEMICTARGETS_POST)
+
 # ---------------  Production Rules  ------------------------------------
 
 # Use default rules for directories without app pages in them.
-
 include $(TOP)/make.default.rules
 
-# path to the rss generators
-GENERATOR = $(TARGETROOT)/server_apps/WebSiteTools
+#------------------ To generate RSS feed pages by default ----------------
 
+$(TARGETDIR)/jobs.rss : $(TARGETDIR)/jobs.html
+	$(GENERATOR)/gen-jobs-rss.r $(TARGETDIR)
 
-# RSS feed pages
+$(TARGETDIR)/siteNews.rss : $(TARGETDIR)/siteNews.html
+	$(GENERATOR)/gen-news-rss.r $(TARGETDIR)
 
+$(TARGETDIR)/mtgs.rss : $(TARGETDIR)/mtgs.html
+	$(GENERATOR)/gen-meetings-rss.r $(TARGETDIR)
+
+#------------- HTML page Validating ----------------------------------------
 
 jobs_test : jobs.html
 	echo "Scan for funny chars 'Error 1' if none"
 	egrep -n "[^ -~	]" jobs.html
+
 jobs_tidy : jobs.html
 	tidy -eq -ascii jobs.html
-jobs_rss : jobs.html
-	$(GENERATOR)/gen-jobs-rss.r $(TARGETDIR)
+
 
 meetings_test : mtgs.html
 	echo "Scan for funny chars 'Error 1' if none"
 	egrep -n "[^ -~	]" mtgs.html
+
 meetings_tidy : mtgs.html
 	tidy -eq -ascii  mtgs.html
-meetings_rss : mtgs.html
-	$(GENERATOR)/gen-meetings-rss.r $(TARGETDIR)
 
 
 news_test : siteNews.html
 	echo "Scan for funny chars 'Error 1' if none"
 	egrep -n "[^ -~	]" siteNews.html
+
 news_tidy : siteNews.html
 	tidy -eq -ascii  siteNews.html
-news_rss : siteNews.html
-	$(GENERATOR)/gen-news-rss.r $(TARGETDIR)
+
