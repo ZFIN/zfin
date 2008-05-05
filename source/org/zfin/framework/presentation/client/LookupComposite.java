@@ -3,8 +3,7 @@ package org.zfin.framework.presentation.client;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -125,8 +124,17 @@ public class LookupComposite extends Composite {
 
                     if( c == KeyboardListener.KEY_ENTER
                             &&
-                            textBox.getText().length()>= getMinLookupLenth()){
-                           doSubmit(textBox.getText());
+                            textBox.getText().length()>= getMinLookupLenth()
+                            ){
+                        // must defer the command in case selection are entered concurrently
+                        DeferredCommand.addCommand(new Command(){
+                            public void execute() {
+                                if(textBox.getText().length()>= getMinLookupLenth()){
+                                    doSubmit(textBox.getText());
+                                }
+                                //To change body of implemented methods use File | Settings | File Templates.
+                            }
+                        });
                     }
                 }
                 else
