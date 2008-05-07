@@ -435,15 +435,15 @@ function setMarkerTarget(featreli,anchor){
   ==========================
 <?/MICOMMENT>
 
-    <?MISQL SQL="
+    <?MISQL COND=$(OR,$(NXST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,)) SQL="
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
-          and cs_field_name = 'xpbcur_c_figure_only';">
+          and cs_field_name = 'xpcur_c_figure_only';">
         <?MIVAR NAME=xpcur_c_figure_only>$1<?/MIVAR>
     <?/MISQL> 
 
-    <?MISQL SQL="
+    <?MISQL COND=$(NXST,$xpcur_c_gene_only) SQL="
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
@@ -451,7 +451,7 @@ function setMarkerTarget(featreli,anchor){
         <?MIVAR NAME=xpcur_c_gene_only>$1<?/MIVAR>
     <?/MISQL>     
 
-    <?MISQL SQL="
+    <?MISQL COND=$(NXST,$xpcur_c_fish_only) SQL="
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
@@ -459,7 +459,7 @@ function setMarkerTarget(featreli,anchor){
         <?MIVAR NAME=xpcur_c_fish_only>$1<?/MIVAR>
     <?/MISQL> 
 
-    <?MISQL SQL="
+    <?MISQL COND=$(NXST,$xpcur_c_auto_on) SQL="
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
@@ -627,13 +627,6 @@ function setMarkerTarget(featreli,anchor){
       <?MIVAR NAME=pubcur_G_exp_attrib_csv SEPARATE="','">$pubcur_exp_attrib<?/MIVAR>
 
 
-    <?MISQL SQL="
-        select cs_field_name_value 
-        from curator_session 
-        where cs_data_zdb_id = '$OID' 
-          and cs_field_name = 'xpcur_c_figure_only';">
-        <?MIVAR NAME=xpcur_c_figure_only>$1<?/MIVAR>
-    <?/MISQL> 
     
     <?MIVAR NAME=pubcur_fig_attrib><?/MIVAR>
     <?MISQL SQL="

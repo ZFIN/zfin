@@ -119,6 +119,7 @@ EFFECTS
     }
   </script>
 
+  <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,)) >
     <?MISQL SQL="
         select cs_field_name_value 
         from curator_session 
@@ -126,6 +127,7 @@ EFFECTS
           and cs_field_name = 'xpcur_c_figure_only';">
         <?MIVAR NAME=xpcur_c_figure_only>$1<?/MIVAR>
     <?/MISQL>
+  <?/MIBLOCK>
 
   <?MIVAR NAME=xpcurfig_row_color><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
   
