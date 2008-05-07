@@ -209,10 +209,18 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
 
 ! echo "Inserted data into file xpat.txt"
 
+-- create temp table for environment
 
--- generate a file to map experiment id to environment condition description
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_environment.txt'
- DELIMITER "	"
+create temp table tmp_env (
+   t_exp_zdb_id	  varchar(50),
+   t_cdt_group	  varchar(50),
+   t_cdt_name	  varchar(80),
+   t_expcond_value	varchar(20),
+   t_expunit_name	varchar(20),
+   t_expcond_comments	varchar(255)
+) with no log;
+ 
+insert into  tmp_env
  select exp_zdb_id, cdt_group,
         case when expcond_mrkr_zdb_id is not null
              then expcond_mrkr_zdb_id
@@ -225,9 +233,23 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_environment.txt'
     and exists (select 't'
                   from genotype_experiment, expression_experiment
                  where exp_zdb_id = genox_exp_zdb_id
-                   and genox_zdb_id = xpatex_genox_zdb_id)
-order by exp_zdb_id, cdt_group;
+                   and genox_zdb_id = xpatex_genox_zdb_id);
 
+-- special handling for _Generic-control
+insert into tmp_env
+ select exp_zdb_id, exp_name, exp_name, "N/A", "N/A", "This environment is used for non-standard conditions used in control treatments."
+   from experiment
+  where exp_name = "_Generic-control";
+
+-- generate a file to map experiment id to environment condition description
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_environment.txt'
+ DELIMITER "	"
+ select t_exp_zdb_id, t_cdt_group, t_cdt_name, t_expcond_value, t_expunit_name, t_expcond_comments
+   from tmp_env
+order by  t_exp_zdb_id, t_cdt_group;
+
+-- clean the temp table for phenotype
+delete from tmp_env;
 
 -- generate a file with genes and associated expression experiment
 
@@ -337,9 +359,10 @@ select "ZDB:"||geno_zdb_id, geno_display_name,
 	and genox_geno_zdb_id = geno_zdb_id
  order by geno_zdb_id, apato_pub_zdb_id ;
 
+
 -- generate a file to map experiment id to environment condition description
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_environment.txt'
- DELIMITER "	"
+
+insert into tmp_env
  select exp_zdb_id, cdt_group,
         case when expcond_mrkr_zdb_id is not null
              then expcond_mrkr_zdb_id
@@ -352,8 +375,20 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_environment.txt
     and exists (select 't'
                   from genotype_experiment, atomic_phenotype
                  where exp_zdb_id = genox_exp_zdb_id
-                   and genox_zdb_id = apato_genox_zdb_id)
-order by exp_zdb_id, cdt_group;
+                   and genox_zdb_id = apato_genox_zdb_id);
+
+-- special handling for _Generic-control
+insert into tmp_env
+ select exp_zdb_id, exp_name, exp_name, "N/A", "N/A", "This environment is used for non-standard conditions used in control treatments."
+   from experiment
+  where exp_name = "_Generic-control";
+
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_environment.txt'
+ DELIMITER "	"
+ select t_exp_zdb_id, t_cdt_group, t_cdt_name, t_expcond_value, t_expunit_name, t_expcond_comments
+   from tmp_env
+order by t_exp_zdb_id, t_cdt_group;
 
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_ontology_translation.txt'
