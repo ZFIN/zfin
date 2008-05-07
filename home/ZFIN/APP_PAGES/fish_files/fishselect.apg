@@ -43,10 +43,16 @@ var termStatus  ;
 function call_submit() {
   var pauseIcrement = 500 ;  // wait up to 4 seconds
   var currentTime = new Date() ;  // wait up to 4 seconds
-  validateLookup() ;
-  termStatus = getValidationStatus() ;
-  currentTime = new Date() ;  // wait up to 4 seconds
-  intervalId = setInterval('doValidateAndSubmit('+currentTime.getMilliseconds()+');',pauseIcrement) ; 
+  try{
+      validateLookup() ;
+      termStatus = getValidationStatus() ;
+      currentTime = new Date() ;  // wait up to 4 seconds
+      intervalId = setInterval('doValidateAndSubmit('+currentTime.getMilliseconds()+');',pauseIcrement) ; 
+  }
+  catch(e){
+      // if not defined or some other problem, then go ahead and submit
+      document.BrowserForm.submit();
+  }
 }
 
  function doValidateAndSubmit(currentTime ){

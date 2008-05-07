@@ -124,7 +124,12 @@ var intervalId = 0 ;
 function call_submit() {
   var pauseIcrement = 500 ;  // wait up to 4 seconds
   var currentTime = new Date() ;  // wait up to 4 seconds
-  validateLookup() ; 
+  try{
+      validateLookup() ; 
+  }
+  catch(e){
+      // if not defined, then keep going
+  }
   
   if (document.critform.stage_start.selectedIndex > document.critform.stage_end.selectedIndex) {
     //swap it so that the earlier stage is first.. after all, the user isn't "wrong" in saying
@@ -137,9 +142,15 @@ function call_submit() {
 
   // Added for backward compliants.  TA_selected_structures no longer necessary.
   document.critform.TA_selected_structures = document.critform.xpatsel_processed_selected_structures ;  
-  termStatus = getValidationStatus() ;
-  currentTime = new Date() ;  // wait up to 4 seconds
-  intervalId = setInterval('doValidateAndSubmit('+currentTime.getMilliseconds()+');',pauseIcrement) ; 
+  try{
+      termStatus = getValidationStatus() ;
+      currentTime = new Date() ;  // wait up to 4 seconds
+      intervalId = setInterval('doValidateAndSubmit('+currentTime.getMilliseconds()+');',pauseIcrement) ; 
+  }
+  catch(e){
+      // if not defined or some other problem, then go ahead and submit
+      document.critform.submit();
+  }
 }
 
 
