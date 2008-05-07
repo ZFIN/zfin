@@ -245,8 +245,24 @@ public class LookupTable extends Lookup {
             return lookupTable.@org.zfin.framework.presentation.client.LookupTable::useTerm(Ljava/lang/String;)(term);
         }
 
+        $wnd.hideTerm = function(term){
+            return lookupTable.@org.zfin.framework.presentation.client.LookupTable::hideTerm()();
+        }
+
     }-*/;
 
+
+    /**
+     *  Called externally to hide the phenote lookup.
+     */
+    public void hideTerm(){
+        phenotePopup.hide() ; 
+    }
+
+
+    /**
+     *  Called externally to use the current phenote term.
+     */
     public void useTerm(String term){
         lookup.getTextBox().setText(term);
         validateLookup() ;
