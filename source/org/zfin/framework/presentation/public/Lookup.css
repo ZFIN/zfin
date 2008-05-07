@@ -51,3 +51,17 @@
     font-style: italic;
 }
 
+.gwt-Hyperlink {
+   color: blue;
+    text-decoration: underline;
+    cursor: pointer ; 
+}
+
+.gwt-Frame {
+    background: white ;
+    border-color: black ;
+    box-shadow: 0.2em 0.2em #CCC
+}
+
+
+

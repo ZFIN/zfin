@@ -77,12 +77,15 @@ public class LookupServiceImpl
 
 
     public TermStatus validateTerm(String term) {
+
+        SessionCreator.instantiateDBForHostedMode() ;
+
         List<AnatomyItem> anatomyItems= ar.getAnatomyItemsByName(term,false) ;
-        int foundInexactMatch = 0 ; 
+        int foundInexactMatch = 0 ;
         for(AnatomyItem anatomyItem : anatomyItems){
             String name = anatomyItem.getName() ;
             if(name.equals(term)){
-                return new TermStatus(TermStatus.TERM_STATUS_FOUND_EXACT);
+                return new TermStatus(TermStatus.TERM_STATUS_FOUND_EXACT,term,anatomyItem.getOboID());
             }
             else
             if(foundInexactMatch < 1 || name.contains(term)){
@@ -90,9 +93,9 @@ public class LookupServiceImpl
             }
         }
         if(foundInexactMatch > 1){
-           return new TermStatus(TermStatus.TERM_STATUS_FOUND_MANY);
+           return new TermStatus(TermStatus.TERM_STATUS_FOUND_MANY,term);
         }
-        return new TermStatus(TermStatus.TERM_STATUS_FOUND_NONE);
+        return new TermStatus(TermStatus.TERM_STATUS_FOUND_NONE,term);
     }
 }
 

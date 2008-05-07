@@ -12,6 +12,8 @@ public class TermStatus implements IsSerializable {
     public final static String TERM_STATUS_LOOKING = "TERM_STATUS_LOOKING";
 
     private String status = TERM_STATUS_LOOKING ;
+    private String term = "" ;
+    private String oboID = "" ;
 
     public TermStatus() { }
 
@@ -32,6 +34,18 @@ public class TermStatus implements IsSerializable {
             throw new RuntimeException("Must initialize term status with TERM_STATUS variable not: "+status);
         }
     }
+
+    public TermStatus(String status,String term){
+        this(status)  ;
+        this.term = term ;
+    }
+
+    public TermStatus(String status,String term,String oboID){
+        this(status)  ;
+        this.term = term ;
+        this.oboID = oboID;
+    }
+
 
     public void reset(){
         status = TERM_STATUS_LOOKING ;
@@ -62,4 +76,19 @@ public class TermStatus implements IsSerializable {
         return getStatus() ;
     }
 
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
+    }
+
+    public String getOboID() {
+        return oboID;
+    }
+
+    public void setOboID(String oboID) {
+        this.oboID = oboID;
+    }
 }

@@ -1,9 +1,7 @@
 package org.zfin.framework.presentation.client;
 
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.*;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.i18n.client.Dictionary;
 
@@ -14,11 +12,12 @@ import java.util.*;
  * The structure of this SuggestBox is used in order to capture the extra "Enter" event.
  * As this uses a "GET" encoding we can be a bit more
  */
-public class LookupTable extends Lookup{
+public class LookupTable extends Lookup {
 
     private FlexTable table = new FlexTable() ;
     private Label testLabel = new Label() ;
     private Element hiddenList = null ;
+    private PhenotePopup phenotePopup = new PhenotePopup(); 
     private String separator = "," ;
     private List termList = new ArrayList() ;
     public static final String JSREF_HIDDEN_NAME ="hiddenName" ;
@@ -63,10 +62,11 @@ public class LookupTable extends Lookup{
         }
 
         if(keySet.contains(JSREF_PREVIOUS_TABLE_VALUES)){
-            setPreviousTableNames(lookupProperties.get(JSREF_PREVIOUS_TABLE_VALUES));
+            prepopulateTable(lookupProperties.get(JSREF_PREVIOUS_TABLE_VALUES));
         }
 
         lookup.handleNoText();
+
 
         exposeMethodToJavascript(this);
     }
@@ -77,18 +77,27 @@ public class LookupTable extends Lookup{
         table.setText(0,0,noTerms);
     }
 
-    public void addTermToTable(String term){
-        if(false==termList.contains(term)){
+    public void addTermToTable(final TermStatus term){
+        if(false==termList.contains(term.getTerm())){
             if(termList.size()==0 && table.getRowCount()>0){
                 table.removeRow(0);
                 table.setStyleName("gwt-table-full");
             }
-            termList.add(term) ;
+            termList.add(term.getTerm()) ;
             table.insertRow( table.getRowCount()) ;
             int currentRow = table.getRowCount() -1 ;
-            table.setText(currentRow,1,term);
+
+            final Hyperlink link = new Hyperlink() ;
+            link.setHTML(term.getTerm());
+            link.addClickListener(new ClickListener(){
+                public void onClick(Widget widget) {
+                    phenotePopup.showPopup(term.getOboID()) ;
+                }
+            });
+
+            table.setWidget(currentRow,1,link);
             Image removeImage = new Image(getImageURL()+"action_delete.png") ;
-            table.setWidget(currentRow,0,new RemoveButton(removeImage,this,term));
+            table.setWidget(currentRow,0,new RemoveButton(removeImage,this,term.getTerm()));
             DOM.setElementProperty(hiddenList, "value", generateListValues());
             lookup.getTextBox().setText("");
             lookup.clearError();
@@ -97,7 +106,7 @@ public class LookupTable extends Lookup{
         }
         // if contained, need to mention
         else{
-            lookup.setErrorString("Term '"+term+"' already added");
+            lookup.setErrorString("Term '"+term.getTerm()+"' already added");
         }
     }
 
@@ -134,10 +143,11 @@ public class LookupTable extends Lookup{
                 public void onSuccess(Object o) {
                     termStatus = (TermStatus) o ;
                     String textBoxTerm = lookup.getTextBox().getText() ;
+                    termStatus.setTerm(textBoxTerm);
                     // checking length catching any asynchronous updates
                     if(termStatus.isExactMatch() && textBoxTerm.length()>0){
                         termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_EXACT);
-                        addTermToTable(textBoxTerm);
+                        addTermToTable(termStatus);
                     }
                     else
                     if(termStatus.isFoundMany()){
@@ -231,7 +241,16 @@ public class LookupTable extends Lookup{
             return lookupTable.@org.zfin.framework.presentation.client.LookupTable::getValidationStatus()();
         }
 
+        $wnd.useTerm = function(term){
+            return lookupTable.@org.zfin.framework.presentation.client.LookupTable::useTerm(Ljava/lang/String;)(term);
+        }
+
     }-*/;
+
+    public void useTerm(String term){
+        lookup.getTextBox().setText(term);
+        validateLookup() ;
+    }
 
     public String getValidationStatus(){
         if(termStatus==null){
@@ -246,12 +265,67 @@ public class LookupTable extends Lookup{
      * A comma separated list of terms
      * @param termList
      */
-    private void setPreviousTableNames(String termList){
+    private void prepopulateTable(String termList){
         String[] terms  = termList.split(",") ;
-        String term ;
+        final Set termsNotFound = new HashSet() ;
+        final Set termsFoundMany = new HashSet() ;
+
         for(int i = 0 ; i < terms.length ; i++){
-            term = terms[i] ;
-            addTermToTable(term);
+            String tokenizedTerm = terms[i] ;
+            LookupService.App.getInstance().validateTerm( tokenizedTerm, new AsyncCallback(){
+                public void onFailure(Throwable throwable) {
+                    lookup.setErrorString(throwable.toString());
+                    termStatus.setStatus(TermStatus.TERM_STATUS_FAILURE);
+                    //To change body of implemented mvn st -qthods use File | Settings | File Templates.
+                }
+
+                public void onSuccess(Object o) {
+                    termStatus = (TermStatus) o ;
+                    String term = termStatus.getTerm() ;
+                    // checking length catching any asynchronous updates
+                    if(termStatus.isExactMatch()){
+                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_EXACT);
+                        addTermToTable(termStatus);
+                    }
+                    else
+                    if(termStatus.isFoundMany()){
+                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_MANY);
+                        termsNotFound.add(term) ;
+                    }
+                    else
+                    if(termStatus.isNotFound()){
+                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_NONE);
+                        termsFoundMany.add(term) ;
+                    }
+                }
+            });
+
+            String errorString = "Error adding terms<br>" ;
+            String specialTerm = "";
+            if(termsFoundMany.size()>0){
+                errorString += "Found too many: " ;
+                for (Iterator iter = termsNotFound.iterator() ;
+                     iter.hasNext() ;
+                     specialTerm = iter.next().toString()){
+                    errorString += specialTerm  + " ";
+                }
+                errorString += "<br>" ;
+            }
+
+
+            if(termsNotFound.size()>0){
+                errorString += "Not found: " ;
+                for (Iterator iter = termsNotFound.iterator() ;
+                     iter.hasNext() ;
+                     specialTerm = iter.next().toString()){
+                    errorString += specialTerm  + " ";
+                }
+                errorString += "<br>" ;
+            }
+
+            if(termsFoundMany.size()>0 || termsNotFound.size()>0){
+                lookup.setErrorString(errorString);
+            }
         }
     }
 
