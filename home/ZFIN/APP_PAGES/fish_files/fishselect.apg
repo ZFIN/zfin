@@ -274,10 +274,12 @@ function call_submit() {
     <?/MICOMMENT>
 <?MIBLOCK COND="$(XST,$fsel_inputname)">
 
-  <?MIVAR NAME=$fsel_inputname DELIMIT="'" REPLACE="''">$fsel_inputname<?/MIVAR>
-  <?MIVAR NAME=$fsel_inputname DELIMIT="_" REPLACE="\_">$fsel_inputname<?/MIVAR>
+  <?MIVAR NAME=$fsel_inputname>$(REPLACE,$fsel_inputname,"'","''")<?/MIVAR>
+  <?MIVAR NAME=$fsel_inputname>$(REPLACE,$fsel_inputname,"_","\_")<?/MIVAR>
+  
+  <?MIVAR NAME=$genonm_inputname>$fsel_inputname<?/MIVAR>
 
-  <?MISQL SQL="select WebExplode(object,'genonm_inputname=$fsel_inputname&genonm_session_id=$fsel_session_id&compare=$compare') from webPages where ID='aa-genotype_name_match.apg';">$1<?/MISQL> 
+  <?MISQL SQL="select WebExplode(object,'genonm_session_id=$fsel_session_id&compare=$compare') from webPages where ID='aa-genotype_name_match.apg';">$1<?/MISQL> 
 
   <?MIVAR NAME=$fishselect_temp_on_name>$genonm_temp_on_name<?/MIVAR>
   
@@ -290,8 +292,8 @@ function call_submit() {
   <?MIVAR>$(SETVAR,$constraint,$(CONCAT,$constraint,$moreConstraint))<?/MIVAR> 
   
   <?MICOMMENT>restore the fsel_inputname string for display<?/MICOMMENT>
-  <?MIVAR NAME=fsel_inputname DELIMIT="''" REPLACE="'">$fsel_inputname<?/MIVAR>
-  <?MIVAR NAME=fsel_inputname DELIMIT="\_" REPLACE="_">$fsel_inputname<?/MIVAR>  
+  <?MIVAR NAME=$fsel_inputname>$(REPLACE,$fsel_inputname,"''","'")<?/MIVAR>
+  <?MIVAR NAME=$fsel_inputname>$(REPLACE,$fsel_inputname,"\_","_")<?/MIVAR> 
   
 <?/MIBLOCK>
 
