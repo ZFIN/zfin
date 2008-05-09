@@ -36,7 +36,8 @@ public class LookupComposite extends Composite {
     // lookup types
     public final static String TYPE_ANATOMY_ONTOLOGY = "ANATOMY_ONTOLOGY" ;
     public final static String TYPE_GENE_ONTOLOGY= "GENE_ONTOLOGY" ;
-    public final static String TYPE_QUALITY = "QUALITY" ;
+    public final static String TYPE_QUALITY = "QUALITY_ONTOLOGY" ;
+    public final static String MARKER_LOOKUP = "MARKER_LOOKUP" ;
     private List types = new ArrayList() ;
     private String EMPTY_STRING  = "&nbsp;" ;
 
@@ -55,6 +56,7 @@ public class LookupComposite extends Composite {
         types.add(TYPE_ANATOMY_ONTOLOGY) ;
         types.add(TYPE_GENE_ONTOLOGY) ;
         types.add(TYPE_QUALITY) ;
+        types.add(MARKER_LOOKUP) ;
     }
 
     public void initGui(){

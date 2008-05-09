@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Order;
 import org.zfin.framework.HibernateUtil;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.infrastructure.DataNote;
@@ -57,6 +58,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
         criteria.add(Restrictions.eq("name", name));
         return (Marker) criteria.uniqueResult();
     }
+
+    public List<Marker> getMarkersByAbbreviation(String name) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Marker.class);
+        criteria.add(Restrictions.like("abbreviation", name, MatchMode.ANYWHERE));
+        criteria.addOrder(Order.asc("abbreviation")) ;
+        return criteria.list();
+    }
+
 
     public MarkerRelationship getSpecificMarkerRelationship(Marker firstMarker, Marker secondMarker, MarkerRelationship.Type type) {
         Session session = currentSession();

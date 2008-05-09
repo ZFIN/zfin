@@ -6,14 +6,15 @@ import org.zfin.framework.presentation.client.LookupService;
 import org.zfin.framework.presentation.client.ItemSuggestion;
 import org.zfin.framework.presentation.client.TermStatus;
 import org.zfin.anatomy.presentation.SortAnatomySearchTerm;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomySynonym;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.repository.SessionCreator;
+import org.zfin.ontology.GoTerm;
+import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.mutant.Term;
+import org.zfin.marker.Marker;
 import org.apache.log4j.Logger;
-import org.apache.commons.collections.CollectionUtils;
-import org.geneontology.oboedit.datamodel.Synonym;
 import org.geneontology.util.CollectionUtil;
 
 import java.util.*;
@@ -26,7 +27,6 @@ public class LookupServiceImpl
         extends RemoteServiceServlet
         implements LookupService {
 
-    private transient AnatomyRepository ar = RepositoryFactory.getAnatomyRepository() ;
     private transient Logger logger = Logger.getLogger(LookupServiceImpl.class) ;
 
 
@@ -35,7 +35,7 @@ public class LookupServiceImpl
      * Note that we do not use limits on the request for this implementation.
      *
      */
-    public SuggestOracle.Response getSuggestions(SuggestOracle.Request req,boolean wildCard) {
+    public SuggestOracle.Response getAnatomySuggestions(SuggestOracle.Request req,boolean wildCard) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery() ;
 
@@ -47,7 +47,7 @@ public class LookupServiceImpl
 
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
-        List<AnatomyItem> anatomyItems= ar.getAnatomyItemsByName(query,false) ;
+        List<AnatomyItem> anatomyItems= RepositoryFactory.getAnatomyRepository().getAnatomyItemsByName(query,false) ;
         Collections.sort(anatomyItems, new SortAnatomySearchTerm(query));
         if(wildCard==true && anatomyItems!=null && anatomyItems.size()>0){
             suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
@@ -80,7 +80,7 @@ public class LookupServiceImpl
 
         SessionCreator.instantiateDBForHostedMode() ;
 
-        List<AnatomyItem> anatomyItems= ar.getAnatomyItemsByName(term,false) ;
+        List<AnatomyItem> anatomyItems= RepositoryFactory.getAnatomyRepository().getAnatomyItemsByName(term,false) ;
         int foundInexactMatch = 0 ;
         for(AnatomyItem anatomyItem : anatomyItems){
             String name = anatomyItem.getName() ;
@@ -96,6 +96,86 @@ public class LookupServiceImpl
            return new TermStatus(TermStatus.TERM_STATUS_FOUND_MANY,term);
         }
         return new TermStatus(TermStatus.TERM_STATUS_FOUND_NONE,term);
+    }
+
+    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req,boolean wildCard) {
+        SuggestOracle.Response resp = new SuggestOracle.Response();
+        String query = req.getQuery() ;
+
+        if(query.equals("xxx333")){
+            throw new RuntimeException("this is a test error") ;
+        }
+
+        SessionCreator.instantiateDBForHostedMode() ;
+
+
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
+        if(query.length()>2){
+            for(GoTerm goTerm: RepositoryFactory.getMutantRepository().getGoTermsByName(query) ){
+                suggestions.add(new ItemSuggestion(goTerm.getName().replaceAll(query,"<strong>"+query+"</strong>"),goTerm.getName())) ;
+            }
+        }
+        if(wildCard==true){
+            suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
+        }
+        resp.setSuggestions(suggestions);
+        logger.info("returned with no error: "+ req + " "  +  suggestions.size() + " suggestions ");
+        return resp ;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public SuggestOracle.Response getQualitySuggestions(SuggestOracle.Request req,boolean wildCard) {
+        MutantRepository repository = RepositoryFactory.getMutantRepository() ;
+        SuggestOracle.Response resp = new SuggestOracle.Response();
+        String query = req.getQuery() ;
+
+        if(query.equals("xxx333")){
+            throw new RuntimeException("this is a test error") ;
+        }
+
+        SessionCreator.instantiateDBForHostedMode() ;
+
+
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
+        if(query.length()>2){
+            for(Term term: repository.getQualityTermsByName(query) ){
+                suggestions.add(new ItemSuggestion(term.getName().replaceAll(query,"<strong>"+query+"</strong>"),term.getName())) ;
+            }
+        }
+        if(wildCard==true){
+            suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
+        }
+        resp.setSuggestions(suggestions);
+
+        logger.info("returned with no error: "+ req + " "  +  suggestions.size() + " suggestions ");
+
+        return resp ;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req, boolean wildCard) {
+        SuggestOracle.Response resp = new SuggestOracle.Response();
+        String query = req.getQuery() ;
+
+        if(query.equals("xxx333")){
+            throw new RuntimeException("this is a test error") ;
+        }
+
+        SessionCreator.instantiateDBForHostedMode() ;
+
+
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
+        if(query.length()>2){
+            for(Marker marker: RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(query) ){
+                suggestions.add(new ItemSuggestion(marker.getAbbreviation().replaceAll(query,"<strong>"+query+"</strong>"),marker.getAbbreviation())) ;
+            }
+        }
+        if(wildCard==true){
+            suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
+        }
+        resp.setSuggestions(suggestions);
+
+        logger.info("returned with no error: "+ req + " "  +  suggestions.size() + " suggestions ");
+
+        return resp ;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }
 

@@ -6,6 +6,8 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.Term;
+import org.zfin.ontology.GoTerm;
 
 import java.util.List;
 
@@ -108,5 +110,20 @@ public interface MutantRepository extends CachedRepository {
      * @param paginationBean Pagination Bean
      */
     void setPaginationParameters(PaginationBean paginationBean);
+
+    /**
+     *
+     * @param name
+     * @return A list of GoTerms that contain the parameter handed in.
+     */
+    List<GoTerm> getGoTermsByName(String name) ;
+
+    /**
+     *
+     * @param name
+     * @return A list of GoTerms that contain the parameter handed in.
+     */
+    List<Term> getQualityTermsByName(String name) ; 
+
 }
 

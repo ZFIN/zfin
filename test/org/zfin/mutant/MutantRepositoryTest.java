@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.ontology.GoTerm;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.repository.AnatomyRepository;
@@ -87,5 +88,44 @@ public class MutantRepositoryTest {
         }
 
     }
+
+    @Test
+    public void checkGoTerms(){
+        //  ao term: otic placode
+        String name = "ribosome";
+        MutantRepository mr = RepositoryFactory.getMutantRepository();
+        List<GoTerm> goTerms = mr.getGoTermsByName(name);
+        Assert.assertNotNull(goTerms);
+        Assert.assertTrue(goTerms.size()>0);
+
+        boolean findKnown = false ;
+        for(GoTerm term: goTerms){
+            if(term.getName().equals("polysomal ribosome")){
+                findKnown = true ; 
+            }
+        }
+
+        Assert.assertTrue(findKnown);
+    }
+
+    @Test
+    public void checkQualityTerms(){
+        //  ao term: otic placode
+        String name = "red brown";
+        MutantRepository mr = RepositoryFactory.getMutantRepository();
+        List<Term> terms = mr.getQualityTermsByName(name);
+        Assert.assertNotNull(terms);
+        Assert.assertTrue(terms.size()>0);
+
+        boolean findKnown = false ;
+        for(Term term: terms){
+            if(term.getName().equals("dark red brown")){
+                findKnown = true ;
+            }
+        }
+
+        Assert.assertTrue(findKnown);
+    }
+
 
 }

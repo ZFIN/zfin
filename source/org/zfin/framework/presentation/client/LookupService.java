@@ -24,6 +24,9 @@ public interface LookupService extends RemoteService {
         }
     }
 
-    public SuggestOracle.Response getSuggestions(SuggestOracle.Request req,boolean wildCard) ;
+    public SuggestOracle.Response getAnatomySuggestions(SuggestOracle.Request req,boolean wildCard) ;
+    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req,boolean wildCard) ;
+    public SuggestOracle.Response getQualitySuggestions(SuggestOracle.Request req,boolean wildCard) ;
+    public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req,boolean wildCard) ;
     public TermStatus validateTerm(String term) ;
 }

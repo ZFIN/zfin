@@ -82,6 +82,14 @@ public class MarkerRepositoryTest {
         assertFalse("pax2a is not in the type group BAC", pax2a.isInTypeGroup(Marker.TypeGroup.BAC));
     }
 
+
+    @Test
+    public void testMarkersByAbbreviation() {
+        List<Marker> paxs = markerRepository.getMarkersByAbbreviation("pax");
+        assertNotNull("pax should not be null", paxs);
+        assertTrue("pax should have multiple markers", paxs.size()>1);
+    }
+
     /**
      * Test that a new Marker record takes the Marker type in the sequence
      * that is given by the Marker

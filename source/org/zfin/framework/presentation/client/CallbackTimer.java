@@ -28,7 +28,22 @@ public class CallbackTimer extends Timer {
     }
 
     public void run(){
-        LookupService.App.getInstance().getSuggestions(request , lookup.isWildCard(),callback);
+        if(lookup.getType().equals(LookupComposite.TYPE_ANATOMY_ONTOLOGY)){
+            LookupService.App.getInstance().getAnatomySuggestions(request , lookup.isWildCard(),callback);
+        }
+        else
+        if(lookup.getType().equals(LookupComposite.TYPE_GENE_ONTOLOGY)){
+            LookupService.App.getInstance().getGOSuggestions(request , lookup.isWildCard(),callback);
+        }
+        else
+        if(lookup.getType().equals(LookupComposite.TYPE_QUALITY)){
+            LookupService.App.getInstance().getQualitySuggestions(request , lookup.isWildCard(),callback);
+        }
+        else
+        if(lookup.getType().equals(LookupComposite.MARKER_LOOKUP)){
+            LookupService.App.getInstance().getMarkerSuggestions(request , lookup.isWildCard(),callback);
+        }
+
         this.callback = null ;
     }
 }

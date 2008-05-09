@@ -7,6 +7,13 @@ import com.google.gwt.user.client.ui.SuggestOracle;
  */
 public interface LookupServiceAsync {
 
-    public void getSuggestions(SuggestOracle.Request req,boolean doWildCard, AsyncCallback callback);
-    public void validateTerm(String term, AsyncCallback callback) ;
+    void getAnatomySuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
+
+    void getGOSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
+
+    void getQualitySuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
+
+    void getMarkerSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
+
+    void validateTerm(String term, AsyncCallback async);
 }

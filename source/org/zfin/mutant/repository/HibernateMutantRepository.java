@@ -2,15 +2,15 @@ package org.zfin.mutant.repository;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.Morpholino;
-import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.*;
+import org.zfin.ontology.GoTerm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -244,6 +244,20 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public void setPaginationParameters(PaginationBean paginationBean) {
         this.paginationBean = paginationBean;
+    }
+
+    public List<GoTerm> getGoTermsByName(String name) {
+        Session session = HibernateUtil.currentSession() ;
+        Criteria criteria = session.createCriteria(GoTerm.class) ;
+        criteria.add(Restrictions.like("name","%"+name+"%")) ;
+        return criteria.list() ;
+    }
+
+    public List<Term> getQualityTermsByName(String name) {
+        Session session = HibernateUtil.currentSession() ;
+        Criteria criteria = session.createCriteria(Term.class) ;
+        criteria.add(Restrictions.like("name","%"+name+"%")) ;
+        return criteria.list() ;
     }
 
     private List<Morpholino> getMorpholinoRecords(List<Marker> markers) {
