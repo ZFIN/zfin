@@ -65,12 +65,12 @@ set 'make-title func["puts the string into the rss feed title"
     feed-title [string!]
 ][  ;;; <rss version="2.0">
     insert rss-xml rejoin[
-    {<?xml version="1.0" encoding="utf-8"?>
-    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-    <link> }feed-link{</link>
-    <atom:link href="http://}feed-url/host{/}feed-url/path copy/part feed-url/target find feed-url/target "."{.rss" rel="self" type="application/rss+xml"/>
-    <title>}feed-title: trim/all/with feed-title newline{</title>
+{<?xml version="1.0" encoding="utf-8"?>
+ <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+   <link> }feed-link{</link>
+   <atom:link href="http://}feed-url/host{/}feed-url/path copy/part feed-url/target find feed-url/target "."{.rss" rel="self" type="application/rss+xml"/>
+   <title>}feed-title: trim/all/with feed-title newline{</title>
     }]
     set 'feed-title :feed-title
 ]
@@ -92,8 +92,9 @@ set 'make-description func["puts the string into the rss feed description"
   </image>
   <lastBuildDate>}to-idate now{</lastBuildDate>
   <language>en-us</language>
-  <copyright>}feed-copyright  now/year {</copyright>
-}   ]
+  <copyright>}feed-copyright { } now/year {</copyright>
+  }
+    ]
     foreach cat feed-categories [
        insert tail rss-xml rejoin[{<category>}cat{</category>}]
     ]
@@ -115,7 +116,7 @@ set 'make-item func[
    <guid>}item-link{</guid>
    <pubDate>}to-idate to-date trim item-date{</pubDate>
    <description>}rss-escape rel-to-abs item-description{</description>
-}]
+   }]
    foreach cat feed-categories [
        insert tail rss-xml rejoin[{<category>}cat{</category>}]
    ]
