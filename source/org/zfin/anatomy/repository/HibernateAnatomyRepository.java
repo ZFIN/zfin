@@ -116,15 +116,19 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
     @SuppressWarnings("unchecked")
     public List<AnatomyItem> getAnatomyItemsByName(String searchString, boolean includeObsoletes) {
         Session session = HibernateUtil.currentSession();
+
         String hql = "select term from AnatomyItem term  " +
                 "where  " +
                 "   (term.lowerCaseName like :name or exists (from AnatomySynonym syn where syn.item = term " +
-                "                                           and syn.aliasLowerCase like :name )) "+
+                "                                           and syn.aliasLowerCase like :name and syn.group <> :group))" +
                 " AND obsolete = :obsolete " +
                 " order by term.name";
+
+
         Query query = session.createQuery(hql);
         query.setString("name", "%" + searchString.toLowerCase() + "%");
         query.setBoolean("obsolete", includeObsoletes);
+        query.setString("group", DataAlias.Group.SECONDARY_ID.toString());
         List<AnatomyItem> items = query.list();
 
         if (items != null) {

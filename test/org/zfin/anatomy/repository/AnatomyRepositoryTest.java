@@ -117,4 +117,35 @@ public class AnatomyRepositoryTest {
 
         assertTrue(genos.size()> 1);
     }
+
+
+    /**
+     * 1 - find anatomy item term
+     * 2 - find anatomy item term by synonym
+     * 3 - find anatomy item term not by data alias
+     *
+     */
+    @Test
+    public void getAnatomyItemsWithoutDataAlias(){
+        // 1 - get by name
+        List<AnatomyItem> terms ;
+        terms = aoRepository.getAnatomyItemsByName("extrascapular", false);
+        assertNotNull(terms);
+        assertTrue(terms.size()==1);
+
+        AnatomyItem item = terms.get(0) ;
+        Set<AnatomySynonym> synonyms = item.getSynonyms() ;
+        assertEquals("Should be 1 synonym because filtered secondary",synonyms.size(),1) ; 
+
+        // 2- get by synonym
+        terms = aoRepository.getAnatomyItemsByName("supratemporal", false);
+        assertNotNull(terms);
+        assertTrue(terms.size()==2);
+
+        // 3- get by data alias
+        terms = aoRepository.getAnatomyItemsByName("413", false);
+        assertNotNull(terms);
+        assertTrue("Should be no terms for '413'",terms.size()==0);
+    }
+
 }
