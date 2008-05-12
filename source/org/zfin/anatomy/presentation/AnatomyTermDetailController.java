@@ -69,9 +69,20 @@ public class AnatomyTermDetailController extends AbstractCommandController {
     }
 
     private AnatomyItem retrieveAnatomyTermData(AnatomySearchBean form) {
-        AnatomyItem ai = anatomyRepository.getAnatomyTermByID(form.getAnatomyItem().getZdbID());
-        if (ai == null)
+        AnatomyItem ai ; 
+        try{
+            ai = anatomyRepository.getAnatomyTermByID(form.getAnatomyItem().getZdbID());
+        }
+        catch(Exception e){
+            LOG.error("failed to get anatomy term from form["+form+"]");
+            LOG.error("anatomyItem["+form.getAnatomyItem()+"]");
+            LOG.error("zdbID["+form.getAnatomyItem().getZdbID()+"]");
+            LOG.error("error",e);
+            ai = null ;
+        }
+        if (ai == null){
             return null;
+        }
         List<AnatomyRelationship> relationships = anatomyRepository.getAnatomyRelationships(ai);
         ai.setRelatedItems(relationships);
         form.setAnatomyItem(ai);

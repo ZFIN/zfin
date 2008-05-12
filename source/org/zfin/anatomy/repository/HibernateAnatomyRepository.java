@@ -188,26 +188,13 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
     }
 
     public AnatomyItem loadAnatomyItem(AnatomyItem anatomyItem) {
-        try{
-            Session session = HibernateUtil.currentSession();
-            anatomyItem = (AnatomyItem) session.load(AnatomyItem.class, anatomyItem.getZdbID());
-            return anatomyItem;
-        }
-        catch(Exception e){
-            LOG.error("failure getting ID["+anatomyItem.getZdbID()+"]",e);
-            throw new RuntimeException(e);
-        }
+        Session session = HibernateUtil.currentSession();
+        return (AnatomyItem) session.load(AnatomyItem.class, anatomyItem.getZdbID());
     }
 
     public AnatomyItem getAnatomyTermByID(String aoZdbID) {
-        try{
-            Session session = HibernateUtil.currentSession();
-            return (AnatomyItem) session.get(AnatomyItem.class, aoZdbID);
-        }
-        catch(Exception e){
-            LOG.error("failure getting ID["+aoZdbID+"]",e);
-            throw new RuntimeException(e);
-        }
+        Session session = HibernateUtil.currentSession();
+        return (AnatomyItem) session.get(AnatomyItem.class, aoZdbID);
     }
 
     /**
