@@ -61,38 +61,87 @@ sub gp2proteinReport()
     print REPORT "!From: ZFIN (zfin.org) \n";
     print REPORT "! \n";
 
-    my $cur = $dbh->prepare('select distinct mrkr_zdb_id,fdbcont_fdb_db_name,dblink_acc_num
-                               from marker,db_link, foreign_db_contains
-                              where mrkr_zdb_id = dblink_linked_recid
-                                and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                                and mrkr_zdb_id like "ZDB-GENE-%"
-                                and fdbcont_fdb_db_name = "UniProt";'
+#    FB: 2675
+#    Show all gene marker ZdbIDs.
+#    For the Gene marker with UniProt associations show the 
+#    uniprot id with the longest sequence. (union 1)
+#    For Genes without a UniProt  (union 2)
+#    or with no association (union3) 
+#    only show the ZdbID.
+#
+    my $cur = $dbh->prepare('
+select
+distinct m.mrkr_zdb_id,fdbc.fdbcont_fdb_db_name,dbl.dblink_acc_num,dbl.dblink_length
+from marker m,db_link dbl, foreign_db_contains fdbc
+where m.mrkr_zdb_id = dbl.dblink_linked_recid
+and dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and m.mrkr_zdb_id like "ZDB-GENE-%"
+and fdbc.fdbcont_fdb_db_name = "UniProt"
+union
+select
+distinct m.mrkr_zdb_id, "","",0
+from marker m join db_link dbl on m.mrkr_zdb_id= dbl.dblink_linked_recid join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+where m.mrkr_zdb_id like "ZDB-GENE-%"
+and not exists
+(
+   select
+   "t"
+   from db_link dbl , foreign_db_contains fdbc
+   where dbl.dblink_linked_recid=m.mrkr_zdb_id
+   and fdbc.fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id
+   and m.mrkr_zdb_id like "ZDB-GENE-%"
+   and fdbc.fdbcont_fdb_db_name = "UniProt"
+)
+union
+select
+distinct m.mrkr_zdb_id,"","",0
+from marker m
+where m.mrkr_zdb_id like "ZDB-GENE-%"
+and not exists
+(
+   select
+   "t"
+   from db_link dbl , foreign_db_contains fdbc
+   where dbl.dblink_linked_recid=m.mrkr_zdb_id
+   and fdbc.fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id
+   and m.mrkr_zdb_id like "ZDB-GENE-%"
+)
+order by m.mrkr_zdb_id
+                                ;'
 			   );
     $cur->execute;
-    my($mrkr_id,$db_name,$acc_num);
-    $cur->bind_columns(\$mrkr_id,\$db_name,\$acc_num);
+    my($mrkr_id,$db_name,$acc_num,$db_length);
+    $cur->bind_columns(\$mrkr_id,\$db_name,\$acc_num,\$db_length);
     
     my %zdbIDs = ();
     my %zdbPids = ();
-    ###my %invalidIDs = ();
+    my %dbLengths = () ; 
     while ($cur->fetch) {
       $zdbIDs{$mrkr_id} = 1;
       if($db_name eq "UniProt") {
-   ### if(exists $validPids{$acc_num}) {
-	  if (!exists $zdbPids{$mrkr_id}) {
-	    $zdbPids{$mrkr_id} = $acc_num;
-	  } else {
-	    $uniprotId = $zdbPids{$mrkr_id};
-            $zdbPids{$mrkr_id} = $acc_num if ($lengths{$uniprotId} <= $lengths{$acc_num});
-	  }
-   ### } else {
-   ###     $invalidIDs{$acc_num} = 1;
-   ### }
+          if (!exists $zdbPids{$mrkr_id}) {
+            $zdbPids{$mrkr_id} = $acc_num;
+            $dbLengths{$acc_num} = $db_length; 
+          } else {
+            $uniprotId = $zdbPids{$mrkr_id};
+            if ($dbLengths{$uniprotId} <= $db_length){
+             $zdbPids{$mrkr_id} = $acc_num    ; 
+             $dbLengths{$acc_num} = $db_length ; 
+            };
+          }
+      }
+      else{
+            $zdbPids{$mrkr_id} = "NONE";
       }
     }
     
     foreach $k (sort keys %zdbIDs) {
-      $v1 = "UniProt:" . $zdbPids{$k} if exists $zdbPids{$k};
+      if($zdbPids{$k} eq "NONE"){
+          $v1 = "";
+      }
+      else{
+          $v1 = "UniProtKB:" . $zdbPids{$k} if exists $zdbPids{$k};
+      }
       print REPORT "ZFIN:$k\t$v1\n";     
     }
     
