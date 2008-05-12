@@ -45,21 +45,21 @@ system("/bin/rm -f *.txt") and die "can not rm txt" ;
 print "\nRemoving old data files is done.\n";
 
 # download 2 data files from MGI for updating human and mouse chromosome info 
-system("/local/bin/wget -q ftp://ftp.informatics.jax.org/pub/reports/HMD_Human1.rpt -O MGI.data") and &emailError("Cannot download data file 1 from MGI.");
-system("/local/bin/wget -q ftp://ftp.informatics.jax.org/pub/reports/HMD_Rat1.rpt -O MGI2.data") and &emailError("Cannot download data file 2 from MGI.");
+system("/local/bin/wget -q ftp://ftp.informatics.jax.org/pub/reports/HMD_Human1.rpt -O MGI.data") and &emailError("cannot download data file 1 from MGI.");
+system("/local/bin/wget -q ftp://ftp.informatics.jax.org/pub/reports/HMD_Rat1.rpt -O MGI2.data") and &emailError("cannot download data file 2 from MGI.");
 print "\nDownloading from MGI is done\n";
 
 # download data file from FlyBase for updating fly chromosome info 
-system("/local/bin/wget -q ftp://flybase.net/genomes/Drosophila_melanogaster/current/fasta/dmel-all-gene-r5.7.fasta.gz -O FlyBase.data.gz") and &emailError("Cannot download data file from FlyBase.");
-system("/local/bin/gunzip FlyBase.data.gz") and &emailError("Cannot decompress data file of FlyBase.");
+system("/local/bin/wget -q ftp://flybase.net/genomes/Drosophila_melanogaster/current/fasta/dmel-all-gene-r5.7.fasta.gz -O FlyBase.data.gz") and &emailError("cannot download data file from FlyBase. Perhaps file version changed again.");
+system("/local/bin/gunzip FlyBase.data.gz") and &emailError("cannot decompress data file of FlyBase.");
 print "\nDownloading and decompressing FlyBase file is done.\n";
 
 # download data file from SGD for updating fly chromosome info
-system("/local/bin/wget -q ftp://ftp.yeastgenome.org/yeast/data_download/chromosomal_feature/SGD_features.tab -O SGD.data") and &emailError("Cannot download data file from SGD.");
+system("/local/bin/wget -q ftp://ftp.yeastgenome.org/yeast/data_download/chromosomal_feature/SGD_features.tab -O SGD.data") and &emailError("cannot download data file from SGD.");
 print "\nDownloading from SGD is done.\n";
 
 # unload the current fly and yeast orthology data
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DATABASE'} unloadOrthoData.sql") and &emailError("Unable to unload fly and yeast orthology data from orthologue table.");
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DATABASE'} unloadOrthoData.sql") and &emailError("unable to unload fly and yeast orthology data from orthologue table.");
 print "\nUnloading fly and yeast orthology data from ZFIN orthologue table is done.\n";
 
 # excecute the Perl scripts to do parsing and prepare .unl files for updating orthologue table
