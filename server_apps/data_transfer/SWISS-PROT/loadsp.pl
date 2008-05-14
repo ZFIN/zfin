@@ -140,12 +140,42 @@ sub sendRunningResult {
 #------------------- Download -----------
 
 sub downloadGOtermFiles () {
+    &process_vertabrates ;
 
-   system("wget -q ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat -O zfin.dat");
    system("wget -q http://www.geneontology.org/external2go/spkw2go -O spkw2go");
    system("wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2go");
    system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
  }
+
+
+sub process_vertabrates{
+    system("wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz");
+    system("gunzip uniprot_trembl_vertebrates.dat.gz");
+    system("cp uniprot_trembl_vertebrates.dat pre_zfin.dat");
+    system("wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz");
+    system("gunzip uniprot_sprot_vertebrates.dat.gz");
+    system("cat uniprot_sprot_vertebrates.dat >> pre_zfin.dat");
+
+    open(DAT, "pre_zfin.dat") || die("Could not open file!");
+
+    open OUTPUT, ">zfin.dat" or die "Cannot open zfin.dat";
+
+    # find each "//\n" and test to see if its a zfin record.
+    my $buffer = "" ; 
+    my $line ; 
+    foreach $line(<DAT>){
+        $buffer = $buffer .  $line  ; 
+       if($line=~ m/\/\/\n/){
+           if($buffer=~ m/OS   Danio rerio/){
+               print OUTPUT $buffer; 
+           }
+           $buffer = "" ;  # reset the buffer
+       }
+    }
+
+    close(DAT) ; 
+    close(OUTPUT) ; 
+}
 
 
 #=======================================================
@@ -196,7 +226,7 @@ close F;
 # --------------- Check SWISS-PROT file --------------
 # good records for loading are placed in "okfile"
 print "\n sp_check.pl zfin.dat >checkreport.txt \n";
-system ("sp_check.pl zfin.dat >checkreport.txt" );
+system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sp_check.pl zfin.dat >checkreport.txt" );
 
 $count = 0;
 $retry = 1;
@@ -212,7 +242,7 @@ while( !( -e "okfile" &&
       $count = 0;
       $retry = 0;
       print "retry sp_check.pl\n";
-      system("sp_check.pl zfin.dat >checkreport.txt ");
+      system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sp_check.pl zfin.dat >checkreport.txt" );
     }
     else
     {

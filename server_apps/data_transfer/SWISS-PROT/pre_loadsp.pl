@@ -1,10 +1,22 @@
 #!/private/bin/perl 
+use strict ; 
 
 #
 # pre_loadsp.pl
 #
  
 use MIME::Lite;
+
+
+#------------------- Download -----------
+
+sub downloadGOtermFiles () {
+    &process_vertabrates ;
+
+   system("wget -q http://www.geneontology.org/external2go/spkw2go -O spkw2go");
+   system("wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2go");
+   system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
+ }
 
 # ----------------- Send Error Report -------------
 # Parameter
@@ -17,7 +29,7 @@ sub sendErrorReport ($) {
   my $TXTFILE="./report.txt";
  
   # Create a new multipart message:
-  $msg1 = new MIME::Lite 
+  my $msg1 = new MIME::Lite 
     From    => "$ENV{LOGNAME}",
     To      => "$MAILTO",
     Subject => "$SUBJECT",
@@ -47,7 +59,7 @@ sub sendRunningResult {
   my $TXTFILE="./checkreport.txt";
  
   # Create a new multipart message:
-  $msg2 = new MIME::Lite 
+  my $msg2 = new MIME::Lite 
     From    => "$ENV{LOGNAME}",
     To      => "$MAILTO",
     Subject => "$SUBJECT",
@@ -70,7 +82,7 @@ sub sendRunningResult {
   my $ATTFILE = "allproblems.txt";
 
   # Create another new multipart message:
-  $msg3 = new MIME::Lite 
+  my $msg3 = new MIME::Lite 
     From    => "$ENV{LOGNAME}",
     To      => "$MAILTO",
     Subject => "$SUBJECT",
@@ -93,7 +105,7 @@ sub sendRunningResult {
   my $ATTFILE = "pubmed_not_in_zfin";
 
   # Create another new multipart message:
-  $msg4 = new MIME::Lite 
+  my $msg4 = new MIME::Lite 
     From    => "$ENV{LOGNAME}",
     To      => "$MAILTO",
     Subject => "$SUBJECT",
@@ -112,6 +124,39 @@ sub sendRunningResult {
   close(SENDMAIL);
 }
 
+
+# ====================================
+#
+# Extracts only zfin data from vertebrates.
+#
+sub process_vertabrates{
+    system("wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz");
+    system("gunzip uniprot_trembl_vertebrates.dat.gz");
+    system("cp uniprot_trembl_vertebrates.dat pre_zfin.dat");
+    system("wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz");
+    system("gunzip uniprot_sprot_vertebrates.dat.gz");
+    system("cat uniprot_sprot_vertebrates.dat >> pre_zfin.dat");
+
+    open(DAT, "pre_zfin.dat") || die("Could not open file!");
+
+    open OUTPUT, ">zfin.dat" or die "Cannot open zfin.dat";
+
+    # find each "//\n" and test to see if its a zfin record.
+    my $buffer = "" ; 
+    my $line ; 
+    foreach $line(<DAT>){
+        $buffer = $buffer .  $line  ; 
+       if($line=~ m/\/\/\n/){
+           if($buffer=~ m/OS   Danio rerio/){
+               print OUTPUT $buffer; 
+           }
+           $buffer = "" ;  # reset the buffer
+       }
+    }
+
+    close(DAT) ; 
+    close(OUTPUT) ; 
+}
 
 #=======================================================
 #
@@ -142,10 +187,8 @@ system("rm -f *.txt");
 system("rm -f *.dat");
 system("mkdir ./ccnote");
 
-system("wget -q ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat -O zfin.dat");
-system("wget -q http://www.geneontology.org/external2go/spkw2go -O spkw2go");
-system("wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2go");
-system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
+
+&downloadGOtermFiles();
 
 
 #--------------- Delete records from last SWISS-PROT loading-----
@@ -162,10 +205,10 @@ close F;
 # --------------- Check SWISS-PROT file --------------
 # good records for loading are placed in "okfile"
 print "\n sp_check.pl zfin.dat >checkreport.txt \n";
-system ("sp_check.pl zfin.dat >checkreport.txt" );
+system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sp_check.pl zfin.dat >checkreport.txt" );
 
-$count = 0;
-$retry = 1;
+my $count = 0;
+my $retry = 1;
 # wait till checking is finished
 while( !( -e "okfile" && 
           -e "problemfile")) {
