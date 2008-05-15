@@ -28,37 +28,6 @@ EFFECTS:
 	  =============
 <?/MICOMMENT>
 
-    <?MISQL SQL="
-        select cs_field_name_value 
-        from curator_session 
-        where cs_data_zdb_id = '$OID' 
-          and cs_field_name = 'xpbcur_c_figure_only';">
-        <?MIVAR NAME=xpcur_c_figure_only>$1<?/MIVAR>
-    <?/MISQL> 
-
-    <?MISQL SQL="
-        select cs_field_name_value 
-        from curator_session 
-        where cs_data_zdb_id = '$OID' 
-          and cs_field_name = 'xpcur_c_gene_only';">
-        <?MIVAR NAME=xpcur_c_gene_only>$1<?/MIVAR>
-    <?/MISQL>     
-
-    <?MISQL SQL="
-        select cs_field_name_value 
-        from curator_session 
-        where cs_data_zdb_id = '$OID' 
-          and cs_field_name = 'cpcur_c_fish_only';">
-        <?MIVAR NAME=cpcur_c_fish_only>$1<?/MIVAR>
-    <?/MISQL> 
-
-    <?MISQL SQL="
-        select cs_field_name_value 
-        from curator_session 
-        where cs_data_zdb_id = '$OID' 
-          and cs_field_name = 'xpcur_c_auto_on';">
-        <?MIVAR NAME=xpcur_c_auto_on>$1<?/MIVAR>
-    <?/MISQL> 
 
 <form>
 <a name=gene_only>
