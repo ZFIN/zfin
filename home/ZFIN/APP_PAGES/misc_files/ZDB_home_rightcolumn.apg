@@ -52,11 +52,22 @@
 			       value="regen_oevdisp">
 		      </form>
         </li>
-        <li> <form name="quickpub" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="get">
+        <li>
+        <script type="text/javascript">
+        function handleOID(){ 
+            if(document.quickpub.OIDpart.value.indexOf('ZDB-PUB-') != '0'){
+              document.quickpub.OID.value = 'ZDB-PUB-' + document.quickpub.OIDpart.value;
+            }
+            else{
+              document.quickpub.OID.value = document.quickpub.OIDpart.value;
+            }
+        }
+        </script>
+        
+        <form name="quickpub" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="get" onsubmit="handleOID() ; ">
                <input type="hidden" name="MIval" value="aa-curation.apg">
                <input type="hidden" name="OID">
-               <label for="OIDpart"> Curate ZDB-PUB-</label><input name="OIDpart" id="OIDpart" size="15" 
-                              onChange="document.quickpub.OID.value = 'ZDB-PUB-' + document.quickpub.OIDpart.value;">
+               <label for="OIDpart"> Curate ZDB-PUB-</label><input name="OIDpart" id="OIDpart" size="15">
              </form>
         </li>
         <li> <form name="quickacc" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="get">
