@@ -618,7 +618,7 @@ EFFECTS
             <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
             <?MIVAR NAME=xpcurpnl_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
             <option value=$xpcurpnl_xpatex_zdb_id
-                    $(IF,$(AND,$(XST,$xpcur_G_panel_add_xpatex),$(EC,$xpcur_G_panel_add_xpatex,$xpcurpnl_xpatex_zdb_id)),SELECTED)>$xpcurpnl_xpatex_display_name</option>
+                    $(IF,$(AND,$(XST,$xpcurpan_xpatex_selected),$(!=,0,$(POSITION,$xpcurpan_xpatex_selected,$xpcurpnl_xpatex_zdb_id))),SELECTED)>$xpcurpnl_xpatex_display_name</option>
           <?/MISQL>
       </select></td>
     <td colspan=3> 

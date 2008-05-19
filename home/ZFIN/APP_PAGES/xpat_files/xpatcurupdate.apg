@@ -818,6 +818,12 @@ EFFECTS
       <?/MISQL>
     
       <?MIBLOCK INDEX=$xpcurUP_panel_xpatex FOREACH=$xpcur_G_panel_add_xpatex>
+      
+        <?MIBLOCK COND=$(NXST,$xpcurpan_xpatex_selected)>
+            <?MIVAR NAME=xpcurpan_xpatex_selected>$xpcurUP_panel_xpatex<?/MIVAR>
+        <?MIELSE>    
+            <?MIVAR NAME=xpcurpan_xpatex_selected>$xpcurpan_xpatex_selected,$xpcurUP_panel_xpatex<?/MIVAR>
+        <?/MIBLOCK>
     
       <?MISQL SQL="select WebExplode(object,'gPSLitem_xpatex_zdb_id=$xpcurUP_panel_xpatex&gPSLitem_anatitem_zdb_id=$xpcurup_panel_add_anatitem&gPSLitem_expressed=$xpcurup_panel_add_expressed&gPSLitem_stg_start_zdb_id=$xpcur_G_panel_add_start_stg&gPSLitem_stg_end_zdb_id=$xpcur_G_panel_add_end_stg') from webPages where ID='aa-getPubStructureListItem.apg';">$1<?/MISQL>
 
