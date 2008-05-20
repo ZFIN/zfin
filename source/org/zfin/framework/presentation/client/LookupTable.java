@@ -17,7 +17,7 @@ public class LookupTable extends Lookup {
     private FlexTable table = new FlexTable() ;
     private Label testLabel = new Label() ;
     private Element hiddenList = null ;
-    private PhenotePopup phenotePopup = new PhenotePopup(); 
+    private PhenotePopup phenotePopup = null ;
     private String separator = "," ;
     private List termList = new ArrayList() ;
     public static final String JSREF_HIDDEN_NAME ="hiddenName" ;
@@ -91,7 +91,7 @@ public class LookupTable extends Lookup {
             link.setHTML(term.getTerm());
             link.addClickListener(new ClickListener(){
                 public void onClick(Widget widget) {
-                    phenotePopup.showPopup(term.getOboID()) ;
+                    phenotePopup = new PhenotePopup(term.getZdbID()) ;
                 }
             });
 
@@ -256,7 +256,8 @@ public class LookupTable extends Lookup {
      *  Called externally to hide the phenote lookup.
      */
     public void hideTerm(){
-        phenotePopup.hide() ; 
+        phenotePopup.hide() ;
+        phenotePopup = null ; 
     }
 
 

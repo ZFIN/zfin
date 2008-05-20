@@ -45,6 +45,10 @@ public class AnatomyItem implements Serializable {
         return name;
     }
 
+    public String getNameEscaped() {
+        return getName().replaceAll("'","\\\\'") ;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -83,6 +87,15 @@ public class AnatomyItem implements Serializable {
 
     public String getDefinition() {
         return StringUtils.isEmpty(definition) ? null : definition;
+    }
+
+    public String getFormattedDefinition() {
+        if( StringUtils.isEmpty(definition)){
+            return null ;
+        }
+        else{
+            return definition.replaceAll("a href","a target=\\\"_blank\\\" class=\\\"external\\\" href") ;
+        }
     }
 
     public void setDefinition(String definition) {

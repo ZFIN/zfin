@@ -7,12 +7,7 @@ import com.google.gwt.user.client.*;
  */
 public class PhenotePopup extends PopupPanel {
 
-    private final String BASE_URL =  "/phenote/Phenote/" +
-            "?ontologyName=ZF" +
-            "&field=ENTITY" +
-            "&viewType=EXTERNAL" +
-            "&useTerm=true" +
-            "&termId=" ;
+    private final String BASE_URL =  "/action/anatomy/term-info?anatomyItem.zdbID=" ;
     private Frame frame ;
 
     public PhenotePopup(){
@@ -20,9 +15,9 @@ public class PhenotePopup extends PopupPanel {
         initGUI();
     }
 
-    public PhenotePopup(String ontologyID){
+    public PhenotePopup(String zdbID){
         this() ;
-        showPopup(ontologyID) ;
+        showPopup(zdbID) ;
     }
 
 
@@ -37,8 +32,8 @@ public class PhenotePopup extends PopupPanel {
 
 
 
-    public void showPopup(String ontologyID){
-        String url = BASE_URL + ontologyID ;
+    public void showPopup(String zdbID){
+        String url = BASE_URL + zdbID ;
         setPopupPositionAndShow(new PopupPanel.PositionCallback(){
             public void setPosition(int offsetWidth, int offsetHeight) {
                 int left = (Window.getClientWidth() - offsetWidth) / 2;

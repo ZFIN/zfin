@@ -15,7 +15,6 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.Term;
 import org.zfin.marker.Marker;
 import org.apache.log4j.Logger;
-import org.geneontology.util.CollectionUtil;
 
 import java.util.*;
 
@@ -85,7 +84,7 @@ public class LookupServiceImpl
         for(AnatomyItem anatomyItem : anatomyItems){
             String name = anatomyItem.getName() ;
             if(name.equals(term)){
-                return new TermStatus(TermStatus.TERM_STATUS_FOUND_EXACT,term,anatomyItem.getOboID());
+                return new TermStatus(TermStatus.TERM_STATUS_FOUND_EXACT,term,anatomyItem.getZdbID());
             }
             else
             if(foundInexactMatch < 1 || name.contains(term)){
@@ -119,7 +118,9 @@ public class LookupServiceImpl
             suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
         }
         resp.setSuggestions(suggestions);
+
         logger.info("returned with no error: "+ req + " "  +  suggestions.size() + " suggestions ");
+
         return resp ;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

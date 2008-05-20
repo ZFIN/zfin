@@ -11,6 +11,7 @@
         <property name="mappings">
             <props>
                 <prop key="/anatomy/term-detail">anatomyTermDetail</prop>
+                <prop key="/anatomy/term-info">anatomyTermInfo</prop>
                 <prop key="/anatomy/search">anatomySearch</prop>
                 <prop key="/anatomy/high-quality-probes">highQualityProbes</prop>
                 <prop key="/anatomy/all-expressed-genes">allExpressedGenes</prop>
@@ -21,6 +22,7 @@
     </bean>
 
     <bean name="anatomyTermDetail" class="org.zfin.anatomy.presentation.AnatomyTermDetailController" autowire="byName"/>
+    <bean name="anatomyTermInfo" class="org.zfin.anatomy.presentation.AnatomyTermInfoController" autowire="byName"/>
 
     <bean name="anatomySearch" class="org.zfin.anatomy.presentation.AnatomySearchController" autowire="byName">
         <property name="redirectUrlIfSingleResult">

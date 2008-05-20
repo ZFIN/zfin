@@ -13,7 +13,7 @@ public class TermStatus implements IsSerializable {
 
     private String status = TERM_STATUS_LOOKING ;
     private String term = "" ;
-    private String oboID = "" ;
+    private String zdbID = "" ;
 
     public TermStatus() { }
 
@@ -40,10 +40,10 @@ public class TermStatus implements IsSerializable {
         this.term = term ;
     }
 
-    public TermStatus(String status,String term,String oboID){
+    public TermStatus(String status,String term,String zdbID){
         this(status)  ;
         this.term = term ;
-        this.oboID = oboID;
+        this.zdbID = zdbID;
     }
 
 
@@ -84,11 +84,11 @@ public class TermStatus implements IsSerializable {
         this.term = term;
     }
 
-    public String getOboID() {
-        return oboID;
+    public String getZdbID() {
+        return zdbID;
     }
 
-    public void setOboID(String oboID) {
-        this.oboID = oboID;
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
     }
 }

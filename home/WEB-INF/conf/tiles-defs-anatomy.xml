@@ -16,6 +16,9 @@
         <put name="body" value="/WEB-INF/jsp/anatomy/anatomy_term_detail.jsp"/>
     </definition>
 
+    <definition name="anatomy-terminfo.page" page="/WEB-INF/jsp/anatomy/anatomy_term_info.jsp">
+    </definition>
+
     <definition name="all-morpholino-experiments.page" extends="main_layout">
         <put name="staticTitle" value="ZFIN: All Morpholino Experiments: " />
         <put name="body" value="/WEB-INF/jsp/anatomy/all_morpholino_experiments.jsp"/>

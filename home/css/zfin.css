@@ -518,3 +518,8 @@ a.small-new-link:hover {
     background-color:#000;
 }
 
+a.external{
+       background: transparent url( /images/external.png) no-repeat scroll right center ;
+       padding-right: 13px;
+}
+
