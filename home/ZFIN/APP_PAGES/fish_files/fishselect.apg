@@ -111,6 +111,16 @@ function call_submit() {
 
   <?MIBLOCK COND="$(OR,$(XST,$fsel_cnstrct_id),$(XST,$fsel_allele_id),$(XST,$fsel_marker_id))">
     <?MIVAR NAME=query_results>f<?/MIVAR>
+  <?MIELSE COND="$(XST,$fsel_anatomy_item_id)">  
+    <?MISQL SQL="select anatitem_name from anatomy_item 
+       	          where anatitem_zdb_id = '$fsel_anatomy_item_id';">
+      <?MIVAR NAME=TA_selected_structures>$1<?/MIVAR>        
+      <?MIVAR NAME=fsel_processed_selected_structures>$1<?/MIVAR>        
+    <?/MISQL>  
+    <?MIBLOCK COND="$(XST,$fsel_anatomy_include)">
+      <?MIVAR NAME=include_substructures>checked<?/MIVAR>
+    <?/MIBLOCK> 
+    <?MIVAR NAME=query_results>f<?/MIVAR>
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(XST,$query_results)">
@@ -620,7 +630,9 @@ function call_submit() {
              -- $xpanatv_anatomy_error_occured.
              ---------------------------------------------------------------------
        <?/MICOMMENT>
+       <?MIVAR NAME=$fsel_anatomy_expression>
        <?MISQL SQL="select WebExplode(object,'xpanatv_processed_selected_structures=$(URLENCODE,$fsel_processed_selected_structures)&xpanatv_anatomy_error_occured=$fsel_anatomy_error_occured&xpanatv_called_from=mutantpage') from webpages  where id = 'aa-xpatselectanatverify.apg';">  $1  <?/MISQL> 
+       <?/MIVAR>
     
        <?MIVAR NAME=fsel_anatomy_error_occured>$xpanatv_anatomy_error_occured<?/MIVAR>  
        <?MIVAR NAME=item_count>$(VECSIZE,$xpanatv_anatomy_zdb_id_list)<?/MIVAR>
@@ -871,7 +883,7 @@ function call_submit() {
 	  <td width=60% align=center>
             &nbsp;<br/>
 	    <?MIVAR>
-	      <font size="+1">Mutant / Transgenic Lines Search Results (<b>$num_recs</b> $(IF,$(<,$num_recs,2),record found,records found))
+	      <font size="+1">Mutant / Transgenic Lines Search Results (<b>$num_recs</b> $(IF,$(=,$num_recs,1),record found,records found))
 	      </font>
   <form name=critform 
         method=get
@@ -1401,6 +1413,11 @@ function call_submit() {
 	   <b>&nbsp;&nbsp;Search for mutant / transgenic lines</b>
 	 </td>
    <?MIELSE>
+
+<?MIVAR COND="$(=,$num_recs,0)">$fsel_anatomy_expression <br><?/MIVAR>
+   <?MICOMMENT>
+<?/MICOMMENT>
+
      <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
        <tr>
 	 <td class=titlebar>
@@ -1550,6 +1567,7 @@ return false ; ">
 
 		<input type="hidden" id="fsel_processed_selected_structures" name="fsel_processed_selected_structures" <?MIVAR COND=$(XST,$fsel_processed_selected_structures)>value=$fsel_processed_selected_structures<?/MIVAR> >		
 
+        <a name="bottom">
 
 <script type="text/javascript">
     var LookupProperties = {

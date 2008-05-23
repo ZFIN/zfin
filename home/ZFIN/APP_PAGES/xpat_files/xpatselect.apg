@@ -301,12 +301,15 @@ function openChild(childWinUrl,childWinName) {
 
     <?MICOMMENT> pass in $xpatsel_processed_selected_structures, retrieve xpanatv_anatomy_zdb_id_list, 
                  xpanatv_anatomy_error_occured<?/MICOMMENT>
+    <?MIVAR NAME=xpatsel_anatomy_expression>
     <?MISQL SQL="
     select WebExplode(object, 'xpanatv_processed_selected_structures=$(URLENCODE,$xpatsel_processed_selected_structures)&xpanatv_anatomy_error_occured=$xpatsel_anatomy_error_occured')
       from webpages 
       where id = 'aa-xpatselectanatverify.apg';">
     $1
-    <?/MISQL> <?MICOMMENT> returns xpanatv_anatomy_zdb_id_list & xpatanv_anatomy_error_occured <?/MICOMMENT>
+    <?/MISQL> 
+    <?/MIVAR>
+    <?MICOMMENT> returns xpanatv_anatomy_zdb_id_list & xpatanv_anatomy_error_occured <?/MICOMMENT>
 
     <?MIVAR NAME=xpatsel_anatomy_error_occured>$xpanatv_anatomy_error_occured<?/MIVAR>
 
@@ -526,6 +529,7 @@ function openChild(childWinUrl,childWinName) {
      No gene expression patterns were found for your search.
     </div>
     <br>
+<?MIVAR COND="$(AND,$(XST,$xpatsel_anatomy_expression),$(=,$xpatsel_geneCount,0))">$xpatsel_anatomy_expression <br><?/MIVAR>
     <br>
     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatselect_note.apg';">
         <div style="{ text-align: center; }"> <?MICOMMENT> ** IE needs this, the 'auto' below centers in standards compliant browsers ** <?/MICOMMENT>
@@ -705,6 +709,8 @@ function openChild(childWinUrl,childWinName) {
   ==========  QUERY FORM
   ============================================================================
 <?/MICOMMENT>
+
+
 
 <?MIBLOCK COND="$(NXST,$pubId)">
   <table border=0 width=100% cellpadding=3 cellspacing=0>
@@ -913,6 +919,9 @@ return false ; "
 	     </TR>
 	     <TR>
 	     <TD colspan="2">
+
+
+        <a name="bottom">
 
 		<input type="hidden"  id="xpatsel_processed_selected_structures" name="xpatsel_processed_selected_structures" <?MIVAR COND=$(XST,$xpatsel_processed_selected_structures)>value=$xpatsel_processed_selected_structures<?/MIVAR>>
 <script type="text/javascript">

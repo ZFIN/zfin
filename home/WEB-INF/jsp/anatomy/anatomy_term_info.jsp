@@ -18,9 +18,13 @@
             font-family:sans-serif;
             font-weight:bold;
             text-decoration: none;
+            font-size: larger;
         }
         a.close_link:hover{
             color: red ; 
+        }
+        body{
+            font-family: arial, sans-serif;
         }
        
 
@@ -36,20 +40,21 @@
 <TABLE width="100%">
     <tr height=30 valign=top>
         <td colspan=2 align="right" valign="center">
-            <a onclick="window.parent.useTerm('${formBean.anatomyItem.nameEscaped}'); " href="javascript:;">[Add Term]</a> 
+            <%--<a onclick="window.parent.useTerm('${formBean.anatomyItem.nameEscaped}'); " href="javascript:;">[Add To Search]</a>--%>
+            <input type="button"  alt="Add To Search" value="Add To Search" onclick="window.parent.useTerm('${formBean.anatomyItem.nameEscaped}'); " >
             &nbsp;
             &nbsp;
             <a title="Close widnow" class="close_link" onclick="window.parent.hideTerm(); " href="javascript:;">x</a>
         </td>
     </tr>
     <tr>
-        <td width="80">
+        <td width="80" valign=top>
             <FONT SIZE=+1><STRONG>Name:</STRONG></FONT></td>
         <td>
             <FONT SIZE=+1><STRONG>
              ${formBean.anatomyItem.name}
              <br>
-             <a href="/action/anatomy/term-detail?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}" class="external" target="_blank"><font size="-1">More Detail</font></a>
+             <a href="/action/anatomy/term-detail?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}" class="external" target="_blank"><font size="-1">Anatomy Details</font></a>
             </STRONG></FONT>
             <c:if test="${formBean.anatomyItem.obsolete}"><span style="color:red">(obsolete)</span> </c:if>
         </td>

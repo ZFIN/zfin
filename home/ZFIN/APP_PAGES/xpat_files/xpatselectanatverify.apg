@@ -60,7 +60,15 @@ OUTPUT:
 <table bgcolor="#CCCCCC"> 
   <tr>
     <td colspan="2">
-      <B><font size=-1>Anatomy Terms Searched...</font></B>
+      <strong>
+<?MIBLOCK COND=$(NXST,$xpanatv_called_from)"> <?MICOMMENT> called from xpatselect.apg <?/MICOMMENT>
+      Gene expression in individual structures 
+    <?MIELSE>
+      Mutant/transgenic lines with phenotypes in individual structures 
+    <?/MIBLOCK>
+      </strong>
+      <br>
+    <font size=-1>(including substructures, all stages)</font>
     </td>
   </tr>
   <?MIBLOCK INDEX=$xpanatv_part FOREACH=$xpanatv_str_dlmt_list>  <?MICOMMENT> *** open foreach anatitem *** <?/MICOMMENT>
@@ -109,14 +117,10 @@ ORDER BY 3,1
             <?MIVAR NAME="$xpanatv_processed_item_name">$(REPLACE,$xpanatv_item_name,",","|")<?/MIVAR>
 
             <?MIVAR>
-              <font size=-1 style="font-family:arial; font-weight:bold;">
                 <A HREF="/action/anatomy/term-detail?anatomyItem.zdbID=$xpanatv_item_zdb_id">$xpanatv_item_name</A>
-              </font> 
             <?/MIVAR>
           </td>
           <td bgcolor="#EEEEEE">
-            <FONT size=-1 style="font-family:arial;">
-            
             <?MIBLOCK COND="$(NXST,$xpanatv_called_from)"> <?MICOMMENT> called from xpatselect.apg <?/MICOMMENT>
             <?MICOMMENT> ** Joining on xpatfig to protect code from xpatres records that have lost their 
                             connection to data and screw up the counts.  The data will get fixed also, but 
@@ -144,9 +148,9 @@ where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
               <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>
 
               <?MIBLOCK COND="$(>,$xpanatv_totalcount,0)"> 
-                <?MIVAR>has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_processed_item_name" target="_parent"><B>($xpanatv_totalcount)</B></A> gene(s), including substructures, expressed in all stages <?/MIVAR>
+                <?MIVAR>expression for <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_processed_item_name" target="_parent"><B>($xpanatv_totalcount)</B></A> genes<?/MIVAR>
               <?MIELSE>
-	        has no expression data.
+	        <label class="error">no expression data</label>
               <?/MIBLOCK>
 
      <?MIELSE COND="$(AND,$(XST,$xpanatv_called_from),$(EC,$xpanatv_called_from,mutantpage))"> <?MICOMMENT> called from fishselect.apg <?/MICOMMENT>
@@ -222,13 +226,12 @@ where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
               <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>
 
               <?MIBLOCK COND="$(>,$xpanatv_totalcount,0)"> 
-                <?MIVAR>has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$xpanatv_item_zdb_id&fsel_anatomy_include=yes&WINSIZE=25" target="_parent"><B>($xpanatv_totalcount)</B></A> mutant/transgenic line(s) (including substructures) <?/MIVAR>
-              <?MIELSE>                                                                                                            
-	        has no mutant/transgenic data.
+                <?MIVAR>phenotypes in <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$xpanatv_item_zdb_id&fsel_anatomy_include=yes&WINSIZE=25" target="_parent"><B>($xpanatv_totalcount)</B></A> lines <?/MIVAR>
+              <?MIELSE>                  
+	        <label class="error">no mutant/transgenic data</label>
               <?/MIBLOCK>
         <?MISQL SQL="delete from $temp_on_anat;"><?/MISQL>
      <?/MIBLOCK>
-            </FONT>
             <FONT size=-1 style="font-family:arial; font-weight:bold;  ">
               <?MIVAR>$xpanatv_matchingText<?/MIVAR>
             </FONT>

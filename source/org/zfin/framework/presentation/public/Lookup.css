@@ -61,6 +61,8 @@
     background: white ;
     border-color: black ;
     box-shadow: 0.2em 0.2em #CCC
+    border: thin black solid ;  
+    position: relative ; 
 }
 
 

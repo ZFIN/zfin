@@ -9,9 +9,12 @@ public class PhenotePopup extends PopupPanel {
 
     private final String BASE_URL =  "/action/anatomy/term-info?anatomyItem.zdbID=" ;
     private Frame frame ;
+    private int  height = 600 ; 
+    private int  width = 400 ; 
 
     public PhenotePopup(){
         super(true,true) ;
+//        super(false,false) ;
         initGUI();
     }
 
@@ -24,8 +27,8 @@ public class PhenotePopup extends PopupPanel {
 
     private void initGUI(){
         frame = new Frame() ;
-        frame.setWidth("400");
-        frame.setHeight("600");
+        frame.setHeight(""+height);
+        frame.setWidth(""+width);
         frame.setStylePrimaryName("gwt-Frame");
         setWidget(frame) ;
     }
@@ -34,14 +37,17 @@ public class PhenotePopup extends PopupPanel {
 
     public void showPopup(String zdbID){
         String url = BASE_URL + zdbID ;
-        setPopupPositionAndShow(new PopupPanel.PositionCallback(){
-            public void setPosition(int offsetWidth, int offsetHeight) {
-                int left = (Window.getClientWidth() - offsetWidth) / 2;
-                int top = (Window.getClientHeight() - offsetHeight) / 3;
-                setPopupPosition(left, top);
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-        });
+        center() ; 
+        // the  offset width/height is the same as that of the frame
+//        setPopupPositionAndShow(new PopupPanel.PositionCallback(){
+//            public void setPosition(int offsetWidth, int offsetHeight) {
+//                int left =  (Window.getClientWidth()+Window.getScrollLeft()-offsetWidth)/2 ; 
+//                int top =  (Window.getClientHeight()+Window.getScrollTop()-offsetHeight) ; 
+//                setPopupPosition(left, top);
+//                //To change body of implemented methods use File | Settings | File Templates.
+//            }
+//        });
+
         frame.setUrl(url);
     }
 

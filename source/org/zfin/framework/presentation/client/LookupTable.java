@@ -92,6 +92,7 @@ public class LookupTable extends Lookup {
             link.addClickListener(new ClickListener(){
                 public void onClick(Widget widget) {
                     phenotePopup = new PhenotePopup(term.getZdbID()) ;
+                    navigateToBottom() ; 
                 }
             });
 
@@ -225,6 +226,11 @@ public class LookupTable extends Lookup {
         }
         return returnList ;
     }
+
+    public static native void navigateToBottom()/*-{
+        $wnd.navigate('#bottom') ; 
+    }-*/;
+    
 
     private native void exposeMethodToJavascript(LookupTable lookupTable)/*-{
         $wnd.clearTable = function(){
