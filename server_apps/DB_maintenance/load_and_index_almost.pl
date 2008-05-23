@@ -192,9 +192,11 @@ $zfinWwwDir = "/research/zusers/almost/ZFIN_WWW";
 $makeEnvFile = "/private/ZfinLinks/Commons/env/almost.env";
 
 # Use your own values while testing/modifying this script.
-#$dbName      = "clemdb";
-#$zfinWwwDir  = "/research/zusers/clements/Zfin/ZFIN_WWW";
-#$makeEnvFile = "/private/ZfinLinks/Commons/env/albino.env";
+# the testing gets trick due to the different ways to start/stop tomcat,
+# and specific site name inside system command.
+#$dbName      = "ogodb";
+#$zfinWwwDir  = "/research/zusers/peirans/Ogon/Zfin/ZFIN_WWW";
+#$makeEnvFile = "/private/ZfinLinks/Commons/env/ogon.env";
 
 
 #set environment variables
@@ -225,24 +227,40 @@ $latestDump = `/bin/ls -1t $dumpDir | head -1`;
 chop($latestDump);
 print(LOG "Using dump $dumpDir/$latestDump\n");
 
-# stop Tomcat to get rid of open session
+# stop Tomcat to get rid of open sessions
 $status = system("/private/ZfinLinks/Commons/bin/stoptomcat.pl");
-# check whether jsvc processes are terminated, 
-# if not, explicitly kill the process as root. 
-# (We don't handle the return code from the system call.)
-my $jsvc_pid = `ps -ef | egrep 'jsvc.*almost' | egrep -v grep | awk '{print \$2}'`;
+
+# check whether jsvc processes are terminated
+my $jsvc_pid = `pgrep -P 1 -u root,informix jsvc`;
 $jsvc_pid =~ s/\n/ /g;
 if ( $jsvc_pid ) {
-    print (STDERR "Explicitly kill orphan jsvc processes: $jsvc_pid \n");
-
-    my @userData = getpwnam("root");
-    $REAL_USER_ID = $userData[2];
-    $EFFECTIVE_USER_ID = $userData[2];
-    $REAL_GROUP_ID = $userData[3];
-    $EFFECTIVE_GROUP_ID = $userData[3];
-
-    system("kill $jsvc_pid");
+    print (STDERR "Tomcat failed to exit, jsvc process: $jsvc_pid. Please check catalina.out \n");
 }
+
+# restartapache, then
+# provide info on open sessions and remove sessions.
+# (this code could be put inside loaddb.pl but it is probably better to 
+#  make the dangling tomcat db connections be explicit for interactive 
+#  db reload?)
+$status = system("/private/ZfinLinks/Commons/bin/restartapache.pl");
+
+open (SESSID, "$ENV{INFORMIXDIR}/bin/onstat -g sql | grep $dbName | ");
+while (<SESSID>) {
+   
+    my ($sessionId) = split;
+   
+    if ($sessionId =~ /^\d+$/) {
+
+	open (ONSTAT, "$ENV{INFORMIXDIR}/bin/onstat -g ses $sessionId |");
+	while (<ONSTAT>) {
+	    print ;
+	}
+	close ONSTAT;
+
+	system ("$ENV{INFORMIXDIR}/bin/onmode -z $sessionId ");	
+    }
+}
+close SESSID;
 
 # load it
 close(LOG) or abort("Cannot close log file $logFile.\n");
