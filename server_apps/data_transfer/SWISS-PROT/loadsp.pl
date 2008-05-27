@@ -164,7 +164,9 @@ sub process_vertabrates{
     my $buffer = "" ; 
     my $line ; 
     foreach $line(<DAT>){
+       if( $line !~ m/CC   /){
         $buffer = $buffer .  $line  ; 
+       }
        if($line=~ m/\/\/\n/){
            if($buffer=~ m/OS   Danio rerio/){
                print OUTPUT $buffer; 
