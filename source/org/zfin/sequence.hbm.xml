@@ -266,7 +266,7 @@
            <!--and link.dblink_fdbcont_zdb_id=acc.accbk_fdbcont_zdb_id-->
            and fdbc.fdbcont_zdb_id = link.dblink_fdbcont_zdb_id
            and fdbc.fdbcont_fdbdt_super_type = 'sequence'
-           and fdbc.fdbcont_fdbdt_data_type in ('cDNA','Polypeptide','Vega Transcript')
+           and fdbc.fdbcont_fdbdt_data_type in ('RNA','Polypeptide')
     </sql-query>
 
 </hibernate-mapping>

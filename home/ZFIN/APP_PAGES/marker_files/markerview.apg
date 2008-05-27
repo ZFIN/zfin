@@ -232,7 +232,7 @@ function jump(form_select){
 
         // the following checks enforce correct accession# format
         // per curator, we check RefSeq and Vega for now
-		if ( ( dbname == 'RefSeq' && /cDNA/.test(seq_type) &&  ! /[NX]M[_]/.test(seq_acc) )
+		if ( ( dbname == 'RefSeq' && /RNA/.test(seq_type) &&  ! /[NX]M[_]/.test(seq_acc) )
                    ||( dbname == 'RefSeq' && /Polypeptide/.test(seq_type) &&  ! /[NX]P[_]/.test(seq_acc) )             ){
 	            
 		    alert ("RefSeq accession number is in a wrong format, please check.");
@@ -2173,7 +2173,7 @@ union
      where 
      fdbc.fdbcont_zdb_id in 
 (
- 'ZDB-FDBCONT-040412-37', --GenBank (cDNA)
+ 'ZDB-FDBCONT-040412-37', --GenBank (RNA)
 'ZDB-FDBCONT-040412-36', -- GenBank (Genomic)
 'ZDB-FDBCONT-040412-42', -- GenPept (Polypeptide)
 'ZDB-FDBCONT-040412-47', --UniProt (Polypeptide) 
@@ -2208,7 +2208,7 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
      where fdbdt_super_type = 'sequence'
      and fdbdt_data_type != 'Sequence Clusters'
      order by fdbdt_data_type;">
-    <option value="$1"  $(IF,$(EC,$1,cDNA),SELECTED)>$1</option>
+    <option value="$1"  $(IF,$(EC,$1,RNA),SELECTED)>$1</option>
   <?/MISQL>
   </SELECT>
   Length: <input type=text size=10 name=upd_seq_length>
@@ -2224,7 +2224,7 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
      where 
      fdbc.fdbcont_zdb_id in 
 (
- 'ZDB-FDBCONT-040412-37', --GenBank (cDNA)
+ 'ZDB-FDBCONT-040412-37', --GenBank (RNA)
 'ZDB-FDBCONT-040412-36', -- GenBank (Genomic)
 'ZDB-FDBCONT-040412-42', -- GenPept (Polypeptide)
 'ZDB-FDBCONT-040412-47', --UniProt (Polypeptide) 
@@ -2373,7 +2373,7 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
                 <?MIVAR>$dblink_length<?/MIVAR>
                 <?MIBLOCK COND=$(NC,$dblink_length,)>
                    <?MIBLOCK COND=$(EC,$data_type,Polypeptide)> aa
-                   <?MIELSE  COND=$(OR,$(EC,$data_type,Vega Transcript),$(EC,$data_type,cDNA),$(EC,$data_type,Genomic))> bp
+                   <?MIELSE  COND=$(OR,$(EC,$data_type,RNA),$(EC,$data_type,Genomic))> bp
                    <?/MIBLOCK>
                 <?/MIBLOCK>
               </nobr>

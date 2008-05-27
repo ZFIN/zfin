@@ -33,17 +33,17 @@ update tmp_run set trun_zad = get_id('RUN');
 alter table tmp_run add trun_query_fdbcont varchar(50);
 update tmp_run set trun_query_fdbcont =
     case
-        when trun_name[1,3] = 'ZGC' then     'ZDB-FDBCONT-040412-37' -- GenBank cDNA
+        when trun_name[1,3] = 'ZGC' then     'ZDB-FDBCONT-040412-37' -- GenBank RNA
 --      when trun_name[1,4] = 'Vega' then    'ZDB-FDBCONT-050210-1'  -- PreVega ... (make that internal)
         when trun_name[1,4] = 'Vega' then(
         select fdbcont_zdb_id from foreign_db_contains
-         where fdbcont_fdbdt_data_type = 'Vega Transcript'
+         where fdbcont_fdbdt_data_type = 'RNA'
            and fdbcont_fdb_db_name = 'INTVEGA'
            and fdbcont_organism_common_name = 'Zebrafish'
            and fdbcont_fdbdt_super_type = 'sequence'
         )
         when trun_name[1,7] = 'UniProt' then 'ZDB-FDBCONT-040412-47' -- (get FDBCONT from DB_LINK)
-        else  'ZDB-FDBCONT-040412-37'        --local??? google???    -- GenBank cDNA
+        else  'ZDB-FDBCONT-040412-37'        --local??? google???    -- GenBank RNA
     end
 ;
 -- fix trailing space from case statment
@@ -54,8 +54,8 @@ update tmp_run set trun_query_fdbcont = trim( trun_query_fdbcont);
 alter table tmp_run add trun_target_fdbcont varchar(50);
 update tmp_run set trun_target_fdbcont =
     case
-        when trun_name[1,3] = 'ZGC' then     'ZDB-FDBCONT-040412-37' -- GenBank cDNA
-        when trun_name[1,4] = 'Vega' then    'ZDB-FDBCONT-040412-37' -- GenBank cDNA
+        when trun_name[1,3] = 'ZGC' then     'ZDB-FDBCONT-040412-37' -- GenBank RNA
+        when trun_name[1,4] = 'Vega' then    'ZDB-FDBCONT-040412-37' -- GenBank RNA
         when trun_name[1,7] = 'UniProt' then 'ZDB-FDBCONT-040412-47' -- UniProt Zebrafish
         else  'ZDB-FDBCONT-040412-37'
     end
@@ -68,12 +68,12 @@ update tmp_run set trun_target_fdbcont =
 create table tmp_report (
     trpt_acc       varchar(40),  -- BC146618
     trpt_acc_db    varchar(20),  -- "gb|ref|tpe|"
-    trpt_acc_type  varchar(20),  -- "transcript|cDNA|DNA|RNA ..." (PSEUDO?)
+    trpt_acc_type  varchar(20),  -- "transcript|RNA|DNA|RNA ..." (PSEUDO?)
     trpt_locus_acc varchar(60),  -- "zgc:158136" or "OTTDARG"
     trpt_acc_len   integer,      -- 3498
     trpt_alt_id    varchar(60),  -- "si:dkey"
     trpt_exitcode  integer,	     -- 0
-    trpt_defline   lvarchar,     -- {gi|148921504|gb|BC146618.1|zgc:158136 Danio rerio cDNA clone MGC:158136 IMAGE:6970042, complete cds (3498 letters; record 1)}
+    trpt_defline   lvarchar,     -- {gi|148921504|gb|BC146618.1|zgc:158136 Danio rerio RNA clone MGC:158136 IMAGE:6970042, complete cds (3498 letters; record 1)}
     trpt_detail    lvarchar
   --trpt_query_id  (accession_bank_id)
   --trpt_cnd_zdbid
@@ -100,8 +100,8 @@ create table tmp_hit (
     thit_order           integer,     --;;; : 0
     thit_acc             varchar(30), --;;; : "BC116508"
     thit_acc_db          varchar(10), --;;; : "gb"
-    thit_acc_type        varchar(20), --;;; : "nucleotide|protein|transcript --- cDNA|DNA|[t|r|m|u]RNA|RNA ...EST GSS WGS ...
-    thit_defline         lvarchar,    --;;; : {BC116508.1|BC116508 Danio rerio zgc     ;;;; :136342, mRNA (cDNA clone MGC     ;;;; :136342 IMAGE     ;;;; :8128252), complete cds Length = 2014}
+    thit_acc_type        varchar(20), --;;; : "nucleotide|protein|transcript --- RNA|DNA|[t|r|m|u]RNA|RNA ...EST GSS WGS ...
+    thit_defline         lvarchar,    --;;; : {BC116508.1|BC116508 Danio rerio zgc     ;;;; :136342, mRNA (RNA clone MGC     ;;;; :136342 IMAGE     ;;;; :8128252), complete cds Length = 2014}
     thit_species         varchar(15), --;;; : "Danio rerio"
     thit_acc_len         integer,     --;;; : 0
     thit_score           integer,     --;;; : "5874"
@@ -634,7 +634,7 @@ insert into blast_hit (
 )
 -- this DISTINCT really slows things down, especially large nomenclature loads
 -- where so far, it has not been needed. nor has it been needed for Vega or ZGC
--- loads to date.  *BUT* it has been needed for at least one 'paper' load of cDNA
+-- loads to date.  *BUT* it has been needed for at least one 'paper' load of RNA
 -- for now I am going to enable it only if need be for a particular load
 select --DISTINCT -- ***
     thit_zad,

@@ -285,7 +285,7 @@ public class MarkerRepositoryTest {
 
            ReferenceDatabase refDb = sequenceRepository.getReferenceDatabase(
                    ForeignDB.AvailableName.GENBANK.toString(),
-                   ReferenceDatabase.Type.CDNA,
+                   ReferenceDatabase.Type.RNA,
                    ReferenceDatabase.SuperType.SEQUENCE,
                    Species.ZEBRAFISH);
 

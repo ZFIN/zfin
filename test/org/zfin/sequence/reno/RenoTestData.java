@@ -98,7 +98,7 @@ public class RenoTestData {
         ReferenceDatabase refDb = sequenceRepository.getReferenceDatabaseByAlternateKey(
                 foreignDB,
 //                ReferenceDatabase.Type.GENOMIC,
-                ReferenceDatabase.Type.CDNA,
+                ReferenceDatabase.Type.RNA,
                 ReferenceDatabase.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 

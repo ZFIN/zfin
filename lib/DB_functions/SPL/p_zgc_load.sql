@@ -524,7 +524,7 @@ create function p_zgc_load() returning int;
     WHERE
         zgc_acc_num NOT IN (select zDblink_acc_num from tmp_Zgc_Dblink_moved)
         AND fdbcont_fdb_db_name = 'GenBank'
-        AND fdbcont_fdbdt_data_type = 'cDNA'
+        AND fdbcont_fdbdt_data_type = 'RNA'
         AND zgc_name = zEST_name;
 
 

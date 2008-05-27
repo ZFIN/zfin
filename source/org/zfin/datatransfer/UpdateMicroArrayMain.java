@@ -37,7 +37,7 @@ public final class UpdateMicroArrayMain {
 
 
     ReferenceDatabase genBankGenomicDatabase  = null ;
-    ReferenceDatabase genBankCDNADatabase  = null ;
+    ReferenceDatabase genBankRNADatabase  = null ;
     SequenceRepository sequenceRepository = null ;
     final String[] confFiles = {
             "sequence.hbm.xml",
@@ -59,7 +59,7 @@ public final class UpdateMicroArrayMain {
     
 
     void loadGenBankDBs() throws Exception{
-        genBankLinks = sequenceRepository.getUniqueMarkerDBLinks( genBankGenomicDatabase, genBankCDNADatabase) ;   // 1 - load genbank
+        genBankLinks = sequenceRepository.getUniqueMarkerDBLinks( genBankGenomicDatabase, genBankRNADatabase) ;   // 1 - load genbank
     }
 
 
@@ -91,9 +91,9 @@ public final class UpdateMicroArrayMain {
             logger.debug("genBankGenomicDatabase: " + genBankGenomicDatabase) ;
 
 
-            genBankCDNADatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(),
-                    ReferenceDatabase.Type.CDNA,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
-            logger.debug("genBankCDNADatabase: " + genBankCDNADatabase) ;
+            genBankRNADatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(),
+                    ReferenceDatabase.Type.RNA,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
+            logger.debug("genBankRNADatabase: " + genBankRNADatabase) ;
 
             refPub = RepositoryFactory.getPublicationRepository().getPublication(referencePubZdbID) ;
 

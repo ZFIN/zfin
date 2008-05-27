@@ -114,7 +114,7 @@ public class MapAccessionDbLinkTest {
 
         refSeqReferenceDatabase =sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.REFSEQ.toString(),
-                ReferenceDatabase.Type.CDNA,
+                ReferenceDatabase.Type.RNA,
                 ReferenceDatabase.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 

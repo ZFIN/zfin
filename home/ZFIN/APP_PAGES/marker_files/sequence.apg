@@ -62,7 +62,7 @@
 
         // the following checks enforce correct accession# format
         // per curator, we check RefSeq and Vega for now
-		if ( ( dbname == 'RefSeq' && /cDNA/.test(seq_type) &&  ! /[NX]M[_]/.test(seq_acc) )
+		if ( ( dbname == 'RefSeq' && /RNA/.test(seq_type) &&  ! /[NX]M[_]/.test(seq_acc) )
                    ||( dbname == 'RefSeq' && /Polypeptide/.test(seq_type) &&  ! /[NX]P[_]/.test(seq_acc) )             ){
 	            
 		    alert ("RefSeq accession number is in a wrong format, please check.");
@@ -269,7 +269,7 @@
      where 
      fdbc.fdbcont_zdb_id in 
 (
- 'ZDB-FDBCONT-040412-37', --GenBank (cDNA)
+ 'ZDB-FDBCONT-040412-37', --GenBank (RNA)
 'ZDB-FDBCONT-040412-36', -- GenBank (Genomic)
 'ZDB-FDBCONT-040412-42', -- GenPept (Polypeptide)
 'ZDB-FDBCONT-040412-47', --UniProt (Polypeptide) 
@@ -305,7 +305,7 @@ Type:<SELECT name=upd_seq_type>
      where fdbdt_super_type = 'sequence'
      and fdbdt_data_type != 'Sequence Clusters'
      order by fdbdt_data_type;">
-    <option value="$1" $(IF,$(EC,$1,cDNA),SELECTED)>$1</option>
+    <option value="$1" $(IF,$(EC,$1,RNA),SELECTED)>$1</option>
   <?/MISQL>
 </SELECT>
 Length: <input type=text size=10 name=upd_seq_length>
@@ -320,7 +320,7 @@ Length: <input type=text size=10 name=upd_seq_length>
      where 
      fdbc.fdbcont_zdb_id in 
 (
- 'ZDB-FDBCONT-040412-37', --GenBank (cDNA)
+ 'ZDB-FDBCONT-040412-37', --GenBank (RNA)
 'ZDB-FDBCONT-040412-36', -- GenBank (Genomic)
 'ZDB-FDBCONT-040412-42', -- GenPept (Polypeptide)
 'ZDB-FDBCONT-040412-47', --UniProt (Polypeptide) 

@@ -1,7 +1,7 @@
 #!/private/bin/perl
 #
 # This script generates ZFIN GenBank accession and 
-# GenBank cDNA accession lists for Genomix. Since it is
+# GenBank RNA accession lists for Genomix. Since it is
 # internal use, it doesn't has to be generated on production.
 # After Sunday night's almost reload, we schedule this script. 
 #
@@ -29,9 +29,9 @@ my $accFile_xpat = $outputdir."zfin_gene_xpat_cdna_acc.unl";
 
 my $sql ="unload to \"$accFile\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_name = \"GenBank\" and fdbcont_fdbdt_super_type = \"sequence\")";  
      
-my $sql_cdna ="unload to \"$accFile_cdna\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_name = \"GenBank\" and fdbcont_fdbdt_data_type = \"cDNA\") ";  
+my $sql_cdna ="unload to \"$accFile_cdna\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_name = \"GenBank\" and fdbcont_fdbdt_data_type = \"RNA\") ";  
 
-# query genbank cDNA and vega transcripts accessions on genes 
+# query genbank RNA and vega transcripts accessions on genes 
 # that has expression data, and not named microRNA%
 my $sql_xpat ="
 
@@ -56,7 +56,7 @@ unload to \"$accFile_xpat\" delimiter \" \"
     where dblink_linked_recid = t_xgl_mrkr_zdb_id
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id 
       and fdbcont_fdb_db_name in (\"GenBank\",\"Vega_Trans\") 
-      and fdbcont_fdbdt_data_type = \"cDNA\"
+      and fdbcont_fdbdt_data_type = \"RNA\"
 ";  
   
 

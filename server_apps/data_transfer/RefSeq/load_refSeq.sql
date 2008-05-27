@@ -314,7 +314,7 @@ INSERT INTO tmp_db_link
   WHERE refseq_ll = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
     AND fdbcont_fdb_db_name = 'RefSeq'
-    AND fdbcont_fdbdt_data_type = 'cDNA'
+    AND fdbcont_fdbdt_data_type = 'RNA'
     AND refseq_nM_acc[1,2] = 'NM'
     AND acclen_acc = refseq_nM_acc
 ;
@@ -384,7 +384,7 @@ select distinct gbacc_pept as pept_acc, dblink_linked_recid as seg_zdb
     where gbacc_acc = dblink_acc_num
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id
       and fdbcont_fdb_db_name = "GenBank"
-      and fdbcont_fdbdt_data_type = "cDNA"
+      and fdbcont_fdbdt_data_type = "RNA"
       and gbacc_pept != "-"
       and dblink_linked_recid not like "ZDB-GENE%";
 

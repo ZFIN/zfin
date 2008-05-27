@@ -45,6 +45,50 @@
 -- Marker Relationship data
 --	marker1 id, marker1 symbol, marker 2 id, marker 2 symbol, relationship
 
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/seq_in_notes.txt'
+  DELIMITER "	"
+  select dnote_data_zdb_id, dnote_text
+    from data_note
+    where lower(dnote_text) like '%aa%'
+   union 
+     select dnote_data_zdb_id, dnote_text
+        from data_note
+       where lower(dnote_text) like '%gg%'
+      union 
+     select dnote_data_zdb_id, dnote_text
+        from data_note
+       where lower(dnote_text) like '%<br>m%'
+        and lower(dnote_text) not like '%mindi%';
+
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/seq_in_notes_no_accessions.txt'
+  DELIMITER "	"
+  select dnote_data_zdb_id, dnote_text
+    from data_note
+    where lower(dnote_text) like '%aa%'
+ and not exists (Select 'x' from db_link
+      	      	     	     where dblink_linked_recid = dnote_data_zdb_id)
+  and dnote_data_zdb_id not like 'ZDB-GENO-%'
+  and dnote_data_zdb_id not like 'ZDB-MRPHLNO-%'
+   union 
+     select dnote_data_zdb_id, dnote_text
+        from data_note
+       where lower(dnote_text) like '%gg%'
+ and not exists (Select 'x' from db_link
+      	      	     	     where dblink_linked_recid = dnote_data_zdb_id)
+  and dnote_data_zdb_id not like 'ZDB-GENO-%'
+  and dnote_data_zdb_id not like 'ZDB-MRPHLNO-%'
+      union 
+     select dnote_data_zdb_id, dnote_text
+        from data_note
+       where lower(dnote_text) like '%<br>m%'
+        and lower(dnote_text) not like '%mindi%'
+      and not exists (Select 'x' from db_link
+      	      	     	     where dblink_linked_recid = dnote_data_zdb_id)
+  and dnote_data_zdb_id not like 'ZDB-GENO-%'
+  and dnote_data_zdb_id not like 'ZDB-MRPHLNO-%';
+
+
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genetic_markers.txt'
   DELIMITER "	"
   select mrkr_zdb_id, mrkr_abbrev, mrkr_name, mrkr_type

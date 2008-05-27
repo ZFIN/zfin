@@ -73,7 +73,7 @@ public class MultiRunTest {
 
         ReferenceDatabase refDb = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
                 ForeignDB.AvailableName.GENBANK.toString(),
-                ReferenceDatabase.Type.CDNA,
+                ReferenceDatabase.Type.RNA,
                 ReferenceDatabase.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 
