@@ -989,7 +989,6 @@ INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
     FROM tmp_db_link
 ;
 
-
-rollback work;
---commit work;
+--rollback work;
+commit work;
 
