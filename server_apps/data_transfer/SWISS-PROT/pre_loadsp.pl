@@ -145,7 +145,13 @@ sub process_vertabrates{
     my $buffer = "" ; 
     my $line ; 
     foreach $line(<DAT>){
-       if( $line !~ m/CC   /){
+       if( 
+           $line !~ m/CC   -------/
+           and 
+           $line !~ m/CC   Copyrighted/ 
+           and 
+           $line !~ m/CC   Distributed/ 
+           ){
         $buffer = $buffer .  $line  ; 
        }
        if($line=~ m/\/\/\n/){
