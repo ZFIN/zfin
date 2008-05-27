@@ -28,6 +28,7 @@ public interface RenoRepository {
     RunCandidate getRunCandidateByID(String runCandidateID);
     List<RunCandidate> getRunCandidates(String runZdbId);
     List<RunCandidate> getSortedRunCandidates(String runZdbId, String comparator, int maxNumOfRecords);
+    List<RunCandidate> getSortedNonZFRunCandidates(String runZdbId, String comparator, int maxNumOfRecords);
     List<RunCandidate> getPendingCandidates(Run run);
 
 }

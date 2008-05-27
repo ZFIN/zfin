@@ -195,6 +195,85 @@ public class HibernateRenoRepository implements RenoRepository {
                 list.add(cand);
             }
         }
+
+
+
+        session.setCacheMode(oldCacheMode);
+
+        return list;
+    }
+
+    public List<RunCandidate> getSortedNonZFRunCandidates(String runZdbId, String comparator, int maxNumRecords) {
+        Session session = HibernateUtil.currentSession();
+        CacheMode oldCacheMode = session.getCacheMode();
+        LOG.info("old cache mode: " + oldCacheMode);
+
+        session.setCacheMode(CacheMode.REFRESH);
+
+        String orderBy;
+
+        List<RunCandidate> list = new ArrayList<RunCandidate>();
+
+
+        String hql = "SELECT runCandidate.zdbID , hit.expectValue, max(hit.score ), runCandidate.candidate.lastFinishedDate , runCandidate.occurrenceOrder, runCandidate.candidate.problem " +
+                "FROM RunCandidate runCandidate, Query query , Hit hit, Accession accession , EntrezProtRelation  entrezProtRelation " +
+                "WHERE runCandidate.run.zdbID = :zdbID" +
+                " and runCandidate.done  = :done" +
+                " and runCandidate= query.runCandidate " +
+                " and hit.query = query " +
+                " and hit.targetAccession  = accession " +
+                " and accession.number  = entrezProtRelation.proteinAccNum " +
+                " and hit.expectValue = (select min(bh.expectValue)" +
+                "                            from Hit bh,Accession ab, EntrezProtRelation ep" +
+                "                          where bh.query = query "+
+                "                            and bh.targetAccession.ID  =ab.ID " +
+                "                            and ab.number = ep.proteinAccNum " +
+                "                        ) " +
+                "GROUP BY runCandidate.zdbID , runCandidate.candidate.problem,hit.expectValue , runCandidate.candidate.lastFinishedDate , runCandidate.occurrenceOrder " +
+                "ORDER BY " ;
+
+        if (comparator.equals(RunBean.SORT_BY_OCCURRENCE_DSC)) {
+            orderBy = "runCandidate.candidate.problem asc, runCandidate.occurrenceOrder desc, hit.expectValue asc, max(hit.score) desc";
+        } else if (comparator.equals(RunBean.SORT_BY_OCCURRENCE_ASC)) {
+            orderBy = "runCandidate.candidate.problem asc, runCandidate.occurrenceOrder asc, hit.expectValue asc, max(hit.score) desc";
+        } else if (comparator.equals(RunBean.SORT_BY_LASTDONE_ASC)) {
+            orderBy = "runCandidate.candidate.problem asc, runCandidate.candidate.lastFinishedDate asc, hit.expectValue asc, max(hit.score) desc";
+        } else if (comparator.equals(RunBean.SORT_BY_LASTDONE_DSC)) {
+            orderBy = "runCandidate.candidate.problem asc, runCandidate.candidate.lastFinishedDate desc, hit.expectValue asc, max(hit.score) desc";
+        } else {
+            orderBy = "runCandidate.candidate.problem asc, hit.expectValue asc, max(hit.score) desc";
+        }
+        hql += orderBy ;
+
+        Query query = session.createQuery(hql);
+        query.setString("zdbID", runZdbId);
+        query.setBoolean("done", false);
+        query.setMaxResults(maxNumRecords);
+        List runs = query.list();
+        for (Object run : runs) {
+            Object[] tuple = (Object[]) run;
+            Hit bestHit1 = new Hit();
+            bestHit1.setExpectValue((Double) tuple[1]);
+            bestHit1.setScore((Integer) tuple[2]);
+            list.add(getRunCandidateByID((String) tuple[0], bestHit1));
+        }
+
+        if (runs == null || runs.size() < maxNumRecords) {
+            String hql1 = "select runCandidate from RunCandidate runCandidate, Query query " +
+                    "WHERE runCandidate.run.zdbID = :zdbID AND " +
+                    "      query.runCandidate = runCandidate AND " +
+                    "      runCandidate.done = :done AND " +
+                    "      runCandidate.lockPerson is null  AND " +
+                    "      not exists (select 1 from Hit hit where hit.query = query) ";
+            Query nonHitQuery = session.createQuery(hql1);
+            nonHitQuery.setString("zdbID", runZdbId);
+            nonHitQuery.setBoolean("done", false);
+            nonHitQuery.setMaxResults(maxNumRecords - runs.size());
+            List<RunCandidate> nonHitRuns = nonHitQuery.list();
+            for (RunCandidate cand : nonHitRuns) {
+                list.add(cand);
+            }
+        }
         session.setCacheMode(oldCacheMode);
 
         return list;

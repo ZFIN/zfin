@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.orthology.Species;
 import org.zfin.marker.Marker;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
@@ -14,14 +15,11 @@ import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.Accession;
+import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.reno.repository.RenoRepository;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class RenoRepositoryTest.
@@ -340,6 +338,130 @@ public class RenoRepositoryTest {
         }
     }
 
+
+    @Test
+    public void testSortedRunCandidates() {
+        Session session = HibernateUtil.currentSession();
+        session.beginTransaction();
+        try {
+            Map<String, Object> returnMap = insertTestData();
+            Run run1 = (Run) returnMap.get("run1");
+			List runCandidates ;
+            Hit bestHit ;
+            RunCandidate runCandidate ;
+            runCandidates =  repository.getSortedRunCandidates( run1.getZdbID(),"other", 3  ) ;
+			runCandidate = (RunCandidate) runCandidates.get(0) ;
+			bestHit = runCandidate.getBestHit() ;
+			Hit hit1 = (Hit) returnMap.get("hit1");
+			assertEquals( bestHit.getExpectValue() , hit1.getExpectValue() );
+			assertEquals( bestHit.getScore() , hit1.getScore() );
+
+            // should choose the same score, because still has the best expect value
+            hit1.setScore(600);
+            session.update(hit1);
+            runCandidates =  repository.getSortedRunCandidates( run1.getZdbID(),"other", 3  ) ;
+            runCandidate = (RunCandidate) runCandidates.get(0) ;
+            bestHit = runCandidate.getBestHit() ;
+            assertEquals( bestHit.getExpectValue() , hit1.getExpectValue() );
+            assertEquals( bestHit.getScore() , hit1.getScore() );
+
+            // make hit1 and hit2 the same expect value, so now should take hit2 value as 800 > 600
+            Hit hit2 = (Hit) returnMap.get("hit2");
+            hit2.setExpectValue(0);
+            session.update(hit2);
+            runCandidates =  repository.getSortedRunCandidates( run1.getZdbID(),"other", 3  ) ;
+            runCandidate = (RunCandidate) runCandidates.get(0) ;
+            bestHit = runCandidate.getBestHit() ;
+            assertEquals( bestHit.getExpectValue() , hit2.getExpectValue() );// would work for either hit1 or hit2
+            assertEquals( bestHit.getScore() , hit2.getScore() );
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        finally {
+            // rollback on success or exception to leave no new records in the database
+            session.getTransaction().rollback();
+        }
+    }
+
+//    @Test
+//    public void testSortedRunNoZfinCandidates() {
+//        Session session = HibernateUtil.currentSession();
+//        session.beginTransaction();
+//        try {
+//            Map<String, Object> returnMap = insertTestData();
+//
+//
+//
+//            // assume this isn't going away for awhile
+//            Entrez entrez2 = (Entrez) session.get("org.zfin.sequence.Entrez","9") ;
+//            assertNotNull(entrez2);
+//            Entrez entrez3 = (Entrez) session.get("org.zfin.sequence.Entrez","13") ;
+//            assertNotNull(entrez3);
+//
+//            EntrezProtRelation entrezProt2Relation = new EntrezProtRelation() ;
+//            entrezProt2Relation.setOrganism(Species.HUMAN);
+//            Hit hit2 = (Hit) returnMap.get("hit2");
+//            Accession hit2Accession = hit2.getTargetAccession() ;
+//            entrezProt2Relation.setProteinAccNum(hit2Accession.getNumber());
+//            entrezProt2Relation.setEntrezAccession(entrez2);
+//            session.save(entrezProt2Relation);
+//
+//            EntrezProtRelation entrezProt3Relation = new EntrezProtRelation() ;
+//            entrezProt3Relation.setOrganism(Species.HUMAN);
+//            Hit hit3 = (Hit) returnMap.get("hit3");
+//            Accession hit3Accession = hit3.getTargetAccession() ;
+//            entrezProt3Relation.setProteinAccNum(hit3Accession.getNumber());
+//            entrezProt3Relation.setEntrezAccession(entrez3);
+//            session.save(entrezProt3Relation);
+//            session.flush();
+//
+//
+//
+//            List runCandidates ;
+//            Hit bestHit ;
+//            RunCandidate runCandidate ;
+//            Run run1 = (Run) returnMap.get("run1");
+//
+//
+//            runCandidates =  repository.getSortedNonZFRunCandidates( run1.getZdbID(),"other", 3  ) ;
+//            runCandidate = (RunCandidate) runCandidates.get(0) ;
+//            bestHit = runCandidate.getBestHit() ;
+//            assertEquals( bestHit.getExpectValue() , hit2.getExpectValue() );
+//            assertEquals( bestHit.getScore() , hit2.getScore() );
+//
+//            // should choose the same score, because still has the best expect value
+//            hit2.setScore(200);
+//            session.update(hit2);
+//            runCandidates =  repository.getSortedNonZFRunCandidates( run1.getZdbID(),"other", 3  ) ;
+//            runCandidate = (RunCandidate) runCandidates.get(0) ;
+//            bestHit = runCandidate.getBestHit() ;
+//            assertEquals( bestHit.getExpectValue() , hit2.getExpectValue() );
+//            assertEquals( bestHit.getScore() , hit2.getScore() );
+//
+//            // make hit1 and hit2 the same expect value, so now should take hit2 value as 800 > 600
+//            hit2.setExpectValue(0);
+//            hit3.setExpectValue(0);
+//            session.update(hit2);
+//            session.update(hit3);
+//            runCandidates =  repository.getSortedNonZFRunCandidates( run1.getZdbID(),"other", 3  ) ;
+//            runCandidate = (RunCandidate) runCandidates.get(0) ;
+//            bestHit = runCandidate.getBestHit() ;
+//            assertEquals( bestHit.getExpectValue() , hit2.getExpectValue() );// would work for either hit1 or hit2
+//            assertEquals( bestHit.getScore() , hit3.getScore() );  // should be this one
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            fail(e.getMessage());
+//        }
+//        finally {
+//            // rollback on success or exception to leave no new records in the database
+//            session.getTransaction().rollback();
+//        }
+//    }
+
+
     /**
      * Returns ZdbID
      * @return Map of Runs, candidates, Persons
@@ -464,6 +586,7 @@ public class RenoRepositoryTest {
         hit1.setPositivesNumerator(1);
         hit1.setPositivesDenominator(1);
         session.save(hit1);
+        returnMap.put("hit1", hit1);
 
         Hit hit2 = new Hit();
         hit2.setQuery(query);
@@ -475,6 +598,7 @@ public class RenoRepositoryTest {
         hit2.setPositivesNumerator(2);
         hit2.setPositivesDenominator(4);
         session.save(hit2);
+        returnMap.put("hit2", hit2);
 
         Hit hit3 = new Hit();
         hit3.setQuery(query);
@@ -486,6 +610,7 @@ public class RenoRepositoryTest {
         hit3.setPositivesDenominator(6);
         query.getBlastHits().add(hit3);
         session.save(hit3);
+        returnMap.put("hit3", hit3);
 
         Hit hit4 = new Hit();
         hit4.setQuery(query);
@@ -497,6 +622,7 @@ public class RenoRepositoryTest {
         hit4.setPositivesDenominator(8);
         query.getBlastHits().add(hit4);
         session.save(hit4);
+        returnMap.put("hit4", hit4);
 
         Hit hit5 = new Hit();
         hit5.setQuery(query);
@@ -508,6 +634,7 @@ public class RenoRepositoryTest {
         hit5.setPositivesDenominator(10);
         query.getBlastHits().add(hit5);
         session.save(hit5);
+        returnMap.put("hit5", hit5);
 
         return returnMap;
     }

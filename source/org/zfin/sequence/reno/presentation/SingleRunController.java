@@ -132,14 +132,23 @@ public class SingleRunController extends SimpleFormController {
 
         }
 
+
         if (candidateType.equals(INQUEUE_CANDIDATES)) {
 
-            if (request.getParameter("comparator") != null)
+            if (request.getParameter("comparator") != null){
                 form.setComparator(request.getParameter("comparator"));
-            else
+            }
+            else{
                 form.setComparator("expectValue");
+            }
 
-            form.setRunCandidates(renoRepository.getSortedRunCandidates(run.getZdbID(), form.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
+            if (run.isRedundancy()) {
+                form.setRunCandidates(renoRepository.getSortedRunCandidates(run.getZdbID(), form.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
+            }
+            else
+            if (run.isNomenclature()) {
+                form.setRunCandidates(renoRepository.getSortedNonZFRunCandidates(run.getZdbID(), form.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
+            }
         }
         else
         if (candidateType.equals(PENDING_CANDIDATES)) {
