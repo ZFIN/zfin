@@ -187,6 +187,12 @@
        </li>
        <?/MICOMMENT>
        
+            <li>
+         <a href="/zf_info/news/siteNews.html#clones">
+           May 28 - 1819 ZGC clones recloned in pENTR223.1
+         </a>
+       </li>    
+       
         <li>
          <a href="/zf_info/news/siteNews.html#snp">
            April 29 - Retrieve zebrafish SNPS in ZFIN
@@ -198,11 +204,7 @@
           
        
        
-                <li>
-         <a href="/zf_info/news/siteNews.html#NIH">
-           April 14 - Two funding opportunities at NIH
-         </a>
-       </li>    
+           
        
        
                 
