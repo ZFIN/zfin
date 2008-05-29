@@ -36,6 +36,24 @@ EFFECTS: Edits a feature/marker
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
+
+
+<?MIVAR>
+  <script>
+     function setFeatureAttrib(featzdbid){
+         document.selectFeature.featedit_feature_zdb_id.value=featzdbid ;
+         document.selectFeature.submit();
+     }
+   </script>
+<?/MIVAR>
+
+<?MICOMMENT> Use a post form submit to avoid smart browsers from not refreshing. <?/MICOMMENT>
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featediting" name=selectFeature>
+    <input type=hidden name=featedit_feature_zdb_id>
+    <input type=hidden name=MIval value="aa-curation.apg">
+    <input type=hidden name=OID value="<?MIVAR>$OID<?/MIVAR>">
+</form>
+
     <?MIVAR NAME=featcur_feat_isfeature>yes<?/MIVAR>
 
     <?MIVAR>
@@ -150,7 +168,7 @@ EFFECTS: Edits a feature/marker
 
 <table>
         <tr><td><B>Feature Name/Abbrev</b>:
-        <td> <select name=featedit_feature_name onChange="setFeatureAttrib(this.value,'featediting');">
+        <td> <select name=featedit_feature_name onChange="setFeatureAttrib(this.value);">
              <?MIVAR COND="$(XST,$featcur_feat_name)"><option select value='$featcur_feat_name'>$featcur_feat_name<?/MIVAR>
              <?MISQL SQL="select feature_name, feature_zdb_id , feature_abbrev
                       from feature, record_attribution 

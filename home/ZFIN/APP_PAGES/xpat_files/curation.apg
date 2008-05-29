@@ -321,12 +321,6 @@ function setMarkerTarget(featreli,anchor){
 }
 
 <?MIVAR>
-     function setFeatureAttrib(featzdbid,anchor){
-     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&featedit_feature_zdb_id='+featzdbid+"#"+anchor);
-}
-
-<?/MIVAR>
-<?MIVAR>
      function DeleteFeature(featzdbid,anchor){
      window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&rtype=feature&OID='+featzdbid+"#"+anchor);
 }
