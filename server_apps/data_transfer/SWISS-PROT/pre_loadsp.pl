@@ -11,7 +11,7 @@ use MIME::Lite;
 #------------------- Download -----------
 
 sub downloadGOtermFiles () {
-    &process_vertabrates ;
+    &process_vertebrates ;
 
    system("wget -q http://www.geneontology.org/external2go/spkw2go -O spkw2go");
    system("wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2go");
@@ -129,7 +129,7 @@ sub sendRunningResult {
 #
 # Extracts only zfin data from vertebrates.
 #
-sub process_vertabrates{
+sub process_vertebrates{
     system("wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz");
     system("gunzip uniprot_trembl_vertebrates.dat.gz");
     system("cp uniprot_trembl_vertebrates.dat pre_zfin.dat");
@@ -151,8 +151,13 @@ sub process_vertabrates{
            $line !~ m/CC   Copyrighted/ 
            and 
            $line !~ m/CC   Distributed/ 
+           and
+           $line !~ m/DR   ZFIN; ZDB-GENE/
            ){
-        $buffer = $buffer .  $line  ; 
+           $buffer = $buffer .  $line  ; 
+       }
+       if($line=~ m/DR   ZFIN; ZDB-GENE/){
+           $buffer = $line .  $buffer; 
        }
        if($line=~ m/\/\/\n/){
            if($buffer=~ m/OS   Danio rerio/){
