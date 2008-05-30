@@ -120,7 +120,8 @@ This page simply generates a REFER format file for the selected pubs. Since we d
 		pub_volume, 
 		pub_pages,
 		year(pub_date) as pyear,
-                zdb_id
+                zdb_id,
+		status
     from publication, journal 
     $pubprint_constraint 
     $pubprint_pubJrnlJoin 
@@ -133,11 +134,12 @@ This page simply generates a REFER format file for the selected pubs. Since we d
   <?MIVAR NAME=$pubprint_pub_pages>$5<?/MIVAR>
   <?MIVAR NAME=$pubprint_pyear>$6<?/MIVAR>
   <?MIVAR NAME=$pubprint_zdb_id>$7<?/MIVAR>
+  <?MIVAR NAME=$pubprint_status>$8<?/MIVAR>
 
 <TABLE>
- <TR><TD colspan=1 align=left><DIV class="show_pubs"> $pubprint_authors ($pubprint_pyear) $pubprint_title. $pubprint_jrnl_abbrev $(IF,$(NC,$pubprint_pub_volume,),$pubprint_pub_volume:,$pubprint_pub_volume) $(IF,$(NC,$pubprint_pub_pages,),$pubprint_pub_pages,$pubprint_pub_pages)
+ <TR><TD colspan=1 align=left><DIV class="show_pubs"> $pubprint_authors ($pubprint_pyear) $pubprint_title. $pubprint_jrnl_abbrev $(IF,$(NC,$pubprint_pub_volume,),$pubprint_pub_volume:,$pubprint_pub_volume) $(IF,$(NC,$pubprint_pub_pages,),$pubprint_pub_pages.,) $(IF,$(OR,$(EC,$pubprint_status,Epub ahead of print), $(EC,$pubprint_status,in press)), $pubprint_status.,)
 <?MIBLOCK COND="$(EQ,$pubprint_jrnl_abbrev,ZFIN Direct Data Submission)">
- (http://zfin.org) 
+ (http://zfin.org).
 <?/MIBLOCK>
 </DIV></TD></TR>
 
