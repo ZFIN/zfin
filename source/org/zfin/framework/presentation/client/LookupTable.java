@@ -228,7 +228,9 @@ public class LookupTable extends Lookup {
     }
 
     public static native void navigateToBottom()/*-{
-        $wnd.navigate('#bottom') ; 
+        if( navigator.userAgent.indexOf("MSIE") < 0){
+            $wnd.navigate('#bottom') ; 
+        }
     }-*/;
     
 
