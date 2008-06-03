@@ -11,13 +11,8 @@
     }
 </SCRIPT>
 
-<SCRIPT>
-    if (is_nav4) {
-        document.write('<LINK rel=stylesheet type="text/css" href="/nn4_zfin_style.css">');
-    } else {
-        document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
-    }
-
+<SCRIPT type="text/javascript">
+        document.write('<LINK rel=stylesheet type="text/css" href="/css/zfin.css">');
 </SCRIPT>
 
 
