@@ -87,12 +87,11 @@ public class LookupTable extends Lookup {
             table.insertRow( table.getRowCount()) ;
             int currentRow = table.getRowCount() -1 ;
 
-            final Hyperlink link = new Hyperlink() ;
-            link.setHTML(term.getTerm());
+            final Hyperlink link = new Hyperlink(term.getTerm(),false,term.getTerm()+"#bottom") ;
             link.addClickListener(new ClickListener(){
                 public void onClick(Widget widget) {
+                // this is new each time . . I think so that we never inadvertenly browse to new events
                     phenotePopup = new PhenotePopup(term.getZdbID()) ;
-                    navigateToBottom() ; 
                 }
             });
 
@@ -227,12 +226,6 @@ public class LookupTable extends Lookup {
         return returnList ;
     }
 
-    public static native void navigateToBottom()/*-{
-        if( navigator.userAgent.indexOf("MSIE") < 0){
-            $wnd.navigate('#bottom') ; 
-        }
-    }-*/;
-    
 
     private native void exposeMethodToJavascript(LookupTable lookupTable)/*-{
         $wnd.clearTable = function(){
