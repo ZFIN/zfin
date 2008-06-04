@@ -1414,7 +1414,7 @@ function call_submit() {
 	 </td>
    <?MIELSE>
 
-<?MIVAR COND="$(=,$num_recs,0)">$fsel_anatomy_expression <br><?/MIVAR>
+<?MIVAR COND="$(AND,$(=,$num_recs,0),$(XST,fsel_anatomy_expression))">$fsel_anatomy_expression <br><?/MIVAR>
    <?MICOMMENT>
 <?/MICOMMENT>
 
