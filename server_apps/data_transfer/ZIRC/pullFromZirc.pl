@@ -26,7 +26,6 @@
 
 use DBI;
 
-
 #----------------------------------------------------------------------
 # Write a line to the report (STDOUT)
 #
@@ -72,20 +71,37 @@ sub errorExit(@) {
 #
 # Returns ()
 
-sub downloadFiles(@) {
-    my $filename;
-    foreach $filename (@_) {
+sub downloadFiles($$) {
+    my $filename = $_[0];
+    my $Geno = $_[1];
+
+    if (defined($Geno) and $Geno eq "Genos"){
+	
 	my $wgetStatusFile = "/tmp/pullFromZirc.<!--|DB_NAME|-->.$filename";
 	system("rm -f $wgetStatusFile");
-	if (system("/local/bin/wget http://zirc.uoregon.edu/zfin/$filename >> $wgetStatusFile 2>&1")) {
+	if (system("/local/bin/wget http://zebrafish.org/zirc/zfin/$filename >> $wgetStatusFile 2>&1")) {
 	    &errorExit("Failed to download $filename file from ZIRC.",
-			"  See $wgetStatusFile for details.");
+		   "  See $wgetStatusFile for details.");
 	}
 	if (-z $filename) {
 	    &errorExit("Downloaded file $filename is empty.  Aborting.",
-			"  See $wgetStatusFile for details.");
+		       "  See $wgetStatusFile for details.");
 	}
     }
+    else {
+	
+	$wgetStatusFile = "/tmp/pullFromZirc.almdb.$filename";
+	system("rm -f $wgetStatusFile");
+	if (system("/local/bin/wget http://zirc.uoregon.edu/zfin/$filename >> $wgetStatusFile 2>&1")) {
+	    &errorExit("Failed to download $filename file from ZIRC.",
+		       "  See $wgetStatusFile for details.");
+	}
+	if (-z $filename) {
+	    &errorExit("Downloaded file $filename is empty.  Aborting.",
+		       "  See $wgetStatusFile for details.");
+	}
+    }
+
     return ();
 }
 
@@ -97,7 +113,7 @@ sub downloadFiles(@) {
 # Now, get the subroutines for handling each type of data.
 
 require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullEstsFromZirc.pl");
-
+require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullGenoFromZirc.pl");
 
 #----------------------------------------------------------------------
 # Main
@@ -137,6 +153,7 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 #  o parse and prepare the downloaded data into a format that can be used.
 #  o Update the database, reporting as it goes
 
+&geno_main($dbh, $zircZdbId);           # Genotype availability
 &est_main($dbh, $zircZdbId);	        # EST availability
 
 $dbh->commit();

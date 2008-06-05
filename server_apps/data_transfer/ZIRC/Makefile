@@ -22,7 +22,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/ZIRC
 
 GENERICS = pushToZirc.pl pushToZirc.sql \
-	   pullFromZirc.pl pullEstsFromZirc.pl \
+	   pullFromZirc.pl pullEstsFromZirc.pl pullGenoFromZirc.pl \
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
