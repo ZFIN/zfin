@@ -116,7 +116,7 @@ function start_help() {
 }
 
 function start_note() {
-  top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+  top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500");
 }
 
 var intervalId = 0 ; 
@@ -518,24 +518,19 @@ function openChild(childWinUrl,childWinName) {
 
 
 
-  <div style="position: absolute; top: 115px; right: 5px; "> <?MICOMMENT> ** this seems wrong, but I'm having trouble doing it better ** <?/MICOMMENT>
+    <?MICOMMENT>
+  <div style="position: absolute;  right: 5px; "> <?MICOMMENT> ** this seems wrong, but I'm having trouble doing it better ** <?/MICOMMENT>
     <a href="#modify">Modify Search</a><br>
     <!-- Insert a form with one button. Label button Your Input Welcome -->
     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';"> $1 <?/MISQL>
   </div>
+  <?/MICOMMENT>
 
-
-    <div style="{ font-weight: bold; text-align: center; }">
+    <div style="font-weight: bold; text-align: center;">
      No gene expression patterns were found for your search.
     </div>
     <br>
-<?MIVAR COND="$(AND,$(XST,$xpatsel_anatomy_expression),$(=,$xpatsel_geneCount,0))">$xpatsel_anatomy_expression <br><?/MIVAR>
-    <br>
-    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatselect_note.apg';">
-        <div style="{ text-align: center; }"> <?MICOMMENT> ** IE needs this, the 'auto' below centers in standards compliant browsers ** <?/MICOMMENT>
-          <div style="{ text-align: left; background-color: #eee; width: 550; border: 2px solid black; padding: 5px; margin: 0px auto -1px auto; }"><small>$1</small></div>
-        </div>
-    <?/MISQL>
+<?MIVAR COND="$(AND,$(XST,$xpatsel_anatomy_expression),$(=,$xpatsel_geneCount,0))">$xpatsel_anatomy_expression<?/MIVAR>
 
   <?/MIBLOCK> <?MICOMMENT> --- end summary vs detailed block <?/MICOMMENT>
 
@@ -546,7 +541,6 @@ function openChild(childWinUrl,childWinName) {
   <?/MISQL>
 
 
-  <br>
 
     <?MICOMMENT>
       ============================================================================
@@ -721,8 +715,47 @@ function openChild(childWinUrl,childWinName) {
 	<?MIBLOCK COND="$(NXST,$query_results)">
           <b>Search for Gene Expression Data </b>
 	<?MIELSE>
-          <a name=modify></a><b>Modify your search.</b>
+          <a name=modify></a><b>Modify your search.</b> 
 	<?/MIBLOCK>
+    <script type="text/javascript" src="/javascript/control.modal.js"></script>
+    &nbsp;&nbsp; &ndash; &nbsp;&nbsp; 
+    <a id="xpsel_expression_details" href="#note_contents">Search Tips</a>
+    <div id="note_contents">
+<p>ZFIN now displays three kinds of gene expression data:</p>
+
+<ol>
+<li>  annotated images that have been directly submitted to ZFIN by
+researchers.
+<li>  annotated figures from the current literature. Images and captions are displayed when copyright permissions are available. 
+<li> an index of gene expression data from older publications
+</ol>
+
+<p>ZFIN began to include published figures in 2004.  We are currently
+able to add figures from older publications only on an ad hoc basis.
+A more complete incorporation of figures from the older literature is
+a long-term goal.</p>
+
+<p>
+Reporter gene constructs can employ a variety of different engineered foreign genes.  If, for example, a search for GFP expression yields no results, try RFP, YFP etc.  For a full list, see
+<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=EFG&query_results=t" target=new>all current EFG's</a>
+
+<p>If you have questions or suggestions or would like to submit
+expression pattern images to ZFIN, please <a href="mailto:zfinadmn@zfin.org">contact us</a>. </p>
+    </div>
+    <script type="text/javascript">
+    // used as part of control.modal.js.  
+    // Needs to be out here because functions weird if within MIVAR apg calls.
+    new Control.Modal('xpsel_expression_details',{
+                    // hover: true,
+                    // position: 'relative',
+                    opacity: 0.3,
+                    //offsetLeft: 20,
+                    //offsetTop: -200,
+                    width: 400,
+                    height: 600,
+                    iframe: true,
+            });
+    </script>
 
       </td>
 
