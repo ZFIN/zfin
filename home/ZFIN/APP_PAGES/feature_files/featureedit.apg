@@ -36,22 +36,24 @@ EFFECTS: Edits a feature/marker
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-
+<?MIVAR COND=$(NXST,$randomNum) NAME=randomNum>1.111<?/MIVAR>
 
 <?MIVAR>
   <script>
      function setFeatureAttrib(featzdbid){
-         document.selectFeature.featedit_feature_zdb_id.value=featzdbid ;
+         document.selectFeature.featedit_feature_zdb_id.value=featzdbid
          document.selectFeature.submit();
-     }
+     }    
    </script>
 <?/MIVAR>
 
+
 <?MICOMMENT> Use a post form submit to avoid smart browsers from not refreshing. <?/MICOMMENT>
-<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featediting" name=selectFeature>
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?randomNum=<?MIVAR>$(*,1.1,$randomNum)<?/MIVAR>#featediting" name=selectFeature>
     <input type=hidden name=featedit_feature_zdb_id>
     <input type=hidden name=MIval value="aa-curation.apg">
     <input type=hidden name=OID value="<?MIVAR>$OID<?/MIVAR>">
+    <input type=hidden name=randomNum value="<?MIVAR>$(*,1.1,$randomNum)<?/MIVAR>">
 </form>
 
     <?MIVAR NAME=featcur_feat_isfeature>yes<?/MIVAR>
@@ -70,15 +72,19 @@ EFFECTS: Edits a feature/marker
             <?MIVAR NAME=featcur_feat_type><?/MIVAR>
             <?MIVAR NAME=featcur_feat_mutagen><?/MIVAR>
             <?MIVAR NAME=featcur_feat_mutagee><?/MIVAR>
-            <?MIBLOCK COND="$(XST,$featcur_feature_only)">
+            <?MIBLOCK COND="$(AND,$(XST,$featcur_feature_only),$(NC,$featcur_feature_only,))">
                 <?MIVAR NAME=featedit_feature_zdb_id>$featcur_feature_only<?/MIVAR>
             <?/MIBLOCK>
             <?MIVAR NAME=featcur_feat_zdb_id><?/MIVAR>
             <?MIVAR NAME=featcur_feat_name><?/MIVAR>
             <?MIVAR NAME=featcur_feat_publicnote><?/MIVAR>
             <?MIVAR NAME=featcur_feat_abbrev><?/MIVAR>
+
             <?MIBLOCK COND="$(XST,$featedit_feature_zdb_id)">
+
                <?MIBLOCK COND="$(EC,$(SUBSTR,$featedit_feature_zdb_id,5,3),ALT)">
+
+              
                  <?MISQL SQL="
                          select feature_name, ftrtype_type_display,
                          featassay_mutagen, featassay_mutagee, feature_zdb_id, 
@@ -105,6 +111,7 @@ EFFECTS: Edits a feature/marker
                          <?MIVAR NAME=featcur_feat_isfeature>yes<?/MIVAR>
                          <?MIVAR NAME=featcur_feat_lab><?/MIVAR>
                   <?/MISQL>
+
                   <?MISQL SQL="select name
                         from lab, int_data_source
                         where ids_data_zdb_id = '$featedit_feature_zdb_id'
@@ -113,6 +120,8 @@ EFFECTS: Edits a feature/marker
                         <?MIVAR NAME=featcur_feat_lab>$1<?/MIVAR>
                   <?/MISQL>
             <?MIELSE>
+
+         
                   <?MISQL SQL="
                         select mrkr_name, mrkrtype_type_display,
                         mrkr_zdb_id, mrkr_type,mrkr_comments, mrkr_abbrev
