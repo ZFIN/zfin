@@ -275,7 +275,9 @@ and display them one after the other horizontally
 
 <?MISQL SQL="
            select distinct fig_label, fig_caption, img_thumbnail, img_zdb_id, img_comments, fig_source_zdb_id, img_view, img_direction, img_image, img_height, img_width 
-           from figure left outer join image
+           from publication join figure on 
+               fig_source_zdb_id = zdb_id
+           left outer join image
                           on img_fig_zdb_id=fig_zdb_id
            where fig_zdb_id = '$fxfigview_fig_zdb_id'
           ;">
@@ -289,6 +291,7 @@ and display them one after the other horizontally
           <?MIVAR NAME=fxfigview_image>$9<?/MIVAR>
           <?MIVAR NAME=fxfigview_height>$10<?/MIVAR>
           <?MIVAR NAME=fxfigview_width>$11<?/MIVAR>
+          <?MIVAR NAME=fxfigview_showimage>$12<?/MIVAR>
           <?MIBLOCK COND="$(NE,$fxfigview_height,)">
           <?MIBLOCK COND="$(>,$fxfigview_height,$fxfigview_width)">
              <?MIVAR NAME=$fxfigview_dimension>height<?/MIVAR>
@@ -333,7 +336,11 @@ and display them one after the other horizontally
               <?MIELSE>
                 <?MIVAR>
                  <tr><td> 
-                 <img src="http://<!--|DOMAIN_NAME|-->/images/imagenotavailable.gif" border=2 align=left>
+                  <?MIBLOCK COND="$(EQ,t,$fxfigview_showimage)">
+                 <img src="/images/imagenotavailable.gif" border=2 align=left>
+                  <?MIELSE>
+                  <img src="/images/onlyfrompublisher.jpg" border=2 align=left>
+                  <?/MIBLOCK>
                  <?MIBLOCK COND="$(NE,$fxfigview_caption,)">
                    <p class="fig"><?MIVAR><b>$fxfigview_label</b><?/MIVAR><?MIVAR> $fxfigview_caption<?/MIVAR><?MICOMMENT> display figure label caption if present <?/MICOMMENT>
                  <?/MIBLOCK>

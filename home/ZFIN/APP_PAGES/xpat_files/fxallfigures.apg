@@ -181,8 +181,10 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
 <?MIELSE>
   <?MIVAR NAME=$fxallfig_sql> 
            select distinct fig_zdb_id, fig_label, fig_caption, img_thumbnail,
-                           img_zdb_id, fig_comments, fig_source_zdb_id, zero_pad(fig_full_label) as fig_order,img_image, img_width, img_height
-           from figure left outer join image
+                           img_zdb_id, fig_comments, fig_source_zdb_id, zero_pad(fig_full_label) as fig_order,img_image, img_width, img_height, pub_can_show_images
+           from publication join figure on 
+               fig_source_zdb_id = zdb_id
+                 left outer join image
                          on img_fig_zdb_id=fig_zdb_id  
             where fig_source_zdb_id ='$OID'
             order by fig_order 
@@ -198,6 +200,7 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
        <?MIVAR NAME=fxallfig_comments>$6<?/MIVAR>
        <?MIVAR NAME=fxallfig_source_zdb_id>$7<?/MIVAR>
        <?MIVAR NAME=fxallfig_image>$9<?/MIVAR>
+       <?MIVAR NAME=fxallfig_showimage>$12<?/MIVAR>
        <?MICOMMENT>check if the figure has associated expression patterns. 
                   This will determine whether to display the "All expression" link
        <?/MICOMMENT>
@@ -230,7 +233,12 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
           <?/MIVAR>
       <?MIELSE>
           <?MIVAR>
-           <tr><td><img src="http://<!--|DOMAIN_NAME|-->/images/imagenotavailable.gif" border=2 align=left>
+           <tr><td>
+              <?MIBLOCK COND="$(EQ,t,$fxallfig_showimage)">
+           <img src="/images/imagenotavailable.gif" border=2 align=left>
+              <?MIELSE>
+           <img src="/images/onlyfrompublisher.jpg" border=2 align=left>
+              <?/MIBLOCK>
             <p class="fig"><?MIVAR COND="$(EQ,$fxallfig_is_text,no)"><b>$fxallfig_label</b><?/MIVAR> $fxallfig_caption</p>
 <?MICOMMENT>
              <?MIBLOCK COND="$(EQ,yes,$fxallfig_has_results)">
