@@ -113,8 +113,6 @@ sub est_reportUnknownEsts($) {
 
     my $rowCount = 0;
 
-    writeReport("Checking for unknown EST ZDB IDs ...");
-
     # report them
     my $cur = $dbh->prepare("
           select epfz_est_zdb_id
@@ -157,8 +155,6 @@ sub est_dropDiscontinuedEsts($$) {
     my $zircZdbId = $_[1];
 
     my $rowCount = 0;
-
-    writeReport("Dropping discontinued ESTs ...");
 
     # report and delete them
     my $cur = $dbh->prepare("
@@ -210,8 +206,6 @@ sub est_addNewlySuppliedEsts($$) {
     my $zircZdbId = $_[1];
 
     my $rowCount = 0;
-
-    writeReport("Adding newly supplied ESTs ...");
 
     # report and insert them
     my $cur = $dbh->prepare("
