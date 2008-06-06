@@ -47,6 +47,7 @@ EFFECTS
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'pubcur_c_new_genotype';">
         <?MIVAR NAME=pubcur_c_new_genotype>$1<?/MIVAR>
     <?/MISQL>    
@@ -219,6 +220,7 @@ EFFECTS
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'genocur_staging_zdb';">
         <?MIVAR NAME=genocur_staging_zdb>$1<?/MIVAR>
     <?/MISQL>    
@@ -248,6 +250,7 @@ EFFECTS
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'genocur_staging_zdb';">
         <?MIVAR NAME=genocur_staging_zdb>$1<?/MIVAR>
     <?/MISQL>     
@@ -320,6 +323,7 @@ EFFECTS
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'pubcur_c_geno_attrib_count';">
         <?MIVAR NAME=pubcur_c_geno_attrib_count>$1<?/MIVAR>
     <?/MISQL>
@@ -327,6 +331,7 @@ EFFECTS
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'pubcur_c_geno_attrib_list';">
         <?MIVAR NAME=pubcur_c_geno_attrib_list>$1<?/MIVAR>
     <?/MISQL>    

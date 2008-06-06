@@ -433,6 +433,7 @@ function setMarkerTarget(featreli,anchor){
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'xpcur_c_figure_only';">
         <?MIVAR NAME=xpcur_c_figure_only>$1<?/MIVAR>
     <?/MISQL> 
@@ -441,6 +442,7 @@ function setMarkerTarget(featreli,anchor){
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'xpcur_c_gene_only';">
         <?MIVAR NAME=xpcur_c_gene_only>$1<?/MIVAR>
     <?/MISQL>     
@@ -449,6 +451,7 @@ function setMarkerTarget(featreli,anchor){
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'xpcur_c_fish_only';">
         <?MIVAR NAME=xpcur_c_fish_only>$1<?/MIVAR>
     <?/MISQL> 
@@ -457,6 +460,7 @@ function setMarkerTarget(featreli,anchor){
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'xpcur_c_auto_on';">
         <?MIVAR NAME=xpcur_c_auto_on>$1<?/MIVAR>
     <?/MISQL> 
@@ -700,6 +704,7 @@ function setMarkerTarget(featreli,anchor){
     select cs_field_name_value 
     from curator_session 
     where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
       and cs_field_name = 'xpcur_c_checked_expression';">
     <?MIVAR NAME=xpcur_c_checked_expression>$1<?/MIVAR>
   <?/MISQL>
@@ -708,6 +713,7 @@ function setMarkerTarget(featreli,anchor){
     select cs_field_name_value 
     from curator_session 
     where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
       and cs_field_name = 'xpcur_c_panel';">
     <?MIVAR NAME=xpcur_c_panel>$1<?/MIVAR>
   <?/MISQL>
@@ -716,6 +722,7 @@ function setMarkerTarget(featreli,anchor){
     select cs_field_name_value 
     from curator_session 
     where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
       and cs_field_name = 'xpcur_c_condition';">
     <?MIVAR NAME=xpcur_c_condition>$1<?/MIVAR>
   <?/MISQL>

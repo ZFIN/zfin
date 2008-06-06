@@ -607,6 +607,7 @@ EFFECTS
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'xpcur_c_has_permission';">
         <?MIVAR NAME=xpcur_c_has_permission>$1<?/MIVAR>
     <?/MISQL>

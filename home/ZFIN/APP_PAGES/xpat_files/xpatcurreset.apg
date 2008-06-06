@@ -34,6 +34,7 @@ Reset the cookies and infrastructure tables for pub curation.
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'pubcur_c_pubCuration';">
         <?MIVAR NAME=pubcur_c_pubCuration>$1<?/MIVAR>
     <?/MISQL>
@@ -57,6 +58,7 @@ Reset the cookies and infrastructure tables for pub curation.
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'xpcur_c_show_all';">
         <?MIVAR NAME=xpcur_c_show_all>$1<?/MIVAR>
     <?/MISQL>
