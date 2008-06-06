@@ -4,19 +4,27 @@ This readme is intended to explain the process of loading SWISS-PROT
 report into ZFIN.   
 =================================================================
 
+
 -> NOTE: Uniprot was to update DE line format post Feb 1st, 2008. Please check 
 http://ca.expasy.org/sprot/relnotes/sp_soon.html and make change to sp_parse.pl 
 accordingly.
 
-First of all, check ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat to see when is the file last updated!
+
+------------------------------------
+-- How to run a UniProt load
+------------------------------------
+
+First of all, check ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat to see when the file is last updated!
 Doesn't hurt to check http://www.geneontology.org/external2go/spkw2go, interpro2go, and ec2go too.
 
+
+Test on a testing site or almost
+---------------------------------------
 If there has been some code changes, please first run the SwissProt load in a developer test environment. To do so, get a fresh load with ACCESSION_BANK table.
  
     % loaddb.pl -e defline dbname inputdir
 
-If there hasn't been any code changes, it is generally safe to run the pre-load at almost db which should always has last night's dump. The pre-load is required to take place at a database rather than production because during the pre-load, data from previous SwissProt load would all be wiped off and there would be time gaps when curators need to do some manual work before the real load could happen. To run SwissProt load on almost or production, user "Informix" is required.
-
+If there hasn't been any code changes, it is generally safe to run the pre-load at almost db which should always has last night's dump. The pre-load is required to take place at a database rather than production because during the pre-load, data from previous SwissProt load would all be wiped off and there would be time gaps when curators need to do some manual work before the real load could happen. 
 At source dir
 
 	%gmake runpre
@@ -28,13 +36,31 @@ You would receive emails of the statistics, and allproblems.txt file. Forward th
 Create an ok2file to include these approved ok records. Save it in the target dir, back to source dir,
 
 	% gmake run
----------------------------------------
- 
-To run Swiss-Prot at produciton, copy the ok2file from almost target dir to production target dir. Inform curators that Swiss-Prot is running, related data would be wiped off and reloaded. At source dir
+
+
+
+Execute on production
+---------------------------
+To run SwissProt load on production, user "Informix" is required to write files to target directory.
+
+First, copy the ok2file from almost target dir to production target dir. Email curators that Swiss-Prot is running, related data would be wiped off and reloaded. 
+
+At source dir
 
 	% gmake run
 
----------------------------------------------------------------------
+Then, go to GO directory to generate a gp2protain file which will be emailed to Doug.
+
+        % cd ../GO
+        % gmake run 
+
+
+
+-----------------------------------------------------
+-- Development Documentation and Notes
+-----------------------------------------------------
+===================================================
+by Peiran Song, Aug 2004
 
 A pre-process is added by pre_loadsp.pl. It is basically the quality check step of the loadsp.pl. A curator would review the check result and provide a list of Swiss-Prot accession numbers from the problem files to be added to okfile. Most of those records would be associated with more than one ZFIN gene. Run sp_match.pl with the accession file as the parameter. Send the output file "ok2file" to a curator to add in additional DR ZFIN lines if applicable.When the file is ready at the destination directory, run the whole load process, the ok2file would be appended to the okfile.   
 
@@ -42,7 +68,7 @@ On production, to save the excution time, use the ok2file producted from almost 
 
 GN and DR EMBL lines are no longer loaded due to the fact that one SP record could validly associated with more than one ZFIN genes. 
 
-=================================================================
+===================================================
 by Peiran Song, Jun 2004
 
 The SP/GO load process has changes a lot in the GO project. The GO
@@ -59,12 +85,12 @@ sp_load.sql.
 Follow loadsp.pl, it will work you through the process. ;)
 
 
-=================================================================
+====================================================
 To create file for export to SWISS-PROT
                % gmake create
    
 
-=================================================================
+=====================================================
 by Peiran Song,  Sep 2002.
 
 To run the SWISS-PROT loading process:
