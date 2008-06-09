@@ -133,7 +133,16 @@ while (<>) {
       $acc_num = $dr[2]; chop($acc_num);
 
       foreach $gene (@gene_array) {
-	  print DBLINK "$gene|$dbname|$acc_num||\n";
+          if( 
+              $dbname eq "InterPro"
+              or 
+              $dbname eq "Pfam"
+              or 
+              $dbname eq "PROSITE"
+#              or   $dbname eq "UniProt" # UniProt added in the UniProt section
+              ){
+              print DBLINK "$gene|$dbname|$acc_num||\n";
+          }
       }
       next;
   }  
