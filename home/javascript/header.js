@@ -14,7 +14,7 @@ function addScript(url) {
 }
 
 
-addScript("/javascript/prototype-1.6.0.2.js");
+addScript("/javascript/prototype.js");
 
 
 /** mostly this kind of thing is bad, but thers a 

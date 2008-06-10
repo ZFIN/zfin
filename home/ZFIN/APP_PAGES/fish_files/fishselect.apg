@@ -101,8 +101,6 @@ function call_submit() {
 
   </script>
 
-  <script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
-
 
   <?MICOMMENT>======================================================
               == Keep parameter(s) when called from another page

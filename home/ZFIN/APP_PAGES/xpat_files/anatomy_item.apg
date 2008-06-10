@@ -915,3 +915,1837 @@ auditory (tympanal or flagellar) organs, which may be in a variety of anatomical
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 <?/MIBLOCK> <?MICOMMENT>-- close OID passed in -- <?/MICOMMENT> 
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<HTML>
+<?MIBLOCK COND="$(NXST,$OID)"> 
+  <p>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+<SCRIPT>
+
+function updateInnerHTML(element_id,html_to_display) {
+    var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+}
+
+function new_anat_ref() {
+                var genename=document.addcanmrkr.anat_gene.value;
+                var refid=document.addcanmrkr.anat_ref.value;
+                <?MIVAR>
+                window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-addcanmrkr.apg&OID=$OID&anatcmrkr_gene='+genename+'&anatcmrkr_ref='+refid);
+                <?/MIVAR>
+}
+
+function Delete_gene(anatkeyid) {
+                <?MIVAR>
+                window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-addcanmrkr.apg&OID=$OID&anatcmrkr_anatkey='+anatkeyid);
+                <?/MIVAR>
+}
+
+
+        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-addcanmrkr.apg&jsdelatt_page_var=__') 
+        from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
+
+</SCRIPT>
+
+<?MISQL SQL="select WebExplode(object,'') 
+		from webPages 
+		where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(XST,$OID)">
+   <?MIVAR NAME=$userid>GUEST<?/MIVAR>
+   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+   <?MISQL SQL="
+	SELECT anatitem_name,
+	       get_stg_name_long_html(s1.stg_zdb_id), 
+	       get_stg_name_long_html(s2.stg_zdb_id),
+               anatitem_definition, anatitem_description,
+	       anatitem_is_obsolete
+	FROM anatomy_item, stage s1, stage s2
+	WHERE anatitem_zdb_id = '$OID'
+	  and s1.stg_zdb_id = anatitem_start_stg_zdb_id
+	  and s2.stg_zdb_id = anatitem_end_stg_zdb_id
+	;">
+      <?MIVAR NAME="item_name">$1<?/MIVAR>
+      <?MIVAR NAME="item_stg_start_html">$2<?/MIVAR>
+      <?MIVAR NAME="item_stg_end_html">$3<?/MIVAR>
+      <?MIVAR NAME="item_definition">$4<?/MIVAR>
+      <?MIVAR NAME="item_description">$5<?/MIVAR>
+      <?MIVAR NAME="item_is_obsolete">$6<?/MIVAR>
+	
+   <?/MISQL>
+ 
+   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+	<center><font size=4><b>Requested ID not found on ZFIN. </font>  
+   <?MIELSE> 
+      <?MIVAR NAME=$item_definition COND="$(EC,$item_definition,NULL)"><?/MIVAR>
+      <?MIVAR NAME=$item_description COND="$(EC,$item_description,NULL)"><?/MIVAR>
+
+      <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
+      <?MIVAR NAME=$item_name_url>$(URLENCODE,$item_name)<?/MIVAR>
+      <?MIVAR NAME=$processed_item_name>$(REPLACE,$item_name,',','|')<?/MIVAR>
+
+      <!-- title for webpage history ----------->	
+      <?MIBLOCK COND="$(XST,$UPDATE)">
+	 <?MIVAR>
+ 		<TITLE>ZFIN Update Anatomy Item: $item_name</title>
+	 <?/MIVAR>
+      <?MIELSE>
+	 <?MIVAR>
+ 		<TITLE>ZFIN: Anatomical Structure: $item_name</title>
+	 <?/MIVAR>
+      <?/MIBLOCK>
+
+      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=anatomy_item') from webPages where ID='aa-data_mgr.apg';">$1
+      <?/MISQL>
+
+      <?MICOMMENT>  =========  Starts Display  ============== <?/MICOMMENT>
+
+<?MIBLOCK COND="$(NXST,$UPDATE)"> <!---- define Input Welcome button---->     
+  <table width="15%" align=right>
+   <tr> 
+   <?MIVAR>
+        <form method=post 
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+              target=comments>
+           <input type=hidden name=subject value="$item_name">
+           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
+           <td><input type=submit value="Your Input Welcome"></td>         
+         </form>
+    <?/MIVAR>
+    </tr>
+   </table>
+<?/MIBLOCK> 
+
+<?MICOMMENT>
+<?MIBLOCK COND="$(XST,$UPDATE)">
+<?MICOMMENT> -- First, do any updates <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(XST,$delete_synonym)"> 
+    <?MISQL SQL="DELETE FROM data_alias WHERE dalias_zdb_id = '$updated_synonym_zdb_id';"><?/MISQL>
+    <?MISQL SQL="DELETE FROM record_attribution WHERE recattrib_data_zdb_id = '$updated_synonym_zdb_id';"><?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(AND,$(NXST,$delete_synonym),$(XST,$updated_synonym))">
+    <?MISQL SQL="UPDATE data_alias 
+		 SET dalias_alias = '$updated_synonym'
+		 WHERE dalias_zdb_id = '$updated_synonym_zdb_id';"><?/MISQL>
+    <?MISQL COND="$(XST,$updated_synonym_ref)" SQL="
+		UPDATE record_attribution
+		SET recattrib_source_zdb_id = '$updated_synonym_ref'
+		WHERE recattrib_data_zdb_id = '$updated_synonym_zdb_id'
+      ;"> <?/MISQL>
+
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(XST,$new_synonym)">
+    <?MISQL SQL="select get_id('DALIAS') from single;">
+      <?MIVAR NAME="new_synonym_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="insert into zdb_active_data values ('$new_synonym_zdb_id');"><?/MISQL>
+    <?MISQL SQL="INSERT into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group, dalias_alias_lower)
+                 values ('$new_synonym_zdb_id', '$OID', '$new_synonym', 'alias', lower('$new_synonym'));"><?/MISQL>
+
+    <?MISQL COND="$(XST,$new_synonym_ref)" SQL="
+		INSERT into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+		values ('$new_synonym_zdb_id','$new_synonym_ref');"><?/MISQL>
+
+  <?/MIBLOCK>
+ 
+  <?MIBLOCK COND="$(XST,$updated_definition)">
+   <?MIVAR NAME=$updated_definition_safe DELIMIT="'" REPLACE="''">$updated_definition<?/MIVAR>
+   <?MIVAR NAME="item_definition">$updated_definition<?/MIVAR>
+    <?MISQL SQL="update anatomy_item set anatitem_definition = '$updated_definition_safe' 
+	         where anatitem_zdb_id = '$OID';">
+    <?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(XST,$delete_definition)">
+   <?MIVAR NAME="item_definition"><?/MIVAR>
+    <?MISQL SQL="update anatomy_item set anatitem_definition = null 
+	         where anatitem_zdb_id = '$OID';">
+    <?/MISQL>
+  <?/MIBLOCK>
+
+
+  <?MIBLOCK COND="$(XST,$updated_description)">
+   <?MIVAR NAME=$updated_description_safe DELIMIT="'" REPLACE="''">$updated_description<?/MIVAR>
+   <?MIVAR NAME="item_description">$updated_description<?/MIVAR>
+    <?MISQL SQL="update anatomy_item set anatitem_description = '$updated_description_safe' 
+	         where anatitem_zdb_id = '$OID';">
+    <?/MISQL>
+  <?/MIBLOCK>
+
+
+<?MICOMMENT> -- Now bring up the table with update goodies -- <?/MICOMMENT>
+
+<TABLE BORDER=0 WIDTH="90%" BGCOLOR="#EEEEEE" ALIGN="CENTER">
+  <TR>
+    <TD BGCOLOR="#CCCCCC">
+      <?MIVAR><B>Update Anatomy Record</B><?/MIVAR>
+    </TD>
+  </TR>
+  
+  <?MIVAR NAME="$alias_number">0<?/MIVAR>
+
+  <?MISQL SQL="SELECT dalias_alias, dalias_zdb_id
+	       FROM data_alias
+	       WHERE dalias_data_zdb_id = '$OID';">
+    <?MIVAR name="current_synonym">$1<?/MIVAR>
+    <?MIVAR name="current_synonym_zdb_id">$2<?/MIVAR>
+
+    <?MISQL SQL="SELECT recattrib_source_zdb_id
+	         FROM record_attribution 
+		 WHERE recattrib_data_zdb_id = '$current_synonym_zdb_id';">
+    	<?MIVAR name="current_synonym_ref">$1<?/MIVAR>
+    <?/MISQL>
+    <?MIVAR COND="$(NXST,$current_synonym_ref)" NAME="current_synonym_ref"><?/MIVAR>
+    <TR>
+      <TD>
+
+  <?MIVAR NAME="alias_number">$(+,$alias_number,1)<?/MIVAR>
+
+  <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_synonym_$alias_number" method="get">
+   <?MIVAR>
+      <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+      <INPUT type="hidden" name="OID" value="$OID">
+      <INPUT type="hidden" name="UPDATE" value="1">
+      <INPUT type="hidden" name="updated_synonym_zdb_id" value="$current_synonym_zdb_id">
+      <INPUT type="text" name="updated_synonym" size="22" value="$current_synonym">
+      <INPUT type="text" name="updated_synonym_ref" size="22" value="$current_synonym_ref">
+      <INPUT type="submit" value="Update Synonym/Ref">
+      <INPUT type="hidden" name="delete_synonym">
+      <INPUT type="button" value="Delete $current_synonym"
+             onClick="document.update_synonym_$alias_number.delete_synonym.value='1'
+		      document.update_synonym_$alias_number.submit();">
+    <?/MIVAR>
+  </FORM>
+
+      </TD>
+    </TR>
+    <?MICOMMENT> -- clear this guy for the next loop -- <?/MICOMMENT>
+    <?MIVAR NAME="current_synonym_ref"><?/MIVAR>
+  <?/MISQL>
+
+  <TR>
+    <TD>
+<?MIVAR>
+  <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="new_anat_synonym" method="get">
+
+      <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+      <INPUT type="hidden" name="OID" value="$OID">
+      <INPUT type="hidden" name="UPDATE" value="1">
+      <INPUT type="text" name="new_synonym" size="22">
+      <INPUT type="text" name="new_synonym_ref" size="22">
+      <INPUT type="submit" value="New Synonym/Ref">
+   
+  </FORM>
+  <?/MIVAR> 
+    </TD>
+  </TR
+  <TR>
+    <TD>
+      <?MIVAR> 
+      <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_definition" method="get">
+         <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+        <INPUT type="hidden" name="OID" value="$OID">
+        <INPUT type="hidden" name="UPDATE" value="1">
+        <TEXTAREA cols=80 rows=3 name="updated_definition">$item_definition</TEXTAREA>
+        <INPUT type="submit" value="Update Definition">
+	<INPUT type="hidden" name="delete_definition">
+	<INPUT type="button" value="Delete Definition" 
+	   onClick="document.update_definition.delete_definition.value='1';
+		    document.update_definition.submit();">
+     </FORM>
+     <?/MIVAR>
+    </TD>
+  </TR>
+
+<?MICOMMENT> ---- commented out until we make description an lvarchar ----
+  <TR>
+    <TD>
+      <?MIVAR> 
+      <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_description" method="get">
+         <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+        <INPUT type="hidden" name="OID" value="$OID">
+        <INPUT type="hidden" name="UPDATE" value="1">
+        <TEXTAREA cols=80 rows=3 name="updated_description">$item_description</TEXTAREA>
+        <INPUT type="submit" value="Update Description" 
+               onClick="if (document.update_description.updated_description.value = '') {
+		    document.update_description.delete_description = 1;  }  ">
+	<INPUT type="hidden" name="delete_description">
+	<INPUT type="button" value="Delete Description" onClick=" document.update_description.delete_description.value='1';
+					       		          document.update_description.submit();">
+     </FORM>
+     <?/MIVAR>
+    </TD>
+  </TR>
+<?/MICOMMENT>
+
+  <TR>
+    <TD bgcolor="#CCCCCC" ALIGN="right">
+      <?MIVAR>
+      <FORM /<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="done_updating" method="get">
+	<INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+        <INPUT type="hidden" name="OID" value="$OID">
+	<INPUT type="submit" value="Done Updating">
+      </FORM>
+      <?/MIVAR>
+    </TD
+  </TR>
+</TABLE>
+<?/MIBLOCK> <?MICOMMENT> == end if update ==<?/MICOMMENT>
+<?/MICOMMENT>
+
+<?MICOMMENT> ===============================================================
+             ==       Page Display
+             ===============================================================
+<?/MICOMMENT>
+<BR>
+<?MIVAR>
+  <FONT SIZE=+1><STRONG>Name: <I>$item_name</I> </STRONG></FONT>
+<?/MIVAR>
+
+<?MICOMMENT> == In case of obsolete == <?/MICOMMENT>
+<?MIBLOCK COND="$(EC,$item_is_obsolete,t)">
+  <font color=red>(obsolete)<?/font>
+  <p>
+<?MICOMMENT> == Only display other info if term not obsolete == <?/MICOMMENT>
+<?MIELSE>
+ <BR>
+
+ <!--------- Display previous names (synonyms, but I stole this code from markerview, 
+            really both should be webexploded)        --------------------------------> 
+
+
+<?MISQL SQL="
+  select dalias_alias, dalias_zdb_id
+    from data_alias
+    where dalias_data_zdb_id = '$OID' and dalias_group = 'alias';">
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+     <STRONG>Synonyms:</STRONG>
+  <?/MIBLOCK>
+
+  <?MIVAR NAME=$alias>$1<?/MIVAR>
+  <?MIVAR NAME=$aliasId>$2<?/MIVAR>
+
+  $(IF,$(>,$MI_CURRENTROW,1),",") $alias
+
+  <?MIBLOCK COND="$(XST,$aliasId)">	
+      <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+	
+<?/MISQL>
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+<BR>
+<?/MIBLOCK>
+<!----------------------------------------------------------------> 
+
+
+
+<?MISQL SQL="SELECT anatitem_definition from anatomy_item where anatitem_zdb_id = '$OID' and anatitem_definition is not null;">
+<STRONG>Definition:</STRONG> $1<BR>
+<?/MISQL>
+
+<?MISQL COND="$(EC,$AUTHORIZED,root)" SQL="SELECT anatitem_description from anatomy_item where anatitem_zdb_id = '$OID' and anatitem_description is not null;">
+<STRONG>Curator Note:</STRONG> $1<BR>
+<?/MISQL>
+
+
+<br>
+<TABLE width="90%">
+  <TR>
+    <TD bgcolor="#CCCCCC">
+      <STRONG>Appears at</STRONG>
+    </TD>
+    <TD bgcolor="#CCCCCC">
+      <STRONG>Evident until</STRONG>
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+          <?MIVAR>$item_stg_start_html<?/MIVAR>
+    </TD>
+    <TD bgcolor="#EEEEEE">
+     
+          <?MIVAR>$item_stg_end_html<?/MIVAR>
+    </TD>
+  </TR>
+</TABLE>
+
+<br>
+<?MICOMMENT>========================================================
+            == RELATIONSHIP
+	    ========================================================
+<?/MICOMMENT>
+<?MICOMMENT> exclude term 'unspecified'. not good to hardcode, but...
+<?/MICOMMENT>
+<?MIBLOCK COND="$(NC,$item_name,unspecified)">
+ <TABLE width="90%">
+  <TR>
+    <TD bgcolor="#CCCCCC" colspan=2>
+      <STRONG>Relationships</STRONG>
+    </TD>
+   </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE" valign=top align=left width=110>
+      Contained by: 
+    </TD>
+    <TD bgcolor="#EEEEEE">
+ <?MISQL SQL="
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_1_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_2_zdb_id = '$OID'
+	   AND anatrel_dagedit_id in ('part_of', 'is_a')
+	ORDER BY anatitem_name_order
+    ;">
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
+ <?/MISQL>
+      </TD>
+    </TR>
+    <TR>
+      <TD bgcolor="#EEEEEE" valign=top align=left>
+        Contains: 
+      </TD>
+      <TD bgcolor="#EEEEEE">
+ <?MISQL SQL="
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_2_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_1_zdb_id = '$OID'
+	   AND anatrel_dagedit_id in ('part_of', 'is_a')
+	ORDER BY anatitem_name_order
+     ;">
+     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
+ <?/MISQL>
+      </TD>
+  </TR>
+  <?MICOMMENT>====================================================================== 
+              == for develops from relationship, only show if there is content  ===
+              ======================================================================
+  <?/MICOMMENT>
+  <?MISQL SQL="
+	select 't'
+          from anatomy_relationship
+	 where '$OID' in (anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id)
+           and anatrel_dagedit_id = 'develops_from';">
+  <?/MISQL>
+  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+    <TR>
+     <TD bgcolor="#EEEEEE" valign=top align=left width=110>
+      Develops from: 
+     </TD>
+     <TD bgcolor="#EEEEEE">
+      <?MISQL SQL="
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_1_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_2_zdb_id = '$OID'
+	   AND anatrel_dagedit_id = 'develops_from'
+	ORDER BY anatitem_name_order
+        ;">
+         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
+       <?/MISQL>
+      </TD>
+     </TR>
+     <TR>
+      <TD bgcolor="#EEEEEE" valign=top align=left>
+        Develops into: 
+      </TD>
+      <TD bgcolor="#EEEEEE">
+      <?MISQL SQL="
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_2_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_1_zdb_id = '$OID'
+	   AND anatrel_dagedit_id = 'develops_from'
+	ORDER BY anatitem_name_order
+          ;">
+         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
+      <?/MISQL>
+      </TD>
+     </TR>  
+   <?/MIBLOCK> <?MICOMMENT> == end if there is develops from relationship == <?/MICOMMENT>  	
+</TABLE>
+<?/MIBLOCK> <?MICOMMENT> if not term 'unspecified' <?/MICOMMENT>
+
+<?MICOMMENT> ===============================================================
+             ==       Recommended Markers display and entry
+             ===============================================================
+<?/MICOMMENT>
+
+<?MISQL SQL="select anatcmrkr_zdb_id from anatomy_canonical_marker 
+             where
+             anatcmrkr_anatitem_zdb_id='$OID'">
+<?/MISQL>
+<?MIVAR NAME=anat_item_ct>$MI_ROWCOUNT<?/MIVAR>
+<?MIBLOCK COND="$(OR,$(>,$anat_item_ct,0),$(XST,$UPDATE))">
+  <BR>
+  <TABLE width="90%">
+  <TR>
+   <TD bgcolor="#CCCCCC">
+   <STRONG>
+    Recommended Markers:
+   </STRONG>
+
+<?MISQL SQL="select distinct mrkr_abbrev, anatcmrkr_zdb_id, anatcmrkr_mrkr_zdb_id
+             from marker, anatomy_canonical_marker, record_attribution
+             where anatcmrkr_anatitem_zdb_id='$OID'
+             and recattrib_data_zdb_id=anatcmrkr_zdb_id
+             and anatcmrkr_mrkr_zdb_id=mrkr_zdb_id">
+
+            <?MIVAR NAME=anat_item_marker>$1<?/MIVAR>
+            <?MIVAR NAME=anat_item_cmrkrid>$2<?/MIVAR>
+            <?MIVAR NAME=anat_item_mrkr_id>$3<?/MIVAR>
+            <TR>
+            <TD>
+            <?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
+             <INPUT TYPE=button value=Delete
+             onClick="Delete_gene('$anat_item_cmrkrid')">
+            <?/MIVAR>
+
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$anat_item_mrkr_id">$anat_item_marker</A>
+            <?MISQL SQL="select WebExplode(object,'dataId=$anat_item_cmrkrid&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>  
+
+<?/MISQL>
+<?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
+             <form name=addcanmrkr>
+               <TR>
+               <TD>
+               Gene:<input type=text size=15 name=anat_gene>
+               Reference: <input type=text size=15 name=anat_ref>
+               <input type=button value="Add it!" onClick=new_anat_ref();>
+             </form>
+<?/MIVAR>
+</TABLE>
+<?/MIBLOCK>
+
+<?MICOMMENT> ===============================================================
+             ==       Potential Probes (5 star probes) display
+             ===============================================================
+<?/MICOMMENT>
+
+<?MICOMMENT> set variables for hide and seek display<?/MICOMMENT>
+
+<?MIVAR NAME="$anatitem_condensed_count" COND="$(NXST,$anatitem_condensed_count)">8<?/MIVAR>
+<?MIVAR NAME="$anatitem_max_count" COND="$(NXST,$anatitem_max_count)">14<?/MIVAR>
+
+
+<?MISQL SQL="select * from expression_experiment,expression_result,clone where
+     xpatres_anat_item_zdb_id='$OID'
+and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+and  xpatex_probe_feature_zdb_id=clone_mrkr_zdb_id
+and  clone_rating=4
+">
+<?/MISQL>
+<?MIVAR NAME=clone_count>$MI_ROWCOUNT<?/MIVAR>
+<?MIBLOCK COND="$(NE,$OID,ZDB-ANAT-041102-1)"> <!--begin "if not specified" anatomy item condition-->
+  <?MIBLOCK COND="$(>,$clone_count,0)"> <!--begin 5 star probes condition-->
+    <br/>
+    <TABLE width="90%">
+    <TR>
+    <TD bgcolor="#CCCCCC">
+    <STRONG>
+      <a href="/zf_info/stars.html">High Quality Probes</a>:
+    </STRONG>
+    <?MISQL SQL="select distinct pub_mini_ref, zdb_id 
+                 from expression_experiment,expression_result,clone,publication                  where
+                      xpatres_anat_item_zdb_id='$OID'
+                 and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+                 and  xpatex_probe_feature_zdb_id=clone_mrkr_zdb_id
+                 and  clone_rating=4 and xpatex_source_zdb_id=zdb_id;">
+                 <?MIVAR NAME=source>$1<?/MIVAR>
+                 <?MIVAR NAME=pub_zdb_id>$2<?/MIVAR>
+                 <?MIVAR>(<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$pub_zdb_id">$source</a>)<?/MIVAR> &nbsp;
+    <?/MISQL>
+    </TD>
+    </TR>
+
+    <TR>
+    <TD bgcolor="#EEEEEE">
+    <?MISQL SQL="
+	SELECT distinct m1.mrkr_abbrev as probe, m1.mrkr_zdb_id as probe_id,  
+	       m1.mrkr_abbrev_order,get_mrkr_abbrev_html_link(m2.mrkr_zdb_id) as gene_abbrev,m2.mrkr_zdb_id as gene_id,m2.mrkr_abbrev_order, xpatex_zdb_id, xpatex_source_zdb_id,m2.mrkr_abbrev as gene_name, get_mrkr_abbrev_html(m1.mrkr_zdb_id) as probe_link
+	  FROM expression_experiment, expression_result, marker m1,marker m2, clone, expression_pattern_figure
+	 WHERE xpatres_anat_item_zdb_id = '$OID'
+           and xpatfig_xpatres_zdb_id=xpatres_zdb_id
+	   and xpatex_zdb_id = xpatres_xpatex_zdb_id
+	   and xpatex_probe_feature_zdb_id = m1.mrkr_zdb_id
+           and xpatex_probe_feature_zdb_id=clone_mrkr_zdb_id
+           and clone_rating=4
+           and xpatex_gene_zdb_id=m2.mrkr_zdb_id
+	 ORDER BY m2.mrkr_abbrev_order
+       ;">
+      <?MIVAR NAME=probe_name>$1<?/MIVAR>
+      <?MIVAR NAME=probe_zdb_id>$2<?/MIVAR>
+      <?MIVAR NAME=gene_abbrev>$4<?/MIVAR>
+      <?MIVAR NAME=gene_zdb_id>$5<?/MIVAR>
+      <?MIVAR NAME=xpatex_id>$7<?/MIVAR>
+      <?MIVAR NAME=xpatex_source_id>$8<?/MIVAR>
+      <?MIVAR NAME=gene_name>$9<?/MIVAR>
+      <?MIVAR NAME=probe_link>$10<?/MIVAR>
+      <?MIVAR NAME=display_html><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id'><i>$gene_name</i></A> <a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$probe_zdb_id>[$probe_name]</a><?/MIVAR>
+      <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+         <?MIVAR NAME=probe_short_list>$display_html<?/MIVAR>
+         <?MIVAR NAME=probe_long_list>$display_html<?/MIVAR>
+      <?MIELSE COND=$(<,$MI_CURRENTROW,$anatitem_condensed_count)>
+         <?MIVAR>$(VECAPPEND,probe_long_list,$display_html)
+         <?/MIVAR>
+         <?MIVAR>$(VECAPPEND,probe_short_list,$display_html)
+         <?/MIVAR>
+       <?MIELSE>
+          <?MIVAR>$(VECAPPEND,probe_long_list,$display_html)
+          <?/MIVAR>
+       <?/MIBLOCK>
+
+    <?/MISQL>
+    <?MIVAR NAME=probe_separate_short_list SEPARATE=", ">$probe_short_list<?/MIVAR>
+     <?MIVAR NAME=probe_separate_long_list SEPARATE=", ">$probe_long_list<?/MIVAR>
+  
+     <?MIVAR NAME=probe_escape_short_list>$(REPLACE,$probe_separate_short_list,"'","")<?/MIVAR>
+     <?MIVAR NAME=probe_escape_long_list>$(REPLACE,$probe_separate_long_list,"'","")<?/MIVAR>
+  
+     <?MIVAR NAME=probe_zdb_minus>$(REPLACE,$OID,"-","")<?/MIVAR>
+     <?MIVAR NAME=$probe_left_arrow><img border=0 onClick=updateProbeList$probe_zdb_minus('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+      <?MIVAR NAME=$probe_right_arrow><img onClick=updateProbeList$probe_zdb_minus('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+
+  <script>
+  <?MIVAR>
+   function updateProbeList$probe_zdb_minus(display_option) {
+      var long_display = "$probe_escape_long_list  <a href=\"javascript:updateProbeList$probe_zdb_minus('short');\">$probe_left_arrow</a>";
+      var short_display = "$probe_escape_short_list ... <a href=javascript:onClick=updateProbeList$probe_zdb_minus('long')>(all $(VECSIZE,$probe_long_list))</a> $probe_right_arrow";
+
+      if (display_option == "long") {
+        updateInnerHTML('probeList$probe_zdb_minus',long_display)
+    }
+    else {
+        updateInnerHTML('probeList$probe_zdb_minus',short_display)    
+    }
+}
+  <?/MIVAR>
+  </script>
+  <?MIBLOCK COND="$(EQ,$probe_escape_short_list,)">
+     <?MIVAR NAME=$probe_escape_short_list> $probe_escape_short_list<?/MIVAR>
+  <?/MIBLOCK>
+  <?MIVAR><span id="probeList$probe_zdb_minus"><?/MIVAR>
+  <?MIBLOCK COND="$(<,$(VECSIZE,$probe_long_list),$anatitem_max_count)">
+    <?MIVAR>
+    $probe_escape_long_list
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR>
+    $probe_escape_short_list ... <a href=javascript:onClick=updateProbeList$probe_zdb_minus('long')>(all $(VECSIZE,$probe_long_list))</a> $probe_right_arrow
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+   </span>
+   </TD>
+   </TR>
+  </TABLE>
+  <?/MIBLOCK> <!--end unspecified anatomy term condition-->
+<?/MIBLOCK> <!--end 5 star probe count condition--> 
+
+
+<?MICOMMENT>use the fast search table to get number of genes that have 
+            expression at this structure
+<?/MICOMMENT>
+<?MISQL SQL="
+	SELECT anatstat_object_count, anatstat_total_distinct_count
+	  FROM anatomy_stats
+	 WHERE anatstat_anatitem_zdb_id = '$OID';">
+
+  <?MIVAR NAME=$totalxpats>$1<?/MIVAR>
+  <?MIVAR NAME=$totalxpats_ind_substr>$2<?/MIVAR>	
+<?/MISQL>
+<BR>
+<?MIBLOCK COND="$(>,$totalxpats,0)">
+
+  <TABLE width="90%">
+    <TR>
+     <TD bgcolor="#CCCCCC">
+       <?MIVAR>
+       <STRONG>All Expressed Genes 
+       </STRONG>
+       <?/MIVAR>
+     </TD>
+   </TR>
+   <TR>
+     <TD bgcolor="#EEEEEE">
+<?MISQL SQL="
+	SELECT FIRST 8 distinct get_mrkr_abbrev_html_link(mrkr_zdb_id), mrkr_zdb_id,  
+	       mrkr_abbrev_order
+	  FROM expression_experiment, expression_result, marker
+	 WHERE xpatres_anat_item_zdb_id = '$OID'
+	   and xpatex_zdb_id = xpatres_xpatex_zdb_id
+	   and xpatex_gene_zdb_id = mrkr_zdb_id
+           and xpatres_expression_found = 't'
+	ORDER BY mrkr_abbrev_order
+;">
+  <?MIVAR NAME="gene_abbrev">$1<?/MIVAR>
+  <?MIVAR NAME="gene_zdb_id">$2<?/MIVAR>
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> 
+    <?MIVAR NAME=anat_seperator>&nbsp;<?/MIVAR>	              
+  <?MIELSE>
+    <?MIVAR NAME=anat_seperator>, &nbsp; <?/MIVAR>
+  <?/MIBLOCK>
+  $anat_seperator<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id">$gene_abbrev</A>
+<?/MISQL>
+<?MIBLOCK COND="$(>,$totalxpats,8)">
+  <?MIVAR><b>...</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=unchecked"><b>$totalxpats total</b></A> &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked">$totalxpats_ind_substr</A> if substructures included)<?/MIVAR>
+<?/MIBLOCK>
+      </TD>
+    </TR>
+  </TABLE>
+<BR>
+<?/MIBLOCK>
+
+<?MICOMMENT> =================== links to mutants / transgenic lines  =====================<?/MICOMMENT>
+     <?MICOMMENT>------------------------------------------------------------
+               -- temp table $temp_on_anat holds geno zdb ids 
+               ------------------------------------------------------------
+     <?/MICOMMENT>
+  <?MISQL SQL="
+      select dbinfo('sessionid') 
+        from single;">
+      <?MIVAR NAME=$session_id>$1<?/MIVAR>
+  <?/MISQL>     
+     <?MIVAR NAME=$temp_on_anat>$(CONCAT,temp_on_anat_,$session_id)<?/MIVAR>
+     <?MISQL SQL="
+       execute function table_exists('$temp_on_anat')">
+       <?MISQL COND=$(EC,$1,f) SQL="
+         create temp table $temp_on_anat (
+             g_zdb_id	 	varchar(50)
+         ) with NO LOG;">
+       <?/MISQL>
+     <?/MISQL>     
+
+     <?MICOMMENT> -------------------------------------------------------------
+             -- get genotypes directly related to the anatomy terms
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>
+     <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, genotype 
+              where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and apato_entity_a_zdb_id = '$OID';">
+     <?/MISQL>
+     <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, genotype
+              where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and apato_entity_b_zdb_id = '$OID';">
+     <?/MISQL>   
+
+       <?MISQL SQL="select distinct g_zdb_id from $temp_on_anat;">
+       <?/MISQL>  
+       <?MIVAR name=$totalMutants>$MI_ROWCOUNT<?/MIVAR>
+
+     <?MICOMMENT> -------------------------------------------------------------
+             -- include substructure
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>   
+       <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains, genotype
+              where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and apato_entity_a_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id = '$OID';">
+       <?/MISQL>
+       <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains, genotype
+              where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and apato_entity_b_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id = '$OID';">
+       <?/MISQL>  
+
+       <?MISQL SQL="select distinct g_zdb_id from $temp_on_anat;">
+       <?/MISQL>  
+       <?MIVAR name=$totalMutantsWithSubstructure>$MI_ROWCOUNT<?/MIVAR>     
+  <?MISQL SQL="delete from $temp_on_anat;"><?/MISQL>
+<?MIBLOCK COND="$(OR,$(>,$totalMutants,0),$(>,$totalMutantsWithSubstructure,0))">
+  <TABLE width="90%">
+    <TR>
+     <TD bgcolor="#CCCCCC">
+       <?MIVAR>
+       <STRONG>All Mutants / Transgenic lines
+       </STRONG>
+       <?/MIVAR>
+     </TD>
+   </TR>
+   
+   <TR>
+     <TD bgcolor="#EEEEEE">
+     <?MIBLOCK COND="$(>,$totalMutants,0)">
+        <?MISQL SQL="
+	  SELECT FIRST 6 DISTINCT geno_zdb_id,geno_display_name,geno_name_order
+	    FROM genotype,genotype_experiment,atomic_phenotype
+	  	  WHERE geno_zdb_id = genox_geno_zdb_id
+	  	    AND geno_is_wildtype = 'f'
+	  	    AND apato_genox_zdb_id = genox_zdb_id 
+	            AND (apato_entity_a_zdb_id = '$OID' 
+                      OR apato_entity_b_zdb_id = '$OID')
+	        ORDER BY geno_name_order;">
+              <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
+	         <?MIVAR NAME=anat_seperator>&nbsp;<?/MIVAR>	              
+              <?MIELSE>
+       		 <?MIVAR NAME=anat_seperator>, &nbsp; <?/MIVAR>
+    	      <?/MIBLOCK>
+
+              <i>$anat_seperator<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=$1">$2</A></i>
+        <?/MISQL>
+     
+        <?MIBLOCK COND="$(>,$totalMutants,6)">
+          <?MIVAR><b>...</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$OID&WINSIZE=20"><b>$totalMutants total</b></A> &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$OID&fsel_anatomy_include=yes&WINSIZE=20">$totalMutantsWithSubstructure</A> if substructures included)<?/MIVAR>
+        <?/MIBLOCK>
+      <?MIELSE>       
+          <?MIVAR><b>$totalMutants total</b> &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$OID&fsel_anatomy_include=yes&WINSIZE=20">$totalMutantsWithSubstructure</A> if substructures included)<?/MIVAR>    
+      <?/MIBLOCK>
+      </TD>
+    </TR>
+  </TABLE>
+<BR>
+<?/MIBLOCK>
+
+<?MICOMMENT> =========================================================
+     The code below is a mockup of the homologue display that will 
+             replace it in the future
+
+<BR>
+
+<TABLE>
+  <TR>
+    <TD bgcolor="#CCCCCC" colspan=2>
+      <STRONG>Homologues</STRONG>
+
+
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE"> 
+      Human
+    </TD>
+    <TD bgcolor="#EEEEEE">
+      otic placode, otic vesicle, inner ear
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+Mouse
+    </TD>
+    <TD bgcolor="#EEEEEE">
+ otic placode, otic vesicle, inner ear
+    </TD>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+      Chicken
+    </TD>
+    <TD bgcolor="#EEEEEE">
+      otic placode, otic vesicle, inner ear
+
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+?
+    </TD>
+    <TD bgcolor="#EEEEEE">
+
+Fish do not have a counterpart of the cochlea, the specialised auditory organ of amniotes, with its associated sensory patch (organ of Corti (mouse, human); basilar papilla (chick)). Instead, the macular organs of the sacculus, lagena and macula neglecta detect sound waves in the adult fish, in addition to their vestibular roles. The utriculus and cristae of the semicircular canals have the same vestibular functions in all species, detecting linear accelerations and gravity (utriculus) and angular accelerations (cristae).
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">  
+Frog
+    </TD>
+    <TD bgcolor="#EEEEEE">  
+ otic placode, otic vesicle, inner ear
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+Fly
+    </TD>
+     <TD bgcolor="#EEEEEE">
+
+ No direct counterparts. Hearing insects hear using auditory receptors (chordotonal sensilla, also known as scolopidia) associated with 
+auditory (tympanal or flagellar) organs, which may be in a variety of anatomical locations. In Drosophila, Johnston's organs, found on the antennae, discriminate species-specific courtship songs. The halteres (reduced and specialised hind wings, rich in campaniform sensilla) function to maintain balance during flight and motion.
+
+    </TD>
+  </TR>
+</TABLE>
+      ===================================================================
+<?/MICOMMENT>
+
+
+
+<?MICOMMENT>========================================================
+            == PUBLICATION
+	    ========================================================
+<?/MICOMMENT>
+<?MICOMMENT> exclude term 'unspecified'. not good to hardcode, but...
+<?/MICOMMENT>
+<?MISQL COND="$(NC,$item_name,unspecified)" SQL="
+	     select count(*)::Integer
+	       from publication 
+              where lower(pub_abstract) like '%$item_name_safe%';">
+  <?MIVAR NAME="$pubcount">$1<?/MIVAR>
+  <?MIBLOCK COND="$(>,$pubcount,0)">
+    <?MIVAR>
+       <STRONG>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=$item_name&anon1textAllOneWord=1&query_results=exists">$1</A>) Publication(s)</STRONG> with "$item_name" occuring in the abstract.
+    <?/MIVAR>
+  <?/MIBLOCK>
+<?/MISQL>
+<!---  end pub relationships -->
+
+<?/MIBLOCK> <?MICOMMENT>-- close if not obsolete -- <?/MICOMMENT> 
+<?/MIBLOCK> <?MICOMMENT>-- close OID valid -- <?/MICOMMENT> 
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+<?/MIBLOCK> <?MICOMMENT>-- close OID passed in -- <?/MICOMMENT> 
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<HTML>
+<?MIBLOCK COND="$(NXST,$OID)"> 
+  <p>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+<SCRIPT>
+
+function updateInnerHTML(element_id,html_to_display) {
+    var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+}
+
+function new_anat_ref() {
+                var genename=document.addcanmrkr.anat_gene.value;
+                var refid=document.addcanmrkr.anat_ref.value;
+                <?MIVAR>
+                window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-addcanmrkr.apg&OID=$OID&anatcmrkr_gene='+genename+'&anatcmrkr_ref='+refid);
+                <?/MIVAR>
+}
+
+function Delete_gene(anatkeyid) {
+                <?MIVAR>
+                window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-addcanmrkr.apg&OID=$OID&anatcmrkr_anatkey='+anatkeyid);
+                <?/MIVAR>
+}
+
+
+        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-addcanmrkr.apg&jsdelatt_page_var=__') 
+        from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
+
+</SCRIPT>
+
+<?MISQL SQL="select WebExplode(object,'') 
+		from webPages 
+		where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(XST,$OID)">
+   <?MIVAR NAME=$userid>GUEST<?/MIVAR>
+   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+   <?MISQL SQL="
+	SELECT anatitem_name,
+	       get_stg_name_long_html(s1.stg_zdb_id), 
+	       get_stg_name_long_html(s2.stg_zdb_id),
+               anatitem_definition, anatitem_description,
+	       anatitem_is_obsolete
+	FROM anatomy_item, stage s1, stage s2
+	WHERE anatitem_zdb_id = '$OID'
+	  and s1.stg_zdb_id = anatitem_start_stg_zdb_id
+	  and s2.stg_zdb_id = anatitem_end_stg_zdb_id
+	;">
+      <?MIVAR NAME="item_name">$1<?/MIVAR>
+      <?MIVAR NAME="item_stg_start_html">$2<?/MIVAR>
+      <?MIVAR NAME="item_stg_end_html">$3<?/MIVAR>
+      <?MIVAR NAME="item_definition">$4<?/MIVAR>
+      <?MIVAR NAME="item_description">$5<?/MIVAR>
+      <?MIVAR NAME="item_is_obsolete">$6<?/MIVAR>
+	
+   <?/MISQL>
+ 
+   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+	<center><font size=4><b>Requested ID not found on ZFIN. </font>  
+   <?MIELSE> 
+      <?MIVAR NAME=$item_definition COND="$(EC,$item_definition,NULL)"><?/MIVAR>
+      <?MIVAR NAME=$item_description COND="$(EC,$item_description,NULL)"><?/MIVAR>
+
+      <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
+      <?MIVAR NAME=$item_name_url>$(URLENCODE,$item_name)<?/MIVAR>
+      <?MIVAR NAME=$processed_item_name>$(REPLACE,$item_name,',','|')<?/MIVAR>
+
+      <!-- title for webpage history ----------->	
+      <?MIBLOCK COND="$(XST,$UPDATE)">
+	 <?MIVAR>
+ 		<TITLE>ZFIN Update Anatomy Item: $item_name</title>
+	 <?/MIVAR>
+      <?MIELSE>
+	 <?MIVAR>
+ 		<TITLE>ZFIN: Anatomical Structure: $item_name</title>
+	 <?/MIVAR>
+      <?/MIBLOCK>
+
+      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=anatomy_item') from webPages where ID='aa-data_mgr.apg';">$1
+      <?/MISQL>
+
+      <?MICOMMENT>  =========  Starts Display  ============== <?/MICOMMENT>
+
+<?MIBLOCK COND="$(NXST,$UPDATE)"> <!---- define Input Welcome button---->     
+  <table width="15%" align=right>
+   <tr> 
+   <?MIVAR>
+        <form method=post 
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+              target=comments>
+           <input type=hidden name=subject value="$item_name">
+           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
+           <td><input type=submit value="Your Input Welcome"></td>         
+         </form>
+    <?/MIVAR>
+    </tr>
+   </table>
+<?/MIBLOCK> 
+
+<?MICOMMENT>
+<?MIBLOCK COND="$(XST,$UPDATE)">
+<?MICOMMENT> -- First, do any updates <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(XST,$delete_synonym)"> 
+    <?MISQL SQL="DELETE FROM data_alias WHERE dalias_zdb_id = '$updated_synonym_zdb_id';"><?/MISQL>
+    <?MISQL SQL="DELETE FROM record_attribution WHERE recattrib_data_zdb_id = '$updated_synonym_zdb_id';"><?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(AND,$(NXST,$delete_synonym),$(XST,$updated_synonym))">
+    <?MISQL SQL="UPDATE data_alias 
+		 SET dalias_alias = '$updated_synonym'
+		 WHERE dalias_zdb_id = '$updated_synonym_zdb_id';"><?/MISQL>
+    <?MISQL COND="$(XST,$updated_synonym_ref)" SQL="
+		UPDATE record_attribution
+		SET recattrib_source_zdb_id = '$updated_synonym_ref'
+		WHERE recattrib_data_zdb_id = '$updated_synonym_zdb_id'
+      ;"> <?/MISQL>
+
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(XST,$new_synonym)">
+    <?MISQL SQL="select get_id('DALIAS') from single;">
+      <?MIVAR NAME="new_synonym_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="insert into zdb_active_data values ('$new_synonym_zdb_id');"><?/MISQL>
+    <?MISQL SQL="INSERT into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group, dalias_alias_lower)
+                 values ('$new_synonym_zdb_id', '$OID', '$new_synonym', 'alias', lower('$new_synonym'));"><?/MISQL>
+
+    <?MISQL COND="$(XST,$new_synonym_ref)" SQL="
+		INSERT into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+		values ('$new_synonym_zdb_id','$new_synonym_ref');"><?/MISQL>
+
+  <?/MIBLOCK>
+ 
+  <?MIBLOCK COND="$(XST,$updated_definition)">
+   <?MIVAR NAME=$updated_definition_safe DELIMIT="'" REPLACE="''">$updated_definition<?/MIVAR>
+   <?MIVAR NAME="item_definition">$updated_definition<?/MIVAR>
+    <?MISQL SQL="update anatomy_item set anatitem_definition = '$updated_definition_safe' 
+	         where anatitem_zdb_id = '$OID';">
+    <?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(XST,$delete_definition)">
+   <?MIVAR NAME="item_definition"><?/MIVAR>
+    <?MISQL SQL="update anatomy_item set anatitem_definition = null 
+	         where anatitem_zdb_id = '$OID';">
+    <?/MISQL>
+  <?/MIBLOCK>
+
+
+  <?MIBLOCK COND="$(XST,$updated_description)">
+   <?MIVAR NAME=$updated_description_safe DELIMIT="'" REPLACE="''">$updated_description<?/MIVAR>
+   <?MIVAR NAME="item_description">$updated_description<?/MIVAR>
+    <?MISQL SQL="update anatomy_item set anatitem_description = '$updated_description_safe' 
+	         where anatitem_zdb_id = '$OID';">
+    <?/MISQL>
+  <?/MIBLOCK>
+
+
+<?MICOMMENT> -- Now bring up the table with update goodies -- <?/MICOMMENT>
+
+<TABLE BORDER=0 WIDTH="90%" BGCOLOR="#EEEEEE" ALIGN="CENTER">
+  <TR>
+    <TD BGCOLOR="#CCCCCC">
+      <?MIVAR><B>Update Anatomy Record</B><?/MIVAR>
+    </TD>
+  </TR>
+  
+  <?MIVAR NAME="$alias_number">0<?/MIVAR>
+
+  <?MISQL SQL="SELECT dalias_alias, dalias_zdb_id
+	       FROM data_alias
+	       WHERE dalias_data_zdb_id = '$OID';">
+    <?MIVAR name="current_synonym">$1<?/MIVAR>
+    <?MIVAR name="current_synonym_zdb_id">$2<?/MIVAR>
+
+    <?MISQL SQL="SELECT recattrib_source_zdb_id
+	         FROM record_attribution 
+		 WHERE recattrib_data_zdb_id = '$current_synonym_zdb_id';">
+    	<?MIVAR name="current_synonym_ref">$1<?/MIVAR>
+    <?/MISQL>
+    <?MIVAR COND="$(NXST,$current_synonym_ref)" NAME="current_synonym_ref"><?/MIVAR>
+    <TR>
+      <TD>
+
+  <?MIVAR NAME="alias_number">$(+,$alias_number,1)<?/MIVAR>
+
+  <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_synonym_$alias_number" method="get">
+   <?MIVAR>
+      <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+      <INPUT type="hidden" name="OID" value="$OID">
+      <INPUT type="hidden" name="UPDATE" value="1">
+      <INPUT type="hidden" name="updated_synonym_zdb_id" value="$current_synonym_zdb_id">
+      <INPUT type="text" name="updated_synonym" size="22" value="$current_synonym">
+      <INPUT type="text" name="updated_synonym_ref" size="22" value="$current_synonym_ref">
+      <INPUT type="submit" value="Update Synonym/Ref">
+      <INPUT type="hidden" name="delete_synonym">
+      <INPUT type="button" value="Delete $current_synonym"
+             onClick="document.update_synonym_$alias_number.delete_synonym.value='1'
+		      document.update_synonym_$alias_number.submit();">
+    <?/MIVAR>
+  </FORM>
+
+      </TD>
+    </TR>
+    <?MICOMMENT> -- clear this guy for the next loop -- <?/MICOMMENT>
+    <?MIVAR NAME="current_synonym_ref"><?/MIVAR>
+  <?/MISQL>
+
+  <TR>
+    <TD>
+<?MIVAR>
+  <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="new_anat_synonym" method="get">
+
+      <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+      <INPUT type="hidden" name="OID" value="$OID">
+      <INPUT type="hidden" name="UPDATE" value="1">
+      <INPUT type="text" name="new_synonym" size="22">
+      <INPUT type="text" name="new_synonym_ref" size="22">
+      <INPUT type="submit" value="New Synonym/Ref">
+   
+  </FORM>
+  <?/MIVAR> 
+    </TD>
+  </TR
+  <TR>
+    <TD>
+      <?MIVAR> 
+      <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_definition" method="get">
+         <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+        <INPUT type="hidden" name="OID" value="$OID">
+        <INPUT type="hidden" name="UPDATE" value="1">
+        <TEXTAREA cols=80 rows=3 name="updated_definition">$item_definition</TEXTAREA>
+        <INPUT type="submit" value="Update Definition">
+	<INPUT type="hidden" name="delete_definition">
+	<INPUT type="button" value="Delete Definition" 
+	   onClick="document.update_definition.delete_definition.value='1';
+		    document.update_definition.submit();">
+     </FORM>
+     <?/MIVAR>
+    </TD>
+  </TR>
+
+<?MICOMMENT> ---- commented out until we make description an lvarchar ----
+  <TR>
+    <TD>
+      <?MIVAR> 
+      <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_description" method="get">
+         <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+        <INPUT type="hidden" name="OID" value="$OID">
+        <INPUT type="hidden" name="UPDATE" value="1">
+        <TEXTAREA cols=80 rows=3 name="updated_description">$item_description</TEXTAREA>
+        <INPUT type="submit" value="Update Description" 
+               onClick="if (document.update_description.updated_description.value = '') {
+		    document.update_description.delete_description = 1;  }  ">
+	<INPUT type="hidden" name="delete_description">
+	<INPUT type="button" value="Delete Description" onClick=" document.update_description.delete_description.value='1';
+					       		          document.update_description.submit();">
+     </FORM>
+     <?/MIVAR>
+    </TD>
+  </TR>
+<?/MICOMMENT>
+
+  <TR>
+    <TD bgcolor="#CCCCCC" ALIGN="right">
+      <?MIVAR>
+      <FORM /<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="done_updating" method="get">
+	<INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+        <INPUT type="hidden" name="OID" value="$OID">
+	<INPUT type="submit" value="Done Updating">
+      </FORM>
+      <?/MIVAR>
+    </TD
+  </TR>
+</TABLE>
+<?/MIBLOCK> <?MICOMMENT> == end if update ==<?/MICOMMENT>
+<?/MICOMMENT>
+
+<?MICOMMENT> ===============================================================
+             ==       Page Display
+             ===============================================================
+<?/MICOMMENT>
+<BR>
+<?MIVAR>
+  <FONT SIZE=+1><STRONG>Name: <I>$item_name</I> </STRONG></FONT>
+<?/MIVAR>
+
+<?MICOMMENT> == In case of obsolete == <?/MICOMMENT>
+<?MIBLOCK COND="$(EC,$item_is_obsolete,t)">
+  <font color=red>(obsolete)<?/font>
+  <p>
+<?MICOMMENT> == Only display other info if term not obsolete == <?/MICOMMENT>
+<?MIELSE>
+ <BR>
+
+ <!--------- Display previous names (synonyms, but I stole this code from markerview, 
+            really both should be webexploded)        --------------------------------> 
+
+
+<?MISQL SQL="
+  select dalias_alias, dalias_zdb_id
+    from data_alias
+    where dalias_data_zdb_id = '$OID' and dalias_group = 'alias';">
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+     <STRONG>Synonyms:</STRONG>
+  <?/MIBLOCK>
+
+  <?MIVAR NAME=$alias>$1<?/MIVAR>
+  <?MIVAR NAME=$aliasId>$2<?/MIVAR>
+
+  $(IF,$(>,$MI_CURRENTROW,1),",") $alias
+
+  <?MIBLOCK COND="$(XST,$aliasId)">	
+      <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+	
+<?/MISQL>
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+<BR>
+<?/MIBLOCK>
+<!----------------------------------------------------------------> 
+
+
+
+<?MISQL SQL="SELECT anatitem_definition from anatomy_item where anatitem_zdb_id = '$OID' and anatitem_definition is not null;">
+<STRONG>Definition:</STRONG> $1<BR>
+<?/MISQL>
+
+<?MISQL COND="$(EC,$AUTHORIZED,root)" SQL="SELECT anatitem_description from anatomy_item where anatitem_zdb_id = '$OID' and anatitem_description is not null;">
+<STRONG>Curator Note:</STRONG> $1<BR>
+<?/MISQL>
+
+
+<br>
+<TABLE width="90%">
+  <TR>
+    <TD bgcolor="#CCCCCC">
+      <STRONG>Appears at</STRONG>
+    </TD>
+    <TD bgcolor="#CCCCCC">
+      <STRONG>Evident until</STRONG>
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+          <?MIVAR>$item_stg_start_html<?/MIVAR>
+    </TD>
+    <TD bgcolor="#EEEEEE">
+     
+          <?MIVAR>$item_stg_end_html<?/MIVAR>
+    </TD>
+  </TR>
+</TABLE>
+
+<br>
+<?MICOMMENT>========================================================
+            == RELATIONSHIP
+	    ========================================================
+<?/MICOMMENT>
+<?MICOMMENT> exclude term 'unspecified'. not good to hardcode, but...
+<?/MICOMMENT>
+<?MIBLOCK COND="$(NC,$item_name,unspecified)">
+ <TABLE width="90%">
+  <TR>
+    <TD bgcolor="#CCCCCC" colspan=2>
+      <STRONG>Relationships</STRONG>
+    </TD>
+   </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE" valign=top align=left width=110>
+      Contained by: 
+    </TD>
+    <TD bgcolor="#EEEEEE">
+ <?MISQL SQL="
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_1_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_2_zdb_id = '$OID'
+	   AND anatrel_dagedit_id in ('part_of', 'is_a')
+	ORDER BY anatitem_name_order
+    ;">
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
+ <?/MISQL>
+      </TD>
+    </TR>
+    <TR>
+      <TD bgcolor="#EEEEEE" valign=top align=left>
+        Contains: 
+      </TD>
+      <TD bgcolor="#EEEEEE">
+ <?MISQL SQL="
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_2_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_1_zdb_id = '$OID'
+	   AND anatrel_dagedit_id in ('part_of', 'is_a')
+	ORDER BY anatitem_name_order
+     ;">
+     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
+ <?/MISQL>
+      </TD>
+  </TR>
+  <?MICOMMENT>====================================================================== 
+              == for develops from relationship, only show if there is content  ===
+              ======================================================================
+  <?/MICOMMENT>
+  <?MISQL SQL="
+	select 't'
+          from anatomy_relationship
+	 where '$OID' in (anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id)
+           and anatrel_dagedit_id = 'develops_from';">
+  <?/MISQL>
+  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+    <TR>
+     <TD bgcolor="#EEEEEE" valign=top align=left width=110>
+      Develops from: 
+     </TD>
+     <TD bgcolor="#EEEEEE">
+      <?MISQL SQL="
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_1_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_2_zdb_id = '$OID'
+	   AND anatrel_dagedit_id = 'develops_from'
+	ORDER BY anatitem_name_order
+        ;">
+         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
+       <?/MISQL>
+      </TD>
+     </TR>
+     <TR>
+      <TD bgcolor="#EEEEEE" valign=top align=left>
+        Develops into: 
+      </TD>
+      <TD bgcolor="#EEEEEE">
+      <?MISQL SQL="
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_2_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_1_zdb_id = '$OID'
+	   AND anatrel_dagedit_id = 'develops_from'
+	ORDER BY anatitem_name_order
+          ;">
+         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
+      <?/MISQL>
+      </TD>
+     </TR>  
+   <?/MIBLOCK> <?MICOMMENT> == end if there is develops from relationship == <?/MICOMMENT>  	
+</TABLE>
+<?/MIBLOCK> <?MICOMMENT> if not term 'unspecified' <?/MICOMMENT>
+
+<?MICOMMENT> ===============================================================
+             ==       Recommended Markers display and entry
+             ===============================================================
+<?/MICOMMENT>
+
+<?MISQL SQL="select anatcmrkr_zdb_id from anatomy_canonical_marker 
+             where
+             anatcmrkr_anatitem_zdb_id='$OID'">
+<?/MISQL>
+<?MIVAR NAME=anat_item_ct>$MI_ROWCOUNT<?/MIVAR>
+<?MIBLOCK COND="$(OR,$(>,$anat_item_ct,0),$(XST,$UPDATE))">
+  <BR>
+  <TABLE width="90%">
+  <TR>
+   <TD bgcolor="#CCCCCC">
+   <STRONG>
+    Recommended Markers:
+   </STRONG>
+
+<?MISQL SQL="select distinct mrkr_abbrev, anatcmrkr_zdb_id, anatcmrkr_mrkr_zdb_id
+             from marker, anatomy_canonical_marker, record_attribution
+             where anatcmrkr_anatitem_zdb_id='$OID'
+             and recattrib_data_zdb_id=anatcmrkr_zdb_id
+             and anatcmrkr_mrkr_zdb_id=mrkr_zdb_id">
+
+            <?MIVAR NAME=anat_item_marker>$1<?/MIVAR>
+            <?MIVAR NAME=anat_item_cmrkrid>$2<?/MIVAR>
+            <?MIVAR NAME=anat_item_mrkr_id>$3<?/MIVAR>
+            <TR>
+            <TD>
+            <?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
+             <INPUT TYPE=button value=Delete
+             onClick="Delete_gene('$anat_item_cmrkrid')">
+            <?/MIVAR>
+
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$anat_item_mrkr_id">$anat_item_marker</A>
+            <?MISQL SQL="select WebExplode(object,'dataId=$anat_item_cmrkrid&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>  
+
+<?/MISQL>
+<?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
+             <form name=addcanmrkr>
+               <TR>
+               <TD>
+               Gene:<input type=text size=15 name=anat_gene>
+               Reference: <input type=text size=15 name=anat_ref>
+               <input type=button value="Add it!" onClick=new_anat_ref();>
+             </form>
+<?/MIVAR>
+</TABLE>
+<?/MIBLOCK>
+
+<?MICOMMENT> ===============================================================
+             ==       Potential Probes (5 star probes) display
+             ===============================================================
+<?/MICOMMENT>
+
+<?MICOMMENT> set variables for hide and seek display<?/MICOMMENT>
+
+<?MIVAR NAME="$anatitem_condensed_count" COND="$(NXST,$anatitem_condensed_count)">8<?/MIVAR>
+<?MIVAR NAME="$anatitem_max_count" COND="$(NXST,$anatitem_max_count)">14<?/MIVAR>
+
+
+<?MISQL SQL="select * from expression_experiment,expression_result,clone where
+     xpatres_anat_item_zdb_id='$OID'
+and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+and  xpatex_probe_feature_zdb_id=clone_mrkr_zdb_id
+and  clone_rating=4
+">
+<?/MISQL>
+<?MIVAR NAME=clone_count>$MI_ROWCOUNT<?/MIVAR>
+<?MIBLOCK COND="$(NE,$OID,ZDB-ANAT-041102-1)"> <!--begin "if not specified" anatomy item condition-->
+  <?MIBLOCK COND="$(>,$clone_count,0)"> <!--begin 5 star probes condition-->
+    <br/>
+    <TABLE width="90%">
+    <TR>
+    <TD bgcolor="#CCCCCC">
+    <STRONG>
+      <a href="/zf_info/stars.html">High Quality Probes</a>:
+    </STRONG>
+    <?MISQL SQL="select distinct pub_mini_ref, zdb_id 
+                 from expression_experiment,expression_result,clone,publication                  where
+                      xpatres_anat_item_zdb_id='$OID'
+                 and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+                 and  xpatex_probe_feature_zdb_id=clone_mrkr_zdb_id
+                 and  clone_rating=4 and xpatex_source_zdb_id=zdb_id;">
+                 <?MIVAR NAME=source>$1<?/MIVAR>
+                 <?MIVAR NAME=pub_zdb_id>$2<?/MIVAR>
+                 <?MIVAR>(<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$pub_zdb_id">$source</a>)<?/MIVAR> &nbsp;
+    <?/MISQL>
+    </TD>
+    </TR>
+
+    <TR>
+    <TD bgcolor="#EEEEEE">
+    <?MISQL SQL="
+	SELECT distinct m1.mrkr_abbrev as probe, m1.mrkr_zdb_id as probe_id,  
+	       m1.mrkr_abbrev_order,get_mrkr_abbrev_html_link(m2.mrkr_zdb_id) as gene_abbrev,m2.mrkr_zdb_id as gene_id,m2.mrkr_abbrev_order, xpatex_zdb_id, xpatex_source_zdb_id,m2.mrkr_abbrev as gene_name, get_mrkr_abbrev_html(m1.mrkr_zdb_id) as probe_link
+	  FROM expression_experiment, expression_result, marker m1,marker m2, clone, expression_pattern_figure
+	 WHERE xpatres_anat_item_zdb_id = '$OID'
+           and xpatfig_xpatres_zdb_id=xpatres_zdb_id
+	   and xpatex_zdb_id = xpatres_xpatex_zdb_id
+	   and xpatex_probe_feature_zdb_id = m1.mrkr_zdb_id
+           and xpatex_probe_feature_zdb_id=clone_mrkr_zdb_id
+           and clone_rating=4
+           and xpatex_gene_zdb_id=m2.mrkr_zdb_id
+	 ORDER BY m2.mrkr_abbrev_order
+       ;">
+      <?MIVAR NAME=probe_name>$1<?/MIVAR>
+      <?MIVAR NAME=probe_zdb_id>$2<?/MIVAR>
+      <?MIVAR NAME=gene_abbrev>$4<?/MIVAR>
+      <?MIVAR NAME=gene_zdb_id>$5<?/MIVAR>
+      <?MIVAR NAME=xpatex_id>$7<?/MIVAR>
+      <?MIVAR NAME=xpatex_source_id>$8<?/MIVAR>
+      <?MIVAR NAME=gene_name>$9<?/MIVAR>
+      <?MIVAR NAME=probe_link>$10<?/MIVAR>
+      <?MIVAR NAME=display_html><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id'><i>$gene_name</i></A> <a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$probe_zdb_id>[$probe_name]</a><?/MIVAR>
+      <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+         <?MIVAR NAME=probe_short_list>$display_html<?/MIVAR>
+         <?MIVAR NAME=probe_long_list>$display_html<?/MIVAR>
+      <?MIELSE COND=$(<,$MI_CURRENTROW,$anatitem_condensed_count)>
+         <?MIVAR>$(VECAPPEND,probe_long_list,$display_html)
+         <?/MIVAR>
+         <?MIVAR>$(VECAPPEND,probe_short_list,$display_html)
+         <?/MIVAR>
+       <?MIELSE>
+          <?MIVAR>$(VECAPPEND,probe_long_list,$display_html)
+          <?/MIVAR>
+       <?/MIBLOCK>
+
+    <?/MISQL>
+    <?MIVAR NAME=probe_separate_short_list SEPARATE=", ">$probe_short_list<?/MIVAR>
+     <?MIVAR NAME=probe_separate_long_list SEPARATE=", ">$probe_long_list<?/MIVAR>
+  
+     <?MIVAR NAME=probe_escape_short_list>$(REPLACE,$probe_separate_short_list,"'","")<?/MIVAR>
+     <?MIVAR NAME=probe_escape_long_list>$(REPLACE,$probe_separate_long_list,"'","")<?/MIVAR>
+  
+     <?MIVAR NAME=probe_zdb_minus>$(REPLACE,$OID,"-","")<?/MIVAR>
+     <?MIVAR NAME=$probe_left_arrow><img border=0 onClick=updateProbeList$probe_zdb_minus('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+      <?MIVAR NAME=$probe_right_arrow><img onClick=updateProbeList$probe_zdb_minus('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+
+  <script>
+  <?MIVAR>
+   function updateProbeList$probe_zdb_minus(display_option) {
+      var long_display = "$probe_escape_long_list  <a href=\"javascript:updateProbeList$probe_zdb_minus('short');\">$probe_left_arrow</a>";
+      var short_display = "$probe_escape_short_list ... <a href=javascript:onClick=updateProbeList$probe_zdb_minus('long')>(all $(VECSIZE,$probe_long_list))</a> $probe_right_arrow";
+
+      if (display_option == "long") {
+        updateInnerHTML('probeList$probe_zdb_minus',long_display)
+    }
+    else {
+        updateInnerHTML('probeList$probe_zdb_minus',short_display)    
+    }
+}
+  <?/MIVAR>
+  </script>
+  <?MIBLOCK COND="$(EQ,$probe_escape_short_list,)">
+     <?MIVAR NAME=$probe_escape_short_list> $probe_escape_short_list<?/MIVAR>
+  <?/MIBLOCK>
+  <?MIVAR><span id="probeList$probe_zdb_minus"><?/MIVAR>
+  <?MIBLOCK COND="$(<,$(VECSIZE,$probe_long_list),$anatitem_max_count)">
+    <?MIVAR>
+    $probe_escape_long_list
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR>
+    $probe_escape_short_list ... <a href=javascript:onClick=updateProbeList$probe_zdb_minus('long')>(all $(VECSIZE,$probe_long_list))</a> $probe_right_arrow
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+   </span>
+   </TD>
+   </TR>
+  </TABLE>
+  <?/MIBLOCK> <!--end unspecified anatomy term condition-->
+<?/MIBLOCK> <!--end 5 star probe count condition--> 
+
+
+<?MICOMMENT>use the fast search table to get number of genes that have 
+            expression at this structure
+<?/MICOMMENT>
+<?MISQL SQL="
+	SELECT anatstat_object_count, anatstat_total_distinct_count
+	  FROM anatomy_stats
+	 WHERE anatstat_anatitem_zdb_id = '$OID';">
+
+  <?MIVAR NAME=$totalxpats>$1<?/MIVAR>
+  <?MIVAR NAME=$totalxpats_ind_substr>$2<?/MIVAR>	
+<?/MISQL>
+<BR>
+<?MIBLOCK COND="$(>,$totalxpats,0)">
+
+  <TABLE width="90%">
+    <TR>
+     <TD bgcolor="#CCCCCC">
+       <?MIVAR>
+       <STRONG>All Expressed Genes 
+       </STRONG>
+       <?/MIVAR>
+     </TD>
+   </TR>
+   <TR>
+     <TD bgcolor="#EEEEEE">
+<?MISQL SQL="
+	SELECT FIRST 8 distinct get_mrkr_abbrev_html_link(mrkr_zdb_id), mrkr_zdb_id,  
+	       mrkr_abbrev_order
+	  FROM expression_experiment, expression_result, marker
+	 WHERE xpatres_anat_item_zdb_id = '$OID'
+	   and xpatex_zdb_id = xpatres_xpatex_zdb_id
+	   and xpatex_gene_zdb_id = mrkr_zdb_id
+           and xpatres_expression_found = 't'
+	ORDER BY mrkr_abbrev_order
+;">
+  <?MIVAR NAME="gene_abbrev">$1<?/MIVAR>
+  <?MIVAR NAME="gene_zdb_id">$2<?/MIVAR>
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> 
+    <?MIVAR NAME=anat_seperator>&nbsp;<?/MIVAR>	              
+  <?MIELSE>
+    <?MIVAR NAME=anat_seperator>, &nbsp; <?/MIVAR>
+  <?/MIBLOCK>
+  $anat_seperator<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id">$gene_abbrev</A>
+<?/MISQL>
+<?MIBLOCK COND="$(>,$totalxpats,8)">
+  <?MIVAR><b>...</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=unchecked"><b>$totalxpats total</b></A> &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked">$totalxpats_ind_substr</A> if substructures included)<?/MIVAR>
+<?/MIBLOCK>
+      </TD>
+    </TR>
+  </TABLE>
+<BR>
+<?/MIBLOCK>
+
+<?MICOMMENT> =================== links to mutants / transgenic lines  =====================<?/MICOMMENT>
+     <?MICOMMENT>------------------------------------------------------------
+               -- temp table $temp_on_anat holds geno zdb ids 
+               ------------------------------------------------------------
+     <?/MICOMMENT>
+  <?MISQL SQL="
+      select dbinfo('sessionid') 
+        from single;">
+      <?MIVAR NAME=$session_id>$1<?/MIVAR>
+  <?/MISQL>     
+     <?MIVAR NAME=$temp_on_anat>$(CONCAT,temp_on_anat_,$session_id)<?/MIVAR>
+     <?MISQL SQL="
+       execute function table_exists('$temp_on_anat')">
+       <?MISQL COND=$(EC,$1,f) SQL="
+         create temp table $temp_on_anat (
+             g_zdb_id	 	varchar(50)
+         ) with NO LOG;">
+       <?/MISQL>
+     <?/MISQL>     
+
+     <?MICOMMENT> -------------------------------------------------------------
+             -- get genotypes directly related to the anatomy terms
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>
+     <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, genotype 
+              where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and apato_entity_a_zdb_id = '$OID';">
+     <?/MISQL>
+     <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, genotype
+              where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and apato_entity_b_zdb_id = '$OID';">
+     <?/MISQL>   
+
+       <?MISQL SQL="select distinct g_zdb_id from $temp_on_anat;">
+       <?/MISQL>  
+       <?MIVAR name=$totalMutants>$MI_ROWCOUNT<?/MIVAR>
+
+     <?MICOMMENT> -------------------------------------------------------------
+             -- include substructure
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>   
+       <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains, genotype
+              where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and apato_entity_a_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id = '$OID';">
+       <?/MISQL>
+       <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains, genotype
+              where genox_zdb_id = apato_genox_zdb_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and apato_entity_b_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id = '$OID';">
+       <?/MISQL>  
+
+       <?MISQL SQL="select distinct g_zdb_id from $temp_on_anat;">
+       <?/MISQL>  
+       <?MIVAR name=$totalMutantsWithSubstructure>$MI_ROWCOUNT<?/MIVAR>     
+  <?MISQL SQL="delete from $temp_on_anat;"><?/MISQL>
+<?MIBLOCK COND="$(OR,$(>,$totalMutants,0),$(>,$totalMutantsWithSubstructure,0))">
+  <TABLE width="90%">
+    <TR>
+     <TD bgcolor="#CCCCCC">
+       <?MIVAR>
+       <STRONG>All Mutants / Transgenic lines
+       </STRONG>
+       <?/MIVAR>
+     </TD>
+   </TR>
+   
+   <TR>
+     <TD bgcolor="#EEEEEE">
+     <?MIBLOCK COND="$(>,$totalMutants,0)">
+        <?MISQL SQL="
+	  SELECT FIRST 6 DISTINCT geno_zdb_id,geno_display_name,geno_name_order
+	    FROM genotype,genotype_experiment,atomic_phenotype
+	  	  WHERE geno_zdb_id = genox_geno_zdb_id
+	  	    AND geno_is_wildtype = 'f'
+	  	    AND apato_genox_zdb_id = genox_zdb_id 
+	            AND (apato_entity_a_zdb_id = '$OID' 
+                      OR apato_entity_b_zdb_id = '$OID')
+	        ORDER BY geno_name_order;">
+              <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
+	         <?MIVAR NAME=anat_seperator>&nbsp;<?/MIVAR>	              
+              <?MIELSE>
+       		 <?MIVAR NAME=anat_seperator>, &nbsp; <?/MIVAR>
+    	      <?/MIBLOCK>
+
+              <i>$anat_seperator<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=$1">$2</A></i>
+        <?/MISQL>
+     
+        <?MIBLOCK COND="$(>,$totalMutants,6)">
+          <?MIVAR><b>...</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$OID&WINSIZE=20"><b>$totalMutants total</b></A> &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$OID&fsel_anatomy_include=yes&WINSIZE=20">$totalMutantsWithSubstructure</A> if substructures included)<?/MIVAR>
+        <?/MIBLOCK>
+      <?MIELSE>       
+          <?MIVAR><b>$totalMutants total</b> &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$OID&fsel_anatomy_include=yes&WINSIZE=20">$totalMutantsWithSubstructure</A> if substructures included)<?/MIVAR>    
+      <?/MIBLOCK>
+      </TD>
+    </TR>
+  </TABLE>
+<BR>
+<?/MIBLOCK>
+
+<?MICOMMENT> =========================================================
+     The code below is a mockup of the homologue display that will 
+             replace it in the future
+
+<BR>
+
+<TABLE>
+  <TR>
+    <TD bgcolor="#CCCCCC" colspan=2>
+      <STRONG>Homologues</STRONG>
+
+
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE"> 
+      Human
+    </TD>
+    <TD bgcolor="#EEEEEE">
+      otic placode, otic vesicle, inner ear
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+Mouse
+    </TD>
+    <TD bgcolor="#EEEEEE">
+ otic placode, otic vesicle, inner ear
+    </TD>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+      Chicken
+    </TD>
+    <TD bgcolor="#EEEEEE">
+      otic placode, otic vesicle, inner ear
+
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+?
+    </TD>
+    <TD bgcolor="#EEEEEE">
+
+Fish do not have a counterpart of the cochlea, the specialised auditory organ of amniotes, with its associated sensory patch (organ of Corti (mouse, human); basilar papilla (chick)). Instead, the macular organs of the sacculus, lagena and macula neglecta detect sound waves in the adult fish, in addition to their vestibular roles. The utriculus and cristae of the semicircular canals have the same vestibular functions in all species, detecting linear accelerations and gravity (utriculus) and angular accelerations (cristae).
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">  
+Frog
+    </TD>
+    <TD bgcolor="#EEEEEE">  
+ otic placode, otic vesicle, inner ear
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+Fly
+    </TD>
+     <TD bgcolor="#EEEEEE">
+
+ No direct counterparts. Hearing insects hear using auditory receptors (chordotonal sensilla, also known as scolopidia) associated with 
+auditory (tympanal or flagellar) organs, which may be in a variety of anatomical locations. In Drosophila, Johnston's organs, found on the antennae, discriminate species-specific courtship songs. The halteres (reduced and specialised hind wings, rich in campaniform sensilla) function to maintain balance during flight and motion.
+
+    </TD>
+  </TR>
+</TABLE>
+      ===================================================================
+<?/MICOMMENT>
+
+
+
+<?MICOMMENT>========================================================
+            == PUBLICATION
+	    ========================================================
+<?/MICOMMENT>
+<?MICOMMENT> exclude term 'unspecified'. not good to hardcode, but...
+<?/MICOMMENT>
+<?MISQL COND="$(NC,$item_name,unspecified)" SQL="
+	     select count(*)::Integer
+	       from publication 
+              where lower(pub_abstract) like '%$item_name_safe%';">
+  <?MIVAR NAME="$pubcount">$1<?/MIVAR>
+  <?MIBLOCK COND="$(>,$pubcount,0)">
+    <?MIVAR>
+       <STRONG>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=$item_name&anon1textAllOneWord=1&query_results=exists">$1</A>) Publication(s)</STRONG> with "$item_name" occuring in the abstract.
+    <?/MIVAR>
+  <?/MIBLOCK>
+<?/MISQL>
+<!---  end pub relationships -->
+
+<?/MIBLOCK> <?MICOMMENT>-- close if not obsolete -- <?/MICOMMENT> 
+<?/MIBLOCK> <?MICOMMENT>-- close OID valid -- <?/MICOMMENT> 
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+<?/MIBLOCK> <?MICOMMENT>-- close OID passed in -- <?/MICOMMENT> 

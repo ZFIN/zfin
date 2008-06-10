@@ -213,8 +213,6 @@ function openChild(childWinUrl,childWinName) {
 }
 
 </SCRIPT>
-<script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
-
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 <?MISQL SQL="select WebExplode(object,'page_title=Expression Search') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>

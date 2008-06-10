@@ -6,7 +6,7 @@
 		</title>
 	</head>
 
-<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/header.js"></script>
+<script language="JavaScript" src="/javascript/header.js"></script>
 
 <CENTER><H4>Data Descriptions for The Zebrafish Database (ZDB)</H4>
 </CENTER>
@@ -34,7 +34,7 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 <P>	<B>abbrev (text, REQUIRED).</B> This field holds the officially accepted abbreviation for the CHROMOSOME. It is assumed that the name adheres to the conventions established by the zebrafish community; the database will not check the value for correctness. For example, the mutation <I>no tail</I>, is abbreviated as <I>ntl</I>.
 <P>	<B>chrom# (INTEGER{1-25}, REQUIRED). </B> Specifies the chromosome number represented by the record. 
 <P>	<B>phenotype (text, REQUIRED).</B> A free form textual description of the phenotype associated with the mutant chromosome, including anatomical, developmental, physiological, behavioral aspects. 
-<P>	<B>pheno_pattern (text, REQUIRED). </B>A more rigid and compact summary of the mutant phenotype, to be used to support searches. The format is ([GENE] PART, STAGE-start, STAGE-end), where the values for this set are determined by presenting the user with the following interface: &ldquo;Please summarize the primary phenotypic characteristic of this mutation: Affects [expression of <GENE> in] <PART> from stage <STAGE-start> to <STAGE-end>.&rdquo;
+<P>	<B>pheno_pattern (text, REQUIRED). </B>A more rigid and compact summary of the mutant phenotype, to be used to support searches. The format is ([GENE] PART, STAGE-start, STAGE-end), where the values for this set are determined by presenting the user with the following interface: &ldquo;Please summarize the primary phenotypic characteristic of this mutation: Affects [expression of &lt;GENE&gt; in] &lt;PART&gt; from stage &lt;STAGE-start&gt; to &lt;STAGE-end&gt;.&rdquo;
 <P>			MIGHT NOT PHYSICALLY EXIST as an actual field. It is likely that this function will be implemented as EXPRESSION-DATA intersection table, which maps expression to data records (CHROMOSOMES or IMAGES) that match the given phenotype.
 <P>	<B>lab (TEXT, REQUIRED. </B>Specification of the lab in which this mutant chromosome was first generated.
 
@@ -51,4 +51,4 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 
 </BODY>
 
-<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/footer.js"></script>
+<script language="JavaScript" src="/javascript/footer.js"></script>
