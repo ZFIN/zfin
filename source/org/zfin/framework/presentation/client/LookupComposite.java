@@ -30,6 +30,8 @@ public class LookupComposite extends Composite {
 //    protected Label noteLabel = new Label();
     protected HTML noteLabel = new HTML("",true);
     protected VerticalPanel rootPanel = new VerticalPanel() ;
+
+    // internal ui data
     protected String noteString = "" ;
     protected String errorString = "" ;
 
@@ -39,6 +41,8 @@ public class LookupComposite extends Composite {
     public final static String TYPE_QUALITY = "QUALITY_ONTOLOGY" ;
     public final static String MARKER_LOOKUP = "MARKER_LOOKUP" ;
     private List types = new ArrayList() ;
+
+    // variables
     private String EMPTY_STRING  = "&nbsp;" ;
 
     // options
@@ -183,6 +187,7 @@ public class LookupComposite extends Composite {
 
     protected void doSubmit(String text) {
         if (text != null) {
+            suggestBox.setFocus(false);
             Window.open("/action/anatomy/search?action=term-search&searchTerm=" + text.replaceAll(" ", "%20"), "_self",
                     "");
         }
