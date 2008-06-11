@@ -9,3 +9,4 @@ Disallow: /ted
 Disallow: /MOMspider-out
 Disallow: /Templates
 Disallow: /old_zf_info
+Disallow: /action
