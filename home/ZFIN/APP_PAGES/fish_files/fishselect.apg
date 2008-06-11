@@ -1083,7 +1083,7 @@ function call_submit() {
       <?/MISQL>  
       
 
-<?MIVAR NAME=phenosum_sql_select>select distinct fig_zdb_id<?/MIVAR>
+<?MIVAR NAME=phenosum_sql_select>select distinct apatofig_fig_zdb_id<?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'OID=$genotypeid') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
 
 <?MISQL SQL="$phenosum_sql;"><?/MISQL>

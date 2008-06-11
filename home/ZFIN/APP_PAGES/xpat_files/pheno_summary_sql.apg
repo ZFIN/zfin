@@ -1,57 +1,58 @@
+<?MICOMMENT>
 
-<?MIVAR>
-  $(UNSETVAR,$phenosum_sql)
-<?/MIVAR>
-<?MIVAR>
-  $(UNSETVAR,$phenosum_sql_from)
-  $(UNSETVAR,$phenosum_sql_from_outer_genofeat)
-<?/MIVAR>
+  FILE:  pheno_summary_sql.apg
+
+  INPUT:    
+    phenosum_sql_select
+    phenosum_sql_from_spec - optional 
+    phenosum_sql_where_spec - optional 
+    phenosum_sql_from_outer_genofeat - optional 
+    envID - optional
+    anatID - optional
+  OUTPUT:
+    phenosum_sql
+
+
+<?/MICOMMENT>
+
+
+<?MICOMMENT>-- In one case,phenotype_summary.apg calls this page with genofeat_zdb_id in the select 
+            -- list, we special handle it so that we only outer join genotype_feature in that case.
+<?/MICOMMENT>
+<?MIBLOCK COND=$(XST,$phenosum_sql_from_outer_genofeat)>
+   <?MIVAR NAME=phenosum_sql_where_outer_genofeat>and genofeat_geno_zdb_id = genox_geno_zdb_id<?/MIVAR>
+<?MIELSE>
+  <?MIVAR NAME=phenosum_sql_from_outer_genofeat><?/MIVAR>
+  <?MIVAR NAME=phenosum_sql_where_outer_genofeat><?/MIVAR>
+<?/MIBLOCK>
+
 
 <?MIVAR NAME=phenosum_sql_from>
-      from figure, publication, apato_figure, atomic_phenotype, genotype_experiment, genotype, genotype_feature
+      from apato_figure, atomic_phenotype, genotype_experiment $(IF,$(XST,$phenosum_sql_from_spec),$phenosum_sql_from_spec)
 <?/MIVAR>
-
-<?MIVAR NAME=phenosum_sql_from_outer_genofeat>
-      from figure, publication, apato_figure, atomic_phenotype, genotype_experiment, genotype, OUTER(genotype_feature)
-<?/MIVAR>
-
 
 <?MIVAR NAME=phenosum_sql_where>
-     where fig_source_zdb_id = zdb_id
-       and fig_zdb_id = apatofig_fig_zdb_id
-       and apatofig_apato_zdb_id = apato_zdb_id
+     where apatofig_apato_zdb_id = apato_zdb_id
        and apato_genox_zdb_id = genox_zdb_id
-       and genox_geno_zdb_id = geno_zdb_id
-       and geno_zdb_id = genofeat_geno_zdb_id
+       $(IF,$(XST,$phenosum_sql_where_spec),$phenosum_sql_where_spec)
 <?/MIVAR>
-
-
-<?MICOMMENT> *** Find an image for the search result image icon. <?/MICOMMENT>
-<?MIBLOCK COND=$(XST,$phenosum_img_count)>
-
-  <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from , image  <?/MIVAR>
-  <?MIVAR NAME=phenosum_sql_from_outer_genofeat>$phenosum_sql_from_outer_genofeat , image  <?/MIVAR>
-  
-  <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where 
-       and apatofig_fig_zdb_id = img_fig_zdb_id
-  <?/MIVAR>  
-
-<?/MIBLOCK>
 
 
 <?MIBLOCK COND=$(NC,$(SUBSTR,$OID,1,8),ZDB-GENO)>
 
   <?MIVAR NAME=phenosum_sql_where_mrphlno>$phenosum_sql_where<?/MIVAR>
-  
+
   <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where
+       and genofeat_geno_zdb_id = genox_geno_zdb_id
        and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
        and fmrel_mrkr_zdb_id = '$OID'  
        
        UNION
        
        $phenosum_sql_select
-       $phenosum_sql_from , feature, mapped_deletion
+       $phenosum_sql_from, genotype_feature, feature, mapped_deletion
        $phenosum_sql_where
+       and genofeat_geno_zdb_id = genox_geno_zdb_id
        and genofeat_feature_zdb_id = feature_zdb_id
        and feature_name = allele
        and present_t = 'f'
@@ -60,13 +61,13 @@
        UNION
        
        $phenosum_sql_select
-       $phenosum_sql_from_outer_genofeat , marker_relationship, experiment_condition
+       $phenosum_sql_from, marker_relationship, experiment_condition $phenosum_sql_from_outer_genofeat
        $phenosum_sql_where
-       and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
        and expcond_exp_zdb_id = genox_exp_zdb_id 
+       and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
        and mrel_type = 'knockdown reagent targets gene'
        and mrel_mrkr_2_zdb_id = '$OID'
-
+       $phenosum_sql_where_outer_genofeat
   <?/MIVAR>  
 
   <?MIBLOCK COND=$(EC,$(SUBSTR,$OID,1,11),ZDB-MRPHLNO)>
@@ -77,15 +78,15 @@
        UNION
        
        $phenosum_sql_select
-       $phenosum_sql_from_outer_genofeat , experiment_condition
+       $phenosum_sql_from, experiment_condition $phenosum_sql_from_outer_genofeat
        $phenosum_sql_where_mrphlno
        and expcond_exp_zdb_id = genox_exp_zdb_id 
        and expcond_mrkr_zdb_id = '$OID'
+       $phenosum_sql_where_outer_genofeat
     <?/MIVAR>
   <?/MIBLOCK>
 
-  <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from, feature_marker_relationship<?/MIVAR> 
-  <?MIVAR NAME=phenosum_sql_from_outer_genofeat>$phenosum_sql_from_outer_genofeat, feature_marker_relationship<?/MIVAR> 
+  <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from, genotype_feature, feature_marker_relationship<?/MIVAR> 
    
 <?MIELSE>
 
@@ -102,14 +103,13 @@
                  and expcond_mrkr_zdb_id = '' )
     <?/MIVAR>
     
-    <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from_outer_genofeat<?/MIVAR>
-  
   <?/MIBLOCK>
 
   <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where
-       and geno_zdb_id = '$OID'  
+       and genox_geno_zdb_id = '$OID' 
+       $phenosum_sql_where_outer_genofeat
   <?/MIVAR> 
-  
+  <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from $phenosum_sql_from_outer_genofeat<?/MIVAR>
 <?/MIBLOCK>
 
 <?MIVAR NAME=phenosum_sql>
@@ -120,7 +120,7 @@
 
 <?MIVAR>
   $(UNSETVAR,$phenosum_sql_select)
-  $(UNSETVAR,$phenosum_img_count)
-  $(UNSETVAR,$phenosum_sql_from)
+  $(UNSETVAR,$phenosum_sql_from_spec)
+  $(UNSETVAR,$phenosum_sql_where_spec)
   $(UNSETVAR,$phenosum_sql_from_outer_genofeat)
 <?/MIVAR>

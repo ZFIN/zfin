@@ -996,7 +996,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 			 and present_t = 'f';">
               <?/MISQL>
 
-<?MIVAR NAME=phenosum_sql_select>select distinct fig_zdb_id<?/MIVAR>
+<?MIVAR NAME=phenosum_sql_select>select distinct apatofig_fig_zdb_id<?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
 
 <?MISQL SQL="$phenosum_sql;"><?/MISQL>
@@ -1015,7 +1015,8 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
               <?/MIVAR>
 
 <?MIVAR NAME=phenosum_sql_select>select distinct img_zdb_id<?/MIVAR>
-<?MIVAR NAME=phenosum_img_count>true<?/MIVAR>
+<?MIVAR NAME=phenosum_sql_from_spec>, image <?/MIVAR>
+<?MIVAR NAME=phenosum_sql_where_spec> and apatofig_fig_zdb_id = img_fig_zdb_id <?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
 
 <?MISQL SQL="$phenosum_sql;"><?/MISQL>

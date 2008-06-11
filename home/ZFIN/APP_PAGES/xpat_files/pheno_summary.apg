@@ -43,9 +43,6 @@ DEBUGGING:
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 
-
-
-
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
@@ -59,9 +56,9 @@ DEBUGGING:
   <?MIVAR NAME=phenosum_header><?MISQL SQL="execute function get_geno_name_with_bg_html_link('$OID');">$1<?/MISQL><?/MIVAR>
 <?/MIBLOCK>
 
-<?MIVAR NAME=phenosum_sql_select>select count(distinct zdb_id)<?/MIVAR>
-
-
+<?MIVAR NAME=phenosum_sql_select>select count(distinct fig_source_zdb_id)<?/MIVAR>
+<?MIVAR NAME=phenosum_sql_from_spec>, figure<?/MIVAR>
+<?MIVAR NAME=phenosum_sql_where_spec>and apatofig_fig_zdb_id = fig_zdb_id<?/MIVAR>
   
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
 
@@ -80,7 +77,7 @@ DEBUGGING:
     <br>$1 get fig count
   <?/MISQL>
 
-<?MIVAR NAME=phenosum_sql_select>select distinct fig_zdb_id<?/MIVAR>
+<?MIVAR NAME=phenosum_sql_select>select distinct apatofig_fig_zdb_id<?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
 
 <?MISQL SQL="$phenosum_sql;"><?/MISQL>
@@ -156,10 +153,13 @@ DEBUGGING:
 
 
 
-<?MIVAR NAME=phenosum_sql_select>    select distinct zdb_id, pub_mini_ref, fig_zdb_id, 
-           get_geno_name_with_bg_html_link(geno_zdb_id), 
-           fig_label, fig_full_label, geno_zdb_id, 
+<?MIVAR NAME=phenosum_sql_select> select distinct zdb_id, pub_mini_ref, fig_zdb_id, 
+           get_geno_name_with_bg_html_link(genox_geno_zdb_id), 
+           fig_label, fig_full_label, genox_geno_zdb_id, 
            get_genofeat_mp_zyg_html_display(genofeat_zdb_id) <?/MIVAR>
+<?MIVAR NAME=phenosum_sql_from_spec>, figure, publication <?/MIVAR>
+<?MIVAR NAME=phenosum_sql_where_spec>and apatofig_fig_zdb_id = fig_zdb_id and fig_source_zdb_id = zdb_id <?/MIVAR>
+<?MIVAR NAME=phenosum_sql_from_outer_genofeat>, outer genotype_feature<?/MIVAR>
            
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
 

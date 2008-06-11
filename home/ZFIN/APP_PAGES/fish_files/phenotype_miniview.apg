@@ -25,7 +25,7 @@
 
 
 
-<?MIVAR NAME=phenosum_sql_select>select distinct fig_zdb_id<?/MIVAR>
+<?MIVAR NAME=phenosum_sql_select>select distinct apatofig_fig_zdb_id<?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
 
 <?MISQL SQL="$phenosum_sql;"><?/MISQL>
@@ -39,7 +39,9 @@
 <?MIBLOCK COND="$(>,$phmview_pato_fig_count,0)">
 
   <?MIVAR NAME=phenosum_sql_select>select distinct pub_mini_ref, zdb_id<?/MIVAR>
-  
+  <?MIVAR NAME=phenosum_sql_from_spec>, figure, publication <?/MIVAR>
+  <?MIVAR NAME=phenosum_sql_where_spec> and apatofig_fig_zdb_id = fig_zdb_id and fig_source_zdb_id = zdb_id <?/MIVAR>
+
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
 
   <?MISQL SQL="$phenosum_sql;"><?/MISQL>
