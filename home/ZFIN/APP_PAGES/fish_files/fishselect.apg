@@ -917,57 +917,6 @@ function call_submit() {
   <?MIVAR NAME=anat_right_arrows><?/MIVAR>
   <?MIVAR NAME=anat_longlist_lens><?/MIVAR>
 
- <?MIBLOCK COND="$(XST,$fsel_inputname)">
-    <?MIVAR NAME=fsel_addToList>f<?/MIVAR>
-    <?MIVAR NAME=fsel_unique_list><?/MIVAR>   
-
-    <?MIVAR NAME=$fishselect_temp_match_unique>$(CONCAT,fishselect_temp_match_unique_,$fsel_session_id)<?/MIVAR>
-
-    <?MISQL SQL="
-      execute function table_exists('$fishselect_temp_match_unique')">
-      <?MISQL COND=$(EC,$1,f) SQL="
-	create temp table $fishselect_temp_match_unique (
-	  fmatch_zdb_id_u varchar(50),
-	  fmatch_order_u varchar(100),
-	  fmatch_precedence_u varchar(50),
-	  fmatch_matchtext_u varchar(255),
-	  fmatch_matchtype_u varchar(80)
-	) with NO LOG;">
-      <?/MISQL>
-    <?/MISQL>
-  
-  <?MISQL SQL="select distinct fmatch_zdb_id,fmatch_order,fmatch_precedence from $fishselect_temp_match order by fmatch_order,fmatch_precedence;">
-    <?MIVAR>$(SETVAR,$fsel_addToList,t)<?/MIVAR>
-    <?MIBLOCK INDEX=$fsel_unique_id FOREACH=$fsel_unique_list>
-      <?MIBLOCK COND="$(EC,$1,$fsel_unique_id)">
-        <?MIVAR>$(SETVAR,$fsel_addToList,f)<?/MIVAR>
-      <?/MIBLOCK>
-    <?/MIBLOCK>
-    
-    <?MIBLOCK COND="$(EC,$fsel_addToList,t)">
-      <?MISQL SQL="select first 1 *
-	           from $fishselect_temp_match
-	           where fmatch_zdb_id = '$1'
-	           order by fmatch_order,fmatch_precedence;">    
-          <?MIVAR NAME=$genotypeid_u>$1<?/MIVAR>
-          <?MIVAR NAME=$order_u>$2<?/MIVAR>
-          <?MIVAR NAME=$pref_u>$3<?/MIVAR>
-          <?MIVAR NAME=$text_u>$4<?/MIVAR>
-          <?MIVAR NAME=$type_u>$5<?/MIVAR>
-      <?/MISQL>
-      
-      <?MIVAR>$(VECAPPEND,$fsel_unique_list,$genotypeid_u)<?/MIVAR>
-      
-      <?MIVAR>$(SETVAR,$text_u,$(REPLACE,$text_u,',''))<?/MIVAR>
-      
-      <?MISQL SQL="insert into $fishselect_temp_match_unique (fmatch_zdb_id_u,fmatch_order_u,fmatch_precedence_u,fmatch_matchtext_u,fmatch_matchtype_u)
-                   values ('$genotypeid_u','$order_u','$pref_u','$text_u','$type_u');">
-      <?/MISQL>
-    <?/MIBLOCK>
-  <?/MISQL>
-  
-  <?MIVAR>$(UNSETVAR,$fsel_unique_list)<?/MIVAR>
- <?/MIBLOCK>
 
   <?MICOMMENT> =======================================================
                ===   display Records, one per row
@@ -979,7 +928,7 @@ function call_submit() {
 
   <?MIBLOCK COND="$(XST,$fsel_inputname)">
   
-    <?MIVAR NAME=fsel_displaySQL>select distinct fmatch_zdb_id_u,fmatch_order_u,fmatch_precedence_u,fmatch_matchtext_u,fmatch_matchtype_u from $fishselect_temp_match_unique order by fmatch_order_u,fmatch_precedence_u<?/MIVAR>
+    <?MIVAR NAME=fsel_displaySQL>select distinct fmatch_zdb_id,fmatch_order,fmatch_precedence,fmatch_matchtext,fmatch_matchtype from $fishselect_temp_match order by fmatch_order,fmatch_precedence<?/MIVAR>
   <?MIELSE>
     <?MIVAR NAME=fsel_displaySQL>select distinct fmatch_zdb_id,fmatch_order,fmatch_precedence,fmatch_matchtext,fmatch_matchtype from $fishselect_temp_match order by fmatch_order,fmatch_precedence<?/MIVAR>
   <?/MIBLOCK>
@@ -1378,10 +1327,6 @@ function call_submit() {
     delete from $fishselect_temp_match;">
   <?/MISQL> 
   
-  <?MISQL COND="$(XST,$fsel_inputname)"  SQL="
-    delete from $fishselect_temp_match_unique;">
-  <?/MISQL>   
-    
 <?/MIBLOCK> <?MICOMMENT> === end of xst query results 
        ========
        ======================================================================================

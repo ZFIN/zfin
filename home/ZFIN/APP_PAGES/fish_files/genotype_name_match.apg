@@ -27,9 +27,10 @@
 <?/MIERROR>
 
 
-  <?MICOMMENT> --- Create or reuse temp tables --- <?/MICOMMENT>
+  <?MICOMMENT> --- Create or reuse temp tables  --- <?/MICOMMENT>
   <?MIVAR NAME=$genonm_temp_on_name>$(CONCAT,genonm_temp_on_name_,$genonm_session_id)<?/MIVAR>
 
+  <?MICOMMENT> -- the column names could be much better -- <?/MICOMMENT>
   <?MISQL SQL="
     execute function table_exists('$genonm_temp_on_name')">
     <?MISQL COND=$(EC,$1,f) SQL="
@@ -66,12 +67,43 @@
     <?MIVAR NAME=$input>$(CONCAT,$genonm_inputname,$percentage)<?/MIVAR>
   <?/MIBLOCK>
   
-    <?MISQL SQL="
-	insert into $genonm_temp_on_name 
-	    select allmapnm_zdb_id,allmapnm_significance,allmapnm_name, allmapnm_precedence 
+
+  <?MIVAR NAME=$genonm_temp_name_minsig>$(CONCAT,genonm_temp_name_minsig,$genonm_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$genonm_temp_name_minsig')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $genonm_temp_name_minsig (
+        t_geno_zdb_id	 	varchar(50),
+        t_name_significance     varchar(10)
+      ) with NO LOG;">
+    <?/MISQL>
+    <?MISQL COND="$(EC,$1,t)" SQL="
+      	    delete from $genonm_temp_name_minsig;">
+    <?/MISQL> 
+  <?/MISQL>
+
+  <?MISQL SQL="
+	insert into $genonm_temp_name_minsig 
+	    select allmapnm_zdb_id,min(allmapnm_significance) 
               from all_map_names$table_all_name_ends
              where $target_col $like_or_equal '$(LOWER,$input)'
                    $connecting_2_tables
-               and allmapnm_zdb_id like 'ZDB-GENO-%';">	    
-    <?/MISQL>     
+               and allmapnm_zdb_id like 'ZDB-GENO-%'
+            group by allmapnm_zdb_id;">	    
+  <?/MISQL>  
 
+  <?MICOMMENT> it is safe to use two min() as long as,for all genotype related names, 
+               each significance corresponding to one and only one precedence.<?/MICOMMENT>
+
+  <?MISQL SQL="
+	insert into $genonm_temp_on_name
+            select allmapnm_zdb_id,allmapnm_significance,min(allmapnm_name), min(allmapnm_precedence)
+              from $genonm_temp_name_minsig, all_map_names$table_all_name_ends
+             where allmapnm_zdb_id = t_geno_zdb_id 
+               and allmapnm_significance = t_name_significance
+               and $target_col $like_or_equal '$(LOWER,$input)'
+                   $connecting_2_tables
+           group by allmapnm_zdb_id,allmapnm_significance;">
+  <?/MISQL>
+
+            
