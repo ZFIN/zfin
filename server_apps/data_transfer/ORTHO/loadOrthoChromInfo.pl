@@ -49,8 +49,18 @@ system("/local/bin/wget -q ftp://ftp.informatics.jax.org/pub/reports/HMD_Human1.
 system("/local/bin/wget -q ftp://ftp.informatics.jax.org/pub/reports/HMD_Rat1.rpt -O MGI2.data") and &emailError("cannot download data file 2 from MGI.");
 print "\nDownloading from MGI is done\n";
 
-# download data file from FlyBase for updating fly chromosome info 
-system("/local/bin/wget -q ftp://flybase.net/genomes/Drosophila_melanogaster/current/fasta/dmel-all-gene-r5.8.fasta.gz -O FlyBase.data.gz") and &emailError("cannot download data file from FlyBase. Perhaps file version changed again.");
+# download data file from FlyBase for updating fly chromosome info  
+system("/local/bin/wget -q ftp://flybase.net/genomes/Drosophila_melanogaster/current/fasta/ -O FlyBase.indexFile") and &emailError("cannot download index file for FlyBase data files.");
+open (FLYBASE, "FlyBase.indexFile") || &emailError("Cannot open FlyBase.indexFile : $!\n");
+@lines=<FLYBASE>;
+close(FLYBASE);
+foreach $line (@lines) {
+  if ($line =~ m/dmel-all-gene-r(.+)">/) {
+    $ftp = "ftp://flybase.net/genomes/Drosophila_melanogaster/current/fasta/dmel-all-gene-r" . $1;
+  }
+}
+print "\n$ftp\n";
+system("/local/bin/wget -q $ftp -O FlyBase.data.gz") and &emailError("cannot download data file from FlyBase.");
 system("/local/bin/gunzip FlyBase.data.gz") and &emailError("cannot decompress data file of FlyBase.");
 print "\nDownloading and decompressing FlyBase file is done.\n";
 
