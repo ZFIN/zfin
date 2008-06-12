@@ -876,36 +876,54 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
   <br/>
 
-       
-  *Attribute Mrkr: 
-     <input type="textbox" name="pubcur_G_mrkr_attrib" id="curApgMrkrCompleter" size="20" autocomplete="off">             
-          <span id="pubcurMrkrAutoCompleterIndicator" style="display: none; color: red;">working...</span>
-
-          <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="mrkr_abbrev_auto_complete"></div>
-
-<script type="text/javascript">
-     var patoApgGoCompleter = new Ajax.Autocompleter( 'curApgMrkrCompleter', 'mrkr_abbrev_auto_complete', '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',{parameters:'MIval=aa-wordcompletion.apg&wcomp_t=marker&wcomp_cn=mrkr_abbrev&wcomp_order_col=mrkr_abbrev_order', tokens: ',', paramName: 'wcomp_q', indicator: 'pubcurMrkrAutoCompleterIndicator', minChars: 3});
-</script>  
-
-     <input type=submit value=Submit>
-
-  &nbsp;&nbsp;&nbsp;
-
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 
+        <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.Lookup/Lookup.css"/>
+
+        <script type="text/javascript">
+            var LookupProperties = { NumLookups: "2" } ;
+            var LookupProperties0 = {
+                divName: "attributeMrkr",
+                inputName: "pubcur_G_mrkr_attrib",
+                showError: true,
+                wildcard: false,
+                width: 15,
+                type: "MARKER_LOOKUP"
+            };
+            var LookupProperties1 = {
+                divName: "attributeFtr",
+                inputName: "pubcur_G_fish_attrib",
+                showError: true,
+                wildcard: false,
+                width: 8,
+                type: "FEATURE_LOOKUP"
+            };
+        </script>
+
+        <script language="javascript" src="/gwt/org.zfin.framework.presentation.Lookup/org.zfin.framework.presentation.Lookup.nocache.js"></script>
+  <table>
+  <tr>
+  <td valign=top>
+  *Attribute Mrkr: 
+  </td>
+  <td>
+        <div id="attributeMrkr"></div>
+    </td>
+  <td valign=top>
+         <input type=submit value=Submit>
+    </td>
+  <td valign=top>
   *Attribute Feature: 
-     <input type="textbox" name="pubcur_G_fish_attrib" id="curApgFishCompleter" size="20" autocomplete="off">             
-          <span id="pubcurFishAutoCompleterIndicator" style="display: none; color: red;">working...</span>
-
-          <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="fish_abbrev_auto_complete"></div>
-
-<script type="text/javascript">
-     var patoApgGoCompleter = new Ajax.Autocompleter( 'curApgFishCompleter', 'fish_abbrev_auto_complete', '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',{parameters:'MIval=aa-wordcompletion.apg&wcomp_t=feature&wcomp_cn=feature_abbrev&wcomp_order_col=feature_abbrev_order', tokens: ',', paramName: 'wcomp_q', indicator: 'pubcurFishAutoCompleterIndicator', minChars: 3});
-</script> 
+  </td>
+  <td valign=top>
+        <div id="attributeFtr"></div>
+  </td>
+  <td valign=top>
      <input type=submit value=Submit>
+  </td>
 
-  &nbsp;&nbsp;&nbsp;  
+  <td valign=top>
   Remove Attribution: 
     <select name=pubcur_G_remove_attrib>
     <option value="-">***MARKER</option>
@@ -940,10 +958,10 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
     <?/MISQL>
     </select>
     <input type=submit value=Submit>
+    </td>
+    </tr>
+</table>
 
-<br>    
-<font size="-1">*Auto complete requires three characters. Use '%' as a wildcard. </font>
-<br>
 
 </form>
 

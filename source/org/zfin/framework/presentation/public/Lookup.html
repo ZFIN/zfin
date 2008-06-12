@@ -18,17 +18,25 @@
 <!--                                            -->
 
 <script type="text/javascript">
-    var LookupProperties = {
-        divName: "anatomyTerm",
+    var LookupProperties = { NumLookups: "2" } ;
+    var LookupProperties0 = {
+        divName: "featureTerm",
         inputName: "searchTerm",
         showError: true,
         buttonText: "search",
-//        type: "ANATOMY_ONTOLOGY",
-//        type: "GENE_ONTOLOGY",
-//        type: "QUALITY_ONTOLOGY",
+        type: "FEATURE_LOOKUP",
+        wildcard: true
+    };
+
+    var LookupProperties1 = {
+        divName: "markerTerm",
+        inputName: "searchTerm",
+        showError: true,
+        buttonText: "search",
         type: "MARKER_LOOKUP",
         wildcard: true
     };
+
 </script>
 
 <script language="javascript" src="gwt.js"></script>
@@ -38,11 +46,12 @@
 
 <h1>Lookup Application</h1>
 <form action="run">
-<table>
-    <tr> <td> Above term </td> </tr>
-<tr> <td> <div id="anatomyTerm"> </div> </td> </tr>
-    <tr> <td> Below term </td> </tr>
-</table>
-    </form>
+    <table>
+        <tr> <td> Feature term </td> </tr>
+        <tr> <td> <div id="featureTerm"> </div> </td> </tr>
+        <tr> <td> Marker term </td> </tr>
+        <tr> <td> <div id="markerTerm"> </div> </td> </tr>
+    </table>
+</form>
 </body>
 </html>

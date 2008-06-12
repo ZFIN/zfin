@@ -13,6 +13,7 @@ import org.zfin.repository.SessionCreator;
 import org.zfin.ontology.GoTerm;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.Term;
+import org.zfin.mutant.Feature;
 import org.zfin.marker.Marker;
 import org.apache.log4j.Logger;
 
@@ -75,7 +76,7 @@ public class LookupServiceImpl
     }
 
 
-    public TermStatus validateTerm(String term) {
+    public TermStatus validateAnatomyTerm(String term) {
 
         SessionCreator.instantiateDBForHostedMode() ;
 
@@ -164,13 +165,40 @@ public class LookupServiceImpl
 
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
-        if(query.length()>2){
+        if(query.length()>0){
             for(Marker marker: RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(query) ){
                 suggestions.add(new ItemSuggestion(marker.getAbbreviation().replaceAll(query,"<strong>"+query+"</strong>"),marker.getAbbreviation())) ;
             }
         }
         if(wildCard==true){
-            suggestions.add(new ItemSuggestion("*"+query+"*",null)) ;
+            suggestions.add(0,new ItemSuggestion("*"+query+"*",null)) ;
+        }
+        resp.setSuggestions(suggestions);
+
+        logger.info("returned with no error: "+ req + " "  +  suggestions.size() + " suggestions ");
+
+        return resp ;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public SuggestOracle.Response getFeatureSuggestions(SuggestOracle.Request req, boolean wildCard) {
+        SuggestOracle.Response resp = new SuggestOracle.Response();
+        String query = req.getQuery() ;
+
+        if(query.equals("xxx333")){
+            throw new RuntimeException("this is a test error") ;
+        }
+
+        SessionCreator.instantiateDBForHostedMode() ;
+
+
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
+        if(query.length()>0){
+            for(Feature feature: RepositoryFactory.getMutantRepository().getFeaturesByAbbreviation(query) ){
+                suggestions.add(new ItemSuggestion(feature.getAbbreviation().replaceAll(query,"<strong>"+query+"</strong>"),feature.getAbbreviation())) ;
+            }
+        }
+        if(wildCard==true){
+            suggestions.add(0,new ItemSuggestion("*"+query+"*",null)) ;
         }
         resp.setSuggestions(suggestions);
 

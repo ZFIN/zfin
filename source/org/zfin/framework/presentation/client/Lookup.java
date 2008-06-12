@@ -4,8 +4,9 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.JavaScriptObject;
 
-import java.util.Set;
+import java.util.*;
 
 /**
  * The structure of this SuggestBox is used in order to capture the extra "Enter" event.
@@ -21,50 +22,65 @@ public class Lookup implements EntryPoint {
     public static final String JSREF_BUTTONTEXT ="buttonText" ;
     public static final String JSREF_WILDCARD ="wildcard" ;
     public static final String JSREF_WIDTH ="width" ;
+    public static final String JSREF_ACTION="action" ;
 
-    protected LookupComposite lookup  ;
-    private String divName ;
-
-    protected void handleProperties(){
-        Dictionary lookupProperties = Dictionary.getDictionary("LookupProperties") ;
-        // set options
-        Set keySet = lookupProperties.keySet() ;
-        if(keySet.contains(JSREF_DIV_NAME)){
-            setDivName(lookupProperties.get(JSREF_DIV_NAME));
-        }
-        if(keySet.contains(JSREF_INPUT_NAME)){
-            lookup.setInputName(lookupProperties.get(JSREF_INPUT_NAME));
-        }
-        if(keySet.contains(JSREF_TYPE)){
-            lookup.setType(lookupProperties.get(JSREF_TYPE));
-        }
-        if(keySet.contains(JSREF_BUTTONTEXT)){
-            lookup.setButtonText(lookupProperties.get(JSREF_BUTTONTEXT));
-        }
-        if(keySet.contains(JSREF_SHOWERROR)){
-            lookup.setShowError(Boolean.valueOf(lookupProperties.get(JSREF_SHOWERROR)).booleanValue());
-        }
-        if(keySet.contains(JSREF_WILDCARD)){
-            lookup.setWildCard(Boolean.valueOf(lookupProperties.get(JSREF_WILDCARD)).booleanValue());
-        }
-        if(keySet.contains(JSREF_WIDTH)){
-            lookup.setSuggestBoxWidth(Integer.parseInt(lookupProperties.get(JSREF_WIDTH)));
-        }
-    }
+    //    protected LookupComposite lookup  ;
+    //    private String divName ;
+    protected final static String LOOKUP_STRING = "LookupProperties" ;
+    private final static String NUMLOOKUPS_STRING = "NumLookups" ;
+    private Set lookups = new HashSet() ;
 
     public void onModuleLoad() {
         // init gui
-        lookup = new LookupComposite() ;
-        handleProperties();
-        lookup.initGui();
-        RootPanel.get(getDivName()).add(lookup);
+
+        String numLookupStrings = Dictionary.getDictionary(LOOKUP_STRING).get(NUMLOOKUPS_STRING) ;
+        int numLookups = Integer.parseInt(numLookupStrings) ;
+
+        for(int i = 0 ; i < numLookups ; i++){
+            Dictionary lookupProperties = Dictionary.getDictionary(LOOKUP_STRING+i) ;
+            if(lookupProperties==null){
+                return ;
+            }
+            LookupComposite lookup = new LookupComposite() ;
+            // set options
+            Set keySet = lookupProperties.keySet() ;
+            if(keySet.contains(JSREF_INPUT_NAME)){
+                lookup.setInputName(lookupProperties.get(JSREF_INPUT_NAME));
+            }
+            if(keySet.contains(JSREF_TYPE)){
+                lookup.setType(lookupProperties.get(JSREF_TYPE));
+            }
+            if(keySet.contains(JSREF_BUTTONTEXT)){
+                lookup.setButtonText(lookupProperties.get(JSREF_BUTTONTEXT));
+            }
+            if(keySet.contains(JSREF_SHOWERROR)){
+                lookup.setShowError(Boolean.valueOf(lookupProperties.get(JSREF_SHOWERROR)).booleanValue());
+            }
+            if(keySet.contains(JSREF_WILDCARD)){
+                lookup.setWildCard(Boolean.valueOf(lookupProperties.get(JSREF_WILDCARD)).booleanValue());
+            }
+            if(keySet.contains(JSREF_WIDTH)){
+                lookup.setSuggestBoxWidth(Integer.parseInt(lookupProperties.get(JSREF_WIDTH)));
+            }
+
+			if(keySet.contains(JSREF_ACTION)){
+				if( lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_ANATOMY_SEARCH)){
+					lookup.setAction(new AnatomySearchSubmitAction());
+				}
+			}
+
+
+            lookup.initGui();
+
+            if(keySet.contains(JSREF_DIV_NAME)){
+                RootPanel.get(lookupProperties.get(JSREF_DIV_NAME)).add(lookup);
+            }
+            else{
+                RootPanel.get().add(lookup);
+            }
+
+            lookups.add(lookup) ; 
+        }
     }
 
-    public String getDivName() {
-        return divName;
-    }
-
-    public void setDivName(String divName) {
-        this.divName = divName;
-    }
 }

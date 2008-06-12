@@ -3,10 +3,7 @@ package org.zfin.mutant.repository;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.CachedRepository;
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.Morpholino;
-import org.zfin.mutant.Term;
+import org.zfin.mutant.*;
 import org.zfin.ontology.GoTerm;
 
 import java.util.List;
@@ -123,7 +120,15 @@ public interface MutantRepository extends CachedRepository {
      * @param name
      * @return A list of GoTerms that contain the parameter handed in.
      */
-    List<Term> getQualityTermsByName(String name) ; 
+    List<Term> getQualityTermsByName(String name) ;
 
+
+
+    /**
+     *
+     * @param name
+     * @return A list of Features that contain the name in the abbreviation.
+     */
+    List<Feature> getFeaturesByAbbreviation(String name) ;
 }
 

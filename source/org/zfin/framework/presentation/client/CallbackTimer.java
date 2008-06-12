@@ -43,6 +43,10 @@ public class CallbackTimer extends Timer {
         if(lookup.getType().equals(LookupComposite.MARKER_LOOKUP)){
             LookupService.App.getInstance().getMarkerSuggestions(request , lookup.isWildCard(),callback);
         }
+        else
+        if(lookup.getType().equals(LookupComposite.FEATURE_LOOKUP)){
+            LookupService.App.getInstance().getFeatureSuggestions(request , lookup.isWildCard(),callback);
+        }
 
         this.callback = null ;
     }

@@ -15,5 +15,7 @@ public interface LookupServiceAsync {
 
     void getMarkerSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
 
-    void validateTerm(String term, AsyncCallback async);
+    void getFeatureSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
+
+    void validateAnatomyTerm(String term, AsyncCallback async);
 }

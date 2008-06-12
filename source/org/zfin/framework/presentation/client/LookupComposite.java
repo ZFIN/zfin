@@ -12,7 +12,7 @@ import java.util.Iterator;
 /**
  *  This is a lookup box composite.  It allows the following options:
  *  - name of input box
-  *  - show errors
+ *  - show errors
  *  - show button
  *  - type (GO, PATO, QUALITY)
  *  - showSynons
@@ -27,7 +27,7 @@ public class LookupComposite extends Composite {
     protected SuggestOracle.Suggestion suggestion = null;
     protected Button submitButton ;
     protected String currentText = null;
-//    protected Label noteLabel = new Label();
+    //    protected Label noteLabel = new Label();
     protected HTML noteLabel = new HTML("",true);
     protected VerticalPanel rootPanel = new VerticalPanel() ;
 
@@ -40,10 +40,15 @@ public class LookupComposite extends Composite {
     public final static String TYPE_GENE_ONTOLOGY= "GENE_ONTOLOGY" ;
     public final static String TYPE_QUALITY = "QUALITY_ONTOLOGY" ;
     public final static String MARKER_LOOKUP = "MARKER_LOOKUP" ;
+    public final static String FEATURE_LOOKUP = "FEATURE_LOOKUP" ;
     private List types = new ArrayList() ;
 
     // variables
-    private String EMPTY_STRING  = "&nbsp;" ;
+    private final static String EMPTY_STRING  = "&nbsp;" ;
+
+    // actions
+    public final static String ACTION_ANATOMY_SEARCH= "ANATOMY_SEARCH" ;
+    private SubmitAction action = null ;
 
     // options
     protected String inputName = "search";
@@ -61,12 +66,13 @@ public class LookupComposite extends Composite {
         types.add(TYPE_GENE_ONTOLOGY) ;
         types.add(TYPE_QUALITY) ;
         types.add(MARKER_LOOKUP) ;
+        types.add(FEATURE_LOOKUP) ;
     }
 
     public void initGui(){
         textBox.setName(inputName);
         textBox.setTitle(inputName);
-        DOM.setElementProperty(textBox.getElement(), "id", inputName); 
+        DOM.setElementProperty(textBox.getElement(), "id", inputName);
         textBox.setVisibleLength(suggestBoxWidth);
         DOM.setElementAttribute(textBox.getElement(), "autocomplete", "off");
         suggestBox = new SuggestBox(oracle, textBox);
@@ -118,11 +124,11 @@ public class LookupComposite extends Composite {
                 }
                 if (textBox.getText() != null && textBox.getText().length() > 0 &&
                         (
-                            c != KeyboardListener.KEY_DELETE
-                            &&
-                            c != KeyboardListener.KEY_BACKSPACE
+                                c != KeyboardListener.KEY_DELETE
+                                        &&
+                                        c != KeyboardListener.KEY_BACKSPACE
                         )
-                ){
+                        ){
                     currentText = textBox.getText()  ;
                     if( Character.isLetterOrDigit(c)){
                         currentText += c ;
@@ -145,11 +151,11 @@ public class LookupComposite extends Composite {
                 }
                 else
                 if (textBox.getText() == null || textBox.getText().length() == 0 ||
-                    ( textBox.getText().length()==1
-                            &&
-                            (c== KeyboardListener.KEY_DELETE || c== KeyboardListener.KEY_BACKSPACE)
-                      )
-                   )
+                        ( textBox.getText().length()==1
+                                &&
+                                (c== KeyboardListener.KEY_DELETE || c== KeyboardListener.KEY_BACKSPACE)
+                        )
+                        )
                 {
                     handleNoText();
                 }
@@ -186,10 +192,8 @@ public class LookupComposite extends Composite {
     }
 
     protected void doSubmit(String text) {
-        if (text != null) {
-            suggestBox.setFocus(false);
-            Window.open("/action/anatomy/search?action=term-search&searchTerm=" + text.replaceAll(" ", "%20"), "_self",
-                    "");
+        if(action != null){
+            action.doSubmit(text);
         }
     }
 
@@ -246,7 +250,7 @@ public class LookupComposite extends Composite {
                 typeList += iter.next().toString() + " " ;
             }
 
-            throw new RuntimeException("Type " + type + " not recognized.  Try: \n" + typeList) ; 
+            throw new RuntimeException("Type " + type + " not recognized.  Try: \n" + typeList) ;
         }
         this.type = type;
     }
@@ -276,9 +280,9 @@ public class LookupComposite extends Composite {
     }
 
 
-	public String getCurrentText(){
-		return currentText ; 
-	}
+    public String getCurrentText(){
+        return currentText ;
+    }
 
     public TextBox getTextBox() {
         return textBox;
@@ -312,4 +316,12 @@ public class LookupComposite extends Composite {
         this.suggestBoxWidth = suggestBoxWidth;
     }
 
+
+    public SubmitAction getAction() {
+        return action;
+    }
+
+    public void setAction(SubmitAction action) {
+        this.action = action;
+    }
 }

@@ -28,6 +28,9 @@ public class LookupTable extends Lookup {
     private String imageURL = "/gwt/org.zfin.framework.presentation.LookupTable/";
     private TermStatus termStatus = new TermStatus();
     private String noTerms = "Enter search terms" ;
+    private String divName ;
+
+    private LookupComposite lookup ;
 
     public void onModuleLoad() {
 
@@ -69,6 +72,34 @@ public class LookupTable extends Lookup {
 
 
         exposeMethodToJavascript(this);
+    }
+
+    private void handleProperties(){
+        Dictionary lookupProperties = Dictionary.getDictionary(LOOKUP_STRING) ;
+        Set keySet = lookupProperties.keySet() ;
+        if(keySet.contains(JSREF_INPUT_NAME)){
+            lookup.setInputName(lookupProperties.get(JSREF_INPUT_NAME));
+        }
+        if(keySet.contains(JSREF_TYPE)){
+            lookup.setType(lookupProperties.get(JSREF_TYPE));
+        }
+        if(keySet.contains(JSREF_BUTTONTEXT)){
+            lookup.setButtonText(lookupProperties.get(JSREF_BUTTONTEXT));
+        }
+        if(keySet.contains(JSREF_SHOWERROR)){
+            lookup.setShowError(Boolean.valueOf(lookupProperties.get(JSREF_SHOWERROR)).booleanValue());
+        }
+        if(keySet.contains(JSREF_WILDCARD)){
+            lookup.setWildCard(Boolean.valueOf(lookupProperties.get(JSREF_WILDCARD)).booleanValue());
+        }
+        if(keySet.contains(JSREF_WIDTH)){
+            lookup.setSuggestBoxWidth(Integer.parseInt(lookupProperties.get(JSREF_WIDTH)));
+        }
+        if(keySet.contains(JSREF_DIV_NAME)){
+            setDivName(lookupProperties.get(JSREF_DIV_NAME));
+        }
+
+
     }
 
     private void initTable(){
@@ -133,7 +164,7 @@ public class LookupTable extends Lookup {
     public String validateLookup(){
         String term = lookup.getTextBox().getText() ;
         if(term != null && term.length()>=lookup.getMinLookupLenth()){
-            LookupService.App.getInstance().validateTerm( term, new AsyncCallback(){
+            LookupService.App.getInstance().validateAnatomyTerm( term, new AsyncCallback(){
                 public void onFailure(Throwable throwable) {
 //                    lookup.setErrorString(throwable.toString());
                     termStatus.setStatus(TermStatus.TERM_STATUS_FAILURE);
@@ -290,7 +321,7 @@ public class LookupTable extends Lookup {
 
         for(int i = 0 ; i < terms.length ; i++){
             String tokenizedTerm = terms[i] ;
-            LookupService.App.getInstance().validateTerm( tokenizedTerm, new AsyncCallback(){
+            LookupService.App.getInstance().validateAnatomyTerm( tokenizedTerm, new AsyncCallback(){
                 public void onFailure(Throwable throwable) {
                     lookup.setErrorString(throwable.toString());
                     termStatus.setStatus(TermStatus.TERM_STATUS_FAILURE);
@@ -363,5 +394,13 @@ public class LookupTable extends Lookup {
 
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
+    }
+
+    public String getDivName() {
+        return divName;
+    }
+
+    public void setDivName(String divName) {
+        this.divName = divName;
     }
 }

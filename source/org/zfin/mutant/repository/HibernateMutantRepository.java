@@ -3,7 +3,10 @@ package org.zfin.mutant.repository;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Criteria;
+import static org.zfin.framework.HibernateUtil.currentSession;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
@@ -330,6 +333,24 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
         return (Genotype) session.load(Genotype.class, genoteypZbID);
     }
+
+    public List<Feature> getFeaturesByAbbreviation(String name) {
+        List<Feature> features = new ArrayList<Feature>() ;
+        Session session = currentSession();
+
+        Criteria criteria1 = session.createCriteria(Feature.class);
+        criteria1.add(Restrictions.like("abbreviation", name, MatchMode.START));
+        criteria1.addOrder(Order.asc("abbreviation")) ;
+        features.addAll(criteria1.list()) ;
+
+        Criteria criteria2 = session.createCriteria(Feature.class);
+        criteria2.add(Restrictions.like("abbreviation", name, MatchMode.ANYWHERE));
+        criteria2.add(Restrictions.not(Restrictions.like("abbreviation", name, MatchMode.START)));
+        criteria2.addOrder(Order.asc("abbreviation")) ;
+        features.addAll(criteria2.list()) ;
+        return features ;
+    }
+
 
     public void invalidateCachedObjects() {
     }

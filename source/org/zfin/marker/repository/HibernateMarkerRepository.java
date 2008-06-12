@@ -60,11 +60,20 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public List<Marker> getMarkersByAbbreviation(String name) {
+        List<Marker> markerList = new ArrayList<Marker>() ;
         Session session = currentSession();
-        Criteria criteria = session.createCriteria(Marker.class);
-        criteria.add(Restrictions.like("abbreviation", name, MatchMode.ANYWHERE));
-        criteria.addOrder(Order.asc("abbreviation")) ;
-        return criteria.list();
+
+        Criteria criteria1 = session.createCriteria(Marker.class);
+        criteria1.add(Restrictions.like("abbreviation", name, MatchMode.START));
+        criteria1.addOrder(Order.asc("abbreviation")) ;
+        markerList.addAll(criteria1.list()) ;
+
+        Criteria criteria2 = session.createCriteria(Marker.class);
+        criteria2.add(Restrictions.like("abbreviation", name, MatchMode.ANYWHERE));
+        criteria2.add(Restrictions.not(Restrictions.like("abbreviation", name, MatchMode.START)));
+        criteria2.addOrder(Order.asc("abbreviation")) ;
+        markerList.addAll(criteria2.list()) ;
+        return markerList ;
     }
 
 
