@@ -719,6 +719,20 @@ function openChild(childWinUrl,childWinName) {
     &nbsp;&nbsp; &ndash; &nbsp;&nbsp; 
     <a id="xpsel_expression_details" href="#note_contents">Search Tips</a>
     <div id="note_contents">
+
+    <style>
+a.close_link {
+color:#333333;
+float:right;
+font-family:sans-serif;
+font-size: Large ;
+font-weight:bold;
+text-decoration:none;
+}
+    </style>
+
+<a class="close_link" href="javascript:;" onclick="parent.Control.Modal.close();" target="_top">x</a>
+<br>
 <p>ZFIN now displays three kinds of gene expression data:</p>
 
 <ol>

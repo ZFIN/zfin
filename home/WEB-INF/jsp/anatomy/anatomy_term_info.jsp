@@ -18,10 +18,7 @@
             font-family:sans-serif;
             font-weight:bold;
             text-decoration: none;
-            font-size: larger;
-        }
-        a.close_link:hover{
-            color: red ; 
+            font-size: Large;
         }
         body{
             font-family: arial, sans-serif;
