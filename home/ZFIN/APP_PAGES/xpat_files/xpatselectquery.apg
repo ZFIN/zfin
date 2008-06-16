@@ -203,12 +203,50 @@ DEBUGGING:
   <?MIVAR NAME=xpatselqry_cond>$xpatselqry_cond and xpatex_direct_submission_date::datetime year to day > current - $xpatselqry_recentRecords units day<?/MIVAR>
 <?/MIBLOCK>
 
+
+<?MICOMMENT>
+    ============================================================================
+    ======= WT only 
+    ============================================================================
+<?/MICOMMENT>
+<?MIBLOCK COND="$(XST,$xpatselqry_wtOnly)">
+    <?MIVAR NAME=$xselqry_tmp_wt_genox>$(CONCAT,xselqry_tmp_wt_genox,$xpatselqry_session_id)<?/MIVAR>    
+
+    <?MISQL SQL="
+          execute function table_exists('$xselqry_tmp_wt_genox')">
+          <?MISQL COND="$(EC,$1,f)" SQL="
+             create temp table $xselqry_tmp_wt_genox (
+		  xtwg_genox_zdb_id		varchar(50)
+             ) with NO LOG;">
+          <?/MISQL>
+          <?MISQL COND="$(EC,$1,t)" SQL="
+                delete from $xselqry_tmp_wt_genox;">
+          <?/MISQL>
+    <?/MISQL>
+
+    <?MISQL SQL="
+    	    insert into $xselqry_tmp_wt_genox
+	    	 select genox_zdb_id
+                   from genotype_experiment, genotype, experiment
+                  where genox_geno_zdb_id = geno_zdb_id
+                    and genox_exp_zdb_id = exp_zdb_id
+                    and geno_is_wildtype = 't'
+                    and exp_name = '_Standard';"> 
+          
+    <?/MISQL>
+   <?MIVAR NAME=xpatselqry_join>$xpatselqry_join,  $xselqry_tmp_wt_genox <?/MIVAR>
+   <?MIVAR NAME=xpatselqry_cond>$xpatselqry_cond and xpatex_genox_zdb_id = xtwg_genox_zdb_id <?/MIVAR>
+ 
+<?/MIBLOCK>
+
+
+
 <?MICOMMENT>
     ============================================================================
     ==========  MO knockdown Gene
     ============================================================================
 <?/MICOMMENT>
-<?MIBLOCK COND="$(XST,$xpatselqry_MOgene)">
+<?MIBLOCK COND="$(AND,$(XST,$xpatselqry_MOgene),$(NXST,,$xpatselqry_wtOnly))">
  
   <?MIVAR NAME=$xpatselqry_nameEndsTable><?/MIVAR>
 
@@ -293,7 +331,7 @@ DEBUGGING:
     ============================================================================
 
 <?/MICOMMENT>
-<?MIBLOCK COND="$(AND,$(XST,$xpatselqry_genoName),$(NXST,$xpatselqry_genoZdbId))">
+<?MIBLOCK COND="$(AND,$(XST,$xpatselqry_genoName),$(NXST,$xpatselqry_genoZdbId),$(NXST,$xpatselqry_wtOnly))">
 
     <?MISQL SQL="select WebExplode(object,'genonm_inputname=$xpatselqry_genoName&genonm_session_id=$xpatselqry_session_id&compare=$xpatselqry_genoSearchType') from webPages where ID='aa-genotype_name_match.apg';">$1<?/MISQL>   
 
@@ -484,13 +522,14 @@ DEBUGGING:
       <?/MISQL>
     <?/MISQL>
 
+    <?MICOMMENT> -- filter with stage overlapping if applicable --<?/MICOMMENT>
     <?MIVAR NAME=$xpatselqry_stage_overlap_tbl><?/MIVAR>
     <?MIVAR NAME=$xpatselqry_stage_overlap_tbl COND="$(XST,$xpatselqry_stageStart)">, stage ss, stage se <?/MIVAR>
     	   
    <?MIVAR NAME=$xpatselqry_stage_overlap_cnd><?/MIVAR>
     <?MIVAR NAME=$xpatselqry_stage_overlap_cnd COND="$(XST,$xpatselqry_stageStart)">and xpatres_start_stg_zdb_id = ss.stg_zdb_id and xpatres_end_stg_zdb_id = se.stg_zdb_id and ss.stg_hours_start < $xpatselqry_stageEnd and se.stg_hours_end > $xpatselqry_stageStart <?/MIVAR>
 
- 
+    <?MICOMMENT> -- filter with gene/probe name matching if applicable --<?/MICOMMENT>
     <?MIVAR NAME=xpatselqry_gene_tbl_join><?/MIVAR>
     <?MIVAR NAME=xpatselqry_gene_tbl_cnd><?/MIVAR>
     <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_gene_probe_count),$(>,$xpatselqry_gene_probe_count,0))">
@@ -499,25 +538,39 @@ DEBUGGING:
         <?MIVAR COND="$(XST,$xpatselqry_probe_ismatched)" NAME=xpatselqry_gene_tbl_cnd> and xpatex_probe_feature_zdb_id = xtn_mrkr_zdb_id<?/MIVAR>
     <?/MIBLOCK>
 
+    <?MICOMMENT> -- filter with WT only if applicable --<?/MICOMMENT>
+    <?MIVAR NAME=xpatselqry_wt_tbl_join><?/MIVAR>
+    <?MIVAR NAME=xpatselqry_wt_tbl_cnd><?/MIVAR>
+    <?MIBLOCK COND="$(XST,$xpatselqry_wtOnly)">
+      <?MIVAR NAME=xpatselqry_wt_tbl_join>, $xselqry_tmp_wt_genox<?/MIVAR>
+      <?MIVAR NAME=xpatselqry_wt_tbl_cnd> and xpatex_genox_zdb_id = xtwg_genox_zdb_id <?/MIVAR>
+    <?/MIBLOCK>
+
+
     <?MISQL SQL="
        insert into $xselqry_tmp_anat_all
 	    select xpatex_gene_zdb_id, xpatex_genox_zdb_id, xpatres_anat_item_zdb_id, xpatres_zdb_id
-              from expression_experiment, expression_result $xpatselqry_gene_tbl_join $xpatselqry_stage_overlap_tbl
+              from expression_experiment, expression_result 
+                   $xpatselqry_gene_tbl_join $xpatselqry_stage_overlap_tbl $xpatselqry_wt_tbl_join
              where xpatres_anat_item_zdb_id in ('$xpatselqry_anatitem_zdb_id_list')
                and xpatres_expression_found = 't'
                and xpatex_zdb_id = xpatres_xpatex_zdb_id 
+	       $xpatselqry_wt_tbl_cnd
 	       $xpatselqry_gene_tbl_cnd
-               $xpatselqry_stage_overlap_cnd ;">
+               $xpatselqry_stage_overlap_cnd
+                ;">
     <?/MISQL>
 
     <?MISQL COND="$(AND,$(XST,$xpatselqry_includeSubstructures),$(NE,$xpatselqry_includeSubstructures,),$(NE,$xpatselqry_includeSubstructures,unchecked))" SQL="
        insert into $xselqry_tmp_anat_all
 	    select xpatex_gene_zdb_id, xpatex_genox_zdb_id, allanatcon_container_zdb_id, xpatres_zdb_id
-              from expression_experiment, expression_result, all_anatomy_contains $xpatselqry_gene_tbl_join $xpatselqry_stage_overlap_tbl
+              from expression_experiment, expression_result, all_anatomy_contains 
+                   $xpatselqry_gene_tbl_join $xpatselqry_stage_overlap_tbl $xpatselqry_wt_tbl_join
              where allanatcon_container_zdb_id in ('$xpatselqry_anatitem_zdb_id_list')
                and xpatres_expression_found = 't' 
                and xpatres_anat_item_zdb_id = allanatcon_contained_zdb_id
                and xpatres_xpatex_zdb_id = xpatex_zdb_id
+	       $xpatselqry_wt_tbl_cnd
 	       $xpatselqry_gene_tbl_cnd
                $xpatselqry_stage_overlap_cnd ;">
     <?/MISQL>
@@ -561,8 +614,9 @@ DEBUGGING:
           <?MISQL COND="$(EC,$1,t)" SQL="
                 delete from $xselqry_tmp_anat_real;">
           <?/MISQL>
-        <?/MISQL>
-   
+      <?/MISQL>
+
+      <?MIBLOCK COND="$(NXST,$xpatselqry_wtOnly)">
         <?MISQL SQL="
 	     insert into $xselqry_tmp_anat_real
                   select xtaa_gene_zdb_id, xtaa_genox_zdb_id
@@ -579,8 +633,30 @@ DEBUGGING:
                    where xtar_gene_zdb_id = xtaa_gene_zdb_id  
                      and xtar_genox_zdb_id = xtaa_genox_zdb_id ;">
          <?/MISQL>
+      <?MIELSE>    <?MICOMMENT> --- WT only and flat WTs  --- <?/MICOMMENT>
+       <?MISQL SQL="
+	     insert into $xselqry_tmp_anat_real(xtar_gene_zdb_id)
+                  select xtaa_gene_zdb_id
+                    from $xselqry_tmp_anat_all 
+		group by xtaa_gene_zdb_id
+                  having count(distinct xtaa_search_anat_zdb_id) = $xpatselqry_item_count
+	   ;">
+         <?/MISQL>
 
-    <?MIELSE>  <?MICOMMENT> --- OR search --- <?/MICOMMENT>
+         <?MISQL SQL="
+      	      insert into $xselqry_tmp_anat_res_id
+                  select distinct xtaa_xpatres_zdb_id 
+                    from $xselqry_tmp_anat_real, $xselqry_tmp_anat_all
+                   where xtar_gene_zdb_id = xtaa_gene_zdb_id ;">
+         <?/MISQL>
+
+      <?/MIBLOCK>
+      
+
+    <?MIELSE>  <?MICOMMENT> -------------------------------------------
+                            --   OR search  (no worry of WT flatting)      
+                            -------------------------------------------
+               <?/MICOMMENT>
 
         <?MISQL SQL="
 	     insert into $xselqry_tmp_anat_res_id
