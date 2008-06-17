@@ -11,3 +11,5 @@ Disallow: /Templates
 Disallow: /old_zf_info
 Disallow: /action
 Disallow: /zf_info
+Disallow: /data_transfer
+Disallow: /zirc
