@@ -2566,13 +2566,14 @@ sub mrkrgoevObsoleteAnnotationsFound ($) {
 
   my $routineName = "mrkrgoevObsoleteAnnotationsFound";
 
-  my $sql = 'select mrkrgoev_zdb_id
-               from marker_go_term_evidence, go_term
+  my $sql = 'select mrkrgoev_zdb_id, mrkr_abbrev, goterm_name, mrkrgoev_source_zdb_id
+               from marker_go_term_evidence, go_term, marker
                where mrkrgoev_go_term_zdb_id = goterm_zdb_id
-               and goterm_is_obsolete = "t" '
+               and goterm_is_obsolete = "t" 
+               and mrkrgoev_mrkr_Zdb_id = mrkr_zdb_id'
               ;
 
-  my @colDesc = ("mrkrgoev_zdb_id");
+  my @colDesc = ("mrkrgoev_zdb_id","mrkr_abbrev","goterm_name", "mrkrgoev_source_zdb_id");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
   if ( $nRecords > 0 ) {
@@ -2596,13 +2597,14 @@ sub mrkrgoevSecondaryAnnotationsFound ($) {
 
   my $routineName = "mrkrgoevSecondaryAnnotationsFound";
 
-  my $sql = 'select mrkrgoev_zdb_id
-               from marker_go_term_evidence, go_term
+  my $sql = 'select mrkrgoev_zdb_id, mrkr_abbrev, goterm_name, mrkrgoev_source_zdb_id
+               from marker_go_term_evidence, go_term, marker
                where mrkrgoev_go_term_zdb_id = goterm_zdb_id
-               and goterm_is_secondary = "t"'
+               and goterm_is_secondary = "t"
+               and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id'
               ;
 
-  my @colDesc = ("mrkrgoev_zdb_id");
+  my @colDesc = ("mrkrgoev_zdb_id","mrkr_abbrev","goterm_name", "mrkrgoev_source_zdb_id");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
   if ( $nRecords > 0 ) {
@@ -3313,11 +3315,14 @@ if($daily) {
     $sth->execute();
 
     while (my ($curatorEmail, $curatorId, $curatorName) = $sth->fetchrow_array()) {
-      my @curatorName = split(/,/,$curatorName);
-      my $curatorFirstName = $curatorName[$#curatorName];
-      $curatorFirstName =~ s/^\s+//;
-      featureAssociatedWithGenotype ($curatorEmail, $curatorId, $curatorFirstName);
-     }
+	if ($globalDbName ne "zfindb"){
+	    $curatorEmail = "<!--|VALIDATION_EMAIL_OTHER|-->";
+	}
+	my @curatorName = split(/,/,$curatorName);
+	my $curatorFirstName = $curatorName[$#curatorName];
+	$curatorFirstName =~ s/^\s+//;
+	featureAssociatedWithGenotype ($curatorEmail, $curatorId, $curatorFirstName);
+    }
     featureIsAlleleOfOrMrkrAbsent($mutantEmail);
     genotypesHaveNoNames($genoEmail);
     pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
