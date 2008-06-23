@@ -962,7 +962,7 @@ sub associatedDataforPUB030905_2 ($) {
                        where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
                        and    dblink_zdb_id = recattrib_data_zdb_id
                        and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                       and    fdbcont_fdbdt_data_type in ('Genomic','cDNA','Sequence Clusters')
+                       and    fdbcont_fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
                        and    r1.recattrib_data_zdb_id = r2.recattrib_data_zdb_id
                      union
                     -- all nucleotide accession numbers assoc. w/pub via dblink_linked_recid (GENE)
@@ -971,7 +971,7 @@ sub associatedDataforPUB030905_2 ($) {
                        where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
                        and    dblink_linked_recid = recattrib_data_zdb_id
                        and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                       and    fdbcont_fdbdt_data_type in ('Genomic','cDNA','Sequence Clusters')
+                       and    fdbcont_fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
                        and    r1.recattrib_data_zdb_id = r3.recattrib_data_zdb_id
                     )  
              order by recattrib_data_zdb_id";
@@ -986,7 +986,7 @@ sub associatedDataforPUB030905_2 ($) {
     my $subject = "Invalid data is associated with ZDB-PUB-030905-2.";
     my $errMsg = "$nRecords data are associated with ZDB-PUB-030905-2 "
                . " that are not nucleotide sequence accession numbers "
-               . " (i.e. not Genomic, cDNA or Sequence Clusters.)";
+               . " (i.e. not Genomic, RNA or Sequence Clusters.)";
 
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
@@ -3080,15 +3080,10 @@ select es_pk_id
     and es_external_link is not null
     and jtype not in ('Unpublished', 'Curation')
     and not exists (
-        select distinct es_pk_id 
+        select 'x' 
             from 
             image
-            where es_figure_zdb_id = fig_zdb_id
-            and fig_source_zdb_id = zdb_id
-            and pub_doi is not  null 
-            and es_external_link is not null
-            and jtype not in ('Unpublished', 'Curation')
-            and fig_zdb_id = img_fig_zdb_id
+            where fig_zdb_id = img_fig_zdb_id
             )
     ; " ;
   my $totaldoiwoimagefromfigure = execSql ($sql, undef, @colDesc);
@@ -3131,17 +3126,34 @@ select es_pk_id
   $sql = $allsql ; 
 
   $msg = $msg .  "All pubs have DOIs, are published, and have been curated.\n" ; 
+
   $msg = $msg .  "Pubs w/o images are all published after $normalDate in order to normalize the average publication date versus pubs with images.\n\n" ; 
 
-  $msg = $msg .  "DOI access for pubs with images per number of pubs: " . substr((($totaldoiwithimagefromfig+$totaldoiwithimagefrompub+$totaldoiwithimagefromimg)/$pubswithimg),0,7) . "\n" ; 
-  $msg = $msg .  "DOI access for pubs w/o images per number of pubs w/o images: " . substr((($totaldoiwoimagefrompub+$totaldoiwoimagefromfigure)/$pubswoimg),0,7) . "\n\n" ; 
+  if ($pubswithimg > 0){
+      $msg = $msg .  "DOI access for pubs with images per number of pubs: " . substr((($totaldoiwithimagefromfig+$totaldoiwithimagefrompub+$totaldoiwithimagefromimg)/$pubswithimg),0,7) . "\n" ; 
+  }
 
-  $msg = $msg .  "% DOI Access per pub access with image: " . substr(( $totaldoiwithimagefrompub/ $pubaccesswithimage),0,7) . "\n" ; 
-  $msg = $msg .  "% DOI Access per pub access w/o image: " . substr(($totaldoiwoimagefrompub/ $pubaccesswoimage),0,7) . "\n\n" ; 
+  if ($pubswoimg > 0){
 
+      $msg = $msg .  "DOI access for pubs w/o images per number of pubs w/o images: " . substr((($totaldoiwoimagefrompub+$totaldoiwoimagefromfigure)/$pubswoimg),0,7) . "\n\n" ; 
+  }
+
+  if ($pubaccesswithimage > 0){
+      $msg = $msg .  "% DOI Access per pub access with image: " . substr(( $totaldoiwithimagefrompub/ $pubaccesswithimage),0,7) . "\n" ; 
+  }
+
+  if ($pubaccesswoimage > 0){
+      $msg = $msg .  "% DOI Access per pub access w/o image: " . substr(($totaldoiwoimagefrompub/ $pubaccesswoimage),0,7) . "\n\n" ; 
+  }
+
+  if ($pubswithimg > 0){
   $msg = $msg .  "Pub access per pub with image: " . substr(($pubaccesswithimage / $pubswithimg),0,7) . "\n" ; 
-  $msg = $msg .  "Pub access per pub w/o image: " . substr(($pubaccesswoimage / $pubswoimg),0,7) . "\n\n\n\n" ; 
+  }
 
+  if ($pubswoimg > 0){
+
+  $msg = $msg .  "Pub access per pub w/o image: " . substr(($pubaccesswoimage / $pubswoimg),0,7) . "\n\n\n\n" ; 
+  }
 
 
   $msg = $msg .  "Pubs with image: " . $pubswithimg . "\n" ; 
