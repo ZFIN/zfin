@@ -194,7 +194,8 @@ public class LookupServiceImpl
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         if(query.length()>0){
             for(Feature feature: RepositoryFactory.getMutantRepository().getFeaturesByAbbreviation(query) ){
-                suggestions.add(new ItemSuggestion(feature.getAbbreviation().replaceAll(query,"<strong>"+query+"</strong>"),feature.getAbbreviation())) ;
+                suggestions.add(new ItemSuggestion(
+                        feature.getAbbreviation().replaceAll(query.replace("(","\\(").replace(")","\\)"),"<strong>"+query+"</strong>"),feature.getAbbreviation())) ;
             }
         }
         if(wildCard==true){

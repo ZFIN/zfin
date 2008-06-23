@@ -9,6 +9,7 @@
   overflow: auto; 
   height: auto;
   max-height: 400px ;
+  min-width: 100px ; 
 }
 
 .gwt-SuggestBoxPopup .item {
@@ -60,7 +61,7 @@
 .gwt-Frame {
     background: white ;
     border-color: black ;
-    box-shadow: 0.2em 0.2em #CCC
+    box-shadow: 0.2em 0.2em #CCC ;
     border: thin black solid ;  
     position: relative ; 
 }
