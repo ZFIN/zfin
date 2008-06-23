@@ -1,9 +1,23 @@
+
+##################################################################
+Apr 2008 
+thinking about where to pull GFF files from Ensembl/Vega 
+as the period is apt to be tied to the two month Ensembl
+cycle this seems like a good starting point.
+
+
+wget  ftp://ftp.sanger.ac.uk/pub/vega/danio/gff3/vega_danio_rerio_20070803.gff3
+
+wget ftp://ftp.ensembl.org/pub/current_gtf/danio_rerio/Danio_rerio.ZFISH7.49.gtf.gz
+
+
+#################################################################
 Dec 2007
 
 reminder that when a new assembly is released the foreign DB
 name changes to reflect the new assembly.
 
-care must be taken to look for sql that uses 
+care must be taken to look for sql that uses
  fdbcont_fdb_db_name = 'Ensembl(zV7)'
 
 *** NOTE ***
@@ -13,9 +27,12 @@ as it can happen a new ensembl release (danio_rerio_core_xx_x)
 is in ftp://ftp.ensembl.org/pub/current_mysql/
 
 before it is available in
+ 
+ mysql:// ensembldb.ensembl.org:3306
 
- mysql:// ensembldb.ensembl.org:3306  
-
+should also note the mysql port changed from 3306 to 5306
+when they upgraded to a newer mysql v5. 
+the old port is still in place to serve the old v4 releases.
 
 
 ############################################################
