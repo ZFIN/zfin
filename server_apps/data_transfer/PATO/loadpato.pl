@@ -29,8 +29,7 @@ print "$dir"."\n" ;
 
 sub downloadPATOtermFiles () { # download the obo file from PATO
 
-    system("/local/bin/curl -s http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo -o 
-quality.obo") and die "can not download quality.obo";
+    system("/local/bin/curl -s http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo -o quality.obo") and die "can not download quality.obo";
 
     print "download done.\n" ;
 
