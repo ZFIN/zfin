@@ -40,7 +40,7 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REFCROSS),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,IMAGE),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,COMPANY),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,ANAT),0)">MIval=aa-anatomy_item.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,ANAT),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENO),0)">MIval=aa-genotypeview.apg&OID=$record<?/MIVAR>
 <?MICOMMENT>fish gets replaced by genotype, genotypeview page checks zdb_replaced_data 
             and displays history info <?/MICOMMENT>
@@ -91,9 +91,16 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?/MIBLOCK>
 
 <SCRIPT>
+  <?MIBLOCK COND="$(>,$(POSITION,$start_page,action),0)">
+  <?MIVAR>
+    window.location.replace("$start_page")
+  <?/MIVAR>
+  <?/MIBLOCK>
+  <?MIBLOCK COND="$(=,$(POSITION,$start_page,action),0)">
   <?MIVAR>
     window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$start_page")
   <?/MIVAR>
+  <?/MIBLOCK>
 </SCRIPT>
 
 </FRAMESET>

@@ -3,7 +3,7 @@
 #
 # Script that generates a new list of all data pages for the indexer.
 # For example, it creates a list URLS of such as:
-#   http://quark.zfin.org/cgi-bin_quark/webdriver?MIval=aa-anatomy_item.apg&OID=ZDB-ANAT-010921-404
+#   http://quark.zfin.org/action/anatomy/tem-detail/anatomyItem.zdbID=ZDB-ANAT-010921-404
 #   http://quark.zfin.org/cgi-bin_quark/webdriver?MIval=aa-markerview.apg&OID=ZDB-BAC-050218-3566
 #
 # These URLS are then used by the # These URLS are then used by the 

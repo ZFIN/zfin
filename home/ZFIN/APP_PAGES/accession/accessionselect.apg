@@ -140,7 +140,7 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ANAT),0)">aa-anatomy_item.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ANAT),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$OID<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FIG),0)">aa-fxfigureview.apg<?/MIVAR>
 
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ALT),0)">aa-fishselect.apg&fsel_allele_id=$aname&query_results=exist<?/MIVAR>
@@ -170,11 +170,20 @@
     <?MIBLOCK COND="$(EC,$start_page,NULL)">
       <form><center><font size=4><?MIVAR><b>Requested ID is not available in ZFIN.</b> </font></center><?/MIVAR>
       </form>
-    <?MIELSE>
-      <script>
-        <?MIVAR>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page&OID=$OID")<?/MIVAR>
-      </script>
-    <?/MIBLOCK>  <!-- ends if valid start page, not null  -->
+      <?/MIBLOCK>
+    <?MIBLOCK COND="$(>,$(POSITION,$start_page,action),0)">
+    <?MIVAR>
+    <script>
+      window.location.replace("$start_page")
+    </script>
+      <?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(=,$(POSITION,$start_page,action),0)">
+    <script>
+      <?MIVAR>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page&OID=$OID")<?/MIVAR>
+    </script>
+    <?/MIBLOCK>
+  <!-- ends if valid start page, not null  -->
 
 
   <?/MIBLOCK>  <!-- ENDS IF SEARCHTYPE ZDB ID -->

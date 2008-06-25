@@ -9,7 +9,7 @@ and display genotype list when called from other pages.
 Variables THAT MIGHT BE Expected: 
  -- fsel_allele_id        -- from jump_to.apg
  -- fsel_marker_id        -- from markerview.apg
- -- fsel_anatomy_item_id  -- from anatomy_item.apg
+ -- fsel_anatomy_item_id  -- from action/anatomy/term-detail
  -- fsel_inputname     -- from search form and markerview and markerselect page
  -- fsel_cnstrct_id
  -- pubId     

@@ -31,7 +31,7 @@ anatomy
 view.apg
 view2.apg
 aa-orthoviewdetailed.apg
-aa-anatomy_item.apg
+anatomy/term-detail
 aa-fxassayabbrev.apg
 aa-fxallfigures.apg
 aa-geneprddescription.apg
