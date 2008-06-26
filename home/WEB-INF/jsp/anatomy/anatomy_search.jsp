@@ -63,6 +63,7 @@
 
                         <script language="javascript" src="/gwt/org.zfin.framework.presentation.Lookup/org.zfin.framework.presentation.Lookup.nocache.js"></script>
                         <div id="anatomyTerm"></div>
+                        <form:errors path="searchTerm" cssClass="Error"/>
                     </TD>
                     <TD width=10%>
                         <b>or</b>

@@ -25,8 +25,16 @@
     <bean name="anatomyTermInfo" class="org.zfin.anatomy.presentation.AnatomyTermInfoController" autowire="byName"/>
 
     <bean name="anatomySearch" class="org.zfin.anatomy.presentation.AnatomySearchController" autowire="byName">
-        <property name="redirectUrlIfSingleResult">
-            <value>redirect:/action/anatomy/term-detail</value>
+        <property name="redirectUrlIfSingleResult" value="redirect:/action/anatomy/term-detail"/>
+        <property name="validator">
+            <bean class="org.zfin.framework.presentation.SearchTextValidator" />
+        </property>
+        <property name="formView" value="anatomy-search.page"/>
+        <property name="bindOnNewForm">
+            <value>true</value>
+        </property>
+        <property name="validateOnBinding">
+            <value>true</value>
         </property>
     </bean>
 
