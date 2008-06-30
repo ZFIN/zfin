@@ -62,6 +62,13 @@ where mrkr_abbrev like '%:%'
 
 <?MIBLOCK COND="$(EQ,$mvphnote_mrkr_type,GENE)">
 
+
+<?MICOMMENT> ** WITHDRAWN: ** <?/MICOMMENT>
+<?MIBLOCK COND="$(EC,$(POSITION,$mvphnote_mrkr_abbrev,WITHDRAWN:),1)">
+<?MIVAR NAME="mvphnote_label"><span class="error">This gene was based on a non-zebrafish clone and has been withdrawn</span><?/MIVAR>
+<?/MIBLOCK>
+
+
 <?MIVAR>$mvphnote_label<?/MIVAR>
 
 <?MICOMMENT> ** ch: ** <?/MICOMMENT>
@@ -174,7 +181,7 @@ Singapore.
 
 
 <?MICOMMENT> *** NOTE: for sb: genes, there are two correct disclaimers,
-                 for two different kinds of data *** <?/MICOMMENT>
+             for two different kinds of data *** <?/MICOMMENT>
 
 <?MICOMMENT> ** sb:eu ** <?/MICOMMENT>
 <?MIBLOCK COND="$(EC,$(POSITION,$mvphnote_mrkr_abbrev,sb:eu),1)">
@@ -256,6 +263,20 @@ zebrafish gene nomenclature. The prefix 'si:' indicates that th
 is pseudogene is represented by annotated genomic sequence from
 the Sanger Institute.
 <?/MIBLOCK>
+
+<?MICOMMENT>
+Not a gene or a pseudogene.
+<?MIELSE>
+
+<?MICOMMENT> ** WITHDRAWN: ** <?/MICOMMENT>
+<?MIBLOCK COND="$(EC,$(POSITION,$mvphnote_mrkr_abbrev,WITHDRAWN:),1)">
+<span class="error">This clone has been derived from a non-zebrafish species and has been withdrawn</span>
+<?/MIBLOCK>
+
+
+
+
+
 
 
 <?/MIBLOCK>

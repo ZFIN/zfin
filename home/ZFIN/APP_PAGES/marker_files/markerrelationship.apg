@@ -98,8 +98,12 @@ OUTPUT:
       <?/MIVAR>
 	  <tr>
         <td bgcolor=#EEEEEE>       			
-	      <?MIVAR>
-			$(IF,$(>,$(POSITION,$OID,GENE),0),$abbrev,$name) $mrkrrel_mrel_comments
+	      <?MIVAR> 
+          <span 
+          $(IF,$(EC,WITHDRAWN:,$(SUBSTR,$name,1,10)), class="error-inline"  ,)
+          >
+			$(IF,$(>,$(POSITION,$OID,GENE),0),$abbrev,$name) </span> 
+            $mrkrrel_mrel_comments
 	      <?/MIVAR>
         </td>
   	    <td align=left width=80% bgcolor=#EEEEEE>
@@ -122,9 +126,12 @@ OUTPUT:
        <INPUT TYPE=button value=Delete 
          	  onClick="Delete_mrel('$mrkrrel_seg_mrkr_zdb_id','$mrkrrel_mrel_type')">
     <?/MIVAR>
-
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrrel_seg_mrkr_zdb_id">
-	    $mrkrrel_seg_mrkr_abbrev
+	<A
+    <?MIVAR>
+          $(IF,$(EC,WITHDRAWN:,$(SUBSTR,$name,1,10)), class="error-inline"  ,)
+    <?/MIVAR>
+    HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrrel_seg_mrkr_zdb_id">
+	    $mrkrrel_seg_mrkr_abbrev  
 	</A>
 
 	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrrel_mrel_zdb_id&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>

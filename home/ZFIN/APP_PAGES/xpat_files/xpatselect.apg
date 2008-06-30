@@ -104,6 +104,13 @@ EFFECTS
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
 
+<?MICOMMENT> ** Flag for hiding withdrawn records - some day we'll upgrade to a method of keeping
+                track of records that are withdrawn that doesn't just involve renaming.  I'll wrap
+                all of the withdrawn related code in IF statements, so it's easy to find (& test) **
+<?/MICOMMENT>
+<?MIVAR NAME="xpatsel_hide_withdrawn">t<?/MIVAR>
+
+
 <HTML>
 
 <?MIVAR Name=page_name>$(IF,$(NXST,$query_results),ZFIN Search Expressions,ZFIN Expression Search Results)<?/MIVAR>

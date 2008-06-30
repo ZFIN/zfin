@@ -700,6 +700,33 @@ DEBUGGING:
   <?/MIVAR>
 <?/MIBLOCK>
 
+
+
+<?MICOMMENT>
+    ============================================================================
+    ======= Exclude withdrawn records 
+    ============================================================================
+    ======= This will always happen, but I want it to be in it's own section
+    ======= so that one day, when we handle withdrawn/obsolete records in a 
+    ======= more systematic way, we can remove / replace this.
+    ============================================================================
+<?/MICOMMENT>
+
+
+ <?MIVAR NAME="xpatselqry_outer_join"><?/MIVAR>
+
+ <?MIVAR NAME="xpatselqry_outer_join">, outer marker probe<?/MIVAR>
+ <?MIVAR NAME="xpatselqry_join">$xpatselqry_join , marker as gene <?/MIVAR>
+ <?MIVAR NAME="xpatselqry_cond">
+    $xpatselqry_cond 
+     and xpatex_gene_zdb_id = gene.mrkr_zdb_id
+     and gene.mrkr_abbrev[1,10] <> "WITHDRAWN:"
+     and not exists (select 'x' from marker
+                        where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+                                    and mrkr_abbrev[1,10] = "WITHDRAWN:")
+ <?/MIVAR>
+
+
 <?MICOMMENT>
   ============================================================================
   ==========  Into RESULT TABLE
@@ -715,7 +742,7 @@ DEBUGGING:
                $xpatselqry_cols
           from expression_result,
                expression_pattern_figure,
-	       expression_experiment 
+	       expression_experiment
 	       $xpatselqry_join
          where xpatex_zdb_id = xpatres_xpatex_zdb_id
            and xpatres_zdb_id = xpatfig_xpatres_zdb_id

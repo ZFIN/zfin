@@ -122,30 +122,13 @@ ORDER BY 3,1
           </td>
           <td bgcolor="#EEEEEE">
             <?MIBLOCK COND="$(NXST,$xpanatv_called_from)"> <?MICOMMENT> called from xpatselect.apg <?/MICOMMENT>
-            <?MICOMMENT> ** Joining on xpatfig to protect code from xpatres records that have lost their 
-                            connection to data and screw up the counts.  The data will get fixed also, but 
-                            this way if it happens again nobody will blame this code ** <?/MICOMMENT>
-              <?MISQL SQL="
-select distinct xpatex_gene_zdb_id
-from expression_experiment
-     join expression_result
-       on xpatex_zdb_id = xpatres_xpatex_zdb_id
-     join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-where xpatres_anat_item_zdb_id = '$xpanatv_item_zdb_id'
-     AND xpatres_expression_found = 't'
-UNION
-select distinct xpatex_gene_zdb_id
-from expression_experiment
-     join expression_result
-       on xpatex_zdb_id = xpatres_xpatex_zdb_id
-     join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-     join all_anatomy_contains
-       on allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
-where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
-     AND xpatres_expression_found = 't'
-              ;">
+
+              <?MISQL SQL="select anatstat_total_distinct_count 
+                           from anatomy_stats 
+                           where anatstat_anatitem_zdb_id = '$xpanatv_item_zdb_id' 
+                             and anatstat_object_type = 'GENE';">
+                <?MIVAR name=$xpanatv_totalcount>$1<?/MIVAR>
               <?/MISQL>
-              <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>
 
               <?MIBLOCK COND="$(>,$xpanatv_totalcount,0)"> 
                 <?MIVAR>expression for <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_processed_item_name" target="_parent"><B>($xpanatv_totalcount)</B></A> genes<?/MIVAR>

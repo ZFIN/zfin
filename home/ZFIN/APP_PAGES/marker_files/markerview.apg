@@ -1052,7 +1052,7 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
             ==========================================================
 <?/MICOMMENT>
 <?MICOMMENT> check data existence, and count total pubs<?/MICOMMENT>
-<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA),$(EQ,$marker_type,GENE),$(EQ,$marker_type,EFG))">
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA),$(AND,$(EQ,$marker_type,GENE),$(NE,WITHDRAWN:,$(SUBSTR,$name,1,10))),$(EQ,$marker_type,EFG))">
 
 <?MISQL SQL="
     select count(distinct xpatex_source_zdb_id)::integer
@@ -2010,15 +2010,19 @@ union
 <?MIVAR NAME=$mrel_mtype><?/MIVAR>
 <?MIVAR NAME=$mrel_count><?/MIVAR>
 
-<?MISQL SQL="select count(*)::Integer
+<?MISQL SQL="
+        select count(*)::Integer
                from marker_relationship
+               inner join marker 
+               on mrkr_zdb_id = mrel_mrkr_2_zdb_id 
               where (mrel_mrkr_1_zdb_id = '$OID'
                      or mrel_mrkr_2_zdb_id = '$OID')
                 and mrel_type not in  ('knockdown reagent targets gene',
 					'promoter of',
 					'coding sequence of',
 					'contains other feature'
-					);">
+					)
+                    ;">
      <?MIVAR NAME=$mrel_count>$1<?/MIVAR>
 <?/MISQL>
 <?MIVAR NAME=snpexists><?/MIVAR>

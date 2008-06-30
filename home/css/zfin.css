@@ -213,6 +213,11 @@ tr.odd {
     display: block;
 }
 
+/** error messages for forms **/
+.error-inline {
+    color: red;
+}
+
 /*** Rounded Corner CSS from spiffycorners.com ***/
 
 .spiffy {
