@@ -221,9 +221,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         // ToDo: Rewrite as HQL and include the whole marker object as it is needed.
         String hql = "SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol, " +
                 "count(distinct fig.fig_zdb_id) as numOfFig  " +
-                "FROM  Expression_Experiment exp, Anatomy_Item item_, Marker gene, Figure fig," +
+                "FROM  Expression_Experiment exp, outer marker probe, Anatomy_Item item_, Marker gene, Figure fig," +
                 "      Genotype geno, Genotype_Experiment genox, expression_pattern_figure results, expression_result result " +
-                "WHERE  item_.anatitem_zdb_id = :anatomyZdbID AND " +
+                "WHERE  exp.xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id AND" +
+                "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND         " +
+                "       item_.anatitem_zdb_id = :anatomyZdbID AND " +
                 "       result.xpatres_xpatex_zdb_id = exp.xpatex_zdb_id AND " +
                 "       result.xpatres_anat_item_zdb_id = item_.anatitem_zdb_id AND " +
                 "       result.xpatres_expression_found = :expressionFound AND " +
@@ -232,7 +234,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       genox.genox_zdb_id=exp.xpatex_genox_zdb_id AND " +
                 "       genox.genox_geno_zdb_id=geno.geno_zdb_id AND " +
                 "       geno.geno_is_wildtype = :isWildtype AND " +
-                "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id " +
+                "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND " +
+                "       gene.mrkr_abbrev[1,10] <> :withdrawn  AND   " +
+                "       probe.mrkr_abbrev[1,10] <> :withdrawn  " +
                 "GROUP BY exp.xpatex_gene_zdb_id, gene.mrkr_abbrev " +
                 "ORDER BY numOfFig DESC";
         SQLQuery query = session.createSQLQuery(hql);
@@ -244,6 +248,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("anatomyZdbID", anatomyTerm.getZdbID());
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
+        query.setString("withdrawn","WITHDRAWN:");
         List<Object[]> list = query.list();
         return createMarkerStatistics(list, anatomyTerm);
     }
@@ -261,7 +266,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select count(distinct fig) from Figure fig, ExpressionResult res where " +
                 "res.anatomyTerm = :aoTerm AND " +
                 "fig member of res.figures AND " +
-                "res.expressionFound = :expressionFound ";
+                "res.expressionFound = :expressionFound AND "+
+                "res.expressionExperiment.marker.abbreviation not like 'WITHDRAWN:%' ";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setParameter("aoTerm", anatomyTerm);
@@ -316,7 +322,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "SELECT count(distinct exp.marker) FROM ExpressionExperiment exp, ExpressionResult res  " +
                 "WHERE res.anatomyTerm = :aoTerm " +
                 "AND res.expressionExperiment = exp " +
-                "AND res.expressionFound = :expressionFound ";
+                "AND res.expressionFound = :expressionFound " +
+                "AND exp.marker.abbreviation  not like 'WITHDRAWN:%' ";
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", anatomyTerm);
         query.setBoolean("expressionFound", true);
