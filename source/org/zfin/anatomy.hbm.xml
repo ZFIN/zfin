@@ -120,27 +120,6 @@
 
     </class>
 
-    <class name="org.zfin.anatomy.AnatomyStageStatistics" table="anatomy_stage_stats">
-        <id name="zdbID">
-            <column name="anatstgstat_anatitem_zdb_id" not-null="true"/>
-            <generator class="native"/>
-        </id>
-
-        <property name="type">
-            <column name="anatstgstat_object_type" not-null="false"/>
-        </property>
-
-        <property name="numberOfObjects">
-            <column name="anatstgstat_object_count" not-null="false"/>
-        </property>
-
-        <property name="numberOfTotalDistinctObjects">
-            <column name="anatstgstat_total_distinct_count" not-null="false"/>
-        </property>
-
-        <one-to-one name="anatomyItem" cascade="all" constrained="true" fetch="join"/>
-
-    </class>
 
     <class name="org.zfin.anatomy.repository.AnatomyRelationshipTypePersistence" table="anatomy_relationship_type">
         <id name="typeID">
