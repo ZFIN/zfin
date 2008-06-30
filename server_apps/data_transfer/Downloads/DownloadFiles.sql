@@ -205,6 +205,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
 	  on gene.mrkr_zdb_id = xpatex_gene_zdb_id
       left join marker probe
 	  on probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
+ where gene.mrkr_abbrev not like 'WITHDRAWN: %' 
  order by gene_zdb, xpat_zdb, probe_zdb;
 
 ! echo "Inserted data into file xpat.txt"

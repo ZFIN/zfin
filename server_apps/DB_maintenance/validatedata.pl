@@ -2885,6 +2885,43 @@ sub countBots($){
 #Parameter
 # $      Email Address for recipients
 # 
+sub findWithdrawnMarkerMismatch($) {
+
+    open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write.";
+
+    my $sql = "
+    select m.mrkr_zdb_id, m.mrkr_name,m.mrkr_abbrev from 
+    marker m 
+    where 
+    m.mrkr_abbrev like 'WITHDRAWN:%'
+    and 
+    m.mrkr_name not like 'WITHDRAWN:%'
+    union
+    select m.mrkr_zdb_id, m.mrkr_name,m.mrkr_abbrev from 
+    marker m 
+    where 
+    m.mrkr_name like 'WITHDRAWN:%'
+    and 
+    m.mrkr_abbrev not like 'WITHDRAWN:%'
+      ";
+
+    my @colDesc = ("mrkr_zdb_id", "mrkr_name","mrkr_abbrev");
+    my $nRecords = execSql($sql,undef,@colDesc);
+    if($nRecords >0){
+        my $sendToAddress = $_[0];
+        my $subject = "Found $nRecords of withdrawn marker name / abbreviation mismatch";
+        my $routineName = "findWithdrawnMarkerMismatch";
+        my $msg = "Found $nRecords withdrawn markers where the name or abbrevation did not match.";
+        &sendMail($sendToAddress, $subject, $routineName, $msg, );
+    }
+    close(RESULTFILE);
+}
+
+
+#-------------------
+#Parameter
+# $      Email Address for recipients
+# 
 sub oldOrphanSourceCheck($) {
 
   open ORPH, ">$globalResultFile" or die "Cannot open the result file to write.";
@@ -3310,6 +3347,7 @@ my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
 
 if($daily) {
 #    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
+    findWithdrawnMarkerMismatch($geneEmail); 
     withdrawnSymbolsConsistent($xpatEmail);
     unFeatureNameAbbrevUpdate($dbaEmail);
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
