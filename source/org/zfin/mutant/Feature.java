@@ -62,13 +62,14 @@ public class Feature {
 
     public enum Type {
         DEFICIENCY,
-        INSERTION,
-        INVERSION,
-        POINT_MUTATION,
-        SEQUENCE_VARIANT,
-        TRANSGENIC_INSERTION,
-        TRANSLOC,
-        UNSPECIFIED        ;
+	    INSERTION,
+	    INVERSION,
+	    POINT_MUTATION,
+	    SEQUENCE_VARIANT,
+	    TRANSGENIC_INSERTION,
+	    TRANSLOC,
+	    UNSPECIFIED,
+	    COMPLEX_SUBSTITUTION;
 
         public String toString(){
             return name() ; 
