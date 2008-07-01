@@ -65,7 +65,7 @@ where mrkr_abbrev like '%:%'
 
 <?MICOMMENT> ** WITHDRAWN: ** <?/MICOMMENT>
 <?MIBLOCK COND="$(EC,$(POSITION,$mvphnote_mrkr_abbrev,WITHDRAWN:),1)">
-<?MIVAR NAME="mvphnote_label"><span class="error">This gene was based on a non-zebrafish clone and has been withdrawn</span><?/MIVAR>
+<?MIVAR NAME="mvphnote_label"><span class="error">This gene was based on a non-zebrafish clone and has been withdrawn.</span><?/MIVAR>
 <?/MIBLOCK>
 
 
