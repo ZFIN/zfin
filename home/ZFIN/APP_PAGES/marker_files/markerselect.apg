@@ -938,10 +938,15 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 	      <?MISQL SQL="
          	  select distinct xpatfig_fig_zdb_id
           	    from expression_experiment, expression_result,
-                         expression_pattern_figure
+                         expression_pattern_figure, marker gene
           	   where '$OID' = xpatex_gene_zdb_id
+                     and gene.mrkr_abbrev[1,10] <> 'WITHDRAWN:'
 		     and xpatex_zdb_id = xpatres_xpatex_zdb_id
-                     and xpatres_zdb_id = xpatfig_xpatres_zdb_id;">
+                     and xpatres_zdb_id = xpatfig_xpatres_zdb_id
+                     and xpatex_gene_zdb_id = gene.mrkr_zdb_id
+ 		     and not exists (select 'x' from marker
+                        where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+                                    and mrkr_abbrev[1,10] = 'WITHDRAWN:') ;">
       	      <?/MISQL>
 	      <?MIVAR NAME=$mrkrsel_xpat_fig_count>$MI_ROWCOUNT<?/MIVAR>
 	      <?MIVAR NAME=$mrkrsel_xpat_fig_zdb_id>$1<?/MIVAR>
@@ -959,11 +964,16 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 	      <?MISQL SQL="
          	  select img_zdb_id
           	    from expression_experiment, expression_result,
-                         expression_pattern_figure, image
+                         expression_pattern_figure, image, marker gene
           	   where '$OID' = xpatex_gene_zdb_id
+                     and gene.mrkr_abbrev[1,10] <> 'WITHDRAWN:'
 		     and xpatex_zdb_id = xpatres_xpatex_zdb_id
                      and xpatres_zdb_id = xpatfig_xpatres_zdb_id
-                     and xpatfig_fig_zdb_id = img_fig_zdb_id;">
+                     and xpatfig_fig_zdb_id = img_fig_zdb_id
+                     and xpatex_gene_zdb_id = gene.mrkr_zdb_id
+                     and not exists (select 'x' from marker
+                        where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+                                    and mrkr_abbrev[1,10] = 'WITHDRAWN:') ;">
 		
       	      <?/MISQL>
               <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
