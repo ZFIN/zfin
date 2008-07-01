@@ -21,7 +21,7 @@ create procedure p_check_mrkr_abbrev (vMrkrName   like marker.mrkr_name,
 		let vOK = 't' ;
     else if
 	(vMrkrAbbrev != lower(vMrkrAbbrev)  AND
-		     vMrkrAbbrev not like 'WITHDRAWN:%' )
+		     vMrkrAbbrev[1,10] <> 'WITHDRAWN:' )
      then
 
       raise exception -746, 0,
