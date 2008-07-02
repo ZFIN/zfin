@@ -8,7 +8,6 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.framework.presentation.SearchTextInputFields;
 import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Genotype;
@@ -25,7 +24,7 @@ import java.util.*;
  * This Bean is used for most of the anatomy pages and contains all objects that
  * need to be displayed on any of the pages.
  */
-public class AnatomySearchBean extends PaginationBean implements SearchTextInputFields {
+public class AnatomySearchBean extends PaginationBean {
 
     public static final int MAX_NUMBER_GENOTYPES = 5;
     public static final int MAX_NUMBER_EPRESSED_GENES = 5;
@@ -185,12 +184,9 @@ public class AnatomySearchBean extends PaginationBean implements SearchTextInput
     /**
      * Sort the result list according to: first the items that begin with the search term and
      * then the terms that contain the serach term. If no term is specified do not sort at all.
-     *
      * @return list of anatomy statistics
      */
     public List<AnatomyStatistics> getSortedStatisticsItems() {
-        if (statisticItems == null)
-            return null;
         if (searchTerm != null && !isStageSearch())
             Collections.sort(statisticItems, new SortAnatomyResults(searchTerm));
         return statisticItems;
@@ -267,12 +263,6 @@ public class AnatomySearchBean extends PaginationBean implements SearchTextInput
 
     public void setNonWildtypeMorpholinos(List<MorpholinoStatistics> nonWildtypeMorpholinos) {
         this.nonWildtypeMorpholinos = nonWildtypeMorpholinos;
-    }
-
-    public Set<String> getSearchFields() {
-        Set<String> terms = new HashSet<String>();
-        terms.add("searchTerm");
-        return terms;
     }
 
     public enum Action {
@@ -394,11 +384,11 @@ public class AnatomySearchBean extends PaginationBean implements SearchTextInput
         url.addNamevaluePair("xpatsel_processed_selected_structures", getAnatomyItem().getName());
         if (includeSubstructures)
             url.addNamevaluePair("include_substructures", "checked");
-        url.addNamevaluePair("structure_bool", "and");
-        url.addNamevaluePair("xpatsel_jtypeDirect", "checked");
-        url.addNamevaluePair("xpatsel_jtypePublished", "checked");
+        url.addNamevaluePair("structure_bool","and");
+        url.addNamevaluePair("xpatsel_jtypeDirect","checked");
+        url.addNamevaluePair("xpatsel_jtypePublished","checked");
         url.addNamevaluePair("WINSIZE", "25");
-        url.addNamevaluePair("xpatsel_calledBySelf", "true");
+        url.addNamevaluePair("xpatsel_calledBySelf","true");
         return url.getFullURL();
     }
 
@@ -411,16 +401,16 @@ public class AnatomySearchBean extends PaginationBean implements SearchTextInput
         url.addNamevaluePair("fsel_processed_selected_structures", getAnatomyItem().getName());
         if (includeSubstructures)
             url.addNamevaluePair("include_substructures", "checked");
-        url.addNamevaluePair("structure_bool", "and");
-        url.addNamevaluePair("mutagen", "any");
-        url.addNamevaluePair("lg", "0");
+        url.addNamevaluePair("structure_bool","and");
+        url.addNamevaluePair("mutagen","any");
+        url.addNamevaluePair("lg","0");
         url.addNamevaluePair("WINSIZE", "20");
-        url.addNamevaluePair("fishsel_calledBySelf", "true");
-        url.addNamevaluePair("fselFilterValue", "all");
-        url.addNamevaluePair("chrom_change", "any");
-        url.addNamevaluePair("search", "SEARCH");
-        url.addNamevaluePair("fsel_inputname", "");
-        url.addNamevaluePair("compare", "contains");
+        url.addNamevaluePair("fishsel_calledBySelf","true");
+        url.addNamevaluePair("fselFilterValue","all");
+        url.addNamevaluePair("chrom_change","any");
+        url.addNamevaluePair("search","SEARCH");
+        url.addNamevaluePair("fsel_inputname","");
+        url.addNamevaluePair("compare","contains");
         return url.getFullURL();
     }
 
@@ -465,23 +455,23 @@ public class AnatomySearchBean extends PaginationBean implements SearchTextInput
         return mutantMorpholinoCount <= MAX_NUMBER_GENOTYPES;
     }
 
-    public boolean isExpressedGenesExist() {
+    public boolean isExpressedGenesExist(){
         return !CollectionUtils.isEmpty(allExpressedMarkers);
     }
 
-    public boolean isMutantsExist() {
+    public boolean isMutantsExist(){
         return !CollectionUtils.isEmpty(genoStats);
     }
 
-    public boolean isInSituProbesExist() {
+    public boolean isInSituProbesExist(){
         return !CollectionUtils.isEmpty(highQualityProbeGenes);
     }
 
-    public boolean isMorpholinoExist() {
+    public boolean isMorpholinoExist(){
         return !CollectionUtils.isEmpty(allMorpholinos);
     }
 
-    public boolean isNonWildtypeMorpholinoExist() {
+    public boolean isNonWildtypeMorpholinoExist(){
         return !CollectionUtils.isEmpty(nonWildtypeMorpholinos);
     }
 }

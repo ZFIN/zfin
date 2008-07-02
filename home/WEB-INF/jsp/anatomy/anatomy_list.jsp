@@ -20,19 +20,18 @@
         <th width="30%">Structure Name</th>
         <th>Synonyms</th>
     </tr>
-    <c:if test="${formBean.sortedStatisticsItems ne null}">
-        <c:forEach var="ao" items="${formBean.sortedStatisticsItems}" varStatus="rowCounter">
-            <c:choose>
-                <c:when test="${rowCounter.count % 2 != 0}">
-                    <tr class="odd">
-                </c:when>
-                <c:otherwise>
-                    <tr>
-                </c:otherwise>
-            </c:choose>
-            <td>
-                <c:if test="${ao.treeInfo != null}">
-                <!-- This creates the visual level in the graph -->
+    <c:forEach var="ao" items="${formBean.sortedStatisticsItems}" varStatus="rowCounter">
+        <c:choose>
+            <c:when test="${rowCounter.count % 2 != 0}">
+                <tr class="odd">
+            </c:when>
+            <c:otherwise>
+                <tr>
+            </c:otherwise>
+        </c:choose>
+        <td>
+            <c:if test="${ao.treeInfo != null}">
+            <!-- This creates the visual level in the graph -->
                 <span style="margin-left: <c:out value="${ao.indentationLevel}" />pt">
             </c:if>
             <a href='/action/anatomy/term-detail?anatomyItem.zdbID=<c:out value="${ao.zdbID}"/>'>
@@ -50,13 +49,13 @@
             </a>
             <c:if test="${ao.treeInfo != null}">
                 </span>
-                </c:if>
-                <c:if test="${ao.anatomyItem.obsolete == true}">
-                    (<span class="obsolete">obsolete</span>)
-                </c:if>
-            </td>
-            <td>
-                <c:if test="${ao.numberOfSynonyms > 0}">
+            </c:if>
+            <c:if test="${ao.anatomyItem.obsolete == true}">
+                (<span class="obsolete">obsolete</span>)
+            </c:if>
+        </td>
+        <td>
+            <c:if test="${ao.numberOfSynonyms > 0}">
                         <span class="anatomy-list-notes">
                             <!-- Highlight the search term or the hightlight term if provided -->
                             <c:choose>
@@ -70,9 +69,8 @@
                                 </c:otherwise>
                             </c:choose>
                         </span>
-                </c:if>
-            </td>
-            </tr>
-        </c:forEach>
-    </c:if>
+            </c:if>
+        </td>
+        </tr>
+    </c:forEach>
 </table>

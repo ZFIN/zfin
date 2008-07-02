@@ -3,22 +3,20 @@ package org.zfin.anatomy.presentation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomySynonym;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.sequence.reno.presentation.CandidateBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Action class that serves the anatomy search page.
@@ -26,7 +24,7 @@ import java.util.*;
  * 2) Search by developmental stage
  * 3) List all anaotmy items.
  */
-public class AnatomySearchController extends SimpleFormController {
+public class AnatomySearchController extends AbstractCommandController {
 
     private static final Logger LOG = Logger.getLogger(AnatomySearchController.class);
     // These two variables are injected by Spring
@@ -37,44 +35,22 @@ public class AnatomySearchController extends SimpleFormController {
         setCommandClass(AnatomySearchBean.class);
     }
 
-    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) {
-        AnatomySearchBean anatomyForm = (AnatomySearchBean) command;
-        populateDevelopmentStages(anatomyForm);
-
-        if(errors.hasErrors()){
-            request.setAttribute(BindingResult.MODEL_KEY_PREFIX + "formBean", errors );
-        }
-        List<String> names = anatomyRepository.getAllAnatomyNamesAndSynonyms();
-        anatomyForm.setAnatomyNamesAndSynonyms(names);
-        LOG.debug(anatomyForm);
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put(LookupStrings.FORM_BEAN, anatomyForm);
-        return map;
-    }
-
-    /*
-        protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-    */
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-                                    Object command, BindException errors) throws Exception {
+    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
 
         AnatomySearchBean anatomyForm = (AnatomySearchBean) command;
         AnatomySearchController.LOG.debug("Start Action Class");
-        // do not perform search if an error occured
-        if (!errors.hasErrors()) {
-            if (anatomyForm.isCompleteSearch()) {
-                prepareCompleteSearch(anatomyForm);
-            } else if (anatomyForm.isStageSearch()) {
-                doTermSearchByStage(anatomyForm);
-            }
-            // search term is the default mode.
-            else if (anatomyForm.isTermSearch()) {
-                runTermSearch(anatomyForm);
-                // If only one term was found or an exact match redirect directly to the details page
-                if (anatomyForm.getStatisticItems().size() == 1) {
-                    AnatomyStatistics stats = anatomyForm.getStatisticItems().get(0);
-                    return new ModelAndView(redirectUrlIfSingleResult + "?anatomyItem.zdbID=" + stats.getAnatomyItem().getZdbID());
-                }
+        if (anatomyForm.isCompleteSearch()) {
+            prepareCompleteSearch(anatomyForm);
+        } else if (anatomyForm.isStageSearch()) {
+            doTermSearchByStage(anatomyForm);
+        }
+        // search term is the default mode.
+        else if (anatomyForm.isTermSearch()) {
+            runTermSearch(anatomyForm);
+            // If only one term was found or an exact match redirect directly to the details page
+            if (anatomyForm.getStatisticItems().size() == 1) {
+                AnatomyStatistics stats = anatomyForm.getStatisticItems().get(0);
+                return new ModelAndView(redirectUrlIfSingleResult + "?anatomyItem.zdbID=" + stats.getAnatomyItem().getZdbID());
             }
         }
         populateDevelopmentStages(anatomyForm);
@@ -149,10 +125,5 @@ public class AnatomySearchController extends SimpleFormController {
 
     public void setRedirectUrlIfSingleResult(String redirectUrlIfSingleResult) {
         this.redirectUrlIfSingleResult = redirectUrlIfSingleResult;
-    }
-
-    //override POST vs GET distinction and make it explicitly all about the "done" boolean
-    protected boolean isFormSubmission(HttpServletRequest request) {
-        return request.getParameter("action") != null;
     }
 }
