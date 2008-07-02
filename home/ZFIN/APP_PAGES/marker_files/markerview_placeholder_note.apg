@@ -65,7 +65,16 @@ where mrkr_abbrev like '%:%'
 
 <?MICOMMENT> ** WITHDRAWN: ** <?/MICOMMENT>
 <?MIBLOCK COND="$(EC,$(POSITION,$mvphnote_mrkr_abbrev,WITHDRAWN:),1)">
+<?MICOMMENT>
+We will use this when we integrate the chimeric project as part of FogBugz 2792.
+
+-- Gene with no chimeric clone. --
 <?MIVAR NAME="mvphnote_label"><span class="error">This gene was based on a non-zebrafish clone and has been withdrawn.</span><?/MIVAR>
+
+-- Gene that has been withdrawn but has a chimeric clone. --
+<?MIVAR NAME="mvphnote_label"><span class="error">This gene has been withdrawn because it was derived from a chimeric clone.</span><?/MIVAR>
+<?/MICOMMENT>
+<?MIVAR NAME="mvphnote_label"><span class="error">This gene has been withdrawn.</span><?/MIVAR>
 <?/MIBLOCK>
 
 
@@ -269,8 +278,17 @@ Not a gene or a pseudogene.
 <?MIELSE>
 
 <?MICOMMENT> ** WITHDRAWN: ** <?/MICOMMENT>
+<?MICOMMENT>
+We will use this when we integrate the chimeric project as part of FogBugz 2792.
+
+-- Withdrawn clone. --
+<?MIVAR NAME="mvphnote_label"><span class="error">This clone has been derived from a non-zebrafish species and has been withdrawn.</span><?/MIVAR>
+
+-- Withdrawn chimeric clone --
+<?MIVAR NAME="mvphnote_label"><span class="error">This clone has been withdrawn because it is chimeric clone.</span><?/MIVAR>
+<?/MICOMMENT>
 <?MIBLOCK COND="$(EC,$(POSITION,$mvphnote_mrkr_abbrev,WITHDRAWN:),1)">
-<span class="error">This clone has been derived from a non-zebrafish species and has been withdrawn</span>
+<span class="error">This clone has been withdrawn.</span>
 <?/MIBLOCK>
 
 
