@@ -1052,16 +1052,37 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
             ==========================================================
 <?/MICOMMENT>
 <?MICOMMENT> check data existence, and count total pubs<?/MICOMMENT>
-<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA),$(AND,$(EQ,$marker_type,GENE),$(NE,WITHDRAWN:,$(SUBSTR,$name,1,10))),$(EQ,$marker_type,EFG))">
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA),$(EQ,$marker_type,EFG),$(EQ,$marker_type,GENE))">
 
-<?MISQL SQL="
+<?MICOMMENT>
+If a gene, then only show expression where the probe is not withdrawn.
+Use 'not exists' because outer join includes too many results.
+<?/MICOMMENT>
+<?MISQL COND="$(EQ,$marker_type,GENE)" 
+SQL="
     select count(distinct xpatex_source_zdb_id)::integer
       from expression_experiment join 
            expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
      where xpatex_gene_zdb_id = '$OID'
-        or xpatex_probe_feature_zdb_id = '$OID'; ">
-<?/MISQL>
+     and not exists (select 'x' from marker
+         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+         and mrkr_abbrev[1,10] = 'WITHDRAWN:') 
+     ;">
 <?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
+<?/MISQL>
+
+
+<?MISQL COND="$(NE,$marker_type,GENE)" 
+SQL="
+    select count(distinct xpatex_source_zdb_id)::integer
+      from expression_experiment join 
+           expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
+     where xpatex_probe_feature_zdb_id = '$OID'
+     ;">
+<?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
+<?/MISQL>
+
+
 
 <HR width="80%">
 <b>GENE EXPRESSION:</b><font size=-1>(<a href="javascript:start_note('xpatselect_note')">current status</a></font>)
@@ -1070,15 +1091,32 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
     <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
 
     <?MICOMMENT> query literature pub <?/MICOMMENT>
-    <?MISQL SQL="
+
+    <?MIVAR COND="$(EQ,$marker_type,GENE)"
+    NAME="mrkrview_xpatsource_desc_sql">
 	select distinct pub_mini_ref
           from expression_experiment 
 	       join publication
                     on xpatex_source_zdb_id = zdb_id
-         where (  xpatex_gene_zdb_id = '$OID'
-               or xpatex_probe_feature_zdb_id = '$OID')
-	   and jtype <> 'Unpublished'; ">
+         where xpatex_gene_zdb_id = '$OID'
+	   and jtype <> 'Unpublished'
+     and not exists (select 'x' from marker
+         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+         and mrkr_abbrev[1,10] = 'WITHDRAWN:')  ; 
+    <?/MIVAR>
 
+    <?MIVAR COND="$(NE,$marker_type,GENE)"
+    NAME="mrkrview_xpatsource_desc_sql">
+	select distinct pub_mini_ref
+          from expression_experiment 
+	       join publication
+                    on xpatex_source_zdb_id = zdb_id
+         where xpatex_probe_feature_zdb_id = '$OID'
+	   and jtype <> 'Unpublished'; 
+    <?/MIVAR>
+
+
+    <?MISQL SQL="$mrkrview_xpatsource_desc_sql">
 	<?MIVAR NAME=mrkrview_xpatsource_desc>$1<?/MIVAR>
     <?/MISQL>    
     <?MICOMMENT> 
@@ -1096,7 +1134,8 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
 		$mrkrview_xpatsource_count publications
       <?/MIVAR>     
 
-      <?MISQL SQL="
+     <?MIVAR COND="$(EQ,$marker_type,GENE)"
+      NAME=mrkrview_xpatfig_count_sql>
 	 select count(distinct xpatfig_fig_zdb_id)::integer
            from expression_pattern_figure
                 join expression_result 
@@ -1104,7 +1143,24 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
                 join expression_experiment 
 			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
 	  where xpatex_gene_zdb_id = '$OID'
-             or xpatex_probe_feature_zdb_id = '$OID'; ">
+     and not exists (select 'x' from marker
+         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+         and mrkr_abbrev[1,10] = 'WITHDRAWN:') 
+             ; 
+      <?/MIVAR>
+
+     <?MIVAR COND="$(NE,$marker_type,GENE)"
+      NAME=mrkrview_xpatfig_count_sql>
+	 select count(distinct xpatfig_fig_zdb_id)::integer
+           from expression_pattern_figure
+                join expression_result 
+			on xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                join expression_experiment 
+			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
+	  where xpatex_probe_feature_zdb_id = '$OID'; 
+      <?/MIVAR>
+
+      <?MISQL SQL="$mrkrview_xpatfig_count_sql">
        <?/MISQL>
        <?MIVAR NAME=mrkrview_xpatfig_count>$1<?/MIVAR>     
          <tr><td><b>All expression data: </b> </td>
@@ -1116,22 +1172,9 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
          </tr>
      <?/MIBLOCK>
 
-     <?MICOMMENT>
-	=========   query for figures from direct submission  ===============
-	 <?MISQL SQL="select count(distinct img_zdb_id)::integer 
-           from image, expression_pattern_figure,
-                expression_result, expression_experiment, 
-                publication
-	   where
-		img_fig_zdb_id=xpatfig_fig_zdb_id
-           and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
-           and  xpatex_zdb_id=xpatres_xpatex_zdb_id
-           and  zdb_id = xpatex_source_zdb_id
-	   and  (xpatex_gene_zdb_id = '$OID' or xpatex_probe_feature_zdb_id = '$OID')
-           and jtype = 'Unpublished'"><?/MISQL>
-      <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
-     <?/MICOMMENT>
-     <?MISQL SQL="
+
+     <?MIVAR COND="$(EQ,$marker_type,GENE)"
+     NAME=mrkrview_xpatsubfig_sql>
 	 select count(distinct xpatfig_fig_zdb_id)::integer, 
 		pub.zdb_id, pub.pub_mini_ref,xpatex_probe_feature_zdb_id
            from expression_pattern_figure
@@ -1139,9 +1182,30 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
                 join expression_experiment 
 			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
                 join publication pub on pub.zdb_id = xpatex_source_zdb_id
-	  where (xpatex_gene_zdb_id = '$OID' or xpatex_probe_feature_zdb_id = '$OID')
+      where xpatex_gene_zdb_id = '$OID'
             and pub.jtype = 'Unpublished'
-         group by xpatex_probe_feature_zdb_id, pub.zdb_id, pub.pub_mini_ref; ">
+     and not exists (select 'x' from marker
+         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+         and mrkr_abbrev[1,10] = 'WITHDRAWN:') 
+         group by xpatex_probe_feature_zdb_id, pub.zdb_id, pub.pub_mini_ref; 
+     <?/MIVAR>
+
+     <?MIVAR COND="$(NE,$marker_type,GENE)"
+     NAME=mrkrview_xpatsubfig_sql>
+	 select count(distinct xpatfig_fig_zdb_id)::integer, 
+		pub.zdb_id, pub.pub_mini_ref,xpatex_probe_feature_zdb_id
+           from expression_pattern_figure
+                join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                join expression_experiment 
+			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
+                join publication pub on pub.zdb_id = xpatex_source_zdb_id
+	  where xpatex_probe_feature_zdb_id = '$OID'
+            and pub.jtype = 'Unpublished'
+         group by xpatex_probe_feature_zdb_id, pub.zdb_id, pub.pub_mini_ref; 
+     <?/MIVAR>
+
+     <?MISQL 
+    SQL="$mrkrview_xpatsubfig_sql">
 
          <?MIVAR NAME=mrkrview_xpatsubfig_count>$1<?/MIVAR>
 	 <?MIVAR NAME=mrkrview_xpatsubpub_id>$2<?/MIVAR>
