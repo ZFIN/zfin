@@ -65,13 +65,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         Criteria criteria1 = session.createCriteria(Marker.class);
         criteria1.add(Restrictions.like("abbreviation", name, MatchMode.START));
-        criteria1.addOrder(Order.asc("abbreviation")) ;
+        criteria1.addOrder(Order.asc("abbreviationOrder")) ;
         markerList.addAll(criteria1.list()) ;
 
         Criteria criteria2 = session.createCriteria(Marker.class);
         criteria2.add(Restrictions.like("abbreviation", name, MatchMode.ANYWHERE));
         criteria2.add(Restrictions.not(Restrictions.like("abbreviation", name, MatchMode.START)));
-        criteria2.addOrder(Order.asc("abbreviation")) ;
+        criteria2.addOrder(Order.asc("abbreviationOrder")) ;
         markerList.addAll(criteria2.list()) ;
         return markerList ;
     }

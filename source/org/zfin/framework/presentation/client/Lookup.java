@@ -23,6 +23,7 @@ public class Lookup implements EntryPoint {
     public static final String JSREF_WILDCARD ="wildcard" ;
     public static final String JSREF_WIDTH ="width" ;
     public static final String JSREF_ACTION="action" ;
+    public static final String JSREF_OID ="OID" ;
 
     //    protected LookupComposite lookup  ;
     //    private String divName ;
@@ -62,11 +63,22 @@ public class Lookup implements EntryPoint {
             if(keySet.contains(JSREF_WIDTH)){
                 lookup.setSuggestBoxWidth(Integer.parseInt(lookupProperties.get(JSREF_WIDTH)));
             }
+            if(keySet.contains(JSREF_OID)){
+                lookup.setOID((lookupProperties.get(JSREF_OID)));
+            }
 
 			if(keySet.contains(JSREF_ACTION)){
 				if( lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_ANATOMY_SEARCH)){
 					lookup.setAction(new AnatomySearchSubmitAction());
 				}
+                else
+                if( lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_MARKER_ATTRIBUTE)){
+                    lookup.setAction(new MarkerAttributeSubmitAction(lookup.getOID()));
+                }
+                else
+                if( lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_FEATURE_ATTRIBUTE)){
+                    lookup.setAction(new FeatureAttributeSubmitAction(lookup.getOID()));
+                }
 			}
 
 

@@ -34,6 +34,7 @@ public class LookupComposite extends Composite {
     // internal ui data
     protected String noteString = "" ;
     protected String errorString = "" ;
+    protected boolean suggetBoxHasFocus = true ;
 
     // lookup types
     public final static String TYPE_ANATOMY_ONTOLOGY = "ANATOMY_ONTOLOGY" ;
@@ -48,6 +49,8 @@ public class LookupComposite extends Composite {
 
     // actions
     public final static String ACTION_ANATOMY_SEARCH= "ANATOMY_SEARCH" ;
+    public final static String ACTION_MARKER_ATTRIBUTE = "MARKER_ATTRIBUTE" ;
+    public final static String ACTION_FEATURE_ATTRIBUTE = "FEATURE_ATTRIBUTE" ;
     private SubmitAction action = null ;
 
     // options
@@ -56,7 +59,8 @@ public class LookupComposite extends Composite {
     protected String buttonText = null ;
     protected String type = TYPE_ANATOMY_ONTOLOGY ;
     protected boolean wildCard = true ;
-    private int suggestBoxWidth = 30 ;
+    protected int suggestBoxWidth = 30 ;
+    protected String OID = null ;
 
     // later option
     protected int minLookupLenth = 3 ;
@@ -165,10 +169,12 @@ public class LookupComposite extends Composite {
         suggestBox.addFocusListener(new FocusListener(){
             public void onLostFocus(Widget widget) {
                 clearNote();
+                suggetBoxHasFocus = false ;
             }
 
             public void onFocus(Widget widget) {
                 clearError();
+                suggetBoxHasFocus = true; 
             }
         });
 
@@ -193,6 +199,7 @@ public class LookupComposite extends Composite {
 
     protected void doSubmit(String text) {
         if(action != null){
+            suggestBox.setFocus(false);
             action.doSubmit(text);
         }
     }
@@ -323,5 +330,21 @@ public class LookupComposite extends Composite {
 
     public void setAction(SubmitAction action) {
         this.action = action;
+    }
+
+    public boolean isSuggetBoxHasFocus() {
+        return suggetBoxHasFocus;
+    }
+
+    public void setSuggetBoxHasFocus(boolean suggetBoxHasFocus) {
+        this.suggetBoxHasFocus = suggetBoxHasFocus;
+    }
+
+    public String getOID() {
+        return OID;
+    }
+
+    public void setOID(String OID) {
+        this.OID = OID;
     }
 }

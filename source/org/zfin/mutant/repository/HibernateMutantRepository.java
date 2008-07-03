@@ -340,13 +340,13 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Criteria criteria1 = session.createCriteria(Feature.class);
         criteria1.add(Restrictions.like("abbreviation", name, MatchMode.START));
-        criteria1.addOrder(Order.asc("abbreviation")) ;
+        criteria1.addOrder(Order.asc("abbreviationOrder")) ;
         features.addAll(criteria1.list()) ;
 
         Criteria criteria2 = session.createCriteria(Feature.class);
         criteria2.add(Restrictions.like("abbreviation", name, MatchMode.ANYWHERE));
         criteria2.add(Restrictions.not(Restrictions.like("abbreviation", name, MatchMode.START)));
-        criteria2.addOrder(Order.asc("abbreviation")) ;
+        criteria2.addOrder(Order.asc("abbreviationOrder")) ;
         features.addAll(criteria2.list()) ;
         return features ;
     }

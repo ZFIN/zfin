@@ -3,7 +3,7 @@ package org.zfin.framework.presentation.client;
 /**
  * This class represents a submit action.
  */
-public abstract class SubmitAction {
+public interface SubmitAction {
 
-    public abstract void doSubmit(String value); 
+    public void doSubmit(String value); 
 }

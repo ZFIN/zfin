@@ -39,6 +39,10 @@ class ItemSuggestCallback implements AsyncCallback {
         lookup.clearError();
         lookup.clearNote();
 
+        if(lookup.isSuggetBoxHasFocus()==false){
+           return ;  
+        }
+
         if(true==lookup.getTextBox().getText().equalsIgnoreCase(request.getQuery())){
             SuggestOracle.Response response = (SuggestOracle.Response)retValue ;
             if(response.getSuggestions().size()==0){

@@ -477,7 +477,6 @@ function setMarkerTarget(featreli,anchor){
 <?MIVAR NAME=xpcur_G_light_fig_text><?/MIVAR>
 <?MIVAR NAME=xpcur_G_TO_fig_text>unillustrated text statements<?/MIVAR>
 
-
 <?MIBLOCK COND=$(AND,$(XST,$pubcur_c_attribution_update),$(EC,$pubcur_c_attribution_update,update))>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-attribupdate.apg';">$1<?/MISQL>
 <?/MIBLOCK>
@@ -829,42 +828,10 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
 
 <a name=attrib>
+
+
+      
 <p>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#attrib" method=post name=attribution onSubmit="setCookie('attribution_update','update','pubcur_c_');setCookie('anchor','attrib','pubcur_c_');">
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
-
-  <link href="/phenote/css/control.css" type="text/css" rel="stylesheet">
-  <!-- Ajax stuff (prototype library and friends)-->
-
-  <script src="/phenote/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
-  <script src="/phenote/javascript/ajax-lib/effects.js"   type="text/javascript"></script>
-  <script src="/phenote/javascript/ajax-lib/dragdrop.js"  type="text/javascript"></script>
-  <script src="/phenote/javascript/ajax-lib/controls.js"  type="text/javascript"></script>
-  <!-- /Ajax stuff -->
-      <?MICOMMENT>
-      If number does not exist and is a nice publication.
-      <?/MICOMMENT>
-      
-         <?MIVAR NAME=elsevierName>Elsevier%<?/MIVAR>
-      
-      <?MISQL SQL="select pub_doi, jrnl_publisher,jrnl_is_nice from publication, journal where zdb_id='$OID' and jrnl_publisher like '$elsevierName' and jrnl_zdb_id = pub_jrnl_zdb_id;"><?/MISQL>
-      
-         <?MIVAR NAME=$pubview2_doi_no>$1<?/MIVAR>
-         <?MIVAR NAME=$jrnl_publisher>$2<?/MIVAR>
-         <?MIVAR NAME=$jrnl_is_nice>$3<?/MIVAR>
-      
-      
-
-         <?MICOMMENT> Elsevier is momentarily allowing this so there is no reason to report this way.
-      <?MIVAR COND="$(AND,$(NC,$pubview2_doi_no,NULL),$(EC,$jrnl_publisher,Elsevier),$(EC,$jrnl_is_nice,t),$(OR,$(EC,$pubcur_c_tab,Figure),$(EC,$pubcur_c_tab,FX)))">
-        <font color=green>
-            Curator Reminder:  For this Elsevier publication, image permission is granted only for figures with gene expression data  (e.g. in situs, antibodies, blots, GFP patterns).  Please remove images/captions from any figures without gene expression.
-            </font>
-            <br/>
-            <p>
-      <?/MIVAR>
-         <?/MICOMMENT>
 
  <?MIVAR>
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE&newmrkrSource=\'$OID\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Gene</a> 
@@ -879,8 +846,10 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 
+
         <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.Lookup/Lookup.css"/>
 
+        <?MIVAR>
         <script type="text/javascript">
             var LookupProperties = { NumLookups: "2" } ;
             var LookupProperties0 = {
@@ -889,6 +858,9 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
                 showError: true,
                 wildcard: false,
                 width: 15,
+                buttonText: "Add",
+                action: "MARKER_ATTRIBUTE",
+                OID: "$OID",
                 type: "MARKER_LOOKUP"
             };
             var LookupProperties1 = {
@@ -896,10 +868,14 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
                 inputName: "pubcur_G_fish_attrib",
                 showError: true,
                 wildcard: false,
+                buttonText: "Add",
+                action: "FEATURE_ATTRIBUTE",
+                OID: "$OID",
                 width: 8,
                 type: "FEATURE_LOOKUP"
             };
         </script>
+        <?/MIVAR>
 
         <script language="javascript" src="/gwt/org.zfin.framework.presentation.Lookup/org.zfin.framework.presentation.Lookup.nocache.js"></script>
   <table>
@@ -911,19 +887,20 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
         <div id="attributeMrkr"></div>
     </td>
   <td valign=top>
-         <input type=submit value=Submit>
-    </td>
-  <td valign=top>
+      &nbsp;  
+      &nbsp;  
   *Attribute Feature: 
   </td>
   <td valign=top>
         <div id="attributeFtr"></div>
   </td>
-  <td valign=top>
-     <input type=submit value=Submit>
-  </td>
 
   <td valign=top>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#attrib" method=get name=attribution onSubmit="setCookie('attribution_update','update','pubcur_c_');setCookie('anchor','attrib','pubcur_c_');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+      &nbsp;  
+      &nbsp;  
   Remove Attribution: 
     <select name=pubcur_G_remove_attrib>
     <option value="-">***MARKER</option>
@@ -957,13 +934,13 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
       <option value=$1>$2</option>
     <?/MISQL>
     </select>
-    <input type=submit value=Submit>
+    <input type=submit value=Remove>
+</form>
     </td>
     </tr>
 </table>
 
 
-</form>
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">

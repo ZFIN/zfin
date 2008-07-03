@@ -4,7 +4,7 @@ import com.google.gwt.user.client.Window;
 
 /**
  */
-public class AnatomySearchSubmitAction extends SubmitAction{
+public class AnatomySearchSubmitAction implements SubmitAction{
 
     public void doSubmit(String value) {
         if (value!= null) {
