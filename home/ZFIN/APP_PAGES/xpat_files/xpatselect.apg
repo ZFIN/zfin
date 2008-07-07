@@ -801,7 +801,7 @@ expression pattern images to ZFIN, please <a href="mailto:zfinadmn@zfin.org">con
                     //offsetTop: -200,
                     width: 400,
                     height: 600,
-                    iframe: true,
+                    iframe: true
             });
     </script>
 
