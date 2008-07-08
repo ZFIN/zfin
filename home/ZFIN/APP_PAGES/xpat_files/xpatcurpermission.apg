@@ -75,7 +75,7 @@ EFFECTS
     <?MIVAR NAME=xpcurperm_can_show_image>$1<?/MIVAR>
   <?/MISQL>
 
-<?MISQL SQL="select pub_doi,jrnl_is_nice from publication, journal where zdb_id='$OID' and jrnl_publisher like '$elsevierName' and jrnl_zdb_id = pub_jrnl_zdb_id;"><?/MISQL>
+<?MISQL SQL="select pub_doi,jrnl_is_nice from publication, journal where zdb_id='$OID' and jrnl_publisher like 'Elsevier%' and jrnl_zdb_id = pub_jrnl_zdb_id;"><?/MISQL>
 
    <?MIVAR NAME=$pubview2_doi_no>$1<?/MIVAR>
    <?MIVAR NAME=$jrnl_is_nice>$2<?/MIVAR>
