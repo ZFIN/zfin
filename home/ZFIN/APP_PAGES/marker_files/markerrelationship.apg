@@ -99,10 +99,7 @@ OUTPUT:
 	  <tr>
         <td bgcolor=#EEEEEE>       			
 	      <?MIVAR> 
-          <span 
-          $(IF,$(EC,WITHDRAWN:,$(SUBSTR,$name,1,10)), class="error-inline"  ,)
-          >
-			$(IF,$(>,$(POSITION,$OID,GENE),0),$abbrev,$name) </span> 
+			$(IF,$(>,$(POSITION,$OID,GENE),0),$abbrev,$name) 
             $mrkrrel_mrel_comments
 	      <?/MIVAR>
         </td>
@@ -127,9 +124,6 @@ OUTPUT:
          	  onClick="Delete_mrel('$mrkrrel_seg_mrkr_zdb_id','$mrkrrel_mrel_type')">
     <?/MIVAR>
 	<A
-    <?MIVAR>
-          $(IF,$(EC,WITHDRAWN:,$(SUBSTR,$name,1,10)), class="error-inline"  ,)
-    <?/MIVAR>
     HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrrel_seg_mrkr_zdb_id">
 	    $mrkrrel_seg_mrkr_abbrev  
 	</A>
