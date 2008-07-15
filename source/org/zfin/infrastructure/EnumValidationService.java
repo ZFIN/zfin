@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import sun.reflect.Reflection;
-
 /**
  * Service validates java Enumerations versus their database counterparts for controlled vocabulary clases.
  */

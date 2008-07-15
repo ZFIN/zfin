@@ -14,7 +14,6 @@
                 <prop key="/anatomy/term-info">anatomyTermInfo</prop>
                 <prop key="/anatomy/search">anatomySearch</prop>
                 <prop key="/anatomy/high-quality-probes">highQualityProbes</prop>
-                <prop key="/anatomy/all-expressed-genes">allExpressedGenes</prop>
                 <prop key="/anatomy/request-new-term">requestNewAnatomyTerm</prop>
                 <prop key="/anatomy/show-all-morpholino-experiments">allMorpholinoExperiments</prop>
             </props>
@@ -35,8 +34,6 @@
     <bean name="addCanonicalGene" class="org.zfin.anatomy.presentation.AnatomyTermDetailController" autowire="byName"/>
 
     <bean name="highQualityProbes" class="org.zfin.anatomy.presentation.HighQualityProbesController" autowire="byName"/>
-
-    <bean name="allExpressedGenes" class="org.zfin.anatomy.presentation.AllExpressedGenesController" autowire="byName"/>
 
     <bean name="auditLogDetails" class="org.zfin.audit.presentation.DetailsController" autowire="byName"/>
 

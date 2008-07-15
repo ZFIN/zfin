@@ -33,6 +33,7 @@ import org.zfin.infrastructure.EnumValidationTest;
         MarkerRepositoryTest.class,
         MutantRepositoryTest.class,
         OrthologyTest.class,
+        PaginationResultTest.class,
         PeopleRepositoryTest.class,
         PublicationRepositoryTest.class,
         RedundancyCandidateControllerTest.class,

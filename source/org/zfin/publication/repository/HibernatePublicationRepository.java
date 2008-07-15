@@ -11,6 +11,7 @@ import org.zfin.anatomy.CanonicalMarker;
 import org.zfin.database.SearchUtil;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -141,84 +142,91 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param term AnatomyTerm
      * @return list of High quality probes.
      */
-    public List<HighQualityProbe> getHighQualityProbeNames(AnatomyItem term) {
-        Query query = highQualityProbeQuery(term);
-        List<Object[]> list = query.list();
-        return createHighQualityProbeObjects(list, term);
+    public PaginationResult<HighQualityProbe> getHighQualityProbeNames(AnatomyItem term) {
+        return getHighQualityProbeNames(term,Integer.MAX_VALUE) ;
     }
 
-    private Query highQualityProbeQuery(AnatomyItem term) {
-        Session session = HibernateUtil.currentSession();
-        StringBuilder hql = new StringBuilder("SELECT distinct probe, marker ");
-        hql.append(highQualityProbeBaseQueryPerAnatomy());
-        hql.append("ORDER BY marker.abbreviationOrder");
-        Query query = session.createQuery(hql.toString());
-        query.setString("zdbID", term.getZdbID());
-        return query;
-    }
 
-    private String highQualityProbeBaseQueryPerAnatomy() {
-        StringBuilder hql = new StringBuilder();
-        hql.append("FROM ExpressionExperiment exp, ExpressionResult res, Clone clone, ");
-        hql.append(" Marker probe, Marker marker   ");
-        hql.append("WHERE res.anatomyTerm.zdbID = :zdbID ");
-        hql.append("AND res.expressionExperiment = exp ");
-        hql.append("AND exp.clone = clone ");
-        hql.append("AND exp.probe = probe ");
-        hql.append("AND exp.marker = marker ");
-        hql.append("AND clone.rating = 4 ");
-        return hql.toString();
-    }
+    public PaginationResult<HighQualityProbe> getHighQualityProbeNames(AnatomyItem term, int maxRow) {
 
-    private Query numberOfHighQualityProbeQuery(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-        StringBuilder hql = new StringBuilder("SELECT count(distinct probe) ");
-        hql.append(highQualityProbeBaseQueryPerAnatomy());
-        Query query = session.createQuery(hql.toString());
-        query.setString("zdbID", zdbID);
-        return query;
-    }
+        String hql = "select distinct probe, marker " +
+                "FROM ExpressionExperiment exp, ExpressionResult res, Clone clone, Marker probe, Marker marker " +
+                "WHERE  res.anatomyTerm.zdbID = :zdbID " +
+                   "AND res.expressionExperiment = exp " +
+                   "AND exp.clone = clone " +
+                   "AND exp.probe = probe " +
+                   "AND exp.marker = marker " +
+                   "AND clone.rating = 4 " +
+                   "ORDER by marker.abbreviationOrder  ";
+        Session session = HibernateUtil.currentSession() ;
+        Query query = session.createQuery(hql) ;
+        query.setString("zdbID",term.getZdbID()) ;
+        ScrollableResults results = query.scroll() ;
 
-    public List<HighQualityProbe> getHighQualityProbeNames(AnatomyItem term, int maxRow) {
-        Query query = highQualityProbeQuery(term);
-        query.setMaxResults(maxRow);
-        List<Object[]> list = query.list();
-        return createHighQualityProbeObjects(list, term);
+//        results.beforeFirst();
+
+        List<Object[]> list = new ArrayList<Object[]>() ; 
+        while( results.next() && results.getRowNumber() < maxRow ){
+            list.add(results.get()) ;
+        }
+        
+        results.last() ;
+        int totalCount = results.getRowNumber() +1 ;
+
+        results.close();
+
+        List<HighQualityProbe> probes = createHighQualityProbeObjects(list, term);
+        return new PaginationResult<HighQualityProbe>(totalCount,probes) ;
+
     }
 
     public List<Marker> getAllExpressedMarkers(String zdbID, int maxRow) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "SELECT distinct marker FROM Marker marker, ExpressionExperiment exp, ExpressionResult res  " +
+//        String hql = "SELECT distinct marker FROM Marker marker, ExpressionExperiment exp, ExpressionResult res  " +
+//                "WHERE res.anatomyTerm.zdbID = :zdbID " +
+//                "AND res.expressionExperiment = exp " +
+//                "AND marker.zdbID = exp.geneID " +
+//                "ORDER BY marker.abbreviationOrder";
+
+        String hql = "SELECT distinct marker FROM Marker marker, ExpressionResult res  " +
                 "WHERE res.anatomyTerm.zdbID = :zdbID " +
-                "AND res.expressionExperiment = exp " +
-                "AND marker.zdbID = exp.geneID " +
+                "AND res.expressionExperiment.geneID = marker.zdbID " +
                 "ORDER BY marker.abbreviationOrder";
+
         Query query = session.createQuery(hql);
-        if (maxRow != SearchUtil.ALL)
+        if (maxRow != SearchUtil.ALL){
             query.setMaxResults(maxRow);
+        }
         query.setString("zdbID", zdbID);
         List<Marker> list = query.list();
         return list;
     }
 
+
+    public PaginationResult<MarkerStatistic> getAllExpressedMarkers(AnatomyItem anatomyTerm) {
+        return getAllExpressedMarkers(anatomyTerm,0, Integer.MAX_VALUE) ;
+    }
+
     /**
      * Note: firstRow must be 1 or greater, i.e. the way a user would describes
      * the record number. Hibernate starts with the first row numbered '0'.
+	 * Written in native SQL because need to order by number of figures.
      *
      * @param anatomyTerm     anatomy term
      * @param firstRow        first row
      * @param numberOfRecords number
      */
-    public List<MarkerStatistic> getAllExpressedMarkers(AnatomyItem anatomyTerm, int firstRow, int numberOfRecords) {
-        if (firstRow < 1)
+    public PaginationResult<MarkerStatistic> getAllExpressedMarkers(AnatomyItem anatomyTerm, int firstRow, int numberOfRecords) {
+        if (firstRow < 0)
             throw new RuntimeException("First Row number <" + firstRow + "> is invalid");
         // Hibernate starts at 0 while the argument expects to start at 1
-        firstRow--;
+//        firstRow--;  // from old implementation I think
 
         Session session = HibernateUtil.currentSession();
 
-        // ToDo: Rewrite as HQL and include the whole marker object as it is needed.
+        // todo: Rewrite as HQL and include the whole marker object as it is needed.
+        // todo: note that when in SQL, start at 1 (current) , but when in HQL, start at 0
         String hql = "SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol, " +
                 "count(distinct fig.fig_zdb_id) as numOfFig  " +
                 "FROM  Expression_Experiment exp, outer marker probe, Anatomy_Item item_, Marker gene, Figure fig," +
@@ -243,14 +251,27 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.addScalar("geneID", Hibernate.STRING);
         query.addScalar("geneSymbol", Hibernate.STRING);
         query.addScalar("numOfFig", Hibernate.INTEGER);
-        query.setFirstResult(firstRow);
-        query.setMaxResults(numberOfRecords);
         query.setString("anatomyZdbID", anatomyTerm.getZdbID());
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
         query.setString("withdrawn","WITHDRAWN:");
-        List<Object[]> list = query.list();
-        return createMarkerStatistics(list, anatomyTerm);
+        ScrollableResults results = query.scroll() ;
+        results.last() ;
+        int totalResults = results.getRowNumber() + 1;
+
+        List<Object[]> list  = new ArrayList<Object[]>() ;
+
+        results.beforeFirst();
+        while(results.next() && results.getRowNumber() < numberOfRecords ){
+           if(results.getRowNumber()>=firstRow) {
+               list.add(results.get());
+           }
+        }
+
+        results.close();
+        List<MarkerStatistic> markerStatistics = createMarkerStatistics(list, anatomyTerm);
+
+        return new PaginationResult<MarkerStatistic>(totalResults,markerStatistics) ;
     }
 
     /**
@@ -310,25 +331,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return markers;
     }
 
-    /**
-     * Retrieve the total number of markers expressed in a specified structure.
-     *
-     * @param anatomyTerm Anatomy Term
-     * @return number
-     */
-    public int getAllExpressedMarkersCount(AnatomyItem anatomyTerm) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "SELECT count(distinct exp.marker) FROM ExpressionExperiment exp, ExpressionResult res  " +
-                "WHERE res.anatomyTerm = :aoTerm " +
-                "AND res.expressionExperiment = exp " +
-                "AND res.expressionFound = :expressionFound " +
-                "AND exp.marker.abbreviation  not like 'WITHDRAWN:%' ";
-        Query query = session.createQuery(hql);
-        query.setParameter("aoTerm", anatomyTerm);
-        query.setBoolean("expressionFound", true);
-        return (Integer) query.uniqueResult();
-    }
 
     public Publication getPublication(String zdbID) {
         Session session = HibernateUtil.currentSession();
@@ -367,22 +369,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return number.intValue() == 1;
     }
 
-    public boolean canonicalMarkerExists(CanonicalMarker canon) {
-        Session session = HibernateUtil.currentSession();
-        Criteria query = session.createCriteria(CanonicalMarker.class);
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
-    /**
-     * Retrieve the number of all high quality probes for a particular anatomy term.
-     *
-     * @param anatomyTerm AnatomyTerm
-     * @return number
-     */
-    public int getNumberOfHighQualityProbes(AnatomyItem anatomyTerm) {
-        Query query = numberOfHighQualityProbeQuery(anatomyTerm.getZdbID());
-        return (Integer) query.uniqueResult();
-    }
 
     public List<Figure> getFiguresByGeneID(String geneID, String publicationID) {
         Session session = HibernateUtil.currentSession();
@@ -413,9 +400,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return trafo.transformList(figures);
     }
 
-    public List<Publication> getPublicationsByGene(String zdbID) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     public List<Figure> getFiguresByGeneAndPublication(String geneID, String publicationID) {
         Session session = HibernateUtil.currentSession();
@@ -500,7 +484,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public List<Publication> getPublicationsWithAccessionButNoDOI(int maxResults) {
         Session session = HibernateUtil.currentSession();
-        Criteria query = HibernateUtil.currentSession().createCriteria(Publication.class);
+        Criteria query = session.createCriteria(Publication.class);
         query.add(Restrictions.isNull("doi"));
         query.add(Restrictions.isNotNull("accessionNumber"));
         query.add(Restrictions.ne("accessionNumber", "none"));
@@ -550,38 +534,41 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         hql.append("      ( pheno.patoEntityAzdbID = :aoZdbID OR pheno.patoEntityBzdbID = :aoZdbID ) ");
     }
 
-    public List<Figure> getFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term) {
+
+    public PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term) {
         Session session = HibernateUtil.currentSession();
 
-        StringBuilder hql = new StringBuilder("select figure from Figure figure, Phenotype pheno, ");
-        hql.append("GenotypeExperiment exp, Genotype geno ");
-        hql.append("where geno.zdbID = :genoID AND ");
-        hql.append("      exp.genotype = geno AND ");
-        hql.append("      pheno.genotypeExperiment = exp  AND ");
-        hql.append("      figure member of pheno.figures AND ");
-        hql.append("      ( pheno.patoEntityAzdbID = :aoZdbID OR pheno.patoEntityBzdbID = :aoZdbID ) ");
-        hql.append("order by figure.orderingLabel    ");
-        Query query = session.createQuery(hql.toString());
+        String hql = "select figure from Figure figure, Phenotype pheno, " +
+                "GenotypeExperiment exp, Genotype geno " +
+                "where geno.zdbID = :genoID AND " +
+                "      exp.genotype = geno AND " +
+                "      pheno.genotypeExperiment = exp  AND " +
+                "      figure member of pheno.figures AND " +
+                "      ( pheno.patoEntityAzdbID = :aoZdbID OR pheno.patoEntityBzdbID = :aoZdbID ) " +
+                "order by figure.orderingLabel    " ;
+        Query query = session.createQuery(hql);
         query.setString("genoID", geno.getZdbID());
         query.setString("aoZdbID", term.getZdbID());
-        List<Figure> figures = query.list();
-        return figures;
+        PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list()) ; 
+        return paginationResult ;
     }
 
-    public List<Publication> getPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, AnatomyItem aoTerm) {
+
+    public int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, AnatomyItem aoTerm) {
         Session session = HibernateUtil.currentSession();
 
-        StringBuilder hql = new StringBuilder("select distinct figure.publication from Figure figure, Phenotype pheno, ");
-        hql.append("GenotypeExperiment exp, Genotype geno ");
-        hql.append("where geno.zdbID = :genoID AND ");
-        hql.append("      exp.genotype = geno AND ");
-        hql.append("      pheno.genotypeExperiment = exp  AND ");
-        hql.append("      figure member of pheno.figures AND ");
-        hql.append("      ( pheno.patoEntityAzdbID = :aoZdbID OR pheno.patoEntityBzdbID = :aoZdbID ) ");
-        Query query = session.createQuery(hql.toString());
+        String hql = " select count(distinct figure.publication.zdbID ) from "+
+                " Figure figure, Phenotype phenotype " +
+                "where " +
+                "      ( phenotype.patoEntityAzdbID = :aoZdbID OR phenotype.patoEntityBzdbID = :aoZdbID ) AND " +
+                "      phenotype.genotypeExperiment.genotype.zdbID = :genoID AND " +
+                "      figure member of phenotype.figures " +
+                "" ;
+        Query query = session.createQuery(hql);
         query.setString("genoID", genotype.getZdbID());
         query.setString("aoZdbID", aoTerm.getZdbID());
-        return (List<Publication>) query.list();
+
+        return  Integer.parseInt(query.uniqueResult().toString()) ;
     }
 
     /**
@@ -643,7 +630,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
         catch(Exception e){
             logger.error("failed to get journal title["+journalTitle+"] returning null",e);
-            return null ; 
+            return null ;
         }
     }
 

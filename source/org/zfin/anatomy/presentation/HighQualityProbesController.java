@@ -8,6 +8,7 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -47,11 +48,12 @@ public class HighQualityProbesController extends AbstractCommandController {
         anatomyForm.setQualityProbePublications(qualityPubs);
 
         // Get the genes of the high-quality probes
-        List<HighQualityProbe> hqp = pr.getHighQualityProbeNames(anatomyTerm);
+        PaginationResult<HighQualityProbe> hqpResult = pr.getHighQualityProbeNames(anatomyTerm);
+        List<HighQualityProbe> hqp = hqpResult.getPopulatedResults() ;
         anatomyForm.setHighQualityProbeGenes(hqp);
         createFigureStatisticsOnHQP(anatomyForm);
 
-        int numberOfHighQualityProbes = pr.getNumberOfHighQualityProbes(anatomyTerm);
+        int numberOfHighQualityProbes = hqpResult.getTotalCount() ; 
         anatomyForm.setNumberOfHighQualityProbes(numberOfHighQualityProbes);
 
         return new ModelAndView("high-quality-probes.page", LookupStrings.FORM_BEAN, anatomyForm);

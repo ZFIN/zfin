@@ -11,7 +11,7 @@ import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Controller class that serves the anatomy term detail page.
@@ -36,9 +35,9 @@ public class AnatomyTermDetailController extends AbstractCommandController {
 
     private static final Logger LOG = Logger.getLogger(AnatomyTermDetailController.class);
 
-    private PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-    private AnatomyRepository anatomyRepository;
-    private MutantRepository mutantRepository;
+    private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+    private AnatomyRepository anatomyRepository; // can be set through the bean
+    private MutantRepository mutantRepository;   // can be set through the bean
 
     public AnatomyTermDetailController() {
         setCommandClass(AnatomySearchBean.class);
@@ -48,24 +47,19 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         LOG.info("Start Anatomy Term Detail Controller");
         AnatomySearchBean form = (AnatomySearchBean) command;
         AnatomyItem term = retrieveAnatomyTermData(form);
-        if (term == null)
+        if (term == null){
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAnatomyItem().getZdbID());
+		}
 
         retrieveExpressedGenesData(term, form);
         retrieveHighQualityProbeData(term, form);
         retrieveMutantData(term, form);
         retrieveMorpholinoData(term, form);
-        retrieveNumberOfPublications(term, form);
 
         ModelAndView modelAndView = new ModelAndView("anatomy-item.page", LookupStrings.FORM_BEAN, form);
         modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, term.getName());
 
         return modelAndView;
-    }
-
-    private void retrieveNumberOfPublications(AnatomyItem ai, AnatomySearchBean form) {
-        int numberOfPublications = pr.getNumberOfPublications(ai.getName());
-        form.setNumberOfPublications(numberOfPublications);
     }
 
     private AnatomyItem retrieveAnatomyTermData(AnatomySearchBean form) {
@@ -90,45 +84,47 @@ public class AnatomyTermDetailController extends AbstractCommandController {
     }
 
     private void retrieveHighQualityProbeData(AnatomyItem anatomyTerm, AnatomySearchBean form) {
-        List<HighQualityProbe> hqp = pr.getHighQualityProbeNames(anatomyTerm, AnatomySearchBean.MAX_NUMBER_PROBES);
-        form.setHighQualityProbeGenes(hqp);
-        createHQPStatistics(hqp, anatomyTerm);
+        PaginationResult<HighQualityProbe> hqp = publicationRepository.getHighQualityProbeNames(anatomyTerm, AnatomySearchBean.MAX_NUMBER_PROBES);
+        form.setHighQualityProbeGenes(hqp.getPopulatedResults());
+        createHQPStatistics(hqp.getPopulatedResults(), anatomyTerm);
 
-        int numberOfHighQualityProbes = pr.getNumberOfHighQualityProbes(anatomyTerm);
+        int numberOfHighQualityProbes = hqp.getTotalCount() ;
         form.setNumberOfHighQualityProbes(numberOfHighQualityProbes);
     }
 
     private void retrieveExpressedGenesData(AnatomyItem anatomyTerm, AnatomySearchBean form) {
-        List<MarkerStatistic> markers =
-                pr.getAllExpressedMarkers(anatomyTerm, 1, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
-        List<ExpressedGeneDisplay> expressedGenes = AllExpressedGenesController.createFigureStatistics(markers);
-        form.setAllExpressedMarkers(expressedGenes);
-        form.setTotalNumberOfFiguresPerAnatomyItem(pr.getTotalNumberOfFiguresPerAnatomyItem(anatomyTerm));
-        form.setTotalNumberOfImagesPerAnatomyItem(pr.getTotalNumberOfImagesPerAnatomyItem(anatomyTerm));
 
-        int markerCount = pr.getAllExpressedMarkersCount(anatomyTerm);
-        form.setTotalNumberOfExpressedGenes(markerCount);
+        PaginationResult<MarkerStatistic> expresionMarkersResult =
+                publicationRepository.getAllExpressedMarkers(anatomyTerm, 0, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
+
+        List<MarkerStatistic> markers = expresionMarkersResult.getPopulatedResults() ;
+
+        List<ExpressedGeneDisplay> expressedGenes = new ArrayList<ExpressedGeneDisplay>();
+        if (markers != null) {
+            for (MarkerStatistic marker : markers) {
+                ExpressedGeneDisplay expressedGene = new ExpressedGeneDisplay(marker);
+                expressedGenes.add(expressedGene);
+            }
+        }
+
+
+        form.setAllExpressedMarkers(expressedGenes);
+
+        // todo: could we get this as part of our statistic?
+        form.setTotalNumberOfFiguresPerAnatomyItem(publicationRepository.getTotalNumberOfFiguresPerAnatomyItem(anatomyTerm));
+		// maybe used later?
+        form.setTotalNumberOfExpressedGenes(expresionMarkersResult.getTotalCount());
 
         AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getZdbID());
         form.setAnatomyStatistics(statistics);
     }
 
     private void retrieveMutantData(AnatomyItem ai, AnatomySearchBean form) {
-        int mutantCount = mutantRepository.getNumberOfMutants(ai.getZdbID(), false);
-        form.setGenotypeCount(mutantCount);
+        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(ai,false,
+                AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+        form.setGenotypeCount(genotypeResult.getTotalCount());
 
-        List<Genotype> genotypes =
-                mutantRepository.getGenotypesByAnatomyTerm(ai, false, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        for (Genotype geno : genotypes) {
-            Set<GenotypeFeature> features = geno.getGenotypeFeatures();
-            for (GenotypeFeature feat : features) {
-                Feature feature = feat.getFeature();
-                Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
-                for (FeatureMarkerRelationship rel : rels) {
-                    System.out.println(rel.getMarker());
-                }
-            }
-        }
+        List<Genotype> genotypes = genotypeResult.getPopulatedResults() ;
         form.setGenotypes(genotypes);
         List<GenotypeStatistics> genoStats = createGenotypeStats(genotypes, ai);
         form.setGenotypeStatistics(genoStats);
@@ -137,25 +133,43 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         form.setAnatomyStatisticsMutant(statistics);
     }
 
+    /**
+     *  Note: method 1 - very slow to do one query and then split
+     *  because you need to rehydrate each instance
+     *  in order to compare. So instead did as two separate queries.
+     */
     private void retrieveMorpholinoData(AnatomyItem ai, AnatomySearchBean form) {
 
-        int wildtypeMorphCount = mutantRepository.getNumberOfMorpholinoExperiments(ai, true);
-        PaginationBean pagination = new PaginationBean();
-        pagination.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        mutantRepository.setPaginationParameters(pagination);
 
-        form.setWildtypeMorpholinoCount(wildtypeMorphCount);
-        List<GenotypeExperiment> morphs =
+        // same
+        int wildtypeCount = 0 ;
+        int nonWildtypeCount = 0 ;
+        List<GenotypeExperiment> wildtypeExperiments ;
+        List<GenotypeExperiment> nonWildtypeExperiments ;
+
+
+        PaginationResult<GenotypeExperiment> wildtypeMorphResults =
                 mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, true);
-        List<MorpholinoStatistics> morpholinoStats = createMorpholinoStats(morphs, ai);
+        wildtypeCount = wildtypeMorphResults.getTotalCount() ;
+        wildtypeExperiments = wildtypeMorphResults.getPopulatedResults() ;
+
+
+        PaginationResult<GenotypeExperiment> nonWildtypeMorphResults =
+                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, false);
+        nonWildtypeCount = nonWildtypeMorphResults.getTotalCount() ;
+        nonWildtypeExperiments = nonWildtypeMorphResults.getPopulatedResults() ;
+
+        // same
+        form.setWildtypeMorpholinoCount(wildtypeCount);
+        form.setMutantMorpholinoCount(nonWildtypeCount);
+
+        List<MorpholinoStatistics> morpholinoStats = createMorpholinoStats(wildtypeExperiments, ai);
         form.setAllMorpholinos(morpholinoStats);
 
-        int mutantMorphCount = mutantRepository.getNumberOfMorpholinoExperiments(ai, false);
-        form.setMutantMorpholinoCount(mutantMorphCount);
-        List<GenotypeExperiment> nonWiltypeMorphs =
-                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, false);
-        List<MorpholinoStatistics> mutantMorphStats = createMorpholinoStats(nonWiltypeMorphs, ai);
+
+        List<MorpholinoStatistics> mutantMorphStats = createMorpholinoStats(nonWildtypeExperiments, ai);
         form.setNonWildtypeMorpholinos(mutantMorphStats);
+
     }
 
     /**
@@ -211,4 +225,5 @@ public class AnatomyTermDetailController extends AbstractCommandController {
     public void setMutantRepository(MutantRepository mutantRepository) {
         this.mutantRepository = mutantRepository;
     }
+
 }

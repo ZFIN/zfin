@@ -10,6 +10,7 @@ import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.anatomy.AnatomySynonym;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
@@ -62,11 +63,12 @@ public class AnatomyRepositoryTest {
         AnatomyItem item = aoRepository.getAnatomyItem(termName);
 
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        List<HighQualityProbe> probes = pr.getHighQualityProbeNames(item);
+        PaginationResult<HighQualityProbe> probeResults = pr.getHighQualityProbeNames(item);
+        List<HighQualityProbe> probes = probeResults.getPopulatedResults() ;
         assertTrue(probes != null);
         assertTrue(probes.size() > 0);
 
-        int numberOHQProbes = pr.getNumberOfHighQualityProbes(item);
+        int numberOHQProbes = probeResults.getTotalCount() ;
         assertTrue(numberOHQProbes > 0);
         assertTrue(probes.size() == numberOHQProbes);
 
@@ -103,19 +105,32 @@ public class AnatomyRepositoryTest {
     }
 
     @Test
+    public void compareWildTypeSelectionToFullForMorpholinos(){
+        AnatomyItem item = aoRepository.getAnatomyItem("neural plate");
+        PaginationResult<GenotypeExperiment> genosWildtype = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true);
+        PaginationResult<GenotypeExperiment> genosNonWildtype = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, false);
+        PaginationResult<GenotypeExperiment> genosAll = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item);
+
+        assertNotNull(genosWildtype.getPopulatedResults());
+        assertNotNull(genosNonWildtype.getPopulatedResults());
+        assertNotNull(genosAll.getPopulatedResults());
+        assertEquals( genosAll.getTotalCount() , genosNonWildtype.getTotalCount()+ genosWildtype.getTotalCount());
+        assertTrue(genosAll.getTotalCount() > genosAll.getPopulatedResults().size()); // may not be true in all cases, so just doing it for this one
+        assertNotSame("It is feasible, but unlikely that these will ever be the same",genosWildtype.getTotalCount() , genosNonWildtype.getTotalCount()); // its feasible, but not likely
+
+
+    }
+
+    @Test
     public void getWildtypeMorpholinos(){
         // String neuralPlateZdbID = "ZDB-ANAT-010921-560";
         AnatomyItem item = aoRepository.getAnatomyItem("neural plate");
-        List<GenotypeExperiment> genos = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true);
-        assertTrue(genos != null && genos.size() > 0);
+        PaginationResult<GenotypeExperiment> genos = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true);
+        assertNotNull(genos.getPopulatedResults());
+        assertTrue(genos.getPopulatedResults().size()>1);
+        assertTrue(genos.getPopulatedResults().size()<genos.getTotalCount());
         //assertEquals(2, genos.size());
-        for(GenotypeExperiment genotypeExperiment: genos){
-            Genotype geno = genotypeExperiment.getGenotype();
-            System.out.println(genotypeExperiment.getZdbID());
-            System.out.println(geno.getZdbID() + "\r");
-        }
 
-        assertTrue(genos.size()> 1);
     }
 
 

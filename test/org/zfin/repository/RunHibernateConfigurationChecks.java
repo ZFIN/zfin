@@ -164,7 +164,6 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
         marker.setZdbID("ZDB-GENE-980526-561");
         canon.setGene(marker);
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        boolean exists = pr.canonicalMarkerExists(canon);
         pr.insertCanonicalMarker(canon);
         session.getTransaction().commit();
     }
@@ -222,8 +221,8 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
             System.out.println("Number of publication: " + list.size());
 */
 
-        List markers = ar.getHighQualityProbeNames(item);
-        System.out.println("Probes Number : " + markers.size());
+//        List markers = ar.getHighQualityProbeNames(item).getResults();
+        System.out.println("Probes Number : " + ar.getHighQualityProbeNames(item).getPopulatedResults().size()); // this is only the # populated
     }
 
     protected String[] getMappings() {

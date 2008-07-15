@@ -12,6 +12,7 @@ import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -70,22 +71,9 @@ public class MutantRepositoryTest {
         String name = "otic placode";
         AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
         AnatomyItem ai = ar.getAnatomyItem(name);
-        List<GenotypeExperiment> morphs =
+        PaginationResult<GenotypeExperiment> morphs =
                 mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, true);
-        Assert.assertNotNull("morphs exist", morphs);
-
-/*
-        Session session = HibernateUtil.currentSession();
-        GenotypeExperiment exper = (GenotypeExperiment) session.load(GenotypeExperiment.class, "ZDB-GENOX-041102-1010");
-
-*/
-        for(GenotypeExperiment exp: morphs){
-            for(Phenotype pheno: exp.getPhenotypes()){
-                System.out.println("Tag: " +pheno.getTag());
-                System.out.println("Term: " +pheno.getTerm().getName());
-
-            }
-        }
+        Assert.assertNotNull("morphs exist", morphs.getPopulatedResults());
 
     }
 

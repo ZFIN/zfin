@@ -3,6 +3,7 @@ package org.zfin.mutant.repository;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.CachedRepository;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GoTerm;
 
@@ -24,17 +25,8 @@ public interface MutantRepository extends CachedRepository {
      * @param numberOfRecords @return A list of Genotype objects.
      * @return list of genotypes
      */
-    List<Genotype> getGenotypesByAnatomyTerm(AnatomyItem item, boolean wildtype, int numberOfRecords);
+    PaginationResult<Genotype> getGenotypesByAnatomyTerm(AnatomyItem item, boolean wildtype, int numberOfRecords);
 
-    /**
-     * Retrieve the number of mutants that are annotated to
-     * a given anatomy item.
-     *
-     * @param zdbID           anatomy item id
-     * @param wildtype boolean
-     * @return number of mutants
-     */
-    int getNumberOfMutants(String zdbID, boolean wildtype);
 
     /**
      * Retrieve the number of images associated to a mutant marker and a given
@@ -83,7 +75,20 @@ public interface MutantRepository extends CachedRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    List<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype);
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype);
+
+
+    /**
+     * Retrieve the genotype objects that are assoicated to a morpholino.
+     * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
+     * attached.
+
+     * @param item anatomy structure
+     * @return list of genotype object
+     */
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item);
+
+
 
     /**
      * Retrieve the list of morpholinos for a given genotype.
@@ -94,13 +99,6 @@ public interface MutantRepository extends CachedRepository {
      */
     List<Morpholino> getMorpholinosByGenotype(Genotype genotype, AnatomyItem item, boolean isWildtype);
 
-    /**
-     * Retrieve the number of Morpholino Experiments for a given anatomy term.
-     * @param item AO term
-     * @param isWildtype wildtyep or not
-     * @return number of morpholinos
-     */
-    int getNumberOfMorpholinoExperiments(AnatomyItem item, boolean isWildtype);
 
     /**
      * Method to set pagination-related parameters.

@@ -11,6 +11,7 @@ import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.mutant.Genotype;
@@ -96,8 +97,10 @@ public class PublicationRepositoryTest {
         String zdbID = "ZDB-ANAT-010921-591";
         AnatomyItem term = new AnatomyItem();
         term.setZdbID(zdbID);
-        List<MarkerStatistic> list = pr.getAllExpressedMarkers(term, 1, 5);
-        assertEquals("5 genes", 5, list.size());
+        PaginationResult<MarkerStatistic> paginationResult = pr.getAllExpressedMarkers(term, 0, 5) ;
+        List<MarkerStatistic> list = paginationResult.getPopulatedResults();
+        assertEquals("5 genes", 5, paginationResult.getPopulatedResults().size());
+        assertTrue( list.size() < paginationResult.getTotalCount());
     }
 
     /**
@@ -108,8 +111,10 @@ public class PublicationRepositoryTest {
         String termName = "somite";
         AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
         AnatomyItem term = aoRepository.getAnatomyItem(termName);
-        int number = pr.getAllExpressedMarkersCount(term);
-        assertTrue(number > 0);
+        int number1 = pr.getAllExpressedMarkers(term,0,5).getTotalCount();
+        int number2 = pr.getAllExpressedMarkers(term,12,20).getTotalCount();
+        assertTrue(number1 > 0);
+        assertEquals(number1 ,number2);
     }
 
     @Test
@@ -119,8 +124,8 @@ public class PublicationRepositoryTest {
         String zdbID = "ZDB-ANAT-050711-66 ";
         AnatomyItem term = new AnatomyItem();
         term.setZdbID(zdbID);
-        List<MarkerStatistic> list = pr.getAllExpressedMarkers(term, 1, 10);
-//        assertEquals("9 genes", 9, list.size());
+        List<MarkerStatistic> list = pr.getAllExpressedMarkers(term, 0, 10).getPopulatedResults();
+//        assertEquals("10 genes", 10, list.size());
         assertNotNull(list);
     }
 
@@ -170,9 +175,11 @@ public class PublicationRepositoryTest {
         String aoZdbID = "ZDB-ANAT-050711-66 ";
         AnatomyItem item = new AnatomyItem();
         item.setZdbID(aoZdbID);
-        List<Genotype> list = mutantRepository.getGenotypesByAnatomyTerm(item, false, 4);
+        PaginationResult<Genotype> genotypeResult= mutantRepository.getGenotypesByAnatomyTerm(item, false, 4);
 //        assertEquals("8 genes", 4, list.size());
-        assertNotNull(list);
+        assertNotNull(genotypeResult.getPopulatedResults());
+        assertEquals(genotypeResult.getPopulatedResults().size(),4);
+        assertTrue(genotypeResult.getTotalCount()> 4);
     }
 
     @Test
@@ -260,12 +267,15 @@ public class PublicationRepositoryTest {
     @Test
     public void getMutantByAnatomyExpression() {
         //  somite 8
-        String aoZdbID = "ZDB-ANAT-020309-228";
+        String aoZdbID = "ZDB-ANAT-010921-555";
         AnatomyItem item = new AnatomyItem();
         item.setZdbID(aoZdbID);
-        List<Genotype> genotypes = mutantRepository.getGenotypesByAnatomyTerm(item, false, 5);
+        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, 5);
 
-        assertTrue(genotypes != null);
+        assertNotNull(genotypeResult);
+        assertNotNull(genotypeResult.getPopulatedResults());
+        assertEquals(genotypeResult.getPopulatedResults().size(),5);
+        assertTrue(genotypeResult.getTotalCount()> 5);
 
     }
 
@@ -279,8 +289,8 @@ public class PublicationRepositoryTest {
         String aoZdbID = "ZDB-ANAT-010921-415";
         AnatomyItem item = new AnatomyItem();
         item.setZdbID(aoZdbID);
-        List<Figure> figs = pr.getFiguresByGenoAndAnatomy(geno, item);
-        assertTrue(figs != null);
+        PaginationResult<Figure> figs = pr.getFiguresByGenoAndAnatomy(geno, item);
+        assertTrue(figs.getPopulatedResults() != null);
 //        assertEquals("1 figure", 1, figs.size());
 
     }
@@ -311,8 +321,8 @@ public class PublicationRepositoryTest {
         String aoZdbID = "ZDB-ANAT-010921-415";
         AnatomyItem item = new AnatomyItem();
         item.setZdbID(aoZdbID);
-        List<Publication> publications = pr.getPublicationsWithFiguresPerGenotypeAndAnatomy(geno, item);
-        assertTrue(publications != null);
+        int publicationCount = pr.getNumPublicationsWithFiguresPerGenotypeAndAnatomy(geno, item);
+        assertTrue(publicationCount >0 );
 //        assertEquals("1 publication", 1, publications.size());
 
     }

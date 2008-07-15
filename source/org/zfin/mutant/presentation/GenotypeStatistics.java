@@ -4,9 +4,8 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
-import org.zfin.publication.Publication;
-import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.framework.presentation.PaginationResult;
 
 import java.util.*;
 
@@ -17,8 +16,8 @@ public class GenotypeStatistics {
 
     private Genotype genotype;
     private AnatomyItem anatomyItem;
-    private List<Figure> figures;
-    private List<Publication> publications;
+    private PaginationResult<Figure> figureResults = null ; // null indicates that this has not been populated yet
+    private int publicationCount = -1 ; // <0 indicates that we have not generated the statistics
 
     public GenotypeStatistics(Genotype genotype, AnatomyItem anatomyItem) {
         this.genotype = genotype;
@@ -30,25 +29,31 @@ public class GenotypeStatistics {
     }
 
     public int getNumberOfFigures() {
-        if (figures == null) {
-            PublicationRepository publicationRep = RepositoryFactory.getPublicationRepository();
-            figures = publicationRep.getFiguresByGenoAndAnatomy(genotype, anatomyItem);
+        if (figureResults == null ) {
+            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoAndAnatomy(genotype, anatomyItem);
         }
-        return figures.size();
+        return figureResults.getTotalCount()  ;
     }
 
+    /**
+     *
+     * @return There should be a single figure per GenotypeStatistics
+     */
     public Figure getFigure() {
-        if (figures == null || figures.size() != 1)
+        if (figureResults == null || figureResults.getTotalCount() != 1){
+            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoAndAnatomy(genotype, anatomyItem);
+        }
+        if(figureResults == null || figureResults.getTotalCount() != 1){
             throw new RuntimeException("Can call this method only when there is exactly one figure");
-        return figures.get(0);
+        }
+        return figureResults.getPopulatedResults().get(0);
     }
 
     public int getNumberOfPublications() {
-        if (publications == null) {
-            PublicationRepository publicationRep = RepositoryFactory.getPublicationRepository();
-            publications = publicationRep.getPublicationsWithFiguresPerGenotypeAndAnatomy(genotype, anatomyItem);
+        if (publicationCount < 0 ) {
+            publicationCount = RepositoryFactory.getPublicationRepository().getNumPublicationsWithFiguresPerGenotypeAndAnatomy(genotype, anatomyItem);
         }
-        return publications.size();
+        return publicationCount;
     }
 
     public List<Marker> getAffectedMarkers() {
