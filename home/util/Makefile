@@ -27,7 +27,7 @@ POSTLOADDB_SUBDIRS =
 
 GENERICS = 
 
-STATICS  = index.html 
+STATICS  = 
 
 
 # ---------------  Production Rules  ------------------------------------
