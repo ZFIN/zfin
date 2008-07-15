@@ -269,6 +269,7 @@ Not a gene. <?/MICOMMENT>
 
 <?MICOMMENT> ** Pseudogene section **    <?/MICOMMENT>     
 
+<?MIVAR NAME=si_pseudogene>false<?/MIVAR>
 <?MIVAR NAME=$si_pseudogene COND="$(EQ,$mvphnote_mrkr_type,GENEP)">true<?/MIVAR>
 <?MIBLOCK COND="$(EQ,$si_pseudogene,true)">
 This pseudogene is derived from the zebrafish genome sequencing
