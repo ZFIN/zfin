@@ -169,9 +169,20 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
  <?MIVAR COND="$(=,$fxallfig_probe_rating,4)" NAME=$fxallfig_probe_key>Simple to use intense expression pattern restricted to a few structures<?/MIVAR>
  <?MIVAR NAME=$fxallfig_probe_best><img src=http://<!--|DOMAIN_NAME|-->/images/50stars.gif>= intense staining in a restricted group of structures<?/MIVAR>        
 <?/MIBLOCK>
-   &nbsp;<b>Probe : </b><?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$fxallfig_probe_zdb_id">$fxallfig_probe_name<?/MIVAR> </a> 
+   &nbsp;<b>Probe : </b><?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$fxallfig_probe_zdb_id">$fxallfig_probe_name<?/MIVAR></a> 
  <?MISQL SQL="select WebExplode(object,'clorlk_mrkr_zdb_id=$fxallfig_probe_zdb_id') from webPages where ID='aa-cloneorderlink.apg';">$1<?/MISQL>
 &nbsp;&nbsp;
+
+<?MISQL SQL="
+select clone_problem_type
+from clone 
+where clone_mrkr_zdb_id = '$fxallfig_probe_zdb_id'
+and clone_problem_type is not null 
+">
+<p>
+<span class="error-inline">$1</span>
+</p>
+<?/MISQL>
 
 <?MIBLOCK COND="$(NE,$fxallfig_probe_rating,)">
 <a href="/zf_info/stars.html"><b>Quality</b></a>:  <?MIVAR>$fxallfig_probe_image<?/MIVAR>

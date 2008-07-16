@@ -713,6 +713,9 @@ DEBUGGING:
 <?/MICOMMENT>
 
 
+<?MICOMMENT>
+Do not show a withdrawn gene, a gene with a withdrawn clone, or a gene with a chimeric clone.
+<?/MICOMMENT>
  <?MIVAR NAME="xpatselqry_outer_join"><?/MIVAR>
 
  <?MIVAR NAME="xpatselqry_outer_join">, outer marker probe<?/MIVAR>
@@ -721,6 +724,11 @@ DEBUGGING:
     $xpatselqry_cond 
      and xpatex_gene_zdb_id = gene.mrkr_zdb_id
      and gene.mrkr_abbrev[1,10] <> "WITHDRAWN:"
+     and not exists(
+         select 'x' from clone
+         where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
+         and clone_problem_type = 'Chimeric'
+     )
      and not exists (select 'x' from marker
                         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
                                     and mrkr_abbrev[1,10] = "WITHDRAWN:")

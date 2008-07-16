@@ -703,7 +703,12 @@ create dba function "informix".regen_anatomy()
 	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	      and xpatres_expression_found = 't'
               and gene.mrkr_abbrev[1,10] <> "WITHDRAWN:"
-              and probe.mrkr_abbrev[1,10] <> "WITHDRAWN:";
+              and probe.mrkr_abbrev[1,10] <> "WITHDRAWN:"
+          and not exists(
+              select 'x' from clone
+              where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
+              and clone_problem_type = 'Chimeric'
+          ) ;
 
 	let nGenesForThisItem = DBINFO('sqlca.sqlerrd2');
 
@@ -721,7 +726,13 @@ create dba function "informix".regen_anatomy()
 	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	      and xpatres_expression_found = 't'
               and gene.mrkr_abbrev[1,10] <> "WITHDRAWN:"
-              and probe.mrkr_abbrev[1,10] <> "WITHDRAWN:";
+              and probe.mrkr_abbrev[1,10] <> "WITHDRAWN:"
+         and not exists(
+             select 'x' from clone
+             where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
+             and clone_problem_type = 'Chimeric'
+         )
+              ;
 
 	let nGenesForChildItems = DBINFO('sqlca.sqlerrd2');
 

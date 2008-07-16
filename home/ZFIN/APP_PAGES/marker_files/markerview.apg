@@ -134,7 +134,8 @@ function jump(form_select){
     select mrkr_name, mrkr_type, mrkrtype_type_display, mrkr_abbrev, mrkr_comments
       from marker, marker_types
       where mrkr_zdb_id = '$OID'
-	and mrkr_type = marker_type;">
+	and mrkr_type = marker_type;
+    ">
   <?/MISQL>
   <?MIVAR NAME=$name>$1<?/MIVAR>
   <?MIVAR NAME=$marker_type>$2<?/MIVAR>
@@ -142,6 +143,19 @@ function jump(form_select){
   <?MIVAR NAME=$abbrev>$4<?/MIVAR>
   <?MIVAR NAME=$comments>$5<?/MIVAR>
   <?MIVAR NAME=$id_exist COND="$(>,$MI_ROWCOUNT,0)">t<?/MIVAR>
+
+  <?MIVAR COND="$(NXST,$gene_has_chimeric_clone)" NAME=$gene_has_chimeric_clone>f<?/MIVAR>
+  <?MISQL COND="$(EQ,$marker_type,GENE)" 
+  SQL="
+    select 't'
+    from marker_relationship
+      join clone on clone_mrkr_zdb_id = mrel_mrkr_2_zdb_id 
+    where mrel_mrkr_1_zdb_id = '$OID'
+	and clone_problem_type = 'Chimeric'
+    ;
+  ">
+      <?MIVAR  NAME=$gene_has_chimeric_clone>$1<?/MIVAR>
+  <?/MISQL>
 
   <?MISQL SQL="
 	select * from marker_type_group_member
@@ -289,19 +303,8 @@ function jump(form_select){
 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&ancor=other&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type);
 		}
 	}
-	function setChimericism(old_value) {
-	<?MICOMMENT> index 0 = true; index 1 = false <?/MICOMMENT>
-		if (document.updateseq.chimericism[0].checked) {
-		  var isChimeric = 't';
-		}
-		else {
-		  var isChimeric = 'f';
-		}
 
-		if (isChimeric != old_value) {
-  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&anchor=sequence&OID=$OID&attr=clone_is_chimeric&attr_type=boolean&old_value='+old_value+'&new_value='+isChimeric+'&target_table=clone');
-  		}
-	}
+    // sets chimerism, which is the problem type
 	function new_proseqnum() {
 		var dbind=document.updateps.prt_seqdb.selectedIndex;
 		var dbname=document.updateps.prt_seqdb[dbind].value;
@@ -338,6 +341,15 @@ function jump(form_select){
  		}
         }
 
+	function update_problem_type(old_value , new_value) {
+        old_value.replace(/ /, "%20") ;
+ 	    old_value = escape(old_value);
+        new_value.replace(/ /, "%20") ; 
+ 	    new_value = escape(new_value);
+        if(old_value!=new_value){
+           window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&anchor=top&OID=$OID&attr=clone_problem_type&attr_type=boolean&old_value='+old_value+'&new_value='+new_value+'&target_table=clone');
+        }
+	}
 
 	function new_attrib_nomen(nomen_zdb,pub_obj) {
         	var pub_id = escape(pub_obj.value.strip());
@@ -548,6 +560,8 @@ function jump(form_select){
   <b>Previous Names:</b>
 <?/MIVAR>
 
+
+
 <?MISQL SQL="
   select dalias_alias, dalias_zdb_id
     from data_alias
@@ -576,6 +590,42 @@ function jump(form_select){
   <?/MIBLOCK>
 
 <?/MISQL>
+
+
+<?MICOMMENT>
+Only need to update clones, etc., which should be the only things that will have a problem type.
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA),$(EQ,$marker_type,BAC),$(EQ,$marker_type,PAC)))">
+
+    <?MIVAR name=mrkrvw_problem_type>NONE<?/MIVAR>
+    <?MISQL SQL="
+      SELECT clone_problem_type
+      FROM clone
+      WHERE clone_mrkr_zdb_id = '$OID';">
+      <?MIVAR NAME=mrkrvw_problem_type>$1<?/MIVAR>
+    <?/MISQL>
+      <form name="clone_problem">
+      <b>Update Problem Type:</b>
+      <select name=attrib_problem_type>
+      <option name="NONE" value="NONE">None</option>
+    <?MISQL SQL="
+      SELECT cpt.cpt_type from clone_problem_type cpt ;
+      ">
+      <option 
+      <?MIVAR COND="$(EQ,$1,$mrkrvw_problem_type)">
+      selected  
+      <?/MIVAR>
+       value="$1">$1</option>
+    <?/MISQL>
+      </select>
+      <?MIVAR>
+      <input type=button value="Update" onClick="update_problem_type('$mrkrvw_problem_type',this.form.attrib_problem_type.value)">
+      <?/MIVAR>
+      </form>
+
+<?/MIBLOCK>
+
 
 <?MIVAR NAME=mrkrvw_vec_index>1<?/MIVAR>
 <?MIVAR NAME=mrkrvw_vec_size>$(VECSIZE,$mrkrvw_alias_name_array)<?/MIVAR>
@@ -873,6 +923,24 @@ function jump(form_select){
 <?/MIVAR>
 
 
+<?MICOMMENT>
+=========================================================
+==    Marker View Problem Types
+=========================================================
+<?/MICOMMENT>
+<?MIVAR name=mrkrvw_problem_type><?/MIVAR>
+<?MISQL SQL="
+  SELECT clone_problem_type
+  FROM clone
+  WHERE clone_mrkr_zdb_id = '$OID';">
+  <?MIVAR NAME=mrkrvw_problem_type>$1<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR COND="$(AND,$(NE,$mrkrvw_problem_type,),$(NXST,$UPDATE))">
+<b>Problem Type:</b> &nbsp; &nbsp; $mrkrvw_problem_type <img src="/images/warning-noborder.gif" width=20 height=20 align=top>
+<?/MIVAR>
+
+
 <?MICOMMENT>=========================================================
             ==    Curator Note
 	    =========================================================
@@ -945,6 +1013,7 @@ COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITIO
 <?MIBLOCK COND="$(POSITION,$abbrev,:)">
     <?MIVAR NAME="mvphnote_mrkr_abbrev">$abbrev<?/MIVAR>
     <?MIVAR NAME="mvphnote_mrkr_type">$marker_type<?/MIVAR>
+    <?MIVAR NAME="mvphnote_mrkr_gene_has_chimeric_clone">$gene_has_chimeric_clone<?/MIVAR>
     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-markerview_placeholder_note.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
@@ -1061,12 +1130,19 @@ Use 'not exists' because outer join includes too many results.
 <?MISQL COND="$(EQ,$marker_type,GENE)" 
 SQL="
     select count(distinct xpatex_source_zdb_id)::integer
-      from expression_experiment join 
-           expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
+     from expression_experiment join 
+         expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
      where xpatex_gene_zdb_id = '$OID'
-     and not exists (select 'x' from marker
+     and not exists(
+         select 'x' from clone
+         where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
+         and clone_problem_type = 'Chimeric'
+     )
+     and not exists (
+         select 'x' from marker
          where mrkr_zdb_id = xpatex_probe_feature_zdb_id
-         and mrkr_abbrev[1,10] = 'WITHDRAWN:') 
+         and mrkr_abbrev[1,10] = 'WITHDRAWN:'
+     )
      ;">
 <?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
 <?/MISQL>
@@ -1081,6 +1157,7 @@ SQL="
      ;">
 <?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
 <?/MISQL>
+<?/MISQL>
 
 
 
@@ -1092,7 +1169,33 @@ SQL="
 
     <?MICOMMENT> query literature pub <?/MICOMMENT>
 
+    <?MICOMMENT>
+    If a OID is a gene, hide expression if its clone is WITHDRAWN or chimeric
+    <?/MICOMMENT>
     <?MIVAR COND="$(EQ,$marker_type,GENE)"
+    NAME="mrkrview_xpatsource_desc_sql">
+	select distinct pub_mini_ref
+       from expression_experiment join publication
+       on xpatex_source_zdb_id = zdb_id
+       where xpatex_gene_zdb_id = '$OID'
+	   and jtype <> 'Unpublished'
+       and not exists (
+           select 'x' from marker
+           where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+           and mrkr_abbrev[1,10] = 'WITHDRAWN:'
+       )
+       and not exists(
+           select 'x' from clone
+           where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+           and clone_problem_type = 'Chimeric'
+       )
+         ; 
+    <?/MIVAR>
+
+    <?MICOMMENT>
+    If a OID is not a gene, just show all data.
+    <?/MICOMMENT>
+    <?MIVAR COND="$(NE,$marker_type,GENE)"
     NAME="mrkrview_xpatsource_desc_sql">
 	select distinct pub_mini_ref
           from expression_experiment 
@@ -1134,21 +1237,36 @@ SQL="
 		$mrkrview_xpatsource_count publications
       <?/MIVAR>     
 
+      <?MICOMMENT>
+      If a OID is a gene, hide expression if its clone is WITHDRAWN or chimeric
+      <?/MICOMMENT>
      <?MIVAR COND="$(EQ,$marker_type,GENE)"
-      NAME=mrkrview_xpatfig_count_sql>
+      NAME="mrkrview_xpatfig_count_sql">
 	 select count(distinct xpatfig_fig_zdb_id)::integer
            from expression_pattern_figure
                 join expression_result 
 			on xpatfig_xpatres_zdb_id = xpatres_zdb_id
                 join expression_experiment 
 			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
-	  where xpatex_gene_zdb_id = '$OID'
-     and not exists (select 'x' from marker
-         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
-         and mrkr_abbrev[1,10] = 'WITHDRAWN:') 
-             ; 
-      <?/MIVAR>
+          where xpatex_gene_zdb_id = '$OID'
+         and not exists 
+         (
+           select 'x' from marker
+             where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+             and mrkr_abbrev[1,10] = 'WITHDRAWN:'
+         )
+         and not exists 
+         (
+          select 'x' from clone
+             where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+             and clone_problem_type = 'Chimeric' 
+         )
+         ;
+     <?/MIVAR>
 
+    <?MICOMMENT>
+    If a OID is not a gene, just show all data.
+    <?/MICOMMENT>
      <?MIVAR COND="$(NE,$marker_type,GENE)"
       NAME=mrkrview_xpatfig_count_sql>
 	 select count(distinct xpatfig_fig_zdb_id)::integer
@@ -1161,8 +1279,8 @@ SQL="
       <?/MIVAR>
 
       <?MISQL SQL="$mrkrview_xpatfig_count_sql">
-       <?/MISQL>
        <?MIVAR NAME=mrkrview_xpatfig_count>$1<?/MIVAR>     
+       <?/MISQL>
          <tr><td><b>All expression data: </b> </td>
 
            <td> <?MIVAR> 
@@ -1173,20 +1291,29 @@ SQL="
      <?/MIBLOCK>
 
 
+     <?MICOMMENT>
+     If a gene, then do no show if clone is WITHDRAWN: or is chimeric.
+     <?/MICOMMENT>
      <?MIVAR COND="$(EQ,$marker_type,GENE)"
-     NAME=mrkrview_xpatsubfig_sql>
+     NAME="mrkrview_xpatsubfig_sql">
 	 select count(distinct xpatfig_fig_zdb_id)::integer, 
 		pub.zdb_id, pub.pub_mini_ref,xpatex_probe_feature_zdb_id
            from expression_pattern_figure
                 join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                join expression_experiment 
-			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
+                join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id 
                 join publication pub on pub.zdb_id = xpatex_source_zdb_id
-      where xpatex_gene_zdb_id = '$OID'
-            and pub.jtype = 'Unpublished'
-     and not exists (select 'x' from marker
-         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
-         and mrkr_abbrev[1,10] = 'WITHDRAWN:') 
+          where xpatex_gene_zdb_id = '$OID'
+          and pub.jtype = 'Unpublished'
+          and not exists(
+             select 'x' from clone
+             where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
+             and clone_problem_type = 'Chimeric'
+          )
+          and not exists (
+             select 'x' from marker
+             where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+             and mrkr_abbrev[1,10] = 'WITHDRAWN:' 
+         )
          group by xpatex_probe_feature_zdb_id, pub.zdb_id, pub.pub_mini_ref; 
      <?/MIVAR>
 
@@ -1196,18 +1323,16 @@ SQL="
 		pub.zdb_id, pub.pub_mini_ref,xpatex_probe_feature_zdb_id
            from expression_pattern_figure
                 join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                join expression_experiment 
-			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
+                join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id 
                 join publication pub on pub.zdb_id = xpatex_source_zdb_id
-	  where xpatex_probe_feature_zdb_id = '$OID'
-            and pub.jtype = 'Unpublished'
-         group by xpatex_probe_feature_zdb_id, pub.zdb_id, pub.pub_mini_ref; 
+           where xpatex_probe_feature_zdb_id = '$OID'
+           and pub.jtype = 'Unpublished'
+           group by xpatex_probe_feature_zdb_id, pub.zdb_id, pub.pub_mini_ref; 
      <?/MIVAR>
 
      <?MISQL 
     SQL="$mrkrview_xpatsubfig_sql">
-
-         <?MIVAR NAME=mrkrview_xpatsubfig_count>$1<?/MIVAR>
+     <?MIVAR NAME=mrkrview_xpatsubfig_count>$1<?/MIVAR>
 	 <?MIVAR NAME=mrkrview_xpatsubpub_id>$2<?/MIVAR>
 	 <?MIVAR NAME=mrkrview_xpatsubpub_miniref>$3<?/MIVAR>
 	 <?MIVAR NAME=mrkrview_xpatsub_probe_id>$4<?/MIVAR>
@@ -1221,14 +1346,15 @@ SQL="
          <?/MIBLOCK>
 	 <?MISQL SQL="select count(distinct img_zdb_id)::integer 
            from image, expression_pattern_figure,
-                expression_result, expression_experiment 
+                expression_result, expression_experiment , clone
 	   where
 		img_fig_zdb_id=xpatfig_fig_zdb_id
            and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
            and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+           and  clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
            and  xpatex_source_zdb_id= '$mrkrview_xpatsubpub_id'
-	   and  xpatex_probe_feature_zdb_id='$mrkrview_xpatsub_probe_id'
-           ">
+           and  xpatex_probe_feature_zdb_id='$mrkrview_xpatsub_probe_id' 
+           ; ">
       <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
 	 <?MISQL SQL="
 		     select mrkr_name
@@ -1250,7 +1376,7 @@ SQL="
 
 
      <?MICOMMENT>Show only if OID is a GENE and contains expression<?/MICOMMENT>
-
+     <?MICOMMENT>Do not show if expression is WITHDRAWN: or 'chimeric'<?/MICOMMENT>
 	 <?MISQL SQL=" 
 	 SELECT  get_stg_name_long_html(stg_zdb_id) from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage 
 	 WHERE xpatex_gene_zdb_id = '$OID' 
@@ -1266,9 +1392,18 @@ SQL="
 	 AND  xpatex_genox_zdb_id = genox_zdb_id 
 	 AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  
 	 AND geno_zdb_id  = genox_geno_zdb_id and geno_is_wildtype = 't' 
+     AND not exists(
+         select 'x' from clone
+         where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
+         and clone_problem_type = 'Chimeric'
+     )
+     AND not exists (
+         select 'x' from marker
+         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+         and mrkr_abbrev[1,10] = 'WITHDRAWN:' 
+     )
 	 ORDER BY stg_hours_start asc 
-	 ;
-	 ">
+	 ; ">
 		 <?MIVAR COND="$(EQ,$MI_CURRENTROW,1)">
 			 <?MIVAR NAME=$FIRSTSTAGE>$1<?/MIVAR>
 	     <?/MIVAR>
@@ -2181,7 +2316,7 @@ union
 
 <?MICOMMENT> ceate a list of chimeric clones <?/MICOMMENT>
 <?MIVAR NAME=chimeric_clone_list><?/MIVAR>
-<?MISQL SQL="select clone_mrkr_zdb_id from clone where clone_is_chimeric = 't';">
+<?MISQL SQL="select clone_mrkr_zdb_id from clone where clone_problem_type = 'Chimeric';">
   $(VECAPPEND,$chimeric_clone_list,$1)
 <?/MISQL>
 <?MIVAR NAME=chimeric_clone_list>$(SEPARATE,$chimeric_clone_list,"','")<?/MIVAR>
@@ -2231,7 +2366,7 @@ union
 <?MIBLOCK COND="$(XST,$UPDATE)">
   <form name=updateseq>
   <?MIVAR NAME=seq_tab>&nbsp;&nbsp;&nbsp;<?/MIVAR>
-  <br><br>
+  <br>
   <?MIVAR>$seq_tab<?/MIVAR>
   <b>Link to Seq DB:</b> &nbsp;
   DBname:<SELECT name=seqdb>
@@ -2309,23 +2444,6 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
   <input type=button value="Add it!" onClick=new_attrib_seq();>
   <?MICOMMENT>Added CDNA for this condition (FogBugz 410) <?/MICOMMENT>
 
-  <?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA))">
-
-    <?MISQL SQL="
-      SELECT clone_is_chimeric
-      FROM clone
-      WHERE clone_mrkr_zdb_id = '$OID';">
-
-      <br>
-      <?MIVAR>$seq_tab<?/MIVAR>
-      <b>Chimeric:</b>
-        Yes:<input type=radio name=chimericism value=t $(IF,$(EC,$1,t),checked)>
-        No:<input type=radio name=chimericism value=f $(IF,$(EC,$1,f),checked)>
-        <input type=button value="Update" onclick=setChimericism('$1')>
-      (Chimeric links are not displayed on gene pages.)
-
-    <?/MISQL>
-  <?/MIBLOCK>
   <br><br>
 <?/MIBLOCK>  <?MICOMMENT> end update <?/MICOMMENT>
 

@@ -18,6 +18,7 @@ public class MarkerRelationship {
         GENE_ENCODES_SMALL_SEGMENT ("gene encodes small segment"),
         GENE_HYBRIDIZED_BY_SMALL_SEGMENT("gene hybridized by small segment"),
         KNOCKDOWN_REAGENT_TARGETS_GENE("knockdown reagent targets gene"),
+        GENE_HAS_ARTIFACT("gene has artifact"),
         PROMOTER_OF("promoter of");
 
         private final String value;

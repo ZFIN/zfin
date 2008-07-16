@@ -6,8 +6,9 @@ DESCRIPTION:
 Shows nomenclature disclaimer for placeholder genes
 
 INPUT VARS:
-    $mvphnote_mrkr_abbrev  ::  mrkr_abbrev of marker to show disclaimer for
-    $mvphnote_mrkr_type    ::  mrkr_type of marker to show disclaimer for
+    $mvphnote_mrkr_abbrev       ::  mrkr_abbrev of marker to show disclaimer for
+    $mvphnote_mrkr_type         ::  mrkr_type of marker to show disclaimer for
+    $mvphnote_mrkr_gene_has_chimeric_clone ::  if gene has a chimeric clone
 
 OUTPUT VARS: none
 
@@ -64,16 +65,19 @@ where mrkr_abbrev like '%:%'
 
 <?MICOMMENT> ** WITHDRAWN: ** <?/MICOMMENT>
 <?MIBLOCK COND="$(EC,$(POSITION,$mvphnote_mrkr_abbrev,WITHDRAWN:),1)">
-<?MICOMMENT>
-We will use this when we integrate the chimeric project as part of FogBugz 2792.
 
--- Gene with no chimeric clone. --
-<?MIVAR NAME="mvphnote_label"><span class="error">This gene was based on a non-zebrafish clone and has been withdrawn.</span><?/MIVAR>
+    <?MIBLOCK COND="$(EQ,$mvphnote_mrkr_gene_has_chimeric_clone,t)">
+    <?MICOMMENT>
+    -- Gene that has been withdrawn but has a chimeric clone. --
+    <?/MICOMMENT>
+        <?MIVAR NAME="mvphnote_label"><span class="error">This gene has been withdrawn because it was derived from a chimeric clone.</span><?/MIVAR>
+    <?MIELSE>
+    <?MICOMMENT>
+    -- Gene with no chimeric clone. --
+    <?/MICOMMENT>
+        <?MIVAR NAME="mvphnote_label"><span class="error">This gene was based on a non-zebrafish clone and has been withdrawn.</span><?/MIVAR>
+    <?/MIBLOCK>
 
--- Gene that has been withdrawn but has a chimeric clone. --
-<?MIVAR NAME="mvphnote_label"><span class="error">This gene has been withdrawn because it was derived from a chimeric clone.</span><?/MIVAR>
-<?/MICOMMENT>
-<?MIVAR NAME="mvphnote_label"><span class="error">This gene has been withdrawn.</span><?/MIVAR>
 <?/MIBLOCK>
 
 
@@ -283,21 +287,39 @@ the Sanger Institute.
 <?MICOMMENT> ** WITHDRAWN: ** <?/MICOMMENT>
 <?MICOMMENT>
 We will use this when we integrate the chimeric project as part of FogBugz 2792.
-
--- Withdrawn clone. --
-<?MIVAR NAME="mvphnote_label"><span class="error">This clone has been derived from a non-zebrafish species and has been withdrawn.</span><?/MIVAR>
-
--- Withdrawn chimeric clone --
-<?MIVAR NAME="mvphnote_label"><span class="error">This clone has been withdrawn because it is chimeric clone.</span><?/MIVAR>
 <?/MICOMMENT>
-<?MIBLOCK COND="$(EC,$(POSITION,$mvphnote_mrkr_abbrev,WITHDRAWN:),1)">
+
+<?MIVAR NAME=mvphnote_is_chimeric>f<?/MIVAR>
+  <?MISQL SQL="
+    select clone_problem_type
+      from marker left outer join clone on mrkr_zdb_id=clone_mrkr_zdb_id
+      where mrkr_zdb_id = '$OID'
+      ;
+    ">
+   <?MIVAR COND="$(EQ,$1,Chimeric)"  NAME=mvphnote_is_chimeric>t<?/MIVAR>
+  <?/MISQL>
+
+
+<?MIVAR NAME="mvphnote_label"><?/MIVAR>
+
+<?MIBLOCK COND="$(EQ,$(POSITION,$mvphnote_mrkr_abbrev,WITHDRAWN:),1)">
+<?MIBLOCK COND="$(EQ,$mvphnote_is_chimeric,t)">
+<?MICOMMENT>
+-- Withdrawn chimeric clone --
+<?/MICOMMENT>
+<?MIVAR NAME="mvphnote_label"><span class="error">This clone has been withdrawn because it is chimeric.</span><?/MIVAR>
+<?MIELSE>
+<?MICOMMENT>
+-- Withdrawn clone. --
+<?/MICOMMENT>
+<?MIVAR NAME="mvphnote_label"><span class="error">This clone has been derived from a non-zebrafish species and has been withdrawn.</span><?/MIVAR>
+<?MICOMMENT> -- Unused -- 
 <span class="error">This clone has been withdrawn.</span>
+<?/MICOMMENT>
+<?/MIBLOCK>
 <?/MIBLOCK>
 
-
-
-
-
+<?MIVAR>$mvphnote_label<?/MIVAR>
 
 
 <?/MIBLOCK>

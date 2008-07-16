@@ -542,52 +542,6 @@ sub featureAssociatedWithGenotype($$$) {
 
 }
 
-#========================  Features  ================================
-#
-#---------------------------------------------------------------
-# withdrawnSymbolsConsistent
-#
-# features with names like un_* related to genes, must be kept up to 
-# date.  feature_names/abbrevs should equal current gene abbrev plus un_* prefix
-#
-# Parameter
-# $ Email Address for recipients
-
-sub withdrawnSymbolsConsistent($) {
-  my $routineName = "withdrawnSymbolsConsistent";
-  
- my $sql = "select m.mrkr_zdb_id,m.mrkr_name,m.mrkr_abbrev 
-            from marker m
-            where
-            m.mrkr_name like 'WITHDRAWN:%'
-            and
-            m.mrkr_abbrev not like 'WITHDRAWN:%'
-            union
-            select m.mrkr_zdb_id,m.mrkr_name,m.mrkr_abbrev
-            from marker m
-            where
-            m.mrkr_abbrev like 'WITHDRAWN:%'
-            and
-            m.mrkr_name not like 'WITHDRAWN:%'
-               ;";
-
-  my @colDesc = ("Zdb ID        ",
-		         "name          ",
-                 "abrrev        ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  
-  
- if ( $nRecords > 0 ) {
-  my $sendToAddress = $_[0];
-  my $subject = "Withdrawn marker has inconsistent names";
-  my $errMsg = "There are $nRecords withdrawn markers inconsistently named. ";
-    
-  logError ($errMsg);
-  &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  &recordResult($routineName, $nRecords);
- }
-}
 
 
 #========================  Features  ================================
@@ -2885,6 +2839,39 @@ sub countBots($){
 #Parameter
 # $      Email Address for recipients
 # 
+sub onlyProblemClonesHaveArtifactOf($) {
+
+    open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write.";
+
+    my $sql = "
+        select m.mrkr_name,m.mrkr_zdb_id,m.mrkr_abbrev
+        from clone c 
+        join marker_relationship mr on c.clone_mrkr_zdb_id=mr.mrel_mrkr_2_zdb_id
+        join marker m on c.clone_mrkr_zdb_id=m.mrkr_zdb_id
+        where
+        c.clone_problem_type is null
+        and
+        mr.mrel_type='gene has artifact' 
+      ";
+
+    my @colDesc = ("mrkr_zdb_id", "mrkr_name","mrkr_abbrev");
+    my $nRecords = execSql($sql,undef,@colDesc);
+    if($nRecords >0){
+        my $sendToAddress = $_[0];
+        my $subject = "Found $nRecords clones with 'has artifact of' relations, but no problem types";
+        my $routineName = "onlyProblemClonesHaveArtifactOf";
+        my $msg = "Found $nRecords clones with 'has artifact of' relations, but no problem types.";
+        &sendMail($sendToAddress, $subject, $routineName, $msg, );
+    }
+    close(RESULTFILE);
+}
+
+
+
+#-------------------
+#Parameter
+# $      Email Address for recipients
+# 
 sub findWithdrawnMarkerMismatch($) {
 
     open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write.";
@@ -3348,7 +3335,7 @@ my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
 if($daily) {
 #    checkClosedElsevierFigureNoExpressions($xpatEmail); # Elsevier is allowing this for now
     findWithdrawnMarkerMismatch($geneEmail); 
-    withdrawnSymbolsConsistent($xpatEmail);
+    onlyProblemClonesHaveArtifactOf($geneEmail); 
     unFeatureNameAbbrevUpdate($dbaEmail);
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
     xpatHasConsistentMarkerRelationship($xpatEmail);

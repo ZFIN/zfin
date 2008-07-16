@@ -492,7 +492,7 @@ update clone set (clone_polymerase_name, clone_digest,
 -- new clone record
 insert into clone 
   (
-    clone_mrkr_zdb_id,  clone_is_chimeric,
+    clone_mrkr_zdb_id,  clone_problem_type,
     clone_vector_name,  clone_polymerase_name,
     clone_insert_size,  clone_cloning_site,
     clone_digest,       clone_probelib_zdb_id,

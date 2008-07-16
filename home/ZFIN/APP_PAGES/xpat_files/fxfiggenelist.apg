@@ -39,13 +39,15 @@ http://<!--|DOMAIN_NAME|-->/images/darrow.gif
 <?MIVAR NAME=$fxfigge_list_items><?/MIVAR>
 <?MIVAR NAME=$fxfigge_down_arrow>http://<!--|DOMAIN_NAME|-->/images/darrow.gif<?/MIVAR>
 <?MISQL SQL="
-    SELECT distinct get_mrkr_abbrev_html(mrkr_zdb_id), mrkr_zdb_id, mrkr_name_order
+    SELECT distinct get_mrkr_abbrev_html(mrkr_zdb_id), mrkr_zdb_id, mrkr_name_order, mrel_type
       FROM expression_pattern_figure, expression_result,
-           expression_experiment, marker
+           expression_experiment, marker, marker_relationship
      WHERE xpatfig_fig_zdb_id = '$OID'
        AND xpatfig_xpatres_zdb_id = xpatres_zdb_id
        AND xpatres_xpatex_zdb_id = xpatex_zdb_id
        AND xpatex_gene_zdb_id = mrkr_zdb_id
+       AND mrel_mrkr_1_zdb_id = xpatex_gene_zdb_id
+       AND mrel_mrkr_2_zdb_id = xpatex_probe_feature_zdb_id
      ORDER BY mrkr_name_order;">
 
     <?MIBLOCK COND=$(EC,$fxfigge_display_option,anchor)>
@@ -57,9 +59,9 @@ http://<!--|DOMAIN_NAME|-->/images/darrow.gif
     <?/MIBLOCK>
 
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-        <?MIVAR NAME=fxfigge_list_items>$fxfigge_gene_href$1</a>$fxfigge_down_arrow<?/MIVAR>
+        <?MIVAR NAME=fxfigge_list_items>$fxfigge_gene_href$1</a>$fxfigge_down_arrow <font size=-1>[$4]</font><?/MIVAR>
     <?MIELSE>
-        <?MIVAR>$(VECAPPEND,fxfigge_list_items,$fxfigge_gene_href$1</a>$fxfigge_down_arrow)<?/MIVAR>
+        <?MIVAR>$(VECAPPEND,fxfigge_list_items,$fxfigge_gene_href$1</a>$fxfigge_down_arrow <font size=-1>[$4])<?/MIVAR>
     <?/MIBLOCK>
     
 <?/MISQL>

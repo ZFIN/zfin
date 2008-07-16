@@ -935,6 +935,9 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 
 	      <?MIVAR NAME=$mrkrsel_xpat_fig_count>0<?/MIVAR>
 
+          <?MICOMMENT>
+          Do not show genes that are withdrawn or have withdrawn clones or chimeric clones
+          <?/MICOMMENT>
 	      <?MISQL SQL="
          	  select distinct xpatfig_fig_zdb_id
           	    from expression_experiment, expression_result,
@@ -944,6 +947,11 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 		     and xpatex_zdb_id = xpatres_xpatex_zdb_id
                      and xpatres_zdb_id = xpatfig_xpatres_zdb_id
                      and xpatex_gene_zdb_id = gene.mrkr_zdb_id
+             and not exists(
+                 select 'x' from clone
+                 where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
+                 and clone_problem_type = 'Chimeric'
+             )
  		     and not exists (select 'x' from marker
                         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
                                     and mrkr_abbrev[1,10] = 'WITHDRAWN:') ;">
@@ -960,7 +968,10 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
               <?MIVAR COND="$(>,$mrkrsel_xpat_fig_count,1)">
                   <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>$mrkrsel_xpat_fig_count figure(s) </A>
 	      <?/MIVAR>
-           
+          
+          <?MICOMMENT>
+          Do not show genes that are withdrawn or have withdrawn clones or chimeric clones
+          <?/MICOMMENT>
 	      <?MISQL SQL="
          	  select img_zdb_id
           	    from expression_experiment, expression_result,
@@ -971,6 +982,11 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
                      and xpatres_zdb_id = xpatfig_xpatres_zdb_id
                      and xpatfig_fig_zdb_id = img_fig_zdb_id
                      and xpatex_gene_zdb_id = gene.mrkr_zdb_id
+                     and not exists(
+                         select 'x' from clone
+                         where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
+                         and clone_problem_type = 'Chimeric'
+                     )
                      and not exists (select 'x' from marker
                         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
                                     and mrkr_abbrev[1,10] = 'WITHDRAWN:') ;">

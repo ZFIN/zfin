@@ -42,7 +42,7 @@ public class PublicationRepositoryTest {
     }
 
 
-    //@Test
+//    @Test
     public void retrieveSinglePublication() {
         Session session = HibernateUtil.currentSession();
         session.beginTransaction();
@@ -143,6 +143,7 @@ public class PublicationRepositoryTest {
         String termName = "neural rod";
         AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
         AnatomyItem term = aoRepository.getAnatomyItem(termName);
+        assertNotNull(term);
 
         int number = pr.getTotalNumberOfFiguresPerAnatomyItem(term);
 //        assertEquals("200 images", 213, number);
@@ -150,10 +151,11 @@ public class PublicationRepositoryTest {
     }
 
     @Test
-    public void getNumberOfFiguresPerAnatomyStructureLateralFloorPlate() {
-        String termName = "lateral floor plate";
+    public void getNumberOfFiguresPerAnatomyStructureFloorPlate() {
+        String termName = "floor plate";
         AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
         AnatomyItem term = aoRepository.getAnatomyItem(termName);
+        assertNotNull(term);
         int number = pr.getTotalNumberOfFiguresPerAnatomyItem(term);
 //        assertEquals("13 images", 14, number);
         assertTrue(number > 0);

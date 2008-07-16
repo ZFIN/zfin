@@ -438,7 +438,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 
 <?MICOMMENT> create a list of chimeric clones <?/MICOMMENT>
 <?MIVAR NAME=chimeric_clone_list><?/MIVAR>
-<?MISQL SQL="select clone_mrkr_zdb_id from clone where clone_is_chimeric = 't';">
+<?MISQL SQL="select clone_mrkr_zdb_id from clone where clone_problem_type = 'Chimeric';">
   $(VECAPPEND,$chimeric_clone_list,$1)
 <?/MISQL>
 <?MIVAR NAME=chimeric_clone_list>$(SEPARATE,$chimeric_clone_list,"','")<?/MIVAR>
@@ -677,6 +677,135 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       <?/MISQL>
 
       <?MIVAR COND="$(XST,$contains_zdb_id)"></TABLE><?/MIVAR>
+
+
+
+<?MICOMMENT> -------- ARTIFACT OF -------- <?/MICOMMENT>
+
+      <?MICOMMENT>
+      Marking as distinct because can have multiple dblinks.
+      <?/MICOMMENT>
+      <?MISQL SQL="
+        select distinct mrel_mrkr_1_zdb_id, mrkr_abbrev, mrkrtype_type_display, mrkrtype_significance, mrel_zdb_id,mrel_mrkr_2_zdb_id
+        from marker_relationship, marker, foreign_db_contains, marker_types, db_link
+        where mrel_mrkr_1_zdb_id = '$OID'
+          and mrel_type = 'gene has artifact'
+          and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+          and mrkr_type = marker_type
+          and mrkr_zdb_id = dblink_linked_recid
+          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdbdt_super_type = 'sequence'
+        order by mrkrtype_significance, mrkrtype_type_display desc, mrkr_abbrev
+      ;">
+
+        <?MIVAR COND=$(NXST,$artifact_of_mrkr_abbrev)>
+          <br>
+          <br>
+          <p><img src="/images/warning-noborder.gif" width=20 height=20 align=top>
+          <b>$link_backto_OID Has artifacts:</b> <br>
+          <TABLE width=100% border=0 bgcolor=$highlight>
+            <TR bgcolor=#ccccccc>
+              <TD width=20%><B>Marker</B></TD>
+              <TD width=10%><B>Type</B></TD>
+              <TD width=40%><B>Accession #</B></TD>
+              <TD align=right width=10%><B>Length</B></TD>
+              <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
+            </TR>
+        <?/MIVAR>
+
+        <?MIVAR NAME=artifact_of_zdb_id>$6<?/MIVAR>
+        <?MIVAR NAME=artifact_of_mrkr_abbrev>$2<?/MIVAR>
+        <?MIVAR NAME=artifact_of_mrkr_type>$3<?/MIVAR>
+        <?MIVAR NAME=artifact_of_mrel_zdb_id>$5<?/MIVAR>
+
+        <TR>
+          <TD>
+            [$artifact_of_mrkr_type]
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$artifact_of_zdb_id"
+            > $artifact_of_mrkr_abbrev</A>
+            <?MISQL SQL="
+              select WebExplode(object,'dataId=$artifact_of_mrel_zdb_id&type=recattrib&info=standard')
+              from webPages
+              where ID='aa-miniref_display.apg';">
+              $1
+            <?/MISQL>
+          </TD>
+
+          <?MIVAR NAME=previous_data_type><?/MIVAR>
+
+      <?MISQL SQL="
+        select fdbcont_fdbdt_data_type, dblink_length, fdbcont_fdb_db_name,
+               fdb_db_query || dblink_acc_num || (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
+               dblink_acc_num_display, dblink_zdb_id,
+               fdb_db_significance, fdbdt_display_order
+        from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
+        where dblink_linked_recid = '$artifact_of_zdb_id'
+          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = fdb_db_name
+          and fdbcont_fdbdt_super_type = 'sequence'
+          and fdbcont_fdbdt_super_type = fdbdt_super_type
+          and fdbcont_fdbdt_data_type = fdbdt_data_type
+          and fdb_db_name != 'BLAST'
+          order by fdbdt_display_order, fdbcont_fdbdt_data_type, dblink_length desc, fdb_db_significance
+      ;">
+
+        <?MIVAR NAME=data_type>$1<?/MIVAR>
+        <?MIVAR NAME=dblink_length>$2<?/MIVAR>
+        <?MIVAR NAME=db_name>$3<?/MIVAR>
+        <?MIVAR NAME=link_url>$4<?/MIVAR>
+        <?MIVAR NAME=acc_num>$5<?/MIVAR>
+        <?MIVAR NAME=dataId>$6<?/MIVAR>
+
+          <?MIBLOCK COND=$(XST,$artifact_of_data_type)>
+            <TR style="height:2.25em;"><TD>&nbsp;</TD>
+          <?/MIBLOCK>
+
+          <TD>
+            $(IF,$(AND,$(XST,$artifact_of_data_type),$(EC,$data_type,$artifact_of_data_type)),&nbsp;,$data_type)
+          </TD>
+          <TD>
+            <A HREF="$link_url">$db_name:$acc_num</A>
+            <?MISQL SQL="
+              select WebExplode(object,'dataId=$dataId&type=recattrib&info=standard')
+              from webPages
+              where ID='aa-miniref_display.apg';">
+              $1
+            <?/MISQL>
+          </TD>
+          <TD align=right>
+            <nobr>
+                <?MIVAR>$dblink_length<?/MIVAR>
+                <?MIBLOCK COND=$(NC,$dblink_length,)>
+                   <?MIBLOCK COND=$(EQ,$data_type,Polypeptide)> aa
+                   <?MIELSE> bp
+                   <?/MIBLOCK>
+                <?/MIBLOCK>
+            </nobr>
+          </TD>
+          <TD align=center>
+            <?MICOMMENT>bizzare kludge to prevent seqt_acc_len from being undefined after the first webexplode &seqt_acc_len=$dblink_length<?/MICOMMENT>
+            <?MIVAR NAME=seqt_acc_len>$dblink_length<?/MIVAR>
+             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
+          </TD>
+        </TR>
+        <?MIVAR NAME=artifact_of_data_type>$data_type<?/MIVAR>
+
+      <?/MISQL>
+
+        $(UNSETVAR,$artifact_of_data_type)
+
+      <?/MISQL>
+
+      <?MIVAR COND="$(XST,$artifact_of_zdb_id)"></TABLE><?/MIVAR>
+
+
+
+
+
+
+
+
+
 
     </form>
 

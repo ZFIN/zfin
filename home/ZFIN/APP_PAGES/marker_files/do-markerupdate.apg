@@ -288,12 +288,33 @@ marker.<?/MIVAR>
       A potential problem: not all ESTs have clones.
   <?/MICOMMENT>
   
-  <?MIBLOCK COND="$(EC,$attr,clone_is_chimeric)">
-    <?MISQL SQL="
-      UPDATE clone
-      SET clone_is_chimeric = '$new_value'
-      WHERE clone_mrkr_zdb_id = '$OID';">
-    <?/MISQL>  
+  <?MIBLOCK COND="$(EC,$attr,clone_problem_type)">
+    <?MIBLOCK COND="$(NE,$new_value,NONE)">
+      <?MISQL SQL="
+          UPDATE clone
+          SET clone_problem_type = '$new_value'
+          WHERE clone_mrkr_zdb_id = '$OID';">
+      <?/MISQL>  
+
+      <?MICOMMENT>
+      Set marker_relation to "artifact of" where this OID is the second marker relation.  The reverse, which is much rarer, must be set manually.
+      <?/MICOMMENT>
+
+      <?MISQL SQL="
+        UPDATE  marker_relationship 
+        SET mrel_type='gene has artifact'
+        WHERE mrel_mrkr_2_zdb_id='$OID'
+      ;">
+      <?/MISQL>
+
+
+    <?MIELSE>
+      <?MISQL SQL="
+          UPDATE clone
+          SET clone_problem_type = null
+          WHERE clone_mrkr_zdb_id = '$OID';">
+      <?/MISQL>  
+    <?/MIBLOCK>
   <?/MIBLOCK>
 
 	<?MIVAR NAME=$fdbcont_zdb_id>$xtra_param<?/MIVAR>

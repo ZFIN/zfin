@@ -223,6 +223,14 @@ public class EnumValidationService {
         checkEnumVersusDatabaseCollection(typeList, ForeignDB.AvailableName.values()) ;
     }
 
+    @ServiceTest
+    public void validateCloneProblemType() throws EnumValidationException {
+        String hql = "select cpt_type from clone_problem_type cpt";
+        List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        checkEnumVersusDatabaseCollection(typeList, Clone.ProblemType.values()) ;
+    }
+
+
 
     public void checkEnumVersusDatabaseCollection(List<String> list,Enum[] enumValues)
         throws EnumValidationException

@@ -14,6 +14,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
+import org.zfin.marker.Clone;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
@@ -54,7 +55,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "WHERE res.anatomyTerm = :aoTerm " +
                 "AND res.expressionExperiment = exp " +
                 "AND exp.clone = clone " +
-                "AND clone.rating = 4 ";
+                "AND clone.rating = 4 "+
+                "AND clone.problem is null" ; 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", anatomyTerm);
         List<Publication> list = query.list();
@@ -211,6 +213,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     /**
      * Note: firstRow must be 1 or greater, i.e. the way a user would describes
      * the record number. Hibernate starts with the first row numbered '0'.
+     * Do not include records where the gene or probe is WITHDRAWN.
+     * Do not include records where the probe is Chimeric.
 	 * Written in native SQL because need to order by number of figures.
      *
      * @param anatomyTerm     anatomy term
@@ -221,7 +225,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         if (firstRow < 0)
             throw new RuntimeException("First Row number <" + firstRow + "> is invalid");
         // Hibernate starts at 0 while the argument expects to start at 1
-//        firstRow--;  // from old implementation I think
 
         Session session = HibernateUtil.currentSession();
 
@@ -244,7 +247,17 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       geno.geno_is_wildtype = :isWildtype AND " +
                 "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND " +
                 "       gene.mrkr_abbrev[1,10] <> :withdrawn  AND   " +
-                "       probe.mrkr_abbrev[1,10] <> :withdrawn  " +
+                "       not exists( " +
+                "           select 'x' from clone " +
+                "           where clone.clone_mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
+                "           and clone.clone_problem_type = :chimeric " + 
+                "       ) AND " + 
+                // todo: fix this query
+                "       not exists( "  + 
+                "           select 'x' from marker m2" +
+                "           where m2.mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
+                "           and m2.mrkr_abbrev[1,10] = :withdrawn  " +
+                "       ) " +
                 "GROUP BY exp.xpatex_gene_zdb_id, gene.mrkr_abbrev " +
                 "ORDER BY numOfFig DESC";
         SQLQuery query = session.createSQLQuery(hql);
@@ -255,6 +268,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
         query.setString("withdrawn","WITHDRAWN:");
+        query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
         ScrollableResults results = query.scroll() ;
         results.last() ;
         int totalResults = results.getRowNumber() + 1;
@@ -284,14 +298,21 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public int getTotalNumberOfFiguresPerAnatomyItem(AnatomyItem anatomyTerm) {
 
         Session session = HibernateUtil.currentSession();
-        String hql = "select count(distinct fig) from Figure fig, ExpressionResult res where " +
-                "res.anatomyTerm = :aoTerm AND " +
-                "fig member of res.figures AND " +
-                "res.expressionFound = :expressionFound AND "+
-                "res.expressionExperiment.marker.abbreviation not like 'WITHDRAWN:%' ";
+        String hql = "select count(distinct fig) from Figure fig, ExpressionResult res " +
+                "WHERE res.anatomyTerm = :aoTerm " +
+                "AND fig member of res.figures " +
+                "AND res.expressionFound = :expressionFound "+
+                "AND res.expressionExperiment.marker.abbreviation not like :withdrawn " +
+                "AND ( " +
+                    "res.expressionExperiment.clone.problem is null " +
+                    "OR "+
+                    "res.expressionExperiment.clone.problem <> :chimeric "  +
+                ")";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setParameter("aoTerm", anatomyTerm);
+        query.setString("withdrawn", "WITHDRAWN:%" );
+        query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString());
         return (Integer) query.uniqueResult();
     }
 
