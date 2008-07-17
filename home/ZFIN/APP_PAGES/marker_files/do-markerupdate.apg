@@ -559,11 +559,16 @@ marker.<?/MIVAR>
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
       <?/MISQL>
       <?MIELSE>
+      <?MIVAR>
+      alert("$xtra_param") ; 
+      <?/MIVAR>
       <?MISQL COND="$(EC,$info,seqacc)" SQL="
-	   select dblink_zdb_id 
-	     from db_link
-	    where dblink_linked_recid = '$OID'
-	      and dblink_acc_num = '$old_value';">
+	   select dblink_zdb_id
+       from db_link dbl join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id
+	    where dbl.dblink_linked_recid = '$OID'
+	      and dbl.dblink_acc_num = '$old_value'
+	      and fdbc.fdbcont_zdb_id = '$xtra_param';
+          ">
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
       <?/MISQL>	
       <?/MIBLOCK>
