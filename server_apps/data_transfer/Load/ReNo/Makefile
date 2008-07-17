@@ -38,13 +38,13 @@ include $(TOP)/make.default.rules
 # ---------------  Misc Targets  ----------------------------------------
 
 run	:
-	write-run-report-hit.r run.ctx 
+	./write-run-report-hit.r run.ctx 
 	cp -f *.unl $(TARGETDIR)
 	$(TARGETDIR)/load_run_report_hit.sh
 	rm -f *.unl
 
 run_commit	:
-	write-run-report-hit.r run.ctx
+	./write-run-report-hit.r run.ctx
 	cp -f *.unl $(TARGETDIR)
 	$(TARGETDIR)/load_run_report_hit.sh commit
 	rm -f *.unl
