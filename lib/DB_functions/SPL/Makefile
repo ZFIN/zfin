@@ -56,7 +56,7 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
                p_insert_into_record_attribution_datazdbids.sql \
 	       p_insert_marker_go_ev.sql p_populate_go_root_terms.sql \
 	       p_check_drop_go_root_term.sql \
-	       get_mrkr_abbrev_html.sql get_mrkr_name_html.sql \
+	       get_mrkr_abbrev_html.sql get_mrkr_name_html.sql p_update_clone_relationship.sql \
 
 PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       pub_xpat_curation_status.sql jrnl_acknowledgment.sql \

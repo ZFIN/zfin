@@ -31,6 +31,8 @@ TRIGGERS = \
 	atomic_phenotype_update_trigger.sql \
 	apatoinf_insert_trigger.sql \
 	apatoinf_update_trigger.sql \
+	clone_problem_type_insert_trigger.sql \
+	clone_problem_type_update_trigger.sql \
 	data_alias_insert_trigger.sql \
 	dalias_alias_update_trigger.sql \
 	db_link_insert_trigger.sql \
