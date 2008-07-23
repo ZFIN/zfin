@@ -107,9 +107,9 @@
         <discriminator type="string"
                        formula="(
                     CASE dblink_linked_recid[1,9]
-                    WHEN 'ORTHO' THEN 'Orthology'
-                    WHEN 'ANAT' THEN 'Anatomy'
-                    ELSE  'Marker'
+                    WHEN 'ZDB-ORTHO' THEN 'ORTH'
+                    WHEN 'ZDB-ANAT-' THEN 'ANAT'
+                    ELSE  'MARK'
                   END
                 )"
                 />
@@ -119,13 +119,13 @@
         <many-to-one name="referenceDatabase" column="dblink_fdbcont_zdb_id"
                      class="org.zfin.sequence.ReferenceDatabase" not-null="true" lazy="no-proxy"/>
 
-        <subclass name="org.zfin.sequence.MarkerDBLink" discriminator-value="Marker">
+        <subclass name="org.zfin.sequence.MarkerDBLink" discriminator-value="MARK">
             <many-to-one name="marker" column="dblink_linked_recid" class="org.zfin.marker.Marker" not-null="true"/>
         </subclass>
-        <subclass name="org.zfin.sequence.OrthologueDBLink" discriminator-value="Orthology">
+        <subclass name="org.zfin.sequence.OrthologueDBLink" discriminator-value="ORTH">
             <many-to-one name="orthologue" column="dblink_linked_recid" class="org.zfin.orthology.Orthologue" not-null="true"/>
         </subclass>
-        <subclass name="org.zfin.anatomy.AnatomyDBLink" discriminator-value="Anatomy">
+        <subclass name="org.zfin.anatomy.AnatomyDBLink" discriminator-value="ANAT">
             <many-to-one name="anatomyItem" column="dblink_linked_recid" class="org.zfin.anatomy.AnatomyItem" not-null="true"/>
         </subclass>
 
