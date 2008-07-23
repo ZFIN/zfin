@@ -418,8 +418,9 @@ insert into blast_query (
     bqry_runcan_zdb_id,
     bqry_accbk_pk_id
 )
-select * from tmp_blast_query where tbqry_runcan_zdb_id is not NULL
-;
+
+-- can get very verbose
+--select * from tmp_blast_query where tbqry_runcan_zdb_id is not NULL;
 
 create index tmp_blast_query_tbqry_accbk_pk_idx
     on tmp_blast_query(tbqry_accbk_pk_id) in idxdbs1;
@@ -504,12 +505,15 @@ select count(thit_acc) all_told,count(distinct thit_acc) howmany from tmp_hit wh
 
 
 -- DEBUG
+{
 select thit_acc,accbk_fdbcont_zdb_id,thit_target_id
  from tmp_hit, accession_bank
  where thit_acc =  accbk_acc_num
    and (thit_target_id IS NULL OR accbk_pk_id != thit_target_id)
  ;
+}
 
+{
 select thit_acc,thit_acc_len, thit_defline
  from tmp_hit
  where thit_acc in (
@@ -518,7 +522,7 @@ select thit_acc,thit_acc_len, thit_defline
  	  where thit_target_id IS NULL
  	 group by 1 having count(*) > 1
 ) order by 1,2;
-
+}
 
 
 
