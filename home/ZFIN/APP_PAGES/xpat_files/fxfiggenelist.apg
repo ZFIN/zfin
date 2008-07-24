@@ -38,7 +38,41 @@ http://<!--|DOMAIN_NAME|-->/images/darrow.gif
 <?MIVAR COND=$(NXST,$fxfigge_display_option) NAME=$fxfigge_display_option><?/MIVAR>
 <?MIVAR NAME=$fxfigge_list_items><?/MIVAR>
 <?MIVAR NAME=$fxfigge_down_arrow>http://<!--|DOMAIN_NAME|-->/images/darrow.gif<?/MIVAR>
+<?MIVAR NAME="fxfigge_isunpublished">f<?/MIVAR>
 <?MISQL SQL="
+select 't'
+from publication p join figure f on f.fig_source_zdb_id=p.zdb_id
+where f.fig_zdb_id='$OID'
+and p.jtype = 'Unpublished'
+">
+<?MIVAR NAME="fxfigge_isunpublished">$1<?/MIVAR>
+<?/MISQL>
+
+<?MICOMMENT>
+We only want to display marker_rlation if there are multiple relations, 
+   otherwise, we want to treat it like a published journal, and not
+   show the encoding.
+<?/MICOMMENT>
+<?MISQL  COND="$(EC,$fxfigge_isunpublished,t)" SQL="
+    SELECT count (distinct mrkr_zdb_id)
+      FROM expression_pattern_figure, expression_result,
+           expression_experiment, marker, marker_relationship
+     WHERE xpatfig_fig_zdb_id = '$OID'
+       AND xpatfig_xpatres_zdb_id = xpatres_zdb_id
+       AND xpatres_xpatex_zdb_id = xpatex_zdb_id
+       AND xpatex_gene_zdb_id = mrkr_zdb_id
+       AND mrel_mrkr_1_zdb_id = xpatex_gene_zdb_id
+       AND mrel_mrkr_2_zdb_id = xpatex_probe_feature_zdb_id
+     ;
+">
+<?MIBLOCK COND="$(=,$1,1)">
+<?MIVAR NAME="fxfigge_isunpublished">f<?/MIVAR>
+<?/MIBLOCK>
+<?/MISQL>
+
+
+
+<?MIVAR NAME="fxfigge_sql" COND="$(EC,$fxfigge_isunpublished,t)">
     SELECT distinct get_mrkr_abbrev_html(mrkr_zdb_id), mrkr_zdb_id, mrkr_name_order, mrel_type
       FROM expression_pattern_figure, expression_result,
            expression_experiment, marker, marker_relationship
@@ -48,7 +82,22 @@ http://<!--|DOMAIN_NAME|-->/images/darrow.gif
        AND xpatex_gene_zdb_id = mrkr_zdb_id
        AND mrel_mrkr_1_zdb_id = xpatex_gene_zdb_id
        AND mrel_mrkr_2_zdb_id = xpatex_probe_feature_zdb_id
-     ORDER BY mrkr_name_order;">
+     ORDER BY mrkr_name_order;
+<?/MIVAR>
+
+
+<?MIVAR NAME="fxfigge_sql" COND="$(EC,$fxfigge_isunpublished,f)">
+    SELECT distinct get_mrkr_abbrev_html(mrkr_zdb_id), mrkr_zdb_id, mrkr_name_order
+      FROM expression_pattern_figure, expression_result,
+           expression_experiment, marker
+     WHERE xpatfig_fig_zdb_id = '$OID'
+       AND xpatfig_xpatres_zdb_id = xpatres_zdb_id
+       AND xpatres_xpatex_zdb_id = xpatex_zdb_id
+       AND xpatex_gene_zdb_id = mrkr_zdb_id
+     ORDER BY mrkr_name_order;
+<?/MIVAR>
+
+<?MISQL SQL="$fxfigge_sql">
 
     <?MIBLOCK COND=$(EC,$fxfigge_display_option,anchor)>
       <?MIVAR NAME=$fxfigge_down_arrow>&nbsp;<a href="#$2"><img src=http://<!--|DOMAIN_NAME|-->/images/darrow.gif border=0 title="Jump to GENE data."></a><?/MIVAR>
@@ -59,11 +108,13 @@ http://<!--|DOMAIN_NAME|-->/images/darrow.gif
     <?/MIBLOCK>
 
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-        <?MIVAR NAME=fxfigge_list_items>$fxfigge_gene_href$1</a>$fxfigge_down_arrow <font size=-1>[$4]</font><?/MIVAR>
+        <?MIVAR COND="$(EC,$fxfigge_isunpublished,t)" NAME=fxfigge_list_items>$fxfigge_gene_href$1</a>$fxfigge_down_arrow <font size=-1>[$4]</font><?/MIVAR>
+        <?MIVAR COND="$(EC,$fxfigge_isunpublished,f)" NAME=fxfigge_list_items>$fxfigge_gene_href$1</a>$fxfigge_down_arrow <?/MIVAR>
     <?MIELSE>
-        <?MIVAR>$(VECAPPEND,fxfigge_list_items,$fxfigge_gene_href$1</a>$fxfigge_down_arrow <font size=-1>[$4])<?/MIVAR>
+        <?MIVAR COND="$(EC,$fxfigge_isunpublished,t)">$(VECAPPEND,fxfigge_list_items,$fxfigge_gene_href$1</a>$fxfigge_down_arrow <font size=-1>[$4])<?/MIVAR>
+        <?MIVAR COND="$(EC,$fxfigge_isunpublished,f)">$(VECAPPEND,fxfigge_list_items,$fxfigge_gene_href$1</a>$fxfigge_down_arrow)<?/MIVAR>
     <?/MIBLOCK>
-    
+
 <?/MISQL>
 
   <?MIVAR NAME=fxfigge_separate_items SEPARATE=", ">$fxfigge_list_items<?/MIVAR>
