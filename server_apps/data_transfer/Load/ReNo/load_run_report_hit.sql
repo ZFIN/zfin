@@ -418,9 +418,7 @@ insert into blast_query (
     bqry_runcan_zdb_id,
     bqry_accbk_pk_id
 )
-
--- can get very verbose
---select * from tmp_blast_query where tbqry_runcan_zdb_id is not NULL;
+select * from tmp_blast_query where tbqry_runcan_zdb_id is not NULL;
 
 create index tmp_blast_query_tbqry_accbk_pk_idx
     on tmp_blast_query(tbqry_accbk_pk_id) in idxdbs1;
