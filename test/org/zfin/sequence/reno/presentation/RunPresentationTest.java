@@ -1,6 +1,7 @@
 package org.zfin.sequence.reno.presentation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;import static org.junit.Assert.assertFalse;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
@@ -27,6 +28,15 @@ public class RunPresentationTest {
     public void markerLink() {
         String link = RunPresentation.getLink(run);
         assertEquals("Hyperlink", "<a href=\"/action/reno/candidate-inqueue?zdbID=ZDB-RUN-090227278-0\">Test Run</a>", link);
+    }
+
+    @Test
+    public void testRunName(){
+        Run runA = new RedundancyRun() ;
+        runA.setName("test_NEW_");
+        assertFalse(runA.hasAssociatedMarkers()) ;
+        runA.setName("test");
+        assertTrue(runA.hasAssociatedMarkers()) ; 
     }
 
 }

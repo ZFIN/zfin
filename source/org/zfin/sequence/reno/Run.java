@@ -20,7 +20,7 @@ public abstract class Run {
         REDUNDANCY("Redundancy"),
         NOMENCLATURE("Nomenclature");
 
-//        protected final String value  ;
+        //        protected final String value  ;
         protected String value  ;
 
         Type(String value) {
@@ -169,7 +169,15 @@ public abstract class Run {
         this.nomenclaturePublication = nomenclaturePublication;
     }
 
-        public String toString() {
+    /**
+     * If the name in the title is _NEW_, then the transcripts are not expected to have associated MarkerDBLink's.
+     * @return Returns false if the name of the run contains _NEW_, indicating no associated markers.
+     */
+    public boolean hasAssociatedMarkers(){
+        return (!getName().contains("_NEW_")) ;
+    }
+
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Run [BO]");
         sb.append("\n\t");

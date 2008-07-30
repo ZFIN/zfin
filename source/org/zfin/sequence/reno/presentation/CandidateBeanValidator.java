@@ -58,8 +58,9 @@ public class CandidateBeanValidator implements Validator {
         }
 
         RunCandidate runCandidate = candidateBean.getRunCandidate() ;
-        
-        if(runCandidate.getIdentifiedMarker()==null){
+
+        // If it is null, but should have associated markers, then we have a serious problem.
+        if(runCandidate.getIdentifiedMarker()==null  && runCandidate.getRun().hasAssociatedMarkers()==true){
             Set<Query> queries = runCandidate.getCandidateQueries() ;
             // just grab the first query and report the error if there is one query
             Object[] args = new Object[1] ;
