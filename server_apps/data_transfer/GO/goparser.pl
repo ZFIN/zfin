@@ -83,7 +83,7 @@ sub goMod()
   {
     $mod_by =$_[0];
     $source = 'ZFIN' if ($mod_by ne 'S-P Curators');
-    $source = 'UniProt' if ($mod_by eq 'S-P Curators');
+    $source = 'UniProtKB' if ($mod_by eq 'S-P Curators');
     return $source;
   }
 sub goInf()
@@ -94,6 +94,7 @@ sub goInf()
     $inf =~ s/GenPept:/protein_id:/;
     $inf =~ s/RefSeq:NM_/NCBI_NM:NM_/;
     $inf =~ s/RefSeq:NP_/NCBI_NP:NP_/;
+    $inf =~ s/UniProt:/UniProtKB:/;
 
     if (index($inf,'\ ')==0) {
        $inf=~s/\\ //;
