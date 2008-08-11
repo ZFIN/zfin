@@ -1,10 +1,10 @@
 #!/private/bin/perl -w
 #
 # The script gets GenBank daily update flat file, parses it,
-# and updates the acc information in accession_bank and db_link. 
-# In the case the script is run from zfin.org, the resulted FASTA 
-# files as well as the original flat file are moved to 
-# /research/zblastfiles/files/daily for weekly BLAST db updates.   
+# and updates the acc information in accession_bank and db_link.
+# In the case the script is run from zfin.org, the resulted FASTA
+# files as well as the original flat file are moved to
+# /research/zblastfiles/files/daily for weekly BLAST db updates.
 #
 use strict;
 
@@ -38,10 +38,10 @@ else {
     $md_date = `date +%m%d`;
     chop($md_date);
 }
-$prefix = "nc$md_date"; 
+$prefix = "nc$md_date";
 $unzipfile = "$prefix.flat";
 $newfile = $unzipfile.".gz";
-$accfile = $prefix."_zf_acc.unl";    
+$accfile = $prefix."_zf_acc.unl";
 
 #get daily update file
 &downloadDailyUpdateFile($newfile);
@@ -59,8 +59,8 @@ while( !(-e "$newfile") ){
 	  $retry = 0;
 	  &downloadDailyUpdateFile();
       }
-      else {  
-	  &emailError("Failed to download GenBank daily update file.") 
+      else {
+	  &emailError("Failed to download GenBank daily update file.")
 	  }
   }
 }
@@ -74,15 +74,15 @@ $retry = 1;
 #wait until the files are decompressed
 while( !(-e "$unzipfile") ) {
     $count++;
-    if ($count > 10){   
+    if ($count > 10){
 	if ($retry) {
-    
+
 	    $count = 0;
 	    $retry = 0;
 	    system("/local/bin/gunzip -f $newfile");
 	}
 	else{
-	    &emailError("Gunzip failed to extract the file.") 
+	    &emailError("Gunzip failed to extract the file.")
 	    }
     }
 }
@@ -96,12 +96,12 @@ system ("parseDaily.pl $unzipfile")  &&  &writeReport("parseDaily.pl failed.");
 
 
 # only move the FASTA files and flat files to embryonix if that script
-# is run from production. 
+# is run from production.
 
 if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
 	if (! system ("/bin/mv *.fa *.flat $dir_on_embryonix") ) {
-		
-		&writeReport("Fasta files moved to embryonix."); 
+
+		&writeReport("Fasta files moved to embryonix.");
 		system ("/bin/touch $dir_on_embryonix/fileMoved.$md_date");
 	}
 	else {
@@ -111,7 +111,7 @@ if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
 else {
 	&writeReport("Files generated for BLAST db updates are dropped assuming you are only testing.");
 }
-	
+
 # rename daily zebrafish accession file and use that to update the database
 if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
 
@@ -152,7 +152,7 @@ sub sendReport()
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "$report") || die "cannot open report";
 
-    print MAIL "To: peirans\@cs.uoregon.edu\n";
+    print MAIL "To: tomc\@cs.uoregon.edu\n";
     print MAIL "Subject: GenBank accession update report\n";
     while(my $line = <REPORT>)
     {
@@ -161,11 +161,3 @@ sub sendReport()
     close (REPORT);
     close (MAIL);
   }
-
-
-
-
-
-
-
-
