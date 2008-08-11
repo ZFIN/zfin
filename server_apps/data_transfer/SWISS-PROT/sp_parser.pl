@@ -68,8 +68,11 @@ while (<>) {
   }
   
   #DE   Tyrosine-protein kinase Jak1 (EC 2.7.1.112) (Janus kinase 1) (Jak-1).q
+  # since Jul 22, 2008:
+  #DE            EC=3.4.24.81;   
   if (/^DE\s+(.*)/) {   
-      if (/.* \(EC ([\d\.\-]*)\)/){ # see http://www.chem.qmul.ac.uk/iubmb/enzyme/ 
+#      if (/.* \(EC ([\d\.\-]*)\)/){ # see http://www.chem.qmul.ac.uk/iubmb/enzyme/ 
+       if (/.* EC=([\d\.\-]*);/){
 	  $ecnumber=$1;  
 
 	  # we want to use the full EC# for link out
