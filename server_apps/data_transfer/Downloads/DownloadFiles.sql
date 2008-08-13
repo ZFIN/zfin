@@ -513,23 +513,28 @@ create temp table geno_data (
   feature_name varchar(255),
   feature_abbrev varchar(30),
   feature_type varchar(30),
+  feature_type_display varchar(40),
   gene_abbrev varchar(40),
   gene_id varchar(50),
-  feature_zdb_id varchar(50)
+  feature_zdb_id varchar(50)  
 ) with no log ;
 
 insert into geno_data (genotype_id, geno_display_name, geno_handle,
-		feature_name, feature_abbrev, feature_type, feature_zdb_id)
+		feature_name, feature_abbrev, feature_type, 
+		feature_type_display,
+		feature_zdb_id)
   select genofeat_geno_zdb_id,
 	        geno_display_name,
 		geno_handle,
 		feature_name,
 		feature_abbrev,
 		lower(feature_type),
+		ftrtype_type_display,
 		feature_zdb_id
-    from genotype_feature, feature, genotype
+    from genotype_feature, feature, genotype, feature_type
    where genofeat_feature_zdb_id = feature_zdb_id
-    and geno_zdb_id = genofeat_geno_zdb_id;
+    and geno_zdb_id = genofeat_geno_zdb_id
+    and feature_type = ftrtype_name;
 
 update geno_data set (gene_id, gene_abbrev) =
 	    (( select mrkr_zdb_id, mrkr_abbrev
@@ -547,6 +552,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features.txt
 				feature_name,
 				feature_abbrev,
 				feature_type,
+				feature_type_display,
 				gene_abbrev,
 				gene_id
 			from geno_data order by genotype_id, geno_display_name;
