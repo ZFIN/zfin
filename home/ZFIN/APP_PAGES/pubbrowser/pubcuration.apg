@@ -125,9 +125,49 @@ OPTIONAL VARS:
             <?/MIVAR>
           }
         <?MIELSE>
-          <?MIVAR>
-            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
-          <?/MIVAR>
+
+<?MIVAR NAME="featureswogenotypes"><?/MIVAR>
+            <?MISQL SQL="
+              select distinct f.feature_name, f.feature_zdb_id, ra1.recattrib_source_zdb_id
+              from feature f
+              join record_attribution ra1 on ra1.recattrib_data_zdb_id=f.feature_zdb_id
+              where
+              ra1.recattrib_source_zdb_id='$OID'
+              and
+              ra1.recattrib_source_type='standard'
+              and not exists
+              (
+                  select *
+                  from genotype_feature gf, record_attribution ra2
+                  where 
+                  gf.genofeat_feature_zdb_id = f.feature_zdb_id
+                  and
+                  ra2.recattrib_source_type='standard'
+                  and 
+                  gf.genofeat_geno_zdb_id = ra2.recattrib_data_zdb_id
+                  and
+                  ra2.recattrib_source_zdb_id='$OID'
+              )
+              ;
+        ">
+            <?MIVAR NAME="featureswogenotypes">$1 $featureswogenotypes<?/MIVAR>
+            <?/MISQL>
+
+          <?MIBLOCK COND="$(>,$(STRLEN,$featureswogenotypes),0)">
+            <?MIVAR>
+            var answer = confirm('Close if these features have no genotypes?\n  $featureswogenotypes') ; 
+            if(answer){
+                replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
+            }
+            else{
+                alert("Not closing") ; 
+            }
+            <?/MIVAR>
+          <?MIELSE>
+            <?MIVAR>
+                replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
+            <?/MIVAR>
+          <?/MIBLOCK>
         <?/MIBLOCK>
       }
       
