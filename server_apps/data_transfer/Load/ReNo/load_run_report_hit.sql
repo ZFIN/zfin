@@ -410,7 +410,7 @@ select distinct truncan_zad, trpt_query_id
 
 update tmp_blast_query set tbqry_zad = get_id('BQRY');
 
-insert into zdb_active_data select tbqry_zad from tmp_blast_query;
+--insert into zdb_active_data select tbqry_zad from tmp_blast_query;
 
 
 insert into blast_query (
@@ -431,7 +431,7 @@ update statistics high for table tmp_blast_query;
 alter table tmp_report add trpt_brpt_zad varchar(50);
 update tmp_report set trpt_brpt_zad = get_id('BRPT');
 
-insert into zdb_active_data select trpt_brpt_zad from tmp_report;
+--insert into zdb_active_data select trpt_brpt_zad from tmp_report;
 
 insert into blast_report (
     brpt_zdb_id,
@@ -616,7 +616,8 @@ update statistics high for table tmp_hit;
 
 alter table tmp_hit add thit_zad varchar(50);
 update tmp_hit set thit_zad = get_id('BHIT');
-insert into zdb_active_data select thit_zad from tmp_hit;
+
+--insert into zdb_active_data select thit_zad from tmp_hit;
 
 ! echo "loading alignments takes a while `date`"
 insert into blast_hit (
