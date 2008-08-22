@@ -217,6 +217,7 @@ update accession_bank set accbk_length = (
 );
 
 ! echo "clobber existing VEGA accession_bank deflines allways"
+-- this query seems slow  removed tmp_run from inner query as it was not used
 update accession_bank set accbk_defline = (
     select trpt_defline
      from tmp_run,tmp_report
@@ -224,7 +225,7 @@ update accession_bank set accbk_defline = (
 )
  where accbk_acc_num[1,6] = 'OTTDAR'
    and exists(
-    select 1 from tmp_run,tmp_report
+    select 1 from tmp_report
      where trpt_query_id = accbk_pk_id
        and trpt_defline is not NULL
 );
@@ -657,7 +658,12 @@ select --DISTINCT -- ***
  from tmp_hit, tmp_blast_query, tmp_report
  where trpt_query_id = tbqry_accbk_pk_id
    and trpt_acc      = thit_rpt
-   and thit_rpt     != thit_acc  -- no self hits (double checking)
+
+   -- no time for the double check on a large load ...
+   -- 458: Long transaction aborted.
+   -- 12204: RSAM error: Long transaction detected.
+
+   --and thit_rpt     != thit_acc  -- no self hits (double checking)
 ;
 
 ! echo "alignments loaded `date`"
