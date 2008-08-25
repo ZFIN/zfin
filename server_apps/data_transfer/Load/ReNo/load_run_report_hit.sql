@@ -479,12 +479,12 @@ update statistics high for table tmp_hit;
 ! echo "update accession_banks with NULL length if one is available"
 update accession_bank set accbk_length = (
     select thit_acc_len
-     from tmp_hit
+     from tmp_run,tmp_hit
      where thit_target_id = accbk_pk_id
        and trun_target_fdbcont = accbk_fdbcont_zdb_id
 ) where accbk_length is NULL
     and exists (
-    select 1 from tmp_hit
+    select 1 from tmp_run,tmp_hit
      where thit_target_id = accbk_pk_id
        and trun_target_fdbcont = accbk_fdbcont_zdb_id
        and thit_acc_len > 0
@@ -592,7 +592,7 @@ update statistics high for table accession_bank;
 update accession_bank set accbk_fdbcont_zdb_id = trim (accbk_fdbcont_zdb_id)
  where exists (
  	select 1 from tmp_hit
- 	 where accbk_acc_num = thit_acc from tmp_hit
+ 	 where accbk_acc_num = thit_acc
  ) and accbk_fdbcont_zdb_id != trim (accbk_fdbcont_zdb_id)
 ;
 
