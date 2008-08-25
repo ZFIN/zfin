@@ -179,17 +179,20 @@ insert into run (
 ;
 
 ! echo "fix trailing space from case statment"
-update run set run_type = trim(run_type);
+update run set run_type = trim(run_type)
+ where run_type != trim(run_type);
 
 -- fix trailing space from case statment (just in case)
-update run set run_nomen_pub_zdb_id= trim(run_nomen_pub_zdb_id);
-update run set run_relation_pub_zdb_id = trim(run_relation_pub_zdb_id);
+update run set run_nomen_pub_zdb_id= trim(run_nomen_pub_zdb_id)
+ where run_nomen_pub_zdb_id != trim(run_nomen_pub_zdb_id);
 
+update run set run_relation_pub_zdb_id = trim(run_relation_pub_zdb_id)
+ where run_relation_pub_zdb_id != trim(run_relation_pub_zdb_id);
 
 ----------------------------------------------------------------------------------
 
-
 ! echo "add the accession bank id for the query  to the record (if it exists)"
+
 alter table tmp_report add trpt_query_id varchar(50);
 
 update tmp_report
@@ -207,20 +210,19 @@ create index tmp_report_trpt_query_idx on tmp_report(trpt_query_id) in idxdbs2;
 ! echo "update accession_bank with NULL length"
 update accession_bank set accbk_length = (
     select trpt_acc_len
-     from tmp_run,tmp_report
+     from tmp_report
      where trpt_query_id = accbk_pk_id
 ) where accbk_length is NULL
     and exists (
-    select 1 from tmp_run,tmp_report
+    select 1 from tmp_report
      where trpt_query_id = accbk_pk_id
        and trpt_acc_len > 0
 );
 
-! echo "clobber existing VEGA accession_bank deflines allways"
--- this query seems slow  removed tmp_run from inner query as it was not used
+! echo "clobber existing VEGA accession_bank deflines if they are changed"
 update accession_bank set accbk_defline = (
     select trpt_defline
-     from tmp_run,tmp_report
+     from tmp_report
      where trpt_query_id = accbk_pk_id
 )
  where accbk_acc_num[1,6] = 'OTTDAR'
@@ -228,6 +230,7 @@ update accession_bank set accbk_defline = (
     select 1 from tmp_report
      where trpt_query_id = accbk_pk_id
        and trpt_defline is not NULL
+       and trpt_defline != accbk_defline
 );
 
 ! echo "how many Queries still need to be added to accession bank?"
@@ -265,7 +268,8 @@ select distinct
 ;
 -- clean up after the SQL's superior conditional operator skillz
 update accession_bank set accbk_fdbcont_zdb_id = trim (accbk_fdbcont_zdb_id)
- where  accbk_acc_num in (select trpt_acc from tmp_report)
+ where exists (select 1 from tmp_report where accbk_acc_num = trpt_acc)
+   and accbk_fdbcont_zdb_id != trim (accbk_fdbcont_zdb_id)
 ;
 
 update statistics high for table accession_bank;
@@ -280,9 +284,8 @@ update tmp_report
     select 1
      from accession_bank, tmp_run
      where trpt_acc = accbk_acc_num
+     and trpt_query_id is NULL
 );
-
-
 
 update statistics high for table tmp_report;
 
@@ -348,7 +351,8 @@ select distinct
 ;
 
 ! echo "fix trailing space from case statment"
-update candidate set cnd_mrkr_type = trim(cnd_mrkr_type);
+update candidate set cnd_mrkr_type = trim(cnd_mrkr_type)
+ where cnd_mrkr_type != trim(cnd_mrkr_type);
 
 ! echo "aassociate the new candidates with their reports"
 update tmp_report set trpt_cnd_zdbid = (
@@ -361,6 +365,7 @@ update tmp_report set trpt_cnd_zdbid = (
 
 ----------------------------------
 ! echo "next make run_candidates"
+
 
 create table tmp_run_cnd (
     truncan_zad       varchar(50) ,
@@ -471,21 +476,21 @@ create index tmp_hit_thit_target_idx
 update statistics high for table tmp_hit;
 
 
-! echo "update accession_bank with NULL length"
+! echo "update accession_banks with NULL length if one is available"
 update accession_bank set accbk_length = (
     select thit_acc_len
-     from tmp_run,tmp_hit
+     from tmp_hit
      where thit_target_id = accbk_pk_id
        and trun_target_fdbcont = accbk_fdbcont_zdb_id
 ) where accbk_length is NULL
     and exists (
-    select 1 from tmp_run,tmp_hit
+    select 1 from tmp_hit
      where thit_target_id = accbk_pk_id
        and trun_target_fdbcont = accbk_fdbcont_zdb_id
        and thit_acc_len > 0
 );
 
-! echo "clobber existing NULL accession_bank defline"
+! echo "update existing NULL accession_bank defline if one is available"
 update accession_bank set accbk_defline = (
     select distinct thit_defline
      from tmp_hit,tmp_run
@@ -493,7 +498,7 @@ update accession_bank set accbk_defline = (
        and trun_target_fdbcont = accbk_fdbcont_zdb_id
 ) where accbk_defline is NULL
   and exists (
-    select 1 from tmp_run,tmp_hit
+    select 1 from tmp_hit
      where thit_target_id = accbk_pk_id
        and trun_target_fdbcont = accbk_fdbcont_zdb_id
        and thit_defline is not NULL
@@ -544,25 +549,24 @@ select distinct
          and thit_acc_db = 'gb'            then 'ZDB-FDBCONT-040412-42'
         when thit_acc_type = 'protein'
          and thit_acc_db = 'sp'
---         and thit_species= 'Homo sapiens' then 'ZDB-FDBCONT-071023-3'
-           and thit_species= 'Homo sapiens' then (
+--       and thit_species= 'Homo sapiens' then 'ZDB-FDBCONT-071023-3'
+         and thit_species= 'Homo sapiens' then (
                 select fdbcont_zdb_id from foreign_db_contains
                 where fdbcont_fdbdt_super_type = 'sequence'
                   and fdbcont_fdbdt_data_type = 'Polypeptide'
                   and fdbcont_fdb_db_name = 'UniProt'
                   and fdbcont_organism_common_name = 'Human'
-           )
+         )
         when thit_acc_type = 'protein'
          and thit_acc_db = 'sp'
---         and thit_species= 'Mus musculus'  then 'ZDB-FDBCONT-071023-2'
-           and thit_species= 'Mus musculus'  then(
+--       and thit_species= 'Mus musculus'  then 'ZDB-FDBCONT-071023-2'
+         and thit_species= 'Mus musculus'  then(
                 select fdbcont_zdb_id from foreign_db_contains
                 where fdbcont_fdbdt_super_type = 'sequence'
                   and fdbcont_fdbdt_data_type = 'Polypeptide'
                   and fdbcont_fdb_db_name = 'UniProt'
                   and fdbcont_organism_common_name = 'Mouse'
-           )
-
+         )
         when thit_acc_type = 'protein'
          and thit_acc_db = 'sp'
          and thit_species= 'Danio rerio'   then 'ZDB-FDBCONT-040412-47'
@@ -586,7 +590,10 @@ update statistics high for table accession_bank;
 
 -- clean up after the SQL's superior conditional operator skillz
 update accession_bank set accbk_fdbcont_zdb_id = trim (accbk_fdbcont_zdb_id)
- where  accbk_acc_num in (select thit_acc from tmp_hit)
+ where exists (
+ 	select 1 from tmp_hit
+ 	 where accbk_acc_num = thit_acc from tmp_hit
+ ) and accbk_fdbcont_zdb_id != trim (accbk_fdbcont_zdb_id)
 ;
 
 ! echo "add this accession length if it is > 0 and accbk_length = 0"
@@ -595,8 +602,11 @@ update accession_bank set accbk_length = (
      where thit_acc = accbk_acc_num
  )
  where accbk_length = 0
-   and accbk_acc_num in (select  thit_acc from tmp_hit)
-;
+   and exists (
+   	select 1 from tmp_hit
+   	 where accbk_acc_num =  thit_acc
+   	   and thit_acc_len > 0
+);
 
 
 ! echo "add the new accession bank ids back into tmp_hit"
@@ -604,8 +614,9 @@ update tmp_hit
  set thit_target_id = (
     select accbk_pk_id from accession_bank
      where thit_acc = accbk_acc_num
- )where thit_target_id is NULL
-    and exists (
+ )
+ where thit_target_id is NULL
+   and exists (
     select 1 from accession_bank
     where thit_acc = accbk_acc_num
 );
@@ -617,7 +628,6 @@ update statistics high for table tmp_hit;
 
 alter table tmp_hit add thit_zad varchar(50);
 update tmp_hit set thit_zad = get_id('BHIT');
-
 --insert into zdb_active_data select thit_zad from tmp_hit;
 
 ! echo "loading alignments takes a while `date`"
@@ -658,12 +668,7 @@ select --DISTINCT -- ***
  from tmp_hit, tmp_blast_query, tmp_report
  where trpt_query_id = tbqry_accbk_pk_id
    and trpt_acc      = thit_rpt
-
-   -- no time for the double check on a large load ...
-   -- 458: Long transaction aborted.
-   -- 12204: RSAM error: Long transaction detected.
-
-   --and thit_rpt     != thit_acc  -- no self hits (double checking)
+   and thit_rpt     != thit_acc  -- no self hits (double checking)
 ;
 
 ! echo "alignments loaded `date`"
