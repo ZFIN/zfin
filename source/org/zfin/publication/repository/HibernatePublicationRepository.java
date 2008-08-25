@@ -267,7 +267,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("anatomyZdbID", anatomyTerm.getZdbID());
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
-        query.setString("withdrawn","WITHDRAWN:");
+        query.setString("withdrawn",Marker.WITHDRAWN );
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
         ScrollableResults results = query.scroll() ;
         results.last() ;
@@ -303,15 +303,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "AND fig member of res.figures " +
                 "AND res.expressionFound = :expressionFound "+
                 "AND res.expressionExperiment.marker.abbreviation not like :withdrawn " +
-                "AND ( " +
-                    "res.expressionExperiment.clone.problem is null " +
-                    "OR "+
-                    "res.expressionExperiment.clone.problem <> :chimeric "  +
+                "AND not exists ( " +
+                    "select 1 from Clone clone where " +
+                "           clone.zdbID = res.expressionExperiment.clone.zdbID AND " +
+                "           clone.problem  <> :chimeric "  +
                 ")";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setParameter("aoTerm", anatomyTerm);
-        query.setString("withdrawn", "WITHDRAWN:%" );
+        query.setString("withdrawn", Marker.WITHDRAWN + "%" );
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString());
         return (Integer) query.uniqueResult();
     }
@@ -559,7 +559,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select figure from Figure figure, Phenotype pheno, " +
+        String hql = "select distinct figure from Figure figure, Phenotype pheno, " +
                 "GenotypeExperiment exp, Genotype geno " +
                 "where geno.zdbID = :genoID AND " +
                 "      exp.genotype = geno AND " +

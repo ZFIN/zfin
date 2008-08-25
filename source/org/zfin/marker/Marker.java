@@ -22,6 +22,8 @@ import java.io.Serializable;
  */
 public class Marker implements Serializable, Comparable {
 
+    public static final String WITHDRAWN = "WITHDRAWN:";
+    
     private String zdbID;
     private String name;
     private String abbreviation;
