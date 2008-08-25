@@ -7,6 +7,7 @@
 # to unload file "sp_mrkrgoterm.unl"
 
 my (@line, @spkw, @spkw_id, @term_id, @term, @id);
+my $spkwName;
 
 
 if (@ARGV == 0) {
@@ -20,23 +21,27 @@ while(<>) {
  if(/^SP/) {
     chomp;
     @line = split(/ > /, $_);
-    @spkw = split(/ /, $line[0]);
+    $spIDandName = $line[0];
+    @spkw = split(/ /, $spIDandName);
     @spkw_id = split(/:/, $spkw[0]);
+    $spID = $spkw_id[1];
 
     @term_id  = split(/ ; /, $line[1]);
     @term = split(/GO:/, $term_id[0]);
     @id = split(/:/, $term_id[1]);
     
     #output: KW-0117| Actin capping|barbed-end actin filament capping|0051016|
-    print KWGO "$spkw_id[1]|$spkw[1]|$term[1]|$id[1]|\n";
-  }
- @line=(); @ip=(); @term_id=(); @term=(); @id=();    
-}
-
-
+    ## the following WRONG OUTPUT (2nd field) is produced by souce code which is commented out
+    ##  KW-0117|Actin|barbed-end actin filament capping|0051016|
+    ##print KWGO "$spkw_id[1]|$spkw[1]|$term[1]|$id[1]|\n";
     
-
-
-
-
+    @spkwNamePieces = split(/$spID/, $spIDandName);
+    $spkwName = $spkwNamePieces[1];
+    $spkwName =~ s/^\s+//; #remove leading spaces
+    $spkwName =~ s/\s+$//; #remove trailing spaces
+    print KWGO "$spID|$spkwName|$term[1]|$id[1]|\n";
+  }
+ @line=(); @ip=(); @term_id=(); @term=(); @id=();   
+ $spkwName = "";
+}
 
