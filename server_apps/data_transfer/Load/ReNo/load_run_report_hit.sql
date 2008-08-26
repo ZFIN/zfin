@@ -498,7 +498,7 @@ update accession_bank set accbk_defline = (
        and trun_target_fdbcont = accbk_fdbcont_zdb_id
 ) where accbk_defline is NULL
   and exists (
-    select 1 from tmp_hit
+    select 1 from tmp_run,tmp_hit
      where thit_target_id = accbk_pk_id
        and trun_target_fdbcont = accbk_fdbcont_zdb_id
        and thit_defline is not NULL
