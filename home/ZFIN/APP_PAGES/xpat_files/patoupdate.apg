@@ -184,6 +184,7 @@ EFFECTS
                      select api_zdb_id from apato_infrastructure 
                      where api_entity_a_zdb_id = '$patoup_entity_a_zdb_id'
                        $(IF,$(XST,$patoup_entity_b_zdb_id), and api_entity_b_zdb_id = '$patoup_entity_b_zdb_id')
+                       $(IF,$(NXST,$patoup_entity_b_zdb_id), and api_entity_b_zdb_id is null )
                        and api_quality_zdb_id = '$patoup_quality_zdb_id'
                        and api_tag = '$patoup_tag'
                        and api_pub_zdb_id = '$OID';
@@ -383,6 +384,7 @@ EFFECTS
         <?MIELSE>
           <?MIVAR NAME="$patoup_entity_where">
             and apato_entity_a_zdb_id = '$patoup_entity_a_zdb_id'
+            and apato_entity_b_zdb_id is null
           <?/MIVAR>
         <?/MIBLOCK>
 
@@ -471,6 +473,7 @@ EFFECTS
         <?MIELSE>
           <?MIVAR NAME="$patoup_entity_where">
             and apato_entity_a_zdb_id = '$patoup_entity_a_zdb_id'
+            and apato_entity_b_zdb_id is null 
           <?/MIVAR>
         <?/MIBLOCK>
 
