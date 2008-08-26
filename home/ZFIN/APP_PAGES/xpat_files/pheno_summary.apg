@@ -70,7 +70,7 @@ DEBUGGING:
   
 <?MISQL SQL="$phenosum_sql;"><?/MISQL>
     
-<?MIVAR NAME=phenosum_pub_count>$1<?/MIVAR>
+<?MIVAR NAME=phenosum_pub_count>$(ROUND,$1,0)<?/MIVAR>
 
   <?MISQL COND=$(XST,$debug_timing) SQL="
     execute function get_time()">
@@ -87,6 +87,39 @@ DEBUGGING:
   <?MIVAR COND=$(XST,$debug_timing)>
     <br>$MI_SQL
   <?/MIVAR>
+
+<?MIBLOCK COND=$(XST,$anatID)>
+
+  <?MISQL SQL="select anatitem_name from anatomy_item where anatitem_zdb_id = '$anatID';">
+    <?MIVAR NAME=phenosum_anat_link><a href="/action/anatomy/term-detail?anatomyItem.zdbID=$anatID">$1</a><?/MIVAR>
+  <?/MISQL>
+
+  <?MIVAR NAME=phenosum_header>$phenosum_anat_link in $phenosum_header<?/MIVAR>
+
+<?/MIBLOCK>
+
+<?MIBLOCK COND=$(XST,$envID)>
+
+  <?MISQL SQL="
+      select get_mrkr_name_html_link(expcond_mrkr_zdb_id) 
+      from experiment_condition 
+      where expcond_exp_zdb_id = '$envID' 
+        and expcond_mrkr_zdb_id != '' 
+        and expcond_mrkr_zdb_id is not null;">
+        
+    <?MIBLOCK COND=$(NXST,$phenosum_MO_link)>
+      <?MIVAR NAME=phenosum_MO_link>$1<?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME=phenosum_MO_link>, $1<?/MIVAR>    
+    <?/MIBLOCK>
+  <?/MISQL>
+
+  <?MIVAR COND=$(XST,$phenosum_MO_link) NAME=phenosum_header>$phenosum_header with $phenosum_MO_link<?/MIVAR>
+
+<?/MIBLOCK>
+
+
+
 
 <table bgcolor=<?MIVAR>$highlight<?/MIVAR> width=100%>
   <tr>

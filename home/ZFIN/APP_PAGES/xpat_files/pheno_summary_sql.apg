@@ -92,7 +92,6 @@
 
   <?MICOMMENT> *** Link from the anatomy page. Only find Morpholinos with a specified environment <?/MICOMMENT>
   <?MIBLOCK COND=$(XST,$envID)>
-
   
     <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where 
        and genox_exp_zdb_id = '$envID'
@@ -103,6 +102,12 @@
                  and expcond_mrkr_zdb_id = '' )
     <?/MIVAR>
     
+  <?MIELSE COND=$(XST,$anatID)>
+  
+    <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where 
+       and (apato_entity_a_zdb_id = '$anatID' or apato_entity_b_zdb_id = '$anatID')
+    <?/MIVAR>
+  
   <?/MIBLOCK>
 
   <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where
