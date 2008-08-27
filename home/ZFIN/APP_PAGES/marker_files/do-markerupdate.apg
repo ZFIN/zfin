@@ -14,8 +14,6 @@ FILE: do-markerupdate.html
 Commits the updates requested in the forms tossed up by
 markerupdate.html. Also files update record.
 
-PREFIX: domrkrup_
-
 EXPECTED VARS:
 OID -- the zdb_id of the rec to update
 attr -- the column to be updated
@@ -536,12 +534,11 @@ marker.<?/MIVAR>
   <?MIBLOCK COND="$(EC,$attr_type,special-newattrib)">
     <!-- check whether the pub zdb id is valid. -->
     <?MISQL SQL="
-	   select 'x' from publication
+	   select * from publication
              where zdb_id = '$new_value'	
                 ;">
-	<?MIVAR NAME="domrkrup_pub_exists">t<?/MIVAR>
     <?/MISQL>	
-    <?MIBLOCK COND="$(XST,$domrkrup_pub_exists)">
+    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
       <?MISQL COND="$(EC,$info,namealias)" SQL="
 	   select dalias_zdb_id 
 	     from data_alias
@@ -551,22 +548,11 @@ marker.<?/MIVAR>
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
       <?/MISQL>
 
+      <?MIVAR NAME=$fdbcont_zdb_id>$xtra_param<?/MIVAR>
 
-      <?MICOMMENT> ** if an fdbcont_zdb_id is passed in, it will show up in the
-                      $xtra_param variable.  Let's do a query and if $xtra_param
-                      comes back as a valid fdbcont_zdb_id, then we'll set the var,
-                      otherwise, it won't exist                        ** <?/MICOMMENT>
-
-      <?MISQL SQL="select fdbcont_zdb_id 
-                   from foreign_db_contains 
-                   where fdbcont_zdb_id = '$xtra_param';">
-          <?MIVAR NAME="$domrkrup_fdbcont_zdb_id">$1<?/MIVAR>
-      <?/MISQL>
-
-      <?MIBLOCK COND=$(NXST,$domrkrup_fdbcont_zdb_id)>
-
-      <?MISQL COND="$(EC,$info,seqacc)" SQL="      
-            select dblink_zdb_id 
+      <?MIBLOCK COND=$(EC,$fdbcont_zdb_id,)>
+      <?MISQL COND="$(EC,$info,seqacc)" SQL="
+	   select dblink_zdb_id 
 	     from db_link
 	    where dblink_linked_recid = '$OID'
 	      and dblink_acc_num = '$old_value';">
@@ -578,7 +564,7 @@ marker.<?/MIVAR>
        from db_link dbl join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id
 	    where dbl.dblink_linked_recid = '$OID'
 	      and dbl.dblink_acc_num = '$old_value'
-	      and fdbc.fdbcont_zdb_id = '$domrkrup_fdbcont_zdb_id';
+	      and fdbc.fdbcont_zdb_id = '$xtra_param';
           ">
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
       <?/MISQL>	
@@ -604,11 +590,10 @@ marker.<?/MIVAR>
 
       <!-- add attribution-->
       <?MIBLOCK COND="$(AND,$(EC,$attr,recattrib),$(NE,$info,mrel))">
-
          <?MISQL SQL="
 	    insert into record_attribution
 		(recattrib_data_zdb_id, recattrib_source_zdb_id) 
-              values('$old_value', '$new_value') 	
+              values('$old_value', '$new_value')	
                 ;">
          <?/MISQL>
 
