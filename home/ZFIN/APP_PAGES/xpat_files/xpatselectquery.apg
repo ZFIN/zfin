@@ -246,7 +246,7 @@ DEBUGGING:
     ==========  MO knockdown Gene
     ============================================================================
 <?/MICOMMENT>
-<?MIBLOCK COND="$(AND,$(XST,$xpatselqry_MOgene),$(NXST,,$xpatselqry_wtOnly))">
+<?MIBLOCK COND="$(AND,$(XST,$xpatselqry_MOgene),$(NXST,$xpatselqry_wtOnly))">
  
   <?MIVAR NAME=$xpatselqry_nameEndsTable><?/MIVAR>
 
