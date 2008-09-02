@@ -17,7 +17,7 @@
  print $Q->header();
  print $Q->start_html(-TITLE => "ZFIN Request a Map",-BGCOLOR=>'#FFFFFF');
 
- print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'>
+ print "<script language='JavaScript' src='/javascript/header.js'>
  </script>";
 
  my $cur = $dbh->prepare("select object from webPages where id = 'aa-htmlpageheader.apg';");
@@ -29,7 +29,7 @@
  mapper_select(Q);
 
 
- print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'>
+ print "<script language='JavaScript' src='/javascript/footer.js'>
  </script>";
  print $Q->end_html();
  $dbh->disconnect;

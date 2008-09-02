@@ -123,7 +123,7 @@
 	.best_match            { font-size: 100%; font-family:arial, sans-serif; padding: 0px; margin: 0px;}
     </style>
 </head>
-<script language="JavaScript" src="/header.js"></script>
+<script language="JavaScript" src="/javascript/header.js"></script>
 
 <script>
   document.getElementById("qsearch").value = "<%= queryTerm %>";
@@ -229,4 +229,4 @@
 
 <% }  %>
 
-<script language="JavaScript" src="/footer.js"></script>
+<script language="JavaScript" src="/javascript/footer.js"></script>
