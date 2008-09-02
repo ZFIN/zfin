@@ -26,7 +26,7 @@ public class SessionUpdateCallbackTimer extends Timer {
                         //Window.alert("success");
                     }
                     public void onFailure(Throwable throwable) {
-                        Window.alert("SessionSave update failed: "+ throwable);
+//                        Window.alert("SessionSave update failed: "+ throwable);
                     }
                 }) ;
                 sessionList.clear();

@@ -20,6 +20,6 @@ public class SessionUpdateCallbackWithURL implements AsyncCallback {
                     "");
     }
     public void onFailure(Throwable throwable) {
-        Window.alert("SessionSave update failed: "+ throwable);
+        Window.alert("SessionSave update failed when URL refresh: "+ throwable);
     }
 }
