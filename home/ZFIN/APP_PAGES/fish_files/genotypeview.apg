@@ -976,7 +976,6 @@ Datablade documentation.
 
              <?MIVAR NAME=genovw_ftr_lab_zdb_id>$1<?/MIVAR>
              <?MIVAR NAME=genovw_ftr_lab_name>$2<?/MIVAR>
-          <?/MISQL>
 
 	  <?MIVAR COND="$(XST,$genovw_ftr_lab_zdb_id)">
                <tr>
@@ -987,7 +986,7 @@ Datablade documentation.
 		 </td>
                </tr>
           <?/MIVAR>
-
+<?/MISQL>
           <?MICOMMENT> ---------  Mapping data ------------<?/MICOMMENT>
            <tr> 
              <td><b>Map: </td>
