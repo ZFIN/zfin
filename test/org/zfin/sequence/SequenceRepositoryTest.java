@@ -9,9 +9,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.zfin.TestConfiguration;
-import org.zfin.marker.Marker;
 import org.zfin.orthology.Species;
-import org.zfin.orthology.repository.OrthologyRepository;
 
 import org.zfin.sequence.repository.SequenceRepository  ; 
 import org.zfin.sequence.repository.HibernateSequenceRepository  ;
@@ -22,12 +20,8 @@ import org.hibernate.*;
 
 import org.zfin.framework.HibernateSessionCreator ;
 import org.zfin.framework.HibernateUtil ;
-import org.zfin.framework.ExceptionFormatter;
 import org.zfin.repository.RepositoryFactory ;
 import org.apache.log4j.Logger;
-
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  *  Class SequenceRepositoryTest.
@@ -68,11 +62,30 @@ public class SequenceRepositoryTest {
     @Test
     public void testAccessionEntity(){
         Session session = HibernateUtil.currentSession();
-        String hsqlString = "from Accession" ; 
-        Query query = session.createQuery(hsqlString) ;
-        query.setMaxResults(1) ;
-        Accession accession =  (Accession) query.uniqueResult() ; 
-        assertNotNull("database contains at least one accession", accession) ; 
+        try {
+            session.beginTransaction()  ;
+            Accession accession1 = new Accession() ;
+            String number ="AC:TEST" ;
+            String abbrev ="AC:TEST_ABBREV" ;
+            accession1.setNumber(number);
+            accession1.setAbbreviation(abbrev);
+            ReferenceDatabase genBankRefDB =RepositoryFactory.getSequenceRepository().getReferenceDatabase(
+                    ForeignDB.AvailableName.GENBANK.toString(),
+                    ReferenceDatabase.Type.GENOMIC,
+                    ReferenceDatabase.SuperType.SEQUENCE,
+                    Species.ZEBRAFISH);
+            accession1.setReferenceDatabase(genBankRefDB);
+            session.save(accession1) ;
+            String hsqlString = "from Accession acc where acc.number = :number" ;
+            Query query = session.createQuery(hsqlString) ;
+            query.setString("number",number) ;
+//            query.setMaxResults(1) ;
+            Accession accession =  (Accession) query.uniqueResult() ;
+            assertNotNull("database contains at least one accession", accession) ;
+            assertEquals("abbrevs are equal", abbrev, accession.getAbbreviation()); ;
+        } finally {
+            session.getTransaction().rollback();
+        }
     }
 
     @Test
