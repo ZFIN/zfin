@@ -149,13 +149,13 @@ public class AnatomyTermDetailController extends AbstractCommandController {
 
 
         PaginationResult<GenotypeExperiment> wildtypeMorphResults =
-                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, true);
+                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, true, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         wildtypeCount = wildtypeMorphResults.getTotalCount() ;
         wildtypeExperiments = wildtypeMorphResults.getPopulatedResults() ;
 
 
         PaginationResult<GenotypeExperiment> nonWildtypeMorphResults =
-                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, false);
+                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, false, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         nonWildtypeCount = nonWildtypeMorphResults.getTotalCount() ;
         nonWildtypeExperiments = nonWildtypeMorphResults.getPopulatedResults() ;
 

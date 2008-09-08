@@ -6,7 +6,6 @@ import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
 import org.zfin.mutant.repository.MutantRepository;
@@ -30,17 +29,15 @@ public class AllMorpholinoExperimentController extends AbstractCommandController
 
         AnatomyItem term = retrieveAnatomyTerm(form.getAnatomyItem());
         if (term == null)
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAnatomyItem().getZdbID());
+            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, form.getAnatomyItem().getZdbID());
         form.setAnatomyItem(term);
 
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
         AnatomyItem anatomyItem = form.getAnatomyItem();
-        PaginationResult<GenotypeExperiment> morphResult =
+        List<GenotypeExperiment> morphResult =
                 mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(anatomyItem, form.isWildtype());
-        int wildtypeMorphCount = morphResult.getTotalCount() ;
-        form.setWildtypeMorpholinoCount(wildtypeMorphCount);
-        mutantRepository.setPaginationParameters(null);
-        List<MorpholinoStatistics> morpholinoStats = AnatomyTermDetailController.createMorpholinoStats(morphResult.getPopulatedResults(), anatomyItem);
+        form.setWildtypeMorpholinoCount(morphResult.size());
+        List<MorpholinoStatistics> morpholinoStats = AnatomyTermDetailController.createMorpholinoStats(morphResult, anatomyItem);
         form.setAllMorpholinos(morpholinoStats);
         return new ModelAndView("all-morpholino-experiments.page", LookupStrings.FORM_BEAN, form);
     }

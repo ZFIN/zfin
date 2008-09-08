@@ -1,12 +1,10 @@
 package org.zfin.mutant;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.ontology.GoTerm;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.repository.AnatomyRepository;
@@ -14,6 +12,7 @@ import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.ontology.GoTerm;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
@@ -72,7 +71,7 @@ public class MutantRepositoryTest {
         AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
         AnatomyItem ai = ar.getAnatomyItem(name);
         PaginationResult<GenotypeExperiment> morphs =
-                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, true);
+                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, true, null);
         Assert.assertNotNull("morphs exist", morphs.getPopulatedResults());
 
     }

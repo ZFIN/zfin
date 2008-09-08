@@ -12,7 +12,6 @@ import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.presentation.HighQualityProbe;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.repository.PublicationRepository;
@@ -64,18 +63,18 @@ public class AnatomyRepositoryTest {
 
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         PaginationResult<HighQualityProbe> probeResults = pr.getHighQualityProbeNames(item);
-        List<HighQualityProbe> probes = probeResults.getPopulatedResults() ;
+        List<HighQualityProbe> probes = probeResults.getPopulatedResults();
         assertTrue(probes != null);
         assertTrue(probes.size() > 0);
 
-        int numberOHQProbes = probeResults.getTotalCount() ;
+        int numberOHQProbes = probeResults.getTotalCount();
         assertTrue(numberOHQProbes > 0);
         assertTrue(probes.size() == numberOHQProbes);
 
     }
 
     @Test
-    public void getTotalNumberOfFiguresPerAnatomy(){
+    public void getTotalNumberOfFiguresPerAnatomy() {
         // brain
         String termName = "brain";
         AnatomyItem item = aoRepository.getAnatomyItem(termName);
@@ -83,11 +82,11 @@ public class AnatomyRepositoryTest {
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         int numOfFigures = pr.getTotalNumberOfFiguresPerAnatomyItem(item);
         //assertEquals(1036, numOfFigures);
-        
+
     }
 
     @Test
-    public void getAnatomyRelationships(){
+    public void getAnatomyRelationships() {
         String termName = "neural rod";
         AnatomyItem item = aoRepository.getAnatomyItem(termName);
 
@@ -97,7 +96,7 @@ public class AnatomyRepositoryTest {
     }
 
     @Test
-    public void getAnatomyTermsSearchResult(){
+    public void getAnatomyTermsSearchResult() {
         String searchTerm = "bra";
 
         List<AnatomyItem> terms = aoRepository.getAnatomyItemsByName(searchTerm, true);
@@ -105,31 +104,29 @@ public class AnatomyRepositoryTest {
     }
 
     @Test
-    public void compareWildTypeSelectionToFullForMorpholinos(){
+    public void compareWildTypeSelectionToFullForMorpholinos() {
         AnatomyItem item = aoRepository.getAnatomyItem("neural plate");
-        PaginationResult<GenotypeExperiment> genosWildtype = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true);
-        PaginationResult<GenotypeExperiment> genosNonWildtype = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, false);
-        PaginationResult<GenotypeExperiment> genosAll = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item);
+        PaginationResult<GenotypeExperiment> genosWildtype = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true, null);
+        PaginationResult<GenotypeExperiment> genosNonWildtype = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, false, null);
 
         assertNotNull(genosWildtype.getPopulatedResults());
         assertNotNull(genosNonWildtype.getPopulatedResults());
-        assertNotNull(genosAll.getPopulatedResults());
-        assertEquals( genosAll.getTotalCount() , genosNonWildtype.getTotalCount()+ genosWildtype.getTotalCount());
-        assertTrue(genosAll.getTotalCount() > genosAll.getPopulatedResults().size()); // may not be true in all cases, so just doing it for this one
-        assertNotSame("It is feasible, but unlikely that these will ever be the same",genosWildtype.getTotalCount() , genosNonWildtype.getTotalCount()); // its feasible, but not likely
+        assertNotSame("It is feasible, but unlikely that these will ever be the same", genosWildtype.getTotalCount(), genosNonWildtype.getTotalCount()); // its feasible, but not likely
 
 
     }
 
     @Test
-    public void getWildtypeMorpholinos(){
+    public void getWildtypeMorpholinos() {
         // String neuralPlateZdbID = "ZDB-ANAT-010921-560";
         AnatomyItem item = aoRepository.getAnatomyItem("neural plate");
-        PaginationResult<GenotypeExperiment> genos = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true);
+        PaginationResult<GenotypeExperiment> genos = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true, null);
         assertNotNull(genos.getPopulatedResults());
-        assertTrue(genos.getPopulatedResults().size()>1);
-        assertTrue(genos.getPopulatedResults().size()<genos.getTotalCount());
-        //assertEquals(2, genos.size());
+        assertTrue(genos.getPopulatedResults().size() > 1);
+
+        List<GenotypeExperiment> genosList = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true);
+        assertNotNull(genosList);
+        assertTrue(genosList.size() > 1);
 
     }
 
@@ -138,29 +135,28 @@ public class AnatomyRepositoryTest {
      * 1 - find anatomy item term
      * 2 - find anatomy item term by synonym
      * 3 - find anatomy item term not by data alias
-     *
      */
     @Test
-    public void getAnatomyItemsWithoutDataAlias(){
+    public void getAnatomyItemsWithoutDataAlias() {
         // 1 - get by name
-        List<AnatomyItem> terms ;
+        List<AnatomyItem> terms;
         terms = aoRepository.getAnatomyItemsByName("extrascapular", false);
         assertNotNull(terms);
-        assertTrue(terms.size()==1);
+        assertTrue(terms.size() == 1);
 
-        AnatomyItem item = terms.get(0) ;
-        Set<AnatomySynonym> synonyms = item.getSynonyms() ;
-        assertEquals("Should be 1 synonym because filtered secondary",synonyms.size(),1) ; 
+        AnatomyItem item = terms.get(0);
+        Set<AnatomySynonym> synonyms = item.getSynonyms();
+        assertEquals("Should be 1 synonym because filtered secondary", synonyms.size(), 1);
 
         // 2- get by synonym
         terms = aoRepository.getAnatomyItemsByName("supratemporal", false);
         assertNotNull(terms);
-        assertTrue(terms.size()==2);
+        assertTrue(terms.size() == 2);
 
         // 3- get by data alias
         terms = aoRepository.getAnatomyItemsByName("413", false);
         assertNotNull(terms);
-        assertTrue("Should be no terms for '413'",terms.size()==0);
+        assertTrue("Should be no terms for '413'", terms.size() == 0);
     }
 
 }

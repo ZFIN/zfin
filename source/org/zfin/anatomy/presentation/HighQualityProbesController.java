@@ -36,7 +36,7 @@ public class HighQualityProbesController extends AbstractCommandController {
         HighQualityProbesController.LOG.info("Start High Quality Probes  Controller");
         AnatomyItem anatomyTerm = ar.getAnatomyTermByID(anatomyForm.getAnatomyItem().getZdbID());
         if (anatomyTerm == null)
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, anatomyForm.getAnatomyItem().getZdbID());
+            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, anatomyForm.getAnatomyItem().getZdbID());
 
         anatomyForm.setAnatomyItem(anatomyTerm);
 

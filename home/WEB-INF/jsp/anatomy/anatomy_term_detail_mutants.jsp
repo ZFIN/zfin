@@ -83,7 +83,7 @@
             <tr align="left">
                 <td>
                     Show all
-                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20">
+                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20&include_substructures=unchecked">
                             ${formBean.genotypeCount} 
                         <zfin:choice choicePattern="0# genotypes| 1# genotype| 2# genotypes"
                                      integerEntity="${formBean.genotypeCount}"/>

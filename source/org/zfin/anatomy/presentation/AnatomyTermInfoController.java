@@ -47,7 +47,7 @@ public class AnatomyTermInfoController extends AbstractCommandController {
         AnatomySearchBean form = (AnatomySearchBean) command;
         AnatomyItem term = retrieveAnatomyTermData(form);
         if (term == null)
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAnatomyItem().getZdbID());
+            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, form.getAnatomyItem().getZdbID());
 
 
         ModelAndView modelAndView = new ModelAndView("anatomy-terminfo.page", LookupStrings.FORM_BEAN, form);

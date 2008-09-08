@@ -21,7 +21,7 @@ public interface MutantRepository extends CachedRepository {
      * to a given anatomy item.
      *
      * @param item            Anatomy Item
-     * @param wildtype return wildtype genotypes
+     * @param wildtype        return wildtype genotypes
      * @param numberOfRecords @return A list of Genotype objects.
      * @return list of genotypes
      */
@@ -61,6 +61,7 @@ public interface MutantRepository extends CachedRepository {
 
     /**
      * Retrieve a genotype object by PK.
+     *
      * @param genoteypZbID pk
      * @return genotype
      */
@@ -70,30 +71,43 @@ public interface MutantRepository extends CachedRepository {
      * Retrieve the genotype objects that are assoicated to a morpholino.
      * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
      * attached.
+     *
+     * @param item            anatomy structure
+     * @param isWildtype      wildtype of genotype
+     * @param numberOfRecords defines the first n records to retrieve
+     * @return list of genotype object
+     */
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype, int numberOfRecords);
 
-     * @param item anatomy structure
+    /**
+     * Retrieve all genotype objects that are assoicated to a morpholino.
+     * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
+     * attached.
+     *
+     * @param item       anatomy structure
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype);
-
+    List<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype);
 
     /**
-     * Retrieve the genotype objects that are assoicated to a morpholino.
+     * Retrieve genotype objects that are assoicated to a morpholino within the range specified
+     * in the pagination bean object.
      * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
      * attached.
-
-     * @param item anatomy structure
+     *
+     * @param item       anatomy structure
+     * @param isWildtype wildtype of genotype
+     * @param bean       PaginationBean
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item);
-
-
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype, PaginationBean bean);
 
     /**
      * Retrieve the list of morpholinos for a given genotype.
-     * @param genotype Genotype
-     * @param item Anatomy Structure
+     *
+     * @param genotype   Genotype
+     * @param item       Anatomy Structure
      * @param isWildtype genotype is wild type or not
      * @return list of morpholinos
      */
@@ -102,31 +116,28 @@ public interface MutantRepository extends CachedRepository {
 
     /**
      * Method to set pagination-related parameters.
+     *
      * @param paginationBean Pagination Bean
      */
     void setPaginationParameters(PaginationBean paginationBean);
 
     /**
-     *
-     * @param name
+     * @param name go term name
      * @return A list of GoTerms that contain the parameter handed in.
      */
-    List<GoTerm> getGoTermsByName(String name) ;
+    List<GoTerm> getGoTermsByName(String name);
 
     /**
-     *
-     * @param name
+     * @param name name of quality term
      * @return A list of GoTerms that contain the parameter handed in.
      */
-    List<Term> getQualityTermsByName(String name) ;
-
+    List<Term> getQualityTermsByName(String name);
 
 
     /**
-     *
-     * @param name
+     * @param name name of feature
      * @return A list of Features that contain the name in the abbreviation.
      */
-    List<Feature> getFeaturesByAbbreviation(String name) ;
+    List<Feature> getFeaturesByAbbreviation(String name);
 }
 
