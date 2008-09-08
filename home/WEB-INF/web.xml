@@ -30,11 +30,6 @@
     </context-param>
 
     <filter>
-        <filter-name>timing-logger</filter-name>
-        <filter-class>org.zfin.framework.filter.TimingLoggerFilter</filter-class>
-    </filter>
-
-    <filter>
         <filter-name>clickstream</filter-name>
         <filter-class>com.opensymphony.clickstream.ClickstreamFilter</filter-class>
     </filter>
