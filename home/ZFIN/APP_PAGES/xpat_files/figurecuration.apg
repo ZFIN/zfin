@@ -31,10 +31,11 @@ PREFIX:   figcur_
 	  =============
 <?/MICOMMENT>
 <a name=figure>
-    <?MISQL SQL="
+    <?MISQL COND=$(NXST,$xpcur_c_has_permission) SQL="
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'xpcur_c_has_permission';">
         <?MIVAR NAME=xpcur_c_has_permission>$1<?/MIVAR>
     <?/MISQL>
@@ -42,6 +43,7 @@ PREFIX:   figcur_
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'xpcur_c_figure';">
         <?MIVAR NAME=xpcur_c_figure>$1<?/MIVAR>
     <?/MISQL>
@@ -68,6 +70,7 @@ PREFIX:   figcur_
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'xpcur_c_image';">
         <?MIVAR NAME=xpcur_c_image>$1<?/MIVAR>
     <?/MISQL>
@@ -104,6 +107,7 @@ PREFIX:   figcur_
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
+          and cs_person_zdb_id = '$ZDB_ident'
           and cs_field_name = 'xpcur_c_permission';">
         <?MIVAR NAME=xpcur_c_permission>$1<?/MIVAR>
     <?/MISQL>
