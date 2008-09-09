@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+  version="2.0">
+    
+  <description>ZFIN functions library</description>
+  <display-name>ZFIN functions</display-name>
+  <tlib-version>1.1</tlib-version>
+  <short-name>zfn</short-name>
+  <uri></uri>
+
+  <function>
+    <description>
+      Replace special characters, such as carriage returns so JS would not choke.
+    </description>
+    <name>escapeForJavaScript</name>
+    <function-class>org.zfin.framework.presentation.Functions</function-class>
+    <function-signature>java.lang.String escapeJavaScript(java.lang.String)</function-signature>
+    <example>
+      ${fn:escapeForJavaScript(name)}">
+    </example>
+  </function>
+
+  <function>
+    <description>
+      Replace special characters, such as carriage returns so JS would not choke.
+    </description>
+    <name>escapeHtml</name>
+    <function-class>org.zfin.framework.presentation.Functions</function-class>
+    <function-signature>java.lang.String escapeHtml(java.lang.String)(java.lang.String)</function-signature>
+    <example>
+      ${fn:escapeHtml(name)}">
+    </example>
+  </function>
+
+</taglib>

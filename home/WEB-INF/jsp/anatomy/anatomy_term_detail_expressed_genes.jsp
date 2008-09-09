@@ -22,6 +22,7 @@
                             <zfin:createFiguresLink marker="${expressedGene.markerStat.gene}"
                                                     anatomyItem="${formBean.anatomyItem}"
                                                     numberOfFigures="${expressedGene.markerStat.numberOfFigures}"
+                                                    wildtypeOnly="true"
                                                     useGeneZdbID="true"/>
                         </c:if>
                         <c:if test="${expressedGene.markerStat.numberOfFigures == 1 }">

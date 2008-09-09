@@ -26,6 +26,7 @@ public class CreateFiguresLinkTag extends TagSupport {
     private Collection numberOfFiguresCollection;
     private String author;
     private boolean useGeneZdbID;
+    private boolean wildtypeOnly = true;
 
     public int doStartTag() throws JspException {
 
@@ -57,6 +58,10 @@ public class CreateFiguresLinkTag extends TagSupport {
         if (author != null) {
             hyperLink.append("&authsearchtype=contains&author=");
             hyperLink.append(author);
+        }
+
+        if (wildtypeOnly) {
+            hyperLink.append("&xpatsel_wtOnly=checked");
         }
 
         hyperLink.append("'>");
@@ -104,6 +109,7 @@ public class CreateFiguresLinkTag extends TagSupport {
         marker = null;
         anatomyItem = null;
         numberOfFigures = 0;
+        wildtypeOnly = true;
     }
 
 
@@ -164,5 +170,13 @@ public class CreateFiguresLinkTag extends TagSupport {
 
     public void setUseGeneZdbID(boolean useGeneZdbID) {
         this.useGeneZdbID = useGeneZdbID;
+    }
+
+    public boolean isWildtypeOnly() {
+        return wildtypeOnly;
+    }
+
+    public void setWildtypeOnly(boolean wildtypeOnly) {
+        this.wildtypeOnly = wildtypeOnly;
     }
 }

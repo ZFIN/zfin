@@ -10,6 +10,7 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.CanonicalMarker;
 import org.zfin.database.SearchUtil;
 import org.zfin.expression.Figure;
+import org.zfin.expression.Experiment;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
@@ -233,7 +234,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol, " +
                 "count(distinct fig.fig_zdb_id) as numOfFig  " +
                 "FROM  Expression_Experiment exp, outer marker probe, Anatomy_Item item_, Marker gene, Figure fig," +
-                "      Genotype geno, Genotype_Experiment genox, expression_pattern_figure results, expression_result result " +
+                "      Genotype geno, Genotype_Experiment genox, expression_pattern_figure results, expression_result result," +
+                "      Experiment experiment " +
                 "WHERE  exp.xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id AND" +
                 "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND         " +
                 "       item_.anatitem_zdb_id = :anatomyZdbID AND " +
@@ -246,6 +248,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       genox.genox_geno_zdb_id=geno.geno_zdb_id AND " +
                 "       geno.geno_is_wildtype = :isWildtype AND " +
                 "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND " +
+                "       experiment.exp_zdb_id = genox.genox_exp_zdb_id AND " +
+                "       experiment.exp_name = :condition AND " +
                 "       gene.mrkr_abbrev[1,10] <> :withdrawn  AND   " +
                 "       not exists( " +
                 "           select 'x' from clone " +
@@ -267,6 +271,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("anatomyZdbID", anatomyTerm.getZdbID());
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
+        query.setString("condition", Experiment.STANDARD_ONE );
         query.setString("withdrawn",Marker.WITHDRAWN );
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
         ScrollableResults results = query.scroll() ;
