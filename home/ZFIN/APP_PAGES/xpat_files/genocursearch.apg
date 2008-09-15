@@ -143,17 +143,15 @@ from the 'Existing Genotype' Search. Order by display name.
     <?MIVAR NAME=genocursrch_index>0<?/MIVAR>    
     
     <?MISQL SQL="
-        select g1.geno_zdb_id, g1.geno_handle, g1.geno_display_name
+        select g1.geno_zdb_id, g1.geno_handle, g1.geno_display_name, g1.geno_nickname
         from   genotype g1 $genosrcht_tables
-        where  $genosrcht_constraint 
-        order by g1.geno_handle;">    
+        where  $genosrcht_constraint order by g1.geno_nickname;">
     
         genocursrchArray$genocursrchOB$genocursrch_index$genocursrchCB = "$1" ;
 
       <?MIVAR NAME=genocursrch_index>$(+,$genocursrch_index,1)<?/MIVAR>
       
     <?/MISQL>
-
     
     // For each checkbox that is checked, add the geno_zdb_id to a variable
     // that is pipe delimited.
@@ -166,19 +164,19 @@ from the 'Existing Genotype' Search. Order by display name.
       //increment by the number of hidden variables.
 
       for(i=0; i<genocursrchArray.length; i++) {
-        //alert(genocursrchArray[i]);
-        //alert(genotype_form_elements[i+2].name);
+        //window.alert(genocursrchArray[i]);
+        //window.alert(genotype_form_elements[i+2].name);
         if (genotype_form_elements[i+2].checked == true) {
           checked_geno_search_zdb = genocursrchArray[i] +"|"+checked_geno_search_zdb;
           genotype_form_elements[i+2].checked = false;
           geno_count++;
         }        
       }
-      //alert(checked_geno_search_zdb);
+      //window.alert(checked_geno_search_zdb);
       document.forms['selectExistingGeno'].elements['pubcur_c_geno_attrib_count'].value = geno_count;
       //alert(geno_count);
       document.forms['selectExistingGeno'].elements['pubcur_c_geno_attrib_list'].value = checked_geno_search_zdb;
-      //alert(checked_geno_search_zdb);
+      //window.alert(checked_geno_search_zdb);
       
       return geno_count;
     }
