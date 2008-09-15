@@ -27,8 +27,9 @@ display detailed orthology data.
 ***
 <?/MICOMMENT>
 
-
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
+<head>
 
 <?MIVAR NAME=$ball_img><img src="/images/fill_green_ball.gif" border="0" height="10"><?/MIVAR>
 <?MIVAR NAME=$indx><?/MIVAR>
@@ -38,12 +39,9 @@ display detailed orthology data.
 <?MIVAR NAME=$trColor><?/MIVAR>
 <?MIVAR NAME=$oneOrZero><?/MIVAR>
 
-<!--  ZFIN header -->
-<DIV>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">
   $1
 <?/MISQL>
-</DIV>
 
 <?MISQL SQL="
           select mrkr_name, mrkr_abbrev, mrkr_type, mrkrtype_type_display
@@ -59,7 +57,7 @@ display detailed orthology data.
 <?/MISQL>
 
 <?MIVAR>
-  <head><title>Orthology Details of $mrkr_abbrev</title></head>
+  <title>Orthology Details of $mrkr_abbrev</title>
 <?/MIVAR>
 
 <body>
