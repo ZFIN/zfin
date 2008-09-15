@@ -1,56 +1,58 @@
 package org.zfin.infrastructure;
 
-import org.hibernate.Session;
-import org.hibernate.Query;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.*;
-import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.mutant.Feature;
 import org.zfin.orthology.OrthoEvidence;
 import org.zfin.orthology.Species;
-import org.zfin.sequence.reno.Run;
-import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.ForeignDB;
-import org.apache.log4j.Logger;
-import org.apache.commons.collections.CollectionUtils;
+import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.reno.Run;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Service validates java Enumerations versus their database counterparts for controlled vocabulary clases.
  */
 public class EnumValidationService {
 
-    protected static String ENUM_NOT_FOUND = "Java enum not found in database: " ; 
-    protected static String DATABASE_VALUE_NOT_FOUND = "Database value not mapped to java enum: " ; 
-    protected static String DOMAIN = "Domain: " ;
-    protected static String DOMAIN_NAME = "DOMAIN_NAME" ; 
+    protected static String ENUM_NOT_FOUND_IN_DATABASE = "Java enum not found in database: ";
+    protected static String DATABASE_VALUE_NOT_FOUND_IN_JAVA = "Database value not mapped to java enum: ";
+    protected static String DOMAIN = "Domain: ";
+    protected static String DOMAIN_NAME = "DOMAIN_NAME";
 
-    Logger logger = Logger.getLogger(EnumValidationService.class);
+    private static final Logger logger = Logger.getLogger(EnumValidationService.class);
+
+    private StringBuilder report;
 
     public void checkAllEnums() throws EnumValidationException {
         logger.info("Begin validation");
         Method[] methods = this.getClass().getMethods();
         int count = 0;
         for (Method method : methods) {
-            if( method.isAnnotationPresent(ServiceTest.class)){
+            if (method.isAnnotationPresent(ServiceTest.class)) {
                 try {
                     logger.info("running method: " + method.getName());
-                    method.invoke(this,new Object[0]);
+                    method.invoke(this, new Object[0]);
                     ++count;
                 }
                 catch (IllegalAccessException iae) {
-                    if(iae.getCause() instanceof EnumValidationException){
-                        throw new EnumValidationException("test failed"+ method.getName() + "\n"
-                                + iae.getCause().getMessage()  , iae);                         
+                    if (iae.getCause() instanceof EnumValidationException) {
+                        throw new EnumValidationException("test failed" + method.getName() + "\n"
+                                + iae.getCause().getMessage(), iae);
                     }
                     logger.fatal("bad method exception", iae);
-                    throw new EnumValidationException("exception from EnumValidationService on method "+ method.getName() , iae);
+                    throw new EnumValidationException("exception from EnumValidationService on method " + method.getName(), iae);
                 }
                 catch (InvocationTargetException ite) {
                     logger.fatal("bad method exception", ite);
@@ -66,18 +68,18 @@ public class EnumValidationService {
 
     @ServiceTest
     public void validateMarkerTypes() throws EnumValidationException {
-        String hql = "select mt.name from MarkerType mt" ; 
-        List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list() ;
-        checkEnumVersusDatabaseCollection(typeList,Marker.Type.values()) ;
+        String hql = "select mt.name from MarkerType mt";
+        List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list();
+        checkEnumVersusDatabaseCollection(typeList, Marker.Type.values());
 
-        Criteria c = HibernateUtil.currentSession().createCriteria(MarkerType.class) ;
+        Criteria c = HibernateUtil.currentSession().createCriteria(MarkerType.class);
     }
 
     @ServiceTest
     public void validateMarkerTypeGroups() throws EnumValidationException {
         String hql = "select mtg.name from MarkerTypeGroup mtg";
         List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,Marker.TypeGroup.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, Marker.TypeGroup.values());
     }
 
 
@@ -118,7 +120,7 @@ public class EnumValidationService {
     public void validateRecordAttributionSourceType() throws EnumValidationException {
         String hql = "select * from attribution_type";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,RecordAttribution.SourceType.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, RecordAttribution.SourceType.values());
     }
 
 
@@ -129,7 +131,7 @@ public class EnumValidationService {
     public void validateMarkerHistoryEvent() throws EnumValidationException {
         String hql = "select * from marker_history_event";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,MarkerHistory.Event.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, MarkerHistory.Event.values());
     }
 
 
@@ -140,7 +142,7 @@ public class EnumValidationService {
     public void validateMarkerHistoryReason() throws EnumValidationException {
         String hql = "select * from marker_history_reason";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,MarkerHistory.Reason.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, MarkerHistory.Reason.values());
     }
 
     /**
@@ -150,7 +152,7 @@ public class EnumValidationService {
     public void validateMarkerRelationshipType() throws EnumValidationException {
         String hql = "select mreltype_name from marker_relationship_type";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,MarkerRelationship.Type.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, MarkerRelationship.Type.values());
     }
 
 
@@ -161,7 +163,7 @@ public class EnumValidationService {
     public void validateFeatureType() throws EnumValidationException {
         String hql = "select ftrtype_name from feature_type";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,Feature.Type.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, Feature.Type.values());
     }
 
     /**
@@ -171,35 +173,35 @@ public class EnumValidationService {
     public void validateOrthoEvidenceCode() throws EnumValidationException {
         String hql = "select code from EvidenceCode";
         List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,OrthoEvidence.Code.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, OrthoEvidence.Code.values());
     }
 
     @ServiceTest
     public void validateSpecies() throws EnumValidationException {
         String hql = "select organism_common_name from organism";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,Species.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, Species.values());
     }
 
     @ServiceTest
     public void validateRunType() throws EnumValidationException {
         String hql = "select *  from run_type";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,Run.Type.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, Run.Type.values());
     }
 
     @ServiceTest
     public void validateReferenceDatabaseType() throws EnumValidationException {
         String hql = "select fdbdt_data_type  from foreign_db_data_type group by fdbdt_data_type";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,ReferenceDatabase.Type.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, ReferenceDatabase.Type.values());
     }
 
     @ServiceTest
     public void validateReferenceDatabaseSuperType() throws EnumValidationException {
         String hql = "select fdbdt_super_type from foreign_db_data_type group by fdbdt_super_type";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,ReferenceDatabase.SuperType.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, ReferenceDatabase.SuperType.values());
     }
 
 
@@ -213,40 +215,43 @@ public class EnumValidationService {
     public void validateDataAliasGroup() throws EnumValidationException {
         String hql = "select dag.name from DataAliasGroup dag";
         List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList,DataAlias.Group.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, DataAlias.Group.values());
     }
 
     @ServiceTest
     public void validateForeignDBNames() throws EnumValidationException {
         String hql = "select fdb.dbName from ForeignDB fdb";
         List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList, ForeignDB.AvailableName.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, ForeignDB.AvailableName.values());
     }
 
     @ServiceTest
     public void validateCloneProblemType() throws EnumValidationException {
         String hql = "select cpt_type from clone_problem_type cpt";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList, Clone.ProblemType.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, Clone.ProblemType.values());
     }
 
-
-
-    public void checkEnumVersusDatabaseCollection(List<String> list,Enum[] enumValues)
-        throws EnumValidationException
-    {
-        List<String> enumList = new ArrayList<String>() ;
-        for(Enum type : enumValues){
-            enumList.add(type.toString()) ;
+    public void checkEnumVersusDatabaseCollection(List<String> databaseList, Enum[] enumValues)
+            throws EnumValidationException {
+        List<String> enumList = new ArrayList<String>();
+        Enum enumType = null;
+        for (Enum type : enumValues) {
+            enumList.add(type.toString());
+            enumType = type;
         }
 
-
-        String message = getCollectionDifferenceReport(enumList, list);
-        if (message != null){
-            message += "Enum that fails to map: " + enumValues.getClass().getName() + "\n"; 
-            throw new EnumValidationException(message);
+        String message = getCollectionDifferenceReport(enumList, databaseList, enumType.getClass());
+        if (message != null) {
+            String reason = System.getProperty("line.separator") + "*******************************************************************************";
+            reason += System.getProperty("line.separator");
+            reason += "ENUMERATION VALIDATION REPORT: " + System.getProperty("line.separator") + message;
+            reason += System.getProperty("line.separator") + "*******************************************************************************";
+            logger.warn(reason);
+            if (report == null)
+                report = new StringBuilder();
+            report.append(message);
         }
-
     }
 
 
@@ -255,50 +260,55 @@ public class EnumValidationService {
      * The first collection is called the source collection while the
      * second collection is called target.
      *
-     * @param source Source Collection
-     * @param target Target Collection
+     * @param enumList     Source Collection
+     * @param databaseList Target Collection
      * @return report message. null if the collections are the same.
      */
-    public static String getCollectionDifferenceReport(Collection<String> source, Collection<String> target) {
-        if (source == null && target == null)
+    public static String getCollectionDifferenceReport(Collection<String> enumList, Collection<String> databaseList, Class clazz) {
+        if (enumList == null && databaseList == null)
             return null;
 
-        Collection<String> difference = CollectionUtils.disjunction(source, target);
-        if (CollectionUtils.isEmpty(difference))
+        Collection<String> difference = CollectionUtils.disjunction(enumList, databaseList);
+        if (difference == null)
             return null;
 
         StringBuilder sb = new StringBuilder();
-        // add unmatched source entries to report
+        // add unmatched enumList entries to report
         for (String name : difference) {
-            if (source != null && source.contains(name)) {
-                sb.append(ENUM_NOT_FOUND);
+            if (enumList != null && enumList.contains(name)) {
+                sb.append(ENUM_NOT_FOUND_IN_DATABASE);
                 sb.append(name);
-                sb.append(System.getProperty("line.separator"));                
-                sb.append("You may wish to add "+ name + " to the java code.");
+                sb.append(System.getProperty("line.separator"));
+                sb.append("You may wish to add " + name + " to the database. The enumeration");
                 sb.append(System.getProperty("line.separator"));
             }
         }
-        // add unmatched target entries to report
+        // add unmatched databaseList entries to report
         for (String name : difference) {
-            if (target != null && target.contains(name)) {
-                sb.append(DATABASE_VALUE_NOT_FOUND);
+            if (databaseList != null && databaseList.contains(name)) {
+                sb.append(DATABASE_VALUE_NOT_FOUND_IN_JAVA);
                 sb.append(name);
                 sb.append(System.getProperty("line.separator"));
-                sb.append("You may wish to remove "+ name + " from the java code.");
+                sb.append("You may wish to add " + name + " to the class: " + clazz.getName());
                 sb.append(System.getProperty("line.separator"));
             }
         }
 
-        String domain = System.getenv(DOMAIN_NAME) ;
-        if(sb.length()>0){
-            if(domain != null){
-                sb.insert(0,DOMAIN + domain + "\n") ;
+        String domain = System.getenv(DOMAIN_NAME);
+        if (sb.length() > 0) {
+            if (domain != null) {
+                sb.insert(0, DOMAIN + domain + "\n");
             }
-            return sb.toString(); 
-        }else{
-            return null ; 
+            return sb.toString();
+        } else {
+            return null;
         }
 
     }
 
+    public String getReport() {
+        if (report == null)
+            return null;
+        return report.toString();
+    }
 }

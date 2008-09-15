@@ -2,6 +2,7 @@ package org.zfin.infrastructure ;
 
 import org.apache.log4j.Logger;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.framework.HibernateUtil;
@@ -53,6 +54,8 @@ public class EnumValidationTest {
             logger.fatal(eve);
             fail(eve.toString()) ;
         }
+        String report = enumValidationService.getReport();
+        assertEquals(null, report);
     }
 
 
@@ -67,15 +70,12 @@ public class EnumValidationTest {
         namesTwo.add("Walter");
         namesTwo.add("Heinrich");
 
-        String errorReport = EnumValidationService.getCollectionDifferenceReport(namesOne, namesTwo);
+        String errorReport = EnumValidationService.getCollectionDifferenceReport(namesOne, namesTwo, String.class);
         assertNull(errorReport );
 
         namesTwo.add("Ingrid");
-        errorReport = EnumValidationService.getCollectionDifferenceReport(namesOne, namesTwo);
+        errorReport = EnumValidationService.getCollectionDifferenceReport(namesOne, namesTwo, String.class);
         assertNotNull(errorReport );
-        assertTrue( errorReport.contains(EnumValidationService.DATABASE_VALUE_NOT_FOUND  +  "Ingrid"));
-
-
 
     }
 

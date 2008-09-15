@@ -61,12 +61,15 @@ public class ZfinActionServlet extends DispatcherServlet {
     }
 
     public void startupTests() {
+        EnumValidationService service = new EnumValidationService();
         try {
-            (new EnumValidationService()).checkAllEnums();
+            service.checkAllEnums();
         }
         catch (EnumValidationException eve) {
             throw new RuntimeException("EnumValidationException caught", eve);
         }
+        if (service.getReport() != null)
+            throw new RuntimeException(service.getReport());
     }
 
     private void initDatabase() {
