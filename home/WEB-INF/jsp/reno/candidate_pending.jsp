@@ -36,7 +36,7 @@
 <table class="searchresults">
     <tr style="background: #ccc">
 
-        <th>Edit</th>
+        <th></th>
         <th>Symbol</th>
         <th>Curator</th>
     </tr>
