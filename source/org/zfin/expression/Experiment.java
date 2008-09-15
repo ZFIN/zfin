@@ -8,8 +8,8 @@ import java.util.HashSet;
  */
 public class Experiment {
 
-    public static final String STANDARD_ONE = "_Standard";
-    public static final String STANDARD_TWO = "_Generic-control";
+    public static final String STANDARD = "_Standard";
+    public static final String GENERIC_CONTROL = "_Generic-control";
 
     private String zdbID;
     private String name;

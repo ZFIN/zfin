@@ -389,6 +389,7 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("xpatsel_jtypePublished","checked");
         url.addNamevaluePair("WINSIZE", "25");
         url.addNamevaluePair("xpatsel_calledBySelf","true");
+        url.addNamevaluePair("xpatsel_wtOnly","checked");
         return url.getFullURL();
     }
 

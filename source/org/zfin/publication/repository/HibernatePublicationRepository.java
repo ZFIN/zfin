@@ -271,7 +271,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("anatomyZdbID", anatomyTerm.getZdbID());
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
-        query.setString("condition", Experiment.STANDARD_ONE );
+        query.setString("condition", Experiment.STANDARD);
         query.setString("withdrawn",Marker.WITHDRAWN );
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
         ScrollableResults results = query.scroll() ;
@@ -307,6 +307,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "WHERE res.anatomyTerm = :aoTerm " +
                 "AND fig member of res.figures " +
                 "AND res.expressionFound = :expressionFound "+
+                "AND res.expressionExperiment.genotypeExperiment.experiment.name = :condition "+
                 "AND res.expressionExperiment.marker.abbreviation not like :withdrawn " +
                 "AND not exists ( " +
                     "select 1 from Clone clone where " +
@@ -316,6 +317,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setParameter("aoTerm", anatomyTerm);
+        query.setString("condition", Experiment.STANDARD);
         query.setString("withdrawn", Marker.WITHDRAWN + "%" );
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString());
         return (Integer) query.uniqueResult();
@@ -627,7 +629,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Figure> getFiguresByGeneAndAnatomy(Marker marker, AnatomyItem anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct fig from Figure fig, ExpressionResult res, Marker marker, ExpressionExperiment exp, " +
-                "     Genotype geno, GenotypeExperiment genox " +
+                "     Genotype geno, GenotypeExperiment genox, Experiment experiment " +
                 "where " +
                 "   marker = :marker AND " +
                 "   exp.marker = marker AND " +
@@ -636,6 +638,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "   fig member of res.figures AND " +
                 "   res.expressionFound = :expressionFound AND " +
                 "   exp.genotypeExperiment = genox AND " +
+                "   genox.experiment = experiment AND " +
+                "   experiment.name = :condition AND " +
                 "   genox.genotype = geno AND " +
                 "   geno.wildtype = :isWildtype ";
         Query query = session.createQuery(hql);
@@ -643,6 +647,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setBoolean("isWildtype", true);
         query.setParameter("aoTerm", anatomyTerm);
         query.setParameter("marker", marker);
+        query.setParameter("condition", Experiment.STANDARD);
         return (List<Figure>) query.list();
     }
 
