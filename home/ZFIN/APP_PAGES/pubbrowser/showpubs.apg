@@ -359,7 +359,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?MIBLOCK COND="$(NC,$rtype,xpat)">
 <?MICOMMENT>  ==================== value= will not change value with Safari need special case ============== <?/MICOMMENT>
 <?MIVAR>
-    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,authors_lower),'pyear','authors_lower'),'$total_count','$count_of_real_pub','$evidence')" value="$(IF,$(EC,$pubOrder,authors_lower),Order By Date,Order By Author)"> 
+    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,authors_lower),'pyear desc','authors_lower'),'$total_count','$count_of_real_pub','$evidence')" value="$(IF,$(EC,$pubOrder,authors_lower),Order By Date,Order By Author)"> 
     <script>
       if (navigator.userAgent.indexOf('Safari') != -1) {
         resultOrder.value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)";
