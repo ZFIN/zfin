@@ -297,7 +297,7 @@
       }
       $g_zdbid =  $Q->param("OID");
       #$sm_refresh = 1;
-    }
+    }#~ marker not unique
     if (defined $Q->param("loc_lg")){
         $note =  $note ."@panels and ". $Q->param("loc_lg")." <p>\n";
     }else{
@@ -1470,6 +1470,41 @@
     #--------------------------------------------------------------------------
     if(($count < 1) ) {
       ### did NOT find any exact match--
+      ### look for associated accessions with the current constraints
+      $note = $note .  "\nIs it ACCESSION NUMBER? \n";
+      if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
+      $note = $note .  "Is |$marker| exactly unique on |$panel| |$lg| officially?<p>\n ";
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM  paneled_markers, db_link,foreign_db_contains ".
+	 "WHERE dblink_acc_num  = \'$marker\' AND target_abbrev in (\'$panel\') ".
+	  "AND mtype IN (\'$types\') AND or_lg =  \'$lg\' AND zdb_id = dblink_linked_recid ".
+      "AND dblink_fdbcont_zdb_id =  fdbcont_zdb_id AND fdbcont_fdbdt_super_type = \'sequence\'".
+      "AND fdbcont_fdbdt_data_type != \'Polypeptide\' and fdbcont_organism_common_name = \'zebrafish\';";
+
+      } elsif( defined  $panel) {
+      $note = $note .  "Is |$marker| exactly unique on |$panel| offically?<p>\n ";
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM paneled_markers, db_link,foreign_db_contains ".
+	 "WHERE dblink_acc_num   = \'$marker\' AND target_abbrev in (\'$panel\') " .
+	  "AND mtype IN ( \'$types\' ) AND zdb_id = dblink_linked_recid ".
+      "AND dblink_fdbcont_zdb_id =  fdbcont_zdb_id AND fdbcont_fdbdt_super_type = \'sequence\'".
+      "AND fdbcont_fdbdt_data_type != \'Polypeptide\' and fdbcont_organism_common_name = \'zebrafish\';";
+
+      } else  {
+      $note = $note . "Is |$marker| exactly unique in ZFIN officially?<p>\n ";
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM paneled_markers, db_link,foreign_db_contains ".
+	  "WHERE dblink_acc_num   = \'$marker\' AND mtype IN ( \'$types\' ) AND zdb_id = dblink_linked_recid ".
+      "AND dblink_fdbcont_zdb_id =  fdbcont_zdb_id AND fdbcont_fdbdt_super_type = \'sequence\'".
+      "AND fdbcont_fdbdt_data_type != \'Polypeptide\' and fdbcont_organism_common_name = \'zebrafish\';";
+      }
+      $cur = $dbh->prepare($sql);$cur->execute();
+      $array_ref = $cur->fetchall_arrayref();
+      #$note = $note . @$array_ref . " " .$array_ref->[0][0]." ".$array_ref->[1][0]. "\n\n";
+      $count = (defined @$array_ref)? @$array_ref : 0;
+      $note = $note . "found $count similar official symbols<p>\n";
+    }
+
+    #--------------------------------------------------------------------------
+    if(($count < 1) ) {
+      ### did NOT find any exact match--
       ### first look for "contains" with the current constraints
       $note = $note .  "\nLOOKING for CONTAINS \n";
       if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25)) {
@@ -1530,6 +1565,9 @@
         $count = (defined @$array_ref)? @$array_ref : 0;
         $note = $note . "found $count <p>\n";
     }
+
+
+    #--------------------------------------------------------------------------
     if(($count < 1) ) {
         ### did NOT find any exact match--
         ### first look for "contains" with the current constraints
