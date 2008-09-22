@@ -117,7 +117,7 @@ Before proposing and reserving a name, review the current guidelines and search 
     <p><strong>Line Information *</strong></p>
   <p>Please provide names for each allele and/or transgenic insertion carried
     by your line. In addition to the genetic locus or construct name, a unique
-    lab allele/line designation must be provided for each. For help with naming
+    lab allele/line designation must be provided for each. Please also provide a description of the protocol used to generate each mutation or transgenic insertion, as well as the mutation type if known.  For example use "ENU treated adult males" and "point", or "embryos treated with DNA" and "transgenic insertion". For help with naming
     conventions, contact the nomenclature committee at <a href="mailto:nomenclature@zfin.org">nomenclature@zfin.org</a>.
     If you need a laboratory prefix set up for you, please contact us at <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>.</p>
   <table border="0" cellspacing="8" cellpadding="0">
@@ -133,6 +133,12 @@ Before proposing and reserving a name, review the current guidelines and search 
       <td nowrap>Allele/Line Designation
         <input name="lab_desig_1" type="text" size="8">
       </td>
+      <td nowrap>Protocol
+        <input name="protocol_1" type="text" size="8">
+      </td>
+      <td nowrap>Mutation Type
+        <input name="mut_type_1" type="text" size="8">
+      </td>
     </tr>
 
     <tr>
@@ -147,6 +153,12 @@ Before proposing and reserving a name, review the current guidelines and search 
         <input name="lab_desig_2" type="text" size="8">
 
       </td>
+      <td nowrap>Protocol
+        <input name="protocol_2" type="text" size="8">
+      </td>
+      <td nowrap>Mutation Type
+        <input name="mut_type_2" type="text" size="8">
+      </td>
     </tr>
     <tr>
       <td>3.</td>
@@ -159,6 +171,12 @@ Before proposing and reserving a name, review the current guidelines and search 
       </td>
       <td nowrap>Allele/Line Designation
         <input name="lab_desig_3" type="text" size="8">
+      </td>
+      <td nowrap>Protocol
+        <input name="protocol_3" type="text" size="8">
+      </td>
+      <td nowrap>Mutation Type
+        <input name="mut_type_3" type="text" size="8">
       </td>
     </tr>
   </table>
