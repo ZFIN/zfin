@@ -5,18 +5,19 @@
             TARGETS
 
             DEPLOYMENT:
-            all/deploy/install: Deploys entire target. 
+            all/deploy/install: Deploys entire target
                pre-deploy (test if not production) advance-build restart 
             revert: revert-build restart
-            pre-deploy: Deploys entire WEB-INF environment to the pre-build directories.
-            advance-build: Moves the prebuild directory to current.
-            revert-build: Moves the post-build directory to current.  Does not restart.
-            gwt: Compile gwt targets to the pre-directory.
-            jsp-compile: Precompile jsp files and generate appropriate web.xml servlert reference.
+            pre-deploy: Deploys entire WEB-INF environment to the pre-build directories
+            advance-build: Moves the prebuild directory to current
+            revert-build: Moves the post-build directory to current, but does not restart
+            gwt: Compile gwt targets to the pre-directory
+            jsp-compile: Precompile jsp files and generate appropriate web.xml servlert reference
 
             DEVELOPMENT:
             dirtydeploy: Deploys entire WEB-INF environment changes without cleaning
-            do: Clean, compile and build entire WEB-INF environment. No copying into target directory.
+            dirty-gwt: Deploys all gwt instances into the active target directory
+            do: Clean, compile and build entire WEB-INF environment. No copying into target directory
             clean: Cleans WEB-INF target
             compile: Compile WEB-INF target only
             runHibernate: Run the HibernateStandaloneUtil class to check your Persistence

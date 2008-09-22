@@ -1,45 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="gwt" basedir=".">
 
-<target name="gwt" description="Compiles all gwt targets">
-    <antcall target="lookup-gwt"/>
-    <antcall target="lookuptable-gwt"/>
-    <antcall target="sessionsave-gwt"/>
-</target>
+    <target name="dirty-gwt" description="Compiles all gwt targets">
+        <antcall target="dirty-lookup-gwt"/>
+        <antcall target="dirty-lookuptable-gwt"/>
+        <antcall target="dirty-sessionsave-gwt"/>
+    </target>
 
-<target name="lookup-gwt" description="Compiles lookup gwt">
-<antcall target="gwt-compile">
-    <param name="gwt.module" value="org.zfin.framework.presentation.Lookup"/>
-</antcall>
-</target>
+    <target name="gwt" description="Compiles all gwt targets">
+        <antcall target="lookup-gwt"/>
+        <antcall target="lookuptable-gwt"/>
+        <antcall target="sessionsave-gwt"/>
+    </target>
+
+    <target name="dirty-lookup-gwt" description="Compiles lookup gwt">
+        <antcall target="gwt-compile">
+            <param name="gwt.module.target" value="${gwt.target}"/>
+            <param name="gwt.module" value="org.zfin.framework.presentation.Lookup"/>
+        </antcall>
+    </target>
+
+    <target name="lookup-gwt" description="Compiles lookup gwt">
+        <antcall target="gwt-compile">
+            <param name="gwt.module.target" value="${gwt.pre-target}"/>
+            <param name="gwt.module" value="org.zfin.framework.presentation.Lookup"/>
+        </antcall>
+    </target>
+
+    <target name="dirty-lookuptable-gwt" description="Compiles lookup gwt">
+        <antcall target="gwt-compile">
+            <param name="gwt.module.target" value="${gwt.target}"/>
+            <param name="gwt.module" value="org.zfin.framework.presentation.LookupTable"/>
+        </antcall>
+    </target>
 
     <target name="lookuptable-gwt" description="Compiles lookup gwt">
         <antcall target="gwt-compile">
+            <param name="gwt.module.target" value="${gwt.pre-target}"/>
             <param name="gwt.module" value="org.zfin.framework.presentation.LookupTable"/>
+        </antcall>
+    </target>
+
+    <target name="dirty-sessionsave-gwt" description="Compiles sessionsave gwt">
+        <antcall target="gwt-compile">
+            <param name="gwt.module.target" value="${gwt.target}"/>
+            <param name="gwt.module" value="org.zfin.people.presentation.SessionSave"/>
         </antcall>
     </target>
 
     <target name="sessionsave-gwt" description="Compiles sessionsave gwt">
         <antcall target="gwt-compile">
+            <param name="gwt.module.target" value="${gwt.pre-target}"/>
             <param name="gwt.module" value="org.zfin.people.presentation.SessionSave"/>
         </antcall>
     </target>
 
-<target name="gwt-compile" description="Compile gwt classes to javascript" depends="compile">
-<java fork="true" className="com.google.gwt.dev.GWTCompiler" classpathref="extended.classpath">
-    <classpath>
-        <dirset dir="${source.dir}" defaultexcludes="true">
-            <include name="**"/>
-            <exclude name="**/.svn"/>
-        </dirset>
-    </classpath>
-    <arg value="-out"/>
-    <arg value="${gwt.pre-target}"/>
-    <arg value="-style"/>
-    <arg value="PRETTY"/>
-    <arg value="${gwt.module}"/>
-    <jvmarg value="-Xms256m"  />
-    <jvmarg value="-Xmx512m"  />
-</java>
-</target>
+    <target name="gwt-compile" description="Compile gwt classes to javascript" depends="compile">
+        <java fork="true" className="com.google.gwt.dev.GWTCompiler" classpathref="extended.classpath">
+            <classpath>
+                <dirset dir="${source.dir}" defaultexcludes="true">
+                    <include name="**"/>
+                    <exclude name="**/.svn"/>
+                </dirset>
+            </classpath>
+            <arg value="-out"/>
+            <arg value="${gwt.module.target}"/>
+            <arg value="-style"/>
+            <arg value="PRETTY"/>
+            <arg value="${gwt.module}"/>
+            <jvmarg value="-Xms256m"  />
+            <jvmarg value="-Xmx512m"  />
+        </java>
+    </target>
 </project>
