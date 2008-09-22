@@ -175,14 +175,16 @@ sub geno_load($) {
 
     my $add_new_genoids = $dbh->prepare("update geno_pulled_from_zirc
                                           set epfz_geno_zdb_id = get_id('GENO')
-                                          where epfz_geno_zdb_id is null;");
+                                          where epfz_geno_zdb_id is null
+                                          and get_obj_type(epfz_alt_zdb_id)='ALT';");
 
     my $to_active_data = $dbh->prepare("insert into zdb_active_data
                                           select epfz_geno_zdb_id
                                              from geno_pulled_From_zirc
                                              where not exists (Select 'x'
     	      	     	                                         from zdb_active_data
-			                                         where epfz_geno_Zdb_id = zactvd_zdb_id);");
+			                                         where epfz_geno_Zdb_id = zactvd_zdb_id)
+                                             and epfz_geno_zdb_id is not null;");
 
     my $to_genotype = $dbh->prepare("insert into genotype (geno_zdb_id, 
        	    	                                           geno_display_name,
@@ -197,7 +199,8 @@ sub geno_load($) {
                                          from geno_pulled_from_zirc
                                          where not exists (select 'x'
   	    	   	                                     from genotype
-			                                     where geno_zdb_id = epfz_geno_zdb_id);");
+			                                     where geno_zdb_id = epfz_geno_zdb_id)
+                                          and epfz_geno_zdb_id is not null;");
 
     my $to_genofeat = $dbh->prepare(
 	"insert into genotype_feature (genofeat_zdb_id,
@@ -224,7 +227,8 @@ sub geno_load($) {
                                     and genofeat_feature_zdb_id = epfz_alt_zdb_id
                                     and genofeat_zygocity = (select zyg_zdb_id from zygocity where zyg_name =epfz_zygocity)
                                     and genofeat_mom_zygocity = 'ZDB-ZYG-070117-7'
-                                    and genofeat_dad_zygocity = 'ZDB-ZYG-070117-7');");
+                                    and genofeat_dad_zygocity = 'ZDB-ZYG-070117-7')
+              and epfz_geno_zdb_id is not null;");
 
     my $to_genoback=$dbh->prepare(
 	"insert into genotype_background (genoback_geno_zdb_id,
@@ -233,7 +237,8 @@ sub geno_load($) {
              from geno_pulled_from_zirc
              where not exists (Select 'x' from genotype_background
                                     where genoback_geno_zdb_id = epfz_geno_zdb_id
-                                    and genoback_background_zdb_id = epfz_background_zdb_id);");
+                                    and genoback_background_zdb_id = epfz_background_zdb_id)
+              and epfz_geno_zdb_id is not null;");
 
     my $to_recattrib=$dbh->prepare(
 	"insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
@@ -243,7 +248,8 @@ sub geno_load($) {
     	      	     	           from record_attribution 
 			           where recattrib_data_zdb_id = epfz_geno_zdb_id
 			           and recattrib_source_zdb_id = 'ZDB-PUB-080110-2'
-			           and recattrib_source_type = 'standard');");
+			           and recattrib_source_type = 'standard')
+              and epfz_geno_zdb_id is not null;");
 
     my $to_recattrib_genofeat=$dbh->prepare(
 	"insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
@@ -253,7 +259,8 @@ sub geno_load($) {
     	      	     	           from record_attribution 
 			           where recattrib_data_zdb_id = epfz_genofeat_zdb_id
 			           and recattrib_source_zdb_id = 'ZDB-PUB-080110-2'
-			           and recattrib_source_type = 'standard');");
+			           and recattrib_source_type = 'standard')
+               and epfz_geno_zdb_id is not null;");
 
     my $to_data_supplier_geno=$dbh->prepare(
 	"insert into int_data_supplier (idsup_data_zdb_id, idsup_acc_num, 
@@ -266,7 +273,8 @@ sub geno_load($) {
 			         and idsup_Acc_num = epfz_geno_zdb_id
 			         and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53')
              and exists (Select 'x' from geno_available
-                            where geno_zdb_id = epfz_geno_zdb_id);");
+                            where geno_zdb_id = epfz_geno_zdb_id)
+             and epfz_geno_zdb_id is not null ;");
 
     my $to_data_supplier_feature=$dbh->prepare(
     "insert into int_data_supplier (idsup_data_zdb_id, idsup_acc_num, 
@@ -279,17 +287,20 @@ sub geno_load($) {
 			            and idsup_Acc_num = epfz_alt_zdb_id
 			            and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53')
                  and exists (Select 'x' from geno_available
-                            where geno_zdb_id = epfz_geno_zdb_id);");
+                            where geno_zdb_id = epfz_geno_zdb_id)
+                 and epfz_geno_zdb_id is not null;");
  
     my $update_geno_handle=$dbh->prepare(
 	"update geno_pulled_from_zirc
                set epfz_geno_handle = get_genotype_handle(epfz_geno_zdb_id)
-               where epfz_geno_handle is null;");
+               where epfz_geno_handle is null
+               and epfz_geno_zdb_id is not null;");
 
     my $update_geno_display=$dbh->prepare(
           "update geno_pulled_from_zirc
                  set epfz_geno_display_name = get_genotype_display(epfz_geno_zdb_id)
-                 where epfz_geno_display_name is null;");
+                 where epfz_geno_display_name is null
+                 and epfz_geno_zdb_id is not null;");
 
 
 
@@ -297,21 +308,25 @@ sub geno_load($) {
                     "update genotype
                        set geno_handle = (Select epfz_geno_handle
       		                            from geno_pulled_from_zirc
-		                            where epfz_geno_zdb_id = geno_zdb_id)
+		                            where epfz_geno_zdb_id = geno_zdb_id
+                                            and epfz_geno_zdb_id is not null)
                        where exists (Select 'x'
        	      	                       from geno_pulled_From_zirc
 		                       where geno_zdb_id = epfz_geno_zdb_id)
-                       and geno_handle like 'ZDB-GENO-%';");
+                       and geno_handle like 'ZDB-GENO-%'
+                       ;");
 
     my $update_genotype_display=$dbh->prepare(
                "update genotype
                   set geno_display_name =  (Select epfz_geno_display_name
       		                              from geno_pulled_from_zirc
-		                              where epfz_geno_zdb_id = geno_zdb_id)
+		                              where epfz_geno_zdb_id = geno_zdb_id
+                                              and epfz_geno_zdb_id is not null)
                   where exists (Select 'x'
        	      	                  from geno_pulled_from_zirc
 		                  where geno_zdb_id = epfz_geno_zdb_id)
-                                  and geno_display_name like 'ZDB-GENO-%';");
+                                  and geno_display_name like 'ZDB-GENO-%'
+                                  and geno_zdb_id is not null;");
 
  
    die "Couldn't prepare queries; aborting"
@@ -394,7 +409,7 @@ sub geno_dropDiscontinuedGenos($$) {
     my $deleteCur = $dbh->prepare("
            delete from int_data_supplier
              where idsup_supplier_zdb_id = '$zircZdbId'
-               and idsup_data_zdb_id like 'ZDB-GENO%'
+               and get_obj_type(idsup_data_zdb_id) = 'GENO'
                and idsup_data_zdb_id = ?;");
 
     $cur->execute;
@@ -432,7 +447,7 @@ sub geno_dropDiscontinuedAlts($$) {
                     ( select 'z'
                         from geno_available
                         where idsup_data_zdb_id = geno_zdb_id
-                        and geno_zdb_id like 'ZDB-ALT%')
+                        and get_obj_type(geno_zdb_id) ='ALT')
               
             order by idsup_data_zdb_id;");
 
@@ -441,7 +456,7 @@ sub geno_dropDiscontinuedAlts($$) {
              where idsup_supplier_zdb_id = '$zircZdbId'
                and idsup_data_zdb_id = ?
                and idsup_data_zdb_id = idsup_acc_num
-               and idsup_data_zdb_id like 'ZDB-ALT%';");
+               and get_obj_type(idsup_data_zdb_id) = 'ALT';");
 
     $cur->execute;
 
@@ -480,7 +495,7 @@ sub geno_altSuppliedByZFIN_count($$) {
     # count them
     my $cur = $dbh->prepare("select count(*)
             from int_data_supplier
-            where idsup_data_zdb_id like 'ZDB-ALT-%'
+            where get_obj_type(idsup_data_zdb_id) ='ALT'
               and idsup_supplier_zdb_id = '$zircZdbId'
               and idsup_data_zdb_id = idsup_acc_num;");
 
@@ -506,7 +521,7 @@ sub geno_GenoSuppliedByZFIN_count($$) {
     # count them
     my $cur = $dbh->prepare("select count(*)
             from int_data_supplier
-            where idsup_data_zdb_id like 'ZDB-GENO-%'
+            where get_obj_type(idsup_data_zdb_id) ='GENO'
               and idsup_supplier_zdb_id = '$zircZdbId'
               and idsup_acc_num = idsup_data_zdb_id;");
 
@@ -558,7 +573,7 @@ sub geno_reportSuppliedByZircGenos($) {
 
     # report them
     my $cur = $dbh->prepare("select count(*) from geno_available
-                               where geno_zdb_id like 'ZDB-GENO-%';");
+                               where get_obj_type(geno_zdb_id)= 'GENO';");
 
     $cur->execute;   
     $cur->bind_columns(\$rowCount);

@@ -74,34 +74,18 @@ sub errorExit(@) {
 sub downloadFiles($$) {
     my $filename = $_[0];
     my $Geno = $_[1];
-
-    if (defined($Geno) and $Geno eq "Genos"){
-	
-	my $wgetStatusFile = "/tmp/pullFromZirc.<!--|DB_NAME|-->.$filename";
-	system("rm -f $wgetStatusFile");
-	if (system("/local/bin/wget http://zebrafish.org/zirc/zfin/$filename >> $wgetStatusFile 2>&1")) {
-	    &errorExit("Failed to download $filename file from ZIRC.",
+    my $wgetStatusFile = "/tmp/pullFromZirc.<!--|DB_NAME|-->.$filename";
+ 
+    system("rm -f $wgetStatusFile");
+    if (system("/local/bin/wget http://zebrafish.org/zirc/zfin/$filename >> $wgetStatusFile 2>&1")){
+	&errorExit("Failed to download $filename file from ZIRC.",
 		   "  See $wgetStatusFile for details.");
-	}
-	if (-z $filename) {
-	    &errorExit("Downloaded file $filename is empty.  Aborting.",
-		       "  See $wgetStatusFile for details.");
-	}
     }
-    else {
-	
-	$wgetStatusFile = "/tmp/pullFromZirc.almdb.$filename";
-	system("rm -f $wgetStatusFile");
-	if (system("/local/bin/wget http://zirc.uoregon.edu/zfin/$filename >> $wgetStatusFile 2>&1")) {
-	    &errorExit("Failed to download $filename file from ZIRC.",
-		       "  See $wgetStatusFile for details.");
-	}
-	if (-z $filename) {
-	    &errorExit("Downloaded file $filename is empty.  Aborting.",
-		       "  See $wgetStatusFile for details.");
-	}
+    if (-z $filename) {
+	&errorExit("Downloaded file $filename is empty.  Aborting.",
+		   "  See $wgetStatusFile for details.");
     }
-
+    
     return ();
 }
 

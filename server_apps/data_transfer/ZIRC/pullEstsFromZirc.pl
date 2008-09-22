@@ -38,7 +38,7 @@ sub est_parse($$$) {
     #
     # Therefore, this routine directly inserts records into the temp table.
 
-    $/ = "\r";			# control M is input line separator.
+    #$/ = "\r";			# control M is input line separator.
 
     open (ZIRCESTFILE,"$zircFile") || errorExit ("Failed to open $zircFile");
 
@@ -57,7 +57,7 @@ sub est_parse($$$) {
     }
     close (ZIRCESTFILE);
 
-    $/ = '\n';			# restore default input line separator
+   # $/ = '\n';			# restore default input line separator
 
     return ();
 }
@@ -84,7 +84,8 @@ sub est_reportUnchangedCount($$) {
           select count(*)
             from est_pulled_from_zirc, int_data_supplier
             where idsup_data_zdb_id = epfz_est_zdb_id 
-              and idsup_supplier_zdb_id = '$zircZdbId';");
+              and idsup_supplier_zdb_id = '$zircZdbId'
+              and get_obj_type(idsup_data_zdb_id) ='EST';");
 
     $cur->execute();
     $cur->bind_columns(\$rowCount);
@@ -121,6 +122,7 @@ sub est_reportUnknownEsts($) {
                     ( select mrkr_zdb_id 
                         from marker
                         where mrkr_zdb_id = epfz_est_zdb_id )
+            and get_obj_type(epfz_est_zdb_id) ='EST'         
             order by epfz_est_zdb_id;");
 
     $cur->execute;
@@ -212,6 +214,7 @@ sub est_addNewlySuppliedEsts($$) {
           select epfz_est_zdb_id 
             from est_pulled_from_zirc, marker
             where epfz_est_zdb_id = mrkr_zdb_id
+              and get_obj_type(epfz_est_zdb_id) = 'EST'
               and not exists
                     ( select idsup_data_zdb_id
                         from int_data_supplier
@@ -286,12 +289,11 @@ sub est_main($$) {
 
     my $dbh = $_[0];
     my $zircZdbId = $_[1];
-    my $zircEstFile = "zircESTs.tab"; # file to download
+    my $zircEstFile = "resource.txt"; # file to download
 
     &writeReport("****** Pulling EST information from ZIRC.\n");
-
-    system("rm -f $zircEstFile");    # remove old downloaded files
-    &downloadFiles($zircEstFile);    # get new EST file
+    # since EST file is the same as GENO, ALT file we don't need to rm
+    # and re-download.
 
     # create temp table to load list of ESTs from ZIRC into
 
