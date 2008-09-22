@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="tomcat" basedir=".">
+    <!-- todo: the location of the commons tree should probably come from the env -->
+    <property name="tomcat-script-mutant" value="/private/ZfinLinks/Commons/bin/tomcat.sh"/>
+    <property name="tomcat-script-production-stop" value="/private/ZfinLinks/Commons/bin/stoptomcat.pl"/>
+    <property name="tomcat-script-production-start" value="/private/ZfinLinks/Commons/bin/starttomcat.pl"/>
+
+
+    <target name="productionandalmost-tomcat-start" if="isalmostorproduction" description="Starts tomcat if production or almost">
+        <exec executable="${tomcat-script-production-start}" failifexecutionfails="true">
+            <arg value="start"/>
+        </exec>
+        <echo message=":TOMCAT START SUCCESSFUL:"/>
+    </target>
+
+    <target name="productionandalmost-tomcat-stop" if="isalmostorproduction" description="Stops tomcat if production or almost">
+        <exec executable="${tomcat-script-production-stop}" failifexecutionfails="true">
+            <arg value="stop"/>
+        </exec>
+        <echo message=":TOMCAT STOP SUCCESSFUL:"/>
+    </target>
+
+    <target name="mutant-tomcat-start" if="ismutant" description="Starts tomcat if mutant">
+        <exec executable="${tomcat-script-mutant}"  failifexecutionfails="true">
+            <arg value="start"/>
+        </exec>
+        <echo message=":TOMCAT START SUCCESSFUL:"/>
+    </target>
+
+    <target name="mutant-tomcat-stop" if="ismutant" description="Stops tomcat if mutant">
+        <exec executable="${tomcat-script-mutant}" failifexecutionfails="true">
+            <arg value="stop"/>
+        </exec>
+        <echo message=":TOMCAT STOP SUCCESSFUL:"/>
+    </target>
+	 
+
+    <target name="zfinonembryonix-tomcat-start" if="iszfinonembryonix"  description="Starts tomcat if zfin on embryonix">
+        <echo message=":Manually START Tomcat:"/>
+        <echo>
+        "ssh username@embryonix sudo tomcat.sh start embryonix"
+        </echo>
+    </target>
+
+    <target name="zfinonembryonix-tomcat-stop" if="iszfinonembryonix"  description="Stops tomcat if zfin on embryonix">
+        <echo message=":Manually STOP Tomcat:"/>
+        <echo>
+        "ssh username@embryonix sudo tomcat.sh stop embryonix"
+        </echo>
+    </target>
+
+
+
+    <target name="tomcat-stop" depends="productionandalmost-tomcat-stop,zfinonembryonix-tomcat-stop,mutant-tomcat-stop"  description="Stops tomcat by calling all tomcat stop targets"/>
+    <target name="tomcat-start" depends="productionandalmost-tomcat-start,zfinonembryonix-tomcat-start,mutant-tomcat-start"   description="Starts tomcat if zfin on embryonix"/>
+
+
+    <target name="tomcat-debug-start"   description="Starts tomcat in debug mode">
+        <exec executable="${tomcat-script-mutant}">
+            <arg value="debug-start"/>
+        </exec>
+    </target>
+
+
+    <target name="tomcat-debug-stop"   description="Stops tomcat in debug mode">
+        <exec executable="${tomcat-script-mutant}">
+            <arg value="debug-stop"/>
+        </exec>
+    </target>
+
+
+    <target name="tomcat-restart" depends="tomcat-stop,tomcat-start"  description="Restarts tomcat for the appropriate machine"/>
+    <target name="tomcat-debug-restart" depends="tomcat-debug-stop,tomcat-debug-start"  description="Restarts tomcat in debug mode"/>
+    <target name="restart" depends="tomcat-restart"  description="Restarts tomcat for the appropriate environment"/> 
+    <target name="debug-restart" depends="tomcat-debug-restart"  description="Restarts tomcat in debug mode" />
+
+    <!-- an alias to create-mutant-instance with a more explanatory name -->
+    <target name="deploy-catalina-base" depends="create-mutant-instance"  description="Creates a tomcat"/>
+
+    <target name="create-mutant-instance" depends="create-tomcat-dirs"
+            description="Target to create a Tomcat tree for a given mutant">
+        <!--        Copy the conf files-->
+        <copy todir="${tomcat-conf}">
+            <fileset dir="${template-dir}/conf">
+                <exclude name="Catalina/**"/>
+            </fileset>
+            <filterset>
+                <filter token="TARGETROOT" value="${env.TARGETROOT}"/>
+                <filter token="DBNAME" value="${dbname}"/>
+                <filter token="SERVER-SHUTDOWN-PORT" value="${shutdownport}"/>
+                <filter token="Non-SECUREPORT" value="${non-secureport}"/>
+                <filter token="SECUREPORT" value="${secureport}"/>
+                <filter token="DOMAIN-NAME" value="${domain-name}"/>
+            </filterset>
+        </copy>
+        <!--        Copy the  context files-->
+        <copy todir="${domain-conf}">
+            <fileset dir="${template-dir}/conf/Catalina/mutant"/>
+            <filterset>
+                <filter token="TARGETROOT" value="${env.TARGETROOT}"/>
+                <filter token="DBNAME" value="${dbname}"/>
+                <filter token="SERVER-SHUTDOWN-PORT" value="${shutdownport}"/>
+                <filter token="Non-SECUREPORT" value="${non-secureport}"/>
+                <filter token="SECUREPORT" value="${secureport}"/>
+                <filter token="SQLHOSTSHOST" value="${sqlhosts-host}"/>
+                <filter token="INFORMIXSERVER" value="${informixserver}"/>
+                <filter token="INFORMIXPORT" value="${informixport}"/>
+                <filter token="DOMAIN-NAME" value="${domain-name}"/>
+            </filterset>
+        </copy>
+        <antcall target="set-catalina-base-perms"/>
+    </target>
+
+    <target name="set-catalina-base-perms"  if="isinformix"  description="Sets permissions for tomcat">
+        <echo message="chmod a+rX for ${env.CATALINA_BASE}"/>
+        <chmod perm="a+rX" type="both" verbose="true">
+            <fileset dir="${env.CATALINA_BASE}"/>
+        </chmod>
+
+        <echo message="chmod a+rwX for ${env.CATALINA_BASE}/work"/>
+        <chmod perm="a+rwX" type="both" verbose="true">
+            <fileset dir="${env.CATALINA_BASE}/work"/>
+        </chmod>
+        <echo message="***********************************************************************"/>
+        <echo message=" As yourself, please do: "/>
+        <echo message="    sudo chown -R zfishweb ${env.CATALINA_BASE}/logs "/>
+        <echo message="    sudo -u zfishweb touch ${env.CATALINA_BASE}/logs/catalina.out "/>
+        <echo message="************************************************************************"/>
+    </target>
+
+    <target name="create-tomcat-dirs" description="Creates tomcat directories">
+        <mkdir dir="${env.CATALINA_BASE}"/>
+        <mkdir dir="${env.CATALINA_BASE}/conf"/>
+        <mkdir dir="${env.CATALINA_BASE}/conf/Catalina"/>
+        <mkdir dir="${domain-conf}"/>
+        <mkdir dir="${env.CATALINA_BASE}/logs"/>
+        <mkdir dir="${env.CATALINA_BASE}/webapps"/>
+        <mkdir dir="${env.CATALINA_BASE}/work"/>
+    </target>
+
+    <target name="jsp-compile" description="Compiles jsp files using jspc">
+        <delete dir="${pre.jsp-compile}" includes="**/*"/>
+        <mkdir dir="${pre.jsp-compile}"/>
+        <taskdef classname="org.apache.jasper.JspC" name="jasper2">
+            <classpath id="jspc.classpath">
+                <path refid="classpath"/>
+                <pathelement location="${pre-web-inf}"/>
+                <fileset dir="${env.CATALINA_HOME}/bin">
+                    <include name="*.jar"/>
+                </fileset>
+                <fileset dir="${env.CATALINA_HOME}/server/lib">
+                    <include name="*.jar"/>
+                </fileset>
+                <fileset dir="${env.CATALINA_HOME}/common/lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </taskdef>
+        <jasper2 validateXml="false"
+                 uriroot="${pre-home.target}"
+                 outputDir="${pre.jsp-compile}"
+                 classpath="${jspc.classpath}"
+                 failOnError="false"
+                 verbose="0"
+                 listErrors="true"
+                 compile="false"
+                 compilerSourceVM="1.5"
+                 compilerTargetVM="1.5"
+                />
+        <javac srcdir="${pre.jsp-compile}"
+              destdir="${pre.jsp-compile}"
+              classpathref="jspc.classpath"
+              fork="true"
+              includeAntRuntime="no"
+              memoryMaximumSize="256m"
+              debug="true"
+              target="1.5"/>
+	<echo message=":JSP COMPILE SUCCESSFUL:"/>
+    </target>
+
+
+    <target name="has-tomcat-symlink">
+       <echo message="Checking tomcat symlink between ${tomcat-work}/org and ${jsp-compile}/org.  "/>
+        <fail message=":FAIL TOMCAT JSP-COMPILE SYMLINK NOT FOUND:  Try running 'ant create-tomcat-symlink'." unless="has.tomcat.symlink"/>
+        <echo message="Link exists"/>
+    </target>
+
+    <target name="create-tomcat-symlink">
+       <symlink link="${tomcat-work}/org" action="single" overwrite="true" failonerror="fail" resource="${jsp-compile}/org"/> 
+    </target>
+
+</project>

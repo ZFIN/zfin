@@ -122,10 +122,16 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/zfin_statistics_view.jsp"/>
     </definition>
 
+    <definition name="svn-version" extends="dev_layout">
+        <put name="title" value="SVN Version"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/svn_version.jsp"/>
+    </definition>
+
     <definition name="error-page" extends="home_layout">
         <put name="title" value="Edit Log4J Appenders"/>
         <put name="body" value="/WEB-INF/jsp/error_page.jsp"/>
     </definition>
-    
+
+
 </tiles-definitions>
 

@@ -30,6 +30,7 @@
                 <prop key="/dev-tools/view-user-request-tracks">userRequestTrack</prop>
                 <prop key="/dev-tools/view-single-user-request-tracking">singleUserRequestTrack</prop>
                 <prop key="/dev-tools/zfin-statistics">zfinStatistics</prop>
+                <prop key="/dev-tools/svn-version">devToolsDatabaseInfo</prop>
             </props>
         </property>
     </bean>
@@ -77,6 +78,7 @@
                 <prop key="/dev-tools/view-session-info">viewSessionInfoHandler</prop>
                 <prop key="/dev-tools/view-global-session-info">viewGlobalSessionInfoHandler</prop>
                 <prop key="/dev-tools/view-hibernate-info">viewHibernateInfoHandler</prop>
+                <prop key="/dev-tools/svn-version">svnVersionHandler</prop>
             </props>
         </property>
     </bean>

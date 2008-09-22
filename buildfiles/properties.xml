@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="properties" basedir=".">
+
+    <!-- today -->
+    <tstamp prefix="today"/>
+
+    <!-- the destination directory for building a deploy tar -->
+    <property name="deploy.dir" value="deploy"/>
+    <property name="web.dir" value="${basedir}/home"/>
+    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="web.conf" value="${web-inf.dir}/conf"/>
+    <property name="lib" value="${basedir}/lib/Java"/>
+    <property name="static-version.file.name" value="java-deploy-version.html"/>
+    <property name="jsp-version.file.name" value="svn_version.jsp"/>
+    <property name="gwt.lib" value="${lib}/gwt"/>
+    <property name="doi.dir" value="${basedir}/server_apps/data_transfer/DOI"/>
+    <!-- path to servlet jar file -->
+    <property name="servlet.jar" value="${lib}/servlet-api-2.4.jar"/>
+    <property environment="env"/>
+
+
+    <property name="hibernate.exists" value="hibernate.properties.exists"/>
+
+    <!-- directory in which the unit test coverage is generated and kept-->
+    <property name="unit.test.coverage" value="${basedir}/unit-test-coverage"/>
+
+    <!-- The destination directory for all the compiled classes. -->
+    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+
+    <!-- The destination directory for all the compiled classes. -->
+    <!-- home targets -->
+    <property name="home.target" value="${env.TARGETROOT}/home"/>
+    <property name="pre-home.target" value="${env.TARGETROOT}/pre-home"/>
+    <property name="post-home.target" value="${env.TARGETROOT}/post-home"/>
+    <property name="archive-home.target" value="${env.TARGETROOT}/archive${today.DSTAMP}-home"/>
+
+    <!-- static-version file targets -->
+    <property name="static-version.file" value="${home.target}/${static-version.file.name}"/>
+    <property name="pre.static-version.file" value="${pre-home.target}/${static-version.file.name}"/>
+    <property name="post.static-version.file" value="${post-home.target}/${static-version.file.name}"/>
+    <property name="archive.static-version.file" value="${archive-home.target}/${static-version.file.name}"/>
+
+    <!-- jsp-version file targets -->
+    <property name="jsp-version.file" value="${home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
+    <property name="pre.jsp-version.file" value="${pre-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
+    <property name="post.jsp-version.file" value="${post-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
+    <property name="archive.jsp-version.file" value="${archive-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
+
+    <!-- gwt targets -->
+    <property name="gwt.target" value="${home.target}/gwt"/>
+    <property name="gwt.pre-target" value="${pre-home.target}/gwt"/>
+    <property name="gwt.post-target" value="${post-home.target}/gwt"/>
+    <property name="gwt.archive-target" value="${archive-home.target}/gwt"/>
+
+    <!-- web-inf targets -->
+    <property name="web-inf.target" value="${home.target}/WEB-INF"/>
+    <property name="pre-web-inf" value="${pre-home.target}/WEB-INF" />
+    <property name="post-web-inf" value="${post-home.target}/WEB-INF" />
+    <property name="archive-web-inf" value="${archive-home.target}/WEB-INF" />
+
+    <property name="tomcat-work" value="${env.CATALINA_BASE}/work/Catalina/${env.DOMAIN_NAME}/_"/>
+    <property name="pre.jsp-compile" value="${pre-web-inf}/classes/jsp-compile"/>
+    <property name="jsp-compile" value="${web-inf.target}/classes/jsp-compile"/>
+
+    <!-- The destination directory for tagunit web root -->
+    <property name="tagunit-root.dir" value="${env.TAGUNIT_HOME}"/>
+
+    <!-- Source Path. -->
+    <property name="source.dir" value="source"/>
+
+    <!-- The destination directory for all the javadocs. -->
+    <property name="java-doc.dir" value="${web.dir}/util/javadoc"/>
+
+
+    <!-- extended classpath for unit tests and other commands. -->
+    <path id="extended.classpath">
+        <path refid="classpath"/>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+        <fileset dir="${lib}/jaxws">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${gwt.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${env.CATALINA_HOME}/common/lib">
+            <include name="ifxjdbc.jar"/>
+        </fileset>
+    </path>
+
+
+    <!-- where all of the static xml data files are -->
+    <property name="conf.dir" value="${basedir}/conf"/>
+
+    <!-- directory of the hibernate configuration files. -->
+    <property name="hibernate.conf.dir" value="${basedir}/source/org/zfin"/>
+
+    <!-- JVM args for all forked processes relating to unit tests -->
+    <property name="junit.jvmargs" value="-Xmx128m"/>
+
+    <property name="target.dir" value="${basedir}"/>
+
+    <!-- war file name-->
+    <property name="zfin.war" value="${basedir}/zfin.war"/>
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <pathelement location="${servlet.jar}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+
+    <!-- Tomcat related environment variables -->
+    <property name="webdriver-loc" value="${env.WEBDRIVER_LOC}"/>
+    <property name="mutant-name" value="${env.MUTANT_NAME}"/>
+    <property name="dbname" value="${env.DBNAME}"/>
+    <property name="domain-name" value="${env.DOMAIN_NAME}"/>
+    <property name="non-secureport" value="${env.NON_SECUREPORT}"/>
+    <property name="secureport" value="${env.SECUREPORT}"/>
+    <property name="shutdownport" value="${env.SHUTDOWNPORT}"/>
+    <property name="tomcat-conf" value="${env.CATALINA_BASE}/conf"/>
+    <property name="domain-conf" value="${env.CATALINA_BASE}/conf/Catalina/${env.DOMAIN_NAME}"/>
+    <property name="informixserver" value="${env.INFORMIXSERVER}"/>
+    <property name="informixport" value="${env.INFORMIX_PORT}"/>
+    <property name="sqlhosts-host" value="${env.SQLHOSTS_HOST}"/>
+
+    <property name="template-dir" value="lib/Java/tomcat"/>
+    <property name="host-dir" value="${template-dir}/conf/Catalina"/>
+    <property name="domain-host-dir" value="${env.CATALINA_BASE}/conf/Catalina"/>
+
+    <condition property="isinformix">
+        <equals arg1="${env.USER}" arg2="informix"/>
+    </condition>
+
+    <condition property="isalmost">
+        <equals arg1="${env.DBNAME}" arg2="almdb"/>
+    </condition>
+
+    <condition property="iszfinonembryonix">
+        <and>
+            <equals arg1="${env.DBNAME}" arg2="zfindb"/>
+            <equals arg1="${env.INFORMIX_SERVER}" arg2="wanda"/>
+	    <equals arg1="${env.USER}" arg2="informix"/>
+        </and>
+    </condition>
+
+    <condition property="iszfinonhelix">
+        <and>
+            <equals arg1="${env.DBNAME}" arg2="zfindb"/>
+            <equals arg1="${env.INFORMIX_SERVER}" arg2="wildtype"/>
+	    <equals arg1="${env.USER}" arg2="informix"/>
+        </and>
+    </condition>
+ 
+   <condition property="isalmostorproduction">
+     <or> 
+       <equals arg1="${isalmost}" arg2="true"/>
+       <equals arg1="${iszfinonhelix}" arg2="true"/>
+     </or>
+   </condition>
+
+
+    <condition property="notproduction">
+        <not>
+        <equals arg1="${env.DBNAME}" arg2="zfindb"/>
+        </not>
+    </condition>
+
+    <condition property="ismutant">
+        <not>
+            <equals arg1="${env.USER}" arg2="informix"/>
+        </not>
+    </condition>
+
+    <!-- javadoc diectory -->
+    <property name="zfin-javadoc" value="home/util/javadoc/zfin"/>
+
+    <condition property="has.pre-directories">
+        <and>
+        <available file="${pre-web-inf}"/>
+         <available file="${gwt.pre-target}"/>
+        </and>
+    </condition>
+
+    <condition property="has.web-inf">
+        <available file="${web-inf.dir}"/>
+    </condition>
+
+    <condition property="has.post-directories">
+        <and>
+        <available file="${post-web-inf}"/>
+         <available file="${gwt.post-target}"/>
+        </and>
+    </condition>
+
+    <condition property="has.tomcat.symlink">
+            <available type="dir" file="${tomcat-work}/org"/>
+    </condition>
+
+
+
+</project>

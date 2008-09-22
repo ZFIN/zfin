@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="usage" basedir=".">
+  <target name="usage">
+        <echo>
+            TARGETS
+
+            DEPLOYMENT:
+            all: Same as 'deploy'.
+            do: Clean, compile and build entire WEB-INF environment. No copying into target directory.
+            deploy/install: pre-deploy (test if not production) advance-build restart 
+            revert: revert-build restart
+            pre-deploy: Deploys entire WEB-INF environment to the pre-build directories.
+            advance-build: Moves the prebuild directory to current.
+            revert-build: Moves the post-build directory to current.  Does not restart.
+            build-properties:  Echos important build-propertiets.
+
+            DEVELOPMENT:
+            dirtydeploy: Deploys entire WEB-INF environment changes without cleaning
+            deploy-javadoc: Create the JavaDoc and deploy it into the targetroot
+            clean: Cleans WEB-INF target
+            compile: Compile WEB-INF target only
+            gwt: Compile gwt targets to the pre-directory.
+            runHibernate: Run the HibernateStandaloneUtil class to check your Persistence
+
+            UTILITIES:
+            echoProps: Print out all java properties
+            jversion: Print out the used JVM
+            javadocs: Create JavaDoc for ZFIN API
+            generate-wsdl-doi-client: Generates wsdl java client code for the DOI
+            jsp-compile: Precompile jsp files and generate appropriate web.xml servlert reference.
+			graph:  Generates dotty graph.
+
+            TOMCAT:
+            tomcat-restart: Restarts tomcat
+            tomcat-start: Start tomcat
+            tomcat-debug-start: Start tomcat and allow remote debugging on port $JPDA_ADDRESS
+            tomcat-stop: Stop tomcat
+            tomcat-kill: Forced tomcat stop
+            deploy-catalina-base: Build/update tomcat instance in CATALINA_BASE
+            (used to be called create-mutant-instance)
+
+            TESTS:
+            test: Always run this before comitting. Seriously.
+            (currently just points to runtests-quiet)
+            runtests: Runs non-db test suites in org.zfin.UnitTests
+            runDBtests: Runs db test suites in org.zfin.DbUnitTests
+            runtests-quiet: Runs all test suites in org.zfin.UnitTests but only gives a summary
+            compile-tests: Compiles test directories
+            runTagTests: Compiles and deploys all tag-unit-testing code into a separate
+            application root directory.
+            Deploys it into an app server root directory specified
+            by the environment variable TAGUNIT_HOME
+        </echo>
+    </target>
+
+</project>

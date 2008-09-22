@@ -6,7 +6,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.properties.ZfinProperties;
-import org.zfin.util.FileUtil;
 import org.zfin.util.FileWrapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -91,6 +90,13 @@ public class DatabaseInfoController extends MultiActionController {
         return new ModelAndView("view-global-session-info", LookupStrings.FORM_BEAN, form);
     }
 
+    public ModelAndView svnVersionHandler(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException {
+        ModelAndView modelAndView = new ModelAndView() ;
+        modelAndView.setViewName("svn-version");
+
+        return modelAndView ;
+    }
 
     public ModelAndView zfinPropertyHandler(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {

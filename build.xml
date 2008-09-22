@@ -1,229 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="ZFIN" default="usage" basedir=".">
 
+    <property name="buildfiles.dir" value="buildfiles"/>
 
-    <!-- the destination directory for building a deploy tar -->
-    <property name="deploy.dir" value="deploy"/>
-    <property name="web.dir" value="${basedir}/home"/>
-    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
-    <property name="web.lib" value="${web-inf.dir}/lib"/>
-    <property name="web.conf" value="${web-inf.dir}/conf"/>
-    <property name="lib" value="${basedir}/lib/Java"/>
-    <property name="gwt.lib" value="${lib}/gwt"/>
-    <property name="doi.dir" value="${basedir}/server_apps/data_transfer/DOI"/>
-    <!-- path to servlet jar file -->
-    <property name="servlet.jar" value="${lib}/servlet-api-2.4.jar"/>
-    <property environment="env"/>
-
-    <property name="hibernate.exists" value="hibernate.properties.exists"/>
-
-    <!-- directory in which the unit test coverage is generated and kept-->
-    <property name="unit.test.coverage" value="${basedir}/unit-test-coverage"/>
-
-    <!-- The destination directory for all the compiled classes. -->
-    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
-
-    <!-- The destination directory for all the compiled classes. -->
-    <property name="home.target" value="${env.TARGETROOT}/home"/>
-    <property name="gwt.target" value="${home.target}/gwt"/>
-    <property name="web-inf.target" value="${home.target}/WEB-INF"/>
-    <property name="classes.target" value="${web-inf.target}/classes"/>
-    <property name="jsp-src.target" value="${web-inf.target}/jsp-src"/>
-
-    <!-- The destination directory for tagunit web root -->
-    <property name="tagunit-root.dir" value="${env.TAGUNIT_HOME}"/>
-
-    <!-- Source Path. -->
-    <property name="source.dir" value="source"/>
-
-    <!-- The destination directory for all the javadocs. -->
-    <property name="java-doc.dir" value="${web.dir}/util/javadoc"/>
-
-    <!-- extended classpath for unit tests and other commands. -->
-    <path id="extended.classpath">
-        <path refid="classpath"/>
-        <fileset dir="${lib}">
-            <include name="*.jar"/>
-            <include name="*.zip"/>
-        </fileset>
-        <fileset dir="${lib}/jaxws">
-            <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${gwt.lib}">
-            <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${env.CATALINA_HOME}/common/lib">
-            <include name="ifxjdbc.jar"/>
-        </fileset>
-    </path>
+    <import file="${buildfiles.dir}/properties.xml"/>
+    <import file="${buildfiles.dir}/gwt.xml"/>
+    <import file="${buildfiles.dir}/test.xml"/>
+    <import file="${buildfiles.dir}/tomcat.xml"/>
+    <import file="${buildfiles.dir}/usage.xml"/>
 
 
-    <!-- where all of the static xml data files are -->
-    <property name="conf.dir" value="${basedir}/conf"/>
-
-    <!-- directory of the hibernate configuration files. -->
-    <property name="hibernate.conf.dir" value="${basedir}/source/org/zfin"/>
-
-    <!-- JVM args for all forked processes relating to unit tests -->
-    <property name="junit.jvmargs" value="-Xmx128m"/>
-
-    <property name="target.dir" value="${basedir}"/>
-
-    <!-- war file name-->
-    <property name="zfin.war" value="${basedir}/zfin.war"/>
-
-    <!-- Classpath definitions -->
-    <path id="classpath">
-        <pathelement location="${classbin.dir}"/>
-        <pathelement location="${servlet.jar}"/>
-        <fileset dir="${web.lib}">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-
-
-    <!-- Tomcat related environment variables -->
-    <property name="webdriver-loc" value="${env.WEBDRIVER_LOC}"/>
-    <property name="mutant-name" value="${env.MUTANT_NAME}"/>
-    <property name="dbname" value="${env.DBNAME}"/>
-    <property name="domain-name" value="${env.DOMAIN_NAME}"/>
-    <property name="non-secureport" value="${env.NON_SECUREPORT}"/>
-    <property name="secureport" value="${env.SECUREPORT}"/>
-    <property name="shutdownport" value="${env.SHUTDOWNPORT}"/>
-    <property name="tomcat-conf" value="${env.CATALINA_BASE}/conf"/>
-    <property name="domain-conf" value="${env.CATALINA_BASE}/conf/Catalina/${env.DOMAIN_NAME}"/>
-    <property name="domain-work" value="${env.CATALINA_BASE}/work/Catalina/${env.DOMAIN_NAME}/_/"/>
-    <property name="informixserver" value="${env.INFORMIXSERVER}"/>
-    <property name="informixport" value="${env.INFORMIX_PORT}"/>
-    <property name="sqlhosts-host" value="${env.SQLHOSTS_HOST}"/>
-
-    <property name="template-dir" value="lib/Java/tomcat"/>
-    <property name="host-dir" value="${template-dir}/conf/Catalina"/>
-    <property name="domain-host-dir" value="${env.CATALINA_BASE}/conf/Catalina"/>
-
-    <!-- javadoc diectory -->
-    <property name="zfin-javadoc" value="home/util/javadoc/zfin"/>
-
-
-    <!-- TARGETS -->
-    <target name="_get-classpath">
-        <condition property="classpath.ok">
-            <not>
-                <or>
-                    <equals arg1="${servlet.jar}" arg2=""/>
-                </or>
-            </not>
-        </condition>
-    </target>
-
-
-    <target name="gwt" description="Compiles all gwt targets">
-        <antcall target="lookup-gwt"/>
-        <antcall target="lookuptable-gwt"/>
-        <antcall target="sessionsave-gwt"/>
-    </target>
-
-    <target name="lookup-gwt" description="Compiles lookup gwt">
-        <antcall target="gwt-compile">
-            <param name="gwt.module" value="org.zfin.framework.presentation.Lookup"/>
-        </antcall>
-    </target>
-
-    <target name="lookuptable-gwt" description="Compiles lookup gwt">
-        <antcall target="gwt-compile">
-            <param name="gwt.module" value="org.zfin.framework.presentation.LookupTable"/>
-        </antcall>
-    </target>
-
-    <target name="sessionsave-gwt" description="Compiles sessionsave gwt">
-        <antcall target="gwt-compile">
-            <param name="gwt.module" value="org.zfin.people.presentation.SessionSave"/>
-        </antcall>
-    </target>
-
-    <target name="gwt-compile" description="Compile gwt classes to javascript" depends="compile">
-      <java fork="true" className="com.google.gwt.dev.GWTCompiler" classpathref="extended.classpath">
-          <classpath>
-              <dirset dir="${source.dir}" defaultexcludes="true">
-                <include name="**"/>
-                <exclude name="**/.svn"/>
-              </dirset>
-          </classpath>
-            <arg value="-out"/>
-            <arg value="${gwt.target}"/>
-            <arg value="-style"/>
-            <arg value="PRETTY"/>
-            <arg value="${gwt.module}"/>
-            <jvmarg value="-Xms256m"  />
-            <jvmarg value="-Xmx512m"  />
-        </java>
-    </target>
-
-
-    <target name="usage">
-        <echo>
-            TARGETS
-            all: Same as 'deploy'.
-            do: Clean, compile and build entire WEB-INF environment. No copying into target directory.
-            deploy/install: Deploys entire WEB-INF ernvironment after cleaning
-            dirtydeploy: Deploys entire WEB-INF environment changes without cleaning
-            deploy-all: Deploys entire environment
-            deploy-javadoc: Create the JavaDoc and deploy it into the targetroot
-            clobber-all: Clobber, compile and build entire environment
-            clean: Cleans WEB-INF target
-            clean-all: Cleans all targets
-            compile: Compile WEB-INF target only
-            compile-all: Compile all targets
-            gwt: Compile gwt targets
-            echoProps: Print out all java properties
-            jversion: Print out the used JVM
-            javadocs: Create JavaDoc for ZFIN API
-            runHibernate: Run the HibernateStandaloneUtil class to check your Persistence
-            tomcat-restart: Restarts tomcat
-            tomcat-start: Start tomcat
-            tomcat-debug-start: Start tomcat and allow remote debugging on port $JPDA_ADDRESS
-            tomcat-stop: Stop tomcat
-            tomcat-kill: Forced tomcat stop
-            deploy-catalina-base: Build/update tomcat instance in CATALINA_BASE
-            (used to be called create-mutant-instance)
-            generate-wsdl-doi-client: Generates wsdl java client code for the DOI
-            jsp-compile: Precompile jsp files and generate appropriate web.xml servlert reference.
-
-            TESTS
-
-            test: Always run this before comitting. Seriously.
-            (currently just points to runtests-quiet)
-
-            runtests: Runs non-db test suites in org.zfin.UnitTests
-            runDBtests: Runs db test suites in org.zfin.DbUnitTests
-            runtests-quiet: Runs all test suites in org.zfin.UnitTests but only gives a summary
-            compile-tests: Compiles test directories
-            runTagTests: Compiles and deploys all tag-unit-testing code into a separate
-            application root directory.
-            Deployes it into an app server root directory specified
-            by the environment variable TAGUNIT_HOME
-        </echo>
-    </target>
-
-    <!-- ====================================================================== -->
-    <!-- TESTING TASKS                                                          -->
-    <!-- ====================================================================== -->
-
-    <target name="echoProps" description="Simple target to dump all ant properties">
-        <echoproperties/>
-    </target>
-
-    <target name="jversion" description="Prints out java version in use">
-        <java fork="yes" classname="ignoreMe">
-            <jvmarg line="-version"/>
-        </java>
-    </target>
 
 
     <!-- ====================================================================== -->
     <!-- COMPILE TASKS                                                          -->
     <!-- ====================================================================== -->
 
-    <target name="prepare" depends="hibernate-available">
+    <target name="prepare" depends="hibernate-available" description="Prepares directories for compilation">
         <mkdir dir="${classbin.dir}"/>
         <mkdir dir="${classbin.dir}/resources"/>
         <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}"/>
@@ -241,7 +34,7 @@
         <copy file="${conf.dir}/zfin-messages.properties" tofile="${classbin.dir}/zfin-messages.properties"/>
     </target>
 
-    <target name="copy-hibernate-props" if="${hibernate.exists}"
+    <target name="copy-hibernate-props" if="hibernate.exists"
             description="Copy the hiberate.properties file if it exists">
         <echo message="Hibernate configuration file hibernate.properties found"/>
         <copy file="${conf.dir}/hibernate.properties" tofile="${classbin.dir}/hibernate.properties"
@@ -252,18 +45,16 @@
     <target name="do" depends="clean, construct-xsd-classes, compile, prepare-properties"
             description="Everything to compile excluding jsp files. No copying into target directory"/>
 
-    <target name="all" depends="deploy" description="The same as deploy for Tom."/>
+    <target name="all" depends="pre-deploy" description="The same as deploy for Tom."/>
 
-    <target name="deploy-all" depends="clean-all, gmake, deploy"
-            description="Target to compile all classes, excluding jsp files."/>
 
     <target name="compile" depends="prepare"
             description="Target to compile all classes, excluding test files, and moving anything from the source
             folder to the class folder.">
-        <copy  todir="${classbin.dir}">
+        <copy todir="${classbin.dir}">
             <fileset dir="${source.dir}">
-            <include name="**/*.xml"/>
-            <exclude name="**/.svn"/>
+                <include name="**/*.xml"/>
+                <exclude name="**/.svn"/>
             </fileset>
         </copy>
         <javac srcdir="source"
@@ -274,6 +65,7 @@
                memoryMaximumSize="256m"
                debug="true"
                target="1.5"/>
+	<echo message=":JAVA COMPILE SUCCESSFUL:"/>
     </target>
 
     <target name="compile-tests"
@@ -288,22 +80,31 @@
                target="1.5"/>
     </target>
 
+    <target name="remove-pre-and-post-targets" description="Remove the pre-WEB-INF folder if exists. It is used for the new build version">
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${pre-web-inf}" includes="**/*"/>
+        </delete>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${post-web-inf}" includes="**/*"/>
+        </delete>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${gwt.pre-target}" includes="**/*"/>
+        </delete>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${gwt.post-target}" includes="**/*"/>
+        </delete>
+    </target>
+
     <target name="clean" description="Remove java classes directory contents. ">
         <delete includeemptydirs="true" quiet="true">
             <fileset dir="${classbin.dir}" includes="**/*"/>
         </delete>
-        <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${jsp-src.target}" includes="**/*"/>
-        </delete>
-        <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${domain-work}" includes="**/*"/>
-        </delete>
-        <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${gwt.target}" includes="**/*"/>
-        </delete>
+        <!--<delete includeemptydirs="true" quiet="true">-->
+            <!--<fileset dir="${domain-work}" includes="**/*"/>-->
+        <!--</delete>-->
     </target>
 
-    <target name="clean-javadoc">
+    <target name="clean-javadoc" description="Cleans javadoc">
         <delete dir="${java-doc.dir}"/>
     </target>
 
@@ -321,7 +122,7 @@
                  private="yes"
                  windowtitle="ZFIN API"
                  doctitle="ZFIN"
-                 bottom="Copyright &#169; 2007 ZFIN"
+                 bottom="Copyright &#169; 2008 ZFIN"
                  locale="en"
                 />
     </target>
@@ -340,7 +141,7 @@
     <!-- CONFIGURATION TASKS                                                    -->
     <!-- ====================================================================== -->
 
-    <target name="hibernate-available">
+    <target name="hibernate-available"  description="Verifies that hibernate is available" >
         <available file="${conf.dir}/hibernate.properties" property="${hibernate.exists}"/>
     </target>
 
@@ -356,147 +157,8 @@
         </war>
     </target>
 
-    <target name="runtests" depends="dirtydeploy,build-tests" description="Unit tests for DataExchange module">
-        <antcall target="runatest">
-            <param name="junit.test.class.name" value="org.zfin.UnitTests"/>
-        </antcall>
-    </target>
 
-    <target name="runDBtests" depends="dirtydeploy,build-tests" description="Unit tests for DataExchange module">
-        <antcall target="runatest">
-            <param name="junit.test.class.name" value="org.zfin.DbUnitTests"/>
-        </antcall>
-    </target>
-
-    <target name="compile-tagunit">
-        <javac srcdir="source"
-               destdir="${tagunit-root.dir}/WEB-INF/classes"
-               classpathref="extended.classpath"
-               fork="true"
-               includeAntRuntime="no"
-               memoryMaximumSize="256m"
-               debug="true"
-               target="1.5"/>
-    </target>
-
-    <target name="preptagunit" depends="compile-tagunit" description="Prepares to run the unit test related to JSP tags.
-               Deployes it into an app server root directory specified by the environment variable TAGUNIT_HOME ">
-        <delete dir="${tagunit-root.dir}/test/zfin"/>
-        <copy file="${web-inf.dir}/tld/zfin-tags.tld" todir="${tagunit-root.dir}/WEB-INF/tld/"/>
-        <copy todir="${tagunit-root.dir}/test/zfin">
-            <fileset dir="test/jsp-tags" defaultexcludes="true">
-                <include name="**"/>
-            </fileset>
-            <filterset>
-                <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
-            </filterset>
-        </copy>
-    </target>
-
-    <!--
-        <taskdef name="tagunit" classname="org.tagunit.ant.TagUnitTask" />
-    -->
-
-    <target name="runTagTests" depends="preptagunit" description="Run the actual tagunit tests. You need to have
-            a tagunit context setup in a tomcat server.">
-        <tagunit url="http://localhost:8081/" ignorewarnings="true"/>
-    </target>
-
-
-    <!-- an easy to remember tag that should always be kept up to date to match whatever
-         test(s) need to be run before committing changes or pushing files to production -->
-    <target name="test" depends="runtests-quiet"/>
-
-    <target name="runtests-quiet" depends="dirtydeploy,build-tests">
-        <junit fork="yes"
-               printsummary="yes"
-               haltonfailure="no"
-               showoutput="false">
-            <test name="org.zfin.UnitTests" outfile="result">
-                <!-- <formatter type="xml"/>-->
-                <!-- <formatter type="brief"/> -->
-                <formatter type="plain"/>
-            </test>
-            <test name="org.zfin.DbUnitTests" outfile="result">
-                <!-- <formatter type="xml"/>-->
-                <!-- <formatter type="brief"/> -->
-                <formatter type="plain"/>
-            </test>
-            <classpath refid="extended.classpath"/>
-            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-            <jvmarg line="${junit.jvmargs}"/>
-            <!-- <arg value="${junit.test.class.name}"/>-->
-
-            <jvmarg value="-DDBNAME=${dbname}"/>
-            <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-            <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-            <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-            <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
-        </junit>
-    </target>
-
-    <target name="build-tests" description="Target to compile all test classes">
-        <javac srcdir="test"
-               destdir="${classbin.dir}"
-               classpathref="extended.classpath"
-               fork="yes"
-               includeAntRuntime="no"
-               memoryMaximumSize="256m"
-               source="1.5"
-               debug="true"
-               target="1.5"/>
-        <!--
-                        deprecation="${javac.deprecation}"
-                        debug="${javac.debug}"/>
-        -->
-    </target>
-
-    <target name="testsingleclass" depends="build-tests">
-        <java fork="yes" classname="org.zfin.sequence.reno.RenoControllerTest" taskname="junit" failonerror="true">
-            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-            <jvmarg line="${junit.jvmargs}"/>
-            <arg value="${junit.test.class.name}"/>
-            <classpath refid="extended.classpath"/>
-
-            <jvmarg value="-DDBNAME=${dbname}"/>
-            <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-            <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-            <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-            <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
-        </java>
-    </target>
-
-    <target name="runatest" depends="build-tests">
-        <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
-            <!--
-                        <sysproperty key="java.endorsed.dirs" value="${endorsed.lib}"/>
-            -->
-            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-            <jvmarg line="${junit.jvmargs}"/>
-            <arg value="${junit.test.class.name}"/>
-            <classpath refid="extended.classpath"/>
-
-            <jvmarg value="-DDBNAME=${dbname}"/>
-            <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-            <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-            <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-            <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
-        </java>
-    </target>
-
-    <target name="singletest" depends="build-tests">
-        <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
-            <!--
-                        <sysproperty key="java.endorsed.dirs" value="${endorsed.lib}"/>
-            -->
-            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-            <jvmarg line="${junit.jvmargs}"/>
-            <arg value="org.zfin.util.ListFormatterTest"/>
-            <classpath refid="extended.classpath"/>
-        </java>
-    </target>
-
-    <target name="schemaVersion">
+    <target name="schemaVersion" description="Prints schema version">
         <java fork="yes" classname="org.zfin.database.SchemaManager" taskname="junit" failonerror="true">
             <arg value="-checkSchema"/>
             <classpath refid="extended.classpath"/>
@@ -527,50 +189,121 @@
         </copy>
     </target>
 
-    <target name="install" depends="deploy"
-            description="Same as deploy."/>
+    <target name="install" depends="pre-deploy" description="Same as deploy."/>
 
-    <target name="deploy" depends="do,prepareDeploy,gwt"
+    <target name="remove-archives"  description="Removes archived builds (older than post-builds)">
+        <delete verbose="true" includeemptydirs="true">
+            <fileset dir="${env.TARGETROOT}/home" includes="archive*/**" />
+        </delete>
+    </target>
+
+    <target name="revert"  depends="revert-build,restart" description="Reverts the build and restarts"/>
+
+    <target name="revert-build"  description="Moves the last successful build to the current build and this build to the previous build directly (which will get clobbered on a subsequent build)."  >
+        <fail message=":FAIL TO REVERT BUILD.  POST DIRECTORIES DO NOT EXIST TO MOVE:">
+           <condition>
+           <not>
+            <and>
+            <available file="${post-web-inf}"/>
+             <available file="${gwt.post-target}"/>
+<!--             <available file="${post.version.file}"/> -->
+            </and>
+           </not>
+           </condition>
+        </fail>
+        <!-- move web-inf -->
+        <echo message="reverting build"/>
+        <delete dir="${pre-web-inf}"  verbose="false"/>
+        <move todir="${pre-web-inf}"  verbose="true" >
+            <fileset dir="${web-inf.target}"/>
+        </move>
+        <move todir="${web-inf.target}"  verbose="true" >
+            <fileset dir="${post-web-inf}"/>
+        </move>
+        <move todir="${post-web-inf}" failonerror="false"   verbose="true" >
+            <fileset dir="${archive-web-inf}"/>
+        </move>
+
+        <!-- move the gwt -->
+        <delete dir="${gwt.pre-target}"  verbose="true"/>
+        <move todir="${gwt.pre-target}"  verbose="true" >
+            <fileset dir="${gwt.target}"/>
+        </move>
+        <move todir="${gwt.target}" failonerror="false"  verbose="true"  >
+            <fileset dir="${gwt.post-target}"/>
+        </move>
+        <move todir="${gwt.post-target}" failonerror="false"  verbose="true" >
+            <fileset dir="${gwt.archive-target}"/>
+        </move>
+
+        <!-- move static version file-->
+        <delete file="${pre.static-version.file}"  verbose="true" failonerror="false"/>
+        <move tofile="${pre.static-version.file}" file="${static-version.file}" verbose="true" failonerror="false" />
+        <move tofile="${static-version.file}" file="${post.static-version.file}" verbose="true" failonerror="false"/>
+        <echo append="true" file="${static-version.file}">REVERTED DEPLOYMENT!!!</echo>
+        <echo append="true" file="${jsp-version.file}">REVERTED DEPLOYMENT!!!</echo>
+        <move tofile="${post.static-version.file}" file="${archive.static-version.file}" failonerror="false" verbose="true" />
+
+        <echo message=":WEB-INF, GWT, VERSION DIRS REVERTED SUCCESSFUL:"/>
+    </target>
+
+
+
+    <!-- removed the has.pre-directories clause, as we shouldn't get here unless the pre-compile has been built -->
+    <target name="advance-build" description="For WEB-INF and GWT, Deletes archives, moves post to archive, most current to post, and pre to current.">
+        <echo message="advancing build"/>
+        <fail message=":FAIL TO ADVANCE BUILD.  PRE DIRECTORIES DO NOT EXIST TO MOVE:">
+           <condition>
+           <not>
+            <and>
+            <available file="${pre-web-inf}"/>
+             <available file="${gwt.pre-target}"/>
+             <!-- <available file="${pre.version.file}"/> -->
+            </and>
+            </not>
+           </condition>
+        </fail>
+	    <!-- move the WEB-INF -->
+        <delete dir="${archive-web-inf}"  verbose="false"/>
+        <move todir="${archive-web-inf}" failonerror="false"  verbose="true">  
+            <fileset dir="${post-web-inf}"/>
+        </move>
+        <move todir="${post-web-inf}" failonerror="false"  verbose="true">
+            <fileset dir="${web-inf.target}"/>
+        </move>
+        <move todir="${web-inf.target}" verbose="true">
+            <fileset dir="${pre-web-inf}"/>
+        </move>
+
+	    <!-- move the gwt -->
+        <delete dir="${gwt.archive-target}"  verbose="true"/>
+        <move todir="${gwt.archive-target}"  failonerror="false"  verbose="true">  <!-- add date here -->
+            <fileset dir="${gwt.post-target}"/>
+        </move>
+        <move todir="${gwt.post-target}" failonerror="false"  verbose="true">
+            <fileset dir="${gwt.target}"/>
+        </move>
+        <move todir="${gwt.target}"  verbose="true" >
+            <fileset dir="${gwt.pre-target}"/>
+        </move>
+
+	    <!-- move the static version file-->
+        <delete file="${archive.static-version.file}"  verbose="true" failonerror="false"/>
+        <move tofile="${archive.static-version.file}" file="${post.static-version.file}"  failonerror="false"  verbose="true"/>
+        <move tofile="${post.static-version.file}" file="${static-version.file}" failonerror="false"  verbose="true"/>
+        <move tofile="${static-version.file}" file="${pre.static-version.file}" verbose="true" failonerror="false"  />
+
+
+        <echo message=":WEB-INF, GWT, VERSION DIRS MOVE SUCCESSFUL:"/>
+    </target>
+
+
+    <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,test,advance-build,restart"  description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/> 
+
+    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release" 
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
-        <copy todir="${env.TARGETROOT}/lib/Java/jaxws">
-            <fileset dir="${lib}/jaxws">
-                <exclude name="**/.svn"/>
-            </fileset>
-        </copy>
-        <copy todir="${env.TARGETROOT}">
-            <fileset dir="${basedir}">
-                <include name="home/WEB-INF/web.xml"/>
-                <include name="home/WEB-INF/**/*.jsp"/>
-                <include name="home/index-java.html"/>
-                <exclude name="**/.svn"/>
-            </fileset>
-            <filterset>
-                <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
-            </filterset>
-            <filterset>
-                <filter token="WEBDRIVER_LOC" value="${env.WEBDRIVER_LOC}"/>
-            </filterset>
-        </copy>
-        <copy todir="${env.TARGETROOT}">
-            <fileset dir="${basedir}">
-                <include name="home/*.jsp"/>
-                <include name="home/WEB-INF/**"/>
-                <include name="home/dev/**"/>
-                <include name="home/anatomy/**"/>
-                <exclude name="**/.svn"/>
-            </fileset>
-        </copy>
-        <copy todir="${env.TARGETROOT}">
-            <fileset dir="${basedir}">
-                <include name="home/tiles/**"/>
-                <exclude name="**/.svn"/>
-            </fileset>
-            <filterset>
-                <filter token="WEBDRIVER_LOC" value="${env.WEBDRIVER_LOC}"/>
-            </filterset>
-        </copy>
-        <copy file="${basedir}/home/WEB-INF/zfin-properties.xml"
-              tofile="${basedir}/home/WEB-INF/zfin-change-properties.xml">
+        <copy file="${web-inf.dir}/zfin-properties.xml"
+              tofile="${web-inf.dir}/zfin-change-properties.xml">
             <filterset>
                 <filter token="SECUREPORT" value="${secureport}"/>
             </filterset>
@@ -581,11 +314,48 @@
             <arg value="${env.MAKESPECIFIC}"/>
             <arg value="${basedir}/home/WEB-INF/zfin-change-properties.xml"/>
             <arg value="${env.TRANSLATETABLE}"/>
-            <arg value="${env.TARGETROOT}/home/WEB-INF/zfin-properties.xml"/>
+            <arg value="${pre-web-inf}/zfin-properties.xml"/>
         </exec>
         <delete file="${basedir}/home/WEB-INF/zfin-change-properties.xml"/>
-        <antcall target="jsp-compile"/>
-        <antcall target="set-deploy-permissions"/>
+        <!-- Generate last jsp file before compiling -->
+        <antcall target="generateJSPVersionFile"/>
+         <!-- Want to call at the same time in order match -->
+        <antcall target="generateStaticHTMLVersionFile"/>
+        <antcall target="jsp-compile"/> 
+    </target>
+
+    <target name="copy-to-pre-release"  description="Copies built files to pre-release area">
+        <copy todir="${env.TARGETROOT}/lib/Java/jaxws">
+            <fileset dir="${lib}/jaxws">
+                <exclude name="**/.svn"/>
+            </fileset>
+        </copy>
+        <!-- move non-binary files in order to not replace any characters in Binary files -->
+        <copy todir="${pre-web-inf}">
+            <fileset dir="${web-inf.dir}">
+                <include name="**/*"/>
+                <exclude name="**/*.jar"/>
+                <exclude name="**/*.zip"/>
+                <exclude name="**/*.class"/>
+                <exclude name="**/*.ser"/>
+                <exclude name="**/*.svn"/>
+            </fileset>
+            <filterset>
+                <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
+            </filterset>
+            <filterset>
+                <filter token="WEBDRIVER_LOC" value="${env.WEBDRIVER_LOC}"/>
+            </filterset>
+        </copy>
+        <copy todir="${pre-web-inf}">
+            <fileset dir="${web-inf.dir}">
+                <include name="**/*.jar"/>
+                <include name="**/*.zip"/>
+                <include name="**/*.class"/>
+                <include name="**/*.ser"/>
+                <exclude name="**/*.svn"/>
+            </fileset>
+        </copy>
     </target>
 
     <target name="dirtydeploy" depends="compile"
@@ -626,186 +396,43 @@
             <arg value="${env.TRANSLATETABLE}"/>
             <arg value="${env.TARGETROOT}/home/WEB-INF/zfin-properties.xml"/>
         </exec>
-        <antcall target="set-deploy-permissions"/>
+    </target>
+
+    <target name="prepareDeploy" description="Remove existin pre-release folder">
+        <delete dir="${pre-web-inf}"/>
+        <delete dir="${gwt.pre-target}"/>
+        <mkdir dir="${pre-web-inf}"/>
+        <mkdir dir="${gwt.pre-target}"/>
     </target>
 
 
-    <target name="prepareDeploy" depends="deleteDeployDirs">
-        <mkdir dir="${env.TARGETROOT}/home/WEB-INF"/>
-    </target>
-    <target name="deleteDeployDirs">
-        <delete dir="${env.TARGETROOT}/home/WEB-INF"/>
-    </target>
-
-
-    <target name="am-i-informix">
-        <echo message="am-i-informix user: [${env.USER}]"/>
-        <condition property="i.am.informix">
-            <equals arg1="${env.USER}" arg2="informix"/>
-        </condition>
-    </target>
-
-    <target name="set-deploy-permissions" depends="am-i-informix" if="i.am.informix">
-        <!--<echo message="Running as informix, doing chmod of jsp-compile and java deploy dirs"/>-->
-        <echo message="chmod a+rX for ${env.TARGETROOT} and ${env.CATALINA_BASE}:"/>
-        <chmod perm="a+rX" type="both" verbose="true">
-            <fileset dir="${env.TARGETROOT}">
-                <exclude name="**/CurrentDataModel/**"/>
-            </fileset>
-            <fileset dir="${env.CATALINA_BASE}"/>
-        </chmod>
-        <echo message="chmod a+rwX for ${env.CATALINA_BASE}/work: "/>
-        <chmod perm="a+rwX" type="both" verbose="true">
-            <fileset dir="${env.CATALINA_BASE}/work"/>
-        </chmod>
+    <target name="build-properties" description="Describes build properties for environment">
+        <echo>If properties are defined as true, they will show up that way, otherwise will just produce string version.</echo>
+        <echo message="Is informix: ${isinformix}" />
+        <echo message="Is almost: ${isalmost}"/>
+        <echo message="Is mutant: ${ismutant}"/>
+        <echo message="Not production: ${notproduction}"/>
+        <echo message="Has pre-redirctories: ${has.pre-directories}"/>
+        <echo message="Has post-redirctories: ${has.post-directories}"/>
     </target>
 
 
-    <!-- todo: the location of the commons tree should probably come from the env -->
-    <property name="tomcat-script" value="/private/ZfinLinks/Commons/bin/tomcat.sh"/>
 
-    <target name="tomcat-start">
-        <exec executable="${tomcat-script}">
-            <arg value="start"/>
+    <target name="generateStaticHTMLVersionFile">
+       <delete file="${pre.static-version.file}"/>
+       <exec executable="./buildfiles/generateVersion.sh">
+        <arg value="${pre.static-version.file}"/>
+       </exec>
+    </target>
+
+    <target name="generateJSPVersionFile">
+        <delete file="${pre.jsp-version.file}"/>
+        <exec executable="./buildfiles/generateVersion.sh">
+            <arg value="${pre.jsp-version.file}"/>
         </exec>
     </target>
 
 
-    <target name="tomcat-stop">
-        <exec executable="${tomcat-script}" failifexecutionfails="false">
-            <arg value="stop"/>
-        </exec>
-    </target>
-
-
-    <target name="tomcat-debug-start">
-        <exec executable="${tomcat-script}">
-            <arg value="debug-start"/>
-        </exec>
-    </target>
-
-
-    <target name="tomcat-debug-stop">
-        <exec executable="${tomcat-script}">
-            <arg value="debug-stop"/>
-        </exec>
-    </target>
-
-
-    <target name="tomcat-restart" depends="tomcat-stop,tomcat-start"/>
-    <target name="tomcat-debug-restart" depends="tomcat-debug-stop,tomcat-debug-start"/>
-    <target name="restart" depends="tomcat-restart"/>
-    <target name="debug-restart" depends="tomcat-debug-restart"/>
-
-
-    <target name="clobber-all" depends="gmakeClobber,gmake,deploy"/>
-    <target name="clean-all" depends="gmakeClean,clean"/>
-    <target name="compile-all" depends="gmake,compile"/>
-
-
-    <target name="gmake">
-        <exec executable="gmake" output="gmake.log">
-            <arg value="-s"/>
-        </exec>
-    </target>
-
-
-    <target name="gmakeClean">
-        <exec executable="gmake" output="gmake.clean.log">
-            <arg value="-s"/>
-            <arg value="clean"/>
-        </exec>
-    </target>
-
-    <target name="gmakeClobber">
-        <exec executable="gmake" output="gmake.clobber.log">
-            <arg value="-s"/>
-            <arg value="clobber"/>
-        </exec>
-    </target>
-
-    <!-- an alias to create-mutant-instance with a more explanatory name -->
-    <target name="deploy-catalina-base" depends="create-mutant-instance"/>
-
-    <target name="create-mutant-instance" depends="create-tomcat-dirs"
-            description="Target to create a Tomcat tree for a given mutant">
-        <!--        Copy the conf files-->
-        <copy todir="${tomcat-conf}">
-            <fileset dir="${template-dir}/conf">
-                <exclude name="Catalina/**"/>
-            </fileset>
-            <filterset>
-                <filter token="TARGETROOT" value="${env.TARGETROOT}"/>
-                <filter token="DBNAME" value="${dbname}"/>
-                <filter token="SERVER-SHUTDOWN-PORT" value="${shutdownport}"/>
-                <filter token="Non-SECUREPORT" value="${non-secureport}"/>
-                <filter token="SECUREPORT" value="${secureport}"/>
-                <filter token="DOMAIN-NAME" value="${domain-name}"/>
-            </filterset>
-        </copy>
-        <!--        Copy the  context files-->
-        <copy todir="${domain-conf}">
-            <fileset dir="${template-dir}/conf/Catalina/mutant"/>
-            <filterset>
-                <filter token="TARGETROOT" value="${env.TARGETROOT}"/>
-                <filter token="DBNAME" value="${dbname}"/>
-                <filter token="SERVER-SHUTDOWN-PORT" value="${shutdownport}"/>
-                <filter token="Non-SECUREPORT" value="${non-secureport}"/>
-                <filter token="SECUREPORT" value="${secureport}"/>
-                <filter token="SQLHOSTSHOST" value="${sqlhosts-host}"/>
-                <filter token="INFORMIXSERVER" value="${informixserver}"/>
-                <filter token="INFORMIXPORT" value="${informixport}"/>
-                <filter token="DOMAIN-NAME" value="${domain-name}"/>
-            </filterset>
-        </copy>
-        <antcall target="set-catalina-base-perms"/>
-    </target>
-
-    <target name="set-catalina-base-perms" depends="am-i-informix" if="i.am.informix">
-        <echo message="chmod a+rX for ${env.CATALINA_BASE}"/>
-        <chmod perm="a+rX" type="both" verbose="true">
-            <fileset dir="${env.CATALINA_BASE}"/>
-        </chmod>
-
-        <echo message="chmod a+rwX for ${env.CATALINA_BASE}/work"/>
-        <chmod perm="a+rwX" type="both" verbose="true">
-            <fileset dir="${env.CATALINA_BASE}/work"/>
-        </chmod>
-        <echo message="***********************************************************************"/>
-        <echo message=" As yourself, please do: "/>
-        <echo message="    sudo chown -R zfishweb ${env.CATALINA_BASE}/logs "/>
-        <echo message="    sudo -u zfishweb touch ${env.CATALINA_BASE}/logs/catalina.out "/>
-        <echo message="************************************************************************"/>
-    </target>
-
-    <target name="jsp-compile">
-        <taskdef classname="org.apache.jasper.JspC" name="jasper2">
-            <classpath id="jspc.classpath">
-                <path refid="classpath"/>
-                <pathelement location="${web-inf.dir}"/>
-                <fileset dir="${env.CATALINA_HOME}/bin">
-                    <include name="*.jar"/>
-                </fileset>
-                <fileset dir="${env.CATALINA_HOME}/server/lib">
-                    <include name="*.jar"/>
-                </fileset>
-                <fileset dir="${env.CATALINA_HOME}/common/lib">
-                    <include name="*.jar"/>
-                </fileset>
-            </classpath>
-        </taskdef>
-        <jasper2 validateXml="false"
-                 uriroot="${home.target}"
-                 outputDir="${domain-work}"
-                 classpath="${jspc.classpath}"
-                 failOnError="false"
-                 verbose="1"
-                 listErrors="true"
-                 compile="true"
-                 compilerSourceVM="1.5"
-                 compilerTargetVM="1.5"
-                />
-    </target>
 
 
     <!--
@@ -815,7 +442,7 @@
     Exectue generateStubs (or execute same steps from here)
     Delete the working directory
     -->
-    <target name="generate-wsdl-doi-client">
+    <target name="generate-wsdl-doi-client"  description="Geneates wsdl client code for use with citexplorer" >
         <mkdir dir="${doi.dir}/bin"/>
         <symlink link="${doi.dir}/lib" resource="${lib}/jaxws" overwrite="true"/>
         <copy file="${doi.dir}/wsimport.sh" todir="${doi.dir}/bin"/>
@@ -827,37 +454,18 @@
         <symlink link="${doi.dir}/lib" action="delete"/>
     </target>
 
-    <target name="create-tomcat-dirs">
-        <mkdir dir="${env.CATALINA_BASE}"/>
-        <mkdir dir="${env.CATALINA_BASE}/conf"/>
-        <mkdir dir="${env.CATALINA_BASE}/conf/Catalina"/>
-        <mkdir dir="${domain-conf}"/>
-        <mkdir dir="${env.CATALINA_BASE}/logs"/>
-        <mkdir dir="${env.CATALINA_BASE}/webapps"/>
-        <mkdir dir="${env.CATALINA_BASE}/work"/>
-    </target>
+    <taskdef resource="task.properties" classpath="lib/Java/grand-1.8.jar">
+       <classpath refid="extended.classpath"/>
+    </taskdef>
 
-    <target name="runHibernate" depends="compile,compile-tests"
-            description="Run the Hibernate standalone class for persistence checking">
-        <java classname="org.zfin.repository.HibernateStandaloneUtil"
-              fork="yes"
-              classpathref="extended.classpath">
-            <jvmarg value="-DDBNAME=${dbname}"/>
-            <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-            <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-            <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-            <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
-        </java>
-    </target>
+     <target name="graph" description="Creates graph of build process">
+         <grand output="build.dot" buildfile="build.xml"/>
+         <exec executable="dot" >
+                       <arg line="-Tps -Gsize=11.69,8.27 -Grotate=90 -o build.ps build.dot"/>
+       </exec>
+   </target>
 
-    <target name="testMail" depends="dirtydeploy"
-            description="Runs the mail testing code.">
-        <!-- <java classname="org.zfin.framework.mail.MailXMailSender" -->
-        <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
-              fork="yes"
-              classpathref="classpath">
-        </java>
-    </target>
+
 
 </project>
 

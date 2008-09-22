@@ -41,7 +41,10 @@ FTPTARGET = $(TARGETDIR)/transfer
 
 CLIENTAPPSTARGET = $(TARGETDIR)/client_apps
 
-ENDEMICTARGETS_POSTTARGETS = $(FTPTARGET) $(CLIENTAPPSTARGET)
+GENERATE_VERSION : gmake-version.html
+	
+
+ENDEMICTARGETS_POSTTARGETS = $(FTPTARGET) $(CLIENTAPPSTARGET) $(GENERATE_VERSION) 
 
 # If we are building a mirror then disable calling gmake with no target.
 
@@ -63,9 +66,12 @@ include $(TOP)/make.default.rules
 $(FTPTARGET) : 
 	if [ ! -h $(FTPTARGET) ] ; then ln -s $(TARGETFTPROOT)/pub/transfer $(FTPTARGET); fi
 
+
 $(CLIENTAPPSTARGET) :
 	if [ ! -h $(CLIENTAPPSTARGET) ] ; then ln -s $(TARGETDIR)/../client_apps $(CLIENTAPPSTARGET); fi
 
+gmake-version.html :
+	cd .. ; ./buildfiles/generateVersion.sh $(TARGETROOT)/home/gmake-deploy-version.html  ; cd home
 
 
 # ---------------  Special Targets  ------------------------------------
