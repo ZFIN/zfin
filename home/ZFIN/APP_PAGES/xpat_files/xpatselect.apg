@@ -864,7 +864,7 @@ return false ; "
 
 	    <!-- gene name -->
 
-	    <label for="xpatselGene" class="namesearchLabel">Gene/EST name</label>
+	    <label for="xpatselGene" class="namesearchLabel">Gene/EST name </label>
 
 	    <SELECT name=searchtype>
 	        <option value="contains" $(IF,$(AND,$(XST,$searchtype),$(EC,$searchtype,contains)),SELECTED) >contains
@@ -1106,14 +1106,13 @@ return false ; "
 
 
             <?MICOMMENT> ** start recent xpats (only for root user)** <?/MICOMMENT>
-            <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">             
+            <?MICOMMENT> ** BugzID1865. Making this feature accessible to all ?MIBLOCK COND="$(EC,$AUTHORIZED,root) <?/MICOMMENT>
 	      
               <?MIVAR>
               <label for="xpatselRecentRecords">Added in last </label>
               <input name="xpatsel_recentRecords" id="xpatselRecentRecords" size="3" $(IF,$(XST,$xpatsel_recentRecords),value='$xpatsel_recentRecords')>
               <?/MIVAR>
               <label for="xpatselRecentRecords">days</label>
-            <?/MIBLOCK>       
             <?MICOMMENT>  ** end recent xpats ** <?/MICOMMENT>
             <br> 
 
