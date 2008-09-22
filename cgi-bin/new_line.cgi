@@ -58,12 +58,18 @@ Submitter's Lab: $data{lab_name}
 1.Gene/Locus/Construct Name: $data{feat_or_gene_name_1}
 1.Gene/Locus Symbol: $data{gene_symbol_1}
 1.Lab designation: $data{lab_desig_1}
+1.Protocol: $data{protocol_1}
+1.Mutation Type: $data{mut_type_1}
 2.Gene/Locus/Construct Name: $data{feat_or_gene_name_2}
 2.Gene/Locus Symbol: $data{gene_symbol_2}
 2.Lab designation: $data{lab_desig_2}
+2.Protocol: $data{protocol_2}
+2.Mutation Type: $data{mut_type_2}
 3.Gene/Locus/Construct Name: $data{feat_or_gene_name_3}
 3.Gene/Locus Symbol: $data{gene_symbol_3}
 3.Lab designation: $data{lab_desig_3}
+3.Protocol: $data{protocol_3}
+3.Mutation Type: $data{mut_type_3}
 Genetic Background: $data{background}
 Publication Status: $data{pub_status}
 Citation(s): $data{citations}
@@ -97,12 +103,18 @@ Submitter's Lab: $data{lab_name}
 1.Gene/Locus/Construct Name: $data{feat_or_gene_name_1}
 1.Gene/Locus Symbol: $data{gene_symbol_1}
 1.Lab designation: $data{lab_desig_1}
+1.Protocol: $data{protocol_1}
+1.Mutation Type: $data{mut_type_1}
 2.Gene/Locus/Construct Name: $data{feat_or_gene_name_2}
 2.Gene/Locus Symbol: $data{gene_symbol_2}
 2.Lab designation: $data{lab_desig_2}
+2.Protocol: $data{protocol_2}
+2.Mutation Type: $data{mut_type_2}
 3.Gene/Locus/Construct Name: $data{feat_or_gene_name_3}
 3.Gene/Locus Symbol: $data{gene_symbol_3}
 3.Lab designation: $data{lab_desig_3}
+3.Protocol: $data{protocol_3}
+3.Mutation Type: $data{mut_type_3}
 Genetic Background: $data{background}
 Publication Status: $data{pub_status}
 Citation(s): $data{citations}
