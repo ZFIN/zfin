@@ -220,7 +220,7 @@ create dba function "informix".regen_names() returning integer
 	allmapnm_precedence	varchar(80) not null,
 	allmapnm_name_lower	varchar(255) not null
 		check (allmapnm_name_lower = lower(allmapnm_name)),
-        allmapnm_serial_id	serial 
+        allmapnm_serial_id	serial8 not null 
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
       extent size 8192 next size 8192 lock mode page;
@@ -254,7 +254,7 @@ create dba function "informix".regen_names() returning integer
     create table all_name_ends_new
       (
         allnmend_name_end_lower    	varchar(255),
-        allnmend_allmapnm_serial_id	integer
+        allnmend_allmapnm_serial_id	int8
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
       extent size 16384 next size 16384 lock mode page;
