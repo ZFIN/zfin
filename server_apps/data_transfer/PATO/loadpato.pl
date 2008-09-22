@@ -238,8 +238,6 @@ system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadpatoterms.sql >ou
 
 &isEmptyFile ("terms_becoming_obsolete.unl","no new obsolete terms\n","staylor\@cs.uoregon.edu","new obsolete terms with annotations\n");
 
-&isEmptyFile ("number_annotations_per_obsolete_term.unl","no annotations to obsolete terms\n","staylor\@cs.uoregon.edu","number annotatons per obsolete term\n");
-
 &isEmptyFile ("sec_unload_report","no annotations to secondary terms\n","staylor\@cs.uoregon.edu","new secondary terms report\n");
 
 &isEmptyFile ("terms_missing_obo_id.txt","no terms missing obo ids\n","staylor\@cs.uoregon.edu","terms missing obo ids\n");

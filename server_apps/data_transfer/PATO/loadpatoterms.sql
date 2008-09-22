@@ -249,7 +249,9 @@ load from patoterm_secondary.unl
 create temp table sec_oks 
   (
     prim_id varchar(50),
-    sec_id varchar(50)
+    sec_id varchar(50), 
+    prim_zdb_id varchar(50), 
+    sec_zdb_id varchar(50)
   );
 
 --insert only the distinct secondary terms
@@ -257,6 +259,17 @@ create temp table sec_oks
 insert into sec_oks (sec_id, prim_id)
   select distinct sec_id, prim_id
     from sec_dups ;
+
+update sec_oks
+  set prim_zdb_id = (select term_zdb_id 
+      		       from term
+		       where term_ont_id = prim_id);
+
+ 
+update sec_oks
+  set sec_zdb_id = (select term_zdb_id 
+      		       from term
+		       where term_ont_id = sec_id);
 
 create temp table sec_unload 
   (
@@ -266,7 +279,7 @@ create temp table sec_unload
 
 --update the secondary terms in ZFIN
 
---!echo "here is the secondary update for pato terms" ;
+!echo "here is the secondary update for pato terms" ;
 
 update term
   set term_is_secondary = 't'
@@ -275,6 +288,26 @@ update term
 		  where term_ont_id = sec_id) ;
 
 
+update atomic_phenotype
+  set apato_quality_zdb_id = (Select prim_zdb_id
+      			        from sec_oks
+				where sec_zdb_id = apato_quality_zdb_id)
+  where exists (Select 'x' from term
+  	       	       where term_is_Secondary = 't'
+		       and apato_quality_zdb_id = term_zdb_id);    
+
+delete from apato_infrastructure
+  where exists  (Select 'x' from sec_oks
+    	  	 	 where api_quality_zdb_id = sec_zdb_id);
+
+update apato_infrastructure
+  set api_quality_zdb_id = (Select prim_zdb_id
+      			        from sec_oks
+				where sec_zdb_id = api_quality_zdb_id)
+  where exists (Select 'x' from term
+  	       	       where term_is_secondary = 't'
+		       and api_quality_zdb_id = term_zdb_id);
+
 --create a table for unload to report 
 
 insert into sec_unload (sec_id, prim_id)
@@ -282,6 +315,7 @@ insert into sec_unload (sec_id, prim_id)
     from sec_oks
     where exists (select 'x' from
 		    term where term_ont_id = sec_id) ;
+
 
 create temp table sec_unload_report 
   (
@@ -299,7 +333,7 @@ insert into sec_unload_report
 	'Now Primary: '||prim_id, 
 	'Name: '||term_name, 
 	'Ontology: '||term_ontology,
- 	'Genotype Handle: '||geno_handle, 
+ 	'Genotype Handle: '||geno_handle,
 	'Experiment Name: '||exp_name,
 	'Pub: '||apato_pub_zdb_id
     from sec_unload, 
