@@ -54,12 +54,12 @@ mkdir($tmpDir, $dirPerms);
 # Define tests:
 # 3 items: Test Name:Apply to Char columns?:Condition
 my @tests = 
-  (# "LeadSpace:Y:column like \" %\" and column <> \" \"",
-   # "DoublSpace:Y:column like \"_%  %_\" and column <> \" \"",
-   # "AllSpace:Y:column = \" \" and octet_length(column) > 0",
-   # "EmptyStrng:N:octet_length(column) = 0",
-   # "Newlines:Y:column like \"%
-# %\"", 
+  ("LeadSpace:Y:column like \" %\" and column <> \" \"",
+   "DoublSpace:Y:column like \"_%  %_\" and column <> \" \"",
+   "AllSpace:Y:column = \" \" and octet_length(column) > 0",
+   "EmptyStrng:N:octet_length(column) = 0",
+   # "Newlines:Y:column like \"%",
+   # %\"", 
    # "Tabs:Y:column like \"%	%\"",
    "TrailSpace:N:length(column) <> octet_length(column) and column <> \" \"",
    "ScrubChar:Y:column <> scrub_char(column)");
