@@ -41,8 +41,7 @@ FTPTARGET = $(TARGETDIR)/transfer
 
 CLIENTAPPSTARGET = $(TARGETDIR)/client_apps
 
-GENERATE_VERSION : gmake-version.html
-	
+GENERATE_VERSION = gmake-deploy-version.html
 
 ENDEMICTARGETS_POSTTARGETS = $(FTPTARGET) $(CLIENTAPPSTARGET) $(GENERATE_VERSION) 
 
@@ -70,8 +69,8 @@ $(FTPTARGET) :
 $(CLIENTAPPSTARGET) :
 	if [ ! -h $(CLIENTAPPSTARGET) ] ; then ln -s $(TARGETDIR)/../client_apps $(CLIENTAPPSTARGET); fi
 
-gmake-version.html :
-	cd .. ; ./buildfiles/generateVersion.sh $(TARGETROOT)/home/gmake-deploy-version.html  ; cd home
+$(GENERATE_VERSION) :
+	../buildfiles/generateVersion.sh $(TARGETROOT)/home/$(GENERATE_VERSION)
 
 
 # ---------------  Special Targets  ------------------------------------
