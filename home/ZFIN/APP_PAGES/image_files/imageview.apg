@@ -707,7 +707,6 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	    <?MIVAR NAME=fimgview_pub_zdb_id>$1<?/MIVAR>
 	  <?/MISQL>
        
-        <?MIVAR NAME=trackZdbID>$OID<?/MIVAR>
         <?MISQL SQL="select  pub_doi, jrnl_abbrev from publication, figure, journal where fig_zdb_id='$fig_zdb_id' and fig_source_zdb_id=zdb_id and pub_jrnl_zdb_id=jrnl_zdb_id">
         <?/MISQL>
         <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
@@ -715,9 +714,6 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
           <?MIVAR NAME=pubview2_jrnl_abbrev>$2<?/MIVAR>
         <?/MIBLOCK>
 
-<?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
-<?MISQL SQL="select WebExplode(object,'sourceURL=$QUERY_STRING') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
-<?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
           <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fimgview_pub_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>	
         <?/MIBLOCK>

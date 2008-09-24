@@ -134,11 +134,6 @@ get source zdb id, comments, label and caption of figure to determine type of FX
 <?/MIVAR>
 <?MICOMMENT> ** end Your Input Welcome ** <?/MICOMMENT>
 
-<?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
-<?MIVAR NAME=trackZdbID>$OID<?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'sourceURL=$QUERY_STRING') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
-<br/>
-<?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
 
 
@@ -482,12 +477,12 @@ and display them one after the other horizontally
       <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fxfigview_source_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
    <?MIELSE>
         <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-        <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+        <?MISQL SQL="select WebExplode(object,'trackZdbID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
         <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
    <?/MIBLOCK><?MICOMMENT>End full figure condition<?/MICOMMENT>
    <?MIELSE>
         <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-        <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+        <?MISQL SQL="select WebExplode(object,'trackZdbID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
         <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
    <?MICOMMENT>End unpublished condition<?/MICOMMENT>
 <?/MIBLOCK>

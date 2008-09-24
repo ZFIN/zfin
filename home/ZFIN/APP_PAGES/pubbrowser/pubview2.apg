@@ -102,11 +102,6 @@ displays a publication record, or many publication records if > 1 returned.
    <?MIVAR NAME=$jrnl_publisher>$17<?/MIVAR>
 
 
-<?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
-<?MIVAR NAME=trackZdbID>$OID<?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'sourceURL=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
-<br/>
-<?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
 
    

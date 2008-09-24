@@ -131,7 +131,7 @@ to display the "Additional figures" link
     <?MIVAR COND="$(NC,$pubview2_doi_no,)">
     -  
     <?/MIVAR>
-    <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'trackZdbID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
     <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
     <?MICOMMENT>Display Additional Figures link only if multiple figures<?/MICOMMENT>

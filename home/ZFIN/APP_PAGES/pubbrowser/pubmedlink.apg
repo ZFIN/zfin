@@ -4,7 +4,8 @@
   <b>PubMed:</b> 
   <?MIBLOCK COND="$(ISINT,$accession_no)">
     <?MIVAR>
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubmedredirect.apg&pubID=$trackZdbID&accession_no=$accession_no&referenceurl=$referenceurl">$accession_no</A>
+<?MIVAR NAME=$externallink>http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=search&db=PubMed&dopt=Abstract&term=$accession_no<?/MIVAR>
+<a href="$externallink">$accession_no</a>
     <?/MIVAR>
   <?MIELSE>
     <?MIVAR>$accession_no<?/MIVAR>

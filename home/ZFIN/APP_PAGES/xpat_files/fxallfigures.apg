@@ -95,11 +95,6 @@ function updateInnerHTMLAnat(element_id,html_to_display) {
 <?MICOMMENT> ** end Your Input Welcome ** <?/MICOMMENT>
 
 
-<?MICOMMENT> ** START ELSEVIER STATS ** <?/MICOMMENT>
-<?MIVAR NAME=trackZdbID>$OID<?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'sourceURL=$QUERY_STRING') from webPages where ID='aa-insertelsevierstat.apg';">$1<?/MISQL>
-<br/>
-<?MICOMMENT> ** END ELSEVIER STATS ** <?/MICOMMENT>
 
 
 <?MISQL SQL="select WebExplode(object,'fxpubdis_source_zdb_id=$OID&fxpubdis_fig_zdb_id=test&fxpubdis_probe_zdb_id=$fxallfig_probe_zdb_id') from webPages where ID='aa-fxpubdisplay.apg';">$1<?/MISQL>
@@ -301,7 +296,7 @@ and clone_problem_type is not null
  <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fxallfig_source_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
 <?MIELSE>
         <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
-        <?MISQL SQL="select WebExplode(object,'trackZdbID=$trackZdbID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
+        <?MISQL SQL="select WebExplode(object,'trackZdbID=$OID&pubview2_doi_no=$pubview2_doi_no&referenceurl=$HTTP_HOST$HTTP_URI$QUERY_STRING') from webPages where ID='aa-externallink.apg';">$1<?/MISQL>
         <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 <?/MIBLOCK>
 <?/MIBLOCK> <?MICOMMENT>end no probe condition <?/MICOMMENT>
