@@ -477,7 +477,7 @@ $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER
 $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3">SELECT</A>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</FONT>")
 </TD></DIV>
 
-<TD colspan=1 align=left><font size=3><DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pubsel2_authors ($pubsel2_year) $pubsel2_title. $pubsel2_jrnlabbrev$(IF,$(NC,$pubsel2_pvolume,), $pubsel2_pvolume:,)$(IF,$(NC,$pubsel2_ppages,),$pubsel2_ppages.,)$(IF,$(OR,$(EC,$pubsel2_pstatus,Epub ahead of print), $(EC,$pubsel2_pstatus,in press)), $pubsel2_pstatus,)</DIV></A> 
+<TD colspan=1 align=left><font size=3><DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pubsel2_authors ($pubsel2_year) $pubsel2_title. $pubsel2_jrnlabbrev$(IF,$(NC,$pubsel2_pvolume,), $pubsel2_pvolume:,)$(IF,$(NC,$pubsel2_ppages,), $pubsel2_ppages.,)$(IF,$(OR,$(EC,$pubsel2_pstatus,Epub ahead of print), $(EC,$pubsel2_pstatus,in press)), $pubsel2_pstatus,)</DIV></A> 
 </TD>
 <?MIVAR COND="$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root))">
   <TD>$(IF,$(NE,$PUB_COMPLETION,),CLOSED&nbsp;&nbsp;,OPEN&nbsp;&nbsp;)</TD>
