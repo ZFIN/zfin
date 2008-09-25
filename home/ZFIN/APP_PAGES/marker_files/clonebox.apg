@@ -233,7 +233,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
 				from record_Attribution
 				where xpatex_zdb_id = recattrib_datA_zdb_id
 				and xpatex_source_zdb_id = recattrib_source_zdb_id
-				and xpatex_source_zdb_id in ('ZDB-PUB-051025-1','ZDB-PUB-040907-1','ZDB-PUB-010810-1'));">
+				and xpatex_source_zdb_id in ('ZDB-PUB-051025-1','ZDB-PUB-040907-1','ZDB-PUB-010810-1', 'ZDB-PUB-080227-22','ZDB-PUB-080220-1'));">
 
 
     <?MIVAR NAME=$number_of_thisse_xpat_records>$1<?/MIVAR>
