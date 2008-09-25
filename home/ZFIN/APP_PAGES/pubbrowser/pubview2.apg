@@ -114,7 +114,7 @@ displays a publication record, or many publication records if > 1 returned.
        <?MIVAR NAME=$pubview_source>$pubview_source $pubview2_pub_volume<?/MIVAR>
        <?MIVAR NAME=$pubview_colon>:<?/MIVAR>
    <?/MIBLOCK>
-   <?MIVAR NAME=$pubview_source COND="$(NC,$pubview2_pub_pages,)">$pubview_source$pubview_colon$pubview2_pub_pages<?/MIVAR>
+   <?MIVAR NAME=$pubview_source COND="$(NC,$pubview2_pub_pages,)">$pubview_source$pubview_colon&nbsp;$pubview2_pub_pages<?/MIVAR>
    <?MIVAR NAME=$pubview_source COND="$(NC,$jtype,Unpublished)">$pubview_source ($jtype)<?/MIVAR>
    
      
