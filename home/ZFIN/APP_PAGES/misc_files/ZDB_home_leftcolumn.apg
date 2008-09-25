@@ -14,8 +14,8 @@
             title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li> 
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_gene.apg" 
             title="Contact the Nomenclature Committee">Obtain approval for gene names</a>
-    </ul>
-
+            <li><a href="/zf_info/author_guidelines.html">ZFIN Author Guidelines</a>
+   </ul>
 
    <ul>
      <li>Search <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant"
