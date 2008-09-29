@@ -203,15 +203,32 @@ create dba function "informix".regen_maps()
   -- SNP
   --------------------------------------
 
-   insert into paneled_m_new
-      select mm.marker_id,mm.map_name, mm.marker_type, mm.OR_lg, mm.lg_location,
-             mm.metric, pn.abbrev, 'f'::boolean, mm.refcross_id, mrkr_abbrev
-        from marker, mapped_marker mm, panels pn
-        where mm.marker_type = 'SNP'
-          and mm.refcross_id = pn.zdb_id
-      and mrkr_zdb_id = mm.marker_id;
+  -- prepare SNPs whose associated ESTs or genes are mapped
 
+   select mrel_mrkr_2_zdb_id as snp_zdb_id,
+          or_lg, lg_location, refcross_id, metric
+     from marker_relationship, mapped_marker m
+    where mrel_mrkr_1_zdb_id = m.marker_id
+      and mrel_mrkr_1_zdb_id[1,8] in ('ZDB-EST-', 'ZDB-GENE')
+      and mrel_mrkr_2_zdb_id[1,8] = 'ZDB-SNP-'
+      and mrel_type = 'contains polymorphism'
+      and m.scoring_data is not null
+     into temp tmp_snp_id with no log;
 
+   select mrkr_zdb_id, mrkr_abbrev, mrkr_type, ts.or_lg as or_lg, 
+            ts.lg_location as lg_location, ts.metric as metric, p.abbrev as panel,
+            'f'::boolean as frame, refcross_id, dalias_alias map_name
+     from tmp_snp_id ts, marker m, panels p, data_alias
+     where snp_zdb_id = m.mrkr_zdb_id
+       and dalias_data_zdb_id = snp_zdb_id
+       and refcross_id = p.zdb_id
+     into temp tmp_paneled_snps;
+
+    insert into paneled_m_new
+      select * from tmp_paneled_snps;
+
+   drop table tmp_snp_id;
+   drop table tmp_paneled_snps;
 
   --------------------------------------
   -- Create a temporary index
