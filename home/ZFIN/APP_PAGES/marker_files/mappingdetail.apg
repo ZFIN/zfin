@@ -40,6 +40,21 @@ FILE: mappingdetail.apg
 <?MIVAR COND="$(EC,$split,break)" NAME=$split><br><?/MIVAR>
 
 <?MIVAR COND="$(NXST,$oID)">No ZDB-ID Passed In!<?/MIVAR>
+
+<?MICOMMENT>added code for SNP<?/MICOMMENT>
+<?MIBLOCK COND="$(>,$(POSITION,$oID,SNP),0)">
+  <?MIVAR NAME=$snpID>$oID<?/MIVAR>
+  <?MISQL SQL="
+        select mrel_mrkr_1_zdb_id
+            from marker_relationship
+           where mrel_mrkr_2_zdb_id = '$oID'
+             and mrel_type = 'contains polymorphism'
+             and (mrel_mrkr_1_zdb_id[1,8] = 'ZDB-EST-'
+                  or mrel_mrkr_1_zdb_id[1,8] = 'ZDB-GENE'); ">
+        <?MIVAR>$(SETVAR,$oID,$1)<?/MIVAR>
+   <?/MISQL>
+<?/MIBLOCK>
+
 <?MIVAR NAME=viewmap><?/MIVAR>
 <?MISQL SQL="
 	SELECT or_lg
@@ -172,19 +187,22 @@ FILE: mappingdetail.apg
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(OR,$(XST,$lg_list),$(>,$map_count,0))">
-
- <?MIVAR>&nbsp;<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$oID">Details</A><?/MIVAR>
+ <?MICOMMENT>added code for SNP<?/MICOMMENT>
+ <?MIBLOCK COND="$(XST,$snpID)">
+    <?MIVAR>&nbsp;<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$snpID">Details</A><?/MIVAR>
+ <?MIELSE COND="$(NXST,$snpID)">
+    <?MIVAR>&nbsp;<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$oID">Details</A><?/MIVAR>
+ <?/MIBLOCK>
 <?MIVAR COND="$(EC,$mapdetails_mode,mini_slim)">
 	$(SETVAR,$viewmap,f)
 <?/MIVAR>
-
 <?MICOMMENT>
   mini mode section is exploded from both mapping details page and 
   geneselect page, the column open and close need to be handled 
   differently, use the $split functionality to determine which was 
   the calling routine and add appropriate td's 
 <?/MICOMMENT>
-    <?MIVAR COND="$(EC,$viewmap,t)">
+    <?MIVAR COND="$(AND,$(EC,$viewmap,t),$(NXST,$snpID))">
 	$(IF,$(EC,$split,&nbsp;),</td><td>)
 	   $split View Map:
   	   
@@ -999,6 +1017,81 @@ marker = '';
   </TD></TR>
   <?/MIBLOCK>
  <?MICOMMENT>-------------- end Clone containing -----------------<?/MICOMMENT>
+
+   <?MICOMMENT>-------------- EST and/or Gene containing SNP -------------------<?/MICOMMENT>
+   
+   <?MISQL SQL="SELECT mrel_mrkr_1_zdb_id, mrkr_abbrev
+             FROM marker_relationship,  marker
+	     WHERE mrel_mrkr_2_zdb_id = '$detOID'
+ 	       and mrkr_type = 'EST'	     
+	       and mrel_type = 'contains polymorphism' 
+	       and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+	       and exists
+	       		 ( SELECT 'x' 
+	       		           FROM mapped_marker
+		           WHERE mrel_mrkr_1_zdb_id = marker_id )
+  ;">
+  <?MIVAR NAME=$mrkr_abbrev>$2<?/MIVAR>
+  <?MIVAR NAME=$mrkr_OID>$1<?/MIVAR>
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
+    <TR><?MIVAR>
+      <TD colspan=3><p><b>EST Containing $abbrev:</b></TD>
+    </TR><?/MIVAR>
+    <TR><TD><table cols=2>
+    <?MIVAR NAME=$table>y<?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MISQL SQL="
+    select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$mrkr_OID')
+      from webPages 
+      where ID = 'aa-mappingdetail.apg';">
+    <tr>
+      <td>
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkr_OID"><b>$mrkr_abbrev</b></A>
+      </td>
+      <td> $1 </td>
+     </tr>
+   <?/MISQL>
+   <?MIVAR NAME=$mapped>t<?/MIVAR>	
+  <?/MISQL>
+ 
+    <?MISQL SQL="SELECT mrel_mrkr_1_zdb_id, mrkr_abbrev
+              FROM marker_relationship,  marker
+ 	     WHERE mrel_mrkr_2_zdb_id = '$detOID'
+ 	       and mrkr_type = 'GENE'
+ 	       and mrel_type = 'contains polymorphism' 
+ 	       and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+   ;">
+   <?MIVAR NAME=$mrkr_abbrev>$2<?/MIVAR>
+   <?MIVAR NAME=$mrkr_OID>$1<?/MIVAR>
+   <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
+     <TR><?MIVAR>
+       <TD colspan=3><p><b>Gene Containing $abbrev:</b></TD>
+     </TR><?/MIVAR>
+     <?MIVAR NAME=$table COND="$(NXST,$table)">n<?/MIVAR>
+     <TR><TD><?MIVAR>$(IF,$(EC,$table,y),,<table cols=2>)<?/MIVAR>
+     <?MIVAR>$(SETVAR,$table,y)<?/MIVAR>
+   <?/MIBLOCK>
+ 
+   <?MISQL SQL="
+     select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$mrkr_OID')
+       from webPages 
+       where ID = 'aa-mappingdetail.apg';">
+     <tr>
+       <td>
+         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkr_OID"><b>$mrkr_abbrev</b></A>
+       </td>
+       <td> $1 </td>
+      </tr>
+    <?/MISQL>
+    <?MIVAR NAME=$mapped>t<?/MIVAR>	
+  <?/MISQL>
+ 
+  <?MIBLOCK COND="$(AND,$(XST,$table),$(EC,$table,y))">
+  </table><?MIVAR>$(SETVAR,$table,n)<?/MIVAR>
+  </TD></TR>
+  <?/MIBLOCK>
+ <?MICOMMENT>-------------- end EST and/or Gene containing SNP -----------------<?/MICOMMENT>
 
  </TABLE></TD></TR>
 <?MIBLOCK COND="$(EC,$mapped,t)"> <p><TR><TD> <hr width=80%></TD></TR> 
