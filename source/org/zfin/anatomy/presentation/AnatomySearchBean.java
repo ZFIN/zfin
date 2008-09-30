@@ -13,6 +13,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
+import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -51,12 +52,14 @@ public class AnatomySearchBean extends PaginationBean {
 
     private List<Genotype> genotypes;
     private int genotypeCount;
+    private int antibodyCount;
     private int wildtypeMorpholinoCount;
     private int mutantMorpholinoCount;
     private int totalNumberOfFiguresPerAnatomyItem;
     private int totalNumberOfImagesPerAnatomyItem;
     private List<GenotypeStatistics> genoStats;
     private List<MorpholinoStatistics> allMorpholinos;
+    private List<AntibodyStatistics> antibodyStatistics;
     private List<MorpholinoStatistics> nonWildtypeMorpholinos;
     private boolean wildtype;
 
@@ -257,6 +260,14 @@ public class AnatomySearchBean extends PaginationBean {
         return allMorpholinos;
     }
 
+    public List<AntibodyStatistics> getAntibodyStatistics() {
+        return antibodyStatistics;
+    }
+
+    public void setAntibodyStatistics(List<AntibodyStatistics> antibodyStatistics) {
+        this.antibodyStatistics = antibodyStatistics;
+    }
+
     public List<MorpholinoStatistics> getNonWildtypeMorpholinos() {
         return nonWildtypeMorpholinos;
     }
@@ -367,6 +378,14 @@ public class AnatomySearchBean extends PaginationBean {
         this.wildtypeMorpholinoCount = wildtypeMorpholinoCount;
     }
 
+    public int getAntibodyCount() {
+        return antibodyCount;
+    }
+
+    public void setAntibodyCount(int antibodyCount) {
+        this.antibodyCount = antibodyCount;
+    }
+
     public int getMutantMorpholinoCount() {
         return mutantMorpholinoCount;
     }
@@ -470,6 +489,10 @@ public class AnatomySearchBean extends PaginationBean {
 
     public boolean isMorpholinoExist(){
         return !CollectionUtils.isEmpty(allMorpholinos);
+    }
+
+    public boolean isAntibodiesExist(){
+        return !CollectionUtils.isEmpty(antibodyStatistics);
     }
 
     public boolean isNonWildtypeMorpholinoExist(){

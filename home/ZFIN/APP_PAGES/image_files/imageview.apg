@@ -354,6 +354,16 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
                  <?MIVAR NAME=fimgview_phenotype_exists>true<?/MIVAR>
             <?/MISQL>            
 
+           <?MISQL SQL="select *
+              from expression_pattern_figure, expression_result, expression_experiment
+              where xpatfig_fig_zdb_id='$fimgview_fig_zdb_id'
+              and xpatres_zdb_id=xpatfig_xpatres_zdb_id
+              and xpatres_xpatex_zdb_id=xpatex_zdb_id
+              and xpatex_gene_zdb_id is null
+              and xpatex_atb_zdb_id is not null">
+                 <?MIVAR NAME=fimgview_labeling_exists>true<?/MIVAR>
+            <?/MISQL>
+
 
         <?MICOMMENT> ***** If the Pub is unpublished, the figures page needs the probe ***** <?/MICOMMENT>	          
           <?MIBLOCK COND=$(NC,$fimgview_pub_jtype,Curation)>

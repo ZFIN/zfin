@@ -207,11 +207,24 @@ patterns associated with the figure
 <?/MICOMMENT>
 
 <?MISQL SQL="select count(xpatfig_xpatres_zdb_id)::integer 
-              from expression_pattern_figure 
-              where xpatfig_fig_zdb_id='$OID'">
+              from expression_pattern_figure, expression_result, expression_experiment 
+              where xpatfig_fig_zdb_id='$OID'
+              and xpatres_zdb_id=xpatfig_xpatres_zdb_id
+              and xpatres_xpatex_zdb_id=xpatex_zdb_id
+              and xpatex_gene_zdb_id is not null">
 <?/MISQL>
 <?MIVAR NAME=fxfigview_resultct>$1<?/MIVAR>
    
+<?MISQL SQL="select count(xpatfig_xpatres_zdb_id)::integer 
+              from expression_pattern_figure, expression_result, expression_experiment 
+              where xpatfig_fig_zdb_id='$OID'
+              and xpatres_zdb_id=xpatfig_xpatres_zdb_id
+              and xpatres_xpatex_zdb_id=xpatex_zdb_id
+              and xpatex_gene_zdb_id is null
+              and xpatex_atb_zdb_id is not null">
+<?/MISQL>
+<?MIVAR NAME=fxfigview_atbresultct>$1<?/MIVAR>
+
 <?MISQL SQL="select count(apatofig_apato_zdb_id)::integer 
               from apato_figure 
               where apatofig_fig_zdb_id='$OID'">
@@ -219,10 +232,10 @@ patterns associated with the figure
 <?MIVAR NAME=fxfigview_pato_resultct>$1<?/MIVAR>
 <?MICOMMENT>Begin expression pattern condition <?/MICOMMENT>
 
-<?MIBLOCK COND="$(>,$fxfigview_resultct,0)">
+<?MIBLOCK COND="$(OR,$(>,$fxfigview_resultct,0),$(>,$fxfigview_atbresultct,0))">
 <table width = 100%>
    <tr><td>
-   <tr><td><b>GENE EXPRESSION:</b>
+   <tr><td><b>EXPRESSION / LABELING:</b>
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfigge_fig_zdb_id=$OID&fxfigge_display_option=anchor') from webPages where ID='aa-fxfiggenelist.apg';">$1<?/MISQL>
 
     <tr><td><b>Genotype or Background : </b><?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$OID') from webPages where ID='aa-fxfigfishlist.apg';">$1<?/MISQL>
@@ -269,7 +282,7 @@ and display them one after the other horizontally
 
 
 <?MISQL SQL="
-           select distinct fig_label, fig_caption, img_thumbnail, img_zdb_id, img_comments, fig_source_zdb_id, img_view, img_direction, img_image, img_height, img_width 
+           select distinct fig_label, fig_caption, img_thumbnail, img_zdb_id, img_comments, fig_source_zdb_id, img_view, img_direction, img_image, img_height, img_width,pub_can_show_images 
            from publication join figure on 
                fig_source_zdb_id = zdb_id
            left outer join image
@@ -392,6 +405,7 @@ and display them one after the other horizontally
     <table width = 100% border = 0 cellspacing = 0 cellpadding = 0 colspan = 7>
       <tr bgcolor=#cccccc height=25><td><b>Gene</b>
       <td></td> 
+      <td><b>Antibody</TITLE></b>
       <td><b><ALT TITLE="Genotype + environment">Fish</TITLE></b>
       <td><b>Stage</td></b>
       <?MICOMMENT>Display qualifier column only if it exists for atleast one structure the gene is expressed in<?/MICOMMENT>
@@ -430,6 +444,71 @@ and display them one after the other horizontally
     </table>
 <?/MIBLOCK> <?MICOMMENT>End gene expression details block<?/MICOMMENT>
 <p>
+
+
+<?MIBLOCK COND="$(>,$fxfigview_atbresultct,0)">
+
+     <?MICOMMENT> Check to see if any of the figures have qualifiers <?/MICOMMENT>
+     <?MISQL SQL="select count(*) from 
+                  expression_pattern_figure, expression_result, expression_experiment 
+                  where xpatfig_fig_zdb_id='$OID' 
+                  and xpatfig_xpatres_zdb_id=xpatres_zdb_id 
+                  and xpatres_xpatex_zdb_id=xpatex_zdb_id
+                  and xpatex_atb_Zdb_id is not null
+                  and xpatex_gene_zdb_id is null
+                  and xpatres_expression_found = 'f'">
+      <?/MISQL>
+      <?MIBLOCK COND="$(>,$1,0)">
+         <?MIVAR NAME=$fxfigview_is_qual>yes<?/MIVAR>
+      <?MIELSE>
+         <?MIVAR NAME=$fxfigview_is_qual>no<?/MIVAR>
+      <?/MIBLOCK>
+    <?MICOMMENT>End qualifier section <?/MICOMMENT>
+
+    <a name=xpat>    
+    <b>Antibody Labeling Details</b>
+    <table width = 100% border = 0 cellspacing = 0 cellpadding = 0 colspan = 7>
+      <tr bgcolor=#cccccc height=25><td><b>Antibody</b>
+      <td></td> 
+      <td><b><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxassayabbrev.apg">Assay</a></td></b>
+      <td><b><ALT TITLE="Genotype + environment">Fish</TITLE></b>
+      <td><b>Stage</td></b>
+      <?MICOMMENT>Display qualifier column only if it exists for atleast one structure the gene is expressed in<?/MICOMMENT>
+      <?MIBLOCK COND="$(EQ,$fxfigview_is_qual,yes)">
+              <td><b>Qualifier</td></b>
+      <?/MIBLOCK>
+      <?MICOMMENT>For GELI curated papers, do not display anatomy column<?/MICOMMENT>
+      <?MIBLOCK COND="$(EQ,$fxfigview_is_geli,)">
+              <td><b>Anatomy</td></b>
+      <?/MIBLOCK>
+      <p>
+      <?MISQL SQL="
+           select distinct xpatex_atb_zdb_id, mrkr_abbrev
+           from
+           figure,expression_experiment, marker,
+           expression_result,expression_pattern_figure
+           where
+           fig_zdb_id='$fxfigview_fig_zdb_id'
+           and fig_zdb_id=xpatfig_fig_zdb_id
+           and xpatfig_xpatres_zdb_id=xpatres_zdb_id
+           and xpatres_xpatex_zdb_id=xpatex_zdb_id
+           and xpatex_atb_zdb_id = mrkr_zdb_id
+           order by mrkr_abbrev">
+
+           <?MIVAR NAME=$fxinfo_atboid>$1<?/MIVAR>
+           <?MIBLOCK COND="$(NXST,$fxfigview_rowcolor)">
+            <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+             <?MIVAR NAME=$fxfigview_rowcolor>$fxfigview_highlight<?/MIVAR>
+            <?/MIBLOCK>
+           <?/MIBLOCK>
+           <?MISQL SQL="select WebExplode(object,'OID=$fxinfo_atboid&fxinfo_fig_zdb_id=$fxfigview_fig_zdb_id&fxinfo_is_geli=$fxfigview_is_geli&fxinfo_is_qual=$fxfigview_is_qual&fxinfo_rowcolor=$fxfigview_rowcolor') from webPages where ID='aa-fxlabelinfo.apg';">$1<?/MISQL>
+           <?MIVAR NAME=$fxfigview_rowcolor>$fxinfo_lastcolor<?/MIVAR>
+      <?/MISQL>
+    </table>
+<?/MIBLOCK> <?MICOMMENT>End antibody labeling block<?/MICOMMENT>
+<p>
+
+
 <?MIBLOCK COND="$(>,$fxfigview_pato_resultct,0)">
 
     <a name=phenotype>

@@ -15,7 +15,7 @@ public class ExpressedGeneDisplay {
 
     private ChoiceFormat figureChoice = new ChoiceFormat("0#figures|1#figure|2#figures");
     private ChoiceFormat imageChoice = new ChoiceFormat("0#images|1#image|2#images");
-    private ChoiceFormat publicationChoice = new ChoiceFormat("0#publications|1#publication|2#publications");
+    private ChoiceFormat publicationChoice = new ChoiceFormat("0#sources|1#publication|2#sources");
 
     public ExpressedGeneDisplay(MarkerStatistic markerStat) {
         this.markerStat = markerStat;

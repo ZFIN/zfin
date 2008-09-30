@@ -271,12 +271,12 @@ and clone_problem_type is not null
 <tr><td>
     <?MIBLOCK COND="$(EC,$fxallfig_has_results,yes)">
        <table width = 100%  cellspacing = 0 cellpadding = 5 bgcolor="#EEEEEE">
-    <tr><td><b>EXPRESSION :</b>
+    <tr><td><b>EXPRESSION / LABELING :</b>
     <tr><td><?MISQL SQL="select WebExplode(object,'OID=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfiggenelist.apg';">$1<?/MISQL>
     <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigfi_is_displayed=t') from webPages where ID='aa-fxfigfishlist.apg';">$1<?/MISQL>
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfiganat_fig_zdb_id=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfiganatlist.apg';">$1<?/MISQL>
     <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigst_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigst_is_displayed=t') from webPages where ID='aa-fxfigstgrng.apg';">$1<?/MISQL>
-                  <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Gene expression details</a></td>
+                  <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Expression / Labeling details</a></td>
 </table>
     <?/MIBLOCK>
     <?MIBLOCK COND="$(EC,$fxallfig_has_patoresults,yes)">

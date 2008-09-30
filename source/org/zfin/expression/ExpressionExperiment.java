@@ -1,10 +1,10 @@
 package org.zfin.expression;
 
-import org.zfin.publication.Publication;
+import org.zfin.antibody.Antibody;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
-import org.zfin.marker.Gene;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.publication.Publication;
 
 import java.util.Set;
 
@@ -23,7 +23,8 @@ public class ExpressionExperiment {
     private GenotypeExperiment genotypeExperiment;
     private Marker marker;
     private Marker probe;
-    private Gene gene;
+    private ExpressionAssay assay;
+    private Antibody antibody;
 
     public String getZdbID() {
         return zdbID;
@@ -105,11 +106,19 @@ public class ExpressionExperiment {
         this.genotypeExperiment = genotypeExperiment;
     }
 
-    public Gene getGene() {
-        return gene;
+    public Antibody getAntibody() {
+        return antibody;
     }
 
-    public void setGene(Gene gene) {
-        this.gene = gene;
+    public void setAntibody(Antibody antibody) {
+        this.antibody = antibody;
+    }
+
+    public ExpressionAssay getAssay() {
+        return assay;
+    }
+
+    public void setAssay(ExpressionAssay assay) {
+        this.assay = assay;
     }
 }

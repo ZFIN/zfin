@@ -50,7 +50,7 @@ EFFECTS
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
-
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
  <style type="text/css"><!--
@@ -101,22 +101,23 @@ EFFECTS
     <?MIVAR NAME=xpcurpnl_index>0<?/MIVAR>
     <?MISQL SQL="
         select distinct fig_label, fig_zdb_id, xpatex_zdb_id, s1.stg_zdb_id, s2.stg_zdb_id, s1.stg_abbrev, s2.stg_abbrev,
-               zero_pad(fig_label), mrkr_abbrev_order, geno_nickname, s1.stg_hours_start, s2.stg_hours_end
+               zero_pad(fig_label), m1.mrkr_abbrev_order, geno_nickname, s1.stg_hours_start, s2.stg_hours_end
         from figure, expression_pattern_figure, expression_result, stage as s1, stage as s2, 
-             expression_experiment, marker, genotype_experiment, genotype
+             expression_experiment, OUTER(marker m1),OUTER(marker m2), genotype_experiment, genotype
         where fig_source_zdb_id = '$OID'
           and xpatex_source_zdb_id = '$OID'
           and xpatfig_fig_zdb_id = fig_zdb_id
           and xpatfig_xpatres_zdb_id = xpatres_zdb_id
           and xpatres_xpatex_zdb_id = xpatex_zdb_id 
-          and xpatex_gene_zdb_id = mrkr_zdb_id
+          and xpatex_gene_zdb_id = m1.mrkr_zdb_id
           and xpatres_start_stg_zdb_id = s1.stg_zdb_id
           and xpatres_end_stg_zdb_id = s2.stg_zdb_id
           and xpatex_genox_zdb_id = genox_zdb_id
           and genox_geno_zdb_id = geno_zdb_id
+          and xpatex_atb_zdb_id = m2.mrkr_zdb_id
           and fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
           $(IF,$(AND,$(XST,$xpcur_c_figure_only),$(NE,$xpcur_c_figure_only,)),and fig_zdb_id = '$xpcur_c_figure_only')
-          $(IF,$(AND,$(XST,$xpcur_c_gene_only),$(NE,$xpcur_c_gene_only,)),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
+$(IF,$(XST,$xpcur_wherestring),$xpcur_wherestring)
           $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(NE,$xpcur_c_fish_only,)),and geno_zdb_id = '$xpcur_c_fish_only')
         order by 8,9,10,11;">
         
@@ -134,14 +135,12 @@ EFFECTS
         $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,9)$xpcurpnlCB = '$5';
         $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,10)$xpcurpnlCB = $11;
         $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,11)$xpcurpnlCB = $12;
-
         <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$3') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
         $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,3)$xpcurpnlCB = '$(REPLACE,$xpcurexpssdisp_xpatex_display_name,"&nbsp;"," ")';
         
         xpcurpnlArray$xpcurpnlOB$xpcurpnl_index$xpcurpnlCB = $xpcurpnl_figexp_name ;
         <?MIVAR NAME=xpcurpnl_index>$(+,$xpcurpnl_index,1)<?/MIVAR>
     <?/MISQL>
- 
     var xpcurpnl_Stages = new Array();
     
     <?MISQL SQL="
@@ -425,7 +424,15 @@ EFFECTS
 <?MIVAR NAME=xpcurpnl_prev_fish><?/MIVAR>
 <?MIVAR NAME=xpcurpnl_prev_gene><?/MIVAR>
 <?MIVAR NAME=xpcurpnl_prev_fig><?/MIVAR>
-    
+<?MIBLOCK COND="$(XST,$xpcur_c_gene_only)">    
+<?MIBLOCK COND=$(NE,$xpcur_c_gene_only,)>
+  <?MIBLOCK COND="$(>,$(POSITION,$xpcur_c_gene_only,GENE),0)">
+   <?MIVAR NAME=$wherestring>and xpatex_gene_zdb_id='$xpcur_c_gene_only'<?/MIVAR>
+  <?MIELSE>
+   <?MIVAR NAME=$wherestring>and xpatex_atb_zdb_id='$xpcur_c_gene_only' and xpatex_atb_zdb_id=mrkr_zdb_id<?/MIVAR>
+<?/MIBLOCK>
+<?/MIBLOCK>
+<?/MIBLOCK>
 <table class="tbl" width=100% cellspacing=0 cellpadding=3>
   <tr bgcolor=#CCCCCC>
     <td>Select</td>
@@ -438,6 +445,7 @@ EFFECTS
   </tr>  
 
 <form name="xpcur_exp">
+
 <?MISQL SQL="
     select distinct fig_zdb_id, fig_label, 
                     xpatres_start_stg_zdb_id, 
@@ -452,7 +460,7 @@ EFFECTS
                     zero_pad(exp_name),
                     exp_zdb_id,
                     genox_zdb_id
-    from figure, expression_pattern_figure, expression_result, expression_experiment, marker, stage, genotype_experiment, genotype, expression_pattern_assay, experiment
+    from figure, expression_pattern_figure, expression_result, expression_experiment, OUTER(marker),stage, genotype_experiment, genotype, expression_pattern_assay, experiment
       where fig_source_zdb_id = '$OID'
       and xpatfig_fig_zdb_id = fig_zdb_id
       and xpatfig_xpatres_zdb_id = xpatres_zdb_id
@@ -464,7 +472,7 @@ EFFECTS
       and fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
       and xpatex_assay_name = xpatassay_name
       and genox_exp_zdb_id = exp_zdb_id
-      $(IF,$(AND,$(XST,$xpcur_c_gene_only),$(NE,$xpcur_c_gene_only,)),and mrkr_zdb_id = '$xpcur_c_gene_only')
+      $(IF,$(XST,$wherestring),$wherestring)
       $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(NE,$xpcur_c_fish_only,)),and geno_zdb_id = '$xpcur_c_fish_only')
     order by fig_label, mrkr_abbrev_order, geno_nickname, xpatassay_display_order, 12, stg_hours_start;">
 
@@ -479,7 +487,6 @@ EFFECTS
       <?MIVAR NAME=xpcurpnl_exp_zdb_id>$13<?/MIVAR>
       <?MIVAR NAME=xpcurpnl_geno_zdb_id>$10<?/MIVAR>
       <?MIVAR NAME=xpcurpnl_genox_zdb_id>$14<?/MIVAR>      
-
       <?MICOMMENT> The panel ID format is Fig,xpatex,sstg,estg. <?/MICOMMENT>
       <?MIVAR NAME=xpcurpnl_id>$xpcurpnl_fig_zdb_id$xpcurpnl_xpatex_zdb_id$xpcurpnl_start_stg_zdb_id$xpcurpnl_end_stg_zdb_id<?/MIVAR>
       <?MIVAR NAME=xpcurpnl_id_minus>$(REPLACE,$xpcurpnl_id,"-","")<?/MIVAR>
@@ -492,7 +499,10 @@ EFFECTS
     <?MIELSE COND=$(NC,$xpcurpnl_fig_zdb_id,$xpcurpnl_prev_fig)>
         <?MIVAR NAME=xpcurpnl_row_color>$(IF,$(EC,$xpcurpnl_row_color,<!--|HIGHLIGHT_COLOR|-->),#FFFFFF,<!--|HIGHLIGHT_COLOR|-->)<?/MIVAR>      
     <?/MIBLOCK>
-     
+    <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name='QuickGO'">
+     <?MIVAR NAME=$dbquery>$1<?/MIVAR>
+  <?/MISQL>
+  
     <tr bgcolor='$xpcurpnl_row_color' onmouseover="this.style.background='$pubcur_G_active_row_color';" onmouseout="this.style.background='$xpcurpnl_row_color';">
       <?MISQL SQL="
         select start.stg_abbrev ||' '|| start.stg_name_ext, 
@@ -502,8 +512,8 @@ EFFECTS
                  else anatitem_name
                end,
                xpatres_expression_found, 
-               anatitem_name_order
-        from expression_pattern_figure, expression_result, anatomy_item, stage as start, stage as end       
+               anatitem_name_order, goterm_name,goterm_go_id
+        from expression_pattern_figure, expression_result, anatomy_item, stage as start, stage as end, OUTER(go_term)       
         where xpatfig_fig_zdb_id = '$xpcurpnl_fig_zdb_id'
           and xpatfig_xpatres_zdb_id = xpatres_zdb_id
           and xpatres_start_stg_zdb_id = '$xpcurpnl_start_stg_zdb_id'
@@ -511,33 +521,40 @@ EFFECTS
           and xpatres_start_stg_zdb_id = start.stg_zdb_id
           and xpatres_end_stg_zdb_id = end.stg_zdb_id
           and xpatres_anat_item_zdb_id = anatitem_zdb_id
+          and xpatres_go_term_zdb_id = goterm_zdb_id
           and xpatres_xpatex_zdb_id = '$xpcurpnl_xpatex_zdb_id'
         order by anatitem_name_order
         ;">
-   
         <?MIVAR NAME=xpcurpnl_start_stg>$1<?/MIVAR>
         <?MIVAR NAME=xpcurpnl_end_stg>$2<?/MIVAR>
         <?MIVAR NAME=xpcurpnl_anatitem_name>$3<?/MIVAR>
+        <?MIVAR NAME=xpcurpnl_goterm_name>$6<?/MIVAR>
+        <?MIVAR NAME=xpcurpnl_goterm_goid>$7<?/MIVAR>
         <?MIVAR NAME=xpcurpnl_expression_found>$(IF,$(EC,$4,f),<font color=red>&#40not&#41</font>) <?/MIVAR>
-      
-        <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">     
+<?MIBLOCK COND="$(NE,$xpcurpnl_goterm_name,)">
+                        <?MIVAR NAME=$xpcurpnl_goterm_name>:$xpcurpnl_goterm_name<?/MIVAR>
+<?MIELSE>
+                        <?MIVAR NAME=$xpcurpnl_goterm_name><?/MIVAR>
+<?/MIBLOCK>
+
+        <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> 
+<?MIVAR>   
           <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
           <?MIVAR NAME=xpcurpnl_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
-          <?MIVAR>
             <td valign=top><input name="$xpcurpnl_id_minus" type=checkbox onClick="if(this.checked==true){set_expression_form('$xpcurpnl_id_minus');}set_selected_expression();"></td>
             <td valign=top onClick="document.xpcur_exp.$xpcurpnl_id_minus.click();" >$xpcurpnl_fig_label</td>
             <td valign=top onClick="document.xpcur_exp.$xpcurpnl_id_minus.click();" >
               $xpcurpnl_xpatex_display_name
             </td>    
             <td valign=top onClick="document.xpcur_exp.$xpcurpnl_id_minus.click();" >$xpcurpnl_start_stg $(IF,$(NE,$xpcurpnl_start_stg,$xpcurpnl_end_stg),- <br>$xpcurpnl_end_stg)</td>
-            <td valign=top onClick="document.xpcur_exp.$xpcurpnl_id_minus.click();" >$xpcurpnl_expression_found$xpcurpnl_anatitem_name
-          <?/MIVAR>
-        <?MIELSE>  
-          <?MIVAR>, $xpcurpnl_expression_found$xpcurpnl_anatitem_name<?/MIVAR>  
+            <td valign=top onClick="document.xpcur_exp.$xpcurpnl_id_minus.click();" >$xpcurpnl_expression_found$xpcurpnl_anatitem_name$xpcurpnl_goterm_name
+<?/MIVAR>
+        <?MIELSE> 
+<?MIVAR> 
+          , $xpcurpnl_expression_found$xpcurpnl_anatitem_name$xpcurpnl_goterm_name<?/MIVAR>
         <?/MIBLOCK> <?MICOMMENT> MI_CURRENTROW = 1 <?/MICOMMENT>
   
       <?/MISQL>
-      
       <td valign=top>
         <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurpnl_delete','panel')"><?/MIVAR>
 
@@ -574,7 +591,6 @@ EFFECTS
     <?MIVAR NAME=xpcurpnl_prev_fish>$xpcurpnl_fish<?/MIVAR>
     <?MIVAR NAME=xpcurpnl_prev_gene>$xpcurpnl_gene<?/MIVAR>
     <?MIVAR NAME=xpcurpnl_prev_fig>$xpcurpnl_fig_zdb_id<?/MIVAR>
-    
 <?/MISQL>
 </form>
 <?MICOMMENT> ==| Enter a New Panel |== <?/MICOMMENT>
@@ -605,18 +621,19 @@ EFFECTS
     <td>
         <select name="xpcur_G_panel_add_xpatex" MULTIPLE SIZE=5>
           <?MISQL SQL="
-            select xpatex_zdb_id, mrkr_abbrev_order, geno_nickname, xpatassay_display_order, zero_pad(exp_name)
-	    from expression_experiment, marker, genotype_experiment, genotype, expression_pattern_assay, experiment
+            select xpatex_zdb_id, m1.mrkr_abbrev_order, geno_nickname, xpatassay_display_order, zero_pad(exp_name)
+	    from expression_experiment, OUTER(marker m1),OUTER(marker m2), genotype_experiment, genotype, expression_pattern_assay, experiment
 	    where xpatex_source_zdb_id = '$OID'
-	      and xpatex_gene_zdb_id = mrkr_zdb_id
+	      and xpatex_gene_zdb_id = m1.mrkr_zdb_id
 	      and xpatex_genox_zdb_id = genox_zdb_id
 	      and genox_geno_zdb_id = geno_zdb_id
 	      and xpatex_assay_name = xpatassay_name
               and genox_exp_zdb_id = exp_zdb_id
-              $(IF,$(AND,$(XST,$xpcur_c_gene_only),$(NE,$xpcur_c_gene_only,)),and mrkr_zdb_id = '$xpcur_c_gene_only')
+	      and xpatex_atb_zdb_id = m2.mrkr_zdb_id
+              $(IF,$(AND,$(XST,$xpcur_c_gene_only),$(NE,$xpcur_c_gene_only,)),and m1.mrkr_zdb_id = '$xpcur_c_gene_only')
               $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(NE,$xpcur_c_fish_only,)),and geno_zdb_id = '$xpcur_c_fish_only')
-            order by mrkr_abbrev_order, geno_nickname, xpatassay_display_order, zero_pad(exp_name);">
-            <?MIVAR NAME=xpcurpnl_xpatex_zdb_id>$1<?/MIVAR>  
+            order by m1.mrkr_abbrev_order, geno_nickname, xpatassay_display_order, zero_pad(exp_name);">
+            <?MIVAR NAME=xpcurpnl_xpatex_zdb_id>$1<?/MIVAR> 
             <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
             <?MIVAR NAME=xpcurpnl_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
             <option value=$xpcurpnl_xpatex_zdb_id

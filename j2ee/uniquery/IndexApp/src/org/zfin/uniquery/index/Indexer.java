@@ -660,6 +660,14 @@ public class Indexer implements Runnable
             {
             return SearchCategory.ANATOMY_ITEM;
             }
+	else if (url.indexOf("antibody/detail") != -1)
+            {
+		return SearchCategory.ANTIBODY;
+            }
+	else if (url.indexOf("antibody/labeling-detail") != -1)
+            {
+		return SearchCategory.ANTIBODY;
+            }
         else if (url.indexOf("zf_info/anatomy") != -1)
             {
             return SearchCategory.ANATOMY_ZFINFO;

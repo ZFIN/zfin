@@ -54,7 +54,8 @@ OUTPUT:
 	   and mrel_type not in ('knockdown reagent targets gene',
 					'promoter of',
 					'coding sequence of',
-					'contains other feature'
+					'contains other feature',
+					'gene product recognized by antibody'
 					)
       order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order;
     <?/MIVAR>
@@ -73,7 +74,8 @@ OUTPUT:
 	   and mrel_type not in ('knockdown reagent targets gene',
 					'promoter of',
 					'coding sequence of',
-					'contains other feature'
+					'contains other feature',
+					'gene product recognized by antibody'
 					)
       order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order;
     <?/MIVAR>

@@ -371,6 +371,18 @@ and mrkr_type = 'MRPHLNO'
   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mo">Morpholino</a> &nbsp; ($1)
   <?/MIVAR> 
 
+  <?MICOMMENT> ======== Antibodies  ============ <?/MICOMMENT>
+  <?MISQL SQL="
+  	  select count(recattrib_data_zdb_id)::integer
+	         from  record_attribution, marker
+	         where recattrib_source_zdb_id = '$OID'
+	           and recattrib_data_zdb_id = mrkr_zdb_id
+         and mrkr_type = 'ATB'
+      ; ">
+  <?/MISQL> 
+  <?MIVAR COND="$(>,$1,0)">
+  <li><a href="/action/antibody/antibodies-per-publication?publicationZdbID=$OID">Antibodies</a> &nbsp; ($1)
+  <?/MIVAR> 
 
 <?MICOMMENT> ======== EFG  ============ <?/MICOMMENT>
    <?MISQL SQL="

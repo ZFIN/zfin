@@ -176,12 +176,14 @@ public class EnumValidationService {
         checkEnumVersusDatabaseCollection(typeList, OrthoEvidence.Code.values());
     }
 
+/*
     @ServiceTest
     public void validateSpecies() throws EnumValidationException {
         String hql = "select organism_common_name from organism";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, Species.values());
     }
+*/
 
     @ServiceTest
     public void validateRunType() throws EnumValidationException {

@@ -16,6 +16,7 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/conf/anatomy.xml,
+            /WEB-INF/conf/antibody.xml,
             /WEB-INF/conf/reno.xml,
             /WEB-INF/conf/developer-tools.xml,
             /WEB-INF/conf/framework.xml,

@@ -127,7 +127,7 @@ $xpdetres_imagesOnlyConstraint
     <th>Genotype or Background </th>
     <th>Stage Range</th>
     <th>Anatomy</th>
-    <?MICOMMENT> **** commenting out assay column ** <th><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxassayabbrev.apg">Assay Type</a></th> *** <?/MICOMMENT>
+    <?MICOMMENT> **** commenting out assay column ** <th><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxassayabbrev.apg">Assay</a></th> *** <?/MICOMMENT>
   </tr>
   </thead>
   <tbody class="searchresults">

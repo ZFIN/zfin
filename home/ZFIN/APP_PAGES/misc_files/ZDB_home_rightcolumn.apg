@@ -15,7 +15,8 @@
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=EFG"><em>foreign gene</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=MRPHLNO"><em>morpholino</em></a>,
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg"><em>linkages</em></a>
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg"><em>linkages</em></a>,
+          <a href="/action/antibody/create"><em>antibody</em></a>
 
         </li>
         <li>

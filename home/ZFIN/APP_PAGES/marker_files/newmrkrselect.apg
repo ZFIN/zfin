@@ -514,6 +514,9 @@ DEBUGGING:
 		<?MIVAR COND="$(!=,$knownmutant_count,0)" NAME=gene_extra>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam&knownmutant=t">$1 with mutants</A>)<?/MIVAR>
 	   <?/MISQL>
 	
+		<?MIBLOCK COND="$(EC,$mtype_display,Antibody)">
+		<?MIVAR name=mtype_display>Antibodie<?/MIVAR>
+		<?/MIBLOCK>
            <?MIVAR>
 	     <TR><TD><b><li>
                <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam">$search_count $mtype_display$(IF,$(!=,$search_count,1),s) </A> 

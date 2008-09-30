@@ -2,7 +2,7 @@
 <html>
   <head>
 </head>
-<!--app page to enter gene ontology info-->
+<!-- snpview -->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 <script>
 function start_note(ref_page) {
@@ -148,7 +148,7 @@ Detailed information for the list of reference SNPs on this clone can be obtaine
 
 <hr>
 <?MIVAR>
- <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showsnppubs.apg&OID=$OID&rtype=SNP&snppubs=$snppubs&name=$name">CITATIONS</a></b> (<?MIVAR>$snppubs<?/MIVAR>)
+ <b> <a href="/action/marker/snp-publication-list?markerID=$OID&orderBy=author">CITATIONS</a></b> (<?MIVAR>$snppubs<?/MIVAR>)
 <?/MIVAR>
 <hr>
 <p>

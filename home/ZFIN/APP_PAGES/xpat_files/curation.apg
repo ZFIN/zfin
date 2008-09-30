@@ -580,6 +580,19 @@ function setMarkerTarget(featreli,anchor){
       <?MIVAR NAME=pubcur_G_est_attrib_csv SEPARATE="','">$pubcur_est_attrib<?/MIVAR>
 
 
+    <?MIVAR NAME=pubcur_antibody_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select mrkr_zdb_id
+        from marker, record_attribution
+        where mrkr_type ='ATB'
+          and recattrib_source_zdb_id = '$OID' 
+	  and recattrib_source_type = 'standard'
+          and mrkr_zdb_id=recattrib_data_Zdb_id
+        ;">
+        <?MIVAR> $(VECAPPEND,$pubcur_antibody_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=pubcur_G_antibody_attrib_csv SEPARATE="','">$pubcur_antibody_attrib<?/MIVAR>
+
     <?MIVAR NAME=pubcur_dblink_genbank><?/MIVAR>
     <?MISQL SQL="
         select dblink_zdb_id
@@ -837,6 +850,8 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE&newmrkrSource=\'$OID\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Gene</a> 
   &nbsp;
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=MRPHLNO&newmrkrSource='$OID'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Morpholino</a> 
+   &nbsp;
+  <a class="small-new-link" href="javascript:;" onClick=open("/action/antibody/create?antibodyPublicationZdbID=$OID","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Antibody</a> 
   &nbsp;
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg&calling_form=linkage&pub_source=$OID&source_specified=true","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add Linkages</a> 
  <?/MIVAR>

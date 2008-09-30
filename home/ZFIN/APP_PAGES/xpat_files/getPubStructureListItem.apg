@@ -38,9 +38,13 @@ EFFECTS
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MIVAR>$(UNSETVAR,$gPSLitem_xpatres_zdb_id)<?/MIVAR>
 <?MIVAR COND=$(NXST,$gPSLitem_comment) NAME=gPSLitem_comment><?/MIVAR>
+<?MIVAR COND=$(NXST,$gPSLitem_goterm_zdb_id) NAME=gPSLitem_goterm_zdb_id><?/MIVAR>
 
 <?MISQL SQL="execute function anatitem_overlaps_stg_window('$gPSLitem_anatitem_zdb_id','$gPSLitem_stg_start_zdb_id','$gPSLitem_stg_end_zdb_id');"><?/MISQL>
 
@@ -54,6 +58,7 @@ EFFECTS
       and xpatres_expression_found = '$gPSLitem_expressed'
       and xpatres_start_stg_zdb_id = '$gPSLitem_stg_start_zdb_id'
       and xpatres_end_stg_zdb_id = '$gPSLitem_stg_end_zdb_id'
+      and xpatres_go_term_zdb_id = '$gPSLitem_goterm_zdb_id'
       and xpatres_zdb_id = recattrib_data_zdb_id
       and recattrib_source_zdb_id = '$OID'
     ;">
@@ -78,10 +83,10 @@ EFFECTS
         and xpatres_start_stg_zdb_id = '$gPSLitem_stg_start_zdb_id'
         and xpatres_end_stg_zdb_id = '$gPSLitem_stg_end_zdb_id'
         and xpatres_expression_found = '$gPSLitem_expressed'
+      and xpatres_go_term_zdb_id $(IF,$(EC,$gPSLitem_goterm_zdb_id,),is NULL,= '$gPSLitem_goterm_zdb_id')
       ;">
       <?MIVAR NAME=gPSLitem_xpatres_zdb_id>$1<?/MIVAR>
     <?/MISQL>
- 
     <?MIBLOCK COND=$(NXST,$gPSLitem_xpatres_zdb_id)>
       <?MICOMMENT>Create a new record. Add the record to zdb_active_data. <?/MICOMMENT>
       <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
@@ -89,7 +94,6 @@ EFFECTS
     
       <?MICOMMENT> ==| Add New ZDB-ID |== <?/MICOMMENT>  
       <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$gPSLitem_xpatres_zdb_id');"><?/MISQL>
-
       <?MISQL SQL="
         INSERT into expression_result(
           xpatres_zdb_id,
@@ -98,6 +102,7 @@ EFFECTS
           xpatres_start_stg_zdb_id,
           xpatres_end_stg_zdb_id,
           xpatres_expression_found,
+          xpatres_go_term_zdb_id,
           xpatres_comments)
         VALUES ( 
           '$gPSLitem_xpatres_zdb_id',
@@ -106,6 +111,7 @@ EFFECTS
           '$gPSLitem_stg_start_zdb_id',
           '$gPSLitem_stg_end_zdb_id',
           '$gPSLitem_expressed',
+          $(IF,$(EC,$gPSLitem_goterm_zdb_id,),NULL,'$gPSLitem_goterm_zdb_id'),
           '$gPSLitem_comment ' || TODAY || ' xpatcuration')
         ;">
       <?/MISQL> 
@@ -133,6 +139,7 @@ EFFECTS
           xpatinf_curator_zdb_id,
           xpatinf_pub_zdb_id,
           xpatinf_anatitem_zdb_id,
+          xpatinf_go_term_zdb_id,
           xpatinf_expressed,
           xpatinf_date )
       VALUES (
@@ -140,6 +147,7 @@ EFFECTS
           '$ZDB_ident', 
           '$OID', 
           '$gPSLitem_anatitem_zdb_id',
+          $(IF,$(EC,$gPSLitem_goterm_zdb_id,),NULL,'$gPSLitem_goterm_zdb_id'),
           '$gPSLitem_expressed',
           TODAY);">
     <?/MISQL>
@@ -255,4 +263,5 @@ EFFECTS
   $(UNSETVAR,gPSLitem_anatitem_name)
   $(UNSETVAR,gPSLitem_alert)
   $(UNSETVAR,gPSLitem_prev_anatrel_id)
+  $(UNSETVAR,gPSLitem_goterm_zdb_id)
 <?/MIVAR>

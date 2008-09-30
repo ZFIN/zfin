@@ -80,4 +80,18 @@ public class StagePresentation {
         displayName.append(")");
         return displayName.toString();
     }
+
+    public static String createDisplayEntryShort(DevelopmentStage stage) {
+        if (stage == null) {
+            return null;
+        }
+        String stageName = stage.getName();
+        if (stageName == null)
+            return null;
+        StringBuilder displayName = new StringBuilder(stageName);
+        if (stageName.equals(DevelopmentStage.UNKNOWN)) {
+            return stageName;
+        }
+        return displayName.toString();
+    }
 }

@@ -34,6 +34,11 @@ EFFECTS
   Message: $MI_ERRORMSG <br>
 
 <?/MIERROR>
+<?MIVAR NAME=$titledisplay>0<?/MIVAR>
+  <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name='QuickGO'">
+     <?MIVAR NAME=$dbquery>$1<?/MIVAR>
+  <?/MISQL>
+
 <?MIVAR NAME=$fxinfo_lastmrkr><?/MIVAR>
 <?MIVAR NAME=$fxinfo_lastassay><?/MIVAR>
 <?MIVAR NAME=$fxinfo_laststage><?/MIVAR>
@@ -52,19 +57,19 @@ EFFECTS
                select distinct geno_display_name, 
                       xpatassay_abbrev,
                       anatitem_name, st1.stg_abbrev s1, st2.stg_abbrev s2, exp_name,
-                      xpatres_expression_found, get_mrkr_abbrev_html_link('$OID') as mrkr_abbrev, anatitem_zdb_id, xpatex_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , st1.stg_hours_start sh1, st1.stg_hours_end sh2
+                      xpatres_expression_found, get_mrkr_abbrev_html_link('$OID') as mrkr_abbrev, anatitem_zdb_id, xpatex_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , st1.stg_hours_start sh1, st1.stg_hours_end sh2, m1.mrkr_zdb_id, goterm_name, goterm_go_id
               from
                      figure,expression_experiment, anatomy_item, 
-                     experiment, expression_result,
-                     expression_pattern_figure,marker,genotype_experiment,
-                     genotype, stage st1, stage st2, expression_pattern_assay 
+                     experiment, expression_result, OUTER(go_term),
+                     expression_pattern_figure,marker m,genotype_experiment,
+                     genotype, stage st1, stage st2, expression_pattern_assay, OUTER(marker m1) 
               where
                      xpatex_gene_zdb_id='$OID' 
                      and fig_zdb_id='$fxinfo_fig_zdb_id'
                      and fig_zdb_id=xpatfig_fig_zdb_id 
                      and xpatfig_xpatres_zdb_id=xpatres_zdb_id 
                      and xpatres_xpatex_zdb_id=xpatex_zdb_id 
-                     and xpatex_gene_zdb_id=mrkr_zdb_id
+                     and xpatex_gene_zdb_id=m.mrkr_zdb_id
                      and xpatex_genox_zdb_id=genox_zdb_id
                      and genox_geno_zdb_id=geno_zdb_id
                      and genox_exp_zdb_id=exp_zdb_id
@@ -72,6 +77,8 @@ EFFECTS
                      and xpatres_end_stg_zdb_id=st2.stg_zdb_id
                      and xpatres_anat_item_zdb_id=anatitem_zdb_id
                      and xpatex_assay_name = xpatassay_name 
+                     and xpatex_atb_zdb_id=m1.mrkr_zdb_id
+                     and xpatres_go_term_zdb_id=goterm_Zdb_id
                order by 
                      geno_display_name,exp_name,sh1,sh2,anatitem_name">
   
@@ -84,6 +91,9 @@ EFFECTS
                     <?MIVAR NAME=$fxinfo_genox>$10<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_stage1>$11<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_stage2>$12<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_atb>$15<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_goterm>$16<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_gotermid>$17<?/MIVAR>
                     
                     <?MIBLOCK COND=$(EQ,$fxinfo_start_stage,$fxinfo_end_stage)>
                       <?MIVAR NAME=$fxinfo_stage>$fxinfo_stage1<?/MIVAR>
@@ -133,7 +143,15 @@ EFFECTS
                         <tr bgcolor=<?MIVAR>$row_color<?/MIVAR> height = 25><?MIVAR><td></td><?/MIVAR>
                         <td></td>
                    <?/MIBLOCK>
-                   
+<?MIBLOCK COND="$(NE,$fxinfo_atb,)">
+                  <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id='$fxinfo_atb'">
+                   <td><?MIVAR><a href="/action/antibody/detail?antibody.zdbID=$fxinfo_atb">$1</a><?/MIVAR>  
+                  <?/MISQL>                 
+<?MIELSE>
+<td></td>
+<?/MIBLOCK>
+
+
                    <?MIBLOCK COND=$(NE,$fxinfo_last_genox,$fxinfo_genox)>
                        <td> <?MISQL SQL="select WebExplode(object,'fxp_zdb_id=$fxinfo_genox')from webpages where ID='aa-xpatfeatexp.apg';">
                              <?/MISQL>
@@ -165,18 +183,23 @@ EFFECTS
                     <?/MIBLOCK> 
                     <?MIBLOCK COND="$(EQ,$fxinfo_is_geli,)"> 
                         <?MIVAR NAME=$fxinfo_anat_link><a href="/action/anatomy/term-detail?anatomyItem.zdbID=$fxinfo_anatzdbid">$fxinfo_anat_item</a><?/MIVAR>
+<?MIBLOCK COND="$(NE,$fxinfo_goterm,)">
+                        <?MIVAR NAME=$fxinfo_goterm>:<a href=$dbquery$fxinfo_gotermid>$fxinfo_goterm</a><?/MIVAR>
+<?MIELSE>
+                        <?MIVAR NAME=$fxinfo_goterm><?/MIVAR>
+<?/MIBLOCK>
                         <?MIBLOCK COND=$(NE,$fxinfo_samefish,f)>
                            <?MIBLOCK COND=$(NE,$fxinfo_laststage,$fxinfo_stage)> 
-                              <td><?MIVAR>$fxinfo_anat_link<?/MIVAR></td>
+                              <td><?MIVAR>$fxinfo_anat_link$fxinfo_goterm<?/MIVAR></td>
                            <?MIELSE>
                              <?MIBLOCK COND=$(NE,$fxinfo_lastterm,$fxinfo_anat_item)>
-                                <td><?MIVAR>$fxinfo_anat_link<?/MIVAR></td>
+                                <td><?MIVAR>$fxinfo_anat_link$fxinfo_goterm<?/MIVAR></td>
                              <?MIELSE>
                                 <td></td>
                              <?/MIBLOCK>     
                           <?/MIBLOCK>
                        <?MIELSE>
-                           <td><?MIVAR>$fxinfo_anat_link<?/MIVAR></td>
+                           <td><?MIVAR>$fxinfo_anat_link$fxinfo_goterm<?/MIVAR></td>
                        <?/MIBLOCK>
                     <?/MIBLOCK>
               <!--assay display--> 

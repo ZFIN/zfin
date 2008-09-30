@@ -37,6 +37,11 @@ public class AnatomyRepositoryTest {
         TestConfiguration.configure();
     }
 
+    @Test
+    public void getAllAnatomyTerms(){
+        List<AnatomyItem> terms = aoRepository.getAllAnatomyItems();
+    }
+
     /**
      * Check that synonyms are not of group 'seconday id'
      */

@@ -59,5 +59,15 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
+    public static String getGeneralHyperLink(String url, String linkName) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<a href=\"");
+        sb.append(url);
+        sb.append("\">");
+        sb.append(linkName);
+        sb.append("</a>");
+        return sb.toString();
+    }
+
 
 }

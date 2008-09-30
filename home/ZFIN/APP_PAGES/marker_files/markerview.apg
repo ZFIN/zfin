@@ -19,11 +19,32 @@ Datablade documentation.
 
 Recent changes:
 for SNP display
+for antibody: antibody subsection added at the end of gene product section.
+for antibody: added meta redirect at the beginning and the end of the file.
 <?/MICOMMENT>
 
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
+
+<?MICOMMENT>
+     If the $OID is an antibody zdbID, redirect to antibody details JSP.
+<?/MICOMMENT>
+<?MIBLOCK COND="$(>,$(POSITION,$OID,ATB),0)">
+   <html>
+      <head>
+   	    <?MIVAR>
+   	      <meta http-equiv="Refresh" content="0; url=/action/antibody/detail?antibody.zdbID=$OID">
+   	    <?/MIVAR>
+      </head>
+
+      <body>
+         <p/>
+         <h3>Redirecting to antibody details page: <?MIVAR><a href="/action/antibody/detail?antibody.zdbID=$OID">&nbsp;link</a><?/MIVAR></h3>
+      </body>
+    </html>
+<?MIELSE>
 <HTML>
 <head>
   <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
@@ -2149,6 +2170,62 @@ union
   <?/MIBLOCK>
   <!-----------end of Gene Product Description ------->
 
+  <!--------------- Antibody ------->
+  <?MISQL SQL="select count(mrel_mrkr_2_zdb_id)
+  		 from marker_relationship
+  		where mrel_mrkr_1_zdb_id = '$OID'
+  		  and mrel_type = 'gene product recognized by antibody';">
+  <?/MISQL>
+  <?MIBLOCK COND="$(>,$1,0)">
+        <?MIBLOCK COND="$(=,$titledisplay,0)">
+    		<hr width = "80%">
+      		<b>GENE PRODUCTS: </b>
+    		<?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
+	<?/MIBLOCK>
+  <p><b>Antibodies:</b>
+  <table width =100% border=0 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+  <?MIVAR NAME=$antibodyID><?/MIVAR>
+  <tr><td>
+  <?MISQL SQL="select mrel_mrkr_2_zdb_id,mrkr_abbrev
+    		 from marker_relationship, marker
+    		where mrel_mrkr_1_zdb_id = '$OID'
+    		  and mrel_type = 'gene product recognized by antibody'
+    		  and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+    		  order by mrkr_abbrev;">
+           <?MIVAR NAME=mrkrvw_antibody_id>$1<?/MIVAR>
+           <?MIVAR NAME=mrkrvw_antibody_abbrev>$2<?/MIVAR>
+           <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+	   	<?MIVAR NAME=mrkrvw_antibody_list_firstItem>t<?/MIVAR>
+	   <?MIELSE>
+	   	<?MIVAR NAME=mrkrvw_antibody_list_firstItem>f<?/MIVAR>
+           <?/MIBLOCK>
+           <?MISQL SQL="select recattrib_source_zdb_id
+	                             from record_attribution
+	                            where recattrib_data_zdb_id = '$mrkrvw_antibody_id';">
+	        <?MIVAR NAME=mrkrvw_antibody_pub_id>$1<?/MIVAR>
+	   <?/MISQL>
+	   <?MIVAR NAME=mrkrvw_antibody_pub_count>$MI_ROWCOUNT<?/MIVAR>
+	   <?MIBLOCK COND="$(=,$mrkrvw_antibody_pub_count,0)">
+	       <?MIVAR NAME=mrkrvw_antibody_pub><?/MIVAR>
+	   <?MIELSE COND="$(=,$mrkrvw_antibody_pub_count,1)">
+	       <?MIVAR NAME=mrkrvw_antibody_pub>(<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrvw_antibody_pub_id>$mrkrvw_antibody_pub_count</A>)<?/MIVAR>
+	   <?MIELSE>
+	       <?MIVAR NAME=mrkrvw_antibody_pub>(<A HREF=/action/antibody/publication-list?antibody.zdbID=$mrkrvw_antibody_id&orderBy=author>$mrkrvw_antibody_pub_count</A>)<?/MIVAR>
+           <?/MIBLOCK>
+
+           <?MIVAR NAME=mrkrvw_antibody_display><A HREF=/action/antibody/detail?antibody.zdbID=$mrkrvw_antibody_id>$mrkrvw_antibody_abbrev</A> $mrkrvw_antibody_pub<?/MIVAR>
+           <?MIBLOCK COND=$(EQ,$mrkrvw_antibody_list_firstItem,t)>
+	        <?MIVAR NAME=mrkrvw_antibody_display_list>$mrkrvw_antibody_display<?/MIVAR>
+	   <?MIELSE>
+	   	<?MIVAR>$(VECAPPEND,$mrkrvw_antibody_display_list,$mrkrvw_antibody_display)<?/MIVAR>
+           <?/MIBLOCK>
+  <?/MISQL>
+  <?MIVAR NAME=mrkrvw_antibody_display_list_sepa SEPARATE=", ">$mrkrvw_antibody_display_list<?/MIVAR>
+  <?MIVAR>$mrkrvw_antibody_display_list_sepa<?/MIVAR>
+  </td> </tr>
+  </table>
+  <?/MIBLOCK> <!-----------end of Antibody ------->
+
 <?/MIBLOCK> <?MICOMMENT> marker is a gene ($type_of_genedom exists) <?/MICOMMENT>
 
 <!------------------ end of GENE PRODUCT ---------------------->
@@ -2831,4 +2908,6 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
 </BODY>
 
 </HTML>
+
+<?/MIBLOCK>
 

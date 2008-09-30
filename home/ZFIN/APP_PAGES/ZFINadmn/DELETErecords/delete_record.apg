@@ -216,8 +216,12 @@ Message: $MI_ERRORMSG
   <p>
 
  Click "Cancel" if you are unsure that this is what you want to do. <p>
- To merge this record, select a record for merging then click on "Delete or Merge".<p>
- Click "Delete or Merge" to delete this record.<p>
+ 
+<?MIBLOCK COND="$(=,$(POSITION,$OID,-ATB-),0)">
+	To merge this record, select a record for merging then click on "Delete or Merge".<p>
+<?/MIBLOCK>
+ 	Click "Delete or Merge" to delete this record.<p>
+
 
   <?MIBLOCK COND="$(NC,$merge_oid,none)">
     And <B>MERGE</B> with<br>
@@ -230,7 +234,7 @@ Message: $MI_ERRORMSG
   <?/MIBLOCK> 
  
  
-
+<?MIBLOCK COND="$(=,$(POSITION,$OID,-ATB-),0)">
   <?MIBLOCK COND="$(EC,$merge_oid,none)">
     <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,image),$(EC,$rtype,genotype))">
     <?MIVAR COND="$(NXST,$mtype)" NAME=$mtype>GENE<?/MIVAR>
@@ -326,7 +330,7 @@ Message: $MI_ERRORMSG
       	<input type=hidden name=merge value="" >  
     <?/MIBLOCK>
   <?/MIBLOCK>  
-
+<?/MIBLOCK>
   <!-- present option to cancel or delete -->
 
 

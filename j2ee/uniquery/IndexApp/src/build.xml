@@ -9,6 +9,7 @@
 	<property name="config.dir" value="${base.dir}/etc" />
 	<property name="build.dir" value="${base.dir}/classes" />
 	<property name="dist.dir" value="${base.dir}/dist" />
+        <property name="build.compiler" value="javac1.5" />
 
 
 	<!-- files -->

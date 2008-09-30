@@ -3,11 +3,12 @@ package org.zfin.expression;
 import org.zfin.publication.Publication;
 
 import java.util.Set;
+import java.io.Serializable;
 
 /**
  * Figure domain business object. It is a figure referenced in a publication.
  */
-public class Figure {
+public class Figure implements Serializable {
 
     private String zdbID;
     // Todo should be an image object: private    String sourceID;

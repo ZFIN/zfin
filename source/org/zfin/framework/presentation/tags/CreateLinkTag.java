@@ -1,7 +1,11 @@
 package org.zfin.framework.presentation.tags;
 
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
+import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
+import org.zfin.antibody.Antibody;
+import org.zfin.antibody.presentation.AntibodyPresentation;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.presentation.ExperimentConditionPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
@@ -9,6 +13,8 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.GenotypePresentation;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.mutant.Genotype;
+import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.presentation.GoTermPresentation;
 import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
 import org.zfin.publication.Publication;
@@ -24,7 +30,6 @@ import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Set;
 
 /** This tag class needs to be expanded to support a "type" attribute which allows it to be used for any
  bean
@@ -42,6 +47,9 @@ public class CreateLinkTag extends TagSupport {
         Object o = getEntity();
         StringBuilder linkBuffer = new StringBuilder();
 
+        if (o == null)
+            return SKIP_BODY;
+        
         if (o instanceof Collection) {
             Collection collection = (Collection) o;
             int numberOfItems = collection.size();
@@ -66,7 +74,7 @@ public class CreateLinkTag extends TagSupport {
 
     private String createLinkFromSingleDomainObject(Object o) throws JspException {
         String link;
-        if (o instanceof Marker)
+        if (o instanceof Marker && !(o instanceof Antibody))
             link = MarkerPresentation.getLink((Marker) o);
         else if (o instanceof RunCandidate)
             link = RunCandidatePresentation.getLink((RunCandidate) o);
@@ -84,6 +92,12 @@ public class CreateLinkTag extends TagSupport {
             link = GenotypePresentation.getLink((Genotype) o);
         else if (o instanceof ExperimentCondition)
             link = ExperimentConditionPresentation.getLink((ExperimentCondition) o);
+        else if (o instanceof GoTerm)
+            link = GoTermPresentation.getLink((GoTerm) o);
+        else if (o instanceof DevelopmentStage)
+            link = DevelopmentStagePresentation.getLink((DevelopmentStage) o);
+        else if (o instanceof Antibody)
+            link = AntibodyPresentation.getLink((Antibody) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return link;

@@ -119,6 +119,14 @@ public class MockAnatomyRepository implements AnatomyRepository {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    public boolean isSubstructureOf(AnatomyItem term, AnatomyItem substructureTerm) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public List<String> getAnatomyTermsForAutoComplete() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void invalidateCachedObjects() {
         throw new RuntimeException("Not implemented yet");
     }

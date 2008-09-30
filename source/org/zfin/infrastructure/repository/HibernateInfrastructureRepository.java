@@ -9,9 +9,14 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.zfin.ExternalNote;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.MarkerType;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.people.Person;
 
 import java.sql.Connection;
@@ -86,15 +91,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (DataNote) criteria.uniqueResult();
     }
 
-    //retrieve a set of dataNotes by its data_zdb_id
-    public DataNote getDataNoteByDataID(String zdbID) {
+    public MarkerAlias getMarkerAliasByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(DataNote.class);
+        Criteria criteria = session.createCriteria(MarkerAlias.class);
         criteria.add(Restrictions.eq("zdbID", zdbID));
-        return (DataNote) criteria.uniqueResult();
+        return (MarkerAlias) criteria.uniqueResult();
     }
-
-    //    public RecordAttribution getRecordAttribution(String zdbID);
 
     public RecordAttribution getRecordAttribution(String dataZdbID, String sourceZdbId, RecordAttribution.SourceType sourceType) {
         Session session = HibernateUtil.currentSession();
@@ -111,7 +113,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (RecordAttribution) criteria.uniqueResult();
     }
 
-
+    @SuppressWarnings("unchecked")
     public List<RecordAttribution> getRecordAttributions(ActiveData data) {
 
         Session session = HibernateUtil.currentSession();
@@ -119,6 +121,22 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         criteria.add(Restrictions.eq("dataZdbID", data.getZdbID()));
 
         return criteria.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public RecordAttribution getRecordAttribution(ActiveData data, ActiveSource source, RecordAttribution.SourceType type) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(RecordAttribution.class);
+        criteria.add(Restrictions.eq("dataZdbID", data.getZdbID()));
+        criteria.add(Restrictions.eq("sourceZdbID", source.getZdbID()));
+        criteria.add(Restrictions.eq("sourceType", type.toString()));
+
+        return (RecordAttribution) criteria.uniqueResult();
+    }
+
+    public PublicationAttribution getPublicationAttribution(PublicationAttribution attribution) {
+        Session session = HibernateUtil.currentSession();
+        return (PublicationAttribution) session.get(PublicationAttribution.class, attribution);
     }
 //
 //    public RecordAttribution getRecordAttribution(String zdbID){
@@ -148,7 +166,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         session.save(up);
     }
 
-    public void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person) {
+    public void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person,String newValue, String oldValue) {
         Session session = HibernateUtil.currentSession();
 
         Updates up = new Updates();
@@ -157,7 +175,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         up.setSubmitterID(person.getZdbID());
         up.setSubmitterName(person.getUsername());
         up.setComments(comments);
-        up.setNewValue(marker.getAbbreviation());
+        up.setNewValue(newValue);
+        up.setOldValue(oldValue);
         up.setWhenUpdated(new Date());
         session.save(up);
         String newline = System.getProperty("line.separator");
@@ -190,6 +209,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
 
+    @SuppressWarnings("unchecked")
     public int deleteRecordAttributionByDataZdbID(List<String> dataZdbIDs) {
         for (String zdbID : dataZdbIDs) {
             logger.debug("zdbID: " + zdbID);
@@ -221,6 +241,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return query.executeUpdate();
     }
 
+    public int removeRecordAttributionForData(String zdbID, String datazdbID) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:datazdbID and ra.sourceZdbID=:zdbID");
+        query.setParameter("zdbID", zdbID);
+         query.setParameter("datazdbID", datazdbID);
+        return query.executeUpdate();
+    }
+
     /**
      * Retrieve the Updates flag that indicates if the db is disabled for updates.
      *
@@ -231,6 +259,31 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Criteria criteria = session.createCriteria(ZdbFlag.class);
         criteria.add(Restrictions.eq("type", ZdbFlag.Type.DISABLE_UPDATES));
         return (ZdbFlag) criteria.uniqueResult();
+    }
+
+    public ExternalNote getExternalNoteByID(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        return (ExternalNote) session.get(ExternalNote.class, zdbID);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<AllNamesFastSearch> getAllNameMarkerMatches(String string) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(AllMarkerNamesFastSearch.class);
+        criteria.add(Restrictions.like("nameLowerCase", "%"+string+"%"));
+        return (List<AllNamesFastSearch>) criteria.list();
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<AllMarkerNamesFastSearch> getAllNameMarkerMatches(String string, MarkerType type) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(AllMarkerNamesFastSearch.class);
+        criteria.add(Restrictions.like("nameLowerCase", "%" + string + "%"));
+        Criteria marker = criteria.createCriteria("marker");
+        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+        marker.add(Restrictions.eq("markerType", type));
+        return (List<AllMarkerNamesFastSearch>) marker.list();
     }
 
 } 

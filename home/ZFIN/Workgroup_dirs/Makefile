@@ -29,7 +29,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/Workgroup_dirs
 
-SUBDIRS = AnatDict
+#SUBDIRS = AnatDict
 
 # --------------------------  Rules  ------------------------------------
 

@@ -141,6 +141,7 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ANAT),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$OID<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ATB),0)">/action/antibody/detail?antibody.zdbID=$OID<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FIG),0)">aa-fxfigureview.apg<?/MIVAR>
 
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ALT),0)">aa-fishselect.apg&fsel_allele_id=$aname&query_results=exist<?/MIVAR>

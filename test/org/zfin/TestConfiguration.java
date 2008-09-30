@@ -7,6 +7,8 @@ import org.zfin.properties.Path;
 import org.zfin.properties.impl.ApplicationPropertiesImpl;
 import org.zfin.properties.impl.PathImpl;
 import org.zfin.people.Person;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.repository.RepositoryFactory;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextImpl;
 import org.acegisecurity.context.SecurityContextHolder;
@@ -36,6 +38,7 @@ public class TestConfiguration {
                 "reno.hbm.xml",
                 "anatomy.hbm.xml",
                 "people.hbm.xml",
+                "general.hbm.xml",
                 "blast.hbm.xml",
                 "marker.hbm.xml",
                 "expression.hbm.xml",
@@ -76,6 +79,11 @@ public class TestConfiguration {
         user.setZdbID("ZDB-PERS-990101-01");
         user.setName("Authenticated User");
         return user;
+    }
+
+    public static Person getPerson(){
+        ProfileRepository pr = RepositoryFactory.getProfileRepository();
+        return pr.getPerson("ZDB-PERS-000103-2");
     }
 
 

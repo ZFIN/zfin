@@ -2,19 +2,20 @@ package org.zfin.marker;
 
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
+import org.zfin.infrastructure.DataNote;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.mapping.MappedMarker;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.orthology.Orthologue;
+import org.zfin.people.Person;
+import org.zfin.people.MarkerSupplier;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.orthology.Orthologue;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.people.Person;
-import org.zfin.mapping.MappedMarker;
-import org.zfin.sequence.DBLink;
 import org.zfin.sequence.MarkerDBLink;
-import org.zfin.infrastructure.DataNote;
 
-import java.util.*;
 import java.io.Serializable;
+import java.util.*;
 
 /**
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
@@ -30,7 +31,7 @@ public class Marker implements Serializable, Comparable {
     private String abbreviationOrder;
     private Set<ExpressionExperiment> probeExpressionExperiments;
     private Set<ExpressionExperiment> expressionExperiments;
-    private Set<Publication> publications;
+    private Set<PublicationAttribution> publications;
     private HashMap<String, List<Publication>> pubsPerAnatomy;
     private Set<Figure> figures;
     private Set<MarkerFamilyName> familyName;
@@ -45,6 +46,11 @@ public class Marker implements Serializable, Comparable {
     private Set<MarkerDBLink> dbLinks;
     private Set<MarkerAlias> aliases;
     private Set<DataNote> dataNotes;
+    private Set<MarkerSupplier> suppliers;
+
+    // cashed attribute
+    private transient List<Marker> markers;
+
 
     public String getZdbID() {
         return zdbID;
@@ -99,6 +105,8 @@ public class Marker implements Serializable, Comparable {
     }
 
     public Set<MarkerAlias> getAliases() {
+        if (aliases == null || aliases.size() == 0)
+            return null;
         return aliases;
     }
 
@@ -126,15 +134,12 @@ public class Marker implements Serializable, Comparable {
         this.expressionExperiments = expressionExperiments;
     }
 
-    public Set<Publication> getPublications() {
-        if (expressionExperiments == null)
-            return null;
-        Set<Publication> pubs = new HashSet<Publication>();
-        for (ExpressionExperiment exp : expressionExperiments) {
-            Publication publication = exp.getPublication();
-            pubs.add(publication);
-        }
-        return pubs;
+    public Set<PublicationAttribution> getPublications() {
+        return publications;
+    }
+
+    public void setPublications(Set<PublicationAttribution> publications) {
+        this.publications = publications;
     }
 
     /**
@@ -162,12 +167,40 @@ public class Marker implements Serializable, Comparable {
     /**
      * Note that a single publication can be used in multiple expressionExperiments!
      * s
+     *
+     * @return number
      */
     public int getNumberOfPublications() {
         if (expressionExperiments == null)
             return 0;
         return getPublications().size();
     }
+
+    /**
+     * Retrieve all related markers, no dublicates.
+     *
+     * @return List of marker objects
+     */
+    public List<Marker> getAllRelatedMarker() {
+        Set<MarkerRelationship> relationshipsFirst = getFirstMarkerRelationships();
+        for (MarkerRelationship relationship : relationshipsFirst) {
+            if (markers == null)
+                markers = new ArrayList<Marker>();
+            if (!markers.contains(relationship.getSecondMarker()))
+                markers.add(relationship.getSecondMarker());
+        }
+        Set<MarkerRelationship> relationshipsSecond = getSecondMarkerRelationships();
+        for (MarkerRelationship relationship : relationshipsSecond) {
+            if (markers == null)
+                markers = new ArrayList<Marker>();
+            if (!markers.contains(relationship.getFirstMarker()))
+                markers.add(relationship.getFirstMarker());
+        }
+        if (markers != null)
+            Collections.sort(markers);
+        return markers;
+    }
+
 
     public Set<Figure> getFigures() {
         return figures;
@@ -275,13 +308,15 @@ public class Marker implements Serializable, Comparable {
         this.directPanelMappings = directPanelMappings;
     }
 
+    /* found no usage of this method
     public void addPublication(Publication pub) {
         if (publications == null)
             publications = new HashSet<Publication>();
         publications.add(pub);
-    }
+    }      */
 
     public static enum Type {
+        ATB("ATB"),
         BAC("BAC"),
         BAC_END("BAC_END"),
         CDNA("CDNA"),
@@ -303,8 +338,8 @@ public class Marker implements Serializable, Comparable {
         SNP("SNP"),
         SSLP("SSLP"),
         STS("STS"),
-	TGCONSTRCT("TGCONSTRCT"),
-	INDEL("INDEL");
+        TGCONSTRCT("TGCONSTRCT"),
+        INDEL("INDEL");
 
         private final String value;
 
@@ -328,6 +363,7 @@ public class Marker implements Serializable, Comparable {
 
     public static enum TypeGroup {
         ABBREV_EQ_NAME("ABBREV_EQ_NAME"),
+        ATB("ATB"),
         BAC("BAC"),
         BAC_END("BAC_END"),
         CAN_HAVE_MRPHLN("CAN_HAVE_MRPHLN"),
@@ -397,6 +433,7 @@ public class Marker implements Serializable, Comparable {
     /**
      * Only be used because family names are stored in a separate tabel.
      * Todo: Better to have subclass Gene
+     *
      * @return set of family names
      */
     public Set<MarkerFamilyName> getFamilyName() {
@@ -406,9 +443,24 @@ public class Marker implements Serializable, Comparable {
     /**
      * Only be used because family names are stored in a separate tabel.
      * Todo: Better to have subclass Gene
+     *
      * @param familyName family names
      */
     public void setFamilyName(Set<MarkerFamilyName> familyName) {
         this.familyName = familyName;
     }
+
+    /**
+     * Return a sorted set of suppliers.
+     *
+     * @return set of Suppliers
+     */
+    public Set<MarkerSupplier> getSuppliers() {
+        return suppliers;
+    }
+
+    public void setSuppliers(Set<MarkerSupplier> suppliers) {
+        this.suppliers = suppliers;
+    }
+
 }

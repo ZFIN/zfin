@@ -6,8 +6,8 @@ import org.junit.After;
 import static org.junit.Assert.* ;
 
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.sequence.Accession;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.ForeignDB;
@@ -343,7 +343,7 @@ public class MicroArrayTest {
         cDNA.setMarkerType(markerRepository.getMarkerTypeByName("CDNA"));
         cDNA.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
         session.save(cDNA);
-        markerRepository.addSmallSegmentToGene(cDNA, gene,"ZDB-PUB-070122-15" );
+        markerRepository.addMarkerRelationship(cDNA, gene,"ZDB-PUB-070122-15", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT );
 
         est = new Marker();
         est.setAbbreviation(EST_NAME);
@@ -352,7 +352,7 @@ public class MicroArrayTest {
         est.setMarkerType(markerRepository.getMarkerTypeByName("EST"));
         est.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
         session.save(est);
-        markerRepository.addSmallSegmentToGene(est, gene,"ZDB-PUB-070122-15" );
+        markerRepository.addMarkerRelationship(est, gene,"ZDB-PUB-070122-15",MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT );
 
 
         // set to cDNA

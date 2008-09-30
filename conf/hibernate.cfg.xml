@@ -34,8 +34,10 @@
 
         <!-- Mappings -->
         <mapping resource="org/zfin/anatomy.hbm.xml"/>
+        <mapping resource="org/zfin/antibody.hbm.xml"/>
         <mapping resource="org/zfin/blast.hbm.xml"/>
         <mapping resource="org/zfin/expression.hbm.xml"/>
+        <mapping resource="org/zfin/general.hbm.xml"/>
         <mapping resource="org/zfin/infrastructure.hbm.xml"/>
         <mapping resource="org/zfin/marker.hbm.xml"/>
         <mapping resource="org/zfin/mapping.hbm.xml"/>

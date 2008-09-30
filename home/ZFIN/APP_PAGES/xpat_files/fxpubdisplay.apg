@@ -69,7 +69,8 @@ $fxpubdis_probe_zdb_id (probe zdb id for unpublished pubs)
 <?MIVAR NAME=$fxpubdis_source COND="$(AND,$(NC,$fxpubdis_jtype,Unpublished),$(NC,$fxpubdis_jtype,Journal))">$fxpubdis_source($fxpubdis_jtype)<?/MIVAR>
 
 <?MICOMMENT> ZDB-PUB-060503-2 Mutant Data Curated from Older Literature <?/MICOMMENT>
-<?MIVAR NAME=$fxpubdis_source COND="$(EC,$fxpubdis_zdb_id,ZDB-PUB-060503-2)"><?/MIVAR>
+<?MIVAR NAME=$fxpubdis_source COND="$(OR,$(EC,$fxpubdis_zdb_id,ZDB-PUB-060503-2),$(EC,$fxpubdis_zdb_id,ZDB-PUB-080813-1))"><?/MIVAR>
+<?MIVAR NAME=$fxpubdis_source COND="$(EC,$fxpubdis_zdb_id,ZDB-PUB-080813-1)"><?/MIVAR>
 <?MICOMMENT>
 Determine if the pub has multiple figures. This is used to determine if we need
 to display the "Additional figures" link

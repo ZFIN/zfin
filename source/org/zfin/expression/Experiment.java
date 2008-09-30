@@ -50,4 +50,8 @@ public class Experiment {
         }
         return morpholinoConditions;
     }
+
+    public boolean isStandard() {
+        return (name.equalsIgnoreCase(Experiment.STANDARD) || name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
+    }
 }

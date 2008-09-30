@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
  */
 public interface LookupServiceAsync {
 
+
     void getAnatomySuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
 
     void getGOSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
@@ -14,6 +15,10 @@ public interface LookupServiceAsync {
     void getQualitySuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
 
     void getMarkerSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
+
+    void getGenedomAndEFGSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
+
+    void getSupplierSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
 
     void getFeatureSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback async);
 

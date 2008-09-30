@@ -609,7 +609,7 @@ public class CandidateController extends SimpleFormController {
             LOG.debug("createRelationships segments are not empty");
             for (Marker segment : segments) {
                 LOG.info("adding small segment to gene: " + segment);
-                mr.addSmallSegmentToGene(segment, gene, attributionZdbID);
+                mr.addMarkerRelationship(segment, gene, attributionZdbID,MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
             }
             //our query accession(s) was(were) linked to one or more segments, we just made
             //relationships from those segments to the gene that the curator chose
@@ -666,7 +666,7 @@ public class CandidateController extends SimpleFormController {
         Publication pub = new Publication();
         pub.setZdbID(attributionZdbID);
         mr.renameMarker(gene, pub, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
-        ir.insertUpdatesTable(gene, "data_alias", "", currentUser);
+        ir.insertUpdatesTable(gene, "data_alias", "", currentUser,"","");
 //        ir.insertUpdatesTable(geneToRename.getZdbID(),"dalias_alias",geneToRename.getAbbreviation(),"",rc.getLockPerson().getZdbID(),rc.getLockPerson().getName());
 
     }

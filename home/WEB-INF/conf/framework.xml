@@ -12,10 +12,16 @@
                 <prop key="/autocomplete/gene-family">autoComplete</prop>
                 <prop key="/autocomplete/anatomy-term">autoComplete</prop>
                 <prop key="/http-redirect/">httpRedirect</prop>
+                <prop key="/pagination">pagination</prop>
+                <prop key="/def-pub">defPub</prop>
             </props>
         </property>
 
     </bean>
+
+    <bean name="pagination" class="org.zfin.framework.presentation.PaginationController"/>
+
+    <bean name="defPub" class="org.zfin.framework.presentation.DefPubController"/>
 
     <bean name="httpRedirect" class="org.zfin.framework.presentation.RedirectController"/>
 

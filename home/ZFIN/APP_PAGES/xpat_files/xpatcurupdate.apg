@@ -136,29 +136,60 @@ EFFECTS
                ============================================================
   <?/MICOMMENT>   
   <?MIVAR Name=xpcurup_textOnly>text only<?/MIVAR>
+      <?MIVAR COND=$(NXST,$gPSLitem_goterm_zdb_id) NAME=gPSLitem_goterm_zdb_id><?/MIVAR>
 
   <?MICOMMENT> ================| Experiment |================ <?/MICOMMENT>
+      <?MIVAR COND=$(NXST,$xpcur_G_xpatex_gene) NAME=xpcur_G_xpatex_gene><?/MIVAR>
+      <?MIVAR COND=$(NXST,$xpcur_G_xpatex_antibody) NAME=xpcur_G_xpatex_antibody><?/MIVAR>
   <?MIBLOCK COND=$(XST,$xpcur_G_xpatex)>
-  
   
     <?MICOMMENT>
       required: xpcur_G_xpatex_add_gene, xpcur_G_xpatex_add_fish, xpcur_G_xpatex_add_assay, xpcur_G_xpatex_add_exp
       optional: xpcur_G_xpatex_genbank
       
       unique constraint on {gene/fish/assay/exp}
-    <?/MICOMMENT>    
-    
-    <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_xpatex_gene),$(XST,$xpcur_G_xpatex_fish),$(XST,$xpcur_G_xpatex_assay),$(XST,$xpcur_G_xpatex_exp))>
+<?/MICOMMENT>
+    <?MIBLOCK COND=$(OR,$(XST,$xpcur_G_xpatex_gene),$(XST,$xpcur_G_xpatex_antibody))>
       <?MIVAR COND=$(NXST,$xpcur_G_xpatex_genbank) NAME=xpcur_G_xpatex_genbank><?/MIVAR>
-    
+      <?MIVAR COND=$(NXST,$xpcur_G_xpatex_assay) NAME=xpcur_G_xpatex_assay><?/MIVAR>
+      <?MIVAR COND=$(NXST,$xpcur_G_xpatex_fish) NAME=xpcur_G_xpatex_fish><?/MIVAR>
+      <?MIVAR COND=$(NXST,$xpcur_G_xpatex_exp) NAME=xpcur_G_xpatex_exp><?/MIVAR>
+
+<?MICOMMENT>begin condition for checking if ab-gene relation is valid<?/MICOMMENT>
+<?MIBLOCK COND="$(AND,$(NE,$xpcur_G_xpatex_gene,),$(NE,$xpcur_G_xpatex_antibody,))">
+
+         <?MISQL SQL="select count(*)
+                      from marker_relationship, record_attribution
+                      where mrel_mrkr_2_zdb_id='$xpcur_G_xpatex_antibody'
+                      and mrel_mrkr_1_zdb_id='$xpcur_G_xpatex_gene'">
+                     <?MIVAR NAME=$related_gene>$1<?/MIVAR>
+          <?/MISQL>
+<?MIELSE>
+                     <?MIVAR NAME=$related_gene>5<?/MIVAR>
+<?/MIBLOCK>
+         <?MIBLOCK COND="$(=,0,$related_gene)">
+            <SCRIPT>
+             alert('This gene and antibody are not related. Please pick the correct antibody or create the relationship');
+            </SCRIPT>
+        <?MIELSE> 
+
+
+
+
+   
       <?MISQL SQL="
         select count(*) :: integer
         from expression_experiment, genotype_experiment
-        where xpatex_gene_zdb_id = '$xpcur_G_xpatex_gene'
+        where $(IF,$(EC,$xpcur_G_xpatex_gene,),
+              xpatex_gene_zdb_id is null,
+              xpatex_gene_zdb_id = '$xpcur_G_xpatex_gene')
           and xpatex_assay_name = '$xpcur_G_xpatex_assay'
           and xpatex_genox_zdb_id = genox_zdb_id
           and genox_geno_zdb_id = '$xpcur_G_xpatex_fish'
           and genox_exp_zdb_id = '$xpcur_G_xpatex_exp'
+          and $(IF,$(EC,$xpcur_G_xpatex_antibody,),
+              xpatex_atb_zdb_id is null,
+              xpatex_atb_zdb_id = '$xpcur_G_xpatex_antibody')
           and xpatex_source_zdb_id = '$OID'
           and $(IF,$(EC,$xpcur_G_xpatex_genbank,),
               xpatex_dblink_zdb_id is null,
@@ -247,6 +278,7 @@ EFFECTS
                    xpatex_source_zdb_id,
                    xpatex_assay_name,
                    xpatex_gene_zdb_id,
+                   xpatex_atb_zdb_id,
                    xpatex_probe_feature_zdb_id,
                    xpatex_genox_zdb_id,
                    xpatex_dblink_zdb_id)
@@ -254,7 +286,8 @@ EFFECTS
                    '$xpcurup_xpat_zdb',
                    '$OID',
                    '$xpcur_G_xpatex_assay',
-                   '$xpcur_G_xpatex_gene',
+                    $(IF,$(EC,$xpcur_G_xpatex_gene,),NULL,'$xpcur_G_xpatex_gene'),
+                    $(IF,$(EC,$xpcur_G_xpatex_antibody,),NULL,'$xpcur_G_xpatex_antibody'),
                    '$xpcurup_xpatex_probe',
                    '$xpcurup_genox_zdb_id',
                    '$xpcur_G_xpatex_genbank');">
@@ -266,13 +299,15 @@ EFFECTS
                    xpatex_source_zdb_id,
                    xpatex_assay_name,
                    xpatex_gene_zdb_id,
+                   xpatex_atb_zdb_id,
                    xpatex_genox_zdb_id,
                    xpatex_dblink_zdb_id)
                 VALUES (
                    '$xpcurup_xpat_zdb',
                    '$OID',
                    '$xpcur_G_xpatex_assay',
-                   '$xpcur_G_xpatex_gene',
+                    $(IF,$(EC,$xpcur_G_xpatex_gene,),NULL,'$xpcur_G_xpatex_gene'),
+                    $(IF,$(EC,$xpcur_G_xpatex_antibody,),NULL,'$xpcur_G_xpatex_antibody'),
                    '$xpcurup_genox_zdb_id',
                    $(IF,$(EC,$xpcur_G_xpatex_genbank,),NULL,'$xpcur_G_xpatex_genbank') );">
               <?/MISQL>       
@@ -340,24 +375,26 @@ EFFECTS
                      xpatex_probe_feature_zdb_id,
                      xpatex_genox_zdb_id,
                      xpatex_dblink_zdb_id,
-                     xpatex_assay_name
+                     xpatex_assay_name,
+                     xpatex_atb_zdb_id
               from expression_experiment
               where xpatex_zdb_id = '$xpcur_G_xpatex_zdb_id';">
-              <?MIVAR NAME=xpcurup_old_value>$1,$2,$3,$4,$5<?/MIVAR>
+              <?MIVAR NAME=xpcurup_old_value>$1,$2,$3,$4,$5,$6<?/MIVAR>
             <?/MISQL>
  
             <?MISQL SQL="
               UPDATE expression_experiment
                  set xpatex_assay_name = '$xpcur_G_xpatex_assay',
-                     xpatex_gene_zdb_id = '$xpcur_G_xpatex_gene',
+                     xpatex_gene_zdb_id = $(IF,$(EC,$xpcur_G_xpatex_gene,),NULL,'$xpcur_G_xpatex_gene'),
                      xpatex_probe_feature_zdb_id = $(IF,$(EC,$xpcurup_xpatex_probe,),NULL,'$xpcurup_xpatex_probe'),
                      xpatex_dblink_zdb_id = $(IF,$(EC,$xpcur_G_xpatex_genbank,),NULL,'$xpcur_G_xpatex_genbank'),
-                     xpatex_genox_zdb_id = '$xpcurup_genox_zdb_id'
+                     xpatex_genox_zdb_id = '$xpcurup_genox_zdb_id',
+                     xpatex_atb_zdb_id = $(IF,$(EC,$xpcur_G_xpatex_antibody,),NULL,'$xpcur_G_xpatex_antibody')
                where xpatex_zdb_id = '$xpcur_G_xpatex_zdb_id'
                ;">
             <?/MISQL> 
             
-            <?MIVAR NAME=$xpcurup_new_value>$xpcur_G_xpatex_gene,$xpcurup_xpatex_probe,$xpcurup_genox_zdb_id,$xpcur_G_xpatex_genbank,$xpcur_G_xpatex_assay<?/MIVAR>
+            <?MIVAR NAME=$xpcurup_new_value>$xpcur_G_xpatex_gene,$xpcurup_xpatex_probe,$xpcurup_genox_zdb_id,$xpcur_G_xpatex_genbank,$xpcur_G_xpatex_assay,$xpcur_G_xpatex_antibody<?/MIVAR>
             
             <?MISQL SQL="
               select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_experiment&recweb_new_value=$xpcurup_new_value&recweb_old_value=$xpcurup_old_value&recweb_comments=create+new+record') 
@@ -365,6 +402,7 @@ EFFECTS
             <?/MISQL>            
            }
            </SCRIPT>
+<?MIVAR NAME=$xpcur_G_xpatex_gene><?/MIVAR>        
           <?/MIBLOCK>  <?MICOMMENT> END $xpcur_G_xpatex = add <?/MICOMMENT>
 
 
@@ -376,7 +414,6 @@ EFFECTS
               </SCRIPT> 
             <?/MIVAR>
           <?/MIBLOCK>
-      
         <?MIELSE> 
           <?MICOMMENT> ============================================================
                           Gene and Probe not related through marker relationship
@@ -405,15 +442,16 @@ EFFECTS
       <?/MIBLOCK>  <?MICOMMENT> end $1 = 0 <?/MICOMMENT>
     
     <?MIELSE>
+  why here?
       <SCRIPT>
-        alert('One of these required data elements was missing: Gene, Fish, Env, Assay.\n\nPlease check your data and renter.');
+        alert('Either a gene or an antibody is required.\n\nPlease check your data and renter.');
       </SCRIPT>        
     <?/MIBLOCK> <?MICOMMENT> 
                     END
                          $(AND,$(XST,$xpcur_G_xpatex_gene),$(XST,$xpcur_G_xpatex_fish),
                          $(XST,$xpcur_G_xpatex_assay),$(XST,$xpcur_G_xpatex_exp))
                 <?/MICOMMENT>
-            
+  <?/MIBLOCK><?MICOMMENT>end rekated gene<?/MICOMMENT>  
   <?/MIBLOCK> <?MICOMMENT> END COND=$(XST,$xpcur_G_xpatex)> <?/MICOMMENT>
   
 
@@ -911,16 +949,14 @@ EFFECTS
     <?MIVAR NAME=xpcur_G_structures_remove COND=$(NXST,$xpcur_G_structures_remove)><?/MIVAR>
     <?MIVAR NAME=xpcurup_anatitem_add><?/MIVAR>
     <?MIVAR NAME=xpcurup_anatitem_remove><?/MIVAR>
-    
     <?MIVAR NAME=xpcurup_xpatinf_add_csv>$(REPLACE,$xpcur_G_structures_add,"|","','")<?/MIVAR>
-    
     <?MISQL SQL="
-      select xpatinf_anatitem_zdb_id, xpatinf_expressed
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed, xpatinf_go_term_zdb_id
       from expression_pattern_infrastructure
       where xpatinf_zdb_id in ('$xpcurup_xpatinf_add_csv')
       ;">
       <?MIVAR NAME=item DELIMIT="'" REPLACE="''">$1<?/MIVAR>
-      <?MIVAR>$(VECAPPEND,$xpcurup_anatitem_add,$item$2)<?/MIVAR>
+      <?MIVAR>$(VECAPPEND,$xpcurup_anatitem_add,$item$2$3)<?/MIVAR>
     <?/MISQL>
     <?MIVAR NAME=xpcurup_anatitem_add_csv SEPARATE="','">$xpcurup_anatitem_add<?/MIVAR>
     <?MIVAR NAME=xpcur_c_anatitem_add_csv>$xpcurup_anatitem_add_csv<?/MIVAR>
@@ -930,19 +966,18 @@ EFFECTS
     <?MIVAR NAME=xpcurup_xpatinf_remove_csv DELIMIT="|" REPLACE="','">$xpcur_G_structures_remove<?/MIVAR>
     
     <?MISQL SQL="
-      select xpatinf_anatitem_zdb_id, xpatinf_expressed
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed, xpatinf_go_term_zdb_id
       from expression_pattern_infrastructure
       where xpatinf_zdb_id in ('$xpcurup_xpatinf_remove_csv')
       ;">
       <?MIVAR NAME=item DELIMIT="'" REPLACE="''">$1<?/MIVAR>
-      <?MIVAR>$(VECAPPEND,$xpcurup_anatitem_remove,$item$2)<?/MIVAR>
+      <?MIVAR>$(VECAPPEND,$xpcurup_anatitem_remove,$item$2$3)<?/MIVAR>
     <?/MISQL>
     <?MIVAR NAME=xpcurup_anatitem_remove_csv SEPARATE="','">$xpcurup_anatitem_remove<?/MIVAR>
     <?MIVAR NAME=url_anatitem_remove_csv>$xpcurup_anatitem_remove_csv<?/MIVAR>
     <?MIVAR NAME=url_anatitem_remove_csv DELIMIT="'" REPLACE="">$url_anatitem_remove_csv<?/MIVAR>  
 
       <?MIVAR NAME=pubcur_onload>$pubcur_onload storeSession('$ZDB_ident','$OID','pubcur_c_anatitem_remove_csv','$(URLENCODE,$url_anatitem_remove_csv)');<?/MIVAR>
-    
     
     <?MICOMMENT> =============================================================== 
                    Create xpatres and xpatfig records  
@@ -952,12 +987,16 @@ EFFECTS
     <?MIVAR>$(UNSETVAR,$xpcurup_xpatfig_add_list)<?/MIVAR>
     <?MIVAR NAME=xpcurup_xpatfig_add_list><?/MIVAR>
     <?MISQL SQL="
-      select xpatinf_anatitem_zdb_id, xpatinf_expressed
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed, xpatinf_go_term_zdb_id
       from expression_pattern_infrastructure
       where xpatinf_zdb_id in ('$xpcurup_xpatinf_add_csv')
       ;">
-      <?MISQL SQL="select WebExplode(object,'gPSLitem_anatitem_zdb_id=$1&gPSLitem_expressed=$2&gPSLitem_xpatex_zdb_id=$xpcurup_panel_xpatex_zdb_id&gPSLitem_stg_start_zdb_id=$xpcurup_panel_sstage_zdb_id&gPSLitem_stg_end_zdb_id=$xpcurup_panel_estage_zdb_id') from webPages where ID='aa-getPubStructureListItem.apg';">$1<?/MISQL>
-
+      <?MIBLOCK COND="$(EC,$3,NULL)">
+        <?MIVAR NAME=goterm><?/MIVAR>
+      <?MIELSE>
+        <?MIVAR NAME=goterm>$3<?/MIVAR>
+      <?/MIBLOCK>
+      <?MISQL SQL="select WebExplode(object,'gPSLitem_anatitem_zdb_id=$1&gPSLitem_expressed=$2&gPSLitem_goterm_zdb_id=$goterm&gPSLitem_xpatex_zdb_id=$xpcurup_panel_xpatex_zdb_id&gPSLitem_stg_start_zdb_id=$xpcurup_panel_sstage_zdb_id&gPSLitem_stg_end_zdb_id=$xpcurup_panel_estage_zdb_id') from webPages where ID='aa-getPubStructureListItem.apg';">$1<?/MISQL>
       <?MIVAR>$(VECAPPEND,$xpcurup_xpatfig_add_list,$gPSLitem_xpatres_zdb_id)<?/MIVAR>              
     <?/MISQL>
 
@@ -1006,6 +1045,7 @@ EFFECTS
               where xpatfig_xpatres_zdb_id = xpatres_zdb_id
                 and xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
                 and xpatres_expression_found = xpatinf_expressed
+                and xpatres_go_term_zdb_id = xpatinf_go_term_zdb_id 
                 and xpatinf_zdb_id in ('$xpcurup_xpatinf_remove_csv')
                 and xpatres_xpatex_zdb_id = '$xpcurup_panel_xpatex_zdb_id'
                 and xpatres_start_stg_zdb_id = '$xpcurup_panel_sstage_zdb_id'
@@ -1030,14 +1070,27 @@ EFFECTS
               where xpatfig_xpatres_zdb_id = xpatres_zdb_id
                 and xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
                 and xpatres_expression_found = xpatinf_expressed
+                and xpatres_go_term_zdb_id=xpatinf_go_term_zdb_id
                 and xpatinf_zdb_id in ('$xpcurup_xpatinf_remove_csv')
                 and xpatres_xpatex_zdb_id = '$xpcurup_panel_xpatex_zdb_id'
                 and xpatres_start_stg_zdb_id = '$xpcurup_panel_sstage_zdb_id'
                 and xpatres_end_stg_zdb_id = '$xpcurup_panel_estage_zdb_id'
+                and xpatres_go_term_zdb_id is not null
+                UNION
+              select *
+              from expression_result, expression_pattern_infrastructure
+              where xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                and xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
+                and xpatres_expression_found = xpatinf_expressed
+                and xpatinf_zdb_id in ('$xpcurup_xpatinf_remove_csv')
+                and xpatres_xpatex_zdb_id = '$xpcurup_panel_xpatex_zdb_id'
+                and xpatres_start_stg_zdb_id = '$xpcurup_panel_sstage_zdb_id'
+                and xpatres_end_stg_zdb_id = '$xpcurup_panel_estage_zdb_id'
+                and xpatres_go_term_zdb_id is null
+                and xpatinf_go_term_zdb_id is null
             )
         ;">
     <?/MISQL>
-
     <?MIBLOCK COND=$(NC,$xpcurup_old_value,)>
     
       <?MIVAR NAME=xpcurup_old_value>xpatfig_fig_zdb_id = $xpcurup_panel_fig_zdb_id<BR>xpatfig_xpatres_zdb_id = $xpcurup_old_value<?/MIVAR>

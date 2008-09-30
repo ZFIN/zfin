@@ -1,9 +1,11 @@
 package org.zfin.publication;
 
+import java.io.Serializable;
+
 /**
  * Journal domain object.
  */
-public class Journal {
+public class Journal implements Serializable {
 
     private String zdbID;
     private String name;

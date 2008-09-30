@@ -3,6 +3,7 @@ package org.zfin.anatomy;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ObjectUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -10,11 +11,11 @@ import java.io.Serializable;
 
 /**
  * This business object defines an anatomical structure, aka anatomy item or anatomy term.
- *
- *
+ * <p/>
+ * <p/>
  * ToDo: This class needs to be refactored to allow for a common interface for a term in any ontology.
  */
-public class AnatomyItem implements Serializable {
+public class AnatomyItem implements Comparable<AnatomyItem> {
 
     public static final String UNKNOWN = "unknown";
     private long itemID;
@@ -46,7 +47,7 @@ public class AnatomyItem implements Serializable {
     }
 
     public String getNameEscaped() {
-        return getName().replaceAll("'","\\\\'") ;
+        return getName().replaceAll("'", "\\\\'");
     }
 
     public void setName(String name) {
@@ -90,11 +91,10 @@ public class AnatomyItem implements Serializable {
     }
 
     public String getFormattedDefinition() {
-        if( StringUtils.isEmpty(definition)){
-            return null ;
-        }
-        else{
-            return definition.replaceAll("a href","a target=\\\"_blank\\\" class=\\\"external\\\" href") ;
+        if (StringUtils.isEmpty(definition)) {
+            return null;
+        } else {
+            return definition.replaceAll("a href", "a target=\\\"_blank\\\" class=\\\"external\\\" href");
         }
     }
 
@@ -189,5 +189,55 @@ public class AnatomyItem implements Serializable {
 
     public void setCellTerm(boolean cellTerm) {
         this.cellTerm = cellTerm;
+    }
+
+    public int compareTo(AnatomyItem term) {
+        if (term == null)
+            return +1;
+        return nameOrder.compareTo(term.getNameOrder());
+    }
+
+    public boolean equals(AnatomyItem anotherAO) {
+        return anotherAO.getZdbID().equalsIgnoreCase(zdbID);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AnatomyItem))
+            return false;
+        AnatomyItem term = (AnatomyItem) o;
+        return
+                cellTerm == term.isCellTerm() &&
+                        obsolete == term.isObsolete() &&
+                        StringUtils.equals(definition, term.getDefinition()) &&
+                        StringUtils.equals(description, term.getDescription()) &&
+                        StringUtils.equals(name, term.getName()) &&
+                        StringUtils.equals(nameOrder, term.getNameOrder()) &&
+                        StringUtils.equals(oboID, term.getOboID()) &&
+                        StringUtils.equals(zdbID, term.getZdbID()) &&
+                        ObjectUtils.equals(start, term.getStart()) &&
+                        ObjectUtils.equals(end, term.getEnd());
+    }
+
+    @Override
+    public int hashCode(){
+        int hash = 37;
+        if (definition != null)
+            hash = hash * definition.hashCode();
+        if(description != null)
+            hash += hash * description.hashCode();
+        if(name != null)
+            hash += hash * name.hashCode();
+        if(nameOrder != null)
+            hash += hash * nameOrder.hashCode();
+        if(oboID != null)
+            hash += hash * oboID.hashCode();
+        if(zdbID != null)
+            hash += hash * zdbID.hashCode();
+        if(start != null)
+            hash += hash * start.hashCode();
+        if(end != null)
+            hash += hash * end.hashCode();
+        return hash;
     }
 }

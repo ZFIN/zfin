@@ -622,86 +622,22 @@ function openChild(childWinUrl,childWinName) {
       
     <?/MIBLOCK>
         
+        <script src="/phenote/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
+	<script src="/phenote/javascript/ajax-lib/effects.js"   type="text/javascript"></script>
+	<script src="/phenote/javascript/ajax-lib/dragdrop.js"  type="text/javascript"></script>
+	<script src="/phenote/javascript/ajax-lib/controls.js"  type="text/javascript"></script>
 
-    <Center>
-    <Table width="70%" border="0">
-      <tr>
-        <td width="45%" align=right valign=top>&nbsp;
-	  <!--- Return to the previous set of Rows --->
-	  <?MIBLOCK COND="$(>,$BEGIN,1)">
-	    <?MIVAR>
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
-	      <!-- If current not First Page, create link to first page. -->
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
-	    <?/MIVAR>
-	  <?/MIBLOCK>
-	</td>
-
-
-        <!-- Calculate 3 pages before and 3 pages after current page. -->
-        <?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
-        <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
-          <td valign=top>
-	    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
-	  </td>
-        <?/MIBLOCK>
-
-        <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
-	  <td valign=top>
-	    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
-	  </td>
-        <?/MIBLOCK>
-
-        <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
-	  <td valign=top>
-	    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
-	  </td>
-        <?/MIBLOCK>
-<?MIBLOCK COND="$(XST,$xpdetres_figCount)">
-  <?MIVAR NAME=$xpatsel_nResults>$xpdetres_figCount<?/MIVAR>
-<?/MIBLOCK>
-
-        <?MIBLOCK COND="$(>,$xpatsel_nResults,$WINSIZE)">
-	  <td align=center valign=top>
-	    <?MIVAR>  $CURRENT <?/MIVAR>
-	  </td>
-        <?/MIBLOCK>
-
-        <?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$xpatsel_nResults)">
-	  <td valign=top>
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$END"> $(+,$CURRENT,1)</A>
-	  </td>
-        <?/MIVAR>
-
-        <?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$xpatsel_nResults)">
-	  <td valign=top>
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
-	  </td>
-        <?/MIVAR>
-
-        <?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$xpatsel_nResults)">
-	  <td valign=top>
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
-	  </td>
-        <?/MIVAR>
-
-        <td width="45%" align=left valign=top>&nbsp;
-          <!--- Get the next set of Rows --->
-	  <?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$xpatsel_nResults)">
-	    <?MIVAR>
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$selector$UserInput">Next</A><br>
-	    <?/MIVAR>
-
-	    <!-- Calculate last page -->
-	    <?MIVAR name=$START COND="$(=,$(MOD,$xpatsel_nResults,$WINSIZE),0)">$(+,$(*,$(-,$(/,$xpatsel_nResults,$WINSIZE),1),$WINSIZE),1)<?/MIVAR>
-	    <?MIVAR name=$START COND="$(!=,$(MOD,$xpatsel_nResults,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$xpatsel_nResults,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
-	    <?MIVAR>
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$selector$UserInput">Last Page</A>
-	    <?/MIVAR>
-	  <?/MIBLOCK>
-        </td>
-      </tr>
-    </table>  <?MICOMMENT> end walking windows table <?/MICOMMENT>
+       <?MIVAR>
+       <p/>
+	<div id="pagination"></div>
+	<script type="text/javascript">
+	    new Ajax.Updater('pagination','/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$xpatsel_nResults', {Method: 'get' });
+	</script>
+ 	<?/MIVAR>
+	<div id="pagination"></div>
+       <p/>
+        
+  <?MICOMMENT> end walking windows table <?/MICOMMENT>
 
     <?MICOMMENT> ** done with temp table, nuke it ** <?/MICOMMENT>
     <?MISQL SQL="delete from $xpatselect_temp_match;"><?/MISQL>
@@ -967,7 +903,7 @@ return false ; "
 	  <td>
 
             <!-- begin assay type -->
-	    <label for="xpatselAssay" class="selectLabel">Assay Type</label>
+	    <label for="xpatselAssay" class="selectLabel">Assay</label>
 	      <SELECT id="xpatselAssay" NAME=assay>
 		<option <?MIVAR COND="$(EC,$assay,ANY)">SELECTED<?/MIVAR> value=ANY>ANY
 		<?MISQL SQL="

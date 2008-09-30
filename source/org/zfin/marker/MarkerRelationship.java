@@ -1,12 +1,18 @@
 package org.zfin.marker;
 
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.publication.Publication;
+
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
- *  Class MarkerRelationship.
+ * Class MarkerRelationship.
  */
-public class MarkerRelationship {
+public class MarkerRelationship implements Comparable {
 
-    public enum Type{
+    public enum Type {
 
         CLONE_CONTAINS_GENE("clone contains gene"),
         CLONE_CONTAINS_SMALL_SEGMENT("clone contains small segment"),
@@ -15,11 +21,12 @@ public class MarkerRelationship {
         CONTAINS_OTHER_FEATURE("contains other feature"),
         CONTAINS_POLYMORPHISM("contains polymorphism"),
         GENE_CONTAINS_SMALL_SEGMENT("gene contains small segment"),
-        GENE_ENCODES_SMALL_SEGMENT ("gene encodes small segment"),
+        GENE_ENCODES_SMALL_SEGMENT("gene encodes small segment"),
         GENE_HYBRIDIZED_BY_SMALL_SEGMENT("gene hybridized by small segment"),
         KNOCKDOWN_REAGENT_TARGETS_GENE("knockdown reagent targets gene"),
-        GENE_HAS_ARTIFACT("gene has artifact"),
-        PROMOTER_OF("promoter of");
+        PROMOTER_OF("promoter of"),
+        GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY("gene product recognized by antibody"),
+        GENE_HAS_ARTIFACT("gene has artifact");
 
         private final String value;
 
@@ -27,34 +34,34 @@ public class MarkerRelationship {
             this.value = value;
         }
 
-        public String toString(){
+        public String toString() {
             return value;
         }
 
     }
 
-    private String zdbID ;
+    private String zdbID;
     private Type type;
-    private Marker firstMarker ;
-    private Marker secondMarker ; 
+    private Marker firstMarker;
+    private Marker secondMarker;
+
+    private Set<PublicationAttribution> publications;
 
     /**
      * Get zdbID.
      *
      * @return zdbID as String.
      */
-    public String getZdbID()
-    {
+    public String getZdbID() {
         return zdbID;
     }
-    
+
     /**
      * Set zdbID.
      *
      * @param zdbID the value to set.
      */
-    public void setZdbID(String zdbID)
-    {
+    public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
     }
 
@@ -72,55 +79,80 @@ public class MarkerRelationship {
      *
      * @return firstMarker as Marker.
      */
-    public Marker getFirstMarker()
-    {
+    public Marker getFirstMarker() {
         return firstMarker;
     }
-    
+
     /**
      * Set firstMarker.
      *
      * @param firstMarker the value to set.
      */
-    public void setFirstMarker(Marker firstMarker)
-    {
+    public void setFirstMarker(Marker firstMarker) {
         this.firstMarker = firstMarker;
     }
-    
+
     /**
      * Get secondMarker.
      *
      * @return secondMarker as Marker.
      */
-    public Marker getSecondMarker()
-    {
+    public Marker getSecondMarker() {
         return secondMarker;
     }
-    
+
     /**
      * Set secondMarker.
      *
      * @param secondMarker the value to set.
      */
-    public void setSecondMarker(Marker secondMarker)
-    {
+    public void setSecondMarker(Marker secondMarker) {
         this.secondMarker = secondMarker;
     }
 
-     public String toString(){
-         String newline = System.getProperty("line.separator");
+    public Set<PublicationAttribution> getPublications() {
+        if (publications == null)
+            return new HashSet<PublicationAttribution>();
+        return publications;
+    }
+
+    public void setPublications(Set<PublicationAttribution> publications) {
+        this.publications = publications;
+    }
+
+    public int getPublicationCount() {
+        if (publications == null)
+            return 0;
+        else
+            return publications.size();
+    }
+
+    public Publication getSinglePublication() {
+        if (getPublicationCount() == 1) {
+            for (PublicationAttribution pubAttr : getPublications())
+                return pubAttr.getPublication();
+        }
+        return null;
+    }
+
+    public int compareTo(Object anotherMarkerRelationship) {
+        return firstMarker.compareTo(((MarkerRelationship) anotherMarkerRelationship).getFirstMarker());
+    }
+
+    public String toString() {
+        String newline = System.getProperty("line.separator");
         StringBuilder sb = new StringBuilder("MARKER_RELATIONSHIP");
         sb.append("zdbID: " + zdbID);
         sb.append(newline);
         sb.append("type: " + type);
-         sb.append(newline);
+        sb.append(newline);
         sb.append("firstMarker: " + firstMarker);
-         sb.append(newline);
+        sb.append(newline);
         sb.append("secondMarker: " + secondMarker);
-         sb.append(newline);
+        sb.append(newline);
         return sb.toString();
 
-     }
+    }
 }
 
 

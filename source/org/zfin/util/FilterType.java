@@ -32,6 +32,10 @@ public class FilterType {
         return name;
     }
 
+    public String toString(){
+        return name;
+    }
+
     public static FilterType getFilterType(String name) {
         for (int i = 0; i < completeList.length; i++) {
             FilterType currentFilter = completeList[i];

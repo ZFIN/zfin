@@ -40,7 +40,9 @@ public class LookupComposite extends Composite {
     public final static String TYPE_ANATOMY_ONTOLOGY = "ANATOMY_ONTOLOGY" ;
     public final static String TYPE_GENE_ONTOLOGY= "GENE_ONTOLOGY" ;
     public final static String TYPE_QUALITY = "QUALITY_ONTOLOGY" ;
+    public final static String GENEDOM_AND_EFG = "GENEDOM_AND_EFG_LOOKUP" ;
     public final static String MARKER_LOOKUP = "MARKER_LOOKUP" ;
+    public final static String TYPE_SUPPLIER = "SUPPLIER" ;
     public final static String FEATURE_LOOKUP = "FEATURE_LOOKUP" ;
     private List types = new ArrayList() ;
 
@@ -49,9 +51,11 @@ public class LookupComposite extends Composite {
 
     // actions
     public final static String ACTION_ANATOMY_SEARCH= "ANATOMY_SEARCH" ;
+    public final static String ACTION_GENEDOM_AND_EFG_SEARCH= "GENEDOM_AND_EFG_SEARCH" ;
     public final static String ACTION_MARKER_ATTRIBUTE = "MARKER_ATTRIBUTE" ;
     public final static String ACTION_FEATURE_ATTRIBUTE = "FEATURE_ATTRIBUTE" ;
     private SubmitAction action = null ;
+    private String onclick;
 
     // options
     protected String inputName = "search";
@@ -69,7 +73,9 @@ public class LookupComposite extends Composite {
         types.add(TYPE_ANATOMY_ONTOLOGY) ;
         types.add(TYPE_GENE_ONTOLOGY) ;
         types.add(TYPE_QUALITY) ;
+        types.add(TYPE_SUPPLIER) ;
         types.add(MARKER_LOOKUP) ;
+        types.add(GENEDOM_AND_EFG) ;
         types.add(FEATURE_LOOKUP) ;
     }
 
@@ -202,7 +208,12 @@ public class LookupComposite extends Composite {
             suggestBox.setFocus(false);
             action.doSubmit(text);
         }
+        if(onclick != null)
+            runOnclickJavaScriptMethod(onclick);
     }
+    private native void runOnclickJavaScriptMethod(String string)/*-{
+            $wnd.submitForm(string);
+    }-*/;
 
     public void setErrorString(String text){
         noteLabel.setStyleName("gwt-lookup-error");
@@ -346,5 +357,13 @@ public class LookupComposite extends Composite {
 
     public void setOID(String OID) {
         this.OID = OID;
+    }
+
+    public String getOnclick() {
+        return onclick;
+    }
+
+    public void setOnclick(String onclick) {
+        this.onclick = onclick;
     }
 }

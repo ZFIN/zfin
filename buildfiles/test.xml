@@ -180,5 +180,13 @@ test(s) need to be run before committing changes or pushing files to production 
       fork="yes"
       classpathref="classpath">
 </java>
+
+    <target name="smokeTests" depends="dirtydeploy,build-tests" description="Unit tests for DataExchange module">
+        <antcall target="runatest">
+            <param name="junit.test.class.name" value="org.zfin.SmokeTests"/>
+        </antcall>
+    </target>
+
+
 </target>
 </project>

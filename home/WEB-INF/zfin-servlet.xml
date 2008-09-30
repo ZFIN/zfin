@@ -4,9 +4,7 @@
 <beans>
 
     <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="order">
-            <value>0</value>
-        </property>
+        <property name="order" value="0"/>
         <property name="mappings">
             <props>
                 <prop key="/login">login</prop>
@@ -27,11 +25,13 @@
         <property name="definitions">
             <list>
                 <value>/WEB-INF/conf/tiles-defs-anatomy.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-antibody.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-reno.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-dev-tools.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-framework.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-orthology.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-profile.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-publication.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-webdriver.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-quicksearch.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-marker.xml</value>
@@ -67,18 +67,14 @@
 <!--    </bean>-->
 
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename">
-            <value>zfin-messages</value>
-        </property>
+        <property name="basename" value="zfin-messages"/>
     </bean>
 
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
     </bean>
 
     <bean id="zfinMailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender">
-        <property name="mailHost">
-            <value>mailhost.cs.uoregon.edu"</value>
-        </property>
+        <property name="mailHost" value="mailhost.cs.uoregon.edu&quot;"/>
         <property name="mailSender"><ref bean="mailSender"/></property>
     </bean>
 

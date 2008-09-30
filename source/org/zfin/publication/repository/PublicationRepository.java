@@ -46,6 +46,8 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Publication> getExpressedGenePublications(String geneID, String anatomyItemID);
 
+    List<String> getSNPPublicationIDs(Marker marker);
+
     /**
      * retrieve the total number of publications for a given geneID and anatomical structure.
      *

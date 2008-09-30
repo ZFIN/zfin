@@ -170,4 +170,14 @@ public interface AnatomyRepository extends CachedRepository {
      * @return AnatomyItem
      */
     List<AnatomySynonym> getAnatomyTermsBySynonymName(String name);
+
+    /**
+     * Checks if
+     * @param term Anatomy term
+     * @param rootTerm  anatomy term
+     * @return boolean
+     */
+    boolean isSubstructureOf(AnatomyItem term, AnatomyItem rootTerm);
+
+    List<String> getAnatomyTermsForAutoComplete();
 }

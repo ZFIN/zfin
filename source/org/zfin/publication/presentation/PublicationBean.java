@@ -3,15 +3,21 @@ package org.zfin.publication.presentation;
 import org.zfin.publication.Publication;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Christian Pich
- * Date: Aug 1, 2006
- * Time: 4:35:48 PM
- * To change this template use File | Settings | File Templates.
+ * Serving Def Pub section
  */
 public class PublicationBean {
 
+    private String zdbID;
     private Publication publication;
+    private boolean validPublication;
+
+    public String getZdbID() {
+        return zdbID;
+    }
+
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
+    }
 
     public Publication getPublication() {
         if (publication == null)
@@ -21,5 +27,13 @@ public class PublicationBean {
 
     public void setPublication(Publication publication) {
         this.publication = publication;
+    }
+
+    public boolean isValidPublication() {
+        return validPublication;
+    }
+
+    public void setValidPublication(boolean validPublication) {
+        this.validPublication = validPublication;
     }
 }

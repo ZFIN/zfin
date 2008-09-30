@@ -1116,89 +1116,15 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 
 
     <?/MIBLOCK> 
-
-    <Center>
-    <TABLE width="70%" border="0">
-      <TR>
-        <TD width="45%" align=right valign=top>&nbsp;
-          <?MICOMMENT> Return to the previous set of Rows <?/MICOMMENT>
-	  <?MIBLOCK COND="$(>,$BEGIN,1)">
-	    <?MIVAR>
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
-	      <?MICOMMENT>
-                If current not First Page, create link to first page. 
-              <?/MICOMMENT>
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
-
-	    <?/MIVAR>
-	  <?/MIBLOCK>
-        </TD>
-
-      <?MICOMMENT> Calculate 3 pages before and 3 pages after current page. <?/MICOMMENT>
-      <?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
-      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
-	<TD valign=top>
-	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
-	</TD>
-      <?/MIBLOCK>
-
-      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
-	<TD valign=top>
-	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
-	</TD>
-      <?/MIBLOCK>
-
-      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
-	<TD valign=top>
-	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
-	</TD>
-      <?/MIBLOCK>
-
-      <?MIBLOCK COND="$(>,$num_recs,$WINSIZE)">
-	<TD align=center valign=top>
-	  <?MIVAR> $CURRENT <?/MIVAR>
-	</TD>
-      <?/MIBLOCK>
-
-      <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)>
-	<TD valign=top>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$END"> $(+,$CURRENT,1)</A>
-	</TD>
-      <?/MIVAR>
-
-      <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)>
-	<TD valign=top>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
-	</TD>
-      <?/MIVAR>
-
-      <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)>
-	<TD valign=top>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
-	</TD>
-      <?/MIVAR>
-
-        <TD width="45%" align=left valign=top>&nbsp;
-
-	<?MICOMMENT> Get the next set of Rows <?/MICOMMENT>
-	<?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
-	  <?MIVAR>
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$selector$UserInput">Next</A><br>
-	  <?/MIVAR>
-
-	  <?MICOMMENT> Calculate last page <?/MICOMMENT>
-	  <?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)<?/MIVAR>
-
-	  <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
-
-	  <?MIVAR>
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$selector$UserInput">Last Page</A>
-	  <?/MIVAR>
-	<?/MIBLOCK>
-        </TD>
-      </tr>
-    </Table>
-    </Center>
+       <?MIVAR>
+       <p/>
+	<div id="pagination"></div>
+	<script type="text/javascript">
+	    new Ajax.Updater('pagination','/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs', {Method: 'get' });
+	</script>
+ 	<?/MIVAR>
+	<div id="pagination"></div>
+       <p/>
 
   <?/MIBLOCK> <?MICOMMENT> if not redirect to markerview <?/MICOMMENT>
 

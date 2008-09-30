@@ -42,6 +42,7 @@ public class SearchCategory
     public static final String JOBS                     = "JOBS";
     public static final String OTHERS                   = "OTHERS";
     public static final String ALL                      = "ALL";
+    public static final String ANTIBODY                 = "ANTIBODY";
 
 
     public static final Map CATEGORY_LOOKUP;
@@ -86,6 +87,9 @@ public class SearchCategory
         
         String[] anatomyTypes = {ANATOMY_ITEM, ANATOMY_ZFINFO};
         categoryList.add(new SearchCategory("ANATOMY", "Anatomy", anatomyTypes));
+
+        String[] antibodies = {ANTIBODY};
+        categoryList.add(new SearchCategory("ANTIBODY", "Antibody", antibodies));
 
         String[] productTypes = {GENES_GENEPRDDESCRIPTION};
         categoryList.add(new SearchCategory("PRODUCT", "Gene Product", productTypes));

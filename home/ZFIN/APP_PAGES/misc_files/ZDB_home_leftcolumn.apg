@@ -7,6 +7,10 @@
      <li>Search <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg" 
                    title="Search by gene, developmental stage, anatomy or process">
          <strong>Gene Expression</strong></a></li>
+      <li>Search <a href="/action/antibody/search" 
+                    title="Search for antibodies"><strong>Antibodies</strong></a>
+<img src="/images/new1.gif" alt="new" />
+</li>
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg" 
             title="Search for sequence alignment against ZFIN datasets and Zebrafish datasets">
          <strong>BLAST</strong> at ZFIN</a> </li>

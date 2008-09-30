@@ -109,7 +109,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      * 2) searching all synonyms as 'contains'
      * 3) Case insensitive in both cases
      *
-     * @param searchString string
+     * @param searchString     string
      * @param includeObsoletes include obsolete terms
      * @return list of anatomy terms
      */
@@ -278,6 +278,9 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      * @param stage Stage
      */
     public DevelopmentStage getStage(DevelopmentStage stage) {
+        if (stage == null || stage.getZdbID() == null)
+          return null;
+
         Session session = HibernateUtil.currentSession();
         long stageID = stage.getStageID();
         if (stageID != 0) {
@@ -411,7 +414,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      * Retrieve an anatomy term for a given synonym name
      * The lookup is case-insensitive.
      * Returns null if no term is found or the search name is null
-
+     *
      * @param name ao synonym name
      * @return AnatomyItem
      */
@@ -423,6 +426,28 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         Criteria criteria = session.createCriteria(AnatomySynonym.class);
         criteria.add(Restrictions.eq("aliasLowerCase", name.toLowerCase()));
         return (List<AnatomySynonym>) criteria.list();
+    }
+
+    public boolean isSubstructureOf(AnatomyItem term, AnatomyItem rootTerm) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select 1 from AnatomyChildren root where root.child = :child AND root.root = :parent ";
+        Query query = session.createQuery(hql);
+        query.setParameter("child", term);
+        query.setParameter("parent", rootTerm);
+        Object result = query.uniqueResult();
+        return result != null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getAnatomyTermsForAutoComplete() {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select term.name FROM AnatomyItem term ";
+        Query query = session.createQuery(hql);
+        List<String> terms = null;
+        terms = (List<String>) query.list();
+        return terms;
+
     }
 
     /*

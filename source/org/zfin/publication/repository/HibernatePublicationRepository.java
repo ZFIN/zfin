@@ -1,5 +1,6 @@
 package org.zfin.publication.repository;
 
+import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -20,10 +21,9 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
-import org.zfin.publication.Publication;
 import org.zfin.publication.Journal;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class HibernatePublicationRepository extends PaginationUtil implements PublicationRepository {
 
-    Logger logger = Logger.getLogger(HibernatePublicationRepository.class) ;
+    Logger logger = Logger.getLogger(HibernatePublicationRepository.class);
 
     public int getNumberOfPublications(String abstractText) {
 
@@ -80,6 +80,35 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         List<Publication> list = query.list();
         return list;
     }
+
+
+    public List<String> getSNPPublicationIDs(Marker marker) {
+        Session session = HibernateUtil.currentSession();
+        String sql = "select distinct snpdattr_pub_zdb_id " +
+                " from snp_download_attribution, snp_download " +
+                " where snpdattr_snpd_pk_id = snpd_pk_id and snpd_mrkr_zdb_id = :zdbID";
+        SQLQuery query = session.createSQLQuery(sql);
+        query.setString("zdbID", marker.getZdbID());
+        List<String> pubIDs = query.list();
+        return pubIDs;
+    }
+
+    /*
+    public List<Publication> getSNPPublications(Marker marker) {
+       Session session = HibernateUtil.currentSession();
+        String hql = "SELECT distinct publication FROM Publication publication, ExpressionExperiment exp, ExpressionResult res, Marker marker   " +
+                "WHERE res.anatomyTerm.zdbID = :aoZdbID " +
+                "AND publication.zdbID = exp.publicationID " +
+                "AND res.expressionExperiment = exp " +
+                "AND marker.zdbID = exp.geneID " +
+                "AND marker.zdbID = :zdbID ";
+        String sql = addOrderByParameters(hql);
+        Query query = session.createQuery(sql);
+        query.setString("zdbID", marker.getZdbID());
+        List<Publication> list = query.list();
+        return list;
+    }     */
+
 
     private String addOrderByParameters(String hql) {
         if (!isUsePagination())
@@ -327,7 +356,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * Count the number of images from all publications that have a gene
      * expression in a given anatomy structure.
      *
-     * @param anatomyTerm
+     * @param anatomyTerm ao term
      * @return number
      */
     public int getTotalNumberOfImagesPerAnatomyItem(AnatomyItem anatomyTerm) {
@@ -394,11 +423,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setProjection(Projections.count("zdbID"));
         query.add(Restrictions.eq("zdbID", canonicalPublicationZdbID));
         Integer number = (Integer) query.uniqueResult();
-        return number.intValue() == 1;
+        return number == 1;
     }
 
 
-
+    @SuppressWarnings("unchecked")
     public List<Figure> getFiguresByGeneID(String geneID, String publicationID) {
         Session session = HibernateUtil.currentSession();
         Criteria crit = session.createCriteria(Figure.class);
@@ -408,6 +437,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Figure>) crit.list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<Figure> getFiguresByProbeAndPublication(String probeID, String publicationID) {
         Session session = HibernateUtil.currentSession();
 
@@ -429,6 +459,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
 
+    @SuppressWarnings("unchecked")
     public List<Figure> getFiguresByGeneAndPublication(String geneID, String publicationID) {
         Session session = HibernateUtil.currentSession();
         Criteria crit = session.createCriteria(Figure.class);
@@ -469,6 +500,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param aoTerm anatomical structure
      * @return list of figures
      */
+    @SuppressWarnings("unchecked")
     public List<Figure> getFiguresPerProbeAndAnatomy(Marker gene, Marker clone, AnatomyItem aoTerm) {
         Session session = HibernateUtil.currentSession();
 
@@ -492,6 +524,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return figures;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Publication> getPublicationsWithFiguresPerProbeAndAnatomy(Marker gene, Marker subGene, AnatomyItem aoTerm) {
         Session session = HibernateUtil.currentSession();
 
@@ -510,6 +543,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Publication>) query.list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<Publication> getPublicationsWithAccessionButNoDOI(int maxResults) {
         Session session = HibernateUtil.currentSession();
         Criteria query = session.createCriteria(Publication.class);
@@ -537,6 +571,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Figure> getFiguresByMorpholinoAndAnatomy(Morpholino morpholino, AnatomyItem term) {
         Session session = HibernateUtil.currentSession();
 
@@ -626,6 +661,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param anatomyTerm anatomy
      * @return a set of figures
      */
+    @SuppressWarnings("unchecked")
     public List<Figure> getFiguresByGeneAndAnatomy(Marker marker, AnatomyItem anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct fig from Figure fig, ExpressionResult res, Marker marker, ExpressionExperiment exp, " +
@@ -653,15 +689,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
 
     public Journal getJournalByTitle(String journalTitle) {
-        try{
-            Session session = HibernateUtil.currentSession() ;
-            Criteria criteria = session.createCriteria(Journal.class) ;
-            criteria.add(Restrictions.eq("name",journalTitle)) ;
-            return (Journal) criteria.uniqueResult() ;
+        try {
+            Session session = HibernateUtil.currentSession();
+            Criteria criteria = session.createCriteria(Journal.class);
+            criteria.add(Restrictions.eq("name", journalTitle));
+            return (Journal) criteria.uniqueResult();
         }
-        catch(Exception e){
-            logger.error("failed to get journal title["+journalTitle+"] returning null",e);
-            return null ;
+        catch (Exception e) {
+            logger.error("failed to get journal title[" + journalTitle + "] returning null", e);
+            return null;
         }
     }
 

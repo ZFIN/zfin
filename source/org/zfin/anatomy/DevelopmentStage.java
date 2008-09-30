@@ -2,8 +2,12 @@ package org.zfin.anatomy;
 
 import java.io.Serializable;
 
-public class DevelopmentStage  implements Serializable {
+public class DevelopmentStage  implements Serializable, Comparable<DevelopmentStage> {
 
+    public static final String ZYGOTE_STAGE = "Zygote:1-cell";
+    public static final String ZYGOTE_STAGE_ZDB_ID = "ZDB-STAGE-010723-4";
+    public static final String ADULT_STAGE = "Adult";
+    public static final String ADULT_STAGE_ZDB_ID = "ZDB-STAGE-010723-39";
     public static final String UNSPECIFIED = "unspecified";
     public static final String UNKNOWN = "unknown";
 
@@ -97,6 +101,35 @@ public class DevelopmentStage  implements Serializable {
         return name.substring(0, colonIndex);
     }
 
+    /**
+     * Checks if the provided development stage comes after the stage of this object.
+     * If they are the same it returns false;
+     * @param stage stage
+     * @return boolean
+     */
+    public boolean earlierThan(DevelopmentStage stage){
+        if(stage == null)
+            throw new RuntimeException("No valid stage object provided for comparison.");
+
+        if(this == stage)
+            return false;
+
+        if(this.getName().equals(UNKNOWN))
+            return true;
+
+        if(stage.getName().equals(UNKNOWN))
+            return false;
+
+        return hoursStart <= stage.getHoursStart();
+
+    }
+
+    public int compareTo(DevelopmentStage anotherStage) {
+        if (anotherStage == null)
+            return +1;
+        return (int)(hoursStart - anotherStage.getHoursStart());
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Developmental Stage [BO]");
@@ -116,4 +149,7 @@ public class DevelopmentStage  implements Serializable {
         return sb.toString();
     }
 
+    public boolean equals(DevelopmentStage anotherStage) {
+        return anotherStage.getZdbID().equalsIgnoreCase(zdbID);
+    }
 }

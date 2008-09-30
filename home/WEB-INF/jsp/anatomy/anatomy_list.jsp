@@ -39,11 +39,11 @@
                 <c:choose>
                     <c:when test="${formBean.stageSearch}">
                         <zfin:hightlight highlightEntity="${ao.anatomyItem.name}"
-                                         hightlightString="${formBean.highlightText}"/>
+                                         highlightString="${formBean.highlightText}"/>
                     </c:when>
                     <c:otherwise>
                         <zfin:hightlight highlightEntity="${ao.anatomyItem.name}"
-                                         hightlightString="${formBean.searchTerm}"/>
+                                         highlightString="${formBean.searchTerm}"/>
                     </c:otherwise>
                 </c:choose>
             </a>
@@ -61,11 +61,11 @@
                             <c:choose>
                                 <c:when test="${formBean.stageSearch}">
                                     <zfin:hightlight highlightEntity="${ao.formattedSynonymList}"
-                                                     hightlightString="${formBean.highlightText}"/>
+                                                     highlightString="${formBean.highlightText}"/>
                                 </c:when>
                                 <c:otherwise>
                                     <zfin:hightlight highlightEntity="${ao.formattedSynonymList}"
-                                                     hightlightString="${formBean.searchTerm}"/>
+                                                     highlightString="${formBean.searchTerm}"/>
                                 </c:otherwise>
                             </c:choose>
                         </span>

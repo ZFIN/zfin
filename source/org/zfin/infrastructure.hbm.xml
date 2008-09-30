@@ -20,37 +20,50 @@
     <class name="org.zfin.infrastructure.ActiveData" table="zdb_active_data">
         <id name="zdbID" type="string">
             <column name="zactvd_zdb_id" not-null="true"/>
-         </id>
-
+        </id>
     </class>
 
     <class name="org.zfin.infrastructure.ActiveSource" table="zdb_active_source">
         <id name="zdbID" type="string">
             <column name="zactvs_zdb_id" not-null="true"/>
-         </id>
+        </id>
     </class>
 
     <class name="org.zfin.infrastructure.RecordAttribution" table="record_attribution">
         <composite-id>
             <key-property name="dataZdbID" column="recattrib_data_zdb_id" type="string"/>
             <key-property name="sourceZdbID" column="recattrib_source_zdb_id" type="string"/>
+            <key-property name="sourceType" column="recattrib_source_type"/>
         </composite-id>
-        <property name="sourceType" column="recattrib_source_type" type="string"/>
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(recattrib_source_zdb_id)
+                                    WHEN 'PUB' THEN 'Publication'
+                                    WHEN 'PERS' THEN 'Person'
+                                    WHEN 'COMPANY' THEN 'Company'
+                                    WHEN 'JRNL' THEN 'Journal'
+                                    ELSE             'other'
+                                 END)"/>
+
+        <subclass name="org.zfin.infrastructure.PublicationAttribution" discriminator-value="Publication">
+            <many-to-one name="publication" column="recattrib_source_zdb_id" insert="false" update="false"/>
+        </subclass>
+
     </class>
+
     <class name="org.zfin.infrastructure.Updates" table="updates">
-            <id name="ID"  type="long">
-                <column name="upd_pk_id" not-null="true"/>
-                <generator class="identity"/>
-            </id>
-            <property name="submitterID" column="submitter_id" type="string"/>
-            <property name="recID" column="rec_id" type="string"/>
-            <property name="fieldName" column="field_name" type="string"/>
-            <property name="newValue" column="new_value" type="string"/>
-            <property name="oldValue" column="old_value" type="string"/>
-            <property name="comments" column="comments" type="string"/>
-            <property name="submitterName" column="submitter_name" type="string"/>
-            <property name="whenUpdated" column="when" type="date"/>
-        </class>
+        <id name="ID" type="long">
+            <column name="upd_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <property name="submitterID" column="submitter_id" type="string"/>
+        <property name="recID" column="rec_id" type="string"/>
+        <property name="fieldName" column="field_name" type="string"/>
+        <property name="newValue" column="new_value" type="string"/>
+        <property name="oldValue" column="old_value" type="string"/>
+        <property name="comments" column="comments" type="string"/>
+        <property name="submitterName" column="submitter_name" type="string"/>
+        <property name="whenUpdated" column="when" type="date"/>
+    </class>
 
     <class name="org.zfin.infrastructure.DataNote" table="data_note">
         <id name="zdbID">
@@ -66,22 +79,22 @@
         <property name="note">
             <column name="dnote_text"/>
         </property>
-         <property name="date">
-             <column name="dnote_date"/>
-         </property>
+        <property name="date">
+            <column name="dnote_date"/>
+        </property>
         <many-to-one name="curator" column="dnote_curator_zdb_id"
                      class="org.zfin.people.Person"/>
     </class>
 
-    <class name="org.zfin.infrastructure.DataAliasGroup" table="alias_group" >
-        <id name="name" column="aliasgrp_name" />
-        <property name="significance" column="aliasgrp_significance" />
+    <class name="org.zfin.infrastructure.DataAliasGroup" table="alias_group">
+        <id name="name" column="aliasgrp_name"/>
+        <property name="significance" column="aliasgrp_significance"/>
     </class>
 
-    <class name="org.zfin.infrastructure.ZdbFlag" table="zdb_flag" >
+    <class name="org.zfin.infrastructure.ZdbFlag" table="zdb_flag">
         <id name="type" column="zflag_name" type="zdbFlagType"/>
-        <property name="systemUpdateDisabled" column="zflag_is_on" />
-        <property name="dateLastModified" column="zflag_last_modified" />
+        <property name="systemUpdateDisabled" column="zflag_is_on"/>
+        <property name="dateLastModified" column="zflag_last_modified"/>
     </class>
 
     <class name="org.zfin.infrastructure.DataAlias" table="data_alias">
@@ -94,9 +107,10 @@
         </id>
 
         <discriminator type="string"
-                       formula="(CASE dalias_data_zdb_id[5,8]
+                       formula="(CASE get_obj_type(dalias_data_zdb_id)
                                     WHEN 'ANAT' THEN 'Anatomy'
                                     WHEN 'GENE' THEN 'Gene'
+                                    WHEN 'ATB' THEN 'Gene'
                                     ELSE             'other'
                                  END)"/>
 
@@ -110,15 +124,80 @@
             <column name="dalias_group"/>
         </property>
 
+        <set name="sources" lazy="true" table="record_attribution">
+            <key column="recattrib_data_zdb_id" foreign-key="recattrib_data_zdb_id"/>
+            <many-to-many class="org.zfin.infrastructure.ActiveSource" column="recattrib_source_zdb_id"/>
+        </set>
+
+        <set name="publications" lazy="true" order-by="">
+            <key column="recattrib_data_zdb_id"/>
+            <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
+        </set>
+
         <subclass name="org.zfin.anatomy.AnatomySynonym" discriminator-value="Anatomy">
-            <many-to-one name="item" column="dalias_data_zdb_id" class="org.zfin.anatomy.AnatomyItem">
-            </many-to-one>
+            <many-to-one name="item" column="dalias_data_zdb_id" class="org.zfin.anatomy.AnatomyItem"/>
         </subclass>
 
         <subclass name="org.zfin.marker.MarkerAlias" discriminator-value="Gene">
             <many-to-one name="marker" column="dalias_data_zdb_id" class="org.zfin.marker.Marker"/>
         </subclass>
 
+    </class>
+
+    <class name="org.zfin.ExternalNote" abstract="true" table="external_note">
+        <id name="zdbID">
+            <column name="extnote_zdb_id"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">EXTNOTE</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(extnote_data_zdb_id)
+                                    WHEN 'ATB' THEN 'Antibody'
+                                    WHEN 'GENO' THEN 'Genotye'
+                                    WHEN 'DBLINK' THEN 'Dblink'
+                                    ELSE             'other'
+                                 END)"/>
+
+        <property name="note" column="extnote_note"/>
+
+        <property name="type" column="extnote_note_type"/>
+
+        <set name="pubAttributions">
+            <key>
+                <column name="recattrib_data_zdb_id"/>
+            </key>
+            <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
+        </set>
+
+        <subclass name="org.zfin.antibody.AntibodyExternalNote" discriminator-value="Antibody">
+            <many-to-one name="antibody" column="extnote_data_zdb_id"/>
+        </subclass>
+
+    </class>
+
+    <class name="org.zfin.infrastructure.AllNamesFastSearch" table="all_map_names">
+        <id name="id" type="int">
+            <column name="allmapnm_serial_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(allmapnm_zdb_id)
+                                    WHEN 'ALT'  THEN 'Alt---'
+                                    WHEN 'GENO' THEN 'Geno--'
+                                    ELSE             'Marker'
+                                 END)"/>
+
+        <property name="name" column="allmapnm_name" type="string"/>
+        <property name="nameLowerCase" column="allmapnm_name_lower" type="string"/>
+        <property name="precedence" column="allmapnm_precedence" type="string"/>
+
+        <subclass name="org.zfin.infrastructure.AllMarkerNamesFastSearch" discriminator-value="Marker">
+            <many-to-one name="marker" class="org.zfin.marker.Marker" column="allmapnm_zdb_id"/>
+        </subclass>
     </class>
 
 </hibernate-mapping>

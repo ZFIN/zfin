@@ -50,7 +50,10 @@ class ItemSuggestCallback implements AsyncCallback {
                     lookup.setErrorString("Please select one term at a time without punctuation") ;
                 }
                 else{
-                    lookup.setErrorString("Term not found '"+request.getQuery()+"'") ;
+                    if(!lookup.getType().equals(LookupComposite.TYPE_SUPPLIER))
+                        lookup.setErrorString("Term not found '"+request.getQuery()+"'") ;
+                    else
+                        lookup.setErrorString("Supplier name '"+request.getQuery()+"' not found.") ;
                 }
             }
             callback.onSuggestionsReady(request, (SuggestOracle.Response)retValue);

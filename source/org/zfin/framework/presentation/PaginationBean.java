@@ -1,17 +1,22 @@
 package org.zfin.framework.presentation;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Basic bean object that can be used for any form bean to include pagination.
  * Inherit from this Bean and you get all the relevant request parameters from a
- * a web page. The JSP part can be found in the pagination.jsp tiles. 
+ * a web page. The JSP part can be found in the pagination.jsp tiles.
  */
 
 public class PaginationBean {
 
-    private static final int MAXPAGELINKS = 7;
+    public static final String PAGE = "page";
+    public static final int MAXPAGELINKS = 3;
+    public static final int MAX_DISPLAY_RECORDS_DEFAULT = 25;
 
     /* MAXPAGELINKS must be an odd integer that denotes the total number of
        page links to display at the bottom of each result page.  Calculate by:
@@ -19,13 +24,19 @@ public class PaginationBean {
        to include the current page in the total number of pages.
     **/
 
-    private int maxDisplayRecords = 5;
+    protected int maxDisplayRecords = MAX_DISPLAY_RECORDS_DEFAULT;
     private int totalRecords;
-    private int page = 1;
+    protected int page = 1;
     private String formLink;
 
     private String welcomeInputSubject;
-    private   String welcomeInputID;
+    private String welcomeInputID;
+    private String queryString;
+    private StringBuffer requestUrl;
+
+    // for APG pagination
+    private String actionUrl;
+    private int firstPageRecord;
 
     public int getMaxDisplayRecords() {
         return maxDisplayRecords;
@@ -52,11 +63,11 @@ public class PaginationBean {
     }
 
     public int getTotalNumPages() {
-        return (int)Math.ceil((double)totalRecords/(double)maxDisplayRecords);
+        return (int) Math.ceil((double) totalRecords / (double) maxDisplayRecords);
     }
 
     public int getFirstRecord() {
-        return ((page-1) * maxDisplayRecords + 1);
+        return ((page - 1) * maxDisplayRecords + 1);
     }
 
     public int getLastRecord() {
@@ -64,26 +75,26 @@ public class PaginationBean {
     }
 
     public int getPreviousPage() {
-        return page-1;
+        return page - 1;
     }
 
     public int getNextPage() {
-        return page+1;
+        return page + 1;
     }
 
     public List<Integer> getPageList() {
         int totalPages = getTotalNumPages();
         List<Integer> pageList = new ArrayList<Integer>();
-        for (int i = MAXPAGELINKS/2; i > 0; i--) {
-            if (page-i > 0)
-                pageList.add(page-i);
+        for (int i = MAXPAGELINKS / 2; i > 0; i--) {
+            if (page - i > 0)
+                pageList.add(page - i);
         }
 
         pageList.add(page);
 
-        for (int i = 1; i <= MAXPAGELINKS/2; i++) {
-            if (page+i <= totalPages)
-                pageList.add(page+i);
+        for (int i = 1; i <= MAXPAGELINKS / 2; i++) {
+            if (page + i <= totalPages)
+                pageList.add(page + i);
         }
 
         return pageList;
@@ -105,15 +116,31 @@ public class PaginationBean {
         return page == getTotalNumPages();
     }
 
-    public void addRequestParameter(String name, String value){
-           formLink += "&" + name + "=" + value;
+    public boolean isElisionForHigherPages() {
+        return (getTotalNumPages() - page) >= (MAXPAGELINKS + 3) / 2;
+    }
+
+    public boolean isShowLastPage() {
+        return page + (MAXPAGELINKS - 1) / 2 < getTotalNumPages();
+    }
+
+    public boolean isShowFirstPage() {
+        return page - (MAXPAGELINKS - 1) / 2 > 1;
+    }
+
+    public boolean isElisionForLowerPages() {
+        return page > (MAXPAGELINKS + 3) / 2;
+    }
+
+    public void addRequestParameter(String name, String value) {
+        formLink += "&" + name + "=" + value;
     }
 
     public String getFormLink() {
         return formLink;
     }
 
-    public boolean isPaginationNeeded(){
+    public boolean isPaginationNeeded() {
         return totalRecords > maxDisplayRecords;
     }
 
@@ -131,5 +158,54 @@ public class PaginationBean {
 
     public void setWelcomeInputID(String welcomeInputID) {
         this.welcomeInputID = welcomeInputID;
+    }
+
+    public String getActionUrl() {
+        if (!StringUtils.isEmpty(actionUrl))
+            return actionUrl;
+        if (StringUtils.isEmpty(queryString))
+            return "";
+
+        int indexOfPageParam = queryString.indexOf(PAGE);
+        String newQueryString = queryString;
+        if (indexOfPageParam > -1) {
+            newQueryString = queryString.substring(0, indexOfPageParam);
+            String remainingHalfOfQueryString = queryString.substring(indexOfPageParam + PAGE.length());
+            int indexOfAtSign = remainingHalfOfQueryString.indexOf("&");
+            newQueryString += remainingHalfOfQueryString.substring(indexOfAtSign + 1);
+        }
+        StringBuffer sb = new StringBuffer(requestUrl);
+        sb.append("?");
+        sb.append(newQueryString);
+        return sb.toString();
+
+    }
+
+    public void setActionUrl(String actionUrl) {
+        this.actionUrl = actionUrl;
+    }
+
+    public int getFirstRecordOnPage() {
+        return (page - 1) * maxDisplayRecords + 1;
+    }
+
+    public int getFirstPageRecord() {
+        return firstPageRecord;
+    }
+
+    public void setFirstPageRecord(int firstPageRecord) {
+        this.firstPageRecord = firstPageRecord;
+    }
+
+    public String getQueryString() {
+        return queryString;
+    }
+
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
+
+    public void setRequestUrl(StringBuffer requestUrl) {
+        this.requestUrl = requestUrl;
     }
 }

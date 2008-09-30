@@ -668,6 +668,9 @@ public class SearchBean
 	    else if (theMatchId.startsWith("ZDB-ANAT")) {
 		viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + theMatchId;
 	    }
+	    else if (theMatchId.startsWith("ZDB-ATB")) {
+		viewPageUrl = "/action/antibody/detail?antibody.zdbID=" + theMatchId;
+	    }
 	    else {
 		viewPageUrl = "/"+ envWebdriverLoc + "/webdriver?MIval=aa-markerview.apg&OID=" + theMatchId;
 	    }

@@ -45,6 +45,34 @@
 -- Marker Relationship data
 --	marker1 id, marker1 symbol, marker 2 id, marker 2 symbol, relationship
 
+-- create antibody download file
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies.txt'
+  DELIMITER "	"
+  select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name, atb_immun_organism, atb_host_organism
+    from marker, antibody
+   where mrkr_zdb_id = atb_zdb_id order by 1;
+
+-- create antibody expression download file
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibody_expressions.txt'
+  DELIMITER "	"
+  select mrkr_zdb_id, xpatres_anat_item_zdb_id, anatitem_name, goterm_go_id, goterm_name
+    from marker, expression_experiment, expression_result, outer go_term, anatomy_item, genotype_experiment, experiment, genotype
+  where 
+	xpatres_xpatex_zdb_id = xpatex_zdb_id
+	AND xpatex_atb_zdb_id = mrkr_zdb_id
+	AND mrkr_zdb_id = 'ATB'
+	AND  xpatres_go_term_zdb_id = goterm_zdb_id
+	AND anatitem_zdb_id = xpatres_anat_item_zdb_id
+	AND xpatex_genox_zdb_id = genox_zdb_id 
+	AND genox_exp_zdb_id = exp_zdb_id
+	AND exp_name in= '_Standard'
+	AND xpatres_expression_found = 't'
+	AND geno_zdb_id = genox_geno_zdb_id
+	AND geno_is_wildtype
+	order by mrkr_abbrev_order;
+
+-- create all marker file
+
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genetic_markers.txt'
   DELIMITER "	"
   select mrkr_zdb_id, mrkr_abbrev, mrkr_name, mrkr_type

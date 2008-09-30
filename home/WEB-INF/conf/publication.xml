@@ -2,9 +2,49 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <!--
-  - Application context definitions for the publication pages
-  -->
+- Application context definitions for the publication pages
+-->
 <beans>
+
+    <bean id="publicationUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/publication/publication-list">showPublicationList</prop>
+                <prop key="/antibody/publication-list">showPublicationList</prop>
+                <prop key="/antibody/alias-publication-list">showPublicationList</prop>
+                <prop key="/antibody/relationship-publication-list">showPublicationList</prop>
+                <prop key="/marker/snp-publication-list">showPublicationList</prop>
+                <prop key="/antibody/disassociate-publication">showPublicationList</prop>
+                <prop key="/antibody/add-publication">showPublicationList</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="publicationActionResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+        <property name="mappings">
+            <props>
+                <prop key="/antibody/publication-list">antibodyPublicationListHandler</prop>
+                <prop key="/antibody/alias-publication-list">aliasPublicationListHandler</prop>
+                <prop key="/antibody/relationship-publication-list">relationshipPublicationListHandler</prop>
+                <prop key="/marker/snp-publication-list">snpPublicationListHandler</prop>
+                <prop key="/antibody/disassociate-publication">disassociatePublicationListHandler</prop>
+                <prop key="/antibody/add-publication">associatePublicationHandler</prop>
+            </props>
+
+        </property>
+
+    </bean>
+
+    <bean name="showPublicationList" class="org.zfin.publication.presentation.PublicationListController">
+        <property name="methodNameResolver" ref="publicationActionResolver"/>
+        <property name="validatorMap" >
+            <map>
+                <entry key="add-publication">
+                    <bean class="org.zfin.publication.presentation.AddPublicationValidator"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
 
     <bean name="publicationSearchResult" class="org.zfin.publication.presentation.PublicationSearchResultController"/>
 

@@ -62,11 +62,11 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
         this.numberOfTotalDistinctObjects = numberOfTotalDistinctObjects;
     }
 
-    public String getFormattedGeneNumber(){
+    public String getFormattedGeneNumber() {
         return geneChoice.format(numberOfObjects);
     }
 
-    public String getFormattedSynonymNumber(){
+    public String getFormattedSynonymNumber() {
         return synonymChoice.format(numberOfSynonyms);
     }
 
@@ -99,16 +99,17 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
         return AnatomyPresentation.createFormattedSynonymList(anatomyItem);
     }
 
-    public String getIndentationLevel(){
-        if(treeInfo == null)
+    public String getIndentationLevel() {
+        if (treeInfo == null)
             return "0";
         else
-        return "" + (treeInfo.getIndent()-1) * 10;
+            return "" + (treeInfo.getIndent() - 1) * 10;
     }
 
 
     /**
      * Allow sorting by case insensitive anatomy item name.
+     *
      * @param anatCompare
      * @return integer that indicates comparison.
      */
@@ -118,17 +119,17 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
         return name.toLowerCase().compareTo(compName.toLowerCase());
     }
 
-    public enum Type{
-         GENE, GENO ;
+    public enum Type {
+        GENE, GENO;
 
-         public String toString() {
+        public String toString() {
             return name();
         }
 
-         
+
     }
 
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("AnatomyStatistics:");
         sb.append(NEWLINE);
@@ -157,11 +158,13 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
         return sb.toString();
     }
 
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
+        if (!(o instanceof AnatomyStatistics))
+            return false;
         return anatomyItem.equals(o);
     }
 
-    public int hashCode(){
+    public int hashCode() {
         return anatomyItem.hashCode();
     }
 

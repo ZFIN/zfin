@@ -9,13 +9,17 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.antibody.Antibody;
+import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.*;
+import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
 import org.zfin.mutant.repository.MutantRepository;
@@ -35,9 +39,10 @@ public class AnatomyTermDetailController extends AbstractCommandController {
 
     private static final Logger LOG = Logger.getLogger(AnatomyTermDetailController.class);
 
+    private AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
+    private AnatomyRepository anatomyRepository;
+    private MutantRepository mutantRepository;
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-    private AnatomyRepository anatomyRepository; // can be set through the bean
-    private MutantRepository mutantRepository;   // can be set through the bean
 
     public AnatomyTermDetailController() {
         setCommandClass(AnatomySearchBean.class);
@@ -53,6 +58,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
 
         retrieveExpressedGenesData(term, form);
         retrieveHighQualityProbeData(term, form);
+        retrieveAntibodyData(term, form);
         retrieveMutantData(term, form);
         retrieveMorpholinoData(term, form);
 
@@ -137,6 +143,8 @@ public class AnatomyTermDetailController extends AbstractCommandController {
      *  Note: method 1 - very slow to do one query and then split
      *  because you need to rehydrate each instance
      *  in order to compare. So instead did as two separate queries.
+     * @param ai ao term
+     * @param form form bean
      */
     private void retrieveMorpholinoData(AnatomyItem ai, AnatomySearchBean form) {
 
@@ -170,6 +178,30 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         List<MorpholinoStatistics> mutantMorphStats = createMorpholinoStats(nonWildtypeExperiments, ai);
         form.setNonWildtypeMorpholinos(mutantMorphStats);
 
+    }
+
+    private void retrieveAntibodyData(AnatomyItem aoTerm, AnatomySearchBean form) {
+
+        int antibodyCount = antibodyRepository.getAntibodiesByAOTermCount(aoTerm);
+        form.setAntibodyCount(antibodyCount);
+
+        PaginationBean pagination = new PaginationBean();
+        pagination.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+        List<Antibody> antibodies = antibodyRepository.getAntibodiesByAOTerm(aoTerm, pagination);
+        List<AntibodyStatistics> abStats = createAntibodyStatistics(antibodies, aoTerm);
+        form.setAntibodyStatistics(abStats);
+    }
+
+    private List<AntibodyStatistics> createAntibodyStatistics(List<Antibody> antibodies, AnatomyItem aoTerm) {
+        if (antibodies == null)
+            return null;
+
+        List<AntibodyStatistics> stats = new ArrayList<AntibodyStatistics>();
+        for (Antibody antibody : antibodies) {
+            AntibodyStatistics stat = new AntibodyStatistics(antibody, aoTerm);
+            stats.add(stat);
+        }
+        return stats;
     }
 
     /**

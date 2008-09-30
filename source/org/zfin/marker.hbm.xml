@@ -17,6 +17,14 @@
         <param name="enumClassname">org.zfin.infrastructure.DataAlias$Group</param>
     </typedef>
 
+    <typedef class="org.zfin.database.StringEnumUserType" name="antibodyType">
+        <param name="enumClassname">org.zfin.antibody.AntibodyType</param>
+    </typedef>
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="species">
+        <param name="enumClassname">org.zfin.Species$Kind</param>
+    </typedef>
+
     <typedef class="org.zfin.database.StringEnumUserType" name="cloneProblemType">
         <param name="enumClassname">org.zfin.marker.Clone$ProblemType</param>
     </typedef>
@@ -58,7 +66,10 @@
         <many-to-one name="firstMarker" class="org.zfin.marker.Marker" column="mrel_mrkr_1_zdb_id" lazy="no-proxy"/>
         <many-to-one name="secondMarker" class="org.zfin.marker.Marker" column="mrel_mrkr_2_zdb_id" lazy="no-proxy"/>
 
-
+        <set name="publications" lazy="true" order-by="">
+            <key column="recattrib_data_zdb_id" />
+            <one-to-many class="org.zfin.infrastructure.PublicationAttribution" />
+        </set>
     </class>
 
 
@@ -82,11 +93,9 @@
                      class="org.zfin.people.Person"
                      not-null="true"/>
 
-
         <many-to-one name="markerType" column="mrkr_type"
                      foreign-key="mrkr_type" not-null="true"
                      class="org.zfin.marker.MarkerType"/>
-
 
         <property name="abbreviationOrder">
             <column name="mrkr_abbrev_order"/>
@@ -100,7 +109,6 @@
             <key column="dblink_linked_recid"/>
             <one-to-many class="org.zfin.sequence.MarkerDBLink"/>
         </set>
-
 
         <set name="probeExpressionExperiments" lazy="true">
             <key column="xpatex_probe_feature_zdb_id"/>
@@ -136,12 +144,53 @@
             <key column="marker_id"/>
             <one-to-many class="org.zfin.mapping.MappedMarker"/>
         </set>
-
+        
         <!-- ToDo: This should be mapped as a many-to-one or even better part of a Gene class -->
         <set name="familyName" lazy="true" table="genedom_family_member">
             <key column="gfammem_mrkr_zdb_id"/>
             <many-to-many column="gfammem_gfam_name" class="org.zfin.marker.MarkerFamilyName"/>
         </set>
+
+        <set name="suppliers">
+            <key column="idsup_data_zdb_id" update="false"/>
+            <one-to-many class="org.zfin.people.MarkerSupplier" />
+        </set>
+
+        <set name="aliases" lazy="true" table="data_alias"  order-by="dalias_alias_lower">
+            <key column="dalias_data_zdb_id" />
+            <one-to-many class="org.zfin.marker.MarkerAlias" />
+        </set>
+
+        <set name="publications" lazy="true" order-by="">
+            <key column="recattrib_data_zdb_id" />
+            <one-to-many class="org.zfin.infrastructure.PublicationAttribution" />
+        </set>
+
+        <joined-subclass name="org.zfin.antibody.Antibody" table="antibody">
+            <key column="atb_zdb_id" />
+
+            <property name="clonalType" column="atb_type"/>
+
+            <property name="immunogenSpecies" column="atb_immun_organism" />
+
+            <property name="hostSpecies" column="atb_host_organism" />
+
+            <property name="heavyChainIsotype" column="atb_hviso_name" />
+
+            <property name="lightChainIsotype" column="atb_ltiso_name" />
+            
+            <set name="antibodyLabelings" lazy="true">
+                <key column="xpatex_atb_zdb_id" />
+                <one-to-many class="org.zfin.expression.ExpressionExperiment" />
+            </set>
+
+            <set name="externalNotes" lazy="true">
+                <key column="extnote_data_zdb_id" />
+                <one-to-many class="org.zfin.antibody.AntibodyExternalNote" />
+            </set>
+            
+        </joined-subclass>
+
     </class>
 
     <class name="MarkerFamilyName" table="genedom_family_name">

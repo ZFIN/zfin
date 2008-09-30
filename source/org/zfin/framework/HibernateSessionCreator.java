@@ -65,7 +65,8 @@ public class HibernateSessionCreator {
         config.setProperty("hibernate.connection.autocommit", "false");
         config.setProperty("hibernate.connection.isolation", "1");
         config.setProperty("hibernate.show_sql", Boolean.toString(showSql));
-//        config.setProperty("hibernate.format_sql", "true");
+        config.setProperty("hibernate.format_sql", "true");
+        config.setProperty("hibernate.cglib.use_reflection_optimizer", "false");
 //        config.setProperty("hibernate.use_sql_comments", "true");
         return config;
     }

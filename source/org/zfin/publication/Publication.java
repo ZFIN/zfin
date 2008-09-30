@@ -7,12 +7,13 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.Set;
 import java.util.GregorianCalendar;
+import java.util.Calendar;
 import java.io.Serializable;
 
 /**
  * ToDo:
  */
-public class Publication {
+public class Publication implements Comparable<Publication>, Serializable {
 
     private String zdbID;
     private String title;
@@ -30,9 +31,12 @@ public class Publication {
     private Set<ExpressionExperiment> expressionExperiments;
     private Set<Figure> figures;
 
+    private boolean deletable;
+
     //todo: make type into a proper enum, with tests
     //for now I only need one value, so I'll just be quick and dirty
     public static final String CURATION = "Curation";
+    public static final String UNPUBLISHED = "Unpublished";
 
     public String getZdbID() {
         return zdbID;
@@ -178,8 +182,9 @@ public class Publication {
 
     }
 
-
-
+    public int getYear() {
+       return publicationDate.get(Calendar.YEAR);
+    }
 
     public String toString() {
         String newline = System.getProperty("line.separator");
@@ -192,6 +197,30 @@ public class Publication {
         sb.append("ZDB ID: " + zdbID);
         return sb.toString();
     }
-    
-    
+
+    public int compareTo(Publication anotherPublication) {
+        if (publicationDate == null)
+            return -1;
+        if (anotherPublication.getPublicationDate() == null)
+            return +1;
+        int publicationComparison = 0 - publicationDate.compareTo(anotherPublication.getPublicationDate());
+        if (publicationComparison != 0)
+            return publicationComparison;
+
+        // in case the 2 publications have the same publication dates,
+        // compare the authors
+        return authors.compareToIgnoreCase(anotherPublication.getAuthors());
+    }
+
+    public boolean isUnpublished() {
+        return (type.equalsIgnoreCase(Publication.CURATION) || type.equalsIgnoreCase(Publication.UNPUBLISHED));
+    }
+
+    public boolean isDeletable() {
+        return deletable;
+    }
+
+    public void setDeletable(boolean deletable) {
+        this.deletable = deletable;
+    }
 }

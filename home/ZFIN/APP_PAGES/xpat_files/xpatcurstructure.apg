@@ -58,6 +58,7 @@ EFFECTS
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
 
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
 <link href="/phenote/css/control.css" type="text/css" rel="stylesheet">
@@ -110,14 +111,19 @@ EFFECTS
            case anatitem_name
              when 'unspecified' then '<font color=orange>unspecified</font>'
              else anatitem_name
-           end
+           end,
+        xpatinf_go_term_zdb_id
         from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2
         where xpatinf_pub_zdb_id = '$OID'
           and xpatinf_anatitem_zdb_id = anatitem_zdb_id
           and anatitem_start_stg_zdb_id = s1.stg_zdb_id
           and anatitem_end_stg_zdb_id = s2.stg_zdb_id;">
-        <?MIVAR NAME=xpcurstr_xpatinf_zdb_minus>$(REPLACE,$1,"-","")<?/MIVAR>        
-          
+        <?MIVAR NAME=xpcurstr_xpatinf_zdb_minus>$(REPLACE,$1,"-","")<?/MIVAR>       <?MIBLOCK COND="$(NE,$5,NULL)"> 
+<?MIVAR NAME=xpcurstr_xpatinf_goterm_zdb_minus>$(REPLACE,$5,"-","")<?/MIVAR>  
+<?MIELSE>
+
+<?MIVAR NAME=xpcurstr_xpatinf_goterm_zdb_minus><?/MIVAR>  
+    <?/MIBLOCK>
         var xpinf$xpcurstr_xpatinf_zdb_minus = new Array();
         xpinf$xpcurstr_xpatinf_zdb_minus$xpcurstrOB$(+,0,0)$xpcurstrCB = 'str$xpcurstr_xpatinf_zdb_minus';
         xpinf$xpcurstr_xpatinf_zdb_minus$xpcurstrOB$(+,0,1)$xpcurstrCB = $2 ;
@@ -150,8 +156,23 @@ EFFECTS
           
         var $xpcurstr_xpress_name = new Array();
         $xpcurstr_xpress_name$xpcurstrOB$(+,0,0)$xpcurstrCB = '$1$2$3$4';
-        
-          <?MISQL SQL="
+
+       <?MISQL SQL="
+            SELECT distinct xpatinf_zdb_id, anatitem_name
+              FROM expression_pattern_infrastructure, anatomy_item,
+                   expression_result, expression_pattern_figure
+             WHERE xpatinf_anatitem_zdb_id = xpatres_anat_item_zdb_id
+               AND xpatinf_go_term_zdb_id=xpatres_go_term_zdb_id
+               AND xpatinf_anatitem_zdb_id = anatitem_zdb_id
+               AND xpatinf_expressed = xpatres_expression_found
+               AND xpatinf_pub_zdb_id = '$OID'
+               AND xpatres_zdb_id = xpatfig_xpatres_zdb_id
+               AND xpatfig_fig_zdb_id = '$xpcurstr_fig_zdb_id'
+               AND xpatres_xpatex_zdb_id = '$xpcurstr_xpatex_zdb_id'
+               AND xpatres_start_stg_zdb_id = '$xpcurstr_sstage_zdb_id'
+               AND xpatres_end_stg_zdb_id = '$xpcurstr_estage_zdb_id'
+               and xpatres_go_term_zdb_id is not null
+             UNION
             SELECT distinct xpatinf_zdb_id, anatitem_name
               FROM expression_pattern_infrastructure, anatomy_item,
                    expression_result, expression_pattern_figure
@@ -164,7 +185,9 @@ EFFECTS
                AND xpatres_xpatex_zdb_id = '$xpcurstr_xpatex_zdb_id'
                AND xpatres_start_stg_zdb_id = '$xpcurstr_sstage_zdb_id'
                AND xpatres_end_stg_zdb_id = '$xpcurstr_estage_zdb_id'
+               AND xpatres_go_term_zdb_id is null and xpatinf_go_term_zdb_id is null
              ORDER BY anatitem_name;"> 
+ 
         
             <?MIVAR NAME=xpcurstr_anat_count>$(+,$xpcurstr_anat_count,1)<?/MIVAR>
             $xpcurstr_xpress_name$xpcurstrOB$xpcurstr_anat_count$xpcurstrCB = '$1'
@@ -246,7 +269,6 @@ EFFECTS
       for(z=0; z<xpatinfArray.length; z++)
       {
         array1 = xpatinfArray[z];
-
         document.forms['panel_structures'].elements[array1[4]][0].click();                
       }              
             
@@ -259,11 +281,9 @@ EFFECTS
       for(i=0; i<fig_xpat_stg_selected_array.length; i++)
       {
           exp_checked = fig_xpat_stg_selected_array[i];       
-
           for (j=0; j<xpressArray.length; j++)
           {
             xpressStructure = xpressArray[j];
-            
             if (exp_checked[6]+exp_checked[7]+exp_checked[8]+exp_checked[9] == xpressStructure[0])
             {
                 if (stage_hours_start < exp_checked[10])
@@ -465,12 +485,13 @@ EFFECTS
            end,
            xpatinf_expressed, anatitem_name_order, xpatinf_zdb_id, 
            s1.stg_abbrev, s2.stg_abbrev, 
-           anatitem_obo_id
-    from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2
+           anatitem_obo_id, goterm_name
+    from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2, OUTER(go_term)
     where xpatinf_anatitem_zdb_id = anatitem_zdb_id
       and xpatinf_pub_zdb_id = '$OID'
       and anatitem_start_stg_zdb_id = s1.stg_zdb_id
       and anatitem_end_stg_zdb_id = s2.stg_zdb_id
+      and xpatinf_go_term_zdb_id=goterm_zdb_id
     order by anatitem_name_order, xpatinf_expressed;">
 
     <?MIVAR NAME=$xpcurstr_anatitem_zdb_id>$1<?/MIVAR>
@@ -481,6 +502,16 @@ EFFECTS
     <?MIVAR NAME=$xpcurstr_start_stg_name>$6<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_end_stg_name>$7<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_obo_id>$8<?/MIVAR>
+    <?MIVAR NAME=$xpcurstr_goterm_name>$9<?/MIVAR>
+    <?MIVAR NAME=xpcurstr_xpatinf_goterm_zdb_minus>$(REPLACE,$9,"-","")<?/MIVAR>
+    <?MIBLOCK COND="$(NE,xpcurstr_xpatinf_goterm_name,NULL)">
+       <?MIVAR NAME=$xpcurstr_goterm_name>$9<?/MIVAR>
+       <?MIVAR NAME=xpcurstr_xpatinf_goterm_zdb_minus>$(REPLACE,$9,"-","")<?/MIVAR>
+    <?MIELSE>
+       <?MIVAR NAME=$xpcurstr_goterm_name><?/MIVAR>
+    <?/MIBLOCK>
+
+ 
     <?MIVAR NAME=$row_id>$5<?/MIVAR>
     <?MIVAR>
 
@@ -492,7 +523,7 @@ EFFECTS
         <input type=radio 
                  name="$xpcurstr_xpatinf_zdb_id" 
                  value="ignore" 
-                 $(IF,$(=,0,$(POSITION,$xpcur_c_anatitem_add_csv,$xpcurstr_anatitem_zdb_id$xpcurstr_expression_found,1)),CHECKED)>
+                 $(IF,$(=,0,$(POSITION,$xpcur_c_anatitem_add_csv,$xpcurstr_anatitem_zdb_id$xpcurstr_expression_found$xpcurstr_goterm_name,1)),CHECKED)>
       </td>
       <td align=center>
          <input type=radio 
@@ -504,7 +535,7 @@ EFFECTS
                name="$xpcurstr_xpatinf_zdb_id" 
                value="add" 
                <?MIVAR COND="$(AND,$(XST,$xpcurstr_unspecied_id),$(NC,$xpcurstr_xpatinf_zdb_id,$xpcurstr_unspecied_id))">onClick="document.forms['panel_structures'].elements['$xpcurstr_unspecied_id'][1].click();"<?/MIVAR>
-               $(IF,$(!=,0,$(POSITION,$xpcur_c_anatitem_add_csv,$xpcurstr_anatitem_zdb_id$xpcurstr_expression_found,1)),CHECKED)>
+               $(IF,$(!=,0,$(POSITION,$xpcur_c_anatitem_add_csv,$xpcurstr_anatitem_zdb_id$xpcurstr_expression_found$xpcurstr_goterm_name,1)),CHECKED)>
       </td>
       
       <td align=center onClick="increment_radio_button(document.forms['panel_structures'].elements['$xpcurstr_xpatinf_zdb_id']);"> $(IF,$(EC,$xpcurstr_expression_found,t),,<font color=red>not</font>) </td>
@@ -516,14 +547,14 @@ EFFECTS
         <?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
           <?MIVAR>
           <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><b><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></b></a>
-           ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
+          $(IF,$(NE,$xpcurstr_goterm_name,),:$xpcurstr_goterm_name,)($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
         <?MIELSE>
           <?MICOMMENT>
           <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
           <?/MICOMMENT>
           <?MIVAR>
           <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></a>
-           ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
+           $(IF,$(NE,$xpcurstr_goterm_name,),:$xpcurstr_goterm_name,)($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
         <?/MIBLOCK>
       </td>
       <td>
@@ -560,21 +591,28 @@ EFFECTS
   <table>
    <tr>
      <td valign="top" >
-     <small>Add a single term</small><br>
+     <small>Add terms</small><br>
         <input type=hidden name="xpcur_G_structure_add">   
 
 
-  Term:
+  AO Term:
 
 
   <input type="text" size="50" name="xpcur_G_AO_term" id="xpcurstr_AOterm" autocomplete="off">
   <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="xpcurstr_AOterm_autocomplete"></div>
+<span id="AO_term_indicator" style="display: none; color: red;">working...</span>
+<br>
+<p>
+  CC Term:
 
-  <br>
+
+  <input type="text" size="50" name="xpcur_G_CC_term" id="xpcurstr_CCterm" autocomplete="off">
+  <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="xpcurstr_CCterm_autocomplete"></div>
+<span id="CC_term_indicator" style="display: none; color: red;">working...</span>
+<br>
   <span style="margin-left: 5em;">
   	<input id="xpcurstrDetected" name="structure_expressed" value=t type=radio CHECKED> <label for="xpcurstrDetected">Detected</label> 
         <input id="xpcurstrNotDetected" name="structure_expressed" value=f type=radio> <label for="xpcurstrNotDetected" style="color: red">not</label>
-        
         <input name="xpcur_G_structure_add_button" type="submit" value="Add" style="margin-left: 9em;">
   </span>
 
@@ -582,10 +620,12 @@ EFFECTS
   <script type="text/javascript"> 
       phenoteState.setTermInfoUrl('/phenote/Phenote/'); 
       phenoteState.setActiveField(document.getElementById('xpcurstr_AOterm'));
+      phenoteState.setActiveField(document.getElementById('xpcurstr_CCterm'));
   </script>
   <script src="/phenote/javascript/ncbo-term-info.js" type="text/javascript"></script>
   <script type="text/javascript">
-    new Ajax.Autocompleter( 'xpcurstr_AOterm', 'xpcurstr_AOterm_autocomplete', '/phenote/Phenote/', {parameters:'ontologyName=ZF&field=ENTITY',paramName: "userInput", minChars: 2} );
+    new Ajax.Autocompleter( 'xpcurstr_AOterm', 'xpcurstr_AOterm_autocomplete', '/phenote/Phenote/', {parameters:'ontologyName=ZF&field=ENTITY',paramName: "userInput", indicator: 'AO_term_indicator', minChars: 2} );
+    new Ajax.Autocompleter( 'xpcurstr_CCterm', 'xpcurstr_CCterm_autocomplete', '/phenote/Phenote/', {parameters:'ontologyName=CC&field=ENTITY',paramName: "userInput", indicator: 'CC_term_indicator', minChars: 2} );
   </script>
 
 

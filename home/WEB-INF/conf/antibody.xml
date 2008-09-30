@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <bean id="antibodyUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <!--
+                                <prop key="/antibody/create">createAntibody</prop>
+                                <prop key="/antibody/labeling-detail">labelingDetailAntibody</prop>
+                -->
+                <prop key="/antibody/detail">detailAntibody</prop>
+                <prop key="/antibody/labeling-detail">labelingDetailAntibody</prop>
+                <prop key="/antibody/figure-summary">figureSummaryAntibody</prop>
+                <prop key="/antibody/search">searchAntibody</prop>
+                <prop key="/antibody/antibodies-per-publication">perPublication</prop>
+                <prop key="/antibody/create">createAntibody</prop>
+                <prop key="/antibody/updateName">updateAntibody</prop>
+                <prop key="/antibody/update-details">updateAntibodyDetails</prop>
+                <prop key="/antibody/add-alias">updateAntibodyDetails</prop>
+                <prop key="/antibody/delete-alias">updateAntibodyDetails</prop>
+                <prop key="/antibody/delete-aliasref">updateAntibodyDetails</prop>
+                <prop key="/antibody/add-aliasattrib">updateAntibodyDetails</prop>
+                <prop key="/antibody/add-antigen">updateAntibodyDetails</prop>
+                <prop key="/antibody/delete-antigen">updateAntibodyDetails</prop>
+                <prop key="/antibody/delete-antigenref">updateAntibodyDetails</prop>
+                <prop key="/antibody/add-antigenattrib">updateAntibodyDetails</prop>
+                <prop key="/antibody/add-note">updateAntibodyDetails</prop>
+                <prop key="/antibody/add-supplier">updateAntibodyDetails</prop>
+                <prop key="/antibody/delete-supplier">updateAntibodyDetails</prop>
+                <prop key="/antibody/edit-note">updateAntibodyDetails</prop>
+                <prop key="/antibody/delete-note">updateAntibodyDetails</prop>
+                <prop key="/antibody/update-immunogen-org">updateAntibodyDetails</prop>
+                <prop key="/antibody/update-hostspecies">updateAntibodyDetails</prop>
+                <prop key="/antibody/update-heavyisotype">updateAntibodyDetails</prop>
+                <prop key="/antibody/update-lightisotype">updateAntibodyDetails</prop>
+                <prop key="/antibody/update-clonaltype">updateAntibodyDetails</prop>
+                <prop key="/antibody/update-abproperties">updateAntibodyDetails</prop>
+            </props>
+        </property>
+
+    </bean>
+
+    <bean id="actionResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+        <property name="mappings">
+            <props>
+                <prop key="/antibody/update-details">updateDetailsHandler</prop>
+                <prop key="/antibody/add-alias">addAliasHandler</prop>
+                <prop key="/antibody/delete-alias">deleteAliasHandler</prop>
+                <prop key="/antibody/delete-aliasref">deleteAliasRefHandler</prop>
+                <prop key="/antibody/add-aliasattrib">addAliasAttribHandler</prop>                
+                <prop key="/antibody/add-antigen">addAntigenHandler</prop>
+                <prop key="/antibody/delete-antigen">deleteAntigenHandler</prop>
+                <prop key="/antibody/delete-antigenref">deleteAntigenRefHandler</prop>
+                <prop key="/antibody/add-antigenattrib">addAntigenAttribHandler</prop>
+                <prop key="/antibody/add-supplier">addSupplierHandler</prop>
+                <prop key="/antibody/delete-supplier">deleteSupplierHandler</prop>
+                <prop key="/antibody/add-note">addNoteHandler</prop>
+                <prop key="/antibody/edit-note">editNoteHandler</prop>
+                <prop key="/antibody/delete-note">deleteNoteHandler</prop>
+                <prop key="/antibody/update-immunogen-org">updateImmunogenOrgHandler</prop>
+                <prop key="/antibody/update-hostspecies">updateHostSpeciesHandler</prop>
+                <prop key="/antibody/update-heavyisotype">updateHeavyIsotypeHandler</prop>
+                <prop key="/antibody/update-lightisotype">updateLightIsotypeHandler</prop>
+                <prop key="/antibody/update-clonaltype">updateClonaltypeHandler</prop>
+                <prop key="/antibody/update-abproperties">updateAbPropertiesHandler</prop>
+            </props>
+
+        </property>
+
+
+    </bean>
+
+    <bean name="detailAntibody" class="org.zfin.antibody.presentation.AntibodyDetailController"/>
+
+    <bean name="updateAntibodyDetails" class="org.zfin.antibody.presentation.AntibodyUpdateDetailController">
+        <property name="methodNameResolver" ref="actionResolver"/>
+        <property name="validatorMap" >
+            <map>
+                <entry key="add-alias">
+                    <bean class="org.zfin.antibody.presentation.UpdateAntibodyAliasValidator"/>
+                </entry>
+                <entry key="add-antigen">
+                    <bean class="org.zfin.antibody.presentation.UpdateAntibodyAntigenValidator"/>
+                </entry>
+                 <entry key="add-note">
+                    <bean class="org.zfin.antibody.presentation.UpdateAntibodyNotesValidator"/>
+                </entry>
+                <entry key="add-aliasattrib">
+                    <bean class="org.zfin.antibody.presentation.AddAliasAttribValidator"/>
+                </entry>
+                <entry key="add-antigenattrib">
+                    <bean class="org.zfin.antibody.presentation.AddAntigenAttribValidator"/>
+                </entry>
+                <entry key="add-supplier">
+                    <bean class="org.zfin.antibody.presentation.AddSupplierValidator"/>
+                </entry>
+            </map>
+        </property>
+     </bean>
+
+    <bean name="labelingDetailAntibody" class="org.zfin.antibody.presentation.AntibodyLabelingDetailController"/>
+
+    <bean name="figureSummaryAntibody" class="org.zfin.antibody.presentation.AntibodyFigureSummaryController"/>
+
+    <bean name="perPublication" class="org.zfin.antibody.presentation.AntibodiesPerPublicationController" />
+
+    <bean id="searchAntibody" class="org.zfin.antibody.presentation.AntibodySearchController">
+        <property name="successView" value="antibody-search.page"/>
+        <property name="formView" value="antibody-search.page"/>
+        <property name="commandClass" value="org.zfin.antibody.presentation.AntibodySearchFormBean"/>
+    </bean>
+
+    <bean id="createAntibody" class="org.zfin.antibody.presentation.AntibodyCreateController">
+        <property name="formView" value="antibody-create.page"/>
+        <property name="commandClass" value="org.zfin.antibody.presentation.CreateAntibodyFormBean"/>
+        <property name="validateOnBinding" value="true"/>
+        <property name="bindOnNewForm" value="true"/>
+        <property name="validator">
+            <bean class="org.zfin.antibody.presentation.CreateAntibodyFormBeanValidator"/>
+        </property>
+    </bean>
+    <bean id="updateAntibody" class="org.zfin.antibody.presentation.AntibodyUpdateController">
+        <property name="formView" value="antibody-update.page"/>
+        <property name="commandClass" value="org.zfin.antibody.presentation.UpdateAntibodyFormBean"/>
+        <property name="validateOnBinding" value="true"/>
+        <property name="bindOnNewForm" value="true"/>
+        <property name="validator">
+            <bean class="org.zfin.antibody.presentation.UpdateAntibodyFormBeanValidator"/>
+        </property>
+
+    </bean>
+    
+    <bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="customEditors">
+            <map>
+                <entry key="org.zfin.util.FilterType">
+                    <bean id="filterTypeEditor" class="org.zfin.util.FilterTypeEditor"/>
+                </entry>
+                <entry key="org.zfin.expression.Assay">
+                    <bean id="assay" class="org.zfin.expression.AssayEditor"/>
+                </entry>
+                <entry key="org.zfin.antibody.AntibodyType">
+                    <bean id="antibodyType" class="org.zfin.antibody.AntibodyTypeEditor"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>

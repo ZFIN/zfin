@@ -16,12 +16,14 @@
                 <prop key="/anatomy/high-quality-probes">highQualityProbes</prop>
                 <prop key="/anatomy/request-new-term">requestNewAnatomyTerm</prop>
                 <prop key="/anatomy/show-all-morpholino-experiments">allMorpholinoExperiments</prop>
+                <prop key="/anatomy/antibody-summary">antibodySummary</prop>
             </props>
         </property>
     </bean>
 
     <bean name="anatomyTermDetail" class="org.zfin.anatomy.presentation.AnatomyTermDetailController" autowire="byName"/>
     <bean name="anatomyTermInfo" class="org.zfin.anatomy.presentation.AnatomyTermInfoController" autowire="byName"/>
+    <bean name="antibodySummary" class="org.zfin.anatomy.presentation.AntibodySummaryController" autowire="byName"/>
 
     <bean name="anatomySearch" class="org.zfin.anatomy.presentation.AnatomySearchController" autowire="byName">
         <property name="redirectUrlIfSingleResult">

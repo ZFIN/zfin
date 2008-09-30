@@ -136,15 +136,32 @@
         <name>hightlight</name>
         <tagclass>org.zfin.framework.presentation.tags.HightlightTag</tagclass>
         <bodycontent>empty</bodycontent>
-        <info>Hightlight a sub string within a given string</info>
+        <info>Hightlight a sub string within a given string (use highlightString)
+              or a string array (use highlightEntities) which highlights only the second and following components.
+              By default the string replacement is case insensitive</info>
         <attribute>
             <name>highlightEntity</name>
-            <required>true</required>
+            <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>hightlightString</name>
-            <required>true</required>
+            <name>highlightEntities</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>highlightString</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>highlightStrings</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>caseSensitive</name>
+            <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
@@ -274,5 +291,32 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+
+    <tag>
+        <name>toggleTextLength</name>
+        <tagclass>org.zfin.framework.presentation.tags.ToggleTextLengthTag</tagclass>
+        <info>Create an HTML output string for an object</info>
+        <attribute>
+            <name>text</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>shortLength</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>shortVersion</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>escape</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
 
 </taglib>

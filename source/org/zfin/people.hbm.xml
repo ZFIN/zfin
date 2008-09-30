@@ -45,39 +45,87 @@
             <column name="on_dist_list"/>
         </property>
 
-        <one-to-one name="user" class="org.zfin.people.User"  cascade="save-update"/>
+        <one-to-one name="user" class="org.zfin.people.User" cascade="save-update"/>
 
-        <set name="labs" lazy="true" table="int_person_lab" >
+        <set name="labs" lazy="true" table="int_person_lab">
             <key column="source_id"/>
-            <many-to-many class="org.zfin.people.Lab" column="target_id" />
+            <many-to-many class="org.zfin.people.Lab" column="target_id"/>
         </set>
 
         <set name="publications" lazy="true" table="int_person_pub">
             <key column="source_id"/>
-            <many-to-many class="org.zfin.publication.Publication" column="target_id" />
+            <many-to-many class="org.zfin.publication.Publication" column="target_id"/>
         </set>
 
     </class>
 
-    <class name="org.zfin.people.Lab" table="lab">
-        <id name="zdbID" type="string">
-            <column name="zdb_id" not-null="true"/>
+    <class name="org.zfin.people.Organization" abstract="true">
+        <id name="zdbID" column="zdb_id">
             <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">LAB</param>
+                <param name="type">LAB-COMPANY</param>
             </generator>
         </id>
 
-        <property name="name" />
-
+        <property name="name"/>
         <property name="url"/>
-
         <property name="email"/>
-
         <property name="fax"/>
-
         <property name="phone"/>
-
         <property name="address"/>
+
+        <set name="organizationUrls">
+            <key column="srcurl_source_zdb_id"/>
+            <one-to-many class="org.zfin.people.SourceUrl"/>
+        </set>
+
+        <union-subclass name="org.zfin.people.Lab" table="lab">
+            <!--    Causes problems in Hibernate as it adds a 'null as company_lab ' line as a union needs to have the same columns
+                        <property name="bio" column="lab_bio" />
+            -->
+        </union-subclass>
+
+        <union-subclass name="org.zfin.people.Company" table="company">
+            <!--    Causes problems in Hibernate as it adds a 'null as company_lab ' line as a union needs to have the same columns
+            <property name="bio" column="company_bio" />
+            -->
+        </union-subclass>
+
+    </class>
+
+    <class abstract="true" name="org.zfin.people.ObjectSupplier" table="int_data_supplier">
+        <composite-id>
+            <key-property name="dataZdbID" column="idsup_data_zdb_id"/>
+            <key-many-to-one name="organization" column="idsup_supplier_zdb_id" class="org.zfin.people.Organization"/>
+        </composite-id>
+
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(idsup_data_zdb_id)
+                                    WHEN 'ATB' THEN 'Marker'
+                                    WHEN 'BAC' THEN 'Marker'
+                                    WHEN 'DDNA' THEN 'Marker'
+                                    WHEN 'EST' THEN 'Marker'
+                                    WHEN 'FOSMID' THEN 'Marker'
+                                    WHEN 'PAC' THEN 'Marker'
+                                    ELSE             'other-'
+                                 END)"/>
+
+        <property name="accNum">
+            <column name="idsup_acc_num"/>
+        </property>
+
+        <subclass name="org.zfin.people.MarkerSupplier" discriminator-value="Marker" >
+            <many-to-one name="marker" column="idsup_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+    </class>
+
+    <class name="org.zfin.people.SourceUrl" table="source_url">
+        <composite-id>
+            <key-many-to-one name="organization" column="srcurl_source_zdb_id" class="org.zfin.people.Organization"/>
+            <key-property name="urlPrefix" column="srcurl_url"/>
+            <key-property name="businessPurpose" column="srcurl_purpose"/>
+        </composite-id>
+
+        <property name="hyperlinkName" column="srcurl_display_text"/>
     </class>
 
     <class name="org.zfin.people.User" table="zdb_submitters">
@@ -91,8 +139,8 @@
 
         <property name="login" not-null="true"/>
 
-        <property name="password" >
-            <column name="password" />
+        <property name="password">
+            <column name="password"/>
         </property>
 
         <property name="role">
@@ -104,7 +152,7 @@
         </property>
 
         <property name="cookie">
-            <column name="cookie" />
+            <column name="cookie"/>
         </property>
 
         <property name="loginDate">
@@ -120,7 +168,7 @@
         </property>
 
         <one-to-one name="person" class="org.zfin.people.Person" constrained="true"/>
-        
+
     </class>
 
     <class name="org.zfin.people.CuratorSession" table="curator_session">
@@ -146,8 +194,8 @@
         <property name="value">
             <column name="cs_field_name_value"/>
         </property>
-        
+
     </class>
-    
+
 </hibernate-mapping>
 

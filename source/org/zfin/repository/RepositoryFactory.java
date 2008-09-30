@@ -2,28 +2,30 @@ package org.zfin.repository;
 
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.anatomy.repository.HibernateAnatomyRepository;
-import org.zfin.sequence.reno.repository.RenoRepository;
-import org.zfin.sequence.reno.repository.HibernateRenoRepository ;
-import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.sequence.repository.HibernateSequenceRepository;
+import org.zfin.antibody.repository.AntibodyRepository;
+import org.zfin.antibody.repository.HibernateAntibodyRepository;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.audit.repository.HibernateAuditLogRepository;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.publication.repository.HibernatePublicationRepository;
-import org.zfin.security.repository.UserRepository;
-import org.zfin.security.repository.HibernateUserRepository;
-import org.zfin.people.repository.ProfileRepository;
-import org.zfin.people.repository.HibernateProfileRepository;
-import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.mutant.repository.HibernateMutantRepository;
 import org.zfin.expression.repository.ExpressionSummaryRepository;
 import org.zfin.expression.repository.HibernateExpressionSummaryRepository;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.marker.repository.HibernateMarkerRepository;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
-import org.zfin.orthology.repository.OrthologyRepository;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.marker.repository.HibernateMarkerRepository;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.repository.HibernateMutantRepository;
+import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.repository.HibernateOrthologyRepository;
+import org.zfin.orthology.repository.OrthologyRepository;
+import org.zfin.people.repository.HibernateProfileRepository;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.publication.repository.HibernatePublicationRepository;
+import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.security.repository.HibernateUserRepository;
+import org.zfin.security.repository.UserRepository;
+import org.zfin.sequence.reno.repository.HibernateRenoRepository;
+import org.zfin.sequence.reno.repository.RenoRepository;
+import org.zfin.sequence.repository.HibernateSequenceRepository;
+import org.zfin.sequence.repository.SequenceRepository;
 
 /**
  * Please provide JavaDoc info!!!
@@ -31,6 +33,7 @@ import org.zfin.orthology.repository.HibernateOrthologyRepository;
 public class RepositoryFactory {
 
     private static AnatomyRepository anatRep;
+    private static AntibodyRepository antibodyRep;
     private static RenoRepository renoRep;
     private static PublicationRepository pubRep;
     private static UserRepository userRep;
@@ -64,6 +67,17 @@ public class RepositoryFactory {
 
     public static void setAnatomyRepository(AnatomyRepository ar) {
         anatRep = ar;
+    }
+
+    public static AntibodyRepository getAntibodyRepository() {
+        if (antibodyRep == null) {
+            antibodyRep = new HibernateAntibodyRepository();
+        }
+        return antibodyRep;
+    }
+
+    public static void setAntibodyRepository(AntibodyRepository ar) {
+        antibodyRep = ar;
     }
 
     public static RenoRepository getRenoRepository() {

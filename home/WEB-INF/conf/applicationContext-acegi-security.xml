@@ -152,6 +152,9 @@
                 /action/dev-tools/*=root
                 /action/audit-log/*=root
                 /action/reno/*=root
+                /action/antibody/create=root
+                /action/antibody/update-details=root
+                
             </value>
         </property>
     </bean>

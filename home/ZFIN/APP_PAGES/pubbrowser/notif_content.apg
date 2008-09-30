@@ -224,6 +224,20 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 <?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
 <?MIVAR NAME=mysql>
+             select 'Antibody',
+		    mrkr_zdb_id,
+		    mrkr_name,
+		    mrkr_abbrev,
+		    mrkr_abbrev_order
+               from record_attribution, marker
+              where recattrib_source_zdb_id = '$OID'
+	        and recattrib_data_zdb_id   = mrkr_zdb_id
+	        and mrkr_type = 'ATB'
+           order by mrkr_abbrev_order;
+<?/MIVAR>
+<?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
+
+<?MIVAR NAME=mysql>
              select distinct 'Gene Expression',
 		    mrkr_zdb_id,
                     mrkr_name,

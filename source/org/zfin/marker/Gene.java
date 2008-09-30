@@ -3,7 +3,7 @@ package org.zfin.marker ;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.framework.NamedData;
 
-public class Gene implements NamedData {
+public class Gene implements NamedData, Comparable<Gene> {
     public final static String CSS_CLASS = "genedom";
 
     private String zdbID;
@@ -42,5 +42,9 @@ public class Gene implements NamedData {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
+    }
+
+    public int compareTo(Gene anotherGene) {
+        return symbol.compareTo(anotherGene.getSymbol());
     }
 }

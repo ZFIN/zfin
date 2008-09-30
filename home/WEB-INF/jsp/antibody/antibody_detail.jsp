@@ -1,0 +1,246 @@
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ page import="org.zfin.properties.ZfinProperties" %>
+
+<table bgcolor="#eeeeee" border="0" width="100%">
+    <tbody>
+        <tr align="center">
+            <td>
+                <font size="-1"><b>ZFIN ID:</b>
+                    ${formBean.antibody.zdbID}
+                </font>
+            </td>
+            <authz:authorize ifAnyGranted="root">
+                <td>
+                    <a href="update-details?antibody.zdbID=${formBean.antibody.zdbID}">
+                        <font size=-1 color=red> Add/Update this Record </font>
+                    </a>
+                </td>
+                <td>
+
+                </td>
+                <td>
+                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-delete_record.apg&rtype=marker&OID=${formBean.antibody.zdbID}">
+                        <font size=-1 color=red> Delete or Merge this record </font>
+                    </a>
+                </td>
+                <td>
+                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-update-vframeset.apg&OID=${formBean.antibody.zdbID}&rtype=antibody">
+                        <font size=-1><b>Updated:</b>
+                            <c:choose>
+                                <c:when test="${formBean.latestUpdate != null}">
+                                    <fmt:formatDate value="${formBean.latestUpdate.dateUpdated}" type="date"/>
+                                </c:when>
+                                <c:otherwise>
+                                    Never modified
+                                </c:otherwise>
+                            </c:choose>
+                        </font>
+                    </a>
+                </td>
+            </authz:authorize>
+        </tr>
+    </tbody>
+</table>
+
+<table width="100%" border="0">
+<tr>
+    <td width="180">
+        <FONT SIZE=+1><STRONG>Antibody Name:</STRONG></FONT>
+    </td>
+    <td>
+        <FONT SIZE=+1><STRONG>
+            ${formBean.antibody.name}
+        </STRONG></FONT>
+    </td>
+    <td align="right">
+        <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:put name="subjectName" value="${formBean.antibody.name}"/>
+            <tiles:put name="subjectID" value="${formBean.antibody.zdbID}"/>
+        </tiles:insert>
+    </td>
+</tr>
+
+<c:if test="${formBean.antibody.aliases != null}">
+    <tr>
+        <td>
+            <b> Alias: </b>
+        </td>
+        <td>
+            <c:forEach var="markerAlias" items="${formBean.antibody.aliases}" varStatus="loop">
+                ${markerAlias.alias}
+                <c:if test="${markerAlias.publicationCount > 0}">
+                    <c:choose>
+                        <c:when test="${markerAlias.publicationCount == 1}">
+                            (<a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${markerAlias.singlePublication.zdbID}">${markerAlias.publicationCount}</a>)
+                        </c:when>
+                        <c:otherwise>
+                            (<a href="alias-publication-list?markerAlias.zdbID=${markerAlias.zdbID}&orderBy=author">${markerAlias.publicationCount}</a>)
+                        </c:otherwise>
+                    </c:choose>
+                </c:if>
+                <c:if test="${!loop.last}">,&nbsp;</c:if>
+            </c:forEach>
+        </td>
+    </tr>
+</c:if>
+
+<tr>
+    <td>
+        <b> Host Organism: </b>
+    </td>
+    <td>
+        ${formBean.antibody.hostSpecies}
+    </td>
+</tr>
+
+<tr>
+    <td>
+        <b> Immunogen Organism: </b>
+    </td>
+    <td>
+        ${formBean.antibody.immunogenSpecies}
+    </td>
+</tr>
+
+<tr>
+    <td>
+        <b> Isotype: </b>
+    </td>
+    <td>
+        ${formBean.antibody.heavyChainIsotype}
+        <c:if
+                test="${formBean.antibody.heavyChainIsotype != null && formBean.antibody.lightChainIsotype != null}">,
+        </c:if>
+        <font face="symbol">${formBean.antibody.lightChainIsotype}</font>
+    </td>
+</tr>
+<tr>
+    <td>
+        <b> Type: </b>
+    </td>
+    <td>
+        ${formBean.antibody.clonalType}
+    </td>
+</tr>
+<tr>
+    <td>
+        <b> Assays: </b>
+    </td>
+    <td>
+        <c:forEach var="assay" items="${formBean.antibodyStat.distinctAssayNames}" varStatus="loop">
+            ${assay}
+            <c:if test="${!loop.last}">
+                ,&nbsp;
+            </c:if>
+        </c:forEach>
+    </td>
+</tr>
+<tr>
+    <td width="180">
+        <b><b>Antigen Genes:</b> </b>
+    </td>
+    <td>
+        <c:forEach var="antigenRel" items="${formBean.antibodyStat.sortedAntigenRelationships}" varStatus="loop">
+            <zfin:link entity="${antigenRel.firstMarker}"/>
+            <c:if test="${antigenRel.publicationCount > 0}">
+                <c:choose>
+                    <c:when test="${antigenRel.publicationCount == 1}">
+                        (<a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${antigenRel.singlePublication.zdbID}">${antigenRel.publicationCount}</a>)
+                    </c:when>
+                    <c:otherwise>
+                        (<a href="relationship-publication-list?markerRelationship.zdbID=${antigenRel.zdbID}&orderBy=author">${antigenRel.publicationCount}</a>)
+                    </c:otherwise>
+                </c:choose>
+            </c:if>
+            <c:if test="${!loop.last}">
+                ,&nbsp;
+            </c:if>
+        </c:forEach>
+    </td>
+</tr>
+
+</table>
+
+<p/>
+<b>NOTES:</b>
+<c:if test="${formBean.numOfUsageNotes eq null || formBean.numOfUsageNotes ==0 }">
+    None Submitted
+</c:if>
+
+<c:if test="${formBean.numOfUsageNotes > 0}">
+    <table width=100% border=0 cellspacing=0>
+        <tr bgcolor="#cccccc">
+            <td width="30%"><b>Reference</b></td>
+            <td><b>Comment</b></td>
+        </tr>
+        <c:forEach var="extnote" items="${formBean.notesSortedByPubTime}" varStatus="loop">
+            <zfin:alternating-tr loopName="loop">
+                <td valign="top">
+                    <zfin:link entity="${extnote.singlePubAttribution.publication}"/>
+                </td>
+                <td>
+                    <zfin2:toggleTextLength text="${extnote.note}" idName="${loop.index}" shortLength="80"/>
+                </td>
+            </zfin:alternating-tr>
+        </c:forEach>
+    </table>
+</c:if>
+<p/>
+
+<b>ANATOMICAL LABELING</b>&nbsp;
+<c:import url="/WEB-INF/jsp/antibody/antibody_labeling_detail.jsp"/>
+
+<p/>
+<b>SOURCE:</b>
+<br/>
+<c:choose>
+    <c:when test="${formBean.antibody.suppliers ne null && fn:length(formBean.antibody.suppliers) > 0}">
+        <table width=100% border=0 cellspacing=0>
+            <c:forEach var="supplier" items="${formBean.antibody.suppliers}" varStatus="status">
+                <zfin:alternating-tr loopName="status">
+                    <td>
+                        <c:choose>
+                            <c:when test="${supplier.organization.url == null}">
+                                <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}">
+                                        ${supplier.organization.name}
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${supplier.organization.url}">${supplier.organization.name}</a>
+                            </c:otherwise>
+                        </c:choose>
+
+                        <c:if test="${supplier.orderURL != null}">
+                            &nbsp;&nbsp;&nbsp;
+                            <font size="-1">
+                                <!-- //ToDo Please take this out after pairs testing. This is hard-coded only for testing purposes. -->
+                                <c:choose>
+                                    <c:when test="${supplier.organization.name eq 'Zebrafish International Resource Center (ZIRC)'}">
+                                        <a href="http://almost.zebrafish.org/zirc/abs/absAll.php?t=Anything&c=${formBean.antibody.name}&searchMenuQuick=Go">(Order
+                                            this / More info)</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="${supplier.orderURL}">
+                                            (order antibody / more info)
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </font>
+                        </c:if>
+                    </td>
+                </zfin:alternating-tr>
+            </c:forEach>
+        </table>
+    </c:when>
+    <c:otherwise>
+        <table width=100% border=0 cellspacing=0>
+            <tr class="odd">
+                <td width="30%">None Submitted</td>
+            </tr>
+        </table>
+    </c:otherwise>
+</c:choose>
+
+<hr width="80%">
+<a href="publication-list?antibody.zdbID=${formBean.antibody.zdbID}&orderBy=author">CITATIONS</a>&nbsp;&nbsp;(${formBean.numOfPublications})
+

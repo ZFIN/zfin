@@ -1,37 +1,40 @@
 package org.zfin.anatomy;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
-import org.zfin.BaseDatabaseUnitTest;
+import org.hibernate.SessionFactory;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.zfin.TestConfiguration;
 import org.zfin.anatomy.presentation.StagePresentation;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 
-public class DevelopmentStageTest extends BaseDatabaseUnitTest {
+public class DevelopmentStageTest  {
 
-    private static AnatomyRepository ar ;
+    private static AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
 
-    public static void main(String args[]) {
-        TestRunner.run(suite());
+    static {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        if (sessionFactory == null) {
+            new HibernateSessionCreator(TestConfiguration.getHibernateConfiguration());
+        }
     }
 
-    public static Test suite() {
-        return new TestSuite(DevelopmentStageTest.class);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-        ar = RepositoryFactory.getAnatomyRepository();
+    @Before
+    public void setUp() {
+        TestConfiguration.configure();
     }
 
     /**
      * Test that all development stages are in the mock obeject.
      */
+    @Test
     public void testAllStages() {
-        List stages = ar.getAllStages();
+        List stages = aoRepository.getAllStages();
         assertEquals("All Stages", 45, stages.size());
     }
 
@@ -40,28 +43,67 @@ public class DevelopmentStageTest extends BaseDatabaseUnitTest {
      * It is a concatenation of name, start and stop and other feature attribute.
      * See DevelopmentStage for more info.
      */
+    @Test
     public void testDisplayStages() {
-        List stages = ar.getAllStages();
+        List stages = aoRepository.getAllStages();
         assertEquals("All Stages", 45, stages.size());
 
         DevelopmentStage stage = new DevelopmentStage();
         stage.setZdbID("ZDB-STAGE-010723-39");
-        DevelopmentStage adult = ar.getStage(stage);
+        DevelopmentStage adult = aoRepository.getStage(stage);
 
         String adultDisplay = StagePresentation.createDisplayEntry(adult);
         assertEquals("Adult Stage Display", "Adult (90d-730d, breeding adult)", adultDisplay);
 
         stage.setZdbID("ZDB-STAGE-050211-1");
-        adult = ar.getStage(stage);
+        adult = aoRepository.getStage(stage);
         String unknownDisplay = StagePresentation.createDisplayEntry(adult);
-        assertEquals("Unknown Stage Display", "Unknown", unknownDisplay);
+        assertEquals("Unknown Stage Display", "Unknown (0.0h-730d)", unknownDisplay);
 
         // test if no stage object is available
         String nullStage = StagePresentation.createDisplayEntry(null);
         assertNull("No Stage object", nullStage);
     }
 
-    public void testabbreviation(){
+    /**
+     * Check that Zygote is an earlier stage than Blastula.
+     */
+    @Test
+    public void stageComparisonRegular(){
+        String zygoteName = "Zygote:1-cell";
+        DevelopmentStage zygote = aoRepository.getStageByName(zygoteName);
+
+        String blastulaName = "Blastula:128-cell";
+        DevelopmentStage blastula = aoRepository.getStageByName(blastulaName);
+
+        assertTrue("Zygote comes before blastula", zygote.earlierThan(blastula));
+
+    }
+
+    /**
+     * Check that Unknown is earlier than any other stage.
+     */
+    @Test
+    public void unknownStageEarlierThanAnyOther(){
+        String zygoteName = "Zygote:1-cell";
+        DevelopmentStage zygote = aoRepository.getStageByName(zygoteName);
+
+        String unknownName = "Unknown";
+        DevelopmentStage unknown = aoRepository.getStageByName(unknownName);
+
+        assertTrue("Unknown comes before Zygote", unknown.earlierThan(zygote));
+
+    }
+
+    /**
+     * Check that two same stages produce a false;
+     */
+    @Test
+    public void compareTheSameStages(){
+        String zygoteName = "Zygote:1-cell";
+        DevelopmentStage zygote = aoRepository.getStageByName(zygoteName);
+
+        assertTrue("Zygote does not come before Zygote", !zygote.earlierThan(zygote));
 
     }
 }

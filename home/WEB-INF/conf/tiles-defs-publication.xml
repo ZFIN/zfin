@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+        "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+
+<tiles-definitions>
+
+    <definition name="antibody-publication-list.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN Publication list"/>
+        <put name="body" value="/WEB-INF/jsp/publication/antibody_publication_list.jsp"/>
+    </definition>
+
+    <definition name="alias-publication-list.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN Publication list"/>
+        <put name="body" value="/WEB-INF/jsp/publication/alias_publication_list.jsp"/>
+    </definition>
+
+    <definition name="relationship-publication-list.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN Publication list"/>
+        <put name="body" value="/WEB-INF/jsp/publication/relationship_publication_list.jsp"/>
+    </definition>
+
+    <definition name="snp-publication-list.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN Publication list"/>
+        <put name="body" value="/WEB-INF/jsp/publication/snp_publication_list.jsp"/>
+    </definition>
+</tiles-definitions>
+

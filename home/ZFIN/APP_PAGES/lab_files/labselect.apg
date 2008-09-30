@@ -219,75 +219,14 @@ Lab Search Results
 
 		</td>
 
-
-<!-- Calculate 3 pages before and 3 pages after current page. -->
-<?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
-
-<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
-<td valign=top>
-  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
-		</td>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
-<td valign=top>
-  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
-		</td>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
-<td valign=top>
-  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
-		</td>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(>,$num_recs,$WINSIZE)">
-<td align=center valign=top>
-	<?MIVAR>  $CURRENT <?/MIVAR>
-</td>
-<?/MIBLOCK>
-
-<?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)>
-<td valign=top>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$END"> $(+,$CURRENT,1)</A>
-		</td>
-<?/MIVAR>
-
-<?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)>
-<td valign=top>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
-		</td>
-<?/MIVAR>
-
-<?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)>
-<td valign=top>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
-		</td>
-<?/MIVAR>
-
-		<td width="45%" align=left valign=top>&nbsp;
-
-<!--- Get the next set of Rows --->
-<?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
-<?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$selector$UserInput">Next</A><br>
-<?/MIVAR>
-
-
-<!-- Calculate last page -->
-<?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">
-	$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)
-<?/MIVAR>
-
-<?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">
-	$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)
-<?/MIVAR>
-
-<?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$selector$UserInput">Last Page</A>
-<?/MIVAR>
-
-<?/MIBLOCK>
+               <?MIVAR>
+		<div id="pagination"></div>
+		<script type="text/javascript">
+		    new Ajax.Updater('pagination','/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs', {Method: 'get' });
+		</script>
+	 	<?/MIVAR>
+		<div id="pagination"></div>
+	       <p/>
 
 		</td>
 	</tr>

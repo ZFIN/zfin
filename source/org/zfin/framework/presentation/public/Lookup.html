@@ -18,7 +18,7 @@
 <!--                                            -->
 
 <script type="text/javascript">
-    var LookupProperties = { NumLookups: "2" } ;
+    var LookupProperties = { NumLookups: "3" } ;
     var LookupProperties0 = {
         divName: "featureTerm",
         inputName: "searchTerm",
@@ -37,9 +37,29 @@
         wildcard: true
     };
 
+    var LookupProperties2 = {
+        divName: "antigenGene",
+        inputName: "searchTerm",
+        showError: true,
+        buttonText: "search",
+        action: "GENEDOM_AND_EFG_SEARCH",
+        onclick: "hello",
+        type: "GENEDOM_AND_EFG_LOOKUP",
+        wildcard: true
+    };
+
 </script>
 
-<script language="javascript" src="gwt.js"></script>
+<script language="javascript" src="gwt.js">
+    function submitForm(url) {
+        form = document.getElementById("Antibody Detail Update");
+        //alert("Form: " + form.name);
+        form.action = url;
+        alert('url ' + url);
+        form.submit();
+    }
+  
+</script>
 
 <!-- OPTIONAL: include this if you want history support -->
 <iframe id="__gwt_historyFrame" style="width:0;height:0;border:0"></iframe>
@@ -51,6 +71,8 @@
         <tr> <td> <div id="featureTerm"> </div> </td> </tr>
         <tr> <td> Marker term </td> </tr>
         <tr> <td> <div id="markerTerm"> </div> </td> </tr>
+        <tr> <td> Antigen Gene </td> </tr>
+        <tr> <td> <div id="antigenGene"> </div> </td> </tr>
     </table>
 </form>
 </body>

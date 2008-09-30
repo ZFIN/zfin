@@ -23,6 +23,7 @@ public class Lookup implements EntryPoint {
     public static final String JSREF_WILDCARD ="wildcard" ;
     public static final String JSREF_WIDTH ="width" ;
     public static final String JSREF_ACTION="action" ;
+    public static final String JSREF_ONCLICK="onclick" ;
     public static final String JSREF_OID ="OID" ;
 
     //    protected LookupComposite lookup  ;
@@ -80,6 +81,10 @@ public class Lookup implements EntryPoint {
                     lookup.setAction(new FeatureAttributeSubmitAction(lookup.getOID()));
                 }
 			}
+            if(keySet.contains(JSREF_ONCLICK)){
+                String onclickEvent = lookupProperties.get(JSREF_ONCLICK);
+                lookup.setOnclick(onclickEvent);
+            }
 
 
             lookup.initGui();

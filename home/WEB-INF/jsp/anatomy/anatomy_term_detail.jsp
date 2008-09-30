@@ -160,6 +160,11 @@
 <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
     Thisse lab</a>
 <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_insitu_probes.jsp" flush="false"/>
+<p/>
+<p/>
+<!-- Antibodies -->
+<b>Antibodies</b>:
+<tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_antibodies.jsp" flush="false"/>
 <hr width="80%">
 <p/>
 <!-- All mutants -->

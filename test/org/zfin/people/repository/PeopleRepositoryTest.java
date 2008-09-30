@@ -3,21 +3,23 @@ package org.zfin.people.repository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import static org.junit.Assert.*;
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.publication.Publication;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.people.CuratorSession;
+import org.zfin.people.Organization;
 import org.zfin.people.Person;
 import org.zfin.people.User;
-import org.zfin.people.CuratorSession;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.repository.UserRepository;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Class PeopleRepositoryTest.
@@ -42,7 +44,7 @@ public class PeopleRepositoryTest {
         TestConfiguration.configure();
     }
 
- 
+
     @After
     public void closeSession() {
         HibernateUtil.closeSession();
@@ -68,11 +70,11 @@ public class PeopleRepositoryTest {
             CuratorSession cs1 = profileRepository.createCuratorSession(person.getZdbID(), pub.getZdbID(), field, value);
             CuratorSession cs2 = profileRepository.createCuratorSession(person2.getZdbID(), pub.getZdbID(), field, value);
 
-            CuratorSession databaseCS = profileRepository.getCuratorSession(person.getZdbID(),pub.getZdbID(),field);
+            CuratorSession databaseCS = profileRepository.getCuratorSession(person.getZdbID(), pub.getZdbID(), field);
 
             assertNotNull("curator session created successfully", databaseCS);
             assertNotNull("curator session created with PK id", databaseCS.getID());
-            assertEquals("curator session value is correct", databaseCS.getValue(),value);
+            assertEquals("curator session value is correct", databaseCS.getValue(), value);
 
         }
         catch (Exception e) {
@@ -98,13 +100,13 @@ public class PeopleRepositoryTest {
             String field = "This is my field";
             String value = "This is my value";
 
-            profileRepository.createCuratorSession(REAL_PERSON_1_ZDB_ID, null, field, value); 
+            profileRepository.createCuratorSession(REAL_PERSON_1_ZDB_ID, null, field, value);
 
-            CuratorSession databaseCS = profileRepository.getCuratorSession(person.getZdbID(),null,field);
+            CuratorSession databaseCS = profileRepository.getCuratorSession(person.getZdbID(), null, field);
 
             assertNotNull("curator session created successfully", databaseCS);
             assertNotNull("curator session created with PK id", databaseCS.getID());
-            assertEquals("curator session value is correct", databaseCS.getValue(),value);
+            assertEquals("curator session value is correct", databaseCS.getValue(), value);
 
         }
         catch (Exception e) {
@@ -150,7 +152,7 @@ public class PeopleRepositoryTest {
      * creating a user object in the database.
      */
     @Test
-    public void createPersonOnly(){
+    public void createPersonOnly() {
         Person person = getTestPerson();
         person.setUser(null);
         Session session = HibernateUtil.currentSession();
@@ -182,5 +184,14 @@ public class PeopleRepositoryTest {
         person.setUser(user);
         user.setPerson(person);
         return person;
+    }
+
+    @Test
+    public void getMatchingOrganizations() {
+        String name = "zeb";
+        ProfileRepository pr = RepositoryFactory.getProfileRepository();
+        List<Organization> orgs = pr.getOrganizationsByName(name);
+        assertTrue(orgs != null);
+
     }
 }

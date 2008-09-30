@@ -8,6 +8,7 @@ public class Image {
 
     String zdbID;
     Figure figure;
+    String thumbnail;
 
     public Figure getFigure() {
         return figure;
@@ -24,4 +25,13 @@ public class Image {
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
     }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+    
 }

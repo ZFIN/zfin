@@ -197,6 +197,7 @@
         </id>
 
         <property name="name" column="goterm_name" />
+        <property name="goID" column="goterm_go_id" />
 
     </class>
     <!--

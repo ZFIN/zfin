@@ -1,17 +1,18 @@
 package org.zfin.people.repository;
 
-import org.zfin.people.Person;
-import org.zfin.people.Lab;
-import org.zfin.people.User;
-import org.zfin.people.CuratorSession;
+import org.zfin.people.*;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.publication.Publication;
+import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.marker.Marker;
 import org.hibernate.Session;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Example;
+
+import java.util.List;
+import java.util.Collections;
 
 /**
  * Persistence storage of profile data.
@@ -23,6 +24,31 @@ public class HibernateProfileRepository implements ProfileRepository {
         Person person = (Person) session.get(Person.class, zdbID);
         return person;
     }
+    public MarkerSupplier getSupplier(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        MarkerSupplier supplier = (MarkerSupplier) session.get(MarkerSupplier.class, zdbID);
+        return supplier;
+    }
+
+
+    public Organization getOrganizationByID(String zdbID) {
+        Session session = currentSession();
+        return (Organization) session.get(Organization.class, zdbID);
+    }
+
+    public void deleteSupplier(MarkerSupplier supplier) {
+        Session session = currentSession();
+        session.delete(supplier);
+              
+
+    }
+
+    public Organization getOrganizationByName(String name) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Organization.class);
+        criteria.add(Restrictions.eq("name", name));
+        return (Organization) criteria.uniqueResult();
+    }
 
     public Person getPerson(Person pers) {
         return null;
@@ -30,16 +56,21 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     public void insertPerson(Person person) {
         Session session = HibernateUtil.currentSession();
-        session.getTransaction().begin();
         session.save(person);
-        session.getTransaction().commit();
+    }
+
+    public void addSupplier(Organization organization, Marker marker) {
+          Session session = HibernateUtil.currentSession();
+          MarkerSupplier supplier = new MarkerSupplier();
+          supplier.setOrganization(organization);
+          supplier.setMarker(marker);
+          session.save(supplier);
+                 
     }
 
     public void insertLab(Lab lab) {
         Session session = HibernateUtil.currentSession();
-        session.getTransaction().begin();
         session.save(lab);
-        session.getTransaction().commit();
     }
 
     public User getUser(String zdbID) {
@@ -48,7 +79,13 @@ public class HibernateProfileRepository implements ProfileRepository {
         return user;
     }
 
- 
+  public MarkerSupplier getSpecificSupplier(Marker marker, Organization organization) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(MarkerSupplier.class);
+        criteria.add(Restrictions.eq("marker", marker));
+        criteria.add(Restrictions.eq("organization", organization));
+         return (MarkerSupplier) criteria.uniqueResult();
+    }
     public CuratorSession getCuratorSession(String curatorZdbID, String pubZdbID, String field) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(org.zfin.people.CuratorSession.class);
@@ -81,5 +118,22 @@ public class HibernateProfileRepository implements ProfileRepository {
 
         session.save(cs);
         return cs;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Organization> getOrganizationsByName(String name) {
+        Session session = HibernateUtil.currentSession();
+        Criteria labCriteria = session.createCriteria(Lab.class);
+        labCriteria.add(Restrictions.ilike("name", "%"+name+"%"));
+
+        List<Organization> labs = (List<Organization>) labCriteria.list();
+
+        Criteria companyCriteria = session.createCriteria(Company.class);
+        companyCriteria.add(Restrictions.ilike("name", "%"+name+"%"));
+
+        List<Organization> companies = (List<Organization>) companyCriteria.list();
+        labs.addAll(companies);
+        Collections.sort(labs);
+        return labs;
     }
 }

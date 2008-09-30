@@ -314,6 +314,8 @@ function hdrSetTabs() {
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-xpatselect.apg">Expression</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
+      <a href="/action/antibody/search">Antibodies</a>
+      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
        <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-blast.apg" title="Search for sequence alignment against ZFIN datasets and Zebrafish datasets">BLAST</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-fishselect.apg&line_type=mutant">Mutants / Tg</a>

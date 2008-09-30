@@ -50,6 +50,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 				select organism
 				  from orthologue
 				 where c_gene_id = '$OID')
+	           and organism_common_name in ('Human', 'Mouse','Fruit fly','Yeast')
         	order by organism_display_order ;">
 
                 <?MIVAR COND="$(=,$MI_CURRENTROW,1)">

@@ -44,6 +44,11 @@
         <put name="body" value="/WEB-INF/jsp/anatomy/request_term.jsp"/>
     </definition>
 
+    <definition name="antibody-summary.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: All Antibodies labeling: " />
+        <put name="body" value="/WEB-INF/jsp/anatomy/antibody_summary.jsp"/>
+    </definition>
+
     <!-- Needs to go into a more generic file -->
     <definition name="audit-log-details" extends="main_layout">
         <put name="staticTitle" value="Audit Log: " />

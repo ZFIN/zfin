@@ -123,6 +123,49 @@ We only want to display marker_rlation if there are multiple relations,
 <?MIELSE>
  <?MIVAR>$fxfigge_separate_items<?/MIVAR>
 <?/MIBLOCK>
+
+<br>
+<?MIVAR COND=$(NXST,$fxfigab_display_option) NAME=$fxfigab_display_option><?/MIVAR>
+<?MIVAR NAME=$fxfigab_list_items><?/MIVAR>
+<?MIVAR NAME=$fxfigab_down_arrow>http://<!--|DOMAIN_NAME|-->/images/darrow.gif<?/MIVAR>
+<?MISQL SQL="
+    SELECT distinct  mrkr_zdb_id, mrkr_abbrev,mrkr_name_order
+      FROM expression_pattern_figure, expression_result,
+           expression_experiment, marker
+     WHERE xpatfig_fig_zdb_id = '$OID'
+       AND xpatfig_xpatres_zdb_id = xpatres_zdb_id
+       AND xpatres_xpatex_zdb_id = xpatex_zdb_id
+       AND xpatex_atb_zdb_id = mrkr_zdb_id
+       AND xpatex_gene_zdb_id is null
+     UNION
+    SELECT distinct  mrkr_zdb_id, mrkr_abbrev,mrkr_name_order
+      FROM expression_pattern_figure, expression_result,
+           expression_experiment, marker
+     WHERE xpatfig_fig_zdb_id = '$OID'
+       AND xpatfig_xpatres_zdb_id = xpatres_zdb_id
+       AND xpatres_xpatex_zdb_id = xpatex_zdb_id
+       AND xpatex_atb_zdb_id = mrkr_zdb_id
+     ORDER BY mrkr_name_order;">
+    <?MIBLOCK COND=$(EC,$fxfigab_display_option,anchor)>
+      <?MIVAR NAME=$fxfigab_down_arrow>&nbsp;<a href="#$2"><img src=http://<!--|DOMAIN_NAME|-->/images/darrow.gif border=0 title="Jump to GENE data."></a><?/MIVAR>
+      <?MIVAR NAME=fxfigab_gene_href><a href="/action/antibody/detail?antibody.zdbID=$1"><?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME=$fxfigab_down_arrow><?/MIVAR>
+      <?MIVAR NAME=fxfigab_gene_href><a href="/action/antibody/detail?antibody.zdbID=$1"><?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+        <?MIVAR NAME=fxfigab_list_items>$fxfigab_gene_href$2</a>$fxfigab_down_arrow<?/MIVAR>
+    <?MIELSE>
+        <?MIVAR>$(VECAPPEND,fxfigab_list_items,$fxfigab_gene_href$2</a>$fxfigab_down_arrow)<?/MIVAR>
+    <?/MIBLOCK>
+<?/MISQL>
+  <?MIVAR NAME=fxfigab_separate_items SEPARATE=", ">$fxfigab_list_items<?/MIVAR>
+<?MIBLOCK COND="$(NE,$fxfigab_separate_items,)">
+ <?MIVAR><b>Antibodies :</b> $fxfigab_separate_items<?/MIVAR>
+<?MIELSE>
+ <?MIVAR>$fxfigab_separate_items<?/MIVAR>
+<?/MIBLOCK>
 <?MICOMMENT>
   ============================================================================
   ==========  Unset any existence vars, before the next call of this page
@@ -132,7 +175,11 @@ We only want to display marker_rlation if there are multiple relations,
 <?MIVAR>
   $(UNSETVAR,$fxfigge_fig_zdb_id)
   $(UNSETVAR,$fxfigge_display_option)
+  $(UNSETVAR,$fxfigab_display_option)
   $(UNSETVAR,$fxfigge_down_arrow)
+  $(UNSETVAR,$fxfigab_down_arrow)
   $(UNSETVAR,$fxfigge_list_items)  
+  $(UNSETVAR,$fxfigab_list_items)  
   $(UNSETVAR,$fxfigge_separate_items)
+  $(UNSETVAR,$fxfigab_separate_items)
 <?/MIVAR>

@@ -84,6 +84,12 @@ $urlTail     = '.apg';
 # Returns:  APP_FILE, OID
 my $sql = <<ENDSQL;
 
+-- antibody
+SELECT "antibody" AS app_file, atb_zdb_id AS oid
+FROM antibody
+
+UNION 
+
 -- anatomy_item
 SELECT "anatomy_item" AS app_file, anatitem_zdb_id AS oid
 FROM anatomy_item
@@ -142,6 +148,7 @@ UNION
 -- markerview
 SELECT "markerview" AS app_file, mrkr_zdb_id AS oid
 FROM marker
+WHERE mrkr_zdb_id not like 'ZDB-ATB%'
 
 UNION
 
@@ -215,15 +222,19 @@ while (my @row = $sth->fetchrow_array()) {
 	my $app_page = trim($row[0]);
 	my $oid = trim($row[1]);
 	
-	# generate specific URL for data-page corresponding to APP_PAGE, OID pairs
-	if ($app_page ne "anatomy_item") {
-	    my $idName = ($app_page eq "xpatexpcdndisplay") ? "&cdp_exp_zdb_id=" : "&OID=";
-	    $url = $urlHead . $app_page . $urlTail . $idName . $oid;
-	} else {
-	    # hardcode the path for Java page. When Java file path name gets standalized, 
-            # will update here.
-	    $url = "http://<!--|DOMAIN_NAME|-->/action/anatomy/term-detail?anatomyItem.zdbID=".$oid; 
-	} 
+        # generate specific URL for data-page corresponding to APP_PAGE, OID pairs
+        if ($app_page eq "anatomy_item") {
+            $url = "http://<!--|DOMAIN_NAME|-->/action/anatomy/term-detail?anatomyItem.zdbID=".$oid; 
+        }
+        elsif ($app_page eq "antibody") {
+            $url = "http://<!--|DOMAIN_NAME|-->/action/antibody/detail?antibody.zdbID=".$oid; 
+	    print RESULT "http://<!--|DOMAIN_NAME|-->/action/antibody/labeling-detail?antibody.zdbID=".$oid;
+	    print RESULT "\n";
+        }
+        else {
+            my $idName = ($app_page eq "xpatexpcdndisplay") ? "&cdp_exp_zdb_id=" : "&OID=";
+            $url = $urlHead . $app_page . $urlTail . $idName . $oid;
+        }
 	# write URL to file
 	print RESULT "$url\n";
 }
