@@ -805,7 +805,7 @@ public class AntibodyRepositoryTest {
         assertTrue(sup.getOrganization() != null);
     }
 
-    @Test
+    //@Test
     public void createAntibody() {
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
@@ -834,7 +834,7 @@ public class AntibodyRepositoryTest {
         }
     }
 
-    @Test
+    //@Test
     public void updateAntibody() {
 
         // anti-DLX3b
@@ -863,7 +863,7 @@ public class AntibodyRepositoryTest {
         }
     }
 
-    @Test
+    //@Test
     public void updateAntibodyViaRenameMarkerMethod() {
 
         // anti-DLX3b
@@ -898,7 +898,7 @@ public class AntibodyRepositoryTest {
         }
     }
 
-    @Test
+    //@Test
     public void getAllMapNameForAntibodies(){
         String string = "pdx";
         List<AllMarkerNamesFastSearch> all = antibodyRep.getAllNameAntibodyMatches(string);
