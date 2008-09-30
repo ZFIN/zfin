@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zfin.antibody">
+
+    <!-- ToDo: we need a true PK for this table in future as
+               the common name is not unique! -->
+    <class name="org.zfin.Species" table="organism" >
+        <id name="commonName" column="organism_common_name" >
+            <generator class="native" />
+        </id>
+
+        <property name="speciesName" column="organism_species" />
+        <property name="displayOrder" column="organism_display_order" />
+        <property name="antibodyHost" column="organism_is_ab_host" />
+        <property name="antibodyImmunogen" column="organism_is_ab_immun" />
+    </class>
+</hibernate-mapping>
+
