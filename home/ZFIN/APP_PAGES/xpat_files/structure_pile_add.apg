@@ -1,4 +1,4 @@
-    <?MICOMMENTS>
+    <?MICOMMENT>
 
 $structure_expressed = t or f. implies expressed or not expressed
 
@@ -15,7 +15,7 @@ $structure_expressed = t or f. implies expressed or not expressed
          Translate the commas into # and the delimiter to comma. Select
          items useing the INDEX function. Back Translate # to comma.
        ================================================
-    <?/MICOMMENTS>
+    <?/MICOMMENT>
    <?MIVAR NAME=$MI_NOVALUE><?/MIVAR> 
 
    <?MIVAR NAME=$MI_NULL><?/MIVAR> 
@@ -64,7 +64,7 @@ $structure_expressed = t or f. implies expressed or not expressed
 		where xpatinf_pub_zdb_id = '$OID'
 		  and xpatinf_anatitem_zdb_id = '$xpcurup_structure_add_id'
 		  and xpatinf_expressed = '$structure_expressed'
-                  and xpatinf_go_term_zdb_id = '$xpcur_G_cellcomp_add_id'
+                  and xpatinf_go_term_zdb_id $(IF,$(EC,$xpcur_G_cellcomp_add_id,),is NULL,='$xpcur_G_cellcomp_add_id')
 		;">
 	    <?/MISQL>
 
