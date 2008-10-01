@@ -422,11 +422,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             for (int i = 0; i < numberOfTerms; i++) {
                 hql.append("    ( exists ( select result from ExpressionResult result " +
                         "                  where result.anatomyTerm.zdbID = :aoTermID_" + i +
-                        "                     AND result.expressionExperiment = experiment) ");
+                        "                     AND result.expressionExperiment = experiment" +
+                        "                     AND result.expressionFound = 't' ) ");
                 if (searchCriteria.isIncludeSubstructures())
                     hql.append("     OR exists ( select result from ExpressionResult result, AnatomyChildren child " +
                             "                  where result.anatomyTerm = child.child AND child.root = :aoTermID_" + i +
-                            "                       AND result.expressionExperiment = experiment) ");
+                            "                       AND result.expressionExperiment = experiment" +
+                            "                       AND result.expressionFound = 't' ) ");
                 hql.append(" ) ");
                 if (i < numberOfTerms - 1) {
                     if (searchCriteria.isAnatomyEveryTerm())
