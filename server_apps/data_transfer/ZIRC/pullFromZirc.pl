@@ -150,7 +150,7 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 
 &geno_main($dbh, $zircZdbId);           # Genotype availability
 &est_main($dbh, $zircZdbId);	        # EST availability
-&atb_main($dbh, $zircZdbId);	        # Antibody availability
+# &atb_main($dbh, $zircZdbId);	        # Antibody availability
 
 $dbh->commit();
 $dbh->disconnect();
