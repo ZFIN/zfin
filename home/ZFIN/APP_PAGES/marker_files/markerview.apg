@@ -2186,14 +2186,14 @@ union
   <table width =100% border=0 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
   <?MIVAR NAME=$antibodyID><?/MIVAR>
   <tr><td>
-  <?MISQL SQL="select mrel_mrkr_2_zdb_id,mrkr_abbrev
+  <?MISQL SQL="select mrel_mrkr_2_zdb_id,mrkr_name
     		 from marker_relationship, marker
     		where mrel_mrkr_1_zdb_id = '$OID'
     		  and mrel_type = 'gene product recognized by antibody'
     		  and mrel_mrkr_2_zdb_id = mrkr_zdb_id
     		  order by mrkr_abbrev;">
            <?MIVAR NAME=mrkrvw_antibody_id>$1<?/MIVAR>
-           <?MIVAR NAME=mrkrvw_antibody_abbrev>$2<?/MIVAR>
+           <?MIVAR NAME=mrkrvw_antibody_name>$2<?/MIVAR>
            <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
 	   	<?MIVAR NAME=mrkrvw_antibody_list_firstItem>t<?/MIVAR>
 	   <?MIELSE>
@@ -2213,7 +2213,7 @@ union
 	       <?MIVAR NAME=mrkrvw_antibody_pub>(<A HREF=/action/antibody/publication-list?antibody.zdbID=$mrkrvw_antibody_id&orderBy=author>$mrkrvw_antibody_pub_count</A>)<?/MIVAR>
            <?/MIBLOCK>
 
-           <?MIVAR NAME=mrkrvw_antibody_display><A HREF=/action/antibody/detail?antibody.zdbID=$mrkrvw_antibody_id>$mrkrvw_antibody_abbrev</A> $mrkrvw_antibody_pub<?/MIVAR>
+           <?MIVAR NAME=mrkrvw_antibody_display><A HREF=/action/antibody/detail?antibody.zdbID=$mrkrvw_antibody_id>$mrkrvw_antibody_name</A> $mrkrvw_antibody_pub<?/MIVAR>
            <?MIBLOCK COND=$(EQ,$mrkrvw_antibody_list_firstItem,t)>
 	        <?MIVAR NAME=mrkrvw_antibody_display_list>$mrkrvw_antibody_display<?/MIVAR>
 	   <?MIELSE>
