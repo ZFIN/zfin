@@ -13,7 +13,7 @@ public class FilterType {
     private String name;
 
     public static final FilterType CONTAINS = new FilterType("contains");
-    public static final FilterType BEGINS = new FilterType("begins");
+    public static final FilterType BEGINS = new FilterType("begins with");
     public static final FilterType ENDS = new FilterType("ends");
     public static final FilterType EQUALS = new FilterType("equals");
     public static final FilterType LIST = new FilterType("list");
