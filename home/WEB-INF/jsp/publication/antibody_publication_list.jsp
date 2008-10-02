@@ -89,7 +89,7 @@
 
         <font size=+1>
             <b>
-                Antibody Name:&nbsp;<i>${formBean.antibody.name}</i>
+                Antibody Name:&nbsp;${formBean.antibody.name}
                 <br/>
             </b>
         </font>
@@ -136,7 +136,7 @@
 
                         <div class="show_pubs">
                             <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${publishedPublication.zdbID}">${publishedPublication.authors}
-                                &nbsp;(${publishedPublication.year})&nbsp;${publishedPublication.title}
+                                &nbsp;(${publishedPublication.year})&nbsp;${publishedPublication.title}.&nbsp;${publishedPublication.journal.abbreviation}&nbsp;<c:if test="${publishedPublication.volume != null}">${publishedPublication.volume}:</c:if>${publishedPublication.pages}
                             </a>
                         </div>
                     </td>
