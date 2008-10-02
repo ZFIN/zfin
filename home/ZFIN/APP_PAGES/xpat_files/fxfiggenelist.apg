@@ -138,7 +138,7 @@ We only want to display marker_rlation if there are multiple relations,
        AND xpatex_atb_zdb_id = mrkr_zdb_id
        AND xpatex_gene_zdb_id is null
      UNION
-    SELECT distinct  mrkr_zdb_id, mrkr_abbrev,mrkr_name_order
+    SELECT distinct  mrkr_zdb_id, mrkr_name,mrkr_name_order
       FROM expression_pattern_figure, expression_result,
            expression_experiment, marker
      WHERE xpatfig_fig_zdb_id = '$OID'
