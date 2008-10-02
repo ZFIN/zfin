@@ -209,24 +209,16 @@
                                 <a href="${supplier.organization.url}">${supplier.organization.name}</a>
                             </c:otherwise>
                         </c:choose>
-
-                        <c:if test="${supplier.orderURL != null}">
+<%--
+                        <c:if test="${supplier.orderURL != null && supplier.available ne null}">
                             &nbsp;&nbsp;&nbsp;
                             <font size="-1">
-                                <!-- //ToDo Please take this out after pairs testing. This is hard-coded only for testing purposes. -->
-                                <c:choose>
-                                    <c:when test="${supplier.organization.name eq 'Zebrafish International Resource Center (ZIRC)'}">
-                                        <a href="http://almost.zebrafish.org/zirc/abs/absAll.php?t=Anything&c=${formBean.antibody.name}&searchMenuQuick=Go">(Order
-                                            this / More info)</a>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <a href="${supplier.orderURL}">
-                                            (order antibody / more info)
-                                        </a>
-                                    </c:otherwise>
-                                </c:choose>
+                                <a href="${supplier.orderURL}">
+                                    (order antibody / more info)
+                                </a>
                             </font>
                         </c:if>
+--%>
                     </td>
                 </zfin:alternating-tr>
             </c:forEach>
