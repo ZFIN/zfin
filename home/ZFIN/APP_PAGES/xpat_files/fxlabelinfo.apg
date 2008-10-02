@@ -55,7 +55,7 @@ EFFECTS
                select distinct geno_display_name, 
                       xpatassay_abbrev,
                       anatitem_name, st1.stg_abbrev s1, st2.stg_abbrev s2, exp_name,
-                      xpatres_expression_found, get_mrkr_abbrev_html_link('$OID') as mrkr_abbrev, anatitem_zdb_id, xpatex_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , st1.stg_hours_start sh1, st1.stg_hours_end sh2, goterm_name, goterm_go_id,mrkr_abbrev
+                      xpatres_expression_found, get_mrkr_abbrev_html_link('$OID') as mrkr_abbrev, anatitem_zdb_id, xpatex_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , st1.stg_hours_start sh1, st1.stg_hours_end sh2, goterm_name, goterm_go_id,mrkr_name
               from
                      figure,expression_experiment, anatomy_item, 
                      experiment, expression_result,
