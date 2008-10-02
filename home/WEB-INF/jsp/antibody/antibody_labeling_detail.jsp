@@ -189,8 +189,7 @@
                     <a href="javascript:collapse()">
                         <img onclick="showAnatomyList('${id}', true)"
                              src="/images/up.gif" alt="expand" title="Show first 5 structures" border="0">
-                        Show first</a>
-                    5 labeling structures
+                        Show first</a> 5 labeled structures
                 </td>
             </tr>
         </table>
