@@ -65,7 +65,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibody_expressions.
 	AND anatitem_zdb_id = xpatres_anat_item_zdb_id
 	AND xpatex_genox_zdb_id = genox_zdb_id 
 	AND genox_exp_zdb_id = exp_zdb_id
-	AND exp_name in= '_Standard'
+	AND exp_name = '_Standard'
 	AND xpatres_expression_found = 't'
 	AND geno_zdb_id = genox_geno_zdb_id
 	AND geno_is_wildtype
