@@ -60,6 +60,8 @@ TRIGGERS = \
 	geno_handle_update_trigger.sql \
 	image_stage_insert_trigger.sql \
 	image_stage_update_trigger.sql \
+	int_person_pub_insert_trigger.sql \
+	int_person_pub_update_trigger.sql \
 	journal_insert_trigger.sql \
 	journal_update_trigger.sql \
 	lab_insert_trigger.sql \
@@ -86,6 +88,8 @@ TRIGGERS = \
 	person_insert_trigger.sql \
 	person_update_trigger.sql \
 	person_address_update_trigger.sql \
+	persaddress_insert_trigger.sql \
+	persaddress_update_trigger.sql \
 	publication_insert_trigger.sql \
 	publication_update_trigger.sql \
 	publication_completion_date_update_trigger.sql \
