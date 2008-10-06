@@ -6,6 +6,16 @@
   -->
 <beans>
 
+    <!--  URL mapping -->
+    <bean id="peopleUrls" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/people/edit-user">editUserBean</prop>
+                <prop key="/people/edit-user-confirmation">editUserConfirmationBean</prop>
+            </props>
+        </property>
+    </bean>
+
     <bean name="peopleViewDetail" class="org.zfin.people.presentation.ViewDetailController"/>
 
 <!--
@@ -15,5 +25,19 @@
     <bean name="publicationViewDetail" class="org.zfin.publication.presentation.ViewPublicationDetailController"/>
 
     <bean name="peopleRepository" class="org.zfin.security.repository.HibernateUserRepository"/>
+
+    <bean name="editUserBean" class="org.zfin.people.presentation.EditUserPasswordController" >
+        <property name="successView" value="edit-user-password-confirmation.page"/>
+        <property name="formView" value="edit-user-password.page"/>
+        <property name="commandClass" value="org.zfin.people.presentation.ProfileBean"/>
+        <property name="commandName" value="formBean"/>
+        <property name="salt" value="dedicated to George Streisinger" />
+        <property name="validator">
+            <bean class="org.zfin.people.presentation.EditUserValidator"/>
+        </property>
+    </bean>
+
+    <bean name="editUserConfirmationBean" class="org.zfin.people.presentation.EditUserPasswordConfirmationController" >
+    </bean>
 
 </beans>

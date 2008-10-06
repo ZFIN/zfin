@@ -11,12 +11,19 @@
         <property name="mappings">
             <props>
                 <prop key="/webdriver">webdriverCall</prop>
+                <prop key="/webdriver/secure/edit-user">webdriverCall</prop>
+                <prop key="/webdriver/modify-password">webdriverCall</prop>
+<!--
+                <prop key="/webdrive/http-redirect">webdriverHttpRedirect</prop>
+-->
             </props>
         </property>
     </bean>
 
-    <bean name="webdriverCall" class="org.zfin.webdriver.presentation.WebdriverController" autowire="byName">
+    <bean name="webdriverCall" class="org.zfin.webdriver.presentation.WebdriverController">
        <property name="webExplodeRepository" ref="webExplodeRepository" />
+        <property name="salt" value="dedicated to George Streisinger" />
+
     </bean>
 
     <bean id="webExplodeRepository" class="org.zfin.webdriver.repository.HibernateWebExplodeRepository" />

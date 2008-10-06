@@ -91,10 +91,10 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
 <TD>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_user.apg&OID=$OID"><font size=-1 color=red> Add/Edit ZFIN Registration</font></A> 
+<A HREF="/action/people/edit-user?user.zdbID=$OID"><font size=-1 color=red> Add/Edit ZFIN Registration</font></A> 
 <?/MIVAR>
 <?MIVAR COND="$(EC,$AUTHORIZED,owner)">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_user.apg&OID=$OID"><font size=-1 color=red> Change ZFIN Password</font></A>
+<A HREF="/action/people/edit-user?user.zdbID=$OID"><font size=-1 color=red> Change ZFIN Password</font></A>
 <?/MIVAR>
 
 <?/MIBLOCK>  <!-- ends cond PERSON and authorized -->

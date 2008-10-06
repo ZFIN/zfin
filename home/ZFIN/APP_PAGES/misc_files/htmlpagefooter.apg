@@ -29,9 +29,6 @@
       University of Oregon</a>, 1994-2008,<a href="http://www.ci.eugene.or.us"> Eugene</a>, Oregon. <br>
       <small>ZFIN logo design by Kari Pape, <A HREF="http://www.uoregon.edu">University of Oregon</a></small><br>
 
-      <?MICOMMENT>
-        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-login.apg';">$1<?/MISQL>
-      <?/MICOMMENT>
       </center>
   </div>
 

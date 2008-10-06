@@ -11,8 +11,14 @@ import org.zfin.repository.RepositoryFactory;
  */
 public class ProfileBean {
 
+    public static final String ACTION_DELETE = "delete-user";
+    public static final String ACTION_EDIT = "edit-user";
+
     private Person person;
     private User user;
+    private String passwordOne;
+    private String passwordTwo;
+    private String action;
 
     public Person getPerson() {
         if (person == null)
@@ -29,16 +35,50 @@ public class ProfileBean {
     }
 
     public User getUser() {
+        if (user == null)
+            user = new User();
         return user;
     }
 
-    //ToDo; This is a recurring method for many pages.
-    // Make it reusable: jsp tag definition or 
-    public AuditLogItem getLatestUpdate(){
+    public boolean isOwnerOrRoot() {
+        Person securityUser = Person.getCurrentSecurityUser();
+        if (User.Role.ROOT.toString().equals(securityUser.getUser().getRole()))
+            return true;
+        return securityUser.getUser().equals(user);
+    }
+
+    public String getPasswordOne() {
+        return passwordOne;
+    }
+
+    public void setPasswordOne(String passwordOne) {
+        this.passwordOne = passwordOne;
+    }
+
+    public String getPasswordTwo() {
+        return passwordTwo;
+    }
+
+    public void setPasswordTwo(String passwordTwo) {
+        this.passwordTwo = passwordTwo;
+    }//ToDo; This is a recurring method for many pages.
+
+    // Make it reusable: jsp tag definition or
+    public AuditLogItem getLatestUpdate() {
         AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
         AuditLogItem latestLogItem = alr.getLatestAuditLogItem(person.getZdbID());
         return latestLogItem;
     }
 
+    public String getAction() {
+        return action;
+    }
 
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public boolean deleteRecord(){
+        return (action != null && action.equals(ACTION_DELETE));
+    }
 }

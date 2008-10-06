@@ -22,5 +22,20 @@
         <put name="body" value="/WEB-INF/jsp/publication/view_publication.jsp"/>
     </definition>
 
+    <definition name="edit-user-password.page" extends="main_layout">
+        <put name="staticTitle" value="Edit ZFIN User" />
+        <put name="body" value="/WEB-INF/jsp/people/edit_user_password.jsp"/>
+    </definition>
+
+    <definition name="edit-user-password-confirmation.page" extends="main_layout">
+        <put name="staticTitle" value="Edit ZFIN User Confirmation" />
+        <put name="body" value="/WEB-INF/jsp/people/edit_user_password_confirmation.jsp"/>
+    </definition>
+
+    <definition name="delete-user-password-confirmation.page" extends="main_layout">
+        <put name="staticTitle" value="Delete ZFIN User Confirmation" />
+        <put name="body" value="/WEB-INF/jsp/people/delete_user_confirmation.jsp"/>
+    </definition>
+
 </tiles-definitions>
 

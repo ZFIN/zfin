@@ -29,7 +29,6 @@ GENERICS = ZDB_home.apg data_mgr.apg doc_title.apg \
 	htmlpagefooter.apg your_input_welcome.apg input_button_generic.apg \
 	input_welcome_generic.apg zdb_history.apg new_gene.apg new_line.apg \
 	ZDB_home_leftcolumn.apg ZDB_home_rightcolumn.apg spiffy_corners.apg 
-#    ZDB_home_login.apg
 
 
 # --------------------------  Rules  ------------------------------------

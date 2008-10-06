@@ -42,6 +42,7 @@
 		        /action/dev-tools/**=REQUIRES_SECURE_CHANNEL
                 /action/audit-log/**=REQUIRES_SECURE_CHANNEL
                 /action/security-check=REQUIRES_SECURE_CHANNEL
+                /action/people/edit-user=REQUIRES_SECURE_CHANNEL
                 /action/login-redirect=REQUIRES_SECURE_CHANNEL
                 /**=REQUIRES_INSECURE_CHANNEL
             </value>
@@ -152,6 +153,8 @@
                 /action/dev-tools/*=root
                 /action/audit-log/*=root
                 /action/reno/*=root
+                /action/people/edit-user=root,submit
+                /action/webdriver/secure/*=root,submit
                 /action/antibody/create=root
                 /action/antibody/update-details=root
                 

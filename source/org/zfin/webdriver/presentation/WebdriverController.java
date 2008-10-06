@@ -1,5 +1,7 @@
 package org.zfin.webdriver.presentation;
 
+import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -9,22 +11,23 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.security.ZfinAuthenticationProcessingFilter;
 import org.zfin.webdriver.WebExplode;
 import org.zfin.webdriver.repository.WebExplodeRepository;
-import org.zfin.security.ZfinAuthenticationProcessingFilter;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Cookie;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
-import java.sql.SQLException;
 
 /**
  */
 public class WebdriverController extends AbstractCommandController {
 
     private WebExplodeRepository webExplodeRepository;
+    private String salt;
 
     private static final Logger LOG = Logger.getLogger(WebdriverController.class);
 
@@ -35,12 +38,17 @@ public class WebdriverController extends AbstractCommandController {
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         WebExplode explode = (WebExplode) command;
         StringBuilder parameters;
+/*
         if (isPost(request)) {
+*/
             parameters = new StringBuilder(createQueryString(request));
+/*
         } else {
             parameters = new StringBuilder(request.getQueryString());
         }
+*/
         addCookiesToQueryString(request, parameters);
+        addPasswordEncryption(request, parameters);
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         String contents = null;
@@ -58,6 +66,17 @@ public class WebdriverController extends AbstractCommandController {
 
         explode.setContents(contents);
         return new ModelAndView("webdriver.page", LookupStrings.FORM_BEAN, explode);
+    }
+
+    private void addPasswordEncryption(HttpServletRequest request, StringBuilder parameters) {
+        String passwordFirst = request.getParameter("password");
+        String passwordSecond = request.getParameter("password2");
+        if (!StringUtils.isEmpty(passwordFirst) && !StringUtils.isEmpty(passwordSecond)) {
+            Md5PasswordEncoder encoder = new Md5PasswordEncoder();
+            String encodedPass = encoder.encodePassword(passwordFirst, salt);
+            parameters.append("&encryptedPassword=");
+            parameters.append(encodedPass);
+        }
     }
 
     /**
@@ -118,5 +137,13 @@ public class WebdriverController extends AbstractCommandController {
 
     public void setWebExplodeRepository(WebExplodeRepository webExplodeRepository) {
         this.webExplodeRepository = webExplodeRepository;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }

@@ -79,6 +79,11 @@ public class HibernateProfileRepository implements ProfileRepository {
         return user;
     }
 
+    public void updateUser(User user) {
+        Session session = HibernateUtil.currentSession();
+        session.update(user);
+    }
+
   public MarkerSupplier getSpecificSupplier(Marker marker, Organization organization) {
         Session session = currentSession();
         Criteria criteria = session.createCriteria(MarkerSupplier.class);
@@ -86,6 +91,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         criteria.add(Restrictions.eq("organization", organization));
          return (MarkerSupplier) criteria.uniqueResult();
     }
+
     public CuratorSession getCuratorSession(String curatorZdbID, String pubZdbID, String field) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(org.zfin.people.CuratorSession.class);
@@ -98,8 +104,9 @@ public class HibernateProfileRepository implements ProfileRepository {
         }
 
         criteria.add(Restrictions.eq("field", field));
-        return (CuratorSession)criteria.uniqueResult();
+        return (CuratorSession) criteria.uniqueResult();
     }
+
     public CuratorSession getCuratorSession(CuratorSession curatorSession) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -112,12 +119,20 @@ public class HibernateProfileRepository implements ProfileRepository {
 
         cs.setCurator(getPerson(curatorZdbID));
         if (pubZdbID != null)
-             cs.setPublication(publicationRepository.getPublication(pubZdbID));
+            cs.setPublication(publicationRepository.getPublication(pubZdbID));
         cs.setField(field);
         cs.setValue(value);
 
         session.save(cs);
         return cs;
+    }
+
+    public void delete(User user) {
+        if (user == null)
+            return;
+        Session session = HibernateUtil.currentSession();
+        session.delete(user);
+        session.flush();
     }
 
     @SuppressWarnings("unchecked")

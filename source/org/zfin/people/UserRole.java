@@ -1,11 +1,7 @@
 package org.zfin.people;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Christian Pich
- * Date: Aug 3, 2006
- * Time: 3:24:40 PM
- * To change this template use File | Settings | File Templates.
+ * Role types for users.
  */
 public class UserRole {
 

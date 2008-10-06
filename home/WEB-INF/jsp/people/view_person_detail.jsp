@@ -40,7 +40,7 @@
         </zfin:authorize>
         <authz:authorize ifAllGranted="root">
         <td>
-            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_user.apg&OID=$OID"><font size=-1 color=red>
+            <A HREF="/action/people/edit-user?user.zdbID=$OID"><font size=-1 color=red>
                 Add/Edit ZFIN Registration
             </font></A>
         </td>

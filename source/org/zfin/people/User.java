@@ -1,5 +1,7 @@
 package org.zfin.people;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Date;
 import java.io.Serializable;
 
@@ -106,5 +108,48 @@ public class User implements Serializable {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof User))
+            return false;
+
+        User user = (User) o;
+        return StringUtils.equals(zdbID, user.getZdbID()) && StringUtils.equals(login, user.getLogin());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 37;
+        if (zdbID != null)
+            hash = hash * zdbID.hashCode();
+        if (login != null)
+            hash += hash * login.hashCode();
+        return hash;
+    }
+
+    public enum Role {
+
+        ROOT("root"),
+        SUBMIT("submit");
+
+        private String name;
+
+        Role(String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return this.name;
+        }
+
+        public static Role getRole(String type) {
+            for (Role role : values()) {
+                if (role.toString().equals(type))
+                    return role;
+            }
+            throw new RuntimeException("No user role of string " + type + " found.");
+        }
     }
 }

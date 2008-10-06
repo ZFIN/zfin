@@ -56,6 +56,7 @@ public interface ProfileRepository {
      */
     User getUser(String zdbID);
 
+    void updateUser(User user);
     /**
      * @param curatorZdbID person for whom the session value is being retrieved
      * @param pubZdbID     pub that the session value is associated with [can be null!]
@@ -99,4 +100,12 @@ public interface ProfileRepository {
      * @param supplier Supplier
      */
     void deleteSupplier(MarkerSupplier supplier);
+
+
+    /**
+     * Delete a user, but not the person record.
+     * If User record is null it just returns.
+     * @param user User
+     */
+    void delete(User user);
 }
