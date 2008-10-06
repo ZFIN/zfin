@@ -79,6 +79,7 @@ OUTPUT VARS:
 <?MIVAR COND="$(NXST,$mutsearch)" NAME=$mutsearch><?/MIVAR>
 <?MIVAR COND="$(NXST,$pubcount)" NAME=$pubcount><?/MIVAR>
 <?MIVAR COND="$(NXST,$caller)" NAME=$caller><?/MIVAR>
+<?MIVAR COND="$(NXST,$geno_name)" NAME=$geno_name><?/MIVAR>
 <?MIVAR NAME=cit_G_filter><?/MIVAR>
 <?MIVAR COND="$(NXST,$recattrsrctype)" NAME=recattrsrctype>standard<?/MIVAR>
 <?MIVAR COND=$(NC,$recattrsrctype,standard) NAME=cit_G_filter>and recattrib_source_type = '$recattrsrctype'<?/MIVAR>
@@ -114,7 +115,25 @@ OUTPUT VARS:
 	  into temp fish_search_list"><?/MISQL>
 <?MIVAR NAME=fish_table_created>true<?/MIVAR>
 <?/MIBLOCK>
-
+<?MIBLOCK COND="$(EC,$rtype,marker)">
+  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
+   <?MISQL SQL="select get_mrkr_abbrev_html_link('$OID') from marker
+               where mrkr_zdb_id='$OID'">
+               <?MIVAR NAME=$abbrev>$1<?/MIVAR>
+    <?/MISQL>
+  <?MIELSE>
+   <?MISQL SQL="select get_mrkr_name_html_link('$OID') from marker
+               where mrkr_zdb_id='$OID'">
+               <?MIVAR NAME=$name>$1<?/MIVAR>
+   <?/MISQL>
+<?/MIBLOCK>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(EC,$rtype,genotype)">
+   <?MISQL SQL="select get_geno_name_html_link('$OID') from genotype
+               where geno_zdb_id='$OID'">
+               <?MIVAR NAME=$geno_name>$1<?/MIVAR>
+    <?/MISQL>
+<?/MIBLOCK>
 <?MIVAR>
 $(IF,$(>,$(POSITION,$rtype,marker),0),
       $(SETVAR,$return_page1,aa-markerupdate.apg)
@@ -347,11 +366,23 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?MIBLOCK COND="$(AND,$(NC,$abbrev,),$(NC,$abbrev,''))">
      <?MIVAR>
 	$(IF,$(OR,$(>,$(POSITION,$OID,GENE),0),$(>,$(POSITION,$OID,OEVDISP),0)),$marker_type_display Symbol:&nbsp;<i>$abbrev</i>)
-	$(IF,$(OR,$(>,$(POSITION,$OID,GENO),0),$(>,$(POSITION,$OID,ALT),0)),Abbreviation:&nbsp;$abbrev)
+	$(IF,$(OR,$(>,$(POSITION,$OID,GENO),0),$(>,$(POSITION,$OID,ALT),0)),Abbreviation:&nbsp;$geno_name)
      <?/MIVAR><br>
+    <?MIELSE>
+     <?MIVAR>
+	$(IF,$(>,$(POSITION,$OID,GENO),0),Genotype Name:&nbsp;$geno_name) <br>
+      <?/MIVAR>
   <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(>,$(POSITION,$OID,GEN0),1)">
+fnbdfvdbfvdfb
+   Genotype name=<?MIVAR>$geno_name<?/MIVAR>
+  <?/MIBLOCK>
+
+
 </b></font>	
 
+    
 <?MIVAR>
     <?MIVAR COND="$(NXST,$total_count)" NAME=$total_count><?/MIVAR>
     <?MIVAR COND="$(NXST,$count_of_real_pub)" NAME=$count_of_real_pub>-9<?/MIVAR>
