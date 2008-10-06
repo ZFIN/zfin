@@ -89,7 +89,7 @@
 
         <font size=+1>
             <b>
-                Antibody Name:&nbsp;${formBean.antibody.name}
+                Antibody Name:&nbsp;<a href="detail?antibody.zdbID=${formBean.antibody.zdbID}">${formBean.antibody.name}</a>
                 <br/>
             </b>
         </font>
