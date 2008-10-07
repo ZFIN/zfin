@@ -18,7 +18,7 @@
             title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li> 
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_gene.apg" 
             title="Contact the Nomenclature Committee">Obtain approval for gene names</a>
-            <li><a href="/zf_info/author_guidelines.html">ZFIN Author Guidelines</a>
+            <li><a href="/zf_info/author_guidelines.html">ZFIN Author Guidelines</a> <img src="/images/new1.gif" alt="new" />
    </ul>
 
    <ul>
@@ -105,8 +105,11 @@
   </ul>
   <ul>
      <li><a href="/zf_info/zfbook/zfbk.html" title="View the Zebrafish Book">View <i>The Zebrafish Book</i></a></li>
-     <li><a href="/zf_info/news/newsgroup.html" title="a moderated, online discussion group for anyone interested in zebrafish research">Zebrafish Newsgroup</a></li>
+     
+    
+     
      <li><a href="http://www.neuro.uoregon.edu/k12/zfk12.html">Zebrafish for K-12</a></li>
+     
      <li><a href="http://www.zfic.org/">Zebrafish In The Classroom</a></li>
     
   </ul>
