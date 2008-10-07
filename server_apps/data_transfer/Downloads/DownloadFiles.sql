@@ -339,6 +339,30 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
 
 ! echo "Inserted data into file phenotype.txt"
 
+-- generate a file with xpatex and associated figure zdbid's
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatfig.txt'
+ DELIMITER "	"
+ select distinct xpatex_zdb_id,xpatfig_fig_zdb_id
+ from expression_experiment, expression_result,expression_pattern_figure
+ where xpatex_zdb_id=xpatres_xpatex_zdb_id
+ and   xpatres_zdb_id=xpatfig_xpatres_zdb_id
+ order by xpatex_zdb_id;
+
+! echo "Inserted data into file xpatfig.txt"
+
+-- generate a file with genotype id's and associated figure zdbid's
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genofig.txt'
+ DELIMITER "	"
+ select distinct genox_geno_zdb_id,apatofig_fig_zdb_id
+ from genotype_experiment, atomic_phenotype, apato_figure
+ where genox_zdb_id=apato_genox_zdb_id
+ and apato_zdb_id=apatofig_apato_zdb_id
+ order by genox_geno_zdb_id;
+
+! echo "Inserted data into file genofig.txt"
+
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_obo.txt'
  DELIMITER "	"
