@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.presentation.*;
 import org.zfin.anatomy.AnatomyItemTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
+import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.infrastructure.ActiveDataTest;
 import org.zfin.infrastructure.ActiveSourceTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
@@ -21,6 +22,7 @@ import org.zfin.util.FileUtilTest;
 import org.zfin.util.HighlightUtilTest;
 import org.zfin.util.ListFormatterTest;
 import org.zfin.util.UrlCreatorTest;
+import org.zfin.framework.presentation.UIFieldTransformerTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite).
@@ -33,6 +35,7 @@ import org.zfin.util.UrlCreatorTest;
         AnatomyItemTest.class,
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
+        AntibodyServiceTest.class,
         FileUtilTest.class,
         HighlightUtilTest.class,
         ListFormatterTest.class,
@@ -49,6 +52,7 @@ import org.zfin.util.UrlCreatorTest;
         RunPresentationTest.class,
         StagePresentationTest.class,
         SortAnatomyResultsTest.class,
+        UIFieldTransformerTest.class,
         UrlCreatorTest.class
         })
 

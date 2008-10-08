@@ -178,7 +178,7 @@ public class AntibodyService {
             return null;
         List<MatchingText> matchingTexts = new ArrayList<MatchingText>();
         // check antibody name
-        AddMatchingAntibodyName(matchingTexts);
+        addMatchingAntibodyName(matchingTexts);
 
         // check antigen gene abbreviation, name and previous names
         addMatchingAntigenGene(matchingTexts);
@@ -280,8 +280,8 @@ public class AntibodyService {
         }
     }
 
-    private void AddMatchingAntibodyName(List<MatchingText> matchingTexts) {
-        String antibodyNamefilterString = antibodySerachCriteria.getName();
+    protected void addMatchingAntibodyName(List<MatchingText> matchingTexts) {
+        String antibodyNamefilterString = antibodySerachCriteria.getName().trim();
         if (antibodyNamefilterString != null && antibodyNamefilterString.trim().length() != 0) {
             String antibodyName = antibody.getName();
             boolean hasNameMatch = false;
@@ -297,7 +297,7 @@ public class AntibodyService {
                 if (aliases != null) {
                     MatchingText match = new MatchingText(MatchingText.Type.ANTIBODY_ALIAS);
                     for (MarkerAlias alias : aliases) {
-                        if (alias.getAlias().indexOf(antibodyNamefilterString) > -1) {
+                        if (alias.getAlias().toLowerCase().indexOf(antibodyNamefilterString.toLowerCase()) > -1) {
                             match.addMatchedString(antibodyNamefilterString);
                             match.addMatchingTerm(alias.getAlias());
                         }

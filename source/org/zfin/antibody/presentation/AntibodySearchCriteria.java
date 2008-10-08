@@ -5,6 +5,7 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.UIFieldTransformer;
 import org.zfin.util.FilterType;
 
 /**
@@ -68,7 +69,7 @@ public class AntibodySearchCriteria extends Antibody {
     }
 
     public void setAntigenGeneName(String antigenGeneName) {
-        this.antigenGeneName = antigenGeneName;
+        this.antigenGeneName = UIFieldTransformer.transformTextEntryFieldValue(antigenGeneName);
     }
 
     public boolean isZircOnly() {
@@ -147,6 +148,12 @@ public class AntibodySearchCriteria extends Antibody {
             stageDefinedEvaluated = false;
             return false;
         }
+    }
+
+    // ToDo: Need to come up with a more generic way: register field names and then apply
+    // transformer.
+    public void setName(String name) {
+        super.setName(UIFieldTransformer.transformTextEntryFieldValue(name));
     }
 
     public boolean isAnatomyDefined() {

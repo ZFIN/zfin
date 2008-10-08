@@ -386,13 +386,12 @@ public class AntibodyRepositoryTest {
 
     // Test search by:
     //  antigen name
-    // ToDo: Need to wait until code in production that creates an antigen gene association.
-    //@Test
+    @Test
     public void getAntibodyByAntigenGenePreviousName() {
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
 
-        String antigenName = "cb10";
+        String antigenName = "veg";
         searchCriteria.setAntigenGeneName(antigenName);
         searchCriteria.setAntigenNameFilterType(FilterType.CONTAINS);
 
