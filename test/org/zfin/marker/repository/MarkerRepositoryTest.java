@@ -469,6 +469,7 @@ public class MarkerRepositoryTest {
 */
 
     }
+
     @Test
     public void getESTClone() {
         String name = "eu815";
@@ -479,5 +480,13 @@ public class MarkerRepositoryTest {
         Clone cl = (Clone) clone;
 */
 
+    }
+
+    @Test
+    public void getMarkerAlias() {
+        // acerebellar, alias for fgf8a
+        String zdbID = "ZDB-DALIAS-070117-777";
+        MarkerAlias alias = markerRepository.getMarkerAlias(zdbID);
+        assertTrue(alias != null);
     }
 }

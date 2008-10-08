@@ -151,14 +151,15 @@ public class PublicationListController extends MultiActionController {
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         Person currentUser = Person.getCurrentSecurityUser();
 
-        String pub = bean.getAntibodyNewPubZdbID();
-
+        String pubID = bean.getAntibodyNewPubZdbID();
+        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
+        Publication publication = pr.getPublication(pubID);
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
 
         try {
             tx = session.beginTransaction();
-            markerRepository.addMarkerPub(ab, pub);
+            markerRepository.addMarkerPub(ab, publication);
             ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser,"","");
             tx.commit();
         } catch (Exception e) {

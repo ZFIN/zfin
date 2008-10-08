@@ -1,20 +1,24 @@
 package org.zfin.marker.repository;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Order;
+import org.zfin.ExternalNote;
+import org.zfin.antibody.Antibody;
+import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.framework.HibernateUtil;
 import static org.zfin.framework.HibernateUtil.currentSession;
-import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.DataAlias;
-import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.*;
@@ -26,10 +30,6 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
-import org.zfin.ExternalNote;
-import org.zfin.antibody.AntibodyExternalNote;
-import org.zfin.antibody.Antibody;
-
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -221,7 +221,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     //if we end up with more than a couple of these, it should get
     //generalized..
-    public void addMarkerRelationship(Marker marker, Marker gene, String sourceZdbID,MarkerRelationship.Type type ) {
+    public void addMarkerRelationship(Marker marker, Marker gene, String sourceZdbID, MarkerRelationship.Type type) {
 
         MarkerRelationship mrel = new MarkerRelationship();
         mrel.setType(type);
@@ -251,15 +251,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
             PublicationAttribution pa = new PublicationAttribution();
             pa.setSourceZdbID(sourceZdbID);
             pa.setDataZdbID(mrel.getZdbID());
-            pa.setSourceType("standard");
+            pa.setSourceType(RecordAttribution.SourceType.STANDARD.toString());
             Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
             pubattr.add(pa);
             mrel.setPublications(pubattr);
             currentSession().save(pa);
-            pa.setPublication(RepositoryFactory.getPublicationRepository().getPublication(sourceZdbID));
+            Publication publication = RepositoryFactory.getPublicationRepository().getPublication(sourceZdbID);
+            pa.setPublication(publication);
 
-            addMarkerPub(marker, sourceZdbID);
-            addMarkerPub(gene, sourceZdbID);
+            addMarkerPub(marker, publication);
+            addMarkerPub(gene, publication);
         }
     }
 
@@ -295,9 +296,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (!sourceZdbID.equals("")) {
             PublicationAttribution pa = new PublicationAttribution();
             PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-            pa.setPublication(pr.getPublication(sourceZdbID));
+            Publication publication = pr.getPublication(sourceZdbID);
+            pa.setPublication(publication);
             pa.setDataZdbID(extnote.getZdbID());
-            pa.setSourceType("standard");
+            pa.setSourceType(RecordAttribution.SourceType.STANDARD.toString());
             Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
             pubattr.add(pa);
             extnote.setPubAttributions(pubattr);
@@ -310,16 +312,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
             }
             currentSession().save(pa);
 
-            addMarkerPub(antibody, sourceZdbID);
+            addMarkerPub(antibody, publication);
         }
-        ir.insertUpdatesTable(antibody, "notes", "", currentUser,note,"");
+        ir.insertUpdatesTable(antibody, "notes", "", currentUser, note, "");
     }
 
     public void editAntibodyExternalNote(String notezdbid, String note) {
         LOG.debug("enter addExtDataNote");
-        /*dnote.setCurator(curator);
-        dnote.setDate(new Date());
-        dnote.setNote(note);*/
 
         ExternalNote extnote = RepositoryFactory.getInfrastructureRepository().getExternalNoteByID(notezdbid);
         extnote.setNote(note);
@@ -327,7 +326,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-   public void addMarkerAlias(Marker marker, String alias, String attributionZdbID) {
+    /**
+     * Create a new alias for a given marker. IF no alias is found no alias is crerated.
+     *
+     * @param marker      valid marker object.
+     * @param alias       alias string
+     * @param publication publication
+     */
+    public void addMarkerAlias(Marker marker, String alias, Publication publication) {
         //first handle the alias..
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         Person currentUser = Person.getCurrentSecurityUser();
@@ -339,18 +345,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
             Set<MarkerAlias> markerAliases = new HashSet<MarkerAlias>();
             markerAliases.add(markerAlias);
             marker.setAliases(markerAliases);
-        } else marker.getAliases().add(markerAlias);
+        } else
+            marker.getAliases().add(markerAlias);
 
         currentSession().save(markerAlias);
 
         //now handle the attribution
-        if (attributionZdbID != "") {
+        if (publication != null) {
             PublicationAttribution pa = new PublicationAttribution();
-            pa.setSourceZdbID(attributionZdbID);
             pa.setDataZdbID(markerAlias.getZdbID());
-            pa.setSourceType("standard");
-
-            pa.setPublication(RepositoryFactory.getPublicationRepository().getPublication(attributionZdbID));
+            pa.setSourceType(RecordAttribution.SourceType.STANDARD.toString());
+            pa.setPublication(publication);
             Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
             pubattr.add(pa);
 
@@ -358,75 +363,95 @@ public class HibernateMarkerRepository implements MarkerRepository {
             currentSession().save(pa);
 
             if (marker.getType() == Marker.Type.ATB)
-              addMarkerPub(marker, attributionZdbID);
+                addMarkerPub(marker, publication);
         }
-        ir.insertUpdatesTable(marker, "alias", "", currentUser,alias,"");
+        ir.insertUpdatesTable(marker, "alias", "", currentUser, alias, "");
+        runMarkerNameFastSearchUpdate(marker);
+    }
+
+    public void deleteMarkerAlias(Marker marker, MarkerAlias alias) {
+        if (marker == null)
+            throw new RuntimeException("No marker object provided.");
+        if (alias == null)
+            throw new RuntimeException("No alias object provided.");
+        // check that the alias belongs to the marker
+        if( !marker.getAliases().contains(alias))
+            throw new RuntimeException("Alias '"+ alias+"' does not belong to the marker '" + marker + "'! " +
+                    "Cannot remove such an alias.");
+        // remove the ZDB active data record with cascade.
+        currentSession().delete(alias);
+        currentSession().flush();
+        currentSession().refresh(marker);
+
+        // run the fast search table script so the alias is not showing up any more.
+        runMarkerNameFastSearchUpdate(marker);
     }
 
     public void addAliasPub(String aliasZdbID, String attributionZdbID, Marker antibody) {
-           if (attributionZdbID.equals(""))
-               throw new RuntimeException("Cannot attribute this alias with a blank pub.");
-
-           InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-           RecordAttribution recordAttribution = ir.getRecordAttribution(aliasZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
-           Person currentUser = Person.getCurrentSecurityUser();
-           // only add the publication when it is not there
-           if (recordAttribution == null) {
-               PublicationAttribution pa = new PublicationAttribution();
-               pa.setSourceZdbID(attributionZdbID);
-               pa.setDataZdbID(aliasZdbID);
-               pa.setSourceType("standard");
-               pa.setPublication(RepositoryFactory.getPublicationRepository().getPublication(attributionZdbID));
-               Set<PublicationAttribution> pubAttrbs = new HashSet<PublicationAttribution>();
-               pubAttrbs.add(pa);
-               MarkerAlias markerAlias = new MarkerAlias();
-               markerAlias.setPublications(pubAttrbs);
-               currentSession().save(pa);
-               addMarkerPub(antibody, attributionZdbID);
-           }
-           ir.insertUpdatesTable(antibody, "alias attribution", "aliasZdbID", currentUser,attributionZdbID,"");
-       }
-
-       public void addRelPub(String relZdbID, String attributionZdbID, Marker antibody) {
-           if (attributionZdbID.equals(""))
-               throw new RuntimeException("Cannot attribute this alias with a blank pub.");
-
-           InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-           RecordAttribution recordAttribution = ir.getRecordAttribution(relZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
-           Person currentUser = Person.getCurrentSecurityUser();
-
-           // only add the publication when it is not there
-           if (recordAttribution == null) {
-               PublicationAttribution pa = new PublicationAttribution();
-               pa.setSourceZdbID(attributionZdbID);
-               pa.setDataZdbID(relZdbID);
-               pa.setSourceType("standard");
-               pa.setPublication(RepositoryFactory.getPublicationRepository().getPublication(attributionZdbID));
-               Set<PublicationAttribution> pubAttrbs = new HashSet<PublicationAttribution>();
-               pubAttrbs.add(pa);
-               MarkerRelationship mrel = new MarkerRelationship();
-               mrel.setPublications(pubAttrbs);
-               currentSession().save(pa);
-               addMarkerPub(antibody, attributionZdbID);
-           }
-           ir.insertUpdatesTable(antibody, "antigen attribution", relZdbID, currentUser,attributionZdbID,"");
-       }
-
-    public void addMarkerPub(Marker marker, String attributionZdbID) {
         if (attributionZdbID.equals(""))
-            throw new RuntimeException("Cannot attribute this marker with a blank pub.");
+            throw new RuntimeException("Cannot attribute this alias with a blank pub.");
 
-        String markerZdbID = marker.getZdbID();
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        RecordAttribution recordAttribution = ir.getRecordAttribution(markerZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
+        RecordAttribution recordAttribution = ir.getRecordAttribution(aliasZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
+        Person currentUser = Person.getCurrentSecurityUser();
+        // only add the publication when it is not there
+        if (recordAttribution == null) {
+            PublicationAttribution pa = new PublicationAttribution();
+            pa.setSourceZdbID(attributionZdbID);
+            pa.setDataZdbID(aliasZdbID);
+            pa.setSourceType("standard");
+            Publication publication = RepositoryFactory.getPublicationRepository().getPublication(attributionZdbID);
+            pa.setPublication(publication);
+            Set<PublicationAttribution> pubAttrbs = new HashSet<PublicationAttribution>();
+            pubAttrbs.add(pa);
+            MarkerAlias markerAlias = new MarkerAlias();
+            markerAlias.setPublications(pubAttrbs);
+            currentSession().save(pa);
+            addMarkerPub(antibody, publication);
+        }
+        ir.insertUpdatesTable(antibody, "alias attribution", "aliasZdbID", currentUser, attributionZdbID, "");
+    }
+
+    public void addRelPub(String relZdbID, String attributionZdbID, Marker antibody) {
+        if (attributionZdbID.equals(""))
+            throw new RuntimeException("Cannot attribute this alias with a blank pub.");
+
+        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+        RecordAttribution recordAttribution = ir.getRecordAttribution(relZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
+        Person currentUser = Person.getCurrentSecurityUser();
 
         // only add the publication when it is not there
         if (recordAttribution == null) {
             PublicationAttribution pa = new PublicationAttribution();
             pa.setSourceZdbID(attributionZdbID);
+            pa.setDataZdbID(relZdbID);
+            pa.setSourceType(RecordAttribution.SourceType.STANDARD.toString());
+            Publication publication = RepositoryFactory.getPublicationRepository().getPublication(attributionZdbID);
+            pa.setPublication(publication);
+            Set<PublicationAttribution> pubAttrbs = new HashSet<PublicationAttribution>();
+            pubAttrbs.add(pa);
+            MarkerRelationship mrel = new MarkerRelationship();
+            mrel.setPublications(pubAttrbs);
+            currentSession().save(pa);
+            addMarkerPub(antibody, publication);
+        }
+        ir.insertUpdatesTable(antibody, "antigen attribution", relZdbID, currentUser, attributionZdbID, "");
+    }
+
+    public void addMarkerPub(Marker marker, Publication publication) {
+        if (publication == null)
+            throw new RuntimeException("Cannot attribute this marker with a blank pub.");
+
+        String markerZdbID = marker.getZdbID();
+        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+        RecordAttribution recordAttribution = ir.getRecordAttribution(markerZdbID, publication.getZdbID(), RecordAttribution.SourceType.STANDARD);
+
+        // only add the publication when it is not there
+        if (recordAttribution == null) {
+            PublicationAttribution pa = new PublicationAttribution();
             pa.setDataZdbID(markerZdbID);
-            pa.setSourceType("standard");
-            pa.setPublication(RepositoryFactory.getPublicationRepository().getPublication(attributionZdbID));
+            pa.setSourceType(RecordAttribution.SourceType.STANDARD.toString());
+            pa.setPublication(publication);
             Set<PublicationAttribution> pubAttrbs = new HashSet<PublicationAttribution>();
             pubAttrbs.add(pa);
             Marker mrkr = new Marker();
@@ -452,21 +477,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public void addOrthoDBLink(Orthologue orthologue, EntrezProtRelation accession) {
-        /*OrthologueDBLink odb = new OrthologueDBLink();
-        odb.setOrthologue(orthologue);
-        odb.setAccessionNumber(accession.getNumber());
-        odb.setReferenceDatabase(accession.getReferenceDatabase());
-        currentSession().save(odb);*/
         if (accession == null)
             return;
-        /*for (EntrezProtRelation accessionOrthologue : accession) {
-            if (accessionOrthologue != null) {
-                OrthologueDBLink oldb = new OrthologueDBLink();
-                oldb.setOrthologue(orthologue);
-                oldb.setAccessionNumber(accessionOrthologue.getEntrezAccession().getEntrezAccNum());
-                oldb.setReferenceDatabase(accessionOrthologue.getRefDB());
-                currentSession().save(oldb);
-            }*/
 
         if (orthologue.getOrganism() == Species.MOUSE) {
             for (EntrezMGI mgiOrthologue : accession.getEntrezAccession().getRelatedMGIAccessions()) {
@@ -540,6 +552,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public List<MarkerFamilyName> getMarkerFamilyNamesBySubstring(String substring) {
 
         ArrayList<MarkerFamilyName> families = new ArrayList<MarkerFamilyName>();
@@ -632,17 +645,29 @@ public class HibernateMarkerRepository implements MarkerRepository {
         runMarkerNameFastSearchUpdate(marker);
     }
 
-    public void updateMarker(Marker marker, Publication publication, Boolean dataAlias, String alias) {
+    /**
+     * Update marker object. Requires a valid publication.
+     * After successful modification a script is executed for the fast search tables.
+     *
+     * @param marker      new marker object
+     * @param publication publication under which the changes are attributed
+     * @param alias       the alias name. If no alias string provided no alias is created.
+     */
+    public void updateMarker(Marker marker, Publication publication, String alias) {
+        if (marker == null)
+            throw new RuntimeException("No marker object provided.");
+        if (publication == null)
+            throw new RuntimeException("Cannot update a marker without a publication.");
         currentSession().save(marker);
         currentSession().flush();
 
         //add publication to attribution list.
         // run procedure for fast search table
 
-        if (dataAlias) {
-            addMarkerAlias(marker, alias, publication.getZdbID());
-        }
-        runMarkerNameFastSearchUpdate(marker);
+        if (!StringUtils.isEmpty(alias)) {
+            addMarkerAlias(marker, alias, publication);
+        } else
+            runMarkerNameFastSearchUpdate(marker);
 
     }
 
@@ -696,6 +721,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
         criteria2.add(Restrictions.in("markerType", types));
         markerList.addAll(criteria2.list());
         return markerList;
+    }
+
+    public MarkerAlias getMarkerAlias(String aliasZdbID) {
+        Session session = currentSession();
+        return (MarkerAlias) session.get(MarkerAlias.class, aliasZdbID);
     }
 
 

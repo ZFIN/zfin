@@ -11,7 +11,7 @@
         </webroots>
         <building>
           <setting name="EXPLODED_URL" value="file://$MODULE_DIR$/out/exploded/zfinWeb" />
-          <setting name="EXPLODED_ENABLED" value="true" />
+          <setting name="EXPLODED_ENABLED" value="false" />
           <setting name="JAR_URL" value="file://" />
           <setting name="JAR_ENABLED" value="false" />
           <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />

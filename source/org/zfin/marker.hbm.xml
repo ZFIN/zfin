@@ -156,7 +156,7 @@
             <one-to-many class="org.zfin.people.MarkerSupplier" />
         </set>
 
-        <set name="aliases" lazy="true" table="data_alias"  order-by="dalias_alias_lower">
+        <set name="aliases" lazy="true" table="data_alias"  order-by="dalias_alias_lower" inverse="false">
             <key column="dalias_data_zdb_id" />
             <one-to-many class="org.zfin.marker.MarkerAlias" />
         </set>

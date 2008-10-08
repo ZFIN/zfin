@@ -34,22 +34,41 @@ public interface MarkerRepository {
 
     TreeSet<String> getLG(Marker marker);
 
-    void addMarkerRelationship(Marker marker, Marker gene, String attributionZdbID,MarkerRelationship.Type type);
+    void addMarkerRelationship(Marker marker, Marker gene, String attributionZdbID, MarkerRelationship.Type type);
 
-   
+
     void addMarkerDataNote(Marker marker, String note, Person curator);
 
     void addAntibodyExternalNote(Antibody antibody, String note, String sourcezdbid);
 
     void editAntibodyExternalNote(String notezdbid, String note);
 
-    void addMarkerAlias(Marker marker, String alias, String attributionZdbID);
+    /**
+     * Create a new alias for a given marker. IF no alias is found no alias is crerated.
+     *
+     * @param marker valid marker object.
+     * @param alias alias string
+     * @param publication  publication object
+     */
+    void addMarkerAlias(Marker marker, String alias, Publication publication);
+
+    /**
+     * Delete an existing alias that belongs to a given marker.
+     * @param marker Marker Object
+     * @param alias Marker alias object
+     */
+    void deleteMarkerAlias(Marker marker, MarkerAlias alias);
 
     void addAliasPub(String alias, String attributionZdbID, Marker antibody);
 
     void addRelPub(String relzdbid, String attributionZdbID, Marker antibody);
 
-    void addMarkerPub(Marker marker, String attributionZdbID);
+    /**
+     * Add a publication to a given marker: Attribution.
+     * @param marker valid marker object
+     * @param publication publication object
+     */
+    void addMarkerPub(Marker marker,  Publication publication);
 
     void addDBLink(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID);
 
@@ -75,7 +94,14 @@ public interface MarkerRepository {
 
     void createMarker(Marker marker, Publication publication);
 
-    void updateMarker(Marker marker, Publication publication, Boolean dataAlias, String alias);
+    /**
+     * Update marker object. Requires a valid publication.
+     *
+     * @param marker      new marker object
+     * @param publication publication under which the changes are attributed
+     * @param alias       the alias name
+     */
+    void updateMarker(Marker marker, Publication publication, String alias);
 
     /**
      * Checks if a gene has a small segment relationship with a given small segment.
@@ -95,4 +121,11 @@ public interface MarkerRepository {
      * @return list of marker objects
      */
     List<Marker> getMarkersByAbbreviationAndGroup(String name, Marker.TypeGroup markerType);
+
+    /**
+     * Retrieve a marker alias by zdb ID
+     * @param aliasZdbID id
+     * @return Marker Alias object
+     */
+    MarkerAlias getMarkerAlias(String aliasZdbID);
 }

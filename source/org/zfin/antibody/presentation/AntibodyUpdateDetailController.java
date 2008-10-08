@@ -12,6 +12,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.MarkerAlias;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.people.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -144,13 +145,15 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
         Antibody antibodytoUpdate = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-        String pub = bean.getAntibodyDefPubZdbID();
+        String pubID = bean.getAntibodyDefPubZdbID();
 
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            mr.addMarkerAlias(antibodytoUpdate, bean.getNewAlias(), pub);
+            PublicationRepository pr = RepositoryFactory.getPublicationRepository();
+            Publication publication = pr.getPublication(pubID);
+            mr.addMarkerAlias(antibodytoUpdate, bean.getNewAlias(), publication);
 
             tx.commit();
             bean.setNewAlias("");
@@ -283,7 +286,6 @@ public class AntibodyUpdateDetailController extends MultiActionController {
     public ModelAndView deleteAliasHandler(HttpServletRequest request, HttpServletResponse response, AntibodyUpdateDetailBean bean)
             throws ServletException {
 
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         String abAlias = bean.getAntibodyAliaszdbID();
         addPubIdToPublicationList(request, bean, bean.getAntibodyDefPubZdbID());
 
@@ -291,7 +293,11 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            ir.deleteActiveDataByZdbID(abAlias);
+            MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+            AntibodyRepository ar = RepositoryFactory.getAntibodyRepository();
+            Antibody antibody = ar.getAntibodyByID(bean.getAntibody().getZdbID());
+            MarkerAlias alias = mr.getMarkerAlias(abAlias);
+            mr.deleteMarkerAlias(antibody, alias);
             tx.commit();
         } catch (Exception e) {
             try {
