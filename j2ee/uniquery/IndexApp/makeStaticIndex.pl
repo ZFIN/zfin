@@ -16,7 +16,7 @@
 #   There are no arguments or options.
 #
 # Author       :  Paea LePendu
-# Last Updated :  December 10, 2005
+# Last Updated :  Oct. 7th, 2008
 
 use English;
 use DBI;
@@ -228,8 +228,6 @@ while (my @row = $sth->fetchrow_array()) {
         }
         elsif ($app_page eq "antibody") {
             $url = "http://<!--|DOMAIN_NAME|-->/action/antibody/detail?antibody.zdbID=".$oid; 
-	    print RESULT "http://<!--|DOMAIN_NAME|-->/action/antibody/labeling-detail?antibody.zdbID=".$oid;
-	    print RESULT "\n";
         }
         else {
             my $idName = ($app_page eq "xpatexpcdndisplay") ? "&cdp_exp_zdb_id=" : "&OID=";
