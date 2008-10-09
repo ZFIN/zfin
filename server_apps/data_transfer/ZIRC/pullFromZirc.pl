@@ -108,7 +108,7 @@ sub downloadFiles($$) {
 
 require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullEstsFromZirc.pl");
 require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullGenoFromZirc.pl");
-require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullAtbFromZirc.pl");
+#require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullAtbFromZirc.pl");
 
 #----------------------------------------------------------------------
 # Main
