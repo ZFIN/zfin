@@ -387,44 +387,17 @@ public class AntibodyRepositoryTest {
     // Test search by:
     //  antigen name
     @Test
-    public void getAntibodyByAntigenGenePreviousName() {
+    public void getAntibodyByAntibodyPreviousName() {
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
 
-        String antigenName = "veg";
-        searchCriteria.setAntigenGeneName(antigenName);
-        searchCriteria.setAntigenNameFilterType(FilterType.CONTAINS);
+        String antibodyAlias = "veg";
+        searchCriteria.setName(antibodyAlias);
+        searchCriteria.setAntibodyNameFilterType(FilterType.CONTAINS);
 
         List<Antibody> abs = antibodyRep.getAntibodies(searchCriteria);
         assertTrue(abs != null);
-        assertTrue(abs != null);
-        boolean foundGene = false;
-        Antibody foundAB = null;
-        for (Antibody ab : abs) {
-
-            List<Marker> markers = ab.getAllRelatedMarker();
-            for (Marker marker : markers) {
-                if (marker.getAbbreviation().indexOf(antigenName) > -1) {
-                    foundAB = ab;
-                    foundGene = true;
-                }
-                if (marker.getName().indexOf(antigenName) > -1) {
-                    foundAB = ab;
-                    foundGene = true;
-                }
-                Set<MarkerAlias> aliases = marker.getAliases();
-                for (MarkerAlias alias : aliases) {
-                    if (alias.getAlias().indexOf(antigenName) > -1) {
-                        foundAB = ab;
-                        foundGene = true;
-                    }
-                }
-            }
-        }
-        // found antibody
-        assertEquals("anti-Tbx16", foundAB.getName());
-        // found tbx16 gene on
-        assertTrue(foundGene);
+        assertTrue(abs.size() > 0);
 
         int numberOfAb = antibodyRep.getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
