@@ -62,6 +62,8 @@ OUTPUT VARS:
 <?MIVAR COND="$(NXST,$title)" NAME=$title><?/MIVAR>
 <?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
 <?MIVAR COND="$(NXST,$abbrev)" NAME=$abbrev><?/MIVAR>
+<?MIVAR COND="$(NXST,$mrkr_abbrev)" NAME=$mrkr_abbrev><?/MIVAR>
+<?MIVAR COND="$(NXST,$mrkr_name)" NAME=$mrkr_name><?/MIVAR>
 
 <?MIVAR COND="$(NXST,$orgOID)" NAME=$orgOID>$OID<?/MIVAR>
 <?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
@@ -119,12 +121,12 @@ OUTPUT VARS:
   <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
    <?MISQL SQL="select get_mrkr_abbrev_html_link('$OID') from marker
                where mrkr_zdb_id='$OID'">
-               <?MIVAR NAME=$abbrev>$1<?/MIVAR>
+               <?MIVAR NAME=$mrkr_abbrev>$1<?/MIVAR>
     <?/MISQL>
   <?MIELSE>
    <?MISQL SQL="select get_mrkr_name_html_link('$OID') from marker
                where mrkr_zdb_id='$OID'">
-               <?MIVAR NAME=$name>$1<?/MIVAR>
+               <?MIVAR NAME=$mrkr_name>$1<?/MIVAR>
    <?/MISQL>
 <?/MIBLOCK>
 <?/MIBLOCK>
@@ -353,7 +355,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <font size=+1><b>
   <?MIVAR COND="$(NC,$title,)">$title: <?/MIVAR>
   <?MIVAR COND="$(NC,$name,)">
-    $(IF,$(OR,$(>,$(POSITION,$OID,OEVDISP),0),$(>,$(POSITION,$OID,GENE),0)),<i>$name</i>,$name)
+    $(IF,$(OR,$(>,$(POSITION,$OID,OEVDISP),0),$(>,$(POSITION,$OID,GENE),0)),<i>$name</i>,$mrkr_name)
     <br>
   <?/MIVAR>
 
@@ -365,7 +367,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?/MICOMMENT>
   <?MIBLOCK COND="$(AND,$(NC,$abbrev,),$(NC,$abbrev,''))">
      <?MIVAR>
-	$(IF,$(OR,$(>,$(POSITION,$OID,GENE),0),$(>,$(POSITION,$OID,OEVDISP),0)),$marker_type_display Symbol:&nbsp;<i>$abbrev</i>)
+	$(IF,$(OR,$(>,$(POSITION,$OID,GENE),0),$(>,$(POSITION,$OID,OEVDISP),0)),$marker_type_display Symbol:&nbsp;<i>$mrkr_abbrev</i>)
 	$(IF,$(OR,$(>,$(POSITION,$OID,GENO),0),$(>,$(POSITION,$OID,ALT),0)),Abbreviation:&nbsp;$geno_name)
      <?/MIVAR><br>
     <?MIELSE>
@@ -375,7 +377,6 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(>,$(POSITION,$OID,GEN0),1)">
-fnbdfvdbfvdfb
    Genotype name=<?MIVAR>$geno_name<?/MIVAR>
   <?/MIBLOCK>
 
