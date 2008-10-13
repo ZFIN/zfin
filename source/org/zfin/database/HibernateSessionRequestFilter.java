@@ -4,6 +4,7 @@ import org.zfin.framework.HibernateUtil;
 import org.apache.log4j.Logger;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -29,7 +30,13 @@ public class HibernateSessionRequestFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } catch (Exception e) {
-            LOG.error("Unhandled Exception in Servlet Filter found: ", e);
+            HttpServletRequest req = (HttpServletRequest) request;
+            StringBuffer message = new StringBuffer("Unhandled Exception in Servlet Filter found: ");
+            message.append(System.getProperty("line.separator"));
+            message.append("Request URL: ").append(req.getRequestURL());
+            message.append(System.getProperty("line.separator"));
+            message.append("Query parameters: ").append(req.getQueryString());
+            LOG.error(message, e);
         } finally {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
             // the current threadLocal

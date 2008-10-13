@@ -235,7 +235,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria genotype = genotypeExperiment.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
         Criteria experiment = genotypeExperiment.createCriteria("experiment");
-        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
+        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD}));
 
         return (Integer) criteria.list().get(0);
     }
@@ -253,6 +253,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria genotypeExperiment = labeling.createCriteria("genotypeExperiment");
         Criteria genotype = genotypeExperiment.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
+        Criteria experiment = genotypeExperiment.createCriteria("experiment");
+        experiment.add(Restrictions.eq("name", Experiment.STANDARD));
 
         return (List<Figure>) labeling.list();
     }

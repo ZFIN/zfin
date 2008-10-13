@@ -39,7 +39,7 @@
                             <!-- If one one figure available go directly to the figure page -->
                             <c:if test="${fn:length(gene.figures) == 1}">
                                 <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${gene.figure.zdbID}'>
-                                    <zfin:choice choicePattern="0#Figures| 1#Figure| 2#Figures"
+                                    <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                                  collectionEntity="${gene.figures}"
                                                  includeNumber="true"/>
                                 </a>

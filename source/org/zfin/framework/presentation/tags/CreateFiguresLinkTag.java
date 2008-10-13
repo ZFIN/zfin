@@ -71,7 +71,7 @@ public class CreateFiguresLinkTag extends TagSupport {
         else
             numOfFigs = numberOfFigures;
         hyperLink.append(numOfFigs);
-        ChoiceFormat cf = new ChoiceFormat("0#Figures| 1#Figure| 2#Figures");
+        ChoiceFormat cf = new ChoiceFormat("0#figures| 1#figure| 2#figures");
         hyperLink.append(" ");
         hyperLink.append(cf.format(numOfFigs));
         hyperLink.append("</a>");
