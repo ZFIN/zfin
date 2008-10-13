@@ -5,9 +5,11 @@
 package org.zfin.infrastructure.repository;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.ExternalNote;
 import org.zfin.repository.RepositoryFactory;
@@ -24,6 +26,7 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
 
@@ -261,6 +264,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (ZdbFlag) criteria.uniqueResult();
     }
 
+
     public ExternalNote getExternalNoteByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return (ExternalNote) session.get(ExternalNote.class, zdbID);
@@ -286,6 +290,58 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (List<AllMarkerNamesFastSearch>) marker.list();
     }
 
-} 
+
+    // Todo: ReplacementZdbID is a composite key (why?) and thus this
+    // could retrieve more than one record. If so then it throws an exception,
+    // meaning the id was replaced more than once and then we would not know whic one to use.
+    public ReplacementZdbID getReplacementZdbId(String oldZdbID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria query = session.createCriteria(ReplacementZdbID.class);
+        query.add(Restrictions.eq("oldZdbID", oldZdbID));
+        return (ReplacementZdbID) query.uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<DataAlias> getDataAliases(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria crit = session.createCriteria(DataAlias.class);
+        crit.add(Restrictions.eq("aliasLowerCase", zdbID));
+        return (List<DataAlias>) crit.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getDataAliasesWithAbbreviation(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        SQLQuery sqlQuery = session.createSQLQuery("select get_obj_abbrev(dalias_data_zdb_id) as abbreviation " +
+                "from data_alias where dalias_alias_lower = :id ");
+        sqlQuery.addScalar("abbreviation");
+        sqlQuery.setParameter("id", zdbID);
+        return (List<String>) sqlQuery.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getAnatomyTokens(String name) {
+        Session session = HibernateUtil.currentSession();
+        SQLQuery sqlQuery = session.createSQLQuery("select anattok_anatitem_zdb_id as zdbID " +
+                "from all_anatomy_tokens where anattok_token_lower =  :token ");
+        sqlQuery.addScalar("zdbID");
+        sqlQuery.setParameter("token", name.toLowerCase());
+        return (List<String>) sqlQuery.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getBestNameMatch(String name) {
+        Session session = HibernateUtil.currentSession();
+        SQLQuery sqlQuery = session.createSQLQuery("select allmapnm_zdb_id as zdbID from all_map_names " +
+                "where allmapnm_name_lower = :name and " +
+                "allmapnm_precedence in ('Current symbol', 'Current name', 'Genotype name') " +
+                "UNION " +
+                "select anatitem_zdb_id as zdb_id from anatomy_item " +
+                "where anatitem_name_lower = :name ");
+        sqlQuery.addScalar("zdbID");
+        sqlQuery.setParameter("name", name.toLowerCase());
+        return (List<String>) sqlQuery.list();
+    }
+}
 
 

@@ -283,15 +283,15 @@ if ($status) {
 
 # Index the web site, if requested.  This takes many hours.
 if ($indexing) {
-    $status = system("<!--|ROOT_PATH|-->/j2ee/uniquery/IndexApp/regenerateindex.pl >> $logFile 2>&1");
+    $status = system("<!--|ROOT_PATH|-->/server_apps/quicksearch/regenerateindex.pl >> $logFile 2>&1");
     if ($status) {
 	abort("regenerateindex.pl failed.\n");
     }
     # Need to copy indexes to production.  Use the /private/ZfinLinks
     # directory to copy it to production, wherever zfin.org is currently 
     # residing.
-    copyIndexes("<!--|ROOT_PATH|-->/j2ee/uniquery/indexes",
-		"/private/ZfinLinks/www/j2ee/uniquery");
+    copyIndexes("<!--|ROOT_PATH|-->/server_apps/quicksearch/indexes",
+		"/private/ZfinLinks/www/server_apps/quicksearch");
 }
 
 exit 0;

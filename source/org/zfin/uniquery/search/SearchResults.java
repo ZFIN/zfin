@@ -43,6 +43,8 @@ public class SearchResults
 
     public int getPageCount()
         {
+            if(totalHits == 0)
+            return 0;
         if (totalHits % pageSize == 0)
             {
             return totalHits / pageSize;
@@ -86,11 +88,20 @@ public class SearchResults
                 }
 	    // if searchResultURL starts with "/cgi-bin_hostname/", 
             // get rid of the hostname
-	    if ( searchResultURL.indexOf("cgi-bin_") > 0 ) {
-	    	int pos = searchResultURL.substring(1).indexOf("/");
-	    	searchResultURL = "/cgi-bin" +  searchResultURL.substring(pos+1);
-	    }
-	    
+	    // if ( searchResultURL.indexOf("almost") == 0 ) {
+
+	    int pos = searchResultURL.substring(1).indexOf("/");
+
+	    String envWebdriverLoc =  System.getenv("WEBDRIVER_LOC");
+
+     
+	    // there is no mutant name for production, and we want to redirect to cgi-bin/
+	    //System.out.println(envWebdriverPathFromRoot);
+				   		    
+	    searchResultURL = searchResultURL.replaceFirst("almost",envWebdriverLoc);
+		
+		//}
+	   
 	    htmlOutputBuffer.append("<p>\n");
 	    htmlOutputBuffer.append("<a href='" + searchResultURL + "'>" + pageTitle + "</a><br>\n");
 	    htmlOutputBuffer.append(hit.getHighlightedText() + "<br>\n");

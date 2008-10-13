@@ -230,9 +230,9 @@ function hdrSetTabs() {
 
 
   <div id="quicksearchBox">
-    <form method="GET" action="/SearchApp/category_search.jsp" name="quicksearch">
+    <form method="GET" action="/action/quicksearch" name="quicksearch">
       <label for="qsearch" id="quicksearchLabel">
-        <a href="/SearchApp/syntax_help.jsp">
+        <a href="/zf_info/syntax_help.html">
           Site Search:
         </a>
       </label>

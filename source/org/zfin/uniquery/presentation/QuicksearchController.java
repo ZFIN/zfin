@@ -1,20 +1,20 @@
 package org.zfin.uniquery.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.validation.BindException;
-import org.zfin.audit.presentation.AuditLogBean;
-import org.zfin.audit.repository.AuditLogRepository;
-import org.zfin.audit.AuditLogItem;
-import org.zfin.repository.RepositoryFactory;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.uniquery.search.SearchBean;
+import org.zfin.uniquery.search.SearchResults;
+import org.zfin.infrastructure.ReplacementZdbID;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
- * Controller for the Audit Log.
+ * Controller for quicksearch
  */
 public class QuicksearchController extends AbstractCommandController {
 
@@ -23,8 +23,19 @@ public class QuicksearchController extends AbstractCommandController {
     }
 
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        SearchBean form = (SearchBean) command;
+        SearchBean searchBean = (SearchBean) command;
+        String queryTerm = searchBean.getQueryTerm();
 
-        return new ModelAndView("quick-search-page", "searchBean", form);
+        InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+        ReplacementZdbID replacementZdbID = infrastructureRepository.getReplacementZdbId(queryTerm);
+        searchBean.setReplacementZdbID(replacementZdbID);
+
+        SearchResults expressionResults = null;
+        if (queryTerm.length() > 0 && replacementZdbID == null) {
+            expressionResults = searchBean.doCategorySearch();
+            searchBean.setSearchResult(expressionResults);
+        }
+
+        return new ModelAndView("quick-search.page", LookupStrings.FORM_BEAN, searchBean);
     }
 }

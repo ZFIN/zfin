@@ -200,4 +200,12 @@
         </subclass>
     </class>
 
+    <class name="org.zfin.infrastructure.ReplacementZdbID" table="zdb_replaced_data">
+        <composite-id>
+            <key-property name="oldZdbID" column="zrepld_old_zdb_id" />
+            <key-property name="replacementZdbID" column="zrepld_new_zdb_id" />
+        </composite-id>
+
+        <property name="oldName" column="zrepld_old_name" />
+    </class>
 </hibernate-mapping>

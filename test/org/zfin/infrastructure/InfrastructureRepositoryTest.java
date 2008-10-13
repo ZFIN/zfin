@@ -16,6 +16,8 @@ import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.assertEquals;
 
 import java.util.List;
 
@@ -116,8 +118,31 @@ public class InfrastructureRepositoryTest {
         List<AllMarkerNamesFastSearch> all = repository.getAllNameMarkerMatches(string, type);
         assertTrue(all != null);
     }
+    @Test
+    public void replacementZDB(){
+        String replacedZdbID = "ZDB-ANAT-010921-497";
+        ReplacementZdbID replacementZdbID = repository.getReplacementZdbId(replacedZdbID);
+        assertTrue(replacementZdbID != null);
 
+        assertEquals("ZDB-ANAT-011113-37", replacementZdbID.getReplacementZdbID());
+    }
 
+    @Test
+    public void dataAliasAbbrev(){
+        String name = "acerebellar";
+        List<String> list= repository.getDataAliasesWithAbbreviation(name);
+        assertTrue(list != null);
+        assertTrue(list.size() == 1);
+        assertEquals("fgf8a", list.get(0));
+    }
+
+    @Test
+    public void anatomyTokens(){
+        String name = "presumptive";
+        List<String> list= repository.getAnatomyTokens(name);
+        assertTrue(list != null);
+        assertTrue(list.size() > 10);
+    }
 }
 
 

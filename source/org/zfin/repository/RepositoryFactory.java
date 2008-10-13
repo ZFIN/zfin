@@ -26,6 +26,8 @@ import org.zfin.sequence.reno.repository.HibernateRenoRepository;
 import org.zfin.sequence.reno.repository.RenoRepository;
 import org.zfin.sequence.repository.HibernateSequenceRepository;
 import org.zfin.sequence.repository.SequenceRepository;
+import org.zfin.uniquery.repository.QuicksearchRepository;
+import org.zfin.uniquery.repository.HibernateQuicksearchRepository;
 
 /**
  * Please provide JavaDoc info!!!
@@ -45,6 +47,7 @@ public class RepositoryFactory {
     private static InfrastructureRepository infraRep;
     private static SequenceRepository seqRep;
     private static OrthologyRepository orthoRep;
+    private static QuicksearchRepository quicksearchRep;
 
     public static ExpressionSummaryRepository getExpressionSummaryRepository() {
         if (xpatsumRep == null) {
@@ -182,5 +185,13 @@ public class RepositoryFactory {
         RepositoryFactory.orthoRep = orthoRep; 
     }
 
+    public static QuicksearchRepository getQuicksearchRepository() {
+        if (quicksearchRep == null)
+            quicksearchRep = new HibernateQuicksearchRepository();
+        return quicksearchRep;
+    }
 
+    public static void setQuicksearchRepository(QuicksearchRepository quicksearchRep) {
+        RepositoryFactory.quicksearchRep = quicksearchRep;
+    }
 }

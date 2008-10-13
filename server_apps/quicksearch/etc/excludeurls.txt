@@ -1,0 +1,52 @@
+# This file contains keywords indicating which urls to avoid crawling and indexing.
+# When the spider encounters a URL, it looks through this list of keys, if any of them
+# appear in anywhere in the URL it will be ignored.
+
+# special pages 
+#
+view_mapplet
+view_zmapplet
+ZFIN_jump
+pdf
+images
+data_transfer
+javascript
+SearchApp
+php
+
+# We do not want to crawl select pages.
+# These (especially xpatselect) take a long time to crawl.
+# To avoid this problem, we have created a fixed-list of all the
+# app pages (data) to be indexed.
+
+select.apg
+select2.apg
+anatdict.apg
+anatomy
+quicksearch
+
+# The following are all the app pages included by the fixed-list 
+# described above.  We do not want to crawl them.  Instead
+# they are forcible added to the "to be indexed" list upfront.
+
+view.apg
+view2.apg
+aa-orthoviewdetailed.apg
+anatomy/term-detail
+aa-fxassayabbrev.apg
+aa-fxallfigures.apg
+aa-geneprddescription.apg
+aa-mappingdetail.apg
+aa-quickfindpers.apg
+aa-refcrosslist.apg
+aa-sequence.apg
+aa-wtlist.apg
+aa-xpatexpcdndisplay.apg
+aa-zirclist.apg
+aa-ZDB_home.apg
+aa-showpubs.apg
+aa-ortholist.apg
+aa-externalredirect.apg
+aa-externallink.apg
+aa-pubmedredirect.apg
+aa-pubmedlink.apg

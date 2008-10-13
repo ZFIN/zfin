@@ -13,6 +13,8 @@
                 url="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@"
                 maxActive="8" maxIdle="4"/>
 
+ <Parameter name="quicksearch-index-directory" value="/research/zcentral/www_homes/almost/j2ee/uniquery/indexes" override="true"/>
+
 <Valve className="org.apache.catalina.valves.AccessLogValve"
                  fileDateFormat="yyyy-MM"
                  directory="logs"  prefix="@DOMAIN-NAME@_zfin_access_log." 

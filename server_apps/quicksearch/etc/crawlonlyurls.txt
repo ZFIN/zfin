@@ -1,0 +1,25 @@
+# This file contains keywords indicating which urls to avoid indexing. Note that these
+# pages will still be crawled and urls contained in them will be indexed. This section is 
+# useful for search results pages where we don't want to index the list of results but
+# we do want to index the individual items.
+# When the spider encounters a URL, it looks through this list of keys, if any of them
+# appear in anywhere in the URL then the page won't be indexed.
+#
+
+
+# These are the search pages.  We no longer want to crawl them because
+# they take too long to load (especially xpatselect).  Instead
+# we exclude them from crawling and index all the app pages directly
+# using a fixed-list of all app (data) pages generated nightly from
+# a database query.
+
+#aa-fishselect.apg
+#aa-newmrkrselect.apg
+#aa-markerselect.apg
+#aa-msegselect.apg
+#aa-xpatselect.apg
+#aa-pubselect2.apg
+#aa-persselect.apg
+#aa-labselect.apg
+#aa-companyselect.apg
+#aa-fxallfigures.apg

@@ -21,6 +21,7 @@ public final class ZfinProperties {
     private static File propertyFile;
     private static String webRootDirectory;
     private static boolean secureServer;
+    private static String indexDirectory;
 
     private static final String NON_SECURE_HTTP = "http://";
     private static final String SECURE_HTTP = "https://";
@@ -272,6 +273,7 @@ public final class ZfinProperties {
 
     /**
      * Retrieve the poperty file.
+     * @return File handle
      */
     public static File getZfinPropertyFile() {
         return propertyFile;
@@ -296,4 +298,11 @@ public final class ZfinProperties {
         ZfinProperties.secureServer = secureServer;
     }
 
+    public static String getIndexDirectory() {
+        return indexDirectory;
+    }
+
+    public static void setIndexDirectory(String indexDirectory) {
+        ZfinProperties.indexDirectory = indexDirectory;
+    }
 }

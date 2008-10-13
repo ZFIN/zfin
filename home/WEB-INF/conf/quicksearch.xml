@@ -6,6 +6,15 @@
   -->
 <beans>
 
+    <!--  URL mappings -->
+    <bean id="quicksearchUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/quicksearch">viewSearchDetail</prop>
+            </props>
+        </property>
+    </bean>
+
     <bean name="viewSearchDetail" class="org.zfin.uniquery.presentation.QuicksearchController"/>
 
 </beans>

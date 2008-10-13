@@ -39,6 +39,7 @@ public class ZfinActionServlet extends DispatcherServlet {
         webRoot = getServletContext().getRealPath("/");
         // make web root dir available to the application
         ZfinProperties.setWebRootDirectory(webRoot);
+        ZfinProperties.setIndexDirectory(getServletContext().getInitParameter("quicksearch-index-directory"));
         initProperties();
         initDatabase();
         try {

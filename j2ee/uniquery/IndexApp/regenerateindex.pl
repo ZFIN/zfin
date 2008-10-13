@@ -91,7 +91,7 @@ $status =
          "$indexAppDir/lib/commons-lang-2.3.jar:" .
          "$indexAppDir/lib/cvu.jar:" .
          "$indexAppDir/lib/lucene-core-2.3.1.jar" .
-      " org.zfin.uniquery.index.Indexer " .
+      " org.zfin.uniquery.Indexer " .
       " -d $newIndexDir " .
       " -u $indexAppDir/etc/searchurls.txt " .
       " -e $indexAppDir/etc/excludeurls.txt " .
