@@ -189,5 +189,5 @@
 <hr width="80%">
 <!-- Number of Publications with an abstract that contains the anatomical structure -->
 
-<A HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.name}&anon1textAllOneWord=1&query_results=exists'>Publications with '${formBean.anatomyItem.name}' in abstract</A>
+<A HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.name}&anon1textAllOneWord=1&query_results=exists'>Search for publications with '${formBean.anatomyItem.name}' in abstract</A>
                 
