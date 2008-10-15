@@ -10,6 +10,11 @@
         <tr align="center">
             <td><font size="-1"><b>ZFIN ID:</b>
                 ${formBean.anatomyItem.zdbID}
+    <c:if test="${!empty formBean.anatomyItem.oboID}">
+      &nbsp;
+            <b>OBO ID:</b>
+            ${formBean.anatomyItem.oboID}
+    </c:if>
             </font>&nbsp;
                 <authz:authorize ifAnyGranted="root">
                     <A HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-update-vframeset.apg&OID=${formBean.anatomyItem.zdbID}&rtype=anatomy_item'>
