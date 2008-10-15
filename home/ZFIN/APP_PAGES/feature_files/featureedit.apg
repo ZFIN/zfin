@@ -239,7 +239,8 @@ EFFECTS: Edits a feature/marker
       <input name="featedit_delete_typeattr" type=submit value="Delete">
 
       <tr><td><b>Alias</b>:
-      <td> <input type=text name=featedit_feature_alias size=15 value=<?MIVAR COND="$(XST,$featcur_feat_alias)">'$featcur_feat_alias'<?/MIVAR>>
+      <td> <input type=text name=featedit_feature_alias size=15 disabled = true value=<?MIVAR COND="$(XST,$featcur_feat_alias)">'$featcur_feat_alias'<?/MIVAR>>
+    **Use the Feature Details section of a Genotype Page to add/edit feature aliases**
       <tr><td><b>Lab of Origin</b>
       <td> <select name=featedit_feature_lab>
              <?MIVAR COND="$(XST,$featcur_feat_lab)"><option select value='$featcur_feat_lab'>$featcur_feat_lab<?/MIVAR>
