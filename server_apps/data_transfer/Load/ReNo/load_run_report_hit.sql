@@ -9,7 +9,7 @@
 --     -> [blast_report & blast_hit]
 
 begin work;
-
+! echo "BEGIN `date`"
 create table tmp_run (
     trun_name    	varchar(40),
     trun_host    	varchar(40),
@@ -84,7 +84,7 @@ create table tmp_report (
 
 ! echo "Import report table"
 load from 'report.unl' insert into tmp_report;
-
+! echo "`date`"
 update tmp_report set trpt_locus_acc = NULL where trpt_locus_acc = '';
 update tmp_report set trpt_locus_acc = trpt_acc where trpt_locus_acc is NULL;
 update tmp_report set trpt_alt_id = NULL where trpt_alt_id = '';
@@ -92,6 +92,7 @@ update tmp_report set trpt_alt_id = trpt_locus_acc where trpt_alt_id is NULL;
 
 create index tmp_report_trpt_acc_idx on tmp_report (trpt_acc ) in idxdbs1 ;
 create index tmp_report_trpt_alt_id_idx on tmp_report (trpt_alt_id )in idxdbs1 ;
+create index tmp_report_trpt_acc_len_idx on tmp_report (trpt_acc_len )in idxdbs1 ; -- cheap and might help speed up accession bank update.
 
 update statistics high for table tmp_report;
 ------------------------------------------------------------------
@@ -125,6 +126,8 @@ load from 'hit.unl' insert into tmp_hit;
 
 create index tmp_hit_thit_rpt_idx on  tmp_hit(thit_rpt)in idxdbs3;
 create index tmp_hit_thit_acc_idx on  tmp_hit(thit_acc)in idxdbs3;
+
+update statistics high for table tmp_hit;
 
 ! echo "filter hits to self (should not be any)"
 delete from tmp_hit where thit_rpt = thit_acc;
@@ -192,7 +195,7 @@ update run set run_relation_pub_zdb_id = trim(run_relation_pub_zdb_id)
 ----------------------------------------------------------------------------------
 
 ! echo "add the accession bank id for the query  to the record (if it exists)"
-
+! echo "`date`"
 alter table tmp_report add trpt_query_id varchar(50);
 
 update tmp_report
@@ -207,7 +210,11 @@ update tmp_report
 
 create index tmp_report_trpt_query_idx on tmp_report(trpt_query_id) in idxdbs2;
 
+update statistics high for table tmp_report;
+
+
 ! echo "update accession_bank with NULL length"
+! echo "`date`"
 update accession_bank set accbk_length = (
     select trpt_acc_len
      from tmp_report
@@ -219,7 +226,23 @@ update accession_bank set accbk_length = (
        and trpt_acc_len > 0
 );
 
+! echo "update accession_bank with NEW length"
+! echo "`date`"
+update accession_bank set accbk_length = (
+    select trpt_acc_len
+     from tmp_report
+     where trpt_query_id = accbk_pk_id
+) where accbk_length is NOT NULL
+    and exists (
+    select 1 from tmp_report
+     where trpt_query_id = accbk_pk_id
+       and trpt_acc_len > 0
+       and trpt_acc_len != accbk_length
+);
+
+
 ! echo "clobber existing VEGA accession_bank deflines if they are changed"
+! echo "`date`"
 update accession_bank set accbk_defline = (
     select trpt_defline
      from tmp_report
@@ -237,6 +260,7 @@ update accession_bank set accbk_defline = (
 select count(*) howmany from tmp_report where trpt_query_id is NULL;
 
 ! echo "add new *QUERIES* to accession_bank"
+! echo "`date`"
 insert into  accession_bank (
     accbk_acc_num ,
     accbk_length ,
@@ -275,6 +299,7 @@ update accession_bank set accbk_fdbcont_zdb_id = trim (accbk_fdbcont_zdb_id)
 update statistics high for table accession_bank;
 
 ! echo "add the new accession bank ids back in to the queries"
+! echo "`date`"
 update tmp_report
  set trpt_query_id = (
     select accbk_pk_id
@@ -291,6 +316,7 @@ update statistics high for table tmp_report;
 
 -----------------------------------------------------------
 ! echo "add the candidate id to the record (if it exists)"
+! echo "`date`"
 alter table tmp_report add trpt_cnd_zdbid varchar(50);
 
 update tmp_report
@@ -307,6 +333,7 @@ update tmp_report
 select count(*) howmany from tmp_report where trpt_cnd_zdbid is NULL;
 
 ! echo "create new candidates if not seen before"
+! echo "`date`"
 create table tmp_candidate (
 	tcnd_zad           VARCHAR(50),
 --	tcnd_is_problem       BOOLEAN,
@@ -365,6 +392,7 @@ update tmp_report set trpt_cnd_zdbid = (
 
 ----------------------------------
 ! echo "next make run_candidates"
+! echo "`date`"
 
 
 create table tmp_run_cnd (
@@ -397,6 +425,7 @@ select * from  tmp_run_cnd
 
 --------------------------------
 ! echo "next make blast_query"
+! echo "`date`"
 
 create table tmp_blast_query (
     tbqry_zad varchar(50) ,
@@ -433,7 +462,7 @@ update statistics high for table tmp_blast_query;
 
 -----------------------------------------
 ! echo "next make blast_report"
-
+! echo "`date`"
 alter table tmp_report add trpt_brpt_zad varchar(50);
 update tmp_report set trpt_brpt_zad = get_id('BRPT');
 
@@ -458,7 +487,7 @@ update statistics high for table blast_report;
 ---------------------------------------------------------------------
 { just continue to use the accession as FK }
 ! echo "add the accession bank id for the target to tmp_hit (if it exists)"
-
+! echo "`date`"
 alter table tmp_hit add thit_target_id int;
 
 update tmp_hit
@@ -476,9 +505,10 @@ create index tmp_hit_thit_target_idx
 update statistics high for table tmp_hit;
 
 
-! echo "update accession_banks with NULL length if one is available"
+! echo "update accession_banks with NULL length if any is available"
+! echo "`date`"
 update accession_bank set accbk_length = (
-    select thit_acc_len
+    select max(thit_acc_len)
      from tmp_run,tmp_hit
      where thit_target_id = accbk_pk_id
        and trun_target_fdbcont = accbk_fdbcont_zdb_id
@@ -490,7 +520,25 @@ update accession_bank set accbk_length = (
        and thit_acc_len > 0
 );
 
+! echo "update not null accession_banks length if new one is available"
+! echo "`date`"
+update accession_bank set accbk_length = (
+    select max(thit_acc_len)
+     from tmp_run,tmp_hit
+     where thit_target_id = accbk_pk_id
+       and trun_target_fdbcont = accbk_fdbcont_zdb_id
+) where accbk_length is not NULL
+    and exists (
+    select 1 from tmp_run,tmp_hit
+     where thit_target_id = accbk_pk_id
+       and trun_target_fdbcont = accbk_fdbcont_zdb_id
+       and thit_acc_len > 0
+       and thit_acc_len != accbk_length
+);
+
+
 ! echo "update existing NULL accession_bank defline if one is available"
+! echo "`date`"
 update accession_bank set accbk_defline = (
     select distinct thit_defline
      from tmp_hit,tmp_run
@@ -505,6 +553,7 @@ update accession_bank set accbk_defline = (
 );
 
 ! echo "how many distinct Hit still need to be added to accession bank? (mind the dups)"
+! echo "`date`"
 select count(thit_acc) all_told,count(distinct thit_acc) howmany from tmp_hit where thit_target_id is NULL;
 
 
@@ -533,6 +582,7 @@ select thit_acc,thit_acc_len, thit_defline
 -- TODO: swap the selects for the hardcoded FDBCONT after it is stabalized
 
 ! echo "add new *TARGETS* to accession_bank"
+! echo "`date`"
 insert into  accession_bank (
     accbk_acc_num ,
     accbk_length ,
@@ -597,11 +647,12 @@ update accession_bank set accbk_fdbcont_zdb_id = trim (accbk_fdbcont_zdb_id)
 ;
 
 ! echo "add this accession length if it is > 0 and accbk_length = 0"
+! echo "`date`"
 update accession_bank set accbk_length = (
     select max(thit_acc_len) from tmp_hit
      where thit_acc = accbk_acc_num
  )
- where accbk_length = 0
+ where (accbk_length < 1 or accbk_length is NULL)
    and exists (
    	select 1 from tmp_hit
    	 where accbk_acc_num =  thit_acc
@@ -610,6 +661,7 @@ update accession_bank set accbk_length = (
 
 
 ! echo "add the new accession bank ids back into tmp_hit"
+! echo "`date`"
 update tmp_hit
  set thit_target_id = (
     select accbk_pk_id from accession_bank
@@ -624,7 +676,7 @@ update tmp_hit
 update statistics high for table tmp_hit;
 -------------------------------
 ! echo "Finally make blast_hit"
-
+! echo "`date`"
 
 alter table tmp_hit add thit_zad varchar(50);
 update tmp_hit set thit_zad = get_id('BHIT');
@@ -734,6 +786,8 @@ drop table tmp_candidate;
 drop table tmp_run_cnd;
 drop table tmp_blast_query;
 --drop table ;
+
+! echo "FINISHED `date`"
 
 
 --rollback/commit applied externally
