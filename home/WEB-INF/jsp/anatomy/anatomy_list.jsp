@@ -17,7 +17,7 @@
         </caption>
     </c:if>
     <tr>
-        <th width="30%">Structure Name</th>    AT
+        <th width="30%">Structure Name</th>
         <th>Synonyms</th>
     </tr>
     <c:forEach var="ao" items="${formBean.sortedStatisticsItems}" varStatus="rowCounter">
