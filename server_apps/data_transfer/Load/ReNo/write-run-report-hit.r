@@ -5,11 +5,12 @@ terminate: func[
     "puts a terminator after each element in a series"
     blk [block!] /with t [string!]  /local result
 ][
+    t: either with[t]["|"]
     result: make block! 2 * length? blk
     parse blk [
         any [copy element skip
             (insert tail result element
-             insert tail result either with[t]["|"]
+             insert tail result t
             )
          ]
     ]
@@ -26,9 +27,9 @@ clip-normal-float: func [
     either 0 >= norm: to decimal! denorm[0.0][maximum 2.2250e-307 norm]
 ]
 
-
+print ["reading run.ctx: " now/time]
 run: load to file! system/script/args
-
+print ["run.ctx file read: " now/time]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; run data
 
@@ -51,6 +52,12 @@ write %hit.unl ""
 
 count: 0
 
+
+buf-size: 500000000
+hit-buf: make string! buf-size
+rpt-buf: make string! buf-size
+print ["begin writeing reports and hits: " now/time]
+
 foreach rpt run/reports [
     if here: find/last rpt/acc "." [clear here]
     if all[run/query-type = "protein" here: find/last rpt/locus_acc "."] [
@@ -59,7 +66,8 @@ foreach rpt run/reports [
     xit-code: copy find/last rpt/detail " "
     replace/all rpt/detail newline "\^/"
     replace/all rpt/defline "|" "\|"
-    write/append %report.unl join terminate reduce [
+    ;;;
+    insert tail rpt-buf join terminate reduce [
         rpt/acc         ;;; BC146618
         rpt/acc_db       ;;; "gb"
         either any["" = rpt/acc_type none? rpt/acc_type]
@@ -82,7 +90,7 @@ foreach rpt run/reports [
         replace/all hit/alignment "|" "\|"
         replace/all hit/defline   "|" "\|"
         if rpt/acc <> hit/acc[ ;; skip self hits
-        write/append %hit.unl join terminate reduce[
+            insert tail hit-buf join terminate reduce[
             rpt/acc       ;;; : BC146618
             hit/order     ;;; : 0
             hit/acc       ;;; : "BC116508"
@@ -108,9 +116,13 @@ foreach rpt run/reports [
         ]
         ;;;print [count: 1 + count  tab  (clip-normal-float hit/expect)  tab  hit/prob]
    ]
+   if  buf-size <= length? hit-buf [write  write/append %hit.unl hit-buf clear hit-buf]
 ]
 
+write %report.unl rpt-buf
+write/append %hit.unl hit-buf
 
+print ["reports and hits .unl files written: " now/time]
 
 
 
