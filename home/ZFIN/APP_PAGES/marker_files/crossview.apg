@@ -1,6 +1,6 @@
 <?MICOMMENT>
-FILE: CROSSVIEW.APG. This file implements a viewer for mapping and reference 
-crosses.  Should display all info on cross as whole, plus list markers mapped 
+FILE: CROSSVIEW.APG. This file implements a viewer for mapping and reference
+crosses.  Should display all info on cross as whole, plus list markers mapped
 in the cross.
 <?/MICOMMENT>
 <?MIERROR>
@@ -21,20 +21,13 @@ in the cross.
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
 
-
-
 <SCRIPT>
-
-
-
 function call_mapplet(lg,panel_abbrev) {
-for (var count = 0; count <= 25; count++){
-	if ( lg == count) document.mapview.loc_lg.value = count ;
+	for (var count = 0; count <= 25; count++){
+		if ( lg == count) document.mapview.loc_lg.value = count ;
 
-}
-
-
-document.mapview.submit();
+	}
+	document.mapview.submit();
 }
 </SCRIPT>
 </HEAD>
@@ -67,12 +60,12 @@ ERROR -- something bad happened -- no OID passed in!
 
 
 <?MISQL SQL="
-  select name, panel_date, producer, source, mappanel_comments, ptype, abbrev, 
-	 day(panel_date), month(panel_date), year(panel_date),
-	 mappanel_interactive_url, mappanel_interactive_url_extra_text,
-	 mappanel_rh_rad_dose, mappanel_meiotic_num_meioses
-    from panels
-    where zdb_id='$OID';">
+  select name, panel_date, producer, source, mappanel_comments, ptype, abbrev,
+    day(panel_date), month(panel_date), year(panel_date),
+    mappanel_interactive_url, mappanel_interactive_url_extra_text,
+    mappanel_rh_rad_dose, mappanel_meiotic_num_meioses
+  from panels
+  where zdb_id='$OID';">
 <?/MISQL>
 
 <?MIVAR NAME=$name>$1<?/MIVAR>
@@ -96,17 +89,17 @@ ERROR -- something bad happened -- no OID passed in!
         <!-- look to see if replaced zdb_id -->
 
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
-    
+
         <?MIBLOCK COND="$(NXST,$new_oid)">
           <form><center><font size=+2>
 	  <b>Requested ID not found in ZFIN.</b>
           </form>
         <?/MIBLOCK>
-        
+
     <?MIELSE>
 
       <?MIBLOCK COND="$(NC,$panel_date,NULL)">
-      <?MIVAR NAME=$upd_date>$(INDEX,$(-,$mappanel_month,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $mappanel_day, $mappanel_year 
+      <?MIVAR NAME=$upd_date>$(INDEX,$(-,$mappanel_month,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $mappanel_day, $mappanel_year
       <?/MIVAR>
       <?/MIBLOCK>
 
@@ -121,7 +114,7 @@ ERROR -- something bad happened -- no OID passed in!
       <!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
 
       <!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
-      <?MISQL SQL="select WebExplode(object,'rtype=panels') from webPages where 
+      <?MISQL SQL="select WebExplode(object,'rtype=panels') from webPages where
       ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 
@@ -129,20 +122,20 @@ ERROR -- something bad happened -- no OID passed in!
       <!-- OKAY, NOW  THROW UP THE  PANEL INFO -->
       <form method=post name=mapview  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" >
       <input type=hidden name=view_map  value='viewmap'>
-      <INPUT TYPE=hidden name=loc_lg value=0 > 
+      <INPUT TYPE=hidden name=loc_lg value=0 >
       <?MIVAR><input type=hidden name=userid value="$userid"><?/MIVAR>
 
 
       <P>
       <?MIVAR NAME=$title>$panel_type Panel<?/MIVAR>
-      
-      <FONT SIZE=+1> <B> 
+
+      <FONT SIZE=+1> <B>
          <?MIVAR>$title: $name ($abbrev)<?/MIVAR>
       </B></FONT>
-    
+
       <p>
 
-      <b>Description:</b> 
+      <b>Description:</b>
       <?MIVAR COND="$(NC,$mappanel_comments,NULL)">$mappanel_comments<?/MIVAR>
       <p>
 
@@ -157,8 +150,8 @@ ERROR -- something bad happened -- no OID passed in!
       <?MIVAR COND="$(EC,$panel_producer,NULL)"> UNKNOWN. <?/MIVAR>
       </TD>
 
-      <TD> 
-      <b>Most Recent Update:</b> 
+      <TD>
+      <b>Most Recent Update:</b>
       <?MIVAR>$(IF,$(NC,$panel_date,NULL),$upd_date,UNKNOWN)<?/MIVAR>
       </td>
       </TR>
@@ -180,13 +173,13 @@ ERROR -- something bad happened -- no OID passed in!
 
       <TABLE>
       <TR>
-      <TD><b>Current source of genetic material for mapping:</b> 
+      <TD><b>Current source of genetic material for mapping:</b>
       <?MIBLOCK COND="$(NC,$source,NULL)">
       <?MISQL SQL="
 		   select full_name from person where zdb_id='$source'
-		union 
+		union
 		   select name from lab where zdb_id = '$source'
-		union 
+		union
 		   select name from company where zdb_id = '$source'
 		;">
       <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$source">$1</A>
@@ -201,7 +194,7 @@ ERROR -- something bad happened -- no OID passed in!
       <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=1 rows=1>
       <TR>
       <TD align=center>
-        <b>Interactive Mapping:</b> 
+        <b>Interactive Mapping:</b>
         <A HREF="$mappanel_interactive_url">Place markers on $abbrev panel</a>
         <?MIVAR COND="$(NC,$mappanel_interactive_url_extra_text,null)">
 	  <font size=-1>$mappanel_interactive_url_extra_text</font>
@@ -222,13 +215,13 @@ ERROR -- something bad happened -- no OID passed in!
       <p>
       <b>Markers:</B>
       <ul>
-      <?MIVAR NAME=$mcount>0<?/MIVAR>	
+      <?MIVAR NAME=$mcount>0<?/MIVAR>
 
       <?MIBLOCK COND="$(NC,$abbrev,ZMAP)">
 	<?MISQL SQL="select panelcnt_mrkr_type, SUM(panelcnt_count)
 			from panel_count
 		       where panelcnt_panel_zdb_id = '$OID'
-		     group by panelcnt_mrkr_type	
+		     group by panelcnt_mrkr_type
 			;">
 	$(IF,$(NC,$MI_CURRENTROW,1),"<br>")
 	$1 (total of $2)
@@ -248,91 +241,84 @@ ERROR -- something bad happened -- no OID passed in!
 
 
       <?MIBLOCK COND="$(>,$mcount,0)">
-      <?MIVAR>Total of <b>$mcount</b> markers on panel<?/MIVAR>
-      <p>
-      Click "View Map" in table at right to see a graphical map of an individual linkage group. 
-      <p align=center>
-         OR
-      </p>
-      <?MIVAR>
-      Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">see a list of all mapping panels.</A>
-      <?/MIVAR>
-      </TD>
+       <?MIVAR>Total of <b>$mcount</b> markers on panel<?/MIVAR>
+        <p>
+        <?MIBLOCK COND="$(EC,$abbrev,ZMAP)">
+         <B>NOTE:</B> There is too much data to display an entire Linkage Group <br>
+         Please use <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi?marker="> Search ZMap </A>
+         to restrict the query.
+        <?MIELSE>
+         Click "View Map" in table at right to see a graphical map of an individual linkage group.
+        <?/MIBLOCK>
+        <p align=center>OR</p>
+        <?MIVAR>
+         Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">see a list of all mapping panels.</A>
+        <?/MIVAR>
+        </TD>
+        <TD>
+        <?MIVAR>
+         <TABLE BORDER=0 cellpadding=2 bgcolor="white" cols=4>
+        <?/MIVAR>
+        <TH>LG</TH><TH>Markers on LG</TH><TH> </TH><TH> </TH>
+        <?MIVAR><INPUT TYPE=hidden name=loc_panel value=$abbrev><?/MIVAR>
+        <?MIVAR NAME=$last>0<?/MIVAR>
+        <?MIVAR NAME=$marker>None<?/MIVAR>
+        <?MIVAR NAME=$marker_abbrev>None<?/MIVAR>
 
 
-      <TD>
-      <?MIVAR>
-      <TABLE BORDER=0 cellpadding=2 bgcolor="white" cols=4>
-      <?/MIVAR>
-      <TH>LG</TH><TH>Markers on LG</TH><TH> </TH><TH> </TH>
-      <?MIVAR><INPUT TYPE=hidden name=loc_panel value=$abbrev><?/MIVAR>
-      <?MIVAR NAME=$last>0<?/MIVAR>
-      <?MIVAR NAME=$marker>None<?/MIVAR>
-      <?MIVAR NAME=$marker_abbrev>None<?/MIVAR>
+        <?MIBLOCK COND="$(NC,$abbrev,ZMAP)">
+         <?MISQL SQL="select panelcnt_or_lg,panelcnt_mrkr_type,panelcnt_count,lg_order::integer
+            from panel_count, linkage_group c
+            where panelcnt_panel_zdb_id='$OID'
+              and panelcnt_or_lg = c.lg_name
+            order by lg_order::integer;">
 
-
-      <?MIBLOCK COND="$(NC,$abbrev,ZMAP)">
-	<?MISQL SQL="select panelcnt_or_lg,panelcnt_mrkr_type,panelcnt_count,lg_order 
-		       from panel_count, linkage_group c  
-		      where panelcnt_panel_zdb_id='$OID'
-			and panelcnt_or_lg = c.lg_name 
-		   order by lg_order;">
-
-	  <?MIBLOCK COND="$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1))">
-	    <?MIVAR>
-	      </TD><TD bgcolor="$highlight" ><font size=1><input type=button name=view_map value="View Map" onClick=call_mapplet("$(-,$1,1)","$abbrev")></TD><TD bgcolor="$highlight"><font size=1><A HREF=javascript:view_scores('$OID','$(-,$1,1)','$marker','$marker_abbrev');>Scoring Data</A></TD></TR>
+	      <?MIBLOCK COND="$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1))">
+	       <?MIVAR>
+	        </TD><TD bgcolor="$highlight" ><font size=1><input type=button name=view_map value="View Map" onClick=call_mapplet("$(-,$1,1)","$abbrev")></TD><TD bgcolor="$highlight"><font size=1><A HREF=javascript:view_scores('$OID','$(-,$1,1)','$marker','$marker_abbrev');>Scoring Data</A></TD></TR>
+	       <?/MIVAR>
+	      <?/MIBLOCK>
+	      $(IF,$(>,$1,$last),"<TR align=center><TD bgcolor="$highlight"><font size=1>"$1"</TD><TD bgcolor="$highlight"><font size=1>")
+	      $(IF,$(=,$1,$last),"; ")
+	      $2($3)
+	      $(SETVAR,$last,$1)
+	     <?/MISQL>
+	     <?MIVAR>
+	     </TD><TD bgcolor="$highlight" ><font size=1><input type=button name=view_map value='View Map' onClick='call_mapplet("$1","$abbrev")'></TD><TD bgcolor="$highlight"><font size=1><A HREF="javascript:view_scores('$OID','$1','$marker','$marker_abbrev');">Scoring Data</A></TD></TR>
 	    <?/MIVAR>
-	  <?/MIBLOCK>
-	  $(IF,$(>,$1,$last),"<TR align=center><TD bgcolor="$highlight"><font size=1>"$1"</TD><TD bgcolor="$highlight"><font size=1>")
-	  $(IF,$(=,$1,$last),"; ")
-	  $2($3)
-	  $(SETVAR,$last,$1)
-	<?/MISQL>
-	<?MIVAR>
-	  </TD><TD bgcolor="$highlight" ><font size=1><input type=button name=view_map value='View Map' onClick='call_mapplet("$1","$abbrev")'></TD><TD bgcolor="$highlight"><font size=1><A HREF="javascript:view_scores('$OID','$1','$marker','$marker_abbrev');">Scoring Data</A></TD></TR>
-	<?/MIVAR>
+       <?/MIBLOCK>
 
+       <?MIBLOCK COND="$(EC,$abbrev,ZMAP)">
+        <?MISQL SQL="select or_lg::integer,mtype,count(*)::integer from zmap_pub_pan_mark a , panels b  where a.target_abbrev = b.abbrev and  b.zdb_id='$OID' and or_lg <> 0 group by or_lg,mtype order by or_lg::integer;">
 
-      <?/MIBLOCK>
+         <?MIBLOCK COND="$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1))">
+          <?MIVAR>
+           </TD><TD bgcolor="$highlight"></TD><TD bgcolor="$highlight" ></TD></TR>
+          <?/MIVAR>
+         <?/MIBLOCK>
 
+         $(IF,$(>,$1,$last),"<TR align=center><TD bgcolor="$highlight"><font size=1>"$1"</TD><TD bgcolor="$highlight"><font size=1>")
+	      $(IF,$(=,$1,$last),"; ")
+	      $2($3)
+	      $(SETVAR,$last,$1)
+	     <?/MISQL>
+	     <?MIVAR>
+	      </TD><TD bgcolor="$highlight"></TD><TD bgcolor="$highlight" ></TD></TR>
+	     <?/MIVAR>
+        <?/MIBLOCK>
+        </TABLE>
+       <?/MIBLOCK> <!-- ends mcount greater than 0 -->
 
-      <?MIBLOCK COND="$(EC,$abbrev,ZMAP)">
-	<?MISQL SQL="select OR_lg,mtype,count(*)::integer from zmap_pub_pan_mark a , panels b  where a.target_abbrev = b.abbrev and  b.zdb_id='$OID' and or_lg <> 0 group by OR_lg,mtype order by OR_lg;">
-
-	  <?MIBLOCK COND="$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1))">
-	    <?MIVAR>
-	      </TD><TD bgcolor="$highlight"><font size=1><A HREF="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi">View Map</A></TD><TD bgcolor="$highlight" ></TD></TR>
-	    <?/MIVAR>
-	  <?/MIBLOCK>
-
-	  $(IF,$(>,$1,$last),"<TR align=center><TD bgcolor="$highlight"><font size=1>"$1"</TD><TD bgcolor="$highlight"><font size=1>")
-	  $(IF,$(=,$1,$last),"; ")
-	  $2($3)
-	  $(SETVAR,$last,$1)
-	<?/MISQL>
-	    <?MIVAR>
-	      </TD><TD bgcolor="$highlight"><font size=1><A HREF="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi">View Map</A></TD><TDbgcolor="$highlight" ></TD></TR>
-	    <?/MIVAR>
-      <?/MIBLOCK>
-
-
-      </TABLE>
-
-      <?/MIBLOCK> <!-- ends mcount greater than 0 -->
-
-      <?MIVAR COND="$(=,$mcount,0)"> No marker data available yet. <?/MIVAR>
-
-      </TD>
-
-
-      </TR>
+       <?MIVAR COND="$(=,$mcount,0)"> No marker data available yet. <?/MIVAR>
+       </TD>
+       </TR>
       </TABLE>
 
 
 
       </form>
 
-    
+
     <?MICOMMENT> *** Citation Link *** <?/MICOMMENT>
     <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') from webPages where ID='aa-citlink.apg';">$1<?/MISQL>
 
