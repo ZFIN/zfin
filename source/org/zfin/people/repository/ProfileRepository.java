@@ -108,4 +108,11 @@ public interface ProfileRepository {
      * @param user User
      */
     void delete(User user);
+
+    /**
+     * Retrieve a User for a given login.
+     * @param login login string
+     * @return boolean
+     */
+    boolean userExists(String login);
 }

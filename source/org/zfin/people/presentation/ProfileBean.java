@@ -13,12 +13,14 @@ public class ProfileBean {
 
     public static final String ACTION_DELETE = "delete-user";
     public static final String ACTION_EDIT = "edit-user";
+    public static final String ACTION_CREATE= "create-user";
 
     private Person person;
     private User user;
     private String passwordOne;
     private String passwordTwo;
     private String action;
+    private boolean newUser;
 
     public Person getPerson() {
         if (person == null)
@@ -80,5 +82,17 @@ public class ProfileBean {
 
     public boolean deleteRecord(){
         return (action != null && action.equals(ACTION_DELETE));
+    }
+
+    public boolean createRecord(){
+        return (action != null && action.equals(ACTION_CREATE));
+    }
+
+    public boolean isNewUser() {
+        return newUser;
+    }
+
+    public void setNewUser(boolean newUser) {
+        this.newUser = newUser;
     }
 }

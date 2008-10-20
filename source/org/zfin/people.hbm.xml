@@ -130,8 +130,7 @@
 
     <class name="org.zfin.people.User" table="zdb_submitters">
 
-        <id name="zdbID">
-            <column name="zdb_id"/>
+        <id name="zdbID" column="zdb_id">
             <generator class="foreign">
                 <param name="property">person</param>
             </generator>

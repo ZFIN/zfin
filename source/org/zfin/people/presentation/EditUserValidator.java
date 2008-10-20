@@ -5,6 +5,8 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.zfin.people.Person;
 import org.zfin.people.User;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.repository.RepositoryFactory;
 
 
 /**
@@ -47,6 +49,23 @@ public class EditUserValidator implements Validator {
                 // cannot change role
                 if (!profileBean.getUser().getRole().equals(User.Role.SUBMIT.toString()))
                     errors.rejectValue("user.login", "code", "Your access level does not allowed to change your role");
+            }
+        }
+
+        ProfileRepository pr = RepositoryFactory.getProfileRepository();
+        // check for login uniqueness if a new user should be created
+        if (profileBean.isNewUser()) {
+            if (pr.userExists(profileBean.getUser().getLogin()))
+                errors.rejectValue("user.login", "code", "LOGIN name '" + profileBean.getUser().getLogin() + " is already in use. " +
+                        "Please choose a different name.");
+
+        } else {
+            // check that the change in the login name does not conflict with an existing login account
+            User user = pr.getUser(profileBean.getUser().getZdbID());
+            if (!user.getLogin().equals(profileBean.getUser().getLogin())) {
+                if (pr.userExists(profileBean.getUser().getLogin()))
+                    errors.rejectValue("user.login", "code", "LOGIN name '" + profileBean.getUser().getLogin() + " is already in use. " +
+                            "Please choose a different name.");
             }
         }
 

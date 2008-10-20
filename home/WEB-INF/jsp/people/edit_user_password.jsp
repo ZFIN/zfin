@@ -128,8 +128,22 @@ function vet_pw(str) {
 <c:choose>
 <c:when test="${formBean.ownerOrRoot}">
 
-<form:form  action="/action/people/edit-user?user.zdbID=${formBean.user.zdbID}" commandName="formBean" method="POST" name="login_form">
-<h1 align=center> Edit registered ZFIN user</h1>
+<form:form action="/action/people/edit-user?user.zdbID=${formBean.user.zdbID}" commandName="formBean" method="POST"
+           name="login_form">
+
+<c:choose>
+    <c:when test="${formBean.newUser}">
+        <center><big><Font color="#ff0000">
+            This person is not currently a registered ZFIN user.
+            Creating a new registered user...
+        </font></big></center>
+        <h1 align=center> CREATE NEW ZFIN USER</h1>
+        <form:hidden path="newUser"/>
+    </c:when>
+    <c:otherwise>
+        <h1 align=center> Edit registered ZFIN user</h1>
+    </c:otherwise>
+</c:choose>
 
 <b>Make desired changes to the ZFIN registered user, then click on COMMIT
     button. Or you may click "CANCEL" to abort the update.</b>
@@ -239,8 +253,8 @@ function vet_pw(str) {
     <TR align=center>
         <TD>
             <B>
-                    <input type=button name="Deleteme" value="Permanently Delete" onClick="submit_delete()">
-                <form:hidden path="action" />
+                <input type=button name="Deleteme" value="Permanently Delete" onClick="submit_delete()">
+                <form:hidden path="action"/>
                 this user's ZFIN registration </B>
             <font size=-1>(but not their PERSON record)</font>
         </TD>

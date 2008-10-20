@@ -135,6 +135,14 @@ public class HibernateProfileRepository implements ProfileRepository {
         session.flush();
     }
 
+    public boolean userExists(String login) {
+        Session session = HibernateUtil.currentSession();
+        Criteria crit = session.createCriteria(User.class);
+        crit.add(Restrictions.eq("login", login));
+        User user = (User) crit.uniqueResult();
+        return user != null;
+    }
+
     @SuppressWarnings("unchecked")
     public List<Organization> getOrganizationsByName(String name) {
         Session session = HibernateUtil.currentSession();
