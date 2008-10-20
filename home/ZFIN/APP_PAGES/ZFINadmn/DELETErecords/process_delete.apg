@@ -43,6 +43,7 @@
 
   <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
 
+
     <?MICOMMENT>=========================================================
                 == for Markers, Genotypes
                 =========================================================
@@ -339,7 +340,15 @@
 	    delete from zdb_active_source
 	          where zactvs_zdb_id = '$OID';">
         <?/MISQL>
-
+    <?MICOMMENT>=========================================================== 
+                If current kind is image then we need to be explicit.
+                =========================================================== 
+    <?/MICOMMENT>
+    <?MIELSE COND="$(OR,$(EC,$rtype,image))">
+        <?MISQL SQL="
+	     delete from $rtype 
+	           where img_zdb_id='$OID';">
+        <?/MISQL>
     <?MICOMMENT>=========================================================== 
 	        ==  Other than Marker,Feature, Genotype,Data Source ======= 
                 == delete from base table (currently used??)

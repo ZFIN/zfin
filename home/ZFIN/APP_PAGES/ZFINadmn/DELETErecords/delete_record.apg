@@ -236,7 +236,7 @@ Message: $MI_ERRORMSG
  
 <?MIBLOCK COND="$(=,$(POSITION,$OID,-ATB-),0)">
   <?MIBLOCK COND="$(EC,$merge_oid,none)">
-    <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,image),$(EC,$rtype,genotype))">
+    <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,genotype))">
     <?MIVAR COND="$(NXST,$mtype)" NAME=$mtype>GENE<?/MIVAR>
     <?MIVAR COND="$(NXST,$nsearch)" NAME=$nsearch><?/MIVAR>
        <b>Merge this record into:</b>
