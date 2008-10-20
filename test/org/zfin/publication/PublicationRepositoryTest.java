@@ -6,6 +6,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.antibody.repository.AntibodyRepository;
+import org.zfin.antibody.Antibody;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Figure;
@@ -42,7 +44,7 @@ public class PublicationRepositoryTest {
     }
 
 
-//    @Test
+    //    @Test
     public void retrieveSinglePublication() {
         Session session = HibernateUtil.currentSession();
         session.beginTransaction();
@@ -97,10 +99,10 @@ public class PublicationRepositoryTest {
         String zdbID = "ZDB-ANAT-010921-591";
         AnatomyItem term = new AnatomyItem();
         term.setZdbID(zdbID);
-        PaginationResult<MarkerStatistic> paginationResult = pr.getAllExpressedMarkers(term, 0, 5) ;
+        PaginationResult<MarkerStatistic> paginationResult = pr.getAllExpressedMarkers(term, 0, 5);
         List<MarkerStatistic> list = paginationResult.getPopulatedResults();
         assertEquals("5 genes", 5, paginationResult.getPopulatedResults().size());
-        assertTrue( list.size() < paginationResult.getTotalCount());
+        assertTrue(list.size() < paginationResult.getTotalCount());
     }
 
     /**
@@ -111,10 +113,10 @@ public class PublicationRepositoryTest {
         String termName = "somite";
         AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
         AnatomyItem term = aoRepository.getAnatomyItem(termName);
-        int number1 = pr.getAllExpressedMarkers(term,0,5).getTotalCount();
-        int number2 = pr.getAllExpressedMarkers(term,12,20).getTotalCount();
+        int number1 = pr.getAllExpressedMarkers(term, 0, 5).getTotalCount();
+        int number2 = pr.getAllExpressedMarkers(term, 12, 20).getTotalCount();
         assertTrue(number1 > 0);
-        assertEquals(number1 ,number2);
+        assertEquals(number1, number2);
     }
 
     @Test
@@ -177,11 +179,11 @@ public class PublicationRepositoryTest {
         String aoZdbID = "ZDB-ANAT-050711-66 ";
         AnatomyItem item = new AnatomyItem();
         item.setZdbID(aoZdbID);
-        PaginationResult<Genotype> genotypeResult= mutantRepository.getGenotypesByAnatomyTerm(item, false, 4);
+        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, 4);
 //        assertEquals("8 genes", 4, list.size());
         assertNotNull(genotypeResult.getPopulatedResults());
-        assertEquals(genotypeResult.getPopulatedResults().size(),4);
-        assertTrue(genotypeResult.getTotalCount()> 4);
+        assertEquals(genotypeResult.getPopulatedResults().size(), 4);
+        assertTrue(genotypeResult.getTotalCount() > 4);
     }
 
     @Test
@@ -276,8 +278,8 @@ public class PublicationRepositoryTest {
 
         assertNotNull(genotypeResult);
         assertNotNull(genotypeResult.getPopulatedResults());
-        assertEquals(genotypeResult.getPopulatedResults().size(),5);
-        assertTrue(genotypeResult.getTotalCount()> 5);
+        assertEquals(genotypeResult.getPopulatedResults().size(), 5);
+        assertTrue(genotypeResult.getTotalCount() > 5);
 
     }
 
@@ -324,7 +326,7 @@ public class PublicationRepositoryTest {
         AnatomyItem item = new AnatomyItem();
         item.setZdbID(aoZdbID);
         int publicationCount = pr.getNumPublicationsWithFiguresPerGenotypeAndAnatomy(geno, item);
-        assertTrue(publicationCount >0 );
+        assertTrue(publicationCount > 0);
 //        assertEquals("1 publication", 1, publications.size());
 
     }
@@ -354,5 +356,33 @@ public class PublicationRepositoryTest {
         assertTrue(qualityPubs != null);
 //        assertEquals("2 pubs", 2, qualityPubs.size());
 
+    }
+
+    @Test
+    public void getFigures() {
+        String name = "zn-5";
+        String aoTerm = "spinal cord";
+        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
+        AnatomyItem item = aoRepository.getAnatomyItem(aoTerm);
+        AntibodyRepository ar = RepositoryFactory.getAntibodyRepository();
+        Antibody antibody = ar.getAntibodyByName(name);
+        List<Figure> figures = ar.getFiguresPerAoTerm(antibody, item);
+        assertTrue(figures != null);
+    }
+
+    @Test
+    public void getFigureFigure(){
+        String zdbID = "ZDB-FIG-081003-1";
+        Figure figure = pr.getFigure(zdbID);
+        assertTrue(figure != null);
+        assertEquals(Figure.Type.FIGURE , figure.getType());
+    }
+
+    @Test
+    public void getTextOnlyFigure(){
+        String zdbID = "ZDB-FIG-081002-2";
+        Figure figure = pr.getFigure(zdbID);
+        assertTrue(figure != null);
+        assertEquals(Figure.Type.TOD , figure.getType());
     }
 }

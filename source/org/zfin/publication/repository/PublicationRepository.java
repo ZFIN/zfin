@@ -306,4 +306,11 @@ public interface PublicationRepository extends PaginationParameter {
 
 
     Journal getJournalByTitle(String journalTitle) ;
+
+    /**
+     * Retrieve Figue by ID
+     * @param zdbID ID
+     * @return Figure
+     */
+    Figure getFigure(String zdbID);
 }

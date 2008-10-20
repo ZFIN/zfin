@@ -1,25 +1,24 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<TABLE width="100%">
-    <tbody>
-        <TR class="search-result-table-header">
-            <TD width="20%">
-                Gene Symbol
-            </TD>
-            <TD width="20%">
-                Probe
-            </TD>
-            <TD width="60%">
-                Figures
-            </TD>
-        </TR>
-        <c:if test="${!formBean.inSituProbesExist}">
-            <tr>
-                <td colspan="4">No data available</td>
-            </tr>
-        </c:if>
-        <c:if test="${formBean.inSituProbesExist}">
+<c:if test="${!formBean.inSituProbesExist}">
+    <br/>
+    No data available
+</c:if>
+<c:if test="${formBean.inSituProbesExist}">
+    <TABLE width="100%">
+        <tbody>
+            <TR class="search-result-table-header">
+                <TD width="20%">
+                    Gene Symbol
+                </TD>
+                <TD width="20%">
+                    Probe
+                </TD>
+                <TD width="60%">
+                    Figures
+                </TD>
+            </TR>
             <c:forEach var="gene" items="${formBean.highQualityProbeGenes}">
                 <tr class="search-result-table-entries">
                     <td>
@@ -68,6 +67,6 @@
                     </td>
                 </tr>
             </c:if>
-        </c:if>
-    </tbody>
-</TABLE>
+        </tbody>
+    </TABLE>
+</c:if>

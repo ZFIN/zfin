@@ -27,9 +27,7 @@
                         </c:if>
                         <c:if test="${expressedGene.markerStat.numberOfFigures == 1 }">
                             <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${expressedGene.markerStat.figure.zdbID}'>
-                                <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                                             integerEntity="${expressedGene.markerStat.numberOfFigures}"
-                                             includeNumber="true"/>
+                                <zfin2:figureOrTextOnlyLink figure="${expressedGene.markerStat.figure}" integerEntity="${expressedGene.markerStat.numberOfFigures}"/>
                             </a>
                         </c:if>
                     </c:if>

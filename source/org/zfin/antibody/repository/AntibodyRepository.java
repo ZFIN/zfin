@@ -9,6 +9,7 @@ import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.FigureStatistics;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -90,9 +91,12 @@ public interface AntibodyRepository {
      *
      * @param antibody Antibody
      * @param aoTerm   AO Term
+     * @param type:  true figures
+     *               text only figures
+     *               all figures (if null)
      * @return number
      */
-    int getNumberOfFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm);
+    int getNumberOfFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm, Figure.Type type);
 
     /**
      * Get all figures for a given antibody and ao term.

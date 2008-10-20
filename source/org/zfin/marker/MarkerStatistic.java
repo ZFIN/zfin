@@ -4,6 +4,7 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.framework.presentation.FigureStatistics;
 
 import java.util.Set;
 import java.util.List;
@@ -17,6 +18,7 @@ public class MarkerStatistic {
     private long zdbID;
     private int numberOfPublications;
     private int numberOfFigures;
+    private FigureStatistics figureStatistics;
     private Marker gene;
     private AnatomyItem anatomyTerm;
     private Set<Figure> figures;
@@ -88,5 +90,11 @@ public class MarkerStatistic {
         return figs.get(0);
     }
 
+    public FigureStatistics getFigureStatistics() {
+        return figureStatistics;
+    }
 
+    public void setFigureStatistics(FigureStatistics figureStatistics) {
+        this.figureStatistics = figureStatistics;
+    }
 }

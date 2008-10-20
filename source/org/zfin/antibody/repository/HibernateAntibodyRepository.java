@@ -21,6 +21,8 @@ import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
+import org.zfin.expression.TextOnlyFigure;
+import org.zfin.expression.FigureFigure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.publication.Publication;
@@ -222,9 +224,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return (List<Antibody>) query.list();
     }
 
-    public int getNumberOfFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm) {
+    public int getNumberOfFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm, Figure.Type figureType) {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(Figure.class);
+        Criteria criteria;
+        if (figureType != null && figureType == Figure.Type.TOD)
+            criteria = session.createCriteria(TextOnlyFigure.class);
+        else
+            criteria = session.createCriteria(FigureFigure.class);
         criteria.setProjection(Projections.countDistinct("zdbID"));
         Criteria results = criteria.createCriteria("expressionResults");
         results.add(eq("anatomyTerm", aoTerm));
@@ -236,7 +242,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         genotype.add(Restrictions.eq("wildtype", true));
         Criteria experiment = genotypeExperiment.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD}));
-
         return (Integer) criteria.list().get(0);
     }
 
@@ -378,7 +383,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             if (hasOneWhereClause)
                 hql.append(" AND ");
             hql.append("    rel.secondMarker = antibody AND ");
-            hql.append("   (mapGene.marker =  rel.firstMarker AND mapGene.nameLowerCase like :markerName ) ") ;
+            hql.append("   (mapGene.marker =  rel.firstMarker AND mapGene.nameLowerCase like :markerName ) ");
 //                    "       AND mapGene.precedence in (:genePrecedence) )");
             hasOneWhereClause = true;
         }

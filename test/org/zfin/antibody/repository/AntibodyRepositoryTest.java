@@ -634,15 +634,15 @@ public class AntibodyRepositoryTest {
     @Test
     public void getFigureCount() {
         // zn-5
-        String abName = "zn-5";
+        String abName = "Ab1-elavl3/4";
         Antibody antibody = antibodyRep.getAntibodyByName(abName);
-        // brain
-        String aoID = "ZDB-ANAT-010921-415";
+        // spinal cord
+        String aoID = "ZDB-ANAT-010921-494";
         AnatomyItem aoTerm = new AnatomyItem();
         aoTerm.setZdbID(aoID);
 
-        int numOfFigures = antibodyRep.getNumberOfFiguresPerAoTerm(antibody, aoTerm);
-        assertTrue(numOfFigures > 0);
+        int numOfFigures = antibodyRep.getNumberOfFiguresPerAoTerm(antibody, aoTerm, Figure.Type.FIGURE);
+        assertTrue(numOfFigures > 0 );
 
         List<Figure> figures = antibodyRep.getFiguresPerAoTerm(antibody, aoTerm);
         assertTrue(figures != null);

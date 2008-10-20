@@ -6,6 +6,7 @@ import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.expression.Figure;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.framework.presentation.FigureStatistics;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class AntibodyStatistics {
     private Antibody antibody;
     private AnatomyItem anatomyItem;
     private List<Figure> figures;
+    private FigureStatistics figureStats;
     private int numberOfFigures = -1;
     private int numberOfPublications = -1;
     private List<Publication> publications;
@@ -33,7 +35,10 @@ public class AntibodyStatistics {
     public int getNumberOfFigures() {
         if (numberOfFigures == -1) {
             AntibodyRepository abRepository = RepositoryFactory.getAntibodyRepository();
-            numberOfFigures = abRepository.getNumberOfFiguresPerAoTerm(antibody, anatomyItem);
+            int textOnly = abRepository.getNumberOfFiguresPerAoTerm(antibody, anatomyItem, Figure.Type.TOD);
+            int trueFigure = abRepository.getNumberOfFiguresPerAoTerm(antibody, anatomyItem, Figure.Type.FIGURE);
+            figureStats = new FigureStatistics(trueFigure, textOnly);
+            numberOfFigures = textOnly + trueFigure;
         }
         return numberOfFigures;
     }
@@ -66,5 +71,7 @@ public class AntibodyStatistics {
         return publications.iterator().next();
     }
 
-
+    public FigureStatistics getFigureStats() {
+        return figureStats;
+    }
 }

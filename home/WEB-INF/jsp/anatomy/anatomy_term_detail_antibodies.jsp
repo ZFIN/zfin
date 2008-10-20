@@ -1,25 +1,24 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<TABLE width="100%">
-    <tbody>
-        <TR class="search-result-table-header">
-            <TD width="20%">
-                Antibody
-            </TD>
-            <TD width="20%">
-                Gene Symbol
-            </TD>
-            <TD width="60%">
-                Figures
-            </TD>
-        </TR>
-        <c:if test="${!formBean.antibodiesExist}">
-            <tr>
-                <td colspan="4">No data available</td>
-            </tr>
-        </c:if>
-        <c:if test="${formBean.antibodiesExist}">
+<c:if test="${!formBean.antibodiesExist}">
+    <br/>
+    No data available
+</c:if>
+<c:if test="${formBean.antibodiesExist}">
+    <TABLE width="100%">
+        <tbody>
+            <TR class="search-result-table-header">
+                <TD width="20%">
+                    Antibody
+                </TD>
+                <TD width="20%">
+                    Gene Symbol
+                </TD>
+                <TD width="60%">
+                    Figures
+                </TD>
+            </TR>
             <c:forEach var="antibodyStats" items="${formBean.antibodyStatistics}">
                 <tr class="search-result-table-entries">
                     <td>
@@ -41,9 +40,8 @@
                             <!-- If only one figure available go directly to the figure page -->
                             <c:if test="${antibodyStats.numberOfFigures == 1}">
                                 <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${antibodyStats.figure.zdbID}'>
-                                    <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                                                 integerEntity="${antibodyStats.numberOfFigures}"
-                                                 includeNumber="true"/>
+                                    <zfin2:figureOrTextOnlyLink figure="${antibodyStats.figure}"
+                                                                integerEntity="${antibodyStats.numberOfFigures}"/>
                                 </a>
                             </c:if>
                             from
@@ -70,6 +68,6 @@
                     </td>
                 </tr>
             </c:if>
-        </c:if>
-    </tbody>
-</TABLE>
+        </tbody>
+    </TABLE>
+</c:if>

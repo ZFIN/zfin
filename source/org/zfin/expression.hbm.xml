@@ -13,6 +13,12 @@
             </generator>
         </id>
 
+        <discriminator type="string"
+                       formula="(CASE fig_label
+                                    WHEN 'text only' THEN 'TOD'
+                                    ELSE                  'FIG'
+                                 END)"/>
+
         <property name="caption">
             <column name="fig_caption"/>
         </property>
@@ -42,6 +48,10 @@
         <many-to-one name="publication" class="org.zfin.publication.Publication" column="fig_source_zdb_id"
                      insert="false"
                      update="false"/>
+
+        <subclass name="org.zfin.expression.FigureFigure" discriminator-value="FIG"/>
+
+        <subclass name="org.zfin.expression.TextOnlyFigure" discriminator-value="TOD"/>
 
     </class>
 

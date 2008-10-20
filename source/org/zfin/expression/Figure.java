@@ -8,10 +8,24 @@ import java.io.Serializable;
 /**
  * Figure domain business object. It is a figure referenced in a publication.
  */
-public class Figure implements Serializable {
+public abstract class Figure implements Serializable {
+
+    public enum Type {
+        FIGURE("figure"),
+        TOD("text only");
+
+        private String name;
+
+        Type(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
 
     private String zdbID;
-    // Todo should be an image object: private    String sourceID;
     private String caption;
     private String comments;
     private String label;
@@ -84,4 +98,6 @@ public class Figure implements Serializable {
     public void setPublication(Publication publication) {
         this.publication = publication;
     }
+
+    public abstract Type getType();
 }
