@@ -46,7 +46,7 @@ get_obj_abbrev(zdbId varchar(50))
     select geno_display_name
       into objName
       from genotype
-      where zdb_id = zdbId;
+      where geno_zdb_id = zdbId;
   elif (objType = "JRNL") then
     select jrnl_abbrev  -- NULL values
       into objName
