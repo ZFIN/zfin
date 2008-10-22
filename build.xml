@@ -454,10 +454,6 @@
         <symlink link="${doi.dir}/lib" action="delete"/>
     </target>
 
-    <taskdef resource="task.properties" classpath="lib/Java/grand-1.8.jar">
-       <classpath refid="extended.classpath"/>
-    </taskdef>
-
      <target name="graph" description="Creates graph of build process">
          <grand output="build.dot" buildfile="build.xml"/>
          <exec executable="dot" >
