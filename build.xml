@@ -45,7 +45,8 @@
     <target name="do" depends="clean, construct-xsd-classes, compile, prepare-properties"
             description="Everything to compile excluding jsp files. No copying into target directory"/>
 
-    <target name="all" depends="pre-deploy" description="The same as deploy for Tom."/>
+    <target name="all" depends="deploy" description="The same as deploy for Tom."/>
+    <target name="install" depends="deploy" description="Same as deploy."/>
 
 
     <target name="compile" depends="prepare"
@@ -189,7 +190,6 @@
         </copy>
     </target>
 
-    <target name="install" depends="pre-deploy" description="Same as deploy."/>
 
     <target name="remove-archives"  description="Removes archived builds (older than post-builds)">
         <delete verbose="true" includeemptydirs="true">
