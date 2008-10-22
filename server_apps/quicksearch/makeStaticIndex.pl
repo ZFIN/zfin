@@ -221,14 +221,14 @@ while (my @row = $sth->fetchrow_array()) {
 	my $oid = trim($row[1]);
 	
 	# generate specific URL for data-page corresponding to APP_PAGE, OID pairs
-	if ($app_page ne "anatomy_item") {
-	    my $idName = ($app_page eq "xpatexpcdndisplay") ? "&cdp_exp_zdb_id=" : "&OID=";
-	    $url = $urlHead . $app_page . $urlTail . $idName . $oid;
-	}
-        elsif ($app_page eq "antibody") {
-            $url = "http://<!--|DOMAIN_NAME|-->/action/antibody/detail?antibody.zdbID=".$oid;
-        }
-	else {
+	if ($app_page ne "anatomy_item" ) {
+	    if ($app_page eq "antibody") {
+		$url = "http://<!--|DOMAIN_NAME|-->/action/antibody/detail?antibody.zdbID=".$oid;
+	    }else{
+		my $idName = ($app_page eq "xpatexpcdndisplay") ? "&cdp_exp_zdb_id=" : "&OID=";
+		$url = $urlHead . $app_page . $urlTail . $idName . $oid;
+	    }
+	}else {
 	    # hardcode the path for Java page. When Java file path name gets standalized, 
             # will update here.
 	    $url = "http://<!--|DOMAIN_NAME|-->/action/anatomy/term-detail?anatomyItem.zdbID=".$oid; 
