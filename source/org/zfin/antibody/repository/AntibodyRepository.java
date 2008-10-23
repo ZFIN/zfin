@@ -10,6 +10,7 @@ import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.FigureStatistics;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -108,24 +109,14 @@ public interface AntibodyRepository {
     public List<Figure> getFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm);
 
     /**
-     * Retrieve the number of distinct publications that have figures associated
-     * with a given antibody and ao term.
-     *
-     * @param antibody Antibody
-     * @param aoTerm   AO term
-     * @return number of publications
-     */
-    int getNumberOfPublicationsWithFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm);
-
-    /**
      * Retrieve distinct publications for given antibody and ao term that have
      * figures associated.
      *
      * @param antibody Antibody
      * @param aoTerm   ao term
-     * @return Publciation
+     * @return Pagination Result object
      */
-    List<Publication> getPublicationsWithFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm);
+    PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, AnatomyItem aoTerm);
 
     /**
      * Lookup all distinct antibodies that are referenced in a given publciation.

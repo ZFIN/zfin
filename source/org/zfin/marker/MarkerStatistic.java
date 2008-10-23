@@ -2,21 +2,23 @@ package org.zfin.marker;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
+import org.zfin.framework.presentation.EntityStatistics;
+import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.framework.presentation.FigureStatistics;
 
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class is a container for marker-related info by anatomy structure:
  * Publications and Figures.
  */
-public class MarkerStatistic {
+public class MarkerStatistic extends EntityStatistics {
 
     private long zdbID;
-    private int numberOfPublications;
     private int numberOfFigures;
     private FigureStatistics figureStatistics;
     private Marker gene;
@@ -41,12 +43,9 @@ public class MarkerStatistic {
         this.zdbID = zdbID;
     }
 
-    public int getNumberOfPublications() {
-        return numberOfPublications;
-    }
-
-    public void setNumberOfPublications(int numberOfPublications) {
-        this.numberOfPublications = numberOfPublications;
+    protected PaginationResult<Publication> getPublicationPaginationResult() {
+        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
+        return pr.getPublicationsWithFigures(gene, anatomyTerm);
     }
 
     public Marker getGene() {

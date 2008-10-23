@@ -10,21 +10,19 @@ import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.publication.Publication;
+import org.zfin.framework.presentation.EntityStatistics;
+import org.zfin.framework.presentation.PaginationResult;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class is a statistics class about Morpholinos on the Anatomy Detail page.
  */
-public class MorpholinoStatistics {
+public class MorpholinoStatistics extends EntityStatistics {
 
     private GenotypeExperiment genoExperiment;
     private AnatomyItem anatomyItem;
     private Set<Figure> figures;
-    private Set<Publication> publications;
 
     public MorpholinoStatistics(GenotypeExperiment genoExperiment, AnatomyItem anatomyItem) {
         this.anatomyItem = anatomyItem;
@@ -76,20 +74,16 @@ public class MorpholinoStatistics {
         return figures.iterator().next();
     }
 
-    public int getNumberOfPublications() {
-        if (publications == null) {
-            for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
-                if (StringUtils.equals(phenotype.getPatoEntityAzdbID(), anatomyItem.getZdbID()) ||
-                        StringUtils.equals(phenotype.getPatoEntityBzdbID(), anatomyItem.getZdbID())) {
-                    if (publications == null)
-                        publications = new HashSet<Publication>();
-                    publications.add(phenotype.getPublication());
-                }
+    protected PaginationResult<Publication> getPublicationPaginationResult() {
+        Set<Publication> pubs = new HashSet<Publication>();
+        for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
+            if (StringUtils.equals(phenotype.getPatoEntityAzdbID(), anatomyItem.getZdbID()) ||
+                    StringUtils.equals(phenotype.getPatoEntityBzdbID(), anatomyItem.getZdbID())) {
+                pubs.add(phenotype.getPublication());
             }
         }
-        if (publications == null)
-            return 0;
-        return publications.size();
+        List<Publication> pubList = new ArrayList<Publication>(pubs);
+        return new PaginationResult<Publication>(pubList);
     }
 
     private class PhenotypeComparator implements Comparator<String> {

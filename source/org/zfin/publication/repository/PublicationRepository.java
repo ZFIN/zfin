@@ -281,8 +281,16 @@ public interface PublicationRepository extends PaginationParameter {
 
     /**
      *
-     * @param genotype
-     * @param aoTerm
+     * @param genotype Genotype
+     * @param aoTerm ao term
+     * @return Number of publications with figures per genotype and anatomy
+     */
+    PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, AnatomyItem aoTerm);
+
+    /**
+     *
+     * @param genotype Genotype
+     * @param aoTerm ao term
      * @return Number of publications with figures per genotype and anatomy
      */
     int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, AnatomyItem aoTerm);
@@ -313,4 +321,13 @@ public interface PublicationRepository extends PaginationParameter {
      * @return Figure
      */
     Figure getFigure(String zdbID);
+
+    /**
+     * Retrieve all Publications with Figures for a given marker and ao term.
+     * Standard condition and wildtype fish
+     * @param marker marker
+     * @param anatomyTerm ao term
+     * @return pagination result
+     */
+    PaginationResult<Publication> getPublicationsWithFigures(Marker marker, AnatomyItem anatomyTerm);
 }

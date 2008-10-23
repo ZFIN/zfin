@@ -6,6 +6,8 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import static org.hibernate.criterion.Restrictions.eq;
+import static org.hibernate.criterion.Restrictions.isNotEmpty;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.CanonicalMarker;
@@ -382,7 +384,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             Marker marker = mr.getMarkerByID(markerZdbID);
             MarkerStatistic statistic = new MarkerStatistic(anatomyTerm, marker);
             statistic.setNumberOfFigures((Integer) stats[2]);
-            statistic.setNumberOfPublications(getNumberOfExpressedGenePublicationsWithFigures(marker.getZdbID(), anatomyTerm.getZdbID()));
+            //statistic.setNumberOfPublications(getNumberOfExpressedGenePublicationsWithFigures(marker.getZdbID(), anatomyTerm.getZdbID()));
             markers.add(statistic);
         }
         return markers;
@@ -616,6 +618,26 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return paginationResult ;
     }
 
+    public PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, AnatomyItem aoTerm) {
+        Session session = HibernateUtil.currentSession();
+        Criteria pubs = session.createCriteria(Publication.class);
+        Criteria phenotype = pubs.createCriteria("phenotypes");
+        phenotype.add(Restrictions.or(
+                Restrictions.eq("patoEntityAzdbID", aoTerm.getZdbID()),
+                Restrictions.eq("patoEntityBzdbID", aoTerm.getZdbID())));
+        phenotype.add(Restrictions.isNotEmpty("figures"));
+        Criteria genox = phenotype.createCriteria("genotypeExperiment");
+        genox.add(Restrictions.eq("genotype", genotype));
+        Criteria geno = genox.createCriteria("genotype");
+        geno.add(Restrictions.eq("wildtype", false));
+/*
+        Criteria experiment = genox.createCriteria("experiment");
+        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
+*/
+        pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return  new PaginationResult<Publication>((List<Publication>) pubs.list()) ;
+    }
+
 
     public int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, AnatomyItem aoTerm) {
         Session session = HibernateUtil.currentSession();
@@ -709,6 +731,26 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public Figure getFigure(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return (Figure) session.get(Figure.class, zdbID);
+    }
+
+    @SuppressWarnings("unchecked")
+    public PaginationResult<Publication> getPublicationsWithFigures(Marker marker, AnatomyItem anatomyTerm) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria pubs = session.createCriteria(Publication.class);
+        Criteria expresssion = pubs.createCriteria("expressionExperiments");
+        expresssion.add(Restrictions.eq("marker", marker));
+        Criteria result = expresssion.createCriteria("expressionResults");
+        result.add(Restrictions.isNotEmpty("figures"));
+        result.add(Restrictions.eq("anatomyTerm", anatomyTerm));
+        Criteria genox = expresssion.createCriteria("genotypeExperiment");
+        Criteria genotype = genox.createCriteria("genotype");
+        genotype.add(Restrictions.eq("wildtype", true));
+        Criteria experiment = genox.createCriteria("experiment");
+        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
+        pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+        return new PaginationResult<Publication>((List<Publication>) pubs.list());
     }
 
 }

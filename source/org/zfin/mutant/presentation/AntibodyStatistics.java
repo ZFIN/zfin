@@ -7,21 +7,21 @@ import org.zfin.expression.Figure;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.framework.presentation.FigureStatistics;
+import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.framework.presentation.EntityStatistics;
 
 import java.util.List;
 
 /**
  * This class is a statistics class about Morpholinos on the Anatomy Detail page.
  */
-public class AntibodyStatistics {
+public class AntibodyStatistics extends EntityStatistics {
 
     private Antibody antibody;
     private AnatomyItem anatomyItem;
     private List<Figure> figures;
     private FigureStatistics figureStats;
     private int numberOfFigures = -1;
-    private int numberOfPublications = -1;
-    private List<Publication> publications;
 
     public AntibodyStatistics(Antibody antibody, AnatomyItem anatomyItem) {
         this.anatomyItem = anatomyItem;
@@ -53,25 +53,9 @@ public class AntibodyStatistics {
         return figures.iterator().next();
     }
 
-    public int getNumberOfPublications() {
-        if (numberOfPublications == -1) {
-            AntibodyRepository abRepository = RepositoryFactory.getAntibodyRepository();
-            numberOfPublications = abRepository.getNumberOfPublicationsWithFiguresPerAoTerm(antibody, anatomyItem);
-        }
-        return numberOfPublications;
+    public PaginationResult<Publication> getPublicationPaginationResult() {
+        AntibodyRepository abRepository = RepositoryFactory.getAntibodyRepository();
+        return abRepository.getPublicationsWithFigures(antibody, anatomyItem);
     }
 
-    public Publication getPublication() {
-        if (publications == null) {
-            AntibodyRepository abRepository = RepositoryFactory.getAntibodyRepository();
-            publications = abRepository.getPublicationsWithFiguresPerAoTerm(antibody, anatomyItem);
-        }
-        if (publications == null || publications.size() != 1)
-            throw new RuntimeException("Can call this method only when there is exactly one publication");
-        return publications.iterator().next();
-    }
-
-    public FigureStatistics getFigureStats() {
-        return figureStats;
-    }
 }

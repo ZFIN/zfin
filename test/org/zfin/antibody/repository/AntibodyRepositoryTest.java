@@ -25,6 +25,7 @@ import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
@@ -658,12 +659,10 @@ public class AntibodyRepositoryTest {
         AnatomyItem aoTerm = new AnatomyItem();
         aoTerm.setZdbID(aoID);
 
-        int numOfPubs = antibodyRep.getNumberOfPublicationsWithFiguresPerAoTerm(antibody, aoTerm);
-        assertTrue(numOfPubs > 0);
+        PaginationResult<Publication> pubs = antibodyRep.getPublicationsWithFigures(antibody, aoTerm);
+        assertTrue(pubs != null);
 
-        List<Publication> publications = antibodyRep.getPublicationsWithFiguresPerAoTerm(antibody, aoTerm);
-        assertTrue(publications != null);
-        assertEquals(true, publications.size() > 0);
+        assertEquals(true, pubs.getPopulatedResults().size() > 0);
     }
 
     @Test
@@ -883,5 +882,15 @@ public class AntibodyRepositoryTest {
         assertTrue(all != null);
     }
 
+    @Test
+    public void getPublicationsPerAntibodyAndAoTerm(){
+        String antibodyName = "zn-5";
+        String aoTermName = "spinal cord";
+        Antibody antibody = antibodyRep.getAntibodyByName(antibodyName);
+        AnatomyItem aoTerm =anatomyRep.getAnatomyItem(aoTermName);
+
+        PaginationResult<Publication> pubs = antibodyRep.getPublicationsWithFigures(antibody, aoTerm);
+        assertTrue(pubs != null);
+    }
 
 }

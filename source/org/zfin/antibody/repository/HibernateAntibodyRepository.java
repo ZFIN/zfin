@@ -25,6 +25,7 @@ import org.zfin.expression.TextOnlyFigure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
@@ -264,13 +265,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return (List<Figure>) labeling.list();
     }
 
-    public int getNumberOfPublicationsWithFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm) {
-        Criteria pubs = QueryBlockPublicationsWithFiguresPerAoTerm(antibody, aoTerm);
-        pubs.setProjection(Projections.countDistinct("zdbID"));
-
-        return (Integer) pubs.list().get(0);
-    }
-
     private Criteria QueryBlockPublicationsWithFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm) {
         Session session = HibernateUtil.currentSession();
         Criteria pubs = session.createCriteria(Publication.class);
@@ -289,11 +283,22 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Publication> getPublicationsWithFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm) {
-        Criteria pubs = QueryBlockPublicationsWithFiguresPerAoTerm(antibody, aoTerm);
+    public PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, AnatomyItem aoTerm) {
+        Session session = HibernateUtil.currentSession();
+        Criteria pubs = session.createCriteria(Publication.class);
+        Criteria labeling = pubs.createCriteria("expressionExperiments");
+        labeling.add(eq("antibody", antibody));
+        Criteria results = labeling.createCriteria("expressionResults");
+        results.add(eq("anatomyTerm", aoTerm));
+        results.add(isNotEmpty("figures"));
+        results.add(eq("expressionFound", true));
+        Criteria genotypeExperiment = labeling.createCriteria("genotypeExperiment");
+        Criteria genotype = genotypeExperiment.createCriteria("genotype");
+        genotype.add(Restrictions.eq("wildtype", true));
+        Criteria experiment = genotypeExperiment.createCriteria("experiment");
+        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-        return (List<Publication>) pubs.list();
+        return  new PaginationResult<Publication>((List<Publication>) pubs.list()) ;
     }
 
     @SuppressWarnings("unchecked")

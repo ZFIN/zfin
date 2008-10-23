@@ -32,8 +32,14 @@
                         </c:if>
                     </c:if>
                     from
-                    <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
-                                 integerEntity="${expressedGene.markerStat.numberOfPublications}" includeNumber="true"/>
+                    <c:if test="${expressedGene.markerStat.numberOfPublications ==1}">
+                        <zfin:link entity="${expressedGene.markerStat.singlePublication}"/>
+                    </c:if>
+                    <c:if test="${expressedGene.markerStat.numberOfPublications > 1}">
+                        <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
+                                     integerEntity="${expressedGene.markerStat.numberOfPublications}"
+                                     includeNumber="true"/>
+                    </c:if>
                 </td>
             </tr>
         </c:forEach>

@@ -4,6 +4,7 @@ import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.mutant.Phenotype;
 
 import java.util.Set;
 import java.util.GregorianCalendar;
@@ -29,6 +30,7 @@ public class Publication implements Comparable<Publication>, Serializable {
     private GregorianCalendar publicationDate;
     private Journal journal;
     private Set<ExpressionExperiment> expressionExperiments;
+    private Set<Phenotype> phenotypes;
     private Set<Figure> figures;
 
     private boolean deletable;
@@ -68,6 +70,14 @@ public class Publication implements Comparable<Publication>, Serializable {
 
     public void setExpressionExperiments(Set<ExpressionExperiment> expressionExperiments) {
         this.expressionExperiments = expressionExperiments;
+    }
+
+    public Set<Phenotype> getPhenotypes() {
+        return phenotypes;
+    }
+
+    public void setPhenotypes(Set<Phenotype> phenotypes) {
+        this.phenotypes = phenotypes;
     }
 
     public String getAuthors() {

@@ -16,6 +16,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
 import org.zfin.mutant.repository.MutantRepository;
@@ -385,4 +386,32 @@ public class PublicationRepositoryTest {
         assertTrue(figure != null);
         assertEquals(Figure.Type.TOD , figure.getType());
     }
+
+    @Test
+    public void getGenotypePublications(){
+        String termName = "spinal cord";
+        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
+        AnatomyItem item = aoRepository.getAnatomyItem(termName);
+        // bib^tb8/tb8
+        //String genoID = "ZDB-GENO-980202-841";
+        String genoID = "ZDB-GENO-080326-12";
+        MutantRepository mr = RepositoryFactory.getMutantRepository();
+        Genotype genotype = mr.getGenotypeByID(genoID);
+        PaginationResult<Publication> qualityPubs = pr.getPublicationsWithFigures(genotype, item);
+        assertTrue(qualityPubs != null);
+    }
+
+    @Test
+    public void getMarkerPublications(){
+        String termName = "spinal cord";
+        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
+        AnatomyItem item = aoRepository.getAnatomyItem(termName);
+        // bib^tb8/tb8
+        String markerID = "ZDB-GENE-980526-36";
+        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+        Marker marker = mr.getMarkerByID(markerID);
+        PaginationResult<Publication> qualityPubs = pr.getPublicationsWithFigures(marker, item);
+        assertTrue(qualityPubs != null);
+    }
+
 }

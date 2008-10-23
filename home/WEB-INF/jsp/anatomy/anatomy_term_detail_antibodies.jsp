@@ -46,7 +46,7 @@
                             </c:if>
                             from
                             <c:if test="${antibodyStats.numberOfPublications ==1}">
-                                <zfin:link entity="${antibodyStats.publication}"/>
+                                <zfin:link entity="${antibodyStats.singlePublication}"/>
                             </c:if>
                             <c:if test="${antibodyStats.numberOfPublications > 1}">
                                 <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"

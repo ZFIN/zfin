@@ -63,18 +63,27 @@
                                     <zfin2:figureOrTextOnlyLink figure="${genoStat.figure}" integerEntity="${genoStat.numberOfFigures}"/>
                                 </a>
                             </c:if>
-                            from
-                            <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
-                                         integerEntity="${genoStat.numberOfPublications}" includeNumber="true"/>
                         </c:if>
                         <c:if test="${genoStat.numberOfFigures == 0}">
                             --
                         </c:if>
-                    </td>
-                </tr>
-            </c:forEach>
-        </tbody>
-    </table>
+                        from
+                        <c:if test="${genoStat.numberOfPublications ==1}">
+                            <zfin:link entity="${genoStat.singlePublication}"/>
+                        </c:if>
+                        <c:if test="${genoStat.numberOfPublications > 1}">
+                            <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
+                                         integerEntity="${genoStat.numberOfPublications}"
+                                         includeNumber="true"/>
+                        </c:if>
+                    <c:if test="${genoStat.numberOfFigures == 0}">
+                        --
+                    </c:if>
+                </td>
+            </tr>
+        </c:forEach>
+    </tbody>
+</table>
     <c:if test="${!formBean.allGenotypesAreDisplayed}">
         <table width="100%">
             <tbody>
