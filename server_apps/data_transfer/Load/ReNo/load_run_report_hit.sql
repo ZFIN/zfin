@@ -183,14 +183,17 @@ insert into run (
 
 ! echo "fix trailing space from case statment"
 update run set run_type = trim(run_type)
- where run_type != trim(run_type);
+ --where octet_length(run_type) != length(run_type)
+ ;
 
 -- fix trailing space from case statment (just in case)
 update run set run_nomen_pub_zdb_id= trim(run_nomen_pub_zdb_id)
- where run_nomen_pub_zdb_id != trim(run_nomen_pub_zdb_id);
+ --where run_nomen_pub_zdb_id != trim(run_nomen_pub_zdb_id)
+ ;
 
 update run set run_relation_pub_zdb_id = trim(run_relation_pub_zdb_id)
- where run_relation_pub_zdb_id != trim(run_relation_pub_zdb_id);
+ --where run_relation_pub_zdb_id != trim(run_relation_pub_zdb_id)
+ ;
 
 ----------------------------------------------------------------------------------
 
@@ -226,19 +229,19 @@ update accession_bank set accbk_length = (
        and trpt_acc_len > 0
 );
 
-! echo "update accession_bank with NEW length"
+! echo "update accession_bank with NEW length  *** ACTION SKIPPED FOR EXCESSIVE TIME ***"
 ! echo "`date`"
-update accession_bank set accbk_length = (
-    select trpt_acc_len
-     from tmp_report
-     where trpt_query_id = accbk_pk_id
-) where accbk_length is NOT NULL
-    and exists (
-    select 1 from tmp_report
-     where trpt_query_id = accbk_pk_id
-       and trpt_acc_len > 0
-       and trpt_acc_len != accbk_length
-);
+--update accession_bank set accbk_length = (
+--    select trpt_acc_len
+--     from tmp_report
+--     where trpt_query_id = accbk_pk_id
+--) where accbk_length is NOT NULL
+--    and exists (
+--    select 1 from tmp_report
+--     where trpt_query_id = accbk_pk_id
+--       and trpt_acc_len > 0
+--       and trpt_acc_len != accbk_length
+--);
 
 
 ! echo "clobber existing VEGA accession_bank deflines if they are changed"
@@ -293,7 +296,7 @@ select distinct
 -- clean up after the SQL's superior conditional operator skillz
 update accession_bank set accbk_fdbcont_zdb_id = trim (accbk_fdbcont_zdb_id)
  where exists (select 1 from tmp_report where accbk_acc_num = trpt_acc)
-   and accbk_fdbcont_zdb_id != trim (accbk_fdbcont_zdb_id)
+   and octet_length(accbk_fdbcont_zdb_id) != length(accbk_fdbcont_zdb_id)
 ;
 
 update statistics high for table accession_bank;
@@ -356,6 +359,7 @@ select distinct trpt_alt_id,
    and trpt_alt_id is not NULL
 ;
 
+update tmp_candidate set tcnd_mrkr_type = trim(tcnd_mrkr_type);
 update tmp_candidate set tcnd_zad = get_id('CND');
 insert into  zdb_active_data select tcnd_zad from tmp_candidate;
 
@@ -379,7 +383,8 @@ select distinct
 
 ! echo "fix trailing space from case statment"
 update candidate set cnd_mrkr_type = trim(cnd_mrkr_type)
- where cnd_mrkr_type != trim(cnd_mrkr_type);
+ --where cnd_mrkr_type != trim(cnd_mrkr_type)
+ ;
 
 ! echo "aassociate the new candidates with their reports"
 update tmp_report set trpt_cnd_zdbid = (
@@ -643,7 +648,7 @@ update accession_bank set accbk_fdbcont_zdb_id = trim (accbk_fdbcont_zdb_id)
  where exists (
  	select 1 from tmp_hit
  	 where accbk_acc_num = thit_acc
- ) and accbk_fdbcont_zdb_id != trim (accbk_fdbcont_zdb_id)
+ ) and octet_length(accbk_fdbcont_zdb_id) != length (accbk_fdbcont_zdb_id)
 ;
 
 ! echo "add this accession length if it is > 0 and accbk_length = 0"
