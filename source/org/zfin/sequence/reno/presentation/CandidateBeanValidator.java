@@ -59,16 +59,6 @@ public class CandidateBeanValidator implements Validator {
 
         RunCandidate runCandidate = candidateBean.getRunCandidate() ;
 
-        // If it is null, but should have associated markers, then we have a serious problem.
-        if(runCandidate.getIdentifiedMarker()==null  && runCandidate.getRun().hasAssociatedMarkers()==true){
-            Set<Query> queries = runCandidate.getCandidateQueries() ;
-            // just grab the first query and report the error if there is one query
-            Object[] args = new Object[1] ;
-            args[0] = queries.iterator().next().getAccession().getNumber() ;
-            errors.rejectValue("action","code note used",args,"Can not resolve because accession {0} has no corresponding zfin gene." +
-                    "  Either manually fix or wait for GenBank to fix and to be subsequently loaded."); ;
-        }
-
         if (runCandidate.getRun().isRedundancy()){
             validateRedundancy(candidateBean, candidateGene, errors);
         }
@@ -83,6 +73,19 @@ public class CandidateBeanValidator implements Validator {
     protected void validateRedundancy(CandidateBean candidateBean, Marker candidateGene, Errors errors) {
 
         LOG.info("Validating redundancy pipeline submission");
+
+        RunCandidate runCandidate =  candidateBean.getRunCandidate();
+        // If it is null, but should have associated markers, then we have a serious problem.
+        if(runCandidate.getIdentifiedMarker()==null  && runCandidate.getRun().hasAssociatedMarkers()==true){
+            Set<Query> queries = runCandidate.getCandidateQueries() ;
+            // just grab the first query and report the error if there is one query
+            Object[] args = new Object[1] ;
+            args[0] = queries.iterator().next().getAccession().getNumber() ;
+            errors.rejectValue("action","code note used",args,"Can not resolve because accession {0} has no corresponding zfin gene." +
+                    "  Either manually fix or wait for GenBank to fix and to be subsequently loaded."); ;
+        }
+
+
 
         //check that the pubs aren't null
         RedundancyRun run = (RedundancyRun) candidateBean.getRunCandidate().getRun();
