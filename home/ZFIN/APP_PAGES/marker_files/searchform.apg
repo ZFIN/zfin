@@ -95,10 +95,11 @@ Input:
        </SELECT>    
 
        <p>
+       <?MIVAR>
 	Display results in groups of 
-	<input type="text" name="WINSIZE" size="3" value="20" 
-	       onChange='document.critform.START.value = "";' 
-	       $(IF,$(XST,$WINSIZE),value='$WINSIZE')>.
+	<input type="text" name="WINSIZE" size="3"
+	       onChange='document.critform.START.value = "";' $(IF,$(XST,$WINSIZE),value='$WINSIZE',value="25")>
+       </?MIVAR>
 
 	<?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
 	  <?MIVAR> 
