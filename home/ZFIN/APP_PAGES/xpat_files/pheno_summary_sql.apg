@@ -42,22 +42,176 @@
 
   <?MIVAR NAME=phenosum_sql_where_mrphlno>$phenosum_sql_where<?/MIVAR>
 
+
+       <?MICOMMENT> 
+         
+         First SQL is for Reporter Line Genotypes
+         
+         Reporter lines are Trasgenic insertions, with a coding region that is an EFG.
+         
+         They may only have alleles that target the gene we want.
+         
+         The environment must be _Generic, _Standard, or clean except for Morpholinos
+         that target the gene we want.
+         
+       <?/MICOMMENT>
+       
   <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where
        and genofeat_geno_zdb_id = genox_geno_zdb_id
        and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
-       and fmrel_mrkr_zdb_id = '$OID'  
+       and fmrel_mrkr_zdb_id = '$OID' 
+       and not exists(
+              select * 
+              from feature_marker_relationship NOTmrkr,
+                   genotype_feature NOTfeat
+              where genox_geno_zdb_id = NOTfeat.genofeat_geno_zdb_id
+                and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
+                and NOTmrkr.fmrel_mrkr_zdb_id != '$OID'
+           )
+       and not exists(
+              select * 
+              from marker_relationship NOTmrkr,
+                   experiment_condition NOTmo
+              where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
+                and NOTmo.expcond_mrkr_zdb_id = NOTmrkr.mrel_mrkr_1_zdb_id 
+                and NOTmrkr.mrel_type = 'knockdown reagent targets gene'
+                and NOTmrkr.mrel_mrkr_2_zdb_id != '$OID'
+           )
+       and not exists(
+              select * 
+              from experiment_condition NOTmo,
+                   experiment Generic
+              where Generic.exp_zdb_id = genox_exp_zdb_id
+                and Generic.exp_name not like "\_%"
+                and NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
+                and NOTmo.expcond_mrkr_zdb_id is null
+           )
+
+       <?MICOMMENT> 
+       
+         Genotypes with alleles to the Gene we want. 
+         
+         They may only have alleles that target the gene we want.
+         
+         The environment must be _Generic, _Standard, or clean except for Morpholinos
+         that target the gene we want.
+           
+       <?/MICOMMENT>
        
        UNION
        
        $phenosum_sql_select
-       $phenosum_sql_from, genotype_feature, feature, mapped_deletion
+       $phenosum_sql_from, genotype_feature, feature_marker_relationship
        $phenosum_sql_where
        and genofeat_geno_zdb_id = genox_geno_zdb_id
-       and genofeat_feature_zdb_id = feature_zdb_id
-       and feature_name = allele
-       and present_t = 'f'
-       and marker_id = '$OID'
+       and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+       and fmrel_mrkr_zdb_id = '$OID' 
+       and not exists(
+              select * 
+              from feature_marker_relationship NOTmrkr,
+                   genotype_feature NOTfeat
+              where genox_geno_zdb_id = NOTfeat.genofeat_geno_zdb_id
+                and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
+                and NOTmrkr.fmrel_mrkr_zdb_id != '$OID'
+                and NOTmrkr.fmrel_type = "is allele of"
+           )
+       and exists(
+              select * 
+              from feature_marker_relationship NOTmrkr,
+                   genotype_feature NOTfeat,
+                   marker_relationship EFG
+              where genox_geno_zdb_id = NOTfeat.genofeat_geno_zdb_id
+                and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
+                and NOTmrkr.fmrel_mrkr_zdb_id = EFG.mrel_mrkr_1_zdb_id
+                and EFG.mrel_mrkr_2_zdb_id like "ZDB-EFG%"
+           )
+       and not exists(
+              select * 
+              from marker_relationship NOTmrkr,
+                   experiment_condition NOTmo
+              where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
+                and NOTmo.expcond_mrkr_zdb_id = NOTmrkr.mrel_mrkr_1_zdb_id 
+                and NOTmrkr.mrel_type = 'knockdown reagent targets gene'
+                and NOTmrkr.mrel_mrkr_2_zdb_id != '$OID'
+           )
+       and not exists(
+              select * 
+              from experiment_condition NOTmo,
+                   experiment Generic
+              where Generic.exp_zdb_id = genox_exp_zdb_id
+                and Generic.exp_name not like "\_%"
+                and NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
+                and NOTmo.expcond_mrkr_zdb_id is null
+           )
 
+       <?MICOMMENT> 
+       
+         Genotypes with alleles to the Gene we want. 
+         
+         They may only have alleles that target the gene we want.
+         
+         The environment must be _Generic, _Standard, or clean except for Morpholinos
+         that target the gene we want.
+           
+       <?/MICOMMENT>
+       
+       UNION
+       
+       $phenosum_sql_select
+       $phenosum_sql_from, genotype_feature, feature_marker_relationship
+       $phenosum_sql_where
+       and genofeat_geno_zdb_id = genox_geno_zdb_id
+       and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+       and fmrel_mrkr_zdb_id like "ZDB-TGCON%"
+       and not exists(
+              select * 
+              from feature_marker_relationship NOTmrkr,
+                   genotype_feature NOTfeat
+              where genox_geno_zdb_id = NOTfeat.genofeat_geno_zdb_id
+                and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
+                and NOTmrkr.fmrel_type = "is allele of"
+           )
+       and exists(
+              select * 
+              from feature_marker_relationship NOTmrkr,
+                   genotype_feature NOTfeat,
+                   marker_relationship EFG
+              where genox_geno_zdb_id = NOTfeat.genofeat_geno_zdb_id
+                and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
+                and NOTmrkr.fmrel_mrkr_zdb_id = EFG.mrel_mrkr_1_zdb_id
+                and EFG.mrel_mrkr_2_zdb_id like "ZDB-EFG%"
+           )
+       and exists(
+              select * 
+              from marker_relationship NOTmrkr,
+                   experiment_condition NOTmo
+              where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
+                and NOTmo.expcond_mrkr_zdb_id = NOTmrkr.mrel_mrkr_1_zdb_id 
+                and NOTmrkr.mrel_type = 'knockdown reagent targets gene'
+                and NOTmrkr.mrel_mrkr_2_zdb_id = '$OID'
+           )
+       and not exists(
+              select * 
+              from marker_relationship NOTmrkr,
+                   experiment_condition NOTmo
+              where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
+                and NOTmo.expcond_mrkr_zdb_id = NOTmrkr.mrel_mrkr_1_zdb_id 
+                and NOTmrkr.mrel_type = 'knockdown reagent targets gene'
+                and NOTmrkr.mrel_mrkr_2_zdb_id != '$OID'
+           )
+       and not exists(
+              select * 
+              from experiment_condition NOTmo,
+                   experiment Generic
+              where Generic.exp_zdb_id = genox_exp_zdb_id
+                and Generic.exp_name not like "\_%"
+                and NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
+                and NOTmo.expcond_mrkr_zdb_id is null
+           )
+
+       
+       <?MICOMMENT> Wildtypes with Morpholino targeting the gene <?/MICOMMENT>
+       
        UNION
        
        $phenosum_sql_select
@@ -67,7 +221,33 @@
        and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
        and mrel_type = 'knockdown reagent targets gene'
        and mrel_mrkr_2_zdb_id = '$OID'
+       and exists (
+              select *
+              from genotype WT
+              where genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 't'
+           )
+       and not exists(
+              select * 
+              from marker_relationship NOTmrkr,
+                   experiment_condition NOTmo
+              where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
+                and NOTmo.expcond_mrkr_zdb_id = NOTmrkr.mrel_mrkr_1_zdb_id 
+                and NOTmrkr.mrel_type = 'knockdown reagent targets gene'
+                and NOTmrkr.mrel_mrkr_2_zdb_id != '$OID'
+           )
+       and not exists(
+              select * 
+              from experiment_condition NOTmo,
+                   experiment Generic
+              where Generic.exp_zdb_id = genox_exp_zdb_id
+                and Generic.exp_name not like "\_%"
+                and NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
+                and NOTmo.expcond_mrkr_zdb_id is null
+           )
        $phenosum_sql_where_outer_genofeat
+              
+
   <?/MIVAR>  
 
   <?MIBLOCK COND=$(EC,$(SUBSTR,$OID,1,11),ZDB-MRPHLNO)>
@@ -82,6 +262,29 @@
        $phenosum_sql_where_mrphlno
        and expcond_exp_zdb_id = genox_exp_zdb_id 
        and expcond_mrkr_zdb_id = '$OID'
+       and not exists(
+              select * 
+              from experiment_condition NOTmo
+              where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
+                and NOTmo.expcond_mrkr_zdb_id != '$OID'
+           )
+       and not exists(
+              select * 
+              from experiment_condition NOTmo
+              where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
+                and NOTmo.expcond_mrkr_zdb_id is null
+           )
+       and not exists(
+              select * 
+              from feature_marker_relationship NOTmrkr,
+                   genotype_feature NOTfeat,
+                   marker_relationship NOTmo
+              where genox_geno_zdb_id = NOTfeat.genofeat_geno_zdb_id
+                and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
+                and NOTmrkr.fmrel_mrkr_zdb_id = NOTmo.mrel_mrkr_1_zdb_id 
+                and NOTmo.mrel_mrkr_2_zdb_id != '$OID'
+                and NOTmrkr.fmrel_type = "is allele of"
+           )
        $phenosum_sql_where_outer_genofeat
     <?/MIVAR>
   <?/MIBLOCK>
@@ -113,6 +316,12 @@
   <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where
        and genox_geno_zdb_id = '$OID' 
        $phenosum_sql_where_outer_genofeat
+       and not exists(
+              select * 
+              from  experiment Generic
+              where Generic.exp_zdb_id = genox_exp_zdb_id
+                and Generic.exp_name not like "\_%"
+           )
   <?/MIVAR> 
   <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from $phenosum_sql_from_outer_genofeat<?/MIVAR>
 <?/MIBLOCK>

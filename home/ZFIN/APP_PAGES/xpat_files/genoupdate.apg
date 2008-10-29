@@ -121,29 +121,44 @@ EFFECTS
     <?MIVAR NAME=genoup_geno_exists><?/MIVAR>
     
     <?MISQL SQL="
-          select *
+          select geno_zdb_id
             from genotype
            where geno_handle = '$genoup_handle'
             
              ;">    
-       <?MIVAR NAME=genoup_geno_exists>true<?/MIVAR>
-    <script>
-      alert('Duplicate Genotype!');
-    </script>
+       <?MIVAR NAME=genoup_geno_exists>$1<?/MIVAR>
+
     <?/MISQL> 
     
+    <?MIBLOCK COND=$(NC,$genoup_geno_exists,)>
     
-    <?MISQL COND=$(EC,$genoup_geno_exists,) SQL="
+      <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$pubcur_c_finalize_genotype';"><?/MISQL>
+      
+      <?MIVAR NAME=pubcur_c_finalize_genotype>$genoup_geno_exists<?/MIVAR>    
+    
+      <?MISQL SQL="
+        insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
+        values ('$genoup_geno_exists','$OID');">
+      <?/MISQL> 
+
+    <?MIELSE>
+    
+
+      <?MISQL SQL="
           UPDATE genotype
           SET geno_display_name = '$genoup_display_name',
               geno_handle = '$genoup_handle'
           where geno_zdb_id = '$pubcur_c_finalize_genotype';">
-    <?/MISQL> 
-    <?MISQL COND=$(EC,$genoup_geno_exists,) SQL="
+      <?/MISQL> 
+
+      <?MISQL SQL="
           UPDATE genotype
            SET geno_nickname = '$pubcur_c_geno_nickname'
           where geno_zdb_id = '$pubcur_c_finalize_genotype';">
-    <?/MISQL> 
+      <?/MISQL> 
+    
+      
+    <?/MIBLOCK>
 
     <?MISQL SQL="
         select WebExplode(object,'permission=root&recweb_rec_id=$pubcur_c_finalize_genotype&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=geno_handle&recweb_new_value=$genoup_handle&recweb_comments=finalize+genotype+name.') 
