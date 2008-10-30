@@ -635,7 +635,7 @@ public class AntibodyRepositoryTest {
     @Test
     public void getFigureCount() {
         // zn-5
-        String abName = "Ab1-elavl3/4";
+        String abName = "Ab1-elavl";
         Antibody antibody = antibodyRep.getAntibodyByName(abName);
         // spinal cord
         String aoID = "ZDB-ANAT-010921-494";
