@@ -66,6 +66,16 @@ Datablade documentation.
 <SCRIPT>
 <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-genotypeview.apg&jsdelatt_page_var=__') from webpages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
 </SCRIPT>
+
+<?MICOMMENT>Function to delete feature alias <?/MICOMMENT>
+<SCRIPT>
+function Delete_alias(aliaszdb,ftrzdb) {
+   <?MIVAR>
+window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg &OID=$OID&delete_item="+aliaszdb);
+   <?/MIVAR>
+}
+</SCRIPT>
+
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
   <?MICOMMENT>=== Update Action === 
@@ -75,6 +85,34 @@ Datablade documentation.
         if to be consistent with marker page. Also we are not checking whether there is
         truly an update since it doesn't cost much to execute an update statement.
   <?/MICOMMENT>
+
+<?MICOMMENT>check for existence of variable delete_item to determine if curator has clicked on the 'Delete' button for deleting the alias<?/MICOMMENT>
+<?MIBLOCK COND="$(XST,$delete_item)">
+
+       <?MISQL SQL="select dalias_alias,dalias_data_zdb_id from data_alias where dalias_zdb_id='$delete_item'">
+       <?MIVAR NAME=$geno_ftr_alias>$1<?/MIVAR>
+       <?MIVAR NAME=$geno_ftr_zdbid>$2<?/MIVAR>
+       <?/MISQL>
+       <?MISQL SQL="update  feature_history
+                    set fhist_dalias_zdb_id=null 
+                    where fhist_dalias_zdb_id='$delete_item'">
+       <?/MISQL>
+       <?MISQL SQL="delete from record_attribution
+                    where recattrib_data_zdb_id='$delete_item'">
+       <?/MISQL>
+       <?MISQL SQL="delete from zdb_active_data
+                    where zactvd_zdb_id='$delete_item'">
+       <?/MISQL>
+
+       <?MICOMMENT>record change in updates table<?/MICOMMENT>
+       <?MISQL SQL="insert into updates (submitter_id,submitter_name, rec_id, field_name,old_value,new_value,comments,when)
+         values ('$ZDB_ident', '$ZDB_name','$OID', 'alias',
+                  '$geno_ftr_alias', '', 'feature alias deleted', TODAY);">
+       <?/MISQL>
+<?/MIBLOCK>
+
+
+
   <?MIBLOCK COND="$(XST,$do_update)">
          <?MICOMMENT> when the textarea is empty, this varible is undefined<?/MICOMMENT>
 	 <?MISQL COND="$(NXST,$genoview_update_note)" SQL="
@@ -793,9 +831,22 @@ Datablade documentation.
              <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
                 <tr>
                   <td nowrap><b>Previous Name(s): </td>
-		  <td><?MIVAR>$genovw_ftr_alias_display<?MISQL SQL="select WebExplode(object,'dataId=$genovw_alias_zdb_id&type=recattrib') from  webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
+		  <td>
+                 <?MIVAR COND="$(XST,$UPDATE)">
+                  &nbsp;&nbsp;<INPUT TYPE=button
+                  value=Delete
+                  onClick="Delete_alias('$genovw_alias_zdb_id')">
+                 <?/MIVAR>
+                 <?MIVAR>$genovw_ftr_alias_display&nbsp;<?MISQL SQL="select WebExplode(object,'dataId=$genovw_alias_zdb_id&type=recattrib') from  webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
              <?MIELSE>
-	          , <?MIVAR>$genovw_ftr_alias_display<?MISQL SQL="select WebExplode(object,'dataId=$genovw_alias_zdb_id&type=recattrib') from  webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
+	          , 
+                 <?MIVAR COND="$(XST,$UPDATE)">
+                  &nbsp;&nbsp;<INPUT TYPE=button
+                  value=Delete
+                  onClick="Delete_alias('$genovw_alias_zdb_id')">
+                 <?/MIVAR>
+
+                 <?MIVAR>$genovw_ftr_alias_display&nbsp;<?MISQL SQL="select WebExplode(object,'dataId=$genovw_alias_zdb_id&type=recattrib') from  webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
 	     <?/MIBLOCK>
           <?/MISQL>
 
