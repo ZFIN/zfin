@@ -148,7 +148,7 @@ Linkage Members:   (At least one member must be specified) <br>
 
     <?MIVAR>
       <select name=mtype>
-	<option value=MUTANT $(IF,$(EC,$mtype,MUTANT),SELECTED)>Mutant
+	<option value=MUTANT $(IF,$(EC,$mtype,MUTANT),SELECTED)>Feature
 	<?MISQL SQL="
 	      select marker_type, mrkrtype_type_display, mrkrtype_significance
                 from marker_types
