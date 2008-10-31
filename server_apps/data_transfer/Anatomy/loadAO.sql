@@ -958,7 +958,6 @@ delete from input_data_alias
                       from data_alias, outer record_attribution
 		     where dalias_data_zdb_id = i_dalias_data_zdb_id
 	   	       and dalias_alias = i_dalias_alias
-		       and dalias_group = i_dalias_group
 		       and dalias_zdb_id = recattrib_data_zdb_id
                        and i_dalias_attribution = recattrib_source_zdb_id);
 
