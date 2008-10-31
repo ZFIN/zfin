@@ -22,7 +22,7 @@ my ($termId, $termName,$termZdbId,@termCLs, @termCAROs,@secondIds, @termZdbIds, 
 
 &initiateVar ();
 
-my $dbname = "<!--|DB_NAME|-->";
+my $dbname = "yoldb";
 my $username = "";
 my $password = "";
 
@@ -118,7 +118,17 @@ while (<>) {
 	}
 	if ( /^synonym:\s+\"(.+)\"/ ) {
 	    push @termSynonym, &stringTrim($1);
-	    push @termSynonym, /[RELATED|EXACT]\s+PLURAL/ ? "plural" : "alias";
+            if ( /([RELATED|EXACT])\s+PLURAL/ ) {
+               push @termSynonym,"$1 plural";
+            }
+              elsif ( /RELATED\s/ ) {
+               push @termSynonym,"related alias";
+            }
+              elsif ( /EXACT\s/ ) {
+               push @termSynonym,"exact alias";
+            }
+
+	    #push @termSynonym, /([RELATED|EXACT])\s+PLURAL/ ? "$1 plural" : "alias";
 	    push @termSynonym, /\[ZFIN:(\S+)\]/ ? $1 : "";
 	    next;
 	}
