@@ -127,10 +127,21 @@ while (my @data = $anat_sth->fetchrow_array()) {
         #--------------------------------
 	foreach my $anatSynonymAttr (&getSynonyms ($anatId)) {
 	    my ($anatSynonym,$anatSynGroup,$anatSynAttrib) = split (/\|/,$anatSynonymAttr);
-	    $anatSynGroup = ($anatSynGroup eq "plural") ? "PLURAL" : ""; 
-	    $anatSynAttrib = $anatSynAttrib ? "ZFIN:$anatSynAttrib": "";
-	    print "synonym: \"$anatSynonym\" RELATED $anatSynGroup [$anatSynAttrib] \n";
+	    #$anatSynAttrib = $anatSynAttrib ? "ZFIN:$anatSynAttrib": "";
+	   #print "synonym: \"$anatSynonym\" RELATED $anatSynGroup [$anatSynAttrib] \n";
+            if ($anatSynGroup eq "exact plural") {
+	      print "synonym: \"$anatSynonym\" EXACT PLURAL [$anatSynAttrib] \n";
 	}
+            if ($anatSynGroup eq "related plural") {
+	       print "synonym: \"$anatSynonym\" RELATED PLURAL [$anatSynAttrib] \n";
+	}
+            if ($anatSynGroup eq "related alias") {
+	      print "synonym: \"$anatSynonym\" RELATED [$anatSynAttrib] \n";
+	}
+            if ($anatSynGroup eq "exact alias") {
+	      print "synonym: \"$anatSynonym\" EXACT [$anatSynAttrib] \n";
+	}
+  }
 
 	#--------------------------------
 	#-- Definition
@@ -195,7 +206,7 @@ sub getSynonyms ($){
                        from data_alias left outer join record_attribution
                             on dalias_zdb_id = recattrib_data_zdb_id
                       where dalias_data_zdb_id = ?
-                        and dalias_group in ('alias','plural')";
+                        and dalias_group in ('related alias','related plural', 'exact alias', 'exact plural')";
     my $alias_sth = $dbh->prepare($alias_sql)
 	    or &reportError("Couldn't prepare the statement:$!\n");
     $alias_sth->execute($anatZdbId) or &reportError( "Couldn't execute the statement:$!\n");
@@ -304,4 +315,3 @@ sub getParents ($){
     }
     return @arel_array;
 }
-
