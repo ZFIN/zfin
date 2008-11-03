@@ -118,8 +118,14 @@ while (<>) {
 	}
 	if ( /^synonym:\s+\"(.+)\"/ ) {
 	    push @termSynonym, &stringTrim($1);
-            if ( /([RELATED|EXACT])\s+PLURAL/ ) {
-               push @termSynonym,"$1 plural";
+            #if ( /([RELATED|EXACT])\s+PLURAL/ ) {
+            #   push @termSynonym,"$1 plural";
+            #}
+            if ( /RELATED\s+PLURAL/ ) {
+               push @termSynonym,"related plural";
+            }
+            elsif ( /EXACT\s+PLURAL/ ) {
+               push @termSynonym,"exact plural";
             }
               elsif ( /RELATED\s/ ) {
                push @termSynonym,"related alias";
