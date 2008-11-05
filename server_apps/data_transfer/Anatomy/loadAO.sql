@@ -943,20 +943,6 @@ update data_alias set dalias_group= (select i_dalias_group from input_data_alias
             and dalias_group not like 'seconda%');
 
 
-
-
-select dalias_zdb_id t_dalias_id, dalias_data_zdb_id t_dalias_data_id,
-       dalias_alias t_dalias_alias
-  from data_alias
- where dalias_data_zdb_id like "ZDB-ANAT-%"
-   and not exists 
-	(select 't'
-	   from input_data_alias
-	  where dalias_data_zdb_id = i_dalias_data_zdb_id
-	    and dalias_alias = i_dalias_alias )
-into temp tmp_obsolete_alias with no log;
-
-
 !echo '== delete dead synonym from zdb_active_data =='
 select dalias_zdb_id t_dalias_id, dalias_data_zdb_id t_dalias_data_id,
        dalias_alias t_dalias_alias
