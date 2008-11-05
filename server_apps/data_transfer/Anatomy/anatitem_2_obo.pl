@@ -19,18 +19,18 @@ require "err_report.pl";
 # main
 
 #set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
+$ENV{"INFORMIXDIR"}="/private/apps/Informix/informix";
+$ENV{"INFORMIXSERVER"}="wanda";
+$ENV{"ONCONFIG"}="onconfig";
+$ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix/etc/sqlhosts";
 
 ### open a handle on the db
-my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
+my $dbh = DBI->connect('DBI:Informix:yoldb',
                        '', 
                        '', 
 		       {AutoCommit => 1,RaiseError => 1}
 		      )
-    || &reportError("Failed while connecting to <!--|DB_NAME|--> "); 
+    || &reportError("Failed while connecting to yoldb "); 
 
 # In dagedit the root cann't have any relationship attribution.
 # Since zfin anatomy terms always have start stage and end stage,
@@ -127,7 +127,7 @@ while (my @data = $anat_sth->fetchrow_array()) {
         #--------------------------------
 	foreach my $anatSynonymAttr (&getSynonyms ($anatId)) {
 	    my ($anatSynonym,$anatSynGroup,$anatSynAttrib) = split (/\|/,$anatSynonymAttr);
-	    #$anatSynAttrib = $anatSynAttrib ? "ZFIN:$anatSynAttrib": "";
+	    $anatSynAttrib = $anatSynAttrib ? "ZFIN:$anatSynAttrib": "";
 	   #print "synonym: \"$anatSynonym\" RELATED $anatSynGroup [$anatSynAttrib] \n";
             if ($anatSynGroup eq "exact plural") {
 	      print "synonym: \"$anatSynonym\" EXACT PLURAL [$anatSynAttrib] \n";
