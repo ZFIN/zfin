@@ -22,7 +22,7 @@ my ($termId, $termName,$termZdbId,@termCLs, @termCAROs,@secondIds, @termZdbIds, 
 
 &initiateVar ();
 
-my $dbname = "yoldb";
+my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
 
