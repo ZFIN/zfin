@@ -214,6 +214,10 @@ update input_data_alias set i_dalias_data_zdb_id =
 			(select n_anatitem_obo_id
 			   from new_anatomy_item);
 
+
+
+
+ 
 !echo '=== alias_attribution_temp ==='
 create temp table alias_attribution_temp (
 	a_data_zdb_id	varchar(50),
@@ -927,6 +931,31 @@ delete from zdb_active_data
 -- Delete dead Alias/Synonym, Keep zdb id on unchanged alias
 -- Load in new ones. 
 -----------------------------------------------------------------
+select count(*) from input_data_alias where i_dalias_group is null;
+!echo '== data alias group second try =='
+update data_alias set dalias_group= (select i_dalias_group from input_data_alias where dalias_data_zdb_id=i_dalias_data_zdb_id and i_dalias_alias=dalias_alias and i_dalias_group not like 'secon%') 
+ where dalias_data_zdb_id like "ZDB-ANAT-%"
+   and exists 
+	(select 't'
+	   from input_data_alias
+	  where dalias_data_zdb_id = i_dalias_data_zdb_id
+	    and dalias_alias = i_dalias_alias
+            and dalias_group not like 'seconda%');
+
+
+
+
+select dalias_zdb_id t_dalias_id, dalias_data_zdb_id t_dalias_data_id,
+       dalias_alias t_dalias_alias
+  from data_alias
+ where dalias_data_zdb_id like "ZDB-ANAT-%"
+   and not exists 
+	(select 't'
+	   from input_data_alias
+	  where dalias_data_zdb_id = i_dalias_data_zdb_id
+	    and dalias_alias = i_dalias_alias )
+into temp tmp_obsolete_alias with no log;
+
 
 !echo '== delete dead synonym from zdb_active_data =='
 select dalias_zdb_id t_dalias_id, dalias_data_zdb_id t_dalias_data_id,
