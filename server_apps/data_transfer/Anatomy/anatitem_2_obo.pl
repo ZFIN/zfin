@@ -25,12 +25,12 @@ $ENV{"ONCONFIG"}="onconfig";
 $ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix/etc/sqlhosts";
 
 ### open a handle on the db
-my $dbh = DBI->connect('DBI:Informix:yoldb',
+my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
                        '', 
                        '', 
 		       {AutoCommit => 1,RaiseError => 1}
 		      )
-    || &reportError("Failed while connecting to yoldb "); 
+    || &reportError("Failed while connecting to  <!--|DB_NAME|--> "); 
 
 # In dagedit the root cann't have any relationship attribution.
 # Since zfin anatomy terms always have start stage and end stage,
