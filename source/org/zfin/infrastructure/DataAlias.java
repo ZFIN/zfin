@@ -15,7 +15,11 @@ public class DataAlias implements Comparable {
         ALIAS("alias"),
         PLURAL("plural"),
         SECONDARY_ID("secondary id"),
-        SEQUENCE_SIMILARITY("sequence similarity");
+        SEQUENCE_SIMILARITY("sequence similarity"),
+        EXACT_ALIAS("exact alias"),
+        RELATED_ALIAS("related alias"),
+        RELATED_PLURAL("related plural"),
+        EXACT_PLURAL("exact plural");
 
         private String value;
 
