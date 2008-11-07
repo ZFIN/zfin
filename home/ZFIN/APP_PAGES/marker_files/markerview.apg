@@ -2723,7 +2723,7 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
       <?MIVAR NAME=vDBnameColumn>
          <nobr><LI>
         $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
-       <A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref
+       <A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref 
         </LI></nobr>
         <?MISQL SQL="select mtgrpmem_mrkr_type_group from marker_type_group_member where mtgrpmem_mrkr_type_group='CLONE' and mtgrpmem_mrkr_type='$marker_type'">
            <?MIVAR COND="$(EC,$1,CLONE)" NAME=type_of_clone>t<?/MIVAR>
@@ -2827,6 +2827,9 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
 <?MIBLOCK COND="$(XST,$UPDATE)">
   </form>  <?MICOMMENT> end form updateother <?/MICOMMENT>
 <?/MIBLOCK>
+        <?MIBLOCK COND="$(EC,$db_name,MODB)">
+         <br>NOTE:**MODB links temporarily down for site rebuilding**
+       <?/MIBLOCK> 
 
 <!------------   ends   OTHER MARKER PAGES   ------------------------>
 
