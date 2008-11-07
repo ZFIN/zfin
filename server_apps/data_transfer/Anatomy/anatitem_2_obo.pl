@@ -19,10 +19,10 @@ require "err_report.pl";
 # main
 
 #set environment variables
-$ENV{"INFORMIXDIR"}="/private/apps/Informix/informix";
-$ENV{"INFORMIXSERVER"}="wanda";
-$ENV{"ONCONFIG"}="onconfig";
-$ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix/etc/sqlhosts";
+$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
+$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
+$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
+$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 ### open a handle on the db
 my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
