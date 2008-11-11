@@ -1976,16 +1976,16 @@ sub vegaAccessionInWrongFormat ($) {
                select dblink_linked_recid, "Vega_Trans", dblink_acc_num
                  from db_link, foreign_db_contains
                 where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                  and fdbcont_fdb_db_name = "Vega_Trans"
+                  and fdbcont_fdb_db_name in("Vega_Trans","INTVEGA","PREVEGA")
                   and fdbcont_fdbdt_super_type = "sequence"
-                  and dblink_acc_num[1,3] <> "OTT"
+                  and dblink_acc_num[1,6] <> "OTTDAR"
                UNION 
                select dblink_linked_recid, fdbcont_fdb_db_name, dblink_acc_num
                  from db_link, foreign_db_contains
                 where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                  and fdbcont_fdb_db_name <> "Vega_Trans"
+                  and fdbcont_fdb_db_name not in ("Vega_Trans","INTVEGA","PREVEGA")
                   and fdbcont_fdbdt_super_type = "sequence"
-                  and dblink_acc_num[1,3] = "OTT"
+                  and dblink_acc_num[1,6] = "OTTDAR"
                    ';
 
     my @colDesc =("Data zdb id",
@@ -3045,7 +3045,7 @@ if($weekly) {
 	orthologyOrganismMatchesForeignDBContains($dbaEmail);
 
 	refSeqAccessionInWrongFormat($geneEmail);
-	vegaAccessionInWrongFormat($geneEmail);
+	vegaAccessionInWrongFormat($dbaEmail);
 	morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
 
 }
