@@ -2827,7 +2827,7 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
 <?MIBLOCK COND="$(XST,$UPDATE)">
   </form>  <?MICOMMENT> end form updateother <?/MICOMMENT>
 <?/MIBLOCK>
-        <?MIBLOCK COND="$(EC,$db_name,MODB)">
+        <?MIBLOCK COND="$(AND,$(XST,$db_name),$(EC,$db_name,MODB))">
          <br>NOTE:**MODB links temporarily down for site rebuilding**
        <?/MIBLOCK> 
 
