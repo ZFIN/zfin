@@ -115,6 +115,7 @@ Message: $MI_ERRORMSG
             == All alleles that begin with 't' and are not 'tsu' or 'twu' 
             == should be listed for Tubingen.  
             == Similarly for 'ut', former Parichy designation, should find 'utr'
+            == Similarly for 'wp', Parichy designation, should find 'wpr'
             == Also, sq should include sqet1, etc.; ba should include baz1
             ==  cz should include czt13, cztq 7; hi should include hiD1Tg etc
             ==  f should include fmv69, fov01b, fs31, ft09e, fv109k, fw039-k etc.
@@ -138,7 +139,12 @@ Message: $MI_ERRORMSG
         <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNumD),$(EQ,$adn_firstNumD,r))">
           <?MIVAR>$1<?/MIVAR> <br/>
           <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
-        <?/MIBLOCK>        
+        <?/MIBLOCK>
+      <?MIELSE COND="$(EQ,$adn_beginningLetter,wp)">        
+              <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNumD),$(EQ,$adn_firstNumD,r))">
+                <?MIVAR>$1<?/MIVAR> <br/>
+                <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+        <?/MIBLOCK>
       <?MIELSE COND="$(OR,$(EQ,$adn_beginningLetter,sq),$(EQ,$adn_beginningLetter,cz))"> 
         <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNumD),$(EQ,$adn_firstNumD,t))">
           <?MIVAR>$1<?/MIVAR> <br/>
@@ -180,6 +186,7 @@ Message: $MI_ERRORMSG
             == All alleles that begin with 't' and are not 'tsu' or 'twu' 
             == should be listed for Tubingen.  
             == Similarly for 'ut', former Parichy designation, should find 'utr'
+            == Similarly for 'wp', Parichy designation, should find 'wpr'
             == Also, sq should include sqet1, etc.; ba should include baz1
             ==  cz should include czt13, cztq 7; hi should include hiD1Tg etc
             ==  f should include fmv69, fov01b, fs31, ft09e, fv109k, fw039-k etc.
@@ -203,7 +210,12 @@ Message: $MI_ERRORMSG
         <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNum),$(EQ,$adn_firstNum,r))">
           <?MIVAR>$1<?/MIVAR> <br/>
           <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
-        <?/MIBLOCK>        
+        <?/MIBLOCK>
+      <?MIELSE COND="$(EQ,$adn_beginningLetter,wp)">        
+              <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNum),$(EQ,$adn_firstNum,r))">
+                <?MIVAR>$1<?/MIVAR> <br/>
+                <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+        <?/MIBLOCK>
       <?MIELSE COND="$(OR,$(EQ,$adn_beginningLetter,sq),$(EQ,$adn_beginningLetter,cz))"> 
          <?MIVAR>$1<?/MIVAR> <br/>
          <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR> 
