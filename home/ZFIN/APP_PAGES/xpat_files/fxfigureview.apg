@@ -158,7 +158,7 @@ the block below is to determine if the figure is a text only.
 <?MICOMMENT>
 if the figure is a GELI, get journal name and link to add to the standard caption text
 <?/MICOMMENT>
-
+<?MICOMMENT>
 <?MIBLOCK COND="$(EQ,$fxfigview_comments,GELI)">
      <?MIVAR NAME=$fxfigview_is_geli>yes<?/MIVAR>
       <?MISQL SQL="select jrnl_name,srcurl_url
@@ -171,7 +171,7 @@ if the figure is a GELI, get journal name and link to add to the standard captio
          <?MIVAR NAME=$fxfigview_jrnl><a href="$2">Journal Website</a><?/MIVAR>
       <?/MIBLOCK>
 <?/MIBLOCK> 
-
+<?/MICOMMENT>
 <?MICOMMENT>
 For all unpublished figures, we display the caption, but append the label Description to them
 <?/MICOMMENT>
@@ -347,7 +347,11 @@ and display them one after the other horizontally
                   <?MIBLOCK COND="$(EQ,t,$fxfigview_showimage)">
                  <img src="/images/imagenotavailable.gif" border=2 align=left>
                   <?MIELSE>
+       <?MIBLOCK COND="$(EQ,$fxfigview_is_text,yes)">
+                 <img src="/images/imagenotavailable.gif" border=2 align=left>
+        <?MIELSE> 
                   <img src="/images/onlyfrompublisher.jpg" border=2 align=left>
+       <?/MIBLOCK>
                   <?/MIBLOCK>
                  <?MIBLOCK COND="$(NE,$fxfigview_caption,)">
                    <p class="fig"><?MIVAR><b>$fxfigview_label</b><?/MIVAR><?MIVAR> $fxfigview_caption<?/MIVAR><?MICOMMENT> display figure label caption if present <?/MICOMMENT>
@@ -451,7 +455,7 @@ and display them one after the other horizontally
      <?MICOMMENT> Check to see if any of the figures have qualifiers <?/MICOMMENT>
      <?MISQL SQL="select count(*) from 
                   expression_pattern_figure, expression_result, expression_experiment 
-                  where xpatfig_fig_zdb_id='$OID' 
+                  where xpatfig_fig_zdb_id='$fxfigview_fig_zdb_id' 
                   and xpatfig_xpatres_zdb_id=xpatres_zdb_id 
                   and xpatres_xpatex_zdb_id=xpatex_zdb_id
                   and xpatex_atb_Zdb_id is not null
@@ -469,7 +473,7 @@ and display them one after the other horizontally
     <b>Antibody Labeling Details</b>
     <table width = 100% border = 0 cellspacing = 0 cellpadding = 0 colspan = 7>
       <tr bgcolor=#cccccc height=25><td><b>Antibody</b>
-      <td></td> 
+      <td></td>
       <td><b><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxassayabbrev.apg">Assay</a></td></b>
       <td><b><ALT TITLE="Genotype + environment">Fish</TITLE></b>
       <td><b>Stage</td></b>
