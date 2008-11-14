@@ -54,16 +54,18 @@ function setGenBankDisplay(geneValue,geneid, abid, exptid) {
    var gene = document.new_experiment.xpcur_G_xpatex_gene;
    var assay = document.new_experiment.xpcur_G_xpatex_assay;
    var antibody = document.new_experiment.xpcur_G_xpatex_antibody;
+   var fish = document.new_experiment.xpcur_G_xpatex_fish;
+   var exp = document.new_experiment.xpcur_G_xpatex_exp;
    if (gene.value=="") {
      document.new_experiment.xpcur_G_xpatex_genbank.disabled = true;
     }
    else {
    if (geneid == ""){
       document.new_experiment.xpcur_G_xpatex_zdb_id=exptid;
-     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&xpcur_G_xpatex_gene='+gene.value+'&xpcur_G_xpatex_assay='+assay.value+'&xpcur_G_xpatex_antibody='+antibody.value);
+     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&xpcur_G_xpatex_gene='+gene.value+'&xpcur_G_xpatex_assay='+assay.value+'&xpcur_G_xpatex_fish='+fish.value+'&xpcur_G_xpatex_exp='+exp.value+'&xpcur_G_xpatex_antibody='+antibody.value);
     }
     else {
-     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&xpcur_G_xpatex_gene='+gene.value+'&xpcur_G_xpatex_assay='+assay.value+'&xpcur_G_xpatex_antibody='+antibody.value);
+     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&xpcur_G_xpatex_gene='+gene.value+'&xpcur_G_xpatex_assay='+assay.value+'&xpcur_G_xpatex_fish='+fish.value+'&xpcur_G_xpatex_exp='+exp.value+'&xpcur_G_xpatex_antibody='+antibody.value);
        }
  }
 }
@@ -84,9 +86,6 @@ function setParams(upd,expt){
       document.new_experiment.xpcur_G_xpatex_zdb_id=expt;
 }
 
-function setGeneValue(abValue) {
-   window.alert('here');
-}   
 
 
 
@@ -142,6 +141,8 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,antbid,exptid)
    }
 
    var genbank = document.new_experiment.xpcur_G_xpatex_genbank;
+   if (genbankid!= 'NULL') {
+    document.new_experiment.xpcur_G_xpatex_antibody.disabled=false;
    for (i=0; i<genbank.length; i++)
    {
       if (genbank[i].value == genbankid)
@@ -149,6 +150,11 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,antbid,exptid)
         genbank.selectedIndex = i;
       }
     }
+   }
+  else {
+    document.new_experiment.xpcur_G_xpatex_genbank.value='';
+   }
+
    if ((assayid == "Immunohistochemistry") || (assayid == "Western blot") || (assayid == "other") || (assayid == "cDNA clones")){
         document.new_experiment.xpcur_G_xpatex_antibody.disabled=false;
    }
@@ -187,6 +193,8 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,antbid,exptid)
      to previous values. 
   <?/MICOMMENT>
 <?MIVAR COND=$(NXST,$xpcur_G_xpatex_gene) NAME=xpcur_G_xpatex_gene><?/MIVAR>
+<?MIVAR COND=$(NXST,$xpcur_G_xpatex_fish) NAME=xpcur_G_xpatex_fish><?/MIVAR>
+<?MIVAR COND=$(NXST,$xpcur_G_xpatex_exp) NAME=xpcur_G_xpatex_exp><?/MIVAR>
 <?MIVAR COND=$(NXST,$xpcurxprss_xpatex_zdb_id) NAME=xpcurxprss_xpatex_zdb_id><?/MIVAR>
 <?MIVAR COND=$(NXST,$xpcurxprss_xpatex_gene) NAME=xpcurxprss_xpatex_gene><?/MIVAR>
 <?MIVAR COND=$(NXST,$xpcurxprss_xpatex_antibody) NAME=xpcurxprss_xpatex_antibody><?/MIVAR>
@@ -414,6 +422,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,antbid,exptid)
             <option value="$1" 
                 $(IF,$(AND,$(EC,wt,$fishOption),$(EC,$xpcurxprss_old_xpatex_fish,)),SELECTED)
                 $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)
+                $(IF,$(EC,$xpcur_G_xpatex_fish,$1),SELECTED)
                    $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$fishOption</option>
           <?/MISQL>
             <option value="-">----------</option>
@@ -428,6 +437,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,antbid,exptid)
             <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
             <option value="$1" 
                 $(IF,$(AND,$(EC,wt,$fishOption),$(EC,$xpcurxprss_old_xpatex_fish,)),SELECTED)
+                $(IF,$(EC,$xpcur_G_xpatex_fish,$1),SELECTED)
                 $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)
                    $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$fishOption</option>
           <?/MISQL>
@@ -444,6 +454,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,antbid,exptid)
             <option value="$1" 
                 $(IF,$(AND,$(EC,wt,$fishOption),$(EC,$xpcurxprss_old_xpatex_fish,)),SELECTED)
                 $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)
+                $(IF,$(EC,$xpcur_G_xpatex_fish,$1),SELECTED)
                    $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$2</option>
           <?/MISQL>
       </select></td>
@@ -458,7 +469,8 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,antbid,exptid)
               from experiment
               where exp_name in ('$pubcur_G_exp_standard_name','$pubcur_G_exp_generic_name')
 	      order by exp_name desc;">
-            <option value="$1" $(IF,$(EC,$xpcurxprss_old_xpatex_exp,$1),SELECTED)>$2</option>
+            <option value="$1" $(IF,$(EC,$xpcurxprss_old_xpatex_exp,$1),SELECTED)
+                $(IF,$(EC,$xpcur_G_xpatex_exp,$1),SELECTED)>$2</option>
           <?/MISQL>
 <?MISQL SQL="
               select exp_zdb_id, exp_name, zero_pad(exp_name)
