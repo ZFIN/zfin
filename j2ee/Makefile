@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/j2ee
 
-SUBDIRS = uniquery MergerServlet phenote
+SUBDIRS = MergerServlet phenote
 
 # ---------------  Production Rules  ------------------------------------
 

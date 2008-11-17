@@ -1,9 +1,0 @@
-# This file contains urls to start crawling from. Note that because the crawler does
-# not discover and submit forms within pages, you must include any pages only reachable
-# through forms here. Our forms generally return all records when no query parameters are 
-# specified so we can successfully hit our forms without providing specific queries.
-#
-
-# WINSIZE should be tuned for indexing performance.
-
-http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg
