@@ -55,21 +55,21 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies.txt'
 -- create antibody expression download file
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibody_expressions.txt'
   DELIMITER "	"
-  select mrkr_zdb_id, xpatres_anat_item_zdb_id, anatitem_name, goterm_go_id, goterm_name
+  select distinct mrkr_zdb_id, xpatres_anat_item_zdb_id, anatitem_name, goterm_go_id, goterm_name
     from marker, expression_experiment, expression_result, outer go_term, anatomy_item, genotype_experiment, experiment, genotype
   where 
 	xpatres_xpatex_zdb_id = xpatex_zdb_id
 	AND xpatex_atb_zdb_id = mrkr_zdb_id
-	AND mrkr_zdb_id = 'ATB'
+	AND mrkr_type = 'ATB'
 	AND  xpatres_go_term_zdb_id = goterm_zdb_id
 	AND anatitem_zdb_id = xpatres_anat_item_zdb_id
 	AND xpatex_genox_zdb_id = genox_zdb_id 
 	AND genox_exp_zdb_id = exp_zdb_id
-	AND exp_name = '_Standard'
+	AND (exp_name = '_Standard' OR exp_name = '_Generic-control')
 	AND xpatres_expression_found = 't'
 	AND geno_zdb_id = genox_geno_zdb_id
-	AND geno_is_wildtype
-	order by mrkr_abbrev_order;
+	AND geno_is_wildtype = 't'
+	order by mrkr_zdb_id;
 
 -- create all marker file
 
