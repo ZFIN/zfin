@@ -40,14 +40,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     private AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
 
-    // These attributes are cashed for performance reasons
-    // They are static, i.e. they do not change all that often.
-    // To update the list you need to retstart Tomcat or we can have an
-    // update at runtime.
-    private List<Species> immunogenSpeciesList;
-    private List<Species> hostSpeciesList;
-
-
     public Antibody getAntibodyByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return (Antibody) session.get(Antibody.class, zdbID);
@@ -140,15 +132,12 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     @SuppressWarnings("unchecked")
     public List<Species> getHostSpeciesList() {
-        if (hostSpeciesList != null)
-            return hostSpeciesList;
 
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Species.class);
         criteria.add(eq("antibodyHost", true));
         criteria.addOrder(Order.asc("displayOrder"));
-        hostSpeciesList = criteria.list();
-        return hostSpeciesList;
+        return criteria.list();
     }
 
     @SuppressWarnings("unchecked")
@@ -166,15 +155,12 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     @SuppressWarnings("unchecked")
     public List<Species> getImmunogenSpeciesList() {
-        if (immunogenSpeciesList != null)
-            return immunogenSpeciesList;
 
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Species.class);
         criteria.add(eq("antibodyImmunogen", true));
         criteria.addOrder(Order.asc("displayOrder"));
-        immunogenSpeciesList = criteria.list();
-        return immunogenSpeciesList;
+        return criteria.list();
     }
 
 
@@ -476,3 +462,4 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
 }
+
