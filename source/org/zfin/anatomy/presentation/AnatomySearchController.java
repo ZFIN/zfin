@@ -55,8 +55,6 @@ public class AnatomySearchController extends AbstractCommandController {
         }
         populateDevelopmentStages(anatomyForm);
 
-        List<String> names = anatomyRepository.getAllAnatomyNamesAndSynonyms();
-        anatomyForm.setAnatomyNamesAndSynonyms(names);
         LOG.debug(anatomyForm);
         return new ModelAndView("anatomy-search.page", LookupStrings.FORM_BEAN, anatomyForm);
     }
