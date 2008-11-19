@@ -22,10 +22,10 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/SWISS-PROT
 
 GENERICS = pre_loadsp.pl loadsp.pl sp_check.pl sp_parser.pl  index.html \
 	create_file_for_swiss_prot.pl create_file_for_swiss_prot.sql \
-	sp_badgo_report.pl 
+	sp_badgo_report.pl loadsp_ec2go_part.pl sp_badgo_report_ec2gopart.pl
 
-STATICS = sp_match.pl sptogo.pl iptogo.pl ectogo.pl sp_delete.sql \
-	sp_load.sql README  
+STATICS = sp_match.pl sptogo.pl iptogo.pl ectogo.pl sp_delete.sql sp_delete_ec2gopart.sql\
+	sp_load.sql sp_load_ec2gopart.sql README  
 
 # Define targets that require special handling.
 
@@ -55,4 +55,7 @@ runpre:
 
 run:
 	$(TARGETDIR)/loadsp.pl
+
+runec2go:
+	$(TARGETDIR)/loadsp_ec2go_part.pl
 
