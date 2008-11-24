@@ -2680,6 +2680,7 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
 <?MICOMMENT>
 ------------   OTHER MARKER PAGES   -------------------------------
 <?/MICOMMENT>
+
   <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>  
 
               <?MIVAR NAME=$snp_ensembl_accnum><?/MIVAR>
@@ -2703,7 +2704,10 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
     <?MIVAR NAME=acc_num>$3<?/MIVAR>
     <?MIVAR NAME=dataId>$4<?/MIVAR>
     <?MIVAR NAME=link_display>$5<?/MIVAR>
+        <?MIBLOCK COND="$(AND,$(XST,$db_name),$(EC,$db_name,MODB))">
+    <?MIVAR NAME=link_url><?/MIVAR>
 
+<?/MIBLOCK>
     <?MIVAR NAME=mini_ref><?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
 
     <?MIBLOCK COND="$(AND,$(XST,$vPrevDBname),$(NC,$vPrevDBname,$db_name))">
@@ -2723,7 +2727,11 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
       <?MIVAR NAME=vDBnameColumn>
          <nobr><LI>
         $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
-       <A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref 
+        <?MIBLOCK COND="$(AND,$(XST,$db_name),$(EC,$db_name,MODB))">
+<?MIVAR>$db_name:$link_display</A>&nbsp;$mini_ref<?/MIVAR>
+       <?MIELSE>
+   <?MIVAR>    <A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref <?/MIVAR> 
+      <?/MIBLOCK>
         </LI></nobr>
         <?MISQL SQL="select mtgrpmem_mrkr_type_group from marker_type_group_member where mtgrpmem_mrkr_type_group='CLONE' and mtgrpmem_mrkr_type='$marker_type'">
            <?MIVAR COND="$(EC,$1,CLONE)" NAME=type_of_clone>t<?/MIVAR>
@@ -2752,8 +2760,11 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
       <?MIVAR NAME=vDBnameColumn>
         $vDBnameColumn
        <nobr><LI>
-        $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
-        <A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref
+        <?MIBLOCK COND="$(AND,$(XST,$db_name),$(EC,$db_name,MODB))">
+<?MIVAR>$db_name:$link_display</A>&nbsp;$mini_ref<?/MIVAR>
+       <?MIELSE>
+       <?MIVAR><A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref <?/MIVAR>
+      <?/MIBLOCK>
         </LI></nobr>
       <?/MIVAR>
     <?/MIBLOCK>
@@ -2777,7 +2788,11 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
   <?MIBLOCK COND=$(OR,$(XST,$dblink_other),$(XST,$UPDATE))>
     <HR width="80%">
     <?MIVAR><b>OTHER &nbsp;<i>$abbrev</i>&nbsp; GENE / MARKER PAGES:</b><?/MIVAR>
-
+<br>
+        <?MIBLOCK COND="$(AND,$(XST,$db_name),$(EC,$db_name,MODB))">
+         <br>NOTE:**MODB links temporarily down for site rebuilding**
+       <?/MIBLOCK> 
+<br>
 <?MIBLOCK COND="$(XST,$UPDATE)">
   <form name=updateother>
   <?MIVAR NAME=seq_tab>&nbsp;&nbsp;&nbsp;<?/MIVAR>
@@ -2827,9 +2842,6 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
 <?MIBLOCK COND="$(XST,$UPDATE)">
   </form>  <?MICOMMENT> end form updateother <?/MICOMMENT>
 <?/MIBLOCK>
-        <?MIBLOCK COND="$(AND,$(XST,$db_name),$(EC,$db_name,MODB))">
-         <br>NOTE:**MODB links temporarily down for site rebuilding**
-       <?/MIBLOCK> 
 
 <!------------   ends   OTHER MARKER PAGES   ------------------------>
 
