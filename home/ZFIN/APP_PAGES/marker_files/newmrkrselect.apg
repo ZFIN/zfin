@@ -514,12 +514,19 @@ DEBUGGING:
 		<?MIVAR COND="$(!=,$knownmutant_count,0)" NAME=gene_extra>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam&knownmutant=t">$1 with mutants</A>)<?/MIVAR>
 	   <?/MISQL>
 	
-		<?MIBLOCK COND="$(EC,$mtype_display,Antibody)">
-		<?MIVAR name=mtype_display>Antibodie<?/MIVAR>
-		<?/MIBLOCK>
-           <?MIVAR>
+	<?MIVAR>
 	     <TR><TD><b><li>
-               <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam">$search_count $mtype_display$(IF,$(!=,$search_count,1),s) </A> 
+               <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam">$search_count 
+	       <?MIBLOCK COND="$(EC,$mtype_display,Antibody)">
+	       	  <?MIVAR>
+			$(IF,$(!=,$search_count,1),Antibodies)$(IF,$(=,$search_count,1),Antibody) 
+		  <?/MIVAR>
+	       <?MIELSE>
+		  <?MIVAR>
+			$mtype_display$(IF,$(!=,$search_count,1),s)
+		  <?/MIVAR>
+	       <?/MIBLOCK>
+</A> 
                $(IF,$(AND,$(>,$(POSITION,$mtype_in_db,GENE),0),$(>,$knownmutant_count,0)),&nbsp;$gene_extra)
 	     </li></b></TD></TR>
            <?/MIVAR>
