@@ -966,7 +966,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
               <?/MIVAR>
 
               <?MIVAR COND="$(>,$mrkrsel_xpat_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>$mrkrsel_xpat_fig_count figure(s) </A>
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>$mrkrsel_xpat_fig_count figures </A>
 	      <?/MIVAR>
           
           <?MICOMMENT>
@@ -1037,7 +1037,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
               <?/MIVAR>
 
               <?MIVAR COND="$(>,$mrkrsel_pheno_fig_count,1)">	
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figure(s) </A>
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figures </A>
               <?/MIVAR>
 
 <?MIVAR NAME=phenosum_sql_select>select distinct img_zdb_id<?/MIVAR>
