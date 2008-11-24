@@ -133,7 +133,7 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
                                 ${formBean.categorySearch} results for '${formBean.queryTerm}   '
                             </span>
                             <span class="search_tip">
-                                <a href="/quicksearch/syntax_help.jsp"> Tips </a>
+                                <a href="/zf_info/syntax_help.html"> Tips </a>
                             </span>
                         </td>
                         <td width=15% align=right>
