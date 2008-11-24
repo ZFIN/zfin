@@ -27,7 +27,7 @@
          <strong>Mutants / Transgenics</strong></a></li>
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-wtlist.apg" 
             title="Zebrafish wild-type lines">Wild-Type Lines</a></li>
-     <li><a href="/zf_info/zfbook/lab_desig.html">Laboratory Line Designations</a></li>
+     <li><a href="/zf_info/zfbook/lab_desig.html">Line Designations</a></li>
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_line.apg">
          Submit mutant/transgenic line names</a>
    </ul>
