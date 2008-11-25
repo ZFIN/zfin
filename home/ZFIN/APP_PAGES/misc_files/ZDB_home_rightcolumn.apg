@@ -219,7 +219,9 @@
 
       
 
-       <li><a href="/zf_info/news/siteNews.html">All News</a></li>
+       <li><a href="/zf_info/news/siteNews.html">All News</a>, 
+       
+        	<a href="/zf_info/news/Newsletters.html">All ZFIN Newsletters</a></li>
    
     <br>
 
