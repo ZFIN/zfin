@@ -228,7 +228,7 @@ function showMotto() {
 
 document.write(" <body id=\"body\" onload=\"hdrSetTabs();\">");
 document.write("   <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg\">");
-document.write("    <img id=\"logo-img\" src=\"/images/zfinlogo-thanksgiving.png\"> ");
+document.write("    <img id=\"logo-img\" src=\"/images/zfinlogo.png\"> ");
 document.write("    <img id=\"logo-text\" src=\"/images/zfintxt.png\">");
 document.write("   </a>");
 document.write("   <noscript>");
