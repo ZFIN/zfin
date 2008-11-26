@@ -218,7 +218,7 @@ function hdrSetTabs() {
 <body id="body" onload="hdrSetTabs();">
 
   <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-ZDB_home.apg">
-   <img id="logo-img" src="/images/zfinlogo.png">
+   <img id="logo-img" src="/images/zfinlogo-thanksgiving.png">
    <img id="logo-text" src="/images/zfintxt.png">
   </a>
 
