@@ -83,7 +83,10 @@ PREFIX:   genocursrch_
         select geno_zdb_id, geno_display_name
         from genotype
         where geno_is_wildtype = 't'
-        order by geno_display_name">
+        and geno_display_name <> 'wild type (unspecified)'
+        order by geno_display_name
+        ;
+        ">
 
       <option value="$1">$2</option>         
   <?/MISQL>
