@@ -157,7 +157,31 @@ public class SessionManagerServlet extends HttpServlet implements ContainerServl
         }
     }
 
+    /**
+     * Remove all non-authenticated uses sessions since they
+     * cause an annoying warning in clickstream.
+     */
     public void destroy() {
         LOG.info("Servlet is decomissioned.");
+        Session[] sessions = wrapper.getManager().findSessions();
+        if (sessions == null)
+            return;
+        for (Session session : sessions) {
+            try {
+                String sessionID = session.getId();
+                Map authenticatedSessions = ZfinAuthenticationProcessingFilter.getAuthenticatedSessions();
+                // check session times only for non-authenticated sessions
+                // authentication sessions are not touched as they are handled by the Tomcat container.
+                if (!authenticatedSessions.containsKey(sessionID)) {
+                    LOG.debug("Session: " + session.getId());
+                    session.expire();
+                }
+            } catch (Exception e) {
+                LOG.error("Error during session checks.", e);
+            }
+        }
+        LOG.debug("Sessions found: " + sessions.length);
     }
+
 }
+
