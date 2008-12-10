@@ -1,34 +1,34 @@
-<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.anatomy.AnatomyItem,
                  org.zfin.anatomy.DevelopmentStage" %>
 <%@ page import="org.zfin.anatomy.presentation.StagePresentation" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <table bgcolor="#eeeeee" border="0" width="100%">
     <tbody>
-        <tr align="center">
-            <td><font size="-1"><b>ZFIN ID:</b>
-                ${formBean.anatomyItem.zdbID}
-    <c:if test="${!empty formBean.anatomyItem.oboID}">
-      &nbsp;
-            <b>OBO ID:</b>
-            ${formBean.anatomyItem.oboID}
-    </c:if>
-            </font>&nbsp;
-                <authz:authorize ifAnyGranted="root">
-                    <A HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-update-vframeset.apg&OID=${formBean.anatomyItem.zdbID}&rtype=anatomy_item'>
-                        Last Update:
-                        <c:choose>
-                            <c:when test="${formBean.latestUpdate != null}">
-                                <fmt:formatDate value="${formBean.latestUpdate.dateUpdated}" type="date"/>
-                            </c:when>
-                            <c:otherwise>Never modified</c:otherwise>
-                        </c:choose>
-                    </A> &nbsp;
-                </authz:authorize>
-            </td>
-        </tr>
+    <tr align="center">
+        <td><font size="-1"><b>ZFIN ID:</b>
+            ${formBean.anatomyItem.zdbID}
+            <c:if test="${!empty formBean.anatomyItem.oboID}">
+                &nbsp;
+                <b>OBO ID:</b>
+                ${formBean.anatomyItem.oboID}
+            </c:if>
+        </font>&nbsp;
+            <authz:authorize ifAnyGranted="root">
+                <A HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-update-vframeset.apg&OID=${formBean.anatomyItem.zdbID}&rtype=anatomy_item'>
+                    Last Update:
+                    <c:choose>
+                        <c:when test="${formBean.latestUpdate != null}">
+                            <fmt:formatDate value="${formBean.latestUpdate.dateUpdated}" type="date"/>
+                        </c:when>
+                        <c:otherwise>Never modified</c:otherwise>
+                    </c:choose>
+                </A> &nbsp;
+            </authz:authorize>
+        </td>
+    </tr>
     </tbody>
 </table>
 
@@ -143,20 +143,11 @@
 <p/>
 <b>EXPRESSION</b> <br>
 <b>
-    <div title="Genes with Most Figures, annotated to ${formBean.anatomyItem.name}, substructures excluded">Genes
-        with Most Figures
-    </div>
-    <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_expressed_genes.jsp" flush="false"/>
+    <span title="Genes with Most Figures, annotated to ${formBean.anatomyItem.name}, substructures excluded">
+        Genes with Most Figures
+    </span>
 </b>
-<c:if test="${!formBean.expressedGenesExist && formBean.anatomyStatistics.numberOfTotalDistinctObjects > 0}">
-    Show <a href='/${formBean.expressionSearchLinkSubstructures}'>
-    <zfin:choice choicePattern="0#genes| 1#gene| 2#genes"
-                 integerEntity="${formBean.anatomyStatistics.numberOfTotalDistinctObjects}"
-                 includeNumber="true"/>
-</a> in substructures.
-</c:if>
-
-
+<tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_expressed_genes.jsp" flush="false"/>
 <p/>
 
 <p/>
@@ -166,6 +157,7 @@
     Thisse lab</a>
 <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_insitu_probes.jsp" flush="false"/>
 <p/>
+
 <p/>
 <!-- Antibodies -->
 <b>Antibodies</b>:
@@ -175,16 +167,8 @@
 <!-- All mutants -->
 <b>PHENOTYPE</b> affecting</b> ${formBean.anatomyItem.name}
 <br/>
-    <b>Mutant and Transgenic Lines</b>
-    <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_mutants.jsp" flush="false"/>
-<c:if test="${!formBean.mutantsExist && formBean.anatomyStatisticsMutant.numberOfObjects > 0}">
-    Show <a
-        href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=<c:out value='${formBean.anatomyItem.zdbID}' />&WINSIZE=20">
-    <zfin:choice choicePattern="0#genotypes| 1#genotype| 2#genotypes"
-                 integerEntity="${formBean.anatomyStatisticsMutant.numberOfObjects}"
-                 includeNumber="true"/>
-</a> in substructures.
-</c:if>
+<b>Mutant and Transgenic Lines</b>
+<tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_mutants.jsp" flush="false"/>
 <p/>
 <b>Morpholino Experiments in wild-type fish</b>
 <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_morpholinos.jsp" flush="false"/>
@@ -194,5 +178,6 @@
 <hr width="80%">
 <!-- Number of Publications with an abstract that contains the anatomical structure -->
 
-<A HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.name}&anon1textAllOneWord=1&query_results=exists'>Search for publications with '${formBean.anatomyItem.name}' in abstract</A>
+<A HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.name}&anon1textAllOneWord=1&query_results=exists'>Search
+    for publications with '${formBean.anatomyItem.name}' in abstract</A>
                 

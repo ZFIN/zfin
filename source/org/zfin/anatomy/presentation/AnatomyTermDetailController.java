@@ -100,11 +100,11 @@ public class AnatomyTermDetailController extends AbstractCommandController {
 
     private void retrieveExpressedGenesData(AnatomyItem anatomyTerm, AnatomySearchBean form) {
 
-        PaginationResult<MarkerStatistic> expresionMarkersResult =
+        PaginationResult<MarkerStatistic> expressionMarkersResult =
                 publicationRepository.getAllExpressedMarkers(anatomyTerm, 0, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
 
-        List<MarkerStatistic> markers = expresionMarkersResult.getPopulatedResults() ;
-
+        List<MarkerStatistic> markers = expressionMarkersResult.getPopulatedResults() ;
+        form.setExpressedGeneCount(expressionMarkersResult.getTotalCount());
         List<ExpressedGeneDisplay> expressedGenes = new ArrayList<ExpressedGeneDisplay>();
         if (markers != null) {
             for (MarkerStatistic marker : markers) {
@@ -119,7 +119,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         // todo: could we get this as part of our statistic?
         form.setTotalNumberOfFiguresPerAnatomyItem(publicationRepository.getTotalNumberOfFiguresPerAnatomyItem(anatomyTerm));
 		// maybe used later?
-        form.setTotalNumberOfExpressedGenes(expresionMarkersResult.getTotalCount());
+        form.setTotalNumberOfExpressedGenes(expressionMarkersResult.getTotalCount());
 
         AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getZdbID());
         form.setAnatomyStatistics(statistics);

@@ -53,6 +53,7 @@ public class AnatomySearchBean extends PaginationBean {
     private List<Genotype> genotypes;
     private int genotypeCount;
     private int antibodyCount;
+    private int expressedGeneCount;
     private int wildtypeMorpholinoCount;
     private int mutantMorpholinoCount;
     private int totalNumberOfFiguresPerAnatomyItem;
@@ -394,6 +395,14 @@ public class AnatomySearchBean extends PaginationBean {
         this.mutantMorpholinoCount = mutantMorpholinoCount;
     }
 
+    public int getExpressedGeneCount() {
+        return expressedGeneCount;
+    }
+
+    public void setExpressedGeneCount(int expressedGeneCount) {
+        this.expressedGeneCount = expressedGeneCount;
+    }
+
     public String getExpressionSearchLink(boolean includeSubstructures) {
         URLCreator url = new URLCreator(ZfinProperties.getWebDriver());
         url.addNamevaluePair("MIval", "aa-xpatselect.apg");
@@ -461,6 +470,10 @@ public class AnatomySearchBean extends PaginationBean {
 
     public void setAnatomyStatisticsMutant(AnatomyStatistics anatomyStatisticsMutant) {
         this.anatomyStatisticsMutant = anatomyStatisticsMutant;
+    }
+
+    public boolean isAllExpressedGenesAreDisplayed() {
+        return expressedGeneCount <= MAX_NUMBER_EPRESSED_GENES;
     }
 
     public boolean isAllGenotypesAreDisplayed() {
