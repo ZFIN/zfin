@@ -69,10 +69,13 @@
                     <tr align="left">
                         <td>
                             Show all
-                            <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&fsel_anatomy_item_id=${formBean.anatomyItem.zdbID}&WINSIZE=20&include_substructures=unchecked">
-                                    ${formBean.expressedGeneCount}
-                                <zfin:choice choicePattern="0# genes| 1# gene| 2# genes"
-                                             integerEntity="${formBean.expressedGeneCount}"/></a> &nbsp;
+                    <a href='/${formBean.expressionSearchLink}'>
+                        <zfin:choice choicePattern="0#genes| 1#gene| 2#genes"
+                                     integerEntity="${formBean.totalNumberOfExpressedGenes}" includeNumber="true"/>,
+                        <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
+                                     integerEntity="${formBean.totalNumberOfFiguresPerAnatomyItem}"
+                                     includeNumber="true"/> </a>
+                    &nbsp;
                             <c:if test="${formBean.anatomyStatistics.numberOfTotalDistinctObjects > formBean.expressedGeneCount }">
                                 (including substructures
                                 <a href='/${formBean.expressionSearchLinkSubstructures}'>
