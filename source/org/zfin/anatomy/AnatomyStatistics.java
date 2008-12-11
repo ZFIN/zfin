@@ -116,7 +116,7 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     public int compareTo(AnatomyStatistics anatCompare) {
         String compName = anatCompare.getAnatomyItem().getName();
         String name = anatomyItem.getName();
-        return name.toLowerCase().compareTo(compName.toLowerCase());
+        return name.compareToIgnoreCase(compName);
     }
 
     public enum Type {

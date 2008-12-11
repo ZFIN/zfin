@@ -18,7 +18,7 @@ public class SortAnatomySearchTerm implements Comparator<AnatomyItem> {
     }
 
     public int compare(AnatomyItem termOne, AnatomyItem termTwo) {
-
+                          
         String nameOne = termOne.getName();
         String nameTwo = termTwo.getName();
         boolean isObsOne = termOne.isObsolete();
@@ -27,7 +27,7 @@ public class SortAnatomySearchTerm implements Comparator<AnatomyItem> {
         // Both names start with the search term: sort alphabetically
         if (nameOne.startsWith(searchTerm) && nameTwo.startsWith(searchTerm)) {
             if ((isObsTwo && isObsOne) || (!isObsOne && !isObsTwo))
-                return nameOne.compareTo(nameTwo);
+                return nameOne.compareToIgnoreCase(nameTwo);
             else if (!isObsOne)
                 return -1;
             else
@@ -36,7 +36,7 @@ public class SortAnatomySearchTerm implements Comparator<AnatomyItem> {
         // neither name starts with the search term: sort alphabetically
         if (!nameOne.startsWith(searchTerm) && !nameTwo.startsWith(searchTerm)) {
             if ((isObsTwo && isObsOne) || (!isObsOne && !isObsTwo))
-                return nameOne.compareTo(nameTwo);
+                return nameOne.compareToIgnoreCase(nameTwo);
             else if (!isObsOne)
                 return -1;
             else

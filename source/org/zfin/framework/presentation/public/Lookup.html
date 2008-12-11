@@ -18,7 +18,7 @@
 <!--                                            -->
 
 <script type="text/javascript">
-    var LookupProperties = { NumLookups: "3" } ;
+    var LookupProperties = { NumLookups: "4" } ;
     var LookupProperties0 = {
         divName: "featureTerm",
         inputName: "searchTerm",
@@ -48,6 +48,15 @@
         wildcard: true
     };
 
+    var LookupProperties3 = {
+        divName: "anatomyTerm",
+        inputName: "searchTerm",
+        showError: true,
+        buttonText: "search",
+        type: "ANATOMY_ONTOLOGY",
+        wildcard: true
+    };
+
 </script>
 
 <script language="javascript" src="gwt.js">
@@ -73,6 +82,8 @@
         <tr> <td> <div id="markerTerm"> </div> </td> </tr>
         <tr> <td> Antigen Gene </td> </tr>
         <tr> <td> <div id="antigenGene"> </div> </td> </tr>
+        <tr> <td> Anatomy Term</td> </tr>
+        <tr> <td> <div id="anatomyTerm"> </div> </td> </tr>
     </table>
 </form>
 </body>

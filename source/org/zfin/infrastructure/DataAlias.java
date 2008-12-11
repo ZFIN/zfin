@@ -9,7 +9,8 @@ import java.util.HashSet;
  * Base class for alias records. You need to extend this class
  * to make use of the real function, e.g. MarkerAlias or AnatomySynonym.
  */
-public class DataAlias implements Comparable {
+public class
+        DataAlias implements Comparable {
 
     public enum Group {
         ALIAS("alias"),
@@ -35,9 +36,18 @@ public class DataAlias implements Comparable {
     protected String zdbID;
     protected String alias;
     protected Group group;
+    
     protected String aliasLowerCase;
 
-    // this property is only useful when not only publications are desired
+    public DataAliasGroup dAliasGroup;
+
+    public DataAliasGroup getDAliasGroup() {
+        return dAliasGroup;
+    }
+
+    public void setDAliasGroup(DataAliasGroup dAliasGroup) {
+        this.dAliasGroup = dAliasGroup;
+    }// this property is only useful when not only publications are desired
     protected Set<ActiveSource> sources;
 
     protected Set<PublicationAttribution> publications;
