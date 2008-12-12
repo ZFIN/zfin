@@ -188,18 +188,19 @@
        </li>
        <?/MICOMMENT>
        
+           <li>
+         <a href="/zf_info/news/siteNews.html#Zv8">
+           December 12 - Zv8 Assembly, Pre Ensembl and Community Annotation Tool Released
+         </a>
+       </li>    
+       
             <li>
          <a href="/zf_info/news/siteNews.html#ab">
            October 3 - Antibodies join ZFIN
          </a>
        </li>    
        
-        <li>
-         <a href="/zf_info/news/siteNews.html#zfn">
-           October 3 - Zinc Finger Protein Search Algorithms On-line
-         </a>
-       </li>    
-       
+    
        
        
           
