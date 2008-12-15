@@ -121,9 +121,6 @@ public class EditUserPasswordController extends SimpleFormController {
                 User user = person.getUser();
                 if (user == null && bean.isNewUser())
                     user = new User();
-                user.setName(bean.getUser().getName());
-                user.setRole(bean.getUser().getRole());
-                user.setLogin(bean.getUser().getLogin());
                 Md5PasswordEncoder encoder = new Md5PasswordEncoder();
                 String encodedPass = encoder.encodePassword(passwordFirst, salt);
                 user.setPassword(encodedPass);
@@ -132,6 +129,8 @@ public class EditUserPasswordController extends SimpleFormController {
                     user.setPerson(person);
                     user.setCookie(Math.random() + "-" + bean.getUser().getLogin());
                     person.setUser(user);
+                } else {
+                    profileRepository.updateUser(user, bean.getUser());
                 }
                 tx.commit();
             } catch (Exception e) {

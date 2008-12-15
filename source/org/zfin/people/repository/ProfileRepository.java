@@ -115,4 +115,11 @@ public interface ProfileRepository {
      * @return boolean
      */
     boolean userExists(String login);
+
+    /**
+     * Update a users record
+     * @param currentUser
+     * @param newUserAttributes
+     */
+    void updateUser(User currentUser, User newUserAttributes);
 }

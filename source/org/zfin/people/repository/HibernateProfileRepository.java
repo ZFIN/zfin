@@ -6,13 +6,16 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.marker.Marker;
+import org.zfin.infrastructure.Updates;
 import org.hibernate.Session;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 import java.util.Collections;
+import java.util.Date;
 
 /**
  * Persistence storage of profile data.
@@ -24,6 +27,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         Person person = (Person) session.get(Person.class, zdbID);
         return person;
     }
+
     public MarkerSupplier getSupplier(String zdbID) {
         Session session = HibernateUtil.currentSession();
         MarkerSupplier supplier = (MarkerSupplier) session.get(MarkerSupplier.class, zdbID);
@@ -39,7 +43,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     public void deleteSupplier(MarkerSupplier supplier) {
         Session session = currentSession();
         session.delete(supplier);
-              
+
 
     }
 
@@ -60,12 +64,12 @@ public class HibernateProfileRepository implements ProfileRepository {
     }
 
     public void addSupplier(Organization organization, Marker marker) {
-          Session session = HibernateUtil.currentSession();
-          MarkerSupplier supplier = new MarkerSupplier();
-          supplier.setOrganization(organization);
-          supplier.setMarker(marker);
-          session.save(supplier);
-                 
+        Session session = HibernateUtil.currentSession();
+        MarkerSupplier supplier = new MarkerSupplier();
+        supplier.setOrganization(organization);
+        supplier.setMarker(marker);
+        session.save(supplier);
+
     }
 
     public void insertLab(Lab lab) {
@@ -84,12 +88,12 @@ public class HibernateProfileRepository implements ProfileRepository {
         session.update(user);
     }
 
-  public MarkerSupplier getSpecificSupplier(Marker marker, Organization organization) {
+    public MarkerSupplier getSpecificSupplier(Marker marker, Organization organization) {
         Session session = currentSession();
         Criteria criteria = session.createCriteria(MarkerSupplier.class);
         criteria.add(Restrictions.eq("marker", marker));
         criteria.add(Restrictions.eq("organization", organization));
-         return (MarkerSupplier) criteria.uniqueResult();
+        return (MarkerSupplier) criteria.uniqueResult();
     }
 
     public CuratorSession getCuratorSession(String curatorZdbID, String pubZdbID, String field) {
@@ -143,16 +147,78 @@ public class HibernateProfileRepository implements ProfileRepository {
         return user != null;
     }
 
+    public void updateUser(User currentUser, User newUserAttributes) {
+        if (currentUser == null)
+            return;
+
+        if (newUserAttributes == null)
+            return;
+
+        Session session = HibernateUtil.currentSession();
+        String newName = newUserAttributes.getName();
+        Person submittingPerson = Person.getCurrentSecurityUser();
+        if (StringUtils.isNotEmpty(newName) && !newName.equals(currentUser.getName())) {
+            Updates update = new Updates();
+            update.setFieldName("name");
+            update.setNewValue(newName);
+            update.setOldValue(currentUser.getName());
+            update.setRecID(currentUser.getZdbID());
+            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitterName(submittingPerson.getUsername());
+            update.setWhenUpdated(new Date());
+            session.save(update);
+            currentUser.setName(newName);
+        }
+        // since the password has to be typed in every time there is no concept
+        // of changing a password. So we mark it as changed...
+        {
+            Updates update = new Updates();
+            update.setFieldName("password");
+            update.setRecID(currentUser.getZdbID());
+            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitterName(submittingPerson.getUsername());
+            update.setWhenUpdated(new Date());
+            session.save(update);
+        }
+        String role = newUserAttributes.getRole();
+        if (StringUtils.isNotEmpty(role) && !role.equals(currentUser.getRole())) {
+            Updates update = new Updates();
+            update.setFieldName("role");
+            update.setRecID(currentUser.getZdbID());
+            update.setNewValue(role);
+            update.setOldValue(currentUser.getRole());
+            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitterName(submittingPerson.getUsername());
+            update.setWhenUpdated(new Date());
+            currentUser.setRole(role);
+            session.save(update);
+        }
+        String login = newUserAttributes.getLogin();
+        if (StringUtils.isNotEmpty(login) && !login.equals(currentUser.getLogin())) {
+            Updates update = new Updates();
+            update.setFieldName("login");
+            update.setRecID(currentUser.getZdbID());
+            update.setNewValue(login);
+            update.setOldValue(currentUser.getLogin());
+            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitterName(submittingPerson.getUsername());
+            update.setWhenUpdated(new Date());
+            currentUser.setLogin(login);
+            session.save(update);
+        }
+        session.update(currentUser);
+    }
+
     @SuppressWarnings("unchecked")
     public List<Organization> getOrganizationsByName(String name) {
         Session session = HibernateUtil.currentSession();
         Criteria labCriteria = session.createCriteria(Lab.class);
-        labCriteria.add(Restrictions.ilike("name", "%"+name+"%"));
+        labCriteria.add(Restrictions.ilike("name", "%" + name + "%"));
 
         List<Organization> labs = (List<Organization>) labCriteria.list();
 
         Criteria companyCriteria = session.createCriteria(Company.class);
-        companyCriteria.add(Restrictions.ilike("name", "%"+name+"%"));
+        companyCriteria.add(Restrictions.ilike("name", "%" + name + "%"));
 
         List<Organization> companies = (List<Organization>) companyCriteria.list();
         labs.addAll(companies);
