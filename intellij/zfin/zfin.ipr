@@ -7,6 +7,7 @@
       <antReference projectDefault="true" />
       <customJdkName value="" />
       <maximumHeapSize value="128" />
+      <maximumStackSize value="32" />
       <properties />
     </buildFile>
   </component>
@@ -60,6 +61,7 @@
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
     <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
@@ -256,13 +258,16 @@
       </item>
     </group>
   </component>
+  <component name="ProjectDetails">
+    <option name="projectName" value="zfin" />
+  </component>
   <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/zfin.iml" filepath="$PROJECT_DIR$/zfin.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/../../home/WEB-INF/classes" />
   </component>
   <component name="ResourceManagerContainer">
@@ -280,7 +285,7 @@
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="SvnBranchConfigurationManager">
-    <option name="myVersion" value="123" />
+    <option name="myVersion" value="124" />
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="svn" />
@@ -289,41 +294,8 @@
   <component name="libraryTable">
     <library name="runtime">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/jaxb-impl.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/acegi-security-tiger-1.0.6.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/hibernate-3.1.3.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/commons-codec-1.3.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/clickstream-1.0.3.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/jta.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/relaxngDatatype.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/commons-collections-3.2.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/standard-1.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/commons-digester-1.6.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/asm-attrs.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/spring-2.0.8.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/mail-1.4.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/commons-validator-1.1.4.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/commons-beanutils-1.6.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/commons-lang-2.3.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/log4j-1.2.15.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/ehcache-1.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/activation-1.1.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/ant-antlr-1.6.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/oro-2.0.8.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/cglib-2.1.3.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/jaxb-libs.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/struts-1.2.9.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/highlighter.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/commons-logging-1.0.4.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/xmlbind.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/asm.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/jstl-1.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/antlr-2.7.7.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/xsdlib.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/dom4j-1.6.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/acegi-security-1.0.6.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/gwt-servlet.jar!/" />
         <root url="file://$PROJECT_DIR$/../../lib/Java/http-unit" />
+        <root url="file://$PROJECT_DIR$/../../home/WEB-INF/lib" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
@@ -337,6 +309,7 @@
         <root url="jar://$PROJECT_DIR$/../../../../apache-commons/commons-lang-2.3-src.zip!/commons-lang-2.3-src/src/java" />
         <root url="file://$PROJECT_DIR$/../../../../clickstream-1.0.3-sources/src/java" />
       </SOURCES>
+      <jarDirectory url="file://$PROJECT_DIR$/../../home/WEB-INF/lib" recursive="false" />
       <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/http-unit" recursive="false" />
     </library>
     <library name="build-time">

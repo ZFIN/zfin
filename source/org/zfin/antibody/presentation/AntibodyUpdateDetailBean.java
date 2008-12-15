@@ -315,20 +315,46 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
         this.mostRecentPubs = mostRecentPubs;
     }
 
+    /**
+     * Default publication list;
+     * Show the publications that should always be displayed.
+     * Then add non-standard publications that were selected during
+     * a user session. They get added to the list in the order of most recent usage.
+     * Make sure that the standard publications are not included in the list of
+     * most recent pubs as we do not want to have it be displayed more than once. 
+     * @return map of publications.
+     * ToDO: Make the standard pubs be more configurable so this method can be reused elsewhere.
+     */
     public Map<String, String> getDefPubList() {
         Map<String, String> entries = new LinkedHashMap<String, String>();
         entries.put("-", "Select Publication");
         entries.put("ZDB-PUB-080117-1", "Antibody Data Submissions");
         entries.put("ZDB-PUB-020723-5", "Manually Curated Data");
+        entries.put("ZDB-PUB-081107-1", "Antibody information from supplier");
         if (mostRecentPubs == null || mostRecentPubs.size() == 0)
             return entries;
+
+        // check if the the pubs used are different from the default publication list.
+        boolean defaultPubsOnly = true;
+        for (Publication publication : mostRecentPubs) {
+            // if a non-default publication is found continue otherwise only
+            //return the detfault list
+            if (!entries.containsKey(publication.getZdbID())) {
+                defaultPubsOnly = false;
+                break;
+            }
+        }
+        if (defaultPubsOnly)
+            return entries;
+
         entries.put("--", "--- Most Recent Pubs -----");
         for (int i = mostRecentPubs.size() - 1; i > -1; i--) {
             Publication pub = mostRecentPubs.get(i);
-	    if(pub != null){
-		String labelString = pub.getShortAuthorList();
-		entries.put(pub.getZdbID(), labelString);
-	    }
+            if (pub != null) {
+                String labelString = pub.getShortAuthorList();
+                if (!entries.containsKey(pub.getZdbID()))
+                entries.put(pub.getZdbID(), labelString);
+            }
         }
         return entries;
     }
