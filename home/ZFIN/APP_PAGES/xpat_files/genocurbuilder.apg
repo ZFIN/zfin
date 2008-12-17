@@ -102,7 +102,7 @@ the genotype is finalized and committed, the staging area is reset.
           and feature_zdb_id = recattrib_data_zdb_id
         order by feature_abbrev_order
         ;">
-      <option value="$1">Feature - $2</option>     
+      <option value="$1">$2</option>     
       <?/MISQL>
     </select>
             
@@ -114,8 +114,9 @@ the genotype is finalized and committed, the staging area is reset.
 
     <select name=genocurbld_zyg_zdb_id onChange="zygocityConstraints();">
       <?MISQL SQL="
-        select zyg_zdb_id, zyg_name
-        from zygocity
+        select z.zyg_zdb_id, z.zyg_name
+        from zygocity z
+        where z.zyg_name <> 'wild type'
         order by zyg_name
         ;">
       <option value="$1" $(IF,$(EC,$2,$genocurbld_zyg_default),SELECTED)>$2</option>     
