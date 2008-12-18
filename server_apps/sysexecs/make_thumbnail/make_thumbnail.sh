@@ -10,10 +10,6 @@ my $thumbnailFile = $1;
 my $mediumImageFile = $fullImageFile;
 $mediumImageFile =~ s/ZDB-IMAGE/medium\/ZDB-IMAGE/;
 
-#system("/local/apps/netpbm/bin/anytopnm $fullImageFile | " .
-#       "/local/apps/netpbm/bin/pnmscale -h 64 | " .
-#       "/local/apps/netpbm/bin/ppmtojpeg > $thumbnailFile");
-
 #the 1000px is a maximum that no sensible thumbnail should achieve
 system("/local/bin/convert -thumbnail 1000x64 $fullImageFile $thumbnailFile");
 system("/local/bin/convert -thumbnail 500x550 $fullImageFile $mediumImageFile");
