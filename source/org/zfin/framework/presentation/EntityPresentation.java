@@ -47,6 +47,27 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
+    protected static String getWebdriverUrl(String uri, String zdbID) {
+        StringBuilder sb = new StringBuilder("/");
+        sb.append(ZfinProperties.getWebDriver());
+        sb.append(uri);
+        sb.append(zdbID);
+        return sb.toString();
+    }
+
+    protected static String getWebdriverStartTag(String uri, String zdbID) {
+        StringBuilder sb = new StringBuilder("<a href=\"");
+        sb.append(getWebdriverUrl(uri,zdbID));
+        sb.append("\">");
+        return sb.toString();
+    }
+
+    /* I made this method public because it won't generally be necessary for
+     * underlying entities to override this method */
+    public static String getLinkEndTag() {
+        return "</a>";
+    }
+
     protected static String getSpanTag(String cssClassName, String title, String name) {
         StringBuilder sb = new StringBuilder();
         sb.append("<span class=\"");

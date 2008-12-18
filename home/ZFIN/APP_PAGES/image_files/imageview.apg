@@ -254,49 +254,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	  </font></center>
 	<?/MIVAR>
 
-	<?MIBLOCK COND="$(NC,$fimgview_fimg_form,movie)">
 
-	  <center>
-	  <TABLE border=0 cellpadding=20>
-	    <TR>
-	      <TD align=center bgcolor=#000000>
-		<?MIVAR> 
-		  <script>
-		    var frameWidth;
-		    if (navigator.appName == "Microsoft Internet Explorer") {
-		      frameWidth = parent.document.body.clientWidth - 60;
-		    }
-		    else {
-		      frameWidth = parent.innerWidth - 80;
-		    }
-
-		    if (($fimgview_fimg_width > frameWidth)||$fimgview_fimg_width==0) {   
-		      document.write(
-			  '<IMG width="' + frameWidth + '"' +
-			  '  SRC="<!--|IMAGE_LOAD|-->/$fimgview_imageToShow">' +
-			  '<br>'); 
-		      document.write(
-			  '<INPUT TYPE=button ' +
-			  '  value="View image at high resolution"' +
-			  '  onClick="popup_image(' + "'<!--|IMAGE_LOAD|-->/$fimgview_imageToShow'" + ')">');
-		    } 
-		    else {
-		      document.write('<IMG SRC="<!--|IMAGE_LOAD|-->/$fimgview_imageToShow">');
-		    }
-		  </script>
-		<?/MIVAR>
-
-		<?MIVAR COND="$(XST,$UPDATE)">
-		  <br>
-		  <INPUT TYPE=button 
-			 value="Change Image file" 
-			 onClick="doit('img_image','pic','Image+file','image','img_zdb_id')">
-		<?/MIVAR>
-	      </TD>
-	    </TR>
-	  </TABLE>
-	  </center>
-	<?/MIBLOCK>
 
 	<A NAME="image_info">
 
@@ -450,7 +408,52 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	        <?/MIBLOCK>
  
 	<?/MIVAR>
-	 <br><br>
+	 
+
+	<?MIBLOCK COND="$(NC,$fimgview_fimg_form,movie)">
+
+	  <center>
+	  <TABLE border=0 cellpadding=20>
+	    <TR>
+	      <TD align=center bgcolor=#000000>
+		<?MIVAR> 
+		  <script>
+		    var frameWidth;
+		    if (navigator.appName == "Microsoft Internet Explorer") {
+		      frameWidth = parent.document.body.clientWidth - 60;
+		    }
+		    else {
+		      frameWidth = parent.innerWidth - 80;
+		    }
+
+		    if (($fimgview_fimg_width > frameWidth)||$fimgview_fimg_width==0) {   
+		      document.write(
+			  '<IMG width="' + frameWidth + '"' +
+			  '  SRC="<!--|IMAGE_LOAD|-->/$fimgview_imageToShow">' +
+			  '<br>'); 
+		      document.write(
+			  '<INPUT TYPE=button ' +
+			  '  value="View image at high resolution"' +
+			  '  onClick="popup_image(' + "'<!--|IMAGE_LOAD|-->/$fimgview_imageToShow'" + ')">');
+		    } 
+		    else {
+		      document.write('<IMG SRC="<!--|IMAGE_LOAD|-->/$fimgview_imageToShow">');
+		    }
+		  </script>
+		<?/MIVAR>
+
+		<?MIVAR COND="$(XST,$UPDATE)">
+		  <br>
+		  <INPUT TYPE=button 
+			 value="Change Image file" 
+			 onClick="doit('img_image','pic','Image+file','image','img_zdb_id')">
+		<?/MIVAR>
+	      </TD>
+	    </TR>
+	  </TABLE>
+	  </center>
+	<?/MIBLOCK>
+
 
 <?MIVAR NAME=$OID>$fimgview_image_zdb_id<?/MIVAR>
         <?MICOMMENT>

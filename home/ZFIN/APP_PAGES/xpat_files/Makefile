@@ -41,8 +41,7 @@ GENERICS = xpatview.apg xpatselect.apg anatdict.apg \
 	figurecuration.apg experimentcuration.apg xpatcurreset.apg fxfigphenogenolist.apg \
 	fxfigphenogolist.apg pheno_summary.apg pheno_summary_sql.apg wordcompletion.apg \
 	curation_filters.apg patoupdate_addmutant.apg xpatcurupdatecondition.apg gocuration.apg \
-	structure_pile_add.apg fxlabelinfo.apg
-
+	structure_pile_add.apg xpatselect_resultsasimages.apg fxlabelinfo.apg
 
 
 # Use default rules for app page directories. 

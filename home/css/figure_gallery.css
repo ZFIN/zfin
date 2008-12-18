@@ -1,0 +1,53 @@
+.modalBackground {
+    z-index:0 ;
+    Background-color: Gray;
+    opacity:0.7; 
+}
+#modal_container {
+        padding:5px;  
+        background-color:#fff;  
+        border: 1px solid black;
+        color:#333;  
+        text-align:left;
+       
+   } 
+    
+   #modal_overlay {  
+       background-color:#000;
+
+   }  
+
+   #imagebox_maxnote {
+       font-size: .7em;
+   }
+
+#figpop_top {
+       color: #333;
+       padding: .5em;
+       height: 20px;}
+/*#figpop_top a { text-decoration: none; }*/
+#figpop_image { text-align: center;
+         margin: 0;
+         padding: 0; }
+#figpop_image img { margin: 0 auto; padding-top: 3px;
+             border: 0;
+}
+.figpop_expressionData { 
+        color: #333;
+        padding-left: 1.5em;
+        line-height: 1.6em; }
+.figpop_expressionData a { text-decoration: none; }
+.close_link { font-family: sans-serif;
+              font-weight: bold;
+              font-size: 1.2em;
+              text-decoration: none;
+              color: #333;
+              float: right;} 
+.figpop_expressionTitle { margin-top:1em; padding-left: .5em; font-weight: bold  ; color: #333 }
+.figpop_phenotypeTitle {margin-top:1em; padding-left: .5em;  font-weight: bold ; color: #333}
+.figpop_captionTitle {margin-top: 1em; padding-left: .5em;  font-weight: bold ; color: #333}
+.figpop_caption { padding-left: 1em; padding-right: 1em; }
+
+#xpresimg_imagePreload {
+ display: none;
+}

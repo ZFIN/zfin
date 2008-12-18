@@ -227,8 +227,10 @@ and clone_problem_type is not null
           <?MIVAR>
               <tr><td>
               <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=<?MIVAR>$fxallfig_image_zdb_id<?/MIVAR>&image_table=image">
-              <!--<Img src="<!--|IMAGE_LOAD|-->/$fxallfig_thumbnail" align = left border=2></a>-->
-              <Img src="<!--|IMAGE_LOAD|-->/$fxallfig_image" align = left  width=$fxallfig_size border=2></a>
+
+                  <Img src="<!--|IMAGE_LOAD|-->/medium/$fxallfig_image" align="left"   border="2"></a>
+
+
               <p class="fig"><?MIVAR COND="$(EQ,$fxallfig_is_text,no)"><b>$fxallfig_label </b> <?/MIVAR> <?MIVAR>$fxallfig_caption <?/MIVAR>
 <?MICOMMENT>
              <?MIBLOCK COND="$(EQ,yes,$fxallfig_has_results)">

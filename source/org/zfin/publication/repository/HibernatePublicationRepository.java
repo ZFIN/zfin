@@ -13,6 +13,7 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.CanonicalMarker;
 import org.zfin.database.SearchUtil;
 import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
 import org.zfin.expression.Experiment;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
@@ -430,6 +431,17 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
 
     @SuppressWarnings("unchecked")
+    public Figure getFigureById(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        return (Figure)session.get(Figure.class, zdbID);
+    }
+
+    public Image getImageById(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        return (Image)session.get(Image.class, zdbID);
+
+    }
+
     public List<Figure> getFiguresByGeneID(String geneID, String publicationID) {
         Session session = HibernateUtil.currentSession();
         Criteria crit = session.createCriteria(Figure.class);
@@ -458,6 +470,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         // Only pick out the distinct records.
         DistinctRootEntityResultTransformer trafo = new DistinctRootEntityResultTransformer();
         return trafo.transformList(figures);
+    }
+
+    public Figure getFigureByID(String figureZdbID) {
+        Session session = HibernateUtil.currentSession();
+        return (Figure) session.get(Figure.class, figureZdbID);
     }
 
 

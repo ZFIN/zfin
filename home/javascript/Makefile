@@ -35,9 +35,9 @@ SUBDIRS  = ajax-lib
 
 STATICS = patocuration.js ncbo-term-info.js term_completer.js \
 	dichty-term-info.js json.js sessionstate.js prototype.js \
-	awstats_misc_tracker.js control.modal.js control.modal.2.2.3.js  
+	awstats_misc_tracker.js control.modal.js control.modal.2.2.3.js
 
-GENERICS = header.js footer.js 
+GENERICS = header.js footer.js imagebox.js
 
 
 # ---------------  Production Rules  ------------------------------------

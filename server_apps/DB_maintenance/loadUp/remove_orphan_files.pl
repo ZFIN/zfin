@@ -155,13 +155,21 @@ foreach $remorph_image_line (@remorph_imageLines) {
     $remorph_image_line =~ s/$remorph_new_line/|/g ;
 
     # print filenames to a new file (used to load into db), if they aren't 
-    # thumbnail or annotation files, and if they aren't the 'bkup' directory
+    # thumbnail or annotation files, and if they aren't the 'bkup' or 'medium' directories.
+    
+    # the medium directory was created to hold mid-sized images.  They should have the same
+    # zdb-ids as their full sized counter-parts.  We create the list of orphans from the 
+    # main image file, then apply that list to the medium directory as well. This is the same
+    # behavior that is used for thumbnail and annotation images, but in another directory.
+    
     # we'll later parse out just the ZDB-id for the files that are orphaned
     # and move all files named with this ZDB-id (including _annot and _thumb
-    # files into a backup directory), so we don't need to process the _thumb
-    # or _annot files individually.
+    # files into a backup directory).  we then move to the medium directory and then move
+    # the orphaned images in that one to the medium/bkup direcotry.
 
-    if (!($remorph_image_line =~ /\_/) && !($remorph_image_line =~ /bkup/)){	
+    # Thus, we don't need to process the _thumb, /medium, or _annot files individually.
+
+    if (!($remorph_image_line =~ /\_/) && !($remorph_image_line =~ /bkup/) && !($remorph_image_line =~ /medium/)){	
 	$remorph_file_to_print = $remorph_image_line.$remorph_new_line ;
 	print FL_IMAGE_MODIFIED $remorph_file_to_print;
     }
@@ -192,7 +200,7 @@ print "loading...\n";
 # load the files created by the above steps into the database using 
 # the load_upload_file_list.sql script
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/load_upload_file_list.sql >out 2> /tmp/orphan_file_report.txt");
+system ("/private/apps/Informix/informix/bin/dbaccess <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/load_upload_file_list.sql >out 2> /tmp/orphan_file_report.txt");
 
 system ("/bin/chmod 644 /tmp/filesystem_images_not_in_database.unl") 
     and die "Can not chmod the filesystem_images_not_in_database.unl";
@@ -252,6 +260,12 @@ foreach $remorph_orphan_image_line (@remorph_orphanImageLines) {
 
     system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_orphan_image_line.* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/" )
 and die "can not move image file";
+
+    # medium images are in a separate directory, so do the same thing for those files as we did for files
+    # in the imageLoadUp directory itself.  medium/ has a bkup dir as well.
+
+    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/medium/$remorph_orphan_image_line.* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/medium/bkup/" )
+and die "can not move medium image file";
 
     $remorph_dash_star = "_*";
     $remorph_image_ext = $remorph_orphan_image_line.$remorph_dash_star;

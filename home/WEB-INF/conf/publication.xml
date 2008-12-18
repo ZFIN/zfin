@@ -16,6 +16,7 @@
                 <prop key="/marker/snp-publication-list">showPublicationList</prop>
                 <prop key="/antibody/disassociate-publication">showPublicationList</prop>
                 <prop key="/antibody/add-publication">showPublicationList</prop>
+                <prop key="/publication/image-popup">imageViewPopup</prop>
             </props>
         </property>
     </bean>
@@ -35,6 +36,10 @@
 
     </bean>
 
+    <bean name="imageViewPopup" class="org.zfin.publication.presentation.ImageViewController">
+        <property name="successView" value="image-popup.page"/>
+    </bean>
+
     <bean name="showPublicationList" class="org.zfin.publication.presentation.PublicationListController">
         <property name="methodNameResolver" ref="publicationActionResolver"/>
         <property name="validatorMap" >
@@ -48,4 +53,6 @@
 
     <bean name="publicationSearchResult" class="org.zfin.publication.presentation.PublicationSearchResultController"/>
 
+
+    
 </beans>

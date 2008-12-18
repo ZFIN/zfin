@@ -320,16 +320,12 @@ and display them one after the other horizontally
                 <?MIVAR>
           <?MIVAR NAME=fxfigview_height>$10<?/MIVAR>
           <?MIVAR NAME=fxfigview_width>$11<?/MIVAR>
-          <?MIBLOCK COND="$(>,$fxfigview_height,$fxfigview_width)">
-             <?MIVAR NAME=$fxfigview_dimension>height<?/MIVAR>
-          <?MIELSE>
-             <?MIVAR NAME=$fxfigview_dimension>width<?/MIVAR>
-          <?/MIBLOCK> 
+
                  <tr><td> 
 <?MIBLOCK COND="$(NE,$fxfigview_jtype,Unpublished)">
 <?MIVAR>
                  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=image">
-                 <Img src="<!--|IMAGE_LOAD|-->/$fxfigview_image" $fxfigview_dimension = $fxfigview_size align = left border=2></a>
+                 <Img src="<!--|IMAGE_LOAD|-->/medium/$fxfigview_image" align="left" border=2></a>
 <?/MIVAR>
 <?MIELSE>
 <?MIVAR>

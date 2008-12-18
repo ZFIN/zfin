@@ -5,6 +5,7 @@
         "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
 
 <tiles-definitions>
+    <definition name="image-popup.page" path="/WEB-INF/jsp/publication/image_popup.jsp"/>
 
     <definition name="antibody-publication-list.page" extends="main_layout">
         <put name="staticTitle" value="ZFIN Publication list"/>
@@ -26,4 +27,3 @@
         <put name="body" value="/WEB-INF/jsp/publication/snp_publication_list.jsp"/>
     </definition>
 </tiles-definitions>
-

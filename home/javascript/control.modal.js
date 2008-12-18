@@ -44,7 +44,9 @@ Object.extend(Control.Modal,{
 	load: function(){
 		if(!Control.Modal.loaded){
 			Control.Modal.loaded = true;
-			Control.Modal.ie = !(typeof document.body.style.maxHeight != 'undefined');
+            if (Prototype.Browser.IE) {
+                Control.Modal.ie = true;
+            }
 			Control.Modal.overlay = $(document.createElement('div'));
 			Control.Modal.overlay.id = 'modal_overlay';
 			Object.extend(Control.Modal.overlay.style,Control.Modal['overlay' + (Control.Modal.ie ? 'IE' : '') + 'Styles']);
@@ -80,8 +82,11 @@ Object.extend(Control.Modal,{
 			Control.Modal.current.close(force);
 	},
 	attachEvents: function(){
-		Event.observe(window,'load',Control.Modal.load);
-		Event.observe(window,'unload',Event.unloadCache,false);
+	    //	Event.observe(window,'load',Control.Modal.load);
+	    //	Event.observe(window,'unload',Event.unloadCache,false);
+	    //  this fix is from http://livepipe.net/community/control_suite/195
+	    //  and is meant to upgrade control.modal to work with prototype 1.6
+	    document.observe('contentloaded', Control.Modal.load);  
 	},
 	center: function(element){
 		if(!element._absolutized){

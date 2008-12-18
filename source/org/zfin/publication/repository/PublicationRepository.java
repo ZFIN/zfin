@@ -3,6 +3,7 @@ package org.zfin.publication.repository;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.CanonicalMarker;
 import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -177,12 +178,17 @@ public interface PublicationRepository extends PaginationParameter {
 
 
     /**
+
+    Figure getFigureById(String zdbID);
+
      * Retrieve the figures that can be found for a given publication and gene.
      *
      * @param geneID
      * @param publicationID
      */
     List<Figure> getFiguresByGeneID(String geneID, String publicationID);
+
+    Figure getFigureByID(String figureZdbID);
 
     List<Figure> getFiguresByGeneAndPublication(String geneID, String publicationID);
 
@@ -315,12 +321,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     Journal getJournalByTitle(String journalTitle) ;
 
-    /**
-     * Retrieve Figue by ID
-     * @param zdbID ID
-     * @return Figure
-     */
-    Figure getFigure(String zdbID);
+    Image getImageById(String zdbID);
 
     /**
      * Retrieve all Publications with Figures for a given marker and ao term.

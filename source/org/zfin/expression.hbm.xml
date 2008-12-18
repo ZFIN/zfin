@@ -48,7 +48,6 @@
         <many-to-one name="publication" class="org.zfin.publication.Publication" column="fig_source_zdb_id"
                      insert="false"
                      update="false"/>
-
         <subclass name="org.zfin.expression.FigureFigure" discriminator-value="FIG"/>
 
         <subclass name="org.zfin.expression.TextOnlyFigure" discriminator-value="TOD"/>
@@ -63,6 +62,22 @@
                 <param name="type">IMAGE</param>
             </generator>
         </id>
+
+        <property name="imageFilename">
+            <column name="img_image"/>
+        </property>
+
+        <property name="imageWithAnnotationsFilename">
+            <column name="img_image_with_annotation"/>
+        </property>
+
+        <property name="height">
+            <column name="img_height"/>
+        </property>
+
+        <property name="width">
+            <column name="img_width"/>
+        </property>
 
         <many-to-one name="figure" class="org.zfin.expression.Figure" column="img_fig_zdb_id"/>
 
