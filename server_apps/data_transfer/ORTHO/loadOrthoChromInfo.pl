@@ -42,6 +42,8 @@ print "$dir\n";
 system("/bin/rm -f *.data") and die "can not rm old data file";
 system("/bin/rm -f *.unl") and die "can not rm unl" ;
 system("/bin/rm -f *.txt") and die "can not rm txt" ;
+system("/bin/rm -f *.indexFile") and die "can not rm FlyBase indexFile" ;
+
 print "\nRemoving old data files is done.\n";
 
 # download 2 data files from MGI for updating human and mouse chromosome info 
@@ -55,8 +57,9 @@ open (FLYBASE, "FlyBase.indexFile") || &emailError("Cannot open FlyBase.indexFil
 @lines=<FLYBASE>;
 close(FLYBASE);
 foreach $line (@lines) {
-  if ($line =~ m/dmel-all-gene-r(.+)">/) {
+  if ($line =~ m/>dmel-all-gene-r(.+)</) {
     $ftp = "ftp://flybase.net/genomes/Drosophila_melanogaster/current/fasta/dmel-all-gene-r" . $1;
+    last;
   }
 }
 print "\n$ftp\n";
