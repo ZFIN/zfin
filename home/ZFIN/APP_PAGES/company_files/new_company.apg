@@ -53,10 +53,10 @@
 
   <b>Address:</b><br>
   This field holds the COMPANY's surface mail address. Be sure to include all necessary zip codes or country codes. For example:<br>
-  <pre>Institute of Neuroscience
-  1254 University of Oregon
-  Eugene,OR 97403-1254
-  USA
+  <pre>
+1 DNA Way
+South San Francisco, CA 94080-4990
+USA
   </pre>
   <TEXTAREA name=address WRAP=virtual rows=6 cols=70><?MIVAR COND=$(NC,$address,NULL)>$address<?/MIVAR></TEXTAREA>
   <p>
@@ -78,7 +78,7 @@
   <p>
 
   <b>URL:</b><br>
-  This field should hold the address (URL) for the company's WWW site.
+  This field should hold the address (URL) for the company's WWW site. For example, http://www.gene.com
   <INPUT type=text <?MIVAR COND=$(NC,$url,NULL)>value="$url" <?/MIVAR> name="url" size="80">
   <p>
 
