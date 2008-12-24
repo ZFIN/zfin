@@ -1,4 +1,4 @@
-package org.zfin.uniquery.search;
+package org.zfin.uniquery.presentation;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -11,6 +11,8 @@ import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.uniquery.SearchCategory;
 import org.zfin.uniquery.ZfinAnalyzer;
+import org.zfin.uniquery.search.*;
+import org.zfin.framework.presentation.PaginationBean;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,7 +29,7 @@ import java.util.*;
  * that the results are stored in memory for each user.  As a result, this will
  * take up a significant amount of system memory.
  */
-public class SearchBean {
+public class SearchBean extends PaginationBean {
 
     private static final Logger LOG = Logger.getLogger(SearchBean.class);
 
@@ -37,17 +39,17 @@ public class SearchBean {
     public static final String TYPE = "type";
     public static final int MAX_RESULTS_PER_CATEGORY = 5000;
 
-    private ArrayList allCategoryHitsList;
+    private List<CategoryHits> allCategoryHitsList;
     private String queryString;
-    private ArrayList allResultsList;
+    private List<org.zfin.uniquery.search.Hit> allResultsList;
 
     private String query;
     private String category;
-    private int startIndex;
     private int pageSize = 25;
     private String indexDirectory = ZfinProperties.getIndexDirectory();
     private ReplacementZdbID replacementZdbID;
     private SearchResults searchResult;
+    public static final String WEBDRIVER_LOCATION = System.getenv("WEBDRIVER_LOC");
 
     /**
      * For a given user query (and a set of indexes), search for the resulting hits.
@@ -67,38 +69,31 @@ public class SearchBean {
             Searcher searcher = new IndexSearcher(reader);
             ZfinAnalyzer analyzer = new ZfinAnalyzer();
 
-            //System.err.println("Query = " + query.toString());
             Query query = parseQuery(queryString, BODY, analyzer);
-            //System.err.println("rewrittenQuery = " + query.toString());
-            Query rewrittenQuery = query.rewrite(reader);
-
 
             if ((allCategoryHitsList != null) && (allResultsList != null) && (this.queryString != null) && (this.queryString.equals(queryString))) {
                 // do not repeat search, same query is being repeated and we have it saved already
             } else {
                 this.queryString = queryString;
-                allResultsList = new ArrayList();
-                allCategoryHitsList = new ArrayList();
+                allResultsList = new ArrayList<org.zfin.uniquery.search.Hit>();
+                allCategoryHitsList = new ArrayList<CategoryHits>();
 
                 /*
                 * Search all categories in the order of the SearchCategory.CATEGORIES list
                 * (which is decided by biologists).
                 */
                 for (int i = 0; i < SearchCategory.CATEGORIES.size(); i++) {
-                    Hits hits = null;
-                    Query fullQuery = query;
 
                     // determine the category
-                    SearchCategory category = (SearchCategory) SearchCategory.CATEGORIES.get(i);
+                    SearchCategory category = SearchCategory.CATEGORIES.get(i);
 
                     if (category != null) {
                         // reformulate query into the category-specific query, and rewrite the original query
-                        fullQuery = addCategoryPrefixToQuery(category, query, analyzer);
+                        Query fullQuery = addCategoryPrefixToQuery(category, query, analyzer);
                         query = query.rewrite(reader);
-                        //System.err.println("categorizeSearchResults FullQuery = " + fullQuery.toString());
 
                         // search the indexes and get all the hits
-                        hits = searcher.search(fullQuery);
+                        Hits hits = searcher.search(fullQuery);
 
                         // save the hits for this category in a category-specific results object
                         CategoryHits catHits = new CategoryHits(category, hits, query, MAX_RESULTS_PER_CATEGORY);
@@ -133,18 +128,15 @@ public class SearchBean {
      * @return SearchResult object
      */
     public SearchResults doFullSearch(String indexPath, String queryString, int resultsPageSize, int startIndex) {
-        SearchResults resultPage = null;
 
         // first search for and categorize all results into the category-results structure
         categorizeSearchResults(indexPath, queryString);  // caching should ensure adequate performance
 
         // from all results, get the relevant results subset based on the pageSize (from x to y out of a total of z)
-        ArrayList relevantResults = getResultsSubset(allResultsList, resultsPageSize, startIndex);
+        List relevantResults = getResultsSubset(allResultsList, resultsPageSize, startIndex);
 
         // now create the resulting HTML results subset
-        resultPage = new SearchResults(relevantResults.iterator(), allResultsList.size(), resultsPageSize, startIndex);
-
-        return resultPage;
+        return new SearchResults(relevantResults.iterator(), allResultsList.size(), resultsPageSize, startIndex);
     }
 
     /**
@@ -166,6 +158,7 @@ public class SearchBean {
         categorizeSearchResults(indexDirectory, queryString);  // caching should ensure adequate performance
 
         // category could be "All"
+        int startIndex = getFirstRecord() - 1;
         if (categoryId.equalsIgnoreCase("All")) {
             return doFullSearch(indexDirectory, queryString, pageSize, startIndex);
         }
@@ -173,14 +166,14 @@ public class SearchBean {
         // now use the categoryId to filter all the results to only those in that category
         // a better, more efficient implementation would use a binary search instead of a linear one!
         // (for now, since the list only ever has about 12 items, this is tolerable)
-        if (categoryId != null && !categoryId.trim().equals("")) {
+        if (!categoryId.trim().equals("")) {
             for (Object anAllCategoryHitsList : allCategoryHitsList) {
                 CategoryHits catHit = (CategoryHits) anAllCategoryHitsList;
 
                 // if the category is found, use those results (then exit for loop)
                 if (catHit.getCategory().getId().equals(categoryId)) {
                     // from all results, get the relevant results subset (from x to y out of a total of z)
-                    ArrayList relevantResults = getResultsSubset(catHit.getHitsAsHTML(), pageSize, startIndex);
+                    List relevantResults = getResultsSubset(catHit.getHitsAsHTML(), pageSize, startIndex);
 
                     // now create the resulting HTML results subset
                     resultPage = new SearchResults(relevantResults.iterator(), catHit.getHitsAsHTML().size(), pageSize, startIndex);
@@ -226,8 +219,7 @@ public class SearchBean {
         // a better, more efficient implementation would use a binary search instead of a linear one!
         // (for now, since the list only ever has about 12 items, this is tolerable)
         if (categoryId != null && !categoryId.trim().equals("")) {
-            for (int i = 0; i < allCategoryHitsList.size(); i++) {
-                CategoryHits catHit = (CategoryHits) allCategoryHitsList.get(i);
+            for (CategoryHits catHit : allCategoryHitsList) {
                 // if the category is found, use those results (then exit for loop)
                 if (catHit.getCategory().getId().equals(categoryId)) {
                     searchResultsCount = catHit.getHits().length();
@@ -246,46 +238,34 @@ public class SearchBean {
      * @param queryString query
      * @return List
      */
-    public List getIgnoredWords(String queryString) {
-        ZfinAnalyzer analyzer = new ZfinAnalyzer();
-        List ignoredWords = findStopWords(queryString, analyzer);
-        return ignoredWords;
+    public List<String> getIgnoredWords(String queryString) {
+        return findStopWords(queryString, new ZfinAnalyzer());
     }
 
 
     /**
      * A function that encapsulates the ignored words in HTML formatting for use by the JSP.
      * Ignored words are treated as a separate paragraph, usually one sentence long.
-     * <p/>
-     * Relies on the "ignored_words" CSS class for formatting.
+     *
+     * @return List of ignored words
      */
-    public String getIgnoredWordsHTML() throws Exception {
-        List ignoredWords = getIgnoredWords(getQueryTerm());
-        String returnResults = "";
-
-        if (ignoredWords.size() > 0) {
-            returnResults += "<div class='ignored_words'>";
-            returnResults += "The following words are very common and were not included in your search: &nbsp;&nbsp;";
-
-            for (int i = 0; i < ignoredWords.size(); i++) {
-                String word = (String) ignoredWords.get(i);
-                returnResults += "<em>" + word + "</em>&nbsp;&nbsp;";
-            }
-
-            returnResults += "</div>";
-        }
-
-        return returnResults;
+    public List<String> getIgnoredWords(){
+        return getIgnoredWords(getQueryTerm());
     }
-
 
     /**
      * This function takes a user's query string and transforms it into a Lucene Query object.
+     *
+     * @param queryString query
+     * @param field       field
+     * @param analyzer    Analyzer
+     * @return query
+     * @throws java.io.IOException exception
      */
     private Query parseQuery(String queryString, String field, Analyzer analyzer) throws IOException {
         BooleanQuery query = new BooleanQuery();
         TokenStream tokenStream = analyzer.tokenStream(field, new StringReader(queryString));
-        Token tok = null;
+        Token tok;
         while ((tok = tokenStream.next()) != null) {
             query.add(new PrefixQuery(new Term(field, new String(tok.termBuffer(), 0, tok.termLength()))), BooleanClause.Occur.MUST);
         }
@@ -305,18 +285,14 @@ public class SearchBean {
     private Query addCategoryPrefixToQuery(SearchCategory category, Query query, Analyzer analyzer) {
 
         BooleanQuery prefixQuery = new BooleanQuery();
-
         String[] types = category.getTypes();
-
         if (types == null) {
             throw new RuntimeException("No types found");
         }
         if (analyzer == null) {
-
             throw new RuntimeException("Analyzer is null");
         }
         if (query == null) {
-
             throw new RuntimeException("query is null");
         }
 
@@ -326,7 +302,7 @@ public class SearchBean {
 
             if (tokenStream == null)
                 throw new RuntimeException("tokenStream is null [" + i + "]");
-            Token token = null;
+            Token token;
             try {
                 token = tokenStream.next();
             } catch (IOException e) {
@@ -346,7 +322,6 @@ public class SearchBean {
         }
 
         BooleanQuery fullQuery = new BooleanQuery();
-        fullQuery.setMaxClauseCount(32000);
         fullQuery.add(prefixQuery, BooleanClause.Occur.MUST);
         fullQuery.add(query, BooleanClause.Occur.MUST);
 
@@ -361,19 +336,16 @@ public class SearchBean {
      * @param analyzer    analyzer
      * @return List
      */
-    private List findStopWords(String queryString, ZfinAnalyzer analyzer) {
-        ArrayList ignoredWords = new ArrayList();
+    private List<String> findStopWords(String queryString, ZfinAnalyzer analyzer) {
+        List<String> ignoredWords = new ArrayList<String>();
         TokenStream queryTokenStream = analyzer.tokenStream(BODY, new StringReader(queryString));
         TokenStream nonStoppedTokenStream = analyzer.nonStoppedTokenStream(BODY, new StringReader(queryString));
 
-        Token nextQueryToken = null;
-        String nextQueryTerm = null;
-        Token nextNonStoppedToken = null;
-        String nextNonStoppedTerm = null;
         boolean shouldContinue = true;
         try {
             while (shouldContinue) {
-                nextQueryToken = queryTokenStream.next();
+                String nextQueryTerm;
+                Token nextQueryToken = queryTokenStream.next();
                 if (nextQueryToken == null) {
                     nextQueryTerm = null;
                     shouldContinue = false;
@@ -381,7 +353,9 @@ public class SearchBean {
                     nextQueryTerm = new String(nextQueryToken.termBuffer(), 0, nextQueryToken.termLength());
                 }
 
+                Token nextNonStoppedToken;
                 while ((nextNonStoppedToken = nonStoppedTokenStream.next()) != null) {
+                    String nextNonStoppedTerm;
                     nextNonStoppedTerm = new String(nextNonStoppedToken.termBuffer(), 0, nextNonStoppedToken.termLength());
                     if (nextNonStoppedTerm.equals(nextQueryTerm)) {
                         break;
@@ -403,9 +377,14 @@ public class SearchBean {
      * the full results, current view, and page size.
      * <p/>
      * PageSize is the number of results requested per page by the user (default is 25 as of this comment).
+     *
+     * @param results         results
+     * @param resultsPageSize page size
+     * @param startIndex      starting record
+     * @return list of Hit objects
      */
-    private ArrayList getResultsSubset(ArrayList results, int resultsPageSize, int startIndex) {
-        ArrayList newResults = new ArrayList();
+    private List<org.zfin.uniquery.search.Hit> getResultsSubset(List<org.zfin.uniquery.search.Hit> results, int resultsPageSize, int startIndex) {
+        List<org.zfin.uniquery.search.Hit> newResults = new ArrayList<org.zfin.uniquery.search.Hit>();
 
         if (startIndex > results.size()) {
             startIndex = 0;
@@ -432,7 +411,7 @@ public class SearchBean {
      *
      * @return List
      */
-    public ArrayList getAllResultsList() {
+    public List getAllResultsList() {
         return allResultsList;
     }
 
@@ -451,22 +430,17 @@ public class SearchBean {
      *          exception
      */
     public String getCategoryListingHTML() throws UnsupportedEncodingException {
-        String returnResults = "";
         int screenWidth = 100;
         String unitOfMeasure = "%"; // % means percent literally
         int numberOfColumns = 5;
-        int numberOfResults = 0;
-        int columnWidth = screenWidth / numberOfColumns;
-        String cellSelected = "";
-        String categoryHtml = "";
-        String searchResultURL = "";
-        List<SearchCategory> categories = new ArrayList<SearchCategory>();
-        categories.addAll(SearchCategory.CATEGORIES);
+        String cellSelected;
+        String categoryHtml;
+        List<SearchCategory> categories = SearchCategory.CATEGORIES;
 
-        returnResults += "<div class='category_box'>";
+        String returnResults = "<div class='category_box'>";
         returnResults += "<TABLE border='0' width='" + screenWidth + unitOfMeasure + "' align='center' cellpadding='2' cellspacing='2' class='category_table'> \n";
         for (int i = 0; i < categories.size(); i++) {
-            SearchCategory category = (SearchCategory) categories.get(i);
+            SearchCategory category = categories.get(i);
             String currentCategoryId = category.getId();
             if (currentCategoryId.equalsIgnoreCase(getCategoryTerm())) {
                 cellSelected = "<img src=/images/right_arrow.gif />&nbsp;";
@@ -477,13 +451,12 @@ public class SearchBean {
             if (i % numberOfColumns == 0) {
                 returnResults += "<TR> \n";
             }
-            numberOfResults = getSearchResultsCount(currentCategoryId);
+            int numberOfResults = getSearchResultsCount(currentCategoryId);
             if (currentCategoryId.equalsIgnoreCase("All") || numberOfResults > 1) {
                 categoryHtml = "<a href='category_search.jsp?pageSize=" + pageSize + "&query=" + URLEncoder.encode(getQueryTerm(), "UTF-8") + "&category=" + currentCategoryId + "'><b>" + category.getDescription() + "</b></a>";
             } else if (numberOfResults == 1) {
-
-                for (int j = 0; j < allCategoryHitsList.size(); j++) {
-                    CategoryHits catHit = (CategoryHits) allCategoryHitsList.get(j);
+                String searchResultURL = "";
+                for (CategoryHits catHit : allCategoryHitsList) {
                     // if the category is found, use those results (then exit for loop)
                     if (catHit.getCategory().getId().equals(currentCategoryId)) {
                         try {
@@ -494,7 +467,7 @@ public class SearchBean {
                         break;
                     }
                 }
-                String envWebdriverLoc = System.getenv("WEBDRIVER_LOC");
+                String envWebdriverLoc = WEBDRIVER_LOCATION;
                 searchResultURL = searchResultURL.replaceFirst("almost", envWebdriverLoc);
                 categoryHtml = "<a href='" + searchResultURL + "'><b>" + category.getDescription() + "</b></a>";
 
@@ -515,65 +488,6 @@ public class SearchBean {
 
         return returnResults;
 
-    }
-
-    /**
-     * This function formats the page navigation feature (<PREV 1 2 3 4 NEXT>)
-     * at the bottom of the search page results.
-     * It encapsulates page navigation in HTML formatting for use by the JSP.
-     * <p/>
-     * This code is unweildly and difficult to modify, it would be nice to
-     * modularize it neatly.
-     *
-     * @return string
-     * @throws java.io.UnsupportedEncodingException
-     *          exception
-     */
-    public String getPageNavigationHTML() throws UnsupportedEncodingException {
-        String returnResults = "";
-
-        int totalPageCount = searchResult.getPageCount();
-        int currentPage = searchResult.getCurrentPageIndex();
-        int startOfPageRange = Math.max(0, currentPage - 3);
-        int endOfPageRange = Math.min(currentPage + 4, totalPageCount);
-
-        returnResults += "<p align='center'>";
-        String queryTerm = getQueryTerm();
-        String categoryTerm = getCategoryTerm();
-        if (totalPageCount > 1) {
-            returnResults += "<table width='70%' border='0'> \n";
-            returnResults += "<tr> \n";
-            returnResults += "<td width='45%' align='right' valign='top'>&nbsp;";
-            if (currentPage > 0) {
-                returnResults += "<a href='category_search.jsp?query=" + URLEncoder.encode(queryTerm, "UTF-8") + "&category=" + categoryTerm + "&pageSize=" + pageSize + "&startIndex=" + ((currentPage - 1) * pageSize) + "'>Previous</a><br>";
-                returnResults += "<a href='category_search.jsp?query=" + URLEncoder.encode(queryTerm, "UTF-8") + "&category=" + categoryTerm + "&pageSize=" + pageSize + "&startIndex=0'>First Page</a>";
-            }
-            returnResults += "</td>\n";
-
-            for (int i = startOfPageRange; i < endOfPageRange; i++) {
-                if (i == currentPage) {
-                    returnResults += "<td valign='top'>";
-                    returnResults += "<b>" + (i + 1) + "&nbsp;</b>";
-                    returnResults += "</td> \n";
-                } else {
-                    returnResults += "<td valign='top'>";
-                    returnResults += "<a href='category_search.jsp?query=" + URLEncoder.encode(queryTerm, "UTF-8") + "&category=" + categoryTerm + "&pageSize=" + pageSize + "&startIndex=" + (i * pageSize) + "'>" + (i + 1) + "&nbsp;</a>";
-                    returnResults += "</td> \n";
-                }
-            }
-
-            returnResults += "<td width='45%' align='left' valign='top'>&nbsp;";
-            if (currentPage < (totalPageCount - 1)) {
-                returnResults += "<a href='category_search.jsp?query=" + URLEncoder.encode(queryTerm, "UTF-8") + "&category=" + categoryTerm + "&pageSize=" + pageSize + "&startIndex=" + ((currentPage + 1) * pageSize) + "'>Next</a><br>";
-                returnResults += "<a href='category_search.jsp?query=" + URLEncoder.encode(queryTerm, "UTF-8") + "&category=" + categoryTerm + "&pageSize=" + pageSize + "&startIndex=" + ((totalPageCount - 1) * pageSize) + "'>Last page</a>";
-            }
-            returnResults += "</td> \n";
-            returnResults += "</tr> \n";
-            returnResults += "</table> \n";
-        }
-        returnResults += "</p> \n";
-
-        return returnResults;
     }
 
     /**
@@ -629,21 +543,19 @@ public class SearchBean {
         RelatedTerms term = new RelatedTerms();
         String queryTerm = getQueryTerm();
         String theMatchId = term.getBestMatchId(queryTerm);
-        String viewPageUrl = "";
         String returnResults = "";
-        String envWebdriverLoc = System.getenv("WEBDRIVER_LOC");
+        String envWebdriverLoc = WEBDRIVER_LOCATION;
 
         if (theMatchId.length() > 0) {
+            String viewPageUrl;
             if (theMatchId.startsWith("ZDB-GENO")) {
 
                 viewPageUrl = "/" + envWebdriverLoc + "/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
             } else if (theMatchId.startsWith("ZDB-ANAT")) {
                 viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + theMatchId;
-            }
-            else if (theMatchId.startsWith("ZDB-ATB")) {
-            viewPageUrl = "/action/antibody/detail?antibody.zdbID=" + theMatchId;
-            }
-            else {
+            } else if (theMatchId.startsWith("ZDB-ATB")) {
+                viewPageUrl = "/action/antibody/detail?antibody.zdbID=" + theMatchId;
+            } else {
                 viewPageUrl = "/" + envWebdriverLoc + "/webdriver?MIval=aa-markerview.apg&OID=" + theMatchId;
             }
             returnResults += "<br><span class='best_match'>Exact Match: ";
@@ -670,9 +582,8 @@ public class SearchBean {
      *          exception forn encoding
      */
     public String getRelatedSearchPageHTML() throws UnsupportedEncodingException {
-        String specificSearchURL = "";
+        String specificSearchURL;
         String categoryDescription = SearchCategory.getDescriptionById(getCategoryTerm());
-        String returnResults = "";
         RelatedTerms terms = new RelatedTerms();
         String queryTerm = getQueryTerm();
         Map<String, List<String>> anatomyHits = terms.getAllAnatomyHits(queryTerm);
@@ -712,6 +623,7 @@ public class SearchBean {
             specificSearchURL = "";
         }
 
+        String returnResults = "";
         if (specificSearchURL.length() > 0) {
             returnResults += "<span class='specific_search'>";
             returnResults += "Advanced search: ";
@@ -760,22 +672,6 @@ public class SearchBean {
         return categoryTerm;
     }
 
-    public int getStartIndex() {
-        return startIndex;
-    }
-
-    public void setStartIndex(int startIndex) {
-        this.startIndex = startIndex;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
     public void setReplacementZdbID(ReplacementZdbID replacementZdbID) {
         this.replacementZdbID = replacementZdbID;
     }
@@ -786,13 +682,11 @@ public class SearchBean {
 
     public String getCategorySearch() {
         String categoryDesc = SearchCategory.getDescriptionById(getCategoryTerm());
-        String categorySearch = "";
         if (categoryDesc.equals("All")) {
-            categorySearch = "Search";
+            return "Search";
         } else {
-            categorySearch = categoryDesc + " search";
+            return categoryDesc + " search";
         }
-        return categorySearch;
     }
 
     public void setSearchResult(SearchResults searchResult) {

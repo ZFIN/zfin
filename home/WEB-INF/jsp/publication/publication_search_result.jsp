@@ -48,4 +48,6 @@
     </c:forEach>
 </TABLE>
 
-<tiles:insert page="/WEB-INF/jsp-include/pagination.jsp" flush="false"/>
+<!-- ToDO: Check if this file is being used and make sure the pagination is setup correctly.
+<zfin2:pagination paginationBean="${formBean}" />
+-->

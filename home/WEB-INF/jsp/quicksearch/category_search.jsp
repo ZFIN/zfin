@@ -1,3 +1,4 @@
+<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <!---
@@ -150,21 +151,24 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
 
 
                 <!--- Display Ignored Words List --->
-                ${formBean.ignoredWordsHTML}
-                <!--- END: Display Ignored Words List --->
+                <c:if test="${ not empty formBean.ignoredWords}">
+                    <div class="ignored_words">The following words are very common and were not included in your search:
+                        <c:forEach var="ignoredWord" items="${formBean.ignoredWords}">
+                        <em> ${ignoredWord}</em> &nbsp;
+                            </c:forEach>
+                    </div>
+                </c:if>
                 <table>
                     <tr>
                         <td>
                             <!--- Display Related Words List --->
                                 ${formBean.relatedTermsHTML}
-                            <!--- END: Display Related Words List --->
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <!---  Display suggestion to use ZFIN specific search forms. --->
                                 ${formBean.relatedSearchPageHTML}
-                            <!---  suggestion to use ZFIN specific search forms. --->
                         </td>
                     </tr>
                 </table>
@@ -174,26 +178,13 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
                 <center>
                         ${formBean.categoryListingHTML}
                 </center>
-                <!--- END: Display Category List (as a TABLE) --->
 
-                <!--- Display the best match if any --->
                 ${formBean.bestMatchHTML}
                 <!--- END: Display the best match --->
 
-                <!--- Display Search Results --->
                 ${formBean.searchResult}
-                <!--- END: Display Search Results --->
 
-
-                <!--- Page Navigation --->
-                <center>
-                        ${formBean.pageNavigationHTML}
-                </center>
-                <!--- END: Page Navigation --->
-
-
-                <!--- END: Only display results if there is a query --->
-
+                <zfin2:pagination paginationBean="${formBean}" />
             </c:otherwise>
         </c:choose>
     </c:otherwise>

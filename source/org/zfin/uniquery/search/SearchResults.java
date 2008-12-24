@@ -1,8 +1,9 @@
 package org.zfin.uniquery.search;
 
 import java.util.Iterator;
-import java.util.List;
+
 import org.zfin.uniquery.search.Hit;
+import org.zfin.uniquery.presentation.SearchBean;
 import org.apache.lucene.document.Document;
 
 /**

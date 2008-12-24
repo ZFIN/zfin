@@ -110,7 +110,7 @@
     </center>
 </table>
 
-<tiles:insert page="/WEB-INF/jsp-include/pagination.jsp" flush="true"/>
+<zfin2:pagination paginationBean="${formBean}" />
 
 <%--
 <tiles:insert page="/WEB-INF/jsp/orthology/orthology_search.jsp" flush="true"/>

@@ -134,7 +134,7 @@
         </table>
 
         <input name="page" type="hidden" value="1" id="page"/>
-        <tiles:insert page="/WEB-INF/jsp-include/antibody_pagination.jsp" flush="true"/>
+        <zfin2:pagination paginationBean="${formBean}" />
     </c:if>
 </c:if>
 

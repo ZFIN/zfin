@@ -69,7 +69,7 @@ public class RelatedTerms {
      * @param queryTerm string
      * @return string
      */
-    public String getBestMatchId(String queryTerm) {
+    public static String getBestMatchId(String queryTerm) {
 
         InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
         List<String> list = infrastructureRepository.getBestNameMatch(queryTerm);

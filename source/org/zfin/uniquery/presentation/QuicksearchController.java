@@ -4,7 +4,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.uniquery.search.SearchBean;
+import org.zfin.uniquery.presentation.SearchBean;
 import org.zfin.uniquery.search.SearchResults;
 import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -30,11 +30,16 @@ public class QuicksearchController extends AbstractCommandController {
         ReplacementZdbID replacementZdbID = infrastructureRepository.getReplacementZdbId(queryTerm);
         searchBean.setReplacementZdbID(replacementZdbID);
 
-        SearchResults expressionResults = null;
+        int numberOfRecords = 0;
+        // if replaced ID found do not do a search
         if (queryTerm.length() > 0 && replacementZdbID == null) {
-            expressionResults = searchBean.doCategorySearch();
+            SearchResults expressionResults = searchBean.doCategorySearch();
             searchBean.setSearchResult(expressionResults);
+            numberOfRecords = expressionResults.getTotalHits();
         }
+        searchBean.setTotalRecords(numberOfRecords);
+        searchBean.setQueryString(request.getQueryString());
+        searchBean.setRequestUrl(request.getRequestURL());
 
         return new ModelAndView("quick-search.page", LookupStrings.FORM_BEAN, searchBean);
     }
