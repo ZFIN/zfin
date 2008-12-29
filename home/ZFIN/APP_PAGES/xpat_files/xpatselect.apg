@@ -1008,7 +1008,7 @@ return false ; "
              onchange="if (this.checked) { disable_genotype_and_morpholino(); }
                        else { enable_genotype_and_morpholino(); } " 
             >
-            <label for="xpatselwtOnly" >Show only WT expression <img src="/images/new1.gif"></label>
+            <label for="xpatselwtOnly" >Show only WT expression </label>
 <?MICOMMENT>
           <?MIBLOCK COND="$(AND,$(XST,$xpatsel_wtOnly),$(EC,$xpatsel_wtOnly,checked))">
 	    <script type="text/javascript">
