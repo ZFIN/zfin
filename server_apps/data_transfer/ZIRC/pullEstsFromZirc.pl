@@ -170,6 +170,7 @@ sub est_dropDiscontinuedEsts($$) {
                         where idsup_data_zdb_id = epfz_est_zdb_id)
             order by idsup_data_zdb_id;");
 
+# ZDB-CDNA-050503-1 see case 3195
     my $deleteCur = $dbh->prepare("
            delete from int_data_supplier
              where idsup_data_zdb_id = ?
@@ -187,6 +188,13 @@ sub est_dropDiscontinuedEsts($$) {
 	$rowCount++;
     }
     
+    my $deleteCurException = $dbh->prepare("
+           delete from int_data_supplier
+             where idsup_data_zdb_id = 'ZDB-CDNA-050503-1'
+               and idsup_supplier_zdb_id = '$zircZdbId';");
+
+    $deleteCurException->execute;
+    writeReport("Dropped exception discontinued EST(s)\n");
     writeReport("Dropped $rowCount discontinued EST(s)\n");
 
     return ();
@@ -209,12 +217,15 @@ sub est_addNewlySuppliedEsts($$) {
 
     my $rowCount = 0;
 
-    # report and insert them
+    # report and insert them; not ZDB-CDNA-050503-1 though; see case
+    # 3195
+
     my $cur = $dbh->prepare("
           select epfz_est_zdb_id 
             from est_pulled_from_zirc, marker
             where epfz_est_zdb_id = mrkr_zdb_id
               and get_obj_type(epfz_est_zdb_id) = 'EST'
+              and epfz_est_zdb_id = 'ZDB-CDNA-050503-1'
               and not exists
                     ( select idsup_data_zdb_id
                         from int_data_supplier
