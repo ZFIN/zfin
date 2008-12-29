@@ -9,7 +9,7 @@
          <strong>Gene Expression</strong></a></li>
       <li>Search <a href="/action/antibody/search" 
                     title="Search for antibodies"><strong>Antibodies</strong></a>
-<img src="/images/new1.gif" alt="new" />
+
 </li>
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg" 
             title="Search for sequence alignment against ZFIN datasets and Zebrafish datasets">
@@ -18,7 +18,7 @@
             title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li> 
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_gene.apg" 
             title="Contact the Nomenclature Committee">Obtain approval for gene names</a>
-            <li><a href="/zf_info/author_guidelines.html">ZFIN Author Guidelines</a> <img src="/images/new1.gif" alt="new" />
+            <li><a href="/zf_info/author_guidelines.html">ZFIN Author Guidelines</a>
    </ul>
 
    <ul>
