@@ -1,11 +1,9 @@
 package org.zfin.sequence.reno.presentation;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.OrthoEvidence;
-import org.zfin.people.Person;
+import org.zfin.people.User;
 import org.zfin.sequence.Entrez;
 import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.reno.RunCandidate;
@@ -323,18 +321,10 @@ public class CandidateBean {
         return null;
     }
 
-    public Person getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (Person) authentication.getPrincipal();
-    }
-
     public boolean isOwnerViewing() {
-        if (getRunCandidate().getLockPerson() != null
-                && getCurrentUser().equals(getRunCandidate().getLockPerson())) {
-            return true;
-        } else {
-            return false;
-        }
+        User currentUser = User.getCurrentSecurityUser();
+        return getRunCandidate().getLockUser() != null
+                && currentUser.equals(getRunCandidate().getLockUser());
 
     }
 }

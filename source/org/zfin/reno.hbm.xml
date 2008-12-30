@@ -60,7 +60,7 @@
 
         <many-to-one name="candidate" column="runcan_cnd_zdb_id" class="org.zfin.sequence.reno.Candidate" not-null="true" lazy="false" fetch="join" />
 
-        <many-to-one name="lockPerson" column="runcan_locked_by" class="org.zfin.people.Person" />
+        <many-to-one name="lockUser" column="runcan_locked_by" class="org.zfin.people.User" />
 
         <!--<many-to-one name="run" column="runcan_run_zdb_id" class="org.zfin.sequence.reno.Run" not-null="true" lazy="no-proxy" />-->
         <many-to-one name="run" column="runcan_run_zdb_id" class="org.zfin.sequence.reno.Run" not-null="true" lazy="false" />

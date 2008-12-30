@@ -73,8 +73,9 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
         UserRepository ur = RepositoryFactory.getUserRepository();
-        Person person = ur.getPersonByLoginName(login);
-        User user = person.getUser();
+        User user = ur.getUserByLoginName(login);
+        if (user == null)
+            return;
         user.setCookie(value);
         user.setPreviousLoginDate(new Date());
 
@@ -82,26 +83,6 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
         newSession.setUserName(login);
         newSession.setSessionID(sessionID);
         authenticatedSessions.put(sessionID, newSession);
-/*
-        ZfinSession zfinS;
-        zfinS = ur.getSession(sessionID);
-        boolean newSession = false;
-        if (zfinS == null) {
-            zfinS = new ZfinSession();
-            newSession = true;
-        }
-
-        zfinS.setUserID(user.getZdbID());
-        zfinS.setUserName(login);
-        zfinS.setSessionID(sessionID);
-
-        if (newSession)
-            ur.createSession(zfinS);
-        else {
-            zfinS.setDateModified(new Date());
-            ur.updateSession(zfinS);
-        }
-*/
         tx.commit();
         HibernateUtil.closeSession();
 

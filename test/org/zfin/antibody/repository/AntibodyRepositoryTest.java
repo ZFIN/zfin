@@ -789,7 +789,7 @@ public class AntibodyRepositoryTest {
             antibody.setMarkerType(mt);
             antibody.setName("werner");
             antibody.setAbbreviation("werner");
-            antibody.setOwner(TestConfiguration.getPerson());
+            antibody.setOwner(TestConfiguration.getUser());
             session.save(antibody);
             session.flush();
         }

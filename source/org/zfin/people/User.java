@@ -1,18 +1,26 @@
 package org.zfin.people;
 
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.GrantedAuthorityImpl;
+import org.acegisecurity.Authentication;
+import org.acegisecurity.context.SecurityContext;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.userdetails.UserDetails;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Date;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
- * User object is a value object of the person object.
- * It contains all the credential-related inof, including
- * role and cookie info.
+ * User object inherits the Person attributes and
+ * contains all the credential-related info, including
+ * role and cookies needed for authentication.
+ * It implements the UserDetails interface neede for the Acegi Security library.
  */
-public class User implements Serializable {
+//ToDo: The attribute 'name' seems to be superfluous as the person class already
+//      has a name attribute. No need for duplication. Check with DB design team. 
+public class User extends Person implements Serializable, UserDetails {
 
-    private String zdbID;
     private String login;
     private transient String password;
     private String name;
@@ -22,7 +30,6 @@ public class User implements Serializable {
     private Date accountCreationDate;
     // ToDo: Only needed as webdatablade integration is needed.
     private String cookie;
-    private Person person;
 
     public String getLogin() {
         return login;
@@ -92,22 +99,9 @@ public class User implements Serializable {
         this.accountCreationDate = accountCreationDate;
     }
 
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
+    @Override
+    public Type getType() {
+        return Type.LOGIN;
     }
 
     @Override
@@ -127,6 +121,51 @@ public class User implements Serializable {
         if (login != null)
             hash += hash * login.hashCode();
         return hash;
+    }
+
+    public GrantedAuthority[] getAuthorities() {
+        GrantedAuthority gr = new GrantedAuthorityImpl(role);
+        return new GrantedAuthority[]{gr};
+    }
+
+    // Not applicable in ZFIN but required for the UserDetails interface
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    // Not applicable in ZFIN but required for the UserDetails interface
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    // Not applicable in ZFIN but required for the UserDetails interface
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    // Not applicable in ZFIN but required for the UserDetails interface
+    public boolean isEnabled() {
+        return true;
+    }
+
+    /**
+     * This returns a Person object of the current security person.
+     * If no authorized Person is found return null.
+     *
+     * @return Person object
+     */
+    public static User getCurrentSecurityUser() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context == null)
+            return null;
+        Authentication authentication = context.getAuthentication();
+        if (authentication == null)
+            return null;
+        Object principal = authentication.getPrincipal();
+        // ToDo: Annonymous user should also be a Person object opposed to a String object
+        if (principal instanceof String)
+            return null;
+        return (User) principal;
     }
 
     public enum Role {

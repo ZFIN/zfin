@@ -104,7 +104,7 @@ public class MarkerRepositoryTest {
             marker.setName("test marker");
             marker.setAbbreviation("test Abbreviation");
             marker.setAbbreviationOrder("test Abbreviation");
-            marker.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+            marker.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
             session.save(marker);
 
             String zdbID = marker.getZdbID();
@@ -214,7 +214,7 @@ public class MarkerRepositoryTest {
         marker.setName("Reno Test Name");
         //should this be an enum?
         marker.setMarkerType(markerRepository.getMarkerTypeByName("GENE"));
-        marker.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+        marker.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
         session.save(marker);
         return marker;
     }
@@ -305,28 +305,28 @@ public class MarkerRepositoryTest {
             segment.setAbbreviation("MGC:test");
             segment.setName("MGC:test");
             segment.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.CDNA.toString()));
-            segment.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+            segment.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
             session.save(segment);
 
             Marker gene = new Marker();
             gene.setAbbreviation("renogene");
             gene.setName("existing reno gene");
             gene.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.GENE.toString()));
-            gene.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+            gene.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
             session.save(gene);
 
             Marker segment2 = new Marker();
             segment2.setAbbreviation("MGC:test2");
             segment2.setName("MGC:test2");
             segment2.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.CDNA.toString()));
-            segment2.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+            segment2.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
             session.save(segment2);
 
             Marker gene2 = new Marker();
             gene2.setAbbreviation("renogene2");
             gene2.setName("existing reno gene 2");
             gene2.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.GENE.toString()));
-            gene2.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+            gene2.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
             session.save(gene2);
 
 

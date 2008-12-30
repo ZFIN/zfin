@@ -5,7 +5,7 @@ import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.people.Person;
+import org.zfin.people.User;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.ZfinSecurityContextLogoutHandler;
 
@@ -38,7 +38,7 @@ public class UpdatesCheckFilter implements Filter {
         String url = request.getRequestURI();
         InfrastructureRepository infrastructure = RepositoryFactory.getInfrastructureRepository();
         systemUpdates = infrastructure.getUpdatesFlag();
-        Person person = Person.getCurrentSecurityUser();
+        User person = User.getCurrentSecurityUser();
 
         // redirect if user is logged in and database is locked 
         if (systemUpdates.isSystemUpdateDisabled() && !url.equals(REDIRECT_URL) && person != null) {

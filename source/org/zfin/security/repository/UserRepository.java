@@ -2,6 +2,7 @@ package org.zfin.security.repository;
 
 import org.zfin.framework.ZfinSession;
 import org.zfin.people.Person;
+import org.zfin.people.User;
 import org.acegisecurity.annotation.Secured;
 
 import java.util.List;
@@ -15,9 +16,9 @@ public interface UserRepository {
      * Retrieve a person record from the login name.
      *
      * @param username login name
-     * @return Person
+     * @return User user
      */
-    Person getPersonByLoginName(String username);
+    User getUserByLoginName(String username);
 
     /**
      * Create a Person record.

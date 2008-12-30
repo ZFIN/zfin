@@ -23,7 +23,7 @@ import org.zfin.marker.presentation.MarkerAliasBean;
 import org.zfin.marker.presentation.MarkerRelationshipBean;
 import org.zfin.marker.presentation.SNPBean;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.people.Person;
+import org.zfin.people.User;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -50,11 +50,8 @@ public class PublicationListController extends MultiActionController {
             throws ServletException {
 
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-
         Antibody ab = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
-
         bean.setAntibody(ab);
-
         return new ModelAndView(ANTIBODY_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
     }
 
@@ -62,11 +59,8 @@ public class PublicationListController extends MultiActionController {
             throws ServletException {
 
         InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-
         MarkerAlias alias = infrastructureRepository.getMarkerAliasByID(bean.getMarkerAlias().getZdbID());
-
         bean.setMarkerAlias(alias);
-
         return new ModelAndView(ALIAS_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
     }
 
@@ -74,11 +68,8 @@ public class PublicationListController extends MultiActionController {
             throws ServletException {
 
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-
         MarkerRelationship markerRelationship = markerRepository.getMarkerRelationshipByID(bean.getMarkerRelationship().getZdbID());
-
         bean.setMarkerRelationship(markerRelationship);
-
         return new ModelAndView(RELATIONSHIP_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
     }
 
@@ -86,24 +77,15 @@ public class PublicationListController extends MultiActionController {
             throws ServletException {
 
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-
-        // Marker marker = markerRepository.getMarkerByID(bean.getMarker().getZdbID());
-
         Marker marker = markerRepository.getMarkerByID(bean.getMarkerID());
-
         bean.setMarker(marker);
-
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-
         List<String> pubIDs = publicationRepository.getSNPPublicationIDs(bean.getMarker());
-
         Set<Publication> pubs = new HashSet<Publication>();
         for (String id : pubIDs) {
             pubs.add(publicationRepository.getPublication(id));
         }
-
         bean.setPublications(pubs);
-
         return new ModelAndView(SNP_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
     }
 
@@ -120,8 +102,8 @@ public class PublicationListController extends MultiActionController {
             tx = session.beginTransaction();
 
             ir.removeRecordAttributionForData(bean.getDisassociatedPubId(), ab.getZdbID());
-            Person currentUser = Person.getCurrentSecurityUser();
-            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser,"","");
+            User currentUser = User.getCurrentSecurityUser();
+            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser, "", "");
             tx.commit();
         } catch (Exception exception) {
             try {
@@ -149,7 +131,7 @@ public class PublicationListController extends MultiActionController {
 
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        Person currentUser = Person.getCurrentSecurityUser();
+        User currentUser = User.getCurrentSecurityUser();
 
         String pubID = bean.getAntibodyNewPubZdbID();
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
@@ -160,7 +142,7 @@ public class PublicationListController extends MultiActionController {
         try {
             tx = session.beginTransaction();
             markerRepository.addMarkerPub(ab, publication);
-            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser,"","");
+            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser, "", "");
             tx.commit();
         } catch (Exception e) {
             try {

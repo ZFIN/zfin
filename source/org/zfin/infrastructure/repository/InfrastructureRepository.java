@@ -8,7 +8,7 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
-import org.zfin.people.Person;
+import org.zfin.people.User;
 
 import java.util.List;
 
@@ -63,10 +63,7 @@ public interface InfrastructureRepository {
 
     void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, String submitterID, String submitterName);
 
-    void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person,String newValue,String oldValue);
-//    void deleteRecordAttribution(RecordAttribution recordAttribution);
-
-    //  RecordAttribution getRecordAttribution(String zdbID);
+    void insertUpdatesTable(Marker marker, String fieldName, String comments, User user,String newValue,String oldValue);
 
     DataNote getDataNoteByID(String zdbID);
 

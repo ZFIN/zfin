@@ -9,6 +9,7 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.ZfinSession;
 import org.zfin.people.Person;
+import org.zfin.people.User;
 
 import java.util.Date;
 import java.util.List;
@@ -18,12 +19,12 @@ import java.util.List;
  */
 public class HibernateUserRepository implements UserRepository {
 
-    public Person getPersonByLoginName(String username) {
+    public User getUserByLoginName(String username) {
         Session session = HibernateUtil.currentSession();
-        String hql = " from Person person where person.user.login = :login ";
+        String hql = " from User where login = :login ";
         Query query = session.createQuery(hql);
         query.setString("login", username);
-        return (Person) query.uniqueResult();
+        return (User) query.uniqueResult();
     }
 
     @Secured({"root"})

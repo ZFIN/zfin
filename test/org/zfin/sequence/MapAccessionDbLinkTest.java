@@ -3,7 +3,6 @@ package org.zfin.sequence;
 import org.hibernate.SessionFactory;
 import org.hibernate.Session;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.Candidate;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.RedundancyRun;
@@ -90,7 +89,7 @@ public class MapAccessionDbLinkTest {
         gene.setName(GENE_NAME);
         //should this be an enum?
         gene.setMarkerType(markerRepository.getMarkerTypeByName("GENE"));
-        gene.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+        gene.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
         session.save(gene);
 
         Marker cDNA = new Marker();
@@ -98,7 +97,7 @@ public class MapAccessionDbLinkTest {
         cDNA.setName(CDNA_NAME);
         //should this be an enum?
         cDNA.setMarkerType(markerRepository.getMarkerTypeByName("CDNA"));
-        cDNA.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+        cDNA.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
         session.save(cDNA);
 
         // get reference DBs
@@ -233,7 +232,7 @@ public class MapAccessionDbLinkTest {
         RunCandidate runCandidate = new RunCandidate();
         runCandidate.setRun(run);
         runCandidate.setDone(false);
-        runCandidate.setLockPerson(personRepository.getPerson("ZDB-PERS-030520-1"));
+        runCandidate.setLockUser(personRepository.getUser("ZDB-PERS-030520-1"));
         runCandidate.setCandidate(candidate);
         session.save(runCandidate);
 
@@ -486,7 +485,7 @@ public class MapAccessionDbLinkTest {
         gene.setName(GENE_NAME);
         //should this be an enum?
         gene.setMarkerType(markerRepository.getMarkerTypeByName("GENE"));
-        gene.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+        gene.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
         session.save(gene);
 
         Marker cDNA = new Marker();
@@ -494,7 +493,7 @@ public class MapAccessionDbLinkTest {
         cDNA.setName(CDNA_NAME);
         //should this be an enum?
         cDNA.setMarkerType(markerRepository.getMarkerTypeByName("CDNA"));
-        cDNA.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+        cDNA.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
         session.save(cDNA);
 
         Orthologue orthology1 = new Orthologue();
@@ -582,7 +581,7 @@ public class MapAccessionDbLinkTest {
         RunCandidate runCandidate = new RunCandidate();
         runCandidate.setRun(run);
         runCandidate.setDone(false);
-        runCandidate.setLockPerson(personRepository.getPerson("ZDB-PERS-030520-1"));
+        runCandidate.setLockUser(personRepository.getUser("ZDB-PERS-030520-1"));
         runCandidate.setCandidate(candidate);
         session.save(runCandidate);
 

@@ -90,7 +90,7 @@
             <column name="mrkr_abbrev" not-null="true"/>
         </property>
         <many-to-one name="owner" column="mrkr_owner"
-                     class="org.zfin.people.Person"
+                     class="org.zfin.people.User"
                      not-null="true"/>
 
         <many-to-one name="markerType" column="mrkr_type"

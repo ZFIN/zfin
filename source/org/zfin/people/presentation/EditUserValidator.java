@@ -3,7 +3,6 @@ package org.zfin.people.presentation;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import org.zfin.people.Person;
 import org.zfin.people.User;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -41,11 +40,11 @@ public class EditUserValidator implements Validator {
             if (!passwordOne.equals(passwordTwo))
                 errors.rejectValue("passwordOne", "code", "The two passwords are not the same");
         }
-        Person submitPerson = Person.getCurrentSecurityUser();
+        User submitPerson = User.getCurrentSecurityUser();
         // if submitter changes own records
         if (submitPerson.getZdbID().equals(profileBean.getUser().getZdbID())) {
             // if submit roles
-            if (submitPerson.getUser().getRole().equals(User.Role.SUBMIT.toString())) {
+            if (submitPerson.getRole().equals(User.Role.SUBMIT.toString())) {
                 // cannot change role
                 if (!profileBean.getUser().getRole().equals(User.Role.SUBMIT.toString()))
                     errors.rejectValue("user.login", "code", "Your access level does not allowed to change your role");

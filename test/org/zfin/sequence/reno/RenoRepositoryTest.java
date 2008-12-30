@@ -2,16 +2,17 @@ package org.zfin.sequence.reno;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.HibernateException;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.orthology.Species;
 import org.zfin.marker.Marker;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.people.Person;
+import org.zfin.people.User;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -145,7 +146,7 @@ public class RenoRepositoryTest {
             runCandidate.setDone(true);
             assertEquals("No query candidate because done", 0, repository.getQueueCandidateCount(run));
             runCandidate.setDone(false);
-            Person person1 = (Person) returnMap.get("person1");
+            User person1 = (User) returnMap.get("person1");
             repository.lock(person1, runCandidate);
             assertEquals("No query candidate because locked", 0, repository.getQueueCandidateCount(run));
             repository.unlock(person1, runCandidate);
@@ -182,7 +183,7 @@ public class RenoRepositoryTest {
             assertEquals("No pending candidate because finished", 0, repository.getPendingCandidateCount(run1));
             runCandidate.setDone(false);
             session.saveOrUpdate(runCandidate);
-            Person person1 = (Person) returnMap.get("person1");
+            User person1 = (User) returnMap.get("person1");
             repository.lock(person1, runCandidate);
             assertEquals("One pending candidate because locked and not finished", 1, repository.getPendingCandidateCount(run1));
             repository.unlock(person1, runCandidate);
@@ -218,7 +219,7 @@ public class RenoRepositoryTest {
                     repository.getFinishedCandidateCount(run1));
             runCandidate.setDone(false);
             session.saveOrUpdate(runCandidate);
-            Person person1 = (Person) returnMap.get("person1");
+            User person1 = (User) returnMap.get("person1");
             repository.lock(person1, runCandidate);
             assertEquals("No finished candidate because locked and not finished", 0,
                     repository.getFinishedCandidateCount(run1));
@@ -259,10 +260,10 @@ public class RenoRepositoryTest {
             Map<String, Object> returnMap = insertTestData();
             RunCandidate runCandidate = (RunCandidate) returnMap.get("runCandidate1");
             assertFalse("RunCandidate is not locked", runCandidate.isLocked());
-            Person person1 = (Person) returnMap.get("person1");
+            User person1 = (User) returnMap.get("person1");
             assertTrue("RunCandidate is locked by person 1", repository.lock(person1, runCandidate));
             assertTrue("RunCandidate is locked by same person 1", repository.lock(person1, runCandidate));
-            Person person2 = (Person) returnMap.get("person2");
+            User person2 = (User) returnMap.get("person2");
             assertFalse("RunCandidate is locked by person 2 and fails", repository.lock(person2, runCandidate));
             assertTrue("RunCandidate is file is locked", runCandidate.isLocked());
             assertTrue("RunCandidate is unlocked by person 1", repository.unlock(person1, runCandidate));
@@ -474,9 +475,9 @@ public class RenoRepositoryTest {
         Publication publication1 = publicationRepository.getPublication("ZDB-PUB-070122-15");
         Publication publication2 = publicationRepository.getPublication("ZDB-PUB-070210-20");
 
-        Person person1 = RepositoryFactory.getProfileRepository().getPerson("ZDB-PERS-991202-1");
+        User person1 = RepositoryFactory.getProfileRepository().getUser("ZDB-PERS-991202-1");
         returnMap.put("person1", person1);
-        Person person2 = RepositoryFactory.getProfileRepository().getPerson("ZDB-PERS-960805-676");
+        User person2 = RepositoryFactory.getProfileRepository().getUser("ZDB-PERS-960805-676");
         returnMap.put("person2", person2);
 
 
@@ -549,7 +550,7 @@ public class RenoRepositoryTest {
         RunCandidate runCandidate1 = new RunCandidate();
         runCandidate1.setRun(run1);
         runCandidate1.setDone(false);
-        runCandidate1.setLockPerson(null);
+        runCandidate1.setLockUser(null);
         runCandidate1.setCandidate(candidate);
         session.save(runCandidate1);
         returnMap.put("runCandidate1", runCandidate1);
@@ -558,7 +559,7 @@ public class RenoRepositoryTest {
         RunCandidate runCandidate2 = new RunCandidate();
         runCandidate2.setRun(run2);
         runCandidate2.setDone(false);
-        runCandidate2.setLockPerson(null);
+        runCandidate2.setLockUser(null);
         runCandidate2.setCandidate(candidate);
         session.save(runCandidate2);
         returnMap.put("runCandidate2", runCandidate2);
@@ -712,7 +713,11 @@ public class RenoRepositoryTest {
             fail(e.getMessage());
         }
         finally{
-            session.getTransaction().rollback() ; 
+            try {
+                session.getTransaction().rollback() ;
+            } catch (HibernateException e) {
+                e.printStackTrace();
+            }
         }
 
     }

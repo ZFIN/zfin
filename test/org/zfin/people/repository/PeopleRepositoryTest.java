@@ -3,6 +3,7 @@ package org.zfin.people.repository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.HibernateException;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -92,9 +93,8 @@ public class PeopleRepositoryTest {
     public void createAndUpdateCuratorSessionWithNoPublication() {
 
         Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
+            session.beginTransaction();
 
             Person person = profileRepository.getPerson(REAL_PERSON_1_ZDB_ID);
             String field = "This is my field";
@@ -125,21 +125,21 @@ public class PeopleRepositoryTest {
      * Test that creation of a new person object including a user object
      * creates a single PK for both of them. User is a value object and is
      * tied to the Person object: one-to-one relationhip.
+     * Unfortunately, Hibernate requires both objects to be not-null.
+     * Workaround: Lazy loading
      */
-    public void createPersonWithUser() {
-        Person person = getTestPerson();
+    public void createUser() {
+        User user = getTestUser();
 
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            session.save(person);
+            session.save(user);
 
-            String personID = person.getZdbID();
-            assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
-            String userID = person.getUser().getZdbID();
-            assertEquals("Perseon and User have the same primary key", personID, userID);
-
+            String userID = user.getZdbID();
+            assertTrue("PK created", userID != null && userID.startsWith("ZDB-PERS"));
+            assertTrue("Login user", user.getType() == Person.Type.LOGIN);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -154,7 +154,6 @@ public class PeopleRepositoryTest {
     @Test
     public void createPersonOnly() {
         Person person = getTestPerson();
-        person.setUser(null);
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         try {
@@ -163,11 +162,15 @@ public class PeopleRepositoryTest {
 
             String personID = person.getZdbID();
             assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
-            assertTrue("No user object created", person.getUser() == null);
+            assertTrue("Guest person created", person.getType() == Person.Type.GUEST);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            tx.rollback();
+            try {
+                tx.rollback();
+            } catch (HibernateException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -175,15 +178,19 @@ public class PeopleRepositoryTest {
         Person person = new Person();
         person.setName("Test Person");
         person.setEmail("Email Address Test");
+        return person;
+    }
+
+    private User getTestUser() {
         User user = new User();
+        user.setName("Test Person");
+        user.setEmail("Email Address Test");
         user.setLogin("newUser");
         user.setRole("root");
         user.setName("Test Person");
         user.setLoginDate(new Date());
         user.setAccountCreationDate(new Date());
-        person.setUser(user);
-        user.setPerson(person);
-        return person;
+        return user;
     }
 
     @Test

@@ -26,6 +26,7 @@ import org.zfin.mutant.FeatureMarkerRelationship;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
 import org.zfin.people.Person;
+import org.zfin.people.User;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -288,7 +289,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public void addAntibodyExternalNote(Antibody antibody, String note, String sourceZdbID) {
         LOG.debug("enter addExtDataNote");
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        Person currentUser = Person.getCurrentSecurityUser();
+        User currentUser = User.getCurrentSecurityUser();
         AntibodyExternalNote extnote = new AntibodyExternalNote();
         extnote.setAntibody(antibody);
         extnote.setNote(note);
@@ -336,7 +337,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public void addMarkerAlias(Marker marker, String alias, Publication publication) {
         //first handle the alias..
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        Person currentUser = Person.getCurrentSecurityUser();
+        User currentUser = User.getCurrentSecurityUser();
         MarkerAlias markerAlias = new MarkerAlias();
         markerAlias.setMarker(marker);
         markerAlias.setGroup(MarkerAlias.Group.ALIAS);  //default for database, hibernate tries to insert null
@@ -375,8 +376,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (alias == null)
             throw new RuntimeException("No alias object provided.");
         // check that the alias belongs to the marker
-        if( !marker.getAliases().contains(alias))
-            throw new RuntimeException("Alias '"+ alias+"' does not belong to the marker '" + marker + "'! " +
+        if (!marker.getAliases().contains(alias))
+            throw new RuntimeException("Alias '" + alias + "' does not belong to the marker '" + marker + "'! " +
                     "Cannot remove such an alias.");
         // remove the ZDB active data record with cascade.
         currentSession().delete(alias);
@@ -393,7 +394,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         RecordAttribution recordAttribution = ir.getRecordAttribution(aliasZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
-        Person currentUser = Person.getCurrentSecurityUser();
+        User currentUser = User.getCurrentSecurityUser();
         // only add the publication when it is not there
         if (recordAttribution == null) {
             PublicationAttribution pa = new PublicationAttribution();
@@ -418,7 +419,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         RecordAttribution recordAttribution = ir.getRecordAttribution(relZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
-        Person currentUser = Person.getCurrentSecurityUser();
+        User currentUser = User.getCurrentSecurityUser();
 
         // only add the publication when it is not there
         if (recordAttribution == null) {
