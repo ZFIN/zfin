@@ -17,16 +17,35 @@
             </generator>
         </id>
 
-        <property name="fullName" column="full_name"/>
+        <property name="fullName">
+            <column name="full_name"/>
+        </property>
+
         <property name="name"/>
+
         <property name="url"/>
+
         <property name="email"/>
+
         <property name="fax"/>
+
         <property name="phone"/>
+
         <property name="address"/>
-        <property name="ownerID" column="owner"/>
-        <property name="nonZfinPublications" column="nonzf_pubs"/>
-        <property name="emailList" column="on_dist_list"/>
+
+        <property name="ownerID">
+            <column name="owner"/>
+        </property>
+
+        <property name="nonZfinPublications">
+            <column name="nonzf_pubs"/>
+        </property>
+
+        <property name="emailList">
+            <column name="on_dist_list"/>
+        </property>
+
+        <one-to-one name="user" class="org.zfin.people.User" cascade="save-update"/>
 
         <set name="labs" lazy="true" table="int_person_lab">
             <key column="source_id"/>
@@ -38,17 +57,6 @@
             <many-to-many class="org.zfin.publication.Publication" column="target_id"/>
         </set>
 
-        <joined-subclass name="org.zfin.people.User" table="zdb_submitters">
-            <key column="zdb_id"/>
-            <property name="login" not-null="true"/>
-            <property name="password" column="password"/>
-            <property name="role" column="access" not-null="true"/>
-            <property name="name" column="name" not-null="true"/>
-            <property name="cookie" column="cookie"/>
-            <property name="loginDate" column="issue_time"/>
-            <property name="previousLoginDate" column="previous_login"/>
-            <property name="accountCreationDate" column="create_date"/>
-        </joined-subclass>
     </class>
 
     <class name="org.zfin.people.Organization" abstract="true">
@@ -105,7 +113,7 @@
             <column name="idsup_acc_num"/>
         </property>
 
-        <subclass name="org.zfin.people.MarkerSupplier" discriminator-value="Marker">
+        <subclass name="org.zfin.people.MarkerSupplier" discriminator-value="Marker" >
             <many-to-one name="marker" column="idsup_data_zdb_id" insert="false" update="false"/>
         </subclass>
     </class>
@@ -118,6 +126,48 @@
         </composite-id>
 
         <property name="hyperlinkName" column="srcurl_display_text"/>
+    </class>
+
+    <class name="org.zfin.people.User" table="zdb_submitters">
+
+        <id name="zdbID" column="zdb_id">
+            <generator class="foreign">
+                <param name="property">person</param>
+            </generator>
+        </id>
+
+        <property name="login" not-null="true"/>
+
+        <property name="password">
+            <column name="password"/>
+        </property>
+
+        <property name="role">
+            <column name="access" not-null="true"/>
+        </property>
+
+        <property name="name">
+            <column name="name" not-null="true"/>
+        </property>
+
+        <property name="cookie">
+            <column name="cookie"/>
+        </property>
+
+        <property name="loginDate">
+            <column name="issue_time"/>
+        </property>
+
+        <property name="previousLoginDate">
+            <column name="previous_login"/>
+        </property>
+
+        <property name="accountCreationDate">
+            <column name="create_date" not-null="true"/>
+        </property>
+
+        <one-to-one name="person" class="org.zfin.people.Person" constrained="true"/>
+
     </class>
 
     <class name="org.zfin.people.CuratorSession" table="curator_session">

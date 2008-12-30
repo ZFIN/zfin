@@ -1,20 +1,21 @@
 package org.zfin.people.repository;
 
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
+import org.zfin.people.*;
 import org.zfin.framework.HibernateUtil;
 import static org.zfin.framework.HibernateUtil.currentSession;
-import org.zfin.infrastructure.Updates;
-import org.zfin.marker.Marker;
-import org.zfin.people.*;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.marker.Marker;
+import org.zfin.infrastructure.Updates;
+import org.hibernate.Session;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+import org.apache.commons.lang.StringUtils;
 
+import java.util.List;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Persistence storage of profile data.
@@ -155,15 +156,15 @@ public class HibernateProfileRepository implements ProfileRepository {
 
         Session session = HibernateUtil.currentSession();
         String newName = newUserAttributes.getName();
-        User submittingUser = User.getCurrentSecurityUser();
+        Person submittingPerson = Person.getCurrentSecurityUser();
         if (StringUtils.isNotEmpty(newName) && !newName.equals(currentUser.getName())) {
             Updates update = new Updates();
             update.setFieldName("name");
             update.setNewValue(newName);
             update.setOldValue(currentUser.getName());
             update.setRecID(currentUser.getZdbID());
-            update.setSubmitterID(submittingUser.getZdbID());
-            update.setSubmitterName(submittingUser.getUsername());
+            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
             session.save(update);
             currentUser.setName(newName);
@@ -174,8 +175,8 @@ public class HibernateProfileRepository implements ProfileRepository {
             Updates update = new Updates();
             update.setFieldName("password");
             update.setRecID(currentUser.getZdbID());
-            update.setSubmitterID(submittingUser.getZdbID());
-            update.setSubmitterName(submittingUser.getUsername());
+            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
             session.save(update);
         }
@@ -186,8 +187,8 @@ public class HibernateProfileRepository implements ProfileRepository {
             update.setRecID(currentUser.getZdbID());
             update.setNewValue(role);
             update.setOldValue(currentUser.getRole());
-            update.setSubmitterID(submittingUser.getZdbID());
-            update.setSubmitterName(submittingUser.getUsername());
+            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
             currentUser.setRole(role);
             session.save(update);
@@ -199,8 +200,8 @@ public class HibernateProfileRepository implements ProfileRepository {
             update.setRecID(currentUser.getZdbID());
             update.setNewValue(login);
             update.setOldValue(currentUser.getLogin());
-            update.setSubmitterID(submittingUser.getZdbID());
-            update.setSubmitterName(submittingUser.getUsername());
+            update.setSubmitterID(submittingPerson.getZdbID());
+            update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
             currentUser.setLogin(login);
             session.save(update);

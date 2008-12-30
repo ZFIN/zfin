@@ -70,6 +70,7 @@ public class EditUserPasswordController extends SimpleFormController {
                                     Object command, BindException errors) throws Exception {
 
         ProfileBean bean = (ProfileBean) command;
+        Person submitUser = Person.getCurrentSecurityUser();
         // check for invalid zdbID Write validator class
 
         // handle delete action
@@ -116,20 +117,21 @@ public class EditUserPasswordController extends SimpleFormController {
             Transaction tx = null;
             try {
                 tx = session.beginTransaction();
-                User user = profileRepository.getUser(bean.getUser().getZdbID());
-                if (bean.isNewUser()) {
-                    user = bean.getUser();
-                    user.setAccountCreationDate(new Date());
-                    user.setCookie(Math.random() + "-" + bean.getUser().getLogin());
-                    session.save(user);
-                } else {
-                    if (user.getType() == Person.Type.GUEST)
-                        throw new Exception("User is a guest user without credentials: ");
-                    profileRepository.updateUser(user, bean.getUser());
-                }
+                Person person = profileRepository.getPerson(bean.getUser().getZdbID());
+                User user = person.getUser();
+                if (user == null && bean.isNewUser())
+                    user = new User();
                 Md5PasswordEncoder encoder = new Md5PasswordEncoder();
                 String encodedPass = encoder.encodePassword(passwordFirst, salt);
                 user.setPassword(encodedPass);
+                if (bean.isNewUser()){
+                    user.setAccountCreationDate(new Date());
+                    user.setPerson(person);
+                    user.setCookie(Math.random() + "-" + bean.getUser().getLogin());
+                    person.setUser(user);
+                } else {
+                    profileRepository.updateUser(user, bean.getUser());
+                }
                 tx.commit();
             } catch (Exception e) {
                 try {

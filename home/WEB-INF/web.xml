@@ -195,7 +195,7 @@
 
     <servlet-mapping>
         <servlet-name>zfin</servlet-name>
-        <url-pattern>/frost/*</url-pattern>
+        <url-pattern>/@TARGETCGIBIN@/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

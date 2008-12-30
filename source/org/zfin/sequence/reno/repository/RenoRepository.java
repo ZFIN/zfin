@@ -8,7 +8,6 @@ import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.people.Person;
-import org.zfin.people.User;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public interface RenoRepository {
     Run castRun(Run run) ;
 
 
-    boolean lock(User user, RunCandidate rc);
+    boolean lock(Person p, RunCandidate rc);
     boolean unlock(Person p, RunCandidate rc);
 
     Run getRunByID(String runID);

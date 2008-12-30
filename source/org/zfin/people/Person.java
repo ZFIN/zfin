@@ -1,18 +1,22 @@
 package org.zfin.people;
 
 import org.zfin.publication.Publication;
+import org.acegisecurity.userdetails.UserDetails;
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.GrantedAuthorityImpl;
+import org.acegisecurity.Authentication;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.context.SecurityContext;
 
 import java.util.Set;
 
 /**
- * Domain business object that describes a single person: name and address-related info as well
- * as publications. A person is typically created to associate an author to a publications
- * but is also used to for any person providing some service to the community.
- * This class is subclasses.
+ * Domain business object that describes a single person that may or may not
+ * have a login.
  */
-public class Person {
+public class Person implements UserDetails {
 
-    protected String zdbID;
+    private String zdbID;
     private String fullName;
     private String name;
     private String email;
@@ -25,6 +29,7 @@ public class Person {
     private boolean emailList;
     private Set<Lab> labs;
     private Set<Publication> publications;
+    private User user;
 
     public String getZdbID() {
         return zdbID;
@@ -130,8 +135,69 @@ public class Person {
         this.ownerID = ownerID;
     }
 
-    public Type getType() {
-        return Type.GUEST;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public GrantedAuthority[] getAuthorities() {
+        if (user == null)
+            return null;
+        String role = user.getRole();
+        GrantedAuthority gr = new GrantedAuthorityImpl(role);
+        return new GrantedAuthority[]{gr};
+    }
+
+    public String getPassword() {
+        if (user == null)
+            return null;
+        return user.getPassword();
+    }
+
+    public String getUsername() {
+        if (user == null)
+            return null;
+        return user.getUsername();
+    }
+
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    public boolean isEnabled() {
+        return true;
+    }
+
+    /**
+     * This returns a Person object of the current security person.
+     * If no authorized Person is found return null.
+     *
+     * @return Person object
+     */
+    public static Person getCurrentSecurityUser() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context == null)
+            return null;
+        Authentication authentication = context.getAuthentication();
+        if (authentication == null)
+            return null;
+        Object principal = authentication.getPrincipal();
+        // ToDo: Annonymous user should also be a Person object opposed to a String object
+        if (principal instanceof String)
+            return null;
+        return (Person) principal;
     }
 
     public int hashCode() {
@@ -145,10 +211,4 @@ public class Person {
         Person p = (Person) o;
         return getZdbID().equals(p.getZdbID());
     }
-
-    public enum Type{
-        GUEST,
-        LOGIN
-    }
-
 }

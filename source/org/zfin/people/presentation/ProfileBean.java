@@ -43,10 +43,10 @@ public class ProfileBean {
     }
 
     public boolean isOwnerOrRoot() {
-        User securityUser = User.getCurrentSecurityUser();
-        if (User.Role.ROOT.toString().equals(securityUser.getRole()))
+        Person securityUser = Person.getCurrentSecurityUser();
+        if (User.Role.ROOT.toString().equals(securityUser.getUser().getRole()))
             return true;
-        return securityUser.equals(user);
+        return securityUser.getUser().equals(user);
     }
 
     public String getPasswordOne() {

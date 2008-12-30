@@ -7,7 +7,6 @@ import org.zfin.properties.Path;
 import org.zfin.properties.impl.ApplicationPropertiesImpl;
 import org.zfin.properties.impl.PathImpl;
 import org.zfin.people.Person;
-import org.zfin.people.User;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.acegisecurity.context.SecurityContext;
@@ -68,8 +67,8 @@ public class TestConfiguration {
     public static void setAuthenticatedUser() {
         SecurityContext security = new SecurityContextImpl();
         AuthenticationManager manager = new MockAuthenticationManager(true);
-        User user = getUser();
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null);
+        Person person = createNonSecurityPerson();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(person, null);
         manager.authenticate(authentication);
         security.setAuthentication(authentication);
         SecurityContextHolder.setContext(security);
@@ -78,13 +77,13 @@ public class TestConfiguration {
     private static Person createNonSecurityPerson() {
         Person user = new Person();
         user.setZdbID("ZDB-PERS-990101-01");
-        user.setName("Guest Person");
+        user.setName("Authenticated User");
         return user;
     }
 
-    public static User getUser(){
+    public static Person getPerson(){
         ProfileRepository pr = RepositoryFactory.getProfileRepository();
-        return pr.getUser("ZDB-PERS-000103-2");
+        return pr.getPerson("ZDB-PERS-000103-2");
     }
 
 

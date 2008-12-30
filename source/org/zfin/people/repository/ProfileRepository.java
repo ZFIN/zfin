@@ -13,8 +13,7 @@ public interface ProfileRepository {
     /**
      * Lookup a Person by its primary key.
      *
-     * @param zdbID PK
-     * @return Person object
+     * @param zdbID
      */
     Person getPerson(String zdbID);
 
@@ -22,8 +21,7 @@ public interface ProfileRepository {
      * Lookup a Person by given attribtes. If more than one objects are
      * found a runtime exception is thrown.
      *
-     * @param person person
-     * @return Person
+     * @param person
      */
     Person getPerson(Person person);
 
@@ -50,19 +48,15 @@ public interface ProfileRepository {
      * @param lab Lab
      */
     void insertLab(Lab lab);
-
     void addSupplier(Organization organization, Marker marker);
-
     /**
      * Retrieve User (person with login account) information.
      *
-     * @param zdbID PK
-     * @return User record
+     * @param zdbID
      */
     User getUser(String zdbID);
 
     void updateUser(User user);
-
     /**
      * @param curatorZdbID person for whom the session value is being retrieved
      * @param pubZdbID     pub that the session value is associated with [can be null!]
@@ -91,7 +85,7 @@ public interface ProfileRepository {
      */
     MarkerSupplier getSpecificSupplier(Marker marker, Organization organization);
 
-
+   
     /**
      * Retrieve an organization by ID
      *
@@ -111,14 +105,12 @@ public interface ProfileRepository {
     /**
      * Delete a user, but not the person record.
      * If User record is null it just returns.
-     *
      * @param user User
      */
     void delete(User user);
 
     /**
      * Retrieve a User for a given login.
-     *
      * @param login login string
      * @return boolean
      */
@@ -126,9 +118,8 @@ public interface ProfileRepository {
 
     /**
      * Update a users record
-     *
-     * @param currentUser       old user info
-     * @param newUserAttributes new user info
+     * @param currentUser
+     * @param newUserAttributes
      */
     void updateUser(User currentUser, User newUserAttributes);
 }

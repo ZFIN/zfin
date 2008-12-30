@@ -5,6 +5,7 @@
 package org.zfin.infrastructure.repository;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -18,13 +19,14 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.people.User;
+import org.zfin.people.Person;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
 
@@ -167,14 +169,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         session.save(up);
     }
 
-    public void insertUpdatesTable(Marker marker, String fieldName, String comments, User user,String newValue, String oldValue) {
+    public void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person,String newValue, String oldValue) {
         Session session = HibernateUtil.currentSession();
 
         Updates up = new Updates();
         up.setRecID(marker.getZdbID());
         up.setFieldName(fieldName);
-        up.setSubmitterID(user.getZdbID());
-        up.setSubmitterName(user.getUsername());
+        up.setSubmitterID(person.getZdbID());
+        up.setSubmitterName(person.getUsername());
         up.setComments(comments);
         up.setNewValue(newValue);
         up.setOldValue(oldValue);

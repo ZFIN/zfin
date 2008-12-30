@@ -1,31 +1,32 @@
 package org.zfin.sequence.reno;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.junit.After;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.zfin.TestConfiguration;
+import static org.zfin.framework.HibernateUtil.getSessionFactory;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import static org.zfin.framework.HibernateUtil.getSessionFactory;
-import org.zfin.marker.Marker;
+import org.zfin.TestConfiguration;
 import org.zfin.orthology.Species;
-import org.zfin.people.repository.ProfileRepository;
-import org.zfin.publication.Publication;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.Accession;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.reno.presentation.CandidateBean;
 import org.zfin.sequence.reno.presentation.CandidateController;
+import org.zfin.sequence.Accession;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.blast.Query;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.marker.Marker;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+import org.apache.log4j.Logger;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.List;
@@ -82,7 +83,7 @@ public class MultiRunTest {
         //should this be an enum?
         gene.setMarkerType(RepositoryFactory.getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString()));
 //        gene.setMarkerType(markerRepository.getMarkerTypeByName("GENE"));
-        gene.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
+        gene.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
         session.save(gene);
 
 //        Marker cDNA = new Marker();
@@ -90,7 +91,7 @@ public class MultiRunTest {
 //        cDNA.setName(cdnaName);
 //        //should this be an enum?
 //        cDNA.setMarkerType(RepositoryFactory.getMarkerRepository().getMarkerTypeByName(Marker.Type.CDNA.toString()));
-//        cDNA.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
+//        cDNA.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
 //        session.save(cDNA);
 
 
@@ -103,6 +104,7 @@ public class MultiRunTest {
         nomenRun1.setName("TestNomenRun1");
         nomenRun1.setProgram("BLASTP");
         nomenRun1.setBlastDatabase("sptr_hssptr_mssptr_zf");
+//        nomenRun1.setType(Run.Type.NOMENCLATURE);
         nomenRun1.setDate(new Date());
         session.save(nomenRun1);
 
@@ -112,6 +114,7 @@ public class MultiRunTest {
         nomenRun2.setName("TestNomenRun2");
         nomenRun2.setProgram("BLASTP");
         nomenRun2.setBlastDatabase("sptr_hssptr_mssptr_zf");
+//        nomenRun2.setType(Run.Type.NOMENCLATURE);
         nomenRun2.setDate(new Date());
         session.save(nomenRun2);
 
@@ -127,7 +130,7 @@ public class MultiRunTest {
         runCandidateNomen1 = new RunCandidate();
         runCandidateNomen1.setRun(nomenRun1);
         runCandidateNomen1.setDone(false);
-        runCandidateNomen1.setLockUser(personRepository.getUser("ZDB-PERS-030520-1"));
+        runCandidateNomen1.setLockPerson(personRepository.getPerson("ZDB-PERS-030520-1"));
         runCandidateNomen1.setCandidate(candidateNomen);
         nomenRun1.getCandidates().add(runCandidateNomen1);
         session.save(runCandidateNomen1);
@@ -157,7 +160,7 @@ public class MultiRunTest {
         runCandidateNomen2 = new RunCandidate();
         runCandidateNomen2.setRun(nomenRun2);
         runCandidateNomen2.setDone(false);
-        runCandidateNomen2.setLockUser(personRepository.getUser("ZDB-PERS-030520-2"));
+        runCandidateNomen2.setLockPerson(personRepository.getPerson("ZDB-PERS-030520-2"));
         runCandidateNomen2.setCandidate(candidateNomen);
         nomenRun2.getCandidates().add(runCandidateNomen2);
         session.save(runCandidateNomen2);

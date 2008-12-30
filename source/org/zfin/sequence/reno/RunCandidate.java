@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.orthology.Species;
-import org.zfin.people.User;
+import org.zfin.people.Person;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.blast.Hit;
@@ -22,7 +22,7 @@ public class RunCandidate {
     private Run run;
     private Candidate candidate;
     private Set<Query> candidateQueries = new HashSet<Query>();
-    private User lockUser;
+    private Person lockPerson;
     private boolean done;
     private Hit bestHit;
 
@@ -35,7 +35,7 @@ public class RunCandidate {
      * @return true if locked, false if not locked
      */
     public boolean isLocked() {
-        return lockUser != null;
+        return lockPerson != null;
     }
 
     /**
@@ -133,46 +133,47 @@ public class RunCandidate {
             for (Hit h : q.getBlastHits()) {
                 LOG.debug("I've got a hit: " + h.getTargetAccession().getNumber());
                 Accession a = h.getTargetAccession();
-                List<Marker> genesToAdd = new ArrayList<Marker>();
+                List<Marker> genesToAdd= new ArrayList<Marker>() ;
                 LOG.debug("number of genes for hit: " + genes.size());
                 for (Marker m : a.getMarkers()) {
-                    LOG.debug("I've got a Marker: " + m.getAbbreviation() + " of type: " + m.getType());
+                    LOG.debug("I've got a Marker: " + m.getAbbreviation()+ " of type: "+ m.getType());
                     LOG.debug("genes.contains(m): " + genes.contains(m));
                     LOG.debug("is in type group genedom: " + m.isInTypeGroup(Marker.TypeGroup.GENEDOM));
                     // if the hit is a gene, then add directly
                     if ((m.isInTypeGroup(Marker.TypeGroup.GENEDOM))
                             && (!genes.contains(m))) {
                         LOG.debug("ADDING genedom gene: " + m.getAbbreviation());
-                        genesToAdd.add(m);
+                        genesToAdd.add(m) ;
 //                        genes.add(m);
                     }
                     // if the hit is not a gene, then add any genes that encode it
                     else {
-                        Set<MarkerRelationship> secondMarkerRelationships = m.getSecondMarkerRelationships();
-                        LOG.debug(m.getAbbreviation() + (secondMarkerRelationships != null ? " number of second marker relationships: " + secondMarkerRelationships.size() : "null"));
+                        Set<MarkerRelationship> secondMarkerRelationships = m.getSecondMarkerRelationships() ;
+                        LOG.debug(m.getAbbreviation()+ (secondMarkerRelationships!=null ? " number of second marker relationships: "+ secondMarkerRelationships.size() : "null" ));
                         for (MarkerRelationship rel : m.getSecondMarkerRelationships()) {
                             Marker gene = rel.getFirstMarker();
-                            LOG.debug("gene: " + (gene == null ? "null" : gene.getAbbreviation()));
+                            LOG.debug("gene: "+ (gene==null ? "null" : gene.getAbbreviation())  ) ; 
                             LOG.debug("encoding gene is in type group genedom: " + gene.isInTypeGroup(Marker.TypeGroup.GENEDOM));
                             LOG.debug("genes to add size: " + genesToAdd.size());
                             LOG.debug("genes to add contains: " + genesToAdd.contains(gene));
 
                             if (gene.isInTypeGroup(Marker.TypeGroup.GENEDOM) && !genesToAdd.contains(gene) && rel.getType().equals(
-                                    MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT)) {
-                                LOG.debug("ADDING encoding gene: " + gene.getAbbreviation());
-                                genesToAdd.add(gene);
-                            } else {
-                                LOG.debug("NOT adding encoding gene: " + gene.getAbbreviation());
+                                    MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT)){
+                                LOG.debug("ADDING encoding gene: "+ gene.getAbbreviation());
+                                genesToAdd.add(gene) ;
+                            }
+                            else{
+                                LOG.debug("NOT adding encoding gene: "+ gene.getAbbreviation());
                             }
                         }
                         // only add if a single encoded relationship
                     }
                 }
-                LOG.debug("genes to add " + genesToAdd.size() + " for hit accession " + a.getNumber());
-                if (genesToAdd.size() == 1) {
-                    LOG.debug("adding one gene: " + genesToAdd.get(0).getAbbreviation());
-                    Marker geneToAdd = genesToAdd.get(0);
-                    if (!genes.contains(geneToAdd)) {
+                LOG.debug("genes to add "+genesToAdd.size() + " for hit accession " + a.getNumber());
+                if(genesToAdd.size()==1){
+                    LOG.debug("adding one gene: " + genesToAdd.get(0).getAbbreviation()); ;
+                    Marker geneToAdd = genesToAdd.get(0) ;
+                    if(!genes.contains(geneToAdd)){
                         genes.add(genesToAdd.get(0));
                     }
                 }
@@ -267,12 +268,12 @@ public class RunCandidate {
         this.candidate = candidate;
     }
 
-    public User getLockUser() {
-        return lockUser;
+    public Person getLockPerson() {
+        return lockPerson;
     }
 
-    public void setLockUser(User lockUser) {
-        this.lockUser = lockUser;
+    public void setLockPerson(Person lockPerson) {
+        this.lockPerson = lockPerson;
     }
 
     public boolean isDone() {
@@ -300,11 +301,11 @@ public class RunCandidate {
     }
 
     public boolean isOwner() {
-        User user = User.getCurrentSecurityUser();
+        Person user = Person.getCurrentSecurityUser();
         if (user == null)
             return false;
 
-        if (lockUser != null && user.equals(lockUser)) {
+        if (lockPerson != null && user.equals(lockPerson)) {
             return true;
         } else {
             return false;

@@ -20,7 +20,7 @@ import org.zfin.orthology.OrthoEvidence;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
 import org.zfin.orthology.repository.OrthologyRepository;
-import org.zfin.people.User;
+import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -138,9 +138,9 @@ public class CandidateController extends SimpleFormController {
 
         handleNote(candidateBean);
 
-        User currentUser = User.getCurrentSecurityUser();
+        Person currentUser = Person.getCurrentSecurityUser();
 
-        if (rc.getLockUser() != null && !currentUser.equals(rc.getLockUser()))
+        if (rc.getLockPerson() != null && !currentUser.equals(rc.getLockPerson()))
             LOG.debug(" Person records are not equal.. ");
 
         LOG.debug("action: " + candidateBean.getAction());
@@ -177,9 +177,9 @@ public class CandidateController extends SimpleFormController {
                 MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
                 for (Marker smallSegment : smallSegments) {
                     boolean hasRelationship = markerRepository.hasSmallSegmentRelationship(associatedMarker, smallSegment);
-                    if (hasRelationship) {
+                    if(hasRelationship){
                         candidateBean.addMessage("This candidate already has a small-segment relationship to " +
-                                associatedMarker.getAbbreviation());
+                        associatedMarker.getAbbreviation());
                     }
                 }
             }
@@ -198,7 +198,7 @@ public class CandidateController extends SimpleFormController {
      * @param rc            RunCandidate
      * @param currentUser   Person
      */
-    private void handleLock(CandidateBean candidateBean, RunCandidate rc, User currentUser) {
+    private void handleLock(CandidateBean candidateBean, RunCandidate rc, Person currentUser) {
         if (StringUtils.equals(candidateBean.getAction(), CandidateBean.LOCK_RECORD)) {
             boolean success = rr.lock(currentUser, rc);
             if (success)
@@ -318,7 +318,7 @@ public class CandidateController extends SimpleFormController {
         Marker novelGene = new Marker();
 
         novelGene.setName(rc.getCandidate().getSuggestedName());
-        novelGene.setOwner(rc.getLockUser());
+        novelGene.setOwner(rc.getLockPerson());
         LOG.info("novelGene is set");
         MarkerType mt = mr.getMarkerTypeByName(rc.getCandidate().getMarkerType());
         if (mt == null) {
@@ -453,7 +453,7 @@ public class CandidateController extends SimpleFormController {
             LOG.info("Orthology: " + humanOrtholog);
             Updates up = new Updates();
             Date date = new Date();
-            User currentUser = User.getCurrentSecurityUser();
+            Person currentUser = Person.getCurrentSecurityUser();
             up.setRecID(zebrafishMarker.getZdbID());
             up.setFieldName("orthologue");
             up.setNewValue("Human");
@@ -481,7 +481,7 @@ public class CandidateController extends SimpleFormController {
             mouseOrtholog.setEvidence(orthoEvidences);
             Updates up = new Updates();
             Date date = new Date();
-            User currentUser = User.getCurrentSecurityUser();
+            Person currentUser = Person.getCurrentSecurityUser();
             up.setRecID(zebrafishMarker.getZdbID());
             up.setFieldName("orthologue");
             up.setNewValue("Mouse");
@@ -609,7 +609,7 @@ public class CandidateController extends SimpleFormController {
             LOG.debug("createRelationships segments are not empty");
             for (Marker segment : segments) {
                 LOG.info("adding small segment to gene: " + segment);
-                mr.addMarkerRelationship(segment, gene, attributionZdbID, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+                mr.addMarkerRelationship(segment, gene, attributionZdbID,MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
             }
             //our query accession(s) was(were) linked to one or more segments, we just made
             //relationships from those segments to the gene that the curator chose
@@ -662,11 +662,11 @@ public class CandidateController extends SimpleFormController {
     }
 
     private void renameGene(Marker gene, String attributionZdbID) {
-        User currentUser = User.getCurrentSecurityUser();
+        Person currentUser = Person.getCurrentSecurityUser();
         Publication pub = new Publication();
         pub.setZdbID(attributionZdbID);
         mr.renameMarker(gene, pub, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
-        ir.insertUpdatesTable(gene, "data_alias", "", currentUser, "", "");
+        ir.insertUpdatesTable(gene, "data_alias", "", currentUser,"","");
 //        ir.insertUpdatesTable(geneToRename.getZdbID(),"dalias_alias",geneToRename.getAbbreviation(),"",rc.getLockPerson().getZdbID(),rc.getLockPerson().getName());
 
     }
@@ -716,7 +716,7 @@ public class CandidateController extends SimpleFormController {
         LOG.info("existingGene abbrev: " + gene.getAbbreviation());
         if (!StringUtils.isEmpty(rc.getCandidate().getNote())) {
             LOG.debug("attach a data note to the gene");
-            mr.addMarkerDataNote(gene, rc.getCandidate().getNote(), rc.getLockUser());
+            mr.addMarkerDataNote(gene, rc.getCandidate().getNote(), rc.getLockPerson());
             rc.getCandidate().setNote(null);
         }
         LOG.info("exit moveNoteToGene");

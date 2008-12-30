@@ -7,8 +7,8 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.Orthologue;
+import org.zfin.people.Person;
 import org.zfin.people.MarkerSupplier;
-import org.zfin.people.User;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -41,7 +41,7 @@ public class Marker implements Serializable, Comparable {
     private MarkerType markerType;
     private Set<MarkerHistory> markerHistory;
     private Set<MappedMarker> directPanelMappings;
-    private User owner;
+    private Person owner;
     private String comments;
     private Set<MarkerDBLink> dbLinks;
     private Set<MarkerAlias> aliases;
@@ -80,11 +80,11 @@ public class Marker implements Serializable, Comparable {
         return abbreviationOrder;
     }
 
-    public User getOwner() {
+    public Person getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(Person owner) {
         this.owner = owner;
     }
 

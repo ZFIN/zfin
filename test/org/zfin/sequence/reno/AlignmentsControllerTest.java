@@ -167,7 +167,7 @@ private String insertRunCandidate() {
     gene.setName("Reno Test Name");
     //should this be an enum?
     gene.setMarkerType(markerRepository.getMarkerTypeByName("GENE"));
-    gene.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
+    gene.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
     session.save(gene);
 
     Marker cDNA = new Marker();
@@ -175,7 +175,7 @@ private String insertRunCandidate() {
     cDNA.setName("MGC:test");
     //should this be an enum?
     cDNA.setMarkerType(markerRepository.getMarkerTypeByName("CDNA"));
-    cDNA.setOwner(personRepository.getUser("ZDB-PERS-030520-1"));
+    cDNA.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
     session.save(cDNA);
 
     PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
@@ -258,7 +258,7 @@ private String insertRunCandidate() {
     RunCandidate runCandidate = new RunCandidate();
     runCandidate.setRun(run);
     runCandidate.setDone(false);
-    runCandidate.setLockUser(personRepository.getUser("ZDB-PERS-030520-1"));
+    runCandidate.setLockPerson(personRepository.getPerson("ZDB-PERS-030520-1"));
     runCandidate.setCandidate(candidate);
     session.save(runCandidate);
 
