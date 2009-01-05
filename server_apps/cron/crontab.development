@@ -30,6 +30,10 @@
 #
 00 22 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl
 # Nights   When      Comments
+# MTWT    10:00pm   Grep errors in tests/build for nightly run on almost.
+#
+00 23 * * 1-4 ant test 2>&1 | grep -i fail | grep -v "Failures: 0, Errors: 0"
+# Nights   When      Comments
 # MTWT    10:50pm   Grep for errors in unit tests
 #
 50 22 * * 1-4 
