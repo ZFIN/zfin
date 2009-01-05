@@ -3,8 +3,12 @@ package org.zfin.sequence.reno;
 import org.zfin.publication.Publication;
 
 
+/**
+ * This class represents a Reno Nomenclature run,
+ * which is unique from a general run in that it has an orthology publication.
+ */
 public class NomenclatureRun extends Run{
-    protected  Publication orthologyPublication;
+    private Publication orthologyPublication;
 
     public Publication getOrthologyPublication() {
         return orthologyPublication;
@@ -12,15 +16,6 @@ public class NomenclatureRun extends Run{
 
     public void setOrthologyPublication(Publication orthologyPublication) {
         this.orthologyPublication = orthologyPublication;
-    }
-
-
-    public boolean isRedundancy() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public boolean isNomenclature() {
-        return true;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public Type getType() {
@@ -31,10 +26,8 @@ public class NomenclatureRun extends Run{
 
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString());
+        sb.append("\n\t");
         sb.append("relation publication: ").append(orthologyPublication);
-        sb.append("\n\t");
-        sb.append("instace of NomenclatureRun: ").append(this instanceof NomenclatureRun);
-        sb.append("\n\t");
         return sb.toString();
     }
 }

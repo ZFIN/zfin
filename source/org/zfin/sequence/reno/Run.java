@@ -9,7 +9,9 @@ import java.util.Set;
 import java.util.HashSet;
 
 /**
- * ToDo: Please provide documentation.
+ * This abstract class represents a single reno run.
+ * Each run has a Set of RunCandidate's as well as information pertaining to the
+ * run, itself.
  */
 public abstract class Run {
 
@@ -20,8 +22,8 @@ public abstract class Run {
         REDUNDANCY("Redundancy"),
         NOMENCLATURE("Nomenclature");
 
-        //        protected final String value  ;
-        protected String value  ;
+        //        private final String value  ;
+        private String value  ;
 
         Type(String value) {
             this.value = value;
@@ -41,15 +43,14 @@ public abstract class Run {
         }
     }
 
-    protected String zdbID;
-    protected String name;
-    protected String program;
-    protected Date date;
-    protected Type type;
-    protected String markerComment;
-    protected String blastDatabase;
-    protected Set<RunCandidate> candidates = new HashSet<RunCandidate>() ;
-    protected Publication nomenclaturePublication;
+    private String zdbID;
+    private String name;
+    private String program;
+    private Date date;
+    private String markerComment;
+    private String blastDatabase;
+    private Set<RunCandidate> candidates = new HashSet<RunCandidate>() ;
+    private Publication nomenclaturePublication;
 
 
     /**
@@ -95,9 +96,13 @@ public abstract class Run {
         return count;
     }
 
-    public abstract boolean isRedundancy() ;
+    public boolean isRedundancy() {
+        return getType()==Type.REDUNDANCY ;
+    }
 
-    public abstract boolean isNomenclature() ;
+    public boolean isNomenclature(){
+        return getType()==Type.NOMENCLATURE ;
+    }
 
 
     public String getZdbID() {
@@ -192,7 +197,6 @@ public abstract class Run {
         sb.append("blastDatabase: ").append(blastDatabase);
         sb.append("\n\t");
         sb.append("nomenclature publication: ").append(nomenclaturePublication);
-        sb.append("\n\t");
         return sb.toString();
     }
 
