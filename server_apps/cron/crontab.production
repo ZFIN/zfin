@@ -244,7 +244,7 @@
 # Nights   When      Comments
 # 1         5:00am   DATA TRANSFER: run quarterly SNP load from dbSNP.
 #
-00 05 1 1,4,9 * <!--|ROOT_PATH|-->/server_apps/data_transfer/dbSNP.pl <!--|DB_NAME|-->
+00 05 1 1,4,9 * <!--|ROOT_PATH|-->/server_apps/data_transfer/SNP/dbSNP.pl <!--|DB_NAME|-->
 #
 #
 # ========================================================================
