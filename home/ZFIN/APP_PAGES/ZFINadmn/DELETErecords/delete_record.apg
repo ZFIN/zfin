@@ -247,6 +247,7 @@ Message: $MI_ERRORMSG
 		<option value=genotype $(IF,$(EC,$mtype,genotype),SELECTED)>Genotype
 		<option value=GENE $(IF,$(EC,$mtype,GENE),SELECTED)>Gene
 		<option value=GENEP $(IF,$(EC,$mtype,GENEP),SELECTED)>Pseudogene
+        <option value=MRPHLNO $(IF,$(EC,$mtype,MRPHLNO),SELECTED)>Morpholino
 		<option $(IF,$(EC,$mtype,EST),SELECTED)>EST
 		<option $(IF,$(EC,$mtype,RAPD),SELECTED)>RAPD
 		<option $(IF,$(EC,$mtype,SSLP),SELECTED)>SSLP
@@ -273,7 +274,7 @@ Message: $MI_ERRORMSG
                 where mrkr_type = '$mtype' 
                   and mrkr_zdb_id = allmapnm_zdb_id 
                   and allmapnm_serial_id = allnmend_allmapnm_serial_id
-                  and allnmend_name_end_lower like '$(LOWER,$merge)%' 
+                  and allnmend_name_end_lower like '%$(LOWER,$merge)%' 
                 order by mrkr_abbrev;">
               <?MIVAR NAME=$delrec_mrkrZdbId>$1<?/MIVAR>
               <?MIVAR NAME=$delrec_mrkrName>$2<?/MIVAR>
