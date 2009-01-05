@@ -73,10 +73,13 @@ begin work;
 				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,
 				mrkrgoev_date_entered,mrkrgoev_date_modified,mrkrgoev_contributed_by,
 				mrkrgoev_modified_by)
-		select mrkrgoev_zdb_id,mrkr_zdb_id, go_zdb_id,
-		       mrkrgoev_source, "IEA", CURRENT,CURRENT,
-		       mrkrgoev_contributed_by, mrkrgoev_contributed_by
-		  from pre_marker_go_evidence;
+		select p.mrkrgoev_zdb_id,p.mrkr_zdb_id, p.go_zdb_id,
+		       p.mrkrgoev_source, "IEA", CURRENT,CURRENT,
+		       p.mrkrgoev_contributed_by, p.mrkrgoev_contributed_by
+		  from pre_marker_go_evidence p
+		  where not exists (Select 'x' from marker a
+		  	    	   	   where a.mrkr_zdb_id = p.mrkr_zdb_id
+					   and a.mrkr_abbrev like 'WITHDRAWN%');
 
 	
 --	db trigger attributes MRKRGOEV to the internal pub record
