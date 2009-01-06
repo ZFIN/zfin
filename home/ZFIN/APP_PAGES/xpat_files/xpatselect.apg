@@ -614,7 +614,8 @@ function openChild(childWinUrl,childWinName) {
       <?MIVAR name=$UserInput COND=$(XST,$author)>$UserInput&author=$(URLENCODE,$author)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$assay)>$UserInput&assay=$(URLENCODE,$assay)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_jtype)>$UserInput&xpatsel_jtype=$xpatsel_jtype<?/MIVAR>
-      <?MIVAR name=$UserInput COND=$(XST,$xpatsel_imagesOnly)>$UserInput&xpatsel_imagesOnly=$xpatsel_imagesOnly<?/MIVAR>
+      <?MIVAR name=$UserInput COND=$(XST,$xpatsel_wtOnly)>$UserInput&xpatsel_wtOnly=$xpatsel_wtOnly<?/MIVAR>
+      <?MIVAR name=$UserInput COND=$(XST,$xpatsel_imagesOnly)>$UserInput&xpatsel_imagesOnly=$xpatsel_imagesOnly<?/MIVAR>      
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_recentRecords)>$UserInput&xpatsel_recentRecords=$xpatsel_recentRecords<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$MOsearchtype)>$UserInput&MOsearchtype=$MOsearchtype<?/MIVAR>
