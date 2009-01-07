@@ -9,7 +9,7 @@ import org.zfin.marker.Marker;
 import org.zfin.infrastructure.Updates;
 import org.hibernate.Session;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.apache.commons.lang.StringUtils;
 
@@ -77,17 +77,6 @@ public class HibernateProfileRepository implements ProfileRepository {
         session.save(lab);
     }
 
-    public User getUser(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-        User user = (User) session.get(User.class, zdbID);
-        return user;
-    }
-
-    public void updateUser(User user) {
-        Session session = HibernateUtil.currentSession();
-        session.update(user);
-    }
-
     public MarkerSupplier getSpecificSupplier(Marker marker, Organization organization) {
         Session session = currentSession();
         Criteria criteria = session.createCriteria(MarkerSupplier.class);
@@ -131,82 +120,85 @@ public class HibernateProfileRepository implements ProfileRepository {
         return cs;
     }
 
-    public void delete(User user) {
-        if (user == null)
+    public void deleteAccountInfo(Person person) {
+        AccountInfo accountInfo  = person.getAccountInfo();
+        if (accountInfo == null)
             return;
+
         Session session = HibernateUtil.currentSession();
-        session.delete(user);
-        session.flush();
+        AccountInfo info = (AccountInfo) session.get(AccountInfo.class, person.getZdbID());
+        session.delete(info);
     }
 
     public boolean userExists(String login) {
         Session session = HibernateUtil.currentSession();
-        Criteria crit = session.createCriteria(User.class);
-        crit.add(Restrictions.eq("login", login));
-        User user = (User) crit.uniqueResult();
-        return user != null;
+        Criteria crit = session.createCriteria(Person.class);
+        crit.add(Restrictions.eq("accountInfo.login", login));
+        AccountInfo accountInfo = (AccountInfo) crit.uniqueResult();
+        return accountInfo != null;
     }
 
-    public void updateUser(User currentUser, User newUserAttributes) {
-        if (currentUser == null)
+    public void updateAccountInfo(Person currentPerson, AccountInfo newAccountInfo){
+        AccountInfo currentAccountInfo = currentPerson.getAccountInfo();
+        if (currentAccountInfo == null)
             return;
 
-        if (newUserAttributes == null)
+        if (newAccountInfo == null)
             return;
 
         Session session = HibernateUtil.currentSession();
-        String newName = newUserAttributes.getName();
+        String newName = newAccountInfo.getName();
         Person submittingPerson = Person.getCurrentSecurityUser();
-        if (StringUtils.isNotEmpty(newName) && !newName.equals(currentUser.getName())) {
+        if (StringUtils.isNotEmpty(newName) && !newName.equals(currentAccountInfo.getName())) {
             Updates update = new Updates();
             update.setFieldName("name");
             update.setNewValue(newName);
-            update.setOldValue(currentUser.getName());
-            update.setRecID(currentUser.getZdbID());
+            update.setOldValue(currentAccountInfo.getName());
+            update.setRecID(currentPerson.getZdbID());
             update.setSubmitterID(submittingPerson.getZdbID());
             update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
             session.save(update);
-            currentUser.setName(newName);
+            currentAccountInfo.setName(newName);
         }
         // since the password has to be typed in every time there is no concept
         // of changing a password. So we mark it as changed...
         {
             Updates update = new Updates();
             update.setFieldName("password");
-            update.setRecID(currentUser.getZdbID());
+            update.setRecID(currentPerson.getZdbID());
             update.setSubmitterID(submittingPerson.getZdbID());
             update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
             session.save(update);
         }
-        String role = newUserAttributes.getRole();
-        if (StringUtils.isNotEmpty(role) && !role.equals(currentUser.getRole())) {
+        String role = newAccountInfo.getRole();
+        if (StringUtils.isNotEmpty(role) && !role.equals(currentAccountInfo.getRole())) {
             Updates update = new Updates();
             update.setFieldName("role");
-            update.setRecID(currentUser.getZdbID());
+            update.setRecID(currentPerson.getZdbID());
             update.setNewValue(role);
-            update.setOldValue(currentUser.getRole());
+            update.setOldValue(currentAccountInfo.getRole());
             update.setSubmitterID(submittingPerson.getZdbID());
             update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
-            currentUser.setRole(role);
+            currentAccountInfo.setRole(role);
             session.save(update);
         }
-        String login = newUserAttributes.getLogin();
-        if (StringUtils.isNotEmpty(login) && !login.equals(currentUser.getLogin())) {
+        String login = newAccountInfo.getLogin();
+        if (StringUtils.isNotEmpty(login) && !login.equals(currentAccountInfo.getLogin())) {
             Updates update = new Updates();
             update.setFieldName("login");
-            update.setRecID(currentUser.getZdbID());
+            update.setRecID(currentPerson.getZdbID());
             update.setNewValue(login);
-            update.setOldValue(currentUser.getLogin());
+            update.setOldValue(currentAccountInfo.getLogin());
             update.setSubmitterID(submittingPerson.getZdbID());
             update.setSubmitterName(submittingPerson.getUsername());
             update.setWhenUpdated(new Date());
-            currentUser.setLogin(login);
+            currentAccountInfo.setLogin(login);
             session.save(update);
         }
-        session.update(currentUser);
+        session.update(currentPerson);
     }
 
     @SuppressWarnings("unchecked")

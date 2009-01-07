@@ -206,7 +206,7 @@
             <column name="when" not-null="true"/>
         </property>
 
-        <many-to-one name="owner" class="org.zfin.people.User" column="submitter_id" insert="false"
+        <many-to-one name="owner" class="org.zfin.people.Person" column="submitter_id" insert="false"
                      update="false"/>
     </class>
 

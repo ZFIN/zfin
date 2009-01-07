@@ -2,7 +2,8 @@ package org.zfin.framework.presentation.tags;
 
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.Authentication;
-import org.zfin.people.User;
+import org.zfin.people.AccountInfo;
+import org.zfin.people.Person;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -13,9 +14,13 @@ public class UsernameTag extends TagSupport {
     public int doStartTag() throws JspException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object o = authentication.getPrincipal();
-        if (o instanceof User) {
-            User user = (User) o;
-            String name = user.getName();
+        if (o instanceof Person) {
+            Person person = (Person) o;
+            AccountInfo accountInfo = person.getAccountInfo();
+            if (accountInfo == null)
+                return EVAL_PAGE;
+
+            String name = accountInfo.getName();
             try {
                 pageContext.getOut().print(name);
             } catch (IOException ioe) {

@@ -11,8 +11,8 @@ import org.acegisecurity.context.SecurityContext;
 import java.util.Set;
 
 /**
- * Domain business object that describes a single person that may or may not
- * have a login.
+ * Domain business object that describes a single person.
+ * AccountInfo composite contains login information which is optional.
  */
 public class Person implements UserDetails {
 
@@ -29,7 +29,7 @@ public class Person implements UserDetails {
     private boolean emailList;
     private Set<Lab> labs;
     private Set<Publication> publications;
-    private User user;
+    private AccountInfo accountInfo;
 
     public String getZdbID() {
         return zdbID;
@@ -136,32 +136,32 @@ public class Person implements UserDetails {
     }
 
 
-    public User getUser() {
-        return user;
+    public AccountInfo getAccountInfo() {
+        return accountInfo;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAccountInfo(AccountInfo accountInfo) {
+        this.accountInfo = accountInfo;
     }
 
     public GrantedAuthority[] getAuthorities() {
-        if (user == null)
+        if (accountInfo == null)
             return null;
-        String role = user.getRole();
+        String role = accountInfo.getRole();
         GrantedAuthority gr = new GrantedAuthorityImpl(role);
         return new GrantedAuthority[]{gr};
     }
 
     public String getPassword() {
-        if (user == null)
+        if (accountInfo == null)
             return null;
-        return user.getPassword();
+        return accountInfo.getPassword();
     }
 
     public String getUsername() {
-        if (user == null)
+        if (accountInfo == null)
             return null;
-        return user.getUsername();
+        return accountInfo.getUsername();
     }
 
     public boolean isAccountNonExpired() {

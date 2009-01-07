@@ -10,7 +10,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.people.User;
+import org.zfin.people.AccountInfo;
 import org.zfin.people.Person;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -40,28 +40,29 @@ public class EditUserPasswordController extends SimpleFormController {
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) {
         ProfileBean profileBean = (ProfileBean) command;
 
-        String personID = request.getParameter("user.zdbID");
+        String personID = profileBean.getPerson().getZdbID();
+        Map<String, Object> map = new HashMap<String, Object>();
         if (StringUtils.isEmpty(personID)) {
-            // error page
+            setFormView("record-not-found.page");
+            map.put(LookupStrings.ZDB_ID, "");
+            return map;
         }
 
-        User user = profileRepository.getUser(personID);
-        if (user != null)
-            profileBean.setUser(user);
-        else {
-            user = new User();
-            user.setZdbID(personID);
-            Person person = profileRepository.getPerson(personID);
+        Person person = profileRepository.getPerson(personID);
+        AccountInfo accountInfo = person.getAccountInfo();
+        if (accountInfo == null) {
+            accountInfo = new AccountInfo();
             String fullName = person.getFullName();
             int indexOfComma = fullName.indexOf(",");
             String lastName = fullName.substring(0, indexOfComma).trim();
             String firstName = fullName.substring(indexOfComma + 1).trim();
-            user.setName(firstName + " " + lastName);
+            accountInfo.setName(firstName + " " + lastName);
+            person.setAccountInfo(accountInfo);
             profileBean.setNewUser(true);
-            profileBean.setUser(user);
         }
-
-        Map<String, Object> map = new HashMap<String, Object>();
+        profileBean.setPerson(person);
+        profileBean.setAccountInfo(person.getAccountInfo());
+        setFormView("edit-user-password.page");
         map.put(LookupStrings.FORM_BEAN, profileBean);
         return map;
     }
@@ -70,34 +71,33 @@ public class EditUserPasswordController extends SimpleFormController {
                                     Object command, BindException errors) throws Exception {
 
         ProfileBean bean = (ProfileBean) command;
-        Person submitUser = Person.getCurrentSecurityUser();
-        // check for invalid zdbID Write validator class
 
         // handle delete action
         if (bean.deleteRecord()) {
-            deleteUser(bean);
+            deleteAccountInfo(bean);
             //redirect to confirmation page
             // need this redirect to switch from HTTPS to HTTP
             String url = "/action/people/edit-user-confirmation?action=" +
-                    ProfileBean.ACTION_DELETE + "&user.zdbID=" + bean.getUser().getZdbID();
+                    ProfileBean.ACTION_DELETE + "&person.zdbID=" + bean.getPerson().getZdbID();
             return new ModelAndView(new RedirectView(url));
         }
 
-        editOrCreateUser(bean);
+        editOrCreateAccountInfo(bean);
         //redirect to confirmation page
         // need this redirect to switch from HTTPS to HTTP
         String url = "/action/people/edit-user-confirmation?action=" +
-                ProfileBean.ACTION_EDIT + "&user.zdbID=" + bean.getUser().getZdbID();
+                ProfileBean.ACTION_EDIT + "&person.zdbID=" + bean.getPerson().getZdbID();
         return new ModelAndView(new RedirectView(url));
     }
 
-    private void deleteUser(ProfileBean bean) {
+    private void deleteAccountInfo(ProfileBean bean) {
         Transaction tx = null;
         Session session = HibernateUtil.currentSession();
         try {
             tx = session.beginTransaction();
-            User user = profileRepository.getUser(bean.getUser().getZdbID());
-            profileRepository.delete(user);
+            Person person = profileRepository.getPerson(bean.getPerson().getZdbID());
+            profileRepository.deleteAccountInfo(person);
+            tx.commit();
         } catch (Exception e) {
             try {
                 tx.rollback();
@@ -107,9 +107,10 @@ public class EditUserPasswordController extends SimpleFormController {
             LOG.error("Error in Transaction", e);
             throw new RuntimeException("Error during transaction. Rolled back.", e);
         }
+        //person.setAccountInfo(null);
     }
 
-    private void editOrCreateUser(ProfileBean bean) {
+    private void editOrCreateAccountInfo(ProfileBean bean) {
         String passwordFirst = bean.getPasswordOne();
         String passwordSecond = bean.getPasswordTwo();
         if (!StringUtils.isEmpty(passwordFirst) && !StringUtils.isEmpty(passwordSecond)) {
@@ -117,20 +118,22 @@ public class EditUserPasswordController extends SimpleFormController {
             Transaction tx = null;
             try {
                 tx = session.beginTransaction();
-                Person person = profileRepository.getPerson(bean.getUser().getZdbID());
-                User user = person.getUser();
-                if (user == null && bean.isNewUser())
-                    user = new User();
+                Person person = profileRepository.getPerson(bean.getPerson().getZdbID());
+                AccountInfo accountInfo = person.getAccountInfo();
+                if (accountInfo == null && bean.isNewUser())
+                    accountInfo = new AccountInfo();
                 Md5PasswordEncoder encoder = new Md5PasswordEncoder();
                 String encodedPass = encoder.encodePassword(passwordFirst, salt);
-                user.setPassword(encodedPass);
-                if (bean.isNewUser()){
-                    user.setAccountCreationDate(new Date());
-                    user.setPerson(person);
-                    user.setCookie(Math.random() + "-" + bean.getUser().getLogin());
-                    person.setUser(user);
+                accountInfo.setPassword(encodedPass);
+                if (bean.isNewUser()) {
+                    accountInfo.setAccountCreationDate(new Date());
+                    accountInfo.setCookie(Math.random() + "-" + bean.getAccountInfo().getLogin());
+                    accountInfo.setLogin( bean.getAccountInfo().getLogin());
+                    accountInfo.setRole( bean.getAccountInfo().getRole());
+                    accountInfo.setName( bean.getAccountInfo().getName());
+                    person.setAccountInfo(accountInfo);
                 } else {
-                    profileRepository.updateUser(user, bean.getUser());
+                    profileRepository.updateAccountInfo(person, bean.getAccountInfo());
                 }
                 tx.commit();
             } catch (Exception e) {

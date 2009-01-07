@@ -20,9 +20,10 @@ public class UserService {
     public static boolean isRootUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object o = authentication.getPrincipal();
-        if (o instanceof User) {
-            User user = (User) o;
-            String role = user.getRole();
+        if (o instanceof Person) {
+            Person person = (Person) o;
+            AccountInfo accountInfo = person.getAccountInfo();
+            String role = accountInfo.getRole();
             if (role != null && role.equals("root"))
                 return true;
         }
@@ -65,9 +66,9 @@ public class UserService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object o = authentication.getPrincipal();
-        if (o instanceof User) {
-            User user = (User) o;
-            String role = user.getRole();
+        if (o instanceof AccountInfo) {
+            AccountInfo accountInfo = (AccountInfo) o;
+            String role = accountInfo.getRole();
             if (role != null && role.equals(roleName))
                 return true;
         }

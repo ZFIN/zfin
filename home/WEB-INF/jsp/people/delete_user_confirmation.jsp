@@ -4,7 +4,7 @@
 <div class="allcontent">
     <h1 align=center>CONFIRMATION</h1>
     <big>You have successfully deleted the ZFIN registration of
-        <b>${formBean.user.name}</b>.
+        <b>${formBean.person.name}</b>.
         The changes you have specified are effective immediately.</big>
 
     <p/>
@@ -16,7 +16,7 @@
     <form:form>
         <input type=button name="done"
                value="Back to viewing PERSON record"
-               onClick="window.location.href='/<%=ZfinProperties.getWebDriver()%>?MIval=aa-persview.apg&OID=${formBean.user.zdbID}'">
+               onClick="window.location.href='/<%=ZfinProperties.getWebDriver()%>?MIval=aa-persview.apg&OID=${formBean.person.zdbID}'">
     </form:form>
 </div>
 

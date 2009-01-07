@@ -6,13 +6,12 @@ import java.util.Date;
 import java.io.Serializable;
 
 /**
- * User object is a value object of the person object.
- * It contains all the credential-related inof, including
- * role and cookie info.
+ * Account Info object is a value object of the person object.
+ * It contains all the credential-related info, including
+ * role and cookie.
  */
-public class User implements Serializable {
+public class AccountInfo implements Serializable {
 
-    private String zdbID;
     private String login;
     private transient String password;
     private String name;
@@ -22,8 +21,9 @@ public class User implements Serializable {
     private Date accountCreationDate;
     // ToDo: Only needed as webdatablade integration is needed.
     private String cookie;
-    private Person person;
-
+    // Hibernate uses field access to set this variable
+    private String zdbID;
+    
     public String getLogin() {
         return login;
     }
@@ -92,41 +92,25 @@ public class User implements Serializable {
         this.accountCreationDate = accountCreationDate;
     }
 
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof User))
+        if (!(o instanceof AccountInfo))
             return false;
 
-        User user = (User) o;
-        return StringUtils.equals(zdbID, user.getZdbID()) && StringUtils.equals(login, user.getLogin());
+        AccountInfo accountInfo = (AccountInfo) o;
+        return StringUtils.equals(login, accountInfo.getLogin());
     }
 
     @Override
     public int hashCode() {
         int hash = 37;
-        if (zdbID != null)
-            hash = hash * zdbID.hashCode();
         if (login != null)
             hash += hash * login.hashCode();
         return hash;
+    }
+
+    public String getZdbID() {
+        return zdbID;
     }
 
     public enum Role {

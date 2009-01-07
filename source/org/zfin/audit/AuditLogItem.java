@@ -1,6 +1,6 @@
 package org.zfin.audit;
 
-import org.zfin.people.User;
+import org.zfin.people.Person;
 
 import java.util.Date;
 
@@ -16,7 +16,7 @@ public class AuditLogItem {
     private String oldValue;
     private String comment;
     private Date dateUpdated;
-    private User owner;
+    private Person owner;
 
     public long getAuditLogID() {
         return auditLogID;
@@ -74,11 +74,11 @@ public class AuditLogItem {
         this.dateUpdated = dateUpdated;
     }
 
-    public User getOwner() {
+    public Person getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(Person owner) {
         this.owner = owner;
     }
 }

@@ -35,6 +35,7 @@
         <property name="validator">
             <bean class="org.zfin.people.presentation.EditUserValidator"/>
         </property>
+        <property name="bindOnNewForm" value="true" />
     </bean>
 
     <bean name="editUserConfirmationBean" class="org.zfin.people.presentation.EditUserPasswordConfirmationController" >

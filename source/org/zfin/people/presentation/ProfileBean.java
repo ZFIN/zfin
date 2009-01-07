@@ -1,7 +1,7 @@
 package org.zfin.people.presentation;
 
 import org.zfin.people.Person;
-import org.zfin.people.User;
+import org.zfin.people.AccountInfo;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -13,10 +13,10 @@ public class ProfileBean {
 
     public static final String ACTION_DELETE = "delete-user";
     public static final String ACTION_EDIT = "edit-user";
-    public static final String ACTION_CREATE= "create-user";
+    public static final String ACTION_CREATE = "create-user";
 
     private Person person;
-    private User user;
+    private AccountInfo accountInfo;
     private String passwordOne;
     private String passwordTwo;
     private String action;
@@ -32,21 +32,11 @@ public class ProfileBean {
         this.person = person;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public User getUser() {
-        if (user == null)
-            user = new User();
-        return user;
-    }
-
     public boolean isOwnerOrRoot() {
         Person securityUser = Person.getCurrentSecurityUser();
-        if (User.Role.ROOT.toString().equals(securityUser.getUser().getRole()))
+        if (AccountInfo.Role.ROOT.toString().equals(securityUser.getAccountInfo().getRole()))
             return true;
-        return securityUser.getUser().equals(user);
+        return securityUser.getAccountInfo().equals(accountInfo);
     }
 
     public String getPasswordOne() {
@@ -68,8 +58,7 @@ public class ProfileBean {
     // Make it reusable: jsp tag definition or
     public AuditLogItem getLatestUpdate() {
         AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
-        AuditLogItem latestLogItem = alr.getLatestAuditLogItem(person.getZdbID());
-        return latestLogItem;
+        return alr.getLatestAuditLogItem(person.getZdbID());
     }
 
     public String getAction() {
@@ -80,11 +69,11 @@ public class ProfileBean {
         this.action = action;
     }
 
-    public boolean deleteRecord(){
+    public boolean deleteRecord() {
         return (action != null && action.equals(ACTION_DELETE));
     }
 
-    public boolean createRecord(){
+    public boolean createRecord() {
         return (action != null && action.equals(ACTION_CREATE));
     }
 
@@ -94,5 +83,15 @@ public class ProfileBean {
 
     public void setNewUser(boolean newUser) {
         this.newUser = newUser;
+    }
+
+    public AccountInfo getAccountInfo() {
+        if (accountInfo == null)
+            accountInfo = new AccountInfo();
+        return accountInfo;
+    }
+
+    public void setAccountInfo(AccountInfo accountInfo) {
+        this.accountInfo = accountInfo;
     }
 }

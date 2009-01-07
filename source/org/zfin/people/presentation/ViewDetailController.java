@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.people.Person;
-import org.zfin.people.User;
+import org.zfin.people.AccountInfo;
 import org.zfin.people.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,10 +33,11 @@ public class ViewDetailController extends AbstractCommandController {
         person = profileRep.getPerson(person.getZdbID());
         profileForm.setPerson(person);
 
-        User user = null;
+        AccountInfo accountInfo = null;
         if(UserService.isRootUser() || UserService.isOwner(person.getZdbID(), Person.class)){
-            user = profileRep.getUser(person.getZdbID());
-            profileForm.setUser(user);
+            Person pers = profileRep.getPerson(person.getZdbID());
+            accountInfo = pers.getAccountInfo();
+            profileForm.setAccountInfo(accountInfo);
         }
 
 

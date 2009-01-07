@@ -13,7 +13,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.people.CuratorSession;
 import org.zfin.people.Organization;
 import org.zfin.people.Person;
-import org.zfin.people.User;
+import org.zfin.people.AccountInfo;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.repository.UserRepository;
@@ -126,7 +126,7 @@ public class PeopleRepositoryTest {
      * creates a single PK for both of them. User is a value object and is
      * tied to the Person object: one-to-one relationhip.
      */
-    public void createPersonWithUser() {
+    public void createPersonWithAccountInfo() {
         Person person = getTestPerson();
 
         Session session = HibernateUtil.currentSession();
@@ -137,8 +137,6 @@ public class PeopleRepositoryTest {
 
             String personID = person.getZdbID();
             assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
-            String userID = person.getUser().getZdbID();
-            assertEquals("Perseon and User have the same primary key", personID, userID);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -154,7 +152,7 @@ public class PeopleRepositoryTest {
     @Test
     public void createPersonOnly() {
         Person person = getTestPerson();
-        person.setUser(null);
+        person.setAccountInfo(null);
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         try {
@@ -163,7 +161,7 @@ public class PeopleRepositoryTest {
 
             String personID = person.getZdbID();
             assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
-            assertTrue("No user object created", person.getUser() == null);
+            assertTrue("No user object created", person.getAccountInfo() == null);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -171,18 +169,26 @@ public class PeopleRepositoryTest {
         }
     }
 
+    @Test
+    public void retrievePersonAndAccountInfo() {
+        // monte
+        String zdbID = "ZDB-PERS-960805-676";
+        Person person = profileRepository.getPerson(zdbID);
+        assertTrue(person != null);
+        assertTrue(person.getAccountInfo() != null);
+    }
+
     private Person getTestPerson() {
         Person person = new Person();
         person.setName("Test Person");
         person.setEmail("Email Address Test");
-        User user = new User();
-        user.setLogin("newUser");
-        user.setRole("root");
-        user.setName("Test Person");
-        user.setLoginDate(new Date());
-        user.setAccountCreationDate(new Date());
-        person.setUser(user);
-        user.setPerson(person);
+        AccountInfo accountInfo = new AccountInfo();
+        accountInfo.setLogin("newUser");
+        accountInfo.setRole("root");
+        accountInfo.setName("Test Person");
+        accountInfo.setLoginDate(new Date());
+        accountInfo.setAccountCreationDate(new Date());
+        person.setAccountInfo(accountInfo);
         return person;
     }
 

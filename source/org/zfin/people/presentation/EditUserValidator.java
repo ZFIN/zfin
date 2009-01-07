@@ -4,7 +4,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.zfin.people.Person;
-import org.zfin.people.User;
+import org.zfin.people.AccountInfo;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -25,11 +25,11 @@ public class EditUserValidator implements Validator {
         ProfileBean profileBean = (ProfileBean) command;
 
         if (!profileBean.deleteRecord()) {
-            ValidationUtils.rejectIfEmpty(errors, "user.zdbID", "code", "No user zdb ID found.");
+            ValidationUtils.rejectIfEmpty(errors, "person.zdbID", "code", "No user zdb ID found.");
             ValidationUtils.rejectIfEmpty(errors, "passwordOne", "code", "No password provided.");
             ValidationUtils.rejectIfEmpty(errors, "passwordTwo", "code", "No password provided.");
-            ValidationUtils.rejectIfEmpty(errors, "user.login", "code", "No login provided.");
-            ValidationUtils.rejectIfEmpty(errors, "user.role", "code", "No role provided.");
+            ValidationUtils.rejectIfEmpty(errors, "accountInfo.login", "code", "No login provided.");
+            ValidationUtils.rejectIfEmpty(errors, "accountInfo.role", "code", "No role provided.");
 
             // Check for double passwords
             String passwordOne = profileBean.getPasswordOne();
@@ -43,28 +43,29 @@ public class EditUserValidator implements Validator {
         }
         Person submitPerson = Person.getCurrentSecurityUser();
         // if submitter changes own records
-        if (submitPerson.getZdbID().equals(profileBean.getUser().getZdbID())) {
+        if (submitPerson.getZdbID().equals(profileBean.getPerson().getZdbID())) {
             // if submit roles
-            if (submitPerson.getUser().getRole().equals(User.Role.SUBMIT.toString())) {
+            if (submitPerson.getAccountInfo().getRole().equals(AccountInfo.Role.SUBMIT.toString())) {
                 // cannot change role
-                if (!profileBean.getUser().getRole().equals(User.Role.SUBMIT.toString()))
-                    errors.rejectValue("user.login", "code", "Your access level does not allowed to change your role");
+                if (!profileBean.getAccountInfo().getRole().equals(AccountInfo.Role.SUBMIT.toString()))
+                    errors.rejectValue("accountInfo.login", "code", "Your access level does not allowed to change your role");
             }
         }
 
         ProfileRepository pr = RepositoryFactory.getProfileRepository();
         // check for login uniqueness if a new user should be created
         if (profileBean.isNewUser()) {
-            if (pr.userExists(profileBean.getUser().getLogin()))
-                errors.rejectValue("user.login", "code", "LOGIN name '" + profileBean.getUser().getLogin() + " is already in use. " +
+            if (pr.userExists(profileBean.getAccountInfo().getLogin()))
+                errors.rejectValue("accountInfo.login", "code", "LOGIN name '" + profileBean.getAccountInfo().getLogin() + " is already in use. " +
                         "Please choose a different name.");
 
         } else {
             // check that the change in the login name does not conflict with an existing login account
-            User user = pr.getUser(profileBean.getUser().getZdbID());
-            if (!user.getLogin().equals(profileBean.getUser().getLogin())) {
-                if (pr.userExists(profileBean.getUser().getLogin()))
-                    errors.rejectValue("user.login", "code", "LOGIN name '" + profileBean.getUser().getLogin() + " is already in use. " +
+            Person person = pr.getPerson(profileBean.getPerson().getZdbID());
+            AccountInfo accountInfo = person.getAccountInfo();
+            if (!accountInfo.getLogin().equals(profileBean.getAccountInfo().getLogin())) {
+                if (pr.userExists(profileBean.getAccountInfo().getLogin()))
+                    errors.rejectValue("accountInfo.login", "code", "LOGIN name '" + profileBean.getAccountInfo().getLogin() + " is already in use. " +
                             "Please choose a different name.");
             }
         }

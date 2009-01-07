@@ -48,15 +48,9 @@ public interface ProfileRepository {
      * @param lab Lab
      */
     void insertLab(Lab lab);
-    void addSupplier(Organization organization, Marker marker);
-    /**
-     * Retrieve User (person with login account) information.
-     *
-     * @param zdbID
-     */
-    User getUser(String zdbID);
 
-    void updateUser(User user);
+    void addSupplier(Organization organization, Marker marker);
+
     /**
      * @param curatorZdbID person for whom the session value is being retrieved
      * @param pubZdbID     pub that the session value is associated with [can be null!]
@@ -85,7 +79,7 @@ public interface ProfileRepository {
      */
     MarkerSupplier getSpecificSupplier(Marker marker, Organization organization);
 
-   
+
     /**
      * Retrieve an organization by ID
      *
@@ -103,23 +97,25 @@ public interface ProfileRepository {
 
 
     /**
-     * Delete a user, but not the person record.
-     * If User record is null it just returns.
-     * @param user User
+     * Delete account Info of person, but not the person record.
+     *
+     * @param person Person
      */
-    void delete(User user);
+    void deleteAccountInfo(Person person);
 
     /**
      * Retrieve a User for a given login.
+     *
      * @param login login string
      * @return boolean
      */
     boolean userExists(String login);
 
     /**
-     * Update a users record
-     * @param currentUser
-     * @param newUserAttributes
+     * Update a users account info and record the changes.
+     *
+     * @param currentPerson person info on which updates are applied
+     * @param newAccountInfo     new account info
      */
-    void updateUser(User currentUser, User newUserAttributes);
+    void updateAccountInfo(Person currentPerson, AccountInfo newAccountInfo);
 }

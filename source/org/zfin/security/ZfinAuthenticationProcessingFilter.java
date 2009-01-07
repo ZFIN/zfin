@@ -8,7 +8,7 @@ import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.ZfinSession;
 import org.zfin.people.Person;
-import org.zfin.people.User;
+import org.zfin.people.AccountInfo;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.repository.UserRepository;
@@ -74,9 +74,9 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
         Transaction tx = session.beginTransaction();
         UserRepository ur = RepositoryFactory.getUserRepository();
         Person person = ur.getPersonByLoginName(login);
-        User user = person.getUser();
-        user.setCookie(value);
-        user.setPreviousLoginDate(new Date());
+        AccountInfo accountInfo = person.getAccountInfo();
+        accountInfo.setCookie(value);
+        accountInfo.setPreviousLoginDate(new Date());
 
         ZfinSession newSession = new ZfinSession();
         newSession.setUserName(login);
