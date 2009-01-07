@@ -32,7 +32,7 @@
 # Nights   When      Comments
 # MTWT    10:00pm   Grep errors in tests/build for nightly run on almost.
 #
-00 23 * * 1-4 ant test 2>&1 | grep -i fail | grep -v "Failures: 0, Errors: 0"
+00 23 * * 1-4 /local/bin/ant /bin/testtest 2>&1 | /bin/grep -i fail | /bin/grep -v "Failures: 0, Errors: 0"
 # Nights   When      Comments
 # MTWT    10:50pm   Grep for errors in unit tests
 #
