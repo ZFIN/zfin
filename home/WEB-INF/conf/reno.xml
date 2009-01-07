@@ -9,7 +9,9 @@
             <props>
                 <prop key="/reno/run-list">runList</prop>
                 <prop key="/reno/candidate-inqueue">candidatesInQueue</prop>
-                <prop key="/reno/candidate-view">candidateBean</prop>
+                <prop key="/reno/redundancy-candidate-view">redundancyCandidate</prop>
+                <prop key="/reno/nomenclature-candidate-view">nomenclatureCandidate</prop>
+                <prop key="/reno/candidate-view">candidateView</prop>
                 <prop key="/reno/candidate-pending">candidatesPending</prop>
                 <prop key="/reno/alignment-list">alignmentList</prop>
             </props>
@@ -54,7 +56,17 @@
     </bean>
 
 
-    <bean name="candidateBean" class="org.zfin.sequence.reno.presentation.CandidateController" autowire="byName">
+    <bean name="candidateView" class="org.zfin.sequence.reno.presentation.RedirectCandidateViewController" autowire="byName">
+        <property name="commandName">
+            <value>formBean</value>
+        </property>
+        <property name="commandClass">
+            <value>org.zfin.sequence.reno.presentation.CandidateBean</value>
+        </property>
+
+    </bean>
+
+    <bean name="redundancyCandidate" class="org.zfin.sequence.reno.presentation.RedundancyCandidateController" autowire="byName">
         <property name="commandName">
             <value>formBean</value>
         </property>
@@ -70,13 +82,34 @@
         </property>
 
         <property name="validator">
-            <bean class="org.zfin.sequence.reno.presentation.CandidateBeanValidator"/>
+            <bean class="org.zfin.sequence.reno.presentation.RedundancyCandidateValidator"/>
         </property>
-        <property name="formView" value="candidate-view.page"/>
+        <property name="formView" value="redundancy-candidate-view.page"/>
         <property name="successView" value="candidate-inqueue.page"/>
     </bean>
 
 
+    <bean name="nomenclatureCandidate" class="org.zfin.sequence.reno.presentation.NomenclatureCandidateController" autowire="byName">
+        <property name="commandName">
+            <value>formBean</value>
+        </property>
+        <property name="commandClass">
+            <value>org.zfin.sequence.reno.presentation.CandidateBean</value>
+        </property>
+
+        <property name="bindOnNewForm">
+            <value>true</value>
+        </property>
+        <property name="validateOnBinding">
+            <value>true</value>
+        </property>
+
+        <property name="validator">
+            <bean class="org.zfin.sequence.reno.presentation.NomenclatureCandidateValidator"/>
+        </property>
+        <property name="formView" value="nomenclature-candidate-view.page"/>
+        <property name="successView" value="candidate-inqueue.page"/>
+    </bean>
 
 
     <bean id="renoRepository" class="org.zfin.sequence.reno.repository.HibernateRenoRepository"/>

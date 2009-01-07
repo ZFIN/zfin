@@ -21,7 +21,6 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.reno.RenoTestData;
-import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.repository.RenoRepository;
@@ -30,7 +29,7 @@ import java.util.Set;
 
 
 /**
- * Tests the CandidateController methods for redundancy runs.
+ * Tests the RedundancyCandidateController methods for redundancy runs.
  */
 public class RedundancyCandidateControllerTest {
 
@@ -81,13 +80,13 @@ public class RedundancyCandidateControllerTest {
 
         try {
             CandidateBean candidateBeanRedun = setUpBasicBeanRedunDoneSubmission();
-            CandidateController candidateController = new CandidateController();
+            RedundancyCandidateController redundancyCandidateController = new RedundancyCandidateController();
             RunCandidate runCandidate = candidateBeanRedun.getRunCandidate();
 
             //assume the curator picks the best hit (aka the first existing gene from the pulldown that is not novel).
 //            Marker geneFromSelectList = null ;
             
-            candidateController.handleDone(candidateBeanRedun);
+            redundancyCandidateController.handleDone(candidateBeanRedun);
 
             //I want to only test the handlNote method here, but the handleNote method
             //is private; so I need to call public method like handleDone() to get handleNote()
@@ -149,7 +148,7 @@ public class RedundancyCandidateControllerTest {
 
         try {
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();        
-            CandidateController candidateController = new CandidateController();
+            RedundancyCandidateController candidateController = new RedundancyCandidateController();
 
             //assume the curator picks the best hit (aka the first existing gene from the pulldown that is not novel).
             Marker geneFromSelectList = markerRepository.getMarkerByAbbreviation("reno");
@@ -218,7 +217,7 @@ public class RedundancyCandidateControllerTest {
 
         try {
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
-            CandidateController candidateController = new CandidateController();
+            RedundancyCandidateController candidateController = new RedundancyCandidateController();
 
             //assume the curator picks the best hit (aka the first existing gene from the pulldown that is not novel).
             Marker geneFromSelectList = markerRepository.getMarkerByAbbreviation("reno");
@@ -327,7 +326,7 @@ public class RedundancyCandidateControllerTest {
         try {
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
-            CandidateController candidateController = new CandidateController();
+            RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
 
@@ -366,7 +365,7 @@ public class RedundancyCandidateControllerTest {
 
             logger.debug("mrel zdb_id: " + renoMrel.getZdbID());
 
-            //Todo: add attribution in CandidateController to mrel creation.
+            //Todo: add attribution in RedundancyCandidateController to mrel creation.
 
 /*            
 
@@ -410,7 +409,7 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
         try {
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
-            CandidateController candidateController = new CandidateController();
+            RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
 
@@ -501,7 +500,7 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
         try {
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
-            CandidateController candidateController = new CandidateController();
+            RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
             //assume the curator picks PROBLEM.
@@ -549,7 +548,7 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
         try {
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
-            CandidateController candidateController = new CandidateController();
+            RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
 
@@ -589,7 +588,7 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
         try {
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
-            CandidateController candidateController = new CandidateController();
+            RedundancyCandidateController redundancyCandidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
 
@@ -603,7 +602,7 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
             logger.info("tell the candidateController to handleDone");
             //tell the controller to execute handle done with the bean that was created here.
 
-            candidateController.handleDone(candidateBean);
+            redundancyCandidateController.handleDone(candidateBean);
             currentSession().flush();
 
             assertTrue(runCandidate.isDone());
@@ -621,7 +620,7 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
 
             assertNotNull("mrel exists between gene and cdna", renoMrel);
             //the gene has a relationship to the cdna
-            //Todo: add attribution in CandidateController to mrel creation.
+            //Todo: add attribution in RedundancyCandidateController to mrel creation.
 
 /*            assertNotNull("renoMrel not null",renoMrel);
 

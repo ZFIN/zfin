@@ -2,7 +2,6 @@ package org.zfin.sequence.reno.presentation;
 
 import org.zfin.sequence.reno.RenoTestData;
 import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.repository.RenoRepository;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -81,10 +80,10 @@ public class NomenclatureCandidateControllerTest {
 
         try {
             CandidateBean candidateBeanNomen = setUpBasicBeanNomen();
-            CandidateController candidateController = new CandidateController();
+            NomenclatureCandidateController nomenclatureCandidateController = new NomenclatureCandidateController();
 
             //tell the candidateController to hadle the done nomenBean
-            candidateController.handleDone(candidateBeanNomen);
+            nomenclatureCandidateController.handleDone(candidateBeanNomen);
 
 
         }

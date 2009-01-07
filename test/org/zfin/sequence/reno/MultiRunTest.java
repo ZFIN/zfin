@@ -10,7 +10,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.TestConfiguration;
 import org.zfin.orthology.Species;
 import org.zfin.sequence.reno.presentation.CandidateBean;
-import org.zfin.sequence.reno.presentation.CandidateController;
+import org.zfin.sequence.reno.presentation.NomenclatureCandidateController;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ReferenceDatabase;
@@ -271,8 +271,8 @@ public class MultiRunTest {
             assertEquals("run count should be 2",2,runCandidate1.getCandidate().getRunCount()) ;
 
 
-            CandidateController candidateController = new CandidateController() ;
-            candidateController.handleDone(candidateBean);
+            NomenclatureCandidateController nomenclatureCandidateController = new NomenclatureCandidateController() ;
+            nomenclatureCandidateController.handleDone(candidateBean);
             session.flush() ;
 
             assertNotSame("run candidate is NOT shared across both runs",runCandidate1.getZdbID(),runCandidate2.getZdbID()); ;

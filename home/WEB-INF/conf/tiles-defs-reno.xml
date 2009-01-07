@@ -7,8 +7,13 @@
 <tiles-definitions>
 
 
-    <definition name="candidate-view.page" extends="main_layout">
-        <put name="staticTitle" value="ZFIN: ReNo Candidate: " />
+    <definition name="redundancy-candidate-view.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: ReNo Redundancy Candidate: " />
+        <put name="body" value="/WEB-INF/jsp/reno/candidate_view.jsp"/>
+    </definition>
+
+    <definition name="nomenclature-candidate-view.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: ReNo Nomenclature Candidate: " />
         <put name="body" value="/WEB-INF/jsp/reno/candidate_view.jsp"/>
     </definition>
 
