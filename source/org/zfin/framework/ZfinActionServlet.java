@@ -41,6 +41,9 @@ public class ZfinActionServlet extends DispatcherServlet {
         ZfinProperties.setWebRootDirectory(webRoot);
         ZfinProperties.setIndexDirectory(getServletContext().getInitParameter("quicksearch-index-directory"));
         initProperties();
+        // Added this to the application context to make it easier to use global values.
+        // ToDo: Should add all global parameters into application context and have it added
+        // to the right context. There might be parameters that should only apply on a session scope...
         config.getServletContext().setAttribute("webdriverURL",ZfinProperties.getWebDriver( ));
         initDatabase();
         try {

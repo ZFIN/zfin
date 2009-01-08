@@ -52,14 +52,16 @@ public class PaginationResultFactory {
             scrollableResults.setRowNumber(startRecord - 1);
         }
         // if stopRecord = 0 then retrieve all records.
-        if (stopRecord > 0)
+        if (stopRecord > 0){
             while (scrollableResults.next() && scrollableResults.getRowNumber() < stopRecord) {
                 list.add((T) scrollableResults.get(0));
             }
-        else
+        }
+        else{
             while (scrollableResults.next()) {
                 list.add((T) scrollableResults.get(0));
             }
+        }
         if (scrollableResults.last())
             returnResult.setTotalCount(scrollableResults.getRowNumber() + 1);
         else
