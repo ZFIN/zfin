@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.antibody.repository.AntibodyRepository;
+import org.zfin.antibody.Antibody;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.anatomy.AnatomySynonym;
@@ -24,6 +26,7 @@ public class AnatomyRepositoryTest {
 
     private static AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
     private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+    private static AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
 
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -38,7 +41,7 @@ public class AnatomyRepositoryTest {
     }
 
     @Test
-    public void getAllAnatomyTerms(){
+    public void getAllAnatomyTerms() {
         List<AnatomyItem> terms = aoRepository.getAllAnatomyItems();
     }
 
@@ -164,4 +167,21 @@ public class AnatomyRepositoryTest {
         assertTrue("Should be no terms for '413'", terms.size() == 0);
     }
 
+    @Test
+    public void getSubstructureAntibodies() {
+        // zdbID = ZDB-ANAT-060816-27
+        String aoTermName = "cranium";
+        AnatomyItem item = aoRepository.getAnatomyItem(aoTermName);
+        assertTrue(item != null);
+
+        // only primary ao term
+        PaginationResult<Antibody> antibodies = antibodyRepository.getAntibodiesByAOTerm(item, null, false);
+        assertEquals("no antibodies annotated against cranium", 0, antibodies.getPopulatedResults().size());
+
+        // include annotation to substructures
+        antibodies = antibodyRepository.getAntibodiesByAOTerm(item, null, true);
+        assertTrue("no antibodies annotated against cranium", antibodies.getPopulatedResults().size() > 0);
+
+
+    }
 }

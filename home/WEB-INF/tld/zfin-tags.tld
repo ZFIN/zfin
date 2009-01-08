@@ -184,7 +184,7 @@
         <attribute>
             <name>choicePattern</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>includeNumber</name>

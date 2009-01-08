@@ -41,6 +41,7 @@ public class ZfinActionServlet extends DispatcherServlet {
         ZfinProperties.setWebRootDirectory(webRoot);
         ZfinProperties.setIndexDirectory(getServletContext().getInitParameter("quicksearch-index-directory"));
         initProperties();
+        config.getServletContext().setAttribute("webdriverURL",ZfinProperties.getWebDriver( ));
         initDatabase();
         try {
             startupTests();

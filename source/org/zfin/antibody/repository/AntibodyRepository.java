@@ -80,11 +80,14 @@ public interface AntibodyRepository {
      * Retrieve antibodies for a given ao term.
      * Only wild-type fish are cared for.
      *
+     * If no pagination info is provided then return the complete list.
+     *
      * @param aoTerm         Anatomy Term
      * @param paginationBean Pagination Bean
+     * @param includeSubstructures boolean
      * @return number of antibodies
      */
-    List<Antibody> getAntibodiesByAOTerm(AnatomyItem aoTerm, PaginationBean paginationBean);
+    PaginationResult<Antibody> getAntibodiesByAOTerm(AnatomyItem aoTerm, PaginationBean paginationBean, boolean includeSubstructures);
 
     /**
      * Counts distinct figures that are associated to an expression result with a given

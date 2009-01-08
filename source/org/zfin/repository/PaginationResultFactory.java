@@ -35,6 +35,8 @@ public class PaginationResultFactory {
     }
 
     /**
+     * stopRecord = 0 is interpreted to retrieve all records.
+     *
      * @param startRecord       This is inclusive.
      * @param stopRecord        This is exclusive.
      * @param scrollableResults Scrollable Object
@@ -49,22 +51,37 @@ public class PaginationResultFactory {
         } else {
             scrollableResults.setRowNumber(startRecord - 1);
         }
-        while (scrollableResults.next() && scrollableResults.getRowNumber() < stopRecord) {
-            list.add((T) scrollableResults.get(0));
-        }
-        scrollableResults.last();
-        returnResult.setTotalCount(scrollableResults.getRowNumber() + 1);
+        // if stopRecord = 0 then retrieve all records.
+        if (stopRecord > 0)
+            while (scrollableResults.next() && scrollableResults.getRowNumber() < stopRecord) {
+                list.add((T) scrollableResults.get(0));
+            }
+        else
+            while (scrollableResults.next()) {
+                list.add((T) scrollableResults.get(0));
+            }
+        if (scrollableResults.last())
+            returnResult.setTotalCount(scrollableResults.getRowNumber() + 1);
+        else
+            returnResult.setTotalCount(0);
         returnResult.setPopulatedResults(list);
         scrollableResults.close();
         return returnResult;
     }
 
     /**
+     * If no pagination bean object is provided a new one is created
+     * with first record = 0 and
+     * last record = 0 meaning all records will be retrieved.
+     *
      * @param bean              PaginationBean
      * @param scrollableResults Scrollable Object
      * @return pagination result
      */
     public static <T> PaginationResult<T> createResultFromScrollableResultAndClose(PaginationBean bean, ScrollableResults scrollableResults) {
+        if (bean == null) {
+            bean = new PaginationBean();
+        }
         return createResultFromScrollableResultAndClose(bean.getFirstRecord() - 1, bean.getLastRecord(), scrollableResults);
     }
 }

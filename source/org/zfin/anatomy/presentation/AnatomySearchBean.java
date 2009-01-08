@@ -46,6 +46,7 @@ public class AnatomySearchBean extends PaginationBean {
     private List<ExpressedGeneDisplay> allExpressedMarkers;
     private AnatomyStatistics anatomyStatistics;
     private AnatomyStatistics anatomyStatisticsMutant;
+    private AnatomyStatistics anatomyStatisticsAntibodies;
     private static final String NEWLINE = System.getProperty("line.separator");
     private int numberOfHighQualityProbes;
     private int markerCount;
@@ -472,12 +473,24 @@ public class AnatomySearchBean extends PaginationBean {
         this.anatomyStatisticsMutant = anatomyStatisticsMutant;
     }
 
+    public AnatomyStatistics getAnatomyStatisticsAntibodies() {
+        return anatomyStatisticsAntibodies;
+    }
+
+    public void setAnatomyStatisticsAntibodies(AnatomyStatistics anatomyStatisticsAntibodies) {
+        this.anatomyStatisticsAntibodies = anatomyStatisticsAntibodies;
+    }
+
     public boolean isAllExpressedGenesAreDisplayed() {
         return expressedGeneCount <= MAX_NUMBER_EPRESSED_GENES;
     }
 
     public boolean isAllGenotypesAreDisplayed() {
         return genotypeCount <= MAX_NUMBER_GENOTYPES;
+    }
+
+    public boolean isAllAntibodiesAreDisplayed() {
+        return antibodyCount <= MAX_NUMBER_GENOTYPES;
     }
 
     public boolean isAllWildtypeMorpholinosAreDisplayed() {

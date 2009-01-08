@@ -182,14 +182,18 @@ public class AnatomyTermDetailController extends AbstractCommandController {
 
     private void retrieveAntibodyData(AnatomyItem aoTerm, AnatomySearchBean form) {
 
-        int antibodyCount = antibodyRepository.getAntibodiesByAOTermCount(aoTerm);
-        form.setAntibodyCount(antibodyCount);
-
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        List<Antibody> antibodies = antibodyRepository.getAntibodiesByAOTerm(aoTerm, pagination);
-        List<AntibodyStatistics> abStats = createAntibodyStatistics(antibodies, aoTerm);
+        PaginationResult<Antibody> antibodies = antibodyRepository.getAntibodiesByAOTerm(aoTerm, pagination, false);
+        List<AntibodyStatistics> abStats = createAntibodyStatistics(antibodies.getPopulatedResults(), aoTerm);
         form.setAntibodyStatistics(abStats);
+        form.setAntibodyCount(antibodies.getTotalCount());
+
+        PaginationResult<Antibody> antibodiesIncludingSubstructures = antibodyRepository.getAntibodiesByAOTerm(aoTerm, pagination, true);
+        AnatomyStatistics statistics = new AnatomyStatistics();
+        statistics.setNumberOfTotalDistinctObjects(antibodiesIncludingSubstructures.getTotalCount());
+        statistics.setNumberOfObjects(antibodies.getTotalCount());
+        form.setAnatomyStatisticsAntibodies(statistics);
     }
 
     private List<AntibodyStatistics> createAntibodyStatistics(List<Antibody> antibodies, AnatomyItem aoTerm) {

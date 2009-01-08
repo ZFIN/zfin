@@ -61,7 +61,6 @@ public class AntibodyRepositoryTest {
     /**
      * Retrieving an antibody by ID'
      */
-    //ToDo: wait until Abs are in production and then hard-code a correct AB
     // @Test
     public void getAntibodyByID() {
         String zdbID = "ZDB-ATB-080421-2";
@@ -609,9 +608,9 @@ public class AntibodyRepositoryTest {
         int count = antibodyRep.getAntibodiesByAOTermCount(term);
         assertTrue(count > 0);
 
-        List<Antibody> abs = antibodyRep.getAntibodiesByAOTerm(term, pagination);
+        PaginationResult<Antibody> abs = antibodyRep.getAntibodiesByAOTerm(term, pagination, false);
         assertTrue(abs != null);
-        assertTrue(abs.size() == count);
+        assertTrue(abs.getTotalCount() == count);
     }
 
     @Test
@@ -629,7 +628,7 @@ public class AntibodyRepositoryTest {
         int count = antibodyRep.getAntibodiesByAOTermCount(term);
         assertTrue(count > -1);
 
-        List<Antibody> abs = antibodyRep.getAntibodiesByAOTerm(term, pagination);
+        PaginationResult<Antibody> abs = antibodyRep.getAntibodiesByAOTerm(term, pagination, false);
     }
 
     @Test

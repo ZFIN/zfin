@@ -28,6 +28,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.repository.PaginationResultFactory;
 import org.zfin.util.FilterType;
 
 import java.util.List;
@@ -75,8 +76,11 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             query.setParameter("antibodyType", searchCriteria.getClonalType());
         if (searchCriteria.isStageDefined())
             bindStageFilterValues(searchCriteria, query);
-        if (searchCriteria.isAnatomyDefined())
+        if (searchCriteria.isAnatomyDefined()){
             applyAnatomyTermsFilter(searchCriteria, query);
+            query.setParameter("standard", Experiment.STANDARD);
+            query.setParameter("generic", Experiment.GENERIC_CONTROL);
+        }
         PaginationBean paginationBean = searchCriteria.getPaginationBean();
         setPaginationParameters(query, paginationBean);
         return (List<Antibody>) query.list();
@@ -125,8 +129,11 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             query.setParameter("antibodyType", searchCriteria.getClonalType());
         if (searchCriteria.isStageDefined())
             bindStageFilterValues(searchCriteria, query);
-        if (searchCriteria.isAnatomyDefined())
+        if (searchCriteria.isAnatomyDefined()){
             applyAnatomyTermsFilter(searchCriteria, query);
+            query.setParameter("standard", Experiment.STANDARD);
+            query.setParameter("generic", Experiment.GENERIC_CONTROL);
+        }
         return (Integer) query.uniqueResult();
     }
 
@@ -182,7 +189,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Antibody> getAntibodiesByAOTerm(AnatomyItem aoTerm, PaginationBean paginationBean) {
+    public PaginationResult<Antibody> getAntibodiesByAOTerm(AnatomyItem aoTerm, PaginationBean paginationBean, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
         StringBuffer hql = new StringBuffer();
         hql.append("select distinct antibody from Antibody antibody, ExpressionExperiment expExp,  ");
@@ -194,7 +201,11 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         hql.append("       and genox = expExp.genotypeExperiment ");
         hql.append("       and geno = genox.genotype ");
         hql.append("       and geno.wildtype = :wildType ");
-        hql.append("       and res.anatomyTerm = :aoTerm ");
+        if (includeSubstructures) {
+            hql.append("   and ( res.anatomyTerm = :aoTerm  OR exists ( select 1 from AnatomyChildren child " +
+                    "                  where res.anatomyTerm = child.child AND child.root = :aoTerm ) ) ");
+        } else
+            hql.append("       and res.anatomyTerm = :aoTerm ");
         hql.append("       and res.expressionFound = :expressionFound ");
         hql.append("       and exp = genox.experiment ");
         hql.append("       and exp.name in (:standard , :generic ) ");
@@ -205,10 +216,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         query.setParameter("expressionFound", true);
         query.setParameter("standard", Experiment.STANDARD);
         query.setParameter("generic", Experiment.GENERIC_CONTROL);
-        int maxDisplayRecords = paginationBean.getMaxDisplayRecords();
-        if (maxDisplayRecords > 0)
-            query.setMaxResults(maxDisplayRecords);
-        return (List<Antibody>) query.list();
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, query.scroll());
     }
 
     public int getNumberOfFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm, Figure.Type figureType) {
@@ -284,7 +292,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria experiment = genotypeExperiment.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return  new PaginationResult<Publication>((List<Publication>) pubs.list()) ;
+        return new PaginationResult<Publication>((List<Publication>) pubs.list());
     }
 
     @SuppressWarnings("unchecked")
@@ -421,12 +429,16 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 hql.append("    ( exists ( select result from ExpressionResult result " +
                         "                  where result.anatomyTerm.zdbID = :aoTermID_" + i +
                         "                     AND result.expressionExperiment = experiment" +
+                        "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
+                        "                     AND result.expressionExperiment.genotypeExperiment.experiment.name in (:standard , :generic )" +
                         "                     AND result.expressionFound = 't' ) ");
                 if (searchCriteria.isIncludeSubstructures())
                     hql.append("     OR exists ( select result from ExpressionResult result, AnatomyChildren child " +
                             "                  where result.anatomyTerm = child.child AND child.root = :aoTermID_" + i +
-                            "                       AND result.expressionExperiment = experiment" +
-                            "                       AND result.expressionFound = 't' ) ");
+                            "                     AND result.expressionExperiment = experiment" +
+                            "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
+                            "                     AND result.expressionExperiment.genotypeExperiment.experiment.name in (:standard , :generic )" +
+                            "                     AND result.expressionFound = 't' ) ");
                 hql.append(" ) ");
                 if (i < numberOfTerms - 1) {
                     if (searchCriteria.isAnatomyEveryTerm())

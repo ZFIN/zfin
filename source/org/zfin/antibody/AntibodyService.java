@@ -28,10 +28,10 @@ public class AntibodyService {
     private AntibodySearchCriteria antibodySerachCriteria;
 
     private int numOfLabelings;
-
     private int numberOfPublications;
-
     private List<FigureSummaryDisplay> figureSummary;
+    // for caching purposed
+    private List<MatchingText> matchingTexts;
 
     public AntibodyService(Antibody antibody) {
         if (antibody == null)
@@ -174,18 +174,21 @@ public class AntibodyService {
      * @return matching text collection
      */
     public List<MatchingText> getMatchingText() {
+        if (matchingTexts != null)
+            return matchingTexts;
+
         if (antibodySerachCriteria == null)
             return null;
-        List<MatchingText> matchingTexts = new ArrayList<MatchingText>();
+        List<MatchingText> matchedTerms = new ArrayList<MatchingText>();
         // check antibody name
-        addMatchingAntibodyName(matchingTexts);
+        addMatchingAntibodyName(matchedTerms);
 
         // check antigen gene abbreviation, name and previous names
-        addMatchingAntigenGene(matchingTexts);
+        addMatchingAntigenGene(matchedTerms);
 
         // Check anatomy terms
-        addMatchingAnatomyTerms(matchingTexts);
-
+        addMatchingAnatomyTerms(matchedTerms);
+        matchingTexts = matchedTerms;
         return matchingTexts;
     }
 
@@ -281,7 +284,8 @@ public class AntibodyService {
     }
 
     protected void addMatchingAntibodyName(List<MatchingText> matchingTexts) {
-        String antibodyNamefilterString = antibodySerachCriteria.getName().trim();
+        String name = antibodySerachCriteria.getName();
+        String antibodyNamefilterString = name != null ? name.trim() : "";
         if (antibodyNamefilterString != null && antibodyNamefilterString.trim().length() != 0) {
             String antibodyName = antibody.getName();
             boolean hasNameMatch = false;
@@ -315,10 +319,20 @@ public class AntibodyService {
         if (experiments == null)
             return terms;
         for (ExpressionExperiment experiment : experiments) {
-            Set<ExpressionResult> results = experiment.getExpressionResults();
-            if (results != null) {
-                for (ExpressionResult result : results) {
-                    terms.add(result.getAnatomyTerm());
+            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+
+            // need to get an Experiment object to check for standard environment; do nothing if not standard
+            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+
+            if (geno.isWildtype() && exp.isStandard()) {
+                Set<ExpressionResult> results = experiment.getExpressionResults();
+                if (results != null) {
+                    for (ExpressionResult result : results) {
+                        if (result.isExpressionFound()) {
+
+                            terms.add(result.getAnatomyTerm());
+                        }
+                    }
                 }
             }
         }
@@ -335,9 +349,9 @@ public class AntibodyService {
             Set<ExpressionResult> results = labeling.getExpressionResults();
             // exclude those assays with no expression result record
             if (results != null && !results.isEmpty()) {
-              String assayName = labeling.getAssay().getName();
-              if (assayName != null)
-                assayNames.add(assayName);
+                String assayName = labeling.getAssay().getName();
+                if (assayName != null)
+                    assayNames.add(assayName);
             }
         }
         return assayNames;
@@ -393,9 +407,9 @@ public class AntibodyService {
                         GoTerm cc = result.getGoTerm();
                         String ccName;
                         if (cc == null)
-                          ccName = "";
+                            ccName = "";
                         else
-                          ccName = cc.getName();
+                            ccName = cc.getName();
 
                         // form the key
                         String key = ao.getName() + ccName;
@@ -444,10 +458,10 @@ public class AntibodyService {
 
                         Set<Figure> allFigures = labeling.getFigures();
                         for (Figure fig : allFigures) {
-                           if (!fig.getLabel().equals(AnatomyLabel.TEXT_ONLY))  {
-                              labeling.setNotAllFiguresTextOnly(true);
-                              break;
-                           }
+                            if (!fig.getLabel().equals(AnatomyLabel.TEXT_ONLY)) {
+                                labeling.setNotAllFiguresTextOnly(true);
+                                break;
+                            }
                         }
                     }
                 }
@@ -496,9 +510,9 @@ public class AntibodyService {
                         GoTerm cc = result.getGoTerm();
                         String ccZdbID;
                         if (cc == null)
-                          ccZdbID = "";
+                            ccZdbID = "";
                         else
-                          ccZdbID = cc.getZdbID();
+                            ccZdbID = cc.getZdbID();
 
                         DevelopmentStage startStage = result.getStartStage();
                         String startStageName;
@@ -566,10 +580,10 @@ public class AntibodyService {
 
                         Set<Figure> allFigures = labeling.getFigures();
                         for (Figure fig : allFigures) {
-                           if (!fig.getLabel().equals(AnatomyLabel.TEXT_ONLY))  {
-                              labeling.setNotAllFiguresTextOnly(true); 
-                              break;
-                           }
+                            if (!fig.getLabel().equals(AnatomyLabel.TEXT_ONLY)) {
+                                labeling.setNotAllFiguresTextOnly(true);
+                                break;
+                            }
                         }
                     }
                 }

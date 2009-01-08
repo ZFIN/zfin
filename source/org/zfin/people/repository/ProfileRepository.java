@@ -118,4 +118,5 @@ public interface ProfileRepository {
      * @param newAccountInfo     new account info
      */
     void updateAccountInfo(Person currentPerson, AccountInfo newAccountInfo);
+
 }

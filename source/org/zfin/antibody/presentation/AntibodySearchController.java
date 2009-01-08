@@ -40,7 +40,11 @@ public class AntibodySearchController extends SimpleFormController {
         DevelopmentStage end = new DevelopmentStage();
         end.setZdbID(DevelopmentStage.ADULT_STAGE_ZDB_ID);
         end.setName(DevelopmentStage.ADULT_STAGE);
+        DevelopmentStage start = new DevelopmentStage();
+        start.setZdbID(DevelopmentStage.ZYGOTE_STAGE_ZDB_ID);
+        start.setName(DevelopmentStage.ZYGOTE_STAGE);
         antibodySearchCriteria.setEndStage(end);
+        antibodySearchCriteria.setStartStage(start);
         formBean.setAntibodyCriteria(antibodySearchCriteria);
         return formBean;
     }

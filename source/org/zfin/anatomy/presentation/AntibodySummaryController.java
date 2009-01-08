@@ -11,6 +11,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.repository.RepositoryFactory;
 
@@ -61,8 +62,8 @@ public class AntibodySummaryController extends AbstractCommandController {
 
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(-1);
-        List<Antibody> antibodies = antibodyRepository.getAntibodiesByAOTerm(aoTerm, pagination);
-        List<AntibodyStatistics> abStats = createAntibodyStatistics(antibodies, aoTerm);
+        PaginationResult<Antibody> antibodies = antibodyRepository.getAntibodiesByAOTerm(aoTerm, pagination, false);
+        List<AntibodyStatistics> abStats = createAntibodyStatistics(antibodies.getPopulatedResults(), aoTerm);
         form.setAntibodyStatistics(abStats);
     }
 
