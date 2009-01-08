@@ -9,7 +9,6 @@ import org.zfin.marker.Marker;
 import org.zfin.infrastructure.Updates;
 import org.hibernate.Session;
 import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.apache.commons.lang.StringUtils;
 
@@ -134,8 +133,8 @@ public class HibernateProfileRepository implements ProfileRepository {
         Session session = HibernateUtil.currentSession();
         Criteria crit = session.createCriteria(Person.class);
         crit.add(Restrictions.eq("accountInfo.login", login));
-        AccountInfo accountInfo = (AccountInfo) crit.uniqueResult();
-        return accountInfo != null;
+        Person person = (Person) crit.uniqueResult();
+        return person != null;
     }
 
     public void updateAccountInfo(Person currentPerson, AccountInfo newAccountInfo){
