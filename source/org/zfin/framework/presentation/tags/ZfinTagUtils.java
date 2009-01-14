@@ -69,7 +69,7 @@ public class ZfinTagUtils {
      * @return property of specified JavaBean
      * @throws javax.servlet.jsp.JspException if the specified bean is not found
      */
-    public Object lookup(
+    public static Object lookup(
             PageContext pageContext,
             String name,
             String property,
@@ -119,7 +119,7 @@ public class ZfinTagUtils {
      * @throws JspException if an invalid scope name
      *                      is requested
      */
-    public Object lookup(PageContext pageContext, String name, String scopeName)
+    public static Object lookup(PageContext pageContext, String name, String scopeName)
             throws JspException {
 
         if (scopeName == null) {

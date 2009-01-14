@@ -235,6 +235,38 @@
         <attribute>
             <name>loopName</name>
             <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>groupBeanCollection</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>groupByBean</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>groupByDisplay</name>
+        <tagclass>org.zfin.framework.presentation.tags.GroupByDisplayTag</tagclass>
+        <info>If the another element of a collection is the same in the group by attribute then
+              do not display the the attribute again</info>
+        <attribute>
+            <name>loopName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>groupBeanCollection</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>groupByBean</name>
+            <required>true</required>
             <rtexprvalue>false</rtexprvalue>
         </attribute>
     </tag>

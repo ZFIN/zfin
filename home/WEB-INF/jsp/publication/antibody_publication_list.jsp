@@ -125,7 +125,7 @@
         </c:choose>
         <form:errors path="<%= AntibodyBean.AB_NEWPUB_ZDB_ID%>" cssClass="error indented-error"/>
 
-        <table cellspacing=0>
+        <table class="summary smallstripes">
             <c:forEach var="publishedPublication" items="${formBean.sortedPublishedPublications}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
                     <td align=left>

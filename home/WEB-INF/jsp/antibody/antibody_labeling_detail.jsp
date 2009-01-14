@@ -1,34 +1,32 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
 <c:if test="${fn:length(formBean.antibodyStat.antibodyDetailedLabelings) ne null && fn:length(formBean.antibodyStat.antibodyDetailedLabelings) > 0}">
-    <div id="short-version">
-        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <div id="short-version" class="summary">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="searchresults largestripes">
             <tr bgcolor="#ccccc0">
-                <td><b>Anatomy</b></td>
-                <td><b>Stage</b></td>
-                <td><b><a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxassayabbrev.apg">Assay</a></b></td>
-                <td><b>Gene</b></td>
-                <td><b>Data</b></td>
+                <th>Anatomy</th>
+                <th>Stage</th>
+                <th><a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxassayabbrev.apg">Assay</a></th>
+                <th>Gene</th>
+                <th>Data</th>
             </tr>
 
-            <% int alternateShadingIndx = 0; %>
             <c:forEach var="detailedLabeling" items="${formBean.antibodyStat.antibodyDetailedLabelings}"
-                       varStatus="loop"
-                       end="4">
-                <c:if test="${loop.index == 0 || formBean.antibodyStat.antibodyDetailedLabelings[loop.index].aoAndPostCompostTerm ne formBean.antibodyStat.antibodyDetailedLabelings[status.index -1].aoAndPostCompostTerm}">
-                    <% alternateShadingIndx++; %>
-                </c:if>
-                <% if (alternateShadingIndx % 2 == 1) { %>
-                <tr class="odd">
-                        <% } else { %>
-                <tr>
-                    <% } %>
+                       varStatus="loop" end="4">
+                <zfin:alternating-tr loopName="loop"
+                                     groupBeanCollection="${formBean.antibodyStat.antibodyDetailedLabelings}"
+                                     groupByBean="aoAndPostCompostTerm">
                     <td>
-                        <c:if test="${loop.index == 0 || formBean.antibodyStat.antibodyDetailedLabelings[loop.index].aoAndPostCompostTerm ne formBean.antibodyStat.antibodyDetailedLabelings[loop.index -1].aoAndPostCompostTerm}">
-                            <zfin:link entity="${detailedLabeling.anatomyItem}"/><c:if
-                                test="${detailedLabeling.cellularComponent != null}"> : <zfin:link
-                                entity="${detailedLabeling.cellularComponent}"/></c:if>
-                        </c:if>
+                        <zfin:groupByDisplay loopName="loop"
+                                             groupBeanCollection="${formBean.antibodyStat.antibodyDetailedLabelings}"
+                                             groupByBean="aoAndPostCompostTerm">
+                            <zfin:link entity="${detailedLabeling.anatomyItem}"/>
+                            <c:if test="${detailedLabeling.cellularComponent != null}"> :
+                                <zfin:link
+                                        entity="${detailedLabeling.cellularComponent}"/>
+                            </c:if>
+                        </zfin:groupByDisplay>
                     </td>
                     <td>
                         <zfin:link entity="${detailedLabeling.startStage}"/>
@@ -77,54 +75,46 @@
                             </c:if>
                         </c:if>
                     </td>
-                </tr>
+                </zfin:alternating-tr>
             </c:forEach>
             <tr>
                 <td>
                     <c:if test="${fn:length(formBean.antibodyStat.antibodyDetailedLabelings) > 5}">
                         <br/>&nbsp;&nbsp;
                         <a href="javascript:expand()">
-                            <img onclick="showAnatomyList('${id}', true)"
-                                 src="/images/darrow.gif" alt="expand"
-                                 title="Show all ${fn:length(formBean.antibodyStat.antibodyDetailedLabelings)} structures"
-                                 border="0">
+                            <img src="/images/darrow.gif" alt="expand" border="0">
                             Show all</a>
-                        ${fn:length(formBean.antibodyStat.antibodyDetailedLabelings)} labeled structures
+                        ${fn:length(formBean.antibodyStat.distinctAnatomyTerms)} labeled structures
                     </c:if>
                 </td>
             </tr>
         </table>
     </div>
-</c:if>
 
-<div style="display:none" id="long-version">
-    <c:if test="${fn:length(formBean.antibodyStat.antibodyDetailedLabelings) ne null && fn:length(formBean.antibodyStat.antibodyDetailedLabelings) > 0}">
-        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <div style="display:none" id="long-version" class="summary">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="searchresults largestripes">
             <tr bgcolor="#ccccc0">
-                <td><b>Anatomy</b></td>
-                <td><b>Stage</b></td>
-                <td><b><a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxassayabbrev.apg">Assay</a></b></td>
-                <td><b>Gene</b></td>
-                <td><b>Data</b></td>
+                <th>Anatomy</th>
+                <th>Stage</th>
+                <th><a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxassayabbrev.apg">Assay</a></th>
+                <th>Gene</th>
+                <th>Data</th>
             </tr>
 
-            <% int alternateShadingIndx = 0; %>
             <c:forEach var="detailedLabeling" items="${formBean.antibodyStat.antibodyDetailedLabelings}"
                        varStatus="loop">
-                <c:if test="${loop.index == 0 || formBean.antibodyStat.antibodyDetailedLabelings[loop.index].aoAndPostCompostTerm ne formBean.antibodyStat.antibodyDetailedLabelings[loop.index -1].aoAndPostCompostTerm}">
-                    <% alternateShadingIndx++; %>
-                </c:if>
-                <% if (alternateShadingIndx % 2 == 1) { %>
-                <tr class="odd">
-                        <% } else { %>
-                <tr>
-                    <% } %>
+                <zfin:alternating-tr loopName="loop"
+                                     groupBeanCollection="${formBean.antibodyStat.antibodyDetailedLabelings}"
+                                     groupByBean="aoAndPostCompostTerm">
                     <td>
-                        <c:if test="${loop.index == 0 || formBean.antibodyStat.antibodyDetailedLabelings[loop.index].aoAndPostCompostTerm ne formBean.antibodyStat.antibodyDetailedLabelings[loop.index -1].aoAndPostCompostTerm}">
-                            <zfin:link entity="${detailedLabeling.anatomyItem}"/><c:if
-                                test="${detailedLabeling.cellularComponent != null}"> : <zfin:link
-                                entity="${detailedLabeling.cellularComponent}"/></c:if>
-                        </c:if>
+                        <zfin:groupByDisplay loopName="loop"
+                                             groupBeanCollection="${formBean.antibodyStat.antibodyDetailedLabelings}"
+                                             groupByBean="aoAndPostCompostTerm">
+                            <zfin:link entity="${detailedLabeling.anatomyItem}"/>
+                            <c:if test="${detailedLabeling.cellularComponent != null}"> :
+                                <zfin:link entity="${detailedLabeling.cellularComponent}"/>
+                            </c:if>
+                        </zfin:groupByDisplay>
                     </td>
                     <td>
                         <zfin:link entity="${detailedLabeling.startStage}"/>
@@ -150,11 +140,9 @@
                         <c:if test="${detailedLabeling.numberOfFigures > 0}">
                             <c:choose>
                                 <c:when test="${detailedLabeling.numberOfFigures == 1}">
-                                    <a href="/<%= ZfinProperties
-                                        .
-                                                getWebDriver
-                                                        (
-                                                        )%>?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}">
+                                    <a href="/<%= ZfinProperties.getWebDriver
+                                        (
+                                        )%>?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}">
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:when>
                                 <c:otherwise>
@@ -177,20 +165,19 @@
                             </c:if>
                         </c:if>
                     </td>
-                </tr>
+                </zfin:alternating-tr>
             </c:forEach>
             <tr>
                 <td>
                     <br/>&nbsp;&nbsp;
                     <a href="javascript:collapse()">
-                        <img onclick="showAnatomyList('${id}', true)"
-                             src="/images/up.gif" alt="expand" title="Show first 5 structures" border="0">
-                        Show first</a> 5 labeled structures
+                        <img src="/images/up.gif" alt="expand" title="Show first 5 structures" border="0">
+                        Show first</a> 5 lines
                 </td>
             </tr>
         </table>
-    </c:if>
-</div>
+    </div>
+</c:if>
 
 
 <script type="text/javascript">

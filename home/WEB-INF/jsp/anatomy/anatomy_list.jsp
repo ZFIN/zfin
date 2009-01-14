@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<table class="searchresults">
+<table class="searchresults smallstripes">
 
     <c:if test="${!formBean.stageSearch}">
 
@@ -21,14 +21,7 @@
         <th>Synonyms</th>
     </tr>
     <c:forEach var="ao" items="${formBean.sortedStatisticsItems}" varStatus="rowCounter">
-        <c:choose>
-            <c:when test="${rowCounter.count % 2 != 0}">
-                <tr class="odd">
-            </c:when>
-            <c:otherwise>
-                <tr>
-            </c:otherwise>
-        </c:choose>
+        <zfin:alternating-tr loopName="rowCounter">
         <td>
             <c:if test="${ao.treeInfo != null}">
             <!-- This creates the visual level in the graph -->
@@ -71,6 +64,6 @@
                         </span>
             </c:if>
         </td>
-        </tr>
+        </zfin:alternating-tr>
     </c:forEach>
 </table>

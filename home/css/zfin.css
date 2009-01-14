@@ -528,3 +528,38 @@ a.external{
        padding-right: 13px;
 }
 
+/**** Styling necessary to produce different zfin table looks **/
+
+/* small stripes (w/top border dividers) summary table styling */
+
+/* */
+table.smallstripes tr.newgroup { border-top: 5px solid #ccc;}
+table.smallstripes tr.odd { background-color: #eee; }
+table.smallstripes tr.even { background-color: #fff }
+
+/* large striped (one per group) summary table styling */
+table.largestripes tr.newgroup { border: none; }
+table.largestripes tr.odd { background-color: transparent; }
+table.largestripes tr.even { background-color: transparent; }
+table.largestripes tr.oddgroup { background-color: #eee; }
+table.largestripes tr.evengroup { background-color: #fff; }
+
+/* solid block sommary table styling */
+table.solidblock tr.newgroup { border-top: 1px solid #ccc; }
+table.solidblock tr.odd, tr.even { background-color: #eee; }
+table.solidblock tr.oddgroup, tr.evengroup { background-color: #eee; }
+
+table.summary th {
+  background: #ccc;
+  font-weight: bold;
+  text-align: left;
+  vertical-align: top;
+  padding: .2em;
+}
+
+table.summary td {
+  /* background: #eee; */
+  padding: .2em;
+  text-align: left;
+  vertical-align: top;
+}

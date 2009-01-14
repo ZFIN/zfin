@@ -8,7 +8,6 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.core.LoopTagStatus;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -27,7 +26,7 @@ import java.util.List;
  * For example the first element in a collection will always result in:
  * <tr class="odd newgroup oddgroup">
  */
-public class CreateAlternateTRTag extends TagSupport {
+public class GroupByDisplayTag extends TagSupport {
 
     // Name of the main loop
     private String loopName;
@@ -36,9 +35,6 @@ public class CreateAlternateTRTag extends TagSupport {
     private String groupByBean;
     // the collection object
     private List groupBeanCollection;
-
-    // this index is used to indicate if a new group is started with a new element
-    private int groupIndex;
     private static final Logger LOG = Logger.getLogger(GroupByDisplayTag.class);
 
 
@@ -48,10 +44,9 @@ public class CreateAlternateTRTag extends TagSupport {
         if (loop == null)
             throw new RuntimeException("No counter named " + loopName + " being found in page context");
         int loopIndex = loop.getCount();
-        init(loopIndex);
 
         boolean isNewGroup = true;
-        if (loopIndex > 1 && groupByBean != null) {
+        if (loopIndex > 1) {
             Object previousObject = groupBeanCollection.get(loopIndex - 2);
             Object currentObject = groupBeanCollection.get(loopIndex - 1);
             try {
@@ -67,40 +62,10 @@ public class CreateAlternateTRTag extends TagSupport {
             }
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("<tr class=\"");
+        if (isNewGroup)
+            return Tag.EVAL_BODY_INCLUDE;
 
-        if (loopIndex % 2 != 0)
-            sb.append(" odd ");
-        else
-            sb.append(" even ");
-
-        if (isNewGroup && groupByBean!= null) {
-            sb.append(" newgroup ");
-            groupIndex++;
-        }
-
-        if (groupByBean != null) {
-            if (groupIndex % 2 != 0)
-                sb.append(" oddgroup ");
-            else
-                sb.append(" evengroup ");
-        }
-        sb.append("\">");
-
-        try {
-            pageContext.getOut().print(sb.toString());
-        } catch (IOException ioe) {
-            throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
-        }
-        return Tag.EVAL_BODY_INCLUDE;
-    }
-
-    private void init(int index) {
-        // if start of the loop set group index accordingly
-        if (index == 1) {
-            groupIndex = 0;
-        }
+        return Tag.SKIP_BODY;
     }
 
     /**
@@ -110,11 +75,6 @@ public class CreateAlternateTRTag extends TagSupport {
      * @throws javax.servlet.jsp.JspException
      */
     public int doEndTag() throws JspException {
-        try {
-            pageContext.getOut().print("</tr>");
-        } catch (IOException ioe) {
-            throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
-        }
         return Tag.EVAL_PAGE;
     }
 
