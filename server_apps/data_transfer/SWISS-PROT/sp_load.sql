@@ -317,7 +317,7 @@ begin work;
 		  from pre_marker_go_evidence p
 		  where not exists (Select 'x' from marker a
 		       	   	  	      where a.mrkr_zdb_id = p.mrkr_zdb_id
-					      and a.mrkr_abbrev not like 'WITHDRAWN%');
+					      and a.mrkr_abbrev like 'WITHDRAWN%');
 
 	
 --	db trigger attributes MRKRGOEV to the internal pub record
