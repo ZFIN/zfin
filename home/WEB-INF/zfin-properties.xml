@@ -26,8 +26,9 @@
     </Path>
     <Email>
         <adminEmailAddress><!--|ZFIN_ADMIN|--></adminEmailAddress>
-        <validationEmailOther><!--|VALIDATION_EMAIL_OTHER|--></validationEmailOther>        
-	<requestNewAnatomyTerm><!--|REQUEST_NEW_ANATOMY_EMAIL|--></requestNewAnatomyTerm>
+        <validationEmailOther><!--|VALIDATION_EMAIL_OTHER|--></validationEmailOther>
+        <requestNewAnatomyTerm><!--|REQUEST_NEW_ANATOMY_EMAIL|--></requestNewAnatomyTerm>
+        <ln54Contact><!--|LN54_CONTACT_EMAIL|--></ln54Contact>
     </Email>
     <Logging>
         <logFileName>zfin_logger.log</logFileName>

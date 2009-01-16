@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definitions for the site wide framework presentation stuff
+  -->
+<beans>
+
+    <bean id="frameworkUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/ln54mapper">ln54Mapper</prop>
+            </props>
+        </property>
+
+    </bean>
+
+    <bean name="ln54Mapper" class="org.zfin.mapping.presentation.LN54MapperController">
+        <property name="formView" value="ln54mapper-request.page"/>
+        <property name="successView" value="ln54mapper-result.page"/>
+        <property name="mailSender">
+            <ref bean="mailSender"/>
+        </property>
+        <property name="validator">
+            <ref bean="ln54validator"/>
+        </property>
+        <property name="commandClass" value="org.zfin.mapping.presentation.LN54MapperBean"/>
+        <property name="commandName" value="formBean"/>
+    </bean>
+
+    <bean name="mailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender"/>
+
+    <bean name="ln54validator" class="org.zfin.mapping.presentation.LN54MapperValidator"/>
+
+</beans>

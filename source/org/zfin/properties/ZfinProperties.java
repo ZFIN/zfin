@@ -84,6 +84,11 @@ public final class ZfinProperties {
 
     }
 
+    public static String getLN54ContactEmail(){
+        checkValidProperties();
+        return stripEmailBackslash(props.getEmail().getLn54Contact()) ;
+    }
+
     public static String getBackgroundColor() {
         checkValidProperties();
         return props.getWeb().getBackgroundColor();

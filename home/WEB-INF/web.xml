@@ -26,6 +26,7 @@
             /WEB-INF/conf/quicksearch.xml,
             /WEB-INF/conf/publication.xml,
             /WEB-INF/conf/webdriver.xml,
+            /WEB-INF/conf/mapper.xml,
             /WEB-INF/conf/applicationContext-acegi-security.xml
         </param-value>
     </context-param>

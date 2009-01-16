@@ -35,6 +35,7 @@
                 <value>/WEB-INF/conf/tiles-defs-webdriver.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-quicksearch.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-marker.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-mapper.xml</value>
             </list>
         </property>
     </bean>

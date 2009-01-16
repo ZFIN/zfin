@@ -195,10 +195,29 @@ ERROR -- something bad happened -- no OID passed in!
       <TR>
       <TD align=center>
         <b>Interactive Mapping:</b>
+
+        <?MIVAR NAME=LN54_OPTIONS><?/MIVAR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+    <?MISQL SQL="
+      select 
+        email, full_name 
+        from person where zdb_id ='$ZDB_ident';">
+    <?/MISQL>
+    <?MIVAR NAME=LN54_OPTIONS>?email=$1&amp;name=$2<?/MIVAR>
+<?/MIBLOCK>
+
+
+
+        <A HREF="/action/ln54mapper$LN54_OPTIONS">Place markers on $abbrev panel</a>
+        <?MICOMMENT>
         <A HREF="$mappanel_interactive_url">Place markers on $abbrev panel</a>
+        <?/MICOMMENT>
+        <?MICOMMENT>  <!-- removed -->
         <?MIVAR COND="$(NC,$mappanel_interactive_url_extra_text,null)">
 	  <font size=-1>$mappanel_interactive_url_extra_text</font>
         <?/MIVAR>
+        <?/MICOMMENT>
       </TD>
       </TR></TABLE>
       <?/MIVAR>

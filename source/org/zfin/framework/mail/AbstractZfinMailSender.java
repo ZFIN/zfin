@@ -10,6 +10,7 @@ public abstract class AbstractZfinMailSender implements MailSender {
         return sendMail(subject, message, true, ZfinProperties.getAdminEmailAddresses()[0], recipients);
     }
 
+
     public String prependSubject(String initialSubject) {
         return "From [" + System.getenv("DOMAIN_NAME") + "] on [" + System.getenv("HOST") + "]: " + initialSubject;
     }
