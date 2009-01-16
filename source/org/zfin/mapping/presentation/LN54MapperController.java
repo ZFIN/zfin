@@ -67,8 +67,19 @@ public class LN54MapperController extends SimpleFormController {
 //        emails[0] = "ndunn@uoregon.edu" ; // the contact person! from zfin admin
 //        ZfinProperties.getLN54ContactEmail() ;
         emails[0] = ZfinProperties.getLN54ContactEmail() ; // the contact person! from zfin admin
-        emails[1] = form.getEmail() ; // zfin properties
+        logger.debug("ZfinProperties.getLN54ContactEmail(): " + ZfinProperties.getLN54ContactEmail()) ; 
+        int commaIndex = form.getEmail().indexOf(",");
+        // in the case where both the command and request object gethte same data
+        if(commaIndex>0){
+            emails[1] = form.getEmail().split(",")[0] ; // zfin properties
+        }
+        else{
+            emails[1] = form.getEmail() ; // zfin properties
+        }
+        logger.debug("form.getEmail(): " + form.getEmail()) ; 
         emails[2] = ZfinProperties.getAdminEmailAddresses()[0] ; // zfin admin
+        logger.debug("ZfinProperties.getAdminEmailAddresses(): " + ZfinProperties.getAdminEmailAddresses()) ; 
+        logger.debug("ZfinProperties.getAdminEmailAddresses()[0]: " + ZfinProperties.getAdminEmailAddresses()[0]) ; 
         mailSender.sendMail("Request for new LN 54 mapping", emailContents.toString(), false, ZfinProperties.getAdminEmailAddresses()[0],emails);
 
         return modelAndView ;
