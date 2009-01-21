@@ -14,7 +14,6 @@
                 <prop key="/http-redirect/">httpRedirect</prop>
                 <prop key="/pagination">pagination</prop>
                 <prop key="/def-pub">defPub</prop>
-                <prop key="/ln54mapping">ln54Mapping</prop>
             </props>
         </property>
 
@@ -23,23 +22,6 @@
     <bean name="pagination" class="org.zfin.framework.presentation.PaginationController"/>
 
     <bean name="defPub" class="org.zfin.framework.presentation.DefPubController"/>
-
-    <bean name="ln54mapping" class="org.zfin.mapping.presentation.LN54MapperController">
-        <property name="successView" value="ln54mapping-result.page"/>
-        <property name="formView" value="ln54mapping.page"/>
-        <property name="mailSender">
-            <ref bean="mailSender"/>
-        </property>
-        <property name="validator">
-            <ref bean="ln54validator"/>
-        </property>
-        <property name="commandClass" value="org.zfin.mapping.presentation.LN54MapperBean"/>
-        <property name="commandName" value="formBean"/>
-    </bean>
-
-    <bean name="mailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender"/>
-
-    <bean name="ln54validator" class="org.zfin.mapping.presentation.LN54MapperValidator"/>
 
     <bean name="httpRedirect" class="org.zfin.framework.presentation.RedirectController"/>
 

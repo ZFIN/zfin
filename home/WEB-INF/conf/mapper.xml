@@ -6,7 +6,7 @@
   -->
 <beans>
 
-    <bean id="frameworkUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <bean id="mapperUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
                 <prop key="/ln54mapper">ln54Mapper</prop>
