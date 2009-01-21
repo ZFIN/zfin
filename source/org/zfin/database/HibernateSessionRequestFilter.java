@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.URLDecoder;
 
 /**
  * This servlet filter creates a Hibernate session for each incoming request
@@ -35,7 +36,7 @@ public class HibernateSessionRequestFilter implements Filter {
             message.append(System.getProperty("line.separator"));
             message.append("Request URL: ").append(req.getRequestURL());
             message.append(System.getProperty("line.separator"));
-            message.append("Query parameters: ").append(req.getQueryString());
+            message.append("Query parameters: ").append(URLDecoder.decode(req.getQueryString()));
             LOG.error(message, e);
         } finally {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
