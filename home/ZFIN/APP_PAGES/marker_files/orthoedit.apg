@@ -57,7 +57,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 		    <b>Add Orthologue:&nbsp;</b>
                     <SELECT name=species_newadd>
 		<?/MIVAR>
-		<option value=$1>$1
+		<option value="$1">$1
        <?/MISQL>
        <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
          </SELECT>
