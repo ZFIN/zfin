@@ -84,7 +84,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
                     <?MIVAR NAME=$species_update>$1<?/MIVAR>
                  <?/MIBLOCK>
 
-		 <option value=$1 $(IF,$(AND,$(XST,$species_selected),$(EC,$species_selected,$1)),selected $(SETVAR,$species_update,$species_selected))>$1</option>
+		 <option value="$1" $(IF,$(AND,$(XST,$species_selected),$(EC,$species_selected,$1)),selected $(SETVAR,$species_update,$species_selected))>$1</option>
 
      	<?/MISQL>
 
@@ -215,7 +215,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 		  <b>Delete <font color="red">Entire</font> Orthologue: &nbsp; </b>
                   <SELECT name=species_bigdelete>
                 <?/MIVAR>
-		<option value=$1>$1
+		<option value="$1">$1
      	 <?/MISQL>
          <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
            </SELECT>
