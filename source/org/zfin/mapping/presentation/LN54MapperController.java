@@ -80,7 +80,7 @@ public class LN54MapperController extends SimpleFormController {
         emails[2] = ZfinProperties.getAdminEmailAddresses()[0] ; // zfin admin
         logger.debug("ZfinProperties.getAdminEmailAddresses(): " + ZfinProperties.getAdminEmailAddresses()) ; 
         logger.debug("ZfinProperties.getAdminEmailAddresses()[0]: " + ZfinProperties.getAdminEmailAddresses()[0]) ; 
-        mailSender.sendMail("Request for new LN 54 mapping", emailContents.toString(), false, ZfinProperties.getAdminEmailAddresses()[0],emails);
+        mailSender.sendMail("Request for new LN 54 mapping", emailContents.toString(), false, ZfinProperties.getLN54ContactEmail(),emails);
 
         return modelAndView ;
     }
