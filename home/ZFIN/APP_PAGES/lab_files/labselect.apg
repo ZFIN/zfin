@@ -190,7 +190,6 @@ Lab Search Results
 <Center>
 <Table width="70%" border="0">
 	<tr>
-		<td width="45%" align=right valign=top>&nbsp;
 
 <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
 <!-- to be used by walking windows-->
@@ -205,19 +204,6 @@ Lab Search Results
 <?MIVAR name=$UserInput COND=$(XST,$address)>$UserInput&address=$(URLENCODE,$address)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>
-<!--- Return to the previous set of Rows --->
-<?MIBLOCK COND="$(>,$BEGIN,1)">
-	
-<?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
-
-<!-- If current not First Page, create link to first page. -->
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
-<?/MIVAR>
-
-<?/MIBLOCK>
-
-		</td>
 
                <?MIVAR>
 		<div id="pagination"></div>

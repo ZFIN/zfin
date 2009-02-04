@@ -19,8 +19,11 @@ public class PaginationController extends AbstractCommandController {
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         ApgPaginationBean bean = (ApgPaginationBean) command;
         // apg call
-        if(bean.getFirstPageRecord() > 0)
-        bean.setPage(bean.getFirstPageRecord() / bean.getMaxDisplayRecords() + 1);
+        if (bean.getFirstPageRecord() > 0)
+            if (bean.getMaxDisplayRecords() > 1)
+                bean.setPage(bean.getFirstPageRecord() / bean.getMaxDisplayRecords() + 1);
+            else
+                bean.setPage(bean.getFirstPageRecord());
         return new ModelAndView("pagination.page", LookupStrings.FORM_BEAN, bean);
     }
 }
