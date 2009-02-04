@@ -10,7 +10,7 @@
         <sidebarColor>#2234</sidebarColor>
     </Web>
     <Path>
-        <Server name="localhost" port="8080" securePort="8443"></Server>
+        <Server name="localhost" port="8080" securePort="8443"/>
         <cookiePath>cgi-bin_frost</cookiePath>
         <Webdriver>cgi-bin/webdriver</Webdriver>
         <FtpRootPath>/ftp/zfin</FtpRootPath>
@@ -20,8 +20,10 @@
         <IndexPath>/werter</IndexPath>
     </Path>
     <Email>
-        <adminEmailAddress>ndunn@uoregon.edu</adminEmailAddress>
-        <validationEmailOther>ndunn@uoregon.edu</validationEmailOther>
+        <adminEmailAddress>zfin@zfin.org</adminEmailAddress>
+        <validationEmailOther>zfin@zfin.org</validationEmailOther>
+        <requestNewAnatomyTerm>zfin@zfin.org</requestNewAnatomyTerm>
+        <ln54Contact>zfin@zfin.org</ln54Contact>
     </Email>
     <Logging>
         <logFileName>zfin_logger.log</logFileName>

@@ -23,6 +23,7 @@ import org.zfin.util.HighlightUtilTest;
 import org.zfin.util.ListFormatterTest;
 import org.zfin.util.UrlCreatorTest;
 import org.zfin.framework.presentation.UIFieldTransformerTest;
+import org.zfin.properties.ZfinPropertiesTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite).
@@ -53,7 +54,8 @@ import org.zfin.framework.presentation.UIFieldTransformerTest;
         StagePresentationTest.class,
         SortAnatomyResultsTest.class,
         UIFieldTransformerTest.class,
-        UrlCreatorTest.class
+        UrlCreatorTest.class,
+        ZfinPropertiesTest.class
         })
 
 public class UnitTests {

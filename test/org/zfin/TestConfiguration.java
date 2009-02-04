@@ -1,21 +1,17 @@
 package org.zfin;
 
-import org.apache.log4j.xml.DOMConfigurator;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ApplicationProperties;
-import org.zfin.properties.Path;
-import org.zfin.properties.impl.ApplicationPropertiesImpl;
-import org.zfin.properties.impl.PathImpl;
-import org.zfin.people.Person;
-import org.zfin.people.repository.ProfileRepository;
-import org.zfin.repository.RepositoryFactory;
-import org.acegisecurity.context.SecurityContext;
-import org.acegisecurity.context.SecurityContextImpl;
-import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.Authentication;
 import org.acegisecurity.AuthenticationManager;
 import org.acegisecurity.MockAuthenticationManager;
-import org.acegisecurity.Authentication;
+import org.acegisecurity.context.SecurityContext;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.context.SecurityContextImpl;
 import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+import org.apache.log4j.xml.DOMConfigurator;
+import org.zfin.people.Person;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
 
@@ -35,19 +31,20 @@ public class TestConfiguration {
 
     public static String[] getHibernateConfiguration() {
         return new String[]{
-                "reno.hbm.xml",
+                "antibody.hbm.xml",
                 "anatomy.hbm.xml",
-                "people.hbm.xml",
-                "general.hbm.xml",
                 "blast.hbm.xml",
-                "marker.hbm.xml",
                 "expression.hbm.xml",
-                "sequence.hbm.xml",
-                "publication.hbm.xml",
-                "orthology.hbm.xml",
-                "mutant.hbm.xml",
+                "general.hbm.xml",
                 "infrastructure.hbm.xml",
-                "mapping.hbm.xml"
+                "marker.hbm.xml",
+                "mapping.hbm.xml",
+                "mutant.hbm.xml",
+                "orthology.hbm.xml",
+                "people.hbm.xml",
+                "publication.hbm.xml",
+                "reno.hbm.xml",
+                "sequence.hbm.xml"
         };
     }
 
@@ -55,13 +52,7 @@ public class TestConfiguration {
      * Creates a default ApplicationProperties object.
      */
     public static void initApplicationProperties() {
-//        ZfinProperties.init(APP_SETUP_REPOSITORY_DIRECTORY, APP_SETUP_MASTER_FILE);
-        ApplicationProperties properties = new ApplicationPropertiesImpl();
-        Path path = new PathImpl();
-        path.setWebdriver("cgi-bin/webdriver");
-        properties.setPath(path);
-        ZfinProperties.init(properties);
-
+        ZfinProperties.init(APP_SETUP_REPOSITORY_DIRECTORY, APP_SETUP_MASTER_FILE);
     }
 
     public static void setAuthenticatedUser() {
