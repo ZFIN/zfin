@@ -82,17 +82,9 @@ zero_pad(mi_lvarchar *unpaddedLvar)
       }
     }
     else {      /* just a regular character, copy it. */
-
-      /* special case to ignore the '*' character
-         if the current char is '*', move up in the
-         unpaddedPtr string without changing the 
-         paddedPtr at all */
-      if (*unpaddedPtr != '*') {
-	*paddedPtr = tolower(*unpaddedPtr);
-	paddedPtr++;
-      }
+      *paddedPtr = tolower(*unpaddedPtr);
       unpaddedPtr++;
-
+      paddedPtr++;
     }
     if (paddedPtr - paddedStr > MAXLEN) {
       /* ERROR Condition:  Padded string is too long */
