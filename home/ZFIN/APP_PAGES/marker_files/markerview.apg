@@ -2723,7 +2723,7 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
     <?MIBLOCK COND=$(NXST,$vDBnameColumn)>
       <?MIVAR NAME=vDBnameColumn>
          <nobr><LI>
-        $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
+         $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
    <?MIVAR>    <A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref <?/MIVAR> 
         </LI></nobr>
         <?MISQL SQL="select mtgrpmem_mrkr_type_group from marker_type_group_member where mtgrpmem_mrkr_type_group='CLONE' and mtgrpmem_mrkr_type='$marker_type'">
@@ -2753,8 +2753,10 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
       <?MIVAR NAME=vDBnameColumn>
         $vDBnameColumn
        <nobr><LI>
+       $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
        <?MIVAR><A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref <?/MIVAR>
         </LI></nobr>
+
       <?/MIVAR>
     <?/MIBLOCK>
 
