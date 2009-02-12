@@ -18,7 +18,7 @@
 use strict;
 use DBI;
 
-my ($termId, $termName,$termZdbId,@termCLs, @termCAROs,@secondIds, @termZdbIds, $termStartStg, $termEndStg, @termPartOf,@termDevelopsFrom,@termIsA,$termDef, $termComment, @termSynonym, $term_zdb_id);
+my ($termId, $termName,$termZdbId,@termCLs, @termCAROs,@secondIds, @termZdbIds, $termStartStg, $termEndStg, @termPartOf,@termDevelopsFrom,@termIsA,$termDef, $termComment, @termSynonym, $term_zdb_id, @termDefAttrib, @termAttrib, $refCount);
 
 &initiateVar ();
 
@@ -36,6 +36,7 @@ open ANATOBS, ">anatitem_obsolete.unl" or die "Cannot open anatitem_obsolete.unl
 open ANATREL, ">anatrel.unl" or die "Cannot open anatrel.unl file for write \n";
 open ANATALIAS, ">anatalias.unl" or die "Cannot open anatalias.unl file for write \n";
 open ANATMERG, ">anatitem_merged.unl" or die "Cannot open anatmerge.unl file for write \n";
+open ANATDEFATTRIB, ">anatitem_def_attrib.unl" or die "Cannot open anatitem_def_attrib.unl file for write \n";
 
 open DBLINKIDS, ">dblink_ids.unl" or die "Cannot open cell_ids.unl file for write \n";
 
@@ -114,6 +115,38 @@ while (<>) {
 	    $termDef = &stringTrim($1);
 	    #$termDef =~ s/\'/\"/g;   # double quotes are preferred in table storage
 	    $termDef =~ s/\\n/ /g;   # replace '\n' to a space character
+	    if (/\[(.*)\]/) { 
+	      my @termAttrib = split ',', $1 ;
+	      foreach (@termAttrib)
+	      {
+	        if (/(ZDB\-PUB\-[0-9]{6}\-[0-9]+)/)
+	        {
+	          push @termDefAttrib, "$1";
+	        }
+	        elsif (/:cura/i){}
+	        elsif (/ISBN\: ?([0-9]+)/)
+	        {
+	          $termDef .= " <a href=\"http://isbndb.com/search-all.html?kw=$1\">ISBN:$1</a> ";
+	        }	        
+	        elsif (/PMID\: ?([0-9]+)/)
+	        {
+	          $termDef .= " <a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?db=PubMed&term=$1\">PubMed:$1</a> ";
+	        }        
+	        elsif (/http\:\/?\/?(.+\.com)(.*)/)
+	        {
+	          $termDef .= " <a href=\"http://$1$2\">$1</a> ";
+	        }
+	        else
+	        {
+	          $termDef .= " <a href=\"$_\">$_</a> ";
+	        }
+	      }
+	      if (@termDefAttrib == 1)
+	      {
+	        $termDef .= " (<a href=http://zfin.org/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$termDefAttrib[0]>1</a>)";
+	      }
+	    }
+	    
 	    next;
 	}
 	if ( /^synonym:\s+\"(.+)\"/ ) {
@@ -195,6 +228,13 @@ while (<>) {
 	$termZdbId = pop @termZdbIds;
     }
     
+    if (@termDefAttrib > 1)
+    {
+        $refCount = @termDefAttrib;
+        $termDef .= " (<a href=http://gorp.zfin.org/cgi-bin/webdriver?MIval=aa-showpubs.apg&OID=$termZdbId&total_count=$refCount>$refCount</a>)";
+        $refCount = 0;
+    } 
+    
     if ( $termZdbId )  {
 	
 	print ANATEXT join("|", $termZdbId, $termName, $termStartStg, $termEndStg, $termDef, $termComment,"\n");
@@ -228,6 +268,9 @@ while (<>) {
     foreach (@termIsA) {
 	print ANATREL join("|", $_, $termId, "is_a")."|\n";
     }
+    foreach (@termDefAttrib) {
+	print ANATDEFATTRIB "$termId|$_|\n";
+    }
     
     &initiateVar ();
     
@@ -240,6 +283,7 @@ close ANATREL;
 close ANATALIAS;
 close ANATMERG;
 close DBLINKIDS;
+close ANATDEFATTRIB;
 
 $dbh->disconnect();
 
@@ -272,6 +316,9 @@ sub initiateVar  {
     @termCLs = ();
     @termCAROs = ();
     @termZdbIds = ();
+    @termDefAttrib = ();
+    @termAttrib = ();
+    $refCount = 0;
 }
 #=====================================
 # sub stringTrim

@@ -11,6 +11,7 @@
 --      anatrel.unl  : ZFA:#######(parent)|ZFA:#######(child)|rel_type|
 --      anatalias.unl: ZFA:#######|synonym|ZDB-PUB-######-##|
 --      dblink_ids.unl    : ZFA:#######|CL/CARO:#######|
+--      anatitem_def_attrib.unl    : ZFA:#######|ZDB-PUB-######-##|
 --
 -- OUTPUT:
 --     start_startInconsistent.err
@@ -26,6 +27,7 @@
 --      anatomy_item: new/updated entries
 --      anatomy_relationship: wipe off and reload
 --      data_alias: new/updated entries
+--      record_attribution: new definition entries
 --      expression_result  : replace merged anatomy term 
 --			     with the replacer
 --      zdb_active_data: drop obsolete and merged anatomy term,
@@ -107,6 +109,16 @@ create unique index u_anatomy_item_primary_key
 load from "anatitem_exist.unl" insert into updated_anatomy_item;
 
 !echo '== update stg obo id =='
+
+select u_anatitem_name from updated_anatomy_item where not exists 
+                 (select stg_zdb_id
+		   from stage
+		  where u_anatitem_start_stg_zdb_id = stg_obo_id);
+select u_anatitem_name from updated_anatomy_item where not exists 
+                 (select stg_zdb_id
+		   from stage
+		  where u_anatitem_end_stg_zdb_id = stg_obo_id);
+
 update updated_anatomy_item
    set u_anatitem_start_stg_zdb_id = 
 		(select stg_zdb_id
@@ -331,6 +343,8 @@ insert into anatomy_relationship_list_before
 	select * from anatomy_relationship_list_temp;
 
 
+
+
 !echo "============================================================"
 !echo "====   Load in /Delete from real tables                 ===="
 !echo "============================================================"
@@ -525,6 +539,12 @@ select n_anatitem_name, n_anatitem_zdb_id, ss.stg_abbrev, se.stg_abbrev
 insert into zdb_active_data (zactvd_zdb_id)
      select n_anatitem_zdb_id
        from new_anatomy_item;
+
+select n_anatitem_zdb_id, n_anatitem_name, n_anatitem_obo_id, anatitem_zdb_Id, anatitem_name, anatitem_obo_id
+from anatomy_item, new_anatomy_item
+where anatitem_zdb_id != n_anatitem_zdb_id
+  and anatitem_obo_id = n_anatitem_obo_id;
+  
 
 insert into anatomy_item (anatitem_zdb_id, anatitem_obo_id, anatitem_name,
 			  anatitem_start_stg_zdb_id, 
@@ -1197,10 +1217,99 @@ insert into updates (submitter_id, submitter_name, rec_id,
       from tmp_ao_updates;
 
 
+
+-------------------------------------------------------------------
+-- Definition attribution
+-- 
+-- create new attributions for anatomy definitions
+-------------------------------------------------------------------
+
+!echo '=====  new_definition_attributions  ====='
+create temp table new_record_attribution (
+	n_recattrib_data_zdb_id 	varchar(50),
+	n_recattrib_source_zdb_id 	varchar(50)
+)with no log;
+
+create temp table new_anatitem_def_attribution (
+	n_recattrib_data_zdb_id 	varchar(50),
+	n_recattrib_source_zdb_id 	varchar(50)
+)with no log;
+
+
+!echo '== load anatitem_def_attrib.unl =='
+load from 'anatitem_def_attrib.unl' insert into new_record_attribution;
+
+!echo '== remove white space =='
+update new_record_attribution 
+   set (n_recattrib_source_zdb_id, n_recattrib_data_zdb_id) = 
+   (scrub_char(n_recattrib_source_zdb_id), scrub_char(n_recattrib_data_zdb_id));
+   
+   
+!echo '== update obo id to zdb id =='
+update new_record_attribution 
+   set n_recattrib_data_zdb_id = (select anatitem_zdb_id
+			                from anatomy_item
+				       where n_recattrib_data_zdb_id = anatitem_obo_id)
+ where n_recattrib_data_zdb_id in (select anatitem_obo_id
+					 from anatomy_item);
+
+
+!echo '==  remove existing records =='
+delete from new_record_attribution where exists ( select *
+                                          from record_attribution
+                                          where recattrib_data_zdb_id = n_recattrib_data_zdb_id
+                                            and recattrib_source_zdb_id = n_recattrib_source_zdb_id
+                                            and recattrib_source_type = "anatomy definition");
+
+
+!echo '== unload if obo_id not found in zfin =='
+ unload to "obo_id_not_found.rpt"
+   select *
+     from new_record_attribution 
+    where n_recattrib_data_zdb_id not like "ZDB%";
+
+-- '== delete record if obo_id not found in zfin =='
+delete from new_record_attribution where n_recattrib_data_zdb_id not like "ZDB%";
+
+
+!echo '== unload if PUB id not found in zfin =='
+ unload to "pub_id_not_found.rpt"
+   select *
+     from new_record_attribution 
+    where not exists (select * from publication where zdb_id = n_recattrib_source_zdb_id);
+
+-- '== delete record if obo_id not found in zfin =='
+delete from new_record_attribution 
+    where not exists (select * from publication where zdb_id = n_recattrib_source_zdb_id);
+
+
+-- '== remove duplicates by copying distinct =='
+insert into new_anatitem_def_attribution (
+    n_recattrib_data_zdb_id,
+    n_recattrib_source_zdb_id)
+select distinct
+    n_recattrib_data_zdb_id,
+    n_recattrib_source_zdb_id
+from new_record_attribution;
+
+
+!echo '==  create new records =='
+insert into record_attribution (
+    recattrib_data_zdb_id,
+    recattrib_source_zdb_id,
+    recattrib_source_type)
+select 
+    n_recattrib_data_zdb_id,
+    n_recattrib_source_zdb_id,
+    "anatomy definition"
+from new_anatitem_def_attribution;
+
+
+
 !echo "============================================================"
 !echo "====   Verify XPAT annotation with the new AO           ===="
 !echo "============================================================"
-
+{
 unload to "annotationViolates.err"
 	    select xpatex_source_zdb_id, 
 		   s1.stg_abbrev, 
@@ -1227,8 +1336,8 @@ unload to "annotationViolates.err"
                                      xpatres_end_stg_zdb_id
                                      ) = "f";
 
-
---rollback work;
+}
+rollback work;
 
 --if no error from the screen, numbers looks right, and except 
 --annotationViolates.err the other three .err files are with zero length,
@@ -1236,6 +1345,5 @@ unload to "annotationViolates.err"
 --ask for a file AO_translation.unl from one of them with file format
 -- ZDB-ANAT-XXXX|ZDB-STAGE-XXXX|ZDB-STAGE-XXXX|ZDB-ANAT-XXXX
 
---
-commit work;
+--commit work;
  
