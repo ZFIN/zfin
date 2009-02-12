@@ -652,7 +652,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
 */
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return  new PaginationResuselt<Publication>((List<Publication>) pubs.list()) ;
+        return  new PaginationResult<Publication>((List<Publication>) pubs.list()) ;
     }
 
 
