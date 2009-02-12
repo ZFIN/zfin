@@ -3,7 +3,7 @@ package org.zfin.ontology;
 /**
  * domain object for GO ontology. Will be superseeded by the gDAG.
  */
-public class GoTerm implements Comparable<GoTerm> {
+public class GoTerm implements OntologyTerm, Comparable<GoTerm> {
 
     private String zdbID;
     private String goID;

@@ -1,13 +1,13 @@
 package org.zfin.anatomy;
 
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.anatomy.repository.AnatomyRepository;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.ontology.OntologyTerm;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 import java.util.Set;
-import java.io.Serializable;
 
 /**
  * This business object defines an anatomical structure, aka anatomy item or anatomy term.
@@ -15,7 +15,7 @@ import java.io.Serializable;
  * <p/>
  * ToDo: This class needs to be refactored to allow for a common interface for a term in any ontology.
  */
-public class AnatomyItem implements Comparable<AnatomyItem> {
+public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
 
     public static final String UNKNOWN = "unknown";
     private long itemID;

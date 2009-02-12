@@ -159,16 +159,6 @@ public class LookupComposite extends Composite {
                         });
                     }
                 }
-                else
-                if (textBox.getText() == null || textBox.getText().length() == 0 ||
-                        ( textBox.getText().length()==1
-                                &&
-                                (c== KeyboardListener.KEY_DELETE || c== KeyboardListener.KEY_BACKSPACE)
-                        )
-                        )
-                {
-                    handleNoText();
-                }
             }
         });
 
@@ -187,15 +177,10 @@ public class LookupComposite extends Composite {
 
     }
 
-    protected void handleNoText(){
-        setNoteString("Enter "+getMinLookupLenth()+" or more letters");
-    }
-
     protected void initNoteGui(){
         noteLabel.setVisible(true);
         noteLabel.setWordWrap(true);
         rootPanel.add(noteLabel);
-        handleNoText();
     }
 
 

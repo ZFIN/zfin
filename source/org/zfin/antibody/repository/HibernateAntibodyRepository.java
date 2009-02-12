@@ -41,6 +41,14 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     private AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
 
+    // These attributes are cashed for performance reasons
+    // They are static, i.e. they do not change all that often.
+    // To update the list you need to retstart Tomcat or we can have an
+    // update at runtime.
+    private List<Species> immunogenSpeciesList;
+    private List<Species> hostSpeciesList;
+
+
     public Antibody getAntibodyByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return (Antibody) session.get(Antibody.class, zdbID);
@@ -139,12 +147,15 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     @SuppressWarnings("unchecked")
     public List<Species> getHostSpeciesList() {
+        if (hostSpeciesList != null)
+            return hostSpeciesList;
 
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Species.class);
         criteria.add(eq("antibodyHost", true));
         criteria.addOrder(Order.asc("displayOrder"));
-        return criteria.list();
+        hostSpeciesList = criteria.list();
+        return hostSpeciesList;
     }
 
     @SuppressWarnings("unchecked")
@@ -162,12 +173,15 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     @SuppressWarnings("unchecked")
     public List<Species> getImmunogenSpeciesList() {
+        if (immunogenSpeciesList != null)
+            return immunogenSpeciesList;
 
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Species.class);
         criteria.add(eq("antibodyImmunogen", true));
         criteria.addOrder(Order.asc("displayOrder"));
-        return criteria.list();
+        immunogenSpeciesList = criteria.list();
+        return immunogenSpeciesList;
     }
 
 
@@ -180,7 +194,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria genotype = genotypeExperiment.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
         Criteria results = labeling.createCriteria("expressionResults");
-        results.add(eq("anatomyTerm", aoTerm));
+        // check AO1 and AO2 
+        results.add(Restrictions.or(
+                Restrictions.eq("anatomyTerm", aoTerm),
+                Restrictions.eq("secondaryAnatomyTerm", aoTerm)));
         results.add(eq("expressionFound", true));
         Criteria experiment = genotypeExperiment.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
@@ -202,10 +219,14 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         hql.append("       and geno = genox.genotype ");
         hql.append("       and geno.wildtype = :wildType ");
         if (includeSubstructures) {
-            hql.append("   and ( res.anatomyTerm = :aoTerm  OR exists ( select 1 from AnatomyChildren child " +
-                    "                  where res.anatomyTerm = child.child AND child.root = :aoTerm ) ) ");
+            hql.append("   and ( res.anatomyTerm = :aoTerm  OR res.secondaryAnatomyTerm = :aoTerm" +
+                    "                                       OR exists ( select 1 from AnatomyChildren child " +
+                    "                  where res.anatomyTerm = child.child AND child.root = :aoTerm ) " +
+                    "                                       OR exists ( select 1 from AnatomyChildren child " +
+                    "                  where res.secondaryAnatomyTerm = child.child AND child.root = :aoTerm ) " +
+                    ") ");
         } else
-            hql.append("       and res.anatomyTerm = :aoTerm ");
+            hql.append("       and (res.anatomyTerm = :aoTerm OR res.secondaryAnatomyTerm = :aoTerm) ");
         hql.append("       and res.expressionFound = :expressionFound ");
         hql.append("       and exp = genox.experiment ");
         hql.append("       and exp.name in (:standard , :generic ) ");
@@ -228,7 +249,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             criteria = session.createCriteria(FigureFigure.class);
         criteria.setProjection(Projections.countDistinct("zdbID"));
         Criteria results = criteria.createCriteria("expressionResults");
-        results.add(eq("anatomyTerm", aoTerm));
+        // check AO1 and AO2
+        results.add(Restrictions.or(
+                Restrictions.eq("anatomyTerm", aoTerm),
+                Restrictions.eq("secondaryAnatomyTerm", aoTerm)));
         results.add(eq("expressionFound", true));
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
@@ -246,7 +270,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria criteria = session.createCriteria(Figure.class);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         Criteria results = criteria.createCriteria("expressionResults");
-        results.add(eq("anatomyTerm", aoTerm));
+        // check AO1 and AO2
+        results.add(Restrictions.or(
+                Restrictions.eq("anatomyTerm", aoTerm),
+                Restrictions.eq("secondaryAnatomyTerm", aoTerm)));
         results.add(eq("expressionFound", true));
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
@@ -283,7 +310,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria labeling = pubs.createCriteria("expressionExperiments");
         labeling.add(eq("antibody", antibody));
         Criteria results = labeling.createCriteria("expressionResults");
-        results.add(eq("anatomyTerm", aoTerm));
+        // check AO1 and AO2
+        results.add(Restrictions.or(
+                Restrictions.eq("anatomyTerm", aoTerm),
+                Restrictions.eq("secondaryAnatomyTerm", aoTerm)));
         results.add(isNotEmpty("figures"));
         results.add(eq("expressionFound", true));
         Criteria genotypeExperiment = labeling.createCriteria("genotypeExperiment");
@@ -427,14 +457,16 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             int numberOfTerms = searchCriteria.getAnatomyTerms().length;
             for (int i = 0; i < numberOfTerms; i++) {
                 hql.append("    ( exists ( select result from ExpressionResult result " +
-                        "                  where result.anatomyTerm.zdbID = :aoTermID_" + i +
+                        "                  where (   result.anatomyTerm.zdbID = :aoTermID_" + i +
+                        "                         OR result.secondaryAnatomyTerm.zdbID = :aoTermID_" + i + ")" +
                         "                     AND result.expressionExperiment = experiment" +
                         "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
                         "                     AND result.expressionExperiment.genotypeExperiment.experiment.name in (:standard , :generic )" +
                         "                     AND result.expressionFound = 't' ) ");
                 if (searchCriteria.isIncludeSubstructures())
                     hql.append("     OR exists ( select result from ExpressionResult result, AnatomyChildren child " +
-                            "                  where result.anatomyTerm = child.child AND child.root = :aoTermID_" + i +
+                            "                  where (result.anatomyTerm = child.child OR result.secondaryAnatomyTerm = child.child) " +
+                            "                       AND child.root = :aoTermID_" + i +
                             "                     AND result.expressionExperiment = experiment" +
                             "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
                             "                     AND result.expressionExperiment.genotypeExperiment.experiment.name in (:standard , :generic )" +
@@ -474,4 +506,3 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
 }
-

@@ -782,8 +782,8 @@ create dba function "informix".regen_anatomy()
 	insert into genos_with_phenos
 	  select distinct genox_geno_Zdb_id
 	    from atomic_phenotype, genotype_experiment, genotype
-	    where (apato_entity_a_zdb_id = anatomyId or
-		   apato_entity_b_zdb_id = anatomyId)
+	    where (apato_subterm_zdb_id = anatomyId or
+		   apato_superterm_zdb_id = anatomyId)
 	      and genox_zdb_id = apato_genox_zdb_id
 	      and genox_geno_zdb_id = geno_zdb_id
 	      and geno_is_wildtype = 'f';
@@ -797,8 +797,8 @@ create dba function "informix".regen_anatomy()
 	  select distinct genox_geno_zdb_id
 	    from all_anatomy_contains_new,
 		 atomic_phenotype, genotype_Experiment, genotype
-	    where (allanatcon_contained_zdb_id = apato_entity_A_zdb_id or
-			allanatcon_contained_zdb_id = apato_entity_b_zdb_id)
+	    where (allanatcon_contained_zdb_id = apato_subterm_zdb_id or
+			allanatcon_contained_zdb_id = apato_superterm_zdb_id)
 	      and allanatcon_container_zdb_id = anatomyId
 	      and apato_genox_Zdb_id = genox_Zdb_id
 	      and genox_geno_zdb_id = geno_zdb_id

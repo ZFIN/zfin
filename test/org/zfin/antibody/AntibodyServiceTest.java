@@ -122,6 +122,46 @@ public class AntibodyServiceTest {
         assertEquals(2, aoTerms.size());
     }
 
+    @Test
+    public void distinctAOTermListWithSecondaryAoTerm(){
+        AnatomyItem termOne = new AnatomyItem();
+        termOne.setZdbID("ZDB-ANAT-011113-512");
+        termOne.setNameOrder("Halle");
+        AnatomyItem termTwo = new AnatomyItem();
+        termTwo.setZdbID("ZDB-ANAT-011113-223");
+        termTwo.setNameOrder("Zwitter");
+        AnatomyItem termThree = new AnatomyItem();
+        termThree.setZdbID("ZDB-ANAT-011113-514");
+        termThree.setNameOrder("Margor");
+
+        ExpressionResult resultOne = new ExpressionResult();
+        resultOne.setAnatomyTerm(termOne);
+        resultOne.setExpressionFound(true);
+        resultOne.setSecondaryAnatomyTerm(termThree);
+
+        ExpressionResult resultTwo = new ExpressionResult();
+        resultTwo.setAnatomyTerm(termTwo);
+        resultTwo.setExpressionFound(true);
+
+        HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
+        results.add(resultOne);
+        results.add(resultTwo);
+
+        ExpressionExperiment experiment = new ExpressionExperiment();
+        experiment.setExpressionResults(results);
+
+        Set<ExpressionExperiment> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
+
+        Antibody ab = new Antibody();
+        ab.setAntibodyLabelings(experiments);
+
+        AntibodyService as = new AntibodyService(ab);
+
+        List<AnatomyItem> aoTerms = as.getDistinctAnatomyTerms();
+        assertTrue(aoTerms != null);
+        assertEquals(3, aoTerms.size());
+    }
+
     private Set<ExpressionExperiment> createWildtypeAndStandardGenotypeExperiment(ExpressionExperiment experiment) {
         GenotypeExperiment genox = new GenotypeExperiment();
         experiment.setGenotypeExperiment(genox);

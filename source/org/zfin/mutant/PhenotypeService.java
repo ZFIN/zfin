@@ -21,7 +21,7 @@ public class PhenotypeService {
      * @param anatomyItem        Anatomy Term
      * @return HashMap
      */
-    public static Map<String, Set> getPhenotypesGroupedByOntology(GenotypeExperiment genotypeExperiment, AnatomyItem anatomyItem) {
+    public static Map<String, Set<String>> getPhenotypesGroupedByOntology(GenotypeExperiment genotypeExperiment, AnatomyItem anatomyItem) {
         if (genotypeExperiment == null)
             return null;
         if (anatomyItem == null)
@@ -29,13 +29,13 @@ public class PhenotypeService {
         if (genotypeExperiment.getPhenotypes() == null)
             return null;
 
-        Map<String, Set> map = new TreeMap<String, Set>(new PhenotypeComparator());
+        Map<String, Set<String>> map = new TreeMap<String, Set<String>>(new PhenotypeComparator());
 
         for (Phenotype phenotype : genotypeExperiment.getPhenotypes()) {
-            if (StringUtils.equals(phenotype.getPatoEntityAzdbID(), anatomyItem.getZdbID()) ||
-                    StringUtils.equals(phenotype.getPatoEntityBzdbID(), anatomyItem.getZdbID())) {
+            if (StringUtils.equals(phenotype.getPatoSubTermzdbID(), anatomyItem.getZdbID()) ||
+                    StringUtils.equals(phenotype.getPatoSuperTermzdbID(), anatomyItem.getZdbID())) {
                 StringBuilder keyBuilder = new StringBuilder();
-                if (phenotype.getPatoEntityBzdbID() != null) {
+                if (phenotype.getPatoSubTermzdbID() != null) {
                     if (phenotype instanceof GoPhenotype) {
                         GoPhenotype goPheno = (GoPhenotype) phenotype;
                         keyBuilder.append(goPheno.getGoTerm().getName());

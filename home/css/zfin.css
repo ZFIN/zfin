@@ -164,6 +164,103 @@ tr.odd {
     background-color: #EEEEEE;
 }
 
+tr.newgroup {
+    border-top: 1px solid #ccc; 
+}
+
+tr.even {
+    background-color: #fff;
+}
+
+tr.oddgroup {
+/* just a placeholder, not defined for the default style */
+}
+
+tr.evengroup {
+/* just a placeholder, not defined for the default style */
+}
+
+/*** data page summary table ***/
+
+table.summary {
+  width: 100%;
+  /* clear: both; */
+  border-collapse: collapse;
+  /* border: 1px solid #ccc; */ /* this looks good, but maybe too drastic */
+  background: #eee;
+}
+
+div.summary {
+    margin-top: 1em;    
+}
+
+table.summary caption, h3.summary, span.summaryTitle {
+  font-weight: bold;
+  text-align: left;
+/*  padding-left: .2em;*/
+  padding-bottom: .2em;
+}
+
+table.summary th {
+  background: #ccc;
+  font-weight: bold;
+  text-align: left;
+  vertical-align: top;
+  padding: .2em;
+}
+
+table.summary td {
+  /* background: #eee; */
+  padding: .2em;
+  text-align: left;
+  vertical-align: top;
+}
+
+table.summary td.showall {
+  background: none;
+}
+
+ul.summary {
+  background: #eee;
+  margin-left: -3em;
+}
+
+ul.summary li {
+  display: inline;
+  white-space: nowrap;
+  padding-left: 1em;
+
+}
+
+/**** Styling necessary to produce different zfin table looks **/
+
+/* small stripes (w/top border dividers) summary table styling */
+
+table.smallstripes tr.newgroup { border-top: 1px solid #ccc; }
+table.smallstripes tr.odd { background-color: #eee; }
+table.smallstripes tr.even { background-color: #fff }
+
+/* large striped (one per group) summary table styling */
+table.largestripes { border: 1px solid #ccc; }
+table.largestripes tr.newgroup { border-top: 1px solid #ccc; }
+table.largestripes tr.odd { background-color: transparent; }
+table.largestripes tr.even { background-color: transparent; }
+table.largestripes tr.oddgroup { background-color: #eee; }
+table.largestripes tr.evengroup { background-color: #fff; }
+
+/* solid block summary table styling */
+table.solidblock tr.newgroup { border-top: 1px solid #ccc; }
+table.solidblock tr.odd, tr.even { background-color: #eee; }
+table.solidblock tr.oddgroup, tr.evengroup { background-color: #eee; }
+
+/* table with grey boxes over white gridlines */
+table.gridlines {
+    background-color: #fff;
+    border-collapse: separate;
+}
+table.gridlines td { background-color: #eee; }
+
+
 /*** gene name & abbrev ***/
 
 .genedom {

@@ -63,14 +63,49 @@ EFFECTS
 
 <link href="/phenote/css/control.css" type="text/css" rel="stylesheet">
 <!-- Ajax stuff (prototype library and friends)-->
- 
+<style>
+.indent1 {margin-left:8px;}
+</style> 
+<style>
+.indent2 {margin-left:100px;}
+</style> 
+<style>
+.indent3 {margin-left:70px;}
+</style> 
 <script src="/phenote/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
 <script src="/phenote/javascript/ajax-lib/effects.js"   type="text/javascript"></script>
 <script src="/phenote/javascript/ajax-lib/dragdrop.js"  type="text/javascript"></script>
 <script src="/phenote/javascript/ajax-lib/controls.js"  type="text/javascript"></script>
 
+<?MIVAR NAME="$cs_field">patobldr_entity_b_ontology<?/MIVAR>
+<?MIVAR NAME="$cs_default">AO<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID')
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patobldr_entity_b_ontology">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR NAME="$cs_field">patobldr_entity_a_ontology<?/MIVAR>
+<?MIVAR NAME="$cs_default">AO<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'&cs_person=$ZDB_ident&cs_data=$OID')
+             from webPages where ID='aa-curator_session.apg';">
+  <?MIVAR NAME="$patobldr_entity_a_ontology">$(TRIM,$1)<?/MIVAR>
+<?/MISQL>
+
+
+
 <script type="text/javascript" src="/javascript/control.modal.js"></script>
   <script type="text/javascript" language="javascript">
+function setEntityOntology(selectedOntology, autoCompleter) {
+    if (selectedOntology == 'AO') {
+      ontologyName = 'ZF';
+    } else if (selectedOntology == 'GO') {
+      ontologyName = 'CC';
+    }
+
+    autoCompleter.options.defaultParams = "ontologyName=" + ontologyName;
+
+
+  }
 
 
   // used as part of control.modal.js.  
@@ -112,7 +147,7 @@ EFFECTS
              when 'unspecified' then '<font color=orange>unspecified</font>'
              else anatitem_name
            end,
-        xpatinf_go_term_zdb_id
+        xpatinf_term_zdb_id
         from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2
         where xpatinf_pub_zdb_id = '$OID'
           and xpatinf_anatitem_zdb_id = anatitem_zdb_id
@@ -162,7 +197,7 @@ EFFECTS
               FROM expression_pattern_infrastructure, anatomy_item,
                    expression_result, expression_pattern_figure
              WHERE xpatinf_anatitem_zdb_id = xpatres_anat_item_zdb_id
-               AND xpatinf_go_term_zdb_id=xpatres_go_term_zdb_id
+               AND xpatinf_term_zdb_id=xpatres_term_zdb_id
                AND xpatinf_anatitem_zdb_id = anatitem_zdb_id
                AND xpatinf_expressed = xpatres_expression_found
                AND xpatinf_pub_zdb_id = '$OID'
@@ -171,7 +206,7 @@ EFFECTS
                AND xpatres_xpatex_zdb_id = '$xpcurstr_xpatex_zdb_id'
                AND xpatres_start_stg_zdb_id = '$xpcurstr_sstage_zdb_id'
                AND xpatres_end_stg_zdb_id = '$xpcurstr_estage_zdb_id'
-               and xpatres_go_term_zdb_id is not null
+               and xpatres_term_zdb_id is not null
              UNION
             SELECT distinct xpatinf_zdb_id, anatitem_name
               FROM expression_pattern_infrastructure, anatomy_item,
@@ -185,7 +220,7 @@ EFFECTS
                AND xpatres_xpatex_zdb_id = '$xpcurstr_xpatex_zdb_id'
                AND xpatres_start_stg_zdb_id = '$xpcurstr_sstage_zdb_id'
                AND xpatres_end_stg_zdb_id = '$xpcurstr_estage_zdb_id'
-               AND xpatres_go_term_zdb_id is null and xpatinf_go_term_zdb_id is null
+               AND xpatres_term_zdb_id is null and xpatinf_term_zdb_id is null
              ORDER BY anatitem_name;"> 
  
         
@@ -418,7 +453,30 @@ EFFECTS
       }
       return strCount;
     }
-  </script>
+
+
+function switchTerms() {
+     var entityB= document.getElementById('patobldrEntityBName');
+     var entityBvalue=entityB.value;
+     var entityA= document.getElementById('patobldrEntityAName');
+     var entityAvalue=entityA.value;
+     var entityBOnt=document.getElementById('patobldrEntityBOntology');
+     var entityBOntology=entityBOnt.value;
+     document.getElementById('patobldrEntityAName').value=entityBvalue;
+     document.getElementById('patobldrEntityBName').value=entityAvalue;
+} 
+  
+function checkAnatomy() {
+
+     var entityA= document.getElementById('patobldrEntityAName');
+     var entityAvalue=entityA.value;
+     if (entityAvalue==""){
+     	document.getElementById('no-superterm-defined').style.display = 'inline';
+        return false;
+     }
+     return true;
+}
+</script>
 
 <?MIVAR NAME=anatdict_anatList><?/MIVAR>
 
@@ -485,13 +543,12 @@ EFFECTS
            end,
            xpatinf_expressed, anatitem_name_order, xpatinf_zdb_id, 
            s1.stg_abbrev, s2.stg_abbrev, 
-           anatitem_obo_id, goterm_name
-    from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2, OUTER(go_term)
+           anatitem_obo_id, xpatinf_term_zdb_id, get_ontology_id(xpatinf_term_zdb_id) as term2
+    from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2
     where xpatinf_anatitem_zdb_id = anatitem_zdb_id
       and xpatinf_pub_zdb_id = '$OID'
       and anatitem_start_stg_zdb_id = s1.stg_zdb_id
       and anatitem_end_stg_zdb_id = s2.stg_zdb_id
-      and xpatinf_go_term_zdb_id=goterm_zdb_id
     order by anatitem_name_order, xpatinf_expressed;">
 
     <?MIVAR NAME=$xpcurstr_anatitem_zdb_id>$1<?/MIVAR>
@@ -502,16 +559,38 @@ EFFECTS
     <?MIVAR NAME=$xpcurstr_start_stg_name>$6<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_end_stg_name>$7<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_obo_id>$8<?/MIVAR>
-    <?MIVAR NAME=$xpcurstr_goterm_name>$9<?/MIVAR>
+    <?MIVAR NAME=$xpcurstr_term_zdb_id>$9<?/MIVAR>
+    <?MIVAR NAME=$xpcurstr_term_obo_id>$10<?/MIVAR>
+    <?MIVAR NAME=$xpcurstr_term_ontology>ZF<?/MIVAR>
+    <?MIBLOCK COND="$(>,$(POSITION,$xpcurstr_term_zdb_id,GOTERM),0)">
+      <?MISQL SQL="select goterm_name from go_term
+                   where goterm_zdb_id='$xpcurstr_term_zdb_id'">
+          <?MIVAR NAME=xpcurstr_goterm_name>$1<?/MIVAR>
+          <?MIVAR NAME=$xpcurstr_term_ontology>GO<?/MIVAR>
+      <?/MISQL>
+    <?/MIBLOCK>   
+    <?MIBLOCK COND="$(>,$(POSITION,$xpcurstr_term_zdb_id,ANAT),0)">
+      <?MISQL SQL="select anatitem_name from anatomy_item
+                   where anatitem_zdb_id='$xpcurstr_term_zdb_id'">
+          <?MIVAR NAME=xpcurstr_second_aoterm_name>$1<?/MIVAR>
+      <?/MISQL>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(EC,$xpcurstr_term_zdb_id,)">
+          <?MIVAR NAME=xpcurstr_goterm_name><?/MIVAR>
+          <?MIVAR NAME=xpcurstr_second_aoterm_name><?/MIVAR>
+    <?/MIBLOCK>
     <?MIVAR NAME=xpcurstr_xpatinf_goterm_zdb_minus>$(REPLACE,$9,"-","")<?/MIVAR>
+<?MICOMMENT>
     <?MIBLOCK COND="$(NE,xpcurstr_xpatinf_goterm_name,NULL)">
-       <?MIVAR NAME=$xpcurstr_goterm_name>$9<?/MIVAR>
+       <?MIVAR NAME=$xpcurstr_goterm_name>$xpcurstr_goterm_name<?/MIVAR>
        <?MIVAR NAME=xpcurstr_xpatinf_goterm_zdb_minus>$(REPLACE,$9,"-","")<?/MIVAR>
+not should
     <?MIELSE>
        <?MIVAR NAME=$xpcurstr_goterm_name><?/MIVAR>
+       should
     <?/MIBLOCK>
 
- 
+<?/MICOMMENT> 
     <?MIVAR NAME=$row_id>$5<?/MIVAR>
     <?MIVAR>
 
@@ -544,18 +623,24 @@ EFFECTS
       *** Structure ***
       <?/MICOMMENT>
       <td onClick="increment_radio_button(document.forms['panel_structures'].elements['$xpcurstr_xpatinf_zdb_id']);">
-        <?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
+<?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
           <?MIVAR>
-          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><b><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></b></a>
-          $(IF,$(NE,$xpcurstr_goterm_name,),:$xpcurstr_goterm_name,)($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
-        <?MIELSE>
-          <?MICOMMENT>
-          <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
-          <?/MICOMMENT>
+          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><b><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></b></a><?/MIVAR>
+<?MIBLOCK COND="$(NE,$xpcurstr_goterm_name,)">
+<?MIVAR>
+          :<a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")>$xpcurstr_goterm_name</a>
+	   <?/MIVAR>
+<?/MIBLOCK>
+<?MIELSE>
           <?MIVAR>
-          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></a>
-           $(IF,$(NE,$xpcurstr_goterm_name,),:$xpcurstr_goterm_name,)($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
+          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></a><?/MIVAR>
+<?MIBLOCK COND="$(NE,$xpcurstr_goterm_name,)">
+<?MIVAR>
+          :<a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")>$xpcurstr_goterm_name</a>
+          <?/MIVAR>
+<?/MIBLOCK>
         <?/MIBLOCK>
+          <?MIVAR>($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
       </td>
       <td>
         <input type=button value='X' onClick="if(countExpressionForStructure('$xpcurstr_xpatinf_zdb_id')!=0){alert('Expression is recorded for this structure. \n\nRemove all expression of this structure and try again.');}else{deleteZDB('$xpcurstr_xpatinf_zdb_id','structure');}">
@@ -577,59 +662,211 @@ EFFECTS
   <tr>
     <td colspan=6><HR></td>
   </tr>
+</table>
+
+<table>
+<tr>
+<td valign="top">
 <?MICOMMENT> ==| Enter a New Structure |== <?/MICOMMENT>
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#structure" method="post" name="structure2">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update"> 
-  <tr>
-    <td colspan=5>&nbsp;</td>
-  </tr>
 
-  <tr><td colspan="5" valign="top">
+<table>
+<tr>
+<td width=100 align=left><b>Anatomy</b>
+<td><b>:</b></td>
+<td align=right width=150><b>Substructure</b>
+</table>
+<table border="0" cellpadding="5" cellspacing="3">
+<tbody><tr><td align="center">
 
-  <table>
-   <tr>
-     <td valign="top" >
-     <small>Add terms</small><br>
-        <input type=hidden name="xpcur_G_structure_add">   
+<table border="0" cellpadding="0" cellspacing="0" height="90"><tbody><tr><td align="center" bgcolor="#000099">
+<table border="0" cellpadding="0" cellspacing="1">
+<tbody><tr><td></td></tr></tbody></table>
+</td></tr></tbody></table>
 
+<td align="top">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="patoup_entity_b_ontology" id="patobldrEntityBOntology" 
+                  onChange="setEntityOntology(this.options[this.selectedIndex].value, entityBAutoCompleter);
+                            storeSession('$ZDB_ident','$OID',
+                                         'patobldr_entity_b_ontology',
+                                          this.options[this.selectedIndex].value);">
+             <?MIBLOCK COND="$(AND,$(XST,$xpcur_addtopile_error),$(>,$(STRLEN,$xpcur_addtopile_error),0),$(XST,$patoup_entity_b_ontology))">
+                    <option value="<?MIVAR>$patoup_entity_b_ontology<?/MIVAR>" selected="true"><?MIVAR>$patoup_entity_b_ontology<?MIVAR COND="$(EC,$patoup_entity_b_ontology,GO)">-CC<?/MIVAR><?/MIVAR></option>
+                    <?MIBLOCK COND="$(EC,$patoup_entity_b_ontology,AO)">
+                       <option value="GO">GO-CC</option>
+                    <?MIELSE>
+                       <option value="AO">AO</option>
+                    <?/MIBLOCK>
+                 <?MIELSE>
+                    <option value="AO" 
+                    <?MIBLOCK COND="$(EC,$patobldr_entity_b_ontology,AO)">selected="true"<?/MIBLOCK>  >AO</option> 
+                    <option value="GO"
+                    <?MIBLOCK COND="$(EC,$patobldr_entity_b_ontology,GO)">selected="true"<?/MIBLOCK>>GO-CC</option>
+                 <?/MIBLOCK>                              
+           </select>                               
+                                          
+         <input type="text" size="42" name="patoup_entity_b_name" id="patobldrEntityBName" autocomplete="off"
+                 onchange="phenoteState.setActiveField(this);"
+                 onkeypress="document.getElementById('patobldrEntityBOntology').onchange();"
+    <?MIBLOCK COND="$(AND,$(XST,$xpcur_addtopile_error),$(>,$(STRLEN,$xpcur_addtopile_error),0),$(XST,$patoup_entity_b_name))">
+                 <?MIVAR>value="$patoup_entity_b_name"<?/MIVAR>
+                 <?/MIBLOCK>
+                 >
+          <span id="patobldrEntityBAutoCompleterIndicator" style="display: none; color: red;">working...</span>
 
-  AO Term:
-
-
-  <input type="text" size="50" name="xpcur_G_AO_term" id="xpcurstr_AOterm" autocomplete="off" onchange="phenoteState.setActiveField(this);" >
-  <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="xpcurstr_AOterm_autocomplete"></div>
-<span id="AO_term_indicator" style="display: none; color: red;">working...</span>
-<br>
+          <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="entity_b_auto_complete"></div>
 <p>
-  CC Term:
+<p>
+<span class="indent2"><b><i>within the</i></b></span>
+
+<span class="indent3">
+     <input
+        type="button"
+        value="Swap Terms &uarr;&darr;"
+        name="switch_term"
+        onClick="switchTerms()"
+      >
+</span>
+</td>
+
+</tbody></table>
+
+<table>
+<tr>
+<td>
+          <select name="patoup_entity_a_ontology" id="patobldrEntityAOntology" 
+                  onChange="setEntityOntology(this.options[this.selectedIndex].value, entityAAutoCompleter);
+                            storeSession('$ZDB_ident','$OID',
+                                         'patobldr_entity_a_ontology',
+                                          this.options[this.selectedIndex].value);">
+                                          
+                                          
+            <option value="AO" 
+              <?MIBLOCK COND="$(EC,$patobldr_entity_a_ontology,AO)">selected="true"<?/MIBLOCK>  >AO</option> 
+          </select>
+</td>
+<td>          <input type="text" size="52" name="patoup_entity_a_name" id="patobldrEntityAName" autocomplete="off"
+                 onchange="phenoteState.setActiveField(this);"
+                 onkeypress="document.getElementById('patobldrEntityAOntology').onchange();"
+    <?MIBLOCK COND="$(AND,$(XST,$xpcur_addtopile_error),$(>,$(STRLEN,$xpcur_addtopile_error),0),$(XST,$patoup_entity_a_name))">
+                 <?MIVAR>value="$patoup_entity_a_name"<?/MIVAR>
+                 <?/MIBLOCK>
+                 >
+          <span id="patobldrEntityAAutoCompleterIndicator" style="display: none; color: red;">working...</span>
+          <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="entity_a_auto_complete"></div>
+</td></tr>
+
+</table>
+<p>
+<table>
+<tr>
+  <td>	<input id="xpcurstrDetected" name="structure_expressed" value=t type=radio CHECKED> <label for="xpcurstrDetected">Detected</label>
+        <input id="xpcurstrNotDetected" name="structure_expressed" value=f type=radio> <label for="xpcurstrNotDetected" style="color: red">not</label></td>
+        <td><input name="xpcur_G_structure_add_button" type="submit" value="Add" style="margin-left: 9em;" onClick="return checkAnatomy()"></td>
+</table>
+<?MIBLOCK COND="$(XST,$xpcur_addtopile_error)">
+     <br><div class="error"><?MIVAR>$xpcur_addtopile_error<?/MIVAR></div>
+   <?/MIBLOCK>
+     <br><div style="display:none" class="error" id="no-superterm-defined">You must enter an anatomy item in the lower box.</div>
+<?MICOMMENT>
+<table>
+
+<tr><td>
+<b><font size=3><b>Anatomy </b></font></td><td>:</td><td><b><font size=3><b>Substructure</b></font></td>
 
 
-  <input type="text" size="50" name="xpcur_G_CC_term" id="xpcurstr_CCterm" autocomplete="off" onchange="phenoteState.setActiveField(this);">
-  <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="xpcurstr_CCterm_autocomplete"></div>
-<span id="CC_term_indicator" style="display: none; color: red;">working...</span>
-<br>
-  <span style="margin-left: 5em;">
-  	<input id="xpcurstrDetected" name="structure_expressed" value=t type=radio CHECKED> <label for="xpcurstrDetected">Detected</label> 
+<tr><td>
+<b><font size=2><b>(Entity A) </b></font></td><td>:</td><td><b><font size=2><b>(Entity B)</b></font></td>
+</tr>
+<?MICOMMENT> new code from PATO here<?/MICOMMENT>
+<?MIVAR>
+<tr><td></td><td></td><td></td></tr>
+<tr>
+<td>:  B
+         <td> <select name="patoup_entity_b_ontology" id="patobldrEntityBOntology" 
+                  onChange="setEntityOntology(this.options[this.selectedIndex].value, entityBAutoCompleter);
+                            storeSession('$ZDB_ident','$OID',
+                                         'patobldr_entity_b_ontology',
+                                          this.options[this.selectedIndex].value);">
+            <option value="AO" 
+              <?MIBLOCK COND="$(EC,$patobldr_entity_b_ontology,AO)">selected="true"<?/MIBLOCK>  >AO</option> 
+            <option value="GO"
+              <?MIBLOCK COND="$(EC,$patobldr_entity_b_ontology,GO)">selected="true"<?/MIBLOCK>  >GO-CC</option>
+          </select>
+       <td>  <input type="text" size="35" name="patoup_entity_b_name" id="patobldrEntityBName" autocomplete="off"
+                 onchange="phenoteState.setActiveField(this);"
+                 onkeypress="document.getElementById('patobldrEntityBOntology').onchange();"
+                 >
+          <span id="patobldrEntityBAutoCompleterIndicator" style="display: none; color: red;">working...</span>
+
+          <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="entity_b_auto_complete"></div>
+</td></tr>
+<tr>
+<td></td>
+<td>
+<i><b>within the</b></i></td>
+
+
+<tr><td> A:
+
+         <td> <select name="patoup_entity_a_ontology" id="patobldrEntityAOntology" 
+                  onChange="setEntityOntology(this.options[this.selectedIndex].value, entityAAutoCompleter);
+                            storeSession('$ZDB_ident','$OID',
+                                         'patobldr_entity_a_ontology',
+                                          this.options[this.selectedIndex].value);">
+            <option value="AO" 
+              <?MIBLOCK COND="$(EC,$patobldr_entity_a_ontology,AO)">selected="true"<?/MIBLOCK>  >AO</option> 
+          </select>
+
+   <td>       <input type="text" size="45" name="patoup_entity_a_name" id="patobldrEntityAName" autocomplete="off"
+                 onchange="phenoteState.setActiveField(this);"
+                 onkeypress="document.getElementById('patobldrEntityAOntology').onchange();"
+                 >
+          <span id="patobldrEntityAAutoCompleterIndicator" style="display: none; color: red;">working...</span>
+          <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="entity_a_auto_complete"></div>
+<?/MIVAR>
+</td>
+</tr>
+<tr><td></td><td></td><td></td></tr>
+<tr>
+  <td>	<input id="xpcurstrDetected" name="structure_expressed" value=t type=radio CHECKED> <label for="xpcurstrDetected">Detected</label> 
         <input id="xpcurstrNotDetected" name="structure_expressed" value=f type=radio> <label for="xpcurstrNotDetected" style="color: red">not</label>
-        <input name="xpcur_G_structure_add_button" type="submit" value="Add" style="margin-left: 9em;">
-  </span>
+        <td><input name="xpcur_G_structure_add_button" type="submit" value="Add" style="margin-left: 9em;"></td>
+<td></td>
+ </tr>
 
+</table>
+<?/MICOMMENT>
   <script type="text/javascript" src="/phenote/javascript/phenote-state.js"></script>
   <script type="text/javascript"> 
       phenoteState.setTermInfoUrl('/phenote/Phenote/'); 
       //phenoteState.setActiveField(document.getElementById('xpcurstr_AOterm'));
       //phenoteState.setActiveField(document.getElementById('xpcurstr_CCterm'));
   </script>
-  <script src="/phenote/javascript/ncbo-term-info.js" type="text/javascript"></script>
-  <script type="text/javascript">
-    new Ajax.Autocompleter( 'xpcurstr_AOterm', 'xpcurstr_AOterm_autocomplete', '/phenote/Phenote/', {parameters:'ontologyName=ZF&field=ENTITY',paramName: "userInput", indicator: 'AO_term_indicator', minChars: 2} );
-    new Ajax.Autocompleter( 'xpcurstr_CCterm', 'xpcurstr_CCterm_autocomplete', '/phenote/Phenote/', {parameters:'ontologyName=CC&field=ENTITY',paramName: "userInput", indicator: 'CC_term_indicator', minChars: 2} );
-  </script>
+  
+ <script type="text/javascript">
 
+     var entityBAutoCompleter = new Ajax.Autocompleter( 'patobldrEntityBName', 'entity_b_auto_complete', '/phenote/Phenote/',{parameters:'ontologyName=CC&field=ENTITY',paramName: "userInput", indicator: 'patobldrEntityBAutoCompleterIndicator', minChars: 3});
+     var entityAAutoCompleter = new Ajax.Autocompleter( 'patobldrEntityAName', 'entity_a_auto_complete', '/phenote/Phenote/',{parameters:'ontologyName=ZF&field=ENTITY',paramName: "userInput", indicator: 'patobldrEntityAAutoCompleterIndicator', minChars: 3});
+     
+   </script>
+</form></td>
+<td></td>
+<td>
 
-
+  <div style="width:400px; overflow: auto; height: 400px;" id="termInfo"></div>
+     <input
+        type="button"
+        value="Use Term"
+        name="use_term_info"
+        onClick="useTermInfo()"
+      >
+  </td>
+  </tr>
+<?MICOMMENT>
   <div style="height: 5em;">&nbsp;</div>
 
   <small>Add multiple terms</small><br>
@@ -668,9 +905,8 @@ EFFECTS
   </tr>
   </table>
   </td></tr>
+<?/MICOMMENT>
 
-
-  </form>
-  
+ </td></tr> 
 </table>
 <?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>

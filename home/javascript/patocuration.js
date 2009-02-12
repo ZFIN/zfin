@@ -15,7 +15,7 @@ function deselectDefault() {
   distinctPhenotypes = patoCuration.distinctPhenotypes;
 
   for (var dP in distinctPhenotypes) {
-    if ((distinctPhenotypes[dP].entity_a == "unspecified") 
+    if ((distinctPhenotypes[dP].superterm == "unspecified") 
          && (distinctPhenotypes[dP].quality == "quality")) {
       distinctPhenotypes[dP].setState('remove');
       document.getElementById(dP+"add").checked = false;

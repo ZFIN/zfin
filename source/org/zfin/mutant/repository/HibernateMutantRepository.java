@@ -36,7 +36,7 @@ public class HibernateMutantRepository implements MutantRepository {
         String hql =
                 "select distinct geno from Genotype geno, Phenotype pheno " +
                         "WHERE  pheno.genotypeExperiment member of geno.genotypeExperiments " +
-                        "AND (pheno.patoEntityAzdbID = :zdbID or pheno.patoEntityBzdbID = :zdbID ) " +
+                        "AND (pheno.patoSubTermzdbID = :zdbID or pheno.patoSuperTermzdbID = :zdbID ) " +
                         "AND pheno.tag != :tag ";
 //        "AND pheno.tag is not :tag ";
         if (!wildtype) {
@@ -163,7 +163,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "      Phenotype pheno, ExperimentCondition con, Marker marker " +
                 "WHERE   " +
                 "      genotypeExperiment.experiment = exp AND " +
-                "       (pheno.patoEntityAzdbID = :aoZdbID or pheno.patoEntityBzdbID = :aoZdbID) AND " +
+                "       (pheno.patoSubTermzdbID = :aoZdbID or pheno.patoSuperTermzdbID = :aoZdbID) AND " +
                 "       pheno.genotypeExperiment = genotypeExperiment AND " +
                 "       con.experiment = exp AND " +
                 "       genotypeExperiment.genotype = geno AND" +
@@ -195,7 +195,7 @@ public class HibernateMutantRepository implements MutantRepository {
         hql.append("       genox.experiment = exp AND ");
         hql.append("       genox member of geno.genotypeExperiments AND ");
         hql.append("       pheno.genotypeExperiment = genox AND ");
-        hql.append("       pheno.patoEntityAzdbID = :aoZdbID AND ");
+        hql.append("       pheno.patoSuperTermzdbID = :aoZdbID AND ");
         hql.append("       geno = :genotype AND ");
         hql.append("       con.experiment = exp AND ");
         hql.append("       geno.wildtype = :isWildtype AND ");
@@ -258,7 +258,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "      Phenotype pheno, ExperimentCondition con, GenotypeExperiment geno " +
                 "WHERE   " +
                 "       geno.experiment = exp AND " +
-                "       pheno.patoEntityAzdbID = :aoZdbID AND " +
+                "       pheno.patoSuperTermzdbID = :aoZdbID AND " +
                 "       pheno.genotypeExperiment = geno AND " +
                 "       con.experiment = exp AND " +
                 "       marker = con.morpholino ";
@@ -270,7 +270,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "      Phenotype pheno, ExperimentCondition con, GenotypeExperiment geno " +
                 "WHERE   " +
                 "       geno.experiment = exp AND " +
-                "       pheno.patoEntityAzdbID = :aoZdbID AND " +
+                "       pheno.patoSuperTermzdbID = :aoZdbID AND " +
                 "       pheno.genotypeExperiment = geno AND " +
                 "       con.experiment = exp AND " +
                 "       geno.genotype = genotype AND" +

@@ -293,41 +293,41 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
 			(select stg_name
 				from stage
 				where stg_zdb_id = apato_end_stg_zdb_id),
-			apato_entity_a_zdb_id,
+			apato_superterm_zdb_id,
 				case
 				  when
-				  get_obj_type(apato_Entity_a_zdb_id) = 'ANAT'
+				  get_obj_type(apato_superterm_zdb_id) = 'ANAT'
 				  then
 					(select anatitem_name
 					  from anatomy_item
 					  where anatitem_zdb_id =
-						apato_entity_a_zdb_id)
+						apato_superterm_zdb_id)
 				  when
-				  get_obj_type(apato_entity_a_zdb_id)='GOTERM'
+				  get_obj_type(apato_superterm_zdb_id)='GOTERM'
 				  then
 					(select goterm_name
 					   from go_term
-					   where goterm_zdb_id = apato_entity_a_zdb_id)
+					   where goterm_zdb_id = apato_superterm_zdb_id)
 				  end,
 			apato_quality_zdb_id,
 				(select term_name
 					from term
 					where term_Zdb_id = apato_quality_zdb_id),
-			apato_entity_b_zdb_id,
+			apato_subterm_zdb_id,
 				case
 				  when
-				  get_obj_type(apato_Entity_b_zdb_id) = 'ANAT'
+				  get_obj_type(apato_subterm_zdb_id) = 'ANAT'
 				  then
 					(select anatitem_name
 					  from anatomy_item
 					  where anatitem_zdb_id =
-						apato_entity_b_zdb_id)
+						apato_subterm_zdb_id)
 				  when
-				  get_obj_type(apato_entity_b_zdb_id)='GOTERM'
+				  get_obj_type(apato_subterm_zdb_id)='GOTERM'
 				  then
 					(select goterm_name
 					   from go_term
-					   where goterm_zdb_id = apato_entity_b_zdb_id)
+					   where goterm_zdb_id = apato_subterm_zdb_id)
 				  end,
 			apato_tag,
 			apato_pub_zdb_id,
@@ -373,36 +373,36 @@ select "ZFIN:"||geno_zdb_id, geno_display_name,
                            where stg_zdb_id = apato_end_Stg_zdb_id),
 				case
 				  when
-				  get_obj_type(apato_Entity_a_zdb_id) = 'ANAT'
+				  get_obj_type(apato_superterm_zdb_id) = 'ANAT'
 				  then
 					(select anatitem_obo_id
 					  from anatomy_item
 					  where anatitem_zdb_id =
-						apato_entity_a_zdb_id)
+						apato_superterm_zdb_id)
 				  when
-				  get_obj_type(apato_entity_a_zdb_id)='GOTERM'
+				  get_obj_type(apato_superterm_zdb_id)='GOTERM'
 				  then
 					(select "GO:"||goterm_go_id
 					   from go_term
-					   where goterm_zdb_id = apato_entity_a_zdb_id)
+					   where goterm_zdb_id = apato_superterm_zdb_id)
 				  end,
 				(select term_ont_id
 					from term
 					where term_Zdb_id = apato_quality_zdb_id),
 				case
 				  when
-				  get_obj_type(apato_Entity_b_zdb_id) = 'ANAT'
+				  get_obj_type(apato_subterm_zdb_id) = 'ANAT'
 				  then
 					(select anatitem_obo_id
 					  from anatomy_item
 					  where anatitem_zdb_id =
-						apato_entity_b_zdb_id)
+						apato_subterm_zdb_id)
 				  when
-				  get_obj_type(apato_entity_b_zdb_id)='GOTERM'
+				  get_obj_type(apato_subterm_zdb_id)='GOTERM'
 				  then
 					(select goterm_go_id
 					   from go_term
-					   where goterm_zdb_id = apato_entity_b_zdb_id)
+					   where goterm_zdb_id = apato_subterm_zdb_id)
 				  end,
 			apato_tag,
 			"ZFIN:"||apato_pub_zdb_id,

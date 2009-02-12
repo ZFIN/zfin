@@ -424,6 +424,7 @@ $(IF,$(XST,$xpcur_wherestring),$xpcur_wherestring)
 <?MIVAR NAME=xpcurpnl_prev_fish><?/MIVAR>
 <?MIVAR NAME=xpcurpnl_prev_gene><?/MIVAR>
 <?MIVAR NAME=xpcurpnl_prev_fig><?/MIVAR>
+<?MIVAR NAME=xpcurpnl_goterm_name><?/MIVAR>
 <?MIBLOCK COND="$(XST,$xpcur_c_gene_only)">    
 <?MIBLOCK COND=$(NE,$xpcur_c_gene_only,)>
   <?MIBLOCK COND="$(>,$(POSITION,$xpcur_c_gene_only,GENE),0)">
@@ -512,8 +513,8 @@ $(IF,$(XST,$xpcur_wherestring),$xpcur_wherestring)
                  else anatitem_name
                end,
                xpatres_expression_found, 
-               anatitem_name_order, goterm_name,goterm_go_id
-        from expression_pattern_figure, expression_result, anatomy_item, stage as start, stage as end, OUTER(go_term)       
+               anatitem_name_order, get_obj_name(xpatres_term_zdb_id)
+        from expression_pattern_figure, expression_result, anatomy_item, stage as start, stage as end
         where xpatfig_fig_zdb_id = '$xpcurpnl_fig_zdb_id'
           and xpatfig_xpatres_zdb_id = xpatres_zdb_id
           and xpatres_start_stg_zdb_id = '$xpcurpnl_start_stg_zdb_id'
@@ -521,7 +522,6 @@ $(IF,$(XST,$xpcur_wherestring),$xpcur_wherestring)
           and xpatres_start_stg_zdb_id = start.stg_zdb_id
           and xpatres_end_stg_zdb_id = end.stg_zdb_id
           and xpatres_anat_item_zdb_id = anatitem_zdb_id
-          and xpatres_go_term_zdb_id = goterm_zdb_id
           and xpatres_xpatex_zdb_id = '$xpcurpnl_xpatex_zdb_id'
         order by anatitem_name_order
         ;">
@@ -529,8 +529,8 @@ $(IF,$(XST,$xpcur_wherestring),$xpcur_wherestring)
         <?MIVAR NAME=xpcurpnl_end_stg>$2<?/MIVAR>
         <?MIVAR NAME=xpcurpnl_anatitem_name>$3<?/MIVAR>
         <?MIVAR NAME=xpcurpnl_goterm_name>$6<?/MIVAR>
-        <?MIVAR NAME=xpcurpnl_goterm_goid>$7<?/MIVAR>
         <?MIVAR NAME=xpcurpnl_expression_found>$(IF,$(EC,$4,f),<font color=red>&#40not&#41</font>) <?/MIVAR>
+
 <?MIBLOCK COND="$(NE,$xpcurpnl_goterm_name,)">
                         <?MIVAR NAME=$xpcurpnl_goterm_name>:$xpcurpnl_goterm_name<?/MIVAR>
 <?MIELSE>

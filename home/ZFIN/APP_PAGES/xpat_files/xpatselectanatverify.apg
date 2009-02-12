@@ -167,7 +167,7 @@ ORDER BY 3,1
               where genox_zdb_id = apato_genox_zdb_id
                 and genox_geno_zdb_id = geno_zdb_id
                 and geno_is_wildtype = 'f'
-                and apato_entity_a_zdb_id = '$xpanatv_item_zdb_id';">
+                and apato_subterm_zdb_id = '$xpanatv_item_zdb_id';">
      <?/MISQL>
      <?MISQL SQL="
 	insert into $temp_on_anat(g_zdb_id)
@@ -176,7 +176,7 @@ ORDER BY 3,1
               where genox_zdb_id = apato_genox_zdb_id
                 and genox_geno_zdb_id = geno_zdb_id
                 and geno_is_wildtype = 'f'
-                and apato_entity_b_zdb_id = '$xpanatv_item_zdb_id';">
+                and apato_superterm_zdb_id = '$xpanatv_item_zdb_id';">
      <?/MISQL>   
   
      <?MICOMMENT> -------------------------------------------------------------
@@ -190,7 +190,7 @@ ORDER BY 3,1
               where genox_zdb_id = apato_genox_zdb_id
                 and genox_geno_zdb_id = geno_zdb_id
                 and geno_is_wildtype = 'f'
-                and apato_entity_a_zdb_id = allanatcon_contained_zdb_id
+                and apato_subterm_zdb_id = allanatcon_contained_zdb_id
                 and allanatcon_container_zdb_id = '$xpanatv_item_zdb_id';">
        <?/MISQL>
        <?MISQL SQL="
@@ -200,7 +200,7 @@ ORDER BY 3,1
               where genox_zdb_id = apato_genox_zdb_id
                 and genox_geno_zdb_id = geno_zdb_id
                 and geno_is_wildtype = 'f'
-                and apato_entity_b_zdb_id = allanatcon_contained_zdb_id
+                and apato_superterm_zdb_id = allanatcon_contained_zdb_id
                 and allanatcon_container_zdb_id = '$xpanatv_item_zdb_id';">
        <?/MISQL>  
 

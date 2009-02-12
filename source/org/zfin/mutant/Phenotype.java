@@ -1,6 +1,7 @@
 package org.zfin.mutant;
 
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
 import org.zfin.ontology.OntologyTerm;
 import org.zfin.publication.Publication;
@@ -8,42 +9,29 @@ import org.zfin.publication.Publication;
 import java.util.Set;
 
 /**
- * ZFIN Domain object. 
+ * ZFIN Domain object.
  */
 public class Phenotype {
-
-    public enum Tag{
-        NORMAL("normal"),
-        ABNORMAL("abnormal");
-
-        private String value;
-
-        Tag(String value) {
-            this.value = value;
-        }
-
-        public String toString(){
-            return value;
-        }
-    }
 
 
     private String zdbID;
     private GenotypeExperiment genotypeExperiment;
+    private AnatomyItem anatomyTerm;
+    private DevelopmentStage stage;
+    private Set<Figure> figures;
+    private Publication publication;
+    private Term term;
+
     // toDo: This needs to be cleaned up when the full phenotype functionality is implemented
-    private String patoEntityAzdbID;
-    private String patoEntityBzdbID;
+    private String patoSubTermzdbID;
+    private String patoSuperTermzdbID;
 
     //private GenotypeExperiment
     private OntologyTerm termA;
     private OntologyTerm termB;
     private OntologyTerm quality;
-    private DevelopmentStage stage;
     // ToDo: Needs to be of type Tag once the tag field in the atomic_phenotype table is being cleaned up
     private String tag;
-    private Set<Figure> figures;
-    private Publication publication;
-    private Term term;
 
     public String getZdbID() {
         return zdbID;
@@ -93,22 +81,21 @@ public class Phenotype {
         this.tag = tag;
     }
 
-    public String getPatoEntityAzdbID() {
-        return patoEntityAzdbID;
+    public String getPatoSubTermzdbID() {
+        return patoSubTermzdbID;
     }
 
-    public void setPatoEntityAzdbID(String patoEntityAzdbID) {
-        this.patoEntityAzdbID = patoEntityAzdbID;
+    public void setPatoSubTermzdbID(String patoSubTermzdbID) {
+        this.patoSubTermzdbID = patoSubTermzdbID;
     }
 
-    public String getPatoEntityBzdbID() {
-        return patoEntityBzdbID;
+    public String getPatoSuperTermzdbID() {
+        return patoSuperTermzdbID;
     }
 
-    public void setPatoEntityBzdbID(String patoEntityBzdbID) {
-        this.patoEntityBzdbID = patoEntityBzdbID;
+    public void setPatoSuperTermzdbID(String patoSuperTermzdbID) {
+        this.patoSuperTermzdbID = patoSuperTermzdbID;
     }
-
 
     public GenotypeExperiment getGenotypeExperiment() {
         return genotypeExperiment;
@@ -142,4 +129,28 @@ public class Phenotype {
     public void setPublication(Publication publication) {
         this.publication = publication;
     }
+
+    public AnatomyItem getAnatomyTerm() {
+        return anatomyTerm;
+    }
+
+    public void setAnatomyTerm(AnatomyItem anatomyTerm) {
+        this.anatomyTerm = anatomyTerm;
+    }
+
+    public static enum Tag{
+        NORMAL("normal"),
+        ABNORMAL("abnormal");
+
+        private String value;
+
+        Tag(String value) {
+            this.value = value;
+        }
+
+        public String toString(){
+            return value;
+        }
+    }
+
 }

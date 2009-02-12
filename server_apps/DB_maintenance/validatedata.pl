@@ -332,7 +332,7 @@ sub phenotypeAnnotationUnspecified ($$) {
         on cur_curator_zdb_id = zdb_id
       where cur_topic='Phenotype'
         and cur_closed_date is not null
-        and apato_entity_a_zdb_id = 'ZDB-ANAT-041102-1'
+        and apato_superterm_zdb_id = 'ZDB-ANAT-041102-1'
         and email = '$_[0]'
       order by apato_pub_zdb_id ";
 

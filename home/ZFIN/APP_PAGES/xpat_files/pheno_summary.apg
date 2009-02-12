@@ -274,7 +274,7 @@ DEBUGGING:
                 and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
                 and apatofig_apato_zdb_id = apato_zdb_id
                 and genox_geno_zdb_id = '$phenosum_geno_zdb'
-	        and apato_entity_a_zdb_id = anatitem_zdb_id 
+	        and apato_subterm_zdb_id = anatitem_zdb_id
 	UNION
 	     select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
                from atomic_phenotype, anatomy_item, genotype_experiment, apato_figure
@@ -282,7 +282,7 @@ DEBUGGING:
                 and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
                 and apatofig_apato_zdb_id = apato_zdb_id
                 and genox_geno_zdb_id = '$phenosum_geno_zdb'
-	        and apato_entity_b_zdb_id = anatitem_zdb_id
+	        and apato_superterm_zdb_id = anatitem_zdb_id
 	UNION		  
 	     select distinct goterm_go_id, goterm_name, zero_pad(goterm_name), 'go'
                from atomic_phenotype, go_term, genotype_experiment, apato_figure
@@ -290,7 +290,7 @@ DEBUGGING:
                 and genox_geno_zdb_id = '$phenosum_geno_zdb'
                 and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
                 and apatofig_apato_zdb_id = apato_zdb_id
-	        and apato_entity_a_zdb_id = goterm_zdb_id 
+	        and apato_subterm_zdb_id = goterm_zdb_id
 	UNION		  
 	     select distinct goterm_go_id, goterm_name, zero_pad(goterm_name), 'go'
                from atomic_phenotype, go_term, genotype_experiment, apato_figure
@@ -298,7 +298,7 @@ DEBUGGING:
                 and genox_geno_zdb_id = '$phenosum_geno_zdb'
                 and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
                 and apatofig_apato_zdb_id = apato_zdb_id
-	        and apato_entity_b_zdb_id = goterm_zdb_id
+	        and apato_superterm_zdb_id = goterm_zdb_id
            order by 3	; ">
            
           <?MIBLOCK COND=$(EC,$4,anatomy)>

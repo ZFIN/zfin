@@ -40,7 +40,6 @@ EFFECTS
 <?/MIERROR>
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 
-<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MIVAR>$(UNSETVAR,$gPSLitem_xpatres_zdb_id)<?/MIVAR>
 <?MIVAR COND=$(NXST,$gPSLitem_comment) NAME=gPSLitem_comment><?/MIVAR>
@@ -58,7 +57,7 @@ EFFECTS
       and xpatres_expression_found = '$gPSLitem_expressed'
       and xpatres_start_stg_zdb_id = '$gPSLitem_stg_start_zdb_id'
       and xpatres_end_stg_zdb_id = '$gPSLitem_stg_end_zdb_id'
-      and xpatres_go_term_zdb_id = '$gPSLitem_goterm_zdb_id'
+      and xpatres_term_zdb_id = '$gPSLitem_goterm_zdb_id'
       and xpatres_zdb_id = recattrib_data_zdb_id
       and recattrib_source_zdb_id = '$OID'
     ;">
@@ -83,7 +82,7 @@ EFFECTS
         and xpatres_start_stg_zdb_id = '$gPSLitem_stg_start_zdb_id'
         and xpatres_end_stg_zdb_id = '$gPSLitem_stg_end_zdb_id'
         and xpatres_expression_found = '$gPSLitem_expressed'
-      and xpatres_go_term_zdb_id $(IF,$(EC,$gPSLitem_goterm_zdb_id,),is NULL,= '$gPSLitem_goterm_zdb_id')
+      and xpatres_term_zdb_id $(IF,$(EC,$gPSLitem_goterm_zdb_id,),is NULL,= '$gPSLitem_goterm_zdb_id')
       ;">
       <?MIVAR NAME=gPSLitem_xpatres_zdb_id>$1<?/MIVAR>
     <?/MISQL>
@@ -102,7 +101,7 @@ EFFECTS
           xpatres_start_stg_zdb_id,
           xpatres_end_stg_zdb_id,
           xpatres_expression_found,
-          xpatres_go_term_zdb_id,
+          xpatres_term_zdb_id,
           xpatres_comments)
         VALUES ( 
           '$gPSLitem_xpatres_zdb_id',
@@ -139,7 +138,7 @@ EFFECTS
           xpatinf_curator_zdb_id,
           xpatinf_pub_zdb_id,
           xpatinf_anatitem_zdb_id,
-          xpatinf_go_term_zdb_id,
+          xpatinf_term_zdb_id,
           xpatinf_expressed,
           xpatinf_date )
       VALUES (

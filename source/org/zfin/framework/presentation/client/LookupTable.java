@@ -68,9 +68,6 @@ public class LookupTable extends Lookup {
             prepopulateTable(lookupProperties.get(JSREF_PREVIOUS_TABLE_VALUES));
         }
 
-        lookup.handleNoText();
-
-
         exposeMethodToJavascript(this);
     }
 
@@ -133,7 +130,6 @@ public class LookupTable extends Lookup {
             lookup.getTextBox().setText("");
             lookup.clearError();
             lookup.clearNote();
-            lookup.handleNoText();
         }
         // if contained, need to mention
         else{
@@ -155,7 +151,6 @@ public class LookupTable extends Lookup {
         lookup.clearNote();
         lookup.setText("");
         initTable();
-        lookup.handleNoText();
     }
 
     /**

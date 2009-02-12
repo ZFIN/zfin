@@ -48,15 +48,15 @@ public class MorpholinoStatistics extends EntityStatistics {
         return morpholinoGenes;
     }
 
-    public Map<String, Set> getPhenotypeDescriptions() {
+    public Map<String, Set<String>> getPhenotypeDescriptions() {
         return PhenotypeService.getPhenotypesGroupedByOntology(genoExperiment, anatomyItem);
     }
 
     public int getNumberOfFigures() {
         if (figures == null) {
             for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
-                if (StringUtils.equals(phenotype.getPatoEntityAzdbID(), anatomyItem.getZdbID()) ||
-                        StringUtils.equals(phenotype.getPatoEntityBzdbID(), anatomyItem.getZdbID())) {
+                if (StringUtils.equals(phenotype.getPatoSubTermzdbID(), anatomyItem.getZdbID()) ||
+                        StringUtils.equals(phenotype.getPatoSuperTermzdbID(), anatomyItem.getZdbID())) {
                     if (figures == null)
                         figures = new HashSet<Figure>();
                     figures.addAll(phenotype.getFigures());
@@ -77,8 +77,8 @@ public class MorpholinoStatistics extends EntityStatistics {
     protected PaginationResult<Publication> getPublicationPaginationResult() {
         Set<Publication> pubs = new HashSet<Publication>();
         for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
-            if (StringUtils.equals(phenotype.getPatoEntityAzdbID(), anatomyItem.getZdbID()) ||
-                    StringUtils.equals(phenotype.getPatoEntityBzdbID(), anatomyItem.getZdbID())) {
+            if (StringUtils.equals(phenotype.getPatoSubTermzdbID(), anatomyItem.getZdbID()) ||
+                    StringUtils.equals(phenotype.getPatoSuperTermzdbID(), anatomyItem.getZdbID())) {
                 pubs.add(phenotype.getPublication());
             }
         }

@@ -2182,7 +2182,8 @@ union
       		<b>GENE PRODUCTS: </b>
     		<?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
 	<?/MIBLOCK>
-  <p><b>Antibodies:</b>
+  <hr width = "80%">
+  <p><b>ANTIBODIES:</b>
   <table width =100% border=0 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
   <?MIVAR NAME=$antibodyID><?/MIVAR>
   <tr><td>
@@ -2724,7 +2725,7 @@ order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
       <?MIVAR NAME=vDBnameColumn>
          <nobr><LI>
          $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
-   <?MIVAR>    <A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref <?/MIVAR> 
+   <?MIVAR>    <A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref <?/MIVAR>
         </LI></nobr>
         <?MISQL SQL="select mtgrpmem_mrkr_type_group from marker_type_group_member where mtgrpmem_mrkr_type_group='CLONE' and mtgrpmem_mrkr_type='$marker_type'">
            <?MIVAR COND="$(EC,$1,CLONE)" NAME=type_of_clone>t<?/MIVAR>

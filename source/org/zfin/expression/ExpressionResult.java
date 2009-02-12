@@ -3,6 +3,7 @@ package org.zfin.expression;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.OntologyTerm;
 
 import java.util.Set;
 
@@ -13,6 +14,7 @@ public class ExpressionResult {
 
     private String zdbID;
     private AnatomyItem anatomyTerm;
+    private AnatomyItem secondaryAnatomyTerm;
     private boolean expressionFound;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
@@ -20,6 +22,7 @@ public class ExpressionResult {
     private Set<ExpressionResult> expressionResults;
     private Set<Figure> figures;
     private GoTerm goTerm;
+    private OntologyTerm term;
 
     public String getZdbID() {
         return zdbID;
@@ -91,5 +94,21 @@ public class ExpressionResult {
 
     public void setGoTerm(GoTerm goTerm) {
         this.goTerm = goTerm;
+    }
+
+    public AnatomyItem getSecondaryAnatomyTerm() {
+        return secondaryAnatomyTerm;
+    }
+
+    public void setSecondaryAnatomyTerm(AnatomyItem secondaryAnatomyTerm) {
+        this.secondaryAnatomyTerm = secondaryAnatomyTerm;
+    }
+
+    public OntologyTerm getTerm() {
+        return term;
+    }
+
+    public void setTerm(OntologyTerm term) {
+        this.term = term;
     }
 }

@@ -75,22 +75,22 @@
 	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
                from $phmview_input_table, atomic_phenotype, anatomy_item
               where t_pato_zdb_id = apato_zdb_id
-	        and apato_entity_a_zdb_id = anatitem_zdb_id 
+	        and apato_subterm_zdb_id = anatitem_zdb_id
 	  UNION
 	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
                from $phmview_input_table, atomic_phenotype, anatomy_item
               where t_pato_zdb_id = apato_zdb_id
-	        and apato_entity_b_zdb_id = anatitem_zdb_id
+	        and apato_superterm_zdb_id = anatitem_zdb_id
           UNION
             select goterm_go_id, goterm_name, lower(goterm_name), 'go'
                 from $phmview_input_table, atomic_phenotype, go_term
                where t_pato_zdb_id = apato_zdb_id
-               and apato_entity_a_zdb_id = goterm_zdb_id 
+               and apato_subterm_zdb_id = goterm_zdb_id
           UNION
             select goterm_go_id, goterm_name, lower(goterm_name), 'go'
                 from $phmview_input_table, atomic_phenotype, go_term
                where t_pato_zdb_id = apato_zdb_id
-               and apato_entity_b_zdb_id = goterm_zdb_id 
+               and apato_superterm_zdb_id = goterm_zdb_id 
            order by 3	; ">
      
           <?MIBLOCK COND=$(EC,$4,anatomy)>

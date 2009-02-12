@@ -50,7 +50,7 @@ EFFECTS
 
 <SCRIPT>
 <?MIVAR>
-function setGenBankDisplay(geneValue,geneid, abid, exptid) {
+function setGenBankDisplay(geneValue,geneid, exptid) {
    var gene = document.new_experiment.xpcur_G_xpatex_gene;
    var assay = document.new_experiment.xpcur_G_xpatex_assay;
    var antibody = document.new_experiment.xpcur_G_xpatex_antibody;
@@ -199,7 +199,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,antbid,exptid)
 <?MIVAR COND=$(NXST,$xpcurxprss_xpatex_gene) NAME=xpcurxprss_xpatex_gene><?/MIVAR>
 <?MIVAR COND=$(NXST,$xpcurxprss_xpatex_antibody) NAME=xpcurxprss_xpatex_antibody><?/MIVAR>
 <?MIVAR COND=$(NXST,$xpcur_G_xpatex_antibody) NAME=xpcur_G_xpatex_antibody><?/MIVAR>
-<?MIVAR NAME=xpcur_G_xpatex_antibody><?/MIVAR>
+<?MICOMMENT><?MIVAR NAME=xpcur_G_xpatex_antibody><?/MIVAR><?/MICOMMENT>
 <?MIVAR COND=$(NXST,$xpcur_G_xpatex_assay) NAME=xpcur_G_xpatex_assay><?/MIVAR>
   <?MIVAR NAME=xpcurxprss_old_xpatex_gene>$(IF,$(XST,$xpcur_G_xpatex_gene),$xpcur_G_xpatex_gene)<?/MIVAR>
   <?MIVAR NAME=xpcurxprss_old_xpatex_fish>$(IF,$(XST,$xpcur_G_xpatex_fish),$xpcur_G_xpatex_fish)<?/MIVAR>
@@ -384,7 +384,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,antbid,exptid)
       <input name="button" type=submit value="Add">
     </td>
     <td> 
-        <select name="xpcur_G_xpatex_gene" onChange=setGenBankDisplay(this.value,<?MIVAR>'$xpcurxprss_xpatex_gene'<?/MIVAR>,<?MIVAR>'$xpcurxprss_xpatex_antibody'<?/MIVAR>,<?MIVAR>'$xpcurxprss_xpatex_zdb_id'<?/MIVAR>);>
+        <select name="xpcur_G_xpatex_gene" onChange=setGenBankDisplay(this.value,<?MIVAR>'$xpcurxprss_xpatex_gene'<?/MIVAR>,<?MIVAR>'$xpcurxprss_xpatex_zdb_id'<?/MIVAR>);>
           <option value=""></value>
          <?MIBLOCK COND="$(EQ,$xpcur_G_xpatex_antibody,)">
           <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev 

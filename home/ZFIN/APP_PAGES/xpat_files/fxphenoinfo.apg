@@ -47,7 +47,7 @@ EFFECTS
 <?MISQL SQL="
                select distinct geno_display_name, 
                        st1.stg_abbrev s1, st2.stg_abbrev s2,
-                       apato_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , st1.stg_hours_start sh1, st1.stg_hours_end sh2, apato_tag, apato_quality_zdb_id, apato_entity_a_zdb_id,term_name, get_geno_name_html_link('$OID') as geno_link, apato_entity_b_zdb_id
+                       apato_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , st1.stg_hours_start sh1, st1.stg_hours_end sh2, apato_tag, apato_quality_zdb_id, apato_subterm_zdb_id,term_name, get_geno_name_html_link('$OID') as geno_link, apato_superterm_zdb_id
               from
                      figure,atomic_phenotype,
                      apato_figure,genotype_experiment,
@@ -63,8 +63,8 @@ EFFECTS
                      and apato_end_stg_zdb_id=st2.stg_zdb_id
                      and apato_quality_zdb_id=term_zdb_id
                order by 
-                     apato_genox_zdb_id, geno_display_name,apato_entity_a_zdb_id,sh1">
-  
+                     apato_genox_zdb_id, geno_display_name,apato_subterm_zdb_id,sh1">
+
                     <?MIVAR NAME=$fxphenoinfo_geno_name>$1<?/MIVAR>
                     <?MIVAR NAME=$fxphenoinfo_start_stage>$2<?/MIVAR>
                     <?MIVAR NAME=$fxphenoinfo_end_stage>$3<?/MIVAR>
@@ -72,10 +72,10 @@ EFFECTS
                     <?MIVAR NAME=$fxphenoinfo_stage1>$5<?/MIVAR>
                     <?MIVAR NAME=$fxphenoinfo_stage2>$6<?/MIVAR>
                     <?MIVAR NAME=$fxphenoinfo_tag>$9<?/MIVAR>
-                    <?MIVAR NAME=$fxphenoinfo_entity_a>$11<?/MIVAR>
+                    <?MIVAR NAME=$fxphenoinfo_subterm>$11<?/MIVAR>
                     <?MIVAR NAME=$fxphenoinfo_term_name>$12<?/MIVAR>
                     <?MIVAR NAME=$fxphenoinfo_genolink>$13<?/MIVAR>
-                    <?MIVAR NAME=$fxphenoinfo_entity_b>$14<?/MIVAR>
+                    <?MIVAR NAME=$fxphenoinfo_superterm>$14<?/MIVAR>
                     <?MIBLOCK COND=$(EQ,$fxphenoinfo_start_stage,$fxphenoinfo_end_stage)>
                       <?MIVAR NAME=$fxphenoinfo_stage>$fxphenoinfo_stage1<?/MIVAR>
                     <?MIELSE>
@@ -88,7 +88,7 @@ EFFECTS
 
 
                    <?MIBLOCK COND="$(NE,$fxphenoinfo_lastgenox,$fxphenoinfo_genox)">
-                        <tr bgcolor=<?MIVAR>$row_color<?/MIVAR> height = 25><td width = 5% nowrap>
+                        <tr class="newgroup" bgcolor=<?MIVAR>$row_color<?/MIVAR> height = 25><td width = 5% nowrap>
   <?MISQL SQL="select WebExplode(object,'fxp_zdb_id=$fxphenoinfo_genox')from webpages where ID='aa-xpatfeatexp.apg';">
                              <?/MISQL>
 <?MIVAR>$1<?/MIVAR></td>
@@ -104,13 +104,19 @@ EFFECTS
                        <?MIELSE>
                            <td></td>
                        <?/MIBLOCK>
-                      <?MISQL SQL="execute function get_entity_name_html('$fxphenoinfo_entity_a')">
+                      <?MISQL SQL="execute function get_entity_name_html('$fxphenoinfo_subterm')">
                        <?MIVAR NAME=fxphenoinfo_link>$1<?/MIVAR>
                       <?/MISQL>
-<?MIBLOCK COND="$(NE,$fxphenoinfo_entity_b,)">
-                      <?MISQL SQL="execute function get_entity_name_html('$fxphenoinfo_entity_b')">
+<?MIBLOCK COND="$(NE,$fxphenoinfo_superterm,)">
+                <?MIBLOCK COND="$(NE,$fxphenoinfo_subterm,)">
+                      <?MISQL SQL="execute function get_entity_name_html('$fxphenoinfo_superterm')">
                        <?MIVAR NAME=fxphenoinfo_link>$1 : $fxphenoinfo_link<?/MIVAR>
                       <?/MISQL>
+                <?MIELSE>
+                      <?MISQL SQL="execute function get_entity_name_html('$fxphenoinfo_superterm')">
+                       <?MIVAR NAME=fxphenoinfo_link>$1 <?/MIVAR>
+                      <?/MISQL>
+                <?/MIBLOCK>
 <?/MIBLOCK>
                                 <td><?MIVAR>$fxphenoinfo_link<?/MIVAR></td>
 <?MIBLOCK COND="$(OR,$(EC,$fxphenoinfo_term_name,quantitative),$(EC,$fxphenoinfo_term_name,quality))">
@@ -135,7 +141,7 @@ EFFECTS
         <tr bgcolor=#aaaaaa>
             <td colspan=7><img src="/images/transp.gif" width="1" height="1"></td>
         </tr>
-        
+
        <?MIVAR NAME=$fxphenoinfo_rowcount>$MI_ROWCOUNT<?/MIVAR>
        
        <?MICOMMENT>The color of the last row is reported back to fxfigureview.apg so that the the first data row  

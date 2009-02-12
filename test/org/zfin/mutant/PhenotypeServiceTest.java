@@ -43,7 +43,7 @@ public class PhenotypeServiceTest {
     @Test
     public void noPhenotypesOrAnatomy() {
         GenotypeExperiment genox = new GenotypeExperiment();
-        Map<String, Set> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
+        Map<String, Set<String>> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
         assertTrue(map == null);
 
         map = PhenotypeService.getPhenotypesGroupedByOntology(null, anatomyTerm);
@@ -62,7 +62,8 @@ public class PhenotypeServiceTest {
     public void singleAOPhenotype() {
         GenotypeExperiment genox = new GenotypeExperiment();
         AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setPatoEntityAzdbID(aoTermZdbID);
+        pheno.setPatoSuperTermzdbID(aoTermZdbID);
+        pheno.setAnatomyTerm(anatomyTerm);
         Term term = new Term();
         String brightOrange = "bright orange";
         term.setName(brightOrange);
@@ -71,7 +72,7 @@ public class PhenotypeServiceTest {
         phenotypes.add(pheno);
         genox.setPhenotypes(phenotypes);
 
-        Map<String, Set> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
+        Map<String, Set<String>> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
         assertTrue(map != null);
         assertTrue(map.size() == 1);
         String terms = map.keySet().iterator().next();
@@ -89,21 +90,24 @@ public class PhenotypeServiceTest {
     public void ThreeAOPhenotype() {
         GenotypeExperiment genox = new GenotypeExperiment();
         AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setPatoEntityAzdbID(aoTermZdbID);
+        pheno.setPatoSuperTermzdbID(aoTermZdbID);
+        pheno.setAnatomyTerm(anatomyTerm);
         Term term = new Term();
         String brightOrange = "bright orange";
         term.setName(brightOrange);
         pheno.setTerm(term);
 
         AnatomyPhenotype phenoTwo = new AnatomyPhenotype();
-        phenoTwo.setPatoEntityAzdbID(aoTermZdbID);
+        phenoTwo.setPatoSuperTermzdbID(aoTermZdbID);
+        phenoTwo.setAnatomyTerm(anatomyTerm);
         Term termTwo = new Term();
         String pink = "pink";
         termTwo.setName(pink);
         phenoTwo.setTerm(termTwo);
 
         AnatomyPhenotype phenoThree = new AnatomyPhenotype();
-        phenoThree.setPatoEntityAzdbID(aoTermZdbID);
+        phenoThree.setPatoSuperTermzdbID(aoTermZdbID);
+        phenoThree.setAnatomyTerm(anatomyTerm);
         Term termThree = new Term();
         String angry = "angry";
         termThree.setName(angry);
@@ -115,7 +119,7 @@ public class PhenotypeServiceTest {
         phenotypes.add(phenoThree);
         genox.setPhenotypes(phenotypes);
 
-        Map<String, Set> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
+        Map<String, Set<String>> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
         assertTrue(map != null);
         assertTrue(map.size() == 1);
         String terms = map.keySet().iterator().next();
@@ -165,7 +169,7 @@ public class PhenotypeServiceTest {
         GenotypeExperiment genox = new GenotypeExperiment();
         genox.setPhenotypes(phenotypes);
 
-        Map<String, Set> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
+        Map<String, Set<String>> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
         assertTrue(map != null);
         assertTrue(map.size() == 3);
         Iterator<String> termIterator = map.keySet().iterator();
@@ -199,7 +203,8 @@ public class PhenotypeServiceTest {
 
     private Phenotype getAOPhenotype(String phenotypeName) {
         AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setPatoEntityAzdbID(aoTermZdbID);
+        pheno.setPatoSuperTermzdbID(aoTermZdbID);
+        pheno.setAnatomyTerm(anatomyTerm);
         Term term = new Term();
         term.setName(phenotypeName);
         pheno.setTerm(term);
@@ -208,8 +213,8 @@ public class PhenotypeServiceTest {
 
     private Phenotype getCellAOPhenotype(String cellPhenotypeName) {
         AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setPatoEntityBzdbID(aoTermZdbID);
-        pheno.setPatoEntityAzdbID(cellAOZdbID);
+        pheno.setPatoSuperTermzdbID(aoTermZdbID);
+        pheno.setPatoSubTermzdbID(cellAOZdbID);
         pheno.setAnatomyTerm(cellAnatomyTerm);
         Term term = new Term();
         term.setName(cellPhenotypeName);
@@ -219,8 +224,8 @@ public class PhenotypeServiceTest {
 
     private Phenotype getGOPhenotype(String goPhenotypeName) {
         GoPhenotype pheno = new GoPhenotype();
-        pheno.setPatoEntityBzdbID(aoTermZdbID);
-        pheno.setPatoEntityAzdbID(cellAOZdbID);
+        pheno.setPatoSuperTermzdbID(aoTermZdbID);
+        pheno.setPatoSubTermzdbID(cellAOZdbID);
         GoTerm goterm = new GoTerm();
         goterm.setName(CILIUM);
         pheno.setGoTerm(goterm);

@@ -64,6 +64,10 @@ public class AntibodyService {
                     AnatomyItem term = result.getAnatomyTerm();
                     if (!distinctAoTerms.contains(term))
                         distinctAoTerms.add(term);
+                    // add the secondary term if available
+                    AnatomyItem secondaryAoTerm = result.getSecondaryAnatomyTerm();
+                    if (secondaryAoTerm != null && !distinctAoTerms.contains(secondaryAoTerm))
+                        distinctAoTerms.add(secondaryAoTerm);
                 }
             }
         }
@@ -329,8 +333,10 @@ public class AntibodyService {
                 if (results != null) {
                     for (ExpressionResult result : results) {
                         if (result.isExpressionFound()) {
-
                             terms.add(result.getAnatomyTerm());
+                            AnatomyItem secondaryTerm = result.getSecondaryAnatomyTerm();
+                            if (secondaryTerm != null)
+                                terms.add(secondaryTerm);
                         }
                     }
                 }
@@ -419,7 +425,7 @@ public class AntibodyService {
                         // if the ao is not a key in the map, instantiate a display object and add it to the map
                         // otherwise, get the display object from the map
                         if (!map.containsKey(key)) {
-                            labeling = new AnatomyLabel(ao, cc);
+                            labeling = new AnatomyLabel(ao, cc, null, null);
                             map.put(key, labeling);
                         } else {
                             labeling = map.get(key);
@@ -458,7 +464,7 @@ public class AntibodyService {
 
                         Set<Figure> allFigures = labeling.getFigures();
                         for (Figure fig : allFigures) {
-                            if (!fig.getLabel().equals(AnatomyLabel.TEXT_ONLY)) {
+                            if (fig.getType() == Figure.Type.FIGURE) {
                                 labeling.setNotAllFiguresTextOnly(true);
                                 break;
                             }
@@ -508,11 +514,12 @@ public class AntibodyService {
                         AnatomyItem ao = result.getAnatomyTerm();
 
                         GoTerm cc = result.getGoTerm();
-                        String ccZdbID;
-                        if (cc == null)
-                            ccZdbID = "";
-                        else
-                            ccZdbID = cc.getZdbID();
+                        AnatomyItem secondaryAoTerm = result.getSecondaryAnatomyTerm();
+                        String termZdbID = "";
+                        if (cc != null)
+                            termZdbID = cc.getZdbID();
+                        else if (secondaryAoTerm != null)
+                            termZdbID = secondaryAoTerm.getZdbID();
 
                         DevelopmentStage startStage = result.getStartStage();
                         String startStageName;
@@ -530,14 +537,17 @@ public class AntibodyService {
                             endStageName = endStage.getName();
 
                         // form the key
-                        String key = ao.getName() + ccZdbID + startStageName + endStageName;
+                        String key = ao.getName() + termZdbID + startStageName + endStageName;
 
                         AnatomyLabel labeling;
 
                         // if the key is not in the map, instantiate a display (AnatomyLabel) object and add it to the map
                         // otherwise, just get the display object from the map
                         if (!map.containsKey(key)) {
-                            labeling = new AnatomyLabel(ao, cc, startStage, endStage);
+                            if (cc != null)
+                                labeling = new AnatomyLabel(ao, cc, startStage, endStage);
+                            else
+                                labeling = new AnatomyLabel(ao, secondaryAoTerm, startStage, endStage);
                             map.put(key, labeling);
                         } else {
                             labeling = map.get(key);
@@ -580,7 +590,7 @@ public class AntibodyService {
 
                         Set<Figure> allFigures = labeling.getFigures();
                         for (Figure fig : allFigures) {
-                            if (!fig.getLabel().equals(AnatomyLabel.TEXT_ONLY)) {
+                            if (fig.getType() == Figure.Type.FIGURE) {
                                 labeling.setNotAllFiguresTextOnly(true);
                                 break;
                             }

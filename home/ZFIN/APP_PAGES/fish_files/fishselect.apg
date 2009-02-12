@@ -683,17 +683,17 @@ function call_submit() {
      <?/MICOMMENT>
      <?MISQL SQL="
 	insert into $fishselect_temp_on_anat_junior(junior_g_zdb_id, junior_anat_zdb_id)
-	     select genox_geno_zdb_id, apato_entity_a_zdb_id
+	     select genox_geno_zdb_id, apato_subterm_zdb_id
 	       from genotype_experiment, atomic_phenotype 
               where genox_zdb_id = apato_genox_zdb_id
-                and apato_entity_a_zdb_id in ($anatIDs);">
+                and apato_subterm_zdb_id in ($anatIDs);">
      <?/MISQL>
      <?MISQL SQL="
 	insert into $fishselect_temp_on_anat_junior(junior_g_zdb_id, junior_anat_zdb_id)
-	     select genox_geno_zdb_id, apato_entity_b_zdb_id
+	     select genox_geno_zdb_id, apato_superterm_zdb_id
 	       from genotype_experiment, atomic_phenotype 
               where genox_zdb_id = apato_genox_zdb_id
-                and apato_entity_b_zdb_id in ($anatIDs);">
+                and apato_superterm_zdb_id in ($anatIDs);">
      <?/MISQL> 
 
      <?MICOMMENT> -------------------------------------------------------------
@@ -707,7 +707,7 @@ function call_submit() {
 	     select genox_geno_zdb_id, allanatcon_container_zdb_id
 	       from genotype_experiment, atomic_phenotype, all_anatomy_contains
               where genox_zdb_id = apato_genox_zdb_id
-                and apato_entity_a_zdb_id = allanatcon_contained_zdb_id
+                and apato_subterm_zdb_id = allanatcon_contained_zdb_id
                 and allanatcon_container_zdb_id in ($anatIDs);">
        <?/MISQL>
        <?MISQL SQL="
@@ -715,7 +715,7 @@ function call_submit() {
 	     select genox_geno_zdb_id, allanatcon_container_zdb_id
 	       from genotype_experiment, atomic_phenotype, all_anatomy_contains
               where genox_zdb_id = apato_genox_zdb_id
-                and apato_entity_b_zdb_id = allanatcon_contained_zdb_id
+                and apato_superterm_zdb_id = allanatcon_contained_zdb_id
                 and allanatcon_container_zdb_id in ($anatIDs);">
        <?/MISQL>    <?MICOMMENT>-- end of if include substructures --<?/MICOMMENT>
 
@@ -1042,8 +1042,8 @@ function call_submit() {
                <?MISQL SQL="select distinct anatitem_name,anatitem_name_order 
                  from anatomy_item,atomic_phenotype,genotype_experiment 
                  where apato_genox_zdb_id = genox_zdb_id 
-                   and (apato_entity_a_zdb_id = anatitem_zdb_id 
-		    or apato_entity_b_zdb_id = anatitem_zdb_id)
+                   and (apato_subterm_zdb_id = anatitem_zdb_id 
+		    or apato_superterm_zdb_id = anatitem_zdb_id)
                    and genox_geno_zdb_id = '$genotypeid'
        	           order by anatitem_name_order;">  
                  <?MIVAR>$(SETVAR,$fsel_anat_list[$MI_CURRENTROW],$1)<?/MIVAR>

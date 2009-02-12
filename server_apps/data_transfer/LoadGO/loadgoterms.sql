@@ -495,18 +495,18 @@ create temp table obssec_phenoentity (
                 );
 
 insert into obssec_phenoentity
-      select distinct apato_entity_a_zdb_id,apato_entity_b_zdb_id, genox_geno_zdb_id,apatofig_fig_zdb_id, 'obs' 
+      select distinct apato_subterm_zdb_id,apato_superterm_zdb_id, genox_geno_zdb_id,apatofig_fig_zdb_id, 'obs' 
       from atomic_phenotype, go_term, apato_figure, genotype_experiment
-      where (apato_entity_a_zdb_id = goterm_go_id or apato_entity_b_zdb_id=goterm_go_id)
+      where (apato_subterm_zdb_id = goterm_go_id or apato_superterm_zdb_id=goterm_go_id)
       and apato_genox_zdb_id=genox_zdb_id
       and goterm_is_obsolete='t'
       and apato_zdb_id=apatofig_apato_zdb_id;
 
 
 insert into obssec_phenoentity
-      select distinct apato_entity_a_zdb_id,apato_entity_b_zdb_id, genox_geno_zdb_id,apatofig_fig_zdb_id, 'sec' 
+      select distinct apato_subterm_zdb_id,apato_superterm_zdb_id, genox_geno_zdb_id,apatofig_fig_zdb_id, 'sec' 
       from atomic_phenotype, go_term, apato_figure, genotype_experiment
-      where (apato_entity_a_zdb_id = goterm_go_id or apato_entity_b_zdb_id=goterm_go_id)
+      where (apato_subterm_zdb_id = goterm_go_id or apato_superterm_zdb_id=goterm_go_id)
       and goterm_is_secondary='t'
       and apato_genox_zdb_id=genox_zdb_id
       and apato_zdb_id=apatofig_apato_zdb_id;

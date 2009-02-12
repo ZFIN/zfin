@@ -130,7 +130,7 @@ EFFECTS
 
     <?MISQL SQL="select first 1 apato_zdb_id 
                  from atomic_phenotype 
-                 where apato_entity_a_zdb_id = '$puaddmu_default_entity_zdb_id'
+                 where apato_superterm_zdb_id = '$puaddmu_default_entity_zdb_id'
                    and apato_quality_zdb_id = '$puaddmu_default_quality_zdb_id'
                    and apato_genox_zdb_id = '$puaddmu_genox_zdb_id'
                    and apato_tag = 'abnormal'
@@ -148,7 +148,7 @@ EFFECTS
       <?MISQL SQL="insert into zdb_active_data values ('$puaddmu_apato_zdb_id');"><?/MISQL>
 
       <?MISQL SQL="insert into atomic_phenotype  (apato_zdb_id, apato_genox_zdb_id, apato_start_stg_zdb_id, 
-                                                  apato_end_stg_zdb_id, apato_pub_zdb_id, apato_entity_a_zdb_id, 
+                                                  apato_end_stg_zdb_id, apato_pub_zdb_id, apato_superterm_zdb_id, 
                                                   apato_quality_zdb_id, apato_tag)
                                           values ('$puaddmu_apato_zdb_id', '$puaddmu_genox_zdb_id', '$puaddmu_start_stg_zdb_id', 
                                                   '$puaddmu_end_stg_zdb_id', '$OID', '$puaddmu_default_entity_zdb_id', 

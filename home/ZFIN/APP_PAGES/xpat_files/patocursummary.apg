@@ -331,8 +331,8 @@ fitted
                    patoCuration.updateMutantForm('$patosum_fig_zdb_id', '$patosum_geno_zdb_id', '$patosum_exp_zdb_id', 
                                                  '$patosum_start_stg_zdb_id', '$patosum_end_stg_zdb_id');"> 
          <small>
-          <?MISQL SQL="select distinct apato_entity_a_zdb_id, get_obj_name(apato_entity_a_zdb_id), 
-                                       apato_entity_b_zdb_id, get_obj_name(apato_entity_b_zdb_id),
+          <?MISQL SQL="select distinct apato_subterm_zdb_id, get_obj_name(apato_subterm_zdb_id), 
+                                       apato_superterm_zdb_id, get_obj_name(apato_superterm_zdb_id),
                                        apato_quality_zdb_id, term_name, apato_tag, apato_zdb_id
                        from atomic_phenotype
                             join term on term_zdb_id = apato_quality_zdb_id
@@ -345,28 +345,28 @@ fitted
                          and apato_end_stg_zdb_id = '$patosum_end_stg_zdb_id'
                        order by 2;"> 
 
-             <?MIVAR NAME="$patosum_entity_a_zdb_id">$1<?/MIVAR>
-             <?MIVAR   NAME="$patosum_entity_a_name">$2<?/MIVAR>
-             <?MIVAR NAME="$patosum_entity_b_zdb_id">$3<?/MIVAR>
-             <?MIVAR   NAME="$patosum_entity_b_name">$4<?/MIVAR>
+             <?MIVAR NAME="$patosum_subterm_zdb_id">$1<?/MIVAR>
+             <?MIVAR   NAME="$patosum_subterm_name">$2<?/MIVAR>
+             <?MIVAR NAME="$patosum_superterm_zdb_id">$3<?/MIVAR>
+             <?MIVAR   NAME="$patosum_superterm_name">$4<?/MIVAR>
              <?MIVAR  NAME="$patosum_quality_zdb_id">$5<?/MIVAR>
              <?MIVAR    NAME="$patosum_quality_name">$6<?/MIVAR>
              <?MIVAR             NAME="$patosum_tag">$7<?/MIVAR>
              <?MIVAR    NAME="$patosum_apato_zdb_id">$8<?/MIVAR>
             
-             <?MIVAR NAME="$patosum_pheno_key">$patosum_entity_a_zdb_id$patosum_entity_b_zdb_id$patosum_quality_zdb_id$patosum_tag<?/MIVAR>
+             <?MIVAR NAME="$patosum_pheno_key">$patosum_subterm_zdb_id$patosum_superterm_zdb_id$patosum_quality_zdb_id$patosum_tag<?/MIVAR>
              
              <?MICOMMENT> ** If entity a is unspecified, make it orange ** <?/MICOMMENT>             
-             <?MIVAR COND="$(POSITION,$patosum_entity_a_name,unspecified,1)"
-                     NAME="$patosum_entity_a_name">
-               <span style="color: orange;">$patosum_entity_a_name</span>
+             <?MIVAR COND="$(POSITION,$patosum_superterm_name,unspecified,1)"
+                     NAME="$patosum_superterm_name">
+               <span style="color: orange;">$patosum_superterm_name</span>
              <?/MIVAR>
 
 
-            <?MIBLOCK COND="$(NE,$patosum_entity_b_zdb_id,NULL)">
-               <?MIVAR>$patosum_entity_b_name<?/MIVAR>:
-             <?/MIBLOCK> 
-              $patosum_entity_a_name
+               <?MIVAR>$patosum_superterm_name<?/MIVAR>
+            <?MIBLOCK COND="$(NE,$patosum_subterm_zdb_id,NULL)">
+              <?MIVAR>:$patosum_subterm_name<?/MIVAR>
+            <?/MIBLOCK>
              - $patosum_quality_name [$patosum_tag] <br>
              <script type="text/javascript">
                patoCuration.mutants[$(-,$patosum_recordIndex,1)].phenotypes[$(-,$MI_CURRENTROW,1)] = "$patosum_pheno_key";

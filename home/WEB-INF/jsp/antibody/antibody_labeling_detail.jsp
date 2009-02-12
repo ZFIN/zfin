@@ -5,7 +5,7 @@
     <div id="short-version" class="summary">
         <table cellpadding="0" cellspacing="0" border="0" width="100%" class="searchresults largestripes">
             <tr bgcolor="#ccccc0">
-                <th>Anatomy</th>
+                <th>Anatomy : Substructure</th>
                 <th>Stage</th>
                 <th><a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxassayabbrev.apg">Assay</a></th>
                 <th>Gene</th>
@@ -23,8 +23,10 @@
                                              groupByBean="aoAndPostCompostTerm">
                             <zfin:link entity="${detailedLabeling.anatomyItem}"/>
                             <c:if test="${detailedLabeling.cellularComponent != null}"> :
-                                <zfin:link
-                                        entity="${detailedLabeling.cellularComponent}"/>
+                                <zfin:link entity="${detailedLabeling.cellularComponent}"/>
+                            </c:if>
+                            <c:if test="${detailedLabeling.secondaryAnatomyItem != null}"> :
+                                <zfin:link entity="${detailedLabeling.secondaryAnatomyItem}"/>
                             </c:if>
                         </zfin:groupByDisplay>
                     </td>
@@ -114,6 +116,9 @@
                             <c:if test="${detailedLabeling.cellularComponent != null}"> :
                                 <zfin:link entity="${detailedLabeling.cellularComponent}"/>
                             </c:if>
+                            <c:if test="${detailedLabeling.secondaryAnatomyItem != null}"> :
+                                <zfin:link entity="${detailedLabeling.secondaryAnatomyItem}"/>
+                            </c:if>
                         </zfin:groupByDisplay>
                     </td>
                     <td>
@@ -172,7 +177,7 @@
                     <br/>&nbsp;&nbsp;
                     <a href="javascript:collapse()">
                         <img src="/images/up.gif" alt="expand" title="Show first 5 structures" border="0">
-                        Show first</a> 5 lines
+                        Show first</a> 5 lines                      
                 </td>
             </tr>
         </table>

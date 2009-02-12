@@ -951,7 +951,7 @@ EFFECTS
     <?MIVAR NAME=xpcurup_anatitem_remove><?/MIVAR>
     <?MIVAR NAME=xpcurup_xpatinf_add_csv>$(REPLACE,$xpcur_G_structures_add,"|","','")<?/MIVAR>
     <?MISQL SQL="
-      select xpatinf_anatitem_zdb_id, xpatinf_expressed, xpatinf_go_term_zdb_id
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed, xpatinf_term_zdb_id
       from expression_pattern_infrastructure
       where xpatinf_zdb_id in ('$xpcurup_xpatinf_add_csv')
       ;">
@@ -966,7 +966,7 @@ EFFECTS
     <?MIVAR NAME=xpcurup_xpatinf_remove_csv DELIMIT="|" REPLACE="','">$xpcur_G_structures_remove<?/MIVAR>
     
     <?MISQL SQL="
-      select xpatinf_anatitem_zdb_id, xpatinf_expressed, xpatinf_go_term_zdb_id
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed, xpatinf_term_zdb_id
       from expression_pattern_infrastructure
       where xpatinf_zdb_id in ('$xpcurup_xpatinf_remove_csv')
       ;">
@@ -987,7 +987,7 @@ EFFECTS
     <?MIVAR>$(UNSETVAR,$xpcurup_xpatfig_add_list)<?/MIVAR>
     <?MIVAR NAME=xpcurup_xpatfig_add_list><?/MIVAR>
     <?MISQL SQL="
-      select xpatinf_anatitem_zdb_id, xpatinf_expressed, xpatinf_go_term_zdb_id
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed, xpatinf_term_zdb_id
       from expression_pattern_infrastructure
       where xpatinf_zdb_id in ('$xpcurup_xpatinf_add_csv')
       ;">
@@ -1045,7 +1045,7 @@ EFFECTS
               where xpatfig_xpatres_zdb_id = xpatres_zdb_id
                 and xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
                 and xpatres_expression_found = xpatinf_expressed
-                and xpatres_go_term_zdb_id = xpatinf_go_term_zdb_id 
+                and xpatres_term_zdb_id = xpatinf_term_zdb_id 
                 and xpatinf_zdb_id in ('$xpcurup_xpatinf_remove_csv')
                 and xpatres_xpatex_zdb_id = '$xpcurup_panel_xpatex_zdb_id'
                 and xpatres_start_stg_zdb_id = '$xpcurup_panel_sstage_zdb_id'
@@ -1070,12 +1070,12 @@ EFFECTS
               where xpatfig_xpatres_zdb_id = xpatres_zdb_id
                 and xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
                 and xpatres_expression_found = xpatinf_expressed
-                and xpatres_go_term_zdb_id=xpatinf_go_term_zdb_id
+                and xpatres_term_zdb_id=xpatinf_term_zdb_id
                 and xpatinf_zdb_id in ('$xpcurup_xpatinf_remove_csv')
                 and xpatres_xpatex_zdb_id = '$xpcurup_panel_xpatex_zdb_id'
                 and xpatres_start_stg_zdb_id = '$xpcurup_panel_sstage_zdb_id'
                 and xpatres_end_stg_zdb_id = '$xpcurup_panel_estage_zdb_id'
-                and xpatres_go_term_zdb_id is not null
+                and xpatres_term_zdb_id is not null
                 UNION
               select *
               from expression_result, expression_pattern_infrastructure
@@ -1086,8 +1086,8 @@ EFFECTS
                 and xpatres_xpatex_zdb_id = '$xpcurup_panel_xpatex_zdb_id'
                 and xpatres_start_stg_zdb_id = '$xpcurup_panel_sstage_zdb_id'
                 and xpatres_end_stg_zdb_id = '$xpcurup_panel_estage_zdb_id'
-                and xpatres_go_term_zdb_id is null
-                and xpatinf_go_term_zdb_id is null
+                and xpatres_term_zdb_id is null
+                and xpatinf_term_zdb_id is null
             )
         ;">
     <?/MISQL>
@@ -1142,9 +1142,6 @@ EFFECTS
         from webPages where ID='aa-record_web_update.apg';">
       <?/MISQL>        
       
-      <script>
-        alert('The Unspecified term was added when the last anatomy item was removed.');
-      </script>
     
     <?/MIBLOCK>
     

@@ -188,8 +188,8 @@ unload to "obsolete_anat_with_pato.err"
      from obsolete_anatomy_item
     where exists (select * 
                     from atomic_phenotype
-                   where apato_entity_a_zdb_id = o_anatitem_zdb_id
-                      or apato_entity_b_zdb_id = o_anatitem_zdb_id) ;
+                   where apato_subterm_zdb_id = o_anatitem_zdb_id
+                      or apato_superterm_zdb_id = o_anatitem_zdb_id) ;
 
 -------------------------------------------------------------------
 -- Anatomy term synonyms/alias 
@@ -734,32 +734,32 @@ select o.apato_zdb_id,
        n.apato_zdb_id 
   from merged_anatomy_item
 	join atomic_phenotype o
-		on m_anatitem_old_zdb_id = o.apato_entity_a_zdb_id
+		on m_anatitem_old_zdb_id = o.apato_subterm_zdb_id
 	join atomic_phenotype n
-		on m_anatitem_new_zdb_id = n.apato_entity_a_zdb_id
+		on m_anatitem_new_zdb_id = n.apato_subterm_zdb_id
  where o.apato_genox_zdb_id = n.apato_genox_zdb_id 
    and o.apato_start_stg_zdb_id = n.apato_start_stg_zdb_id 
    and o.apato_end_stg_zdb_id = n.apato_end_stg_zdb_id 
    and o.apato_pub_zdb_id = n.apato_pub_zdb_id
    and o.apato_quality_zdb_id = n.apato_quality_zdb_id
    and o.apato_tag = n.apato_tag
-   and o.apato_entity_b_zdb_id = n.apato_entity_b_zdb_id;
+   and o.apato_superterm_zdb_id = n.apato_superterm_zdb_id;
 
 insert into tmp_pato_merge_pair_same_annotation
 select o.apato_zdb_id,
        n.apato_zdb_id 
   from merged_anatomy_item
 	join atomic_phenotype o
-		on m_anatitem_old_zdb_id = o.apato_entity_b_zdb_id
+		on m_anatitem_old_zdb_id = o.apato_superterm_zdb_id
 	join atomic_phenotype n
-		on m_anatitem_new_zdb_id = n.apato_entity_b_zdb_id
+		on m_anatitem_new_zdb_id = n.apato_superterm_zdb_id
  where o.apato_genox_zdb_id = n.apato_genox_zdb_id 
    and o.apato_start_stg_zdb_id = n.apato_start_stg_zdb_id 
    and o.apato_end_stg_zdb_id = n.apato_end_stg_zdb_id 
    and o.apato_pub_zdb_id = n.apato_pub_zdb_id
    and o.apato_quality_zdb_id = n.apato_quality_zdb_id
    and o.apato_tag = n.apato_tag
-   and o.apato_entity_a_zdb_id = n.apato_entity_a_zdb_id;
+   and o.apato_subterm_zdb_id = n.apato_subterm_zdb_id;
 
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id)
 	select tps_old_apato_zdb_id,tps_new_apato_zdb_id
@@ -790,35 +790,35 @@ create temp table tmp_pato_merge_record (
 	tpm_genox_zdb_id	varchar(50),
 	tpm_start_stg_zdb_id	varchar(50),
 	tpm_end_stg_zdb_id	varchar(50),
-	tpm_entity_a_zdb_id	varchar(50),
-	tpm_entity_b_zdb_id	varchar(50),
+	tpm_subterm_zdb_id	varchar(50),
+	tpm_superterm_zdb_id	varchar(50),
 	tpm_quality_zdb_id	varchar(50),
 	tpm_pub_zdb_id		varchar(50),
 	tpm_tag			varchar(35)
 )with no log;
 
 insert into tmp_pato_merge_record (tpm_genox_zdb_id, tpm_start_stg_zdb_id, 
-                                   tpm_end_stg_zdb_id, tpm_entity_a_zdb_id, 
-                                   tpm_entity_b_zdb_id, tpm_quality_zdb_id, 
+                                   tpm_end_stg_zdb_id, tpm_subterm_zdb_id, 
+                                   tpm_superterm_zdb_id, tpm_quality_zdb_id, 
                                    tpm_pub_zdb_id, tpm_tag )
 -- More than one term might be merged into the same term, thus 'distinct' is needed.
   select distinct apato_genox_zdb_id, apato_start_stg_zdb_id,
-         apato_end_stg_zdb_id,m_anatitem_new_zdb_id, apato_entity_b_zdb_id,
+         apato_end_stg_zdb_id,m_anatitem_new_zdb_id, apato_superterm_zdb_id,
          apato_quality_zdb_id, apato_pub_zdb_id, apato_tag
     from merged_anatomy_item
 	 join atomic_phenotype
-		on m_anatitem_old_zdb_id = apato_entity_a_zdb_id;
+		on m_anatitem_old_zdb_id = apato_subterm_zdb_id;
 
 insert into tmp_pato_merge_record (tpm_genox_zdb_id, tpm_start_stg_zdb_id, 
-                                   tpm_end_stg_zdb_id, tpm_entity_a_zdb_id, 
-                                   tpm_entity_b_zdb_id, tpm_quality_zdb_id, 
+                                   tpm_end_stg_zdb_id, tpm_subterm_zdb_id, 
+                                   tpm_superterm_zdb_id, tpm_quality_zdb_id, 
                                    tpm_pub_zdb_id, tpm_tag )
   select distinct apato_genox_zdb_id, apato_start_stg_zdb_id,
-         apato_end_stg_zdb_id,apato_entity_a_zdb_id, m_anatitem_new_zdb_id,
+         apato_end_stg_zdb_id,apato_subterm_zdb_id, m_anatitem_new_zdb_id,
          apato_quality_zdb_id, apato_pub_zdb_id, apato_tag
     from merged_anatomy_item
 	 join atomic_phenotype
-		on m_anatitem_old_zdb_id = apato_entity_b_zdb_id;
+		on m_anatitem_old_zdb_id = apato_superterm_zdb_id;
 
 update tmp_pato_merge_record set tpm_apato_zdb_id = get_id ("APATO");
 
@@ -838,15 +838,12 @@ insert into tmp_pato_merge_pair_diff_annotation
        where tpm_genox_zdb_id = apato_genox_zdb_id
          and tpm_start_stg_zdb_id =  apato_start_stg_zdb_id
          and tpm_end_stg_zdb_id = apato_end_stg_zdb_id
-         and (tpm_entity_b_zdb_id = apato_entity_b_zdb_id
-              or (apato_entity_b_zdb_id is null
-                  and tpm_entity_b_zdb_id is null )
-             )
+         and tpm_superterm_zdb_id = apato_superterm_zdb_id
          and tpm_quality_zdb_id = apato_quality_zdb_id
          and tpm_pub_zdb_id = apato_pub_zdb_id
          and tpm_tag = apato_tag
-         and tpm_entity_a_zdb_id = m_anatitem_new_zdb_id
-         and apato_entity_a_zdb_id = m_anatitem_old_zdb_id;
+         and tpm_subterm_zdb_id = m_anatitem_new_zdb_id
+         and apato_subterm_zdb_id = m_anatitem_old_zdb_id;
 
 -- on entity_b
 insert into tmp_pato_merge_pair_diff_annotation
@@ -855,12 +852,12 @@ insert into tmp_pato_merge_pair_diff_annotation
        where tpm_genox_zdb_id = apato_genox_zdb_id
          and tpm_start_stg_zdb_id =  apato_start_stg_zdb_id
          and tpm_end_stg_zdb_id = apato_end_stg_zdb_id
-         and tpm_entity_b_zdb_id = apato_entity_b_zdb_id
+         and tpm_superterm_zdb_id = apato_superterm_zdb_id
          and tpm_quality_zdb_id = apato_quality_zdb_id
          and tpm_pub_zdb_id = apato_pub_zdb_id
          and tpm_tag = apato_tag
-         and tpm_entity_b_zdb_id = m_anatitem_new_zdb_id
-         and apato_entity_b_zdb_id = m_anatitem_old_zdb_id;
+         and tpm_superterm_zdb_id = m_anatitem_new_zdb_id
+         and apato_superterm_zdb_id = m_anatitem_old_zdb_id;
 
 -- Save the pato figure records (with the new anatomy item) in a temp table,
 -- we will do a distinct select and insert them back later. 
@@ -886,7 +883,7 @@ delete from apato_figure
 
 select  apato_zdb_id, m_anatitem_old_zdb_id, m_anatitem_new_zdb_id
 from merged_anatomy_item join 
-     atomic_phenotype on m_anatitem_old_zdb_id = apato_entity_a_zdb_id
+     atomic_phenotype on m_anatitem_old_zdb_id = apato_subterm_zdb_id
      join apato_figure  on apato_zdb_id = apatofig_apato_zdb_id
 where  apato_zdb_id not in (select tpd_old_apato_zdb_id from tmp_pato_merge_pair_diff_annotation);
 
@@ -897,21 +894,21 @@ delete from zdb_active_data
 	       (select 'x'
 	          from merged_anatomy_item join 
                        atomic_phenotype
-			   on m_anatitem_old_zdb_id = apato_entity_a_zdb_id
+			   on m_anatitem_old_zdb_id = apato_subterm_zdb_id
 	         where zactvd_zdb_id = apato_zdb_id);
 delete from zdb_active_data 
 	where exists 
 	       (select 'x'
 	          from merged_anatomy_item join 
                        atomic_phenotype
-			   on m_anatitem_old_zdb_id = apato_entity_b_zdb_id
+			   on m_anatitem_old_zdb_id = apato_superterm_zdb_id
 	         where zactvd_zdb_id = apato_zdb_id);
 
 -- restore the annotation with new terms (it establishes some primary keys
 -- for the xpat figures restore.  
 insert into atomic_phenotype (apato_zdb_id, apato_genox_zdb_id,
 			apato_start_stg_zdb_id,  apato_end_stg_zdb_id,
-			apato_entity_a_zdb_id, apato_entity_b_zdb_id,
+			apato_subterm_zdb_id, apato_superterm_zdb_id,
                         apato_quality_zdb_id, apato_pub_zdb_id, apato_tag)
      select * 
        from tmp_pato_merge_record;

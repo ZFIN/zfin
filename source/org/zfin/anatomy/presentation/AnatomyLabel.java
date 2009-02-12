@@ -15,8 +15,8 @@ import java.util.*;
 public class AnatomyLabel implements Comparable<AnatomyLabel> {
 
     private AnatomyItem anatomyItem;
+    private AnatomyItem secondaryAnatomyItem;
     private GoTerm cellularComponent;
-    private String aoAndPostCompostTerm;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
     private Set<Publication> publications;
@@ -27,32 +27,26 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
     private boolean figureWithImage;
     private boolean notAllFiguresTextOnly;
 
-    public static String TEXT_ONLY = "text only";
-
-    public AnatomyLabel(AnatomyItem anatomyItem, GoTerm goTerm) {
-        setAnatomyItem(anatomyItem);
-        setCellularComponent(goTerm);
-        if (anatomyItem == null && goTerm == null)
-          setAoAndPostCompostTerm("");
-        else if (goTerm == null)
-          setAoAndPostCompostTerm(anatomyItem.getName());
-        else
-          setAoAndPostCompostTerm(anatomyItem.getName() + goTerm.getName());
+    public AnatomyLabel(AnatomyItem anatomyItem, GoTerm goTerm, DevelopmentStage startStage, DevelopmentStage endStage) {
+        if (anatomyItem == null)
+            throw new NullPointerException("No Anatomy Term provided.");
+        this.anatomyItem = anatomyItem;
+        cellularComponent = goTerm;
+        this.startStage = startStage;
+        this.endStage = endStage;
         publications = new HashSet<Publication>();
         figures = new HashSet<Figure>();
         assays = new TreeSet<ExpressionAssay>();
         genes = new TreeSet<Marker>();
     }
 
-    public AnatomyLabel(AnatomyItem anatomyItem, GoTerm goTerm, DevelopmentStage startStage, DevelopmentStage endStage) {
-        setAnatomyItem(anatomyItem);
-        setCellularComponent(goTerm);
-        if (goTerm == null)
-          setAoAndPostCompostTerm(anatomyItem.getName());
-        else
-          setAoAndPostCompostTerm(anatomyItem.getName() + goTerm.getName());
-        setStartStage(startStage);
-        setEndStage(endStage);
+    public AnatomyLabel(AnatomyItem anatomyItem, AnatomyItem secondaryAoTerm, DevelopmentStage startStage, DevelopmentStage endStage) {
+        if (anatomyItem == null)
+            throw new NullPointerException("No Anatomy Term provided.");
+        this.anatomyItem = anatomyItem;
+        this.secondaryAnatomyItem = secondaryAoTerm;
+        this.startStage = startStage;
+        this.endStage = endStage;
         publications = new HashSet<Publication>();
         figures = new HashSet<Figure>();
         assays = new TreeSet<ExpressionAssay>();
@@ -66,24 +60,12 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
         return anatomyItem;
     }
 
-    public void setAnatomyItem(AnatomyItem anatomyItem) {
-        this.anatomyItem = anatomyItem;
-    }
-
     public DevelopmentStage getStartStage() {
         return startStage;
     }
 
-    public void setStartStage(DevelopmentStage startStage) {
-        this.startStage = startStage;
-    }
-
     public DevelopmentStage getEndStage() {
         return endStage;
-    }
-
-    public void setEndStage(DevelopmentStage endStage) {
-        this.endStage = endStage;
     }
 
     public Set<Publication> getPublications() {
@@ -119,7 +101,7 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
         if (notAllFiguresTextOnly)
             return getNumberOfFigures() + " " + figureChoice.format(getNumberOfFigures());
         else
-            return TEXT_ONLY;
+            return Figure.Type.TOD.getName();
     }
 
     public Publication getSinglePublication() {
@@ -133,17 +115,17 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
         if (anotherDisplay == null)
             return 1;
         int result = anatomyItem.compareTo(anotherDisplay.getAnatomyItem());
-        if(result == 0) {
-          if (cellularComponent == null && anotherDisplay.getCellularComponent() == null)
-            return 0;
-          else if (cellularComponent == null)
-            return -1;
-          else if (anotherDisplay.getCellularComponent() == null)
-            return 1;
-          else
-            return cellularComponent.compareTo(anotherDisplay.getCellularComponent());
+        if (result == 0) {
+            if (cellularComponent == null && anotherDisplay.getCellularComponent() == null)
+                return 0;
+            else if (cellularComponent == null)
+                return -1;
+            else if (anotherDisplay.getCellularComponent() == null)
+                return 1;
+            else
+                return cellularComponent.compareTo(anotherDisplay.getCellularComponent());
         } else {
-          return result;
+            return result;
         }
     }
 
@@ -174,7 +156,7 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
         for (Marker gene : genes) {
             Marker marker = new Marker();
             MarkerType mrkrType = new MarkerType();
-            mrkrType.setName("GENE");
+            mrkrType.setName(Marker.Type.GENE.name());
             mrkrType.setType(Marker.Type.GENE);
             Set<Marker.TypeGroup> typeGroup = new HashSet<Marker.TypeGroup>();
             typeGroup.add(Marker.TypeGroup.GENEDOM);
@@ -200,16 +182,12 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
         return cellularComponent;
     }
 
-    public void setCellularComponent(GoTerm cellularComponent) {
-        this.cellularComponent = cellularComponent;
-    }
-
     public String getAoAndPostCompostTerm() {
-        return aoAndPostCompostTerm;
-    }
-
-    public void setAoAndPostCompostTerm(String aoAndPostCompostTerm) {
-        this.aoAndPostCompostTerm = aoAndPostCompostTerm;
+        if (secondaryAnatomyItem == null && cellularComponent == null)
+            return anatomyItem.getName();
+        else if (cellularComponent != null)
+            return anatomyItem.getName() + cellularComponent.getName();
+        return anatomyItem.getName() + secondaryAnatomyItem.getName();
     }
 
     public boolean isNotAllFiguresTextOnly() {
@@ -218,5 +196,9 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
 
     public void setNotAllFiguresTextOnly(boolean notAllFiguresTextOnly) {
         this.notAllFiguresTextOnly = notAllFiguresTextOnly;
+    }
+
+    public AnatomyItem getSecondaryAnatomyItem() {
+        return secondaryAnatomyItem;
     }
 }

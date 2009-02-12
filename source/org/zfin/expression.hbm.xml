@@ -160,7 +160,11 @@
                           column="xpatfig_fig_zdb_id"/>
         </set>
 
-        <many-to-one name="goTerm" class="org.zfin.ontology.GoTerm" column="xpatres_go_term_zdb_id"/>
+        <many-to-one name="goTerm" class="org.zfin.ontology.GoTerm" column="xpatres_term_zdb_id" insert="false"
+                     update="false" not-found="ignore"/>
+
+        <many-to-one name="secondaryAnatomyTerm" class="org.zfin.anatomy.AnatomyItem" column="xpatres_term_zdb_id"
+                     insert="false" update="false" not-found="ignore"/>
 
     </class>
 

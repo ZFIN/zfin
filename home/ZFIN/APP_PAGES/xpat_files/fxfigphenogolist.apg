@@ -93,7 +93,7 @@ stage range, experiment, or expression_found in the same figure.
       FROM apato_figure, atomic_phenotype, go_term 
      WHERE apatofig_fig_zdb_id = '$fxfiggo_fig_zdb_id'
        AND apatofig_apato_zdb_id = apato_zdb_id
-                     and apato_entity_a_zdb_id= goterm_zdb_id
+                     and apato_subterm_zdb_id= goterm_zdb_id
      ORDER BY goterm_name asc;">
     <?MIVAR NAME="$fxfigphenogo_goterm_html"><span nowrap><a href=$fxfigphenogo_url$3>$1</a></span><?/MIVAR>
 

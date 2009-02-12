@@ -613,7 +613,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         hql.append("      marker = con.morpholino AND  ");
         hql.append("      pheno.genotypeExperiment = geno AND  ");
         hql.append("      figure member of pheno.figures AND ");
-        hql.append("      ( pheno.patoEntityAzdbID = :aoZdbID OR pheno.patoEntityBzdbID = :aoZdbID ) ");
+        hql.append("      ( pheno.patoSubTermzdbID = :aoZdbID OR pheno.patoSuperTermzdbID = :aoZdbID ) ");
     }
 
 
@@ -626,7 +626,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "      exp.genotype = geno AND " +
                 "      pheno.genotypeExperiment = exp  AND " +
                 "      figure member of pheno.figures AND " +
-                "      ( pheno.patoEntityAzdbID = :aoZdbID OR pheno.patoEntityBzdbID = :aoZdbID ) " +
+                "      ( pheno.patoSubTermzdbID = :aoZdbID OR pheno.patoSuperTermzdbID = :aoZdbID ) " +
                 "order by figure.orderingLabel    " ;
         Query query = session.createQuery(hql);
         query.setString("genoID", geno.getZdbID());
@@ -640,8 +640,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Criteria pubs = session.createCriteria(Publication.class);
         Criteria phenotype = pubs.createCriteria("phenotypes");
         phenotype.add(Restrictions.or(
-                Restrictions.eq("patoEntityAzdbID", aoTerm.getZdbID()),
-                Restrictions.eq("patoEntityBzdbID", aoTerm.getZdbID())));
+                Restrictions.eq("patoSubTermzdbID", aoTerm.getZdbID()),
+                Restrictions.eq("patoSuperTermzdbID", aoTerm.getZdbID())));
         phenotype.add(Restrictions.isNotEmpty("figures"));
         Criteria genox = phenotype.createCriteria("genotypeExperiment");
         genox.add(Restrictions.eq("genotype", genotype));
@@ -652,7 +652,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
 */
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return  new PaginationResult<Publication>((List<Publication>) pubs.list()) ;
+        return  new PaginationResuselt<Publication>((List<Publication>) pubs.list()) ;
     }
 
 
@@ -662,7 +662,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = " select count(distinct figure.publication.zdbID ) from "+
                 " Figure figure, Phenotype phenotype " +
                 "where " +
-                "      ( phenotype.patoEntityAzdbID = :aoZdbID OR phenotype.patoEntityBzdbID = :aoZdbID ) AND " +
+                "      ( phenotype.patoSubTermzdbID = :aoZdbID OR phenotype.patoSuperTermzdbID = :aoZdbID ) AND " +
                 "      phenotype.genotypeExperiment.genotype.zdbID = :genoID AND " +
                 "      figure member of phenotype.figures " +
                 "" ;
