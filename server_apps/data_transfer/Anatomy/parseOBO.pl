@@ -231,7 +231,7 @@ while (<>) {
     if (@termDefAttrib > 1)
     {
         $refCount = @termDefAttrib;
-        $termDef .= " (<a href=http://gorp.zfin.org/cgi-bin/webdriver?MIval=aa-showpubs.apg&OID=$termZdbId&total_count=$refCount>$refCount</a>)";
+        $termDef .= " (<a href=http://zfin.org/cgi-bin/webdriver?MIval=aa-showpubs.apg&OID=$termZdbId&total_count=$refCount>$refCount</a>)";
         $refCount = 0;
     } 
     
