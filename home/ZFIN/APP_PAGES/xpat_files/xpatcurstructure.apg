@@ -634,9 +634,9 @@ not should
 <?MIELSE>
           <?MIVAR>
           <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></a><?/MIVAR>
-<?MIBLOCK COND="$(NE,$xpcurstr_goterm_name,)">
+<?MIBLOCK COND="$(NE,$xpcurstr_second_aoterm_name,)">
 <?MIVAR>
-          :<a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")>$xpcurstr_goterm_name</a>
+          :<a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")>$xpcurstr_second_aoterm_name</a>
           <?/MIVAR>
 <?/MIBLOCK>
         <?/MIBLOCK>
