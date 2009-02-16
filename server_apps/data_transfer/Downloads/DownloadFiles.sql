@@ -343,7 +343,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatfig.txt'
  DELIMITER "	"
- select distinct xpatex_zdb_id,xpatfig_fig_zdb_id
+ select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
  from expression_experiment, expression_result,expression_pattern_figure
  where xpatex_zdb_id=xpatres_xpatex_zdb_id
  and   xpatres_zdb_id=xpatfig_xpatres_zdb_id
@@ -703,12 +703,14 @@ select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id, anatrel_dagedit_id
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_stage_anatomy.txt'
  DELIMITER "	"
-select xpatres_xpatex_zdb_id,
+select  xpatres_zdb_id,
+       xpatres_xpatex_zdb_id,
        xpatres_start_stg_zdb_id,
        xpatres_end_stg_zdb_id,
        xpatres_anat_item_zdb_id,
        xpatres_expression_found
-  from expression_result;
+  from expression_result
+ order by xpatres_xpatex_zdb_id; 
 
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_synonyms.txt'
@@ -740,5 +742,11 @@ select gn.mrkr_zdb_id, gn.mrkr_abbrev, mo.mrkr_zdb_id, mo.mrkr_abbrev, mrkrseq_s
     and mo.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
     order by gn.mrkr_abbrev;
 
-
+-- Image data
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/ImageFigures.txt'
+ DELIMITER "	"
+select img_zdb_id, img_fig_zdb_id, img_preparation
+ from image
+where img_fig_zdb_id is not null
+ order by img_zdb_id;
 
