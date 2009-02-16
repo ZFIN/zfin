@@ -484,11 +484,20 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
     <?/MIBLOCK>
 
     <?MIBLOCK COND="$(>,$(POSITION,$OID,ALT),0)">
+<?MIBLOCK COND="$(EQ,$pubOrder,authors_lower)">
       <?MISQL SQL="
         select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
         from webPages where ID='aa-citgeneric.apg';">
           <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
       <?/MISQL>
+<?MIELSE>
+<?MIVAR NAME=$pubOrderType><?/MIVAR>
+      <?MISQL SQL="
+        select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
+        from webPages where ID='aa-citgeneric.apg';">
+          <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
+<?/MISQL>
+<?/MIBLOCK>
     
       <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
 
@@ -533,11 +542,20 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
 
   <?MIBLOCK COND="$(>,$(POSITION,$OID,GENO),0)">
-    <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
-                 from webPages where ID='aa-citgeneric.apg';">
-        <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
-    <?/MISQL>
-    
+<?MIBLOCK COND="$(EQ,$pubOrder,authors_lower)">
+      <?MISQL SQL="
+        select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
+        from webPages where ID='aa-citgeneric.apg';">
+          <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
+      <?/MISQL>
+<?MIELSE>
+<?MIVAR NAME=$pubOrderType><?/MIVAR>
+      <?MISQL SQL="
+        select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
+        from webPages where ID='aa-citgeneric.apg';">
+          <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
+      <?/MISQL>
+<?/MIBLOCK>
     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
 
   <?/MIBLOCK>
