@@ -1,4 +1,4 @@
-<?MICOMMENT>
+ke<?MICOMMENT>
 
 FILE:     xpatcurstructure.apg
 PREFIX:   xpcurstr_
@@ -562,24 +562,22 @@ function checkAnatomy() {
     <?MIVAR NAME=$xpcurstr_term_zdb_id>$9<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_term_obo_id>$10<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_term_ontology>ZF<?/MIVAR>
+
+    <?MIVAR NAME=$xpcurstr_goterm_name><?/MIVAR>
+    <?MIVAR NAME=$xpcurstr_second_aoterm_name><?/MIVAR>
+
     <?MIBLOCK COND="$(>,$(POSITION,$xpcurstr_term_zdb_id,GOTERM),0)">
       <?MISQL SQL="select goterm_name from go_term
                    where goterm_zdb_id='$xpcurstr_term_zdb_id'">
           <?MIVAR NAME=xpcurstr_goterm_name>$1<?/MIVAR>
           <?MIVAR NAME=$xpcurstr_term_ontology>GO<?/MIVAR>
-          <?MIVAR NAME=xpcurstr_second_aoterm_name><?/MIVAR>
       <?/MISQL>
     <?/MIBLOCK>   
     <?MIBLOCK COND="$(>,$(POSITION,$xpcurstr_term_zdb_id,ANAT),0)">
       <?MISQL SQL="select anatitem_name from anatomy_item
                    where anatitem_zdb_id='$xpcurstr_term_zdb_id'">
           <?MIVAR NAME=xpcurstr_second_aoterm_name>$1<?/MIVAR>
-          <?MIVAR NAME=xpcurstr_goterm_name><?/MIVAR>
       <?/MISQL>
-    <?/MIBLOCK>
-    <?MIBLOCK COND="$(EC,$xpcurstr_term_zdb_id,)">
-          <?MIVAR NAME=xpcurstr_goterm_name><?/MIVAR>
-          <?MIVAR NAME=xpcurstr_second_aoterm_name><?/MIVAR>
     <?/MIBLOCK>
     <?MIVAR NAME=xpcurstr_xpatinf_goterm_zdb_minus>$(REPLACE,$9,"-","")<?/MIVAR>
 <?MICOMMENT>
@@ -591,7 +589,6 @@ not should
        <?MIVAR NAME=$xpcurstr_goterm_name><?/MIVAR>
        should
     <?/MIBLOCK>
-
 <?/MICOMMENT> 
     <?MIVAR NAME=$row_id>$5<?/MIVAR>
     <?MIVAR>
@@ -625,23 +622,33 @@ not should
       *** Structure ***
       <?/MICOMMENT>
       <td onClick="increment_radio_button(document.forms['panel_structures'].elements['$xpcurstr_xpatinf_zdb_id']);">
-<?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
+
+      <?MIVAR>
+            <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" 
+	     onmouseover=addcontrol("$row_id")>
+      <?/MIVAR>
+      <?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
+      	   <b>
+      <?/MIBLOCK>
           <?MIVAR>
-          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><b><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></b></a><?/MIVAR>
-<?MIBLOCK COND="$(NE,$xpcurstr_goterm_name,)">
-<?MIVAR>
-          :<a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")>$xpcurstr_goterm_name</a>
-	   <?/MIVAR>
-<?/MIBLOCK>
-<?MIELSE>
-          <?MIVAR>
-          <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></a><?/MIVAR>
-<?MIBLOCK COND="$(NE,$xpcurstr_second_aoterm_name,)">
-<?MIVAR>
-          :<a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$row_id")>$xpcurstr_second_aoterm_name</a>
-          <?/MIVAR>
-<?/MIBLOCK>
-        <?/MIBLOCK>
+		<span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span>
+	  <?/MIVAR>
+      <?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
+           </b>
+      <?/MIBLOCK>
+      </a>
+      <?MIBLOCK COND="$(NE,$xpcurstr_goterm_name,)">
+	  	<?MIVAR>
+		              :<a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" 
+			        onmouseover=addcontrol("$row_id")>$xpcurstr_goterm_name</a>
+	   	<?/MIVAR>
+       <?/MIBLOCK>
+       <?MIBLOCK COND="$(NE,$xpcurstr_second_aoterm_name,)">
+	        <?MIVAR>
+			     :<a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" 
+			     onmouseover=addcontrol("$row_id")>$xpcurstr_second_aoterm_name</a>
+		<?/MIVAR>
+       <?/MIBLOCK>
           <?MIVAR>($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
       </td>
       <td>
