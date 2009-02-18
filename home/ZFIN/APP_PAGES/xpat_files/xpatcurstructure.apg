@@ -623,29 +623,19 @@ not should
       <?/MICOMMENT>
       <td onClick="increment_radio_button(document.forms['panel_structures'].elements['$xpcurstr_xpatinf_zdb_id']);">
 
-      <?MIVAR>
-            <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" 
-	     onmouseover=addcontrol("$row_id")>
-      <?/MIVAR>
-      <?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
-      	   <b>
-      <?/MIBLOCK>
-          <?MIVAR>
-		<span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span>
-	  <?/MIVAR>
-      <?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
-           </b>
-      <?/MIBLOCK>
-      </a>
+      	    <?MIVAR>
+		<a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_obo_id&ontologyName=ZF&field=ENTITY&viewType=EXTERNAL" 
+	     	onmouseover=addcontrol("$row_id")><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span></a>
+      	    <?/MIVAR>
       <?MIBLOCK COND="$(NE,$xpcurstr_goterm_name,)">
 	  	<?MIVAR>
-		              :<a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" 
+		              : <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" 
 			        onmouseover=addcontrol("$row_id")>$xpcurstr_goterm_name</a>
 	   	<?/MIVAR>
        <?/MIBLOCK>
        <?MIBLOCK COND="$(NE,$xpcurstr_second_aoterm_name,)">
 	        <?MIVAR>
-			     :<a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" 
+			     : <a id="$row_id" href="/phenote/Phenote/?termId=$xpcurstr_term_obo_id&ontologyName=$xpcurstr_term_ontology&field=ENTITY&viewType=EXTERNAL" 
 			     onmouseover=addcontrol("$row_id")>$xpcurstr_second_aoterm_name</a>
 		<?/MIVAR>
        <?/MIBLOCK>
