@@ -72,7 +72,7 @@ case
                                            where goterm_zdb_id = xpatres_term_zdb_id)
                                   end
 
-    from marker, expression_experiment, expression_result, outer go_term, anatomy_item, genotype_experiment, experiment, genotype
+    from marker, expression_experiment, expression_result,  anatomy_item, genotype_experiment, experiment, genotype
   where 
 	xpatres_xpatex_zdb_id = xpatex_zdb_id
 	AND xpatex_atb_zdb_id = mrkr_zdb_id
