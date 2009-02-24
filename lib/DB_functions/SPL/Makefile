@@ -41,9 +41,10 @@ FISH_STATS   = get_image_stats.sql \
 	       get_genotype_backgrounds.sql \
 	       get_genotype_display.sql \
 	       get_genotype_handle.sql \
-	       p_check_pato_entities.sql \
 	       p_update_geno_nickname.sql \
-	       get_feature_type.sql
+	       get_feature_type.sql \
+	       p_check_pato_postcomposed_terms.sql \
+	       p_check_fx_postcomposed_terms.sql 
 LOAD_STATS   = p_zgc_load.sql
 XPAT_STATS   = populate_direct_submission_date.sql
 MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
