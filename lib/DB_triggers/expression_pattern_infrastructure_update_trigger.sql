@@ -1,7 +1,10 @@
 create trigger expression_pattern_infrastructure_update_trigger 
-   update on expression_pattern_infrastructure referencing 
+    update on expression_pattern_infrastructure referencing 
     new as new_xpatinf
     for each row
         (
-        execute procedure p_check_submitter_is_root(new_xpatinf.xpatinf_curator_zdb_id 
-    ));
+        execute procedure p_check_submitter_is_root(new_xpatinf.xpatinf_curator_zdb_id),
+	execute procedure p_check_fx_postcomposed_terms(new_xpatinf.xpatinf_anatitem_zdb_id,new_xpatinf.xpatinf_term_zdb_id),
+        execute procedure p_term_is_not_obsolete_or_secondary(new_xpatinf.xpatinf_anatitem_zdb_id),
+        execute procedure p_term_is_not_obsolete_or_secondary(new_xpatinf.xpatinf_term_zdb_id)
+);
