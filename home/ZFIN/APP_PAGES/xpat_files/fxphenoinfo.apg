@@ -137,10 +137,6 @@ EFFECTS
                   <?MIVAR NAME=$fxphenoinfo_lastgeno>$1<?/MIVAR>
                   <?MIVAR NAME=$fxphenoinfo_lastgenox>$fxphenoinfo_genox<?/MIVAR>
 <?/MISQL>
-       <?MICOMMENT>draw line between genes in table<?/MICOMMENT>
-        <tr bgcolor=#aaaaaa>
-            <td colspan=7><img src="/images/transp.gif" width="1" height="1"></td>
-        </tr>
 
        <?MIVAR NAME=$fxphenoinfo_rowcount>$MI_ROWCOUNT<?/MIVAR>
        
