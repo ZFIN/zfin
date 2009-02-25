@@ -77,10 +77,38 @@ while (my @data = $anat_sth->fetchrow_array()) {
 	my $anatIsCell   = $data[8];
 	my $anatStartStgName = $data[9];
 	my $anatEndStgName = $data[10];
+	my $modifiedAnatDef = "";
+	my @xternalAttrib = ();
+	my $xternDefAttr = "";
 
 	$anatDef =~ s/\n/ /g if $anatDef;  # '\n' would break the OBO parse
 	$anatDef =~ s/\"/\'/g if $anatDef;
 	
+	if ($anatDef){
+	#remove external references and put them in the reference section
+	if ($anatDef =~ /(.*)\<a href=\'http\:\/\/isbndb\.com.*ISBN\:([0-9]+)\<\/a\>/)
+	{
+	    push @xternalAttrib , "ISBN:$2";
+	    $modifiedAnatDef = $1;
+	}
+	if ($anatDef =~ /(.*)\<a href=\'http\:\/\/www\.ncbi\.nlm\.nih\.gov\/sites\/entrez.*PubMed\:([0-9]+)\<\/a\>/)
+	{
+	    push @xternalAttrib , "PMID:$2";
+	    $modifiedAnatDef = $1;
+	}
+	if ($anatDef =~ /(.*)\(\<a href=http\:\/\/zfin\.org\/cgi\-bin\/webdriver\?MIval=aa\-pubview2\.apg.*\>1\<\/a\>\)/)
+	{
+	    $modifiedAnatDef = $1;
+	}
+	if ($anatDef =~ /(.*)\(\<a href=http\:\/\/zfin\.org\/cgi\-bin\/webdriver\?MIval=aa\-showpubs\.apg.*\>[0-9]\<\/a\>\)/)
+	{
+	    $modifiedAnatDef = $1;
+	}
+	
+	if ($modifiedAnatDef ne "") { $anatDef = $modifiedAnatDef;}
+	}
+
+
 	#--------------------------------
 	#-- Id
         #--------------------------------
@@ -141,7 +169,7 @@ while (my @data = $anat_sth->fetchrow_array()) {
             if ($anatSynGroup eq "exact alias") {
 	      print "synonym: \"$anatSynonym\" EXACT [$anatSynAttrib] \n";
 	}
-  }
+  }#foreach
 
 	#--------------------------------
 	#-- Definition
@@ -149,9 +177,17 @@ while (my @data = $anat_sth->fetchrow_array()) {
 	my $anatDefAttr = "";
 	$anatDefAttr = join (", ZFIN:", &getDefAttrib ($anatId));
 	if ($anatDefAttr) {
-	    $anatDefAttr = "[ZFIN:".$anatDefAttr."]" if $anatDefAttr;
+	    $anatDefAttr = "ZFIN:".$anatDefAttr."" if $anatDefAttr;
 	}else {
-	    $anatDefAttr = ($anatIsCell eq "t") ? "[CL:curator]" :"[ZFIN:curator]";
+	    $anatDefAttr = ($anatIsCell eq "t") ? "CL:curator" :"ZFIN:curator";
+	}
+		
+	$xternDefAttr = join (", ", @xternalAttrib);
+	if ($xternDefAttr) {
+	    $anatDefAttr = "[$anatDefAttr, $xternDefAttr]";
+	}
+	else {
+	    $anatDefAttr = "[$anatDefAttr]";
 	}
 
 	print "def: \"$anatDef\" $anatDefAttr\n" if $anatDef;
