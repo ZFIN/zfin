@@ -455,6 +455,16 @@ and mrkr_type = 'MRPHLNO'
       <?MIVAR NAME=pbv_fig_page_link_id>$OID<?/MIVAR>
   <?/MIBLOCK>	
   
+  <?MIBLOCK COND="$(=,$pbv_fig_count2,1)">
+
+     <?MISQL SQL="select fig_zdb_id
+                  from figure,apato_figure
+                  where fig_source_zdb_id='$OID'and fig_zdb_id=apatofig_fig_zdb_id;">
+      <?/MISQL> 
+      <?MIVAR NAME=pbv_fig_page_link_id>$1<?/MIVAR>
+      <?MIVAR NAME=pbv_fig_page>fxfigureview.apg<?/MIVAR>
+
+  <?/MIBLOCK>
   <?MIBLOCK COND="$(AND,$(>,$pbv_fig_count,0),$(>,$pbv_fig_count2,0))">
      <?MIVAR NAME=pbv_fig_link_text>Gene Expression and Phenotype Data<?/MIVAR>	
   <?MIELSE COND="$(AND,$(>,$pbv_fig_count,0),$(<,$pbv_fig_count2,1))">
