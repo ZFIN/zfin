@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 
 <!--
   - Application context definitions for the anatomy pages
@@ -31,7 +32,8 @@
         </property>
     </bean>
 
-    <bean name="allMorpholinoExperiments" class="org.zfin.anatomy.presentation.AllMorpholinoExperimentController" autowire="byName"/>
+    <bean name="allMorpholinoExperiments" class="org.zfin.anatomy.presentation.AllMorpholinoExperimentController"
+          autowire="byName"/>
 
     <bean name="addCanonicalGene" class="org.zfin.anatomy.presentation.AnatomyTermDetailController" autowire="byName"/>
 
@@ -39,7 +41,8 @@
 
     <bean name="auditLogDetails" class="org.zfin.audit.presentation.DetailsController" autowire="byName"/>
 
-    <bean name="requestNewAnatomyTerm" class="org.zfin.anatomy.presentation.RequestNewAnatomyTermController" autowire="byName">
+    <bean name="requestNewAnatomyTerm" class="org.zfin.anatomy.presentation.RequestNewAnatomyTermController"
+          autowire="byName">
         <property name="successView" value="request-term-feedback.page"/>
         <property name="formView" value="request-new-anatomy-term.page"/>
         <property name="mailSender">
@@ -50,9 +53,9 @@
     <bean name="mailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender"/>
 
     <!-- Designates to use the repository using hibernate -->
-    <bean id="anatomyRepository" class="org.zfin.anatomy.repository.HibernateAnatomyRepository" />
+    <bean id="anatomyRepository" class="org.zfin.anatomy.repository.HibernateAnatomyRepository"/>
 
-    <bean id="mutantRepository" class="org.zfin.mutant.repository.HibernateMutantRepository" />
+    <bean id="mutantRepository" class="org.zfin.mutant.repository.HibernateMutantRepository"/>
 
 
 </beans>
