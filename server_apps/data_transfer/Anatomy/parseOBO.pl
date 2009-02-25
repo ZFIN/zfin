@@ -18,7 +18,7 @@
 use strict;
 use DBI;
 
-my ($termId, $termName,$termZdbId,@termCLs, @termCAROs,@secondIds, @termZdbIds, $termStartStg, $termEndStg, @termPartOf,@termDevelopsFrom,@termIsA,$termDef, $termComment, @termSynonym, $term_zdb_id, @termDefAttrib, @termAttrib, $refCount);
+my ($termId, $termName,$termZdbId,@termCLs, @termCAROs,@secondIds, @termZdbIds, $termStartStg, $termEndStg, @termPartOf,@termDevelopsFrom,@termIsA,$termDef, $termComment, @termSynonym, $term_zdb_id, @termDefAttrib, @termAttrib, $refCount, @termTAOs);
 
 &initiateVar ();
 
@@ -92,6 +92,10 @@ while (<>) {
 	}
 	if (/^xref:\s+(CARO:\d+)/) {
 	    push @termCAROs, $1;
+	    next;
+	}
+	if (/^xref:\s+(TAO:\d+)/) {
+	    push @termTAOs, $1;
 	    next;
 	}
 
@@ -257,6 +261,9 @@ while (<>) {
     foreach (@termCAROs) {
 	print DBLINKIDS join("|", $_, $termId, "NCBO-CARO")."||\n";
     }
+    foreach (@termTAOs) {
+	print DBLINKIDS join("|", $_, $termId, "TAO")."||\n";
+    }
 
 
     foreach (@termPartOf) {
@@ -315,6 +322,7 @@ sub initiateVar  {
     $termZdbId = "";
     @termCLs = ();
     @termCAROs = ();
+    @termTAOs = ();
     @termZdbIds = ();
     @termDefAttrib = ();
     @termAttrib = ();
