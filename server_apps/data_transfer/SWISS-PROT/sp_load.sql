@@ -253,7 +253,7 @@ begin work;
                                   from zdb_replaced_data); 
 
 	create temp table pre_marker_go_evidence (
-                mrkrgoev_zdb_id 	varchar(50), 
+                pre_mrkrgoev_zdb_id 	varchar(50), 
 		mrkr_zdb_id		varchar(50),
 		go_zdb_id		varchar(50),
 		mrkrgoev_source		varchar(50),
@@ -289,7 +289,9 @@ begin work;
 		  and goterm_go_id = ec.goterm_id;
 
 
-	update pre_marker_go_evidence set mrkrgoev_zdb_id = get_id ("MRKRGOEV");
+               
+
+	update pre_marker_go_evidence set pre_mrkrgoev_zdb_id = get_id ("MRKRGOEV");
 
 --!echo 'do not include "unknown" terms and root terms if any'
         delete from pre_marker_go_evidence where go_zdb_id in 
@@ -302,16 +304,18 @@ begin work;
 -- db trigger is added for this purpose. 
 
 
+
+
 --!echo 'Insert MRKRGOEV into zdb_active_data'
 	insert into zdb_active_data
-		select mrkrgoev_zdb_id from pre_marker_go_evidence;
+		select pre_mrkrgoev_zdb_id from pre_marker_go_evidence;
 
 --!echo 'Insert into marker_go_term_evidence'
 	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_go_term_zdb_id,
 				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,
 				mrkrgoev_date_entered,mrkrgoev_date_modified,mrkrgoev_contributed_by,
 				mrkrgoev_modified_by)
-		select p.mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id,
+		select p.pre_mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id,
 		       p.mrkrgoev_source, "IEA", CURRENT,CURRENT,
 		       p.mrkrgoev_contributed_by, p.mrkrgoev_contributed_by
 		  from pre_marker_go_evidence p
@@ -324,10 +328,14 @@ begin work;
 --	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 --	  	               select mrkrgoev_zdb_id,mrkrgoev_source from pre_marker_go_evidence;
 
+
+
+
 -- load inference_group_member
 	insert into inference_group_member (infgrmem_inferred_from, infgrmem_mrkrgoev_zdb_id)
-			select mrkrgoev_inference, mrkrgoev_zdb_id
-			  from pre_marker_go_evidence;
+			select mrkrgoev_inference, pre_mrkrgoev_zdb_id
+			  from pre_marker_go_evidence
+			 where exists (select * from marker_go_term_evidence where pre_mrkrgoev_zdb_id = mrkrgoev_zdb_id);
 		
 
 ---------------- loading cc field -----------------------------
