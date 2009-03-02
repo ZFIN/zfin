@@ -765,3 +765,10 @@ select img_zdb_id, img_fig_zdb_id, img_preparation
 where img_fig_zdb_id is not null
  order by img_zdb_id;
 
+-- unload publication - genotype association file
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_publication.txt'
+ DELIMITER "	"
+select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_zdb_id 
+   from record_attribution, genotype
+  where recattrib_data_zdb_id = geno_zdb_id and 
+        recattrib_source_type = 'standard';
