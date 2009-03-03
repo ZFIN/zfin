@@ -155,14 +155,14 @@ select unique publication.zdb_id, publication.pub_mini_ref, fig_zdb_id,
         then 't'
         else 'f'
        end as fig_is_geli,
-       fig_full_label	
+       fig_full_label, probe.mrkr_abbrev_order as probe_abbrev_order
 from $xpdetres_resultTable
      join figure on fig_zdb_id = xpat_fig_zdb_id
      join publication on fig_source_zdb_id = publication.zdb_id
      join expression_experiment on xpatex_zdb_id = xpat_xpatex_zdb_id
      left outer join marker probe on xpatex_probe_feature_zdb_id  = probe.mrkr_zdb_id
 $xpdetres_imagesOnlyConstraint
-order by date desc, pub_mini_ref, fig_full_label
+order by date desc, pub_mini_ref, probe_abbrev_order, fig_full_label
 
 ;">   
  
