@@ -41,7 +41,8 @@ public class ReferenceDatabase {
         ANATOMY("anatomy"),
         CELL_ONTOLOGY("cell ontology"),
         COMMON_ANATOMY_REFERENCE_ONTOLOGY("common anatomy reference ontology"),
-        GENE_ONTOLOGY("gene ontology");
+	    GENE_ONTOLOGY("gene ontology"),
+	    TELEOST_ANATOMY_ONTOLOGY("teleost anatomy ontology") ;
 
         private String value;
 
