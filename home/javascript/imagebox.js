@@ -3,11 +3,10 @@
  Defines an imageBox class that will manage display of image thumbnails
  built from an array of image objects defined with:
 
- { "imgThumb":"$1",
- "imgZdbId":"$2",
- "figLabel":"$3",
- "figZdbId":"$4",
- "pubMiniRef":"$5" }
+ {
+ "imgThumb":"$1",
+ "imgZdbId":"$2"
+ }
 
  Because of the way events are handled, the instantiated class has to be named
  imageBox.
@@ -44,21 +43,17 @@ function ImageBox() {
 	//"private" methods
 
     this.generateImageAnchor = function(image) {
-        anchor = document.createElement('a');
+        var anchor = document.createElement('a');
         anchor.href = this.POPUP_URL + image.imgZdbId + "&imgpop_displayed_width=670";
-        //anchor.href = "http://iguana.zfin.org";
-        //anchor.href = this.FIG_URL + image.figZdbId;
-        //anchor.href = this.POPUP_URL + image.imgZdbId;
-        anchor.title = image.figLabel;
         anchor.id = image.imgZdbId;
 
-        img = document.createElement('img');
+        var img = document.createElement('img');
         img.src = this.IMG_URL + image.imgThumb;
         img.className = "xpresimg_img";
         anchor.appendChild(img);
 
         return anchor;
-    }
+    };
 
     this.render = function() {
 
@@ -68,7 +63,7 @@ function ImageBox() {
         //render the image section
         this.renderImages();
 
-    }
+    };
 
     this.renderControls = function() {
         this.controlDiv.innerHTML = "";
@@ -80,18 +75,18 @@ function ImageBox() {
             //previous arrow
             if (this.firstVisibleImage == 0 ) {
                 //on the first set, don't make a link
-                backArrow = document.createElement('img');
+                var backArrow = document.createElement('img');
                 backArrow.src = "/images/arrow_back_disabled.png";
                 backArrow.title = "This is the first set";
             } else {
-                backArrow = document.createElement('a');
+                var backArrow = document.createElement('a');
                 backArrowImg = document.createElement('img');
                 backArrowImg.src = "/images/arrow_back.png";
                 backArrow.href = "javascript:;";
                 //see the commment below about the onclick method, notice that
                 //it's imageBox rather than ImageBox - referring to the insance
                 //rather than the class - so the object *MUST* be named imageBox
-                backArrow.onclick = function() { imageBox.displayPrev(); }
+                backArrow.onclick = function() { imageBox.displayPrev(); };
                 backArrow.appendChild(backArrowImg);
             }
             this.controlDiv.appendChild(backArrow);
@@ -116,7 +111,7 @@ function ImageBox() {
             
                 document.getElementById('xpatsel_thumbnail_page_hidden_field').value = countField.value;
                 imageBox.jumpToPage(countField.value);
-            }
+            };
 
             this.controlDiv.appendChild(countField) ;
 
@@ -141,7 +136,7 @@ function ImageBox() {
                 //instance of this class - it should probably be refactored
                 //to be a singleton where the object is created by name when
                 //the .js file is included.
-                nextArrow.onclick = function() { imageBox.displayNext(); }
+                nextArrow.onclick = function() { imageBox.displayNext(); };
                 nextArrow.appendChild(nextArrowImg);
             }
             this.controlDiv.appendChild(nextArrow);
@@ -152,7 +147,7 @@ function ImageBox() {
                 maxnote.style.display = "block";
             }
         }
-    }
+    };
 
 
     this.renderImages = function() {
@@ -192,55 +187,55 @@ function ImageBox() {
         }
 
         
-    }
+    };
 
     this.getLastVisibleImageIndex = function() {
         var lastVisibleImage = this.firstVisibleImage + this.MAX_VISIBLE - 1;
         if (lastVisibleImage > this.getLastImageIndex()) { lastVisibleImage = this.getLastImageIndex(); }
         return lastVisibleImage;
-    }
+    };
 
     this.getLastImageIndex = function() {
         return this.images.length - 1;
-    }
+    };
 
     this.getLastPageIndex = function() {
-        return Math.ceil(this.getLastImageIndex() / this.MAX_VISIBLE)
-    }
+        return Math.ceil((this.getLastImageIndex() + 1) / this.MAX_VISIBLE);
+    };
 
     this.getHiddenCountInput = function() {
 	return document.getElementById(this.hiddenInput);
-    }
+    };
   
     this.setHiddenCountFieldById = function(hiddenInputId) {
 	this.hiddenInput = hiddenInputId;
-    }
+    };
 
     //public methods
 
     this.preloadImages = function() {
         //todo: get & set this via a method once preloading is actually in use
         var div = document.getElementById('xpresimg_imagePreload');
-                
+
         div.innerHTML = "";
         for(var i = this.firstVisibleImage ; i <= this.getLastVisibleImageIndex() ; i++) {
             var img = document.createElement('img');
             img.src = "/cgi-bin/image_resize.cgi?maxheight=500&maxwidth=550&image=" + this.images[i].filename;
             div.appendChild(img);
         }
-    }
+    };
 
     this.setMaxImages = function(max) {
         this.maxImages = max;
-    }
+    };
 
     this.setControlDivById = function(div) {
         this.controlDiv = document.getElementById(div);
-    }
+    };
 
     this.setImageDivById = function(div) {
         this.imageDiv = document.getElementById(div);
-    }
+    };
 
     this.displayFirstSet = function() {
 
@@ -249,33 +244,33 @@ function ImageBox() {
             this.jumpToImage(this.FIRST);
         }
 
-    }
+    };
 
     this.displayNext = function () {
         var newIndex = this.firstVisibleImage + this.MAX_VISIBLE;
-        if (newIndex < this.getLastImageIndex()) {
+        if (newIndex <= this.getLastImageIndex()) {
             this.jumpToImage(this.firstVisibleImage + this.MAX_VISIBLE);
             countField.value = this.firstVisibleImage  / this.MAX_VISIBLE + 1 ; 
         }
-    }
+    };
 
 
     this.displayPrev = function () {
         if (this.firstVisibleImage > this.MAX_VISIBLE-1) {
-            this.jumpToImage(this.firstVisibleImage - this.MAX_VISIBLE)
+            this.jumpToImage(this.firstVisibleImage - this.MAX_VISIBLE);
             countField.value = this.firstVisibleImage  / this.MAX_VISIBLE + 1 ; 
         }
-    }
+    };
 
     this.jumpToImage = function(index) {
         this.firstVisibleImage = index;
         this.render();
-    }
+    };
 
     this.jumpToPage = function(index) {
         this.firstVisibleImage = (index - 1) * this.MAX_VISIBLE;
         this.render();
-    }
+    };
 
 }
 

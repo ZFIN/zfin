@@ -24,8 +24,7 @@ OUTPUT VARS:
 
 <?MISQL SQL="select first 1 img_zdb_id
              from $xpresimg_resultTable
-                  join figure on fig_zdb_id = xpat_fig_zdb_id
-                  join image on img_fig_zdb_id = fig_zdb_id">
+                  join image on img_fig_zdb_id = xpat_fig_zdb_id;">
 <?MIVAR NAME="$xpresimg_query_has_images">t<?/MIVAR>
 <?/MISQL>
 
@@ -36,42 +35,6 @@ OUTPUT VARS:
 
 
 <link rel="stylesheet" type="text/css" href="/css/figure_gallery.css">
-
-
-<style type="text/css">
-
-  #xpresimg_box {
-    overflow: auto; 
-    white-space: nowrap; 
-    height: 88px;
- }
- .xpresimg_img {
-    border: 1px solid black;
-    margin: 2px; 
- }
-
-  #xpresimg_control_box {
-      margin-top: 80px;
-  }
-
-  #xpresimg_controls {
-      margin-left: 200px;      
-  }
-   #xpresimg_controls img {
-       border: none;
-       position: relative;
-       top: 2px;
-       padding-left: 5px;
-       padding-right: 5px;
-   }
-
-   #imagebox_maxnote {
-       font-size: .7em;
-   }
-
-   #xpresimg_thumbs_title { font-weight: bold ; font-size: 85%; }
-
-</style>
 
 <?MIVAR NAME="$xpresimg_images_per_box">20<?/MIVAR>
 <?MIVAR NAME="$xpresimg_box_number">1<?/MIVAR>
@@ -88,63 +51,50 @@ OUTPUT VARS:
 
 <script type="text/javascript" src="/javascript/imagebox.js"></script>
 <script type="text/javascript">
+  var imageBox = new ImageBox();
 
-var imageBox = new ImageBox();
+  <?MIVAR>
+    imageBox.setImageDivById("xpresimg_box");
+    imageBox.setControlDivById("xpresimg_controls");
+    imageBox.setHiddenCountFieldById("xpatsel_thumbnail_page_hidden_field");
+    imageBox.setMaxImages($xpresimg_max_images);
+    imageBox.images = [
+   <?/MIVAR>
 
-<?MIVAR>
-imageBox.setImageDivById("xpresimg_box");
-imageBox.setControlDivById("xpresimg_controls");
-imageBox.setHiddenCountFieldById("xpatsel_thumbnail_page_hidden_field");
-imageBox.setMaxImages($xpresimg_max_images);
-imageBox.images = [
-<?/MIVAR>
+   <?MISQL SQL="
+     select first $xpresimg_max_images distinct img_thumbnail, img_zdb_id
+       from $xpresimg_resultTable
+            join image on img_fig_zdb_id = xpat_fig_zdb_id ;">
+     <?MIVAR NAME="xpresimg_imgThumb">$1<?/MIVAR>
+     <?MIVAR NAME="xpresimg_imgZdbId">$2<?/MIVAR>
+     <?MIVAR>$(IF,$(NE,$MI_CURRENTROW,1),",")<?/MIVAR>
+     {{
+       "imgThumb":"$xpresimg_imgThumb",
+       "imgZdbId":"$xpresimg_imgZdbId",
+     }}
+   <?/MISQL> ];
 
-<?MISQL SQL=" 
-select first $xpresimg_max_images distinct img_thumbnail, img_zdb_id, img_fig_zdb_id, img_image, img_image_with_annotation
-from $xpresimg_resultTable
-     join image on img_fig_zdb_id = xpat_fig_zdb_id    
-;">
-  <?MIVAR NAME="xpresimg_imgThumb">$1<?/MIVAR>
-  <?MIVAR NAME="xpresimg_imgZdbId">$2<?/MIVAR>
-  <?MIVAR NAME="xpresimg_figZdbId">$3<?/MIVAR>
-  <?MIVAR NAME="xpresimg_imgFilename">$(IF,$(ISNULL,$5),$4)$(IF,$(NOT,$(ISNULL,$5)),$5)<?/MIVAR>
-  <?MIVAR NAME="xpresimg_mouseover"><?/MIVAR>
-  <?MIVAR>$(IF,$(NE,$MI_CURRENTROW,1),",")<?/MIVAR>
+  <?MIVAR>
 
-{{ 
-  "imgThumb":"$xpresimg_imgThumb",
-  "imgZdbId":"$xpresimg_imgZdbId",
-  "figLabel":"$xpresimg_mouseover", 
-  "figZdbId":"$xpresimg_figZdbId", 
-  "pubMiniRef":"",
-  "filename": "$xpresimg_imgFilename"
+   document.getElementById('xpresimg_thumbs_title').innerHTML = "Figure Gallery ($MI_ROWCOUNT images)";
 
 
- }}
-<?/MISQL> ];
+   function loadImages() {
+     storedpage = imageBox.getHiddenCountInput().value;
 
-<?MIVAR>
-document.getElementById('xpresimg_thumbs_title').innerHTML = "Figure Gallery ($MI_ROWCOUNT images)";
+     if ((storedpage != null) && (storedpage != "")) {
+       imageBox.jumpToPage(storedpage);
+     } else {
+       imageBox.displayFirstSet();
+     }
+   }
 
+   document.hasImages = true;
 
-function loadImages() {
-
-  storedpage = imageBox.getHiddenCountInput().value;
-
-  if ((storedpage != null) && (storedpage != "")) {
-    imageBox.jumpToPage(storedpage);
-  } else {
-    imageBox.displayFirstSet();
-  }
-}
-
-document.hasImages = true;
-
-<?/MIVAR>
+  <?/MIVAR>
 </script>
 
 
 <?MIVAR NAME="$xpresimg_imgCount">$MI_ROWCOUNT<?/MIVAR>
-
 
 <?/MIBLOCK> <?MICOMMENT> -- end query_has_images xst check -- <?/MICOMMENT>

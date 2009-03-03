@@ -51,3 +51,33 @@
 #xpresimg_imagePreload {
  display: none;
 }
+  #xpresimg_box {
+    overflow: auto;
+    white-space: nowrap;
+    height: 88px;
+ }
+ .xpresimg_img {
+    border: 1px solid black;
+    margin: 2px;
+ }
+
+  #xpresimg_control_box {
+      margin-top: 80px;
+  }
+
+  #xpresimg_controls {
+      margin-left: 200px;
+  }
+   #xpresimg_controls img {
+       border: none;
+       position: relative;
+       top: 2px;
+       padding-left: 5px;
+       padding-right: 5px;
+   }
+
+   #imagebox_maxnote {
+       font-size: .7em;
+   }
+
+   #xpresimg_thumbs_title { font-weight: bold ; font-size: 85%; }
