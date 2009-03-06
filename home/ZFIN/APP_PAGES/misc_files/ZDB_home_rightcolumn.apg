@@ -188,6 +188,14 @@
        </li>
        <?/MICOMMENT>
        
+       
+        <li>
+         <a href="/zf_info/news/siteNews.html#zfpoll">
+           March 6 - Zebrafish Antibodies Poll
+         </a>
+       </li>   
+       
+       
            <li>
          <a href="/zf_info/news/siteNews.html#lnmap">
            January 28 - LN54 panel interactive mapping
@@ -195,11 +203,7 @@
        </li> 
        
        
-          <li>
-         <a href="/zf_info/news/siteNews.html#tilling">
-           January 22 - TILLING submission site online
-         </a>
-       </li>    
+          
        
      
         
