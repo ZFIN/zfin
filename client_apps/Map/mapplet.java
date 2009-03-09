@@ -373,7 +373,13 @@ public class mapplet extends Applet  {
 			marker_url = getParameter("geno_url");
 		    else
 			marker_url = "/cgi-bin/ZFIN_jump?record=";
-		} else {
+		} 
+		else if (ZDB_ID.indexOf("ALT") > -1 ) {
+            		if (getParameter("feature_url") != null)
+			    marker_url = getParameter("feature_url");
+		    	else
+			    marker_url = "/cgi-bin/ZFIN_jump?record=";   
+        	} else {
 		    if (getParameter("marker_url") != null)
 			marker_url = getParameter("marker_url");
 		    else
