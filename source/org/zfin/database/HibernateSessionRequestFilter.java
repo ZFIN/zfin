@@ -36,7 +36,10 @@ public class HibernateSessionRequestFilter implements Filter {
             message.append(System.getProperty("line.separator"));
             message.append("Request URL: ").append(req.getRequestURL());
             message.append(System.getProperty("line.separator"));
-            message.append("Query parameters: ").append(URLDecoder.decode(req.getQueryString()));
+            String requestQueryString = req.getQueryString();
+            if(requestQueryString != null) {
+                message.append("Query parameters: ").append(URLDecoder.decode(requestQueryString));
+            }
             LOG.error(message, e);
         } finally {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from

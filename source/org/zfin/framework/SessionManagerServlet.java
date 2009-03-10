@@ -4,6 +4,9 @@ import org.apache.catalina.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.security.ZfinAuthenticationProcessingFilter;
+import org.zfin.security.repository.UserRepository;
+import org.zfin.repository.RepositoryFactory;
+import org.hibernate.HibernateException;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -104,6 +107,37 @@ public class SessionManagerServlet extends HttpServlet implements ContainerServl
         SessionManagerThread thread = new SessionManagerThread();
         thread.start();
         LOG.info("Session Manager Thread started: ");
+        restoreAuthenticatedSessions();
+    }
+
+    private void restoreAuthenticatedSessions() {
+        Session[] sessions = wrapper.getManager().findSessions();
+        if (sessions == null)
+            return;
+
+        for (Session session : sessions) {
+        ZfinAuthenticationProcessingFilter.addAuthenticatedSession(session.getId());
+            try {
+                org.hibernate.Session hSession = HibernateUtil.currentSession();
+                try {
+                    hSession.beginTransaction();
+                    UserRepository userRep = RepositoryFactory.getUserRepository();
+                    userRep.restoreAPGCookie(session.getId());
+                    hSession.getTransaction().commit();
+                } catch (HibernateException e) {
+                    try {
+                        hSession.getTransaction().rollback();
+                    } catch (HibernateException he) {
+                        LOG.error(he);
+                    }
+                    LOG.error(e);
+                }
+
+            } catch (Exception e) {
+                LOG.error("Error during session checks.", e);
+            }
+        }
+        LOG.debug("Sessions found: " + sessions.length);
     }
 
     /**
@@ -175,7 +209,24 @@ public class SessionManagerServlet extends HttpServlet implements ContainerServl
                 if (!authenticatedSessions.containsKey(sessionID)) {
                     LOG.debug("Session: " + session.getId());
                     session.expire();
+                    continue;
                 }
+                // backup authenticated sessions in APG land
+                org.hibernate.Session hSession = HibernateUtil.currentSession();
+                try {
+                    hSession.beginTransaction();
+                    UserRepository userRep = RepositoryFactory.getUserRepository();
+                    userRep.backupAPGCookie(session.getId());
+                    hSession.getTransaction().commit();
+                } catch (HibernateException e) {
+                    try {
+                        hSession.getTransaction().rollback();
+                    } catch (HibernateException he) {
+                        LOG.error(he);
+                    }
+                    LOG.error(e);
+                }
+
             } catch (Exception e) {
                 LOG.error("Error during session checks.", e);
             }

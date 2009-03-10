@@ -50,7 +50,7 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals(JSESSIONID)) {
                         String id = cookie.getValue();
-                        String value = id.substring(0, 19);
+                        String value = convertTomcatCookieToApgCookie(id);
                         Cookie zfinCookie = new Cookie(ZFIN_LOGIN, value);
                         zfinCookie.setPath(ZfinProperties.getCookiePath());
                         response.addCookie(zfinCookie);
@@ -61,6 +61,17 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
             }
         }
 
+    }
+
+    /**
+     * Pass in a Tomcat cookie and return an apg cookie.
+     * APG cookies are shorter than Tomcat cookies and typically
+     * are truncated.
+     * @param id Tomcat cookie
+     * @return
+     */
+    public static String convertTomcatCookieToApgCookie(String id) {
+        return id.substring(0, 19);
     }
 
     // if no session found then the user started with the login page
@@ -109,6 +120,12 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
 
     public static Map getAuthenticatedSessions() {
         return authenticatedSessions;
+    }
+
+    public static void addAuthenticatedSession(String sessionID){
+        ZfinSession newSession = new ZfinSession();
+        newSession.setSessionID(sessionID);
+        authenticatedSessions.put(sessionID, newSession);
     }
 
     public static void removeSession(String sessionID) {

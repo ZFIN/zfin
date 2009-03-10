@@ -1,8 +1,8 @@
 package org.zfin.security.repository;
 
+import org.acegisecurity.annotation.Secured;
 import org.zfin.framework.ZfinSession;
 import org.zfin.people.Person;
-import org.acegisecurity.annotation.Secured;
 
 import java.util.List;
 
@@ -60,4 +60,19 @@ public interface UserRepository {
      * @return session
      */
     List<ZfinSession> getActiveSessions();
+
+    /**
+     * Backup the APG cookie that is associated to an authenticated user.
+     *
+     * @param sessionID Tomcat session
+     */
+    void backupAPGCookie(String sessionID);
+
+    /**
+     * Restore the APG cookie after Tomcat is started if it is a valid
+     * authenticated session in Tomcat.
+     *
+     * @param sessionID Tomcat session
+     */
+    void restoreAPGCookie(String sessionID);
 }

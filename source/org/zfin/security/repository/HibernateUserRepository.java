@@ -9,6 +9,7 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.ZfinSession;
 import org.zfin.people.Person;
+import org.zfin.security.ZfinAuthenticationProcessingFilter;
 
 import java.util.Date;
 import java.util.List;
@@ -62,5 +63,29 @@ public class HibernateUserRepository implements UserRepository {
         criteria.add(Restrictions.eq("status", "active"));
         criteria.addOrder(Order.asc("dateCreated"));
         return (List<ZfinSession>) criteria.list();
+    }
+
+    public void backupAPGCookie(String sessionID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = " from Person person where person.accountInfo.cookie = :cookie ";
+        Query query = session.createQuery(hql);
+        query.setString("cookie", ZfinAuthenticationProcessingFilter.convertTomcatCookieToApgCookie(sessionID));
+        Person person = (Person) query.uniqueResult();
+        if(person != null){
+            person.getAccountInfo().setAuthenticatedCookie(person.getAccountInfo().getCookie());
+            // have to set the cookie to a unique value (not null), so I chose to use the person id.
+            person.getAccountInfo().setCookie(person.getZdbID());
+        }
+    }
+
+    public void restoreAPGCookie(String sessionID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = " from Person person where person.accountInfo.authenticatedCookie = :cookie ";
+        Query query = session.createQuery(hql);
+        query.setString("cookie", ZfinAuthenticationProcessingFilter.convertTomcatCookieToApgCookie(sessionID));
+        Person person = (Person) query.uniqueResult();
+        if(person != null){
+            person.getAccountInfo().setCookie(person.getAccountInfo().getAuthenticatedCookie());
+        }
     }
 }

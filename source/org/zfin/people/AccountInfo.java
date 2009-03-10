@@ -21,9 +21,11 @@ public class AccountInfo implements Serializable {
     private Date accountCreationDate;
     // ToDo: Only needed as webdatablade integration is needed.
     private String cookie;
+    // cookie saved when Tomcat shuts down
+    private String authenticatedCookie;
     // Hibernate uses field access to set this variable
     private String zdbID;
-    
+
     public String getLogin() {
         return login;
     }
@@ -90,6 +92,14 @@ public class AccountInfo implements Serializable {
 
     public void setAccountCreationDate(Date accountCreationDate) {
         this.accountCreationDate = accountCreationDate;
+    }
+
+    public String getAuthenticatedCookie() {
+        return authenticatedCookie;
+    }
+
+    public void setAuthenticatedCookie(String authenticatedCookie) {
+        this.authenticatedCookie = authenticatedCookie;
     }
 
     @Override
