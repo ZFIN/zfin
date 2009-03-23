@@ -195,9 +195,11 @@ order by date desc, pub_mini_ref, probe_abbrev_order, fig_full_label
         <?MIBLOCK COND="$(NE,$xpdetres_lastPubProbeCombo,$xpdetres_pubZdbId $xpdetres_probeZdbId)">
           <?MIVAR> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$xpdetres_pubZdbId">$xpdetres_pubMiniRef</a> <?/MIVAR>
           <?MIBLOCK COND="$(EC,$xpdetres_isDirectSubmission,t)">
+           <?MIBLOCK COND="$(NE,NULL,$xpdetres_probeZdbId)">
             <?MIVAR>
               [<a HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpdetres_probeZdbId">$xpdetres_probeAbbrev</a>]
             <?/MIVAR>
+           <?/MIBLOCK>
           <?/MIBLOCK>
         <?/MIBLOCK>
       </td>
