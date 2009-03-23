@@ -336,9 +336,6 @@ EFFECTS
 	  ================
 <?/MICOMMENT>
 
-
-    
-<a name=structure>
 <p>
 <b><font size=3>Structure:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_structure),$(NC,$xpcur_c_structure,show))>

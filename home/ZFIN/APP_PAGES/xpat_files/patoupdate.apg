@@ -192,8 +192,10 @@ EFFECTS
 
       <?MISQL SQL="$patoup_duplicate_pile_sql">
         <?MIVAR NAME="$patoup_addtopile_error"> $patoup_addtopile_error 
-          $patoup_subterm_name 
-          <small>part of</small> $patoup_superterm_name
+	<?MIBLOCK COND="$(XST,$patoup_subterm_name)">
+		<?MIVAR>$patoup_subterm_name<?/MIVAR>
+	<?/MIBLOCK>
+	<small>part of</small> $patoup_superterm_name
           - $patoup_quality_name
           [$patoup_tag]
           was already in the pile.  <br>

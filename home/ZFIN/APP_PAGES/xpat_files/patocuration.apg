@@ -60,7 +60,7 @@ function getCookie(name) {
 
   <script type="text/javascript">
     patoCuration.updateMutants();
-    $('patobldrEntityAName').focus();
+    $('patobldrSupertermName').focus();
   </script>
 
 

@@ -16,18 +16,18 @@ $structure_expressed = t or f. implies expressed or not expressed
          items useing the INDEX function. Back Translate # to comma.
        ================================================
     <?/MICOMMENT>
-<?MIVAR COND="$(XST,$patoup_entity_a_name)" NAME="$patoup_entity_a_name">$(TRIM,$patoup_entity_a_name)<?/MIVAR>
-<?MIVAR COND="$(XST,$patoup_entity_b_name)" NAME="$patoup_entity_b_name">$(TRIM,$patoup_entity_b_name)<?/MIVAR>
+<?MIVAR COND="$(XST,$superterm_name)" NAME="$superterm_name">$(TRIM,$superterm_name)<?/MIVAR>
+<?MIVAR COND="$(XST,$subterm_name)" NAME="$subterm_name">$(TRIM,$subterm_name)<?/MIVAR>
 <?MIVAR COND=$(NXST,$xpcur_G_cellcomp_add_id) NAME=xpcur_G_cellcomp_add_id><?/MIVAR>
 
 
     
-    <?MIBLOCK COND=$(XST,$patoup_entity_a_name)>
-      <?MIVAR NAME=patoup_entity_a_name>$(REPLACE,$patoup_entity_a_name,"'","''")<?/MIVAR>
+    <?MIBLOCK COND=$(XST,$superterm_name)>
+      <?MIVAR NAME=superterm_name>$(REPLACE,$superterm_name,"'","''")<?/MIVAR>
 <?MISQL SQL="
         select anatitem_zdb_id
         from anatomy_item
-        where anatitem_name = '$patoup_entity_a_name';">
+        where anatitem_name = '$superterm_name';">
 
         <?MIVAR NAME=xpcur_G_structure_add>$1<?/MIVAR>
     <?/MISQL>
@@ -35,7 +35,7 @@ $structure_expressed = t or f. implies expressed or not expressed
       <?MISQL SQL="
         select anatitem_zdb_id
         from anatomy_item
-        where anatitem_name = '$patoup_entity_a_name';">
+        where anatitem_name = '$superterm_name';">
         
         <?MIVAR NAME=xpcur_G_structure_add>$1<?/MIVAR>
         
@@ -44,12 +44,13 @@ $structure_expressed = t or f. implies expressed or not expressed
     <?/MIBLOCK>
 
 
-    <?MIBLOCK COND=$(XST,$patoup_entity_b_name)>
+    <?MIBLOCK COND=$(XST,$subterm_name)>
+      <?MIVAR NAME=subterm_name>$(REPLACE,$subterm_name,"'","''")<?/MIVAR>
       <?MIBLOCK COND="$(EC,$patoup_entity_b_ontology,GO)">      
           <?MISQL SQL="
         select goterm_zdb_id
         from go_term
-        where goterm_name = '$patoup_entity_b_name';">
+        where goterm_name = '$subterm_name';">
         
         <?MIVAR NAME=xpcur_G_cellcomp_add_id>$1<?/MIVAR>
         <?/MISQL>
@@ -57,7 +58,7 @@ $structure_expressed = t or f. implies expressed or not expressed
       <?MISQL SQL="
         select anatitem_zdb_id
         from anatomy_item
-        where anatitem_name = '$patoup_entity_b_name';">
+        where anatitem_name = '$subterm_name';">
         
         <?MIVAR NAME=xpcur_G_cellcomp_add_id>$1<?/MIVAR>
         <?/MISQL> 
@@ -69,16 +70,16 @@ $structure_expressed = t or f. implies expressed or not expressed
     <?MIVAR NAME="$xpcur_addtopile_error"><?/MIVAR>
 
     <?MICOMMENT> ** if we have an entity a name and we didn't get an id, set the error to abort ** <?/MICOMMENT>
-    <?MIBLOCK COND="$(AND,$(NXST,$xpcur_G_structure_add),$(XST,$patoup_entity_a_name) )">
+    <?MIBLOCK COND="$(AND,$(NXST,$xpcur_G_structure_add),$(XST,$superterm_name) )">
       <?MIVAR NAME="$xpcur_addtopile_error"> $xpcur_addtopile_error 
-         <b>$patoup_entity_a_name</b> not found in the AO <br>
+         <b>$superterm_name</b> not found in the AO <br>
       <?/MIVAR>
     <?/MIBLOCK>
 
     <?MICOMMENT> ** if we have an entity b name and we didn't get an id, set the error to abort ** <?/MICOMMENT>
-    <?MIBLOCK COND="$(AND,$(EQ,$xpcur_G_cellcomp_add_id,),$(XST,$patoup_entity_b_name))">
+    <?MIBLOCK COND="$(AND,$(EQ,$xpcur_G_cellcomp_add_id,),$(XST,$subterm_name))">
       <?MIVAR NAME="$xpcur_addtopile_error">$xpcur_addtopile_error
-         <b>$patoup_entity_b_name</b> not found in $patoup_entity_b_ontology <br> <?/MIVAR>
+         <b>$subterm_name</b> not found in $patoup_entity_b_ontology <br> <?/MIVAR>
     <?/MIBLOCK>
 
    

@@ -222,8 +222,6 @@ new Control.Modal(referencId,{
 
 <?MIVAR>
 
-<a name="patopile"></a>
-
 <span style="float: right; margin-right: 2em;">
 
 <span class="curation-box-control-text"> size: </span>
@@ -298,7 +296,8 @@ get_obj_name(api_superterm_zdb_id),
 term_name,
 lower(get_obj_name(api_superterm_zdb_id)) as entity_name_order ,
 get_ontology_id(api_subterm_zdb_id) as term1,
-get_ontology_id(api_superterm_zdb_id) as term2
+get_ontology_id(api_superterm_zdb_id) as term2,
+term_ont_id
 from apato_infrastructure
 join term on api_quality_zdb_id = term_zdb_id
 where api_pub_zdb_id = '$OID'
@@ -328,10 +327,12 @@ order by 9
       <?MIVAR NAME="patobldr_tag">$5<?/MIVAR>
       <?MIVAR NAME="patobldr_subterm_name_html">$6<?/MIVAR>
       <?MIVAR NAME="patobldr_superterm_name_html">$7<?/MIVAR>
+      <?MIVAR NAME="patobldr_superterm_name">$patobldr_superterm_name_html<?/MIVAR>
       <?MIVAR NAME="patobldr_quality_name">$8<?/MIVAR>
       <?MIVAR NAME="patobldr_radio_id">$2$3$4$5<?/MIVAR>
       <?MIVAR NAME="patobldr_subterm_obo_id">$10<?/MIVAR>
       <?MIVAR NAME="patobldr_superterm_obo_id">$11<?/MIVAR>
+      <?MIVAR NAME="patobldr_quality_obo_id">$12<?/MIVAR>
 
 
       <?MIVAR NAME="patobldr_subterm_ontology">ZF<?/MIVAR>
@@ -361,15 +362,21 @@ order by 9
              onChange="if (this.checked == true) { patoCuration.distinctPhenotypes['$patobldr_radio_id'].setState('add');
                        deselectDefault(); }"> </td>
         <td onclick="rotateRadio('$patobldr_radio_id');">
+
+        <?MIVAR name="javascriptSetTerms">		    javascript:setQuality('$patobldr_quality_obo_id','$(REPLACE,$patobldr_quality_name,"'","\'")');setSuperTerm('$patobldr_superterm_obo_id','$(REPLACE,$patobldr_superterm_name,"'","\'")','$patobldr_superterm_ontology');setSubTerm('$patobldr_subterm_obo_id','$(REPLACE,$patobldr_subterm_name_html,"'","\'")','$patobldr_subterm_ontology');setTag('$patobldr_tag')<?/MIVAR>
             <?MIVAR>
-             <a id="$(CONCAT,patobldr_api_zdb_id,_b$MI_CURRENTROW)" href="/phenote/Phenote/?termId=$patobldr_superterm_obo_id&ontologyName=$patobldr_superterm_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$(CONCAT,patobldr_api_zdb_id,_b$MI_CURRENTROW)")>$patobldr_superterm_name_html</a>
+             <span onclick="event.cancelBubble= true;">
+             <a id="$(CONCAT,patobldr_api_zdb_id,_b$MI_CURRENTROW)" href="#patopile" onclick="$javascriptSetTerms;getTermInfo('$patobldr_superterm_obo_id','$(REPLACE,$patobldr_superterm_name,"'","\'")','superterm')" onmouseover=addcontrol("$(CONCAT,patobldr_api_zdb_id,_b$MI_CURRENTROW)") >$patobldr_superterm_name_html</a>
+             </span>
             <?MICOMMENT>
             $patobldr_superterm_name_html
             <?/MICOMMENT>
 <?/MIVAR>
 <?MIBLOCK COND="$(NE,$patobldr_subterm_name_html,NULL)">
             :<?MIVAR>
-             <a id="$patobldr_api_zdb_id$MI_CURRENTROW" href="/phenote/Phenote/?termId=$patobldr_subterm_obo_id&ontologyName=$patobldr_subterm_ontology&field=ENTITY&viewType=EXTERNAL" onmouseover=addcontrol("$patobldr_api_zdb_id$MI_CURRENTROW")>$patobldr_subterm_name_html</a>
+             <span onclick="event.cancelBubble= true;">
+               <a id="$patobldr_api_zdb_id$MI_CURRENTROW" href="#patopile" onclick="$javascriptSetTerms;getTermInfo('$patobldr_subterm_obo_id','$(REPLACE,$patobldr_subterm_name_html,"'","\'")','subterm')" onmouseover=addcontrol("$patobldr_api_zdb_id$MI_CURRENTROW")>$patobldr_subterm_name_html</a>
+             </span>
             <?MICOMMENT>
           $patobldr_subterm_name_html 
             <?/MICOMMENT>
@@ -379,7 +386,13 @@ order by 9
              <div id="$patosum_apato_zdb_id"></div>
               <?/MIBLOCK>
         </td>
-        <td onclick="rotateRadio('$patobldr_radio_id');">$patobldr_quality_name</td>
+        <td onclick="rotateRadio('$patobldr_radio_id');">
+        <span onclick="event.cancelBubble= true;">
+        <a href="#patopile" onclick="$javascriptSetTerms;getTermInfo('$patobldr_quality_obo_id','$patobldr_quality_name','quality')">
+        	$patobldr_quality_name
+        	</a>
+        	</span>
+        </td>
         <td onclick="rotateRadio('$patobldr_radio_id');">$patobldr_tag</td>
         <td onclick="rotateRadio('$patobldr_radio_id');">
           <input type="button" value=" X " onClick="deleteZDB('$patobldr_api_zdb_id','patopile');">
@@ -394,6 +407,235 @@ order by 9
 <br>
 <input type="button" onclick="document.getElementById('updatePhenoButton').click();" 
        value="Update Phenotype for Mutant(s)">
+
+  <script type="text/javascript"> 
+  
+
+	phenoteState.setTermInfoUrl('/phenote/Phenote/'); 
+	
+        function setTag(tagName){
+		   tagElement = document.getElementById('patobldrTag');
+	       for(i=0; i < tagElement.length; i++){
+	    	     if(tagElement[i].value == tagName){
+		     	   tagElement.selectedIndex = i;
+		     }
+	       }
+        }
+        
+        function setQuality(termID, termName){
+	   inputElement = document.getElementById('patobldrQuality');
+	   inputElement.value = termName;
+    	   qualityFieldID = document.getElementById('quality-field-id');
+	   qualityFieldID.innerHTML = termID;
+        }
+        
+        function setSuperTerm(termID, termName, ontology){
+	clearErrorMessages();
+	inputElement = document.getElementById('patobldrSupertermName');
+	       inputElement.value = termName;
+    	   qualityFieldID = document.getElementById('superterm-field-id');
+	       qualityFieldID.innerHTML = termID;
+
+	       supertermOntology = document.getElementById('patobldrSupertermOntology');
+	       selectionBoxOntologyName = 'AO';
+	       if(ontology =='GO')
+		     selectionBoxOntologyName = 'GO';
+	         for(i=0; i < supertermOntology.length; i++){
+	    	     if(supertermOntology[i].value == selectionBoxOntologyName){
+		     	   supertermOntology.selectedIndex = i;
+		     }
+	      }
+        }
+        
+	function setSubTerm(termID, termName, ontology){
+	   inputElement = document.getElementById('patobldrSubtermName');
+       if(termID == 'NULL'){
+	       inputElement.value = '';
+           return;
+       }
+	   inputElement.value = termName;
+    	   qualityFieldID = document.getElementById('subterm-field-id');
+	   qualityFieldID.innerHTML = termID;
+
+	   subtermOntology = document.getElementById('patobldrSubtermOntology');
+	   selectionBoxOntologyName = 'AO';
+	   if(ontology =='GO')
+		selectionBoxOntologyName = 'GO';
+	   for(i=0; i < subtermOntology.length; i++){
+	        if(subtermOntology[i].value == selectionBoxOntologyName){
+	 	   subtermOntology.selectedIndex = i;
+	        }
+	   }
+	}
+
+	function getTermInfo(id, name, term){
+		 if(name == null || name.length == 0){
+		    // display empty terminfo section
+		    document.getElementById('termInfo').innerHTML = '';
+		    return;
+		 }
+
+		//window.alert(name);
+		//window.alert(id);
+		 if(term == 'quality'){
+		    field = document.getElementById('patobldrQuality');
+		    qualityFieldID = document.getElementById('quality-field-id');
+ 		    if(id == null || id.length == 0)
+			id = qualityFieldID.innerHTML;
+		    //window.alert(id);
+		 }
+		 if(term == 'superterm'){
+		    field = document.getElementById('superterm_name');
+		    supertermFieldID = document.getElementById('superterm-field-id');
+		    
+ 		    if(id == null || id.length == 0)
+			id = supertermFieldID.innerHTML;
+		 }
+		 if(term == 'subterm'){
+		    field = document.getElementById('subterm_name');
+		    subtermFieldID = document.getElementById('subterm-field-id');
+ 		    if(id == null || id.length == 0)
+			id = subtermFieldID.innerHTML;
+		 }
+		//window.alert(id);
+
+		// if no id available do nothing as no term info can be retrieved.
+		if(id.length == 0)
+			return;
+		phenoteState.setActiveField(field);
+		ontology = getOntologyName(id);
+		//window.alert(id);
+		//window.alert(name);
+		phenoteState.updateTermInfo(new Term(id, name, ontology));
+	}
+
+	// this should go into phenote.
+	// phenote knows from the term id what ontology to look into.
+	function getOntologyName(termID){
+		 if(termID == null)
+		 	   return null;
+		 if(termID.indexOf('PATO') > -1)
+			return 'quality';
+                 if(termID.indexOf('GO') > -1)
+                        return 'GO';
+                 if(termID.indexOf('ZFA') > -1)
+                        return 'ZF';
+		 return null;
+
+	}
+
+	function useTermInfoField(term){
+		 clearErrorMessages();
+ 	     ontologyName = phenoteState.getCurrentTermInfoTerm().ontology;
+		 if(term == 'quality'){
+		    field = document.getElementById('patobldrQuality');
+
+		    // update the invisible ID and ontology
+           if(ontologyName !='quality'){
+       	     	document.getElementById('faulty-quality-term').style.display = 'inline';
+             	return;
+           }
+    	   qualityFieldID = document.getElementById('quality-field-id');
+		   qualityFieldID.innerHTML = phenoteState.getCurrentTermInfoTerm().termId;
+		 }
+		 if(term == 'superterm'){
+		 	//window.alert('OO: '+ ontologyName)
+		    field = document.getElementById('patobldrSupertermName');
+   		    ontology = document.getElementById('patobldrSupertermOntology');
+  	            if(ontologyName =='quality'){
+            	    document.getElementById('faulty-superterm').style.display = 'inline';
+  	            	return;
+  	            }
+		    for(i=0; i < ontology.length; i++){
+   	   	      selectionBoxOntologyName = 'AO';
+		       if(ontologyName =='GO')
+			  	 selectionBoxOntologyName = 'GO';
+		       if(ontology[i].value == selectionBoxOntologyName){
+			  	 ontology.selectedIndex = i;
+		       }
+		    }
+		    // update the invisible ID and ontology
+		    supertermFieldID = document.getElementById('superterm-field-id');
+		    supertermFieldID.innerHTML = phenoteState.getCurrentTermInfoTerm().termId;
+		 }
+		 if(term == 'subterm'){
+		 	//window.alert('O: '+ phenoteState.getCurrentTermInfoTerm().ontology)
+		    field = document.getElementById('patobldrSubtermName');
+   		    ontology = document.getElementById('patobldrSubtermOntology');
+  	        if(ontologyName =='quality'){
+               	document.getElementById('faulty-superterm').style.display = 'inline';
+  	           	return;
+  	        }
+		    for(i=0; i < ontology.length; i++){
+   	   	      selectionBoxOntologyName = 'AO';
+		       if(ontologyName =='GO')
+			  	 selectionBoxOntologyName = 'GO';
+		       if(ontology[i].value == selectionBoxOntologyName){
+			  	 ontology.selectedIndex = i;
+		       }
+		    // update the invisible IDs and ontology
+		    subtermFieldID = document.getElementById('subterm-field-id');
+		    subtermFieldID.innerHTML = phenoteState.getCurrentTermInfoTerm().termId;
+		    }
+
+   		 }
+   	         // if no terminfo is available do nothing
+   	         ontologyName = phenoteState.getCurrentTermInfoTerm().ontology;
+		 if(ontologyName == null)
+		   return;
+  		 
+   	         phenoteState.setActiveField(field);
+		 phenoteState.useTermInfo();
+
+	}
+	
+	function updateTermInfo(field, termType){
+		 //window.alert(field);
+		 activeField = phenoteState.getActiveField();
+		if(activeField == null || activeField.value == null){
+			getTermInfo('',field.value, termType);
+			return;
+		}
+			
+		//window.alert(activeField.value);
+		//window.alert(field.value);
+		id = '';
+		// if the field focud came through auto complete use the new id
+		if(activeField == field){
+			id = phenoteState.getCurrentTermInfoTerm().termId;
+			if(termType == 'quality'){
+			   qualityFieldID = document.getElementById('quality-field-id');
+			   qualityFieldID.innerHTML = id;
+			}
+			if(termType == 'subterm'){
+			   subtermFieldID = document.getElementById('subterm-field-id');
+			   subtermFieldID.innerHTML = id;
+			}
+			if(termType == 'superterm'){
+			   supertermFieldID = document.getElementById('superterm-field-id');
+			   supertermFieldID.innerHTML = id;
+			}
+
+		}
+		getTermInfo(id, field.value,  termType);
+	}
+	
+	function resetTerms(){
+		 document.getElementById('patobldrSubtermName').value = '';
+		 document.getElementById('patobldrSupertermName').value = '';
+		 document.getElementById('patobldrQuality').value = '';
+		 clearErrorMessages();
+		 document.getElementById('termInfo').innerHTML = '';
+	}
+
+	function clearErrorMessages(){
+		 document.getElementById('faulty-quality-term').style.display = 'none';
+		 document.getElementById('faulty-superterm').style.display = 'none';
+		 document.getElementById('faulty-two-go-terms').style.display = 'none';
+		 document.getElementById('error-on-add').style.display = 'none';
+	}
+	</script>
+
 <br>
 <?MICOMMENT> *** this css will need to be done a bit better *** <?/MICOMMENT>
 
@@ -442,6 +684,13 @@ function checkAnatomy() {
 	document.getElementById('no-quality-defined').style.display = 'inline';
         return false;
      }
+     
+     if(document.getElementById('patobldrSupertermOntology').values == 'GO' &&
+        document.getElementById('patobldrSubtermOntology').values  == 'GO'){
+     	document.getElementById('faulty-two-go-terms').style.display = 'inline';
+     	return false;
+     }
+     	
      return true;
 }
 
@@ -457,7 +706,12 @@ function switchTerms() {
      document.getElementById('patobldrSubtermName').value=superTermValue;
      document.getElementById('patobldrSubtermOntology').value=superTermOntology;
      document.getElementById('patobldrSupertermName').value=subTermValue;
-     document.getElementById('patobldrSupertermOntology').value=subTermOntology;
+      document.getElementById('patobldrSupertermOntology').value=subTermOntology;
+     subtermSpan = document.getElementById('subterm-field-id').innerHTML;
+     supertermSpan = document.getElementById('superterm-field-id').innerHTML;
+     document.getElementById('subterm-field-id').innerHTML = supertermSpan;
+     document.getElementById('superterm-field-id').innerHTML = subtermSpan;
+     clearErrorMessages();
 }
 
 
@@ -482,9 +736,10 @@ function switchTerms() {
 
 
 <?MIVAR>
- 
- <?MICOMMENT> new PATO code here <?/MICOMMENT>
- <table>
+
+<a name="patopile"></a>
+
+<table>
 <tr>
 <td width=100 align=left><b>Superterm</b>
 <td><b>:</b></td>
@@ -520,12 +775,16 @@ function switchTerms() {
                  <?/MIBLOCK>
           </select>
           <input type="text" size="46" name="patoup_subterm_name" id="patobldrSubtermName" autocomplete="off"
-                 onchange="phenoteState.setActiveField(this);"
-                 onkeypress="document.getElementById('patobldrSubtermOntology').onchange();"
+	  	onchange="phenoteState.setActiveField(this)"
+                onkeypress="document.getElementById('patobldrSubtermOntology').onchange();"
 		 <?MIBLOCK COND="$(AND,$(XST,$patoup_addtopile_error),$(>,$(STRLEN,$patoup_addtopile_error),0),$(XST,$patoup_subterm_name))">
-                 <?MIVAR>value="$patoup_subterm_name"<?/MIVAR>
+                 <?MIVAR>value="$(REPLACE,$patoup_subterm_name,"''","'")"<?/MIVAR>
                  <?/MIBLOCK>
-                 >
+                 onfocus="updateTermInfo(this,'subterm')">
+                 <span id="subterm-field-id" style="display: none;"></span>
+		&nbsp;
+                 <input type="button" value="&larr;" onclick="useTermInfoField('subterm')" />
+
           <span id="patobldrSubtermAutoCompleterIndicator" style="display: none; color: red;">working...</span>
 
           <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="subterm_auto_complete"></div>
@@ -569,12 +828,17 @@ function switchTerms() {
 </td>
 
 <td>          <input type="text" size="48" name="patoup_superterm_name" id="patobldrSupertermName" autocomplete="off"
-                 onchange="phenoteState.setActiveField(this);"
+		 onchange="phenoteState.setActiveField(this)"
                  onkeypress="document.getElementById('patobldrSupertermOntology').onchange();"
 		 <?MIBLOCK COND="$(AND,$(XST,$patoup_addtopile_error),$(>,$(STRLEN,$patoup_addtopile_error),0),$(XST,$patoup_superterm_name))">
-                 <?MIVAR>value="$patoup_superterm_name"<?/MIVAR>
+                 <?MIVAR>value="$(REPLACE,$patoup_superterm_name,"''","'")"<?/MIVAR>
                  <?/MIBLOCK>
-                 >
+                 onfocus="updateTermInfo(this,'superterm')">
+                 <span id="superterm-field-id" style="display: none;"></span>
+					&nbsp;
+                 <input type="button" value="&larr;" onclick="useTermInfoField('superterm')" />
+
+                 
           <span id="patobldrSupertermAutoCompleterIndicator" style="display: none; color: red;">working...</span>
           <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="superterm_auto_complete"></div>
 </td></tr>
@@ -584,11 +848,14 @@ function switchTerms() {
 Quality:
 
          <input type="text" size="48" name="patoup_quality_name" id="patobldrQuality" autocomplete="off"
-                 onChange="phenoteState.setActiveField(this);"
 		 <?MIBLOCK COND="$(AND,$(XST,$patoup_addtopile_error),$(>,$(STRLEN,$patoup_addtopile_error),0),$(XST,$patoup_quality_name))">
-                 <?MIVAR>value="$patoup_quality_name"<?/MIVAR>
+                 <?MIVAR>value="$(REPLACE,$patoup_quality_name,"''","'")"<?/MIVAR>
                  <?/MIBLOCK>
-                 >
+                 onfocus="updateTermInfo(this,'quality')">
+                 <span id="quality-field-id" style="display: none;"></span>
+                 		&nbsp;
+		 <input type="button" value="&larr;" onclick="useTermInfoField('quality')" />
+		 
          <span id="patobldrQualityAutoCompleterIndicator" style="display: none; color: red;">working...</span>
          <div style="overflow: auto; height: 400px; width: 300px;" class="auto_complete" id="pato_auto_complete"></div>
 <br>
@@ -606,14 +873,22 @@ Tag:
            <option $(IF,$(EC,$patobldr_tag_cs,abnormal),selected="true")>abnormal</option>
 	   <option $(IF,$(EC,$patobldr_tag_cs,normal),selected="true")>normal</option>
          </select>
-<span class="indent2">
-        <input type="submit" value="Add" onClick="return checkAnatomy()" ></span>
+	<span class="indent2">
+        <input type="submit" value="Add" onClick="return checkAnatomy()" >
+        <input type="button" value="Reset" onClick="resetTerms()" >
+        </span>
 <br>
+<br><div class="error" id="error-on-add">
    <?MIBLOCK COND="$(XST,$patoup_addtopile_error)">
-     <br><div class="error"><?MIVAR>$patoup_addtopile_error<?/MIVAR></div>
+     <?MIVAR>$(REPLACE,$patoup_addtopile_error,"''","'")<?/MIVAR>
    <?/MIBLOCK>
+     </div>
 <br><div style="display:none" class="error" id="no-superterm-defined">You must enter a valid superterm in the lower box.</div>
 <div style="display:none" class="error" id="no-quality-defined">You must enter a quality term.</div> 
+<div style="display:none" class="error" id="faulty-quality-term">You can only enter terms form the quality ontology.</div>
+<div style="display:none" class="error" id="faulty-superterm">You cannot add a quality term.</div>
+<div style="display:none" class="error" id="faulty-two-go-terms">You cannot add a post-composed term from two GO terms .</div>
+
         <!-- this is set by ncbo-term-info.js but its unclear what its for is this the datamodel???? -->
 
         <input type="hidden" name="termInfoTermId">
@@ -647,12 +922,6 @@ Tag:
   </td>
 <td>
   <div style="width:400px; overflow: auto; height: 400px;" id="termInfo"></div>
-     <input
-        type="button"
-        value="Use Term"
-        name="use_term_info"
-        onClick="useTermInfo()"
-      >
   </td>
   </tr>
   </table>
