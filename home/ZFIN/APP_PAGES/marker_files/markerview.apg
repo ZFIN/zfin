@@ -1169,8 +1169,8 @@ SQL="
 <?/MISQL>
 
 
-<?MISQL COND="$(NE,$marker_type,GENE)" 
-SQL="
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA))">
+ <?MISQL SQL="
     select count(distinct xpatex_source_zdb_id)::integer
       from expression_experiment join 
            expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
@@ -1178,8 +1178,17 @@ SQL="
      ;">
 <?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
 <?/MISQL>
-<?/MISQL>
+<?/MIBLOCK>
 
+<?MISQL COND="$(EQ,$marker_type,EFG)"
+  SQL=" 
+    select count(distinct xpatex_source_zdb_id)::integer
+      from expression_experiment join 
+           expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
+     where xpatex_gene_zdb_id = '$OID'
+     ;">
+<?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
+<?/MISQL>
 
 
 <HR width="80%">
@@ -1216,8 +1225,8 @@ SQL="
     <?MICOMMENT>
     If a OID is not a gene, just show all data.
     <?/MICOMMENT>
-    <?MIVAR COND="$(NE,$marker_type,GENE)"
-    NAME="mrkrview_xpatsource_desc_sql">
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA))">
+   <?MIVAR  NAME="mrkrview_xpatsource_desc_sql">
 	select distinct pub_mini_ref
           from expression_experiment 
 	       join publication
@@ -1228,14 +1237,15 @@ SQL="
          where mrkr_zdb_id = xpatex_probe_feature_zdb_id
          and mrkr_abbrev[1,10] = 'WITHDRAWN:')  ; 
     <?/MIVAR>
+<?/MIBLOCK>
 
-    <?MIVAR COND="$(NE,$marker_type,GENE)"
+    <?MIVAR COND="$(EQ,$marker_type,EFG)"
     NAME="mrkrview_xpatsource_desc_sql">
 	select distinct pub_mini_ref
           from expression_experiment 
 	       join publication
                     on xpatex_source_zdb_id = zdb_id
-         where xpatex_probe_feature_zdb_id = '$OID'
+         where xpatex_gene_zdb_id = '$OID'
 	   and jtype <> 'Unpublished'; 
     <?/MIVAR>
 
@@ -1288,8 +1298,8 @@ SQL="
     <?MICOMMENT>
     If a OID is not a gene, just show all data.
     <?/MICOMMENT>
-     <?MIVAR COND="$(NE,$marker_type,GENE)"
-      NAME=mrkrview_xpatfig_count_sql>
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA))">
+      <?MIVAR NAME=mrkrview_xpatfig_count_sql>
 	 select count(distinct xpatfig_fig_zdb_id)::integer
            from expression_pattern_figure
                 join expression_result 
@@ -1298,6 +1308,19 @@ SQL="
 			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
 	  where xpatex_probe_feature_zdb_id = '$OID'; 
       <?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EQ,$marker_type,EFG)">
+      <?MIVAR NAME=mrkrview_xpatfig_count_sql>
+	 select count(distinct xpatfig_fig_zdb_id)::integer
+           from expression_pattern_figure
+                join expression_result 
+			on xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                join expression_experiment 
+			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
+	  where xpatex_gene_zdb_id = '$OID'; 
+      <?/MIVAR>
+<?/MIBLOCK>
 
       <?MISQL SQL="$mrkrview_xpatfig_count_sql">
        <?MIVAR NAME=mrkrview_xpatfig_count>$1<?/MIVAR>     
@@ -1338,8 +1361,10 @@ SQL="
          group by xpatex_probe_feature_zdb_id, pub.zdb_id, pub.pub_mini_ref; 
      <?/MIVAR>
 
-     <?MIVAR COND="$(NE,$marker_type,GENE)"
-     NAME=mrkrview_xpatsubfig_sql>
+
+
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA))">
+    <?MIVAR  NAME=mrkrview_xpatsubfig_sql>
 	 select count(distinct xpatfig_fig_zdb_id)::integer, 
 		pub.zdb_id, pub.pub_mini_ref,xpatex_probe_feature_zdb_id
            from expression_pattern_figure
@@ -1350,7 +1375,10 @@ SQL="
            and pub.jtype = 'Unpublished'
            group by xpatex_probe_feature_zdb_id, pub.zdb_id, pub.pub_mini_ref; 
      <?/MIVAR>
+<?/MIBLOCK>
 
+
+<?MIBLOCK COND="$(NE,$marker_type,EFG)">
      <?MISQL 
     SQL="$mrkrview_xpatsubfig_sql">
      <?MIVAR NAME=mrkrview_xpatsubfig_count>$1<?/MIVAR>
@@ -1394,6 +1422,63 @@ SQL="
 	 </td></tr>
 <?/MISQL>	
      <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
+<?MIELSE>
+
+
+    <?MIVAR  NAME=mrkrview_xpatsubfig_sql>
+	 select count(distinct xpatfig_fig_zdb_id)::integer, 
+		pub.zdb_id, pub.pub_mini_ref
+           from expression_pattern_figure
+                join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id 
+                join publication pub on pub.zdb_id = xpatex_source_zdb_id
+           where xpatex_gene_zdb_id = '$OID'
+           and pub.jtype = 'Unpublished'
+           group by  pub.zdb_id, pub.pub_mini_ref; 
+     <?/MIVAR>
+
+
+     <?MISQL 
+    SQL="$mrkrview_xpatsubfig_sql">
+     <?MIVAR NAME=mrkrview_xpatsubfig_count>$1<?/MIVAR>
+	 <?MIVAR NAME=mrkrview_xpatsubpub_id>$2<?/MIVAR>
+	 <?MIVAR NAME=mrkrview_xpatsubpub_miniref>$3<?/MIVAR>
+	 
+	 <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
+
+	    <tr><td><b>Directly submitted expression data: </b></td>
+              
+         <?MIELSE>
+	    <tr><td>&nbsp;</td>
+         <?/MIBLOCK>
+	 <?MISQL SQL="select count(distinct img_zdb_id)::integer 
+           from image, expression_pattern_figure,
+                expression_result, expression_experiment
+	   where
+		img_fig_zdb_id=xpatfig_fig_zdb_id
+           and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
+           and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+           and  xpatex_source_zdb_id= '$mrkrview_xpatsubpub_id'
+           ; ">
+      <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
+<?MIVAR NAME=mrkrview_xpat_author>Mason<?/MIVAR>
+<?MIVAR NAME=mrkrview_xpat_resulttytpe>Unpublished<?/MIVAR>
+
+         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
+     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID&xpatsel_jtype=Unpublished&author=$mrkrview_xpat_author">$mrkrview_xpatsubfig_count figure(s)($mrkrview_image_count images)</a> 
+<?MICOMMENT>
+	   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
+<?/MICOMMENT>
+	 <?/MIVAR>
+
+         <td>
+	   $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref 
+	 </td></tr>
+<?/MISQL>	
+     <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
+
+
+<?/MIBLOCK>
 
 
      <?MICOMMENT>Show only if OID is a GENE and contains expression<?/MICOMMENT>
