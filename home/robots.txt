@@ -1,5 +1,8 @@
-User-agent: *
-Disallow: /<!--|CGI_BIN_DIR_NAME|-->
+User-Agent: *
+Disallow: /
+
+User-Agent: Googlebot
+Disallow: /cgi-bin
 Disallow: /htbin
 Disallow: /status
 Disallow: /apache-info
@@ -13,3 +16,5 @@ Disallow: /action
 Disallow: /zf_info
 Disallow: /data_transfer
 Disallow: /zirc
+Allow: /cgi-bin/webdriver?MIval=aa-ZDB_home.apg
+Allow: /index.asis
