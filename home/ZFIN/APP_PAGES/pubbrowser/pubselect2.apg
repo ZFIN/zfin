@@ -554,9 +554,10 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
         </td>
       </tr>
 
-  <form name=critform 
-	method=post 
+  <form name="critform"
+	method="get" 
 	action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+  <input type=hidden name=MIval value=aa-pubselect2.apg>
 
     <TR>
       <TD class=halfwidth>
@@ -821,8 +822,6 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
   <?MIVAR COND=$(XST,$return_rec)>
   <input type=hidden NAME="return_rec" value=$return_rec>
   <?/MIVAR>
-
-  <input type=hidden name=MIval value=aa-pubselect2.apg>
 
   </form>
 <?/MIBLOCK>  <!-- nxst accession -->

@@ -26,7 +26,8 @@ Input:
      <?/MIBLOCK>
 
     </TR>
-     <FORM name="critform" method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+     <FORM name="critform" method="get" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+        <input type=hidden name=MIval value=aa-newmrkrselect.apg>
       <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
       <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
       <?MIVAR NAME=$START>1<?/MIVAR>
@@ -113,7 +114,6 @@ Input:
      <TR>
        <TD class=submitbar colspan=2 align="right">
        <?MIVAR>
-        <input type=hidden name=MIval value=aa-newmrkrselect.apg>
         <input type=hidden name=query_results value="exist">
 	<input type=hidden NAME="START" value=1>
        <?/MIVAR>

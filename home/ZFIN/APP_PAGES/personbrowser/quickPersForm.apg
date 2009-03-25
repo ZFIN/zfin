@@ -1,8 +1,9 @@
 <?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
 
-<form name=critform 
-      method=post 
+<form name="critform" 
+      method="get" 
       action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+<input type=hidden name=MIval value=aa-persselect.apg>
 
   <?MIBLOCK COND="$(NXST,$query_results)">
     <table class=search width=100%>
@@ -51,7 +52,6 @@
   </TR>
 </TABLE>
 
-<input type=hidden name=MIval value=aa-persselect.apg>
 <input type=hidden name=searchtype value=begins>
 <input type=hidden name=quickform value=t>
 

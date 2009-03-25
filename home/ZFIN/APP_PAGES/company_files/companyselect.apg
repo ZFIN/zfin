@@ -226,7 +226,8 @@ Company Search Results
                     <!-- COMPANY SELECT CODE -->
 
 
-<form name=critform method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+<form name="critform" method="get" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+<input type=hidden name=MIval value=aa-companyselect.apg>
 
 <?MIBLOCK COND="$(NXST,$query_results)">
 <table class="search" width=100%>
@@ -321,7 +322,6 @@ we have to do at this point is pass the return record along to perslister.
 <?/MIVAR>
 
 
-<input type=hidden name=MIval value=aa-companyselect.apg>
 
 </form>
 

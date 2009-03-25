@@ -288,9 +288,10 @@ to the left of each item.
 
 <?MIELSE>
 
-  <form name=critform 
-	method=post  
+  <form name="critform" 
+	method="get"  
 	action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+    <input type=hidden name=MIval value=aa-persselect.apg>
 
     <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
 
@@ -409,7 +410,6 @@ to the left of each item.
     <?/MIVAR>
 
 
-    <input type=hidden name=MIval value=aa-persselect.apg>
     <?MIVAR><input type=hidden name=AUTHORIZED value=$AUTHORIZED><?/MIVAR>
 
   </form>

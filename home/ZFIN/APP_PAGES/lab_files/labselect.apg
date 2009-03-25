@@ -225,10 +225,11 @@ Lab Search Results
 
 <?MIBLOCK COND="$(NXST,$accession)">  <!-- don't want modify search result if come from accession lister -->
 
-  <form name=critform 
-	method=post 
+  <form name="critform" 
+	method="get" 
 	action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
 
+  <input type=hidden name=MIval value=aa-labselect.apg>
   <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
 
   <?MIBLOCK COND="$(NXST,$query_results)">
@@ -325,7 +326,6 @@ Lab Search Results
   <?/MIVAR>
 
 
-  <input type=hidden name=MIval value=aa-labselect.apg>
 
   </form>
 
