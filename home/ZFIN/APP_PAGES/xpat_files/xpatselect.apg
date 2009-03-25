@@ -553,6 +553,7 @@ function openChild(childWinUrl,childWinName) {
    <?MISQL SQL="select WebExplode(object,'&xpdetres_baseUrl=$xpatsel_baseUrl&xpdetres_resultTable=$xpatselect_temp_match$xpatsel_imagesOnlyString$xpatsel_detailedMatchString') 
                from webPages where ID='aa-xpatselect_detailedresults.apg';">$1<?/MISQL>
    <?MIVAR NAME="xpatsel_nResults">$xpdetres_pubCount<?/MIVAR>
+   <?MIVAR NAME="xpatsel_figureResults">$xpdetres_figCount<?/MIVAR>
   
  
   <?MIELSE>
@@ -637,11 +638,17 @@ function openChild(childWinUrl,childWinName) {
 	<script src="/phenote/javascript/ajax-lib/dragdrop.js"  type="text/javascript"></script>
 	<script src="/phenote/javascript/ajax-lib/controls.js"  type="text/javascript"></script>
 
+
+       <?MIVAR name="totalRecords">$xpatsel_nResults<?/MIVAR>
+       <?MIBLOCK COND="$(XST,$xpatsel_figureResults)">
+       		<?MIVAR name="totalRecords">$xpatsel_figureResults<?/MIVAR>
+       <?/MIBLOCK>
        <?MIVAR>
+       
        <p/>
 	<div id="pagination"></div>
 	<script type="text/javascript">
-	    new Ajax.Updater('pagination','/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$xpatsel_nResults', {Method: 'get' });
+	    new Ajax.Updater('pagination','/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$totalRecords', {Method: 'get' });
 	</script>
  	<?/MIVAR>
 	<div id="pagination"></div>

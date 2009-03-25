@@ -11,7 +11,8 @@ INPUT VARS:
 
 OUTPUT VARS:
    xpdetres_pubCount	used by xpatselect to fill xpatsel_nResults variable
-
+   xpdetres_figCount    used by xpatselect to fill xpatsel_figureResults variable
+   
 <?/MICOMMENT>
 
 <?MIERROR>
