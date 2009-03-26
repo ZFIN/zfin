@@ -121,7 +121,7 @@ EFFECTS
       select cdt_zdb_id, cdt_name
       from condition_data_type
       where cdt_group = '$xpcurcond_aUnit_cg'
-      order by cdt_name;">
+      order by lower(cdt_name);">
       
       <?MIVAR NAME=$xpcurcond_aUnit_zdb>$1<?/MIVAR>
       <?MIVAR NAME=$xpcurcond_aUnit_name>$2<?/MIVAR>
