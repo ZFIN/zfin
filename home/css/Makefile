@@ -31,7 +31,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/css
 
-GENERICS = header.css zdbhome.css zfin.css figure_gallery.css pagination.css
+GENERICS = header.css zdbhome.css zfin.css figure_gallery.css pagination.css \
+	summary.css searchresults.css spiffycorners.css footer.css
 
 
 # ---------------  Production Rules  ------------------------------------

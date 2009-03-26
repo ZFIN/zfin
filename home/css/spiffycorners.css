@@ -1,0 +1,114 @@
+/*** Rounded Corner CSS from spiffycorners.com ***/
+
+.spiffy {
+    display: block;
+}
+
+.spiffy * {
+    display: block;
+    height: 1px;
+    overflow: hidden;
+    background: #e0e7e0;
+}
+
+.spiffy1 {
+    border-right: 1px solid #f1f4f1;
+    padding-right: 1px;
+    margin-right: 3px;
+    border-left: 1px solid #f1f4f1;
+    padding-left: 1px;
+    margin-left: 3px;
+    background: #e7ede7;
+}
+
+.spiffy2 {
+    border-right: 1px solid #fbfcfb;
+    border-left: 1px solid #fbfcfb;
+    padding: 0px 1px;
+    background: #e5ebe5;
+    margin: 0px 1px;
+}
+
+.spiffy3 {
+    border-right: 1px solid #e5ebe5;
+    border-left: 1px solid #e5ebe5;
+    margin: 0px 1px;
+}
+
+.spiffy4 {
+    border-right: 1px solid #f1f4f1;
+    border-left: 1px solid #f1f4f1;
+}
+
+.spiffy5 {
+    border-right: 1px solid #e7ede7;
+    border-left: 1px solid #e7ede7;
+}
+
+.spiffy_content {
+    padding: 0px 5px;
+    background: #e0e7e0;
+
+}
+
+/** selected spiffy corner, for tabs in header **/
+
+.selectedspiffy {
+    display: block;
+}
+
+.selectedspiffy * {
+    display: block;
+    height: 1px;
+    overflow: hidden;
+    background: #006666;
+}
+
+.selectedspiffy1 {
+    border-right: 1px solid #91bdbd;
+    padding-right: 1px;
+    margin-right: 3px;
+    border-left: 1px solid #91bdbd;
+    padding-left: 1px;
+    margin-left: 3px;
+    background: #3f8c8c;
+}
+
+.selectedspiffy2 {
+    border-right: 1px solid #e5efef;
+    border-left: 1px solid #e5efef;
+    padding: 0px 1px;
+    background: #308383;
+    margin: 0px 1px;
+}
+
+.selectedspiffy3 {
+    border-right: 1px solid #308383;
+    border-left: 1px solid #308383;
+    margin: 0px 1px;
+}
+
+.selectedspiffy4 {
+    border-right: 1px solid #91bdbd;
+    border-left: 1px solid #91bdbd;
+}
+
+.selectedspiffy5 {
+    border-right: 1px solid #3f8c8c;
+    border-left: 1px solid #3f8c8c;
+}
+
+.selectedspiffy_content {
+    padding: 0px 5px;
+    background: #006666;
+}
+
+/*** spiffy corners seems to break without some kind of inline element at the end, so
+here's a class for a very short inline element ***/
+
+.spiffy-bottom-fix {
+    line-height: .001em;
+}
+
+/*** end Rounded Corner CSS ***/
+

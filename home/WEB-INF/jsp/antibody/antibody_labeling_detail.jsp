@@ -3,7 +3,7 @@
 
 <c:if test="${fn:length(formBean.antibodyStat.antibodyDetailedLabelings) ne null && fn:length(formBean.antibodyStat.antibodyDetailedLabelings) > 0}">
     <div id="short-version" class="summary">
-        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="searchresults largestripes">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="searchresults groupstripes">
             <tr bgcolor="#ccccc0">
                 <th>Anatomy : Substructure</th>
                 <th>Stage</th>
@@ -94,7 +94,7 @@
     </div>
 
     <div style="display:none" id="long-version" class="summary">
-        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="searchresults largestripes">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="searchresults groupstripes">
             <tr bgcolor="#ccccc0">
                 <th>Anatomy</th>
                 <th>Stage</th>

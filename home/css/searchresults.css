@@ -1,0 +1,61 @@
+/**** style declaration for zfin return results class *****/
+
+table.searchresults {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.searchresults th {
+    text-align: left;
+    vertical-align: bottom;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+table.searchresults td {
+    text-align: left;
+    vertical-align: top;
+    padding: 3px;
+
+}
+
+table.searchresults caption {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: top;
+    padding-bottom: 15px;
+}
+
+td.anatomy {
+    font-size: small;
+    vertical-align: top;
+}
+
+td.thumbnail {
+    text-align: right;
+}
+
+td.small {
+    font-size: small;
+}
+
+tr.odd {
+    background-color: #EEEEEE;
+}
+
+tr.newgroup {
+    border-top: 1px solid #ccc; 
+}
+
+tr.even {
+    background-color: #fff;
+}
+
+tr.oddgroup {
+/* just a placeholder, not defined for the default style */
+}
+
+tr.evengroup {
+/* just a placeholder, not defined for the default style */
+}
+

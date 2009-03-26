@@ -401,7 +401,7 @@ and display them one after the other horizontally
     <?MICOMMENT>End qualifier section <?/MICOMMENT>
 
     <a name=xpat>    
-    <table class="summary largestripes">
+    <table class="summary groupstripes">
       <caption>Gene expression details</caption>
       <tr>
         <th>Gene</th>
@@ -467,7 +467,7 @@ and display them one after the other horizontally
     <?MICOMMENT>End qualifier section <?/MICOMMENT>
 
     <a name=xpat>    
-    <table class="summary largestripes">
+    <table class="summary groupstripes">
       <caption>Antibody Labeling Details</caption> 
       <tr>
         <th>Antibody</th>
@@ -514,7 +514,7 @@ and display them one after the other horizontally
 <?MIBLOCK COND="$(>,$fxfigview_pato_resultct,0)">
 
     <a name=phenotype>
-    <table class="summary largestripes">
+    <table class="summary groupstripes">
       <caption>Phenotype details</caption>
       <tr>
       <th title="Genotype + environment">Fish</th>

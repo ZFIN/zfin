@@ -64,7 +64,7 @@
 <form:form method="Get" commandName="formBean" name="Antibody Search" id="Antibody Search" onsubmit="return false;">
 <c:if test="${formBean.searchResults == true}">
     <c:if test="${formBean.totalRecords > 0}">
-        <table class="searchresults smallstripes">
+        <table class="searchresults rowstripes">
             <tr>
                 <th>Name</th>
                 <th width=10%>Gene</th>

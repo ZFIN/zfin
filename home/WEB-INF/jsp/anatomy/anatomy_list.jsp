@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<table class="searchresults smallstripes">
+<table class="searchresults rowstripes">
 
     <c:if test="${!formBean.stageSearch}">
 

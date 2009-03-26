@@ -107,7 +107,7 @@
 </table>
 
 <br>
-<table class="searchresults smallstripes">
+<table class="searchresults rowstripes">
     <tr style="background: #ccc">
         <th>Look</th>
         <th>Lock</th>
