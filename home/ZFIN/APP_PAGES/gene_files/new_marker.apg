@@ -308,6 +308,30 @@ marker table.
         return true;
       }
 
+     function noenter(e) {
+var ENTER_KEY = 13;
+            var code = "";
+      
+            if (window.event) // IE
+            {
+                code = e.keyCode;
+            }
+            else if (e.which) // Netscape/Firefox/Opera
+            {
+                code = e.which;
+            }
+            
+            if (code == ENTER_KEY) {
+                return false;
+            }
+      }
+
+  function doSubmit() {
+      // omitted logic that sets the action on the form based on the selected option
+      document.newdata.submit();
+  }
+
+
     </SCRIPT>
 
     <?MIVAR>
@@ -318,11 +342,11 @@ marker table.
 	<input type=hidden name=marker_type_display value="$marker_type_display">
 
         <p><B>$marker_type_display name</b> (required):
-        <input type=text name=mname size=80>
+        <input type=text onkeypress="return noenter(event)" name=mname size=80>
 
         <?MIBLOCK COND=$(OR,$(EC,$marker_type,GENE),$(EC,$marker_type,GENEP))>
           <p><b>Abbreviation</b> (required):
-          <input type=text name=abbrev size=15>
+          <input type=text onkeypress="return noenter(event)" name=abbrev size=15>
         <?/MIBLOCK>
         
         <p>
@@ -332,17 +356,35 @@ marker table.
         <?MIBLOCK COND="$(>,$(POSITION,$marker_type,GENE),0)">
         <p><b>Is this a reservation?</b>:
         Yes <input type=radio name=reserve value=yes> / No <input type=radio name=reserve value=no checked>
-        <br>Reservation Comments: <input type=text name=rsrvComment size=50>
+        <br>Reservation Comments: <input type=text onkeypress="return noenter(event)" name=rsrvComment size=50>
         <?MIELSE>
           <input type=hidden name=reserve value="no">
 	<?/MIBLOCK>
         <p>
-
-        <input type=submit name=s_new value="Submit new $marker_type_display">
-        
         <p>
 
-        <table border=0>
+        <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.Lookup/Lookup.css"/>
+        <script type="text/javascript">
+                        var LookupProperties = { NumLookups: "1" } ;
+                        var LookupProperties0 = {
+                            divName: "targetgene",
+                            inputName: "newmrkrTargetGene",
+                            showError: true,
+                            wildcard: false,
+                            width: "25",
+                            type: "MARKER_LOOKUP"
+                        };
+         </script>
+
+        <?MIBLOCK COND="$(EC,$marker_type_display,Morpholino)">
+             <script language="javascript" src="/gwt/org.zfin.framework.presentation.Lookup/org.zfin.framework.presentation.Lookup.nocache.js"></script>
+             Add Target Gene:
+             <div id="targetgene" onkeypress="return noenter(event)"></div>
+
+        <?/MIBLOCK>
+       <p>
+
+       <table border=0>
           <tr>
             <td valign=top>
               <b>Sequence:</b>           
@@ -357,7 +399,7 @@ marker table.
           </tr>
           <tr>
             <td>  
-              Reported: 5'-   <input type=text name=newmrkrReportedSequence size=40 onChange="this.value = this.value.toUpperCase();"> -3'
+              Reported: 5'-   <input type=text name=newmrkrReportedSequence size=40 onChange="this.value = this.value.toUpperCase()"; onkeypress="return noenter(event)"> -3'
             </td>
             <td> </td>
             <td valign=top rowspan=2>
@@ -366,13 +408,16 @@ marker table.
           </tr>
           <tr>
             <td>
-              Displayed: 5'-   <input type=text name=newmrkrDisplaySequence size=40> -3'
+              Displayed: 5'-   <input type=text onkeypress="return noenter(event)" name=newmrkrDisplaySequence size=40> -3'
             </td>
           </tr>
         </table>
         <br>
-        <b>publication:</b> <input type=text name=newmrkrSource $(IF,$(XST,$newmrkrSource),value=$newmrkrSource)>
-        
+        <b>publication:</b> <input type=text onkeypress="return noenter(event)" name=newmrkrSource $(IF,$(XST,$newmrkrSource),value=$newmrkrSource)>
+<p>        
+       <?MIVAR>
+         <input type=submit name=s_new value="Submit new $marker_type_display">
+       <?/MIVAR>
       </form>
     <?/MIVAR>
 
@@ -478,6 +523,61 @@ marker table.
       <?/MISQL>
       
     <?/MIBLOCK>           
+    
+
+
+<?MIBLOCK COND="$(XST,$newmrkrTargetGene)">
+     <?MISQL SQL="select mrkr_zdb_id from marker 
+                  where mrkr_abbrev='$newmrkrTargetGene'">
+        <?MIVAR NAME=$newmrkrTgtGeneId>$1<?/MIVAR>
+     <?/MISQL>
+      <?MICOMMENT> 
+        ============================================================
+          Create a marker_relationship record and a curator note.
+        ============================================================
+      <?/MICOMMENT>
+            
+      <?MIBLOCK COND="$(XST,$newmrkrTgtGeneId)">
+        <?MISQL SQL="execute function get_id('MREL')">
+        <?MIVAR NAME=$newmrkrRelId>$1<?/MIVAR>
+      <?/MISQL>
+      <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$newmrkrRelId');"><?/MISQL>
+      <?MISQL SQL="
+        insert into marker_relationship (
+          mrel_zdb_id,
+          mrel_type,
+          mrel_mrkr_1_zdb_id,
+          mrel_mrkr_2_zdb_id)
+        values (
+          '$newmrkrRelId',
+          'knockdown reagent targets gene',
+          '$new_id',
+          '$newmrkrTgtGeneId');">
+      <?/MISQL>
+                 	
+      <?MIBLOCK COND="$(XST,$newmrkrSource)">
+          <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+          values ('$newmrkrRelId','$newmrkrSource');">
+         <?/MISQL> 
+
+         <?MISQL SQL="select count(*) from record_attribution
+                       where
+                       recattrib_data_zdb_id='$newmrkrTgtGeneId'
+                       and
+                       recattrib_source_zdb_id='$newmrkrSource'
+                   ">
+             <?MIVAR NAME=$newmrkrcount>$1<?/MIVAR>
+         <?/MISQL>
+          <?MIBLOCK COND="$(=,$newmrkrcount,0)"> 
+             <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+             values ('$newmrkrTgtGeneId','$newmrkrSource');">
+             <?/MISQL>
+         <?/MIBLOCK>
+      <?/MIBLOCK>
+      
+    <?/MIBLOCK>           
+<?/MIBLOCK>
+
 
       <?MIBLOCK COND=$(XST,$newmrkrCuratorNote)>
         <?MISQL SQL="execute function get_id('DNOTE')">
