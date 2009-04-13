@@ -100,6 +100,46 @@ sub execSql {
   return ($nRecords);
 }
 
+sub executeSqlAndPrint {
+
+  my $sql = shift;
+  my $subSqlRef = shift;
+  my @colDesc = @_;
+  my $nRecords = 0;
+ 
+  my $sth = $dbh->prepare($sql) or die "Prepare fails";
+  
+  $sth -> execute() or die "Could not execute $sql";
+  
+  open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result."
+    if @colDesc; 
+  
+  while (my @row = $sth ->fetchrow_array()) {
+
+    my $valid = 1;
+    $valid = $subSqlRef->(@row) if $subSqlRef;
+    
+    if ($valid) {
+      my $i = 0;
+      $nRecords ++;
+
+      if (@colDesc) {
+	foreach (@row) {
+	  $_ = '' unless defined;
+	  print RESULT "$_";
+	  if($i + 1 < @colDesc ){
+	      print RESULT " : ";
+	  }
+	  $i ++;
+	}
+      print RESULT "\n";    
+      }
+    }  
+  } 
+  close(RESULT) if @colDesc;
+  return ($nRecords);
+}
+
 
 #------------------------------------------------------------------------
 #
@@ -2817,6 +2857,31 @@ sub findWithdrawnMarkerMismatch($) {
 #Parameter
 # $      Email Address for recipients
 # 
+sub printTop40PostcomposedTerms($) {
+
+    my $routineName = "printTop40PostcomposedTerms";
+    my $sql = "
+     select first 40 termOne.anatitem_name, termTwo.anatitem_name, count(*) as frequency from expression_result, anatomy_item termOne, anatomy_item termTwo
+    where xpatres_anat_item_zdb_id is not null 
+      and xpatres_term_zdb_id is not null
+      and termOne.anatitem_zdb_id = xpatres_anat_Item_zdb_id
+      and termTwo.anatitem_zdb_id = xpatres_term_zdb_id
+    group by termOne.anatitem_name, termTwo.anatitem_name
+    order by frequency desc, termOne.anatitem_name
+      ";
+
+    my @colDesc = ("Anatomy Term", "Anatomy Term","Frequency");
+    my $nRecords = executeSqlAndPrint($sql,undef,@colDesc);
+    if($nRecords >0){
+        my $sendToAddress = $_[0];
+        my $subject = "Top 40 post-composed terms";
+        my $msg = "Top 40 post-composed terms.\n\nAnatomy Term : Anatomy Term : Frequency\n";
+        &sendMail($sendToAddress, $subject, $routineName, $msg, $sql);
+    }
+    &recordResult($routineName, $nRecords);
+}
+
+
 sub oldOrphanSourceCheck($) {
 
   open ORPH, ">$globalResultFile" or die "Cannot open the result file to write.";
@@ -2966,6 +3031,7 @@ my $geneEmail    = "<!--|VALIDATION_EMAIL_GENE|-->";
 my $mutantEmail  = "<!--|VALIDATION_EMAIL_MUTANT|-->";
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
 my $goEmail      = "<!--|GO_EMAIL_CURATOR|-->";
+my $aoEmail      = "<!--|AO_EMAIL_CURATOR|-->";
 my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
 my $webAdminEmail = "<!--|WEB_ADMIN_EMAIL|-->";
 my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
@@ -3018,6 +3084,7 @@ if($daily) {
     mrkrgoevGoevflagDuplicatesFound($goEmail);
     mrkrgoevObsoleteAnnotationsFound($goEmail);
     mrkrgoevSecondaryAnnotationsFound($goEmail);
+    printTop40PostcomposedTerms($aoEmail);
 }
 if($orphan) {
   
