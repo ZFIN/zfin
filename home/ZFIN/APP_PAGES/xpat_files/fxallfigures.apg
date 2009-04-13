@@ -307,10 +307,19 @@ and clone_problem_type is not null
 <p>
 
 <?MIELSE>
+<?MIBLOCK COND="$(OR,$(EQ,$OID,ZDB-PUB-090406-1),$(EQ,$OID,ZDB-PUB-090311-2))">
+<?MIBLOCK COND="$(EQ,$OID,ZDB-PUB-090311-2)">
+<?MIVAR NAME=fxallfig_author>Mason<?/MIVAR>
+<?MIELSE>
+<?MIVAR NAME=fxallfig_author>Bruce<?/MIVAR>
+<?/MIBLOCK>
+<?MISQL SQL="select WebExplode(object,'xpatsel_jtype=Unpublished&query_results=true&author=$fxallfig_author') from webPages where ID='aa-xpatselect.apg';">$1<?/MISQL>
+<?MIELSE>
 <br>
 You have reached this page because of an incorrect link to directly-submitted ZFIN figure data. <br>
 <br>
 Please use the the <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Mutants/Transgenics</a> search page or <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Gene Expression</a> search page.
 <br>
+<?/MIBLOCK>
 <?/MIBLOCK>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
