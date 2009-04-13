@@ -237,7 +237,7 @@ DEBUGGING:
       <?/MIBLOCK>
       <?MIVAR NAME=geneMchIdLast><?/MIVAR>
       <?MIVAR NAME=mrkrsel_union><?/MIVAR>
-      <?MIBLOCK COND="$(EQ,$marker_type,TGCONSTRCT)">
+     <?MIBLOCK COND="$(>,$(POSITION,$marker_type,CONSTRCT),0)">
         <?MIVAR NAME=mrkrsel_union>
 	UNION
 	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, 
@@ -851,7 +851,7 @@ DEBUGGING:
            <?/MIVAR>
 
            <?MIBLOCK COND="$(XST,$input_name)">
-     <?MIBLOCK COND="$(AND,$(XST,$mtype),$(EC,$mtype,TGCONSTRCT))">
+     <?MIBLOCK COND="$(AND,$(XST,$mtype),$(>,$(POSITION,$mtype,CONSTRCT),0))">
        <TD align=left>&nbsp;</TD>
      <?/MIBLOCK>
      <TD align=left><b>Matching Text</b></TD>	    
@@ -915,7 +915,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
   <?/MIVAR>
 
   <?MIBLOCK COND=$(EC,$type_of_genedom,f)>
-    <?MIBLOCK COND="$(AND,$(XST,$mtype),$(EC,$mtype,TGCONSTRCT))">
+     <?MIBLOCK COND="$(AND,$(XST,$mtype),$(>,$(POSITION,$mtype,CONSTRCT),0))">
 
              <?MIVAR><A HREF="$curviewer$OID"><i>$marker_name</i></A></TD><?/MIVAR>
       <?MIELSE>
