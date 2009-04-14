@@ -3084,7 +3084,6 @@ if($daily) {
     mrkrgoevGoevflagDuplicatesFound($goEmail);
     mrkrgoevObsoleteAnnotationsFound($goEmail);
     mrkrgoevSecondaryAnnotationsFound($goEmail);
-    printTop40PostcomposedTerms($aoEmail);
 }
 if($orphan) {
   
@@ -3129,6 +3128,7 @@ if($monthly) {
   encodesRelationshipsInBACorPAC($geneEmail);
   addressStillNeedsUpdate($adminEmail);
   mrkrgoevInfgrpDuplicatesFound($goEmail);
+  printTop40PostcomposedTerms($aoEmail);
 
   # for each zfin curator, run phenotypeAnnotationUnspecified() check
   my $sql = " select email, full_name
