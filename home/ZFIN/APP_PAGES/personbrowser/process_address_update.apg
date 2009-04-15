@@ -274,6 +274,7 @@ an updated person record
 
      <?MIVAR NAME=$ua_concantenated_address>$ua_pers_street1$ua_pers_street2$ua_pers_street3$ua_pers_street4$ua_pers_street5$ua_pers_street6$ua_pers_city$ua_pers_state_code$ua_pers_postal_code$pua_pers_country_name<?/MIVAR>
  
+  <?MIVAR NAME=$ua_concantenated_address DELIMIT="'" REPLACE="''">$ua_concantenated_address<?/MIVAR>
 
      <?MICOMMENT> update the person table with the new addres 
 	(in concantenated version), so updator only has to do this update 
@@ -282,6 +283,7 @@ an updated person record
         and person tables are in sync.  when they are not in sync, the link 
 	changes on the persview.apg page so that the updator knows
 	we need to change the person_address table record<?/MICOMMENT>
+
 
 
      <?MISQL SQL="update person
