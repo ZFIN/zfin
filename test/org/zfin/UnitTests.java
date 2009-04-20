@@ -3,10 +3,13 @@ package org.zfin;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.zfin.anatomy.presentation.*;
 import org.zfin.anatomy.AnatomyItemTest;
-import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
+import org.zfin.anatomy.presentation.*;
 import org.zfin.antibody.AntibodyServiceTest;
+import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
+import org.zfin.framework.presentation.FunctionsTest;
+import org.zfin.framework.presentation.SectionVisibilityTest;
+import org.zfin.framework.presentation.UIFieldTransformerTest;
 import org.zfin.infrastructure.ActiveDataTest;
 import org.zfin.infrastructure.ActiveSourceTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
@@ -14,6 +17,7 @@ import org.zfin.mutant.PhenotypeServiceTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.people.OrganizationUrlTest;
+import org.zfin.properties.ZfinPropertiesTest;
 import org.zfin.security.Md5PasswordEncoderTest;
 import org.zfin.sequence.reno.presentation.RunCandidatePresentationTest;
 import org.zfin.sequence.reno.presentation.RunPresentationTest;
@@ -22,8 +26,6 @@ import org.zfin.util.FileUtilTest;
 import org.zfin.util.HighlightUtilTest;
 import org.zfin.util.ListFormatterTest;
 import org.zfin.util.UrlCreatorTest;
-import org.zfin.framework.presentation.UIFieldTransformerTest;
-import org.zfin.properties.ZfinPropertiesTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite).
@@ -38,6 +40,7 @@ import org.zfin.properties.ZfinPropertiesTest;
         AntibodySearchCriteriaTest.class,
         AntibodyServiceTest.class,
         FileUtilTest.class,
+        FunctionsTest.class,
         HighlightUtilTest.class,
         ListFormatterTest.class,
         MarkerPresentationTest.class,
@@ -49,8 +52,9 @@ import org.zfin.properties.ZfinPropertiesTest;
         PhenotypeServiceTest.class,
         RelationshipTypeSortingTest.class,
         RunCandidatePresentationTest.class,
-        SingleAssociatedGenesFromQueryTest.class,
         RunPresentationTest.class,
+        SectionVisibilityTest.class,
+        SingleAssociatedGenesFromQueryTest.class,
         StagePresentationTest.class,
         SortAnatomyResultsTest.class,
         UIFieldTransformerTest.class,

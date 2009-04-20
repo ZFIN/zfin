@@ -7,13 +7,14 @@ import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
+import org.zfin.framework.presentation.SectionVisibility;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
-import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -46,10 +47,12 @@ public class AnatomySearchBean extends PaginationBean {
     private List<ExpressedGeneDisplay> allExpressedMarkers;
     private AnatomyStatistics anatomyStatistics;
     private AnatomyStatistics anatomyStatisticsMutant;
+    private AnatomyStatistics anatomyStatisticsProbe;
     private AnatomyStatistics anatomyStatisticsAntibodies;
     private static final String NEWLINE = System.getProperty("line.separator");
     private int numberOfHighQualityProbes;
     private int markerCount;
+    private SectionVisibility visibility = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
 
     private List<Genotype> genotypes;
     private int genotypeCount;
@@ -189,6 +192,7 @@ public class AnatomySearchBean extends PaginationBean {
     /**
      * Sort the result list according to: first the items that begin with the search term and
      * then the terms that contain the serach term. If no term is specified do not sort at all.
+     *
      * @return list of anatomy statistics
      */
     public List<AnatomyStatistics> getSortedStatisticsItems() {
@@ -278,7 +282,7 @@ public class AnatomySearchBean extends PaginationBean {
         this.nonWildtypeMorpholinos = nonWildtypeMorpholinos;
     }
 
-    public enum Action {
+    public static enum Action {
         TERM_SEARCH("term-search"),
         COMPLETE_SEARCH("complete-search"),
         STAGE_SEARCH("term-by-stage-search");
@@ -413,12 +417,12 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("xpatsel_processed_selected_structures", getAnatomyItem().getName());
         if (includeSubstructures)
             url.addNamevaluePair("include_substructures", "checked");
-        url.addNamevaluePair("structure_bool","and");
-        url.addNamevaluePair("xpatsel_jtypeDirect","checked");
-        url.addNamevaluePair("xpatsel_jtypePublished","checked");
+        url.addNamevaluePair("structure_bool", "and");
+        url.addNamevaluePair("xpatsel_jtypeDirect", "checked");
+        url.addNamevaluePair("xpatsel_jtypePublished", "checked");
         url.addNamevaluePair("WINSIZE", "25");
-        url.addNamevaluePair("xpatsel_calledBySelf","true");
-        url.addNamevaluePair("xpatsel_wtOnly","checked");
+        url.addNamevaluePair("xpatsel_calledBySelf", "true");
+        url.addNamevaluePair("xpatsel_wtOnly", "checked");
         return url.getFullURL();
     }
 
@@ -431,16 +435,16 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("fsel_processed_selected_structures", getAnatomyItem().getName());
         if (includeSubstructures)
             url.addNamevaluePair("include_substructures", "checked");
-        url.addNamevaluePair("structure_bool","and");
-        url.addNamevaluePair("mutagen","any");
-        url.addNamevaluePair("lg","0");
+        url.addNamevaluePair("structure_bool", "and");
+        url.addNamevaluePair("mutagen", "any");
+        url.addNamevaluePair("lg", "0");
         url.addNamevaluePair("WINSIZE", "20");
-        url.addNamevaluePair("fishsel_calledBySelf","true");
-        url.addNamevaluePair("fselFilterValue","all");
-        url.addNamevaluePair("chrom_change","any");
-        url.addNamevaluePair("search","SEARCH");
-        url.addNamevaluePair("fsel_inputname","");
-        url.addNamevaluePair("compare","contains");
+        url.addNamevaluePair("fishsel_calledBySelf", "true");
+        url.addNamevaluePair("fselFilterValue", "all");
+        url.addNamevaluePair("chrom_change", "any");
+        url.addNamevaluePair("search", "SEARCH");
+        url.addNamevaluePair("fsel_inputname", "");
+        url.addNamevaluePair("compare", "contains");
         return url.getFullURL();
     }
 
@@ -473,6 +477,14 @@ public class AnatomySearchBean extends PaginationBean {
         this.anatomyStatisticsMutant = anatomyStatisticsMutant;
     }
 
+    public AnatomyStatistics getAnatomyStatisticsProbe() {
+        return anatomyStatisticsProbe;
+    }
+
+    public void setAnatomyStatisticsProbe(AnatomyStatistics anatomyStatisticsProbe) {
+        this.anatomyStatisticsProbe = anatomyStatisticsProbe;
+    }
+
     public AnatomyStatistics getAnatomyStatisticsAntibodies() {
         return anatomyStatisticsAntibodies;
     }
@@ -493,6 +505,10 @@ public class AnatomySearchBean extends PaginationBean {
         return antibodyCount <= MAX_NUMBER_GENOTYPES;
     }
 
+    public boolean isAllProbesAreDisplayed() {
+        return numberOfHighQualityProbes <= MAX_NUMBER_GENOTYPES;
+    }
+
     public boolean isAllWildtypeMorpholinosAreDisplayed() {
         return wildtypeMorpholinoCount <= MAX_NUMBER_GENOTYPES;
     }
@@ -501,27 +517,52 @@ public class AnatomySearchBean extends PaginationBean {
         return mutantMorpholinoCount <= MAX_NUMBER_GENOTYPES;
     }
 
-    public boolean isExpressedGenesExist(){
+    public boolean isExpressedGenesExist() {
         return !CollectionUtils.isEmpty(allExpressedMarkers);
     }
 
-    public boolean isMutantsExist(){
+    public boolean isMutantsExist() {
         return !CollectionUtils.isEmpty(genoStats);
     }
 
-    public boolean isInSituProbesExist(){
+    public boolean isInSituProbesExist() {
         return !CollectionUtils.isEmpty(highQualityProbeGenes);
     }
 
-    public boolean isMorpholinoExist(){
+    public boolean isMorpholinoExist() {
         return !CollectionUtils.isEmpty(allMorpholinos);
     }
 
-    public boolean isAntibodiesExist(){
+    public boolean isAntibodiesExist() {
         return !CollectionUtils.isEmpty(antibodyStatistics);
     }
 
-    public boolean isNonWildtypeMorpholinoExist(){
+    public boolean isNonWildtypeMorpholinoExist() {
         return !CollectionUtils.isEmpty(nonWildtypeMorpholinos);
     }
+
+    public SectionVisibility getSectionVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(SectionVisibility visibility) {
+        this.visibility = visibility;
+    }
+
+    public static enum Section {
+        ANATOMY_EXPRESSION,
+        ANATOMY_PHENOTYPE;
+
+        public static String[] getValues() {
+            String[] values = new String[values().length];
+            int index = 0;
+            for (Section section : values()) {
+                values[index++] = section.toString();
+            }
+            return values;
+        }
+
+
+    }
+
 }

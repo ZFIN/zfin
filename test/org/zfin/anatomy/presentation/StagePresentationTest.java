@@ -54,12 +54,44 @@ public class StagePresentationTest {
      * If no valid stage, no name given, then return a null value for the display String
      */
     @Test
-    public void noValidStage(){
+    public void noValidStage() {
         DevelopmentStage stage = new DevelopmentStage();
         String displayName = StagePresentation.createDisplayEntry(stage);
         assertEquals(displayName, null);
 
     }
 
+    @Test
+    public void developmentStageShortVersion() {
+        DevelopmentStage stage = new DevelopmentStage();
+        stage.setName("Pharyngula:Prim-15");
+        stage.setAbbreviation("Prim-15");
+        stage.setHoursStart(30);
+        stage.setHoursEnd(36);
+        String link = DevelopmentStagePresentation.getLink(stage, false);
+        assertEquals("<a href=\"/zf_info/zfbook/stages/index.html#Pharyngula\">Prim-15</a>", link);
+    }
+
+    @Test
+    public void developmentStageLongVersion() {
+        DevelopmentStage stage = new DevelopmentStage();
+        stage.setName("Pharyngula:Prim-15");
+        stage.setAbbreviation("Prim-15");
+        stage.setHoursStart(30);
+        stage.setHoursEnd(36);
+        String link = DevelopmentStagePresentation.getLink(stage, true);
+        assertEquals("<a href=\"/zf_info/zfbook/stages/index.html#Pharyngula\">Pharyngula:Prim-15 (30.0h-36.0h)</a>", link);
+    }
+
+    @Test
+    public void developmentStageUnknown() {
+        DevelopmentStage stage = new DevelopmentStage();
+        stage.setName(DevelopmentStage.UNKNOWN);
+        stage.setAbbreviation("unk");
+        stage.setHoursStart(0);
+        stage.setHoursEnd(17520);
+        String link = DevelopmentStagePresentation.getLink(stage, true);
+        assertEquals("<a href=\"/zf_info/zfbook/stages/index.html#unknown\">unknown</a>", link);
+    }
 
 }

@@ -123,38 +123,6 @@ public class MarkerService {
         return genes ;
     }
 
-
-    /**
-     * Retrieve an associated gene (of type genedom).
-     * If there are more than one gene found it throws a Runtime Exception.
-     *
-     * @param clone Clone object
-     * @return Marker object
-     * @deprecated Use getRelatedSmallSegmentGenesFromClone if in RENO interface.
-     */
-    public static Marker getRelatedGeneFromClone(Marker clone) {
-        Set<MarkerRelationship.Type> types = new HashSet<MarkerRelationship.Type>();
-        types.add(MarkerRelationship.Type.CLONE_CONTAINS_GENE);
-        types.add(MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT);
-        types.add(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
-        types.add(MarkerRelationship.Type.GENE_HYBRIDIZED_BY_SMALL_SEGMENT);
-
-        Set<Marker> genes = getRelatedMarker(clone, types);
-
-        if (CollectionUtils.isEmpty(genes)) {
-            return null;
-        }
-
-        logger.info("genes: " + genes);
-        logger.info("genes.size: " + genes.size());
-        if (genes.size() > 1) {
-            throw new RuntimeException("Found more than one gene associated to clone " + clone + ". " +
-                    "Found genes: " + genes);
-        }
-        return genes.iterator().next();
-    }
-
-
     /**
      * Retrieve LG for clone or gene.
      *

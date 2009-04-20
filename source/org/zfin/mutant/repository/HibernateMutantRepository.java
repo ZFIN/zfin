@@ -144,7 +144,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype, int numberOfRecords) {
+    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, Boolean isWildtype, int numberOfRecords) {
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(numberOfRecords);
         return getGenotypeExperimentMorhpolinosByAnatomy(item, isWildtype, bean);
@@ -155,8 +155,7 @@ public class HibernateMutantRepository implements MutantRepository {
         return getGenotypeExperimentMorhpolinosByAnatomy(item, isWildtype, null).getPopulatedResults();
     }
 
-    @SuppressWarnings("unchecked")
-    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype, PaginationBean bean) {
+    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, Boolean isWildtype, PaginationBean bean) {
         Session session = HibernateUtil.currentSession();
         String hql = "SELECT distinct genotypeExperiment " +
                 "FROM  GenotypeExperiment genotypeExperiment, Experiment exp, Genotype geno, " +
@@ -166,14 +165,16 @@ public class HibernateMutantRepository implements MutantRepository {
                 "       (pheno.patoSubTermzdbID = :aoZdbID or pheno.patoSuperTermzdbID = :aoZdbID) AND " +
                 "       pheno.genotypeExperiment = genotypeExperiment AND " +
                 "       con.experiment = exp AND " +
-                "       genotypeExperiment.genotype = geno AND" +
-                "       marker = con.morpholino AND " +
-                "       geno.wildtype = :isWildtype AND " +
-                "       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
+                "       genotypeExperiment.genotype = geno AND " +
+                "       marker = con.morpholino AND ";
+        if (isWildtype != null)
+            hql += "      geno.wildtype = :isWildtype AND ";
+        hql += "       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
                 "                             expCon.morpholino is null ) ";
         Query query = session.createQuery(hql);
         query.setString("aoZdbID", item.getZdbID());
-        query.setBoolean("isWildtype", isWildtype);
+        if (isWildtype != null)
+            query.setBoolean("isWildtype", isWildtype);
 
         // no boundaries defined, all records
         if (bean == null) {

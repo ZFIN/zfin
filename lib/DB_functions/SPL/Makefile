@@ -35,6 +35,7 @@ FISH_STATS   = get_image_stats.sql \
 	       p_update_fmrel_genotype_names.sql \
                fhist_event.sql \
 	       p_update_unspecified_alleles.sql \
+	       p_feature_stats_check_constraints.sql \
 	       p_fmrel_grpmem_correct.sql \
 	       get_feature_abbrev_display.sql \
 	       get_feature_abbrev_html.sql \
@@ -67,7 +68,8 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       p_delete_curator_session.sql	\
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
-	       regen_panelcount.sql regen_maps.sql
+	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql\
+	       add_ab_ao_fast_search.sql 
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
 ZDB_GNRCS    = table_exists.sql  
 ZDB_AGGR    = concatenate.sql

@@ -27,10 +27,14 @@ public abstract class EntityPresentation {
         return sb;
     }
 
-    protected static String getTomcatLink(String uri, String zdbID, String abbreviation) {
+    protected static String getTomcatLink(String uri, String zdbID, String abbreviation, String name) {
         StringBuilder sb = getTomcatHyperLinkStart();
         sb.append(uri);
         sb.append(zdbID);
+        sb.append("\"");
+        sb.append(" name=\"");
+        if (name != null)
+            sb.append(name);
         sb.append("\">");
         sb.append(abbreviation);
         sb.append("</a>");
@@ -57,7 +61,7 @@ public abstract class EntityPresentation {
 
     protected static String getWebdriverStartTag(String uri, String zdbID) {
         StringBuilder sb = new StringBuilder("<a href=\"");
-        sb.append(getWebdriverUrl(uri,zdbID));
+        sb.append(getWebdriverUrl(uri, zdbID));
         sb.append("\">");
         return sb.toString();
     }

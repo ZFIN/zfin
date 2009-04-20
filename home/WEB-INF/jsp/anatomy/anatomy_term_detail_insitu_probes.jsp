@@ -1,16 +1,16 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<c:if test="${!formBean.inSituProbesExist}">
-    <br/>
-    No data available
-</c:if>
 <c:if test="${formBean.inSituProbesExist}">
+    <b>In Situ Probes</b>: <a href="/zf_info/stars.html"> Recommended </a> by
+    <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
+        Thisse lab</a>
+
     <TABLE width="100%">
         <tbody>
             <TR class="search-result-table-header">
                 <TD width="20%">
-                    Gene Symbol
+                    Gene
                 </TD>
                 <TD width="20%">
                     Probe
@@ -19,54 +19,49 @@
                     Figures
                 </TD>
             </TR>
-            <c:forEach var="gene" items="${formBean.highQualityProbeGenes}">
+            <c:forEach var="probeStats" items="${formBean.highQualityProbeGenes}">
                 <tr class="search-result-table-entries">
                     <td>
-                        <zfin:link entity="${gene.gene}"/>
+                        <zfin:link entity="${probeStats.genes}"/>
                     </td>
                     <td>
-                        <zfin:link entity="${gene.subGene}"/>
+                        <zfin:link entity="${probeStats.probe}"/>
                     </td>
                     <td>
-                        <c:if test="${fn:length(gene.figures) > 0}">
+                        <c:if test="${probeStats.numberOfFigures > 0}">
                             <!-- link to figure search page if more than one figure available-->
-                            <c:if test="${fn:length(gene.figures) > 1}">
-                                <zfin:createFiguresLink marker="${gene.subGene}" anatomyItem="${formBean.anatomyItem}"
-                                                        numberOfFiguresCollection="${gene.figures}" author="Thisse"
+                            <c:if test="${probeStats.numberOfFigures > 1}">
+                                <zfin:createFiguresLink marker="${probeStats.probe}" anatomyItem="${formBean.anatomyItem}"
+                                                        numberOfFigures="${probeStats.numberOfFigures}" author="Thisse"
                                                         useGeneZdbID="false"/>
                             </c:if>
-                            <!-- If one one figure available go directly to the figure page -->
-                            <c:if test="${fn:length(gene.figures) == 1}">
-                                <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${gene.figure.zdbID}'>
-                                    <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                                                 collectionEntity="${gene.figures}"
-                                                 includeNumber="true"/>
+                            <!-- If only one figure available go directly to the figure page -->
+                            <c:if test="${probeStats.numberOfFigures == 1}">
+                                <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${probeStats.figure.zdbID}'>
+                                    <zfin2:figureOrTextOnlyLink figure="${probeStats.figure}"
+                                                                integerEntity="${probeStats.numberOfFigures}"/>
                                 </a>
                             </c:if>
                             from
-                            <c:if test="${gene.numberOfPublications ==1}">
-                                <zfin:link entity="${gene.probePublication}"/>
+                            <c:if test="${probeStats.numberOfPubs ==1}">
+                                <zfin:link entity="${probeStats.singlePub}"/>
                             </c:if>
-                            <c:if test="${gene.numberOfPublications > 1}">
+                            <c:if test="${probeStats.numberOfPubs > 1}">
                                 <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
-                                             collectionEntity="${gene.publications}"
+                                             integerEntity="${probeStats.numberOfPubs}"
                                              includeNumber="true"/>
                             </c:if>
                         </c:if>
                     </td>
                 </tr>
             </c:forEach>
-            <c:if test="${formBean.numberOfHighQualityProbes > 5 }">
-                <tr>
-                    <td colspan="4" align="left">
-                        Show all
-                        <a href="/action/anatomy/high-quality-probes?anatomyItem.zdbID=<c:out value='${formBean.anatomyItem.zdbID}' />">
-                                ${formBean.numberOfHighQualityProbes}
-                            Probes
-                        </a>
-                    </td>
-                </tr>
-            </c:if>
         </tbody>
     </TABLE>
-</c:if>
+    <zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.anatomyItem}"
+                                           recordsExist="${formBean.inSituProbesExist}"
+                                           anatomyStatistics="${formBean.anatomyStatisticsProbe}"
+                                           structureSearchLink="/action/anatomy/high-quality-probes?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}"
+                                           choicePattern="0# Probes| 1# probe| 2# probes"
+                                           allRecordsAreDisplayed="${formBean.allProbesAreDisplayed}"
+                                           totalRecordCount="${formBean.numberOfHighQualityProbes}"/>
+</c:if>  

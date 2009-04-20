@@ -1,19 +1,23 @@
 package org.zfin.marker.repository;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import static org.zfin.framework.HibernateUtil.currentSession;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
+import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.orthology.Species;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.Publication;
@@ -25,9 +29,7 @@ import org.zfin.sequence.LinkageGroup;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class MarkerRepositoryTest {
@@ -229,7 +231,7 @@ public class MarkerRepositoryTest {
             tx = HibernateUtil.currentSession().beginTransaction();
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
             Marker clone = mr.getMarkerByID("ZDB-CDNA-040425-3060");
-            Marker gene = MarkerService.getRelatedGeneFromClone(clone);
+            Marker gene = MarkerService.getRelatedSmallSegmentGenesFromClone(clone).iterator().next();
             assertEquals("Found gene", "ZDB-GENE-040426-2113", gene.getZdbID());
         }
         catch (Exception e) {
@@ -237,7 +239,11 @@ public class MarkerRepositoryTest {
             fail(e.getMessage());
         }
         finally {
-            tx.rollback();
+            try {
+                tx.rollback();
+            } catch (HibernateException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -248,7 +254,7 @@ public class MarkerRepositoryTest {
             tx = HibernateUtil.currentSession().beginTransaction();
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
             Marker clone = mr.getMarkerByID("ZDB-CDNA-040425-3060");
-            Marker gene = MarkerService.getRelatedGeneFromClone(clone);
+            Marker gene = MarkerService.getRelatedSmallSegmentGenesFromClone(clone).iterator().next();
             MarkerRelationship mrel = mr.getSpecificMarkerRelationship(gene, clone, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
             assertEquals("Found marker relationship", "ZDB-MREL-040426-3790", mrel.getZdbID());
         }
@@ -412,8 +418,8 @@ public class MarkerRepositoryTest {
             Marker gene = mr.getMarkerByID("ZDB-GENE-990415-72");
             List<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
             assertTrue(groups != null);
-	    assertTrue(groups.size() > 1);
-	    //            assertEquals("linkage groups found", 3, groups.size());
+            assertTrue(groups.size() > 1);
+            //            assertEquals("linkage groups found", 3, groups.size());
             //LinkageGroup group = groups.get(0);
             //assertEquals("First LG", "13", group.getName());
         }
@@ -488,4 +494,127 @@ public class MarkerRepositoryTest {
         MarkerAlias alias = markerRepository.getMarkerAlias(zdbID);
         assertTrue(alias != null);
     }
+
+    @Test
+    public void thisseProbesForAoTerm() {
+        String aoTermName = "pancreas";
+        AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
+        AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);
+
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct stat.probe " +
+                "     from HighQualityProbeAOStatistics stat " +
+                "     where stat.superterm = :aoterm " +
+                "           and stat.subterm = :aoterm";
+        Query query = session.createQuery(hql);
+        query.setParameter("aoterm", aoTerm);
+
+        List<AntibodyAOStatistics> list = query.list();
+        assertTrue(list != null);
+        assertTrue(list.size() > 0);
+
+        hql = " " +
+                "     from AntibodyAOStatistics stat " +
+                "     where stat.superterm = :aoterm " +
+                "           and stat.subterm = :aoterm";
+        query = session.createQuery(hql);
+        query.setParameter("aoterm", aoTerm);
+        List<AntibodyAOStatistics> listStat = query.list();
+        assertTrue(list != null);
+        assertTrue(list.size() > 0);
+
+    }
+
+    @Test
+    public void ProbesStatistics() {
+        String aoTermName = "brain";
+        AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
+        AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);
+
+        PaginationBean pagination = new PaginationBean();
+        pagination.setMaxDisplayRecords(5);
+        pagination.setFirstPageRecord(0);
+        // without substructures
+        PaginationResult<HighQualityProbe> result = markerRepository.getHighQualityProbeStatistics(aoTerm, pagination, false);
+        assertTrue(result != null);
+        assertTrue(result.getTotalCount() > 0);
+
+        // including substructures
+        result = markerRepository.getHighQualityProbeStatistics(aoTerm, pagination, true);
+        assertTrue(result != null);
+        assertTrue(result.getTotalCount() > 0);
+
+    }
+
+    @Test
+    public void hibernateQueryIterate() {
+        String aoTermName = "brain";
+        Session session = HibernateUtil.currentSession();
+        session.beginTransaction();
+        AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
+        AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);
+        String name = aoTerm.getStart().getName();
+        String hql = " select distinct(stat.fstat_feat_zdb_id), probe.mrkr_abbrev, gene.mrkr_zdb_id," +
+                "                       gene.mrkr_abbrev,gene.mrkr_abbrev_order  " +
+                "from feature_stats as stat, marker as gene, marker as probe " +
+                "     where fstat_superterm_zdb_id = :aoterm " +
+                "           and fstat_superterm_zdb_id = :aoterm " +
+                "           and fstat_gene_zdb_id = gene.mrkr_zdb_id " +
+                "           and fstat_feat_zdb_id = probe.mrkr_zdb_id " +
+                "           and fstat_type = :type" +
+                "     order by gene.mrkr_abbrev_order ";
+        SQLQuery query = session.createSQLQuery(hql);
+        query.setString("aoterm", "ZDB-ANAT-010921-587");
+        query.setString("type", "High-Quality-Probe");
+        query.setFirstResult(0);
+        query.setMaxResults(5);
+        ScrollableResults results = query.scroll();
+        List<HighQualityProbe> probes = new ArrayList<HighQualityProbe>();
+        while (results.next()) {
+            Marker probe = new Marker();
+            Object[] objects = results.get();
+            probe.setZdbID((String) objects[0]);
+            probe.setAbbreviation((String) objects[1]);
+            Marker gene = new Marker();
+            gene.setZdbID((String) objects[2]);
+            gene.setAbbreviation((String) objects[3]);
+            HighQualityProbe hqp = new HighQualityProbe(probe, aoTerm);
+            hqp.addGene(gene);
+            probes.add(hqp);
+        }
+        results.last();
+        int num = results.getRowNumber();
+
+        hql = " select stat.* from feature_stats as stat, marker " +
+                "     where fstat_superterm_zdb_id = :aoterm " +
+                "           and fstat_superterm_zdb_id = :aoterm " +
+                "           and fstat_gene_zdb_id = mrkr_zdb_id " +
+                "           and fstat_type = :type" +
+                "     order by mrkr_abbrev_order ";
+
+        query = session.createSQLQuery(hql);
+        query.setString("aoterm", "ZDB-ANAT-010921-587");
+        query.setString("type", "High-Quality-Probe");
+        //query.addScalar("aoterm", Hibernate.STRING);
+        results = query.scroll();
+
+        results.last();
+        num = results.getRowNumber();
+        assertTrue(true);
+        session.getTransaction().rollback();
+    }
+
+    @Test
+    public void lazyLoadAnatomy() {
+        String aoTermName = "brain";
+        Session session = HibernateUtil.currentSession();
+        AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
+        AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);
+        aoTerm.getZdbID();
+        aoTerm.getName();
+        DevelopmentStage start = aoTerm.getStart();
+        start.getName();
+    }
+
+
 }

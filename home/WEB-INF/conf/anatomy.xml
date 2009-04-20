@@ -18,6 +18,13 @@
                 <prop key="/anatomy/request-new-term">requestNewAnatomyTerm</prop>
                 <prop key="/anatomy/show-all-morpholino-experiments">allMorpholinoExperiments</prop>
                 <prop key="/anatomy/antibody-summary">antibodySummary</prop>
+                <prop key="/anatomy/show-expression-genes">ajaxAnatomy</prop>
+                <prop key="/anatomy/show-expression-insitu-probes">ajaxAnatomy</prop>
+                <prop key="/anatomy/show-expression-antibodies">ajaxAnatomy</prop>
+                <prop key="/anatomy/show-phenotype">ajaxAnatomy</prop>
+                <prop key="/anatomy/show-phenotype-mutants">ajaxAnatomy</prop>
+                <prop key="/anatomy/show-phenotype-morpholinos">ajaxAnatomy</prop>
+                <prop key="/anatomy/show-phenotype-non-wildtype-morpholinos">ajaxAnatomy</prop>
             </props>
         </property>
     </bean>
@@ -57,5 +64,22 @@
 
     <bean id="mutantRepository" class="org.zfin.mutant.repository.HibernateMutantRepository"/>
 
+    <bean name="ajaxAnatomy" class="org.zfin.anatomy.presentation.AnatomyAjaxController">
+        <property name="methodNameResolver" ref="actionResolverAnatomy"/>
+     </bean>
 
+    <bean id="actionResolverAnatomy" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+        <property name="mappings">
+            <props>
+                <prop key="/anatomy/show-expression">showExpression</prop>
+                <prop key="/anatomy/show-expression-genes">showExpressionGenes</prop>
+                <prop key="/anatomy/show-expression-insitu-probes">showExpressionInsituProbes</prop>
+                <prop key="/anatomy/show-expression-antibodies">showExpressionAntibodies</prop>
+                <prop key="/anatomy/show-phenotype">showPhenotype</prop>
+                <prop key="/anatomy/show-phenotype-mutants">showPhenotypeMutants</prop>
+                <prop key="/anatomy/show-phenotype-morpholinos">showPhenotypeMorpholinos</prop>
+                <prop key="/anatomy/show-phenotype-non-wildtype-morpholinos">showPhenotypeNonwildtypeMorpholinos</prop>
+            </props>
+        </property>
+    </bean>
 </beans>

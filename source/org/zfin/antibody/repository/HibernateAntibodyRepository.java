@@ -4,10 +4,12 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.*;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.isNotEmpty;
 import org.zfin.Species;
+import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
@@ -19,6 +21,7 @@ import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
+import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.TextOnlyFigure;
@@ -32,6 +35,8 @@ import org.zfin.repository.PaginationResultFactory;
 import org.zfin.util.FilterType;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 /**
@@ -84,7 +89,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             query.setParameter("antibodyType", searchCriteria.getClonalType());
         if (searchCriteria.isStageDefined())
             bindStageFilterValues(searchCriteria, query);
-        if (searchCriteria.isAnatomyDefined()){
+        if (searchCriteria.isAnatomyDefined()) {
             applyAnatomyTermsFilter(searchCriteria, query);
             query.setParameter("standard", Experiment.STANDARD);
             query.setParameter("generic", Experiment.GENERIC_CONTROL);
@@ -137,7 +142,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             query.setParameter("antibodyType", searchCriteria.getClonalType());
         if (searchCriteria.isStageDefined())
             bindStageFilterValues(searchCriteria, query);
-        if (searchCriteria.isAnatomyDefined()){
+        if (searchCriteria.isAnatomyDefined()) {
             applyAnatomyTermsFilter(searchCriteria, query);
             query.setParameter("standard", Experiment.STANDARD);
             query.setParameter("generic", Experiment.GENERIC_CONTROL);
@@ -503,6 +508,105 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         marker.add(Restrictions.eq("markerType", type));
         return (List<AllMarkerNamesFastSearch>) marker.list();
 
+    }
+
+    public PaginationResult<AntibodyStatistics> getAntibodyStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures) {
+        Session session = HibernateUtil.currentSession();
+        String hql;
+        if (includeSubstructures) {
+            hql = "select count(distinct stat.antibody) " +
+                    "     from AntibodyAOStatistics stat " +
+                    "     where stat.superterm = :aoterm ";
+        } else {
+            hql = "select count(distinct stat.antibody) " +
+                    "     from AntibodyAOStatistics stat " +
+                    "     where stat.superterm = :aoterm and " +
+                    "           stat.subterm = :aoterm";
+        }
+        Query query = session.createQuery(hql);
+        query.setParameter("aoterm", aoTerm);
+        int totalCount = (Integer) query.uniqueResult();
+        // if no antibodies found return here
+        if (totalCount == 0)
+            return new PaginationResult<AntibodyStatistics>(0, null);
+
+        if(includeSubstructures)
+            return new PaginationResult<AntibodyStatistics>(totalCount, null);
+
+        // loop over all antibodyAOStatistic records until the given number of distinct antibodies from the pagination
+        // bean is reached.
+        if (includeSubstructures)
+            hql = "  from AntibodyAOStatistics stat fetch all properties" +
+                    "     where stat.superterm = :aoterm";
+        else
+            hql = " select stat from AntibodyAOStatistics stat fetch all properties" +
+                    "     where stat.superterm = :aoterm " +
+                    "           and stat.subterm = :aoterm ";
+
+        query = session.createQuery(hql);
+        query.setParameter("aoterm", aoTerm);
+        Iterator scrollableResults = query.iterate();
+        List<AntibodyStatistics> list = new ArrayList<AntibodyStatistics>();
+        // Since the number of entities that manifest a single record are comprised of
+        // multiple single records (differ by figures, genes, pubs) from the database we have to aggregate
+        // them into single entities. Need to populate one more entity than requested to collect
+        // all information pertaining to that record. Have to remove that last entity.
+        while (scrollableResults.hasNext() && list.size() < pagination.getMaxDisplayRecords()) {
+            //Object[] record = scrollableResults.get(0);
+            //AntibodyAOStatistics antibodyStat = (AntibodyAOStatistics) record[0];
+            AntibodyAOStatistics antibodyStat = (AntibodyAOStatistics) scrollableResults.next();
+            populateAntibodyStatisticsRecord(antibodyStat, list, aoTerm);
+        }
+        // remove the last entity as it is beyond the display limit.
+        if (list.size() > pagination.getMaxDisplayRecords())
+            list.remove(list.size() - 1);
+        //scrollableResults.close();
+        return new PaginationResult<AntibodyStatistics>(totalCount, list);
+    }
+
+    /**
+     * Create a list of AntibodyStatistics objects from antibodyAOStatistics record.
+     * This logic groups the objects accordingly.
+     *
+     * @param record AntibodyAOStatistics
+     * @param aoTerm anatom term
+     * @param list   antibodyStatistics objects to be manipulated.
+     */
+    private void populateAntibodyStatisticsRecord(AntibodyAOStatistics record, List<AntibodyStatistics> list, AnatomyItem aoTerm) {
+
+        if (record == null || record.getAntibody() == null)
+            return;
+
+        AntibodyStatistics abStat;
+        if (list.size() == 0) {
+            abStat = new AntibodyStatistics(record.getAntibody(), aoTerm);
+            list.add(abStat);
+        } else
+            abStat = list.get(list.size() - 1);
+
+        // if antibody from records is the same as the one on the statistics object
+        // add new info to that object.
+        AntibodyStatistics newAntibodyStat;
+        boolean isNew = false;
+        if (record.getAntibody().equals(abStat.getAntibody())) {
+            newAntibodyStat = abStat;
+        } else {
+            newAntibodyStat = new AntibodyStatistics(record.getAntibody(), abStat.getAnatomyItem());
+            isNew = true;
+        }
+
+        Marker gene = record.getGene();
+        if (gene != null)
+            newAntibodyStat.addGene(gene);
+        Figure figure = record.getFigure();
+        if (figure != null)
+            newAntibodyStat.addFigure(figure);
+        Publication publication = record.getPublication();
+        if (publication != null)
+            newAntibodyStat.addPublication(publication);
+
+        if (isNew)
+            list.add(newAntibodyStat);
     }
 
 }

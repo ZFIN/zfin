@@ -15,6 +15,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
 import org.zfin.mutant.repository.MutantRepository;
@@ -370,4 +371,21 @@ public class PublicationRepositoryTest {
 
     }
 
+    @Test
+    public void getNumberOfPublicationForPax2aAndMHB() {
+        String termName = "midbrain hindbrain boundary";
+        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
+        AnatomyItem item = aoRepository.getAnatomyItem(termName);
+        Marker pax2a = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation("pax2a");
+
+        PaginationResult<Publication> qualityPubs = pr.getPublicationsWithFigures(pax2a, item);
+        assertTrue(qualityPubs != null);
+//        assertEquals("2 pubs", 2, qualityPubs.size());
+
+    }
+
+
+
 }
+
+

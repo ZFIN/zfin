@@ -100,4 +100,18 @@ public abstract class Figure implements Serializable {
     }
 
     public abstract Type getType();
+
+    public boolean equals(Object otherFigure) {
+        if (!(otherFigure instanceof Figure))
+            return false;
+
+        Figure figure = (Figure) otherFigure;
+        return getZdbID().equals(figure.getZdbID());
+    }
+
+    public int hashCode() {
+        return zdbID.hashCode();
+    }
+
+    
 }

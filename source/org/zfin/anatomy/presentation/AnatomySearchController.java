@@ -80,7 +80,6 @@ public class AnatomySearchController extends AbstractCommandController {
         anatomyForm.setStage(stage);
         List<AnatomyStatistics> anatomyStatistics = anatomyRepository.getAnatomyItemStatisticsByStage(stage);
         anatomyForm.setStatisticItems(anatomyStatistics);
-        anatomyForm.setTotalRecords(anatomyStatistics.size());
 
     }
 

@@ -77,7 +77,7 @@ public interface MutantRepository extends CachedRepository {
      * @param numberOfRecords defines the first n records to retrieve
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype, int numberOfRecords);
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, Boolean isWildtype, int numberOfRecords);
 
     /**
      * Retrieve all genotype objects that are assoicated to a morpholino.
@@ -101,7 +101,7 @@ public interface MutantRepository extends CachedRepository {
      * @param bean       PaginationBean
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype, PaginationBean bean);
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, Boolean isWildtype, PaginationBean bean);
 
     /**
      * Retrieve the list of morpholinos for a given genotype.

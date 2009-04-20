@@ -1,9 +1,6 @@
 package org.zfin.antibody.repository;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.HibernateException;
+import org.hibernate.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -12,6 +9,8 @@ import org.junit.Test;
 import org.zfin.ExternalNote;
 import org.zfin.Species;
 import org.zfin.TestConfiguration;
+import org.zfin.mutant.presentation.AntibodyStatistics;
+import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
@@ -643,7 +642,7 @@ public class AntibodyRepositoryTest {
         aoTerm.setZdbID(aoID);
 
         int numOfFigures = antibodyRep.getNumberOfFiguresPerAoTerm(antibody, aoTerm, Figure.Type.FIGURE);
-        assertTrue(numOfFigures > 0 );
+        assertTrue(numOfFigures > 0);
 
         List<Figure> figures = antibodyRep.getFiguresPerAoTerm(antibody, aoTerm);
         assertTrue(figures != null);
@@ -870,27 +869,74 @@ public class AntibodyRepositoryTest {
     }
 
     //@Test
-    public void getAllMapNameForAntibodies(){
+    public void getAllMapNameForAntibodies() {
         String string = "pdx";
         List<AllMarkerNamesFastSearch> all = antibodyRep.getAllNameAntibodyMatches(string);
         assertTrue(all != null);
     }
 
     @Test
-    public void getUsedAntibodies(){
+    public void getUsedAntibodies() {
         List<Species> all = antibodyRep.getUsedHostSpeciesList();
         assertTrue(all != null);
     }
 
     @Test
-    public void getPublicationsPerAntibodyAndAoTerm(){
+    public void getPublicationsPerAntibodyAndAoTerm() {
         String antibodyName = "zn-5";
         String aoTermName = "spinal cord";
         Antibody antibody = antibodyRep.getAntibodyByName(antibodyName);
-        AnatomyItem aoTerm =anatomyRep.getAnatomyItem(aoTermName);
+        AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);
 
         PaginationResult<Publication> pubs = antibodyRep.getPublicationsWithFigures(antibody, aoTerm);
         assertTrue(pubs != null);
     }
 
+    @Test
+    public void getAntibodiesForAoTerm() {
+        String aoTermName = "pancreas";
+        AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);
+
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct stat.antibody " +
+                "     from AntibodyAOStatistics stat " +
+                "     where stat.superterm = :aoterm " +
+                "           and stat.subterm = :aoterm";
+        Query query = session.createQuery(hql);
+        query.setParameter("aoterm", aoTerm);
+
+        List<AntibodyAOStatistics> list = query.list();
+        assertTrue(list != null);
+        assertTrue(list.size() > 0);
+
+        hql = " " +
+                "     from AntibodyAOStatistics stat " +
+                "     where stat.superterm = :aoterm " +
+                "           and stat.subterm = :aoterm";
+        query = session.createQuery(hql);
+        query.setParameter("aoterm", aoTerm);
+        List<AntibodyAOStatistics> listStat = query.list();
+        assertTrue(list != null);
+        assertTrue(list.size() > 0);
+
+    }
+
+    @Test
+    public void getAntibodyStatistics() {
+        String aoTermName = "eye";
+        AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);
+
+        PaginationBean pagination = new PaginationBean();
+        pagination.setMaxDisplayRecords(5);
+        // without substructures
+        PaginationResult<AntibodyStatistics> result = antibodyRep.getAntibodyStatistics(aoTerm, pagination, false);
+        assertTrue(result != null);
+        assertTrue(result.getTotalCount() > 0);
+        assertTrue(result.getPopulatedResults().size() > 1);
+        // including substructures
+        result = antibodyRep.getAntibodyStatistics(aoTerm, pagination, true);
+        assertTrue(result != null);
+        assertTrue(result.getTotalCount() > 0);
+
+    }
 }

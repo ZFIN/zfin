@@ -886,6 +886,9 @@ EFFECTS
               '$xpcur_G_panel_fig_zdb_id'
             );">
         <?/MISQL>
+        
+        <?MICOMMENT>Update antibody_stats table <?/MICOMMENT>
+	<?MISQL SQL="execute function add_ab_ao_fast_search('$gPSLitem_xpatres_zdb_id');"><?/MISQL> 
         <?MISQL SQL="
           select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_pattern_figure&recweb_new_value=$gPSLitem_xpatres_zdb_id,$xpcur_G_panel_fig_zdb_id&recweb_comments=create+new+record') 
           from webPages where ID='aa-record_web_update.apg';">
@@ -1022,6 +1025,9 @@ EFFECTS
             '$xpcurup_panel_fig_zdb_id',
             '$xpcurup_panel_xpatres_zdb_id');">
         <?/MISQL>         
+                <?MICOMMENT>Update antibody_stats table <?/MICOMMENT>
+		<?MISQL SQL="execute function add_ab_ao_fast_search('$xpcurup_panel_xpatres_zdb_id');"><?/MISQL> 
+
         <?MISQL SQL="
           select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_pattern_figure&recweb_new_value=$xpcurup_panel_xpatres_zdb_id,$xpcurup_panel_fig_zdb_id&recweb_comments=create+new+record') 
           from webPages where ID='aa-record_web_update.apg';">
@@ -1091,6 +1097,7 @@ EFFECTS
             )
         ;">
     <?/MISQL>
+    
     <?MIBLOCK COND=$(NC,$xpcurup_old_value,)>
     
       <?MIVAR NAME=xpcurup_old_value>xpatfig_fig_zdb_id = $xpcurup_panel_fig_zdb_id<BR>xpatfig_xpatres_zdb_id = $xpcurup_old_value<?/MIVAR>

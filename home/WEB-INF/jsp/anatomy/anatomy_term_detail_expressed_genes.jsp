@@ -1,12 +1,17 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<b>
+    <span title="Genes with Most Figures, annotated to ${formBean.anatomyItem.name}, substructures excluded">
+        Genes with Most Figures
+    </span>
+</b>
 <c:if test="${formBean.expressedGenesExist}">
     <TABLE width="100%">
         <tbody>
         <TR class="search-result-table-header">
             <TD width="40%" colspan="2">
-                Gene Symbol
+                Gene
             </TD>
             <TD width="60%">
                 Figures

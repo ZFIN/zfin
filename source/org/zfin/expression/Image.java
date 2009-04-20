@@ -71,4 +71,17 @@ public class Image {
         this.thumbnail = thumbnail;
     }
     
+
+    public boolean equals(Object otherImage) {
+        if (!(otherImage instanceof Image))
+            return false;
+
+        Image image = (Image) otherImage;
+        return getZdbID().equals(image.getZdbID());
+    }
+
+    public int hashCode() {
+        return zdbID.hashCode();
+    }
+
 }

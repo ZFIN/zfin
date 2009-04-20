@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Basic bean object that can be used for any form bean to include pagination.
@@ -169,10 +168,7 @@ public class PaginationBean {
         int indexOfPageParam = queryString.indexOf(PAGE);
         String newQueryString = queryString;
         if (indexOfPageParam > -1) {
-            newQueryString = queryString.substring(0, indexOfPageParam);
-            String remainingHalfOfQueryString = queryString.substring(indexOfPageParam + PAGE.length());
-            int indexOfAtSign = remainingHalfOfQueryString.indexOf("&");
-            newQueryString += remainingHalfOfQueryString.substring(indexOfAtSign + 1);
+            newQueryString = queryString.substring(0,indexOfPageParam -1);
         }
         StringBuffer sb = new StringBuffer(requestUrl);
         sb.append("?");

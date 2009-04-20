@@ -1,6 +1,7 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<b>Mutant and Transgenic Lines</b>
 
 <c:if test="${formBean.mutantsExist}">
     <table width="100%">

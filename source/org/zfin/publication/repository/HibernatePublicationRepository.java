@@ -6,8 +6,6 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import static org.hibernate.criterion.Restrictions.eq;
-import static org.hibernate.criterion.Restrictions.isNotEmpty;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.CanonicalMarker;
@@ -59,8 +57,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "WHERE res.anatomyTerm = :aoTerm " +
                 "AND res.expressionExperiment = exp " +
                 "AND exp.clone = clone " +
-                "AND clone.rating = 4 "+
-                "AND clone.problem is null" ; 
+                "AND clone.rating = 4 " +
+                "AND clone.problem is null";
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", anatomyTerm);
         List<Publication> list = query.list();
@@ -178,7 +176,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @return list of High quality probes.
      */
     public PaginationResult<HighQualityProbe> getHighQualityProbeNames(AnatomyItem term) {
-        return getHighQualityProbeNames(term,Integer.MAX_VALUE) ;
+        return getHighQualityProbeNames(term, Integer.MAX_VALUE);
     }
 
 
@@ -187,31 +185,30 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select distinct probe, marker " +
                 "FROM ExpressionExperiment exp, ExpressionResult res, Clone clone, Marker probe, Marker marker " +
                 "WHERE  res.anatomyTerm.zdbID = :zdbID " +
-                   "AND res.expressionExperiment = exp " +
-                   "AND exp.clone = clone " +
-                   "AND exp.probe = probe " +
-                   "AND exp.marker = marker " +
-                   "AND clone.rating = 4 " +
-                   "ORDER by marker.abbreviationOrder  ";
-        Session session = HibernateUtil.currentSession() ;
-        Query query = session.createQuery(hql) ;
-        query.setString("zdbID",term.getZdbID()) ;
-        ScrollableResults results = query.scroll() ;
+                "AND res.expressionExperiment = exp " +
+                "AND exp.clone = clone " +
+                "AND exp.probe = probe " +
+                "AND exp.marker = marker " +
+                "AND clone.rating = 4 " +
+                "ORDER by marker.abbreviationOrder  ";
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery(hql);
+        query.setString("zdbID", term.getZdbID());
+        ScrollableResults results = query.scroll();
 
-//        results.beforeFirst();
-
-        List<Object[]> list = new ArrayList<Object[]>() ; 
-        while( results.next() && results.getRowNumber() < maxRow ){
-            list.add(results.get()) ;
+        List<Object[]> list = new ArrayList<Object[]>();
+        while (results.next() && results.getRowNumber() < maxRow) {
+            list.add(results.get());
         }
-        
-        results.last() ;
-        int totalCount = results.getRowNumber() +1 ;
+
+        int totalCount = 0;
+        if (results.last())
+            totalCount = results.getRowNumber() + 1;
 
         results.close();
 
         List<HighQualityProbe> probes = createHighQualityProbeObjects(list, term);
-        return new PaginationResult<HighQualityProbe>(totalCount,probes) ;
+        return new PaginationResult<HighQualityProbe>(totalCount, probes);
 
     }
 
@@ -230,7 +227,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "ORDER BY marker.abbreviationOrder";
 
         Query query = session.createQuery(hql);
-        if (maxRow != SearchUtil.ALL){
+        if (maxRow != SearchUtil.ALL) {
             query.setMaxResults(maxRow);
         }
         query.setString("zdbID", zdbID);
@@ -240,7 +237,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
 
     public PaginationResult<MarkerStatistic> getAllExpressedMarkers(AnatomyItem anatomyTerm) {
-        return getAllExpressedMarkers(anatomyTerm,0, Integer.MAX_VALUE) ;
+        return getAllExpressedMarkers(anatomyTerm, 0, Integer.MAX_VALUE);
     }
 
     /**
@@ -248,7 +245,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * the record number. Hibernate starts with the first row numbered '0'.
      * Do not include records where the gene or probe is WITHDRAWN.
      * Do not include records where the probe is Chimeric.
-	 * Written in native SQL because need to order by number of figures.
+     * Written in native SQL because need to order by number of figures.
      *
      * @param anatomyTerm     anatomy term
      * @param firstRow        first row
@@ -286,10 +283,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       not exists( " +
                 "           select 'x' from clone " +
                 "           where clone.clone_mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
-                "           and clone.clone_problem_type = :chimeric " + 
-                "       ) AND " + 
+                "           and clone.clone_problem_type = :chimeric " +
+                "       ) AND " +
                 // todo: fix this query
-                "       not exists( "  + 
+                "       not exists( " +
                 "           select 'x' from marker m2" +
                 "           where m2.mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
                 "           and m2.mrkr_abbrev[1,10] = :withdrawn  " +
@@ -304,25 +301,25 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
         query.setString("condition", Experiment.STANDARD);
-        query.setString("withdrawn",Marker.WITHDRAWN );
+        query.setString("withdrawn", Marker.WITHDRAWN);
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
-        ScrollableResults results = query.scroll() ;
-        results.last() ;
+        ScrollableResults results = query.scroll();
+        results.last();
         int totalResults = results.getRowNumber() + 1;
 
-        List<Object[]> list  = new ArrayList<Object[]>() ;
+        List<Object[]> list = new ArrayList<Object[]>();
 
         results.beforeFirst();
-        while(results.next() && results.getRowNumber() < numberOfRecords ){
-           if(results.getRowNumber()>=firstRow) {
-               list.add(results.get());
-           }
+        while (results.next() && results.getRowNumber() < numberOfRecords) {
+            if (results.getRowNumber() >= firstRow) {
+                list.add(results.get());
+            }
         }
 
         results.close();
         List<MarkerStatistic> markerStatistics = createMarkerStatistics(list, anatomyTerm);
 
-        return new PaginationResult<MarkerStatistic>(totalResults,markerStatistics) ;
+        return new PaginationResult<MarkerStatistic>(totalResults, markerStatistics);
     }
 
     /**
@@ -338,19 +335,19 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select count(distinct fig) from Figure fig, ExpressionResult res " +
                 "WHERE res.anatomyTerm = :aoTerm " +
                 "AND fig member of res.figures " +
-                "AND res.expressionFound = :expressionFound "+
-                "AND res.expressionExperiment.genotypeExperiment.experiment.name = :condition "+
+                "AND res.expressionFound = :expressionFound " +
+                "AND res.expressionExperiment.genotypeExperiment.experiment.name = :condition " +
                 "AND res.expressionExperiment.marker.abbreviation not like :withdrawn " +
                 "AND not exists ( " +
-                    "select 1 from Clone clone where " +
+                "select 1 from Clone clone where " +
                 "           clone.zdbID = res.expressionExperiment.clone.zdbID AND " +
-                "           clone.problem  <> :chimeric "  +
+                "           clone.problem  <> :chimeric " +
                 ")";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setParameter("aoTerm", anatomyTerm);
         query.setString("condition", Experiment.STANDARD);
-        query.setString("withdrawn", Marker.WITHDRAWN + "%" );
+        query.setString("withdrawn", Marker.WITHDRAWN + "%");
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString());
         return (Integer) query.uniqueResult();
     }
@@ -433,12 +430,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @SuppressWarnings("unchecked")
     public Figure getFigureById(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        return (Figure)session.get(Figure.class, zdbID);
+        return (Figure) session.get(Figure.class, zdbID);
     }
 
     public Image getImageById(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        return (Image)session.get(Image.class, zdbID);
+        return (Image) session.get(Image.class, zdbID);
 
     }
 
@@ -500,11 +497,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             for (Object[] array : list) {
                 Marker subGene = (Marker) array[0];
                 Marker gene = (Marker) array[1];
-                HighQualityProbe probe = new HighQualityProbe();
-                probe.setGene(gene);
-                probe.setSubGene(subGene);
+                HighQualityProbe probe = new HighQualityProbe(subGene, aoTerm);
+                probe.addGene(gene);
                 probes.add(probe);
-                probe.setFigures(getFiguresPerProbeAndAnatomy(gene, subGene, aoTerm));
+                //probe.add(getFiguresPerProbeAndAnatomy(gene, subGene, aoTerm));
             }
         }
         return probes;
@@ -627,12 +623,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "      pheno.genotypeExperiment = exp  AND " +
                 "      figure member of pheno.figures AND " +
                 "      ( pheno.patoSubTermzdbID = :aoZdbID OR pheno.patoSuperTermzdbID = :aoZdbID ) " +
-                "order by figure.orderingLabel    " ;
+                "order by figure.orderingLabel    ";
         Query query = session.createQuery(hql);
         query.setString("genoID", geno.getZdbID());
         query.setString("aoZdbID", term.getZdbID());
-        PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list()) ; 
-        return paginationResult ;
+        PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
+        return paginationResult;
     }
 
     public PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, AnatomyItem aoTerm) {
@@ -652,25 +648,25 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
 */
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return  new PaginationResult<Publication>((List<Publication>) pubs.list()) ;
+        return new PaginationResult<Publication>((List<Publication>) pubs.list());
     }
 
 
     public int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, AnatomyItem aoTerm) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = " select count(distinct figure.publication.zdbID ) from "+
+        String hql = " select count(distinct figure.publication.zdbID ) from " +
                 " Figure figure, Phenotype phenotype " +
                 "where " +
                 "      ( phenotype.patoSubTermzdbID = :aoZdbID OR phenotype.patoSuperTermzdbID = :aoZdbID ) AND " +
                 "      phenotype.genotypeExperiment.genotype.zdbID = :genoID AND " +
                 "      figure member of phenotype.figures " +
-                "" ;
+                "";
         Query query = session.createQuery(hql);
         query.setString("genoID", genotype.getZdbID());
         query.setString("aoZdbID", aoTerm.getZdbID());
 
-        return  Integer.parseInt(query.uniqueResult().toString()) ;
+        return Integer.parseInt(query.uniqueResult().toString());
     }
 
     /**
@@ -742,6 +738,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     /**
      * Retrieve Figue by ID
+     *
      * @param zdbID ID
      * @return Figure
      */
@@ -760,11 +757,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Criteria result = expresssion.createCriteria("expressionResults");
         result.add(Restrictions.isNotEmpty("figures"));
         result.add(Restrictions.eq("anatomyTerm", anatomyTerm));
+        result.add(Restrictions.eq("expressionFound", true));
         Criteria genox = expresssion.createCriteria("genotypeExperiment");
         Criteria genotype = genox.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
         Criteria experiment = genox.createCriteria("experiment");
-        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
+        experiment.add(Restrictions.eq("name", Experiment.STANDARD));
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         return new PaginationResult<Publication>((List<Publication>) pubs.list());

@@ -16,7 +16,7 @@
       Replace special characters, such as carriage returns so JS would not choke.
     </description>
     <name>escapeForJavaScript</name>
-    <function-class>org.zfin.framework.presentation.Functions</function-class>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
     <function-signature>java.lang.String escapeJavaScript(java.lang.String)</function-signature>
     <example>
       ${fn:escapeForJavaScript(name)}">
@@ -24,14 +24,74 @@
   </function>
 
   <function>
-    <description>
+    <description>                                    
       Replace special characters, such as carriage returns so JS would not choke.
     </description>
     <name>escapeHtml</name>
-    <function-class>org.zfin.framework.presentation.Functions</function-class>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
     <function-signature>java.lang.String escapeHtml(java.lang.String)(java.lang.String)</function-signature>
     <example>
       ${fn:escapeHtml(name)}">
+    </example>
+ </function>
+    
+  <function>
+    <description>
+      Determine if a given section is set to show or hide
+    </description>
+    <name>isSectionVisible</name>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+    <function-signature>boolean isSectionVisible(java.lang.String, org.zfin.framework.presentation.SectionVisibility)</function-signature>
+    <example>
+      ${fn:isSectionVisible(name, visibility)}">
+    </example>
+  </function>
+
+  <function>
+    <description>
+      Determine if a given section has data
+    </description>
+    <name>dataAvailable</name>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+    <function-signature>boolean dataAvailable(java.lang.String,org.zfin.framework.presentation.SectionVisibility)</function-signature>
+    <example>
+      ${fn:dataAvailable(name, visibility)}">
+    </example>
+  </function>
+
+  <function>
+    <description>
+      Remove a given key-value pair that pertains to the sectionVisibility
+    </description>
+    <name>removeQueryParameter</name>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+    <function-signature>java.lang.String removeQueryParameter(java.lang.String,java.lang.String,java.lang.String)</function-signature>
+    <example>
+      ${fn:removeQueryParameter(queryString, 'hideSection')}">
+    </example>
+  </function>
+
+  <function>
+    <description>
+      Remove key-value pairs that pertain to the sectionVisibility
+    </description>
+    <name>removeAllVisibleQueryParameters</name>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+    <function-signature>java.lang.String removeAllVisibleQueryParameters(java.lang.String,java.lang.String)</function-signature>
+    <example>
+      ${fn:removeAllVisibleQueryParameters(queryString, 'visibility.')}">
+    </example>
+  </function>
+
+  <function>
+    <description>
+      Remove key-value pairs that pertain to the sectionVisibility
+    </description>
+    <name>removeAllVisibilityQueryParameters</name>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+    <function-signature>java.lang.String removeAllVisibilityQueryParameters(java.lang.String,java.lang.String,java.lang.String[])</function-signature>
+    <example>
+      ${fn:removeAllVisibilityQueryParameters(queryString, 'visibility.', AnatomySearchBean.Section.getValues())}">
     </example>
   </function>
 

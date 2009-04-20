@@ -47,6 +47,8 @@ public class CreateLinkTag extends BodyTagSupport {
 
     private static Logger LOG = Logger.getLogger(CreateLinkTag.class);
     private Object entity;
+    private String name;
+    private boolean longVersion;
 
     public int doStartTag() throws JspException {
         return BodyTag.EVAL_BODY_BUFFERED;
@@ -63,7 +65,7 @@ public class CreateLinkTag extends BodyTagSupport {
         else if (o instanceof Accession)
             link = AccessionPresentation.getLink((Accession) o);
         else if (o instanceof AnatomyItem)
-            link = AnatomyItemPresentation.getLink((AnatomyItem) o);
+            link = AnatomyItemPresentation.getLink((AnatomyItem) o, name);
         else if (o instanceof Publication)
             link = PublicationPresentation.getLink((Publication) o);
         else if (o instanceof Figure)
@@ -77,7 +79,7 @@ public class CreateLinkTag extends BodyTagSupport {
         else if (o instanceof GoTerm)
             link = GoTermPresentation.getLink((GoTerm) o);
         else if (o instanceof DevelopmentStage)
-            link = DevelopmentStagePresentation.getLink((DevelopmentStage) o);
+            link = DevelopmentStagePresentation.getLink((DevelopmentStage) o, longVersion);
         else if (o instanceof Antibody)
             link = AntibodyPresentation.getLink((Antibody) o);
         else
@@ -139,17 +141,12 @@ public class CreateLinkTag extends BodyTagSupport {
 
 
         }
-
-
-
-
-
         try {
             pageContext.getOut().print(linkBuffer.toString());
         } catch (IOException ioe) {
             throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
         }
-        
+
         return Tag.EVAL_PAGE;
     }
 
@@ -161,4 +158,19 @@ public class CreateLinkTag extends BodyTagSupport {
         this.entity = entity;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isLongVersion() {
+        return longVersion;
+    }
+
+    public void setLongVersion(boolean longVersion) {
+        this.longVersion = longVersion;
+    }
 }

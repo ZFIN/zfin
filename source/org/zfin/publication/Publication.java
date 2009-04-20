@@ -233,4 +233,17 @@ public class Publication implements Comparable<Publication>, Serializable {
     public void setDeletable(boolean deletable) {
         this.deletable = deletable;
     }
+
+    public boolean equals(Object otherPublication) {
+        if (!(otherPublication instanceof Publication))
+            return false;
+
+        Publication publication = (Publication) otherPublication;
+        return getZdbID().equals(publication.getZdbID());
+    }
+
+    public int hashCode() {
+        return zdbID.hashCode();
+    }
+
 }

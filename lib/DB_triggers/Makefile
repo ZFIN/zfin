@@ -47,6 +47,7 @@ TRIGGERS = \
 	expression_pattern_infrastructure_update_trigger.sql \
 	expression_result_insert_trigger.sql \
 	expression_result_update_trigger.sql \
+	feature_stats_insert_trigger.sql \
 	figure_insert_trigger.sql \
 	figure_update_trigger.sql \
 	feature_marker_relationship_insert_trigger.sql \

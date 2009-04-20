@@ -17,7 +17,7 @@ public class RunPresentation extends EntityPresentation {
      * @param run Run
      */
     public static String getLink(Run run) {
-        return getTomcatLink(uri, run.getZdbID(), run.getName());
+        return getTomcatLink(uri, run.getZdbID(), run.getName(), null);
     }
 
 }

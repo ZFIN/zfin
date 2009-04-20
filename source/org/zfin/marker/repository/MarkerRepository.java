@@ -3,11 +3,16 @@ package org.zfin.marker.repository;
 import org.zfin.antibody.Antibody;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.*;
+import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.orthology.Orthologue;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.anatomy.AnatomyItem;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.mutant.presentation.AntibodyStatistics;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -128,4 +133,25 @@ public interface MarkerRepository {
      * @return Marker Alias object
      */
     MarkerAlias getMarkerAlias(String aliasZdbID);
+
+    /**
+     * Get all high quality probes AO Statistics records for a given ao term.
+     * Note: for the case to include substructures the result set is not returned just the total number
+     * in the PaginationResult object!
+     *
+     * @param aoTerm ao term
+     * @param pagination pagination bean
+     * @param includeSubstructures boolean
+     * @return pagination result
+     */
+    PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures);
+
+    /**
+     * Retrieve all distinct publications that contain a high quality probe
+     * with a rating of 4.
+     *
+     * @param anatomyTerm Anatomy Term
+     * @return list of publications
+     */
+    List<Publication> getHighQualityProbePublications(AnatomyItem anatomyTerm);
 }

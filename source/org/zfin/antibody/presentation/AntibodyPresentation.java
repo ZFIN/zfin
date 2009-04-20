@@ -17,7 +17,7 @@ public class AntibodyPresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(Antibody antibody) {
-        return getTomcatLink(uri, antibody.getZdbID(), antibody.getName());
+        return getTomcatLink(uri, antibody.getZdbID(), antibody.getName(), null);
     }
 
     public static String getName(Antibody antibody) {

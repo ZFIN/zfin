@@ -15,9 +15,10 @@ public class AnatomyItemPresentation extends EntityPresentation {
      *
      * @return html for marker link
      * @param anatomyItem Run
+     * @param name name attribute in hyperlink
      */
-    public static String getLink(AnatomyItem anatomyItem) {
-        return getTomcatLink(uri, anatomyItem.getZdbID(), anatomyItem.getName());
+    public static String getLink(AnatomyItem anatomyItem, String name) {
+        return getTomcatLink(uri, anatomyItem.getZdbID(), anatomyItem.getName(), name);
     }
 
     public static String getName(AnatomyItem anatomyItem) {

@@ -19,8 +19,8 @@
 <c:if test="${!empty formBean.expressionGenes}">
   <c:if test="${fn:length(formBean.expressionGenes) > 1 }">All ${formBean.image.figure.label} genes: </c:if>
   <c:if test="${fn:length(formBean.expressionGenes) == 1 }">Gene: </c:if>
-  <c:forEach var="gene" items="${formBean.expressionGenes}" varStatus="loop">
-      <zfin:link entity="${gene}" /><c:if test="${!loop.last}">,</c:if>
+  <c:forEach var="probeStats" items="${formBean.expressionGenes}" varStatus="loop">
+      <zfin:link entity="${probeStats}" /><c:if test="${!loop.last}">,</c:if>
   </c:forEach>
 </c:if>
 

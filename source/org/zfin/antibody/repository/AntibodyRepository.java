@@ -1,16 +1,14 @@
 package org.zfin.antibody.repository;
 
 import org.zfin.Species;
-import org.zfin.infrastructure.AllMarkerNamesFastSearch;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
-import org.zfin.antibody.Isotype;
-import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.framework.presentation.FigureStatistics;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.AllMarkerNamesFastSearch;
+import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -145,5 +143,16 @@ public interface AntibodyRepository {
      * @return list
      */
     List<AllMarkerNamesFastSearch> getAllNameAntibodyMatches(String string);
-    
+
+    /**
+     * Get all antibodyAOStatistics records for a given ao term.
+     * Note: for the case to include substructures the result set is not returned just the total number
+     * in the PaginationResult object!
+     * 
+     * @param aoTerm ao term
+     * @param pagination pagination bean
+     * @param includeSubstructures boolean
+     * @return pagination result
+     */
+    PaginationResult<AntibodyStatistics> getAntibodyStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures);
 }

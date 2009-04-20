@@ -1,6 +1,7 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<b>Antibodies</b>
 
 <c:if test="${formBean.antibodiesExist}">
     <TABLE width="100%">
@@ -10,7 +11,7 @@
                 Antibody
             </TD>
             <TD width="20%">
-                Gene Symbol
+                Gene
             </TD>
             <TD width="60%">
                 Figures
@@ -22,7 +23,7 @@
                     <zfin:link entity="${antibodyStats.antibody}"/>
                 </td>
                 <td>
-                    <zfin:link entity="${antibodyStats.antibody.allRelatedMarker}"/>
+                    <zfin:link entity="${antibodyStats.genes}"/>
                 </td>
                 <td>
                     <c:if test="${antibodyStats.numberOfFigures > 0}">
@@ -42,12 +43,12 @@
                             </a>
                         </c:if>
                         from
-                        <c:if test="${antibodyStats.numberOfPublications ==1}">
-                            <zfin:link entity="${antibodyStats.singlePublication}"/>
+                        <c:if test="${antibodyStats.numberOfPubs ==1}">
+                            <zfin:link entity="${antibodyStats.singlePub}"/>
                         </c:if>
-                        <c:if test="${antibodyStats.numberOfPublications > 1}">
+                        <c:if test="${antibodyStats.numberOfPubs > 1}">
                             <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
-                                         integerEntity="${antibodyStats.numberOfPublications}"
+                                         integerEntity="${antibodyStats.numberOfPubs}"
                                          includeNumber="true"/>
                         </c:if>
                     </c:if>

@@ -55,5 +55,13 @@
         <put name="body" value="/WEB-INF/jsp/auditLog/audit_log_details.jsp"/>
     </definition>
 
+    <definition name="anatomy-show-expression-genes.ajax" path="/WEB-INF/jsp/anatomy/anatomy_term_detail_expressed_genes.jsp"/>
+    <definition name="anatomy-show-expression-insitu-probes.ajax" path="/WEB-INF/jsp/anatomy/anatomy_term_detail_insitu_probes.jsp"/>
+    <definition name="anatomy-show-expression-antibodies.ajax" path="/WEB-INF/jsp/anatomy/anatomy_term_detail_antibodies.jsp"/>
+
+    <definition name="anatomy-show-phenotype-mutant.ajax" path="/WEB-INF/jsp/anatomy/anatomy_term_detail_mutants.jsp"/>
+    <definition name="anatomy-show-phenotype-morpholinos.ajax" path="/WEB-INF/jsp/anatomy/anatomy_term_detail_morpholinos.jsp"/>
+    <definition name="anatomy-show-phenotype-non-wildtype-morpholinos.ajax" path="/WEB-INF/jsp/anatomy/anatomy_term_detail_non_wildtype_morpholinos.jsp"/>
+
 </tiles-definitions>
 

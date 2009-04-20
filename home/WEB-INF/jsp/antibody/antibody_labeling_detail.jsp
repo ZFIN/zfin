@@ -43,8 +43,8 @@
                     </td>
 
                     <td>
-                        <c:forEach var="gene" items="${detailedLabeling.antigenGenes}" varStatus="status">
-                            <zfin:link entity="${gene}"/>
+                        <c:forEach var="probeStats" items="${detailedLabeling.antigenGenes}" varStatus="status">
+                            <zfin:link entity="${probeStats}"/>
                             <c:if test="${!status.last}">
                                 ,&nbsp;
                             </c:if>
@@ -134,8 +134,8 @@
                     </td>
 
                     <td>
-                        <c:forEach var="gene" items="${detailedLabeling.antigenGenes}" varStatus="status">
-                            <zfin:link entity="${gene}"/>
+                        <c:forEach var="probeStats" items="${detailedLabeling.antigenGenes}" varStatus="status">
+                            <zfin:link entity="${probeStats}"/>
                             <c:if test="${!status.last}">
                                 ,&nbsp;
                             </c:if>

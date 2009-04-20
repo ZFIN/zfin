@@ -3,18 +3,23 @@ package org.zfin.marker.repository;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.ExternalNote;
+import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
+import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
+import org.zfin.expression.FigureFigure;
+import org.zfin.expression.TextOnlyFigure;
 import org.zfin.framework.HibernateUtil;
 import static org.zfin.framework.HibernateUtil.currentSession;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -22,6 +27,8 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.*;
+import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
 import org.zfin.mutant.FeatureMarkerRelationship;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
@@ -375,8 +382,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (alias == null)
             throw new RuntimeException("No alias object provided.");
         // check that the alias belongs to the marker
-        if( !marker.getAliases().contains(alias))
-            throw new RuntimeException("Alias '"+ alias+"' does not belong to the marker '" + marker + "'! " +
+        if (!marker.getAliases().contains(alias))
+            throw new RuntimeException("Alias '" + alias + "' does not belong to the marker '" + marker + "'! " +
                     "Cannot remove such an alias.");
         // remove the ZDB active data record with cascade.
         currentSession().delete(alias);
@@ -726,6 +733,275 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public MarkerAlias getMarkerAlias(String aliasZdbID) {
         Session session = currentSession();
         return (MarkerAlias) session.get(MarkerAlias.class, aliasZdbID);
+    }
+
+    @SuppressWarnings("unchecked")
+    public PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures) {
+        Session session = HibernateUtil.currentSession();
+        String hql = null;
+        String hqlCount;
+        if (includeSubstructures) {
+            hqlCount = "select count(distinct stat.probe) " +
+                    "     from HighQualityProbeAOStatistics stat " +
+                    "     where stat.superterm.zdbID = :aoterm ";
+        } else {
+            hqlCount = "select count(distinct stat.probe) " +
+                    "     from HighQualityProbeAOStatistics stat " +
+                    "     where stat.superterm.zdbID = :aoterm and " +
+                    "           stat.subterm.zdbID = :aoterm ";
+        }
+        Query query = session.createQuery(hqlCount);
+        query.setParameter("aoterm", aoTerm.getZdbID());
+        int totalCount = (Integer) query.uniqueResult();
+
+        // if no antibodies found return here
+        if (totalCount == 0)
+            return new PaginationResult<HighQualityProbe>(0, null);
+
+        if (includeSubstructures)
+            return new PaginationResult<HighQualityProbe>(totalCount, null);
+
+        String sqlQueryStr = " select distinct(stat.fstat_feat_zdb_id), probe.mrkr_abbrev, gene.mrkr_zdb_id," +
+                "                       gene.mrkr_abbrev,gene.mrkr_abbrev_order  " +
+                "from feature_stats as stat, marker as gene, marker as probe " +
+                "     where fstat_superterm_zdb_id = :aoterm " +
+                "           and fstat_subterm_zdb_id = :aoterm " +
+                "           and fstat_gene_zdb_id = gene.mrkr_zdb_id " +
+                "           and fstat_feat_zdb_id = probe.mrkr_zdb_id " +
+                "           and fstat_type = :type" +
+                "     order by gene.mrkr_abbrev_order ";
+        SQLQuery sqlQquery = session.createSQLQuery(sqlQueryStr);
+        sqlQquery.setString("aoterm", aoTerm.getZdbID());
+        sqlQquery.setString("type", "High-Quality-Probe");
+        sqlQquery.setFirstResult(pagination.getFirstRecord() - 1);
+        sqlQquery.setMaxResults(pagination.getMaxDisplayRecords());
+        List<Object[]> objs = sqlQquery.list();
+        List<Marker> hqpRecords = new ArrayList<Marker>();
+        for (Object[] objects : objs) {
+            Marker probe = new Marker();
+            probe.setZdbID((String) objects[0]);
+            probe.setAbbreviation((String) objects[1]);
+            hqpRecords.add(probe);
+        }
+        // loop over all antibodyAOStatistic records until the given number of distinct antibodies from the pagination
+        // bean is reached.
+/*
+            if (includeSubstructures)
+                hql = "  from HighQualityProbeAOStatistics stat fetch all properties" +
+                        "     where stat.superterm = :aoterm";
+            else
+*/
+/*
+        hql = "  from HighQualityProbeAOStatistics stat " +
+                "     where stat.superterm.zdbID = :aoterm " +
+                "           and stat.subterm.zdbID = :aoterm " +
+                "     order by stat.gene.abbreviationOrder ";
+
+*/
+        String sqlQueryAllStr = " select stat.fstat_feat_zdb_id, probe.mrkr_abbrev as probeSymbol, gene.mrkr_zdb_id," +
+                "                       gene.mrkr_abbrev,stat.fstat_fig_zdb_id, fig.fig_label, stat.fstat_pub_zdb_id, " +
+                "                       probe.mrkr_type, gene.mrkr_abbrev_order, pub.zdb_id, pub.pub_mini_ref," +
+                "                       gene.mrkr_name, probe.mrkr_name as probeName, img.img_zdb_id  " +
+                "from feature_stats as stat, marker as gene, marker as probe, figure as fig, publication as pub, " +
+                "     OUTER image as img " +
+                "     where fstat_superterm_zdb_id = :aoterm " +
+                "           and fstat_subterm_zdb_id = :aoterm " +
+                "           and fstat_gene_zdb_id = gene.mrkr_zdb_id " +
+                "           and fstat_feat_zdb_id = probe.mrkr_zdb_id " +
+                "           and fstat_type = :type " +
+                "           and fstat_fig_zdb_id = fig.fig_zdb_id " +
+                "           and fstat_pub_zdb_id = pub.zdb_id " +
+                "           and fstat_img_zdb_id = img.img_zdb_id " +
+                "     order by gene.mrkr_abbrev_order ";
+        SQLQuery sqlAllQquery = session.createSQLQuery(sqlQueryAllStr);
+        sqlAllQquery.setString("aoterm", aoTerm.getZdbID());
+        sqlAllQquery.setString("type", "High-Quality-Probe");
+        ScrollableResults scrollableResults = sqlAllQquery.scroll();
+        if (pagination.getFirstRecord() == 1) {
+            scrollableResults.beforeFirst();
+        } else {
+            scrollableResults.setRowNumber(pagination.getFirstRecord() - 1);
+        }
+        List<HighQualityProbe> list = new ArrayList<HighQualityProbe>();
+        // Since the number of entities that manifest a single record are comprised of
+        // multiple single records (differ by figures, genes, pubs) from the database we have to aggregate
+        // them into single entities. Need to populate one more entity than requestAjaed to collect
+        // all information pertaining to that record. Have to remove that last entity.
+        // When paginating from a place other than the start of all records we have to go through
+        // the worst case scenario list (assuming there is only one record per probe) and then
+        // loop over the results and check if the probe is in the list of probes from above
+        while (scrollableResults.next() && list.size() < pagination.getMaxDisplayRecords() + 1) {
+            Object[] record = scrollableResults.get();
+            HighQualityProbeAOStatistics highQualityProbeStats = new HighQualityProbeAOStatistics();
+            Marker probe = new Marker();
+            probe.setZdbID((String) record[0]);
+            probe.setAbbreviation((String) record[1]);
+            probe.setName((String) record[12]);
+            probe.setMarkerType(getProbeType((String) record[7]));
+            highQualityProbeStats.setProbe(probe);
+            Marker gene = new Marker();
+            gene.setZdbID((String) record[2]);
+            gene.setAbbreviation((String) record[3]);
+            gene.setName((String) record[11]);
+            gene.setMarkerType(getGenedomType());
+            highQualityProbeStats.setGene(gene);
+            String figID = (String) record[4];
+            String label = (String) record[5];
+            Figure figure = null;
+            if (label != null && label.equals(Figure.Type.TOD.toString()))
+                figure = new TextOnlyFigure();
+            else
+                figure = new FigureFigure();
+
+            figure.setZdbID(figID);
+            figure.setLabel(label);
+            highQualityProbeStats.setFigure(figure);
+            Publication pub = new Publication();
+            pub.setZdbID((String) record[9]);
+            pub.setShortAuthorList((String) record[10]);
+            highQualityProbeStats.setPublication(pub);
+            if (record[13] != null) {
+                Image image = new Image();
+                image.setZdbID((String) record[13]);
+                highQualityProbeStats.setImage(image);
+            }
+            if (hqpRecords.contains(highQualityProbeStats.getProbe()))
+                populateProbeStatisticsRecord(highQualityProbeStats, list, aoTerm);
+        }
+        // remove the last entity as it is beyond the display limit.
+        if (list.size() > pagination.getMaxDisplayRecords())
+            list.remove(list.size() - 1);
+        scrollableResults.close();
+        return new PaginationResult<HighQualityProbe>(totalCount, list);
+
+    }
+
+    private MarkerType getGenedomType() {
+        MarkerType type = new MarkerType();
+        type.setType(Marker.Type.GENE);
+        Set<Marker.TypeGroup> typeGroups = new HashSet<Marker.TypeGroup>();
+        typeGroups.add(Marker.TypeGroup.GENEDOM);
+        type.setTypeGroups(typeGroups);
+        return type;
+    }
+
+    private MarkerType getProbeType(String typeStr) {
+        MarkerType type = new MarkerType();
+        type.setType(Marker.Type.getType(typeStr));
+        Set<Marker.TypeGroup> typeGroups = new HashSet<Marker.TypeGroup>();
+        typeGroups.add(Marker.TypeGroup.getType(typeStr));
+        type.setTypeGroups(typeGroups);
+        return type;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Publication> getHighQualityProbePublications(AnatomyItem anatomyTerm) {
+        Session session = HibernateUtil.currentSession();
+        String hql;
+        hql = "select distinct stat.publication" +
+                "     from HighQualityProbeAOStatistics stat " +
+                "     where stat.superterm = :aoterm and " +
+                "           stat.subterm = :aoterm" +
+                "     order by stat.publication.publicationDate ";
+        Query query = session.createQuery(hql);
+        query.setParameter("aoterm", anatomyTerm);
+        return (List<Publication>) query.list();
+    }
+
+    /**
+     * Create a list of AntibodyStatistics objects from antibodyAOStatistics record.
+     * This logic groups the objects accordingly.
+     *
+     * @param record AntibodyAOStatistics
+     * @param aoTerm anatom term
+     * @param list   antibodyStatistics objects to be manipulated.
+     */
+    private void populateProbeStatisticsRecord(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, AnatomyItem aoTerm) {
+
+        if (record == null || record.getProbe() == null)
+            return;
+
+        HighQualityProbe probeStats;
+        if (list.size() == 0) {
+            probeStats = new HighQualityProbe(record.getProbe(), aoTerm);
+            list.add(probeStats);
+        } else
+            probeStats = list.get(list.size() - 1);
+
+        // if antibody from records is the same as the one on the statistics object
+        // add new info to that object.
+        HighQualityProbe newProbeStats;
+        boolean isNew = false;
+        if (record.getProbe().equals(probeStats.getProbe())) {
+            newProbeStats = probeStats;
+        } else {
+            newProbeStats = new HighQualityProbe(record.getProbe(), probeStats.getAnatomyTerm());
+            isNew = true;
+        }
+
+        Marker gene = record.getGene();
+        if (gene != null)
+            newProbeStats.addGene(gene);
+        Figure figure = record.getFigure();
+        if (figure != null)
+            newProbeStats.addFigure(figure);
+        Publication publication = record.getPublication();
+        if (publication != null)
+            newProbeStats.addPublication(publication);
+        Image image = record.getImage();
+        if (image != null)
+            newProbeStats.addImage(image);
+
+        if (isNew)
+            list.add(newProbeStats);
+    }
+
+    /**
+     * Create a list of AntibodyStatistics objects from antibodyAOStatistics record.
+     * This logic groups the objects accordingly.
+     *
+     * @param record AntibodyAOStatistics
+     * @param aoTerm anatom term
+     * @param list   antibodyStatistics objects to be manipulated.
+     */
+    private void populateProbeStatisticsRecordOld(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, AnatomyItem aoTerm) {
+
+        if (record == null || record.getProbe() == null)
+            return;
+
+        HighQualityProbe probeStats;
+        if (list.size() == 0) {
+            probeStats = new HighQualityProbe(record.getProbe(), aoTerm);
+            list.add(probeStats);
+        } else
+            probeStats = list.get(list.size() - 1);
+
+        // if antibody from records is the same as the one on the statistics object
+        // add new info to that object.
+        HighQualityProbe newProbeStats;
+        boolean isNew = false;
+        if (record.getProbe().equals(probeStats.getProbe())) {
+            newProbeStats = probeStats;
+        } else {
+            newProbeStats = new HighQualityProbe(record.getProbe(), probeStats.getAnatomyTerm());
+            isNew = true;
+        }
+
+        Marker gene = record.getGene();
+        if (gene != null)
+            newProbeStats.addGene(gene);
+        Figure figure = record.getFigure();
+        if (figure != null)
+            newProbeStats.addFigure(figure);
+        Publication publication = record.getPublication();
+        if (publication != null)
+            newProbeStats.addPublication(publication);
+        Image image = record.getImage();
+        if (image != null)
+            newProbeStats.addImage(image);
+
+        if (isNew)
+            list.add(newProbeStats);
     }
 
 

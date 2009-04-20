@@ -16,7 +16,7 @@
         <param name="enumClassname">org.zfin.infrastructure.DataAlias$Group</param>
     </typedef>
 
-    <class name="org.zfin.anatomy.DevelopmentStage" table="stage">
+    <class name="org.zfin.anatomy.DevelopmentStage" table="stage" lazy="true" proxy="DevelopmentStage" >
         <id name="zdbID">
             <column name="stg_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
@@ -83,10 +83,10 @@
         </property>
 
         <many-to-one name="start" column="anatitem_start_stg_zdb_id" class="org.zfin.anatomy.DevelopmentStage"
-                     not-null="true"/>
+                     not-null="true" lazy="proxy"/>
 
         <many-to-one name="end" column="anatitem_end_stg_zdb_id" class="org.zfin.anatomy.DevelopmentStage"
-                     not-null="true"/>
+                     not-null="true" lazy="proxy"/>
 
         <set name="synonyms" lazy="true">
             <key column="dalias_data_zdb_id"/>
@@ -237,6 +237,38 @@
         </composite-id>
     </class>
 
+    <class name="org.zfin.framework.presentation.AnatomyFact" table="feature_stats" entity-name="AnatomyFact">
+        <id name="zdbID">
+            <column name="fstat_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+
+        <discriminator type="string"
+                       formula="(CASE fstat_type
+                                    WHEN 'Antibody'           THEN 'Antibody'
+                                    WHEN 'High-Quality-Probe' THEN 'HQProbe '
+                                    ELSE             'other'
+                                 END)"/>
+
+        <many-to-one name="expressionResult" column="fstat_xpatres_zdb_id" lazy="proxy"/>
+        <many-to-one name="superterm" column="fstat_superterm_zdb_id"  lazy="proxy"/>
+        <many-to-one name="figure" column="fstat_fig_zdb_id" lazy="proxy" />
+        <many-to-one name="subterm" column="fstat_subterm_zdb_id"  lazy="proxy"/>
+        <many-to-one name="publication" column="fstat_pub_zdb_id" lazy="proxy" />
+
+        <many-to-one name="gene" column="fstat_gene_zdb_id" lazy="proxy"/>
+        <many-to-one name="image" column="fstat_img_zdb_id" lazy="proxy"/>
+        <property name="type" column="fstat_type" />
+
+        <subclass name="org.zfin.antibody.presentation.AntibodyAOStatistics" discriminator-value="Antibody">
+            <many-to-one name="antibody" column="fstat_feat_zdb_id" insert="false" update="false"/>
+        </subclass>
+
+        <subclass name="org.zfin.marker.presentation.HighQualityProbeAOStatistics" discriminator-value="HQProbe ">
+            <many-to-one name="probe" column="fstat_feat_zdb_id" insert="false" update="false"/>
+        </subclass>
+
+    </class>
     <filter-def name="noSecondaryAliasesForAO" condition="  dalias_group != :group">
         <filter-param name="group" type="string"/>
     </filter-def>

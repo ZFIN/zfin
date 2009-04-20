@@ -13,11 +13,16 @@ public class DevelopmentStagePresentation extends EntityPresentation {
     /**
      * Generates a Go stage link using the go id
      *
-     * @param stage Go stage
+     * @param stage       Go stage
+     * @param longVersion boolean
      * @return html for marker link
      */
-    public static String getLink(DevelopmentStage stage) {
-        return getGeneralHyperLink(uri + stage.abbreviation(), stage.getAbbreviation());
+    public static String getLink(DevelopmentStage stage, boolean longVersion) {
+        if (longVersion) {
+            String stageName = StagePresentation.createDisplayEntry(stage);
+            return getGeneralHyperLink(uri + stage.abbreviation(), stageName);
+        } else
+            return getGeneralHyperLink(uri + stage.abbreviation(), stage.getAbbreviation());
     }
 
     /**

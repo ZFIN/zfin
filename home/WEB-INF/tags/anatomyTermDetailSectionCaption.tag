@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="anatomyStatistics" type="org.zfin.anatomy.AnatomyStatistics" required="true" %>
-<%@ attribute name="substructureSearchLink" type="java.lang.String" required="true" %>
+<%@ attribute name="substructureSearchLink" type="java.lang.String" required="false" %>
 <%@ attribute name="structureSearchLink" type="java.lang.String" required="true" %>
 <%@ attribute name="choicePattern" type="java.lang.String" required="true" %>
 <%@ attribute name="anatomyItem" type="org.zfin.anatomy.AnatomyItem" required="true" %>
@@ -31,10 +31,22 @@
                         <tr align="left">
                             <td>
                                 Show all
-                                <a href='${substructureSearchLink}'>
-                                    <zfin:choice choicePattern="${choicePattern}"
-                                                 integerEntity="${anatomyStatistics.numberOfTotalDistinctObjects}"
-                                                 includeNumber="true"/></a> in substructures
+                                <c:choose>
+                                    <c:when test="${substructureSearchLink ne null}">
+                                        <a href='${substructureSearchLink}'>
+                                            <zfin:choice choicePattern="${choicePattern}"
+                                                         integerEntity="${anatomyStatistics.numberOfTotalDistinctObjects}"
+                                                         includeNumber="true"/>
+                                        </a>
+                                        in substructures
+                                    </c:when>
+                                    <c:otherwise>
+                                        <zfin:choice choicePattern="${choicePattern}"
+                                                     integerEntity="${anatomyStatistics.numberOfTotalDistinctObjects}"
+                                                     includeNumber="true"/>
+                                        in substructures
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                         </tr>
                         </tbody>
@@ -50,10 +62,10 @@
                             Show all
                             <c:choose>
                                 <c:when test="${useWebdriverURL}">
-                                    <c:set var="webdriver" value='/${webdriverURL}${structureSearchLink}' />
+                                    <c:set var="webdriver" value='/${webdriverURL}${structureSearchLink}'/>
                                 </c:when>
                                 <c:otherwise>
-                                    <c:set var="webdriver" value="${structureSearchLink}" />
+                                    <c:set var="webdriver" value="${structureSearchLink}"/>
                                 </c:otherwise>
                             </c:choose>
                             <a href="${webdriver}">
@@ -66,10 +78,20 @@
                                                  includeNumber="true"/></c:if></a> &nbsp;
                             <c:if test="${anatomyStatistics.numberOfTotalDistinctObjects > totalRecordCount }">
                                 (including substructures
-                                <a href='${substructureSearchLink}'>
-                                    <zfin:choice choicePattern="${choicePattern}"
-                                                 integerEntity="${anatomyStatistics.numberOfTotalDistinctObjects}"
-                                                 includeNumber="true"/></a>)
+                                <c:choose>
+                                    <c:when test="${substructureSearchLink ne null}">
+                                        <a href='${substructureSearchLink}'>
+                                            <zfin:choice choicePattern="${choicePattern}"
+                                                         integerEntity="${anatomyStatistics.numberOfTotalDistinctObjects}"
+                                                         includeNumber="true"/>
+                                        </a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <zfin:choice choicePattern="${choicePattern}"
+                                                     integerEntity="${anatomyStatistics.numberOfTotalDistinctObjects}"
+                                                     includeNumber="true"/> 
+                                    </c:otherwise>
+                                </c:choose>)
                             </c:if>
                         </td>
                     </tr>
@@ -78,7 +100,7 @@
             </c:otherwise>
         </c:choose>
     </c:when>
-    <c:otherwise>    <!-- no record exists -->
+    <c:otherwise> <!-- no record exists -->
         <c:choose>
             <c:when test="${anatomyStatistics.numberOfTotalDistinctObjects > 0}">
                 </br>No data for '${anatomyItem.name}'.
