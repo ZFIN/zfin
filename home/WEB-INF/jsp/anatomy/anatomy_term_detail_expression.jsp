@@ -21,7 +21,7 @@
             showSection('${expressionSection}', true);
         }
     </script>
-    <div id="${expressionSection}-id" style="display:none">
+    <div id="${expressionSection}-id" style="display:none; text-indent:20pt">
         <div id="${expressionSection}-genes" class="indented-section"><span class="search-result-table-header">Genes with Most Figures</span>
             loading <img src="/images/ajax-loader.gif" alt="loading...">
         </div>

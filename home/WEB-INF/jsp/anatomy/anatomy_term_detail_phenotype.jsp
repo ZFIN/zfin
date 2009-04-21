@@ -21,7 +21,7 @@
             showSection('${phenotypeSection}', true);
         }
     </script>
-    <div id="${phenotypeSection}-id" style="display:none;">
+    <div id="${phenotypeSection}-id" style="display:none; text-indent:20pt">
         <div id="${phenotypeSection}-mutants" class="indented-section"><span
                 class="search-result-table-header">Mutants</span> loading
             <img src="/images/ajax-loader.gif" alt="loading...">
