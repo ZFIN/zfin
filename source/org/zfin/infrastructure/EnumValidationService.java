@@ -93,11 +93,11 @@ public class EnumValidationService {
     @ServiceTest
     public void validateAnatomyStatisticsType() throws EnumValidationException {
         Session session = HibernateUtil.currentSession();
-        String hqlAll = "select count(astat.zdbID) from AnatomyFact astat";
+        String hqlAll = "select count(astat.zdbID) from AnatomyStatistics astat";
         Query queryAll = session.createQuery(hqlAll);
         Integer countAll = Integer.valueOf(queryAll.uniqueResult().toString());
 
-        String hqlWithTypes = "select count(astat.zdbID) from AnatomyFact astat where astat.type in  (:types) ";
+        String hqlWithTypes = "select count(astat.zdbID) from AnatomyStatistics astat where astat.type in  (:types) ";
         Query queryBothTypes = session.createQuery(hqlWithTypes);
         List<String> types = new ArrayList<String>();
         for (AnatomyStatistics.Type type : AnatomyStatistics.Type.values()) {
