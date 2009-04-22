@@ -24,7 +24,7 @@ echo 'execute function regen_names(); update statistics for procedure' | dbacces
 echo "Starting regen_oevdisp at `date`"
 echo 'execute function regen_oevdisp(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
-echo "Starting regen_antibody_ao_fast_search at `date`"
-echo 'execute function regen_antibody_ao_fast_search(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
+echo "Starting regen_feature_ao_fast_search at `date`"
+echo 'execute function regen_feature_ao_fast_search(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
 echo "Finished at `date`"
