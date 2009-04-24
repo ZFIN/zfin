@@ -13,8 +13,13 @@ Disallow: /MOMspider-out
 Disallow: /Templates
 Disallow: /old_zf_info
 Disallow: /action
-Disallow: /zf_info
 Disallow: /data_transfer
-Disallow: /zirc
 Allow: /cgi-bin/webdriver?MIval=aa-ZDB_home.apg
 Allow: /index.asis
+Allow: /zf_info
+Allow: /css
+Allow: /images
+Allow: /javascript
+Allow: /favicon.ico
+Allow: /sitemap.xml
+Allow: /zirc
