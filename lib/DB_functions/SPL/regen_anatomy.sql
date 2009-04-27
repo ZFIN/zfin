@@ -696,12 +696,16 @@ create dba function "informix".regen_anatomy()
 
 	insert into genes_with_xpats
 	  select distinct xpatex_gene_zdb_id
-	    from expression_experiment, outer marker probe, marker gene, expression_result
+	    from expression_experiment, outer marker probe, marker gene, expression_result,
+	    	 genotype_experiment, genotype	    	 
 	    where xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id
               and xpatex_gene_zdb_id = gene.mrkr_zdb_id
               and xpatres_anat_item_zdb_id = anatomyId 
 	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	      and xpatres_expression_found = 't'
+              and xpatex_genox_zdb_id = genox_zdb_id
+              and genox_geno_zdb_id = geno_zdb_id
+              and geno_is_wildtype = 't'
               and gene.mrkr_abbrev[1,10] <> "WITHDRAWN:"
               and probe.mrkr_abbrev[1,10] <> "WITHDRAWN:"
           and not exists(
@@ -718,13 +722,17 @@ create dba function "informix".regen_anatomy()
 	insert into genes_with_xpats
 	  select distinct xpatex_gene_zdb_id
 	    from all_anatomy_contains_new,
-		 expression_experiment, outer marker probe, marker gene, expression_result
+		 expression_experiment, outer marker probe, marker gene, expression_result,
+		 genotype_experiment, genotype			
 	    where xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id
               and xpatex_gene_zdb_id = gene.mrkr_zdb_id
               and allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
 	      and allanatcon_container_zdb_id = anatomyId
 	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	      and xpatres_expression_found = 't'
+              and xpatex_genox_zdb_id = genox_zdb_id
+              and genox_geno_zdb_id = geno_zdb_id
+              and geno_is_wildtype = 't'
               and gene.mrkr_abbrev[1,10] <> "WITHDRAWN:"
               and probe.mrkr_abbrev[1,10] <> "WITHDRAWN:"
          and not exists(
