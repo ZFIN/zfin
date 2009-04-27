@@ -314,12 +314,12 @@ Create dba function regen_feature_ao_fast_search()
 	   references figure on delete cascade constraint 
 	   fstat_figure_fk_constraint_odc);
 
-         let errorHint = "fstat_img_fk_constraint_odc";
+--         let errorHint = "fstat_img_fk_constraint_odc";
 
-    	 alter table feature_stats_new 
-	   add constraint (foreign key (fstat_img_zdb_id)
-	   references image on delete cascade constraint 
-	   fstat_image_fk_constraint_odc);
+--    	 alter table feature_stats_new 
+--	   add constraint (foreign key (fstat_img_zdb_id)
+--	   references image on delete cascade constraint 
+--	   fstat_image_fk_constraint_odc);
 
          let errorHint = "fstat_publication_fk_constraint_odc";
 
