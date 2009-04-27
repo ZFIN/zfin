@@ -571,6 +571,30 @@ select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link
 	  and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1' order by 1;
 
 
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/all_rna_accessions.txt'
+select distinct gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev gene_sym,dblink_acc_num accession
+from db_link, marker gene, foreign_db_contains
+where dblink_linked_recid=gene.mrkr_zdb_id
+and gene.mrkr_type='GENE'
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+and fdbcont_fdbdt_data_type='RNA'
+and fdbcont_fdb_db_name not like '%Vega%' and fdbcont_fdb_db_name not like '%VEGA%'
+union
+select distinct gene.mrkr_zdb_id gene_zdb,
+       gene.mrkr_abbrev gene_sym,
+       dblink_acc_num accession
+from marker gene, marker est, db_link, marker_relationship, foreign_db_contains
+where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+and   est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id
+and  mrel_type = 'gene encodes small segment'
+and est.mrkr_zdb_id = dblink_linked_recid
+and est.mrkr_type  in ('EST','CDNA')
+and gene.mrkr_type = 'GENE'
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+and fdbcont_fdbdt_data_type='RNA'
+and fdbcont_fdb_db_name not like '%Vega%' and fdbcont_fdb_db_name not like '%VEGA%';
+
+
 -- Generate genotype_feature file
 
 create temp table geno_data (
