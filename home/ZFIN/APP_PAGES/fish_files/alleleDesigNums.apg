@@ -101,6 +101,7 @@ Message: $MI_ERRORMSG
     <?MIVAR>$(SETVAR,$adn_count,$MI_ROWCOUNT)<?/MIVAR>
 
     <?MISQL SQL="delete from $adn_temp_sorted;"><?/MISQL>
+    
   <?MIELSE>
    
     <?MISQL SQL="select feature_abbrev
@@ -123,6 +124,7 @@ Message: $MI_ERRORMSG
             ==     but not fh, fl, fr
             ==  mi should include mik1 etc.
             == And 'sb' should be finding sb13fixe
+            == And nk should also finds nksag, nksagm, nksagp etc
             ====================================================================
     <?/MICOMMENT>      
       <?MIBLOCK COND="$(EQ,$adn_beginningLetter,t)">
@@ -142,9 +144,9 @@ Message: $MI_ERRORMSG
           <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
         <?/MIBLOCK>
       <?MIELSE COND="$(EQ,$adn_beginningLetter,wp)">        
-              <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNumD),$(EQ,$adn_firstNumD,r))">
-                <?MIVAR>$1<?/MIVAR> <br/>
-                <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+        <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNumD),$(EQ,$adn_firstNumD,r))">
+          <?MIVAR>$1<?/MIVAR> <br/>
+          <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
         <?/MIBLOCK>
       <?MIELSE COND="$(OR,$(EQ,$adn_beginningLetter,sq),$(EQ,$adn_beginningLetter,cz))"> 
         <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNumD),$(EQ,$adn_firstNumD,t))">
@@ -161,6 +163,11 @@ Message: $MI_ERRORMSG
           <?MIVAR>$1<?/MIVAR> <br/>
           <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
         <?/MIBLOCK>
+      <?MIELSE COND="$(EQ,$adn_beginningLetter,nk)">  
+        <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNumD),$(EQ,$adn_firstNumD,s))">
+          <?MIVAR>$1<?/MIVAR> <br/>
+          <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+        <?/MIBLOCK>        
       <?MIELSE COND="$(EQ,$adn_beginningLetter,mi)">        
         <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNumD),$(EQ,$adn_firstNumD,k))">
           <?MIVAR>$1<?/MIVAR> <br/>
@@ -194,6 +201,7 @@ Message: $MI_ERRORMSG
             ==     but not fh, fl, fr
             ==  mi should include mik1 etc.
             == And 'sb' should be finding sb13fixe
+            == And nk should also finds nksag, nksagm, nksagp etc            
             ====================================================================
     <?/MICOMMENT>      
       <?MIBLOCK COND="$(EQ,$adn_beginningLetter,t)">
@@ -213,9 +221,9 @@ Message: $MI_ERRORMSG
           <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
         <?/MIBLOCK>
       <?MIELSE COND="$(EQ,$adn_beginningLetter,wp)">        
-              <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNum),$(EQ,$adn_firstNum,r))">
-                <?MIVAR>$1<?/MIVAR> <br/>
-                <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+        <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNum),$(EQ,$adn_firstNum,r))">
+          <?MIVAR>$1<?/MIVAR> <br/>
+          <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
         <?/MIBLOCK>
       <?MIELSE COND="$(OR,$(EQ,$adn_beginningLetter,sq),$(EQ,$adn_beginningLetter,cz))"> 
          <?MIVAR>$1<?/MIVAR> <br/>
@@ -229,7 +237,12 @@ Message: $MI_ERRORMSG
         <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNum),$(EQ,$adn_firstNum,D))">
           <?MIVAR>$1<?/MIVAR> <br/>
           <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
-        <?/MIBLOCK>         
+        <?/MIBLOCK>    
+      <?MIELSE COND="$(EQ,$adn_beginningLetter,nk)">  
+        <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNum),$(EQ,$adn_firstNum,s))">
+          <?MIVAR>$1<?/MIVAR> <br/>
+          <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
+        <?/MIBLOCK>       
       <?MIELSE COND="$(EQ,$adn_beginningLetter,mi)">        
         <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNum),$(EQ,$adn_firstNum,k))">
           <?MIVAR>$1<?/MIVAR> <br/>
