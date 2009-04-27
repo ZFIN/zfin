@@ -10,6 +10,7 @@ import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
 import org.zfin.framework.presentation.FunctionsTest;
 import org.zfin.framework.presentation.SectionVisibilityTest;
 import org.zfin.framework.presentation.UIFieldTransformerTest;
+import org.zfin.framework.presentation.PaginationBeanTest;
 import org.zfin.infrastructure.ActiveDataTest;
 import org.zfin.infrastructure.ActiveSourceTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
@@ -49,6 +50,7 @@ import org.zfin.util.UrlCreatorTest;
         OrthologyEvidenceFastSearchTest.class,
         OrthologyValidationTest.class,
         OrthologyRepositoryTest.class,
+        PaginationBeanTest.class,
         PhenotypeServiceTest.class,
         RelationshipTypeSortingTest.class,
         RunCandidatePresentationTest.class,

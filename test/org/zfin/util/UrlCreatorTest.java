@@ -13,8 +13,8 @@ public class UrlCreatorTest {
 
         String url1 = "http://zfin.org/";
         URLCreator url = new URLCreator(url1);
-        String fullUrl = url.getFullURL();
-        Assert.assertEquals("No request params added. URL encoded", "http://zfin.org/", fullUrl);
+        String fullUrl = url.getURL(true);
+        Assert.assertEquals("http://zfin.org/", fullUrl);
     }
 
     @Test
@@ -25,8 +25,8 @@ public class UrlCreatorTest {
         String name = "name";
         String value = "value";
         url.addNamevaluePair(name, value);
-        String fullUrl = url.getFullURL();
-        Assert.assertEquals("No request params added", "http://zfin.org/?name=value", fullUrl);
+        String fullUrl = url.getURL(true);
+        Assert.assertEquals("http://zfin.org/?name=value", fullUrl);
     }
 
     @Test
@@ -40,8 +40,8 @@ public class UrlCreatorTest {
         String name2 = "name2";
         String value2 = "value2";
         url.addNamevaluePair(name2, value2);
-        String fullUrl = url.getFullURL();
-        Assert.assertEquals("No request params added", "http://zfin.org/?name=value&name2=value2", fullUrl);
+        String fullUrl = url.getURL(true);
+        Assert.assertEquals("http://zfin.org/?name=value&name2=value2", fullUrl);
     }
 
     @Test
@@ -53,8 +53,64 @@ public class UrlCreatorTest {
         String value = "value";
         url.addNamevaluePair(name, value);
         url.addNamevaluePair(name, value);
-        String fullUrl = url.getFullURL();
-        Assert.assertEquals("No request params added", "http://zfin.org/?name=value", fullUrl);
+        String fullUrl = url.getURL(true);
+        Assert.assertEquals("http://zfin.org/?name=value", fullUrl);
+    }
+
+    @Test
+    public void removeFirstParamAndValue() {
+
+        String url1 = "http://zfin.org/?name=value&name2=value2";
+        URLCreator url = new URLCreator(url1);
+        String fullUrl = url.getURL(true);
+        Assert.assertEquals(url1, fullUrl);
+
+        url.removeNamevaluePair("name");
+        fullUrl = url.getURL(true);
+        Assert.assertEquals("http://zfin.org/?name2=value2", fullUrl);
+
+    }
+
+    @Test
+    public void removeLastParamAndValue() {
+
+        String url1 = "http://zfin.org/?name=value&name2=value2";
+        URLCreator url = new URLCreator(url1);
+        String fullUrl = url.getURL(true);
+        Assert.assertEquals(url1, fullUrl);
+
+        url.removeNamevaluePair("name2");
+        fullUrl = url.getURL(true);
+        Assert.assertEquals("http://zfin.org/?name=value", fullUrl);
+
+    }
+
+    @Test
+    public void removeMiddleParamAndValue() {
+
+        String url1 = "http://zfin.org/aber_warum?name=value&name1=value1&name2=value2";
+        URLCreator url = new URLCreator(url1);
+        String fullUrl = url.getURL(true);
+        Assert.assertEquals(url1, fullUrl);
+
+        url.removeNamevaluePair("name1");
+        fullUrl = url.getURL(true);
+        Assert.assertEquals("http://zfin.org/aber_warum?name=value&name2=value2", fullUrl);
+
+    }
+
+    @Test
+    public void removeMiddleParamAndValueQueryStringOnly() {
+
+        String url1 = "http://zfin.org/aber_warum?name=value&name1=value1&name2=value2";
+        URLCreator url = new URLCreator(url1);
+        String fullUrl = url.getURL(false);
+        Assert.assertEquals("name=value&name1=value1&name2=value2", fullUrl);
+
+        url.removeNamevaluePair("name1");
+        fullUrl = url.getURL(false);
+        Assert.assertEquals("name=value&name2=value2", fullUrl);
+
     }
 
 }

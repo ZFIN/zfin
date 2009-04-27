@@ -423,7 +423,7 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("WINSIZE", "25");
         url.addNamevaluePair("xpatsel_calledBySelf", "true");
         url.addNamevaluePair("xpatsel_wtOnly", "checked");
-        return url.getFullURL();
+        return url.getURL(true);
     }
 
     public String getMutantSearchLink(boolean includeSubstructures) {
@@ -445,7 +445,7 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("search", "SEARCH");
         url.addNamevaluePair("fsel_inputname", "");
         url.addNamevaluePair("compare", "contains");
-        return url.getFullURL();
+        return url.getURL(true);
     }
 
     public boolean isWildtype() {

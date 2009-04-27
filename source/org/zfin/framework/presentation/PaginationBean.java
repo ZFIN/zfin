@@ -1,6 +1,7 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
+import org.zfin.util.URLCreator;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -159,21 +160,20 @@ public class PaginationBean {
         this.welcomeInputID = welcomeInputID;
     }
 
+    /**
+     * This return the full url with all query parameters inlcuded
+     * but the page parameter which is set on the JSP page dynamically. 
+     * @return full URL string
+     */
     public String getActionUrl() {
         if (!StringUtils.isEmpty(actionUrl))
             return actionUrl;
         if (StringUtils.isEmpty(queryString))
             return "";
-
-        int indexOfPageParam = queryString.indexOf(PAGE);
-        String newQueryString = queryString;
-        if (indexOfPageParam > -1) {
-            newQueryString = queryString.substring(0,indexOfPageParam -1);
-        }
-        StringBuffer sb = new StringBuffer(requestUrl);
-        sb.append("?");
-        sb.append(newQueryString);
-        return sb.toString();
+        // remove the page=xxx parameter
+        URLCreator urlCreator = new URLCreator(requestUrl + "?" + queryString);
+        urlCreator.removeNamevaluePair(PAGE);
+        return urlCreator.getURL(true);
 
     }
 
