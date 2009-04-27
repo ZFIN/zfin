@@ -52,7 +52,6 @@
   </TR>
 </TABLE>
 
-<input type=hidden name=searchtype value=begins>
 <input type=hidden name=quickform value=t>
 
 <?MIVAR>
