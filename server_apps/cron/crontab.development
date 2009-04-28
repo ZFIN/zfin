@@ -58,18 +58,18 @@
 #
 # SMTWUF 11pm Update zfin morpholino and microRNA blastdb on embryonix
 #
-00 23 * * 0-5 /research/zblastfiles/users/peirans/Scripts/ZFIN/zfmrkrsequpdate.pl
+#00 23 * * 0-5 /research/zblastfiles/users/peirans/Scripts/ZFIN/zfmrkrsequpdate.pl
 #===============
 #=== Weekly
 #================
-#
+# 
 # F  7pm Update blast dbs (except zfin morpholino).
 #        Normally it takes less than 1 hour,
 #        every two month when there is a new GenBank release,
 #        it takes about 24 hours.  #
-00 19 * * 5 /research/zblastfiles/users/peirans/Scripts/blastdbupdate.pl
+#00 19 * * 5 /research/zblastfiles/users/peirans/Scripts/blastdbupdate.pl
 # early weekday mornings regenerate zfin_rna
-15 05 * * 1,2,3,4,5 /research/zblastfiles/users/peirans/Scripts/ZFIN/processZFIN.pl
+#15 05 * * 1,2,3,4,5 /research/zblastfiles/users/peirans/Scripts/ZFIN/processZFIN.pl
 # 
 ### ENE Peiran's
 # ------------------------------------------------------------
