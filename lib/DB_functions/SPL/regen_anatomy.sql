@@ -1136,6 +1136,11 @@ create dba function "informix".regen_anatomy()
     return 1;
   end if
 
+  -- re-create self-records in all_anatomy_contains
+  insert into all_anatomy_contains
+              select anatitem_zdb_id,anatitem_zdb_id,0
+              from anatomy_item;
+
   return 0;
 
 end function;
