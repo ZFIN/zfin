@@ -796,3 +796,37 @@ select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_
    from record_attribution, genotype
   where recattrib_data_zdb_id = geno_zdb_id and 
         recattrib_source_type = 'standard';
+
+-- create full expression file for WT fish: standard condition, expression shown and 
+-- only wildtype fish
+
+unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/wildtype-expression.txt'
+ DELIMITER "	"
+select mrkr_zdb_id, mrkr_abbrev, geno_display_name, anatitem_zdb_id, anatitem_name, start.stg_name, end.stg_name, xpatex_assay_name
+from anatomy_item, stage as start, stage as end, expression_result, marker
+join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
+join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
+join genotype on geno_zdb_id = genox_geno_zdb_id
+join experiment on exp_zdb_id = genox_exp_zdb_id
+where     geno_is_wildtype = 't'
+      and exp_zdb_id = 'ZDB-EXP-041102-1'
+      and xpatres_xpatex_zdb_id = xpatex_zdb_id
+      and xpatres_expression_found = 't'
+      and xpatres_anat_item_zdb_id = anatitem_zdb_id
+      and xpatres_start_stg_zdb_id = start.stg_zdb_id
+      and xpatres_end_stg_zdb_id = end.stg_zdb_id
+UNION
+select mrkr_zdb_id, mrkr_abbrev, geno_display_name, anatitem_zdb_id, anatitem_name, start.stg_name, end.stg_name, xpatex_assay_name
+from anatomy_item, stage as start, stage as end, expression_result, marker
+join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
+join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
+join genotype on geno_zdb_id = genox_geno_zdb_id
+join experiment on exp_zdb_id = genox_exp_zdb_id
+where     geno_is_wildtype = 't'
+      and exp_zdb_id = 'ZDB-EXP-041102-1'
+      and xpatres_xpatex_zdb_id = xpatex_zdb_id
+      and xpatres_expression_found = 't'
+      and xpatres_term_zdb_id = anatitem_zdb_id
+      and xpatres_start_stg_zdb_id = start.stg_zdb_id
+      and xpatres_end_stg_zdb_id = end.stg_zdb_id
+order by mrkr_zdb_id;
