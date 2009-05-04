@@ -23,3 +23,7 @@ Allow: /javascript
 Allow: /favicon.ico
 Allow: /sitemap.xml
 Allow: /zirc
+Allow: /data_transfer/Downloads
+Allow: /cgi-bin/webdriver?MIval=aa-wtlist.apg
+Allow: /cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-99*
+Disallow: /zf_info/2006_tutorial
