@@ -1,3 +1,4 @@
+
 <?MICOMMENT>
 
 FILE: process_address_update.apg
@@ -272,9 +273,10 @@ an updated person record
 	     in the old person table for display/consistancy issuse. 
      <?/MICOMMENT>
 
+     <?MIVAR NAME=$pua_pers_country_name DELIMIT="'" REPLACE="''">$pua_pers_country_name<?/MIVAR>
+
      <?MIVAR NAME=$ua_concantenated_address>$ua_pers_street1$ua_pers_street2$ua_pers_street3$ua_pers_street4$ua_pers_street5$ua_pers_street6$ua_pers_city$ua_pers_state_code$ua_pers_postal_code$pua_pers_country_name<?/MIVAR>
  
-  <?MIVAR NAME=$ua_concantenated_address DELIMIT="'" REPLACE="''">$ua_concantenated_address<?/MIVAR>
 
      <?MICOMMENT> update the person table with the new addres 
 	(in concantenated version), so updator only has to do this update 
