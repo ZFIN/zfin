@@ -75,9 +75,17 @@ EFFECTS
       var amped = unescape(figCap.replace(/;;;/g, ";&"));
       amped = amped.replace(/;;/g, "&");
       amped = amped.replace(/'/g, "&prime;");
+      amped = amped.replace(/&/g, "&amp;");
       window.document.figureUpdate.xpcur_G_fig_caption.value=amped;    
     }
 
+    function websafeCaption() { 
+      var amped = window.document.figure_new.xpcur_G_fig_add_caption.value;
+      amped = amped.replace(/'/g, "&prime;");
+      amped = amped.replace(/&/g, "&amp;");
+      window.document.figure_new.xpcur_G_fig_add_caption.value=amped;    
+    }
+    
     function validCaption(figCap) {    
       count = 0;
       pos = figCap.indexOf('"');
@@ -253,7 +261,7 @@ EFFECTS
     <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update">
   <tr>
     <td>
-      <input name="xpcur_G_fig_add" type=button value="Add" onClick="if (validateFigLabel() && validCaption((this.form).xpcur_G_fig_add_caption.value)){document.figure_new.submit();}">
+      <input name="xpcur_G_fig_add" type=button value="Add" onClick="if (validateFigLabel() && validCaption((this.form).xpcur_G_fig_add_caption.value)){websafeCaption();document.figure_new.submit();}">
     </td>
     <td> 
         <select name="xpcur_G_fig_add_prefix_label">

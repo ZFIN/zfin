@@ -736,6 +736,15 @@ EFFECTS
     <?/MISQL> 
     
     <?MIVAR NAME=xpcurup_new_value>$(URLENCODE,$xpcur_G_fig_zdb_id<BR>$xpcur_G_fig_label<BR>$xpcur_G_fig_caption<BR>$xpcur_G_fig_comments)<?/MIVAR>
+    
+   
+    <?MIVAR NAME=xpcurup_url_amp>$(URLENCODE,&)<?/MIVAR> 
+    <?MIVAR NAME=xpcurup_replace_amp>$(URLENCODE,&amp;)<?/MIVAR> 
+
+    <?MIVAR NAME=xpcurup_old_value>$(REPLACE,$xpcurup_old_value,$xpcurup_url_amp,$xpcurup_replace_amp)<?/MIVAR>
+    
+    <?/MIVAR>
+    
     <?MISQL SQL="
       select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=figure&recweb_new_value=$xpcurup_new_value&recweb_old_value=$xpcurup_old_value&recweb_comments=update') 
       from webPages where ID='aa-record_web_update.apg';">
