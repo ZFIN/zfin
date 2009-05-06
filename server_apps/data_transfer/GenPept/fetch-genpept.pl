@@ -15,9 +15,21 @@ open (OUT,">$out_file");
 #run initial search and get number of records, web environment
 
 $tool="esearch";
-$results=getUrl("$ebase$tool.fcgi?usehistory=y&db=$db&term=$term&dopt=GenPept&email=bsprunge/@cs.uoregon.edu");
-$results=~/<Count>(\d+)<\/Count>.*<QueryKey>(\d+).*<WebEnv>(.+)<\/WebEnv/s;
-($nrecords,$qkey,$webenv)=($1,$2,$3);
+$urlsearch = "$ebase$tool.fcgi?usehistory=n\&db=$db\&term=$term\&retmode=html\&dopt=GenPept\&email=bsprunge\@cs.uoregon.edu";
+
+`/local/bin/wget -q "$urlsearch" -O gpresult`;
+
+#print "/local/bin/wget  $urlsearch -O gpresult.txt";
+#$results=getUrl("$ebase$tool.fcgi?usehistory=n&db=$db&term=$term&retmode=html&dopt=GenPept&email=bsprunge/@cs.uoregon.edu");
+
+open (GP,"gpresult");
+
+while ($line = <GP>)
+{
+  $line=~/<Count>(\d+)<\/Count>.*<QueryKey>(\d+).*<WebEnv>(.+)<\/WebEnv/s;
+  ($nrecords,$qkey,$webenv)=($1,$2,$3);
+}
+close GP;
 
 #download in user-specified format and write to output file
 $tool="efetch";
@@ -49,6 +61,7 @@ sub init(){
 
 }
 
+
 sub getUrl() {
 
   local $url=shift;
@@ -56,7 +69,7 @@ sub getUrl() {
   local $host = "www.ncbi.nlm.nih.gov";
   local $port = 80;
   local $socketaddr= 'S n a4 x8';
-  local $results;
+  local $urlresults;
 
   $socketaddr= sockaddr_in $port, inet_aton $host or die "Bad hostname\n";
   socket SOCK, PF_INET, SOCK_STREAM, getprotobyname('tcp') or die "Bad socket\n";
@@ -66,12 +79,12 @@ sub getUrl() {
   print SOCK "PUT ".$url."\r\n";
  
   while ( <SOCK> ) {
-    $results .= $_;
+    $urlresults .= $_;
   }
 
   close SOCK;
 
-  return $results;
+  return $urlresults;
 }
 
 sub getparms() {
