@@ -168,19 +168,20 @@
   <?MIVAR NAME=lastevidence><?/MIVAR>
   <?MIVAR NAME=lastflag><?/MIVAR>
   <?MIVAR NAME=lasthasinf><?/MIVAR>
+  <?MIVAR NAME=lastinfername><?/MIVAR>
+  <?MIVAR NAME=infername><?/MIVAR>
 
 <?MISQL SQL="
-       select goterm_ontology,goterm_name,mrkrgoev_evidence_code,gont_order,goterm_go_id,
+       select  distinct goterm_ontology,goterm_name,mrkrgoev_evidence_code,gont_order,goterm_go_id,
 	      mrkrgoev_go_term_zdb_id,mrkrgoev_zdb_id, mrkrgoev_source_zdb_id,
-	      mrkrgoev_notes, goevflag_gflag_name 
-	 from go_term, marker_go_term_evidence, go_ontology, outer go_evidence_flag
+	      mrkrgoev_notes, goevflag_gflag_name, infgrmem_inferred_from 
+	 from go_term, marker_go_term_evidence, go_ontology, outer go_evidence_flag, outer inference_group_member
 	where mrkrgoev_mrkr_zdb_id='$OID' 
 	  and mrkrgoev_go_term_zdb_id=goterm_zdb_id 
 	  and goterm_ontology=gont_ontology_name 
 	  and mrkrgoev_zdb_id = goevflag_mrkrgoev_zdb_id
-        order by 4,2,3 " 
->
-
+          and mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id
+        order by gont_order,mrkrgoev_evidence_code,goterm_name, infgrmem_inferred_from, goevflag_gflag_name">
 
    <?MIVAR NAME=$ontology>$1<?/MIVAR>
    <?MIVAR NAME=$goterm>$2<?/MIVAR>
@@ -195,18 +196,14 @@
    <?MIVAR NAME=contribs>f<?/MIVAR>
    <?MIVAR COND="$(EC,$flag,not)" NAME=$isnot>t<?/MIVAR>
    <?MIVAR COND="$(EC,$flag,contributes to)" NAME=$contribs>t<?/MIVAR>
-
    <?MIBLOCK COND="$(EC,$isnot,t)">
  	 <?MIVAR NAME=not>NOT<?/MIVAR>
    <?MIELSE>
   	<?MIVAR NAME=not><?/MIVAR>
    <?/MIBLOCK>
-
    <?MIVAR NAME=has_inf>f<?/MIVAR>
-   <?MISQL SQL="select * from inference_group_member where infgrmem_mrkrgoev_zdb_id = '$markergoevid'"><?/MISQL>
+   <?MISQL SQL="select * from inference_group_member where infgrmem_mrkrgoev_zdb_id = '$markergoevid'"><?MIVAR NAME=infername>$1<?/MIVAR><?/MISQL>
    <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=has_inf>t<?/MIVAR>
-
-   <?MIVAR NAME=infername><?/MIVAR>
 
    <?MIBLOCK COND="$(AND,$(NC,$lastonto,),$(NC,$ontology,$lastonto))">
       <tr bgcolor=#aaaaaa>
@@ -214,10 +211,8 @@
       <?MIVAR COND="$(NC,$qualifier,true)"><td colspan=5><img src="/images/transp.gif" width="1" height="1"></td><?/MIVAR>
       </tr>
    <?/MIBLOCK>
-
    <!--now displaying annotations-->
-   <?MIBLOCK COND="$(OR,$(NC,$ontology,$lastonto),$(NC,$lastgoterm,$goterm),$(NC,$lastevidence,$evidence),$(NC,$flag,),$(NC,$flag,$lastflag),$(EC,$has_inf,t),$(NC,$has_inf,$lasthasinf))">
-
+   <?MIBLOCK COND="$(OR,$(NC,$ontology,$lastonto),$(NC,$lastgoterm,$goterm),$(NC,$lastevidence,$evidence),$(NE,$flag,$lastflag),$(NE,$infername,$lastinfername))">
      <tr bgcolor=<?MIVAR>$row_color<?/MIVAR> height=25>
 
      <?MIVAR>
@@ -299,29 +294,92 @@
 		    and mrkrgoev_go_term_zdb_id ='$gozdbid'
 		    and mrkrgoev_zdb_id <> '$markergoevid'
                     and exists (select 'x' from inference_group_member
-     where mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
+     where mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id and infgrmem_mrkrgoev_zdb_id='$markergoevid'
       union
     select 'x' from go_evidence_flag
-      where mrkrgoev_zdb_id = goevflag_mrkrgoev_zdb_id) ;
+      where mrkrgoev_zdb_id = goevflag_mrkrgoev_zdb_id and goevflag_gflag_name ='$flag')"> ;
        <?/MISQL>
        <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="
 		 select count(distinct mrkrgoev_source_zdb_id) 
 		   from marker_go_term_evidence
 		  where mrkrgoev_evidence_code='$evidence' 
 		    and mrkrgoev_mrkr_zdb_id='$OID'
-		    and mrkrgoev_go_term_zdb_id ='$gozdbid'">
+		    and mrkrgoev_go_term_zdb_id ='$gozdbid'
+and mrkrgoev_zdb_id not in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id) and mrkrgoev_Zdb_id not in (select infgrmem_mrkrgoev_zdb_id from inference_group_member where mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id)">
              <?MIVAR NAME=pubcount>$(FIX,$1)<?/MIVAR>
     	<?/MISQL>
-     <?/MIBLOCK>   
-    
-     <?MIBLOCK COND="$(EC,$pubcount,1)">
+     <?/MIBLOCK>  
+
+
+<?MICOMMENT> we need to count publications based on whethere inference and modifiers are present..the following blocks calculate pubs for the following conditions: (inference and flags are stored in 2 different tables)
+  flag present, no inference
+  flag present, has inference
+  no flag, has inference
+  has flag, has inference
+
+<?/MICOMMENT>
+ 
+<?MICOMMENT>flag present, no inference and inference condition block<?/MICOMMENT>  
+<?MIBLOCK COND="$(NE,$flag,)">
+ <?MIBLOCK COND="$(EQ,$has_inf,f)">
+   <?MISQL SQL="
+		 select count(distinct mrkrgoev_source_zdb_id) 
+		   from marker_go_term_evidence
+		  where mrkrgoev_evidence_code='$evidence' 
+		    and mrkrgoev_mrkr_zdb_id='$OID'
+		    and mrkrgoev_go_term_zdb_id ='$gozdbid'
+and mrkrgoev_zdb_id  in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id)  and mrkrgoev_Zdb_id not in (select infgrmem_mrkrgoev_zdb_id from inference_group_member where mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id)">
+
+             <?MIVAR NAME=pubcount>$(FIX,$1)<?/MIVAR>
+  <?/MISQL>
+ <?MIELSE>
+  <?MISQL SQL="
+		 select count(distinct mrkrgoev_source_zdb_id) 
+		   from marker_go_term_evidence
+		  where mrkrgoev_evidence_code='$evidence' 
+		    and mrkrgoev_mrkr_zdb_id='$OID'
+		    and mrkrgoev_go_term_zdb_id ='$gozdbid'
+and mrkrgoev_zdb_id  in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id) and mrkrgoev_zdb_id in (select infgrmem_mrkrgoev_zdb_id from inference_group_member where mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id)">
+
+             <?MIVAR NAME=pubcount>$(FIX,$1)<?/MIVAR>
+ <?/MISQL>
+ <?/MIBLOCK>
+<?/MIBLOCK>  
+
+<?MICOMMENT>inference present, no flag and flag condition block<?/MICOMMENT>  
+<?MIBLOCK COND="$(EQ,$has_inf,t)">
+ <?MIBLOCK COND="$(EQ,$flag,)">
+  <?MISQL SQL="
+		 select count(distinct mrkrgoev_source_zdb_id) 
+		   from marker_go_term_evidence
+		  where mrkrgoev_evidence_code='$evidence' 
+		    and mrkrgoev_mrkr_zdb_id='$OID'
+		    and mrkrgoev_go_term_zdb_id ='$gozdbid'
+ and mrkrgoev_zdb_id in (select distinct infgrmem_mrkrgoev_zdb_id from inference_group_member where mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id and infgrmem_inferred_from='$infername') and mrkrgoev_zdb_id not in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id)">
+
+             <?MIVAR NAME=pubcount>$(FIX,$1)<?/MIVAR>
+   <?/MISQL>
+ <?MIELSE>
+   <?MISQL SQL=" select count(distinct mrkrgoev_source_zdb_id) 
+		   from marker_go_term_evidence
+		  where mrkrgoev_evidence_code='$evidence' 
+		    and mrkrgoev_mrkr_zdb_id='$OID'
+		    and mrkrgoev_go_term_zdb_id ='$gozdbid'
+ and mrkrgoev_zdb_id in (select distinct infgrmem_mrkrgoev_zdb_id from inference_group_member where mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id and infgrmem_inferred_from='$infername')">
+
+             <?MIVAR NAME=pubcount>$(FIX,$1)<?/MIVAR>
+  <?/MISQL>
+ <?/MIBLOCK>
+<?/MIBLOCK>    
+
+<?MIBLOCK COND="$(EC,$pubcount,1)">
       <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=<?MIVAR>$sourcezdbid<?/MIVAR>"><?MIVAR>$pubcount<?/MIVAR></a></td></tr>
-    <?MIELSE>
+<?MIELSE>
        <?MIVAR NAME=$titleexp>Gene Ontology Pubs<?/MIVAR>
        <?MIVAR NAME=$name><?/MIVAR>
        <?MIVAR>
-         <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=goview&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&goterm=$gozdbid&evidence=$evidence&total_count=$pubcount"><?MIVAR>$pubcount<?/MIVAR></a></td></tr><?/MIVAR>
-    <?/MIBLOCK>
+         <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=goview&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&goterm=$gozdbid&evidence=$evidence&goflag=$flag&infer=$has_inf&total_count=$pubcount"><?MIVAR>$pubcount<?/MIVAR></a></td></tr><?/MIVAR>
+<?/MIBLOCK>
 
     <?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlighter),$white,$highlighter)<?/MIVAR>
   
@@ -330,7 +388,7 @@
   $(SETVAR,$lastevidence,$evidence)
   $(SETVAR,$lastflag,$flag)
   $(SETVAR,$lasthasinf,$has_inf)
-
+  $(SETVAR,$lastinfername,$infername)
  <?/MIVAR> 
  <?/MIBLOCK>
 <?/MISQL>
