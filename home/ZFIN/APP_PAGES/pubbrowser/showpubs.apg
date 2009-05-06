@@ -82,6 +82,7 @@ OUTPUT VARS:
 <?MIVAR COND="$(NXST,$pubcount)" NAME=$pubcount><?/MIVAR>
 <?MIVAR COND="$(NXST,$caller)" NAME=$caller><?/MIVAR>
 <?MIVAR COND="$(NXST,$geno_name)" NAME=$geno_name><?/MIVAR>
+<?MIVAR COND="$(NXST,$goflag)" NAME=$goflag><?/MIVAR>
 <?MIVAR NAME=cit_G_filter><?/MIVAR>
 <?MIVAR COND="$(NXST,$recattrsrctype)" NAME=recattrsrctype>standard<?/MIVAR>
 <?MIVAR COND=$(NC,$recattrsrctype,standard) NAME=cit_G_filter>and recattrib_source_type = '$recattrsrctype'<?/MIVAR>
@@ -628,7 +629,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	where xpatex_zdb_id in ('$showpubs_inXpatList')
 	  and xpatex_source_zdb_id = publication.zdb_id
 	  and jrnl_zdb_id = pub_jrnl_zdb_id          
-	  amd xpatex_featexp_zdb_id = featexp_zdb_id
+	  and xpatex_featexp_zdb_id = featexp_zdb_id
           and xpatex_gene_zdb_id = '$OID'
         group by publication.zdb_id, 2, authors, jrnl_abbrev, 5, publication.pub_pages, 7, 8, 9, 10, 11, 12
 	order by authors_lower">
@@ -830,6 +831,16 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
  <?/MIBLOCK> <?MICOMMENT> *** end of attribtype *** <?/MICOMMENT>
 
 <?MIELSE COND="$(EC,$rtype,goview)"> 
+
+<?MICOMMENT>count of pubs depends on inference as well as modifier flag. The following is done to establish a where clause in case an inference is present<?/MICOMMENT>
+ <?MIBLOCK COND="$(EQ,$infer,f)">
+   <?MIVAR NAME=$infwhere>and mrkrgoev_zdb_id not in (select infgrmem_mrkrgoev_zdb_id from inference_group_member where mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id)<?/MIVAR>
+ <?MIELSE>
+   <?MIVAR NAME=$infwhere>and mrkrgoev_zdb_id in (select infgrmem_mrkrgoev_zdb_id from inference_group_member where mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id)<?/MIVAR>
+ <?/MIBLOCK>
+
+<?MICOMMENT> block to count pubs if flag is present<?/MICOMMENT>
+ <?MIBLOCK COND="$(EQ,$goflag,)">
       <?MISQL SQL="
   	select distinct title, 
 		p.zdb_id, 
@@ -851,8 +862,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
 	   and mrkrgoev_go_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
-	   and p.jtype not in ('Curation','Unpublished');">
-
+	   and p.jtype not in ('Curation','Unpublished')and mrkrgoev_zdb_id not in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id) $infwhere;">
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">
@@ -864,6 +874,8 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
         <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
 
   	<?/MISQL>
+
+<?MICOMMENT> SQL for listing pubs of type Curation or Unpublished<?/MICOMMENT>
   <TR><TD>&nbsp;</TD><TR>
       <?MISQL SQL="
   	select distinct title, 
@@ -886,7 +898,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	   and mrkrgoev_go_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
-	   and p.jtype in ('Curation','Unpublished');">
+	   and p.jtype in ('Curation','Unpublished')and mrkrgoev_zdb_id not in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id) $infwhere;">
 
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
@@ -899,6 +911,79 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
       <?/MISQL>
    
+<?MIELSE>
+      <?MISQL SQL="
+  	select distinct title, 
+		p.zdb_id, 
+		year(pub_date) as pyear, 
+		authors, 
+		jrnl_abbrev, 
+  	                case
+		          when pub_volume is not null
+		          then pub_volume || ':'
+	                else
+		          ''
+		        end,	
+		pub_pages, 
+	 	pub_authors_lower, 
+		pub_date
+   	  from publication p, marker_go_term_evidence, journal
+     	 where mrkrgoev_source_zdb_id = p.zdb_id
+	   and mrkrgoev_mrkr_zdb_id = '$OID'
+	   and jrnl_zdb_id = pub_jrnl_zdb_id
+	   and mrkrgoev_go_term_zdb_id ='$goterm'
+	   and mrkrgoev_evidence_code  ='$evidence'
+	   and p.jtype not in ('Curation','Unpublished')and mrkrgoev_zdb_id  in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id and goevflag_gflag_name='$goflag') $infwhere;">
+  	<TR bgcolor=$showpubs_tr_bg>
+    	<TD align=left>
+      	<DIV class="show_pubs">
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2&$rtype=publication">$4 ($3) $1. $5.</A>
+        </DIV>
+    	</TD>
+  	</TR>
+
+        <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
+
+  	<?/MISQL>
+<?MICOMMENT> SQL for listing pubs of type Curation or Unpublished<?/MICOMMENT>
+  <TR><TD>&nbsp;</TD><TR>
+      <?MISQL SQL="
+  	select distinct title, 
+		p.zdb_id, 
+		year(pub_date) as pyear, 
+		authors, 
+		jrnl_abbrev, 
+  	                case
+		          when pub_volume is not null
+		          then pub_volume || ':'
+	                else
+		          ''
+		        end,	
+		pub_pages, 
+	 	pub_authors_lower, 
+		pub_date
+   	  from publication p, marker_go_term_evidence, journal
+     	 where mrkrgoev_source_zdb_id = p.zdb_id
+	   and mrkrgoev_mrkr_zdb_id = '$OID'
+	   and jrnl_zdb_id = pub_jrnl_zdb_id
+	   and mrkrgoev_go_term_zdb_id ='$goterm'
+	   and mrkrgoev_evidence_code  ='$evidence'
+	   and p.jtype  in ('Curation','Unpublished')and mrkrgoev_zdb_id  in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id and goevflag_gflag_name='$goflag') $infwhere;">
+  	<TR bgcolor=$showpubs_tr_bg>
+    	<TD align=left>
+      	<DIV class="show_pubs">
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2&$rtype=publication">$4 ($3) $1. $5.</A>
+        </DIV>
+    	</TD>
+  	</TR>
+        <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
+
+      <?/MISQL>
+<?/MIBLOCK>
+
+<?MICOMMENT> end block if flag present<?/MICOMMENT>
+
+
 <?/MIBLOCK> <?MICOMMENT> end of go *** <?/MICOMMENT>
 
 </TABLE>
