@@ -76,7 +76,7 @@ from marker m,db_link dbl, foreign_db_contains fdbc
 where m.mrkr_zdb_id = dbl.dblink_linked_recid
 and dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and m.mrkr_zdb_id like "ZDB-GENE-%"
-and fdbc.fdbcont_fdb_db_name = "UniProt"
+and fdbc.fdbcont_fdb_db_name = "UniProtKB"
 union
 select
 distinct m.mrkr_zdb_id, "","",0
@@ -90,7 +90,7 @@ and not exists
    where dbl.dblink_linked_recid=m.mrkr_zdb_id
    and fdbc.fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id
    and m.mrkr_zdb_id like "ZDB-GENE-%"
-   and fdbc.fdbcont_fdb_db_name = "UniProt"
+   and fdbc.fdbcont_fdb_db_name = "UniProtKB"
 )
 union
 select
@@ -118,7 +118,7 @@ order by m.mrkr_zdb_id
     my %dbLengths = () ; 
     while ($cur->fetch) {
       $zdbIDs{$mrkr_id} = 1;
-      if($db_name eq "UniProt") {
+      if($db_name eq "UniProtKB") {
           if (!exists $zdbPids{$mrkr_id}) {
             $zdbPids{$mrkr_id} = $acc_num;
             $dbLengths{$acc_num} = $db_length; 
