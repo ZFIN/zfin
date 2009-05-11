@@ -609,7 +609,7 @@ select distinct
                 select fdbcont_zdb_id from foreign_db_contains
                 where fdbcont_fdbdt_super_type = 'sequence'
                   and fdbcont_fdbdt_data_type = 'Polypeptide'
-                  and fdbcont_fdb_db_name = 'UniProt'
+                  and fdbcont_fdb_db_name = 'UniProtKB'
                   and fdbcont_organism_common_name = 'Human'
          )
         when thit_acc_type = 'protein'
@@ -619,7 +619,7 @@ select distinct
                 select fdbcont_zdb_id from foreign_db_contains
                 where fdbcont_fdbdt_super_type = 'sequence'
                   and fdbcont_fdbdt_data_type = 'Polypeptide'
-                  and fdbcont_fdb_db_name = 'UniProt'
+                  and fdbcont_fdb_db_name = 'UniProtKB'
                   and fdbcont_organism_common_name = 'Mouse'
          )
         when thit_acc_type = 'protein'
