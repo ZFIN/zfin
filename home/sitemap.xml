@@ -42,7 +42,7 @@
 	</url>
 	<url>
 		<loc>
-		http://zfin.org/data_transfer/Downloads
+		http://zfin.org/zf_info/downloads.html
 		</loc>
 		<changefreq>weekly</changefreq>
 		<priority>0.4</priority>
