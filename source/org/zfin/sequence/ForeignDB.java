@@ -52,7 +52,7 @@ public class ForeignDB {
         EBI_CELL("EBI-Cell"),
         EC("EC"),
         ENSEMBL("ENSEMBL"),
-        ENSEMBL_ZV7("Ensembl(Zv7)"),
+        ENSEMBL_ZV8_("Ensembl(Zv8)"),
         ENSEMBL_CLONE("Ensembl_Clone"),
         ENSEMBL_SNP("Ensembl_SNP"),
         ENTREZ_GENE("Entrez Gene"),
@@ -75,7 +75,7 @@ public class ForeignDB {
         PREVEGA("PREVEGA"),
         PROSITE("PROSITE"),
         PFAM("Pfam"),
-        PREENSEMBL_ZV7("PreEnsembl(Zv7)"),
+        PREENSEMBL_ZV7_("PreEnsembl(Zv7)"),
         PUBMED("PubMed"),
         QUICKGO("QuickGO"),
         REFSEQ("RefSeq"),
@@ -83,7 +83,7 @@ public class ForeignDB {
         SNPBLAST("SNPBLAST"),
         SP_KW("SP_KW"),
         SANGER_CLONE("Sanger_Clone"),
-	TAO("TAO"),
+        TAO("TAO"),
         TRACEVIEW("TraceView"),
         UNIGENE("UniGene"),
         UNIPROT("UniProt"),
@@ -93,8 +93,7 @@ public class ForeignDB {
         VEGA_TRANS("Vega_Trans"),
         WASHU("WashU"),
         WASHUZ("WashUZ"),
-        ZF_ESPRESSO("ZF-Espresso")
-            ;
+        ZF_ESPRESSO("ZF-Espresso");
 
 
         private final String value;

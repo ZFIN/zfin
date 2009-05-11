@@ -67,11 +67,11 @@ public class StringEnumUserType implements UserType, ParameterizedType {
             return null;
         // convert enumeration name into upper case as the names are always all upper case.
         // this needs to be done if the enumeration string is not all caps.
-        boolean hasSpaces = name.contains(" ");
-        // Spaces have to be turned into underscores!
-        if(hasSpaces){
-            name = name.replace(' ', '_');
-        }
+        name = name.replace('-', '_');
+        name = name.replace('+', '_');
+        name = name.replace(' ', '_');
+        name = name.replace('(', '_');
+        name = name.replace(')', '_');
         return Enum.valueOf(enumClass, name.toUpperCase());
     }
 
