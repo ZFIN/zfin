@@ -614,7 +614,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
         <?MISQL SQL="
         select idsup_supplier_zdb_id, idsup_avail_state,
 	       get_obj_name(idsup_supplier_zdb_id),
-	       srcurl_url, srcurl_display_text	
+	       srcurl_url, srcurl_display_text
           from int_data_supplier, outer source_url
          where idsup_data_zdb_id = '$OID'
            and idsup_supplier_zdb_id = srcurl_source_zdb_id
@@ -669,7 +669,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
         <?MISQL SQL="
         select idsup_supplier_zdb_id, idsup_avail_state,
 	       get_obj_name(idsup_supplier_zdb_id),
-	       srcurl_url, srcurl_display_text	
+	       srcurl_url, srcurl_display_text, idsup_acc_num, idsup_acc_num[1,3]
           from int_data_supplier, outer source_url
          where idsup_data_zdb_id = '$genovw_ftr_zdb_id'
            and idsup_supplier_zdb_id = srcurl_source_zdb_id
@@ -680,6 +680,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
     	 <?MIVAR NAME=genovw_ftr_sup_name>$3<?/MIVAR>	
     	 <?MIVAR NAME=genovw_ftr_sup_src_url>$4<?/MIVAR>	
     	 <?MIVAR NAME=genovw_ftr_sup_src_display>$5<?/MIVAR>	
+    	 <?MIVAR NAME=genovw_ftr_sup_acc_num>$(IF,$(NC,,$7),$6,$1)<?/MIVAR>
 
 	 <?MIVAR>$(SETVAR,$genovw_ftr_sup_exist,t)<?/MIVAR>
          </tr>
@@ -697,7 +698,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
            &nbsp;&nbsp;&nbsp;
         
 	   <?MIVAR COND="$(NC,$genovw_ftr_sup_src_url,)">
-             	(<A HREF="$genovw_ftr_sup_src_url$genovw_ftr_zdb_id">$genovw_ftr_sup_src_display</A>)
+             	(<A HREF="$genovw_ftr_sup_src_url$genovw_ftr_sup_acc_num">$genovw_ftr_sup_src_display</A>)
            <?/MIVAR>
          </td>
          </tr>
