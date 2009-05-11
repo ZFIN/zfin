@@ -183,7 +183,7 @@ while (<>) {
 
    foreach $gene (@gene_array) {
 
-	print DBLINK "$gene|UniProt|$prm_ac|$len|\n";
+	print DBLINK "$gene|UniProtKB|$prm_ac|$len|\n";
     }
 
     if (length($ecnumber)>0){
