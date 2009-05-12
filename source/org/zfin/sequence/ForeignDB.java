@@ -86,7 +86,7 @@ public class ForeignDB {
         TAO("TAO"),
         TRACEVIEW("TraceView"),
         UNIGENE("UniGene"),
-        UNIPROT("UniProt"),
+        UNIPROT("UniProtKB"),
         UNISTS("UniSTS"),
         VEGA("VEGA"),
         VEGA_CLONE("VEGA_Clone"),
