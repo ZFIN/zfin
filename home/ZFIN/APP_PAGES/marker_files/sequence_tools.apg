@@ -76,7 +76,7 @@ function jump(form_select){
             <OPTION VALUE=$(CONCAT,$fdb_url_blastp,$seqt_acc)>NCBI BLAST</OPTION>
             <OPTION VALUE=$(CONCAT,$fdb_url_pblast,$seqt_acc)> SIB BLAST</OPTION>
 	    <?/MIVAR>
-	  <?MIELSE COND=$(EQ,$seqt_acc_db,UniProt)>
+	  <?MIELSE COND=$(EQ,$seqt_acc_db,UniProtKB)>
 	    <?MIVAR>
 	    <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastp,$seqt_acc),&DATALIB=sptr_zf)>ZFIN BLAST</OPTION>
 	    <OPTION VALUE=$(CONCAT,$fdb_url_pblast,$seqt_acc)> SIB BLAST</OPTION>
