@@ -48,7 +48,8 @@ public class URLCreator {
 
     /**
      * Retrieve the full URL if fullURL=true
-     * otherwise return query string only
+     * otherwise return query string only.
+     * The string is URL-encoded.
      *
      * @param completeURL boolean
      * @return full url or query string

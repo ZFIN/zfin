@@ -5,6 +5,7 @@ import org.zfin.util.URLCreator;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.net.URLDecoder;
 
 /**
  * Basic bean object that can be used for any form bean to include pagination.
@@ -198,7 +199,7 @@ public class PaginationBean {
     }
 
     public void setQueryString(String queryString) {
-        this.queryString = queryString;
+        this.queryString = URLDecoder.decode(queryString);
     }
 
     public void setRequestUrl(StringBuffer requestUrl) {
