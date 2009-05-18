@@ -27,6 +27,7 @@ import org.zfin.util.FileUtilTest;
 import org.zfin.util.HighlightUtilTest;
 import org.zfin.util.ListFormatterTest;
 import org.zfin.util.UrlCreatorTest;
+import org.zfin.expression.ExpressionExperimentTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite).
@@ -40,6 +41,7 @@ import org.zfin.util.UrlCreatorTest;
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
         AntibodyServiceTest.class,
+        ExpressionExperimentTest.class,
         FileUtilTest.class,
         FunctionsTest.class,
         HighlightUtilTest.class,

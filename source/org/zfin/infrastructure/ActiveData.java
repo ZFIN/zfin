@@ -67,6 +67,8 @@ public class ActiveData {
         FMREL,
         FOSMID,
         GENE,
+        GENOX,
+        GENO,
         GENOFE,
         GOTERM,
         GTCONST,

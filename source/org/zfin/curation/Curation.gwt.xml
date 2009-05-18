@@ -1,0 +1,13 @@
+<module>
+
+    <inherits name='com.google.gwt.user.User'/>
+
+    <source path='dto'/>
+    <source path='client'/>
+    <source path='event'/>
+
+    <entry-point class='org.zfin.curation.client.CurationEntryPoint'/>
+
+    <servlet path="/ajax/curation"
+             class="org.zfin.curation.server.CurationExperimentRPCImpl"/>
+</module>

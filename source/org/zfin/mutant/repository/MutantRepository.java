@@ -139,5 +139,12 @@ public interface MutantRepository extends CachedRepository {
      * @return A list of Features that contain the name in the abbreviation.
      */
     List<Feature> getFeaturesByAbbreviation(String name);
+
+    /**
+     * Retrieve all distinct wild-type genotypes.
+     * @return list of wildtype fish
+     */
+    List<Genotype> getAllWildtypeGenotypes();
+
 }
 

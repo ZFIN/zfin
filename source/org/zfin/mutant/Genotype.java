@@ -17,9 +17,13 @@ import java.util.Set;
  */
 public class Genotype {
 
+    public static final String WT = "WT";
+
     private String zdbID;
     private String name;
     private String nameOrder;
+    private String handle;
+    private String nickname;
     private boolean wildtype;
     private Set<GenotypeExperiment> genotypeExperiments;
     // This attribute is used only for storage purposes.
@@ -51,7 +55,6 @@ public class Genotype {
         this.nameOrder = nameOrder;
     }
 
-
     public boolean isWildtype() {
         return wildtype;
     }
@@ -60,12 +63,28 @@ public class Genotype {
         this.wildtype = wildtype;
     }
 
+    public String getHandle() {
+        return handle;
+    }
+
+    public void setHandle(String handle) {
+        this.handle = handle;
+    }
+
     public Set<GenotypeExperiment> getGenotypeExperiments() {
         return genotypeExperiments;
     }
 
     public void setGenotypeExperiments(Set<GenotypeExperiment> genotypeExperiments) {
         this.genotypeExperiments = genotypeExperiments;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     /**

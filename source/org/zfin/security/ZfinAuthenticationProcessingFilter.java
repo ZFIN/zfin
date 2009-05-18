@@ -131,4 +131,16 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
     public static void removeSession(String sessionID) {
         authenticatedSessions.remove(sessionID);
     }
+
+    protected String determineTargetUrl(HttpServletRequest request) {
+
+        String targetUrl = super.determineTargetUrl(request);
+
+        // if the login redirect came through an ajax call redirect to a separate page
+        // Todo: find a better place to store these strings
+        if (targetUrl.indexOf("/ajax/") > -1)
+            targetUrl = "/javascript/ajax-lib/ajax-redirect.html";
+        return targetUrl;
+    }
+
 }

@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.zfin.infrastructure.DataAlias;
+import org.zfin.repository.SessionCreator;
 
 import java.sql.SQLException;
 
@@ -66,6 +67,12 @@ public class HibernateUtil {
      *
      */
     public static Session currentSession() {
+        // if no session factory is created yet we may be in hosted mode. Then
+        // initialize
+        if(sessionFactory == null){
+            SessionCreator.instantiateDBForHostedMode();
+        }
+
         Session s = localSession.get();
         // Open a new ZfinSession, if this Thread has none yet
         if (s == null) {

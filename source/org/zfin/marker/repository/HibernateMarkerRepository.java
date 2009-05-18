@@ -1053,4 +1053,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     }
 
+    /**
+     * Retrieve marker types by marker type groups
+     * @param typeGroup type group
+     * @return list of marker types
+     */
+    public List<MarkerType> getMarkerTypesByGroup(Marker.TypeGroup typeGroup) {
+        if (typeGroup == null)
+            return null;
+        MarkerTypeGroup group = getMarkerTypeGroupByName(typeGroup.name());
+        List<MarkerType> markerTypes = new ArrayList<MarkerType>();
+        for (String type : group.getTypeStrings()) {
+            markerTypes.add(getMarkerTypeByName(type));
+        }
+        return markerTypes;
+    }
 }

@@ -16,7 +16,7 @@ public class SessionCreator {
      * Only creates session if in hosted mode.
      * @return boolean Instatiation success
      */
-    public  static boolean instantiateDBForHostedMode(){
+    public  static synchronized boolean instantiateDBForHostedMode(){
         String gwtArgs = System.getProperty("gwt.args") ;
         if(gwtArgs!=null && gwtArgs.indexOf("hosted")>=0 && isInstantiated==false){
             logger.warn("running in hosted mode");

@@ -12,7 +12,7 @@ public class CuratorSession extends CuratorSessionDTO {
 
     private Long ID;
     private Person curator;
-    private transient Publication publication;
+    private Publication publication;
 
     public Long getID() {
         return ID;
@@ -64,5 +64,9 @@ public class CuratorSession extends CuratorSessionDTO {
         result = 31 * result + (field != null ? field.hashCode() : 0);
         result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
+    }
+
+    public static enum Attribute {
+        SHOW_EXPERIMENT_SECTION
     }
 }

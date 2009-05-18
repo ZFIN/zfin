@@ -4,6 +4,7 @@ import org.zfin.people.*;
 import org.zfin.framework.HibernateUtil;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.marker.Marker;
 import org.zfin.infrastructure.Updates;
@@ -86,8 +87,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     public CuratorSession getCuratorSession(String curatorZdbID, String pubZdbID, String field) {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(org.zfin.people.CuratorSession.class);
-
+        Criteria criteria = session.createCriteria(CuratorSession.class);
         criteria.add(Restrictions.eq("curator.zdbID", curatorZdbID));
 
         //publication field is nullable
@@ -96,6 +96,19 @@ public class HibernateProfileRepository implements ProfileRepository {
         }
 
         criteria.add(Restrictions.eq("field", field));
+        return (CuratorSession) criteria.uniqueResult();
+    }
+
+    public CuratorSession getCuratorSession(String pubID, CuratorSession.Attribute field) {
+        Person curator = Person.getCurrentSecurityUser();
+        if (curator == null)
+            return null;
+
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(CuratorSession.class);
+        criteria.add(Restrictions.eq("curator.zdbID", curator.getZdbID()));
+        criteria.add(Restrictions.eq("publication.zdbID", pubID));
+        criteria.add(Restrictions.eq("field", field.toString()));
         return (CuratorSession) criteria.uniqueResult();
     }
 
@@ -120,7 +133,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     }
 
     public void deleteAccountInfo(Person person) {
-        AccountInfo accountInfo  = person.getAccountInfo();
+        AccountInfo accountInfo = person.getAccountInfo();
         if (accountInfo == null)
             return;
 
@@ -137,7 +150,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         return person != null;
     }
 
-    public void updateAccountInfo(Person currentPerson, AccountInfo newAccountInfo){
+    public void updateAccountInfo(Person currentPerson, AccountInfo newAccountInfo) {
         AccountInfo currentAccountInfo = currentPerson.getAccountInfo();
         if (currentAccountInfo == null)
             return;
@@ -198,6 +211,34 @@ public class HibernateProfileRepository implements ProfileRepository {
             session.save(update);
         }
         session.update(currentPerson);
+    }
+
+    /**
+     * Persist experiment section visibility
+     *
+     * @param pubID                 pub ID
+     * @param showExperimentSection attribute name
+     * @param experimentVisibility  attribute value
+     */
+    public void setCuratorSession(String pubID, CuratorSession.Attribute showExperimentSection, boolean experimentVisibility) {
+        Session session = HibernateUtil.currentSession();
+        CuratorSession curationAttribute = getCuratorSession(pubID, CuratorSession.Attribute.SHOW_EXPERIMENT_SECTION);
+        if (curationAttribute != null)
+            curationAttribute.setValue(String.valueOf(experimentVisibility));
+        else {
+            Person curator = Person.getCurrentSecurityUser();
+            // ToDo: IS this the right thing to do?
+            if(curator == null)
+                return;
+
+            Publication pub = RepositoryFactory.getPublicationRepository().getPublication(pubID);
+            curationAttribute = new CuratorSession();
+            curationAttribute.setPublication(pub);
+            curationAttribute.setCurator(curator);
+            curationAttribute.setField(CuratorSession.Attribute.SHOW_EXPERIMENT_SECTION.toString());
+            curationAttribute.setValue(String.valueOf(experimentVisibility));
+            session.save(curationAttribute);
+        }
     }
 
     @SuppressWarnings("unchecked")

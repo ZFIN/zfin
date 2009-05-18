@@ -12,11 +12,7 @@ public interface SessionSaveService extends RemoteService {
     // Sample interface method of remote interface
 //    void saveCuratorUpdate(String personZdbID, String publicationZdbID, String field, String value);
 
-    /**
-     * We specify the type here in order to optimize.
-     * @gwt.typeArgs curationSessionUpdateList <org.zfin.people.presentation.client.CuratorSessionDTO>
-     */
-    void saveCuratorUpdate(List curationSessionUpdateList);
+    void saveCuratorUpdate(List<CuratorSessionDTO> curationSessionUpdateList);
 
     /**
      * Utility/Convenience class.

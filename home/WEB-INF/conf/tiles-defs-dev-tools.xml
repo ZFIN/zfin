@@ -122,6 +122,21 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/zfin_statistics_view.jsp"/>
     </definition>
 
+    <definition name="gwt-modules" extends="dev_layout">
+        <put name="title" value="ZFIN Statistics"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/modules.jsp"/>
+    </definition>
+
+    <definition name="fx-curation" extends="dev_layout">
+        <put name="title" value="ZFIN Statistics"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/fx_curation.jsp"/>
+    </definition>
+
+    <definition name="lookup" extends="dev_layout">
+        <put name="title" value="ZFIN Statistics"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/lookup.jsp"/>
+    </definition>
+
     <definition name="svn-version" extends="dev_layout">
         <put name="title" value="SVN Version"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/svn_version.jsp"/>

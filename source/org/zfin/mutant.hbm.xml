@@ -20,17 +20,11 @@
             </generator>
         </id>
 
-        <property name="name">
-            <column name="geno_display_name"/>
-        </property>
-
-        <property name="nameOrder">
-            <column name="geno_name_order"/>
-        </property>
-        
-        <property name="wildtype">
-            <column name="geno_is_wildtype" />
-        </property>
+        <property name="name" column="geno_display_name"/>
+        <property name="nameOrder" column="geno_name_order"/>
+        <property name="handle" column="geno_handle"/>
+        <property name="wildtype" column="geno_is_wildtype"/>
+        <property name="nickname" column="geno_nickname"/>
 
         <set name="genotypeExperiments" lazy="true">
             <key column="genox_geno_zdb_id"/>
@@ -70,7 +64,12 @@
     <class name="org.zfin.mutant.GenotypeExperiment" table="genotype_experiment">
         <id name="zdbID">
             <column name="genox_zdb_id"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">GENOX</param>
+                <param name="insertActiveData">true</param>
+            </generator>
         </id>
+
         <many-to-one name="experiment" class="org.zfin.expression.Experiment">
             <column name="genox_exp_zdb_id"/>
         </many-to-one>

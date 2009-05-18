@@ -86,30 +86,26 @@
         </property>
     </class>
 
-    <class name="org.zfin.expression.ExpressionExperiment" table="expression_experiment">
+    <!-- Make sure only attributes that have changed are updated in teh Query: if no probe is given
+         but probe = null is set then a trigger would fail.
+         -->
+    <class name="org.zfin.expression.ExpressionExperiment" table="expression_experiment" dynamic-update="true" dynamic-insert="true">
         <id name="zdbID" type="string">
             <column name="xpatex_zdb_id" not-null="true"/>
-            <generator class="native"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">XPAT</param>
+                <param name="insertActiveData">true</param>
+            </generator>
         </id>
 
-        <property name="publicationID">
-            <column name="xpatex_source_zdb_id" not-null="true"/>
-        </property>
-
         <property name="cloneID">
-            <column name="xpatex_probe_feature_zdb_id" not-null="true"/>
-        </property>
-
-        <property name="geneID">
-            <column name="xpatex_gene_zdb_id" not-null="true"/>
+            <column name="xpatex_probe_feature_zdb_id" not-null="false"/>
         </property>
 
         <many-to-one name="publication" class="org.zfin.publication.Publication" column="xpatex_source_zdb_id"
-                     insert="false"
                      update="false"/>
 
-        <many-to-one name="marker" class="org.zfin.marker.Marker" column="xpatex_gene_zdb_id" insert="false"
-                     update="false"/>
+        <many-to-one name="marker" class="org.zfin.marker.Marker" column="xpatex_gene_zdb_id"/>
 
         <many-to-one name="probe" class="org.zfin.marker.Marker" column="xpatex_probe_feature_zdb_id" insert="false"
                      update="false"/>
@@ -128,6 +124,7 @@
         <many-to-one name="assay" column="xpatex_assay_name" class="org.zfin.expression.ExpressionAssay"/>
 
         <many-to-one name="antibody" column="xpatex_atb_zdb_id" class="org.zfin.antibody.Antibody"/>
+        <many-to-one name="markerDBLink" column="xpatex_dblink_zdb_id" class="org.zfin.sequence.MarkerDBLink"/>
     </class>
 
     <class name="org.zfin.expression.ExpressionResult" table="expression_result">
@@ -181,9 +178,11 @@
             <key column="expcond_exp_zdb_id"/>
             <one-to-many class="org.zfin.expression.ExperimentCondition"/>
         </set>
+
+        <many-to-one name="publication" column="exp_source_zdb_id" />
     </class>
 
-    <class name="org.zfin.expression.ExpressionAssay" table="expression_pattern_assay">
+     <class name="org.zfin.expression.ExpressionAssay" table="expression_pattern_assay">
         <id name="name" column="xpatassay_name">
             <generator class="native"/>
         </id>

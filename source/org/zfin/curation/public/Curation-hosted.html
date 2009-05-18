@@ -1,0 +1,126 @@
+<html>
+<head>
+    <title>Curation Application</title>
+    <link rel="stylesheet" href="Curation.css">
+    <link rel="stylesheet" href="/css/zfin.css">
+</head>
+<body>
+<script type="text/javascript" language="javascript"
+        src="org.zfin.curation.Curation.nocache.js"></script>
+<h1>Curation Application</h1>
+
+<span id="show-hide-experiments"></span>
+
+<div id="display-experiment"></div>
+<div id="image-loading"></div>
+<div id="display-experiment-errors"></div>
+
+<p/>
+<table width="100%" bgcolor="#33cc99" border="0" cellpadding="0">
+    <tbody>
+    <tr>
+        <td style="font-weight:bold;"> Show:</td>
+        <td>
+            Only Fig:
+            <span id="curation-filter"></span>
+        </td>
+        <td>
+            Only Gene:
+            <span id="curation-filter-genes"></span>
+        </td>
+        <td>
+            Only Fish:
+            <span id="curation-filter-fish"></span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p/>
+
+<script type="text/javascript">
+    var curationProperties = {
+        zdbID : "ZDB-PUB-080306-3",
+        geneID: "",
+        fishID: "",
+        debug: "true"
+    } ;
+</script>
+<script type="text/javascript">
+    var curationPropertiespp = {
+        zdbID : "ZDB-PUB-990507-16",
+        geneID: "ZDB-GENE-990415-30",
+        fishID: "ZDB-GENO-030619-2"
+    } ;
+</script>
+
+<script type="text/javascript">
+    function addExperimentInExpressionSection(text, experimentID) {
+        var option = document.createElement("OPTION");
+        option.text = text;
+        option.value = experimentID;
+        document.xpcur_G_panel_add.xpcur_G_panel_add_xpatex.options.add(option);
+    }
+
+    function modifyExperimentInExpressionSection(text, experimentID) {
+        var experiment = document.xpcur_G_panel_add.xpcur_G_panel_add_xpatex;
+        for (i = 0; i < experiment.length; i++)
+        {
+            if (experiment[i].value == experimentID)
+            {
+                alert(experiment[i].text);
+                experiment[i].text = text;
+            }
+        }
+    }
+
+    // This function is called after an experiment is already removed.
+    // it updates the expression section experiment box.
+    function removeExperimentInExpressionSection(experimentID) {
+        var experiment = document.xpcur_G_panel_add.xpcur_G_panel_add_xpatex;
+        for (i = 0; i < experiment.length; i++)
+        {
+            if (experiment[i].value == experimentID)
+            {
+                experiment[i] = null;
+            }
+        }
+    }
+
+    function selectExperimentInExpressionSection(experimentID) {
+        document.xpcur_G_panel_add.xpcur_G_panel_add_xpatex.value = experimentID;
+        /*
+         var expt = document.panel_structures.xpcurstr_fig_xpat_stg;
+         for (i = 0; i < expt.length; i++)
+         {
+         if (expt[i].value == experimentID)
+         {
+         expt.selectedIndex = i;
+         }
+         }
+         */
+    }
+
+    function reloadPage(){
+        alert("Reload JS method called");
+    }
+</script>
+
+Expression:
+
+<form action="/cgi-bin/webdriver#panel" method="post" name="xpcur_G_panel_add">
+    <select name="xpcur_G_panel_add_xpatex" multiple="multiple" size="5">
+        <option value="ZDB-XPAT-081003-1">---- &nbsp; WT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; _Standard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            IHC &nbsp;znp-1 &nbsp;</option>
+        <option value="ZDB-XPAT-050720-1"> &nbsp;alcam &nbsp; WT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+            _Standard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ISH &nbsp;
+            &nbsp;</option>
+        <option value="ZDB-XPAT-050720-2"> &nbsp;alcam &nbsp; WT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+            _Standard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IHC &nbsp;zn-5
+            &nbsp;</option>
+        <option value="ZDB-XPAT-081003-2"> &nbsp;alcam &nbsp; WT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+            _Standard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; WB &nbsp;zn-5
+            &nbsp;</option>
+    </select>
+</form>
+</body>
+</html>

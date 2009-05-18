@@ -1,3 +1,4 @@
+
 <?MICOMMENT>natomy
 
 FILE:     xpatcuration.apg
@@ -245,33 +246,112 @@ EFFECTS
 <?/MICOMMENT>
 
 
-    <?MISQL SQL="
-        select cs_field_name_value 
-        from curator_session 
-        where cs_data_zdb_id = '$OID' 
-          and cs_person_zdb_id = '$ZDB_ident'
-          and cs_field_name = 'xpcur_c_experiment';">
-        <?MIVAR NAME=xpcur_c_experiment>$1<?/MIVAR>
-    <?/MISQL>
-    
 <a name=experiment>
 
-<p><b><font size=3>Experiments:</font></b>
-<?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_experiment),$(EC,$xpcur_c_experiment,hide))>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_experiment','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide</a><?/MIVAR>
-  <br>
-  
-<?MIELSE>
+<script type="text/javascript" language="javascript" src="/gwt/org.zfin.curation.Curation/org.zfin.curation.Curation.nocache.js"></script>
 
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_experiment','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide</a><?/MIVAR>
-  <br>
 
-<?/MIBLOCK>
+<p>
+<span id="show-hide-experiments"></span>
+<div id="display-experiment"></div>
+<div id="image-loading"></div>
+<div id="display-experiment-errors"></div>
 
-  <?MICOMMENT> Always call this page. Display the Add New Experiment form even when hidden<?/MICOMMENT>
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurexpression.apg';">$1<?/MISQL>
-  
-  
+<?MIVAR COND=$(NXST,$xpcur_c_gene_only) NAME=xpcur_c_gene_only><?/MIVAR>
+<?MIVAR COND=$(NXST,$xpcur_c_fish_only) NAME=xpcur_c_fish_only><?/MIVAR>
+<?MIVAR COND=$(NXST,$debug) NAME=debug>false<?/MIVAR>
+
+<script type="text/javascript">
+    var curationProperties = {
+        zdbID : "<?MIVAR>$OID<?/MIVAR>",
+	geneID: "<?MIVAR>$xpcur_c_gene_only<?/MIVAR>",
+	fishID: "<?MIVAR>$xpcur_c_fish_only<?/MIVAR>",
+	debug: "<?MIVAR>$debug<?/MIVAR>"
+    } ;
+
+    function addExperimentInExpressionSection(text, experimentID) {
+        var option = document.createElement("OPTION");
+        option.text = text;
+        option.value = experimentID;
+        document.xpcur_G_panel_add.xpcur_G_panel_add_xpatex.options.add(option);
+    }
+
+
+    function modifyExperimentInExpressionSection(text, experimentID) {
+        var experiment = document.xpcur_G_panel_add.xpcur_G_panel_add_xpatex;
+        for (i = 0; i < experiment.length; i++)
+        {
+            if (experiment[i].value == experimentID)
+            {
+                //alert(experiment[i].text);
+                experiment[i].text = text;
+		experiment[i].value = experimentID;
+            }
+        }
+    }
+
+    function selectExperimentInExpressionSection(experimentID) {
+        //window.alert(experimentID);
+	var panel = document.xpcur_G_panel_add;
+	if(panel != null)
+		 panel.xpcur_G_panel_add_xpatex.value = experimentID
+    }
+
+    function reloadPage(){
+    	     <?MIVAR>
+    	     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random());
+	     <?/MIVAR>
+    }
+
+    // This function is called after an experiment is already removed.
+    // it updates the expression section experiment box.
+    function removeExperimentInExpressionSection(experimentID) {
+        var experiment = document.xpcur_G_panel_add.xpcur_G_panel_add_xpatex;
+        for (i = 0; i < experiment.length; i++)
+        {
+            if (experiment[i].value == experimentID)
+                experiment[i] = null;
+        }
+    }
+</script>
+<p/>
+
+<!-- Use this bar when expresion section is integrated as well.
+<table width="100%" bgcolor="#33cc99" border="0" cellpadding="0">
+    <tbody>
+    <tr>
+        <td style="font-weight:bold;"> Show:</td>
+        <td>
+            Only Fig:
+    <select <?MIVAR>onChange="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_figure_only',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"<?/MIVAR>>
+      <option value="">ALL</option>
+      <?MISQL SQL="
+        select fig_zdb_id, fig_label, zero_pad(fig_label)
+        from figure, record_attribution
+        where recattrib_source_zdb_id = '$OID'
+	  and recattrib_source_type = 'standard'
+          and fig_zdb_id = recattrib_data_zdb_id
+        order by 3
+        ;">
+      <option value="$1"
+        $(IF,$(AND,$(XST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,$1)),SELECTED)>$2</option>     
+      <?/MISQL>
+    </select>
+        </td>
+        <td>
+            Only Gene:
+            <span id="curation-filter-genes"></span>
+        </td>
+        <td>
+            Only Fish:
+            <span id="curation-filter-fish"></span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p/>
+-->
+
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
   <br>$1 Starting Filters

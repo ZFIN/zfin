@@ -60,6 +60,16 @@ public interface ProfileRepository {
     CuratorSession getCuratorSession(String curatorZdbID, String pubZdbID, String field);
 
     /**
+     * Retrieve a Curator Session by pub and field name.
+     * This requires to have a security login, i.e. a Person record.
+     * 
+     * @param pubZdbID     pub that the session value is associated with [can be null!]
+     * @param field        field name
+     * @return CuratorSession object from the database, if there is one
+     */
+    CuratorSession getCuratorSession(String pubZdbID,CuratorSession.Attribute field);
+
+    /**
      * @param curatorZdbID person for whom the session value is being saved for
      * @param pubZdbID     associated pub, can be null.
      * @param field        field name
@@ -119,4 +129,11 @@ public interface ProfileRepository {
      */
     void updateAccountInfo(Person currentPerson, AccountInfo newAccountInfo);
 
+    /**
+     * Persist experiment section visibility
+     * @param pubID pub ID
+     * @param showExperimentSection attribute name
+     * @param experimentVisibility attribute value 
+     */
+    void setCuratorSession(String pubID, CuratorSession.Attribute showExperimentSection, boolean experimentVisibility);
 }

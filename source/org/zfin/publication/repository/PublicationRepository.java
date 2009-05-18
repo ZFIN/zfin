@@ -4,6 +4,8 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.CanonicalMarker;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
+import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.Experiment;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -13,6 +15,9 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.Journal;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.antibody.Antibody;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.MarkerDBLink;
 
 import java.util.List;
 
@@ -108,6 +113,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     /**
      * Returns the appropriate # of records, as well as statistics on the total # of records.
+     *
      * @param anatomyTerm
      * @param firstRow
      * @param maxRow
@@ -117,6 +123,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     /**
      * Returns the appropriate # of records, as well as statistics on the total # of records.
+     *
      * @param anatomyTerm
      * @return
      */
@@ -136,7 +143,7 @@ public interface PublicationRepository extends PaginationParameter {
      * Count the number of images from all publications that have a gene
      * expression in a given anatomy structure.
      *
-     * @param anatomyTerm  Anatomy Term
+     * @param anatomyTerm Anatomy Term
      * @return number
      */
     int getTotalNumberOfImagesPerAnatomyItem(AnatomyItem anatomyTerm);
@@ -178,9 +185,8 @@ public interface PublicationRepository extends PaginationParameter {
 
 
     /**
-
-    Figure getFigureById(String zdbID);
-
+     * Figure getFigureById(String zdbID);
+     * <p/>
      * Retrieve the figures that can be found for a given publication and gene.
      *
      * @param geneID
@@ -277,26 +283,24 @@ public interface PublicationRepository extends PaginationParameter {
 //    List<Figure> getFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term);
 
     /**
-    * Retrieve list of figures for a given genotype and anatomy term
-    *
-    * @param geno genotype
-    * @param term anatomy term
-    * @return list of figures.
-    */
+     * Retrieve list of figures for a given genotype and anatomy term
+     *
+     * @param geno genotype
+     * @param term anatomy term
+     * @return list of figures.
+     */
     PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term);
 
     /**
-     *
      * @param genotype Genotype
-     * @param aoTerm ao term
+     * @param aoTerm   ao term
      * @return Number of publications with figures per genotype and anatomy
      */
     PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, AnatomyItem aoTerm);
 
     /**
-     *
      * @param genotype Genotype
-     * @param aoTerm ao term
+     * @param aoTerm   ao term
      * @return Number of publications with figures per genotype and anatomy
      */
     int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, AnatomyItem aoTerm);
@@ -304,31 +308,158 @@ public interface PublicationRepository extends PaginationParameter {
     /**
      * Retrieve the publications for the figures for a given morpholino and anatomy term
      *
-     * @param morpholino  Morpholino
-     * @param aoTerm anatomy Term
+     * @param morpholino Morpholino
+     * @param aoTerm     anatomy Term
      * @return List of publications
      */
     List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(Morpholino morpholino, AnatomyItem aoTerm);
 
     /**
      * Retrieve figures for a given gene and anatomy term.
-     * @param gene Gene
+     *
+     * @param gene        Gene
      * @param anatomyTerm anatomy
      * @return a set of figures
      */
     List<Figure> getFiguresByGeneAndAnatomy(Marker gene, AnatomyItem anatomyTerm);
 
 
-    Journal getJournalByTitle(String journalTitle) ;
+    Journal getJournalByTitle(String journalTitle);
 
     Image getImageById(String zdbID);
 
     /**
      * Retrieve all Publications with Figures for a given marker and ao term.
      * Standard condition and wildtype fish
-     * @param marker marker
+     *
+     * @param marker      marker
      * @param anatomyTerm ao term
      * @return pagination result
      */
     PaginationResult<Publication> getPublicationsWithFigures(Marker marker, AnatomyItem anatomyTerm);
+
+    /**
+     * Retrieve all experiments for a given publication.
+     *
+     * @param publicationID pub id
+     * @return list of experiments
+     */
+    List<ExpressionExperiment> getExperiments(String publicationID);
+
+    /**
+     * Retrieve a list of distinct figures, labels not IDs
+     *
+     * @param publicationID pub id
+     * @return list of labels
+     */
+    List<String> getDistinctFigureLabels(String publicationID);
+
+    /**
+     * Retrieve distinct list of genes that are attributed to a given
+     * publication.
+     *
+     * @param pubID publication id
+     * @return list of markers
+     */
+    List<Marker> getGenesByPublication(String pubID);
+
+    /**
+     * Retrieve distinct list of genes that are attributed to a given
+     * publication and used in an experiment.
+     *
+     * @param pubID publication id
+     * @return list of markers
+     */
+    List<Marker> getGenesByExperiment(String pubID);
+
+
+    /**
+     * Retrieves experiment that pertain to a given
+     * publication
+     * gene
+     * fish
+     *
+     * @param publicationID publication
+     * @param geneZdbID     gene ID
+     * @param fishID        genotype ID
+     * @return list of expression experiment
+     */
+    List<ExpressionExperiment> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID);
+
+    /**
+     * Retrieve list of Genotypes being used in experiments for a given publication
+     *
+     * @param publicationID publication ID
+     * @return list of genotype
+     */
+    List<Genotype> getFishUsedInExperiment(String publicationID);
+
+    /**
+     * Retrieve all experiments that pertain to a given publication.
+     * It adds the Standard and Generic-control
+     *
+     * @param publicationID publication
+     * @return listof experiments
+     */
+    List<Experiment> getExperimentsByPublication(String publicationID);
+
+    /**
+     * Retrieve a genotype for a given nickname.
+     *
+     * @param nickname string
+     * @return genotype
+     */
+    Genotype getGenotypeByNickname(String nickname);
+
+    /**
+     * Retrieve all Genotypes attributed to a given publication.
+     *
+     * @param publicationID pub id
+     * @return list of genoypes
+     */
+    List<Genotype> getNonWTGenotypesByPublication(String publicationID);
+
+    /**
+     * Retrieve antibodies attributes to a given publication
+     *
+     * @param publicationID String
+     * @return list of antibodies
+     */
+    List<Antibody> getAntibodiesByPublication(String publicationID);
+
+
+    /**
+     * Retrieve antibodies by publication and associated gene
+     *
+     * @param publicationID String
+     * @param geneID        String
+     * @return list of antibodies
+     */
+    List<Antibody> getAntibodiesByPublicationAndGene(String publicationID, String geneID);
+
+    /**
+     * Retrieve list of associated genes for given pub and antibody
+     *
+     * @param publicationID String
+     * @param antibodyID    string
+     * @return list of markers
+     */
+    List<Marker> getGenesByAntibody(String publicationID, String antibodyID);
+
+    /**
+     * Retrieve access numbers for given pub and gene.
+     *
+     * @param publicationID string
+     * @param geneID        string
+     * @return list of db links
+     */
+    List<MarkerDBLink> getDBLinksByGene(String publicationID, String geneID);
+
+    /**
+     * Retrieve db link object of a clone for a gene and pub.
+     * @param pubID pub is
+     * @param geneID       gene ID
+     * @return list of MarkerDBLinks
+     */
+    List<MarkerDBLink> getDBLinksForCloneByGene(String pubID, String geneID);
 }

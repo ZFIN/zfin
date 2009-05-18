@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.expression.ExpressionAssay;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.Marker;
@@ -16,6 +17,7 @@ import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.apache.commons.collections.CollectionUtils;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.assertEquals;
 
@@ -105,44 +107,53 @@ public class InfrastructureRepositoryTest {
     }
 
     @Test
-    public void allMapNames(){
+    public void allMapNames() {
         String string = "pdx";
         List<AllNamesFastSearch> all = repository.getAllNameMarkerMatches(string);
-        assertTrue(all != null);
+        assertNotNull(all);
     }
 
     @Test
-    public void allMapNamesGenes(){
+    public void allMapNamesGenes() {
         String string = "pdx";
         MarkerType type = RepositoryFactory.getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
         List<AllMarkerNamesFastSearch> all = repository.getAllNameMarkerMatches(string, type);
-        assertTrue(all != null);
+        assertNotNull(all);
     }
+
     @Test
-    public void replacementZDB(){
+    public void replacementZDB() {
         String replacedZdbID = "ZDB-ANAT-010921-497";
         ReplacementZdbID replacementZdbID = repository.getReplacementZdbId(replacedZdbID);
-        assertTrue(replacementZdbID != null);
+        assertNotNull(replacementZdbID);
 
         assertEquals("ZDB-ANAT-011113-37", replacementZdbID.getReplacementZdbID());
     }
 
     @Test
-    public void dataAliasAbbrev(){
+    public void dataAliasAbbrev() {
         String name = "acerebellar";
-        List<String> list= repository.getDataAliasesWithAbbreviation(name);
-        assertTrue(list != null);
+        List<String> list = repository.getDataAliasesWithAbbreviation(name);
+        assertNotNull(list);
         assertTrue(list.size() == 1);
         assertEquals("fgf8a", list.get(0));
     }
 
     @Test
-    public void anatomyTokens(){
+    public void anatomyTokens() {
         String name = "presumptive";
-        List<String> list= repository.getAnatomyTokens(name);
-        assertTrue(list != null);
+        List<String> list = repository.getAnatomyTokens(name);
+        assertNotNull(list);
         assertTrue(list.size() > 10);
     }
+
+    @Test
+    public void allAssays() {
+        List<ExpressionAssay> list = repository.getAllAssays();
+        assertTrue(CollectionUtils.isNotEmpty(list));
+    }
+
+
 }
 
 

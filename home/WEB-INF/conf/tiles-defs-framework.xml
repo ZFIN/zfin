@@ -10,6 +10,7 @@
     <definition name="home-page-redirect.page" path="/redirect.html"/>
     <definition name="pagination.page" path="/WEB-INF/jsp-include/apg_pagination.jsp"/>
     <definition name="def-pub.page" path="/WEB-INF/jsp-include/def_pub.jsp"/>
+    <definition name="ajax/login-required" path="/WEB-INF/jsp/ajax_login_required.jsp"/>
 
     <definition name="record-not-found.page" extends="main_layout">
         <put name="staticTitle" value="Record Not Found"/>

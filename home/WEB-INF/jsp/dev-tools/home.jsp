@@ -164,4 +164,12 @@ ToDo: enable once we have the session table back in place.
             <a href="/action/dev-tools/zfin-statistics">ZFIN Statistics</a>
         </td>
     </tr>
+    <tr>
+        <td valign=top class="listContentBold">
+            GWT modules:
+        </td>
+        <td colspan="2" class="listContent">
+            <a href="/action/dev-tools/gwt/modules">GWT Modules</a>
+        </td>
+    </tr>
 </table>

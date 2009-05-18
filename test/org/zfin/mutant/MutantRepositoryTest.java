@@ -17,6 +17,10 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.assertEquals;
+
 public class MutantRepositoryTest {
 
     private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
@@ -46,8 +50,8 @@ public class MutantRepositoryTest {
         //  background genotype AB
         String bgZdbID = "ZDB-GENO-960809-7";
         Genotype background = mutantRepository.getGenotypeByID(bgZdbID);
-        Assert.assertNotNull("Background exists", geno.getBackground());
-        Assert.assertEquals("Background AB", background, geno.getBackground());
+        assertNotNull("Background exists", geno.getBackground());
+        assertEquals("Background AB", background, geno.getBackground());
 
     }
 
@@ -60,7 +64,7 @@ public class MutantRepositoryTest {
         AnatomyItem ai = ar.getAnatomyItem(name);
         List<Morpholino> morphs =
                 mutantRepository.getPhenotypeMorhpolinosByAnatomy(ai, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        Assert.assertNotNull("morphs exist", morphs);
+        assertNotNull("morphs exist", morphs);
 
     }
 
@@ -72,7 +76,7 @@ public class MutantRepositoryTest {
         AnatomyItem ai = ar.getAnatomyItem(name);
         PaginationResult<GenotypeExperiment> morphs =
                 mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, true, null);
-        Assert.assertNotNull("morphs exist", morphs.getPopulatedResults());
+        assertNotNull("morphs exist", morphs.getPopulatedResults());
 
     }
 
@@ -82,8 +86,8 @@ public class MutantRepositoryTest {
         String name = "ribosome";
         MutantRepository mr = RepositoryFactory.getMutantRepository();
         List<GoTerm> goTerms = mr.getGoTermsByName(name);
-        Assert.assertNotNull(goTerms);
-        Assert.assertTrue(goTerms.size()>0);
+        assertNotNull(goTerms);
+        assertTrue(goTerms.size()>0);
 
         boolean findKnown = false ;
         for(GoTerm term: goTerms){
@@ -92,7 +96,7 @@ public class MutantRepositoryTest {
             }
         }
 
-        Assert.assertTrue(findKnown);
+        assertTrue(findKnown);
     }
 
     @Test
@@ -101,8 +105,8 @@ public class MutantRepositoryTest {
         String name = "red brown";
         MutantRepository mr = RepositoryFactory.getMutantRepository();
         List<Term> terms = mr.getQualityTermsByName(name);
-        Assert.assertNotNull(terms);
-        Assert.assertTrue(terms.size()>0);
+        assertNotNull(terms);
+        assertTrue(terms.size()>0);
 
         boolean findKnown = false ;
         for(Term term: terms){
@@ -112,6 +116,13 @@ public class MutantRepositoryTest {
         }
 
         Assert.assertTrue(findKnown);
+    }
+
+    @Test
+    public void retrieveAllWildtypeGenotypes(){
+        MutantRepository mr = RepositoryFactory.getMutantRepository();
+        List<Genotype> terms = mr.getAllWildtypeGenotypes();
+        assertNotNull(terms);
     }
 
 

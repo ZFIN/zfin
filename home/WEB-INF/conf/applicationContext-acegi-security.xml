@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
-        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <!--
         Acegi Security configuration.
@@ -16,7 +15,8 @@
             <value>
                 CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
                 PATTERN_TYPE_APACHE_ANT
-                /**=channelProcessingFilter,concurrentSessionHandlingFilter,httpSessionContextIntegrationFilter,logoutFilter,authenticationProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,authorizationProcessingFilter,checkUpdates
+                /action/**=channelProcessingFilter,concurrentSessionHandlingFilter,httpSessionContextIntegrationFilter,logoutFilter,authenticationProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,authorizationProcessingFilter,checkUpdates
+                /ajax/**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,exceptionTranslationFilterAjax,authorizationProcessingFilter,checkUpdates
             </value>
         </property>
     </bean>
@@ -140,6 +140,19 @@
         </property>
     </bean>
 
+    <bean id="exceptionTranslationFilterAjax" class="org.acegisecurity.ui.ExceptionTranslationFilter">
+        <property name="authenticationEntryPoint">
+            <bean class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+                <property name="loginFormUrl" value="/action/ajax/login-required"/>
+            </bean>
+        </property>
+        <property name="accessDeniedHandler">
+            <bean class="org.acegisecurity.ui.AccessDeniedHandlerImpl">
+                <property name="errorPage" value="/javascript/ajax-lib/ajax-authorization-error.html"/>
+            </bean>
+        </property>
+    </bean>
+
     <bean id="authorizationProcessingFilter" class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="accessDecisionManager">
@@ -158,7 +171,8 @@
                 /action/webdriver/secure/*=root,submit
                 /action/antibody/create=root
                 /action/antibody/update-details=root
-                
+                /ajax/session-save=root
+                /ajax/curation=root
             </value>
         </property>
     </bean>

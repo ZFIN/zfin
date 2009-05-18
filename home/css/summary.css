@@ -66,6 +66,15 @@ table.groupstripes tr.even { background-color: transparent; }
 table.groupstripes tr.oddgroup { background-color: #eee; }
 table.groupstripes tr.evengroup { background-color: #fff; }
 
+/* large striped (one per group) summary table styling with a hover feature*/
+table.groupstripes-hover { border: 1px solid #ccc; }
+table.groupstripes-hover tr.newgroup { border-top: 1px solid #ccc; }
+table.groupstripes-hover tr.odd { background-color: transparent; }
+table.groupstripes-hover tr.even { background-color: transparent; }
+table.groupstripes-hover tr.oddgroup { background-color: #eee; }
+table.groupstripes-hover tr.evengroup { background-color: #fff; }
+table.groupstripes-hover tr.experiment-row:hover { background-color: #CCFFFF; }
+
 /* solid block summary table styling */
 table.solidblock tr.newgroup { border-top: 1px solid #ccc; }
 table.solidblock tr.odd, tr.even { background-color: #eee; }

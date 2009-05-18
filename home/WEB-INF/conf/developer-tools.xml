@@ -31,9 +31,25 @@
                 <prop key="/dev-tools/view-user-request-tracks">userRequestTrack</prop>
                 <prop key="/dev-tools/view-single-user-request-tracking">singleUserRequestTrack</prop>
                 <prop key="/dev-tools/zfin-statistics">zfinStatistics</prop>
+                <prop key="/dev-tools/gwt/modules">gwtModules</prop>
+                <prop key="/dev-tools/gwt/fx-curation">fxCuration</prop>
+                <prop key="/dev-tools/gwt/lookup">lookup</prop>
                 <prop key="/dev-tools/svn-version">devToolsDatabaseInfo</prop>
             </props>
         </property>
+    </bean>
+
+    <!-- Make sure to use scope=prototype to instantiate a new object to make the call thread-safe!-->
+    <bean name="gwtModules" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="gwt-modules" />
+    </bean>
+
+    <bean name="fxCuration" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="fx-curation" />
+    </bean>
+
+    <bean name="lookup" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="lookup" />
     </bean>
 
     <bean name="log4jConfiguration" class="org.zfin.framework.presentation.Log4jConfigurationController"/>
@@ -80,6 +96,7 @@
                 <prop key="/dev-tools/view-global-session-info">viewGlobalSessionInfoHandler</prop>
                 <prop key="/dev-tools/view-hibernate-info">viewHibernateInfoHandler</prop>
                 <prop key="/dev-tools/svn-version">svnVersionHandler</prop>
+                <prop key="/dev-tools/gwt/fx-curation">fxCurationHandler</prop>
             </props>
         </property>
     </bean>

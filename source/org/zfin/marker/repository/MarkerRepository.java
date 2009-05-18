@@ -154,4 +154,12 @@ public interface MarkerRepository {
      * @return list of publications
      */
     List<Publication> getHighQualityProbePublications(AnatomyItem anatomyTerm);
+
+    /**
+     * Retrieve marker types by marker type groups
+     * @param typeGroup type group
+     * @return list of marker types
+     */
+    List<MarkerType> getMarkerTypesByGroup(Marker.TypeGroup typeGroup);
+
 }

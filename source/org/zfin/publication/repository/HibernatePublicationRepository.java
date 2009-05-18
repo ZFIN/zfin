@@ -13,11 +13,10 @@ import org.zfin.database.SearchUtil;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.expression.Experiment;
+import org.zfin.expression.ExpressionExperiment;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerStatistic;
-import org.zfin.marker.Clone;
+import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
@@ -25,6 +24,10 @@ import org.zfin.mutant.Morpholino;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.antibody.Antibody;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.ForeignDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,6 +198,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query query = session.createQuery(hql);
         query.setString("zdbID", term.getZdbID());
         ScrollableResults results = query.scroll();
+
 
         List<Object[]> list = new ArrayList<Object[]>();
         while (results.next() && results.getRowNumber() < maxRow) {
@@ -767,5 +771,270 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         return new PaginationResult<Publication>((List<Publication>) pubs.list());
     }
+
+    @SuppressWarnings("unchecked")
+    public List<ExpressionExperiment> getExperiments(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select experiment from ExpressionExperiment experiment" +
+                "       left join experiment.marker as gene " +
+                "     where experiment.publication.zdbID = :pubID " +
+                "    order by gene.abbreviationOrder, " +
+                "             experiment.genotypeExperiment.genotype.nickname, " +
+                "             experiment.assay.displayOrder ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+
+        return (List<ExpressionExperiment>) query.list();
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getDistinctFigureLabels(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select figure.label from Figure figure" +
+                "     where figure.publication.zdbID = :pubID " +
+                "    order by figure.orderingLabel ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+
+        return (List<String>) query.list();
+
+    }
+
+    /**
+     * Retrieve distinct list of genes (GENEDOM_EFG) that are attributed to a given
+     * publication.
+     *
+     * @param pubID publication id
+     * @return list of markers
+     */
+    // ToDo: There must be a better way to retrieve GENEs versus all markers.
+    // GENE should be a subclass of Marker
+    @SuppressWarnings("unchecked")
+    public List<Marker> getGenesByPublication(String pubID) {
+        Session session = HibernateUtil.currentSession();
+
+        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_EFG);
+
+        String hql = "select distinct marker from Marker marker, PublicationAttribution pub" +
+                "     where pub.dataZdbID = marker.zdbID" +
+                "           and pub.publication.zdbID = :pubID " +
+                "           and marker.markerType in (:markerType)  " +
+                "    order by marker.abbreviationOrder ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setParameterList("markerType", markerTypes);
+
+        return (List<Marker>) query.list();
+    }
+
+    public List<Marker> getGenesByExperiment(String pubID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct marker from Marker marker, ExpressionExperiment experiment" +
+                "     where experiment.publication.zdbID = :pubID" +
+                "            and experiment.marker = marker " +
+                "           and marker.markerType.name = :type  " +
+                "    order by marker.abbreviationOrder ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setString("type", Marker.Type.GENE.toString());
+
+        return (List<Marker>) query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ExpressionExperiment> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select experiment from ExpressionExperiment experiment";
+        hql += "       left join experiment.marker as gene ";
+        if (fishID != null) {
+            hql += "       join experiment.genotypeExperiment.genotype geno";
+        }
+        hql += "     where experiment.publication.zdbID = :pubID ";
+        if (geneZdbID != null)
+            hql += "           and experiment.marker.zdbID = :geneID ";
+        if (fishID != null) {
+            hql += "           and geno.zdbID = :fishID ";
+        }
+        hql += "    order by gene.abbreviationOrder, " +
+                "             experiment.genotypeExperiment.genotype.nickname, " +
+                "             experiment.assay.displayOrder ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+        if (geneZdbID != null)
+            query.setString("geneID", geneZdbID);
+        if (fishID != null)
+            query.setString("fishID", fishID);
+
+        return (List<ExpressionExperiment>) query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Genotype> getFishUsedInExperiment(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct fish from Genotype fish, ExpressionExperiment ee," +
+                "                               GenotypeExperiment genox " +
+                "     where ee.publication.zdbID = :pubID " +
+                "           and ee.genotypeExperiment = genox " +
+                "           and genox.genotype = fish" +
+                "    order by fish.handle ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+
+        return (List<Genotype>) query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Experiment> getExperimentsByPublication(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria crit = session.createCriteria(Experiment.class);
+        crit.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
+        List<Experiment> experimentList = (List<Experiment>) crit.list();
+
+
+        String hql = "select distinct experiment from Experiment experiment" +
+                "     where experiment.publication.zdbID = :pubID" +
+                "    order by experiment.name ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+
+        experimentList.addAll(query.list());
+        return experimentList;
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public Genotype getGenotypeByNickname(String nickname) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria crit = session.createCriteria(Genotype.class);
+        crit.add(Restrictions.eq("nickname", nickname));
+        return (Genotype) crit.uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Genotype> getNonWTGenotypesByPublication(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct geno from Genotype geno, PublicationAttribution record" +
+                "     where record.publication.zdbID = :pubID " +
+                "           and record.dataZdbID = geno.zdbID" +
+                "    order by geno.handle ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+
+        return (List<Genotype>) query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Antibody> getAntibodiesByPublication(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct antibody from Antibody antibody, PublicationAttribution record" +
+                "     where record.publication.zdbID = :pubID " +
+                "           and record.dataZdbID = antibody.zdbID" +
+                "    order by antibody.abbreviationOrder ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+
+        return (List<Antibody>) query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Antibody> getAntibodiesByPublicationAndGene(String publicationID, String geneID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct antibody from Antibody antibody, PublicationAttribution record, MarkerRelationship rel" +
+                "     where record.publication.zdbID = :pubID " +
+                "           and record.dataZdbID = antibody.zdbID" +
+                "           and rel.firstMarker.zdbID = :geneID " +
+                "           and rel.secondMarker = antibody " +
+                "    order by antibody.abbreviationOrder ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+        query.setString("geneID", geneID);
+
+        return (List<Antibody>) query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Marker> getGenesByAntibody(String publicationID, String antibodyID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct gene from Marker gene, PublicationAttribution record, MarkerRelationship rel" +
+                "     where record.publication.zdbID = :pubID " +
+                "           and record.dataZdbID = gene.zdbID" +
+                "           and rel.firstMarker = gene " +
+                "           and rel.secondMarker.zdbID = :antibodyID " +
+                "    order by gene.abbreviationOrder ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+        query.setString("antibodyID", antibodyID);
+
+        return (List<Marker>) query.list();
+    }
+
+    /**
+     * Retrieve access numbers for given pub and gene.
+     *
+     * @param publicationID string
+     * @param geneID        string
+     * @return list of db links
+     */
+    @SuppressWarnings("unchecked")
+    public List<MarkerDBLink> getDBLinksByGene(String publicationID, String geneID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct link from MarkerDBLink link, PublicationAttribution record" +
+                "     where record.publication.zdbID = :pubID " +
+                "           and record.dataZdbID = :geneID" +
+                "           and link.marker = :geneID " +
+                "           and link.referenceDatabase.foreignDB.dbName = :foreignDB " +
+                "    order by link.accessionNumber ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+        query.setString("geneID", geneID);
+        query.setString("foreignDB", ForeignDB.AvailableName.GENBANK.toString());
+
+        return (List<MarkerDBLink>) query.list();
+    }
+
+    /**
+     * Retrieve db link object of a clone for a gene and pub.
+     * @param pubID pub is
+     * @param geneID       gene ID
+     * @return list of MarkerDBLinks
+     */
+    @SuppressWarnings("unchecked")
+    public List<MarkerDBLink> getDBLinksForCloneByGene(String pubID, String geneID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct link from MarkerDBLink link, PublicationAttribution record, " +
+                "                               Marker marker, Clone clone, MarkerRelationship mrel " +
+                "     where record.publication.zdbID = :pubID " +
+                "           and record.dataZdbID = :geneID" +
+                "           and link.marker.zdbID = clone.zdbID " +
+                "           and marker.zdbID = :geneID " +
+                "           and mrel.firstMarker.zdbID = :geneID " +
+                "           and mrel.secondMarker.zdbID = clone.id " +
+                "           and mrel.type = :type " +
+                "           and link.referenceDatabase.foreignDB.dbName = :foreignDB " +
+                "    order by link.accessionNumber ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setString("geneID", geneID);
+        query.setString("foreignDB", ForeignDB.AvailableName.GENBANK.toString());
+        query.setParameter("type", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+
+        return (List<MarkerDBLink>) query.list();
+    }
+
 
 }

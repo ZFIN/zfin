@@ -1,5 +1,7 @@
 package org.zfin.expression;
 
+import org.zfin.publication.Publication;
+
 import java.util.Set;
 import java.util.HashSet;
 
@@ -13,6 +15,7 @@ public class Experiment {
 
     private String zdbID;
     private String name;
+    private Publication publication;
     private Set<ExperimentCondition> experimentConditions;
 
     public String getZdbID() {
@@ -29,6 +32,14 @@ public class Experiment {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Publication getPublication() {
+        return publication;
+    }
+
+    public void setPublication(Publication publication) {
+        this.publication = publication;
     }
 
     public Set<ExperimentCondition> getExperimentConditions() {

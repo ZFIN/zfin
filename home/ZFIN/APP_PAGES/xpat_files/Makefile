@@ -26,7 +26,7 @@ GENERICS = xpatview.apg xpatselect.apg anatdict.apg \
 	xpatexdisplayname.apg getPubStructureListItem.apg xpatselectanatverify.apg \
 	xpatcurexpssdisplayname.apg xpatcurupdate.apg xpatcurimage.apg \
 	xpatcurexperiment.apg xpatcurcondition.apg xpatcurfigure.apg \
-	xpatcurexpression.apg xpatcurpanel.apg xpatcurstructure.apg  \
+	xpatcurpanel.apg xpatcurstructure.apg  \
 	fxpubdisplay.apg fxfigureview.apg  fxfiggenelist.apg \
 	fxfiganatlist.apg  fxfigstgrng.apg fxallfigures.apg \
 	fxassayabbrev.apg xpatselect_summaryresults.apg xpatselect_detailedresults.apg \

@@ -11,7 +11,9 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Order;
 import org.zfin.ExternalNote;
+import org.zfin.expression.ExpressionAssay;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
@@ -169,7 +171,23 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         session.save(up);
     }
 
-    public void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person,String newValue, String oldValue) {
+    public void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments) {
+        Person submitter = Person.getCurrentSecurityUser();
+        Session session = HibernateUtil.currentSession();
+
+        Updates update = new Updates();
+        update.setRecID(recID);
+        update.setFieldName(fieldName);
+        update.setSubmitterID(submitter.getZdbID());
+        update.setSubmitterName(submitter.getFullName());
+        update.setComments(comments);
+        update.setNewValue(newValue);
+        update.setOldValue(oldValue);
+        update.setWhenUpdated(new Date() );
+        session.save(update);
+    }
+
+    public void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person, String newValue, String oldValue) {
         Session session = HibernateUtil.currentSession();
 
         Updates up = new Updates();
@@ -248,7 +266,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:datazdbID and ra.sourceZdbID=:zdbID");
         query.setParameter("zdbID", zdbID);
-         query.setParameter("datazdbID", datazdbID);
+        query.setParameter("datazdbID", datazdbID);
         return query.executeUpdate();
     }
 
@@ -274,7 +292,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public List<AllNamesFastSearch> getAllNameMarkerMatches(String string) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(AllMarkerNamesFastSearch.class);
-        criteria.add(Restrictions.like("nameLowerCase", "%"+string+"%"));
+        criteria.add(Restrictions.like("nameLowerCase", "%" + string + "%"));
         return (List<AllNamesFastSearch>) criteria.list();
 
     }
@@ -341,6 +359,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         sqlQuery.addScalar("zdbID");
         sqlQuery.setParameter("name", name.toLowerCase());
         return (List<String>) sqlQuery.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ExpressionAssay> getAllAssays() {
+        Session session = HibernateUtil.currentSession();
+        Criteria crit = session.createCriteria(ExpressionAssay.class);
+        crit.addOrder(Order.asc("displayOrder"));
+        return (List<ExpressionAssay>) crit.list();
     }
 }
 

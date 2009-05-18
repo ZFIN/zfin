@@ -4,6 +4,7 @@
 package org.zfin.infrastructure.repository;
 
 import org.zfin.ExternalNote;
+import org.zfin.expression.ExpressionAssay;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -63,7 +64,9 @@ public interface InfrastructureRepository {
 
     void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, String submitterID, String submitterName);
 
-    void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person,String newValue,String oldValue);
+    void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments);
+
+    void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person, String newValue, String oldValue);
 //    void deleteRecordAttribution(RecordAttribution recordAttribution);
 
     //  RecordAttribution getRecordAttribution(String zdbID);
@@ -73,6 +76,7 @@ public interface InfrastructureRepository {
     MarkerAlias getMarkerAliasByID(String zdbID);
 
     int deleteRecordAttributionForPub(String zdbID);
+
     public int removeRecordAttributionForData(String zdbID, String datazdbID);
 
     int deleteRecordAttributionByDataZdbID(List<String> dataZdbIDs);
@@ -96,6 +100,7 @@ public interface InfrastructureRepository {
 
     /**
      * Retrieves Markers that match a given string (contains).
+     *
      * @param string search string
      * @return list of AllNamesFastSearch
      */
@@ -103,14 +108,16 @@ public interface InfrastructureRepository {
 
     /**
      * Retrieves Markers that match a given string (contains) for a specified marker type.
+     *
      * @param string search string
-     * @param type marker type
+     * @param type   marker type
      * @return list of AllNamesFastSearch
      */
     List<AllMarkerNamesFastSearch> getAllNameMarkerMatches(String string, MarkerType type);
 
     /**
-     * Retrieve the replaced zdbID for a given zdbID. 
+     * Retrieve the replaced zdbID for a given zdbID.
+     *
      * @param oldZdbID zdb ID
      * @return Replacement object
      */
@@ -118,6 +125,7 @@ public interface InfrastructureRepository {
 
     /**
      * Retrieve all data aliases for a given zdbID.
+     *
      * @param zdbID zdb ID
      * @return List of data aliases
      */
@@ -126,13 +134,15 @@ public interface InfrastructureRepository {
     /**
      * Retrieve all data aliases for a given zdbID. This method
      * also retrieves abbreviation info for an alias
+     *
      * @param zdbID zdb ID
      * @return List of data aliases
      */
     List<String> getDataAliasesWithAbbreviation(String zdbID);
 
     /**
-     * Retrieve anatomy terms (zdbIDs) by token. 
+     * Retrieve anatomy terms (zdbIDs) by token.
+     *
      * @param name string
      * @return list of strings
      */
@@ -140,11 +150,18 @@ public interface InfrastructureRepository {
 
     /**
      * Retrieve zdbIDs from entities that best match a given name
+     *
      * @param name string
      * @return list of strings
      */
     List<String> getBestNameMatch(String name);
 
+    /**
+     * Retrieves all Assays.
+     *
+     * @return list of assays.
+     */
+    List<ExpressionAssay> getAllAssays();
 }
 
 

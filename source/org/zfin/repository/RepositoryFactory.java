@@ -8,6 +8,8 @@ import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.audit.repository.HibernateAuditLogRepository;
 import org.zfin.expression.repository.ExpressionSummaryRepository;
 import org.zfin.expression.repository.HibernateExpressionSummaryRepository;
+import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.expression.repository.HibernateExpressionRepository;
 import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.repository.HibernateMarkerRepository;
@@ -48,6 +50,7 @@ public class RepositoryFactory {
     private static SequenceRepository seqRep;
     private static OrthologyRepository orthoRep;
     private static QuicksearchRepository quicksearchRep;
+    private static ExpressionRepository expressionRep;
 
     public static ExpressionSummaryRepository getExpressionSummaryRepository() {
         if (xpatsumRep == null) {
@@ -193,5 +196,15 @@ public class RepositoryFactory {
 
     public static void setQuicksearchRepository(QuicksearchRepository quicksearchRep) {
         RepositoryFactory.quicksearchRep = quicksearchRep;
+    }
+
+    public static ExpressionRepository getExpressionRepository() {
+        if (expressionRep == null)
+            expressionRep = new HibernateExpressionRepository();
+        return expressionRep;
+    }
+
+    public static void setExpressionRepository(ExpressionRepository expressionRep) {
+        RepositoryFactory.expressionRep = expressionRep;
     }
 }

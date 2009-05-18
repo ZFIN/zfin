@@ -6,10 +6,14 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.antibody.Antibody;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureService;
+import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.Experiment;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
@@ -44,8 +48,7 @@ public class PublicationRepositoryTest {
     }
 
 
-
-//    @Test
+    //    @Test
     public void retrieveSinglePublication() {
         Session session = HibernateUtil.currentSession();
         session.beginTransaction();
@@ -100,10 +103,10 @@ public class PublicationRepositoryTest {
         String zdbID = "ZDB-ANAT-010921-591";
         AnatomyItem term = new AnatomyItem();
         term.setZdbID(zdbID);
-        PaginationResult<MarkerStatistic> paginationResult = pr.getAllExpressedMarkers(term, 0, 5) ;
+        PaginationResult<MarkerStatistic> paginationResult = pr.getAllExpressedMarkers(term, 0, 5);
         List<MarkerStatistic> list = paginationResult.getPopulatedResults();
         assertEquals("5 genes", 5, paginationResult.getPopulatedResults().size());
-        assertTrue( list.size() < paginationResult.getTotalCount());
+        assertTrue(list.size() < paginationResult.getTotalCount());
     }
 
     /**
@@ -114,10 +117,10 @@ public class PublicationRepositoryTest {
         String termName = "somite";
         AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
         AnatomyItem term = aoRepository.getAnatomyItem(termName);
-        int number1 = pr.getAllExpressedMarkers(term,0,5).getTotalCount();
-        int number2 = pr.getAllExpressedMarkers(term,12,20).getTotalCount();
+        int number1 = pr.getAllExpressedMarkers(term, 0, 5).getTotalCount();
+        int number2 = pr.getAllExpressedMarkers(term, 12, 20).getTotalCount();
         assertTrue(number1 > 0);
-        assertEquals(number1 ,number2);
+        assertEquals(number1, number2);
     }
 
     @Test
@@ -180,11 +183,11 @@ public class PublicationRepositoryTest {
         String aoZdbID = "ZDB-ANAT-050711-66 ";
         AnatomyItem item = new AnatomyItem();
         item.setZdbID(aoZdbID);
-        PaginationResult<Genotype> genotypeResult= mutantRepository.getGenotypesByAnatomyTerm(item, false, 4);
+        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, 4);
 //        assertEquals("8 genes", 4, list.size());
         assertNotNull(genotypeResult.getPopulatedResults());
-        assertEquals(genotypeResult.getPopulatedResults().size(),4);
-        assertTrue(genotypeResult.getTotalCount()> 4);
+        assertEquals(genotypeResult.getPopulatedResults().size(), 4);
+        assertTrue(genotypeResult.getTotalCount() > 4);
     }
 
     @Test
@@ -279,8 +282,8 @@ public class PublicationRepositoryTest {
 
         assertNotNull(genotypeResult);
         assertNotNull(genotypeResult.getPopulatedResults());
-        assertEquals(genotypeResult.getPopulatedResults().size(),5);
-        assertTrue(genotypeResult.getTotalCount()> 5);
+        assertEquals(genotypeResult.getPopulatedResults().size(), 5);
+        assertTrue(genotypeResult.getTotalCount() > 5);
 
     }
 
@@ -327,7 +330,7 @@ public class PublicationRepositoryTest {
         AnatomyItem item = new AnatomyItem();
         item.setZdbID(aoZdbID);
         int publicationCount = pr.getNumPublicationsWithFiguresPerGenotypeAndAnatomy(geno, item);
-        assertTrue(publicationCount >0 );
+        assertTrue(publicationCount > 0);
 //        assertEquals("1 publication", 1, publications.size());
 
     }
@@ -386,6 +389,127 @@ public class PublicationRepositoryTest {
 
 
 
-}
+    @Test
+    public void getMarkersPerPublication() {
+        String zdbID = "ZDB-PUB-990507-16";
 
+        List<Marker> experiments = pr.getGenesByPublication(zdbID);
+        assertTrue(experiments != null);
+    }
+
+    @Test
+    public void getFigureLabels() {
+        String zdbID = "ZDB-PUB-990507-16";
+
+        List<String> experiments = pr.getDistinctFigureLabels(zdbID);
+        assertTrue(experiments != null);
+    }
+
+    @Test
+    public void getExpressionExperiments() {
+        String zdbID = "ZDB-PUB-990507-16";
+
+        List<ExpressionExperiment> experiments = pr.getExperiments(zdbID);
+        assertTrue(experiments != null);
+        // alcam
+        String geneID = "ZDB-GENE-990415-30";
+        experiments = pr.getExperimentsByGeneAndFish(zdbID, geneID, null);
+        assertTrue(experiments != null);
+
+        // alcam and WT
+        String fishName = "WT";
+        experiments = pr.getExperimentsByGeneAndFish(zdbID, geneID, fishName);
+        assertTrue(experiments != null);
+    }
+
+    @Test
+    public void getFishByPublication() {
+        String zdbID = "ZDB-PUB-990507-16";
+
+        List<Genotype> experiments = pr.getFishUsedInExperiment(zdbID);
+        assertTrue(experiments != null);
+    }
+
+    @Test
+    public void getExperimentsByPublications() {
+        String zdbID = "ZDB-PUB-990507-16";
+
+        List<Experiment> experiments = pr.getExperimentsByPublication(zdbID);
+        assertTrue(experiments != null);
+    }
+
+    @Test
+    public void getWTGenotype() {
+        String nickname = "WT";
+
+        Genotype geno = pr.getGenotypeByNickname(nickname);
+        assertTrue(geno != null);
+    }
+
+    @Test
+    public void getGenotypeByPublicationAttribution() {
+        String zdbID = "ZDB-PUB-990507-16";
+
+        List<Genotype> genotypes = pr.getNonWTGenotypesByPublication(zdbID);
+        assertTrue(genotypes != null);
+    }
+
+    @Test
+    public void getAntibodiesByPublicationAttribution() {
+        String zdbID = "ZDB-PUB-990507-16";
+
+        List<Antibody> antibodyList = pr.getAntibodiesByPublication(zdbID);
+        assertTrue(antibodyList != null);
+    }
+
+    @Test
+    public void getAntibodiesByPublicationAttributionAndGene() {
+        String zdbID = "ZDB-PUB-990507-16";
+        String geneID = "ZDB-GENE-990415-30";
+
+        List<Antibody> antibodyList = pr.getAntibodiesByPublicationAndGene(zdbID, geneID);
+        assertTrue(antibodyList != null);
+    }
+
+    @Test
+    public void getGenesByPublicationAttributionAndAntibody() {
+        String zdbID = "ZDB-PUB-990507-16";
+        // zn-5
+        String antibodyID = "ZDB-ATB-081002-19 ";
+
+        List<Marker> antibodyList = pr.getGenesByAntibody(zdbID, antibodyID);
+        assertTrue(antibodyList != null);
+    }
+
+    @Test
+    public void getGenesByPublicationAttribution() {
+        String zdbID = "ZDB-PUB-080306-3";
+
+        List<Marker> geneList = pr.getGenesByPublication(zdbID);
+        assertTrue(geneList != null);
+    }
+
+    @Test
+    public void getAccessionBYGenesByPublication() {
+        String zdbID = "ZDB-PUB-990507-16";
+        // alcam
+        String geneID = "ZDB-GENE-990415-30";
+
+        List<MarkerDBLink> antibodyList = pr.getDBLinksByGene(zdbID, geneID);
+        assertTrue(antibodyList != null);
+    }
+
+    @Test
+    public void getAccessionForAssociatedEst() {
+        String zdbID = "ZDB-PUB-990507-16";
+        // kif11 has one EST as a probe 
+        String geneID = "ZDB-GENE-020426-1";
+
+        List<MarkerDBLink> cloneDBLinks = pr.getDBLinksForCloneByGene(zdbID, geneID);
+        assertTrue(cloneDBLinks != null);
+    }
+
+
+
+}
 

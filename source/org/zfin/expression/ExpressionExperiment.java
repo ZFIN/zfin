@@ -5,16 +5,18 @@ import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.publication.Publication;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.anatomy.DevelopmentStage;
 
 import java.util.Set;
+import java.util.HashSet;
 
 /**
- * Expression ExpressionExperiment.
+ * Main Experiment object that contains expression annotations.
  */
 public class ExpressionExperiment {
 
     private String zdbID;
-    private String publicationID;
     private String cloneID;
     private String geneID;
     private Publication publication;
@@ -25,6 +27,7 @@ public class ExpressionExperiment {
     private Marker probe;
     private ExpressionAssay assay;
     private Antibody antibody;
+    private MarkerDBLink markerDBLink;
 
     public String getZdbID() {
         return zdbID;
@@ -40,14 +43,6 @@ public class ExpressionExperiment {
 
     public void setGeneID(String geneID) {
         this.geneID = geneID;
-    }
-
-    public String getPublicationID() {
-        return publicationID;
-    }
-
-    public void setPublicationID(String publicationID) {
-        this.publicationID = publicationID;
     }
 
     public Publication getPublication() {
@@ -120,5 +115,39 @@ public class ExpressionExperiment {
 
     public void setAssay(ExpressionAssay assay) {
         this.assay = assay;
+    }
+
+    public MarkerDBLink getMarkerDBLink() {
+        return markerDBLink;
+    }
+
+    public void setMarkerDBLink(MarkerDBLink markerDBLink) {
+        this.markerDBLink = markerDBLink;
+    }
+
+    /**
+     * Distinct expressions are combinations of
+     * 1) Figure
+     * 2) Stage Range
+     * You can add multiple structures to such a combination.
+     *
+     * @return number of distinct expressions
+     */
+    public int getDistinctExpressions() {
+        HashSet<String> distinctSet = new HashSet<String>();
+        if (expressionResults != null) {
+            for (ExpressionResult expression : expressionResults) {
+                DevelopmentStage startStage = expression.getStartStage();
+                DevelopmentStage endStage = expression.getEndStage();
+                Set<Figure> figures = expression.getFigures();
+                for (Figure figure : figures) {
+                    StringBuilder sb = new StringBuilder(figure.getZdbID());
+                    sb.append(startStage);
+                    sb.append(endStage);
+                    distinctSet.add(sb.toString());
+                }
+            }
+        }
+        return distinctSet.size();
     }
 }
