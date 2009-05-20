@@ -88,7 +88,9 @@ OUTPUT VARS:
 <?MIVAR COND=$(NC,$recattrsrctype,standard) NAME=cit_G_filter>and recattrib_source_type = '$recattrsrctype'<?/MIVAR>
 
 <?MIVAR NAME=pub_G_display>links<?/MIVAR>
-
+<?MISQL SQL="select count (recattrib_data_zdb_id) from record_attribution where recattrib_data_zdb_id='$OID'"><?/MISQL>
+  <?MIVAR NAME=$recattribcount>$1<?/MIVAR>
+ 
 <?MIBLOCK COND="$(EC,$rtype,xpat)">
   <?MIBLOCK COND="$(NXST,$total_count)">
    <?MIVAR NAME=$total_count>$pubcount<?/MIVAR>
@@ -239,6 +241,11 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 		 from webPages 
 		 where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   
+  <?MIBLOCK COND="$(=,$recattribcount,0)">
+<form><center><font size=4>
+        <?MIVAR> <b>Requested ID not found in ZFIN.<?/MIVAR></font>
+       </form>
+<?MIELSE>
   <?MISQL COND="$(NXST,$UPDATE)"  SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
   <?MICOMMENT>since genotype records are not like markers or images, they do not
@@ -310,7 +317,9 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
    
 
 <TABLE width=100%><TR><TD bgcolor=#ccccccc>
-<font size=+2><b>CITATIONS</b></font>
+<?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg')
+                 from webPages where ID='aa-cittotalcount.apg';">$1<?/MISQL>
+<font size=+2><b>CITATIONS</b></font> <?MIVAR>($citlink_total_count total) <?/MIVAR>
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
   <br>$1 Citation Count
@@ -321,10 +330,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	marker, locus and fish page will pass along total_count. Only for 
 	the attribution list, need to recalculate the pubs 
 	for the data items. *** <?/MICOMMENT>
-
 <?MIBLOCK COND="$(XST,$total_count)">
-   <?MIVAR>($total_count total)<?/MIVAR>
-
 <?MIELSE>
   <?MIBLOCK COND="$(NXST,$attribtype)">
     <?MIBLOCK COND="$(NE,$rtype,xpat)">
@@ -341,16 +347,16 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
     <?MIELSE>
       <br>
       <i>Click on a publication to view summary of gene expression reported.</i>
-    <?/MIBLOCK>      
-  <?/MIBLOCK>
-<?/MIBLOCK>
+    <?/MIBLOCK>  
+<?/MIBLOCK>    
+<?/MIBLOCK>    
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
   <br>$1 Citation Count End
 <?/MISQL>
 </TD></TR></TABLE>
 <p>
-
+<?MIVAR NAME=pub_G_display>links<?/MIVAR>
 <form>
 <?MICOMMENT> *** ------------- Title display------------ *** <?/MICOMMENT>
 <font size=+1><b>
@@ -499,7 +505,6 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
           <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
 <?/MISQL>
 <?/MIBLOCK>
-    
       <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
 
     <?/MIBLOCK>
@@ -993,6 +998,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?MISQL COND=$(EC,1,0) SQL="drop table all_curation_pubs_temp;"><?/MISQL>
 
 <?/MIBLOCK><?MICOMMENT> -- end of $AUTHORIZED check -- <?/MICOMMENT>
+<?/MIBLOCK>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 <?MIBLOCK COND="$(XST,$fish_table_created)">
   <?MICOMMENT> *** delete temp table, with dummy insert because otherwise it's an illegal statement  *** <?/MICOMMENT>
@@ -1001,6 +1007,5 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 drop table fish_search_list;">
   <?/MISQL>
 <?/MIBLOCK>
-
 </HTML>
 
