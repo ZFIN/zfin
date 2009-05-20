@@ -27,7 +27,7 @@
     <?MIVAR>
         $(UNSETVAR,citlink_pub_count)
         $(UNSETVAR,citlink_unpub_count)
-        $(UNSETVAR,citlink_total_count)
+<?MICOMMENT>        $(UNSETVAR,citlink_total_count)<?/MICOMMENT>
     <?/MIVAR>
 
 <?/MIBLOCK>
