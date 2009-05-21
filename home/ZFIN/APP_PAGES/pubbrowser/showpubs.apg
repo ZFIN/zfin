@@ -197,9 +197,9 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
         window.location.replace(url);
       }
   
-      function result_order(pubOrder,total_count,count_of_real_pub,evidence)
+      function result_order(pubOrder,total_count,count_of_real_pub,evidence,infer,goterm,goflag)
       {
-        var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&name=$(URLENCODE,$name)&abbrev=$abbrev&title=$(URLENCODE,$title)&total_count='+total_count+'&count_of_real_pub='+count_of_real_pub+'&pubOrder='+pubOrder+'&evidence='+evidence;
+        var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&name=$(URLENCODE,$name)&abbrev=$abbrev&title=$(URLENCODE,$title)&total_count='+total_count+'&count_of_real_pub='+count_of_real_pub+'&pubOrder='+pubOrder+'&infer='+infer+'&goflag='+goflag+'&goterm='+goterm+'&evidence='+evidence;
         $(IF,$(XST,$UPDATE),url += '&UPDATE=1';)
     
         location.replace(url);
@@ -319,7 +319,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <TABLE width=100%><TR><TD bgcolor=#ccccccc>
 <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg')
                  from webPages where ID='aa-cittotalcount.apg';">$1<?/MISQL>
-<font size=+2><b>CITATIONS</b></font> <?MIVAR>($citlink_total_count total) <?/MIVAR>
+<font size=+2><b>CITATIONS</b></font>
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
   <br>$1 Citation Count
@@ -331,6 +331,14 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	the attribution list, need to recalculate the pubs 
 	for the data items. *** <?/MICOMMENT>
 <?MIBLOCK COND="$(XST,$total_count)">
+  <?MIBLOCK COND="$(NE,$rtype,goview)">
+    <?MIBLOCK COND="$(NXST,$attribtype)">
+      <?MIVAR>($citlink_total_count total) <?/MIVAR>
+    <?/MIBLOCK> 
+   <?MIELSE>
+   
+   <?MIVAR>($total_count total) <?/MIVAR>
+   <?/MIBLOCK>
 <?MIELSE>
   <?MIBLOCK COND="$(NXST,$attribtype)">
     <?MIBLOCK COND="$(NE,$rtype,xpat)">
@@ -342,7 +350,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
            and get_obj_type(recattrib_source_zdb_id) = 'PUB'
            $(IF,$(XST,$recattrsrctype),and recattrib_source_type = '$recattrsrctype');">
 	<?MIVAR NAME=$sp_counter>$1<?/MIVAR>
-		($sp_counter sp_total) 
+	<?MIVAR>	($sp_counter total)<?/MIVAR> 
       <?/MISQL>	
     <?MIELSE>
       <br>
@@ -395,10 +403,13 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
     <?MIVAR COND="$(NXST,$total_count)" NAME=$total_count><?/MIVAR>
     <?MIVAR COND="$(NXST,$count_of_real_pub)" NAME=$count_of_real_pub>-9<?/MIVAR>
     <?MIVAR COND="$(NXST,$evidence)" NAME=$evidence><?/MIVAR>
+    <?MIVAR COND="$(NXST,$infer)" NAME=$infer><?/MIVAR>
+    <?MIVAR COND="$(NXST,$goterm)" NAME=$goterm><?/MIVAR>
+    <?MIVAR COND="$(NXST,$goflag)" NAME=$goflag><?/MIVAR>
 <?MIBLOCK COND="$(NC,$rtype,xpat)">
 <?MICOMMENT>  ==================== value= will not change value with Safari need special case ============== <?/MICOMMENT>
 <?MIVAR>
-    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,authors_lower),'pyear desc','authors_lower'),'$total_count','$count_of_real_pub','$evidence')" value="$(IF,$(EC,$pubOrder,authors_lower),Order By Date,Order By Author)"> 
+    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,authors_lower),'pyear desc','authors_lower'),'$total_count','$count_of_real_pub','$evidence', '$infer', '$goterm', '$goflag')" value="$(IF,$(EC,$pubOrder,authors_lower),Order By Date,Order By Author)"> 
     <script>
       if (navigator.userAgent.indexOf('Safari') != -1) {
         resultOrder.value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)";
@@ -415,7 +426,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?MIBLOCK COND="$(NXST,$total_count)">
    <?MIVAR NAME=$total_count>$pubcount<?/MIVAR>
   <?/MIBLOCK>
-    <input type=button name=resultOrderxpat onClick="xpatresult($(IF,$(EC,$pubOrder,6),'9 desc','6'),'$total_count','','')"
+    <input type=button name=resultOrderxpat onClick="xpatresult($(IF,$(EC,$pubOrder,6),'9 desc','6'),'$total_count','','','')"
            value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)"> 
 <?/MIVAR>   
 <?/MIBLOCK>
@@ -859,7 +870,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 		          ''
 		        end,	
 		pub_pages, 
-	 	pub_authors_lower, 
+	 	pub_authors_lower as authors_lower, 
 		pub_date
    	  from publication p, marker_go_term_evidence, journal
      	 where mrkrgoev_source_zdb_id = p.zdb_id
@@ -867,7 +878,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
 	   and mrkrgoev_go_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
-	   and p.jtype not in ('Curation','Unpublished')and mrkrgoev_zdb_id not in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id) $infwhere;">
+	   and p.jtype not in ('Curation','Unpublished')and mrkrgoev_zdb_id not in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id) $infwhere order by $pubOrder;">
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">
