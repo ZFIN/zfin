@@ -287,6 +287,23 @@ update term
 		  from sec_oks
 		  where term_ont_id = sec_id) ;
 
+unload to term_no_longer_secondary.txt
+  select term_name, term_ont_id, term_zdb_id
+    from term
+    where term_is_secondary = 't'
+    and not exists (Select 'x'
+		  from sec_oks
+		  where term_ont_id = sec_id) ;
+
+--set these back to primary for now
+
+update term
+  set term_is_secondary = 'f'
+  where not exists (Select 'x'
+		  from sec_oks
+		  where term_ont_id = sec_id) 
+  and term_is_secondary = 't';
+
 
 update atomic_phenotype
   set apato_quality_zdb_id = (Select prim_zdb_id

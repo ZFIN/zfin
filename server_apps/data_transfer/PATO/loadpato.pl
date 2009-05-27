@@ -186,7 +186,7 @@ $count++ while <PATODEFS_PARSED>;
 
 if ($count < 10) {
 
-    &sendLoadReport("parsePATOobo.pl failed","staylor\@cs.uoregon.edu", "./patoterm_parsed.unl") ;
+    &sendLoadReport("parsePATOobo.pl failed","<!--|VALIDATION_EMAIL_DBA|-->", "./patoterm_parsed.unl") ;
 
 }
 else {	 
@@ -227,20 +227,22 @@ system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadpatoterms.sql >ou
 # else, send the file to the curators.  Do this for both the secondary
 # term report and the obsolete term report. first, reset the count variable.
 
-#&isEmptyFile ("newannotsecterms.unl","No new secondary terms\n","staylor\@cs.uoregon.edu","Terms now secondary");
+#&isEmptyFile ("newannotsecterms.unl","No new secondary terms\n","<!--|VALIDATION_EMAIL_DBA|-->","Terms now secondary");
 
 
-&isEmptyFile ("report.txt","loadpatoterms.sql failed to run\n","staylor\@cs.uoregon.edu","Pato SQL term load results");
+&isEmptyFile ("report.txt","loadpatoterms.sql failed to run\n","<!--|VALIDATION_EMAIL_DBA|-->","Pato SQL term load results");
 
-&isEmptyFile ("updated_pato_terms.unl","no updated pato terms\n","staylor\@cs.uoregon.edu","Pato terms updated\n");
+&isEmptyFile ("updated_pato_terms.unl","no updated pato terms\n","<!--|VALIDATION_EMAIL_DBA|-->","Pato terms updated\n");
 
-&isEmptyFile ("new_terms.unl","no new terms\n","staylor\@cs.uoregon.edu","new PATO terms\n");
+&isEmptyFile ("new_terms.unl","no new terms\n","<!--|VALIDATION_EMAIL_DBA|-->","new PATO terms\n");
 
-&isEmptyFile ("terms_becoming_obsolete.unl","no new obsolete terms\n","staylor\@cs.uoregon.edu","new obsolete terms with annotations\n");
+&isEmptyFile ("terms_becoming_obsolete.unl","no new obsolete terms\n","<!--|VALIDATION_EMAIL_DBA|-->","new obsolete terms with annotations\n");
 
-&isEmptyFile ("sec_unload_report","no annotations to secondary terms\n","staylor\@cs.uoregon.edu","new secondary terms report\n");
+&isEmptyFile ("sec_unload_report","no annotations to secondary terms\n","<!--|VALIDATION_EMAIL_DBA|-->","new secondary terms report\n");
 
-&isEmptyFile ("terms_missing_obo_id.txt","no terms missing obo ids\n","staylor\@cs.uoregon.edu","terms missing obo ids\n");
+&isEmptyFile ("terms_missing_obo_id.txt","no terms missing obo ids\n","<!--|VALIDATION_EMAIL_DBA|-->","terms missing obo ids\n");
+
+&isEmptyFile ("term_no_longer_secondary.txt","Terms once secondary are now primary","<!--|PATO_EMAIL_CURATOR|-->","Error in quality.obo?  Terms once secondary are now primary.");
 
 system ("/bin/chmod 654 <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/*") and die "could not chmod data_Transfer files";
 
