@@ -242,7 +242,7 @@ system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadpatoterms.sql >ou
 
 &isEmptyFile ("terms_missing_obo_id.txt","no terms missing obo ids\n","<!--|VALIDATION_EMAIL_DBA|-->","terms missing obo ids\n");
 
-&isEmptyFile ("term_no_longer_secondary.txt","Terms once secondary are now primary","<!--|PATO_EMAIL_CURATOR|-->","Error in quality.obo?  Terms once secondary are now primary.");
+&isEmptyFile ("term_no_longer_secondary.txt","Terms once secondary are now primary","<!--|REQUEST_NEW_ANATOMY_EMAIL|-->","Error in quality.obo?  Terms once secondary are now primary.");
 
 system ("/bin/chmod 654 <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/*") and die "could not chmod data_Transfer files";
 
