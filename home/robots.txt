@@ -5,23 +5,49 @@ Disallow: /zf_info/2006_tutorial/tutorial.html
 Disallow: /cgi-bin/awstats/awstats.pl
 Disallow: /cgi-bin/mapper_select.cgi
 Disallow: /cgi-bin/webdriver?MIval=aa-blast.apg
-Disallow: /cgi-bin/webdriver?MIval=aa-fxallfigures.apg*
 Disallow: /cgi-bin/webdriver?MIval=aa-companyselect.apg*
-Disallow: /cgi-bin/webdriver?MIval=aa-fxfigureview.apg*
 Disallow: /cgi-bin/webdriver?MIval=aa-fishselect.apg*
+# this is okay if there is a pub, but without the pubid, it is open search
+Allow: /cgi-bin/webdriver?MIval=aa-fishselect.apg&pubId=ZDB-PUB-*
 Disallow: /cgi-bin/webdriver?MIval=aa-quickfindpers.apg*
-Disallow: /cgi-bin/webdriver?MIval=aa-xpatselect.apg*
 Disallow: /cgi-bin/webdriver?MIval=aa-newmrkrselect.apg*
+# disallow search form, simply gives results
 Disallow: /cgi-bin/webdriver?MIval=aa-markerselect.apg*
+Allow: /cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=ZDB-PUB-*&type=pub_*
 Disallow: /cgi-bin/webdriver?MIval=aa-labselect.apg*
 Disallow: /cgi-bin/webdriver?MIval=aa-pubselect2.apg*
-Disallow: /action/antibody/*
-Disallow: /action/anatomy/*
+# has results as well as search form, so must disallow
+Disallow: /cgi-bin/webdriver?MIval=aa-xpatselect.apg*
+# has results as well as search form, so must disallow
+Disallow: /cgi-bin/webdriver?MIval=aa-xpatview.apg*
+# only allow stage search
+Disallow: /action/anatomy/search
+# allow stage searches from drop-down, in theory
+Allow: /action/anatomy/search?action=term-by-stage-search&stage.zdbID=ZDB-STAGE-*
+# disallow antibody search
 Disallow: /cgi-bin/ZFIN_jump*
 Allow: /cgi-bin/ZFIN_jump?record=ZDB-GOTERM*
+Allow: /cgi-bin/ZFIN_jump?record=ZDB-GENO-*
 Allow: /cgi-bin/ZFIN_jump?record=ZDB-PUB-*
 Allow: /cgi-bin/ZFIN_jump?record=ZDB-FISH-*
+
+# person-type records
 Allow: /cgi-bin/ZFIN_jump?record=ZDB-PERS-*
-Allow: /cgi-bin/ZFIN_jump?record=ZDB-MRPHLNO-*
-Allow: /cgi-bin/ZFIN_jump?record=ZDB-GENE-*
 Allow: /cgi-bin/ZFIN_jump?record=ZDB-LAB-*
+Allow: /cgi-bin/ZFIN_jump?record=ZDB-COMPANY-*
+
+# new marker types
+Allow: /cgi-bin/ZFIN_jump?record=ZDB-ANAT-*
+Allow: /cgi-bin/ZFIN_jump?record=ZDB-ATB-*
+
+# old marker types
+Allow: /cgi-bin/ZFIN_jump?record=ZDB-BAC-*
+Allow: /cgi-bin/ZFIN_jump?record=ZDB-CDNA-*
+Allow: /cgi-bin/ZFIN_jump?record=ZDB-GENE-*
+Allow: /cgi-bin/ZFIN_jump?record=ZDB-EST-*
+Allow: /cgi-bin/ZFIN_jump?record=ZDB-MRPHLNO-*
+
+# this jumps to fxallfigures
+Allow: /cgi-bin/ZFIN_jump?record=ZDB-XPAT-*
+
+Allow:  /cgi-bin/ZFIN_jump?record=ZDB-IMAGE-010716-2

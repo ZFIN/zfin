@@ -38,13 +38,6 @@
 		http://zfin.org/zf_info/downloads.html
 		</loc>
 		<changefreq>weekly</changefreq>
-		<priority>0.5</priority>
-	</url>
-	<url>
-		<loc>
-		http://zfin.org/zf_info/downloads.html
-		</loc>
-		<changefreq>weekly</changefreq>
 		<priority>0.4</priority>
 	</url>
 	<url>
@@ -88,5 +81,19 @@
 		</loc>
 		<changefreq>weekly</changefreq>
 		<priority>0.8</priority>
+	</url>
+	<url>
+		<loc>
+		http://zfin.org/action/anatomy/term-detail
+		</loc>
+		<changefreq>monthly</changefreq>
+		<priority>0.4</priority>
+	</url>
+	<url>
+		<loc>
+		http://zfin.org/cgi-bin/ZFIN_jump
+		</loc>
+		<changefreq>weekly</changefreq>
+		<priority>0.7</priority>
 	</url>
 </urlset>
