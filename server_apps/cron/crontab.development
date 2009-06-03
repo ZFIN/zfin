@@ -76,9 +76,9 @@
 # ------ 10:30 PM - 11 PM   DATA TRANSFER OUT         --------
 # -------------------------------------------------------------
 #
-# SMTWT    11:30pm   Generate fasta file of zfin morpholino and microRNA for genomix
+# SMTWT    11:00pm   Generate fasta file of zfin morpholino and microRNA for genomix
 #
-30 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/BLAST/getShortSeq.pl
+00 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/BLAST/getShortSeq.pl
 #
 # S        11:40pm   Generate zfin GB accession and cDNA accession lists for genomix 06/2007 moved from Monday to Sunday to be close to pull4genomix.pl run on production. 
 #
