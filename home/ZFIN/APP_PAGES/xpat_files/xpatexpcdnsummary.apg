@@ -54,7 +54,7 @@ OUPUT:
   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
      ERROR: Invalid experiment zdb id.
 
-  <?MIELSE COND="$(NC,$1,_Standard)"> 
+  <?MIELSE COND="$(AND,$(NC,$1,_Generic-control),$(NC,$1,_Standard))"> 
      <?MICOMMENT> display nothing if condition is Standard <?/MICOMMENT>
     
     <?MISQL SQL="
