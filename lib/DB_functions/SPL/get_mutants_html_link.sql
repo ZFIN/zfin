@@ -27,7 +27,7 @@ create function get_mutants_html_link
  	let genoSuffix = '';
 	let genoZdbId = '';
 
-	select count(fmrel_ftr_zdb_id) :: integer 
+	select count(distinct fmrel_ftr_zdb_id) :: integer 
 	  into ftrCount
      	  from feature_marker_relationship, feature
          where fmrel_mrkr_zdb_id = geneZdbId
@@ -35,7 +35,7 @@ create function get_mutants_html_link
            and fmrel_type = 'is allele of';
 
 	-- count in allele that knock out the gene
-	select count(allele) :: integer
+	select count(distinct allele) :: integer
 	  into ftrCount_2
 	  from mapped_deletion
 	 where present_t = 'f'
@@ -43,7 +43,7 @@ create function get_mutants_html_link
 
 	let ftrCount = ftrCount + ftrCount_2;
 
-        select count(genofeat_geno_zdb_id) :: integer 
+        select count(distinct genofeat_geno_zdb_id) :: integer 
 	   into genoCount
            from feature_marker_relationship, genotype_feature
           where fmrel_mrkr_zdb_id = geneZdbId
@@ -59,7 +59,7 @@ create function get_mutants_html_link
             	   and fmrel_type = 'is allele of';
 	end if 
 
-	select count(genofeat_geno_zdb_id) :: integer 
+	select count(distinct genofeat_geno_zdb_id) :: integer 
 	   into genoCount_2
            from mapped_deletion, feature, genotype_feature
           where present_t = 'f'
