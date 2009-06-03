@@ -221,7 +221,7 @@ sub est_addNewlySuppliedEsts($$) {
     # 3195
 
     my $cur = $dbh->prepare("
-          select epfz_est_zdb_id 
+          select distinct epfz_est_zdb_id 
             from est_pulled_from_zirc, marker
             where epfz_est_zdb_id = mrkr_zdb_id
               and get_obj_type(epfz_est_zdb_id) = 'EST'
@@ -310,7 +310,7 @@ sub est_main($$) {
 
     my $cur = $dbh->do('
         create temp table est_pulled_from_zirc
-          ( epfz_est_zdb_id  varchar(50) not null unique )
+          ( epfz_est_zdb_id  varchar(50) not null )
           with no log;');
 
     # parse routine populates the temp table.

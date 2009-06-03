@@ -660,20 +660,14 @@ sub unFeatureNameAbbrevUpdate($) {
 sub morpholinoAbbrevContainsGeneAbbrev($) {
   my $routineName = "morpholinoAbbrevContainsGeneAbbrev";
 	
-  my $sql = "select a.mrkr_abbrev, b.mrkr_abbrev
+  my $sql = "select a.mrkr_abbrev as construct, b.mrkr_abbrev as gene
                from marker a, marker b, marker_relationship
                where a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-               and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-               and get_obj_type(a.mrkr_zdb_id) = 'MRPHLNO'
-                and b.mrkr_abbrev !=
-               (substring(a.mrkr_abbrev 
-                            from
-                             (length(a.mrkr_abbrev)-length(b.mrkr_abbrev)+1)
-                            for
-                             (length(b.mrkr_abbrev))
-                          )
-                )
-              order by b.mrkr_abbrev";
+                 and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                 and mrel_type in ('knockdown reagent targets gene')
+                 and a.mrkr_abbrev not like '%'||b.mrkr_abbrev||'%'
+                 and lower(a.mrkr_abbrev) not like lower('%'||b.mrkr_abbrev||'%')
+                    order by a.mrkr_abbrev";
 
   my @colDesc = ("Morpholino abbrev         ",
 		 "Gene abbrev       ");
@@ -684,6 +678,68 @@ sub morpholinoAbbrevContainsGeneAbbrev($) {
     my $sendToAddress = $_[0];
     my $subject = "Morpholino abbrev not like gene_abbrev";
     my $errMsg = "There are $nRecords morpholinos without corresponding gene abbrevs. ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+
+}
+
+#---------------------------------------------------------------
+# constructNameContainsGeneAbbrev
+#
+# Parameter
+# $ Email Address for recipients
+
+sub constructNameContainsGeneAbbrev($) {
+  my $routineName = "constructNameContainsGeneAbbrev";
+	
+  my $sql = "select a.mrkr_name as construct, b.mrkr_abbrev as gene
+               from marker a, marker b, marker_relationship
+               where a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                 and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                 and mrel_type in ('knockdown reagent targets gene')
+                 and lower(a.mrkr_name) not like lower('%'||b.mrkr_abbrev||'%')
+                    order by a.mrkr_name";
+
+  my @colDesc = ("Construct name         ",
+		 "Gene abbrev       ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Construct does not contain gene name";
+    my $errMsg = "There are $nRecords constructs whose names do not match their gene component names. ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+
+}
+
+#---------------------------------------------------------------
+# constructNameContainsGeneAbbrev
+#
+# Parameter
+# $ Email Address for recipients
+
+sub insertionFeatureConstructNameMismatch($) {
+  my $routineName = "insertionFeatureConstructNameMismatch";
+	
+  my $sql = "";
+
+  my @colDesc = ("Insertion feature name         ",
+		 "Construct name       ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Insertion feature name does not match construct name";
+    my $errMsg = "There are $nRecords insertion features whose names do not match their construct component names. ";
     
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
@@ -3113,7 +3169,7 @@ if($weekly) {
 	refSeqAccessionInWrongFormat($geneEmail);
 	vegaAccessionInWrongFormat($dbaEmail);
 	morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
-
+	constructNameContainsGeneAbbrev($genoEmail);
 }
 if($monthly) {
   orthologueHasDblink($geneEmail);
