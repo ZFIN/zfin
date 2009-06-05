@@ -88,7 +88,7 @@ OUTPUT VARS:
 <?MIVAR COND=$(NC,$recattrsrctype,standard) NAME=cit_G_filter>and recattrib_source_type = '$recattrsrctype'<?/MIVAR>
 
 <?MIVAR NAME=pub_G_display>links<?/MIVAR>
-<?MISQL SQL="select count (recattrib_data_zdb_id) from record_attribution where recattrib_data_zdb_id='$OID'"><?/MISQL>
+<?MISQL SQL="select count (*) from zdb_active_data where zactvd_zdb_id='$OID'"><?/MISQL>
   <?MIVAR NAME=$recattribcount>$1<?/MIVAR>
  
 <?MIBLOCK COND="$(EC,$rtype,xpat)">
@@ -350,7 +350,11 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
            and get_obj_type(recattrib_source_zdb_id) = 'PUB'
            $(IF,$(XST,$recattrsrctype),and recattrib_source_type = '$recattrsrctype');">
 	<?MIVAR NAME=$sp_counter>$1<?/MIVAR>
+<<<<<<< .mine
+		($sp_counter total) 
+=======
 	<?MIVAR>	($sp_counter total)<?/MIVAR> 
+>>>>>>> .r17170
       <?/MISQL>	
     <?MIELSE>
       <br>
