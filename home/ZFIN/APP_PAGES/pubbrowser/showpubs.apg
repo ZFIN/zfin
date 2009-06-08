@@ -350,11 +350,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
            and get_obj_type(recattrib_source_zdb_id) = 'PUB'
            $(IF,$(XST,$recattrsrctype),and recattrib_source_type = '$recattrsrctype');">
 	<?MIVAR NAME=$sp_counter>$1<?/MIVAR>
-<<<<<<< .mine
-		($sp_counter total) 
-=======
 	<?MIVAR>	($sp_counter total)<?/MIVAR> 
->>>>>>> .r17170
       <?/MISQL>	
     <?MIELSE>
       <br>
