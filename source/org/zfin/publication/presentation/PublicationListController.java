@@ -50,11 +50,14 @@ public class PublicationListController extends MultiActionController {
             throws ServletException {
 
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-
-        Antibody ab = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
+        String antibodyID = bean.getAntibody().getZdbID();
+        if (antibodyID == null)
+            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, "EMPTY");
+        Antibody ab = antibodyRepository.getAntibodyByID(antibodyID);
+        if (ab == null)
+            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, bean.getAntibody().getZdbID());
 
         bean.setAntibody(ab);
-
         return new ModelAndView(ANTIBODY_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
     }
 
@@ -62,11 +65,8 @@ public class PublicationListController extends MultiActionController {
             throws ServletException {
 
         InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-
         MarkerAlias alias = infrastructureRepository.getMarkerAliasByID(bean.getMarkerAlias().getZdbID());
-
         bean.setMarkerAlias(alias);
-
         return new ModelAndView(ALIAS_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
     }
 
@@ -74,11 +74,8 @@ public class PublicationListController extends MultiActionController {
             throws ServletException {
 
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-
         MarkerRelationship markerRelationship = markerRepository.getMarkerRelationshipByID(bean.getMarkerRelationship().getZdbID());
-
         bean.setMarkerRelationship(markerRelationship);
-
         return new ModelAndView(RELATIONSHIP_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
     }
 
@@ -86,17 +83,11 @@ public class PublicationListController extends MultiActionController {
             throws ServletException {
 
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-
         // Marker marker = markerRepository.getMarkerByID(bean.getMarker().getZdbID());
-
         Marker marker = markerRepository.getMarkerByID(bean.getMarkerID());
-
         bean.setMarker(marker);
-
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-
         List<String> pubIDs = publicationRepository.getSNPPublicationIDs(bean.getMarker());
-
         Set<Publication> pubs = new HashSet<Publication>();
         for (String id : pubIDs) {
             pubs.add(publicationRepository.getPublication(id));
