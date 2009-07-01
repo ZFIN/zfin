@@ -1,3 +1,4 @@
+
 <?MICOMMENT>
 ***
 FILE: process-pub.html
@@ -74,6 +75,21 @@ OUTPUT:
     <?MIVAR COND="$(XST,$q_pub_abstract)" NAME=$q_pub_abstract>$(REPLACE,$q_pub_abstract,','')<?/MIVAR>
     <?MIVAR COND="$(XST,$q_pub_errata_and_notes)" NAME=$q_pub_errata_and_notes>$(REPLACE,$q_pub_errata_and_notes,','')<?/MIVAR>
 
+
+   <?MICOMMENT> 
+      ***
+      if optional values do not exist, set all to null,this allows user to null an existing value for these fields 
+      ***
+    <?/MICOMMENT>
+
+
+    <?MIVAR COND=$(NXST,$q_keywords) NAME=$q_keywords><?/MIVAR>
+    <?MIVAR COND=$(NXST,$q_pub_abstract) NAME=$q_pub_abstract><?/MIVAR>
+    <?MIVAR COND=$(NXST,$q_accession_no) NAME=$q_accession_no><?/MIVAR>
+    <?MIVAR COND=$(NXST,$q_doi_no) NAME=$q_doi_no><?/MIVAR>
+    <?MIVAR COND=$(NXST,$editpub_pub_volume) NAME=$editpub_pub_volume><?/MIVAR>
+    <?MIVAR COND=$(NXST,$editpub_pub_pages) NAME=$editpub_pub_pages><?/MIVAR>
+<?MIVAR COND=$(NXST,$q_pub_errata_and_notes) NAME=$q_pub_errata_and_notes><?/MIVAR>
 
     <?MICOMMENT> *** If you're creating new PUB record,create and 
 	insert a blank record for it.  Stop search on return becuase 
@@ -166,14 +182,7 @@ OUTPUT:
       <?MIVAR NAME=$procpub_jrnl_zdb_id>$1<?/MIVAR>
 
 
-    <?MIVAR NAME=$setvalues>set title='$q_title',jtype='$q_jtype',authors='$q_authors',pub_date='$q_pub_date'::date,status='$q_status',num_auths='$q_num_auths', pub_jrnl_zdb_id = '$procpub_jrnl_zdb_id'<?/MIVAR>
-    <?MIVAR COND=$(XST,$q_keywords) NAME=$setvalues>$setvalues,keywords='$q_keywords'<?/MIVAR>
-    <?MIVAR COND=$(XST,$q_pub_abstract) NAME=$setvalues>$setvalues,pub_abstract='$q_pub_abstract'<?/MIVAR>
-    <?MIVAR COND=$(XST,$q_accession_no) NAME=$setvalues>$setvalues,accession_no='$q_accession_no'<?/MIVAR>
-    <?MIVAR COND=$(XST,$q_doi_no) NAME=$setvalues>$setvalues,pub_doi='$q_doi_no'<?/MIVAR>
-    <?MIVAR COND=$(XST,$editpub_pub_volume) NAME=$setvalues>$setvalues,pub_volume='$editpub_pub_volume'<?/MIVAR>
-     <?MIVAR COND=$(XST,$editpub_pub_pages) NAME=$setvalues>$setvalues,pub_pages='$editpub_pub_pages'<?/MIVAR>
-<?MIVAR COND=$(XST,$q_pub_errata_and_notes) NAME=$setvalues>$setvalues,pub_errata_and_notes='$q_pub_errata_and_notes'<?/MIVAR>
+    <?MIVAR NAME=$setvalues>set title='$q_title',jtype='$q_jtype',authors='$q_authors',pub_date='$q_pub_date'::date,status='$q_status',num_auths='$q_num_auths', pub_jrnl_zdb_id = '$procpub_jrnl_zdb_id', keywords='$q_keywords', pub_abstract='$q_pub_abstract', accession_no='$q_accession_no', pub_doi='$q_doi_no', pub_volume='$editpub_pub_volume', pub_pages='$editpub_pub_pages', pub_errata_and_notes='$q_pub_errata_and_notes'<?/MIVAR>
 
     <?MICOMMENT> *** OKAY, now just do the update! *** <?/MICOMMENT>
 
