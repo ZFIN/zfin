@@ -27,4 +27,7 @@ echo 'execute function regen_oevdisp(); update statistics for procedure' | dbacc
 echo "Starting regen_feature_ao_fast_search at `date`"
 echo 'execute function regen_feature_ao_fast_search(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
+echo "do extra update statistics high to try and avoid 710 errors `date`"
+echo 'update statistics high' | dbaccess <!--|DB_NAME|-->
+
 echo "Finished at `date`"
