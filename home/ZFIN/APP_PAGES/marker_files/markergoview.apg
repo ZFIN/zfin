@@ -243,6 +243,10 @@
      	<?MIVAR NAME=$currinflength>$(STRLEN,$infername)<?/MIVAR>
      	<?MIVAR NAME=$position>$(+,$pos,1)<?/MIVAR>
      	<?MIVAR NAME=$accID>$(SUBSTR,$infername,$position,$currinflength)<?/MIVAR>
+
+     	<?MIBLOCK COND="$(EC,$dbase,UniProt)">
+     	  <?MIVAR NAME=$dbase>UniProtKB<?/MIVAR>
+        <?/MIBLOCK>
      	<?MIBLOCK COND="$(EC,$dbase,ZFIN)">
 	   <?MIVAR NAME=inf_mem_sym><?/MIVAR>
 	   <?MISQL COND="$(>,$(POSITION,$accID,GENO),0)" SQL="
@@ -273,6 +277,7 @@
         <?MIELSE>
           <?MISQL SQL="select a.fdb_db_query from foreign_db a where a.fdb_db_name='$dbase'"><?/MISQL>
           <?MIVAR NAME=query>$1<?/MIVAR>
+
           <?MIVAR NAME=$link>$query$accID<?/MIVAR>
           <?MIVAR NAME=$currinflink><a href=$link>$dbase:$accID</a><?/MIVAR>
        <?/MIBLOCK>
