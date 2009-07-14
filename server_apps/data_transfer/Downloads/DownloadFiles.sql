@@ -870,6 +870,6 @@ select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id
 ;
 
 
-unload to 'lamhdi.unl'
+unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/lamhdi.unl'
 select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id, genofeat_feature_zdb_id
 from lamhdi_tmp;
