@@ -830,3 +830,46 @@ where     geno_is_wildtype = 't'
       and xpatres_start_stg_zdb_id = start.stg_zdb_id
       and xpatres_end_stg_zdb_id = end.stg_zdb_id
 order by mrkr_zdb_id;
+
+
+
+{
+case 4402
+
+Weekly download file available via the web.
+
+Fields: OMIM, ZFIN-GENE-ID, ZFIN-GENO-ID, ZIRC-ALT-ID
+
+All lines available from ZIRC.
+
+}
+
+select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id, genofeat_feature_zdb_id
+  from db_link, foreign_db_contains, orthologue, feature_marker_relationship, genotype_feature, int_data_supplier
+ where fdbcont_fdb_db_name = 'OMIM'
+   and fdbcont_zdb_id = dblink_fdbcont_zdb_id
+   and dblink_linked_recid = zdb_id
+   and c_gene_id = fmrel_mrkr_zdb_id
+   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+   and genofeat_feature_zdb_id = idsup_data_zdB_id
+   and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53'
+into temp lamhdi_tmp   
+;
+
+
+insert into lamhdi_tmp(dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id)
+select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id
+  from db_link, foreign_db_contains, orthologue, feature_marker_relationship, genotype_feature, int_data_supplier
+ where fdbcont_fdb_db_name = 'OMIM'
+   and fdbcont_zdb_id = dblink_fdbcont_zdb_id
+   and dblink_linked_recid = zdb_id
+   and c_gene_id = fmrel_mrkr_zdb_id
+   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+   and genofeat_geno_zdb_id = idsup_data_zdB_id
+   and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53' 
+;
+
+
+unload to 'lamhdi.unl'
+select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id, genofeat_feature_zdb_id
+from lamhdi_tmp;
