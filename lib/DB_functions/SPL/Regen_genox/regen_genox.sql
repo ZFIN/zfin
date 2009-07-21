@@ -71,7 +71,6 @@ create dba function regen_genox() returning integer
   --
   --    To turn tracing on uncomment the next statement
   --
-set debug file to 'debug-regen';
   --
   --    This enables tracing, but doesn't turn it on.  To turn on tracing,
   --    add a "trace on;" before the first piece of code that you suspect
