@@ -1,9 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module version="4" relativePaths="true" type="J2EE_WEB_MODULE">
-  <component name="AppServerSpecificValidatorsManager" />
-  <component name="ModuleRootManager" />
+<module relativePaths="true" type="J2EE_WEB_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="hibernate" name="Hibernate" implicit="true">
+      <configuration>
+        <setting name="validation-enabled" value="true" />
+        <datasource-map />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/../conf/hibernate.cfg.xml" optional="false" version="3.0" />
+      </configuration>
+    </facet>
+    <facet type="Spring" name="Spring" implicit="true">
+      <configuration>
+        <options>
+          <option name="enableValidation" value="false" />
+          <option name="reportErrorsAsWarnings" value="true" />
+        </options>
+        <customNs />
+      </configuration>
+    </facet>
+    <facet type="gwt" name="GWT" implicit="true">
+      <configuration>
+        <setting name="gwtSdkUrl" value="" />
+        <setting name="gwtScriptOutputStyle" value="DETAILED" />
+        <setting name="runGwtCompilerOnMake" value="true" />
+        <setting name="compilerMaxHeapSize" value="128" />
+      </configuration>
+    </facet>
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <exploded url="file://" />
     <exclude-exploded />
     <content url="file://$MODULE_DIR$/..">
       <sourceFolder url="file://$MODULE_DIR$/../client_apps/ListSelector" isTestSource="false" />
@@ -863,6 +888,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="runtime" level="project" />
     <orderEntryProperties />
   </component>
   <component name="WebModuleBuildComponent">
@@ -870,10 +896,10 @@
     <setting name="EXPLODED_ENABLED" value="false" />
     <setting name="JAR_URL" value="file://" />
     <setting name="JAR_ENABLED" value="false" />
-    <setting name="SYNC_EXPLODED_DIR" value="true" />
     <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />
     <setting name="BUILD_EXTERNAL_DEPENDENCIES" value="false" />
     <setting name="RUN_JASPER_VALIDATION" value="true" />
+    <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
   </component>
   <component name="WebModuleProperties">
     <containerElement type="library" level="module">
@@ -1345,11 +1371,10 @@
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib" />
     </containerElement>
-    <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../home/WEB-INF/web.xml" optional="false" version="2.4" />
+    <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../home/WEB-INF/web.xml" optional="false" version="2.5" />
     <webroots>
       <root url="file://$MODULE_DIR$/../home/WEB-INF" relative="/WEB-INF" />
     </webroots>
   </component>
-  <component name="WeblogicWebModuleProperties" />
 </module>
 

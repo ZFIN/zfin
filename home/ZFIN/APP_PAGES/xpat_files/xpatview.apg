@@ -41,7 +41,6 @@ DESCRIPTION:
 
 
 <?MIBLOCK COND="$(NOT,$(=,$(POSITION,$OID,GENE),0))">
-
   <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id = '$OID';">
     <?MIVAR NAME="$xpatview_mrkr_abbrev">$1<?/MIVAR>
   <?/MISQL>

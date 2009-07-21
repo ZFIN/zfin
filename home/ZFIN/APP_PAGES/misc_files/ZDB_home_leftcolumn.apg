@@ -22,9 +22,9 @@
    </ul>
 
    <ul>
-     <li>Search <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant"
+     <li>Search <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg"
                    title="Search by allele, locus, phenotype keywords or map location">
-         <strong>Mutants / Transgenics</strong></a></li>
+         <strong>Mutants / Morphants / Transgenics</strong></a></li>
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-wtlist.apg" 
             title="Zebrafish wild-type lines">Wild-Type Lines</a></li>
      <li><a href="/zf_info/zfbook/lab_desig.html">Line Designations</a></li>

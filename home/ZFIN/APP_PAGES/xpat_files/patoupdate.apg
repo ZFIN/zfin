@@ -319,6 +319,15 @@ EFFECTS
                        where zactvd_zdb_id = '$patoup_delete_apato_zdb_id'"><?/MISQL>
         <?/MISQL>
 
+        <?MISQL COND="$(XST,$patoup_genox_zdb_id)" SQL="select genox_geno_zdb_id from genotype_experiment
+                                                         where genox_zdb_id = '$patoup_genox_zdb_id';">
+          <?MIVAR NAME="$patoup_genox_geno_zdb_id">$1<?/MIVAR>
+        <?/MISQL>
+
+        <?MISQL COND="$(XST,$patoup_genox_geno_zdb_id)" SQL="
+          execute procedure regen_genofig_genotype('$patoup_genox_geno_zdb_id');">
+        <?/MISQL>  
+
       <?/MISQL> <?MICOMMENT> ** outer loop ** <?/MICOMMENT>
 
     <?/MIBLOCK> <?MICOMMENT> ** end delete a mutant (fig+genox+stages) ** <?/MICOMMENT>
@@ -431,7 +440,13 @@ EFFECTS
                                                     '$patoup_end_stg_zdb_id', '$OID', $patoup_entities_values_sql, 
                                                     '$patoup_quality_zdb_id', '$patoup_tag');"><?/MISQL>
 
-                
+          <?MISQL COND="$(XST,$patoup_genox_zdb_id)" SQL="select genox_geno_zdb_id from genotype_experiment where genox_zdb_id = '$patoup_genox_zdb_id';">
+            <?MIVAR NAME="$patoup_genox_geno_zdb_id">$1<?/MIVAR>
+          <?/MISQL>
+
+          <?MISQL COND="$(XST,$patoup_genox_geno_zdb_id)" SQL="
+            execute procedure regen_genofig_genotype('$patoup_genox_geno_zdb_id');">
+          <?/MISQL>           
          
         <?/MIBLOCK>
 
@@ -451,9 +466,11 @@ EFFECTS
 
         <?/MISQL>
 
+        <?MISQL COND="$(NXST,$patoup_apatofig_exists)" SQL="
+          execute procedure regen_genofig_genotype('$patoup_genox_geno_zdb_id');">
+        <?/MISQL> 
+
       <?/MISQL> <?MICOMMENT> ** end for each structure to add ** <?/MICOMMENT>
-
-
 
 
       <?MICOMMENT> ** foreach structure to remove... ** <?/MICOMMENT>
@@ -513,7 +530,14 @@ EFFECTS
 
 
         <?/MISQL> <?MICOMMENT> ** end pato exists sql 'if' statement ** <?/MICOMMENT>
+
+
+        <?MISQL SQL="select genox_geno_zdb_id from genotype_experiment where genox_zdb_id = '$patoup_genox_zdb_id';">
+          <?MIVAR NAME="patoup_genox_geno_zdb_id">$1<?/MIVAR>
+        <?/MISQL>
    
+        <?MISQL SQL="execute procedure regen_genofig_genotype('$patoup_genox_geno_zdb_id');">
+        <?/MISQL>   
 
         <?MICOMMENT> ** if we deleted everything attached to this mutant, re-insert a default entry ** <?/MICOMMENT>
 
@@ -550,6 +574,9 @@ EFFECTS
             <?MIVAR NAME="$patoup_apato_zdb_id">$1<?/MIVAR>
           <?/MISQL>
 
+          <?MISQL SQL="select genox_geno_zdb_id from genotype_experiment where genox_zdb_id = '$patoup_genox_zdb_id';">
+            <?MIVAR NAME="patoup_genox_geno_zdb_id">$1<?/MIVAR>
+          <?/MISQL>
 
           <?MICOMMENT> ** if we have a default record attached to another fig, attach it to this fig ** <?/MICOMMENT>
           <?MIBLOCK COND="$(XST,$patoup_apato_zdb_id)">
@@ -557,6 +584,8 @@ EFFECTS
             <?MISQL SQL="insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id) 
                          values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id');"><?/MISQL>
 
+            <?MISQL SQL="execute procedure regen_genofig_genotype('$patoup_genox_geno_zdb_id');">
+            <?/MISQL> 
 
           <?MIELSE> <?MICOMMENT> ** need to make a new default record ** <?/MICOMMENT>
 
@@ -575,6 +604,10 @@ EFFECTS
                                                       '$patoup_default_quality_zdb_id', '$patoup_default_tag');">
               <?MISQL SQL="insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id) 
                            values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id');"><?/MISQL>
+
+              <?MISQL SQL="execute procedure regen_genofig_genotype('$patoup_genox_geno_zdb_id');">
+              <?/MISQL> 
+
             <?/MISQL>
             <script>alert('All phenotypes were removed from a mutant, so unspecified was added as a placeholder');</script>
           <?/MIBLOCK>
@@ -583,7 +616,6 @@ EFFECTS
         <?MICOMMENT> * clean up for the next pass through the loop * <?/MICOMMENT>
         <?MIVAR>$(UNSETVAR,$patoup_still_has_phenotypes)<?/MIVAR>
         
-
 
       <?/MISQL> <?MICOMMENT> *** end foreach structure to remove *** <?/MICOMMENT>
 

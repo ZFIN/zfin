@@ -58,8 +58,8 @@ public class PhenotypeService {
                 String tag = phenotype.getTag();
                 if (termName.equals(Term.QUALITY) && tag.equals(Term.TAG_ABNORMAL))
                     termNameBuilder.append(Term.TAG_ABNORMAL);
-                else if (termName.equals(Term.QUALITY) && tag.equals(Term.TAG_NORMAL))
-                    termNameBuilder.append(Term.TAG_NORMAL);
+                else if (tag != null && tag.equals(Term.TAG_NORMAL))
+                    continue;
                 else
                     termNameBuilder.append(termName);
 

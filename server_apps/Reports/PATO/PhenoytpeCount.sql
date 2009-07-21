@@ -191,7 +191,7 @@ and genofeat_geno_zdb_id = geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
 and genofeat_feature_zdb_id = feature_zdb_id
  and apato_genox_zdb_id = genox_zdb_id
-and fmrel_type = 'contains sequence feature'
+and fmrel_type in ('contains sequence feature', 'contains phenotypic sequence feature')
  and get_feature_type(fmrel_ftr_zdb_id) = 'TRANSGENIC_INSERTION'
  and get_obj_type(fmrel_mrkr_zdb_id) = 'TGCONSTRCT'
 and feature_zdb_id = genofeat_feature_zdb_id;
@@ -213,7 +213,7 @@ select distinct fmrel_mrkr_zdb_id
  and apato_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
  and genofeat_geno_zdb_id = geno_zdb_id
- and fmrel_type = 'contains sequence feature' 
+ and fmrel_type in ('contains sequence feature', 'contains phenotypic sequence feature') 
  and apatofig_apato_Zdb_id = apato_zdb_id
  and apatofig_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id

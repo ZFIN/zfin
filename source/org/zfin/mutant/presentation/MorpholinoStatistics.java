@@ -23,10 +23,21 @@ public class MorpholinoStatistics extends EntityStatistics {
     private GenotypeExperiment genoExperiment;
     private AnatomyItem anatomyItem;
     private Set<Figure> figures;
+    private String targetGeneOrder;
 
     public MorpholinoStatistics(GenotypeExperiment genoExperiment, AnatomyItem anatomyItem) {
         this.anatomyItem = anatomyItem;
         this.genoExperiment = genoExperiment;
+        targetGeneOrder = "";
+        Set<Marker> targetGenes = getMorpholinoMarkers();
+        int numberOfTargetGenes = targetGenes.size();
+        int index = 1;
+        for (Marker marker : targetGenes) {
+            targetGeneOrder += marker.getAbbreviation();
+            if (index != numberOfTargetGenes)
+                targetGeneOrder += ", ";
+            index++;
+        }
     }
 
     public GenotypeExperiment getGenoExperiment() {
@@ -35,7 +46,11 @@ public class MorpholinoStatistics extends EntityStatistics {
 
     public Set<Marker> getMorpholinoMarkers() {
         Set<ExperimentCondition> experimentConditions = genoExperiment.getExperiment().getExperimentConditions();
-        Set<Marker> morpholinoGenes = new HashSet<Marker>();
+        Set<Marker> morpholinoGenes = new TreeSet<Marker>(new Comparator<Marker>() {
+            public int compare(Marker one, Marker two) {
+                return (one.getAbbreviation().compareTo(two.getAbbreviation()));
+            }
+        });
         for (ExperimentCondition condition : experimentConditions) {
             Marker morpholino = condition.getMorpholino();
             if (morpholino != null) {
@@ -56,7 +71,8 @@ public class MorpholinoStatistics extends EntityStatistics {
         if (figures == null) {
             for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
                 if (StringUtils.equals(phenotype.getPatoSubTermzdbID(), anatomyItem.getZdbID()) ||
-                        StringUtils.equals(phenotype.getPatoSuperTermzdbID(), anatomyItem.getZdbID())) {
+                        StringUtils.equals(phenotype.getPatoSuperTermzdbID(), anatomyItem.getZdbID()) &&
+                                !phenotype.getTag().equals(Phenotype.Tag.NORMAL.toString())) {
                     if (figures == null)
                         figures = new HashSet<Figure>();
                     figures.addAll(phenotype.getFigures());
@@ -78,12 +94,17 @@ public class MorpholinoStatistics extends EntityStatistics {
         Set<Publication> pubs = new HashSet<Publication>();
         for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
             if (StringUtils.equals(phenotype.getPatoSubTermzdbID(), anatomyItem.getZdbID()) ||
-                    StringUtils.equals(phenotype.getPatoSuperTermzdbID(), anatomyItem.getZdbID())) {
+                    StringUtils.equals(phenotype.getPatoSuperTermzdbID(), anatomyItem.getZdbID()) &&
+                            !phenotype.getTag().equals(Phenotype.Tag.NORMAL.toString())) {
                 pubs.add(phenotype.getPublication());
             }
         }
         List<Publication> pubList = new ArrayList<Publication>(pubs);
         return new PaginationResult<Publication>(pubList);
+    }
+
+    public String getTargetGeneOrder() {
+        return targetGeneOrder;
     }
 
     private class PhenotypeComparator implements Comparator<String> {

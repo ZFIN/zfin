@@ -22,8 +22,9 @@ public class FeatureMarkerRelationship {
 
     public static final String IS_ALLELE_OF = "is allele of";
 
-    public static final String CONTAINS_SEQUENCE_FEATURE = "contains sequence feature";
+    public static final String CONTAINS_INNOCUOUS_SEQUENCE_FEATURE = "contains innocuous sequence feature";
 
+    public static final String CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE = "contains phenotypic sequence feature";
 
 
     public String getZdbID() {

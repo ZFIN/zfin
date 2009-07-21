@@ -286,6 +286,14 @@ and clone_problem_type is not null
        <table width = 100%  cellspacing = 0 cellpadding = 5 bgcolor="#EEEEEE">
     <tr><td> <b>PHENOTYPE : </b>
     <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigfi_is_displayed=t') from webPages where ID='aa-fxfigphenogenolist.apg';">$1<?/MISQL></tr>
+<?MICOMMENT>
+    <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigfi_is_displayed=t') from webPages where ID='aa-fxfigphenocondnlist.apg';">$1<?/MISQL></tr>
+<?/MICOMMENT>
+<?MISQL SQL="select WebExplode(object,'fxp_fig_zdb_id=$fxallfig_fig_zdb_id')from webpages where ID='aa-xpatfeatexpcondn.apg';">
+<?MIBLOCK COND="$(NE,$1,)">
+<?MIVAR><tr><td><b>Condition(s):</b> $(SUBSTR,$1,2,$(STRLEN,$1))<?/MIVAR>
+<?/MIBLOCK>
+<?/MISQL>
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfigphenoanat_fig_zdb_id=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfigphenoanatlist.apg';">$1<?/MISQL>
     <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigst_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigst_is_displayed=t') from webPages where ID='aa-fxfigphenostgrng.apg';">$1<?/MISQL>
                   <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Phenotype details</a></td>

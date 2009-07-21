@@ -1729,7 +1729,7 @@ union
  	  from genotype_feature, feature_marker_relationship
          where fmrel_mrkr_zdb_id = '$OID'
            and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-           and fmrel_type = 'contains sequence feature'">
+           and fmrel_type like 'contains%'">
 
 	<?MIVAR NAME=mkvw_geno_html>$1<?/MIVAR>
 
@@ -1842,102 +1842,52 @@ union
             ==========================================================
   <?/MICOMMENT>
 <?MIBLOCK COND="$(OR,$(EQ,$marker_type,GENE),$(EQ,$marker_type,MRPHLNO))">
- <?MISQL SQL="
-  	select dbinfo('sessionid') 
-  	  from single;">
+  <?MISQL SQL="select dbinfo('sessionid') from single;">
     <?MIVAR NAME=$mrkrview_session_id>$1<?/MIVAR>
     <?MIVAR NAME=$mrkrview_temp_pato>$(CONCAT,mrkrview_temp_pato_,$mrkrview_session_id)<?/MIVAR>
- <?/MISQL>
+  <?/MISQL>
 
- <?MISQL SQL="
-  	  execute function table_exists('$mrkrview_temp_pato')">
-  	<?MIVAR NAME="$mrkrview_tableExists">$1<?/MIVAR>
- <?/MISQL>
- <?MISQL COND=$(NC,$mrkrview_tableExists,f) SQL="
-	delete from $mrkrview_temp_pato
-	">
- <?/MISQL>
- <?MISQL COND=$(EC,$mrkrview_tableExists,f) SQL="
-    	  create temp table $mrkrview_temp_pato (
-   	    t_pato_zdb_id 	varchar(50)
-  	  ) with NO LOG;">
- <?/MISQL>  
+  <?MISQL SQL="execute function table_exists('$mrkrview_temp_pato')">
+    <?MIVAR NAME="$mrkrview_tableExists">$1<?/MIVAR>
+  <?/MISQL>
+  <?MISQL COND=$(NC,$mrkrview_tableExists,f) SQL="delete from $mrkrview_temp_pato">
+  <?/MISQL>
+  <?MISQL COND=$(EC,$mrkrview_tableExists,f) SQL="
+    create temp table $mrkrview_temp_pato (
+    t_pato_zdb_id 	varchar(50)       ) with NO LOG;">
+  <?/MISQL>  
 
- <?MIBLOCK COND="$(EQ,$marker_type,GENE)">
-   <?MISQL SQL="
-	insert into $mrkrview_temp_pato
-            select apato_zdb_id
-              from feature_marker_relationship, genotype_feature,
-		   genotype_experiment, atomic_phenotype
-             where fmrel_mrkr_zdb_id='$OID'
-      	       and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-      	       and fmrel_type = 'is allele of'
-               and genofeat_geno_zdb_id = genox_geno_zdb_id
-               and genox_zdb_id = apato_genox_zdb_id
-               and apato_tag not like 'normal%' ;">
-   <?/MISQL>
+  <?MISQL SQL="insert into $mrkrview_temp_pato
+               select apato_zdb_id
+                 from mutant_fast_search, atomic_phenotype
+                where mfs_mrkr_zdb_id ='$OID'
+      	          and mfs_genox_zdb_id = apato_genox_zdb_id ;">
+  <?/MISQL>
  
-   <?MISQL SQL="
-	insert into $mrkrview_temp_pato
-            select apato_zdb_id
-              from mapped_deletion, feature, genotype_feature,
-		   genotype_experiment, atomic_phenotype
-             where marker_id='$OID'
-      	       and allele = feature_name
-               and present_t = 'f'
-               and feature_zdb_id = genofeat_feature_zdb_id
-               and genofeat_geno_zdb_id = genox_geno_zdb_id
-               and genox_zdb_id = apato_genox_zdb_id
-               and apato_tag not like 'normal%' ;">
-   <?/MISQL>
+  <?MIBLOCK COND="$(EQ,$marker_type,GENE)">
+    <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
+      <hr width=80%>
+      <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>    
+      $(SETVAR,$display_mut_trg_title,t)
+    <?/MIVAR> 
 
-   <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
-     <hr width=80%>
-     <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>    
-     $(SETVAR,$display_mut_trg_title,t)
-   <?/MIVAR> 
+    <?MIBLOCK COND="$(XST,$type_of_genedom)">
+      <?MISQL SQL="select count(*)::integer
+	             from marker_relationship
+	            where mrel_mrkr_2_zdb_id = '$OID'
+		      and mrel_type = 'knockdown reagent targets gene';">
+        <?MIVAR NAME=$mrkrview_agt_plural_pheno>$(IF,$(>,$1,0),t,f)<?/MIVAR>
+      <?/MISQL>
+    <?/MIBLOCK>
+   
+  <?/MIBLOCK>
 
-   <?MIBLOCK COND="$(XST,$type_of_genedom)">
-     <?MISQL SQL="select count(*)::integer
-	       from marker_relationship
-	      where mrel_mrkr_2_zdb_id = '$OID'
-		and mrel_type = 'knockdown reagent targets gene';">
-
-       <?MIVAR NAME=$mrkrview_agt_plural_pheno>$(IF,$(>,$1,0),t,f)<?/MIVAR>
-     <?/MISQL>
-     <?MIBLOCK COND="$(EQ,$mrkrview_agt_plural_pheno,t)">
-       <?MISQL SQL="
-	  insert into $mrkrview_temp_pato
-            select apato_zdb_id 
-              from marker_relationship, experiment_condition, genotype_experiment, atomic_phenotype 
-             where mrel_mrkr_2_zdb_id = '$OID'
-               and mrel_type = 'knockdown reagent targets gene' 
-               and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id 
-               and expcond_exp_zdb_id = genox_exp_zdb_id 
-               and genox_zdb_id = apato_genox_zdb_id 
-               and apato_tag not like 'normal%';">
-       <?/MISQL> 
-     <?/MIBLOCK>
-   <?/MIBLOCK>
- <?MIELSE>
-   <?MISQL SQL="
-	insert into $mrkrview_temp_pato
-            select apato_zdb_id
-              from experiment_condition, genotype_experiment, atomic_phenotype
-             where expcond_mrkr_zdb_id = '$OID'
-	       and expcond_exp_zdb_id = genox_exp_zdb_id
-               and genox_zdb_id = apato_genox_zdb_id 
-               and apato_tag not like 'normal%';">
-   <?/MISQL> 
-   <br/>
- <?/MIBLOCK>
-
- <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
+  <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
     <tr><td> 
        <b> Phenotype: </b><font size=-1>(<a href="javascript:start_note('phenotype_note')">current status</a></font>)
     </td></tr>
- </table>
- <?MISQL SQL="select WebExplode(object,'phmview_input_table=$mrkrview_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
+  </table>
+  <?MISQL SQL="select WebExplode(object,'phmview_input_table=$mrkrview_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
 
 <?/MIBLOCK>
 

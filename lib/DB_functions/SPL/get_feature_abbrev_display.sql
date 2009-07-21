@@ -34,7 +34,7 @@ foreach
    where feature_zdb_id = featZdbId
      and fmrel_ftr_zdb_id = feature_zdb_id
      and fmrel_mrkr_zdb_id = mrkr_zdb_id
-     and fmrel_type != "contains sequence feature"
+     and fmrel_type not like "contains%"
      
 
   if (featName is null) then

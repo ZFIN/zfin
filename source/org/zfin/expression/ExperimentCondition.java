@@ -10,7 +10,8 @@ public class ExperimentCondition {
     private String zdbID;
     private Experiment experiment;
     private Marker morpholino;
-
+    private String value;
+    private ExperimentUnit unit;
 
     public String getZdbID() {
         return zdbID;
@@ -34,5 +35,21 @@ public class ExperimentCondition {
 
     public void setMorpholino(Marker morpholino) {
         this.morpholino = morpholino;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public ExperimentUnit getUnit() {
+        return unit;
+    }
+
+    public void setUnit(ExperimentUnit unit) {
+        this.unit = unit;
     }
 }

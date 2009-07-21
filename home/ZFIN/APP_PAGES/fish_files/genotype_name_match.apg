@@ -82,6 +82,12 @@
     <?/MISQL> 
   <?/MISQL>
 
+  <?MIBLOCK COND="$(XST,$fsel_processed_selected_structures)">
+    <?MIVAR NAME=$exists_anat> and exists (select 'x' from $fishselect_temp_on_anat_table where allmapnm_zdb_id = g_zdb_id) <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=$exists_anat><?/MIVAR>
+  <?/MIBLOCK>  
+    
   <?MISQL SQL="
 	insert into $genonm_temp_name_minsig 
 	    select allmapnm_zdb_id,min(allmapnm_significance) 
@@ -89,21 +95,20 @@
              where $target_col $like_or_equal '$(LOWER,$input)'
                    $connecting_2_tables
                and allmapnm_zdb_id like 'ZDB-GENO-%'
+                   $exists_anat
             group by allmapnm_zdb_id;">	    
   <?/MISQL>  
 
   <?MICOMMENT> it is safe to use two min() as long as,for all genotype related names, 
                each significance corresponding to one and only one precedence.<?/MICOMMENT>
 
-  <?MISQL SQL="
-	insert into $genonm_temp_on_name
-            select allmapnm_zdb_id,allmapnm_significance,min(allmapnm_name), min(allmapnm_precedence)
-              from $genonm_temp_name_minsig, all_map_names$table_all_name_ends
-             where allmapnm_zdb_id = t_geno_zdb_id 
-               and allmapnm_significance = t_name_significance
-               and $target_col $like_or_equal '$(LOWER,$input)'
-                   $connecting_2_tables
-           group by allmapnm_zdb_id,allmapnm_significance;">
-  <?/MISQL>
-
-            
+  <?MISQL SQL="insert into $genonm_temp_on_name
+               select allmapnm_zdb_id,allmapnm_significance,min(allmapnm_name), min(allmapnm_precedence)
+                 from $genonm_temp_name_minsig, all_map_names$table_all_name_ends
+                where allmapnm_zdb_id = t_geno_zdb_id 
+                  and allmapnm_significance = t_name_significance
+                  and $target_col $like_or_equal '$(LOWER,$input)'
+                      $connecting_2_tables
+                      $exists_anat
+             group by allmapnm_zdb_id,allmapnm_significance;">
+  <?/MISQL>  

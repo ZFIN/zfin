@@ -163,14 +163,32 @@
             </generator>
         </id>
 
+        <property name="value" column="expcond_value" />
+
         <many-to-one name="experiment" class="org.zfin.expression.Experiment">
             <column name="expcond_exp_zdb_id"/>
+        </many-to-one>
+
+        <many-to-one name="unit" class="org.zfin.expression.ExperimentUnit">
+            <column name="expcond_expunit_zdb_id"/>
         </many-to-one>
 
         <many-to-one name="morpholino" class="org.zfin.marker.Marker">
             <column name="expcond_mrkr_zdb_id"/>
         </many-to-one>
 
+    </class>
+
+    <class name="org.zfin.expression.ExperimentUnit" table="experiment_unit">
+        <id name="zdbID" type="string">
+            <column name="expunit_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">EXPUNIT</param>
+            </generator>
+        </id>
+
+        <property name="name" column="expunit_name" />
+        <property name="group" column="expunit_condition_group" />
     </class>
 
     <class name="org.zfin.mutant.Term" table="term" >

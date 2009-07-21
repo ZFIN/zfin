@@ -257,6 +257,12 @@ patterns associated with the figure
    <tr><td> <b>PHENOTYPE:</b>
     <tr><td><b>Genotype(s): </b><?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$OID&fxfiggeno_display_option=anchor') from webPages where ID='aa-fxfigphenogenolist.apg';">$1<?/MISQL>
 
+<?MISQL SQL="select WebExplode(object,'fxp_fig_zdb_id=$OID')from webpages where ID='aa-xpatfeatexpcondn.apg';">
+<?MIBLOCK COND="$(NE,$1,)">
+<?MIVAR><tr><td><b>Condition(s):</b> $(SUBSTR,$1,2,$(STRLEN,$1))<?/MIVAR>
+<?/MIBLOCK>
+<?/MISQL>
+
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfigphenoanat_fig_zdb_id=$OID&fxfigge_display_option=anchor') from webPages where ID='aa-fxfigphenoanatlist.apg';">$1<?/MISQL>
 
 

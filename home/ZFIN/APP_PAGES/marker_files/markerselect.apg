@@ -1022,13 +1022,44 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 			 and present_t = 'f';">
               <?/MISQL>
 
-<?MIVAR NAME=phenosum_sql_select>select distinct apatofig_fig_zdb_id<?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
+              <?MIVAR NAME=mrkrsel_pheno_img_count>0<?/MIVAR>
+              <?MIVAR NAME=mrkrsel_MO_flag>0<?/MIVAR>
+              <?MISQL SQL="select distinct apatofig_fig_zdb_id
+                             from mutant_fast_search, atomic_phenotype, apato_figure
+                            where mfs_mrkr_zdb_id ='$OID'
+      	                      and mfs_genox_zdb_id = apato_genox_zdb_id 
+      	                      and apatofig_apato_zdb_id = apato_zdb_id
+      	                      and exists (select NOTnormal.apato_zdb_id 
+                                            from atomic_phenotype NOTnormal 
+                                           where NOTnormal.apato_genox_zdb_id = mfs_genox_zdb_id 
+                                             and NOTnormal.apato_tag != 'normal' 
+                                             and apatofig_apato_zdb_id = NOTnormal.apato_zdb_id);">
+                <?MIVAR NAME=mrkrsel_pheno_fig_zdb_id>$1<?/MIVAR>
 
-<?MISQL SQL="$phenosum_sql;"><?/MISQL>
+                <?MICOMMENT> *** deciding on displaying camera icon or not <?/MICOMMENT>
+                <?MISQL COND="$(<,$mrkrsel_pheno_img_count,1)" 
+                        SQL="select count(img_zdb_id) from image 
+                              where img_fig_zdb_id = '$mrkrsel_pheno_fig_zdb_id';">
+                  <?MIVAR>$(SETVAR,$mrkrsel_pheno_img_count,$1)<?/MIVAR>
+                <?/MISQL> 
+                
+                <?MICOMMENT> *** deciding on displaying MO icon or not <?/MICOMMENT>
+                <?MISQL COND="$(<,$mrkrsel_MO_flag,1)" 
+                        SQL="select count(expcond_mrkr_zdb_id)
+       	                       from mutant_fast_search,genotype_experiment,experiment_condition,atomic_phenotype,apato_figure
+       	                      where mfs_mrkr_zdb_id = '$OID'
+       	                        and apato_genox_zdb_id = mfs_genox_zdb_id 
+       	                        and apatofig_apato_zdb_id = apato_zdb_id
+       	                        and apatofig_fig_zdb_id = '$mrkrsel_pheno_fig_zdb_id' 
+       	                        and mfs_genox_zdb_id = genox_zdb_id
+       	                        and genox_zdb_id = mfs_genox_zdb_id
+       	                        and expcond_exp_zdb_id = genox_exp_zdb_id
+       	                        and expcond_mrkr_zdb_id is not null;">
+                  <?MIVAR>$(SETVAR,$mrkrsel_MO_flag,$1)<?/MIVAR>
+                <?/MISQL>                 
+              <?/MISQL>
 
 	      <?MIVAR NAME=mrkrsel_pheno_fig_count>$MI_ROWCOUNT<?/MIVAR>
-              <?MIVAR NAME=mrkrsel_pheno_fig_zdb_id>$1<?/MIVAR>
 
               <TD nowrap>
 
@@ -1039,17 +1070,15 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
               <?MIVAR COND="$(>,$mrkrsel_pheno_fig_count,1)">	
                   <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figures </A>
               <?/MIVAR>
-
-<?MIVAR NAME=phenosum_sql_select>select distinct img_zdb_id<?/MIVAR>
-<?MIVAR NAME=phenosum_sql_from_spec>, image <?/MIVAR>
-<?MIVAR NAME=phenosum_sql_where_spec> and apatofig_fig_zdb_id = img_fig_zdb_id <?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
-
-<?MISQL SQL="$phenosum_sql;"><?/MISQL>
-
-              <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+              
+              <?MIBLOCK COND="$(>,$mrkrsel_pheno_fig_count,0)">
+                <?MIVAR COND="$(>,$mrkrsel_pheno_img_count,0)">
 		   <img src="/images/camera_icon.gif" border=0 alt="with image(s)">
-	      <?/MIVAR>
+	        <?/MIVAR>
+	        <?MIVAR COND="$(>,$mrkrsel_MO_flag,0)">
+	           <img src="/images/MO_icon.gif" border="0" alt="MO image">
+	        <?/MIVAR> 
+	      <?/MIBLOCK>
               &nbsp;	
               </TD>
 

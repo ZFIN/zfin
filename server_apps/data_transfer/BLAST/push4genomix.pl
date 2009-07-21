@@ -122,12 +122,9 @@ sub generateGeneDataFile () {
         # query phenotype fig
 	$sql = "
                 select apatofig_fig_zdb_id
-                  from feature_marker_relationship, genotype_feature,
-                       genotype_experiment, atomic_phenotype, apato_figure, image
-                 where fmrel_mrkr_zdb_id = '$gene_zdb_id'
-                   and fmrel_ftr_zdb_Id = genofeat_feature_zdb_id
-                   and genofeat_geno_zdb_id  = genox_geno_zdb_id
-                   and genox_zdb_id = apato_genox_zdb_id
+                  from mutant_fast_search, atomic_phenotype, apato_figure, image
+                 where mfs_mrkr_zdb_id = '$gene_zdb_id'
+                   and mfs_genox_zdb_id = apato_genox_zdb_id
                    and apato_zdb_id = apatofig_apato_zdb_id
                    and apatofig_fig_zdb_id = img_fig_zdb_id";
 
@@ -141,12 +138,9 @@ sub generateGeneDataFile () {
 
 	    $sql = "
                 select apato_zdb_id
-                  from feature_marker_relationship, genotype_feature,
-                       genotype_experiment, atomic_phenotype
-                 where fmrel_mrkr_zdb_id = '$gene_zdb_id'
-                   and fmrel_ftr_zdb_Id = genofeat_feature_zdb_id
-                   and genofeat_geno_zdb_id  = genox_geno_zdb_id
-                   and genox_zdb_id = apato_genox_zdb_id       ";
+                  from mutant_fast_search, atomic_phenotype
+                 where mfs_mrkr_zdb_id = '$gene_zdb_id'
+                   and mfs_genox_zdb_id = apato_genox_zdb_id       ";
 
 	    $has_pato = 1 if $dbh->selectrow_array ($sql);
 	}

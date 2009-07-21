@@ -33,19 +33,23 @@ OUPUT:
 <?/MIERROR>
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR NAME=$new_exp_id><?/MIVAR>
+<?MISQL SQL="select distinct apato_genox_zdb_id,genox_exp_zdb_id from atomic_phenotype,apato_figure, genotype_experiment
+             where apato_zdb_id=apatofig_apato_zdb_id
+             and apatofig_fig_zdb_id='$fxp_fig_zdb_id'
+             and apato_genox_zdb_id=genox_zdb_id">
 
-<?MIBLOCK COND="$(NXST,$fxp_zdb_id)">
-    ERROR: Genotype experiment zdb id is not passed in.
-
-<?MIELSE>
+<?MIVAR NAME=$fxp_zdb_id>$1<?/MIVAR>
+<?MIVAR NAME=$exp_id>$2<?/MIVAR>
+   <?MIBLOCK COND="$(NE,$exp_id,$new_exp_id)"> 
   <?MISQL SQL="
-	select get_geno_name_with_bg_html_link(genox_geno_zdb_id), 
-	       genox_exp_zdb_id
+	select  
+	       distinct genox_exp_zdb_id
  	  from genotype_experiment
-	 where genox_zdb_id = '$fxp_zdb_id';">
+	 where genox_zdb_id = '$fxp_zdb_id'
+         order by genox_exp_zdb_id;">
 
-	<?MIVAR NAME=fxp_genobgrd_html>$1<?/MIVAR>
-	<?MIVAR NAME=fxp_exp_zdb_id>$2<?/MIVAR>
+	<?MIVAR NAME=fxp_exp_zdb_id>$1<?/MIVAR>
 
   <?/MISQL>
   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
@@ -62,10 +66,14 @@ OUPUT:
      <?MICOMMENT>===========  Display   =================
 		 ==   genotype background and experiment condition 
      <?/MICOMMENT>
+
+
+
      <?MIVAR>
-$fxp_genobgrd_html$(IF,$(NC,$fxp_exp_html,),", "$fxp_exp_html) 
-     <?/MIVAR>	 
+$(IF,$(NE,$fxp_exp_html,),"; "$fxp_exp_html)
+<?/MIVAR>
+<?/MIBLOCK>
  
    <?/MIBLOCK> <?MICOMMENT> end if genox zdb id is valid <?/MICOMMENT>
-
-<?/MIBLOCK> <?MICOMMENT> end if genox zdb id is passed in <?/MICOMMENT>
+<?MIVAR NAME=$new_exp_id>$exp_id<?/MIVAR>
+<?/MISQL>

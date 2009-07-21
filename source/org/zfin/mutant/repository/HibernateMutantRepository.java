@@ -17,6 +17,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GoTerm;
 import org.zfin.repository.PaginationResultFactory;
+import org.zfin.expression.Experiment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,19 +35,24 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct geno from Genotype geno, Phenotype pheno " +
-                        "WHERE  pheno.genotypeExperiment member of geno.genotypeExperiments " +
+                "select distinct genox.genotype from GenotypeExperiment genox, Phenotype pheno " +
+                        "WHERE pheno.genotypeExperiment = genox " +
                         "AND (pheno.patoSubTermzdbID = :zdbID or pheno.patoSuperTermzdbID = :zdbID ) " +
-                        "AND pheno.tag != :tag ";
-//        "AND pheno.tag is not :tag ";
+                        "AND pheno.tag != :tag " +
+                        "AND genox.experiment.name in (:condition) " +
+                        "AND not exists (select 1 from ExperimentCondition cond where" +
+                        " cond.experiment = genox.experiment " +
+                        " AND cond.morpholino is not null ) ";
+
         if (!wildtype) {
-            hql += "AND geno.wildtype = 'f' ";
+            hql += "AND genox.genotype.wildtype = 'f' ";
         }
-        hql += "ORDER BY geno.nameOrder asc";
+        hql += "ORDER BY genox.genotype.nameOrder asc";
 
         Query query = session.createQuery(hql);
         query.setString("zdbID", item.getZdbID());
         query.setParameter("tag", Phenotype.Tag.NORMAL.toString());
+        query.setParameterList("condition", Experiment.STANDARD_CONDITIONS);
 
         return PaginationResultFactory.createResultFromScrollableResultAndClose(numberOfRecords, query.scroll());
     }
@@ -155,6 +161,7 @@ public class HibernateMutantRepository implements MutantRepository {
         return getGenotypeExperimentMorhpolinosByAnatomy(item, isWildtype, null).getPopulatedResults();
     }
 
+    @SuppressWarnings("unchecked")
     public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, Boolean isWildtype, PaginationBean bean) {
         Session session = HibernateUtil.currentSession();
         String hql = "SELECT distinct genotypeExperiment " +
@@ -164,17 +171,17 @@ public class HibernateMutantRepository implements MutantRepository {
                 "      genotypeExperiment.experiment = exp AND " +
                 "       (pheno.patoSubTermzdbID = :aoZdbID or pheno.patoSuperTermzdbID = :aoZdbID) AND " +
                 "       pheno.genotypeExperiment = genotypeExperiment AND " +
+                "       pheno.tag != :tag AND " +
                 "       con.experiment = exp AND " +
                 "       genotypeExperiment.genotype = geno AND " +
-                "       marker = con.morpholino AND ";
-        if (isWildtype != null)
-            hql += "      geno.wildtype = :isWildtype AND ";
-        hql += "       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
+                "       marker = con.morpholino AND " +
+                "       geno.wildtype = :isWildtype AND " +
+                "       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
                 "                             expCon.morpholino is null ) ";
         Query query = session.createQuery(hql);
         query.setString("aoZdbID", item.getZdbID());
-        if (isWildtype != null)
-            query.setBoolean("isWildtype", isWildtype);
+        query.setParameter("tag", Phenotype.Tag.NORMAL.toString());
+        query.setBoolean("isWildtype", isWildtype);
 
         // no boundaries defined, all records
         if (bean == null) {
@@ -253,7 +260,7 @@ public class HibernateMutantRepository implements MutantRepository {
         return morphs;
     }
 
-    // ToDo: See FogBugz 1926: Include morpholinos from expression object. 
+    // ToDo: See FogBugz 1926: Include morpholinos from expression object.
     private String getMorpholinosByAnatomyTermQueryBlock() {
         String hql = "FROM  Marker marker, Experiment exp, " +
                 "      Phenotype pheno, ExperimentCondition con, GenotypeExperiment geno " +

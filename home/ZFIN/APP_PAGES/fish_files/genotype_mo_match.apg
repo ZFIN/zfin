@@ -1,0 +1,189 @@
+<?MICOMMENT>
+
+  file: genotype_mo_match.apg
+  prefiex: genomm_
+
+  INPUT:
+     genomm_inputname:  the input search string for genotype
+     genomm_session_id:  the current session
+
+  OUTPUT:
+
+     temp table genomm_temp_on_mo_target_<session_id>
+
+  This page is created to be used by both the fishselect.apg exclusively 
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+
+  <?MICOMMENT> --- Create or reuse temp tables  --- <?/MICOMMENT>
+  <?MIVAR NAME=$genomm_temp_on_mo_target>$(CONCAT,genomm_temp_on_mo_target_,$genomm_session_id)<?/MIVAR>    
+
+  <?MISQL SQL="
+    execute function table_exists('$genomm_temp_on_mo_target')">
+    
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $genomm_temp_on_mo_target (
+        g_m_zdb_id	 	varchar(50),
+        m_order	 	        varchar(10),
+        m_text                  varchar(80),
+        m_type                  varchar(80),
+        m_gene                  varchar(50),
+        m_wildtype              boolean
+      ) with NO LOG;">
+    <?/MISQL>
+    <?MISQL COND="$(EC,$1,t)" SQL="
+      	    delete from  $genomm_temp_on_mo_target;">
+    <?/MISQL> 
+  <?/MISQL>
+  
+  <?MIVAR NAME=$genomm_temp_mo_target>$(CONCAT,genomm_temp_mo_target_,$genomm_session_id)<?/MIVAR>
+
+  <?MISQL SQL="
+    execute function table_exists('$genomm_temp_mo_target')">
+    
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $genomm_temp_mo_target (
+        gene_zdb_id	 	varchar(50),
+        m_order	 	        varchar(10),
+        m_text                  varchar(80),
+        m_type                  varchar(80)
+      ) with NO LOG;">
+    <?/MISQL>
+    <?MISQL COND="$(EC,$1,t)" SQL="
+      	    delete from $genomm_temp_mo_target;">
+    <?/MISQL> 
+  <?/MISQL> 
+  
+  <?MIVAR NAME=$percentage>%<?/MIVAR>
+  <?MIBLOCK COND="$(EC,$compare,starts)">
+    <?MIVAR NAME=$table_all_name_ends> <?/MIVAR>
+    <?MIVAR NAME=$target_col>allmapnm_name_lower<?/MIVAR>
+    <?MIVAR NAME=$connecting_2_tables> <?/MIVAR>
+    <?MIVAR NAME=$like_or_equal>like<?/MIVAR>
+    <?MIVAR NAME=$input>$(CONCAT,$genomm_inputname,$percentage)<?/MIVAR>   
+  <?MIELSE COND="$(EC,$compare,equals)">    
+    <?MIVAR NAME=$table_all_name_ends> <?/MIVAR>
+    <?MIVAR NAME=$target_col>allmapnm_name_lower<?/MIVAR>
+    <?MIVAR NAME=$connecting_2_tables> <?/MIVAR>
+    <?MIVAR NAME=$like_or_equal>=<?/MIVAR> 
+    <?MIVAR NAME=$input>$genomm_inputname<?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=$table_all_name_ends>,all_name_ends<?/MIVAR>
+    <?MIVAR NAME=$target_col>allnmend_name_end_lower<?/MIVAR>
+    <?MIVAR NAME=$connecting_2_tables>and allmapnm_serial_id = allnmend_allmapnm_serial_id<?/MIVAR>
+    <?MIVAR NAME=$like_or_equal>like<?/MIVAR> 
+    <?MIVAR NAME=$input>$(CONCAT,$genomm_inputname,$percentage)<?/MIVAR>
+  <?/MIBLOCK>
+  
+
+  <?MIVAR NAME=$genomm_temp_name_minsig>$(CONCAT,genomm_temp_name_minsig_,$genomm_session_id)<?/MIVAR>
+
+  <?MISQL SQL="
+    execute function table_exists('$genomm_temp_name_minsig')">
+    
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $genomm_temp_name_minsig (
+        t_gene_zdb_id	 	varchar(50),
+        t_name_significance     varchar(10)
+      ) with NO LOG;">
+    <?/MISQL>
+    <?MISQL COND="$(EC,$1,t)" SQL="
+      	    delete from $genomm_temp_name_minsig;">
+    <?/MISQL> 
+  <?/MISQL> 
+
+  <?MISQL SQL="
+	insert into $genomm_temp_name_minsig 
+	    select allmapnm_zdb_id,min(allmapnm_significance) 
+              from all_map_names$table_all_name_ends
+             where $target_col $like_or_equal '$(LOWER,$input)'
+                   $connecting_2_tables
+               and allmapnm_zdb_id like 'ZDB-GENE-%'
+            group by allmapnm_zdb_id;">	    
+  <?/MISQL>  
+
+  <?MICOMMENT> it is safe to use two min() as long as,for all gene related names, 
+               each significance corresponding to one and only one precedence.<?/MICOMMENT>
+
+  <?MISQL SQL="
+	insert into $genomm_temp_mo_target
+            select allmapnm_zdb_id,allmapnm_significance,min(allmapnm_name), min(allmapnm_precedence)
+              from $genomm_temp_name_minsig, all_map_names$table_all_name_ends
+             where allmapnm_zdb_id = t_gene_zdb_id 
+               and allmapnm_significance = t_name_significance
+               and $target_col $like_or_equal '$(LOWER,$input)'
+                   $connecting_2_tables
+           group by allmapnm_zdb_id,allmapnm_significance;">
+  <?/MISQL>
+
+  <?MISQL SQL="select * from $genomm_temp_mo_target;">
+     <?MIVAR NAME=$genomm_gene>$1<?/MIVAR>
+     <?MIVAR NAME=$genomm_order>$2<?/MIVAR>
+     <?MIVAR>$(SETVAR,$genomm_order,$(+,$genomm_order,107))<?/MIVAR>
+     <?MIVAR NAME=$genomm_text>$3<?/MIVAR>
+     <?MIVAR NAME=$genomm_text DELIMIT="'" REPLACE="''">$genomm_text<?/MIVAR>
+     <?MIVAR NAME=$genomm_type>$4<?/MIVAR>
+     <?MIVAR NAME=$genomm_type DELIMIT="Current" REPLACE="MO gene">$genomm_type<?/MIVAR>
+     <?MIVAR COND="$(EC,$genomm_type,Previous name)">$(SETVAR,$genomm_type,MO gene alias)<?/MIVAR>
+              
+     <?MISQL SQL="
+            select distinct geno_zdb_id, geno_is_wildtype
+              from marker_relationship, genotype_figure_fast_search, genotype
+             where mrel_mrkr_2_zdb_id = '$genomm_gene' 
+               and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
+               and geno_zdb_id = gffs_geno_zdb_id
+               and not exists (select 'x' from $fishselect_temp_on_name
+                                where g_zdb_id = geno_zdb_id);">               
+        <?MIVAR NAME=$genomm_geno>$1<?/MIVAR>
+        <?MIVAR NAME=$genomm_wildtype>$2<?/MIVAR>
+        
+        <?MIVAR NAME=callModule>f<?/MIVAR>
+
+        <?MIVAR NAME=genomm_fig_count>1<?/MIVAR>
+        <?MIBLOCK COND="$(XST,$fsel_processed_selected_structures)">   
+          <?MIBLOCK COND="$(EC,$genomm_wildtype,f)">
+            <?MISQL SQL="select genofeat_zdb_id
+                     from genotype_feature, feature_marker_relationship, marker_relationship EFG
+                    where genofeat_geno_zdb_id = '$genomm_geno'
+                      and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                      and fmrel_type != 'contains phenotypic sequence feature'
+                      and fmrel_mrkr_zdb_id = EFG.mrel_mrkr_1_zdb_id
+                      and EFG.mrel_mrkr_2_zdb_id like 'ZDB-EFG%'
+                      and not exists(select 'x' 
+                                       from genotype_feature, feature_marker_relationship
+                                      where genofeat_geno_zdb_id = '$genomm_geno'
+                                        and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                        and fmrel_type = 'is allele of');">
+               <?MIVAR>$(SETVAR,$callModule,t)<?/MIVAR>
+            <?/MISQL>
+          <?MIELSE>
+            <?MIVAR>$(SETVAR,$callModule,t)<?/MIVAR>      
+          <?/MIBLOCK>
+        
+          <?MIBLOCK  COND="$(EC,$callModule,t)">
+            <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=genotype_mo_match&wtphn_session_id=$genomm_session_id&wtphn_geno_zdb_id=$genomm_geno&wtphn_gene_zdb_id=$genomm_gene&wtphn_processed_selected_structures=$fsel_processed_selected_structures&wtphn_include_substructures=$include_substructures&wtphn_structure_bool=$structure_bool') 
+                         from webPages where ID='aa-wildtypePhenoAnat.apg';">$1<?/MISQL>
+            <?MIVAR>$(SETVAR,$genomm_fig_count,$wtphn_figCt)<?/MIVAR>
+          <?/MIBLOCK>
+
+        <?/MIBLOCK>
+        
+        <?MISQL COND="$(>,$genomm_fig_count,0)" SQL="
+                     insert into $genomm_temp_on_mo_target (g_m_zdb_id,m_order,m_text,m_type,m_gene,m_wildtype)
+                          values ('$genomm_geno','$genomm_order', '$genomm_text', '$genomm_type', '$genomm_gene', '$genomm_wildtype');">
+        <?/MISQL>
+        
+     <?/MISQL>
+  <?/MISQL>
+

@@ -472,41 +472,212 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
 
   <?MICOMMENT> ======    Phenotype   ====== <?/MICOMMENT>
   <?MIBLOCK COND=$(EC,$genovw_is_wildtype,f)>
-   <?MISQL SQL="
-  	select dbinfo('sessionid') 
-  	  from single;">
-    <?MIVAR NAME=genovw_session_id>$1<?/MIVAR>
-    <?MIVAR NAME=genovw_temp_pato>$(CONCAT,genovw_temp_pato_,$genovw_session_id)<?/MIVAR>
+   <?MISQL SQL="select dbinfo('sessionid') from single;">
+     <?MIVAR NAME=genovw_session_id>$1<?/MIVAR>
+     <?MIVAR NAME=genovw_temp_figentity>$(CONCAT,genovw_temp_figentity_,$genovw_session_id)<?/MIVAR>
    <?/MISQL>
 
-   <?MISQL SQL="
-  	  execute function table_exists('$genovw_temp_pato')">
-  	<?MIVAR NAME="$genovw_tableExists">$1<?/MIVAR>
+   <?MISQL SQL="execute function table_exists('$genovw_temp_figentity')">
+     <?MIVAR NAME="$genovw_tableExists">$1<?/MIVAR>
    <?/MISQL>
-  <?MISQL COND=$(EC,$genovw_tableExists,t) SQL="
-	drop table $genovw_temp_pato;">
-  <?/MISQL>
-   <?MISQL SQL="
-    	  create temp table $genovw_temp_pato (
-   	    t_pato_zdb_id 	varchar(50)
-  	  ) with NO LOG;">
+  
+   <?MISQL COND=$(EC,$genovw_tableExists,t) SQL="
+     drop table $genovw_temp_figentity;">
+   <?/MISQL>
+   
+   <?MISQL SQL="create temp table $genovw_temp_figentity (
+                  t_fig_zdb_id varchar(50),
+                  t_superterm_zdb_id varchar(50),
+                  t_subterm_zdb_id varchar(50)
+        ) with NO LOG;">
    <?/MISQL>  
-
-   <?MISQL SQL="
-	insert into $genovw_temp_pato
-            select distinct apato_zdb_id
-              from atomic_phenotype, genotype_experiment
-             where genox_zdb_id = apato_genox_zdb_id 
-               and genox_geno_zdb_id = '$OID' ;">
-   <?/MISQL>
 
    <hr width=80%>
    <b> PHENOTYPE: </b><font size=-1>(<a href="javascript:start_note('phenotype_note')">current status</a></font>)
    <br>
 
-   <?MISQL SQL="select WebExplode(object,'phmview_input_table=$genovw_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
- 
-  <?/MIBLOCK> <?MICOMMENT> end of if mutant <?/MICOMMENT>
+    <?MIVAR NAME=genovw_entity_short_list_cap>5<?/MIVAR>
+
+   <?MISQL SQL="insert into $genovw_temp_figentity
+                select distinct gffs_fig_zdb_id, gffs_superterm_zdb_id, gffs_subterm_zdb_id
+                  from genotype_figure_fast_search
+                 where gffs_geno_zdb_id = '$OID'
+                   and gffs_morph_zdb_id is null;">
+   <?/MISQL>
+
+   <?MISQL SQL="select WebExplode(object,'phmview_input_figentity_table=$genovw_temp_figentity&phmview_morphant=no') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
+
+  <?MIVAR NAME=genovw_pato_fig_count1>$phmview_pato_fig_count<?/MIVAR>
+  
+  <?MIBLOCK  COND="$(>,$genovw_pato_fig_count1,0)">
+  
+  <?MIVAR NAME=genovw_pato_source_desc1>$phmview_pato_source_desc<?/MIVAR>
+  <?MIVAR NAME=genovw_pato_link1>$phmview_pato_link<?/MIVAR>
+
+   &nbsp;&nbsp;&nbsp;<b>Phenotype in <?MIVAR><i>$genovw_display_name</i><?/MIVAR>:</b>
+
+  <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>        
+    <tr>
+      <td width="15%"><b>&nbsp;&nbsp;Data: </b>
+      <td width="85%">
+        <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$genovw_pato_link1">$genovw_pato_fig_count1<?/MIVAR> figure<?MIVAR>$(IF,$(>,$genovw_pato_fig_count1,1),s,)<?/MIVAR></a> from <?MIVAR>$genovw_pato_source_desc1<?/MIVAR>
+      </td>
+    </tr>
+   
+   <?MIVAR NAME=genovw_entity_sql1>$phmview_entity_sql<?/MIVAR>
+
+    <?MIVAR NAME=genovw_entity_counter>0<?/MIVAR>
+    <?MISQL SQL="$genovw_entity_sql1 order by 3;">     
+      <?MIBLOCK COND=$(EC,$4,anatomy)>
+         <?MIVAR NAME=genovw_anatitem_html><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$1>$2</a></span><?/MIVAR>
+      <?MIELSE>
+         <?MIVAR NAME=genovw_anatitem_html><span nowrap><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:$1>$2</a></span><?/MIVAR>          
+      <?/MIBLOCK>
+
+      $(SETVAR,$genovw_entity_counter,$(+,$genovw_entity_counter,1))
+        <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+     	  <?MIVAR NAME=genovw_entity_short_list1>$genovw_anatitem_html<?/MIVAR>
+      	  <?MIVAR NAME=genovw_entity_long_list1>$genovw_anatitem_html<?/MIVAR>         
+	<?MIELSE>
+	  <?MIVAR COND="$(<=,$genovw_entity_counter,$genovw_entity_short_list_cap)">
+	     $(VECAPPEND,$genovw_entity_short_list1,$genovw_anatitem_html)
+          <?/MIVAR>
+          <?MIVAR>
+            $(VECAPPEND,$genovw_entity_long_list1,$genovw_anatitem_html)
+          <?/MIVAR>
+        <?/MIBLOCK>
+    <?/MISQL>
+
+    <?MIVAR NAME=genovw_entity_totalnum1>$MI_ROWCOUNT<?/MIVAR>
+    <?MIVAR NAME=genovw_entity_short_list_sepa1 SEPARATE=", ">$genovw_entity_short_list1<?/MIVAR>
+    <?MIVAR NAME=genovw_entity_long_list_sepa1 SEPARATE=", ">$genovw_entity_long_list1<?/MIVAR>
+    <?MIVAR NAME=genovw_entity_short_list_escp1>$(REPLACE,$genovw_entity_short_list_sepa1,"'","")<?/MIVAR>    
+    <?MIVAR NAME=genovw_entity_long_list_escp1>$(REPLACE,$genovw_entity_long_list_sepa1,"'","")<?/MIVAR>
+
+    <tr>
+      <td width="15%">&nbsp;&nbsp;<b>Observed in: </b></td>
+      <td width="85%"> 
+        <script>
+           <?MIVAR>
+   	   function expandAnatomyList1() {
+     	       var elem = document.getElementById("anatomyList1");
+               elem.innerHTML = "$genovw_entity_long_list_escp1 <a href=javascript:onClick=shrinkAnatomyList1()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+	   }
+
+   	   function shrinkAnatomyList1() {
+     	       var elem = document.getElementById("anatomyList1");
+               elem.innerHTML = "$genovw_entity_short_list_escp1 ... <a href=javascript:onClick=expandAnatomyList1()>(all $genovw_entity_totalnum1) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+	   }
+
+	   <?/MIVAR>
+        </script> 
+
+        <span id="anatomyList1">
+         <?MIVAR>$genovw_entity_short_list_escp1<?/MIVAR>
+
+         <?MIVAR COND="$(>,$genovw_entity_totalnum1,$genovw_entity_short_list_cap)">   
+	   ... <a href=javascript:onClick=expandAnatomyList1()>(all $genovw_entity_totalnum1) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+         <?/MIVAR>
+       </span>
+     </td>
+    </tr>
+
+  </table>
+  
+  <?/MIBLOCK>
+
+   <?MISQL SQL="delete from $genovw_temp_figentity;">
+   <?/MISQL> 
+
+   <?MISQL SQL="insert into $genovw_temp_figentity
+                select distinct gffs_fig_zdb_id, gffs_superterm_zdb_id, gffs_subterm_zdb_id
+                  from genotype_figure_fast_search
+                 where gffs_geno_zdb_id = '$OID'
+                   and gffs_morph_zdb_id is not null;">
+   <?/MISQL>
+
+   <?MISQL SQL="select WebExplode(object,'phmview_input_figentity_table=$genovw_temp_figentity&phmview_morphant=yes') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
+
+  <?MIVAR NAME=genovw_pato_fig_count2>$phmview_pato_fig_count<?/MIVAR>
+  
+  <?MIBLOCK  COND="$(>,$genovw_pato_fig_count2,0)">
+  
+  <?MIVAR NAME=genovw_pato_source_desc2>$phmview_pato_source_desc<?/MIVAR>
+  <?MIVAR NAME=genovw_pato_link2>$phmview_pato_link<?/MIVAR>
+
+  &nbsp;&nbsp;&nbsp;<b>Phenotype in <?MIVAR><i>$genovw_display_name</i>&nbsp;with morpholinos<?/MIVAR>:</b>
+
+  <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>        
+    <tr>
+      <td width="15%"><b>&nbsp;&nbsp;Data: </b>
+      <td width="85%">
+        <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$genovw_pato_link2">$genovw_pato_fig_count2<?/MIVAR> figure<?MIVAR>$(IF,$(>,$genovw_pato_fig_count2,1),s,)<?/MIVAR></a> from <?MIVAR>$genovw_pato_source_desc2<?/MIVAR>
+      </td>
+    </tr>
+
+   <?MIVAR NAME=genovw_entity_sql2>$phmview_entity_sql<?/MIVAR>
+
+    <?MIVAR NAME=genovw_entity_counter>0<?/MIVAR>
+    <?MISQL SQL="$genovw_entity_sql2 order by 3;">     
+      <?MIBLOCK COND=$(EC,$4,anatomy)>
+         <?MIVAR NAME=genovw_anatitem_html><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$1>$2</a></span><?/MIVAR>
+      <?MIELSE>
+         <?MIVAR NAME=genovw_anatitem_html><span nowrap><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:$1>$2</a></span><?/MIVAR>          
+      <?/MIBLOCK>
+
+      $(SETVAR,$genovw_entity_counter,$(+,$genovw_entity_counter,1))
+        <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+     	  <?MIVAR NAME=genovw_entity_short_list2>$genovw_anatitem_html<?/MIVAR>
+      	  <?MIVAR NAME=genovw_entity_long_list2>$genovw_anatitem_html<?/MIVAR>         
+	<?MIELSE>
+	  <?MIVAR COND="$(<=,$genovw_entity_counter,$genovw_entity_short_list_cap)">
+	     $(VECAPPEND,$genovw_entity_short_list2,$genovw_anatitem_html)
+          <?/MIVAR>
+          <?MIVAR>
+            $(VECAPPEND,$genovw_entity_long_list2,$genovw_anatitem_html)
+          <?/MIVAR>
+        <?/MIBLOCK>
+    <?/MISQL>
+
+    <?MIVAR NAME=genovw_entity_totalnum2>$MI_ROWCOUNT<?/MIVAR>
+    <?MIVAR NAME=genovw_entity_short_list_sepa2 SEPARATE=", ">$genovw_entity_short_list2<?/MIVAR>
+    <?MIVAR NAME=genovw_entity_long_list_sepa2 SEPARATE=", ">$genovw_entity_long_list2<?/MIVAR>
+    <?MIVAR NAME=genovw_entity_short_list_escp2>$(REPLACE,$genovw_entity_short_list_sepa2,"'","")<?/MIVAR>    
+    <?MIVAR NAME=genovw_entity_long_list_escp2>$(REPLACE,$genovw_entity_long_list_sepa2,"'","")<?/MIVAR>
+
+    <tr>
+      <td width="15%">&nbsp;&nbsp;<b>Observed in: </b></td>
+      <td width="85%"> 
+        <script>
+           <?MIVAR>
+   	   function expandAnatomyList2() {
+     	       var elem = document.getElementById("anatomyList2");
+               elem.innerHTML = "$genovw_entity_long_list_escp2 <a href=javascript:onClick=shrinkAnatomyList2()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+	   }
+
+   	   function shrinkAnatomyList2() {
+     	       var elem = document.getElementById("anatomyList2");
+               elem.innerHTML = "$genovw_entity_short_list_escp2 ... <a href=javascript:onClick=expandAnatomyList2()>(all $genovw_entity_totalnum2) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+	   }
+
+	   <?/MIVAR>
+        </script> 
+
+        <span id="anatomyList2">
+         <?MIVAR>$genovw_entity_short_list_escp2<?/MIVAR>
+
+         <?MIVAR COND="$(>,$genovw_entity_totalnum2,$genovw_entity_short_list_cap)">   
+	   ... <a href=javascript:onClick=expandAnatomyList2()>(all $genovw_entity_totalnum2) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+         <?/MIVAR>
+       </span>
+     </td>
+    </tr>
+
+  </table>
+  
+  <?/MIBLOCK>
+  
+ <?/MIBLOCK> <?MICOMMENT> end of if mutant <?/MICOMMENT>
 
 
 
@@ -1008,7 +1179,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
                  from feature_marker_relationship, marker
                 where fmrel_ftr_zdb_id = '$genovw_ftr_zdb_id'
                   and fmrel_mrkr_zdb_id = mrkr_zdb_id
-                  and fmrel_type = 'contains sequence feature';"> 
+                  and fmrel_type like 'contains%';"> 
 
              <tr>
                 <td><b>Construct: </b></td>

@@ -311,7 +311,7 @@ document.write("       <a href=\"/action/antibody/search\">Antibodies</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("        <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg\" title=\"Search for sequence alignment against ZFIN datasets and Zebrafish datasets\">BLAST</a> ");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant\">Mutants / Tg</a>");
+document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant\">Mutants / Morphants / Tg</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
  document.write("      <a href=\"/action/anatomy/search\">Anatomy</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");

@@ -50,6 +50,23 @@ EFFECTS
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
+  <?MISQL SQL="select dbinfo('sessionid') from single;">
+  <?/MISQL>
+
+  <?MIVAR NAME=puaddmu_session_id>$1<?/MIVAR>
+  <?MIVAR NAME=puaddmu_markers_regen>$(CONCAT,puaddmu_temp_markers_regen_,$puaddmu_session_id)<?/MIVAR>
+
+  <?MISQL SQL="execute function table_exists('$puaddmu_markers_regen')">
+  <?/MISQL>
+
+  <?MIVAR NAME="$puaddmu_tableExists">$1<?/MIVAR>
+
+  <?MISQL COND=$(EC,$puaddmu_tableExists,t) SQL="drop table $puaddmu_markers_regen;">
+  <?/MISQL>
+
+  <?MISQL SQL="create temp table $puaddmu_markers_regen (puaddmu_temp_marker_zdb_id  varchar(50) ) with NO LOG;">
+  <?/MISQL>  
+
    <?MICOMMENT> ** Get the genox id, if it exists ** <?/MICOMMENT>
 
     <?MISQL SQL="select genox_zdb_id 
@@ -89,15 +106,15 @@ EFFECTS
     <?MICOMMENT> ** get default quality id ** <?/MICOMMENT>
     <?MISQL SQL="select term_zdb_id 
                    from term 
-                   where term_name = 'quality'
-                     and term_is_obsolete = 'f';">
+                  where term_name = 'quality'
+                    and term_is_obsolete = 'f';">
       <?MIVAR NAME="$puaddmu_default_quality_zdb_id">$1<?/MIVAR>
     <?/MISQL>
 
     <?MICOMMENT> ** get default entity id ** <?/MICOMMENT>
       
     <?MISQL SQL="select anatitem_zdb_id 
-                  from anatomy_item 
+                   from anatomy_item 
                   where anatitem_name = 'unspecified';">
       <?MIVAR NAME="$puaddmu_default_entity_zdb_id">$1<?/MIVAR>
     <?/MISQL>
@@ -113,6 +130,53 @@ EFFECTS
       <?MISQL SQL="insert into zdb_active_data values ('$puaddmu_genox_zdb_id');"><?/MISQL>
       <?MISQL SQL="insert into genotype_experiment (genox_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id)
                                values ('$puaddmu_genox_zdb_id', '$puaddmu_geno_zdb_id', '$puaddmu_exp_zdb_id');"><?/MISQL>
+
+      <?MISQL COND="$(XST,$puaddmu_geno_zdb_id)" SQL="
+        execute procedure regen_genofig_genotype('$puaddmu_geno_zdb_id');">
+      <?/MISQL> 
+
+      <?MISQL COND="$(XST,$puaddmu_geno_zdb_id)" SQL="
+           select distinct fmrel_mrkr_zdb_id
+             from genotype_feature, feature_marker_relationship 
+            where genofeat_geno_zdb_id = '$puaddmu_geno_zdb_id' 
+              and genofeat_feature_zdb_id = fmrel_ftr_zdb_id;">
+        <?MIVAR NAME="$puaddmu_mrkr_zdb_id">$1<?/MIVAR>
+        <?MISQL COND="$(XST,$puaddmu_mrkr_zdb_id)" SQL="
+                  insert into $puaddmu_markers_regen (puaddmu_temp_marker_zdb_id)
+                    values ('$puaddmu_mrkr_zdb_id');">
+        <?/MISQL> 
+      <?/MISQL> 
+
+      <?MISQL COND="$(XST,$puaddmu_genox_zdb_id)" SQL="
+            select distinct expcond_mrkr_zdb_id
+              from experiment_condition, genotype_experiment, marker_relationship 
+             where genox_zdb_id = '$puaddmu_genox_zdb_id' 
+               and genox_exp_zdb_id = expcond_exp_zdb_id;">
+               
+        <?MIVAR NAME="$puaddmu_mo_zdb_id">$1<?/MIVAR>
+        
+        <?MISQL COND="$(XST,$puaddmu_mo_zdb_id)" SQL="
+                  insert into $puaddmu_markers_regen (puaddmu_temp_marker_zdb_id)
+                    values ('$puaddmu_mo_zdb_id');">
+        <?/MISQL> 
+        
+        <?MISQL COND="$(XST,$puaddmu_mo_zdb_id)" SQL="
+             select distinct mrel_mrkr_2_zdb_id
+               from marker_relationship
+              where mrel_mrkr_1_zdb_id = '$puaddmu_mo_zdb_id'
+                and mrel_type = 'knockdown reagent targets gene';">
+                
+          <?MIVAR NAME="$puaddmu_mo_target_zdb_id">$1<?/MIVAR>
+          
+          <?MISQL COND="$(XST,$puaddmu_mo_target_zdb_id)" SQL="
+                    insert into $puaddmu_markers_regen (puaddmu_temp_marker_zdb_id)
+                      values ('$puaddmu_mo_target_zdb_id');">
+          <?/MISQL> 
+          
+        <?/MISQL>     
+        
+      <?/MISQL> 
+
     <?/MIBLOCK>
 
     <?MICOMMENT> ** When these sets get made, they're always 'empty', meaning that
@@ -129,14 +193,14 @@ EFFECTS
                      for this pub & genox id *** <?/MICOMMENT>
 
     <?MISQL SQL="select first 1 apato_zdb_id 
-                 from atomic_phenotype 
-                 where apato_superterm_zdb_id = '$puaddmu_default_entity_zdb_id'
-                   and apato_quality_zdb_id = '$puaddmu_default_quality_zdb_id'
-                   and apato_genox_zdb_id = '$puaddmu_genox_zdb_id'
-                   and apato_tag = 'abnormal'
-                   and apato_start_stg_zdb_id = '$puaddmu_start_stg_zdb_id'
-                   and apato_end_stg_zdb_id = '$puaddmu_end_stg_zdb_id'
-                   and apato_pub_zdb_id = '$OID';">
+                   from atomic_phenotype 
+                  where apato_superterm_zdb_id = '$puaddmu_default_entity_zdb_id'
+                    and apato_quality_zdb_id = '$puaddmu_default_quality_zdb_id'
+                    and apato_genox_zdb_id = '$puaddmu_genox_zdb_id'
+                    and apato_tag = 'abnormal'
+                    and apato_start_stg_zdb_id = '$puaddmu_start_stg_zdb_id'
+                    and apato_end_stg_zdb_id = '$puaddmu_end_stg_zdb_id'
+                    and apato_pub_zdb_id = '$OID';">
       <?MIVAR NAME="$puaddmu_apato_zdb_id">$1<?/MIVAR>
     <?/MISQL>
 
@@ -155,6 +219,55 @@ EFFECTS
                                                   '$puaddmu_default_quality_zdb_id', '$puaddmu_default_tag');">
       <?/MISQL>
 
+      <?MISQL COND="$(XST,$puaddmu_geno_zdb_id)" SQL="
+        execute procedure regen_genofig_genotype('$puaddmu_geno_zdb_id');">
+      <?/MISQL> 
+
+      <?MISQL COND="$(XST,$puaddmu_geno_zdb_id)" SQL="
+           select distinct fmrel_mrkr_zdb_id
+             from genotype_feature, feature_marker_relationship 
+            where genofeat_geno_zdb_id = '$puaddmu_geno_zdb_id' 
+              and genofeat_feature_zdb_id = fmrel_ftr_zdb_id;">
+              
+        <?MIVAR NAME="$puaddmu_mrkr_zdb_id">$1<?/MIVAR>
+        
+        <?MISQL COND="$(XST,$puaddmu_mrkr_zdb_id)" SQL="
+                  insert into $puaddmu_markers_regen (puaddmu_temp_marker_zdb_id)
+                    values ('$puaddmu_mrkr_zdb_id');">
+        <?/MISQL> 
+        
+      <?/MISQL> 
+
+      <?MISQL COND="$(XST,$puaddmu_genox_zdb_id)" SQL="
+            select distinct expcond_mrkr_zdb_id
+              from experiment_condition, genotype_experiment, marker_relationship 
+             where genox_zdb_id = '$puaddmu_genox_zdb_id' 
+               and genox_exp_zdb_id = expcond_exp_zdb_id;">
+               
+        <?MIVAR NAME="puaddmu_mo_zdb_id">$1<?/MIVAR>
+
+        <?MISQL COND="$(XST,$puaddmu_mo_zdb_id)" SQL="
+                  insert into $puaddmu_markers_regen (puaddmu_temp_marker_zdb_id)
+                    values ('$puaddmu_mo_zdb_id');">
+        <?/MISQL>   
+        
+        <?MISQL COND="$(XST,$puaddmu_mo_zdb_id)" SQL="
+             select distinct mrel_mrkr_2_zdb_id
+               from marker_relationship
+              where mrel_mrkr_1_zdb_id = '$puaddmu_mo_zdb_id'
+                and mrel_type = 'knockdown reagent targets gene';">
+                
+          <?MIVAR NAME="$puaddmu_mo_target_zdb_id">$1<?/MIVAR>
+          
+          <?MISQL COND="$(XST,$puaddmu_mo_target_zdb_id)" SQL="
+                    insert into $puaddmu_markers_regen (puaddmu_temp_marker_zdb_id)
+                      values ('$puaddmu_mo_target_zdb_id');">                      
+          <?/MISQL> 
+          
+        <?/MISQL> 
+        
+      <?/MISQL>
+      
     <?/MIBLOCK> <?MICOMMENT> ** end preexisting pato record check, 
                                 puaddmu_apato_zdb_id will now be filled
                                 in either case ** <?/MICOMMENT>
@@ -163,15 +276,26 @@ EFFECTS
                                   values ('$puaddmu_apato_zdb_id','$puaddmu_fig_zdb_id');">
     <?/MISQL>
 
-
     <?MICOMMENT> ** unset any vars used as flags, incase this code is ever
                     called more than once in a single datablade call ** <?/MICOMMENT>
     <?MIVAR> 
              $(UNSETVAR,$puaddmu_genox_zdb_id)
              $(UNSETVAR,$puaddmu_apato_zdb_id)
+             $(UNSETVAR,$puaddmu_mo_zdb_id)
+             $(UNSETVAR,$puaddmu_mo_target_zdb_id)
     <?/MIVAR>
 
-
   <?/MIBLOCK> <?MICOMMENT> end new figure / genox / stages set (new mutant) <?/MICOMMENT>
+
+  <?MISQL SQL="select distinct puaddmu_temp_marker_zdb_id from $puaddmu_markers_regen;">
+    <?MIVAR NAME="puaddmu_regen_mrkr_zdb_id">$1<?/MIVAR>
+    <?MISQL COND="$(XST,$puaddmu_regen_mrkr_zdb_id)" SQL="
+        execute procedure regen_genox_marker('$puaddmu_regen_mrkr_zdb_id');">
+        
+    <?/MISQL>    
+  <?/MISQL>
+
+  <?MISQL SQL="drop table $puaddmu_markers_regen;"> 
+  <?/MISQL>
 
 <?/MIBLOCK>  <?MICOMMENT> end authorize == root <?/MICOMMENT>

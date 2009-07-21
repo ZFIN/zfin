@@ -440,7 +440,7 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("lg", "0");
         url.addNamevaluePair("WINSIZE", "20");
         url.addNamevaluePair("fishsel_calledBySelf", "true");
-        url.addNamevaluePair("fselFilterValue", "all");
+        url.addNamevaluePair("fselFilterValue", "moExcluded");
         url.addNamevaluePair("chrom_change", "any");
         url.addNamevaluePair("search", "SEARCH");
         url.addNamevaluePair("fsel_inputname", "");

@@ -13,6 +13,8 @@ import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -38,6 +40,11 @@ public class AllMorpholinoExperimentController extends AbstractCommandController
                 mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(anatomyItem, form.isWildtype());
         form.setWildtypeMorpholinoCount(morphResult.size());
         List<MorpholinoStatistics> morpholinoStats = AnatomyAjaxController.createMorpholinoStats(morphResult, anatomyItem);
+        Collections.sort(morpholinoStats, new Comparator<MorpholinoStatistics>() {
+            public int compare(MorpholinoStatistics one, MorpholinoStatistics two) {
+                return (one.getTargetGeneOrder().compareTo(two.getTargetGeneOrder()));
+            }
+        });
         form.setAllMorpholinos(morpholinoStats);
         return new ModelAndView("all-morpholino-experiments.page", LookupStrings.FORM_BEAN, form);
     }

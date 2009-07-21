@@ -15,6 +15,7 @@ import org.zfin.infrastructure.ActiveDataTest;
 import org.zfin.infrastructure.ActiveSourceTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
+import org.zfin.mutant.presentation.MorpholinoStatisticsTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.people.OrganizationUrlTest;
@@ -48,6 +49,7 @@ import org.zfin.expression.ExpressionExperimentTest;
         ListFormatterTest.class,
         MarkerPresentationTest.class,
         Md5PasswordEncoderTest.class,
+        MorpholinoStatisticsTest.class,
         OrganizationUrlTest.class,
         OrthologyEvidenceFastSearchTest.class,
         OrthologyValidationTest.class,

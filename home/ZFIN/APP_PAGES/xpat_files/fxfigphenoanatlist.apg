@@ -112,18 +112,20 @@ stage range, experiment, or expression_found in the same figure.
      WHERE apatofig_fig_zdb_id = '$fxfigphenoanat_fig_zdb_id'
        AND apatofig_apato_zdb_id = apato_zdb_id
                      and (apato_subterm_zdb_id= anatitem_zdb_id or apato_superterm_zdb_id=anatitem_zdb_id)
+                     and apato_tag != 'normal'
     UNION
     SELECT distinct goterm_name, goterm_zdb_id,goterm_go_id
       FROM apato_figure, atomic_phenotype, go_term 
      WHERE apatofig_fig_zdb_id = '$fxfigphenoanat_fig_zdb_id'
        AND apatofig_apato_zdb_id = apato_zdb_id
-                     and (apato_subterm_zdb_id= goterm_zdb_id or apato_superterm_zdb_id=goterm_zdb_id)">
+                     and (apato_subterm_zdb_id= goterm_zdb_id or apato_superterm_zdb_id=goterm_zdb_id)
+                     and apato_tag != 'normal'">
  <?MIVAR NAME=$zdbType>$(SUBSTR,$2,1,8)<?/MIVAR>
    <?MIBLOCK COND="$(EC,$zdbType,ZDB-ANAT)">
     <?MIVAR NAME="$fxfigphenoanat_anatitem_html"><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$2>$1</a></span><?/MIVAR>
    <?MIELSE>
     <?MIVAR NAME="$fxfigphenoanat_anatitem_html"><span nowrap><a href=$fxfigphenogo_url$3>$1</a></span><?/MIVAR>
-<?/MIBLOCK>
+   <?/MIBLOCK>
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
       <?MIVAR NAME=fxfigphenoanat_short_list>$fxfigphenoanat_Label $fxfigphenoanat_anatitem_html<?/MIVAR>
       <?MIVAR NAME=fxfigphenoanat_long_list>$fxfigphenoanat_Label $fxfigphenoanat_anatitem_html<?/MIVAR>

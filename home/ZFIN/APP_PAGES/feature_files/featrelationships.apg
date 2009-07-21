@@ -210,7 +210,7 @@ EFFECTS
                        where
                        ftrgrpmem_ftr_type= '$featcur_reln_type'
                        and ftrgrpmem_ftr_type_group=fmreltype_ftr_type_group
-                       $(IF,$(NE,$featcur_reln_add_type,Transgenic Insertion),and fmreltype_name!='contains sequence feature')
+                       $(IF,$(NE,$featcur_reln_add_type,Transgenic Insertion),and fmreltype_name not like 'contains%')
                        union
                        select distinct mreltype_name 
                        from

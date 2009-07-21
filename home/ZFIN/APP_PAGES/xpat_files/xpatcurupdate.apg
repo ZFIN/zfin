@@ -256,7 +256,11 @@ EFFECTS
                    '$xpcur_G_xpatex_fish',
                    '$xpcur_G_xpatex_exp');">
             <?/MISQL>
-            
+ 
+            <?MISQL COND="$(XST,$xpcur_G_xpatex_fish)" SQL="
+              execute procedure regen_genofig_genotype('$xpcur_G_xpatex_fish');">
+            <?/MISQL>  
+ 
             <?MISQL SQL="
               select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=genox_zdb_id&recweb_new_value=$xpcurup_genox_zdb_id&recweb_comments=create+new+record') 
               from webPages where ID='aa-record_web_update.apg';">

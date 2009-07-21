@@ -81,8 +81,14 @@
                             </a>
                         </c:if>
                         from
-                        <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
-                                     integerEntity="${morpholinoStat.numberOfPublications}" includeNumber="true"/>
+                        <c:if test="${morpholinoStat.numberOfPublications ==1}">
+                            <zfin:link entity="${morpholinoStat.singlePublication}"/>
+                        </c:if>
+                        <c:if test="${morpholinoStat.numberOfPublications > 1}">
+                            <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
+                                         integerEntity="${morpholinoStat.numberOfPublications}"
+                                         includeNumber="true"/>
+                        </c:if>
                     </c:if>
                     <c:if test="${morpholinoStat.numberOfFigures == 0}">
                         --

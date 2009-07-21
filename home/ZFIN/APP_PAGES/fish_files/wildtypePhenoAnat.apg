@@ -1,0 +1,318 @@
+<?MICOMMENT> 
+FILE: wildtypePhenoAnat.apg 
+Prefix: wtphn_
+
+This file implements search interface for genotypes. 
+The goal is to display genotypes as search result according to the search criteria 
+and display genotype list when called from other pages.   
+ 
+Input:
+ wtphn_calling_page
+ 
+ wtphn_session_id
+
+ wtphn_geno_zdb_id
+ 
+ wtphn_gene_zdb_id
+
+ wtphn_processed_selected_structures
+ 
+ wtphn_include_substructures
+ 
+ wtphn_structure_bool
+
+Output:
+
+ wtphn_figID
+ 
+ wtphn_figCt
+ 
+<?/MICOMMENT>
+
+
+<?MIVAR NAME="$wtphn_figCt">0<?/MIVAR>
+
+
+       <?MICOMMENT> ---------------------------------------------------------------
+             -- use xpatselectanatverify.apg to retrieve vector list of anatomy zdb
+             -- ids $xpanatv_anatomy_zdb_id_list, as well as boolean value
+             -- $xpanatv_anatomy_error_occured.
+             ---------------------------------------------------------------------
+       <?/MICOMMENT>
+ 
+       <?MIVAR NAME=comma>,<?/MIVAR>  
+       <?MIVAR NAME=single_quote>'<?/MIVAR>
+ 
+       <?MIVAR NAME="$wtphn_anatomy_error_occured">f<?/MIVAR>
+       <?MIVAR NAME=$wtphn_anatomy_expression>
+       <?MISQL SQL="select WebExplode(object,'xpanatv_processed_selected_structures=$(URLENCODE,$wtphn_processed_selected_structures)&xpanatv_anatomy_error_occured=$wtphn_anatomy_error_occured&xpanatv_called_from=mutantpage') from webpages  where id = 'aa-xpatselectanatverify.apg';">  $1  <?/MISQL> 
+       <?/MIVAR>
+    
+       <?MIVAR NAME=wtphn_anatomy_error_occured>$xpanatv_anatomy_error_occured<?/MIVAR>  
+       <?MIVAR NAME=item_count>$(VECSIZE,$xpanatv_anatomy_zdb_id_list)<?/MIVAR>
+  
+       <?MIVAR NAME=wtphn_anatIDs>$(SEPARATE,$xpanatv_anatomy_zdb_id_list,$single_quote$comma$single_quote)<?/MIVAR>
+       <?MIVAR>$(SETVAR,$wtphn_anatIDs,$single_quote$wtphn_anatIDs$single_quote)<?/MIVAR>
+
+     <?MICOMMENT>------------------------------------------------------------
+               -- temp table $wtphn_temp_on_anat holds figure zdb ids 
+               ------------------------------------------------------------
+     <?/MICOMMENT>
+     
+     <?MIVAR NAME=$wtphn_temp_on_anat>$(CONCAT,wtphn_temp_on_anat_,$wtphn_session_id)<?/MIVAR>
+
+     <?MISQL SQL="execute function table_exists('$wtphn_temp_on_anat')">
+       <?MISQL COND=$(EC,$1,f) SQL="create temp table $wtphn_temp_on_anat (
+                                      fig_zdb_id    varchar(50)
+                                    ) with NO LOG;">
+       <?/MISQL>
+       <?MISQL COND="$(EC,$1,t)" SQL="delete from $wtphn_temp_on_anat;">
+       <?/MISQL> 
+     <?/MISQL>
+
+     <?MICOMMENT>------------------------------------------------------------
+               -- temp table $wtphn_temp_on_anat_junior holds figure zdb id
+               -- and anatomy zdb id pairs 
+               ------------------------------------------------------------
+     <?/MICOMMENT>
+
+     <?MIVAR NAME=$wtphn_temp_on_anat_junior>$(CONCAT,wtphn_temp_on_anat_junior_,$wtphn_session_id)<?/MIVAR>    
+
+     <?MISQL SQL="execute function table_exists('$wtphn_temp_on_anat_junior')">
+       <?MISQL COND=$(EC,$1,f) SQL="create temp table $wtphn_temp_on_anat_junior (
+                                      junior_fig_zdb_id 		varchar(50),
+                                      junior_anat_zdb_id         varchar(50)
+                                    ) with NO LOG;">
+       <?/MISQL>
+       <?MISQL COND="$(EC,$1,t)" SQL="delete from $wtphn_temp_on_anat_junior;">
+       <?/MISQL> 
+     <?/MISQL>
+
+     <?MICOMMENT>-----------------------------------------------------------------------------------
+               -- temp table $wtphn_temp_entities holds affected entity names and their lower-cases
+               -------------------------------------------------------------------------------------
+     <?/MICOMMENT>
+
+     <?MIBLOCK COND="$(EC,$wtphn_calling_page,fishselect)">
+       <?MIVAR NAME=$wtphn_temp_entities>$(CONCAT,wtphn_temp_entities_,$wtphn_session_id)<?/MIVAR>    
+       <?MISQL SQL="
+         execute function table_exists('$wtphn_temp_entities')">
+         <?MISQL COND=$(EC,$1,f) SQL="
+           create temp table $wtphn_temp_entities (
+             ent_name 		varchar(255),
+             ent_name_lower     varchar(255)
+            ) with NO LOG;">
+         <?/MISQL>
+         <?MISQL COND="$(EC,$1,t)" SQL="delete from $wtphn_temp_entities;">
+         <?/MISQL> 
+       <?/MISQL>
+     <?/MIBLOCK>
+
+     <?MICOMMENT> -------------------------------------------------------------
+             -- get figures directly related to the anatomy terms
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>
+ 
+     <?MIBLOCK COND="$(XST,$wtphn_gene_zdb_id)">
+       <?MISQL SQL="
+	insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, gffs_superterm_zdb_id
+	       from genotype_figure_fast_search, marker_relationship 
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id' 
+                and gffs_superterm_zdb_id in ($wtphn_anatIDs)
+                and mrel_mrkr_2_zdb_id = '$wtphn_gene_zdb_id'
+                and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id;">
+       <?/MISQL>
+     
+       <?MISQL SQL="
+	insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, gffs_subterm_zdb_id
+	       from genotype_figure_fast_search, marker_relationship 
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                and gffs_subterm_zdb_id in ($wtphn_anatIDs)
+                and mrel_mrkr_2_zdb_id = '$wtphn_gene_zdb_id'
+                and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id;">
+       <?/MISQL>               
+     <?MIELSE> 
+       <?MISQL SQL="
+	insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, gffs_superterm_zdb_id
+	       from genotype_figure_fast_search 
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id' 
+                and gffs_superterm_zdb_id in ($wtphn_anatIDs);">
+       <?/MISQL>
+     
+       <?MISQL SQL="
+	insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, gffs_subterm_zdb_id
+	       from genotype_figure_fast_search 
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                and gffs_subterm_zdb_id in ($wtphn_anatIDs);">
+       <?/MISQL>        
+     <?/MIBLOCK>
+     
+     <?MICOMMENT> -------------------------------------------------------------
+             -- if include substructure
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>   
+     <?MIBLOCK COND="$(AND,$(NE,$wtphn_include_substructures,),$(NE,$wtphn_include_substructures,unchecked))">  
+       <?MIBLOCK COND="$(XST,$wtphn_gene_zdb_id)">
+         <?MISQL SQL="
+	   insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, allanatcon_container_zdb_id 
+	       from genotype_figure_fast_search, all_anatomy_contains, marker_relationship
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                and gffs_superterm_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id in ($wtphn_anatIDs)
+                and mrel_mrkr_2_zdb_id = '$wtphn_gene_zdb_id'
+                and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id;">
+         <?/MISQL>
+       
+         <?MISQL SQL="
+	   insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, allanatcon_container_zdb_id
+	       from genotype_figure_fast_search, all_anatomy_contains, marker_relationship
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                and gffs_subterm_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id in ($wtphn_anatIDs)
+                and mrel_mrkr_2_zdb_id = '$wtphn_gene_zdb_id'
+                and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id;">
+         <?/MISQL>     
+       <?MIELSE>
+         <?MISQL SQL="
+	   insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, allanatcon_container_zdb_id
+	       from genotype_figure_fast_search, all_anatomy_contains
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                and gffs_superterm_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id in ($wtphn_anatIDs);">
+         <?/MISQL>
+       
+         <?MISQL SQL="
+	   insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, allanatcon_container_zdb_id
+	       from genotype_figure_fast_search, all_anatomy_contains
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                and gffs_subterm_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id in ($wtphn_anatIDs);">
+         <?/MISQL>     
+       <?/MIBLOCK>
+     <?/MIBLOCK>  <?MICOMMENT>-- end of if include substructures --<?/MICOMMENT>
+    
+    <?MICOMMENT> -------------------------------------------------------------
+             -- "and" search vs. "or" search 
+             ---------------------------------------------------------------------
+    <?/MICOMMENT>  
+    <?MIBLOCK COND="$(AND,$(XST,$wtphn_structure_bool),$(EC,$wtphn_structure_bool,and))">
+
+       <?MISQL SQL="  
+     	 insert into $wtphn_temp_on_anat (fig_zdb_id)
+              select junior_fig_zdb_id
+                from $wtphn_temp_on_anat_junior
+            group by junior_fig_zdb_id
+              having count (distinct junior_anat_zdb_id) = $item_count;">
+       <?/MISQL>
+    <?MIELSE>
+       <?MISQL SQL="  
+     	 insert into $wtphn_temp_on_anat (fig_zdb_id)
+              select distinct junior_fig_zdb_id  
+                from $wtphn_temp_on_anat_junior;">
+       <?/MISQL>   
+    <?/MIBLOCK>
+
+    <?MIVAR NAME=wtphn_img_count>0<?/MIVAR>
+    <?MIVAR NAME=wtphn_figID><?/MIVAR>
+    <?MISQL COND="$(NE,$wtphn_calling_page,pheno_summary)" SQL="select fig_zdb_id from $wtphn_temp_on_anat;">
+      <?MIVAR>$(SETVAR,$wtphn_figID,$1)<?/MIVAR>
+      <?MIBLOCK COND="$(EC,$wtphn_calling_page,fishselect)">
+        <?MICOMMENT> *** deciding on displaying camera icon or not <?/MICOMMENT>
+        <?MISQL COND="$(<,$wtphn_img_count,1)" 
+                 SQL="select count(img_zdb_id) from image where img_fig_zdb_id = '$wtphn_figID';">
+          <?MIVAR>$(SETVAR,$wtphn_img_count,$1)<?/MIVAR>
+        <?/MISQL> 
+        <?MIBLOCK COND="$(XST,$wtphn_gene_zdb_id)">
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select anatitem_name, anatitem_name_order 
+                         from genotype_figure_fast_search, anatomy_item, marker_relationship 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_superterm_zdb_id = anatitem_zdb_id
+                          and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
+                          and mrel_mrkr_2_zdb_id = '$wtphn_gene_zdb_id';">
+          <?/MISQL>  
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select anatitem_name, anatitem_name_order 
+                         from genotype_figure_fast_search, anatomy_item, marker_relationship 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_subterm_zdb_id = anatitem_zdb_id
+                          and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
+                          and mrel_mrkr_2_zdb_id = '$wtphn_gene_zdb_id';">
+          <?/MISQL>           
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select goterm_name, lower(goterm_name)
+                         from genotype_figure_fast_search, go_term, marker_relationship 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_superterm_zdb_id = goterm_zdb_id
+                          and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
+                          and mrel_mrkr_2_zdb_id = '$wtphn_gene_zdb_id';">
+          <?/MISQL>   
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select goterm_name, lower(goterm_name)
+                         from genotype_figure_fast_search, go_term, marker_relationship 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_subterm_zdb_id = goterm_zdb_id
+                          and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
+                          and mrel_mrkr_2_zdb_id = '$wtphn_gene_zdb_id';">
+          <?/MISQL>           
+        <?MIELSE>
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select anatitem_name, anatitem_name_order 
+                         from genotype_figure_fast_search, anatomy_item 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_superterm_zdb_id = anatitem_zdb_id;">
+          <?/MISQL>  
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select anatitem_name, anatitem_name_order 
+                         from genotype_figure_fast_search, anatomy_item 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_subterm_zdb_id = anatitem_zdb_id;">
+          <?/MISQL>           
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select goterm_name, lower(goterm_name)
+                         from genotype_figure_fast_search, go_term 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_superterm_zdb_id = goterm_zdb_id;">
+          <?/MISQL>
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select goterm_name, lower(goterm_name)
+                         from genotype_figure_fast_search, go_term 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_subterm_zdb_id = goterm_zdb_id;">                          
+          <?/MISQL>       
+        <?/MIBLOCK>
+      <?/MIBLOCK>
+    <?/MISQL>
+    <?MIVAR>$(SETVAR,$wtphn_figCt,$MI_ROWCOUNT)<?/MIVAR>
+      
+    <?MIBLOCK COND="$(EC,$wtphn_calling_page,fishselect)">
+      <?MIVAR NAME=wtphn_anat_list><?/MIVAR>
+      <?MISQL SQL="select distinct ent_name, ent_name_lower
+                     from $wtphn_temp_entities
+                    order by 2;">
+        <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+          <?MIVAR>$(SETVAR,$wtphn_anat_list,$1)<?/MIVAR>
+        <?MIELSE>
+          <?MIVAR>$(SETVAR,$wtphn_anat_list,$(CONCAT,$wtphn_anat_list,$comma $1))<?/MIVAR>
+        <?/MIBLOCK>
+      <?/MISQL>     
+    <?/MIBLOCK>
+  
+  <?MIVAR>$(UNSETVAR,$wtphn_gene_zdb_id)<?/MIVAR>
+  

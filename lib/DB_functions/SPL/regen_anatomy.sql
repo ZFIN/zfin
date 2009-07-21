@@ -788,13 +788,11 @@ create dba function "informix".regen_anatomy()
 	-- anatomy item. Suppress wildtype genos in this list.
 
 	insert into genos_with_phenos
-	  select distinct genox_geno_Zdb_id
-	    from atomic_phenotype, genotype_experiment, genotype
-	    where (apato_subterm_zdb_id = anatomyId or
-		   apato_superterm_zdb_id = anatomyId)
-	      and genox_zdb_id = apato_genox_zdb_id
-	      and genox_geno_zdb_id = geno_zdb_id
-	      and geno_is_wildtype = 'f';
+	  select distinct gffs_geno_zdb_id
+	    from genotype_figure_fast_search
+	    where (gffs_superterm_zdb_id = anatomyId or
+		   gffs_subterm_zdb_id = anatomyId)
+	      and gffs_morph_zdb_id is null;
 
 	let nGenosForThisItem = DBINFO('sqlca.sqlerrd2');
 
@@ -802,15 +800,13 @@ create dba function "informix".regen_anatomy()
 	-- anatomy item's children. Suppress wildtype genos.
 
 	insert into genos_with_phenos
-	  select distinct genox_geno_zdb_id
+	  select distinct gffs_geno_zdb_id
 	    from all_anatomy_contains_new,
-		 atomic_phenotype, genotype_Experiment, genotype
-	    where (allanatcon_contained_zdb_id = apato_subterm_zdb_id or
-			allanatcon_contained_zdb_id = apato_superterm_zdb_id)
+		 genotype_figure_fast_search
+	    where (allanatcon_contained_zdb_id = gffs_subterm_zdb_id or
+			allanatcon_contained_zdb_id = gffs_superterm_zdb_id)
 	      and allanatcon_container_zdb_id = anatomyId
-	      and apato_genox_Zdb_id = genox_Zdb_id
-	      and genox_geno_zdb_id = geno_zdb_id
-	      and geno_is_wildtype = 'f';
+	      and gffs_morph_zdb_id is null;
 
 	let nGenosForChildItems = DBINFO('sqlca.sqlerrd2');
 

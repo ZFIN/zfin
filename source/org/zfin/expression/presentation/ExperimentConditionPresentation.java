@@ -18,14 +18,13 @@ public class ExperimentConditionPresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(ExperimentCondition condition) {
-        if (condition.getMorpholino() != null)
-            return getWebdriverLink(MarkerPresentation.uri, condition.getMorpholino().getZdbID(), condition.getMorpholino().getName());
-        else
-        return "no morpholino";
-/*
-            throw new RuntimeException("Not yet implemented. Please provide a logic to create the hyperlink for " +
-                    "a non-morpholino");
-*/
+        if (condition.getMorpholino() != null) {
+            String name = condition.getMorpholino().getName();
+            if (condition.getValue() != null)
+                name += " (" + condition.getValue() + " " + condition.getUnit().getName() + ")";
+            return getWebdriverLink(MarkerPresentation.uri, condition.getMorpholino().getZdbID(), name);
+        } else
+            return "no morpholino";
     }
 
 }

@@ -9,139 +9,212 @@
 
  INPUT VAR:
     phmview_input_table : the temp table
+    phmview_input_figentity_table: the temp table
+    phmview_morphant : yes or no
 
  OUTPUT:
 
     PHENOTYPE:
       Data:              xx figure(s) from xx publication(s)
-      Affecting: anatitem1, anatitem2, anatitem3, anatitem4, anatitem5 ... (all xx)
+      Affecting: entity1, entity2, entity3, entity4, entity5 ... (all xx)
 
  OUTPUT VAR: none
 
 <?/MICOMMENT>
 
+  <?MIVAR COND="$(XST,$phmview_entity_short_list)">$(UNSETVAR,$phmview_entity_short_list)<?/MIVAR>  
+  <?MIVAR COND="$(XST,$phmview_entity_long_list)">$(UNSETVAR,$phmview_entity_long_list)<?/MIVAR>
 
-<?MICOMMENT> *** from pheno_summary.sql.  count the figures and publications. <?/MICOMMENT>
+<?MICOMMENT> ***  count the figures <?/MICOMMENT>
 
+<?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENO)">
+  <?MIVAR NAME=phenosum_count_fig_sql>
+    select distinct t_fig_zdb_id 
+      from $phmview_input_figentity_table
+  <?/MIVAR>
+<?MIELSE>
+  <?MIVAR NAME=phenosum_count_fig_sql>
+    select distinct apatofig_fig_zdb_id 
+      from apato_figure, atomic_phenotype, genotype_experiment, mutant_fast_search 
+     where mfs_mrkr_zdb_id = '$OID'
+       and mfs_genox_zdb_id = genox_zdb_id  
+       and apato_genox_zdb_id = genox_zdb_id 
+       and apatofig_apato_zdb_id = apato_zdb_id        
+       and exists (select NOTnormal.apato_zdb_id 
+                     from atomic_phenotype NOTnormal 
+                    where NOTnormal.apato_genox_zdb_id = mfs_genox_zdb_id 
+                      and NOTnormal.apato_tag != "normal" 
+                      and apatofig_apato_zdb_id = NOTnormal.apato_zdb_id)   
+  <?/MIVAR>
+<?/MIBLOCK>
 
-
-<?MIVAR NAME=phenosum_sql_select>select distinct apatofig_fig_zdb_id<?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
-
-<?MISQL SQL="$phenosum_sql;"><?/MISQL>
+<?MISQL SQL="$phenosum_count_fig_sql;"><?/MISQL>
 
 <?MIVAR NAME=phmview_pato_fig_count>$MI_CURRENTROW<?/MIVAR>
+
 <?MIVAR NAME=phmview_pato_fig_zdb_id>$1<?/MIVAR>
 
-<?MICOMMENT> *** END from pheno_summary.sql.  count the figures and publications. <?/MICOMMENT>
-
+<?MICOMMENT> *** count the fpublications <?/MICOMMENT>
 
 <?MIBLOCK COND="$(>,$phmview_pato_fig_count,0)">
 
-  <?MIVAR NAME=phenosum_sql_select>select distinct pub_mini_ref, zdb_id<?/MIVAR>
-  <?MIVAR NAME=phenosum_sql_from_spec>, figure, publication <?/MIVAR>
-  <?MIVAR NAME=phenosum_sql_where_spec> and apatofig_fig_zdb_id = fig_zdb_id and fig_source_zdb_id = zdb_id <?/MIVAR>
+  <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENO)">
+    <?MIVAR NAME=phenosum_count_pub_sql>
+      select distinct pub_mini_ref, zdb_id 
+      from $phmview_input_figentity_table, figure, publication 
+     where t_fig_zdb_id = fig_zdb_id
+       and fig_source_zdb_id = zdb_id 
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=phenosum_count_pub_sql>
+      select distinct pub_mini_ref, zdb_id 
+        from apato_figure, atomic_phenotype, genotype_experiment, figure, publication, mutant_fast_search 
+       where mfs_mrkr_zdb_id = '$OID' 
+         and mfs_genox_zdb_id = genox_zdb_id 
+         and apato_genox_zdb_id = genox_zdb_id
+         and apatofig_apato_zdb_id = apato_zdb_id  
+         and apatofig_fig_zdb_id = fig_zdb_id 
+         and fig_source_zdb_id = zdb_id 
+         and exists (select NOTnormal.apato_zdb_id 
+                       from atomic_phenotype NOTnormal 
+                      where NOTnormal.apato_genox_zdb_id = mfs_genox_zdb_id 
+                        and NOTnormal.apato_tag != "normal" 
+                        and apatofig_apato_zdb_id = NOTnormal.apato_zdb_id)   
+    <?/MIVAR>
+  <?/MIBLOCK>
 
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
-
-  <?MISQL SQL="$phenosum_sql;"><?/MISQL>
+  <?MISQL SQL="$phenosum_count_pub_sql;"><?/MISQL>
     
-    <?MIVAR NAME=phmview_pato_source_count>$MI_ROWCOUNT<?/MIVAR>
+  <?MIVAR NAME=phmview_pato_source_count>$MI_ROWCOUNT<?/MIVAR>
 
-    <?MIVAR NAME=phmview_pato_source_desc>$phmview_pato_source_count publications<?/MIVAR>
-    <?MIVAR NAME=phmview_pato_link>pheno_summary.apg&OID=$OID<?/MIVAR>
+  <?MIVAR NAME=phmview_pato_source_desc>$phmview_pato_source_count publications<?/MIVAR>
+  <?MIVAR NAME=phmview_pato_link>pheno_summary.apg&OID=$OID<?/MIVAR>
 
-    <?MIVAR COND="$(=,$phmview_pato_source_count,1)"> 
-          $(SETVAR,$phmview_pato_source_desc,$1)
-          <?MIVAR NAME=$phmview_pato_source_desc><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2>$1</a><?/MIVAR>
+  <?MIVAR COND="$(=,$phmview_pato_source_count,1)"> 
+    $(SETVAR,$phmview_pato_source_desc,$1)
+    <?MIVAR NAME=$phmview_pato_source_desc><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2>$1</a><?/MIVAR>
+  <?/MIVAR>
+  <?MIBLOCK COND="$(=,$phmview_pato_fig_count,1)">      
+    <?MIVAR>$(SETVAR,$phmview_pato_link,fxfigureview.apg&OID=$phmview_pato_fig_zdb_id)<?/MIVAR>
+  <?MIELSE>
+    <?MIBLOCK COND="$(AND,$(XST,$phmview_morphant),$(EC,$phmview_morphant,yes))">
+      <?MIVAR>$(SETVAR,$phmview_pato_link,pheno_summary.apg&OID=$OID&includingMO=yes&morphantsOnly=yes)<?/MIVAR>
+    <?/MIBLOCK>
+  <?/MIBLOCK>
 
-    <?/MIVAR>
-    <?MIVAR COND="$(=,$phmview_pato_fig_count,1)">      
-	  $(SETVAR,$phmview_pato_link,fxfigureview.apg&OID=$phmview_pato_fig_zdb_id)
-    <?/MIVAR>
+  <?MIBLOCK COND="$(NE,$(SUBSTR,$OID,1,8),ZDB-GENO)">
 
+  <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>        
+    <tr>
+      <td width="15%"><b>&nbsp;&nbsp;Data: </b>
+      <td width="85%">
+        <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$phmview_pato_link">$phmview_pato_fig_count<?/MIVAR> figure<?MIVAR>$(IF,$(>,$phmview_pato_fig_count,1),s,)<?/MIVAR></a> from <?MIVAR>$phmview_pato_source_desc<?/MIVAR>
+      </td>
+    </tr>
 
-    <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
-      <tr> <td>&nbsp;</td>
-        <td><b> Data: </b>
-        <td>
-          <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$phmview_pato_link">$phmview_pato_fig_count figure(s)</a> from $phmview_pato_source_desc<?/MIVAR>
-        </td>
-      </tr>
+  <?/MIBLOCK> 
+  
+    <?MIVAR NAME=phmview_entity_counter>0<?/MIVAR>
+    <?MIVAR NAME=phmview_entity_short_list_cap>5<?/MIVAR>
 
-      <?MIVAR NAME=phmview_anat_counter>0<?/MIVAR>
-      <?MIVAR NAME=phmview_anat_short_list_cap>5<?/MIVAR>
-      <?MISQL SQL="
+    <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENO)">
+      <?MIVAR NAME=phmview_entity_sql>
+	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
+               from $phmview_input_figentity_table, anatomy_item
+              where t_superterm_zdb_id = anatitem_zdb_id 
+	  UNION
+	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
+               from $phmview_input_figentity_table, anatomy_item
+              where t_subterm_zdb_id = anatitem_zdb_id
+          UNION
+            select goterm_go_id, goterm_name, lower(goterm_name), 'go'
+                from $phmview_input_figentity_table, go_term
+               where t_superterm_zdb_id = goterm_zdb_id 
+          UNION
+            select goterm_go_id, goterm_name, lower(goterm_name), 'go'
+                from $phmview_input_figentity_table, atomic_phenotype, go_term
+               where t_subterm_zdb_id = goterm_zdb_id 
+      <?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME=phmview_entity_sql>
 	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
                from $phmview_input_table, atomic_phenotype, anatomy_item
               where t_pato_zdb_id = apato_zdb_id
-	        and apato_subterm_zdb_id = anatitem_zdb_id
+	        and apato_subterm_zdb_id = anatitem_zdb_id 
+	        and apato_tag != 'normal'
 	  UNION
 	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
                from $phmview_input_table, atomic_phenotype, anatomy_item
               where t_pato_zdb_id = apato_zdb_id
 	        and apato_superterm_zdb_id = anatitem_zdb_id
+	        and apato_tag != 'normal'
           UNION
             select goterm_go_id, goterm_name, lower(goterm_name), 'go'
                 from $phmview_input_table, atomic_phenotype, go_term
                where t_pato_zdb_id = apato_zdb_id
-               and apato_subterm_zdb_id = goterm_zdb_id
+               and apato_subterm_zdb_id = goterm_zdb_id 
+               and apato_tag != 'normal'
           UNION
             select goterm_go_id, goterm_name, lower(goterm_name), 'go'
                 from $phmview_input_table, atomic_phenotype, go_term
                where t_pato_zdb_id = apato_zdb_id
                and apato_superterm_zdb_id = goterm_zdb_id 
-           order by 3	; ">
-     
-          <?MIBLOCK COND=$(EC,$4,anatomy)>
-              <?MIVAR NAME=phmview_anatitem_html><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$1>$2</a></span><?/MIVAR>
-          <?MIELSE>
-              <?MIVAR NAME=phmview_anatitem_html><span nowrap><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:$1>$2</a></span><?/MIVAR>          
-          <?/MIBLOCK>
+               and apato_tag != 'normal'
+      <?/MIVAR>
+    <?/MIBLOCK>
 
-          $(SETVAR,$phmview_anat_counter,$(+,$phmview_anat_counter,1))
-  	  <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-     	    <?MIVAR NAME=phmview_anat_short_list>$phmview_anatitem_html<?/MIVAR>
-      	    <?MIVAR NAME=phmview_anat_long_list>$phmview_anatitem_html<?/MIVAR>         
-	  <?MIELSE>
-	    <?MIVAR COND="$(<=,$phmview_anat_counter,$phmview_anat_short_list_cap)">
-	       $(VECAPPEND,$phmview_anat_short_list,$phmview_anatitem_html)
-            <?/MIVAR>
-            <?MIVAR>
-              $(VECAPPEND,$phmview_anat_long_list,$phmview_anatitem_html)
-            <?/MIVAR>
-          <?/MIBLOCK>
+   <?MIBLOCK COND="$(NE,$(SUBSTR,$OID,1,8),ZDB-GENO)">
+    
+    <?MISQL SQL="$phmview_entity_sql order by 3;">     
+      <?MIBLOCK COND=$(EC,$4,anatomy)>
+         <?MIVAR NAME=phmview_anatitem_html><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$1>$2</a></span><?/MIVAR>
+      <?MIELSE>
+         <?MIVAR NAME=phmview_anatitem_html><span nowrap><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:$1>$2</a></span><?/MIVAR>          
+      <?/MIBLOCK>
 
+      $(SETVAR,$phmview_entity_counter,$(+,$phmview_entity_counter,1))
+        <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+     	  <?MIVAR NAME=phmview_entity_short_list>$phmview_anatitem_html<?/MIVAR>
+      	  <?MIVAR NAME=phmview_entity_long_list>$phmview_anatitem_html<?/MIVAR>         
+	<?MIELSE>
+	  <?MIVAR COND="$(<=,$phmview_entity_counter,$phmview_entity_short_list_cap)">
+	     $(VECAPPEND,$phmview_entity_short_list,$phmview_anatitem_html)
+          <?/MIVAR>
+          <?MIVAR>
+            $(VECAPPEND,$phmview_entity_long_list,$phmview_anatitem_html)
+          <?/MIVAR>
+        <?/MIBLOCK>
     <?/MISQL>
 
-    <?MIVAR NAME=phmview_anat_short_list_sepa SEPARATE=", ">$phmview_anat_short_list<?/MIVAR>
-    <?MIVAR NAME=phmview_anat_long_list_sepa SEPARATE=", ">$phmview_anat_long_list<?/MIVAR>
-    <?MIVAR NAME=phmview_anat_short_list_escp>$(REPLACE,$phmview_anat_short_list_sepa,"'","")<?/MIVAR>
-    
-    <?MIVAR NAME=phmview_anat_long_list_escp>$(REPLACE,$phmview_anat_long_list_sepa,"'","")<?/MIVAR>
+    <?MIVAR NAME=phmview_entity_totalnum>$MI_ROWCOUNT<?/MIVAR>
 
-    <tr><td>&nbsp;</td>
-      <td><b>Observed in: </b></td>
-      <td> 
+    <?MIVAR NAME=phmview_entity_short_list_sepa SEPARATE=", ">$phmview_entity_short_list<?/MIVAR>
+    <?MIVAR NAME=phmview_entity_long_list_sepa SEPARATE=", ">$phmview_entity_long_list<?/MIVAR>
+    <?MIVAR NAME=phmview_entity_short_list_escp>$(REPLACE,$phmview_entity_short_list_sepa,"'","")<?/MIVAR>    
+    <?MIVAR NAME=phmview_entity_long_list_escp>$(REPLACE,$phmview_entity_long_list_sepa,"'","")<?/MIVAR>
+
+    <tr>
+      <td width="15%">&nbsp;&nbsp;<b>Observed in: </b></td>
+      <td width="85%"> 
         <script>
            <?MIVAR>
    	   function expandAnatomyList() {
      	       var elem = document.getElementById("anatomyList");
-               elem.innerHTML = "$phmview_anat_long_list_escp <a href=javascript:onClick=shrinkAnatomyList()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+               elem.innerHTML = "$phmview_entity_long_list_escp <a href=javascript:onClick=shrinkAnatomyList()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
 	   }
 
    	   function shrinkAnatomyList() {
      	       var elem = document.getElementById("anatomyList");
-               elem.innerHTML = "$phmview_anat_short_list_escp ... <a href=javascript:onClick=expandAnatomyList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+               elem.innerHTML = "$phmview_entity_short_list_escp ... <a href=javascript:onClick=expandAnatomyList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
 	   }
 
 	   <?/MIVAR>
         </script> 
 
         <span id="anatomyList">
-         <?MIVAR>$phmview_anat_short_list_escp<?/MIVAR>
+         <?MIVAR>$phmview_entity_short_list_escp<?/MIVAR>
 
-         <?MIVAR COND="$(>,$MI_ROWCOUNT,$phmview_anat_short_list_cap)">   
+         <?MIVAR COND="$(>,$MI_ROWCOUNT,$phmview_entity_short_list_cap)">   
 	   ... <a href=javascript:onClick=expandAnatomyList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
          <?/MIVAR>
        </span>
@@ -151,5 +224,7 @@
 
   </table>
 
-<?/MIBLOCK>
+  <?/MIBLOCK> 
+
+<?/MIBLOCK>  
 
