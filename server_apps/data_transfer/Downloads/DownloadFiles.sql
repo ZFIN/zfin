@@ -844,13 +844,14 @@ All lines available from ZIRC.
 
 }
 
-select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id, genofeat_feature_zdb_id
-  from db_link, foreign_db_contains, orthologue, feature_marker_relationship, genotype_feature, int_data_supplier
+select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id, feature_name
+  from db_link, foreign_db_contains, orthologue, feature_marker_relationship, genotype_feature, int_data_supplier, feature
  where fdbcont_fdb_db_name = 'OMIM'
    and fdbcont_zdb_id = dblink_fdbcont_zdb_id
    and dblink_linked_recid = zdb_id
    and c_gene_id = fmrel_mrkr_zdb_id
    and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+   and genofeat_feature_zdb_id = feature_zdb_id
    and genofeat_feature_zdb_id = idsup_data_zdB_id
    and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53'
 into temp lamhdi_tmp   
@@ -871,5 +872,5 @@ select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id
 
 
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/lamhdi.unl'
-select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id, genofeat_feature_zdb_id
+select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id, feature_name
 from lamhdi_tmp;
