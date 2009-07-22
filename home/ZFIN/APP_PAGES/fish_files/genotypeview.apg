@@ -611,7 +611,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
     <tr>
       <td width="15%"><b>&nbsp;&nbsp;Data: </b>
       <td width="85%">
-        <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$genovw_pato_link2">$genovw_pato_fig_count2<?/MIVAR> figure<?MIVAR>$(IF,$(>,$genovw_pato_fig_count2,1),s,)<?/MIVAR></a> from <?MIVAR>$genovw_pato_source_desc2<?/MIVAR>
+        <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$genovw_pato_link2">$genovw_pato_fig_count2<?/MIVAR> figure<?MIVAR>$(IF,$(>,$genovw_pato_fig_count2,1),s,)<?/MIVAR><img src="/images/MO_icon.gif" border="0" alt="MO image"></a> from <?MIVAR>$genovw_pato_source_desc2<?/MIVAR>
       </td>
     </tr>
 
