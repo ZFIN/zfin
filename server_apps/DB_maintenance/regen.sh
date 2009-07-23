@@ -12,6 +12,9 @@ setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->
 setenv LD_LIBRARY_PATH ${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
 setenv PATH <!--|INFORMIX_DIR|-->/bin:$PATH
 
+echo "Starting regen_genox at `date`"
+echo 'execute function regen_genox(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
+
 echo "Starting regen_anatomy at `date`"
 echo 'execute function regen_anatomy(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
@@ -29,5 +32,6 @@ echo 'execute function regen_feature_ao_fast_search(); update statistics for pro
 
 echo "do extra update statistics high to try and avoid 710 errors `date`"
 echo 'update statistics high' | dbaccess <!--|DB_NAME|-->
+
 
 echo "Finished at `date`"
