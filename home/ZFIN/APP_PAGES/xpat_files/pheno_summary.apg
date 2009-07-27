@@ -76,6 +76,7 @@ DEBUGGING:
 <?MISQL COND=$(EC,$phenosum_tableExists,t) SQL="drop table $phenosum_phenodata;">
 <?/MISQL>
 
+<?MICOMMENT> ** create a temp table to make displaying the data easier ** <?/MICOMMENT>
 <?MISQL SQL="create temp table $phenosum_phenodata (
                  phenosum_pub_zdb_id      varchar(50),
                  phenosum_pub_mini_ref    varchar(60),
@@ -85,8 +86,11 @@ DEBUGGING:
    	         phenosum_geno_zdb_id 	  varchar(50)  ) with NO LOG;">
 <?/MISQL>  
 
+<?MICOMMENT> ** if the phenotype summary is for genotype ** <?/MICOMMENT>
 <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENO)">
+ <?MICOMMENT> ** if the phenotype summary is for genotype with perticular anatomy structure(s) ** <?/MICOMMENT>
  <?MIBLOCK COND="$(AND,$(XST,$phenosum_processed_selected_structures),$(NE,$phenosum_processed_selected_structures,))">
+  <?MICOMMENT> ** if there are MO target gene involved ** <?/MICOMMENT>
   <?MIBLOCK COND="$(AND,$(XST,$moTargetGeneID),$(NE,$moTargetGeneID,))">
    <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=pheno_summary&wtphn_session_id=$phenosum_session_id&wtphn_geno_zdb_id=$OID&wtphn_gene_zdb_id=$moTargetGeneID&wtphn_processed_selected_structures=$phenosum_processed_selected_structures&wtphn_include_substructures=$phenosum_include_substructures&wtphn_structure_bool=$phenosum_structure_bool') 
                        from webPages where ID='aa-wildtypePhenoAnat.apg';">$1<?/MISQL>
@@ -111,7 +115,7 @@ DEBUGGING:
        and gffs_fig_zdb_id = f.fig_zdb_id  
        and fig_source_zdb_id = zdb_id 
   <?/MIVAR> 
- <?MIELSE>
+ <?MIELSE> 
   <?MIVAR NAME="$phenosum_getPheno_sql_insert">insert into $phenosum_phenodata<?/MIVAR>
   
   <?MIVAR NAME="$phenosum_getPheno_sql_select">
@@ -158,7 +162,7 @@ DEBUGGING:
     $phenosum_getPheno_sql_where
  <?/MIVAR> 
   
-<?MIELSE>
+<?MIELSE> <?MICOMMENT> ** if the phenotype summary is for gene / MO ** <?/MICOMMENT>
   <?MIVAR NAME="$phenosum_getPheno_sql">
     insert into $phenosum_phenodata
          select distinct zdb_id, pub_mini_ref, fig_zdb_id, fig_label, fig_full_label, genox_geno_zdb_id 
@@ -176,15 +180,19 @@ DEBUGGING:
   <?/MIVAR>
 <?/MIBLOCK>
 
+<?MICOMMENT> ** execute the query to populate the temp table ** <?/MICOMMENT>
 <?MISQL SQL="$phenosum_getPheno_sql;"><?/MISQL> 
 
+<?MICOMMENT> ** get the total pub number ** <?/MICOMMENT>
 <?MISQL SQL="select count(distinct phenosum_pub_zdb_id) from $phenosum_phenodata;"><?/MISQL>
 <?MIVAR NAME=phenosum_pub_count>$(ROUND,$1,0)<?/MIVAR>
 
+<?MICOMMENT> ** get the total figure number ** <?/MICOMMENT>
 <?MISQL SQL="select count(distinct phenosum_fig_zdb_id) from $phenosum_phenodata;"><?/MISQL>
 
 <?MIVAR NAME=phenosum_fig_count>$1<?/MIVAR>
 
+<?MICOMMENT> ** if linked from AO page ** <?/MICOMMENT>
 <?MIBLOCK COND=$(XST,$anatID)>
 
   <?MISQL SQL="select anatitem_name from anatomy_item where anatitem_zdb_id = '$anatID';">
@@ -195,6 +203,7 @@ DEBUGGING:
 
 <?/MIBLOCK>
 
+<?MICOMMENT> ** if there is envID in parameters ** <?/MICOMMENT>
 <?MIBLOCK COND=$(XST,$envID)>
 
   <?MISQL SQL="
@@ -217,7 +226,7 @@ DEBUGGING:
 
 <table bgcolor=<?MIVAR>$highlight<?/MIVAR> width=100%>
   <tr>
-    <td>
+    <td> <?MICOMMENT> ** beginning of page header ** <?/MICOMMENT>
       <b>
         Phenotype Summary for <?MIVAR>$phenosum_header<?/MIVAR>
     <?MIBLOCK COND="$(AND,$(XST,$includingMO),$(EC,$includingMO,yes))">
@@ -232,6 +241,7 @@ DEBUGGING:
       <?/MIBLOCK>
     <?/MIBLOCK>
         
+    <?MICOMMENT> ** get the anatomy structure list displayed in the page header ** <?/MICOMMENT>
     <?MIBLOCK COND="$(AND,$(XST,$phenosum_processed_selected_structures),$(NE,$phenosum_processed_selected_structures,))">
  
       <?MICOMMENT> ---------------------------------------------------------------
@@ -269,7 +279,7 @@ DEBUGGING:
       <?/MIBLOCK>)
     <?/MIBLOCK>
       </b>
-    </td>
+    </td> <?MICOMMENT> ** end of page header ** <?/MICOMMENT>
     
     <td>
   <?MICOMMENT> ==== Input Welcome Button ==== <?/MICOMMENT>
@@ -351,6 +361,7 @@ DEBUGGING:
   <?MIVAR NAME=phenosum_anat_elem_id_nonMO>nonMO$phenosum_anat_elem_id<?/MIVAR>
   <?MIVAR NAME=phenosum_mo_elem_id>mo$phenosum_anat_elem_id<?/MIVAR>
 
+  <?MICOMMENT> ** have a different entity list for morphants, if any ** <?/MICOMMENT>
   <?MIBLOCK COND="$(AND,$(XST,$split),$(EC,$split,yes))">  
     <?MIVAR NAME=phenosum_split>f<?/MIVAR>
     <?MIVAR NAME=phenosum_split_morphant_flag>f<?/MIVAR>
@@ -551,7 +562,8 @@ DEBUGGING:
     <?MIVAR NAME=phenosum_anat_counter_nonMO>0<?/MIVAR>
     <?MIVAR NAME=phenosum_anat_short_list_cap>3<?/MIVAR>
     <td valign=bottom>
-          
+      
+      <?MICOMMENT> *** entity list for gene / MO <?/MICOMMENT>
       <?MIBLOCK COND="$(OR,$(EC,$(SUBSTR,$OID,1,8),ZDB-GENE),$(EC,$(SUBSTR,$OID,1,8),ZDB-MRPH))">
         <?MIVAR NAME=phenosum_sql_entities>
           select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
@@ -790,7 +802,7 @@ DEBUGGING:
             <?/MIVAR>
           <?/MIBLOCK>
 
-     <?/MISQL>
+      <?/MISQL>
 
     <?MIVAR NAME=phenosum_anat_short_list_sepa SEPARATE=", ">$phenosum_anat_short_list<?/MIVAR>
     <?MIVAR NAME=phenosum_anat_long_list_sepa SEPARATE=", ">$phenosum_anat_long_list<?/MIVAR>
