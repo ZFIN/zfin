@@ -1,24 +1,26 @@
 <?MICOMMENT>
  file: phenotype_miniview.apg
  prefix: phmview_
-
- Displays the mini format of Phenotype section. This page is webexploded from markerview.apg and genotypeview.apg.
+ 
+ This page is webexploded from markerview.apg and genotypeview.apg.
+ If called from gene or MO page, displays the mini format of Phenotype section. 
+ If called from genotype page, output the figure and pub counts, link, and sql for affected entities.
 
  INPUT:
     a temp table with one column - t_pato_zdb_id 
 
  INPUT VAR:
-    phmview_input_table : the temp table
-    phmview_input_figentity_table: the temp table
+    phmview_input_table : the temp table passed from gene or MO page
+    phmview_input_figentity_table: the temp table passed from genotype page
     phmview_morphant : yes or no
 
- OUTPUT:
-
+ OUTPUT (for gene or MO page):
     PHENOTYPE:
       Data:              xx figure(s) from xx publication(s)
       Affecting: entity1, entity2, entity3, entity4, entity5 ... (all xx)
 
- OUTPUT VAR: none
+ OUTPUT VAR (for genotype page): 
+     $phmview_pato_fig_count, $phmview_pato_source_desc, $phmview_pato_link
 
 <?/MICOMMENT>
 
@@ -54,7 +56,7 @@
 
 <?MIVAR NAME=phmview_pato_fig_zdb_id>$1<?/MIVAR>
 
-<?MICOMMENT> *** count the fpublications <?/MICOMMENT>
+<?MICOMMENT> *** count the publications <?/MICOMMENT>
 
 <?MIBLOCK COND="$(>,$phmview_pato_fig_count,0)">
 
@@ -104,7 +106,7 @@
 
   <?MIBLOCK COND="$(NE,$(SUBSTR,$OID,1,8),ZDB-GENO)">
 
-  <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>        
+    <?MIVAR><table width="100%" border="0" bgcolor="$highlight"><?/MIVAR>        
     <tr>
       <td width="15%"><b>&nbsp;&nbsp;Data: </b>
       <td width="85%">
@@ -114,11 +116,11 @@
 
   <?/MIBLOCK> 
   
-    <?MIVAR NAME=phmview_entity_counter>0<?/MIVAR>
-    <?MIVAR NAME=phmview_entity_short_list_cap>5<?/MIVAR>
+  <?MIVAR NAME=phmview_entity_counter>0<?/MIVAR>
+  <?MIVAR NAME=phmview_entity_short_list_cap>5<?/MIVAR>
 
-    <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENO)">
-      <?MIVAR NAME=phmview_entity_sql>
+  <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENO)">
+    <?MIVAR NAME=phmview_entity_sql>
 	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
                from $phmview_input_figentity_table, anatomy_item
               where t_superterm_zdb_id = anatitem_zdb_id 
@@ -134,9 +136,9 @@
             select goterm_go_id, goterm_name, lower(goterm_name), 'go'
                 from $phmview_input_figentity_table, atomic_phenotype, go_term
                where t_subterm_zdb_id = goterm_zdb_id 
-      <?/MIVAR>
-    <?MIELSE>
-      <?MIVAR NAME=phmview_entity_sql>
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=phmview_entity_sql>
 	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
                from $phmview_input_table, atomic_phenotype, anatomy_item
               where t_pato_zdb_id = apato_zdb_id
@@ -160,10 +162,11 @@
                where t_pato_zdb_id = apato_zdb_id
                and apato_superterm_zdb_id = goterm_zdb_id 
                and apato_tag != 'normal'
-      <?/MIVAR>
-    <?/MIBLOCK>
+    <?/MIVAR>
+  <?/MIBLOCK>
 
-   <?MIBLOCK COND="$(NE,$(SUBSTR,$OID,1,8),ZDB-GENO)">
+  <?MICOMMENT> *** display the phenotype block for gene or MO page <?/MICOMMENT>
+  <?MIBLOCK COND="$(NE,$(SUBSTR,$OID,1,8),ZDB-GENO)">
     
     <?MISQL SQL="$phmview_entity_sql order by 3;">     
       <?MIBLOCK COND=$(EC,$4,anatomy)>
@@ -194,7 +197,7 @@
     <?MIVAR NAME=phmview_entity_long_list_escp>$(REPLACE,$phmview_entity_long_list_sepa,"'","")<?/MIVAR>
 
     <tr>
-      <td width="15%">&nbsp;&nbsp;<b>Observed in: </b></td>
+      <td width="15%" valign="top">&nbsp;&nbsp;<b>Observed in: </b></td>
       <td width="85%"> 
         <script>
            <?MIVAR>
@@ -224,7 +227,7 @@
 
   </table>
 
-  <?/MIBLOCK> 
+  <?/MIBLOCK> <?MICOMMENT> *** end of if it's not genotype <?/MICOMMENT>
 
-<?/MIBLOCK>  
+<?/MIBLOCK>  <?MICOMMENT> *** end of figure count > 0 <?/MICOMMENT>
 
