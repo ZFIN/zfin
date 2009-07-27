@@ -328,16 +328,6 @@ function updateAuthor(strURL) {
         and pub_file is not null;">
       <?MIVAR NAME=linkauth_pub_file>$1<?/MIVAR>
     <?/MISQL>
-    <TR>
-      <TD colspan=2>
-       <?MIBLOCK COND="$(NXST,$linkauth_pub_file)">
-         <font size=2> <b>Upload PDF:</b> </font><input type=file name="linkauth_pub_file" size=50> 
-         <br><font size=-1>(The PDF field may be left blank.)</font>
-       <?MIELSE>
-         PDF file exists for this publication.
-       <?/MIBLOCK>
-      </TD>
-    </TR>
   </TABLE>
 
   <P>
