@@ -60,13 +60,19 @@ create procedure regen_names_drop_dups()
       group by rgnallnm_zdb_id, rgnallnm_name_lower
       having count(*) > 1;
 
+-- do not remove entries where marker is an EST with  EST name and accession number are identical 
+-- example DQ017726  
+-- change made for fogbugz case 3026
+
   delete from regen_all_names_temp
     where exists (
               select 'x'
                 from regen_names_dups_temp
 		where rgndup_name_lower       = rgnallnm_name_lower
 		and   rgndup_zdb_id           = rgnallnm_zdb_id
-		and   rgndup_min_significance < rgnallnm_significance);  
+		and   rgndup_min_significance < rgnallnm_significance
+		and   NOT (rgnallnm_zdb_id[1,8] = 'ZDB-EST-' and rgnallnm_significance = 7)); 
+ 
 
   delete from regen_names_dups_temp;
 
