@@ -2,19 +2,19 @@
 FILE:   pheno_summary.apg
 PREFIX: phenosum_
 
-Display phenotype summary by publication and figure, for a gene or genotype.
+Display phenotype summary by publication and figure, for a gene, MO, or genotype.
 
 2008-02-04: Linked to by the anatomy page. Filter for morpholinos with phenotype data for an anatomy item.
 
 INPUT VARS:  
-	$OID:    ZDB ID for a Genotype
-	$envID:  ZDB ID for an experiment.
-	$anatID: ZDB ID for an anatomy_item. 
+	$OID:    ZDB ID of a gene, MO, or genotype
+	$envID:  ZDB ID of an experiment.
+	$anatID: ZDB ID of an anatomy_item. 
 	
 	$phenosum_processed_selected_structures
 	$phenosum_include_substructures
 	$phenosum_structure_bool
-	phenosum_item_count
+	$phenosum_item_count
 
 OUTPUT VARS: 
 
@@ -336,7 +336,7 @@ DEBUGGING:
   </td>
 </tr>
 
-<?MISQL SQL="select phenosum_pub_zdb_id,phenosum_pub_mini_ref,phenosum_fig_zdb_id,phenosum_fig_label,
+<?MISQL SQL="select distinct phenosum_pub_zdb_id,phenosum_pub_mini_ref,phenosum_fig_zdb_id,phenosum_fig_label,
                     phenosum_fig_full_label,phenosum_geno_zdb_id, get_geno_name_with_bg_html_link(phenosum_geno_zdb_id)
                from $phenosum_phenodata order by 2,5,7;">
 
