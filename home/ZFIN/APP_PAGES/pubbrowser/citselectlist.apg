@@ -16,6 +16,7 @@
       get_sortable_authors_lower(p.zdb_id) as authors_lower, 
       p.pub_date,
       recattrib_source_type,
-      recattrib_data_zdb_id
+      recattrib_data_zdb_id,
+      p.pub_completion_date
     <?/MIVAR>
     
