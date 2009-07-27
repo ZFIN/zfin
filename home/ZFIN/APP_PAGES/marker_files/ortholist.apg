@@ -83,10 +83,12 @@
 <?MIVAR NAME=$ball_img><img src="/images/fill_green_ball.gif" border=0 height=10><?/MIVAR>
 
 <?MISQL SQL="
-	  select distinct oevdisp_gene_zdb_id
-	    from orthologue_evidence_display, record_attribution
+	  select distinct oevdisp_gene_zdb_id, mrkr_abbrev
+	    from orthologue_evidence_display, record_attribution, marker
 	    where recattrib_source_zdb_id = '$pubId'
 	      and recattrib_data_zdb_id = oevdisp_zdb_id
+	      and oevdisp_gene_zdb_id = mrkr_zdb_id 
+	      order by mrkr_abbrev
 	   ;"
 >
   <?MIVAR>$(SETVAR,$OIDLIST,$1)<?/MIVAR>
