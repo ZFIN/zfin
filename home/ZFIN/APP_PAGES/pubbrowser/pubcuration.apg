@@ -324,7 +324,7 @@ OPTIONAL VARS:
       </td>
       <td>
         <?MIVAR>
-          $(IF,$(EC,$ZDB_access,root),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate Paper</A>")
+          $(IF,$(EC,$ZDB_access,root),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate</A>")
         <?/MIVAR>
       </td>
     </tr>

@@ -313,7 +313,7 @@ Number exists
   <B>ADDITIONAL INFORMATION: </B>
 
   <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-    <br><br><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate Data</a>
+    <br><br><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate</a>
   <?/MIVAR>
 
   <ul>
