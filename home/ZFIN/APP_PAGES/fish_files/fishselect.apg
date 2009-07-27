@@ -1981,43 +1981,43 @@ return false ; ">
 
    <tr>
      <td class="halfwidth">
-       <img src="/images/MO_icon.gif" border="0" alt="MO image"><input type="radio" id="fselFilter" name="fselFilterValue" value="moOnly" <?MIVAR>$(IF,$(OR,$(EC,$fselFilterValue,moOnly),$(EC,$fselFilterValue,moWTandReporterOnly)),checked="unchecked")<?/MIVAR> >
-       <label for="fselFltr" class="accessoryLabel" >Show only morphants</label>
+       <img src="/images/MO_icon.gif" border="0" alt="MO image"><input type="radio" id="fselFilterMOonly" name="fselFilterValue" value="moOnly" <?MIVAR>$(IF,$(OR,$(EC,$fselFilterValue,moOnly),$(EC,$fselFilterValue,moWTandReporterOnly)),checked="unchecked")<?/MIVAR> >
+       <label for="fselFilterMOonly" class="accessoryLabel" >Show only morphants</label>
      </td>
    </tr>
 
    <tr>
      <td class="halfwidth">
-       <img src="/images/MO_icon.gif" border="0" alt="MO image"><input type="radio" id="fselFilter" name="fselFilterValue" value="moWTandReporterOnly" <?MIVAR>$(IF,$(EC,$fselFilterValue,moWTandReporterOnly),checked="unchecked")<?/MIVAR> >
-       <label for="fselFltr" class="accessoryLabel" >Show only morphants in WT/reporter</label>
+       <img src="/images/MO_icon.gif" border="0" alt="MO image"><input type="radio" id="fselFilterMOwt" name="fselFilterValue" value="moWTandReporterOnly" <?MIVAR>$(IF,$(EC,$fselFilterValue,moWTandReporterOnly),checked="unchecked")<?/MIVAR> >
+       <label for="fselFilterMOwt" class="accessoryLabel" >Show only morphants in WT/reporter</label>
      </td>
    </tr>
 
    <tr>
      <td class="halfwidth">
-       <img src="/images/MO_icon.gif" border="0" alt="MO image"><input type="radio" id="fselFilter" name="fselFilterValue" value="moExcluded" <?MIVAR>$(IF,$(EC,$fselFilterValue,moExcluded),checked="unchecked")<?/MIVAR> >
-       <label for="fselFltr" class="accessoryLabel" >Exclude morphants</label>
+       <img src="/images/MO_icon.gif" border="0" alt="MO image"><input type="radio" id="fselFilterNoMO" name="fselFilterValue" value="moExcluded" <?MIVAR>$(IF,$(EC,$fselFilterValue,moExcluded),checked="unchecked")<?/MIVAR> >
+       <label for="fselFilterNoMO" class="accessoryLabel" >Exclude morphants</label>
      </td>
    </tr>
    
    <tr>
      <td class="halfwidth">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="fselFilter" name="fselFilterValue" value="mutOnly" <?MIVAR>$(IF,$(EC,$fselFilterValue,mutOnly),checked="unchecked")<?/MIVAR> >
-       <label for="fselFltr" class="accessoryLabel" >Show only characterized mutations</label>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="fselFilterChar" name="fselFilterValue" value="mutOnly" <?MIVAR>$(IF,$(EC,$fselFilterValue,mutOnly),checked="unchecked")<?/MIVAR> >
+       <label for="fselFilterChar" class="accessoryLabel" >Show only characterized mutations</label>
      </td>
    </tr>
    
    <tr>
      <td class="halfwidth">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="fselFilter" name="fselFilterValue" value="TGonly" <?MIVAR>$(IF,$(EC,$fselFilterValue,TGonly),checked="unchecked")<?/MIVAR> >
-       <label for="fselFltr" class="accessoryLabel" >Show only transgenics</label>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="fselFilterTg" name="fselFilterValue" value="TGonly" <?MIVAR>$(IF,$(EC,$fselFilterValue,TGonly),checked="unchecked")<?/MIVAR> >
+       <label for="fselFilterTg" class="accessoryLabel" >Show only transgenics</label>
      </td>
    </tr>   
    
    <tr>
      <td class="halfwidth">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="fselFilter" name="fselFilterValue" value="all" <?MIVAR>$(IF,$(EC,$fselFilterValue,all),checked="checked")<?/MIVAR> >
-       <label for="fselFltr" class="accessoryLabel" >Show all</label>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="fselFilterAll" name="fselFilterValue" value="all" <?MIVAR>$(IF,$(EC,$fselFilterValue,all),checked="checked")<?/MIVAR> >
+       <label for="fselFilterAll" class="accessoryLabel" >Show all</label>
      </td>
    </tr>      
    
