@@ -1887,6 +1887,8 @@ union
        <b> Phenotype: </b><font size=-1>(<a href="javascript:start_note('phenotype_note')">current status</a></font>)
     </td></tr>
   </table>
+  
+  <?MICOMMENT> *** call phenotype_miniview.apg to display the phenotype data *** <?/MICOMMENT>
   <?MISQL SQL="select WebExplode(object,'phmview_input_table=$mrkrview_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
 
 <?/MIBLOCK>
