@@ -2,9 +2,8 @@
 FILE: wildtypePhenoAnat.apg 
 Prefix: wtphn_
 
-This file implements search interface for genotypes. 
-The goal is to display genotypes as search result according to the search criteria 
-and display genotype list when called from other pages.   
+This file is webexploded from fishslect.apg and some other pages and calculates the phenotype figure number with
+a wildtype or Tg morphant with specific anatomy structures.   
  
 Input:
  wtphn_calling_page

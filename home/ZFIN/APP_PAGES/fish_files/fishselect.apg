@@ -2,17 +2,17 @@
 FILE: fishselect.apg 
 Prefix: fsel_
 
-This file implements search interface for genotypes. 
-The goal is to display genotypes as search result according to the search criteria 
-and display genotype list when called from other pages.
+This file implements search interface for mutants / morphants / transgenics. 
+The goal is to display the genotypes as search result according to the search criteria 
+and display genotype list when called from other pages, such as marker page, pub page.
 
 Variables THAT MIGHT BE Expected: 
  -- fsel_allele_id        -- from genotypeview .apg and jump_to.apg
  -- fsel_marker_id        -- from markerview.apg
  -- fsel_anatomy_item_id  -- from action/anatomy/term-detail
  -- fsel_inputname     -- from search form and markerview and markerselect page
- -- fsel_cnstrct_id
- -- pubId     
+ -- fsel_cnstrct_id    -- from markerview.apg
+ -- pubId              -- from pubview2.apg
  
 <?/MICOMMENT>
 
@@ -55,7 +55,7 @@ function call_submit() {
   }
 }
 
- function doValidateAndSubmit(currentTime ){
+function doValidateAndSubmit(currentTime ){
   var maxTime = 5000 ; 
   var diff  = (new Date()).getMilliseconds() - currentTime; 
   var inputElement = document.getElementById(LookupProperties.inputName);
@@ -76,7 +76,7 @@ function call_submit() {
  }
  
 
-  function call_reset() {   
+ function call_reset() {   
   	 document.BrowserForm.lg.selectedIndex = 0;
  	 document.BrowserForm.compare.selectedIndex = 0;	
  	 document.BrowserForm.fsel_inputname.value = "";
@@ -143,8 +143,6 @@ function call_submit() {
   <?MIVAR><TITLE>$page_name</TITLE><?/MIVAR>
 
 </head>  <?MICOMMENT>=============== end html head =============================<?/MICOMMENT>
-
-
 
 <?MICOMMENT>
    ==============================================================================
@@ -232,6 +230,9 @@ function call_submit() {
 
 
 <?MIBLOCK COND="$(OR,$(XST,$query_results),$(XST,$pubId))"> 
+  <?MICOMMENT> === $constraintMO is a variable to flag morphant search. 
+               === There was a time when there is only include morphant filter and no exclude morphant filter.
+  <?/MICOMMENT>
   <?MIBLOCK COND="$(NXST,$constraintMO)">
     <?MIVAR NAME=$constraintMO><?/MIVAR>
     <?MIVAR COND="$(NXST,$target_tablesMO)" NAME=$target_tablesMO>genotype<?/MIVAR>
@@ -250,7 +251,6 @@ function call_submit() {
             ==========================================================================
     <?/MICOMMENT>
 
-
   <?MISQL SQL="
       select dbinfo('sessionid') 
         from single;">
@@ -258,7 +258,7 @@ function call_submit() {
       <?MIVAR NAME=$fishselect_temp_result>$(CONCAT,fishselect_temp_result_,$fsel_session_id)<?/MIVAR>
   <?/MISQL>
 
-    <?MISQL SQL="
+  <?MISQL SQL="
       execute function table_exists('$fishselect_temp_result')">
       <?MISQL COND=$(EC,$1,f) SQL="
 	create temp table $fishselect_temp_result (
@@ -271,7 +271,7 @@ function call_submit() {
 	  fmatch_wildtype boolean
 	) with NO LOG;">
       <?/MISQL>
-    <?/MISQL>
+  <?/MISQL>
 
   <?MIVAR COND="$(NXST,$include_substructures)" NAME=include_substructures>unchecked<?/MIVAR>
 
@@ -292,6 +292,15 @@ function call_submit() {
          =================================================================================
          
   <?/MICOMMENT>
+  
+  <?MICOMMENT> =================================================================
+         As for the Morphant Search and Phenotype Blocks Update Project, there is a piece of 
+         new requirement, which makes the search more like phenotype search, when the search result
+         is wildtype and Tg morphant: don't show it if the figure count is 0 in such case.
+         Therefore, to move this part of the code to the beginning would make things easy.
+         =================================================================================
+         
+  <?/MICOMMENT>  
 
   <?MIBLOCK COND="$(OR,$(XST,$fsel_processed_selected_structures),$(XST,$fsel_anatomy_item_id))">
 
@@ -474,52 +483,57 @@ function call_submit() {
     <?MICOMMENT> ------- Clean up temp table---------------<?/MICOMMENT> 
     <?MISQL SQL="delete from $fishselect_temp_on_anat_junior;"><?/MISQL>
 
-     <?MIBLOCK COND="$(>,$item_count,0)">
-       <?MISQL SQL="select distinct g_zdb_id from $fishselect_temp_on_anat;">
-         <?MIVAR NAME=fsel_anat_geno>$1<?/MIVAR>
-    <?MISQL SQL="select geno_is_wildtype from genotype where geno_zdb_id = '$fsel_anat_geno';">
-      <?MIVAR NAME=fsel_anat_isWildtype>$1<?/MIVAR>
-    <?/MISQL>    
+    <?MIBLOCK COND="$(>,$item_count,0)">
     
-    <?MIVAR NAME=call_innocuous>f<?/MIVAR>
-    <?MIBLOCK COND="$(EC,$fsel_anat_isWildtype,f)"> 
-      <?MISQL SQL="select genofeat_zdb_id
-                     from genotype_feature, feature_marker_relationship, marker_relationship EFG
-                    where genofeat_geno_zdb_id = '$fsel_anat_geno'
-                      and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
-                      and fmrel_type != 'contains phenotypic sequence feature'
-                      and fmrel_mrkr_zdb_id = EFG.mrel_mrkr_1_zdb_id
-                      and EFG.mrel_mrkr_2_zdb_id like 'ZDB-EFG%'
-                      and not exists(select 'x' 
-                                       from genotype_feature, feature_marker_relationship
-                                      where genofeat_geno_zdb_id = '$fsel_anat_geno'
-                                        and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
-                                        and fmrel_type = 'is allele of');">
-        <?MIVAR>$(SETVAR,$call_innocuous,t)<?/MIVAR>
-      <?/MISQL>
-    <?MIELSE> 
-      <?MIVAR>$(SETVAR,$call_innocuous,t)<?/MIVAR>
-    <?/MIBLOCK>
+      <?MISQL SQL="select distinct g_zdb_id from $fishselect_temp_on_anat;">
+        <?MIVAR NAME=fsel_anat_geno>$1<?/MIVAR>
+        <?MISQL SQL="select geno_is_wildtype from genotype where geno_zdb_id = '$fsel_anat_geno';">
+          <?MIVAR NAME=fsel_anat_isWildtype>$1<?/MIVAR>
+        <?/MISQL>    
+    
+        <?MIVAR NAME=call_wildtypePhenoAnat>f<?/MIVAR>
+        
+        <?MICOMMENT> *** if it's not a wildtype, look up to see if it's a Tg *** <?/MICOMMENT>
+        <?MIBLOCK COND="$(EC,$fsel_anat_isWildtype,f)"> 
+          <?MISQL SQL="select genofeat_zdb_id
+                         from genotype_feature, feature_marker_relationship, marker_relationship EFG
+                        where genofeat_geno_zdb_id = '$fsel_anat_geno'
+                          and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                          and fmrel_type != 'contains phenotypic sequence feature'
+                          and fmrel_mrkr_zdb_id = EFG.mrel_mrkr_1_zdb_id
+                          and EFG.mrel_mrkr_2_zdb_id like 'ZDB-EFG%'
+                          and not exists(select 'x' 
+                                           from genotype_feature, feature_marker_relationship
+                                          where genofeat_geno_zdb_id = '$fsel_anat_geno'
+                                            and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                            and fmrel_type = 'is allele of');">
+            <?MIVAR>$(SETVAR,$call_wildtypePhenoAnat,t)<?/MIVAR>
+          <?/MISQL>
+        <?MIELSE> <?MICOMMENT> *** must call wildtypePhenoAnat.apg if it's wildtype *** <?/MICOMMENT>
+          <?MIVAR>$(SETVAR,$call_wildtypePhenoAnat,t)<?/MIVAR>
+        <?/MIBLOCK>
 
-          <?MIVAR NAME=fsel_anat_fig_count>1<?/MIVAR>
-          <?MIBLOCK  COND="$(EC,$call_innocuous,t)">
-            <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=fishselectAnat&wtphn_session_id=$fsel_session_id&wtphn_geno_zdb_id=$fsel_anat_geno&wtphn_processed_selected_structures=$fsel_processed_selected_structures&wtphn_include_substructures=$include_substructures&wtphn_structure_bool=$structure_bool') 
+        <?MIVAR NAME=fsel_anat_fig_count>1<?/MIVAR>
+        <?MICOMMENT> *** call wildtypePhenoAnat.apg to get the figure count for the wildtype or Tg *** <?/MICOMMENT>
+        <?MIBLOCK  COND="$(EC,$call_wildtypePhenoAnat,t)">
+          <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=fishselectAnat&wtphn_session_id=$fsel_session_id&wtphn_geno_zdb_id=$fsel_anat_geno&wtphn_processed_selected_structures=$fsel_processed_selected_structures&wtphn_include_substructures=$include_substructures&wtphn_structure_bool=$structure_bool') 
                          from webPages where ID='aa-wildtypePhenoAnat.apg';">$1<?/MISQL>
-            <?MIVAR>$(SETVAR,$fsel_anat_fig_count,$wtphn_figCt)<?/MIVAR>
-          <?/MIBLOCK>
-          <?MISQL COND="$(>,$fsel_anat_fig_count,0)" SQL="
+          <?MIVAR>$(SETVAR,$fsel_anat_fig_count,$wtphn_figCt)<?/MIVAR>
+        <?/MIBLOCK>
+        
+        <?MICOMMENT> *** only insert the genotype id to the temp table when the figure count is greater than 0 *** <?/MICOMMENT>
+        <?MISQL COND="$(>,$fsel_anat_fig_count,0)" SQL="
                      insert into $fishselect_temp_on_anatfig (g_zdb_id)
                           values ('$fsel_anat_geno');">
-          <?/MISQL>
-        
+        <?/MISQL>        
+      <?/MISQL>
+      <?MIVAR NAME=fishselect_temp_on_anat_table>$fishselect_temp_on_anatfig<?/MIVAR>
+    
+    <?MIELSE>
+      <?MIVAR NAME=fishselect_temp_on_anat_table>$fishselect_temp_on_anat<?/MIVAR>
+    <?/MIBLOCK>
 
-       <?/MISQL>
-       <?MIVAR NAME=fishselect_temp_on_anat_table>$fishselect_temp_on_anatfig<?/MIVAR>
-     <?MIELSE>
-       <?MIVAR NAME=fishselect_temp_on_anat_table>$fishselect_temp_on_anat<?/MIVAR>
-     <?/MIBLOCK>
-
-     <?MICOMMENT> ------- Define constraints for final SQL ---------------<?/MICOMMENT> 
+    <?MICOMMENT> ------- Define constraints for final SQL ---------------<?/MICOMMENT> 
     <?MIBLOCK  COND="$(XST,$moreConstraint)">
       <?MIVAR NAME=$moreConstraint> and exists (select 'x' from $fishselect_temp_on_anat_table where geno_zdb_id = g_zdb_id) <?/MIVAR>
     <?MIELSE>
@@ -548,10 +562,11 @@ function call_submit() {
          ==================================================================================
   <?/MICOMMENT>
 
-    <?MICOMMENT> =================================================================
+
+<?MICOMMENT> =================================================================
                           if Name / Symbol is searched
          ==============================================================================
-    <?/MICOMMENT>
+<?/MICOMMENT>
 <?MIBLOCK COND="$(AND,$(XST,$fsel_inputname),$(NE,$fsel_inputname,))">
 
   <?MIVAR NAME=$fsel_inputname>$(REPLACE,$fsel_inputname,"'","''")<?/MIVAR>
@@ -559,6 +574,7 @@ function call_submit() {
   
   <?MIVAR NAME=$genonm_inputname>$fsel_inputname<?/MIVAR>
 
+  <?MICOMMENT> *** call genotype_name_match.apg to get the temp table for genotypes with matching text *** <?/MICOMMENT>
   <?MISQL SQL="select WebExplode(object,'genonm_session_id=$fsel_session_id&compare=$compare') 
                  from webPages where ID='aa-genotype_name_match.apg';">$1<?/MISQL> 
   
@@ -577,6 +593,7 @@ function call_submit() {
 
   <?MIVAR NAME=$genomm_inputname>$fsel_inputname<?/MIVAR>
   
+  <?MICOMMENT> *** call genotype_name_match.apg to get the temp table for morphants with matching text *** <?/MICOMMENT>
   <?MIBLOCK  COND="$(AND, $(XST,$fsel_inputname), $(NE,$fsel_inputname,), $(NXST,$pubId))">
     <?MISQL SQL="select WebExplode(object,'genomm_session_id=$fsel_session_id&compare=$compare') 
                    from webPages where ID='aa-genotype_mo_match.apg';">$1<?/MISQL> 
@@ -850,6 +867,7 @@ function call_submit() {
                           if filter selection is made
          ==============================================================================
     <?/MICOMMENT>
+       
 <?MIBLOCK COND="$(OR,$(EC,$fselFilterValue,moOnly),$(EC,$fselFilterValue,moWTandReporterOnly),$(EC,$fselFilterValue,moExcluded),$(EC,$fselFilterValue,mutOnly),$(EC,$fselFilterValue,TGonly))">
 
    <?MISQL COND=$(EC,$debug_timing,t) SQL="
@@ -1007,28 +1025,30 @@ function call_submit() {
   <?/MIVAR>
 
 <?MIELSE COND="$(AND,$(NXST,$pubId),$(NXST,$fsel_cnstrct_id),$(NXST,$fsel_marker_id))">
-    <?MIVAR NAME=$sqlStr>insert into $fishselect_temp_result 
+  <?MIVAR NAME=$sqlStr>insert into $fishselect_temp_result 
                        (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype)
                      select $target_cols
                        from $target_tables
                        $constraint ;
-    <?/MIVAR>   
+  <?/MIVAR>   
     
-    <?MIBLOCK COND="$(XST,$fsel_inputname)">
-  <?MIBLOCK  COND="$(XST,$moreConstraintMO)">
-    <?MIVAR NAME=$moreConstraintMO> and not exists (select 'x' from $fishselect_temp_result where geno_zdb_id = fmatch_zdb_id) <?/MIVAR>
-  <?MIELSE>
-    <?MIVAR NAME=$moreConstraintMO> where not exists (select 'x' from $fishselect_temp_result where geno_zdb_id = fmatch_zdb_id) <?/MIVAR> 
-  <?/MIBLOCK>  
-  <?MIVAR>$(SETVAR,$constraintMO,$(CONCAT,$constraintMO,$moreConstraintMO))<?/MIVAR>
-      <?MIVAR NAME=$sqlStrMO>insert into $fishselect_temp_result 
+  <?MIBLOCK COND="$(XST,$fsel_inputname)">
+    <?MIBLOCK  COND="$(XST,$moreConstraintMO)">
+      <?MIVAR NAME=$moreConstraintMO> and not exists (select 'x' from $fishselect_temp_result where geno_zdb_id = fmatch_zdb_id) <?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME=$moreConstraintMO> where not exists (select 'x' from $fishselect_temp_result where geno_zdb_id = fmatch_zdb_id) <?/MIVAR> 
+    <?/MIBLOCK>  
+    <?MIVAR>$(SETVAR,$constraintMO,$(CONCAT,$constraintMO,$moreConstraintMO))<?/MIVAR>
+    
+    <?MICOMMENT> *** if there is input with name textbox, need to consider morphant *** <?/MICOMMENT> 
+    <?MIVAR NAME=$sqlStrMO>insert into $fishselect_temp_result 
                        (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype, fmatch_gene_id, fmatch_wildtype)
                      select $target_colsMO
                        from $target_tablesMO
                        $constraintMO group by geno_zdb_id, m_order, geno_name_order, m_type, m_gene, m_wildtype;
-      <?/MIVAR>
+    <?/MIVAR>
     
-    <?/MIBLOCK>
+  <?/MIBLOCK>
 
 <?MIELSE COND="$(AND,$(XST,$pubId),$(NXST,$fsel_cnstrct_id),$(NXST,$fsel_marker_id))">
 <?MICOMMENT> ============= from pub page ============= <?/MICOMMENT>
@@ -1085,8 +1105,7 @@ function call_submit() {
   <?/MIBLOCK>
 <?MIELSE>
   <?MISQL SQL=$sqlStr1><?/MISQL>
-  <?MISQL SQL=$sqlStr2><?/MISQL>
-  
+  <?MISQL SQL=$sqlStr2><?/MISQL>  
 <?/MIBLOCK>
 
 <?MISQL COND=$(EC,$debug_timing,t) SQL="
@@ -1643,7 +1662,6 @@ function call_submit() {
 	  <?MIVAR name=UserInput COND=$(XST,$fsel_cnstrct_id)>$UserInput&fsel_cnstrct_id=$fsel_cnstrct_id<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$fsel_anatomy_item_id)>$UserInput&fsel_anatomy_item_id=$fsel_anatomy_item_id<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$fsel_anatomy_include)>$UserInput&fsel_anatomy_include=$fsel_anatomy_include<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(XST,$fsel_cnstrct_id)>$UserInput&fsel_cnstrct_id=$fsel_cnstrct_id<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$pubId)>$UserInput&pubId=$pubId<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$mutagen)>$UserInput&mutagen=$mutagen<?/MIVAR>
 	  <?MIVAR name=UserInput COND=$(XST,$chrom_change)>$UserInput&chrom_change=$chrom_change<?/MIVAR>

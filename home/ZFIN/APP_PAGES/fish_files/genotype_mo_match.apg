@@ -11,7 +11,7 @@
 
      temp table genomm_temp_on_mo_target_<session_id>
 
-  This page is created to be used by both the fishselect.apg exclusively 
+  This page is created to be used by the fishselect.apg exclusively 
 
 <?/MICOMMENT>
 
