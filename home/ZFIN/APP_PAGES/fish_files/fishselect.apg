@@ -2000,21 +2000,21 @@ return false ; ">
    <tr>
      <td class="halfwidth">
        <img src="/images/MO_icon.gif" border="0" alt="MO image"><input type="radio" id="fselFilterMOonly" name="fselFilterValue" value="moOnly" <?MIVAR>$(IF,$(OR,$(EC,$fselFilterValue,moOnly),$(EC,$fselFilterValue,moWTandReporterOnly)),checked="unchecked")<?/MIVAR> >
-       <label for="fselFilterMOonly" class="accessoryLabel" >Show only morphants</label>
+       <label for="fselFilterMOonly" class="accessoryLabel" >Show only morphants<sup><img src="/images/new1.gif" border="0"></sup></label>
      </td>
    </tr>
 
    <tr>
      <td class="halfwidth">
        <img src="/images/MO_icon.gif" border="0" alt="MO image"><input type="radio" id="fselFilterMOwt" name="fselFilterValue" value="moWTandReporterOnly" <?MIVAR>$(IF,$(EC,$fselFilterValue,moWTandReporterOnly),checked="unchecked")<?/MIVAR> >
-       <label for="fselFilterMOwt" class="accessoryLabel" >Show only morphants in WT/reporter</label>
+       <label for="fselFilterMOwt" class="accessoryLabel" >Show only morphants in WT/reporter<sup><img src="/images/new1.gif" border="0"></sup></label>
      </td>
    </tr>
 
    <tr>
      <td class="halfwidth">
        <img src="/images/MO_icon.gif" border="0" alt="MO image"><input type="radio" id="fselFilterNoMO" name="fselFilterValue" value="moExcluded" <?MIVAR>$(IF,$(EC,$fselFilterValue,moExcluded),checked="unchecked")<?/MIVAR> >
-       <label for="fselFilterNoMO" class="accessoryLabel" >Exclude morphants</label>
+       <label for="fselFilterNoMO" class="accessoryLabel" >Exclude morphants<sup><img src="/images/new1.gif" border="0"></sup></label>
      </td>
    </tr>
    
