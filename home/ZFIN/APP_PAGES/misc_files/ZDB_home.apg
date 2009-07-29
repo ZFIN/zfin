@@ -27,7 +27,7 @@
 
   <table id="zdbhome-container-inner">
    <tr>
-   <td id="zdbhome-primary">
+   <td id="zdbhome-primary" nowrap>
        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-ZDB_home_leftcolumn.apg';">$1<?/MISQL>
    </td>
    <td id="zdbhome-sidebar">
