@@ -2054,7 +2054,6 @@ return false ; ">
      </td>
    </tr>    
      
-
 <!-- This next little block executes only if we are using the browser as a
 selecto. That is we want user to ultimately CHOOSE a browsed value. All
 we have to do at this point is pass the return record along to the fishlister.
