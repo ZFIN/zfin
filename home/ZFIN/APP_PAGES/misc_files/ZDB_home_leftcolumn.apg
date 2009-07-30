@@ -23,7 +23,7 @@
 
    <ul>
      <li>Search <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg"
-                   title="Search by allele, locus, phenotype keywords or map location">
+                   title="Search by allele, mutant/morphant gene, affected anatomy">
          <strong>Mutants / Morphants<sup><img src="/images/new1.gif" border="0"></sup>/ Transgenics</strong></a></li>
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-wtlist.apg" 
             title="Zebrafish wild-type lines">Wild-Type Lines</a></li>
