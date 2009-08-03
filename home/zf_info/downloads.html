@@ -72,10 +72,11 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <tr><td><a HREF="#phenotype"> Phenotype Data</a></td></tr>
 <tr><td><a HREF="#genotype"> Genotype Data</a></td></tr>
 <tr><td><a HREF="#wildtypes"> Wildtype Lines</a></td></tr>
+<tr><td><a HREF="#pmt"> Publications</a></td></tr>
 <tr><td><a HREF="#ad"> Anatomical Ontologies</a></td></tr>
 <tr><td><a HREF="#mo"> Morpholino Data</a></td></tr>
 <tr><td><a HREF="#ot"> Ontology Translations</a></td></tr>
-<tr><td><a HREF="#pmt"> PubMed Translations</a></td></tr>
+<!--<tr><td><a HREF="#pmt"> PubMed Translations</a></td></tr>-->
 <tr><td><a HREF="#img"> Images</a></td></tr>
 <tr><td><a HREF="#pga"> Genotype - Publication Association</a></td></tr>
 </table>
@@ -270,6 +271,9 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/wildtype-expression.txt">Download</a>
 
+<p><b> Zebrafish Gene Expression by Stage and Anatomy Term </b>
+<table BORDER CELLPADDING=2><tr> <td>Expression Result ID </td><td>Expression ID</td><td>Begin Stage ID</td><td>End Stage ID</td><td>Anatomy Item ID</td><td>Expression Found</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/xpat_stage_anatomy.txt">Download</a>
 <!-- -->
 <a NAME="genotype"></a><br><br>
 <table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Genotype Data</th></tr></table>
@@ -298,6 +302,20 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <p><b> Wildtype Lines </b>
 <table BORDER CELLPADDING=2><tr><td>Genotype ID</td><td>Genotype Name</td><td>Genotype Abbreviation</td></tr></table>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/wildtypes.txt">Download</a>
+
+<a NAME="pmt"></a><br><br>
+<table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Publications</th></tr></table>
+
+<p><b> ZFIN Publication IDs: ZFIN IDs to PubMed ids </b>
+<br>
+<table BORDER CELLPADDING=2><tr> <td>Publication ZFIN ID</td><td>PubMed ID.  None or blank when not available</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/pub_to_pubmed_id_translation.txt">Download</a>
+
+<p><b> ZFIN Marker ID's-UniProtKB ID's to ZFIN Pub IDs & PubMed ids </b>
+<br>
+<table BORDER CELLPADDING=2><tr> <td>ZFIN Marker ID</td><td>UniProtKB ID</td><td> ZFIN Pub ID </td><td>PubMedID</td><td>ZFIN Annotation(GO/Phenotype/Expression)</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/uniprot-zfinpub.txt">Download</a>
+
 
 <a NAME="phenotype"></a><br><br>
 <table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Phenotype Data</th></tr></table>
@@ -379,9 +397,9 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <table BORDER CELLPADDING=2><tr> <td>Anatomy Item ID</td><td>Anatomy Item Name</td><td>Anatomy Item Synonym</td></tr></table>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/anatomy_synonyms.txt">Download</a>
 
-<p><b> Zebrafish Gene Expression by Stage and Anatomy Term </b>
+<!--<p><b> Zebrafish Gene Expression by Stage and Anatomy Term </b>
 <table BORDER CELLPADDING=2><tr> <td>Expression Result ID </td><td>Expression ID</td><td>Begin Stage ID</td><td>End Stage ID</td><td>Anatomy Item ID</td><td>Expression Found</td></tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/xpat_stage_anatomy.txt">Download</a>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/xpat_stage_anatomy.txt">Download</a>-->
 
 <a NAME="mo"></a><br><br>
 <table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Morpholino Data</th></tr></table>
@@ -408,13 +426,13 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <table BORDER CELLPADDING=2><tr> <td>Quality term ZFIN ID</td><td>Quality term Quality ID</td><td>Quality term name</td></tr></table>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/phenotype_quality_ontology_translation.txt">Download</a>
 
-<a NAME="pmt"></a><br><br>
+<!--<a NAME="pmt"></a><br><br>
 <table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>PubMed Translations</th></tr></table>
 
 <p><b> ZFIN Publication IDs: ZFIN IDs to PubMed ids </b>
 <br>
 <table BORDER CELLPADDING=2><tr> <td>Publication ZFIN ID</td><td>PubMed ID.  None or blank when not available</td></tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/pub_to_pubmed_id_translation.txt">Download</a>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/pub_to_pubmed_id_translation.txt">Download</a>-->
 
 <a NAME="img"></a><br><br>
 <table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Images</th></tr></table>
@@ -427,9 +445,6 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/ImageFigures.txt">Download</a>
 </div>
 
-<table>
-<tr>
-<td>
 
 <script language="JavaScript" src="/javascript/footer.js"></script>
 </HTML>
