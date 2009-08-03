@@ -1474,7 +1474,7 @@ function doValidateAndSubmit(currentTime ){
         <?MIBLOCK COND="$(=,$fsel_fig_count,1)">
           <?MIVAR>
             <span title="Phenotype observed in: $fsel_separate_anat_list">
-              <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$fsel_fig_id'>$fsel_fig_count figure $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+              <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$fsel_fig_id'>$fsel_fig_count figure $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
             </span>
           <?/MIVAR>
         <?MIELSE>
@@ -1482,13 +1482,13 @@ function doValidateAndSubmit(currentTime ){
             <?MIBLOCK COND="$(AND,$(EC,$innocuous,t),$(XST,$fsel_processed_selected_structures))">
               <?MIVAR>
               <span title="Phenotype observed in: $fsel_separate_anat_list">
-                <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_processed_selected_structures=$fsel_processed_selected_structures&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_processed_selected_structures=$fsel_processed_selected_structures&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
               </span>
               <?/MIVAR>
             <?MIELSE>
               <?MIVAR>
               <span title="Phenotype observed in: $fsel_separate_anat_list">
-                <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
               </span>
               <?/MIVAR>
             <?/MIBLOCK>
@@ -1497,13 +1497,13 @@ function doValidateAndSubmit(currentTime ){
               <?MIBLOCK COND="$(AND,$(EC,$innocuous,t),$(XST,$fsel_processed_selected_structures))">
                 <?MIVAR>
                 <span title="Phenotype observed in: $fsel_separate_anat_list">
-                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_processed_selected_structures=$fsel_processed_selected_structures&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_processed_selected_structures=$fsel_processed_selected_structures&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
                 </span>
                 <?/MIVAR>
               <?MIELSE>
                 <?MIVAR>
                 <span title="Phenotype observed in: $fsel_separate_anat_list">
-                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
                 </span>
                 <?/MIVAR> 
               <?/MIBLOCK>
@@ -1511,13 +1511,13 @@ function doValidateAndSubmit(currentTime ){
               <?MIBLOCK COND="$(AND,$(EC,$innocuous,t),$(XST,$fsel_processed_selected_structures))">
                 <?MIVAR>
                 <span title="Phenotype observed in: $fsel_separate_anat_list">
-                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_processed_selected_structures=$fsel_processed_selected_structures&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&split=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_processed_selected_structures=$fsel_processed_selected_structures&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&split=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
                 </span>
                 <?/MIVAR>              
               <?MIELSE>
                 <?MIVAR>
                 <span title="Phenotype observed in: $fsel_separate_anat_list">
-                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&split=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&split=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
                 </span>
                 <?/MIVAR>
               <?/MIBLOCK>
