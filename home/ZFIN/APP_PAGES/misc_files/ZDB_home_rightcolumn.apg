@@ -188,6 +188,11 @@
        </li>
        <?/MICOMMENT>
        
+       <li>
+         <a href="/zf_info/news/siteNews.html#wikipath">
+           August 3 - New at WikiPathways
+         </a>
+       </li>   
        
         
            <li>
@@ -197,12 +202,7 @@
        </li> 
        
        
-        <li>
-         <a href="/zf_info/news/siteNews.html#zfpoll">
-           March 6 - Zebrafish Antibodies Poll
-         </a>
-       </li>   
-       
+        
       
        
           
@@ -234,8 +234,6 @@
    
     <br>
 
- 
-    <li><a href="/zf_info/news/newsgroup.html" title="a moderated, online discussion group for anyone interested in zebrafish research">Zebrafish Newsgroup</a></li>
      </ul>
      
      <img id="zdbhome-fishimg" src="/images/betterfish.jpg">
