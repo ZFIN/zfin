@@ -69,6 +69,15 @@
       and jrnl_zdb_id = pub_jrnl_zdb_id")
 
   $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, db_link, marker_relationship
+      where recattrib_data_zdb_id = dblink_zdb_id
+      and dblink_linked_recid = mrel_mrkr_2_zdb_id
+      and mrel_mrkr_1_zdb_id = '"$OID"' 
+      and mrel_type = 'gene encodes small segment'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citfish_fromwhere,"
       from record_attribution, publication p, journal, orthologue_evidence_display
       where recattrib_data_zdb_id = oevdisp_zdb_id
       and oevdisp_gene_zdb_id = '"$OID"'
