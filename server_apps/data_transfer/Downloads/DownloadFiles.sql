@@ -240,7 +240,8 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
         probe.mrkr_zdb_id probe_zdb, probe.mrkr_abbrev,
         xpatex_assay_name, xpatex_zdb_id xpat_zdb,
         xpatex_source_zdb_id,
-        genox_geno_zdb_id, genox_exp_zdb_id
+        genox_geno_zdb_id, genox_exp_zdb_id,
+        clone_rating
  from expression_experiment
       join genotype_experiment
 	  on genox_zdb_id = xpatex_genox_zdb_id
@@ -248,6 +249,8 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
 	  on gene.mrkr_zdb_id = xpatex_gene_zdb_id
       left join marker probe
 	  on probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
+      left join clone
+          on clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
  where gene.mrkr_abbrev not like 'WITHDRAWN: %' 
  order by gene_zdb, xpat_zdb, probe_zdb;
 
@@ -874,3 +877,133 @@ select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/lamhdi.unl'
 select dblink_acc_num, fmrel_mrkr_zdb_id, genofeat_geno_zdb_id, feature_name
 from lamhdi_tmp;
+
+-- download file Case 4200 as reuqested by uniprot
+
+create temp table gene_pubcount(
+       geneid varchar(50),
+       pubcount integer);
+
+
+insert into gene_pubcount
+select recattrib_data_zdb_id, count (recattrib_source_zdb_id) as citationcount from record_attribution where recattrib_data_zdb_id like 'ZDB-GENE%' group by recattrib_data_zdb_id; 
+
+
+unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot-zfinpub.txt'
+select geneid, dblink_acc_num,zdb_id,accession_no,'Expression' as  cur_topic
+from db_link, foreign_db_contains, publication,gene_pubcount, expression_experiment
+where geneid=dblink_linked_recid
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'UniProtKB'
+and geneid=xpatex_gene_zdb_id
+and xpatex_source_zdb_id=zdb_id
+and pubcount <= 20
+and jtype='Journal'
+union
+select geneid, dblink_acc_num,zdb_id,accession_no,'GO' as  cur_topic
+from db_link, foreign_db_contains, publication,gene_pubcount, marker_go_term_evidence
+where geneid=dblink_linked_recid
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'UniProtKB'
+and geneid=mrkrgoev_mrkr_zdb_id
+and mrkrgoev_source_zdb_id=zdb_id
+and pubcount <= 20
+and jtype='Journal'
+union
+select geneid, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
+from db_link, foreign_db_contains, publication,gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment,atomic_phenotype
+where geneid=dblink_linked_recid
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'UniProtKB'
+and geneid=fmrel_mrkr_zdb_id
+and fmrel_ftr_zdb_id=genofeat_feature_zdb_id
+and genofeat_geno_zdb_id=genox_geno_zdb_id
+and genox_zdb_id=apato_genox_zdb_id
+and apato_pub_zdb_id=zdb_id
+and pubcount <= 20
+and jtype='Journal'
+and (exp_name ='_Standard' or exp_name like '%Generic%')
+and exp_zdb_id=genox_exp_zdb_id
+and apato_tag!='normal'
+union
+select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
+from atomic_phenotype, gene_pubcount,foreign_db_contains,db_link, publication,mutant_fast_search
+where apato_genox_zdb_id=mfs_genox_zdb_id
+and geneid=dblink_linked_recid
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'UniProtKB'
+and mfs_mrkr_zdb_id=geneid
+and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+and apato_pub_zdb_id=zdb_id
+and pubcount <= 20
+and jtype='Journal'
+and apato_tag!='normal'
+union
+select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
+from atomic_phenotype, gene_pubcount,foreign_db_contains,db_link, publication,mutant_fast_search, marker_relationship
+where apato_genox_zdb_id=mfs_genox_zdb_id
+and geneid=dblink_linked_recid
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'UniProtKB'
+and mfs_mrkr_zdb_id=mrel_mrkr_1_zdb_id
+and mfs_mrkr_zdb_id like 'ZDB-MRPHLNO%'
+and mrel_mrkr_2_zdb_id=geneid
+and apato_pub_zdb_id=zdb_id
+and pubcount <= 20
+and jtype='Journal'
+and apato_tag!='normal'
+union
+select geneid, dblink_acc_num,zdb_id,accession_no,'GO' as  cur_topic
+from db_link, foreign_db_contains, publication,gene_pubcount, marker_go_term_evidence
+where geneid=dblink_linked_recid
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'UniProtKB'
+and geneid=mrkrgoev_mrkr_zdb_id
+and mrkrgoev_source_zdb_id=zdb_id
+and pubcount > 20
+and jtype='Journal'
+union
+select geneid, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
+from db_link, foreign_db_contains, publication,gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment,atomic_phenotype
+where geneid=dblink_linked_recid
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'UniProtKB'
+and geneid=fmrel_mrkr_zdb_id
+and fmrel_ftr_zdb_id=genofeat_feature_zdb_id
+and genofeat_geno_zdb_id=genox_geno_zdb_id
+and genox_zdb_id=apato_genox_zdb_id
+and apato_pub_zdb_id=zdb_id
+and pubcount > 20
+and jtype='Journal'
+and (exp_name ='_Standard' or exp_name like '%Generic%')
+and exp_zdb_id=genox_exp_zdb_id
+and apato_tag!='normal'
+union
+select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
+from atomic_phenotype, gene_pubcount,foreign_db_contains,db_link, publication,mutant_fast_search
+where apato_genox_zdb_id=mfs_genox_zdb_id
+and geneid=dblink_linked_recid
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'UniProtKB'
+and mfs_mrkr_zdb_id=geneid
+and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+and apato_pub_zdb_id=zdb_id
+and pubcount > 20
+and jtype='Journal'
+and apato_tag!='normal'
+union
+select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
+from atomic_phenotype, gene_pubcount,foreign_db_contains,db_link, publication,mutant_fast_search, marker_relationship
+where apato_genox_zdb_id=mfs_genox_zdb_id
+and geneid=dblink_linked_recid
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'UniProtKB'
+and mfs_mrkr_zdb_id=mrel_mrkr_1_zdb_id
+and mfs_mrkr_zdb_id like 'ZDB-MRPHLNO%'
+and mrel_mrkr_2_zdb_id=geneid
+and apato_pub_zdb_id=zdb_id
+and pubcount > 20
+and apato_tag!='normal'
+and jtype='Journal';
+
+
