@@ -76,9 +76,9 @@ public final class UpdateMicroArrayMain {
                     ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
             logger.debug("geoDatabase: " + geoDatabase) ;
 
-            zfEspressoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ZF_ESPRESSO.toString(),
-                    ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
-            logger.debug("zfEspressoDatabase: " + zfEspressoDatabase) ;
+            // zfEspressoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ZF_ESPRESSO.toString(),
+//                    ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
+ //           logger.debug("zfEspressoDatabase: " + zfEspressoDatabase) ;
 
 
 //            arrayExpressDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ARRAY_EXPRESS.toString(),
@@ -215,13 +215,13 @@ public final class UpdateMicroArrayMain {
                                                                                                                                                         
 
             // Process the 1319 chipset for all.  
-            Set<String> newOtherAccessions = new HashSet<String>() ;
-            newOtherAccessions.addAll(   (new SoftParser1319()).parseUniqueNumbers() );
+            // Set<String> newOtherAccessions = new HashSet<String>() ;
+            //newOtherAccessions.addAll(   (new SoftParser1319()).parseUniqueNumbers() );
 //            //okay if it only returns one
-            microarrayLinks.clear();
-            microarrayLinks = sequenceRepository.getMarkerDBLinks(null, zfEspressoDatabase ) ;   // 0 - load microarray
-            processNewLinks( newOtherAccessions , microarrayLinks,zfEspressoDatabase) ;  // 2
-            cleanupOldLinks(newOtherAccessions,zfEspressoDatabase) ; // 3
+            //microarrayLinks.clear();
+            //microarrayLinks = sequenceRepository.getMarkerDBLinks(null, zfEspressoDatabase ) ;   // 0 - load microarray
+           //processNewLinks( newOtherAccessions , microarrayLinks,zfEspressoDatabase) ;  // 2
+            // cleanupOldLinks(newOtherAccessions,zfEspressoDatabase) ; // 3
 
 //            microarrayLinks = sequenceRepository.getMarkerDBLinks(null, zfEspressoDatabase ,arrayExpressDatabase) ;   // 0 - load microarray
 //            processNewLinks( newOtherAccessions , microarrayLinks,zfEspressoDatabase,arrayExpressDatabase) ;  // 2
