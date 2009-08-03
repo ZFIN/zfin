@@ -14,7 +14,6 @@ INPUT VARS:
 	$phenosum_processed_selected_structures
 	$phenosum_include_substructures
 	$phenosum_structure_bool
-	$phenosum_item_count
 
 OUTPUT VARS: 
 
@@ -46,7 +45,6 @@ DEBUGGING:
  <BODY>
 
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-
 
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
@@ -275,7 +273,11 @@ DEBUGGING:
         <?/MISQL>
       <?/MIBLOCK>
       <?MIBLOCK COND="$(AND,$(XST,$phenosum_include_substructures),$(NE,$phenosum_include_substructures,unchecked))">
-        <?MIVAR>$(IF,$(>,$phenosum_item_count,1),their,and its)<?/MIVAR> substructures
+        <?MIBLOCK COND="$(>,$phenosum_item_count,1)">
+          <?MIVAR>$(IF,$(EC,$phenosum_structure_bool,and),and,or)<?/MIVAR> their substructures
+        <?MIELSE>
+          and its substructures
+        <?/MIBLOCK>
       <?/MIBLOCK>)
     <?/MIBLOCK>
       </b>
