@@ -214,7 +214,7 @@ update ortho_exp
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/fly_orthos.txt'
   DELIMITER "	"
   select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, flybase
-    from ortho_exp where organism = 'Fly' order by 1;
+    from ortho_exp where organism = 'Fruit fly' order by 1;
 
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/human_orthos.txt'
