@@ -56,11 +56,17 @@ function jump(form_select){
 
 <?MIVAR NAME=zfin_url_blastn>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg&PROGRAM=blastn&SEQ_TYPE=nt&SEQ_ID=<?/MIVAR>
 <?MIVAR NAME=zfin_url_blastp>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg&PROGRAM=blastp&DATALIB=sptr_zf&SEQ_TYPE=pt&SEQ_ID=<?/MIVAR>
+
 <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'ENSEMBL';"><?MIVAR NAME=fdb_url_ensembl>$1<?/MIVAR><?/MISQL>
+
 <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'PBLAST';"><?MIVAR NAME=fdb_url_pblast>$1<?/MIVAR><?/MISQL>
+
 <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLASTP';"><?MIVAR NAME=fdb_url_blastp>$1<?/MIVAR><?/MISQL>
+
 <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAT';"><?MIVAR NAME=fdb_url_blat>$1<?/MIVAR><?/MISQL>
+
 <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'MEGA BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
+
 <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
             
 <?MICOMMENT> =====  Polypeptide  ======== <?/MICOMMENT>   
@@ -96,7 +102,7 @@ function jump(form_select){
 
 <?MICOMMENT> =====  cDNA/RNA  ======== <?/MICOMMENT>       
 <?MIELSE COND=$(AND,$(EQ,$seqt_acc_type,RNA),$(OR,$(EQ,$seqt_acc_db,GenBank),$(EQ,$seqt_acc_db,RefSeq)))>
-    <FORM NAME="rna_seq_tool" method="get" ><DIV>
+    <FORM NAME="rnac_seq_tool" method="get" ><DIV>
       <SELECT NAME="select_rna" onChange="return jump(this);" >
         <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
         <?MIBLOCK COND="$(>,$seqt_acc_len,25000)">
