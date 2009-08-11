@@ -366,6 +366,7 @@ public class Marker implements Serializable, Comparable {
         ATB("ATB"),
         BAC("BAC"),
         BAC_END("BAC_END"),
+	CAN_BE_PROMOTER("CAN_BE_PROMOTER"),
         CAN_HAVE_MRPHLN("CAN_HAVE_MRPHLN"),
         CDNA("CDNA"),
         CDNA_AND_EST("CDNA_AND_EST"),
