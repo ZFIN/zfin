@@ -465,10 +465,16 @@ EFFECTS
                             values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id'); ">
 
         <?/MISQL>
+<?MIBLOCK COND="$(NXST,$patoup_apatofig_exists)">
+          <?MISQL COND="$(XST,$patoup_genox_zdb_id)" SQL="select genox_geno_zdb_id from genotype_experiment where genox_zdb_id = '$patoup_genox_zdb_id';">
+            <?MIVAR NAME="$patoup_genox_geno_zdb_id">$1<?/MIVAR>
+          <?/MISQL>
 
-        <?MISQL COND="$(NXST,$patoup_apatofig_exists)" SQL="
-          execute procedure regen_genofig_genotype('$patoup_genox_geno_zdb_id');">
-        <?/MISQL> 
+          <?MISQL COND="$(XST,$patoup_genox_geno_zdb_id)" SQL="
+            execute procedure regen_genofig_genotype('$patoup_genox_geno_zdb_id');">
+          <?/MISQL>           
+<?/MIBLOCK> 
+
 
       <?/MISQL> <?MICOMMENT> ** end for each structure to add ** <?/MICOMMENT>
 
@@ -583,7 +589,6 @@ EFFECTS
 
             <?MISQL SQL="insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id) 
                          values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id');"><?/MISQL>
-
             <?MISQL SQL="execute procedure regen_genofig_genotype('$patoup_genox_geno_zdb_id');">
             <?/MISQL> 
 
@@ -605,6 +610,9 @@ EFFECTS
               <?MISQL SQL="insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id) 
                            values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id');"><?/MISQL>
 
+          <?MISQL SQL="select genox_geno_zdb_id from genotype_experiment where genox_zdb_id = '$patoup_genox_zdb_id';">
+            <?MIVAR NAME="patoup_genox_geno_zdb_id">$1<?/MIVAR>
+          <?/MISQL>
               <?MISQL SQL="execute procedure regen_genofig_genotype('$patoup_genox_geno_zdb_id');">
               <?/MISQL> 
 
