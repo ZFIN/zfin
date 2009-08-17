@@ -60,7 +60,7 @@ OUPUT:
      <?MISQL SQL="select WebExplode(object,
 				   'cds_exp_zdb_id=$fxp_exp_zdb_id') 
 		    from webPages 
-		   where ID='aa-xpatexpcdnsummary.apg';">
+		   where ID='aa-xpatexpcdnlist.apg';">
      <?/MISQL>
      <?MIVAR NAME=fxp_exp_html>$(TRIM,$1)<?/MIVAR>	
      <?MICOMMENT>===========  Display   =================
