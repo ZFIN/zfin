@@ -268,7 +268,7 @@ OPTIONAL VARS:
      }  	
 
 
-    <?MIVAR COND=$(XST,$calling_apg)">
+    <?MIVAR COND="$(XST,$calling_apg)">
       window.replaceLocation("$calling_apg");
     <?/MIVAR>
   
@@ -314,7 +314,7 @@ OPTIONAL VARS:
   ===============================
 <?/MICOMMENT>
 
-  <table cellspacing=0 cellpadding=3 width=100%>
+  <table cellspacing=0 cellpadding=3 width=100% col=3>
     <tr bgcolor="<!--|SIDEBAR_COLOR|-->">
       <td>
         <FONT SIZE=+1><b> Curation </b></FONT> 
@@ -322,20 +322,21 @@ OPTIONAL VARS:
           $(IF,$(NE,$pub_completion_date,NULL),<FONT color=red>Closed: $pub_completion_date</FONT>)
         <?/MIVAR>
       </td>
-      <td>
+      <td align=center>
+        <?MIVAR>$OID<?/MIVAR>
+      </td>
+      <td align=right>
         <?MIVAR>
           $(IF,$(EC,$ZDB_access,root),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate</A>")
         <?/MIVAR>
       </td>
     </tr>
     <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
-      <td>
+      <td colspan=3>
         <?MIVAR>
           <b>Title:</b>
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">$title</a>
         <?/MIVAR>
-      </td>
-      <td>
       </td>
     </tr>
 
@@ -344,7 +345,7 @@ OPTIONAL VARS:
 -->
 
     <tr>
-      <td>
+      <td colspan=3>
           <b>File:</b>
          <?MIBLOCK COND="$(NC,$pub_file,NULL)">
            <?MIVAR>
@@ -387,6 +388,20 @@ OPTIONAL VARS:
     <input type=button value="ReOpen Paper" onClick="openPaper()";>
   <?/MIBLOCK>
   </form> 
+
+
+<?MICOMMENT> 
+======================================
+= link to googleforms curator survey =
+======================================
+<?/MICOMMENT> 
+
+   <?MIVAR>
+     $(IF,$(EC,$ZDB_access,root),"<A HREF="http://spreadsheets.google.com/viewform?formkey=dFo0bTRuOVBEOC1Pa082T3VGdWFYYkE6MA" target="blank">Do Curation Questionnaire</A>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="http://spreadsheets.google.com/viewanalytics?formkey=dFo0bTRuOVBEOC1Pa082T3VGdWFYYkE6MA">(View Results)</A>")
+   <?/MIVAR>
+  
+
+
   
 <?MICOMMENT> 
   ======================
@@ -637,7 +652,7 @@ OPTIONAL VARS:
                 WHERE source_id = a.zdb_id 
                   AND target_id='$OID' 
                   AND a.email is not null
-                  AND a.email <> ""
+                  AND a.email <> ''
              ORDER BY a.full_name ; ">
      <?MIVAR NAME=author_name>$1<?/MIVAR>
      <?MIVAR NAME=author_id>$2<?/MIVAR>
@@ -652,6 +667,13 @@ OPTIONAL VARS:
         <?/MIVAR>
   <br>
   <INPUT type=submit value="Edit Notification">
+
+  <br>
+  <br>
+  <br>
+  <?MIVAR>
+    $(IF,$(EC,$ZDB_access,root),"<iframe src="http://spreadsheets.google.com/embeddedform?key=tZ4m4n9PD8-OkO6OuFuaXbA" width="900" height="1200" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>")
+  <?/MIVAR>
 
 </form> 
 
