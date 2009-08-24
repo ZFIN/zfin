@@ -225,7 +225,7 @@
        <?/MIBLOCK>
      <?/MIBLOCK>
      <td><A HREF=$dbquery$goid>$goterm</A></TD>
-     <td nowrap><A HREF="http://www.geneontology.org/doc/GO.evidence.html#$(LOWER,$evidence)">$evidence</A></TD>
+     <td nowrap><A HREF="http://www.geneontology.org/GO.evidence.shtml#$(LOWER,$evidence)">$evidence</A></TD>
 
      <?MIVAR NAME=currinfs><?/MIVAR>
      <?MIVAR NAME=$infs><?/MIVAR>
@@ -383,7 +383,7 @@ and mrkrgoev_zdb_id  in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag w
        <?MIVAR NAME=$titleexp>Gene Ontology Pubs<?/MIVAR>
        <?MIVAR NAME=$name><?/MIVAR>
        <?MIVAR>
-         <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=goview&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&goterm=$gozdbid&evidence=$evidence&goflag=$flag&infer=$has_inf&total_count=$pubcount"><?MIVAR>$pubcount<?/MIVAR></a></td></tr><?/MIVAR>
+         <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=goview&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&goterm=$gozdbid&evidence=$evidence&goflag=$flag&infer=$has_inf&total_count=$pubcount&inf=$infername"><?MIVAR>$pubcount<?/MIVAR></a></td></tr><?/MIVAR>
 <?/MIBLOCK>
 
     <?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlighter),$white,$highlighter)<?/MIVAR>
