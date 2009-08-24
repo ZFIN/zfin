@@ -852,7 +852,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
  <?MIBLOCK COND="$(EQ,$infer,f)">
    <?MIVAR NAME=$infwhere>and mrkrgoev_zdb_id not in (select infgrmem_mrkrgoev_zdb_id from inference_group_member where mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id)<?/MIVAR>
  <?MIELSE>
-   <?MIVAR NAME=$infwhere>and mrkrgoev_zdb_id in (select infgrmem_mrkrgoev_zdb_id from inference_group_member where mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id)<?/MIVAR>
+   <?MIVAR NAME=$infwhere>and mrkrgoev_zdb_id in (select infgrmem_mrkrgoev_zdb_id from inference_group_member where mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id and  infgrmem_inferred_from='$inf')<?/MIVAR>
  <?/MIBLOCK>
 
 <?MICOMMENT> block to count pubs if flag is present<?/MICOMMENT>
@@ -882,7 +882,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">
-		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2&$rtype=publication">$4 ($3) $1. $5.</A>
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2&$rtype=publication">$4 ($3) $1. $5.$6$7</A>
         </DIV>
     	</TD>
   	</TR>
