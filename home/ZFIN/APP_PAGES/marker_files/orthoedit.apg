@@ -224,6 +224,23 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
          <?/MIVAR>
         <!--------- end big deletion ----------->
     </form>
-  
-<?/MIBLOCK>  <!-- ends authorized -->
 
+
+<?MISQL SQL="select extnote_note from external_note where extnote_data_zdb_id='$OID'">
+   <?MIVAR NAME="$note">$1<?/MIVAR>
+<?/MISQL>
+
+<?MIBLOCK COND="$(XST,$note)">
+	  <?MIVAR>
+	  Note: $note <BR/>
+	  <a href="/action/orthology/update-note?geneID=$OID">Edit Orthology Note</a>
+	  <?/MIVAR>
+	  <P/>
+<?MIELSE>
+	  <?MIVAR>
+	  <a href="/action/orthology/update-note?geneID=$OID">Create Orthology Note</a>
+	  <?/MIVAR>	
+	  <P/>
+<?/MIBLOCK>
+
+<?/MIBLOCK>  <!-- ends authorized -->

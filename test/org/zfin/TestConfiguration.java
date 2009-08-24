@@ -67,7 +67,7 @@ public class TestConfiguration {
 
     private static Person createNonSecurityPerson() {
         Person user = new Person();
-        user.setZdbID("ZDB-PERS-990101-01");
+        user.setZdbID("ZDB-PERS-060413-1");
         user.setName("Authenticated User");
         return user;
     }

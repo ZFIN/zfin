@@ -616,5 +616,45 @@ public class MarkerRepositoryTest {
         start.getName();
     }
 
+    @Test
+    public void createNewOrthologyNote() {
+
+        String geneName = "fgf8a";
+        MarkerRepository markerRep = RepositoryFactory.getMarkerRepository();
+        Marker gene = markerRep.getMarkerByAbbreviation(geneName);
+        assertTrue(gene != null);
+
+
+        Transaction tx = null;
+        try {
+            tx = HibernateUtil.currentSession().beginTransaction();
+            MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+            mr.createOrUpdateOrthologyExternalNote(gene, "This is a note");
+            tx.commit();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        finally {
+            if (tx != null)
+                try {
+                    tx.rollback();
+                } catch (HibernateException e) {
+                    
+                }
+        }
+    }
+
+    @Test
+    public void orthologyNote() {
+        String geneName = "fgf8a";
+        MarkerRepository markerRep = RepositoryFactory.getMarkerRepository();
+        Marker gene = markerRep.getMarkerByAbbreviation(geneName);
+        assertTrue(gene != null);
+
+        Set<OrthologyNote> notes = gene.getOrthologyNotes();
+        assertTrue(notes != null);
+    }
 
 }

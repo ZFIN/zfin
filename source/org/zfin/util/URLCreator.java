@@ -106,6 +106,11 @@ public class URLCreator {
 
         // Split off the given URL from its query string
         StringTokenizer tokenizerQueryString = new StringTokenizer(url.toString(), "?");
+        if (!tokenizerQueryString.hasMoreElements()){
+            urlWithoutParameters = url.toString();
+            return;
+        }
+
         urlWithoutParameters = tokenizerQueryString.nextToken();
 
         // Parse the query string (if any) into name/value pairs

@@ -166,6 +166,11 @@
             <one-to-many class="org.zfin.infrastructure.PublicationAttribution" />
         </set>
 
+        <set name="orthologyNotes" lazy="true">
+            <key column="extnote_data_zdb_id" />
+            <one-to-many class="org.zfin.marker.OrthologyNote" />
+        </set>
+
         <joined-subclass name="org.zfin.antibody.Antibody" table="antibody">
             <key column="atb_zdb_id" />
 

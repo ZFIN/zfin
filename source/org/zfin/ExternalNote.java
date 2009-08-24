@@ -1,6 +1,7 @@
 package org.zfin;
 
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.PersonAttribution;
 
 import java.util.Set;
 
@@ -10,9 +11,10 @@ import java.util.Set;
 public abstract class ExternalNote {
 
     private String zdbID;
-    private String note;
+    protected String note;
     private String type;
     protected Set<PublicationAttribution> pubAttributions;
+    protected Set<PersonAttribution> personAttributions;
 
     public String getNote() {
         return note;
@@ -46,4 +48,34 @@ public abstract class ExternalNote {
         this.pubAttributions = pubAttributions;
     }
 
+    public Set<PersonAttribution> getPersonAttributions() {
+        return personAttributions;
+    }
+
+    public void setPersonAttributions(Set<PersonAttribution> personAttributions) {
+        this.personAttributions = personAttributions;
+    }
+
+    public enum Type{
+        ORTHOLOGY("orthology");
+
+        private String value;
+
+        private Type(String value) {
+            this.value = value;
+        }
+
+        public String toString() {
+            return this.value;
+        }
+
+        public static Type getType(String type) {
+            for (Type t : values()) {
+                if (t.toString().equals(type))
+                    return t;
+            }
+            throw new RuntimeException("No run type of string " + type + " found.");
+        }
+
+    }
 }

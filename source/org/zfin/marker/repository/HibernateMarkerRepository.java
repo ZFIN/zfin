@@ -20,10 +20,7 @@ import org.zfin.framework.HibernateUtil;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.DataAlias;
-import org.zfin.infrastructure.DataNote;
-import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.*;
@@ -322,6 +319,38 @@ public class HibernateMarkerRepository implements MarkerRepository {
             addMarkerPub(antibody, publication);
         }
         ir.insertUpdatesTable(antibody, "notes", "", currentUser, note, "");
+    }
+
+    public void createOrUpdateOrthologyExternalNote(Marker gene, String note) {
+        LOG.debug("add orthology note");
+        Person currentUser = Person.getCurrentSecurityUser();
+        if (currentUser == null)
+            throw new RuntimeException("Cannot add an orthology note without an authenticated user");
+
+        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+        if (gene.getOrthologyNotes() == null || gene.getOrthologyNotes().size() == 0) {
+            OrthologyNote extnote = new OrthologyNote();
+            extnote.setMarker(gene);
+            extnote.setNote(note);
+            extnote.setType(ExternalNote.Type.ORTHOLOGY.toString());
+            HibernateUtil.currentSession().save(extnote);
+            PersonAttribution pa = new PersonAttribution();
+            pa.setPerson(currentUser);
+            pa.setDataZdbID(extnote.getZdbID());
+            pa.setSourceType(RecordAttribution.SourceType.STANDARD.toString());
+            HibernateUtil.currentSession().save(pa);
+            Set<PersonAttribution> personAttributions = new HashSet<PersonAttribution>();
+            personAttributions.add(pa);
+            extnote.setPersonAttributions(personAttributions);
+            Set<OrthologyNote> markerExternalNotes = new HashSet<OrthologyNote>();
+            markerExternalNotes.add(extnote);
+            gene.setOrthologyNotes(markerExternalNotes);
+        } else {
+            OrthologyNote extNote = gene.getOrthologyNotes().iterator().next();
+            String oldNote = gene.getOrthologyNotes().iterator().next().getNote();
+            extNote.setNote(note);
+            ir.insertUpdatesTable(gene, "notes", "", currentUser, note, oldNote);
+        }
     }
 
     public void editAntibodyExternalNote(String notezdbid, String note) {
@@ -1055,6 +1084,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     /**
      * Retrieve marker types by marker type groups
+     *
      * @param typeGroup type group
      * @return list of marker types
      */

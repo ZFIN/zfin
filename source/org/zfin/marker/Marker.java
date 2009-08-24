@@ -13,6 +13,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
+import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.*;
@@ -50,6 +51,7 @@ public class Marker implements Serializable, Comparable {
 
     // cashed attribute
     private transient List<Marker> markers;
+    private Set<OrthologyNote> orthologyNotes;
 
 
     public String getZdbID() {
@@ -174,6 +176,26 @@ public class Marker implements Serializable, Comparable {
         if (expressionExperiments == null)
             return 0;
         return getPublications().size();
+    }
+
+    public Set<OrthologyNote> getOrthologyNotes() {
+        return orthologyNotes;
+    }
+
+    public void setOrthologyNotes(Set<OrthologyNote> orthologyNotes) {
+        this.orthologyNotes = orthologyNotes;
+    }
+
+    public OrthologyNote getOrthologyNote(){
+        if(orthologyNotes == null || orthologyNotes.size() ==0)
+            return null;
+
+        if(orthologyNotes.size() > 1) {
+            String message = "More than one Ortholgoy notes found. This is not allowed!";
+            LOG.error(message);
+        }
+
+        return orthologyNotes.iterator().next();
     }
 
     /**
@@ -307,13 +329,6 @@ public class Marker implements Serializable, Comparable {
     public void setDirectPanelMappings(Set<MappedMarker> directPanelMappings) {
         this.directPanelMappings = directPanelMappings;
     }
-
-    /* found no usage of this method
-    public void addPublication(Publication pub) {
-        if (publications == null)
-            publications = new HashSet<Publication>();
-        publications.add(pub);
-    }      */
 
     public static enum Type {
         ATB("ATB"),
@@ -464,4 +479,5 @@ public class Marker implements Serializable, Comparable {
         this.suppliers = suppliers;
     }
 
+    private static Logger LOG = Logger.getLogger(Marker.class);
 }

@@ -16,4 +16,9 @@
         <put name="body" value="/WEB-INF/jsp/orthology/orthology_search_result.jsp"/>
     </definition>
 
+    <definition name="create-note.page" extends="main_layout">
+        <put name="staticTitle" value="Create / Update Orthology Note" />
+        <put name="body" value="/WEB-INF/jsp/orthology/create_orthology_note.jsp"/>
+    </definition>
+
 </tiles-definitions>

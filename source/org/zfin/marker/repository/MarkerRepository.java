@@ -46,6 +46,17 @@ public interface MarkerRepository {
 
     void addAntibodyExternalNote(Antibody antibody, String note, String sourcezdbid);
 
+    /**
+     * Creates a new note in regards to the orthololgy to a gene.
+     * Only a single note allowed per gene, i.e. if no note exists then
+     * create a new one, if there is already one available then it gets replaced
+     * with this one (updated) as we typically display the old note in the updates field.
+     * Attribution is done on the current security person.
+     * @param gene gene
+     * @param note note text
+     */
+    void createOrUpdateOrthologyExternalNote(Marker gene, String note);
+
     void editAntibodyExternalNote(String notezdbid, String note);
 
     /**

@@ -12,31 +12,27 @@
         <property name="mappings">
             <props>
                 <prop key="/orthology/search">orthologySearch</prop>
+                <prop key="/orthology/update-note">orthologyNoteUpdate</prop>
             </props>
         </property>
     </bean>
 
     <bean name="orthologySearch" class="org.zfin.orthology.presentation.OrthologySearchController">
-        <property name="orthologyRepository">
-            <ref bean="orthologyRepository"/>
-        </property>
-        <property name="formView">
-            <value>orthology-search.page</value>
-        </property>
-        <property name="successView">
-            <value>orthology-searchresult.page</value>
-        </property>
-        <property name="sessionForm">
-            <value>true</value>
-        </property>
-        <property name="bindOnNewForm">
-            <value>true</value>
-        </property>
+        <property name="orthologyRepository" ref="orthologyRepository"/>
+        <property name="formView" value="orthology-search.page"/>
+        <property name="successView" value="orthology-searchresult.page"/>
+        <property name="sessionForm" value="true"/>
+        <property name="bindOnNewForm" value="true"/>
         <property name="validator">
             <bean class="org.zfin.orthology.presentation.OrthologyWebSearchFormValidator"/>
         </property>
     </bean>
 
+    <bean name="orthologyNoteUpdate" class="org.zfin.orthology.presentation.OrthologyNoteController" >
+      <property name="commandClass" value="org.zfin.marker.presentation.OrthologyNoteBean" />
+        <property name="formView" value="create-note.page" />
+        <property name="bindOnNewForm" value="true" />
+    </bean>
     <!-- Designates to use the repository using hibernate -->
     <bean id="orthologyRepository" class="org.zfin.orthology.repository.HibernateOrthologyRepository"/>
 </beans>

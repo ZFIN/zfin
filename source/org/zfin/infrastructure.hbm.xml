@@ -37,15 +37,19 @@
         </composite-id>
         <discriminator type="string"
                        formula="(CASE get_obj_type(recattrib_source_zdb_id)
-                                    WHEN 'PUB' THEN 'Publication'
-                                    WHEN 'PERS' THEN 'Person'
-                                    WHEN 'COMPANY' THEN 'Company'
-                                    WHEN 'JRNL' THEN 'Journal'
-                                    ELSE             'other'
+                                    WHEN 'PUB' THEN       'Pub    '
+                                    WHEN 'PERS' THEN      'Person '
+                                    WHEN 'COMPANY' THEN   'Company'
+                                    WHEN 'JRNL' THEN      'Journal'
+                                    ELSE                  'other'
                                  END)"/>
 
-        <subclass name="org.zfin.infrastructure.PublicationAttribution" discriminator-value="Publication">
+        <subclass name="org.zfin.infrastructure.PublicationAttribution" discriminator-value="Pub    ">
             <many-to-one name="publication" column="recattrib_source_zdb_id" insert="false" update="false"/>
+        </subclass>
+
+        <subclass name="org.zfin.infrastructure.PersonAttribution" discriminator-value="Person ">
+            <many-to-one name="person" column="recattrib_source_zdb_id" insert="false" update="false"/>
         </subclass>
 
     </class>
@@ -155,15 +159,13 @@
         </id>
 
         <discriminator type="string"
-                       formula="(CASE get_obj_type(extnote_data_zdb_id)
-                                    WHEN 'ATB' THEN 'Antibody'
-                                    WHEN 'GENO' THEN 'Genotye'
-                                    WHEN 'DBLINK' THEN 'Dblink'
-                                    ELSE             'other'
+                       formula="(CASE extnote_note_type
+                                    WHEN 'antibody' THEN    'Antibody '
+                                    WHEN 'orthology' THEN   'Orthology'
+                                    ELSE                    'other    '
                                  END)"/>
 
         <property name="note" column="extnote_note"/>
-
         <property name="type" column="extnote_note_type"/>
 
         <set name="pubAttributions">
@@ -173,8 +175,19 @@
             <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
         </set>
 
-        <subclass name="org.zfin.antibody.AntibodyExternalNote" discriminator-value="Antibody">
+        <set name="personAttributions">
+            <key>
+                <column name="recattrib_data_zdb_id"/>
+            </key>
+            <one-to-many class="org.zfin.infrastructure.PersonAttribution"/>
+        </set>
+
+        <subclass name="org.zfin.antibody.AntibodyExternalNote" discriminator-value="Antibody ">
             <many-to-one name="antibody" column="extnote_data_zdb_id"/>
+        </subclass>
+
+        <subclass name="org.zfin.marker.OrthologyNote" discriminator-value="Orthology">
+            <many-to-one name="marker" column="extnote_data_zdb_id"/>
         </subclass>
 
     </class>
