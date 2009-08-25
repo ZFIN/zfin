@@ -481,8 +481,9 @@ display detailed orthology data.
 <?MISQL SQL="select extnote_note from external_note where extnote_data_zdb_id='$OID'">
    <?MIVAR NAME="$note">$1<?/MIVAR>
 <?/MISQL>
+<?MIBLOCK cond="$(XST,$note)">
 <span style="text-align: left; font-size: large; font-weight: bold;">Orthology Note: </span><?MIVAR>$1<?/MIVAR>
-
+<?/MIBLOCK>
 
 <!--  ZFIN footer -->     
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
