@@ -1010,4 +1010,11 @@ and pubcount > 20
 and apato_tag!='normal'
 and jtype='Journal';
 
+-- download file Case 4693 as reuqested by uniprot
 
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfinpubs.txt'
+ DELIMITER "	"
+ select zdb_id, accession_no, authors,title,jrnl_name,year(pub_date),pub_volume,pub_pages
+   from publication, journal
+ where pub_jrnl_zdb_id = jrnl_zdb_id
+ and jtype = 'Journal';
