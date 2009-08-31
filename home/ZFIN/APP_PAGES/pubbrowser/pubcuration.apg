@@ -397,7 +397,7 @@ OPTIONAL VARS:
 <?/MICOMMENT> 
 
    <?MIVAR>
-     $(IF,$(EC,$ZDB_access,root),"<A HREF="http://spreadsheets.google.com/viewform?formkey=dFo0bTRuOVBEOC1Pa082T3VGdWFYYkE6MA" target="blank">Do Curation Questionnaire</A>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="http://spreadsheets.google.com/viewanalytics?formkey=dFo0bTRuOVBEOC1Pa082T3VGdWFYYkE6MA">(View Results)</A>")
+     $(IF,$(EC,$ZDB_access,root),"<A HREF="http://spreadsheets.google.com/viewform?formkey=dFo0bTRuOVBEOC1Pa082T3VGdWFYYkE6MA&entry_0=$OID" target="blank">Do Curation Questionnaire</A>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="http://spreadsheets.google.com/viewanalytics?formkey=dFo0bTRuOVBEOC1Pa082T3VGdWFYYkE6MA">(View Results)</A>")
    <?/MIVAR>
   
 
