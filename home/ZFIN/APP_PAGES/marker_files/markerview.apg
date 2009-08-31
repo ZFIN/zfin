@@ -1379,7 +1379,7 @@ SQL="
 
 
 <?MIBLOCK COND="$(NE,$marker_type,EFG)">
-     <?MISQL 
+  <?MISQL 
     SQL="$mrkrview_xpatsubfig_sql">
      <?MIVAR NAME=mrkrview_xpatsubfig_count>$1<?/MIVAR>
 	 <?MIVAR NAME=mrkrview_xpatsubpub_id>$2<?/MIVAR>
@@ -1393,35 +1393,62 @@ SQL="
          <?MIELSE>
 	    <tr><td>&nbsp;</td>
          <?/MIBLOCK>
-	 <?MISQL SQL="select count(distinct img_zdb_id)::integer 
-           from image, expression_pattern_figure,
+
+<?MICOMMENT> deal with direct submission data that does not specify a probe  (case 4634)  <?/MICOMMENT>
+<?MICOMMENT> gene slc30a7 is an exampleof direct submission data without a probe.  <?/MICOMMENT>
+<?MICOMMENT>  more will probably follow if phenote submissions become popular with the users. <?/MICOMMENT>
+
+         <?MIBLOCK COND="$(NE,$mrkrview_xpatsub_probe_id,)">
+	   <?MISQL SQL="select count(distinct img_zdb_id)::integer 
+             from image, expression_pattern_figure,
                 expression_result, expression_experiment , clone
-	   where
+	     where
 		img_fig_zdb_id=xpatfig_fig_zdb_id
-           and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
-           and  xpatex_zdb_id=xpatres_xpatex_zdb_id
-           and  clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
-           and  xpatex_source_zdb_id= '$mrkrview_xpatsubpub_id'
-           and  xpatex_probe_feature_zdb_id='$mrkrview_xpatsub_probe_id' 
-           ; ">
-      <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
-	 <?MISQL SQL="
+             and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
+             and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+             and  clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
+             and  xpatex_source_zdb_id= '$mrkrview_xpatsubpub_id'
+             and  xpatex_probe_feature_zdb_id='$mrkrview_xpatsub_probe_id' 
+             ; ">
+          <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
+	  <?MISQL SQL="
 		     select mrkr_name
                        from marker
                       where mrkr_zdb_id = '$mrkrview_xpatsub_probe_id';">
 
-	    <?MIVAR NAME=mrkrview_xpatsub_probe_name>$1<?/MIVAR>
-	 <?/MISQL>
+	   <?MIVAR NAME=mrkrview_xpatsub_probe_name>$1<?/MIVAR>
+	   <?/MISQL>
 
-         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
-	   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id&fxallfig_probe_zdb_id=$mrkrview_xpatsub_probe_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
-	 <?/MIVAR>
+           <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
+	     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id&fxallfig_probe_zdb_id=$mrkrview_xpatsub_probe_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
+	   <?/MIVAR>
 
-         <td>
-	   $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref [$mrkrview_xpatsub_probe_name] 
-	 </td></tr>
-<?/MISQL>	
-     <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
+           <td>
+	     $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref [$mrkrview_xpatsub_probe_name] 
+	   </td></tr>	
+         <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
+       <?MIELSE>
+          <?MISQL SQL="select count(distinct img_zdb_id)::integer 
+             from image, expression_pattern_figure,
+                expression_result, expression_experiment
+	     where
+		img_fig_zdb_id=xpatfig_fig_zdb_id
+             and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
+             and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+             and  xpatex_source_zdb_id= '$mrkrview_xpatsubpub_id'
+             ; ">
+          <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
+
+          <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
+	     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
+	   <?/MIVAR>
+
+           <td>
+	     $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref 
+	   </td></tr>	
+         <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
+      <?/MIBLOCK>
+    <?/MISQL>
 <?MIELSE>
 
 
