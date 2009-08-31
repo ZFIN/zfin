@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.curation.client.FxFilterTable" %>
+<%@ page import="org.zfin.curation.client.FxFilterModule" %>
 <script type="text/javascript" language="javascript"
         src="/gwt/org.zfin.curation.Curation/org.zfin.curation.Curation.nocache.js"></script>
 <h1>FX Curation </h1>
@@ -38,8 +38,7 @@
     var curationProperties = {
         zdbID : "ZDB-PUB-990507-16",
         geneID: "ZDB-GENE-990415-30",
-        fishID: "",
-        <%= FxFilterTable.DEBUG%>: "<%= request.getParameter(FxFilterTable.DEBUG)%>"
+        fishID: ""
     } ;
 </script>
 <script type="text/javascript">

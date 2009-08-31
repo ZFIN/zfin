@@ -91,7 +91,7 @@ public class StagePresentationTest {
         stage.setHoursStart(0);
         stage.setHoursEnd(17520);
         String link = DevelopmentStagePresentation.getLink(stage, true);
-        assertEquals("<a href=\"/zf_info/zfbook/stages/index.html#unknown\">unknown</a>", link);
+        assertEquals("<a href=\"/zf_info/zfbook/stages/index.html#Unknown\">Unknown</a>", link);
     }
 
 }

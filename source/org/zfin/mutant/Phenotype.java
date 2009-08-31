@@ -7,6 +7,7 @@ import org.zfin.ontology.OntologyTerm;
 import org.zfin.publication.Publication;
 
 import java.util.Set;
+import java.util.HashSet;
 
 /**
  * ZFIN Domain object.
@@ -17,7 +18,8 @@ public class Phenotype {
     private String zdbID;
     private GenotypeExperiment genotypeExperiment;
     private AnatomyItem anatomyTerm;
-    private DevelopmentStage stage;
+    private DevelopmentStage startStage;
+    private DevelopmentStage endStage;
     private Set<Figure> figures;
     private Publication publication;
     private Term term;
@@ -65,12 +67,20 @@ public class Phenotype {
         this.quality = quality;
     }
 
-    public DevelopmentStage getStage() {
-        return stage;
+    public DevelopmentStage getStartStage() {
+        return startStage;
     }
 
-    public void setStage(DevelopmentStage stage) {
-        this.stage = stage;
+    public void setStartStage(DevelopmentStage startStage) {
+        this.startStage = startStage;
+    }
+
+    public DevelopmentStage getEndStage() {
+        return endStage;
+    }
+
+    public void setEndStage(DevelopmentStage endStage) {
+        this.endStage = endStage;
     }
 
     public String getTag() {
@@ -136,6 +146,13 @@ public class Phenotype {
 
     public void setAnatomyTerm(AnatomyItem anatomyTerm) {
         this.anatomyTerm = anatomyTerm;
+        patoSuperTermzdbID = anatomyTerm.getZdbID();
+    }
+
+    public void addFigure(Figure figure) {
+        if(figures == null)
+             figures = new HashSet<Figure>();
+        figures.add(figure);
     }
 
     public static enum Tag{

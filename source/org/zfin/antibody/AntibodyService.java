@@ -65,9 +65,14 @@ public class AntibodyService {
                     if (!distinctAoTerms.contains(term))
                         distinctAoTerms.add(term);
                     // add the secondary term if available
-                    AnatomyItem secondaryAoTerm = result.getSecondaryAnatomyTerm();
-                    if (secondaryAoTerm != null && !distinctAoTerms.contains(secondaryAoTerm))
-                        distinctAoTerms.add(secondaryAoTerm);
+                    if (result instanceof AnatomyExpressionResult) {
+                        AnatomyExpressionResult goResult = (AnatomyExpressionResult) result;
+                        AnatomyItem goTerm = goResult.getSubterm();
+                        if (goTerm != null) {
+                            if (!distinctAoTerms.contains(goTerm))
+                                distinctAoTerms.add(goTerm);
+                        }
+                    }
                 }
             }
         }
@@ -101,10 +106,14 @@ public class AntibodyService {
                     // only record if expression is found.
                     if (!result.isExpressionFound())
                         continue;
-                    GoTerm goTerm = result.getGoTerm();
-                    if (goTerm != null) {
-                        if (!distinctGoTerms.contains(goTerm))
-                            distinctGoTerms.add(goTerm);
+
+                    if (result instanceof GoTermExpressionResult) {
+                        GoTermExpressionResult goResult = (GoTermExpressionResult) result;
+                        GoTerm goTerm = goResult.getSubterm();
+                        if (goTerm != null) {
+                            if (!distinctGoTerms.contains(goTerm))
+                                distinctGoTerms.add(goTerm);
+                        }
                     }
                 }
             }
@@ -334,9 +343,12 @@ public class AntibodyService {
                     for (ExpressionResult result : results) {
                         if (result.isExpressionFound()) {
                             terms.add(result.getAnatomyTerm());
-                            AnatomyItem secondaryTerm = result.getSecondaryAnatomyTerm();
-                            if (secondaryTerm != null)
-                                terms.add(secondaryTerm);
+                            if (result instanceof AnatomyExpressionResult) {
+                                AnatomyExpressionResult anatResult = (AnatomyExpressionResult) result;
+                                AnatomyItem secondaryTerm = anatResult.getSubterm();
+                                if (secondaryTerm != null)
+                                    terms.add(secondaryTerm);
+                            }
                         }
                     }
                 }
@@ -410,12 +422,16 @@ public class AntibodyService {
                     if (result.isExpressionFound()) {
                         AnatomyItem ao = result.getAnatomyTerm();
 
-                        GoTerm cc = result.getGoTerm();
+                        GoTerm cc = null;
+                        if (result instanceof GoTermExpressionResult) {
+                            GoTermExpressionResult goResult = (GoTermExpressionResult) result;
+                            cc = goResult.getSubterm();
+                        }
                         String ccName;
                         if (cc == null)
                             ccName = "";
                         else
-                            ccName = cc.getName();
+                            ccName = cc.getTermName();
 
                         // form the key
                         String key = ao.getName() + ccName;
@@ -513,8 +529,16 @@ public class AntibodyService {
                     if (result.isExpressionFound()) {
                         AnatomyItem ao = result.getAnatomyTerm();
 
-                        GoTerm cc = result.getGoTerm();
-                        AnatomyItem secondaryAoTerm = result.getSecondaryAnatomyTerm();
+                        GoTerm cc = null;
+                        if (result instanceof GoTermExpressionResult) {
+                            GoTermExpressionResult goResult = (GoTermExpressionResult) result;
+                            cc = goResult.getSubterm();
+                        }
+                        AnatomyItem secondaryAoTerm = null;
+                        if (result instanceof AnatomyExpressionResult) {
+                            AnatomyExpressionResult anatResult = (AnatomyExpressionResult) result;
+                            secondaryAoTerm = anatResult.getSubterm();
+                        }
                         String termZdbID = "";
                         if (cc != null)
                             termZdbID = cc.getZdbID();

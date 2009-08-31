@@ -1,6 +1,7 @@
 package org.zfin.mutant.repository;
 
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.AnatomyPhenotype;
 import org.zfin.framework.CachedRepository;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -115,17 +116,16 @@ public interface MutantRepository extends CachedRepository {
 
 
     /**
-     * Method to set pagination-related parameters.
-     *
-     * @param paginationBean Pagination Bean
-     */
-    void setPaginationParameters(PaginationBean paginationBean);
-
-    /**
      * @param name go term name
      * @return A list of GoTerms that contain the parameter handed in.
      */
     List<GoTerm> getGoTermsByName(String name);
+
+    /**
+     * @param name go term name
+     * @return A unique GoTerm.
+     */
+    GoTerm getGoTermByName(String name);
 
     /**
      * @param name name of quality term
@@ -142,9 +142,38 @@ public interface MutantRepository extends CachedRepository {
 
     /**
      * Retrieve all distinct wild-type genotypes.
+     *
      * @return list of wildtype fish
      */
     List<Genotype> getAllWildtypeGenotypes();
 
+    /**
+     * Check if for a given figure annotation a pato record (Phenotype)
+     *
+     * @param genotypeExperimentID expression experiment
+     * @param figureID             figure
+     * @param startID              start   stage
+     * @param endID                end     stage
+     * @return boolean
+     */
+    boolean isPatoExists(String genotypeExperimentID, String figureID, String startID, String endID);
+
+    /**
+     * Create a default phenotype record.
+     * Default:
+     * AO term: unspecified
+     * Quality term: quality
+     * Tag: normal
+     *
+     * @param pheno AnatomyPhenotype
+     */
+    void createDefaultPhenotype(Phenotype pheno);
+
+    /**
+     * Lookup a term by name. Term must not be obsolete.
+     * @param termName term name
+     * @return Term object
+     */
+    Term getQualityTermByName(String termName);
 }
 

@@ -2,6 +2,7 @@ package org.zfin.anatomy.repository;
 
 import org.zfin.anatomy.*;
 import org.zfin.framework.CachedRepository;
+import org.zfin.expression.ExpressionStructure;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public interface AnatomyRepository extends CachedRepository {
 
     /**
      * This returns the complete list of all developmental stages.
+     *
      * @return A list of DevelopmentalStage objects.
      */
     List<DevelopmentStage> getAllStages();
@@ -21,6 +23,7 @@ public interface AnatomyRepository extends CachedRepository {
     /**
      * This returns the complete list of all developmental stages
      * except the 'Unknown' stage.
+     *
      * @return A list of DevelopmentalStage objects.
      */
     List<DevelopmentStage> getAllStagesWithoutUnknown();
@@ -31,13 +34,17 @@ public interface AnatomyRepository extends CachedRepository {
      * is the primary key). Second, it tries to find the stage by zdbID if
      * available. Lastly, it tries to search by name if available. Each of them needs to
      * find a unique record otherwise a Runtime exception is being thrown.
+     *
      * @param stage development stage
      * @return stage
      */
     DevelopmentStage getStage(DevelopmentStage stage);
 
+    DevelopmentStage getStageByID(String stageID);
+
     /**
      * Find the stage by stage name.
+     *
      * @param stageName stage name
      * @return stage
      */
@@ -45,6 +52,7 @@ public interface AnatomyRepository extends CachedRepository {
 
     /**
      * This returns the complete list of all anatomy Item objects.
+     *
      * @return A list of AnatomyItem objects.
      */
     List<AnatomyItem> getAllAnatomyItems();
@@ -52,6 +60,7 @@ public interface AnatomyRepository extends CachedRepository {
     /**
      * This returns the complete list of all anatomy names and synonym names,
      * sorted alphabetically
+     *
      * @return A list of strings.
      */
     List<String> getAllAnatomyNamesAndSynonyms();
@@ -62,15 +71,17 @@ public interface AnatomyRepository extends CachedRepository {
      * 1) 'contains'
      * 2) searching all synonyms as 'contains'
      * 3) Case insensitive in both cases
-     *  
-     * @param searchString string
+     *
+     * @param searchString     string
      * @param includeObsoletes include obsolete terms
      * @return list of anatomy terms
      */
     List<AnatomyItem> getAnatomyItemsByName(String searchString, boolean includeObsoletes);
+
     /**
      * Retrieves the statistics for all anatomy items.
      * See the BO for more info.
+     *
      * @return AnatomyStatistics objects.
      */
     List<AnatomyStatistics> getAllAnatomyItemStatistics();
@@ -81,7 +92,7 @@ public interface AnatomyRepository extends CachedRepository {
      *
      * @param searchTerm search term string
      * @return list of AnatomyStatistics object. Null if no term was found or the search
-     * term is null.
+     *         term is null.
      */
     List<AnatomyStatistics> getAnatomyItemStatistics(String searchTerm);
 
@@ -99,6 +110,7 @@ public interface AnatomyRepository extends CachedRepository {
      * Retrtieve an anatomical term by ID.
      * This is not a load but a get in Hibernate, i.e. no proxy.
      * Returns null if no term found.
+     *
      * @param aoZdbID AO term
      * @return ao term
      */
@@ -108,6 +120,7 @@ public interface AnatomyRepository extends CachedRepository {
 
     /**
      * Retrieve all relationship types (small number) for anatomical items.
+     *
      * @return AnatomyRelationshipType
      */
     List<String> getAllAnatomyRelationshipTypes();
@@ -115,7 +128,8 @@ public interface AnatomyRepository extends CachedRepository {
     /**
      * Retrieve anatomy items grouped by hierarchy and only those items
      * that fall into the given stage, i.e. the item whose start and end
-     * includes the given stage. 
+     * includes the given stage.
+     *
      * @param stage development stage
      * @return AnatomyStatistics
      */
@@ -123,6 +137,7 @@ public interface AnatomyRepository extends CachedRepository {
 
     /**
      * Persist a developmental stage.
+     *
      * @param stage development stage
      */
     void insertDevelopmentStage(DevelopmentStage stage);
@@ -130,6 +145,7 @@ public interface AnatomyRepository extends CachedRepository {
     /**
      * Persist an anatomical item. This includes the relationship with other
      * terms and its synonyms if any are available.
+     *
      * @param item Anatomy Term
      */
     void insertAnatomyItem(AnatomyItem item);
@@ -137,7 +153,8 @@ public interface AnatomyRepository extends CachedRepository {
 
     /**
      * Retrieve the statistics about expressed genes in a given
-     * anatomical term. 
+     * anatomical term.
+     *
      * @param anatomyZdbID zdbID
      * @return AnatomyStatistics
      */
@@ -146,6 +163,7 @@ public interface AnatomyRepository extends CachedRepository {
     /**
      * Retrieve the statistics about expressed genes in a given
      * anatomical term.
+     *
      * @param anatomyZdbID zdbID
      * @return AnatomyStatistics
      */
@@ -155,7 +173,7 @@ public interface AnatomyRepository extends CachedRepository {
      * Retrieve an anatomy term for a given name.
      * The lookup is case-insensitive.
      * Returns null if no term is found or the search name is null
-
+     *
      * @param name ao term name
      * @return AnatomyItem
      */
@@ -165,7 +183,7 @@ public interface AnatomyRepository extends CachedRepository {
      * Retrieve a list of anatomy terms for a given synonym name
      * The lookup is case-insensitive.
      * Returns null if no term is found or the search name is null.
-
+     *
      * @param name ao synonym name
      * @return AnatomyItem
      */
@@ -173,11 +191,47 @@ public interface AnatomyRepository extends CachedRepository {
 
     /**
      * Checks if
-     * @param term Anatomy term
-     * @param rootTerm  anatomy term
+     *
+     * @param term     Anatomy term
+     * @param rootTerm anatomy term
      * @return boolean
      */
     boolean isSubstructureOf(AnatomyItem term, AnatomyItem rootTerm);
 
     List<String> getAnatomyTermsForAutoComplete();
+
+
+    /**
+     * Retrieve a list of terms that develops_from the given term and are defined in the
+     * stage range given.
+     * In other words, the given structure develops_into the list of terms retrieved.
+     * E.g.
+     * 'adaxial cell' develops_into 'migratory slow muscle precursor cell'
+     *
+     * @param termID     Term id
+     * @param startHours start
+     * @param endHours   end
+     * @return list of anatomy terms
+     */
+    List<AnatomyItem> getTermsDevelopingFromWithOverlap(String termID, double startHours, double endHours);
+
+    /**
+     * Retrieve a list of terms that develops_into the given term and are defined in the
+     * stage range given.
+     * In other words, the given structure develops_from the list of terms retrieved.
+     * E.g.
+     * 'slow muscle' develops_from 'migratory slow muscle precursor cell', 'myotome, 'slow muscle myoblast'
+     *
+     * @param termID     Term id
+     * @param startHours start
+     * @param endHours   end
+     * @return list of anatomy terms
+     */
+    List<AnatomyItem> getTermsDevelopingIntoWithOverlap(String termID, double startHours, double endHours);
+
+    /**
+     * Create a new structure - post-composed - for the structure pile.
+     * @param structure structure
+     */
+    void createPileStructure(ExpressionStructure structure);
 }

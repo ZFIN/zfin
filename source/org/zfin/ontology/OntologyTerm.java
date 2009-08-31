@@ -5,5 +5,9 @@ package org.zfin.ontology;
  */
 public interface OntologyTerm {
 
+    String getId();
+
+    String getTermName();
+
 
 }

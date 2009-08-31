@@ -29,6 +29,11 @@ import org.zfin.util.HighlightUtilTest;
 import org.zfin.util.ListFormatterTest;
 import org.zfin.util.UrlCreatorTest;
 import org.zfin.expression.ExpressionExperimentTest;
+import org.zfin.expression.CurationExperimentTest;
+import org.zfin.curation.StageRangeIntersectionTest;
+import org.zfin.curation.WidgetUtilTest;
+import org.zfin.curation.ExperimentDTOTest;
+import org.zfin.curation.StageRangeUnionTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite).
@@ -42,7 +47,9 @@ import org.zfin.expression.ExpressionExperimentTest;
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
         AntibodyServiceTest.class,
+        CurationExperimentTest.class,
         ExpressionExperimentTest.class,
+        ExperimentDTOTest.class,
         FileUtilTest.class,
         FunctionsTest.class,
         HighlightUtilTest.class,
@@ -61,12 +68,15 @@ import org.zfin.expression.ExpressionExperimentTest;
         RunPresentationTest.class,
         SectionVisibilityTest.class,
         SingleAssociatedGenesFromQueryTest.class,
+        StageRangeIntersectionTest.class,
+        StageRangeUnionTest.class,
         StagePresentationTest.class,
         SortAnatomyResultsTest.class,
         UIFieldTransformerTest.class,
         UrlCreatorTest.class,
+        WidgetUtilTest.class,
         ZfinPropertiesTest.class
-        })
+})
 
 public class UnitTests {
 

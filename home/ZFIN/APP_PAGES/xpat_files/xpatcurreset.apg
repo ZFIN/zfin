@@ -27,7 +27,9 @@ Reset the cookies and infrastructure tables for pub curation.
        
        1. set default values for curator_expression
        2. clean table expression_pattern_infrastructure
-       3. insert records for the structure list
+          This is to mean: create AO structures that are used in an expression_result
+	  table but are not being found in the expression_pattern_infrastructure table
+       3. insert missing records for the structure list
     <?/MICOMMENT>
 
     <?MISQL SQL="
@@ -68,16 +70,16 @@ Reset the cookies and infrastructure tables for pub curation.
        <?MIVAR NAME=xpcur_c_environment>show<?/MIVAR>
        storeSession('$ZDB_ident','$OID','xpcur_c_condition','show')
        <?MIVAR NAME=xpcur_c_condition>show<?/MIVAR>
-       storeSession('$ZDB_ident','$OID','xpcur_c_experiment','show')
-       <?MIVAR NAME=xpcur_c_experiment>show<?/MIVAR>
+       storeSession('$ZDB_ident','$OID','SHOW_EXPERIMENT_SECTION','true')
+       <?MIVAR NAME=SHOW_EXPERIMENT_SECTION>true<?/MIVAR>
        storeSession('$ZDB_ident','$OID','xpcur_c_figure','show')
        <?MIVAR NAME=xpcur_c_figure>show<?/MIVAR>
        storeSession('$ZDB_ident','$OID','xpcur_c_image','show')
        <?MIVAR NAME=xpcur_c_image>show<?/MIVAR>
        storeSession('$ZDB_ident','$OID','xpcur_c_panel','show')
        <?MIVAR NAME=xpcur_c_panel>show<?/MIVAR>
-       storeSession('$ZDB_ident','$OID','xpcur_c_structure','show')
-       <?MIVAR NAME=xpcur_c_structure>show<?/MIVAR>
+       storeSession('$ZDB_ident','$OID','SHOW_EXPRESSION_SECTION','true')
+       <?MIVAR NAME=SHOW_EXPRESSION_SECTION>true<?/MIVAR>
        storeSession('$ZDB_ident','$OID','xpcur_c_tod','show')
        <?MIVAR NAME=xpcur_c_tod>show<?/MIVAR>
        storeSession('$ZDB_ident','$OID','xpcur_c_show_all','t')
@@ -86,11 +88,11 @@ Reset the cookies and infrastructure tables for pub curation.
     <?MIVAR COND=$(AND,$(XST,$xpcur_c_show_all),$(EC,$xpcur_c_show_all,f))>
        storeSession('$ZDB_ident','$OID','xpcur_c_environment','')
        storeSession('$ZDB_ident','$OID','xpcur_c_condition','')
-       storeSession('$ZDB_ident','$OID','xpcur_c_experiment','')
+       storeSession('$ZDB_ident','$OID','SHOW_EXPERIMENT_SECTION','')
        storeSession('$ZDB_ident','$OID','xpcur_c_figure','')
        storeSession('$ZDB_ident','$OID','xpcur_c_image','')
        storeSession('$ZDB_ident','$OID','xpcur_c_panel','')
-       storeSession('$ZDB_ident','$OID','xpcur_c_structure','')
+       storeSession('$ZDB_ident','$OID','SHOW_EXPRESSION_SECTION','')
        storeSession('$ZDB_ident','$OID','xpcur_c_tod','')
        storeSession('$ZDB_ident','$OID','xpcur_c_show_all','f')
     <?/MIVAR> 
@@ -100,7 +102,7 @@ Reset the cookies and infrastructure tables for pub curation.
 
        <?MICOMMENT> Generate the list <?/MICOMMENT>
        <?MISQL SQL="  
-           SELECT distinct xpatres_anat_item_zdb_id, xpatres_expression_found
+           SELECT distinct xpatres_anat_item_zdb_id, xpatres_term_zdb_id
            FROM expression_experiment, expression_result
            WHERE xpatex_source_zdb_id = '$OID'
              AND xpatex_zdb_id = xpatres_xpatex_zdb_id
@@ -110,7 +112,7 @@ Reset the cookies and infrastructure tables for pub curation.
                   from expression_pattern_infrastructure
                   where xpatinf_pub_zdb_id = '$OID'
                     and xpatinf_anatitem_zdb_id = xpatres_anat_item_zdb_id
-                    and xpatinf_expressed = xpatres_expression_found
+		    and (xpatinf_term_zdb_id is null OR xpatinf_term_zdb_id = xpatres_term_zdb_id)
                 );">
              
            <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
@@ -118,23 +120,39 @@ Reset the cookies and infrastructure tables for pub curation.
       
            <?MICOMMENT> ==| Add New XPATINF |== <?/MICOMMENT>  
            <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpatinf_zdb_id');"><?/MISQL>   
-           
+           <?MIBLOCK COND="$(NC,$2,NULL)">
            <?MISQL SQL="    
                INSERT INTO expression_pattern_infrastructure (
                    xpatinf_zdb_id,
                    xpatinf_curator_zdb_id,
                    xpatinf_pub_zdb_id,
                    xpatinf_anatitem_zdb_id,
-                   xpatinf_expressed,
+		   xpatinf_term_zdb_id,
                    xpatinf_date )
                VALUES (
                    '$xpatinf_zdb_id',
                    '$ZDB_ident', 
                    '$OID', 
                    '$1',
-                   '$2',
+		   '$2',
                    TODAY);">
            <?/MISQL>
+	   <?MIELSE>
+           <?MISQL SQL="    
+               INSERT INTO expression_pattern_infrastructure (
+                   xpatinf_zdb_id,
+                   xpatinf_curator_zdb_id,
+                   xpatinf_pub_zdb_id,
+                   xpatinf_anatitem_zdb_id,
+                   xpatinf_date )
+               VALUES (
+                   '$xpatinf_zdb_id',
+                   '$ZDB_ident', 
+                   '$OID', 
+                   '$1',
+                   TODAY);">
+           <?/MISQL>
+	   <?/MIBLOCK>
              
        <?/MISQL>
 

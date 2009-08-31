@@ -8,8 +8,7 @@ public class DevelopmentStage  implements Serializable, Comparable<DevelopmentSt
     public static final String ZYGOTE_STAGE_ZDB_ID = "ZDB-STAGE-010723-4";
     public static final String ADULT_STAGE = "Adult";
     public static final String ADULT_STAGE_ZDB_ID = "ZDB-STAGE-010723-39";
-    public static final String UNSPECIFIED = "unspecified";
-    public static final String UNKNOWN = "unknown";
+    public static final String UNKNOWN = "Unknown";
 
     private long stageID;
     private String zdbID;
@@ -19,6 +18,7 @@ public class DevelopmentStage  implements Serializable, Comparable<DevelopmentSt
     private float hoursEnd;
     private String otherFeature;
     private String abbreviation;
+    private String timeString;
     public static final String NEWLINE_PLUS_INDENT = System.getProperty("line.separator") + "    ";
 
 
@@ -99,6 +99,14 @@ public class DevelopmentStage  implements Serializable, Comparable<DevelopmentSt
             return name;
 
         return name.substring(0, colonIndex);
+    }
+
+    public String getTimeString() {
+        return timeString;
+    }
+
+    public void setTimeString(String timeString) {
+        this.timeString = timeString;
     }
 
     /**

@@ -88,6 +88,7 @@
             <column name="apato_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <param name="type">APATO</param>
+                <param name="insertActiveData">true</param>
             </generator>
         </id>
 
@@ -101,17 +102,13 @@
             <column name="apato_genox_zdb_id"/>
         </many-to-one>
 
+        <property name="patoSuperTermzdbID" column="apato_superterm_zdb_id"/>
+        <!-- updated and inserted through the subclasses -->
         <property name="patoSubTermzdbID" column="apato_subterm_zdb_id" insert="false" update="false"/>
-
-        <property name="patoSuperTermzdbID" column="apato_superterm_zdb_id" insert="false" update="false"/>
-
-        <many-to-one name="term" class="org.zfin.mutant.Term">
-            <column name="apato_quality_zdb_id"/>
-        </many-to-one>
-
-        <many-to-one name="publication" class="org.zfin.publication.Publication">
-            <column name="apato_pub_zdb_id"/>
-        </many-to-one>
+        <many-to-one name="term" column="apato_quality_zdb_id"/>
+        <many-to-one name="publication" column="apato_pub_zdb_id"/>
+        <many-to-one name="startStage"  column="apato_start_stg_zdb_id"/>
+        <many-to-one name="endStage" column="apato_end_stg_zdb_id"/>
 <!--
         ToDo: mark tag as phenotypeTag type when this col is cleaned up
 -->
@@ -201,6 +198,7 @@
         </id>
 
         <property name="name" column="term_name" />
+        <property name="obsolete" column="term_is_obsolete" />
 
     </class>
 

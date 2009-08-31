@@ -214,17 +214,17 @@ public class HibernateProfileRepository implements ProfileRepository {
     }
 
     /**
-     * Persist experiment section visibility
+     * Persist curator session info
      *
      * @param pubID                 pub ID
-     * @param showExperimentSection attribute name
-     * @param experimentVisibility  attribute value
+     * @param showSection attribute name
+     * @param visibility  attribute value
      */
-    public void setCuratorSession(String pubID, CuratorSession.Attribute showExperimentSection, boolean experimentVisibility) {
+    public void setCuratorSession(String pubID, CuratorSession.Attribute showSection, boolean visibility) {
         Session session = HibernateUtil.currentSession();
-        CuratorSession curationAttribute = getCuratorSession(pubID, CuratorSession.Attribute.SHOW_EXPERIMENT_SECTION);
+        CuratorSession curationAttribute = getCuratorSession(pubID, showSection);
         if (curationAttribute != null)
-            curationAttribute.setValue(String.valueOf(experimentVisibility));
+            curationAttribute.setValue(String.valueOf(visibility));
         else {
             Person curator = Person.getCurrentSecurityUser();
             // ToDo: IS this the right thing to do?
@@ -235,10 +235,59 @@ public class HibernateProfileRepository implements ProfileRepository {
             curationAttribute = new CuratorSession();
             curationAttribute.setPublication(pub);
             curationAttribute.setCurator(curator);
-            curationAttribute.setField(CuratorSession.Attribute.SHOW_EXPERIMENT_SECTION.toString());
-            curationAttribute.setValue(String.valueOf(experimentVisibility));
+            curationAttribute.setField(showSection.toString());
+            curationAttribute.setValue(String.valueOf(visibility));
             session.save(curationAttribute);
         }
+    }
+
+    /**
+     * Persist curation attribute.
+     * @param publicationID pub ID
+     * @param attributeName attribute name
+     * @param zdbID zdbID
+     */
+    public void setCuratorSession(String publicationID, CuratorSession.Attribute attributeName, String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        CuratorSession curationAttribute = getCuratorSession(publicationID, attributeName);
+        if (curationAttribute != null)
+            curationAttribute.setValue(zdbID);
+        else {
+            Person curator = Person.getCurrentSecurityUser();
+            // ToDo: IS this the right thing to do?
+            if(curator == null)
+                return;
+
+            Publication pub = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
+            curationAttribute = new CuratorSession();
+            curationAttribute.setPublication(pub);
+            curationAttribute.setCurator(curator);
+            curationAttribute.setField(attributeName.toString());
+            curationAttribute.setValue(zdbID);
+            session.save(curationAttribute);
+        }
+    }
+
+    /**
+     * Retrieve a person record by login name.
+     * @param login login
+     * @return person
+     */
+    @SuppressWarnings("unchecked")
+    public Person getPersonByName(String login) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(Person.class);
+        criteria.add(Restrictions.eq("accountInfo.login", login));
+        return (Person) criteria.uniqueResult();
+    }
+
+    /**
+     * Delete a curator session element.
+     * @param curatorSession CuratorSession
+     */
+    public void deleteCuratorSession(CuratorSession curatorSession) {
+        Session session = HibernateUtil.currentSession();
+        session.delete(curatorSession);
     }
 
     @SuppressWarnings("unchecked")

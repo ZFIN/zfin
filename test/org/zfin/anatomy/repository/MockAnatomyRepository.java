@@ -1,6 +1,7 @@
 package org.zfin.anatomy.repository;
 
 import org.zfin.anatomy.*;
+import org.zfin.expression.ExpressionStructure;
 
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +76,10 @@ public class MockAnatomyRepository implements AnatomyRepository {
         return stageMap.get(id);
     }
 
+    public DevelopmentStage getStageByID(String stageID) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public DevelopmentStage getStageByName(java.lang.String stageName) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -125,6 +130,18 @@ public class MockAnatomyRepository implements AnatomyRepository {
 
     public List<String> getAnatomyTermsForAutoComplete() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public List<AnatomyItem> getTermsDevelopingFromWithOverlap(String termID, double startHours, double endHours) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public List<AnatomyItem> getTermsDevelopingIntoWithOverlap(String termID, double startHours, double endHours) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void createPileStructure(ExpressionStructure structure) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void invalidateCachedObjects() {

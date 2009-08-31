@@ -20,6 +20,7 @@
         <mkdir dir="${classbin.dir}"/>
         <mkdir dir="${classbin.dir}/resources"/>
         <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}"/>
+        <copy file="${conf.dir}/ehcache.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/log4j.xml" todir="${classbin.dir}" failonerror="false"/>
         <copy todir="${classbin.dir}/org/zfin">
             <fileset dir="${hibernate.conf.dir}">

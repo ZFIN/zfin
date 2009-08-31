@@ -33,6 +33,21 @@ public class GoTerm implements OntologyTerm, Comparable<GoTerm> {
         this.goID = goID;
     }
 
+    public String getId() {
+        return zdbID;
+    }
+
+    public String getTermName() {
+        return name;
+    }
+
+    public String getOboID(){
+        if(goID == null)
+            return null;
+
+        return "GO:"+goID;
+    }
+
     public int compareTo(GoTerm goTerm) {
         if (goTerm == null)
             return 1;

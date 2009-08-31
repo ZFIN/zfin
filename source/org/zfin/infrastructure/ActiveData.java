@@ -2,7 +2,7 @@ package org.zfin.infrastructure;
 
 /**
  */
-public class ActiveData {
+public class ActiveData implements ZdbID {
     private String zdbID;
 
     public String getZdbID() {
@@ -10,11 +10,11 @@ public class ActiveData {
     }
 
     public void setZdbID(String zdbID) {
-        validateID(zdbID);
         this.zdbID = zdbID;
+        validateID();
     }
 
-    public static void validateID(String zdbID) {
+    public Type validateID() {
         if (zdbID == null) {
             throw new InvalidZdbID();
         }
@@ -22,16 +22,17 @@ public class ActiveData {
         if (!zdbID.startsWith(ActiveSource.ZDB))
             throw new InvalidZdbID(zdbID);
 
-        boolean validType = false;
-        for (Type type : Type.values()) {
-            if (zdbID.contains(type.name()))
-                validType = true;
+        Type type = null;
+        for (Type zdbType : Type.values()) {
+            if (zdbID.contains(zdbType.name())) {
+                type = zdbType;
+            }
         }
 
-        if (!validType) {
+        if (type == null) {
             throw new InvalidZdbID(zdbID, Type.getValues());
         }
-
+        return type;
     }
 
     public enum Type {
@@ -123,5 +124,14 @@ public class ActiveData {
             allValues = sb.toString();
             return allValues;
         }
+
+        public static Type getType(String type) {
+            for (Type t : values()) {
+                if (t.toString().equals(type))
+                    return t;
+            }
+            throw new RuntimeException("No active Data type of string " + type + " found.");
+        }
+
     }
 }

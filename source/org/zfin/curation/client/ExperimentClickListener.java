@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class ExperimentClickListener {
 
-    private DisplayExperimentTable.ZfinFlexTable table;
+    private FxExperimentModule.ZfinFlexTable table;
 
-    public ExperimentClickListener(DisplayExperimentTable.ZfinFlexTable table) {
+    public ExperimentClickListener(FxExperimentModule.ZfinFlexTable table) {
         this.table = table;
     }
 

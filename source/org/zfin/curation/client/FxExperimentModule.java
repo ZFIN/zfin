@@ -1,12 +1,10 @@
 package org.zfin.curation.client;
 
-import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.curation.dto.ExperimentDTO;
-import org.zfin.curation.dto.StringUtils;
+import org.zfin.curation.dto.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +75,7 @@ import java.util.List;
  * message is displayed when the update matches another existing experiment. Before an experiment is
  * updated a JavaScript alert box pops up to ask for confirmation.
  */
-public class DisplayExperimentTable extends Composite {
+public class FxExperimentModule extends Composite {
 
     // div-elements
     public static final String SHOW_HIDE_EXPERIMENTS = "show-hide-experiments";
@@ -92,6 +90,9 @@ public class DisplayExperimentTable extends Composite {
     private ZfinFlexTable displayTable;
     private Image loadingImage = new Image();
     private Label errorMessage = new Label();
+    public static final String HIDE = "hide";
+    public static final String SHOW = "show";
+
 
     // construction zone
     private Button addButton = new Button("Add");
@@ -103,8 +104,6 @@ public class DisplayExperimentTable extends Composite {
     private ListBox genbankList = new ListBox();
     private Button updateButton = new Button("update");
 
-    // Publication in question.
-    private String publicationID;
     private ExperimentDTO selectedExperiment;
     private List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>();
 
@@ -116,22 +115,33 @@ public class DisplayExperimentTable extends Composite {
     private String duplicateRowOriginalStyle;
     private int duplicateRowIndex;
 
-    // filter set by the banana bar
-    private ExperimentDTO experimentFilter;
     // flag that indicates if the experiment section is visible or not.
     private boolean sectionVisible;
 
     // RPC class being used for this section.
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
 
-    public static final String HIDE = "hide";
-    public static final String SHOW = "show";
-    private boolean debug;
+    // injected variables
+    private CurationEntryPoint curationEntryPoint;
+    // Publication in question.
+    private String publicationID;
+    // filter set by the banana bar
+    private ExperimentDTO experimentFilter;
 
-    public DisplayExperimentTable() {
+
+    public FxExperimentModule(CurationEntryPoint curationEntryPoint) {
+        this.curationEntryPoint = curationEntryPoint;
+        publicationID = curationEntryPoint.getPublicationID();
         displayTable = new ZfinFlexTable(HeaderName.getHeaderNames());
         initGUI();
-        loadPublicationAndFilterElements();
+    }
+
+    /**
+     * This loads the module. Run this method only once at startup.
+     * If you need to reload call the method
+     * experimentTable.retrieveExperiments()
+     */
+    protected void runModule() {
         loadSectionVisibility();
     }
 
@@ -199,6 +209,7 @@ public class DisplayExperimentTable extends Composite {
 
     // Retrieve experiments from the server
     protected void retrieveExperiments() {
+        loadingImage.setVisible(true);
         curationExperimentRPCAsync.getExperimentsByFilter(experimentFilter, new RetrieveExperimentsCallback(experiments));
     }
 
@@ -326,7 +337,7 @@ public class DisplayExperimentTable extends Composite {
             String currentGeneID = currentExperiment.getGeneZdbID();
             if (previousGeneID == null && currentGeneID == null)
                 sb.append(" oldgroup");
-            else if (previousGeneID == null && currentGeneID != null) {
+            else if (previousGeneID == null) {
                 sb.append(" newgroup");
                 groupIndex++;
             } else if (previousGeneID.equals(currentGeneID)) {
@@ -354,12 +365,47 @@ public class DisplayExperimentTable extends Composite {
         showExperimentSection = showHideLink;
     }
 
+    private boolean isDebug() {
+        return curationEntryPoint.isDebug();
+    }
+
+    /**
+     * When an expression record is removed update the experiment about it, ie the number
+     * of expression records isdecrements by 1.
+     *
+     * @param sourceExperiment experiment being removed
+     */
+    public void notifyRemovedExpression(ExperimentDTO sourceExperiment) {
+        for (ExperimentDTO experiment : experiments) {
+            if (experiment.getExperimentZdbID().equals(sourceExperiment.getExperimentZdbID()))
+                experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() - 1);
+        }
+        if (sectionVisible)
+            createExperimentTable();
+    }
+
+    /**
+     * When an expression record is added update the experiment section about it, ie the number
+     * of expression records is incremented by 1.
+     *
+     * @param sourceExperiments experiments being added
+     */
+    public void notifyAddedExpression(List<ExperimentDTO> sourceExperiments) {
+        for (ExperimentDTO experiment : experiments) {
+            for (ExperimentDTO sourceExperiment : sourceExperiments) {
+                if (experiment.equals(sourceExperiment))
+                    experiment.setNumberOfExpressions(experiment.getNumberOfExpressions() + 1);
+            }
+        }
+        if (sectionVisible)
+            createExperimentTable();
+    }
+
     /**
      * This Click Listener is activated upon clicking the selection radio button in the
      * Experiment display section. It should do two things:
      * 1) copy the values for the experiment into the construction zone
-     * 2) select the experiment in the textare of the epression section
-     * being facilitated via a shared JS function //still ToDO
+     * 2) select the experiment in the textarea of the epression section
      */
     private class ExperimentSelectClickListener implements ClickListener {
 
@@ -373,7 +419,7 @@ public class DisplayExperimentTable extends Composite {
             clearErrorMessages();
             // store selected experiment for update purposes
             selectedExperiment = experiments.get(rowIndex);
-            selectExperimentInExpressionSection(selectedExperiment.getExperimentZdbID());
+            curationEntryPoint.getExpressionModule().selectExperiment(selectedExperiment.getExperimentZdbID());
             selectGene();
             selectFish();
             selectEnvironment();
@@ -464,7 +510,7 @@ public class DisplayExperimentTable extends Composite {
         }
     }
 
-    private String concatenatedExperimentText(ExperimentDTO experiment) {
+    protected static String concatenatedExperimentText(ExperimentDTO experiment) {
         if (experiment == null)
             return "";
 
@@ -476,13 +522,18 @@ public class DisplayExperimentTable extends Composite {
         }
         sb.append(" ");
         sb.append(experiment.getFishName());
-        sb.append("        ");
+        sb.append("     ");
         sb.append(experiment.getEnvironment());
         sb.append("              ");
         sb.append(experiment.getAssayAbbreviation());
-        sb.append("              ");
-        if (StringUtils.isNotEmpty(experiment.getAntibody()))
+        if (StringUtils.isNotEmpty(experiment.getAntibody())) {
+            sb.append("              ");
             sb.append(experiment.getAntibody());
+        }
+        if (StringUtils.isNotEmpty(experiment.getGenbankNumber())) {
+            sb.append("              ");
+            sb.append(experiment.getGenbankNumber());
+        }
         return sb.toString();
     }
 
@@ -558,72 +609,6 @@ public class DisplayExperimentTable extends Composite {
         this.experiments = experiments;
     }
 
-    // Load properties from JavaScript.
-    private void loadPublicationAndFilterElements() {
-
-        try {
-            Dictionary transcriptDictionary = Dictionary.getDictionary(FxFilterTable.CURATION_PROPERTIES);
-            publicationID = transcriptDictionary.get(FxFilterTable.LOOKUP_PUBLICATION_ID);
-            String debugStr = transcriptDictionary.get(FxFilterTable.DEBUG);
-            if (debugStr != null && debugStr.equals(Boolean.TRUE.toString()))
-                debug = true;
-            experimentFilter = new ExperimentDTO();
-            experimentFilter.setPublicationID(publicationID);
-            String geneID = transcriptDictionary.get(FxFilterTable.LOOKUP_GENE_ID);
-            if (StringUtils.isNotEmpty(geneID))
-                experimentFilter.setGeneZdbID(geneID);
-            String fishID = transcriptDictionary.get(FxFilterTable.LOOKUP_FISH_ID);
-            if (StringUtils.isNotEmpty(fishID))
-                experimentFilter.setFishID(fishID);
-        } catch (Exception e) {
-            Window.alert(e.toString());
-        }
-
-    }
-
-    /**
-     * This method calls an external JavaScript method that adds the new experiment to the
-     * expression section
-     *
-     * @param text       String
-     * @param experiment experiment
-     */
-    public native void addExperimentToExpressionSection(String text, String experiment) /*-{
-        $wnd.addExperimentInExpressionSection(text, experiment);
-    }-*/;
-
-    /**
-     * This calls an external JavaScript method that updates the experiment attributes
-     * in the expression section.
-     *
-     * @param text         String
-     * @param experimentID experiment ID
-     */
-    public native void modifyExperimentInExpressionSection(String text, String experimentID) /*-{
-        $wnd.modifyExperimentInExpressionSection(text, experimentID);
-    }-*/;
-
-    /**
-     * Calls an external JavaScript method that removes an experiment from the expression section.
-     * Only called if no page reload needed
-     *
-     * @param experimentID experiment ID
-     */
-    public native void removeExperimentInExpressionSection(String experimentID) /*-{
-        $wnd.removeExperimentInExpressionSection(experimentID);
-    }-*/;
-
-    /**
-     * Reload the page.
-     */
-    public native void reloadPage() /*-{
-        $wnd.reloadPage();
-    }-*/;
-
-    public native void selectExperimentInExpressionSection(String experimentID) /*-{
-        $wnd.selectExperimentInExpressionSection(experimentID);    
-    }-*/;
-
     private class RetrieveExperimentsCallback extends ZfinAsyncCallback<List<ExperimentDTO>> {
 
         List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>();
@@ -642,7 +627,11 @@ public class DisplayExperimentTable extends Composite {
                 experiments.add(id);
             }
             //Window.alert("SIZE: " + experiments.size());
-            createExperimentTable();
+            if (sectionVisible)
+                createExperimentTable();
+            // populate expression section
+            curationEntryPoint.getExpressionModule().setExperiments(experiments);
+            curationEntryPoint.getExpressionModule().runModule();
             loadingImage.setVisible(false);
         }
 
@@ -663,12 +652,10 @@ public class DisplayExperimentTable extends Composite {
         public void onSuccess(Void exp) {
             //Window.alert("Success");
             experiments.remove(experiment);
-            if (experiment.getNumberOfExpressions() == 0) {
-                createExperimentTable();
-                removeExperimentInExpressionSection(experiment.getExperimentZdbID());
-            } else {
-                reloadPage();
-            }
+            createExperimentTable();
+            curationEntryPoint.getExpressionModule().setExperiments(experiments);
+            // also remove the figure annotations that were used with this experiments
+            curationEntryPoint.getExpressionModule().removeFigureAnnotations(experiment);
         }
 
         public void onFailureCleanup() {
@@ -764,7 +751,13 @@ public class DisplayExperimentTable extends Composite {
                     antibodyList.setSelectedIndex(rowIndex);
                 rowIndex++;
             }
-            String itemText = assayList.getItemText(assayList.getSelectedIndex());
+            int selectedIndex = assayList.getSelectedIndex();
+            if (selectedIndex == -1) {
+                //Window.alert("No Assay populated yet.");
+                return;
+            }
+
+            String itemText = assayList.getItemText(selectedIndex);
             // enable list if assay is compatible with assay selection
             if (ExpressionAssayDTO.isAntibodyAssay(itemText))
                 antibodyList.setEnabled(true);
@@ -790,7 +783,7 @@ public class DisplayExperimentTable extends Composite {
             genbankList.clear();
             genbankList.addItem("");
             int rowIndex = 1;
-            if (debug)
+            if (isDebug())
                 Window.alert("Selected GeneBank ID: " + selectedGenBankID);
             for (ExperimentDTO accession : accessions) {
                 genbankList.addItem(accession.getGenbankNumber(), accession.getGenbankID());
@@ -808,13 +801,15 @@ public class DisplayExperimentTable extends Composite {
     private class ShowExperimentSectionListener implements ClickListener {
 
         public void onClick(Widget widget) {
+            String errorMessage = "Error while trying to save experiment visibility";
             if (sectionVisible) {
                 // hide experiments
                 clearExperimentListTable();
                 //createConstructionZone();
                 showExperimentSection.setText(SHOW);
                 sectionVisible = false;
-                curationExperimentRPCAsync.setCuratorSession(publicationID, false, new VoidAsyncCallback());
+                curationExperimentRPCAsync.setExperimentVisibilitySession(publicationID, false,
+                        new VoidAsyncCallback(new Label(errorMessage), loadingImage));
             } else {
                 // display experiments
                 // check if we need to re-read the construction zone values again from the server
@@ -824,7 +819,8 @@ public class DisplayExperimentTable extends Composite {
                     retrieveConstructionZoneValues();
                 showExperimentSection.setText(HIDE);
                 sectionVisible = true;
-                curationExperimentRPCAsync.setCuratorSession(publicationID, true, new VoidAsyncCallback());
+                curationExperimentRPCAsync.setExperimentVisibilitySession(publicationID, true,
+                        new VoidAsyncCallback(new Label(errorMessage), loadingImage));
             }
             clearErrorMessages();
         }
@@ -855,8 +851,7 @@ public class DisplayExperimentTable extends Composite {
             }
 
             loadingImage.setVisible(true);
-            curationExperimentRPCAsync.createExpressionExperiment(zoneExperiment,
-                    new AddExperimentCallback());
+            curationExperimentRPCAsync.createExpressionExperiment(zoneExperiment, new AddExperimentCallback());
         }
 
         private void cleanupOnExit() {
@@ -870,13 +865,10 @@ public class DisplayExperimentTable extends Composite {
 
             public void onSuccess(ExperimentDTO newExperiment) {
                 addButtonInProgress = false;
-                if (sectionVisible)
-                    retrieveExperiments();
-                else
+                retrieveExperiments();
+                if (!sectionVisible)
                     errorMessage.setText("Added new Experiment: " + concatenatedExperimentText(newExperiment));
-                String experimentText = concatenatedExperimentText(newExperiment);
                 // add this experiment to the expression section
-                addExperimentToExpressionSection(experimentText, newExperiment.getExperimentZdbID());
                 loadingImage.setVisible(false);
             }
 
@@ -902,8 +894,7 @@ public class DisplayExperimentTable extends Composite {
         int rowIndex = 1;
         for (ExperimentDTO experiment : experiments) {
             if (experiment.equals(updatedExperiment)) {
-                if (isNewExperiment ||
-                        (!isNewExperiment && !experiment.getExperimentZdbID().equals(updatedExperiment.getExperimentZdbID()))) {
+                if (isNewExperiment || (!experiment.getExperimentZdbID().equals(updatedExperiment.getExperimentZdbID()))) {
                     if (sectionVisible) {
                         duplicateRowIndex = rowIndex;
                         duplicateRowOriginalStyle = displayTable.getRowFormatter().getStyleName(rowIndex);
@@ -977,19 +968,17 @@ public class DisplayExperimentTable extends Composite {
             if (widget == null || !(widget instanceof SelectRadioButton))
                 return;
             SelectRadioButton radioButton = (SelectRadioButton) widget;
-            if (radioButton != null) {
-                radioButton.clickRadioButton();
-                radioButton.setChecked(true);
-                // reset the previously changed row style
-                // if it was modified
-                if (previousRowIndex > 0)
-                    displayTable.getRowFormatter().setStyleName(previousRowIndex, previousRowStyle);
+            radioButton.clickRadioButton();
+            radioButton.setChecked(true);
+            // reset the previously changed row style
+            // if it was modified
+            if (previousRowIndex > 0)
+                displayTable.getRowFormatter().setStyleName(previousRowIndex, previousRowStyle);
 
-                previousRowStyle = displayTable.getRowFormatter().getStyleName(row);
-                previousRowIndex = row;
-                // mark the experiment being modified
-                displayTable.getRowFormatter().setStyleName(row, "experiment-selected");
-            }
+            previousRowStyle = displayTable.getRowFormatter().getStyleName(row);
+            previousRowIndex = row;
+            // mark the experiment being modified
+            displayTable.getRowFormatter().setStyleName(row, "experiment-selected");
         }
 
         /**
@@ -1026,6 +1015,7 @@ public class DisplayExperimentTable extends Composite {
         public void clickRadioButton() {
             clickListener.fireClick(this);
         }
+
     }
 
     private ErrorMessageCleanupListener errorMessageCleanupListener = new ErrorMessageCleanupListener();
@@ -1039,20 +1029,6 @@ public class DisplayExperimentTable extends Composite {
 
     public void setExperimentFilter(ExperimentDTO experimentFilter) {
         this.experimentFilter = experimentFilter;
-    }
-
-    private class VoidAsyncCallback extends ZfinAsyncCallback<Void> {
-
-        VoidAsyncCallback() {
-            super("Error", errorMessage);
-        }
-
-        public void onSuccess(Void aVoid) {
-        }
-
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
     }
 
     private class UpdateExperimentClickListener implements ClickListener {
@@ -1116,7 +1092,7 @@ public class DisplayExperimentTable extends Composite {
                         SelectRadioButton selectButton = (SelectRadioButton) widget;
                         if (selectButton.getTitle().equals(updatedExperiment.getExperimentZdbID())) {
                             //selectButton.setChecked(true);
-                            if (debug)
+                            if (isDebug())
                                 Window.alert(updatedExperiment.toString());
                             updateTextInUpdatedRow(row, updatedExperiment);
                         }
@@ -1127,7 +1103,8 @@ public class DisplayExperimentTable extends Composite {
             updateButton.setEnabled(true);
             updateButtonInProgress = false;
             // update expression section with new experiment attributes
-            modifyExperimentInExpressionSection(concatenatedExperimentText(updatedExperiment), updatedExperiment.getExperimentZdbID());
+            curationEntryPoint.getExpressionModule().setExperiments(experiments);
+            curationEntryPoint.getExpressionModule().retrieveExpressions();
         }
 
         public void onFailureCleanup() {
@@ -1151,8 +1128,8 @@ public class DisplayExperimentTable extends Composite {
         displayTable.setText(row, HeaderName.GENBANK.getIndex(), experiment.getGenbankNumber());
         // update experiment in list
         int index = 0;
-        for(ExperimentDTO currentExperiment: experiments){
-            if(currentExperiment.getExperimentZdbID().equals(experiment.getExperimentZdbID()))
+        for (ExperimentDTO currentExperiment : experiments) {
+            if (currentExperiment.getExperimentZdbID().equals(experiment.getExperimentZdbID()))
                 experiments.set(index, experiment);
             index++;
         }
@@ -1161,7 +1138,7 @@ public class DisplayExperimentTable extends Composite {
 
     private class RetrieveGeneListByAntibodyCallBack extends ZfinAsyncCallback<List<MarkerDTO>> {
         public RetrieveGeneListByAntibodyCallBack() {
-            super("Error while readin genes by antibodies", DisplayExperimentTable.this.errorMessage);
+            super("Error while readin genes by antibodies", FxExperimentModule.this.errorMessage);
         }
 
         public void onSuccess(List<MarkerDTO> genes) {
@@ -1223,7 +1200,7 @@ public class DisplayExperimentTable extends Composite {
 
     private class RetrieveAssayListCallback extends ZfinAsyncCallback<List<String>> {
         public RetrieveAssayListCallback(String message) {
-            super(message, DisplayExperimentTable.this.errorMessage);
+            super(message, FxExperimentModule.this.errorMessage);
         }
 
         public void onSuccess(List<String> assays) {
@@ -1240,7 +1217,7 @@ public class DisplayExperimentTable extends Composite {
 
     private class RetrieveEnvironmentListCallback extends ZfinAsyncCallback<List<EnvironmentDTO>> {
         public RetrieveEnvironmentListCallback(String message) {
-            super(message, DisplayExperimentTable.this.errorMessage);
+            super(message, FxExperimentModule.this.errorMessage);
         }
 
         public void onSuccess(List<EnvironmentDTO> environments) {
@@ -1260,18 +1237,17 @@ public class DisplayExperimentTable extends Composite {
 
     private class RetrieveSectionVisiblityCallback extends ZfinAsyncCallback<Boolean> {
         public RetrieveSectionVisiblityCallback(String message) {
-            super(message, DisplayExperimentTable.this.errorMessage);
+            super(message, FxExperimentModule.this.errorMessage);
         }
 
         public void onSuccess(Boolean visible) {
             sectionVisible = visible;
             //Window.alert("Show: " + sectionVisible);
             if (sectionVisible) {
-                loadPublicationAndFilterElements();
                 setInitialValues();
                 showExperimentSection.setText(HIDE);
             } else {
-                retrieveConstructionZoneValues();
+                setInitialValues();
                 createConstructionZone();
                 showExperimentSection.setText(SHOW);
                 loadingImage.setVisible(false);
@@ -1285,7 +1261,7 @@ public class DisplayExperimentTable extends Composite {
 
     private class RetrieveGenotypeListCallback extends ZfinAsyncCallback<List<FishDTO>> {
         public RetrieveGenotypeListCallback(String message) {
-            super(message, DisplayExperimentTable.this.errorMessage);
+            super(message, FxExperimentModule.this.errorMessage);
         }
 
         public void onSuccess(List<FishDTO> genotypes) {

@@ -1,7 +1,7 @@
 package org.zfin.curation.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.zfin.curation.dto.ExperimentDTO;
+import org.zfin.curation.dto.*;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface CurationExperimentRPCAsync {
      * @param publicationID Publication
      * @param async callback
      */
-    void getFish(String publicationID, AsyncCallback<List<FishDTO>> async);
+    void getPossibleFilterValues(String publicationID, AsyncCallback<FilterValuesDTO> async);
 
     void getAssays(AsyncCallback<List<String>> async);
 
@@ -99,7 +99,7 @@ public interface CurationExperimentRPCAsync {
      * @param experimentVisibility experiment section visibility
      * @param async call back
      */
-    void setCuratorSession(String pubID, boolean experimentVisibility, AsyncCallback<Void> async);
+    void setExperimentVisibilitySession(String pubID, boolean experimentVisibility, AsyncCallback<Void> async);
 
     void deleteExperiment(String experimentZdbID, AsyncCallback<Void> async);
 
@@ -120,4 +120,49 @@ public interface CurationExperimentRPCAsync {
     void readFigures(String publicationID, AsyncCallback<List<String>> async);
 
     void getGenes(String pubID, AsyncCallback<List<MarkerDTO>> async);
+
+    //// Expression Section
+    void readExpressionSectionVisibility(String publicationID, AsyncCallback<Boolean> async);
+
+    void getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID, AsyncCallback<List<ExpressionFigureStageDTO>> async);
+
+    void getFigures(String publicationID, AsyncCallback<List<FigureDTO>> async);
+
+    void getStages(AsyncCallback<List<StageDTO>> async);
+
+    void createFigureAnnotations(List<ExpressionFigureStageDTO> newFigureAnnotations, AsyncCallback<List<ExpressionFigureStageDTO>> callback);
+
+    void deleteFigureAnnotation(ExpressionFigureStageDTO figureAnnotation, AsyncCallback callback);
+
+    void setExpressionVisibilitySession(String publicationID, boolean b, AsyncCallback callback);
+
+    void setFilterType(String publicationID, String value, String type, AsyncCallback callback);
+
+    void getFigureFilter(String publicationID, AsyncCallback<FigureDTO> callback);
+
+    void getGeneFilter(String publicationID, AsyncCallback<MarkerDTO> callback);
+
+    void getFilterValues(String publicationID, AsyncCallback<FilterValuesDTO> callback);
+
+    void createPatoRecord(ExpressionFigureStageDTO efs, AsyncCallback<Void> callback);
+
+    void setFigureAnnotationStatus(ExpressionFigureStageDTO checkedExpression, boolean checked, AsyncCallback callback);
+
+    void getFigureAnnotationCheckmarkStatus(String publicationID, AsyncCallback<CheckMarkStatusDTO> callback);
+
+    void readStructureSectionVisibility(String publicationID, AsyncCallback callback);
+
+    void setStructureVisibilitySession(String publicationID, boolean b, AsyncCallback<Void> async);
+
+    void getStructures(String publicationID, AsyncCallback retrieveStructuresCallback);
+
+    void deleteStructure(PileStructureDTO structure, AsyncCallback<Void> callback);
+
+    void updateStructuresForExpression(UpdateExpressionDTO updateEntity, AsyncCallback<List<ExpressionFigureStageDTO>> callback);
+
+    void getTermsWithStageOverlap(PileStructureDTO selectedPileStructure, StageRangeIntersection intersection, AsyncCallback<List<RelatedPileStructureDTO>> callback);
+
+    void createPileStructure(ExpressedTermDTO expressedTerm, String publicationID, AsyncCallback<PileStructureDTO> callback);
+
 }
+

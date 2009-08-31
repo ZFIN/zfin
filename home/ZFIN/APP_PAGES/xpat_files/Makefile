@@ -23,10 +23,9 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 GENERICS = xpatview.apg xpatselect.apg anatdict.apg \
         anatomy_captures.apg xpatselect_note.apg \
 	xpatselectquery.apg xpatselectrowdisplay.apg xpatcuration.apg \
-	xpatexdisplayname.apg getPubStructureListItem.apg xpatselectanatverify.apg \
+	xpatexdisplayname.apg xpatselectanatverify.apg \
 	xpatcurexpssdisplayname.apg xpatcurupdate.apg xpatcurimage.apg \
 	xpatcurexperiment.apg xpatcurcondition.apg xpatcurfigure.apg \
-	xpatcurpanel.apg xpatcurstructure.apg  \
 	fxpubdisplay.apg fxfigureview.apg  fxfiggenelist.apg \
 	fxfiganatlist.apg  fxfigstgrng.apg fxallfigures.apg \
 	fxassayabbrev.apg xpatselect_summaryresults.apg xpatselect_detailedresults.apg \
@@ -41,7 +40,8 @@ GENERICS = xpatview.apg xpatselect.apg anatdict.apg \
 	figurecuration.apg experimentcuration.apg xpatcurreset.apg fxfigphenogenolist.apg \
 	fxfigphenogolist.apg pheno_summary.apg pheno_summary_sql.apg wordcompletion.apg \
 	curation_filters.apg patoupdate_addmutant.apg xpatcurupdatecondition.apg gocuration.apg \
-	structure_pile_add.apg xpatselect_resultsasimages.apg fxlabelinfo.apg  xpatfeatexpcondn.apg  xpatexpcdnlist.apg
+	xpatselect_resultsasimages.apg fxlabelinfo.apg  xpatfeatexpcondn.apg  xpatexpcdnlist.apg
+
 
 
 # Use default rules for app page directories. 

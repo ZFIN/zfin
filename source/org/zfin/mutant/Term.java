@@ -12,6 +12,7 @@ public class Term {
 
     private String zdbID;
     private String name;
+    private boolean obsolete;
 
     public String getZdbID() {
         return zdbID;
@@ -27,5 +28,13 @@ public class Term {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isObsolete() {
+        return obsolete;
+    }
+
+    public void setObsolete(boolean obsolete) {
+        this.obsolete = obsolete;
     }
 }

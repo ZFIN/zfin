@@ -67,6 +67,10 @@ public class CuratorSession extends CuratorSessionDTO {
     }
 
     public static enum Attribute {
-        SHOW_EXPERIMENT_SECTION
+        SHOW_EXPERIMENT_SECTION,
+        SHOW_EXPRESSION_SECTION,
+        SHOW_STRUCTURE_SECTION,
+        FIGURE_ID;
+
     }
 }

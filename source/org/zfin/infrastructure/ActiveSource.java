@@ -2,7 +2,7 @@ package org.zfin.infrastructure;
 
 /**
  */
-public class ActiveSource {
+public class ActiveSource implements ZdbID {
     private String zdbID;
     public static final String ZDB = "ZDB-";
 
@@ -15,24 +15,25 @@ public class ActiveSource {
         this.zdbID = zdbID;
     }
 
-    public static void validateID(String zdbID) {
+    public Type validateID(String zdbID) {
         if (zdbID == null) {
             throw new InvalidZdbID();
         }
 
-        if (!zdbID.startsWith(ZDB))
+        if (!zdbID.startsWith(ActiveSource.ZDB))
             throw new InvalidZdbID(zdbID);
 
-        boolean validType = false;
-        for (Type type : Type.values()) {
-            if (zdbID.contains(type.name()))
-                validType = true;
+        Type type = null;
+        for (Type zdbType : Type.values()) {
+            if (zdbID.contains(zdbType.name())) {
+                type = zdbType;
+            }
         }
 
-        if (!validType) {
+        if (type == null) {
             throw new InvalidZdbID(zdbID, Type.getValues());
         }
-
+        return type;
     }
 
     public enum Type {

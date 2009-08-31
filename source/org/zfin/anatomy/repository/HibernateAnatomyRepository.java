@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.DataAlias;
+import org.zfin.expression.ExpressionStructure;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -310,6 +311,11 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         return stageRet;
     }
 
+    public DevelopmentStage getStageByID(String stageID) {
+        Session session = HibernateUtil.currentSession();
+        return (DevelopmentStage) session.get(DevelopmentStage.class, stageID);
+    }
+
     public DevelopmentStage getStageByName(java.lang.String stageName) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(DevelopmentStage.class);
@@ -448,6 +454,91 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         terms = (List<String>) query.list();
         return terms;
 
+    }
+
+    /**
+     * Retrieve a list of terms that develops_from the given term and are defined in the
+     * stage range given.
+     * In other words, the given structure develops_into the list of terms retrieved.
+     * E.g.
+     * 'adaxial cell' develops_into 'migratory slow muscle precursor cell'
+     *
+     * @param termID     Term id
+     * @param startHours start
+     * @param endHours   end
+     * @return list of anatomy terms
+     */
+    @SuppressWarnings("unchecked")
+    public List<AnatomyItem> getTermsDevelopingFromWithOverlap(String termID, double startHours, double endHours) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "from AnatomyRelationshipOne term where " +
+                "          term.anatomyItemOne.zdbID = :termID AND" +
+                "          term.type.typeID = :type AND " +
+                "          ((term.anatomyItemTwo.start.hoursStart > :start AND term.anatomyItemTwo.start.hoursStart < :end)" +
+                "        OR (term.anatomyItemTwo.end.hoursEnd > :start AND term.anatomyItemTwo.end.hoursEnd < :end) " +
+                "        OR (term.anatomyItemTwo.start.hoursStart < :start AND term.anatomyItemTwo.end.hoursEnd > :end))"+
+                "        order by term.anatomyItemTwo.nameOrder ";
+        Query query = session.createQuery(hql);
+        query.setParameter("termID", termID);
+        query.setDouble("start", startHours);
+        query.setDouble("end", endHours);
+        query.setParameter("type", AnatomyRelationshipTypePersistence.Type.DEVELOPS_FROM.toString());
+        List<AnatomyRelationshipOne> ones =  (List<AnatomyRelationshipOne>) query.list();
+        if(ones == null)
+        return null;
+        List<AnatomyItem> terms = new ArrayList<AnatomyItem>();
+        for(AnatomyRelationshipOne one: ones){
+            terms.add(one.getAnatomyItemTwo());
+        }
+        return terms;
+    }
+
+    /**
+     * Retrieve a list of terms that develops_into the given term and are defined in the
+     * stage range given.
+     * In other words, the given structure develops_from the list of terms retrieved.
+     * E.g.
+     * 'slow muscle' develops_from 'migratory slow muscle precursor cell', 'myotome, 'slow muscle myoblast'
+     *
+     * @param termID     Term id
+     * @param startHours start
+     * @param endHours   end
+     * @return list of anatomy terms
+     */
+    @SuppressWarnings("unchecked")
+    public List<AnatomyItem> getTermsDevelopingIntoWithOverlap(String termID, double startHours, double endHours) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "from AnatomyRelationshipOne term where " +
+                "          term.anatomyItemTwo.zdbID = :termID AND" +
+                "          term.type.typeID = :type AND " +
+                "          ((term.anatomyItemOne.start.hoursStart >= :start AND term.anatomyItemOne.start.hoursStart < :end)" +
+                "        OR (term.anatomyItemOne.end.hoursEnd >= :start AND term.anatomyItemOne.end.hoursEnd < :end) " +
+                "        OR (term.anatomyItemOne.start.hoursStart <= :start AND term.anatomyItemOne.end.hoursEnd > :end))" +
+                "        order by term.anatomyItemOne.nameOrder ";
+        Query query = session.createQuery(hql);
+        query.setParameter("termID", termID);
+        query.setDouble("start", startHours);
+        query.setDouble("end", endHours);
+        query.setParameter("type", AnatomyRelationshipTypePersistence.Type.DEVELOPS_FROM.toString());
+        List<AnatomyRelationshipOne> ones =  (List<AnatomyRelationshipOne>) query.list();
+        if(ones == null)
+        return null;
+        List<AnatomyItem> terms = new ArrayList<AnatomyItem>();
+        for(AnatomyRelationshipOne one: ones){
+            terms.add(one.getAnatomyItemOne());
+        }
+        return terms;
+    }
+
+    /**
+     * Create a new structure - post-composed - for the structure pile.
+     * @param structure structure
+     */
+    public void createPileStructure(ExpressionStructure structure) {
+        Session session = HibernateUtil.currentSession();
+        session.save(structure);
     }
 
     /*

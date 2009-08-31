@@ -2,9 +2,9 @@ package org.zfin.expression;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.ontology.GoTerm;
 import org.zfin.ontology.OntologyTerm;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -21,8 +21,7 @@ public class ExpressionResult {
     private ExpressionExperiment expressionExperiment;
     private Set<ExpressionResult> expressionResults;
     private Set<Figure> figures;
-    private GoTerm goTerm;
-    private OntologyTerm term;
+    protected OntologyTerm subterm;
 
     public String getZdbID() {
         return zdbID;
@@ -64,6 +63,12 @@ public class ExpressionResult {
         this.figures = figures;
     }
 
+    public void addFigure(Figure figure){
+        if(figures == null)
+            figures = new HashSet<Figure>();
+        figures.add(figure);
+    }
+
     public AnatomyItem getAnatomyTerm() {
         return anatomyTerm;
     }
@@ -88,14 +93,6 @@ public class ExpressionResult {
         this.endStage = endStage;
     }
 
-    public GoTerm getGoTerm() {
-        return goTerm;
-    }
-
-    public void setGoTerm(GoTerm goTerm) {
-        this.goTerm = goTerm;
-    }
-
     public AnatomyItem getSecondaryAnatomyTerm() {
         return secondaryAnatomyTerm;
     }
@@ -103,12 +100,12 @@ public class ExpressionResult {
     public void setSecondaryAnatomyTerm(AnatomyItem secondaryAnatomyTerm) {
         this.secondaryAnatomyTerm = secondaryAnatomyTerm;
     }
-
-    public OntologyTerm getTerm() {
-        return term;
+    public OntologyTerm getSubTerm() {
+        return subterm;
     }
 
-    public void setTerm(OntologyTerm term) {
-        this.term = term;
+    public void removeFigure(Figure figure) {
+        if(figures != null)
+            figures.remove(figure);
     }
 }

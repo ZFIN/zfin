@@ -4,39 +4,38 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.*;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.isNotEmpty;
 import org.zfin.Species;
-import org.zfin.mutant.presentation.AntibodyStatistics;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerType;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.infrastructure.AllMarkerNamesFastSearch;
-import org.zfin.infrastructure.AllNamesFastSearch;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyType;
-import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
+import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
-import org.zfin.expression.TextOnlyFigure;
 import org.zfin.expression.FigureFigure;
+import org.zfin.expression.TextOnlyFigure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.AllMarkerNamesFastSearch;
+import org.zfin.infrastructure.AllNamesFastSearch;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.repository.PaginationResultFactory;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -530,7 +529,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         if (totalCount == 0)
             return new PaginationResult<AntibodyStatistics>(0, null);
 
-        if(includeSubstructures)
+        if (includeSubstructures)
             return new PaginationResult<AntibodyStatistics>(totalCount, null);
 
         // loop over all antibodyAOStatistic records until the given number of distinct antibodies from the pagination

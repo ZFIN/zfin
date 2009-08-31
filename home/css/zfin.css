@@ -213,6 +213,19 @@ div.auto_complete ul strong.highlight {
 
 .bold {
     font-weight: bold;
+    text-align:center;
+}
+
+.bold-red {
+    font-weight: bold;
+    color:red;
+    text-align:center;
+}
+
+
+.green {
+    color:green;
+    text-align:center;
 }
 
 .search-result-table-entries {
@@ -317,3 +330,16 @@ a.external {
     background-color: #CCCCFF;
 }
 
+.term-unspecified {
+    color:orange;
+}
+
+.red-modifier {
+    color:red;
+    font-style:italic;
+}
+
+.red-modifier-hyperlink a {
+    color:red;
+    font-style:italic;
+}

@@ -5,7 +5,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 /**
  * Data Transfer Object corresponding to {@link org.zfin.expression.ExpressionExperiment}.
  */
-public class ExperimentDTO implements IsSerializable {
+public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> {
 
     private String experimentZdbID;
     private String geneZdbID;
@@ -23,6 +23,8 @@ public class ExperimentDTO implements IsSerializable {
     private String publicationID;
     private String cloneID;
     private String cloneName;
+    private String genotypeExperimentID;
+
     // allows to display an icon if there are expressions associated with the experiment.
     private int numberOfExpressions;
 
@@ -180,6 +182,14 @@ public class ExperimentDTO implements IsSerializable {
         this.assayAbbreviation = assayAbbreviation;
     }
 
+    public String getGenotypeExperimentID() {
+        return genotypeExperimentID;
+    }
+
+    public void setGenotypeExperimentID(String genotypeExperimentID) {
+        this.genotypeExperimentID = genotypeExperimentID;
+    }
+
     public int hashCode() {
         int code = 43;
         if (geneZdbID != null)
@@ -228,5 +238,30 @@ public class ExperimentDTO implements IsSerializable {
         if (!StringUtils.equalsWithNullString(genbankID, experiment.genbankID))
             return false;
         return true;
+    }
+
+    public int compareTo(ExperimentDTO compExperiment) {
+        if (compExperiment == null)
+            return -1;
+        if (geneName == null && compExperiment.getGeneName() != null)
+            return -1;
+        if (geneName != null && compExperiment.getGeneName() == null)
+            return 1;
+        if (geneName != null && compExperiment.getGeneName() != null)
+            if (!geneName.equals(compExperiment.getGeneName()))
+                return geneName.compareTo(compExperiment.getGeneName());
+        if (!fishName.equals(compExperiment.getFishName()))
+            return fishName.compareTo(compExperiment.getFishName());
+        if (!environment.equals(compExperiment.getEnvironment()))
+            return environment.compareTo(compExperiment.getEnvironment());
+        if (!assay.equals(compExperiment.getAssay()))
+            return assay.compareToIgnoreCase(compExperiment.getAssay());
+        if (antibody == null)
+            return -1;
+        if (compExperiment.getAntibody() == null)
+            return +1;
+        if (!antibody.equals(compExperiment.getAntibody()))
+            return antibody.compareTo(compExperiment.getAntibody());
+        return 0;
     }
 }

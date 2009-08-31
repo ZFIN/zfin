@@ -1,28 +1,36 @@
 package org.zfin.expression.repository;
 
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.Experiment;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.TestConfiguration;
-import org.zfin.curation.server.CurationExperimentRPCImpl;
-import org.zfin.curation.dto.ExperimentDTO;
-import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.Genotype;
-import org.zfin.sequence.MarkerDBLink;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.junit.Test;
 import org.junit.Before;
-import static junit.framework.Assert.assertTrue;
+import org.junit.Test;
+import org.zfin.TestConfiguration;
+import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.curation.dto.ExperimentDTO;
+import org.zfin.curation.server.CurationExperimentRPCImpl;
+import org.zfin.expression.*;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.MarkerDBLink;
+
+import java.util.List;
 
 /**
- * ToDo: ADD DOCUMENTATION!
+ * Test the ExpressionRepository class.
  */
 public class ExpressionRepositoryTest {
 
     private ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
+    private AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
+    private PublicationRepository pubRep = RepositoryFactory.getPublicationRepository();
 
     @Test
     public void getExperimentByID() {
@@ -30,7 +38,7 @@ public class ExpressionRepositoryTest {
         ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
         ExpressionExperiment experiment = expRep.getExpressionExperiment(experimentID);
         assertTrue(experiment != null);
-        
+
     }
 
     @Test
@@ -110,7 +118,7 @@ public class ExpressionRepositoryTest {
         ExperimentDTO dto = new ExperimentDTO();
         dto.setAssay(assay);
         dto.setAntibodyID(antibodyID);
-        dto.setEnvironment(experimentID);
+        dto.setEnvironmentID(experimentID);
         dto.setFishID(genotypeID);
         dto.setPublicationID(pubID);
 
@@ -136,9 +144,74 @@ public class ExpressionRepositoryTest {
             expRep.deleteExpressionExperiment(experiment);
             tx.commit();
         } finally {
-//            tx.rollback();
+            tx.rollback();
         }
     }
+
+    @Test
+    public void retrieveExperimentFigureStages() {
+        String pubID = "ZDB-PUB-060105-3";
+
+        List<ExperimentFigureStage> experiment = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, null);
+        assertNotNull(experiment);
+    }
+
+    @Test
+    public void retrieveSingleExperimentFigureStage() {
+        String experimentID = "ZDB-XPAT-050720-1";
+        String startID = "ZDB-STAGE-010723-35";
+        String endID = "ZDB-STAGE-010723-36";
+        String figureID = "ZDB-FIG-081003-3";
+
+        ExperimentFigureStage experiment = expRep.getExperimentFigureStage(experimentID, figureID, startID, endID);
+        assertNotNull(experiment);
+    }
+
+    @Test
+    public void retrieveExpressionStructures() {
+        String pubID = "ZDB-PUB-990507-16";
+
+        List<ExpressionStructure> structures = expRep.retrieveExpressionStructures(pubID);
+        assertNotNull(structures);
+    }
+
+    @Test
+    public void retrieveFigureAnnotation() {
+        String pubID = "ZDB-PUB-990507-16";
+
+        List<ExpressionStructure> structures = expRep.retrieveExpressionStructures(pubID);
+        assertNotNull(structures);
+    }
+
+    @Test
+    public void createExpressionResult() {
+        String xpatexID = "ZDB-XPAT-050128-4";
+
+        Transaction tx = HibernateUtil.currentSession().beginTransaction();
+        try {
+            ExpressionExperiment experiment = expRep.getExpressionExperiment(xpatexID);
+            assertNotNull(experiment);
+            ExpressionResult result = new ExpressionResult();
+            result.setExpressionExperiment(experiment);
+
+            DevelopmentStage start = anatomyRep.getStageByID("ZDB-STAGE-010723-35");
+            result.setStartStage(start);
+            DevelopmentStage end = anatomyRep.getStageByID("ZDB-STAGE-010723-36");
+            result.setEndStage(end);
+            AnatomyItem term = anatomyRep.getAnatomyItem(AnatomyItem.UNSPECIFIED);
+            result.setAnatomyTerm(term);
+
+            Figure figure = pubRep.getFigureByID("ZDB-FIG-041119-3");
+            result.addFigure(figure);
+            result.setExpressionFound(true);
+            expRep.createExpressionResult(result, null);
+            //tx.commit();
+        } finally {
+            tx.rollback();
+        }
+        assertTrue("yipie", true);
+    }
+
 
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();

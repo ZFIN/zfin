@@ -462,4 +462,11 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of MarkerDBLinks
      */
     List<MarkerDBLink> getDBLinksForCloneByGene(String pubID, String geneID);
+
+    /**
+     * Retrieve all figures that are associated to a given publication.
+     * @param pubID publication ID
+     * @return list of figures
+     */
+    List<Figure> getFiguresByPublication(String pubID);
 }

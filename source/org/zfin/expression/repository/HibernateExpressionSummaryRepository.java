@@ -22,8 +22,8 @@ public class HibernateExpressionSummaryRepository implements ExpressionSummaryRe
         //query in expressions.hbm.xml
         Query query = session.getNamedQuery("stageanatomyfigure");
         query.setParameter("geneZdbID",gene.getZdbID());
-        query.setParameter("unknown",AnatomyItem.UNKNOWN);
-        query.setParameter("unspecified",DevelopmentStage.UNSPECIFIED);
+        query.setParameter("unknown",AnatomyItem.UNSPECIFIED);
+        query.setParameter("unspecified",DevelopmentStage.UNKNOWN);
 
         Iterator stagesAndAnatomy = query.list().iterator();
         ExpressionStageAnatomyContainer xsac = new ExpressionStageAnatomyContainer();

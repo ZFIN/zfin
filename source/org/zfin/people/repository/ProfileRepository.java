@@ -130,10 +130,31 @@ public interface ProfileRepository {
     void updateAccountInfo(Person currentPerson, AccountInfo newAccountInfo);
 
     /**
-     * Persist experiment section visibility
+     * Persist section visibility
      * @param pubID pub ID
-     * @param showExperimentSection attribute name
-     * @param experimentVisibility attribute value 
+     * @param showSection attribute name
+     * @param visibility attribute value
      */
-    void setCuratorSession(String pubID, CuratorSession.Attribute showExperimentSection, boolean experimentVisibility);
+    void setCuratorSession(String pubID, CuratorSession.Attribute showSection, boolean visibility);
+
+    /**
+     * Persist experiment section visibility
+     * @param publicationID pub ID
+     * @param attributeName attribute name
+     * @param zdbID zdbID 
+     */
+    void setCuratorSession(String publicationID, CuratorSession.Attribute attributeName, String zdbID);
+
+    /**
+     * Retrieve a person record by login name.
+     * @param login login
+     * @return person
+     */
+    Person getPersonByName(String login);
+
+    /**
+     * Delete a curator session element.
+     * @param session element
+     */
+    void deleteCuratorSession(CuratorSession session);
 }

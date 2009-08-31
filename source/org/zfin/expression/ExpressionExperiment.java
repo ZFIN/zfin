@@ -150,4 +150,10 @@ public class ExpressionExperiment {
         }
         return distinctSet.size();
     }
+
+    public void addExpressionResult(ExpressionResult newResult){
+        if(expressionResults == null)
+            expressionResults = new HashSet<ExpressionResult>();
+        expressionResults.add(newResult);
+    }
 }

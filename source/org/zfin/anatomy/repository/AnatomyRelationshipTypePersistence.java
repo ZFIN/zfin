@@ -41,4 +41,20 @@ public class AnatomyRelationshipTypePersistence {
                 ", relationTwoToOne='" + relationTwoToOne + '\'' +
                 '}';
     }
+
+    public enum Type {
+        DEVELOPS_FROM("develops_from"),
+        IS_A("is_a"),
+        PART_OF("part_of");
+
+        private String name;
+
+        Type(String name) {
+            this.name = name;
+        }
+
+        public String toString(){
+            return name;
+        }
+    }
 }

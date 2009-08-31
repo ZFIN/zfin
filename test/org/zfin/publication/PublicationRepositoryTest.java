@@ -10,10 +10,7 @@ import org.zfin.sequence.MarkerDBLink;
 import org.zfin.antibody.Antibody;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.expression.Figure;
-import org.zfin.expression.FigureService;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.Experiment;
+import org.zfin.expression.*;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
@@ -28,6 +25,8 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import static junit.framework.Assert.assertNotNull;
 
 
 public class PublicationRepositoryTest {
@@ -507,6 +506,14 @@ public class PublicationRepositoryTest {
 
         List<MarkerDBLink> cloneDBLinks = pr.getDBLinksForCloneByGene(zdbID, geneID);
         assertTrue(cloneDBLinks != null);
+    }
+
+    @Test
+    public void retrieveFiguresFromPublication() {
+        String pubID = "ZDB-PUB-060105-3";
+
+        List<Figure> figures = pr.getFiguresByPublication(pubID);
+        assertNotNull(figures);
     }
 
 

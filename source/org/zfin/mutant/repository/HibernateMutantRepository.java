@@ -7,7 +7,9 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.presentation.AnatomySearchBean;
+import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.expression.Figure;
+import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.framework.presentation.PaginationBean;
@@ -18,6 +20,7 @@ import org.zfin.mutant.*;
 import org.zfin.ontology.GoTerm;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.expression.Experiment;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +30,6 @@ import java.util.Set;
  *
  */
 public class HibernateMutantRepository implements MutantRepository {
-
-    // Use this bean to set pagination parameters.
-    private PaginationBean paginationBean;
 
     public PaginationResult<Genotype> getGenotypesByAnatomyTerm(AnatomyItem item, boolean wildtype, int numberOfRecords) {
         Session session = HibernateUtil.currentSession();
@@ -121,7 +121,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("aoZdbID", item.getZdbID());
         query.setBoolean("isWildtype", true);
 
-        List<Genotype> genotypes = query.list();
+        @SuppressWarnings("unchecked")
         List<Morpholino> morphs = new ArrayList<Morpholino>();
         morphs.addAll(getMorpholinoRecords(null));
 
@@ -185,6 +185,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // no boundaries defined, all records
         if (bean == null) {
+            @SuppressWarnings("unchecked")
             List<GenotypeExperiment> genos = (List<GenotypeExperiment>) query.list();
             return new PaginationResult<GenotypeExperiment>(genos);
         }
@@ -193,6 +194,7 @@ public class HibernateMutantRepository implements MutantRepository {
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
 
+    @SuppressWarnings("unchecked")
     public List<Morpholino> getMorpholinosByGenotype(Genotype genotype, AnatomyItem item, boolean isWildtype) {
         Session session = HibernateUtil.currentSession();
 
@@ -214,15 +216,11 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("aoZdbID", item.getZdbID());
         query.setParameter("genotype", genotype);
 
-        List<Morpholino> morpholinos = query.list();
-        return morpholinos;
+        return (List<Morpholino>) query.list();
     }
 
 
-    public void setPaginationParameters(PaginationBean paginationBean) {
-        this.paginationBean = paginationBean;
-    }
-
+    @SuppressWarnings("unchecked")
     public List<GoTerm> getGoTermsByName(String name) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(GoTerm.class);
@@ -230,6 +228,19 @@ public class HibernateMutantRepository implements MutantRepository {
         return criteria.list();
     }
 
+    /**
+     * @param name go term name
+     * @return A unique GoTerm.
+     */
+    @SuppressWarnings("unchecked")
+    public GoTerm getGoTermByName(String name) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(GoTerm.class);
+        criteria.add(Restrictions.eq("name", name));
+        return (GoTerm) criteria.uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Term> getQualityTermsByName(String name) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Term.class);
@@ -308,6 +319,7 @@ public class HibernateMutantRepository implements MutantRepository {
         return (Genotype) session.load(Genotype.class, genoteypZbID);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Feature> getFeaturesByAbbreviation(String name) {
         List<Feature> features = new ArrayList<Feature>();
         Session session = currentSession();
@@ -327,6 +339,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
     /**
      * Retrieve all distinct wild-type genotypes.
+     *
      * @return list of wildtype fish
      */
     @SuppressWarnings("unchecked")
@@ -342,6 +355,90 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("wt", Genotype.WT);
 
         return (List<Genotype>) query.list();
+    }
+
+    /**
+     * Check if for a given figure annotation a pato record (Phenotype)
+     *
+     * @param genotypeExperimentID expression experiment
+     * @param figureID             figure
+     * @param startID              start   stage
+     * @param endID                end     stage
+     * @return boolean
+     */
+    public boolean isPatoExists(String genotypeExperimentID, String figureID, String startID, String endID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select pheno from Phenotype pheno, Figure figure " +
+                "     where pheno.genotypeExperiment.zdbID = :genoxID" +
+                "           and pheno.startStage.zdbID = :startID " +
+                "           and pheno.endStage.zdbID = :endID " +
+                "           and figure member of pheno.figures " +
+                "           and figure.zdbID = :figureID";
+        Query query = session.createQuery(hql);
+        query.setString("genoxID", genotypeExperimentID);
+        query.setString("startID", startID);
+        query.setString("endID", endID);
+        query.setString("figureID", figureID);
+
+        List list = query.list();
+        return (list != null && list.size() > 0);
+
+    }
+
+    /**
+     * Create a default phenotype record.
+     * Default:
+     * AO term: unspecified
+     * Quality term: quality
+     * Tag: normal
+     *
+     * @param pheno Phenotype
+     */
+    public void createDefaultPhenotype(Phenotype pheno) {
+        if (pheno.getStartStage() == null)
+            throw new NullPointerException("Cannot create Phenotype. No start stage provided.");
+        if (pheno.getEndStage() == null)
+            throw new NullPointerException("Cannot create Phenotype. No end stage provided.");
+        if (pheno.getGenotypeExperiment() == null)
+            throw new NullPointerException("Cannot create Phenotype. No genotype experiment provided.");
+
+
+        // check if such a phenotype record already exists.
+        ExpressionRepository expRepository = RepositoryFactory.getExpressionRepository();
+        Phenotype existingPhenotype = expRepository.getUnspecifiedPhenotypeFromGenoxStagePub(pheno);
+        //  if the phenotype exists then only add new figure to it
+        if (existingPhenotype != null) {
+            for (Figure figure : pheno.getFigures())
+                existingPhenotype.addFigure(figure);
+            return;
+        }
+
+        AnatomyRepository anatRep = RepositoryFactory.getAnatomyRepository();
+        AnatomyItem unspecified = anatRep.getAnatomyItem(AnatomyItem.UNSPECIFIED);
+        Term quality = getQualityTermByName(Term.QUALITY);
+        pheno.setAnatomyTerm(unspecified);
+        pheno.setTerm(quality);
+        pheno.setTag(Phenotype.Tag.NORMAL.toString());
+        Session session = HibernateUtil.currentSession();
+        session.save(pheno);
+    }
+
+    /**
+     * Lookup a term by name. Term must not be obsolete.
+     *
+     * @param termName term name
+     * @return Term object
+     */
+    @SuppressWarnings("unchecked")
+    public Term getQualityTermByName
+            (String
+                    termName) {
+        Session session = HibernateUtil.currentSession();
+        Criteria crit = session.createCriteria(Term.class);
+        crit.add(Restrictions.eq("name", termName));
+        crit.add(Restrictions.eq("obsolete", false));
+        return (Term) crit.uniqueResult();
     }
 
 

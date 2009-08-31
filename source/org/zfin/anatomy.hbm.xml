@@ -16,7 +16,8 @@
         <param name="enumClassname">org.zfin.infrastructure.DataAlias$Group</param>
     </typedef>
 
-    <class name="org.zfin.anatomy.DevelopmentStage" table="stage" lazy="true" proxy="DevelopmentStage" >
+    <class name="org.zfin.anatomy.DevelopmentStage" table="stage" mutable="false" lazy="true" proxy="DevelopmentStage">
+        <cache usage="read-only"/>
         <id name="zdbID">
             <column name="stg_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
@@ -24,25 +25,12 @@
             </generator>
         </id>
 
-        <property name="name">
-            <column name="stg_name" not-null="false"/>
-        </property>
-
-        <property name="hoursStart">
-            <column name="stg_hours_start" not-null="true"/>
-        </property>
-
-        <property name="hoursEnd">
-            <column name="stg_hours_end" not-null="false"/>
-        </property>
-
-        <property name="otherFeature">
-            <column name="stg_other_features" not-null="false"/>
-        </property>
-
-        <property name="abbreviation">
-            <column name="stg_abbrev" not-null="false"/>
-        </property>
+        <property name="name" column="stg_name" not-null="false"/>
+        <property name="hoursStart" column="stg_hours_start" not-null="true"/>
+        <property name="hoursEnd" column="stg_hours_end" not-null="false"/>
+        <property name="otherFeature" column="stg_other_features" not-null="false"/>
+        <property name="abbreviation" column="stg_abbrev" not-null="false"/>
+        <property name="timeString" column="stg_name_ext"/>
 
     </class>
 
@@ -74,7 +62,7 @@
             <column name="anatitem_is_cell"/>
         </property>
 
-         <property name="lowerCaseName">
+        <property name="lowerCaseName">
             <column name="anatitem_name_lower" not-null="false"/>
         </property>
 
@@ -138,8 +126,8 @@
     </class>
 
     <class name="org.zfin.anatomy.repository.AnatomyRelationshipOne" table="anatomy_relationship">
-        <composite-id >
-            <key-many-to-one name="anatomyItemOne" column="anatrel_anatitem_1_zdb_id" lazy="false" />
+        <composite-id>
+            <key-many-to-one name="anatomyItemOne" column="anatrel_anatitem_1_zdb_id" lazy="false"/>
             <key-many-to-one name="anatomyItemTwo" column="anatrel_anatitem_2_zdb_id" lazy="false"/>
         </composite-id>
 
@@ -230,10 +218,10 @@
         </set>
     </class>
 
-    <class name="org.zfin.anatomy.AnatomyChildren" table="all_anatomy_contains" >
+    <class name="org.zfin.anatomy.AnatomyChildren" table="all_anatomy_contains">
         <composite-id>
-            <key-many-to-one name="child" class="org.zfin.anatomy.AnatomyItem" column="allanatcon_contained_zdb_id" />
-            <key-many-to-one name="root" class="org.zfin.anatomy.AnatomyItem" column="allanatcon_container_zdb_id" />
+            <key-many-to-one name="child" class="org.zfin.anatomy.AnatomyItem" column="allanatcon_contained_zdb_id"/>
+            <key-many-to-one name="root" class="org.zfin.anatomy.AnatomyItem" column="allanatcon_container_zdb_id"/>
         </composite-id>
     </class>
 
@@ -251,14 +239,14 @@
                                  END)"/>
 
         <many-to-one name="expressionResult" column="fstat_xpatres_zdb_id" lazy="proxy"/>
-        <many-to-one name="superterm" column="fstat_superterm_zdb_id"  lazy="proxy"/>
-        <many-to-one name="figure" column="fstat_fig_zdb_id" lazy="proxy" />
-        <many-to-one name="subterm" column="fstat_subterm_zdb_id"  lazy="proxy"/>
-        <many-to-one name="publication" column="fstat_pub_zdb_id" lazy="proxy" />
+        <many-to-one name="superterm" column="fstat_superterm_zdb_id" lazy="proxy"/>
+        <many-to-one name="figure" column="fstat_fig_zdb_id" lazy="proxy"/>
+        <many-to-one name="subterm" column="fstat_subterm_zdb_id" lazy="proxy"/>
+        <many-to-one name="publication" column="fstat_pub_zdb_id" lazy="proxy"/>
 
         <many-to-one name="gene" column="fstat_gene_zdb_id" lazy="proxy"/>
         <many-to-one name="image" column="fstat_img_zdb_id" lazy="proxy"/>
-        <property name="type" column="fstat_type" />
+        <property name="type" column="fstat_type"/>
 
         <subclass name="org.zfin.antibody.presentation.AntibodyAOStatistics" discriminator-value="Antibody">
             <many-to-one name="antibody" column="fstat_feat_zdb_id" insert="false" update="false"/>

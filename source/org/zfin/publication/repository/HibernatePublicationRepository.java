@@ -1008,8 +1008,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     /**
      * Retrieve db link object of a clone for a gene and pub.
-     * @param pubID pub is
-     * @param geneID       gene ID
+     *
+     * @param pubID  pub is
+     * @param geneID gene ID
      * @return list of MarkerDBLinks
      */
     @SuppressWarnings("unchecked")
@@ -1034,6 +1035,23 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setParameter("type", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
 
         return (List<MarkerDBLink>) query.list();
+    }
+
+    /**
+     * Retrieve all figures that are associated to a given publication.
+     * @param pubID publication ID
+     * @return list of figures
+     */
+    @SuppressWarnings("unchecked")
+    public List<Figure> getFiguresByPublication(String pubID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select figure from Figure figure ";
+        hql += "      where figure.publication.zdbID = :pubID ";
+        hql += "      order by figure.orderingLabel ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        return (List<Figure>) query.list();
     }
 
 

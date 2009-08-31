@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
 
-    public static final String UNKNOWN = "unknown";
+    public static final String UNSPECIFIED = "unspecified";
     private long itemID;
     private String zdbID;
     private String name;
@@ -155,6 +155,14 @@ public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
 
     public void setNameOrder(String nameOrder) {
         this.nameOrder = nameOrder;
+    }
+
+    public String getId() {
+        return zdbID;
+    }
+
+    public String getTermName() {
+        return name;
     }
 
     private static final String NEWLINE = System.getProperty("line.separator");

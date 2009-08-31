@@ -1,4 +1,4 @@
-package org.zfin.curation.client;
+package org.zfin.curation.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

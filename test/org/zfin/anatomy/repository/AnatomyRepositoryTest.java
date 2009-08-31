@@ -168,6 +168,36 @@ public class AnatomyRepositoryTest {
     }
 
     @Test
+    public void stageOverlapTermsDevelopsInto() {
+        // adaxial cell
+        String zdbID = "ZDB-ANAT-010921-408";
+        double startHours = 36;
+        double endHours = 144;
+        List<AnatomyItem> terms = aoRepository.getTermsDevelopingFromWithOverlap(zdbID, startHours, endHours);
+        assertTrue(terms != null);
+        assertEquals(1, terms.size());
+        // adaxial cell develops from
+        assertEquals("migratory slow muscle precursor cell", terms.get(0).getName());
+    }
+
+    @Test
+    public void stageOverlapTermsDevelopsFrom() {
+        // slow muscle develops from myotome,
+        // range: 11.66-14
+        String zdbID = "ZDB-ANAT-031211-15";
+        double startHours = 0;
+        double endHours = 10.5;
+        List<AnatomyItem> terms = aoRepository.getTermsDevelopingIntoWithOverlap(zdbID, startHours, endHours);
+        assertTrue(terms != null);
+        assertEquals(3, terms.size());
+        // adaxial cell develops from
+        assertEquals("migratory slow muscle precursor cell", terms.get(0).getName());
+        assertEquals("myotome", terms.get(1).getName());
+        assertEquals("slow muscle myoblast", terms.get(2).getName());
+    }
+
+
+    @Test
     public void getSubstructureAntibodies() {
         // zdbID = ZDB-ANAT-060816-27
         String aoTermName = "cranium";
