@@ -1128,7 +1128,7 @@ public class FxStructureModule extends Composite {
                 populateConstructionZoneSuperterm(expressedTerm.getSupertermName(), expressedTerm.getSupertermOboID(),
                         expressedTerm.getSubtermName(), expressedTerm.getSubtermOboID());
             if (pileEntity == PileEntity.SUBTERM)
-                populateConstructionZoneSubterm(expressedTerm.getSupertermName(), expressedTerm.getSubtermOboID(),
+                populateConstructionZoneSubterm(expressedTerm.getSupertermName(), expressedTerm.getSupertermOboID(),
                         expressedTerm.getSubtermName(), expressedTerm.getSubtermOboID());
         }
 
