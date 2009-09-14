@@ -13,8 +13,8 @@ Input:
  wtphn_geno_zdb_id
  
  wtphn_gene_zdb_id
-
- wtphn_processed_selected_structures
+ 
+ wtphn_concted_AO_IDs
  
  wtphn_include_substructures
  
@@ -31,27 +31,30 @@ Output:
 
 <?MIVAR NAME="$wtphn_figCt">0<?/MIVAR>
 
+<?MIVAR NAME=comma>,<?/MIVAR>  
+<?MIVAR NAME=single_quote>'<?/MIVAR>
+   
+<?MIVAR NAME=position>$(POSITION,$wtphn_concted_AO_IDs,ZDB-ANAT-,10)<?/MIVAR>
+   
+<?MIVAR NAME=wtphn_anatIDs_presep><?/MIVAR>   
+<?MIVAR NAME=item_count>1<?/MIVAR>
+<?MIVAR NAME=restStr>$wtphn_concted_AO_IDs<?/MIVAR>
+   
+<?MIBLOCK WHILE="$(>,$position,0)">   
+  <?MIVAR>$(SETVAR,$wtphn_anatIDs_presep[$item_count],$(SUBSTR,$restStr,1,$(-,$position,1)))<?/MIVAR>
+  <?MIVAR>$(SETVAR,$restStr,$(SUBSTR,$restStr,$position))<?/MIVAR>
+     
+  <?MIVAR NAME=position>$(POSITION,$restStr,ZDB-ANAT-,10)<?/MIVAR>
+   
+  <?MIVAR>$(SETVAR,$item_count,$(+,$item_count,1))<?/MIVAR>
+<?/MIBLOCK>
 
-       <?MICOMMENT> ---------------------------------------------------------------
-             -- use xpatselectanatverify.apg to retrieve vector list of anatomy zdb
-             -- ids $xpanatv_anatomy_zdb_id_list, as well as boolean value
-             -- $xpanatv_anatomy_error_occured.
-             ---------------------------------------------------------------------
-       <?/MICOMMENT>
+<?MIVAR>$(SETVAR,$wtphn_anatIDs_presep[$item_count],$restStr)<?/MIVAR>
+   
+   
+<?MIVAR NAME=wtphn_anatIDs>$(SEPARATE,$wtphn_anatIDs_presep,$single_quote$comma$single_quote)<?/MIVAR>   
  
-       <?MIVAR NAME=comma>,<?/MIVAR>  
-       <?MIVAR NAME=single_quote>'<?/MIVAR>
- 
-       <?MIVAR NAME="$wtphn_anatomy_error_occured">f<?/MIVAR>
-       <?MIVAR NAME=$wtphn_anatomy_expression>
-       <?MISQL SQL="select WebExplode(object,'xpanatv_processed_selected_structures=$(URLENCODE,$wtphn_processed_selected_structures)&xpanatv_anatomy_error_occured=$wtphn_anatomy_error_occured&xpanatv_called_from=mutantpage') from webpages  where id = 'aa-xpatselectanatverify.apg';">  $1  <?/MISQL> 
-       <?/MIVAR>
-    
-       <?MIVAR NAME=wtphn_anatomy_error_occured>$xpanatv_anatomy_error_occured<?/MIVAR>  
-       <?MIVAR NAME=item_count>$(VECSIZE,$xpanatv_anatomy_zdb_id_list)<?/MIVAR>
-  
-       <?MIVAR NAME=wtphn_anatIDs>$(SEPARATE,$xpanatv_anatomy_zdb_id_list,$single_quote$comma$single_quote)<?/MIVAR>
-       <?MIVAR>$(SETVAR,$wtphn_anatIDs,$single_quote$wtphn_anatIDs$single_quote)<?/MIVAR>
+<?MIVAR>$(SETVAR,$wtphn_anatIDs,$single_quote$wtphn_anatIDs$single_quote)<?/MIVAR>
 
      <?MICOMMENT>------------------------------------------------------------
                -- temp table $wtphn_temp_on_anat holds figure zdb ids 

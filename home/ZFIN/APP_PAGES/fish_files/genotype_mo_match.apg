@@ -151,7 +151,7 @@
         <?MIVAR NAME=callModule>f<?/MIVAR>
 
         <?MIVAR NAME=genomm_fig_count>1<?/MIVAR>
-        <?MIBLOCK COND="$(XST,$fsel_processed_selected_structures)">   
+        <?MIBLOCK COND="$(AND,$(XST,$fsel_anatomy_ids_concted),$(NE,$fsel_anatomy_ids_concted,))">   
           <?MIBLOCK COND="$(EC,$genomm_wildtype,f)">
             <?MISQL SQL="select genofeat_zdb_id
                      from genotype_feature, feature_marker_relationship, marker_relationship EFG
@@ -172,7 +172,7 @@
           <?/MIBLOCK>
         
           <?MIBLOCK  COND="$(EC,$callModule,t)">
-            <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=genotype_mo_match&wtphn_session_id=$genomm_session_id&wtphn_geno_zdb_id=$genomm_geno&wtphn_gene_zdb_id=$genomm_gene&wtphn_processed_selected_structures=$fsel_processed_selected_structures&wtphn_include_substructures=$include_substructures&wtphn_structure_bool=$structure_bool') 
+            <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=genotype_mo_match&wtphn_session_id=$genomm_session_id&wtphn_geno_zdb_id=$genomm_geno&wtphn_gene_zdb_id=$genomm_gene&wtphn_concted_AO_IDs=$fsel_anatomy_ids_concted&wtphn_include_substructures=$include_substructures&wtphn_structure_bool=$structure_bool') 
                          from webPages where ID='aa-wildtypePhenoAnat.apg';">$1<?/MISQL>
             <?MIVAR>$(SETVAR,$genomm_fig_count,$wtphn_figCt)<?/MIVAR>
           <?/MIBLOCK>
