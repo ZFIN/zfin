@@ -11,7 +11,7 @@ INPUT VARS:
 	$envID:  ZDB ID of an experiment.
 	$anatID: ZDB ID of an anatomy_item. 
 	
-	$phenosum_processed_selected_structures
+	&phenosum_concted_AO_IDs
 	$phenosum_include_substructures
 	$phenosum_structure_bool
 
@@ -86,14 +86,14 @@ DEBUGGING:
 
 <?MICOMMENT> ** if the phenotype summary is for genotype ** <?/MICOMMENT>
 <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENO)">
- <?MICOMMENT> ** if the phenotype summary is for genotype with perticular anatomy structure(s) ** <?/MICOMMENT>
- <?MIBLOCK COND="$(AND,$(XST,$phenosum_processed_selected_structures),$(NE,$phenosum_processed_selected_structures,))">
+ <?MICOMMENT> ** if the phenotype summary is for genotype with specific anatomy structure(s) ** <?/MICOMMENT>
+ <?MIBLOCK COND="$(AND,$(XST,$phenosum_concted_AO_IDs),$(NE,$phenosum_concted_AO_IDs,))">
   <?MICOMMENT> ** if there are MO target gene involved ** <?/MICOMMENT>
   <?MIBLOCK COND="$(AND,$(XST,$moTargetGeneID),$(NE,$moTargetGeneID,))">
-   <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=pheno_summary&wtphn_session_id=$phenosum_session_id&wtphn_geno_zdb_id=$OID&wtphn_gene_zdb_id=$moTargetGeneID&wtphn_processed_selected_structures=$phenosum_processed_selected_structures&wtphn_include_substructures=$phenosum_include_substructures&wtphn_structure_bool=$phenosum_structure_bool') 
+   <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=pheno_summary&wtphn_session_id=$phenosum_session_id&wtphn_geno_zdb_id=$OID&wtphn_gene_zdb_id=$moTargetGeneID&wtphn_concted_AO_IDs=$phenosum_concted_AO_IDs&wtphn_include_substructures=$phenosum_include_substructures&wtphn_structure_bool=$phenosum_structure_bool') 
                        from webPages where ID='aa-wildtypePhenoAnat.apg';">$1<?/MISQL>
   <?MIELSE>
-   <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=pheno_summary&wtphn_session_id=$phenosum_session_id&wtphn_geno_zdb_id=$OID&wtphn_processed_selected_structures=$phenosum_processed_selected_structures&wtphn_include_substructures=$phenosum_include_substructures&wtphn_structure_bool=$phenosum_structure_bool') 
+   <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=pheno_summary&wtphn_session_id=$phenosum_session_id&wtphn_geno_zdb_id=$OID&wtphn_concted_AO_IDs=$phenosum_concted_AO_IDs&wtphn_include_substructures=$phenosum_include_substructures&wtphn_structure_bool=$phenosum_structure_bool') 
                        from webPages where ID='aa-wildtypePhenoAnat.apg';">$1<?/MISQL>
   <?/MIBLOCK>    
  
@@ -240,30 +240,28 @@ DEBUGGING:
     <?/MIBLOCK>
         
     <?MICOMMENT> ** get the anatomy structure list displayed in the page header ** <?/MICOMMENT>
-    <?MIBLOCK COND="$(AND,$(XST,$phenosum_processed_selected_structures),$(NE,$phenosum_processed_selected_structures,))">
+    <?MIBLOCK COND="$(AND,$(XST,$phenosum_concted_AO_IDs),$(NE,$phenosum_concted_AO_IDs,))">
  
-      <?MICOMMENT> ---------------------------------------------------------------
-             -- use xpatselectanatverify.apg to retrieve vector list of anatomy zdb
-             -- ids $xpanatv_anatomy_zdb_id_list, as well as boolean value
-             -- $xpanatv_anatomy_error_occured.
-             ---------------------------------------------------------------------
-      <?/MICOMMENT>
+      <?MIVAR NAME=phenosum_position>$(POSITION,$phenosum_concted_AO_IDs,ZDB-ANAT-,10)<?/MIVAR>
    
-      <?MIVAR NAME=single_quote>'<?/MIVAR>
- 
-      <?MIVAR NAME="$phenosum_anatomy_error_occured">f<?/MIVAR>
-      <?MIVAR NAME=$phenosum_anatomy_expression>
-      <?MISQL SQL="select WebExplode(object,'xpanatv_processed_selected_structures=$(URLENCODE,$phenosum_processed_selected_structures)&xpanatv_anatomy_error_occured=$phenosum_anatomy_error_occured&xpanatv_called_from=mutantpage') from webpages  where id = 'aa-xpatselectanatverify.apg';">  $1  <?/MISQL> 
-      <?/MIVAR>
-    
-      <?MIVAR NAME=phenosum_anatomy_error_occured>$xpanatv_anatomy_error_occured<?/MIVAR>  
-      
+      <?MIVAR NAME=phenosum_anatIDs_presep><?/MIVAR>   
+      <?MIVAR NAME=phenosum_item_count>1<?/MIVAR>
+      <?MIVAR NAME=phenosum_restStr>$phenosum_concted_AO_IDs<?/MIVAR>
+   
+      <?MIBLOCK WHILE="$(>,$phenosum_position,0)">   
+        <?MIVAR>$(SETVAR,$phenosum_anatIDs_presep[$phenosum_item_count],$(SUBSTR,$phenosum_restStr,1,$(-,$phenosum_position,1)))<?/MIVAR>
+        <?MIVAR>$(SETVAR,$phenosum_restStr,$(SUBSTR,$phenosum_restStr,$phenosum_position))<?/MIVAR>
+     
+        <?MIVAR NAME=phenosum_position>$(POSITION,$phenosum_restStr,ZDB-ANAT-,10)<?/MIVAR>
+   
+        <?MIVAR>$(SETVAR,$phenosum_item_count,$(+,$phenosum_item_count,1))<?/MIVAR>
+      <?/MIBLOCK>
+      <?MIVAR>$(SETVAR,$phenosum_anatIDs_presep[$phenosum_item_count],$phenosum_restStr)<?/MIVAR>
+         
       <br/> &nbsp;( phenotype observed in
       
-      <?MIVAR NAME=phenosum_item_count>$(VECSIZE,$xpanatv_anatomy_zdb_id_list)<?/MIVAR>
-
       <?MIVAR NAME=phenosum_structure_count>0<?/MIVAR>  
-      <?MIBLOCK INDEX=$phenosum_anatomy_id FOREACH=$xpanatv_anatomy_zdb_id_list>
+      <?MIBLOCK INDEX=$phenosum_anatomy_id FOREACH=$phenosum_anatIDs_presep>
         <?MIVAR>$(SETVAR, $phenosum_structure_count,$(+,$phenosum_structure_count,1))<?/MIVAR>
         <?MISQL SQL="execute function get_entity_name_html('$phenosum_anatomy_id');">
           <?MIVAR>$1<?/MIVAR> 
