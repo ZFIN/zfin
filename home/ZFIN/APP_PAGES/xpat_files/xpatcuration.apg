@@ -136,7 +136,7 @@ COOKIES:
       xpcur_c_image :: boolean; show or hide data for images
       xpcur_c_panel :: boolean; show or hide data for panels
       xpcur_c_structure :: boolean; show or hide data for structures
-      xpcur_c_figure_only :: a figure zdb_id; only show data for this figure
+      FIGURE_ID :: a figure zdb_id; only show data for this figure
       xpcur_c_permission :: boolean; show or hide permission data
       xpcur_c_has_permission :: permission status of the publication (Yes/No)
       

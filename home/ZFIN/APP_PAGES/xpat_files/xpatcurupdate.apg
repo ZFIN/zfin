@@ -349,9 +349,9 @@ EFFECTS
         from webPages where ID='aa-record_web_update.apg';">
       <?/MISQL>
     
-      <?MIVAR NAME=xpcur_c_figure_only>$xpcurup_fig_zdb_id<?/MIVAR>
+      <?MIVAR NAME=FIGURE_ID>$xpcurup_fig_zdb_id<?/MIVAR>
        
-      <?MIVAR NAME=pubcur_onload>$pubcur_onload storeSession('$ZDB_ident','$OID','xpcur_c_figure_only','$xpcurup_fig_zdb_id');<?/MIVAR>
+      <?MIVAR NAME=pubcur_onload>$pubcur_onload storeSession('$ZDB_ident','$OID','FIGURE_ID','$xpcurup_fig_zdb_id');<?/MIVAR>
     
   <?/MIBLOCK>
   

@@ -429,13 +429,13 @@ function setMarkerTarget(featreli,anchor){
   ==========================
 <?/MICOMMENT>
 
-    <?MISQL COND=$(OR,$(NXST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,)) SQL="
+    <?MISQL COND=$(OR,$(NXST,$FIGURE_ID),$(EC,$FIGURE_ID,)) SQL="
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
           and cs_person_zdb_id = '$ZDB_ident'
-          and cs_field_name = 'xpcur_c_figure_only';">
-        <?MIVAR NAME=xpcur_c_figure_only>$1<?/MIVAR>
+          and cs_field_name = 'FIGURE_ID';">
+        <?MIVAR NAME=FIGURE_ID>$1<?/MIVAR>
     <?/MISQL> 
 
     <?MISQL COND=$(NXST,$xpcur_c_gene_only) SQL="
@@ -645,7 +645,7 @@ function setMarkerTarget(featreli,anchor){
         where recattrib_source_zdb_id = '$OID' 
 	  and recattrib_source_type = 'standard'
           and fig_zdb_id = recattrib_data_zdb_id
-        $(IF,$(AND,$(XST,$xpcur_c_figure_only),$(NE,$xpcur_c_figure_only,)),and fig_zdb_id = '$xpcur_c_figure_only')
+        $(IF,$(AND,$(XST,$FIGURE_ID),$(NE,$FIGURE_ID,)),and fig_zdb_id = '$FIGURE_ID')
         ;">
         <?MIVAR> $(VECAPPEND,$pubcur_fig_attrib,$1)<?/MIVAR>
     <?/MISQL>

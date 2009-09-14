@@ -11,7 +11,7 @@ PREFIX:   patosum_
    $xpcur_G_env_attrib_csv :: csv list of enviornments for the OID
 
   INPUT_VARS:
-   $xpcur_c_figure_only ::to specify display of data only relating to a single figure
+   $FIGURE_ID ::to specify display of data only relating to a single figure
 			  passed in as a zdb_id
    $xpcur_c_fish_only ::to specificy display of data only relating to a single genotype,
 			passed in as a zdb_id
@@ -96,8 +96,8 @@ Control.modal needs specific css calls.  If used other places, should be added t
 <?MICOMMENT> ** copy from cookie to local var, because I coded it to local vars originally,
                 but not a terrible idea, since the cookie is global and shared and I don't
                 want too many references to it ** <?/MICOMMENT>
-   <?MIVAR COND="$(XST,$xpcur_c_figure_only)" 
-           NAME="$patosum_filter_fig">$xpcur_c_figure_only<?/MIVAR>
+   <?MIVAR COND="$(XST,$FIGURE_ID)" 
+           NAME="$patosum_filter_fig">$FIGURE_ID<?/MIVAR>
    <?MIVAR COND="$(XST,$xpcur_c_fish_only)" 
            NAME="$patosum_filter_genotype">$xpcur_c_fish_only<?/MIVAR>
 

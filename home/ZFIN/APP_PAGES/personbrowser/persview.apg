@@ -354,7 +354,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <?MIVAR NAME=$pv_pub_pages>$7<?/MIVAR>
 <?MIVAR NAME=$pv_pub_lwr_authors>$8<?/MIVAR>
 
-<TR><TD colspan=1 align=left><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pv_pub_authors ($pv_pub_year) $pv_pub_title. $pv_jrnl_abbrev. $pv_pub_volume$pv_pub_pages</A></DIV></TD></TR>
+<TR><TD colspan=1 align=left><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pv_pub_authors ($pv_pub_year) $(CONCAT,$pv_pub_title,.) $(CONCAT,$pv_jrnl_abbrev,.) $pv_pub_volume$pv_pub_pages</A></DIV></TD></TR>
 <?/MISQL>
 </TABLE>
 

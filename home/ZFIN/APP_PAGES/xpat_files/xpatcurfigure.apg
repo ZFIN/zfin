@@ -27,7 +27,7 @@ INPUT VARS:
     $xpcur_G_fig_attrib_csv :: csv list of figures for the OID
     
   OPTIONAL:  
-    xpcur_c_figure_only :: a cookie from the xpatcuration page
+    FIGURE_ID :: a cookie from the xpatcuration page
       
 OUTPUT VARS:
 
@@ -127,14 +127,14 @@ EFFECTS
     }
   </script>
 
-  <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,)) >
+  <?MIBLOCK COND=$(OR,$(NXST,$FIGURE_ID),$(EC,$FIGURE_ID,)) >
     <?MISQL SQL="
         select cs_field_name_value 
         from curator_session 
         where cs_data_zdb_id = '$OID' 
           and cs_person_zdb_id = '$ZDB_ident'
-          and cs_field_name = 'xpcur_c_figure_only';">
-        <?MIVAR NAME=xpcur_c_figure_only>$1<?/MIVAR>
+          and cs_field_name = 'FIGURE_ID';">
+        <?MIVAR NAME=FIGURE_ID>$1<?/MIVAR>
     <?/MISQL>
   <?/MIBLOCK>
 
@@ -143,7 +143,7 @@ EFFECTS
   <table width=100% border=0 cellspacing=0 cellpadding=3>
     <tr bgcolor=#CCCCCC>
 
-  <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,))>
+  <?MIBLOCK COND=$(OR,$(NXST,$FIGURE_ID),$(EC,$FIGURE_ID,))>
       <td></td>
       <td>Label</td>
       <td>Caption</td>
@@ -173,11 +173,11 @@ EFFECTS
     <INPUT TYPE=HIDDEN NAME=xpcur_G_fig_zdb_id VALUE="<?MIVAR>$xpcurfig_fig_zdb_id<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update"> 
 
-<?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,))>
+<?MIBLOCK COND=$(OR,$(NXST,$FIGURE_ID),$(EC,$FIGURE_ID,))>
   <?MIVAR>
   <tr bgcolor=$xpcurfig_row_color>
     <td valign=top>
-      <a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_figure_only','$xpcurfig_fig_zdb_id','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"><font color=blue>Only</font></a>
+      <a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','FIGURE_ID','$xpcurfig_fig_zdb_id','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"><font color=blue>Only</font></a>
     </td>
     <td valign=top> 
        $xpcurfig_fig_label
@@ -209,7 +209,7 @@ EFFECTS
   <tr bgcolor=$xpcurfig_row_color>
     <td valign=top>
       <input name="xpcur_G_fig_update" type=button value="Update" onClick="if (document.figureUpdate.xpcur_G_fig_label.value != '' && validCaption((this.form).xpcur_G_fig_caption.value)){uninterpretCaption();document.figureUpdate.submit();}"><br>
-      <a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_figure_only','','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"><font color=blue>Show All</font></a>
+      <a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','FIGURE_ID','','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"><font color=blue>Show All</font></a>
     </td>
     <td valign=top> 
         <input name="xpcur_G_fig_label" type=textbox size=5 value="$xpcurfig_fig_label">

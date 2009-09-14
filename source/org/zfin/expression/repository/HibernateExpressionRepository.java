@@ -647,8 +647,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             }
             Criteria subterm = crit.createCriteria("subterm");
             subterm.add(Restrictions.eq("name", subtermName));
-        } else
-            crit = session.createCriteria(ExpressionStructure.class);
+        } else {
+            crit = session.createCriteria(AnatomyExpressionStructure.class);
+            crit.add(Restrictions.isNull("subterm"));
+        }
         Criteria publication = crit.createCriteria("publication");
         publication.add(Restrictions.eq("zdbID", publicationID));
         Criteria superterm = crit.createCriteria("superterm");

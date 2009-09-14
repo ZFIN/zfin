@@ -983,7 +983,7 @@ public class FxExpressionModule extends Composite {
         experimentList.setSelectedIndex(-1);
     }
 
-    public class ZfinFlexTable extends FlexTable implements TableListener {
+    class ZfinFlexTable extends FlexTable implements TableListener {
 
         private HeaderName[] headerNames;
 

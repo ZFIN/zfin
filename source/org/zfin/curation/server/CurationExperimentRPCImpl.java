@@ -904,11 +904,13 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
 
         CuratorSession attribute = profileRep.getCuratorSession(publicationID, CuratorSession.Attribute.FIGURE_ID);
         if (attribute != null) {
-            Figure figure = pubRepository.getFigureByID(attribute.getValue());
-            FigureDTO figureDTO = new FigureDTO();
-            figureDTO.setLabel(figure.getLabel());
-            figureDTO.setZdbID(figure.getZdbID());
-            vals.setFigure(figureDTO);
+            if (StringUtils.isNotEmpty(attribute.getValue())) {
+                Figure figure = pubRepository.getFigureByID(attribute.getValue());
+                FigureDTO figureDTO = new FigureDTO();
+                figureDTO.setLabel(figure.getLabel());
+                figureDTO.setZdbID(figure.getZdbID());
+                vals.setFigure(figureDTO);
+            }
         }
         return vals;
     }

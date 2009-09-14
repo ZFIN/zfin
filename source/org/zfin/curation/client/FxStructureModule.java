@@ -442,7 +442,7 @@ public class FxStructureModule extends Composite {
         expressionModule.markStructuresForDeletion(null, false);
     }
 
-    public class ZfinFlexTable extends FlexTable implements TableListener {
+    class ZfinFlexTable extends FlexTable implements TableListener {
 
         private HeaderName[] headerNames;
 

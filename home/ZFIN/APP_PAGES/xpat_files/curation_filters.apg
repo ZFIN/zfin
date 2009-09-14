@@ -14,7 +14,7 @@ EFFECTS:
 
    sets filter cookies
  
-   $xpcur_c_figure_only :: limit to a specific fig_zdb_id
+   $FIGURE_ID :: limit to a specific fig_zdb_id
    $xpcur_c_gene_only    :: limit to a specific mrkr_zdb_id
    $xpcur_c_fish_only    :: limit to a specific geno_zdb_id
    $xpcur_c_auto_on      :: turns on auto filtering after some curation actions
@@ -41,7 +41,7 @@ EFFECTS:
   </td>
   <td>
     Only Fig:
-    <select <?MIVAR>onChange="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_figure_only',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"<?/MIVAR>>
+    <select <?MIVAR>onChange="storeSessionAndRefresh('$ZDB_ident','$OID','FIGURE_ID',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"<?/MIVAR>>
       <option value="">ALL</option>
       <?MISQL SQL="
         select fig_zdb_id, fig_label, zero_pad(fig_label)
@@ -52,7 +52,7 @@ EFFECTS:
         order by 3
         ;">
       <option value="$1"
-        $(IF,$(AND,$(XST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,$1)),SELECTED)>$2</option>     
+        $(IF,$(AND,$(XST,$FIGURE_ID),$(EC,$FIGURE_ID,$1)),SELECTED)>$2</option>     
       <?/MISQL>
     </select>
   </td>

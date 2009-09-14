@@ -951,7 +951,7 @@ public class FxExperimentModule extends Composite {
             displayTable.getRowFormatter().setStyleName(duplicateRowIndex, duplicateRowOriginalStyle);
     }
 
-    public class ZfinFlexTable extends FlexTable implements TableListener {
+    class ZfinFlexTable extends FlexTable implements TableListener {
 
         private HeaderName[] headerNames;
 
