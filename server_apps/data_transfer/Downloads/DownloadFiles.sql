@@ -877,6 +877,10 @@ select dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, m
    and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53' 
 ;
 
+update lamhdi_tmp
+set geno_display_name = geno_display_name || " (" || get_genotype_backgrounds(genofeat_geno_zdb_id) || ")" 
+where exists (select * from genotype_background where genoback_geno_zdb_id = genofeat_geno_zdb_id);
+
 
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/lamhdi.unl'
 select dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, mrkr_abbrev, genofeat_geno_zdb_id, geno_display_name, feature_name, feature_zdb_id
