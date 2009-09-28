@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/transcript
 
-GENERICS = loadVegaTscripts.pl parseVega.pl parseMicroRNA.pl loadVegaTscripts.sql loadMicroRNA.sql parseVegaProt.pl loadVegaProt.sql Danio_rerio.VEGA.sep.pep.tot.fa loadMIRANDALinks.sql loadMIRANDALinks.pl parseMIRANDA.pl parseStar.pl miRNA.csv makeCuratedFasta.pl makeCuratedStemFasta.pl makeNUCLsMatureMicroRNA.sql loadSupport.pl parseSuppt.pl makeLoadedFastaStem.pl makeLoadedFastaMature.pl parseAssembly.pl makeMatureMiRBASEFasta.pl makeStemLoopMiRBASEFasta.pl matureZebrafishMiRBASE.fa stemLoopZebrafishMiRBASE.fa\
+GENERICS = loadVegaTscripts.pl parseVega.pl parseMicroRNA.pl loadVegaTscripts.sql loadMicroRNA.sql parseVegaProt.pl loadVegaProt.sql Danio_rerio.VEGA.sep.pep.tot.fa loadMIRANDALinks.sql loadMIRANDALinks.pl parseMIRANDA.pl parseStar.pl miRNA.csv makeCuratedFasta.pl makeCuratedStemFasta.pl makeNUCLsMatureMicroRNA.sql loadSupport.pl parseSuppt.pl makeLoadedFastaStem.pl makeLoadedFastaMature.pl parseAssembly.pl \
 
 # ---------------  Production Rules  ------------------------------------
 
