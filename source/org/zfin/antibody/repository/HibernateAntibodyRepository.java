@@ -146,7 +146,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             query.setParameter("standard", Experiment.STANDARD);
             query.setParameter("generic", Experiment.GENERIC_CONTROL);
         }
-        return (Integer) query.uniqueResult();
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     @SuppressWarnings("unchecked")
@@ -524,7 +524,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         }
         Query query = session.createQuery(hql);
         query.setParameter("aoterm", aoTerm);
-        int totalCount = (Integer) query.uniqueResult();
+        int totalCount = ((Number) query.uniqueResult()).intValue();
         // if no antibodies found return here
         if (totalCount == 0)
             return new PaginationResult<AntibodyStatistics>(0, null);
@@ -561,6 +561,11 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             list.remove(list.size() - 1);
         //scrollableResults.close();
         return new PaginationResult<AntibodyStatistics>(totalCount, list);
+    }
+
+    public List<Antibody> getAllAntibodies() {
+        Query query = HibernateUtil.currentSession().createQuery("from Antibody a order by a.name asc") ;
+        return query.list() ;
     }
 
     /**

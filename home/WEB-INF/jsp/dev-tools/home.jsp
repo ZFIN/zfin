@@ -46,6 +46,21 @@
     </tr>
     <tr>
         <td valign=top class="listContentBold">
+            ReferenceDB/DBLink Display Groups: </td>
+        <td colspan="2" class="listContent">
+            <a href="/action/dev-tools/display-groups">Display Groups</a>
+        </td>
+    </tr>
+    <tr>
+        <td valign=top class="listContentBold">
+            Blast Databases: </td>
+        <td colspan="2" class="listContent">
+            <a href="/action/dev-tools/blastable-databases">Blastabase Databases</a>
+        </td>
+    </tr>
+
+    <tr>
+        <td valign=top class="listContentBold">
             Log4J Configuration:
         </td>
         <td colspan="2" class="listContent">
@@ -118,7 +133,7 @@ ToDo: enable once we have the session table back in place.
             Hibernate Information:
         </td>
         <td colspan="2" class="listContent">
-            <a href="/action/dev-tools/hibernate-info">Hibernate Info</a>
+            <a href="/action/dev-tools/view-hibernate-info">Hibernate Info</a>
         </td>
     </tr>
     <tr>
@@ -170,6 +185,12 @@ ToDo: enable once we have the session table back in place.
         </td>
         <td colspan="2" class="listContent">
             <a href="/action/dev-tools/gwt/modules">GWT Modules</a>
+        </td>
+    </tr>
+    <tr>
+        <td>Version Info:</td>
+        <td colspan="2">
+            <a href="/java-deploy-version.html">Java Deploy Version</a>
         </td>
     </tr>
 </table>

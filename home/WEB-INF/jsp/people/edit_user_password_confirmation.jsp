@@ -8,9 +8,7 @@
       <p>
       <form:form>
 
-          <input type=button name="done"
-		 value="Back to viewing PERSON record"
-		 onClick="window.location.href='/<%=ZfinProperties.getWebDriver()%>?MIval=aa-persview.apg&OID=${formBean.person.zdbID}'">
+        <a href="javascript:" onClick="window.location.href='/<%=ZfinProperties.getWebDriver()%>?MIval=aa-persview.apg&OID=${formBean.person.zdbID}'">[View Person]</a>
 
       </form:form>
       <script>document.success_form.done.focus() </script>

@@ -32,47 +32,22 @@ Requires:  $CLONE_MARKER_ID, $highlight
 
 <?MISQL SQL="
 	SELECT  
-        probelib_species,  --1
-        probelib_name,     --2
-
-        case when probelib_strain_zdb_id is not null
-        then 
-            '<a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=' || probelib_strain_zdb_id ||'>' ||
-            (select geno_display_name from genotype where geno_zdb_id = probelib_strain_zdb_id) || '</a>'
-        else
-            probelib_non_zfin_strain_name
-        end, --3
-
-        clone_rating,  --4
-        probelib_sex,  --5
-
-        case when probelib_tissue_zdb_id is not null
-        then 
-             '<a href=/action/anatomy/term-detail?anatomyItem.zdbID=' || probelib_tissue_zdb_id ||'>' ||
-            (select anatitem_name from anatomy_item where anatitem_zdb_id = probelib_tissue_zdb_id) 
-        else
-            probelib_non_zfin_tissue_name
-        end, --6
- 
-        clone_vector_name, --7
-        vector_type_name,  -- 8
-        clone_cloning_site, -- 9
-        clone_digest, -- 10
-        probelib_host,  -- 11
-        probelib_restriction_sites,  -- 12
-        clone_polymerase_name, -- 13
-        clone_insert_size,  -- 14
-        mrkr_name,  -- 15
-        clone_comments, -- 16
-        clone_pcr_amplification, -- 17
-        mrkr_type -- 18
-
-	FROM clone, marker, probe_library, outer vector, outer anatomy_item
+        clone_probelib_zdb_id,  --1
+        clone_rating,  --2
+        clone_vector_name, --3
+        vector_type_name,  -- 4
+        clone_cloning_site, -- 5
+        clone_digest, -- 6
+        clone_polymerase_name, -- 7
+        clone_insert_size,  -- 8
+        mrkr_name,  -- 9
+        clone_comments, -- 10
+        clone_pcr_amplification, -- 11
+        mrkr_type -- 12
+	FROM clone, marker, outer vector
 	WHERE '$CLONE_MARKER_ID' = clone_mrkr_zdb_id
           and clone_mrkr_zdb_id = mrkr_zdb_id
-          and clone_probelib_zdb_id = probelib_zdb_id
 	  and clone_vector_name = vector_name
-	  and anatitem_zdb_id = probelib_tissue_zdb_id
 ;">
 
 <?MICOMMENT> As per discussion with Erik on 2003/11/21, probe_library stage is not displayed. <?/MICOMMENT>
@@ -108,37 +83,65 @@ Requires:  $CLONE_MARKER_ID, $highlight
 
 <?/MICOMMENT>
 
+    <?MIVAR NAME=probelib_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=clone_rating>$2<?/MIVAR>
+    <?MIVAR NAME=clone_vector_name>$3<?/MIVAR>
+    <?MIVAR NAME=vector_type_name>$4<?/MIVAR>
+    <?MIVAR NAME=clone_cloning_site>$5<?/MIVAR>
+    <?MIVAR NAME=clone_digest>$6<?/MIVAR>
+    <?MIVAR NAME=clone_polymerase_name>$7<?/MIVAR>
+    <?MIVAR NAME=clone_insert_size>$8<?/MIVAR>
+    <?MIVAR NAME=mrkr_name>$9<?/MIVAR>
+    <?MIVAR NAME=clone_comments>$10<?/MIVAR>
+    <?MIVAR NAME=clone_pcr_amplification><BR>$11<?/MIVAR>
+    <?MIVAR NAME=mrkr_type>$12<?/MIVAR>
 
+  
+    <?MICOMMENT> ** grab the probelib variables in a second query, since it would require
+                    two outer joins  ** <?/MICOMMENT>
 
+    <?MISQL SQL="SELECT
+        probelib_species,  --1
+        probelib_name,     --2
+        case when probelib_strain_zdb_id is not null
+        then 
+            '<a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=' || probelib_strain_zdb_id ||'>' ||
+            (select geno_display_name from genotype where geno_zdb_id = probelib_strain_zdb_id) || '</a>'
+        else
+            probelib_non_zfin_strain_name
+        end, --3
+        probelib_sex,  --4
+        case when probelib_tissue_zdb_id is not null
+        then 
+             '<a href=/action/anatomy/term-detail?anatomyItem.zdbID=' || probelib_tissue_zdb_id ||'>' ||
+            (select anatitem_name from anatomy_item where anatitem_zdb_id = probelib_tissue_zdb_id) 
+        else
+            probelib_non_zfin_tissue_name
+        end, --5
+        probelib_host,  --6
+        probelib_restriction_sites  --7
+      FROM probe_library, outer anatomy_item
+      WHERE probelib_zdb_id = '$probelib_zdb_id'
+        and anatitem_zdb_id = probelib_tissue_zdb_id ;">
+         <?MIVAR NAME=probelib_species>$1<?/MIVAR>
+         <?MIVAR NAME=probelib_name>$2<?/MIVAR>
+         <?MIVAR NAME=probelib_strain>$3<?/MIVAR>
+         <?MIVAR NAME=probelib_sex>$4<?/MIVAR>
+         <?MIVAR NAME=anatitem_name>$5<?/MIVAR>
+         <?MIVAR NAME=probelib_host>$6<?/MIVAR>
+         <?MIVAR NAME=probelib_restriction_sites>$7<?/MIVAR>    
+    <?/MISQL>
 
-    <?MIVAR NAME=probelib_species>$1<?/MIVAR>
-    <?MIVAR NAME=probelib_name>$2<?/MIVAR>
-    <?MIVAR NAME=probelib_strain>$3<?/MIVAR>
-    <?MIVAR NAME=clone_rating>$4<?/MIVAR>
-    <?MIVAR NAME=probelib_sex>$5<?/MIVAR>
-    <?MIVAR NAME=anatitem_name>$6<?/MIVAR>
-    <?MIVAR NAME=clone_vector_name>$7<?/MIVAR>
-    <?MIVAR NAME=vector_type_name>$8<?/MIVAR>
-    <?MIVAR NAME=clone_cloning_site>$9<?/MIVAR>
-    <?MIVAR NAME=clone_digest>$10<?/MIVAR>
-    <?MIVAR NAME=probelib_host>$11<?/MIVAR>
-    <?MIVAR NAME=probelib_restriction_sites>$12<?/MIVAR>
-    <?MIVAR NAME=clone_polymerase_name>$13<?/MIVAR>
-    <?MIVAR NAME=clone_insert_size>$14<?/MIVAR>
-    <?MIVAR NAME=mrkr_name>$15<?/MIVAR>
-    <?MIVAR NAME=clone_comments>$16<?/MIVAR>
-    <?MIVAR NAME=clone_pcr_amplification><BR>$17<?/MIVAR>
-    <?MIVAR NAME=mrkr_type>$18<?/MIVAR>
     
     <TABLE width="100%" border=0 cellpadding=5 bgcolor="$highlight">
     
     <?MIBLOCK COND="$(OR,$(EC,$mrkr_type,EST),$(EC,$mrkr_type,cDNA))">
       <?MIVAR>
        <TR>
-         <TD colspan=3><b>Species:</b> $probelib_species</TD>
+         <TD colspan=3><b>Species:</b> $(IF,$(XST,$probelib_species),$probelib_species)</TD>
        </TR>
        <TR>
-         <TD colspan=3><b>Library:</b> $probelib_name</TD>
+         <TD colspan=3><b>Library:</b> $(IF,$(XST,$probelib_name),$probelib_name)</TD>
        </TR>
        <TR>
          <TD><b>Cloning Site:</b> $clone_cloning_site</TD>
@@ -162,15 +165,15 @@ Requires:  $CLONE_MARKER_ID, $highlight
     <?MIELSE COND="$(OR,$(EC,$mrkr_type,BAC),$(EC,$mrkr_type,FOSMID))">
      <?MIVAR>
        <TR>
-         <TD width=33%><b>Species:</b> $probelib_species</TD>
-         <TD width=33%><b>Strain:</b> $probelib_strain</TD>
-         <TD width=33%><b>Sex:</b> $probelib_sex</TD>
+         <TD width=33%><b>Species:</b> $(IF,$(XST,$probelib_species),$probelib_species)</TD>
+         <TD width=33%><b>Strain:</b> $(IF,$(XST,$probelib_strain),$probelib_strain)</TD>
+         <TD width=33%><b>Sex:</b> $(IF,$(XST,$probelib_sex),$probelib_sex)</TD>
        </TR>
        <TR>
-         <TD colspan=3><b>Tissue:</b> $anatitem_name </TD>
+         <TD colspan=3><b>Tissue:</b> $(IF,$(XST,$anatitem_name),$anatitem_name) </TD>
        <TR>
-         <TD><b>Library:</b> $probelib_name</TD>
-         <TD colspan=2><b>Host:</b> $probelib_host</TD>
+         <TD><b>Library:</b> $(IF,$(XST,$probelib_name),$probelib_name)</TD>
+         <TD colspan=2><b>Host:</b> $(IF,$(XST,$probelib_host),$probelib_host)</TD>
        </TR>
        <TR>
          <TD><b>Vector:</b> $clone_vector_name</TD>
@@ -185,14 +188,14 @@ Requires:  $CLONE_MARKER_ID, $highlight
     <?MIELSE COND="$(EC,$mrkr_type,PAC)">
      <?MIVAR>
        <TR>
-         <TD><b>Species:</b> $probelib_species</TD>
-         <TD><b>Strain:</b> $probelib_strain</TD>
+         <TD><b>Species:</b>  $(IF,$(XST,$probelib_species),$probelib_species) </TD>
+         <TD><b>Strain:</b> $(IF,$(XST,$probelib_strain),$probelib_strain) </TD>
        </TR>
        <TR>
-         <TD colspan=2><b>Tissue:</b>$anatitem_name </TD>
+         <TD colspan=2><b>Tissue:</b>$(IF,$(XST,$anatitem_name),$anatitem_name)  </TD>
        <TR>
-         <TD><b>Library:</b> $probelib_name</TD>
-         <TD><b>Host:</b> $probelib_host</TD>
+         <TD><b>Library:</b>$(IF,$(XST,$probelib_name),$probelib_name)</TD>
+         <TD><b>Host:</b> $(IF,$(XST,$probelib_host),$probelib_host)</TD>
        </TR>
        <TR>
          <TD><b>Vector:</b> $clone_vector_name</TD>

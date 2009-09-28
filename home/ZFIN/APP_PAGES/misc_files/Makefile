@@ -23,13 +23,13 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/misc_files
 # They are HTML files, but they are loaded in the database 
 # like an app page.  Treat them like app pages.
 
-GENERICS = ZDB_home.apg data_mgr.apg doc_title.apg \
-	docframes.apg jump_to.apg blast.apg\
-	start_select.apg stub.html helpframes.html htmlpageheader.apg \
+GENERICS = data_mgr.apg doc_title.apg \
+	 jump_to.apg \
+	start_select.apg htmlpageheader.apg \
 	htmlpagefooter.apg your_input_welcome.apg input_button_generic.apg \
 	input_welcome_generic.apg zdb_history.apg new_gene.apg new_line.apg \
-	ZDB_home_leftcolumn.apg ZDB_home_rightcolumn.apg spiffy_corners.apg 
-
+	ZDB_home_leftcolumn.apg ZDB_home_rightcolumn.apg 
+STATICS=ZDB_home.apg docframes.apg stub.html helpframes.html spiffy_corners.apg 
 
 # --------------------------  Rules  ------------------------------------
 

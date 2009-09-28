@@ -20,9 +20,8 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/monitor/vol2.3
 # This directory also contains vol2.3.wp, which I think is a WordPerfect
 # version of this volume.  That does not get copied to the target dir.
 
-GENERICS = 1.html 2.html 3.html 4.html 5.html 6.html 7.html 8.html 9.html contents.html 
+STATICS = fig1.gif fig_1.gif vol2.3.pdf 1.html 2.html 3.html 4.html 5.html 6.html 7.html 8.html 9.html contents.html 
 
-STATICS = fig1.gif fig_1.gif vol2.3.pdf # vol2.3.wp
 
 
 # ---------------  Production Rules  ------------------------------------

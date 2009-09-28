@@ -20,7 +20,7 @@
 
 <table width=100%>
     <tr>
-        <td bgcolor=#ccccccc>
+        <td bgcolor=#cccccc>
             <font size=+2><b>CITATIONS</b></font>
 
             (${formBean.numOfPublications} total)

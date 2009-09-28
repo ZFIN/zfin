@@ -12,12 +12,12 @@ import java.util.*;
  * The structure of this SuggestBox is used in order to capture the extra "Enter" event.
  * As this uses a "GET" encoding we can be a bit more
  */
-public class LookupTable extends Lookup {
+public class LookupTable extends Lookup implements LookupFieldValidator, HasRemoveTerm{
 
     private FlexTable table = new FlexTable() ;
     private Label testLabel = new Label() ;
     private Element hiddenList = null ;
-    private PhenotePopup phenotePopup = null ;
+    private LookupPopup lookupPopup = null ;
     private String separator = "," ;
     private List termList = new ArrayList() ;
     public static final String JSREF_HIDDEN_NAME ="hiddenName" ;
@@ -119,7 +119,7 @@ public class LookupTable extends Lookup {
             link.addClickListener(new ClickListener(){
                 public void onClick(Widget widget) {
                 // this is new each time . . I think so that we never inadvertenly browse to new events
-                    phenotePopup = new PhenotePopup(term.getZdbID()) ;
+                    lookupPopup = new LookupPopup(lookup.getType(),term.getZdbID()) ;
                 }
             });
 
@@ -157,45 +157,51 @@ public class LookupTable extends Lookup {
      * Exposed javascript method to remove table contents.
      */
     public String validateLookup(){
-        String term = lookup.getTextBox().getText() ;
-        if(term != null && term.length()>=lookup.getMinLookupLenth()){
-            LookupService.App.getInstance().validateAnatomyTerm( term, new AsyncCallback(){
+        final String term = lookup.getTextBox().getText() ;
+//        Window.alert("term status: "+ termStatus.getStatus());
+        if(term != null && term.length()>=lookup.getMinLookupLenth() && false==termStatus.isLooking()){
+//            Window.alert("term status making call: "+ termStatus.getStatus());
+            termStatus.setStatus(TermStatus.Status.LOOKING);
+            LookupService.App.getInstance().validateAnatomyTerm( term, new AsyncCallback<TermStatus>(){
                 public void onFailure(Throwable throwable) {
 //                    lookup.setErrorString(throwable.toString());
-                    termStatus.setStatus(TermStatus.TERM_STATUS_FAILURE);
+                    termStatus.setStatus(TermStatus.Status.FAILURE);
+//                    Window.alert("term failed: "+ term);
                     //To change body of implemented mvn st -qthods use File | Settings | File Templates.
                 }
 
-                public void onSuccess(Object o) {
-                    termStatus = (TermStatus) o ;
+                public void onSuccess(TermStatus newTermStatus) {
+                    termStatus = newTermStatus ;
+//                    Window.alert("term success: "+ termStatus.getTerm()+ " - "+ termStatus.getStatus());
                     String textBoxTerm = lookup.getTextBox().getText() ;
-                    termStatus.setTerm(textBoxTerm);
+//                    termStatus.setTerm(textBoxTerm);
                     // checking length catching any asynchronous updates
                     if(termStatus.isExactMatch() && textBoxTerm.length()>0){
-                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_EXACT);
+//                        termStatus.setStatus(TermStatus.Status.FOUND_EXACT);
                         addTermToTable(termStatus);
                     }
                     else
                     if(termStatus.isFoundMany()){
-                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_MANY);
+                        termStatus.setStatus(TermStatus.Status.FOUND_MANY);
                         lookup.setErrorString("Multiple terms match '"+textBoxTerm+"'" +
                                 "<br>Please select a single term");
                     }
                     else
                     if(termStatus.isNotFound()){
-                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_NONE);
+                        termStatus.setStatus(TermStatus.Status.FOUND_NONE);
                         lookup.setErrorString("No match for term '"+textBoxTerm+"'");
                     }
                 }
             });
         }
-        else{
+        else
+        if(false==termStatus.isLooking()) {
             lookup.getTextBox().setText("");
-            termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_NONE);
+            termStatus.setStatus(TermStatus.Status.FOUND_NONE);
         }
 
         if(termStatus!=null){
-            return termStatus.getStatus();
+            return termStatus.getStatus().toString() ;
         }
         else {
             return null ;
@@ -256,26 +262,24 @@ public class LookupTable extends Lookup {
     private native void exposeMethodToJavascript(LookupTable lookupTable)/*-{
         $wnd.clearTable = function(){
             lookupTable.@org.zfin.framework.presentation.client.LookupTable::clearTable()();
-            return ; 
-        }
+        };
 
         $wnd.validateLookup = function(){
             lookupTable.@org.zfin.framework.presentation.client.LookupTable::validateLookup()();
-            return ;
-        }
+        };
 
         $wnd.getValidationStatus = function(){
             return lookupTable.@org.zfin.framework.presentation.client.LookupTable::getValidationStatus()();
-        }
+        };
 
         $wnd.useTerm = function(term){
             return lookupTable.@org.zfin.framework.presentation.client.LookupTable::useTerm(Ljava/lang/String;)(term);
-        }
+        };
 
         $wnd.hideTerm = function(term){
             return lookupTable.@org.zfin.framework.presentation.client.LookupTable::hideTerm()();
-        }
-
+        };
+    
     }-*/;
 
 
@@ -283,8 +287,8 @@ public class LookupTable extends Lookup {
      *  Called externally to hide the phenote lookup.
      */
     public void hideTerm(){
-        phenotePopup.hide() ;
-        phenotePopup = null ; 
+        lookupPopup.hide() ;
+        lookupPopup = null ;
     }
 
 
@@ -301,7 +305,7 @@ public class LookupTable extends Lookup {
             return null ;
         }
         else{
-            return termStatus.getStatus() ; 
+            return termStatus.getStatus().toString() ;
         }
     };
 
@@ -316,29 +320,29 @@ public class LookupTable extends Lookup {
 
         for(int i = 0 ; i < terms.length ; i++){
             String tokenizedTerm = terms[i] ;
-            LookupService.App.getInstance().validateAnatomyTerm( tokenizedTerm, new AsyncCallback(){
+            LookupService.App.getInstance().validateAnatomyTerm( tokenizedTerm, new AsyncCallback<TermStatus>(){
                 public void onFailure(Throwable throwable) {
                     lookup.setErrorString(throwable.toString());
-                    termStatus.setStatus(TermStatus.TERM_STATUS_FAILURE);
+                    termStatus.setStatus(TermStatus.Status.FAILURE);
                     //To change body of implemented mvn st -qthods use File | Settings | File Templates.
                 }
 
-                public void onSuccess(Object o) {
-                    termStatus = (TermStatus) o ;
+                public void onSuccess(TermStatus newTermStatus) {
+                    termStatus = newTermStatus ;
                     String term = termStatus.getTerm() ;
                     // checking length catching any asynchronous updates
                     if(termStatus.isExactMatch()){
-                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_EXACT);
+                        termStatus.setStatus(TermStatus.Status.FOUND_EXACT);
                         addTermToTable(termStatus);
                     }
                     else
                     if(termStatus.isFoundMany()){
-                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_MANY);
+                        termStatus.setStatus(TermStatus.Status.FOUND_MANY);
                         termsNotFound.add(term) ;
                     }
                     else
                     if(termStatus.isNotFound()){
-                        termStatus.setStatus(TermStatus.TERM_STATUS_FOUND_NONE);
+                        termStatus.setStatus(TermStatus.Status.FOUND_NONE);
                         termsFoundMany.add(term) ;
                     }
                 }

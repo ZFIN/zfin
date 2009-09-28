@@ -2,8 +2,8 @@ package org.zfin.orthology;
 
 /**
  * Typesafe enumerated class that represents a species used in the orthology domain.
+ * DO NOT MAP.   Just for convenience.
  */
-// ToDo: Turn this into a Java5 enumeration!
 public enum Species {
 
     ZEBRAFISH("Zebrafish", 1),

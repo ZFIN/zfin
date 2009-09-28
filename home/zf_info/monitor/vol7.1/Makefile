@@ -20,12 +20,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/monitor/vol7.1
 
-GENERICS = vol7.1.html
-
 # vol7.1.pdf contains a pointer to zfin.org, but I'm not comfortable editing
 # pdf files.
 
-STATICS = moens_figure.jpg vol7.1.pdf
+STATICS = moens_figure.jpg vol7.1.pdf vol7.1.html
 
 
 # ---------------  Production Rules  ------------------------------------

@@ -91,9 +91,11 @@ marker.<?/MIVAR>
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(EC,$attr_type,special-updateseqnum)">
-    <?MISQL SQL="select fdbcont_fdb_db_name, dblink_acc_num, dblink_length, fdbcont_fdbdt_data_type
-                 from db_link, foreign_db_contains
+    <?MISQL SQL="select fdb_db_name, dblink_acc_num, dblink_length, fdbdt_data_type
+                 from db_link, foreign_db_contains, foreign_db, foreign_db_data_type
                  where dblink_zdb_id = '$dataOID'
+		 and fdbcont_fdb_db_id = fdb_db_pk_id
+		 and fdbcont_fdbdt_id = fdbdt_pk_id
                    and dblink_fdbcont_zdb_id = fdbcont_zdb_id;">
       <?MIVAR NAME=$comments>Update $1:$2
                  <table border=0 cellpadding=3>   
@@ -243,11 +245,12 @@ marker.<?/MIVAR>
 
       <?MISQL SQL="
 	select recattrib_source_zdb_id, dblink_zdb_id
-	  from record_attribution, db_link, foreign_db_contains
+	  from record_attribution, db_link, foreign_db_contains, foreign_db
 	 where recattrib_data_zdb_id = dblink_zdb_id
 	   and dblink_linked_recid = '$OID'
 	   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	   and fdbcont_fdb_db_name = '$db_name'
+	   and fdb_db_pk_id = fdbcont_fdb_db_id
+	   and fdb_db_name = '$db_name'
 	   and dblink_acc_num = '$acc_num' ; ">
  
        <?MISQL SQL="select WebExplode(object,'pubId=$1&dataId=$2') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
@@ -257,10 +260,11 @@ marker.<?/MIVAR>
 	delete from zdb_active_data
 	  where zactvd_zdb_id = 
 		( select dblink_zdb_id 
-		    from db_link, foreign_db_contains
+		    from db_link, foreign_db_contains, foreign_db
 		    where dblink_linked_recid = '$OID'
 		      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                      and fdbcont_fdb_db_name = '$db_name'
+              and fdbcont_fdb_db_id = fdb_db_pk_id
+              and fdb_db_name = '$db_name'
 		      and dblink_acc_num = '$acc_num' );">
       <?/MISQL>
     <?/MIBLOCK>
@@ -387,10 +391,12 @@ marker.<?/MIVAR>
   <?MIBLOCK COND="$(OR,$(EC,$attr_type,special-newseqnum),$(XST,$donecheck))">
     <?MISQL SQL="
       select fdbcont_zdb_id
-        from foreign_db_contains
-       where fdbcont_fdbdt_super_type = '$fdbcont_super'
-         and fdbcont_fdbdt_data_type = '$fdbcont_data'
-         and fdbcont_fdb_db_name = '$old_value';">
+        from foreign_db_contains, foreign_db, foreign_db_data_type
+       where fdbdt_super_type = '$fdbcont_super'
+         and fdbdt_data_type = '$fdbcont_data'
+         and fdb_db_name = '$old_value'
+	 and fdbcont_fdb_db_id = fdb_db_pk_id
+	 and fdbcont_fdbdt_id = fdbdt_pk_id;">
         
         $(SETVAR,fdbcont_zdb_id,$1)
         
@@ -497,18 +503,21 @@ marker.<?/MIVAR>
        where dblink_zdb_id = '$dataOID';">
      <?/MISQL>
 	 <?MISQL SQL="
- 			select fdbcont_fdb_db_name 
-              from db_link, foreign_db_contains
+ 			select fdb_db_name 
+              from db_link, foreign_db_contains, foreign_db
              where dblink_zdb_id = '$dataOID'
+	     and fdbcont_fdb_db_id = fdb_db_pk_id
                and dblink_fdbcont_zdb_id = fdbcont_zdb_id;">
      <?/MISQL>     
      <?MIVAR NAME=$fdb_name>$1<?/MIVAR>
      <?MISQL SQL="
         select fdbcont_zdb_id
-         from foreign_db_contains
-        where fdbcont_fdbdt_super_type = 'sequence'
-          and fdbcont_fdbdt_data_type = '$xtra_param'
-          and fdbcont_fdb_db_name = '$fdb_name' ;">
+         from foreign_db_contains, foreign_db, foreign_db_data_type
+        where fdbdt_super_type = 'sequence'
+          and fdbdt_data_type = '$xtra_param'
+          and fdb_db_name = '$fdb_name' 
+	  and fdbcont_fdb_db_id = fdb_db_pk_id
+	  and fdbcont_fdbdt_id = fdbdt_pk_id;">
         
         $(SETVAR,fdbcont_zdb_id,$1)
         
@@ -935,10 +944,11 @@ marker.<?/MIVAR>
         <?MIVAR NAME=$newacc>$(TRIM,$newacc)<?/MIVAR>
         <?MISQL SQL="
 		select * 
- 		  from db_link, foreign_db_contains
+ 		  from db_link, foreign_db_contains, foreign_db
 		 where dblink_linked_recid = '$ortho_id'
 		   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-		   and fdbcont_fdb_db_name = '$newdb'
+		   and fdb_db_name = '$newdb'
+		   and fdbcont_fdb_db_id = fdb_db_pk_id
 		   and dblink_acc_num = '$newacc'; ">
 	<?/MISQL>
 	<?MIBLOCK COND="$(<,$MI_ROWCOUNT,1)">
@@ -946,10 +956,12 @@ marker.<?/MIVAR>
 
             <?MISQL SQL="
               select fdbcont_zdb_id
-              from foreign_db_contains
-              where fdbcont_fdbdt_super_type = '$fdbcont_super'
-                and fdbcont_fdbdt_data_type = '$fdbcont_data'
-                and fdbcont_fdb_db_name = '$newdb'
+              from foreign_db_contains, foreign_db, foreign_db_data_type
+              where fdbdt_super_type = '$fdbcont_super'
+                and fdbdt_data_type = '$fdbcont_data'
+                and fdb_db_name = '$newdb'
+		and fdbcont_fdb_db_id = fdb_db_pk_id
+		and fdbcont_fdbdt_id = fdbdt_pk_id
 		and fdbcont_organism_common_name = '$fdbcont_organism';">
                 
                 $(SETVAR,fdbcont_zdb_id,$1)
@@ -1048,10 +1060,11 @@ marker.<?/MIVAR>
    	  delete from zdb_active_data
 	    where zactvd_zdb_id = 
 		( select dblink_zdb_id 
-		    from db_link, foreign_db_contains
+		    from db_link, foreign_db_contains, foreign_db
 		    where dblink_linked_recid = '$ortho_id'
 		      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-		      and fdbcont_fdb_db_name = '$deldb'
+		      and fdb_db_name = '$deldb'
+		      and fdbcont_fdb_db_id = fdb_db_pk_id
 		      and dblink_acc_num = '$delacc' ) ;">
         <?/MISQL>    
       <?/MIBLOCK>

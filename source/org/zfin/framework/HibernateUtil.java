@@ -58,6 +58,15 @@ public class HibernateUtil {
         sessionFactory = factory;
     }
 
+    public static void createTransaction(){
+        currentSession().beginTransaction();
+    }
+
+    public static void flushAndCommitCurrentSession(){
+        currentSession().flush();
+        currentSession().getTransaction().commit();
+    }
+
     /**
      * Call this method to obtain a database session (transaction) object.
      * Within a single thread this method returns always the same object.
@@ -101,10 +110,6 @@ public class HibernateUtil {
         if (s != null) {
             s.close();
         }
-    }
-
-    public static Session getSession() {
-        return sessionFactory.openSession();
     }
 
     /**

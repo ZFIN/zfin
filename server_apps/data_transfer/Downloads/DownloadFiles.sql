@@ -168,44 +168,49 @@ insert into ortho_exp
 	where c_gene_id = mrkr_zdb_id;
 
 update ortho_exp
-	set flybase = (select distinct dblink_acc_num from db_link, orthologue o, foreign_db_contains
+	set flybase = (select distinct dblink_acc_num from db_link, orthologue o, foreign_db_contains, foreign_db
 	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	        and fdbcont_fdb_db_name = 'FLYBASE'
+	        and fdb_db_name = 'FLYBASE'
+		and fdbcont_fdb_db_id = fdb_db_pk_id
 	        and fdbcont_organism_common_name = o.organism
 		and o.zdb_id = dblink_linked_recid
 		and ortho_id = o.zdb_id);
 
 update ortho_exp
-	set Entrez = (select dblink_acc_num from db_link, orthologue o, foreign_db_contains
+	set Entrez = (select dblink_acc_num from db_link, orthologue o, foreign_db_contains, foreign_db
 	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	        and fdbcont_fdb_db_name = 'Entrez Gene'
-	        and fdbcont_organism_common_name = o.organism
-		and o.zdb_id = dblink_linked_recid
-		and ortho_id = o.zdb_id);
-
-
-update ortho_exp
-	set mgi = (select 'MGI:' || dblink_acc_num from db_link , orthologue o, foreign_db_contains
-	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	        and fdbcont_fdb_db_name = 'MGI'
+	        and fdb_db_name = 'Entrez Gene'
+		and fdbcont_fdb_db_id = fdb_db_pk_id
 	        and fdbcont_organism_common_name = o.organism
 		and o.zdb_id = dblink_linked_recid
 		and ortho_id = o.zdb_id);
 
 
 update ortho_exp
-	set omim = (select distinct dblink_acc_num from db_link, orthologue o, foreign_db_contains
+	set mgi = (select 'MGI:' || dblink_acc_num from db_link , orthologue o, foreign_db_contains, foreign_db
 	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	        and fdbcont_fdb_db_name = 'OMIM'
+	   	 and fdbcont_fdb_db_id = fdb_db_pk_id
+	        and fdb_db_name = 'MGI'
 	        and fdbcont_organism_common_name = o.organism
 		and o.zdb_id = dblink_linked_recid
 		and ortho_id = o.zdb_id);
 
 
 update ortho_exp
-	set sgd = (select dblink_acc_num from db_link, orthologue o, foreign_db_contains
+	set omim = (select distinct dblink_acc_num from db_link, orthologue o, foreign_db_contains, foreign_db
 	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	        and fdbcont_fdb_db_name = 'SGD'
+	   	 and fdbcont_fdb_db_id = fdb_db_pk_id
+	        and fdb_db_name = 'OMIM'
+	        and fdbcont_organism_common_name = o.organism
+		and o.zdb_id = dblink_linked_recid
+		and ortho_id = o.zdb_id);
+
+
+update ortho_exp
+	set sgd = (select dblink_acc_num from db_link, orthologue o, foreign_db_contains, foreign_db
+	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	        and fdb_db_name = 'SGD'
+		and fdbcont_fdb_db_id = fdb_db_pk_id
 	        and fdbcont_organism_common_name = o.organism
 		and o.zdb_id = dblink_linked_recid
 		and ortho_id = o.zdb_id);
@@ -499,75 +504,86 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'
 
 -- the last condition is added to filter out mis-placed acc
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genbank.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev, dblink_acc_num from marker, db_link, foreign_db_contains
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev, dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db
 	where mrkr_zdb_id = dblink_linked_recid
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'GenBank'
+	  and fdb_db_name = 'GenBank'
+	  and fdbcont_fdb_db_id = fdb_db_pk_id
           and dblink_acc_num[3] <> "_" order by 1;
 
 -- the last condition is added to filter out mis-placed acc
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/refseq.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db
 	where mrkr_zdb_id = dblink_linked_recid
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'RefSeq'
+	  and fdbcont_fdb_db_id = fdb_db_pk_id
+	  and fdb_db_name = 'RefSeq'
           and dblink_acc_num[3] = "_" order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/entrezgene.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db
 	where mrkr_zdb_id = dblink_linked_recid
+	and fdbcont_fdb_db_id = fdb_db_pk_id
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'Entrez Gene' order by 1;
+	  and fdb_db_name = 'Entrez Gene' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/unigene.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db
 	where mrkr_zdb_id = dblink_linked_recid
+	  and fdbcont_fdb_db_id = fdb_db_pk_id
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'UniGene' order by 1;
+	  and fdb_db_name = 'UniGene' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db
 	where mrkr_zdb_id = dblink_linked_recid
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'UniProtKB' order by 1;
+	  and fdbcont_fdb_db_id = fdb_db_pk_id
+	  and fdb_db_name = 'UniProtKB' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/interpro.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db
 	where mrkr_zdb_id = dblink_linked_recid
+	and fdbcont_fdb_db_id = fdb_db_pk_id
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'InterPro' order by 1;
+	  and fdb_db_name = 'InterPro' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pfam.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db
 	where mrkr_zdb_id = dblink_linked_recid
+and fdbcont_fdb_db_id = fdb_db_pk_id
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'Pfam' order by 1;
+	  and fdb_db_name = 'Pfam' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genpept.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db
 	where mrkr_zdb_id = dblink_linked_recid
+and fdbcont_fdb_db_id = fdb_db_pk_id
 	  and fdbcont_zdb_id = dblink_fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'GenPept' order by 1;
+	  and fdb_db_name = 'GenPept' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db
 	where mrkr_zdb_id = dblink_linked_recid
+and fdbcont_fdb_db_id = fdb_db_pk_id
 	  and fdbcont_zdb_id = dblink_fdbcont_zdb_id
-	  and fdbcont_fdb_db_name in ('VEGA','INTVEGA') order by 1;
+	  and fdb_db_name in ('VEGA','INTVEGA') order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega_transcript.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db
         where mrkr_zdb_id = dblink_linked_recid
           and fdbcont_zdb_id = dblink_fdbcont_zdb_id
-          and fdbcont_fdb_db_name in ('Vega_Trans','INTVEGA') order by 1;
+and fdbcont_fdb_db_id = fdb_db_pk_id
+          and fdb_db_name in ('Vega_Trans','INTVEGA') order by 1;
 
 -- the changing assembly version number in db_name
 -- is apt to come back to bite us so I am opting for the zdb_id
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/ensembl_1_to_1.txt'
  DELIMITER "	" 
-select  "#    ZDBID          ","SYMBOL",fdbcont_fdb_db_name
- from foreign_db_contains
+select  "#    ZDBID          ","SYMBOL",fdb_db_name
+ from foreign_db_contains, foreign_db
  where fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
+ and fdbcont_fdb_db_id = fdb_db_pk_id
 union
 select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link
 	where mrkr_zdb_id = dblink_linked_recid
@@ -576,17 +592,19 @@ select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/all_rna_accessions.txt'
 select distinct gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev gene_sym,dblink_acc_num accession
-from db_link, marker gene, foreign_db_contains
+from db_link, marker gene, foreign_db_contains, foreign_db, foreign_db_data_type
 where dblink_linked_recid=gene.mrkr_zdb_id
 and gene.mrkr_type='GENE'
 and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-and fdbcont_fdbdt_data_type='RNA'
-and fdbcont_fdb_db_name not like '%Vega%' and fdbcont_fdb_db_name not like '%VEGA%'
+     and fdbcont_fdbdt_id = fdbdt_pk_id
+     and fdbcont_fdb_db_id = fdb_db_pk_id
+and fdbdt_data_type='RNA'
+and fdb_db_name not like '%Vega%' and fdb_db_name not like '%VEGA%'
 union
 select distinct gene.mrkr_zdb_id gene_zdb,
        gene.mrkr_abbrev gene_sym,
        dblink_acc_num accession
-from marker gene, marker est, db_link, marker_relationship, foreign_db_contains
+from marker gene, marker est, db_link, marker_relationship, foreign_db_contains, foreign_db, foreign_db_data_type
 where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id
 and   est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id
 and  mrel_type = 'gene encodes small segment'
@@ -594,8 +612,10 @@ and est.mrkr_zdb_id = dblink_linked_recid
 and est.mrkr_type  in ('EST','CDNA')
 and gene.mrkr_type = 'GENE'
 and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-and fdbcont_fdbdt_data_type='RNA'
-and fdbcont_fdb_db_name not like '%Vega%' and fdbcont_fdb_db_name not like '%VEGA%';
+     and fdbcont_fdbdt_id = fdbdt_pk_id
+     and fdbcont_fdb_db_id = fdb_db_pk_id
+and fdbdt_data_type='RNA'
+and fdb_db_name not like '%Vega%' and fdb_db_name not like '%VEGA%';
 
 
 -- Generate genotype_feature file
@@ -661,8 +681,6 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features_mis
     	       and geno_zdb_id = genofeat_geno_zdb_id
 	       and marker_id = mrkr_zdb_id;
 
-
-
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_backgrounds.txt'
  DELIMITER "	" select distinct geno_zdb_id,
 			geno_display_name,
@@ -691,7 +709,8 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zdb_history.txt'
 select distinct gene.mrkr_zdb_id gene_zdb,
        gene.mrkr_abbrev gene_sym,
        dblink_acc_num genbank_acc
-from marker gene, marker est, db_link, marker_relationship, foreign_db_contains
+from marker gene, marker est, db_link, marker_relationship, 
+ foreign_db, foreign_db_contains
 where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id
 and   est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id
 and  mrel_type = 'gene encodes small segment'
@@ -699,7 +718,8 @@ and est.mrkr_zdb_id = dblink_linked_recid
 and est.mrkr_type  in ('EST','CDNA')
 and gene.mrkr_type = 'GENE'
 and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-and fdbcont_fdb_db_name = 'GenBank'
+and fdb_db_name = 'GenBank'
+and fdbcont_fdb_db_id = fdb_db_pk_id
 into temp tmp_veg with no log;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_seq.txt'
@@ -792,6 +812,44 @@ select img_zdb_id, img_fig_zdb_id, img_preparation
 where img_fig_zdb_id is not null
  order by img_zdb_id;
 
+-- Transcript data
+-- Get clones and genes if available but still report if not (a small subset)
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/transcripts.txt'
+ DELIMITER "	"
+select t.tscript_mrkr_zdb_id,m.mrkr_name,'no related gene','no related clone',tt.tscriptt_type,ts.tscripts_status 
+from transcript t
+join marker m on m.mrkr_zdb_id=t.tscript_mrkr_zdb_id
+join transcript_type tt on tt.tscriptt_pk_id=t.tscript_type_id
+left outer join transcript_status ts on ts.tscripts_pk_id=t.tscript_status_id
+where not exists
+(
+select 'x' 
+from marker gene , marker_relationship mr
+where gene.mrkr_zdb_id=mr.mrel_mrkr_1_zdb_id
+and mr.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
+and
+(
+mr.mrel_type='gene produces transcript'
+or
+mr.mrel_type='clone contains transcript'
+)
+)
+union
+select t.tscript_mrkr_zdb_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr_zdb_id,tt.tscriptt_type,ts.tscripts_status 
+from transcript t
+join marker m on m.mrkr_zdb_id=t.tscript_mrkr_zdb_id
+join transcript_type tt on tt.tscriptt_pk_id=t.tscript_type_id
+left outer join transcript_status ts on ts.tscripts_pk_id=t.tscript_status_id
+join marker_relationship gener on gener.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
+join marker_relationship cloner on cloner.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
+join marker gene on gene.mrkr_zdb_id=gener.mrel_mrkr_1_zdb_id
+join marker c on c.mrkr_zdb_id=cloner.mrel_mrkr_1_zdb_id
+where
+gener.mrel_type='gene produces transcript'
+and
+cloner.mrel_type='clone contains transcript'
+;
+
 -- unload publication - genotype association file
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_publication.txt'
  DELIMITER "	"
@@ -848,9 +906,10 @@ All lines available from ZIRC.
 }
 
 select dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, mrkr_abbrev, genofeat_geno_zdb_id, geno_display_name, feature_name, feature_zdb_id
-  from db_link, foreign_db_contains, orthologue, feature_marker_relationship, marker, genotype_feature, int_data_supplier, feature, genotype
- where fdbcont_fdb_db_name = 'OMIM'
-   and fdbcont_zdb_id = dblink_fdbcont_zdb_id
+  from db_link, foreign_db fdb,foreign_db_contains fdbc, orthologue, feature_marker_relationship, marker, genotype_feature, int_data_supplier, feature, genotype
+ where fdb.fdb_db_name = 'OMIM'
+   and fdb.fdb_db_pk_id = fdbc.fdbcont_fdb_db_id
+   and fdbc.fdbcont_zdb_id = dblink_fdbcont_zdb_id
    and dblink_linked_recid = zdb_id
    and c_gene_id = fmrel_mrkr_zdb_id
    and fmrel_mrkr_zdb_id = mrkr_zdb_id
@@ -865,9 +924,10 @@ into temp lamhdi_tmp
 
 insert into lamhdi_tmp(dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, mrkr_abbrev, genofeat_geno_zdb_id, geno_display_name)
 select dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, mrkr_abbrev, genofeat_geno_zdb_id, geno_display_name
-  from db_link, foreign_db_contains, orthologue, feature_marker_relationship, marker, genotype_feature, int_data_supplier, genotype
- where fdbcont_fdb_db_name = 'OMIM'
-   and fdbcont_zdb_id = dblink_fdbcont_zdb_id
+  from db_link, foreign_db_contains fdbc, foreign_db fdb, orthologue, feature_marker_relationship, marker, genotype_feature, int_data_supplier, genotype
+ where fdb.fdb_db_name = 'OMIM'
+   and fdb.fdb_db_pk_id = fdbc.fdbcont_fdb_db_id
+   and fdbc.fdbcont_zdb_id = dblink_fdbcont_zdb_id
    and dblink_linked_recid = zdb_id
    and c_gene_id = fmrel_mrkr_zdb_id
    and fmrel_mrkr_zdb_id = mrkr_zdb_id
@@ -875,7 +935,7 @@ select dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, m
    and genofeat_geno_zdb_id = idsup_data_zdB_id
    and genofeat_geno_zdb_id = geno_zdb_id
    and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53' 
-;
+   ;
 
 update lamhdi_tmp
 set geno_display_name = geno_display_name || " (" || get_genotype_backgrounds(genofeat_geno_zdb_id) || ")" 
@@ -899,30 +959,33 @@ select recattrib_data_zdb_id, count (recattrib_source_zdb_id) as citationcount f
 
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot-zfinpub.txt'
 select geneid, dblink_acc_num,zdb_id,accession_no,'Expression' as  cur_topic
-from db_link, foreign_db_contains, publication,gene_pubcount, expression_experiment
+from db_link, foreign_db_contains fdbc, foreign_db fdb, publication,gene_pubcount, expression_experiment
 where geneid=dblink_linked_recid
-and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = 'UniProtKB'
+and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+and fdb.fdb_db_name = 'UniProtKB'
 and geneid=xpatex_gene_zdb_id
 and xpatex_source_zdb_id=zdb_id
 and pubcount <= 20
 and jtype='Journal'
 union
 select geneid, dblink_acc_num,zdb_id,accession_no,'GO' as  cur_topic
-from db_link, foreign_db_contains, publication,gene_pubcount, marker_go_term_evidence
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,gene_pubcount, marker_go_term_evidence
 where geneid=dblink_linked_recid
-and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = 'UniProtKB'
+and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+and fdb.fdb_db_name = 'UniProtKB'
 and geneid=mrkrgoev_mrkr_zdb_id
 and mrkrgoev_source_zdb_id=zdb_id
 and pubcount <= 20
 and jtype='Journal'
 union
 select geneid, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
-from db_link, foreign_db_contains, publication,gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment,atomic_phenotype
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment,atomic_phenotype
 where geneid=dblink_linked_recid
-and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = 'UniProtKB'
+and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+and fdb.fdb_db_name = 'UniProtKB'
 and geneid=fmrel_mrkr_zdb_id
 and fmrel_ftr_zdb_id=genofeat_feature_zdb_id
 and genofeat_geno_zdb_id=genox_geno_zdb_id
@@ -935,11 +998,12 @@ and exp_zdb_id=genox_exp_zdb_id
 and apato_tag!='normal'
 union
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
-from atomic_phenotype, gene_pubcount,foreign_db_contains,db_link, publication,mutant_fast_search
+from atomic_phenotype, gene_pubcount,foreign_db_contains fdbc, foreign_db fdb, db_link, publication,mutant_fast_search
 where apato_genox_zdb_id=mfs_genox_zdb_id
 and geneid=dblink_linked_recid
-and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = 'UniProtKB'
+and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+and fdb.fdb_db_name = 'UniProtKB'
 and mfs_mrkr_zdb_id=geneid
 and mfs_mrkr_zdb_id like 'ZDB-GENE%'
 and apato_pub_zdb_id=zdb_id
@@ -948,11 +1012,12 @@ and jtype='Journal'
 and apato_tag!='normal'
 union
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
-from atomic_phenotype, gene_pubcount,foreign_db_contains,db_link, publication,mutant_fast_search, marker_relationship
+from atomic_phenotype, gene_pubcount,foreign_db_contains fdbc, foreign_db fdb, db_link, publication,mutant_fast_search, marker_relationship
 where apato_genox_zdb_id=mfs_genox_zdb_id
 and geneid=dblink_linked_recid
-and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = 'UniProtKB'
+and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+and fdb.fdb_db_name = 'UniProtKB'
 and mfs_mrkr_zdb_id=mrel_mrkr_1_zdb_id
 and mfs_mrkr_zdb_id like 'ZDB-MRPHLNO%'
 and mrel_mrkr_2_zdb_id=geneid
@@ -962,20 +1027,22 @@ and jtype='Journal'
 and apato_tag!='normal'
 union
 select geneid, dblink_acc_num,zdb_id,accession_no,'GO' as  cur_topic
-from db_link, foreign_db_contains, publication,gene_pubcount, marker_go_term_evidence
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,gene_pubcount, marker_go_term_evidence
 where geneid=dblink_linked_recid
-and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = 'UniProtKB'
+and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+and fdb.fdb_db_name = 'UniProtKB'
 and geneid=mrkrgoev_mrkr_zdb_id
 and mrkrgoev_source_zdb_id=zdb_id
 and pubcount > 20
 and jtype='Journal'
 union
 select geneid, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
-from db_link, foreign_db_contains, publication,gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment,atomic_phenotype
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment,atomic_phenotype
 where geneid=dblink_linked_recid
-and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = 'UniProtKB'
+and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+and fdb.fdb_db_name = 'UniProtKB'
 and geneid=fmrel_mrkr_zdb_id
 and fmrel_ftr_zdb_id=genofeat_feature_zdb_id
 and genofeat_geno_zdb_id=genox_geno_zdb_id
@@ -988,11 +1055,12 @@ and exp_zdb_id=genox_exp_zdb_id
 and apato_tag!='normal'
 union
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
-from atomic_phenotype, gene_pubcount,foreign_db_contains,db_link, publication,mutant_fast_search
+from atomic_phenotype, gene_pubcount,foreign_db_contains fdbc, foreign_db fdb, db_link, publication,mutant_fast_search
 where apato_genox_zdb_id=mfs_genox_zdb_id
 and geneid=dblink_linked_recid
-and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = 'UniProtKB'
+and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+and fdb.fdb_db_name = 'UniProtKB'
 and mfs_mrkr_zdb_id=geneid
 and mfs_mrkr_zdb_id like 'ZDB-GENE%'
 and apato_pub_zdb_id=zdb_id
@@ -1001,11 +1069,12 @@ and jtype='Journal'
 and apato_tag!='normal'
 union
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
-from atomic_phenotype, gene_pubcount,foreign_db_contains,db_link, publication,mutant_fast_search, marker_relationship
+from atomic_phenotype, gene_pubcount,foreign_db_contains fdbc, foreign_db fdb, db_link, publication,mutant_fast_search, marker_relationship
 where apato_genox_zdb_id=mfs_genox_zdb_id
 and geneid=dblink_linked_recid
-and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = 'UniProtKB'
+and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+and fdb.fdb_db_name = 'UniProtKB'
 and mfs_mrkr_zdb_id=mrel_mrkr_1_zdb_id
 and mfs_mrkr_zdb_id like 'ZDB-MRPHLNO%'
 and mrel_mrkr_2_zdb_id=geneid

@@ -113,12 +113,13 @@ sub zgcReport()
 
     print REPORT "DBLINKS\n";
 
-    my $cur = $dbh->prepare('select count(*), fdbcont_fdb_db_name AS BC_Links
-                             from db_link, foreign_db_contains
+    my $cur = $dbh->prepare('select count(*), fdb_db_name AS BC_Links
+                             from db_link, foreign_db_contains, foreign_db
                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                               and fdbcont_fdb_db_name = "GenBank"
+                               and fdb_db_name = "GenBank"
+                               and fdbcont_fdb_db_id = fdb_db_pk_id
                                and dblink_acc_num[1,2] = "BC"
-                             group by fdbcont_fdb_db_name;'
+                             group by fdb_db_name;'
 			   );
     $cur->execute;
     my($db_count, $db_name);

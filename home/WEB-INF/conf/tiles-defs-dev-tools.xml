@@ -31,6 +31,10 @@
         <put name="body" value="/WEB-INF/jsp/access_denied.jsp"/>
     </definition>
 
+    <definition name="display-groups.page" extends="home_layout">
+        <put name="body" value="/WEB-INF/jsp/dev-tools/display_groups.jsp"/>
+    </definition>
+
     <definition name="java-properties" extends="dev_layout">
         <put name="body" value="/WEB-INF/jsp/dev-tools/java_properties.jsp"/>
     </definition>
@@ -147,6 +151,11 @@
         <put name="body" value="/WEB-INF/jsp/error_page.jsp"/>
     </definition>
 
+
+    <definition name="blastable-databases.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Blastable Databases" />
+        <put name="body" value="/WEB-INF/jsp/dev-tools/blastable_databases.jsp"/>
+    </definition>
 
 </tiles-definitions>
 

@@ -1,0 +1,43 @@
+This design is largely copied from processGB.sh and other scripts in http://zfinwinserver1.uoregon.edu/fogbugz/default.asp?W407 
+
+TODO: likely all of the downloading (Genbank, RefSeq, Ensemble, etc.) will be done up-front, fasta conversion next, so-on and so-forth.
+
+Need to process genbank since everything else is built on top of genbank:
+
+- get all download sequences for genbank
+- convert to fasta by type (record accessions?)
+- assemble necessary according to rules set by each
+- convert to blast database
+- mv to target(s)
+
+(Repeat for Refseq, Ensembl)
+
+
+Process things with local accessions based on genomic DBs:
+# zfin_cdna
+# ZFINGenesWithExpression
+# GenomicDNA 
+# gbk_zf_dna (can be NO DNA?) TODO
+
+
+Cleared (very easy):
+# THESE START OUT EMPTY or with current accessions, so nothing to do
+unreleasedRNA 
+unreleasedProtein
+
+# these are generated once! from server_apps/data_transfer/transcript out of MarkerSequence, need to make sure that we dump the fasta-file, creating fasta + dblinks 
+# TODO: do xdformat, add to accession bank?
+
+Things from unspecified scripts (or scripts we need to create):
+zfin_mrph - MarkerSequence 
+repbase_zf
+publishedProtein (from Tom)
+
+
+Regenerate generated scripts based on heirarchy:
+- .... can this be based on fasta and/or wublast?
+
+
+Transfer files to final destination(s).
+
+

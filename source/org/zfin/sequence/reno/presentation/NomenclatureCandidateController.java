@@ -5,6 +5,11 @@ import org.apache.log4j.Logger;
 import org.zfin.marker.*;
 import org.zfin.people.Person;
 import org.zfin.sequence.reno.*;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.orthology.Species;
 
 import java.util.*;
 
@@ -14,9 +19,7 @@ import java.util.*;
  */
 public class NomenclatureCandidateController extends AbstractCandidateController{
 
-    private static Logger LOG = Logger.getLogger(NomenclatureCandidateController.class);
-
-
+    private static final Logger LOG = Logger.getLogger(NomenclatureCandidateController.class);
 
     /**
      * Does all the work for referenceData method, handles loading up the runCandidate for viewing,
@@ -42,10 +45,20 @@ public class NomenclatureCandidateController extends AbstractCandidateController
 
         NomenclatureRun nomenclatureRun = (NomenclatureRun) rc.getRun();
 
-        LOG.debug("instance of NomenclatureRun: " + (nomenclatureRun instanceof NomenclatureRun));
-        LOG.debug("Run.isNomenclature: " + nomenclatureRun.isNomenclature());
+//        LOG.debug("instance of NomenclatureRun: " + (nomenclatureRun instanceof NomenclatureRun));
+//        LOG.debug("Run.isNomenclature: " + nomenclatureRun.isNomenclature());
 
         //populate fields as necessary..
+        candidateBean.setHumanReferenceDatabase(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
+                ForeignDB.AvailableName.ENTREZ_GENE,
+                ForeignDBDataType.DataType.ORTHOLOGUE,
+                ForeignDBDataType.SuperType.ORTHOLOGUE,
+                Species.HUMAN));
+        candidateBean.setMouseReferenceDatabase(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
+                ForeignDB.AvailableName.ENTREZ_GENE,
+                ForeignDBDataType.DataType.ORTHOLOGUE,
+                ForeignDBDataType.SuperType.ORTHOLOGUE,
+                Species.MOUSE));
 
         if (nomenclatureRun.getOrthologyPublication() != null){
             candidateBean.setOrthologyPublicationZdbID(((NomenclatureRun) rc.getRun()).getOrthologyPublication().getZdbID());

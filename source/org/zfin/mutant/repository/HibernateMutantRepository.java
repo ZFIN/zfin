@@ -75,7 +75,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("aoZdbID", item.getZdbID());
         query.setString("genoZdbID", genotype.getZdbID());
 
-        return (Integer) query.uniqueResult();
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     public int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(AnatomyItem item, Genotype genotype) {
@@ -94,7 +94,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("aoZdbID", item.getZdbID());
         query.setString("genoZdbID", genotype.getZdbID());
 
-        return (Integer) query.uniqueResult();
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     /**
@@ -305,7 +305,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Query query = session.createQuery(hql.toString());
         query.setMaxResults(numberOfRecords);
         query.setString("aoZdbID", item.getZdbID());
-        return (Integer) query.uniqueResult();
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     /**
@@ -317,6 +317,13 @@ public class HibernateMutantRepository implements MutantRepository {
     public Genotype getGenotypeByID(String genoteypZbID) {
         Session session = HibernateUtil.currentSession();
         return (Genotype) session.load(Genotype.class, genoteypZbID);
+    }
+
+    public Genotype getGenotypeByHandle(String handle) {
+        Criteria criteria = currentSession().createCriteria(Genotype.class);
+        criteria.add(Restrictions.eq("handle",handle));
+        
+        return (Genotype) criteria.uniqueResult();
     }
 
     @SuppressWarnings("unchecked")

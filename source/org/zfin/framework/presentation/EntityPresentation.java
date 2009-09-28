@@ -1,12 +1,16 @@
 package org.zfin.framework.presentation;
 
+import org.apache.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.wiki.AntibodyWikiWebService;
+import org.zfin.wiki.WikiLoginException;
 
 /**
  * ToDo: Please add documentation for this class.
  */
 public abstract class EntityPresentation {
 
+    protected static final Logger logger = Logger.getLogger(EntityPresentation.class);
     protected static final String NONGENEDOMMARKER = "nongenedommarker";
 
     /**
@@ -25,6 +29,33 @@ public abstract class EntityPresentation {
         StringBuilder sb = new StringBuilder();
         sb.append("<a href=\"/action/");
         return sb;
+    }
+
+    protected static String getWikiLink(String uri, String zdbID, String abbreviation) {
+        return getWikiLink(uri, zdbID, abbreviation, null);
+    }
+
+    protected static String getWikiLink(String uri, String zdbID, String abbreviation, String name) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[");
+            sb.append(abbreviation);
+            sb.append("|");
+            sb.append("http://");
+            sb.append(AntibodyWikiWebService.getInstance().getDomainName());
+            sb.append("/");
+            sb.append(uri);
+            sb.append(zdbID);
+            if (name != null) {
+                sb.append("|");
+                sb.append(name);
+            }
+            sb.append("]");
+            return sb.toString();
+        } catch (WikiLoginException e) {
+            logger.error(e);
+            return null;
+        }
     }
 
     protected static String getTomcatLink(String uri, String zdbID, String abbreviation, String name) {

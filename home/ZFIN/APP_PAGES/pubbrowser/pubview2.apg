@@ -114,7 +114,7 @@ displays a publication record, or many publication records if > 1 returned.
        <?MIVAR NAME=$pubview_source>$pubview_source $pubview2_pub_volume<?/MIVAR>
        <?MIVAR NAME=$pubview_colon>:<?/MIVAR>
    <?/MIBLOCK>
-   <?MIVAR NAME=$pubview_source COND="$(NC,$pubview2_pub_pages,)">$pubview_source$pubview_colon&nbsp;$pubview2_pub_pages<?/MIVAR>
+   <?MIVAR NAME=$pubview_source COND="$(NC,$pubview2_pub_pages,)">$pubview_source$pubview_colon$pubview2_pub_pages<?/MIVAR>
    <?MIVAR NAME=$pubview_source COND="$(NC,$jtype,Unpublished)">$pubview_source ($jtype)<?/MIVAR>
    
      
@@ -291,7 +291,8 @@ Number exists
                 from db_link, foreign_db_contains, foreign_db
 	        where dblink_linked_recid='$geneid' 
 	          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	          and fdbcont_fdb_db_name ='$fdbname';
+		  and fdbcont_fdb_db_id = fdb_db_pk_id
+	          and fdb_db_name ='$fdbname';
 	        ">	
   <?MIVAR>
   $(IF,$first,$(SETVAR,$first,0),",")<?/MIVAR>	
@@ -396,9 +397,6 @@ and mrkr_type = 'MRPHLNO'
    <?MIVAR COND="$(>,$1,0)">
    <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_efg">Engineered Foreign Genes</a> &nbsp; ($1)
    <?/MIVAR> 
-
-
-
 
   <?MICOMMENT> ======== Clones / Probes  ============ <?/MICOMMENT>
   <?MISQL SQL="

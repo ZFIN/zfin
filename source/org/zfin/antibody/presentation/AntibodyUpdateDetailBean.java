@@ -14,7 +14,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import java.util.*;
 
 public class AntibodyUpdateDetailBean extends AntibodyBean {
-    private String pubAttribData;
+    private String  pubAttribData;
     private String supplierName;
     private String newNote;
     private String[] usageNote;
@@ -23,27 +23,11 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     private String antibodyNotezdbID;
     private String supplierNameErrorString;
     private String supplierzdbID;
-    private String antigenpubzdbid;
-    private String noteZdbId;
-    private String attribution;
-    public static final String AB_DEFPUB_ZDB_ID = "antibodyDefPubZdbID";
-    public static final String AB_NEW_ANTIGEN_GENE = "newAntigenGene";
-    private Marker antigenGene;
-    private int usageNoteIndex;
-    private int aliasAttribIndex;
-    private String aliasRef;
-    private String antigenRef;
-    private String antibodyDefPubZdbID;
-    private String relAttribData;
-    private String newAlias;
-    private String attribAlias;
-    private String newAntigenGene;
-    private String attribAntigen;
     private List<Publication> mostRecentPubs;
 
     public String getSupplierzdbID() {
-        return supplierzdbID;
-    }
+    return supplierzdbID;
+}
 
     public void setSupplierzdbID(String supplierzdbID) {
         this.supplierzdbID = supplierzdbID;
@@ -58,13 +42,14 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     }
 
     public String getAntigenpubzdbid() {
-        return antigenpubzdbid;
-    }
+    return antigenpubzdbid;
+}   
 
     public void setAntigenpubzdbid(String antigenpubzdbid) {
         this.antigenpubzdbid = antigenpubzdbid;
     }
 
+    private String antigenpubzdbid;
 
     public String getAntibodyNotezdbID() {
         return antibodyNotezdbID;
@@ -75,16 +60,16 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     }
 
     public String getAntibodyAntigenzdbID() {
-        return antibodyAntigenzdbID;
-    }
+    return antibodyAntigenzdbID;
+}
 
     public void setAntibodyAntigenzdbID(String antibodyAntigenzdbID) {
         this.antibodyAntigenzdbID = antibodyAntigenzdbID;
     }
 
     public String getAntibodyAliaszdbID() {
-        return antibodyAliaszdbID;
-    }
+    return antibodyAliaszdbID;
+}
 
     public void setAntibodyAliaszdbID(String antibodyAliaszdbID) {
         this.antibodyAliaszdbID = antibodyAliaszdbID;
@@ -95,8 +80,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     }
 
     public int getAliasAttribIndex() {
-        return aliasAttribIndex;
-    }
+    return aliasAttribIndex;
+}
 
     public void setAliasAttribIndex(int aliasAttribIndex) {
         this.aliasAttribIndex = aliasAttribIndex;
@@ -106,19 +91,27 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
         this.supplierName = supplierName;
     }
 
+    private String noteZdbId;
+    private String attribution;
+    public static final String AB_DEFPUB_ZDB_ID = "antibodyDefPubZdbID";
+    public static final String AB_NEW_ANTIGEN_GENE = "newAntigenGene";
+    private Marker antigenGene;
+    private int usageNoteIndex;
+    private int aliasAttribIndex;
 
     public String getAliasRef() {
-        return aliasRef;
-    }
+    return aliasRef;
+}
 
     public void setAliasRef(String aliasRef) {
         this.aliasRef = aliasRef;
     }
 
-
+    private String aliasRef;
+    private String antigenRef;
     public String getAntigenRef() {
-        return antigenRef;
-    }
+    return antigenRef;
+}
 
     public void setAntigenRef(String antigenRef) {
         this.antigenRef = antigenRef;
@@ -148,7 +141,7 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
         this.attribution = attribution;
     }
 
-    public String getNoteZdbId() {
+    public String getNoteZdbId() {                                                             
         return noteZdbId;
     }
 
@@ -165,17 +158,26 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     }
 
     public String getNewNote() {
-        return newNote;
-    }
+    return newNote;
+}
 
     public void setNewNote(String newNote) {
         this.newNote = newNote;
     }
 
+    
+
+    private String newAlias;
+
+    private String attribAlias;
+
+    private String newAntigenGene;
+
+    private String attribAntigen;
 
     public String getAttribAntigen() {
-        return attribAntigen;
-    }
+    return attribAntigen;
+}
 
     public void setAttribAntigen(String attribAntigen) {
         this.attribAntigen = attribAntigen;
@@ -190,12 +192,14 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     }
 
     public String getNewAntigenGene() {
-        return newAntigenGene;
-    }
+    return newAntigenGene;
+}
 
     public void setNewAntigenGene(String newAntigenGene) {
         this.newAntigenGene = newAntigenGene;
     }
+
+    private String relAttribData;
 
 
     public String getAntibodyDefPubZdbID() {
@@ -205,6 +209,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     public void setAntibodyDefPubZdbID(String antibodyDefPubZdbID) {
         this.antibodyDefPubZdbID = antibodyDefPubZdbID;
     }
+
+    private String    antibodyDefPubZdbID;
 
 
     public String getRelAttribData() {
@@ -241,6 +247,7 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     public void setAntibody(Antibody antibody) {
         this.antibody = antibody;
     }
+
 
 
     public Map<String, String> getImmunogenOrganismList() {
@@ -290,8 +297,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
         return typeList;
     }
 
-    public List<Publication> getPublication() {
-        List<Publication> publication = new ArrayList<Publication>();
+     public List<Publication> getPublication() {
+         List<Publication> publication = new ArrayList<Publication>();
 
 
         if (antibody == null)
@@ -308,8 +315,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
                 }
             }
         }
-        return publication;
-    }
+    return publication;
+     }
 
     public void setMostRecentPubs(List<Publication> mostRecentPubs) {
         this.mostRecentPubs = mostRecentPubs;

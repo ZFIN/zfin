@@ -21,10 +21,17 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 my $dbname = "<!--|DB_NAME|-->";
 my $user = "";
 my $passwd = "";
+my $outputdir ="";
 
-my $outputdir = "/research/zblastfiles/files/genomix/";
+# a place on embryonix is used to store the fasta files for blast db update.
+if ($ENV{"HOST"} eq "embryonix") {
+    $outputdir = "/research/zblastfiles/dev_files/genomix/" ;
+}
+else {
+    $outputdir = "/research/zblastfiles/files/genomix/" ;    
+}
+
 my $mrphFile = $outputdir."zfin_mrph.fa";
-my $microFile = $outputdir."zfin_microRNA.fa";
 
 
 my $dbh = DBI->connect("DBI:Informix:$dbname", $user, $passwd) 
@@ -42,15 +49,6 @@ $sql =    " select mrel_mrkr_1_zdb_id, mrph.mrkr_name, mrkrseq_sequence
                          on mrel_mrkr_2_zdb_id = gn.mrkr_zdb_id";
 
 &formFastaFile ($mrphFile, $sql);
-
-# =====  regenerate MicroRNA sequence set ======
-$sql =    " select mrkr_zdb_id, mrkr_name, mrkrseq_sequence
-              from marker_sequence 
-                   join marker 
-                         on mrkrseq_mrkr_zdb_id = mrkr_zdb_id
-             where mrkrseq_mrkr_zdb_id like 'ZDB-GENE-%'";
-
-&formFastaFile ($microFile, $sql);
 
 exit;
 

@@ -16,7 +16,10 @@
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=MRPHLNO"><em>morpholino</em></a>,
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg"><em>linkages</em></a>,
-          <a href="/action/antibody/create"><em>antibody</em></a>
+          <a href="/action/antibody/create"><em>antibody</em></a>,
+          <a href="/action/marker/clone-add"><em>clone</em></a>,
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="/action/marker/transcript-add"><em>transcript</em></a>
 
         </li>
         <li>
@@ -98,6 +101,11 @@
       </ul>
 
 
+      <h3> Development </h3>
+        <ul>
+        <li><a href="/action/dev-tools/home"><em>Developer Tools</em></a> </li>
+        </ul>
+
  <?/MIBLOCK> <?MICOMMENT> ** end if (root) ** <?/MICOMMENT>
 
 
@@ -128,6 +136,8 @@
   <h3>Genomics</h3>
   <ul>
     <li>Browse the genome:
+      <?MICOMMENT> <!-- todo: this link should be real or go away before we merge! --><?/MICOMMENT>
+     <?MICOMMENT> <a href="/cgi-bin/gbrowse/Zv8/"><strong>ZFIN</strong></a>, <?/MICOMMENT>
       <a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a>,
       <a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a>,
       <a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</a>,
@@ -140,7 +150,7 @@
     </li>
 
     <li>BLAST at 
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg">ZFIN</a>, 
+      <a href="/action/blast/blast">ZFIN</a>, 
       <a href="http://www.ensembl.org/Danio_rerio/blastview">Ensembl</a>, 
       <a href="http://vega.sanger.ac.uk/Multi/blastview?species=Danio_rerio">Vega</a>,
       <a href="http://www.ncbi.nlm.nih.gov/projects/genome/seq/BlastGen/BlastGen.cgi?taxid=7955">NCBI</a>,

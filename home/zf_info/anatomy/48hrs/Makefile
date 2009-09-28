@@ -23,11 +23,11 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/48hrs
 # All of the dynamics can be moved back under the statics after the initial 
 # load.
 
-# STATICS = 
-GENERICS = 48hrs.html S017.html S018.html S019.html S020.html S021.html \
+STATICS = 48hrs.html S017.html S018.html S019.html S020.html S021.html \
 	S022.html S023.html S024.html S025.html S026.html S027.html S028.html \
 	S029.html S030.html S031.html S032.html S033.html S034.html S035.html \
 	S036.html S037.html S038.html
+#GENERICS = 
 
 
 

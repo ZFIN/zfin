@@ -495,11 +495,13 @@ SELECT
     'uncurated: ZGC load ' || TODAY,
     zgc_length
 FROM
-    tmp_Zgc, foreign_db_contains, tmp_Zgc_EST
+    tmp_Zgc, foreign_db_contains, foreign_db, foreign_db_data_type, tmp_Zgc_EST
 WHERE
     zgc_acc_num NOT IN (select zDblink_acc_num from tmp_Zgc_Dblink_moved)
-    AND fdbcont_fdb_db_name = 'GenBank'
-    AND fdbcont_fdbdt_data_type = 'RNA'
+    AND fdb_db_name = 'GenBank'
+    AND fdbdt_data_type = 'RNA'
+    AND fdbcont_fdb_db_id = fdb_db_pk_id
+    AND fdbcont_fdbdt_id = fdbdt_pk_id
     AND zgc_name = zEST_name;
 
 

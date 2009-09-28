@@ -25,7 +25,7 @@ function popUp(cloneID) {
 
 <?/MIERROR>
 <?/MICOMMENT>
-<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>  
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR name=$highlighter><!--|HIGHLIGHTER_COLOR|--><?/MIVAR>
 <?MIVAR name=$white>#ffffff<?/MIVAR>
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
@@ -35,7 +35,7 @@ function popUp(cloneID) {
   ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
- 
+
 <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1
 <?/MISQL>
 
@@ -108,8 +108,8 @@ function popUp(cloneID) {
 <p>
 <p>
 <b>Note:</b>
- The list of reference SNPs mapped on this genomic clone has been retrieved through data exchange between NCBI and ZFIN. These reference SNP identifiers are created by NCBI during periodic 'builds' of the dbSNP database. 
- 
+ The list of reference SNPs mapped on this genomic clone has been retrieved through data exchange between NCBI and ZFIN. These reference SNP identifiers are created by NCBI during periodic 'builds' of the dbSNP database.
+
 
 <!--creating table to display added GO annotations-->
 <p><p>

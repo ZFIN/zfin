@@ -22,12 +22,11 @@ import java.util.Set;
 
 /**
  * Class CandidateBeanValidator.
- * ToDo: Put some of the validation into a central place so it can be reused in other
  * controllers.
  */
 public class NomenclatureCandidateValidator extends AbstractRunCandidateValidator {
 
-    private static Logger LOG = Logger.getLogger(NomenclatureCandidateValidator.class);
+    private static final Logger LOG = Logger.getLogger(NomenclatureCandidateValidator.class);
     private RenoRepository rr = RepositoryFactory.getRenoRepository();
     private MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private PublicationRepository pr = RepositoryFactory.getPublicationRepository();
@@ -52,7 +51,6 @@ public class NomenclatureCandidateValidator extends AbstractRunCandidateValidato
     }
 
 
-    //todo: do we need to deal with genes directly associated with accessions for nomenclature?  or is that how it always happens?
     protected void validateNomenclature(CandidateBean candidateBean,  Errors errors) {
 
         LOG.info("Validating nomenclature pipeline submission");
@@ -107,7 +105,6 @@ public class NomenclatureCandidateValidator extends AbstractRunCandidateValidato
         // Check for nomenclature conventions
         if (!StringUtils.isEmpty(newAbbreviation)) {
             // use only lower case abbreviations
-            // toDo: need to add more validation
             if (!newAbbreviation.equals(newAbbreviation.toLowerCase()))
                 errors.rejectValue(CandidateBean.NEW_ABBREVIATION, "code", "Abbreviations have to be" +
                         " lower case according to the nomenclature conventions.");
@@ -133,10 +130,10 @@ public class NomenclatureCandidateValidator extends AbstractRunCandidateValidato
             for (Orthologue o : m.getOrthologues()) {
                 if (o.getOrganism() == Species.HUMAN
                         && !StringUtils.isEmpty(candidateBean.getHumanOrthologueAbbrev().getEntrezAccession().getEntrezAccNum()))
-                    errors.rejectValue("humanOrthologueAbbrev.proteinAccNum", "code", m.getAbbreviation() + " already has a human orthologue.");
+                    errors.rejectValue("humanOrthologueAbbrev.entrezAccession.entrezAccNum", "code", m.getAbbreviation() + " already has a human orthologue.");
                 if (o.getOrganism() == Species.MOUSE
                         && !StringUtils.isEmpty(candidateBean.getMouseOrthologueAbbrev().getEntrezAccession().getEntrezAccNum()))
-                    errors.rejectValue("mouseOrthologueAbbrev.proteinAccNum", "code", m.getAbbreviation() + " already has a mouse orthologue.");
+                    errors.rejectValue("mouseOrthologueAbbrev.entrezAccession.entrezAccNum", "code", m.getAbbreviation() + " already has a mouse orthologue.");
 
             }
 

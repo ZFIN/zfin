@@ -35,13 +35,13 @@
 
   <!-- Main Query to get orthologue -->
   <?MISQL SQL="
-   select ortho_name, ortho_abbrev, organism, fdb_DB_name,
-         fdb_DB_query || dblink_acc_num, dblink_acc_num_display, a.zdb_id, 
+   select ortho_name, ortho_abbrev, organism, fdb_db_name,
+         fdb_db_query || dblink_acc_num, dblink_acc_num_display, a.zdb_id, 
          d.organism_display_order, fdb_db_significance
-    from orthologue a, OUTER (db_link,foreign_db_contains,foreign_DB), organism d 
+    from orthologue a, OUTER (db_link,foreign_db_contains,foreign_db), organism d 
     where a.zdb_id = dblink_linked_recid 
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id 
-      and fdbcont_fdb_db_name = fdb_db_name
+      and fdbcont_fdb_db_id = fdb_db_pk_id
       and c_gene_id = '$OID' 
       and fdb_db_significance < 10
       and a.organism = d.organism_common_name	
@@ -61,9 +61,9 @@
 	<?MIVAR>
         $(SETVAR,$EXIST,1)
         <TR><TD colspan=3></TD>
-        <TD bgcolor=#ccccccc colspan=$envNum><b>Evidence</b></TD></TR>
+        <TD bgcolor=#cccccc colspan=$envNum><b>Evidence</b></TD></TR>
 	<?/MIVAR>
-	<TR bgcolor=#ccccccc><TD><b>Species</b></TD><TD><b>Symbol</b></TD><TD><b>AccID</b></TD>
+	<TR bgcolor=#cccccc><TD><b>Species</b></TD><TD><b>Symbol</b></TD><TD><b>AccID</b></TD>
 	<?MISQL SQL="
 		select count(*), oevdisp_evidence_code, oevcode_order  
 		from orthologue_evidence_display, orthologue_evidence_code
@@ -147,7 +147,7 @@
 
   <!-- Query for references -->
   <?MIBLOCK COND="$(=,$hasEv,1)">
-   <TR><TD bgcolor=#ccccccc colspan=3 align=right>Number of References</TD>
+   <TR><TD bgcolor=#cccccc colspan=3 align=right>Number of References</TD>
    <?MISQL SQL="
 	select count(*), recattrib_data_zdb_id,
                oevdisp_organism_list, oevcode_order  

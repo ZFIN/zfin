@@ -19,11 +19,10 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/zfbook
 
 SUBDIRS = chapt1 chapt2 chapt3 chapt4 chapt5 chapt7 chapt8 chapt9 stages
 
-GENERICS = chapt6.html chapt10.html cont.html lab_desig.html zfbk.html \
-	zfmabs.html zfrefs.html zfstrn.html
+STATICS = streis.gif chapt6.html chapt10.html cont.html zfbk.html \
+	zfmabs.html zfrefs.html
 
-STATICS = streis.gif
-
+GENERICS = lab_desig.html zfstrn.html
 
 # ---------------  Production Rules  ------------------------------------
 

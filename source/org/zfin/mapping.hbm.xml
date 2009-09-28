@@ -32,8 +32,8 @@
             <column name="zdb_id" not-null="true"/>
         </id>
 
-        <property name="markerId" column="marker_id" not-null="true"/>
-        <property name="refcrossId">
+        <many-to-one name="marker" column="marker_id" not-null="true" class="org.zfin.marker.Marker" insert="false" update="false"/>
+        <property name="refcrossID">
             <column name="refcross_id" not-null="true"/>
         </property>
 
@@ -47,7 +47,7 @@
             <column name="comments"/>
         </property>
 
-        <property name="lg">
+        <property name="lg" type="string">
             <column name="or_lg" not-null="true"/>
         </property>
 

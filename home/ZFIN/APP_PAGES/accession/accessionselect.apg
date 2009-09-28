@@ -111,6 +111,25 @@
 
   <?MIBLOCK COND="$(>,$(POSITION,$aname,ZDB),0)">
     
+     <?MICOMMENT> ** Most of this logic really shouldn't be here, it should be in an SPL function
+                     that can be shared in lots of places.  Currently (3/4/09) a method like that
+                     exists for marker - so we'll try that method first, and only if it fails
+                     will the rest of the logic in this page go forward **   <?/MICOMMENT>
+
+     <?MICOMMENT> ** First, try get_mrkr_url($aname) - then split on the zdb_id if that fails ** <?/MICOMMENT>
+     <?MISQL SQL="select get_mrkr_url('$aname') from marker where mrkr_zdb_id = '$aname';">
+       <?MIVAR NAME="$full_url">$1<?/MIVAR>
+     <?/MISQL>     
+
+     <?MIBLOCK COND="$(XST,$full_url)">
+       <?MIVAR>
+       <script>
+         window.location.replace("$full_url")
+       </script>
+       <?/MIVAR>
+     <?MIELSE> <?MICOMMENT> ** didn't find full url, build one from the zdb_id ** <?/MICOMMENT>
+
+
      <?MIVAR NAME=$start_page>NULL<?/MIVAR>
      <!-- if a zdb is passed in,  set second frame to it's viewer with specified zdb_id! -->
 
@@ -121,13 +140,15 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-pubview2.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENO),0)">aa-genotypeview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-genotypeview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REFCROSS),0)">aa-crossview.apg<?/MIVAR>
+
+<?MICOMMENT>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LOCUS),0)">aa-markerview.apg<?/MIVAR>	
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,CDNA),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENEP),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,MRPHLNO),0)">aa-markerview.apg<?/MIVAR>
-     
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC),0)">aa-markerview.apg<?/MIVAR>
@@ -135,14 +156,16 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REGION),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC_END),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC_END),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REFCROSS),0)">aa-crossview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RAPD),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
+<?/MICOMMENT>
+
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ANAT),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$OID<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ATB),0)">/action/antibody/detail?antibody.zdbID=$OID<?/MIVAR>
+
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FIG),0)">aa-fxfigureview.apg<?/MIVAR>
+
 
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ALT),0)">aa-fishselect.apg&fsel_allele_id=$aname&query_results=exist<?/MIVAR>
 
@@ -187,6 +210,8 @@
   <!-- ends if valid start page, not null  -->
 
 
+  <?/MIBLOCK> <?MICOMMENT> ** ends XST $full_url ** <?/MICOMMENT>
+
   <?/MIBLOCK>  <!-- ENDS IF SEARCHTYPE ZDB ID -->
 
 
@@ -214,7 +239,7 @@
         </td>
       </tr>
 
-<form name=critform method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+<form name="critform" method="get" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
 
   <TR>
    <TD class="fullwidth">

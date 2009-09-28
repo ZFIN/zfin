@@ -300,8 +300,13 @@ marker = '';
 
  <?MIVAR COND="$(XST,$UPDATE)">
    <form>
-   <center><font size=+2><input type=button 
-	value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$OID')">         </font></center>
+   <center>
+       <a 
+       style="font-size: large;"
+       href="javascript:" 
+       onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$OID')"
+       >[View Mapping Details]</a>
+    </center>
    </form> 
  <?/MIVAR>
 
@@ -364,7 +369,7 @@ marker = '';
            <input type=hidden name=MIval value="aa-your_input_welcome.apg">
            <input type=hidden name=page_id value="$MID">
   <?/MIVAR>
-  <TR bgcolor=#ccccccc>
+  <TR bgcolor=#cccccc>
   <TD colspan=2>
     <FONT SIZE=+2>    <b>Mapping Details</b>      </FONT>
   </TD>

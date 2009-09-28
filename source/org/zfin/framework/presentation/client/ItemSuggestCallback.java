@@ -3,7 +3,7 @@ package org.zfin.framework.presentation.client;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 
-class ItemSuggestCallback implements AsyncCallback {
+class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response> {
     private SuggestOracle.Request request;
     private SuggestOracle.Callback callback;
     private LookupComposite lookup ;
@@ -29,18 +29,18 @@ class ItemSuggestCallback implements AsyncCallback {
                c!=' '
            )
            {
-               return true ; 
+               return true ;
            }
         }
         return false ;
     }
 
-    public void onSuccess(Object retValue) {
+    public void onSuccess(SuggestOracle.Response retValue) {
         lookup.clearError();
         lookup.clearNote();
 
         if(lookup.isSuggetBoxHasFocus()==false){
-           return ;  
+           return ;
         }
 
         if(true==lookup.getTextBox().getText().equalsIgnoreCase(request.getQuery())){
@@ -56,7 +56,7 @@ class ItemSuggestCallback implements AsyncCallback {
                         lookup.setErrorString("Supplier name '"+request.getQuery()+"' not found.") ;
                 }
             }
-            callback.onSuggestionsReady(request, (SuggestOracle.Response)retValue);
+            callback.onSuggestionsReady(request, retValue);
         }
     }
 

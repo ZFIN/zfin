@@ -35,9 +35,12 @@
                 <prop key="/dev-tools/gwt/fx-curation">fxCuration</prop>
                 <prop key="/dev-tools/gwt/lookup">lookup</prop>
                 <prop key="/dev-tools/svn-version">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/display-groups">displayGroups</prop>
+                <prop key="/dev-tools/blastable-databases">blastableDatabases</prop>
             </props>
         </property>
     </bean>
+
 
     <!-- Make sure to use scope=prototype to instantiate a new object to make the call thread-safe!-->
     <bean name="gwtModules" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
@@ -79,10 +82,15 @@
     <bean name="devToolsDatabaseInfo" class="org.zfin.framework.presentation.DatabaseInfoController">
         <property name="methodNameResolver" ref="devToolsResolver"/>
     </bean>
+
+    <bean name="displayGroups" class="org.zfin.framework.presentation.DisplayGroupController"/>
+
+    <bean name="blastableDatabases" class="org.zfin.framework.presentation.BlastableDatabasesController"/>
+
     <!--
-      - This bean is a MethodNameResolver definition for a MultiActionController.
-      - It maps URLs to methods for the "devToolsDatabaseInfo" bean.
-      -->
+    - This bean is a MethodNameResolver definition for a MultiActionController.
+    - It maps URLs to methods for the "devToolsDatabaseInfo" bean.
+    -->
     <bean id="devToolsResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
         <property name="mappings">
             <props>
@@ -100,6 +108,5 @@
             </props>
         </property>
     </bean>
-
 
 </beans>

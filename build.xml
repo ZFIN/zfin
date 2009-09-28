@@ -11,7 +11,6 @@
 
 
 
-
     <!-- ====================================================================== -->
     <!-- COMPILE TASKS                                                          -->
     <!-- ====================================================================== -->
@@ -43,7 +42,7 @@
     </target>
 
 
-    <target name="do" depends="clean, construct-xsd-classes, compile, prepare-properties"
+    <target name="do" depends="clean, construct-ncbi-dtd-classes,construct-xsd-classes, compile, prepare-properties"
             description="Everything to compile excluding jsp files. No copying into target directory"/>
 
     <target name="all" depends="deploy" description="The same as deploy for Tom."/>
@@ -171,9 +170,21 @@
              classname="com.sun.tools.xjc.XJCTask"
              classpathref="extended.classpath"
              description="Task to generate java source based on Java Binding definitions and an xsd file"
-            />
+            >
+        </taskdef>
 
-    <target name="construct-xsd-classes" description="Run xsd to generate Java files for DX jobs">
+
+    <target name="construct-ncbi-dtd-classes" description="Run xjc to generate Java files for parsing blast results">
+        <echo message="Generating NCBI blast result source files ..."/>
+        <echo message="${web.conf}"/>
+        <xjc schema="${web.conf}/NCBI_BlastOutput.dtd"  binding="${web.conf}/blast-output.xjb" target="source" 
+             package="org.zfin.sequence.blast.results">
+        <arg value="-dtd"/>
+            <produces dir="source"  includes="org.zfin.sequence.blast.results/*.java"/>
+        </xjc>
+    </target>
+
+    <target name="construct-xsd-classes" description="Run xjc to generate Java files for DX jobs">
         <echo message="Generating Properties source files ..."/>
         <echo message="${web.conf}"/>
         <xjc schema="${web.conf}/properties.xsd" binding="${web.conf}/properties.xjb" target="source"
@@ -299,16 +310,14 @@
     </target>
 
 
-    <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,test,advance-build,restart"  description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/> 
+    <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,test,advance-build,restart"  description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
-    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release" 
+    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
-        <copy file="${web-inf.dir}/zfin-properties.xml"
-              tofile="${web-inf.dir}/zfin-change-properties.xml">
-            <filterset>
-                <filter token="SECUREPORT" value="${secureport}"/>
-            </filterset>
-        </copy>
+        <antcall target="copyZfinPropertiesWithEnv">
+            <param name="from-zfin-properties-file" value="${web-inf.dir}/zfin-properties.xml"/>
+            <param name="to-zfin-properties-file" value="${web-inf.dir}/zfin-change-properties.xml"/>
+        </antcall>
         <exec executable="perl" output="output.log">
             <!-- on embryonix should be the following -->
             <!-- <arg value="/private/ZfinLinks/Commons/bin/makespecific.pl"/>  -->
@@ -359,6 +368,44 @@
         </copy>
     </target>
 
+
+    <target name="copyZfinPropertiesWithEnv">
+        <copy file="${from-zfin-properties-file}"
+              tofile="${to-zfin-properties-file}"
+              overwrite="true">
+            <filterset>
+                <!--not sure if this is still used-->
+                <filter token="SECUREPORT" value="${secureport}"/>
+
+                <filter token="DOMAIN" value="${env.DOMAIN_NAME}"/>
+                <filter token="WIKI_USERNAME" value="${env.WIKI_USER}"/>
+                <filter token="WIKI_PASSWORD" value="${env.WIKI_PASS}"/>
+                <filter token="WIKI_HOSTNAME" value="${env.WIKI_HOST}"/>
+                <filter token="WIKI_PUSH_TO_WIKI" value="${env.WIKI_PUSH_TO_WIKI}"/>
+
+                <!--web host variables-->
+                <filter token="WEBHOST_BLAST_DATABASE_PATH" value="${env.WEBHOST_BLAST_DATABASE_PATH}"/>
+                <filter token="WEBHOST_XDGET" value="${env.WEBHOST_XDGET}"/>
+                <filter token="WEBHOST_XDFORMAT" value="${env.WEBHOST_XDFORMAT}"/>
+                <filter token="WEBHOST_USER" value="${env.WEBHOST_USER}"/>
+                <filter token="WEBHOST_HOSTNAME" value="${env.WEBHOST_HOSTNAME}"/>
+                <filter token="WEBHOST_BINARY_PATH" value="${env.WEBHOST_BINARY_PATH}"/>
+                <filter token="WEBHOST_KEY_PATH" value="${env.WEBHOST_KEY_PATH}"/>
+
+                <!--blast server variables-->
+                <filter token="BLASTSERVER_BLAST_DATABASE_PATH" value="${env.BLASTSERVER_BLAST_DATABASE_PATH}"/>
+                <filter token="BLASTSERVER_XDGET" value="${env.BLASTSERVER_XDGET}"/>
+                <filter token="BLASTSERVER_XDFORMAT" value="${env.BLASTSERVER_XDFORMAT}"/>
+                <filter token="BLASTSERVER_USER" value="${env.BLASTSERVER_USER}"/>
+                <filter token="BLASTSERVER_HOSTNAME" value="${env.BLASTSERVER_HOSTNAME}"/>
+                <filter token="BLASTSERVER_DISTRIBUTED_QUERY_PATH" value="${env.BLASTSERVER_DISTRIBUTED_QUERY_PATH}"/>
+                <filter token="BLASTSERVER_BINARY_PATH" value="${env.BLASTSERVER_BINARY_PATH}"/>
+                <!--script variable-->
+                <filter token="BLASTSCRIPT_TARGET_PATH" value="${env.BLASTSCRIPT_TARGET_PATH}"/>
+            </filterset>
+        </copy>
+    </target>
+
     <target name="dirtydeploy" depends="compile"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been buil assuming that its already been built">
         <copy todir="${env.TARGETROOT}">
@@ -383,12 +430,13 @@
                 <exclude name="**/.svn"/>
             </fileset>
         </copy>
-        <copy file="${basedir}/home/WEB-INF/zfin-properties.xml"
-              tofile="${basedir}/home/WEB-INF/zfin-change-properties.xml">
-            <filterset>
-                <filter token="SECUREPORT" value="${secureport}"/>
-            </filterset>
-        </copy>
+
+
+        <antcall target="copyZfinPropertiesWithEnv">
+            <param name="from-zfin-properties-file" value="${web-inf.dir}/zfin-properties.xml"/>
+            <param name="to-zfin-properties-file" value="${web-inf.dir}/zfin-change-properties.xml"/>
+        </antcall>
+
         <exec executable="perl" output="output.log">
             <!-- on embryonix should be the following -->
             <!-- <arg value="/private/ZfinLinks/Commons/bin/makespecific.pl"/>  -->
@@ -434,6 +482,19 @@
     </target>
 
 
+    <target name="generate-ncbi-client"  description="Geneates wsdl client code for use with citexplorer" >
+        <mkdir dir="${doi.dir}/bin"/>
+        <symlink link="${doi.dir}/lib" resource="${lib}/jaxws" overwrite="true"/>
+        <copy file="${doi.dir}/wsimport.sh" todir="${doi.dir}/bin"/>
+        <copy file="${doi.dir}/ncbiStubs.sh" todir="${doi.dir}/bin"/>
+        <chmod file="${doi.dir}/bin/ncbiStubs.sh" perm="+x"/>
+        <chmod file="${doi.dir}/bin/wsimport.sh" perm="+x"/>
+        <exec dir="${doi.dir}/bin" executable="${doi.dir}/bin/ncbiStubs.sh"/>
+        <!-- 
+        <delete dir="${doi.dir}/bin"/>
+        <symlink link="${doi.dir}/lib" action="delete"/>
+        -->
+    </target>
 
 
     <!--
@@ -466,7 +527,68 @@
        </exec>
    </target>
 
+    <macrodef name="regenerateSSHKey">
+        <attribute name="ssh-command"/>
+        <sequential>
+        <delete file="@{ssh-command}"/>
+        <delete file="@{ssh-command}.pub"/>
+        <exec command="ssh-keygen">
+            <arg value="-f"/>
+            <arg value="@{ssh-command}"/>
+            <arg value="-t"/>
+            <arg value="dsa"/>
+            <arg value="-N"/>
+            <arg value=""/>
+        </exec>
 
+        <exec  command="./buildfiles/fixKey.sh" >
+            <arg value="@{ssh-command}"/>
+        </exec>
+        </sequential>
+    </macrodef>
+
+
+    <target name="generateSSHKeys">
+		<regenerateSSHKey ssh-command="cp"/>
+		<regenerateSSHKey ssh-command="xdget"/>
+		<regenerateSSHKey ssh-command="xdformat"/>
+		<regenerateSSHKey ssh-command="blastn"/>
+		<regenerateSSHKey ssh-command="blastp"/>
+		<regenerateSSHKey ssh-command="blastx"/>
+		<regenerateSSHKey ssh-command="tblastn"/>
+		<regenerateSSHKey ssh-command="tblastx"/>
+    </target>
+
+
+    <target name="validateDatabases" depends="compile,build-tests">
+        <java classname="org.zfin.framework.scheduling.blast.ValidateRemoteDatabases"
+              fork="yes"
+              classpathref="extended.classpath">
+            <jvmarg value="-DDBNAME=${dbname}"/>
+            <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
+            <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
+            <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
+            <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
+       </java>
+    </target>
+
+<!--   this should be deleted after load is set-->
+   <target name="pullTaar16" depends="compile">
+ <!-- Run script from a file -->
+        <antcall target="copyZfinPropertiesWithEnv">
+            <param name="from-zfin-properties-file" value="zfin-properties-pullTaar16-init.xml"/>
+            <param name="to-zfin-properties-file" value="zfin-properties-pullTaar16.xml"/>
+        </antcall>
+        <java classname="org.zfin.datatransfer.PullTaar16"
+              fork="yes"
+              classpathref="extended.classpath">
+            <jvmarg value="-DDBNAME=${dbname}"/>
+            <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
+            <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
+            <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
+            <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
+       </java>
+   </target>
 
 </project>
 

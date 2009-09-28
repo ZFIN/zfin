@@ -59,6 +59,7 @@
     <property name="post-web-inf" value="${post-home.target}/WEB-INF" />
     <property name="archive-web-inf" value="${archive-home.target}/WEB-INF" />
 
+    <property name="tomcat-temp" value="${env.CATALINA_BASE}/temp"/>
     <property name="tomcat-work" value="${env.CATALINA_BASE}/work/Catalina/${env.DOMAIN_NAME}/_"/>
     <property name="pre.jsp-compile" value="${pre-web-inf}/classes/jsp-compile"/>
     <property name="jsp-compile" value="${web-inf.target}/classes/jsp-compile"/>

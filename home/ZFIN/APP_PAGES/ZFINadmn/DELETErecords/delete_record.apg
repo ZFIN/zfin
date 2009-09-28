@@ -113,7 +113,25 @@ Message: $MI_ERRORMSG
 
         <?MICOMMENT> ------- Gene/Marker (restrictions only to deletion)------- <?/MICOMMENT>
 
+
+
+
+
 	if (actionType == "delete") {
+          <?MICOMMENT> don't delete transcripts with dblinks <?/MICOMMENT>
+          <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,5,7),TSCRIPT)">
+            <?MISQL SQL="
+              select 'x' from single 
+                where exists (select 'x'
+                              from db_link
+                              where dblink_linked_recid = '$OID');">
+                alert("Transcripts with dblinks can't be deleted");
+                return false;
+            <?/MISQL>
+
+          <?/MIBLOCK>
+
+
           <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,5,4),GENE)">
 
 	    <?MICOMMENT> no deletion if exists expression data<?/MICOMMENT>
@@ -137,6 +155,21 @@ Message: $MI_ERRORMSG
 		alert("Sorry, the gene is related to some feature and cannot be deleted.");
 		return false;
            <?/MIVAR>
+
+        <?MICOMMENT> no deletion if a gene has transcripts <?/MICOMMENT>
+        <?MISQL SQL="select 'x' from single
+                     where exists ( select 'x'
+                                    from marker_relationship
+                                    where mrel_mrkr_1_zdb_id = '$OID'
+                                      and mrel_type = 'gene produces transcript');   ">
+          <?MIVAR>
+        alert("Genes with transcripts can't be deleted or merged");
+        return false;
+
+          <?/MIVAR>
+        <?/MISQL>
+
+
           <?/MIBLOCK>
 
           <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,7,8),CONSTRCT)">

@@ -17,9 +17,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/monitor/vol2.4
 
-GENERICS = vol2.4.html
-
-STATICS = vol2.4.pdf
+STATICS = vol2.4.pdf vol2.4.html
 
 
 # ---------------  Production Rules  ------------------------------------

@@ -1093,8 +1093,9 @@ select *
 
 insert into db_link (dblink_zdb_id, dblink_linked_recid, dblink_acc_num, dblink_fdbcont_zdb_id)
 	select i_dblink_zdb_id, i_dblink_data_zdb_id, i_dblink_acc_num, fdbcont_zdb_id
-	  from input_db_link, foreign_db_contains
-         where i_dblink_fdb_name = fdbcont_fdb_db_name;
+	  from input_db_link, foreign_db_contains, foreign_db
+         where i_dblink_fdb_name = fdb_db_name
+	 and fdbcont_fdb_db_id = fdb_db_pk_id;
 
 insert into tmp_ao_updates(t_rec_id, t_field_name, t_new_value, t_when, t_comments)
       select i_dblink_data_zdb_id, "dblink "||i_dblink_zdb_id, i_dblink_acc_num, 

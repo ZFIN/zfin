@@ -22,7 +22,7 @@
 
     <category name="org.zfin.properties" additivity="true">
 <!--        <priority value="DEBUG"/>-->
-        <priority value="INFO"/>
+<!--        <priority value="INFO"/> -->
     </category>
 
 
@@ -32,15 +32,15 @@
     </category>
 
     <category name="org.zfin" additivity="false">
-<!--        <priority value="DEBUG"/>-->
-        <priority value="INFO"/>
+<!--		<priority value="DEBUG"/> -->
+		<priority value="INFO"/>
         <appender-ref ref="stdout"/>
     </category>
 
     <!-- Log the actual Hibernate Query Language (HQL) expression -->
     <category name="org.hibernate.impl.SessionImpl">
 <!--        <priority value="DEBUG"/>-->
-        <priority value="INFO"/>
+		<priority value="INFO"/> 
     </category>
 
     <!-- Log the substitution parameters in the HQL expression -->
@@ -50,19 +50,30 @@
 
     <!-- Log the real SQL -->
     <category name="org.hibernate.SQL">
+<<<<<<< .working
 <!--        <priority value="DEBUG"/>-->
         <priority value="INFO"/>
+=======
+		<priority value="INFO"/>
+<!--        <priority value="DEBUG"/> -->
+>>>>>>> .merge-right.r18093
     </category>
 
     <category name="org.hibernate.type">
+<<<<<<< .working
 <!--        <priority value="DEBUG"/>-->
         <priority value="INFO"/>
+=======
+<!--        <priority value="DEBUG"/> -->
+		<priority value="info"/>
+>>>>>>> .merge-right.r18093
     </category>
 
     <!-- Log the parameter substitutions in the SQL statement. Unfortunately logging org.hibernate gives a lot of other junk as well -->
     <category name="org.hibernate">
+		<priority value="ERROR"/> 
 <!--        <priority value="DEBUG"/>-->
-        <priority value="INFO"/>
+<!--        <priority value="INFO"/> -->
     </category>
     
     <root>

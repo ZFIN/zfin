@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+    <!--jobs to run-->
+    <bean id="regenerateWebHostDatabasesDaily" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="jobClass" value="org.zfin.framework.scheduling.blast.RegenerateWebHostCuratedDatabasesJob"/>
+            </bean>
+        </property>
+        <!--a nice lookup-->
+        <!--fire at 2 am every day-->
+        <property name="cronExpression" value="0 0 2 * * ?"/>
+    </bean>
+
+
+    <bean id="validateRemoteDatabasesDaily" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="jobClass" value="org.zfin.framework.scheduling.blast.ValidateRemoteDatabases"/>
+            </bean>
+        </property>
+        <!--a nice lookup-->
+        <!--fire at 3 am every day-->
+        <property name="cronExpression" value="0 0 3 * * ?"/>
+    </bean>
+
+    <bean id="pushAntibodiesToWikiWeekly" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="jobClass" value="org.zfin.wiki.SynchronizeZFINAntibodiesWithWikiJob"/>
+            </bean>
+        </property>
+        <!--a nice lookup-->
+        <!--fire at 3.12 am every Sunday-->
+        <property name="cronExpression" value="0 12 3 ? * SUN"/>
+    </bean>
+
+
+    <!-- register them in the scheduler -->
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <!-- name used to publish applicationContext to Quartz Job instances, so they can call business services -->
+        <property name="triggers">
+            <list>
+                <ref bean="regenerateWebHostDatabasesDaily"/>
+                <ref bean="validateRemoteDatabasesDaily"/>
+                <ref bean="pushAntibodiesToWikiWeekly"/>
+            </list>
+        </property>
+        <property name="quartzProperties">
+            <props>
+                <!-- ThreadPool -->
+                <prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
+                <prop key="org.quartz.threadPool.threadCount">3</prop>
+                <prop key="org.quartz.threadPool.threadPriority">5</prop>
+                <prop key="org.quartz.jobStore.class">org.quartz.simpl.RAMJobStore</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>

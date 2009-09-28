@@ -23,7 +23,7 @@ public class DOIHTTPTester {
 
     public List<Publication> testDOIList(List<Publication> publications){
 
-//        System.err.println("dois to test: " + publications.size()) ; 
+//        System.err.println("dois to test: " + sources.size()) ;
         fullLogger.info("dois to test: " + publications.size()) ; 
         Iterator<Publication> iter = publications.iterator() ; 
         Publication pub ; 

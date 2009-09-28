@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+    <!--  URL mappings -->
+    <bean id="blastUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/blast/blast-definitions">blastDefinitions</prop>
+                <prop key="/blast/single-blast-definition">singleBlastDefinition</prop>
+                <prop key="/blast/blast-select">blastSelect</prop>
+                <prop key="/blast/display-sequence">displayBlastSequence</prop>
+                <prop key="/blast/download-sequence">downloadBlastSequence</prop>
+                <prop key="/blast/external-blast">externalBlast</prop>
+                <prop key="/blast/blast">blastXML</prop>
+                <prop key="/blast/blast-view">blastView</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <bean name="blastDefinitions" class="org.zfin.sequence.blast.presentation.BlastDatabaseInfoController">
+        <property name="commandClass" value="org.zfin.sequence.blast.presentation.BlastInfoBean"/>
+        <property name="commandName" value="formBean"/>
+    </bean>
+    <bean name="singleBlastDefinition" class="org.zfin.sequence.blast.presentation.BlastDatabaseInfoController">
+        <property name="commandClass" value="org.zfin.sequence.blast.presentation.BlastInfoBean"/>
+        <property name="commandName" value="formBean"/>
+    </bean>
+
+    <bean name="blastSelect" class="org.zfin.sequence.blast.presentation.BlastDatabaseSelectController"/>
+    <bean name="displayBlastSequence" class="org.zfin.sequence.blast.presentation.DisplayBlastSequenceController" />
+    <bean name="downloadBlastSequence" class="org.zfin.sequence.blast.presentation.DownloadBlastSequenceController" />
+    <bean name="externalBlast" class="org.zfin.sequence.blast.presentation.ExternalBlastController" />
+
+    <bean name="blastXML" class="org.zfin.sequence.blast.presentation.XMLBlastController">
+        <property name="formView" value="blast-setup.page"/>
+        <property name="successView" value="blast-result.page"/>
+        <property name="validateOnBinding" value="true"/>
+        <property name="commandClass" value="org.zfin.sequence.blast.presentation.XMLBlastBean"/>
+        <property name="commandName" value="formBean"/>
+        <!--needs to be true, otherwise will not take parameters-->
+        <property name="bindOnNewForm" value="true"/>
+        <property name="sessionForm" value="true"/>
+        <property name="validator">
+            <bean class="org.zfin.sequence.blast.presentation.XMLBlastValidator">
+                <property name="querySequenceLimit" value="50000"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- ================================== Multipart resolver ==================================-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="1048576" />
+        <property name="defaultEncoding" value="utf8" />
+    </bean>
+
+    <bean name="blastView" class="org.zfin.sequence.blast.presentation.XMLBlastViewController">
+        <property name="commandClass" value="org.zfin.sequence.blast.presentation.XMLBlastBean"/>
+        <property name="commandName" value="formBean"/>
+    </bean>
+
+
+</beans>

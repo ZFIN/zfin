@@ -1,14 +1,37 @@
-package org.zfin.marker;
+ package org.zfin.marker;
 
 import java.util.Set;
 import java.util.HashSet;
 
-public class MarkerType {
+public class MarkerType implements Comparable {
 
     private String name;
     private Marker.Type type;
     private Set<String> typeGroupStrings;
     private Set<Marker.TypeGroup> typeGroups;
+    private String displayName;
+
+    public String toString(){
+        String returnString = "" ;
+        returnString += "name["+name+"]" ;
+        if(type!=null) returnString += "type["+type.name()+"]" ;
+        if(typeGroupStrings!=null) {
+            returnString += "typeGroupStrings[" ;
+            for(String typeGroupString : typeGroupStrings){
+                returnString += typeGroupString + " " ;
+            }
+            returnString += "]" ;
+        }
+        if(typeGroups!=null){
+            returnString += "typeGroups[" ;
+            for(Marker.TypeGroup markerTypeGroup : typeGroups){
+                returnString += markerTypeGroup.name() + " " ;
+            }
+            returnString += "]" ;
+        }
+
+        return returnString ;
+    }
 
     public String getName() {
         return name;
@@ -19,6 +42,13 @@ public class MarkerType {
         type = Marker.Type.getType(name);
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
     public Marker.Type getType() {
         return type;
@@ -48,5 +78,13 @@ public class MarkerType {
 
     public void setTypeGroups(Set<Marker.TypeGroup> typeGroups) {
         this.typeGroups = typeGroups;
+    }
+
+    //todo: this comparison should be something a little more interesting than type name
+    public int compareTo(Object o) {
+        MarkerType mt = (MarkerType)o;
+        if (mt == null)
+            return +1;
+        else return displayName.compareTo(mt.getDisplayName());
     }
 }

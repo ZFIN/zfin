@@ -26,7 +26,7 @@ import java.util.ArrayList;
  */
 public class RenoService {
 
-    private static Logger LOG = Logger.getLogger(RenoService.class) ;
+    private static final Logger LOG = Logger.getLogger(RenoService.class) ;
 
     public static List<Marker> checkForExistingRelationships(CandidateBean candidateBean, RunCandidate rc) {
         List<Marker> associatedMarkers = rc.getAllSingleAssociatedGenesFromQueries();

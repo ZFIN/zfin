@@ -20,9 +20,9 @@ TOP = ../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/misc_html
-GENERICS  = error.html intro1.html intro_mapper.html tips.html \
+STATICS   = blank.html saycomposing.html saysearching.html \
+	    error.html intro1.html intro_mapper.html tips.html \
             wrong_browser.html 
-STATICS   = blank.html saycomposing.html saysearching.html
 
 
 

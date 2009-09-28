@@ -81,15 +81,6 @@ public class OrthologyTest {
             evidences.add(evidence);
             ortho.setEvidence(evidences);
 
-            SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
-            ForeignDB externalDB = sequenceRepository.getForeignDBByName("MGI");
-            ReferenceDatabase ref = 
-                    sequenceRepository.getReferenceDatabaseByAlternateKey(externalDB, ReferenceDatabase.Type.ORTHOLOGUE,
-                                                                          ReferenceDatabase.SuperType.ORTHOLOGUE,
-                                                                          human);
-
-
-
             Entrez entrez = new Entrez() ;
             entrez.setEntrezAccNum("2253");
             entrez.setAbbreviation("FGF8");

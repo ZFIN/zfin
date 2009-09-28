@@ -22,8 +22,9 @@ public class ExpressedGeneDisplay {
     }
 
     /**
-     * calculates the number of figures found in all publications that are annotated
+     * Calculates the number of figures found in all publications that are annotated
      * to the gene.
+ * @return Number of figures as a string.
      */
     public String getNumberOfFigures() {
         int numberOfPublication = markerStat.getNumberOfFigures();
@@ -37,6 +38,7 @@ public class ExpressedGeneDisplay {
 
     /**
      * Calculates the number of images found in all images from all publications for the gene.
+ * @return Number of images as a String
      */
     public String getNumberOfImages() {
         Set<Figure> figures = markerStat.getGene().getFigures();

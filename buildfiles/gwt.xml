@@ -5,6 +5,7 @@
         <antcall target="dirty-lookup-gwt"/>
         <antcall target="dirty-lookuptable-gwt"/>
         <antcall target="dirty-sessionsave-gwt"/>
+        <antcall target="dirty-marker-gwt"/>
         <antcall target="dirty-curation-gwt"/>
     </target>
 
@@ -12,6 +13,7 @@
         <antcall target="lookup-gwt"/>
         <antcall target="lookuptable-gwt"/>
         <antcall target="sessionsave-gwt"/>
+        <antcall target="marker-gwt"/>
         <antcall target="curation-gwt"/>
     </target>
 
@@ -70,6 +72,46 @@
             <param name="gwt.module" value="org.zfin.people.presentation.SessionSave"/>
         </antcall>
     </target>
+
+    <target name="marker-gwt" description="Compiles transcript edit gwt">
+        <antcall target="gwt-compile">
+            <param name="gwt.module.target" value="${gwt.pre-target}"/>
+            <param name="gwt.module" value="org.zfin.marker.presentation.Marker"/>
+        </antcall>
+    </target>
+
+    <target name="dirty-marker-gwt" description="Compiles transcript edit gwt">
+        <antcall target="gwt-compile">
+            <param name="gwt.module.target" value="${gwt.target}"/>
+            <param name="gwt.module" value="org.zfin.marker.presentation.Marker"/>
+        </antcall>
+    </target>
+
+    <target name="run-marker-gwt" description="Compiles transcript edit gwt">
+        <antcall target="gwt-run">
+            <param name="gwt.module.target" value="${gwt.target}"/>
+            <param name="gwt.module" value="org.zfin.marker.presentation.Marker"/>
+        </antcall>
+    </target>
+
+    <target name="gwt-run" description="Compile gwt classes to javascript" depends="compile">
+        <java fork="true" className="com.google.gwt.dev.GWTShell" classpathref="extended.classpath">
+            <classpath>
+                <dirset dir="${source.dir}" defaultexcludes="true">
+                    <include name="**"/>
+                    <exclude name="**/.svn"/>
+                </dirset>
+            </classpath>
+            <arg value="-out"/>
+            <arg value="${gwt.module.target}"/>
+            <arg value="-style"/>
+            <arg value="PRETTY"/>
+            <arg value="${gwt.module}"/>
+            <jvmarg value="-Xms256m"  />
+            <jvmarg value="-Xmx512m"  />
+        </java>
+    </target>
+
 
     <target name="gwt-compile" description="Compile gwt classes to javascript" depends="compile">
         <java fork="true" className="com.google.gwt.dev.GWTCompiler" classpathref="extended.classpath">

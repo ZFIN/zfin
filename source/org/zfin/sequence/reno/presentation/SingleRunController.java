@@ -32,8 +32,8 @@ public class SingleRunController extends SimpleFormController {
     private String candidateType; // set in spring configuration bean, either "inqueue" or "pending"
     private final Logger LOG = Logger.getLogger(SingleRunController.class);
 
-    public final static String INQUEUE_CANDIDATES = "inqueue";
-    public final static String PENDING_CANDIDATES = "pending";
+    private final static String INQUEUE_CANDIDATES = "inqueue";
+    private final static String PENDING_CANDIDATES = "pending";
 
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) {
 
@@ -76,11 +76,11 @@ public class SingleRunController extends SimpleFormController {
             handleNomenclatureAttributionUpdate(form,run) ;
 
             if (run.isNomenclature()) {
-                handleOrthologyAttributionUpdate(form, run);
+                handleOrthologyAttributionUpdate(form,(NomenclatureRun) run);
             }
             else
             if (run.isRedundancy()) {
-                handleRelationUpdate(form, run);
+                handleRelationUpdate(form, (RedundancyRun) run);
             }
 
 
@@ -102,6 +102,10 @@ public class SingleRunController extends SimpleFormController {
     /**
      * Use the parameter in the http request to sort the run candidates and
      * save the ordered list to the form bean.
+     *
+     * @param request HttpRequest
+     * @param form   RunBean
+     * @param run    Actual Run 
      */
     private void setFormData(HttpServletRequest request, RunBean form, Run run) {
 
@@ -157,12 +161,7 @@ public class SingleRunController extends SimpleFormController {
         }
     }
 
-    private void handleOrthologyAttributionUpdate(RunBean form, Run run) {
-        if(!run.isNomenclature()){
-            logger.warn("not a nomenclature run: "+run.getZdbID());
-            return ;
-        }
-        NomenclatureRun nomenRun = (NomenclatureRun) run ;
+    private void handleOrthologyAttributionUpdate(RunBean form, NomenclatureRun nomenRun) {
         if (nomenRun.getOrthologyPublication() == null
                 ||
                 false==form.getOrthologyPublicationZdbID().equals(nomenRun.getOrthologyPublication().getZdbID())
@@ -183,12 +182,13 @@ public class SingleRunController extends SimpleFormController {
         }
     }
 
-    /**  
+    /**
      *
+     * @param form  RunBean that contains form data.
+     * @param redundancyRun Run to manipuluate
      */
-    private void handleRelationUpdate(RunBean form, Run run) {
-        RedundancyRun redundancyRun = (RedundancyRun) run ;
-        LOG.info("form: " + form) ; 
+    private void handleRelationUpdate(RunBean form, RedundancyRun redundancyRun) {
+        LOG.info("form: " + form) ;
         LOG.info("form.getRelationPublicationZdbID: " + form.getRelationPublicationZdbID()) ; 
         if( 
             redundancyRun.getRelationPublication()==null

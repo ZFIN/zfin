@@ -10,6 +10,7 @@ import org.zfin.marker.Marker;
 import org.zfin.infrastructure.Updates;
 import org.hibernate.Session;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.apache.commons.lang.StringUtils;
 
@@ -33,7 +34,13 @@ public class HibernateProfileRepository implements ProfileRepository {
         MarkerSupplier supplier = (MarkerSupplier) session.get(MarkerSupplier.class, zdbID);
         return supplier;
     }
-
+    public int removeSource(String supplierZdbID, String dataZdbID) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("delete from MarkerSupplier sup where sup.org =:supplierZdbID and sup.dataZdbID=:dataZdbID");
+        query.setParameter("supplierZdbID", supplierZdbID);
+         query.setParameter("dataZdbID", dataZdbID);
+        return query.executeUpdate();
+    }
 
     public Organization getOrganizationByID(String zdbID) {
         Session session = currentSession();

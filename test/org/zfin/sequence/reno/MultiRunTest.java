@@ -11,10 +11,7 @@ import org.zfin.TestConfiguration;
 import org.zfin.orthology.Species;
 import org.zfin.sequence.reno.presentation.CandidateBean;
 import org.zfin.sequence.reno.presentation.NomenclatureCandidateController;
-import org.zfin.sequence.Accession;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Query;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -34,16 +31,13 @@ import java.util.List;
 
 public class MultiRunTest {
 
-    private Logger logger = Logger.getLogger(MultiRunTest.class) ;
+    private final Logger logger = Logger.getLogger(MultiRunTest.class) ;
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
 
     // testdata
     private NomenclatureRun nomenRun1 ;
     private NomenclatureRun nomenRun2 ;
-    private Candidate candidateNomen ;
-    private RunCandidate runCandidateNomen1;
-    private RunCandidate runCandidateNomen2 ;
     private final String BASIC_NOTE = "basic note" ;
     private CandidateBean candidateBean ;
     private String cdnaName = "mgc:test";
@@ -72,9 +66,9 @@ public class MultiRunTest {
         Session session = HibernateUtil.currentSession();
 
         ReferenceDatabase refDb = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                ForeignDB.AvailableName.GENBANK.toString(),
-                ReferenceDatabase.Type.RNA,
-                ReferenceDatabase.SuperType.SEQUENCE,
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.RNA,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 
         Marker gene = new Marker();
@@ -119,7 +113,7 @@ public class MultiRunTest {
         session.save(nomenRun2);
 
         // create Candidate
-        candidateNomen = new Candidate();
+        Candidate candidateNomen=new Candidate();
 //        candidateNomen.setRunCount(1);
         candidateNomen.setLastFinishedDate(new Date());
         candidateNomen.setSuggestedName("renoRename");
@@ -127,7 +121,7 @@ public class MultiRunTest {
         session.save(candidateNomen);
 
         // create RunCandidateNomen
-        runCandidateNomen1 = new RunCandidate();
+        RunCandidate runCandidateNomen1=new RunCandidate();
         runCandidateNomen1.setRun(nomenRun1);
         runCandidateNomen1.setDone(false);
         runCandidateNomen1.setLockPerson(personRepository.getPerson("ZDB-PERS-030520-1"));
@@ -144,6 +138,7 @@ public class MultiRunTest {
 
         MarkerDBLink dblink1 = new MarkerDBLink() ;
         dblink1.setAccessionNumber("AC:TEST1");
+        dblink1.setAccessionNumberDisplay("AC:TEST1");
         dblink1.setReferenceDatabase(refDb);
         dblink1.setMarker( gene) ;
         session.save(dblink1);
@@ -157,7 +152,7 @@ public class MultiRunTest {
         session.save(query1);
 
         // create RunCandidateNomen
-        runCandidateNomen2 = new RunCandidate();
+        RunCandidate runCandidateNomen2=new RunCandidate();
         runCandidateNomen2.setRun(nomenRun2);
         runCandidateNomen2.setDone(false);
         runCandidateNomen2.setLockPerson(personRepository.getPerson("ZDB-PERS-030520-2"));
@@ -174,6 +169,7 @@ public class MultiRunTest {
 
         MarkerDBLink dblink2 = new MarkerDBLink() ;
         dblink2.setAccessionNumber("AC:TEST2");
+        dblink2.setAccessionNumberDisplay("AC:TEST2");        
         dblink2.setReferenceDatabase(refDb);
         dblink2.setMarker( gene) ;
         session.save(dblink2);
@@ -275,7 +271,7 @@ public class MultiRunTest {
             nomenclatureCandidateController.handleDone(candidateBean);
             session.flush() ;
 
-            assertNotSame("run candidate is NOT shared across both runs",runCandidate1.getZdbID(),runCandidate2.getZdbID()); ;
+            assertNotSame("run candidate is NOT shared across both runs",runCandidate1.getZdbID(),runCandidate2.getZdbID());
             Candidate candidate1 = runCandidate1.getCandidate() ;
             Candidate candidate2 = runCandidate2.getCandidate() ;
             assertEquals("candidate is shared across both runs",candidate1.getZdbID(),candidate2.getZdbID()) ;

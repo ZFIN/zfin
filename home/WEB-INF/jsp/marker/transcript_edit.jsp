@@ -1,0 +1,112 @@
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+
+<%--<authz:authorize ifAnyGranted="root">--%>
+
+<script type="text/javascript">
+    var MarkerProperties= {
+        zdbID : "${formBean.marker.zdbID}",
+        curatorID : "${formBean.user.zdbID}"
+    } ;
+
+    var LookupProperties = { NumLookups: "1" } ;
+    var LookupProperties0 = {
+        //        divName: "featureTerm",
+        //        inputName: "searchTerm",
+        showError: true,
+        buttonText: "Add",
+        type: "MARKER_LOOKUP",
+        showError: true,
+        wildcard: false
+    };
+
+</script>
+
+<%--Adds the TranscriptEditController.--%>
+<link rel="stylesheet" type="text/css" href="/gwt/org.zfin.marker.presentation.Marker/Marker.css"/>
+<script language="javascript" src="/gwt/org.zfin.marker.presentation.Marker/org.zfin.marker.presentation.Marker.nocache.js"></script>
+
+<input type="hidden" name="hiddenName" id="hiddenName"/>
+
+
+
+<table cellpadding="10">
+    <tr><td align="center" colspan="2">
+        <div id="viewTranscript"></div>
+    </td></tr>
+    <tr>
+        <td>
+            <div id="markerName"></div>
+            <div id="directAttributionName"></div>
+            <br>
+            <div class="summaryTitle">Previous Name(s):</div>
+            <div id="aliasName"></div>
+        </td>
+        <td valign="top">
+            <div id="publicationName"></div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="summaryTitle">Curator Notes:</div>
+            <div id="curatorNoteName"></div>
+        </td>
+        <td>
+            <div class="summaryTitle">Public Notes:</div>
+            <div id="publicNoteName"></div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="summaryTitle">Produced by Genes:</div>
+            <div id="geneName"></div>
+        </td>
+        <td colspan="1" valign="top">
+            <div class="summaryTitle">Contained in Clone</div>
+            <div id="cloneRelatedName"></div>
+            <a target="_blank" href="/action/marker/clone-add" class="external">Add New Clone</a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div class="summaryTitle"
+                 id="targetedGeneTitle">Targeted Genes:</div>
+            <div id="targetedGeneName"></div>          
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+            <a name="proteinLookup"/>
+            <div class="summaryTitle"
+                 id="proteinTitle">Protein Products:</div>
+            <div id="proteinName"></div>
+            <div id="newProteinName"></div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <hr>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div class="summaryTitle">Supporting Sequences:</div>
+            <div id="dbLinksName"></div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <a name="sequence"></a>
+            <div class="summaryTitle">RNA Sequences:</div>
+            <div id="rnaName"></div>
+            <!--<br>-->
+            <!--<div id="rnaUpdateName"></div>-->
+        </td>
+     </tr>
+</table>
+
+<%--</authz:authorize>--%>
+
+
+

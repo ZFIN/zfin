@@ -202,19 +202,21 @@ create temp table meow_exp4 (
 ) with no log;
 
 insert into meow_exp4 
-  select dblink_linked_recid, fdbcont_fdb_DB_name, dblink_acc_num 
-    from db_link, foreign_db_contains
+  select dblink_linked_recid, fdb_db_name, dblink_acc_num 
+    from db_link, foreign_db_contains, foreign_db
    where dblink_linked_recid in 
        ( select zdb_id 
            from meow_exp1 )
+     and fdbcont_fdb_db_id = fdb_db_pk_id
      and dblink_fdbcont_zdb_id = fdbcont_zdb_id;
 
 insert into meow_exp4 
-  select  mrel_mrkr_1_zdb_id, fdbcont_fdb_DB_name, dblink_acc_num 
-    from db_link , marker_relationship, foreign_db_contains
+  select  mrel_mrkr_1_zdb_id, fdb_db_name, dblink_acc_num 
+    from db_link , marker_relationship, foreign_db_contains, foreign_db
    where   mrel_mrkr_2_zdb_id = dblink_linked_recid
         and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-        and fdbcont_fdb_db_name = 'GenBank'
+	and fdbcont_fdb_db_id = fdb_db_pk_id
+        and fdb_db_name = 'GenBank'
 	and mrel_mrkr_1_zdb_id in 
        ( select zdb_id 
            from meow_exp1 );
@@ -232,12 +234,13 @@ create temp table meow_exp5 (
 ) with no log;
 
 insert into meow_exp5
-  select dblink_linked_recid, fdbcont_fdb_DB_name, dblink_acc_num
-    from db_link, foreign_db_contains
+  select dblink_linked_recid, fdb_db_name, dblink_acc_num
+    from db_link, foreign_db_contains, foreign_db
    where dblink_linked_recid in 
        ( select ortho_id 
          from meow_exp3 )
-     and dblink_fdbcont_zdb_id = fdbcont_zdb_id;
+     and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+     and fdbcont_fdb_db_id = fdb_db_pk_id ;
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_ortholinks.txt' 
   DELIMITER "	" 
@@ -250,22 +253,24 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_ortholinks.txt'
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC.txt'
   DELIMITER "	"
   select distinct mrkr_zdb_id, mrkr_abbrev, dblink_acc_num
-    from marker, OUTER (db_link, foreign_db_contains)
+    from marker, OUTER (db_link, foreign_db_contains, foreign_db)
     where (mrkr_type = 'EST')
       and dblink_linked_recid = mrkr_zdb_id
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-      and fdbcont_fdb_db_name = 'GenBank'
+      and fdb_db_name = 'GenBank'
+      and fdbcont_fdb_db_id = fdb_db_pk_id
     order by mrkr_zdB_id; 
 
 -- generate a file of anonymous markers  and assoc GenBank accession numbers
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC_sts.txt'
   DELIMITER "	"
   select distinct mrkr_zdb_id, mrkr_abbrev, dblink_acc_num
-    from marker, db_link, foreign_db_contains
+    from marker, db_link, foreign_db_contains, foreign_db
     where mrkr_type in ('STS', 'SSLP','RAPD')
       and dblink_linked_recid = mrkr_zdb_id
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-      and fdbcont_fdb_db_name = 'GenBank'
+      and fdb_db_name = 'GenBank'
+      and fdbcont_fdb_db_id= fdb_db_pk_id
     order by mrkr_zdb_id; 
 
 -- generate a file with zdb history data

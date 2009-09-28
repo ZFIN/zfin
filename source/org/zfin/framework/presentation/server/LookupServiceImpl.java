@@ -106,18 +106,40 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
         for (AnatomyItem anatomyItem : anatomyItems) {
             String name = anatomyItem.getName();
             if (name.equals(term)) {
-                return new TermStatus(TermStatus.TERM_STATUS_FOUND_EXACT, term, anatomyItem.getZdbID());
+                return new TermStatus(TermStatus.Status.FOUND_EXACT, term, anatomyItem.getZdbID());
             } else if (foundInexactMatch < 1 || name.contains(term)) {
                 ++foundInexactMatch;
             }
         }
         if (foundInexactMatch > 1) {
-            return new TermStatus(TermStatus.TERM_STATUS_FOUND_MANY, term);
+            return new TermStatus(TermStatus.Status.FOUND_MANY, term);
         }
-        return new TermStatus(TermStatus.TERM_STATUS_FOUND_NONE, term);
+        return new TermStatus(TermStatus.Status.FOUND_NONE, term);
     }
 
-    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req, boolean wildCard) {
+    public TermStatus validateMarkerTerm(String term) {
+
+        SessionCreator.instantiateDBForHostedMode() ;
+
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(term) ;
+        if(marker!=null){
+            return new TermStatus(TermStatus.Status.FOUND_EXACT,term,marker.getZdbID());
+        }
+
+        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(term) ;
+        if(markers.size()==1){
+            return new TermStatus(TermStatus.Status.FOUND_EXACT,term,markers.get(0).getZdbID());
+        }
+        else
+        if(markers.size()==0){
+            return new TermStatus(TermStatus.Status.FOUND_NONE,term);
+        }
+        else{
+            return new TermStatus(TermStatus.Status.FOUND_MANY,term);
+        }
+    }
+
+    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req,boolean wildCard) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
 

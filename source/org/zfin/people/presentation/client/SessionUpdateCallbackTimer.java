@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class SessionUpdateCallbackTimer extends Timer {
 
-    private List sessionList = new ArrayList() ;
+    private ArrayList<CuratorSessionDTO> sessionList = new ArrayList<CuratorSessionDTO>() ;
 
     public void scheduleCallback(CuratorSessionDTO sessionUpdate,int time){
         cancel();

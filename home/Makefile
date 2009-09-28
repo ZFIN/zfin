@@ -27,9 +27,9 @@ MIRROR_SUBDIRS = zf_info images
 POSTLOADDB_SUBDIRS = ZFIN
 
 GENERICS = robots.txt redirect.html \
-	warranty.html zfin_is_down.html index.asis sitemap.xml
+	 index.asis sitemap.xml
 
-STATICS  = favicon.ico 
+STATICS  = favicon.ico warranty.html zfin_is_down.html
 
 # This also creates a symbolic link to to an FTP directory to provide an 
 # http interface to the FTP directory.

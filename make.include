@@ -17,7 +17,7 @@
 
 ifneq (,$(findstring gmake,$(MAKE)))
  ifneq (,$(findstring gnumake,$(MAKE)))
-MakeVersionCheck:
+  MakeVersionCheck:
 	$(error Makefiles only compatible with GNU make.  Use gmake or gnumake.)
  endif
 endif

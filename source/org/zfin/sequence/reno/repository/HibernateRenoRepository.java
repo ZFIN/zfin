@@ -25,7 +25,7 @@ import java.util.List;
 
 public class HibernateRenoRepository implements RenoRepository {
 
-    private static Logger LOG = Logger.getLogger(HibernateRenoRepository.class);
+    private static final Logger LOG = Logger.getLogger(HibernateRenoRepository.class);
 
 
     public List<RedundancyRun> getRedundancyRuns() {
@@ -51,31 +51,28 @@ public class HibernateRenoRepository implements RenoRepository {
         return criteria.list();
     }
 
-    public Integer getQueueCandidateCount(Run oneRun) {
+    public int getQueueCandidateCount(Run oneRun) {
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery("select count(*) from RunCandidate rc " +
                 "where rc.run = :run and rc.done = 'f' and rc.lockPerson is null");
         query.setParameter("run", oneRun);
-        Integer count = (Integer) query.uniqueResult();
-        return count;
+        return ((Number) query.uniqueResult()).intValue() ;
     }
 
-    public Integer getPendingCandidateCount(Run oneRun) {
+    public int getPendingCandidateCount(Run oneRun) {
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery("select count(*) from RunCandidate rc " +
                 "where rc.run = :run and rc.done = 'f' and rc.lockPerson is not null");
         query.setParameter("run", oneRun);
-        Integer count = (Integer) query.uniqueResult();
-        return count;
+        return ((Number) query.uniqueResult()).intValue() ;
     }
 
-    public Integer getFinishedCandidateCount(Run oneRun) {
+    public int getFinishedCandidateCount(Run oneRun) {
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery("select count(*) from RunCandidate rc " +
                 "where rc.run = :run and rc.done = 't' and rc.lockPerson is null");
         query.setParameter("run", oneRun);
-        Integer count = (Integer) query.uniqueResult();
-        return count;
+        return ((Number) query.uniqueResult()).intValue() ;
     }
 
     /**
@@ -170,7 +167,7 @@ public class HibernateRenoRepository implements RenoRepository {
         query.setString("zdbID", runZdbId);
         query.setBoolean("done", false);
         query.setMaxResults(maxNumRecords);
-        List runs = query.list();
+        List<Object> runs = query.list();
         for (Object run : runs) {
             Object[] tuple = (Object[]) run;
             Hit bestHit1 = new Hit();
@@ -179,7 +176,7 @@ public class HibernateRenoRepository implements RenoRepository {
             list.add(getRunCandidateByID((String) tuple[0], bestHit1));
         }
 
-        if (runs == null || runs.size() < maxNumRecords) {
+        if (runs.size() < maxNumRecords) {
             String hql1 = "select runCandidate from RunCandidate runCandidate, Query query " +
                     "WHERE runCandidate.run.zdbID = :zdbID AND " +
                     "      query.runCandidate = runCandidate AND " +
@@ -258,7 +255,7 @@ public class HibernateRenoRepository implements RenoRepository {
             list.add(getRunCandidateByID((String) tuple[0], bestHit1));
         }
 
-        if (runs == null || runs.size() < maxNumRecords) {
+        if (runs.size() < maxNumRecords) {
             String hql1 = "select runCandidate from RunCandidate runCandidate, Query query " +
                     "WHERE runCandidate.run.zdbID = :zdbID AND " +
                     "      query.runCandidate = runCandidate AND " +
@@ -284,7 +281,6 @@ public class HibernateRenoRepository implements RenoRepository {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(RunCandidate.class);
         criteria.add(Restrictions.eq("zdbID", runCandidateID));
-        String hql = " from RunCandidate eager ";
         return (RunCandidate) criteria.uniqueResult();
     }
 
@@ -319,7 +315,7 @@ public class HibernateRenoRepository implements RenoRepository {
         Query query = session.createQuery(hql);
         query.setParameter("rcid", rcZdbId);
         query.setParameter("score", score);
-        return (Double) query.uniqueResult();
+        return ((Number) query.uniqueResult()).doubleValue();
     }
 
     public List<RunCandidate> getPendingCandidates(Run run) {

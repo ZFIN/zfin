@@ -17,7 +17,7 @@ import org.zfin.sequence.blast.Query;
 import java.util.*;
 
 public class RunCandidate {
-    private static Logger LOG = Logger.getLogger(RunCandidate.class);
+    private static final Logger LOG = Logger.getLogger(RunCandidate.class);
     private String zdbID;
     private Run run;
     private Candidate candidate;
@@ -83,7 +83,6 @@ public class RunCandidate {
     public Marker getIdentifiedMarker() {
         List<Marker> markers = getIdentifiedMarkers();
 
-        //todo: handle this exception properly
         if (markers.size() > 1) {
             throw new RuntimeException("more than one marker identified with run candidate");
         }
@@ -136,7 +135,7 @@ public class RunCandidate {
                 List<Marker> genesToAdd= new ArrayList<Marker>() ;
                 LOG.debug("number of genes for hit: " + genes.size());
                 for (Marker m : a.getMarkers()) {
-                    LOG.debug("I've got a Marker: " + m.getAbbreviation()+ " of type: "+ m.getType());
+                    LOG.debug("I've got a Marker: " + m.getAbbreviation()+ " of type: "+ m.getMarkerType().getType());
                     LOG.debug("genes.contains(m): " + genes.contains(m));
                     LOG.debug("is in type group genedom: " + m.isInTypeGroup(Marker.TypeGroup.GENEDOM));
                     // if the hit is a gene, then add directly
@@ -171,7 +170,7 @@ public class RunCandidate {
                 }
                 LOG.debug("genes to add "+genesToAdd.size() + " for hit accession " + a.getNumber());
                 if(genesToAdd.size()==1){
-                    LOG.debug("adding one gene: " + genesToAdd.get(0).getAbbreviation()); ;
+                    LOG.debug("adding one gene: " + genesToAdd.get(0).getAbbreviation());
                     Marker geneToAdd = genesToAdd.get(0) ;
                     if(!genes.contains(geneToAdd)){
                         genes.add(genesToAdd.get(0));
@@ -305,11 +304,7 @@ public class RunCandidate {
         if (user == null)
             return false;
 
-        if (lockPerson != null && user.equals(lockPerson)) {
-            return true;
-        } else {
-            return false;
-        }
+        return lockPerson != null && user.equals(lockPerson);
     }
 }
 

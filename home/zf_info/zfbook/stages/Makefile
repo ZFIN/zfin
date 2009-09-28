@@ -19,12 +19,13 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/zfbook/stages
 
 SUBDIRS = figs
 
-GENERICS = abst.html blast.html blast_stgs.html cleave.html cleave_stgs.html \
+STATICS = abst.html blast.html blast_stgs.html cleave.html cleave_stgs.html \
 	gast.html gast_stgs.html gloss.html hatch.html hatch_stgs.html \
 	index.html intro.html larval.html larv_stgs.html \
 	org.html phar.html phar_stgs.html proc.html \
-	refs.html seg.html seg_stgs.html stages.html temp.html zygote.html
+	refs.html seg.html seg_stgs.html temp.html zygote.html
 
+GENERICS = stages.html
 
 # ---------------  Production Rules  ------------------------------------
 

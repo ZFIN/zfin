@@ -13,7 +13,7 @@ The Novel Transcript Fasta record(s) for $ottdarg are:<P><P><pre>
 _END_
 ;
 
-system "/private/apps/wublast/xdget -n /research/zblastdb/db/Current/vega_transcript $ottdarg";
+system "/private/apps/wublast/xdget -n <!--|INTERNAL_BLAST_PATH|-->/vega_transcript $ottdarg";
 print  "</pre>\n";
 print "<script language='JavaScript1.2' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";
 

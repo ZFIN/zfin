@@ -3,10 +3,7 @@
  */
 package org.zfin.sequence.blast ;
 
-import org.zfin.sequence.Accession ;
-import org.zfin.marker.Marker;
-import java.util.List ;
-import java.util.ArrayList ;
+import org.zfin.sequence.Accession;
 
 public class Hit {
     private String zdbID ;
@@ -23,12 +20,8 @@ public class Hit {
 //    private String queryZdbId;
     private Query query;
 
-    public static double noHitExpectValue = 1000;
-    public static int noHitScore = 0;
-
-    public String getSpecies() {
-        return null ;
-    }
+    public static final double noHitExpectValue = 1000;
+    public static final int noHitScore = 0;
 
 
     /**
@@ -200,7 +193,7 @@ public class Hit {
     }
 
     /**
-     * Get formattedAlignment.  TODO: Replace with a better jstl call using function.
+     * Get formattedAlignment.  
      *
      * @return formattedAlignment as String.
      */

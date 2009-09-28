@@ -8,6 +8,7 @@ import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.Accession;
+import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.repository.RepositoryFactory;
 import static org.zfin.framework.HibernateUtil.getSessionFactory;
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -35,9 +36,9 @@ import java.util.HashSet;
  */
 public class NomenclatureCandidateControllerTest {
 
-    private RenoTestData renoTestData = new RenoTestData() ;
+    private final RenoTestData renoTestData = new RenoTestData() ;
 
-    private static Logger logger = Logger.getLogger(NomenclatureCandidateControllerTest.class);
+    private static final Logger logger = Logger.getLogger(NomenclatureCandidateControllerTest.class);
     private static RenoRepository renoRepository = RepositoryFactory.getRenoRepository();
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
@@ -65,12 +66,6 @@ public class NomenclatureCandidateControllerTest {
         HibernateUtil.closeSession();
         //TestConfiguration.unsetAuthenticatedUser();
     }
-
-    @Test
-    public void stub(){
-
-    }
-
 
     @Ignore
     public void testGeneRename() {
@@ -145,35 +140,22 @@ public class NomenclatureCandidateControllerTest {
 
         //have to get the human accession number that the curator would have chosen
         //from the pull down menu.
-        //Todo: make this a repository method in the renoRepository?
 
-        ForeignDB foreignDBHuman = sequenceRepository.getForeignDBByName("UniProt");
-        ReferenceDatabase refDBHuman = sequenceRepository.getReferenceDatabaseByAlternateKey(
-                foreignDBHuman,
-                ReferenceDatabase.Type.POLYPEPTIDE,
-                ReferenceDatabase.SuperType.SEQUENCE,
+        ReferenceDatabase refDBHuman = sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.UNIPROTKB,
+                ForeignDBDataType.DataType.POLYPEPTIDE,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.HUMAN);
         //copied the acc_num out of the database; maybe this will change??
-        Accession humanAccession = sequenceRepository.getAccessionByAlternateKey("AC:NOMENHIT2", refDBHuman);
-        //candidateBean.setHumanOrthologueAbbrev(humanAccession);
-
-        Set<OrthoEvidence.Code> orthoEvidencesHuman = new HashSet<OrthoEvidence.Code>();
-        orthoEvidencesHuman.add(OrthoEvidence.Code.AA);
-        // candidateBean.setHumanOrthologyEvidence(orthoEvidencesHuman);
-
         //have to get the mouse accession number that the curator would have chosen
         //from the pull down menu.
-        //Todo: make this a repository method in the renoRepository?
 
-        ForeignDB foreignDBMouse = sequenceRepository.getForeignDBByName("UniProt");
-        ReferenceDatabase refDBMouse = sequenceRepository.getReferenceDatabaseByAlternateKey(
-                foreignDBMouse,
-                ReferenceDatabase.Type.POLYPEPTIDE,
-                ReferenceDatabase.SuperType.SEQUENCE,
+        ReferenceDatabase refDBMouse = sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.UNIPROTKB,
+                ForeignDBDataType.DataType.POLYPEPTIDE,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.MOUSE);
         //copied the acc_num out of the database, maybe this will change?
-        Accession mouseAccession = sequenceRepository.getAccessionByAlternateKey("AC:NOMENHIT", refDBMouse);
-        //candidateBean.setMouseOrthologueAbbrev(mouseAccession);
 
         Set<OrthoEvidence.Code> orthoEvidencesMouse = new HashSet<OrthoEvidence.Code>();
         orthoEvidencesMouse.add(OrthoEvidence.Code.NT);

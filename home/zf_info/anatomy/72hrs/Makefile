@@ -22,10 +22,10 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/72hrs
 
 # All of the generics can be moved back under statics after the intial load.
 
-# STATICS = 
-GENERICS = 72hrs.html S039.html S040.html S041.html S042.html S043.html \
+STATICS = 72hrs.html S039.html S040.html S041.html S042.html S043.html \
 	S044.html S045.html S046.html S047.html S048.html S049.html S050.html \
 	S051.html S052.html S053.html S054.html S055.html S056.html S057.html
+#GENERICS = 
 
 
 

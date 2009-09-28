@@ -15,7 +15,7 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MIVAR NAME=$start_page>MIval=aa-ZDB_home.apg<?/MIVAR>
---
+
 <!-- now if a start page is passed in, set second frame to it! -->
 <?MIBLOCK COND="$(XST,$record)">
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-LAB-),0)">MIval=aa-labview.apg&OID=$record<?/MIVAR>
@@ -27,15 +27,33 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,LOCUS),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENEP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,MRPHLNO),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+
+<?MICOMMENT>  ** todo: when we wish to link to clone_view, this is what we'll use
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EST),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,CDNA),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SSLP),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,STS),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,BAC),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PAC),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FOSMID),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,BAC_END),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PAC_END),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,RAPD),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?/MICOMMENT>
+
+<?MICOMMENT> ** these may all link to clone_view, eventually ** <?/MICOMMENT>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EST),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,CDNA),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SSLP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,STS),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,BAC),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PAC),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FOSMID),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,BAC_END),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PAC_END),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,RAPD),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+
+
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SNP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REFCROSS),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,IMAGE),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 

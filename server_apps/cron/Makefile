@@ -27,8 +27,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/cron
 
-GENERICS = crontab.production crontab.development crontab.zfishweb \
-           crontab.root.helix
+GENERICS = crontab.production crontab.development crontab.zfishweb crontab.informix.test
+STATICS= crontab.root.helix
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -72,6 +72,11 @@ start : $(TARGETS)
 
 startdevl : $(TARGETS)
 	/bin/crontab $(TARGETDIR)/crontab.development
+
+# as informix src'd test.env, you can combine crons for production and development (keeping those
+# for almost pointing to almost, and the rest pointing to test.
+starttest : $(TARGETS)
+	/bin/crontab $(TARGETDIR)/crontab.informix.test
 
 stop :
 	/bin/crontab -r

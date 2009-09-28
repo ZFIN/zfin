@@ -15,7 +15,7 @@ import java.util.Set;
  * The name of the genotype is a semicolon-delimited list of allele names.
  * Each allele is called a Feature
  */
-public class Genotype {
+public class Genotype implements Comparable {
 
     public static final String WT = "WT";
 
@@ -55,20 +55,20 @@ public class Genotype {
         this.nameOrder = nameOrder;
     }
 
-    public boolean isWildtype() {
-        return wildtype;
-    }
-
-    public void setWildtype(boolean wildtype) {
-        this.wildtype = wildtype;
-    }
-
     public String getHandle() {
         return handle;
     }
 
     public void setHandle(String handle) {
         this.handle = handle;
+    }
+
+    public boolean isWildtype() {
+        return wildtype;
+    }
+
+    public void setWildtype(boolean wildtype) {
+        this.wildtype = wildtype;
     }
 
     public Set<GenotypeExperiment> getGenotypeExperiments() {
@@ -120,4 +120,49 @@ public class Genotype {
     public void setGenotypeFeatures(Set<GenotypeFeature> genotypeFeatures) {
         this.genotypeFeatures = genotypeFeatures;
     }
+
+    /**
+     * Only checking against the zdb id for now
+     * @param otherGenotype to compare for equality
+     * @return boolean for equality
+     */
+    public boolean equals(Object otherGenotype) {
+        if (!(otherGenotype instanceof Genotype))
+            return false;
+        Genotype og = (Genotype)otherGenotype;
+        return getZdbID().equals(og.getZdbID());
+    }
+
+    public int compareTo(Object o) {
+        Genotype otherGenotype = (Genotype)o;
+        return getNameOrder().compareTo(otherGenotype.getNameOrder());
+    }
+
+
+    /* Only putting TU in for now, since it's the only wildtype that's specified by name
+     * rather than generically looking at the isWildtype boolean */
+    public static enum Wildtype {
+        TU("TU");
+
+        private final String value;
+
+        private Wildtype(String type) {
+            this.value = type;
+        }
+
+        public String toString() {
+            return this.value;
+        }
+
+        public static Wildtype getType(String type) {
+            for (Wildtype t : values()) {
+                if (t.toString().equals(type))
+                    return t;
+            }
+            throw new RuntimeException("No run type of string " + type + " found.");
+        }
+
+    }
+
+
 }

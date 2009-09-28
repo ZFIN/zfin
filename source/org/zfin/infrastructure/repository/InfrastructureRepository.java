@@ -27,6 +27,11 @@ public interface InfrastructureRepository {
 
     int deleteActiveDataByZdbID(List<String> zdbID);
 
+    int deleteRecordAttributionsForData(String dataZdbID) ; 
+
+    int deleteRecordAttribution(String dataZdbID, String sourceZdbId) ;
+
+
     RecordAttribution getRecordAttribution(String dataZdbID,
                                            String sourceZdbId,
                                            RecordAttribution.SourceType sourceType);
@@ -60,13 +65,17 @@ public interface InfrastructureRepository {
     PublicationAttribution getPublicationAttribution(PublicationAttribution attribution);
 
     // TODO: RecordAttribution has a composite primary key, so not needed just yet
-    void insertRecordAttribution(String dataZdbID, String sourceZdbID);
+    RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID);
+    PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID);
+    PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID,RecordAttribution.SourceType sourceType);
 
     void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, String submitterID, String submitterName);
 
     void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments);
 
     void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person, String newValue, String oldValue);
+
+    void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person);
 //    void deleteRecordAttribution(RecordAttribution recordAttribution);
 
     //  RecordAttribution getRecordAttribution(String zdbID);
@@ -115,9 +124,17 @@ public interface InfrastructureRepository {
      */
     List<AllMarkerNamesFastSearch> getAllNameMarkerMatches(String string, MarkerType type);
 
+
     /**
-     * Retrieve the replaced zdbID for a given zdbID.
-     *
+     * Retrieves standard PublicationAttributions.
+     * @param dataZdbID
+     * @param pubZdbID
+     * @return
+     */
+    PublicationAttribution getStandardPublicationAttribution(String dataZdbID,String pubZdbID) ;
+
+    /**
+     * Retrieve the replaced zdbID for a given zdbID. 
      * @param oldZdbID zdb ID
      * @return Replacement object
      */
@@ -162,6 +179,8 @@ public interface InfrastructureRepository {
      * @return list of assays.
      */
     List<ExpressionAssay> getAllAssays();
+
+    List<PublicationAttribution> getPublicationAttributions(String dblinkZdbID);
 }
 
 

@@ -2,6 +2,8 @@ package org.zfin.sequence.reno;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -519,7 +521,7 @@ public class RenoRepositoryTest {
         run1.setProgram("BLASTN");
         Date date = new Date();
         run1.setDate(date);
-        run1.setBlastDatabase("zfin_cdna");
+        run1.setBlastDatabase("zfin_cdna_seq");
         session.save(run1);
         returnMap.put("run1", run1);
 
@@ -715,6 +717,22 @@ public class RenoRepositoryTest {
             session.getTransaction().rollback() ; 
         }
 
+    }
+
+
+    /**
+     * mostly just want to test failure
+     */
+    @Test
+    public void populateLinkageGroups(){
+        // in general, can just grab the first one
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(RunCandidate.class) ;
+        criteria.add(Restrictions.eq("zdbID","ZDB-RUNCAN-080514-255")) ;
+        criteria.setMaxResults(1) ;
+
+        RunCandidate rc = (RunCandidate) criteria.list().get(0);
+        assertNotNull(rc);
+        RenoService.populateLinkageGroups(rc);
     }
 
 } 

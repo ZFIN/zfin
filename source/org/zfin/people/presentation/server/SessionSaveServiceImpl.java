@@ -14,7 +14,7 @@ import org.hibernate.HibernateException;
 
 import java.util.List;
 import java.util.Iterator;
-
+import java.util.ArrayList;
 
 
 /**
@@ -28,7 +28,7 @@ public class SessionSaveServiceImpl extends RemoteServiceServlet implements Sess
         return "Client said: \"" + msg + "\"<br>Server answered: \"Hi!\"";
     }
 
-    public synchronized  void saveCuratorUpdate(List curatorSessionUpdateList){
+    public synchronized void saveCuratorUpdate(List<CuratorSessionDTO> curatorSessionUpdateList){
         if(curatorSessionUpdateList.size()==0){
             log.debug("trying to save empty list");
             return; 

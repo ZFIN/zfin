@@ -77,7 +77,7 @@
 	- Update your test database and source the environment. The scripts would inherit environment from the running shell. 
         - Ask Peiran to update the ZFIN blast database, or run 
 	    /research/zblastfiles/users/peirans/Scripts/ZFIN/processZFIN.pl 0
-        - EU clones with RefSeq accessions should not need blast efforts since we keep updated with RefSeq. If it ever needs blast efforts, the thissData2Unl.sh needs to be modified to use refseq_zf datafiles (instead of gbk_zf_all) to retrieve fasta sequences.  
+        - EU clones with RefSeq accessions should not need blast efforts since we keep updated with RefSeq. If it ever needs blast efforts, the thissData2Unl.sh needs to be modified to use refseq_zf datafiles (instead of gbk_zf_dna,rna,mrna) to retrieve fasta sequences.  
 
     $executables$:  parseThisse.pl  checkDups.sql nameClone.pl blast2tab.pl 
 		    filterBlast.pl thisseData2Unl.sh
@@ -99,7 +99,7 @@
                         (blast2zfin.third) - blast hits only EST, no Gene.
 	
     $description$ :
-	This master script calls parseThisse.pl to process .csv files into properly formated .unl files. It calls nameClone.pl to match probes to ZFIN objects(gene/est/clone). Unknown probes are written to acc4blast.txt, and used to retrieve fasta sequence from gbk_zf_all, and launch blast for sequence analysis. blast2tab.pl and filterBlast.pl are used to categorize blast results to auto-assignments(is_gene.unl), or curation-needed (blast2zfin.scnd, blast2zfin.third).
+	This master script calls parseThisse.pl to process .csv files into properly formated .unl files. It calls nameClone.pl to match probes to ZFIN objects(gene/est/clone). Unknown probes are written to acc4blast.txt, and used to retrieve fasta sequence from gbk_zf_mrna,rna,dna, and launch blast for sequence analysis. blast2tab.pl and filterBlast.pl are used to categorize blast results to auto-assignments(is_gene.unl), or curation-needed (blast2zfin.scnd, blast2zfin.third).
 	Thisse ZGC should not need any blast efforts, since all the probes should match a pair of Gene and MGC clone in zfin. Thus no is_gene.unl, no acc_imClone.unl.
 	** Watch out **: make sure the last blast exit code is 0. If not, diagnose.
 

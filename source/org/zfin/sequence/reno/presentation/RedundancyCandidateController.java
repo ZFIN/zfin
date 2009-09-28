@@ -42,9 +42,9 @@ public class RedundancyCandidateController extends AbstractCandidateController{
 
         RedundancyRun run = (RedundancyRun) rc.getRun();
 
-        LOG.debug("instance of RedundancyRun: " + (run instanceof RedundancyRun));
-        LOG.debug("Run.isRedundancy: " + run.isRedundancy());
-        LOG.debug("Run.isNomenclature: " + run.isNomenclature());
+//        LOG.debug("instance of RedundancyRun: " + (run instanceof RedundancyRun));
+//        LOG.debug("Run.isRedundancy: " + run.isRedundancy());
+//        LOG.debug("Run.isNomenclature: " + run.isNomenclature());
 
 
         candidateBean.setGeneAbbreviation(rc.getCandidate().getSuggestedName());
@@ -108,7 +108,7 @@ public class RedundancyCandidateController extends AbstractCandidateController{
 
     }
 
-    public void handleRedundancyNovelGene(CandidateBean candidateBean) {
+    protected void handleRedundancyNovelGene(CandidateBean candidateBean) {
         LOG.info("enter handleNovelGene");
 
         RunCandidate rc = candidateBean.getRunCandidate();
@@ -160,7 +160,7 @@ public class RedundancyCandidateController extends AbstractCandidateController{
     }
 
 
-    public void handleRedundancyExistingGene(CandidateBean candidateBean, Marker existingGene) {
+    protected void handleRedundancyExistingGene(CandidateBean candidateBean, Marker existingGene) {
         LOG.info("handling an existing gene - entry");
 
         RunCandidate rc = candidateBean.getRunCandidate();
@@ -204,7 +204,7 @@ public class RedundancyCandidateController extends AbstractCandidateController{
      * @param rc   the RunCandidate
      * @param gene the gene chosen by the curators (could be newly created)
      */
-    public void createRedundancyRelationships(RunCandidate rc, Marker gene) {
+    protected void createRedundancyRelationships(RunCandidate rc, Marker gene) {
         LOG.info("createRelationsips gene: " + gene);
         LOG.info("createRelationsips runCanZdbID: " + rc.getZdbID());
 
@@ -222,7 +222,7 @@ public class RedundancyCandidateController extends AbstractCandidateController{
         Marker candidateGene = null;
         for (Marker m : markers) {
             if (m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-                LOG.debug("createRelationships marker type: " + m.getType());
+                LOG.debug("createRelationships marker type: " + m.getMarkerType().getType());
                 LOG.debug("createRelationships is in type group genedom");
                 candidateGene = m;
                 break;
@@ -248,7 +248,11 @@ public class RedundancyCandidateController extends AbstractCandidateController{
             LOG.debug("createRelationships segments are not empty");
             for (Marker segment : segments) {
                 LOG.info("adding small segment to gene: " + segment);
-                mr.addMarkerRelationship(segment, gene, attributionZdbID,MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+                MarkerRelationship mrel = new MarkerRelationship();
+                mrel.setType(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+                mrel.setFirstMarker(gene);
+                mrel.setSecondMarker(segment);
+                mr.addMarkerRelationship(mrel,  attributionZdbID);
             }
             //our query accession(s) was(were) linked to one or more segments, we just made
             //relationships from those segments to the gene that the curator chose

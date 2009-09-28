@@ -1,0 +1,6 @@
+=head1 Installing the Generic Genome Browser on Mac OS X
+
+This document has been superseded by the online documentation at
+L<http://www.gmod.org/wiki/index.php/GBrowse_MacOSX_HOWTO>. Or see
+README.MacOSX in the main directory.
+

@@ -21,7 +21,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/monitor
 SUBDIRS = vol1 vol2.1 vol2.2 vol2.3 vol2.4 vol3.1 vol3.2 vol3.3 vol3.4 vol3.5 \
 	vol3.6 vol4.1 vol5.1 vol6.1 vol7.1
 
-GENERICS = mon.html
+STATICS = mon.html
 
 
 # ---------------  Production Rules  ------------------------------------

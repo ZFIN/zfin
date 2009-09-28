@@ -89,6 +89,7 @@ public interface ProfileRepository {
      */
     MarkerSupplier getSpecificSupplier(Marker marker, Organization organization);
 
+    int removeSource(String supplierZdbID, String dataZdbID);
 
     /**
      * Retrieve an organization by ID
@@ -128,7 +129,6 @@ public interface ProfileRepository {
      * @param newAccountInfo     new account info
      */
     void updateAccountInfo(Person currentPerson, AccountInfo newAccountInfo);
-
     /**
      * Persist section visibility
      * @param pubID pub ID

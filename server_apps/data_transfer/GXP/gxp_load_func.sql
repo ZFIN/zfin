@@ -111,9 +111,11 @@ let errorHint = "get foreign db contains zdb id";
    
 select fdbcont_zdb_id 
   into fdbcontZdbId
-  from foreign_db_contains
- where fdbcont_fdb_db_name = "GenBank"
-   and fdbcont_fdbdt_data_type = "cDNA";
+  from foreign_db_contains, foreign_db, foreign_db_data_type
+ where fdb_db_name = "GenBank"
+   and fdbdt_data_type = "cDNA"
+   and fdbcont_fdb_db_id = fdb_db_pk_id
+   and fdbcont_fdbdt_id = fdbdt_pk_id;
 
 -------------------------------------------------------------
 --   MARKER    RECORD_ATTRIBUTION    ZDB_ACTIVE_DATA      --
@@ -127,7 +129,9 @@ create table tmp_gxp_marker(
     t_mrkr_type 	varchar(10),
     t_mrkr_owner 	varchar(50),
     t_mrkr_comments 	lvarchar
-  );  
+  )
+in tbldbs3
+extent size 256 next size 256;  
 
 ------------------------
 -- New ESTs
@@ -250,7 +254,9 @@ create table tmp_gxp_fake_gene (
     	t_fgene_type 	varchar(10),
     	t_fgene_owner 	varchar(50),
     	t_fgene_comments 	lvarchar
-  );  
+  )
+in tbldbs2
+extent size 256 next size 256;  
 
 insert into tmp_gxp_fake_gene
   	 select get_id('GENE'), t_mrkr_zdb_id,
@@ -300,7 +306,9 @@ create table tmp_gxp_marker_relationship (
 	t_mrel_mrkr1_zdb_id 	varchar(50) not null,
 	t_mrel_mrkr2_zdb_id	varchar(50) not null,
 	t_mrel_comments		varchar(255)
-);
+)
+in tbldbs1
+extent size 256 next size 256;
 
 -- known gene and clone assignments
 insert into tmp_gxp_marker_relationship 
@@ -352,7 +360,8 @@ create table tmp_gxp_db_link (
 	t_dblink_acc_num	varchar(50),
 	t_dblink_fdbcont_zdb_id	varchar(50),
 	t_dblink_info		varchar(80)
-) ; 
+) in tbldbs1
+extent size 256 next size 256; 
 	
 insert into tmp_gxp_db_link 
 	 select get_id('DBLINK'), 
@@ -522,7 +531,8 @@ create table tmp_gxp_expression_experiment (
     t_xpatex_probe_zdb_id 	varchar(50),
     t_xpatex_gene_zdb_id 	varchar(50) not null,
     t_xpatex_source_zdb_id	varchar(50) not null
-) ;
+)in tbldbs3
+extent size 256 next size 256 ;
 
 insert into tmp_gxp_expression_experiment 
     	 select get_id('XPAT'), sbm_genox_zdb_id, 
@@ -559,7 +569,8 @@ create table tmp_gxp_expression_result(
     t_xpatres_anat_item_zdb_id  varchar(50),
     t_xpatres_expression_found	boolean not null
     --t_xpatres_comments		lvarchar
-  ); 
+  )in tbldbs2
+extent size 256 next size 256; 
 
 insert into tmp_gxp_expression_result 
 	select get_id('XPATRES'), t_xpatex_zdb_id, 
@@ -601,7 +612,8 @@ create table tmp_gxp_figure(
 	t_fig_start_stg_zdb_id	varchar(50),
 	t_fig_end_stg_zdb_id	varchar(50), 
 	t_fig_start_hours	decimal(7,2)	
-  );
+  )in tbldbs2
+extent size 256 next size 256;
 
 insert into tmp_gxp_figure (t_fig_caption, t_fig_prb_zdb_id, 
 			t_fig_start_stg_zdb_id, t_fig_end_stg_zdb_id,

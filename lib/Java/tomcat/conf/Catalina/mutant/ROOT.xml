@@ -11,7 +11,7 @@
                 type="javax.sql.DataSource" username="zfinner" password="Rtwm4ts"
                 driverClassName="com.informix.jdbc.IfxDriver" 
                 url="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@"
-                maxActive="8" maxIdle="4"/>
+                maxActive="40" maxIdle="10"/>
 
  <Parameter name="quicksearch-index-directory" value="/research/zcentral/www_homes/almost/server_apps/quicksearch/indexes" override="true"/>
 

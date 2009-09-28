@@ -1,0 +1,13 @@
+gtf2gff3 comes from http://www.sequenceontology.org
+
+gffTypeFix.pl is written locally.
+
+The initial script comes very close to producing gff3 
+that gbrowse is happy with, but a little extra processing 
+is done to handle the rest.
+
+Here's how I've used these scripts so far:
+
+./gtf2gff3 --cfg gtf2gff3.cfg vega.gtf > vega.unprocessed.gff3 && ./gffTypeFix.pl vega vega_chromosome_lengths.txt vega.unprocessed.gff3 vega.gff3
+./gtf2gff3 --cfg gtf2gff3.cfg ensembl.gtf > ensembl.unprocessed.gff3 && ./gffTypeFix.pl ensembl ensembl_chromosome_lengths.txt ensembl.unprocessed.gff3 ensembl.gff3 
+

@@ -25,8 +25,9 @@ update accession_bank
                            from tmp_acc_bk)
    and accbk_fdbcont_zdb_id in 
 		(select fdbcont_zdb_id
-		   from foreign_db_contains
-		  where fdbcont_fdb_db_name= "GenBank"
+		   from foreign_db_contains, foreign_db
+		  where fdb_db_name= "GenBank"
+		  and fdbcont_fdb_db_id = fdb_db_pk_id
 		);
 
 !echo "Add new accessions into accession_bank"
@@ -50,8 +51,9 @@ update db_link
 		        and tp_fdbcont_zdb_id = dblink_fdbcont_zdb_id )
  where dblink_fdbcont_zdb_id in 
 		(select fdbcont_zdb_id
-		   from foreign_db_contains
-		  where fdbcont_fdb_db_name= "GenBank"
+		   from foreign_db_contains, foreign_db
+		  where fdb_db_name= "GenBank"
+		  and fdbcont_fdb_db_id = fdb_db_pk_id
 		)
    and exists 
 		(select 't'

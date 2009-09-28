@@ -52,7 +52,8 @@ create table probes_tmp (
    prb_comments 	lvarchar,               --> mrkr_comments
    prb_rating           integer,
    prb_modified 	varchar(20)           -- not used  
-);
+) in tbldbs2
+extent size 256 next size 256;
 
 create unique index probes_tmp_clone_name_index on probes_tmp(prb_clone_name);
  
@@ -206,7 +207,9 @@ create table expression_tmp(
   exp_found		boolean  default 't',
   exp_keyword           varchar (80),
   exp_modified 		varchar (20)
-);
+)
+in tbldbs1
+extent size 256 next size 256;
 
 -- exp_clone_name column, in Thisse case which is what all we have now,
 -- is loaded with keyValue first and updated into clone name in this file
@@ -310,7 +313,8 @@ create table images_tmp (
   imgt_comments 		lvarchar,
   imgt_modified 		varchar (20)
   -- imgt_zdb_id  varchar(50) is added as below
-);
+)in tbldbs3
+extent size 256 next size 256;
 -- key_clone_name column, in Thisse case which is what all we have now,
 -- is loaded with keyValue first and updated into clone name in this file
 -- and so be prepared for loading into ZFIN. We don't expect the foreign
@@ -402,7 +406,9 @@ create table image_dim (
 	imgdim_name varchar(50), 
 	imgdim_width integer, 
 	imgdim_height integer
-);
+) in tbldbs3
+extent size 256 next size 256
+;
 
 load from './images.dim' insert into  image_dim;
 
@@ -414,7 +420,8 @@ create table authors_tmp (
 	 aut_clone_name		varchar(50) not null,
 	 aut_author_name	varchar(80) not null,
 	 aut_modified		varchar(20) 
-);
+)in tbldbs2
+extent size 256 next size 256 ;
 
 ALTER TABLE authors_tmp add constraint (foreign key (aut_clone_name) references probes_tmp constraint aut_clone_name_foreign_key);
 

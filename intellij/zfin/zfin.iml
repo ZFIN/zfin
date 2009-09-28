@@ -46,10 +46,6 @@
             <attribute name="URI" value="&lt;N/A&gt;" />
             <url>jar://$APPLICATION_HOME_DIR$/lib/j2ee.jar!/</url>
           </containerElement>
-          <containerElement type="library" name="hibernate3" level="project">
-            <attribute name="method" value="0" />
-            <attribute name="URI" value="&lt;N/A&gt;" />
-          </containerElement>
         </packaging>
       </configuration>
     </facet>

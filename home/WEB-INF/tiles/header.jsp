@@ -1,4 +1,4 @@
-
+<%@ page import="org.zfin.properties.ZfinProperties" %>
 
 
 <script type="text/javascript" src="/javascript/prototype.js"></script>
@@ -217,7 +217,7 @@ function hdrSetTabs() {
 
 <body id="body" onload="hdrSetTabs();">
 
-  <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-ZDB_home.apg">
+  <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-ZDB_home.apg">
    <img id="logo-img" src="/images/zfinlogo.png">
    <img id="logo-text" src="/images/zfintxt.png">
   </a>
@@ -310,31 +310,31 @@ function hdrSetTabs() {
          style="display: block; ">
       <a href="/">Home</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-      <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-newmrkrselect.apg">Genes / Markers / Clones</a>
+      <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-newmrkrselect.apg">Genes / Markers / Clones</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-      <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-xpatselect.apg">Expression</a>
+      <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect.apg">Expression</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/action/antibody/search">Antibodies</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-       <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-blast.apg" title="Search for sequence alignment against ZFIN datasets and Zebrafish datasets">BLAST</a>
+       <a href="/action/blast/blast" title="Search for sequence alignment against ZFIN datasets and Zebrafish datasets">BLAST</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-      <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-fishselect.apg">Mutants / Morphants / Tg</a>
+      <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg">Mutants / Morphants / Tg</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/action/anatomy/search">Anatomy</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/cgi-bin/mapper_select.cgi" title="View genetic, radiation hybrid or consolidated maps">Maps</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-      <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-pubselect2.apg&select_from=PUBLICATION">Publications</a>
+      <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&select_from=PUBLICATION">Publications</a>
     </div>
 
     <div id="hdr-generallinks" class="hdr-linkbar" style="display: none;">
      <a href="/">Home</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-     <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75">People</a>
+     <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75">People</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-     <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-labselect.apg&select_from=LAB" title="Search for laboratories by name, address or research interests">Laboratories</a>
+     <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-labselect.apg&select_from=LAB" title="Search for laboratories by name, address or research interests">Laboratories</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-     <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230" title="Search for companies supplying zebrafish reagents">Companies</a>
+     <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230" title="Search for companies supplying zebrafish reagents">Companies</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
      <a href="/zf_info/news/jobs.html">Jobs</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">

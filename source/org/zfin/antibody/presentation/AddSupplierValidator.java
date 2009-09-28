@@ -25,7 +25,7 @@ public class AddSupplierValidator implements Validator {
         AntibodyUpdateDetailBean formBean = (AntibodyUpdateDetailBean) command;
         ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
         if (StringUtils.isEmpty(formBean.getSupplierName())) {
-            errors.rejectValue("supplierNameErrorString", "code", " Please enter a valid Supplier.");
+            errors.rejectValue("supplierNameErrorString", "code", " Supplier cannot be null.");
             return;
         }
         if (!StringUtils.isEmpty(formBean.getSupplierName())) {

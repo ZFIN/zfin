@@ -11,7 +11,7 @@ public class EntrezOMIM implements Serializable {
 
     private Entrez entrezAccession;
     private String omimAccession;
-    private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
+    private SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
     private String entrezAccessionNum;
 
 
@@ -37,16 +37,6 @@ public class EntrezOMIM implements Serializable {
 
     public void setOmimAccession(String omimAccession) {
         this.omimAccession = omimAccession;
-    }
-
-
-    public ReferenceDatabase getRefDB() {
-        ForeignDB omimForeignDB = sequenceRepository.getForeignDBByName("OMIM");
-        return sequenceRepository.getReferenceDatabaseByAlternateKey(
-                omimForeignDB,
-                ReferenceDatabase.Type.ORTHOLOGUE,
-                ReferenceDatabase.SuperType.ORTHOLOGUE,
-                Species.HUMAN);
     }
 
     public int hashCode() {

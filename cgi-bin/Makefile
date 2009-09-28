@@ -20,17 +20,18 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 
 
-STATICS = favicon.ico
+STATICS = favicon.ico weekly_report_reminder.txt send_notification.cgi 
 
 GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi \
 	   searchwww.cgi send_request.perl \
 	   mapper_select.cgi mapper_select.pl \
 	   view_mapplet.cgi view_zmapplet.cgi \
+	   internal_protein.cgi \
 	   input_welcome.cgi input_welcome_generic.cgi expired_locus.cgi \
-           publications_today.cgi send_notification.cgi usersurvey2005.cgi \
+           publications_today.cgi usersurvey2005.cgi \
 	   upload.cgi pre_vega.cgi send_Judy_your_report.pl \
-	   weekly_report_reminder.txt new_gene.cgi new_line.cgi \
-	   internal_vega.cgi internal_wzest.cgi
+	   new_gene.cgi new_line.cgi \
+	   internal_vega.cgi internal_wzest.cgi get_sequence.cgi display_sequence.cgi
 
 # ---------------  Production Rules  ------------------------------------
 

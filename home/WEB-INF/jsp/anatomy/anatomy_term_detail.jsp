@@ -6,39 +6,17 @@
 <%@ page import="org.zfin.framework.presentation.SectionVisibility" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<table bgcolor="#eeeeee" border="0" width="100%">
-    <tbody>
-    <tr align="center">
-        <td><font size="-1"><b>ZFIN ID:</b>
-            ${formBean.anatomyItem.zdbID}
-            <c:if test="${!empty formBean.anatomyItem.oboID}">
-                &nbsp;
-                <b>OBO ID:</b>
-                ${formBean.anatomyItem.oboID}
-            </c:if>
-        </font>&nbsp;
-            <authz:authorize ifAnyGranted="root">
-                <A HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-update-vframeset.apg&OID=${formBean.anatomyItem.zdbID}&rtype=anatomy_item'>
-                    Last Update:
-                    <c:choose>
-                        <c:when test="${formBean.latestUpdate != null}">
-                            <fmt:formatDate value="${formBean.latestUpdate.dateUpdated}" type="date"/>
-                        </c:when>
-                        <c:otherwise>Never modified</c:otherwise>
-                    </c:choose>
-                </A> &nbsp;
-            </authz:authorize>
-        </td>
-        <td align="right">
-            <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:put name="subjectName" value="${formBean.anatomyItem.name}"/>
-                <tiles:put name="subjectID" value="${formBean.anatomyItem.zdbID}"/>
-            </tiles:insert>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<zfin2:dataManager zdbID="${formBean.anatomyItem.zdbID}"
+                   oboID="${formBean.anatomyItem.oboID}"
+                   latestUpdate="${formBean.latestUpdate}"
+                   rtype="anatomy_item"/>
 
+<div style="float: right;">
+<tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+    <tiles:put name="subjectName" value="${formBean.anatomyItem.name}"/>
+    <tiles:put name="subjectID" value="${formBean.anatomyItem.zdbID}"/>
+</tiles:insert>
+</div>
 <div class="summary">
     <table width="100%">
         <tr>

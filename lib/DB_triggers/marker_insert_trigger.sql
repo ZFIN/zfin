@@ -20,4 +20,7 @@ create trigger marker_insert_trigger insert on
                 new_marker.mrkr_abbrev ),
         execute procedure p_populate_go_root_terms (new_marker.mrkr_zdb_id,
 				new_marker.mrkr_name, new_marker.mrkr_type)
+--	,
+--	execute procedure p_insert_clone_from_marker (new_marker.mrkr_zdb_id,
+--			  			     new_marker.mrkr_type)
         );

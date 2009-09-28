@@ -3,18 +3,61 @@
         "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 <beans>
 
-        <!--  URL mappings -->
+    <!--  URL mappings -->
     <bean id="markerUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
                 <prop key="/marker/expression-summary">expressionSummaryBean</prop>
+                <prop key="/marker/transcript-view">transcriptView</prop>
+                <prop key="/marker/transcript-add">transcriptAdd</prop>
+                <prop key="/marker/related-transcripts">relatedTranscripts</prop>
+                <prop key="/marker/transcript-definitions">transcriptDefinitions</prop>
+                <prop key="/marker/clone-add">cloneAdd</prop>
+				<prop key="/marker/clone-view">cloneView</prop>
+                <prop key="/marker/mini-gene">miniGeneBean</prop>
+				<prop key="/marker/marker-edit">markerEdit</prop>
+                <prop key="/marker/stemloop-sequence">stemLoopSequence</prop>
             </props>
         </property>
     </bean>
 
 
     <bean name="expressionSummaryBean"
-          class="org.zfin.expression.presentation.ExpressionSummaryController"
-          autowire="byName"/>
+          class="org.zfin.expression.presentation.ExpressionSummaryController"/>
+
+    <bean name="transcriptView" class="org.zfin.marker.presentation.TranscriptViewController"/>
+    <bean name="relatedTranscripts" class="org.zfin.marker.presentation.RelatedTranscriptsController"/>
+    
+    <bean name="transcriptDefinitions" class="org.zfin.marker.presentation.TranscriptDefinitionsController"/>
+
+    <bean name="transcriptAdd" class="org.zfin.marker.presentation.TranscriptAddController">
+        <property name="formView" value="transcript-add.page"/>
+        <property name="validateOnBinding" value="true"/>
+        <property name="commandClass" value="org.zfin.marker.presentation.TranscriptAddBean"/>
+        <property name="commandName" value="formBean"/>
+        <property name="bindOnNewForm" value="true"/>
+        <property name="validator">
+            <bean class="org.zfin.marker.presentation.TranscriptAddValidator"/>
+        </property>
+    </bean>
+
+    <bean name="cloneView" class="org.zfin.marker.presentation.CloneViewController"/>
+
+    <bean name="markerEdit" class="org.zfin.marker.presentation.MarkerEditController"/>
+
+    <bean name="cloneAdd" class="org.zfin.marker.presentation.CloneAddController">
+        <property name="formView" value="clone-add.page"/>
+        <property name="validateOnBinding" value="true"/>
+        <property name="commandClass" value="org.zfin.marker.presentation.CloneAddBean"/>
+        <property name="commandName" value="formBean"/>
+        <!--this is allowed because we want to allow binding from the TEC page-->
+        <property name="bindOnNewForm" value="false"/>
+        <property name="validator">
+            <bean class="org.zfin.marker.presentation.CloneAddValidator"/>
+        </property>
+    </bean>
+
+    <bean name="miniGeneBean" class="org.zfin.marker.presentation.MiniGeneController" />
+    <bean name="stemLoopSequence" class="org.zfin.marker.presentation.StemLoopController" />
 
 </beans>

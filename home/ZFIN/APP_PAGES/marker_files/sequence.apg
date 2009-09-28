@@ -117,17 +117,18 @@
 </SCRIPT>
 
     <?MISQL SQL="
-      SELECT mrkr_name, mrkr_abbrev, mrkr_type
+      SELECT mrkr_name, mrkr_abbrev, mrkr_type, get_mrkr_abbrev_html_link(mrkr_zdb_id)
       FROM marker
       WHERE mrkr_zdb_id = '$OID';">
 
       <?MIVAR NAME=mrkr_name>$1<?/MIVAR>
       <?MIVAR NAME=mrkr_abbrev>$2<?/MIVAR>
       <?MIVAR NAME=mrkr_type>$3<?/MIVAR>
+      <?MIVAR NAME="mrkr_link">$4<?/MIVAR>
 
     <?/MISQL>
 
-      <?MIVAR NAME=link_backto_OID><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">$(IF,$(!=,$(POSITION,$OID,GENE),0),<i>)$mrkr_abbrev$(IF,$(!=,$(POSITION,$OID,GENE),0),</i>)</a><?/MIVAR>
+      <?MIVAR NAME=link_backto_OID>$mrkr_link<?/MIVAR>
 
   <!-- if no match for the entered ID, display not found msg ------>
   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
@@ -145,7 +146,7 @@
 
   <?MIELSE> <!-- if entered ID has an entry in ZFIN------------------------>
 
-   <?MIVAR NAME=link_backto_OID><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">$(IF,$(!=,$(POSITION,$OID,GENE),0),<i>)$mrkr_abbrev$(IF,$(!=,$(POSITION,$OID,GENE),0),</i>)</a><?/MIVAR>
+   <?MIVAR NAME=link_backto_OID>$mrkr_link<?/MIVAR>
 
   <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'page_title=View $mrkr_type') from webPages where ID='aa-secure_navigation.apg';">$1
   <?/MISQL>
@@ -209,13 +210,16 @@
       </TR>
     </TABLE>
 
-    <?MIVAR COND="$(XST,$UPDATE)"> <!---- define button to go back------>
+    <?MIVAR COND="$(XST,$UPDATE)"> 
 
-      <form name=updater><!-- for buttons for update purpose----------->
-      <center><font size=+2>
-      <input type=button
-          value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID')">
-      </font></center>
+      <form name=updater>
+      <center>
+       <a 
+       style="font-size: large;"
+       href="javascript:" 
+        onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID')"
+       >[View Sequences]</a>
+      </center>
 
     <?/MIVAR>
 
@@ -264,10 +268,11 @@
 <b>Add link to Seq DB:</b> &nbsp;
   DBname:<SELECT name=seqdb>
   <?MISQL SQL="
-  select fdbcont_fdb_db_name, fdbcont_fdbdt_data_type, fdbcont_zdb_id
-      from foreign_db_contains fdbc
-     where 
-     fdbc.fdbcont_zdb_id in 
+  select fdb_db_name, fdbdt_data_type, fdbcont_zdb_id
+      from foreign_db_contains fdbc, foreign_db, foreign_db_data_type
+     where fdbcont_fdb_db_id = fdb_db_pk_id
+     and fdbcont_fdbdt_id = fdbdt_pk_id
+     and fdbc.fdbcont_zdb_id in 
 (
  'ZDB-FDBCONT-040412-37', --GenBank (RNA)
 'ZDB-FDBCONT-040412-36', -- GenBank (Genomic)
@@ -275,7 +280,7 @@
 'ZDB-FDBCONT-040412-47', --UniProt (Polypeptide) 
 'ZDB-FDBCONT-060417-1' -- Vega_Trans
 )
-order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
+order by fdb_db_name, fdbdt_data_type
 ;
      ">
     <option value="$3" $(IF,$(EC,$1,GenBank),SELECTED)>$1 - $2</option>
@@ -288,13 +293,15 @@ Accession:<input type=text size=15 name=seq_acc>
 <b>Update Sequence:</b> &nbsp;
 AccNum:<SELECT name=upd_seq_zdb>
   <?MISQL SQL="
-    select distinct fdbcont_fdb_db_name, dblink_acc_num_display, dblink_zdb_id
-      from foreign_db_contains, db_link
-     where fdbcont_fdbdt_super_type = 'sequence'
-       and fdbcont_fdb_db_name <> 'BLAST'
+    select distinct fdb_db_name, dblink_acc_num_display, dblink_zdb_id
+      from foreign_db_contains, db_link, foreign_db, foreign_db_data_type
+     where fdbdt_super_type = 'sequence'
+     and fdbcont_fdbdt_id = fdbdt_pk_id
+     and fdbcont_fdb_db_id = fdb_db_pk_id
+       and fdb_db_name <> 'BLAST'
        and fdbcont_zdb_id = dblink_fdbcont_zdb_id
        and dblink_linked_recid = '$OID'
-     order by fdbcont_fdb_db_name, dblink_acc_num_display;">
+     order by fdb_db_name, dblink_acc_num_display;">
     <option value="$3">$1:$2</option>
   <?/MISQL>
 </SELECT>
@@ -315,10 +322,11 @@ Length: <input type=text size=10 name=upd_seq_length>
 <b>Add reference to Sequence:</b> &nbsp;
   DBname:<SELECT name=attrib_seq_fdb>
   <?MISQL SQL="
-  select fdbcont_fdb_db_name, fdbcont_fdbdt_data_type, fdbcont_zdb_id
-      from foreign_db_contains fdbc
-     where 
-     fdbc.fdbcont_zdb_id in 
+  select fdb_db_name, fdbdt_data_type, fdbcont_zdb_id
+      from foreign_db_contains fdbc, foreign_db, foreign_db_data_type
+     where fdbcont_fdbdt_id = fdbdt_pk_id
+     and fdbcont_fdb_db_id = fdb_db_pk_id
+     and fdbc.fdbcont_zdb_id in 
 (
  'ZDB-FDBCONT-040412-37', --GenBank (RNA)
 'ZDB-FDBCONT-040412-36', -- GenBank (Genomic)
@@ -326,7 +334,7 @@ Length: <input type=text size=10 name=upd_seq_length>
 'ZDB-FDBCONT-040412-47', --UniProt (Polypeptide) 
 'ZDB-FDBCONT-060417-1' -- Vega_Trans
 )
-order by fdbcont_fdb_db_name, fdbcont_fdbdt_data_type
+order by fdb_db_name, fdbdt_data_type
 ;
      ">
     <option value="$3" $(IF,$(EC,$1,GenBank),SELECTED)>$1 - $2</option>
@@ -342,10 +350,13 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 
 <?MISQL SQL="
   select count(*)::integer
-  from db_link, foreign_db_contains
+  from db_link, foreign_db_contains, foreign_db_contains_display_group_member, foreign_db_contains_display_group
   where dblink_linked_recid = '$OID'
     and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-    and fdbcont_fdbdt_super_type = 'sequence'
+    and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+    and fdbcdg_pk_id = fdbcdgm_group_id
+    and fdbcdg_name = 'marker linked sequence'
+	  
   ;">
 <?/MISQL>
 <?MIVAR NAME=vSequence_count>$1<?/MIVAR>
@@ -353,26 +364,30 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MIBLOCK COND="$(!=,$vSequence_count,0)">
     <?MIVAR NAME=row_color>$highlight<?/MIVAR>
 
-    <?MIVAR><TABLE border=0 cellspacing=2 cellpadding=3 bgcolor=$highlight width=100%><?/MIVAR>
-    <TR bgcolor=#ccccccc>
-      <TD width=30%><b>Type</b></TD>
-      <TD width=40%><b>Accession #</b></TD>
-      <TD align=right width=10%><b>Length</b></TD>
-      <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
+<?MICOMMENT>    <?MIVAR><TABLE border=0 cellspacing=2 cellpadding=3 bgcolor=$highlight width=100%><?/MIVAR> <?/MICOMMENT>  
+   <table class="summary">
+    <TR bgcolor=#cccccc>
+      <th width=30%><b>Type</b></th>
+      <th width=40%><b>Accession #</b></th>
+      <th class="length"><b>Length (bp/aa)</b></th>
+      <th class="analysis"><A HREF="javascript:start_help()"><b>Analysis</b></A></th>
     </TR>
 
+
       <?MISQL SQL="
-        select  fdbcont_fdbdt_data_type,dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num ||
+        select  fdbdt_data_type,dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num ||
        (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
-               dblink_acc_num_display, dblink_zdb_id, fdb_db_significance, fdbdt_display_order
-        from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
+               dblink_acc_num_display, dblink_zdb_id, fdb_db_significance, fdbdt_display_order,dblink_fdbcont_zdb_id
+        from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type,
+             foreign_db_contains_display_group_member, foreign_db_contains_display_group
         where dblink_linked_recid = '$OID'
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = fdb_db_name
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and fdbcont_fdbdt_data_type = fdbdt_data_type
-          and fdbcont_fdbdt_super_type = fdbdt_super_type
-          and fdbcont_fdb_db_name != 'BLAST'
+          and fdbcont_fdb_db_id = fdb_db_pk_id
+          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+          and fdbcdg_pk_id = fdbcdgm_group_id
+          and fdbdt_data_type = fdbdt_data_type
+          and fdbcont_fdbdt_id = fdbdt_pk_id
+          and fdbcdg_name = 'marker linked sequence'
         order by 8,7,2 desc,3,5
       ;">
 
@@ -383,6 +398,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
         <?MIVAR NAME=dataId>$6<?/MIVAR>
+        <?MIVAR NAME=dblink_fdbcont_zdb_id>$9<?/MIVAR>
 
         <?MIVAR>
         <?MICOMMENT>
@@ -401,7 +417,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             <A HREF="$link_url">$db_name:$acc_num</A><?/MIVAR>
             <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
           </TD>
-          <TD align=right>
+          <TD class="length">
             <nobr>
                 <?MIVAR>$dblink_length<?/MIVAR>
                 <?MIBLOCK COND=$(NC,$dblink_length,)>
@@ -411,8 +427,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
                 <?/MIBLOCK>
             </nobr>
           </TD>
-          <TD align=center>
-             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_len=$dblink_length&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
+          <TD class="analysis">
+             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_len=$dblink_length&seqt_acc_type=$data_type&seqt_acc_db=$db_name&seqt_fdbc_zdb_id=$dblink_fdbcont_zdb_id') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
           </TD>
         </TR>
 
@@ -447,8 +463,9 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 
 
       <?MISQL SQL="
-        select distinct mrel_mrkr_2_zdb_id, mrkr_abbrev, mrkrtype_type_display, mrkrtype_significance, mrel_zdb_id
-        from marker_relationship, marker, foreign_db_contains, marker_types, db_link
+        select distinct mrel_mrkr_2_zdb_id, mrkr_abbrev, mrkrtype_type_display, mrkrtype_significance, mrel_zdb_id, get_mrkr_abbrev_html_link(mrel_mrkr_2_zdb_id)
+        from marker_relationship, marker, foreign_db_contains, foreign_db_data_type, marker_types, db_link,
+             foreign_db_contains_display_group_member, foreign_db_contains_display_group
         where mrel_mrkr_1_zdb_id = '$OID'
           and mrel_type in ('gene encodes small segment',
                             'gene contains small segment',
@@ -457,21 +474,25 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and mrkr_type = marker_type
           and mrkr_zdb_id = dblink_linked_recid
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdbdt_super_type = 'sequence'
+          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+          and fdbcdg_pk_id = fdbcdgm_group_id
+	  and fdbcont_fdbdt_id = fdbdt_pk_id
           and mrkr_zdb_id not in ('$chimeric_clone_list')
+          and fdbcdg_name = 'marker linked sequence'
         order by mrkrtype_significance, mrkrtype_type_display desc, mrkr_abbrev
       ;">
 
         <?MIVAR COND=$(NXST,$encodes_mrkr_abbrev)>
           <p>
-          <b>$link_backto_OID Encodes:</b>
-          <TABLE width=100% border=0 bgcolor=$highlight>
-            <TR bgcolor=#ccccccc>
-              <TD width=20%><B>Marker</B></TD>
-              <TD width=10%><B>Type</B></TD>
-              <TD width=40%><B>Accession #</B></TD>
-              <TD align=right width=10%><B>Length</B></TD>
-              <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
+          
+          <TABLE class="summary">
+            <caption> $link_backto_OID Encodes:</caption>
+            <TR bgcolor=#cccccc>
+              <th width=20%><B>Marker</B></th>
+              <th width=10%><B>Type</B></th>
+              <th width=40%><B>Accession #</B></th>
+              <th class="length"><B>Length (bp/aa)</B></th>
+              <th class="analysis"><A HREF="javascript:start_help()"><b>Analysis</b></A></th>
             </TR>
         <?/MIVAR>
 
@@ -479,12 +500,12 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         <?MIVAR NAME=encodes_mrkr_abbrev>$2<?/MIVAR>
         <?MIVAR NAME=encodes_mrkr_type>$3<?/MIVAR>
         <?MIVAR NAME=encodes_mrel_zdb_id>$5<?/MIVAR>
+        <?MIVAR NAME="encodes_mrkr_link">$6<?/MIVAR>
 
         <TR>
           <TD>
             [$encodes_mrkr_type]
-            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$encodes_zdb_id"
-            >$encodes_mrkr_abbrev</A>
+	    <?MIVAR>$encodes_mrkr_link<?/MIVAR>
             <?MISQL SQL="
               select WebExplode(object,'dataId=$encodes_mrel_zdb_id&type=recattrib&info=standard')
               from webPages
@@ -496,19 +517,21 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           <?MIVAR NAME=previous_data_type><?/MIVAR>
 
       <?MISQL SQL="
-        select fdbcont_fdbdt_data_type, dblink_length, fdbcont_fdb_db_name,
+        select fdbdt_data_type, dblink_length, fdb_db_name,
                fdb_db_query || dblink_acc_num || (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
                dblink_acc_num_display, dblink_zdb_id,
-               fdb_db_significance, fdbdt_display_order
-        from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
+               fdb_db_significance, fdbdt_display_order,fdbcont_zdb_id
+        from db_link, foreign_db, foreign_db_contains, foreign_db_data_type,
+             foreign_db_contains_display_group_member, foreign_db_contains_display_group
         where dblink_linked_recid = '$encodes_zdb_id'
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = fdb_db_name
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and fdbcont_fdbdt_super_type = fdbdt_super_type
-          and fdbcont_fdbdt_data_type = fdbdt_data_type
-          and fdb_db_name != 'BLAST'
-          order by fdbdt_display_order, fdbcont_fdbdt_data_type, dblink_length desc, fdb_db_significance
+          and fdbcont_fdb_db_id = fdb_db_pk_id
+          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+          and fdbcdg_pk_id = fdbcdgm_group_id
+          and fdbdt_super_type = fdbdt_super_type
+          and fdbcont_fdbdt_id = fdbdt_pk_id
+          and fdbcdg_name = 'marker linked sequence'
+          order by fdbdt_display_order, fdbdt_data_type, dblink_length desc, fdb_db_significance
       ;">
 
         <?MIVAR NAME=data_type>$1<?/MIVAR>
@@ -517,6 +540,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
         <?MIVAR NAME=dataId>$6<?/MIVAR>
+        <?MIVAR NAME=fdbcont_zdb_id>$9<?/MIVAR>
         <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
           <?MIBLOCK COND=$(XST,$encodes_data_type)>
@@ -535,7 +559,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
               $1
             <?/MISQL>
           </TD>
-          <TD align=right>
+          <TD class="length">
             <nobr>
                 <?MIVAR>$dblink_length<?/MIVAR>
                 <?MIBLOCK COND=$(NC,$dblink_length,)>
@@ -545,10 +569,10 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
                 <?/MIBLOCK>
             </nobr>
           </TD>
-          <TD align=center>
+          <TD class="analysis">
             <?MICOMMENT>bizzare kludge to prevent seqt_acc_len from being undefined after the first webexplode &seqt_acc_len=$dblink_length<?/MICOMMENT>
             <?MIVAR NAME=seqt_acc_len>$dblink_length<?/MIVAR>
-             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
+             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_type=$data_type&seqt_acc_db=$db_name&seqt_fdbc_zdb_id=$fdbcont_zdb_id') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
           </TD>
         </TR>
 
@@ -567,29 +591,34 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MICOMMENT> -------- CONTAINS -------- <?/MICOMMENT>
 
       <?MISQL SQL="
-        select mrel_mrkr_1_zdb_id, mrkr_abbrev, mrkrtype_type_display, mrkrtype_significance, mrel_zdb_id
-        from marker_relationship, marker, foreign_db_contains, marker_types, db_link
+        select mrel_mrkr_1_zdb_id, mrkr_abbrev, mrkrtype_type_display, mrkrtype_significance, mrel_zdb_id, 
+               get_mrkr_abbrev_html_link(mrel_mrkr_1_zdb_id)
+        from marker_relationship, marker, foreign_db_data_type, foreign_db_contains, marker_types, db_link,
+             foreign_db_contains_display_group_member, foreign_db_contains_display_group
         where mrel_mrkr_2_zdb_id = '$OID'
           and mrel_type = 'clone contains gene'
           and mrel_mrkr_1_zdb_id = mrkr_zdb_id
           and mrkr_type = marker_type
           and mrkr_zdb_id = dblink_linked_recid
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdbdt_super_type = 'sequence'
+          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+          and fdbcdg_pk_id = fdbcdgm_group_id
+          and fdbcdg_name = 'marker linked sequence'
+	  and fdbcont_fdbdt_id = fdbdt_pk_id
           and mrkr_zdb_id not in ('$chimeric_clone_list')
         order by mrkrtype_significance, mrkrtype_type_display desc, mrkr_abbrev
       ;">
 
         <?MIVAR COND=$(NXST,$contains_mrkr_abbrev)>
           <p>
-          <b>$link_backto_OID Contained in:</b><br>
-          <TABLE width=100% border=0 bgcolor=$highlight>
-            <TR bgcolor=#ccccccc>
-              <TD width=20%><B>Marker</B></TD>
-              <TD width=10%><B>Type</B></TD>
-              <TD width=40%><B>Accession #</B></TD>
-              <TD align=right width=10%><B>Length</B></TD>
-              <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
+          <TABLE class="summary">
+            <caption>$link_backto_OID Contained in: </caption>
+            <TR bgcolor=#cccccc>
+              <th width=20%><B>Marker</B></th>
+              <th width=10%><B>Type</B></th>
+              <th width=40%><B>Accession #</B></th>
+              <th class="length"><B>Length (bp/aa)</B></th>
+              <th class="analysis"><A HREF="javascript:start_help()"><b>Analysis</b></A></th>
             </TR>
         <?/MIVAR>
 
@@ -597,12 +626,12 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         <?MIVAR NAME=contains_mrkr_abbrev>$2<?/MIVAR>
         <?MIVAR NAME=contains_mrkr_type>$3<?/MIVAR>
         <?MIVAR NAME=contains_mrel_zdb_id>$5<?/MIVAR>
+        <?MIVAR NAME="contains_mrkr_link">$6<?/MIVAR>
 
         <TR>
           <TD>
             [$contains_mrkr_type]
-            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$contains_zdb_id"
-            > $contains_mrkr_abbrev</A>
+	    <?MIVAR>$contains_mrkr_link<?/MIVAR>
             <?MISQL SQL="
               select WebExplode(object,'dataId=$contains_mrel_zdb_id&type=recattrib&info=standard')
               from webPages
@@ -614,19 +643,20 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           <?MIVAR NAME=previous_data_type><?/MIVAR>
 
       <?MISQL SQL="
-        select fdbcont_fdbdt_data_type, dblink_length, fdbcont_fdb_db_name,
+        select fdbdt_data_type, dblink_length, fdb_db_name,
                fdb_db_query || dblink_acc_num || (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
                dblink_acc_num_display, dblink_zdb_id,
-               fdb_db_significance, fdbdt_display_order
-        from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
+               fdb_db_significance, fdbdt_display_order,fdbcont_zdb_id
+        from db_link, foreign_db, foreign_db_contains, foreign_db_data_type,
+             foreign_db_contains_display_group_member, foreign_db_contains_display_group
         where dblink_linked_recid = '$contains_zdb_id'
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = fdb_db_name
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and fdbcont_fdbdt_super_type = fdbdt_super_type
-          and fdbcont_fdbdt_data_type = fdbdt_data_type
-          and fdb_db_name != 'BLAST'
-          order by fdbdt_display_order, fdbcont_fdbdt_data_type, dblink_length desc, fdb_db_significance
+          and fdbcont_fdb_db_id = fdb_db_pk_id
+          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+          and fdbcdg_pk_id = fdbcdgm_group_id
+          and fdbcdg_name = 'marker linked sequence'
+          and fdbcont_fdbdt_id = fdbdt_pk_id
+          order by fdbdt_display_order, fdbdt_data_type, dblink_length desc, fdb_db_significance
       ;">
 
         <?MIVAR NAME=data_type>$1<?/MIVAR>
@@ -635,6 +665,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
         <?MIVAR NAME=dataId>$6<?/MIVAR>
+        <?MIVAR NAME=dblink_fdbcont_zdb_id>$9<?/MIVAR>
 
           <?MIBLOCK COND=$(XST,$contains_data_type)>
             <TR style="height:2.25em;"><TD>&nbsp;</TD>
@@ -652,7 +683,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
               $1
             <?/MISQL>
           </TD>
-          <TD align=right>
+          <TD class="length">
             <nobr>
                 <?MIVAR>$dblink_length<?/MIVAR>
                 <?MIBLOCK COND=$(NC,$dblink_length,)>
@@ -662,10 +693,10 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
                 <?/MIBLOCK>
             </nobr>
           </TD>
-          <TD align=center>
+          <TD class="analysis">
             <?MICOMMENT>bizzare kludge to prevent seqt_acc_len from being undefined after the first webexplode &seqt_acc_len=$dblink_length<?/MICOMMENT>
             <?MIVAR NAME=seqt_acc_len>$dblink_length<?/MIVAR>
-             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
+             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_type=$data_type&seqt_acc_db=$db_name&seqt_fdbc_zdb_id=$dblink_fdbcont_zdb_id') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
           </TD>
         </TR>
         <?MIVAR NAME=contains_data_type>$data_type<?/MIVAR>
@@ -686,15 +717,20 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       Marking as distinct because can have multiple dblinks.
       <?/MICOMMENT>
       <?MISQL SQL="
-        select distinct mrel_mrkr_1_zdb_id, mrkr_abbrev, mrkrtype_type_display, mrkrtype_significance, mrel_zdb_id,mrel_mrkr_2_zdb_id
-        from marker_relationship, marker, foreign_db_contains, marker_types, db_link
+        select distinct mrel_mrkr_1_zdb_id, mrkr_abbrev, mrkrtype_type_display, mrkrtype_significance, mrel_zdb_id,mrel_mrkr_2_zdb_id,
+                        get_mrkr_abbrev_html_link(mrel_mrkr_2_zdb_id)
+        from marker_relationship, marker, foreign_db_data_type, foreign_db_contains, marker_types, db_link,
+             foreign_db_contains_display_group_member, foreign_db_contains_display_group
         where mrel_mrkr_1_zdb_id = '$OID'
           and mrel_type = 'gene has artifact'
           and mrel_mrkr_2_zdb_id = mrkr_zdb_id
           and mrkr_type = marker_type
           and mrkr_zdb_id = dblink_linked_recid
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdbdt_super_type = 'sequence'
+	  and fdbcont_fdbdt_id = fdbdt_pk_id
+          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+          and fdbcdg_pk_id = fdbcdgm_group_id
+          and fdbcdg_name = 'marker linked sequence'
         order by mrkrtype_significance, mrkrtype_type_display desc, mrkr_abbrev
       ;">
 
@@ -704,12 +740,12 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           <p><img src="/images/warning-noborder.gif" width=20 height=20 align=top>
           <b>$link_backto_OID Has artifacts:</b> <br>
           <TABLE width=100% border=0 bgcolor=$highlight>
-            <TR bgcolor=#ccccccc>
+            <TR bgcolor=#cccccc>
               <TD width=20%><B>Marker</B></TD>
               <TD width=10%><B>Type</B></TD>
               <TD width=40%><B>Accession #</B></TD>
-              <TD align=right width=10%><B>Length</B></TD>
-              <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
+              <TD class="length"><B>Length (bp/aa)</B></TD>
+              <TD class="analysis"><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
             </TR>
         <?/MIVAR>
 
@@ -717,12 +753,12 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         <?MIVAR NAME=artifact_of_mrkr_abbrev>$2<?/MIVAR>
         <?MIVAR NAME=artifact_of_mrkr_type>$3<?/MIVAR>
         <?MIVAR NAME=artifact_of_mrel_zdb_id>$5<?/MIVAR>
+        <?MIVAR NAME="artifact_of_mrkr_link">$7<?/MIVAR>
 
         <TR>
           <TD>
             [$artifact_of_mrkr_type]
-            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$artifact_of_zdb_id"
-            > $artifact_of_mrkr_abbrev</A>
+	    <?MIVAR>$artifact_of_mrkr_link<?/MIVAR>
             <?MISQL SQL="
               select WebExplode(object,'dataId=$artifact_of_mrel_zdb_id&type=recattrib&info=standard')
               from webPages
@@ -734,19 +770,21 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           <?MIVAR NAME=previous_data_type><?/MIVAR>
 
       <?MISQL SQL="
-        select fdbcont_fdbdt_data_type, dblink_length, fdbcont_fdb_db_name,
+        select fdbdt_data_type, dblink_length, fdb_db_name,
                fdb_db_query || dblink_acc_num || (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
                dblink_acc_num_display, dblink_zdb_id,
-               fdb_db_significance, fdbdt_display_order
-        from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
+               fdb_db_significance, fdbdt_display_order,dblink_fdbcont_zdb_id
+        from db_link, foreign_db, foreign_db_contains, foreign_db_data_type,
+             foreign_db_contains_display_group_member, foreign_db_contains_display_group
         where dblink_linked_recid = '$artifact_of_zdb_id'
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = fdb_db_name
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and fdbcont_fdbdt_super_type = fdbdt_super_type
-          and fdbcont_fdbdt_data_type = fdbdt_data_type
-          and fdb_db_name != 'BLAST'
-          order by fdbdt_display_order, fdbcont_fdbdt_data_type, dblink_length desc, fdb_db_significance
+          and fdbcont_fdb_db_id = fdb_db_pk_id
+	  and fdbcont_fdbdt_id = fdbdt_pk_id
+          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+          and fdbcdg_pk_id = fdbcdgm_group_id
+          and fdbcdg_name = 'marker linked sequence'
+          and fdbdt_super_type = fdbdt_super_type
+          order by fdbdt_display_order, fdbdt_data_type, dblink_length desc, fdb_db_significance
       ;">
 
         <?MIVAR NAME=data_type>$1<?/MIVAR>
@@ -755,6 +793,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
         <?MIVAR NAME=dataId>$6<?/MIVAR>
+        <?MIVAR NAME=dblink_fdbcont_zdb_id>$9<?/MIVAR>
 
           <?MIBLOCK COND=$(XST,$artifact_of_data_type)>
             <TR style="height:2.25em;"><TD>&nbsp;</TD>
@@ -772,7 +811,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
               $1
             <?/MISQL>
           </TD>
-          <TD align=right>
+          <TD class="length">
             <nobr>
                 <?MIVAR>$dblink_length<?/MIVAR>
                 <?MIBLOCK COND=$(NC,$dblink_length,)>
@@ -782,10 +821,10 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
                 <?/MIBLOCK>
             </nobr>
           </TD>
-          <TD align=center>
+          <TD class="analysis">
             <?MICOMMENT>bizzare kludge to prevent seqt_acc_len from being undefined after the first webexplode &seqt_acc_len=$dblink_length<?/MICOMMENT>
             <?MIVAR NAME=seqt_acc_len>$dblink_length<?/MIVAR>
-             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
+             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_type=$data_type&seqt_acc_db=$db_name&seqt_fdbc_zdb_id=$dblink_fdbcont_zdb_id') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
           </TD>
         </TR>
         <?MIVAR NAME=artifact_of_data_type>$data_type<?/MIVAR>

@@ -83,38 +83,38 @@ $urlTail     = '.apg';
 # Returns:  APP_FILE, OID
 my $sql = <<ENDSQL;
 
--- antibody
-SELECT "antibody" AS app_file, atb_zdb_id AS oid
-FROM antibody
+-- marker pages, url provided by spl
+SELECT "marker" AS app_file, mrkr_zdb_id AS oid, get_mrkr_url(mrkr_zdb_id)
+FROM marker
 
 UNION
 
 -- anatomy_item
-SELECT "anatomy_item" AS app_file, anatitem_zdb_id AS oid
+SELECT "anatomy_item" AS app_file, anatitem_zdb_id AS oid, "" as url
 FROM anatomy_item
 
 UNION
 
 -- companyview
-SELECT "companyview" AS app_file, zdb_id AS oid
+SELECT "companyview" AS app_file, zdb_id AS oid, "" as url
 FROM company
 
 UNION
 
 -- crossview
-SELECT "crossview" AS app_file, zdb_id AS oid
+SELECT "crossview" AS app_file, zdb_id AS oid, "" as url
 FROM panels
 
 UNION
 
 -- genotypeview
-SELECT "genotypeview" AS app_file, geno_zdb_id AS oid
+SELECT "genotypeview" AS app_file, geno_zdb_id AS oid, "" as url
 FROM genotype
 
 UNION
 
 -- fxfigureview
-SELECT "fxfigureview" AS app_file, fig_zdb_id AS oid
+SELECT "fxfigureview" AS app_file, fig_zdb_id AS oid, "" as url
 FROM figure
 
 UNION
@@ -122,7 +122,7 @@ UNION
 -- geneprddescription
 -- in this query, we only care about Swiss_Prot external notes
 -- the hardcoded FDBCONT identifies such records specifically
-SELECT distinct "geneprddescription" AS app_file, dblink_linked_recid
+SELECT distinct "geneprddescription" AS app_file, dblink_linked_recid, "" as url
 FROM db_link
 where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-47'
 and exists (
@@ -133,41 +133,41 @@ and exists (
 UNION
 
 -- labview
-SELECT "labview" AS app_file, zdb_id AS oid
+SELECT "labview" AS app_file, zdb_id AS oid, "" as url
 FROM lab
 
 UNION
 
 -- markergoview
-SELECT distinct "markergoview" AS app_file, mrkrgoev_mrkr_zdb_id
+SELECT distinct "markergoview" AS app_file, mrkrgoev_mrkr_zdb_id, "" as url
 FROM marker_go_term_evidence
 
 UNION
 
--- markerview
-SELECT "markerview" AS app_file, mrkr_zdb_id AS oid
-FROM marker
 
-UNION
 
 -- persview
-SELECT "persview" AS app_file, zdb_id AS oid
+SELECT "persview" AS app_file, zdb_id AS oid, "" as url
 FROM person
 
 UNION
 
 -- sequence
-SELECT distinct "sequence" AS app_file, dblink_linked_recid AS oid
+SELECT distinct "sequence" AS app_file, dblink_linked_recid AS oid, "" as url
 FROM   db_link, foreign_db_contains, foreign_db_data_type
 WHERE  dblink_fdbcont_zdb_id = fdbcont_zdb_id
- AND   fdbcont_fdbdt_data_type = fdbdt_data_type
+ AND   fdbdt_pk_id = fdbcont_fdbdt_id
  AND   fdbdt_super_type = "sequence"
+-- transcript's have all sequences displayed on their main page
+-- and don't use sequence.apg
+ AND   dblink_linked_recid[1,11] <> "ZDB-TSCRIPT"
+   
 
 
 UNION
 
 -- xpatexpcdndisplay
-SELECT "xpatexpcdndisplay" AS app_file, expcond_zdb_id AS oid
+SELECT "xpatexpcdndisplay" AS app_file, expcond_zdb_id AS oid, "" as url
 FROM experiment_condition
 
 ENDSQL
@@ -216,23 +216,25 @@ $sth->execute();
 # Loop through SQL query, generating results
 while (my @row = $sth->fetchrow_array()) {
 	$nRecords ++;
-	my $url;
 	my $app_page = trim($row[0]);
 	my $oid = trim($row[1]);
-	
+	my $url = trim($row[2]);
+
 	# generate specific URL for data-page corresponding to APP_PAGE, OID pairs
-	if ($app_page ne "anatomy_item" ) {
-	    if ($app_page eq "antibody") {
-		$url = "http://<!--|DOMAIN_NAME|-->/action/antibody/detail?antibody.zdbID=".$oid;
-	    }else{
-		my $idName = ($app_page eq "xpatexpcdndisplay") ? "&cdp_exp_zdb_id=" : "&OID=";
-		$url = $urlHead . $app_page . $urlTail . $idName . $oid;
-	    }
-	}else {
-	    # hardcode the path for Java page. When Java file path name gets standalized, 
+    if ($url eq "") {
+	    if ($app_page ne "anatomy_item" ) {
+    		my $idName = ($app_page eq "xpatexpcdndisplay") ? "&cdp_exp_zdb_id=" : "&OID=";
+    		$url = $urlHead . $app_page . $urlTail . $idName . $oid;
+
+     	} else {
+	        # hardcode the path for Java page. When Java file path name gets standalized,
             # will update here.
-	    $url = "http://<!--|DOMAIN_NAME|-->/action/anatomy/term-detail?anatomyItem.zdbID=".$oid; 
-	} 
+	        $url = "http://<!--|DOMAIN_NAME|-->/action/anatomy/term-detail?anatomyItem.zdbID=".$oid;
+	    }
+	} else {
+	    #if the url was populated by the query, it won't contain the first bit of the url...
+	    $url = "http://<!--|DOMAIN_NAME|-->" . $url; 
+	}
 	# write URL to file
 	print RESULT "$url\n";
 }

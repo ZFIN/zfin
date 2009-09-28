@@ -18,6 +18,8 @@ body {
 
 }
 
+hr { background-color: #FFFFFF;  border: 0; height: 1px; width: 80%; }
+
 .allcontent {
     margin-left: 5px;
     margin-right: 5px;
@@ -117,6 +119,17 @@ td.submitbar {
 #autosuggest {
     display: none;
 }
+
+
+table.clonedata td {
+    padding: 5px;
+}
+
+table.data_manager { width: 100% ; border-collapse: collapse ; background: #eee; }
+table.data_manager tr { text-align: center; }
+table.data_manager td { text-align: center; font-size: small ; padding: .3em;}
+table.data_manager a.root { color: red }
+
 
 /*** gene name & abbrev ***/
 
@@ -314,8 +327,25 @@ a.external {
     padding-right: 13px;
 }
 
+
+img.blast-key{
+    position: relative;
+    bottom: -0.3em;
+}
+
+img.blast{
+    position: relative;
+    vertical-align: top; 
+    bottom: 0.1em;
+}
+
+
 .indented-section{
      margin-left:18pt;
+}
+
+img.clickable{
+    cursor: pointer ;
 }
 
 .table-header {

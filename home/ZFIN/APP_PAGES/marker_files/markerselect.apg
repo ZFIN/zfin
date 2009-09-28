@@ -665,13 +665,16 @@ DEBUGGING:
      <?MIELSE>
 	<SCRIPT>
           <?MIVAR>	
-            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$the_marker")
+	    <?MISQL SQL="select get_mrkr_url('$the_marker') from single;">	
+	      replaceLocation("$1")
+            <?/MISQL>
           <?/MIVAR>
 	</SCRIPT>
      <?/MIBLOCK>
   <?MIELSE>
 
    <?MICOMMENT>return page title display<?/MICOMMENT>
+  
    <table width=100%>
      <TR>
       <TD width=90%> 
@@ -682,15 +685,15 @@ DEBUGGING:
             <?MIELSE COND="$(EC,$type,pub_mo)">
                 Morpholino 
             <?MIELSE COND="$(EC,$type,pub_efg)">
-                Engineered Foreign Genes 
+                Engineered Foreign Genes
             <?MIELSE>
  	        Mapping Data
             <?/MIBLOCK>
-            <?MIVAR> List (<b>$num_recs</b> records.)<?/MIVAR>
+            <?MIVAR> List (<b>$num_recs</b> records)<?/MIVAR>
 	  <?MIELSE COND="$(XST,$accession)">
-	    <?MIVAR>Marker List (<b>$num_recs</b> records.)<?/MIVAR>
+	    <?MIVAR>Marker List (<b>$num_recs</b> records)<?/MIVAR>
 	  <?MIELSE>
-	    <?MIVAR>$marker_type_display Search Results (<b>$num_recs</b> records.)<?/MIVAR>
+	    <?MIVAR>$marker_type_display Search Results (<b>$num_recs</b> records)<?/MIVAR>
 	  <?/MIBLOCK></center>
           </font>
       </TD>
@@ -759,7 +762,6 @@ DEBUGGING:
 		      mrkrtype_type_display, mstmrkr_zdb_id, 
 		      mstmrkr_abbrev_order, mstmrkr_match_name, 
 		      mstmrkr_significance, mstmrkr_precedence, '', ''
-
 		from $markerselect_temp_marker, marker_types mt
                where mstmrkr_type = mt.marker_type
             order by mstmrkr_significance, mstmrkr_type, mstmrkr_abbrev_order;
@@ -775,7 +777,7 @@ DEBUGGING:
 		      mt.mrkrtype_type_display, mstmrkr_zdb_id, 
 		      mg.mrkr_abbrev_order, mstmrkr_match_name, 
 		      mstmrkr_significance, mstmrkr_precedence, 
-		      mg.mrkr_zdb_id, mg.mrkr_abbrev	
+		      mg.mrkr_zdb_id, mg.mrkr_abbrev
 		from $markerselect_temp_marker, marker_types mt,
 		     outer (marker_relationship, marker mg)
                where mstmrkr_type = mt.marker_type
@@ -798,6 +800,16 @@ DEBUGGING:
       <?MIVAR name=$match_text>$9<?/MIVAR>
       <?MIVAR name=$mrkrsel_mo_gene_zdb_id>$10<?/MIVAR>
       <?MIVAR name=$mrkrsel_mo_gene_sym>$11<?/MIVAR>
+
+      <?MICOMMENT> ** call the html functions here so that they only get executed
+                      for the results that are actually displayed ** <?/MICOMMENT>
+      <?MISQL SQL="select get_mrkr_abbrev_html('$OID'), 
+                   get_mrkr_abbrev_html_link('$OID')
+                   from single;">
+         <?MIVAR NAME="$mrkrsel_mrkr_abbrev_html">$1<?/MIVAR>
+         <?MIVAR NAME="$mrkrsel_mrkr_link">$2<?/MIVAR>
+      <?/MISQL>
+
  
       <?MIBLOCK COND="$(EC,$displayTitle,f)"> 
         <?MICOMMENT> == display the "Show genes with known loci" button ==
@@ -842,13 +854,17 @@ DEBUGGING:
              <TD align=left width=15%><B>Phenotype</b></TD>
 	   <?/MIVAR>
 
-           <?MIVAR NAME=mksel_map_col>t<?/MIVAR>
+           <?MIVAR NAME=mksel_map_col>t<?/MIVAR>           
            <?MIVAR COND="$(AND,$(XST,$marker_type),$(>,$(POSITION,$marker_type,CONSTRCT),0))">
 		$(SETVAR,$mksel_map_col,f)
            <?/MIVAR>            
-           <?MIVAR COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(EC,$mksel_map_col,t))"> 
+           <?MIVAR COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(EC,$mksel_map_col,t),$(AND,$(XST,$marker_type),$(NE,$marker_type,TSCRIPT)))"> 
        	     <TD align-left><b>Map</b></TD>
            <?/MIVAR>
+	   <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EQ,$marker_type,TSCRIPT))">
+             <TD align-left><b><a href="/action/marker/transcript-definitions#type">Transcript Type</a></b></TD>
+           <?/MIBLOCK>
+
 
            <?MIBLOCK COND="$(XST,$input_name)">
      <?MIBLOCK COND="$(AND,$(XST,$mtype),$(>,$(POSITION,$mtype,CONSTRCT),0))">
@@ -875,7 +891,6 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 
  <?MICOMMENT>== when starts MOs on a new gene ==<?/MICOMMENT>
  <?MIBLOCK COND="$(OR,$(NXST,$target_gene_zdb_id),$(AND,$(XST,$target_gene_zdb_id),$(NC,$mrkrsel_mo_gene_zdb_id,$target_gene_zdb_id)))">
-
      <?MIVAR NAME=$display_target_gene><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrsel_mo_gene_zdb_id> $mrkrsel_mo_gene_sym </A><?/MIVAR>
 	   
      <?MIBLOCK COND="$(NC,$rowNUM,1)">
@@ -915,13 +930,8 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
   <?/MIVAR>
 
   <?MIBLOCK COND=$(EC,$type_of_genedom,f)>
-     <?MIBLOCK COND="$(AND,$(XST,$mtype),$(>,$(POSITION,$mtype,CONSTRCT),0))">
-
-             <?MIVAR><A HREF="$curviewer$OID"><i>$marker_name</i></A></TD><?/MIVAR>
-      <?MIELSE>
-             <?MIVAR><A HREF="$curviewer$OID">$marker_name</A></TD><?/MIVAR>
-      <?/MIBLOCK>
-	  <?MIELSE>
+      <?MIVAR>$mrkrsel_mrkr_link<?/MIVAR>
+	  <?MIELSE> <?MICOMMENT> ** IS A GENE ** <?/MICOMMENT>
 	     <?MIVAR>
                  <A HREF="$curviewer$OID"> <i>$marker_abbrev</i></A>-$marker_name</TD>
               <?/MIVAR>
@@ -1090,12 +1100,22 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 
 	
 	  <?MICOMMENT>------ Map info ------<?/MICOMMENT>
-	    <?MIBLOCK COND="$(EC,$type_of_knockdown_reagent,f)">	
-	  <TD width=20%>
-          <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">
-	    $1<?/MISQL>
-	  </TD>
-            <?/MIBLOCK>
+	  <?MIBLOCK COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(AND,$(XST,$marker_type),$(NE,$marker_type,TSCRIPT)))">	
+ 	      <TD width=20%>
+                   <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t&oID=$OID') 
+                                from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+              </TD>
+          <?/MIBLOCK>          
+          <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EC,$marker_type,TSCRIPT))">
+             <?MISQL SQL="select tscriptt_display 
+                          from transcript 
+                            join transcript_type 
+                              on tscript_type_id = tscriptt_pk_id  
+                          where tscript_mrkr_zdb_id = '$OID';">
+               <TD width="20%">$1</TD>
+             <?/MISQL>
+          <?/MIBLOCK>
+
   
 	  <?MICOMMENT>------ Matching Text ------<?/MICOMMENT>
             <?MIBLOCK COND="$(XST,$input_name)">

@@ -119,7 +119,7 @@ OUTPUT VARS:
 
    
 
-<TABLE width=100%><TR><TD bgcolor=#ccccccc>
+<TABLE width=100%><TR><TD bgcolor=#cccccc>
 <font size=+2><b>CITATIONS</b></font>
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">

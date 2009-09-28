@@ -28,10 +28,10 @@ public class AntibodyService {
     private AntibodySearchCriteria antibodySerachCriteria;
 
     private int numOfLabelings;
+
     private int numberOfPublications;
+
     private List<FigureSummaryDisplay> figureSummary;
-    // for caching purposed
-    private List<MatchingText> matchingTexts;
 
     public AntibodyService(Antibody antibody) {
         if (antibody == null)
@@ -187,21 +187,18 @@ public class AntibodyService {
      * @return matching text collection
      */
     public List<MatchingText> getMatchingText() {
-        if (matchingTexts != null)
-            return matchingTexts;
-
         if (antibodySerachCriteria == null)
             return null;
-        List<MatchingText> matchedTerms = new ArrayList<MatchingText>();
+        List<MatchingText> matchingTexts = new ArrayList<MatchingText>();
         // check antibody name
-        addMatchingAntibodyName(matchedTerms);
+        addMatchingAntibodyName(matchingTexts);
 
         // check antigen gene abbreviation, name and previous names
-        addMatchingAntigenGene(matchedTerms);
+        addMatchingAntigenGene(matchingTexts);
 
         // Check anatomy terms
-        addMatchingAnatomyTerms(matchedTerms);
-        matchingTexts = matchedTerms;
+        addMatchingAnatomyTerms(matchingTexts);
+
         return matchingTexts;
     }
 
@@ -297,8 +294,7 @@ public class AntibodyService {
     }
 
     protected void addMatchingAntibodyName(List<MatchingText> matchingTexts) {
-        String name = antibodySerachCriteria.getName();
-        String antibodyNamefilterString = name != null ? name.trim() : "";
+        String antibodyNamefilterString = antibodySerachCriteria.getName().trim();
         if (antibodyNamefilterString != null && antibodyNamefilterString.trim().length() != 0) {
             String antibodyName = antibody.getName();
             boolean hasNameMatch = false;
@@ -367,9 +363,9 @@ public class AntibodyService {
             Set<ExpressionResult> results = labeling.getExpressionResults();
             // exclude those assays with no expression result record
             if (results != null && !results.isEmpty()) {
-                String assayName = labeling.getAssay().getName();
-                if (assayName != null)
-                    assayNames.add(assayName);
+              String assayName = labeling.getAssay().getName();
+              if (assayName != null)
+                assayNames.add(assayName);
             }
         }
         return assayNames;
@@ -428,10 +424,12 @@ public class AntibodyService {
                             cc = goResult.getSubterm();
                         }
                         String ccName;
-                        if (cc == null)
-                            ccName = "";
-                        else
-                            ccName = cc.getTermName();
+                        if (cc == null){
+                          ccName = "";
+                        }
+                        else{
+                          ccName = cc.getName();
+                        }
 
                         // form the key
                         String key = ao.getName() + ccName;

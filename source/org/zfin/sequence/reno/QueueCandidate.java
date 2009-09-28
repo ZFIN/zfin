@@ -1,11 +1,6 @@
 package org.zfin.sequence.reno;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Peiran Song
- * Date: Jul 18, 2007
- * Time: 5:18:47 PM
- * To change this template use File | Settings | File Templates.
  */
 public class QueueCandidate {
     private RunCandidate runCandidate;

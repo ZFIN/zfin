@@ -89,7 +89,7 @@ EFFECTS:
         <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
 	  <TITLE>ZFIN: Experimental Condition: <?MIVAR>$(REPLACE,$cdp_mini_ref,<i>et al.</i>,et at.); $cdp_cdt_name<?/MIVAR> </TITLE>
           <table width=100%>
-            <tr bgcolor=#ccccccc>
+            <tr bgcolor=#cccccc>
               <td> <font size=+2> <b> Environment Description </b> </font></td>
             </tr> 
 	   </table>
@@ -106,7 +106,7 @@ EFFECTS:
 
 	     <table width=100% border=0> 
 	           <?MIVAR>
-		   <tr bgcolor=#ccccccc> 
+		   <tr bgcolor=#cccccc>
                    <?/MIVAR>
 		     <td><b>Gene</b></td>  <td><b>Morpholino</b></td>
 	             <td><b>Value</b></td>   
@@ -155,7 +155,7 @@ EFFECTS:
 	     
 	     <table width=100% border=0> 
 	         <?MIVAR>
-		 <tr bgcolor=#ccccccc>
+		 <tr bgcolor=#cccccc>
 		 <?/MIVAR>
 		     <td><b>Category</b></td>  <td><b>Name</b></td>
 	             <td><b>Value</b></td> <td><b>Unit</b></td> 

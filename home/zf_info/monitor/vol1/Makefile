@@ -22,9 +22,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/monitor/vol1
 
 SUBDIRS = Dec1991.htg VOL1ISS2.htg VOL1ISS4.htg
 
-GENERICS = vol1.1.html vol1.2.html vol1.3.html vol1.4.html
-
-STATICS = vol1.3.pdf vol1.4.pdf vol1.1.pdf vol1.2.pdf
+STATICS = vol1.3.pdf vol1.4.pdf vol1.1.pdf vol1.2.pdf vol1.1.html vol1.2.html vol1.3.html vol1.4.html
 
 
 # ---------------  Production Rules  ------------------------------------

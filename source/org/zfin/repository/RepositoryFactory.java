@@ -6,8 +6,8 @@ import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.antibody.repository.HibernateAntibodyRepository;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.audit.repository.HibernateAuditLogRepository;
-import org.zfin.expression.repository.ExpressionSummaryRepository;
-import org.zfin.expression.repository.HibernateExpressionSummaryRepository;
+import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.expression.repository.HibernateExpressionRepository;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.repository.HibernateExpressionRepository;
 import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
@@ -28,6 +28,12 @@ import org.zfin.sequence.reno.repository.HibernateRenoRepository;
 import org.zfin.sequence.reno.repository.RenoRepository;
 import org.zfin.sequence.repository.HibernateSequenceRepository;
 import org.zfin.sequence.repository.SequenceRepository;
+import org.zfin.sequence.repository.DisplayGroupRepository;
+import org.zfin.sequence.repository.HibernateDisplayGroupRepository;
+import org.zfin.sequence.blast.repository.BlastRepository;
+import org.zfin.sequence.blast.repository.HibernateBlastRepository;
+import org.zfin.mapping.repository.LinkageRepository;
+import org.zfin.mapping.repository.HibernateLinkageRepository;
 import org.zfin.uniquery.repository.QuicksearchRepository;
 import org.zfin.uniquery.repository.HibernateQuicksearchRepository;
 
@@ -44,23 +50,26 @@ public class RepositoryFactory {
     private static AuditLogRepository auditRep;
     private static ProfileRepository profileRep;
     private static MutantRepository mutRep;
-    private static ExpressionSummaryRepository xpatsumRep;
+    private static ExpressionRepository xpatsumRep;
     private static MarkerRepository markerRep;
     private static InfrastructureRepository infraRep;
     private static SequenceRepository seqRep;
     private static OrthologyRepository orthoRep;
+    private static LinkageRepository linkageRep;
     private static QuicksearchRepository quicksearchRep;
+    private static BlastRepository blastRepository;
+    private static DisplayGroupRepository displayGroupRepository;
     private static ExpressionRepository expressionRep;
 
-    public static ExpressionSummaryRepository getExpressionSummaryRepository() {
+    public static ExpressionRepository getExpressionSummaryRepository() {
         if (xpatsumRep == null) {
-            xpatsumRep = new HibernateExpressionSummaryRepository();
+            xpatsumRep = new HibernateExpressionRepository();
         }
 
         return xpatsumRep;
     }
 
-    public static void setExpressionSummaryRepository(ExpressionSummaryRepository xpr) {
+    public static void setExpressionSummaryRepository(ExpressionRepository xpr) {
         xpatsumRep = xpr;
     }
 
@@ -184,8 +193,28 @@ public class RepositoryFactory {
         return orthoRep;
     }
 
+
+    public static LinkageRepository getLinkageRepository() {
+        if (linkageRep == null)
+            linkageRep = new HibernateLinkageRepository();
+        return linkageRep;
+    }
+
     public static void setOrthologyRepository(OrthologyRepository orthoRep) {
         RepositoryFactory.orthoRep = orthoRep; 
+    }
+
+    public static BlastRepository getBlastRepository() {
+        if (blastRepository == null)
+            blastRepository = new HibernateBlastRepository();
+        return blastRepository;
+    }
+
+
+    public static DisplayGroupRepository getDisplayGroupRepository() {
+        if (displayGroupRepository== null)
+            displayGroupRepository = new HibernateDisplayGroupRepository();
+        return displayGroupRepository;
     }
 
     public static QuicksearchRepository getQuicksearchRepository() {

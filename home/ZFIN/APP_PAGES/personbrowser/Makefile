@@ -21,10 +21,11 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/personbrowser
 
-GENERICS = new_person.apg persprintable.apg persselect.apg \
+GENERICS = new_person.apg persselect.apg \
 	persupdate.apg persview.apg process-person.apg quickfindpers.apg \
-	sourceview.apg update-person.apg quickPersForm.apg updateaddress.apg \
-	process_address_update.apg \
+	update-person.apg quickPersForm.apg updateaddress.apg \
+	process_address_update.apg 
+STATICS = persprintable.apg sourceview.apg 
 
 
 # Use default rules for app page directories

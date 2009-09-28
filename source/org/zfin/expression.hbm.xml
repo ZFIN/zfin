@@ -206,7 +206,7 @@
         <property name="abbreviation" column="xpatassay_abbrev"/>
         <property name="comments" column="xpatassay_comments"/>
         <property name="displayOrder" column="xpatassay_display_order"/>
-      
+        <!--<property name="immunogen" column="xpatassay_is_immuno"/>-->
     </class>
 
     <class name="org.zfin.expression.ExpressionStructure" table="expression_pattern_infrastructure">

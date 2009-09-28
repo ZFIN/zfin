@@ -5,14 +5,12 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  */
 public interface SessionSaveService extends RemoteService {
-    // Sample interface method of remote interface
-//    void saveCuratorUpdate(String personZdbID, String publicationZdbID, String field, String value);
 
-    void saveCuratorUpdate(List<CuratorSessionDTO> curationSessionUpdateList);
 
     /**
      * Utility/Convenience class.
@@ -29,4 +27,6 @@ public interface SessionSaveService extends RemoteService {
             return app;
         }
     }
+
+    void saveCuratorUpdate(List<CuratorSessionDTO> curationSessionUpdateList);
 }

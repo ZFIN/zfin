@@ -1,9 +1,12 @@
 package org.zfin.sequence;
 
 import org.zfin.marker.Marker;
+import org.zfin.repository.RepositoryFactory;
 import org.apache.log4j.Logger;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.ArrayList;
 
 public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Serializable {
 
@@ -66,26 +69,27 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
     /**
      *  Sort by accessionNBumber, reference DB id, and finally marker name
      *
-     * @param o
-     * @return
+     * @param markerDBLink MarkerDBLink to compare to.
+     * @return Returns java comparison
      */
-    public int compareTo(MarkerDBLink o) {
+    public int compareTo(MarkerDBLink markerDBLink) {
 
-        int accCompare = getAccessionNumber().compareTo(o.getAccessionNumber()) ;
+        int accCompare = getAccessionNumber().compareTo(markerDBLink.getAccessionNumber()) ;
         if (accCompare!=0){
             return accCompare ;
         }
 
-        int refDBCompare = getReferenceDatabase().getZdbID().compareTo(o.getReferenceDatabase().getZdbID()) ;
+        int refDBCompare = getReferenceDatabase().getZdbID().compareTo(markerDBLink.getReferenceDatabase().getZdbID()) ;
         if (refDBCompare!=0){
             return refDBCompare;
         }
 
-        int markerCompare = getMarker().getZdbID().compareTo(o.getMarker().getZdbID()) ;
+        int markerCompare = getMarker().getZdbID().compareTo(markerDBLink.getMarker().getZdbID()) ;
         if ( markerCompare != 0){
             return markerCompare ;
         }
 
         return 0 ;
     }
+
 }

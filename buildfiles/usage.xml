@@ -43,13 +43,19 @@
             TESTS:
             test: Always run this before comitting. Seriously.
                 (currently just points to runtests-quiet)
-            runtests: Runs non-db test suites in org.zfin.UnitTests
+            unittests: Runs non-db test suites in org.zfin.UnitTests
             runDBtests: Runs db test suites in org.zfin.DbUnitTests
+            runBlasttests: Runs db and blast test suites combined in org.zfin.sequence.blast.BlastAndDBTests
+            enumtests: Tests only enumerations against the database
+            smokeTests:   Tests via http requests against our site.
+            serviceTests: Tests third-party service connections.
             runtests-quiet: Runs all test suites in org.zfin.UnitTests but only gives a summary
             compile-tests: Compiles test directories
             runTagTests: Compiles and deploys all tag-unit-testing code into a separate application 
                 root directory.  Deploys it into an app server root directory specified by the 
                 environment variable TAGUNIT_HOME
+            blastHeuristics:  Runs full blast heuristics to determine the optimal blast setting.
+	    runBlasttests: Runs all blast tests; have to have ssh keys to genomix set up in order to run these from ant deploy.
         </echo>
     </target>
 

@@ -8,6 +8,7 @@ import org.zfin.orthology.OrthoEvidence;
 import org.zfin.people.Person;
 import org.zfin.sequence.Entrez;
 import org.zfin.sequence.EntrezProtRelation;
+import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.reno.RunCandidate;
 
 import java.util.Collection;
@@ -25,7 +26,6 @@ public class CandidateBean {
     public static final String HUMAN_ORTHOLOGY_EVIDENCE = "humanOrthologyEvidence";
     public static final String MOUSE_ORTHOLOGY_EVIDENCE = "mouseOrthologyEvidence";
 
-    public static final String BLAST_URL = "http://zfin.org/blast/blastit.cgi?PROGRAM=blastp&DATALIB=refseq_zf_aa&DATALIB=sptr_zf&SEQ_TYPE=pt&EXPECT=10&WORD=3&MATRIX=BLOSUM62&SEG=on&XNU=on&GRAPH_DISPLAY=on&SEQ_ID=";
     public static final String ZEBRAFISH = "Zebrafish";
 
     public static final String SET_PROBLEM = "SET_PROBLEM";
@@ -34,7 +34,7 @@ public class CandidateBean {
     public static final String UNLOCK_RECORD = "unlock";
     public static final String DONE = "done";
 
-    RunCandidate runCandidate;
+    private RunCandidate runCandidate;
 
     private String associatedGeneField;
     private Collection<Marker> allSingleAssociatedGenesFromQueries;
@@ -59,6 +59,8 @@ public class CandidateBean {
 
 
     private EntrezProtRelation humanOrthologueAbbrev;
+    private ReferenceDatabase humanReferenceDatabase ;
+    private ReferenceDatabase mouseReferenceDatabase ;
 
     public String getRelationPublicationZdbID() {
         return relationPublicationZdbID;
@@ -103,6 +105,21 @@ public class CandidateBean {
         this.humanOrthologueAbbrev = humanOrthologueAbbrev;
     }
 
+    public ReferenceDatabase getHumanReferenceDatabase() {
+        return humanReferenceDatabase;
+    }
+
+    public void setHumanReferenceDatabase(ReferenceDatabase humanReferenceDatabase) {
+        this.humanReferenceDatabase = humanReferenceDatabase;
+    }
+
+    public ReferenceDatabase getMouseReferenceDatabase() {
+        return mouseReferenceDatabase;
+    }
+
+    public void setMouseReferenceDatabase(ReferenceDatabase mouseReferenceDatabase) {
+        this.mouseReferenceDatabase = mouseReferenceDatabase;
+    }
 
     public Set<OrthoEvidence.Code> getHumanOrthologyEvidence() {
         return humanOrthologyEvidence;
@@ -223,11 +240,6 @@ public class CandidateBean {
         this.action = action;
     }
 
-    public String getBlastUrl() {
-        return BLAST_URL;
-    }
-
-
     public static String getSaveNote() {
         return SAVE_NOTE;
     }
@@ -329,12 +341,8 @@ public class CandidateBean {
     }
 
     public boolean isOwnerViewing() {
-        if (getRunCandidate().getLockPerson() != null
-                && getCurrentUser().equals(getRunCandidate().getLockPerson())) {
-            return true;
-        } else {
-            return false;
-        }
+        return getRunCandidate().getLockPerson() != null
+                && getCurrentUser().equals(getRunCandidate().getLockPerson());
 
     }
 }

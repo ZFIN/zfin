@@ -38,7 +38,7 @@ public class SessionSave implements EntryPoint {
         curatorSessionUpdate.setPublicationZdbID(publicationZdbID);
         curatorSessionUpdate.setField(field);
         curatorSessionUpdate.setValue(value);
-        List sessionList = new ArrayList() ;
+        ArrayList<CuratorSessionDTO> sessionList = new ArrayList<CuratorSessionDTO>() ;
         sessionList.add(curatorSessionUpdate) ;
         SessionUpdateCallbackWithURL callbackRefresh = new SessionUpdateCallbackWithURL(anchor) ;
         SessionSaveService.App.getInstance().saveCuratorUpdate( sessionList, callbackRefresh);

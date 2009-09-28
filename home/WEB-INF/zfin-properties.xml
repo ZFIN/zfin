@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<!--
-        This is the dafault properties file. If you need to adjust the parameters
-        you want to copy this file into zfin-properties.xml which then takes
-        precedence. This file lives only on your instance and should not be checked into CVS.
--->
 <ApplicationProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="conf/properties.xsd">
     <Web>
         <backgroundColor><!--|BACKGROUND_COLOR|--></backgroundColor>
@@ -13,7 +8,14 @@
         <highlighterColor><!--|HIGHLIGHTER_COLOR|--></highlighterColor>
         <linkbarColor><!--|LINKBAR_COLOR|--></linkbarColor>
         <sidebarColor><!--|SIDEBAR_COLOR|--></sidebarColor>
+        <domain>@DOMAIN@</domain>
     </Web>
+    <Wiki>
+        <username>@WIKI_USERNAME@</username>
+        <password>@WIKI_PASSWORD@</password>
+        <hostname>@WIKI_HOSTNAME@</hostname>
+        <pushToWiki>@WIKI_PUSH_TO_WIKI@</pushToWiki>
+    </Wiki>
     <Path>
         <Server name="localhost" port="80" securePort="443"></Server>
         <cookiePath>/</cookiePath>
@@ -24,6 +26,29 @@
         <PdfPath>/pdf/</PdfPath>
         <IndexPath>../j2ee/uniquery/indexes</IndexPath>
     </Path>
+    <Blast>
+        <!-- this would typically be helix / embryonix -->
+        <WebHost>
+            <DatabasePath>@WEBHOST_BLAST_DATABASE_PATH@</DatabasePath>
+            <GetBinary>@WEBHOST_XDGET@</GetBinary>
+            <PutBinary>@WEBHOST_XDFORMAT@</PutBinary>
+            <User>@WEBHOST_USER@</User>
+            <HostName>@WEBHOST_HOSTNAME@</HostName>
+            <BinaryPath>@WEBHOST_BINARY_PATH@</BinaryPath>
+        </WebHost>
+        <!-- this would typically be genomix -->
+        <BlastServer>
+            <DatabasePath>@BLASTSERVER_BLAST_DATABASE_PATH@</DatabasePath>
+            <GetBinary>@BLASTSERVER_XDGET@</GetBinary>
+            <PutBinary>@BLASTSERVER_XDFORMAT@</PutBinary>
+            <User>@BLASTSERVER_USER@</User>
+            <HostName>@BLASTSERVER_HOSTNAME@</HostName>
+            <BinaryPath>@BLASTSERVER_BINARY_PATH@</BinaryPath>
+        </BlastServer>
+        <Target>@BLASTSCRIPT_TARGET_PATH@</Target>
+        <DistributedQueryPath>@BLASTSERVER_DISTRIBUTED_QUERY_PATH@</DistributedQueryPath>
+        <KeyPath>@WEBHOST_KEY_PATH@</KeyPath>
+    </Blast>
     <Email>
         <adminEmailAddress><!--|ZFIN_ADMIN|--></adminEmailAddress>
         <validationEmailOther><!--|VALIDATION_EMAIL_OTHER|--></validationEmailOther>

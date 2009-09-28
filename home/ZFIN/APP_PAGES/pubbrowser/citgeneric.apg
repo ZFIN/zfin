@@ -149,6 +149,10 @@
 
 <?MIVAR NAME=sp_G_returnvar>$citfish_sql<?/MIVAR>
 
+<script type="javascript">
+alert("$sp_G_returnvar") ; 
+</script>
+
 
 <?MIVAR>
   $(UNSETVAR,$citfish_sql)

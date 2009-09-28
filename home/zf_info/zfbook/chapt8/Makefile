@@ -17,10 +17,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/zfbook/chapt8
 
-GENERICS = 8.05.html 8.1.html 8.2.html 8.3.html 8.4.html 8.5.html 8.6.html \
+STATICS = 8-3.gif 8-7.gif 8.05.html 8.1.html 8.2.html 8.3.html 8.4.html 8.5.html 8.6.html \
 	8.7.html 8.8.html 8.9.html 8.10.html 
-
-STATICS = 8-3.gif 8-7.gif
 
 
 # ---------------  Production Rules  ------------------------------------

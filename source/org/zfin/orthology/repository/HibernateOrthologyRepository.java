@@ -193,7 +193,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         hqlCount.append(hql);
         Query query = session.createQuery(hqlCount.toString());
         query.setString("species", Species.ZEBRAFISH.toString());
-        Integer number = (Integer) query.uniqueResult();
+        Number number = (Number) query.uniqueResult();
 
         // retrieve records
         hqlRecords.append(hql);

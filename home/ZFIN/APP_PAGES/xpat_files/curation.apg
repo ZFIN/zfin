@@ -596,7 +596,7 @@ function setMarkerTarget(featreli,anchor){
     <?MIVAR NAME=pubcur_dblink_genbank><?/MIVAR>
     <?MISQL SQL="
         select dblink_zdb_id
-        from db_link, foreign_db_contains, record_attribution, marker, marker_type_group_member
+        from db_link, foreign_db_contains, record_attribution, marker, marker_type_group_member, foreign_db
         where recattrib_source_zdb_id = '$OID' 
 	  and recattrib_source_type = 'standard'
           and dblink_linked_recid  = recattrib_data_zdb_id
@@ -604,7 +604,8 @@ function setMarkerTarget(featreli,anchor){
           and mrkr_type =  mtgrpmem_mrkr_type 
           and mtgrpmem_mrkr_type_group in ('GENEDOM_AND_EFG', 'EST')
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = 'GenBank'
+	  and fdbcont_fdb_db_id = fdb_db_pk_id
+          and fdb_db_name = 'GenBank'
         ;">
         <?MIVAR> $(VECAPPEND,$pubcur_dblink_genbank,$1)<?/MIVAR>
     <?/MISQL>

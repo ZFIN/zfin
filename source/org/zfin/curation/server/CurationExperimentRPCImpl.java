@@ -384,10 +384,9 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         if (experimentID == null)
             throw new RuntimeException("No experiment ID provided");
 
-        ExpressionRepository expressionRep = RepositoryFactory.getExpressionRepository();
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            ExpressionExperiment expressionExperiment = expressionRep.getExpressionExperiment(experimentID);
+            ExpressionExperiment expressionExperiment = expRepository.getExpressionExperiment(experimentID);
             //createAuditRecordsForModifications(expressionExperiment, experimentDTO);
             // update assay: never null
             populateExpressionExperiment(experimentDTO, expressionExperiment);
@@ -444,13 +443,12 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         if (experimentDTO == null)
             return null;
 
-        ExpressionRepository expressionRep = RepositoryFactory.getExpressionRepository();
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             ExpressionExperiment expressionExperiment = new ExpressionExperiment();
             populateExpressionExperiment(experimentDTO, expressionExperiment);
 
-            expressionRep.createExpressionExperiment(expressionExperiment);
+            expRepository.createExpressionExperiment(expressionExperiment);
             experimentDTO.setExperimentZdbID(expressionExperiment.getZdbID());
             tx.commit();
         } catch (ConstraintViolationException e) {
@@ -496,15 +494,14 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
      * @param expressionExperiment expression experiment on which the changes are applied.
      */
     public static void populateExpressionExperiment(ExperimentDTO experimentDTO, ExpressionExperiment expressionExperiment) {
-        ExpressionRepository expressionRep = RepositoryFactory.getExpressionRepository();
         // update assay: never null
-        ExpressionAssay newAssay = expressionRep.getAssayByName(experimentDTO.getAssay());
+        ExpressionAssay newAssay = expRepository.getAssayByName(experimentDTO.getAssay());
         expressionExperiment.setAssay(newAssay);
         experimentDTO.setAssayAbbreviation(newAssay.getAbbreviation());
         // update db link: could be null
         String genbankID = experimentDTO.getGenbankID();
         if (!StringUtils.isEmpty(genbankID)) {
-            MarkerDBLink dbLink = expressionRep.getMarkDBLink(genbankID);
+            MarkerDBLink dbLink = expRepository.getMarkDBLink(genbankID);
             expressionExperiment.setMarkerDBLink(dbLink);
             Marker marker = dbLink.getMarker();
             // If the genbank number is an EST or a cDNA then persist their id in the clone column
@@ -517,11 +514,11 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
             expressionExperiment.setMarkerDBLink(null);
         }
         // update Environment (=experiment)
-        GenotypeExperiment genox = expressionRep.getGenotypeExperimentByExperimentIDAndGenotype(experimentDTO.getEnvironmentID(), experimentDTO.getFishID());
+        GenotypeExperiment genox = expRepository.getGenotypeExperimentByExperimentIDAndGenotype(experimentDTO.getEnvironmentID(), experimentDTO.getFishID());
         LOG.info("Finding Genotype Experiment for :" + experimentDTO.getEnvironmentID() + ", " + experimentDTO.getFishID());
         // if no genotype experiment found create a new one.
         if (genox == null) {
-            genox = expressionRep.createGenoteypExperiment(experimentDTO.getEnvironmentID(), experimentDTO.getFishID());
+            genox = expRepository.createGenoteypExperiment(experimentDTO.getEnvironmentID(), experimentDTO.getFishID());
             LOG.info("Created Genotype Experiment :" + genox.getZdbID());
         }
         expressionExperiment.setGenotypeExperiment(genox);

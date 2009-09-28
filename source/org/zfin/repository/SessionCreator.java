@@ -52,7 +52,9 @@ public class SessionCreator {
     public static boolean createSession() {
         try {
             String[] confFiles = {
+                    "filters.hbm.xml",
                     "anatomy.hbm.xml",
+                    "antibody.hbm.xml",
                     "mutant.hbm.xml",
                     "orthology.hbm.xml",
                     "people.hbm.xml",

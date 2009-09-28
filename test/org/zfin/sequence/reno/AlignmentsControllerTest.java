@@ -20,6 +20,7 @@ import org.zfin.sequence.reno.repository.RenoRepository;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.junit.Before;
 import org.junit.After;
@@ -187,9 +188,9 @@ private String insertRunCandidate() {
     accession1.setDefline("defline jam");
     accession1.setLength(12);
     ReferenceDatabase refDb=sequenceRepository.getReferenceDatabase(
-            ForeignDB.AvailableName.GENBANK.toString(),
-            ReferenceDatabase.Type.GENOMIC,
-            ReferenceDatabase.SuperType.SEQUENCE,
+            ForeignDB.AvailableName.GENBANK,
+            ForeignDBDataType.DataType.GENOMIC,
+            ForeignDBDataType.SuperType.SEQUENCE,
             Species.ZEBRAFISH);
     accession1.setReferenceDatabase(refDb);
     session.save(accession1);
@@ -233,7 +234,7 @@ private String insertRunCandidate() {
     run.setRelationPublication(publication);
     run.setName("TestRedunRun");
     run.setProgram("BLASTN");
-    run.setBlastDatabase("zfin_cdna");
+    run.setBlastDatabase("zfin_cdna_seq");
     Date date = new Date();
     logger.debug("date: "+date);
     run.setDate(date);

@@ -1,11 +1,25 @@
 package org.zfin.expression.repository;
 
+import org.hibernate.*;
+import org.junit.After;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.zfin.TestConfiguration;
+import org.zfin.expression.presentation.DirectlySubmittedExpression;
+import org.zfin.expression.presentation.MarkerExpressionInstance;
+import org.zfin.expression.ExpressionService;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.*;
+import org.zfin.repository.RepositoryFactory;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
+import org.apache.log4j.Logger;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
@@ -28,6 +42,29 @@ import java.util.List;
  */
 public class ExpressionRepositoryTest {
 
+    private Logger logger = Logger.getLogger(ExpressionRepositoryTest.class) ;
+
+    static {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+
+        if (sessionFactory == null) {
+            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration());
+        }
+    }
+
+    @Before
+    public void setUp() {
+        TestConfiguration.configure();
+        TestConfiguration.setAuthenticatedUser();
+        // TODO: this should load a specific database instance for testing purposes
+
+    }
+
+    @After
+    public void closeSession() {
+        HibernateUtil.closeSession();
+    }
+
     private ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
     private AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
     private PublicationRepository pubRep = RepositoryFactory.getPublicationRepository();
@@ -35,11 +72,10 @@ public class ExpressionRepositoryTest {
     @Test
     public void getExperimentByID() {
         String experimentID = "ZDB-XPAT-090417-2";
-        ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
         ExpressionExperiment experiment = expRep.getExpressionExperiment(experimentID);
         assertTrue(experiment != null);
-
     }
+
 
     @Test
     public void getMarkerDBLinkByID() {
@@ -76,23 +112,6 @@ public class ExpressionRepositoryTest {
 
     }
 
-    @Test
-    public void createNewGenotypeExperiment() {
-        String experimentID = "ZDB-EXP-070511-5";
-        String genotypeID = "ZDB-GENO-960809-7";
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            GenotypeExperiment genox = new GenotypeExperiment();
-            Experiment experiment = expRep.getExperimentByID(experimentID);
-            genox.setExperiment(experiment);
-            Genotype genotype = expRep.getGenotypeByID(genotypeID);
-            genox.setGenotype(genotype);
-            expRep.createGenoteypExperiment(genox);
-            assertTrue(genox.getZdbID() != null);
-        } finally {
-            tx.rollback();
-        }
-    }
 
     @Test
     public void createNewGenotypeExperimentFromIds() {
@@ -134,7 +153,8 @@ public class ExpressionRepositoryTest {
         }
     }
 
-    @Test
+
+//    @Test
     public void removeExperiment() {
         String experimentID = "ZDB-XPAT-090430-4";
 
@@ -148,6 +168,7 @@ public class ExpressionRepositoryTest {
         }
     }
 
+
     @Test
     public void retrieveExperimentFigureStages() {
         String pubID = "ZDB-PUB-060105-3";
@@ -156,7 +177,7 @@ public class ExpressionRepositoryTest {
         assertNotNull(experiment);
     }
 
-    @Test
+//    @Test
     public void retrieveSingleExperimentFigureStage() {
         String experimentID = "ZDB-XPAT-050720-1";
         String startID = "ZDB-STAGE-010723-35";
@@ -213,15 +234,43 @@ public class ExpressionRepositoryTest {
     }
 
 
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator(TestConfiguration.getHibernateConfiguration());
-        }
+
+    @Test
+    public void testExpressionPubs() {
+        Session session = HibernateUtil.currentSession();
+//        Marker marker = (Marker) session.get(Marker.class, "ZDB-GENE-990415-72" ) ;
+        Marker marker = (Marker) session.get(Marker.class, "ZDB-EST-010914-90" ) ;
+
+        int numPubs = expRep.getExpressionPubCount(marker) ;
+        assertTrue(numPubs > 0 );
     }
 
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
+    @Test
+    public void testExpressionFigures() {
+        Session session = HibernateUtil.currentSession();
+        Marker marker = (Marker) session.get(Marker.class, "ZDB-EST-010914-90" ) ;
+
+        int numFigs = expRep.getExpressionFigureCount(marker) ;
+        assertTrue( numFigs > 0 );
     }
+
+    @Test
+    public void testDirectlySubmittedExpression(){
+        Session session = HibernateUtil.currentSession();
+        Marker marker = (Marker) session.get(Marker.class, "ZDB-CDNA-040425-873" ) ;
+
+        DirectlySubmittedExpression directlySubmittedExpression = ExpressionService.getDirectlySubmittedExpressionSummaries(marker) ;
+//        assertEquals(117, numFigs);
+        assertNotNull(directlySubmittedExpression);
+        List<MarkerExpressionInstance> markerExpressionInstances = directlySubmittedExpression.getExpressionSummaryInstances() ;
+        assertEquals(1, markerExpressionInstances.size()) ;
+        MarkerExpressionInstance markerExpressionInstance = markerExpressionInstances.get(0  ) ;
+        assertEquals(6, markerExpressionInstance.getFigureCount());
+        assertEquals(10, markerExpressionInstance.getImageCount());
+        assertEquals("ZDB-PUB-040907-1", markerExpressionInstance.getSinglePublication().getZdbID());
+    }
+
+
+    
+
 }

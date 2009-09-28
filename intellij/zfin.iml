@@ -1,46 +1,541 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module relativePaths="true" type="J2EE_WEB_MODULE" version="4">
+<module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
-    <facet type="hibernate" name="Hibernate" implicit="true">
+    <facet type="web" name="zfin">
       <configuration>
-        <setting name="validation-enabled" value="true" />
-        <datasource-map />
-        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/../conf/hibernate.cfg.xml" optional="false" version="3.0" />
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../home/WEB-INF/web.xml" optional="false" version="2.5" />
+        </descriptors>
+        <webroots>
+          <root url="file://$MODULE_DIR$/../home/WEB-INF" relative="/WEB-INF" />
+        </webroots>
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/../client_apps/ListSelector" />
+          <root url="file://$MODULE_DIR$/../client_apps/Map" />
+          <root url="file://$MODULE_DIR$/../j2ee/MergerServlet/WEB-INF/src" />
+          <root url="file://$MODULE_DIR$/../j2ee/uniquery/IndexApp/src" />
+          <root url="file://$MODULE_DIR$/../j2ee/uniquery/SearchApp/WEB-INF/src" />
+          <root url="file://$MODULE_DIR$/../j2ee/uniquery/Support/src" />
+          <root url="file://$MODULE_DIR$/../lib/Java" />
+          <root url="file://$MODULE_DIR$/../server_apps/mapimage" />
+          <root url="file://$MODULE_DIR$/../source" />
+          <root url="file://$MODULE_DIR$/../test" />
+        </sourceRoots>
+        <building>
+          <setting name="EXPLODED_URL" value="file://" />
+          <setting name="EXPLODED_ENABLED" value="false" />
+          <setting name="JAR_URL" value="file://" />
+          <setting name="JAR_ENABLED" value="false" />
+          <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
+        </building>
+        <packaging>
+          <containerElement type="module" name="zfin">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/classes" />
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="&lt;N/A&gt;" />
+            <url>jar://$APPLICATION_HOME_DIR$/lib/j2ee.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/acegi-security-1.0.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/acegi-security-tiger-1.0.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/ant-antlr-1.6.5.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/antlr-2.7.6rc1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/asm-attrs.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/asm.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/cglib-2.1.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/clickstream-1.0.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-beanutils-1.6.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-codec-1.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-collections-3.2.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-digester-1.6.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-lang-2.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-logging-1.0.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-validator-1.1.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/dom4j-1.6.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/ehcache-1.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/hibernate-3.1.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/highlighter.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jaxb-impl.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jaxb-libs.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jstl-1.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jta.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/log4j-1.2.14.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/lucene-1.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/oro-2.0.8.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/relaxngDatatype.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/spring-2.0.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/standard-1.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/struts-1.2.9.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/xmlbind.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/xsdlib.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/ant-antlr-1.6.5.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/antlr-2.7.6rc1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/asm-attrs.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/asm.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/cglib-2.1.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/clickstream-1.0.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/commons-beanutils-1.6.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/commons-codec-1.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/commons-digester-1.6.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/commons-logging-1.0.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/commons-validator-1.1.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/dom4j-1.6.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/ehcache-1.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/highlighter.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/jaxb-impl.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/jaxb-libs.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/jstl-1.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/jta.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/log4j-1.2.14.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/lucene-1.3.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/oro-2.0.8.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/relaxngDatatype.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/spring-2.0.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/standard-1.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/struts-1.2.9.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/xmlbind.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/xsdlib.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/asm-2.2.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/catalina.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/cobertura.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/hsqldb.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib/IAClasses.zip" />
+            <url>jar://$MODULE_DIR$/../lib/Java/IAClasses.zip!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jakarta-oro-2.0.8.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxb-xjc.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/activation.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/FastInfoset.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/http.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxb-api.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxb-impl.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxb-xjc.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxws-api.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxws-rt.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxws-tools.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jsr173_api.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jsr181-api.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jsr250-api.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/resolver.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/saaj-api.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/saaj-impl.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/sjsxp.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/stax-ex.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/streambuffer.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jaxws/wsdl-client.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jhall.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="&lt;N/A&gt;" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jsp-api.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/jung-1.7.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/junit-4.1.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib/obo-util.zip" />
+            <url>jar://$MODULE_DIR$/../lib/Java/obo-util.zip!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/../lib/Java/org.geneontology.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="&lt;N/A&gt;" />
+            <url>jar://$MODULE_DIR$/../lib/Java/servlet-api-2.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" name="informix-jdbc" level="project">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+          </containerElement>
+        </packaging>
       </configuration>
     </facet>
-    <facet type="Spring" name="Spring" implicit="true">
+    <facet type="Spring" name="Spring">
+      <configuration />
+    </facet>
+    <facet type="hibernate" name="Hibernate">
       <configuration>
-        <options>
-          <option name="enableValidation" value="false" />
-          <option name="reportErrorsAsWarnings" value="true" />
-        </options>
-        <customNs />
+        <datasource-map>
+          <unit-entry name="home/WEB-INF/classes/hibernate.cfg.xml" value="hoovdb" />
+        </datasource-map>
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/../home/WEB-INF/classes/hibernate.cfg.xml" optional="false" version="3.0" />
       </configuration>
     </facet>
-    <facet type="gwt" name="GWT" implicit="true">
+    <facet type="gwt" name="GWT">
       <configuration>
-        <setting name="gwtSdkUrl" value="" />
-        <setting name="gwtScriptOutputStyle" value="DETAILED" />
-        <setting name="runGwtCompilerOnMake" value="true" />
+        <setting name="additionalCompilerParameters" value="" />
         <setting name="compilerMaxHeapSize" value="128" />
+        <setting name="compilerOutputPath" value="" />
+        <setting name="gwtScriptOutputStyle" value="DETAILED" />
+        <setting name="gwtSdkUrl" value="" />
+        <setting name="runGwtCompilerOnMake" value="true" />
       </configuration>
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <exploded url="file://" />
-    <exclude-exploded />
     <content url="file://$MODULE_DIR$/..">
-      <sourceFolder url="file://$MODULE_DIR$/../client_apps/ListSelector" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../client_apps/Map" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../j2ee/MergerServlet/WEB-INF/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../j2ee/uniquery/IndexApp/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../j2ee/uniquery/SearchApp/WEB-INF/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../j2ee/uniquery/Support/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../lib/Java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../server_apps/mapimage" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../source" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../test" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/../client_apps" />
       <excludeFolder url="file://$MODULE_DIR$" />
       <excludeFolder url="file://$MODULE_DIR$/../j2ee" />
@@ -603,7 +1098,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/dom4j-1.6.1.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/dom4j-1.6.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -612,7 +1107,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/relaxngDatatype.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/relaxngDatatype.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -621,7 +1116,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/log4j-1.2.14.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/log4j-1.2.14.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -630,7 +1125,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-validator-1.1.4.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-validator-1.1.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -639,7 +1134,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/xsdlib.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/xsdlib.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -648,7 +1143,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-beanutils-1.6.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-beanutils-1.6.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -657,7 +1152,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/hibernate-3.1.3.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/hibernate-3.1.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -666,7 +1161,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/highlighter.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/highlighter.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -675,7 +1170,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-collections-3.2.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-collections-3.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -684,7 +1179,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/acegi-security-1.0.3.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/acegi-security-1.0.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -693,7 +1188,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/struts-1.2.9.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/struts-1.2.9.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -702,7 +1197,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/standard-1.1.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/standard-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -711,7 +1206,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/xmlbind.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/xmlbind.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -720,7 +1215,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/asm.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/asm.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -729,7 +1224,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-digester-1.6.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-digester-1.6.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -738,7 +1233,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-codec-1.3.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-codec-1.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -747,7 +1242,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/ant-antlr-1.6.5.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/ant-antlr-1.6.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -756,7 +1251,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/asm-attrs.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/asm-attrs.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -765,7 +1260,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/cglib-2.1.3.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/cglib-2.1.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -774,7 +1269,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/antlr-2.7.6rc1.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/antlr-2.7.6rc1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -783,7 +1278,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/lucene-1.3.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/lucene-1.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -792,7 +1287,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jstl-1.1.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jstl-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -801,7 +1296,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/spring-2.0.1.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/spring-2.0.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -810,7 +1305,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/acegi-security-tiger-1.0.3.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/acegi-security-tiger-1.0.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -819,7 +1314,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/clickstream-1.0.3.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/clickstream-1.0.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -828,7 +1323,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jta.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jta.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -837,7 +1332,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jaxb-impl.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jaxb-impl.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -846,7 +1341,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jaxb-libs.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jaxb-libs.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -855,7 +1350,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/ehcache-1.1.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/ehcache-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -864,7 +1359,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/oro-2.0.8.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/oro-2.0.8.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -873,7 +1368,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-logging-1.0.4.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-logging-1.0.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -882,499 +1377,14 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-lang-2.3.jar!/" />
+          <root url="jar:///research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-lang-2.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="runtime" level="project" />
-    <orderEntryProperties />
-  </component>
-  <component name="WebModuleBuildComponent">
-    <setting name="EXPLODED_URL" value="file://" />
-    <setting name="EXPLODED_ENABLED" value="false" />
-    <setting name="JAR_URL" value="file://" />
-    <setting name="JAR_ENABLED" value="false" />
-    <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />
-    <setting name="BUILD_EXTERNAL_DEPENDENCIES" value="false" />
-    <setting name="RUN_JASPER_VALIDATION" value="true" />
-    <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
-  </component>
-  <component name="WebModuleProperties">
-    <containerElement type="library" level="module">
-      <attribute name="method" value="0" />
-      <attribute name="URI" value="&lt;N/A&gt;" />
-      <url>jar://$APPLICATION_HOME_DIR$/lib/j2ee.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/acegi-security-1.0.3.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/acegi-security-1.0.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/acegi-security-tiger-1.0.3.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/acegi-security-tiger-1.0.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/ant-antlr-1.6.5.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/ant-antlr-1.6.5.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/antlr-2.7.6rc1.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/antlr-2.7.6rc1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/asm-attrs.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/asm-attrs.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/asm.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/asm.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/cglib-2.1.3.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/cglib-2.1.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/clickstream-1.0.3.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/clickstream-1.0.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-beanutils-1.6.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-beanutils-1.6.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-codec-1.3.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-codec-1.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-collections-3.2.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-collections-3.2.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-digester-1.6.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-digester-1.6.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-lang-2.3.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-lang-2.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-logging-1.0.4.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-logging-1.0.4.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-validator-1.1.4.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-validator-1.1.4.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/dom4j-1.6.1.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/dom4j-1.6.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/ehcache-1.1.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/ehcache-1.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/hibernate-3.1.3.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/hibernate-3.1.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/highlighter.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/highlighter.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jaxb-impl.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jaxb-impl.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jaxb-libs.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jaxb-libs.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jstl-1.1.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jstl-1.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jta.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jta.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/log4j-1.2.14.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/log4j-1.2.14.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/lucene-1.3.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/lucene-1.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/oro-2.0.8.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/oro-2.0.8.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/relaxngDatatype.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/relaxngDatatype.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/spring-2.0.1.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/spring-2.0.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/standard-1.1.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/standard-1.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/struts-1.2.9.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/struts-1.2.9.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/xmlbind.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/xmlbind.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/xsdlib.jar" />
-      <url>jar://$MODULE_DIR$/../../../../../research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/xsdlib.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/ant-antlr-1.6.5.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/ant-antlr-1.6.5.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/antlr-2.7.6rc1.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/antlr-2.7.6rc1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/asm-attrs.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/asm-attrs.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/asm.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/asm.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/cglib-2.1.3.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/cglib-2.1.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/clickstream-1.0.3.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/clickstream-1.0.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-beanutils-1.6.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/commons-beanutils-1.6.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-codec-1.3.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/commons-codec-1.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-digester-1.6.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/commons-digester-1.6.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-logging-1.0.4.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/commons-logging-1.0.4.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/commons-validator-1.1.4.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/commons-validator-1.1.4.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/dom4j-1.6.1.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/dom4j-1.6.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/ehcache-1.1.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/ehcache-1.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/highlighter.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/highlighter.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jaxb-impl.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/jaxb-impl.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jaxb-libs.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/jaxb-libs.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jstl-1.1.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/jstl-1.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jta.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/jta.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/log4j-1.2.14.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/log4j-1.2.14.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/lucene-1.3.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/lucene-1.3.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/oro-2.0.8.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/oro-2.0.8.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/relaxngDatatype.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/relaxngDatatype.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/spring-2.0.1.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/spring-2.0.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/standard-1.1.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/standard-1.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/struts-1.2.9.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/struts-1.2.9.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/xmlbind.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/xmlbind.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/xsdlib.jar" />
-      <url>jar://$MODULE_DIR$/../home/WEB-INF/lib/xsdlib.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/asm-2.2.1.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/asm-2.2.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/catalina.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/catalina.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/cobertura.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/cobertura.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/hsqldb.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/hsqldb.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/IAClasses.zip" />
-      <url>jar://$MODULE_DIR$/../lib/Java/IAClasses.zip!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jakarta-oro-2.0.8.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jakarta-oro-2.0.8.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jaxb-xjc.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxb-xjc.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/activation.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/activation.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/FastInfoset.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/FastInfoset.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/http.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/http.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jaxb-api.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxb-api.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jaxb-impl.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxb-impl.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jaxb-xjc.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxb-xjc.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jaxws-api.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxws-api.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jaxws-rt.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxws-rt.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jaxws-tools.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jaxws-tools.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jsr173_api.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jsr173_api.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jsr181-api.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jsr181-api.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jsr250-api.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/jsr250-api.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/resolver.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/resolver.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/saaj-api.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/saaj-api.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/saaj-impl.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/saaj-impl.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/sjsxp.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/sjsxp.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/stax-ex.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/stax-ex.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/streambuffer.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/streambuffer.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/wsdl-client.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jaxws/wsdl-client.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jhall.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jhall.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="0" />
-      <attribute name="URI" value="&lt;N/A&gt;" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jsp-api.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/jung-1.7.4.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/jung-1.7.4.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/junit-4.1.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/junit-4.1.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/obo-util.zip" />
-      <url>jar://$MODULE_DIR$/../lib/Java/obo-util.zip!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/org.geneontology.jar" />
-      <url>jar://$MODULE_DIR$/../lib/Java/org.geneontology.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="0" />
-      <attribute name="URI" value="&lt;N/A&gt;" />
-      <url>jar://$MODULE_DIR$/../lib/Java/servlet-api-2.4.jar!/</url>
-    </containerElement>
-    <containerElement type="library" name="informix-jdbc" level="project">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib" />
-    </containerElement>
-    <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../home/WEB-INF/web.xml" optional="false" version="2.5" />
-    <webroots>
-      <root url="file://$MODULE_DIR$/../home/WEB-INF" relative="/WEB-INF" />
-    </webroots>
+    <orderEntry type="library" name="hibernate3" level="project" />
+    <orderEntry type="library" name="hibernate3 (2)" level="project" />
   </component>
 </module>
 

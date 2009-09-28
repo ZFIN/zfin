@@ -10,11 +10,13 @@ import org.acegisecurity.context.SecurityContext;
 
 import java.util.Set;
 
+import java.io.Serializable ;
+
 /**
  * Domain business object that describes a single person.
  * AccountInfo composite contains login information which is optional.
  */
-public class Person implements UserDetails {
+public class Person implements UserDetails , Serializable,Comparable<Person>{
 
     private String zdbID;
     private String fullName;
@@ -200,6 +202,21 @@ public class Person implements UserDetails {
         return (Person) principal;
     }
 
+
+    /**
+     * This returns a Person object of the current security person.
+     * If no authorized Person is found return null.
+     *
+     * @return Is user root?
+     */
+    public static boolean isCurrentSecurityUserRoot() {
+        Person person = getCurrentSecurityUser() ;
+        if(person == null || person.getAccountInfo()==null){
+            return false ;
+        }
+        return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString()) ;
+    }
+
     public int hashCode() {
         return getZdbID().hashCode();
     }
@@ -210,5 +227,19 @@ public class Person implements UserDetails {
 
         Person p = (Person) o;
         return getZdbID().equals(p.getZdbID());
+    }
+
+    public int compareTo(Person anotherPerson) {
+        if (getFullName() == null)
+            return -1;
+        if (anotherPerson.getFullName() == null)
+            return +1;
+        int personComparison = 0 - getFullName().compareTo(anotherPerson.getFullName());
+        if (personComparison != 0)
+            return personComparison;
+
+        // in case the 2 persons have the same name?
+        // I guess as a tie-breaker we can use the zdbID, which includes date
+        return zdbID.compareTo(anotherPerson.getZdbID()) ;
     }
 }

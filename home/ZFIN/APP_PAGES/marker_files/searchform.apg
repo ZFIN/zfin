@@ -94,6 +94,8 @@ Input:
 	  <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),any,$1)
 	<?/MISQL>
        </SELECT>    
+       <br>
+       <small style="color: #aaa;">(excludes transcripts, morpholinos, and constructs)</small>
 
        <p>
        <?MIVAR>

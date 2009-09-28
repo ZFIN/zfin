@@ -106,7 +106,7 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
 
         if (isMarker) {
             Marker marker = (Marker) object;
-            Marker.Type type = marker.getType();
+            Marker.Type type = marker.getMarkerType().getType();
             if (type == null)
                 throw new HibernateException("No marker type found for Marker: " + marker.getName());
             objectType = type.toString();

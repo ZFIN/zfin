@@ -23,10 +23,11 @@ returning varchar(50);
   define dblinkAccNumDisplay like db_link.dblink_acc_num_display;
   define dblinkDbName varchar(50);
   
-  select distinct fdbcont_fdb_db_name 
+  select distinct fdb_db_name 
     into dblinkDbName 
-      from foreign_db_contains
-      where fdbcont_zdb_id = dblinkFdbId ;
+      from foreign_db_contains, foreign_db
+      where fdbcont_zdb_id = dblinkFdbId 
+        and fdb_db_pk_id = fdbcont_fdb_db_id;
   
   if (dblinkDbName = "WEB_FPC") then
     -- The acc_num will look something like
@@ -60,6 +61,21 @@ returning varchar(50);
   elif (dblinkDbName = "WashUZ") then
     -- we need to prepend "wz" to the acc_num
     let dblinkAccNumDisplay = "wz" || dblinkAccNum;
+
+  --replace the miranda acc num with one that looks more like the 
+  --way curators want to display miRNA names at ZFIN.
+  --ZDB-FDBCONT-090529-1, dre-let-7g
+  --execute function
+  --get_dblink_acc_num_display('ZDB-FDBCONT-090529-1','dre-let-7g')
+
+  elif (dblinkDbName = "MIRANDA") then
+    let dblinkAccNumDisplay = lower(dblinkAccNum);
+    if (dblinkAccNum like 'dre-let%') then
+       let dblinkAccNumDisplay = replace(dblinkAccNum,'dre-let-','mirlet'); 
+    else
+       let dblinkAccNumDisplay = replace(dblinkAccNumDisplay,'dre-mir','mir');   
+    end if;
+
   else
     -- spew out exactly what came in
     let dblinkAccNumDisplay = dblinkAccNum;

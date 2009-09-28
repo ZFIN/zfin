@@ -1495,25 +1495,25 @@ sub  get_OIDs_abbrev{
       $note = $note .  "\nIs it ACCESSION NUMBER? \n";
       if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
       $note = $note .  "Is |$marker| exactly unique on |$panel| |$lg| officially?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM  zmap_pub_pan_mark, db_link,foreign_db_contains ".
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM  zmap_pub_pan_mark,foreign_db, foreign_db_data_type, db_link,foreign_db_contains ".
 	 "WHERE dblink_acc_num  = \'$marker\' AND target_abbrev in (\'$panel\') ".
 	  "AND mtype IN (\'$types\') AND or_lg =  \'$lg\' AND zdb_id = dblink_linked_recid ".
-      "AND dblink_fdbcont_zdb_id =  fdbcont_zdb_id AND fdbcont_fdbdt_super_type = \'sequence\'".
-      "AND fdbcont_fdbdt_data_type != \'Polypeptide\' and fdbcont_organism_common_name = \'zebrafish\';";
+      "AND dblink_fdbcont_zdb_id =  fdbcont_zdb_id AND fdbdt_super_type = \'sequence\' AND fdbcont_fdbdt_id = fdbdt_pk_id".
+      "AND fdbdt_data_type != \'Polypeptide\' and fdbcont_organism_common_name = \'zebrafish\' AND fdbcont_fdb_db_id = fdb_db_pk_id;";
 
       } elsif( defined  $panel) {
       $note = $note .  "Is |$marker| exactly unique on |$panel| offically?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark, db_link,foreign_db_contains ".
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark, db_link,foreign_db_contains, foreign_db, foreign_db_data_type ".
 	 "WHERE dblink_acc_num   = \'$marker\' AND target_abbrev in (\'$panel\') " .
-	  "AND mtype IN ( \'$types\' ) AND zdb_id = dblink_linked_recid ".
+	  "AND mtype IN ( \'$types\' ) AND zdb_id = dblink_linked_recid AND fdbcont_Fdb_db_id = fdb_db_pk_id and fdbcont_fdbdt_id = fdbdt_pk_id".
       "AND dblink_fdbcont_zdb_id =  fdbcont_zdb_id AND fdbcont_fdbdt_super_type = \'sequence\'".
       "AND fdbcont_fdbdt_data_type != \'Polypeptide\' and fdbcont_organism_common_name = \'zebrafish\';";
 
       } else  {
       $note = $note . "Is |$marker| exactly unique in ZFIN officially?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark, db_link,foreign_db_contains ".
-	  "WHERE dblink_acc_num   = \'$marker\' AND mtype IN ( \'$types\' ) AND zdb_id = dblink_linked_recid ".
-      "AND dblink_fdbcont_zdb_id =  fdbcont_zdb_id AND fdbcont_fdbdt_super_type = \'sequence\'".
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark, db_link,foreign_db_contains, foreign_db, foreign_db_data_type ".
+	  "WHERE dblink_acc_num   = \'$marker\' AND mtype IN ( \'$types\' ) AND zdb_id = dblink_linked_recid AND fdbcont_fdbdt_id =fdbdt_pk_id".
+      "AND dblink_fdbcont_zdb_id =  fdbcont_zdb_id AND fdbcont_fdbdt_super_type = \'sequence\' and fdbcont_fdb_db_id =fdb_db_pk_id".
       "AND fdbcont_fdbdt_data_type != \'Polypeptide\' and fdbcont_organism_common_name = \'zebrafish\';";
       }
       $cur = $dbh->prepare($sql);$cur->execute();

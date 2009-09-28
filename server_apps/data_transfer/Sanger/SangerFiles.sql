@@ -29,9 +29,10 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
 select gene.mrkr_zdb_id		gene_zdb,
 	   gene.mrkr_abbrev	gene_sym,
 	   dblink_acc_num	genbank_acc
-from marker gene, db_link, foreign_db_contains
+from marker gene, db_link, foreign_db_contains,foreign_db
 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-and fdbcont_fdb_db_name = 'RefSeq'
+and fdb_db_name = 'RefSeq'
+and fdbcont_fdb_db_id = fdb_db_pk_id
 and gene.mrkr_zdb_id = dblink_linked_recid
 into temp tmp_veg with no log
 ;
@@ -42,7 +43,8 @@ into temp tmp_veg with no log
 select gene.mrkr_zdb_id		gene_zdb,
 	   gene.mrkr_abbrev	gene_sym,
 	   dblink_acc_num	genbank_acc
-from marker gene, marker est, db_link, marker_relationship, foreign_db_contains
+from marker gene, marker est, db_link, marker_relationship, foreign_db_contains,
+   foreign_db
 where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
 and   est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id 
 and  mrel_type = 'gene encodes small segment'
@@ -50,7 +52,8 @@ and est.mrkr_zdb_id = dblink_linked_recid
 and est.mrkr_type  = 'EST'
 and gene.mrkr_type = 'GENE'
 and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-and fdbcont_fdb_db_name ='GenBank'
+and fdb_db_name ='GenBank'
+and fdbcont_fdb_db_id = fdb_db_pk_id
 and gene.mrkr_abbrev[3] <> ':'
 and gene.mrkr_zdb_id not in(
 	select gene_zdb from tmp_veg

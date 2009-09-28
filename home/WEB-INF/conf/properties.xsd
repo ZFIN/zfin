@@ -1,11 +1,13 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:jxb="http://java.sun.com/xml/ns/jaxb">
+           xmlns:jxb="http://java.sun.com/xml/ns/jaxb">
 
     <xs:element name="ApplicationProperties">
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="Web" />
+                <xs:element ref="Wiki" />
                 <xs:element ref="Path" />
+                <xs:element ref="Blast" />
                 <xs:element ref="Email" />
                 <xs:element ref="Logging" />
             </xs:sequence>
@@ -21,6 +23,18 @@
                 <xs:element name="highlighterColor" type="xs:string"/>
                 <xs:element name="linkbarColor" type="xs:string"/>
                 <xs:element name="sidebarColor" type="xs:string"/>
+                <xs:element name="domain" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Wiki">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="username" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+                <xs:element name="hostname" type="xs:string"/>
+                <xs:element name="pushToWiki" type="xs:boolean" default="false"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -39,6 +53,30 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
+    <xs:element name="Blast">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="WebHost" type="BlastParameters" />
+                <xs:element name="BlastServer" type="BlastParameters"/>
+                <xs:element name="Target" type="xs:string"/>
+                <xs:element name="DistributedQueryPath" type="xs:string"/>
+                <xs:element name="KeyPath" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="BlastParameters">
+        <xs:sequence>
+            <xs:element name="DatabasePath" type="xs:string"/>
+            <xs:element name="GetBinary" type="xs:string"/>
+            <xs:element name="PutBinary" type="xs:string"/>
+            <xs:element name="User" type="xs:string"/>
+            <xs:element name="HostName" type="xs:string"/>
+            <xs:element name="BinaryPath" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
 
     <xs:element name="Email">
         <xs:complexType>

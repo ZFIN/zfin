@@ -42,7 +42,7 @@ OUTPUT:
 <?MIBLOCK COND="$(EC,$mrkrrel_rel_direction,2_to_1)">
     <?MIVAR NAME=mrkrrel_sql>
 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display, 
-	       mrel_zdb_id, mrel_type, mreltype_2_to_1_comments
+	       mrel_zdb_id, mrel_type, mreltype_2_to_1_comments, get_mrkr_abbrev_html_link(mrkr_zdb_id)
  	  from marker_relationship
 	       inner join marker_relationship_type
              	  on mrel_type = mreltype_name
@@ -55,14 +55,15 @@ OUTPUT:
 					'promoter of',
 					'coding sequence of',
 					'contains other feature',
-					'gene product recognized by antibody'
+					'gene product recognized by antibody',
+                                        'transcript targets gene'
 					)
       order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order;
     <?/MIVAR>
 <?MIELSE>
     <?MIVAR NAME=mrkrrel_sql>
 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display, 
-	       mrel_zdb_id, mrel_type, mreltype_1_to_2_comments
+	       mrel_zdb_id, mrel_type, mreltype_1_to_2_comments, get_mrkr_abbrev_html_link(mrkr_zdb_id)
  	  from marker_relationship 
 	       inner join marker_relationship_type
                  on mrel_type = mreltype_name
@@ -75,7 +76,9 @@ OUTPUT:
 					'promoter of',
 					'coding sequence of',
 					'contains other feature',
-					'gene product recognized by antibody'
+					'gene product recognized by antibody',
+                                        'gene produces transcript',
+                                        'transcript targets gene'
 					)
       order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order;
     <?/MIVAR>
@@ -91,9 +94,10 @@ OUTPUT:
 	<?MIVAR NAME=mrkrrel_seg_mrkr_type>$4<?/MIVAR> 
 	<?MIVAR NAME=mrkrrel_mrel_zdb_id>$5<?/MIVAR> 
   	<?MIVAR NAME=mrkrrel_mrel_type>$6<?/MIVAR> 
-	<?MIVAR NAME=mrkrrel_mrel_comments>$7<?/MIVAR> 
-	    
-	<?MIBLOCK COND="$(NC,$mrkrrel_mrel_type,$mrkrrel_last_mrel_type)">
+	<?MIVAR NAME=mrkrrel_mrel_comments>$7<?/MIVAR>
+    <?MIVAR NAME=mrkrrel_seg_mrkr_link>$8<?/MIVAR>
+
+    <?MIBLOCK COND="$(NC,$mrkrrel_mrel_type,$mrkrrel_last_mrel_type)">
 	  <?MIVAR COND="$(NC,$mrkrrel_last_mrel_type,)">
 		  </td>
         </tr>
@@ -125,12 +129,8 @@ OUTPUT:
        <INPUT TYPE=button value=Delete 
          	  onClick="Delete_mrel('$mrkrrel_seg_mrkr_zdb_id','$mrkrrel_mrel_type')">
     <?/MIVAR>
-	<A
-    HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrrel_seg_mrkr_zdb_id">
-	    $mrkrrel_seg_mrkr_abbrev  
-	</A>
-
-	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrrel_mrel_zdb_id&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    <?MIVAR>$mrkrrel_seg_mrkr_link<?/MIVAR>
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrrel_mrel_zdb_id&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 
 	<?MISQL SQL="select WebExplode(object,'clorlk_mrkr_zdb_id=$mrkrrel_seg_mrkr_zdb_id') from webPages where ID='aa-cloneorderlink.apg';">$1<?/MISQL>
        

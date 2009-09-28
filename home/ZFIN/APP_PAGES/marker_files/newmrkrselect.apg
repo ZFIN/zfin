@@ -422,7 +422,9 @@ DEBUGGING:
 
        <?MIBLOCK COND="$(NC,$OID,)">
          <?MIVAR>
-           <SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID")</SCRIPT>
+	   <?MISQL SQL="select get_mrkr_url('$OID') from single;">
+             <SCRIPT>location.replace("$1")</SCRIPT>
+           <?/MISQL>
          <?/MIVAR>
        <?MIELSE>
           <?MIVAR>
@@ -447,11 +449,11 @@ DEBUGGING:
   
     <?MIBLOCK COND="$(AND,$(=,$num_of_type,1),$(=,$type_count,1),$(NC,$update_mode,yes))">
 	<?MISQL SQL="
-  		select mrkr_zdb_id
+  		select get_mrkr_url(mrkr_zdb_id)
     	 	from bigselect_temp_markers;">
         <?/MISQL>
-	<?MIVAR NAME=$the_one>$1<?/MIVAR>
-        <?MIVAR>   <SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$the_one")</SCRIPT>
+	<?MIVAR NAME=$the_link>$1<?/MIVAR>
+        <?MIVAR>   <SCRIPT>location.replace("$the_link")</SCRIPT>
         <?/MIVAR>
    <?MIELSE>
      <TABLE>  
@@ -513,7 +515,7 @@ DEBUGGING:
 		<?MIVAR NAME=knownmutant_count>$1<?/MIVAR>
 		<?MIVAR COND="$(!=,$knownmutant_count,0)" NAME=gene_extra>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam&knownmutant=t">$1 with mutants</A>)<?/MIVAR>
 	   <?/MISQL>
-	
+		
 	<?MIVAR>
 	     <TR><TD><b><li>
                <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam">$search_count 
@@ -533,12 +535,12 @@ DEBUGGING:
 
 	 <?MIELSE> <!-- when only one match for one type, link directly-->
 	   <?MISQL SQL="
-	       select mrkr_zdb_id
+	       select get_mrkr_url(mrkr_zdb_id)
     	        from bigselect_temp_markers
 	       where mrkr_type = '$mtype_in_db' ;
 	     ">
               <?MIVAR>
-	      <TR><TD><b><li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$1"> 1 $mtype_display </A></li></b></TD></TR><?/MIVAR>
+	      <TR><TD><b><li><A HREF="$1"> 1 $mtype_display </A></li></b></TD></TR><?/MIVAR>
            <?/MISQL>
 	 <?/MIBLOCK>
 

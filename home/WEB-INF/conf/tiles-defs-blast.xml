@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+ <!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+
+<tiles-definitions>
+    <definition name="external-blast.page" page="/WEB-INF/jsp/blast/external_blast_redirect.jsp">
+    </definition>
+
+    <definition name="display-blast-sequence.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Sequence"/>
+        <put name="body" value="/WEB-INF/jsp/blast/display_blast_sequence.jsp"/>
+    </definition>
+
+    <definition name="blast-database-select.page" page="/WEB-INF/jsp/blast/blast_database_select.jsp">
+    </definition>
+
+    <definition name="single-blast-database-info.page" page="/WEB-INF/jsp/blast/blast_database_info.jsp">
+    </definition>
+
+    <definition name="blast-database-info.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: BLAST Database Information" />
+        <put name="body" value="/WEB-INF/jsp/blast/blast_database_info.jsp"/>
+    </definition>
+
+    <definition name="blast-database-table.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: BLAST Database Information" />
+        <put name="body" value="/WEB-INF/jsp/blast/blast_database_table.jsp"/>
+    </definition>
+
+    <definition name="blast-cgi-setup.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: BLAST Query" />
+        <put name="body" value="/WEB-INF/jsp/blast/blast_cgi_setup.jsp"/>
+    </definition>
+
+    <definition name="blast-setup.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: BLAST Query" />
+        <put name="body" value="/WEB-INF/jsp/blast/blast_setup.jsp"/>
+    </definition>
+
+    <definition name="blast-result.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: BLAST Results: "  />
+        <put name="body" value="/WEB-INF/jsp/blast/blast_result.jsp"/>
+    </definition>
+
+    <definition name="blast-processing.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Processing BLAST: " />
+        <put name="body" value="/WEB-INF/jsp/blast/blast_processing.jsp"/>
+    </definition>
+
+    <definition name="bad-blast-result.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: BLAST Result Failure: " />
+        <put name="body" value="/WEB-INF/jsp/blast/bad_blast_result.jsp"/>
+    </definition>
+
+    <definition name="bad-blast-ticket.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Bad Result Ticket: " />
+        <put name="body" value="/WEB-INF/jsp/blast/bad_blast_ticket.jsp"/>
+    </definition>
+
+    <definition name="blast-fetch-null.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Bad Blast Ticket" />
+        <put name="body" value="/WEB-INF/jsp/blast/bad_ticket.jsp"/>
+    </definition>
+
+</tiles-definitions>
+

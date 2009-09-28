@@ -78,9 +78,14 @@ if (-z acc4blast.txt) then
     echo ""
 else
     echo "== BLASTing and filter results ..."
-    xdget -n -f -Tgb1 -e probe_fasta_retrieve.log gbk_zf_all acc4blast.txt > acc4blast.fa
+    
+    xdget -n -f -Tgb1 -e probe_fasta_retrieve.log gbk_zf_mrna acc4blast.txt > acc4blastmrna.fa
+    xdget -n -f -Tgb1 -e probe_fasta_retrieve.log gbk_zf_mrna acc4blast.txt > acc4blastrna.fa
+    xdget -n -f -Tgb1 -e probe_fasta_retrieve.log gbk_zf_mrna acc4blast.txt > acc4blastdna.fa
+    
+    /bin/cat acc4blastmrna.fa acc4blastrna.fa acc4blastdna.fa > acc4blast.fa
 
-    nice +10 /private/apps/wublast/blastn zfin_cdna acc4blast.fa -e 1e-20  -o blast2zfin.out
+    nice +10 /private/apps/wublast/blastn zfin_cdna_seq acc4blast.fa -e 1e-20  -o blast2zfin.out
 
     ./blast2tab.pl -p 90 -l 40 < blast2zfin.out | \
     ./filterBlast.pl $dbname 

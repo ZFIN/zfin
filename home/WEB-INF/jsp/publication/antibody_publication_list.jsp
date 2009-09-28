@@ -28,9 +28,8 @@
     <c:when test="${formBean.update}">
         <form>
             <center>
-                <font size=+2><input type=button value=" DONE UPDATING. Back to Viewing! "
-                                     onClick="document.location.replace('detail?antibody.zdbID=${formBean.antibody.zdbID}')">
-                </font>
+                <a style="font-size: large;" href="javascript:" 
+                                     onClick="document.location.replace('detail?antibody.zdbID=${formBean.antibody.zdbID}')">[View Antibody]</a>
             </center>
         </form>
     </c:when>
@@ -78,7 +77,7 @@
 </c:choose>
 <table width=100%>
     <tr>
-        <td bgcolor=#ccccccc>
+        <td bgcolor=#cccccc>
             <font size=+2><b>CITATIONS</b></font>
 
             (${formBean.numOfPublications} total)

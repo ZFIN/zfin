@@ -155,4 +155,12 @@ public interface AntibodyRepository {
      * @return pagination result
      */
     PaginationResult<AntibodyStatistics> getAntibodyStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures);
+
+
+    /**
+     * Retrieve all antibodies sorted by name.
+     *
+     * @return All antibodies
+     */
+    List<Antibody> getAllAntibodies();
 }

@@ -2,8 +2,8 @@ package org.zfin.framework.presentation.tags;
 
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.marker.Marker;
+import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.MarkerPresentation;
-import org.zfin.sequence.reno.Candidate;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
@@ -24,7 +24,7 @@ public class CreateNameTag extends TagSupport {
 
         Object o = getEntity();
         String link;
-        if (o instanceof Marker)
+        if (o instanceof Marker || o instanceof Transcript)
             link = MarkerPresentation.getName((Marker) o);
         else if (o instanceof RunCandidate)
             link = RunCandidatePresentation.getName((RunCandidate) o);

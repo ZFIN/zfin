@@ -9,7 +9,7 @@ public class RecordAttribution implements Serializable {
 
     private String dataZdbID;
     private String sourceZdbID;
-    private String sourceType;
+    private SourceType sourceType;
 
     public enum SourceType {
         ANATOMY_DEFINITION("anatomy definition"),
@@ -17,7 +17,8 @@ public class RecordAttribution implements Serializable {
         FEATURE_TYPE("feature type"),
         MOLECULAR_CHARACTERIZATION("molecular characterization"),
         SEGREGATION("segregation"),
-        STANDARD("standard");
+        STANDARD("standard"),
+        FIRST_CURATED_SEQUENCE_PUB("first curated sequence pub");
 
         private final String value;
 
@@ -46,11 +47,11 @@ public class RecordAttribution implements Serializable {
         this.sourceZdbID = sourceZdbID;
     }
 
-    public String getSourceType() {
+    public SourceType getSourceType() {
         return sourceType;
     }
 
-    public void setSourceType(String sourceType) {
+    public void setSourceType(SourceType sourceType) {
         this.sourceType = sourceType;
     }
 

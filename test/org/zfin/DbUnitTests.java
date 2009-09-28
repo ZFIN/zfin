@@ -3,22 +3,28 @@ package org.zfin;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.zfin.anatomy.repository.AnatomyRepositoryTest;
-import org.zfin.antibody.repository.AntibodyRepositoryTest;
-import org.zfin.infrastructure.EnumValidationTest;
-import org.zfin.infrastructure.InfrastructureRepositoryTest;
-import org.zfin.marker.repository.MarkerRepositoryTest;
-import org.zfin.mutant.MutantRepositoryTest;
-import org.zfin.people.repository.PeopleRepositoryTest;
-import org.zfin.publication.PublicationRepositoryTest;
-import org.zfin.sequence.MapAccessionDbLinkTest;
-import org.zfin.sequence.SequenceRepositoryTest;
+import org.zfin.sequence.blast.BlastRepositoryTest;
 import org.zfin.sequence.reno.AlignmentsControllerTest;
+import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.MultiRunTest;
 import org.zfin.sequence.reno.OrthologyTest;
-import org.zfin.sequence.reno.RenoRepositoryTest;
-import org.zfin.sequence.reno.presentation.NomenclatureCandidateControllerTest;
 import org.zfin.sequence.reno.presentation.RedundancyCandidateControllerTest;
+import org.zfin.sequence.MapAccessionDbLinkTest;
+import org.zfin.sequence.SequenceRepositoryTest;
+import org.zfin.sequence.DisplayGroupRepositoryTest;
+import org.zfin.sequence.TranscriptServiceTest;
+import org.zfin.people.repository.PeopleRepositoryTest;
+import org.zfin.antibody.repository.AntibodyRepositoryTest;
+import org.zfin.marker.repository.MarkerRepositoryTest;
+import org.zfin.marker.repository.TranscriptRepositoryTest;
+import org.zfin.publication.PublicationRepositoryTest;
+import org.zfin.expression.repository.ExpressionRepositoryTest;
+import org.zfin.anatomy.repository.AnatomyRepositoryTest;
+import org.zfin.infrastructure.InfrastructureRepositoryTest;
+import org.zfin.infrastructure.EnumValidationTest;
+import org.zfin.mapping.repository.LinkageRepositoryTest;
+import org.zfin.mutant.MutantRepositoryTest;
+import org.zfin.orthology.OrthologyRepositoryTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite)
@@ -32,19 +38,26 @@ import org.zfin.sequence.reno.presentation.RedundancyCandidateControllerTest;
         AntibodyRepositoryTest.class,
         InfrastructureRepositoryTest.class,
         MarkerRepositoryTest.class,
+        TranscriptServiceTest.class,
         OrthologyTest.class,
         MutantRepositoryTest.class,
         PaginationResultTest.class,
         PeopleRepositoryTest.class,
         PublicationRepositoryTest.class,
         RedundancyCandidateControllerTest.class,
-        NomenclatureCandidateControllerTest.class,
+//        NomenclatureCandidateControllerTest.class, // no tests
         RenoRepositoryTest.class,
         SequenceRepositoryTest.class,
         MapAccessionDbLinkTest.class,
         EnumValidationTest.class,
-        MultiRunTest.class
-//        ,MicroArrayTest.class     // Takes 1.5 min to run, but works.
+        MultiRunTest.class,
+        ExpressionRepositoryTest.class,
+        OrthologyRepositoryTest.class,
+        LinkageRepositoryTest.class,
+        TranscriptRepositoryTest.class,
+        DisplayGroupRepositoryTest.class,
+        BlastRepositoryTest.class
+//         MicroArrayTest.class     // Takes 1.5 min to run, but works.
         })
 
 public class DbUnitTests {

@@ -267,7 +267,11 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?MIVAR COND="$(XST,$UPDATE)">
         <form>
 	  <center>
-	   <font size=+2><input type=button value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&orgOID=$orgOID&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)$(IF,$(XST,$recattrsrctype),&recattrsrctype=$recattrsrctype)')"> 
+       <a 
+       style="font-size: large;"
+       href="javascript:" 
+      onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&orgOID=$orgOID&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)$(IF,$(XST,$recattrsrctype),&recattrsrctype=$recattrsrctype)')"
+      >[View Pubs]</a>
 	   </font>
 	  </center>
         </form>
@@ -316,7 +320,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?/MIVAR>
    
 
-<TABLE width=100%><TR><TD bgcolor=#ccccccc>
+<TABLE width=100%><TR><TD bgcolor=#cccccc>
 <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg')
                  from webPages where ID='aa-cittotalcount.apg';">$1<?/MISQL>
 <font size=+2><b>CITATIONS</b></font>

@@ -11,7 +11,7 @@ import org.zfin.sequence.reno.repository.RenoRepository;
 
 public class RunBeanValidator implements Validator {
 
-    private static Logger LOG = Logger.getLogger(RunBeanValidator.class);
+    private static final Logger LOG = Logger.getLogger(RunBeanValidator.class);
     private RenoRepository rr = RepositoryFactory.getRenoRepository();
 
     public boolean supports(Class clazz) {

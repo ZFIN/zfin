@@ -1,9 +1,22 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.zfin.sequence.blast">
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="blastDatabaseType">
+        <param name="enumClassname">org.zfin.sequence.blast.Database$Type</param>
+    </typedef>
+
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="blastDatabaseAbbreviation">
+        <param name="enumClassname">org.zfin.sequence.blast.Database$AvailableAbbrev</param>
+    </typedef>
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="originationType">
+        <param name="enumClassname">org.zfin.sequence.blast.Origination$Type</param>
+    </typedef>
 
     <class name="org.zfin.sequence.blast.Hit" table="blast_hit">
         <id name="zdbID" type="string">
@@ -18,15 +31,10 @@
         <property name="positivesNumerator" column="bhit_positives_numerator" not-null="true"/>
         <property name="positivesDenominator" column="bhit_positives_denominator" not-null="true"/>
         <many-to-one name="targetAccession" column="bhit_target_accbk_pk_id" class="org.zfin.sequence.Accession" not-null="true" lazy="no-proxy" />
-        <!--<many-to-one name="zfinAccession" column="bhit_mrkr_zdb_id" not-null="false" lazy="no-proxy" class="org.zfin.marker.Marker" />-->
-<!--        <property name="alignment" column="bhit_alignment" type="blob"/>-->
         <property name="alignment" column="bhit_alignment" />
-        <!-- this class links into another class in the anatomy package --> 
-<!--        <many-to-one name="zfinAccession" column="dblink" class="org.zfin.sequence.DBLink" not-null="true" lazy="no-proxy" />-->
-
-<!--        <property name="queryZdbId" column="bhit_bqry_zdb_id" not-null="true"/>-->
         <many-to-one name="query" column="bhit_bqry_zdb_id" not-null="true" lazy="no-proxy" class="org.zfin.sequence.blast.Query" />
     </class>
+
 
     <class name="org.zfin.sequence.blast.Query" table="blast_query">
         <id name="zdbID" type="string">
@@ -38,13 +46,63 @@
 
         <many-to-one name="accession" column="bqry_accbk_pk_id" class="org.zfin.sequence.Accession" not-null="true" lazy="no-proxy" />
         <many-to-one name="runCandidate" column="bqry_runcan_zdb_id" class="org.zfin.sequence.reno.RunCandidate" not-null="true" lazy="no-proxy" />
-        
-<!--        NOTE:  inverse = true is added to provide for a single insertion instead of an insertion and an update, but Query must be specified in Hit object.-->
+
+        <!--        NOTE:  inverse = true is added to provide for a single insertion instead of an insertion and an update, but Query must be specified in Hit object.-->
         <set name="blastHits" lazy="true" order-by="bhit_score desc, bhit_expect_value" inverse="true">
             <key column="bhit_bqry_zdb_id"/>
             <one-to-many class="org.zfin.sequence.blast.Hit"/>
         </set>
-    </class>           
+    </class>
+
+
+    <class name="org.zfin.sequence.blast.Database" table="blast_database">
+        <id name="zdbID" type="string">
+            <column name="blastdb_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">BLASTDB</param>
+            </generator>
+        </id>
+        <property name="name" column="blastdb_name" not-null="true"/>
+        <property name="abbrev" column="blastdb_abbrev" not-null="true" type="blastDatabaseAbbreviation"/>
+        <property name="description" column="blastdb_description"/>
+        <property name="type" column="blastdb_type" not-null="true" type="blastDatabaseType"/>
+        <property name="location" column="blastdb_path" not-null="false"/>
+        <property name="publicDatabase" column="blastdb_public" not-null="true"/>
+        <property name="locked" column="blastdb_is_being_processed" not-null="true"/>
+        <property name="displayName" column="blastdb_tool_display_name" not-null="true"/>
+        <property name="toolDisplayOrder" column="blastdb_tool_display_order" not-null="false"/>
+        <many-to-one name="origination" column="blastdb_origination_id" class="org.zfin.sequence.blast.Origination"/>
+
+        <set name="childrenRelationships" lazy="true" order-by="bdborder_order" inverse="true">
+            <key column="bdborder_child_blastdb_zdb_id"/>
+            <one-to-many class="org.zfin.sequence.blast.DatabaseRelationship"/>
+        </set>
+        <set name="parentRelationships" lazy="true" order-by="bdborder_order" inverse="true">
+            <key column="bdborder_parent_blastdb_zdb_id"/>
+            <one-to-many class="org.zfin.sequence.blast.DatabaseRelationship"/>
+        </set>
+    </class>
+
+    <class name="org.zfin.sequence.blast.DatabaseRelationship" table="blastdb_order">
+        <id name="id" type="long">
+            <column name="bdborder_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+        <property name="order" column="bdborder_order" type="integer" not-null="true"/>
+        <many-to-one name="parent" column="bdborder_parent_blastdb_zdb_id" class="org.zfin.sequence.blast.Database"/>
+        <many-to-one name="child" column="bdborder_child_blastdb_zdb_id" class="org.zfin.sequence.blast.Database" not-null="true"/>
+    </class>
+
+
+    <class name="org.zfin.sequence.blast.Origination" table="blast_database_origination_type">
+        <id name="id" type="long">
+            <column name="bdot_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+        <property name="type" column="bdot_type" type="originationType" />
+        <property name="definition" column="bdot_definition"/>
+    </class>
+
 
 </hibernate-mapping>
 

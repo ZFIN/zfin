@@ -18,6 +18,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.wiki.AntibodyWikiWebService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,6 +68,9 @@ public class AntibodyUpdateController extends SimpleFormController {
             antibody = ar.getAntibodyByID(formBean.getAntibody().getZdbID());
             String antibodyAlias = antibody.getName();
             antibody.setAbbreviation(formBean.getAntibodyNewName().toLowerCase());
+
+            AntibodyWikiWebService.getInstance().updatePageForAntibody(antibody,formBean.getAntibodyNewName()) ;
+
             antibody.setName(formBean.getAntibodyNewName());
 
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();

@@ -21,7 +21,14 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Genbank/";
 
 # a place on embryonix is used to store the fasta files for blast db update.
-$dir_on_embryonix = "/research/zblastfiles/files/daily/" ;
+
+my $host = "<!--|DOMAIN_NAME|-->";
+if ($host ne "zfin.org") {
+    $dir_on_embryonix = "/research/zblastfiles/dev_files/daily" ;
+}
+else {
+    $dir_on_embryonix = "/research/zblastfiles/files/daily" ;    
+}
 
 $report = "acc_update.report";
 
@@ -98,6 +105,7 @@ system ("parseDaily.pl $unzipfile")  &&  &writeReport("parseDaily.pl failed.");
 # only move the FASTA files and flat files to embryonix if that script
 # is run from production.
 
+<<<<<<< .working
 if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
 	if (! system ("/bin/mv *.fa *.flat $dir_on_embryonix") ) {
 
@@ -107,11 +115,26 @@ if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
 	else {
 		&writeReport("Failed to move the fasta files to embryonix.");
 	}
+=======
+#if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
+if (! system ("/bin/mv *.fa *.flat $dir_on_embryonix") ) {
+    
+    &writeReport("Fasta files moved to embryonix.");
+    system ("/bin/touch $dir_on_embryonix/fileMoved.$md_date");
+>>>>>>> .merge-right.r18093
 }
 else {
-	&writeReport("Files generated for BLAST db updates are dropped assuming you are only testing.");
+    &writeReport("Failed to move the fasta files to embryonix.");
 }
+<<<<<<< .working
 
+=======
+#}
+#else {
+#	&writeReport("Files generated for BLAST db updates are dropped assuming you are only testing.");
+#}
+
+>>>>>>> .merge-right.r18093
 # rename daily zebrafish accession file and use that to update the database
 if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
 
@@ -152,7 +175,11 @@ sub sendReport()
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "$report") || die "cannot open report";
 
+<<<<<<< .working
     print MAIL "To: tomc\@cs.uoregon.edu\n";
+=======
+    print MAIL "To: informix\@cs.uoregon.edu\n";
+>>>>>>> .merge-right.r18093
     print MAIL "Subject: GenBank accession update report\n";
     while(my $line = <REPORT>)
     {

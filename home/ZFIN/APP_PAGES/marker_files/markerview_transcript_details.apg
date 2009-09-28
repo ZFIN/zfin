@@ -1,0 +1,95 @@
+<?MICOMMENT>
+FILE: markerview_transcript_details.apg
+PREFIX: mvtd
+
+DESCRIPTION:
+Shows all transcripts for a given marker
+
+INPUT VARS:
+    $mvtd_mrkr_zdb_id      ::  mrkr_zdb_id of gene to show transcripts for
+
+OUTPUT VARS: none
+
+SIDE EFFECTS: none
+
+<?/MICOMMENT>
+
+<?MICOMMENT> public static final! (sort of) <?/MICOMMENT>
+<?MIVAR NAME="$mvtd_GENE_PRODUCES_TRANSCRIPT">gene produces transcript<?/MIVAR>
+
+
+
+<?MIVAR NAME="$mvtd_currentrow">0<?/MIVAR>
+<?MIVAR NAME="$mvtd_last_tscript_type"><?/MIVAR>
+
+<?MISQL SQL="select tscript_mrkr_zdb_id, 
+                    get_mrkr_abbrev_html_link(tscript_mrkr_zdb_id), 
+                    tscriptt_display,
+                    t.mrkr_abbrev_order,
+                    mrel_zdb_id
+             from transcript
+                  join marker_relationship 
+                    on tscript_mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                   and mrel_type = 'gene produces transcript' 
+                  join marker t on mrkr_zdb_id = tscript_mrkr_zdb_id
+                  join transcript_type on tscriptt_pk_id = tscript_type_id
+             where mrel_mrkr_1_zdb_id = '$mvtd_mrkr_zdb_id'
+             group by 3,1,2,4,5
+             order by 3,t.mrkr_abbrev_order; ">
+    <?MIVAR name="$mvtd_tscript_zdb_id">$1<?/MIVAR>
+    <?MIVAR name="$mvtd_tscript_link">$2<?/MIVAR>
+    <?MIVAR name="$mvtd_tscript_type">$3<?/MIVAR>
+    <?MIVAR name="$mvtd_mrel_zdb_id">$5<?/MIVAR>
+
+    <?MIVAR>
+    <?MIVAR name="$mvtd_currentrow">$(+,$mvtd_currentrow,1)<?/MIVAR>
+
+    <?MICOMMENT> ** only show the header for the first row ** <?/MICOMMENT>
+    <?MIBLOCK COND="$(EC,$mvtd_currentrow,1)">
+      <table class="summary">
+        <caption>Transcripts</caption>
+        <tr>
+          <th width="20%">Type</th>
+          <th width="20%">Name</th>
+        <th>Length (bp)</th>
+        </tr>
+    <?/MIBLOCK>
+
+        <tr> 
+          <td nowrap="nowrap">
+            <?MIBLOCK COND="$(NE,$mvtd_tscript_type,$mvtd_last_tscript_type)">            
+              <?MIVAR>$mvtd_tscript_type <?/MIVAR>
+            <?/MIBLOCK>
+          </td>
+          <td nowrap="nowrap">  
+            $mvtd_tscript_link
+            <?MISQL SQL="select WebExplode(object,'dataId=$mvtd_mrel_zdb_id&type=recattrib&info=standard') 
+                         from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+
+          </td>
+          <td> 
+            <?MICOMMENT> ** I'm hardcoding the units - I think it's safe to
+                            say that a transcript length will always be in
+                            bp                            ** <?/MICOMMENT>
+            <?MISQL SQL="select first 1 dblink_length
+                           from db_link
+                               join foreign_db_contains 
+                                 on dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                               join foreign_db_contains_display_group_member
+                                 on fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
+                               join foreign_db_contains_display_group
+                                 on fdbcdg_pk_id = fdbcdgm_group_id
+                           where dblink_linked_recid = '$mvtd_tscript_zdb_id'
+                             and fdbcdg_name = 'displayed nucleotide sequence'
+                         order by 1 desc;"> $1 <?/MISQL>   
+              
+          </td>
+        </tr>
+
+  <?/MIVAR>
+
+  <?MIVAR NAME="$mvtd_last_tscript_type">$mvtd_tscript_type<?/MIVAR>
+
+<?/MISQL>
+
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)"></table><?/MIBLOCK>

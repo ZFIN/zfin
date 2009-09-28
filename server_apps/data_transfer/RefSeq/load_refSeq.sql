@@ -38,14 +38,17 @@ CREATE INDEX llhs_abbrev_index ON ll_human
     
 UNLOAD to hs_ortho_abbrev_conflict.unl
 SELECT mrkr_abbrev, ortho_abbrev, llhs_hs_abbrev
-FROM ll_human, db_link, orthologue, marker, foreign_db_contains
+FROM ll_human, db_link, orthologue, marker, foreign_db_contains,
+     foreign_db, foreign_db_data_type
 WHERE llhs_ll_id = dblink_acc_num
   and llhs_hs_abbrev != ortho_abbrev
 
   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
   and fdbcont_organism_common_name = "Human"
-  and fdbcont_fdbdt_data_type = "orthologue"
-  and fdbcont_fdb_db_name = "Entrez Gene"
+  and fdbdt_data_type = "orthologue"
+  and fdb_db_name = "Entrez Gene"
+  and fdbcont_fdb_db_id = fdb_db_pk_id
+  and fdbcont_fdbdt_id = fdbdt_pk_id
   and dblink_linked_recid = zdb_id
   and c_gene_id = mrkr_zdb_id
 ORDER BY mrkr_abbrev;
@@ -69,16 +72,19 @@ CREATE INDEX llmm_abbrev_index ON ll_mouse
     
 UNLOAD to mm_ortho_abbrev_conflict.unl
 SELECT mrkr_abbrev, ortho_abbrev, llmm_mm_abbrev
-FROM ll_mouse, db_link, orthologue, marker, foreign_db_contains
+FROM ll_mouse, db_link, orthologue, marker, foreign_db_contains, foreign_db,
+  foreign_db_data_type
 WHERE llmm_ll_id = dblink_acc_num
 --  and llmm_mm_abbrev != ortho_abbrev
   and llmm_mm_abbrev not like ortho_abbrev||'%'
   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
   and fdbcont_organism_common_name = "Mouse"
-  and fdbcont_fdbdt_data_type = "orthologue"
-  and fdbcont_fdb_db_name = "Entrez Gene"
+  and fdbdt_data_type = "orthologue"
+  and fdb_db_name = "Entrez Gene"
   and dblink_linked_recid = zdb_id
   and c_gene_id = mrkr_zdb_id
+  and fdbcont_fdb_db_id = fdb_db_pk_id
+  and fdbcont_fdbdt_id = fdbdt_pk_id
 ORDER BY mrkr_abbrev;
 
 
@@ -310,11 +316,14 @@ INSERT INTO tmp_db_link
     'x',
     fdbcont_zdb_id,
     acclen_length
-  FROM ref_seq_acc, ll_zdb, marker, foreign_db_contains, OUTER(acc_length)
+  FROM ref_seq_acc, ll_zdb, marker, foreign_db, foreign_db_data_type,
+       foreign_db_contains, OUTER(acc_length)
   WHERE refseq_ll = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
-    AND fdbcont_fdb_db_name = 'RefSeq'
-    AND fdbcont_fdbdt_data_type = 'RNA'
+    AND fdb_db_name = 'RefSeq'
+    AND fdbdt_data_type = 'RNA'
+    AND fdbcont_fdb_db_id = fdb_db_pk_id
+    AND fdbcont_fdbdt_id = fdbdt_pk_id
     AND refseq_nM_acc[1,2] = 'NM'
     AND acclen_acc = refseq_nM_acc
 ;
@@ -327,11 +336,14 @@ INSERT INTO tmp_db_link
     'x',
     fdbcont_zdb_id,
     acclen_length
-  FROM ref_seq_acc, ll_zdb, marker, foreign_db_contains, OUTER(acc_length)
+  FROM ref_seq_acc, ll_zdb, marker, foreign_db_contains, 
+  foreign_db, foreign_db_data_type, OUTER(acc_length)
   WHERE refseq_ll = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
-    AND fdbcont_fdb_db_name = 'RefSeq'
-    AND fdbcont_fdbdt_data_type = 'Polypeptide'
+    AND fdb_db_name = 'RefSeq'
+    AND fdbdt_data_type = 'Polypeptide'
+    AND fdbcont_fdb_db_id = fdb_db_pk_id
+    AND fdbcont_fdbdt_id = fdbdt_pk_id
     AND refseq_nP_acc != '-'
     AND acclen_acc = refseq_nP_acc
 ;
@@ -345,11 +357,14 @@ INSERT INTO tmp_db_link
     'x',
     fdbcont_zdb_id,
     acclen_length
-  FROM ref_seq_acc, ll_zdb, marker, foreign_db_contains, OUTER(acc_length)
+  FROM ref_seq_acc, ll_zdb, marker, foreign_db_contains, 
+  foreign_db_data_type, foreign_db, OUTER(acc_length)
   WHERE refseq_ll = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
-    AND fdbcont_fdb_db_name = 'RefSeq'
-    AND fdbcont_fdbdt_data_type = 'Genomic'
+    AND fdb_db_name = 'RefSeq'
+    AND fdbdt_data_type = 'Genomic'
+    AND fdbcont_fdbdt_id = fdbdt_pk_id
+    AND fdbcont_fdb_db_id = fdb_db_pk_id
     AND refseq_nM_acc[1,2] = 'NC'
     AND acclen_acc = refseq_nM_acc
 ;
@@ -364,13 +379,15 @@ INSERT INTO tmp_db_link
     'x',
     fdbcont_zdb_id,
     accbk_length
-  FROM genbank_acc, ll_zdb, marker, foreign_db_contains, accession_bank
+  FROM genbank_acc, ll_zdb, marker, foreign_db_contains, foreing_db, 
+  foreign_db_data_type, accession_bank
   WHERE gbacc_ll = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
-    AND fdbcont_fdb_db_name = 'GenBank'
+    AND fdb_db_name = 'GenBank'
     AND fdbcont_zdb_id = accbk_fdbcont_zdb_id
     AND gbacc_acc = accbk_acc_num
-    AND fdbcont_fdb_db_name = 'GenBank'
+    AND fdbcont_fdbdt_id = fdbdt_pk_id
+    AND fdbcont_fdb_db_id = fdb_db_pk_id
     AND gbacc_acc != "-"
 ;
 
@@ -380,12 +397,15 @@ insert into tmp_put_genpept_on_segment
     pept_acc, seg_zdb
   )
 select distinct gbacc_pept as pept_acc, dblink_linked_recid as seg_zdb
-    from db_link, foreign_db_contains, genbank_acc 
+    from db_link, foreign_db_contains, foreign_db, foreign_db_data_type,
+    genbank_acc 
     where gbacc_acc = dblink_acc_num
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-      and fdbcont_fdb_db_name = "GenBank"
-      and fdbcont_fdbdt_data_type = "RNA"
+      and fdb_db_name = "GenBank"
+      and fdbdt_data_type = "RNA"
       and gbacc_pept != "-"
+      and fdbcont_fdbdt_id = fdbdt_pk_id
+      and fdbcont_fdb_db_id = fdb_db_pk_id
       and dblink_linked_recid not like "ZDB-GENE%";
 
 
@@ -412,11 +432,14 @@ INSERT INTO tmp_db_link
     'x',
     fdbcont_zdb_id,
     pla_len
-  FROM genbank_acc, ll_zdb, marker, foreign_db_contains, prot_len_acc
+  FROM genbank_acc, ll_zdb, marker, foreign_db_contains, 
+      foreign_db, foreign_db_data_type, prot_len_acc
   WHERE gbacc_ll = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
-    AND fdbcont_fdb_db_name = 'GenPept'
-    AND fdbcont_fdbdt_data_type = 'Polypeptide'
+    AND fdb_db_name = 'GenPept'
+    AND fdbdt_data_type = 'Polypeptide'
+    AND fdbcont_fdbdt_id = fdbdt_pk_id
+    AND fdbcont_fdb_db_id = fdb_db_pk_id
     AND gbacc_pept != '-'
     AND gbacc_pept = pla_prot
 ;
@@ -576,11 +599,14 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
 
 --Redundant links. A record with Marker/Acc_num/DB exists in ZFIN. Delete the matching record in tmp_db_link.
 
-    SELECT dblink_linked_recid, fdbcont_fdb_db_name, dblink_acc_num
-    FROM db_link, tmp_db_link, foreign_db_contains
+    SELECT dblink_linked_recid, fdb_db_name as db_name, dblink_acc_num
+    FROM db_link, tmp_db_link, foreign_db_contains, foreign_db, 
+    	 	  foreign_db_data_type
     WHERE dblink_linked_recid = tmp_linked_recid
       AND dblink_fdbcont_zdb_id = fdbcont_zdb_id
-      AND fdbcont_fdb_db_name = tmp_db_name
+      AND fdbcont_fdbdt_id = fdbdt_pk_id
+      AND fdbcont_fdb_db_id = fdb_db_pk_id
+      AND fdb_db_name = tmp_db_name
       AND dblink_acc_num = tmp_acc_num
     into temp tmp_redundant_db_link;
     
@@ -590,7 +616,7 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
       (
         SELECT *
         FROM tmp_redundant_db_link
-        WHERE fdbcont_fdb_db_name = tmp_db_name
+        WHERE db_name = tmp_db_name
           AND dblink_acc_num = tmp_acc_num
           AND dblink_linked_recid = tmp_linked_recid
       );
@@ -633,9 +659,11 @@ with no log;
       and exists
       (
         SELECT *
-        FROM tmp_est_db_link, marker_relationship, foreign_db_contains
+        FROM tmp_est_db_link, marker_relationship, foreign_db_contains,
+	     foreign_db
         WHERE dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = tmp_db_name
+          and fdb_db_name = tmp_db_name
+	  and fdbcont_fdb_db_id = fdb_db_pk_id
           and dblink_acc_num = tmp_acc_num
           and dblink_linked_recid = mrel_mrkr_1_zdb_id
           and tmp_linked_recid = mrel_mrkr_2_zdb_id
@@ -652,9 +680,10 @@ with no log;
       and exists
       (
         SELECT *
-        FROM tmp_est_db_link, marker_relationship, foreign_db_contains
+        FROM tmp_est_db_link, marker_relationship,foreign_db_contains,foreign_db
         WHERE dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = tmp_db_name
+	  and fdbcont_fdb_db_id = fdb_db_pk_id
+          and fdb_db_name = tmp_db_name
           and dblink_acc_num = tmp_acc_num
           and dblink_linked_recid = mrel_mrkr_2_zdb_id
           and tmp_linked_recid = mrel_mrkr_1_zdb_id
@@ -669,8 +698,8 @@ CREATE TEMP TABLE tmp_conflict_db_link
     conf varchar(50),
     conf_linked_recid varchar(50),
     dblink_acc_num varchar(50),
-    fdbcont_fdb_db_name varchar(50),
-    fdbcont_fdbdt_data_type varchar(20)
+    db_name varchar(50),
+    fdata_type varchar(20)
   )
 with no log;
 
@@ -679,19 +708,21 @@ with no log;
         conf,
         conf_linked_recid,
         dblink_acc_num,
-        fdbcont_fdb_db_name,
-        fdbcont_fdbdt_data_type
+        db_name,
+        fdata_type
       )
     SELECT distinct dblink_linked_recid conf, 
            tmp_linked_recid as conf_linked_recid, 
            dblink_acc_num, 
-           fdbcont_fdb_db_name,
-           fdbcont_fdbdt_data_type
-    FROM db_link, tmp_db_link, foreign_db_contains
+           fdb_db_name,
+           fdbdt_data_type
+    FROM db_link, tmp_db_link, foreign_db_contains, foreign_db, foreign_db_data_type
     WHERE dblink_linked_recid != tmp_linked_recid
       AND dblink_fdbcont_zdb_id = fdbcont_zdb_id
+      AND fdbcont_fdb_db_id = fdb_db_pk_id
+      AND fdbcont_fdbdt_id = fdbdt_pk_id
       AND fdbcont_zdb_id = tmp_fdbcont_zdb_id
-      AND fdbcont_fdbdt_data_type != 'Genomic'
+      AND fdbdt_data_type != 'Genomic'
       AND dblink_acc_num = tmp_acc_num;
         
 
@@ -705,7 +736,7 @@ with no log;
         FROM tmp_conflict_db_link
         WHERE dblink_acc_num = tmp_acc_num
           AND conf_linked_recid = tmp_linked_recid
-          --AND fdbcont_fdb_db_name = tmp_db_name
+          --AND db_name = tmp_db_name
       );
 
 
@@ -769,9 +800,10 @@ UPDATE db_link
 SET dblink_length = 
   (
     SELECT accbk_length 
-    FROM accession_bank, foreign_db_contains 
+    FROM accession_bank, foreign_db_contains, foreign_db 
     WHERE dblink_acc_num = accbk_acc_num 
-      AND fdbcont_fdb_db_name = 'GenBank'
+      AND fdb_db_name = 'GenBank'
+      AND fdbcont_fdb_db_id = fdb_db_pk_id
       AND fdbcont_zdb_id = accbk_fdbcont_zdb_id
   )
 WHERE exists
@@ -826,10 +858,12 @@ INSERT INTO db_link
         tmp_dblink_zdb_id,
         tmp_acc_num,
         tmp_length
-  FROM tmp_db_link, foreign_db_contains 
+  FROM tmp_db_link, foreign_db_contains, foreign_db_data_type,foreign_db 
   WHERE tmp_db_name = "Entrez Gene"
-    AND tmp_db_name = fdbcont_fdb_db_name
-    AND fdbcont_fdbdt_super_type = 'summary page'
+    AND tmp_db_name = fdb_db_name
+    AND fdbcont_fdbdt_id = fdbdt_pk_id
+    AND fdbcont_fdb_db_id = fdb_db_pk_id
+    AND fdbdt_super_type = 'summary page'
     AND fdbcont_organism_common_name = "Zebrafish";
 
 INSERT INTO db_link
@@ -889,14 +923,16 @@ with no log;
 
 INSERT INTO overlapping_acc_num
 SELECT dblink_zdb_id 
-FROM db_link AS genpept, foreign_db_contains AS fdbcont1
+FROM db_link AS genpept, foreign_db_contains AS fdbcont1, foreign_db as fdb1
 WHERE genpept.dblink_fdbcont_zdb_id = fdbcont1.fdbcont_zdb_id
-  AND fdbcont1.fdbcont_fdb_db_name = "GenPept"
+  AND fdbcont1.fdbcont_fdb_db_id = fdb1.fdb_db_pk_id 
+  AND fdb1.fdb_db_name = "GenPept"
   AND exists (
       SELECT *
-      FROM db_link AS refseq, foreign_db_contains AS fdbcont2
+      FROM db_link AS refseq, foreign_db_contains AS fdbcont2, foreign_db as fdb2
       WHERE refseq.dblink_fdbcont_zdb_id = fdbcont2.fdbcont_zdb_id
-        AND fdbcont2.fdbcont_fdb_db_name = "RefSeq"
+        AND fdb2.fdb_db_name = "RefSeq"
+	AND fdbcont2.fdbcont_fdb_db_id = fdb2.fdb_db_pk_id
         AND refseq.dblink_acc_num = genpept.dblink_acc_num
       );
         
@@ -920,11 +956,13 @@ INSERT INTO tmp_db_link
     'x',
     fdbcont_zdb_id,
     ''
-  FROM uni_gene, ll_zdb, marker, foreign_db_contains
+  FROM uni_gene, ll_zdb, marker, foreign_db_contains,foreign_db,foreign_db_data_type
   WHERE uni_ll_id = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
-    AND fdbcont_fdb_db_name = 'UniGene'
-    AND fdbcont_fdbdt_data_type = 'Sequence Clusters'
+    AND fdb_db_name = 'UniGene'
+    AND fdbcont_fdb_db_id = fdb_db_pk_id
+    AND fdbcont_fdbdt_id = fdbdt_pk_id
+    AND fdbdt_data_type = 'Sequence Clusters'
 ;
 
 -- ------------------ add new records ------------------ --
@@ -948,8 +986,9 @@ with no log;
   WHERE EXISTS
     (
       SELECT 'x'
-      FROM foreign_db_contains
-      WHERE fdbcont_fdb_db_name = "UniGene"
+      FROM foreign_db_contains, foreign_db
+      WHERE fdb_db_name = "UniGene"
+      AND fdbcont_fdb_db_id = fdb_db_pk_id
       AND dblink_fdbcont_zdb_id = fdbcont_zdb_id
     );
 

@@ -136,6 +136,7 @@
         <mkdir dir="${env.CATALINA_BASE}/logs"/>
         <mkdir dir="${env.CATALINA_BASE}/webapps"/>
         <mkdir dir="${env.CATALINA_BASE}/work"/>
+        <mkdir dir="${env.CATALINA_BASE}/temp"/>
     </target>
 
     <target name="jsp-compile" description="Compiles jsp files using jspc">

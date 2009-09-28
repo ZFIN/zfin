@@ -46,6 +46,18 @@
 
     </class>
 
+    <class name="org.zfin.orthology.OrthoEvidenceDisplay" table="orthologue_evidence_display">
+        <id name="zdbID" type="string">
+            <column name="oevdisp_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">OEVDISP</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+        <many-to-one name="gene" column="oevdisp_gene_zdb_id" class="org.zfin.marker.Marker" not-null="true"/>
+    </class>
+
+
     <class name="org.zfin.orthology.repository.OrthologyHelper" table="orthology_view">
         <id name="zdbID" type="string">
             <column name="vorthy_orthologue_zdb_id" not-null="true"/>
@@ -188,9 +200,9 @@
             <column name="fdbcont_organism_common_name"/>
         </property>
 
-        <!--<one-to-one name="FDBhelper" class="org.zfin.orthology.repository.AccessionHelperFDB" foreign-key="fdbcont_fdb_db_name" />-->
+        <!--<one-to-one name="FDBhelper" class="org.zfin.orthology.repository.AccessionHelperFDB" foreign-key="fdbcont_fdb_db_id" />-->
 
-        <many-to-one name="FDBhelper" column="fdbcont_fdb_db_name" unique="true" not-null="true"/>
+        <many-to-one name="FDBhelper" column="fdbcont_fdb_db_id" unique="true" not-null="true"/>
     </class>
 
     <class name="org.zfin.orthology.repository.AccessionHelperFDB" table="foreign_db">

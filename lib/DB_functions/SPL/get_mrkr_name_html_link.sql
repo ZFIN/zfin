@@ -14,25 +14,15 @@ create function get_mrkr_name_html_link( mrkrZdbId varchar(50) )
   -- 
   -- RETURNS: 
   --   Name of marker with proper HTML formatting, embedded in an HTML link
-  --   NULL if mrkrZdbId does not exist in marker table
   --
   -- EFFECTS:
   --   None
   -- --------------------------------------------------------------------- 
 
-  -- A couple of implementation details:
-  --  o get_marker_name_html will return NULL if the ZDB ID does not exist.
-  --    That will cause the entire return string to be converted to NULL,
-  --    which is what we want.
-  --  o Currently (2005/04) all marker types are displayed using 
-  --    aa-markerview.apg, and therefore we hardcode that below.  If thes
-  --    ever changes and different marker types have different display pages
-  --    then change this code to get the view app page from the zdb_object_type
-  --    table.
+
 
   return
-    '<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=' ||
-      mrkrZdbId || '">' ||
+    '<a href="' || get_mrkr_url(mrkrZdbId) || '">' ||
       get_mrkr_name_html(mrkrZdbId) ||
     '</a>';
 

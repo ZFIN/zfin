@@ -1,0 +1,91 @@
+<html>
+<head>
+    <title>Marker Application</title>
+    <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.marker.presentation.Marker/Marker.css"/>
+    <link rel="stylesheet" type="text/css" href="/org.zfin.marker.presentation.Marker/Marker.css"/>
+    <meta name='gwt:module' content='org.zfin.marker.presentation.Marker'>
+    <link rel="stylesheet" type="text/css" href="Marker.css"/>
+</head>
+<body>
+
+
+<script type="text/javascript">
+    var MarkerProperties= {
+        zdbID : "ZDB-BAC-060503-101",
+        curatorID : "ZDB-PERS-960805-676"
+    } ;
+
+    var LookupProperties = { NumLookups: "1" } ;
+    var LookupProperties0 = {
+        //        divName: "featureTerm",
+        //        inputName: "searchTerm",
+        buttonText: "Add",
+        type: "MARKER_LOOKUP",
+        showError: true,
+        wildcard: false
+    };
+</script>
+
+
+<script type="text/javascript" language="javascript" src="org.zfin.marker.presentation.Marker.nocache.js"></script>
+
+<input type="hidden" name="hiddenName" id="hiddenName"/>
+
+<a href="/action/marker/clone-view?zdbID=${formBean.marker.zdbID}">View Clone</a>
+
+
+<table cellpadding="10">
+    <tr>
+        <td>
+            <div id="markerName"></div>
+            <br>
+            <div id="supplierName"></div>
+            <br>
+            <div id="directAttributionName"></div>
+            <br>
+            <b>Previous Name(s):</b>
+            <div id="aliasName"></div>
+        </td>
+        <td valign="top">
+            <div id="publicationName"></div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>Curator Notes:</b>
+            <br>
+            <div id="curatorNoteName"></div>
+        </td>
+        <td>
+            <b>Public Notes:</b>
+            <div id="publicNoteName"></div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>Contains Genes:</b>
+            <div id="geneName"></div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <h3>Clone Data</h3>
+            <div id="cloneDataName"></div>
+            <div id="cloneName"></div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <hr>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <b>Sequences:</b>
+            <br>
+            <div id="dbLinksName"></div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

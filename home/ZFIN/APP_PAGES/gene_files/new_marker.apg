@@ -363,6 +363,23 @@ var ENTER_KEY = 13;
         <p>
         <p>
 
+      <?MICOMMENT>
+      Hide sequence entry if marker in marker_type in genedom.
+      <?/MICOMMENT>
+          <?MISQL SQL="
+            select * from marker_types mt
+            join marker_type_group_member mtgm on mtgm.mtgrpmem_mrkr_type=mt.marker_type
+            join marker_type_group mtg on mtgm.mtgrpmem_mrkr_type_group=mtg.mtgrp_name
+            where
+            mtg.mtgrp_name='GENEDOM'
+            and 
+            mt.marker_type='$marker_type'
+          ;">
+          <?MIVAR NAME="hide_sequence"><?/MIVAR>
+          <?/MISQL>
+
+
+
         <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.Lookup/Lookup.css"/>
         <script type="text/javascript">
                         var LookupProperties = { NumLookups: "1" } ;
@@ -385,7 +402,9 @@ var ENTER_KEY = 13;
        <p>
 
        <table border=0>
+
           <tr>
+          <?MIBLOCK COND="$(NXST,$hide_sequence)">
             <td valign=top>
               <b>Sequence:</b>           
               <input type=button value="Reverse" onClick="if ( validSequence(document.newdata.newmrkrReportedSequence.value) ){reverseSequence(document.newdata.newmrkrReportedSequence.value, 'reversed')}};"> 
@@ -393,23 +412,28 @@ var ENTER_KEY = 13;
               <input type=button value="mRNA-->MO" onClick="reverseComplementSequence();"> 
             </td>
             <td width=20></td><!-- spacer column -->
+            <?/MIBLOCK>
             <td>
               <b>Curator Note:</b>
             </td>
           </tr>
           <tr>
+          <?MIBLOCK COND="$(NXST,$hide_sequence)">
             <td>  
               Reported: 5'-   <input type=text name=newmrkrReportedSequence size=40 onChange="this.value = this.value.toUpperCase()"; onkeypress="return noenter(event)"> -3'
             </td>
             <td> </td>
+            <?/MIBLOCK>
             <td valign=top rowspan=2>
               <textarea name=newmrkrCuratorNote rows=5 cols=50></textarea>
             </td>
           </tr>
           <tr>
+          <?MIBLOCK COND="$(NXST,$hide_sequence)">
             <td>
               Displayed: 5'-   <input type=text onkeypress="return noenter(event)" name=newmrkrDisplaySequence size=40> -3'
             </td>
+            <?/MIBLOCK>
           </tr>
         </table>
         <br>

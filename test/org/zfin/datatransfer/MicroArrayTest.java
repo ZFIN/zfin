@@ -6,11 +6,11 @@ import org.junit.After;
 import static org.junit.Assert.* ;
 
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
@@ -67,11 +67,8 @@ public class MicroArrayTest {
     private static String  CDNA_NAME = "cdna_name" ;
     private static String  EST_NAME = "est_name" ;
 
-    private static String  TEST_DEFLINE = "defline jam" ;
-
 
     private Marker gene ;
-    private String geneAccession = ACCESSION_NUM1;
     private String geneGEOAccession = ACCESSION_NUM1;
     private MarkerDBLink geneDBLink ;
 
@@ -80,13 +77,11 @@ public class MicroArrayTest {
     private String cDNAGEOAccession = ACCESSION_NUM2;
 
     private Marker est ;
-    private String estAccession = ACCESSION_NUM3;
     private MarkerDBLink estDBLink ;
     private String estGEOAccession = ACCESSION_NUM3;
 
 
     // other reference variables
-    private Publication refPub ;
     private ReferenceDatabase geoDatabase ;
     private UpdateMicroArrayMain driver ;
     private ReferenceDatabase genBankRefDB ; 
@@ -286,18 +281,15 @@ public class MicroArrayTest {
     private void initTestData(){
 
         // get references DBs
-        ForeignDB genBankForeignDB = sequenceRepository.getForeignDBByName("GenBank");
-        genBankRefDB =sequenceRepository.getReferenceDatabaseByAlternateKey(
-                genBankForeignDB,
-                ReferenceDatabase.Type.GENOMIC,
-                ReferenceDatabase.SuperType.SEQUENCE,
+        genBankRefDB =sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 
-        ForeignDB geoForeignDB = sequenceRepository.getForeignDBByName("GEO");
-        geoDatabase = sequenceRepository.getReferenceDatabaseByAlternateKey(geoForeignDB,
-                ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
+        geoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GEO,
+                ForeignDBDataType.DataType.OTHER,ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
 
-        refPub = publicationRepository.getPublication("ZDB-PUB-070122-15");
     }
 
     // Remove dblinks, but will be rolled back.
@@ -343,7 +335,7 @@ public class MicroArrayTest {
         cDNA.setMarkerType(markerRepository.getMarkerTypeByName("CDNA"));
         cDNA.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
         session.save(cDNA);
-        markerRepository.addMarkerRelationship(cDNA, gene,"ZDB-PUB-070122-15", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT );
+        markerRepository.addSmallSegmentToGene(gene, cDNA, "ZDB-PUB-070122-15" );
 
         est = new Marker();
         est.setAbbreviation(EST_NAME);
@@ -352,7 +344,7 @@ public class MicroArrayTest {
         est.setMarkerType(markerRepository.getMarkerTypeByName("EST"));
         est.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
         session.save(est);
-        markerRepository.addMarkerRelationship(est, gene,"ZDB-PUB-070122-15",MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT );
+        markerRepository.addSmallSegmentToGene(gene, est, "ZDB-PUB-070122-15" );
 
 
         // set to cDNA

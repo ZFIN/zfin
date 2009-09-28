@@ -1,0 +1,184 @@
+/*body {
+    background-color: white;
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: small;
+    margin: 8px;
+}*/
+
+.relatedEntityTable{
+    background-color:lightgray;
+    border: medium black;
+}
+
+.relatedEntityPubLink{
+    text-decoration: underline ;
+    color: blue;
+    cursor: pointer ;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.relatedEntityDefaultPub{
+    color: gray ;
+}
+
+.sequenceDisplay{
+    font-family: monospace ;
+}
+
+.sequenceArea{
+    width: 400px ;
+    height: 200px ;
+}
+
+.publicationlookup{
+    background-color: darkgray;
+    padding: 10px ;
+    text-align: center;
+}
+
+.publicationAbstract{
+    background-color: white;
+    text-align: center;
+}
+
+a:active, a:visited, a:link{
+    text-decoration: none ;
+    color: blue ;
+}
+
+
+a:hover{
+    text-decoration: underline ;
+}
+
+.notePopup{
+    background-color: gray;
+    width: 320px ;
+    height: 240px  ;
+    padding: 10px ;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.notePopupTextArea{
+    width: 300px ;
+    height: 200px  ;
+}
+
+.newProteinBox{
+    padding: 10px ;
+}
+
+.gwt-SuggestBox {
+    border: 1px solid #666;
+    text-align: left;
+}
+
+.gwt-SuggestBoxPopup {
+    border: 1px solid black;
+    background-color: white;
+    overflow: auto;
+    height: auto;
+    max-height: 400px ;
+    min-width: 100px ;
+}
+
+.gwt-SuggestBoxPopup .item {
+    padding: 2px;
+    font-size:0.9em;
+    margin:0pt;
+}
+
+.gwt-SuggestBoxPopup .item-selected {
+    background-color: #FFFFBB;
+    padding: 2px;
+}
+
+/*same as zfin one, maybe should go there instead*/
+.gwt-lookup-error{
+    color: red;
+    display: block;
+}
+
+.gwt-lookup-note{
+    color: blue;
+    display: block;
+}
+
+.gwt-PushButton-up{
+    background-color: #eee;
+}
+
+.gwt-PushButton-down{
+    background-color: white
+}
+
+.gwt-table-full{
+    color: black ;
+    font-style: normal;
+}
+
+.gwt-table-empty{
+    color: gray ;
+    font-style: italic;
+}
+
+.gwt-Hyperlink {
+    color: blue;
+    text-decoration: none ;
+    cursor: pointer ;
+    outline: none ;
+}
+
+.gwt-Hyperlink:hover{
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer ;
+}
+
+.gwt-Frame {
+    background: white ;
+    border: thin solid black;
+    box-shadow: 0.2em 0.2em #CCC ;
+    position: relative ;
+}
+
+
+.gwt-PopupPanel {
+  border: black ;
+  width: 1px ;
+}
+
+.gwt-PopupPanel .popupContent{
+    color: white;
+    opacity:0; 
+}
+
+.externalLink{
+    background: transparent url( /images/external.png) no-repeat scroll right center ;
+    padding-right: 13px;
+    color: blue;
+    cursor: pointer ;
+    outline: none ;
+
+}
+
+
+.externalLink:hover{
+    text-decoration: underline ;
+}
+
+img{
+    border: 0 ; 
+}
+
+a.external{
+    background: transparent url( /images/external.png) no-repeat scroll right center ;
+    padding-right: 13px;
+}
+
+.error{
+    color: red ;
+}

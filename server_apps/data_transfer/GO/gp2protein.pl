@@ -71,12 +71,13 @@ sub gp2proteinReport()
 #
     my $cur = $dbh->prepare('
 select
-distinct m.mrkr_zdb_id,fdbc.fdbcont_fdb_db_name,dbl.dblink_acc_num,dbl.dblink_length
-from marker m,db_link dbl, foreign_db_contains fdbc
+distinct m.mrkr_zdb_id,fdb_db_name,dbl.dblink_acc_num,dbl.dblink_length
+from marker m,db_link dbl, foreign_db_contains fdbc, foreign_db
 where m.mrkr_zdb_id = dbl.dblink_linked_recid
 and dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and m.mrkr_zdb_id like "ZDB-GENE-%"
-and fdbc.fdbcont_fdb_db_name = "UniProtKB"
+and fdb_db_name = "UniProtKB"
+and fdbcont_fdb_db_id = fdb_db_pk_id
 union
 select
 distinct m.mrkr_zdb_id, "","",0
@@ -86,11 +87,12 @@ and not exists
 (
    select
    "t"
-   from db_link dbl , foreign_db_contains fdbc
+   from db_link dbl , foreign_db_contains fdbc, foreign_db
    where dbl.dblink_linked_recid=m.mrkr_zdb_id
    and fdbc.fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id
    and m.mrkr_zdb_id like "ZDB-GENE-%"
-   and fdbc.fdbcont_fdb_db_name = "UniProtKB"
+   and fdb_db_name = "UniProtKB"
+   and fdbcont_fdb_db_id = fdb_db_pk_id
 )
 union
 select

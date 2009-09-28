@@ -18,37 +18,41 @@ import java.util.List;
  */
 public class UpdateDOIMain {
 
-    private int maxProcesses = -1 ; 
-    private static final String MAX_PROCESS_NULL_STRING = "-1" ; 
-    private static final String MAX_DOI_PROCESS = "MAX_DOI_PROCESS" ; 
-    private PublicationRepository publicationRepository = null ; 
+    private int maxProcesses = -1 ;
+    private static final String MAX_PROCESS_NULL_STRING = "-1" ;
+    private static final String MAX_DOI_PROCESS = "MAX_DOI_PROCESS" ;
+    private PublicationRepository publicationRepository = null ;
 
     // Logging data
-    private Logger fullLogger = null ; 
-    private Logger lightLogger = null ; 
+    private Logger fullLogger = null ;
+    private Logger lightLogger = null ;
 
 
     public UpdateDOIMain() {
-        initLoggers(); 
+        initLoggers();
 
 
         // instatiates method
-        String[] confFiles = { 
+        String[] confFiles = {
+                "filters.hbm.xml",
+                "antibody.hbm.xml",
                 "anatomy.hbm.xml",
-              "publication.hbm.xml",
-              "expression.hbm.xml",
-              "marker.hbm.xml",
-               "orthology.hbm.xml",
-               "mutant.hbm.xml",
+                "publication.hbm.xml",
+                "expression.hbm.xml",
+                "marker.hbm.xml",
+                "orthology.hbm.xml",
+                "mutant.hbm.xml",
                 "people.hbm.xml",
                 "sequence.hbm.xml",
                 "infrastructure.hbm.xml",
+                "blast.hbm.xml",
+                "reno.hbm.xml",
                 "mapping.hbm.xml",
 
         };
         new HibernateSessionCreator(false, confFiles) ;
 
-        String maxDOIProcesses = System.getProperty( MAX_DOI_PROCESS, MAX_PROCESS_NULL_STRING ) ; 
+        String maxDOIProcesses = System.getProperty( MAX_DOI_PROCESS, MAX_PROCESS_NULL_STRING ) ;
         publicationRepository = new HibernatePublicationRepository() ;
         try{
 //            maxProcesses = (new Integer(maxDOIProcesses)).intValue()  ;
@@ -56,13 +60,13 @@ public class UpdateDOIMain {
             fullLogger.info("Max processes:"  + maxProcesses) ;
         }
         catch(NumberFormatException e){
-            fullLogger.info("Scanning All Available Dois") ; 
+            fullLogger.info("Scanning All Available Dois") ;
         }
     }
 
     private void initLoggers(){
-        fullLogger = Logger.getLogger( ZfinProperties.FULL_UPDATE_DOI) ; 
-        lightLogger = Logger.getLogger( ZfinProperties.LIGHT_UPDATE_DOI ) ; 
+        fullLogger = Logger.getLogger( ZfinProperties.FULL_UPDATE_DOI) ;
+        lightLogger = Logger.getLogger( ZfinProperties.LIGHT_UPDATE_DOI ) ;
     }
 
 
@@ -70,9 +74,9 @@ public class UpdateDOIMain {
      * @return List<Publication> Returns list of publications without a DOI.
      */
     private List<Publication> getPubmedIdsWithNoDOIs(){
-        List<Publication> publicationList =  publicationRepository.getPublicationsWithAccessionButNoDOI(maxProcesses) ; 
-        fullLogger.info("number of dois to populate:  " + publicationList.size() ) ; 
-        return publicationList ; 
+        List<Publication> publicationList =  publicationRepository.getPublicationsWithAccessionButNoDOI(maxProcesses) ;
+        fullLogger.info("number of dois to populate:  " + publicationList.size() ) ;
+        return publicationList ;
     }
 
 
@@ -82,18 +86,18 @@ public class UpdateDOIMain {
      */
     private void findAndUpdateDOIs(){
         try{
-			List<Publication> publicationList = getPubmedIdsWithNoDOIs() ; 
-            Citexplore wsdlConnect = new Citexplore() ; 
-            publicationList = wsdlConnect.getDoisForPubmedID(publicationList) ; 
-            DOIHTTPTester httpTester = new DOIHTTPTester() ; 
-            publicationList = httpTester.testDOIList(publicationList) ; 
+            List<Publication> publicationList = getPubmedIdsWithNoDOIs() ;
+            Citexplore wsdlConnect = new Citexplore() ;
+            publicationList = wsdlConnect.getDoisForPubmedID(publicationList) ;
+            DOIHTTPTester httpTester = new DOIHTTPTester() ;
+            publicationList = httpTester.testDOIList(publicationList) ;
             for(Publication publication: publicationList){
-                lightLogger.info("added doi["+publication.getDoi()+"] for publication["+publication.getZdbID()+"]") ; 
+                lightLogger.info("added doi["+publication.getDoi()+"] for publication["+publication.getZdbID()+"]") ;
             }
-            updateDOIs(publicationList) ; 
+            updateDOIs(publicationList) ;
         }
         catch(Exception e){
-            fullLogger.info(e) ; 
+            fullLogger.info(e) ;
         }
 
     }
@@ -106,7 +110,7 @@ public class UpdateDOIMain {
     private void updateDOIs(List<Publication> publicationList){
 
         if(publicationList==null || publicationList.size()==0 ){
-            fullLogger.info("No publications to udpate") ;
+            fullLogger.info("No sources to udpate") ;
             return ;
         }
         Session session = HibernateUtil.currentSession() ;
@@ -123,14 +127,14 @@ public class UpdateDOIMain {
     }
 
 
-	public static void main(String[] args) {
-		try {
-			UpdateDOIMain driver = new UpdateDOIMain();
+    public static void main(String[] args) {
+        try {
+            UpdateDOIMain driver = new UpdateDOIMain();
             driver.findAndUpdateDOIs() ;
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

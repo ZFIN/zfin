@@ -23,6 +23,7 @@
 # The specific/target directory tree is populated by the makefiles in the 
 # generic/source directory tree.  The makefiles use a TRANSLATE TABLE FILE 
 # to know what specific values to replace the generic tags with.
+# 
 #
 #
 # VARIABLES

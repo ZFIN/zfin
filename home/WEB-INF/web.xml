@@ -21,12 +21,14 @@
             /WEB-INF/conf/developer-tools.xml,
             /WEB-INF/conf/framework.xml,
             /WEB-INF/conf/marker.xml,
+            /WEB-INF/conf/blast.xml,
             /WEB-INF/conf/orthology.xml,
             /WEB-INF/conf/person.xml,
             /WEB-INF/conf/quicksearch.xml,
             /WEB-INF/conf/publication.xml,
             /WEB-INF/conf/webdriver.xml,
             /WEB-INF/conf/mapper.xml,
+            /WEB-INF/conf/quartz-jobs.xml,
             /WEB-INF/conf/applicationContext-acegi-security.xml
         </param-value>
     </context-param>
@@ -42,8 +44,8 @@
         <filter-name>Acegi Filter Chain Proxy</filter-name>
         <filter-class>org.acegisecurity.util.FilterToBeanProxy</filter-class>
         <init-param>
-            <param-name>targetClass</param-name>
-            <param-value>org.acegisecurity.util.FilterChainProxy</param-value>
+            <param-name>targetBean</param-name>
+            <param-value>filterChainProxy</param-value>
         </init-param>
     </filter>
 
@@ -75,19 +77,12 @@
     </filter>
 
     <filter-mapping>
-        <filter-name>Hibernate Session Request</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-<!--
-
-    <filter-mapping>
-        <filter-name>Check Database Updates</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
--->
-
-    <filter-mapping>
         <filter-name>Acegi Filter Chain Proxy</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>Hibernate Session Request</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
@@ -193,6 +188,37 @@
         <servlet-name>SessionSaveService</servlet-name>
         <url-pattern>/ajax/session-save</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TranscriptService</servlet-name>
+        <servlet-class>org.zfin.marker.presentation.server.TranscriptRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TranscriptService</servlet-name>
+        <url-pattern>/ajax/transcriptservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MarkerService</servlet-name>
+        <servlet-class>org.zfin.marker.presentation.server.MarkerRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>MarkerService</servlet-name>
+        <url-pattern>/ajax/markerservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CloneService</servlet-name>
+        <servlet-class>org.zfin.marker.presentation.server.CloneRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CloneService</servlet-name>
+        <url-pattern>/ajax/cloneservice</url-pattern>
+    </servlet-mapping>
+
 
     <servlet-mapping>
         <servlet-name>CurationService</servlet-name>

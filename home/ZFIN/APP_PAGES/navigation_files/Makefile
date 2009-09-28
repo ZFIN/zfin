@@ -24,7 +24,8 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/navigation_files
 # navigator.html is loaded into the database.  Treat it as an app page.
 #  Therefore, treat it as if it were generic, even though its not.
 
-GENERICS = navigator.html
+GENERICS = 
+SPECIFICS=navigator.html
 
 
 # Use default rules for app page directories

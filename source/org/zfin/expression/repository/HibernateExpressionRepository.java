@@ -8,10 +8,17 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.curation.dto.ExpressedTermDTO;
 import org.zfin.expression.*;
 import org.zfin.framework.HibernateUtil;
+import static org.zfin.framework.HibernateUtil.currentSession;
+import org.zfin.marker.Gene;
+import org.zfin.marker.Marker;
+import org.zfin.marker.Clone;
+import org.zfin.publication.Publication;
+import org.zfin.mutant.GenotypeExperiment;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -21,6 +28,7 @@ import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.GoTerm;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
+import org.apache.log4j.Logger;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -28,11 +36,111 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Iterator;
 
 /**
  * Repository that is used for curation actions, such as dealing with expression experiments.
  */
 public class HibernateExpressionRepository implements ExpressionRepository {
+
+    private Logger logger = Logger.getLogger(HibernateExpressionRepository.class) ;
+
+    public ExpressionStageAnatomyContainer getExpressionStages(Gene gene) {
+        Session session = HibernateUtil.currentSession();
+
+        //List<ExpressionStageAnatomy> myXSAresults = new ArrayList<ExpressionStageAnatomy>();
+
+        //query in expressions.hbm.xml
+        Query query = session.getNamedQuery("stageanatomyfigure");
+        query.setParameter("geneZdbID",gene.getZdbID());
+        query.setParameter("unknown",AnatomyItem.UNSPECIFIED);
+        query.setParameter("unspecified",DevelopmentStage.UNKNOWN);
+
+        Iterator stagesAndAnatomy = query.list().iterator();
+        ExpressionStageAnatomyContainer xsac = new ExpressionStageAnatomyContainer();
+
+        //the container object will handle duplication produced in the query.
+        while(stagesAndAnatomy.hasNext()) {
+            Object[] tuple = (Object[]) stagesAndAnatomy.next();
+
+            DevelopmentStage stage = (DevelopmentStage) tuple[0];
+            AnatomyItem anat = (AnatomyItem) tuple[1];
+            Figure fig = (Figure) tuple[2];
+
+            xsac.add(stage,anat,fig);
+
+        }
+
+
+        return xsac;
+
+    }
+
+    // todo: I think that these are wrong
+    public int getExpressionPubCount(Marker marker) {
+        Session session = currentSession() ;
+		String hql = ""  + 
+			"select count(ee.publication) " +
+			" from ExpressionResult er join er.expressionExperiment as ee " +
+			"where ee.probe=:markerZdbID " +
+                " " ;
+        Query query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+		Number number = (Number) query.uniqueResult() ;
+        logger.fatal("do not use this method getExpressionPubCount until fixed" );
+        return number.intValue() ;
+    }
+
+    // todo: I think that these are wrong
+    public int getExpressionFigureCount(Marker marker) {
+        Session session = currentSession() ;
+		String hql = ""  + 
+			"select count(f) " + 
+			" from Figure f join f.expressionResults er " + 
+			"where er.expressionExperiment.probe=:markerZdbID " +  
+			"" ; 
+		Query query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+		Number number = (Number) query.uniqueResult() ;
+        logger.fatal("do not use this method getExpressionFigureCount until fixed" );
+		return number.intValue() ;
+    }
+
+    public int getImagesFromPubAndClone(Publication publication,Clone clone){
+        String hql = "" +
+                " select count( distinct i) " +
+                " from Image i join i.figure f" +
+                " join f.expressionResults er join er.expressionExperiment ee join ee.clone c join ee.publication p where " +
+                " c.zdbID = :markerZdbID and " +
+                " p.zdbID  = :publicationZdbID ";
+        Session session = currentSession() ;
+        Query query1 = session.createQuery(hql) ;
+        query1.setString("markerZdbID",clone.getZdbID());
+        query1.setString("publicationZdbID",publication.getZdbID());
+        return ((Number) query1.uniqueResult()).intValue() ;
+    }
+
+    public List getDirectlySubmittedExpressionSummaries(Marker marker) {
+
+        String hql1 = "" +
+                "	 select count(distinct figure )," +
+                "		publication.zdbID , clone.zdbID " +
+                "           from Figure figure join figure.expressionResults  er " +
+                "                join er.expressionExperiment ee " +
+                "                join ee.publication publication " +
+                "                join ee.clone clone " +
+                "           where clone.zdbID = :markerZdbID " +
+                "           and publication.type  = :unpublished " +
+                "            group by clone.zdbID , publication.zdbID  "         ;
+
+        Session session = currentSession() ;
+        Query query1 = session.createQuery(hql1) ;
+        query1.setString("markerZdbID",marker.getZdbID());
+        query1.setString("unpublished","Unpublished");
+        List pubList = query1.list() ;
+        return pubList ;
+    }
+
 
     private static Logger LOG = Logger.getLogger(HibernateExpressionRepository.class);
 

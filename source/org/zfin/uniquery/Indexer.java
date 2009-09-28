@@ -632,7 +632,9 @@ public class Indexer implements Runnable
             {
             return SearchCategory.GENES_MARKERVIEW;
             }
-	else if (url.indexOf("markerview.apg") != -1 )
+	else if ((url.indexOf("markerview.apg") != -1 )
+                || (url.indexOf("marker/transcript-view") != -1)
+                || (url.indexOf("marker/clone-view") != -1))
             {
             return SearchCategory.MARKERS_MARKERVIEW;
             }

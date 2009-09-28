@@ -1,6 +1,7 @@
 package org.zfin.marker;
 
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.EntityAttribution;
 import org.zfin.publication.Publication;
 
 import java.util.HashSet;
@@ -10,23 +11,27 @@ import java.util.Set;
 /**
  * Class MarkerRelationship.
  */
-public class MarkerRelationship implements Comparable {
+public class MarkerRelationship implements Comparable, EntityAttribution {
 
     public enum Type {
 
         CLONE_CONTAINS_GENE("clone contains gene"),
         CLONE_CONTAINS_SMALL_SEGMENT("clone contains small segment"),
+        CLONE_CONTAINS_TRANSCRIPT("clone contains transcript"),
         CLONE_OVERLAP("clone overlap"),
         CODING_SEQUENCE_OF("coding sequence of"),
         CONTAINS_OTHER_FEATURE("contains other feature"),
         CONTAINS_POLYMORPHISM("contains polymorphism"),
         GENE_CONTAINS_SMALL_SEGMENT("gene contains small segment"),
+        GENE_PRODUCES_TRANSCRIPT("gene produces transcript"),
         GENE_ENCODES_SMALL_SEGMENT("gene encodes small segment"),
+        GENE_HAS_ARTIFACT("gene has artifact"),
         GENE_HYBRIDIZED_BY_SMALL_SEGMENT("gene hybridized by small segment"),
-        KNOCKDOWN_REAGENT_TARGETS_GENE("knockdown reagent targets gene"),
-        PROMOTER_OF("promoter of"),
         GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY("gene product recognized by antibody"),
-        GENE_HAS_ARTIFACT("gene has artifact");
+        KNOCKDOWN_REAGENT_TARGETS_GENE("knockdown reagent targets gene"),
+        TRANSCRIPT_TARGETS_GENE("transcript targets gene"),
+        PROMOTER_OF("promoter of"),
+            ;
 
         private final String value;
 
@@ -38,12 +43,21 @@ public class MarkerRelationship implements Comparable {
             return value;
         }
 
+        public static Type getType(String type) {
+            for (Type t : values()) {
+                if (t.toString().equals(type))
+                    return t;
+            }
+            throw new RuntimeException("No MarkerRelationship type of string " + type + " found.");
+        }
     }
 
     private String zdbID;
     private Type type;
     private Marker firstMarker;
     private Marker secondMarker;
+
+    private MarkerRelationshipType markerRelationshipType;
 
     private Set<PublicationAttribution> publications;
 
@@ -72,6 +86,14 @@ public class MarkerRelationship implements Comparable {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public MarkerRelationshipType getMarkerRelationshipType() {
+        return markerRelationshipType;
+    }
+
+    public void setMarkerRelationshipType(MarkerRelationshipType markerRelationshipType) {
+        this.markerRelationshipType = markerRelationshipType;
     }
 
     /**
@@ -129,10 +151,11 @@ public class MarkerRelationship implements Comparable {
 
     public Publication getSinglePublication() {
         if (getPublicationCount() == 1) {
-            for (PublicationAttribution pubAttr : getPublications())
-                return pubAttr.getPublication();
+            return getPublications().iterator().next().getPublication();
         }
-        return null;
+        else{
+            return null;
+        }
     }
 
     public int compareTo(Object anotherMarkerRelationship) {
@@ -142,13 +165,13 @@ public class MarkerRelationship implements Comparable {
     public String toString() {
         String newline = System.getProperty("line.separator");
         StringBuilder sb = new StringBuilder("MARKER_RELATIONSHIP");
-        sb.append("zdbID: " + zdbID);
+        sb.append("zdbID: ").append(zdbID);
         sb.append(newline);
-        sb.append("type: " + type);
+        sb.append("type: ").append(type);
         sb.append(newline);
-        sb.append("firstMarker: " + firstMarker);
+        sb.append("firstMarker: ").append(firstMarker);
         sb.append(newline);
-        sb.append("secondMarker: " + secondMarker);
+        sb.append("secondMarker: ").append(secondMarker);
         sb.append(newline);
         return sb.toString();
 

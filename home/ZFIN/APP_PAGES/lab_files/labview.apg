@@ -108,8 +108,8 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdat
 <!-- NOW THROW SHOW THE LABS DATA -->
 <form>
 <?MIVAR COND="$(XST,$UPDATE)">
-<center><font size=+2 color="#00ff00"><input type=button 
-value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$OID')"> </font></center>
+<center>
+       <a style="font-size: large;" href="javascript:" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$OID')">[View Lab]</a>
 <?/MIVAR>
 
 

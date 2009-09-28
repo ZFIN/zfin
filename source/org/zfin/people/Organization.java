@@ -162,4 +162,7 @@ public abstract class Organization implements Comparable<Organization> {
         return hash;
     }
 
+    public abstract boolean getLab() ;
+    public abstract boolean getCompany() ;
+
 }

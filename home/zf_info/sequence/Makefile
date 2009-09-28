@@ -17,9 +17,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/sequence
 
-GENERICS = sequence.html call_for_applications.html
 
-STATICS = nihlogo.gif sequence.pdf
+STATICS = nihlogo.gif sequence.pdf sequence.html call_for_applications.html
 
 
 # ---------------  Production Rules  ------------------------------------

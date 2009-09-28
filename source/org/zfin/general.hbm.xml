@@ -5,8 +5,7 @@
 
 <hibernate-mapping package="org.zfin.antibody">
 
-    <!-- ToDo: we need a true PK for this table in future as
-               the common name is not unique! -->
+    <!-- ToDo: we need a true PK for this table in future as the common name is not unique! -->
     <class name="org.zfin.Species" table="organism" >
         <id name="commonName" column="organism_common_name" >
             <generator class="native" />

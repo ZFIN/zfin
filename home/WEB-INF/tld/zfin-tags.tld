@@ -167,6 +167,35 @@
     </tag>
 
     <tag>
+        <name>blastAccessionURL</name>
+        <tagclass>org.zfin.framework.presentation.tags.BlastAccessionURL</tagclass>
+        <bodycontent>empty</bodycontent>
+        <info>Generates blast url for a dblink and blastDB</info>
+        <attribute>
+            <name>dbLink</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>blastDB</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>collectionSize</name>
+        <tagclass>org.zfin.framework.presentation.tags.CollectionSizeTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <info>Outputs the size of the collection</info>
+        <attribute>
+            <name>collectionEntity</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
         <name>choice</name>
         <tagclass>org.zfin.framework.presentation.tags.ChoiceTag</tagclass>
         <bodycontent>empty</bodycontent>
@@ -324,9 +353,31 @@
     </tag>
 
     <tag>
+        <name>defline</name>
+        <tagclass>org.zfin.framework.presentation.tags.DeflineTag</tagclass>
+        <info>Create an HTML output string for an object</info>
+        <attribute>
+            <name>defLine</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
         <name>abbrev</name>
         <tagclass>org.zfin.framework.presentation.tags.CreateAbbrevTag</tagclass>
         <info>Create an HTML output string for an object</info>
+        <attribute>
+            <name>entity</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>attribution</name>
+        <tagclass>org.zfin.framework.presentation.tags.AttributionTag</tagclass>
+        <info>Show an attribution link for an object</info>
         <attribute>
             <name>entity</name>
             <required>true</required>
@@ -360,5 +411,10 @@
         </attribute>
     </tag>
 
+    <tag>
+        <name>webdriver</name>
+        <tagclass>org.zfin.framework.presentation.tags.WebdriverTag</tagclass>
+        <info>Simple tag, to avoid using ZfinProperties.getWebDriver scripting</info>
+    </tag>
 
 </taglib>

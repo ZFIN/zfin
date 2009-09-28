@@ -56,10 +56,8 @@ public abstract class AbstractCandidateController extends SimpleFormController {
 
     //override POST vs GET distinction and make it explicitly all about the "done" boolean
     protected boolean isFormSubmission(HttpServletRequest request) {
-        if (request.getParameter("action") != null)
-            return StringUtils.equals(request.getParameter("action"), CandidateBean.DONE);
-        else
-            return false;
+        return request.getParameter("action") != null &&
+                StringUtils.equals(request.getParameter("action"), CandidateBean.DONE);
     }
 
 

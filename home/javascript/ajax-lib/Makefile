@@ -31,7 +31,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/javascript/ajax-lib
 
-STATICS = controls.js dragdrop.js effects.js prototype.js ajax-redirect.html
+STATICS = controls.js dragdrop.js effects.js prototype.js ajax-authorization-error.html ajax-redirect.html
 
 
 

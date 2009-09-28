@@ -11,7 +11,7 @@
                     title="Search for antibodies"><strong>Antibodies</strong></a>
 
 </li>
-     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg" 
+     <li><a href="/action/blast/blast" 
             title="Search for sequence alignment against ZFIN datasets and Zebrafish datasets">
          <strong>BLAST</strong> at ZFIN</a> </li>
      <li><a href="/zf_info/nomen.html" 
@@ -35,8 +35,12 @@
 
    <ul>
       <li>Search <a href="/action/anatomy/search" 
-                    title="Search the zebrafish anatomical ontology"><strong>Anatomy</strong></a></li>
-      <li><a href="/zf_info/anatomy/dict/sum.html">Atlases and Resources</a></li>
+                    title="Search the zebrafish anatomical ontology"><strong>Anatomy</strong></a>
+
+</li>
+
+      <li><a href="/zf_info/anatomy/dict/sum.html">Atlases and Resources</a>
+</li>
    </ul>
 
 

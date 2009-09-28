@@ -22,7 +22,10 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/dbase/PAPERS/ZFIN_DataModel
 # are not part of the public web pages.  Don't copy them.
 
 
-GENERICS = data_model.html overview_1.html  overview_2.html overview_3.html \
+#GENERICS = 
+
+STATICS = fig1.gif fig2.gif fig3.gif fig4.gif fig5.gif fig6.gif \
+	fig7.gif fig8.gif fig9.gif data_model.html overview_1.html overview_2.html overview_3.html \
 	overview_4.html sectioni.html sectioni_1.html sectioni_2.html \
 	sectioni_3.html sectioni_4.html sectioni_5.html sectionii.html \
 	sectionii_1.html sectionii_10.html sectionii_11.html \
@@ -33,9 +36,6 @@ GENERICS = data_model.html overview_1.html  overview_2.html overview_3.html \
 	sectionii_9.html sectioniii.html sectioniii_1.html sectioniii_2.html \
 	sectioniv.html sectioniv_1.html sectioniv_2.html sectioniv_3.html \
 	sectioniv_4.html sectionv.html
-
-STATICS = fig1.gif fig2.gif fig3.gif fig4.gif fig5.gif fig6.gif \
-	fig7.gif fig8.gif fig9.gif
 
 
 

@@ -103,16 +103,14 @@ public class PublicationListController extends MultiActionController {
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
         Antibody ab = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
 
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-
+            InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
             ir.removeRecordAttributionForData(bean.getDisassociatedPubId(), ab.getZdbID());
             Person currentUser = Person.getCurrentSecurityUser();
-            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser,"","");
+            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser);            
             tx.commit();
         } catch (Exception exception) {
             try {
@@ -138,10 +136,6 @@ public class PublicationListController extends MultiActionController {
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
         Antibody ab = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
 
-        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        Person currentUser = Person.getCurrentSecurityUser();
-
         String pubID = bean.getAntibodyNewPubZdbID();
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         Publication publication = pr.getPublication(pubID);
@@ -150,8 +144,10 @@ public class PublicationListController extends MultiActionController {
 
         try {
             tx = session.beginTransaction();
-            markerRepository.addMarkerPub(ab, publication);
-            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser,"","");
+            RepositoryFactory.getMarkerRepository().addMarkerPub(ab, publication);
+            Person currentUser = Person.getCurrentSecurityUser();
+            InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser);
             tx.commit();
         } catch (Exception e) {
             try {

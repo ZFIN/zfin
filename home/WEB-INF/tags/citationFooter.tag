@@ -1,0 +1,10 @@
+<%@ tag import="org.zfin.properties.ZfinProperties" %>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<%@ attribute name="numPubs" type="java.lang.Integer" rtexprvalue="true" required="true" %>
+<%@ attribute name="marker" type="org.zfin.marker.Marker" rtexprvalue="true" required="true" %>
+<div class="summary">
+<c:if test="${numPubs > 0}">
+    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-showpubs.apg&OID=${marker.zdbID}&rtype=marker&title=${marker.markerType.displayName}&name=${marker.name}&abbrev=${marker.abbreviation}&total_count=${numPubs}">CITATIONS</a> (${numPubs})
+</c:if>
+</div>

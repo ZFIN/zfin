@@ -963,7 +963,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
 
      <?MIVAR COND="$(=,$row_counter,1)">
        <table width=100%  cellpadding=2> 
-       <tr bgcolor=#ccccccc> 
+       <tr bgcolor=#cccccc> 
             <td width=20%><b> Feature </b> </td>
             <td width=80%><b> Details </b> </td>
           </tr>

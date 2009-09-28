@@ -69,7 +69,7 @@ public class AntibodyCreateController extends SimpleFormController {
             tx = session.beginTransaction();
 
             mr.createMarker(newAntibody, antibodyPub);
-            ir.insertUpdatesTable(newAntibody, "new Antibody", "", currentUser,newAntibody.getAbbreviation(),"");
+            ir.insertUpdatesTable(newAntibody, "new Antibody", "", currentUser);
 
             tx.commit();
         } catch (Exception e) {

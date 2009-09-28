@@ -1,0 +1,519 @@
+#!/private/bin/perl10 
+
+use lib './install_util';
+use ExtUtils::MakeMaker;
+use GuessDirectories;
+use FindBin '$Bin';
+use IO::File;
+use Cwd;
+require 5.005003;
+
+my $VERSION     = '1.70';
+my $working_dir = cwd;
+
+my @OPTIONS = qw(APACHE CONF HTDOCS CGIBIN GBROWSE_ROOT INSTALL_BASE
+		 LIB BIN YES PREFIX PACKAGE_DIR
+		 DO_XS NONROOT SELINUX
+		 INFORMIXDIR INFORMIXSERVER  SQLHOSTS_FILE);
+my $OPTIONS = join ('|',@OPTIONS);
+my %OPTIONS;
+
+my $OPTIONS_TO_ARGV = "LIB|PREFIX";
+
+my @argv = @ARGV;
+@ARGV = ();
+
+foreach (@argv) {
+  if (/^--?h/i) {
+    die <<END;
+To customize install locations, provide one or more of the options
+CONF, HTDOCS, or CGIBIN as in CONF=/usr/local/apache/conf.  To accept
+the default values without being prompted for them, provide YES=1 as
+an argument.
+
+CONF is the directory in which you will place the gbrowse configuration
+files. Usually this is the same as the Apache configuration directory, but
+it doesn't have to be.
+
+CGIBIN is the directory in which to place the GBrowse CGI scripts. This must
+be the same as, or a subdirectory of, your Apache server's CGI executable
+directory.
+
+HTDOCS is the document root in which the HTML files for your web server reside.
+If you are using a virtual server, use the appropriate HTDOCS directory
+for the virtual server's document root.
+
+GBROWSE_ROOT (optional) is the location under HTDOCS in which you would like
+GBrowse's static files (stylesheets, images, documentation) to be stored. For
+example, if you specify
+    HTDOCS=/var/www/html
+  and
+    GBROWSE_ROOT=genomes/gbrowse
+then the static files will be stored at /var/www/html/genomes/gbrowse. The
+default location is "gbrowse".
+
+Finally, PACKAGE_DIR is for creating packages for various distributions like
+deb or rpm packagers.  The argument provided here will be removed from other
+paths before in place subsitutions are done.  For example, if you want the
+final cgi directory to be /usr/lib/cgi-bin and you are building a package
+in /tmp, you would provide PACKAGE_DIR=/tmp and CGIBIN=/tmp/usr/lib/cgi-bin.
+
+Examples:
+
+For RedHat Linux:
+    perl Makefile.PL CONF=/etc/httpd/conf \\
+                     HTDOCS=/var/www/html \\
+                     CGIBIN=/var/www/cgi-bin \\
+                     DO_XS=1
+
+For Ubuntu Linux (running Apache version 2):
+    perl Makefile.PL CONF=/etc/apache2 \\
+                     HTDOCS=/var/www \\
+                     CGIBIN=/usr/lib/cgi-bin \\
+                     DO_XS=1
+
+For Macintosh OS X:
+    perl Makefile.PL CONF=/etc/httpd \\
+                     HTDOCS=/Library/WebServer/Documents \\
+                     CGIBIN=/Library/WebServer/CGI-Executables \\
+                     DO_XS=1
+
+For Slackware Linux systems:
+    perl Makefile.PL CONF=/etc/apache \\
+                     HTDOCS=/var/www/htdocs \\
+                     CGIBIN=/var/www/cgi-bin \\
+                     DO_XS=1
+
+You can also supply the argument APACHE to specify the prefix of the
+Apache installation tree, for systems in which you installed Apache
+from scratch. For example:
+
+    perl Makefile.PL APACHE=/usr/local/apache DO_XS=1
+
+This will set CONF to /usr/local/apache/conf, HTDOCS to
+/usr/local/apache/htdocs, and CGIBIN to /usr/local/apache/cgi-bin.
+
+To install as a user without root privileges, in addition to 
+the arguments above, provide the arguments NONROOT=1,
+LIB=/path/to/perl/libs and BIN=/path/to/scripts
+
+For example:
+    perl Makefile.PL APACHE=~/gbrowse/www \\
+		     LIB=~/gbrowse/lib \\
+		     BIN=~/gbrowse/bin \\
+		     PREFIX=~/gbrowse \\
+		     NONROOT=1
+
+will perform a non-privileged installation that places all gbrowse
+components (including perl libraries) in the path ~/gbrowse.
+
+To make the CGI scipts aware of the custom library location, you can
+either ask someone with root privileges to edit the apache
+configuration file or define the environmental variable $PERL5LIB for
+the owner of the httpd processes serving gbrowse.  Failing that, you
+will want to add the line
+
+  use lib "$ENV{HOME}/gbrowse/lib";
+
+to each of the CGI scripts.
+
+If you have a C compiler and wish to compile the XS extensions, set
+DO_XS=1.  Currently all this does is to speed up the multiple
+alignment plugin.
+END
+;
+  }
+
+  elsif (/($OPTIONS)=(.+)/og) {
+    $OPTIONS{$1} = interpolate($2);
+  }
+
+  else {
+    push @ARGV,$_;
+  }
+}
+
+if (-e 'GGB.def' && !%OPTIONS) {
+  print STDERR "\nShould I use your previous settings to set the file paths and options (y/n) [y]? ";
+  chomp (my $line = <>);
+  if (!$line || $line =~ /^[yY]/) {
+    print STDERR "Using previous settings for file paths and options.\n";
+    open F,'GGB.def' or die "GGB.def: $!";
+    while (<F>) {
+      chomp;
+      next if /^\#/;
+      next unless /^($OPTIONS)=(.*)/o;
+      my $key = $1;
+      $OPTIONS{$1} = interpolate($2);
+      if ($key =~ /$OPTIONS_TO_ARGV/) {
+          push @ARGV, "$key=$OPTIONS{$key}";
+      }
+    }
+    close F;
+  }
+}
+
+if (-e 'GGB.def' && !$OPTIONS{GBROWSE_ROOT} && $OPTIONS{HTDOCS} ) {
+    print STDERR <<END;
+
+--------------WARNING--------------------
+You may have already installed GBrowse in this directory because you have
+the HTDOCS variable set but not the GBROWSE_ROOT variable.  Please see
+the help document for how these variables have changed.  You probably
+want to have GBROWSE_ROOT equal to 'gbrowse' and remove 'gbrowse' from
+the end of your HTDOCS.
+
+Please check the file paths that are printed out at the end of this
+output for sanity.
+
+END
+}
+
+
+if(-e '/proc/filesystems' 
+   && `grep selinux /proc/filesystems`
+   && !$OPTIONS{SELINUX} ) {
+  die <<"END"
+
+------------------------------------------------------------------
+WARNING:
+You appear to have SELinux installed on this computer.
+GBrowse can have problems working on SELinux systems.
+Before you complete this installation please read 'README.fedora'
+Then you can avoid this message by adding the flag --SELINUX=1 when
+you execute perl Makefile.PL.
+------------------------------------------------------------------
+perl Makefile.PL aborted.
+END
+;
+}
+
+$OPTIONS{APACHE} ||= $OPTIONS{PREFIX}        if exists $OPTIONS{PREFIX};
+$OPTIONS{BIN}    ||= $OPTIONS{INSTALLSCRIPT} if exists $OPTIONS{INSTALLSCRIPT};
+
+if ($OPTIONS{APACHE} && !(defined $OPTIONS{CONF})) {
+  $OPTIONS{CONF} = "$OPTIONS{APACHE}/conf";
+}
+if ($OPTIONS{APACHE} && !(defined $OPTIONS{HTDOCS})) {
+  $OPTIONS{HTDOCS} = "$OPTIONS{APACHE}/htdocs";
+}
+if ($OPTIONS{APACHE} && !(defined $OPTIONS{CGIBIN})) {
+  $OPTIONS{CGIBIN} = "$OPTIONS{APACHE}/cgi-bin";
+}
+
+# set hard-coded values
+if ($OPTIONS{YES}) {
+  print "Accepting default install locations.\n";
+  $OPTIONS{APACHE} ||= GuessDirectories->root;
+  $OPTIONS{CONF}   ||= GuessDirectories->conf($OPTIONS{APACHE});
+  $OPTIONS{HTDOCS} ||= GuessDirectories->htdocs($OPTIONS{APACHE});
+  $OPTIONS{CGIBIN} ||= GuessDirectories->cgibin($OPTIONS{APACHE});
+  $OPTIONS{GBROWSE_ROOT}   ||= 'gbrowse';
+}
+else {
+  $OPTIONS{APACHE} ||= prompt('Apache root directory (enter \'\' for none)?',
+			    GuessDirectories->root) unless exists $OPTIONS{APACHE};
+  $OPTIONS{CONF}   ||= prompt('Apache conf directory?',
+			    GuessDirectories->conf($OPTIONS{APACHE}));
+  $OPTIONS{HTDOCS} ||= prompt('Apache htdocs directory?',
+			    GuessDirectories->htdocs($OPTIONS{APACHE}));
+  $OPTIONS{CGIBIN} ||= prompt('Apache cgibin directory?',
+			    GuessDirectories->cgibin($OPTIONS{APACHE}));
+  $OPTIONS{GBROWSE_ROOT}   ||= prompt('GBrowse root for static files?',
+			    'gbrowse');
+}
+unless (defined $OPTIONS{DO_XS}) {
+  $OPTIONS{DO_XS}  = $^O =~ /^(MSWin|dos)/i ? 0 : 1;
+}
+$OPTIONS{APACHE} ||= '/';
+
+# look for non-root installation 
+if (defined $OPTIONS{NONROOT}) {
+  $OPTIONS{INSTALLSITEMAN3DIR} = 'none';
+  $OPTIONS{INSTALLSITEMAN1DIR} = 'none';
+}
+
+# workaround for known bug in FindBin library
+$Bin = "." if -f './Makefile.PL' && -T './Makefile.PL';
+
+my $biographics_version = biographics_version();
+my $patch_version       = biographics_patch_version();
+my $bioperl_needs_patching = $biographics_version < $patch_version;
+
+open F,">$Bin/GGB.def" or die "Can't open $Bin/GGB.def for writing: $!";
+print F "# This hints file contains configuration information used by the generic browser\n\n";
+print F "# To reconfigure, run perl Makefile.PL `cat GGB.def`\n\n";
+foreach (keys %OPTIONS) {
+  print F "$_=$OPTIONS{$_}\n";
+}
+print F "VERSION=$VERSION\n";
+print F "BIOGRAPHICS_VERSION=$biographics_version\n";
+close F;
+
+
+print STDERR <<END;
+----------------------------------------------
+                File Paths
+
+END
+;
+foreach (@OPTIONS) {
+  printf STDERR "%13s %s\n",$_,$OPTIONS{$_} unless $_ eq 'APACHE'; #this confuses people
+}
+print STDERR <<END;
+
+(Run perl Makefile.PL -h for help on changing)
+----------------------------------------------
+END
+;
+
+
+if ($bioperl_needs_patching) {
+  print STDERR "\nInstalled Bio::Graphics version $biographics_version is less than desired version $patch_version.\nYou need to update your BioPerl installation to greater than version 1.5.2.\nAt the time of this GBrowse release, there is no BioPerl release greater than\n1.5.2 so you may need to get a nightly snapshot of bioperl-live.  Please see\n\n  http://bioperl.org/DIST/nightly_builds/\n\nfor downloads.\n\n";
+  die;
+}
+
+my @dir = ();
+push @dir,'libalign'         if $OPTIONS{DO_XS};
+
+unless (IO::File->can('binmode')) {
+    warn "\n\nYour installed version of IO::File is too old; please update it.\n\n";
+}
+#push @dir,'extras/BioPerl'   if $bioperl_needs_patching;
+
+# See lib/ExtUtils/MakeMaker.pm for details of how to influence
+# the contents of the Makefile that is written.
+WriteMakefile(
+	      'NAME'	     => 'Generic-Genome-Browser',
+	      'VERSION'      => $VERSION,
+	      'PREREQ_PM'    => {
+				 Bio::Perl         => 1.0050021,
+				 GD                => 2.07,
+				 IO::String        => 0,
+                 IO::File          => 1.0,
+				 Text::ParseWords  => 1,
+				 CGI::Session      => 4.02,
+				 File::Temp        => 0,
+				 Digest::MD5       => 0,
+                 Statistics::Descriptive => 0,
+                 Bio::Graphics     => 1.92,
+				},
+	      PL_FILES       => {
+                                 'install_util/htdocs_install.PLS' => 'install_util/htdocs_install.pl',
+                                 'install_util/cgi_install.PLS' => 'install_util/cgi_install.pl',
+                                 'install_util/conf_install.PLS' => 'install_util/conf_install.pl',
+				 #'bin/make_das_conf.PLS' => 'bin/make_das_conf.pl',
+				 #'bin/process_sgd.PLS' => 'bin/process_sgd.pl',
+				 #'bin/process_wormbase.PLS' => 'bin/process_wormbase.pl',
+				 #'bin/ucsc_genes2gff.PLS' => 'bin/ucsc_genes2gff.pl',
+#				 'bin/load_genbank.PLS' => 'bin/load_genbank.pl',
+				 #'bin/register_moby_services.PLS' => 'bin/register_moby_services.pl',
+				 'bin/wiggle2gff3.PLS' => 'bin/wiggle2gff3.pl',
+				 'install_util/gbrowse_ppm_install.PLS' => 'install_util/gbrowse_ppm_install.pl',
+				 'cgi-bin/gbrowse.PLS'  => 'cgi-bin/gbrowse',
+				 'cgi-bin/gbrowse_img.PLS'  => 'cgi-bin/gbrowse_img',
+				 'cgi-bin/gbrowse_syn.PLS'  => 'cgi-bin/gbrowse_syn',
+				 'cgi-bin/gbrowse_details.PLS'  => 'cgi-bin/gbrowse_details',
+				 'cgi-bin/gbrowse_est.PLS'  => 'cgi-bin/gbrowse_est',
+				 'cgi-bin/gbrowse_moby.PLS'  => 'cgi-bin/gbrowse_moby',
+				 'cgi-bin/moby_server.PLS'  => 'cgi-bin/moby_server',
+				 'cgi-bin/das.PLS'          => 'cgi-bin/das',
+				 'cgi-bin/gbgff.PLS'        => 'cgi-bin/gbgff',
+				 'conf/MobyServices/GbrowseServices.PMS'  => 'conf/MobyServices/GbrowseServices.pm',
+				 },
+	      EXE_FILES      => [
+				 'bin/register_moby_services.pl',
+				 'bin/make_das_conf.pl',
+				 'bin/process_wormbase.pl',
+				 'bin/process_sgd.pl',
+#                                 'bin/load_genbank.pl',
+                                 'bin/wiggle2gff3.pl',
+				],
+	      'LIBS'	     => [''], # e.g., '-lm'
+	      'LIB'          => $OPTIONS{LIB}, # custom location for perl modules
+	      'DIR'          => \@dir,
+	      'DEFINE'	     => '',
+	      'INC'	     => '', # e.g., '-I/usr/include/other'
+              ($] ge '5.005') ? (
+                  'AUTHOR'   => 'Lincoln Stein (lstein@cshl.org)',
+                  'ABSTRACT' => 'A CGI-driven browser for genomic annotations.',
+                                ) : (),
+              #'INSTALLSITEMAN1DIR' => $OPTIONS{INSTALLSITEMAN1DIR}, # don't install man pages for 
+              #'INSTALLSITEMAN3DIR' => $OPTIONS{INSTALLSITEMAN3DIR}, # non-root user
+	      #'INSTALLSITESCRIPT'  => $OPTIONS{BIN} || $OPTIONS{INSTALLSCRIPT},
+	      'INSTALLSITEBIN'     => $OPTIONS{BIN},
+              'PREFIX'       => $OPTIONS{PREFIX} ? $OPTIONS{PREFIX} : undef,
+);
+
+sub biographics_version {
+  delete $INC{'Bio/Graphics/Panel.pm'};
+  eval <<'END' || 0;
+    require Bio::Graphics::Panel;
+    Bio::Graphics::Panel->api_version;
+END
+}
+
+sub biographics_patch_version {
+  return 1.7; # what is in pre bioperl 1.6?
+}
+
+sub interpolate {
+  my $path = shift;
+  my ($to_expand,$homedir);
+  return $path unless $path =~ m!^~([^/]*)!;
+  eval {
+    if ($to_expand = $1) {
+      $homedir = (getpwnam($to_expand))[7];
+    } else {
+      $homedir = (getpwuid($<))[7];
+    }
+    return $path unless $homedir;
+
+    $path =~ s!^~[^/]*!$homedir!;
+  };
+  return $path;
+}
+
+sub MY::dist {
+  package MY;
+  my $inherited = shift->SUPER::dist(@_);
+  $inherited;
+}
+
+sub MY::clean {
+  package MY;
+  my $inherited = shift->SUPER::clean(@_);
+  $inherited .= "\t-\$(PERL) -I \$(TARGETROOT)/lib/Perl/gbrowse -I \$(TARGETROOT)/lib/Perl/bioperlinstall_util/make_clean_add.pl\n";
+  $inherited;
+}
+
+sub MY::dist_dir {
+  package MY;
+  my $inherited = shift->SUPER::dist_dir(@_);
+  $inherited =~ s!^(\s+.+)!\tpod2text docs/pod/INSTALL.pod > INSTALL\n$1!m;
+  $inherited;
+}
+
+sub MY::processPL {
+  package MY;
+  my $inherited = shift->SUPER::processPL(@_);
+  $inherited =~ s/(cgi-bin\/gbrowse\w*)\s\:\:.+/$1 : FORCE/g;
+  $inherited;
+}
+
+sub MY::install {
+  package MY;
+  my $inherited = shift->SUPER::install(@_);
+  $inherited =~ s/doc_install/doc_install conf_install cgi_install htdocs_install/;
+  $inherited;
+}
+
+sub MY::postamble {
+  my $paths;
+  for my $key (keys %OPTIONS) {
+    $paths .= qq("$key=$OPTIONS{$key}" ) if defined $OPTIONS{$key};
+  }
+
+qq{
+conf_install ::
+	\$(PERL) -I \$(TARGETROOT)/lib/Perl/gbrowse -I \$(TARGETROOT)/lib/Perl/bioperl \"$working_dir/install_util/conf_install.pl\" $paths 
+
+htdocs_install ::
+	\$(PERL) -I \$(TARGETROOT)/lib/Perl/gbrowse -I \$(TARGETROOT)/lib/Perl/bioperl \"$working_dir/install_util/htdocs_install.pl\" $paths
+
+cgi_install ::
+	\$(PERL) -I \$(TARGETROOT)/lib/Perl/gbrowse -I \$(TARGETROOT)/lib/Perl/bioperl \"$working_dir/install_util/cgi_install.pl\" $paths
+
+};
+} 
+
+sub MY::libscan {
+  package MY;
+  my $self = shift;
+  my $from = shift;
+  my $to = $self->SUPER::libscan($from);
+  return undef if $to=~/README/;
+  return $to;
+}
+
+sub MY::ppd {
+  package MY;
+  my $repository = 'http://www.gmod.org/ggb/ppm';
+  my $arch       = 'MSWin32-x86-multi-thread';
+  my $inherited = shift->SUPER::ppd(@_);
+
+  my $implementation;
+  my $newimp;
+  my $oldMM =0;
+
+#VERY irritating--different versions of ExtUtils::MakeMaker has
+#different ways of generating the ppd file.
+  if ($inherited =~ /qq\{(<S.*R>\\n)\}.*qq\{(\\t<I.*\/>\\n)\}.*qq\{(\\t\\t<O.*G>\\n)\}/sg){
+    $oldMM=1;
+    my $xml = $1.$2.$3;
+    #warn "$xml\n";
+    $inherited =~ s/qq\{.*>>/qq{$xml}" >/s;
+  } elsif ($inherited =~ /NOECHO/) {
+    my @la = split /\n/, $inherited;
+    my $grab = 0;
+    for (@la) {
+      $grab++ if (m!<IMPLEMENTATION>!); 
+      if ($grab and $_ =~ /\'(.*)\'/) {
+        $implementation .= "$1\n";
+      }
+      $grab = 0 if (m!</IMPLEMENTATION>!);
+    } 
+  }
+
+  my $impl58;
+  if ($oldMM and $inherited =~ /(\s*\<IMPLEMENTATION\>.*\<\/IMPLEMENTATION\>)/m) {
+    $implementation = $newimp = $1;
+    $newimp      =~ s/ARCHITECTURE NAME=\\"\S+\\"/ARCHITECTURE NAME=\\"$arch\\"/;
+    $newimp      =~ s/\$\(OSNAME\)/MSWin32/;
+    $impl58      = $newimp;
+    $impl58      =~ s/\Q$arch\E/$arch\-5\.8/;
+    $newimp      .= "\\n\\t\\t$impl58";
+    $inherited   =~ s/\Q$implementation\E/$newimp/;
+  } elsif (!$oldMM and $implementation) {
+    $newimp      = $implementation;
+    $newimp      =~ s/ARCHITECTURE NAME="\S+"/ARCHITECTURE NAME="$arch"/;
+    $newimp      =~ s/\$\(OSNAME\)/MSWin32/;
+    $impl58      = $newimp;
+    $impl58      =~ s/\Q$arch\E/$arch\-5\.8/;
+    $newimp      .= $impl58;
+    @la          = split /\n/, $newimp;
+    for my $line (@la) {
+      $line = qq{\t\$(NOECHO) \$(ECHO) '$line' >> \$(DISTNAME).ppd}; 
+    }
+
+    my @inherit_array = split /\n/, $inherited;
+    my @newinherit;
+    $inherited = '';
+    for (@inherit_array) {
+      if (/<IMPLEMENTATION>/) {
+        push @newinherit, @la;
+        last;
+      } else {
+        push @newinherit, $_; 
+      }
+    }
+    push @newinherit, qq{\t\$(NOECHO) \$(ECHO) '</SOFTPKG>' >> \$(DISTNAME).ppd\n};
+    $inherited = join "\n", @newinherit;
+  }
+
+  $inherited .= <<END;
+
+	\@echo "creating Generic-Genome-Browser.ppd"
+	\@echo "creating gbrowse_ppm_support_files-$VERSION.tar.gz"
+	\@\$(TAR) zcf gbrowse_ppm_support_files-$VERSION.tar.gz --exclude CVS --exclude '*~' --exclude '*.PLS' --exclude '.*' --exclude README --exclude '#*' DISCLAIMER INSTALL docs htdocs conf cgi-bin install_util sample_data contrib
+	\@echo "creating gbrowse_ppm-$VERSION.tar.gz"
+	\@\$(TAR) zcf gbrowse_ppm-$VERSION.tar.gz --exclude man1 --exclude man3 blib
+	\@perl -pi -e 's!HREF=""!HREF="$repository/gbrowse_ppm-$VERSION.tar.gz"!' Generic-Genome-Browser.ppd
+	\@perl -pi -e 's!(\\s*</IMPLEMENTATION>)!\\t\\t<INSTALL HREF="$repository/gbrowse_ppm_install.pl" EXEC="PPM_PERL" />\\n\\1!' Generic-Genome-Browser.ppd
+	\@perl -pi -e 's!Bio-Perl!bioperl!' Generic-Genome-Browser.ppd
+	\@cp install_util/gbrowse_ppm_install.pl .
+END
+;
+}
+
+

@@ -9,6 +9,9 @@ import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.DBLink;
+import org.zfin.marker.Transcript;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -21,6 +24,12 @@ public interface MarkerRepository {
     Marker getMarker(Marker marker);
 
     Marker getMarkerByID(String zdbID);
+    Clone getCloneById(String zdbID);
+    Transcript getTranscriptByZdbID(String zdbID);
+    Transcript getTranscriptByName(String name);
+    Transcript getTranscriptByVegaID(String vegaID);
+
+    List<String> getTranscriptTypes();
 
     Marker getMarkerByAbbreviation(String abbreviation);
 
@@ -35,12 +44,13 @@ public interface MarkerRepository {
 
     MarkerRelationship getMarkerRelationshipByID(String zdbID);
 
-    DataAlias getSpecificDataAlias(Marker marker, String alias);
+    MarkerAlias getSpecificDataAlias(Marker marker, String alias);
 
     TreeSet<String> getLG(Marker marker);
 
-    void addMarkerRelationship(Marker marker, Marker gene, String attributionZdbID, MarkerRelationship.Type type);
+    MarkerRelationship addMarkerRelationship(MarkerRelationship mrel, String attributionZdbID);
 
+    void addSmallSegmentToGene(Marker gene, Marker segment, String attributionZdbID);
 
     void addMarkerDataNote(Marker marker, String note, Person curator);
 
@@ -75,9 +85,15 @@ public interface MarkerRepository {
      */
     void deleteMarkerAlias(Marker marker, MarkerAlias alias);
 
-    void addAliasPub(String alias, String attributionZdbID, Marker antibody);
+    /**
+     * Delete a marker relationship
+     * @param mrel
+     */
+    void deleteMarkerRelationship(MarkerRelationship mrel);
 
-    void addRelPub(String relzdbid, String attributionZdbID, Marker antibody);
+    void addDataAliasAttribution(DataAlias alias, Publication attribution, Marker marker);
+
+    void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution, Marker marker);
 
     /**
      * Add a publication to a given marker: Attribution.
@@ -86,7 +102,9 @@ public interface MarkerRepository {
      */
     void addMarkerPub(Marker marker,  Publication publication);
 
-    void addDBLink(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID);
+    MarkerDBLink getDBLink(Marker marker, String accessionNumber, ReferenceDatabase refdb);
+
+    DBLink addDBLink(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID);
 
     void addOrthoDBLink(Orthologue orthologue, EntrezProtRelation accessionNumber);
 
@@ -119,6 +137,7 @@ public interface MarkerRepository {
      */
     void updateMarker(Marker marker, Publication publication, String alias);
 
+
     /**
      * Checks if a gene has a small segment relationship with a given small segment.
      *
@@ -127,6 +146,15 @@ public interface MarkerRepository {
      * @return boolean
      */
     boolean hasSmallSegmentRelationship(Marker associatedMarker, Marker smallSegment);
+
+
+    /**
+     *
+     * @param associatedMarker Associated Marker.
+     * @param transcript Transcript
+     * @return Marker has a relationship with this Transcript.
+     */
+    boolean hasTranscriptRelationship(Marker associatedMarker, Marker transcript);
 
     /**
      * Retrieve all markers of a given type group whose abbreviation
@@ -138,12 +166,37 @@ public interface MarkerRepository {
      */
     List<Marker> getMarkersByAbbreviationAndGroup(String name, Marker.TypeGroup markerType);
 
+    // clone methods
+    List<String> getPolymeraseNames() ;
+    List<String> getVectorNames() ;
+    List<String> getProbeLibraryNames() ;
+    List<ProbeLibrary> getProbeLibraries() ;
+    ProbeLibrary getProbeLibrary(String zdbID) ;
+    List<String> getDigests() ;
+    List<String> getCloneSites() ;
+
     /**
      * Retrieve a marker alias by zdb ID
      * @param aliasZdbID id
      * @return Marker Alias object
      */
     MarkerAlias getMarkerAlias(String aliasZdbID);
+
+
+    List<TranscriptTypeStatusDefinition> getAllTranscriptTypeStatusDefinitions();
+    List<TranscriptType> getAllTranscriptTypes();
+
+    TranscriptType getTranscriptTypeForName(String typeString) ;
+    TranscriptStatus getTranscriptStatusForName(String statusString) ;
+
+    //these are pulled from push4genomix.pl
+
+    boolean getGeneHasExpression(Marker gene ) ;
+    boolean getGeneHasExpressionImages(Marker gene) ;
+    boolean getGeneHasGOEvidence(Marker gene) ;
+    boolean getGeneHasPhenotype(Marker gene ) ;
+    boolean getGeneHasPhenotypeImage(Marker gene ) ;
+
 
     /**
      * Get all high quality probes AO Statistics records for a given ao term.

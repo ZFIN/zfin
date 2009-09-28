@@ -29,8 +29,7 @@ import org.zfin.sequence.DBLink;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ForeignDB;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * ToDO: include documentation
@@ -44,7 +43,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Criteria query = HibernateUtil.currentSession().createCriteria(Publication.class);
         query.add(Restrictions.ilike("abstractText", abstractText, MatchMode.ANYWHERE));
         query.setProjection(Projections.count("abstractText"));
-        return (Integer) query.uniqueResult();
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     /**
@@ -133,7 +132,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query query = session.createQuery(hql);
         query.setString("zdbID", geneID);
         query.setString("aoZdbID", anatomyItemID);
-        return (Integer) query.uniqueResult();
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     public int getNumberOfExpressedGenePublicationsWithFigures(String geneID, String anatomyItemID) {
@@ -147,7 +146,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query query = session.createQuery(hql);
         query.setString("zdbID", geneID);
         query.setString("aoZdbID", anatomyItemID);
-        return (Integer) query.uniqueResult();
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     private void addPaginationParameters(Query query) {
@@ -353,7 +352,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("condition", Experiment.STANDARD);
         query.setString("withdrawn", Marker.WITHDRAWN + "%");
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString());
-        return (Integer) query.uniqueResult();
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     /**
@@ -372,7 +371,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setParameter("aoTerm", anatomyTerm);
-        return (Integer) query.uniqueResult();
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     private List<MarkerStatistic> createMarkerStatistics(List<Object[]> list, AnatomyItem anatomyTerm) {
@@ -426,8 +425,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Criteria query = session.createCriteria(Publication.class);
         query.setProjection(Projections.count("zdbID"));
         query.add(Restrictions.eq("zdbID", canonicalPublicationZdbID));
-        Integer number = (Integer) query.uniqueResult();
-        return number == 1;
+        return (1 ==((Number) query.uniqueResult()).intValue()) ;
     }
 
 
@@ -670,7 +668,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("genoID", genotype.getZdbID());
         query.setString("aoZdbID", aoTerm.getZdbID());
 
-        return Integer.parseInt(query.uniqueResult().toString());
+        return ((Number) (query.uniqueResult())).intValue() ;
     }
 
     /**
@@ -738,6 +736,166 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             logger.error("failed to get journal title[" + journalTitle + "] returning null", e);
             return null;
         }
+    }
+
+
+    /**
+     * Utility method for filling list to a max amount.  This is a destructive method on fillList.
+     * @param fillList  This list will get overwritten.
+     * @param sourceList
+     * @param maxFill
+     * @return fillList
+     */
+    private Collection fillList(Collection fillList,Collection sourceList,int maxFill){
+        Iterator iter = sourceList.iterator() ;
+        while(fillList.size() < maxFill && iter.hasNext()){
+            fillList.add(iter.next()) ;
+        }
+        return fillList ;
+    }
+
+    /**
+     * From citgeneric.apg, includes references for:
+     * 1 - direct attribution t omarker
+     * 2 - attributed second marker relations
+     * 3 - attributed first marker relations
+     * 4 - attributed second marker relations where first marker is a morpholino (redundant?)
+     * 5 - direct attribution to alias that links to marker
+     * 6 - direct attribution to dblink that links to marker
+     * 7 - direct attribution to orthologue evidence that links to marker
+     * 8 - direct attribution to GO evidence that links to marker
+     * 9 - direct attribution to feature evidence that links to marker
+     * 10 - direct attribution to genotype feature evidence that links to marker somehow through feature
+     * 11 - direct attribution to genotype feature evidence that links to marker directly
+     * @param marker
+     * @param maxPubs
+     * @return The number of markers and any publications.
+     */
+    public PaginationResult<Publication> getAllAssociatedPublicationsForMarker(Marker marker, int maxPubs){
+
+        PaginationResult<Publication> paginationResult = new PaginationResult<Publication>() ;
+        Set<Publication> pubList = new HashSet<Publication>() ;
+        Query query ;
+        String hql ;
+        List<Publication> resultList ;
+        Session session = HibernateUtil.currentSession() ;
+
+        // short list:
+        hql = "select p.publication " +
+                " from PublicationAttribution p " +
+                " where p.dataZdbID = :markerZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , MarkerRelationship mr " +
+                " where p.dataZdbID = mr.zdbID " +
+                " and mr.secondMarker.zdbID = :markerZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , MarkerRelationship mr " +
+                " where p.dataZdbID = mr.zdbID " +
+                " and mr.firstMarker.zdbID = :markerZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , MarkerRelationship mr " +
+                " where p.dataZdbID = mr.firstMarker.zdbID " +
+                " and mr.secondMarker.zdbID = :markerZdbID " +
+                " and mr.firstMarker.markerType = :markerType " ;
+        query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+        query.setString("markerType",Marker.Type.MRPHLNO.name()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , DataAlias  da " +
+                "  where p.dataZdbID = da.zdbID " +
+                " and da.dataZdbID = :markerZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , MarkerDBLink dbl " +
+                "  where dbl.zdbID = p.dataZdbID " +
+                "  and dbl.marker.zdbID = :markerZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , OrthoEvidenceDisplay oed " +
+                "  where oed.zdbID = p.dataZdbID " +
+                "  and oed.gene.zdbID = :markerZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , MarkerGoTermEvidence mgte " +
+                "  where mgte.zdbID = p.dataZdbID " +
+                "  and mgte.marker.zdbID  = :markerZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , FeatureMarkerRelationship fmr " +
+                " where fmr.featureZdbId  = p.dataZdbID " +
+                "  and fmr.marker.zdbID = :markerZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , GenotypeFeature gtf, FeatureMarkerRelationship fmr " +
+                "  where gtf.genotype.zdbID  = p.dataZdbID " +
+                "  and fmr.featureZdbId = gtf.feature.zdbID" +
+                "  and fmr.marker.zdbID = :markerZdbID  " ;
+        query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , GenotypeFeature gtf " +
+                " where gtf.genotype.zdbID  = p.dataZdbID " +
+                "  and gtf.feature.zdbID = :markerZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("markerZdbID",marker.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+        String zdbIDs = "" ;
+        for(Publication pub: pubList){
+            zdbIDs += pub.getZdbID()+"\n" ;
+        }
+
+        if(maxPubs>=0){
+            paginationResult.setPopulatedResults((new ArrayList(pubList)).subList(0,maxPubs));
+        }
+        else{
+            paginationResult.setPopulatedResults(new ArrayList(pubList));
+        }
+        paginationResult.setTotalCount(pubList.size());
+        return paginationResult ;
     }
 
     /**

@@ -1,15 +1,26 @@
 package org.zfin.sequence;
 
+import java.util.Set;
+
 /**
 
  */
 public class ForeignDB {
-    private String dbName ;
+
+    private Long dbID ;
+    private AvailableName dbName ;
     private String dbUrlPrefix;
     private String dbUrlSuffix;
-    private String significance;
+    private Integer significance;
+    private String displayName ;
 
+   public Long getDbID() {
+        return dbID;
+    }
 
+    public void setDbID(Long dbID) {
+        this.dbID = dbID;
+    }
     public String getDbUrlPrefix() {
         return dbUrlPrefix;
     }
@@ -26,32 +37,36 @@ public class ForeignDB {
         this.dbUrlSuffix = dbUrlSuffix;
     }
 
-    public String getSignificance() {
+    public Integer getSignificance() {
         return significance;
     }
 
-    public void setSignificance(String significance) {
+    public void setSignificance(Integer significance) {
         this.significance = significance;
     }
 
-    public String getDbName() {
+    public AvailableName getDbName() {
         return dbName;
     }
 
-    public void setDbName(String dbName) {
+    public void setDbName(AvailableName dbName) {
         this.dbName = dbName;
     }
 
-    public static enum AvailableName {
+    public String isDisplayName() {
+        return displayName;
+    }
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
-//        ARRAY_EXPRESS("ArrayExpress"),
-        BLAST("BLAST"),
-        BLASTP("BLASTP"),
-        BLAT("BLAT"),
+
+    public static enum AvailableName {
+        CURATED_MIRNA_MATURE("Curated miRNA Mature"),
+        CURATED_MIRNA_STEM_LOOP("Curated miRNA Stem Loop"),
         DBSNP("dbSNP"),
         EBI_CELL("EBI-Cell"),
         EC("EC"),
-        ENSEMBL("ENSEMBL"),
         ENSEMBL_ZV8_("Ensembl(Zv8)"),
         ENSEMBL_CLONE("Ensembl_Clone"),
         ENSEMBL_SNP("Ensembl_SNP"),
@@ -64,36 +79,41 @@ public class ForeignDB {
         GEO("GEO"),
         INTVEGA("INTVEGA"),
         INTERPRO("InterPro"),
-        MEGA_BLAST("MEGA BLAST"),
+        MIRBASE_MATURE("miRBASE Mature"),
+        MIRBASE_STEM_LOOP("miRBASE Stem Loop"),
         MGI("MGI"),
         MGI_ANATOMY("MGI-Anatomy"),
+        MIRANDA("MIRANDA"),
         MODB("MODB"),
         NCBO_CARO("NCBO-CARO"),
         NOVELGENE("NovelGene"),
         OMIM("OMIM"),
-        PBLAST("PBLAST"),
         PREVEGA("PREVEGA"),
         PROSITE("PROSITE"),
         PFAM("Pfam"),
         PREENSEMBL_ZV7_("PreEnsembl(Zv7)"),
         PUBMED("PubMed"),
+        PUBPROT("PUBPROT"),
+        PUBRNA("PUBRNA"),
         QUICKGO("QuickGO"),
         REFSEQ("RefSeq"),
-        SGD("SGD"),
-        SNPBLAST("SNPBLAST"),
-        SP_KW("SP_KW"),
         SANGER_CLONE("Sanger_Clone"),
+        SGD("SGD"),
+        SP_KW("SP_KW"),
         TAO("TAO"),
         TRACEVIEW("TraceView"),
         UNIGENE("UniGene"),
-        UNIPROT("UniProtKB"),
+        UNIPROTKB("UniProtKB"),
         UNISTS("UniSTS"),
         VEGA("VEGA"),
         VEGA_CLONE("VEGA_Clone"),
         VEGA_TRANS("Vega_Trans"),
+        VEGAPROT("VEGAPROT"),
         WASHU("WashU"),
         WASHUZ("WashUZ"),
-        ZF_ESPRESSO("ZF-Espresso");
+        ZF_ESPRESSO("ZF-Espresso"),
+        ZFIN_PROT("ZFIN_PROT"),
+            ;
 
 
         private final String value;
@@ -101,6 +121,8 @@ public class ForeignDB {
         private AvailableName(String type) {
             this.value = type;
         }
+
+
 
         public String toString() {
             return this.value;
@@ -113,6 +135,5 @@ public class ForeignDB {
             }
             throw new RuntimeException("No ForeignDB named " + type + " found.");
         }
-
     }
 }

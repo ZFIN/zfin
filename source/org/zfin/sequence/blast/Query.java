@@ -1,13 +1,13 @@
 /**
  *  Class Query.
  */
-package org.zfin.sequence.blast ; 
+package org.zfin.sequence.blast ;
 
 import org.zfin.sequence.Accession;
-import org.zfin.sequence.reno.RunCandidate ;
+import org.zfin.sequence.reno.RunCandidate;
 
-import java.util.Set ;
-import java.util.HashSet ;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Query implements Comparable {
 
@@ -103,8 +103,13 @@ public class Query implements Comparable {
         this.runCandidate = runCandidate;
     }
 
+    /**
+     *
+     * Note: compareTo method is using Accession.getNumber(), so there's no zeropad happening
+     * @param o
+     * @return CompareTo value.  0 if same.
+     */
     public int compareTo(Object o) {
-        //todo: compareTo method is using Accession.getNumber(), so there's no zeropad happening
         return getName().compareToIgnoreCase( ((Query)o).getName());
     }
 }

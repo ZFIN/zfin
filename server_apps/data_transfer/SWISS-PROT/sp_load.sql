@@ -61,13 +61,15 @@ begin work;
 -- due to additional entries for certain database, we need to specify the db types
 	update pre_db_link set dblink_fdbcont_zdb_id = 
 				(select fdbcont_zdb_id 
-				   from foreign_db_contains 
-				  where lower(db_name)=lower(fdbcont_fdb_db_name)
-                                    and fdbcont_organism_common_name = "Zebrafish"
-                    and (  (fdbcont_fdbdt_super_type = "protein" 
-                            and fdbcont_fdbdt_data_type = "domain")
-                        or (fdbcont_fdbdt_super_type = "sequence" 
-                            and fdbcont_fdbdt_data_type = "Polypeptide")
+				   from foreign_db_contains, foreign_db, foreign_db_data_type 
+				  where lower(db_name)=lower(fdb_db_name)
+                                    and fdbcont_fdb_db_id = fdb_db_pk_id
+				    and fdbcont_fdbdt_id = fdbdt_pk_id
+				    and fdbcont_organism_common_name = "Zebrafish"
+                    and (  (fdbdt_super_type = "protein" 
+                            and fdbdt_data_type = "domain")
+                        or (fdbdt_super_type = "sequence" 
+                            and fdbdt_data_type = "Polypeptide")
                         )
 				); 
 

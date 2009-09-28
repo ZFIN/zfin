@@ -18,10 +18,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/catch
 
-GENERICS = MCF_8_99.html RFA.html catch.html feb99.html fishman.html nih.html \
-	oct98.html resources.html talbot.html zon.html BAC_library.html zebrafish_programs.html
+GENERICS = catch.html oct98.html
 
-STATICS = bkgrd.jpeg catch.gif fish.gif zfin.gif Zebrafish_disease_project.pdf moqc.pdf
+STATICS = bkgrd.jpeg catch.gif fish.gif zfin.gif Zebrafish_disease_project.pdf moqc.pdf MCF_8_99.html RFA.html feb99.html fishman.html nih.html \
+	 resources.html talbot.html zon.html BAC_library.html zebrafish_programs.html
 
 
 

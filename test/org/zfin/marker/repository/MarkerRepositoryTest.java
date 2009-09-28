@@ -17,6 +17,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
+import org.zfin.marker.presentation.TranscriptAddBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.orthology.Species;
 import org.zfin.people.repository.ProfileRepository;
@@ -28,11 +29,16 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.LinkageGroup;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
+import org.zfin.sequence.*;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
 
+
 public class MarkerRepositoryTest {
+
+    private Logger logger = Logger.getLogger(MarkerRepositoryTest.class) ;
     private static MarkerRepository markerRepository;
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
@@ -63,6 +69,9 @@ public class MarkerRepositoryTest {
         HibernateUtil.closeSession();
     }
 
+
+
+
     @Test
     public void testMarkerLoad() {
         Session session = HibernateUtil.currentSession();
@@ -75,8 +84,8 @@ public class MarkerRepositoryTest {
     @Test
     public void testMarkerTypeAndGroup() {
         Marker pax2a = markerRepository.getMarkerByAbbreviation("pax2a");
-        assertTrue("pax2a has type GENE", pax2a.getType() == Marker.Type.GENE);
-        assertFalse("pax2a doesn't have type BAC", pax2a.getType() == Marker.Type.BAC);
+        assertTrue("pax2a has type GENE", pax2a.getMarkerType().getType() == Marker.Type.GENE);
+        assertFalse("pax2a doesn't have type BAC", pax2a.getMarkerType().getType() == Marker.Type.BAC);
         assertTrue("pax2a is in the type group GENEDOM", pax2a.isInTypeGroup(Marker.TypeGroup.GENEDOM));
         assertFalse("pax2a is not in the type group BAC", pax2a.isInTypeGroup(Marker.TypeGroup.BAC));
     }
@@ -205,7 +214,7 @@ public class MarkerRepositoryTest {
         }
         finally {
             // rollback on success or exception
-            session.getTransaction().rollback();
+            tx.rollback();
         }
     }
 
@@ -230,20 +239,17 @@ public class MarkerRepositoryTest {
         try {
             tx = HibernateUtil.currentSession().beginTransaction();
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-            Marker clone = mr.getMarkerByID("ZDB-CDNA-040425-3060");
-            Marker gene = MarkerService.getRelatedSmallSegmentGenesFromClone(clone).iterator().next();
-            assertEquals("Found gene", "ZDB-GENE-040426-2113", gene.getZdbID());
+            Clone clone = mr.getCloneById("ZDB-CDNA-040425-3060");
+            Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(clone);
+            assertEquals("Only one gene found", 1, genes.size());
+            assertEquals("Found gene", "ZDB-GENE-040426-2113", genes.iterator().next().getZdbID());
         }
         catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
         finally {
-            try {
-                tx.rollback();
-            } catch (HibernateException e) {
-                e.printStackTrace();
-            }
+            tx.rollback();
         }
     }
 
@@ -253,9 +259,10 @@ public class MarkerRepositoryTest {
         try {
             tx = HibernateUtil.currentSession().beginTransaction();
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-            Marker clone = mr.getMarkerByID("ZDB-CDNA-040425-3060");
-            Marker gene = MarkerService.getRelatedSmallSegmentGenesFromClone(clone).iterator().next();
-            MarkerRelationship mrel = mr.getSpecificMarkerRelationship(gene, clone, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+            Clone clone = mr.getCloneById("ZDB-CDNA-040425-3060");
+            Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(clone);
+            assertEquals("Only one gene found", 1, genes.size());
+            MarkerRelationship mrel = mr.getSpecificMarkerRelationship(genes.iterator().next(), clone, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
             assertEquals("Found marker relationship", "ZDB-MREL-040426-3790", mrel.getZdbID());
         }
         catch (Exception e) {
@@ -266,6 +273,10 @@ public class MarkerRepositoryTest {
             tx.rollback();
         }
     }
+
+
+
+
 
     @Test
     public void testRemoveRedundantDBLinks() {
@@ -279,17 +290,10 @@ public class MarkerRepositoryTest {
 
             session.beginTransaction();
 
-//           ForeignDB foreignDB = sequenceRepository.getForeignDBByName("GenBank");
-//           ReferenceDatabase refDb = sequenceRepository.getReferenceDatabaseByAlternateKey(
-//                   foreignDB,
-//                   ReferenceDatabase.Type.CDNA,
-//                   ReferenceDatabase.SuperType.SEQUENCE,
-//                   Species.ZEBRAFISH);
-
             ReferenceDatabase refDb = sequenceRepository.getReferenceDatabase(
-                    ForeignDB.AvailableName.GENBANK.toString(),
-                    ReferenceDatabase.Type.RNA,
-                    ReferenceDatabase.SuperType.SEQUENCE,
+                    ForeignDB.AvailableName.GENBANK,
+                    ForeignDBDataType.DataType.RNA,
+                    ForeignDBDataType.SuperType.SEQUENCE,
                     Species.ZEBRAFISH);
 
 
@@ -342,12 +346,12 @@ public class MarkerRepositoryTest {
             //this case will get a deletion
             markerRepository.addDBLink(gene, acc1.getNumber(), refDb, curationPubZdbID);
             markerRepository.addDBLink(segment, acc1.getNumber(), refDb, curationPubZdbID);
-            markerRepository.addMarkerRelationship(segment, gene, curationPubZdbID, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+            markerRepository.addSmallSegmentToGene(gene, segment, curationPubZdbID);
 
             //this case won't have the dblink deleted
             markerRepository.addDBLink(gene2, acc2.getNumber(), refDb, journalPubZdbID);
             markerRepository.addDBLink(segment2, acc2.getNumber(), refDb, curationPubZdbID);
-            markerRepository.addMarkerRelationship(segment2, gene2, curationPubZdbID, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+            markerRepository.addSmallSegmentToGene(gene2, segment2, curationPubZdbID);
 
             //make sure it's all in the database before testing
             session.flush();
@@ -380,6 +384,7 @@ public class MarkerRepositoryTest {
         }
 
     }
+
 
 
     //ZDB-MREL-021003-11
@@ -458,10 +463,41 @@ public class MarkerRepositoryTest {
     public void genedomEfgMarkers() {
 
         Marker marker = markerRepository.getMarkerByAbbreviation("fgf8a");
-        MarkerType type = marker.getMarkerType();
         List<Marker> markers = markerRepository.getMarkersByAbbreviationAndGroup("gfp", Marker.TypeGroup.GENEDOM_AND_EFG);
         assertTrue(markers != null);
     }
+
+
+    @Test
+    public void testClone(){
+        Transaction tx = null;
+        Session session = HibernateUtil.currentSession() ;
+        try {
+            tx = session.beginTransaction();
+            Marker marker1 = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-CDNA-080114-111") ;
+            assertTrue("Marker is a clone", marker1 instanceof Clone);
+            Clone clone = (Clone) marker1 ;
+//            logger.info(clone.toString());
+            Integer rating = 3 ;
+            clone.setRating(rating);
+            // NOTE: must be CDNA or EST to set as a non-null problem type
+            clone.setProblem(Clone.ProblemType.CHIMERIC);
+            session.update(clone);
+            session.flush();
+            Clone clone2 = (Clone) session.createQuery("from Clone c where c.zdbID = 'ZDB-CDNA-080114-111'").uniqueResult() ;
+            assertEquals(clone2.getRating(),rating);
+            assertEquals(clone2.getProblem(),Clone.ProblemType.CHIMERIC);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        finally {
+            tx.rollback();
+        }
+    }
+
+
 
     @Test
     public void getGeneClone() {

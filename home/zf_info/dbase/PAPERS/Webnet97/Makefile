@@ -22,9 +22,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/dbase/PAPERS/Webnet97
 
-GENERICS = Webnet97.html
-
-STATICS = nav.gif
+STATICS = nav.gif Webnet97.html
 
 
 # ---------------  Production Rules  ------------------------------------

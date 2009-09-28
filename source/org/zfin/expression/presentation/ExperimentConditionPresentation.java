@@ -22,7 +22,7 @@ public class ExperimentConditionPresentation extends EntityPresentation {
             String name = condition.getMorpholino().getName();
             if (condition.getValue() != null)
                 name += " (" + condition.getValue() + " " + condition.getUnit().getName() + ")";
-            return getWebdriverLink(MarkerPresentation.uri, condition.getMorpholino().getZdbID(), name);
+            return getWebdriverLink(MarkerPresentation.marker_uri, condition.getMorpholino().getZdbID(), name);
         } else
             return "no morpholino";
     }

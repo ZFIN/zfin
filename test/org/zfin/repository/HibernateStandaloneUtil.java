@@ -36,6 +36,7 @@ public class HibernateStandaloneUtil {
 
     public static void main(String[] arguments){
         String[] confFiles = {
+            "filters.hbm.xml",
             "anatomy.hbm.xml",
             "mutant.hbm.xml",
             "orthology.hbm.xml",

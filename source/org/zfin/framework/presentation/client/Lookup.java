@@ -35,8 +35,15 @@ public class Lookup implements EntryPoint {
     public void onModuleLoad() {
         // init gui
 
-        String numLookupStrings = Dictionary.getDictionary(LOOKUP_STRING).get(NUMLOOKUPS_STRING) ;
-        int numLookups = Integer.parseInt(numLookupStrings) ;
+        int numLookups = 0 ;
+        try{
+            String numLookupStrings = Dictionary.getDictionary(LOOKUP_STRING).get(NUMLOOKUPS_STRING) ;
+            numLookups = Integer.parseInt(numLookupStrings) ;
+        }
+        catch(Exception nfe){
+            // not a proper # so returning
+            return ; 
+        }
 
         for(int i = 0 ; i < numLookups ; i++){
             Dictionary lookupProperties = Dictionary.getDictionary(LOOKUP_STRING+i) ;
@@ -68,10 +75,10 @@ public class Lookup implements EntryPoint {
                 lookup.setOID((lookupProperties.get(JSREF_OID)));
             }
 
-			if(keySet.contains(JSREF_ACTION)){
-				if( lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_ANATOMY_SEARCH)){
-					lookup.setAction(new AnatomySearchSubmitAction());
-				}
+            if(keySet.contains(JSREF_ACTION)){
+                if( lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_ANATOMY_SEARCH)){
+                    lookup.setAction(new AnatomySearchSubmitAction());
+                }
                 else
                 if( lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_MARKER_ATTRIBUTE)){
                     lookup.setAction(new MarkerAttributeSubmitAction(lookup.getOID()));
@@ -80,7 +87,7 @@ public class Lookup implements EntryPoint {
                 if( lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_FEATURE_ATTRIBUTE)){
                     lookup.setAction(new FeatureAttributeSubmitAction(lookup.getOID()));
                 }
-			}
+            }
             if(keySet.contains(JSREF_ONCLICK)){
                 String onclickEvent = lookupProperties.get(JSREF_ONCLICK);
                 lookup.setOnclick(onclickEvent);
@@ -92,11 +99,11 @@ public class Lookup implements EntryPoint {
             if(keySet.contains(JSREF_DIV_NAME)){
                 RootPanel.get(lookupProperties.get(JSREF_DIV_NAME)).add(lookup);
             }
-            else{
-                RootPanel.get().add(lookup);
-            }
+//            else{
+//                RootPanel.get().add(lookup);
+//            }
 
-            lookups.add(lookup) ; 
+            lookups.add(lookup) ;
         }
     }
 

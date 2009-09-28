@@ -121,11 +121,12 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
          DB: 
          <SELECT name=newdb> 
 	  <?MISQL COND="$(XST,$species_update)" SQL="
-	    select fdbcont_fdb_db_name, fdb_db_significance 
-	     from foreign_db_contains, foreign_db
-	     where fdbcont_fdbdt_data_type = 'orthologue'
+	    select fdb_db_name, fdb_db_significance 
+	     from foreign_db_contains, foreign_db, foreign_db_data_type
+	     where fdbdt_data_type = 'orthologue'
                and fdbcont_organism_common_name = '$species_update'
-	       and fdbcont_fdb_db_name = fdb_db_name
+	       and fdbcont_fdb_db_id = fdb_db_pk_id
+	       and fdbcont_fdbdt_id = fdbdt_pk_id
 	     order by fdb_db_significance;">
 	    <option value="$1">$1
   	   <?/MISQL>
@@ -158,9 +159,10 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
          <SELECT name=delacc>
          <option selected></option>
           <?MISQL SQL="
-	    select fdbcont_fdb_DB_name, dblink_acc_num
-	      from db_link, foreign_db_contains
+	    select fdb_db_name, dblink_acc_num
+	      from db_link, foreign_db_contains, foreign_db
 	      where dblink_linked_recid = '$ortho_id'
+	      and fdbcont_fdb_db_id = fdb_db_pk_id
 	        and dblink_fdbcont_zdb_id = fdbcont_zdb_id;">
 	    <option value="$1:$2">$1:$2
 	  <?/MISQL>

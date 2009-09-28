@@ -121,11 +121,11 @@
     <?MIVAR>
       <TR>
         <TD colspan=4></TD>
-        <TD bgcolor=#ccccccc colspan=$codeNum align=left><b>Evidence</b></TD>
+        <TD bgcolor=#cccccc colspan=$codeNum align=left><b>Evidence</b></TD>
       </TR>
     <?/MIVAR>
   
-    <TR bgcolor=#ccccccc>
+    <TR bgcolor=#cccccc>
       <TD><b>Species</b></TD>
       <TD><b>Symbol</b></TD>
       <TD><b>Chromosome (Position)</b></TD>
@@ -234,11 +234,11 @@
         <TD align="left">
           <?MICOMMENT> *** display AccIds and links to foreign DBs <?/MICOMMENT>
           <?MISQL SQL="
-                    select fdb_DB_name, fdb_DB_query || dblink_acc_num, dblink_acc_num_display, fdb_db_significance
-                      from db_link, foreign_db_contains, foreign_DB
+                    select fdb_db_name, fdb_db_query || dblink_acc_num, dblink_acc_num_display, fdb_db_significance
+                      from db_link, foreign_db_contains, foreign_db
                       where dblink_linked_recid = '$zdbID'
                         and dblink_fdbcont_zdb_id = fdbcont_zdb_id 
-                        and fdbcont_fdb_db_name = fdb_db_name 
+                        and fdbcont_fdb_db_id = fdb_db_pk_id 
                         and fdb_db_significance < 10
                         and fdbcont_organism_common_name = '$organism'
                       order by fdb_db_significance

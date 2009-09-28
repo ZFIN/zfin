@@ -18,7 +18,6 @@ import java.util.Set;
 
 /**
  * Class CandidateBeanValidator.
- * ToDo: Put some of the validation into a central place so it can be reused in other
  * controllers.
  */
 public abstract class AbstractRunCandidateValidator implements Validator {

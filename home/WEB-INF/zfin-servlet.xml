@@ -37,6 +37,7 @@
                 <value>/WEB-INF/conf/tiles-defs-quicksearch.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-marker.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-mapper.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-blast.xml</value>
             </list>
         </property>
     </bean>
@@ -60,52 +61,24 @@
     </bean>
 -->
 
-<!--    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">-->
-<!--        <property name="exceptionMappings">-->
-<!--            <props>-->
-<!--                <prop key="java.lang.Exception">error-page</prop>-->
-<!--            </props>-->
-<!--        </property>-->
-<!--    </bean>-->
+    <!--    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">-->
+    <!--        <property name="exceptionMappings">-->
+    <!--            <props>-->
+    <!--                <prop key="java.lang.Exception">error-page</prop>-->
+    <!--            </props>-->
+    <!--        </property>-->
+    <!--    </bean>-->
 
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basename" value="zfin-messages"/>
     </bean>
 
-    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-    </bean>
-
     <bean id="zfinMailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender">
         <property name="mailHost" value="mailhost.cs.uoregon.edu&quot;"/>
-        <property name="mailSender"><ref bean="mailSender"/></property>
+        <property name="mailSender">
+            <bean id="mailSenderImpl" class="org.springframework.mail.javamail.JavaMailSenderImpl"/>
+        </property>
     </bean>
 
 
-    <!-- TEST FOR QUARTZ SCHEDULER
-        should go into a separate config file.
-    -->
-    <!--
-    <bean id="ontologyJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-            <property name="jobClass" >
-                <value>org.zfin.jobs.OntologyUpdateJob</value>
-            </property>
-        </bean>
-
-        <bean id="cronOntologyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean" >
-            <property name="jobDetail">
-                <ref bean="ontologyJob"/>
-            </property>
-            <property name="cronExpression">
-                <value> 20 * * * * ?</value>
-            </property>
-        </bean>
-
-        <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-            <property name="triggers">
-                <list>
-                    <ref bean="cronOntologyTrigger" />
-                </list>
-            </property>
-        </bean>
-    -->
 </beans>

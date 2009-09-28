@@ -100,6 +100,7 @@ public class ActiveData implements ZdbID {
         TERM,
         TERMREL,
         TGCONST,
+        TSCRIPT,
         URLREF,
         XPAT,
         XPAINF,

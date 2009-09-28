@@ -1,5 +1,6 @@
 package org.zfin.infrastructure;
 
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -87,9 +88,9 @@ public class InfrastructureRepositoryTest {
         try {
             session.beginTransaction();
             String dataZdbID = "ZDB-DALIAS-uuiouy";
-            String sourceZdbID = "ZDB-PUB-89087";
+            String sourceZdbID = "ZDB-PUB-000104-1";
             repository.insertActiveData(dataZdbID);
-            repository.insertActiveSource(sourceZdbID);
+            // should already exist in active source as a valid pub, so no need to insert
             RecordAttribution attribute = repository.getRecordAttribution(dataZdbID, sourceZdbID, null);
             assertNull("RecordAttribution not found prior to insert", attribute);
             repository.insertRecordAttribution(dataZdbID, sourceZdbID);

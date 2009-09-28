@@ -78,8 +78,7 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
 
     public static void main(String[] arguments) {
         RunHibernateConfigurationChecks check = new RunHibernateConfigurationChecks("Hibernate Check");
-//        ZfinSession s = check.openSession();
-        Session s = HibernateUtil.getSession();
+        Session s = HibernateUtil.currentSession();
         String zdbID = "ZDB-ANAT-051116-41";
         zdbID = "ZDB-ANAT-010921-544";
         zdbID = "ZDB-ANAT-050915-161";

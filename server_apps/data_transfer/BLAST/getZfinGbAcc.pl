@@ -17,8 +17,15 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
+my $outputdir ="";
 
-my $outputdir = "/research/zblastfiles/files/genomix/";
+# a place on embryonix is used to store the fasta files for blast db update.
+if ($ENV{"HOST"} eq "embryonix") {
+    $outputdir = "/research/zblastfiles/dev_files/genomix/" ;
+}
+else {
+    $outputdir = "/research/zblastfiles/files/genomix/" ;    
+}
 my $accFile = $outputdir."zfin_genbank_acc.unl";
 my $accFile_cdna = $outputdir."zfin_genbank_cdna_acc.unl";
 my $accFile_xpat = $outputdir."zfin_gene_xpat_cdna_acc.unl";
@@ -27,9 +34,9 @@ my $accFile_xpat = $outputdir."zfin_gene_xpat_cdna_acc.unl";
 # Form the sql 
 ################
 
-my $sql ="unload to \"$accFile\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_name = \"GenBank\" and fdbcont_fdbdt_super_type = \"sequence\")";  
+my $sql ="unload to \"$accFile\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type where fdb_db_name = \"GenBank\" and fdbdt_super_type = \"sequence\" and fdbcont_fdbdt_id = fdbdt_pk_id and fdbcont_fdb_db_id = fdb_db_pk_id)";  
      
-my $sql_cdna ="unload to \"$accFile_cdna\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_name = \"GenBank\" and fdbcont_fdbdt_data_type = \"RNA\") ";  
+my $sql_cdna ="unload to \"$accFile_cdna\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type where fdb_db_name = \"GenBank\" and fdbdt_data_type = \"RNA\" and fdbcont_fdb_db_id = fdb_db_pk_id and fdbcont_fdbdt_id = fdbdt_pk_id ) ";  
 
 # query genbank RNA and vega transcripts accessions on genes 
 # that has expression data, and not named microRNA%
@@ -52,11 +59,13 @@ insert into tmp_xpatmrkr_zdb_id_list
 
 unload to \"$accFile_xpat\" delimiter \" \" 
    select distinct dblink_acc_num 
-     from db_link, foreign_db_contains, tmp_xpatmrkr_zdb_id_list
+     from db_link, foreign_db_contains, foreign_db, foreign_db_data_type,tmp_xpatmrkr_zdb_id_list
     where dblink_linked_recid = t_xgl_mrkr_zdb_id
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id 
-      and fdbcont_fdb_db_name in (\"GenBank\",\"Vega_Trans\") 
-      and fdbcont_fdbdt_data_type = \"RNA\"
+      and fdb_db_name in (\"GenBank\",\"Vega_Trans\") 
+      and fdbdt_data_type = \"RNA\"
+      and fdbcont_fdbdt_id = fdbdt_pk_id
+      and fdbcont_fdb_db_id = fdb_db_pk_id
 ";  
   
 

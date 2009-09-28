@@ -490,9 +490,9 @@ PREFIX: msegsel_
  <?MIVAR NAME=$num_recs>$MI_ROWCOUNT<?/MIVAR>
 
  <?MIBLOCK COND="$(AND,$(NXST,$return_rec),$(NXST,$accession),$(=,$num_recs,1))">
-    <?MIVAR>
-      <SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$the_marker")</SCRIPT>
-    <?/MIVAR>
+    <?MISQL SQL="select get_mrkr_url('$the_marker') from single;">
+      <SCRIPT>location.replace("$1")</SCRIPT>
+    <?/MISQL>
  <?MIELSE>
 
    <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
@@ -585,7 +585,14 @@ PREFIX: msegsel_
 	  <?MIVAR NAME=$match_text>$9<?/MIVAR>
 	  <?MIVAR NAME=$mtype_display>$10<?/MIVAR>
 
-	  <?MIVAR NAME=$viewer>aa-markerview.apg<?/MIVAR>
+          <?MICOMMENT> ** call the link code in it's own query so that it's run only 
+                          for the few records that are actually displayed ** <?/MICOMMENT>
+          <?MISQL SQL="select get_mrkr_abbrev_html_link('$OID') from single;">
+            <?MIVAR NAME="$msegsel_mrkr_link">$1<?/MIVAR>
+          <?/MISQL>
+ 
+
+      <?MIVAR NAME=$viewer>aa-markerview.apg<?/MIVAR>
      <!-- create form for each marker  -->
       <!-- get rid of dashes to avoid javascript error -->
 
@@ -611,7 +618,7 @@ PREFIX: msegsel_
                 </font>
 
 		$(IF,$(OR,$(XST,$accession),$(XST,$pubId)),$mtype_display:)
-		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$viewer&OID=$OID">$abbrev</A>
+              $msegsel_mrkr_link
               <?/MIVAR>
 	      </TD>
 	  <?/MIBLOCK>

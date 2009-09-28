@@ -38,7 +38,7 @@ while (my $gbfile = shift @ARGV) {
     my $prefix = shift (@file);
     #print "$prefix\n";
  
-    open ZF, ">$prefix"."_zf_all.fa" or die "Cannot open the file to write: $!.";
+    open ZF, ">$prefix"."_zf_rna.fa" or die "Cannot open the file to write: $!.";
     open ZF_DNA, ">$prefix"."_zf_dna.fa" or die "Cannot open the file to write: $!.";
     open ZF_mRNA, ">$prefix"."_zf_mrna.fa" or die "Cannot open the file to write: $!.";
     open ZF_GB, ">$prefix"."_gb_zf.fa" or die "Cannot open the file to write: $!.";
@@ -85,9 +85,6 @@ while (my $gbfile = shift @ARGV) {
 	$seq =~ s/(.{60})/$1\n/g;
 
 	if ($organism eq 'Danio rerio'){
-	    
-	    print ZF ">gi|$gi|$dbsource|$accession|$locus $definition \n";
-	    print ZF "$seq\n";
 
 	    if ($type eq "mRNA") {
 		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|ZDB-FDBCONT-040412-37|\n";
@@ -96,6 +93,8 @@ while (my $gbfile = shift @ARGV) {
 		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|ZDB-FDBCONT-040412-36|\n";
 	    }
 	    else {
+		print ZF ">gi|$gi|$dbsource|$accession|$locus $definition \n";
+		print ZF "$seq\n";
 		print "Attention: $accession has type $type";
 	    }	   
 

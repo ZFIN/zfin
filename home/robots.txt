@@ -7,7 +7,7 @@ Disallow: /cgi-bin/mapper_select.cgi
 Disallow: /cgi-bin/print_map.cgi
 Disallow: /cgi-bin/view_mapplet.cgi
 Disallow: /cgi-bin/view_zmapplet.cgi
-Disallow: /cgi-bin/webdriver?MIval=aa-blast.apg
+Disallow: /action/blast/blast
 Disallow: /cgi-bin/webdriver?MIval=aa-companyselect.apg*
 Disallow: /cgi-bin/webdriver?MIval=aa-fishselect.apg*
 # this is okay if there is a pub, but without the pubid, it is open search

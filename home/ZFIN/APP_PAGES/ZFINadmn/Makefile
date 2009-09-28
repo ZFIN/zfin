@@ -20,7 +20,8 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/ZFINadmn
 
 SUBDIRS = DELETErecords
 
-GENERICS = classify_pubs.apg do_direct.apg \
+GENERICS = classify_pubs.apg
+STATICS = do_direct.apg \
         mkdist_list.apg mkdist_list_usa.apg mkdist_list_PI.apg mkmailmerge.apg
 
 

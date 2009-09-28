@@ -129,10 +129,11 @@ get_obj_name(zdbId varchar(50))
       from data_note
       where dnote_zdb_id = zdbId;
   elif (objType = "DBLINK") then
-    select fdbcont_fdb_db_name || ":" || dblink_acc_num
+    select fdb_db_name || ":" || dblink_acc_num
       into objName
-      from db_link, foreign_db_contains
+      from db_link, foreign_db_contains, foreign_db
       where dblink_zdb_id = zdbId
+        and fdb_db_pk_id = fdbcont_fdb_db_id
         and dblink_fdbcont_zdb_id = fdbcont_zdb_id;
    elif (objType = "EXPCOND") then    --no name so return zdb_id
     select expcond_zdb_id

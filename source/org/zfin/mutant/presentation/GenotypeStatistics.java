@@ -3,6 +3,7 @@ package org.zfin.mutant.presentation;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerTypeGroup;
 import org.zfin.mutant.*;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.framework.presentation.PaginationResult;
@@ -64,7 +65,7 @@ public class GenotypeStatistics extends EntityStatistics {
             for (FeatureMarkerRelationship rel : rels) {
                 Marker marker = rel.getMarker();
                 // Only add true genes
-                if (marker.getType() == Marker.Type.GENE) {
+                if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                     markers.add(marker);
                 }
             }

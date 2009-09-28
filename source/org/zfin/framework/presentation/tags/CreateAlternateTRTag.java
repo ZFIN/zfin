@@ -58,6 +58,8 @@ public class CreateAlternateTRTag extends TagSupport {
                 Object previousGroupBeanAttribute = PropertyUtils.getProperty(previousObject, groupByBean);
                 Object currentGroupBeanAttribute = PropertyUtils.getProperty(currentObject, groupByBean);
                 isNewGroup = !previousGroupBeanAttribute.equals(currentGroupBeanAttribute);
+                LOG.debug("previousGroupBeanAttribute: " + previousGroupBeanAttribute);
+                LOG.debug("currentGroupBeanAttribute:" + currentGroupBeanAttribute);
             } catch (IllegalAccessException e) {
                 LOG.error(e);
             } catch (InvocationTargetException e) {

@@ -1,9 +1,13 @@
 package org.zfin.expression.repository;
 
 import org.zfin.expression.*;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.marker.Gene;
+import org.zfin.marker.Marker;
+import org.zfin.marker.Clone;
+import org.zfin.publication.Publication;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.sequence.MarkerDBLink;
 import org.zfin.mutant.Phenotype;
 import org.zfin.curation.dto.ExpressedTermDTO;
 
@@ -13,6 +17,16 @@ import java.util.List;
  * ToDo: ADD DOCUMENTATION!
  */
 public interface ExpressionRepository {
+    ExpressionStageAnatomyContainer getExpressionStages(Gene gene);
+    int getExpressionPubCount(Marker marker) ;
+    int getExpressionFigureCount(Marker marker) ;
+
+    /**
+     * @param marker
+     * @return List of Object[int figureCount,String pubZdbID,String cloneZdbID)
+     */
+    List getDirectlySubmittedExpressionSummaries(Marker marker) ;
+    int getImagesFromPubAndClone(Publication publication, Clone clone);
 
     /**
      * Retrieve an expression experiment by ID.

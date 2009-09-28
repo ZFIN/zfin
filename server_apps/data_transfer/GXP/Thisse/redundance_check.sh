@@ -7,7 +7,7 @@
 #      dbname 
 # Require: 
 #      probes.unl 
-#      gbk_zf_all
+#      gbk_zf_mrna,gbk_zf_rna, gbk_zf_dna
 #      blast2tab.pl
 #      filterBlast.pl
 # Output:
@@ -30,12 +30,15 @@ set dbname = $1
 #======================================
 cut -d\| -f4 probes.unl > acc4blast.txt
 
-xdget -n -f -Tgb1 -e probe_fasta_retrieve.log gbk_zf_all acc4blast.txt > acc4blast.fa
+xdget -n -f -Tgb1 -e probe_fasta_retrieve.log gbk_zf_mrna acc4blast.txt > acc4blastmrna.fa
+xdget -n -f -Tgb1 -e probe_fasta_retrieve.log gbk_zf_rna acc4blast.txt > acc4blastrna.fa
+xdget -n -f -Tgb1 -e probe_fasta_retrieve.log gbk_zf_dna acc4blast.txt > acc4blastdna.fa
 
+/bin/cat acc4blastmrna.fa acc4blastrna.fa acc4blastdna.fa > acc4blast.fa
 #=====================================
 # Run Blast
 #======================================
-nice +10 /private/apps/wublast/blastn zfin_cdna acc4blast.fa -e 1e-50 -o blast2zfin.out
+nice +10 /private/apps/wublast/blastn zfin_cdna_seq acc4blast.fa -e 1e-50 -o blast2zfin.out
 
 #=====================================
 # Run Blast Analysis

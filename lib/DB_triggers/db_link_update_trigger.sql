@@ -8,7 +8,7 @@ create trigger db_link_update_trigger
       into dblink_acc_num,
 
     execute function 
-      get_dblink_acc_num_display_new(
+      get_dblink_acc_num_display(
 	new_db_link.dblink_fdbcont_zdb_id,
 	new_db_link.dblink_acc_num) 
       into db_link.dblink_acc_num_display,

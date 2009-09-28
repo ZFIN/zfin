@@ -19,8 +19,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/ORTHO
 
-GENERICS = unloadOrthoData.sql parseFlyBaseData.pl parseMGIdata.pl parseSGDdata.pl updateOrthologue.sql loadOrthoChromInfo.pl
-
+GENERICS = loadOrthoChromInfo.pl
+STATICS = unloadOrthoData.sql parseFlyBaseData.pl parseMGIdata.pl parseSGDdata.pl updateOrthologue.sql 
 
 # Define targets that require special handling.
 

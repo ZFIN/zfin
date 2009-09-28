@@ -15,9 +15,9 @@
 
     <b>GENE:</b>
     <zfin:geneRelationLink accession="${query.accession}">
-    <font color="red">
-        No zfin gene associated with this accession ${query.accession.number}.
-    </font>
+        <font color="red">
+            No zfin gene associated with this accession ${query.accession.number}.
+        </font>
     </zfin:geneRelationLink>
     <br>
 
@@ -52,17 +52,17 @@
                     <c:forEach var="relatedAccession" items="${hit.targetAccession.relatedEntrezAccessions}">
                         <c:if test="${relatedAccession.entrezAccession.abbreviation ne null}">
                             <c:if test="${relatedAccession.organism eq 'Human'}">
-                        , <a
-                            href="<c:out value='${relatedAccession.humanrefDB.foreignDB.dbUrlPrefix}'/><c:out value='${relatedAccession.entrezAccession.entrezAccNum}'/><c:out value='${relatedAccession.humanrefDB.foreignDB.dbUrlSuffix}'/>">
-                        <c:out value="${relatedAccession.entrezAccession.abbreviation}"/>
-                        </a>
-                        </c:if>
-                             <c:if test="${relatedAccession.organism eq 'Mouse'}">
-                        , <a
-                            href="<c:out value='${relatedAccession.mouserefDB.foreignDB.dbUrlPrefix}'/><c:out value='${relatedAccession.entrezAccession.entrezAccNum}'/><c:out value='${relatedAccession.mouserefDB.foreignDB.dbUrlSuffix}'/>">
-                        <c:out value="${relatedAccession.entrezAccession.abbreviation}"/>
-                        </a>
-                        </c:if>
+                                , <a
+                                    href="<c:out value='${formBean.humanReferenceDatabase.foreignDB.dbUrlPrefix}'/><c:out value='${relatedAccession.entrezAccession.entrezAccNum}'/><c:out value='${formBean.humanReferenceDatabase.foreignDB.dbUrlSuffix}'/>">
+                                <c:out value="${relatedAccession.entrezAccession.abbreviation}"/>
+                            </a>
+                            </c:if>
+                            <c:if test="${relatedAccession.organism eq 'Mouse'}">
+                                , <a
+                                    href="<c:out value='${formBean.mouseReferenceDatabase.foreignDB.dbUrlPrefix}'/><c:out value='${relatedAccession.entrezAccession.entrezAccNum}'/><c:out value='${formBean.mouseReferenceDatabase.foreignDB.dbUrlSuffix}'/>">
+                                <c:out value="${relatedAccession.entrezAccession.abbreviation}"/>
+                            </a>
+                            </c:if>
                         </c:if>
                     </c:forEach>
                 </td>
@@ -78,8 +78,8 @@
                 </td>
                 <%--<td>${hit.targetAccession.referenceDatabase.organism}</td>--%>
                 <td>
-                    ${hit.targetAccession.organism}
-                    <%--<c:forEach var="relatedAccession" items="${hit.targetAccession.relatedEntrezAccessions}">
+                        ${hit.targetAccession.organism}
+                        <%--<c:forEach var="relatedAccession" items="${hit.targetAccession.relatedEntrezAccessions}">
                         <c:if test="${relatedAccession eq null}">
                             <%=CandidateBean.ZEBRAFISH%>
                         </c:if>
@@ -92,7 +92,7 @@
                         </c:if>--%><%--
                     </c:forEach>--%>
 
-                    </td>
+                </td>
 
                 <td>${hit.score}</td>
 
@@ -103,12 +103,13 @@
                 <td>${hit.expectValue}</td>
 
                 <td>
-                        <%-- todo: blast link doesn't seem to be working --%>
-                    <a href="${formBean.blastUrl}${hit.targetAccession.number}">
-                        <c:out value="${hit.targetAccession.number}"/>
-                    </a></td>
+<%--                typically there will only be 1 or 0 for these . . . if there are more than we can handle that--%>
+                    <c:forEach var="dbLink" items="${hit.targetAccession.dbLinks}">
+                        <zfin2:externalAccessionBlastDropDown dbLink="${dbLink}"/>
+                    </c:forEach>
+                </td>
                 <c:out value="${relatedAccession.organism}"/>
-             </zfin:alternating-tr>
+            </zfin:alternating-tr>
 
         </c:forEach>
 

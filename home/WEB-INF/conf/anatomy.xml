@@ -31,6 +31,7 @@
 
     <bean name="anatomyTermDetail" class="org.zfin.anatomy.presentation.AnatomyTermDetailController" autowire="byName"/>
     <bean name="anatomyTermInfo" class="org.zfin.anatomy.presentation.AnatomyTermInfoController" autowire="byName"/>
+
     <bean name="antibodySummary" class="org.zfin.anatomy.presentation.AntibodySummaryController" autowire="byName"/>
 
     <bean name="anatomySearch" class="org.zfin.anatomy.presentation.AnatomySearchController" autowire="byName">
@@ -53,11 +54,10 @@
         <property name="successView" value="request-term-feedback.page"/>
         <property name="formView" value="request-new-anatomy-term.page"/>
         <property name="mailSender">
-            <ref bean="mailSender"/>
+            <bean name="mailSenderImpl" class="org.zfin.framework.mail.IntegratedJavaMailSender" />
         </property>
     </bean>
 
-    <bean name="mailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender"/>
 
     <!-- Designates to use the repository using hibernate -->
     <bean id="anatomyRepository" class="org.zfin.anatomy.repository.HibernateAnatomyRepository"/>

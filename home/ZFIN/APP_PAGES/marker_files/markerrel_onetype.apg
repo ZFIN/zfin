@@ -49,7 +49,7 @@ OUTPUT:
 
 <?MIBLOCK COND="$(EC,$mrelotype_rel_direction,1_to_2)">
     <?MIVAR NAME=mrelotype_sql>
-	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order 
+	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, get_mrkr_abbrev_html_link(mrkr_zdb_id) 
  	  from marker_relationship
                inner join marker
                   on mrel_mrkr_2_zdb_id = mrkr_zdb_id 
@@ -59,7 +59,7 @@ OUTPUT:
     <?/MIVAR>
 <?MIELSE>
     <?MIVAR NAME=mrelotype_sql>
-	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order
+	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, get_mrkr_abbrev_html_link(mrkr_zdb_id)
  	  from marker_relationship 
                inner join marker
                  on mrel_mrkr_1_zdb_id = mrkr_zdb_id 
@@ -73,12 +73,13 @@ OUTPUT:
 
         <?MIVAR NAME=mrel_rel_mrkr_abbrev>$1<?/MIVAR> 
  	<?MIVAR NAME=mrel_rel_mrkr_zdb_id>$2<?/MIVAR> 
+        <?MIVAR NAME="mrel_rel_mrkr_link">$4<?/MIVAR>
   
 	<?MIVAR> COND="$(>,$MI_CURRENTROW,1)">
            ,
         <?/MIVAR>
           
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrel_rel_mrkr_zdb_id"> $mrel_rel_mrkr_abbrev </A>
+        <?MIVAR>$mrel_rel_mrkr_link<?/MIVAR>
 
 	<?MISQL SQL="select WebExplode(object,'clorlk_mrkr_zdb_id=$mrel_rel_mrkr_zdb_id') from webPages where ID='aa-cloneorderlink.apg';">$1<?/MISQL>
 

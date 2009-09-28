@@ -39,18 +39,27 @@ public final class UpdateMicroArrayMain {
     ReferenceDatabase genBankGenomicDatabase  = null ;
     ReferenceDatabase genBankRNADatabase  = null ;
     SequenceRepository sequenceRepository = null ;
-    final String[] confFiles = {
-            "sequence.hbm.xml",
-            "marker.hbm.xml",
-            "mapping.hbm.xml",
-            "expression.hbm.xml",
-            "anatomy.hbm.xml",
-            "publication.hbm.xml",
-            "orthology.hbm.xml",
-            "mutant.hbm.xml",
-            "people.hbm.xml",
-            "infrastructure.hbm.xml",
-    };
+
+
+    public static String[] confFiles() {
+        return new String[]{
+                "filters.hbm.xml",
+                "antibody.hbm.xml",
+                "reno.hbm.xml",
+                "anatomy.hbm.xml",
+                "people.hbm.xml",
+                "general.hbm.xml",
+                "blast.hbm.xml",
+                "marker.hbm.xml",
+                "expression.hbm.xml",
+                "sequence.hbm.xml",
+                "publication.hbm.xml",
+                "orthology.hbm.xml",
+                "mutant.hbm.xml",
+                "infrastructure.hbm.xml",
+                "mapping.hbm.xml"
+        };
+    }
 
 
     final String referencePubZdbID = "ZDB-PUB-071218-1" ;
@@ -67,13 +76,13 @@ public final class UpdateMicroArrayMain {
         logger.debug("init" ) ;
         try{
             if(HibernateUtil.hasSessionFactoryDefined()==false){
-                new HibernateSessionCreator(false, confFiles) ;
+                new HibernateSessionCreator(false, confFiles()) ;
             }
             sequenceRepository = RepositoryFactory.getSequenceRepository() ;
 
 
-            geoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GEO.toString(),
-                    ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
+            geoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GEO,
+                    ForeignDBDataType.DataType.OTHER,ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
             logger.debug("geoDatabase: " + geoDatabase) ;
 
             // zfEspressoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ZF_ESPRESSO.toString(),
@@ -82,17 +91,17 @@ public final class UpdateMicroArrayMain {
 
 
 //            arrayExpressDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ARRAY_EXPRESS.toString(),
-//                    ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
+//                    ForeignDBDataType.DataType.OTHER,ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
 //            logger.debug("arrayExpressDatabase: " + arrayExpressDatabase) ;
 
 
-            genBankGenomicDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(),
-                    ReferenceDatabase.Type.GENOMIC,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
+            genBankGenomicDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
+                    ForeignDBDataType.DataType.GENOMIC,ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
             logger.debug("genBankGenomicDatabase: " + genBankGenomicDatabase) ;
 
 
-            genBankRNADatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK.toString(),
-                    ReferenceDatabase.Type.RNA,ReferenceDatabase.SuperType.SEQUENCE, Species.ZEBRAFISH);
+            genBankRNADatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
+                    ForeignDBDataType.DataType.RNA,ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
             logger.debug("genBankRNADatabase: " + genBankRNADatabase) ;
 
             refPub = RepositoryFactory.getPublicationRepository().getPublication(referencePubZdbID) ;
@@ -112,7 +121,7 @@ public final class UpdateMicroArrayMain {
      */
     void cleanupOldLinks(Collection<String> newAccessions,ReferenceDatabase... referenceDatabases) throws Exception{
         Map<String,Set<MarkerDBLink>> currentMicroArrayLinkSets = sequenceRepository.getMarkerDBLinks( referenceDatabases) ;
-        Set<MarkerDBLink> dbLinksToRemove =new HashSet<MarkerDBLink>() ;
+        Set<DBLink> dbLinksToRemove =new HashSet<DBLink>() ;
         Session session = HibernateUtil.currentSession()  ;
         int numDeleted = 0 ; 
 //        genBankLinks

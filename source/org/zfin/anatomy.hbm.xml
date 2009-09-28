@@ -8,6 +8,7 @@
      could potentially break the code (e.g. moving a clas  into a different package. -->
 <hibernate-mapping package="org.zfin.anatomy">
 
+
     <typedef class="org.zfin.database.StringEnumUserType" name="statisticsType">
         <param name="enumClassname">org.zfin.anatomy.AnatomyStatistics$Type</param>
     </typedef>
@@ -257,9 +258,6 @@
         </subclass>
 
     </class>
-    <filter-def name="noSecondaryAliasesForAO" condition="  dalias_group != :group">
-        <filter-param name="group" type="string"/>
-    </filter-def>
 
 </hibernate-mapping>
 

@@ -151,15 +151,15 @@
 <!--creating table to display added GO annotations-->
 <p><p>
 
-  <table border = 0 cellspacing = 0 width = 100% cellpadding=0>
-  <tr bgcolor=#cccccc height=25><td><b>Ontology</b></td>
+  <table class="summary rowstripes">
+  <tr bgcolor=#cccccc height=25><th><b>Ontology</b></th>
   <?MIVAR COND="$(EC,$qualifier,true)">
-	<td><b>Qualifier</b></td>
+	<th><b>Qualifier</b></th>
   <?/MIVAR>
-  <td nowrap><b>GO Term</b>
-  <td><b>Evidence</b></td>
-  <td nowrap><b>Inferred From</b>
-  <td><b>Reference(s)</b>
+  <th nowrap><b>GO Term</b></th>
+  <th><b>Evidence</b></th>
+  <th nowrap><b>Inferred From</b></th>
+  <th><b>Reference(s)</b></th>
 
   <?MIVAR name=$row_color>$white<?/MIVAR>
 
@@ -205,15 +205,9 @@
    <?MISQL SQL="select * from inference_group_member where infgrmem_mrkrgoev_zdb_id = '$markergoevid'"><?MIVAR NAME=infername>$1<?/MIVAR><?/MISQL>
    <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=has_inf>t<?/MIVAR>
 
-   <?MIBLOCK COND="$(AND,$(NC,$lastonto,),$(NC,$ontology,$lastonto))">
-      <tr bgcolor=#aaaaaa>
-      <?MIVAR COND="$(EC,$qualifier,true)"><td colspan=6><img src="/images/transp.gif" width="1" height="1"></td><?/MIVAR>
-      <?MIVAR COND="$(NC,$qualifier,true)"><td colspan=5><img src="/images/transp.gif" width="1" height="1"></td><?/MIVAR>
-      </tr>
-   <?/MIBLOCK>
    <!--now displaying annotations-->
    <?MIBLOCK COND="$(OR,$(NC,$ontology,$lastonto),$(NC,$lastgoterm,$goterm),$(NC,$lastevidence,$evidence),$(NE,$flag,$lastflag),$(NE,$infername,$lastinfername))">
-     <tr bgcolor=<?MIVAR>$row_color<?/MIVAR> height=25>
+     <tr <?MIVAR>$(IF,$(AND,$(NC,$lastonto,),$(NC,$ontology,$lastonto)),class="newgroup")<?/MIVAR>  bgcolor=<?MIVAR>$row_color<?/MIVAR> height=25>
 
      <?MIVAR>
      <td nowrap>$(IF,$(NC,$ontology,$lastonto),$ontology)</td> 

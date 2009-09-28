@@ -20,7 +20,7 @@
         <property name="formView" value="ln54mapper-request.page"/>
         <property name="successView" value="ln54mapper-result.page"/>
         <property name="mailSender">
-            <ref bean="mailSender"/>
+            <ref bean="mailSenderImpl"/>
         </property>
         <property name="validator">
             <ref bean="ln54validator"/>
@@ -29,7 +29,7 @@
         <property name="commandName" value="formBean"/>
     </bean>
 
-    <bean name="mailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender"/>
+    <bean name="mailSenderImpl" class="org.zfin.framework.mail.IntegratedJavaMailSender"/>
 
     <bean name="ln54validator" class="org.zfin.mapping.presentation.LN54MapperValidator"/>
 

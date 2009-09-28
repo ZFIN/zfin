@@ -952,20 +952,22 @@ sub associatedDataforPUB030905_2 ($) {
              and    not exists (
                     -- all nucleotide accession numbers assoc. w/pub via dblink_zdb_id (DBLINK)
                        select recattrib_data_zdb_id
-                       from   db_link, record_attribution r2, foreign_db_contains
+                       from   db_link, record_attribution r2, foreign_db_contains, foreign_db_data_type
                        where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
                        and    dblink_zdb_id = recattrib_data_zdb_id
+                       and    fdbcont_fdbdt_id = fdbdt_pk_id
                        and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                       and    fdbcont_fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
+                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
                        and    r1.recattrib_data_zdb_id = r2.recattrib_data_zdb_id
                      union
                     -- all nucleotide accession numbers assoc. w/pub via dblink_linked_recid (GENE)
                        select recattrib_data_zdb_id
-                       from   db_link, record_attribution r3, foreign_db_contains
+                       from   db_link, record_attribution r3, foreign_db_contains, foreign_db_data_type
                        where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
                        and    dblink_linked_recid = recattrib_data_zdb_id
                        and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                       and    fdbcont_fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
+                       and    fdbcont_fdbdt_id = fdbdt_pk_id
+                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
                        and    r1.recattrib_data_zdb_id = r3.recattrib_data_zdb_id
                     )  
              order by recattrib_data_zdb_id";
@@ -1427,11 +1429,11 @@ sub genesWithCommonDblinks ($) {
   my $sql = '
       -- cDNA/Polypeptide acc connects anything directly to anything
       -- (no marker relationships)
-      select fdbcont_fdb_db_name, adbl.dblink_acc_num, 
+      select fdb_db_name, adbl.dblink_acc_num, 
 	     a.mrkr_abbrev, b.mrkr_abbrev
 	from marker a, marker b,
 	     db_link adbl, db_link bdbl,
-	     foreign_db_contains,
+	     foreign_db_contains,foreign_db,foreign_db_data_type,
 	     marker_type_group_member amtgm, marker_type_group_member bmtgm
        where a.mrkr_type = amtgm.mtgrpmem_mrkr_type
 	 and b.mrkr_type = bmtgm.mtgrpmem_mrkr_type
@@ -1442,18 +1444,20 @@ sub genesWithCommonDblinks ($) {
 	 and b.mrkr_zdb_id = bdbl.dblink_linked_recid
 	 and adbl.dblink_acc_num = bdbl.dblink_acc_num
 	 and adbl.dblink_acc_num[1,3] <> "NC_" -- temp kludge
-	 and fdbcont_fdbdt_data_type in ("cDNA", "Polypeptide")
+	 and fdbdt_data_type in ("cDNA", "Polypeptide")
+         and fdbdt_pk_id = fdbcont_fdbdt_id
+         and fdbcont_fdb_db_id = fdb_db_pk_id
 	 and adbl.dblink_fdbcont_zdb_id =  fdbcont_zdb_id
 	 and bdbl.dblink_fdbcont_zdb_id =  fdbcont_zdb_id
     union
       -- cDNA/Polypeptide acc connects genes
       -- via marker relationships to both
-      select fdbcont_fdb_db_name, adbl.dblink_acc_num, 
+      select fdb_db_name, adbl.dblink_acc_num, 
 	     a.mrkr_abbrev, b.mrkr_abbrev
 	from marker a, marker b,
 	     marker_relationship amr, marker_relationship bmr,
 	     db_link adbl, db_link bdbl,
-	     foreign_db_contains,
+	     foreign_db_contains,foreign_db, foreign_db_data_type,
 	     marker_type_group_member amtgm, marker_type_group_member bmtgm
        where a.mrkr_type = amtgm.mtgrpmem_mrkr_type
 	 and b.mrkr_type = bmtgm.mtgrpmem_mrkr_type
@@ -1466,18 +1470,20 @@ sub genesWithCommonDblinks ($) {
 	 and bmr.mrel_mrkr_2_zdb_id = bdbl.dblink_linked_recid
 	 and adbl.dblink_acc_num = bdbl.dblink_acc_num
 	 and adbl.dblink_acc_num[1,3] <> "NC_" -- temp kludge
-	 and fdbcont_fdbdt_data_type in ("cDNA", "Polypeptide")
+	 and fdbdt_data_type in ("cDNA", "Polypeptide")
+         and fdbcont_fdb_db_id = fdb_db_pk_id
+         and fdbcont_fdbdt_id = fdbdt_pk_id
 	 and adbl.dblink_fdbcont_zdb_id = fdbcont_zdb_id
 	 and bdbl.dblink_fdbcont_zdb_id = fdbcont_zdb_id
     union
       -- cDNA/Polypeptide acc connected gene to smallseg
       -- via marker relationship on first gene only
-      select fdbcont_fdb_db_name, adbl.dblink_acc_num, 
+      select fdb_db_name, adbl.dblink_acc_num, 
 	     a.mrkr_abbrev, b.mrkr_abbrev
 	from marker a, marker b,
 	     marker_relationship bmr,
 	     db_link adbl, db_link bdbl,
-	     foreign_db_contains,
+	     foreign_db_contains, foreign_db, foreign_db_data_type,
 	     marker_type_group_member amtgm, marker_type_group_member bmtgm
        where a.mrkr_type = amtgm.mtgrpmem_mrkr_type
 	 and b.mrkr_type = bmtgm.mtgrpmem_mrkr_type
@@ -1489,20 +1495,23 @@ sub genesWithCommonDblinks ($) {
 	 and bmr.mrel_mrkr_2_zdb_id = bdbl.dblink_linked_recid
 	 and adbl.dblink_acc_num = bdbl.dblink_acc_num
 	 and adbl.dblink_acc_num[1,3] <> "NC_" -- temp kludge
-	 and fdbcont_fdbdt_data_type in ("cDNA", "Polypeptide")
+	 and fdbdt_data_type in ("cDNA", "Polypeptide")
+         and fdbcont_fdb_db_id = fdb_db_pk_id
+         and fdbcont_fdbdt_id = fdbdt_pk_id
 	 and adbl.dblink_fdbcont_zdb_id = fdbcont_zdb_id
 	 and bdbl.dblink_fdbcont_zdb_id = fdbcont_zdb_id
     union
       -- cDNA/Polypeptide acc connected gene to smallseg
       -- via marker relationship on second gene only
-      select fdbcont_fdb_db_name, adbl.dblink_acc_num, 
+      select fdb_db_name, adbl.dblink_acc_num, 
 	     a.mrkr_abbrev, b.mrkr_abbrev
 	from marker a, marker b,
 	     marker_relationship amr,
 	     db_link adbl, db_link bdbl,
-	     foreign_db_contains,
+	     foreign_db_contains,foreign_db, foreign_db_data_type,
 	     marker_type_group_member amtgm, marker_type_group_member bmtgm
        where a.mrkr_type = amtgm.mtgrpmem_mrkr_type
+         and fdbcont_fdb_db_id = fdb_db_pk_id
 	 and b.mrkr_type = bmtgm.mtgrpmem_mrkr_type
 	 and amtgm.mtgrpmem_mrkr_type_group ="GENEDOM"
 	 and bmtgm.mtgrpmem_mrkr_type_group ="GENEDOM"
@@ -1512,8 +1521,9 @@ sub genesWithCommonDblinks ($) {
 	 and b.mrkr_zdb_id = bdbl.dblink_linked_recid
 	 and adbl.dblink_acc_num = bdbl.dblink_acc_num
 	 and adbl.dblink_acc_num[1,3] <> "NC_" -- temp kludge
-	 and fdbcont_fdbdt_data_type in ("cDNA", "Polypeptide")
-	 and adbl.dblink_fdbcont_zdb_id =  fdbcont_zdb_id
+	 and fdbdt_data_type in ("cDNA", "Polypeptide")
+         and fdbcont_fdbdt_id = fdbdt_pk_id
+       	 and adbl.dblink_fdbcont_zdb_id =  fdcont_zdb_id
 	 and bdbl.dblink_fdbcont_zdb_id =  fdbcont_zdb_id
     order by 1,2,3,4';
 
@@ -1785,10 +1795,11 @@ sub mouseOrthologyHasValidMGIAccession ($) {
              where  organism = 'Mouse'
              and    not exists (
                        select dblink_linked_recid
-                       from   db_link, foreign_db_contains
+                       from   db_link, foreign_db_contains,foreign_db
                        where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
                        and    fdbcont_organism_common_name = 'Mouse'
-                       and    fdbcont_fdb_db_name = 'MGI'
+                       and    fdbcont_fdb_db_id = fdb_db_pk_id
+                       and    fdb_db_name = 'MGI'
                        and    zdb_id = dblink_linked_recid
                        and    dblink_acc_num not like 'MGI:%'
                     )";
@@ -1832,10 +1843,11 @@ sub mouseOrthologyHasEntrezAccession ($) {
              where  organism = 'Mouse'
              and    not exists (
                        select dblink_linked_recid
-                       from   db_link, foreign_db_contains
+                       from   db_link, foreign_db_contains, foreign_db
                        where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
                        and    fdbcont_organism_common_name = 'Mouse'
-                       and    fdbcont_fdb_db_name = 'Entrez Gene'
+                       and    fdbcont_fdb_db_id = fdb_db_pk_id
+                       and    fdb_db_name = 'Entrez Gene'
                        and    zdb_id = dblink_linked_recid
                     )";
 
@@ -1878,10 +1890,11 @@ sub humanOrthologyHasEntrezAccession ($) {
              where  organism = 'Human'
              and    not exists (
                        select dblink_linked_recid
-                       from   db_link, foreign_db_contains
+                       from   db_link, foreign_db_contains, foreign_db
                        where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
                        and    fdbcont_organism_common_name = 'Human'
-                       and    fdbcont_fdb_db_name = 'Entrez Gene'
+                       and    fdb_db_name = 'Entrez Gene'
+                       and    fdbcont_fdb_db_id = fdb_db_pk_id
                        and    o1.zdb_id = dblink_linked_recid
                     )
              -- exclude organism type mismatch errors
@@ -1973,17 +1986,21 @@ sub refSeqAccessionInWrongFormat ($) {
     my $routineName = "refSeqAccessionInWrongFormat";
     my $sql = '
                select dblink_linked_recid, "RefSeq", dblink_acc_num
-                 from db_link, foreign_db_contains
+                 from db_link, foreign_db_contains, foreign_db_data_type,foreign_db
                 where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                  and fdbcont_fdb_db_name = "RefSeq"
-                  and fdbcont_fdbdt_super_type = "sequence"
+                  and fdb_db_name = "RefSeq"
+                  and fdbdt_super_type = "sequence"
+                  and fdbcont_fdbdt_id = fdbdt_pk_id
+                  and fdbcont_fdb_db_id = fdb_db_pk_id
                   and dblink_acc_num[3] <> "_"
                UNION 
-               select dblink_linked_recid, fdbcont_fdb_db_name, dblink_acc_num
-                 from db_link, foreign_db_contains
+               select dblink_linked_recid, fdb_db_name, dblink_acc_num
+                 from db_link, foreign_db_contains, foreign_db, foreign_db_data_type
                 where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                  and fdbcont_fdb_db_name <> "RefSeq"
-                  and fdbcont_fdbdt_super_type = "sequence"
+                  and fdb_db_name <> "RefSeq"
+                  and fdbdt_super_type = "sequence"
+                  and fdbcont_fdbdt_id = fdbdt_pk_id
+                  and fdbcont_fdb_db_id = fdb_db_pk_id
                   and dblink_acc_num[3] = "_"
                    ';
 
@@ -2014,17 +2031,21 @@ sub vegaAccessionInWrongFormat ($) {
     my $routineName = "vegaAccessionInWrongFormat";
     my $sql = '
                select dblink_linked_recid, "Vega_Trans", dblink_acc_num
-                 from db_link, foreign_db_contains
+                 from db_link, foreign_db_contains, foreign_db, foreign_db_data_type
                 where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                  and fdbcont_fdb_db_name in("Vega_Trans","INTVEGA","PREVEGA")
-                  and fdbcont_fdbdt_super_type = "sequence"
+                  and fdb_db_name in("Vega_Trans","INTVEGA","PREVEGA","VEGAPROT")
+                  and fdbdt_super_type = "sequence"
+                  and fdbcont_fdbdt_id = fdbdt_pk_id
+                  and fdbcont_fdb_db_id = fdb_db_pk_id
                   and dblink_acc_num[1,6] <> "OTTDAR"
                UNION 
-               select dblink_linked_recid, fdbcont_fdb_db_name, dblink_acc_num
-                 from db_link, foreign_db_contains
+               select dblink_linked_recid, fdb_db_name, dblink_acc_num
+                 from db_link, foreign_db_contains, foreign_db, foreign_db_data_type
                 where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                  and fdbcont_fdb_db_name not in ("Vega_Trans","INTVEGA","PREVEGA")
-                  and fdbcont_fdbdt_super_type = "sequence"
+                  and fdb_db_name not in ("Vega_Trans","INTVEGA","PREVEGA","VEGAPROT")
+                  and fdbdt_super_type = "sequence"
+                  and fdbcont_fdbdt_id = fdbdt_pk_id
+                  and fdbcont_fdb_db_id = fdb_db_pk_id
                   and dblink_acc_num[1,6] = "OTTDAR"
                    ';
 
@@ -2045,6 +2066,86 @@ sub vegaAccessionInWrongFormat ($) {
     }
     &recordResult($routineName, $nRecords);
 }
+#----------------------------------------------
+# Parameter
+# $      Email Address for recipients
+#
+# 
+sub allTranscriptsHaveAtLeastOneDbLink ($) {
+    my $routineName = "allTranscriptsHaveAtLeastOneDbLink";
+    my $sql = 'select tscript_mrkr_zdb_id 
+                 from transcript
+                 where not exists (Select "x"
+                                     from db_link
+                                     where dblink_linked_recid = tscript_mrkr_zdb_id)';
+
+    my @colDesc =("Data zdb id");
+
+    my $nRecords = execSql ($sql, undef, @colDesc);
+
+    if ( $nRecords > 0 ) {
+
+	my $sendToAddress = $_[0];
+	my $subject = "AutoGen: Transcripts with no DbLinks";
+	my $errMsg = "In transcripts, $nRecords have no dblinks";
+	
+	logError ($errMsg); 
+	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    }
+    &recordResult($routineName, $nRecords);
+}
+
+#----------------------------------------------
+# Parameter
+# $      Email Address for recipients
+#
+# 
+sub syncDbLinkAccBkLength ($) {
+    my $routineName = "syncDbLinkAccBkLength";
+    my $sql = 'select dblink_acc_num from db_link
+                 where dblink_length is null
+                 and exists (Select "x" from accession_bank
+                                where accbk_acc_num = dblink_acc_num
+                                and accbk_fdbcont_zdb_id = dblink_fdbcont_zdb_id
+                                and accbk_length is not null)
+               union 
+                 select accbk_acc_num from accession_bank
+                   where accbk_length is null
+                   and exists (Select "x" from db_link
+                                where accbk_acc_num = dblink_acc_num
+                                and accbk_fdbcont_zdb_id = dblink_fdbcont_zdb_id
+                                and dblink_length is not null);';
+    my $ath = $dbh->do('update db_link
+                 set dblink_length = (select accbk_length
+      		      	      from accession_bank
+			      where accbk_acc_num = dblink_acc_num
+			      and dblink_fdbcont_zdb_id = accbk_fdbcont_zdb_id
+                              and accbk_length is not null)
+                 where dblink_length is null;');
+    $ath = $dbh->do('update accession_bank
+                   set accbk_length = (select dblink_length
+      		     	     from db_link
+			     where dblink_acc_num = accbk_acc_num
+			     and dblink_fdbcont_zdb_id = accbk_fdbcont_zdb_id
+                             and dblink_length is not null)
+                   where accbk_length is null');
+
+    my @colDesc =("accession number");
+
+    my $nRecords = execSql ($sql, undef, @colDesc);
+
+    if ( $nRecords > 0 ) {
+
+	my $sendToAddress = $_[0];
+	my $subject = "AutoGen: accession number lengths in db_link or accession_bank out of sync; auto updated";
+	my $errMsg = "In db_link or accession_bank $nRecords had their length's sync'd.";
+	
+	logError ($errMsg); 
+	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    }
+    &recordResult($routineName, $nRecords);
+}
+
 
 #======================= ZDB Object Type ================================
 #---------------------------------------------------------
@@ -2329,8 +2430,8 @@ sub foreigndbNotInFdbcontains ($) {
 
   my $sql = " select fdb_db_name
                 from foreign_db
-               where fdb_db_name not in (
-                        select fdbcont_fdb_db_name from foreign_db_contains) ";
+               where fdb_db_pk_id not in (
+                        select fdbcont_fdb_db_id from foreign_db_contains) ";
   my @colDesc = ("Db Name    ");
   my $nRecords = execSql ($sql, undef, @colDesc);
   if ( $nRecords > 0 ) {
@@ -2814,7 +2915,30 @@ sub onlyProblemClonesHaveArtifactOf($) {
     close(RESULTFILE);
 }
 
+#Parameter
+# $      Email Address for recipients
+# 
+sub markerCloneHasNoEntryInCloneTable($) {
 
+    open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write.";
+
+    my $sql = "select mrkr_zdb_id
+                 from marker
+                 where mrkr_type in ('EST','CDNA','BAC','PAC','FOSMID') 
+                 and not exists (Select 'x' from clone where clone_mrkr_zdb_id = mrkr_zdb_id)      
+               ";
+
+    my @colDesc = ("mrkr_zdb_id");
+    my $nRecords = execSql($sql,undef,@colDesc);
+    if($nRecords >0){
+        my $sendToAddress = $_[0];
+        my $subject = "Found $nRecords clones with entry in marker but not in clone tables";
+        my $routineName = "markerCloneHasNoEntryInCloneTable";
+        my $msg = "Found $nRecords clones with 'entry in marker but not in clone tables.";
+        &sendMail($sendToAddress, $subject, $routineName, $msg, );
+    }
+    close(RESULTFILE);
+}
 
 #-------------------
 #Parameter
@@ -3070,8 +3194,10 @@ if($daily) {
     pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     linkageHasMembers($linkageEmail);
     linkagePairHas2Members($linkageEmail);
-
+    allTranscriptsHaveAtLeastOneDbLink($dbaEmail);
+    syncDbLinkAccBkLength($dbaEmail);
     foreigndbNotInFdbcontains($otherEmail);
+    markerCloneHasNoEntryInCloneTable($dbaEmail);
 
     zdbObjectHomeTableColumnExist($dbaEmail);
     zdbObjectIsSourceDataCorrect($dbaEmail);

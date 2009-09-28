@@ -19,10 +19,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy
 
 SUBDIRS = 24hrs 48hrs 72hrs 120hrs dict highres lowres stages
 
-STATICS = 24hrs.gif 48hrs.gif 72hrs.gif 120hrs.gif
-
-GENERICS = dev_atlas.html
-
+STATICS = 24hrs.gif 48hrs.gif 72hrs.gif 120hrs.gif dev_atlas.html
 
 # ---------------  Production Rules  ------------------------------------
 

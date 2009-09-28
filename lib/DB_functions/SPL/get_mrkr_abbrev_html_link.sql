@@ -30,10 +30,26 @@ create function get_mrkr_abbrev_html_link( mrkrZdbId varchar(50) )
   --    then change this code to get the view app page from the zdb_object_type
   --    table.
 
-  return
-    '<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=' ||
-      mrkrZdbId || '">' ||
-      get_mrkr_abbrev_html(mrkrZdbId) ||
-    '</a>';
+
+  define mrkrAbbrevHtmlLink lvarchar;
+  define mrkrAbbrev like marker.mrkr_abbrev;
+  define mrkrName like marker.mrkr_name;
+  define mrkrType like marker.mrkr_type;
+
+  select mrkr_abbrev, mrkr_name, mrkr_type
+    into mrkrAbbrev, mrkrName, mrkrType
+    from marker
+    where mrkr_zdb_id = mrkrZdbId;
+
+  if mrkrAbbrev is null then
+    let mrkrAbbrevHtmlLink = null;
+  else
+      let mrkrAbbrevHtmlLink = 
+          '<a href="' || get_mrkr_url(mrkrZdbId) ||
+          '">' || get_mrkr_abbrev_html(mrkrZdbId) || '</a>';
+  end if  -- marker exists
+
+  return mrkrAbbrevHtmlLink;
 
 end function;
+

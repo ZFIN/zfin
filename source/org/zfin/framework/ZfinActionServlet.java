@@ -5,10 +5,14 @@ import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.infrastructure.EnumValidationException;
 import org.zfin.infrastructure.EnumValidationService;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.sequence.blast.*;
+import org.zfin.repository.RepositoryFactory;
+import org.hibernate.stat.Statistics;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import java.io.File;
+import java.util.List;
 
 /**
  * Master Servlet that controls each request and resonse.
@@ -41,17 +45,33 @@ public class ZfinActionServlet extends DispatcherServlet {
         ZfinProperties.setWebRootDirectory(webRoot);
         ZfinProperties.setIndexDirectory(getServletContext().getInitParameter("quicksearch-index-directory"));
         initProperties();
-        // Added this to the application context to make it easier to use global values.
-        // ToDo: Should add all global parameters into application context and have it added
-        // to the right context. There might be parameters that should only apply on a session scope...
-        config.getServletContext().setAttribute("webdriverURL",ZfinProperties.getWebDriver( ));
         initDatabase();
+        startupTests();
+        initBlast() ;
+    }
+
+    private void initBlast() {
+        Thread t = new Thread(){
+            @Override
+            public void run() {
+                WebHostDatabaseStatisticsCache.getInstance().cacheAll() ; 
+                HibernateUtil.closeSession();
+            }
+        };
+        t.start();
+    }
+
+    public void startupTests() {
+        EnumValidationService service = new EnumValidationService();
         try {
-            startupTests();
+            service.checkAllEnums();
+            if (service.getReport() != null){
+                throw new EnumValidationException(service.getReport());
+            }
         }
-        catch (RuntimeException rte) {
-            logger.error("error in enumeration validation.", rte);
-            Throwable rootCause = rte; // set a default
+        catch (EnumValidationException eve) {
+            logger.error("Error in enumeration validation.", eve);
+            Throwable rootCause = eve ; // set a default
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause();
             }
@@ -63,18 +83,6 @@ public class ZfinActionServlet extends DispatcherServlet {
             logger.error("notification sent: " + (new IntegratedJavaMailSender()).sendMail("Enumeration Mapping Failure", "Enumeration mapping failure." +
                     "\n" + errorString, ZfinProperties.getValidationOtherEmailAddresses()));
         }
-    }
-
-    public void startupTests() {
-        EnumValidationService service = new EnumValidationService();
-        try {
-            service.checkAllEnums();
-        }
-        catch (EnumValidationException eve) {
-            throw new RuntimeException("EnumValidationException caught", eve);
-        }
-        if (service.getReport() != null)
-            throw new RuntimeException(service.getReport());
     }
 
     private void initDatabase() {
@@ -96,6 +104,9 @@ public class ZfinActionServlet extends DispatcherServlet {
 */
         // initialize Hibernate
         HibernateUtil.init();
+
+        Statistics stats =  HibernateUtil.getSessionFactory().getStatistics();
+        stats.setStatisticsEnabled(true);
     }
 
     /**

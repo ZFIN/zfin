@@ -21,10 +21,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/company_files
 
-GENERICS = companyprintable.apg companyselect.apg \
+GENERICS = companyselect.apg \
 	companyupdate.apg companyview.apg do-companyupdate.apg \
-	new_company.apg process-company.apg setup-new-company.apg \
-	update-company.apg
+	new_company.apg process-company.apg setup-new-company.apg 
+STATICS = companyprintable.apg update-company.apg
 
 # Use default rules for app page directories.
 

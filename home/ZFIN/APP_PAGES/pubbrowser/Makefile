@@ -20,16 +20,20 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
 SUBDIRS = EDITpubs
 
-GENERICS = REFERinfo.apg enterpubs.apg link_authors.apg link_authors_update.apg \
-	pubprintable.apg pubselect2.apg pubview2.apg \
+GENERICS = enterpubs.apg link_authors.apg link_authors_update.apg \
+	pubselect2.apg pubview2.apg \
 	showpubs.apg miniref_display.apg curate_ortho_select.apg pubcuration.apg \
-	pubtopic_close.apg pubtopic_open.apg pubtopic_unclaim.apg pubtopic_found.apg \
-	pubtopic_reassign.apg pnote_new.apg pnote_editor.apg notif_frame.apg \
-	notif_content.apg journalselect.apg journalview.apg journalupdate.apg pubacknowledgement.apg \
-	js-delete_attrib.apg pub_rowdisplay.apg citselectlist.apg citfish.apg \
-	citjtypeoption.apg citlink.apg citgeneric.apg cittotalcount.apg \
-	externallink.apg pubmedlink.apg showsnppubs.apg
+	pnote_editor.apg notif_frame.apg \
+	notif_content.apg journalselect.apg journalview.apg journalupdate.apg \
+	pubacknowledgement.apg citlink.apg \
+	js-delete_attrib.apg pub_rowdisplay.apg \
+	showsnppubs.apg
 
+STATICS= REFERinfo.apg pubprintable.apg pubtopic_close.apg \
+	pubtopic_open.apg pubtopic_unclaim.apg pubtopic_found.apg \
+	pubtopic_reassign.apg pnote_new.apg \
+	citselectlist.apg citfish.apg externallink.apg pubmedlink.apg \
+	citjtypeoption.apg citgeneric.apg cittotalcount.apg \
 
 # use default rules for app page directories.
 

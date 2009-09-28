@@ -71,22 +71,28 @@ update tmp_xpat_genes set priority = priority + 32
 
 ! echo "find the longest protein associated with each gene"
 
-select mrkr_zdb_id, g.mrkr_abbrev, gdbl.dblink_acc_num, gdbl.dblink_length,g.priority, fdbcont_fdb_db_name,fdbcont_fdbdt_data_type
- from   tmp_xpat_genes g, db_link gdbl, foreign_db_contains
+select mrkr_zdb_id, g.mrkr_abbrev, gdbl.dblink_acc_num, gdbl.dblink_length,g.priority, fdb_db_name,fdbdt_data_type
+ from   tmp_xpat_genes g, db_link gdbl, foreign_db_contains, foreign_db, 
+         foreign_db_data_type
  where  g.mrkr_zdb_id  =  gdbl.dblink_linked_recid
  and    gdbl.dblink_fdbcont_zdb_id = fdbcont_zdb_id
- and    fdbcont_fdbdt_data_type = 'Polypeptide'
- and    fdbcont_fdb_db_name not in ('PBLAST')
+ and    fdbdt_data_type = 'Polypeptide'
+ and    fdb_db_name not in ('PBLAST')
+ and    fdbcont_fdb_db_id = fdb_db_pk_id
+ and    fdbcont_fdbdt_id = fdbdt_pk_id
  union
-select g.mrkr_zdb_id, g.mrkr_abbrev, edbl.dblink_acc_num, edbl.dblink_length,g.priority, fdbcont_fdb_db_name,fdbcont_fdbdt_data_type
- from tmp_xpat_genes g, db_link edbl,foreign_db_contains,marker_relationship, marker e
+select g.mrkr_zdb_id, g.mrkr_abbrev, edbl.dblink_acc_num, edbl.dblink_length,g.priority, fdb_db_name as db_name,fdbdt_data_type as fdata_type
+ from tmp_xpat_genes g, db_link edbl,
+  foreign_db_contains, foreign_db, foreign_db_data_type,emarker_relationship, marker e
  where  g.mrkr_zdb_id = mrel_mrkr_1_zdb_id
  and    e.mrkr_zdb_id = mrel_mrkr_2_zdb_id
  and    mrel_type = 'gene encodes small segment'
  and    e.mrkr_zdb_id  =  edbl.dblink_linked_recid
  and    edbl.dblink_fdbcont_zdb_id = fdbcont_zdb_id
- and    fdbcont_fdbdt_data_type = 'Polypeptide'
- and    fdbcont_fdb_db_name not in ('PBLAST')
+ and    fdbdt_data_type = 'Polypeptide'
+ and    fdb_db_name not in ('PBLAST')
+ and    fdbcont_fdb_db_id = fdb_db_pk_id
+ and    fdbcont_fdbdt_id = fdbdt_pk_id
  into temp tmp_can_pp with no log
 ;
 
@@ -109,13 +115,13 @@ drop table tmp_long_pp;
 ! echo "keep refseq if multiple"
 select mrkr_zdb_id
  from tmp_can_pp tcp1
- where fdbcont_fdb_db_name = 'RefSeq'
+ where db_name = 'RefSeq'
   and tcp1.dblink_length is not null
   and exists (
     select 1
      from tmp_can_pp tcp2
      where tcp2.mrkr_zdb_id = tcp1.mrkr_zdb_id
-     and   (tcp2.fdbcont_fdb_db_name <> 'RefSeq'
+     and   (tcp2.db_name <> 'RefSeq'
      or    tcp2.dblink_length is null)
  )
  into temp tmp_nrs_pp with no log
@@ -124,7 +130,7 @@ select mrkr_zdb_id
 delete from tmp_can_pp where exists (
     select 1 from tmp_nrs_pp
      where tmp_nrs_pp.mrkr_zdb_id = tmp_can_pp.mrkr_zdb_id
-) and (fdbcont_fdb_db_name <> 'RefSeq'
+) and (db_name <> 'RefSeq'
   or   dblink_length is null)
 ;
 
@@ -133,13 +139,21 @@ drop table tmp_nrs_pp;
 ! echo "keep UniProt if multipule"
 select mrkr_zdb_id
  from tmp_can_pp tcp1
+<<<<<<< .working
  where fdbcont_fdb_db_name = 'UniProtKB'
+=======
+ where db_name = 'UniProtKB'
+>>>>>>> .merge-right.r18093
  and tcp1.dblink_length is not null
   and exists (
     select 1
      from tmp_can_pp tcp2
      where tcp2.mrkr_zdb_id = tcp1.mrkr_zdb_id
+<<<<<<< .working
      and   (tcp2.fdbcont_fdb_db_name <> 'UniProtKB'
+=======
+     and   (tcp2.db_name <> 'UniProtKB'
+>>>>>>> .merge-right.r18093
      or    tcp2.dblink_length is null)
  )
  into temp tmp_nrs_pp with no log
@@ -148,7 +162,11 @@ select mrkr_zdb_id
 delete from tmp_can_pp where exists (
     select 1 from tmp_nrs_pp
      where tmp_nrs_pp.mrkr_zdb_id = tmp_can_pp.mrkr_zdb_id
+<<<<<<< .working
 ) and (fdbcont_fdb_db_name <> 'UniProtKB'
+=======
+) and (db_name <> 'UniProtKB'
+>>>>>>> .merge-right.r18093
   or   dblink_length is null)
 ;
 
@@ -182,8 +200,8 @@ insert into nomenclature_candidate(
     mrkr_zdb_id,
     mrkr_abbrev,
     dblink_acc_num,
-    fdbcont_fdbdt_data_type,
-    fdbcont_fdb_db_name,
+    fdata_type,
+    db_name,
     priority
  from  tmp_can_pp
  where priority > 223   -- TWIDDEL THIS

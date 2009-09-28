@@ -26,9 +26,10 @@ with no log;
 
 insert into tmp_vega_gene
 select distinct dblink_linked_recid
-  from db_link, foreign_db_contains
+  from db_link, foreign_db_contains, foreign_db
  where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-   and fdbcont_fdb_db_name in ("VEGA", "PREVEGA","Vega_Trans")
+   and fdb_db_name in ("VEGA", "PREVEGA","Vega_Trans")
+   and fdbcont_fdb_db_id = fdb_db_pk_id
    and not exists
      (
        select *
@@ -42,11 +43,13 @@ select distinct dblink_linked_recid
 
 insert into tmp_vega_cdna_link
 select vgene_mrkr_zdb_id, dblink_acc_num, dblink_length
-  from tmp_vega_gene, db_link, foreign_db_contains
+  from tmp_vega_gene, db_link, foreign_db_contains, foreign_db, foreign_db_data_type
  where vgene_mrkr_zdb_id = dblink_linked_recid
    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-   and fdbcont_fdbdt_data_type = "cDNA"
-   and fdbcont_fdb_db_name = "GenBank"
+   and fdbdt_data_type = "cDNA"
+   and fdb_db_name = "GenBank"
+   and fdbcont_fdb_db_id = fdb_db_pk_id
+   and fdbcont_fdbdt_id = fdbdt_pk_id
 ;
 
 
@@ -54,12 +57,15 @@ select vgene_mrkr_zdb_id, dblink_acc_num, dblink_length
 
 insert into tmp_vega_cdna_link
 select vgene_mrkr_zdb_id, dblink_acc_num, dblink_length
-  from tmp_vega_gene, marker_relationship, db_link, foreign_db_contains
+  from tmp_vega_gene, marker_relationship, db_link, foreign_db_contains,
+  foreign_db, foreign_db_data_type
  where vgene_mrkr_zdb_id = mrel_mrkr_1_zdb_id
    and mrel_mrkr_2_zdb_id = dblink_linked_recid
    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-   and fdbcont_fdbdt_data_type = "cDNA"
-   and fdbcont_fdb_db_name = "GenBank"
+   and fdbdt_data_type = "cDNA"
+   and fdb_db_name = "GenBank"
+   and fdbcont_fdb_db_id = fdb_db_pk_id
+   and fdbcont_fdbdt_id = fdbdt_pk_id
 ;
 
 
@@ -94,11 +100,13 @@ select '1', mrkr_abbrev, vega1.vlink_acc_num, vega1.vlink_acc_length
 
 insert into tmp_vega_thisse_report
 select '3', mrkr_abbrev, dblink_acc_num, dblink_length
-  from tmp_vega_gene, marker, db_link, foreign_db_contains
+  from tmp_vega_gene, marker, db_link, foreign_db_contains,foreign_db, foreign_db_data_type
  where mrkr_zdb_id = vgene_mrkr_zdb_id
    and mrkr_zdb_id = dblink_linked_recid
    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-   and fdbcont_fdb_db_name in ("VEGA", "PREVEGA","Vega_Trans")
+   and fdb_db_name in ("VEGA", "PREVEGA","Vega_Trans")
+   and fdbcont_fdb_db_id = fdb_db_pk_id
+   and fdbcont_fdbdt_id = fdbdt_pk_id
    and not exists
      (
        select *

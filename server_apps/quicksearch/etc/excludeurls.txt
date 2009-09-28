@@ -13,6 +13,7 @@ data_transfer
 javascript
 SearchApp
 php
+gbrowse
 
 # We do not want to crawl select pages.
 # These (especially xpatselect) take a long time to crawl.
@@ -24,6 +25,7 @@ select2.apg
 anatdict.apg
 anatomy
 quicksearch
+get_sequence.cgi
 
 # The following are all the app pages included by the fixed-list 
 # described above.  We do not want to crawl them.  Instead
@@ -33,6 +35,7 @@ view.apg
 view2.apg
 aa-orthoviewdetailed.apg
 anatomy/term-detail
+marker/transcript-view
 aa-fxassayabbrev.apg
 aa-fxallfigures.apg
 aa-geneprddescription.apg

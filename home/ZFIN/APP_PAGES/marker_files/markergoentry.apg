@@ -142,7 +142,13 @@ function call_reset() {
   <INPUT TYPE="hidden" name="MIval" value="aa-markergoentry.apg">
   <center><b>GO annotations for <i><?MIVAR>$mrkr_sym<?/MIVAR></i></b></center>
   <p>
-  <center> <input type=button align = "center" value ="Done updating. Back to Viewing!" onclick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"></center>
+  <center>
+       <a 
+       style="font-size: large;"
+       href="javascript:" 
+        onclick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"
+       >[View GO]</a>
+  </center> 
   <?MIVAR COND="$(NXST,$inf_db)" NAME=$inf_db><?/MIVAR>
   <?MIVAR COND="$(NXST,$evidence_code)" NAME=$evidence_code><?/MIVAR>
   <?MIVAR COND="$(NXST,$go_term)" NAME=$go_term><?/MIVAR>

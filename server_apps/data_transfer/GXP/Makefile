@@ -18,13 +18,12 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/GXP
 
-SUBDIRS = Thisse Talbot
+SUBDIRS = Thisse
 
 STATICS = README pre_gxp_load.sql gxp_load_func.sql \
 	gxp_load_quantity_check.sql processImage.sh \
 	thumbnail.sh filterBlast.pl blast2tab.pl ispell_common \
-	pre_gxp_load_cleanup.sql gxp_load_cleanup.sql
-GENERICS= load_gxp.sh 
+	pre_gxp_load_cleanup.sql gxp_load_cleanup.sql load_gxp.sh 
 
 
 # ---------------  Production Rules  ------------------------------------

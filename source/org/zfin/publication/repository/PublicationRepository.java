@@ -264,24 +264,6 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Figure> getFiguresByMorpholinoAndAnatomy(Morpholino morpholino, AnatomyItem term);
 
-//    /**
-//     * Retrieve list of figures for a given genotype and anatomy term
-//     *
-//     * @param geno genotype
-//     * @param term anatomy term
-//     * @return Number of figures
-//     */
-//    int getNumFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term);
-//
-//    /**
-//    * Retrieve list of figures for a given genotype and anatomy term
-//    *
-//    * @param geno genotype
-//    * @param term anatomy term
-//    * @return list of figures.
-//    */
-//    List<Figure> getFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term);
-
     /**
      * Retrieve list of figures for a given genotype and anatomy term
      *
@@ -326,6 +308,14 @@ public interface PublicationRepository extends PaginationParameter {
 
     Journal getJournalByTitle(String journalTitle);
 
+    public PaginationResult<Publication> getAllAssociatedPublicationsForMarker(Marker marker, int maxPubs) ;
+
+    /**
+     * Retrieve Figue by ID
+     * @param zdbID ID
+     * @return Figure
+     */
+    Figure getFigure(String zdbID);
     Image getImageById(String zdbID);
 
     /**

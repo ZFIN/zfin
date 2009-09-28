@@ -2,6 +2,7 @@ package org.zfin.properties;
 
 import org.apache.log4j.Logger;
 import org.zfin.util.FileUtil;
+import org.zfin.sequence.blast.BlastProtocolNotImplementedException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -14,8 +15,10 @@ import java.io.FileInputStream;
  */
 public final class ZfinProperties {
 
+
     public static final String JAXB_PACKAGE = "org.zfin.properties";
     public static final String CONFIGURATION_DIRECTORY = "conf";
+    public static final String SSH_STRING = "ssh";
 
     private static ApplicationProperties props;
     private static File propertyFile;
@@ -26,7 +29,7 @@ public final class ZfinProperties {
     private static final String NON_SECURE_HTTP = "http://";
     private static final String SECURE_HTTP = "https://";
 
-    private static final Logger LOG = Logger.getLogger(ZfinProperties.class);
+    private static final Logger logger = Logger.getLogger(ZfinProperties.class);
     public static final String ZFIN_DEFAULT_PROPERTIES_XML = "zfin-properties.xml";
     public static final String CATALINA_BASE = System.getProperty("catalina.base");
 
@@ -54,15 +57,15 @@ public final class ZfinProperties {
     public static void init(String dir, String propFile) {
         propertyFile = FileUtil.createFileFromDirAndName(dir, propFile);
         if (!propertyFile.exists()) {
-            LOG.info("Property file " + propertyFile.getAbsolutePath() + " not found. Use default file.");
+            logger.debug("Property file " + propertyFile.getAbsolutePath() + " not found. Use default file.");
             propertyFile = FileUtil.createFileFromDirAndName(dir, ZFIN_DEFAULT_PROPERTIES_XML);
             if (!propertyFile.exists()) {
                 String message = "No default Property file " + propertyFile.getAbsolutePath() + " found!";
-                LOG.error(message);
+                logger.error(message);
                 throw new RuntimeException(message);
             }
         }
-        LOG.info("Property file being used: " + propertyFile.getAbsolutePath());
+        logger.debug("Property file being used: " + propertyFile.getAbsolutePath());
 
         try {
             JAXBContext jc = JAXBContext.newInstance(JAXB_PACKAGE);
@@ -71,14 +74,14 @@ public final class ZfinProperties {
             Unmarshaller u = jc.createUnmarshaller();
             u.setValidating(true);
             if (props != null) {
-                LOG.info("Called more than once");
+                logger.debug("Called more than once");
                 //ToDO: find out why on the server (embryonix this is called twice)
                 //throw new RuntimeException("ZfinProperties class already initialized! This can only be done once ");
             } else {
                 props = (ApplicationProperties) u.unmarshal(new FileInputStream(propertyFile));
             }
         } catch (Throwable e) {
-            LOG.error("Error in initializing the Property File", e);
+            logger.error("Error in initializing the Property File", e);
             throw new RuntimeException(e);
         }
 
@@ -205,11 +208,128 @@ public final class ZfinProperties {
         return "zfin-session.log";
     }
 
+    // convenience method
+    // todo: should be removed at some point as I think that both methods are deprecated
+    public static String getBlastAllBinary(){
+        return getWebHostBinaryPath()+"/"+"wu-blastall" ;
+    }
+
+    // START - local blast methods
+    public static String getWebHostDatabasePath(){
+        checkValidProperties();
+        String blastPath= props.getBlast().getWebHost().getDatabasePath();
+        logger.debug("local blast path: "+ blastPath);
+        return blastPath ;
+    }
+
+    public static String getWebHostBlastGetBinary(){
+        checkValidProperties();
+        return getWebHostBinaryPath()+"/"+props.getBlast().getWebHost().getGetBinary();
+    }
+
+    public static String getWebHostBlastPutBinary(){
+        checkValidProperties();
+        return getWebHostBinaryPath()+"/"+props.getBlast().getWebHost().getPutBinary();
+    }
+
+
+    public static String getWebHostUserAtHost(){
+        checkValidProperties();
+        return props.getBlast().getWebHost().getUser()
+                +"@"
+                +props.getBlast().getWebHost().getHostName() ;
+    }
+
+    public static String getWebHostBinaryPath(){
+        checkValidProperties();
+        return props.getBlast().getWebHost().getBinaryPath();
+    }
+
+    // END - local blast methods
+
+    // START - remote blast methods
+    public static String getBlastServerDatabasePath(){
+        checkValidProperties();
+        String blastPath= props.getBlast().getBlastServer().getDatabasePath();
+        logger.debug("remote blast path: "+ blastPath);
+        return blastPath ;
+    }
+
+    public static String getBlastServerBinaryPath(){
+        checkValidProperties();
+        return props.getBlast().getBlastServer().getBinaryPath();
+    }
+
+    public static String getKeyPath() {
+        checkValidProperties();
+        String blastPath= props.getBlast().getKeyPath() ;
+        logger.debug("remote blast path: "+ blastPath);
+        return blastPath ;
+    }
+
+    public static String getBlastServerPutBinary(){
+        checkValidProperties();
+        return props.getBlast().getBlastServer().getPutBinary();
+    }
+
+    public static String getBlastServerGetBinary(){
+        checkValidProperties();
+        return props.getBlast().getBlastServer().getGetBinary();
+    }
+
+    public static String getBlastServerAccessBinary(){
+        return SSH_STRING ;
+    }
+
+    public static String getBlastServerUserAtHost(){
+        checkValidProperties();
+        return props.getBlast().getBlastServer().getUser()
+                +"@"
+                +props.getBlast().getBlastServer().getHostName() ;
+    }
+
+    public static String getBlastServerTarget(){
+        checkValidProperties();
+        return props.getBlast().getTarget() ;
+    }
+    public static String getDistributedQueryPath(){
+        checkValidProperties();
+        return props.getBlast().getDistributedQueryPath() ;
+    }
+
+
+    // END - remote blast methods
+
     public static String getSearchIndexDirectory() {
         checkValidProperties();
         String indexPath = props.getPath().getIndexPath();
         indexPath = FileUtil.createAbsolutePath(getWebRootDirectory(), indexPath);
         return indexPath;
+    }
+
+    public static String getDomain() {
+        checkValidProperties();
+        return  props.getWeb().getDomain() ;
+    }
+
+    public static String getWikiUserName() {
+        checkValidProperties();
+        return  props.getWiki().getUsername() ;
+    }
+
+    public static String getWikiPassword() {
+        checkValidProperties();
+        return  props.getWiki().getPassword() ;
+    }
+
+    public static String getWikiHostname() {
+        checkValidProperties();
+        return  props.getWiki().getHostname() ;
+    }
+
+    public static boolean isPushToWiki() {
+        checkValidProperties();
+        return  props.getWiki().isPushToWiki() ;
     }
 
     public static String getTomcatLogFileName() {

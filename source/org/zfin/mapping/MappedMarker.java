@@ -2,17 +2,38 @@ package org.zfin.mapping;
 
 import org.zfin.people.Person;
 import org.zfin.people.Lab;
+import org.zfin.marker.Marker;
 
-public class MappedMarker {
+public class MappedMarker implements Comparable{
     private String zdbID;
-    private String refcrossId;
-    private String markerId;
+    private String refcrossID;
+    private Marker marker;
     private Person submitter;
     private Lab lab;
     private Person owner;
     private String comments;
     private String lg;
     private Float lgLocation;
+
+    public int compareTo(Object o) {
+        if (o == null){
+           return -1 ;
+        }
+        else
+        if (false==(o instanceof MappedMarker)){
+           return o.toString().compareTo(toString()) ;
+        }
+        // both MappedMarker
+        else{
+            MappedMarker mappedMarker = (MappedMarker) o ;
+            if(false==lg.equalsIgnoreCase(mappedMarker.getLg())){
+                return lg.toLowerCase().compareTo(mappedMarker.getLg().toLowerCase());
+            }
+            else{
+                return marker.compareTo(mappedMarker.getMarker());
+            }
+        }
+    }
 
     public String getZdbID() {
         return zdbID;
@@ -22,12 +43,12 @@ public class MappedMarker {
         this.zdbID = zdbID;
     }
 
-    public String getRefcrossId() {
-        return refcrossId;
+    public String getRefcrossID() {
+        return refcrossID;
     }
 
-    public void setRefcrossId(String refcrossId) {
-        this.refcrossId = refcrossId;
+    public void setRefcrossID(String refcrossID) {
+        this.refcrossID = refcrossID;
     }
 
     public Person getSubmitter() {
@@ -78,11 +99,12 @@ public class MappedMarker {
         this.lgLocation = lgLocation;
     }
 
-    public String getMarkerId() {
-        return markerId;
+    public Marker getMarker() {
+        return marker;
     }
 
-    public void setMarkerId(String markerId) {
-        this.markerId = markerId;
+    public void setMarker(Marker marker) {
+        this.marker = marker;
     }
+
 }

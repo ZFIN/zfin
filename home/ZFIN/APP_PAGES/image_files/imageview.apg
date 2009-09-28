@@ -249,9 +249,13 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 
       <form name=updater>
 	<?MIVAR COND="$(XST,$UPDATE)">
-	  <center><font size=5 color="#00ff00"><input type=button 
-	  value=" DONE UPDATING. Back to Viewing! " onClick="all_done();">
-	  </font></center>
+	  <center>
+       <a 
+       style="font-size: large;"
+       href="javascript:" 
+       onClick="all_done();"
+       >[View Image]</a>
+	  </center>
 	<?/MIVAR>
 
 

@@ -18,11 +18,11 @@ import org.zfin.sequence.repository.SequenceRepository;
 import java.util.Date;
 
 /**
- * ToDo: Please add documentation for this class.
+ * This class adds Reno test data.
  */
 public class RenoTestData {
 
-    private Logger logger = Logger.getLogger(RenoTestData.class);
+    private final Logger logger = Logger.getLogger(RenoTestData.class);
     private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
@@ -57,22 +57,22 @@ public class RenoTestData {
      */
     public String createRedundancyData(){
         Session session = currentSession();
-       
+
         Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
-   
+
         // create Run
         RedundancyRun redunRun = new RedundancyRun();
         redunRun.setRelationPublication(publication);
         redunRun.setName("TestRedunRun");
 //        redunRun.setType(Run.Type.REDUNDANCY);
         redunRun.setProgram("BLASTN");
-        redunRun.setBlastDatabase("zfin_cdna");
+        redunRun.setBlastDatabase("zfin_cdna_seq");
         redunRun.setNomenclaturePublication(publication);
         Date date = new Date();
         logger.debug("date: " + date);
         redunRun.setDate(date);
         session.save(redunRun);
-        
+
         // create Candidate
         Candidate candidate = new Candidate();
         candidate.setRunCount(1);
@@ -94,12 +94,10 @@ public class RenoTestData {
         session.save(runCandidate);
 
 
-        ForeignDB foreignDB = sequenceRepository.getForeignDBByName("GenBank");
-        ReferenceDatabase refDb = sequenceRepository.getReferenceDatabaseByAlternateKey(
-                foreignDB,
-//                ReferenceDatabase.Type.GENOMIC,
-                ReferenceDatabase.Type.RNA,
-                ReferenceDatabase.SuperType.SEQUENCE,
+        ReferenceDatabase refDb = sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.RNA,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 
         Accession accession1 = new Accession();
@@ -110,10 +108,11 @@ public class RenoTestData {
         accession1.setReferenceDatabase(refDb);
         //logger.info("accession1 number is:"+accession1.getID());
 
-        // todo: note that it FAILS here because it tries to save the marker again.
+        // note that it FAILS here because it tries to save the marker again.
         MarkerDBLink queryGene = new MarkerDBLink();
         queryGene.setMarker(markerRepository.getMarkerByAbbreviation("MGC:test"));
         queryGene.setAccessionNumber(accession1.getNumber());
+        queryGene.setAccessionNumberDisplay(accession1.getNumber());  
         queryGene.setLength(1243);
         queryGene.setReferenceDatabase(accession1.getReferenceDatabase());
         session.save(queryGene);
@@ -127,7 +126,7 @@ public class RenoTestData {
         accession2.setReferenceDatabase(refDb);
         session.save(accession2);
         //logger.info("accession2 number is:" +accession2.getID());
-        
+
         // create Redundancy Query
         Query query = new Query();
         query.setRunCandidate(runCandidate);
@@ -136,7 +135,7 @@ public class RenoTestData {
         session.save(query);
 
 
-        
+
         // create 5 Hits
         Hit hit1 = new Hit();
         hit1.setQuery(query);
@@ -155,19 +154,19 @@ public class RenoTestData {
         hit1.setPositivesDenominator(1);
         session.save(hit1);
 
- /*       Hit hit2 = new Hit();
-        hit2.setQuery(query);
-        hit2.setHitNumber(2);
-        hit2.setTargetAccession(accession2);
-        query.getBlastHits().add(hit2);
-//        hit2.setZfinAccession(markerRepository.getMarkerByAbbreviation("reno"));
-        hit2.setExpectValue(1.3e-56);
-        hit2.setScore(800);
-        hit2.setPositivesNumerator(2);
-        hit2.setPositivesDenominator(4);
-        session.save(hit2);
-*/
-    return runCandidate.getZdbID();
+        /*       Hit hit2 = new Hit();
+                hit2.setQuery(query);
+                hit2.setHitNumber(2);
+                hit2.setTargetAccession(accession2);
+                query.getBlastHits().add(hit2);
+        //        hit2.setZfinAccession(markerRepository.getMarkerByAbbreviation("reno"));
+                hit2.setExpectValue(1.3e-56);
+                hit2.setScore(800);
+                hit2.setPositivesNumerator(2);
+                hit2.setPositivesDenominator(4);
+                session.save(hit2);
+        */
+        return runCandidate.getZdbID();
 
     }
 
@@ -180,18 +179,17 @@ public class RenoTestData {
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
         Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
         Publication publicationO = publicationRepository.getPublication("ZDB-PUB-030905-1");
-        
+
         //create a NomenAccession
         Accession accessionNomenQuery = new Accession();
         accessionNomenQuery.setNumber("AC:NOMENQUERY");
         logger.debug("accessionNomenQuery" + accessionNomenQuery.getNumber());
         accessionNomenQuery.setDefline("defline jam for NOMENQUERY");
         accessionNomenQuery.setLength(12);
-        ForeignDB foreignDBNomenQuery = sequenceRepository.getForeignDBByName("GenPept");
-        ReferenceDatabase refDbNomenQuery = sequenceRepository.getReferenceDatabaseByAlternateKey(
-                foreignDBNomenQuery,
-                ReferenceDatabase.Type.POLYPEPTIDE,
-                ReferenceDatabase.SuperType.SEQUENCE,
+        ReferenceDatabase refDbNomenQuery = sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.GENPEPT,
+                ForeignDBDataType.DataType.POLYPEPTIDE,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
         logger.debug("refdbNomen " + refDbNomenQuery.getForeignDB().getDbName());
         accessionNomenQuery.setReferenceDatabase(refDbNomenQuery);
@@ -203,11 +201,10 @@ public class RenoTestData {
         logger.debug("accessionNomenHit1" + accessionNomenHit1.getNumber());
         accessionNomenHit1.setDefline("defline jam for NOMENHIT");
         accessionNomenHit1.setLength(12);
-        ForeignDB foreignDBNomenHit = sequenceRepository.getForeignDBByName("UniProt");
-        ReferenceDatabase refDbNomenHit = sequenceRepository.getReferenceDatabaseByAlternateKey(
-                foreignDBNomenHit,
-                ReferenceDatabase.Type.POLYPEPTIDE,
-                ReferenceDatabase.SuperType.SEQUENCE,
+        ReferenceDatabase refDbNomenHit = sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.UNIPROTKB,
+                ForeignDBDataType.DataType.POLYPEPTIDE,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.MOUSE);
         logger.debug("refdbNomenHit " + refDbNomenHit.getForeignDB().getDbName());
         accessionNomenHit1.setReferenceDatabase(refDbNomenHit);
@@ -219,11 +216,10 @@ public class RenoTestData {
         logger.debug("accessionNomenHit2" + accessionNomenHit2.getNumber());
         accessionNomenHit2.setDefline("defline jam for NOMENHIT2");
         accessionNomenHit2.setLength(12);
-        ForeignDB foreignDBNomenHit2 = sequenceRepository.getForeignDBByName("UniProt");
-        ReferenceDatabase refDbNomenHit2 = sequenceRepository.getReferenceDatabaseByAlternateKey(
-                foreignDBNomenHit2,
-                ReferenceDatabase.Type.POLYPEPTIDE,
-                ReferenceDatabase.SuperType.SEQUENCE,
+        ReferenceDatabase refDbNomenHit2 = sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.UNIPROTKB,
+                ForeignDBDataType.DataType.POLYPEPTIDE,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.HUMAN);
         logger.debug("refdbNomenHit2 " + refDbNomenHit2.getForeignDB().getDbName());
         accessionNomenHit2.setReferenceDatabase(refDbNomenHit2);
@@ -235,11 +231,10 @@ public class RenoTestData {
         logger.debug("accessionNomenRelated" + accessionNomenRelHuman.getNumber());
         accessionNomenRelHuman.setDefline("this is the related entrez id");
         accessionNomenRelHuman.setLength(12);
-        ForeignDB foreignDBNomenRelHuman = sequenceRepository.getForeignDBByName("Entrez Gene");
-        ReferenceDatabase refDbNomenRelHuman = sequenceRepository.getReferenceDatabaseByAlternateKey(
-                foreignDBNomenRelHuman,
-                ReferenceDatabase.Type.ORTHOLOGUE,
-                ReferenceDatabase.SuperType.ORTHOLOGUE,
+        ReferenceDatabase refDbNomenRelHuman = sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.ENTREZ_GENE,
+                ForeignDBDataType.DataType.ORTHOLOGUE,
+                ForeignDBDataType.SuperType.ORTHOLOGUE,
                 Species.HUMAN);
         logger.debug("refdbNomenRelHuman is: " + refDbNomenRelHuman.getForeignDB().getDbName());
         accessionNomenRelHuman.setReferenceDatabase(refDbNomenRelHuman);
@@ -251,11 +246,10 @@ public class RenoTestData {
         logger.debug("accessionNomenRelated" + accessionNomenRelMouse.getNumber());
         accessionNomenRelMouse.setDefline("this is the related entrez id for mouserel");
         accessionNomenRelMouse.setLength(12);
-        ForeignDB foreignDBNomenRelM = sequenceRepository.getForeignDBByName("Entrez Gene");
-        ReferenceDatabase refDbNomenRelM = sequenceRepository.getReferenceDatabaseByAlternateKey(
-                foreignDBNomenRelM,
-                ReferenceDatabase.Type.ORTHOLOGUE,
-                ReferenceDatabase.SuperType.ORTHOLOGUE,
+        ReferenceDatabase refDbNomenRelM = sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.ENTREZ_GENE,
+                ForeignDBDataType.DataType.ORTHOLOGUE,
+                ForeignDBDataType.SuperType.ORTHOLOGUE,
                 Species.MOUSE);
         logger.debug("refdbNomenRelMouse " + refDbNomenRelM.getForeignDB().getDbName());
         accessionNomenRelMouse.setReferenceDatabase(refDbNomenRelM);
@@ -323,7 +317,7 @@ public class RenoTestData {
         runCandidateNomen.setLockPerson(personRepository.getPerson("ZDB-PERS-030520-1"));
         runCandidateNomen.setCandidate(candidateNomen);
         session.save(runCandidateNomen);
-        
+
         // create a Nomenclature Query
         Query queryNomen = new Query();
         queryNomen.setRunCandidate(runCandidateNomen);
@@ -358,11 +352,10 @@ public class RenoTestData {
         session.save(hitNomenWithoutGene);
         logger.debug("apparently saved it 7" + hitNomenWithoutGene.getHitNumber());
 
-        ForeignDB foreignDBHuman = sequenceRepository.getForeignDBByName("OMIM");
-        ReferenceDatabase refDBHuman = sequenceRepository.getReferenceDatabaseByAlternateKey(
-                foreignDBHuman,
-                ReferenceDatabase.Type.ORTHOLOGUE,
-                ReferenceDatabase.SuperType.ORTHOLOGUE,
+        ReferenceDatabase refDBHuman = sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.OMIM,
+                ForeignDBDataType.DataType.ORTHOLOGUE,
+                ForeignDBDataType.SuperType.ORTHOLOGUE,
                 Species.HUMAN);
         //copied the acc_num out of the database; maybe this will change??
         Accession humanAccession = sequenceRepository.getAccessionByAlternateKey("100650", refDBHuman);
@@ -383,10 +376,10 @@ public class RenoTestData {
 
 
                 ForeignDB foreignDBMouse = sequenceRepository.getForeignDBByName("MGI");
-                ReferenceDatabase refDBMouse = sequenceRepository.getReferenceDatabaseByAlternateKey(
+                ReferenceDatabase refDBMouse = sequenceRepository.getReferenceDatabase(
                         foreignDBMouse,
-                        ReferenceDatabase.Type.ORTHOLOGUE,
-                        ReferenceDatabase.SuperType.ORTHOLOGUE,
+                        ForeignDBDataType.DataType.ORTHOLOGUE,
+                        ForeignDBDataType.SuperType.ORTHOLOGUE,
                         Species.MOUSE);
                 //copied the acc_num out of the database; maybe this will change??
                 Accession mouseAccession = sequenceRepository.getAccessionByAlternateKey("100002",refDBMouse);
@@ -405,14 +398,7 @@ public class RenoTestData {
         */
         logger.debug("runCan got created: "+runCandidateNomen.getZdbID());
         return runCandidateNomen.getZdbID();
-         }
-    
-    //make the new candidate, run, accessions, and run_candidate, returns a runcandidate zdb_id
-    public String createRenoData(String runType) {
-        return null;
-
     }
-
 
 
 }

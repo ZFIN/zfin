@@ -39,13 +39,10 @@ import java.util.Collection;
  *  @link http://zfinwinserver1/FogBUGZ/default.asp?2373
  */
 public class SingleAssociatedGenesFromQueryTest {
-        Logger logger = Logger.getLogger(SingleAssociatedGenesFromQueryTest.class) ;
+    private final Logger logger = Logger.getLogger(SingleAssociatedGenesFromQueryTest.class) ;
 
     private RunCandidate runCandidate;
     private Marker gene1;
-    private Marker gene2 ;
-    private Marker est1 ;
-    private Marker est2 ;
     private Query query = new Query();
     private Hit hit1 = new Hit() ;
     private Hit hit2 = new Hit();
@@ -54,8 +51,6 @@ public class SingleAssociatedGenesFromQueryTest {
 	private Set<Hit> blastHits = new HashSet<Hit>() ;
     private Set<MarkerRelationship> est1SecondMarkerRelationships = new HashSet<MarkerRelationship>() ;
     private Set<MarkerRelationship> est2SecondMarkerRelationships = new HashSet<MarkerRelationship>() ;
-    private Set<MarkerRelationship> gene1FirstMarkerRelationships = new HashSet<MarkerRelationship>() ;
-    private Set<MarkerRelationship> gene2FirstMarkerRelationships = new HashSet<MarkerRelationship>() ;
 	private MarkerDBLink gene1DBLink = new MarkerDBLink();
 	private Set<MarkerDBLink> gene1DBLinks = new HashSet<MarkerDBLink>();
 	private Set<DBLink> est1DBLinks = new HashSet<DBLink>() ;
@@ -88,7 +83,7 @@ public class SingleAssociatedGenesFromQueryTest {
         gene1.setMarkerType(geneType);
 
 
-        gene2 = new Marker() ;
+        Marker gene2=new Marker();
         gene2.setAbbreviation("gene2");
         gene2.setZdbID("ZDB-GENE-5678-1");
         geneType.setTypeGroups(groups);
@@ -99,14 +94,14 @@ public class SingleAssociatedGenesFromQueryTest {
 		MarkerType estType = new MarkerType() ;
 		estType.setType(Marker.Type.EST) ;
 		Set<Marker.TypeGroup> typeGroups = new HashSet<Marker.TypeGroup>() ;
-		estType.setTypeGroups(typeGroups); ;
+		estType.setTypeGroups(typeGroups);
 
-        est1 = new Marker() ;
+        Marker est1=new Marker();
         est1.setAbbreviation("est1");
         est1.setZdbID("ZDB-EST-1111-1");
         est1.setMarkerType(estType);
 
-        est2 = new Marker() ;
+        Marker est2=new Marker();
         est2.setAbbreviation("est2");
         est2.setZdbID("ZDB-EST-2222-1");
         est2.setMarkerType(estType);
@@ -149,7 +144,6 @@ public class SingleAssociatedGenesFromQueryTest {
 
 
 		// implied, but not necessary
-//        gene1.setFirstMarkerRelationships(gene1FirstMarkerRelationships);
         est1.setSecondMarkerRelationships(est1SecondMarkerRelationships);
         est2.setSecondMarkerRelationships(est2SecondMarkerRelationships);
 
@@ -189,15 +183,12 @@ public class SingleAssociatedGenesFromQueryTest {
     public void cleanUp(){
 		est1SecondMarkerRelationships.clear() ; 
 		est2SecondMarkerRelationships.clear() ; 
-		gene1FirstMarkerRelationships.clear() ;
-		gene2FirstMarkerRelationships.clear() ;  
 		blastHits.clear() ; 
 	}
 
 	@Test
 	public void estEncodedByOneGeneIsVisible(){
         // defined, but not necessary
-//        gene1.setFirstMarkerRelationships(gene1FirstMarkerRelationships);
 
 		est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
 
@@ -217,11 +208,6 @@ public class SingleAssociatedGenesFromQueryTest {
         // add this marker relationship to secondMarkerRelationship set (already set)
 
         // need to add gene2 encoding, though this is unnecessary 
-//        gene2FirstMarkerRelationships.add(est1Gene2MarkerRelationship) ;
-//        gene2.setFirstMarkerRelationships(gene2FirstMarkerRelationships);
-//
-//        gene1FirstMarkerRelationships.add(est1Gene1MarkerRelationship) ;
-//        gene1.setFirstMarkerRelationships(gene1FirstMarkerRelationships);
 
         logger.debug("est encoded by 2 genes in 1 hit (hide) getAllSingleAssociatedGenesFromQueries");
         assertEquals(0,runCandidate.getAllSingleAssociatedGenesFromQueries().size());

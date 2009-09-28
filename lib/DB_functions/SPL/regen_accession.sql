@@ -114,54 +114,66 @@ begin	-- master exception handler
 --the Uniprot fdbcont records for human an mouse 
 
     let humanUniProtFdbContZdbId = (select fdbcont_zdb_id
-			      	  	  from foreign_db_contains
-				 	  where fdbcont_fdb_db_name = "UniProt"
-				 	   and fdbcont_fdbdt_super_type = "sequence"
-				  	   and fdbcont_fdbdt_data_type = "Polypeptide"
+			      	  	  from foreign_db_contains, foreign_db, foreign_db_data_type
+				 	  where fdb_db_name = "UniProt"
+				 	   and fdbdt_super_type = "sequence"
+				  	   and fdbdt_data_type = "Polypeptide"
+					   and fdb_db_pk_id = fdbcont_fdb_id
+					   and fdbdt_pk_id = fdbcont_fdbdt_id
 				  	   and fdbcont_organism_common_name = "Human");
 
  
     let mouseUniProtFdbContZdbId = (select fdbcont_zdb_id
-			      	  	  from foreign_db_contains
-				 	  where fdbcont_fdb_db_name = "UniProt"
-				 	   and fdbcont_fdbdt_super_type = "sequence"
-				  	   and fdbcont_fdbdt_data_type = "Polypeptide"
+			      	  	  from foreign_db_contains, foreign_db, foreign_db_data_type
+				 	  where fdb_db_name = "UniProt"
+				 	   and fdbdt_super_type = "sequence"
+				  	   and fdbdt_data_type = "Polypeptide"
+					   and fdbcont_fdb_db_id = fdb_db_pk_id
+					   and fdbcont_fdbdt_id = fdbdt_pk_id
 				  	   and fdbcont_organism_common_name = "Mouse");
 
 
 --the Entrez Gene fdbcont record for human and mouse ZDB-FDBCONT-040412-28
 
     let mouseEntrezGeneFdbContZdbId = (select fdbcont_zdb_id
-			      	  	  from foreign_db_contains
-				 	  where fdbcont_fdb_db_name = "Entrez Gene"
-				  	    and fdbcont_fdbdt_super_type = "orthologue"
-				  	    and fdbcont_fdbdt_data_type = "orthologue"
-				  	    and fdbcont_organism_common_name = "Mouse");
+			      	  	  from foreign_db_contains, foreign_db, foreign_db_data_type
+				 	  where fdb_db_name = "Entrez Gene"
+				  	    and fdbdt_super_type = "orthologue"
+				  	    and fdbdt_data_type = "orthologue"
+				  	    and fdbcont_organism_common_name = "Mouse"
+					    and fdbcont_fdb_db_id = fdb_db_pk_id
+					    and fdbcont_fdbdt_id = fdbdt_pk_id);
 
 
     let humanEntrezGeneFdbContZdbId = (select fdbcont_zdb_id
-			      	  	  from foreign_db_contains
-				 	  where fdbcont_fdb_db_name = "Entrez Gene"
-				 	   and fdbcont_fdbdt_super_type = "orthologue"
-				  	   and fdbcont_fdbdt_data_type = "orthologue"
-				  	   and fdbcont_organism_common_name = "Human");
+			      	  	  from foreign_db_contains, foreign_db, foreign_db_data_type
+				 	  where fdb_db_name = "Entrez Gene"
+				 	   and fdbdt_super_type = "orthologue"
+				  	   and fdbdt_data_type = "orthologue"
+				  	   and fdbcont_organism_common_name = "Human"
+ 					   and fdbcont_fdb_db_id = fdb_db_pk_id
+					    and fdbcont_fdbdt_id = fdbdt_pk_id);
 
 
 --the OMIM and MGI fdbcont records for human and mouse ZDB-FDBCONT-040412-27
 
     let humanOMIMFdbContZdbId = (select fdbcont_zdb_id
-			      	  	  from foreign_db_contains
-				 	  where fdbcont_fdb_db_name = "OMIM"
-				 	   and fdbcont_fdbdt_super_type = "orthologue"
-				  	   and fdbcont_fdbdt_data_type = "orthologue"
-				  	   and fdbcont_organism_common_name = "Human");
+			      	  	  from foreign_db_contains, foreign_db, foreign_db_data_type
+				 	  where fdb_db_name = "OMIM"
+				 	   and fdbdt_super_type = "orthologue"
+				  	   and fdbdt_data_type = "orthologue"
+				  	   and fdbcont_organism_common_name = "Human"
+					    and fdbcont_fdb_db_id = fdb_db_pk_id
+					    and fdbcont_fdbdt_id = fdbdt_pk_id);
 
     let mouseMGIFdbContZdbId = (select fdbcont_zdb_id
 			      	  	  from foreign_db_contains
-				 	  where fdbcont_fdb_db_name = "MGI"
-				 	   and fdbcont_fdbdt_super_type = "orthologue"
-				  	   and fdbcont_fdbdt_data_type = "orthologue"
-				  	   and fdbcont_organism_common_name = "Mouse"); 
+				 	  where fdb_db_name = "MGI"
+				 	   and fdbdt_super_type = "orthologue"
+				  	   and fdbdt_data_type = "orthologue"
+				  	   and fdbcont_organism_common_name = "Mouse"
+					    and fdbcont_fdb_db_id = fdb_db_pk_id
+					    and fdbcont_fdbdt_id = fdbdt_pk_id); 
 
 --here we insert all related protein and entrez ids so that we can update existin
 --entrez ids (from prior runs, that may not be used in blast_query or blast_hit, but also
@@ -210,7 +222,7 @@ begin	-- master exception handler
    let errorHint = "update existing entrez symbols";
 
    update accession_bank
-      set accbk_abbreviation = (Select eon_symbol
+     set accbk_abbreviation = (Select eon_symbol
       	  		          from entrez_orth_name
 				  where accbk_acc_num = eon_entrez_id
 				    and accbk_fdbcont_zdb_id in (mouseEntrezGeneFdbContZdbId,humanEntrezGeneFdbContZdbId)

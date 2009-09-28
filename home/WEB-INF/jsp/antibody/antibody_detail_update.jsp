@@ -222,10 +222,13 @@ function subAntigenRef(element, urlsubmit) {
     </tbody>
 </table>
 
-<center><font size=+2>
-    <input type=button value=" DONE UPDATING. Back to Viewing! "
-           onClick="document.location.replace('detail?antibody.zdbID=${formBean.antibody.zdbID}')">
-</font></center>
+<center>
+       <a 
+       style="font-size: large;"
+       href="javascript:" 
+       onClick="document.location.replace('detail?antibody.zdbID=${formBean.antibody.zdbID}')"
+       >[View Antibody]</a>
+</center>
 
 
 <table width="100%">

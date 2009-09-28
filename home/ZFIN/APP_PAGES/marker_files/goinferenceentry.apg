@@ -48,10 +48,10 @@ EFFECTS
 	      from foreign_db 
 	      where exists 
                      ( select 'x'
-                         from foreign_db_contains
-                         where fdbcont_fdbdt_data_type = 'gene ontology' 
-                           and fdbcont_fdbdt_super_type = 'inference' 
-                           and fdbcont_fdb_db_name = fdb_db_name )">
+                         from foreign_db_contains, foreign_db_data_type
+                         where fdbdt_data_type = 'gene ontology' 
+                           and fdbdt_super_type = 'inference' 
+                           and fdbcont_fdb_db_id = fdb_db_pk_id )">
             <option value="$1" $(IF,$(AND,$(XST,$goinfent_formSelectDb),$(EC,$goinfent_formSelectDb,$1)),SELECTED)>$1
         <?/MISQL>
     </select>

@@ -41,8 +41,8 @@ NETSCAPESYMLINK = $(STAGINGDIR)/netscape
 
 # ---- Java source and destination variables
 
-GENERICS = zmapper/MarkerBuilder.java
-STATICS  = mapplet.java \
+GENERICS = 
+STATICS  = mapplet.java zmapper/MarkerBuilder.java \
            zmapper/BackBone.java zmapper/Bin.java zmapper/BinGroup.java \
            zmapper/LayoutManager.java zmapper/MapViewer.java zmapper/Marker.java
 JAVAS    = $(GENERICS) $(STATICS)

@@ -67,6 +67,13 @@ public class MutantRepositoryTest {
     }
 
     @Test
+    public void checkGetGenotypeByHandle() {
+        //In particular, this test is against TU because it's the standard background for Vega
+        Genotype TU = mutantRepository.getGenotypeByHandle(Genotype.Wildtype.TU.toString());
+        Assert.assertNotNull("Got TU genotype by handle", TU);        
+    }
+
+    @Test
     public void checkMorpholinoRecords() {
 
         //  ao term: otic placode

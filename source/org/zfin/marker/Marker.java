@@ -4,8 +4,9 @@ import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.EntityAlias;
+import org.zfin.infrastructure.EntityNotes;
 import org.zfin.mapping.MappedMarker;
-import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.Orthologue;
 import org.zfin.people.Person;
 import org.zfin.people.MarkerSupplier;
@@ -22,7 +23,7 @@ import java.util.*;
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
  * ToDo: needs more modelling...
  */
-public class Marker implements Serializable, Comparable {
+public class Marker implements Serializable, Comparable , EntityAlias, EntityNotes {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
     
@@ -38,12 +39,12 @@ public class Marker implements Serializable, Comparable {
     private Set<MarkerFamilyName> familyName;
     private Set<Orthologue> orthologues;
     private Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
-    private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel 
+    private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel
     private MarkerType markerType;
     private Set<MarkerHistory> markerHistory;
     private Set<MappedMarker> directPanelMappings;
     private Person owner;
-    private String comments;
+    private String publicComments;
     private Set<MarkerDBLink> dbLinks;
     private Set<MarkerAlias> aliases;
     private Set<DataNote> dataNotes;
@@ -90,12 +91,12 @@ public class Marker implements Serializable, Comparable {
         this.owner = owner;
     }
 
-    public String getComments() {
-        return comments;
+    public String getPublicComments() {
+        return publicComments;
     }
 
-    public void setComments(String comments) {
-        this.comments = comments;
+    public void setPublicComments(String comments) {
+        this.publicComments = comments;
     }
 
     public Set<MarkerDBLink> getDbLinks() {
@@ -148,7 +149,8 @@ public class Marker implements Serializable, Comparable {
      * obtain a list of publications that are expressed in this gene and
      * the given anatomical structure.
      *
-     * @param aoZdbID
+     * @param aoZdbID ZdbID of anatomy object.
+ * @return List of publications.
      */
     public List<Publication> getPublications(String aoZdbID) {
         List<Publication> pubs;
@@ -289,13 +291,13 @@ public class Marker implements Serializable, Comparable {
     public String toString() {
         StringBuilder sb = new StringBuilder("MARKER");
         sb.append("\n");
-        sb.append("zdbID: " + zdbID);
+        sb.append("zdbID: ").append(zdbID);
         sb.append("\n");
-        sb.append("name: " + name);
+        sb.append("name: ").append(name);
         sb.append("\n");
-        sb.append("symbol: " + abbreviation);
+        sb.append("symbol: ").append(abbreviation);
         sb.append("\n");
-        sb.append("type: " + markerType);
+        sb.append("type: ").append(markerType);
         sb.append("\n");
         return sb.toString();
     }
@@ -354,6 +356,7 @@ public class Marker implements Serializable, Comparable {
         SSLP("SSLP"),
         STS("STS"),
         TGCONSTRCT("TGCONSTRCT"),
+        TSCRIPT("TSCRIPT"),
         INDEL("INDEL");
 
         private final String value;
@@ -386,6 +389,7 @@ public class Marker implements Serializable, Comparable {
         CDNA("CDNA"),
         CDNA_AND_EST("CDNA_AND_EST"),
         CLONE("CLONE"),
+        CLONEDOM("CLONEDOM"),
         CONSTRUCT("CONSTRUCT"),
         EFG("EFG"),
         EST("EST"),
@@ -409,7 +413,9 @@ public class Marker implements Serializable, Comparable {
         SMALLSEG("SMALLSEG"),
         SSLP("SSLP"),
         STS("STS"),
-        TGCONSTRUCT("TGCONSTRUCT");
+        TGCONSTRUCT("TGCONSTRUCT"),
+        TRANSCRIPT("TRANSCRIPT")
+        ;
 
         private final String value;
 
@@ -432,8 +438,7 @@ public class Marker implements Serializable, Comparable {
     }
 
     public TreeSet<String> getLG() {
-        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-        TreeSet<String> lgSet = markerRepository.getLG(this);
+        TreeSet<String> lgSet = RepositoryFactory.getLinkageRepository().getLG(this);
         lgSet.remove("0");
         return lgSet;
     }

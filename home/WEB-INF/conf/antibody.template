@@ -1,0 +1,23 @@
+{table-plus:columnAttributes=style=width:20%}
+|| Antibody&nbsp;Name: | {text-data:AntibodyName}{page-info:title}{text-data} ||
+|| Other names, clone ids, catalog ids etc. | {text-data:OtherInfo}{text-data} ||
+|| Does it work on zebrafish? | {list-data:WorksOnZebrafish}{list-option}yes{list-option}{list-option}no{list-option}{list-data} ||
+|| Host organism | {text-data:HostOrganism}{text-data} ||
+|| Antibody isotype | {text-data:AntibodyIsotype}{text-data} ||
+|| Anatomical structures recognized \\
+(use terms from the [ZFIN Anatomical Ontology|http://zfin.org/action/anatomy/search]) | {text-data:AnatomicalStructuresRecognized}{text-data} ||
+|| Recognized target molecules (gene names, domains, epitopes ...)  | {text-data:RecognizedTargetMolecules}{text-data} ||
+|| Recognized ZFIN genes \\
+current ZFIN-gene symbols only [ZFIN Gene Search|http://zfin.org/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg] | {text-data:ZFINGenes}{text-data} ||
+|| Antibody page in ZFIN (if available): \\
+enter ZFIN Antibody name or ZFIN antibody id, for example \\  [ZFIN Antibody Search page|http://zfin.org/action/antibody/search] | {text-data:ZFINAntibody}{text-data} ||
+|| Supplier(s) | {text-data:Suppliers}{text-data} ||
+
+h3. Notes
+{text-data:Comments|type=area|width=400px|height=150px}{text-data}
+----
+h3. Experimental Procedures
+{children:depth=1}
+{add-page-form:template=antibody.procedure.referer|live=false|popup=true|parent=@self|allowRename=true}Add new experimental procedure for this antibody{add-page-form}
+----
+{table-plus}

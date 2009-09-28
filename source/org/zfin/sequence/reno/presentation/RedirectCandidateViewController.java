@@ -33,10 +33,10 @@ public class RedirectCandidateViewController extends AbstractCommandController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject(LookupStrings.FORM_BEAN,candidateBean) ;
         if(rc.getRun().isNomenclature()){
-            modelAndView.setViewName("forward:/action/reno/nomenclature-candidate-view"); ;
+            modelAndView.setViewName("forward:/action/reno/nomenclature-candidate-view");
         }
         else{
-            modelAndView.setViewName("forward:/action/reno/redundancy-candidate-view"); ;
+            modelAndView.setViewName("forward:/action/reno/redundancy-candidate-view");
         }
         return modelAndView ;
     }

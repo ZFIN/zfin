@@ -6,9 +6,10 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  */
 public interface SessionSaveServiceAsync {
-    void saveCuratorUpdate(List curationSessionUpdateList, AsyncCallback async);
+    void saveCuratorUpdate(List<CuratorSessionDTO> curationSessionUpdateList, AsyncCallback async);
 }

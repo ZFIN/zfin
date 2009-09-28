@@ -14,11 +14,6 @@ public class EntrezProtRelation implements Comparable<EntrezProtRelation>{
     private Species organism;
     private String proteinAccNum;
     private Entrez entrezAccession;
-    private ReferenceDatabase humanrefDB;
-    private ReferenceDatabase mouserefDB;
-    private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
-
-
 
     public long getEpID() {
         return epID;
@@ -46,42 +41,12 @@ public class EntrezProtRelation implements Comparable<EntrezProtRelation>{
         this.proteinAccNum = proteinAccNum;
     }
 
-
     public Entrez getEntrezAccession() {
         return entrezAccession;
     }
 
     public void setEntrezAccession(Entrez entrezAccession) {
         this.entrezAccession = entrezAccession;
-    }
-
-
-    public ReferenceDatabase getHumanrefDB() {
-        ForeignDB entrezForeignDB = sequenceRepository.getForeignDBByName("Entrez Gene");
-        ReferenceDatabase humanrefDB =sequenceRepository.getReferenceDatabaseByAlternateKey(
-                entrezForeignDB,
-                ReferenceDatabase.Type.ORTHOLOGUE,
-                ReferenceDatabase.SuperType.ORTHOLOGUE,
-                Species.HUMAN);
-         return humanrefDB;
-    }
-
-    public void setHumanrefDB(ReferenceDatabase humanrefDB) {
-        this.humanrefDB = humanrefDB;
-    }
-
-    public ReferenceDatabase getMouserefDB() {
-        ForeignDB entrezForeignDB = sequenceRepository.getForeignDBByName("Entrez Gene");
-        ReferenceDatabase mouserefDB =sequenceRepository.getReferenceDatabaseByAlternateKey(
-                entrezForeignDB,
-                ReferenceDatabase.Type.ORTHOLOGUE,
-                ReferenceDatabase.SuperType.ORTHOLOGUE,
-                Species.MOUSE);
-         return mouserefDB;
-    }
-
-    public void setMouserefDB(ReferenceDatabase mouserefDB) {
-        this.mouserefDB = mouserefDB;
     }
 
     public int compareTo(EntrezProtRelation o) {

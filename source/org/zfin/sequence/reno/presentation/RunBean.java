@@ -109,6 +109,7 @@ public class RunBean {
    * <code>runCandidates</code> property is null, this
    * method returns false.
    *
+   * @param propertyName Property to sort by
    * @return <code>true</code> if and only if the
    *         <code>runCandidates</code> property is
    *         successfully sorted.

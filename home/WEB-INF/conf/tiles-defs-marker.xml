@@ -9,6 +9,54 @@
         <put name="body" value="/WEB-INF/jsp/marker/expression_summary.jsp"/>
     </definition>
 
+    <definition name="mini-gene.page" page="/WEB-INF/jsp/marker/mini_gene.jsp">
+    </definition>
+
+    <definition name="stemloop-sequence.page" page="/WEB-INF/jsp/marker/stemloop_sequence.jsp">
+    </definition>
+
+    <definition name="transcript-view.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Transcript: " />
+        <put name="body" value="/WEB-INF/jsp/marker/transcript_view.jsp"/>
+    </definition>
+
+    <definition name="related-transcripts.page" page="/WEB-INF/jsp/marker/related_transcripts.jsp">
+    </definition>
+
+    <definition name="transcript-definitions.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Transcript Type and Status Definitions" />
+        <put name="body" value="/WEB-INF/jsp/marker/transcript_definitions.jsp"/>
+    </definition>
+
+    <definition name="transcript-add.page" extends="main_layout">
+        <put name="staticTitle" value="Add Transcript" />
+        <put name="body" value="/WEB-INF/jsp/marker/transcript_add.jsp"/>
+    </definition>
+
+    <definition name="clone-add.page" extends="main_layout">
+        <put name="staticTitle" value="Add Clone" />
+        <put name="body" value="/WEB-INF/jsp/marker/clone_add.jsp"/>
+    </definition>
+
+    <definition name="protein-edit.page" extends="main_layout">
+        <put name="staticTitle" value="Edit Protein" />
+        <put name="body" value="/WEB-INF/jsp/marker/protein_edit.jsp"/>
+    </definition>
+
+    <definition name="clone-view.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Clone: " />
+        <put name="body" value="/WEB-INF/jsp/marker/clone_view.jsp"/>
+    </definition>
+
+    <definition name="clone-edit.page" extends="main_layout">
+        <put name="staticTitle" value="Edit Clone" />
+        <put name="body" value="/WEB-INF/jsp/marker/clone_edit.jsp"/>
+    </definition>
+
+    <definition name="transcript-edit.page" extends="main_layout">
+        <put name="staticTitle" value="Edit Transcript" />
+        <put name="body" value="/WEB-INF/jsp/marker/transcript_edit.jsp"/>
+    </definition>
 
 
 </tiles-definitions>

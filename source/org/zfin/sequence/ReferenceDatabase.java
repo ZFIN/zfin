@@ -3,65 +3,37 @@
  */
 package org.zfin.sequence ;
 
-import org.zfin.orthology.Species;
+import org.zfin.Species;
+import org.zfin.sequence.blast.Database;
 
-public class ReferenceDatabase {
+import java.util.*;
 
-    public enum SuperType{
-        INFERENCE("inference"),
-        ONTOLOGY("ontology"),
-        ORTHOLOGUE("orthologue"),
-        PROTEIN("protein"),
-        PUBLICATION("publication"),
-        SEQUENCE("sequence"),
-        SUMMARY_PAGE("summary page");
-
-        private String value;
-
-        SuperType(String value) {
-            this.value = value;
-        }
-
-        public String toString(){
-            return this.value ; 
-        }
-
-    }
-
-    public enum Type{
-        OTHER("other"),
-        GENOMIC("Genomic"),
-        POLYPEPTIDE("Polypeptide"),
-        SEQUENCE_CLUSTERS("Sequence Clusters"),
-	    //VEGA_TRANSCRIPT("Vega Transcript"),
-        RNA("RNA"),
-        PUBLICATION("publication"),
-        DOMAIN("domain"),
-        ORTHOLOGUE("orthologue"),
-        ANATOMY("anatomy"),
-        CELL_ONTOLOGY("cell ontology"),
-        COMMON_ANATOMY_REFERENCE_ONTOLOGY("common anatomy reference ontology"),
-	    GENE_ONTOLOGY("gene ontology"),
-	    TELEOST_ANATOMY_ONTOLOGY("teleost anatomy ontology") ;
-
-        private String value;
-
-        Type(String value) {
-            this.value = value;
-        }
-
-        public String toString(){
-            return this.value ;
-        }
-    }
+public class ReferenceDatabase implements Comparable<ReferenceDatabase> {
 
     private String zdbID;
     private ForeignDB foreignDB;
-    private Species organism;
-    private Type type;
-    private SuperType superType;
+    private String organism;
+    private ForeignDBDataType foreignDBDataType;
+    private Database primaryBlastDatabase ;
+    private Set<DisplayGroup> displayGroups;
+    private List<Database> relatedBlastDbs;
 
-    
+    public List<Database> getRelatedBlastDbs() {
+        return relatedBlastDbs;
+    }
+
+    public void setRelatedBlastDbs(List<Database> relatedBlastDbs) {
+        this.relatedBlastDbs = relatedBlastDbs;
+    }
+
+    public ForeignDBDataType getForeignDBDataType() {
+        return foreignDBDataType;
+    }
+
+    public void setForeignDBDataType(ForeignDBDataType foreignDBDataType) {
+        this.foreignDBDataType = foreignDBDataType;
+    }
+
     public ForeignDB getForeignDB() {
         return foreignDB;
     }
@@ -86,41 +58,91 @@ public class ReferenceDatabase {
         foreignDB.setDbUrlPrefix(baseURL);
     }
 
-    public Species getOrganism() {
+    public String getOrganism() {
         return organism;
     }
 
-    public void setOrganism(Species organism) {
+    public void setOrganism(String organism) {
         this.organism = organism;
     }
-    public Type getType() {
-        return type;
+
+    public Database getPrimaryBlastDatabase() {
+        return primaryBlastDatabase;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setPrimaryBlastDatabase(Database primaryBlastDatabase) {
+        this.primaryBlastDatabase = primaryBlastDatabase;
     }
 
-    public SuperType getSuperType() {
-        return superType;
+    public Set<DisplayGroup> getDisplayGroups() {
+        return displayGroups;
     }
 
-    public void setSuperType(SuperType superType) {
-        this.superType = superType;
+    public void setDisplayGroups(Set<DisplayGroup> displayGroups) {
+        this.displayGroups = displayGroups;
     }
 
     public String toString(){
-        String returnString = "" ; 
-        returnString += zdbID + " " ; 
-        returnString += organism + " " ; 
-        returnString += type + " " ; 
-        returnString += superType + " " ; 
+        String returnString = "" ;
+        returnString += zdbID + " " ;
+        returnString += organism + " " ;
         if(foreignDB!=null){
-            returnString += foreignDB.getDbName() + " " ; 
+            returnString += foreignDB.getDbName() + " " ;
         }
-        return returnString ; 
+        if(primaryBlastDatabase!=null){
+            returnString += primaryBlastDatabase.toString() ;
+        }
+        return returnString ;
     }
 
+    public int compareTo(ReferenceDatabase otherRefDB) {
+        if (otherRefDB == null) return +1;
+        return foreignDB.getDbName().compareTo(otherRefDB.getForeignDB().getDbName());
+    }
+
+    public boolean isInDisplayGroup(DisplayGroup.GroupName groupName){
+        for(DisplayGroup displayGroup: getDisplayGroups()){
+            if(displayGroup.getGroupName()==groupName){
+                return true ;
+            }
+        }
+        return false ;
+    }
+
+    public String getView(){
+        return foreignDB.getDbName().toString() + " " + foreignDBDataType.getDataType() + " " + foreignDBDataType.getSuperType() ;
+    }
+
+    public List<Database> getOrderedRelatedBlastDB(){
+        List<Database> sortedDatabases = new ArrayList<Database>() ;
+        sortedDatabases.addAll(relatedBlastDbs) ;
+        Collections.sort(sortedDatabases,new Comparator<Database>(){
+            public int compare(Database o1, Database o2) {
+                if(o1.getToolDisplayOrder()!=null && o2.getToolDisplayOrder()!=null){
+                    return o1.getToolDisplayOrder().compareTo(o2.getToolDisplayOrder()) ;
+                }
+                else
+                if(o1.getToolDisplayOrder()==null && o2.getToolDisplayOrder()==null){
+                    return o1.getName().compareTo(o2.getName()) ;
+                }
+                else
+                if(o1.getToolDisplayOrder()==null && o2.getToolDisplayOrder()!=null){
+                    return 1 ;
+                }
+                else{
+                    return -1 ;
+                }
+            }
+        });
+        return sortedDatabases ;
+    }
+
+    public boolean isShortSequence() {
+        String abbrevString = foreignDB.getDbName().toString();
+        return  abbrevString.contains("miRNA") ||
+                abbrevString.contains("miRBASE")
+                ;
+    }
 }
 
 

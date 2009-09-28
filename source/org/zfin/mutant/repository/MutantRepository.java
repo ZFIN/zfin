@@ -69,6 +69,14 @@ public interface MutantRepository extends CachedRepository {
     Genotype getGenotypeByID(String genoteypZbID);
 
     /**
+     * Retrieve a genotype object by handle
+     * @param genotypeHandle handle 
+     * @return genotype
+     */
+    Genotype getGenotypeByHandle(String genotypeHandle);
+
+
+    /**
      * Retrieve the genotype objects that are assoicated to a morpholino.
      * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
      * attached.

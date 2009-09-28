@@ -11,6 +11,15 @@ public class AnatomyItemPresentation extends EntityPresentation {
     private static final String uri = "anatomy/term-detail?anatomyItem.zdbID=";
 
     /**
+     * Generates a link using the anatomy items name.
+     *
+     * @return html for marker link
+     * @param anatomyItem Run
+     */
+    public static String getLink(AnatomyItem anatomyItem) {
+        return getLink(anatomyItem,anatomyItem.getName()) ;
+    }
+    /**
      * Generates a Marker link using the Abbreviation
      *
      * @return html for marker link
@@ -23,5 +32,9 @@ public class AnatomyItemPresentation extends EntityPresentation {
 
     public static String getName(AnatomyItem anatomyItem) {
         return getSpanTag("none", anatomyItem.getName(), anatomyItem.getName());
+    }
+
+    public static String getWikiLink(AnatomyItem anatomyItem) {
+        return getWikiLink("/action/"+uri,anatomyItem.getZdbID(),anatomyItem.getName()) ;
     }
 }

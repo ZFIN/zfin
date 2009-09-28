@@ -36,12 +36,12 @@ import java.util.HashSet;
  * This class tests setting AccessionLink
  */
 public class MapAccessionDbLinkTest {
-    private static Logger logger = Logger.getLogger(MapAccessionDbLinkTest.class);
+    private static final Logger logger = Logger.getLogger(MapAccessionDbLinkTest.class);
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
-    ReferenceDatabase refSeqReferenceDatabase ;
+    private ReferenceDatabase refSeqReferenceDatabase ;
 
     private static String  ACCESSION_NUM1 = "AC:TEST1" ; 
     private static String  ACCESSION_NUM2 = "AC:TEST2" ; 
@@ -76,7 +76,7 @@ public class MapAccessionDbLinkTest {
 
     /**
      * Makes the new candidate, run, accessions, run_candidate, and dblinks.
-     * @note Dblinks have to be saved BEFORE their associated Accession or else
+     * Note: Dblinks have to be saved BEFORE their associated Accession or else
      *        a trigger will reassign the Dblink referenceDatabase to GenBank
      *        and assign the length. 
      * @return String runcandidate zdb_id
@@ -107,15 +107,15 @@ public class MapAccessionDbLinkTest {
 
         // get references DBs
         ReferenceDatabase genBankRefDB =sequenceRepository.getReferenceDatabase(
-                ForeignDB.AvailableName.GENBANK.toString(),
-                ReferenceDatabase.Type.GENOMIC,
-                ReferenceDatabase.SuperType.SEQUENCE,
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 
         refSeqReferenceDatabase =sequenceRepository.getReferenceDatabase(
-                ForeignDB.AvailableName.REFSEQ.toString(),
-                ReferenceDatabase.Type.RNA,
-                ReferenceDatabase.SuperType.SEQUENCE,
+                ForeignDB.AvailableName.REFSEQ,
+                ForeignDBDataType.DataType.RNA,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 
 
@@ -131,6 +131,7 @@ public class MapAccessionDbLinkTest {
 
         MarkerDBLink dblink1 = new MarkerDBLink() ;
         dblink1.setAccessionNumber(ACCESSION_NUM1);
+        dblink1.setAccessionNumberDisplay(ACCESSION_NUM1);
         dblink1.setReferenceDatabase(genBankRefDB);
         dblink1.setMarker( cDNA) ;  
         session.save(dblink1);
@@ -145,6 +146,7 @@ public class MapAccessionDbLinkTest {
 
         MarkerDBLink dblink2 = new MarkerDBLink() ;
         dblink2.setAccessionNumber(ACCESSION_NUM2);
+        dblink2.setAccessionNumberDisplay(ACCESSION_NUM2);
         dblink2.setReferenceDatabase(refSeqReferenceDatabase);
         dblink2.setMarker( gene ) ;  
         session.save(dblink2);
@@ -159,11 +161,13 @@ public class MapAccessionDbLinkTest {
 
         MarkerDBLink dblink3a = new MarkerDBLink() ;
         dblink3a.setAccessionNumber(ACCESSION_NUM3);
+        dblink3a.setAccessionNumberDisplay(ACCESSION_NUM3);
         dblink3a.setReferenceDatabase(genBankRefDB);
         dblink3a.setMarker( cDNA ) ;  
 
         MarkerDBLink dblink3b = new MarkerDBLink() ;
         dblink3b.setAccessionNumber(ACCESSION_NUM3);
+        dblink3b.setAccessionNumberDisplay(ACCESSION_NUM3);
         dblink3b.setReferenceDatabase(genBankRefDB);
         dblink3b.setMarker( gene) ;  
 
@@ -180,6 +184,7 @@ public class MapAccessionDbLinkTest {
 
         MarkerDBLink dblink4 = new MarkerDBLink() ;
         dblink4.setAccessionNumber(ACCESSION_NUM4);
+        dblink4.setAccessionNumberDisplay(ACCESSION_NUM4);
         dblink4.setReferenceDatabase(refSeqReferenceDatabase);
         dblink4.setMarker( gene) ;  
 
@@ -196,6 +201,7 @@ public class MapAccessionDbLinkTest {
 
         MarkerDBLink dblink5 = new MarkerDBLink() ;
         dblink5.setAccessionNumber(ACCESSION_NUM5);
+        dblink5.setAccessionNumberDisplay(ACCESSION_NUM5);
         dblink5.setReferenceDatabase(refSeqReferenceDatabase);
         dblink5.setMarker( gene) ;  
 
@@ -209,7 +215,7 @@ public class MapAccessionDbLinkTest {
         run.setNomenclaturePublication(publication);
         run.setName("TestRedunRun");
         run.setProgram("BLASTN");
-        run.setBlastDatabase("zfin_cdna");
+        run.setBlastDatabase("zfin_cdna_");
         Date date = new Date();
         logger.debug("date: "+date);
         run.setDate(date);
@@ -464,18 +470,16 @@ public class MapAccessionDbLinkTest {
 
 
         // get references DBs
-        ForeignDB genBankForeignDB = sequenceRepository.getForeignDBByName("GenBank");
-        ReferenceDatabase genBankRefDB =sequenceRepository.getReferenceDatabaseByAlternateKey(
-                genBankForeignDB,
-                ReferenceDatabase.Type.GENOMIC,
-                ReferenceDatabase.SuperType.SEQUENCE,
+        ReferenceDatabase genBankRefDB =sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 
-        ForeignDB refSeqForeignDB = sequenceRepository.getForeignDBByName("RefSeq");
-        refSeqReferenceDatabase =sequenceRepository.getReferenceDatabaseByAlternateKey(
-                refSeqForeignDB,
-                ReferenceDatabase.Type.GENOMIC,
-                ReferenceDatabase.SuperType.SEQUENCE,
+        refSeqReferenceDatabase =sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC,
+                ForeignDBDataType.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 
         session.flush();
@@ -518,10 +522,6 @@ public class MapAccessionDbLinkTest {
         evidences2.add(evidenceThree);
         orthology2.setEvidence(evidences2);
         session.save(orthology2);
-
-        Set<Orthologue> orthologs = new HashSet<Orthologue>();
-        orthologs.add(orthology1);
-        orthologs.add(orthology2);
 
         // should find the cdna marker for accession1
         Accession accession1 = new Accession();

@@ -6,11 +6,12 @@
         seqt_acc_len=   $ dblink_length
         seqt_acc_type=  $ data_type
         seqt_acc_db =   $ db_name
+        seqt_fdbc_zdb_id =  $ fdbc_zdb_id
 
 	OUTPUT: js pulldown of links (or a single button) to to various tools, or nothing.
 
    CALLED AS:
-    <?MISQL SQL="select WebExplode(object,'seqt_acc=$ acc_num&seqt_acc_len=$ dblink_length&seqt_acc_type=$ data_type&seqt_acc_db=$ db_name')
+    <?MISQL SQL="select WebExplode(object,'seqt_acc=$ acc_num&seqt_acc_len=$ dblink_length&seqt_acc_type=$ data_type&seqt_acc_db=$ db_name&seqt_fdbc_zdb_id=$fdbc_zdb_id')
                  from webPages where ID='aa-sequence_tools.apg';">$ 1<?/MISQL>
  
     CALLED FROM: markerview.apg and sequence.apg
@@ -23,7 +24,7 @@ ENSEMBL    50,000 bp for SSAHA ,200,000 bp for BLASTN & TBLASTX
 
 
 
-SQL: select WebExplode(object,'seqt_acc=BM735913&seqt_acc_len=411&seqt_acc_type=RNA&seqt_acc_db=GenBank') from webPages where ID='aa-sequence_tools.apg';
+SQL: select WebExplode(object,'seqt_acc=BM735913&seqt_acc_len=411&seqt_acc_type=RNA&seqt_acc_db=GenBank&seqt_fdbc_zdb_id=ZDB-FDBC-040412-37') from webPages where ID='aa-sequence_tools.apg';
 ###############################################################################
 <?/MICOMMENT>
 
@@ -54,96 +55,104 @@ function jump(form_select){
 
 <?MICOMMENT> ===== Prepare Variables ======== <?/MICOMMENT>    
 
-<?MIVAR NAME=zfin_url_blastn>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg&PROGRAM=blastn&SEQ_TYPE=nt&SEQ_ID=<?/MIVAR>
-<?MIVAR NAME=zfin_url_blastp>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg&PROGRAM=blastp&DATALIB=sptr_zf&SEQ_TYPE=pt&SEQ_ID=<?/MIVAR>
-<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'ENSEMBL';"><?MIVAR NAME=fdb_url_ensembl>$1<?/MIVAR><?/MISQL>
-<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'PBLAST';"><?MIVAR NAME=fdb_url_pblast>$1<?/MIVAR><?/MISQL>
-<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLASTP';"><?MIVAR NAME=fdb_url_blastp>$1<?/MIVAR><?/MISQL>
-<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAT';"><?MIVAR NAME=fdb_url_blat>$1<?/MIVAR><?/MISQL>
-<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'MEGA BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
-<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
-            
-<?MICOMMENT> =====  Polypeptide  ======== <?/MICOMMENT>   
-<?MIBLOCK COND=$(EQ,$seqt_acc_type,Polypeptide)>
-    
-    <FORM NAME="prot_seq_tool" method="get"><DIV>
-       <SELECT NAME="select_prot" onChange="return jump(this);">
-          <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
-	  
-          <?MIBLOCK COND=$(EQ,$seqt_acc_db,GenPept)>
-            <?MIVAR>
-	    <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastp,$seqt_acc),&DATALIB=refseq_zf_aa)>ZFIN BLAST</OPTION>
-            <OPTION VALUE=$(CONCAT,$fdb_url_blastp,$seqt_acc)>NCBI BLAST</OPTION>
-            <OPTION VALUE=$(CONCAT,$fdb_url_pblast,$seqt_acc)> SIB BLAST</OPTION>
-	    <?/MIVAR>
-	  <?MIELSE COND=$(EQ,$seqt_acc_db,UniProtKB)>
-	    <?MIVAR>
-	    <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastp,$seqt_acc),&DATALIB=sptr_zf)>ZFIN BLAST</OPTION>
-	    <OPTION VALUE=$(CONCAT,$fdb_url_pblast,$seqt_acc)> SIB BLAST</OPTION>
-            <OPTION VALUE=$(CONCAT,$(CONCAT,$fdb_url_ensembl,$seqt_acc),&query=peptide&database=peptide)>Ensembl</OPTION>
-	    <?/MIVAR>	
-	  <?MIELSE COND=$(EQ,$seqt_acc_db,RefSeq)>
-	    <?MIVAR>
-	    <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastp,$seqt_acc),&DATALIB=refseq_zf_aa)>ZFIN BLAST</OPTION>	
-            <OPTION VALUE=$(CONCAT,$fdb_url_blastp,$seqt_acc)>NCBI BLAST</OPTION>
-            <OPTION VALUE=$(CONCAT,$(CONCAT,$fdb_url_ensembl,$seqt_acc),&query=peptide&database=peptide)>Ensembl</OPTION>
-	    <OPTION VALUE=$(CONCAT,$fdb_url_blat,$seqt_acc)>UCSC BLAT</OPTION>
-	    <?/MIVAR>
-          <?/MIBLOCK>
-        
-       </SELECT><DIV>
-   </FORM>
+ <?MISQL SQL="
+ select bdb.blastdb_path, bdb.blastdb_tool_display_name,bdb.blastdb_abbrev,bdb.blastdb_type,bdb.blastdb_zdb_id, fdbcont_zdb_id, blastdb_tool_display_order
+from 
+foreign_db fdb,
+foreign_db_contains fdbc,
+blast_database bdb,
+ int_fdbcont_analysis_tool ifat
+where
+fdb.fdb_db_pk_id=fdbc.fdbcont_fdb_db_id
+and
+fdbc.fdbcont_zdb_id=ifat.ifat_fdbcont_zdb_id
+and
+bdb.blastdb_zdb_id=ifat.ifat_blastdb_zdb_id
+and
+fdbc.fdbcont_zdb_id='$seqt_fdbc_zdb_id'
+order by bdb.blastdb_tool_display_order 
+ ;">
+   <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
+<FORM>
+ <SELECT onChange="return jump(this);">
+  <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
+  <?/MIVAR>
 
-<?MICOMMENT> =====  cDNA/RNA  ======== <?/MICOMMENT>       
-<?MIELSE COND=$(AND,$(EQ,$seqt_acc_type,RNA),$(OR,$(EQ,$seqt_acc_db,GenBank),$(EQ,$seqt_acc_db,RefSeq)))>
-    <FORM NAME="rna_seq_tool" method="get" ><DIV>
-      <SELECT NAME="select_rna" onChange="return jump(this);" >
-        <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
-        <?MIBLOCK COND="$(>,$seqt_acc_len,25000)">
-           
-            <?MIVAR>
-            <OPTION VALUE=$(CONCAT,$fdb_url_blast,$seqt_acc)>Mega BLAST
-            <OPTION VALUE=$(CONCAT,$fdb_url_ensembl,$seqt_acc)>Ensembl
-            <?/MIVAR>
-        <?MIELSE COND="$(<,$seqt_acc_len,25001)">
-           
-            <?MIVAR>
-	    <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastn,$seqt_acc),&DATALIB=zfin_cdna_seq)>ZFIN BLAST</OPTION>
-            <OPTION VALUE=$(CONCAT,$fdb_url_blast,$seqt_acc)>NCBI BLAST</OPTION>
-            <OPTION VALUE=$(CONCAT,$fdb_url_ensembl,$seqt_acc)>Ensembl</OPTION>
-            <OPTION VALUE=$(CONCAT,$fdb_url_blat,$seqt_acc)>UCSC BLAT</OPTION>
-            <?/MIVAR>
-        <?/MIBLOCK>
-    </SELECT><DIV>
-    </FORM>
+  <?MIBLOCK COND="$(EQ,$1,)"> 
+      <?MIBLOCK COND="$(EQ,$4,nucleotide)">
+          <?MIVAR NAME="seq_type">nt<?/MIVAR>
+          <?MIVAR NAME="program">blastn<?/MIVAR>
+          <?MIVAR NAME="datalib">RNASequences<?/MIVAR>
+      <?MIELSE>
+          <?MIVAR NAME="seq_type">pt<?/MIVAR>
+          <?MIVAR NAME="program">blastp<?/MIVAR>
+          <?MIVAR NAME="datalib">zfin_all_aa<?/MIVAR>
+      <?/MIBLOCK>
 
-<?MICOMMENT> =====  Genomic  ======== <?/MICOMMENT>    
-<?MIELSE COND=$(AND,$(EC,$seqt_acc_type,Genomic),$(OR,$(EC,$seqt_acc_db,GenBank),$(EC,$seqt_acc_db,RefSeq)))>
-    <?MIBLOCK COND="$(>,$seqt_acc_len,200000)">
-        
-      <?MIVAR><input type=button value="- MegaBLAST -" onClick="window.open('$(CONCAT,$fdb_url_blast,$seqt_acc)','SequenceTools');"><?/MIVAR>
+      <?MIVAR NAME="$blast_url">/action/blast/blast?sequenceID=$seqt_acc&program=$program&sequenceType=$seq_type&queryType=SEQUENCE_ID&dataLibraryString=$datalib<?/MIVAR>
 
-    <?MIELSE>
-            
-      <FORM NAME="genomic_seq_tool"><DIV>
-        <SELECT NAME="select_genomic" onChange="return jump(this);" >
-          <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
+  <?MIELSE>
+      <?MIVAR NAME="$blast_url">$1$seqt_acc<?/MIVAR>
+  <?/MIBLOCK>
 
-	    <?MIBLOCK COND="$(>,$seqt_acc_len,25000)">
-              <?MIVAR>
-              <OPTION VALUE=$(CONCAT,$fdb_url_blast,$seqt_acc)>MegaBLAST</OPTION>
-              <OPTION VALUE=$(CONCAT,$fdb_url_ensembl,$seqt_acc)>Ensembl</OPTION>
-              <?/MIVAR>
-	    <?MIELSE COND="$(<,$seqt_acc_len,25001)">
-              <?MIVAR>
-	       <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastn,$seqt_acc),&DATALIB=zfin_gb_seq)>ZFIN BLAST</OPTION>	
-              <OPTION VALUE=$(CONCAT,$fdb_url_blast,$seqt_acc)>NCBI BLAST</OPTION>
-              <OPTION VALUE=$(CONCAT,$fdb_url_ensembl,$seqt_acc)>Ensembl</OPTION>
-              <?/MIVAR>
-            <?/MIBLOCK>
-        </SELECT><DIV>
-      </FORM>
 
-    <?/MIBLOCK>
-<?/MIBLOCK>
+  <?MICOMMENT>
+  Some accessions require that the sequence be sent to the remote database.
+  including: ZFINPROT & MI (stem loop)
+  <?/MICOMMENT>
+  <?MIVAR NAME="blast_url" COND="$(OR,$(EQ,$(SUBSTR,$seqt_acc,1,8),ZFINPROT),$(EQ,$(SUBSTR,$seqt_acc,1,2),MI),$(EQ,$(SUBSTR,$seqt_acc,1,8),ZFINNUCL))">/action/blast/external-blast?accession=$seqt_acc&blastDB=$5&refDB=$6<?/MIVAR>
+
+
+  <?MICOMMENT>
+  From fogbugz 4244.
+  For RNA seqs:
+
+> 25000 we should see MegaBLAST and Ensembl
+< 25001 we should see ZFIN BLAST, NCBI BLAST, Ensembl, UCSC BLAT
+
+For Genomic seqs:
+
+> 200000 we should see MegaBLAST only
+< 200000 and > 25000 MegaBLAST and Ensembl only
+< 200000 and < 25000 ZFIN BLAST, NCBI BLAST, Ensembl
+  <?/MICOMMENT>
+  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,RNA) ,$(<,$seqt_acc_len,25001)) ">
+      <?MIVAR COND="$(NE,$2,MegaBLAST)">
+    <OPTION VALUE="$blast_url"> $2 </OPTION>
+      <?/MIVAR>
+  <?/MIBLOCK>
+  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,RNA) ,$(>,$seqt_acc_len,25000)) ">
+      <?MIVAR COND="$(OR,$(EQ,$2,MegaBLAST), $(EQ,$2,Ensembl))">
+    <OPTION VALUE="$blast_url"> $2 </OPTION>
+      <?/MIVAR>
+  <?/MIBLOCK>
+  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,Genomic) ,$(<,$seqt_acc_len,200000),$(>,$seqt_acc_len,25000)) ">
+      <?MIVAR COND="$(OR ,$(EQ,$2,Ensembl) ,$(EQ,$2,MegaBLAST)) ">
+    <OPTION VALUE="$blast_url"> $2</OPTION>
+      <?/MIVAR>
+  <?/MIBLOCK>
+  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,Genomic) ,$(<,$seqt_acc_len,25001)) ">
+      <?MIVAR COND="$(AND,$(NE,$2,MegaBLAST) ,$(<,$seqt_acc_len,25001)) ">
+    <OPTION VALUE="$blast_url"> $2</OPTION>
+      <?/MIVAR>
+  <?/MIBLOCK>
+  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,Genomic) ,$(>,$seqt_acc_len,200000) ,$(EQ,$2,MegaBLAST)) ">
+      <?MIVAR>
+    <OPTION VALUE="$blast_url"> $2</OPTION>
+      <?/MIVAR>
+  <?/MIBLOCK>
+  <?MIBLOCK COND="$(AND ,$(NE,$seqt_acc_type,Genomic) ,$(NE,$seqt_acc_type,RNA)) ">
+  <?MIVAR>
+    <OPTION VALUE="$blast_url"> $2</OPTION>
+  <?/MIVAR>
+  <?/MIBLOCK>
+
+
+ <?/MISQL>
+
+   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+ </SELECT>
+</FORM>
+   <?/MIVAR>
+
 

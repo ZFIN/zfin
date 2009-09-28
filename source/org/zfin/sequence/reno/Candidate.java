@@ -9,7 +9,6 @@ import org.zfin.marker.MarkerType;
 import java.util.Date;
 
 /**
- * Todo: Add Documentation
  */
 public class Candidate {
     private String zdbID;
@@ -37,32 +36,8 @@ public class Candidate {
         else{
             return "no suggested name see FB:2070" ; 
         }
-
-
-
-
-//        else {
-//            return identifiedMarker.getAbbreviation();
-//        }
     }
 
-    /**
-     * Candidate length, comes from it's accession object
-     * @return length of candidate sequence
-     */
-  /**  public int getLength() {
-        return accession.getLength();
-    }
-      */
-
-    /**
-     * Candidate url, comes from it's accession object
-     * @return html link to candidate
-     */
-    /**public String getURL() {
-        return accession.getURL();
-    }
-     * @return*/
 
     public String getZdbID() {
         return zdbID;
@@ -71,14 +46,6 @@ public class Candidate {
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
     }
-
-    /**public Accession getAccession() {
-        return accession;
-    }    */
-
-    /**public void setAccession(Accession accession) {
-        this.accession = accession;
-    }*/
 
     public String getNote() {
         return note;
@@ -151,17 +118,17 @@ public class Candidate {
     public String toString(){
 		String newline = System.getProperty("line.separator");
         StringBuilder sb = new StringBuilder();
-        sb.append("zdbID: " + zdbID);
+        sb.append("zdbID: ").append(zdbID);
         sb.append(newline);
-        sb.append("Suggested name: " + suggestedName);
+        sb.append("Suggested name: ").append(suggestedName);
         sb.append(newline);
-        sb.append("Marker type: " + markerType);
+        sb.append("Marker type: ").append(markerType);
         sb.append(newline);
-        sb.append("Date last finished: " + lastFinishedDate);
+        sb.append("Date last finished: ").append(lastFinishedDate);
         sb.append(newline);
-        sb.append("Problem: " + problem);
+        sb.append("Problem: ").append(problem);
         sb.append(newline);
-        sb.append("Note: " + note);
+        sb.append("Note: ").append(note);
         return sb.toString();
     }
 }

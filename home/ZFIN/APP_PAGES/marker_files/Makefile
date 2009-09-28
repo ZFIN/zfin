@@ -19,20 +19,20 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/marker_files
 
 GENERICS = chromoscripts.apg crossview.apg clonebox.apg do-markerupdate.apg \
-	make_map.apg mapframe.apg markerselect.apg markerupdate.apg curatornote.apg dnote_editor.apg dnote_new.apg\
+	make_map.apg mapframe.apg markerselect.apg markerupdate.apg curatornote.apg dnote_editor.apg\
 	markerview.apg orthoedit.apg ortholist.apg refcrosslist.apg \
 	scoresframe.apg scoresview.apg mappingdetail.apg msegselect.apg \
 	markergoview.apg markergoentry.apg gomodify.apg markergovalidate.apg \
-        do-markergoupdate.apg do-goedit.apg gonotes.apg goinferenceentry.apg \
+        do-markergoupdate.apg do-goedit.apg gonotes.apg \
         nomenview.apg nomeneditor.apg orthoview.apg marker_history_correction.apg \
 	newmrkrselect.apg searchform.apg sequence.apg geneprddescription.apg \
-	attrib_check.apg do-oevdispupdate.apg showscores.apg sequence_tools.apg \
-	markerrelationship.apg cloneorderlink.apg sequence_disclaimer.apg sequence_data_entry.apg \
+	attrib_check.apg  sequence_tools.apg \
+	markerrelationship.apg cloneorderlink.apg  sequence_data_entry.apg \
 	orthoviewbrief.apg orthoviewdetailed.apg markerrel_onetype.apg mrkrgenolist.apg wtanatlist.apg \
-	markerview_placeholder_note.apg snpview.apg snp_note.apg snpids.apg snpdetails.apg snp_batch.apg
+	 snpview.apg  snpdetails.apg  \
+	markerview_transcript_details.apg
 
-
-#STATICS = attrib_check.apg do-oevdispupdate.apg showscores.apg sequence_tools.apg\
+STATICS =  dnote_new.apg goinferenceentry.apg do-oevdispupdate.apg showscores.apg sequence_disclaimer.apg markerview_placeholder_note.apg snp_note.apg snpids.apg snp_batch.apg
 
 
 

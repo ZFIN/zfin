@@ -13,6 +13,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Order;
 import org.zfin.ExternalNote;
+import org.zfin.publication.Publication;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.framework.HibernateUtil;
@@ -20,7 +21,6 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
-import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.people.Person;
 
 import java.sql.Connection;
@@ -67,6 +67,21 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return query.executeUpdate();
     }
 
+    public int deleteRecordAttributionsForData(String dataZdbID) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:dataZdbID");
+        query.setParameter("dataZdbID", dataZdbID);
+        return query.executeUpdate();
+    }
+
+    public int deleteRecordAttribution(String dataZdbID, String sourceZdbId) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:dataZdbID and ra.sourceZdbID = :sourceZdbID");
+        query.setParameter("dataZdbID", dataZdbID);
+        query.setParameter("sourceZdbID", sourceZdbId);
+        return query.executeUpdate();
+    }
+
     public ActiveData getActiveData(String zdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(ActiveData.class);
@@ -76,16 +91,40 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
 
     //todo: add a getter here, or do some mapping to objects so that we can test the insert in a routine way
-    public void insertRecordAttribution(String dataZdbID, String sourceZdbID) {
+    public RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID) {
         Session session = HibernateUtil.currentSession();
+
+        // need to return null if no valid publication string
+        if( null==session.get(Publication.class,sourceZdbID)){
+            logger.warn("try into insert record attribution with bad pub: " + sourceZdbID);
+            return null ;
+        }
 
         RecordAttribution ra = new RecordAttribution();
         ra.setDataZdbID(dataZdbID);
         ra.setSourceZdbID(sourceZdbID);
-        ra.setSourceType(RecordAttribution.SourceType.STANDARD.toString());
+        ra.setSourceType(RecordAttribution.SourceType.STANDARD);
 
         session.save(ra);
-//        session.flush();
+        return ra ;
+    }
+
+    public PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID) {
+        return insertPublicAttribution(dataZdbID,sourceZdbID,RecordAttribution.SourceType.STANDARD) ;
+    }
+
+    public PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType) {
+        Session session = HibernateUtil.currentSession();
+
+        PublicationAttribution publicationAttribution = new PublicationAttribution();
+        publicationAttribution.setDataZdbID(dataZdbID);
+        publicationAttribution.setSourceZdbID(sourceZdbID);
+        Publication publication = (Publication) session.get(Publication.class,sourceZdbID) ;
+        publicationAttribution.setPublication(publication);
+        publicationAttribution.setSourceType(sourceType);
+
+        session.save(publicationAttribution);
+        return publicationAttribution ;
     }
 
     //retrieve a dataNote by its zdb_id
@@ -143,6 +182,23 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Session session = HibernateUtil.currentSession();
         return (PublicationAttribution) session.get(PublicationAttribution.class, attribution);
     }
+
+    public List<PublicationAttribution> getPublicationAttributions(String dblinkZdbID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(PublicationAttribution.class);
+        criteria.add(Restrictions.eq("dataZdbID", dblinkZdbID));
+        return criteria.list();
+    }
+
+
+    public PublicationAttribution getStandardPublicationAttribution(String dataZdbID,String pubZdbID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(PublicationAttribution.class) ;
+        criteria.add(Restrictions.eq("dataZdbID",dataZdbID)) ;
+        criteria.add(Restrictions.eq("sourceZdbID",pubZdbID)) ;
+        criteria.add(Restrictions.eq("sourceType", RecordAttribution.SourceType.STANDARD.toString())) ;
+        return (PublicationAttribution) criteria.uniqueResult() ;
+    }
 //
 //    public RecordAttribution getRecordAttribution(String zdbID){
 //        Session session = HibernateUtil.currentSession();
@@ -171,15 +227,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         session.save(up);
     }
 
-    public void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments) {
-        Person submitter = Person.getCurrentSecurityUser();
+    public void insertUpdatesTable(String recID, String fieldName, String comments, String newValue,String oldValue) {
         Session session = HibernateUtil.currentSession();
 
         Updates update = new Updates();
         update.setRecID(recID);
         update.setFieldName(fieldName);
-        update.setSubmitterID(submitter.getZdbID());
-        update.setSubmitterName(submitter.getFullName());
+//        update.setSubmitterID(submitter.getZdbID());
+//        update.setSubmitterName(submitter.getFullName());
         update.setComments(comments);
         update.setNewValue(newValue);
         update.setOldValue(oldValue);
@@ -193,33 +248,28 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Updates up = new Updates();
         up.setRecID(marker.getZdbID());
         up.setFieldName(fieldName);
-        up.setSubmitterID(person.getZdbID());
-        up.setSubmitterName(person.getUsername());
+        if(person!=null){
+            up.setSubmitterID(person.getZdbID());
+            up.setSubmitterName(person.getUsername());
+        }
         up.setComments(comments);
         up.setNewValue(newValue);
         up.setOldValue(oldValue);
         up.setWhenUpdated(new Date());
         session.save(up);
-        String newline = System.getProperty("line.separator");
-        Connection connection = session.connection();
-        StringBuilder sb = new StringBuilder("CONNECTION: ");
-        sb.append(newline);
-        sb.append("hashcode: ");
-        sb.append(connection.hashCode());
-        sb.append(newline);
-        sb.append(connection);
-        sb.append(newline);
-        try {
-            sb.append(connection.getAutoCommit());
-            sb.append(newline);
-            SQLWarning warnings = connection.getWarnings();
-            if (warnings != null)
-                sb.append(warnings.getMessage());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        logger.info(sb);
         session.flush();
+    }
+
+    /**
+     * todo: how is the "old value set"
+     * @param marker
+     * @param fieldName
+     * @param comments
+     * @param person
+     */
+    public void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person) {
+        insertUpdatesTable(marker,fieldName,comments,person,marker.getAbbreviation(),"");
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public int deleteRecordAttributionForPub(String zdbID) {
@@ -235,18 +285,26 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         for (String zdbID : dataZdbIDs) {
             logger.debug("zdbID: " + zdbID);
         }
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(RecordAttribution.class);
-        criteria.add(Restrictions.in("dataZdbID", dataZdbIDs));
-        List<RecordAttribution> recordAttributions = criteria.list();
 
-        for (RecordAttribution recordAttribution : recordAttributions) {
-            logger.info("deleting recordAttribution: " + recordAttribution);
-            session.delete(recordAttribution);
-            logger.info("DELETED recordAttribution: " + recordAttribution);
-        }
-        session.flush();
-        return recordAttributions.size();
+
+        Session session = HibernateUtil.currentSession();
+        String hql ="" +
+                "delete from RecordAttribution ra where ra.dataZdbID in (:dataZdbIDs)" ;
+        Query query = session.createQuery(hql) ;
+        query.setParameterList("dataZdbIDs",dataZdbIDs);
+        return query.executeUpdate() ;
+
+//        Criteria criteria = session.createCriteria(RecordAttribution.class);
+//        criteria.add(Restrictions.in("dataZdbID", dataZdbIDs));
+//        List<RecordAttribution> recordAttributions = criteria.list();
+//
+//        for (RecordAttribution recordAttribution : recordAttributions) {
+//            logger.info("deleting recordAttribution: " + recordAttribution);
+//            session.delete(recordAttribution);
+//            logger.info("DELETED recordAttribution: " + recordAttribution);
+//        }
+//        session.flush();
+//        return recordAttributions.size();
 
 //        Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID in (:dataZdbIDs)");
 //        query.setParameterList("dataZdbIDs",dataZdbIDs) ;
@@ -303,7 +361,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Criteria criteria = session.createCriteria(AllMarkerNamesFastSearch.class);
         criteria.add(Restrictions.like("nameLowerCase", "%" + string + "%"));
         Criteria marker = criteria.createCriteria("marker");
-        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         marker.add(Restrictions.eq("markerType", type));
         return (List<AllMarkerNamesFastSearch>) marker.list();
     }
@@ -368,6 +425,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         crit.addOrder(Order.asc("displayOrder"));
         return (List<ExpressionAssay>) crit.list();
     }
+
 }
 
 

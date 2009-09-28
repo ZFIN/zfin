@@ -8,7 +8,7 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# This makefile is a little complicated.  It needs to be in order to 
+# This makefile is a little complicated.  It needs to be in order to
 # avoid hanging the database.  Here's what it does:
 # For each altered function:
 #  1. Create a local copy of the function's library.
@@ -20,11 +20,11 @@
 # if you copy a new library over an old while informix is using a function
 # in that library, very bad things will happen.
 #
-# To add a new function, or multiple functions in a single file, to this 
+# To add a new function, or multiple functions in a single file, to this
 # directory you will need to do at least the following.
 #
 #  o put source code in a single .c file.  Header files are OK, but if you
-#    need to put code in multiple .c files then you shouldn't use this 
+#    need to put code in multiple .c files then you shouldn't use this
 #    makefile.
 #  o Create drop_xxxx.sql and create_xxxx.sql files to create and drop the
 #    new functions in the database.  "xxxx" in the filenames MUST be the
@@ -38,13 +38,13 @@
 TOP = ../../..
 include $(TOP)/make.include
 
-# Note that sibling directories to this one will have the same target 
+# Note that sibling directories to this one will have the same target
 # directory.
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions
 
 SRCS = get_id.c get_obj_type.c zero_pad.c get_time.c scrub_char.c \
-	zero_pad_int.c
+	zero_pad_int.c xdbget.c xdbput.c
 OBJS = $(foreach SRC, $(SRCS), $(patsubst %.c,%.so,$(SRC)))
 TARGETDIR_OBJS = $(foreach OBJ, $(OBJS), $(patsubst %,$(TARGETDIR)/%,$(OBJ)))
 ENDEMICTARGETS_POSTTARGETDIR = $(TARGETDIR_OBJS)
@@ -55,7 +55,7 @@ ENDEMICTARGETS_CLEAN = $(OBJS)
 CC= /local/apps/Lang/SUNWspro/bin/cc
 
 INCDIR = $(INFORMIXDIR)/incl/public
-LIBDIR = $(INFORMIXDIR)/lib 
+LIBDIR = $(INFORMIXDIR)/lib
 
 # Use xcode because we are creating an so.  See cc man page for details.
 

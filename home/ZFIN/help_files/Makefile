@@ -20,8 +20,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/help_files
 
-GENERICS = mut_intro.html label.html
-STATICS  = fishselecthelp.html help-fish.html \
+GENERICS = label.html
+STATICS  = fishselecthelp.html mut_intro.html help-fish.html \
 	   generichelp.html mapperselecthelp.html international_characters.html \
 	   sequence_tools_help.html
 

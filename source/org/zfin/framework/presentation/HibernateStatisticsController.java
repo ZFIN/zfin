@@ -18,9 +18,19 @@ public class HibernateStatisticsController extends AbstractCommandController {
         setCommandClass(HibernateStatisticsBean.class);
     }
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-
         HibernateStatisticsBean form = (HibernateStatisticsBean) command;
-        Statistics stats =  HibernateUtil.currentSession().getSessionFactory().getStatistics();
+
+        Statistics stats =  HibernateUtil.getSessionFactory().getStatistics();
+
+        String reset =  request.getParameter("reset") ;
+        if(reset!=null){
+            if(reset.equals("true")){
+                stats.clear();
+                return new ModelAndView("redirect:/action/dev-tools/view-hibernate-statistics");
+            }
+        }
+
+        stats.setStatisticsEnabled(true);
         form.setStatistics(stats);
         return new ModelAndView("hibernate-statistics-view", LookupStrings.FORM_BEAN, form);
     }

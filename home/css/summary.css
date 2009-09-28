@@ -6,13 +6,15 @@ table.summary {
   border-collapse: collapse;
   /* border: 1px solid #ccc; */ /* this looks good, but maybe too drastic */
   background: #eee;
+  clear: both;
 }
 
 div.summary {
-    margin-top: 1em;    
+    margin-top: 1em;
+    clear: both;
 }
 
-table.summary caption, h3.summary, span.summaryTitle {
+table.summary caption, h3.summary, span.summaryTitle, div.summaryTitle {
   font-weight: bold;
   text-align: left;
 /*  padding-left: .2em;*/
@@ -27,11 +29,29 @@ table.summary th {
   padding: .2em;
 }
 
+table.summary th.length {
+  text-align: right;
+  width: 15%;  
+}
+
+table.summary th.analysis {
+  text-align: center;
+  width: 20%;
+}
+
 table.summary td {
   /* background: #eee; */
   padding: .2em;
   text-align: left;
   vertical-align: top;
+}
+
+table.summary td.length {
+  text-align: right;
+}
+
+table.summary td.analysis {
+  text-align: center;
 }
 
 table.summary td.showall {

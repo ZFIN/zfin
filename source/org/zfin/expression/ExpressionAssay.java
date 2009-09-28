@@ -9,7 +9,7 @@ public class ExpressionAssay implements Comparable<ExpressionAssay> {
     private String comments;
     private int displayOrder;
     private String abbreviation;
-
+    private boolean immunogen;
 
     public String getName() {
         return name;
@@ -43,6 +43,13 @@ public class ExpressionAssay implements Comparable<ExpressionAssay> {
         this.abbreviation = abbreviation;
     }
 
+    public boolean isImmunogen() {
+        return immunogen;
+    }
+
+    public void setImmunogen(boolean immunogen) {
+        this.immunogen = immunogen;
+    }
 
     public int compareTo(ExpressionAssay anotherAssay) {
         if (anotherAssay == null)

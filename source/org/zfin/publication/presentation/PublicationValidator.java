@@ -43,7 +43,7 @@ public class PublicationValidator {
         publicationID = publicationID.trim();
         if (!publicationID.startsWith(ZDB_PUB)) {
             if (!isValidTimeStamp(publicationID)) {
-                errors.rejectValue(field, "code", publicationID + " is not an valid publication zdb id.");
+                errors.rejectValue(field, "code", publicationID + " is not a valid publication zdb id.");
                 return;
             } else
             publicationID = ZDB_PUB + publicationID;
@@ -51,16 +51,17 @@ public class PublicationValidator {
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         if (pr.getPublication(publicationID) == null) {
             LOG.debug("----------Failed zdb id validation --");
-            errors.rejectValue(field, "code", publicationID + " is not an publication zdb id in ZFIN.");
+            errors.rejectValue(field, "code", publicationID + " is not a publication zdb id in ZFIN.");
         }
     }
 
     private static boolean isValidTimeStamp(String publicationID) {
-        return Pattern.matches(ZDB_ID_TIME_STAMP_PATTERN, publicationID);
+        return Pattern.matches(ZDB_ID_TIME_STAMP_PATTERN, publicationID.trim());
     }
 
     /**
-     * Checks if the zdb ID
+     * Checks if the zdb ID is a short version of a full zdbID, i.e. a time stamp pattern.
+     * leading and trailing white spaces are trimmed off.
      *
      * @param pubZdbID pub zdb ID
      * @return boolean
@@ -78,6 +79,7 @@ public class PublicationValidator {
      * @return completed string or unaltered string
      */
     public static String completeZdbID(String pubZdbID) {
+        pubZdbID = pubZdbID.trim();
         if (pubZdbID == null)
             return null;
         if (!pubZdbID.startsWith(ZDB_PUB) && isShortVersion(pubZdbID))

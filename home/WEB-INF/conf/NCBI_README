@@ -1,0 +1,8 @@
+
+NCBI*.dtd files are from:
+http://www.ncbi.nlm.nih.gov/dtd/
+
+Both NCBI and wu-blast xml output validates to this dtd.
+
+We added some tickets with XML.
+

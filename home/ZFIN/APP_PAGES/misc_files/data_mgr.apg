@@ -73,7 +73,26 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
 
 <?MIVAR COND="$(AND,$(NC,$rtype,person),$(NXST,$attribtype),$(NC,$rtype,go))">
+
+<?MISQL SQL="
+select * from 
+clone c
+where 
+c.clone_mrkr_zdb_id='$OID';
+">
+<?MIVAR NAME="dmgr_isclone">true<?/MIVAR>
+<?/MISQL>
+
+<?MIBLOCK COND="$(XST,$dmgr_isclone)">
+<?MIVAR>
+  <A HREF="/action/marker/marker-edit?zdbID=$OID"><font size=-1 color=red> Add/Update this Record </font></A>
+  <?/MIVAR>
+
+<?MIELSE>
+<?MIVAR>
   <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)$(IF,$(XST,$add_cit_count),&add_cit_count=$add_cit_count)$(IF,$(XST,$recattrsrctype),&recattrsrctype=$recattrsrctype)"><font size=-1 color=red> Add/Update this Record </font></A>
+  <?/MIVAR>
+<?/MIBLOCK>
 <?/MIVAR>
 
 <?MIVAR COND="$(AND,$(NC,$rtype,person),$(XST,$attribtype),$(NC,$rtype,go))">

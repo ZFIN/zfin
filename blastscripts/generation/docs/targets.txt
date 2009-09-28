@@ -1,0 +1,17 @@
+
+We need to separate targets so that we can re-run only portions.
+
+
+- genbank downloads
+- genbank convert fasta by type and record accessions
+- genbank assemble rules
+
+
+- create wublast from fasta files
+
+- regenerate the entire tree
+
+
+- send blast databases to other 
+
+

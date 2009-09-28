@@ -151,9 +151,11 @@ Check permissions, set MINULL, MINOVALUE
 
 	<?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
 		<center>
-		   <font size=+2>
-			<input type=button value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalview.apg&OID=$OID')"> 
-		   </font>
+       <a 
+       style="font-size: large;"
+       href="javascript:" 
+        onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalview.apg&OID=$OID')"
+        >View Journal</a>
 		</center>
 	<?/MIVAR>
 

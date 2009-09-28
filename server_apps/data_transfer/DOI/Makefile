@@ -20,8 +20,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/DOI
 
-GENERICS = daily-doi-update.sh monthly-doi-update.sh log4j.properties
-
+GENERICS = daily-doi-update.sh monthly-doi-update.sh 
+STATICS = log4j.properties
 
 # Define targets that require special handling.
 

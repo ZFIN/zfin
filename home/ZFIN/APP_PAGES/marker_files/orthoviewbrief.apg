@@ -28,7 +28,7 @@ display summarized orthology data on gene page.
 <?/MICOMMENT>
 
 <?MIVAR>
-  <TABLE width="100%" border=0 bgcolor="$highlight">
+  <TABLE class="summary">
 <?/MIVAR>
 
 <?MIVAR NAME=$countEvForEvcode><?/MIVAR>
@@ -68,16 +68,16 @@ display summarized orthology data on gene page.
 
   <?MIVAR>
     <TR>
-      <TD colspan=4></TD>
-      <TD bgcolor=#ccccccc colspan=$codeNum align=left><b>Evidence</b></TD>
+      <th style="background: #eeeeee" colspan=4>&nbsp;</th>
+      <th bgcolor=#cccccc colspan=$codeNum align=left><b>Evidence</b></th>
     </TR>
   <?/MIVAR>
   
-  <TR bgcolor=#ccccccc>
-    <TD><b>Species</b></TD>
-    <TD><b>Symbol</b></TD>
-    <TD><b>Chromosome (Position)</b></TD>
-    <TD><b>Accession #</b></TD>
+  <TR bgcolor=#cccccc>
+    <th><b>Species</b></th>
+    <th><b>Symbol</b></th>
+    <th><b>Chromosome (Position)</b></th>
+    <th><b>Accession #</b></th>
     <?MISQL SQL="select count(*), oevdisp_evidence_code, oevcode_order  
 		   from orthologue_evidence_display, orthologue_evidence_code
 		   where oevdisp_gene_zdb_id = '$OID'
@@ -171,13 +171,13 @@ display summarized orthology data on gene page.
       <?/MIBLOCK> 
       
       <TD align="left">
-        <?MICOMMENT> *** display AccIds and links to foreign DBs <?/MICOMMENT>
+        <?MICOMMENT> *** display AccIds and links to foreign dbs <?/MICOMMENT>
         <?MISQL SQL="
-                  select fdb_DB_name, fdb_DB_query || dblink_acc_num, dblink_acc_num_display, fdb_db_significance
-                    from db_link,foreign_db_contains,foreign_DB 
+                  select fdb_db_name, fdb_db_query || dblink_acc_num, dblink_acc_num_display, fdb_db_significance
+                    from db_link,foreign_db_contains,foreign_db
                     where dblink_linked_recid = '$zdbID'
                       and dblink_fdbcont_zdb_id = fdbcont_zdb_id 
-                      and fdbcont_fdb_db_name = fdb_db_name 
+                      and fdbcont_fdb_db_id = fdb_db_pk_id 
                       and fdb_db_significance < 10
                       and fdbcont_organism_common_name = '$organism'	
                     order by fdb_db_significance

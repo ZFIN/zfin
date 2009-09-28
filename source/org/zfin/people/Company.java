@@ -22,4 +22,12 @@ public class Company extends Organization {
     public void setBio(String bio) {
         this.bio = bio;
     }
+
+    public boolean getLab() {
+        return false ;
+    }
+
+    public boolean getCompany() {
+        return true ;
+    }
 }

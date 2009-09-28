@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/curation_files
 
-GENERICS = curator_session.apg curator_session_update.apg
+STATICS = curator_session.apg curator_session_update.apg
 
 # Use default rules for app page directories.
 

@@ -1,5 +1,6 @@
 package org.zfin.antibody.presentation;
 
+import org.apache.log4j.Logger;
 import org.zfin.ExternalNote;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
@@ -9,15 +10,20 @@ import org.zfin.antibody.AntibodyService;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.MarkerService;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.wiki.AntibodyWikiWebService;
+import org.zfin.wiki.WikiLoginException;
 
 import java.util.*;
 
 public class AntibodyBean extends PublicationListBean {
+
+    private final Logger logger = Logger.getLogger(AntibodyBean.class);
 
     protected Antibody antibody;
 
@@ -135,7 +141,7 @@ public class AntibodyBean extends PublicationListBean {
     }
 
     public int getNumOfAttributesPublications() {
-		return getAntibodyAttributesPublications().size();
+        return getAntibodyAttributesPublications().size();
     }
 
     public Set<Publication> getAntibodyAttributesPublications() {
@@ -145,15 +151,8 @@ public class AntibodyBean extends PublicationListBean {
             return publications;
 
         // add alias associated publictions
-        Set<MarkerAlias> mrkrAliases = antibody.getAliases();
-        if (mrkrAliases != null && !mrkrAliases.isEmpty()) {
-            for (MarkerAlias alias : antibody.getAliases()) {
-                Set<PublicationAttribution> aliasPubs = alias.getPublications();
-                if (aliasPubs != null && !aliasPubs.isEmpty()) {
-                    for (PublicationAttribution pubAttr : aliasPubs)
-                        publications.add(pubAttr.getPublication());
-                }
-            }
+        for (Publication pub : MarkerService.getAliasAttributions(antibody)) {
+            publications.add(pub);
         }
 
 
@@ -222,7 +221,7 @@ public class AntibodyBean extends PublicationListBean {
         Set<Publication> AntibodyPublications = getAntibodyAttributesPublications();
         for (Publication pub : getSortedPublications()) {
             if (pub.isUnpublished()) {
-                String yearInAuthors = "(" + pub.getYear() +  ")";
+                String yearInAuthors = "(" + pub.getYear() + ")";
                 String authors = pub.getAuthors();
                 pub.setAuthors(authors.replace(yearInAuthors, ""));
                 if (update) {
@@ -264,11 +263,29 @@ public class AntibodyBean extends PublicationListBean {
 
     public int getNumOfUsageNotes() {
         if (antibody.getExternalNotes() == null)
-          return 0;
+            return 0;
         else
-          return getNotesSortedByPubTime().size();
+            return getNotesSortedByPubTime().size();
     }
 
+    public String getEditURL() {
+        String zdbID = antibody.getZdbID();
+        return "/action/antibody/update-details?antibody.zdbID=" + zdbID;
+    }
+
+    public String getDeleteURL() {
+        String zdbID = antibody.getZdbID();
+        return "/" + ZfinProperties.getWebDriver() + "?MIval=aa-delete_record.apg&rtype=marker&OID=" + zdbID;
+    }
+
+    public String getWikiLink() {
+        try {
+            return AntibodyWikiWebService.getInstance().getWikiLink(antibody);
+        } catch (WikiLoginException e) {
+            logger.error(e);
+            return null;
+        }
+    }
     /*
     public int getNumOfSuppliers() {
         if (antibody == null || antibody.getSuppliers() == null)

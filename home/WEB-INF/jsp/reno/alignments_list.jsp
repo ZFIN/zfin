@@ -40,7 +40,6 @@
               <zfin:geneRelationLink accession="${hit.targetAccession}"  showParent="true"/> 
 
               <br/>
-              <c:out value="${hit.species}"/> 
               <b>Score:</b> <c:out value="${hit.score}"/>
               <b>Positives:</b> <c:out value="${hit.positivesNumerator}"/> / <c:out value="${hit.positivesDenominator}"/>(<c:out value="${hit.percentAlignment}"/>%)
               <b>Expect:</b> <c:out value="${hit.expectValue}"/> 

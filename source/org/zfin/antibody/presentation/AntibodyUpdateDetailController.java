@@ -16,6 +16,7 @@ import org.zfin.marker.MarkerAlias;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.people.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.infrastructure.DataAlias;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.publication.Publication;
@@ -39,7 +40,6 @@ import java.util.Stack;
 public class AntibodyUpdateDetailController extends MultiActionController {
 
     public static final String UPDATE_DETAIL_PAGE = "antibody-detail-update.page";
-    public static final String RECORD_NOT_FOUND_PAGE = "record-not-found.page";
     private static Logger LOG = Logger.getLogger(AntibodyUpdateController.class);
     private AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
     private Map validatorMap;
@@ -47,10 +47,10 @@ public class AntibodyUpdateDetailController extends MultiActionController {
 
     public ModelAndView updateDetailsHandler(HttpServletRequest request, HttpServletResponse response, AntibodyUpdateDetailBean bean)
             throws ServletException {
-
+        bindRequestParameterToFormBean(request, bean);
         Antibody ab = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
         if (ab == null)
-            return new ModelAndView(RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, bean.getAntibody().getZdbID());
+            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, bean.getAntibody().getZdbID());
 
         addPubIdToPublicationList(request, bean, bean.getAntibodyDefPubZdbID());
         return antibodyData(bean);
@@ -75,6 +75,11 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         bean.setAntibody(ab);
     }
 
+    private void bindRequestParameterToFormBean(HttpServletRequest request, AntibodyUpdateDetailBean bean) {
+        ServletRequestDataBinder binder = new ServletRequestDataBinder(bean);
+        binder.bind(request);
+    }
+
 
     public ModelAndView updateAbPropertiesHandler(HttpServletRequest request, HttpServletResponse response, AntibodyUpdateDetailBean bean)
             throws ServletException {
@@ -85,42 +90,37 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         try {
-
             tx = session.beginTransaction();
-            String oldClonalType = antibodytoUpdate.getClonalType();
+
             if (StringUtils.isEmpty(bean.getAntibody().getClonalType())) {
                 bean.getAntibody().setClonalType(null);
             }
             antibodytoUpdate.setClonalType(bean.getAntibody().getClonalType());
-            ir.insertUpdatesTable(antibodytoUpdate, "clonal type", "", currentUser, bean.getAntibody().getClonalType(), oldClonalType);
+            ir.insertUpdatesTable(antibodytoUpdate, "clonal type", "", currentUser);
 
-            String oldLCIso = antibodytoUpdate.getLightChainIsotype();
             if (StringUtils.isEmpty(bean.getAntibody().getLightChainIsotype())) {
                 bean.getAntibody().setLightChainIsotype(null);
             }
             antibodytoUpdate.setLightChainIsotype(bean.getAntibody().getLightChainIsotype());
-            ir.insertUpdatesTable(antibodytoUpdate, "light chain isotype", "", currentUser, bean.getAntibody().getLightChainIsotype(), oldLCIso);
+            ir.insertUpdatesTable(antibodytoUpdate, "light chain isotype", "", currentUser);
 
-            String oldHCIso = antibodytoUpdate.getHeavyChainIsotype();
             if (StringUtils.isEmpty(bean.getAntibody().getHeavyChainIsotype())) {
                 bean.getAntibody().setHeavyChainIsotype(null);
             }
             antibodytoUpdate.setHeavyChainIsotype(bean.getAntibody().getHeavyChainIsotype());
-            ir.insertUpdatesTable(antibodytoUpdate, "heavy chain isotype", "", currentUser, bean.getAntibody().getHeavyChainIsotype(), oldHCIso);
+            ir.insertUpdatesTable(antibodytoUpdate, "heavy chain isotype", "", currentUser);
 
-            String oldImmSpecies = antibodytoUpdate.getImmunogenSpecies();
             if (StringUtils.isEmpty(bean.getAntibody().getImmunogenSpecies())) {
                 bean.getAntibody().setImmunogenSpecies(null);
             }
             antibodytoUpdate.setImmunogenSpecies(bean.getAntibody().getImmunogenSpecies());
-            ir.insertUpdatesTable(antibodytoUpdate, "immunogenspecies", "", currentUser, bean.getAntibody().getImmunogenSpecies(), oldImmSpecies);
+            ir.insertUpdatesTable(antibodytoUpdate, "immunogenspecies", "", currentUser);
 
-            String oldHostSpecies = antibodytoUpdate.getHostSpecies();
             if (StringUtils.isEmpty(bean.getAntibody().getHostSpecies())) {
                 bean.getAntibody().setHostSpecies(null);
             }
             antibodytoUpdate.setHostSpecies(bean.getAntibody().getHostSpecies());
-            ir.insertUpdatesTable(antibodytoUpdate, "host species", "", currentUser, bean.getAntibody().getHostSpecies(), oldHostSpecies);
+            ir.insertUpdatesTable(antibodytoUpdate, "host species", "", currentUser);
 
             tx.commit();
         } catch (Exception e) {
@@ -145,7 +145,12 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
         Antibody antibodytoUpdate = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+        Person currentUser = Person.getCurrentSecurityUser();
         String pubID = bean.getAntibodyDefPubZdbID();
+        if (bean.getAttribution().equals("")) {
+            pubID = bean.getAntibodyDefPubZdbID();
+        }
 
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
@@ -155,6 +160,7 @@ public class AntibodyUpdateDetailController extends MultiActionController {
             Publication publication = pr.getPublication(pubID);
             mr.addMarkerAlias(antibodytoUpdate, bean.getNewAlias(), publication);
 
+            ir.insertUpdatesTable(antibodytoUpdate, "alias", "", currentUser);
             tx.commit();
             bean.setNewAlias("");
         } catch (Exception e) {
@@ -179,17 +185,18 @@ public class AntibodyUpdateDetailController extends MultiActionController {
 
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-
-
+        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+        Person currentUser = Person.getCurrentSecurityUser();
         Antibody antibodytoUpdate = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
-
-        String pub = bean.getAntibodyDefPubZdbID();
+        DataAlias alias = markerRepository.getMarkerAlias(bean.getAntibodyAliaszdbID());
+        String pubZdbID = bean.getAntibodyDefPubZdbID();
+        Publication pub = RepositoryFactory.getPublicationRepository().getPublication(pubZdbID);
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            markerRepository.addAliasPub(bean.getAntibodyAliaszdbID(), pub, antibodytoUpdate);
-
+            markerRepository.addDataAliasAttribution(alias, pub, antibodytoUpdate);
+            ir.insertUpdatesTable(antibodytoUpdate, "alias attribution", "", currentUser);
             tx.commit();
         } catch (Exception e) {
             try {
@@ -216,14 +223,19 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         Antibody antibodytoUpdate = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         Marker antigenGene = mr.getMarker(mr.getMarkerByAbbreviation(bean.getNewAntigenGene()));
-
+        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+        Person currentUser = Person.getCurrentSecurityUser();
         String pub = bean.getAntibodyDefPubZdbID();
 
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            mr.addMarkerRelationship(antibodytoUpdate, antigenGene, pub, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
+            MarkerRelationship mrel = new MarkerRelationship();
+            mrel.setType(MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
+            mrel.setFirstMarker(antigenGene);
+            mrel.setSecondMarker(antibodytoUpdate);
+            mr.addMarkerRelationship(mrel, pub);
             tx.commit();
             bean.setNewAntigenGene("");
         } catch (Exception e) {
@@ -254,7 +266,7 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         if (PublicationValidator.isShortVersion(pubZdbID))
             bean.setAntibodyDefPubZdbID(PublicationValidator.completeZdbID(pubZdbID));
         else
-            bean.setAntibodyDefPubZdbID(pubZdbID);
+             bean.setAntibodyDefPubZdbID(pubZdbID);
         String pubID = bean.getAntibodyDefPubZdbID();
 
         addPubIdToPublicationList(request, bean, pubID);
@@ -285,16 +297,16 @@ public class AntibodyUpdateDetailController extends MultiActionController {
 
     public ModelAndView deleteAliasHandler(HttpServletRequest request, HttpServletResponse response, AntibodyUpdateDetailBean bean)
             throws ServletException {
-
         String abAlias = bean.getAntibodyAliaszdbID();
         addPubIdToPublicationList(request, bean, bean.getAntibodyDefPubZdbID());
+
+        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+        AntibodyRepository ar = RepositoryFactory.getAntibodyRepository();
 
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-            AntibodyRepository ar = RepositoryFactory.getAntibodyRepository();
             Antibody antibody = ar.getAntibodyByID(bean.getAntibody().getZdbID());
             MarkerAlias alias = mr.getMarkerAlias(abAlias);
             mr.deleteMarkerAlias(antibody, alias);
@@ -313,6 +325,8 @@ public class AntibodyUpdateDetailController extends MultiActionController {
 
     public ModelAndView deleteAliasRefHandler(HttpServletRequest request, HttpServletResponse response, AntibodyUpdateDetailBean bean)
             throws ServletException {
+        AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
+        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         String aliasRef = bean.getAliasRef();
         addPubIdToPublicationList(request, bean, bean.getAntibodyDefPubZdbID());
@@ -339,14 +353,16 @@ public class AntibodyUpdateDetailController extends MultiActionController {
             throws ServletException {
 
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         String relID = bean.getAntibodyAntigenzdbID();
+        MarkerRelationship mrel = markerRepository.getMarkerRelationshipByID(relID);       
         addPubIdToPublicationList(request, bean, bean.getAntibodyDefPubZdbID());
 
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            ir.deleteActiveDataByZdbID(relID);
+            markerRepository.deleteMarkerRelationship(mrel);
             tx.commit();
         } catch (Exception e) {
             try {
@@ -394,14 +410,22 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
         Antibody antibodytoUpdate = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+        //Marker antigenGene = mr.getMarker(mr.getMarkerByID(bean.getAttribAntigen()));
+        // MarkerRelationship mrel = mr.getSpecificMarkerRelationship(antibodytoUpdate, antigenGene, MarkerRelationship.Type.ANTIBODY_RECOGNIZES_PRODUCTS_OF_GENE);
         MarkerRelationship mrel = mr.getMarkerRelationshipByID(bean.getAntibodyAntigenzdbID());
-        String pub = bean.getAntibodyDefPubZdbID();
+        String pubZdbID = bean.getAntibodyDefPubZdbID();
+        if (bean.getAttribution().equals("")) {
+            pubZdbID = bean.getAntibodyDefPubZdbID();
+        }
 
         Session session = HibernateUtil.currentSession();
+
+        Publication pub = RepositoryFactory.getPublicationRepository().getPublication(pubZdbID);
+
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            mr.addRelPub(mrel.getZdbID(), pub, antibodytoUpdate);
+            mr.addMarkerRelationshipAttribution(mrel, pub, antibodytoUpdate);
             tx.commit();
         } catch (Exception e) {
             try {
@@ -430,8 +454,10 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         try {
 
             tx = session.beginTransaction();
-            profileRepository.addSupplier(or, bean.getAntibody());
-
+            MarkerSupplier supplier = new MarkerSupplier();
+            supplier.setOrganization(or);
+            supplier.setMarker(bean.getAntibody());
+            session.save(supplier);
             tx.commit();
         } catch (Exception e) {
             try {
@@ -463,7 +489,7 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         try {
             tx = session.beginTransaction();
             pr.deleteSupplier(supplier);
-            ir.insertUpdatesTable(antibodytoUpdate, "deleted supplier", "", currentUser, "", supplier.getOrganization().getZdbID());
+            ir.insertUpdatesTable(antibodytoUpdate, "deleted supplier", "", currentUser);
             tx.commit();
         } catch (Exception e) {
             try {
@@ -483,8 +509,9 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         if (errorView != null)
             return errorView;
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
+        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         Antibody antibodytoUpdate = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
-
+        Person currentUser = Person.getCurrentSecurityUser();
         Session session = HibernateUtil.currentSession();
         String pub = bean.getAntibodyDefPubZdbID();
         Transaction tx = null;
@@ -492,7 +519,7 @@ public class AntibodyUpdateDetailController extends MultiActionController {
             tx = session.beginTransaction();
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
             mr.addAntibodyExternalNote(antibodytoUpdate, bean.getNewNote(), pub);
-
+            ir.insertUpdatesTable(antibodytoUpdate, "notes", "", currentUser);
             tx.commit();
             bean.setNewNote("");
         } catch (Exception e) {
@@ -511,8 +538,9 @@ public class AntibodyUpdateDetailController extends MultiActionController {
     public ModelAndView editNoteHandler(HttpServletRequest request, HttpServletResponse response, AntibodyUpdateDetailBean bean)
             throws ServletException {
         addPubIdToPublicationList(request, bean, bean.getAntibodyDefPubZdbID());
-
+        Person currentUser = Person.getCurrentSecurityUser();
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
+        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         Antibody antibodytoUpdate = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
         String note = bean.getUsageNote()[0];
         Session session = HibernateUtil.currentSession();
@@ -521,6 +549,7 @@ public class AntibodyUpdateDetailController extends MultiActionController {
             tx = session.beginTransaction();
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
             mr.editAntibodyExternalNote(bean.getAntibodyNotezdbID(), note);
+            ir.insertUpdatesTable(antibodytoUpdate, "updated notes", "", currentUser);
             tx.commit();
         } catch (Exception e) {
             try {
@@ -551,7 +580,7 @@ public class AntibodyUpdateDetailController extends MultiActionController {
             tx = session.beginTransaction();
             InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
             ir.deleteActiveDataByZdbID(noteID);
-            ir.insertUpdatesTable(antibodytoUpdate, "deleted notes", "", currentUser, "", noteID);
+            ir.insertUpdatesTable(antibodytoUpdate, "deleted notes", "", currentUser);
             tx.commit();
         } catch (Exception e) {
             try {

@@ -33,7 +33,7 @@ import java.util.Set;
  */
 public class RedundancyCandidateControllerTest {
 
-    private RenoTestData renoTestData = new RenoTestData() ; 
+    private final RenoTestData renoTestData = new RenoTestData() ;
 
     private static Logger logger = Logger.getLogger(RedundancyCandidateControllerTest.class);
     private static RenoRepository renoRepository = RepositoryFactory.getRenoRepository();
@@ -185,7 +185,7 @@ public class RedundancyCandidateControllerTest {
 
             String testData = renoMrelAttribution.getDataZdbID();
             String testAttrib = renoMrelAttribution.getSourceZdbID();
-            String testType = renoMrelAttribution.getSourceType();
+            String testType = renoMrelAttribution.getSourceType().toString();
             logger.debug("renoMrelAttribution: "+renoMrelAttribution) ;
             
             assertEquals("recattrib source id is the run attrib", candidateBean.getNomenclaturePublicationZdbID(), testAttrib);
@@ -280,7 +280,7 @@ public class RedundancyCandidateControllerTest {
 
             String testData = renoMrelAttribution.getDataZdbID();
             String testAttrib = renoMrelAttribution.getSourceZdbID();
-            String testType = renoMrelAttribution.getSourceType();
+            String testType = renoMrelAttribution.getSourceType().toString();
 
             assertEquals("recattrib source id is the run attrib", candidateBean.getNomenclaturePublicationZdbID(), testAttrib);
             assertEquals("recattrib data id is the mrel id", renoMrel.getZdbID(), testData);
@@ -291,11 +291,10 @@ public class RedundancyCandidateControllerTest {
             MarkerHistory mhist = markerRepository.getLastMarkerHistory(renoGene, MarkerHistory.Event.REASSIGNED);
 
             assertEquals("mhist reason is:", MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES, mhist.getReason());
-            //Todo:add record attribution to candidate controller (for mhist and run.attribution) when mhist is created.
 
             /*  RecordAttribution mhistRecattribData =
                      infrastructureRepository.getRecordAttribution(mhist.getZdbID(),
-                                                                    run.getAttribution().getZdbID(),
+                                                                    run.getEntity().getZdbID(),
                                                                     null);
             //we should have a record_attribution record for the name change.
             assertNotNull("record attribution for mhist record exists",mhistRecattribData);
@@ -325,7 +324,6 @@ public class RedundancyCandidateControllerTest {
 
         try {
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
-            RunCandidate runCandidate = candidateBean.getRunCandidate();
             RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
@@ -365,13 +363,11 @@ public class RedundancyCandidateControllerTest {
 
             logger.debug("mrel zdb_id: " + renoMrel.getZdbID());
 
-            //Todo: add attribution in RedundancyCandidateController to mrel creation.
-
-/*            
+/*
 
 RecordAttribution renoMrelAttribution = infrastructureRepository.getRecordAttribution(
     renoMrel.getZdbID(),
-    run.getAttribution().getZdbID(),
+    run.getEntity().getZdbID(),
     RecordAttribution.SourceType.STANDARD);
 
 //the mrel has an attribution
@@ -408,7 +404,6 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
 
         try {
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
-            RunCandidate runCandidate = candidateBean.getRunCandidate();
             RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
@@ -620,13 +615,12 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
 
             assertNotNull("mrel exists between gene and cdna", renoMrel);
             //the gene has a relationship to the cdna
-            //Todo: add attribution in RedundancyCandidateController to mrel creation.
 
 /*            assertNotNull("renoMrel not null",renoMrel);
 
             RecordAttribution renoMrelAttribution = infrastructureRepository.getRecordAttribution(
                     renoMrel.getZdbID(),
-                    run.getAttribution().getZdbID(),
+                    run.getEntity().getZdbID(),
                     RecordAttribution.SourceType.STANDARD);
 
             //the mrel has an attribution

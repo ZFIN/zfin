@@ -1,46 +1,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 
-<table bgcolor="#eeeeee" border="0" width="100%">
-    <tbody>
-        <tr align="center">
-            <td>
-                <font size="-1"><b>ZFIN ID:</b>
-                    ${formBean.antibody.zdbID}
-                </font>
-            </td>
-            <authz:authorize ifAnyGranted="root">
-                <td>
-                    <a href="update-details?antibody.zdbID=${formBean.antibody.zdbID}">
-                        <font size=-1 color=red> Add/Update this Record </font>
-                    </a>
-                </td>
-                <td>
-
-                </td>
-                <td>
-                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-delete_record.apg&rtype=marker&OID=${formBean.antibody.zdbID}">
-                        <font size=-1 color=red> Delete or Merge this record </font>
-                    </a>
-                </td>
-                <td>
-                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-update-vframeset.apg&OID=${formBean.antibody.zdbID}&rtype=antibody">
-                        <font size=-1><b>Updated:</b>
-                            <c:choose>
-                                <c:when test="${formBean.latestUpdate != null}">
-                                    <fmt:formatDate value="${formBean.latestUpdate.dateUpdated}" type="date"/>
-                                </c:when>
-                                <c:otherwise>
-                                    Never modified
-                                </c:otherwise>
-                            </c:choose>
-                        </font>
-                    </a>
-                </td>
-            </authz:authorize>
-        </tr>
-    </tbody>
-</table>
+<zfin2:dataManager zdbID="${formBean.antibody.zdbID}"
+                   editURL="${formBean.editURL}"
+                   deleteURL="${formBean.deleteURL}"
+                   latestUpdate="${formBean.latestUpdate}"
+                   rtype="marker"/>
 
 <table width="100%" border="0">
 <tr>
@@ -48,9 +13,20 @@
         <FONT SIZE=+1><STRONG>Antibody Name:</STRONG></FONT>
     </td>
     <td>
-        <FONT SIZE=+1><STRONG>
+      <div style="display:inline;vertical-align:middle;font-size:large;">
+        <strong>
             ${formBean.antibody.name}
-        </STRONG></FONT>
+        </strong>
+        </div>
+        <c:set var="wikiLink" value="${formBean.wikiLink}"/>
+        <c:if test="${!empty wikiLink}">
+      <div style="display:inline;vertical-align:middle;font-size:small;">
+            &nbsp; &nbsp; 
+            <font size=-1>
+                <a href="${formBean.wikiLink}" target="_blank" class="external">${formBean.antibody.name} Wiki Page</a>
+            </font>
+            </div>
+        </c:if>
     </td>
     <td align="right">
         <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">

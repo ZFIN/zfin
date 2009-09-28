@@ -3,11 +3,7 @@ package org.zfin.marker;
 import java.util.Set;
 
 /**
- * Created by IntelliJ IDEA.
- * User: nathandunn
- * Date: Sep 28, 2007
- * Time: 8:31:01 AM
- * To change this template use File | Settings | File Templates.
+ * This class maps to the marker_type_group table.
  */
 public class MarkerTypeGroup {
 

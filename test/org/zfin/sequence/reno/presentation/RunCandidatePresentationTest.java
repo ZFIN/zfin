@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * ToDo: Please add documentation for this class.
  */
 public class RunCandidatePresentationTest extends EntityPresentation {
 

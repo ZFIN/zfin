@@ -11,7 +11,7 @@
 # is not already exist, use image clone name in the 
 # description to replace FR#. In case no image clone
 # name is provided, use xdget to get fasta file from 
-# gbk_zf_all and parse out image clone name from defline,
+# gbk_zf_rna,mrna,dna and parse out image clone name from defline,
 # and write the accession and name into acc_cloneName.unl.
 # In case no gene id is available, output accession to 
 # acc4blast.txt for blasting. 
@@ -46,9 +46,14 @@ sub getDeflineCloneName ($) {
     
     open ACC_IMCLONE, ">acc_cloneName.unl" or die "Cannot open acc_cloneName.unl for write.";
     
-    open DEFLINE, "xdget -n -f -Tgb1 -e probe_retrieve_for_defline.log gbk_zf_all $accfile |" 
+    open DEFLINE, "xdget -n -f -Tgb1 -e probe_retrieve_for_defline.log gbk_zf_mrna $accfile |" 
 	or die "Error executing xdget in nameClone.pl .";
-    
+
+    system ("xdget -n -f -Tgb1 -e probe_retrieve_for_defline.log gbk_zf_rna /tmp/tmp_zf_rna.fa");
+    system ("xdget -n -f -Tgb1 -e probe_retrieve_for_defline.log gbk_zf_rna /tmp/tmp_zf_dna.fa");
+    system ("/bin/cat /tmp/tmp_zf_rna.fa > DEFLINE");
+    system ("/bin/cat /tmp/tmp_zf_dna.fa > DEFLINE");
+
     while (<DEFLINE>) {
 	print ACC_IMCLONE "$1|$2|\n" if ((/^>.*gb\|(\w+)\..+(IMAGE:\d+)/)||(/^>.*gb\|(\w+)\..+(cssl:\w+)/));
     }

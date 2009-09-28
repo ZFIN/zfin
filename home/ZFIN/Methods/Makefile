@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/Methods
 
-GENERICS = ThisseProtocol.html
+STATICS = ThisseProtocol.html
 
 # --------------------------  Rules  ------------------------------------
 

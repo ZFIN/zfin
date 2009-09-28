@@ -175,11 +175,12 @@ sub dblinksReport()
 
     print REPORT "DBLINKS\n";
 
-    my $cur = $dbh->prepare('select count(*), fdbcont_fdb_db_name
-                             from db_link, foreign_db_contains
+    my $cur = $dbh->prepare('select count(*), fdb_db_name
+                             from db_link, foreign_db_contains, foreign_db
                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                               and fdbcont_fdb_db_name in ("RefSeq","Entrez Gene","UniGene","Genbank","GenPept")
-                             group by fdbcont_fdb_db_name;'
+                              and fdbcont_fdb_db_id = fdb_db_pk_id
+                               and fdb_db_name in ("RefSeq","Entrez Gene","UniGene","Genbank","GenPept")
+                             group by fdb_db_name;'
 			   );
     $cur->execute;
     my($db_count, $db_name);
@@ -200,9 +201,11 @@ sub reportOmimDups()
     print REPORT "OMIM dups\n";
 
     my $cur = $dbh->prepare('select mrkr_abbrev
-                               from db_link, orthologue, marker, foreign_db_contains
+                               from db_link, orthologue, marker, 
+                                       foreign_db_contains, foreign_db
                               where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                                and fdbcont_fdb_db_name = "OMIM"
+                                and fdb_db_name = "OMIM"
+                                and fdbcont_fdb_db_id = fdb_db_pk_id
                                 and dblink_linked_recid = zdb_id
                                 and c_gene_id = mrkr_zdb_id
                               group by mrkr_abbrev

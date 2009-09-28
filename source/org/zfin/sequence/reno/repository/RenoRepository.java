@@ -15,9 +15,9 @@ public interface RenoRepository {
 
     List<RedundancyRun> getRedundancyRuns();
     List<NomenclatureRun> getNomenclatureRuns();
-    Integer getQueueCandidateCount(Run run);
-    Integer getPendingCandidateCount(Run run);
-    Integer getFinishedCandidateCount(Run run);
+    int getQueueCandidateCount(Run run);
+    int getPendingCandidateCount(Run run);
+    int getFinishedCandidateCount(Run run);
     Run castRun(Run run) ;
 
 

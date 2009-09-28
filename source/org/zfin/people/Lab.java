@@ -24,4 +24,12 @@ public class Lab extends Organization {
             return -1;
         return name.compareTo(org.getName());
     }
+
+    public boolean getLab() {
+        return true ;
+    }
+
+    public boolean getCompany() {
+        return false;
+    }
 }

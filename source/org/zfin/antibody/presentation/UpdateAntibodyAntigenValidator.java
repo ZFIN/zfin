@@ -49,7 +49,7 @@ public class UpdateAntibodyAntigenValidator implements Validator {
         Antibody antibodytoUpdate = antibodyRepository.getAntibodyByID(formBean.getAntibody().getZdbID());
         Marker m=mr.getMarkerByAbbreviation(formBean.getNewAntigenGene());
          if (m != null) {
-        MarkerRelationship mrel=mr.getSpecificMarkerRelationship(m,antibodytoUpdate,MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
+        MarkerRelationship mrel=mr.getSpecificMarkerRelationship(antibodytoUpdate,m,MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
         if (mrel!=null) {
              errors.rejectValue("newAntigenGene", "code", " This antigen gene already exists for this antibody");
         }

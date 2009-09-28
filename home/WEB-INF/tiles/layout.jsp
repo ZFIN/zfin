@@ -24,20 +24,15 @@
 <tiles:insert attribute="header">
 </tiles:insert>
 
-<table cellpadding=5 width=100%>
-    <tr>
-        <td>
-            <tiles:insert attribute="body">
-                <tiles:put name="pageSection">
-                    <tiles:getAsString ignore="true" name="pageSection"/>
-                </tiles:put>
-                <tiles:put name="pageSectionTitle">
-                    <tiles:getAsString ignore="true" name="pageSectionTitle"/>
-                </tiles:put>
-            </tiles:insert>
-        </td>
-    </tr>
-</table>
+<tiles:insert attribute="body">
+    <tiles:put name="pageSection">
+        <tiles:getAsString ignore="true" name="pageSection"/>
+    </tiles:put>
+    <tiles:put name="pageSectionTitle">
+        <tiles:getAsString ignore="true" name="pageSectionTitle"/>
+    </tiles:put>
+</tiles:insert>
+
 
 <tiles:insert attribute="footer">
 </tiles:insert>

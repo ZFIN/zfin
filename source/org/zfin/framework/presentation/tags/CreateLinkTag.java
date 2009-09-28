@@ -4,14 +4,14 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
-import org.zfin.antibody.Antibody;
-import org.zfin.antibody.presentation.AntibodyPresentation;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.expression.presentation.ExperimentConditionPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
+import org.zfin.sequence.presentation.DBLinkPresentation;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.marker.presentation.GenotypePresentation;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.mutant.Genotype;
@@ -24,12 +24,18 @@ import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.publication.presentation.FigurePresentation;
 import org.zfin.publication.presentation.ImagePresentation;
 import org.zfin.sequence.Accession;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.blast.results.view.HitViewBean;
+import org.zfin.sequence.blast.presentation.BlastPresentationService;
+import org.zfin.sequence.blast.presentation.BlastLinkPresentation;
 import org.zfin.sequence.presentation.AccessionPresentation;
 import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.presentation.RunPresentation;
-import org.apache.commons.lang.StringUtils;
+import org.zfin.people.Organization;
+import org.zfin.people.presentation.SourcePresentation;
 import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.*;
@@ -50,18 +56,27 @@ public class CreateLinkTag extends BodyTagSupport {
     private String name;
     private boolean longVersion;
 
+    private Logger logger = Logger.getLogger(CreateLinkTag.class);
+
     public int doStartTag() throws JspException {
         return BodyTag.EVAL_BODY_BUFFERED;
     }
 
     private String createLinkFromSingleDomainObject(Object o) throws JspException {
+
         String link;
-        if (o instanceof Marker && !(o instanceof Antibody))
+        if (o instanceof Marker)  //handling of marker subtypes is taken care of in the getLink method
             link = MarkerPresentation.getLink((Marker) o);
+        else if (o instanceof RelatedMarker)
+            link = MarkerPresentation.getLink(((RelatedMarker)o).getMarker());
         else if (o instanceof RunCandidate)
             link = RunCandidatePresentation.getLink((RunCandidate) o);
         else if (o instanceof Run)
             link = RunPresentation.getLink((Run) o);
+        else if (o instanceof HitViewBean)
+            link = BlastLinkPresentation.getLink((HitViewBean) o);
+        else if (o instanceof DBLink)
+            link = DBLinkPresentation.getLink((DBLink) o);
         else if (o instanceof Accession)
             link = AccessionPresentation.getLink((Accession) o);
         else if (o instanceof AnatomyItem)
@@ -80,8 +95,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = GoTermPresentation.getLink((GoTerm) o);
         else if (o instanceof DevelopmentStage)
             link = DevelopmentStagePresentation.getLink((DevelopmentStage) o, longVersion);
-        else if (o instanceof Antibody)
-            link = AntibodyPresentation.getLink((Antibody) o);
+        else if (o instanceof Organization)
+            link = SourcePresentation.getLink((Organization) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return link;

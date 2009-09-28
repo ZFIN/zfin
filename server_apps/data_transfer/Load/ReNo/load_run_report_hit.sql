@@ -36,11 +36,13 @@ update tmp_run set trun_query_fdbcont =
         when trun_name[1,3] = 'ZGC' then     'ZDB-FDBCONT-040412-37' -- GenBank RNA
 --      when trun_name[1,4] = 'Vega' then    'ZDB-FDBCONT-050210-1'  -- PreVega ... (make that internal)
         when trun_name[1,4] = 'Vega' then(
-        select fdbcont_zdb_id from foreign_db_contains
-         where fdbcont_fdbdt_data_type = 'RNA'
-           and fdbcont_fdb_db_name = 'INTVEGA'
+        select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type
+         where fdbdt_data_type = 'RNA'
+           and fdb_db_name = 'INTVEGA'
            and fdbcont_organism_common_name = 'Zebrafish'
-           and fdbcont_fdbdt_super_type = 'sequence'
+           and fdbdt_super_type = 'sequence'
+	   and fdbcont_fdb_db_id = fdb_db_pk_id
+	   and fdbcont_fdbdt_id = fdbdt_pk_id
         )
         when trun_name[1,7] = 'UniProt' then 'ZDB-FDBCONT-040412-47' -- (get FDBCONT from DB_LINK)
         else  'ZDB-FDBCONT-040412-37'        --local??? google???    -- GenBank RNA
@@ -604,22 +606,44 @@ select distinct
          and thit_acc_db = 'gb'            then 'ZDB-FDBCONT-040412-42'
         when thit_acc_type = 'protein'
          and thit_acc_db = 'sp'
+<<<<<<< .working
 --       and thit_species= 'Homo sapiens' then 'ZDB-FDBCONT-071023-3'
          and thit_species= 'Homo sapiens' then (
                 select fdbcont_zdb_id from foreign_db_contains
                 where fdbcont_fdbdt_super_type = 'sequence'
                   and fdbcont_fdbdt_data_type = 'Polypeptide'
                   and fdbcont_fdb_db_name = 'UniProtKB'
+=======
+--       and thit_species= 'Homo sapiens' then 'ZDB-FDBCONT-071023-3'
+         and thit_species= 'Homo sapiens' then (
+                select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type
+                where fdbdt_super_type = 'sequence'
+                  and fdbdt_data_type = 'Polypeptide'
+                  and fdb_db_name = 'UniProtKB'
+		  and fdbcont_fdb_db_id = fdb_db_pk_id
+		  and fdbcont_fdbdt_id = fdbdt_pk_id
+>>>>>>> .merge-right.r18093
                   and fdbcont_organism_common_name = 'Human'
          )
         when thit_acc_type = 'protein'
          and thit_acc_db = 'sp'
+<<<<<<< .working
 --       and thit_species= 'Mus musculus'  then 'ZDB-FDBCONT-071023-2'
          and thit_species= 'Mus musculus'  then(
                 select fdbcont_zdb_id from foreign_db_contains
                 where fdbcont_fdbdt_super_type = 'sequence'
                   and fdbcont_fdbdt_data_type = 'Polypeptide'
                   and fdbcont_fdb_db_name = 'UniProtKB'
+=======
+--       and thit_species= 'Mus musculus'  then 'ZDB-FDBCONT-071023-2'
+         and thit_species= 'Mus musculus'  then(
+                select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type
+                where fdbdt_super_type = 'sequence'
+                  and fdbdt_data_type = 'Polypeptide'
+                  and fdb_db_name = 'UniProtKB'
+		  and fdbcont_fdb_db_id = fdb_db_pk_id
+		  and fdbcont_fdbdt_id = fdbdt_pk_id
+>>>>>>> .merge-right.r18093
                   and fdbcont_organism_common_name = 'Mouse'
          )
         when thit_acc_type = 'protein'

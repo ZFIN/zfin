@@ -18,19 +18,23 @@ public class AccessionPresentation {
      * @param accession Accession
      */
     public static String getLink(Accession accession) {
-        StringBuilder sb = new StringBuilder("") ; 
+        StringBuilder sb = new StringBuilder("") ;
         if(accession!=null){
-            sb.append( "<a href=\"" );
-            sb.append(accession.getReferenceDatabase().getForeignDB().getDbUrlPrefix() );
-            sb.append(accession.getNumber());
-            if( accession.getReferenceDatabase().getForeignDB().getDbUrlSuffix() != null){
-                sb.append(accession.getReferenceDatabase().getForeignDB().getDbUrlSuffix() );
+            if(accession.getReferenceDatabase()!=null){
+                sb.append( "<a href=\"" );
+                sb.append(accession.getReferenceDatabase().getForeignDB().getDbUrlPrefix() );
+                sb.append(accession.getNumber());
+                if( accession.getReferenceDatabase().getForeignDB().getDbUrlSuffix() != null){
+                    sb.append(accession.getReferenceDatabase().getForeignDB().getDbUrlSuffix() );
+                }
+                sb.append( "\"/>" );
+                sb.append(accession.getNumber());
+                sb.append( "</a>" );
+            }else{
+                sb.append(accession.getNumber());
             }
-            sb.append( "\"/>" );
-            sb.append(accession.getNumber());
-            sb.append( "</a>" );
         }
-        return sb.toString() ; 
+        return sb.toString() ;
     }
 
 

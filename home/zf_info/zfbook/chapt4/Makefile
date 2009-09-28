@@ -17,9 +17,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/zfbook/chapt4
 
-GENERICS = 4.1.html 4.2.html 4.3.html 4.4.html
-
-STATICS = 4-2.gif
+STATICS = 4-2.gif 4.1.html 4.2.html 4.3.html 4.4.html
 
 
 # ---------------  Production Rules  ------------------------------------

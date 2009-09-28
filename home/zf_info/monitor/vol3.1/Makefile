@@ -19,9 +19,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/monitor/vol3.1
 
 SUBDIRS = figures
 
-GENERICS = vol3.1.html
-
-STATICS = vol3.1.pdf
+STATICS = vol3.1.pdf vol3.1.html
 
 
 

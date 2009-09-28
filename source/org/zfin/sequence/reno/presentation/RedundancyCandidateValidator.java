@@ -17,12 +17,11 @@ import java.util.Set;
 
 /**
  * Class CandidateBeanValidator.
- * ToDo: Put some of the validation into a central place so it can be reused in other
  * controllers.
  */
 public class RedundancyCandidateValidator extends AbstractRunCandidateValidator {
 
-    private static Logger LOG = Logger.getLogger(RedundancyCandidateValidator.class);
+    private static final Logger LOG = Logger.getLogger(RedundancyCandidateValidator.class);
     private RenoRepository rr = RepositoryFactory.getRenoRepository();
     private MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private PublicationRepository pr = RepositoryFactory.getPublicationRepository();
@@ -63,7 +62,7 @@ public class RedundancyCandidateValidator extends AbstractRunCandidateValidator 
             Object[] args = new Object[1] ;
             args[0] = queries.iterator().next().getAccession().getNumber() ;
             errors.rejectValue("action","code note used",args,"Can not resolve because accession {0} has no corresponding zfin gene." +
-                    "  Either manually fix or wait for GenBank to fix and to be subsequently loaded."); ;
+                    "  Either manually fix or wait for GenBank to fix and to be subsequently loaded.");
         }
 
 
