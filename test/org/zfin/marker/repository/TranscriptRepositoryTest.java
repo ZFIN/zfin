@@ -78,7 +78,7 @@ public class TranscriptRepositoryTest {
 
             TranscriptAddBean transcriptAddBean = new TranscriptAddBean() ;
             transcriptAddBean.setName("testtranscript");
-            transcriptAddBean.setChosenType(TranscriptType.Type.ABERANT_PROCESSED_TRANSCRIPT.toString());
+            transcriptAddBean.setChosenType(TranscriptType.Type.ABERRANT_PROCESSED_TRANSCRIPT.toString());
             transcriptAddBean.setOwnerZdbID("ZDB-PERS-960805-676");
             Transcript newTranscript  = TranscriptService.createTranscript(transcriptAddBean) ;
             session.flush();
