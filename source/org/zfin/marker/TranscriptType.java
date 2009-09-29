@@ -62,7 +62,7 @@ public class TranscriptType {
 
     public enum Type {
         V_GENE("V-gene"),
-        ABERANT_PROCESSED_TRANSCRIPT("aberant processed transcript"),
+        ABERRANT_PROCESSED_TRANSCRIPT("aberrant processed transcript"),
         ANTISENSE("antisense"),
         MRNA("mRNA"),
         MIRNA("miRNA"),
