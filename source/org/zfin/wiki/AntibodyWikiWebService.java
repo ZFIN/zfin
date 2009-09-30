@@ -483,7 +483,7 @@ public class AntibodyWikiWebService extends WikiWebService {
             }
         }
         catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.fillInStackTrace());
             return null;
         }
     }
