@@ -20,7 +20,7 @@ my $password = "";
 my $outputdir ="";
 
 # a place on embryonix is used to store the fasta files for blast db update.
-if ($ENV{"HOST"} eq "embryonix") {
+if ($dbname ne "almdb") {
     $outputdir = "/research/zblastfiles/dev_files/genomix/" ;
 }
 else {

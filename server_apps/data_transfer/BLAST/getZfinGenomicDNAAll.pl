@@ -17,7 +17,7 @@ my $username = "";
 my $password = "";
 my $outputdir ="";
 
-if ($ENV{"HOST"} eq "embryonix") {
+if ($dbname ne "almdb") {
     $outputdir = "/research/zblastfiles/dev_files/genomix/" ;
 }
 else {
