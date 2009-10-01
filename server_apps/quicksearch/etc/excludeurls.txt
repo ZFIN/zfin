@@ -26,6 +26,7 @@ anatdict.apg
 anatomy
 quicksearch
 get_sequence.cgi
+download-sequence
 
 # The following are all the app pages included by the fixed-list 
 # described above.  We do not want to crawl them.  Instead
