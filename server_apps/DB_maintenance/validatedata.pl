@@ -1523,7 +1523,7 @@ sub genesWithCommonDblinks ($) {
 	 and adbl.dblink_acc_num[1,3] <> "NC_" -- temp kludge
 	 and fdbdt_data_type in ("cDNA", "Polypeptide")
          and fdbcont_fdbdt_id = fdbdt_pk_id
-       	 and adbl.dblink_fdbcont_zdb_id =  fdcont_zdb_id
+       	 and adbl.dblink_fdbcont_zdb_id =  fdbcont_zdb_id
 	 and bdbl.dblink_fdbcont_zdb_id =  fdbcont_zdb_id
     order by 1,2,3,4';
 
