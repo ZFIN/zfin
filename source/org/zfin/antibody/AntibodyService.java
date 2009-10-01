@@ -15,6 +15,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GoTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
 
@@ -190,6 +191,7 @@ public class AntibodyService {
         if (antibodySerachCriteria == null)
             return null;
         List<MatchingText> matchingTexts = new ArrayList<MatchingText>();
+
         // check antibody name
         addMatchingAntibodyName(matchingTexts);
 
@@ -294,6 +296,10 @@ public class AntibodyService {
     }
 
     protected void addMatchingAntibodyName(List<MatchingText> matchingTexts) {
+
+        if(StringUtils.isEmpty(antibodySerachCriteria.getName()))
+            return;
+
         String antibodyNamefilterString = antibodySerachCriteria.getName().trim();
         if (antibodyNamefilterString != null && antibodyNamefilterString.trim().length() != 0) {
             String antibodyName = antibody.getName();

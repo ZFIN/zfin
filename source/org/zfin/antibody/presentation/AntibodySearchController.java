@@ -37,6 +37,10 @@ public class AntibodySearchController extends SimpleFormController {
         antibodySearchCriteria.setClonalType(AntibodyType.ANY.getName());
         antibodySearchCriteria.setIncludeSubstructures(true);
         antibodySearchCriteria.setAnatomyEveryTerm(true);
+        DevelopmentStage start = new DevelopmentStage();
+        start.setZdbID(DevelopmentStage.ZYGOTE_STAGE_ZDB_ID);
+        start.setName(DevelopmentStage.ZYGOTE_STAGE);
+        antibodySearchCriteria.setStartStage(start);
         DevelopmentStage end = new DevelopmentStage();
         end.setZdbID(DevelopmentStage.ADULT_STAGE_ZDB_ID);
         end.setName(DevelopmentStage.ADULT_STAGE);

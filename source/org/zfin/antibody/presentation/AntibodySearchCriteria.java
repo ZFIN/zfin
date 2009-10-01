@@ -136,8 +136,9 @@ public class AntibodySearchCriteria extends Antibody {
         DevelopmentStage endStageFilter = getEndStage();
         if ((startStageFilter != null && !StringUtils.isEmpty(startStageFilter.getZdbID()) ||
                 endStageFilter != null && !StringUtils.isEmpty(endStageFilter.getZdbID()))) {
-            if (startStageFilter != null && startStageFilter.getZdbID().equals(DevelopmentStage.ZYGOTE_STAGE_ZDB_ID) &&
-                    endStageFilter != null && endStageFilter.getZdbID().equals(DevelopmentStage.ADULT_STAGE_ZDB_ID)) {
+            if (startStageFilter != null && StringUtils.equals(startStageFilter.getZdbID(),(DevelopmentStage.ZYGOTE_STAGE_ZDB_ID)) 
+                    &&
+                    endStageFilter != null && StringUtils.equals(endStageFilter.getZdbID(),(DevelopmentStage.ADULT_STAGE_ZDB_ID))) {
                 stageDefinedEvaluated = false;
                 return false;
             } else {
