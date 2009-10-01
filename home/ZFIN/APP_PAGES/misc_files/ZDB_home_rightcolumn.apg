@@ -198,6 +198,11 @@
        </li>
        <?/MICOMMENT>
        
+          <li>
+         <a href="/zf_info/news/siteNews.html#react">
+           October 1 - Reactome Pathway Database User Survey
+         </a>
+       </li> 
        
            <li>
          <a href="/zf_info/news/siteNews.html#NIHguide">
@@ -205,11 +210,7 @@
          </a>
        </li> 
        
-       <li>
-         <a href="/zf_info/news/siteNews.html#wikipath">
-           August 3 - New at WikiPathways
-         </a>
-       </li>   
+      
        
         
        
