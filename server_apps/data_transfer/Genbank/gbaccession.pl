@@ -105,7 +105,7 @@ system ("parseDaily.pl $unzipfile")  &&  &writeReport("parseDaily.pl failed.");
 # only move the FASTA files and flat files to embryonix if that script
 # is run from production.
 
-<<<<<<< .working
+
 if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
 	if (! system ("/bin/mv *.fa *.flat $dir_on_embryonix") ) {
 
@@ -115,34 +115,16 @@ if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
 	else {
 		&writeReport("Failed to move the fasta files to embryonix.");
 	}
-=======
-#if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
-if (! system ("/bin/mv *.fa *.flat $dir_on_embryonix") ) {
-    
-    &writeReport("Fasta files moved to embryonix.");
-    system ("/bin/touch $dir_on_embryonix/fileMoved.$md_date");
->>>>>>> .merge-right.r18093
 }
-else {
-    &writeReport("Failed to move the fasta files to embryonix.");
-}
-<<<<<<< .working
-
-=======
-#}
-#else {
-#	&writeReport("Files generated for BLAST db updates are dropped assuming you are only testing.");
-#}
-
->>>>>>> .merge-right.r18093
 # rename daily zebrafish accession file and use that to update the database
 if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
-
-  # load the updates into accesson_bank and db_link
-  system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> dailyUpdate.sql >> $report 2>&1");
+    
+    # load the updates into accesson_bank and db_link
+    system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> dailyUpdate.sql >> $report 2>&1");
 } else {
-     &writeReport("Failed to rename the daily accession file.");
- }
+    &writeReport("Failed to rename the daily accession file.");
+}
+	
 
 &sendReport();
 
