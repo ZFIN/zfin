@@ -6,7 +6,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class TermStatus implements IsSerializable {
 
-    public enum Status {
+    public enum Status implements IsSerializable {
         FOUND_NONE,
         FOUND_MANY,
         FOUND_EXACT,
