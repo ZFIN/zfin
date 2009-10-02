@@ -184,16 +184,11 @@
             <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
         </set>
 
-        <join table="accession_version" optional="true" >
-            <key column="accver_acc_num" foreign-key="dblink_acc_num"/>
-            <property name="version" column="accver_version" />
-        </join>
-
         <subclass name="org.zfin.sequence.TranscriptDBLink" discriminator-value="TSCR">
             <many-to-one name="transcript" column="dblink_linked_recid" class="org.zfin.marker.Transcript" not-null="true"/>
         </subclass>
-        <subclass name="org.zfin.sequence.MarkerDBLink" discriminator-value="MARK">
-            <many-to-one name="marker" column="dblink_linked_recid" class="org.zfin.marker.Marker" not-null="true"/>
+        <subclass name="org.zfin.sequence.MarkerDBLink" discriminator-value="MARK" >
+            <many-to-one name="marker" column="dblink_linked_recid" class="org.zfin.marker.Marker" not-null="true" fetch="select"/>
         </subclass>
         <subclass name="org.zfin.sequence.OrthologueDBLink" discriminator-value="ORTH">
             <many-to-one name="orthologue" column="dblink_linked_recid" class="org.zfin.orthology.Orthologue" not-null="true"/>
