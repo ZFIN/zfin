@@ -120,7 +120,7 @@ if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
 if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
     
     # load the updates into accesson_bank and db_link
-    system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> dailyUpdate.sql >> $report 2>&1");
+    system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> dailyUpdate.sql> > $report 2>&1");
 } else {
     &writeReport("Failed to rename the daily accession file.");
 }
@@ -157,11 +157,7 @@ sub sendReport()
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "$report") || die "cannot open report";
 
-<<<<<<< .working
-    print MAIL "To: tomc\@cs.uoregon.edu\n";
-=======
     print MAIL "To: informix\@cs.uoregon.edu\n";
->>>>>>> .merge-right.r18093
     print MAIL "Subject: GenBank accession update report\n";
     while(my $line = <REPORT>)
     {
