@@ -181,13 +181,22 @@ function call_submit() {
 
 
 function disable_genotype_and_morpholino() {
-  document.critform.mutant.disabled = true;
-  document.critform.mutsearchtype.disabled = true;
-  document.critform.MOgene.disabled = true;
-  document.critform.MOsearchtype.disabled = true;  
-  document.getElementById("xpatselMutantLabel").style.color = "#777";
-  document.getElementById("xpatselMOSearchLabel").style.color = "#777";
-
+  if (document.critform.gene_name.disabled) {
+    alert("cant select both");
+    document.critform.xpatsel_wtOnly.checked = false;
+  } else {
+    document.critform.mutant.disabled = true;
+    document.critform.mutsearchtype.disabled = true;
+    document.critform.MOgene.disabled = true;
+    document.critform.MOsearchtype.disabled = true;  
+    document.critform.xpatsel_efgOnly.disabled = true;
+    document.getElementById("xpatselMutantLabel").style.color = "#777";
+    document.getElementById("xpatselMutantLabel").title = "This option is incompatible with WT only searches.";
+    document.getElementById("xpatselMOSearchLabel").style.color = "#777";
+    document.getElementById("xpatselMOSearchLabel").title = "This option is incompatible with WT only searches.";
+    document.getElementById("xpatselefgOnlyLabel").style.color="#777";
+    document.getElementById("xpatselefgOnlyLabel").title = "This option is incompatible with WT only searches.";
+  }
 }
 
 function enable_genotype_and_morpholino() {
@@ -195,12 +204,45 @@ function enable_genotype_and_morpholino() {
   document.critform.mutsearchtype.disabled = false;
   document.critform.MOgene.disabled = false;
   document.critform.MOsearchtype.disabled = false;  
+  document.critform.xpatsel_efgOnly.disabled = false;
   document.getElementById("xpatselMutantLabel").style.color = "#000";
+  document.getElementById("xpatselMutantLabel").title = null;
   document.getElementById("xpatselMOSearchLabel").style.color = "#000";
+  document.getElementById("xpatselMOSearchLabel").title = null;
+  document.getElementById("xpatselefgOnlyLabel").style.color="#000";
+  document.getElementById("xpatselefgOnlyLabel").title = null;
+
+}
+
+function disable_marker_name() {  
+  if (document.critform.mutant.disabled  ) {   
+    alert("cant select both");
+    document.critform.xpatsel_efgOnly.checked = false;
+  } else {
+    document.critform.searchtype.disabled = true;
+    document.critform.gene_name.disabled = true;
+    document.critform.xpatsel_wtOnly.disabled = true;
+    document.getElementById("xpatselGeneLabel").style.color = "#777";
+    document.getElementById("xpatselGeneLabel").title = "This option is incompatible with reporter gene searches.";
+    document.getElementById("xpatselwtOnlyLabel").style.color = "#777";
+    document.getElementById("xpatselwtOnlyLabel").title = "This option is incompatible with reporter gene searches.";
+    document.critform.xpatsel_wtOnly.title = "This option is incompatible with reporter gene searches.";
+  }
+}
+
+function enable_marker_name() {
+  document.critform.searchtype.disabled = false;
+  document.critform.gene_name.disabled = false;
+  document.critform.xpatsel_wtOnly.disabled = false;
+  document.getElementById("xpatselGeneLabel").style.color = "#000";
+  document.getElementById("xpatselGeneLabel").title  = null;
+  document.getElementById("xpatselwtOnlyLabel").style.color = "#000";
+  document.getElementById("xpatselwtOnlyLabel").title = null;
 }
 
 function call_reset() {
   enable_genotype_and_morpholino();
+  enable_marker_name();
   document.critform.gene_name.value = '';
   document.critform.author.value = '';
   document.critform.mutant.value = '';
@@ -214,6 +256,7 @@ function call_reset() {
   document.critform.xpatsel_jtype[2].checked = true;
   document.critform.include_substructures.checked = true;
   document.critform.xpatsel_wtOnly.checked = false;  
+  document.critform.xpatsel_efgOnly.checked = false;
   document.critform.structure_bool[0].checked = true;
   document.critform.searchtype.selectedIndex = 0;
   document.critform.mutsearchtype.selectedIndex = 0;
@@ -399,11 +442,14 @@ function openChild(childWinUrl,childWinName) {
   <?/MICOMMENT>
   <?MIVAR>
     $(VECAPPEND,$xpatsel_queryVec,xpatselqry_resultTable=$xpatselect_temp_match)
+    
+    <?MIVAR>
     $(IF,$(XST,$gene_name),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_geneName=$(URLENCODE,$gene_name)))
     $(IF,$(XST,$xpatsel_geneZdbId),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_geneZdbId=$(URLENCODE,$xpatsel_geneZdbId)))
     $(IF,$(XST,$searchtype),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_geneSearchType=$searchtype))
     $(IF,$(XST,$xpatsel_probeName),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_probeName=$(URLENCODE,$xpatsel_probeName)))
     $(IF,$(XST,$xpatsel_probeSearchType),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_probeSearchType=$xpatsel_probeSearchType))
+    <?/MIVAR>
 
     <?MIBLOCK COND="$(OR,$(NXST,$xpatsel_wtOnly),$(NE,$xpatsel_wtOnly,checked))">
     <?MIVAR>
@@ -420,6 +466,7 @@ function openChild(childWinUrl,childWinName) {
     <?MIBLOCK INDEX=$anat_id FOREACH=$xpanatv_anatomy_zdb_id_list>
       <?MIVAR> $(VECAPPEND,$xpatsel_queryVec,xpatselqry_anatomyZdbIdList=$anat_id) <?/MIVAR>
     <?/MIBLOCK>
+    $(IF,$(XST,$xpatsel_efgOnly),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_efgOnly=$xpatsel_efgOnly))
     $(IF,$(XST,$xpatsel_wtOnly),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_wtOnly=$xpatsel_wtOnly))
     $(IF,$(XST,$include_substructures),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_includeSubstructures=$include_substructures))
     $(IF,$(XST,$xpatsel_imagesOnly),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_imagesOnly=$xpatsel_imagesOnly))
@@ -494,6 +541,7 @@ function openChild(childWinUrl,childWinName) {
     $(IF,$(XST,$authsearchtype),$(VECAPPEND,$xpatsel_urlVec,authsearchtype=$authsearchtype))
      $(IF,$(XST,$xpatsel_processed_selected_structures),$(VECAPPEND,$xpatsel_urlVec,xpatsel_processed_selected_structures=$xpatsel_processed_selected_structures))
     $(IF,$(XST,$include_substructures),$(VECAPPEND,$xpatsel_urlVec,include_substructures=$include_substructures))
+    $(IF,$(XST,$xpatsel_efgOnly),$(VECAPPEND,$xpatsel_urlVec,xpatsel_efgOnly=$xpatsel_efgOnly))
     $(IF,$(XST,$xpatsel_wtOnly),$(VECAPPEND,$xpatsel_urlVec,xpatsel_wtOnly=$xpatsel_wtOnly))
     $(IF,$(XST,$xpatsel_jtype),$(VECAPPEND,$xpatsel_urlVec,xpatsel_jtype=$xpatsel_jtype))
     $(IF,$(XST,$xpatsel_imagesOnly),$(VECAPPEND,$xpatsel_urlVec,xpatsel_imagesOnly=$xpatsel_imagesOnly))
@@ -615,6 +663,7 @@ function openChild(childWinUrl,childWinName) {
       <?MIVAR name=$UserInput COND=$(XST,$author)>$UserInput&author=$(URLENCODE,$author)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$assay)>$UserInput&assay=$(URLENCODE,$assay)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_jtype)>$UserInput&xpatsel_jtype=$xpatsel_jtype<?/MIVAR>
+      <?MIVAR name=$UserInput COND=$(XST,$xpatsel_efgOnly)>$UserInput&xpatsel_efgOnly=$xpatsel_efgOnly<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_wtOnly)>$UserInput&xpatsel_wtOnly=$xpatsel_wtOnly<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_imagesOnly)>$UserInput&xpatsel_imagesOnly=$xpatsel_imagesOnly<?/MIVAR>      
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_recentRecords)>$UserInput&xpatsel_recentRecords=$xpatsel_recentRecords<?/MIVAR>
@@ -818,7 +867,7 @@ return false ; "
 
 	    <!-- gene name -->
 
-	    <label for="xpatselGene" class="namesearchLabel">Gene/EST name </label>
+	    <label for="xpatselGene" id="xpatselGeneLabel" class="namesearchLabel">Gene/EST name </label>
 
 	    <SELECT name=searchtype>
 	        <option value="contains" $(IF,$(AND,$(XST,$searchtype),$(EC,$searchtype,contains)),SELECTED) >contains
@@ -1009,14 +1058,13 @@ return false ; "
 	  </TABLE>
         </TD>
         <td valign="top">
-          <br>
           <?MICOMMENT> *** WT Only Checkbox *** <?/MICOMMENT>
-            <input type="checkbox" name="xpatsel_wtOnly" id="xpatselwtOnly" value="checked"
+            <input type="checkbox" name="xpatsel_wtOnly" id="xpatselwtOnly" value="checked" title="wt only"
              <?MIVAR> $(IF,$(AND,$(XST,$xpatsel_wtOnly),$(EC,$xpatsel_wtOnly,checked)), checked)<?/MIVAR>
              onchange="if (this.checked) { disable_genotype_and_morpholino(); }
                        else { enable_genotype_and_morpholino(); } " 
             >
-            <label for="xpatselwtOnly" >Show only WT expression </label>
+            <label for="xpatselwtOnly" id="xpatselwtOnlyLabel">Show only WT expression </label>
 <?MICOMMENT>
           <?MIBLOCK COND="$(AND,$(XST,$xpatsel_wtOnly),$(EC,$xpatsel_wtOnly,checked))">
 	    <script type="text/javascript">
@@ -1024,16 +1072,34 @@ return false ; "
             </script>
           <?/MIBLOCK>
 <?/MICOMMENT>
-
           <script type="text/javascript">
              if (document.getElementById("xpatselwtOnly").checked == true) {
                 disable_genotype_and_morpholino();
              }
           </script>
-
+          
          <?MICOMMENT> *** End WT Only Checkbox *** <?/MICOMMENT>
 
-           <br>
+         <br>         
+
+         <?MICOMMENT> *** EFG Only Checkbox *** <?/MICOMMENT>
+         
+         <input type="checkbox" name="xpatsel_efgOnly" id="xpatselefgOnly" value="checked"
+         <?MIVAR> $(IF,$(AND,$(XST,$xpatsel_efgOnly),$(EC,$xpatsel_efgOnly,checked)), checked)<?/MIVAR>
+          onchange="if(this.checked) { disable_marker_name(); } else { enable_marker_name();}"
+          >
+         <label for="xpatselefgOnly" id="xpatselefgOnlyLabel">Show only reporter genes</label> <img src="/images/new1.gif">
+         
+          <script type="text/javascript">
+             if (document.getElementById("xpatselefgOnly").checked == true) {
+                disable_marker_name();
+             }
+          </script>
+
+         <?MICOMMENT> *** end EFG Only Checkbox <?/MICOMMENT>
+         <br>
+
+           
              <?MICOMMENT> *** Images Only Checkbox *** <?/MICOMMENT>
                <input type="checkbox" id="xpatselImagesOnly"
                       name="xpatsel_imagesOnly" value="checked" 

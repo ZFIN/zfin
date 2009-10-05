@@ -484,6 +484,22 @@ DEBUGGING:
 
 <?/MIBLOCK>  <?MICOMMENT>-- end GENE / PROBE name test -- <?/MICOMMENT> 
 
+<?MICOMMENT> 
+    ============================================================================
+    ==========  EFG ONLY TEST
+    ============================================================================
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(XST,$xpatselqry_efgOnly)">
+  <?MIVAR NAME="xpatselqry_join">$xpatselqry_join, marker_type_group_member <?/MIVAR>
+  <?MIVAR NAME="xpatselqry_cond">$xpatselqry_cond 
+                                 AND gene.mrkr_type = mtgrpmem_mrkr_type
+                                 AND mtgrpmem_mrkr_type_group = 'EFG' <?/MIVAR>
+
+<?/MIBLOCK>
+
+
+
 
 <?MICOMMENT>
     ============================================================================
