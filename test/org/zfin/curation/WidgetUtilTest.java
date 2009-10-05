@@ -14,7 +14,7 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.junit.client.GWTTestCase;
+//import com.google.gwt.junit.client.GWTTestCase;
 
 public class WidgetUtilTest {//extends GWTTestCase {
 

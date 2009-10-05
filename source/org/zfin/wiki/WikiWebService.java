@@ -8,7 +8,7 @@ import org.zfin.properties.ZfinProperties;
  * Please see http://confluence.atlassian.com/display/DOC/Remote+API+Specification
  * for further docuementation of the service class.
  */
-public abstract class WikiWebService {
+public class WikiWebService {
 
     protected String token = null;
     protected ConfluenceSoapService service = null;
@@ -23,6 +23,17 @@ public abstract class WikiWebService {
     protected String domainName = ZfinProperties.getDomain();
 
     private final Logger logger = Logger.getLogger(WikiWebService.class);
+
+
+    private static WikiWebService instance = null;
+
+    public static WikiWebService getInstance() throws WikiLoginException {
+        if (instance == null) {
+            instance = new WikiWebService();
+            instance.login();
+        }
+        return instance;
+    }
 
     public boolean login() throws WikiLoginException {
         try {
@@ -118,5 +129,33 @@ public abstract class WikiWebService {
             logger.error(e);
             return null;
         }
+    }
+
+    public void setOwnerForLabel(String label) throws Exception{
+
+        try {
+            RemoteSearchResult[] pages = service.getLabelContentByName(token,label) ;
+
+            // for each page:
+            // if there is is editing or view restriction, then add an editing one to the creator
+            for(RemoteSearchResult page: pages) {
+                logger.debug("processing page: "+ page.getTitle());
+                if(service.getContentPermissionSets(token,page.getId()).length==0){
+                    RemoteContentPermission permission = new RemoteContentPermission();
+                    RemotePage remotePage = service.getPage(token,page.getId()) ;
+                    permission.setUserName(remotePage.getCreator())  ;
+                    logger.info(" setting permission for: "+ page.getTitle()+" to "+remotePage.getCreator()) ;
+                    permission.setType("Edit")  ;
+                    RemoteContentPermission[] permissions = new RemoteContentPermission[1] ;
+                    permissions[0] = permission ;
+                    service.setContentPermissions(token,page.getId(),"Edit",permissions) ;
+                }
+            }  // end of for loop
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            logger.error("Unable to set owner for label["+label+"]",e);
+            throw e ;
+        }
+
     }
 }
