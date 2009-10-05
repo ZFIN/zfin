@@ -17,7 +17,8 @@
 #     There are no arguments to the script, and the script assumes 
 #     that no environment variables are set.
 #
-#     This writes a report to STDOUT.
+#     This writes a report to STDOUT and to a file so that we can send
+#     the file to Ron H. at ZIRC.
 #
 #     Returns
 #       0    All data was successfully pulled from ZIRC and loaded in the DB.
@@ -25,7 +26,7 @@
 #            ZIRC and loaded in the DB.  See output for details.
 
 use DBI;
-
+use MIME::Lite;
 #----------------------------------------------------------------------
 # Write a line to the report (STDOUT)
 #
@@ -39,10 +40,39 @@ sub writeReport(@) {
 
     foreach $line (@_) {
 	print(STDOUT "$line\n");
+	print(ZIRCREPORT "$line\n");
     }
     return ();
 }
 
+sub sendLoadReport ($) { # send email on error or completion
+    
+# . is concantenate
+# $_[x] means to take from the array of values passed to the fxn, the 
+# number indicated: $_[0] takes the first member.
+    
+    my $SUBJECT="Auto Load ZIRC Data:".$_[0];
+    my $MAILTO=$_[1];
+    my $TXTFILE=$_[2];
+    
+    # Create a new multipart message:
+    $msg1 = new MIME::Lite 
+	From    => "$ENV{LOGNAME}",
+	To      => "$MAILTO",
+	Subject => "$SUBJECT",
+	Type    => 'multipart/mixed';
+
+    attach $msg1 
+	Type     => 'text/plain',   
+	Path     => "$TXTFILE";
+
+    # Output the message to sendmail
+    
+    open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+    $msg1->print(\*SENDMAIL);
+    close (SENDMAIL);
+    
+}
 
 
 #----------------------------------------------------------------------
@@ -127,6 +157,10 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 # Hard code the ZDB ID of ZIRC
 my $zircZdbId = "ZDB-LAB-991005-53";
 
+system("/bin/rm ./loadReport.txt");
+
+open(ZIRCREPORT, ">> ./loadReport.txt") or die "can't open loadReport.txt";
+
 # Prepare to do some work.
 #  CD into working directory
 #  remove old downloaded files.
@@ -154,6 +188,8 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 
 $dbh->commit();
 $dbh->disconnect();
+
+&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->, ron\@zebrafish.org", "./loadReport.txt") ;
 
 exit 0;
 
