@@ -606,14 +606,6 @@ select distinct
          and thit_acc_db = 'gb'            then 'ZDB-FDBCONT-040412-42'
         when thit_acc_type = 'protein'
          and thit_acc_db = 'sp'
-<<<<<<< .working
---       and thit_species= 'Homo sapiens' then 'ZDB-FDBCONT-071023-3'
-         and thit_species= 'Homo sapiens' then (
-                select fdbcont_zdb_id from foreign_db_contains
-                where fdbcont_fdbdt_super_type = 'sequence'
-                  and fdbcont_fdbdt_data_type = 'Polypeptide'
-                  and fdbcont_fdb_db_name = 'UniProtKB'
-=======
 --       and thit_species= 'Homo sapiens' then 'ZDB-FDBCONT-071023-3'
          and thit_species= 'Homo sapiens' then (
                 select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type
@@ -622,19 +614,10 @@ select distinct
                   and fdb_db_name = 'UniProtKB'
 		  and fdbcont_fdb_db_id = fdb_db_pk_id
 		  and fdbcont_fdbdt_id = fdbdt_pk_id
->>>>>>> .merge-right.r18093
                   and fdbcont_organism_common_name = 'Human'
          )
         when thit_acc_type = 'protein'
          and thit_acc_db = 'sp'
-<<<<<<< .working
---       and thit_species= 'Mus musculus'  then 'ZDB-FDBCONT-071023-2'
-         and thit_species= 'Mus musculus'  then(
-                select fdbcont_zdb_id from foreign_db_contains
-                where fdbcont_fdbdt_super_type = 'sequence'
-                  and fdbcont_fdbdt_data_type = 'Polypeptide'
-                  and fdbcont_fdb_db_name = 'UniProtKB'
-=======
 --       and thit_species= 'Mus musculus'  then 'ZDB-FDBCONT-071023-2'
          and thit_species= 'Mus musculus'  then(
                 select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type
@@ -643,7 +626,6 @@ select distinct
                   and fdb_db_name = 'UniProtKB'
 		  and fdbcont_fdb_db_id = fdb_db_pk_id
 		  and fdbcont_fdbdt_id = fdbdt_pk_id
->>>>>>> .merge-right.r18093
                   and fdbcont_organism_common_name = 'Mouse'
          )
         when thit_acc_type = 'protein'

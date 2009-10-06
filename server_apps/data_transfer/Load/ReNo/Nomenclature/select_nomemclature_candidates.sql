@@ -139,21 +139,13 @@ drop table tmp_nrs_pp;
 ! echo "keep UniProt if multipule"
 select mrkr_zdb_id
  from tmp_can_pp tcp1
-<<<<<<< .working
- where fdbcont_fdb_db_name = 'UniProtKB'
-=======
  where db_name = 'UniProtKB'
->>>>>>> .merge-right.r18093
  and tcp1.dblink_length is not null
   and exists (
     select 1
      from tmp_can_pp tcp2
      where tcp2.mrkr_zdb_id = tcp1.mrkr_zdb_id
-<<<<<<< .working
-     and   (tcp2.fdbcont_fdb_db_name <> 'UniProtKB'
-=======
      and   (tcp2.db_name <> 'UniProtKB'
->>>>>>> .merge-right.r18093
      or    tcp2.dblink_length is null)
  )
  into temp tmp_nrs_pp with no log
@@ -162,11 +154,7 @@ select mrkr_zdb_id
 delete from tmp_can_pp where exists (
     select 1 from tmp_nrs_pp
      where tmp_nrs_pp.mrkr_zdb_id = tmp_can_pp.mrkr_zdb_id
-<<<<<<< .working
-) and (fdbcont_fdb_db_name <> 'UniProtKB'
-=======
 ) and (db_name <> 'UniProtKB'
->>>>>>> .merge-right.r18093
   or   dblink_length is null)
 ;
 
