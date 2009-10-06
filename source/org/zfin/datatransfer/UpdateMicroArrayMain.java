@@ -44,20 +44,20 @@ public final class UpdateMicroArrayMain {
     public static String[] confFiles() {
         return new String[]{
                 "filters.hbm.xml",
-                "antibody.hbm.xml",
-                "reno.hbm.xml",
                 "anatomy.hbm.xml",
-                "people.hbm.xml",
-                "general.hbm.xml",
+                "antibody.hbm.xml",
                 "blast.hbm.xml",
-                "marker.hbm.xml",
                 "expression.hbm.xml",
-                "sequence.hbm.xml",
-                "publication.hbm.xml",
-                "orthology.hbm.xml",
-                "mutant.hbm.xml",
+                "general.hbm.xml",
                 "infrastructure.hbm.xml",
-                "mapping.hbm.xml"
+                "marker.hbm.xml",
+                "mapping.hbm.xml",
+                "mutant.hbm.xml",
+                "orthology.hbm.xml",
+                "people.hbm.xml",
+                "publication.hbm.xml",
+                "sequence.hbm.xml",
+                "reno.hbm.xml",
         };
     }
 
