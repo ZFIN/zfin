@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/private/bin/perl -W
 #
 # This script generates ZFIN GenBank accession and 
 # GenBank RNA accession lists for Genomix. Since it is
@@ -62,7 +62,7 @@ unload to \"$accFile_xpat\" delimiter \" \"
      from db_link, foreign_db_contains, foreign_db, foreign_db_data_type,tmp_xpatmrkr_zdb_id_list
     where dblink_linked_recid = t_xgl_mrkr_zdb_id
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id 
-      and fdb_db_name in (\"GenBank\",\"Vega_Trans\") 
+      and fdbcont_fdb_db_name in (\"GenBank\",\"Vega_Trans\",\"PREVEGA\",\"RefSeq\") 
       and fdbdt_data_type = \"RNA\"
       and fdbcont_fdbdt_id = fdbdt_pk_id
       and fdbcont_fdb_db_id = fdb_db_pk_id
