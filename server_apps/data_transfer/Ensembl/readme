@@ -1,7 +1,6 @@
-
 ##################################################################
-Apr 2008 
-thinking about where to pull GFF files from Ensembl/Vega 
+Apr 2008
+thinking about where to pull GFF files from Ensembl/Vega
 as the period is apt to be tied to the two month Ensembl
 cycle this seems like a good starting point.
 
@@ -20,9 +19,8 @@ name changes to reflect the new assembly.
 care must be taken to look for sql that uses
  fdb_db_name = 'Ensembl(zV7)'
 
-see: 
- update_ensembl_release_version.sql
-
+see:
+update_ensembl_release_version.sql
 
 *** NOTE ***
 
@@ -31,11 +29,11 @@ as it can happen a new ensembl release (danio_rerio_core_xx_x)
 is in ftp://ftp.ensembl.org/pub/current_mysql/
 
 before it is available in
- 
+
  mysql:// ensembldb.ensembl.org:3306
 
 should also note the mysql port changed from 3306 to 5306
-when they upgraded to a newer mysql v5. 
+when they upgraded to a newer mysql v5.
 the old port is still in place to serve the old v4 releases.
 
 
