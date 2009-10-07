@@ -52,9 +52,7 @@
         </c:forEach>
     </c:if>
 
-    <c:if test="${database.database.publicDatabase}">
-        public
-        <zfin2:databaseOriginationColor origination="${database.database.origination}"/>
-    </c:if>
+    <zfin2:databaseOriginationColor origination="${database.database.origination}"/>
+    ${ (database.database.publicDatabase) ? "public" : "private"}
     </span>
 </authz:authorize>
