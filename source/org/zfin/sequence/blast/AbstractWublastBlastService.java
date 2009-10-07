@@ -826,7 +826,10 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
             return fixBlastXML(execProcess.getStandardOutput().trim(),xmlBlastBean) ;
         } catch (Exception e) {
-            throw new BlastDatabaseException("failed to blast database with: "+commandLine+e);
+            e.fillInStackTrace();
+            String errorString = "failed to blast database with: "+commandLine.toString().replaceAll(","," ")+"\n" + e;
+
+            throw new BlastDatabaseException(errorString,e);
         }
     }
 

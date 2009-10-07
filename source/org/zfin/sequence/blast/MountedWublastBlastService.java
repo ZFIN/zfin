@@ -41,7 +41,7 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
      */
     @Override
     protected File sendFASTAToServer(File fastaFile,int sliceNumber) throws IOException{
-        
+
         // file is already written
         // just replace the name here
         File remoteFile = new File(ZfinProperties.getBlastServerDatabasePath()+"/"+fastaFile.getName()) ;
@@ -186,19 +186,27 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
                 int returnValue = execProcess.exec();
                 logger.debug("return value: "+ returnValue);
             } catch (Exception e) {
-                logger.warn("Error blasting: "+e);
-                throw new RuntimeException("Failed to blast",e) ;
+                e.fillInStackTrace();
+                String errorString = "Failed to blast\n" ;
+                errorString += "command line:[" + commandLine.toString().replaceAll(","," ")+"]\n" ;
+                if(execProcess!=null){
+                    errorString += "output stream[" + execProcess.getStandardOutput()+"]\n" ;
+                    errorString += "error stream[" + execProcess.getStandardError()+"]\n" ;
+                }
+                throw new BlastDatabaseException(errorString,e) ;
             }
             logger.debug("output stream: "+ execProcess.getStandardOutput().trim());
             logger.debug("error stream: "+ execProcess.getStandardError().trim());
 
             return fixBlastXML(execProcess.getStandardOutput().trim(),xmlBlastBean) ;
         } catch (Exception e) {
-            throw new BlastDatabaseException("failed to blast database with: "+commandLine+e);
+            e.fillInStackTrace();
+            String errorString = "failed to blast database with: "+commandLine.toString().replaceAll(","," ")+"\n" + e;
+            throw new BlastDatabaseException(errorString,e);
         }
     }
 
-    private void fixFilePermissions(File fastaSequenceFile) {
+    private void fixFilePermissions(File fastaSequenceFile) throws BlastDatabaseException{
         List<String> commandLine = new ArrayList<String>() ;
         commandLine.add("chmod") ;
         commandLine.add("664") ;
@@ -210,8 +218,14 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
             int returnValue = execProcess.exec();
             logger.debug("return value: "+ returnValue);
         } catch (Exception e) {
-            logger.warn("Error blasting: "+e);
-            throw new RuntimeException("Failed to blast",e) ;
+            e.fillInStackTrace();
+            String errorString = "Failed to fix file permissions\n" ;
+            errorString += "command line:[" + commandLine.toString().replaceAll(","," ")+"]\n" ;
+            if(execProcess!=null){
+                errorString += "output stream[" + execProcess.getStandardOutput()+"]\n" ;
+                errorString += "error stream[" + execProcess.getStandardError()+"]\n" ;
+            }
+            throw new BlastDatabaseException(errorString,e) ;
         }
         logger.debug("output stream: "+ execProcess.getStandardOutput().trim());
         logger.debug("error stream: "+ execProcess.getStandardError().trim());

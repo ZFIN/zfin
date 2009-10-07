@@ -161,7 +161,6 @@ public class XMLBlastValidator implements Validator{
             }
         }
         catch(Exception e){
-            logger.error("trying to use an invalid sequence: " +e);
             String sequenceType ;
             if(xmlBlastBean.getSequenceType().equals("nt")){
                 sequenceType = "Nucleotide" ;
@@ -171,6 +170,9 @@ public class XMLBlastValidator implements Validator{
             }
             String errorString = "Sequence type does not match program "+ xmlBlastBean.getProgram()+".  "+ sequenceType + " sequence expected.";
             errors.rejectValue(field,"code",errorString);
+            logger.warn("Sequence type does not match program "+ xmlBlastBean.getProgram()+".  "+ sequenceType + " sequence expected.");
+            e.fillInStackTrace();
+            logger.warn("FASTA does not match for sequence type ["+xmlBlastBean.getSequenceType()+"[is invalid:\n"+xmlBlastBean.getQuerySequence()+"\n" ,e);
         }
     }
 
