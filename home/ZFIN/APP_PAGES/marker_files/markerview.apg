@@ -854,10 +854,13 @@ Only need to update clones, etc., which should be the only things that will have
           <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 
           <?MIVAR>
+          <?MICOMMENT>
           <script type="text/javascript">
                     new Ajax.Updater('blastDropDown','/action/blast/include-external-blast?zdbID=$mrkrview_mrkrseq_zdb_id');
            </script>
            <div id="blastDropDown"></div>
+          <?/MICOMMENT>
+             &nbsp;  <input type=button value="BLAST IT" onClick="window.open('$(CONCAT,$ncbi_blast_url,$mrkrview_sequence,$blast_option)');">
           <?/MIVAR>
         </td>
       </tr>
