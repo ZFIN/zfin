@@ -2094,7 +2094,43 @@ sub allTranscriptsHaveAtLeastOneDbLink ($) {
     }
     &recordResult($routineName, $nRecords);
 }
+#----------------------------------------------
+# Parameter
+# $      Email Address for recipients
+#
+# 
+sub transcriptsOnMoreThanOneGene ($) {
+    my $routineName = "transcriptsOnMoreThanOneGene";
+    my $sql = 'select count(*), mrkr_zdb_id
+                 from marker, marker_relationship mrel1, transcript, transcript_type
+                 where mrkr_type = "TSCRIPT"
+		 and tscriptt_pk_id = tscript_type_id
+		 and tscriptt_type != "miRNA"
+                 and mrkr_zdb_id = mrel1.mrel_mrkr_2_zdb_id
+                 and mrel1.mrel_mrkr_1_zdb_id like "ZDB-GENE%"
+                 and exists (Select "x" 
+                               from marker_relationship mrel2
+                               where mrel2.mrel_mrkr_1_zdb_id != mrel1.mrel_mrkr_1_zdb_id
+                               and mrel2.mrel_mrkr_1_zdb_id like "ZDB-GENE%"
+                               and mrel2.mrel_mrkr_2_zdb_id = mrel1.mrel_mrkr_2_zdb_id)
+                 group by mrkr_zdb_id
+                 having count(*) > 1';
 
+    my @colDesc =("Data zdb id, counter");
+
+    my $nRecords = execSql ($sql, undef, @colDesc);
+
+    if ( $nRecords > 0 ) {
+
+	my $sendToAddress = $_[0];
+	my $subject = "AutoGen: tscript are associated with more than one gene";
+	my $errMsg = "$nRecords transcripts are associated with more than one gene";
+	
+	logError ($errMsg); 
+	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    }
+    &recordResult($routineName, $nRecords);
+}
 #----------------------------------------------
 # Parameter
 # $      Email Address for recipients
@@ -3163,6 +3199,7 @@ my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
 
 
 if($daily) {
+    transcriptsOnMoreThanOneGene($dbaEmail);
     findWithdrawnMarkerMismatch($geneEmail); 
     onlyProblemClonesHaveArtifactOf($geneEmail); 
     unFeatureNameAbbrevUpdate($dbaEmail);
