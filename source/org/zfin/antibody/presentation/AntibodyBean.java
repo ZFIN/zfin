@@ -278,14 +278,6 @@ public class AntibodyBean extends PublicationListBean {
         return "/" + ZfinProperties.getWebDriver() + "?MIval=aa-delete_record.apg&rtype=marker&OID=" + zdbID;
     }
 
-    public String getWikiLink() {
-        try {
-            return AntibodyWikiWebService.getInstance().getWikiLink(antibody);
-        } catch (WikiLoginException e) {
-            logger.error(e);
-            return null;
-        }
-    }
     /*
     public int getNumOfSuppliers() {
         if (antibody == null || antibody.getSuppliers() == null)

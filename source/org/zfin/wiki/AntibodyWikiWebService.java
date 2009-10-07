@@ -459,17 +459,17 @@ public class AntibodyWikiWebService extends WikiWebService {
     /**
      * Generated a link to the wiki's antibody page for a given antibody.
      *
-     * @param antibody Antibody to evaluate.
+     * @param name Name of antibody
      * @return If true, a wiki page exists for that antibody that is labeled zfin_antibody.
      */
-    public String getWikiLink(Antibody antibody) {
+    public String getWikiLink(String name) {
         try {
             if (!login()) return null;
 
             // get a page with the same title, if so, than set the same Id, as we will be replacing this page
             RemotePage page;
 
-            String pageTitle = getWikiTitleFromAntibodyName(antibody.getName());
+            String pageTitle = getWikiTitleFromAntibodyName(name);
 
             page = service.getPage(token, SPACE_KEY, pageTitle);
             if (page == null) {

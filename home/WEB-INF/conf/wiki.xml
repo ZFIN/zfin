@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+    <bean id="wikiUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/wiki/wikiLink">wikiLink</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean name="wikiLink" class="org.zfin.wiki.presentation.WikiLinkController">
+        <property name="commandName" value="formBean"/>
+        <property name="commandClass" value="org.zfin.wiki.presentation.WikiBean"/>
+    </bean>
+
+</beans>

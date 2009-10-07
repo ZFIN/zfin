@@ -38,6 +38,7 @@
                 <value>/WEB-INF/conf/tiles-defs-marker.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-mapper.xml</value>
                 <value>/WEB-INF/conf/tiles-defs-blast.xml</value>
+                <value>/WEB-INF/conf/tiles-defs-wiki.xml</value>
             </list>
         </property>
     </bean>

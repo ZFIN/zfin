@@ -28,6 +28,7 @@
             /WEB-INF/conf/publication.xml,
             /WEB-INF/conf/webdriver.xml,
             /WEB-INF/conf/mapper.xml,
+            /WEB-INF/conf/wiki.xml,
             /WEB-INF/conf/quartz-jobs.xml,
             /WEB-INF/conf/applicationContext-acegi-security.xml
         </param-value>
