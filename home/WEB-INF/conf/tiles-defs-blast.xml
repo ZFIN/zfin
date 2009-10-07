@@ -8,9 +8,7 @@
     <definition name="external-blast.page" page="/WEB-INF/jsp/blast/external_blast_redirect.jsp">
     </definition>
 
-    <definition name="include-external-blast.page" extends="main_layout">
-        <put name="staticTitle" value="ZFIN: Sequence"/>
-        <put name="body" value="/WEB-INF/jsp/blast/blast_apg_include.jsp"/>
+    <definition name="include-external-blast.page" page="/WEB-INF/jsp/blast/blast_apg_include.jsp">
     </definition>
 
     <definition name="display-blast-sequence.page" extends="main_layout">
