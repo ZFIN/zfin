@@ -109,10 +109,13 @@ public class XMLBlastController extends SimpleFormController {
             {
                 //these values should match blast.js
                 xmlBlastBean.setShortAndNearlyExact(true);
-                xmlBlastBean.setExpectValue(10d);
-                xmlBlastBean.setWordLength(3);
-                xmlBlastBean.setSeg(true);
-                xmlBlastBean.setXnu(true);
+                xmlBlastBean.setExpectValue(1000d);
+                xmlBlastBean.setWordLength(7);
+                xmlBlastBean.setDust(false);
+                xmlBlastBean.setPoly_a(false);
+                xmlBlastBean.setXnu(false);
+                xmlBlastBean.setSeg(false);
+                xmlBlastBean.setXnu(false);
             }
         }
 
