@@ -58,11 +58,11 @@ public class NCBIEfetch {
             }
         }
         catch (Exception e) {
+            e.fillInStackTrace();
             if(e.getMessage().contains("Unexpected subelement Error")){
-                logger.warn("Sequence not found at NCBI["+accession.toUpperCase()+"]",e);
+                logger.info("Sequence not found at NCBI["+accession.toUpperCase()+"]",e);
             }else{
-                e.fillInStackTrace();
-                logger.error("Failed to find sequence at NCBI["+accession.toUpperCase()+"]",e);
+                logger.error("Error trying to find sequence at NCBI["+accession.toUpperCase()+"]",e);
             }
         }
         return fastaStrings ;

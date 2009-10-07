@@ -170,9 +170,9 @@ public class XMLBlastValidator implements Validator{
             }
             String errorString = "Sequence type does not match program "+ xmlBlastBean.getProgram()+".  "+ sequenceType + " sequence expected.";
             errors.rejectValue(field,"code",errorString);
-            logger.warn("Sequence type does not match program "+ xmlBlastBean.getProgram()+".  "+ sequenceType + " sequence expected.");
+            logger.debug("Sequence type does not match program "+ xmlBlastBean.getProgram()+".  "+ sequenceType + " sequence expected.");
             e.fillInStackTrace();
-            logger.warn("FASTA does not match for sequence type ["+xmlBlastBean.getSequenceType()+"[is invalid:\n"+xmlBlastBean.getQuerySequence()+"\n" ,e);
+            logger.debug("FASTA does not match for sequence type ["+xmlBlastBean.getSequenceType()+"[is invalid:\n"+xmlBlastBean.getQuerySequence()+"\n" ,e);
         }
     }
 
