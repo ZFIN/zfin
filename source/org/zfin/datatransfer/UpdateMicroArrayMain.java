@@ -32,8 +32,8 @@ public final class UpdateMicroArrayMain {
     ReferenceDatabase zfEspressoDatabase = null ;
 //    ReferenceDatabase arrayExpressDatabase = null ;
 
-    Map<String,MarkerDBLink> genBankLinks = null ; 
-    Map<String,MarkerDBLink> microarrayLinks = null ; 
+    Map<String,MarkerDBLink> genBankLinks = null ;
+    Map<String,MarkerDBLink> microarrayLinks = null ;
 
 
     ReferenceDatabase genBankGenomicDatabase  = null ;
@@ -65,7 +65,7 @@ public final class UpdateMicroArrayMain {
     final String referencePubZdbID = "ZDB-PUB-071218-1" ;
     Publication refPub ;
 
-    
+
 
     void loadGenBankDBs() throws Exception{
         genBankLinks = sequenceRepository.getUniqueMarkerDBLinks( genBankGenomicDatabase, genBankRNADatabase) ;   // 1 - load genbank
@@ -87,7 +87,7 @@ public final class UpdateMicroArrayMain {
 
             // zfEspressoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ZF_ESPRESSO.toString(),
 //                    ReferenceDatabase.Type.OTHER,ReferenceDatabase.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
- //           logger.debug("zfEspressoDatabase: " + zfEspressoDatabase) ;
+            //           logger.debug("zfEspressoDatabase: " + zfEspressoDatabase) ;
 
 
 //            arrayExpressDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.ARRAY_EXPRESS.toString(),
@@ -123,22 +123,22 @@ public final class UpdateMicroArrayMain {
         Map<String,Set<MarkerDBLink>> currentMicroArrayLinkSets = sequenceRepository.getMarkerDBLinks( referenceDatabases) ;
         Set<DBLink> dbLinksToRemove =new HashSet<DBLink>() ;
         Session session = HibernateUtil.currentSession()  ;
-        int numDeleted = 0 ; 
+        int numDeleted = 0 ;
 //        genBankLinks
         for(String accession : currentMicroArrayLinkSets.keySet()){
             if(false==genBankLinks.containsKey(accession)
-                 ||
-               false==newAccessions.contains(accession)
+                    ||
+                    false==newAccessions.contains(accession)
                     ){
                 for(MarkerDBLink dbLinkToRemove:currentMicroArrayLinkSets.get(accession) ){
-                    infoLogger.warn("removing dblink: " + accession) ; 
-                    dbLinksToRemove.add(dbLinkToRemove) ; 
-                    ++numDeleted ; 
+                    infoLogger.warn("removing dblink: " + accession) ;
+                    dbLinksToRemove.add(dbLinkToRemove) ;
+                    ++numDeleted ;
                 }
-            }            
+            }
         }
-        sequenceRepository.removeDBLinks(dbLinksToRemove) ; 
-        infoLogger.info("number of links cleaned out: " + numDeleted) ; 
+        sequenceRepository.removeDBLinks(dbLinksToRemove) ;
+        infoLogger.info("number of links cleaned out: " + numDeleted) ;
     }
 
 
@@ -154,9 +154,9 @@ public final class UpdateMicroArrayMain {
 
         infoLogger.info("processNewLinks - microarray accessions to process for addition: " + newMicroArrayAccessions.size()   ) ;
         Set<MarkerDBLink> dbLinksToAdd = new HashSet<MarkerDBLink>() ;
-        int numAdded = 0 ; 
+        int numAdded = 0 ;
         for(String newMicroArrayAccession : newMicroArrayAccessions){
-            MarkerDBLink genBankLink = genBankLinks.get(newMicroArrayAccession) ; 
+            MarkerDBLink genBankLink = genBankLinks.get(newMicroArrayAccession) ;
             Set<MarkerDBLink> currentMicroArrayLinkSet = currentMicroArrayLinkSets.get(newMicroArrayAccession) ;
 //            if(genBankLink != null && currentMicroArrayLinkSet != null){
 //               // check for update
@@ -192,12 +192,12 @@ public final class UpdateMicroArrayMain {
             }
             else
             if(genBankLink == null ){
-               // note that accession not found for new accession
-               notFoundLogger.info(newMicroArrayAccession);
+                // note that accession not found for new accession
+                notFoundLogger.info(newMicroArrayAccession);
             }
         }
-        sequenceRepository.addDBLinks(dbLinksToAdd,refPub, 30000) ; 
-        infoLogger.info("number of links added: " + numAdded) ; 
+        sequenceRepository.addDBLinks(dbLinksToAdd,refPub, 30000) ;
+        infoLogger.info("number of links added: " + numAdded) ;
 
 
     }
@@ -221,7 +221,7 @@ public final class UpdateMicroArrayMain {
             processNewLinks(newGEOAccessions,microarrayLinks,geoDatabase) ; // 2
             cleanupOldLinks(newGEOAccessions,geoDatabase) ; // 3
 
-                                                                                                                                                        
+
 
             // Process the 1319 chipset for all.  
             // Set<String> newOtherAccessions = new HashSet<String>() ;
@@ -229,7 +229,7 @@ public final class UpdateMicroArrayMain {
 //            //okay if it only returns one
             //microarrayLinks.clear();
             //microarrayLinks = sequenceRepository.getMarkerDBLinks(null, zfEspressoDatabase ) ;   // 0 - load microarray
-           //processNewLinks( newOtherAccessions , microarrayLinks,zfEspressoDatabase) ;  // 2
+            //processNewLinks( newOtherAccessions , microarrayLinks,zfEspressoDatabase) ;  // 2
             // cleanupOldLinks(newOtherAccessions,zfEspressoDatabase) ; // 3
 
 //            microarrayLinks = sequenceRepository.getMarkerDBLinks(null, zfEspressoDatabase ,arrayExpressDatabase) ;   // 0 - load microarray

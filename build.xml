@@ -572,24 +572,6 @@
        </java>
     </target>
 
-<!--   this should be deleted after load is set-->
-   <target name="pullTaar16" depends="compile">
- <!-- Run script from a file -->
-        <antcall target="copyZfinPropertiesWithEnv">
-            <param name="from-zfin-properties-file" value="zfin-properties-pullTaar16-init.xml"/>
-            <param name="to-zfin-properties-file" value="zfin-properties-pullTaar16.xml"/>
-        </antcall>
-        <java classname="org.zfin.datatransfer.PullTaar16"
-              fork="yes"
-              classpathref="extended.classpath">
-            <jvmarg value="-DDBNAME=${dbname}"/>
-            <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-            <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-            <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-            <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
-       </java>
-   </target>
-
 </project>
 
 
