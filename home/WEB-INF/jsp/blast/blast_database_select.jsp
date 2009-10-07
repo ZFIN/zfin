@@ -11,13 +11,13 @@
     <select multiple="true" name = "dataLibraryString" size=10 onchange="return setInfo(this);">
 </authz:authorize>
 <authz:authorize ifAllGranted="root">
-    <option> ==========  Nucleotide DB  ===========</option>
+    <option value=""> ==========  Nucleotide DB  ===========</option>
 </authz:authorize>
 <c:forEach var="database" items="${formBean.nucleotideDatabases}">
     <zfin2:blastDatabaseSelect database="${database}" selected="${formBean.dataLibraryString}"/>
 </c:forEach>
 <%--<authz:authorize ifAllGranted="root">--%>
-    <option> =======  Protein DB  ========</option>
+    <option value=""> =======  Protein DB  ========</option>
 <%--</authz:authorize>--%>
 <c:forEach var="database" items="${formBean.proteinDatabases}">
     <zfin2:blastDatabaseSelect database="${database}" selected="${formBean.dataLibraryString}"/>
