@@ -5,10 +5,10 @@
 
 <strong>Key</strong>
 <img src="/images/E_letter.png" class="blast-key"> Gene Expression
-<img src="/images/E_camera.png" class="blast-key"> with Figures
+<img src="/images/E_camera.png" class="blast-key"> with Images
 <img src="/images/G_letter.png" class="blast-key"> GO Annotations
 <img src="/images/P_letter.png" class="blast-key"> Phenotype Data
-<img src="/images/P_camera.png" class="blast-key"> with Figures
+<img src="/images/P_camera.png" class="blast-key"> with Images
 
 <table class="searchresults rowstripes">
     <%--<tr bgcolor="darkgray">--%>
