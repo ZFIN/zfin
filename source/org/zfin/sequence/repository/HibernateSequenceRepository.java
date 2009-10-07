@@ -348,6 +348,10 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
         logger.debug("dbLinksToRemove.size: " + dbLinksToRemove.size()) ;
 
+        if(dbLinksToRemove.size()==0){
+            return 0 ; 
+        }
+
         Session session = HibernateUtil.currentSession() ;
         session.flush();  // without this, it fails
         logger.debug("flushed" ) ;
