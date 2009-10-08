@@ -483,13 +483,13 @@ public class ExecuteBlastTest {
             HitViewBean hitViewBean = blastResultBean.getHits().get(15) ;
 
             assertEquals(16,hitViewBean.getHitNumber());
-            assertEquals("ZDB-MRPHLNO-060620-2",hitViewBean.getAccessionNumber());
+            assertEquals("ZDB-MRPHLNO-041109-5",hitViewBean.getAccessionNumber());
             List<HighScoringPair> highScoringPairList = hitViewBean.getHighScoringPairs() ;
             assertEquals(1,highScoringPairList.size());
             assertNull(hitViewBean.getHitDBLink()) ;
             assertNull(hitViewBean.getZfinAccession()) ;
             assertNotNull(hitViewBean.getHitMarker()) ;
-            assertEquals("otx1",hitViewBean.getGene().getAbbreviation());
+            assertEquals("fgf8a",hitViewBean.getGene().getAbbreviation());
         } catch (Exception e) {
             fail(e.fillInStackTrace().toString()) ;
         }
