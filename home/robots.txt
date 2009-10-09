@@ -33,5 +33,11 @@ Disallow: /action/anatomy/search
 User-Agent: msnbot/1.1
 Disallow: /
 
+User-Agent: msnbot/2.0b
+Disallow: /
+
 User-Agent: Yeti/1.0
+Disallow: /
+
+User-Agent: FAST Enterprise Crawler 6
 Disallow: /
