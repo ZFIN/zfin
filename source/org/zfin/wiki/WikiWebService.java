@@ -14,6 +14,7 @@ public class WikiWebService {
     protected ConfluenceSoapService service = null;
     protected final String EDIT_PERMISSION = "Edit";
     protected final String VIEW_PERMISSION = "View";
+    protected final String PAGE_TYPE = "page" ;
     protected final String ENDPOINT_SUFFIX = "/rpc/soap-axis/confluenceservice-v1";
     protected final String WEBSERVICE_PROTOCOL = "https://";
 
@@ -133,14 +134,19 @@ public class WikiWebService {
 
     public void setOwnerForLabel(String label) throws Exception{
 
+        if(false==ZfinProperties.isPushToWiki()){
+            return ; 
+        }
+
         try {
+            if (!login()) return ;
             RemoteSearchResult[] pages = service.getLabelContentByName(token,label) ;
 
             // for each page:
             // if there is is editing or view restriction, then add an editing one to the creator
             for(RemoteSearchResult page: pages) {
-                logger.debug("processing page: "+ page.getTitle());
-                if(service.getContentPermissionSets(token,page.getId()).length==0){
+                logger.debug("processing page["+page.getTitle()+"] type["+page.getType() + "] # perm["+ service.getContentPermissionSets(token,page.getId()).length+"]") ;
+                if(page.getType().equals(PAGE_TYPE) && service.getContentPermissionSets(token,page.getId()).length==0){
                     RemoteContentPermission permission = new RemoteContentPermission();
                     RemotePage remotePage = service.getPage(token,page.getId()) ;
                     permission.setUserName(remotePage.getCreator())  ;
