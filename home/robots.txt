@@ -29,3 +29,9 @@ Disallow: /cgi-bin/webdriver?MIval=aa-xpatview.apg*
 Disallow: /action/anatomy/search
 # allow stage searches from drop-down, in theory, need to set explicitly on page
 #Allow: /action/anatomy/search?action=term-by-stage-search&stage.zdbID=ZDB-STAGE-*
+
+User-Agent: msnbot/1.1
+Disallow: /
+
+User-Agent: Yeti/1.0
+Disallow: /
