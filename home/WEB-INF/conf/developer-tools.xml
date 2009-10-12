@@ -37,6 +37,7 @@
                 <prop key="/dev-tools/svn-version">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/display-groups">displayGroups</prop>
                 <prop key="/dev-tools/blastable-databases">blastableDatabases</prop>
+                <prop key="/dev-tools/test-error-page">errorPageHandler</prop>
             </props>
         </property>
     </bean>
@@ -44,15 +45,15 @@
 
     <!-- Make sure to use scope=prototype to instantiate a new object to make the call thread-safe!-->
     <bean name="gwtModules" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
-        <property name="viewName" value="gwt-modules" />
+        <property name="viewName" value="gwt-modules"/>
     </bean>
 
     <bean name="fxCuration" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
-        <property name="viewName" value="fx-curation" />
+        <property name="viewName" value="fx-curation"/>
     </bean>
 
     <bean name="lookup" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
-        <property name="viewName" value="lookup" />
+        <property name="viewName" value="lookup"/>
     </bean>
 
     <bean name="log4jConfiguration" class="org.zfin.framework.presentation.Log4jConfigurationController"/>
@@ -86,6 +87,13 @@
     <bean name="displayGroups" class="org.zfin.framework.presentation.DisplayGroupController"/>
 
     <bean name="blastableDatabases" class="org.zfin.framework.presentation.BlastableDatabasesController"/>
+
+    <bean name="errorPageHandler" class="org.zfin.framework.presentation.TestErrorPageController">
+        <property name="formView" value="create-error.page"/>
+        <property name="successView" value="no-error.page"/>
+        <property name="commandClass" value="java.lang.Object"/>
+        <property name="commandName" value="formBean"/>
+    </bean>
 
     <!--
     - This bean is a MethodNameResolver definition for a MultiActionController.

@@ -2,12 +2,18 @@
 
 <table cellpadding="2" cellspacing="1" border="0" width="80%">
 
-    <tr><td colspan="3" class="sectionTitle">ZFIN Application:</td></tr>
-    <tr><td class="listContentBold">&nbsp;</td><td colspan="2" class="listContent">&nbsp;</td></tr>
+    <tr>
+        <td colspan="3" class="sectionTitle">ZFIN Application:</td>
+    </tr>
+    <tr>
+        <td class="listContentBold">&nbsp;</td>
+        <td colspan="2" class="listContent">&nbsp;</td>
+    </tr>
 
     <tr>
         <td valign=top class="listContentBold">
-            Database Info: </td>
+            Database Info:
+        </td>
         <td colspan="2" class="listContent">
             <a href="/action/dev-tools/database-info">Database Info</a>
         </td>
@@ -23,7 +29,8 @@
 
     <tr>
         <td valign=top class="listContentBold">
-            Java Properties: </td>
+            Java Properties:
+        </td>
         <td colspan="2" class="listContent">
             <a href="/action/dev-tools/java-properties">Java Properties</a>
         </td>
@@ -39,21 +46,24 @@
 
     <tr>
         <td valign=top class="listContentBold">
-            Zfin Properties: </td>
+            Zfin Properties:
+        </td>
         <td colspan="2" class="listContent">
             <a href="/action/dev-tools/zfin-properties">Zfin Properties</a>
         </td>
     </tr>
     <tr>
         <td valign=top class="listContentBold">
-            ReferenceDB/DBLink Display Groups: </td>
+            ReferenceDB/DBLink Display Groups:
+        </td>
         <td colspan="2" class="listContent">
             <a href="/action/dev-tools/display-groups">Display Groups</a>
         </td>
     </tr>
     <tr>
         <td valign=top class="listContentBold">
-            Blast Databases: </td>
+            Blast Databases:
+        </td>
         <td colspan="2" class="listContent">
             <a href="/action/dev-tools/blastable-databases">Blastabase Databases</a>
         </td>
@@ -97,7 +107,8 @@
             Acegi Security Configuration:
         </td>
         <td colspan="2" class="listContent">
-            <a href="/action/dev-tools/file-content?fileName=/WEB-INF/conf/applicationContext-acegi-security.xml">Acegi Security</a>
+            <a href="/action/dev-tools/file-content?fileName=/WEB-INF/conf/applicationContext-acegi-security.xml">Acegi
+                Security</a>
         </td>
     </tr>
     <tr>
@@ -116,18 +127,18 @@
             <a href="/action/dev-tools/view-session-info">Session Info</a>
         </td>
     </tr>
-<%--
-ToDo: enable once we have the session table back in place.
-      For now it is removed to keep the db changes small
-    <tr>
-        <td valign=top class="listContentBold">
-            Global Session Information:
-        </td>
-        <td colspan="2" class="listContent">
-            <a href="/action/dev-tools/view-global-session-info">Global Session Info</a>
-        </td>
-    </tr>
---%>
+    <%--
+    ToDo: enable once we have the session table back in place.
+          For now it is removed to keep the db changes small
+        <tr>
+            <td valign=top class="listContentBold">
+                Global Session Information:
+            </td>
+            <td colspan="2" class="listContent">
+                <a href="/action/dev-tools/view-global-session-info">Global Session Info</a>
+            </td>
+        </tr>
+    --%>
     <tr>
         <td valign=top class="listContentBold">
             Hibernate Information:
@@ -191,6 +202,12 @@ ToDo: enable once we have the session table back in place.
         <td>Version Info:</td>
         <td colspan="2">
             <a href="/java-deploy-version.html">Java Deploy Version</a>
+        </td>
+    </tr>
+    <tr>
+        <td>Test error handling:</td>
+        <td colspan="2">
+            <a href="/action/dev-tools/test-error-page">Test Error Page</a>
         </td>
     </tr>
 </table>

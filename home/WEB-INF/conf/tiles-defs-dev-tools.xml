@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
- <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
-       "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+        "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
 
 <tiles-definitions>
 
     <definition name="dev_layout" path="/WEB-INF/tiles/layout.jsp">
-        <put name="header" value="/WEB-INF/tiles/header_dev_tools.jsp" />
-        <put name="footer" value="/WEB-INF/tiles/footer.jsp" />
-        <put name="title"  value="Please provide Title"/>
-        <put name="body" value="" />
-     </definition>
+        <put name="header" value="/WEB-INF/tiles/header_dev_tools.jsp"/>
+        <put name="footer" value="/WEB-INF/tiles/footer.jsp"/>
+        <put name="title" value="Please provide Title"/>
+        <put name="body" value=""/>
+    </definition>
 
     <definition name="home_layout" path="/WEB-INF/tiles/layout.jsp">
-        <put name="header" value="/WEB-INF/tiles/header.jsp" />
-        <put name="footer" value="/WEB-INF/tiles/footer.jsp" />
-        <put name="body" value="" />
-     </definition>
+        <put name="header" value="/WEB-INF/tiles/header.jsp"/>
+        <put name="footer" value="/WEB-INF/tiles/footer.jsp"/>
+        <put name="body" value=""/>
+    </definition>
 
     <definition name="home" extends="dev_layout">
         <put name="body" value="/WEB-INF/jsp/dev-tools/home.jsp"/>
@@ -153,9 +153,16 @@
 
 
     <definition name="blastable-databases.page" extends="main_layout">
-        <put name="staticTitle" value="ZFIN: Blastable Databases" />
+        <put name="staticTitle" value="ZFIN: Blastable Databases"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/blastable_databases.jsp"/>
     </definition>
+
+    <definition name="create-error.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Create Error Page"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/create-error.jsp"/>
+    </definition>
+
+    <definition name="no-error.page" path="/WEB-INF/jsp/dev-tools/no-error-page.jsp"/>
 
 </tiles-definitions>
 
