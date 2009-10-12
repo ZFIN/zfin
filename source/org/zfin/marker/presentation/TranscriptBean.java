@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.zfin.marker.*;
 import org.zfin.sequence.Sequence;
+import org.zfin.sequence.DBLink;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.audit.AuditLogItem;
@@ -33,6 +34,7 @@ public class TranscriptBean extends MarkerBean {
     private List<TranscriptTypeStatusDefinition> transcriptTypeStatusDefinitionList;
     private List<TranscriptType> transcriptTypeList;
     private String vegaID;
+    private List<DBLink> unableToFindDBLinks;
 
 
     public RelatedMarkerDisplay getTranscriptRelationships() {
@@ -169,6 +171,14 @@ public class TranscriptBean extends MarkerBean {
 
     public void setVegaID(String vegaID) {
         this.vegaID = vegaID;
+    }
+
+    public List<DBLink> getUnableToFindDBLinks() {
+        return unableToFindDBLinks;
+    }
+
+    public void setUnableToFindDBLinks(List<DBLink> unableToFindDBLinks) {
+        this.unableToFindDBLinks = unableToFindDBLinks;
     }
 
     public String toString(){

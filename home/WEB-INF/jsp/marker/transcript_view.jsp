@@ -5,16 +5,16 @@
 
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
-        editURL="${formBean.editURL}"
-        deleteURL="${formBean.deleteURL}"
-        latestUpdate="${formBean.latestUpdate}"
-        rtype="marker"/>
+                   editURL="${formBean.editURL}"
+                   deleteURL="${formBean.deleteURL}"
+                   latestUpdate="${formBean.latestUpdate}"
+                   rtype="marker"/>
 
 <div style="float: right">
-<tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-    <tiles:put name="subjectName" value="${formBean.marker.name}"/>
-    <tiles:put name="subjectID" value="${formBean.marker.zdbID}"/>
-</tiles:insert>
+    <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+        <tiles:put name="subjectName" value="${formBean.marker.name}"/>
+        <tiles:put name="subjectID" value="${formBean.marker.zdbID}"/>
+    </tiles:insert>
 </div>
 
 <zfin2:transcriptHead transcript="${formBean.marker}"/>
@@ -25,6 +25,16 @@
 
 <zfin2:sequenceView sequences="${formBean.nucleotideSequences}"/>
 
+
+<c:if test="${!empty formBean.unableToFindDBLinks}">
+    <div class="error">Unable to retrieve the following
+            ${(fn:length(formBean.unableToFindDBLinks) eq 1) ? 'sequence' : 'sequences'}:
+        <c:forEach var="unableToFindDBLink"  items="${formBean.unableToFindDBLinks}">
+            <zfin:link entity="${unableToFindDBLink}"/>
+        </c:forEach>
+    </div>
+</c:if>
+
 <%--
 <zfin2:markerGbrowse marker="${formBean.marker}"/>
 --%>
@@ -34,7 +44,7 @@
 <zfin2:subsection title="Associated with Genes"
                   inlineTitle="true"
                   test="${!empty formBean.relatedGenes}">
-    <zfin2:toggledHyperlinkList collection="${formBean.relatedGenes}" 
+    <zfin2:toggledHyperlinkList collection="${formBean.relatedGenes}"
                                 id="relatedGenes"
                                 maxNumber="6"
                                 showAttributionLinks="true"/>
@@ -66,10 +76,10 @@
 
 <c:forEach var="relatedTranscriptDisplay" items="${formBean.relatedTranscriptDisplayList}">
     <c:if test="${fn:length(relatedTranscriptDisplay) > 1}">
-      <zfin2:markerTranscriptSummary transcripts="${relatedTranscriptDisplay}"
-                                     unlinkedTranscript="${formBean.marker}"
-                                     showAllTranscripts="true"/>
-   </c:if>
+        <zfin2:markerTranscriptSummary transcripts="${relatedTranscriptDisplay}"
+                                       unlinkedTranscript="${formBean.marker}"
+                                       showAllTranscripts="true"/>
+    </c:if>
 </c:forEach>
 
 <zfin2:transcriptTargets transcriptTargets="${formBean.transcriptTargets}"/>

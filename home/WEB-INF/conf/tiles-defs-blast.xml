@@ -16,11 +16,9 @@
         <put name="body" value="/WEB-INF/jsp/blast/display_blast_sequence.jsp"/>
     </definition>
 
-    <definition name="blast-database-select.page" page="/WEB-INF/jsp/blast/blast_database_select.jsp">
-    </definition>
-
-    <definition name="single-blast-database-info.page" page="/WEB-INF/jsp/blast/blast_database_info.jsp">
-    </definition>
+    <definition name="blast-database-select.page" page="/WEB-INF/jsp/blast/blast_database_select.jsp"/>
+    <definition name="single-blast-database-info.page" page="/WEB-INF/jsp/blast/blast_database_info.jsp"/>
+    <definition name="no-database-selected.page" page="/WEB-INF/jsp/blast/no_database_selected.jsp"/>
 
     <definition name="blast-database-info.page" extends="main_layout">
         <put name="staticTitle" value="ZFIN: BLAST Database Information" />

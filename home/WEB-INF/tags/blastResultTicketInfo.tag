@@ -10,8 +10,27 @@
             <br>
             <span style="font-size:small;">Links will be active for one week.</span>
             <span style="font-size:small;">
-                <a href="/action/blast/blast?previousSearch=${formBean.ticketNumber}">Edit and resubmit</a>
+                <a href="/action/blast/blast?previousSearch=${formBean.ticketNumber}">Edit&nbsp;and&nbsp;resubmit</a>
                 </span>
+            <c:if test="${!empty formBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage}">
+                <br>
+                <c:choose>
+                    <c:when test="${ ( fn:contains(formBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage.content, 'EXIT: 13')
+                        || fn:contains(formBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage.content, 'EXIT: 16') ) }">
+                        <span style="font-size: small;" class="error-inline">
+                            No query sequence was received by blast.
+                            Try changing filter parameters.
+                        </span>
+                    </c:when>
+                    <c:otherwise>
+                        <span style="font-size: small;" class="error-inline">
+                            Error message from blast server: <br>
+                       ${formBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage.content}
+                        </span>
+                    </c:otherwise>
+                </c:choose>
+                <%--<span style="font-size: small;" class="error-inline">${formBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage.content}</span>--%>
+            </c:if>
         </td>
 
         <td valign="top" width="60%">

@@ -2,8 +2,11 @@ package org.zfin.marker;
 
 import org.zfin.marker.Marker;
 import org.zfin.sequence.*;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  */
@@ -43,6 +46,15 @@ public class Transcript extends Marker {
         return TranscriptService.getTranscriptLength(this,DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE);
     }
 
+    public List<TranscriptDBLink> getTranscriptDBLinksForDisplayGroup(DisplayGroup.GroupName displayGroup) {
+        List<TranscriptDBLink> returnDBLinks = new ArrayList<TranscriptDBLink>() ;
+        for(TranscriptDBLink transcriptDBLink: getTranscriptDBLinks()){
+            if( transcriptDBLink.getReferenceDatabase().isInDisplayGroup(displayGroup)  ){
+                returnDBLinks.add(transcriptDBLink) ;
+            }
+        }
+        return returnDBLinks ;
+    }
 
 
 

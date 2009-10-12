@@ -37,7 +37,8 @@
         SequenceFASTA?,
         SequenceID?,
         SequenceFile?,
-        PolyAFilter?
+        PolyAFilter?,
+        ErrorData?
         )>
 
 
@@ -54,6 +55,7 @@
 <!ELEMENT SequenceID (#PCDATA)>
 <!ELEMENT SequenceFile (#PCDATA)>
 <!ELEMENT PolyAFilter (%INTEGER;)>
+<!ELEMENT ErrorData (#PCDATA)>
 
 <!-- BLAST program: blastp, tblastx etc. -->
 <!ELEMENT BlastOutput_program (#PCDATA)>

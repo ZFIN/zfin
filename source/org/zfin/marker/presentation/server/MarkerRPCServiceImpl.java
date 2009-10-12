@@ -419,9 +419,9 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         // nothing is found so throw exception
         throw new DBLinkNotFoundException(
-                    "Can not add dblinks with reference database not contained in list: "+
-                            dbLink.getReferenceDatabase().getForeignDB().getDbName() + "-"+
-                            dbLink.getReferenceDatabase().getZdbID());
+                "Can not add dblinks with reference database not contained in list: "+
+                        dbLink.getReferenceDatabase().getForeignDB().getDbName() + "-"+
+                        dbLink.getReferenceDatabase().getZdbID());
     }
 
     /**
@@ -453,8 +453,8 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             else{
                 String message = "Not found: accession["+dbLink.getAccessionNumber()+"] " ;
                 if(dbLink.getReferenceDatabase()!=null){
-                   message += "referenceDB["+ dbLink.getReferenceDatabase().getForeignDB().getDbName()+
-                        "-"+dbLink.getReferenceDatabase().getForeignDBDataType().getDataType()+"]" ;
+                    message += "referenceDB["+ dbLink.getReferenceDatabase().getForeignDB().getDbName()+
+                            "-"+dbLink.getReferenceDatabase().getForeignDBDataType().getDataType()+"]" ;
                 }
                 throw new DBLinkNotFoundException( message ) ;
             }
@@ -574,10 +574,10 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         Transaction transaction = session.beginTransaction() ;
         DBLink dbLink = (DBLink) session.get(DBLink.class,dbLinkDTO.getDbLinkZdbID()) ;
         if(dbLink ==null && dbLinkDTO.getDataZdbID()!=null && dbLinkDTO.getName()!=null){
-                dbLink = RepositoryFactory.getSequenceRepository().
-                        getDBLink(dbLinkDTO.getDataZdbID(),
-                                dbLinkDTO.getName(), dbLinkDTO.getReferenceDatabaseDTO().getName());
-         }
+            dbLink = RepositoryFactory.getSequenceRepository().
+                    getDBLink(dbLinkDTO.getDataZdbID(),
+                            dbLinkDTO.getName(), dbLinkDTO.getReferenceDatabaseDTO().getName());
+        }
         if(dbLink==null){
             throw new RuntimeException("Failed to find dblink: "+dbLinkDTO.toString()) ;
         }
@@ -662,7 +662,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         if (!marker.getName().equals(markerDTO.getName())) {
             String oldName = marker.getName();
-            
+
             marker.setAbbreviation(markerDTO.getName());
             marker.setName(markerDTO.getName());
 
@@ -745,7 +745,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
     public void removeMarkerSupplier(String name,String markerZdbID) {
         Session session = HibernateUtil.currentSession() ;
 
-        Marker marker = (Marker) session.get(Marker.class,markerZdbID);        
+        Marker marker = (Marker) session.get(Marker.class,markerZdbID);
 
         String hql = " from MarkerSupplier ms where ms.marker.zdbID = :markerZdbID and ms.organization.name = :supplierName" ;
         Query query = session.createQuery(hql) ;
@@ -785,7 +785,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         }
 
         logger.debug("addMarkerRelationship, first marker: " + firstMarker.getAbbreviation()
-                      + " second marker: " + secondMarker.getAbbreviation());
+                + " second marker: " + secondMarker.getAbbreviation());
 
         HibernateUtil.flushAndCommitCurrentSession();
 
@@ -851,17 +851,21 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
      * @return Any sort of warning strings.
      */
     public String validateDBLink(DBLinkDTO dbLinkDTO) {
-        Marker marker =
-                RepositoryFactory.getMarkerRepository().getMarkerByID(dbLinkDTO.getDataZdbID()) ;
-        if(true==marker.isInTypeGroup(Marker.TypeGroup.CLONEDOM)){
-            List<DBLink> dbLinks =
-                    RepositoryFactory.getSequenceRepository().getDBLinksForAccession(dbLinkDTO.getName()) ;
-            if(dbLinks.size()>0){
-                DBLink dbLink = dbLinks.get(0) ;
-                return "Sequence already associated with another marker: "+dbLink.getDataZdbID() ;
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(dbLinkDTO.getDataZdbID()) ;
+        List<DBLink> dbLinks = RepositoryFactory.getSequenceRepository().getDBLinksForAccession(dbLinkDTO.getName()) ;
+        if(dbLinks==null || dbLinks.size()==0){
+            return null ;
+        }else{
+            List<String> zdbIDs = new ArrayList<String>();
+            for(DBLink dbLink : dbLinks){
+                zdbIDs.add(dbLink.getDataZdbID()) ;
+            }
+            if(zdbIDs.size()>0){
+                return "Sequence already associated with another marker: "+zdbIDs.toString() ;
+            }
+            else{
+                return null ; 
             }
         }
-
-        return null ; 
     }
 }

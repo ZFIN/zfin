@@ -32,7 +32,7 @@ public class BlastDatabaseInfoController extends AbstractCommandController {
 
         // we don't want the proteinDB string
 
-        if(abbreviation!=null){
+        if(abbreviation!=null && abbreviation.trim().length()>0){
             blastInfoBean.setShowTitle(false);
             modelAndView = new ModelAndView("single-blast-database-info.page") ;
             Database.AvailableAbbrev abbrev = Database.AvailableAbbrev.getType(abbreviation) ;
@@ -62,7 +62,8 @@ public class BlastDatabaseInfoController extends AbstractCommandController {
                 blastInfoBean.setProteinDatabases(null);
             }
         }
-        else{
+        else
+        if(abbreviation==null) {
             blastInfoBean.setShowTitle(true);
             blastInfoBean.setNucleotideDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.NUCLEOTIDE,!isRoot,true));
             blastInfoBean.setProteinDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.PROTEIN,!isRoot,true));
@@ -74,6 +75,10 @@ public class BlastDatabaseInfoController extends AbstractCommandController {
             else{
                 modelAndView = new ModelAndView("blast-database-info.page") ;
             }
+        }
+        else{
+//        if(abbreviation!=null && abbreviation.trim().length()==0){
+            modelAndView = new ModelAndView("no-database-selected.page") ;
         }
 
         cacheStatistics(blastInfoBean) ;

@@ -25,7 +25,11 @@ public class BioJavaDefline implements Defline {
 
     @Override
     public String toString() {
-        return ">"+richSequence.getAccession()+  " " + richSequence.getDescription() ;
+        StringBuilder sb = new StringBuilder(">").append(richSequence.getAccession()) ;
+        if(richSequence.getDescription()!=null){
+            sb.append(" ").append(richSequence.getDescription()) ;
+        }
+        return sb.toString();
     }
 
     public String getAccession() {

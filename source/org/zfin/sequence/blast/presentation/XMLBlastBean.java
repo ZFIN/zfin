@@ -13,53 +13,54 @@ import java.util.List;
 
 /**
  */
-public class XMLBlastBean extends BlastInfoBean implements Cloneable{
+public class XMLBlastBean extends BlastInfoBean implements Cloneable {
 
-    public final static String BLAST_PREFIX = "blast" ;
-    public final static String BLAST_SUFFIX = ".xml" ;
+    public final static String BLAST_PREFIX = "blast";
+    public final static String BLAST_SUFFIX = ".xml";
 
-    private List<Database> actualDatabaseTargets ;
-    private List<XMLBlastBean> otherQueries ;
+    private List<Database> actualDatabaseTargets;
+    private List<XMLBlastBean> otherQueries;
 
 
-    public static enum QueryTypes{
-        FASTA,SEQUENCE_ID,UPLOAD
+    public static enum QueryTypes {
+        FASTA, SEQUENCE_ID, UPLOAD
     }
 
-    int numChunks ;
-    int sliceNumber ;
+    int numChunks;
+    int sliceNumber;
 
     // interface parameter
     private String queryType = QueryTypes.FASTA.toString();
 
-    private int refreshTime = 10 ; // refresh time in seconds
+    private int refreshTime = 10; // refresh time in seconds
 
     // *blast* parameters
     private String querySequence;
-    private Integer queryFrom ;
-    private Integer queryTo ;
+    private Integer queryFrom;
+    private Integer queryTo;
     private String program;
     private String dataLibraryString; // can represent more than one libraries
     private String sequenceID;
     private String sequenceType;  // nt or pt
     private String sequenceFile;  // for uploads
     private String matrix;  // location of matrix library
-    private Double expectValue ; //
+    private Double expectValue; //
     private Integer wordLength;
 
     // other options
-    private Boolean dust = false ;
-    private Boolean poly_a = false ;
-    private Boolean seg = false ;
-    private Boolean xnu = false ;
+    private Boolean dust = false;
+    private Boolean poly_a = false;
+    private Boolean seg = false;
+    private Boolean xnu = false;
     private Boolean shortAndNearlyExact = false;
 
-    private View alignmentView  = View.PAIRWISE;
+    private View alignmentView = View.PAIRWISE;
 
     // results
-    private File resultFile ;
+    private File resultFile;
     private BlastOutput blastOutput;
     private BlastResultBean blastResultBean;
+    private String errorString;
 
     public String getQueryType() {
         return queryType;
@@ -129,22 +130,22 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable{
         this.dataLibraryString = dataLibraryString;
     }
 
-    public String getTicketNumber(){
-        return getTicketNumber(resultFile) ;
+    public String getTicketNumber() {
+        return getTicketNumber(resultFile);
     }
 
-    public void setTicketNumber(String ticketNumber){
-        resultFile = new File(BLAST_PREFIX + ticketNumber + BLAST_SUFFIX) ;
+    public void setTicketNumber(String ticketNumber) {
+        resultFile = new File(BLAST_PREFIX + ticketNumber + BLAST_SUFFIX);
     }
 
-    public static String getTicketNumber(File file){
-        if(file==null){
-            return null ;
+    public static String getTicketNumber(File file) {
+        if (file == null) {
+            return null;
         }
-        String fileName = file.getName() ;
-        String ticket = fileName.substring(BLAST_PREFIX.length() ,
-                fileName.length()-BLAST_SUFFIX.length()) ;
-        return ticket ;
+        String fileName = file.getName();
+        String ticket = fileName.substring(BLAST_PREFIX.length(),
+                fileName.length() - BLAST_SUFFIX.length());
+        return ticket;
     }
 
     public File getResultFile() {
@@ -252,9 +253,9 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable{
 //    }
 
     public boolean isFileExists() {
-        return resultFile!=null
+        return resultFile != null
                 && resultFile.exists()
-                && BlastSingleQueryThreadCollection.getInstance().isBlastThreadDone(this) ;
+                && BlastSingleQueryThreadCollection.getInstance().isBlastThreadDone(this);
     }
 
     public BlastOutput getBlastOutput() {
@@ -297,82 +298,82 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable{
         this.sliceNumber = sliceNumber;
     }
 
-    public List<String> getOtherTickets(){
-        List<String> tickets = new ArrayList<String>() ;
-        if(false == CollectionUtils.isEmpty(otherQueries)){
-            for( XMLBlastBean otherQuery : otherQueries){
-                tickets.add(otherQuery.getTicketNumber()) ;
+    public List<String> getOtherTickets() {
+        List<String> tickets = new ArrayList<String>();
+        if (false == CollectionUtils.isEmpty(otherQueries)) {
+            for (XMLBlastBean otherQuery : otherQueries) {
+                tickets.add(otherQuery.getTicketNumber());
             }
         }
-        return tickets ;
+        return tickets;
     }
 
-    public static String getEmptyZFINParametersAsXML(){
-        StringBuilder sb = new StringBuilder() ;
-        sb.append("<ZFINParameters/>").append("\n") ;
-        return sb.toString() ;
+    public static String getEmptyZFINParametersAsXML() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<ZFINParameters/>").append("\n");
+        return sb.toString();
     }
 
-    public void getOtherTicketsAsXML(StringBuilder sb){
-        sb.append("<OtherTickets>").append("\n") ;
-        if(false == CollectionUtils.isEmpty(otherQueries)){
-            for( XMLBlastBean otherQuery : otherQueries){
+    public void getOtherTicketsAsXML(StringBuilder sb) {
+        sb.append("<OtherTickets>").append("\n");
+        if (false == CollectionUtils.isEmpty(otherQueries)) {
+            for (XMLBlastBean otherQuery : otherQueries) {
                 sb.append("<Ticket>")
                         .append(otherQuery.getTicketNumber())
                         .append("</Ticket>")
                         .append("\n");
             }
         }
-        sb.append("</OtherTickets>").append("\n") ;
+        sb.append("</OtherTickets>").append("\n");
     }
 
-    protected void getTargetDatabasesAsXML(StringBuilder sb){
-        sb.append("<TargetDatabases>") ;
-        if(false==CollectionUtils.isEmpty(actualDatabaseTargets)){
-            for(Database database: actualDatabaseTargets){
+    protected void getTargetDatabasesAsXML(StringBuilder sb) {
+        sb.append("<TargetDatabases>");
+        if (false == CollectionUtils.isEmpty(actualDatabaseTargets)) {
+            for (Database database : actualDatabaseTargets) {
                 sb.append("<TargetDatabase>")
                         .append(database.getAbbrev().toString())
-                        .append("</TargetDatabase>") ;
+                        .append("</TargetDatabase>");
             }
         }
-        sb.append("</TargetDatabases>") ;
-        sb.append("\n") ;
+        sb.append("</TargetDatabases>");
+        sb.append("\n");
     }
 
-    private void renderElementAsXML(String elementName,String value,StringBuilder sb){
-        if(StringUtils.isNotEmpty(value)){
+    private void renderElementAsXML(String elementName, String value, StringBuilder sb) {
+        if (StringUtils.isNotEmpty(value)) {
             sb.append("<").append(elementName).append(">")
-            .append(value)
-            .append("</").append(elementName).append(">")
-            .append("\n") ;
+                    .append(value)
+                    .append("</").append(elementName).append(">")
+                    .append("\n");
         }
     }
 
-    private void getElementAsXML(String elementName,Integer number,StringBuilder sb){
-        if(number!=null && number>0){
+    private void getElementAsXML(String elementName, Integer number, StringBuilder sb) {
+        if (number != null && number > 0) {
             sb.append("<").append(elementName).append(">")
                     .append(number)
                     .append("</").append(elementName).append(">")
-                    .append("\n") ;
+                    .append("\n");
         }
     }
 
-    public String getZFINParametersAsXML(){
-        StringBuilder sb = new StringBuilder() ;
+    public String getZFINParametersAsXML() {
+        StringBuilder sb = new StringBuilder();
         sb.append("<ZFINParameters>");
         getOtherTicketsAsXML(sb);
         getTargetDatabasesAsXML(sb);
-        renderElementAsXML("DataLibrary",getDataLibraryString(),sb);
-        getElementAsXML("WordLength",getWordLength(),sb);
-        getElementAsXML("SubSequenceFrom",getQueryFrom(),sb);
-        getElementAsXML("SubSequenceTo",getQueryTo(),sb);
-        renderElementAsXML("QueryType",getQueryType(),sb);
-        renderElementAsXML("SequenceFASTA",getQuerySequence(),sb);
-        renderElementAsXML("SequenceID",getSequenceID(),sb);
-        renderElementAsXML("SequenceFile",getSequenceFile(),sb);
-        getElementAsXML("PolyAFilter",(getPoly_a()?1:0),sb);
-        sb.append("</ZFINParameters>").append("\n") ;
-        return sb.toString() ;
+        renderElementAsXML("DataLibrary", getDataLibraryString(), sb);
+        getElementAsXML("WordLength", getWordLength(), sb);
+        getElementAsXML("SubSequenceFrom", getQueryFrom(), sb);
+        getElementAsXML("SubSequenceTo", getQueryTo(), sb);
+        renderElementAsXML("QueryType", getQueryType(), sb);
+        renderElementAsXML("SequenceFASTA", getQuerySequence(), sb);
+        renderElementAsXML("SequenceID", getSequenceID(), sb);
+        renderElementAsXML("SequenceFile", getSequenceFile(), sb);
+        getElementAsXML("PolyAFilter", (getPoly_a() ? 1 : 0), sb);
+        sb.append("</ZFINParameters>").append("\n");
+        return sb.toString();
     }
 
     public int getRefreshTime() {
@@ -384,12 +385,11 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable{
     }
 
     /**
-     *
      * @return A deep copy of this file
      */
     @Override
-    public XMLBlastBean clone(){
-        XMLBlastBean xmlBlastBean = new XMLBlastBean() ;
+    public XMLBlastBean clone() {
+        XMLBlastBean xmlBlastBean = new XMLBlastBean();
         xmlBlastBean.setActualDatabaseTargets(actualDatabaseTargets);
         xmlBlastBean.setDataLibraryString(dataLibraryString);
         xmlBlastBean.setProgram(program);
@@ -409,23 +409,23 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable{
         xmlBlastBean.setSequenceType(sequenceType);
         xmlBlastBean.setWordLength(wordLength);
         xmlBlastBean.setXnu(xnu);
-        return xmlBlastBean ;
+        return xmlBlastBean;
     }
 
-    public static enum View{
+    public static enum View {
         PAIRWISE("0"),
         XML("7"),
         TABULAR("8"),
         TABULAR_WCOMMENTS("9"),;
 
-        private String value ;
+        private String value;
 
         View() {
-            value = "0" ;
+            value = "0";
         }
 
         View(String i) {
-            value = i ;
+            value = i;
         }
 
         public String getValue() {
@@ -436,18 +436,17 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable{
     /**
      * todo: map to database . type eventually
      */
-    public static enum SequenceType{
+    public static enum SequenceType {
         NUCLEOTIDE("nt"),
-        PROTEIN("pt"),
-        ;
-        private String value ;
+        PROTEIN("pt"),;
+        private String value;
 
         SequenceType() {
-            value = "nt" ;
+            value = "nt";
         }
 
         SequenceType(String i) {
-            value = i ;
+            value = i;
         }
 
         public String getValue() {
@@ -464,22 +463,21 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable{
         }
     }
 
-    public static enum Matrix{
+    public static enum Matrix {
         BLOSUM62,
         BLOSUM45,
         BLOSUM80,
         PAM30,
-        PAM70
-        ;
+        PAM70;
 
-        private String value ;
+        private String value;
 
-        Matrix () {
-            value = "" ;
+        Matrix() {
+            value = "";
         }
 
         Matrix(String i) {
-            value = i ;
+            value = i;
         }
 
         public String getValue() {
@@ -487,25 +485,24 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable{
         }
     }
 
-    public static enum Program{
-        BLASTN("blastn", "Nucleotide - Nucleotide") ,
-        BLASTP("blastp","Protein - Protein") ,
-        BLASTX("blastx","trans. Nucleotide - Protein") ,
-        TBLASTN("tblastn","Protein - trans. Nucleotide") ,
-        TBLASTX("tblastx","trans. Nucleotide - trans. Nucleotide") ,
-        ;
+    public static enum Program {
+        BLASTN("blastn", "Nucleotide - Nucleotide"),
+        BLASTP("blastp", "Protein - Protein"),
+        BLASTX("blastx", "trans. Nucleotide - Protein"),
+        TBLASTN("tblastn", "Protein - trans. Nucleotide"),
+        TBLASTX("tblastx", "trans. Nucleotide - trans. Nucleotide"),;
 
-        private String value ;
-        private String label ;
+        private String value;
+        private String label;
 
-        Program () {
-            value = "blastn" ;
-            label = "Nucleotide - Nucleotide" ;
+        Program() {
+            value = "blastn";
+            label = "Nucleotide - Nucleotide";
         }
 
-        Program(String value,String label) {
-            this.value = value ;
-            this.label = label ;
+        Program(String value, String label) {
+            this.value = value;
+            this.label = label;
         }
 
         public String getValue() {
@@ -525,43 +522,46 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable{
         }
 
         public static SequenceType getSequenceTypeForProgram(String program) {
-            return getSequenceTypeForProgram(getProgram(program)) ;
+            return getSequenceTypeForProgram(getProgram(program));
         }
 
         public static SequenceType getSequenceTypeForProgram(Program program) {
-            if(program==BLASTN
+            if (program == BLASTN
                     ||
-                    program==BLASTX
+                    program == BLASTX
                     ||
-                    program==TBLASTX
-                    ){
-                return SequenceType.NUCLEOTIDE ;
-            }
-            else{
+                    program == TBLASTX
+                    ) {
+                return SequenceType.NUCLEOTIDE;
+            } else {
                 return SequenceType.PROTEIN;
             }
         }
 
     }
 
+    public String getErrorString() {
+        return errorString;
+    }
+
+    public void setErrorString(String errorString) {
+        this.errorString = errorString;
+    }
 
     /**
      * We really care about the resultFiles only unless once is null.
-     *
      */
     @Override
-    public boolean equals(Object o){
-        if(o instanceof XMLBlastBean){
-            XMLBlastBean xmlBlastBean = (XMLBlastBean) o ;
-            if(xmlBlastBean.getResultFile()== null || resultFile==null){
-                return super.equals(o) ;
-            }
-            else
-            if( xmlBlastBean.getResultFile().getName().equals(resultFile.getName())  ){
+    public boolean equals(Object o) {
+        if (o instanceof XMLBlastBean) {
+            XMLBlastBean xmlBlastBean = (XMLBlastBean) o;
+            if (xmlBlastBean.getResultFile() == null || resultFile == null) {
+                return super.equals(o);
+            } else if (xmlBlastBean.getResultFile().getName().equals(resultFile.getName())) {
                 return true;
             }
         }
-        return false ;
+        return false;
     }
 
 
@@ -569,7 +569,7 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable{
     public String toString() {
         return "XMLBlastBean{" +
                 "actualDatabaseTargets=" + actualDatabaseTargets +
-                ", otherQueries=" + (otherQueries!=null ? otherQueries.size() : "null") +
+                ", otherQueries=" + (otherQueries != null ? otherQueries.size() : "null") +
                 ", numChunks=" + numChunks +
                 ", sliceNumber=" + sliceNumber +
                 ", queryType='" + queryType + '\'' +
@@ -592,6 +592,7 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable{
                 ", resultFile=" + resultFile +
                 ", blastOutput=" + blastOutput +
                 ", blastResultBean=" + blastResultBean +
+                ", errorString=" + errorString +
                 '}';
     }
 }
