@@ -45,15 +45,17 @@ public class AntibodyWikiWebService extends WikiWebService {
 
     private static AntibodyWikiWebService instance = null;
 
-    private AntibodyWikiWebService() throws WikiLoginException {
-        login();
-    }
+    private AntibodyWikiWebService() { }
 
     public static AntibodyWikiWebService getInstance() throws WikiLoginException {
         if (instance == null) {
             instance = new AntibodyWikiWebService();
         }
-        return instance;
+        if (instance.login()) {
+            return instance;
+        } else {
+            throw new WikiLoginException("login result was false");
+        }
     }
 
     public RemotePage getPageForAntibodyName(String pageTitle) throws PageDoesNotExistException {
@@ -250,14 +252,8 @@ public class AntibodyWikiWebService extends WikiWebService {
      * Syncrhonizes the antibody wiki and the antibodies in ZFIN, adding, updating, and dropping where appropriate.
      */
     public void synchronizeAntibodiesOnWikiWithZFIN() {
-        if(false==ZfinProperties.isPushToWiki()){
+        if (false == ZfinProperties.isPushToWiki()) {
             logger.info("not authorized to push antibodies to wiki");
-            return ;
-        }
-        try {
-            login();
-        } catch (WikiLoginException e) {
-            logger.error(e);
             return;
         }
         List<Antibody> antibodies = RepositoryFactory.getAntibodyRepository().getAllAntibodies();
@@ -318,9 +314,9 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
     public RemotePage updatePageForAntibody(Antibody antibody, String newTitle) throws Exception {
-        if(false==ZfinProperties.isPushToWiki()){
+        if (false == ZfinProperties.isPushToWiki()) {
             logger.info("not authorized to push to wiki");
-            return null ; 
+            return null;
         }
         String oldPageTitle = getWikiTitleFromAntibodyName(getWikiTitleFromAntibodyName(antibody.getName()));
         String newPageTitle = getWikiTitleFromAntibodyName(newTitle);
@@ -464,8 +460,6 @@ public class AntibodyWikiWebService extends WikiWebService {
      */
     public String getWikiLink(String name) {
         try {
-            if (!login()) return null;
-
             // get a page with the same title, if so, than set the same Id, as we will be replacing this page
             RemotePage page;
 

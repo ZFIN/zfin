@@ -14,7 +14,7 @@ public class WikiWebService {
     protected ConfluenceSoapService service = null;
     protected final String EDIT_PERMISSION = "Edit";
     protected final String VIEW_PERMISSION = "View";
-    protected final String PAGE_TYPE = "page" ;
+    protected final String PAGE_TYPE = "page";
     protected final String ENDPOINT_SUFFIX = "/rpc/soap-axis/confluenceservice-v1";
     protected final String WEBSERVICE_PROTOCOL = "https://";
 
@@ -28,12 +28,17 @@ public class WikiWebService {
 
     private static WikiWebService instance = null;
 
+    protected WikiWebService() { }
+
     public static WikiWebService getInstance() throws WikiLoginException {
         if (instance == null) {
             instance = new WikiWebService();
-            instance.login();
         }
-        return instance;
+        if (instance.login()) {
+            return instance;
+        } else {
+            throw new WikiLoginException("login result was false");
+        }
     }
 
     public boolean login() throws WikiLoginException {
@@ -132,35 +137,35 @@ public class WikiWebService {
         }
     }
 
-    public void setOwnerForLabel(String label) throws Exception{
+    public void setOwnerForLabel(String label) throws Exception {
 
-        if(false==ZfinProperties.isPushToWiki()){
-            return ; 
+        if (false == ZfinProperties.isPushToWiki()) {
+            return;
         }
 
         try {
-            if (!login()) return ;
-            RemoteSearchResult[] pages = service.getLabelContentByName(token,label) ;
+            RemoteSearchResult[] pages = service.getLabelContentByName(token, label);
 
             // for each page:
             // if there is is editing or view restriction, then add an editing one to the creator
-            for(RemoteSearchResult page: pages) {
-                logger.debug("processing page["+page.getTitle()+"] type["+page.getType() + "] # perm["+ service.getContentPermissionSets(token,page.getId()).length+"]") ;
-                if(page.getType().equals(PAGE_TYPE) && service.getContentPermissionSets(token,page.getId()).length==0){
+            for (RemoteSearchResult page : pages) {
+                logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "]") ; 
+                if (page.getType().equals(PAGE_TYPE) && service.getContentPermissionSets(token, page.getId()).length == 0) {
+                    logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "] # perm[" + service.getContentPermissionSets(token, page.getId()).length + "]");
                     RemoteContentPermission permission = new RemoteContentPermission();
-                    RemotePage remotePage = service.getPage(token,page.getId()) ;
-                    permission.setUserName(remotePage.getCreator())  ;
-                    logger.info(" setting permission for: "+ page.getTitle()+" to "+remotePage.getCreator()) ;
-                    permission.setType("Edit")  ;
-                    RemoteContentPermission[] permissions = new RemoteContentPermission[1] ;
-                    permissions[0] = permission ;
-                    service.setContentPermissions(token,page.getId(),"Edit",permissions) ;
+                    RemotePage remotePage = service.getPage(token, page.getId());
+                    permission.setUserName(remotePage.getCreator());
+                    logger.info(" setting permission for: " + page.getTitle() + " to " + remotePage.getCreator());
+                    permission.setType("Edit");
+                    RemoteContentPermission[] permissions = new RemoteContentPermission[1];
+                    permissions[0] = permission;
+                    service.setContentPermissions(token, page.getId(), "Edit", permissions);
                 }
             }  // end of for loop
         } catch (Exception e) {
             e.fillInStackTrace();
-            logger.error("Unable to set owner for label["+label+"]",e);
-            throw e ;
+            logger.error("Unable to set owner for label[" + label + "]", e);
+            throw e;
         }
 
     }
