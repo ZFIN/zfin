@@ -27,10 +27,11 @@
 
 
 <c:if test="${!empty formBean.unableToFindDBLinks}">
-    <div class="error">Unable to retrieve the following
+    <div class="error-inline">Unable to retrieve the following
             ${(fn:length(formBean.unableToFindDBLinks) eq 1) ? 'sequence' : 'sequences'}:
         <c:forEach var="unableToFindDBLink"  items="${formBean.unableToFindDBLinks}">
-            <zfin:link entity="${unableToFindDBLink}"/>
+            ${unableToFindDBLink.accessionNumber}
+            <zfin:attribution entity="${unableToFindDBLink}"/>
         </c:forEach>
     </div>
 </c:if>
