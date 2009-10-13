@@ -18,7 +18,7 @@ public class MarkerAttributeSubmitAction extends AbstractAttributeSubmitAction{
             Window.alert("Can not proceed OID is null");
             return ; 
         }
-
+        value = value.replace("+","%2B");
         if(value!=null){
             setCookieInPage("attribution_update","update","pubcur_c_");
             setCookieInPage("anchor","attrib","pubcur_c_");
