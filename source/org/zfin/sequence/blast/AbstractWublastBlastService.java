@@ -396,8 +396,12 @@ public abstract class AbstractWublastBlastService implements BlastService {
             try {
                 DatabaseStatistics databaseStatistics = getDatabaseStaticsCache().getDatabaseStatistics(database);
                 if (databaseStatistics.getNumSequences() == 0) {
-//                    failures.add("0 sequences in database ["+ database.getAbbrev() + "]: "+ database) ;
-                    logger.warn(failures.get(failures.size() - 1));
+                    if (failures.size() == 0) {
+                        logger.warn("0 sequences in database [" + database.getAbbrev() + "]: " + database);
+                    } else {
+                        logger.warn(failures.get(failures.size() - 1));
+                    }
+
                 } else if (databaseStatistics.getNumSequences() < 0) {
                     failures.add("no database available[" + database.getAbbrev() + "]: " + database);
                     logger.error(failures.get(failures.size() - 1));

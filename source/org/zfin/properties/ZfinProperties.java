@@ -33,12 +33,6 @@ public final class ZfinProperties {
     public static final String ZFIN_DEFAULT_PROPERTIES_XML = "zfin-properties.xml";
     public static final String CATALINA_BASE = System.getProperty("catalina.base");
 
-    public static final String FULL_UPDATE_DOI = "org.zfin.datatransfer.DOI";
-    public static final String LIGHT_UPDATE_DOI = "org.zfin.datatransfer.DOI.light";
-    public static final String MICROARRAY_NOT_FOUND = "MICROARRAY_NOT_FOUND";
-    public static final String MICROARRAY_ERROR = "MICROARRAY_ERROR";
-    public static final String MICROARRAY_INFO = "MICROARRAY_INFO";
-
     /**
      * Initialize properties via property file import.
      *

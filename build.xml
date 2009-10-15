@@ -335,11 +335,6 @@
     </target>
 
     <target name="copy-to-pre-release"  description="Copies built files to pre-release area">
-        <copy todir="${env.TARGETROOT}/lib/Java/jaxws">
-            <fileset dir="${lib}/jaxws">
-                <exclude name="**/.svn"/>
-            </fileset>
-        </copy>
         <!-- move non-binary files in order to not replace any characters in Binary files -->
         <copy todir="${pre-web-inf}">
             <fileset dir="${web-inf.dir}">
@@ -481,40 +476,6 @@
         </exec>
     </target>
 
-
-    <target name="generate-ncbi-client"  description="Geneates wsdl client code for use with citexplorer" >
-        <mkdir dir="${doi.dir}/bin"/>
-        <symlink link="${doi.dir}/lib" resource="${lib}/jaxws" overwrite="true"/>
-        <copy file="${doi.dir}/wsimport.sh" todir="${doi.dir}/bin"/>
-        <copy file="${doi.dir}/ncbiStubs.sh" todir="${doi.dir}/bin"/>
-        <chmod file="${doi.dir}/bin/ncbiStubs.sh" perm="+x"/>
-        <chmod file="${doi.dir}/bin/wsimport.sh" perm="+x"/>
-        <exec dir="${doi.dir}/bin" executable="${doi.dir}/bin/ncbiStubs.sh"/>
-        <!-- 
-        <delete dir="${doi.dir}/bin"/>
-        <symlink link="${doi.dir}/lib" action="delete"/>
-        -->
-    </target>
-
-
-    <!--
-    Create working directory with bin and lib directories (symlink?)
-    Copy wsimport.sh and generatestubs.sh into bin
-    Copy or symlink stuff into lib
-    Exectue generateStubs (or execute same steps from here)
-    Delete the working directory
-    -->
-    <target name="generate-wsdl-doi-client"  description="Geneates wsdl client code for use with citexplorer" >
-        <mkdir dir="${doi.dir}/bin"/>
-        <symlink link="${doi.dir}/lib" resource="${lib}/jaxws" overwrite="true"/>
-        <copy file="${doi.dir}/wsimport.sh" todir="${doi.dir}/bin"/>
-        <copy file="${doi.dir}/generateStubs.sh" todir="${doi.dir}/bin"/>
-        <chmod file="${doi.dir}/bin/generateStubs.sh" perm="+x"/>
-        <chmod file="${doi.dir}/bin/wsimport.sh" perm="+x"/>
-        <exec dir="${doi.dir}/bin" executable="${doi.dir}/bin/generateStubs.sh"/>
-        <delete dir="${doi.dir}/bin"/>
-        <symlink link="${doi.dir}/lib" action="delete"/>
-    </target>
 
     <taskdef resource="task.properties" classpath="lib/Java/grand-1.8.jar">
        <classpath refid="extended.classpath"/>

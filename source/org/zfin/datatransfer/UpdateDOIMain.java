@@ -19,54 +19,17 @@ import java.util.List;
 public class UpdateDOIMain {
 
     private int maxProcesses = -1 ;
-    private static final String MAX_PROCESS_NULL_STRING = "-1" ;
-    private static final String MAX_DOI_PROCESS = "MAX_DOI_PROCESS" ;
     private PublicationRepository publicationRepository = null ;
+    private Logger logger = Logger.getLogger(UpdateDOIMain.class);
 
-    // Logging data
-    private Logger fullLogger = null ;
-    private Logger lightLogger = null ;
+    private boolean reportAll = false ;
 
+    private StringBuilder message ;
 
-    public UpdateDOIMain() {
-        initLoggers();
-
-
-        // instatiates method
-        String[] confFiles = {
-                "filters.hbm.xml",
-                "antibody.hbm.xml",
-                "anatomy.hbm.xml",
-                "publication.hbm.xml",
-                "expression.hbm.xml",
-                "marker.hbm.xml",
-                "orthology.hbm.xml",
-                "mutant.hbm.xml",
-                "people.hbm.xml",
-                "sequence.hbm.xml",
-                "infrastructure.hbm.xml",
-                "blast.hbm.xml",
-                "reno.hbm.xml",
-                "mapping.hbm.xml",
-
-        };
-        new HibernateSessionCreator(false, confFiles) ;
-
-        String maxDOIProcesses = System.getProperty( MAX_DOI_PROCESS, MAX_PROCESS_NULL_STRING ) ;
+    public UpdateDOIMain(boolean reportAll) {
+        this.reportAll = reportAll ;
+        message = new StringBuilder() ;
         publicationRepository = new HibernatePublicationRepository() ;
-        try{
-//            maxProcesses = (new Integer(maxDOIProcesses)).intValue()  ;
-            maxProcesses = new Integer(maxDOIProcesses)  ;
-            fullLogger.info("Max processes:"  + maxProcesses) ;
-        }
-        catch(NumberFormatException e){
-            fullLogger.info("Scanning All Available Dois") ;
-        }
-    }
-
-    private void initLoggers(){
-        fullLogger = Logger.getLogger( ZfinProperties.FULL_UPDATE_DOI) ;
-        lightLogger = Logger.getLogger( ZfinProperties.LIGHT_UPDATE_DOI ) ;
     }
 
 
@@ -75,7 +38,7 @@ public class UpdateDOIMain {
      */
     private List<Publication> getPubmedIdsWithNoDOIs(){
         List<Publication> publicationList =  publicationRepository.getPublicationsWithAccessionButNoDOI(maxProcesses) ;
-        fullLogger.info("number of dois to populate:  " + publicationList.size() ) ;
+        message.append("number of dois to populate:  ").append(publicationList.size() ) ;
         return publicationList ;
     }
 
@@ -84,7 +47,7 @@ public class UpdateDOIMain {
     /**
      * Finds pumbed IDS with no DOI.  Accesses Citexplore via webservice to get DOIS for  pubmed IDS and finally updates pubmed IDS that it does find.
      */
-    private void findAndUpdateDOIs(){
+    public void findAndUpdateDOIs(){
         try{
             List<Publication> publicationList = getPubmedIdsWithNoDOIs() ;
             Citexplore wsdlConnect = new Citexplore() ;
@@ -92,14 +55,16 @@ public class UpdateDOIMain {
             DOIHTTPTester httpTester = new DOIHTTPTester() ;
             publicationList = httpTester.testDOIList(publicationList) ;
             for(Publication publication: publicationList){
-                lightLogger.info("added doi["+publication.getDoi()+"] for publication["+publication.getZdbID()+"]") ;
+                if(reportAll){
+                  message.append("added doi["+publication.getDoi()+"] for publication["+publication.getZdbID()+"]") ;
+                }
             }
             updateDOIs(publicationList) ;
         }
         catch(Exception e){
-            fullLogger.info(e) ;
+            logger.error(e);
+            message.append(e) ;
         }
-
     }
 
 
@@ -110,7 +75,7 @@ public class UpdateDOIMain {
     private void updateDOIs(List<Publication> publicationList){
 
         if(publicationList==null || publicationList.size()==0 ){
-            fullLogger.info("No sources to udpate") ;
+            message.append("No sources to udpate") ;
             return ;
         }
         Session session = HibernateUtil.currentSession() ;
@@ -120,21 +85,26 @@ public class UpdateDOIMain {
             session.getTransaction().commit();
         }
         catch(Exception e){
-            fullLogger.error(e) ;
+            logger.error(e) ;
+            message.append(e);
             session.getTransaction().rollback();
         }
 
     }
 
+    public StringBuilder getMessage() {
+        return message;
+    }
 
     public static void main(String[] args) {
         try {
-            UpdateDOIMain driver = new UpdateDOIMain();
+            UpdateDOIMain driver = new UpdateDOIMain(true);
             driver.findAndUpdateDOIs() ;
         }
         catch(Exception e) {
             e.printStackTrace();
         }
     }
+
 
 }

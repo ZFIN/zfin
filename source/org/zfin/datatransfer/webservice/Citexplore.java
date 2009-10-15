@@ -22,7 +22,7 @@ public class Citexplore {
     private final String PMID_TOKEN = "pmid" ;
     public final static String DOI_URL = "http://dx.doi.org" ;
 
-    private Logger fullLogger = null ;
+    private Logger logger = Logger.getLogger(Citexplore.class) ;
 
 
     /** getDoisForPubmedID.
@@ -37,9 +37,7 @@ public class Citexplore {
     @SuppressWarnings({"PointlessBooleanExpression"})
     public List<Publication> getDoisForPubmedID(List<Publication> publicationList){
         try {
-            fullLogger = Logger.getLogger( ZfinProperties.FULL_UPDATE_DOI) ;
-            Logger lightLogger= Logger.getLogger( ZfinProperties.LIGHT_UPDATE_DOI );
-            fullLogger.info("Invoking doc2loc operation on wscitationImpl port");
+            logger.debug("Invoking doc2loc operation on wscitationImpl port");
             Doc2LocResultListBean doc2LocResultListBean ;
             List<Doc2LocResultBean> doc2LocResultBeanCollection ;
             String urlString , doiValue ;
@@ -51,35 +49,38 @@ public class Citexplore {
             Iterator<Publication> iter = publicationList.iterator() ;
             while( iter.hasNext()){
                 Publication publication = iter.next() ;
-                doc2LocResultListBean = port.doc2Loc(PMID_TOKEN, publication.getAccessionNumber() );
-                doc2LocResultBeanCollection = doc2LocResultListBean.getDoc2LocResultBeanCollection();
-                hasDOI = false ;
-                for (Doc2LocResultBean doc2LocResultBean: doc2LocResultBeanCollection) {
-                    urlString = doc2LocResultBean.getUrl() ;
-                    if(urlString.contains( DOI_URL ) ){
-                        doiValue = urlString.substring( DOI_URL.length()+1 ) ;
-                        lightLogger.info("added doi[" + doiValue + "]  for pmid["+ publication.getAccessionNumber() +"]") ;
-                        publication.setDoi(doiValue) ;
-                        hasDOI = true ;
+                try{
+                    doc2LocResultListBean = port.doc2Loc(PMID_TOKEN, publication.getAccessionNumber() );
+                    doc2LocResultBeanCollection = doc2LocResultListBean.getDoc2LocResultBeanCollection();
+                    hasDOI = false ;
+                    for (Doc2LocResultBean doc2LocResultBean: doc2LocResultBeanCollection) {
+                        urlString = doc2LocResultBean.getUrl() ;
+                        if(urlString.contains( DOI_URL ) ){
+                            doiValue = urlString.substring( DOI_URL.length()+1 ) ;
+                            logger.info("added doi[" + doiValue + "]  for pmid["+ publication.getAccessionNumber() +"]") ;
+                            publication.setDoi(doiValue) ;
+                            hasDOI = true ;
+                        }
                     }
-                }
 
-                if(hasDOI == false ){
-                    fullLogger.info("doi not found for pmid[" + publication.getAccessionNumber() + "]") ;
-                    publication.setDoi(null) ;
-                    iter.remove() ;
-                }
 
-                ++counter ;
-                if( counter%100==0){
-                    printStatus( counter,initSize) ;
+                    if(hasDOI == false ){
+                        logger.info("doi not found for pmid[" + publication.getAccessionNumber() + "]") ;
+                        publication.setDoi(null) ;
+                        iter.remove() ;
+                    }
+
+                    ++counter ;
+                    if( counter%100==0){
+                        printStatus( counter,initSize) ;
+                    }
+                }catch(Exception e){
+                    logger.error("protocol exception getting doi for pub: " + publication);
                 }
             }
-        }catch (QueryException_Exception qex) {
-            fullLogger.error("Caught QueryException_Exception: %s\n"+  qex.getFaultInfo().getMessage());
         }
         catch(Exception e) {
-            fullLogger.error("Unable to access dois:\n"+ e ) ;
+            logger.error("Unable to access dois:\n"+ e ) ;
         }
 
         return publicationList;
@@ -90,7 +91,7 @@ public class Citexplore {
     private void printStatus( int counter, int initSize){
         NumberFormat nf = NumberFormat.getPercentInstance() ;
         double percent =  (( (double) counter / ( (double) initSize-1.0 ) )) ;
-        fullLogger.info( counter + " of " + initSize  + " = " + nf.format(percent) ) ;
+        logger.info( counter + " of " + initSize  + " = " + nf.format(percent) ) ;
     }
 
 } 

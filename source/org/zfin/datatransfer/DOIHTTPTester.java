@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 
 import org.apache.log4j.Logger;
 
-import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication ;
 import org.zfin.datatransfer.webservice.Citexplore ; 
 
@@ -19,25 +18,25 @@ import org.zfin.datatransfer.webservice.Citexplore ;
 public class DOIHTTPTester {
 
 
-    private Logger fullLogger = Logger.getLogger( ZfinProperties.FULL_UPDATE_DOI) ; 
+    private Logger logger = Logger.getLogger( DOIHTTPTester.class) ;
 
     public List<Publication> testDOIList(List<Publication> publications){
 
 //        System.err.println("dois to test: " + sources.size()) ;
-        fullLogger.info("dois to test: " + publications.size()) ; 
+        logger.info("dois to test: " + publications.size()) ;
         Iterator<Publication> iter = publications.iterator() ; 
         Publication pub ; 
         while(iter.hasNext()){
             pub = iter.next() ; 
             if(  pub.getDoi()==null || checkPubExists(pub)==false){
-                 fullLogger.info("INVALID doi["+ pub.getDoi()+"]"); 
+                 logger.info("INVALID doi["+ pub.getDoi()+"]");
                  iter.remove() ; 
             }
             else{
-                 fullLogger.info("VALID doi["+ pub.getDoi()+"]"); 
+                 logger.info("VALID doi["+ pub.getDoi()+"]");
             }
         }
-        fullLogger.info("dois still valid: " + publications.size()) ; 
+        logger.info("dois still valid: " + publications.size()) ;
         return publications ; 
     }
 
@@ -50,7 +49,7 @@ public class DOIHTTPTester {
             URL url = new URL(connectionString) ; 
             connection = (HttpURLConnection) url.openConnection() ; 
             if(connection.getResponseCode() != connection.HTTP_OK){
-                fullLogger.warn("BAD Connection: " + connection.getResponseCode() ) ; 
+                logger.warn("BAD Connection: " + connection.getResponseCode() ) ; 
                 return false ; 
             }
             // read stream
@@ -63,7 +62,7 @@ public class DOIHTTPTester {
             while(line!=null){
                 if(line.indexOf("<title>")>=0 || line.indexOf("<TITLE>")>=0){
                     if(line.indexOf("DOI Not Found")>0){
-                        fullLogger.info("bad DOI connection: " +  publication.getDoi()) ; 
+                        logger.info("bad DOI connection: " +  publication.getDoi()) ;
                         return false ; 
                     }
                     else{
@@ -72,11 +71,11 @@ public class DOIHTTPTester {
                 }
                 line = reader.readLine() ; 
             }
-            fullLogger.warn("error in html:" + connectionString ) ; 
+            logger.warn("error in html:" + connectionString ) ;
             return false ; 
         }
         catch(Exception e){
-            fullLogger.error(e) ; 
+            logger.error(e) ;
             return false ; 
         }
         finally{
@@ -89,7 +88,7 @@ public class DOIHTTPTester {
                 }
             }
             catch(Exception e){
-                fullLogger.error(e) ; 
+                logger.error(e) ;
             }
         }
 

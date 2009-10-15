@@ -23,6 +23,8 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/home.jsp"/>
     </definition>
 
+
+
     <definition name="login" extends="home_layout">
         <put name="body" value="/WEB-INF/jsp/login_form.jsp"/>
     </definition>
@@ -151,10 +153,14 @@
         <put name="body" value="/WEB-INF/jsp/error_page.jsp"/>
     </definition>
 
-
     <definition name="blastable-databases.page" extends="main_layout">
         <put name="staticTitle" value="ZFIN: Blastable Databases"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/blastable_databases.jsp"/>
+    </definition>
+
+    <definition name="quartz-jobs.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Quartz Jobs"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/quartz_jobs.jsp"/>
     </definition>
 
     <definition name="create-error.page" extends="main_layout">

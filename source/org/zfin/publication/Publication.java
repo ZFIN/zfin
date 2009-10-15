@@ -205,6 +205,10 @@ public class Publication implements Comparable<Publication>, Serializable {
         sb.append("Authors: " + authors);
         sb.append(newline);
         sb.append("ZDB ID: " + zdbID);
+        sb.append(newline);
+        sb.append("accession: " + accessionNumber);
+        sb.append(newline);
+        sb.append("doi: " + doi);
         return sb.toString();
     }
 

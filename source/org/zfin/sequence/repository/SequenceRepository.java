@@ -9,6 +9,8 @@ import org.zfin.orthology.Species;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.publication.Publication;
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 
 import java.util.*;
 
@@ -28,7 +30,7 @@ public interface SequenceRepository {
     List<Accession> getAccessionsByNumber(String number);
 
     Map<String, MarkerDBLink > getUniqueMarkerDBLinks(ReferenceDatabase... referenceDatabases) ;
-    Map<String, Set<MarkerDBLink> > getMarkerDBLinks(ReferenceDatabase... referenceDatabases) ;
+    MultiValueMap getMarkerDBLinks(ReferenceDatabase... referenceDatabases) ;
     List<DBLink> getDBLinksForAccession(String accessionString) ;
     List<DBLink> getDBLinksForAccession(String accessionString,boolean include,ReferenceDatabase... referenceDatabases) ;
     List<MarkerDBLink> getMarkerDBLinksForAccession(String accessionString,ReferenceDatabase... referenceDatabases) ;

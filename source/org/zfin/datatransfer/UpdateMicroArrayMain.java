@@ -2,13 +2,12 @@ package org.zfin.datatransfer ;
 
 
 import org.apache.log4j.Logger;
-import org.zfin.properties.ZfinProperties;
+import org.apache.commons.collections.map.MultiValueMap;
 
 import java.util.*;
 
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.orthology.Species;
@@ -25,9 +24,9 @@ import org.hibernate.Session;
 public final class UpdateMicroArrayMain {
 
     final Logger logger = Logger.getLogger( UpdateMicroArrayMain.class ) ;
-    final Logger notFoundLogger  = Logger.getLogger(ZfinProperties.MICROARRAY_NOT_FOUND);
-    final Logger errorLogger = Logger.getLogger(ZfinProperties.MICROARRAY_ERROR);
-    final Logger infoLogger  = Logger.getLogger(ZfinProperties.MICROARRAY_INFO);
+//    final Logger notFoundLogger  = Logger.getLogger(ZfinProperties.MICROARRAY_NOT_FOUND);
+//    final Logger errorLogger = Logger.getLogger(ZfinProperties.MICROARRAY_ERROR);
+//    final Logger infoLogger  = Logger.getLogger(ZfinProperties.MICROARRAY_INFO);
     ReferenceDatabase geoDatabase = null ;
     ReferenceDatabase zfEspressoDatabase = null ;
 //    ReferenceDatabase arrayExpressDatabase = null ;
@@ -40,26 +39,7 @@ public final class UpdateMicroArrayMain {
     ReferenceDatabase genBankRNADatabase  = null ;
     SequenceRepository sequenceRepository = null ;
 
-
-    public static String[] confFiles() {
-        return new String[]{
-                "filters.hbm.xml",
-                "anatomy.hbm.xml",
-                "antibody.hbm.xml",
-                "blast.hbm.xml",
-                "expression.hbm.xml",
-                "general.hbm.xml",
-                "infrastructure.hbm.xml",
-                "marker.hbm.xml",
-                "mapping.hbm.xml",
-                "mutant.hbm.xml",
-                "orthology.hbm.xml",
-                "people.hbm.xml",
-                "publication.hbm.xml",
-                "sequence.hbm.xml",
-                "reno.hbm.xml",
-        };
-    }
+    MicroArrayBean microArrayBean = null ;
 
 
     final String referencePubZdbID = "ZDB-PUB-071218-1" ;
@@ -74,12 +54,9 @@ public final class UpdateMicroArrayMain {
 
     void init() throws Exception{
         logger.debug("init" ) ;
+        microArrayBean = new MicroArrayBean();
         try{
-            if(HibernateUtil.hasSessionFactoryDefined()==false){
-                new HibernateSessionCreator(false, confFiles()) ;
-            }
             sequenceRepository = RepositoryFactory.getSequenceRepository() ;
-
 
             geoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GEO,
                     ForeignDBDataType.DataType.OTHER,ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
@@ -120,25 +97,24 @@ public final class UpdateMicroArrayMain {
      * 3 
      */
     void cleanupOldLinks(Collection<String> newAccessions,ReferenceDatabase... referenceDatabases) throws Exception{
-        Map<String,Set<MarkerDBLink>> currentMicroArrayLinkSets = sequenceRepository.getMarkerDBLinks( referenceDatabases) ;
+        MultiValueMap currentMicroArrayLinkSets = sequenceRepository.getMarkerDBLinks( referenceDatabases) ;
         Set<DBLink> dbLinksToRemove =new HashSet<DBLink>() ;
-        Session session = HibernateUtil.currentSession()  ;
         int numDeleted = 0 ;
 //        genBankLinks
-        for(String accession : currentMicroArrayLinkSets.keySet()){
+        Set<String> currentMicroArrayAccessions = (Set<String>) currentMicroArrayLinkSets.keySet() ;
+        for(String accession : currentMicroArrayAccessions ){
             if(false==genBankLinks.containsKey(accession)
                     ||
                     false==newAccessions.contains(accession)
                     ){
-                for(MarkerDBLink dbLinkToRemove:currentMicroArrayLinkSets.get(accession) ){
-                    infoLogger.warn("removing dblink: " + accession) ;
-                    dbLinksToRemove.add(dbLinkToRemove) ;
-                    ++numDeleted ;
-                }
+                    Collection<DBLink> dbLinksToRemoveForAccession  = currentMicroArrayLinkSets.getCollection(accession) ;
+                    logger.warn("removing all dblink: " + accession + " zdb-ID: "+ dbLinksToRemoveForAccession.size()) ;
+                    dbLinksToRemove.addAll(dbLinksToRemoveForAccession) ;
+                    numDeleted += dbLinksToRemoveForAccession.size() ;
             }
         }
         sequenceRepository.removeDBLinks(dbLinksToRemove) ;
-        infoLogger.info("number of links cleaned out: " + numDeleted) ;
+        microArrayBean.addMessage("number of links cleaned out: " + numDeleted) ;
     }
 
 
@@ -150,14 +126,14 @@ public final class UpdateMicroArrayMain {
      * @param currentMicroArrayLinkSets
      * @param newMicroArrayAccessions
      */
-    public void processNewLinks(Set<String> newMicroArrayAccessions,Map<String,Set<MarkerDBLink>> currentMicroArrayLinkSets,ReferenceDatabase... referenceDatabases){
+    public void processNewLinks(Set<String> newMicroArrayAccessions,Map<String,Collection<MarkerDBLink>> currentMicroArrayLinkSets,ReferenceDatabase... referenceDatabases){
 
-        infoLogger.info("processNewLinks - microarray accessions to process for addition: " + newMicroArrayAccessions.size()   ) ;
+        microArrayBean.addMessage("processNewLinks - microarray accessions to process for addition: " + newMicroArrayAccessions.size()   ); 
         Set<MarkerDBLink> dbLinksToAdd = new HashSet<MarkerDBLink>() ;
         int numAdded = 0 ;
         for(String newMicroArrayAccession : newMicroArrayAccessions){
             MarkerDBLink genBankLink = genBankLinks.get(newMicroArrayAccession) ;
-            Set<MarkerDBLink> currentMicroArrayLinkSet = currentMicroArrayLinkSets.get(newMicroArrayAccession) ;
+            Collection<MarkerDBLink> currentMicroArrayLinkSet = currentMicroArrayLinkSets.get(newMicroArrayAccession) ;
 //            if(genBankLink != null && currentMicroArrayLinkSet != null){
 //               // check for update
 //               // very unlikely, mostly encoding will change
@@ -184,20 +160,21 @@ public final class UpdateMicroArrayMain {
                         newLink.setLength(genBankLink.getLength());
                         ++numAdded ;
                         dbLinksToAdd.add( newLink ) ;
-                        infoLogger.info("adding accession["+newMicroArrayAccession+"] "+
+                        microArrayBean.addMessage("adding accession["+newMicroArrayAccession+"] "+
                                 " for referenceDB["+referenceDatabase.getForeignDB().getDbName() +
-                                "]") ;
+                                "]");
                     }
                 }
             }
             else
             if(genBankLink == null ){
                 // note that accession not found for new accession
-                notFoundLogger.info(newMicroArrayAccession);
+                logger.info("not found in genbank: " + newMicroArrayAccession);
+                microArrayBean.addNotFound(newMicroArrayAccession) ;
             }
         }
         sequenceRepository.addDBLinks(dbLinksToAdd,refPub, 30000) ;
-        infoLogger.info("number of links added: " + numAdded) ;
+        microArrayBean.addMessage("number of links added: " + numAdded); ;
 
 
     }
@@ -210,22 +187,34 @@ public final class UpdateMicroArrayMain {
         session.beginTransaction() ;
 
         try{
+            logger.debug("start loading genbank");
             loadGenBankDBs() ;     // 1
+            logger.debug("end loading genbank");
 
 
             // Process 2715 and 1319 chipsets for GEO only
             Set<String> newGEOAccessions = new HashSet<String>() ;
-            newGEOAccessions.addAll(   (new SoftParser2715()).parseUniqueNumbers() );
-            newGEOAccessions.addAll(   (new SoftParser1319()).parseUniqueNumbers() );
-            Map<String,Set<MarkerDBLink>> microarrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
+            logger.debug("start parsing 2715");
+            newGEOAccessions.addAll(   (new GPLSoftParser2715()).parseUniqueNumbers() );
+            logger.debug("finished parsing 2715");
+            logger.debug("start parsing 1319");
+            newGEOAccessions.addAll(   (new GPLSoftParser1319()).parseUniqueNumbers() );
+            logger.debug("finished parsing 1319");
+            logger.debug("start get current microarray links");
+            Map<String,Collection<MarkerDBLink>> microarrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
+            logger.debug("finished getting current microarray links");
+            logger.debug("start processing new links");
             processNewLinks(newGEOAccessions,microarrayLinks,geoDatabase) ; // 2
+            logger.debug("finished processing new links");
+            logger.debug("start cleaning up old links");
             cleanupOldLinks(newGEOAccessions,geoDatabase) ; // 3
+            logger.debug("finish cleaning up old links");
 
 
 
             // Process the 1319 chipset for all.  
             // Set<String> newOtherAccessions = new HashSet<String>() ;
-            //newOtherAccessions.addAll(   (new SoftParser1319()).parseUniqueNumbers() );
+            //newOtherAccessions.addAll(   (new GPLSoftParser1319()).parseUniqueNumbers() );
 //            //okay if it only returns one
             //microarrayLinks.clear();
             //microarrayLinks = sequenceRepository.getMarkerDBLinks(null, zfEspressoDatabase ) ;   // 0 - load microarray
@@ -239,13 +228,16 @@ public final class UpdateMicroArrayMain {
 
 
             session.getTransaction().commit() ;
+//            session.getTransaction().rollback(); ;
         }
         catch(Exception e){
-            errorLogger.fatal("failed to add dblinks",e);
+            logger.error("failed to add dblinks",e);
             session.getTransaction().rollback();
         }
+    }
 
-
+    public MicroArrayBean getMicroArrayBean() {
+        return microArrayBean;
     }
 
     public static void main(String args[]){

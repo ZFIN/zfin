@@ -205,6 +205,12 @@
         </td>
     </tr>
     <tr>
+        <td>Quartz Jobs:</td>
+        <td colspan="2">
+            <a href="/action/dev-tools/quartz-jobs">Quartz Jobs</a>
+        </td>
+    </tr>
+    <tr>
         <td>Test error handling:</td>
         <td colspan="2">
             <a href="/action/dev-tools/test-error-page">Test Error Page</a>

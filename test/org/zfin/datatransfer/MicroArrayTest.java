@@ -16,7 +16,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.publication.Publication;
 import org.zfin.orthology.Species;
 import org.zfin.TestConfiguration;
 import org.hibernate.Session;
@@ -128,7 +127,7 @@ public class MicroArrayTest {
             Set<String> newMicroArrayAccessions= new HashSet<String>() ;
             newMicroArrayAccessions.add( ACCESSION_NUM1 ) ;
 
-            Map<String,Set<MarkerDBLink>> microArrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
+            Map<String,Collection<MarkerDBLink>> microArrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
 
 
             driver.loadGenBankDBs();
@@ -251,7 +250,7 @@ public class MicroArrayTest {
             newAccessions.add(cDNAGEOAccession) ;  // 2 links with ACCESSION_NUM2 go to the CDNA and the encoding gene
             newAccessions.add(estGEOAccession) ;   // 2 links with ACCESSION_NUM3 go to the EST  and the encoding gene
             driver.init() ;
-            Map<String,Set<MarkerDBLink>> microarrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
+            Map<String,Collection<MarkerDBLink>> microarrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
             driver.processNewLinks(newAccessions,microarrayLinks,geoDatabase) ;
             session.flush() ; 
 
@@ -361,5 +360,10 @@ public class MicroArrayTest {
         estDBLink.setMarker( est) ;
 
         session.save(estDBLink);
+    }
+
+    public static void main(String args[]){
+        GPLSoftParser1319 gplSoftParser1319 = new GPLSoftParser1319();
+        gplSoftParser1319.downloadFile() ;
     }
 }

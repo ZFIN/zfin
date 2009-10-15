@@ -21,6 +21,9 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Order;
 import org.apache.log4j.Logger;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.MultiHashMap;
+import org.apache.commons.collections.map.MultiValueMap;
 
 import java.util.*;
 
@@ -75,6 +78,11 @@ public class HibernateSequenceRepository implements SequenceRepository {
     }
 
 
+    /**
+     * Explicitly do not get transcripts.
+     * @param referenceDatabases
+     * @return
+     */
     public Map<String, MarkerDBLink> getUniqueMarkerDBLinks(ReferenceDatabase... referenceDatabases) {
         Session session = HibernateUtil.currentSession();
 
@@ -86,7 +94,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
         HashMap<String,MarkerDBLink> returnMap = new HashMap<String,MarkerDBLink>() ;
 
         // todo: this should be logged somewhere else possible and not be tied directly to microarray
-        Logger microArrayErrorLog = Logger.getLogger(ZfinProperties.MICROARRAY_ERROR) ;
         for(MarkerDBLink markerDBLink : dbLinks ) {
             if(false==returnMap.containsKey( markerDBLink.getAccessionNumber())){
                 returnMap.put(markerDBLink.getAccessionNumber(),markerDBLink) ;
@@ -94,7 +101,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
             else
             {
                 if(markerDBLink.getMarker().isInTypeGroup(Marker.TypeGroup.CDNA_AND_EST)){
-                    microArrayErrorLog.warn("CDNA/EST accession references more than 1 link:" + markerDBLink.getAccessionNumber());
+                    logger.warn("CDNA/EST accession references more than 1 link:" + markerDBLink.getAccessionNumber());
                 }
                 else{ // if is in genedom or otherwise, we don't really care
                     logger.debug("Accession references >1 links: "+ markerDBLink.getAccessionNumber());
@@ -106,7 +113,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return returnMap ;
     }
 
-    public Map<String, Set<MarkerDBLink>> getMarkerDBLinks(ReferenceDatabase... referenceDatabases) {
+    public MultiValueMap getMarkerDBLinks(ReferenceDatabase... referenceDatabases) {
         Session session = HibernateUtil.currentSession();
 
         Criteria criteria = session.createCriteria(MarkerDBLink.class);
@@ -114,19 +121,9 @@ public class HibernateSequenceRepository implements SequenceRepository {
         criteria.addOrder(Order.asc("accessionNumber"));
         List<MarkerDBLink> dbLinks = criteria.list() ;
 
-        HashMap<String,Set<MarkerDBLink>> returnMap = new HashMap<String,Set<MarkerDBLink>>() ;
+        MultiValueMap returnMap = new MultiValueMap() ;
         for(MarkerDBLink markerDBLink : dbLinks ) {
-            Set<MarkerDBLink> dbLinkSet = returnMap.get(markerDBLink.getAccessionNumber()) ;
-            if(dbLinkSet == null){
-                Set<MarkerDBLink> newSet = new HashSet<MarkerDBLink>() ;
-                newSet.add(markerDBLink) ;
-                returnMap.put(markerDBLink.getAccessionNumber(),newSet) ;
-            }
-            else
-            {
-                dbLinkSet.add(markerDBLink) ;
-            }
-
+            returnMap.put(markerDBLink.getAccessionNumber(),markerDBLink) ;
         }
 
         return returnMap ;

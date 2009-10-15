@@ -30,7 +30,7 @@
     <div class="error-inline">Unable to retrieve the following
             ${(fn:length(formBean.unableToFindDBLinks) eq 1) ? 'sequence' : 'sequences'}:
         <c:forEach var="unableToFindDBLink"  items="${formBean.unableToFindDBLinks}">
-            ${unableToFindDBLink.accessionNumber}
+            <zfin:link entity="${unableToFindDBLink}"/>
             <zfin:attribution entity="${unableToFindDBLink}"/>
         </c:forEach>
     </div>
