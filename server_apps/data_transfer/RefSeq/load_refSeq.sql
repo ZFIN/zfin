@@ -379,7 +379,7 @@ INSERT INTO tmp_db_link
     'x',
     fdbcont_zdb_id,
     accbk_length
-  FROM genbank_acc, ll_zdb, marker, foreign_db_contains, foreing_db, 
+  FROM genbank_acc, ll_zdb, marker, foreign_db_contains, foreign_db, 
   foreign_db_data_type, accession_bank
   WHERE gbacc_ll = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
