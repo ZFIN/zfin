@@ -1,0 +1,65 @@
+package org.zfin.framework.presentation;
+
+import org.apache.commons.lang.StringUtils;
+
+import java.util.List;
+
+/**
+ */
+public class QuartzJobsCommandBean {
+
+    private String action ;
+    private String job ;
+    private String group ;
+    private List<QuartzJobInfo> quartzJobInfoList;
+    private String message ;
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public List<QuartzJobInfo> getQuartzJobInfoList() {
+        return quartzJobInfoList;
+    }
+
+    public void setQuartzJobInfoList(List<QuartzJobInfo> quartzJobInfoList) {
+        this.quartzJobInfoList = quartzJobInfoList;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void clearLastAction() {
+        if(StringUtils.isNotEmpty(action)){
+            this.message = action + " " + job ;
+            this.group= null ;
+            this.action= null ;
+            this.job= null ;
+        }
+    }
+}
