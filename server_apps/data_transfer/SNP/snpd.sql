@@ -10,9 +10,7 @@ create table snp_download(
         snpd_rs_acc_num varchar(40) not null constraint 
 			snpd_rs_acc_num_not_null,
 	snpd_mrkr_zdb_id varchar(50) not null constraint 
-			 snpd_mrkr_zdb_id_not_null,
-	snpd_comment lvarchar
-        )
+			 snpd_mrkr_zdb_id_not_null )
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 32768 next size 32768
 lock mode page;
