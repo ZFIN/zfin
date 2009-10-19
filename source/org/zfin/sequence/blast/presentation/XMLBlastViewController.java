@@ -54,36 +54,36 @@ public class XMLBlastViewController extends AbstractCommandController {
             if (false == BlastSingleQueryThreadCollection.getInstance().isBlastThreadDone(xmlBlastBean)) {
                 modelAndView.setViewName("blast-processing.page");
                 modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
-            } else
+            }
+            // the thread is done processing
+            else {
+                // if it is done processing and no file exists, then there is a serious problem
                 // failed to find the blast ticket
-                if (false == xmlBlastBean.isFileExists() &&
-                        true == BlastSingleQueryThreadCollection.getInstance().isBlastThreadDone(xmlBlastBean)) {
+                if (false == xmlBlastBean.isFileExists() ){
                     modelAndView.setViewName("bad-blast-ticket.page");
                     modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
-                } else
-                    // the blast file is there and is done processing
-                    if (true == xmlBlastBean.isFileExists() &&
-                            true == BlastSingleQueryThreadCollection.getInstance().isBlastThreadDone(xmlBlastBean)
-                            ) {
+                }
+                // if the file exists, then life is good and we can return the result
+                else{
+                    // the file does exist
+                    // create a bene from the JAXB
+                    JAXBContext jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
+                    Unmarshaller u = jc.createUnmarshaller();
+                    BlastOutput blastOutput = (BlastOutput) u.unmarshal(new FileInputStream(xmlBlastBean.getResultFile()));
 
-                        // create a bene from the JAXB
-                        JAXBContext jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
-                        Unmarshaller u = jc.createUnmarshaller();
-                        BlastOutput blastOutput = (BlastOutput) u.unmarshal(new FileInputStream(xmlBlastBean.getResultFile()));
+                    // create top-level alignment from the bean somehow (becomes an image?)
+                    xmlBlastBean.setBlastOutput(blastOutput);
+                    xmlBlastBean.setBlastResultBean(BlastResultMapper.createBlastResultBean(blastOutput));
 
-                        // create top-level alignment from the bean somehow (becomes an image?)
-                        xmlBlastBean.setBlastOutput(blastOutput);
-                        xmlBlastBean.setBlastResultBean(BlastResultMapper.createBlastResultBean(blastOutput));
-
-                        // get result and process via biojava
-                        modelAndView.setViewName("blast-result.page");
-                        modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
-                    } else {
-                        modelAndView.setViewName("bad-blast-result.page");
-                        modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
-                    }
+                    // get result and process via biojava
+                    modelAndView.setViewName("blast-result.page");
+                    modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
+                }
+            }
             return modelAndView;
         } catch (Exception e) {
+            e.fillInStackTrace();
+            logger.error("problem viewing executed blast",e);
             modelAndView.setViewName("bad-blast-result.page");
             modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
             return modelAndView;
