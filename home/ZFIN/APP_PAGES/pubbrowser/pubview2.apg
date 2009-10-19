@@ -185,13 +185,13 @@ displays a publication record, or many publication records if > 1 returned.
 	<?MISQL SQL=" select name, zdb_id from lab where name = 'ZFIN Database Team'">
 		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$2">$1</A>
 	<?/MISQL>
-
        <?MIELSE>
-
 	<?MISQL SQL="select a.full_name,a.zdb_id from person a, int_person_pub b where source_id=a.zdb_id and target_id='$OID' order by a.full_name;">
-
- 	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</A>,  
+          <?MIVAR NAME=registered_author_html><span nowrap><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</A><?/MIVAR>
+          $(VECAPPEND,$registered_author_list,$registered_author_html)
 	<?/MISQL>
+      <?MIVAR NAME=registered_author_list_sepa SEPARATE=", ">$registered_author_list<?/MIVAR> 
+      <?MIVAR>$registered_author_list_sepa<?/MIVAR>
 
        <?/MIBLOCK>
    </TD>
