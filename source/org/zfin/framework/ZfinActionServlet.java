@@ -47,7 +47,7 @@ public class ZfinActionServlet extends DispatcherServlet {
         initProperties();
         initDatabase();
         startupTests();
-//        initBlast() ;
+        initBlast() ;
     }
 
     private void initBlast() {
