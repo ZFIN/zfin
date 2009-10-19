@@ -20,8 +20,10 @@ public class UpdateDOIJob  implements Job {
             UpdateDOIMain driver = new UpdateDOIMain(reportAll);
             driver.findAndUpdateDOIs() ;
 
-            (new IntegratedJavaMailSender()).sendMail("doi updates for: "+(new Date()).toString()
-                    , driver.getMessage().toString(), ZfinProperties.getValidationOtherEmailAddresses());
+            if(reportAll==true || driver.isDoisUpdated()){
+                (new IntegratedJavaMailSender()).sendMail("doi updates for: "+(new Date()).toString()
+                        , driver.getMessage().toString(), ZfinProperties.getValidationOtherEmailAddresses());
+            }
         }
         catch(Exception e) {
             e.printStackTrace();

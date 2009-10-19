@@ -23,6 +23,7 @@ public class UpdateDOIMain {
     private Logger logger = Logger.getLogger(UpdateDOIMain.class);
 
     private boolean reportAll = false ;
+    private boolean doisUpdated = false ;
 
     private StringBuilder message ;
 
@@ -38,7 +39,7 @@ public class UpdateDOIMain {
      */
     private List<Publication> getPubmedIdsWithNoDOIs(){
         List<Publication> publicationList =  publicationRepository.getPublicationsWithAccessionButNoDOI(maxProcesses) ;
-        message.append("number of dois to populate:  ").append(publicationList.size() ) ;
+        message.append("number of dois to populate:  ").append(publicationList.size() ).append("\n") ;
         return publicationList ;
     }
 
@@ -68,6 +69,7 @@ public class UpdateDOIMain {
     }
 
 
+
     /**  updateDOIs:  sets DOI for ZDB_ID
      *  @param  publicationList   A list of publications.
      *
@@ -76,7 +78,11 @@ public class UpdateDOIMain {
 
         if(publicationList==null || publicationList.size()==0 ){
             message.append("No sources to udpate") ;
+            doisUpdated=false ;
             return ;
+        }
+        else{
+            doisUpdated=true;
         }
         Session session = HibernateUtil.currentSession() ;
         session.beginTransaction() ;
@@ -94,6 +100,10 @@ public class UpdateDOIMain {
 
     public StringBuilder getMessage() {
         return message;
+    }
+
+    public boolean isDoisUpdated() {
+        return doisUpdated;
     }
 
     public static void main(String[] args) {
