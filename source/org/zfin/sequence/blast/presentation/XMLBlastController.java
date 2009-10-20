@@ -343,7 +343,7 @@ public class XMLBlastController extends SimpleFormController {
         ModelAndView modelAndView = new ModelAndView("redirect:/action/blast/blast-view?resultFile=" + (
                 inputXMLBlastBean.getTicketNumber() != null ? inputXMLBlastBean.getTicketNumber() :
                         inputXMLBlastBean.getResultFile().getName())
-                + "&refreshTime=5"
+                + "&refreshTime=8"
         );
 
 //        modelAndView.addObject(LookupStrings.FORM_BEAN, inputXMLBlastBean) ;

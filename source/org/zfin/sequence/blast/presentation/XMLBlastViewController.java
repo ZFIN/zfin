@@ -12,14 +12,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * Displays a result from rendered XML.
  */
 public class XMLBlastViewController extends AbstractCommandController {
 
+    private int maxTries = 5 ;
+    private long initPauseTimeMs = 2000 ; // 2 seconds
+    private long pauseTimeBewteenTriesMs = 5000 ; // 5 seconds
 
     @Override
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
@@ -66,10 +71,34 @@ public class XMLBlastViewController extends AbstractCommandController {
                 // if the file exists, then life is good and we can return the result
                 else{
                     // the file does exist
-                    // create a bene from the JAXB
-                    JAXBContext jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
-                    Unmarshaller u = jc.createUnmarshaller();
-                    BlastOutput blastOutput = (BlastOutput) u.unmarshal(new FileInputStream(xmlBlastBean.getResultFile()));
+                    // create a bean from the JAXB
+                    File resultFile = xmlBlastBean.getResultFile() ;
+                    BlastOutput blastOutput = null ;
+                    boolean done = false ;
+                    int tries = 0 ;
+                    while(done==false && tries < maxTries){
+                        try {
+                            ++tries ;
+                            // wait 2 seconds to allow the file time to finish writing
+                            Thread.sleep(initPauseTimeMs);
+                            JAXBContext jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
+                            Unmarshaller u = jc.createUnmarshaller();
+                            blastOutput = (BlastOutput) u.unmarshal(new FileInputStream(resultFile));
+                            done = true ;
+                        } catch (Exception e) {
+                            e.fillInStackTrace() ;
+                            // if it throws premature end of file exception,
+                            // then we are probably not done writing to it, so try again
+                            if(e instanceof org.xml.sax.SAXParseException){
+                                logger.warn("sax exception while parsing: "+resultFile,e);
+                                done = false ;
+                                Thread.sleep(pauseTimeBewteenTriesMs);
+                            }
+                            else {
+                                throw e ;
+                            }
+                        }
+                    }
 
                     // create top-level alignment from the bean somehow (becomes an image?)
                     xmlBlastBean.setBlastOutput(blastOutput);
@@ -88,5 +117,17 @@ public class XMLBlastViewController extends AbstractCommandController {
             modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
             return modelAndView;
         }
+    }
+
+    public void setMaxTries(int maxTries) {
+        this.maxTries = maxTries;
+    }
+
+    public void setInitPauseTimeMs(long initPauseTimeMs) {
+        this.initPauseTimeMs = initPauseTimeMs;
+    }
+
+    public void setPauseTimeBewteenTriesMs(long pauseTimeBewteenTriesMs) {
+        this.pauseTimeBewteenTriesMs = pauseTimeBewteenTriesMs;
     }
 }
