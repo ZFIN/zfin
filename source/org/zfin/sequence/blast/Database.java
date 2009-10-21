@@ -224,7 +224,6 @@ public class Database {
         GBK_ZF_MRNA("gbk_zf_mrna"),
         GBK_ZF_RNA("gbk_zf_rna"),
         GENBANKZEBRAFISHRNA("GenBankZebrafishRNA"),
-        INTVEGA("INTVEGA"),
         GENOMICDNA("GenomicDNA"),
         LOADEDMICRORNAMATURE("LoadedMicroRNAMature"),
         LOADEDMICRORNASTEMLOOP("LoadedMicroRNAStemLoop"),
