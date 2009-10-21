@@ -21,7 +21,7 @@ public class QuicksearchController extends AbstractCommandController {
 
     public QuicksearchController() {
         setCommandClass(SearchBean.class);
-        BooleanQuery.setMaxClauseCount(50000);
+        BooleanQuery.setMaxClauseCount(200000);
     }
 
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
