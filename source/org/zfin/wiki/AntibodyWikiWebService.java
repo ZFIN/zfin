@@ -1,6 +1,7 @@
 package org.zfin.wiki;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 import org.zfin.anatomy.presentation.AnatomyLabel;
@@ -77,7 +78,7 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
     public RemotePage getPageForAntibody(Antibody antibody) throws PageDoesNotExistException {
-        return getPageForAntibodyName(getWikiTitleFromAntibodyName(antibody.getName()));
+        return getPageForAntibodyName(getWikiTitleFromAntibody(antibody));
     }
 
     public void setZfinAntibodyPageMetaData(RemotePage page) throws Exception {
@@ -103,6 +104,10 @@ public class AntibodyWikiWebService extends WikiWebService {
         return name.replaceAll("\\/", "-").toLowerCase();
     }
 
+    private String getWikiTitleFromAntibody(Antibody antibody) {
+        return antibody.getAbbreviation().replaceAll("\\/", "-");
+    }
+
 
     public void clearAntibodyTemplate() {
         antibodyTemplateData = null;
@@ -111,7 +116,7 @@ public class AntibodyWikiWebService extends WikiWebService {
     public String getAntibodyTemplate() throws IOException {
         if (antibodyTemplateData == null) {
             File file = new File(ANTIBODY_TEMPLATE);
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(ANTIBODY_TEMPLATE)));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             StringBuffer stringBuffer = new StringBuffer();
             String buffer;
             while ((buffer = bufferedReader.readLine()) != null) {
@@ -120,6 +125,21 @@ public class AntibodyWikiWebService extends WikiWebService {
             antibodyTemplateData = stringBuffer.toString();
         }
         return antibodyTemplateData;
+    }
+
+    /**
+     * @param antibody Antibody to mangle name of.
+     * @return Returns the case-preserved suffix of an antibody if they start with ab- or anti-
+     */
+    public String getUserFriendlyAntibodyName(Antibody antibody){
+        String antibodyName = antibody.getName() ;
+        if( antibodyName.toLowerCase().startsWith("ab")
+                ||
+                antibodyName.toLowerCase().startsWith("anti")
+                ){
+            return antibodyName.substring(antibodyName.indexOf("-")+1);
+        }
+        return null ;
     }
 
     /**
@@ -135,17 +155,45 @@ public class AntibodyWikiWebService extends WikiWebService {
         // name
         // should leave this unchanged to force a constraint
 //        content = content.replace("{page-info:title}",antibody.getName()) ;
+        StringBuilder antibodyNameString = new StringBuilder();
+        antibodyNameString.append("[") ;
+        antibodyNameString.append(antibody.getName()) ;
+        antibodyNameString.append("|") ;
+        antibodyNameString.append("http://zfin.org/action/antibody/detail?antibody.zdbID=") ;
+        antibodyNameString.append(antibody.getZdbID()) ;
+        antibodyNameString.append("]") ;
+        antibodyNameString.append(" from the [ZFIN antibody database|http://zfin.org/action/antibody/search].") ;
+        content = content.replace("{text-data:AntibodyName}{page-info:title}{text-data}", antibodyNameString.toString());
 
         // aliases
+        String userFriendlyAntibodyName = getUserFriendlyAntibodyName(antibody) ;
+        StringBuilder aliasStringBuilder = new StringBuilder();
         if (antibody.getAliases() != null) {
-            StringBuilder aliasStringBuilder = new StringBuilder();
             Iterator<MarkerAlias> markerAliasIterator = antibody.getAliases().iterator();
             while (markerAliasIterator.hasNext()) {
                 aliasStringBuilder.append(markerAliasIterator.next().getAlias());
                 if (markerAliasIterator.hasNext()) {
-                    aliasStringBuilder.append(", ");
+                    aliasStringBuilder.append(" , ");
                 }
             }
+
+        }
+
+        if (userFriendlyAntibodyName != null) {
+            if(aliasStringBuilder.length()>0){
+                aliasStringBuilder.append(" , ");
+            }
+            aliasStringBuilder.append(userFriendlyAntibodyName) ;
+            aliasStringBuilder.append(" ");
+            if(false==userFriendlyAntibodyName.equals(userFriendlyAntibodyName.toLowerCase())){
+                aliasStringBuilder.append("{hidden-data}");
+                aliasStringBuilder.append(userFriendlyAntibodyName.toLowerCase()) ;
+                aliasStringBuilder.append("{hidden-data}") ;
+                aliasStringBuilder.append(" ");
+            }
+        }
+
+        if(StringUtils.isNotEmpty(aliasStringBuilder.toString())){
             content = content.replace("{text-data:OtherInfo}{text-data}", aliasStringBuilder.toString());
         }
 
@@ -209,10 +257,39 @@ public class AntibodyWikiWebService extends WikiWebService {
                 publicCommentsStringBuilder.append("\n");
             }
         } else {
-            publicCommentsStringBuilder.append("No notes imported.");
+            publicCommentsStringBuilder.append("No notes imported.").append("\n");
         }
+        publicCommentsStringBuilder.append(" * ") ;
+        publicCommentsStringBuilder.append("[") ;
+        publicCommentsStringBuilder.append("Citations for ") ;
+        publicCommentsStringBuilder.append(antibody.getName()) ;
+        publicCommentsStringBuilder.append(" at ZFIN ") ;
+        publicCommentsStringBuilder.append("|") ;
+        publicCommentsStringBuilder.append("http://zfin.org//action/antibody/publication-list?orderBy=author&antibody.zdbID=") ;
+        publicCommentsStringBuilder.append(antibody.getZdbID()) ;
+        publicCommentsStringBuilder.append("]") ;
         publicCommentsStringBuilder.append("\n");
         content = content.replace("{text-data:Comments|type=area|width=400px|height=150px}{text-data}", publicCommentsStringBuilder.toString());
+
+
+        StringBuilder assaysTestedStringBuilder = new StringBuilder() ;
+        for(String assayName: antibodyService.getDistinctAssayNames()){
+            assaysTestedStringBuilder.append(" | ") ;
+            assaysTestedStringBuilder.append(assayName.toLowerCase()) ;
+            assaysTestedStringBuilder.append(" | ") ;
+            assaysTestedStringBuilder.append(" | ") ;
+            assaysTestedStringBuilder.append("yes") ;
+            assaysTestedStringBuilder.append(" | ") ;
+            assaysTestedStringBuilder.append(" from ") ;
+            assaysTestedStringBuilder.append("[ZFIN curation|") ;
+            assaysTestedStringBuilder.append("http://zfin.org/action/antibody/detail?antibody.zdbID=") ;
+            assaysTestedStringBuilder.append(antibody.getZdbID()) ;
+            assaysTestedStringBuilder.append("]") ;
+            assaysTestedStringBuilder.append(" | ") ;
+            assaysTestedStringBuilder.append("\n") ;
+        }
+        content = content.replace("{table:Assays Tested}", assaysTestedStringBuilder.toString());
+
 
 
         return content;
@@ -268,7 +345,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         clearAntibodyTemplate();
         for (Antibody antibody : antibodies) {
             // containers
-            pageTitle = getWikiTitleFromAntibodyName(antibody.getName());
+            pageTitle = getWikiTitleFromAntibody(antibody);
             zfinAntibodyHashMap.put(pageTitle, antibody);
             ReturnStatus returnStatus = synchronizeAntibodyWithWiki(antibody);
             switch (returnStatus) {
@@ -313,18 +390,19 @@ public class AntibodyWikiWebService extends WikiWebService {
         (new IntegratedJavaMailSender()).sendMail("Antibody Wiki Notes", mailMessageStringBuilder.toString(), ZfinProperties.getAdminEmailAddresses());
     }
 
-    public RemotePage updatePageForAntibody(Antibody antibody, String newTitle) throws Exception {
+    public RemotePage updatePageForAntibody(Antibody antibody, String oldName) throws Exception {
         if (false == ZfinProperties.isPushToWiki()) {
             logger.info("not authorized to push to wiki");
             return null;
         }
-        String oldPageTitle = getWikiTitleFromAntibodyName(getWikiTitleFromAntibodyName(antibody.getName()));
-        String newPageTitle = getWikiTitleFromAntibodyName(newTitle);
-        RemotePage page = getPageForAntibodyName(oldPageTitle);
+        
+        String newTitle = getWikiTitleFromAntibody(antibody);
+        String oldTitle = getWikiTitleFromAntibodyName(oldName);
+        RemotePage page = getPageForAntibodyName(oldTitle);
 
-        if (false == oldPageTitle.equals(newPageTitle)) {
+        if (false == newTitle.equals(oldTitle)) {
             // set the title
-            page.setTitle(newPageTitle);
+            page.setTitle(newTitle);
         }
 
         return updatePageForAntibody(createWikiPageContentForAntibodyFromTemplate(antibody), page);
@@ -341,7 +419,7 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
     private RemotePage createPageForAntibody(Antibody antibody) throws Exception {
-        String pageTitle = getWikiTitleFromAntibodyName(antibody.getName());
+        String pageTitle = getWikiTitleFromAntibody(antibody);
 
         RemotePage page = new RemotePage();
         page.setContent(createWikiPageContentForAntibodyFromTemplate(antibody));
@@ -450,7 +528,6 @@ public class AntibodyWikiWebService extends WikiWebService {
         }
         return isZfinAntibodyLabelledPage;
     }
-
 
     /**
      * Generated a link to the wiki's antibody page for a given antibody.

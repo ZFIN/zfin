@@ -10,11 +10,19 @@ import org.zfin.repository.RepositoryFactory;
 import java.io.File;
 
 /**
- */
+ * This class is used to run wiki code once (as opposed to out of a cron job.
+ * Note that the parameters for execution come from "zfin-properties-test.xml".
+ * There is no ant target for this and this is generally run from an IDE with the parameters:
+ * -DDBNAME= -DCONFIGURATION_DIRECTORY= -DINFORMIX_SERVER= -DINFORMIX_PORT= -DSQLHOSTS_HOST=
+ **/
 public class WikiScriptRunner {
 
     private final static Logger logger = Logger.getLogger(WikiScriptRunner.class);
 
+    /**
+     * Adds a web page for a single antibody.
+     * @param antibodyName
+     */
     public void addWebPage(String antibodyName) {
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByName(antibodyName);
         if (antibody != null) {
@@ -23,7 +31,7 @@ public class WikiScriptRunner {
                 AntibodyWikiWebService.ReturnStatus returnStatus = AntibodyWikiWebService.getInstance().synchronizeAntibodyWithWiki(antibody);
                 logger.info("returned: " + returnStatus);
             } catch (WikiLoginException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
         } else {
             logger.warn("no antibody found for[" + antibodyName + "]");
@@ -55,10 +63,12 @@ public class WikiScriptRunner {
             WikiScriptRunner wikiScriptRunner = new WikiScriptRunner();
 //            wikiScriptRunner.addWebPage("zn-5");
 //            wikiScriptRunner.addWebPage("Ab-10E4");
-            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
+//            wikiScriptRunner.addWebPage("Ab-3A10");
+//            wikiScriptRunner.addWebPage("anti-DLX3b");
+//            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
 
 //            AntibodyWikiWebService.login();
-//            AntibodyWikiWebService.addWebPage("Ab1-rlbp");
+            wikiScriptRunner.addWebPage("Ab-2F11");
 //        AntibodyWikiWebService.addWebPage("zn-5");
 
 //            AntibodyWikiWebService.logout();

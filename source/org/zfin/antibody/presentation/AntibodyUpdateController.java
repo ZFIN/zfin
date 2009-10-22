@@ -66,20 +66,34 @@ public class AntibodyUpdateController extends SimpleFormController {
             pubID = antibodyPub.getZdbID();
 
             antibody = ar.getAntibodyByID(formBean.getAntibody().getZdbID());
+
+            // we get the old name before we update the antibody
+            String oldName = antibody.getAbbreviation() ;
             String antibodyAlias = antibody.getName();
             antibody.setAbbreviation(formBean.getAntibodyNewName().toLowerCase());
-
-            AntibodyWikiWebService.getInstance().updatePageForAntibody(antibody,formBean.getAntibodyNewName()) ;
-
             antibody.setName(formBean.getAntibodyNewName());
 
+
+
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-            if (formBean.isCreateAlias())
+            if (formBean.isCreateAlias()){
                 mr.updateMarker(antibody, antibodyPub, antibodyAlias);
-            else
+            }
+            else{
                 mr.updateMarker(antibody, antibodyPub, null);
+            }
+
+            // we pass in the updated antibody with the old name by which to find it
+            // we don't want it to hurt the update process, but we should note it
+            try {
+                AntibodyWikiWebService.getInstance().updatePageForAntibody(antibody,oldName) ;
+            } catch (Exception e) {
+                e.fillInStackTrace() ;
+                logger.error("failed to update the antibody page: "+oldName,e);
+            }
             tx.commit();
         } catch (Exception e) {
+            e.fillInStackTrace() ;
             try {
                 tx.rollback();
             } catch (HibernateException he) {

@@ -35,4 +35,12 @@ public class WikiBean {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public String toString(){
+        String returnString = "WikiBean\n"  ;
+        returnString += "zdbID: " + zdbID + "\n";
+        returnString += "name: " + name + "\n";
+        returnString += "zdbID: " + zdbID + "\n";
+        return returnString ;
+    }
 }

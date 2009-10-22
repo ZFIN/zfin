@@ -20,7 +20,7 @@
                 </strong>
 
                 <script type="text/javascript">
-                    new Ajax.Updater('wikiLink','/action/wiki/wikiLink?zdbID=${formBean.antibody.zdbID}&name=${formBean.antibody.name}');
+                    new Ajax.Updater('wikiLink','/action/wiki/wikiLink?zdbID=${formBean.antibody.zdbID}&name=${formBean.antibody.abbreviation}');
                 </script>
                 <div id="wikiLink" style="display:inline;vertical-align:middle;font-size:small;"> </div>
             </div>
