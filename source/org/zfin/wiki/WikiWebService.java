@@ -14,6 +14,7 @@ public class WikiWebService {
     protected ConfluenceSoapService service = null;
     protected final String EDIT_PERMISSION = "Edit";
     protected final String VIEW_PERMISSION = "View";
+    protected final String ZFIN_GROUP = "zfin-users";
     protected final String PAGE_TYPE = "page";
     protected final String ENDPOINT_SUFFIX = "/rpc/soap-axis/confluenceservice-v1";
     protected final String WEBSERVICE_PROTOCOL = "https://";
@@ -151,15 +152,23 @@ public class WikiWebService {
             for (RemoteSearchResult page : pages) {
                 logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "]") ; 
                 if (page.getType().equals(PAGE_TYPE) && service.getContentPermissionSets(token, page.getId()).length == 0) {
-                    logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "] # perm[" + service.getContentPermissionSets(token, page.getId()).length + "]");
-                    RemoteContentPermission permission = new RemoteContentPermission();
+                    logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "] # perm["
+                            + service.getContentPermissionSets(token, page.getId()).length + "]");
+                    RemoteContentPermission permissionForUser = new RemoteContentPermission();
                     RemotePage remotePage = service.getPage(token, page.getId());
-                    permission.setUserName(remotePage.getCreator());
+                    permissionForUser.setUserName(remotePage.getCreator());
                     logger.info(" setting permission for: " + page.getTitle() + " to " + remotePage.getCreator());
-                    permission.setType("Edit");
-                    RemoteContentPermission[] permissions = new RemoteContentPermission[1];
-                    permissions[0] = permission;
-                    service.setContentPermissions(token, page.getId(), "Edit", permissions);
+                    permissionForUser.setType(EDIT_PERMISSION);
+                    RemoteContentPermission[] permissions = new RemoteContentPermission[2];
+                    permissions[0] = permissionForUser;
+
+                    RemoteContentPermission permissionForZfinGroup = new RemoteContentPermission();
+                    permissionForZfinGroup.setGroupName(ZFIN_GROUP);
+                    logger.info(" setting permission for: " + page.getTitle() + " to group " + ZFIN_GROUP);
+                    permissionForZfinGroup.setType(EDIT_PERMISSION);
+                    permissions[1] = permissionForZfinGroup ;
+
+                    service.setContentPermissions(token, page.getId(), EDIT_PERMISSION, permissions);
                 }
             }  // end of for loop
         } catch (Exception e) {
