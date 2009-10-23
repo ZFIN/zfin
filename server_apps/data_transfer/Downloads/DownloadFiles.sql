@@ -409,9 +409,6 @@ select "ZFIN:"||geno_zdb_id, geno_display_name,
 					   from go_term
 					   where goterm_zdb_id = apato_superterm_zdb_id)
 				  end,
-				(select term_ont_id
-					from term
-					where term_Zdb_id = apato_quality_zdb_id),
 				case
 				  when
 				  get_obj_type(apato_subterm_zdb_id) = 'ANAT'
@@ -423,10 +420,14 @@ select "ZFIN:"||geno_zdb_id, geno_display_name,
 				  when
 				  get_obj_type(apato_subterm_zdb_id)='GOTERM'
 				  then
-					(select goterm_go_id
+					(select "GO:"||goterm_go_id
 					   from go_term
 					   where goterm_zdb_id = apato_subterm_zdb_id)
 				  end,
+                                (select term_ont_id
+                                        from term
+                                        where term_Zdb_id = apato_quality_zdb_id),
+
 			apato_tag,
 			"ZFIN:"||apato_pub_zdb_id,
 			"ZFIN:"||genox_exp_zdb_id
