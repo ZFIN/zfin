@@ -1669,9 +1669,10 @@ union
   <?MIVAR NAME=mrkrview_microarray_suffix>$5<?/MIVAR>
 
 	 <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
-     <?MIVAR NAME=accession_sum>$dblink_acc* OR $dblink_acc.*<?/MIVAR>
+     <?MIVAR NAME=accession_sum>$(CONCAT,$dblink_acc,*) OR $(CONCAT,$dblink_acc,.*)<?/MIVAR>
      <?MIELSE>
-     <?MIVAR NAME=accession_sum>$accession_sum OR $dblink_acc* or $dblink_acc.*<?/MIVAR>
+     <?MIVAR NAME=accession_sum>$accession_sum OR $(CONCAT,$dblink_acc,*)
+ or $(CONCAT,$dblink_acc,.*)<?/MIVAR>
      <?/MIBLOCK>
      <?/MISQL>
 

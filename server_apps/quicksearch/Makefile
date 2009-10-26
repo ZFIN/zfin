@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/quicksearch
 
-GENERICS = regenerateindex.pl makeStaticIndex.pl
+GENERICS = regenerateindex.pl makeStaticIndex.pl build.xml
 
 SUBDIRS = logs etc 
 

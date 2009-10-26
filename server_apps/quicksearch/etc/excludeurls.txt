@@ -11,9 +11,11 @@ pdf
 images
 data_transfer
 javascript
-SearchApp
 php
 gbrowse
+mapper_select.cgi
+action/login
+mailto
 
 # We do not want to crawl select pages.
 # These (especially xpatselect) take a long time to crawl.
@@ -22,7 +24,6 @@ gbrowse
 
 select.apg
 select2.apg
-anatdict.apg
 anatomy
 quicksearch
 get_sequence.cgi
@@ -35,7 +36,9 @@ download-sequence
 view.apg
 view2.apg
 aa-orthoviewdetailed.apg
-anatomy/term-detail
+action/anatomy/term-detail
+action/anatomy/search
+action/antibody
 marker/transcript-view
 aa-fxassayabbrev.apg
 aa-fxallfigures.apg

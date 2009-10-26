@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/quicksearch/logs
 
-STATICS = check_for_duplicates.pl count_pages.pl
+STATICS = check_for_duplicates.pl log4j.xml
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -38,12 +38,3 @@ checkdupscrawl : $(TARGETDIR)/check_for_duplicates.pl
 # Check indexed log for dups
 checkdupsindex : $(TARGETDIR)/check_for_duplicates.pl
 	$(TARGETDIR)/check_for_duplicates.pl $(TARGETROOT)/server_apps/quicksearch/logs/indexedUrls.log
-
-
-# Count crawled pages
-countcrawl : $(TARGETDIR)/count_pages.pl
-	$(TARGETDIR)/count_pages.pl $(TARGETROOT)/server_apps/quicksearch/logs/crawledUrls.log
-
-# Count indexed pages
-countindex : $(TARGETDIR)/count_pages.pl
-	$(TARGETDIR)/count_pages.pl $(TARGETROOT)/server_apps/quicksearch/logs/indexedUrls.log

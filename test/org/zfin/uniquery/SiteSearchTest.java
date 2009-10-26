@@ -19,6 +19,7 @@ import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.uniquery.categories.SiteSearchCategories;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,10 +41,8 @@ public class SiteSearchTest {
     @Test
     public void IndexText() {
         createIndex();
-        // search Index
 
         String queryString = "Antibody";
-        Hits hits;
         IndexReader reader = null;
         Searcher searcher = null;
         try {
@@ -56,7 +55,7 @@ public class SiteSearchTest {
             //        BooleanQuery query = new BooleanQuery();
             //      query.add(new PrefixQuery(new Term("title", queryString)), BooleanClause.Occur.SHOULD);
 
-            hits = searcher.search(query);
+            searcher.search(query);
 
             System.out.println("End of search");
         } catch (IOException e) {
@@ -158,6 +157,19 @@ public class SiteSearchTest {
             e.printStackTrace();
         }
 
+    }
+
+    @Test
+    public void testGetDocMethod() {
+        File file = new File("home", "WEB-INF");
+        File categoryFile = new File(file, "conf");
+        SiteSearchCategories.init(categoryFile.getAbsolutePath(), "site-search-categories.xml");
+        String docType = SiteSearchCategories.getDocType("http://localhost/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-070117-46");
+        assertEquals("GeneView", docType);
+        docType = SiteSearchCategories.getDocType("http://localhost/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-CDNA-040425-396");
+        assertEquals("MarkerView", docType);
+        docType = SiteSearchCategories.getDocType("http://localhost/action/antibody/detail?antibody.zdbID=ZDB-ATB-081002-20");
+        assertEquals("AntibodyView", docType);
     }
 
     @After

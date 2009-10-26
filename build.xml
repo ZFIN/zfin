@@ -42,7 +42,7 @@
     </target>
 
 
-    <target name="do" depends="clean, construct-ncbi-dtd-classes,construct-xsd-classes, compile, prepare-properties"
+    <target name="do" depends="clean, construct-ncbi-dtd-classes,construct-xsd-classes, create-site-search-categories-classes, compile, prepare-properties"
             description="Everything to compile excluding jsp files. No copying into target directory"/>
 
     <target name="all" depends="deploy" description="The same as deploy for Tom."/>
@@ -173,7 +173,6 @@
             >
         </taskdef>
 
-
     <target name="construct-ncbi-dtd-classes" description="Run xjc to generate Java files for parsing blast results">
         <echo message="Generating NCBI blast result source files ..."/>
         <echo message="${web.conf}"/>
@@ -190,6 +189,15 @@
         <xjc schema="${web.conf}/properties.xsd" binding="${web.conf}/properties.xjb" target="source"
              package="org.zfin.properties">
             <produces dir="source" includes="org.zfin.properties/*.java"/>
+        </xjc>
+    </target>
+
+    <target name="create-site-search-categories-classes" description="Run xsd to generate Java files for DX jobs">
+        <echo message="Generating Site Search Categories source files ..."/>
+        <echo message="${web.conf}"/>
+        <xjc schema="${web.conf}/site-search-categories.xsd" binding="${web.conf}/site-search-categories.xjb" target="source"
+             package="org.zfin.uniquery.categories">
+            <produces dir="source" includes="org.zfin.uniquery.categories/*.java"/>
         </xjc>
     </target>
 

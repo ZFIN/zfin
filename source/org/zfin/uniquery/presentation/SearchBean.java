@@ -11,7 +11,10 @@ import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.uniquery.SearchCategory;
 import org.zfin.uniquery.ZfinAnalyzer;
+import org.zfin.uniquery.UrlPattern;
+import org.zfin.uniquery.categories.SiteSearchCategories;
 import org.zfin.uniquery.search.*;
+import org.zfin.uniquery.search.Hit;
 import org.zfin.framework.presentation.PaginationBean;
 
 import java.io.IOException;
@@ -41,11 +44,15 @@ public class SearchBean extends PaginationBean {
 
     private List<CategoryHits> allCategoryHitsList;
     private String queryString;
-    private List<org.zfin.uniquery.search.Hit> allResultsList;
+    private List<Hit> allResultsList;
 
+    // parameters set by web page query
     private String query;
-    private String category;
+    private String categoryID;
     private int pageSize = 25;
+
+    // ***********************************
+
     private String indexDirectory = ZfinProperties.getIndexDirectory();
     private ReplacementZdbID replacementZdbID;
     private SearchResults searchResult;
@@ -75,17 +82,14 @@ public class SearchBean extends PaginationBean {
                 // do not repeat search, same query is being repeated and we have it saved already
             } else {
                 this.queryString = queryString;
-                allResultsList = new ArrayList<org.zfin.uniquery.search.Hit>();
+                allResultsList = new ArrayList<Hit>();
                 allCategoryHitsList = new ArrayList<CategoryHits>();
 
-                /*
-                * Search all categories in the order of the SearchCategory.CATEGORIES list
-                * (which is decided by biologists).
-                */
-                for (int i = 0; i < SearchCategory.CATEGORIES.size(); i++) {
+                // Search through all categories
+                for (int i = 0; i < SiteSearchCategories.getAllSearchCategories().size(); i++) {
 
                     // determine the category
-                    SearchCategory category = SearchCategory.CATEGORIES.get(i);
+                    SearchCategory category = SiteSearchCategories.getAllSearchCategories().get(i);
 
                     if (category != null) {
                         // reformulate query into the category-specific query, and rewrite the original query
@@ -136,7 +140,7 @@ public class SearchBean extends PaginationBean {
         List relevantResults = getResultsSubset(allResultsList, resultsPageSize, startIndex);
 
         // now create the resulting HTML results subset
-        return new SearchResults(relevantResults.iterator(), allResultsList.size(), resultsPageSize, startIndex);
+        return new SearchResults(relevantResults.iterator(), allResultsList.size());
     }
 
     /**
@@ -150,7 +154,7 @@ public class SearchBean extends PaginationBean {
     public SearchResults doCategorySearch() {
 
         String queryString = getQueryTerm();
-        String categoryId = getCategoryTerm();
+        String categoryId = getCategoryID();
 
         SearchResults resultPage = null;
 
@@ -173,10 +177,10 @@ public class SearchBean extends PaginationBean {
                 // if the category is found, use those results (then exit for loop)
                 if (catHit.getCategory().getId().equals(categoryId)) {
                     // from all results, get the relevant results subset (from x to y out of a total of z)
-                    List relevantResults = getResultsSubset(catHit.getHitsAsHTML(), pageSize, startIndex);
+                    List<Hit> relevantResults = getResultsSubset(catHit.getHitsAsHTML(), pageSize, startIndex);
 
                     // now create the resulting HTML results subset
-                    resultPage = new SearchResults(relevantResults.iterator(), catHit.getHitsAsHTML().size(), pageSize, startIndex);
+                    resultPage = new SearchResults(relevantResults.iterator(), catHit.getHitsAsHTML().size());
                     break;
                 }
             }
@@ -193,7 +197,7 @@ public class SearchBean extends PaginationBean {
 
     /**
      * In the past, this was highly inefficient because it had to perform a search in order
-     * to determine the number of results.  In otherwords, it had to perform a search TWICE:
+     * to determine the number of results.  In other words, it had to perform a search TWICE:
      * once to get results, and once to get total counts.  This is an artifact of using a
      * REQUEST-based (as opposed to SESSION-based) bean.  The tradeoff is performance versus
      * memory usage.
@@ -249,7 +253,7 @@ public class SearchBean extends PaginationBean {
      *
      * @return List of ignored words
      */
-    public List<String> getIgnoredWords(){
+    public List<String> getIgnoredWords() {
         return getIgnoredWords(getQueryTerm());
     }
 
@@ -285,10 +289,7 @@ public class SearchBean extends PaginationBean {
     private Query addCategoryPrefixToQuery(SearchCategory category, Query query, Analyzer analyzer) {
 
         BooleanQuery prefixQuery = new BooleanQuery();
-        String[] types = category.getTypes();
-        if (types == null) {
-            throw new RuntimeException("No types found");
-        }
+        List<UrlPattern> urlPattern = category.getUrlPatterns();
         if (analyzer == null) {
             throw new RuntimeException("Analyzer is null");
         }
@@ -296,31 +297,26 @@ public class SearchBean extends PaginationBean {
             throw new RuntimeException("query is null");
         }
 
-        for (int i = 0; i < types.length; i++) {
-
-            TokenStream tokenStream = analyzer.tokenStream("type", new StringReader(types[i]));
+        for (UrlPattern pattern : urlPattern) {
+            TokenStream tokenStream = analyzer.tokenStream("type", new StringReader(pattern.getType()));
 
             if (tokenStream == null)
-                throw new RuntimeException("tokenStream is null [" + i + "]");
+                throw new RuntimeException("tokenStream is null");
             Token token;
             try {
                 token = tokenStream.next();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            if (token == null) {
-                break;
+            if (token != null) {
+                TermQuery termQuery = new TermQuery(new Term("type", new String(token.termBuffer(), 0, token.termLength())));
+
+                // add Boost value to get terms to sort properly
+                if (pattern.getBoostValue() != 0)
+                    termQuery.setBoost(pattern.getBoostValue());
+                prefixQuery.add(termQuery, BooleanClause.Occur.SHOULD);
             }
-            TermQuery termQuery = new TermQuery(new Term("type", new String(token.termBuffer(), 0, token.termLength())));
-
-            if (termQuery == null)
-                throw new RuntimeException("termQuery is null [" + i + "]");
-            // the huge boost values are to get terms to sort properly
-            int boostValue = (int) Math.pow((types.length - i), 8);
-            termQuery.setBoost(boostValue);
-            prefixQuery.add(termQuery, BooleanClause.Occur.SHOULD);
         }
-
         BooleanQuery fullQuery = new BooleanQuery();
         fullQuery.add(prefixQuery, BooleanClause.Occur.MUST);
         fullQuery.add(query, BooleanClause.Occur.MUST);
@@ -383,8 +379,8 @@ public class SearchBean extends PaginationBean {
      * @param startIndex      starting record
      * @return list of Hit objects
      */
-    private List<org.zfin.uniquery.search.Hit> getResultsSubset(List<org.zfin.uniquery.search.Hit> results, int resultsPageSize, int startIndex) {
-        List<org.zfin.uniquery.search.Hit> newResults = new ArrayList<org.zfin.uniquery.search.Hit>();
+    private List<Hit> getResultsSubset(List<Hit> results, int resultsPageSize, int startIndex) {
+        List<Hit> newResults = new ArrayList<Hit>();
 
         if (startIndex > results.size()) {
             startIndex = 0;
@@ -435,14 +431,14 @@ public class SearchBean extends PaginationBean {
         int numberOfColumns = 5;
         String cellSelected;
         String categoryHtml;
-        List<SearchCategory> categories = SearchCategory.CATEGORIES;
+        List<SearchCategory> categories = SiteSearchCategories.getAllSearchCategories();
 
         String returnResults = "<div class='category_box'>";
         returnResults += "<TABLE border='0' width='" + screenWidth + unitOfMeasure + "' align='center' cellpadding='2' cellspacing='2' class='category_table'> \n";
         for (int i = 0; i < categories.size(); i++) {
             SearchCategory category = categories.get(i);
             String currentCategoryId = category.getId();
-            if (currentCategoryId.equalsIgnoreCase(getCategoryTerm())) {
+            if (currentCategoryId.equalsIgnoreCase(getCategoryID())) {
                 cellSelected = "<img src=/images/right_arrow.gif />&nbsp;";
             } else {
                 cellSelected = "";
@@ -453,7 +449,7 @@ public class SearchBean extends PaginationBean {
             }
             int numberOfResults = getSearchResultsCount(currentCategoryId);
             if (currentCategoryId.equalsIgnoreCase("All") || numberOfResults > 1) {
-                categoryHtml = "<a href='category_search.jsp?pageSize=" + pageSize + "&query=" + URLEncoder.encode(getQueryTerm(), "UTF-8") + "&category=" + currentCategoryId + "'><b>" + category.getDescription() + "</b></a>";
+                categoryHtml = "<a href='category_search.jsp?pageSize=" + pageSize + "&query=" + URLEncoder.encode(getQueryTerm(), "UTF-8") + "&categoryID=" + currentCategoryId + "'><b>" + category.getDisplayName() + "</b></a>";
             } else if (numberOfResults == 1) {
                 String searchResultURL = "";
                 for (CategoryHits catHit : allCategoryHitsList) {
@@ -469,10 +465,10 @@ public class SearchBean extends PaginationBean {
                 }
                 String envWebdriverLoc = WEBDRIVER_LOCATION;
                 searchResultURL = searchResultURL.replaceFirst("almost", envWebdriverLoc);
-                categoryHtml = "<a href='" + searchResultURL + "'><b>" + category.getDescription() + "</b></a>";
+                categoryHtml = "<a href='" + searchResultURL + "'><b>" + category.getDisplayName() + "</b></a>";
 
             } else {
-                categoryHtml = category.getDescription();
+                categoryHtml = category.getDisplayName();
             }
 
             returnResults += "<TD nowrap class='category_item'>";
@@ -583,20 +579,20 @@ public class SearchBean extends PaginationBean {
      */
     public String getRelatedSearchPageHTML() throws UnsupportedEncodingException {
         String specificSearchURL;
-        String categoryDescription = SearchCategory.getDescriptionById(getCategoryTerm());
+        String categoryDisplayName = SiteSearchCategories.getDisplayName(getCategoryID());
         RelatedTerms terms = new RelatedTerms();
         String queryTerm = getQueryTerm();
         Map<String, List<String>> anatomyHits = terms.getAllAnatomyHits(queryTerm);
 
-        if (categoryDescription.toLowerCase().equals("mutants/transgenics")) {
+        if (categoryDisplayName.toLowerCase().equals("mutants/transgenics")) {
             specificSearchURL = "aa-fishselect.apg&allele_name=" + queryTerm;
-        } else if (categoryDescription.toLowerCase().equals("genes/markers/clones")) {
+        } else if (categoryDisplayName.toLowerCase().equals("genes/markers/clones")) {
             specificSearchURL = "aa-newmrkrselect.apg&input_name=" + queryTerm;
-        } else if (categoryDescription.toLowerCase().equals("expression/phenotype")) {
+        } else if (categoryDisplayName.toLowerCase().equals("expression/phenotype")) {
             /* expression/phenotyp info are currently all on figureview page, and we
   only have expression search page, no phenotype search page now. */
             specificSearchURL = "aa-xpatselect.apg";
-            categoryDescription = "Expression";
+            categoryDisplayName = "Expression";
             if (anatomyHits.size() > 0) {
                 specificSearchURL += "&TA_selected_structures=";
                 Vector<String> anatkeys = new Vector<String>(anatomyHits.keySet());
@@ -607,7 +603,7 @@ public class SearchBean extends PaginationBean {
             } else {
                 specificSearchURL += "&gene_name=" + queryTerm;
             }
-        } else if (categoryDescription.toLowerCase().equals("anatomy")) {
+        } else if (categoryDisplayName.toLowerCase().equals("anatomy")) {
             specificSearchURL = "anatomy/search";
             if (anatomyHits.size() > 0) {
                 specificSearchURL += "?action=term-search&searchTerm=";
@@ -617,7 +613,7 @@ public class SearchBean extends PaginationBean {
                     specificSearchURL += URLEncoder.encode(anatkey, "UTF-8") + " ";
                 }
             }
-        } else if (categoryDescription.toLowerCase().equals("people")) {
+        } else if (categoryDisplayName.toLowerCase().equals("people")) {
             specificSearchURL = "aa-quickfindpers.apg&pname=" + queryTerm;
         } else {
             specificSearchURL = "";
@@ -627,22 +623,24 @@ public class SearchBean extends PaginationBean {
         if (specificSearchURL.length() > 0) {
             returnResults += "<span class='specific_search'>";
             returnResults += "Advanced search: ";
-            if (categoryDescription.toLowerCase().equals("anatomy"))
-                returnResults += "<a href='/action/" + specificSearchURL + "'>" + categoryDescription + "</a> ";
+            if (categoryDisplayName.toLowerCase().equals("anatomy"))
+                returnResults += "<a href='/action/" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
             else
-                returnResults += "<a href='/cgi-bin/webdriver?MIval=" + specificSearchURL + "'>" + categoryDescription + "</a> ";
+                returnResults += "<a href='/cgi-bin/webdriver?MIval=" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
 
             returnResults += "</span>";
         }
         return returnResults;
     }
 
-    public String getCategory() {
-        return category;
+    public String getCategoryID() {
+        if (categoryID == null)
+            return "ALL";
+        return categoryID.trim();
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryID(String categoryID) {
+        this.categoryID = categoryID;
     }
 
     public String getQuery() {
@@ -663,15 +661,6 @@ public class SearchBean extends PaginationBean {
         return queryTerm;
     }
 
-    public String getCategoryTerm() {
-        String categoryTerm = category;
-        if (categoryTerm == null) {
-            categoryTerm = "ALL";
-        }
-        categoryTerm = categoryTerm.trim();
-        return categoryTerm;
-    }
-
     public void setReplacementZdbID(ReplacementZdbID replacementZdbID) {
         this.replacementZdbID = replacementZdbID;
     }
@@ -681,7 +670,7 @@ public class SearchBean extends PaginationBean {
     }
 
     public String getCategorySearch() {
-        String categoryDesc = SearchCategory.getDescriptionById(getCategoryTerm());
+        String categoryDesc = SiteSearchCategories.getDisplayName(getCategoryID());
         if (categoryDesc.equals("All")) {
             return "Search";
         } else {

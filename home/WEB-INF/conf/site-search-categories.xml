@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+    Categories used for site search.
+-->
+<Categories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:noNamespaceSchemaLocation="site-search-categories.xsd">
+    <Category ID="ALL" order="0">
+        <DisplayName>All</DisplayName>
+        <UrlMapping>
+            <urlPattern type="ALL"/>
+        </UrlMapping>
+    </Category>
+    <Category ID="GENES" order="10">
+        <DisplayName>Genes/Marker/Clones</DisplayName>
+        <UrlMapping>
+            <urlPattern type="GeneView" boostValue="256">\p{ASCII}*markerview\p{ASCII}*ZDB-GENE-\p{ASCII}*</urlPattern>
+            <urlPattern type="MarkerView" boostValue="8">markerview.apg</urlPattern>
+            <urlPattern type="MarkerView" boostValue="8">transcript-view</urlPattern>
+            <urlPattern type="MarkerView" boostValue="8">clone-view</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="MUTANTS" order="20">
+        <DisplayName>Mutants/Transgenics</DisplayName>
+        <UrlMapping>
+            <urlPattern type="MutantGenoView">genotypeview.apg</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="Expression" order="30">
+        <DisplayName>Expression/Phenotype</DisplayName>
+        <UrlMapping>
+            <urlPattern type="ExpressionFigureView">fxfigureview.apg</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="SEQUENCE"  order="40">
+        <DisplayName>Sequence Information</DisplayName>
+        <UrlMapping>
+            <urlPattern type="GeneSequence">sequence.apg</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="ANATOMY"  order="50">
+        <DisplayName>Anatomy</DisplayName>
+        <UrlMapping>
+            <urlPattern type="AnatomyView" boostValue="256">anatomy/term-detail</urlPattern>
+            <urlPattern type="AnatomyImages" boostValue="8">zf_info/anatomy</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="ANTIBODY"  order="60">
+        <DisplayName>Antibody</DisplayName>
+        <UrlMapping>
+            <urlPattern type="AntibodyView" boostValue="256">antibody/detail</urlPattern>
+            <urlPattern type="AntibodyLabelingView" boostValue="8">antibody/labeling-detail</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="PRODUCT"  order="70">
+        <DisplayName>Gene Product</DisplayName>
+        <UrlMapping>
+            <urlPattern type="GeneProduct">geneprddescription</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="ONTOLOGY"  order="80">
+        <DisplayName>Gene Ontology</DisplayName>
+        <UrlMapping>
+            <urlPattern type="GeneOntology">markergoview.apg</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="ZEBRAFISH_BOOK"  order="90">
+        <DisplayName>The Zebrafish Book</DisplayName>
+        <UrlMapping>
+            <urlPattern type="ZebrafishBook">zf_info/zfbook</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="NOMENCLATURE"  order="100">
+        <DisplayName>Nomenclature</DisplayName>
+        <UrlMapping>
+            <urlPattern type="GeneNomenclature" boostValue="256">zf_info/nomen.htm</urlPattern>
+            <urlPattern type="LineDesignation" boostValue="8">zf_info/zfbook/lab_desig.htm</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="MEETINGS"  order="110">
+        <DisplayName>Jobs/Meetings</DisplayName>
+        <UrlMapping>
+            <urlPattern type="NewsMeetings" boostValue="256">news/mtgs.htm</urlPattern>
+            <urlPattern type="NewsJobs" boostValue="8">news/jobs.htm</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="PEOPLE" order="120">
+        <DisplayName>People</DisplayName>
+        <UrlMapping>
+            <urlPattern type="PeopleView" boostValue="256">persview.apg</urlPattern>
+            <urlPattern type="LabView" boostValue="8">labview.apg</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="OTHER" order="140">
+        <DisplayName>Other</DisplayName>
+        <UrlMapping>
+            <urlPattern type="OthersMisc"/>
+        </UrlMapping>
+    </Category>
+</Categories>

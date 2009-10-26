@@ -125,7 +125,7 @@ to display the "Additional figures" link
 
   <?MIVAR>
 
-  <tr><td><big><b><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$fxpubdis_zdb_id">$fxpubdis_mini_ref </b></a> - $fxpubdis_title. $fxpubdis_source </big>
+  <tr><td><big><b><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$fxpubdis_zdb_id">$fxpubdis_mini_ref </b></a> - $(CONCAT,$fxpubdis_title,.) $fxpubdis_source </big>
     
 
     <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>

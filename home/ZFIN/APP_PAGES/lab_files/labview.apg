@@ -371,7 +371,7 @@ $1</A>
   <TR>
      <TD align=left>
        <DIV class="show_pubs">
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$lv_pub_zdb_id">$lv_pub_authors ($lv_pub_year) $lv_pub_title. $lv_jrnl_abbrev. $lv_pub_volume$lv_pub_pages</A>
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$lv_pub_zdb_id">$lv_pub_authors ($lv_pub_year) $(CONCAT,$lv_pub_title,.) $(CONCAT,$lv_jrnl_abbrev,.) $lv_pub_volume$lv_pub_pages</A>
        </DIV>
      </TD>
  </TR>

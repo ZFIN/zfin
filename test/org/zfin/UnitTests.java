@@ -34,6 +34,7 @@ import org.zfin.curation.StageRangeIntersectionTest;
 import org.zfin.curation.WidgetUtilTest;
 import org.zfin.curation.ExperimentDTOTest;
 import org.zfin.curation.StageRangeUnionTest;
+import org.zfin.uniquery.SiteSearchTest;
 
 
 /**
@@ -73,6 +74,7 @@ import org.zfin.curation.StageRangeUnionTest;
         SectionVisibilityTest.class,
         SingleAssociatedGenesFromQueryTest.class,
         SortAnatomyResultsTest.class,
+        SiteSearchTest.class,
         StageRangeIntersectionTest.class,
         StageRangeUnionTest.class,
         StagePresentationTest.class,

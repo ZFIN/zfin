@@ -1,69 +1,32 @@
 package org.zfin.uniquery.search;
 
+import org.apache.lucene.document.Document;
+import org.zfin.uniquery.presentation.SearchBean;
+
 import java.util.Iterator;
 
-import org.zfin.uniquery.search.Hit;
-import org.zfin.uniquery.presentation.SearchBean;
-import org.apache.lucene.document.Document;
-
 /**
- *  SearchResults
- *
- *  This class object is for storing a set of search results
- *  based on page size (number of results per page).
+ * SearchResults
+ * <p/>
+ * This class object is for storing a set of search results
+ * based on page size (number of results per page).
  */
-public class SearchResults
-    {
+public class SearchResults {
     private Iterator results;
     private int totalHits;
-    private int pageSize;
-    private int startIndex;
 
-    public SearchResults(Iterator results, int totalHits, int pageSize, int startIndex)
-        {            
+    public SearchResults(Iterator results, int totalHits) {
         this.results = results;
         this.totalHits = totalHits;
-        this.pageSize = pageSize;
-        this.startIndex = startIndex;
-        }
+    }
 
-    public Iterator getResults()
-        {
+    public Iterator getResults() {
         return results;
-        }
+    }
 
-    public int getTotalHits()
-        {
+    public int getTotalHits() {
         return totalHits;
-        }
-
-    public int getPageSize()
-        {
-        return pageSize;
-        }
-
-    public int getPageCount()
-        {
-            if(totalHits == 0)
-            return 0;
-        if (totalHits % pageSize == 0)
-            {
-            return totalHits / pageSize;
-            }
-        else
-            {
-            return (totalHits / pageSize) + 1;
-            }
-        }
-
-    /**
-     * zero based
-     */
-    public int getCurrentPageIndex()
-        {
-        return (startIndex / pageSize);
-        }
-
+    }
 
     /*
      * Paea's comments / reminder:
@@ -78,40 +41,30 @@ public class SearchResults
 
         while (hitsIterator.hasNext()) {
             Hit hit = (Hit) hitsIterator.next();
- 
+
             Document doc = hit.getDocument();
             String pageTitle = doc.get(SearchBean.TITLE);
-	    String searchResultURL = doc.get(SearchBean.URL);
+            String searchResultURL = doc.get(SearchBean.URL);
 
-            if (pageTitle.trim().length() < 1)
-                {
+            if (pageTitle.trim().length() < 1) {
                 pageTitle = "Untitled";
-                }
-	    // if searchResultURL starts with "/cgi-bin_hostname/", 
-            // get rid of the hostname
-	    // if ( searchResultURL.indexOf("almost") == 0 ) {
+            }
 
-	    int pos = searchResultURL.substring(1).indexOf("/");
+            // there is no mutant name for production, and we want to redirect to cgi-bin/
+            //System.out.println(envWebdriverPathFromRoot);
 
-	    String envWebdriverLoc =  System.getenv("WEBDRIVER_LOC");
+            String envWebdriverLoc = System.getenv("WEBDRIVER_LOC");
+            searchResultURL = searchResultURL.replaceFirst("almost", envWebdriverLoc);
 
-     
-	    // there is no mutant name for production, and we want to redirect to cgi-bin/
-	    //System.out.println(envWebdriverPathFromRoot);
-				   		    
-	    searchResultURL = searchResultURL.replaceFirst("almost",envWebdriverLoc);
-		
-		//}
-	   
-	    htmlOutputBuffer.append("<p>\n");
-	    htmlOutputBuffer.append("<a href='" + searchResultURL + "'>" + pageTitle + "</a><br>\n");
-	    htmlOutputBuffer.append(hit.getHighlightedText() + "<br>\n");
-	    htmlOutputBuffer.append("<font color='green' size='-2'>" + doc.get(SearchBean.URL) + "</font>\n");
-	    htmlOutputBuffer.append("<p>\n");
+            htmlOutputBuffer.append("<p>\n");
+            htmlOutputBuffer.append("<a href='" + searchResultURL + "'>" + pageTitle + "</a><br>\n");
+            htmlOutputBuffer.append(hit.getHighlightedText() + "<br>\n");
+            htmlOutputBuffer.append("<font color='green' size='-2'>" + doc.get(SearchBean.URL) + "</font>\n");
+            htmlOutputBuffer.append("<p>\n");
 
         }
-        
+
         return htmlOutputBuffer.toString();
     }
 
-    }
+}

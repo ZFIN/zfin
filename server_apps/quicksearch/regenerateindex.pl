@@ -40,15 +40,12 @@ sub abort($$) {
 # See top of the file for comments
 
 $uniqueryDir = "<!--|ROOT_PATH|-->/server_apps/quicksearch";
-$newIndexDir = "$uniqueryDir/new_indexes";
-$oldIndexDir = "$uniqueryDir/old_indexes";
 $indexDir    = "$uniqueryDir/indexes";
-$indexAppDir = "<!--|ROOT_PATH|-->";
 $logsDir     = "$uniqueryDir/logs";
 
 $dateTime = `/bin/date`;
 chop($dateTime);
-print ("$dateTime: Regenerating index.\n");
+print ("$dateTime: Launching Java indexer.\n");
 
 #------------------------------
 # Generate full listing of all APP Pages for the Indexer to use
@@ -61,73 +58,16 @@ if ($status) {
     abort($status, "makeStaticIndex.pl failed.");
 }
 
-$dateTime = `/bin/date`;
-chop($dateTime);
-print ("$dateTime: Rotating existing indexes.\n");
-
-# create directory for new indexes
-$status = system("/bin/rm -rf $newIndexDir");
-if ($status) {
-    abort($status, "rm $newIndexDir failed.");
-}
-
-$status = system("/bin/mkdir $newIndexDir");
-if ($status) {
-    abort($status, "mkdir $newIndexDir failed.");
-}
-
-$dateTime = `/bin/date`;
-chop($dateTime);
-print ("$dateTime: Launching Java indexer.\n");
-
 # generate the new indexes
-# we call Java with some memory adjustments (1 Gig)
 $status = 
-    system("/private/apps/java5.0/bin/java -XX:NewSize=256m -XX:MaxNewSize=256m -XX:SurvivorRatio=8 -Xms1G -Xmx1G" .
-      " -server" .
-      " -classpath " .
-         "$indexAppDir/home/WEB-INF/classes:" .
-         "$indexAppDir/home/WEB-INF/lib/UniquerySupport.jar:" .
-         "$indexAppDir/home/WEB-INF/lib/commons-lang-2.3.jar:" .
-         "$indexAppDir/home/WEB-INF/lib/cvu.jar:" .
-         "$indexAppDir/home/WEB-INF/lib/lucene-core-2.3.1.jar" .
-      " org.zfin.uniquery.Indexer " .
-      " -d $newIndexDir " .
-      " -u $uniqueryDir/etc/searchurls.txt " .
-      " -e $uniqueryDir/etc/excludeurls.txt " .
-      " -c $uniqueryDir/etc/crawlonlyurls.txt " .
-      " -q $uniqueryDir/etc/allAPPPagesList.txt " .
-      " -t 10 " .
-      " -l $logsDir " .
-      " -v");
+    system("/usr/local/bin/ant index");
 if ($status) {
     abort($status, "Spider failed.");
 }
 
 $dateTime = `/bin/date`;
 chop($dateTime);
-print ("$dateTime: Committing new indexes.\n");
-
-# rename current index to old index and move new to current
-
-if (-d "$oldIndexDir") {
-    $status = system("/bin/rm -rf $oldIndexDir");
-    if ($status) {
-        abort($status, "rm $oldIndexDir failed.");
-    }
-}
-
-if (-d "$indexDir") {
-    $status = system("/bin/mv $indexDir $oldIndexDir");
-    if ($status) {
-        abort($status, "mv $indexDir $oldIndexDir failed.");
-    }
-}
-
-$status = system("/bin/mv $newIndexDir $indexDir");
-if ($status) {
-    abort($status, "mv $newIndexDir $indexDir failed.");
-}
+print ("$dateTime: Setting permissions on index files.\n");
 
 $status = system("/bin/chmod o+rx $indexDir");
 if ($status) {
@@ -157,23 +97,8 @@ if ($status) {
 
 $dateTime = `/bin/date`;
 chop($dateTime);
-print ("$dateTime: Counting crawled pages ...\n");
-$status = system("$logsDir/count_pages.pl $logsDir/crawledUrls.log");
-if ($status) {
-    abort($status, "count_pages.pl $logsDir/crawledUrls.log failed.");
-}
-
-$dateTime = `/bin/date`;
-chop($dateTime);
-print ("$dateTime: Counting indexed pages ...\n");
-$status = system("$logsDir/count_pages.pl $logsDir/indexedUrls.log");
-if ($status) {
-    abort($status, "count_pages.pl $logsDir/indexedUrls.log failed.");
-}
-
-$dateTime = `/bin/date`;
-chop($dateTime);
 print ("$dateTime: Log analysis finished. Done indexing.\n");
+print ("$dateTime: Check log file logs/spider.log for more detail.\n");
 
 # call it a day
 exit 0

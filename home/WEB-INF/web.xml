@@ -132,6 +132,10 @@
             <param-name>property-file</param-name>
             <param-value>zfin-properties.xml</param-value>
         </init-param>
+        <init-param>
+            <param-name>site-search-category-file</param-name>
+            <param-value>site-search-categories.xml</param-value>
+        </init-param>
         <!-- relative to the web root directory -->
         <init-param>
             <param-name>property-file-directory</param-name>

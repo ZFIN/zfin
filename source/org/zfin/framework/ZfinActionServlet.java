@@ -8,6 +8,7 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.sequence.blast.*;
 import org.zfin.repository.RepositoryFactory;
 import org.hibernate.stat.Statistics;
+import org.zfin.uniquery.categories.SiteSearchCategories;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -31,6 +32,7 @@ public class ZfinActionServlet extends DispatcherServlet {
 
     private static final String PROPERTY_FILE_NAME_PARAM = "property-file";
     private static final String PROPERTY_FILE_DIR_PARAM = "property-file-directory";
+    private static final String SITE_SEARCH_CATEGORIES_FILE = "site-search-category-file";
 
     /**
      * This method is called the first time this servlet is instantiated.
@@ -45,6 +47,11 @@ public class ZfinActionServlet extends DispatcherServlet {
         ZfinProperties.setWebRootDirectory(webRoot);
         ZfinProperties.setIndexDirectory(getServletContext().getInitParameter("quicksearch-index-directory"));
         initProperties();
+        initCategories();
+        // Added this to the application context to make it easier to use global values.
+        // ToDo: Should add all global parameters into application context and have it added
+        // to the right context. There might be parameters that should only apply on a session scope...
+        config.getServletContext().setAttribute("webdriverURL",ZfinProperties.getWebDriver( ));
         initDatabase();
         startupTests();
         initBlast() ;
@@ -118,6 +125,20 @@ public class ZfinActionServlet extends DispatcherServlet {
         String dirRel = getInitParameter(PROPERTY_FILE_DIR_PARAM);
         String dir = getConcatenatedDir(webRoot, dirRel);
         ZfinProperties.init(dir, file);
+    }
+
+    /**
+     * Initialize the Zfin Site search categories by reading the property file and
+     * making the parameters available.
+     */
+    private void initCategories() {
+        String file = getInitParameter(SITE_SEARCH_CATEGORIES_FILE);
+        String dirRel = getInitParameter(PROPERTY_FILE_DIR_PARAM);
+        String dir = getConcatenatedDir(webRoot, dirRel);
+        dir = getConcatenatedDir(dir, "conf");
+        SiteSearchCategories.init(dir, file);
+        // Check if any type strings collide with stop words.
+        SiteSearchCategories.getAllSearchCategories();
     }
 
     // ToDo: create utilities method that takes an array of dir's and creates

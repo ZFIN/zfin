@@ -32,6 +32,7 @@ public final class ZfinProperties {
     private static final Logger logger = Logger.getLogger(ZfinProperties.class);
     public static final String ZFIN_DEFAULT_PROPERTIES_XML = "zfin-properties.xml";
     public static final String CATALINA_BASE = System.getProperty("catalina.base");
+    public static final String COMMUNITY_WIKI_URL = System.getProperty("COMMUNITY_WIKI_URL");
 
     /**
      * Initialize properties via property file import.
