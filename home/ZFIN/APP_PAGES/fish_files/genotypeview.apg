@@ -317,6 +317,9 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
   <?MIVAR COND="$(AND,$(EC,$genovw_is_wildtype,f),$(<,0,$(POSITION,$genovw_display_name,unspecified)))">
 	  <font size='-1'>Note:  This record has been created in support of data for which a publication has not specified an allele.</font>
   <?/MIVAR>
+  <?MIVAR COND="$(AND,$(EC,$genovw_is_wildtype,f),$(<,0,$(POSITION,$genovw_display_name,unrecovered)))">
+	  <font size='-1'>Note:  This record has been created to support data for unrecovered alleles reported by a TILLING project.</font>
+  <?/MIVAR>
   
   <?MICOMMENT> =======  Genotype previous name  ======= <?/MICOMMENT>
   <?MISQL SQL="
@@ -865,6 +868,9 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
 	 <?MIVAR>$(SETVAR,$genovw_ftr_sup_exist,t)<?/MIVAR>
          </tr>
          <tr>
+         <?MIBLOCK COND="$(EC,$(SUBSTR,$genovw_ftr_name,1,6),unrec_)">
+           <?MIVAR NAME=$genovw_ftr_name>unrecovered<?/MIVAR>
+        <?/MIBLOCK>
          <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
  	   <td><?MIVAR>&nbsp;&nbsp;<i>$genovw_ftr_name</i> <?/MIVAR></td>
 	 <?MIELSE>
@@ -878,7 +884,17 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
            &nbsp;&nbsp;&nbsp;
         
 	   <?MIVAR COND="$(NC,$genovw_ftr_sup_src_url,)">
-             	(<A HREF="$genovw_ftr_sup_src_url$genovw_ftr_sup_acc_num">$genovw_ftr_sup_src_display</A>)
+             <?MIBLOCK COND="$(EC,$genovw_ftr_sup_zdb_id,ZDB-LAB-990225-6)">
+               <?MISQL SQL="select mrkr_abbrev from
+                            feature_marker_relationship, marker
+                            where fmrel_ftr_zdb_id='$genovw_ftr_zdb_id'
+                            and fmrel_mrkr_zdb_id=mrkr_zdb_id">
+                           <?MIVAR NAME=$genovw_sup_mrkr_abbrev>$1<?/MIVAR>
+               <?/MISQL>
+             <?MIVAR>	(<A HREF="$genovw_ftr_sup_src_url$genovw_sup_mrkr_abbrev">$genovw_ftr_sup_src_display</A>)<?/MIVAR>
+             <?MIELSE>
+             <?MIVAR>	(<A HREF="$genovw_ftr_sup_src_url$genovw_ftr_sup_acc_num">$genovw_ftr_sup_src_display</A>)<?/MIVAR>
+             <?/MIBLOCK>
            <?/MIVAR>
          </td>
          </tr>
@@ -978,6 +994,9 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
 
      <tr bgcolor=$row_color>
         <td valign="top">
+         <?MIBLOCK COND="$(EC,$(SUBSTR,$genovw_ftr_name,1,6),unrec_)">
+           <?MIVAR NAME=$genovw_ftr_name>unrecovered<?/MIVAR>
+        <?/MIBLOCK>
 	  <?MIVAR>$(IF,$(EC,$(SUBSTR,$genovw_ftr_name,1,3),un_),unspecified,<i>$genovw_ftr_name<i>)<?/MIVAR>
 
           <?MIVAR COND="$(>,$genovw_ftr_all_geno_count,1)">
