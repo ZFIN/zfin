@@ -54,7 +54,14 @@ public class SearchResults {
             //System.out.println(envWebdriverPathFromRoot);
 
             String envWebdriverLoc = System.getenv("WEBDRIVER_LOC");
-            searchResultURL = searchResultURL.replaceFirst("almost", envWebdriverLoc);
+            // this replacement for webdriver URLs only (java does not encode an instance-specific string in
+            // the url.
+            // Assumes /<mutant-name>/webdriver?xxx syntax
+            if (searchResultURL.indexOf("webdriver") != -1) {
+                int webdriver = searchResultURL.indexOf("webdriver");
+                String toBeReplaced = searchResultURL.substring(1, webdriver - 1);
+                searchResultURL = searchResultURL.replaceFirst(toBeReplaced, envWebdriverLoc);
+            }
 
             htmlOutputBuffer.append("<p>\n");
             htmlOutputBuffer.append("<a href='" + searchResultURL + "'>" + pageTitle + "</a><br>\n");
