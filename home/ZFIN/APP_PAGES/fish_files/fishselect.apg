@@ -1570,6 +1570,9 @@ function doValidateAndSubmit(currentTime ){
               <?MIVAR><TD align=left width=$widthAllele> 
                                
                 <?MIBLOCK COND="$(EC,$fsel_is_allele_of_flag,t)">               
+                  <?MIBLOCK COND="$(EC,$(SUBSTR,$fsel_rec_feature_abbrev,1,6),unrec_)">
+                   <?MIVAR NAME=$fsel_rec_feature_abbrev>unrecovered<?/MIVAR>
+                  <?/MIBLOCK>
                   <?MIVAR>$(IF,$(OR,$(EC,$(SUBSTR,$fsel_rec_feature_abbrev,1,3),un_),$(>,$(POSITION,$fsel_rec_feature_abbrev,unspecified),0)),unspecified,$fsel_rec_feature_abbrev)<?/MIVAR>
                 <?MIELSE>
                   &nbsp;
