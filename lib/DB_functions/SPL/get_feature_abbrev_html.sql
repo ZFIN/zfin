@@ -39,6 +39,10 @@ create function get_feature_abbrev_html( featZdbId varchar(50) )
       let featAbbrev = REPLACE(featAbbrev, featMrkrAbbrev, "unspecified");    
     end if
     
+    if (featAbbrev like "%unrec\_%") then
+      let featAbbrev = REPLACE(featAbbrev, featMrkrAbbrev, "unrecovered");    
+    end if
+    
     let featAbbrevHtml = 
 	'<span class="mutant" title="'|| featAbbrev || '">' || featAbbrev || '</span>';
 
