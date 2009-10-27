@@ -45,6 +45,10 @@ foreach
       let featName = "unspecified";    
     end if
     
+    if (featName like "%unrec\_%") then
+      let featName = "unrecovered";    
+    end if
+
     if (featMrkrAbbrev is null OR featMrkrAbbrev == '') then
         let featAbbrevHtml =  featName ;
        
