@@ -59,6 +59,9 @@ create function get_genotype_display( genoZdbId varchar(50) )
         if (featAbbrev like "un\_%") then
           let featAbbrev = "unspecified";    
         end if
+        if (featAbbrev like "unrec\_%") then
+          let featAbbrev = "unrecovered";    
+        end if
         
         if (zygAllele == '/allele') then
           let zygAllele = '/' || featAbbrev;
