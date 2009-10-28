@@ -83,7 +83,7 @@ public class ForeignDB {
         MIRBASE_STEM_LOOP("miRBASE Stem Loop"),
         MGI("MGI"),
         MGI_ANATOMY("MGI-Anatomy"),
-        MIRANDA("MIRANDA"),
+        MICROCOSM("MicroCosm"),
         MODB("MODB"),
         NCBO_CARO("NCBO-CARO"),
         NOVELGENE("NovelGene"),
