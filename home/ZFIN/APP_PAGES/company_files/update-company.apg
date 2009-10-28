@@ -6,6 +6,13 @@ its caller.
 
 -->
 
+<!-- Deal with apostrophes in name and address -->
+
+<?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+<?MIVAR COND="$(XST,$address)" NAME=$address DELIMIT="'" REPLACE="''">$address<?/MIVAR>
+
+
+
 <?MIBLOCK COND=$(NXST,$temp_oid)>
   <?MISQL SQL="execute function get_id('COMPANY');"><?/MISQL>
   <?MIVAR NAME=$temp_oid>$1<?/MIVAR>
@@ -15,11 +22,6 @@ its caller.
 
 
 <?MIBLOCK COND="$(XST,$temp_oid)">
-
-<!-- Deal with apostrophes in name and address -->
-
-<?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
-<?MIVAR COND="$(XST,$address)" NAME=$address DELIMIT="'" REPLACE="''">$address<?/MIVAR>
 
 
 <!--NOW JUST update all existing fields -->
