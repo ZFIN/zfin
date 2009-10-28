@@ -79,15 +79,15 @@ public class BlastDistributedQueryThread extends BlastSingleQueryThread {
 
 
         try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(xmlBlastBean.getResultFile()));
             if (blastOutput != null) {
                 JAXBContext jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
                 Marshaller u = jc.createMarshaller();
-                u.marshal(blastOutput, new BufferedWriter(new FileWriter(xmlBlastBean.getResultFile())));
+                u.marshal(blastOutput, new BufferedWriter(writer));
             } else {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(xmlBlastBean.getResultFile()));
                 writer.write(xmlBlastBean.getErrorString());
-                writer.close();
             }
+            writer.close();
         } catch (Exception e) {
             logger.fatal("Failed to write blast result to file: " + e);
         }
