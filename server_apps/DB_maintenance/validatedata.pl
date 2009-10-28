@@ -602,8 +602,9 @@ sub unFeatureNameAbbrevUpdate($) {
                from feature, marker, feature_marker_relationship
                where feature_zdb_id = fmrel_ftr_zdb_id
                and mrkr_zdb_id = fmrel_mrkr_zdb_id
-               and feature_name like 'un_%'
-               and feature_name != 'un_'||mrkr_abbrev;";
+               and feature_name like 'un\_%'
+               and feature_type = 'UNSPECIFIED'
+               and feature_name != 'un\_'||mrkr_abbrev;";
 
   my @colDesc = ("Feature name         ",
 		 "Feature mrkr_abbrev      ");
@@ -611,40 +612,107 @@ sub unFeatureNameAbbrevUpdate($) {
   my $nRecords = execSql ($sql, undef, @colDesc);
   
   my $sth = $dbh->do("update feature
-                        set feature_name = (select 'un_'||mrkr_abbrev
+                        set feature_name = (select 'un\_'||mrkr_abbrev
                                                   from marker, 
 		       	    feature_marker_relationship
                        where mrkr_zdb_id = fmrel_mrkr_zdb_id
                        and feature_zdb_id = fmrel_ftr_zdb_id
-                       and feature_name like 'un_%')
-                 where feature_name like 'un_%' 
+               and feature_type = 'UNSPECIFIED'
+                       and feature_name like 'un\_%')
+                 where feature_name like 'un\_%' 
                  and not exists (Select 'x'
      	 		           from feature_marker_relationship,
 			                marker
 			           where mrkr_Zdb_id = fmrel_mrkr_Zdb_id
 			           and feature_zdb_id = fmrel_ftr_zdb_id
-			           and feature_name = 'un_'||mrkr_abbrev);" );
+			           and feature_name = 'un\_'||mrkr_abbrev);" );
 
   $sth = $dbh->do("update feature
                 set feature_abbrev = 
-		    (select 'un_'||mrkr_abbrev
+		    (select 'un\_'||mrkr_abbrev
                        from marker, 
 		       	    feature_marker_relationship
                        where mrkr_zdb_id = fmrel_mrkr_zdb_id
                        and feature_zdb_id = fmrel_ftr_zdb_id
-                       and feature_abbrev like 'un_%')
-                 where feature_name like 'un_%' 
+                       and feature_abbrev like 'un\_%')
+                 where feature_name like 'un\_%' 
+               and feature_type = 'UNSPECIFIED'
                  and not exists (Select 'x'
      	 		           from feature_marker_relationship,
 			                marker
 			           where mrkr_Zdb_id = fmrel_mrkr_Zdb_id
 			           and feature_zdb_id = fmrel_ftr_zdb_id
-			           and feature_abbrev = 'un_'||mrkr_abbrev);" );
+			           and feature_abbrev = 'un\_'||mrkr_abbrev);" );
   
  if ( $nRecords > 0 ) {
   my $sendToAddress = $_[0];
   my $subject = "unAlleles have been updates";
   my $errMsg = "There are $nRecords unAllele record(s) whose names have been updated to reflect gene name changes. ";
+    
+  logError ($errMsg);
+  &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  &recordResult($routineName, $nRecords);
+ }
+}
+#---------------------------------------------------------------
+# unrecoveredFeatureNameAbbrevUpdate
+#
+# features with names like unrec_* related to genes, must be kept up to 
+# date.  feature_names/abbrevs should equal current gene abbrev plus unrec_* prefix
+#
+# Parameter
+# $ Email Address for recipients
+
+sub unrecoveredFeeatureNameAbbrevUpdate($) {
+  my $routineName = "unrecoveredFeatureNameAbbrevUpdate";
+  
+ my $sql = "select feature_name, mrkr_abbrev
+               from feature, marker, feature_marker_relationship
+               where feature_zdb_id = fmrel_ftr_zdb_id
+               and mrkr_zdb_id = fmrel_mrkr_zdb_id
+               and feature_name like 'unrec\_%'
+               and feature_name != 'unrec\_'||mrkr_abbrev;";
+
+  my @colDesc = ("Feature name         ",
+		 "Feature mrkr_abbrev      ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+  
+  my $sth = $dbh->do("update feature
+                        set feature_name = (select 'unrec\_'||mrkr_abbrev
+                                                  from marker, 
+		       	    feature_marker_relationship
+                       where mrkr_zdb_id = fmrel_mrkr_zdb_id
+                       and feature_zdb_id = fmrel_ftr_zdb_id
+                       and feature_name like 'unrec\_%')
+                 where feature_name like 'unrec\_%' 
+                 and not exists (Select 'x'
+     	 		           from feature_marker_relationship,
+			                marker
+			           where mrkr_Zdb_id = fmrel_mrkr_Zdb_id
+			           and feature_zdb_id = fmrel_ftr_zdb_id
+			           and feature_name = 'unrec\_'||mrkr_abbrev);" );
+
+  $sth = $dbh->do("update feature
+                set feature_abbrev = 
+		    (select 'unrec\_'||mrkr_abbrev
+                       from marker, 
+		       	    feature_marker_relationship
+                       where mrkr_zdb_id = fmrel_mrkr_zdb_id
+                       and feature_zdb_id = fmrel_ftr_zdb_id
+                       and feature_abbrev like 'unrec\_%')
+                 where feature_name like 'unrec\_%' 
+                 and not exists (Select 'x'
+     	 		           from feature_marker_relationship,
+			                marker
+			           where mrkr_Zdb_id = fmrel_mrkr_Zdb_id
+			           and feature_zdb_id = fmrel_ftr_zdb_id
+			           and feature_abbrev = 'unrec\_'||mrkr_abbrev);" );
+  
+ if ( $nRecords > 0 ) {
+  my $sendToAddress = $_[0];
+  my $subject = "unrecAlleles have been updates";
+  my $errMsg = "There are $nRecords unrecAllele record(s) whose names have been updated to reflect gene name changes. ";
     
   logError ($errMsg);
   &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
@@ -3202,6 +3270,7 @@ if($daily) {
     findWithdrawnMarkerMismatch($geneEmail); 
     onlyProblemClonesHaveArtifactOf($geneEmail); 
     unFeatureNameAbbrevUpdate($dbaEmail);
+    unrecoveredFeatureNameAbbrevUpdate($dbaEmail);
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
     xpatHasConsistentMarkerRelationship($xpatEmail);
     checkFigXpatexSourceConsistant($dbaEmail);
