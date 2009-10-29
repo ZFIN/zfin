@@ -663,7 +663,7 @@ sub unFeatureNameAbbrevUpdate($) {
 # Parameter
 # $ Email Address for recipients
 
-sub unrecoveredFeeatureNameAbbrevUpdate($) {
+sub unrecoveredFeatureNameAbbrevUpdate($) {
   my $routineName = "unrecoveredFeatureNameAbbrevUpdate";
   
  my $sql = "select feature_name, mrkr_abbrev
