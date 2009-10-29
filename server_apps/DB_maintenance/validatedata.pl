@@ -617,9 +617,9 @@ sub unFeatureNameAbbrevUpdate($) {
 		       	    feature_marker_relationship
                        where mrkr_zdb_id = fmrel_mrkr_zdb_id
                        and feature_zdb_id = fmrel_ftr_zdb_id
-               and feature_type = 'UNSPECIFIED'
                        and feature_name like 'un\_%')
                  where feature_name like 'un\_%' 
+               and feature_type = 'UNSPECIFIED'
                  and not exists (Select 'x'
      	 		           from feature_marker_relationship,
 			                marker
