@@ -60,7 +60,7 @@ if ($status) {
 
 # generate the new indexes
 $status = 
-    system("/usr/local/bin/ant index");
+    system("/usr/local/bin/ant -f $uniqueryDir/build.xml index");
 if ($status) {
     abort($status, "Spider failed.");
 }
