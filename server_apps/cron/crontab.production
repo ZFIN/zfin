@@ -84,10 +84,8 @@
 #Blast cleanup scripts
 #  Every day at 1.30 am clean out fasta files older than one day.
 30 01 * * * /bin/find /research/zprodmore/blastdb/*.fa -mtime +1 -exec rm {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt
-#  Every day at 1.35 am clean out fasta files older than one day.
-35 01 * * * /bin/find /var/tmp -follow -type f -mtime +1 >& /var/tmp/fasta-clean-error.txt || grep \.fa | xargs rm -f
 #  Every day at 1.40 am clean out fasta files older than seven days.
-40 01 * * * /bin/find /var/tmp -follow -type f -mtime +7 >& /var/tmp/blast-clean-error.txt || grep "blast.*xml"  | xargs rm -f
+40 01 * * * /bin/find /private/etc/tomcat/zfin.org/temp/*.xml -mtime +7 -exec rm {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt
 #
 # ------------------------------------------------------------------------
 # ---- 10 PM - 11 PM : DATA TRANSFER OUT                              ----
