@@ -324,7 +324,14 @@ public final class ZfinProperties {
 
     public static boolean isPushToWiki() {
         checkValidProperties();
-        return  props.getWiki().isPushToWiki() ;
+        if(props.getWiki().isPushToWiki()){
+            logger.debug("Pushing to wiki: " + props.getWiki().isPushToWiki());
+            return true ;
+        }
+        else{
+            logger.warn("Not pushing to wiki: " + props.getWiki().isPushToWiki());
+            return false ;
+        }
     }
 
     public static String getTomcatLogFileName() {

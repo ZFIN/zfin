@@ -114,15 +114,37 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
     public String getAntibodyTemplate() throws IOException {
-        if (antibodyTemplateData == null) {
-            File file = new File(ANTIBODY_TEMPLATE);
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            StringBuffer stringBuffer = new StringBuffer();
-            String buffer;
-            while ((buffer = bufferedReader.readLine()) != null) {
-                stringBuffer.append(buffer).append("\n");
+        File file = null ;
+        try {
+            if (antibodyTemplateData == null) {
+                file = new File(ANTIBODY_TEMPLATE);
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+                StringBuffer stringBuffer = new StringBuffer();
+                String buffer;
+                while ((buffer = bufferedReader.readLine()) != null) {
+                    stringBuffer.append(buffer).append("\n");
+                }
+                antibodyTemplateData = stringBuffer.toString();
             }
-            antibodyTemplateData = stringBuffer.toString();
+        } catch (IOException e) {
+            e.fillInStackTrace() ;
+            String errorString =  "Failed to read template file\n" ;
+            if(file!=null){
+                errorString += "exists: " + file.exists() + "\n" ;
+                errorString += "absolute path: " + file.getAbsolutePath() + "\n" ;
+                errorString += "canonical path: " + file.getCanonicalPath() + "\n" ;
+                errorString += "path: " + file.getPath() + "\n" ;
+                errorString += "name: " + file.getName() + "\n" ;
+                errorString += "is directory: " + file.isDirectory() + "\n" ;
+                errorString += "is file: " + file.isFile() + "\n" ;
+                errorString += "is hidden: " + file.isHidden() + "\n" ;
+                errorString += "is absolute: " + file.isAbsolute() + "\n" ;
+                errorString += "parent: " + file.getParent() + "\n" ;
+                errorString += "can read: " + file.canRead() + "\n" ;
+                errorString += "can write: " + file.canWrite() + "\n" ;
+            }
+            logger.error(errorString,e);
+            throw e ;
         }
         return antibodyTemplateData;
     }
@@ -395,7 +417,7 @@ public class AntibodyWikiWebService extends WikiWebService {
             logger.info("not authorized to push to wiki");
             return null;
         }
-        
+
         String newTitle = getWikiTitleFromAntibody(antibody);
         String oldTitle = getWikiTitleFromAntibodyName(oldName);
         RemotePage page = getPageForAntibodyName(oldTitle);
