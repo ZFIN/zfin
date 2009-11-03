@@ -9,9 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Liberablle borrowed from the Confluence Plugin Job Manager, JobManagerAction class.
@@ -66,7 +64,7 @@ public class QuartzJobsController extends AbstractCommandController {
 //            }
 //        }
 
-        List<QuartzJobInfo> jobs = new ArrayList<QuartzJobInfo>();
+        Set<QuartzJobInfo> jobs = new TreeSet<QuartzJobInfo>();
         String[] groups = scheduler.getJobGroupNames();
         for (int x=0; x<groups.length; x++)
         {

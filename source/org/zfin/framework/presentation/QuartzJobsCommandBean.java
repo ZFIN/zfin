@@ -3,6 +3,7 @@ package org.zfin.framework.presentation;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  */
@@ -11,7 +12,7 @@ public class QuartzJobsCommandBean {
     private String action ;
     private String job ;
     private String group ;
-    private List<QuartzJobInfo> quartzJobInfoList;
+    private Set<QuartzJobInfo> quartzJobInfoList;
     private String message ;
 
     public String getAction() {
@@ -38,11 +39,11 @@ public class QuartzJobsCommandBean {
         this.group = group;
     }
 
-    public List<QuartzJobInfo> getQuartzJobInfoList() {
+    public Set<QuartzJobInfo> getQuartzJobInfoList() {
         return quartzJobInfoList;
     }
 
-    public void setQuartzJobInfoList(List<QuartzJobInfo> quartzJobInfoList) {
+    public void setQuartzJobInfoList(Set<QuartzJobInfo> quartzJobInfoList) {
         this.quartzJobInfoList = quartzJobInfoList;
     }
 

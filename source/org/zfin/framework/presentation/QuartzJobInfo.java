@@ -10,7 +10,7 @@ import java.util.Date;
 
 /**
  */
-public class QuartzJobInfo {
+public class QuartzJobInfo implements Comparable<QuartzJobInfo>{
 
     private String name ;
     private Date lastExecution ;
@@ -54,5 +54,9 @@ public class QuartzJobInfo {
 
     public void setPaused(boolean paused) {
         this.paused = paused;
+    }
+
+    public int compareTo(QuartzJobInfo o) {
+        return name.compareTo(o.getName()) ;
     }
 }
