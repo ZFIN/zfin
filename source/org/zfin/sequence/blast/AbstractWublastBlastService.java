@@ -21,6 +21,8 @@ import org.zfin.sequence.repository.SequenceRepository;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * This class
@@ -939,4 +941,21 @@ public abstract class AbstractWublastBlastService implements BlastService {
         }
         return databaseStatistics;
     }
+
+
+    public String removeLeadingNumbers(String fileData) {
+        String[] lines = fileData.split("\n") ;
+        StringBuilder sb = new StringBuilder() ;
+        for(String line: lines){
+            line = line.trim() ;
+            if(line.indexOf(">")<0){
+                line = line.replaceAll("[0-9]", "").trim();
+            }
+            sb.append(line).append("\n")  ;
+        }
+        logger.debug("input:\n["+fileData+"]");
+        logger.debug("output:\n["+sb.toString()+"]");
+        return sb.toString();
+    }
+
 }

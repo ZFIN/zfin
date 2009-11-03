@@ -178,24 +178,11 @@ public class XMLBlastController extends SimpleFormController {
         String fileData = xmlBlastBean.getSequenceFile();
 //        if(StringUtils.isNotEmpty(fileData)){
         logger.info("fileData is not null: " + fileData);
-        fileData = removeLeadingNumbers(fileData);
+        fileData = MountedWublastBlastService.getInstance().removeLeadingNumbers(fileData);
         fileData = prependSequenceWithDefline(fileData);
         // need to do a validation
         // clip off sequence file and/or validate against
         xmlBlastBean.setQuerySequence(fileData);
-    }
-
-    private String removeLeadingNumbers(String fileData) {
-        if (fileData.startsWith(">")) {
-            int endOfDefline = fileData.indexOf("\n");
-            String defline = fileData.substring(0, endOfDefline);
-            fileData = fileData.substring(endOfDefline + 1);
-            fileData = fileData.replaceAll("[0-9]", "");
-            fileData = defline + fileData;
-        } else {
-            fileData = fileData.replaceAll("[0-9]", "");
-        }
-        return fileData;
     }
 
     protected void bindBySequenceBox(XMLBlastBean xmlBlastBean, BindException errors) {
@@ -208,7 +195,7 @@ public class XMLBlastController extends SimpleFormController {
         xmlBlastBean.setQuerySequence(xmlBlastBean.getQuerySequence().trim());
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "querySequence", "Missing sequence.", "Missing sequence.");
         String querySequence = xmlBlastBean.getQuerySequence();
-        querySequence = removeLeadingNumbers(querySequence);
+        querySequence = MountedWublastBlastService.getInstance().removeLeadingNumbers(querySequence);
         querySequence = prependSequenceWithDefline(querySequence);
         xmlBlastBean.setQuerySequence(querySequence);
     }
@@ -236,32 +223,26 @@ public class XMLBlastController extends SimpleFormController {
         else if (xmlBlastBean.getQueryType().equals(XMLBlastBean.QueryTypes.FASTA.toString())) {
             bindBySequenceBox(xmlBlastBean, errors);
         }
+
+        bindDatabases(xmlBlastBean, errors);
     }
 
-    public static String prependSequenceWithDefline(String sequence) {
-        if (sequence != null && false == sequence.startsWith(">")) {
-            sequence = ">single query\n" +
-                    sequence;
-        }
-        return sequence;
-    }
+    private void bindDatabases(XMLBlastBean inputXMLBlastBean, BindException errors) throws BlastDatabaseException {
 
+        // Get the blast database string (from the database drop-down).
+        // For the unauthorized users this is only ever one string (the blast abbreviation).
+        // If an authorized user selects more than one database it will be comma separated and will need to be tokenized.
+        StringTokenizer databaseAbbrevTokens = new StringTokenizer(inputXMLBlastBean.getDataLibraryString(), ",");
 
-    @Override
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        logger.debug("onsubmit enter");
-        XMLBlastBean inputXMLBlastBean = (XMLBlastBean) command;
-
-        // get the blast database
-        StringTokenizer databaseTokens = new StringTokenizer(inputXMLBlastBean.getDataLibraryString(), ",");
+        // these are the non-empty databases based on the databaseTokens.  databaseTokens >= databaseTargets
         List<Database> databaseTargets = new ArrayList<Database>();
 
-        logger.debug("# of tokens: " + databaseTokens.countTokens());
-        while (databaseTokens.hasMoreTokens()) {
-            String databaseString = databaseTokens.nextToken();
-            logger.info("database string[" + databaseString + "]");
-            Database targetDatabase = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.getType(databaseString));
-            List<Database> actualDatabaseTargets = BlastPresentationService.getLeaves(targetDatabase);
+        logger.debug("# of tokens: " + databaseAbbrevTokens.countTokens());
+        while (databaseAbbrevTokens.hasMoreTokens()) {
+            String databaseAbbrevString = databaseAbbrevTokens.nextToken();
+            logger.info("database string[" + databaseAbbrevString + "]");
+            Database targetDatabase = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.getType(databaseAbbrevString));
+            List<Database> actualDatabaseTargets = BlastPresentationService.getNonEmptyLeaves(targetDatabase);
 
             if (CollectionUtils.isNotEmpty(actualDatabaseTargets)) {
                 for (Database databaseTarget : actualDatabaseTargets) {
@@ -289,8 +270,33 @@ public class XMLBlastController extends SimpleFormController {
                 }
             }
         }
-        inputXMLBlastBean.setActualDatabaseTargets(databaseTargets);
 
+        if (CollectionUtils.isEmpty(databaseTargets)) {
+            String errorString = "";
+            int numDatabases = databaseAbbrevTokens.countTokens();
+            if (numDatabases > 1) {
+                errorString = "Selected databases have no sequence.";
+            } else {
+                errorString = "Selected database has no sequence.";
+            }
+            errors.rejectValue("dataLibraryString", "code", errorString);
+        }
+        inputXMLBlastBean.setActualDatabaseTargets(databaseTargets);
+    }
+
+    public static String prependSequenceWithDefline(String sequence) {
+        if (sequence != null && false == sequence.startsWith(">")) {
+            sequence = ">single query\n" +
+                    sequence;
+        }
+        return sequence;
+    }
+
+
+    @Override
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
+        logger.debug("onsubmit enter");
+        XMLBlastBean inputXMLBlastBean = (XMLBlastBean) command;
 
         // count the number of sequences put in so we can create the correct number of blast files
         BufferedReader bufferedReader = new BufferedReader(new StringReader(inputXMLBlastBean.getQuerySequence()));
@@ -304,6 +310,7 @@ public class XMLBlastController extends SimpleFormController {
         RichSequenceIterator iterator = RichSequence.IOTools.readFasta(bufferedReader, symbolTokenization, new SimpleNamespace("fasta-in"));
         // handle populating view object
         if (iterator.hasNext() == false) {
+            logger.error("no sequence read from query sequence in submit phase: \n" + inputXMLBlastBean.getQuerySequence());
             errors.reject("No sequences given");
         }
 

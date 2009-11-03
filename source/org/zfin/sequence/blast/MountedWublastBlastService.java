@@ -195,7 +195,7 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
                     errorString += "error stream[" + standardError + "]\n";
                 }
 
-                throw new BlastDatabaseException("Failed to blast\n " + errorString, e);
+                throw new BlastDatabaseException(xmlBlastBean.getTicketNumber() + ": Failed to blast\n " + errorString, e);
             }
 
             // 16, 17, or 23

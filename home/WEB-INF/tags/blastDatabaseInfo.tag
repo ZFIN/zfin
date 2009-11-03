@@ -14,7 +14,7 @@
     <c:set var="orginationType"><%= Origination.Type.GENERATED %></c:set>
     ${database.database.description}
     <c:if test="${!empty database.databaseStatistics.modifiedDate}">
-       (<fmt:formatDate value="${database.databaseStatistics.modifiedDate}"  dateStyle="medium" />)
+        (<fmt:formatDate value="${database.databaseStatistics.modifiedDate}"  dateStyle="medium" />)
     </c:if>
     <c:if test="${database.unavailable}">
         <span class="error-inline">(Unavailable)</span>
@@ -37,6 +37,10 @@
 
 
 <authz:authorize ifAnyGranted="root">
+    <c:if test="${!empty database.databaseStatistics.numSequences && database.databaseStatistics.numSequences>=0}">
+        <fmt:formatNumber value="${database.databaseStatistics.numSequences}"  pattern="##,###" />
+        sequences
+    </c:if>
 <span class="staticcontent">
     <br>
     <c:if test="${fn:length(database.leaves)>1}">

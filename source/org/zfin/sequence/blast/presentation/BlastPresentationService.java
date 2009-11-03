@@ -157,9 +157,12 @@ public class BlastPresentationService {
         return databasePresentationBeans ;
     }
 
+    public static List<Database> getNonEmptyLeaves(Database rootDatabase) throws BlastDatabaseException{
+        return getLeaves(rootDatabase, new ArrayList<Database>(),false) ;
+    }
 
     public static List<Database> getLeaves(Database rootDatabase) throws BlastDatabaseException{
-        return getLeaves(rootDatabase, new ArrayList<Database>()) ;
+        return getLeaves(rootDatabase, new ArrayList<Database>(),true) ;
     }
 
     /**
@@ -169,19 +172,21 @@ public class BlastPresentationService {
      * @param rootDatabase
      * @return A list of database leaves.
      */
-    protected static List<Database> getLeaves(Database rootDatabase, List<Database> databases) throws BlastDatabaseException{
+    protected static List<Database> getLeaves(Database rootDatabase, List<Database> databases,boolean returnEmptyDatabases) throws BlastDatabaseException{
 
         Set<DatabaseRelationship> databaseRelationships = rootDatabase.getParentRelationships() ;
 
         // if there are no children, then add self and return
         if(CollectionUtils.isEmpty(databaseRelationships) ){
-            databases.add(rootDatabase) ;
+            if(returnEmptyDatabases || WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(rootDatabase).getNumSequences()>0){
+                databases.add(rootDatabase) ;
+            }
         }
         else{
             // getting as root, because we always want all of the leaves
             List<Database> childDatabases = getDirectChildren(rootDatabase,true) ;
             for(Database childDatabase : childDatabases){
-                getLeaves(childDatabase,databases) ;
+                getLeaves(childDatabase,databases,returnEmptyDatabases) ;
             }
         }
 
@@ -209,7 +214,7 @@ public class BlastPresentationService {
      *
      * Returns a list of direct database children.  It returns an empty list if it is a leaf.
      * @param database
-     * @param isRoot 
+     * @param isRoot
      * @return A list of direct database children.
      */
     public static List<Database> getDirectChildren(Database database, boolean isRoot){
@@ -238,13 +243,13 @@ public class BlastPresentationService {
             for(DatabaseRelationship childDatabaseRelationship : childDatabaseRelationships){
                 Database parentDatabase = childDatabaseRelationship.getParent() ;
                 if(parentDatabase==null){
-                    return null ; 
+                    return null ;
                 }
                 return getFirstPublicParentDatabase(parentDatabase) ;
             }
         }
 
-        return null ; 
+        return null ;
     }
 
 }

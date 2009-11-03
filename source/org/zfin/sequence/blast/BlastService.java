@@ -120,4 +120,11 @@ public interface BlastService {
      * @return Sequences with unique sequence data
      */
     public List<Sequence> filterUniqueSequences(List<Sequence> sequences) ;
+
+    /**
+     * removes numbers from sequence, but not from defline
+     * @param fileData Sequence to filter.
+     * @return Filtered sequence.
+     */
+    public String removeLeadingNumbers(String fileData) ;
 }

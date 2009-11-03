@@ -22,6 +22,48 @@ public class BlastNonDBTest {
 
     private final Logger logger = Logger.getLogger(BlastNonDBTest.class) ;
 
+    private final String seq1  = ">ga17\n" +
+            "  GCACAGATAAAAATCCACGCTCGCA\n" +
+            " >hlx1\n" +
+            "  AGCCGAACAATACGCAGTCCACAGG\n" +
+            " >meis2.2\n" +
+            "  CTGTGTCGTAGATTTAATTTCCCAG\n" +
+            " >nostrin\n" +
+            "  GTCCTTCATCTTCACTCACGCTGGT\n" ;
+
+
+    private final String seq2  = ">ga17\n" +
+            "  1 GCACAGATAAAAATCCACGCTCGCA\n" +
+            " >hlx1\n" +
+            "  1 AGCCGAACAATACGCAGTCCACAGG\n" +
+            " >meis2.2\n" +
+            "  1 CTGTGTCGTAGATTTAATTTCCCAG\n" +
+            " >nostrin\n" +
+            "  1 GTCCTTCATCTTCACTCACGCTGGT\n" ;
+
+    private final String seq1And2Result  = ">ga17\n" +
+            "GCACAGATAAAAATCCACGCTCGCA\n" +
+            ">hlx1\n" +
+            "AGCCGAACAATACGCAGTCCACAGG\n" +
+            ">meis2.2\n" +
+            "CTGTGTCGTAGATTTAATTTCCCAG\n" +
+            ">nostrin\n" +
+            "GTCCTTCATCTTCACTCACGCTGGT\n" ;
+
+    private final String seq3  = ">ga17\n" +
+            "  1 GCACAGATAAAAATCCACGCTCGCA\n" +
+            "  2 AGCCGAACAATACGCAGTCCACAGG\n" +
+            " >meis2.2\n" +
+            "  1 CTGTGTCGTAGATTTAATTTCCCAG\n" +
+            "  2 GTCCTTCATCTTCACTCACGCTGGT\n" ;
+
+    private final String seq3result  = ">ga17\n" +
+            "GCACAGATAAAAATCCACGCTCGCA\n" +
+            "AGCCGAACAATACGCAGTCCACAGG\n" +
+            ">meis2.2\n" +
+            "CTGTGTCGTAGATTTAATTTCCCAG\n" +
+            "GTCCTTCATCTTCACTCACGCTGGT\n" ;
+
     @Before
     public void setUp() {
         TestConfiguration.initApplicationProperties();
@@ -91,6 +133,13 @@ public class BlastNonDBTest {
         } catch (IOException e) {
             fail(e.toString()) ;
         }
+    }
+
+    @Test
+    public void removeLeadingNumbersFromSequences(){
+        assertEquals(seq1And2Result,MountedWublastBlastService.getInstance().removeLeadingNumbers(seq1)) ;
+        assertEquals(seq1And2Result,MountedWublastBlastService.getInstance().removeLeadingNumbers(seq2)) ;
+        assertEquals(seq3result,MountedWublastBlastService.getInstance().removeLeadingNumbers(seq3)) ;
     }
 
 }
