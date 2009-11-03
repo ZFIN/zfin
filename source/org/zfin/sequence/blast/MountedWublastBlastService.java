@@ -190,6 +190,7 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
                 errorString += "command line:[" + commandLine.toString().replaceAll(",", " ") + "]\n";
                 String standardError = execProcess.getStandardError();
                 if (execProcess != null) {
+                    errorString += "ticket[" + xmlBlastBean.getTicketNumber() + "]\n";
                     errorString += "output stream[" + execProcess.getStandardOutput() + "]\n";
                     errorString += "error stream[" + standardError + "]\n";
                 }
@@ -208,7 +209,7 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
             return fixBlastXML(execProcess.getStandardOutput().trim(), xmlBlastBean);
         } catch (Exception e) {
             e.fillInStackTrace();
-            String errorString = "failed to blast database with: " + commandLine.toString().replaceAll(",", " ") + "\n" + e;
+            String errorString = xmlBlastBean.getTicketNumber()+ " failed to blast database with: " + commandLine.toString().replaceAll(",", " ") + "\n" + e;
             throw new BlastDatabaseException(errorString, e);
         }
     }

@@ -53,7 +53,9 @@ public class BlastSliceThread extends Thread {
             xmlBlastBean.setBlastOutput(blastOutput);
         }
         catch (Exception bde) {
-            logger.error(bde);
+            String errorString = "Failed to blast for ticket:" + xmlBlastBean.getTicketNumber() + "\n" + xmlBlastBean +"\n" ;
+            bde.fillInStackTrace();
+            logger.error(errorString,bde);
         }
     }
 
