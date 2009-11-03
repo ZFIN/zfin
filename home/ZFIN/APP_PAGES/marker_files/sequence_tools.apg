@@ -116,11 +116,6 @@ For Genomic seqs:
 < 200000 and > 25000 MegaBLAST and Ensembl only
 < 200000 and < 25000 ZFIN BLAST, NCBI BLAST, Ensembl
   <?/MICOMMENT>
-  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,RNA),$(EQ,$seqt_acc_len,))">
-  <?MIVAR>
-    <OPTION VALUE="$blast_url"> $2 </OPTION>
-  <?/MIVAR>
-  <?/MIBLOCK>
   <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,RNA),$(NE,$seqt_acc_len,) ,$(<,$seqt_acc_len,25001)) ">
       <?MIVAR COND="$(NE,$2,MegaBLAST)">
     <OPTION VALUE="$blast_url"> $2 </OPTION>
@@ -131,17 +126,22 @@ For Genomic seqs:
     <OPTION VALUE="$blast_url"> $2 </OPTION>
       <?/MIVAR>
   <?/MIBLOCK>
-  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,Genomic) ,$(<,$seqt_acc_len,200000),$(>,$seqt_acc_len,25000)) ">
+  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,Genomic) ,$(EQ,$seqt_acc_len,)) ">
+  <?MIVAR>
+    <OPTION VALUE="$blast_url"> $2</OPTION>
+  <?/MIVAR>
+  <?/MIBLOCK>
+  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,Genomic) ,$(NE,$seqt_acc_len,),$(<,$seqt_acc_len,200000),$(>,$seqt_acc_len,25000)) ">
       <?MIVAR COND="$(OR ,$(EQ,$2,Ensembl) ,$(EQ,$2,MegaBLAST)) ">
     <OPTION VALUE="$blast_url"> $2</OPTION>
       <?/MIVAR>
   <?/MIBLOCK>
-  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,Genomic) ,$(<,$seqt_acc_len,25001)) ">
+  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,Genomic) ,$(NE,$seqt_acc_len,),$(<,$seqt_acc_len,25001)) ">
       <?MIVAR COND="$(AND,$(NE,$2,MegaBLAST) ,$(<,$seqt_acc_len,25001)) ">
     <OPTION VALUE="$blast_url"> $2</OPTION>
       <?/MIVAR>
   <?/MIBLOCK>
-  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,Genomic) ,$(>,$seqt_acc_len,200000) ,$(EQ,$2,MegaBLAST)) ">
+  <?MIBLOCK COND="$(AND ,$(EQ,$seqt_acc_type,Genomic) ,$(NE,$seqt_acc_len,),$(>,$seqt_acc_len,200000) ,$(EQ,$2,MegaBLAST)) ">
       <?MIVAR>
     <OPTION VALUE="$blast_url"> $2</OPTION>
       <?/MIVAR>
