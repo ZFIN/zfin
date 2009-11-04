@@ -29,6 +29,7 @@ public final class ZfinProperties {
     private static final String NON_SECURE_HTTP = "http://";
     private static final String SECURE_HTTP = "https://";
 
+
     private static final Logger logger = Logger.getLogger(ZfinProperties.class);
     public static final String ZFIN_DEFAULT_PROPERTIES_XML = "zfin-properties.xml";
     public static final String CATALINA_BASE = System.getProperty("catalina.base");
@@ -432,4 +433,6 @@ public final class ZfinProperties {
     public static void setIndexDirectory(String indexDirectory) {
         ZfinProperties.indexDirectory = indexDirectory;
     }
+
+
 }

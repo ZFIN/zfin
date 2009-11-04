@@ -3,6 +3,7 @@ package org.zfin.util;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
@@ -89,6 +90,29 @@ public class FileUtilTest {
         assertEquals("Number of apg files", 200, apgFiles.size());
     }
 
+    @Test
+    public void fileBuilderFromString(){
+
+        assertNull(FileUtil.createFileFromStrings());
+        File file1 = new File("file1");
+        assertEquals(file1.getAbsolutePath(),
+                FileUtil.createFileFromStrings("file1").getAbsolutePath());
+        File file2 =  new File("file1"+
+                System.getProperty("file.separator")+
+                "file2.txt") ;
+        assertEquals(file2.getAbsolutePath(),
+                FileUtil.createFileFromStrings("file1","file2.txt").getAbsolutePath());
+
+        ZfinProperties.setWebRootDirectory(".");
+        File testFile1 = FileUtil.createFileFromStrings(ZfinProperties.getWebRootDirectory(),
+                "WEB-INF","conf","antibody.template") ;
+        File file3 = new File(ZfinProperties.getWebRootDirectory()+System.getProperty("file.separator")+
+                "WEB-INF"+System.getProperty("file.separator")+
+                "conf"+System.getProperty("file.separator")+
+                "antibody.template"+System.getProperty("file.separator")) ;
+        assertEquals(file3.getAbsolutePath(),testFile1.getAbsolutePath());
+    }
+
     private void setTestDirectories() {
         testLoadDirectory.mkdir();
 
@@ -106,10 +130,13 @@ public class FileUtilTest {
         testPurgeFile.delete();
         testLoadDirectory.delete();
         File[] files = testArchiveDir.listFiles();
-        for (File file : files) {
-            file.delete();
+        if(files!=null){
+            for (File file : files) {
+                file.delete();
+            }
         }
         testArchiveDir.delete();
     }
+
 
 }

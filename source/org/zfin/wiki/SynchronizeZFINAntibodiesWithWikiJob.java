@@ -15,7 +15,8 @@ public class SynchronizeZFINAntibodiesWithWikiJob extends QuartzJobBean {
         logger.info("pushing antibodies to antibody wiki");
         try {
             AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
-        } catch (WikiLoginException e) {
+        } catch (Exception e) {
+            e.fillInStackTrace();
             logger.error(e);
             throw new JobExecutionException(e);
         }

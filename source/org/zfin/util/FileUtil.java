@@ -17,7 +17,9 @@ import java.nio.ByteBuffer;
  */
 public final class FileUtil {
 
-    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+    // from http://java.sun.com/j2se/1.5.0/docs/api/java/lang/System.html
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator") ; // "\n" on unix
+    public static final String FILE_SEPARATOR = System.getProperty("file.separator") ; // "/" on unix
     public static final String DASH = "-";
     public static final String UNDERSCORE = "_";
     public static final String DOT = ".";
@@ -276,4 +278,18 @@ public final class FileUtil {
         return list;
     }
 
+    public static File createFileFromStrings(String... paths) {
+        File file = null ;
+        if(paths!=null && paths.length>0){
+            for(String path:paths){
+                if(file==null){
+                    file = new File(path) ;
+                }
+                else{
+                    file = new File(file,path) ;
+                }
+            }
+        }
+        return file ;
+    }
 }

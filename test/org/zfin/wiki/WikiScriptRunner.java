@@ -30,7 +30,8 @@ public class WikiScriptRunner {
             try {
                 AntibodyWikiWebService.ReturnStatus returnStatus = AntibodyWikiWebService.getInstance().synchronizeAntibodyWithWiki(antibody);
                 logger.info("returned: " + returnStatus);
-            } catch (WikiLoginException e) {
+            } catch (Exception e) {
+                e.fillInStackTrace() ;
                 e.printStackTrace();
             }
         } else {
@@ -65,10 +66,10 @@ public class WikiScriptRunner {
 //            wikiScriptRunner.addWebPage("Ab-10E4");
 //            wikiScriptRunner.addWebPage("Ab-3A10");
 //            wikiScriptRunner.addWebPage("anti-DLX3b");
-//            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
+            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
 
 //            AntibodyWikiWebService.login();
-            wikiScriptRunner.addWebPage("Ab-2F11");
+//            wikiScriptRunner.addWebPage("Ab-2F11");
 //        AntibodyWikiWebService.addWebPage("zn-5");
 
 //            AntibodyWikiWebService.logout();

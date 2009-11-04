@@ -18,11 +18,9 @@ import org.zfin.people.presentation.SourcePresentation;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.FileUtil;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -32,11 +30,13 @@ public class AntibodyWikiWebService extends WikiWebService {
     private final Logger logger = Logger.getLogger(AntibodyWikiWebService.class);
     private final String SPACE_KEY = "AB";
     private final String ZFIN_ANTIBODY_LABEL = "zfin_antibody";
+
+    // Antibody Homepage page ID
     private final long PARENT_PAGE_ID = 131090;
 
     // from the "antibody" template in the antibody space
     // todo: move to a file
-    private final String ANTIBODY_TEMPLATE = "home/WEB-INF/conf/antibody.template";
+    private final static File ANTIBODY_TEMPLATE_FILE = FileUtil.createFileFromStrings(ZfinProperties.getWebRootDirectory(),"WEB-INF","conf","antibody.template");
     private String antibodyTemplateData = null;
 
     enum ReturnStatus {
@@ -117,31 +117,31 @@ public class AntibodyWikiWebService extends WikiWebService {
         File file = null ;
         try {
             if (antibodyTemplateData == null) {
-                file = new File(ANTIBODY_TEMPLATE);
+                file = ANTIBODY_TEMPLATE_FILE;
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
                 StringBuffer stringBuffer = new StringBuffer();
                 String buffer;
                 while ((buffer = bufferedReader.readLine()) != null) {
-                    stringBuffer.append(buffer).append("\n");
+                    stringBuffer.append(buffer).append(FileUtil.LINE_SEPARATOR);
                 }
                 antibodyTemplateData = stringBuffer.toString();
             }
         } catch (IOException e) {
             e.fillInStackTrace() ;
-            String errorString =  "Failed to read template file\n" ;
+            String errorString =  "Failed to read template file"+FileUtil.LINE_SEPARATOR ;
             if(file!=null){
-                errorString += "exists: " + file.exists() + "\n" ;
-                errorString += "absolute path: " + file.getAbsolutePath() + "\n" ;
-                errorString += "canonical path: " + file.getCanonicalPath() + "\n" ;
-                errorString += "path: " + file.getPath() + "\n" ;
-                errorString += "name: " + file.getName() + "\n" ;
-                errorString += "is directory: " + file.isDirectory() + "\n" ;
-                errorString += "is file: " + file.isFile() + "\n" ;
-                errorString += "is hidden: " + file.isHidden() + "\n" ;
-                errorString += "is absolute: " + file.isAbsolute() + "\n" ;
-                errorString += "parent: " + file.getParent() + "\n" ;
-                errorString += "can read: " + file.canRead() + "\n" ;
-                errorString += "can write: " + file.canWrite() + "\n" ;
+                errorString += "exists: " + file.exists() +FileUtil.LINE_SEPARATOR ;
+                errorString += "absolute path: " + file.getAbsolutePath() +FileUtil.LINE_SEPARATOR ;
+                errorString += "canonical path: " + file.getCanonicalPath() +FileUtil.LINE_SEPARATOR ;
+                errorString += "path: " + file.getPath() +FileUtil.LINE_SEPARATOR ;
+                errorString += "name: " + file.getName() +FileUtil.LINE_SEPARATOR ;
+                errorString += "is directory: " + file.isDirectory() +FileUtil.LINE_SEPARATOR ;
+                errorString += "is file: " + file.isFile() +FileUtil.LINE_SEPARATOR ;
+                errorString += "is hidden: " + file.isHidden() +FileUtil.LINE_SEPARATOR ;
+                errorString += "is absolute: " + file.isAbsolute() +FileUtil.LINE_SEPARATOR ;
+                errorString += "parent: " + file.getParent() +FileUtil.LINE_SEPARATOR ;
+                errorString += "can read: " + file.canRead() +FileUtil.LINE_SEPARATOR ;
+                errorString += "can write: " + file.canWrite() +FileUtil.LINE_SEPARATOR ;
             }
             logger.error(errorString,e);
             throw e ;
@@ -266,7 +266,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         StringBuilder publicCommentsStringBuilder = new StringBuilder();
         publicCommentsStringBuilder.append(" * ");
         publicCommentsStringBuilder.append("Imported from ZFIN Antibody page " + AntibodyPresentation.getWikiLink(antibody));
-        publicCommentsStringBuilder.append("\n");
+        publicCommentsStringBuilder.append(FileUtil.LINE_SEPARATOR);
         // create a sorted list of these
         Set<AntibodyExternalNote> antibodyExternalNotes = new TreeSet<AntibodyExternalNote>(antibody.getExternalNotes());
         if (antibodyExternalNotes != null && antibodyExternalNotes.size() > 0) {
@@ -276,10 +276,10 @@ public class AntibodyWikiWebService extends WikiWebService {
                 publicCommentsStringBuilder.append(" (");
                 publicCommentsStringBuilder.append(PublicationPresentation.getWikiLink(externalNote.getSinglePubAttribution().getPublication()));
                 publicCommentsStringBuilder.append(")");
-                publicCommentsStringBuilder.append("\n");
+                publicCommentsStringBuilder.append(FileUtil.LINE_SEPARATOR);
             }
         } else {
-            publicCommentsStringBuilder.append("No notes imported.").append("\n");
+            publicCommentsStringBuilder.append("No notes imported.").append(FileUtil.LINE_SEPARATOR);
         }
         publicCommentsStringBuilder.append(" * ") ;
         publicCommentsStringBuilder.append("[") ;
@@ -290,7 +290,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         publicCommentsStringBuilder.append("http://zfin.org//action/antibody/publication-list?orderBy=author&antibody.zdbID=") ;
         publicCommentsStringBuilder.append(antibody.getZdbID()) ;
         publicCommentsStringBuilder.append("]") ;
-        publicCommentsStringBuilder.append("\n");
+        publicCommentsStringBuilder.append(FileUtil.LINE_SEPARATOR);
         content = content.replace("{text-data:Comments|type=area|width=400px|height=150px}{text-data}", publicCommentsStringBuilder.toString());
 
 
@@ -308,7 +308,7 @@ public class AntibodyWikiWebService extends WikiWebService {
             assaysTestedStringBuilder.append(antibody.getZdbID()) ;
             assaysTestedStringBuilder.append("]") ;
             assaysTestedStringBuilder.append(" | ") ;
-            assaysTestedStringBuilder.append("\n") ;
+            assaysTestedStringBuilder.append(FileUtil.LINE_SEPARATOR) ;
         }
         content = content.replace("{table:Assays Tested}", assaysTestedStringBuilder.toString());
 
@@ -317,7 +317,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         return content;
     }
 
-    public ReturnStatus synchronizeAntibodyWithWiki(Antibody antibody) {
+    public ReturnStatus synchronizeAntibodyWithWiki(Antibody antibody) throws FileNotFoundException{
         logger.debug("processing antibody: " + antibody.getName());
         try {
             RemotePage page;
@@ -333,14 +333,20 @@ public class AntibodyWikiWebService extends WikiWebService {
             } else {
                 String newContent = createWikiPageContentForAntibodyFromTemplate(antibody);
                 // have to handle the "\r" case here, because contents are sometimes stored with the alternate line-endings
-                if (newContent.replaceAll("\n", " ").replaceAll("\r", "").equals(page.getContent().replaceAll("\n", " "))) {
+                if (newContent.replaceAll("\n", " ").replaceAll("\r", "").equals(page.getContent().replaceAll(FileUtil.LINE_SEPARATOR, " "))) {
                     return ReturnStatus.NOCHANGE;
                 } else {
                     updatePageForAntibody(newContent, page);
                     return ReturnStatus.UPDATE;
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (FileNotFoundException e) {
+            e.fillInStackTrace();
+            throw e ;
+        }
+        catch (Exception e) {
+            e.fillInStackTrace();
             logger.error(e);
             return ReturnStatus.ERROR;
         }
@@ -350,7 +356,7 @@ public class AntibodyWikiWebService extends WikiWebService {
     /**
      * Syncrhonizes the antibody wiki and the antibodies in ZFIN, adding, updating, and dropping where appropriate.
      */
-    public void synchronizeAntibodiesOnWikiWithZFIN() {
+    public void synchronizeAntibodiesOnWikiWithZFIN() throws FileNotFoundException{
         if (false == ZfinProperties.isPushToWiki()) {
             logger.info("not authorized to push antibodies to wiki");
             return;
@@ -406,9 +412,9 @@ public class AntibodyWikiWebService extends WikiWebService {
     private void emailReport(int numAntibodies, WikiSynchronizationReport wikiSynchronizationReport) {
         StringBuilder mailMessageStringBuilder = new StringBuilder();
         mailMessageStringBuilder.append(numAntibodies + " antibodies pushed to wiki from ZFIN");
-        mailMessageStringBuilder.append("\n");
+        mailMessageStringBuilder.append(FileUtil.LINE_SEPARATOR);
         mailMessageStringBuilder.append(wikiSynchronizationReport.toString());
-        mailMessageStringBuilder.append("\n");
+        mailMessageStringBuilder.append(FileUtil.LINE_SEPARATOR);
         (new IntegratedJavaMailSender()).sendMail("Antibody Wiki Notes", mailMessageStringBuilder.toString(), ZfinProperties.getAdminEmailAddresses());
     }
 
