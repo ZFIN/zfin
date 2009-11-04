@@ -356,15 +356,15 @@ function doValidateAndSubmit(currentTime ){
      <?/MISQL>
 
      <?MIBLOCK COND="$(>,$item_count,0)">
-     <?MIVAR NAME=$fishselect_temp_on_anatfig>$(CONCAT,fishselect_temp_on_anatfig_,$fsel_session_id)<?/MIVAR>
-     <?MISQL SQL="
-       execute function table_exists('$fishselect_temp_on_anatfig')">
-       <?MISQL COND=$(EC,$1,f) SQL="
-         create temp table $fishselect_temp_on_anatfig (
+       <?MIVAR NAME=$fishselect_temp_on_anatfig>$(CONCAT,fishselect_temp_on_anatfig_,$fsel_session_id)<?/MIVAR>
+       <?MISQL SQL="
+         execute function table_exists('$fishselect_temp_on_anatfig')">
+         <?MISQL COND=$(EC,$1,f) SQL="
+           create temp table $fishselect_temp_on_anatfig (
              g_zdb_id	 	varchar(50)
-         ) with NO LOG;">
+           ) with NO LOG;">
+         <?/MISQL>
        <?/MISQL>
-     <?/MISQL>
      <?/MIBLOCK>
 
      <?MICOMMENT>------------------------------------------------------------
@@ -489,18 +489,33 @@ function doValidateAndSubmit(currentTime ){
     <?MISQL SQL="delete from $fishselect_temp_on_anat_junior;"><?/MISQL>
 
     <?MIBLOCK COND="$(>,$item_count,0)">
-    
-      <?MISQL SQL="select distinct g_zdb_id from $fishselect_temp_on_anat;">
-        <?MIVAR NAME=fsel_anat_geno>$1<?/MIVAR>
-        <?MISQL SQL="select geno_is_wildtype from genotype where geno_zdb_id = '$fsel_anat_geno';">
-          <?MIVAR NAME=fsel_anat_isWildtype>$1<?/MIVAR>
-        <?/MISQL>    
-    
-        <?MIVAR NAME=call_wildtypePhenoAnat>f<?/MIVAR>
+
+      <?MIBLOCK COND="$(EC,$fselFilterValue,moOnly)">
+        <?MISQL SQL="select distinct g_zdb_id from $fishselect_temp_on_anat;">
+          <?MIVAR NAME=fsel_anat_geno>$1<?/MIVAR>
+          <?MIVAR NAME=fsel_anat_fig_count>1<?/MIVAR>
+          <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=fishselectAnat&wtphn_session_id=$fsel_session_id&wtphn_geno_zdb_id=$fsel_anat_geno&wtphn_concted_AO_IDs=$fsel_anatomy_ids_concted&wtphn_include_substructures=$include_substructures&wtphn_structure_bool=$structure_bool&wtphn_moOnly=moOnly') 
+                         from webPages where ID='aa-wildtypePhenoAnat.apg';">$1<?/MISQL>
+          <?MIVAR>$(SETVAR,$fsel_anat_fig_count,$wtphn_figCt)<?/MIVAR>
         
-        <?MICOMMENT> *** if it's not a wildtype, look up to see if it's a Tg *** <?/MICOMMENT>
-        <?MIBLOCK COND="$(EC,$fsel_anat_isWildtype,f)"> 
-          <?MISQL SQL="select genofeat_zdb_id
+          <?MICOMMENT> *** only insert the genotype id to the temp table when the figure count is greater than 0 *** <?/MICOMMENT>
+          <?MISQL COND="$(>,$fsel_anat_fig_count,0)" SQL="
+                     insert into $fishselect_temp_on_anatfig (g_zdb_id)
+                          values ('$fsel_anat_geno');">
+          <?/MISQL>        
+        <?/MISQL>
+      <?MIELSE>      
+        <?MISQL SQL="select distinct g_zdb_id from $fishselect_temp_on_anat;">
+          <?MIVAR NAME=fsel_anat_geno>$1<?/MIVAR>
+          <?MISQL SQL="select geno_is_wildtype from genotype where geno_zdb_id = '$fsel_anat_geno';">
+            <?MIVAR NAME=fsel_anat_isWildtype>$1<?/MIVAR>
+          <?/MISQL>    
+    
+          <?MIVAR NAME=call_wildtypePhenoAnat>f<?/MIVAR>
+        
+          <?MICOMMENT> *** if it's not a wildtype, look up to see if it's a Tg *** <?/MICOMMENT>
+          <?MIBLOCK COND="$(EC,$fsel_anat_isWildtype,f)"> 
+            <?MISQL SQL="select genofeat_zdb_id
                          from genotype_feature, feature_marker_relationship, marker_relationship EFG
                         where genofeat_geno_zdb_id = '$fsel_anat_geno'
                           and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
@@ -512,26 +527,28 @@ function doValidateAndSubmit(currentTime ){
                                           where genofeat_geno_zdb_id = '$fsel_anat_geno'
                                             and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                             and fmrel_type = 'is allele of');">
+              <?MIVAR>$(SETVAR,$call_wildtypePhenoAnat,t)<?/MIVAR>
+            <?/MISQL>
+          <?MIELSE> <?MICOMMENT> *** must call wildtypePhenoAnat.apg if it's wildtype *** <?/MICOMMENT>
             <?MIVAR>$(SETVAR,$call_wildtypePhenoAnat,t)<?/MIVAR>
-          <?/MISQL>
-        <?MIELSE> <?MICOMMENT> *** must call wildtypePhenoAnat.apg if it's wildtype *** <?/MICOMMENT>
-          <?MIVAR>$(SETVAR,$call_wildtypePhenoAnat,t)<?/MIVAR>
-        <?/MIBLOCK>
+          <?/MIBLOCK>
 
-        <?MIVAR NAME=fsel_anat_fig_count>1<?/MIVAR>
-        <?MICOMMENT> *** call wildtypePhenoAnat.apg to get the figure count for the wildtype or Tg *** <?/MICOMMENT>
-        <?MIBLOCK  COND="$(EC,$call_wildtypePhenoAnat,t)">
-          <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=fishselectAnat&wtphn_session_id=$fsel_session_id&wtphn_geno_zdb_id=$fsel_anat_geno&wtphn_concted_AO_IDs=$fsel_anatomy_ids_concted&wtphn_include_substructures=$include_substructures&wtphn_structure_bool=$structure_bool') 
-                         from webPages where ID='aa-wildtypePhenoAnat.apg';">$1<?/MISQL>
-          <?MIVAR>$(SETVAR,$fsel_anat_fig_count,$wtphn_figCt)<?/MIVAR>
-        <?/MIBLOCK>
+          <?MIVAR NAME=fsel_anat_fig_count>1<?/MIVAR>     
         
-        <?MICOMMENT> *** only insert the genotype id to the temp table when the figure count is greater than 0 *** <?/MICOMMENT>
-        <?MISQL COND="$(>,$fsel_anat_fig_count,0)" SQL="
+          <?MICOMMENT> *** call wildtypePhenoAnat.apg to get the figure count for the wildtype or Tg *** <?/MICOMMENT>
+          <?MIBLOCK  COND="$(EC,$call_wildtypePhenoAnat,t)">
+            <?MISQL SQL="select WebExplode(object,'wtphn_calling_page=fishselectAnat&wtphn_session_id=$fsel_session_id&wtphn_geno_zdb_id=$fsel_anat_geno&wtphn_concted_AO_IDs=$fsel_anatomy_ids_concted&wtphn_include_substructures=$include_substructures&wtphn_structure_bool=$structure_bool') 
+                         from webPages where ID='aa-wildtypePhenoAnat.apg';">$1<?/MISQL>
+            <?MIVAR>$(SETVAR,$fsel_anat_fig_count,$wtphn_figCt)<?/MIVAR>
+          <?/MIBLOCK>
+        
+          <?MICOMMENT> *** only insert the genotype id to the temp table when the figure count is greater than 0 *** <?/MICOMMENT>
+          <?MISQL COND="$(>,$fsel_anat_fig_count,0)" SQL="
                      insert into $fishselect_temp_on_anatfig (g_zdb_id)
                           values ('$fsel_anat_geno');">
-        <?/MISQL>        
-      <?/MISQL>
+          <?/MISQL>        
+        <?/MISQL>
+      <?/MIBLOCK>
       <?MIVAR NAME=fishselect_temp_on_anat_table>$fishselect_temp_on_anatfig<?/MIVAR>
     
     <?MIELSE>
@@ -1569,10 +1586,10 @@ function doValidateAndSubmit(currentTime ){
              
               <?MIVAR><TD align=left width=$widthAllele> 
                                
-                <?MIBLOCK COND="$(EC,$fsel_is_allele_of_flag,t)">               
+                <?MIBLOCK COND="$(EC,$fsel_is_allele_of_flag,t)">  
                   <?MIBLOCK COND="$(EC,$(SUBSTR,$fsel_rec_feature_abbrev,1,6),unrec_)">
                    <?MIVAR NAME=$fsel_rec_feature_abbrev>unrecovered<?/MIVAR>
-                  <?/MIBLOCK>
+                  <?/MIBLOCK>                
                   <?MIVAR>$(IF,$(OR,$(EC,$(SUBSTR,$fsel_rec_feature_abbrev,1,3),un_),$(>,$(POSITION,$fsel_rec_feature_abbrev,unspecified),0)),unspecified,$fsel_rec_feature_abbrev)<?/MIVAR>
                 <?MIELSE>
                   &nbsp;

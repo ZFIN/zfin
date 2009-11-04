@@ -19,6 +19,8 @@ Input:
  wtphn_include_substructures
  
  wtphn_structure_bool
+ 
+ wtphn_moOnly
 
 Output:
 
@@ -134,7 +136,25 @@ Output:
                 and gffs_subterm_zdb_id in ($wtphn_anatIDs)
                 and mrel_mrkr_2_zdb_id = '$wtphn_gene_zdb_id'
                 and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id;">
-       <?/MISQL>               
+       <?/MISQL> 
+     <?MIELSE COND="$(AND,$(XST,$wtphn_moOnly),$(EC,$wtphn_moOnly,moOnly))">
+       <?MISQL SQL="
+	insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, gffs_superterm_zdb_id
+	       from genotype_figure_fast_search 
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id' 
+                and gffs_superterm_zdb_id in ($wtphn_anatIDs)
+                and gffs_morph_zdb_id is not null;">
+       <?/MISQL>
+     
+       <?MISQL SQL="
+	insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, gffs_subterm_zdb_id
+	       from genotype_figure_fast_search 
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                and gffs_subterm_zdb_id in ($wtphn_anatIDs)
+                and gffs_morph_zdb_id is not null;">
+       <?/MISQL>
      <?MIELSE> 
        <?MISQL SQL="
 	insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
@@ -179,7 +199,27 @@ Output:
                 and allanatcon_container_zdb_id in ($wtphn_anatIDs)
                 and mrel_mrkr_2_zdb_id = '$wtphn_gene_zdb_id'
                 and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id;">
-         <?/MISQL>     
+         <?/MISQL>  
+       <?MIELSE COND="$(AND,$(XST,$wtphn_moOnly),$(EC,$wtphn_moOnly,moOnly))">
+         <?MISQL SQL="
+	   insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, allanatcon_container_zdb_id
+	       from genotype_figure_fast_search, all_anatomy_contains
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                and gffs_superterm_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id in ($wtphn_anatIDs)
+                and gffs_morph_zdb_id is not null;">
+         <?/MISQL>
+       
+         <?MISQL SQL="
+	   insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
+	     select gffs_fig_zdb_id, allanatcon_container_zdb_id
+	       from genotype_figure_fast_search, all_anatomy_contains
+              where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                and gffs_subterm_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id in ($wtphn_anatIDs)
+                and gffs_morph_zdb_id is not null;">
+         <?/MISQL>
        <?MIELSE>
          <?MISQL SQL="
 	   insert into $wtphn_temp_on_anat_junior(junior_fig_zdb_id, junior_anat_zdb_id)
@@ -268,7 +308,40 @@ Output:
                           and gffs_subterm_zdb_id = goterm_zdb_id
                           and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
                           and mrel_mrkr_2_zdb_id = '$wtphn_gene_zdb_id';">
+          <?/MISQL>    
+        <?MIELSE COND="$(AND,$(XST,$wtphn_moOnly),$(EC,$wtphn_moOnly,moOnly))">
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select anatitem_name, anatitem_name_order 
+                         from genotype_figure_fast_search, anatomy_item 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_superterm_zdb_id = anatitem_zdb_id
+                          and gffs_morph_zdb_id is not null;">
+          <?/MISQL>  
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select anatitem_name, anatitem_name_order 
+                         from genotype_figure_fast_search, anatomy_item 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_subterm_zdb_id = anatitem_zdb_id
+                          and gffs_morph_zdb_id is not null;">
           <?/MISQL>           
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select goterm_name, lower(goterm_name)
+                         from genotype_figure_fast_search, go_term 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_superterm_zdb_id = goterm_zdb_id
+                          and gffs_morph_zdb_id is not null;">
+          <?/MISQL>
+          <?MISQL SQL="insert into $wtphn_temp_entities
+                       select goterm_name, lower(goterm_name)
+                         from genotype_figure_fast_search, go_term 
+                        where gffs_geno_zdb_id = '$wtphn_geno_zdb_id'
+                          and gffs_fig_zdb_id = '$wtphn_figID'
+                          and gffs_subterm_zdb_id = goterm_zdb_id
+                          and gffs_morph_zdb_id is not null;">                          
+          <?/MISQL> 
         <?MIELSE>
           <?MISQL SQL="insert into $wtphn_temp_entities
                        select anatitem_name, anatitem_name_order 
@@ -316,5 +389,7 @@ Output:
       <?/MISQL>     
     <?/MIBLOCK>
   
-  <?MIVAR>$(UNSETVAR,$wtphn_gene_zdb_id)<?/MIVAR>
+  <?MIVAR COND="$(XST,$wtphn_gene_zdb_id)">$(UNSETVAR,$wtphn_gene_zdb_id)<?/MIVAR>
+  
+  <?MIVAR COND="$(XST,$wtphn_moOnly)">$(UNSETVAR,$wtphn_moOnly)<?/MIVAR>
   
