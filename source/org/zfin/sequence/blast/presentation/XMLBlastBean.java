@@ -568,8 +568,8 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
     @Override
     public String toString() {
         return "XMLBlastBean{" +
-                "actualDatabaseTargets=" + actualDatabaseTargets +
-                ", otherQueries=" + (otherQueries != null ? otherQueries.size() : "null") +
+//                "actualDatabaseTargets=" + actualDatabaseTargets +
+                "otherQueries=" + (otherQueries != null ? otherQueries.size() : "null") +
                 ", numChunks=" + numChunks +
                 ", sliceNumber=" + sliceNumber +
                 ", queryType='" + queryType + '\'' +
