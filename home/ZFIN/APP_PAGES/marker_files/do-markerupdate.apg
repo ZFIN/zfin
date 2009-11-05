@@ -339,6 +339,8 @@ marker.<?/MIVAR>
             dblink_acc_num = '$new_value' 
               and
 	        dblink_fdbcont_zdb_id = '$fdbcont_zdb_id'
+              and
+                mrel_type <> 'gene produces transcript'
 	  UNION
            select dblink_zdb_id
              from db_link
@@ -352,7 +354,7 @@ marker.<?/MIVAR>
        <?/MISQL>
        <?MIBLOCK COND="$(NC,$1,)">
            <SCRIPT>
- 	   			window.alert('The GenBank accession is already associated with a marker.');
+ 	   			window.alert('The GenBank accession is already associated with this marker, or a marker that is related.');
 	       </SCRIPT>
        <?MIELSE>  
 	
