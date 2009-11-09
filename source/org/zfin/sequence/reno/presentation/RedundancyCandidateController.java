@@ -1,6 +1,7 @@
 package org.zfin.sequence.reno.presentation;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.marker.*;
 import org.zfin.people.Person;
@@ -189,7 +190,6 @@ public class RedundancyCandidateController extends AbstractCandidateController{
 
     /**
      * Creates marker relationships (or DBLinks) to connect markers (or accessions)
-     * to the gene that the curator chose.
      * <p/>
      * the basic case is, for one est, or more than one est, we just make a marker relationship.
      * <p/>
@@ -214,20 +214,29 @@ public class RedundancyCandidateController extends AbstractCandidateController{
         }
         String attributionZdbID = ((RedundancyRun) rc.getRun()).getRelationPublication().getZdbID();
 
+        // thing to associate with
         List<Marker> markers = rc.getIdentifiedMarkers();
         LOG.debug("createRelationships markers.size(): " + markers.size());
-        List<Marker> segments = RenoService.getSmallSegementClones(markers);
+        List<Marker> segments = RenoService.getSmallSegments(markers);
 
         //pull the single gene from the collection, if there is one.
-        Marker candidateGene = null;
+        Marker candidateMarker = null;
         for (Marker m : markers) {
             if (m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                 LOG.debug("createRelationships marker type: " + m.getMarkerType().getType());
                 LOG.debug("createRelationships is in type group genedom");
-                candidateGene = m;
+                candidateMarker  = m;
                 break;
-            } else {
-                LOG.debug("createRelationships NOT in type group genedom");
+            }
+            else
+            if (m.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
+                LOG.debug("createRelationships marker type: " + m.getMarkerType().getType());
+                LOG.debug("createRelationships is in type group transcript");
+                candidateMarker  = m;
+                break;
+            }
+            else {
+                LOG.debug("createRelationships NOT in type group genedom or transcript");
 
             }
         }
@@ -249,7 +258,12 @@ public class RedundancyCandidateController extends AbstractCandidateController{
             for (Marker segment : segments) {
                 LOG.info("adding small segment to gene: " + segment);
                 MarkerRelationship mrel = new MarkerRelationship();
-                mrel.setType(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+                if(segment.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)){
+                    mrel.setType(MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+                }
+                else{
+                    mrel.setType(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+                }
                 mrel.setFirstMarker(gene);
                 mrel.setSecondMarker(segment);
                 mr.addMarkerRelationship(mrel,  attributionZdbID);
@@ -260,7 +274,7 @@ public class RedundancyCandidateController extends AbstractCandidateController{
             //we delete it.  (unless it's directly attributed to a journal article)
             MarkerService.removeRedundantDBLinks(gene, accessions);
 
-        } else if (candidateGene == null) {
+        } else if (candidateMarker  == null) {
             //no segments & no genes means that we have an accession that
             //has yet to be linked to any marker at all, so we link it to whatever
             //gene the curators chose.

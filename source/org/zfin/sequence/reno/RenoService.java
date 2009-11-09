@@ -4,7 +4,6 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerService;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.presentation.CandidateBean;
 import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.blast.Hit;
@@ -15,6 +14,7 @@ import org.zfin.publication.Publication;
 import org.zfin.people.Person;
 import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -31,7 +31,7 @@ public class RenoService {
     public static List<Marker> checkForExistingRelationships(CandidateBean candidateBean, RunCandidate rc) {
         List<Marker> associatedMarkers = rc.getAllSingleAssociatedGenesFromQueries();
         List<Marker> identifiedMarkers = rc.getIdentifiedMarkers();
-        List<Marker> smallSegments = getSmallSegementClones(identifiedMarkers);
+        List<Marker> smallSegments = getSmallSegments(identifiedMarkers);
         candidateBean.setSmallSegments(smallSegments);
 
         if (associatedMarkers != null) {
@@ -49,12 +49,36 @@ public class RenoService {
         return associatedMarkers;
     }
 
+    public static List<Marker> getSmallSegments(List<Marker> identifiedMarkers) {
+        List<Marker> segments = getSmallSegementClones(identifiedMarkers) ;
+        if(CollectionUtils.isEmpty(segments)){
+            segments = getTranscriptProducts(identifiedMarkers) ;
+        }
+        return segments;
+    }
+
     public static List<Marker> getSmallSegementClones(List<Marker> markers) {
         List<Marker> segments = new ArrayList<Marker>();
 
         //pull the ESTs from the candidate
         for (Marker m : markers) {
             if (m.isInTypeGroup(Marker.TypeGroup.SMALLSEG)
+                    && !segments.contains(m)) {
+                segments.add(m);
+            }
+        }
+        LOG.debug("createRelationships segments.size(): " + segments.size());
+        return segments;
+    }
+
+
+
+    public static List<Marker> getTranscriptProducts(List<Marker> markers) {
+        List<Marker> segments = new ArrayList<Marker>();
+
+        //pull the ESTs from the candidate
+        for (Marker m : markers) {
+            if (m.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)
                     && !segments.contains(m)) {
                 segments.add(m);
             }
@@ -140,5 +164,4 @@ public class RenoService {
         }
         LOG.info("exit moveNoteToGene");
     }
-
 }

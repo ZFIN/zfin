@@ -13,6 +13,7 @@ import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.repository.RenoRepository;
 
 import java.util.Set;
+import java.util.List;
 
 
 /**
@@ -56,7 +57,14 @@ public class RedundancyCandidateValidator extends AbstractRunCandidateValidator 
 
         RunCandidate runCandidate =  candidateBean.getRunCandidate();
         // If it is null, but should have associated markers, then we have a serious problem.
-        if(runCandidate.getIdentifiedMarker()==null  && runCandidate.getRun().hasAssociatedMarkers()==true){
+        List<Marker> markers = runCandidate.getIdentifiedMarkers() ;
+        boolean areTransript = true;
+        for(Marker marker : markers){
+            if(false==marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)){
+                areTransript = false ; 
+            }
+        }
+        if(!areTransript && runCandidate.getIdentifiedMarker()==null  && runCandidate.getRun().hasAssociatedMarkers()==true){
             Set<Query> queries = runCandidate.getCandidateQueries() ;
             // just grab the first query and report the error if there is one query
             Object[] args = new Object[1] ;
