@@ -37,6 +37,14 @@
         <echo message=":BLAST HEURISTICS EVALUATION SUCCESSFUL:"/>
     </target>
 
+    <target name="blastStressTest" depends="compile,build-tests"
+            description="Calculates all of the blast heuristics">
+        <antcall target="runatest">
+            <param name="junit.test.class.name" value="org.zfin.sequence.blast.BlastStressSuite"/>
+        </antcall>
+        <echo message=":BLAST HEURISTICS EVALUATION SUCCESSFUL:"/>
+    </target>
+
     <target name="runBlasttests" depends="compile,build-tests"
             description="Tests that involve access to the informix and blast databases.">
         <antcall target="runatest">

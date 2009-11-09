@@ -46,7 +46,7 @@
     </definition>
 
     <definition name="jdbc-metadata" extends="dev_layout">
-        <put name="title" value="Edit Log4J Appenders"/>
+        <put name="title" value="Database Driver Info"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/view_database_driver_info.jsp"/>
     </definition>
 
@@ -156,6 +156,11 @@
     <definition name="blastable-databases.page" extends="main_layout">
         <put name="staticTitle" value="ZFIN: Blastable Databases"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/blastable_databases.jsp"/>
+    </definition>
+
+    <definition name="blast-jobs.page" extends="dev_layout">
+        <put name="staticTitle" value="ZFIN: Blast Jobs"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/blast_jobs.jsp"/>
     </definition>
 
     <definition name="quartz-jobs.page" extends="main_layout">

@@ -7,6 +7,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.sequence.blast.BlastSingleQueryThreadCollection;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastResultMapper;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +26,17 @@ public class XMLBlastViewController extends AbstractCommandController {
     private int maxTries = 5 ;
     private long initPauseTimeMs = 2000 ; // 2 seconds
     private long pauseTimeBewteenTriesMs = 5000 ; // 5 seconds
+    private JAXBContext jc = null ;
+
+    private Logger logger = Logger.getLogger(XMLBlastViewController.class) ;
+
+    public XMLBlastViewController(){
+        try {
+            jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
+        } catch (JAXBException e) {
+            logger.error("Failed to instantiate JAXContext for org.zfin.sequence.blast.results: ",e.fillInStackTrace());
+        }
+    }
 
     @Override
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
@@ -32,11 +44,13 @@ public class XMLBlastViewController extends AbstractCommandController {
         XMLBlastBean xmlBlastBean = (XMLBlastBean) command;
 
         ModelAndView modelAndView = new ModelAndView();
+        String fileName = null ;
+        int tries = 0 ;
 
         try {
             // handle file name issues
             if (xmlBlastBean.getResultFile() == null) {
-                String fileName = request.getParameter("resultFile");
+                fileName = request.getParameter("resultFile");
                 if (fileName == null) {
                     return new ModelAndView("blast-fetch-null.page");
                 }
@@ -75,21 +89,22 @@ public class XMLBlastViewController extends AbstractCommandController {
                     File resultFile = xmlBlastBean.getResultFile() ;
                     BlastOutput blastOutput = null ;
                     boolean done = false ;
-                    int tries = 0 ;
                     while(done==false && tries < maxTries){
+                        logger.debug("try: "+ tries + " of "+maxTries);
                         try {
                             ++tries ;
                             // wait 2 seconds to allow the file time to finish writing
                             Thread.sleep(initPauseTimeMs);
-                            JAXBContext jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
                             Unmarshaller u = jc.createUnmarshaller();
                             blastOutput = (BlastOutput) u.unmarshal(new FileInputStream(resultFile));
                             done = true ;
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.fillInStackTrace() ;
                             // if it throws premature end of file exception,
                             // then we are probably not done writing to it, so try again
-                            if(e instanceof org.xml.sax.SAXParseException){
+                            if(e.getMessage().contains("Premature end of file.")){
+//                            if(e instanceof org.xml.sax.SAXParseException){
                                 logger.warn("sax exception while parsing: "+resultFile,e);
                                 done = false ;
                                 Thread.sleep(pauseTimeBewteenTriesMs);
@@ -112,7 +127,10 @@ public class XMLBlastViewController extends AbstractCommandController {
             return modelAndView;
         } catch (Exception e) {
             e.fillInStackTrace();
-            logger.error("problem viewing executed blast",e);
+            String errorString =  "problem viewing executed blast: " ;
+            errorString += fileName ;
+            errorString += " tries: "+ tries ;
+            logger.error(errorString,e);
             modelAndView.setViewName("bad-blast-result.page");
             modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
             return modelAndView;

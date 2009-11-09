@@ -13,6 +13,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
 
 /**
@@ -21,21 +22,43 @@ import java.util.List;
  * 1. multiple databases
  * 2. splitting single databases into smaller parts
  */
-public class BlastDistributedQueryThread extends BlastSingleQueryThread {
+public class BlastDistributedQueryRunnable extends BlastSingleQueryRunnable implements BlastThreadCollection{
 
-    private final static Logger logger = Logger.getLogger(BlastDistributedQueryThread.class);
+    private final static Logger logger = Logger.getLogger(BlastDistributedQueryRunnable.class);
 
     private List<BlastSliceThread> blastSlices = new ArrayList<BlastSliceThread>();
     private BlastHeuristicCollection blastHeuristicCollection;
+    private int totalThreads = 1 ;
 
-    public BlastDistributedQueryThread(XMLBlastBean xmlBlastBean, BlastHeuristicCollection blastHeuristicCollection) {
+    public BlastDistributedQueryRunnable(XMLBlastBean xmlBlastBean, BlastHeuristicCollection blastHeuristicCollection) {
         super(xmlBlastBean);
         this.blastHeuristicCollection = blastHeuristicCollection;
+
+        calculateTotalThreads();
+
+    }
+
+    private int calculateTotalThreads() {
+        totalThreads = 0  ;
+        List<Database> databases = xmlBlastBean.getActualDatabaseTargets();
+        for (Database database : databases) {
+            int numChunks = blastHeuristicCollection.getNumChunksForDatabase(database);
+            if (numChunks < 1) {
+                numChunks = 1;
+            }
+            totalThreads += numChunks ;
+        }
+        return totalThreads ;
+    }
+
+    public int getNumberThreads() {
+        return totalThreads ;
     }
 
     // todo: note that we can  not return until we are done running
     public void run() {
 
+        startBlast();
         // 1. first split on each database
         // for each database
         List<Database> databases = xmlBlastBean.getActualDatabaseTargets();
@@ -55,13 +78,18 @@ public class BlastDistributedQueryThread extends BlastSingleQueryThread {
 
                 BlastSliceThread blastSliceThread = new BlastSliceThread(sliceBean, database, i);
                 blastSlices.add(blastSliceThread);
-                blastSliceThread.start();
+                (new Thread(blastSliceThread)).start();
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    logger.error(e);
+                }
             }
         }
 
 
         // sleep a few seconds each time
-        while (true == isHasActiveThreads()) {
+        while (true == isQueueActive()) {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
@@ -91,17 +119,61 @@ public class BlastDistributedQueryThread extends BlastSingleQueryThread {
         } catch (Exception e) {
             logger.fatal("Failed to write blast result to file: " + e);
         }
+        finishBlast();
     }
 
-
-    public boolean isHasActiveThreads() {
-        for (BlastSliceThread blastSliceThread : blastSlices) {
-            if (true == blastSliceThread.isAlive()) {
-                return true;
+    public int cleanCollection(){
+        int collectionCleaned = 0 ;
+        Iterator<BlastSliceThread> iter = blastSlices.iterator() ;
+        while(iter.hasNext()){
+            BlastQueryRunnable blastSingleQueryThread = iter.next();
+            if(blastSingleQueryThread.isFinished() ){
+                iter.remove() ;
+                ++collectionCleaned ;
             }
         }
-        return false;
+        return collectionCleaned ;
     }
 
 
+    public int getTotalQueueSize() {
+        int count = 0  ;
+        for(BlastSliceThread blastSliceThread: blastSlices){
+                count += blastSliceThread.getNumberThreads();
+        }
+        return count ;
+    }
+
+    public int getNumberQueuedNotRun() {
+        int count = 0  ;
+        for(BlastSliceThread blastSliceThread: blastSlices){
+            if(false==blastSliceThread.isFinished()&& false==blastSliceThread.isRunning()){
+                count += blastSliceThread.getNumberThreads();
+            }
+        }
+        return count ;
+    }
+
+    public int getNumberRunningThreads() {
+        int count = 0  ;
+        for(BlastSliceThread blastSliceThread: blastSlices){
+            if(blastSliceThread.isRunning()){
+                count += blastSliceThread.getNumberThreads() ;
+            }
+        }
+        return count ;
+    }
+
+    public BlastQueryRunnable getNextInQueue() {
+        for(BlastSliceThread blastSliceThread: blastSlices){
+            if(false==blastSliceThread.isFinished()&& false==blastSliceThread.isRunning()){
+                return blastSliceThread ;
+            }
+        }
+        return null ;
+    }
+
+    public boolean isQueueActive() {
+        return getNumberRunningThreads()>0 || getNumberQueuedNotRun()>0 ;
+    }
 }

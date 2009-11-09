@@ -11,13 +11,16 @@ import java.io.ByteArrayInputStream;
 /**
  * A thread for a single blast, that handles a chunk.
  */
-public class BlastSliceThread extends Thread {
+public class BlastSliceThread implements BlastQueryRunnable{
 
     private final Logger logger = Logger.getLogger(BlastSliceThread.class);
 
     private XMLBlastBean xmlBlastBean;
     private Database database;
     private int slice;
+
+    private boolean finished = false ;
+    private boolean running = false ;
 
     public BlastSliceThread(XMLBlastBean xmlBlastBean, Database database, int slice) {
         this.xmlBlastBean = xmlBlastBean;
@@ -33,9 +36,10 @@ public class BlastSliceThread extends Thread {
         return xmlBlastBean;
     }
 
-    @Override
     public void run() {
+        startBlast();
         try {
+
             // so there would not be any confusion, we set to null initially
             xmlBlastBean.setBlastOutput(null);
 
@@ -57,7 +61,27 @@ public class BlastSliceThread extends Thread {
             bde.fillInStackTrace();
             logger.error(errorString,bde);
         }
+        finishBlast();
     }
 
+    public boolean isFinished() {
+        return finished;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
+    public boolean isRunning() {
+        return running ;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void startBlast(){
+        running = true ;
+    }
+
+    public void finishBlast(){
+        finished = true ;
+        running = false ;
+    }
+
+    public int getNumberThreads() {
+        return 1;
+    }
 }

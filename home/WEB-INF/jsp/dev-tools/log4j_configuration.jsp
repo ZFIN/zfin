@@ -26,11 +26,13 @@
                     </td>
                     <input type="hidden" name="loggerName" value="<c:out value='${logger.name}' />"/>
                     <td class="item">
-                        <c:out value="${logger.level}"/>
+                            ${logger.level}
                     </td>
                     <td class="item">
                         <form:select path="level" multiple="single">
-                            <form:options items="${loggerForm.loggerValues}" itemLabel="value" itemValue="key"/>
+                            <c:forEach var="loggerVar" items="${loggerForm.loggerValues}">
+                                <option ${(loggerVar.value eq logger.level ? "selected":"")}>${loggerVar.value}</option>
+                            </c:forEach>
                         </form:select>
                     </td>
                 </tr>

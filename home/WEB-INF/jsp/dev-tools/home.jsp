@@ -68,6 +68,12 @@
             <a href="/action/dev-tools/blastable-databases">Blastabase Databases</a>
         </td>
     </tr>
+    <tr>
+        <td>Blast Jobs:</td>
+        <td colspan="2">
+            <a href="/action/dev-tools/blast-jobs">Blast Jobs</a>
+        </td>
+    </tr>
 
     <tr>
         <td valign=top class="listContentBold">

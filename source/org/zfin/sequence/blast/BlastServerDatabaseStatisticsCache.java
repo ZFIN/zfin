@@ -57,7 +57,7 @@ public class BlastServerDatabaseStatisticsCache extends AbstractDatabaseStatisti
             return new DatabaseStatistics() ;
         }
         else
-        if(true==map.containsKey(database.getAbbrev())){
+        if(map.containsKey(database.getAbbrev())){
             logger.debug("database cached: "+ database.getAbbrev());
             return map.get(database.getAbbrev()) ;
         }
@@ -77,7 +77,7 @@ public class BlastServerDatabaseStatisticsCache extends AbstractDatabaseStatisti
     }
 
     public DatabaseStatistics getDatabaseStatistics(Database.AvailableAbbrev abbrev) throws BlastDatabaseException{
-        if(false==map.containsKey(abbrev)){
+        if(map.containsKey(abbrev)){
             return map.get(abbrev) ;
         }
         else{

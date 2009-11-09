@@ -573,7 +573,7 @@ public class ExecuteBlastTest {
             MountedWublastBlastService.getInstance().setBlastResultFile(xmlBlastBean);
 
             BlastHeuristicCollection blastHeuristicCollection = (new SettableBlastHeuristicFactory(5,true)).createBlastHeuristics(xmlBlastBean) ;
-            BlastDistributedQueryThread blastDistributedQueryThread = new BlastDistributedQueryThread(xmlBlastBean,blastHeuristicCollection) ;
+            BlastDistributedQueryRunnable blastDistributedQueryThread = new BlastDistributedQueryRunnable(xmlBlastBean,blastHeuristicCollection) ;
             blastDistributedQueryThread.run();
 
             XMLBlastBean resultXMLBlastBean = blastDistributedQueryThread.getXmlBlastBean() ;
@@ -768,7 +768,7 @@ public class ExecuteBlastTest {
             MountedWublastBlastService.getInstance().setBlastResultFile(xmlBlastBean);
 
             BlastHeuristicCollection blastHeuristicCollection = (new SettableBlastHeuristicFactory(5,true)).createBlastHeuristics(xmlBlastBean) ;
-            BlastDistributedQueryThread blastDistributedQueryThread = new BlastDistributedQueryThread(xmlBlastBean,blastHeuristicCollection) ;
+            BlastDistributedQueryRunnable blastDistributedQueryThread = new BlastDistributedQueryRunnable(xmlBlastBean,blastHeuristicCollection) ;
             blastDistributedQueryThread.run();
             XMLBlastBean resultDistributedXMLBlastBean = blastDistributedQueryThread.getXmlBlastBean() ;
             assertNotNull(resultDistributedXMLBlastBean);
@@ -777,7 +777,7 @@ public class ExecuteBlastTest {
             assertTrue(resultDistributedXMLBlastBean.getBlastResultBean().getHits().size()>2);
 
 
-            BlastSingleQueryThread blastSingleQueryThread = new BlastSingleQueryThread(xmlBlastBean) ;
+            BlastSingleQueryRunnable blastSingleQueryThread = new BlastSingleQueryRunnable(xmlBlastBean) ;
             blastSingleQueryThread.run();
             XMLBlastBean resultSingleXMLBlastBean = blastSingleQueryThread.getXmlBlastBean() ;
             assertNotNull(resultSingleXMLBlastBean);

@@ -243,7 +243,7 @@ public class BlastHeuristicsEvaluator {
                     MountedWublastBlastService.getInstance().setBlastResultFile(xmlBlastBean);
 
                     BlastHeuristicCollection blastHeuristicCollection = (new SettableBlastHeuristicFactory(split,true)).createBlastHeuristics(xmlBlastBean) ;
-                    BlastDistributedQueryThread blastDistributedQueryThread = new BlastDistributedQueryThread(xmlBlastBean,blastHeuristicCollection) ;
+                    BlastDistributedQueryRunnable blastDistributedQueryThread = new BlastDistributedQueryRunnable(xmlBlastBean,blastHeuristicCollection) ;
 
                     blastDistributedQueryThread.run();
                 }
@@ -332,7 +332,7 @@ public class BlastHeuristicsEvaluator {
                         MountedWublastBlastService.getInstance().setBlastResultFile(xmlBlastBean);
 
                         BlastHeuristicCollection blastHeuristicCollection = (new SettableBlastHeuristicFactory(split,true)).createBlastHeuristics(xmlBlastBean) ;
-                        BlastDistributedQueryThread blastDistributedQueryThread = new BlastDistributedQueryThread(xmlBlastBean,blastHeuristicCollection) ;
+                        BlastDistributedQueryRunnable blastDistributedQueryThread = new BlastDistributedQueryRunnable(xmlBlastBean,blastHeuristicCollection) ;
 
                         long startTime = System.currentTimeMillis() ;
                         blastDistributedQueryThread.run();

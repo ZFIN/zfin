@@ -38,6 +38,7 @@
                 <prop key="/dev-tools/display-groups">displayGroups</prop>
                 <prop key="/dev-tools/blastable-databases">blastableDatabases</prop>
                 <prop key="/dev-tools/quartz-jobs">quartzJobs</prop>
+                <prop key="/dev-tools/blast-jobs">blastQueue</prop>
                 <prop key="/dev-tools/test-error-page">errorPageHandler</prop>
             </props>
         </property>
@@ -86,6 +87,11 @@
     </bean>
 
     <bean name="displayGroups" class="org.zfin.framework.presentation.DisplayGroupController"/>
+
+    <bean name="blastQueue" class="org.zfin.sequence.blast.presentation.BlastJobsController">
+        <property name="commandName" value="formBean"/>
+        <property name="commandClass" value="org.zfin.sequence.blast.presentation.BlastJobsBean"/>
+    </bean>
 
     <bean name="quartzJobs" class="org.zfin.framework.presentation.QuartzJobsController">
         <property name="commandName" value="formBean"/>

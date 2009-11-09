@@ -24,7 +24,9 @@ public class WebHostDatabaseStatisticsCache extends AbstractDatabaseStatisticsCa
         if (database.getOrigination().getType() == Origination.Type.GENERATED) {
             logger.debug("database is generated: " + database.getAbbrev());
             return new DatabaseStatistics();
-        } else if (true == map.containsKey(database.getAbbrev())) {
+        }
+        else
+        if (map.containsKey(database.getAbbrev())) {
             logger.debug("database cached: " + database.getAbbrev());
             return map.get(database.getAbbrev());
         } else {
@@ -41,7 +43,7 @@ public class WebHostDatabaseStatisticsCache extends AbstractDatabaseStatisticsCa
 
 
     public DatabaseStatistics getDatabaseStatistics(Database.AvailableAbbrev abbrev) throws BlastDatabaseException {
-        if (false == map.containsKey(abbrev)) {
+        if (map.containsKey(abbrev)) {
             return map.get(abbrev);
         } else {
             Database database = RepositoryFactory.getBlastRepository().getDatabase(abbrev);
