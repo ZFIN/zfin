@@ -846,9 +846,9 @@ public abstract class AbstractWublastBlastService implements BlastService {
             logger.error("No primary blast database defined for accession: " + accession);
             return new ArrayList<Sequence>();
         }
+        List<String> commandList = new ArrayList<String>();
         try {
             getLock(blastDatabase, false);
-            List<String> commandList = new ArrayList<String>();
             commandList.addAll(getPrefixCommands());
             commandList.add(getKeyPath() + getBlastGetBinary());
             commandList.add("-" + blastDatabase.getTypeCharacter());
@@ -866,8 +866,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
             return execProcess.getSequences();
         }
         catch (Exception e) {
-            logger.error("Failed to retrieve sequences because error.", e);
-//            System.out.println("Failed to send mail because of error\n" + e);
+            logger.error("Failed to retrieve sequences with command ["+commandList.toString().toString().replaceAll(",", " ") + "\n", e.fillInStackTrace());
             return new ArrayList<Sequence>();
         }
         finally {
