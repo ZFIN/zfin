@@ -42,7 +42,7 @@
   </ul>
                            
   <ul>
-      <li><a href="http://zfin.org/action/anatomy/search" 
+      <li><a href="/action/anatomy/search" 
                     title="Search the zebrafish anatomical ontology"><strong>Anatomy</strong></a></li>
       <ul>
         <li><a href="/zf_info/anatomy/dict/sum.html" title="Atlases, anatomical resources and ontology">Atlases and Resources</a></li>
