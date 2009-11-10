@@ -16,7 +16,7 @@ INPUT VARS:
 
 <script type="text/javascript">
 
-/** mostly this kind of thing is bad, but thers a 
+/** mostly this kind of thing is bad, but there's a 
     tiny bit of css we want for IE only  **/
 
 if (navigator.appName == 'Microsoft Internet Explorer') {
@@ -335,41 +335,47 @@ function hdrSetTabs() {
                 <?MIELSE>display: block;<?/MIBLOCK> ">
       <a href="/">Home</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg">Genes / Markers / Clones</a>
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg"  title="Search by name, accession number, LG, vector or sequence type">Genes / Markers / Clones</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Expression</a>
+      <a href="/action/blast/blast" title="Search for sequence alignment against ZFIN datasets and zebrafish datasets">BLAST</a> 
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-      <a href="/action/antibody/search">Antibodies</a>
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg"  title="Search by gene, developmental stage, anatomy and other attributes">Expression</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-       <a href="/action/blast/blast" title="Search for sequence alignment against ZFIN datasets and Zebrafish datasets">BLAST</a> 
+      <a href="/action/antibody/search" title="Search for antibodies by gene, labeled anatomy and other attributes">Antibodies</a>      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg" title="Search by allele, mutant/morphant gene, affected anatomy and other attributes">Mutants / Morphants / Tg</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg">Mutants / Morphants / Tg</a>
+      <a href="/action/anatomy/search" title="Search the zebrafish anatomical ontology">Anatomy</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-      <a href="/action/anatomy/search">Anatomy</a>
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&select_from=PUBLICATION" title="Search for zebrafish research publications by author, title or citation">Publications</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
       <a href="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi" title="View genetic, radiation hybrid or consolidated maps">Maps</a>
-      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&select_from=PUBLICATION">Publications</a>
     </div>
 
     <div id="hdr-generallinks" class="hdr-linkbar" style="display: none;">
      <a href="/">Home</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75">People</a>
+     <a href="http://wiki.zfin.org" title="ZFIN-hosted community wiki: browse, contribute and export">Wiki</A>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg&select_from=LAB" title="Search for laboratories by name, address or research interests">Laboratories</a>
+     <a href="/zf_info/news/jobs.html" title="Zebrafish-related job announcements">Jobs</a>
+     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="/zf_info/news/mtgs.html" title="Zebrafish-related meeting announcements">Meetings</a>
+     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="/zf_info/news/newsgroup.html" title="Moderated, online discussion group for anyone interested in zebrafish research">Newsgroup</a>
+     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75"  title="Search for zebrafish researchers by name or address">People</a>
+     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg&select_from=LAB" title="Search for laboratories by name, address or research interests">Labs</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230" title="Search for companies supplying zebrafish reagents">Companies</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="/zf_info/news/jobs.html">Jobs</a>
+     <a href="/zf_info/news/education.html" title="Educational websites for students and educators">Education</A>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="/zf_info/news/mtgs.html">Meetings</a>
+     <a href="/zf_info/zfbook/zfbk.html" title="Browse The Zebrafish Book"><em>ZF Book</em></A>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="/zf_info/zfbook/zfbk.html" title="Browse the Zebrafish Book">View <em>ZF Book</em></A>
+     <a href="/zf_info/contact_us.html" title="ZFIN contact information">Contact</A>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="/zf_info/news/newsgroup.html" title="a moderated, online discussion group for anyone interested in zebrafish research">ZF Newsgroup</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="/zf_info/contact_us.html">Contact ZFIN</A>
+     <a href="/zf_info/dbase/db.html#citing" title="About ZFIN and citing ZFIN resources in publications">About</A>
+  
     </div>
     <div id="hdr-motto" class="hdr-linkbar" 
          style="<?MIBLOCK COND="$(XST,$hdr_showmotto)"> display: block;
