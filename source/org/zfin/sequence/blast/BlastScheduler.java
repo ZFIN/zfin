@@ -7,7 +7,7 @@ public class BlastScheduler implements Runnable{
     private Logger logger = Logger.getLogger(BlastScheduler.class) ;
 
     private BlastThreadCollection parent;
-    private int maxRunningThreads = 4 ;
+    private int maxRunningThreads = 10 ;
 
     public void setParent(BlastThreadCollection parent) {
         this.parent = parent;
