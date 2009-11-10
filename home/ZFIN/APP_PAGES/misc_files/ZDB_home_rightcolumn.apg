@@ -110,7 +110,7 @@
 
 
 
-  <h3>Zebrafish International Resource Center</h3> 
+  <h3><a href="/zirc/" title="Zebrafish International Resource Center (ZIRC) Home">Zebrafish International Resource Center</a></h3> 
   <ul>
     <li>
         Request:         
@@ -121,21 +121,17 @@
         <a href="/zirc/orders/buyParaQ.php?item=Paramecia&amp;id=para&amp;detail=Paramecia%20Starter%20Culture">Paramecia</a>
       </li>
       <li class="divider-above">
-        Submit: <a href="/zirc/submissions/submitTerms.php">Fish Lines</a>
+        <a href="/zirc/submissions/submitTerms.php">Submit Fish Lines</a>
       <li class="divider-above">
         <a href="/zirc/health/index.php" class="novisited">Health Services</a>
-      </li>
-
-      <li class="divider-above">
-        <a href="/zirc/"><strong>ZIRC Home</strong></a>
       </li>
  </ul>
 
 
 
-  <h3>Genomics</h3>
+ <h3>Genomics</h3>
   <ul>
-    <li>Browse the genome:
+    <li>Browse genome:
       <?MICOMMENT> <!-- todo: this link should be real or go away before we merge! --><?/MICOMMENT>
      <?MICOMMENT> <a href="/cgi-bin/gbrowse/Zv8/"><strong>ZFIN</strong></a>, <?/MICOMMENT>
       <a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a>,
@@ -146,10 +142,10 @@
     <li>
       View <a href="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi" 
               title="View genetic, radiation hybrid or consolidated maps">
-           <strong>Genetic Maps</strong></a>
+           Genetic Maps</a>
     </li>
 
-    <li>BLAST at 
+    <li>BLAST: 
       <a href="/action/blast/blast">ZFIN</a>, 
       <a href="http://www.ensembl.org/Danio_rerio/blastview">Ensembl</a>, 
       <a href="http://vega.sanger.ac.uk/Multi/blastview?species=Danio_rerio">Vega</a>,
@@ -176,7 +172,8 @@
 
   </ul>
  
-  <h3>Zebrafish Programs</h3>
+ 
+  <h3>Zebrafish Programs</strong></h3>
   <ul>
     <li>
       <a href="http://www.nih.gov/science/models/zebrafish/">Trans-NIH Zebrafish Initiative</a>,<br>
@@ -212,38 +209,11 @@
        
       
        
-        
-       
-       
-        
-      
-       
-          
-       
-     
-        
-       
-         
-          
-       
-       
-           
-       
-       
-                
-                
-              
-      
-       
  
-
-
-
-      
-
-       <li><a href="/zf_info/news/siteNews.html">All News</a>, 
-       
-        	<a href="/zf_info/news/Newsletters.html">All ZFIN Newsletters</a></li>
+       <li> 
+         <a href="/zf_info/news/Newsletters.html">ZFIN Newsletters</a>,
+         <a href="/zf_info/news/siteNews.html">News Archive</a>
+      </li>
    
     <br>
 
@@ -254,4 +224,3 @@
 
      <?MICOMMENT> ** Adjust the number of breaks here to keep the columns
                      roughtly the same height ** <?/MICOMMENT>
-
