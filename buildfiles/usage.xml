@@ -46,6 +46,7 @@
             unittests: Runs non-db test suites in org.zfin.UnitTests
             runDBtests: Runs db test suites in org.zfin.DbUnitTests
             runBlasttests: Runs db and blast test suites combined in org.zfin.sequence.blast.BlastAndDBTests
+            blastStressTest: Runs a blast stress test.
             enumtests: Tests only enumerations against the database
             smokeTests:   Tests via http requests against our site.
             serviceTests: Tests third-party service connections.
