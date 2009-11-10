@@ -2,11 +2,12 @@ document.write(" </div> ");
 document.write(" <div id=\"footer\">  ");
 document.write("   <div id=\"footerlinks\"> ");
 document.write("     <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg\">Home</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
-document.write("     <a href=\"/zf_info/dbase/db.html\">About ZFIN</A><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
-document.write("     <a href=\"/zf_info/citation.html\">Citing ZFIN</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
-document.write("     <a href=\"/zf_info/glossary.html\">Glossary</A><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
-document.write("     <a href=\"/ZFIN/misc_html/tips.html\">Help and Tips</A><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
-document.write("     <a href=\"/zf_info/contact_us.html\">Contact ZFIN</A> ");
+document.write("     <a href=\"/ZFIN/misc_html/tips.html\" title=\"Frequently asked questions\">Help and Tips</A><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
+document.write("     <a href=\"/zf_info/glossary.html\" title=\"Terms useful in understanding zebrafish development, anatomy, genetics and bioinformatics\">Glossary</A><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
+document.write("     <a href=\"/zf_info/news/committees.html\" title=\"Committees and working groups\">Committees</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
+document.write("     <a href=\"/zf_info/dbase/db.html#citing\" title=\"Citing ZFIN resources in publications\">Citing ZFIN</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
+document.write("     <a href=\"/zf_info/contact_us.html\" title=\"ZFIN contact information\">Contact</A> <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\"> ");
+document.write("     <a href=\"/zf_info/dbase/db.html\" title=\"About ZFIN\">About</A> ");
 document.write("   </div> ");
 document.write("   <div id=\"footercredits\"> ");
 document.write("     <center> ");
@@ -36,5 +37,3 @@ document.write('_uacct = "UA-2417927-1";');
 document.write("urchinTracker();");
 document.write("</script>");
 <!-- End GOOGLE Analytics -->
-
-
