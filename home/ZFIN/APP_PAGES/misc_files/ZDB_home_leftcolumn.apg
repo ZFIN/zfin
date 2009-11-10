@@ -1,75 +1,93 @@
 
 
   <ul>	
-     <li>Search <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg" 
+     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg" 
                    title="Search by name, accession number, LG, vector or sequence type">
          <strong>Genes / Markers / Clones</strong></a></li>
-     <li>Search <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg" 
-                   title="Search by gene, developmental stage, anatomy or process">
-         <strong>Gene Expression</strong></a></li>
-      <li>Search <a href="/action/antibody/search" 
-                    title="Search for antibodies"><strong>Antibodies</strong></a>
-
-</li>
-     <li><a href="/action/blast/blast" 
-            title="Search for sequence alignment against ZFIN datasets and Zebrafish datasets">
-         <strong>BLAST</strong> at ZFIN</a> </li>
-     <li><a href="/zf_info/nomen.html" 
-            title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li> 
-     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_gene.apg" 
+     <ul>
+            <li><a href="/zf_info/nomen.html" 
+            title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li>   
+            <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_gene.apg" 
             title="Contact the Nomenclature Committee">Obtain approval for gene names</a>
-            <li><a href="/zf_info/author_guidelines.html">ZFIN Author Guidelines</a>
-   </ul>
+     </ul>  
+  </ul>  
 
-   <ul>
-     <li>Search <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg"
-                   title="Search by allele, mutant/morphant gene, affected anatomy">
-         <strong>Mutants / Morphants<sup><img src="/images/new1.gif" border="0"></sup>/ Transgenics</strong></a></li>
-     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-wtlist.apg" 
+                
+    <ul>	
+      <li><a href="/action/blast/blast" 
+            title="Search for sequence alignment against ZFIN datasets and zebrafish datasets">
+           <strong>BLAST</strong> at ZFIN</a> </li>
+    </ul>
+   
+    <ul>
+      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg" 
+                   title="Search by gene, developmental stage, anatomy and other attributes">
+         <strong>Gene Expression</strong></a></li>
+
+      <li><a href="/action/antibody/search" 
+                    title="Search for antibodies by gene, labeled anatomy and other attributes"><strong>Antibodies</strong></a></li>
+    </ul>
+              
+    <ul>
+     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg"
+                   title="Search by allele, mutant/morphant gene, affected anatomy and other attributes">
+         <strong>Mutants / Morphants / Transgenics</strong></a></li>
+     <ul>
+       <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-wtlist.apg" 
             title="Zebrafish wild-type lines">Wild-Type Lines</a></li>
-     <li><a href="/zf_info/zfbook/lab_desig.html">Line Designations</a></li>
-     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_line.apg">
-         Submit mutant/transgenic line names</a>
-   </ul>
-
-
+       <li><a href="/zf_info/zfbook/lab_desig.html" title ="Line designation nomenclature and requests">Line Designations</a></li>
+       <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_line.apg" title="Guidelines for proposing and reserving line names">
+           Submit mutant/transgenic line names</a>
+     </ul>
+  </ul>
+                           
+  <ul>
+      <li><a href="http://zfin.org/action/anatomy/search" 
+                    title="Search the zebrafish anatomical ontology"><strong>Anatomy</strong></a></li>
+      <ul>
+        <li><a href="/zf_info/anatomy/dict/sum.html" title="Atlases, anatomical resources and ontology">Atlases and Resources</a></li>
+      </ul>
+  </ul>
+   
    <ul>
-      <li>Search <a href="/action/anatomy/search" 
-                    title="Search the zebrafish anatomical ontology"><strong>Anatomy</strong></a>
-
-</li>
-
-      <li><a href="/zf_info/anatomy/dict/sum.html">Atlases and Resources</a>
-</li>
-   </ul>
-
-
-   <ul>
-      <li>Search <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&select_from=PUBLICATION" 
+      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&select_from=PUBLICATION" 
                     title="Search for zebrafish research publications by author, title or citation">
-                   <strong>Publications</strong></a>
-      </li>
+                   <strong>Publications</strong></a></li>
+      <ul>
+        <li><a href="/zf_info/author_guidelines.html" title="Tips on how to facilitate published data integration in online databases and increase the impact of your research">Author Guidelines</a></li>
+      </ul> 
    </ul>
 
 
+    <ul>
+        <li>Community
+          <ul>
+          <li><a href="http://wiki.zfin.org" title="ZFIN-hosted community wiki">Wiki</a>:<a href="http://wiki.zfin.org/display/prot" title="Browse, contribute experimental protocols">&nbsp; Protocols,</a><a href="http://wiki.zfin.org/display/AB" title="Browse, contribute antibody data">&nbsp;Antibodies</a><sup><img src="/images/new1.gif" border="0"></sup>
 
-   <ul>
-     <li>Find <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75" 
+           <li><a href="/zf_info/news/jobs.html" title="Zebrafish-related job announcements">Jobs</a>,
+            <a href="/zf_info/news/mtgs.html" title="Zebrafish-related meeting announcements">Meetings</a>, 
+            <a href="/zf_info/news/newsgroup.html" title="Moderated, online discussion group for anyone intested in zebrafish research">Newsgroup</a>       
+            <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75" 
                  title="Search for zebrafish researchers by name or address">
-                <strong>People</strong></a><?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">, 
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$ZDB_ident"><em>Update Your ZFIN Record</em></a>
-    <?/MIVAR>
-    </li>
-     <li>Find <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg&select_from=LAB" 
-                 title="Search for laboratories by name, address or research interests">
-                <strong>Laboratories</strong></a><?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">, <?/MIVAR>
+                 People,</a>
 
-     <?MICOMMENT> ** According to the database, it appears that it's possible 
+                 <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg&select_from=LAB" 
+                 title="Search for laboratories by name, address or research interests">
+                 Labs,</a>
+
+                  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230" 
+                 title="Search for companies supplying zebrafish reagents">
+                 Companies</a> </li>
+
+            <?MIBLOCK COND="$(NC,$AUTHORIZED,GUEST)">
+              <?MIVAR>
+              <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$ZDB_ident"><em>Update Your ZFIN Record</em></a> 
+              <?/MIVAR>
+              <?MICOMMENT> ** According to the database, it appears that it's possible 
                      for a person to belong to more than one lab.  For the sake
                      of this link, we'll just take an arbitrary first one. ** <?/MICOMMENT>
 
-     <?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">
-       <?MISQL SQL="select first 1 lab.zdb_id, 
+              <?MISQL SQL="select first 1 lab.zdb_id, 
                            case
                              when lab.owner = person.zdb_id then 't'
                            else 'f' 
@@ -78,55 +96,38 @@
                         join int_person_lab on target_id = lab.zdb_id 
                         join person on person.zdb_id = source_id 
                       where person.zdb_id = '$ZDB_ident';">
-         <?MIVAR NAME="zdbhome_lab_zdb_id">$1<?/MIVAR>
-         <?MIVAR NAME="zdbhome_is_lab_owner">$2<?/MIVAR>
-         <?MIBLOCK COND="$(EC,$zdbhome_is_lab_owner,t)">         
-           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>Update Lab Record</em></a>
-         <?MIELSE>  
-           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>View Lab Record</em></a>
-         <?/MIBLOCK>
+              <?MIVAR NAME="zdbhome_lab_zdb_id">$1<?/MIVAR>
+              <?MIVAR NAME="zdbhome_is_lab_owner">$2<?/MIVAR>
+              <?MIBLOCK COND="$(EC,$zdbhome_is_lab_owner,t)">         
+               <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>Update Lab Record</em></a> 
+              <?MIELSE>  
+                <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>View Lab Record</em></a> 
+              <?/MIBLOCK>
 
-       <?/MISQL>
-     <?/MIVAR>
+            <?/MISQL>
+          <?/MIBLOCK>
 
-     </li>
-     <li>Find <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230" 
-                 title="Search for companies supplying zebrafish reagents">
-                    <strong>Companies</strong></a> </li>
+   
+          <li><a href="/zf_info/news/education.html" title="Educational websites for students and educators">Educational Resources</a>
+          <li><a href="http://zfin.org/zf_info/zfbook/zfbk.html" title="Browse The Zebrafish Book"><i>The Zebrafish Book</i></a>  
+      </ul>
+    </ul>
+
+  <ul> 
+    <li>Data
+      <ul>
+        <li><a href="/zf_info/downloads.html" title="Download bulk data files generated from the ZFIN database" >Download</a>
+        <li><a href="/zf_info/submissions.html" title="Submit data directly to the ZFIN database using Phenote">Submit</a>
    </ul>
-   <ul>
+  </ul>
 
-     <li>
-        <a href="/zf_info/news/jobs.html"><strong>Jobs</strong></a>,
-        <a href="/zf_info/news/mtgs.html"><strong>Meetings</strong></a>  
-     </li>
-  </ul>
-  <ul>
-
-     <li>
-       <a href="/zf_info/downloads.html" title="Download bulk data files generated from the ZFIN database" >Download Data</a>
-     </li>
-  </ul>
-  <ul>
-     <li><a href="/zf_info/zfbook/zfbk.html" title="View the Zebrafish Book">View <i>The Zebrafish Book</i></a></li>
-     
-    
-     
-     <li><a href="http://www.neuro.uoregon.edu/k12/zfk12.html">Zebrafish for K-12</a></li>
-     
-     <li><a href="http://www.zfic.org/">Zebrafish In The Classroom</a></li>
-    
-  </ul>
-  <ul>
-     <li class="divider-above"><a href="/zf_info/dbase/db.html">About ZFIN</a></li>
-     <li><a href="/zf_info/citation.html">Citing ZFIN</a></li> 
-  </ul>
-  <br>
   <br>
 
-  <span style="font-size: .8em;">
+  <span style="font-size: 1em;">
   <?MIBLOCK COND="$(EC,$AUTHORIZED,guest)">
-      <a href="/action/login"><b>Visit the login page</b></a>
+      <a href="/action/login"><strong>Login</strong></a>
+  </span>
+   <span style="font-size: .8em;"> 
       to update person and lab records.
   <?MIELSE>
       Logged in to ZFIN as: <?MIVAR><span style="color: red;">$ZDB_name</span><?/MIVAR>
