@@ -50,6 +50,7 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
         // execute forced ssh copy from mounted to qrsh_available shared (BLASTSERVER . . . )
         List<String> commandList = new ArrayList<String>();
         commandList.add(ZfinProperties.getBlastServerAccessBinary());
+        commandList.add("-x");
         commandList.add(ZfinProperties.getBlastServerUserAtHost());
         commandList.add("-i");
         commandList.add(ZfinProperties.getKeyPath() + "/" + "cp");
@@ -85,6 +86,7 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
 
         try {
             commandLine.add(ZfinProperties.getBlastServerAccessBinary());
+            commandLine.add("-x");
             commandLine.add(ZfinProperties.getBlastServerUserAtHost());
             commandLine.add("-i");
             commandLine.add(ZfinProperties.getKeyPath() + "/" + xmlBlastBean.getProgram());
