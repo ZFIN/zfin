@@ -124,10 +124,10 @@ Before proposing and reserving a name, review the current guidelines and search 
     <tr>
       <td>1.</td>
 
-      <td nowrap>Locus, Gene, or Construct Name
+      <td nowrap>Gene or Construct Name
         <input name="feat_or_gene_name_1" type="text" size="25">
       </td>
-      <td nowrap>Locus or Gene Symbol
+      <td nowrap>Gene Symbol
         <input name="gene_symbol_1" type="text" size="8">
       </td>
       <td nowrap>Allele/Line Designation
@@ -143,10 +143,10 @@ Before proposing and reserving a name, review the current guidelines and search 
 
     <tr>
       <td>2.</td>
-      <td nowrap>Locus, Gene, or Construct Name
+      <td nowrap>Gene or Construct Name
         <input name="feat_or_gene_name_2" type="text" size="25">
       </td>
-      <td nowrap>Locus or Gene Symbol
+      <td nowrap>Gene Symbol
         <input name="gene_symbol_2" type="text" size="8">
       </td>
       <td nowrap>Allele/Line Designation
@@ -162,10 +162,10 @@ Before proposing and reserving a name, review the current guidelines and search 
     </tr>
     <tr>
       <td>3.</td>
-      <td nowrap>Locus, Gene, or Construct Name
+      <td nowrap>Gene or Construct Name
         <input name="feat_or_gene_name_3" type="text" size="25">
       </td>
-      <td nowrap>Locus or Gene Symbol
+      <td nowrap>Gene Symbol
         <input name="gene_symbol_3" type="text" size="8">
 
       </td>
