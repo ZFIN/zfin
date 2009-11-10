@@ -39,10 +39,11 @@ GENERICS = defs.html nomen_comm.html nomen.html \
 	downloads.html nomen_tutorial.html \
 	stars.html new_gene.html new_line.html syntax_help.html
 
+
 STATICS = 227.gif fish.gif logo.jpeg genome.html updates.html  citation.html \
-	translocation.jpeg zfin.gif anatomy.html contact_us.html \
+	translocation.jpeg zfin.gif anatomy.html submissions.html zebrafish2009.pdf contact_us.html \
 	glossary.html GO.html oev.html \
-	blast_info.html ontology_relationship_info.html author_guidelines.html 
+	blast_info.html ontology_relationship_info.html author_guidelines.html author_guide_checklist.html 
 
 
 # ---------------  Production Rules  ------------------------------------
