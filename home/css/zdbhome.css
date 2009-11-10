@@ -50,6 +50,10 @@
    padding-bottom: .2em;
 }
 
+#zdbhome-sidebar h3 a{
+   color: #0F4351; 
+}
+
 #zdbhome-sidebar a, #zdbhome a:visited {
   text-decoration: none;
   /* color: #0F4351;  */
@@ -102,6 +106,15 @@
    text-indent: -.5em;
    margin-top: 0;
    margin-left: 0;
+   padding-left: .5em;
+}
+
+#zdbhome-primary ul ul li {
+   list-style: none;
+   text-indent: -.8em;
+   margin-top: 0;
+   margin-left: 0;   
+   font-size: .9em;
    padding-left: .5em;
 }
 
