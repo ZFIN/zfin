@@ -4,6 +4,7 @@ import com.dolby.atlassian.confluence.soap.model.confluence.*;
 import org.apache.log4j.Logger;
 import org.swift.confluence.cli.ConfluenceClient;
 import org.zfin.uniquery.categories.SiteSearchCategories;
+import org.zfin.properties.ZfinProperties;
 
 import javax.xml.rpc.ServiceException;
 import java.net.MalformedURLException;
@@ -17,10 +18,10 @@ import java.util.*;
 public class WikiIndexer extends ConfluenceClient {
 
     private ConfluenceSoapService service;
-    private static String wikiAddress = System.getenv("COMMUNITY_WIKI_URL");
+    private static String wikiAddress = "https://" + ZfinProperties.getWikiHostname();
     private List<String> wikiSpaces = new ArrayList<String>();
-    private String user = "webservice";
-    private String password = "dan1orer1o";
+    private String user = ZfinProperties.getWikiUserName();
+    private String password = ZfinProperties.getWikiPassword();
     public static final String WIKI_CATEGORY_ID = "WIKI";
 
     public WikiIndexer() {

@@ -91,6 +91,20 @@
             <urlPattern type="LabView" boostValue="8">labview.apg</urlPattern>
         </UrlMapping>
     </Category>
+    <Category ID="WIKI_PROTOCOLS" order="130">
+        <DisplayName>Community Wiki: Protocols</DisplayName>
+        <UrlMapping>
+            <!-- The name after the last slash indicated the wiki space -->
+            <urlPattern type="CommunityWikiProtocols" titlePrefix="Wiki - Protocols: ">${WIKI_HOST}/display/prot</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="WIKI_ANTIBODIES" order="135">
+        <DisplayName>Community Wiki: Antibodies</DisplayName>
+        <UrlMapping>
+            <!-- The name after the last slash indicated the wiki space -->
+            <urlPattern type="CommunityWikiAntibody" titlePrefix="Wiki - Antibodies: ">${WIKI_HOST}/display/AB</urlPattern>
+        </UrlMapping>
+    </Category>
     <Category ID="OTHER" order="140">
         <DisplayName>Other</DisplayName>
         <UrlMapping>

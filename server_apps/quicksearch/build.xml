@@ -85,6 +85,8 @@
             <arg value="-l"/>
             <arg value="${logsDir}"/>
             <arg value="-v"/>
+            <arg value="-zfinPropertiesDir"/>
+            <arg value="${web-inf.dir}/"/>
         </java>
 
     </target>

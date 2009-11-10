@@ -182,7 +182,7 @@ public final class SiteSearchCategories {
                         if (StringUtils.isEmpty(environmentVariable))
                             environmentVariable = System.getenv(matchedString);
 
-                        if (StringUtils.isEmpty(environmentVariable))
+                            LOG.info("Environment variable for " + matchedString + " found: " + environmentVariable);                        if (StringUtils.isEmpty(environmentVariable))
                             LOG.error("No environment variable for " + matchedString + " found");
                         else
                             urlPatternString = matcher.replaceAll(environmentVariable);

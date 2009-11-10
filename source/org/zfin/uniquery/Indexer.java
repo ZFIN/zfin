@@ -10,6 +10,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.zfin.uniquery.categories.SiteSearchCategories;
 import org.zfin.uniquery.presentation.SearchBean;
+import org.zfin.properties.ZfinProperties;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -201,7 +202,7 @@ public class Indexer implements Runnable {
 
         // index the community wiki
         //todo: enable after wiki goes live: 
-	//indexWiki();
+	indexWiki();
 
         // after all threads have completed, close the index and write appropriate logs
         log.println("Indexed " + filesIndexed + " URLs (" + (bytes / 1024) + " KB) in " + (elapsed / 1000) + " seconds");
@@ -772,6 +773,8 @@ public class Indexer implements Runnable {
                 threads = Integer.parseInt(argv[++i]);
             } else if (argv[i].equals("-categoryDir")) {
                 initSiteSearchCategories(argv[++i]);
+            } else if (argv[i].equals("-zfinPropertiesDir")) {
+                ZfinProperties.init(argv[++i], "zfin-properties.xml");
             } else if (argv[i].equals("-l")) {
                 StringBuffer buf = new StringBuffer(argv[++i]);
                 if (buf.charAt(buf.length() - 1) == '/') {
