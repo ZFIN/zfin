@@ -374,7 +374,7 @@ function hdrSetTabs() {
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
      <a href="/zf_info/contact_us.html" title="ZFIN contact information">Contact</A>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="/zf_info/dbase/db.html#citing" title="About ZFIN and citing ZFIN resources in publications">About</A>
+     <a href="/zf_info/dbase/db.html" title="About ZFIN and citing ZFIN resources in publications">About</A>
   
     </div>
     <div id="hdr-motto" class="hdr-linkbar" 
