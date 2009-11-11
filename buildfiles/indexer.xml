@@ -79,7 +79,7 @@
             <arg value="-q"/>
             <arg value="${indexAppDir}/etc/allAPPPagesList.txt"/>
             <arg value="-t"/>
-            <arg value="4"/>
+            <arg value="6"/>
             <arg value="-categoryDir"/>
             <arg value="${web-inf.dir}/conf"/>
             <arg value="-l"/>
