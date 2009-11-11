@@ -1,4 +1,4 @@
-#!/private/bin/perl 
+#!/private/bin/perl -T
 
 ########################################################################
 # Comments
@@ -17,6 +17,7 @@
 use DBI;
 use MIME::Lite;
 
+$ENV{PATH} = ""; # for Taint
 
 #set environment variables
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
@@ -57,7 +58,7 @@ openReport();
 
     open (REPORT, ">>report") or die "can not open report";
 
-    print REPORT "ZFIN Publications added ".`date "+%a %b %e, %Y"`."\n";
+    print REPORT "ZFIN Publications added ".`/bin/date "+%a %b %e, %Y"`."\n";
 
     my $cur = $dbh->prepare($query);
 
@@ -99,7 +100,7 @@ sub cleanTail () {
 
 sub d8 {
 
-  $date = `date '+%Y%m%d'`;
+  $date = `/bin/date '+%Y%m%d'`;
   
   chop($date);
   return $date;
