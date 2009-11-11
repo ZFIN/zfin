@@ -18,10 +18,10 @@ import java.util.*;
 public class WikiIndexer extends ConfluenceClient {
 
     private ConfluenceSoapService service;
-    private static String wikiAddress = "https://" + ZfinProperties.getWikiHostname();
+    private static String wikiAddress = "https://" + ZfinProperties.getIndexerWikiHostname();
     private List<String> wikiSpaces = new ArrayList<String>();
-    private String user = ZfinProperties.getWikiUserName();
-    private String password = ZfinProperties.getWikiPassword();
+    private String user = ZfinProperties.getIndexerWikiUserName();
+    private String password = ZfinProperties.getIndexerWikiPassword();
     public static final String WIKI_CATEGORY_ID = "WIKI";
 
     public WikiIndexer() {

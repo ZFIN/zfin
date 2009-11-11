@@ -326,6 +326,7 @@
             <param name="from-zfin-properties-file" value="${web-inf.dir}/zfin-properties.xml"/>
             <param name="to-zfin-properties-file" value="${web-inf.dir}/zfin-change-properties.xml"/>
         </antcall>
+        <antcall target="copy-indexer-build-file-with-env-variables"/>
         <exec executable="perl" output="output.log">
             <!-- on embryonix should be the following -->
             <!-- <arg value="/private/ZfinLinks/Commons/bin/makespecific.pl"/>  -->
@@ -371,6 +372,16 @@
         </copy>
     </target>
 
+    <target name="copy-indexer-build-file-with-env-variables">
+      <copy file="buildfiles/indexer.xml"
+              tofile="${env.TARGETROOT}/server_apps/quicksearch/build.xml"
+              overwrite="true">
+            <filterset>
+                <filter token="INDEXER_WIKI_HOSTNAME" value="${env.INDEXER_WIKI_HOSTNAME}"/>      
+	    </filterset>
+      </copy>
+    </target>
+
 
     <target name="copyZfinPropertiesWithEnv">
         <copy file="${from-zfin-properties-file}"
@@ -385,6 +396,9 @@
                 <filter token="WIKI_PASSWORD" value="${env.WIKI_PASS}"/>
                 <filter token="WIKI_HOSTNAME" value="${env.WIKI_HOST}"/>
                 <filter token="WIKI_PUSH_TO_WIKI" value="${env.WIKI_PUSH_TO_WIKI}"/>
+                <filter token="INDEXER_WIKI_USERNAME" value="${env.INDEXER_WIKI_USERNAME}"/>
+                <filter token="INDEXER_WIKI_PASSWORD" value="${env.INDEXER_WIKI_PASSWORD}"/>
+                <filter token="INDEXER_WIKI_HOSTNAME" value="${env.INDEXER_WIKI_HOSTNAME}"/>
 
                 <!--web host variables-->
                 <filter token="WEBHOST_BLAST_DATABASE_PATH" value="${env.WEBHOST_BLAST_DATABASE_PATH}"/>
@@ -440,6 +454,7 @@
             <param name="to-zfin-properties-file" value="${web-inf.dir}/zfin-change-properties.xml"/>
         </antcall>
 
+        <antcall target="copy-indexer-build-file-with-env-variables"/>
         <exec executable="perl" output="output.log">
             <!-- on embryonix should be the following -->
             <!-- <arg value="/private/ZfinLinks/Commons/bin/makespecific.pl"/>  -->

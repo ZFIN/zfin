@@ -323,6 +323,21 @@ public final class ZfinProperties {
         return  props.getWiki().getHostname() ;
     }
 
+    public static String getIndexerWikiUserName() {
+        checkValidProperties();
+        return  props.getIndexer().getUsername() ;
+    }
+
+    public static String getIndexerWikiPassword() {
+        checkValidProperties();
+        return  props.getIndexer().getPassword() ;
+    }
+
+    public static String getIndexerWikiHostname() {
+        checkValidProperties();
+        return  props.getIndexer().getHostname() ;
+    }
+
     public static boolean isPushToWiki() {
         checkValidProperties();
         if(props.getWiki().isPushToWiki()){

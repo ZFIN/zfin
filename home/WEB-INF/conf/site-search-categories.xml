@@ -95,14 +95,14 @@
         <DisplayName>Community Wiki: Protocols</DisplayName>
         <UrlMapping>
             <!-- The name after the last slash indicated the wiki space -->
-            <urlPattern type="CommunityWikiProtocols" titlePrefix="Wiki - Protocols: ">${WIKI_HOST}/display/prot</urlPattern>
+            <urlPattern type="CommunityWikiProtocols" titlePrefix="Wiki - Protocols: ">${INDEXER_WIKI_HOSTNAME}/display/prot</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="WIKI_ANTIBODIES" order="135">
         <DisplayName>Community Wiki: Antibodies</DisplayName>
         <UrlMapping>
             <!-- The name after the last slash indicated the wiki space -->
-            <urlPattern type="CommunityWikiAntibody" titlePrefix="Wiki - Antibodies: ">${WIKI_HOST}/display/AB</urlPattern>
+            <urlPattern type="CommunityWikiAntibody" titlePrefix="Wiki - Antibodies: ">${INDEXER_WIKI_HOSTNAME}/display/AB</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="OTHER" order="140">

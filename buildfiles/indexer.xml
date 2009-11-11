@@ -87,6 +87,7 @@
             <arg value="-v"/>
             <arg value="-zfinPropertiesDir"/>
             <arg value="${web-inf.dir}/"/>
+	    <jvmarg value="-DINDEXER_WIKI_HOSTNAME=@INDEXER_WIKI_HOSTNAME@"/>
         </java>
 
     </target>
