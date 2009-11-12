@@ -188,6 +188,8 @@
    <h3> News </h3>
    <ul>
        <?MICOMMENT> template:
+       
+       
        <li>
          <a href="/zf_info/news/siteNews.html">
          Month day - link text
@@ -195,19 +197,21 @@
        </li>
        <?/MICOMMENT>
        
+       
+              <li>
+         <a href="/zf_info/news/ZNEWS_Fall_09.pdf">
+           November 12 - Fall 2009 ZFIN Newsletter 
+         </a>
+       </li> 
+       
+      
           <li>
          <a href="/zf_info/news/siteNews.html#react">
            October 1 - Reactome Pathway Database User Survey
          </a>
        </li> 
        
-           <li>
-         <a href="/zf_info/news/siteNews.html#NIHguide">
-           August 21 - NIH Guide Notice Published
-         </a>
-       </li> 
-       
-      
+    
        
  
        <li> 
