@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 
-GENERICS = xpatview.apg xpatselect.apg anatdict.apg \
+GENERICS = xpatview.apg xpatselect.apg \
         anatomy_captures.apg xpatselect_note.apg \
 	xpatselectquery.apg xpatselectrowdisplay.apg xpatcuration.apg \
 	xpatexdisplayname.apg xpatselectanatverify.apg \

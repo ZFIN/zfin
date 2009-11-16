@@ -12,7 +12,7 @@ This is called from at least these places:
    ID is passed in.
 3. From itself, meaning the query form.  In this case, lots of variables 
    can be set.  See below.
-4. From anatdict.apg.  An anatomy item ID is passed in. 
+4. From anatomy-detail page.  An anatomy item ID is passed in. 
 5. From action/anatomy/term-detail.  An anatomy item ID is passed in. 
 6. From markerselect.apg.  A gene name is passed in.
 
@@ -61,7 +61,7 @@ INPUT VARS:
     authsearchtype	Specifies if the author should 'begins' with or
 			'contains' the string in author.
     xpatsel_processed_selected_structures Exists if user entered any anatomical structres.
-					  Called from anatdict.apg & action/anatomy/term-detail
+					  Called from action/anatomy/term-detail
 
     include_substructures  	Possible values are 'checked' and '', I think.
     structure_bool	Possible values are 'and' (meaning every selected 
@@ -79,7 +79,7 @@ INPUT VARS:
 
 
 
-  From anatdict.apg and action/anatomy/term-detail
+  From action/anatomy/term-detail
     query_results	If exists, means the page was called from itself.
     ?????
 
