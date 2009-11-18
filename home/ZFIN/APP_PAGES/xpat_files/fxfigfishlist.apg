@@ -84,7 +84,7 @@ EFFECTS
 <?/MISQL>
 
 <?MIBLOCK COND="$(XST,$fxfigfi_is_displayed)">
-  <?MIVAR NAME="fxfigfi_Label"><b>Genetic Background : </b><?/MIVAR>
+  <?MIVAR NAME="fxfigfi_Label"><b>Genotype(s): </b><?/MIVAR>
 <?MIELSE>
   <?MIVAR NAME="fxfigfi_Label"><?/MIVAR>
 <?/MIBLOCK>
