@@ -238,7 +238,7 @@ patterns associated with the figure
    <tr><td><b>EXPRESSION / LABELING:</b>
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfigge_fig_zdb_id=$OID&fxfigge_display_option=anchor') from webPages where ID='aa-fxfiggenelist.apg';">$1<?/MISQL>
 
-    <tr><td><b>Genotype or Background : </b><?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$OID') from webPages where ID='aa-fxfigfishlist.apg';">$1<?/MISQL>
+    <tr><td><b>Genotype(s) : </b><?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$OID') from webPages where ID='aa-fxfigfishlist.apg';">$1<?/MISQL>
     <?MICOMMENT>Dont display anatomy items for GELI<?/MICOMMENT>
 
     <?MIBLOCK COND="$(EQ,$fxfigview_is_geli,)">
