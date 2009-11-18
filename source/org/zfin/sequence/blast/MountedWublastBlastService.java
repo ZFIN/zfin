@@ -80,7 +80,7 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
      * @return XML as String.
      * @throws org.zfin.sequence.blast.BlastDatabaseException
      */
-    public String blastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException {
+    public String blastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException, BusException {
 
         List<String> commandLine = new ArrayList<String>();
 
@@ -182,8 +182,8 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
             ExecProcess execProcess = new ExecProcess(commandLine);
             int returnValue = -1;
             try {
-                int[] exitValues = {0, 16,17, 23};
-                execProcess.setExitValues(exitValues);
+                xmlBlastBean.setErrorString(null);
+                execProcess.setExitValues(WuBlastExitEnum.getNonErrorValues());
                 returnValue = execProcess.exec();
                 logger.debug("return value: " + returnValue);
             } catch (Exception e) {
@@ -197,19 +197,40 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
                     errorString += "error stream[" + standardError + "]\n";
                 }
 
+
                 throw new BlastDatabaseException(xmlBlastBean.getTicketNumber() + ": Failed to blast\n " + errorString, e);
             }
 
+
             // 16, 17, or 23
-            if (returnValue > 0) {
+            if (returnValue > WuBlastExitEnum.BUS_ERROR.getValue()) {
                 String standardError = execProcess.getStandardError();
                 xmlBlastBean.setErrorString(standardError);
             }
+            // bus error
+            else
+            if(returnValue== WuBlastExitEnum.BUS_ERROR.getValue()){
+                logger.warn("bus exception for, will we re-run?: "+xmlBlastBean.getTicketNumber());
+                xmlBlastBean.setErrorString("Some hits may not be shown due to a system error.  You may wish to resubmit the job.");
+            }
+
             logger.debug("output stream: " + execProcess.getStandardOutput().trim());
             logger.debug("error stream: " + execProcess.getStandardError().trim());
 
-            return fixBlastXML(execProcess.getStandardOutput().trim(), xmlBlastBean);
-        } catch (Exception e) {
+            String returnXML = fixBlastXML(execProcess.getStandardOutput().trim(), xmlBlastBean);
+
+            // bus error
+            if(returnValue== WuBlastExitEnum.BUS_ERROR.getValue()){
+                throw new BusException("Bus Error for blast:\n" + xmlBlastBean  ,returnXML) ;
+            }
+
+            return returnXML ;
+
+        }
+        catch(BusException busException){
+            throw busException ;
+        }
+        catch (Exception e) {
             e.fillInStackTrace();
             String errorString = xmlBlastBean.getTicketNumber() + ": failed to blast database with: " + commandLine.toString().replaceAll(",", " ") + "\n" + e;
             throw new BlastDatabaseException(errorString, e);

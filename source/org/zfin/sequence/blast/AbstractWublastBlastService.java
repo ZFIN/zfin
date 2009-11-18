@@ -21,8 +21,6 @@ import org.zfin.sequence.repository.SequenceRepository;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 /**
  * This class
@@ -41,6 +39,8 @@ public abstract class AbstractWublastBlastService implements BlastService {
     protected abstract Sequence addSequence(Sequence sequence) throws BlastDatabaseException;
 
     protected String keyPath = "";
+
+    private int maxAttempts = 5 ;
 
 
     // regeneration methods
@@ -672,6 +672,30 @@ public abstract class AbstractWublastBlastService implements BlastService {
         return sequences;
     }
 
+    public String robustlyBlastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException , BusException{
+        String xml = null ;
+        for(int attempts = 0 ; xml==null && attempts<maxAttempts ; ++attempts){
+            try {
+                xml = MountedWublastBlastService.getInstance().blastOneDBToString(xmlBlastBean,database) ;
+            } catch (BusException e) {
+                if(attempts==maxAttempts-1){
+//                    throw new BlastDatabaseException("too many bus errors: "+maxAttempts + " for ticket: "+ xmlBlastBean.getTicketNumber()+"\n"+xmlBlastBean) ;
+                    throw new BusException("too many bus errors: "+maxAttempts + " for ticket: "+ xmlBlastBean.getTicketNumber()+"\n"+xmlBlastBean,e.getReturnXML()) ;
+                }
+                else{
+                    logger.warn("Bus exception for ticket, re-submitting ticket: "+xmlBlastBean.getTicketNumber(),e);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ie) {
+                        throw new BlastDatabaseException("sleeping thread interrupted for ticket: "+
+                                xmlBlastBean.getTicketNumber()+"\n"+xmlBlastBean,ie.fillInStackTrace()) ;
+                    }
+                }
+            }
+        }
+        return xml ;
+    }
+
     public List<Sequence> getSequencesForMarker(Marker marker, ReferenceDatabase... referenceDatabases) throws BlastDatabaseException {
         List<MarkerDBLink> markerDBLinks = RepositoryFactory.getSequenceRepository().getDBLinksForMarker(marker, referenceDatabases);
         List<Sequence> sequences = new ArrayList<Sequence>();
@@ -719,118 +743,8 @@ public abstract class AbstractWublastBlastService implements BlastService {
      * @throws org.zfin.sequence.blast.BlastDatabaseException
      *
      */
-    public String blastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException {
-
-        List<String> commandLine = new ArrayList<String>();
-
-        try {
-            commandLine.addAll(getPrefixCommands());
-            commandLine.add(getKeyPath() + xmlBlastBean.getProgram());
-
-
-            // handle database
-            commandLine.add(getCurrentDatabasePath(database).trim());
-
-            // set result file if needed
-            setBlastResultFile(xmlBlastBean);
-
-
-            // handle sequence here
-            // create sequence dump
-            // need to prepend a defline so that blast works properly
-            String querySequence = xmlBlastBean.getQuerySequence();
-            // fix defline
-            if (querySequence != null && false == querySequence.startsWith(">")) {
-                querySequence = ">query: http://zfin.org/action/blast/blast-view?resultFile="
-                        + xmlBlastBean.getResultFile().getName() + "\n" +
-                        querySequence;
-            }
-
-            // handle poly-a
-            if (xmlBlastBean.getPoly_a() != null && xmlBlastBean.getPoly_a()) {
-                querySequence = clipPolyATail(querySequence);
-            }
-
-            // handle query from  / to and dump sequence to fasta
-            File fastaSequenceFile = dumpFastaSequence(querySequence,
-                    (xmlBlastBean.getQueryFrom() != null ? xmlBlastBean.getQueryFrom() : -1)
-                    ,
-                    (xmlBlastBean.getQueryTo() != null ? xmlBlastBean.getQueryTo() : -1)
-            );
-
-            File remoteFASTAFile = sendFASTAToServer(fastaSequenceFile, xmlBlastBean.getSliceNumber());
-            commandLine.add(remoteFASTAFile.getAbsolutePath());
-
-
-            // add expect value
-            if (xmlBlastBean.getExpectValue() != null) {
-                commandLine.add("-e");
-                commandLine.add(xmlBlastBean.getExpectValue().toString());
-            }
-
-            // word size
-            if (xmlBlastBean.getWordLength() != null) {
-                commandLine.add("-w");
-                commandLine.add(xmlBlastBean.getWordLength().toString());
-            }
-
-
-            // create alignment view
-            commandLine.add("-mformat");
-            commandLine.add(XMLBlastBean.View.XML.getValue());
-
-            if (StringUtils.isNotEmpty(xmlBlastBean.getMatrix())) {
-                commandLine.add("-matrix");
-                commandLine.add(xmlBlastBean.getMatrix());
-            }
-
-            // set the filter for the sequences
-            String filter = null; // default is false filtering
-            if (xmlBlastBean.getProgram().equals(XMLBlastBean.Program.BLASTN.getValue())
-                    ) {
-                if (xmlBlastBean.getDust()) {
-                    filter = FILTER_DUST;
-                }
-            } else {
-                if (xmlBlastBean.getSeg() && xmlBlastBean.getXnu()) {
-                    filter = FILTER_SEG + "+" + FILTER_XNU;
-                } else if (xmlBlastBean.getSeg()) {
-                    filter = FILTER_SEG;
-                } else if (xmlBlastBean.getXnu()) {
-                    filter = FILTER_XNU;
-                }
-            }
-
-            if (filter != null) {
-                commandLine.add("-filter");
-                commandLine.add(filter);
-            }
-
-
-            // if distributed, then we use these options
-            if (xmlBlastBean.getNumChunks() > 1) {
-                commandLine.add("-dbslice");
-                commandLine.add((xmlBlastBean.getSliceNumber() + 1) + "/" + (xmlBlastBean.getNumChunks()));
-            }
-
-            logger.info("remote blast command list: " + commandLine);
-            ExecProcess execProcess = new ExecProcess(commandLine);
-            try {
-                int returnValue = execProcess.exec();
-                logger.debug("return value: " + returnValue);
-            } catch (Exception e) {
-                logger.warn("no valid context: " + e);
-            }
-            logger.debug("output stream: " + execProcess.getStandardOutput().trim());
-            logger.debug("error stream: " + execProcess.getStandardError().trim());
-
-            return fixBlastXML(execProcess.getStandardOutput().trim(), xmlBlastBean);
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            String errorString = "failed to blast database with: " + commandLine.toString().replaceAll(",", " ") + "\n" + e;
-
-            throw new BlastDatabaseException(errorString, e);
-        }
+    public String blastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException , BusException {
+        throw new BlastDatabaseException("Function not implemented");
     }
 
     /**

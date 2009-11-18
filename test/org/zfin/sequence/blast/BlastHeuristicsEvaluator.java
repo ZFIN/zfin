@@ -243,9 +243,9 @@ public class BlastHeuristicsEvaluator {
                     MountedWublastBlastService.getInstance().setBlastResultFile(xmlBlastBean);
 
                     BlastHeuristicCollection blastHeuristicCollection = (new SettableBlastHeuristicFactory(split,true)).createBlastHeuristics(xmlBlastBean) ;
-                    BlastDistributedQueryRunnable blastDistributedQueryThread = new BlastDistributedQueryRunnable(xmlBlastBean,blastHeuristicCollection) ;
+                    BlastDistributableQueryThread blastDistributableQueryThread = new BlastDistributableQueryThread(xmlBlastBean,blastHeuristicCollection) ;
 
-                    blastDistributedQueryThread.run();
+                    blastDistributableQueryThread.run();
                 }
             } catch (Exception e) {
                 fail(e.toString());
@@ -332,10 +332,10 @@ public class BlastHeuristicsEvaluator {
                         MountedWublastBlastService.getInstance().setBlastResultFile(xmlBlastBean);
 
                         BlastHeuristicCollection blastHeuristicCollection = (new SettableBlastHeuristicFactory(split,true)).createBlastHeuristics(xmlBlastBean) ;
-                        BlastDistributedQueryRunnable blastDistributedQueryThread = new BlastDistributedQueryRunnable(xmlBlastBean,blastHeuristicCollection) ;
+                        BlastDistributableQueryThread blastDistributableQueryThread = new BlastDistributableQueryThread(xmlBlastBean,blastHeuristicCollection) ;
 
                         long startTime = System.currentTimeMillis() ;
-                        blastDistributedQueryThread.run();
+                        blastDistributableQueryThread.run();
                         long endTime = System.currentTimeMillis() ;
                         splitTiming.addTime(endTime-startTime);
                     }

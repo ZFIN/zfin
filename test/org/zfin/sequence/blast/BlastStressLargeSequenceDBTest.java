@@ -11,8 +11,7 @@ import org.zfin.sequence.blast.results.BlastOutput;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -20,15 +19,14 @@ import java.util.Vector;
 /**
  * This tests handles the ExecuteBlast code.
  */
-public class BlastStressLargeDBTest extends BlastStressTest{
+public class BlastStressLargeSequenceDBTest extends BlastStressTest{
 
-    private final Logger logger = Logger.getLogger(BlastStressLargeDBTest.class) ;
+    private final Logger logger = Logger.getLogger(BlastStressLargeSequenceDBTest.class) ;
 
     @Before
     public void setUp() {
-        setAbbrev(Database.AvailableAbbrev.VEGA_ZFIN);
-//        setAbbrev(Database.AvailableAbbrev.GBK_ZF_MRNA);
-        setFastaFile(new File("test/pax6a-004.fa"));
+        setAbbrev(Database.AvailableAbbrev.GBK_ZF_MRNA);
+        setFastaFile(new File("test/large_rna.fa"));
         super.setUp();
     }
 

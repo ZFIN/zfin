@@ -26,6 +26,7 @@ public abstract class BlastStressTest {
     protected XMLBlastBean xmlBlastBean ;
 
     private Database.AvailableAbbrev abbrev ;
+    private File fastaFile;
 
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -43,7 +44,8 @@ public abstract class BlastStressTest {
 
         xmlBlastBean = new XMLBlastBean() ;
         xmlBlastBean.setProgram("blastn");
-        File file = new File("test/pax6a-004.fa") ;
+//        File file = new File("test/pax6a-004.fa") ;
+        File file = getFastaFile();
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file)) ;
             StringBuilder sb = new StringBuilder() ;
@@ -98,5 +100,11 @@ public abstract class BlastStressTest {
         this.abbrev = abbrev;
     }
 
+    public File getFastaFile() {
+        return fastaFile;
+    }
 
+    public void setFastaFile(File fastaFile) {
+        this.fastaFile = fastaFile;
+    }
 }

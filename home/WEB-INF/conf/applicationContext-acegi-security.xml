@@ -164,7 +164,7 @@
                 PATTERN_TYPE_APACHE_ANT
                 /login_form.jsp=guest
                 /action/*=guest,root,submit
-                <!--/action/dev-tools/*=root-->
+				/action/dev-tools/*=root
                 /action/audit-log/*=root
                 /action/reno/*=root
                 /action/marker/transcript-add=root

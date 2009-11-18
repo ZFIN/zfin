@@ -4,7 +4,8 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.sequence.blast.BlastSingleQueryThreadCollection;
+import org.zfin.sequence.blast.BlastQueryThreadCollection;
+import org.zfin.sequence.blast.BlastThreadService;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastResultMapper;
 import org.apache.log4j.Logger;
@@ -16,7 +17,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 /**
  * Displays a result from rendered XML.
@@ -70,7 +70,8 @@ public class XMLBlastViewController extends AbstractCommandController {
 
 
             // if the thread is still processing
-            if (false == BlastSingleQueryThreadCollection.getInstance().isBlastThreadDone(xmlBlastBean)) {
+            if (BlastThreadService.isJobInQueue(xmlBlastBean,BlastQueryThreadCollection.getInstance())) {
+//                if (false == BlastQueryThreadCollection.getInstance().isBlastThreadDone(xmlBlastBean)) {
                 modelAndView.setViewName("blast-processing.page");
                 modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
             }

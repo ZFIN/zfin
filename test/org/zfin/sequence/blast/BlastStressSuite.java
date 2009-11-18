@@ -9,8 +9,9 @@ import junit.framework.JUnit4TestAdapter;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        BlastStressSmallDBTest.class,
-        BlastStressLargeDBTest.class
+        BlastStressSmallDBTest.class
+        , BlastStressLargeDBTest.class
+        // , BlastStressLargeSequenceDBTest.class // this is a LONG test
 })
 
 /**

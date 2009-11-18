@@ -2,8 +2,9 @@ package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.zfin.sequence.blast.BlastSingleQueryThreadCollection;
+import org.zfin.sequence.blast.BlastQueryThreadCollection;
 import org.zfin.sequence.blast.Database;
+import org.zfin.sequence.blast.BlastThreadService;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastResultBean;
 
@@ -255,7 +256,7 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
     public boolean isFileExists() {
         return resultFile != null
                 && resultFile.exists()
-                && BlastSingleQueryThreadCollection.getInstance().isBlastThreadDone(this);
+                && false== BlastThreadService.isJobInQueue(this,BlastQueryThreadCollection.getInstance().getQueue());
     }
 
     public BlastOutput getBlastOutput() {
@@ -340,7 +341,7 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
         sb.append("\n");
     }
 
-    private void renderElementAsXML(String elementName, String value, StringBuilder sb) {
+    private void getStringAsXML(String elementName, String value, StringBuilder sb) {
         if (StringUtils.isNotEmpty(value)) {
             sb.append("<").append(elementName).append(">")
                     .append(value)
@@ -349,7 +350,7 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
         }
     }
 
-    private void getElementAsXML(String elementName, Integer number, StringBuilder sb) {
+    private void getNumberAsXML(String elementName, Integer number, StringBuilder sb) {
         if (number != null && number > 0) {
             sb.append("<").append(elementName).append(">")
                     .append(number)
@@ -363,15 +364,16 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
         sb.append("<ZFINParameters>");
         getOtherTicketsAsXML(sb);
         getTargetDatabasesAsXML(sb);
-        renderElementAsXML("DataLibrary", getDataLibraryString(), sb);
-        getElementAsXML("WordLength", getWordLength(), sb);
-        getElementAsXML("SubSequenceFrom", getQueryFrom(), sb);
-        getElementAsXML("SubSequenceTo", getQueryTo(), sb);
-        renderElementAsXML("QueryType", getQueryType(), sb);
-        renderElementAsXML("SequenceFASTA", getQuerySequence(), sb);
-        renderElementAsXML("SequenceID", getSequenceID(), sb);
-        renderElementAsXML("SequenceFile", getSequenceFile(), sb);
-        getElementAsXML("PolyAFilter", (getPoly_a() ? 1 : 0), sb);
+        getStringAsXML("DataLibrary", getDataLibraryString(), sb);
+        getNumberAsXML("WordLength", getWordLength(), sb);
+        getNumberAsXML("SubSequenceFrom", getQueryFrom(), sb);
+        getNumberAsXML("SubSequenceTo", getQueryTo(), sb);
+        getStringAsXML("QueryType", getQueryType(), sb);
+        getStringAsXML("SequenceFASTA", getQuerySequence(), sb);
+        getStringAsXML("SequenceID", getSequenceID(), sb);
+        getStringAsXML("SequenceFile", getSequenceFile(), sb);
+        getNumberAsXML("PolyAFilter", (getPoly_a() ? 1 : 0), sb);
+        getStringAsXML("ErrorData", getErrorString(), sb);
         sb.append("</ZFINParameters>").append("\n");
         return sb.toString();
     }

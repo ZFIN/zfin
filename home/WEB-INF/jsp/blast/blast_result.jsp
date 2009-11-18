@@ -5,7 +5,7 @@
 
 <h3>BLAST Results</h3>
 
-<zfin2:blastResultTicketInfo formBean="${formBean}"/>
+<zfin2:blastResultTicketInfo xmlBlastBean="${formBean}"/>
 
 <c:choose>
     <c:when test="${empty formBean.blastResultBean.hits}">

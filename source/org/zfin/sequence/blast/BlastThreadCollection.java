@@ -1,17 +1,13 @@
 package org.zfin.sequence.blast;
 
+import org.zfin.sequence.blast.presentation.XMLBlastBean;
+
+import java.util.Collection;
+
 /**
  */
 public interface BlastThreadCollection {
-    int getTotalQueueSize();
 
-    int getNumberQueuedNotRun();
+    Collection<BlastQueryJob> getQueue() ;
 
-    int getNumberRunningThreads();
-
-    BlastQueryRunnable getNextInQueue();
-
-    boolean isQueueActive() ;
-
-    public int cleanCollection();
 }

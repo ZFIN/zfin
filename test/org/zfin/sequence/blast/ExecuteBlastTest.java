@@ -536,7 +536,7 @@ public class ExecuteBlastTest {
 //            xmlBlastBean.setMatrix(XMLBlastBean.Matrix.PAM30.toString());
 
 
-            String returnXML = MountedWublastBlastService.getInstance().blastOneDBToString(xmlBlastBean,blastDatabase) ;
+            String returnXML = MountedWublastBlastService.getInstance().robustlyBlastOneDBToString(xmlBlastBean,blastDatabase) ;
             logger.info("XMLBlastBean resultFile: " + xmlBlastBean.getResultFile());
 
 
@@ -573,10 +573,10 @@ public class ExecuteBlastTest {
             MountedWublastBlastService.getInstance().setBlastResultFile(xmlBlastBean);
 
             BlastHeuristicCollection blastHeuristicCollection = (new SettableBlastHeuristicFactory(5,true)).createBlastHeuristics(xmlBlastBean) ;
-            BlastDistributedQueryRunnable blastDistributedQueryThread = new BlastDistributedQueryRunnable(xmlBlastBean,blastHeuristicCollection) ;
-            blastDistributedQueryThread.run();
+            BlastDistributableQueryThread blastDistributableQueryThread = new BlastDistributableQueryThread(xmlBlastBean,blastHeuristicCollection) ;
+            blastDistributableQueryThread.run();
 
-            XMLBlastBean resultXMLBlastBean = blastDistributedQueryThread.getXmlBlastBean() ;
+            XMLBlastBean resultXMLBlastBean = blastDistributableQueryThread.getXmlBlastBean() ;
             assertNotNull(resultXMLBlastBean);
             assertNotNull(resultXMLBlastBean.getBlastOutput());
             assertNotNull(resultXMLBlastBean.getBlastResultBean());
@@ -730,7 +730,7 @@ public class ExecuteBlastTest {
             assertEquals(0 ,blastResultBeanB.getHits().size());
 
 
-            BlastOutput blastOutput = BlastOutputMerger.mergeBlastOutput(blastOutputB,blastOutputA) ;
+            BlastOutput blastOutput = BlastOutputMerger.mergeBlastHits(blastOutputB,blastOutputA) ;
             BlastResultBean blastResultBean = BlastResultMapper.createBlastResultBean(blastOutput) ;
 
             assertEquals(22,blastResultBean.getHits().size());
@@ -767,23 +767,30 @@ public class ExecuteBlastTest {
             xmlBlastBean.setExpectValue(1.0E-25);
             MountedWublastBlastService.getInstance().setBlastResultFile(xmlBlastBean);
 
-            BlastHeuristicCollection blastHeuristicCollection = (new SettableBlastHeuristicFactory(5,true)).createBlastHeuristics(xmlBlastBean) ;
-            BlastDistributedQueryRunnable blastDistributedQueryThread = new BlastDistributedQueryRunnable(xmlBlastBean,blastHeuristicCollection) ;
-            blastDistributedQueryThread.run();
-            XMLBlastBean resultDistributedXMLBlastBean = blastDistributedQueryThread.getXmlBlastBean() ;
-            assertNotNull(resultDistributedXMLBlastBean);
-            assertNotNull(resultDistributedXMLBlastBean.getBlastOutput());
-            assertNotNull(resultDistributedXMLBlastBean.getBlastResultBean());
-            assertTrue(resultDistributedXMLBlastBean.getBlastResultBean().getHits().size()>2);
 
-
-            BlastSingleQueryRunnable blastSingleQueryThread = new BlastSingleQueryRunnable(xmlBlastBean) ;
-            blastSingleQueryThread.run();
+            BlastHeuristicCollection blastHeuristicCollectionSingle = (new SettableBlastHeuristicFactory(1,false)).createBlastHeuristics(xmlBlastBean) ;
+//            BlastHeuristicFactory blastHeuristicFactory = new ProductionBlastHeuristicFactory() ;
+            BlastDistributableQueryThread blastSingleQueryThread = new BlastDistributableQueryThread(xmlBlastBean, blastHeuristicCollectionSingle) ;
+            Thread t = new Thread(blastSingleQueryThread);
+            t.start();
+            while(t.isAlive()){
+                Thread.sleep(200);
+            }
             XMLBlastBean resultSingleXMLBlastBean = blastSingleQueryThread.getXmlBlastBean() ;
             assertNotNull(resultSingleXMLBlastBean);
             assertNotNull(resultSingleXMLBlastBean.getBlastOutput());
             assertNotNull(resultSingleXMLBlastBean.getBlastResultBean());
             assertTrue(resultSingleXMLBlastBean.getBlastResultBean().getHits().size()>2);
+
+            BlastHeuristicCollection blastHeuristicCollection = (new SettableBlastHeuristicFactory(5,true)).createBlastHeuristics(xmlBlastBean) ;
+            BlastDistributableQueryThread blastDistributableQueryThread = new BlastDistributableQueryThread(xmlBlastBean,blastHeuristicCollection) ;
+            blastDistributableQueryThread.run();
+            XMLBlastBean resultDistributedXMLBlastBean = blastDistributableQueryThread.getXmlBlastBean() ;
+            assertNotNull(resultDistributedXMLBlastBean);
+            assertNotNull(resultDistributedXMLBlastBean.getBlastOutput());
+            assertNotNull(resultDistributedXMLBlastBean.getBlastResultBean());
+            assertTrue(resultDistributedXMLBlastBean.getBlastResultBean().getHits().size()>2);
+
 
             assertEquals(resultDistributedXMLBlastBean.getBlastResultBean().getHits().size(),resultSingleXMLBlastBean.getBlastResultBean().getHits().size());
             assertEquals(resultDistributedXMLBlastBean.getBlastResultBean(),resultSingleXMLBlastBean.getBlastResultBean());

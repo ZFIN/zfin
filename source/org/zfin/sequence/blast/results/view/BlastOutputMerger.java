@@ -1,7 +1,7 @@
 package org.zfin.sequence.blast.results.view;
 
 import org.apache.log4j.Logger;
-import org.zfin.sequence.blast.BlastSliceThread;
+import org.zfin.sequence.blast.BlastQueryJob;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.Hit;
 import org.zfin.sequence.blast.results.HitNum;
@@ -10,6 +10,7 @@ import org.zfin.sequence.blast.results.impl.HitNumImpl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Collection;
 
 /**
  * This class merges blast output into a single result.
@@ -19,11 +20,11 @@ public class BlastOutputMerger {
 
     private final static Logger logger = Logger.getLogger(BlastOutputMerger.class);
 
-    public static BlastOutput mergeBlastOutput(List<BlastSliceThread> blastSlices) {
+    public static BlastOutput mergeBlastOutput(Collection<BlastQueryJob> blastSlices) {
 
         BlastOutput blastOutput = null;
 
-        for (BlastSliceThread blastSliceThread : blastSlices) {
+        for (BlastQueryJob blastSliceThread : blastSlices) {
             if (blastOutput == null) {
                 blastOutput = blastSliceThread.getXmlBlastBean().getBlastOutput();
             } else {
@@ -37,6 +38,41 @@ public class BlastOutputMerger {
 
     }
 
+    private static BlastOutput mergeBlastOutput(BlastOutput blastOutputA, BlastOutput blastOutputB) {
+        blastOutputA = mergeBlastHits(blastOutputA,blastOutputB) ;
+        blastOutputA = mergeBlastErrors(blastOutputA,blastOutputB) ;
+        return blastOutputA ;
+    }
+
+    private static BlastOutput mergeBlastErrors(BlastOutput blastOutputA, BlastOutput blastOutputB) {
+        String errorA = null;
+        String errorB = null;
+        try {
+            errorA =  blastOutputA.getZFINParameters().getErrorData().getContent();
+        } catch (NullPointerException e) {
+            logger.warn("no error for blastA output:" + blastOutputA);
+        }
+
+        try {
+            errorB =  blastOutputB.getZFINParameters().getErrorData().getContent();
+        } catch (NullPointerException e) {
+            logger.warn("no error for blastB output:" + blastOutputB);
+        }
+
+        // if neither is null,then set as normal
+        if (errorA != null && errorB != null) {
+            errorA += " " + errorB;
+        } else
+            // if we have no error on A, but we do have some on B, then we just replace them
+            if (errorA == null && errorB != null) {
+                errorA = errorB;
+            }
+        // if no error on B, then there is nothing to do
+
+
+        return blastOutputA;
+    }
+
     // this method only merges hits
     //
     /**
@@ -46,7 +82,7 @@ public class BlastOutputMerger {
      * @param blastOutputB Second blast ouput.
      * @return Merged blastoutput file.
      */
-    public static BlastOutput mergeBlastOutput(BlastOutput blastOutputA, BlastOutput blastOutputB) {
+    public static BlastOutput mergeBlastHits(BlastOutput blastOutputA, BlastOutput blastOutputB) {
         List<Hit> hitsA = null;
         List<Hit> hitsB = null;
         try {

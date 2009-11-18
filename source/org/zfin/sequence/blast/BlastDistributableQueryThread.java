@@ -7,13 +7,12 @@ import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastOutputMerger;
 import org.zfin.sequence.blast.results.view.BlastResultMapper;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Iterator;
+import java.util.Collection;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 /**
@@ -22,20 +21,21 @@ import java.util.Iterator;
  * 1. multiple databases
  * 2. splitting single databases into smaller parts
  */
-public class BlastDistributedQueryRunnable extends BlastSingleQueryRunnable implements BlastThreadCollection{
+public class BlastDistributableQueryThread extends AbstractQueryThread implements BlastThreadCollection{
 
-    private final static Logger logger = Logger.getLogger(BlastDistributedQueryRunnable.class);
+    private final static Logger logger = Logger.getLogger(BlastDistributableQueryThread.class);
 
-    private List<BlastSliceThread> blastSlices = new ArrayList<BlastSliceThread>();
+    private Collection<BlastQueryJob> blastSlices = new ConcurrentLinkedQueue<BlastQueryJob>();
     private BlastHeuristicCollection blastHeuristicCollection;
     private int totalThreads = 1 ;
+    private int threadSubmitLatency = 200 ;
+    private int checkJobLatency = 200 ;
 
-    public BlastDistributedQueryRunnable(XMLBlastBean xmlBlastBean, BlastHeuristicCollection blastHeuristicCollection) {
+    public BlastDistributableQueryThread(XMLBlastBean xmlBlastBean, BlastHeuristicCollection blastHeuristicCollection) {
         super(xmlBlastBean);
         this.blastHeuristicCollection = blastHeuristicCollection;
 
         calculateTotalThreads();
-
     }
 
     private int calculateTotalThreads() {
@@ -80,7 +80,7 @@ public class BlastDistributedQueryRunnable extends BlastSingleQueryRunnable impl
                 blastSlices.add(blastSliceThread);
                 (new Thread(blastSliceThread)).start();
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(threadSubmitLatency);
                 } catch (InterruptedException e) {
                     logger.error(e);
                 }
@@ -89,9 +89,9 @@ public class BlastDistributedQueryRunnable extends BlastSingleQueryRunnable impl
 
 
         // sleep a few seconds each time
-        while (true == isQueueActive()) {
+        while (BlastThreadService.isJobInQueue(xmlBlastBean,blastSlices)) {
             try {
-                Thread.sleep(200);
+                Thread.sleep(checkJobLatency);
             } catch (InterruptedException e) {
                 logger.error(e);
             }
@@ -109,71 +109,21 @@ public class BlastDistributedQueryRunnable extends BlastSingleQueryRunnable impl
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(xmlBlastBean.getResultFile()));
             if (blastOutput != null) {
-                JAXBContext jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
-                Marshaller u = jc.createMarshaller();
+                Marshaller u = getJAXBBlastContext().createMarshaller();
                 u.marshal(blastOutput, new BufferedWriter(writer));
             } else {
                 writer.write(xmlBlastBean.getErrorString());
             }
             writer.close();
         } catch (Exception e) {
-            logger.fatal("Failed to write blast result to file: " + e);
+            logger.fatal("Failed to write blast result to file" , e.fillInStackTrace());
         }
         finishBlast();
     }
 
-    public int cleanCollection(){
-        int collectionCleaned = 0 ;
-        Iterator<BlastSliceThread> iter = blastSlices.iterator() ;
-        while(iter.hasNext()){
-            BlastQueryRunnable blastSingleQueryThread = iter.next();
-            if(blastSingleQueryThread.isFinished() ){
-                iter.remove() ;
-                ++collectionCleaned ;
-            }
-        }
-        return collectionCleaned ;
+
+    public Collection<BlastQueryJob> getQueue() {
+        return blastSlices;
     }
 
-
-    public int getTotalQueueSize() {
-        int count = 0  ;
-        for(BlastSliceThread blastSliceThread: blastSlices){
-                count += blastSliceThread.getNumberThreads();
-        }
-        return count ;
-    }
-
-    public int getNumberQueuedNotRun() {
-        int count = 0  ;
-        for(BlastSliceThread blastSliceThread: blastSlices){
-            if(false==blastSliceThread.isFinished()&& false==blastSliceThread.isRunning()){
-                count += blastSliceThread.getNumberThreads();
-            }
-        }
-        return count ;
-    }
-
-    public int getNumberRunningThreads() {
-        int count = 0  ;
-        for(BlastSliceThread blastSliceThread: blastSlices){
-            if(blastSliceThread.isRunning()){
-                count += blastSliceThread.getNumberThreads() ;
-            }
-        }
-        return count ;
-    }
-
-    public BlastQueryRunnable getNextInQueue() {
-        for(BlastSliceThread blastSliceThread: blastSlices){
-            if(false==blastSliceThread.isFinished()&& false==blastSliceThread.isRunning()){
-                return blastSliceThread ;
-            }
-        }
-        return null ;
-    }
-
-    public boolean isQueueActive() {
-        return getNumberRunningThreads()>0 || getNumberQueuedNotRun()>0 ;
-    }
 }

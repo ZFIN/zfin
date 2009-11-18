@@ -26,6 +26,7 @@ public class BlastStressSmallDBTest extends BlastStressTest{
     @Before
     public void setUp(){
         setAbbrev(Database.AvailableAbbrev.ZFIN_MRPH);
+        setFastaFile(new File("test/pax6a-004.fa"));
         super.setUp();
     }
 
@@ -38,8 +39,8 @@ public class BlastStressSmallDBTest extends BlastStressTest{
      * -m 7
      * -F F  < ~/svn/ZFIN_WWW/test/pax6a-004.fa
      */
-//    @Test
     // this test should fail
+    @Test
     public void rawBlastOneDBToStream(){
         Vector<String> xmlResults = new Vector<String>() ;
         List<RawBlastOneDBToString> rawBlastOneDBToStringList = new ArrayList<RawBlastOneDBToString>() ;
@@ -70,7 +71,7 @@ public class BlastStressSmallDBTest extends BlastStressTest{
     @Test
     public void scheduleBlast(){
         List<ScheduleBlastOneDBToString> scheduledBlastOneDBToStringList = new ArrayList<ScheduleBlastOneDBToString>() ;
-        int numThreads = 40;
+        int numThreads = 40 ;
 
         // need to number each one one differently
 
@@ -82,7 +83,8 @@ public class BlastStressSmallDBTest extends BlastStressTest{
         }
 
         for(ScheduleBlastOneDBToString scheduledBlastOneDBToString : scheduledBlastOneDBToStringList){
-            scheduledBlastOneDBToString.start();
+//            scheduledBlastOneDBToString.start();
+            scheduledBlastOneDBToString.run();
         }
 
 
@@ -93,9 +95,9 @@ public class BlastStressSmallDBTest extends BlastStressTest{
 
             Thread.sleep(1000);
 
-            while(BlastSingleQueryThreadCollection.getInstance().isQueueActive()){
+            while(BlastThreadService.isQueueActive(BlastQueryThreadCollection.getInstance())){
                 Thread.sleep(1000);
-                logger.info(BlastSingleQueryThreadCollection.getInstance().getNumberRunningThreads()) ;
+                logger.info(BlastThreadService.getRunningThreadCount(BlastQueryThreadCollection.getInstance())) ;
             }
 
             Thread.sleep(1000);
@@ -156,7 +158,7 @@ public class BlastStressSmallDBTest extends BlastStressTest{
         public void run(){
             try {
                 xmlStrings.add(MountedWublastBlastService.getInstance().blastOneDBToString(xmlBlastBean,database)) ;
-            } catch (BlastDatabaseException e) {
+            } catch (Exception e) {
                 logger.error(e.fillInStackTrace());
             }
         }
@@ -172,7 +174,7 @@ public class BlastStressSmallDBTest extends BlastStressTest{
 
 
         public void run(){
-            BlastSingleQueryThreadCollection.getInstance().executeBlastThread(xmlBlastBean);
+            BlastQueryThreadCollection.getInstance().executeBlastThread(xmlBlastBean);
         }
     }
 }

@@ -340,7 +340,7 @@ public class XMLBlastController extends SimpleFormController {
             // set the multiple query files
             blastBean.setOtherQueries(resultXMLBlastBeans);
             // execute thread
-            BlastSingleQueryThreadCollection.getInstance().executeBlastThread(blastBean);
+            BlastQueryThreadCollection.getInstance().executeBlastThread(blastBean);
         }
 
         // set the inputXMLBlastBean to the first result bean

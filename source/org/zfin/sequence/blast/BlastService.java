@@ -5,7 +5,6 @@ import org.zfin.marker.Transcript;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
-import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.Sequence;
 import org.zfin.sequence.DBLink;
 
@@ -56,13 +55,23 @@ public interface BlastService {
 //    BlastOutput blastOneDB(XMLBlastBean xmlBlastBean) throws BlastDatabaseException;
 
     /**
-     * This method performs a remote blast using ssh and returns the output stream
+     * This method wraps blastOneDBToString with multiple attempts.
      * @param xmlBlastBean Blast parameters beans.
      * @param database Database to blast.
      * @return An output stream of an ExecuteBlastBean with populated results.
      * @throws BlastDatabaseException Operation failure.
      */
-    String blastOneDBToString(XMLBlastBean xmlBlastBean,Database database) throws BlastDatabaseException;
+    String robustlyBlastOneDBToString(XMLBlastBean xmlBlastBean,Database database) throws BlastDatabaseException, BusException;
+
+    /**
+     * This method performs a remote blast using ssh and returns the output stream
+     * @param xmlBlastBean Blast parameters beans.
+     * @param database Database to blast.
+     * @return An output stream of an ExecuteBlastBean with populated results.
+     * @throws BlastDatabaseException Operation failure.
+     * @throws BusException Bus error has been thrown.
+     */
+    String blastOneDBToString(XMLBlastBean xmlBlastBean,Database database) throws BlastDatabaseException, BusException;
 
     /**
      * This method returns the number of sequences in a blast database.

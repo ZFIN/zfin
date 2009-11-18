@@ -1,60 +1,53 @@
 package org.zfin.sequence.blast.presentation;
 
-import org.zfin.sequence.blast.BlastQueryRunnable;
-
-import java.util.Set;
+import org.zfin.sequence.blast.BlastQueryThreadCollection;
+import org.zfin.sequence.blast.BlastStatistics;
+import org.zfin.sequence.blast.BlastThreadService;
 
 /**
  */
 public class BlastJobsBean {
 
-    Set<BlastQueryRunnable> blastJobs ;
+    private BlastQueryThreadCollection blastThreadCollection;
+    private BlastStatistics blastStatistics ;
 
-    public Set<BlastQueryRunnable> getBlastJobs() {
-        return blastJobs;
+    public BlastQueryThreadCollection getBlastThreadCollection() {
+        return blastThreadCollection;
     }
 
-    public void setBlastJobs(Set<BlastQueryRunnable> blastJobs) {
-        this.blastJobs = blastJobs;
+    public void setBlastThreadCollection(BlastQueryThreadCollection blastThreadCollection) {
+        this.blastThreadCollection = blastThreadCollection;
     }
 
-    public int getNumJobsRunning() {
-        int numJobsRunning = 0 ;
-        for(BlastQueryRunnable blastQueryRunnable: blastJobs){
-            if(blastQueryRunnable.isRunning()){
-                ++numJobsRunning ;
-            }
-        }
-        return numJobsRunning ;
+    public BlastStatistics getBlastStatistics() {
+        return blastStatistics;
     }
 
-    public int getNumThreadsRunning(){
-        int count = 0 ;
-        for(BlastQueryRunnable blastQueryRunnable: blastJobs){
-            if(blastQueryRunnable.isRunning()){
-                count += blastQueryRunnable.getNumberThreads();
-            }
-        }
-        return count ;
+    public void setBlastStatistics(BlastStatistics blastStatistics) {
+        this.blastStatistics = blastStatistics;
     }
 
-    public int getNumJobsQueued() {
-        int numJobsQueued= 0 ;
-        for(BlastQueryRunnable blastQueryRunnable: blastJobs){
-            if(false==blastQueryRunnable.isRunning()&& false==blastQueryRunnable.isFinished()){
-                ++numJobsQueued;
-            }
-        }
-        return numJobsQueued ;
+    public int getJobCount(){
+        return BlastThreadService.getJobCount(blastThreadCollection) ;
     }
 
-    public int getNumThreadsQueued() {
-        int count = 0 ;
-        for(BlastQueryRunnable blastQueryRunnable: blastJobs){
-            if(false==blastQueryRunnable.isRunning()&& false==blastQueryRunnable.isFinished()){
-                count += blastQueryRunnable.getNumberThreads() ;
-            }
-        }
-        return count ;
+
+    public int getRunningJobCount(){
+        return BlastThreadService.getRunningJobCount(blastThreadCollection) ;
+    }
+
+
+    public int getRunningThreadCount(){
+        return BlastThreadService.getRunningThreadCount(blastThreadCollection) ;
+    }
+
+
+    public int getQueuedJobCount(){
+        return BlastThreadService.getQueuedJobCount(blastThreadCollection) ;
+    }
+
+
+    public int getQueuedThreadCount(){
+        return BlastThreadService.getQueuedThreadCount(blastThreadCollection) ;
     }
 }
