@@ -213,15 +213,32 @@ public class MarkerService {
      * @param marker Marker
      * @return list of LinkageGroups
      */
-    public static List<LinkageGroup> getLinkageGroups(Marker marker) {
+    public static Set<LinkageGroup> getLinkageGroups(Marker marker) {
         LinkageRepository lr = RepositoryFactory.getLinkageRepository();
         if (marker == null){
             return null;
         }
 
-        List<LinkageGroup> groups = new ArrayList<LinkageGroup>();
+        Set<LinkageGroup> groups = new TreeSet<LinkageGroup>();
         // if it is a clone (non-gene) check lg for clone first then the gene.
         Set<String> linkageGroups = lr.getLG(marker);
+        if(marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)){
+            // if no linkage group found for transcript
+            // check the associated gene
+            if (CollectionUtils.isEmpty(linkageGroups)) {
+//                Marker gene = getRelatedGeneFromClone(marker);
+//                Set<Marker> genes = getRelatedSmallSegmentGenesFromClone(marker);S
+
+                Set<Marker> genes = TranscriptService.getRelatedGenesFromTranscript(markerRepository.getTranscriptByZdbID(marker.getZdbID()));
+                for(Marker gene: genes){
+                    if (gene != null) {
+//                        linkageGroups = mr.getLG(gene);
+                        linkageGroups.addAll(lr.getLG(gene));
+                    }
+                }
+            }
+        }
+        else
         if (!marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             // if no linkage group found for clone
             // check the associated gene

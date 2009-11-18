@@ -72,24 +72,7 @@ public abstract class AbstractCandidateController extends SimpleFormController {
         map.put(LookupStrings.FORM_BEAN, candidateBean);
         map.put(LookupStrings.DYNAMIC_TITLE, candidateBean.getRunCandidate().getZdbID());
 
-
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-
-            handleView(candidateBean);
-
-            tx.commit();
-        } catch (Exception e) {
-            try {
-                tx.rollback();
-            } catch (HibernateException he) {
-                LOG.error("Error during roll back of transaction", he);
-            }
-            LOG.error("Error in Transaction", e);
-            throw new RuntimeException("Error during transaction. Rolled back.", e);
-        }
+        handleView(candidateBean);
 
         return map;
     }

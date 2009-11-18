@@ -4,10 +4,11 @@ import org.zfin.sequence.TranscriptDBLink;
 import org.zfin.marker.presentation.RelatedMarker;
 
 import java.util.TreeSet;
+import java.util.Set;
 
 public class TranscriptTargets {
     private TranscriptDBLink predictedTarget;
-    private TreeSet<RelatedMarker> publishedTargets;
+    private Set<RelatedMarker> publishedTargets;
 
 
     public TranscriptDBLink getPredictedTarget() {
@@ -18,13 +19,13 @@ public class TranscriptTargets {
         this.predictedTarget = predictedTarget;
     }
 
-    public TreeSet<RelatedMarker> getPublishedTargets() {
+    public Set<RelatedMarker> getPublishedTargets() {
         //never return a null collection
         if (publishedTargets == null) { publishedTargets = new TreeSet<RelatedMarker>(); }
         return publishedTargets;
     }
 
-    public void setPublishedTargets(TreeSet<RelatedMarker> publishedTargets) {
+    public void setPublishedTargets(Set<RelatedMarker> publishedTargets) {
         this.publishedTargets = publishedTargets;
     }
 }

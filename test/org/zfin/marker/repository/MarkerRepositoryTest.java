@@ -398,10 +398,10 @@ public class MarkerRepositoryTest {
             tx = HibernateUtil.currentSession().beginTransaction();
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
             Marker clone = mr.getMarkerByID("ZDB-CDNA-040425-118");
-            List<LinkageGroup> groups = MarkerService.getLinkageGroups(clone);
+            Set<LinkageGroup> groups = MarkerService.getLinkageGroups(clone);
             assertTrue(groups != null);
             assertEquals("2 linkage groups found", 1, groups.size());
-            LinkageGroup group = groups.get(0);
+            LinkageGroup group = groups.iterator().next();
             assertEquals("First LG", "1", group.getName());
 
         }
@@ -421,7 +421,7 @@ public class MarkerRepositoryTest {
             tx = HibernateUtil.currentSession().beginTransaction();
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
             Marker gene = mr.getMarkerByID("ZDB-GENE-990415-72");
-            List<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
+            Set<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
             assertTrue(groups != null);
             assertTrue(groups.size() > 1);
             //            assertEquals("linkage groups found", 3, groups.size());
@@ -444,10 +444,10 @@ public class MarkerRepositoryTest {
             tx = HibernateUtil.currentSession().beginTransaction();
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
             Marker gene = mr.getMarkerByID("ZDB-GENE-060506-1");
-            List<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
+            Set<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
             assertTrue(groups != null);
             assertEquals("1 linkage groups found", 1, groups.size());
-            LinkageGroup group = groups.get(0);
+            LinkageGroup group = groups.iterator().next();
             assertEquals("First LG", "9", group.getName());
         }
         catch (Exception e) {

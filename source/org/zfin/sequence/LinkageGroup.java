@@ -3,7 +3,7 @@
  */
 package org.zfin.sequence ; 
 
-public class LinkageGroup {
+public class LinkageGroup implements Comparable<LinkageGroup>{
     private String name;
     private String nameOrder;
 
@@ -22,6 +22,10 @@ public class LinkageGroup {
 
     public void setNameOrder(String nameOrder) {
         this.nameOrder = nameOrder;
+    }
+
+    public int compareTo(LinkageGroup o) {
+        return this.name.compareTo(o.getName()) ;
     }
 }
 

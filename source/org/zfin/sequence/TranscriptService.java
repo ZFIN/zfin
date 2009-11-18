@@ -26,28 +26,37 @@ public class TranscriptService {
     }
 
 
-    public static TreeSet<RelatedMarker> getRelatedGenes(Transcript transcript) {
-        TreeSet<RelatedMarker> relatedMarkers;
+    public static Set<RelatedMarker> getRelatedGenes(Transcript transcript) {
+        Set<RelatedMarker> relatedMarkers;
         relatedMarkers = MarkerService.getRelatedMarkers(transcript,MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
         return relatedMarkers;
     }
 
-    public static TreeSet<RelatedMarker> getRelatedTranscripts(Marker gene) {
-        TreeSet<RelatedMarker> relatedMarkers;
+    public static Set<Marker> getRelatedGenesFromTranscript(Transcript transcript) {
+        Set<RelatedMarker> relatedMarkers = MarkerService.getRelatedMarkers(transcript,MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+        Set<Marker> genes = new TreeSet<Marker>() ;
+        for(RelatedMarker relatedMarker:relatedMarkers){
+            genes.add(relatedMarker.getMarkerRelationship().getFirstMarker());
+        }
+        return genes ;
+    }
+
+    public static Set<RelatedMarker> getRelatedTranscripts(Marker gene) {
+        Set<RelatedMarker> relatedMarkers;
         relatedMarkers = MarkerService.getRelatedMarkers(gene, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
         return relatedMarkers;
     }
 
-    public static TreeSet<RelatedMarker> getTargetGenes(Transcript transcript) {
-        TreeSet<RelatedMarker> relatedMarkers;
+    public static Set<RelatedMarker> getTargetGenes(Transcript transcript) {
+        Set<RelatedMarker> relatedMarkers;
         relatedMarkers = MarkerService.getRelatedMarkers(transcript, MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE);
         return relatedMarkers;
     }
 
-    public static TreeSet<RelatedMarker> getRelatedTranscriptsForTranscript(Transcript transcript) {
-        TreeSet<RelatedMarker> relatedTranscripts = new TreeSet<RelatedMarker>();
+    public static Set<RelatedMarker> getRelatedTranscriptsForTranscript(Transcript transcript) {
+        Set<RelatedMarker> relatedTranscripts = new TreeSet<RelatedMarker>();
 
-        TreeSet<RelatedMarker> relatedGenes = getRelatedGenes(transcript);
+        Set<RelatedMarker> relatedGenes = getRelatedGenes(transcript);
         for (RelatedMarker relatedGene : relatedGenes ) {
             Marker gene = relatedGene.getMarker();
             for (RelatedMarker relatedTranscript : TranscriptService.getRelatedTranscripts(gene)) {

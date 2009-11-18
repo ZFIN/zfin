@@ -82,7 +82,7 @@ public class RedundancyCandidateValidator extends AbstractRunCandidateValidator 
         //if novel is selected and no zdb_id was specified... (ie, they really mean novel)
         String suggestedName = candidateBean.getRunCandidate().getCandidate().getSuggestedName();
         if (StringUtils.equals(candidateBean.getAssociatedGeneField(), CandidateBean.NOVEL)
-                && StringUtils.isEmpty(candidateBean.getGeneZdbID())) {
+                && StringUtils.isEmpty(candidateBean.getGeneZdbID().trim().toUpperCase())) {
 
             //reject if a gene was associated directly to an accession
             if (candidateGene != null) {
@@ -114,8 +114,8 @@ public class RedundancyCandidateValidator extends AbstractRunCandidateValidator 
         Marker existingGene = null;
 
         //check that the entered zdb_id maps to a marker and that the marker is a gene
-        if (!StringUtils.isEmpty(candidateBean.getGeneZdbID())) {
-            Marker m = mr.getMarkerByID(candidateBean.getGeneZdbID());
+        if (!StringUtils.isEmpty(candidateBean.getGeneZdbID().trim())) {
+            Marker m = mr.getMarkerByID(candidateBean.getGeneZdbID().trim().toUpperCase());
             if (m == null) {
                 errors.rejectValue("geneZdbID", "code", candidateBean.getGeneZdbID() + " is not a valid marker id in ZFIN.");
             } else if (!m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {

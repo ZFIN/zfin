@@ -8,6 +8,8 @@ import org.zfin.sequence.reno.presentation.CandidateBean;
 import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.LinkageGroup;
+import org.zfin.sequence.TranscriptService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.orthology.OrthoEvidence;
 import org.zfin.publication.Publication;
@@ -16,10 +18,7 @@ import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Common reno services.
@@ -27,6 +26,8 @@ import java.util.ArrayList;
 public class RenoService {
 
     private static final Logger LOG = Logger.getLogger(RenoService.class) ;
+
+    private static Map<Marker,Set<LinkageGroup>> cachedLinkageGroupMap = new HashMap<Marker,Set<LinkageGroup>>();
 
     public static List<Marker> checkForExistingRelationships(CandidateBean candidateBean, RunCandidate rc) {
         List<Marker> associatedMarkers = rc.getAllSingleAssociatedGenesFromQueries();
@@ -125,14 +126,22 @@ public class RenoService {
             Set<Hit> hits = query.getBlastHits();
             LOG.info("popularLinkageGroups hits.size: " + hits.size());
             for (Hit hit : hits) {
-                LOG.info("popularLinkageGroups hit: " + hit.getZdbID());
-                LOG.info("popularLinkageGroups hit.getTargetAccession: " + hit.getTargetAccession().getID());
+                LOG.debug("popularLinkageGroups hit: " + hit.getZdbID());
+                LOG.debug("popularLinkageGroups hit.getTargetAccession: " + hit.getTargetAccession().getID());
                 Set<MarkerDBLink> markerDBLinks = hit.getTargetAccession().getBlastableMarkerDBLinks();
-                LOG.info("popularLinkageGroups markerDBLinks.size: " + markerDBLinks.size());
+                LOG.debug("popularLinkageGroups markerDBLinks.size: " + markerDBLinks.size());
+
+                Set<LinkageGroup> hitLinkageGroup = new TreeSet<LinkageGroup>() ;
                 for (MarkerDBLink markerDBLink : markerDBLinks) {
-                    LOG.info("popularLinkageGroups markerDBLink: " + markerDBLink.getZdbID());
-                    hit.getTargetAccession().setLinkageGroups(MarkerService.getLinkageGroups(markerDBLink.getMarker()));
+                    LOG.debug("popularLinkageGroups markerDBLink: " + markerDBLink.getZdbID());
+                    Marker marker = markerDBLink.getMarker();
+                    if(false==cachedLinkageGroupMap.containsKey(marker)){
+                        cachedLinkageGroupMap.put(marker,MarkerService.getLinkageGroups(marker)) ;
+                    }
+                    hitLinkageGroup.addAll(cachedLinkageGroupMap.get(marker)) ;
+//                    hit.getTargetAccession().setLinkageGroups(MarkerService.getLinkageGroups(markerDBLink.getMarker()));
                 }
+                hit.getTargetAccession().setLinkageGroups(hitLinkageGroup);
             }
         }
     }

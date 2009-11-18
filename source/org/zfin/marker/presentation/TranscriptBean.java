@@ -12,6 +12,7 @@ import org.zfin.mutant.Genotype;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.SortedSet;
+import java.util.Set;
 
 /**
  */
@@ -19,9 +20,9 @@ public class TranscriptBean extends MarkerBean {
 
 
     private RelatedMarkerDisplay transcriptRelationships ;
-    private TreeSet<RelatedMarker> relatedGenes;
+    private Set<RelatedMarker> relatedGenes;
     private List<RelatedTranscriptDisplay> relatedTranscriptDisplayList;
-    private TreeSet<RelatedMarker> microRNARelatedTranscripts;
+    private Set<RelatedMarker> microRNARelatedTranscripts;
     private RelatedTranscriptDisplay relatedTranscriptDisplay;
     private SequenceInfo sequenceInfo ;
     private SummaryDBLinkDisplay summaryDBLinkDisplay;
@@ -45,11 +46,11 @@ public class TranscriptBean extends MarkerBean {
         this.transcriptRelationships = transcriptRelationships;
     }
 
-    public TreeSet<RelatedMarker> getRelatedGenes() {
+    public Set<RelatedMarker> getRelatedGenes() {
         return relatedGenes;
     }
 
-    public void setRelatedGenes(TreeSet<RelatedMarker> relatedGenes) {
+    public void setRelatedGenes(Set<RelatedMarker> relatedGenes) {
         this.relatedGenes = relatedGenes;
     }
 
@@ -61,11 +62,11 @@ public class TranscriptBean extends MarkerBean {
         this.relatedTranscriptDisplayList = relatedTranscriptDisplayList;
     }
 
-    public TreeSet<RelatedMarker> getMicroRNARelatedTranscripts() {
+    public Set<RelatedMarker> getMicroRNARelatedTranscripts() {
         return microRNARelatedTranscripts;
     }
 
-    public void setMicroRNARelatedTranscripts(TreeSet<RelatedMarker> microRNARelatedTranscripts) {
+    public void setMicroRNARelatedTranscripts(Set<RelatedMarker> microRNARelatedTranscripts) {
         this.microRNARelatedTranscripts = microRNARelatedTranscripts;
     }
 

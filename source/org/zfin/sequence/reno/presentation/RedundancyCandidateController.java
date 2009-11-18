@@ -41,13 +41,6 @@ public class RedundancyCandidateController extends AbstractCandidateController{
 
         candidateBean.setRunCandidate(rc);
 
-        RedundancyRun run = (RedundancyRun) rc.getRun();
-
-//        LOG.debug("instance of RedundancyRun: " + (run instanceof RedundancyRun));
-//        LOG.debug("Run.isRedundancy: " + run.isRedundancy());
-//        LOG.debug("Run.isNomenclature: " + run.isNomenclature());
-
-
         candidateBean.setGeneAbbreviation(rc.getCandidate().getSuggestedName());
 
         handleNote(candidateBean);
@@ -86,8 +79,8 @@ public class RedundancyCandidateController extends AbstractCandidateController{
 
         //first, check the text input box, if there's anything there, we
         //ignore the value in the pulldown
-        if (!candidateBean.getGeneZdbID().equals("")) {
-            existingGene = mr.getMarkerByID(candidateBean.getGeneZdbID());
+        if (!candidateBean.getGeneZdbID().trim().equals("")) {
+            existingGene = mr.getMarkerByID(candidateBean.getGeneZdbID().trim().toUpperCase());
         } else if (candidateBean.getAssociatedGeneField().startsWith("ZDB-")) {
             //if the text input box was null, see if an existing gene was chosen in the pulldown
             //(but don't go into this code for PROBLEM, NOVEL or IGNORE

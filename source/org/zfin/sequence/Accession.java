@@ -27,7 +27,7 @@ public class Accession implements Comparable, Serializable {
     private String defline;
     private Integer length;
     private String abbreviation;
-    private List<LinkageGroup> linkageGroups;
+    private Set<LinkageGroup> linkageGroups;
     private ReferenceDatabase referenceDatabase;
     private Set<EntrezProtRelation> relatedEntrezAccessions;
 //    private Set<Accession> relatedAccessions;
@@ -75,11 +75,11 @@ public class Accession implements Comparable, Serializable {
         this.referenceDatabase = referenceDatabase;
     }
 
-    public List<LinkageGroup> getLinkageGroups() {
+    public Set<LinkageGroup> getLinkageGroups() {
         return linkageGroups;
     }
 
-    public void setLinkageGroups(List<LinkageGroup> linkageGroups) {
+    public void setLinkageGroups(Set<LinkageGroup> linkageGroups) {
         this.linkageGroups = linkageGroups;
     }
 
