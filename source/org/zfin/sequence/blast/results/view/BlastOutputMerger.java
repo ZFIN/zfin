@@ -50,13 +50,13 @@ public class BlastOutputMerger {
         try {
             errorA =  blastOutputA.getZFINParameters().getErrorData().getContent();
         } catch (NullPointerException e) {
-            logger.warn("no error for blastA output:" + blastOutputA);
+            logger.debug("no error for blastA output:" + blastOutputA);
         }
 
         try {
             errorB =  blastOutputB.getZFINParameters().getErrorData().getContent();
         } catch (NullPointerException e) {
-            logger.warn("no error for blastB output:" + blastOutputB);
+            logger.debug("no error for blastB output:" + blastOutputB);
         }
 
         // if neither is null,then set as normal
