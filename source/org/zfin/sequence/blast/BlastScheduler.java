@@ -7,7 +7,7 @@ public class BlastScheduler implements Runnable{
     private Logger logger = Logger.getLogger(BlastScheduler.class) ;
 
     private BlastThreadCollection blastThreadCollection;
-    private int maxRunningThreads = 40 ;
+    private int maxRunningThreads = 80 ;
 
     public BlastScheduler(BlastThreadCollection blastThreadCollection){
         this.blastThreadCollection = blastThreadCollection ;
@@ -32,6 +32,8 @@ public class BlastScheduler implements Runnable{
             logger.debug("Running Threads: " + numRunningThreads);
             int threadsToSchedule = ((numQueuedThreads>maxRunningThreads+numRunningThreads)? maxRunningThreads - numRunningThreads : numQueuedThreads);
             logger.debug("threadsToSchedule: " + threadsToSchedule);
+            threadsToSchedule = (numRunningThreads>=maxRunningThreads ? 0 : threadsToSchedule) ;
+            logger.debug("revised threadsToSchedule: " + threadsToSchedule);
             try {
                 for (int scheduledThreadNumber = 0; scheduledThreadNumber < threadsToSchedule; ) {
                     BlastQueryJob blastSingleQueryJob = BlastThreadService.getNextJobInQueue(blastThreadCollection);

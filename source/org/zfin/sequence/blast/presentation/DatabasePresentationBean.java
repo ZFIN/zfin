@@ -67,8 +67,6 @@ public class DatabasePresentationBean implements Comparable<DatabasePresentation
     }
 
     public int compareTo(DatabasePresentationBean databasePresentationBean) {
-        int compareValue = 0 ;
-
         // we only compare the order, which comes from the DatabaseRelationship
         // object
         return (getOrder() - databasePresentationBean.getOrder()) ;

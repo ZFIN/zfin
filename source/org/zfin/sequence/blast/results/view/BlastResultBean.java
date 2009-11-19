@@ -4,6 +4,8 @@ import org.zfin.sequence.blast.presentation.DatabasePresentationBean;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.util.List;
+import java.util.Set;
+import java.util.Collection;
 
 /**
  *  This represents the data for a single query.

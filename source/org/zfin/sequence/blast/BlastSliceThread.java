@@ -31,42 +31,48 @@ public class BlastSliceThread extends AbstractQueryThread{
 
     public void run() {
         startBlast();
-        Unmarshaller u ;
-        BlastOutput blastOutput ;
-
         try {
-            u = getJAXBBlastContext().createUnmarshaller();
-        } catch (JAXBException e) {
-            logger.error(e.fillInStackTrace());
-            return ;
-        }
+            Unmarshaller u ;
+            BlastOutput blastOutput ;
 
-
-        try {
-
-            // so there would not be any confusion, we set to null initially
-            xmlBlastBean.setBlastOutput(null);
-
-            // exec to xml
-            String xml = null;
             try {
-                xml = MountedWublastBlastService.getInstance().robustlyBlastOneDBToString(xmlBlastBean, database);
-            } catch (BusException e) {
-                xml = e.getReturnXML() ;
-                logger.error("bus exception caught",e.fillInStackTrace());
-                xmlBlastBean.setErrorString("Some hits may not have been reported due to a system error.  You may wish to resubmit this job.");
+                u = getJAXBBlastContext().createUnmarshaller();
+            } catch (JAXBException e) {
+                finishBlast();
+                logger.error(e.fillInStackTrace());
+                return ;
             }
 
-            blastOutput = (BlastOutput) u.unmarshal(new ByteArrayInputStream(xml.getBytes()));
 
-            xmlBlastBean.setBlastOutput(blastOutput);
+            try {
+
+                // so there would not be any confusion, we set to null initially
+                xmlBlastBean.setBlastOutput(null);
+
+                // exec to xml
+                String xml = null;
+                try {
+                    xml = MountedWublastBlastService.getInstance().robustlyBlastOneDBToString(xmlBlastBean, database);
+                } catch (BusException e) {
+                    xml = e.getReturnXML() ;
+                    logger.error("bus exception caught",e.fillInStackTrace());
+                    xmlBlastBean.setErrorString("Some hits may not have been reported due to a system error.  You may wish to resubmit this job.");
+                }
+
+                blastOutput = (BlastOutput) u.unmarshal(new ByteArrayInputStream(xml.getBytes()));
+
+                xmlBlastBean.setBlastOutput(blastOutput);
+            }
+            catch (Exception bde) {
+                String errorString = "Failed to blast for ticket:" + xmlBlastBean.getTicketNumber() + "\n" + xmlBlastBean +"\n" ;
+                bde.fillInStackTrace();
+                logger.error(errorString,bde);
+            }
+        } catch (Exception e) {
+            logger.error("problem running BlastSliceThread: "+xmlBlastBean,e.fillInStackTrace());
+        } finally {
+            finishBlast();
         }
-        catch (Exception bde) {
-            String errorString = "Failed to blast for ticket:" + xmlBlastBean.getTicketNumber() + "\n" + xmlBlastBean +"\n" ;
-            bde.fillInStackTrace();
-            logger.error(errorString,bde);
-        }
-        finishBlast();
     }
 
     public void finishBlast(){

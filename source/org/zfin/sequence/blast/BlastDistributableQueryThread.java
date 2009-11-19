@@ -59,66 +59,71 @@ public class BlastDistributableQueryThread extends AbstractQueryThread implement
     public void run() {
 
         startBlast();
-        // 1. first split on each database
-        // for each database
-        List<Database> databases = xmlBlastBean.getActualDatabaseTargets();
+        try {
+// 1. first split on each database
+            // for each database
+            List<Database> databases = xmlBlastBean.getActualDatabaseTargets();
 
 //         remember we are going to re-assble these later
-        for (Database database : databases) {
-            int numChunks = blastHeuristicCollection.getNumChunksForDatabase(database);
-            if (numChunks < 1) {
-                numChunks = 1;
+            for (Database database : databases) {
+                int numChunks = blastHeuristicCollection.getNumChunksForDatabase(database);
+                if (numChunks < 1) {
+                    numChunks = 1;
+                }
+
+                // 2. create chunks for each and execute
+                for (int i = 0; i < numChunks; i++) {
+                    XMLBlastBean sliceBean = xmlBlastBean.clone();
+                    sliceBean.setSliceNumber(i);
+                    sliceBean.setNumChunks(numChunks);
+
+                    BlastSliceThread blastSliceThread = new BlastSliceThread(sliceBean, database, i);
+                    blastSlices.add(blastSliceThread);
+                    (new Thread(blastSliceThread)).start();
+                    try {
+                        Thread.sleep(threadSubmitLatency);
+                    } catch (InterruptedException e) {
+                        logger.error(e);
+                    }
+                }
             }
 
-            // 2. create chunks for each and execute
-            for (int i = 0; i < numChunks; i++) {
-                XMLBlastBean sliceBean = xmlBlastBean.clone();
-                sliceBean.setSliceNumber(i);
-                sliceBean.setNumChunks(numChunks);
 
-                BlastSliceThread blastSliceThread = new BlastSliceThread(sliceBean, database, i);
-                blastSlices.add(blastSliceThread);
-                (new Thread(blastSliceThread)).start();
+            // sleep a few seconds each time
+            while (BlastThreadService.isJobInQueue(xmlBlastBean,blastSlices)) {
                 try {
-                    Thread.sleep(threadSubmitLatency);
+                    Thread.sleep(checkJobLatency);
                 } catch (InterruptedException e) {
                     logger.error(e);
                 }
             }
-        }
 
 
-        // sleep a few seconds each time
-        while (BlastThreadService.isJobInQueue(xmlBlastBean,blastSlices)) {
+            BlastOutput blastOutput = BlastOutputMerger.mergeBlastOutput(blastSlices);
+            xmlBlastBean.setBlastOutput(blastOutput);
+            xmlBlastBean.setBlastResultBean(BlastResultMapper.createBlastResultBean(blastOutput));
+
+            // the thread is done with the database so close the databse connection
+            HibernateUtil.closeSession();
+
+
             try {
-                Thread.sleep(checkJobLatency);
-            } catch (InterruptedException e) {
-                logger.error(e);
+                BufferedWriter writer = new BufferedWriter(new FileWriter(xmlBlastBean.getResultFile()));
+                if (blastOutput != null) {
+                    Marshaller u = getJAXBBlastContext().createMarshaller();
+                    u.marshal(blastOutput, new BufferedWriter(writer));
+                } else {
+                    writer.write(xmlBlastBean.getErrorString());
+                }
+                writer.close();
+            } catch (Exception e) {
+                logger.fatal("Failed to write blast result to file" , e.fillInStackTrace());
             }
-        }
-
-
-        BlastOutput blastOutput = BlastOutputMerger.mergeBlastOutput(blastSlices);
-        xmlBlastBean.setBlastOutput(blastOutput);
-        xmlBlastBean.setBlastResultBean(BlastResultMapper.createBlastResultBean(blastOutput));
-
-        // the thread is done with the database so close the databse connection
-        HibernateUtil.closeSession();
-
-
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(xmlBlastBean.getResultFile()));
-            if (blastOutput != null) {
-                Marshaller u = getJAXBBlastContext().createMarshaller();
-                u.marshal(blastOutput, new BufferedWriter(writer));
-            } else {
-                writer.write(xmlBlastBean.getErrorString());
-            }
-            writer.close();
         } catch (Exception e) {
-            logger.fatal("Failed to write blast result to file" , e.fillInStackTrace());
+            logger.error("problem running distributable blast query: "+xmlBlastBean,e.fillInStackTrace());
+        } finally {
+            finishBlast();
         }
-        finishBlast();
     }
 
 

@@ -18,6 +18,7 @@ import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.blast.WebHostDatabaseStatisticsCache;
 import org.zfin.sequence.blast.presentation.BlastPresentationService;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
+import org.zfin.sequence.blast.presentation.DatabaseNameComparator;
 import org.zfin.sequence.blast.results.*;
 
 import java.util.*;
@@ -44,6 +45,7 @@ import java.util.*;
 public class BlastResultMapper {
 
     private static final Logger logger = Logger.getLogger(BlastResultMapper.class);
+    private static DatabaseNameComparator databaseNameComparator = new DatabaseNameComparator() ;
 
     public static BlastResultBean createBlastResultBean(BlastOutput blastOutput) {
 
@@ -188,6 +190,7 @@ public class BlastResultMapper {
 
         // otherwise, we show multiple, I guess
         blastResultBean.setDatabases(BlastPresentationService.createPresentationBeansWithRemoteSize(databases));
+        Collections.sort(blastResultBean.getDatabases(), databaseNameComparator) ;
 
 
         // set the query length

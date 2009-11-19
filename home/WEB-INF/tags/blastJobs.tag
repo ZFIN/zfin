@@ -95,7 +95,7 @@ Threads Finished: ${blastStatistics.numThreads}
     </c:when>
     <c:otherwise>
 
-        ${blastJobs.jobCount} total jobs.
+        ${blastJobs.jobCount} jobs /  ${blastJobs.threadCount }  threads total. 
         <br>
         ${blastJobs.runningJobCount} jobs / ${blastJobs.runningThreadCount} threads running.
         <br>

@@ -31,6 +31,9 @@ public class BlastJobsBean {
         return BlastThreadService.getJobCount(blastThreadCollection) ;
     }
 
+    public int getThreadCount(){
+        return BlastThreadService.getThreadCount(blastThreadCollection) ;
+    }
 
     public int getRunningJobCount(){
         return BlastThreadService.getRunningJobCount(blastThreadCollection) ;

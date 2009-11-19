@@ -18,7 +18,7 @@ public class BlastThreadService {
         Iterator<BlastQueryJob> iter = blastQueryJobCollection.iterator() ;
         while(iter.hasNext()){
             BlastQueryJob blastSingleQueryThread = iter.next();
-            if(blastSingleQueryThread.isFinished() ){
+            if(blastSingleQueryThread.isFinished()){
                 iter.remove() ;
                 ++collectionCleaned ;
             }
@@ -31,11 +31,7 @@ public class BlastThreadService {
     }
 
     public static int getJobCount(Collection<BlastQueryJob> blastQueryJobCollection ) {
-        int count = 0  ;
-        for(BlastQueryJob blastSliceThread: blastQueryJobCollection){
-            count += blastSliceThread.getNumberThreads();
-        }
-        return count ;
+        return blastQueryJobCollection.size();
     }
 
     public static int getThreadCount(BlastThreadCollection blastThreadCollection) {
@@ -45,9 +41,7 @@ public class BlastThreadService {
     public static int getThreadCount(Collection<BlastQueryJob> blastQueryJobCollection) {
         int count = 0  ;
         for(BlastQueryJob blastSliceThread: blastQueryJobCollection){
-            if(false==blastSliceThread.isFinished()&& false==blastSliceThread.isRunning()){
-                count+= blastSliceThread.getNumberThreads();
-            }
+            count+= blastSliceThread.getNumberThreads();
         }
         return count ;
     }
@@ -73,7 +67,7 @@ public class BlastThreadService {
     public static int getRunningJobCount(Collection<BlastQueryJob> blastQueryJobCollection) {
         int count = 0  ;
         for(BlastQueryJob blastSliceThread: blastQueryJobCollection){
-            if(false==blastSliceThread.isFinished()&& false==blastSliceThread.isRunning()){
+            if(false==blastSliceThread.isFinished()&& blastSliceThread.isRunning()){
                 ++count ;
             }
         }
@@ -81,7 +75,7 @@ public class BlastThreadService {
     }
 
     public static int getQueuedThreadCount(BlastThreadCollection blastThreadCollection) {
-       return getQueuedThreadCount(blastThreadCollection.getQueue())  ;
+        return getQueuedThreadCount(blastThreadCollection.getQueue())  ;
     }
 
     public static int getQueuedThreadCount(Collection<BlastQueryJob> blastQueryJobCollection) {
