@@ -725,7 +725,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
                     }
                 }
             } else {
-                logger.warn("refdb not contained: " + transcriptDBLink.getReferenceDatabase().getForeignDB().getDbName());
+                logger.debug("refdb not contained: " + transcriptDBLink.getReferenceDatabase().getForeignDB().getDbName());
             }
         }
         logger.debug("Transcript!!read only sequences: " + sequences.size());
