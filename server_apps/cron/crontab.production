@@ -107,6 +107,10 @@
 10 22 * * 0 <!--|ROOT_PATH|-->/server_apps/data_transfer/Sanger/SangerFiles.pl
 #
 #
+# F        10:30pm   weekly run of validation of UniProt IDs
+#
+30 22 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/GO/validateUniprotIDsZFIN.pl
+#
 # S        10:30pm   weekly run of GO file generation
 #
 30 22 * * 0 <!--|ROOT_PATH|-->/server_apps/data_transfer/GO/go.pl
