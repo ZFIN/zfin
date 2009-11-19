@@ -37,6 +37,9 @@ public final class UpdateMicroArrayMain {
 
     ReferenceDatabase genBankGenomicDatabase  = null ;
     ReferenceDatabase genBankRNADatabase  = null ;
+    ReferenceDatabase refseqRNADatabase  = null ;
+    ReferenceDatabase mirbaseStemLoopDatabase  = null ;
+    ReferenceDatabase mirbaseMatureDatabase  = null ;
     SequenceRepository sequenceRepository = null ;
 
     MicroArrayBean microArrayBean = null ;
@@ -48,7 +51,7 @@ public final class UpdateMicroArrayMain {
 
 
     void loadGenBankDBs() throws Exception{
-        genBankLinks = sequenceRepository.getUniqueMarkerDBLinks( genBankGenomicDatabase, genBankRNADatabase) ;   // 1 - load genbank
+        genBankLinks = sequenceRepository.getUniqueMarkerDBLinks( genBankGenomicDatabase, genBankRNADatabase, refseqRNADatabase, mirbaseStemLoopDatabase, mirbaseMatureDatabase) ;   // 1 - load genbank
     }
 
 
@@ -80,6 +83,18 @@ public final class UpdateMicroArrayMain {
             genBankRNADatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
                     ForeignDBDataType.DataType.RNA,ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
             logger.debug("genBankRNADatabase: " + genBankRNADatabase) ;
+
+            refseqRNADatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.REFSEQ,
+                    ForeignDBDataType.DataType.RNA,ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+            logger.debug("refseqRNADatabase: " + refseqRNADatabase) ;
+
+            mirbaseStemLoopDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.MIRBASE_STEM_LOOP,
+                    ForeignDBDataType.DataType.RNA,ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+            logger.debug("mirbaseStemLoopDatabase: " + mirbaseStemLoopDatabase) ;
+
+            mirbaseMatureDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.MIRBASE_MATURE,
+                    ForeignDBDataType.DataType.RNA,ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+            logger.debug("mirbaseMatureDatabase: " + mirbaseMatureDatabase) ;
 
             refPub = RepositoryFactory.getPublicationRepository().getPublication(referencePubZdbID) ;
 
