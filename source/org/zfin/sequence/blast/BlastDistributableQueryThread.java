@@ -119,8 +119,6 @@ public class BlastDistributableQueryThread extends AbstractQueryThread implement
             } catch (Exception e) {
                 logger.fatal("Failed to write blast result to file" , e.fillInStackTrace());
             }
-        } catch (Exception e) {
-            logger.error("problem running distributable blast query: "+xmlBlastBean,e.fillInStackTrace());
         } finally {
             finishBlast();
         }

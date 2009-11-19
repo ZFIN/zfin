@@ -68,8 +68,6 @@ public class BlastSliceThread extends AbstractQueryThread{
                 bde.fillInStackTrace();
                 logger.error(errorString,bde);
             }
-        } catch (Exception e) {
-            logger.error("problem running BlastSliceThread: "+xmlBlastBean,e.fillInStackTrace());
         } finally {
             finishBlast();
         }
