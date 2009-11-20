@@ -48,7 +48,7 @@ if [ "${HOST}" == "embryonix" ]; then
 		rm -f $TO_DIRECTORY/unreleased*
 		rm -f $TO_DIRECTORY/published*
 		
-		svn up $WEBHOST_BLAST_DATABASE_PATH/Current/
+		svn up --accept 'theirs-full' $WEBHOST_BLAST_DATABASE_PATH/Current/
 		echo updated Curated blastdbs to most recent version
 		
 	    else
