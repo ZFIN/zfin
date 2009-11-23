@@ -811,6 +811,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
 	
     	   <?MIVAR COND="$(>,$MI_CURRENTROW,1)">
 	     <tr><td>&nbsp;</td>
+
            <?/MIVAR>
  
       	   <td>
@@ -823,8 +824,20 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
             &nbsp;&nbsp;&nbsp;
         
 	    <?MIVAR COND="$(NC,$genovw_sup_src_url,)">
-             (<A HREF="$genovw_sup_src_url$OID">$genovw_sup_src_display</A>)
-            <?/MIVAR>
+
+	      <?MIBLOCK COND="$(EC,$genovw_sup_zdb_id,ZDB-LAB-991005-53)">
+
+
+		<?MIVAR NAME=urlPrefix>OID=<?/MIVAR>
+
+	                <?MIVAR>(<A HREF="$genovw_sup_src_url$urlPrefix$OID">$genovw_sup_src_display</A>)<?/MIVAR>
+
+			
+	    <?MIELSE>
+			<?MIVAR>(<A HREF="$genovw_sup_src_url$OID">$genovw_sup_src_display</A>)<?/MIVAR>
+
+	    <?/MIBLOCK>
+	    <?/MIVAR>
           </td>
         </tr>
        <?/MISQL> 
@@ -840,14 +853,15 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
       <tr><td nowrap>Lines carrying the following genetic features are available from: </td>
       <?MIVAR NAME=genovw_ftr_sup_exist>f<?/MIVAR>
       <?MISQL SQL="
-        select feature_zdb_id, feature_name
+        select feature_zdb_id, feature_name,feature_abbrev
           from genotype_feature, feature
          where genofeat_geno_zdb_id = '$OID'
            and genofeat_feature_zdb_id = feature_zdb_id
         order by feature_name_order;">
 
      	<?MIVAR NAME=genovw_ftr_zdb_id>$1<?/MIVAR>
-   	<?MIVAR NAME=genovw_ftr_name>$2<?/MIVAR>	      
+   	<?MIVAR NAME=genovw_ftr_name>$2<?/MIVAR>
+	<?MIVAR NAME=genovw_ftr_abbrev>$3<?/MIVAR>
 
         <?MISQL SQL="
         select idsup_supplier_zdb_id, idsup_avail_state,
@@ -884,6 +898,14 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
            &nbsp;&nbsp;&nbsp;
         
 	   <?MIVAR COND="$(NC,$genovw_ftr_sup_src_url,)">
+	      <?MIBLOCK COND="$(EC,$genovw_ftr_sup_zdb_id,ZDB-LAB-991005-53)">
+
+
+		<?MIVAR NAME=urlPrefix>Allele=<?/MIVAR>
+                <?MIVAR>(<A HREF="$genovw_ftr_sup_src_url$urlPrefix$genovw_ftr_abbrev">$genovw_ftr_sup_src_display</A>)<?/MIVAR>
+
+             <?MIELSE>
+
              <?MIBLOCK COND="$(EC,$genovw_ftr_sup_zdb_id,ZDB-LAB-990225-6)">
                <?MISQL SQL="select mrkr_abbrev from
                             feature_marker_relationship, marker
