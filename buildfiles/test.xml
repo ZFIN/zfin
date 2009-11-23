@@ -68,7 +68,7 @@
                includeAntRuntime="no"
                memoryMaximumSize="256m"
                debug="true"
-               target="1.5"/>
+               target="1.6"/>
     </target>
 
     <target name="preptagunit" depends="compile-tagunit" description="Prepares to run the unit test related to JSP tags.
@@ -149,9 +149,9 @@ test(s) need to be run before committing changes or pushing files to production 
                fork="yes"
                includeAntRuntime="no"
                memoryMaximumSize="256m"
-               source="1.5"
+               source="1.6"
                debug="true"
-               target="1.5"/>
+               target="1.6"/>
         <!--
                         deprecation="${javac.deprecation}"
                         debug="${javac.debug}"/>

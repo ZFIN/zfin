@@ -165,8 +165,8 @@
                  verbose="0"
                  listErrors="true"
                  compile="false"
-                 compilerSourceVM="1.5"
-                 compilerTargetVM="1.5"
+                 compilerSourceVM="1.6"
+                 compilerTargetVM="1.6"
                 />
         <javac srcdir="${pre.jsp-compile}"
               destdir="${pre.jsp-compile}"
@@ -175,7 +175,7 @@
               includeAntRuntime="no"
               memoryMaximumSize="256m"
               debug="true"
-              target="1.5"/>
+              target="1.6"/>
 	<echo message=":JSP COMPILE SUCCESSFUL:"/>
     </target>
 

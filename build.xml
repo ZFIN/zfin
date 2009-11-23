@@ -65,7 +65,7 @@
                includeAntRuntime="no"
                memoryMaximumSize="256m"
                debug="true"
-               target="1.5"/>
+               target="1.6"/>
 	<echo message=":JAVA COMPILE SUCCESSFUL:"/>
     </target>
 
@@ -78,7 +78,7 @@
                includeAntRuntime="no"
                memoryMaximumSize="256m"
                debug="true"
-               target="1.5"/>
+               target="1.6"/>
     </target>
 
     <target name="remove-pre-and-post-targets" description="Remove the pre-WEB-INF folder if exists. It is used for the new build version">
