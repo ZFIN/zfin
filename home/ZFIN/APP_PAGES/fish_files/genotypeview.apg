@@ -906,23 +906,25 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
 
              <?MIELSE>
 
-             <?MIBLOCK COND="$(EC,$genovw_ftr_sup_zdb_id,ZDB-LAB-990225-6)">
-               <?MISQL SQL="select mrkr_abbrev from
+               <?MIBLOCK COND="$(EC,$genovw_ftr_sup_zdb_id,ZDB-LAB-990225-6)">
+                  <?MISQL SQL="select mrkr_abbrev from
                             feature_marker_relationship, marker
                             where fmrel_ftr_zdb_id='$genovw_ftr_zdb_id'
                             and fmrel_mrkr_zdb_id=mrkr_zdb_id">
                            <?MIVAR NAME=$genovw_sup_mrkr_abbrev>$1<?/MIVAR>
-               <?/MISQL>
-             <?MIVAR>	(<A HREF="$genovw_ftr_sup_src_url$genovw_sup_mrkr_abbrev">$genovw_ftr_sup_src_display</A>)<?/MIVAR>
-             <?MIELSE>
-             <?MIVAR>	(<A HREF="$genovw_ftr_sup_src_url$genovw_ftr_sup_acc_num">$genovw_ftr_sup_src_display</A>)<?/MIVAR>
-             <?/MIBLOCK>
+                   <?/MISQL>
+                    <?MIVAR>	(<A HREF="$genovw_ftr_sup_src_url$genovw_sup_mrkr_abbrev">$genovw_ftr_sup_src_display</A>)<?/MIVAR>
+                <?MIELSE>
+                    <?MIVAR>	(<A HREF="$genovw_ftr_sup_src_url$genovw_ftr_sup_acc_num">$genovw_ftr_sup_src_display</A>)<?/MIVAR>
+               <?/MIBLOCK>
+  	     <?/MIBLOCK>
            <?/MIVAR>
          </td>
          </tr>
         
+  
         <?/MISQL> <?MICOMMENT> -- end inner sql for feature supplier -- <?/MICOMMENT>
-
+	
        <?/MISQL> <?MICOMMENT> -- end  sql for getting features -- <?/MICOMMENT>
        <?MIVAR COND=$(EC,$genovw_ftr_sup_exist,f)>
 	  <td> Not specified </td></tr>
