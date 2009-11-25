@@ -135,8 +135,37 @@ $ENV{"DATABASE"}="<!--|DB_NAME|-->";
 system("/bin/rm -f *.plain") and die "can not rm old plain data file";
 system("/bin/rm -f *.unl") and die "can not rm old unl data file";
 
-sendErrorReport ("unloadZFINuniprotIDs.sql failed") if 
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess zfindb unloadZFINuniprotIDs.sql" );
+### open a handle on the db
+$dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
+                       '', 
+                       '',                     
+		       {AutoCommit => 1,RaiseError => 1}
+		      ) ; 
+  
+$cur = $dbh->prepare('select distinct dblink_acc_num 
+                        from db_link, foreign_db_contains, foreign_db 
+                       where dblink_fdbcont_zdb_id = fdbcont_zdb_id 
+                         and fdbcont_fdb_db_id = fdb_db_pk_id 
+                         and fdb_db_name = "UniProtKB";');
+
+$cur->execute;
+
+$cur->bind_columns(\$acc);
+    
+### get all UniProt IDs at ZFIN
+%zfinUniProtIDs = ();
+$ctZfinUniProtIDs = 0;
+while ($cur->fetch) {
+  $ctZfinUniProtIDs++;
+  $zfinUniProtIDs{$acc} = 1;
+}
+
+$dbh->disconnect();  
+
+print "Total number of UniProt IDs at ZFIN: $ctZfinUniProtIDs\n";
+
+open (SUM, ">validationSummaryReport.txt") || die "Cannot open validationSummaryReport.txt : $!\n";  
+print SUM "Total number of UniProt IDs at ZFIN: $ctZfinUniProtIDs\n";
 
 $url = "ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_sprot.dat.gz";
 print "\nDownloading uniprot_sprot.dat.gz ...\n\n";
@@ -203,38 +232,18 @@ while (<UNIPROT2>) {
 
 close(UNIPROT2);
 
-open (SUM, ">validationSummaryReport.txt") || die "Cannot open validationSummaryReport.txt : $!\n";  
-
 print "Total number of primary UniProt IDs in the two updated external files, uniprot_sprot.dat and uniprot_trembl.dat: $ct1\n";
 print "Total number of secondary UniProt IDs in the two updated external files, uniprot_sprot.dat and uniprot_trembl.dat: $ct2\n";
 
 print SUM "Total number of primary UniProt IDs in the two updated external files, uniprot_sprot.dat and uniprot_trembl.dat: $ct1\n";
 print SUM "Total number of secondary UniProt IDs in the two updated external files, uniprot_sprot.dat and uniprot_trembl.dat: $ct2\n";
 
-open (INP, "allZFINuniprotIDs.unl") || die "Can't open allZFINuniprotIDs.unl : $!\n";
-@lines=<INP>;
-close(INP);
-
-# get all UniProt IDs at ZFIN
-%zfinUniProtIDs = ();
-$ctZfinUniProtIDs = 0;
-foreach $line (@lines) {
-  $ctZfinUniProtIDs++;
-  @fields = split(/\|/, $line);
-  $zfinUniProtIDs{$fields[0]} = 1;
-}
-
-print "Total number of UniProt IDs at ZFIN: $ctZfinUniProtIDs\n";
-print SUM "Total number of UniProt IDs at ZFIN: $ctZfinUniProtIDs\n";
-
-open (OUTPUT, ">ZFINuniprotIDs") || die "Cannot open ZFINuniprotIDs : $!\n";
 
 %validPrimaryIDs = %validSecondaryIDs = %invalidIDs = ();
 $ctValidPrimaryIDs = $ctValidSecondaryIDs = $ctInvalidUniProIDs = 0;
 
 # validation process
 foreach $zfinUniProtID (keys %zfinUniProtIDs) {
-  print OUTPUT "$zfinUniProtID\n";
   if (exists($uniprotPrimaryIDs{$zfinUniProtID})) {
     $ctValidPrimaryIDs++;
     $validPrimaryIDs{$zfinUniProtID} = 1;
@@ -246,8 +255,6 @@ foreach $zfinUniProtID (keys %zfinUniProtIDs) {
     $invalidIDs{$zfinUniProtID} = 1;    
   }  
 }
-
-close(OUTPUT);
 
 open (PRI, ">validPrimaryIDs") || die "Cannot open validPrimaryIDs : $!\n";
 foreach $validPrimaryID (keys %validPrimaryIDs) {
