@@ -75,7 +75,7 @@ public class Citexplore {
                         printStatus( counter,initSize) ;
                     }
                 }catch(Exception e){
-                    logger.error("protocol exception getting doi for pub: " + publication);
+                    logger.error("protocol exception getting doi for pub: " + publication,e.fillInStackTrace());
                 }
             }
         }
