@@ -13,7 +13,7 @@
 #         invalid), if any, will be found weekly.      
 
 use MIME::Lite;
-
+use DBI;
 
 # ----------------- Send Error Report -------------
 # Parameter
@@ -132,15 +132,15 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $ENV{"DATABASE"}="<!--|DB_NAME|-->";
 
 # remove old files 
-system("/bin/rm -f *.plain") and die "can not rm old plain data file";
-system("/bin/rm -f *.unl") and die "can not rm old unl data file";
+system("/bin/rm -f *.plain") and die "can not rm old plain data files";
 
 ### open a handle on the db
 $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
                        '', 
                        '',                     
 		       {AutoCommit => 1,RaiseError => 1}
-		      ) ; 
+		      ) 
+|| sendErrorReport("Failed while connecting to <!--|DB_NAME|-->"); 
   
 $cur = $dbh->prepare('select distinct dblink_acc_num 
                         from db_link, foreign_db_contains, foreign_db 
@@ -169,16 +169,16 @@ print SUM "Total number of UniProt IDs at ZFIN: $ctZfinUniProtIDs\n";
 
 $url = "ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_sprot.dat.gz";
 print "\nDownloading uniprot_sprot.dat.gz ...\n\n";
-sendErrorReport ("downloading uniprot_sprot.dat.gz failed") if 
+sendErrorReport("downloading uniprot_sprot.dat.gz failed") if 
   system("/local/bin/wget -q $url -O uniprot_sprot.plain.gz");
-sendErrorReport ("unzipping uniprot_sprot.dat.gz failed") if 
+sendErrorReport("unzipping uniprot_sprot.dat.gz failed") if 
   system("/local/bin/gunzip uniprot_sprot.plain.gz");
 
 $url = "ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_trembl.dat.gz";
 print "\nDownloading uniprot_trembl.dat.gz ...\n\n";
-sendErrorReport ("downloading uniprot_trembl.dat.gz failed") if 
+sendErrorReport("downloading uniprot_trembl.dat.gz failed") if 
   system("/local/bin/wget -q $url -O uniprot_trembl.plain.gz");
-sendErrorReport ("unzipping uniprot_trembl.dat.gz failed") if 
+sendErrorReport("unzipping uniprot_trembl.dat.gz failed") if 
   system("/local/bin/gunzip uniprot_trembl.plain.gz");
 
 print "\nSuccessfully downloaded and decompressed \n\n";
