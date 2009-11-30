@@ -57,7 +57,8 @@ public abstract class ExternalNote {
     }
 
     public enum Type{
-        ORTHOLOGY("orthology");
+        ORTHOLOGY("orthology"),
+        ANTIBODY("antibody");
 
         private String value;
 

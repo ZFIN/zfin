@@ -344,8 +344,10 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
         // check if the the pubs used are different from the default publication list.
         boolean defaultPubsOnly = true;
         for (Publication publication : mostRecentPubs) {
+            if(publication == null)
+                    continue;
             // if a non-default publication is found continue otherwise only
-            //return the detfault list
+            //return the default list
             if (!entries.containsKey(publication.getZdbID())) {
                 defaultPubsOnly = false;
                 break;

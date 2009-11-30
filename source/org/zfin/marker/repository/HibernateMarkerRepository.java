@@ -380,26 +380,27 @@ public class HibernateMarkerRepository implements MarkerRepository {
         LOG.debug("enter addExtDataNote");
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         Person currentUser = Person.getCurrentSecurityUser() ;
-        AntibodyExternalNote extnote = new AntibodyExternalNote();
-        extnote.setAntibody(antibody);
-        extnote.setNote(note);
-        HibernateUtil.currentSession().save(extnote);
+        AntibodyExternalNote externalNote = new AntibodyExternalNote();
+        externalNote.setAntibody(antibody);
+        externalNote.setNote(note);
+        externalNote.setType(ExternalNote.Type.ANTIBODY.toString());
+        HibernateUtil.currentSession().save(externalNote);
         if (!sourceZdbID.equals("")) {
             PublicationAttribution pa = new PublicationAttribution();
             PublicationRepository pr = RepositoryFactory.getPublicationRepository();
             Publication publication = pr.getPublication(sourceZdbID);
             pa.setPublication(publication);
-            pa.setDataZdbID(extnote.getZdbID());
+            pa.setDataZdbID(externalNote.getZdbID());
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
             Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
             pubattr.add(pa);
-            extnote.setPubAttributions(pubattr);
+            externalNote.setPubAttributions(pubattr);
             if (antibody.getExternalNotes() == null) {
                 Set<AntibodyExternalNote> abExtNote = new HashSet<AntibodyExternalNote>();
-                abExtNote.add(extnote);
+                abExtNote.add(externalNote);
                 antibody.setExternalNotes(abExtNote);
             } else {
-                antibody.getExternalNotes().add(extnote);
+                antibody.getExternalNotes().add(externalNote);
             }
             currentSession().save(pa);
 

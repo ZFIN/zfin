@@ -2,11 +2,14 @@ package org.zfin.antibody.repository;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
+
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.isNotEmpty;
+
 import org.zfin.Species;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
@@ -56,6 +59,37 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     public Antibody getAntibodyByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return (Antibody) session.get(Antibody.class, zdbID);
+    }
+
+    /**
+     * Retrieve an antibody by ID for displaying on the detail page.
+     * Pre-populate most of its attributes and collections for speed.
+     *
+     * @param zdbID primary key
+     * @return antibody
+     */
+    public Antibody getAntibodyByIDFullyPopulated(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria query = session.createCriteria(Antibody.class);
+        query.add(Restrictions.eq("zdbID", zdbID));
+        query.setFetchMode("externalNotes", FetchMode.JOIN);
+        query.setFetchMode("aliases", FetchMode.JOIN);
+        //query.setFetchMode("aliases.publications", FetchMode.JOIN);
+        query.setFetchMode("suppliers", FetchMode.JOIN);
+        query.setFetchMode("suppliers.organization", FetchMode.JOIN);
+        query.setFetchMode("secondMarkerRelationships", FetchMode.JOIN);
+        query.setFetchMode("antibodyLabelings", FetchMode.JOIN);
+        query.setFetchMode("antibodyLabelings.publication", FetchMode.JOIN);
+        query.setFetchMode("antibodyLabelings.assay", FetchMode.JOIN);
+        query.setFetchMode("antibodyLabelings.expressionResults", FetchMode.JOIN);
+        query.setFetchMode("antibodyLabelings.expressionResults.figures", FetchMode.JOIN);
+        query.setFetchMode("antibodyLabelings.expressionResults.figures.images", FetchMode.JOIN);
+        query.setFetchMode("antibodyLabelings.expressionResults.anatomyTerm", FetchMode.JOIN);
+        query.setFetchMode("antibodyLabelings.genotypeExperiment", FetchMode.JOIN);
+        query.setFetchMode("antibodyLabelings.genotypeExperiment.genotype", FetchMode.JOIN);
+        query.setFetchMode("antibodyLabelings.genotypeExperiment.experiment", FetchMode.JOIN);
+        return (Antibody) query.uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
@@ -564,8 +598,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     public List<Antibody> getAllAntibodies() {
-        Query query = HibernateUtil.currentSession().createQuery("from Antibody a order by a.name asc") ;
-        return query.list() ;
+        Query query = HibernateUtil.currentSession().createQuery("from Antibody a order by a.name asc");
+        return query.list();
     }
 
     /**

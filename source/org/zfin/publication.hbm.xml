@@ -23,9 +23,13 @@
             <column name="pub_mini_ref" not-null="true"/>
         </property>
 
-        <property name="abstractText" lazy="true">
+<!-- Do not use this! When retrieving this table in a query with lots of
+     out joins the abstract has so many characters that you will get an  Informix error:
+     maximum output rowsize (32767) exceeded
+        <property name="abstractText" lazy="true" >
             <column name="pub_abstract" not-null="false"/>
         </property>
+-->
 
         <property name="publicationDate">
             <column name="pub_date"/>

@@ -28,7 +28,7 @@ public class AntibodyDetailController extends AbstractCommandController {
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         LOG.info("Start Antibody Detail Controller");
         AntibodyBean form = (AntibodyBean) command;
-        Antibody ab = antibodyRepository.getAntibodyByID(form.getAntibody().getZdbID());
+        Antibody ab = antibodyRepository.getAntibodyByIDFullyPopulated(form.getAntibody().getZdbID());
         if (ab == null)
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAntibody().getZdbID());
 

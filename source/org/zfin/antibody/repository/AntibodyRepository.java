@@ -27,6 +27,15 @@ public interface AntibodyRepository {
     public Antibody getAntibodyByID(String zdbID);
 
     /**
+     * Retrieve an antibody by ID for displaying on the detail page.
+     * Pre-populate most of its attributes and collections for speed.
+     *
+     * @param zdbID primary key
+     * @return antibody
+     */
+    public Antibody getAntibodyByIDFullyPopulated(String zdbID);
+
+    /**
      * Search for antibodies with given ab parameters and given labeling.
      *
      * @param antibody Antibody with search parameters.
