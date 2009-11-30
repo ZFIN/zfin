@@ -1,25 +1,11 @@
 package org.zfin.expression.repository;
 
-import org.hibernate.*;
-import org.junit.After;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.expression.presentation.DirectlySubmittedExpression;
-import org.zfin.expression.presentation.MarkerExpressionInstance;
-import org.zfin.expression.ExpressionService;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.marker.*;
-import org.zfin.repository.RepositoryFactory;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.apache.log4j.Logger;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
@@ -27,8 +13,11 @@ import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.curation.dto.ExperimentDTO;
 import org.zfin.curation.server.CurationExperimentRPCImpl;
 import org.zfin.expression.*;
+import org.zfin.expression.presentation.DirectlySubmittedExpression;
+import org.zfin.expression.presentation.MarkerExpressionInstance;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.publication.repository.PublicationRepository;
@@ -37,12 +26,14 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.List;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 /**
  * Test the ExpressionRepository class.
  */
 public class ExpressionRepositoryTest {
-
-    private Logger logger = Logger.getLogger(ExpressionRepositoryTest.class) ;
 
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -154,7 +145,7 @@ public class ExpressionRepositoryTest {
     }
 
 
-//    @Test
+    @Test
     public void removeExperiment() {
         String experimentID = "ZDB-XPAT-090430-4";
 
@@ -162,7 +153,6 @@ public class ExpressionRepositoryTest {
         ExpressionExperiment experiment = expRep.getExpressionExperiment(experimentID);
         try {
             expRep.deleteExpressionExperiment(experiment);
-            tx.commit();
         } finally {
             tx.rollback();
         }
@@ -177,15 +167,14 @@ public class ExpressionRepositoryTest {
         assertNotNull(experiment);
     }
 
-//    @Test
+    @Test
     public void retrieveSingleExperimentFigureStage() {
         String experimentID = "ZDB-XPAT-050720-1";
         String startID = "ZDB-STAGE-010723-35";
         String endID = "ZDB-STAGE-010723-36";
         String figureID = "ZDB-FIG-081003-3";
 
-        ExperimentFigureStage experiment = expRep.getExperimentFigureStage(experimentID, figureID, startID, endID);
-        assertNotNull(experiment);
+        expRep.getExperimentFigureStage(experimentID, figureID, startID, endID);
     }
 
     @Test
