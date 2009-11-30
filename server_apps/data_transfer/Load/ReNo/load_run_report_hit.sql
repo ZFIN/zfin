@@ -38,7 +38,8 @@ update tmp_run set trun_query_fdbcont =
         when trun_name[1,4] = 'Vega' then(
         select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type
          where fdbdt_data_type = 'RNA'
-           and fdb_db_name = 'INTVEGA'
+--           and fdb_db_name = 'INTVEGA'
+           and fdb_db_name = 'PREVEGA'
            and fdbcont_organism_common_name = 'Zebrafish'
            and fdbdt_super_type = 'sequence'
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
@@ -287,8 +288,8 @@ select distinct
          and trpt_acc_db = 'ref'  then 'ZDB-FDBCONT-040412-38'
         when trpt_acc_type = 'nucleotide'
          and trpt_acc_db = 'gb'   then 'ZDB-FDBCONT-040412-37'
---        when trpt_acc_type = 'transcript'
---         and trpt_acc_db = 'tpe'  then 'ZDB-FDBCONT-050210-1' --TODO: should be internal prevega
+        when trpt_acc_type = 'transcript'
+         and trpt_acc_db = 'tpe'  then 'ZDB-FDBCONT-050210-1' --TODO: should be internal prevega
         else trun_query_fdbcont
     end,
     trpt_defline
