@@ -177,7 +177,7 @@ sub generateAccMrkrRelationshipFile() {
 	'ZDB-FDBCONT-040412-42',  --GenPept AA
 	'ZDB-FDBCONT-040412-47',  --UniProt AA
 	'ZDB-FDBCONT-060417-1',   --Vega_Trans Transcript
-	'ZDB-FDBCONT-071128-1',   --INTVEGA	   Transcript
+	'ZDB-FDBCONT-071128-1',   --unreleasedRNA	   Transcript
 	'ZDB-FDBCONT-050210-1'    --PREVEGA    Transcript
 )
        union

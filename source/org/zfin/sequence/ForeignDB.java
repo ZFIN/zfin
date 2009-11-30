@@ -77,7 +77,7 @@ public class ForeignDB {
         GENBANK("GenBank"),
         GENPEPT("GenPept"),
         GEO("GEO"),
-        INTVEGA("INTVEGA"),
+        UNRELEASEDRNA("UnreleasedRNA"),
         INTERPRO("InterPro"),
         MIRBASE_MATURE("miRBASE Mature"),
         MIRBASE_STEM_LOOP("miRBASE Stem Loop"),

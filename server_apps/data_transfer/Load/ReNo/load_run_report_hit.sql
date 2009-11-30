@@ -38,7 +38,6 @@ update tmp_run set trun_query_fdbcont =
         when trun_name[1,4] = 'Vega' then(
         select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type
          where fdbdt_data_type = 'RNA'
---           and fdb_db_name = 'INTVEGA'
            and fdb_db_name = 'PREVEGA'
            and fdbcont_organism_common_name = 'Zebrafish'
            and fdbdt_super_type = 'sequence'
