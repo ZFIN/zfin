@@ -13,14 +13,10 @@
     <Wiki>
         <username>@WIKI_USERNAME@</username>
         <password>@WIKI_PASSWORD@</password>
-        <hostname>@WIKI_HOSTNAME@</hostname>
-        <pushToWiki>@WIKI_PUSH_TO_WIKI@</pushToWiki>
+        <InterfaceHostname>@WIKI_HOSTNAME@</InterfaceHostname>
+        <IndexerHostname>@INDEXER_WIKI_HOSTNAME@</IndexerHostname>
+        <PushToWiki>@WIKI_PUSH_TO_WIKI@</PushToWiki>
     </Wiki>
-    <Indexer>
-        <username>@IINDEXER_WIKI_USERNAME@</username>
-        <password>@INDEXER_WIKI_PASSWORD@</password>
-        <hostname>@INDEXER_WIKI_HOSTNAME@</hostname>
-    </Indexer> 
     <Path>
         <Server name="localhost" port="8080" securePort="8443"/>
         <cookiePath>cgi-bin_frost</cookiePath>

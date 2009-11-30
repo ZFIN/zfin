@@ -1,6 +1,7 @@
 package org.zfin.datatransfer ;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.datatransfer.webservice.Citexplore;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
@@ -39,7 +40,9 @@ public class UpdateDOIMain {
      */
     private List<Publication> getPubmedIdsWithNoDOIs(){
         List<Publication> publicationList =  publicationRepository.getPublicationsWithAccessionButNoDOI(maxProcesses) ;
-        message.append("number of dois to populate:  ").append(publicationList.size() ).append("\n") ;
+        if(reportAll || CollectionUtils.isNotEmpty(publicationList)){
+            message.append("number of dois to populate:  ").append(publicationList.size() ).append("\n") ;
+        }
         return publicationList ;
     }
 
@@ -56,9 +59,7 @@ public class UpdateDOIMain {
             DOIHTTPTester httpTester = new DOIHTTPTester() ;
             publicationList = httpTester.testDOIList(publicationList) ;
             for(Publication publication: publicationList){
-                if(reportAll){
-                  message.append("added doi["+publication.getDoi()+"] for publication["+publication.getZdbID()+"]") ;
-                }
+                message.append("added doi["+publication.getDoi()+"] for publication["+publication.getZdbID()+"]") ;
             }
             updateDOIs(publicationList) ;
         }

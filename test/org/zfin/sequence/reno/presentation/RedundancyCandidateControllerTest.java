@@ -169,7 +169,7 @@ public class RedundancyCandidateControllerTest {
             Marker renoCdna = markerRepository.getMarkerByAbbreviation("MGC:test");
             logger.info("renoCdna:" + renoCdna.toString());
 
-            MarkerRelationship renoMrel = markerRepository.getSpecificMarkerRelationship(
+            MarkerRelationship renoMrel = markerRepository.getMarkerRelationship(
                     renoGene,
                     renoCdna,
                     MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
@@ -264,7 +264,7 @@ public class RedundancyCandidateControllerTest {
 
             //   logger.info("mrelDetails:" + mrelDebug.getFirstMarker().getAbbreviation() + mrelDebug.getSecondMarker().getAbbreviation());
 
-            MarkerRelationship renoMrel = markerRepository.getSpecificMarkerRelationship(
+            MarkerRelationship renoMrel = markerRepository.getMarkerRelationship(
                     renoGene,
                     renoCdna,
                     MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
@@ -353,7 +353,7 @@ public class RedundancyCandidateControllerTest {
             logger.info("novelgene zdb_id: " + renoGene.getZdbID());
             assertNotNull("renoGene", renoGene);
 
-            MarkerRelationship renoMrel = markerRepository.getSpecificMarkerRelationship(
+            MarkerRelationship renoMrel = markerRepository.getMarkerRelationship(
                     renoGene,
                     renoCdna,
                     MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
@@ -606,7 +606,7 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
             Marker gene = markerRepository.getMarkerByID("ZDB-GENE-990415-72");
             Marker cDNA = markerRepository.getMarkerByAbbreviation("MGC:test");
 
-            MarkerRelationship renoMrel = markerRepository.getSpecificMarkerRelationship(
+            MarkerRelationship renoMrel = markerRepository.getMarkerRelationship(
                     gene,
                     cDNA,
                     MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);

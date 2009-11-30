@@ -17,7 +17,6 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
-import org.zfin.marker.presentation.TranscriptAddBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.orthology.Species;
 import org.zfin.people.repository.ProfileRepository;
@@ -262,7 +261,7 @@ public class MarkerRepositoryTest {
             Clone clone = mr.getCloneById("ZDB-CDNA-040425-3060");
             Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(clone);
             assertEquals("Only one gene found", 1, genes.size());
-            MarkerRelationship mrel = mr.getSpecificMarkerRelationship(genes.iterator().next(), clone, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+            MarkerRelationship mrel = mr.getMarkerRelationship(genes.iterator().next(), clone, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
             assertEquals("Found marker relationship", "ZDB-MREL-040426-3790", mrel.getZdbID());
         }
         catch (Exception e) {

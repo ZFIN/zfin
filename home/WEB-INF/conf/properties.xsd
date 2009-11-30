@@ -6,7 +6,6 @@
             <xs:sequence>
                 <xs:element ref="Web" />
                 <xs:element ref="Wiki" />
-                <xs:element ref="Indexer" />
                 <xs:element ref="Path" />
                 <xs:element ref="Blast" />
                 <xs:element ref="Email" />
@@ -34,18 +33,9 @@
             <xs:sequence>
                 <xs:element name="username" type="xs:string"/>
                 <xs:element name="password" type="xs:string"/>
-                <xs:element name="hostname" type="xs:string"/>
-                <xs:element name="pushToWiki" type="xs:boolean" default="false"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="Indexer">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="username" type="xs:string"/>
-                <xs:element name="password" type="xs:string"/>
-                <xs:element name="hostname" type="xs:string"/>
+                <xs:element name="InterfaceHostname" type="xs:string"/>
+                <xs:element name="IndexerHostname" type="xs:string"/>
+                <xs:element name="PushToWiki" type="xs:boolean" default="false"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

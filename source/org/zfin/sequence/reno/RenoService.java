@@ -1,22 +1,21 @@
 package org.zfin.sequence.reno;
 
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerService;
-import org.zfin.marker.MarkerHistory;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.sequence.reno.presentation.CandidateBean;
-import org.zfin.sequence.blast.Query;
-import org.zfin.sequence.blast.Hit;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.LinkageGroup;
-import org.zfin.sequence.TranscriptService;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.orthology.OrthoEvidence;
-import org.zfin.publication.Publication;
-import org.zfin.people.Person;
-import org.apache.log4j.Logger;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerHistory;
+import org.zfin.marker.MarkerService;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.orthology.OrthoEvidence;
+import org.zfin.people.Person;
+import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.LinkageGroup;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.blast.Hit;
+import org.zfin.sequence.blast.Query;
+import org.zfin.sequence.reno.presentation.CandidateBean;
 
 import java.util.*;
 
@@ -25,14 +24,14 @@ import java.util.*;
  */
 public class RenoService {
 
-    private static final Logger LOG = Logger.getLogger(RenoService.class) ;
+    private static final Logger LOG = Logger.getLogger(RenoService.class);
 
-    private static Map<Marker,Set<LinkageGroup>> cachedLinkageGroupMap = new HashMap<Marker,Set<LinkageGroup>>();
+    private static Map<Marker, Set<LinkageGroup>> cachedLinkageGroupMap = new HashMap<Marker, Set<LinkageGroup>>();
 
     public static List<Marker> checkForExistingRelationships(CandidateBean candidateBean, RunCandidate rc) {
         List<Marker> associatedMarkers = rc.getAllSingleAssociatedGenesFromQueries();
         List<Marker> identifiedMarkers = rc.getIdentifiedMarkers();
-        List<Marker> smallSegments = getSmallSegments(identifiedMarkers);
+        List<Marker> smallSegments = getRelatedMarkers(identifiedMarkers);
         candidateBean.setSmallSegments(smallSegments);
 
         if (associatedMarkers != null) {
@@ -40,7 +39,7 @@ public class RenoService {
                 MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
                 for (Marker smallSegment : smallSegments) {
                     boolean hasRelationship = markerRepository.hasSmallSegmentRelationship(associatedMarker, smallSegment);
-                    if(hasRelationship){
+                    if (hasRelationship) {
                         candidateBean.addMessage("This candidate already has a small-segment relationship to " +
                                 associatedMarker.getAbbreviation());
                     }
@@ -50,10 +49,10 @@ public class RenoService {
         return associatedMarkers;
     }
 
-    public static List<Marker> getSmallSegments(List<Marker> identifiedMarkers) {
-        List<Marker> segments = getSmallSegementClones(identifiedMarkers) ;
-        if(CollectionUtils.isEmpty(segments)){
-            segments = getTranscriptProducts(identifiedMarkers) ;
+    public static List<Marker> getRelatedMarkers(List<Marker> identifiedMarkers) {
+        List<Marker> segments = getSmallSegementClones(identifiedMarkers);
+        if (CollectionUtils.isEmpty(segments)) {
+            segments = getTranscriptProducts(identifiedMarkers);
         }
         return segments;
     }
@@ -71,7 +70,6 @@ public class RenoService {
         LOG.debug("createRelationships segments.size(): " + segments.size());
         return segments;
     }
-
 
 
     public static List<Marker> getTranscriptProducts(List<Marker> markers) {
@@ -131,14 +129,14 @@ public class RenoService {
                 Set<MarkerDBLink> markerDBLinks = hit.getTargetAccession().getBlastableMarkerDBLinks();
                 LOG.debug("popularLinkageGroups markerDBLinks.size: " + markerDBLinks.size());
 
-                Set<LinkageGroup> hitLinkageGroup = new TreeSet<LinkageGroup>() ;
+                Set<LinkageGroup> hitLinkageGroup = new TreeSet<LinkageGroup>();
                 for (MarkerDBLink markerDBLink : markerDBLinks) {
                     LOG.debug("popularLinkageGroups markerDBLink: " + markerDBLink.getZdbID());
                     Marker marker = markerDBLink.getMarker();
-                    if(false==cachedLinkageGroupMap.containsKey(marker)){
-                        cachedLinkageGroupMap.put(marker,MarkerService.getLinkageGroups(marker)) ;
+                    if (false == cachedLinkageGroupMap.containsKey(marker)) {
+                        cachedLinkageGroupMap.put(marker, MarkerService.getLinkageGroups(marker));
                     }
-                    hitLinkageGroup.addAll(cachedLinkageGroupMap.get(marker)) ;
+                    hitLinkageGroup.addAll(cachedLinkageGroupMap.get(marker));
 //                    hit.getTargetAccession().setLinkageGroups(MarkerService.getLinkageGroups(markerDBLink.getMarker()));
                 }
                 hit.getTargetAccession().setLinkageGroups(hitLinkageGroup);
@@ -151,7 +149,7 @@ public class RenoService {
         Publication pub = new Publication();
         pub.setZdbID(attributionZdbID);
         RepositoryFactory.getMarkerRepository().renameMarker(gene, pub, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
-        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(gene, "data_alias", "", currentUser,"","");
+        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(gene, "data_alias", "", currentUser, "", "");
 //        ir.insertUpdatesTable(geneToRename.getZdbID(),"dalias_alias",geneToRename.getAbbreviation(),"",rc.getLockPerson().getZdbID(),rc.getLockPerson().getName());
 
     }

@@ -21,7 +21,7 @@
     </zfin:geneRelationLink>
     <br>
 
-    <b>Query:</b> <zfin:link entity="${query.accession}"/> <zfin:geneRelationLink accession="${query.accession}" showParent="true"/><br>
+    <b>Query:</b> <zfin:link entity="${query.accession}"/> <zfin:geneRelationLink accession="${query.accession}" showParenthesis="true"/><br>
 
     ${query.accession.defline}
 

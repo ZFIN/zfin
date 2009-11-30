@@ -125,7 +125,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-    public MarkerRelationship getSpecificMarkerRelationship(Marker marker1, Marker marker2, MarkerRelationship.Type type) {
+    public MarkerRelationship getMarkerRelationship(Marker marker1, Marker marker2, MarkerRelationship.Type type) {
         Session session = currentSession();
         Criteria criteria = session.createCriteria(MarkerRelationship.class);
         criteria.add(Restrictions.eq("firstMarker", marker1));

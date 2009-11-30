@@ -1,6 +1,5 @@
-package org.zfin.framework.scheduling.blast;
+package org.zfin.sequence.blast;
 
-import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.apache.log4j.Logger;
@@ -9,17 +8,17 @@ import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.properties.ZfinProperties;
-import org.zfin.sequence.blast.BlastServerSGEWublastService;
-import org.zfin.sequence.blast.MountedWublastBlastService;
 import org.hibernate.SessionFactory;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.util.List;
 
 /**
  */
-public class ValidateRemoteDatabases extends QuartzJobBean {
+public class ValidateBlastDatabases extends QuartzJobBean {
 
-    private Logger logger  = Logger.getLogger(ValidateRemoteDatabases.class) ;
+    private Logger logger  = Logger.getLogger(ValidateBlastDatabases.class) ;
+
 
     public void validateDatabase(){
         List<String> failures = MountedWublastBlastService.getInstance().validateAllPhysicalDatabasesReadable() ;
@@ -44,38 +43,39 @@ public class ValidateRemoteDatabases extends QuartzJobBean {
         validateDatabase();
     }
 
+
     public void initDatabase(){
         String[] hibernateConfiguration =
-            new String[]{
-                    "filters.hbm.xml",
-                    "antibody.hbm.xml",
-                    "anatomy.hbm.xml",
-                    "blast.hbm.xml",
-                    "expression.hbm.xml",
-                    "general.hbm.xml",
-                    "infrastructure.hbm.xml",
-                    "mapping.hbm.xml",
-                    "marker.hbm.xml",
-                    "mutant.hbm.xml",
-                    "orthology.hbm.xml",
-                    "people.hbm.xml",
-                    "publication.hbm.xml",
-                    "reno.hbm.xml",
-                    "sequence.hbm.xml",
-            };
+                new String[]{
+                        "filters.hbm.xml",
+                        "antibody.hbm.xml",
+                        "anatomy.hbm.xml",
+                        "blast.hbm.xml",
+                        "expression.hbm.xml",
+                        "general.hbm.xml",
+                        "infrastructure.hbm.xml",
+                        "mapping.hbm.xml",
+                        "marker.hbm.xml",
+                        "mutant.hbm.xml",
+                        "orthology.hbm.xml",
+                        "people.hbm.xml",
+                        "publication.hbm.xml",
+                        "reno.hbm.xml",
+                        "sequence.hbm.xml",
+                };
 
-            SessionFactory sessionFactory=HibernateUtil.getSessionFactory();
+        SessionFactory sessionFactory=HibernateUtil.getSessionFactory();
 
-            if(sessionFactory == null){
-                new HibernateSessionCreator(false,hibernateConfiguration) ;  
+        if(sessionFactory == null){
+            new HibernateSessionCreator(false,hibernateConfiguration) ;
 
             ZfinProperties.init("test","zfin-properties-test.xml");
         }
     }
 
     public static void main(String args[]){
-       ValidateRemoteDatabases validateRemoteDatabases = new ValidateRemoteDatabases() ;
-        validateRemoteDatabases.initDatabase();
-        validateRemoteDatabases.validateDatabase();
-   }
+        ValidateBlastDatabases validateBlastDatabases = new ValidateBlastDatabases() ;
+        validateBlastDatabases.initDatabase();
+        validateBlastDatabases.validateDatabase();
+    }
 }

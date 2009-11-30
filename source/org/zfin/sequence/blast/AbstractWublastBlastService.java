@@ -380,12 +380,13 @@ public abstract class AbstractWublastBlastService implements BlastService {
         return tempFile;
     }
 
-    public void validateCuratedDatabases() throws BlastDatabaseException {
+    public boolean validateCuratedDatabases() throws BlastDatabaseException {
         List<Database> databases = RepositoryFactory.getBlastRepository().getDatabaseByOrigination(Origination.Type.CURATED);
         for (Database database : databases) {
             logger.info("validating: " + database.getName());
             validateDatabase(database);
         }
+        return true ;
     }
 
 

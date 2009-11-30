@@ -347,7 +347,7 @@ public class MarkerService {
      */
     public static void addMarkerRelationshipAttribution(Marker marker1, Marker marker2, String pubZdbID,
                                           MarkerRelationship.Type markerRelationshipType){
-        MarkerRelationship markerRelationship = RepositoryFactory.getMarkerRepository().getSpecificMarkerRelationship(marker1,marker2,markerRelationshipType) ;
+        MarkerRelationship markerRelationship = RepositoryFactory.getMarkerRepository().getMarkerRelationship(marker1,marker2,markerRelationshipType) ;
         //now deal with attribution
         if(pubZdbID!=null && pubZdbID.length()>0){
             infrastructureRepository.insertRecordAttribution(markerRelationship.getZdbID(), pubZdbID);
@@ -363,7 +363,7 @@ public class MarkerService {
      */
     public static void deleteMarkerRelationshipAttribution(Marker marker1, Marker marker2, String pubZdbID,
                                              MarkerRelationship.Type markerRelationshipType){
-        MarkerRelationship markerRelationship = markerRepository.getSpecificMarkerRelationship(marker1,marker2,markerRelationshipType) ;
+        MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1,marker2,markerRelationshipType) ;
 
         //now deal with attribution
         if(pubZdbID!=null && pubZdbID.length()>0){
@@ -385,7 +385,7 @@ public class MarkerService {
      * @param type type of relationship
      */
     public static void deleteMarkerRelationship(Marker marker1, Marker marker2, MarkerRelationship.Type type) {
-        MarkerRelationship mrel = RepositoryFactory.getMarkerRepository().getSpecificMarkerRelationship(marker1, marker2, type);
+        MarkerRelationship mrel = RepositoryFactory.getMarkerRepository().getMarkerRelationship(marker1, marker2, type);
         deleteMarkerRelationship(mrel);
     }
 

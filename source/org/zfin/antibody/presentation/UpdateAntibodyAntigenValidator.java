@@ -8,7 +8,6 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.antibody.Antibody;
-import org.zfin.infrastructure.DataAlias;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.apache.commons.lang.StringUtils;
@@ -49,7 +48,7 @@ public class UpdateAntibodyAntigenValidator implements Validator {
         Antibody antibodytoUpdate = antibodyRepository.getAntibodyByID(formBean.getAntibody().getZdbID());
         Marker m=mr.getMarkerByAbbreviation(formBean.getNewAntigenGene());
          if (m != null) {
-        MarkerRelationship mrel=mr.getSpecificMarkerRelationship(antibodytoUpdate,m,MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
+        MarkerRelationship mrel=mr.getMarkerRelationship(antibodytoUpdate,m,MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
         if (mrel!=null) {
              errors.rejectValue("newAntigenGene", "code", " This antigen gene already exists for this antibody");
         }

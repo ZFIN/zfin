@@ -14,6 +14,7 @@ public class QuartzJobsCommandBean {
     private String group ;
     private Set<QuartzJobInfo> quartzJobInfoList;
     private String message ;
+    private boolean jobsRunning ;
 
     public String getAction() {
         return action;
@@ -53,6 +54,14 @@ public class QuartzJobsCommandBean {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public boolean isJobsRunning() {
+        return jobsRunning;
+    }
+
+    public void setJobsRunning(boolean jobsRunning) {
+        this.jobsRunning = jobsRunning;
     }
 
     public void clearLastAction() {

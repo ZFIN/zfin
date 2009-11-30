@@ -7,6 +7,7 @@
     <!-- register them in the scheduler -->
     <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <!-- name used to publish applicationContext to Quartz Job instances, so they can call business services -->
+        <property name="autoStartup" value="@RUN_QUARTZ_JOBS@"/>
         <property name="triggers">
             <list>
                 <ref bean="regenerateWebHostDatabasesDaily"/>
@@ -34,7 +35,7 @@
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Regenerate WebHost Curated Databases"/>
-                <property name="jobClass" value="org.zfin.framework.scheduling.blast.RegenerateWebHostCuratedDatabasesJob"/>
+                <property name="jobClass" value="org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob"/>
             </bean>
         </property>
         <!--a nice lookup-->
@@ -47,7 +48,7 @@
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Validate Blast Databases"/>
-                <property name="jobClass" value="org.zfin.framework.scheduling.blast.ValidateRemoteDatabases"/>
+                <property name="jobClass" value="org.zfin.sequence.blast.ValidateBlastDatabases"/>
             </bean>
         </property>
         <!--a nice lookup-->

@@ -32,8 +32,8 @@ public class TranscriptService {
         return relatedMarkers;
     }
 
-    public static Set<Marker> getRelatedGenesFromTranscript(Transcript transcript) {
-        Set<RelatedMarker> relatedMarkers = MarkerService.getRelatedMarkers(transcript,MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+    public static Set<Marker> getRelatedGenesFromTranscript(Marker marker) {
+        Set<RelatedMarker> relatedMarkers = MarkerService.getRelatedMarkers(marker,MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
         Set<Marker> genes = new TreeSet<Marker>() ;
         for(RelatedMarker relatedMarker:relatedMarkers){
             genes.add(relatedMarker.getMarkerRelationship().getFirstMarker());

@@ -106,7 +106,7 @@ public interface BlastService {
      * Validates all loaded and curated databases to make sure that the number of accessions matches.
      * @throws BlastDatabaseException Operation failure.
      */
-    void validateCuratedDatabases() throws BlastDatabaseException;
+    boolean validateCuratedDatabases() throws BlastDatabaseException;
 
     /**
      * Validates all physically readable databases (ie, non-generated, non-external) to make sure that

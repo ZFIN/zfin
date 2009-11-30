@@ -15,7 +15,7 @@
     </c:forEach>
     <br>
     <b>Query:</b> <zfin:link entity="${query.accession}"/>
-    <geneRelationLink accession="${query.accession}" showParent="true"/>
+    existing gene encoding(s): <zfin:geneRelationLink accession="${query.accession}" showParenthesis="true"/>
     <br>
     ${query.accession.defline}
     <c:choose>

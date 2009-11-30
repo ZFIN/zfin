@@ -320,22 +320,12 @@ public final class ZfinProperties {
 
     public static String getWikiHostname() {
         checkValidProperties();
-        return  props.getWiki().getHostname() ;
-    }
-
-    public static String getIndexerWikiUserName() {
-        checkValidProperties();
-        return  props.getIndexer().getUsername() ;
-    }
-
-    public static String getIndexerWikiPassword() {
-        checkValidProperties();
-        return  props.getIndexer().getPassword() ;
+        return  props.getWiki().getInterfaceHostname() ;
     }
 
     public static String getIndexerWikiHostname() {
         checkValidProperties();
-        return  props.getIndexer().getHostname() ;
+        return  props.getWiki().getIndexerHostname() ;
     }
 
     public static boolean isPushToWiki() {

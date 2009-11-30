@@ -36,7 +36,7 @@ public interface MarkerRepository {
     Marker getMarkerByName(String name);
 
     //Todo: should this move to another class?
-    MarkerRelationship getSpecificMarkerRelationship(Marker firstMarker,
+    MarkerRelationship getMarkerRelationship(Marker firstMarker,
                                                      Marker secondMarker,
                                                      MarkerRelationship.Type type);
 

@@ -1,5 +1,19 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<strong>Quartz Job Scheduler: </strong>
+<c:choose>
+    <c:when test="${formBean.jobsRunning}">
+        Running
+        <a href="?action=pauseAll">Pause</a>
+    </c:when>
+    <c:otherwise>
+        <a href="?action=resumeAll">Start</a>
+        Paused
+    </c:otherwise>
+</c:choose>
+<br>
+<br>
+
 
 <c:if test="${!empty formBean.message}">
     <b>Last Executed:</b> ${formBean.message}
@@ -40,7 +54,8 @@
                         Never
                     </c:when>
                     <c:otherwise>
-                        <fmt:formatDate value="${jobBean.lastExecution}" type="both" timeStyle="short" dateStyle="short"/>
+                        <fmt:formatDate value="${jobBean.lastExecution}" type="both" timeStyle="short"
+                                        dateStyle="short"/>
                     </c:otherwise>
                 </c:choose>
             </td>
@@ -50,7 +65,8 @@
                         Never
                     </c:when>
                     <c:otherwise>
-                        <fmt:formatDate value="${jobBean.nextExecution}" type="both" timeStyle="short" dateStyle="short"/>
+                        <fmt:formatDate value="${jobBean.nextExecution}" type="both" timeStyle="short"
+                                        dateStyle="short"/>
                     </c:otherwise>
                 </c:choose>
             </td>
@@ -60,7 +76,7 @@
             <td>
                 <a href="?action=run&job=${jobBean.name}">Run</a>
                 <c:choose>
-                    <c:when test="${jobBean.paused}" >
+                    <c:when test="${jobBean.paused}">
                         <a href="?action=resume&job=${jobBean.name}">Resume</a>
                     </c:when>
                     <c:otherwise>

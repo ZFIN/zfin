@@ -2,18 +2,20 @@ package org.zfin.framework.presentation.tags;
 
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerService;
+import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.TranscriptService;
+import org.zfin.repository.RepositoryFactory;
 import org.apache.log4j.Logger;
+import org.apache.commons.collections.CollectionUtils;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Creates a hyperlink for a specific type. Supported types are:
@@ -25,9 +27,21 @@ public class GeneEncodedRelationLinkTag extends BodyTagSupport {
     transient Logger logger = Logger.getLogger(GeneEncodedRelationLinkTag.class) ;
 
     private Accession accession ;
-    private boolean showParent;
+    private boolean showParenthesis;
 
     public GeneEncodedRelationLinkTag(){}
+
+    public void listMarkers(StringBuilder sb, Collection<Marker> markers){
+        if(CollectionUtils.isNotEmpty(markers)){
+            for(Iterator<Marker> iterator = markers.iterator(); iterator.hasNext() ;  ){
+                Marker marker = iterator.next();
+                sb.append(MarkerPresentation.getLink(marker));
+                if(iterator.hasNext()){
+                    sb.append(",");
+                }
+            }
+        }
+    }
 
     public int doStartTag() throws JspException {
 
@@ -44,26 +58,26 @@ public class GeneEncodedRelationLinkTag extends BodyTagSupport {
                 }
                 if(markers.size()>0){
 
-                    if (showParent) {
+                    if (showParenthesis) {
                         sb.append("(");
                     }
                     for(Marker marker: markers){
                         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                             sb.append(MarkerPresentation.getLink(marker));
-                        } else {
-//                            Marker gene = MarkerService.getRelatedGeneFromClone(marker);
-                            Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(marker);
-                            if(genes!=null){
-                                for(Marker gene: genes){
-                                    sb.append(MarkerPresentation.getLink(gene));
-                                    sb.append(",");
-                                }
-                            }
-                            sb.append(MarkerPresentation.getLink(marker));
                         }
-                    }
-                    if (showParent) {
-                        sb.append(")");
+                        else
+                        if (marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
+                            Set<Marker> genes = TranscriptService.getRelatedGenesFromTranscript(marker) ;
+                            listMarkers(sb,genes);
+                        }
+                        else {
+                            Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(marker);
+                            listMarkers(sb,genes);
+                        }
+
+                        if (showParenthesis) {
+                            sb.append(")");
+                        }
                     }
                     pageContext.getOut().print(sb);
                     release();
@@ -90,15 +104,13 @@ public class GeneEncodedRelationLinkTag extends BodyTagSupport {
         this.accession = accession;
     }
 
-    public boolean getShowParent() {
-        return showParent;
+    public boolean getShowParenthesis() {
+        return showParenthesis;
     }
 
-    public void setShowParent(boolean showParent) {
-        this.showParent = showParent;
+    public void setShowParenthesis(boolean showParenthesis) {
+        this.showParenthesis = showParenthesis;
     }
-
-
 
 
 }

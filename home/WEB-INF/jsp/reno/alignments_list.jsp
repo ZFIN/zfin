@@ -37,7 +37,7 @@
               Subject:
               <zfin:link entity="${hit.targetAccession}"/>
 
-              <zfin:geneRelationLink accession="${hit.targetAccession}"  showParent="true"/> 
+              <zfin:geneRelationLink accession="${hit.targetAccession}"  showParenthesis="true"/>
 
               <br/>
               <b>Score:</b> <c:out value="${hit.score}"/>
