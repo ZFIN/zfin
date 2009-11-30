@@ -7,7 +7,7 @@ import org.zfin.properties.ZfinProperties;
 public abstract class AbstractZfinMailSender implements MailSender {
 
     public boolean sendMail(String subject, String message, String[] recipients) {
-        return sendMail(subject, message, true, ZfinProperties.getAdminEmailAddresses()[0], recipients);
+        return sendMail(subject, message, true, ZfinProperties.getValidationOtherEmailAddresses()[0], recipients);
     }
 
 

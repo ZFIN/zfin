@@ -6,6 +6,8 @@ import org.junit.After;
 import static org.junit.Assert.* ;
 
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
+import org.zfin.marker.MarkerTypeGroup;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
@@ -13,16 +15,16 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.orthology.Species;
 import org.zfin.TestConfiguration;
-import org.hibernate.Session;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.apache.log4j.Logger;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.*;
 
@@ -47,9 +49,9 @@ import java.util.*;
          2. process added accessions
  *
  */
-public class MicroArrayTest {
+public class MicroarrayTest {
 
-    private Logger logger = Logger.getLogger(MicroArrayTest.class) ;
+    private Logger logger = Logger.getLogger(MicroarrayTest.class) ;
 
     // get reference DBs
     PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
@@ -78,30 +80,41 @@ public class MicroArrayTest {
     private Marker est ;
     private MarkerDBLink estDBLink ;
     private String estGEOAccession = ACCESSION_NUM3;
+    private Map<String,MarkerDBLink> genBankLinks ;
+    private Map<String,Collection<MarkerDBLink>> currentMicroarrayLinks ;
 
 
     // other reference variables
     private ReferenceDatabase geoDatabase ;
-    private UpdateMicroArrayMain driver ;
-    private ReferenceDatabase genBankRefDB ; 
+    private MicroarrayProcessor driver ;
+    private ReferenceDatabase genBankRefDB ;
 
 
-
-    public MicroArrayTest(){
+    public MicroarrayTest(){
         try{
-            driver = new UpdateMicroArrayMain() ;
+            driver = new org.zfin.datatransfer.MicroarrayProcessor() ;
             driver.init();  // this creates the session so I don't need to do twice
+            genBankLinks = sequenceRepository.getUniqueMarkerDBLinks( driver.getGenbankReferenceDatabases()) ;   // 1 - load genbank
+            currentMicroarrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase) ;   // 0 - load microarray
+
         }catch(Exception e){
-            logger.fatal("failed to init UpdateMicroArrayMain",e);
+            logger.fatal("failed to init MicroArrayProcessor",e);
         }
     }
 
+    static {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+
+        if (sessionFactory == null) {
+            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration());
+        }
+    }
 
 
     @Before
     public void setUp() {
         TestConfiguration.configure();
-        initTestData() ; 
+//        initTestData() ;
     }
 
     @After
@@ -127,11 +140,9 @@ public class MicroArrayTest {
             Set<String> newMicroArrayAccessions= new HashSet<String>() ;
             newMicroArrayAccessions.add( ACCESSION_NUM1 ) ;
 
-            Map<String,Collection<MarkerDBLink>> microArrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
+//            Map<String,Collection<MarkerDBLink>> microArrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
 
-
-            driver.loadGenBankDBs();
-            driver.processNewLinks(newMicroArrayAccessions,  microArrayLinks, geoDatabase);
+            driver.processNewLinks(newMicroArrayAccessions,genBankLinks,   geoDatabase);
 
             Criteria criteria = session.createCriteria(MarkerDBLink.class) ;
             criteria.add(Restrictions.eq("accessionNumber",ACCESSION_NUM1)) ;
@@ -187,9 +198,9 @@ public class MicroArrayTest {
             List<String> currentMicroArrayAccessions = new ArrayList<String>() ; // empty
             List<String> newMicroArrayAccessions= new ArrayList<String>() ;
             currentMicroArrayAccessions.add( ACCESSION_NUM1 ) ;
+            Collection<String> accessionsToRemove = CollectionUtils.subtract(currentMicroArrayAccessions,newMicroArrayAccessions) ;
 
-            driver.loadGenBankDBs();
-            driver.cleanupOldLinks( newMicroArrayAccessions , geoDatabase);
+            driver.removeMicroarrayAccessions( accessionsToRemove, new MicroarrayBean(),currentMicroarrayLinks);
             session.flush() ; 
 
             Criteria criteria = session.createCriteria(MarkerDBLink.class) ;
@@ -250,8 +261,7 @@ public class MicroArrayTest {
             newAccessions.add(cDNAGEOAccession) ;  // 2 links with ACCESSION_NUM2 go to the CDNA and the encoding gene
             newAccessions.add(estGEOAccession) ;   // 2 links with ACCESSION_NUM3 go to the EST  and the encoding gene
             driver.init() ;
-            Map<String,Collection<MarkerDBLink>> microarrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase ) ;   // 0 - load microarray
-            driver.processNewLinks(newAccessions,microarrayLinks,geoDatabase) ;
+            driver.processNewLinks(newAccessions,genBankLinks,geoDatabase) ;
             session.flush() ; 
 
             links = criteria.list() ;
@@ -362,8 +372,52 @@ public class MicroArrayTest {
         session.save(estDBLink);
     }
 
+    @Test
+    public void addMicroarrays(){
+
+        Session session = HibernateUtil.currentSession();
+        Transaction transaction = session.beginTransaction();
+        List<String> accessions = new ArrayList<String>() ;
+        accessions.add("ABC123") ;
+        accessions.add("AAA111") ;
+        accessions.add("BBB222") ;
+        try{
+
+            ReferenceDatabase geoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GEO,
+                    ForeignDBDataType.DataType.OTHER,ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.ZEBRAFISH);
+            MicroarrayProcessor microarrayProcessor = new MicroarrayProcessor();
+
+            Map<String,MarkerDBLink> genbankLinks = new HashMap<String,MarkerDBLink>() ;
+            MarkerDBLink markerDBLink = new MarkerDBLink();
+            markerDBLink.setAccessionNumber("ABC123");
+            Marker m = new Marker();
+            MarkerType markerType = new MarkerType() ;
+            markerType.setName(Marker.Type.CDNA.toString());
+            m.setMarkerType(markerType);
+
+
+            MarkerTypeGroup markerTypeGroup = new MarkerTypeGroup();
+            markerTypeGroup.setName(Marker.TypeGroup.CDNA_AND_EST.toString());
+            Set<Marker.TypeGroup> markerTypeGroupSet = new HashSet<Marker.TypeGroup>() ;
+            markerTypeGroupSet.add(Marker.TypeGroup.CDNA_AND_EST) ;
+            markerType.setTypeGroups(markerTypeGroupSet);
+
+            markerDBLink.setMarker(m);
+            markerDBLink.setLength(12);
+            genbankLinks.put("ABC123",markerDBLink) ;
+            microarrayProcessor.addMicroarrayAcessions(accessions,genBankLinks,new MicroarrayBean(),geoDatabase) ;
+        }
+        catch(Exception e){
+            fail(e.fillInStackTrace().toString()) ;
+        }
+        finally{
+            transaction.rollback();
+        }
+
+    }
+
     public static void main(String args[]){
-        GPLSoftParser1319 gplSoftParser1319 = new GPLSoftParser1319();
-        gplSoftParser1319.downloadFile() ;
+//        AffySoftParser affySoftParser = new AffySoftParser();
+//        affySoftParser.downloadFile() ;
     }
 }

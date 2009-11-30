@@ -439,5 +439,13 @@ public final class ZfinProperties {
         ZfinProperties.indexDirectory = indexDirectory;
     }
 
+//    public static boolean isQuartzEnabled(){
+//       checkValidProperties();
+//        return  props.getWeb().isQuartzEnabled() ;
+//    }
+//
+//    public static void setQuartzEnabled(boolean quartzEnabled){
+//        props.getWeb().setQuartzEnabled(quartzEnabled) ;
+//    }
 
 }

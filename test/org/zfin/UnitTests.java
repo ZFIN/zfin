@@ -35,6 +35,7 @@ import org.zfin.curation.WidgetUtilTest;
 import org.zfin.curation.ExperimentDTOTest;
 import org.zfin.curation.StageRangeUnionTest;
 import org.zfin.uniquery.SiteSearchTest;
+import org.zfin.datatransfer.MicroarrayParseTest;
 
 
 /**
@@ -61,6 +62,7 @@ import org.zfin.uniquery.SiteSearchTest;
         MarkerPresentationTest.class,
         MarkerServiceTest.class,
         Md5PasswordEncoderTest.class,
+        MicroarrayParseTest.class,
         MorpholinoStatisticsTest.class,
         OrganizationUrlTest.class,
         OrthologyEvidenceFastSearchTest.class,

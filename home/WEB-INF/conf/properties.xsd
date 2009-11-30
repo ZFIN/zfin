@@ -24,6 +24,7 @@
                 <xs:element name="linkbarColor" type="xs:string"/>
                 <xs:element name="sidebarColor" type="xs:string"/>
                 <xs:element name="domain" type="xs:string"/>
+                <!--<xs:element name="quartzEnabled" type="xs:boolean" default="false"/>-->
             </xs:sequence>
         </xs:complexType>
     </xs:element>

@@ -17,6 +17,7 @@ import org.zfin.properties.ZfinProperties;
 import org.hibernate.Session;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.CacheMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Order;
 import org.apache.log4j.Logger;
@@ -264,35 +265,19 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     /**
      * Saves a collection of MarkerDBLinks.
-     * The try catch block is within the loop because I want to report on failures directly.  
+     * The try catch block is within the loop because I want to report on failures directly.
+     * Notes from here for massive batch inserts: http://docs.jboss.org/hibernate/core/3.3/reference/en/html/batch.html
      * @param dbLinksToAdd  List of DBLinks to add
      * @param attributionPub Publication to attribute
      */
     public void addDBLinks(Collection<MarkerDBLink> dbLinksToAdd, Publication attributionPub, int commitChunk){
-        Session session = HibernateUtil.currentSession();
-        if(dbLinksToAdd!=null){
-            InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository() ;
-            int size = dbLinksToAdd.size() ;
-//            ZdbIdGenerator generator = new ZdbIdGenerator() ;
+        if(CollectionUtils.isNotEmpty(dbLinksToAdd)){
+            Session session = HibernateUtil.currentSession();
             try{
-
-                long startTime ;
-                long currentTime  ;
-
-//                Set<String> zdbIDs = generator.generateZdbIDs( (SessionImplementor) session,dbLinksToAdd.size(),"DBLINK",true,false);
-//                Set<String> zdbIDs = new HashSet<String>() ;
-
-//                Iterator<String> zdbIDIter = zdbIDs.iterator() ;
-//                String currentZdbID ;
-//                Iterator<String> zdbIDIter = zdbIDs.iterator() ;
-                long totalStartTime = System.currentTimeMillis() ;
-                long totalFinishTime ;
-
-
+                InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository() ;
+                int size = dbLinksToAdd.size() ;
                 int counter = 0 ;
                 for(MarkerDBLink dbLink: dbLinksToAdd){
-//                    currentZdbID = zdbIDIter.next() ; 
-//                    dbLink.setZdbID(currentZdbID) ; 
                     session.save(dbLink) ;
                     logger.debug("adding dblink["+dbLink.getZdbID()+"]:\n"+dbLink.getAccessionNumber() + " db: "+ dbLink.getReferenceDatabase().getForeignDB().getDbName() + " markerID[" +dbLink.getMarker().getZdbID() +"]  ["+counter +"/"+ (size-1)+"]") ;
                     logger.debug("ADDED dblink:\n"+dbLink.getAccessionNumber() + " db: "+
@@ -300,15 +285,11 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
                     if(counter%commitChunk==0 && counter !=0){
                         logger.debug("flushing links["+commitChunk+"]"+" ["+counter +"/"+ (size-1)+"]") ;
-                        startTime = System.currentTimeMillis() ;
                         session.flush();
-                        currentTime = System.currentTimeMillis() ;
-                        logger.debug("flushing link time["+((currentTime-startTime)/(1000.0f))+"]"+" ["+counter +"/"+ (size-1)+"]") ;
                     }
                     ++counter ;
                 }
 
-                session.flush();
 
                 if(attributionPub!=null){
                     for(MarkerDBLink dbLink: dbLinksToAdd){
@@ -316,22 +297,10 @@ public class HibernateSequenceRepository implements SequenceRepository {
                     }
                 }
                 logger.debug("flushing links["+commitChunk+"]"+" ["+counter +"/"+ (size)+"]") ;
-                startTime = System.currentTimeMillis() ;
                 session.flush();
-                currentTime = System.currentTimeMillis() ;
-                logger.debug("flushing link time["+((currentTime-startTime)/(1000.0f))+"]"+" ["+counter +"/"+ (size)+"]") ;
-
-
-                totalFinishTime = System.currentTimeMillis() ;
-                logger.debug("total process time:" + ((totalFinishTime-totalStartTime)/1000.0f) ) ;
-
-
             } catch(Exception e){
-                logger.error("failed to save MarkerDBLinks") ;
-//                logger.error("failed to save MarkerDBLink ["+dbLink+"]",e) ;
-//                    return ;
+                logger.error("failed to save MarkerDBLinks",e.fillInStackTrace()) ;
             }
-
         }
         dbLinksToAdd.clear();
 
@@ -346,7 +315,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         logger.debug("dbLinksToRemove.size: " + dbLinksToRemove.size()) ;
 
         if(dbLinksToRemove.size()==0){
-            return 0 ; 
+            return 0 ;
         }
 
         Session session = HibernateUtil.currentSession() ;

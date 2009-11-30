@@ -62,6 +62,7 @@ public class UpdateDOIMain {
                 message.append("added doi["+publication.getDoi()+"] for publication["+publication.getZdbID()+"]") ;
             }
             updateDOIs(publicationList) ;
+            HibernateUtil.closeSession();
         }
         catch(Exception e){
             logger.error(e);

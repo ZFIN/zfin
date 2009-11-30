@@ -22,13 +22,7 @@
 
     <category name="org.zfin.properties" additivity="true">
 <!--        <priority value="DEBUG"/>-->
-<!--        <priority value="INFO"/> -->
-    </category>
-
-
-    <category name="MICROARRAY_INFO" additivity="true">
-        <priority value="DEBUG"/>
-<!--        <priority value="INFO"/>-->
+		<priority value="INFO"/> 
     </category>
 
     <category name="org.zfin" additivity="false">
