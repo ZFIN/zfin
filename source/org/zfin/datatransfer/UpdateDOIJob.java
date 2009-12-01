@@ -3,9 +3,7 @@ package org.zfin.datatransfer ;
 import org.apache.log4j.Logger;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.datatransfer.webservice.Citexplore;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.HibernatePublicationRepository;
 import org.zfin.publication.repository.PublicationRepository;
@@ -17,18 +15,18 @@ import java.util.List;
 /**  UpdateDOIMain is is the driver class that updates Publication DOIs which have existing pubmed IDs (accession numbers).
  *
  */
-public class UpdateDOIMain {
+public class UpdateDOIJob {
 
     private int maxProcesses = -1 ;
     private PublicationRepository publicationRepository = null ;
-    private Logger logger = Logger.getLogger(UpdateDOIMain.class);
+    private Logger logger = Logger.getLogger(UpdateDOIJob.class);
 
     private boolean reportAll = false ;
     private boolean doisUpdated = false ;
 
     private StringBuilder message ;
 
-    public UpdateDOIMain(boolean reportAll) {
+    public UpdateDOIJob(boolean reportAll) {
         this.reportAll = reportAll ;
         message = new StringBuilder() ;
         publicationRepository = new HibernatePublicationRepository() ;
@@ -110,7 +108,7 @@ public class UpdateDOIMain {
 
     public static void main(String[] args) {
         try {
-            UpdateDOIMain driver = new UpdateDOIMain(true);
+            UpdateDOIJob driver = new UpdateDOIJob(true);
             driver.findAndUpdateDOIs() ;
         }
         catch(Exception e) {
