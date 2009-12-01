@@ -128,7 +128,7 @@ insert into linkage (
   select
     dblink_id,
     lg,
-   "Clones chromosone assignment by the association of Jeff Smith SNP as of " ||
+   "Clones chromosome assignment by the association of Jeff Smith SNP as of " ||
 TODAY,
    'ZDB-PERS-050706-1'
   from pre_lg
