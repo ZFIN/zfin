@@ -34,12 +34,12 @@ OUTPUT:
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MICOMMENT> *** iterates through each term *** <?/MICOMMENT>
+<?MIVAR>
+$xpanatv_processed_selected_structures
+<?/MIVAR>
 <?MIBLOCK WHILE=$(NE,$(INDEX,$xpanatv_index,$xpanatv_processed_selected_structures),)>     
 
   <?MIVAR NAME=$xpanatv_str>$(TRIM,$(INDEX,$xpanatv_index,$xpanatv_processed_selected_structures))<?/MIVAR>
-
-  <?MICOMMENT> *** replace pipe with a comma *** <?/MICOMMENT>
-  <?MIVAR NAME=$xpanatv_str>$(REPLACE,$xpanatv_str,"|",",")<?/MIVAR> 
 
   <?MICOMMENT> *** regular vector of parts *** <?/MICOMMENT>
   <?MIVAR>  $(VECAPPEND,$xpanatv_str_list,$xpanatv_str) <?/MIVAR>
@@ -75,7 +75,7 @@ OUTPUT:
     <?MISQL SQL="
 SELECT anatitem_name, anatitem_zdb_id,''
 FROM anatomy_item
-WHERE anatitem_name_lower = lower('$xpanatv_part')
+WHERE anatitem_zdb_id = '$xpanatv_part'
 
 UNION
 

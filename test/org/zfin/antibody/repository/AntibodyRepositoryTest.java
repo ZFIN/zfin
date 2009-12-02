@@ -162,16 +162,9 @@ public class AntibodyRepositoryTest {
 
         // cranial nerve
         String aoTermCN = "ZDB-ANAT-011113-81";
-        // cranial nerve V
-        String aotermCNV = "cranial nerve V";
-
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
-/*
-        searchCriteria.setName("");
-        searchCriteria.setAntibodyNameFilterType(FilterType.CONTAINS);
-*/
-        searchCriteria.setAnatomyTermsString(aotermCNV);
+        searchCriteria.setAnatomyTermIDs(aoTermCN);
         searchCriteria.setIncludeSubstructures(false);
         searchCriteria.setAnatomyEveryTerm(true);
 
@@ -186,13 +179,10 @@ public class AntibodyRepositoryTest {
     @Test
     public void getAntibodyByAnatomyTermIncludingSubstructures() {
 
-        // zdbID "ZDB-ANAT-010921-415";
         // brain
-        String aotermCNV = "brain";
-
-
+        String termID = "ZDB-ANAT-010921-415";
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
-        searchCriteria.setAnatomyTermsString(aotermCNV);
+        searchCriteria.setAnatomyTermIDs(termID);
         searchCriteria.setIncludeSubstructures(true);
         searchCriteria.setAnatomyEveryTerm(true);
 
@@ -208,10 +198,11 @@ public class AntibodyRepositoryTest {
     @Test
     public void getAntibodyByTwoAnatomyTermAndConnected() {
 
-        String aoTerm = "brain,rhombomere";
+        // brain,rhombomere
+        String aoTermIds = "ZDB-ANAT-010921-415,ZDB-ANAT-020702-3";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
-        searchCriteria.setAnatomyTermsString(aoTerm);
+        searchCriteria.setAnatomyTermIDs(aoTermIds);
         searchCriteria.setIncludeSubstructures(false);
         searchCriteria.setAnatomyEveryTerm(true);
 
@@ -227,10 +218,11 @@ public class AntibodyRepositoryTest {
     @Test
     public void getAntibodyByTwoAnatomyTermAndConnectedIncludingSubstructures() {
 
-        String aoTerm = "brain,rhombomere";
+        // brain,rhombomere
+        String aoTermIds = "ZDB-ANAT-010921-415,ZDB-ANAT-020702-3";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
-        searchCriteria.setAnatomyTermsString(aoTerm);
+        searchCriteria.setAnatomyTermIDs(aoTermIds);
         searchCriteria.setIncludeSubstructures(true);
         searchCriteria.setAnatomyEveryTerm(true);
 
@@ -246,10 +238,11 @@ public class AntibodyRepositoryTest {
     @Test
     public void getAntibodyByTwoAnatomyTermsOr() {
 
-        String aoTerm = "brain,rhombomere";
+        // brain,rhombomere
+        String aoTermIds = "ZDB-ANAT-010921-415,ZDB-ANAT-020702-3";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
-        searchCriteria.setAnatomyTermsString(aoTerm);
+        searchCriteria.setAnatomyTermIDs(aoTermIds);
         searchCriteria.setIncludeSubstructures(false);
         searchCriteria.setAnatomyEveryTerm(false);
 
@@ -506,13 +499,14 @@ public class AntibodyRepositoryTest {
     @Test
     public void getAntibodyByAnatomyTermAndABName() {
 
-        String aotermCNV = "cranial nerve V";
+        //cranial nerve V
+        String termID = "ZDB-ANAT-011113-81";
         String name = "z";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
         searchCriteria.setName(name);
         searchCriteria.setAntibodyNameFilterType(FilterType.CONTAINS);
-        searchCriteria.setAnatomyTermsString(aotermCNV);
+        searchCriteria.setAnatomyTermIDs(termID);
 
         List<Antibody> abs = antibodyRep.getAntibodies(searchCriteria);
         assertTrue(abs != null);
@@ -893,6 +887,7 @@ public class AntibodyRepositoryTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void getAntibodiesForAoTerm() {
         String aoTermName = "pancreas";
         AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);

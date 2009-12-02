@@ -96,7 +96,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     public List<Antibody> getAntibodies(AntibodySearchCriteria searchCriteria) {
         Session session = HibernateUtil.currentSession();
         StringBuilder hql = new StringBuilder("select distinct antibody ");
-        hql.append(getAntibodiesByNameAndLabelingQueryBlock(searchCriteria));
+        hql.append(getAntibodiesByNameAndLabelingQueryBlock(searchCriteria, true));
         hql.append("order by antibody.abbreviationOrder");
         Query query = session.createQuery(hql.toString());
         if (!StringUtils.isEmpty(searchCriteria.getName())) {
@@ -149,7 +149,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     public int getNumberOfAntibodies(AntibodySearchCriteria searchCriteria) {
         Session session = HibernateUtil.currentSession();
         StringBuilder hql = new StringBuilder("select count(distinct antibody)");
-        hql.append(getAntibodiesByNameAndLabelingQueryBlock(searchCriteria));
+        hql.append(getAntibodiesByNameAndLabelingQueryBlock(searchCriteria, false));
         Query query = session.createQuery(hql.toString());
         if (!StringUtils.isEmpty(searchCriteria.getName())) {
             // antibody name and abbreviation is the same
@@ -385,22 +385,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     private void applyAnatomyTermsFilter(AntibodySearchCriteria searchCriteria, Query query) {
-        AnatomyItem[] terms = getAnatomyItemsByName(searchCriteria.getAnatomyTerms());
-        for (int i = 0; i < terms.length; i++) {
-            query.setParameter("aoTermID_" + i, terms[i].getZdbID());
+        String[] termIDs = searchCriteria.getTermIDs();
+        for (int i = 0; i < termIDs.length; i++) {
+            query.setParameter("aoTermID_" + i, termIDs[i]);
         }
-    }
-
-    public AnatomyItem[] getAnatomyItemsByName(String[] anatomyTerms) {
-        if (anatomyTerms == null)
-            return null;
-        AnatomyItem[] terms = new AnatomyItem[anatomyTerms.length];
-
-        int index = 0;
-        for (String name : anatomyTerms) {
-            terms[index++] = anatomyRepository.getAnatomyItem(name);
-        }
-        return terms;
     }
 
     private void bindStageFilterValues(AntibodySearchCriteria searchCriteria, Query query) {
@@ -418,14 +406,15 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     /**
      * Uses the following parameters:
-     * 1) :abbrev
-     * 2) :hostSpeciesif not 'ANY" is set
-     * 3) :immunogenSpecies if not 'ANY" is set
+     * 1) abbrev
+     * 2) host Species if not 'ANY" is set
+     * 3) immunogen species if not 'ANY" is set
      *
      * @param searchCriteria antibody criteria
+     * @param retrieveAntibodies true or false
      * @return string
      */
-    private String getAntibodiesByNameAndLabelingQueryBlock(AntibodySearchCriteria searchCriteria) {
+    private String getAntibodiesByNameAndLabelingQueryBlock(AntibodySearchCriteria searchCriteria, boolean retrieveAntibodies) {
         // Todo: need to do a better job!!!
         boolean hasOneWhereClause = false;
         StringBuilder hql = new StringBuilder(" from Antibody antibody ");
@@ -440,6 +429,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append(",  AllMarkerNamesFastSearch mapAntibody   ");
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName()))
             hql.append(",  AllMarkerNamesFastSearch mapGene   ");
+        if (retrieveAntibodies){
+            hql.append(" left join fetch antibody.antibodyLabelings   ");
+            hql.append(" left join fetch antibody.secondMarkerRelationships   ");
+        }
         if (searchCriteria.isAny())
             hql.append("where ");
         if (!StringUtils.isEmpty(searchCriteria.getName())) {
@@ -492,7 +485,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             if (hasOneWhereClause)
                 hql.append(" AND ");
             hql.append(" experiment.antibody = antibody AND ( ");
-            int numberOfTerms = searchCriteria.getAnatomyTerms().length;
+            int numberOfTerms = searchCriteria.getTermIDs().length;
             for (int i = 0; i < numberOfTerms; i++) {
                 hql.append("    ( exists ( select result from ExpressionResult result " +
                         "                  where (   result.anatomyTerm.zdbID = :aoTermID_" + i +
@@ -597,6 +590,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return new PaginationResult<AntibodyStatistics>(totalCount, list);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Antibody> getAllAntibodies() {
         Query query = HibernateUtil.currentSession().createQuery("from Antibody a order by a.name asc");
         return query.list();
@@ -607,7 +601,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
      * This logic groups the objects accordingly.
      *
      * @param record AntibodyAOStatistics
-     * @param aoTerm anatom term
+     * @param aoTerm anatomy term
      * @param list   antibodyStatistics objects to be manipulated.
      */
     private void populateAntibodyStatisticsRecord(AntibodyAOStatistics record, List<AntibodyStatistics> list, AnatomyItem aoTerm) {

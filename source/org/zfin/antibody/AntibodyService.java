@@ -205,7 +205,7 @@ public class AntibodyService {
     }
 
     private void addMatchingAnatomyTerms(List<MatchingText> matchingTexts) {
-        String[] anatomyTerms = antibodySerachCriteria.getAnatomyTerms();
+        String[] anatomyTerms = antibodySerachCriteria.getTermIDs();
         // do nothing if no search terms were entered
         if (anatomyTerms == null || anatomyTerms.length == 0)
             return;
@@ -215,13 +215,14 @@ public class AntibodyService {
         AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
         MatchingText match = new MatchingText(MatchingText.Type.AO_TERM);
         List<String> directMatchesFound = new ArrayList<String>();
-        for (String searchTermName : anatomyTerms) {
-            match.addMatchedString(searchTermName);
-            AnatomyItem item = anatomyRepository.getAnatomyItem(searchTermName);
+        for (String searchTermID : anatomyTerms) {
+            AnatomyItem item = anatomyRepository.getAnatomyTermByID(searchTermID);
+            String termName = item.getName();
+            match.addMatchedString(termName);
             for (AnatomyItem label : labelingTerms) {
                 if (label.getZdbID().equals(item.getZdbID())) {
                     match.addMatchingTerm(label.getName());
-                    directMatchesFound.add(searchTermName);
+                    directMatchesFound.add(termName);
                 }
             }
         }
@@ -239,16 +240,17 @@ public class AntibodyService {
             match = new MatchingText(MatchingText.Type.AO_TERM);
 
             // check for substructure matches
-            for (String searchTermName : anatomyTerms) {
+            for (String searchTermID : anatomyTerms) {
                 // omit terms that were already matched
-                if (directMatchesFound.contains(searchTermName))
+                if (directMatchesFound.contains(searchTermID))
                     continue;
-                match.addMatchedString(searchTermName);
-                AnatomyItem item = RepositoryFactory.getAnatomyRepository().getAnatomyItem(searchTermName);
+                AnatomyItem item = RepositoryFactory.getAnatomyRepository().getAnatomyTermByID(searchTermID);
+                String termName = item.getName();
+                match.addMatchedString(termName);
                 for (AnatomyItem label : labelingTerms) {
                     if (anatomyRepository.isSubstructureOf(label, item)) {
                         match.setAppendix("(" + label.getName() + ") ");
-                        match.addMatchingTerm(searchTermName);
+                        match.addMatchingTerm(termName);
                         break;
                         //match.setAppendix(searchTermName);
                     }

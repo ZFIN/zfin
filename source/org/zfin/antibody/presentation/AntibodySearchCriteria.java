@@ -23,7 +23,8 @@ public class AntibodySearchCriteria extends Antibody {
     private AnatomyItem anatomyTerm;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
-    private String anatomyTermsString;
+    private String anatomyTermNames;
+    private String anatomyTermIDs;
     private boolean includeSubstructures;
     private boolean anatomyEveryTerm;
     private String antigenName;
@@ -112,12 +113,20 @@ public class AntibodySearchCriteria extends Antibody {
         this.endStage = endStage;
     }
 
-    public String getAnatomyTermsString() {
-        return anatomyTermsString;
+    public String getAnatomyTermNames() {
+        return anatomyTermNames;
     }
 
-    public void setAnatomyTermsString(String anatomyTermsString) {
-        this.anatomyTermsString = anatomyTermsString;
+    public String getAnatomyTermIDs() {
+        return anatomyTermIDs;
+    }
+
+    public void setAnatomyTermIDs(String anatomyTermIDs) {
+        this.anatomyTermIDs = anatomyTermIDs;
+    }
+
+    public void setAnatomyTermNames(String anatomyTermNames) {
+        this.anatomyTermNames = anatomyTermNames;
     }
 
 
@@ -158,7 +167,7 @@ public class AntibodySearchCriteria extends Antibody {
     }
 
     public boolean isAnatomyDefined() {
-        return !StringUtils.isEmpty(anatomyTermsString);
+        return !StringUtils.isEmpty(anatomyTermNames);
     }
 
     public boolean isHostSpeciesDefined() {
@@ -206,12 +215,12 @@ public class AntibodySearchCriteria extends Antibody {
      *
      * @return string array
      */
-    public String[] getAnatomyTerms() {
-        if (StringUtils.isEmpty(anatomyTermsString))
+    public String[] getTermIDs() {
+        if (StringUtils.isEmpty(anatomyTermIDs))
             return null;
 
         String[] array;
-        array = anatomyTermsString.split(",");
+        array = anatomyTermIDs.split(",");
 
         for (int i = 0; i < array.length; i++) {
             array[i] = array[i].trim();

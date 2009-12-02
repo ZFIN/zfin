@@ -5,61 +5,62 @@ import static org.junit.Assert.*;
 
 public class AntibodySearchCriteriaTest  {
 
-    @Test
+
+@Test
     public void noTerm(){
-        String textAreaString = "";
+        String termIds = "";
 
-        AntibodySearchCriteria crit = new AntibodySearchCriteria();
-        crit.setAnatomyTermsString(textAreaString);
+        AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
+        searchCriteria.setAnatomyTermIDs(termIds);
 
-        String[] terms = crit.getAnatomyTerms();
+        String[] terms = searchCriteria.getTermIDs();
 
         assertTrue(terms == null);
     }
 
     @Test
     public void oneTerm(){
-        String textAreaString = "retina";
+        String termIds = "ZDB-ANAT-090811-01";
 
-        AntibodySearchCriteria crit = new AntibodySearchCriteria();
-        crit.setAnatomyTermsString(textAreaString);
+        AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
+        searchCriteria.setAnatomyTermIDs(termIds);
 
-        String[] terms = crit.getAnatomyTerms();
+        String[] terms = searchCriteria.getTermIDs();
 
         assertTrue(terms != null);
         assertTrue(terms.length == 1);
-        assertEquals(textAreaString, terms[0]);
+        assertEquals(termIds, terms[0]);
     }
 
 
     @Test
     public void twoTermsNoSpace(){
-        String textAreaString = "retina,brain";
+        String termIds = "ZDB-ANAT-090811-01,ZDB-ANAT-090811-02";
 
-        AntibodySearchCriteria crit = new AntibodySearchCriteria();
-        crit.setAnatomyTermsString(textAreaString);
+        AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
+        searchCriteria.setAnatomyTermIDs(termIds);
 
-        String[] terms = crit.getAnatomyTerms();
+        String[] terms = searchCriteria.getTermIDs();
 
         assertTrue(terms != null);
         assertTrue(terms.length == 2);
-        assertEquals("retina", terms[0]);
-        assertEquals("brain", terms[1]);
+        assertEquals("ZDB-ANAT-090811-01", terms[0]);
+        assertEquals("ZDB-ANAT-090811-02", terms[1]);
     }
 
     @Test
     public void twoTermsWithSpace(){
-        String textAreaString = "retina ,  brain ";
+        String termIds = "ZDB-ANAT-090811-01, ZDB-ANAT-090811-02 ";
 
-        AntibodySearchCriteria crit = new AntibodySearchCriteria();
-        crit.setAnatomyTermsString(textAreaString);
+        AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
+        searchCriteria.setAnatomyTermIDs(termIds);
 
-        String[] terms = crit.getAnatomyTerms();
+        String[] terms = searchCriteria.getTermIDs();
 
         assertTrue(terms != null);
         assertTrue(terms.length == 2);
-        assertEquals("retina", terms[0]);
-        assertEquals("brain", terms[1]);
+        assertEquals("ZDB-ANAT-090811-01", terms[0]);
+        assertEquals("ZDB-ANAT-090811-02", terms[1]);
     }
 
 }

@@ -201,23 +201,24 @@
             <b title="One or more anatomy structures that an antibody labels">Labeled Anatomy</b>
             <br/>
 
-            <form:hidden path="antibodyCriteria.anatomyTermsString"/>
+            <form:hidden path="antibodyCriteria.anatomyTermIDs"/>
+            <form:hidden path="antibodyCriteria.anatomyTermNames"/>
             <script type="text/javascript">
                 var LookupProperties = {
                     divName: "anatomyTerm",
                     inputName: "searchTerm",
                     showError: true,
                     imageURL: "/gwt/org.zfin.framework.presentation.LookupTable/",
-                    <c:if test='${formBean.antibodyCriteria.anatomyTermsString != null}' >
-                    previousTableValues: "${formBean.antibodyCriteria.anatomyTermsString}",
+                    <c:if test='${formBean.antibodyCriteria.anatomyTermNames != null}' >
+                    previousTableValues: "${formBean.antibodyCriteria.anatomyTermNames}",
                     </c:if>
-                    hiddenName: "antibodyCriteria.anatomyTermsString",
+                    hiddenNames: "antibodyCriteria.anatomyTermNames",
+                    hiddenIds: "antibodyCriteria.anatomyTermIDs",
                     type: "ANATOMY_ONTOLOGY",
                     width: 40,
                     wildcard: false
                 };
             </script>
-
             <style type="text/css">
                 .accessoryLabel {
                     font-size: .75em;

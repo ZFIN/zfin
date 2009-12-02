@@ -1010,14 +1010,16 @@ return false ; "
         <a name="bottom">
 
 		<input type="hidden"  id="xpatsel_processed_selected_structures" name="xpatsel_processed_selected_structures" <?MIVAR COND=$(XST,$xpatsel_processed_selected_structures)>value=$xpatsel_processed_selected_structures<?/MIVAR>>
+		<input type="hidden"  id="xpatsel_processed_selected_structures_names" name="xpatsel_processed_selected_structures_names" <?MIVAR COND=$(XST,$xpatsel_processed_selected_structures_names)>value=$xpatsel_processed_selected_structures_names<?/MIVAR>>
 <script type="text/javascript">
     var LookupProperties = {
         divName: "anatomyTerm",
         inputName: "searchTerm",
         showError: true,
         imageURL: "/gwt/org.zfin.framework.presentation.LookupTable/",
-        <?MIVAR COND=$(XST,$xpatsel_processed_selected_structures)>previousTableValues: "$xpatsel_processed_selected_structures",<?/MIVAR>
-        hiddenName: "xpatsel_processed_selected_structures",
+        <?MIVAR COND=$(XST,$xpatsel_processed_selected_structures_names)>previousTableValues: "$xpatsel_processed_selected_structures_names",<?/MIVAR>
+        hiddenNames: "xpatsel_processed_selected_structures_names",
+        hiddenIds: "xpatsel_processed_selected_structures",
         type: "ANATOMY_ONTOLOGY",
         width: 40,
         wildcard: false

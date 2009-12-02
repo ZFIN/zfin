@@ -1959,6 +1959,7 @@ return false ; ">
 	     <TD colspan="2">
 
 
+		<input type="hidden" id="fsel_processed_selected_structures_names" name="fsel_processed_selected_structures_names" <?MIVAR COND=$(XST,$fsel_processed_selected_structures_names)>value=$fsel_processed_selected_structures_names<?/MIVAR> >
 		<input type="hidden" id="fsel_processed_selected_structures" name="fsel_processed_selected_structures" <?MIVAR COND=$(XST,$fsel_processed_selected_structures)>value=$fsel_processed_selected_structures<?/MIVAR> >		
 
         <a name="bottom">
@@ -1970,8 +1971,9 @@ return false ; ">
         showError: true,
         // buttonText: "Add Term",
         imageURL: "/gwt/org.zfin.framework.presentation.LookupTable/",
-        <?MIVAR COND=$(XST,$fsel_processed_selected_structures)>previousTableValues: "$fsel_processed_selected_structures",<?/MIVAR>
-        hiddenName: "fsel_processed_selected_structures",
+        <?MIVAR COND=$(XST,$fsel_processed_selected_structures_names)>previousTableValues: "$fsel_processed_selected_structures_names",<?/MIVAR>
+        hiddenIds: "fsel_processed_selected_structures",
+        hiddenNames: "fsel_processed_selected_structures_names",
         type: "ANATOMY_ONTOLOGY",
         width: 40, 
         wildcard: false
