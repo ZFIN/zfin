@@ -568,14 +568,14 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega.txt'
 	where mrkr_zdb_id = dblink_linked_recid
 and fdbcont_fdb_db_id = fdb_db_pk_id
 	  and fdbcont_zdb_id = dblink_fdbcont_zdb_id
-	  and fdb_db_name in ('VEGA','INTVEGA') order by 1;
+	  and fdb_db_name in ('VEGA','unreleasedRNA') order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega_transcript.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db
         where mrkr_zdb_id = dblink_linked_recid
           and fdbcont_zdb_id = dblink_fdbcont_zdb_id
 and fdbcont_fdb_db_id = fdb_db_pk_id
-          and fdb_db_name in ('Vega_Trans','INTVEGA') order by 1;
+          and fdb_db_name in ('Vega_Trans','unreleasedRNA') order by 1;
 
 -- the changing assembly version number in db_name
 -- is apt to come back to bite us so I am opting for the zdb_id
