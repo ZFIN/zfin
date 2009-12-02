@@ -1,4 +1,4 @@
-package org.zfin.datatransfer ; 
+package org.zfin.datatransfer.doi;
 
 import java.util.Iterator ; 
 import java.util.List ; 

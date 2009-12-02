@@ -85,7 +85,7 @@
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Update DOIs Daily"/>
-                <property name="jobClass" value="org.zfin.datatransfer.UpdateDOIJob"/>
+                <property name="jobClass" value="org.zfin.datatransfer.doi.UpdateDOIJob"/>
                 <property name="jobDataAsMap">
                     <map>
                         <entry key="reportAll" value="false"/>
@@ -102,7 +102,7 @@
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Update DOIs Monthly"/>
-                <property name="jobClass" value="org.zfin.datatransfer.UpdateDOIJob"/>
+                <property name="jobClass" value="org.zfin.datatransfer.doi.UpdateDOIJob"/>
                 <property name="jobDataAsMap">
                     <map>
                         <entry key="reportAll" value="true"/>
