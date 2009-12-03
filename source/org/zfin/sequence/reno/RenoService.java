@@ -16,10 +16,6 @@ import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.reno.presentation.CandidateBean;
 import org.zfin.sequence.reno.repository.RenoRepository;
-import org.zfin.framework.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 
 import java.util.*;
 
@@ -209,7 +205,7 @@ public class RenoService {
      * @param run Run to finish.
      */
     public static void finishRemainderRedundancy(Run run) {
-        List<RunCandidate> runCandidates = RepositoryFactory.getRenoRepository().getRunCandidatesInQueue(run) ;
+        List<RunCandidate> runCandidates = RepositoryFactory.getRenoRepository().getSangerRunCandidatesInQueue(run) ;
         RenoRepository rr = RepositoryFactory.getRenoRepository();
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         Person currentUser = Person.getCurrentSecurityUser();
