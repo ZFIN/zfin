@@ -101,16 +101,14 @@ public class HibernateRenoRepository implements RenoRepository {
         return (Run) criteria.uniqueResult();
     }
 
-    public List<RunCandidate> getRunCandidates(String runZdbId) {
+    public List<RunCandidate> getRunCandidatesInQueue(Run run) {
 
         Session session = HibernateUtil.currentSession();
         String hql = " from RunCandidate rc " +
                 " where rc.run.zdbID = :runid and rc.done='f' and rc.lockPerson is null";
 
         Query query = session.createQuery(hql);
-        query.setParameter("runid", runZdbId);
-        query.setMaxResults(40);
-
+        query.setParameter("runid", run.getZdbID());
         return query.list();
     }
 

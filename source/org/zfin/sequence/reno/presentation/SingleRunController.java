@@ -13,6 +13,7 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.RedundancyRun;
+import org.zfin.sequence.reno.RenoService;
 import org.zfin.sequence.reno.repository.RenoRepository;
 import org.apache.log4j.Logger;
 
@@ -104,23 +105,23 @@ public class SingleRunController extends SimpleFormController {
      * save the ordered list to the form bean.
      *
      * @param request HttpRequest
-     * @param form   RunBean
+     * @param runBean   RunBean
      * @param run    Actual Run 
      */
-    private void setFormData(HttpServletRequest request, RunBean form, Run run) {
+    private void setFormData(HttpServletRequest request, RunBean runBean, Run run) {
 
-        form.setRun(run);
-        form.setNomenclaturePublicationZdbID(run.getNomenclaturePublication().getZdbID());
+        runBean.setRun(run);
+        runBean.setNomenclaturePublicationZdbID(run.getNomenclaturePublication().getZdbID());
 
         if (run.isNomenclature()) {
             // we've seen orthologyAttribution being null in db
             // thus check it to avoid null-pointer error
             NomenclatureRun nomenRun = (NomenclatureRun) run ;
             if ( nomenRun.getOrthologyPublication() == null)   {
-                form.setOrthologyPublicationZdbID(null);
+                runBean.setOrthologyPublicationZdbID(null);
             }
             else{
-                form.setOrthologyPublicationZdbID(nomenRun.getOrthologyPublication().getZdbID());
+                runBean.setOrthologyPublicationZdbID(nomenRun.getOrthologyPublication().getZdbID());
             }
         }
         else
@@ -128,36 +129,47 @@ public class SingleRunController extends SimpleFormController {
             RedundancyRun redunRun = (RedundancyRun) run ;
 
             if (redunRun.getRelationPublication() == null)   {
-                form.setRelationPublicationZdbID(null);
+                runBean.setRelationPublicationZdbID(null);
             }
             else{
-                form.setRelationPublicationZdbID(redunRun.getRelationPublication().getZdbID());
+                runBean.setRelationPublicationZdbID(redunRun.getRelationPublication().getZdbID());
             }
 
         }
 
 
         if (candidateType.equals(INQUEUE_CANDIDATES)) {
+            if(runBean.getAction()!=null&& runBean.getAction().equals(RunBean.FINISH_REMAINDER) && run.isRedundancy()){
+                HibernateUtil.createTransaction();
+                try {
+                    RenoService.finishRemainderRedundancy(runBean.getRun());
+                    HibernateUtil.flushAndCommitCurrentSession();
+//                    HibernateUtil.rollbackTransaction();
+                } catch (Exception e) {
+                    logger.error(e.fillInStackTrace());
+                    HibernateUtil.rollbackTransaction();
+                }
+            }
 
             if (request.getParameter("comparator") != null){
-                form.setComparator(request.getParameter("comparator"));
+                runBean.setComparator(request.getParameter("comparator"));
             }
             else{
-                form.setComparator("expectValue");
+                runBean.setComparator("expectValue");
             }
 
             if (run.isRedundancy()) {
-                form.setRunCandidates(renoRepository.getSortedRunCandidates(run.getZdbID(), form.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
+                runBean.setRunCandidates(renoRepository.getSortedRunCandidates(run.getZdbID(), runBean.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
             }
             else
             if (run.isNomenclature()) {
-                form.setRunCandidates(renoRepository.getSortedNonZFRunCandidates(run.getZdbID(), form.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
+                runBean.setRunCandidates(renoRepository.getSortedNonZFRunCandidates(run.getZdbID(), runBean.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
             }
         }
         else
         if (candidateType.equals(PENDING_CANDIDATES)) {
-            form.setComparator("name");
-            form.setRunCandidates(renoRepository.getPendingCandidates(run));
+            runBean.setComparator("name");
+            runBean.setRunCandidates(renoRepository.getPendingCandidates(run));
         }
     }
 

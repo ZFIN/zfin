@@ -72,36 +72,14 @@ public abstract class AbstractCandidateController extends SimpleFormController {
         map.put(LookupStrings.FORM_BEAN, candidateBean);
         map.put(LookupStrings.DYNAMIC_TITLE, candidateBean.getRunCandidate().getZdbID());
 
+        // transaction is necessary to handle locks placed from within the view
+        HibernateUtil.createTransaction();
         handleView(candidateBean);
+        HibernateUtil.flushAndCommitCurrentSession();
 
         return map;
     }
 
-
-    /**
-     * Handle a lock or unlock request.
-     * Obtain a lock if:
-     * 1) action code is lock
-     * 2) if runcandidate is not already locked
-     * Unlock if action code is unlock
-     *
-     * @param candidateBean Candidate Bean
-     * @param rc            RunCandidate
-     * @param currentUser   Person
-     */
-    protected void handleLock(CandidateBean candidateBean, RunCandidate rc, Person currentUser) {
-        if (StringUtils.equals(candidateBean.getAction(), CandidateBean.LOCK_RECORD)) {
-            boolean success = rr.lock(currentUser, rc);
-            if (success)
-                LOG.info(currentUser.getZdbID() + " is locking " + rc.getZdbID());
-            else
-                LOG.error("couldn't get lock for " + currentUser.getUsername());
-
-        } else if (StringUtils.equals(candidateBean.getAction(), CandidateBean.UNLOCK_RECORD)) {
-            rr.unlock(currentUser, rc);
-            LOG.info(currentUser.getZdbID() + " is unlocking " + rc.getZdbID());
-        }
-    }
 
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
                                     Object command, BindException errors) throws Exception {

@@ -15,6 +15,7 @@ public class RunBean {
     public static final String ORTHOLOGY_PUBLICATION_ZDB_ID = "orthologyPublicationZdbID";
     public static final String NOMENCLATURE_PUBLICATION_ZDB_ID = "nomenclaturePublicationZdbID";
     public static final String RELATION_PUBLICATION_ZDB_ID = "relationPublicationZdbID";
+    public static final String FINISH_REMAINDER = "finish-remainder";
 
     private List<RedundancyRun> redundancyRuns;
     private List<NomenclatureRun> nomenclatureRuns;
@@ -27,6 +28,7 @@ public class RunBean {
     private String orthologyPublicationZdbID;  // used by nomenclature only
     private String relationPublicationZdbID; // attribute used by redundancy only
     private String comparator;
+    private String action ;
 
     public List<RedundancyRun> getRedundancyRuns() {
         return redundancyRuns;
@@ -134,5 +136,11 @@ public class RunBean {
         this.comparator = comparator;
     }
 
+    public String getAction() {
+        return action;
+    }
 
+    public void setAction(String action) {
+        this.action = action;
+    }
 }

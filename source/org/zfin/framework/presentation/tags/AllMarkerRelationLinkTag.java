@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Creates a hyperlink for any sort of relation from a gene. FB 2385.
@@ -48,7 +49,9 @@ public class AllMarkerRelationLinkTag extends BodyTagSupport {
                     if (showParent) {
                         sb.append("(");
                     }
-                    for(Marker marker: markers){
+                    Iterator<Marker> iter = markers.iterator();
+                    while(iter.hasNext()){
+                        Marker marker = iter.next();
                         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                             sb.append(MarkerPresentation.getLink(marker));
                         } else {
@@ -62,6 +65,10 @@ public class AllMarkerRelationLinkTag extends BodyTagSupport {
                                 }
                             }
                             sb.append(markerPresentationLink);
+                        }
+
+                        if(iter.hasNext()){
+                            sb.append(", ") ;
                         }
                     }
                     if (showParent) {

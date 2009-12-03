@@ -30,13 +30,4 @@ public class RunPresentationTest {
         assertEquals("Hyperlink", "<a href=\"/action/reno/candidate-inqueue?zdbID=ZDB-RUN-090227278-0\" name=\"\">Test Run</a>", link);
     }
 
-    @Test
-    public void testRunName(){
-        Run runA = new RedundancyRun() ;
-        runA.setName("test_NEW_");
-        assertFalse(runA.hasAssociatedMarkers()) ;
-        runA.setName("test");
-        assertTrue(runA.hasAssociatedMarkers()) ; 
-    }
-
 }

@@ -10,6 +10,7 @@ import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.orthology.Species;
+import org.zfin.framework.HibernateUtil;
 
 import java.util.*;
 
@@ -82,7 +83,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
         candidateBean.setAllSingleAssociatedGenesFromQueries(associatedMarkers);
 
         //handle locking & unlocking
-        handleLock(candidateBean, rc, currentUser);
+        RenoService.handleLock(candidateBean);
 
         //handle problem toggling
         if (StringUtils.equals(candidateBean.getAction(), CandidateBean.SET_PROBLEM)) {

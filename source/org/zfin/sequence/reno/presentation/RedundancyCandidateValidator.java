@@ -58,13 +58,13 @@ public class RedundancyCandidateValidator extends AbstractRunCandidateValidator 
         RunCandidate runCandidate =  candidateBean.getRunCandidate();
         // If it is null, but should have associated markers, then we have a serious problem.
         List<Marker> markers = runCandidate.getIdentifiedMarkers() ;
-        boolean areTransript = true;
+        boolean isTransript = true;
         for(Marker marker : markers){
             if(false==marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)){
-                areTransript = false ; 
+                isTransript = false ;
             }
         }
-        if(!areTransript && runCandidate.getIdentifiedMarker()==null  && runCandidate.getRun().hasAssociatedMarkers()==true){
+        if(false==isTransript && runCandidate.getIdentifiedMarker()==null){
             Set<Query> queries = runCandidate.getCandidateQueries() ;
             // just grab the first query and report the error if there is one query
             Object[] args = new Object[1] ;

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.repository.SessionCreator;
@@ -58,8 +59,17 @@ public class HibernateUtil {
         sessionFactory = factory;
     }
 
-    public static void createTransaction(){
-        currentSession().beginTransaction();
+    public static Transaction createTransaction(){
+        return currentSession().beginTransaction();
+    }
+
+    public static void rollbackTransaction(){
+        try {
+            Transaction t = currentSession().getTransaction() ;
+            t.rollback();
+        } catch (HibernateException e) {
+            log.error(e.fillInStackTrace());
+        }
     }
 
     public static void flushAndCommitCurrentSession(){
