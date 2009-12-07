@@ -8,8 +8,9 @@
 
 <%--This file is supposed to contain the sequence alignment image--%>
 
+<c:set var="styletoset" value="${(hitIndex>50?'none':'inline')}"/>
 
-<table id="hitTableRow${hitIndex}" cellpadding="0" cellspacing="0" border="0">
+<table id="hitTableRow${hitIndex}" cellpadding="0" cellspacing="0" border="0" style="display:${styletoset}">
     <c:set var="rowColor" value="${hitIndex%2==0 ? '#EEEEEE' : '#FFFFFF'}"/>
     <tr onmouseover="{
             this.style.background='#CCFFFF';

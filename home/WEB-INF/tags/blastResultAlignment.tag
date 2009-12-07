@@ -9,39 +9,71 @@
 
 <%--This file is supposed to contain the sequence alignment image--%>
 
-
 <div id="defline" style="font-family: monospace; font-size: medium; height: 30px; " id="defline" >Mouse over to see the defline, click to show alignments</div>
 
 <%--start of ticks--%>
 <c:set var="rightSpace" value="&nbsp;&nbsp;&nbsp;" />
 
-<table cellspacing="0" cellpadding="10" border="1" bordercolorlight="#0000FF" bordercolordark="#0000FF"><tbody><tr><td valign="CENTER" align="left"><table cellspacing="1" cellpadding="0" border="0"><tbody><tr><td valign="CENTER" align="left"><img width="50" height="4" src="/images/transp.gif"/></td>
-    <%--<td style="font-family: monospace; width: ${accessionWidth}px;"></td><td valign="CENTER" align="left"><img width="500" height="40" src="/images/score.gif"/></td>--%>
-    <td style="font-family: monospace; width: ${accessionWidth}px;">
-        <c:if test="${fn:length(blastResults.hits)>50}">
-            <script type="text/javascript">
-                function toggleShow50(){
-                    for(var i = 51 ; i < ${fn:length(blastResults.hits)-1} ; i+=1 ) {
-                        if(document.getElementById('first50Box').checked==true){
-                            document.getElementById('hitTableRow'+i).style.display = 'none' ;
+
+<table cellspacing="0" cellpadding="10" border="1" bordercolorlight="#0000FF" bordercolordark="#0000FF"> <tbody><tr><td valign="CENTER" align="left">
+    <table cellspacing="1" cellpadding="0" border="0"><tbody><tr>
+        <td style="font-family: monospace; width: ${accessionWidth}px;">
+            <c:if test="${fn:length(blastResults.hits)>50}">
+                <script type="text/javascript">
+                    var showAll = false ;
+                    function toggleShow50(allOr50){
+
+                        // is currently false, so we set to true (show all)
+                        if(showAll==false && allOr50=='showall'){
+                            showAll = true ;
+                            s=document.getElementById('showAll').style ;
+                            s.cursor = 'auto' ;
+                            s.textDecoration='none';
+                            s.color = 'black';
+                            f=document.getElementById('show50');
+                            t=f.style ;
+                            t.cursor = 'pointer' ;
+                            t.textDecoration='underline';
+                            t.color = 'blue';
+                            for(var i = 50 ; i < ${fn:length(blastResults.hits)} ; i+=1 ) {
+                                document.getElementById('hitTableRow'+i).style.display = 'inline';
+                            }
                         }
-                        else{
-                            document.getElementById('hitTableRow'+i).style.display = 'inline' ;
+                        // is currently true, so we set to false (show only 50)
+                        else
+                        if(showAll==true&& allOr50=='show50'){
+                            showAll = false ;
+                            s=document.getElementById('show50').style ;
+                            s.cursor = 'auto' ;
+                            s.textDecoration='none';
+                            s.color = 'black';
+                            f=document.getElementById('showAll');
+                            t=f.style ;
+                            t.cursor = 'pointer' ;
+                            t.textDecoration='underline';
+                            t.color = 'blue';
+
+                            for(var i = 50 ; i < ${fn:length(blastResults.hits)} ; i+=1 ) {
+                                document.getElementById('hitTableRow'+i).style.display = 'none';
+                            }
                         }
+
                     }
-                }
-            </script>
-            <input type="checkbox" value="false" id="first50Box" onchange="toggleShow50();"> Show 50
-        </c:if>
-    </td>
-    <td style="font-size: small;" valign="top" halign="center">
-        <img width="10" height="10" src="/images/black.gif"/>&nbsp;&le;40${rightSpace}
-        <img width="10" height="10" src="/images/blue.gif"/>&nbsp;40-50${rightSpace}
-        <img width="10" height="10" src="/images/green.gif"/>&nbsp;50-80${rightSpace}
-        <img width="10" height="10" src="/images/purple.gif"/>&nbsp;80-200${rightSpace}
-        <img width="10" height="10" src="/images/red.gif"/>&nbsp;&ge;200${rightSpace}
-    </td>
-</tr></tbody></table>
+                </script>
+            <span id="show50" style="cursor:auto;text-decoration:none;color:black;"  onclick="toggleShow50('show50');">Show 50</span>
+                |
+            <span id="showAll" style="cursor:pointer;text-decoration:underline;color:blue;" onclick="toggleShow50('showall');">Show All</span>
+            </c:if>
+        </td>
+        <td valign="CENTER" align="left"><img width="50" height="4" src="/images/transp.gif"/></td>
+        <td style="font-size: small;" valign="top" halign="center">
+            <img width="10" height="10" src="/images/black.gif"/>&nbsp;&le;40${rightSpace}
+            <img width="10" height="10" src="/images/blue.gif"/>&nbsp;40-50${rightSpace}
+            <img width="10" height="10" src="/images/green.gif"/>&nbsp;50-80${rightSpace}
+            <img width="10" height="10" src="/images/purple.gif"/>&nbsp;80-200${rightSpace}
+            <img width="10" height="10" src="/images/red.gif"/>&nbsp;&ge;200${rightSpace}
+        </td>
+    </tr></tbody></table>
     <%--<table cellspacing="1" cellpadding="0" border="0"><tbody><tr><td style="font-family: monospace; width: ${accessionWidth}px;"></td><td valign="CENTER" align="left"><img width="550" height="10" src="/images/query_no_scale.gif"/></td></tr></tbody></table>--%>
     <table cellspacing="1" cellpadding="0" border="0"><tbody><tr><td style="font-family: monospace; width: ${accessionWidth}px;"></td>
         <td valign="CENTER" width="50" align="center" style="font-size: small;">Query</td>
@@ -101,8 +133,9 @@
         <zfin2:blastResultHit hit="${hit}" hitIndex="${hitLoop.index}" queryLength="${queryLength}" width="${width}" accessionWidth="${accessionWidth}"/>
     </c:forEach>
 
-
-    <table cellspacing="0" cellpadding="0" border="0"><tbody><tr><td><img width="50" height="4" src="/images/transp.gif"/></td></tr></tbody></table>
-</td></tr></tbody></table>
+</td>
+</tr>
+</tbody>
+</table>
 
 
