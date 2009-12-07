@@ -25,17 +25,16 @@ TO_PRISTINE_DIRECTORY=/research/zblastfiles/zmore/nightly/Current/
 # rsync command:
 # -c always checksum 
 # -K follow symlinks 
-# -v verbose 
-# -u update only don't overwrite sooner timestamps
+# -v verbose
 
 echo rsync the almost directory
-/local/bin/rsync -rcvuK $FROM_DIRECTORY/*.x* $TO_ALMOST_DIRECTORY
+/local/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_ALMOST_DIRECTORY
 
-echo rsync the default director
-/local/bin/rsync -rcvuK $FROM_DIRECTORY/*.x* $TO_DEFAULT_DIRECTORY
+echo rsync the default directory
+/local/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_DEFAULT_DIRECTORY
 
 echo rsync the pristine directory
-/local/bin/rsync -rcvuK $FROM_DIRECTORY/*.x* $TO_PRISTINE_DIRECTORY
+/local/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_PRISTINE_DIRECTORY
 
 # if there are changes, then commit them as informix, most likely.
 if [ <!--|DOMAIN_NAME|--> == almost.zfin.org ]; then
@@ -49,12 +48,12 @@ if [ <!--|DOMAIN_NAME|--> == almost.zfin.org ]; then
 fi
 
 # establish the write permissions and group.
-chgrp -R zfishweb $TO_ALMOST_DIRECTORY
-chmod -R g+w $TO_ALMOST_DIRECTORY
+/bin/chgrp -R zfishweb $TO_ALMOST_DIRECTORY
+/bin/chmod -R g+w $TO_ALMOST_DIRECTORY
 
-chgrp -R fishadmin $TO_DEFAULT_DIRECTORY
-chmod -R g+w $TO_DEFAULT_DIRECTORY
+/bin/chgrp -R fishadmin $TO_DEFAULT_DIRECTORY
+/bin/chmod -R g+w $TO_DEFAULT_DIRECTORY
 
-chgrp -R zfishweb $TO_PRISTINE_DIRECTORY
-chmod -R g+w $TO_PRISTINE_DIRECTORY
+/bin/chgrp -R zfishweb $TO_PRISTINE_DIRECTORY
+/bin/chmod -R g+w $TO_PRISTINE_DIRECTORY
 
