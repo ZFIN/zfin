@@ -36,7 +36,7 @@ my $accFile_xpat = $outputdir."zfin_gene_xpat_cdna_acc.unl";
 
 my $sql ="unload to \"$accFile\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type where fdb_db_name = \"GenBank\" and fdbdt_super_type = \"sequence\" and fdbcont_fdbdt_id = fdbdt_pk_id and fdbcont_fdb_db_id = fdb_db_pk_id)";  
      
-my $sql_cdna ="unload to \"$accFile_cdna\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type where fdb_db_name = \"GenBank\" and fdbdt_data_type = \"RNA\" and fdbcont_fdb_db_id = fdb_db_pk_id and fdbcont_fdbdt_id = fdbdt_pk_id ) ";  
+my $sql_cdna ="unload to \"$accFile_cdna\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type where (fdb_db_name = \"GenBank\" or fdb_db_name = \"RefSeq\") and fdbdt_data_type = \"RNA\" and fdbcont_fdb_db_id = fdb_db_pk_id and fdbcont_fdbdt_id = fdbdt_pk_id ) ";  
 
 # query genbank RNA and vega transcripts accessions on genes 
 # that has expression data, and not named microRNA%
