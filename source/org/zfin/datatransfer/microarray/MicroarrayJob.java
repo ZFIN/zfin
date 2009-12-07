@@ -1,4 +1,4 @@
-package org.zfin.datatransfer;
+package org.zfin.datatransfer.microarray ;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

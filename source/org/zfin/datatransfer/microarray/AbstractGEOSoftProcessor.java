@@ -1,4 +1,4 @@
-package org.zfin.datatransfer;
+package org.zfin.datatransfer.microarray ;
 
 import org.apache.log4j.Logger;
 import org.apache.commons.net.ftp.FTPClient;

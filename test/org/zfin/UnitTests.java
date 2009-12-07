@@ -35,7 +35,7 @@ import org.zfin.curation.WidgetUtilTest;
 import org.zfin.curation.ExperimentDTOTest;
 import org.zfin.curation.StageRangeUnionTest;
 import org.zfin.uniquery.SiteSearchTest;
-import org.zfin.datatransfer.MicroarrayParseTest;
+import org.zfin.datatransfer.microarray.MicroarrayParseTest;
 
 
 /**

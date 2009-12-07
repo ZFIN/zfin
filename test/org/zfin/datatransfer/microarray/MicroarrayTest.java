@@ -1,4 +1,4 @@
-package org.zfin.datatransfer;
+package org.zfin.datatransfer.microarray;
 
 import org.junit.Test;
 import org.junit.Before;
@@ -21,6 +21,8 @@ import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.orthology.Species;
 import org.zfin.TestConfiguration;
+import org.zfin.datatransfer.MicroarrayProcessor;
+import org.zfin.datatransfer.MicroarrayBean;
 import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.apache.log4j.Logger;
