@@ -131,6 +131,11 @@ $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $ENV{"DATABASE"}="<!--|DB_NAME|-->";
 
+$mailprog = '/usr/lib/sendmail -t -oi -oem';
+$dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/";
+chdir "$dir";
+print "$dir\n";
+
 # remove old files 
 system("/bin/rm -f *.plain") and die "can not rm old plain data files";
 
