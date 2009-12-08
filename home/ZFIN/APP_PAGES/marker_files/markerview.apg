@@ -629,8 +629,10 @@ function jump(form_select){
 
 <?MISQL SQL="
   select dalias_alias, dalias_zdb_id
-    from data_alias
-    where dalias_data_zdb_id = '$OID' and dalias_group = 'alias';">
+    from data_alias, alias_group
+    where dalias_data_zdb_id = '$OID' 
+    and aliasgrp_pk_id = dalias_group_id
+    and aliasgrp_name = 'alias';">
 
   <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 
@@ -725,9 +727,10 @@ Only need to update clones, etc., which should be the only things that will have
 <?MIVAR NAME="display_sequence_similarity">false<?/MIVAR>
 
 <?MISQL SQL="select count(*)
-	     from data_alias
+	     from data_alias, alias_group
 	     where dalias_data_zdb_id = '$OID'
-	       and dalias_group = 'sequence similarity';">
+	       and dalias_group_id = aliasgrp_pk_id
+	       and aliasgrp_name = 'sequence similarity';">
   <?MIVAR COND="$(>,$1,0)" NAME="display_sequence_similarity">true<?/MIVAR>
 <?/MISQL>
 
@@ -743,8 +746,10 @@ Only need to update clones, etc., which should be the only things that will have
 
  <?MISQL SQL="
   select dalias_alias, dalias_zdb_id
-    from data_alias
-    where dalias_data_zdb_id = '$OID' and dalias_group = 'sequence similarity';">
+    from data_alias, alias_group
+    where dalias_data_zdb_id = '$OID' 
+    and dalias_group_id = aliasgrp_pk_id
+    and aliasgrp_name = 'sequence similarity';">
 
   <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
     <form>
@@ -2210,7 +2215,7 @@ union
 
   <!-----------------  Protein Sequence  -------------->
 
- <?MIVAR NAME=$lastitem><?/MIVAR>
+  <?MIVAR NAME=$lastitem><?/MIVAR>
   <?MISQL SQL="
     select fdb_db_name,
 	   fdb_db_query || dblink_acc_num ||

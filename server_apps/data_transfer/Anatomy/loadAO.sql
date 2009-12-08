@@ -950,14 +950,21 @@ delete from zdb_active_data
 -----------------------------------------------------------------
 select count(*) from input_data_alias where i_dalias_group is null;
 !echo '== data alias group second try =='
-update data_alias set dalias_group= (select i_dalias_group from input_data_alias where dalias_data_zdb_id=i_dalias_data_zdb_id and i_dalias_alias=dalias_alias and i_dalias_group not like 'secon%') 
+update data_alias set dalias_group_id= (select aliasgrp_pk_id 
+       		      		       	       from input_data_alias, alias_group 
+					       where dalias_data_zdb_id=i_dalias_data_zdb_id
+       					       and i_dalias_group = aliasgrp_name 
+					       and i_dalias_alias=dalias_alias 
+					       and i_dalias_group not like 'secon%') 
  where dalias_data_zdb_id like "ZDB-ANAT-%"
    and exists 
 	(select 't'
 	   from input_data_alias
 	  where dalias_data_zdb_id = i_dalias_data_zdb_id
 	    and dalias_alias = i_dalias_alias
-            and dalias_group not like 'seconda%');
+            and dalias_group_id not in (select aliasgrp_pk_id 
+	    			       	       from alias_group 
+					       where aliasgrp_name like 'seconda%');
 
 
 !echo '== delete dead synonym from zdb_active_data =='
@@ -1028,8 +1035,8 @@ insert into zdb_active_data(zactvd_zdb_id)
 	select i_dalias_zdb_id
 	  from input_data_alias;
 
-insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group)
-	select i_dalias_zdb_id, i_dalias_data_zdb_id, i_dalias_alias, i_dalias_group
+insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
+	select i_dalias_zdb_id, i_dalias_data_zdb_id, i_dalias_alias, (select aliasgrp_pk_id from alias_group where aliasgrp_name =i_dalias_group)
 	  from input_data_alias;
 
 insert into tmp_ao_updates(t_rec_id, t_field_name, t_new_value, t_when, t_comments)

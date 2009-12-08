@@ -141,7 +141,7 @@ create procedure regen_names_marker_list()
                     namePrecedence, dalias_alias_lower
       from data_alias, alias_group, regen_zdb_id_temp
       where rgnz_zdb_id = dalias_data_zdb_id
-  	and dalias_group = aliasgrp_name
+  	and dalias_group_id = aliasgrp_pk_id
   	and aliasgrp_name = "alias";
 
 
@@ -158,7 +158,7 @@ create procedure regen_names_marker_list()
                     namePrecedence, dalias_alias_lower
       from data_alias, alias_group, regen_zdb_id_temp
       where rgnz_zdb_id = dalias_data_zdb_id
- 	and dalias_group = aliasgrp_name
+ 	and dalias_group_id = aliasgrp_pk_id
   	and aliasgrp_name = "sequence similarity";
 
 	

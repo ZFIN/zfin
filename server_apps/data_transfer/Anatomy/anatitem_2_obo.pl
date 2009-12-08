@@ -238,11 +238,12 @@ sub getSynonyms ($){
     my $anatZdbId = $_[0];
     my @alias_array = ();
 
-    my $alias_sql = "select dalias_alias, dalias_group, recattrib_source_zdb_id
-                       from data_alias left outer join record_attribution
+    my $alias_sql = "select dalias_alias, aliasgrp_name, recattrib_source_zdb_id
+                       from data_alias, alias_group left outer join record_attribution
                             on dalias_zdb_id = recattrib_data_zdb_id
                       where dalias_data_zdb_id = ?
-                        and dalias_group in ('related alias','related plural', 'exact alias', 'exact plural')";
+                        and aliasgrp_pk_id = dalias_group_id
+                        and aliasgrp_name in ('related alias','related plural', 'exact alias', 'exact plural')";
     my $alias_sth = $dbh->prepare($alias_sql)
 	    or &reportError("Couldn't prepare the statement:$!\n");
     $alias_sth->execute($anatZdbId) or &reportError( "Couldn't execute the statement:$!\n");
@@ -265,9 +266,10 @@ sub getAltId ($){
     my @altid_array = ();
 
     my $altid_sql = "select dalias_alias
-                       from data_alias 
+                       from data_alias, alias_group
                       where dalias_data_zdb_id = ?
-                        and dalias_group = 'secondary id'";
+                        and aliasgrp_name = 'secondary id'
+                        and dalias_group_id = aliasgrp_pk_id";
     my $altid_sth = $dbh->prepare($altid_sql)
 	    or &reportError("Couldn't prepare the statement:$!\n");
     $altid_sth->execute($anatZdbId) or &reportError( "Couldn't execute the statement:$!\n");

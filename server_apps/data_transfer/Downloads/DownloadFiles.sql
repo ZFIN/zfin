@@ -781,12 +781,12 @@ unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_synonyms.txt
  select dalias_data_zdb_id, 
  	anatitem_name,
  	dalias_alias 
-  from data_alias, anatomy_item
+  from data_alias, anatomy_item, alias_group
   where dalias_data_zdb_id = anatitem_zdb_id 
     and dalias_data_zdb_id like 'ZDB-ANAT%'  
     and dalias_alias not like 'ZFA:%' 
-    and dalias_group != 'plural'
-    and dalias_group != 'secondary id'
+    and dalias_group_id = aliasgrp_pk_id
+    and aliasgrp_name not in ('plural','secondary id')
   order by anatitem_name;
 
 

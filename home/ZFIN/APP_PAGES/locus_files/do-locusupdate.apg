@@ -48,10 +48,10 @@ info  -- the column name for the column attrib
     <?/MISQL>
     <?MISQL SQL="
       insert into data_alias
-	 (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group,
+	 (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id,
 		dalias_alias_lower)
 	values 
-	  ('$dalias_zdb_id', '$OID', '$new_value', 'alias',
+	  ('$dalias_zdb_id', '$OID', '$new_value', (select aliasgrp_pk_id from alias_group where aliasgrp_name ='alias'),
 		lower('$new_value'));">
     <?/MISQL>
  
@@ -67,10 +67,10 @@ info  -- the column name for the column attrib
     	<?/MISQL>
     	<?MISQL SQL="
       	  insert into data_alias
-	      (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group,
+	      (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id,
 		dalias_alias_lower)
 	 	values 
-	  	('$dalias_zdb_id', '$OID', '$abbrev', 'alias',
+	  	('$dalias_zdb_id', '$OID', '$abbrev', (select aliasgrp_pk_id from alias_group where aliasgrp_name ='alias'),
 		lower('$abbrev');">
     	<?/MISQL>		
      <?/MIBLOCK>

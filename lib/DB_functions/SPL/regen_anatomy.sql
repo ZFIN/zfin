@@ -687,9 +687,10 @@ create dba function "informix".regen_anatomy()
 
 	select count(*)
 	  into nSynonyms
-	  from data_alias
+	  from data_alias, alias_group
 	  where dalias_data_zdb_id = anatomyId
-	    and dalias_group <> 'secondary id';
+	    and dalias_group_id = aliasgrp_pk_id
+	    and aliasgrp_name <> 'secondary id';
 
 	-- get list of genes that have expression patterns for this
 	-- anatomy item
@@ -780,9 +781,10 @@ create dba function "informix".regen_anatomy()
 
 	select count(*)
 	  into nSynonyms
-	  from data_alias
+	  from data_alias, alias_group
 	  where dalias_data_zdb_id = anatomyId
-	    and dalias_group <> 'secondary id';
+	    and dalias_group_id = aliasgrp_pk_id
+	    and aliasgrp_name <> 'secondary id';
 
 	-- get list of genes that have expression patterns for this
 	-- anatomy item. Suppress wildtype genos in this list.

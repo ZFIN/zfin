@@ -85,9 +85,9 @@ IF (new_value != old_value or event = "assigned") THEN
             LET data_zdb_id  = get_id('DALIAS');
             INSERT INTO zdb_active_data VALUES(data_zdb_id);
             INSERT INTO data_alias (dalias_zdb_id, dalias_data_zdb_id,
-					dalias_alias,dalias_group,
+					dalias_alias,dalias_group_id,
 					dalias_alias_lower)
-                   VALUES(data_zdb_id,active_marker,old_value,'alias',
+                   VALUES(data_zdb_id,active_marker,old_value,(select aliasgrp_pk_id from alias_group where aliasgrp_name ='alias'),
 				lower(old_value));
           ELSE
             SELECT dalias_zdb_id

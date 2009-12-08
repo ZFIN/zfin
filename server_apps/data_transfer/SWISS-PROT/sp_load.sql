@@ -65,7 +65,7 @@ begin work;
 				  where lower(db_name)=lower(fdb_db_name)
                                     and fdbcont_fdb_db_id = fdb_db_pk_id
 				    and fdbcont_fdbdt_id = fdbdt_pk_id
-				    and fdbcont_organism_common_name = "Zebrafish"
+                                    and fdbcont_organism_common_name = "Zebrafish"
                     and (  (fdbdt_super_type = "protein" 
                             and fdbdt_data_type = "domain")
                         or (fdbdt_super_type = "sequence" 
@@ -120,7 +120,7 @@ begin work;
               ) with no log;
 	insert into pre_ac_alias (dalias_data_zdb_id, dalias_alias, 
 		dalias_group, dalias_alias_lower)
-	    select distinct dblink_zdb_id, alias_acc_num, "alias", 
+	    select distinct dblink_zdb_id, alias_acc_num, (select aliasgrp_pk_id from alias_group where aliasgrp_name = "alias"), 
 		lower(alias_acc_num)
 	    from pre_db_link db, temp_ac_alias al
  	    where db.acc_num = al.prm_acc_num;

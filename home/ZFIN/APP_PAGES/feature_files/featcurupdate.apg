@@ -166,14 +166,14 @@ PREFIX:   featcurup_
             dalias_zdb_id,
             dalias_data_zdb_id,
             dalias_alias,
-            dalias_group,
+            dalias_group_id,
             dalias_alias_lower
          <?/MIVAR>
          <?MIVAR NAME=featcur_feature_dalias_insert_values>
             '$featcurup_feature_dalias_zdb_id',
             '$featcurup_feature_zdb_id',
             '$featcur_feature_add_alias',
-            'alias',
+            (select aliasgrp_pk_id from alias_group where aliasgrp_name='alias'),
             '$featcur_feature_add_alias'
         <?/MIVAR>
 

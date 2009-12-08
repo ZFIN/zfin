@@ -202,7 +202,9 @@ create dba function "informix".regen_alias_tokens() returning integer
     insert into tokenize_in_temp
         ( tokin_zdb_id, tokin_name )
       select dalias_zdb_id, dalias_alias_lower
-        from data_alias where dalias_group = "alias";
+        from data_alias, alias_group 
+	where dalias_group_id = aliasgrp_pk_id
+	and alias_group = "alias";
 
 
     -- -------------------------------------------------------------------
