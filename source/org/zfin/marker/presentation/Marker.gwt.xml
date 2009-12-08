@@ -2,6 +2,7 @@
 
     <inherits name='com.google.gwt.user.User'/>
     <inherits name='org.zfin.framework.presentation.Lookup'/>
+    <inherits name="org.zfin.framework.presentation.Zfin" />
 
     <source path='dto'/>
     <source path='client'/>

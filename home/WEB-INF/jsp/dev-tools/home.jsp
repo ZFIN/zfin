@@ -133,6 +133,14 @@
             <a href="/action/dev-tools/view-session-info">Session Info</a>
         </td>
     </tr>
+    <tr>
+        <td valign=top class="listContentBold">
+            Second Level Caching (EhCache):
+        </td>
+        <td colspan="2" class="listContent">
+            <a href="/action/dev-tools/second-level-cache">View Cache Contents</a>
+        </td>
+    </tr>
     <%--
     ToDo: enable once we have the session table back in place.
           For now it is removed to keep the db changes small

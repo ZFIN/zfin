@@ -336,12 +336,15 @@ order by 9
 
 
       <?MIVAR NAME="patobldr_subterm_ontology">ZF<?/MIVAR>
-<?MIBLOCK COND="$(>,$(POSITION,$patobldr_subterm_zdb_id,GOTERM),0)">
-
-     <?MIVAR NAME=patobldr_subterm_ontology>GO<?/MIVAR>
+      <?MIBLOCK COND="$(>,$(POSITION,$patobldr_subterm_zdb_id,GOTERM),0)">
+      		<?MIVAR NAME=patobldr_subterm_ontology>GO<?/MIVAR>
      <?/MIBLOCK> 
 
-      <?MIVAR NAME="patobldr_superterm_ontology">ZF<?/MIVAR>
+     <?MIVAR NAME="patobldr_superterm_ontology">ZF<?/MIVAR>
+      <?MIBLOCK COND="$(>,$(POSITION,$patobldr_superterm_zdb_id,GOTERM),0)">
+      		<?MIVAR NAME=patobldr_superterm_ontology>GO<?/MIVAR>
+     <?/MIBLOCK>
+
 
       <?MICOMMENT> ** if subterm is "unspecified" - make it orange ** <?/MICOMMENT>
 

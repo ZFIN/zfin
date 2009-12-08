@@ -5,15 +5,15 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.*;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.infrastructure.DataAlias;
 import org.zfin.expression.ExpressionStructure;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.DataAliasGroup;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -79,31 +79,6 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
     }
 
     /**
-     * Since hibernate does not support UNION yet, we need to go out and grab the
-     * anatomy item names and the synonym names in two queries and sort it. This list is cached.
-     *
-     * @return String
-     */
-    @SuppressWarnings("unchecked")
-    public List<String> getAllAnatomyNamesAndSynonyms() {
-        if (itemAndSynonymNames != null)
-            return itemAndSynonymNames;
-
-        Session session = HibernateUtil.currentSession();
-        String hql = "select name from AnatomyItem ";
-        Query query = session.createQuery(hql);
-        itemAndSynonymNames = query.list();
-
-        String synsHql = "select alias from AnatomySynonym where group != :groupAlias";
-        Query querySyn = session.createQuery(synsHql);
-        querySyn.setParameter("groupAlias", DataAlias.Group.SECONDARY_ID.toString());
-        List<String> syns = querySyn.list();
-        itemAndSynonymNames.addAll(syns);
-        Collections.sort(itemAndSynonymNames);
-        return itemAndSynonymNames;
-    }
-
-    /**
      * Retrieve a list of anatomy terms that match a search string.
      * Matching is done via
      * 1) 'contains'
@@ -119,17 +94,19 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select term from AnatomyItem term  " +
+                "       left join fetch term.synonyms " +
                 "where  " +
                 "   (term.lowerCaseName like :name or exists (from AnatomySynonym syn where syn.item = term " +
-                "                                           and syn.aliasLowerCase like :name and syn.group <> :group))" +
-                " AND obsolete = :obsolete " +
+                "                                           and syn.aliasLowerCase like :name and syn.aliasGroup.name <> :group))" +
+                " AND term.obsolete = :obsolete " +
                 " order by term.name";
 
 
         Query query = session.createQuery(hql);
         query.setString("name", "%" + searchString.toLowerCase() + "%");
         query.setBoolean("obsolete", includeObsoletes);
-        query.setString("group", DataAlias.Group.SECONDARY_ID.toString());
+        query.setString("group", DataAliasGroup.Group.SECONDARY_ID.toString());
+        query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
         List<AnatomyItem> items = query.list();
 
         if (items != null) {
@@ -280,7 +257,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      */
     public DevelopmentStage getStage(DevelopmentStage stage) {
         if (stage == null || stage.getZdbID() == null)
-          return null;
+            return null;
 
         Session session = HibernateUtil.currentSession();
         long stageID = stage.getStageID();
@@ -477,18 +454,18 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
                 "          term.type.typeID = :type AND " +
                 "          ((term.anatomyItemTwo.start.hoursStart > :start AND term.anatomyItemTwo.start.hoursStart < :end)" +
                 "        OR (term.anatomyItemTwo.end.hoursEnd > :start AND term.anatomyItemTwo.end.hoursEnd < :end) " +
-                "        OR (term.anatomyItemTwo.start.hoursStart < :start AND term.anatomyItemTwo.end.hoursEnd > :end))"+
+                "        OR (term.anatomyItemTwo.start.hoursStart < :start AND term.anatomyItemTwo.end.hoursEnd > :end))" +
                 "        order by term.anatomyItemTwo.nameOrder ";
         Query query = session.createQuery(hql);
         query.setParameter("termID", termID);
         query.setDouble("start", startHours);
         query.setDouble("end", endHours);
         query.setParameter("type", AnatomyRelationshipTypePersistence.Type.DEVELOPS_FROM.toString());
-        List<AnatomyRelationshipOne> ones =  (List<AnatomyRelationshipOne>) query.list();
-        if(ones == null)
-        return null;
+        List<AnatomyRelationshipOne> ones = (List<AnatomyRelationshipOne>) query.list();
+        if (ones == null)
+            return null;
         List<AnatomyItem> terms = new ArrayList<AnatomyItem>();
-        for(AnatomyRelationshipOne one: ones){
+        for (AnatomyRelationshipOne one : ones) {
             terms.add(one.getAnatomyItemTwo());
         }
         return terms;
@@ -522,11 +499,11 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         query.setDouble("start", startHours);
         query.setDouble("end", endHours);
         query.setParameter("type", AnatomyRelationshipTypePersistence.Type.DEVELOPS_FROM.toString());
-        List<AnatomyRelationshipOne> ones =  (List<AnatomyRelationshipOne>) query.list();
-        if(ones == null)
-        return null;
+        List<AnatomyRelationshipOne> ones = (List<AnatomyRelationshipOne>) query.list();
+        if (ones == null)
+            return null;
         List<AnatomyItem> terms = new ArrayList<AnatomyItem>();
-        for(AnatomyRelationshipOne one: ones){
+        for (AnatomyRelationshipOne one : ones) {
             terms.add(one.getAnatomyItemOne());
         }
         return terms;
@@ -534,11 +511,26 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
 
     /**
      * Create a new structure - post-composed - for the structure pile.
+     *
      * @param structure structure
      */
     public void createPileStructure(ExpressionStructure structure) {
         Session session = HibernateUtil.currentSession();
         session.save(structure);
+    }
+
+    /**
+     * Retrieve an anatomical structure by OBO id;
+     *
+     * @param termID obo id
+     * @return anatomical structure
+     */
+    @SuppressWarnings("unchecked")
+    public AnatomyItem getAnatomyTermByOboID(String termID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(AnatomyItem.class);
+        criteria.add(Restrictions.eq("oboID", termID));
+        return (AnatomyItem) criteria.uniqueResult();
     }
 
     /*

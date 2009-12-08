@@ -1,7 +1,7 @@
 package org.zfin.curation;
 
 import org.junit.Test;
-import org.zfin.curation.dto.ExperimentDTO;
+import org.zfin.framework.presentation.dto.ExperimentDTO;
 
 import java.util.List;
 import java.util.ArrayList;

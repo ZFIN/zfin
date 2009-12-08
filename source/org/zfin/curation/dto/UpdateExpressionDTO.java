@@ -5,6 +5,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.zfin.framework.presentation.dto.PileStructureAnnotationDTO;
+import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
+
 /**
  * Transfer object related to updating figure annotations with structures
  * from the pile.

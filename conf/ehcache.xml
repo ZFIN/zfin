@@ -45,7 +45,7 @@
         name              - Sets the name of the cache. This is used to identify the cache. It must be unique.
         maxInMemory       - Sets the maximum number of objects that will be created in memory
         eternal           - Sets whether elements are eternal. If eternal,  timeouts are ignored and the element
-                            is never expired.
+                            is never expired.                                T
         timeToIdleSeconds - Sets the time to idle for an element before it expires. Is only used
                             if the element is not eternal. Idle time is now - last accessed time
         timeToLiveSeconds - Sets the time to live for an element before it expires. Is only used
@@ -63,4 +63,107 @@
            overflowToDisk="true"
             />
 
+    <cache name="org.zfin.anatomy.AnatomyItem"
+           maxElementsInMemory="2000"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.anatomy.AnatomyRelationshipOne"
+           maxElementsInMemory="2000"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.anatomy.AnatomyRelationshipTwo"
+           maxElementsInMemory="2000"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.anatomy.repository.AnatomyRelationshipTypePersistence"
+           maxElementsInMemory="20"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.infrastructure.DataAlias"
+           maxElementsInMemory="1000"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.anatomy.AnatomySynonym"
+           maxElementsInMemory="1000"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.expression.ExpressionAssay"
+           maxElementsInMemory="20"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.expression.DataAliasGroup"
+           maxElementsInMemory="20"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.marker.MarkerType"
+           maxElementsInMemory="40"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.marker.MarkerTypeGroup"
+           maxElementsInMemory="50"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.expression.Figure"
+           maxElementsInMemory="100"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.expression.FigureFigure"
+           maxElementsInMemory="100"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
+
+    <cache name="org.zfin.expression.TextOnlyFigure"
+           maxElementsInMemory="100"
+           eternal="true"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+            />
 </ehcache>

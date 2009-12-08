@@ -266,6 +266,7 @@
     </class>
 
     <class name="org.zfin.marker.MarkerType" table="marker_types">
+        <cache usage="read-only"/>
         <id name="name">
             <column name="marker_type"/>
         </id>
@@ -306,7 +307,8 @@
     </class>
 
 
-   <class name="org.zfin.marker.MarkerTypeGroup" table="marker_type_group">
+    <class name="org.zfin.marker.MarkerTypeGroup" table="marker_type_group">
+        <cache usage="read-only"/>
         <id name="name">
             <column name="mtgrp_name"/>
         </id>
@@ -360,25 +362,6 @@
         <many-to-one name="marker" column="mhist_mrkr_zdb_id" class="org.zfin.marker.Marker"/>
     </class>
 
-    <!--
-        <class name="org.zfin.marker.MarkerAlias" table="data_alias">
-            <id name="zdbID">
-                <column name="dalias_zdb_id"/>
-                <generator class="org.zfin.database.ZdbIdGenerator">
-                    <param name="type">DALIAS</param>
-                    <param name="insertActiveData">true</param>
-                </generator>
-            </id>
-            <property name="alias">
-                <column name="dalias_alias"/>
-            </property>
-            <property name="group" type="dataAliasGroup">
-                <column name="dalias_group"/>
-            </property>
-            <many-to-one name="marker" column="dalias_data_zdb_id" class="org.zfin.marker.Marker"/>
-        </class>
-
-    -->
     <sql-query name="markerNamesFastSearchUpdate" callable="true">
         {call regen_names_marker(:markerZdbID)}
     </sql-query>

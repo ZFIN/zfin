@@ -5,6 +5,7 @@ import org.zfin.anatomy.AnatomyPhenotype;
 import org.zfin.framework.CachedRepository;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.framework.presentation.client.Ontology;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GoTerm;
 
@@ -128,6 +129,13 @@ public interface MutantRepository extends CachedRepository {
      * @return A list of GoTerms that contain the parameter handed in.
      */
     List<GoTerm> getGoTermsByName(String name);
+
+    /**
+     * @param name go term name
+     * @param ontology subset of GO ontology
+     * @return A list of GoTerms that contain the parameter handed in.
+     */
+    List<GoTerm> getGoTermsByNameAndSubtree(String name, Ontology ontology);
 
     /**
      * @param name go term name

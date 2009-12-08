@@ -1,21 +1,22 @@
 package org.zfin.framework.presentation.client;
 
+import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.*;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 /**
- *  This is a lookup box composite.  It allows the following options:
- *  - name of input box
- *  - show errors
- *  - show button
- *  - type (GO, PATO, QUALITY)
- *  - showSynons
+ * This is a lookup box composite.  It allows the following options:
+ * - name of input box
+ * - show errors
+ * - show button
+ * - type (GO, PATO, QUALITY)
+ * - showSynons
  */
 public class LookupComposite extends Composite {
 
@@ -25,61 +26,64 @@ public class LookupComposite extends Composite {
     protected TextBox textBox = new TextBox();
     protected SuggestBox suggestBox;
     protected SuggestOracle.Suggestion suggestion = null;
-    protected Button submitButton ;
+    protected Button submitButton;
     protected String currentText = null;
     //    protected Label noteLabel = new Label();
-    protected HTML noteLabel = new HTML("",true);
-    protected VerticalPanel rootPanel = new VerticalPanel() ;
+    protected HTML noteLabel = new HTML("", true);
+    protected VerticalPanel rootPanel = new VerticalPanel();
 
     // internal ui data
-    protected String noteString = "" ;
-    protected String errorString = "" ;
-    protected boolean suggetBoxHasFocus = true ;
+    protected String noteString = "";
+    protected String errorString = "";
+    protected boolean suggetBoxHasFocus = true;
 
     // lookup types
-    public final static String TYPE_ANATOMY_ONTOLOGY = "ANATOMY_ONTOLOGY" ;
-    public final static String TYPE_GENE_ONTOLOGY= "GENE_ONTOLOGY" ;
-    public final static String TYPE_QUALITY = "QUALITY_ONTOLOGY" ;
-    public final static String GENEDOM_AND_EFG = "GENEDOM_AND_EFG_LOOKUP" ;
-    public final static String MARKER_LOOKUP = "MARKER_LOOKUP" ;
-    public final static String TYPE_SUPPLIER = "SUPPLIER" ;
-    public final static String FEATURE_LOOKUP = "FEATURE_LOOKUP" ;
-    private List types = new ArrayList() ;
+    public final static String TYPE_ANATOMY_ONTOLOGY = "ANATOMY_ONTOLOGY";
+    public final static String TYPE_GENE_ONTOLOGY = "GENE_ONTOLOGY";
+    public final static String TYPE_QUALITY = "QUALITY_ONTOLOGY";
+    public final static String GENEDOM_AND_EFG = "GENEDOM_AND_EFG_LOOKUP";
+    public final static String MARKER_LOOKUP = "MARKER_LOOKUP";
+    public final static String TYPE_SUPPLIER = "SUPPLIER";
+    public final static String FEATURE_LOOKUP = "FEATURE_LOOKUP";
+    public final static String GDAG_TERM_LOOKUP = "GDAG_TERM_LOOKUP";
+    private List<String> types = new ArrayList<String>();
+    private Ontology goOntology;
 
     // variables
-    private final static String EMPTY_STRING  = "&nbsp;" ;
+    private final static String EMPTY_STRING = "&nbsp;";
 
     // actions
-    public final static String ACTION_ANATOMY_SEARCH= "ANATOMY_SEARCH" ;
-    public final static String ACTION_GENEDOM_AND_EFG_SEARCH= "GENEDOM_AND_EFG_SEARCH" ;
-    public final static String ACTION_MARKER_ATTRIBUTE = "MARKER_ATTRIBUTE" ;
-    public final static String ACTION_FEATURE_ATTRIBUTE = "FEATURE_ATTRIBUTE" ;
-    private SubmitAction action = null ;
+    public final static String ACTION_ANATOMY_SEARCH = "ANATOMY_SEARCH";
+    public final static String ACTION_GENEDOM_AND_EFG_SEARCH = "GENEDOM_AND_EFG_SEARCH";
+    public final static String ACTION_MARKER_ATTRIBUTE = "MARKER_ATTRIBUTE";
+    public final static String ACTION_FEATURE_ATTRIBUTE = "FEATURE_ATTRIBUTE";
+    private SubmitAction action = null;
     private String onclick;
 
     // options
     protected String inputName = "search";
     protected boolean showError = true;
-    protected String buttonText = null ;
-    protected String type = TYPE_ANATOMY_ONTOLOGY ;
-    protected boolean wildCard = true ;
-    protected int suggestBoxWidth = 30 ;
-    protected String OID = null ;
+    protected String buttonText = null;
+    protected String type = TYPE_ANATOMY_ONTOLOGY;
+    protected boolean wildCard = true;
+    protected int suggestBoxWidth = 30;
+    protected String OID = null;
 
     // later option
-    protected int minLookupLenth = 3 ;
+    protected int minLookupLenth = 3;
 
-    public LookupComposite(){
-        types.add(TYPE_ANATOMY_ONTOLOGY) ;
-        types.add(TYPE_GENE_ONTOLOGY) ;
-        types.add(TYPE_QUALITY) ;
-        types.add(TYPE_SUPPLIER) ;
-        types.add(MARKER_LOOKUP) ;
-        types.add(GENEDOM_AND_EFG) ;
-        types.add(FEATURE_LOOKUP) ;
+    public LookupComposite() {
+        types.add(TYPE_ANATOMY_ONTOLOGY);
+        types.add(TYPE_GENE_ONTOLOGY);
+        types.add(TYPE_QUALITY);
+        types.add(TYPE_SUPPLIER);
+        types.add(MARKER_LOOKUP);
+        types.add(GENEDOM_AND_EFG);
+        types.add(FEATURE_LOOKUP);
+        types.add(GDAG_TERM_LOOKUP);
     }
 
-    public void initGui(){
+    public void initGui() {
         textBox.setName(inputName);
         textBox.setTitle(inputName);
         DOM.setElementProperty(textBox.getElement(), "id", inputName);
@@ -87,37 +91,37 @@ public class LookupComposite extends Composite {
         DOM.setElementAttribute(textBox.getElement(), "autocomplete", "off");
         suggestBox = new SuggestBox(oracle, textBox);
 
-        addSuggestBoxHandlers() ;
-
+        addSuggestBoxHandlers();
+        //suggestBox.
 
         lookupPanel.add(suggestBox);
 
-        if(buttonText!=null){
-            submitButton = new Button(buttonText) ;
+        if (buttonText != null) {
+            submitButton = new Button(buttonText);
             addSubmitButtonHandler();
             lookupPanel.add(submitButton);
         }
         rootPanel.add(lookupPanel);
-        if(showError){
+        if (showError) {
             initNoteGui();
         }
         textBox.setFocus(true);
         initWidget(rootPanel);
     }
 
-    protected void addSubmitButtonHandler(){
-        submitButton.addClickListener(new ClickListener() {
-            public void onClick(Widget sender) {
+    protected void addSubmitButtonHandler() {
+        submitButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent sender) {
                 doSubmit(textBox.getText());
             }
         });
 
     }
 
-    protected void addSuggestBoxHandlers(){
-        suggestBox.addEventHandler(new SuggestionHandler() {
-            public void onSuggestionSelected(SuggestionEvent event) {
-                suggestion = event.getSelectedSuggestion();
+    protected void addSuggestBoxHandlers() {
+        suggestBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+            public void onSelection(SelectionEvent event) {
+                suggestion = (SuggestOracle.Suggestion) event.getSelectedItem();
                 if (suggestion.getReplacementString() == null) {
                     suggestBox.setText(currentText);
                     doSubmit(currentText);
@@ -127,83 +131,76 @@ public class LookupComposite extends Composite {
             }
         });
 
-        suggestBox.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyDown(Widget w, char c, int i) {
-                if(c== KeyboardListener.KEY_ESCAPE){
-                    suggestBox.setText("");
-                }
-                if (textBox.getText() != null && textBox.getText().length() > 0 &&
-                        (
-                                c != KeyboardListener.KEY_DELETE
-                                        &&
-                                        c != KeyboardListener.KEY_BACKSPACE
-                        )
-                        ){
-                    currentText = textBox.getText()  ;
-                    if( Character.isLetterOrDigit(c)){
-                        currentText += c ;
+        suggestBox.addKeyDownHandler(new KeyDownHandler() {
+            public void onKeyDown(KeyDownEvent keyDownEvent) {
+                if (keyDownEvent.isDownArrow())
+                    if (textBox.getText() != null && textBox.getText().length() > 0) {
+                        currentText = textBox.getText();
                     }
-
-                    if( c == KeyboardListener.KEY_ENTER
-                            &&
-                            textBox.getText().length()>= getMinLookupLenth()
-                            ){
-                        // must defer the command in case selection are entered concurrently
-                        DeferredCommand.addCommand(new Command(){
-                            public void execute() {
-                                if(textBox.getText().length()>= getMinLookupLenth()){
-                                    doSubmit(textBox.getText());
-                                }
-                                //To change body of implemented methods use File | Settings | File Templates.
-                            }
-                        });
-                    }
-                }
             }
         });
 
-        suggestBox.addFocusListener(new FocusListener(){
-            public void onLostFocus(Widget widget) {
-                clearNote();
-                suggetBoxHasFocus = false ;
+        suggestBox.addKeyUpHandler(new KeyUpHandler() {
+            public void onKeyUp(KeyUpEvent keyDownEvent) {
+                if (keyDownEvent.isDownArrow())
+                    if (textBox.getText() != null && textBox.getText().length() > 0) {
+                        currentText = textBox.getText();
+                    }
             }
+        });
 
-            public void onFocus(Widget widget) {
+        suggestBox.getTextBox().addFocusHandler((new FocusHandler() {
+            public void onFocus(FocusEvent event) {
                 clearError();
-                suggetBoxHasFocus = true; 
+                suggetBoxHasFocus = true;
+                // Add logic to popup suggestion upon focus 
+                String text = suggestBox.getText();
+                if(text == null || text.trim().length() > getMinLookupLenth()){
+                    ///
+                }
+//                Window.alert("HIOO");
+
             }
-        });
+        }));
+
+        suggestBox.getTextBox().addBlurHandler((new BlurHandler() {
+            public void onBlur(BlurEvent event) {
+                clearNote();
+                suggetBoxHasFocus = false;
+            }
+        }));
 
 
     }
 
-    protected void initNoteGui(){
+    protected void initNoteGui() {
         noteLabel.setVisible(true);
         noteLabel.setWordWrap(true);
         rootPanel.add(noteLabel);
     }
 
 
-    public void setText(String newText){
+    public void setText(String newText) {
         textBox.setText(newText);
     }
 
     protected void doSubmit(String text) {
-        if(action != null){
+        if (action != null) {
             suggestBox.setFocus(false);
             action.doSubmit(text);
         }
-        if(onclick != null)
+        if (onclick != null)
             runOnclickJavaScriptMethod(onclick);
     }
+
     private native void runOnclickJavaScriptMethod(String string)/*-{
             $wnd.submitForm(string);
     }-*/;
 
-    public void setErrorString(String text){
+    public void setErrorString(String text) {
         noteLabel.setStyleName("gwt-lookup-error");
-        errorString = text ;
-        noteString="" ;
+        errorString = text;
+        noteString = "";
         noteLabel.setHTML(errorString);
         noteLabel.setVisible(true);
     }
@@ -211,7 +208,7 @@ public class LookupComposite extends Composite {
     public void setNoteString(String note) {
         noteLabel.setStyleName("gwt-lookup-note");
         noteString = note;
-        errorString= "" ;
+        errorString = "";
         noteLabel.setHTML(noteString);
         noteLabel.setVisible(true);
     }
@@ -220,23 +217,23 @@ public class LookupComposite extends Composite {
         return noteString;
     }
 
-    public void clearError(){
-        if(errorString.length()>0 && false==errorString.equals(EMPTY_STRING)){
-            setErrorString(EMPTY_STRING) ;
+    public void clearError() {
+        if (errorString.length() > 0 && false == errorString.equals(EMPTY_STRING)) {
+            setErrorString(EMPTY_STRING);
         }
     }
 
-    public void clearNote(){
-        if(noteString.length()>0 && false==noteString.equals(EMPTY_STRING)){
-            setNoteString(EMPTY_STRING) ;
+    public void clearNote() {
+        if (noteString.length() > 0 && false == noteString.equals(EMPTY_STRING)) {
+            setNoteString(EMPTY_STRING);
         }
     }
 
-    public void hideError(){
+    public void hideError() {
         noteLabel.setVisible(false);
     }
 
-    public void showError(){
+    public void showError() {
         noteLabel.setVisible(true);
     }
 
@@ -246,14 +243,14 @@ public class LookupComposite extends Composite {
     }
 
     public void setType(String type) {
-        if(false==types.contains(type)){
-            String typeList = "" ;
+        if (false == types.contains(type)) {
+            String typeList = "";
 
-            for(Iterator iter = types.iterator() ; iter.hasNext() ;  ){
-                typeList += iter.next().toString() + " " ;
+            for (Object type1 : types) {
+                typeList += type1.toString() + " ";
             }
 
-            throw new RuntimeException("Type " + type + " not recognized.  Try: \n" + typeList) ;
+            throw new RuntimeException("Type " + type + " not recognized.  Try: \n" + typeList);
         }
         this.type = type;
     }
@@ -283,8 +280,8 @@ public class LookupComposite extends Composite {
     }
 
 
-    public String getCurrentText(){
-        return currentText ;
+    public String getCurrentText() {
+        return currentText;
     }
 
     public TextBox getTextBox() {
@@ -350,5 +347,25 @@ public class LookupComposite extends Composite {
 
     public void setOnclick(String onclick) {
         this.onclick = onclick;
+    }
+
+    public String getText() {
+        return suggestBox.getText();
+    }
+
+    public void setGoOntology(Ontology goOntology) {
+        this.goOntology = goOntology;
+    }
+
+    public Ontology getGoOntology() {
+        return goOntology;
+    }
+
+    public void addChangeListenerToSuggestionChanges(ChangeHandler changeListener) {
+        suggestBox.getTextBox().addChangeHandler(changeListener);
+    }
+
+    public void addOnFocusHandler(FocusHandler autcompleteFocusHandler) {
+        suggestBox.getTextBox().addFocusHandler(autcompleteFocusHandler);
     }
 }

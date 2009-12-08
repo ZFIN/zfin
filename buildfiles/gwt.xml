@@ -59,10 +59,17 @@
         </antcall>
     </target>
 
-    <target name="dirty-curation-gwt" description="Compiles sessionsave gwt">
+    <target name="dirty-curation-gwt" description="Compiles curation gwt">
         <antcall target="gwt-compile">
             <param name="gwt.module.target" value="${gwt.target}"/>
             <param name="gwt.module" value="org.zfin.curation.Curation"/>
+        </antcall>
+    </target>
+
+    <target name="dirty-pato-curation-gwt" description="Compiles curation gwt">
+        <antcall target="gwt-compile">
+            <param name="gwt.module.target" value="${gwt.target}"/>
+            <param name="gwt.module" value="org.zfin.curation.PatoCuration"/>
         </antcall>
     </target>
 
@@ -114,14 +121,14 @@
 
 
     <target name="gwt-compile" description="Compile gwt classes to javascript" depends="compile">
-        <java fork="true" className="com.google.gwt.dev.GWTCompiler" classpathref="extended.classpath">
+        <java fork="true" className="com.google.gwt.dev.Compiler" classpathref="extended.classpath">
             <classpath>
                 <dirset dir="${source.dir}" defaultexcludes="true">
                     <include name="**"/>
                     <exclude name="**/.svn"/>
                 </dirset>
             </classpath>
-            <arg value="-out"/>
+            <arg value="-war"/>
             <arg value="${gwt.module.target}"/>
             <arg value="-style"/>
             <arg value="PRETTY"/>

@@ -165,6 +165,11 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/blastable_databases.jsp"/>
     </definition>
 
+    <definition name="cache-viewer" extends="dev_layout">
+        <put name="title" value="SVN Version"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/cache_viewer.jsp"/>
+    </definition>
+
     <definition name="blast-jobs.page" extends="dev_layout">
         <put name="staticTitle" value="Blast Jobs"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/blast_jobs.jsp"/>

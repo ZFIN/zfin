@@ -212,7 +212,7 @@ public class EnumValidationService {
     public void validateDataAliasGroup() throws EnumValidationException {
         String hql = "select dag.name from DataAliasGroup dag";
         List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList, DataAlias.Group.values());
+        checkEnumVersusDatabaseCollection(typeList, DataAliasGroup.Group.values());
     }
 
     @ServiceTest
@@ -310,8 +310,8 @@ public class EnumValidationService {
         for(Enum type : enumValues){
             if(type.toString() != null || allowNullEnumValue==false){
                 enumList.add(type.toString()) ;
-                enumType = type;
-            }
+            enumType = type;
+        }
         }
 
         List<String> databaseStringList = new ArrayList<String>() ;

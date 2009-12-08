@@ -36,6 +36,7 @@
     </class>
 
     <class name="org.zfin.anatomy.AnatomyItem" table="anatomy_item">
+        <cache usage="read-only"/>
         <id name="zdbID">
             <column name="anatitem_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
@@ -110,7 +111,8 @@
     </class>
 
 
-    <class name="org.zfin.anatomy.repository.AnatomyRelationshipTypePersistence" table="anatomy_relationship_type">
+    <class name="org.zfin.anatomy.repository.AnatomyRelationshipTypePersistence" table="anatomy_relationship_type" mutable="false">
+        <cache usage="read-only" />
         <id name="typeID">
             <column name="areltype_dagedit_id" not-null="true"/>
             <generator class="native"/>
@@ -127,6 +129,7 @@
     </class>
 
     <class name="org.zfin.anatomy.repository.AnatomyRelationshipOne" table="anatomy_relationship">
+        <cache usage="read-only"/>
         <composite-id>
             <key-many-to-one name="anatomyItemOne" column="anatrel_anatitem_1_zdb_id" lazy="false"/>
             <key-many-to-one name="anatomyItemTwo" column="anatrel_anatitem_2_zdb_id" lazy="false"/>
@@ -138,6 +141,7 @@
     </class>
 
     <class name="org.zfin.anatomy.repository.AnatomyRelationshipTwo" table="anatomy_relationship">
+        <cache usage="read-only"/>
         <composite-id>
             <key-many-to-one name="anatomyItemOne" column="anatrel_anatitem_1_zdb_id" lazy="false"/>
             <key-many-to-one name="anatomyItemTwo" column="anatrel_anatitem_2_zdb_id" lazy="false"/>

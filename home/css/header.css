@@ -162,7 +162,7 @@
   background-color: #066;
   white-space: nowrap; 
   padding: .3em .3em;  
-  z-index = 5;
+  z-index: 5;
 }
 
 /* #hdr-zfinlinks {

@@ -36,6 +36,7 @@
                 <prop key="/dev-tools/gwt/lookup">lookup</prop>
                 <prop key="/dev-tools/svn-version">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/display-groups">displayGroups</prop>
+                <prop key="/dev-tools/second-level-cache">cacheHandler</prop>
                 <prop key="/dev-tools/blastable-databases">blastableDatabases</prop>
                 <prop key="/dev-tools/quartz-jobs">quartzJobs</prop>
                 <prop key="/dev-tools/blast-jobs">blastQueue</prop>
@@ -44,7 +45,7 @@
         </property>
     </bean>
 
-
+    <bean name="cacheHandler" class="org.zfin.framework.presentation.CacheController"/>
     <!-- Make sure to use scope=prototype to instantiate a new object to make the call thread-safe!-->
     <bean name="gwtModules" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
         <property name="viewName" value="gwt-modules"/>

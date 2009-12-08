@@ -2,6 +2,8 @@ package org.zfin.curation.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.curation.dto.*;
+import org.zfin.framework.presentation.dto.*;
+import org.zfin.framework.presentation.gwtutils.StageRangeIntersection;
 
 import java.util.List;
 
@@ -156,7 +158,7 @@ public interface CurationExperimentRPCAsync {
 
     void getStructures(String publicationID, AsyncCallback retrieveStructuresCallback);
 
-    void deleteStructure(PileStructureDTO structure, AsyncCallback<Void> callback);
+    void deleteStructure(PileStructureDTO structure, AsyncCallback<PileStructureDTO> callback);
 
     void updateStructuresForExpression(UpdateExpressionDTO updateEntity, AsyncCallback<List<ExpressionFigureStageDTO>> callback);
 
@@ -164,5 +166,6 @@ public interface CurationExperimentRPCAsync {
 
     void createPileStructure(ExpressedTermDTO expressedTerm, String publicationID, AsyncCallback<PileStructureDTO> callback);
 
+    void saveSessionVisibility(SessionVariable sessionVariable, AsyncCallback<Void> callback);
 }
 

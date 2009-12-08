@@ -6,7 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.zfin.infrastructure.DataAlias;
+import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.repository.SessionCreator;
 
 import java.sql.SQLException;
@@ -105,7 +105,7 @@ public class HibernateUtil {
             }
             localSession.set(s);
         }
-        s.enableFilter("noSecondaryAliasesForAO").setParameter("group", DataAlias.Group.SECONDARY_ID.toString());
+        s.enableFilter("noSecondaryAliasesForAO").setParameter("group", DataAliasGroup.Group.SECONDARY_ID.toString());
         return s;
     }
 

@@ -1,7 +1,7 @@
 package org.zfin.curation.client;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.zfin.curation.dto.ExpressedTermDTO;
+import org.zfin.framework.presentation.dto.ExpressedTermDTO;
 
 /**
  * Exception for structure dup[licates.
@@ -12,6 +12,6 @@ public class PileStructureExistsException extends Exception implements IsSeriali
     }
 
     public PileStructureExistsException(ExpressedTermDTO structure) {
-        super("Structure [" + structure.getComposedTerm() + "] already on the pile. ");
+        super("Structure [" + structure.getDisplayName() + "] already on the pile. ");
     }
 }

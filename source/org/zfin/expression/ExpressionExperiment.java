@@ -142,8 +142,8 @@ public class ExpressionExperiment {
                 Set<Figure> figures = expression.getFigures();
                 for (Figure figure : figures) {
                     StringBuilder sb = new StringBuilder(figure.getZdbID());
-                    sb.append(startStage);
-                    sb.append(endStage);
+                    sb.append(startStage.getZdbID());
+                    sb.append(endStage.getZdbID());
                     distinctSet.add(sb.toString());
                 }
             }

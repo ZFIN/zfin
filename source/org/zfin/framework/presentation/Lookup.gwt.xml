@@ -1,6 +1,7 @@
 <module>
 
     <inherits name='com.google.gwt.user.User'/>
+    <inherits name="org.zfin.framework.presentation.Zfin" />
 
     <entry-point class='org.zfin.framework.presentation.client.Lookup'/>
 

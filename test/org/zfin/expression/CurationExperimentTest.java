@@ -3,7 +3,7 @@ package org.zfin.expression;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
-import org.zfin.curation.dto.ExpressionFigureStageDTO;
+import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
 import org.zfin.curation.server.CurationExperimentRPCImpl;
 
 import java.util.HashSet;

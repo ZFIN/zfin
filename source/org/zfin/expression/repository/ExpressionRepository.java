@@ -9,7 +9,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.mutant.Phenotype;
-import org.zfin.curation.dto.ExpressedTermDTO;
+import org.zfin.framework.presentation.dto.ExpressedTermDTO;
 
 import java.util.List;
 

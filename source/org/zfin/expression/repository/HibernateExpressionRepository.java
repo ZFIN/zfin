@@ -5,30 +5,30 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.FetchMode;
+import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.curation.dto.ExpressedTermDTO;
+import org.zfin.framework.presentation.dto.ExpressedTermDTO;
 import org.zfin.expression.*;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.client.Ontology;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Clone;
 import org.zfin.publication.Publication;
 import org.zfin.mutant.GenotypeExperiment;
-import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.GoTerm;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
-import org.apache.log4j.Logger;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -43,7 +43,7 @@ import java.util.Iterator;
  */
 public class HibernateExpressionRepository implements ExpressionRepository {
 
-    private Logger logger = Logger.getLogger(HibernateExpressionRepository.class) ;
+    private Logger logger = Logger.getLogger(HibernateExpressionRepository.class);
 
     public ExpressionStageAnatomyContainer getExpressionStages(Gene gene) {
         Session session = HibernateUtil.currentSession();
@@ -52,22 +52,22 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         //query in expressions.hbm.xml
         Query query = session.getNamedQuery("stageanatomyfigure");
-        query.setParameter("geneZdbID",gene.getZdbID());
-        query.setParameter("unknown",AnatomyItem.UNSPECIFIED);
-        query.setParameter("unspecified",DevelopmentStage.UNKNOWN);
+        query.setParameter("geneZdbID", gene.getZdbID());
+        query.setParameter("unknown", AnatomyItem.UNSPECIFIED);
+        query.setParameter("unspecified", DevelopmentStage.UNKNOWN);
 
         Iterator stagesAndAnatomy = query.list().iterator();
         ExpressionStageAnatomyContainer xsac = new ExpressionStageAnatomyContainer();
 
         //the container object will handle duplication produced in the query.
-        while(stagesAndAnatomy.hasNext()) {
+        while (stagesAndAnatomy.hasNext()) {
             Object[] tuple = (Object[]) stagesAndAnatomy.next();
 
             DevelopmentStage stage = (DevelopmentStage) tuple[0];
             AnatomyItem anat = (AnatomyItem) tuple[1];
             Figure fig = (Figure) tuple[2];
 
-            xsac.add(stage,anat,fig);
+            xsac.add(stage, anat, fig);
 
         }
 
@@ -78,46 +78,46 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     // todo: I think that these are wrong
     public int getExpressionPubCount(Marker marker) {
-        Session session = currentSession() ;
-		String hql = ""  + 
-			"select count(ee.publication) " +
-			" from ExpressionResult er join er.expressionExperiment as ee " +
-			"where ee.probe=:markerZdbID " +
-                " " ;
-        Query query = session.createQuery(hql) ;
-        query.setString("markerZdbID",marker.getZdbID()) ;
-		Number number = (Number) query.uniqueResult() ;
-        logger.fatal("do not use this method getExpressionPubCount until fixed" );
-        return number.intValue() ;
+        Session session = currentSession();
+        String hql = "" +
+                "select count(ee.publication) " +
+                " from ExpressionResult er join er.expressionExperiment as ee " +
+                "where ee.probe=:markerZdbID " +
+                " ";
+        Query query = session.createQuery(hql);
+        query.setString("markerZdbID", marker.getZdbID());
+        Number number = (Number) query.uniqueResult();
+        logger.fatal("do not use this method getExpressionPubCount until fixed");
+        return number.intValue();
     }
 
     // todo: I think that these are wrong
     public int getExpressionFigureCount(Marker marker) {
-        Session session = currentSession() ;
-		String hql = ""  + 
-			"select count(f) " + 
-			" from Figure f join f.expressionResults er " + 
-			"where er.expressionExperiment.probe=:markerZdbID " +  
-			"" ; 
-		Query query = session.createQuery(hql) ;
-        query.setString("markerZdbID",marker.getZdbID()) ;
-		Number number = (Number) query.uniqueResult() ;
-        logger.fatal("do not use this method getExpressionFigureCount until fixed" );
-		return number.intValue() ;
+        Session session = currentSession();
+        String hql = "" +
+                "select count(f) " +
+                " from Figure f join f.expressionResults er " +
+                "where er.expressionExperiment.probe=:markerZdbID " +
+                "";
+        Query query = session.createQuery(hql);
+        query.setString("markerZdbID", marker.getZdbID());
+        Number number = (Number) query.uniqueResult();
+        logger.fatal("do not use this method getExpressionFigureCount until fixed");
+        return number.intValue();
     }
 
-    public int getImagesFromPubAndClone(Publication publication,Clone clone){
+    public int getImagesFromPubAndClone(Publication publication, Clone clone) {
         String hql = "" +
                 " select count( distinct i) " +
                 " from Image i join i.figure f" +
                 " join f.expressionResults er join er.expressionExperiment ee join ee.clone c join ee.publication p where " +
                 " c.zdbID = :markerZdbID and " +
                 " p.zdbID  = :publicationZdbID ";
-        Session session = currentSession() ;
-        Query query1 = session.createQuery(hql) ;
-        query1.setString("markerZdbID",clone.getZdbID());
-        query1.setString("publicationZdbID",publication.getZdbID());
-        return ((Number) query1.uniqueResult()).intValue() ;
+        Session session = currentSession();
+        Query query1 = session.createQuery(hql);
+        query1.setString("markerZdbID", clone.getZdbID());
+        query1.setString("publicationZdbID", publication.getZdbID());
+        return ((Number) query1.uniqueResult()).intValue();
     }
 
     public List getDirectlySubmittedExpressionSummaries(Marker marker) {
@@ -131,14 +131,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "                join ee.clone clone " +
                 "           where clone.zdbID = :markerZdbID " +
                 "           and publication.type  = :unpublished " +
-                "            group by clone.zdbID , publication.zdbID  "         ;
+                "            group by clone.zdbID , publication.zdbID  ";
 
-        Session session = currentSession() ;
-        Query query1 = session.createQuery(hql1) ;
-        query1.setString("markerZdbID",marker.getZdbID());
-        query1.setString("unpublished","Unpublished");
-        List pubList = query1.list() ;
-        return pubList ;
+        Session session = currentSession();
+        Query query1 = session.createQuery(hql1);
+        query1.setString("markerZdbID", marker.getZdbID());
+        query1.setString("unpublished", "Unpublished");
+        List pubList = query1.list();
+        return pubList;
     }
 
 
@@ -301,24 +301,30 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                                                                               String figureID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select experiment, result, figure from ExpressionExperiment experiment, ExpressionResult result," +
-                "Figure figure ";
-        hql += "       left join experiment.marker as gene ";
+        String hql = "select result, figure from ExpressionResult result, Figure figure";
+        hql += "       left join fetch result.expressionExperiment ";
+        hql += "       left join fetch result.startStage ";
+        hql += "       left join fetch result.endStage ";
+        hql += "       left join fetch result.expressionExperiment.antibody ";
+        hql += "       left join fetch result.expressionExperiment.markerDBLink ";
+        hql += "       left join fetch result.figures ";
+        hql += "       left join fetch result.expressionExperiment.genotypeExperiment ";
+        hql += "       left join fetch result.expressionExperiment.genotypeExperiment.genotype ";
+        hql += "       left join result.expressionExperiment.marker as gene ";
         if (fishID != null) {
-            hql += "       join experiment.genotypeExperiment.genotype geno";
+            hql += "       join result.expressionExperiment.genotypeExperiment.genotype geno";
         }
-        hql += "     where experiment.publication.zdbID = :pubID ";
+        hql += "     where result.expressionExperiment.publication.zdbID = :pubID ";
         if (geneZdbID != null)
-            hql += "           and experiment.marker.zdbID = :geneID ";
+            hql += "           and result.expressionExperiment.marker.zdbID = :geneID ";
         if (fishID != null)
             hql += "           and geno.zdbID = :fishID ";
         if (figureID != null)
             hql += "           and figure.zdbID = :figureID ";
-        hql += " AND result.expressionExperiment = experiment ";
         hql += " AND figure member of result.figures ";
         hql += "    order by figure.orderingLabel, gene.abbreviationOrder, " +
-                "             experiment.genotypeExperiment.genotype.nickname, " +
-                "             experiment.assay.displayOrder, result.startStage.abbreviation ";
+                "             result.expressionExperiment.genotypeExperiment.genotype.nickname, " +
+                "             result.expressionExperiment.assay.displayOrder, result.startStage.abbreviation ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
         if (geneZdbID != null)
@@ -328,6 +334,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         if (figureID != null)
             query.setString("figureID", figureID);
 
+        //query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
         List<Object[]> objects = query.list();
         if (objects == null)
             return null;
@@ -415,7 +422,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                     session.save(result);
                     result.getExpressionExperiment().addExpressionResult(result);
                 }
-            } else{
+            } else {
                 session.save(result);
                 result.getExpressionExperiment().addExpressionResult(result);
             }
@@ -537,8 +544,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select experiment, result, figure from ExpressionExperiment experiment, ExpressionResult result," +
-                "Figure figure ";
+        String hql = "select result, figure from ExpressionResult result, Figure figure ";
+        hql += "       left join fetch result.expressionExperiment as experiment ";
         hql += "     where experiment.zdbID = :experimentID ";
         hql += " AND result.expressionExperiment = experiment ";
         hql += " AND result.startStage.zdbID = :startID ";
@@ -578,6 +585,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         crit.add(Restrictions.eq("publication.zdbID", publicationID));
         Criteria superterm = crit.createCriteria("superterm");
         superterm.addOrder(Order.asc("nameOrder"));
+        crit.setFetchMode("superterm", FetchMode.JOIN);
+        crit.setFetchMode("superterm.start", FetchMode.JOIN);
+        crit.setFetchMode("superterm.end", FetchMode.JOIN);
+        crit.setFetchMode("person", FetchMode.JOIN);
         return (List<ExpressionStructure>) crit.list();
     }
 
@@ -745,10 +756,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
         Criteria crit;
         if (!StringUtils.isEmpty(subtermName)) {
-            String subtermOntoloy = expressedTerm.getSubtermOntology();
-            if (StringUtils.isEmpty(subtermOntoloy))
+            Ontology subtermOntoloy = expressedTerm.getSubtermOntology();
+            if (subtermOntoloy == null)
                 throw new NullPointerException("No subterm ontology provided.");
-            if (subtermOntoloy.equals(ExpressedTermDTO.Ontology.AO.toString())) {
+            if (subtermOntoloy == Ontology.ANATOMY) {
                 crit = session.createCriteria(AnatomyExpressionStructure.class);
             } else {
                 crit = session.createCriteria(GOExpressionStructure.class);
@@ -781,11 +792,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             (List<Object[]> objects) {
         List<ExperimentFigureStage> efses = new ArrayList<ExperimentFigureStage>();
         for (Object[] object : objects) {
-            ExpressionExperiment exp = (ExpressionExperiment) object[0];
-            ExpressionResult result = (ExpressionResult) object[1];
-            Figure figure = (Figure) object[2];
+            //ExpressionExperiment exp = (ExpressionExperiment) object[0];
+            ExpressionResult result = (ExpressionResult) object[0];
+            Figure figure = (Figure) object[1];
             ExperimentFigureStage efs = new ExperimentFigureStage();
-            efs.setExpressionExperiment(exp);
+            ExpressionExperiment expressionExperiment = result.getExpressionExperiment();
+            expressionExperiment.addExpressionResult(result);
+            efs.setExpressionExperiment(expressionExperiment);
             efs.setFigure(figure);
             efs.addExpressionResult(result);
             if (!efses.contains(efs)) {
@@ -796,9 +809,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                         ef.addExpressionResult(result);
                     }
                 }
-
             }
-
         }
         return efses;
     }

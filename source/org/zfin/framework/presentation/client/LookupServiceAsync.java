@@ -2,6 +2,7 @@ package org.zfin.framework.presentation.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
+import org.zfin.curation.client.PileConstructionZoneModule;
 
 /**
  */
@@ -10,7 +11,7 @@ public interface LookupServiceAsync {
 
     void getAnatomySuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback<SuggestOracle.Response> async);
 
-    void getGOSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback<SuggestOracle.Response> async);
+    void getGOSuggestions(SuggestOracle.Request req, boolean wildCard, Ontology ontology, AsyncCallback<SuggestOracle.Response> async);
 
     void getQualitySuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback<SuggestOracle.Response> async);
 
@@ -23,8 +24,36 @@ public interface LookupServiceAsync {
 
     void getFeatureSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback<SuggestOracle.Response> async);
 
+    /**
+     * Retrieve the terminfo for a given term id and ontology.
+     *
+     * @param ontology Ontology
+     * @param termID   term ID
+     * @param async    callback
+     */
+    void getTermInfo(Ontology ontology, String termID, AsyncCallback<TermInfo> async);
+
     // validation methods
     void validateAnatomyTerm(String term, AsyncCallback<TermStatus> async);
 
     void validateMarkerTerm(String term, AsyncCallback<TermStatus> async);
+
+    /**
+     * Retrieve terms from a given ontology (via the gDAG ontology table).
+     *
+     * @param request    request
+     * @param wildCard   true or false
+     * @param goOntology ontology name
+     * @param async      callback
+     */
+    void getOntologySuggestions(SuggestOracle.Request request, boolean wildCard, Ontology goOntology, AsyncCallback<SuggestOracle.Response> async);
+
+    /**
+     * Retrieve the term info for a given ontology and term name.
+     *
+     * @param ontology         Ontology
+     * @param termName         term Name
+     * @param termInfoCallback callback
+     */
+    void getTermInfoByName(Ontology ontology, String termName, AsyncCallback<TermInfo> termInfoCallback);
 }

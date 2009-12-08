@@ -1,10 +1,6 @@
 package org.zfin.framework.presentation.client;
 
 import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.Window;
-
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  */
@@ -47,4 +43,5 @@ public class ItemSuggestOracle extends SuggestOracle {
         this.delayTime = delayTime;
     }
 
+    
 }

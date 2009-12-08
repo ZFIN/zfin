@@ -1,10 +1,15 @@
 package org.zfin.curation.client;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.curation.dto.*;
+import org.zfin.framework.presentation.dto.*;
+import org.zfin.framework.presentation.gwtutils.StringUtils;
 
 /**
  * Filter bar aka banana bar.
@@ -53,21 +58,31 @@ public class FxFilterModule extends Composite {
     // Attributes are injected through constructor
     private String publicationID;
     //private CurationEntryPoint curationEntryPoint;
-    private FxExperimentModule experimentModule;
-    private FxExpressionModule expressionModule;
+    private ExperimentSection experimentModule;
+    private ExpressionSection expressionModule;
+    private StructurePile structureModule;
 
     // RPC class being used for this section.
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
 
-    public FxFilterModule(CurationEntryPoint curationEntryPoint) {
+    public FxFilterModule(String publicationID) {
         super();
-        //this.curationEntryPoint = curationEntryPoint;
-        experimentModule = curationEntryPoint.getExperimentModule();
-        expressionModule = curationEntryPoint.getExpressionModule();
-        publicationID = curationEntryPoint.getPublicationID();
+        this.publicationID = publicationID;
         experimentFilter.setPublicationID(publicationID);
         initGUI();
         setInitialValues();
+    }
+
+    public void setExperimentSection(ExperimentSection experimentModule){
+        this.experimentModule = experimentModule;
+    }
+
+    public void setExpressionSection(ExpressionSection expressionModule){
+        this.expressionModule = expressionModule;
+    }
+
+    public void setPileStructure(StructurePile structureModule){
+        this.structureModule = structureModule;
     }
 
     private void setInitialValues() {
@@ -80,16 +95,16 @@ public class FxFilterModule extends Composite {
 
     private void initGUI() {
         RootPanel.get(FILTER_BAR_GENES).add(geneList);
-        geneList.addChangeListener(new ChangeFilterListener(FilterType.GENE));
+        geneList.addChangeHandler(new ChangeFilterListener(FilterType.GENE));
 
         RootPanel.get(FILTER_BAR_FISH).add(fishList);
-        fishList.addChangeListener(new ChangeFilterListener(FilterType.GENO));
+        fishList.addChangeHandler(new ChangeFilterListener(FilterType.GENO));
 
         RootPanel.get(FILTER_BAR_FIGURE).add(figureList);
-        figureList.addChangeListener(new ChangeFilterListener(FilterType.FIG));
+        figureList.addChangeHandler(new ChangeFilterListener(FilterType.FIG));
 
         Button reset = new Button("Reset");
-        reset.addClickListener(new ResetListener());
+        reset.addClickHandler(new ResetListener());
         RootPanel.get(FILTER_BAR_RESET).add(reset);
 
     }
@@ -173,11 +188,13 @@ public class FxFilterModule extends Composite {
      * expressionTable.retrieveExpressions()
      */
     private void runDependentModules() {
+        structureModule.runModule();
         experimentModule.setExperimentFilter(experimentFilter);
         experimentModule.runModule();
         expressionModule.setExperimentFilter(experimentFilter);
         expressionModule.setFigureID(figureID);
-        //expressionModule.runModule();
+        expressionModule.runModule();
+
     }
 
     class RetrieveFishCallback implements AsyncCallback<FilterValuesDTO> {
@@ -246,7 +263,7 @@ public class FxFilterModule extends Composite {
 
     }
 
-    private class ChangeFilterListener implements ChangeListener {
+    private class ChangeFilterListener implements ChangeHandler {
 
         private FilterType type;
 
@@ -254,7 +271,7 @@ public class FxFilterModule extends Composite {
             this.type = type;
         }
 
-        public void onChange(Widget widget) {
+        public void onChange(ChangeEvent event) {
             applyExperimentFilter(type);
         }
     }
@@ -262,9 +279,9 @@ public class FxFilterModule extends Composite {
     /**
      * Set all three filters: Figure, Gene and Fish to their default value, i.e. ALL
      */
-    private class ResetListener implements ClickListener {
+    private class ResetListener implements ClickHandler {
 
-        public void onClick(Widget widget) {
+        public void onClick(ClickEvent event) {
             // check if any of the filters is not set to ALL
             if (isOneOrMOreFilterSet())
                 return;
@@ -296,12 +313,9 @@ public class FxFilterModule extends Composite {
      */
     private void updateExperimentAndExpressionSection(FilterType type) {
         if (type == null || type != FilterType.FIG) {
-            experimentModule.setExperimentFilter(experimentFilter);
-            experimentModule.retrieveExperiments();
+            experimentModule.applyFilterElements(experimentFilter);
         }
-        expressionModule.setFigureID(figureID);
-        expressionModule.setExperimentFilter(experimentFilter);
-        expressionModule.retrieveExpressions();
+        expressionModule.applyFilterElements(figureID, experimentFilter);
     }
 
     private boolean isOneOrMOreFilterSet() {

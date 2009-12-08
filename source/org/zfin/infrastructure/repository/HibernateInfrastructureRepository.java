@@ -4,31 +4,24 @@
  */
 package org.zfin.infrastructure.repository;
 
-import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SQLQuery;
-import org.hibernate.criterion.Restrictions;
+import org.apache.log4j.Logger;
+import org.hibernate.*;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.zfin.ExternalNote;
-import org.zfin.publication.Publication;
 import org.zfin.expression.ExpressionAssay;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
+import org.zfin.ontology.*;
 import org.zfin.people.Person;
+import org.zfin.publication.Publication;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
 
@@ -95,9 +88,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Session session = HibernateUtil.currentSession();
 
         // need to return null if no valid publication string
-        if( null==session.get(Publication.class,sourceZdbID)){
+        if (null == session.get(Publication.class, sourceZdbID)) {
             logger.warn("try into insert record attribution with bad pub: " + sourceZdbID);
-            return null ;
+            return null;
         }
 
         RecordAttribution ra = new RecordAttribution();
@@ -106,11 +99,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         ra.setSourceType(RecordAttribution.SourceType.STANDARD);
 
         session.save(ra);
-        return ra ;
+        return ra;
     }
 
     public PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID) {
-        return insertPublicAttribution(dataZdbID,sourceZdbID,RecordAttribution.SourceType.STANDARD) ;
+        return insertPublicAttribution(dataZdbID, sourceZdbID, RecordAttribution.SourceType.STANDARD);
     }
 
     public PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType) {
@@ -119,12 +112,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         PublicationAttribution publicationAttribution = new PublicationAttribution();
         publicationAttribution.setDataZdbID(dataZdbID);
         publicationAttribution.setSourceZdbID(sourceZdbID);
-        Publication publication = (Publication) session.get(Publication.class,sourceZdbID) ;
+        Publication publication = (Publication) session.get(Publication.class, sourceZdbID);
         publicationAttribution.setPublication(publication);
         publicationAttribution.setSourceType(sourceType);
 
         session.save(publicationAttribution);
-        return publicationAttribution ;
+        return publicationAttribution;
     }
 
     //retrieve a dataNote by its zdb_id
@@ -183,6 +176,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (PublicationAttribution) session.get(PublicationAttribution.class, attribution);
     }
 
+    @SuppressWarnings("unchecked")
     public List<PublicationAttribution> getPublicationAttributions(String dblinkZdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(PublicationAttribution.class);
@@ -190,14 +184,215 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return criteria.list();
     }
 
-
-    public PublicationAttribution getStandardPublicationAttribution(String dataZdbID,String pubZdbID) {
+    /**
+     * Retrieves all data alias groups
+     *
+     * @return list of data alias groups
+     */
+    @SuppressWarnings("unchecked")
+    public List<DataAliasGroup> getAllDataAliasGroups() {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(PublicationAttribution.class) ;
-        criteria.add(Restrictions.eq("dataZdbID",dataZdbID)) ;
-        criteria.add(Restrictions.eq("sourceZdbID",pubZdbID)) ;
-        criteria.add(Restrictions.eq("sourceType", RecordAttribution.SourceType.STANDARD.toString())) ;
-        return (PublicationAttribution) criteria.uniqueResult() ;
+        Criteria criteria = session.createCriteria(DataAliasGroup.class);
+        return (List<DataAliasGroup>) criteria.list();
+    }
+
+    /**
+     * Retrieve terms by name (contains) and ontology
+     *
+     * @param termName term name (contains)
+     * @param ontology Ontology
+     * @return list of GenericTerm
+     *         exception: If no ontology provided a NullPointerException is thrown.
+     */
+    @SuppressWarnings("unchecked")
+    public List<GenericTerm> getTermsByName(String termName, Ontology ontology) {
+        if (ontology == null)
+            throw new NullPointerException("No Ontology provided");
+
+        String hql = "select distinct term from GenericTerm term  " +
+                "where lower(term.termName) like :name " +
+                " AND term.obsolete = :obsolete " +
+                " AND term.ontologyName = :ontology " +
+                " order by term.termName";
+
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery(hql);
+        query.setString("name", "%" + termName.toLowerCase() + "%");
+        query.setString("ontology", ontology.getOntologyName());
+        query.setBoolean("obsolete", false);
+        List<GenericTerm> list = (List<GenericTerm>) query.list();
+
+        hql = "select term from GenericTerm term, TermAlias alias " +
+                "where alias member of term.synonyms " +
+                " AND alias.aliasLowerCase like :name " +
+                " AND term.obsolete = :obsolete " +
+                " AND term.ontologyName = :ontology " +
+                " order by term.termName";
+        Query queryTwo = session.createQuery(hql);
+        queryTwo.setString("name", "%" + termName.toLowerCase() + "%");
+        queryTwo.setString("ontology", ontology.getOntologyName());
+        queryTwo.setBoolean("obsolete", false);
+        List<GenericTerm> synonyms = (List<GenericTerm>) queryTwo.list();
+        list.addAll(synonyms);
+        Set<GenericTerm> distinctSet = new HashSet<GenericTerm>(list);
+        List<GenericTerm> distinctList = new ArrayList<GenericTerm>(distinctSet);
+        return distinctList;
+    }
+
+    /**
+     * Retrieve terms by synonym match.
+     *
+     * @param queryString synonym name
+     * @param ontology    name
+     * @return list of terms
+     */
+    @SuppressWarnings("unchecked")
+    public List<GenericTerm> getTermsBySynonymName(String queryString, Ontology ontology) {
+        if (ontology == null)
+            throw new NullPointerException("No Ontology provided");
+
+        Session session = HibernateUtil.currentSession();
+        String hql = "from TermAlias alias where " +
+                "          alias ";
+        Criteria criteria = session.createCriteria(TermAlias.class);
+        criteria.add(Restrictions.like("alias", queryString, MatchMode.ANYWHERE));
+        Criteria termCriteria = criteria.createCriteria("term");
+        termCriteria.add(Restrictions.eq("ontologyName", ontology.getOntologyName()));
+        termCriteria.add(Restrictions.eq("obsolete", false));
+        return (List<GenericTerm>) criteria.list();
+    }
+
+    /**
+     * Retrieve a single term by name and ontology. If more than one term is found
+     * an exception is thrown.
+     *
+     * @param termName name
+     * @param ontology Ontology
+     * @return Term
+     */
+    @SuppressWarnings("unchecked")
+    public GenericTerm getTermByName(String termName, Ontology ontology) {
+        if (ontology == null)
+            throw new NullPointerException("No Ontology provided");
+
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(GenericTerm.class);
+        criteria.add(Restrictions.eq("termName", termName));
+        GenericTerm term = (GenericTerm) criteria.uniqueResult();
+        if (term == null)
+            return null;
+        return term;
+    }
+
+    /**
+     * Retrieve Term by ZDB ID from the gDAG table.
+     * If the ID is from the GOTERM table retreive the corresponding term ID first.
+     *
+     * @param termID term id
+     * @return Generic Term
+     */
+    @SuppressWarnings("unchecked")
+    public GenericTerm getTermByID(String termID) {
+        if (StringUtils.isEmpty(termID))
+            return null;
+
+        Session session = HibernateUtil.currentSession();
+        GenericTerm term = null;
+        if (termID.indexOf("GOTERM") > -1)
+            term = getTermFromGotermId(termID);
+        else
+            term = (GenericTerm) session.get(GenericTerm.class, termID);
+        if (term == null)
+            return null;
+        return term;
+    }
+
+    @SuppressWarnings("unchecked")
+    private GenericTerm getTermFromGotermId(String termID) {
+        Session session = HibernateUtil.currentSession();
+        GoTerm goTerm = (GoTerm) session.get(GoTerm.class, termID);
+        if (goTerm == null)
+            return null;
+
+        Criteria criteria = session.createCriteria(GenericTerm.class);
+        criteria.add(Restrictions.eq("termName", goTerm.getName()));
+        return (GenericTerm) criteria.uniqueResult();
+    }
+
+    /**
+     * Retrieve Term by OBO ID.
+     *
+     * @param termID term id
+     * @return Generic Term
+     */
+    @SuppressWarnings("unchecked")
+    public GenericTerm getTermByOboID(String termID) {
+
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(GenericTerm.class);
+        criteria.add(Restrictions.eq("oboID", termID));
+        criteria.setFetchMode("definition", FetchMode.JOIN);
+        criteria.setFetchMode("synonyms", FetchMode.JOIN);
+        GenericTerm term = (GenericTerm) criteria.uniqueResult();
+        if (term == null)
+            return null;
+        return term;
+    }
+
+    /**
+     * Retrieve all related Terms and populate the correct relationship types.
+     *
+     * @param genericTerm term
+     * @return list of relationships
+     */
+    @SuppressWarnings("unchecked")
+    public List<TermRelationship> getTermRelationships(GenericTerm genericTerm) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(TermRelationship.class);
+        criteria.add(Restrictions.eq("termOne.ID", genericTerm.getID()));
+        criteria.setFetchMode("termTwo", FetchMode.JOIN);
+        criteria.setFetchMode("termTwo.definition", FetchMode.JOIN);
+        List<TermRelationship> rels = (List<TermRelationship>) criteria.list();
+        if (rels != null) {
+            for (TermRelationship relationship : rels) {
+                RelationshipType type = RelationshipType.getInverseRelationshipByName(relationship.getType());
+                relationship.setRelationshipType(type);
+            }
+        }
+
+        Criteria criteriaTwo = session.createCriteria(TermRelationship.class);
+        criteriaTwo.add(Restrictions.eq("termTwo.ID", genericTerm.getID()));
+        criteriaTwo.setFetchMode("termOne", FetchMode.JOIN);
+        criteriaTwo.setFetchMode("termOne.definition", FetchMode.JOIN);
+        List<TermRelationship> relationshipListTwo = (List<TermRelationship>) criteriaTwo.list();
+        if (relationshipListTwo != null) {
+            for (TermRelationship relationship : relationshipListTwo) {
+                RelationshipType type = RelationshipType.getRelationshipTypeByRelName(relationship.getType());
+                relationship.setRelationshipType(type);
+                if (rels == null)
+                    rels = new ArrayList<TermRelationship>();
+                rels.add(relationship);
+            }
+        }
+        return rels;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<TermAlias> getTermSynonyms(GenericTerm term) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(TermAlias.class);
+        criteria.add(Restrictions.eq("term", term));
+        return (Set<TermAlias>) criteria.list();
+    }
+
+
+    public PublicationAttribution getStandardPublicationAttribution(String dataZdbID, String pubZdbID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(PublicationAttribution.class);
+        criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
+        criteria.add(Restrictions.eq("sourceZdbID", pubZdbID));
+        criteria.add(Restrictions.eq("sourceType", RecordAttribution.SourceType.STANDARD.toString()));
+        return (PublicationAttribution) criteria.uniqueResult();
     }
 //
 //    public RecordAttribution getRecordAttribution(String zdbID){
@@ -227,7 +422,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         session.save(up);
     }
 
-    public void insertUpdatesTable(String recID, String fieldName, String comments, String newValue,String oldValue) {
+    public void insertUpdatesTable(String recID, String fieldName, String comments, String newValue, String oldValue) {
         Session session = HibernateUtil.currentSession();
 
         Updates update = new Updates();
@@ -238,7 +433,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         update.setComments(comments);
         update.setNewValue(newValue);
         update.setOldValue(oldValue);
-        update.setWhenUpdated(new Date() );
+        update.setWhenUpdated(new Date());
         session.save(update);
     }
 
@@ -248,7 +443,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Updates up = new Updates();
         up.setRecID(marker.getZdbID());
         up.setFieldName(fieldName);
-        if(person!=null){
+        if (person != null) {
             up.setSubmitterID(person.getZdbID());
             up.setSubmitterName(person.getUsername());
         }
@@ -262,13 +457,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     /**
      * todo: how is the "old value set"
+     *
      * @param marker
      * @param fieldName
      * @param comments
      * @param person
      */
     public void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person) {
-        insertUpdatesTable(marker,fieldName,comments,person,marker.getAbbreviation(),"");
+        insertUpdatesTable(marker, fieldName, comments, person, marker.getAbbreviation(), "");
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -288,11 +484,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
 
         Session session = HibernateUtil.currentSession();
-        String hql ="" +
-                "delete from RecordAttribution ra where ra.dataZdbID in (:dataZdbIDs)" ;
-        Query query = session.createQuery(hql) ;
-        query.setParameterList("dataZdbIDs",dataZdbIDs);
-        return query.executeUpdate() ;
+        String hql = "" +
+                "delete from RecordAttribution ra where ra.dataZdbID in (:dataZdbIDs)";
+        Query query = session.createQuery(hql);
+        query.setParameterList("dataZdbIDs", dataZdbIDs);
+        return query.executeUpdate();
 
 //        Criteria criteria = session.createCriteria(RecordAttribution.class);
 //        criteria.add(Restrictions.in("dataZdbID", dataZdbIDs));

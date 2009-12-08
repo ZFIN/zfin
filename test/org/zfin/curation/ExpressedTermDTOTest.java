@@ -2,7 +2,7 @@ package org.zfin.curation;
 
 import static junit.framework.Assert.assertEquals;
 import org.junit.Test;
-import org.zfin.curation.dto.ExpressedTermDTO;
+import org.zfin.framework.presentation.dto.ExpressedTermDTO;
 
 import java.util.ArrayList;
 import java.util.Collections;

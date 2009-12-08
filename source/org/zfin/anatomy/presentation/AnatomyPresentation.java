@@ -123,7 +123,7 @@ public final class AnatomyPresentation {
         for (AnatomyItem anatomyItem : terms) {
             String term = anatomyItem.getName();
             AnatomyAutoCompleteTerm autoCompleteTerm = new AnatomyAutoCompleteTerm(term);
-
+            autoCompleteTerm.setID(anatomyItem.getZdbID());
             // if a match is found on the term name skip the synonym matching logic.
             if (term.toLowerCase().contains(queryString)) {
                 list.add(autoCompleteTerm);
@@ -156,9 +156,9 @@ public final class AnatomyPresentation {
 
         public int compare(AnatomySynonym synOne, AnatomySynonym synTwo) {
 
-            int aliassig1 = synOne.getDAliasGroup().getSignificance();
+            int aliassig1 = synOne.getAliasGroup().getSignificance();
 
-            int aliassig2 = synTwo.getDAliasGroup().getSignificance();
+            int aliassig2 = synTwo.getAliasGroup().getSignificance();
             String alias = synOne.getName();
             String alias1 = synTwo.getName();
 

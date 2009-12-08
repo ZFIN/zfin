@@ -8,7 +8,8 @@
         <!--class mappings (though not defined this way in the dtd-->
 <hibernate-mapping package="org.zfin.anatomy">
     
-    <filter-def name="noSecondaryAliasesForAO" condition="  dalias_group != :group">
+    <filter-def name="noSecondaryAliasesForAO"
+                condition="  dalias_group_id not in (select ag.aliasgrp_pk_id from alias_group ag where ag.aliasgrp_name = :group)">
         <filter-param name="group" type="string"/>
     </filter-def>
 

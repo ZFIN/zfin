@@ -10,6 +10,9 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.TermRelationship;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.marker.MarkerType;
@@ -30,12 +33,12 @@ import java.util.List;
 
 public class InfrastructureRepositoryTest {
 
-    private static InfrastructureRepository repository;
+    private static InfrastructureRepository infrastructureRepository;
     private static Session session;
 
     static {
-        if (repository == null) {
-            repository = new HibernateInfrastructureRepository();
+        if (infrastructureRepository == null) {
+            infrastructureRepository = new HibernateInfrastructureRepository();
         }
 
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -65,13 +68,13 @@ public class InfrastructureRepositoryTest {
             tx = session.beginTransaction();
 
             String testZdbID = "ZDB-GENE-123";
-            ActiveData testActiveData = repository.getActiveData(testZdbID);
+            ActiveData testActiveData = infrastructureRepository.getActiveData(testZdbID);
             assertNull("ActiveData not found prior to insert", testActiveData);
-            repository.insertActiveData(testZdbID);
-            testActiveData = repository.getActiveData(testZdbID);
+            infrastructureRepository.insertActiveData(testZdbID);
+            testActiveData = infrastructureRepository.getActiveData(testZdbID);
             assertNotNull("ActiveData found after insert", testActiveData);
-            repository.deleteActiveData(testActiveData);
-            testActiveData = repository.getActiveData(testZdbID);
+            infrastructureRepository.deleteActiveData(testActiveData);
+            testActiveData = infrastructureRepository.getActiveData(testZdbID);
             assertNull("ActiveData found after delete", testActiveData);
         } catch (HibernateException e) {
             fail("failed");
@@ -89,12 +92,12 @@ public class InfrastructureRepositoryTest {
             session.beginTransaction();
             String dataZdbID = "ZDB-DALIAS-uuiouy";
             String sourceZdbID = "ZDB-PUB-000104-1";
-            repository.insertActiveData(dataZdbID);
+            infrastructureRepository.insertActiveData(dataZdbID);
             // should already exist in active source as a valid pub, so no need to insert
-            RecordAttribution attribute = repository.getRecordAttribution(dataZdbID, sourceZdbID, null);
+            RecordAttribution attribute = infrastructureRepository.getRecordAttribution(dataZdbID, sourceZdbID, null);
             assertNull("RecordAttribution not found prior to insert", attribute);
-            repository.insertRecordAttribution(dataZdbID, sourceZdbID);
-            attribute = repository.getRecordAttribution(dataZdbID, sourceZdbID, null);
+            infrastructureRepository.insertRecordAttribution(dataZdbID, sourceZdbID);
+            attribute = infrastructureRepository.getRecordAttribution(dataZdbID, sourceZdbID, null);
             assertNotNull("RecordAttribution found after insert", attribute);
         }
         catch (Exception e) {
@@ -110,7 +113,7 @@ public class InfrastructureRepositoryTest {
     @Test
     public void allMapNames() {
         String string = "pdx";
-        List<AllNamesFastSearch> all = repository.getAllNameMarkerMatches(string);
+        List<AllNamesFastSearch> all = infrastructureRepository.getAllNameMarkerMatches(string);
         assertNotNull(all);
     }
 
@@ -118,14 +121,14 @@ public class InfrastructureRepositoryTest {
     public void allMapNamesGenes() {
         String string = "pdx";
         MarkerType type = RepositoryFactory.getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
-        List<AllMarkerNamesFastSearch> all = repository.getAllNameMarkerMatches(string, type);
+        List<AllMarkerNamesFastSearch> all = infrastructureRepository.getAllNameMarkerMatches(string, type);
         assertNotNull(all);
     }
 
     @Test
     public void replacementZDB() {
         String replacedZdbID = "ZDB-ANAT-010921-497";
-        ReplacementZdbID replacementZdbID = repository.getReplacementZdbId(replacedZdbID);
+        ReplacementZdbID replacementZdbID = infrastructureRepository.getReplacementZdbId(replacedZdbID);
         assertNotNull(replacementZdbID);
 
         assertEquals("ZDB-ANAT-011113-37", replacementZdbID.getReplacementZdbID());
@@ -134,7 +137,7 @@ public class InfrastructureRepositoryTest {
     @Test
     public void dataAliasAbbrev() {
         String name = "acerebellar";
-        List<String> list = repository.getDataAliasesWithAbbreviation(name);
+        List<String> list = infrastructureRepository.getDataAliasesWithAbbreviation(name);
         assertNotNull(list);
         assertTrue(list.size() == 1);
         assertEquals("fgf8a", list.get(0));
@@ -143,15 +146,66 @@ public class InfrastructureRepositoryTest {
     @Test
     public void anatomyTokens() {
         String name = "presumptive";
-        List<String> list = repository.getAnatomyTokens(name);
+        List<String> list = infrastructureRepository.getAnatomyTokens(name);
         assertNotNull(list);
         assertTrue(list.size() > 10);
     }
 
     @Test
     public void allAssays() {
-        List<ExpressionAssay> list = repository.getAllAssays();
+        List<ExpressionAssay> list = infrastructureRepository.getAllAssays();
         assertTrue(CollectionUtils.isNotEmpty(list));
+    }
+
+    @Test
+    public void getDataAliasGroup() {
+
+        List<DataAliasGroup> groups = infrastructureRepository.getAllDataAliasGroups();
+        assertNotNull(groups);
+        assertTrue(groups.size() > 3);
+    }
+
+    @Test
+    public void getGoCcTermsByQueryString() {
+        String queryString = "mito";
+        List<GenericTerm> groups = infrastructureRepository.getTermsByName(queryString, Ontology.GO_CC);
+        assertNotNull(groups);
+        assertTrue(groups.size() > 10);
+    }
+
+    @Test
+    public void getGoCcTermsSynonymByQueryString() {
+        String queryString = "orga";
+        List<GenericTerm> groups = infrastructureRepository.getTermsByName(queryString, Ontology.GO_CC);
+        assertNotNull(groups);
+        assertTrue(groups.size() > 0);
+    }
+
+    @Test
+    public void getGoCcTermSynonymsByQueryString() {
+        String queryString = "mito";
+        List<GenericTerm> groups = infrastructureRepository.getTermsBySynonymName(queryString, Ontology.GO_CC);
+        assertNotNull(groups);
+        assertTrue(groups.size() > 1);
+    }
+
+    @Test
+    public void getGoCcTerm() {
+        String queryString = "mitochondrion";
+        GenericTerm term = infrastructureRepository.getTermByName(queryString, Ontology.GO_CC);
+        assertNotNull(term);
+        List<TermRelationship> relationships = term.getRelatedTerms();
+        assertNotNull(relationships);
+    }
+
+
+    @Test
+    public void getDataAliasGO() {
+        //mitochondrial ATP synthesis coupled electron transport
+        String alias = "organelle atp synthesis coupled electron transport";
+        List<DataAlias> groups = infrastructureRepository.getDataAliases(alias);
+        assertNotNull(groups);
+        assertTrue(groups.size() > 0);
     }
 
 

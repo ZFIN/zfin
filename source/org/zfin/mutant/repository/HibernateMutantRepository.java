@@ -14,6 +14,7 @@ import org.zfin.framework.HibernateUtil;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.framework.presentation.client.Ontology;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
@@ -227,6 +228,23 @@ public class HibernateMutantRepository implements MutantRepository {
         criteria.add(Restrictions.like("name", "%" + name + "%"));
         return criteria.list();
     }
+
+    /**
+     * @param name     go term name
+     * @param ontology subset of GO ontology
+     * @return A list of GoTerms that contain the parameter handed in.
+     */
+    @SuppressWarnings("unchecked")
+    public List<GoTerm> getGoTermsByNameAndSubtree(String name, Ontology ontology) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(GoTerm.class);
+        criteria.add(Restrictions.like("name", "%" + name + "%"));
+        if (ontology != null && ontology != Ontology.GO)
+            criteria.add(Restrictions.eq("subOntology", ontology.getOntologyName()));
+        criteria.add(Restrictions.eq("obsolete", false));
+        return criteria.list();
+    }
+
 
     /**
      * @param name go term name

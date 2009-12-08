@@ -2,33 +2,35 @@ package org.zfin.framework.presentation.server;
 
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomySynonym;
-import org.zfin.anatomy.presentation.SortAnatomySearchTerm;
-import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.framework.presentation.client.ItemSuggestion;
-import org.zfin.framework.presentation.client.LookupService;
-import org.zfin.framework.presentation.client.TermStatus;
-import org.zfin.anatomy.presentation.SortAnatomySearchTerm;
+import org.zfin.anatomy.AnatomyService;
 import org.zfin.anatomy.presentation.AnatomyAutoCompleteTerm;
 import org.zfin.anatomy.presentation.AnatomyPresentation;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomySynonym;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.repository.SessionCreator;
-import org.zfin.people.repository.ProfileRepository;
-import org.zfin.people.Organization;
-import org.zfin.ontology.GoTerm;
-import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.mutant.Term;
-import org.zfin.mutant.Feature;
+import org.zfin.anatomy.presentation.RelationshipPresentation;
+import org.zfin.anatomy.presentation.SortAnatomySearchTerm;
+import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.framework.presentation.client.*;
+import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.apache.log4j.Logger;
+import org.zfin.mutant.Feature;
+import org.zfin.mutant.Term;
+import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.OntologyService;
+import org.zfin.ontology.presentation.GenericTermComparator;
+import org.zfin.ontology.presentation.OntologyAutoCompleteTerm;
+import org.zfin.people.Organization;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.repository.RepositoryFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -37,7 +39,8 @@ import java.util.*;
 public class LookupServiceImpl extends RemoteServiceServlet implements LookupService {
 
     private transient Logger logger = Logger.getLogger(LookupServiceImpl.class);
-
+    private AnatomyRepository antatomyRep = RepositoryFactory.getAnatomyRepository();
+    private InfrastructureRepository infrastructureRep = RepositoryFactory.getInfrastructureRepository();
 
     /**
      * Gets suggestions from the anatomy repository.
@@ -46,8 +49,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
     public SuggestOracle.Response getAnatomySuggestions(SuggestOracle.Request req, boolean wildCard) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
-
-        SessionCreator.instantiateDBForHostedMode();
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         List<AnatomyItem> anatomyItems = RepositoryFactory.getAnatomyRepository().getAnatomyItemsByName(query, false);
@@ -64,12 +65,26 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
                 if (!term.isMatchOnTermName()) {
                     suggestion += " [" + term.getSynonymName() + "]";
                 }
-                suggestions.add(new ItemSuggestion(suggestion.replaceAll("(?i)" + query, "<strong>$0</strong>"), term.getTermName()));
+                String displayName = suggestion.replaceAll("(?i)" + query, "<strong>$0</strong>");
+                displayName = createListItem(displayName, "AO", term.getID());
+                suggestions.add(new ItemSuggestion(displayName, term.getTermName()));
             }
         }
         resp.setSuggestions(suggestions);
         logger.info("returned with no error: " + req + " " + suggestions.size() + " suggestions ");
         return resp;
+    }
+
+    private String createListItem(String displayName, String ontologyName, String termID) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<span onmouseover=showTermInfoString('");
+        builder.append(ontologyName);
+        builder.append("','");
+        builder.append(termID);
+        builder.append("')  class='autocomplete-plain'>");
+        builder.append(displayName);
+        builder.append("</span>");
+        return builder.toString();
     }
 
     public SuggestOracle.Response getSupplierSuggestions(SuggestOracle.Request req, boolean wildCard) {
@@ -79,8 +94,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
         if (query.equals("xxx333")) {
             throw new RuntimeException("this is a test error");
         }
-
-        SessionCreator.instantiateDBForHostedMode();
 
         ProfileRepository profileRep = RepositoryFactory.getProfileRepository();
         List<Organization> organizations = profileRep.getOrganizationsByName(query);
@@ -98,8 +111,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
 
 
     public TermStatus validateAnatomyTerm(String term) {
-
-        SessionCreator.instantiateDBForHostedMode();
 
         List<AnatomyItem> anatomyItems = RepositoryFactory.getAnatomyRepository().getAnatomyItemsByName(term, false);
         int foundInexactMatch = 0;
@@ -119,45 +130,76 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
 
     public TermStatus validateMarkerTerm(String term) {
 
-        SessionCreator.instantiateDBForHostedMode() ;
-
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(term) ;
-        if(marker!=null){
-            return new TermStatus(TermStatus.Status.FOUND_EXACT,term,marker.getZdbID());
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(term);
+        if (marker != null) {
+            return new TermStatus(TermStatus.Status.FOUND_EXACT, term, marker.getZdbID());
         }
 
-        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(term) ;
-        if(markers.size()==1){
-            return new TermStatus(TermStatus.Status.FOUND_EXACT,term,markers.get(0).getZdbID());
-        }
-        else
-        if(markers.size()==0){
-            return new TermStatus(TermStatus.Status.FOUND_NONE,term);
-        }
-        else{
-            return new TermStatus(TermStatus.Status.FOUND_MANY,term);
+        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(term);
+        if (markers.size() == 1) {
+            return new TermStatus(TermStatus.Status.FOUND_EXACT, term, markers.get(0).getZdbID());
+        } else if (markers.size() == 0) {
+            return new TermStatus(TermStatus.Status.FOUND_NONE, term);
+        } else {
+            return new TermStatus(TermStatus.Status.FOUND_MANY, term);
         }
     }
 
-    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req,boolean wildCard) {
+    /**
+     * Retrieve terms from a given ontology (via the gDAG ontology table)
+     *
+     * @param request  request
+     * @param wildCard true or false
+     * @param ontology ontology name
+     * @return suggestions
+     */
+    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean wildCard, Ontology ontology) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
-        String query = req.getQuery();
+        String query = request.getQuery();
 
-        if (query.equals("xxx333")) {
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
+        org.zfin.ontology.Ontology ontologyEnum = org.zfin.ontology.Ontology.getOntology(ontology.getDBName());
+        List<GenericTerm> genericTerms = RepositoryFactory.getInfrastructureRepository().getTermsByName(query, ontologyEnum);
+        Collections.sort(genericTerms, new GenericTermComparator(query));
+        if (wildCard && genericTerms != null && genericTerms.size() > 0) {
+            suggestions.add(new ItemSuggestion("*" + query + "*", null));
+        }
+
+        if (genericTerms != null) {
+            List<OntologyAutoCompleteTerm> terms = OntologyService.getTermList(genericTerms, query);
+            for (OntologyAutoCompleteTerm term : terms) {
+                String suggestion = term.getTermName();
+                // include synonym if match is on it
+                if (!term.isMatchOnTermName()) {
+                    suggestion += " [" + term.getSynonymName() + "]";
+                }
+                String displayName = suggestion.replaceAll("(?i)" + query, "<strong>$0</strong>");
+                displayName = createListItem(displayName, ontology.getDisplayName(), term.getID());
+                suggestions.add(new ItemSuggestion(displayName, term.getTermName()));
+            }
+        }
+        resp.setSuggestions(suggestions);
+        logger.info("returned with no error: " + request + " " + suggestions.size() + " suggestions ");
+        return resp;
+
+    }
+
+    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req, boolean wildCard, Ontology ontology) {
+        SuggestOracle.Response resp = new SuggestOracle.Response();
+        String termQuery = req.getQuery();
+
+        if (termQuery.equals("xxx333")) {
             throw new RuntimeException("this is a test error");
         }
 
-        SessionCreator.instantiateDBForHostedMode();
-
-
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
-        if (query.length() > 2) {
-            for (GoTerm goTerm : RepositoryFactory.getMutantRepository().getGoTermsByName(query)) {
-                suggestions.add(new ItemSuggestion(goTerm.getName().replaceAll(query, "<strong>" + query + "</strong>"), goTerm.getName()));
+        if (termQuery.length() > 2) {
+            for (GoTerm goTerm : RepositoryFactory.getMutantRepository().getGoTermsByNameAndSubtree(termQuery, ontology)) {
+                suggestions.add(new ItemSuggestion(goTerm.getName().replaceAll(termQuery, "<strong>" + termQuery + "</strong>"), goTerm.getName()));
             }
         }
         if (wildCard == true) {
-            suggestions.add(new ItemSuggestion("*" + query + "*", null));
+            suggestions.add(new ItemSuggestion("*" + termQuery + "*", null));
         }
         resp.setSuggestions(suggestions);
 
@@ -174,8 +216,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
         if (query.equals("xxx333")) {
             throw new RuntimeException("this is a test error");
         }
-
-        SessionCreator.instantiateDBForHostedMode();
 
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
@@ -202,9 +242,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
             throw new RuntimeException("this is a test error");
         }
 
-        SessionCreator.instantiateDBForHostedMode();
-
-
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         if (query.length() > 0) {
             for (Marker marker : RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(query)) {
@@ -225,8 +262,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
     public SuggestOracle.Response getGenedomAndEFGSuggestions(SuggestOracle.Request req, boolean wildCard) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
-        SessionCreator.instantiateDBForHostedMode();
-
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         if (query.length() > 0) {
@@ -254,9 +289,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
             throw new RuntimeException("this is a test error");
         }
 
-        SessionCreator.instantiateDBForHostedMode();
-
-
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         if (query.length() > 0) {
             for (Feature feature : RepositoryFactory.getMutantRepository().getFeaturesByAbbreviation(query)) {
@@ -271,8 +303,170 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
 
         logger.info("returned with no error: " + req + " " + suggestions.size() + " suggestions ");
 
-        return resp;  //To change body of implemented methods use File | Settings | File Templates.
+        return resp;
     }
+
+    /**
+     * Retrieve the terminfo for a given term id and ontology.
+     * This can either be the zdb ID or the obo id.
+     *
+     * @param ontology ontology
+     * @param termID   term id
+     * @return term info if no term found return null
+     */
+    public TermInfo getTermInfo(Ontology ontology, String termID) {
+        if (ontology == null) {
+            logger.warn("No ontology provided");
+            return null;
+        }
+        if (StringUtils.isEmpty(termID)) {
+            logger.warn("No termID provided");
+            return null;
+        }
+        switch (ontology) {
+            case ANATOMY:
+                return getAnatomyTerminfo(termID);
+            case GO_CC:
+                return getGenericTermInfo(termID, ontology);
+            case GO:
+                return getGenericTermInfo(termID, ontology);
+        }
+        return null;
+    }
+
+    /**
+     * Retrieve the term info for a given ontology and term name.
+     *
+     * @param ontology Ontology
+     * @param termName term Name
+     */
+    public TermInfo getTermInfoByName(Ontology ontology, String termName) {
+        if (ontology == null) {
+            logger.warn("No ontology provided");
+            return null;
+        }
+        if (StringUtils.isEmpty(termName)) {
+            logger.warn("No termID provided");
+            return null;
+        }
+        switch (ontology) {
+            case ANATOMY:
+                return getAnatomyTerminfoByName(termName);
+            case GO_CC:
+                return getGenericTermInfoByName(termName, ontology);
+            case GO:
+                return getGenericTermInfoByName(termName, ontology);
+        }
+        return null;
+    }
+
+    private TermInfo getAnatomyTerminfo(String termID) {
+        AnatomyItem term;
+        if (termID.indexOf(ActiveData.Type.ANAT.toString()) > -1)
+            term = antatomyRep.getAnatomyTermByID(termID);
+        else
+            term = antatomyRep.getAnatomyTermByOboID(termID);
+        if (term == null) {
+            logger.warn("No term " + termID + " found!");
+            return null;
+        }
+        TermInfo rootTermInfo = convertAnatomyToTermInfo(term);
+        addRelatedAnatomyTerms(term, rootTermInfo);
+        return rootTermInfo;
+
+    }
+
+    private TermInfo getAnatomyTerminfoByName(String termName) {
+
+        AnatomyItem term = antatomyRep.getAnatomyItem(termName);
+        if (term == null) {
+            logger.warn("No term " + termName + " found!");
+            return null;
+        }
+        TermInfo rootTermInfo = convertAnatomyToTermInfo(term);
+        addRelatedAnatomyTerms(term, rootTermInfo);
+        return rootTermInfo;
+    }
+
+    private TermInfo getGenericTermInfo(String termID, Ontology ontology) {
+        GenericTerm term;
+        if (termID.indexOf(ActiveData.Type.TERM.toString()) > -1)
+            term = infrastructureRep.getTermByID(termID);
+        else
+            term = infrastructureRep.getTermByOboID(termID);
+        if (term == null) {
+            logger.warn("No term " + termID + " found!");
+            return null;
+        }
+        TermInfo rootTermInfo = convertGenericTermToTermInfo(term, ontology, true);
+        addRelatedTerms(term, rootTermInfo, ontology);
+        return rootTermInfo;
+
+    }
+
+    private TermInfo getGenericTermInfoByName(String termName, Ontology ontology) {
+        org.zfin.ontology.Ontology ontol = OntologyService.convertOntology(ontology);
+        GenericTerm term = infrastructureRep.getTermByName(termName, ontol);
+        if (term == null) {
+            logger.warn("No term " + termName + " found!");
+            return null;
+        }
+        TermInfo rootTermInfo = convertGenericTermToTermInfo(term, ontology, true);
+        addRelatedTerms(term, rootTermInfo, ontology);
+        return rootTermInfo;
+
+    }
+
+    private void addRelatedTerms(GenericTerm term, TermInfo rootTermInfo, Ontology ontology) {
+        List<org.zfin.ontology.RelationshipPresentation> rels = OntologyService.getRelatedTerms(term);
+        if (rels != null) {
+            for (org.zfin.ontology.RelationshipPresentation relationship : rels) {
+                List<GenericTerm> terms = relationship.getItems();
+                for (GenericTerm item : terms) {
+                    TermInfo info = convertGenericTermToTermInfo(item, ontology, false);
+                    rootTermInfo.addRelatedTermInfo(relationship.getType(), info);
+                }
+            }
+        }
+    }
+
+    private void addRelatedAnatomyTerms(AnatomyItem term, TermInfo rootTermInfo) {
+        List<RelationshipPresentation> rels = AnatomyService.getRelations(term);
+        if (rels != null) {
+            for (RelationshipPresentation relationship : rels) {
+                List<AnatomyItem> terms = relationship.getItems();
+                for (AnatomyItem item : terms) {
+                    TermInfo info = convertAnatomyToTermInfo(item);
+                    rootTermInfo.addRelatedTermInfo(relationship.getType(), info);
+                }
+            }
+        }
+    }
+
+    private TermInfo convertAnatomyToTermInfo(AnatomyItem term) {
+        TermInfo info = new TermInfo();
+        info.setID(term.getOboID());
+        info.setName(term.getName());
+        info.setSynonyms(AnatomyPresentation.createFormattedSynonymList(term));
+        info.setDefinition(term.getDefinition());
+        info.setStartStage(term.getStart().getAbbreviation());
+        info.setEndStage(term.getEnd().getAbbreviation());
+        info.setOntology(Ontology.ANATOMY);
+        return info;
+    }
+
+    private TermInfo convertGenericTermToTermInfo(GenericTerm term, Ontology ontology, boolean includeSynonyms) {
+        TermInfo info = new TermInfo();
+        info.setID(term.getOboID());
+        info.setName(term.getTermName());
+        if (includeSynonyms)
+            info.setSynonyms(OntologyService.createFormattedSynonymList(term));
+        info.setDefinition(term.getDefinition());
+        info.setComment(term.getComment());
+        info.setOntology(ontology);
+        return info;
+    }
+
 }
 
 

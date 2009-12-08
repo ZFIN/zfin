@@ -3,9 +3,9 @@ package org.zfin.curation;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
-import org.zfin.curation.dto.ExpressionFigureStageDTO;
-import org.zfin.curation.dto.StageRangeIntersection;
-import org.zfin.curation.dto.StageDTO;
+import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
+import org.zfin.framework.presentation.gwtutils.StageRangeIntersection;
+import org.zfin.framework.presentation.dto.StageDTO;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,19 +1,8 @@
 package org.zfin.curation;
 
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-import org.zfin.curation.dto.ExpressionFigureStageDTO;
-import org.zfin.curation.dto.StageRangeIntersection;
-import org.zfin.curation.dto.WidgetUtil;
-import org.zfin.curation.client.CurationEntryPoint;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static junit.framework.Assert.assertEquals;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Label;
+import org.junit.Test;
+import org.zfin.framework.presentation.gwtutils.WidgetUtil;
 //import com.google.gwt.junit.client.GWTTestCase;
 
 public class WidgetUtilTest {//extends GWTTestCase {

@@ -463,7 +463,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Person currentUser = Person.getCurrentSecurityUser() ;
         MarkerAlias markerAlias = new MarkerAlias();
         markerAlias.setMarker(marker);
-        markerAlias.setGroup(MarkerAlias.Group.ALIAS);  //default for database, hibernate tries to insert null
+        markerAlias.setGroup(DataAliasGroup.Group.ALIAS);  //default for database, hibernate tries to insert null
         markerAlias.setAlias(alias);
         if (marker.getAliases() == null) {
             Set<MarkerAlias> markerAliases = new HashSet<MarkerAlias>();
@@ -659,8 +659,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
             marker.getDbLinks().add(mdb);
         currentSession().save(mdb);
         if(StringUtils.isNotEmpty(attributionZdbID)){
-            RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(mdb.getZdbID(), attributionZdbID);
-        }
+        RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(mdb.getZdbID(), attributionZdbID);
+    }
 
         //accessions will end up in the fast search table associated with the marker
         runMarkerNameFastSearchUpdate(marker);

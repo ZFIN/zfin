@@ -58,14 +58,6 @@ public interface AnatomyRepository extends CachedRepository {
     List<AnatomyItem> getAllAnatomyItems();
 
     /**
-     * This returns the complete list of all anatomy names and synonym names,
-     * sorted alphabetically
-     *
-     * @return A list of strings.
-     */
-    List<String> getAllAnatomyNamesAndSynonyms();
-
-    /**
      * Retrieve a list of anatomy terms that match a search string.
      * Matching is done via
      * 1) 'contains'
@@ -234,4 +226,11 @@ public interface AnatomyRepository extends CachedRepository {
      * @param structure structure
      */
     void createPileStructure(ExpressionStructure structure);
+
+    /**
+     * Retrieve an anatomical structure by OBO id;
+     * @param termID obo id
+     * @return anatomical structure
+     */
+    AnatomyItem getAnatomyTermByOboID(String termID);
 }

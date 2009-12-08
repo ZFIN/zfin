@@ -4,6 +4,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.curation.dto.*;
+import org.zfin.framework.presentation.dto.*;
+import org.zfin.framework.presentation.gwtutils.StageRangeIntersection;
+import org.zfin.framework.presentation.gwtutils.TermNotFoundException;
 
 import java.util.List;
 
@@ -271,7 +274,7 @@ public interface CurationExperimentRPC extends RemoteService {
      *
      * @param structure Structure DTO
      */
-    void deleteStructure(PileStructureDTO structure);
+    PileStructureDTO deleteStructure(PileStructureDTO structure);
 
     /**
      * Update inidividual figure annotations with structures from the pile.
@@ -299,5 +302,11 @@ public interface CurationExperimentRPC extends RemoteService {
     PileStructureDTO createPileStructure(ExpressedTermDTO expressedTerm, String publicationID)
             throws PileStructureExistsException, TermNotFoundException;
 
+
+    /**
+     * Save a given session variable in Application session.
+     * @param sessionVariable session variable
+     */
+    void saveSessionVisibility(SessionVariable sessionVariable);
 
 }

@@ -120,7 +120,7 @@
         <many-to-one name="startStage"  column="apato_start_stg_zdb_id"/>
         <many-to-one name="endStage" column="apato_end_stg_zdb_id"/>
         <!--
-                ToDo: mark tag as phenotypeTag type when this col is cleaned up
+        ToDo: mark tag as phenotypeTag type when this col is cleaned up
         -->
         <property name="tag" column="apato_tag" />
 
@@ -226,6 +226,8 @@
 
         <property name="name" column="goterm_name" />
         <property name="goID" column="goterm_go_id" />
+        <property name="subOntology" column="goterm_ontology" />
+        <property name="obsolete" column="goterm_is_obsolete" />
 
     </class>
     <!--

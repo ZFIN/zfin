@@ -11,43 +11,24 @@ import java.util.HashSet;
  */
 public class DataAlias implements Comparable, EntityAttribution {
 
-    public enum Group {
-        ALIAS("alias"),
-        EXACT_ALIAS("exact alias"),
-        EXACT_PLURAL("exact plural"),
-        PLURAL("plural"),
-        RELATED_ALIAS("related alias"),
-        RELATED_PLURAL("related plural"),
-        SECONDARY_ID("secondary id"),
-        SEQUENCE_SIMILARITY("sequence similarity");
-
-        private String value;
-
-        private Group(String value) {
-            this.value = value;
-        }
-
-        public String toString() {
-            return value;
-        }
-    }
-
     protected String zdbID;
     protected String alias;
-    protected Group group;
-    protected String dataZdbID ;
+    protected DataAliasGroup.Group group;
+    protected String dataZdbID;
 
     protected String aliasLowerCase;
 
-    public DataAliasGroup dAliasGroup;
+    // this property is only useful when not only publications are desired
+    public DataAliasGroup aliasGroup;
 
-    public DataAliasGroup getDAliasGroup() {
-        return dAliasGroup;
+    public DataAliasGroup getAliasGroup() {
+        return aliasGroup;
     }
 
-    public void setDAliasGroup(DataAliasGroup dAliasGroup) {
-        this.dAliasGroup = dAliasGroup;
-    }// this property is only useful when not only publications are desired
+    public void setAliasGroup(DataAliasGroup aliasGroup) {
+        this.aliasGroup = aliasGroup;
+    }
+
     protected Set<ActiveSource> sources;
 
     protected Set<PublicationAttribution> publications;
@@ -68,14 +49,13 @@ public class DataAlias implements Comparable, EntityAttribution {
         this.alias = alias;
     }
 
-    public Group getGroup() {
+    public DataAliasGroup.Group getGroup() {
         return group;
     }
 
-    public void setGroup(Group group) {
+    public void setGroup(DataAliasGroup.Group group) {
         this.group = group;
     }
-
 
     public String getDataZdbID() {
         return dataZdbID;
@@ -110,7 +90,7 @@ public class DataAlias implements Comparable, EntityAttribution {
 
     public Set<PublicationAttribution> getPublications() {
         if (publications == null)
-          return new HashSet<PublicationAttribution>();
+            return new HashSet<PublicationAttribution>();
         return publications;
     }
 

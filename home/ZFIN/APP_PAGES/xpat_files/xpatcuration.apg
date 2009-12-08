@@ -187,12 +187,21 @@ EFFECTS
 
 
 <p>
+<?MIVAR COND=$(NXST,$debug) NAME=debug>false<?/MIVAR>
+
+<script type="text/javascript">
+    var curationProperties = {
+        zdbID : "<?MIVAR>$OID<?/MIVAR>",
+	debug: "<?MIVAR>$debug<?/MIVAR>"
+    } ;
+</script>
+<p/>
+
 <span id="show-hide-experiments"></span>
+
 <div id="display-experiment"></div>
 <div id="image-loading"></div>
 <div id="display-experiment-errors"></div>
-
-<?MIVAR COND=$(NXST,$debug) NAME=debug>false<?/MIVAR>
 
 <p/>
 <table width="100%" bgcolor="#33cc99" border="0" cellpadding="0">
@@ -204,7 +213,7 @@ EFFECTS
             <span id="curation-filter-figure"></span>
         </td>
         <td>
-           Only Gene: 
+            Only Gene:
             <span id="curation-filter-genes"></span>
         </td>
         <td>
@@ -218,20 +227,12 @@ EFFECTS
     </tbody>
 </table>
 <p/>
-<span id="show-hide-expressions"></span>
+
+<div id="show-hide-expressions"></div>
 
 <div id="display-expressions"></div>
 <div id="image-loading-expression-section"></div>
 <div id="display-expression-errors"></div>
-
-<script type="text/javascript">
-    var curationProperties = {
-        zdbID : "<?MIVAR>$OID<?/MIVAR>",
-	debug: "<?MIVAR>$debug<?/MIVAR>"
-    } ;
-</script>
-<p/>
-
 
 <p/>
 
@@ -239,16 +240,11 @@ EFFECTS
 <div id="update-experiments"></div>
 <div id="new-term-suggestion"></div>
 <div id="display-structures"></div>
+<div id="update-experiments-bottom"></div>
 <div id="image-loading-structure-section"></div>
 <div id="display-structure-errors"></div>
+<div id="construction-zone"></div>
 
-<script type="text/javascript" src="/phenote/javascript/phenote-state.js"></script>
-<script src="/phenote/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
-
-<script src="/phenote/javascript/ajax-lib/effects.js" type="text/javascript"></script>
-<script src="/phenote/javascript/ajax-lib/dragdrop.js" type="text/javascript"></script>
-<script src="/phenote/javascript/ajax-lib/controls.js" type="text/javascript"></script>
-<script type="text/javascript">
 
 <?MIVAR NAME="$cs_field">subterm_ontology<?/MIVAR>
 <?MIVAR NAME="$cs_default">AO<?/MIVAR>
@@ -257,233 +253,13 @@ EFFECTS
   <?MIVAR NAME="$subterm_ontology">$(TRIM,$1)<?/MIVAR>
 <?/MISQL>
 
-phenoteState.setTermInfoUrl('/phenote/Phenote/');
-
-function setTerms(aoterm, aoID, term, termID) {
-	// alert("Hello "+aoterm+" "+aoID+" ");
-    clearErrorMessages();
-    supertermFieldID = document.getElementById('superterm-field-id');
-    supertermFieldID.innerHTML = aoID;
-    subtermFieldID = document.getElementById('subterm-field-id');
-    subtermFieldID.innerHTML = termID;
-    ontology = getOntologyName(termID);
-
-    inputElement = document.getElementById('supertermName');
-    inputElement.value = aoterm;
-    secondTerm = document.getElementById('subtermName');
-    //window.alert(term);
-    if (term != null && term.length > 0) {
-        secondTerm.value = term;
-        subtermOntology = document.getElementById('subtermOntology');
-        selectionBoxOntologyName = 'AO';
-        if (ontology == 'GO')
-            selectionBoxOntologyName = 'GO';
-        for (i = 0; i < subtermOntology.length; i++) {
-            if (subtermOntology[i].value == selectionBoxOntologyName) {
-                subtermOntology.selectedIndex = i;
-            }
-        }
-    } else {
-        secondTerm.value = '';
-    }
-}
-
-function getTermInfo(id, name, term) {
- //alert("getTermInfo "+name+" "+id+" "+" " +term);
-    if (name == null || name.length == 0) {
-        // display empty terminfo section
-        document.getElementById('termInfo').innerHTML = '';
-        return;
-    }
-
-
-    //window.alert(id);
-
-    if (term == 'superterm') {
-        field = document.getElementById('superterm_name');
-        supertermFieldID = document.getElementById('superterm-field-id');
-
-        if (id == null || id.length == 0)
-            id = supertermFieldID.innerHTML;
-    }
-    if (term == 'subterm') {
-        field = document.getElementById('subterm_name');
-        subtermFieldID = document.getElementById('subterm-field-id');
-        if (id == null || id.length == 0)
-            id = subtermFieldID.innerHTML;
-    }
-    //window.alert(id);
-
-    // if no id available do nothing as no term info can be retrieved.
-    if (id.length == 0)
-        return;
-    ontology = getOntologyName(id);
-    phenoteState.setActiveField(field);
-    phenoteState.updateTermInfo(new Term(id, name, ontology));
-}
-
-function updateTermInfo(field, termType) {
-    //window.alert(field);
-    activeField = phenoteState.getActiveField();
-    if (activeField == null || activeField.value == null) {
-        getTermInfo('', field.value, termType);
-        return;
-    }
-
-    //window.alert(activeField.value);
-    //window.alert(field.value);
-    id = '';
-    // if the field focud came through auto complete use the new id
-    if (activeField == field) {
-        id = phenoteState.getCurrentTermInfoTerm().termId;
-        if (termType == 'subterm') {
-            subtermFieldID = document.getElementById('subterm-field-id');
-            subtermFieldID.innerHTML = id;
-        }
-        if (termType == 'superterm') {
-            supertermFieldID = document.getElementById('superterm-field-id');
-            supertermFieldID.innerHTML = id;
-        }
-
-    }
-    getTermInfo(id, field.value, termType);
-}
-
-function useTermInfoField(term) {
-    clearErrorMessages();
-    if (term == 'superterm') {
-        field = document.getElementById('supertermName');
-        phenoteState.setActiveField(field);
-        ontologyName = phenoteState.getCurrentTermInfoTerm().ontology
-        if (ontologyName == 'GO') {
-            document.getElementById('no-go-terms-for-superterm').style.display = 'block';
-            return;
-        }
-        // update the invisible ID and ontology
-        supertermFieldID = document.getElementById('superterm-field-id');
-        supertermFieldID.innerHTML = phenoteState.getCurrentTermInfoTerm().termId;
-    }
-    if (term == 'subterm') {
-        field = document.getElementById('subtermName');
-        phenoteState.setActiveField(field);
-        subtermOntology = document.getElementById('subtermOntology');
-        for (i = 0; i < subtermOntology.length; i++) {
-            ontologyName = phenoteState.getCurrentTermInfoTerm().ontology
-            selectionBoxOntologyName = 'AO';
-            if (ontologyName == 'GO')
-                selectionBoxOntologyName = 'GO';
-            if (subtermOntology[i].value == selectionBoxOntologyName) {
-                subtermOntology.selectedIndex = i;
-            }
-            // update the invisible IDs and ontology
-            subtermFieldID = document.getElementById('subterm-field-id');
-            subtermFieldID.innerHTML = phenoteState.getCurrentTermInfoTerm().termId;
-        }
-
-    }
-    // if no terminfo is available do nothing
-    ontologyName = phenoteState.getCurrentTermInfoTerm().ontology;
-    if (ontologyName == null)
-        return;
-    phenoteState.useTermInfo();
-
-}
-
-function getOntologyName(termID) {
-    if (termID == null)
-        return null;
-    if (termID.indexOf('PATO') > -1)
-        return 'quality';
-    if (termID.indexOf('GO') > -1)
-        return 'GO';
-    if (termID.indexOf('ZFA') > -1)
-        return 'ZF';
-    return null;
-
-}
-
-function resetTerms() {
-    document.getElementById('supertermName').value = '';
-    document.getElementById('subtermName').value = '';
-    clearErrorMessages();
-    document.getElementById('termInfo').innerHTML = '';
-    showRootTermInfo();
-}
-
-function showRootTermInfo(){
-    getTermInfo('ZFA:0000037','anatomical structure','superterm');
-}
-
-function clearErrorMessages() {
-    document.getElementById('no-superterm-defined').style.display = 'none';
-    document.getElementById('no-go-terms-for-superterm').style.display = 'none';
-    document.getElementById('go-term-swap').style.display = 'none';
-    document.getElementById('error-on-add').style.display = 'none';
-}
-
-function switchTerms() {
-    var entityB = document.getElementById('subtermName');
-    var entityBvalue = entityB.value;
-    var entityA = document.getElementById('supertermName');
-    var entityAvalue = entityA.value;
-    var entityBOnt = document.getElementById('subtermOntology');
-    var entityBOntology = entityBOnt.value;
-
-    // cannot switch if subterm is GO because superterm is fixed to AO
-    if (entityBOntology == 'AO') {
-        subtermSpan = document.getElementById('subterm-field-id').innerHTML;
-        supertermSpan = document.getElementById('superterm-field-id').innerHTML;
-        document.getElementById('subterm-field-id').innerHTML = supertermSpan;
-        document.getElementById('superterm-field-id').innerHTML = subtermSpan;
-        document.getElementById('supertermName').value = entityBvalue;
-        document.getElementById('subtermName').value = entityAvalue;
-    } else {
-        document.getElementById('go-term-swap').style.display = 'block';
-    }
-
-
-}
-
-
-function setEntityOntology(selectedOntology, autoCompleter) {
-    if (selectedOntology == 'AO') {
-        ontologyName = 'ZF';
-    } else if (selectedOntology == 'GO') {
-        ontologyName = 'CC';
-    }
-
-    autoCompleter.options.defaultParams = "ontologyName=" + ontologyName;
-
-
-}
-
-function checkAnatomy() {
-
-    var superterm = document.getElementById('supertermName');
-    var subterm = document.getElementById('subtermName');
-    var pubID = document.getElementById('pubID');
-    var subtermOntology = document.getElementById('subtermOntology');
-    var entityAvalue = superterm.value;
-    if (entityAvalue == "") {
-        document.getElementById('no-superterm-defined').style.display = 'block';
-        return;
-    }
-    //alert("Adding a new post-composed term [" + pubID.value + "]: " + superterm.value + " : " + subterm.value + " <" + subtermOntology.value + ">");
-    addNewComposedTerm(pubID.value, superterm.value, subterm.value, subtermOntology.value);
-}
-</script>
-
 <a name="structure-construction-zone">
-<div id="structure-pile-construction-zone" style="display:none;">
-<table>
-    <tbody>
-    <tr>
-        <td valign="top">
-
-            <form action="" method="post" name="structure">
-                <input name="publicationID" value="<?MIVAR>$OID<?/MIVAR>" type="hidden" id="pubID">
+<div id="structure-pile-construction-zone" style="display:inline;">
+    <table>
+        <tbody>
+        <tr>
+            <td valign="top">
                 <table>
-                    <tbody>
                     <tr>
                         <td align="left" width="100"><b>Anatomy</b>
                         </td>
@@ -491,150 +267,59 @@ function checkAnatomy() {
                         <td align="right" width="150"><b>Substructure</b>
                         </td>
                     </tr>
-                    </tbody>
                 </table>
 
                 <table border="0" cellpadding="5" cellspacing="3">
-                    <tbody>
                     <tr>
-                        <td align="center">
-                            <table border="0" cellpadding="0" cellspacing="0" height="90">
-                                <tbody>
-                                <tr>
-                                    <td align="center" bgcolor="#000099">
-                                        <table border="0" cellpadding="0" cellspacing="1">
-                                            <tbody>
-                                            <tr>
-                                                <td></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-
+                        <td align="center" bgcolor="#006666" width="1">
                         </td>
                         <td align="top">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-         <select name="patoup_entity_b_ontology" id="subtermOntology" 
-                  onChange="setEntityOntology(this.options[this.selectedIndex].value, entityBAutoCompleter);
-                            storeSession('<?MIVAR>$ZDB_ident<?/MIVAR>','<?MIVAR>$OID<?/MIVAR>',
-                                         'subterm_ontology',
-                                          this.options[this.selectedIndex].value);clearErrorMessages();">
-             <?MIBLOCK COND="$(AND,$(XST,$xpcur_addtopile_error),$(>,$(STRLEN,$xpcur_addtopile_error),0),$(XST,$patoup_entity_b_ontology))">
-                    <option value="<?MIVAR>$patoup_entity_b_ontology<?/MIVAR>" selected="true"><?MIVAR>$patoup_entity_b_ontology<?MIVAR COND="$(EC,$patoup_entity_b_ontology,GO)">-CC<?/MIVAR><?/MIVAR></option>
-                    <?MIBLOCK COND="$(EC,$patoup_entity_b_ontology,AO)">
-                       <option value="GO">GO-CC</option>
-                    <?MIELSE>
-                       <option value="AO">AO</option>
-                    <?/MIBLOCK>
-                 <?MIELSE>
-                    <option value="AO" 
-                    <?MIBLOCK COND="$(EC,$subterm_ontology,AO)">selected="true"<?/MIBLOCK>  >AO</option> 
-                    <option value="GO"
-                    <?MIBLOCK COND="$(EC,$subterm_ontology,GO)">selected="true"<?/MIBLOCK>>GO-CC</option>
-                 <?/MIBLOCK>                              
-           </select>                               
-
-                            <input size="42" name="subterm_name" id="subtermName" autocomplete="off"
-                                   onchange="phenoteState.setActiveField(this)"
-                                   onkeypress="document.getElementById('subtermOntology').onchange();"
-                                   onfocus="updateTermInfo(this,'subterm')" type="text">
-                            <span id="subterm-field-id" style="display: none;"></span>
-                            &nbsp;
-
-                            <input value="&larr;" onclick="useTermInfoField('subterm')" type="button">
-                            <span id="subtermAutoCompleterIndicator"
-                                  style="display: none; color: red;">working...</span>
-
-                            <div style="overflow: auto; height: 400px; width: 300px; display: none;"
-                                 class="auto_complete" id="subterm_autocomplete"></div>
+                            <div id="structure-pile-construction-zone-subterm-info"></div>
                             <p>
                             </p>
-
-                            <p>
-                                <span class="indent2"><b><i>within the</i></b></span>
-
-<span class="indent3">
-     <input value="Swap Terms  &uarr;&darr;" name="switch_term" onclick="switchTerms()" type="button">
-</span>
-                            </p></td>
-
+                            <span class="indent2"><b><i>within the</i></b></span>
+                            <span id="structure-pile-construction-zone-swap-terms"></span>
+                        </td>
                     </tr>
-                    </tbody>
                 </table>
 
                 <table>
-                    <tbody>
                     <tr>
                         <td>
-                            AO:
-                        </td>
-                        <td><input size="52" name="superterm_name" id="supertermName" autocomplete="off"
-                                   onchange="phenoteState.setActiveField(this)"
-                                   onfocus="updateTermInfo(this,'superterm')" type="text">
-                            &nbsp;
-                            <span id="superterm-field-id" style="display: none;"></span>
-                            <input value="&larr;" onclick="useTermInfoField('superterm')" type="button">
-                            <span id="supertermAutoCompleterIndicator"
-                                  style="display: none; color: red;">working...</span>
-
-                            <div style="overflow: auto; height: 400px; width: 300px; display: none;"
-                                 class="auto_complete" id="superterm_autocomplete"></div>
+                            <div id="structure-pile-construction-zone-superterm-info"></div>
                         </td>
                     </tr>
-
-                    </tbody>
                 </table>
 
                 <p>
                 <table>
-                    <tbody>
                     <tr>
-                        <td><input name="add-new-structure" value="Add" style="margin-left: 9em;"
-                                   onclick="checkAnatomy();" type="button">
-                            <input value="Reset" onclick="resetTerms()" type="button">
+                        <td>
+                            <div id="structure-pile-construction-zone-submit-reset"></div>
                         </td>
                     </tr>
-                    </tbody>
                 </table>
 
-                </p>
-                <div class="error" id="error-on-add"></div>
+                <p>
+
+                <div id="structure-pile-construction-zone-errors"></div>
                 <br>
-                </a>
-                <div style="display: none;" class="error" id="no-superterm-defined"><a>You must enter an anatomy item in
-                    the lower box.</a></div>
-
-                <div style="display: none;" class="error" id="no-go-terms-for-superterm"><a>You cannot enter a GO term
-                    for a super term.</a></div>
-                <a> </a>
-
-                <div style="display: none;" class="error" id="go-term-swap"><a>You cannot copy a GO term into a super
-                    term (AO).</a></div>
-
-                <a>
-                    <script type="text/javascript" src="/phenote/javascript/phenote-state.js"></script>
-                    <script type="text/javascript">
-                        phenoteState.setTermInfoUrl('/phenote/Phenote/');
-                    </script>
-
-                    <script type="text/javascript">
-
-                        var entityBAutoCompleter = new Ajax.Autocompleter('subtermName', 'subterm_autocomplete', '/phenote/Phenote/', {parameters:'ontologyName=CC&field=ENTITY',paramName: "userInput", indicator: 'subtermAutoCompleterIndicator', minChars: 3});
-                        new Ajax.Autocompleter('supertermName', 'superterm_autocomplete', '/phenote/Phenote/', {parameters:'ontologyName=ZF&field=ENTITY',paramName: "userInput", indicator: 'supertermAutoCompleterIndicator', minChars: 3});
-
-                    </script>
-                </a></form>
-        </td>
-        <td></td>
-        <td>
-            <div style="width:400px; overflow: auto; height: 400px;" id="termInfo"></div>
-        </td>
-    </tr>
-    </tbody>
-</table>
+            </td>
+            <td></td>
+            <td>
+                <iframe src="javascript:''" id='__gwt_historyFrame'
+                        style='position:absolute;width:0;height:0;border:0'></iframe>
+                <table style="width:550px; overflow: auto; border: 0.1px; border-style:solid">
+                    <tr>
+                        <td>
+                            <div id="structure-pile-construction-zone-terminfo"></div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 
@@ -657,6 +342,3 @@ function checkAnatomy() {
   ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
-<script>
-	showRootTermInfo();
-</script>

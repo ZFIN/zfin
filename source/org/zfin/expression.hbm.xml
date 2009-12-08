@@ -6,6 +6,7 @@
 <hibernate-mapping package="org.zfin.expression">
 
     <class name="org.zfin.expression.Figure" table="figure">
+        <cache usage="read-only"/>
         <id name="zdbID" type="string">
             <column name="fig_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
@@ -113,7 +114,7 @@
         <many-to-one name="clone" class="org.zfin.marker.Clone" column="xpatex_probe_feature_zdb_id" insert="false"
                      update="false"/>
 
-        <set name="expressionResults" lazy="true">
+        <set name="expressionResults" lazy="true" inverse="true">
             <key column="xpatres_xpatex_zdb_id"/>
             <one-to-many class="org.zfin.expression.ExpressionResult"/>
         </set>
@@ -145,7 +146,7 @@
         <property name="expressionFound" column="xpatres_expression_found"/>
 
         <many-to-one name="expressionExperiment" class="org.zfin.expression.ExpressionExperiment"
-                     column="xpatres_xpatex_zdb_id"/>
+                     column="xpatres_xpatex_zdb_id" not-null="true"/>
 
         <many-to-one name="anatomyTerm" class="org.zfin.anatomy.AnatomyItem"
                      column="xpatres_anat_item_zdb_id"/>
@@ -198,7 +199,8 @@
         <many-to-one name="publication" column="exp_source_zdb_id" />
     </class>
 
-     <class name="org.zfin.expression.ExpressionAssay" table="expression_pattern_assay">
+     <class name="org.zfin.expression.ExpressionAssay" mutable="false" table="expression_pattern_assay">
+         <cache usage="read-only"/>
         <id name="name" column="xpatassay_name">
             <generator class="native"/>
         </id>

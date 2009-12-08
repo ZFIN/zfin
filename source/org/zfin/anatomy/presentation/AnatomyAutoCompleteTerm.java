@@ -7,11 +7,20 @@ package org.zfin.anatomy.presentation;
  */
 public class AnatomyAutoCompleteTerm {
 
+    private String ID;
     private String termName;
     private String synonymName;
 
     public AnatomyAutoCompleteTerm(String termName) {
         this.termName = termName;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
     public String getTermName() {

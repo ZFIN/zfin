@@ -4,6 +4,9 @@
 package org.zfin.infrastructure.repository;
 
 import org.zfin.ExternalNote;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.TermRelationship;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
@@ -12,6 +15,7 @@ import org.zfin.marker.MarkerType;
 import org.zfin.people.Person;
 
 import java.util.List;
+import java.util.Collection;
 
 public interface InfrastructureRepository {
 
@@ -27,9 +31,9 @@ public interface InfrastructureRepository {
 
     int deleteActiveDataByZdbID(List<String> zdbID);
 
-    int deleteRecordAttributionsForData(String dataZdbID) ; 
+    int deleteRecordAttributionsForData(String dataZdbID);
 
-    int deleteRecordAttribution(String dataZdbID, String sourceZdbId) ;
+    int deleteRecordAttribution(String dataZdbID, String sourceZdbId);
 
 
     RecordAttribution getRecordAttribution(String dataZdbID,
@@ -66,8 +70,10 @@ public interface InfrastructureRepository {
 
     // TODO: RecordAttribution has a composite primary key, so not needed just yet
     RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID);
+
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID);
-    PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID,RecordAttribution.SourceType sourceType);
+
+    PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 
     void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, String submitterID, String submitterName);
 
@@ -127,14 +133,16 @@ public interface InfrastructureRepository {
 
     /**
      * Retrieves standard PublicationAttributions.
+     *
      * @param dataZdbID
      * @param pubZdbID
      * @return
      */
-    PublicationAttribution getStandardPublicationAttribution(String dataZdbID,String pubZdbID) ;
+    PublicationAttribution getStandardPublicationAttribution(String dataZdbID, String pubZdbID);
 
     /**
-     * Retrieve the replaced zdbID for a given zdbID. 
+     * Retrieve the replaced zdbID for a given zdbID.
+     *
      * @param oldZdbID zdb ID
      * @return Replacement object
      */
@@ -181,6 +189,63 @@ public interface InfrastructureRepository {
     List<ExpressionAssay> getAllAssays();
 
     List<PublicationAttribution> getPublicationAttributions(String dblinkZdbID);
+
+    /**
+     * Retrieves all data alias groups
+     *
+     * @return list of data alias groups
+     */
+    List<DataAliasGroup> getAllDataAliasGroups();
+
+    /**
+     * Retrieve terms by name (contains) and ontology.
+     * No obsolete terms are included.
+     *
+     * @param termName term name (contains)
+     * @param ontology Ontology
+     * @return list of GenericTerm
+     */
+    List<GenericTerm> getTermsByName(String termName, Ontology ontology);
+
+    /**
+     * Retrieve terms by synonym match.
+     *
+     * @param queryString synonym name
+     * @param ontology    name
+     * @return list of terms
+     */
+    List<GenericTerm> getTermsBySynonymName(String queryString, Ontology ontology);
+
+    /**
+     * Retrieve a single term by name and ontology. If more than one term is found
+     * an exception is thrown.
+     *
+     * @param termName name
+     * @param ontology Ontology
+     * @return Term
+     */
+    GenericTerm getTermByName(String termName, Ontology ontology);
+
+    /**
+     * Retrieve Term by ZDB ID.
+     * @param termID term id
+     * @return Generic Term
+     */
+    GenericTerm getTermByID(String termID);
+
+    /**
+     * Retrieve Term by OBO ID.
+     * @param termID term id
+     * @return Generic Term
+     */
+    GenericTerm getTermByOboID(String termID);
+
+    /**
+     * Retrieve all related Terms.
+     * @param genericTerm term
+     * @return list of relationships
+     */
+    List<TermRelationship> getTermRelationships(GenericTerm genericTerm);
 }
 
 

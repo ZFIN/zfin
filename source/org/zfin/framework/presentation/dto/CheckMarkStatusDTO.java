@@ -1,0 +1,32 @@
+package org.zfin.framework.presentation.dto;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.util.List;
+
+import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
+
+/**
+ * Holds values for the checkmark status.
+ */
+public class CheckMarkStatusDTO implements IsSerializable {
+
+    private ExpressionFigureStageDTO figureAnnotation;
+    private List<ExpressionFigureStageDTO> figureAnnotations;
+
+    public ExpressionFigureStageDTO getFigureAnnotation() {
+        return figureAnnotation;
+    }
+
+    public void setFigureAnnotation(ExpressionFigureStageDTO figureAnnotation) {
+        this.figureAnnotation = figureAnnotation;
+    }
+
+    public List<ExpressionFigureStageDTO> getFigureAnnotations() {
+        return figureAnnotations;
+    }
+
+    public void setFigureAnnotations(List<ExpressionFigureStageDTO> figureAnnotations) {
+        this.figureAnnotations = figureAnnotations;
+    }
+}

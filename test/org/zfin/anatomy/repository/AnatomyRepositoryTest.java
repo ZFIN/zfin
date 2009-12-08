@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.antibody.Antibody;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyRelationship;
@@ -58,7 +59,7 @@ public class AnatomyRepositoryTest {
         assertTrue(syns != null);
         // check that none of the synonyms are secondary ids
         for (AnatomySynonym syn : syns) {
-            assertEquals(" Not a secondary id", true, syn.getGroup() != AnatomySynonym.Group.SECONDARY_ID);
+            assertEquals(" Not a secondary id", true, syn.getGroup() != DataAliasGroup.Group.SECONDARY_ID);
         }
     }
 

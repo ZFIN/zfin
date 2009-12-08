@@ -69,20 +69,20 @@ td.full_width {
 
 td.resultcount {
     vertical-align: top;
-    align: right;
+    text-align: right;
     background-color: #FFFFFF;
 }
 
 td.titlebar {
     vertical-align: middle;
-    align: left;
+    text-align: left;
     background-color: #CCCCCC;
 
 }
 
 td.submitbar {
     vertical-align: top;
-    align: right;
+    text-align: right;
     background-color: #CCCCCC;
 
 }
@@ -229,6 +229,14 @@ div.auto_complete ul strong.highlight {
     text-align:center;
 }
 
+.left-align {
+    text-align:left;
+}
+
+.right-align {
+    text-align:right;
+}
+
 .bold-red {
     font-weight: bold;
     color:red;
@@ -369,9 +377,39 @@ img.clickable{
     font-style:italic;
 }
 
+.red {
+    color:red;
+}
+
 .red-modifier-hyperlink a {
     color:red;
     font-style:italic;
+}
+
+.left-top-aligned {
+    text-align:left;
+    vertical-align:top;
+}
+
+.nowrap {
+    white-space:nowrap;
+}
+
+.autocomplete-plain {
+    font-size:8pt;
+}
+
+.gwt-SuggestBoxPopup {
+    background: gray;
+    font-size:8pt;
+}
+
+.gwt-Hyperlink {
+   display: inline;
+}
+
+.gwt-HTML {
+   display: inline-block;
 }
 
 a.wiki-link{

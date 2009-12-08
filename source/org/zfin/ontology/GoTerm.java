@@ -8,6 +8,8 @@ public class GoTerm implements OntologyTerm, Comparable<GoTerm> {
     private String zdbID;
     private String goID;
     private String name;
+    private String subOntology;
+    private boolean obsolete;
 
     public String getZdbID() {
         return zdbID;
@@ -46,6 +48,22 @@ public class GoTerm implements OntologyTerm, Comparable<GoTerm> {
             return null;
 
         return "GO:"+goID;
+    }
+
+    public String getSubOntology() {
+        return subOntology;
+    }
+
+    public boolean isObsolete() {
+        return obsolete;
+    }
+
+    public void setObsolete(boolean obsolete) {
+        this.obsolete = obsolete;
+    }
+
+    public void setSubOntology(String subOntology) {
+        this.subOntology = subOntology;
     }
 
     public int compareTo(GoTerm goTerm) {

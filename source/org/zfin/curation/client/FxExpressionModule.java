@@ -1,11 +1,16 @@
 package org.zfin.curation.client;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.curation.dto.*;
+import org.zfin.framework.presentation.client.StageSelector;
+import org.zfin.framework.presentation.dto.*;
+import org.zfin.framework.presentation.gwtutils.StringUtils;
+import org.zfin.framework.presentation.gwtutils.WidgetUtil;
 
 import java.util.*;
 
@@ -71,7 +76,7 @@ import java.util.*;
  * message is displayed when the update matches another existing experiment. Before an experiment is
  * updated a JavaScript alert box pops up to ask for confirmation.
  */
-public class FxExpressionModule extends Composite {
+public class FxExpressionModule extends Composite implements ExpressionSection {
 
     // div-elements
     public static final String SHOW_HIDE_EXPRESSIONS = "show-hide-expressions";
@@ -83,23 +88,20 @@ public class FxExpressionModule extends Composite {
     // this panel holds the Title and the show / hide link
     private HorizontalPanel panel = new HorizontalPanel();
     private Hyperlink showExpressionSection = new Hyperlink();
-    private ZfinFlexTable displayTable;
+    private VerticalPanel displayPanel = new VerticalPanel();
+    private FlexTable constructionRow = new FlexTable();
+    private ExpressionFlexTable displayTable;
     private Image loadingImage = new Image();
     private Label errorMessage = new Label();
 
     // construction zone
     private Button addButton = new Button("Add");
     private Button resetButton = new Button("Reset");
-    private Button multiStageButton = new Button(SELECT_MULTIPLE_STAGES);
+    private StageSelector stageSelector = new StageSelector();
     private ListBox figureList = new ListBox();
-    private HorizontalPanel startStage = new HorizontalPanel();
-    private HorizontalPanel endStage = new HorizontalPanel();
-    private VerticalPanel stageSelection = null;
-    private ListBox startStageList = new ListBox();
-    private ListBox endStageList = new ListBox();
-    private ListBox multiStartStageList = new ListBox(true);
     // this list is being populated through the DisplayExperimentTable
-    private ListBox experimentList = new ListBox(true);
+    private VerticalPanel experimentSelection = new VerticalPanel();
+    private boolean showSelectedExpressionOnly;
 
     // all annotations that are selected
     private List<ExpressionFigureStageDTO> selectedExpressions = new ArrayList<ExpressionFigureStageDTO>();
@@ -108,9 +110,6 @@ public class FxExpressionModule extends Composite {
     // This maps the display table and contains the full objects that each
     // row is made up from
     private Map<Integer, ExpressionFigureStageDTO> displayTableMap = new HashMap<Integer, ExpressionFigureStageDTO>();
-
-    // injected by Experiment Module
-    private List<ExperimentDTO> experiments;
 
     // attributes for duplicate row
     private String duplicateRowOriginalStyle;
@@ -130,7 +129,6 @@ public class FxExpressionModule extends Composite {
     public static final String PUSH_TO_PATO = "to pato";
     public static final String IN_PATO = "in pato";
     public static final String PUSHED = "pushed";
-    private static final HTML HTML_NBSP = new HTML("&nbsp");
 
     private Set<ExpressedTermDTO> expressedTerms = new HashSet<ExpressedTermDTO>();
     // used for highlighting structures
@@ -139,40 +137,44 @@ public class FxExpressionModule extends Composite {
     private List<FigureDTO> allFigureDtos = new ArrayList<FigureDTO>();
 
     // injected variables
-    private CurationEntryPoint curationEntryPoint;
+    private ExperimentSection experimentSection;
+    private StructurePile structurePile;
+
     // Publication in question.
     private String publicationID;
     // filter set by the banana bar
     private ExperimentDTO experimentFilter = new ExperimentDTO();
-    private static final String SELECT_MULTIPLE_STAGES = "Select multiple stages";
-    private static final String SELECT_SINGLE_STAGE = "Select a stage range";
 
-    public FxExpressionModule(CurationEntryPoint curationEntryPoint) {
-        this.curationEntryPoint = curationEntryPoint;
-        publicationID = curationEntryPoint.getPublicationID();
-        displayTable = new ZfinFlexTable(HeaderName.getHeaderNames());
+    public FxExpressionModule(ExperimentSection experimentSection, String publicationID) {
+        this.experimentSection = experimentSection;
+        this.publicationID = publicationID;
+        displayTable = new ExpressionFlexTable(HeaderName.getHeaderNames());
         initGUI();
+    }
+
+    public void setPileStructure(StructurePile structurePile){
+        this.structurePile = structurePile;
     }
 
     /**
      * The data should only be loaded when the filter bar is initilized.
      * So this method is called from the FxFilterTable.
      */
-    protected void runModule() {
+    public void runModule() {
         if (!initialized) {
             loadSectionVisibility();
-            showExperimentList();
             initialized = true;
         }
     }
 
     private void initGUI() {
         initShowHideGUI();
-
-        RootPanel.get(EXPRESSIONS_DISPLAY).add(displayTable);
-        addChangeListeners();
-
-        RootPanel.get(EXPRESSIONS_DISPLAY_ERRORS).add(errorMessage);
+        experimentSelection.setVisible(false);
+        displayPanel.setWidth("100%");
+        displayPanel.add(constructionRow);
+        displayPanel.add(new HTML("&nbsp;"));
+        displayPanel.add(displayTable);
+        RootPanel.get(EXPRESSIONS_DISPLAY).add(displayPanel);
         RootPanel.get(IMAGE_LOADING_EXPRESSION_SECTION).add(loadingImage);
         errorMessage.setStyleName("error");
         loadingImage.setUrl("/images/ajax-loader.gif");
@@ -186,10 +188,8 @@ public class FxExpressionModule extends Composite {
         showExpressionSection.setStyleName("small");
         showExpressionSection.setText(SHOW);
         showExpressionSection.setTargetHistoryToken(SHOW);
-        showExpressionSection.addClickListener(new ShowHideExpressionSectionListener());
+        showExpressionSection.addClickHandler(new ShowHideExpressionSectionHandler());
         panel.add(showExpressionSection);
-        multiStartStageList.setVisibleItemCount(6);
-        multiStartStageList.setVisible(false);
     }
 
     /**
@@ -212,88 +212,14 @@ public class FxExpressionModule extends Composite {
         // stage list
         curationRPCAsync.getStages(new RetrieveStageListCallback());
 
-        // show experiments
     }
 
     // Retrieve experiments from the server
-    protected void retrieveExpressions() {
+    public void retrieveExpressions() {
         loadingImage.setVisible(true);
         curationRPCAsync.getExpressionsByFilter(experimentFilter, figureID, new RetrieveExpressionsCallback());
     }
 
-    private void addChangeListeners() {
-        // start stage changes
-        startStageList.addChangeListener(new StartStageChangeListener());
-        startStageList.addChangeListener(errorMessageCleanupListener);
-    }
-
-    private void createTableHeader() {
-        displayTable.setWidth("100%");
-        displayTable.setHeaderRow();
-        displayTable.addStyleName("searchresults groupstripes-hover");
-        displayTable.getRowFormatter().setStyleName(0, "table-header");
-    }
-
-    public void createExpressionTable() {
-        clearExpressionListTable();
-        // header row index = 0
-        createTableHeader();
-        int rowIndex = 1;
-        //Window.alert("Experiment List Size: " + experiments.size());
-        ExpressionFigureStageDTO previousExpression = null;
-        // first element is an odd group element
-        int groupIndex = 1;
-        for (ExpressionFigureStageDTO expression : displayedExpressions) {
-            // rowindex minus the header row
-            int experimentIndex = rowIndex - 1;
-            displayTableMap.put(rowIndex, expression);
-            SelectExpressionCheckBox checkbbox = new SelectExpressionCheckBox(null);
-            checkbbox.setTitle(expression.getUniqueID());
-            // if any figure annotations are already selected make sure they stay checked
-            if (selectedExpressions.contains(expression))
-                checkbbox.setChecked(true);
-            checkbbox.addClickListener(new ExpressionSelectClickListener(experimentIndex, true));
-            displayTable.setWidget(rowIndex, HeaderName.SELECT.getIndex(), checkbbox);
-            displayTable.setText(rowIndex, HeaderName.FIGURE.getIndex(), expression.getFigureLabel());
-            ExperimentDTO experiment = expression.getExperiment();
-            displayTable.setText(rowIndex, HeaderName.FISH.getIndex(), experiment.getFishName());
-            displayTable.setText(rowIndex, HeaderName.GENE.getIndex(), experiment.getGeneName());
-            displayTable.setText(rowIndex, HeaderName.ENVIRONMENT.getIndex(), experiment.getEnvironmentDisplayValue());
-            String assay = experiment.getAssayAbbreviation();
-            if (!StringUtils.isEmpty(experiment.getGenbankNumber()))
-                assay += " (" + experiment.getGenbankNumber() + ")";
-            displayTable.setText(rowIndex, HeaderName.ASSAY.getIndex(), assay);
-            displayTable.setText(rowIndex, HeaderName.ANTIBODY.getIndex(), experiment.getAntibody());
-            displayTable.setText(rowIndex, HeaderName.STAGE_RANGE.getIndex(), expression.getStageRange());
-
-            Widget terms = createTermList(expression);
-            displayTable.setWidget(rowIndex, HeaderName.EXPRESSED_IN.getIndex(), terms);
-
-            RemoveButton delete = new RemoveButton("X");
-            delete.setTitle(expression.getUniqueID());
-            delete.addClickListener(new DeleteFigureAnnotationClickListener(expression));
-            displayTable.setWidget(rowIndex, HeaderName.DELETE.getIndex(), delete);
-
-            if (expression.isPatoExists()) {
-                Label inPato = new Label(IN_PATO);
-                displayTable.setWidget(rowIndex, HeaderName.PUSH.getIndex(), inPato);
-            } else {
-                ZfinHyperlinkWithEventCancelBubble pushToPato = new ZfinHyperlinkWithEventCancelBubble(PUSH_TO_PATO, "anotherLink");
-                pushToPato.setText(PUSH_TO_PATO);
-                pushToPato.addClickListener(new CreatePatoListener(rowIndex, expression));
-                displayTable.setWidget(rowIndex, HeaderName.PUSH.getIndex(), pushToPato);
-            }
-            groupIndex = setRowStyle(rowIndex, expression, previousExpression, groupIndex);
-            rowIndex++;
-            previousExpression = expression;
-        }
-        // add horizontal line
-        displayTable.getFlexCellFormatter().setColSpan(rowIndex, 0, HeaderName.getHeaderNames().length);
-        HTML html = new HTML("<hr/>");
-        displayTable.setWidget(rowIndex, 0, html);
-
-        createConstructionZone();
-    }
 
     private void recordAllExpressedTerms() {
         expressedTerms.clear();
@@ -337,115 +263,28 @@ public class FxExpressionModule extends Composite {
             if (classNamePrefix != null)
                 classSpan.append("<span class='" + classNamePrefix + "'>");
         }
-        classSpan.append(term.getComposedTerm());
+        classSpan.append(term.getDisplayName());
         if (classNamePrefix != null || markStructures)
             classSpan.append("</span>");
         return classSpan.toString();
     }
 
-    private void clearExpressionListTable() {
-        int rowCount = displayTable.getRowCount();
-        // Note: make sure to remove rows in reverse order
-        // otherwise you get random displays of records!
-        if (rowCount < 2)
-            return;
-
-        for (int i = rowCount - 1; i >= 0; i--) {
-            displayTable.removeRow(i);
-        }
-    }
-
     private void createConstructionZone() {
-        int rowIndex = displayTable.getRowCount() + 1;
-        addButton.addClickListener(new AddExpressionClickListener());
-        addButton.setEnabled(false);
-        displayTable.setWidget(rowIndex, HeaderName.SELECT.getIndex(), addButton);
-        displayTable.setWidget(rowIndex, HeaderName.FIGURE.getIndex(), figureList);
-        displayTable.setWidget(rowIndex, HeaderName.GENE.getIndex(), experimentList);
-        experimentList.addClickListener(new ExperimentClickListener());
-        displayTable.getFlexCellFormatter().setColSpan(rowIndex, HeaderName.GENE.getIndex(), 5);
-        // TODO: move into a separate class to make it reusable
-        if (stageSelection == null) {
-            stageSelection = new VerticalPanel();
-            startStage.add(new Label("Start:"));
-            startStage.add(HTML_NBSP);
-            startStage.add(startStageList);
-            endStage.add(new Label("End:"));
-            endStage.add(HTML_NBSP);
-            endStage.add(endStageList);
-            stageSelection.add(startStage);
-            stageSelection.add(endStage);
-            stageSelection.add(multiStageButton);
-            stageSelection.add(multiStartStageList);
-            startStageList.addChangeListener(new StartStageChangeListener());
-            multiStageButton.addClickListener(new MultiStageButtonClickListener());
-            stageSelection.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
-        }
-        displayTable.setWidget(rowIndex, HeaderName.GENE.getIndex() + 2, stageSelection);
-        resetButton.addClickListener(new ResetExpressionConstructionClickListener());
-        displayTable.setWidget(rowIndex, HeaderName.GENE.getIndex() + 4, resetButton);
-    }
+        addButton.addClickHandler(new AddExpressionClickListener());
+        constructionRow.setWidget(0, 2, stageSelector.getPanelTitle());
+        constructionRow.setWidget(1, 0, addButton);
+        constructionRow.setWidget(1, 1, figureList);
+        HorizontalPanel pan = new HorizontalPanel();
+        pan.add(stageSelector.getStartStagePanel());
+        pan.add(stageSelector.getMultiStagePanel());
+        constructionRow.setWidget(1, 2, pan);
+        resetButton.addClickHandler(new ResetExpressionConstructionClickListener());
+        constructionRow.setWidget(1, 3, resetButton);
+        constructionRow.setWidget(2, 2, stageSelector.getEndStagePanel());
+        constructionRow.setWidget(3, 2, stageSelector.getTogglePanel());
+        constructionRow.setWidget(4, 0, errorMessage);
+        constructionRow.getFlexCellFormatter().setColSpan(4, 0, 4);
 
-
-    // Returns the boolean: isOddGroup
-    private int setRowStyle(int rowIndex, ExpressionFigureStageDTO currentExperiment, ExpressionFigureStageDTO previousExperiment, int groupIndex) {
-        StringBuilder sb = new StringBuilder();
-        // check even/odd row
-        if (rowIndex % 2 == 0)
-            sb.append("even");
-        else
-            sb.append("odd");
-
-        // check if newgroup or oldgroup
-        if (previousExperiment == null) {
-            sb.append(" newgroup");
-        } else {
-            String previousGeneID = previousExperiment.getUniqueID();
-            String currentGeneID = currentExperiment.getUniqueID();
-            if (previousGeneID == null && currentGeneID == null)
-                sb.append(" oldgroup");
-            else if (previousGeneID == null) {
-                sb.append(" newgroup");
-                groupIndex++;
-            } else if (previousGeneID.equals(currentGeneID)) {
-                sb.append(" oldgroup");
-            } else {
-                sb.append(" newgroup");
-                groupIndex++;
-            }
-        }
-
-        // check if odd group or even group
-        if (groupIndex % 2 == 0)
-            sb.append(" evengroup");
-        else
-            sb.append(" oddgroup");
-
-        // add row
-        sb.append(" experiment-row ");
-        displayTable.getRowFormatter().setStyleName(rowIndex, sb.toString());
-        //table.getRowFormatter().getElement(rowIndex).setId(EXPERIMENT_ROW_INDEX_ID + rowIndex);
-        return groupIndex;
-    }
-
-    public void setShowHideWidget(Hyperlink showHideLink) {
-        showExpressionSection = showHideLink;
-    }
-
-    /**
-     * Select (highlight) a given experiment.
-     *
-     * @param experimentID experiment
-     */
-    void selectExperiment(String experimentID) {
-        int totalStages = experimentList.getItemCount();
-        for (int index = 0; index < totalStages; index++) {
-            String value = experimentList.getValue(index);
-            if (value.equals(experimentID)) {
-                experimentList.setSelectedIndex(index);
-                addButton.setEnabled(true);
-            }
-        }
     }
 
     public Set<ExpressedTermDTO> getExpressedTermDTOs() {
@@ -465,7 +304,7 @@ public class FxExpressionModule extends Composite {
             markStructures = true;
             expressedStructure = dto;
         }
-        createExpressionTable();
+        displayTable.createExpressionTable();
         markStructures = false;
     }
 
@@ -483,30 +322,99 @@ public class FxExpressionModule extends Composite {
                     efs.setExpressedTerms(updatedEfs.getExpressedTerms());
             }
         }
-        createExpressionTable();
+        displayTable.createExpressionTable();
         recordAllExpressedTerms();
         // remove check marks from annotations.
     }
 
     /**
-     * Retrieve the expression list again.
-     * remove check marks from expressions.
-     * update expressedTerms collection.
+     * 1) Retrieve the expression list again.
+     * 2) remove check marks from expressions.
+     * 3) update expressedTerms collection.
+     * 4) un-check all experiments in the experiment section. 
      */
     public void postUpdateStructuresOnExpression() {
-        retrieveExpressions();
         selectedExpressions.clear();
-        experimentList.setSelectedIndex(-1);
+        showSelectedExpressionOnly = false;
+        displayTable.uncheckAllRecords();
+        retrieveExpressions();
+        experimentSection.unselectAllExperiments();
     }
 
     /**
      * This method updates the structure pile with the checked figure annotation.
      */
     protected void sendFigureAnnotationsToStructureSection() {
-        FxStructureModule structureTable = curationEntryPoint.getStructureModule();
-        structureTable.updateFigureAnnotations(selectedExpressions);
+        structurePile.updateFigureAnnotations(selectedExpressions);
     }
 
+    private void saveCheckStatusInSession(ExpressionFigureStageDTO checkedExpression, boolean isChecked) {
+        String errorMessage = "Error while saving expression check mark status.";
+        curationRPCAsync.setFigureAnnotationStatus(checkedExpression, isChecked, new VoidAsyncCallback(new Label(errorMessage), null));
+    }
+
+    private void unceckAllCheckStatusInSession() {
+        for (ExpressionFigureStageDTO expression : selectedExpressions) {
+            saveCheckStatusInSession(expression, false);
+        }
+        selectedExpressions.clear();
+        sendFigureAnnotationsToStructureSection();
+    }
+
+
+    public void showExpression(boolean showSelectedExpressionOnly) {
+        //Window.alert("HIO");
+        this.showSelectedExpressionOnly = showSelectedExpressionOnly;
+        displayTable.createExpressionTable();
+    }
+
+    private Set<ExperimentDTO> getSelectedExperiments() {
+        return experimentSection.getSelectedExperiment();
+    }
+
+    /**
+     * Retrieve the list of expression records that are selected.
+     *
+     * @return list of expression figure stage info
+     */
+    public List<ExpressionFigureStageDTO> getSelectedExpressions() {
+        return selectedExpressions;
+    }
+
+    public void applyFilterElements(String figureID, ExperimentDTO experimentFilter) {
+        setFigureID(figureID);
+        // needed for new expression retrieval
+        setExperimentFilter(experimentFilter);
+        // uncheck all checked expressions if any of the filters is set except the ones that are not hidden
+        // by the filter
+        if (StringUtils.isNotEmpty(figureID) || StringUtils.isNotEmpty(experimentFilter.getGeneZdbID())
+                || StringUtils.isNotEmpty(experimentFilter.getFishID())) {
+            for (ExpressionFigureStageDTO expression : selectedExpressions) {
+                if (StringUtils.isNotEmpty(figureID) && !expression.getFigureID().equals(figureID)) {
+                    uncheckExpressionRecord(expression);
+                }
+                if (StringUtils.isNotEmpty(experimentFilter.getGeneZdbID()) &&
+                        !expression.getExperiment().getGeneZdbID().equals(experimentFilter.getGeneZdbID())) {
+                    uncheckExpressionRecord(expression);
+                }
+                if (StringUtils.isNotEmpty(experimentFilter.getFishID()) &&
+                        !expression.getExperiment().getFishID().equals(experimentFilter.getFishID())) {
+                    uncheckExpressionRecord(expression);
+                }
+            }
+        }
+        selectedExpressions.clear();
+        retrieveExpressions();
+    }
+
+    private void uncheckExpressionRecord(ExpressionFigureStageDTO expression) {
+        saveCheckStatusInSession(expression, false);
+        displayTable.showClearAllLink();
+        displayTable.showHideClearAllLink();
+
+    }
+
+    // ****************** Handlers, Callbacks, etc.
     /**
      * This Click Listener is activated upon clicking the selection check box in the
      * Expression display section. It should do two things:
@@ -515,77 +423,34 @@ public class FxExpressionModule extends Composite {
      * 3) Save the check mark status (checked or unchecked) in session.
      * 4) Copy the figure annotation into the structure section.
      */
-    private class ExpressionSelectClickListener implements ClickListener {
+    private class ExpressionSelectClickHandler implements ClickHandler {
 
-        private int rowIndex;
         private ExpressionFigureStageDTO checkedExpression;
-        boolean eventFromCheckBox;
+        private CheckBox checkbox;
 
-        public ExpressionSelectClickListener(int rowIndex, boolean eventFromCheckBox) {
-            this.rowIndex = rowIndex;
-            this.eventFromCheckBox = eventFromCheckBox;
+        private ExpressionSelectClickHandler(ExpressionFigureStageDTO checkedExpression, CheckBox checkbox) {
+            this.checkedExpression = checkedExpression;
+            this.checkbox = checkbox;
         }
 
-        public void onClick(Widget widget) {
+        public void onClick(ClickEvent event) {
+            DOM.eventCancelBubble(Event.getCurrentEvent(), true);
             clearErrorMessages();
             // store selected experiment for update purposes
-            checkedExpression = displayedExpressions.get(rowIndex);
             selectUnselectFigure();
-            selectCheckedExperiment();
-            selectStartStage();
-            selectEndStage();
-            CheckBox checkBox = (CheckBox) widget;
-            boolean isChecked = checkBox.isChecked();
-            if (!eventFromCheckBox) {
-                checkBox.setChecked(!isChecked);
-                isChecked = !isChecked;
-            }
-            saveCheckStatusInSession(isChecked);
-            if (isChecked)
+            stageSelector.selectStartStage(checkedExpression.getStart().getZdbID());
+            stageSelector.selectEndStage(checkedExpression.getEnd().getZdbID());
+            saveCheckStatusInSession(checkedExpression, checkbox.getValue());
+            if (checkbox.getValue()) {
                 selectedExpressions.add(checkedExpression);
-            else
+                experimentSection.setSingleExperiment(checkedExpression.getExperiment());
+            } else {
                 selectedExpressions.remove(checkedExpression);
+                experimentSection.unselectAllExperiments();
+            }
+            //Window.alert("Selected Expressions: "+selectedExpressions.size());
             sendFigureAnnotationsToStructureSection();
-            addButton.setEnabled(true);
-        }
-
-        private void saveCheckStatusInSession(boolean isChecked) {
-            String errorMessage = "Error while saving expression check mark status.";
-            curationRPCAsync.setFigureAnnotationStatus(checkedExpression, isChecked, new VoidAsyncCallback(new Label(errorMessage), null));
-        }
-
-        /**
-         * Select the checked efs (experiment figure stage) in the selection box.
-         */
-        private void selectCheckedExperiment() {
-            String experimentZdbID = checkedExpression.getExperiment().getExperimentZdbID();
-            selectExperiment(experimentZdbID);
-        }
-
-        /**
-         * Select the checked start stage in the selection box.
-         */
-        private void selectStartStage() {
-            String toBeSelectedStage = checkedExpression.getStart().getZdbID();
-            int totalStages = startStageList.getItemCount();
-            for (int index = 0; index < totalStages; index++) {
-                String value = startStageList.getValue(index);
-                if (value.equals(toBeSelectedStage))
-                    startStageList.setSelectedIndex(index);
-            }
-        }
-
-        /**
-         * Select the checked end stage in the selection box.
-         */
-        private void selectEndStage() {
-            String toBeSelectedStage = checkedExpression.getEnd().getZdbID();
-            int totalStages = endStageList.getItemCount();
-            for (int index = 0; index < totalStages; index++) {
-                String value = endStageList.getValue(index);
-                if (value.equals(toBeSelectedStage))
-                    endStageList.setSelectedIndex(index);
-            }
+            displayTable.showHideClearAllLink();
         }
 
         // select or unselect (checkbox) the figure in the figure list
@@ -609,63 +474,48 @@ public class FxExpressionModule extends Composite {
      */
     private List<ExpressionFigureStageDTO> getExpressionsFromConstructionZone() {
         String figureID = figureList.getValue(figureList.getSelectedIndex());
-        String startStageID = startStageList.getValue(startStageList.getSelectedIndex());
-        String endStageID = endStageList.getValue(endStageList.getSelectedIndex());
+        String startStageID = stageSelector.getSelectedStartStageID();
+        String endStageID = stageSelector.getSelectedEndStageID();
 
-        //multiStartStageList.get
         List<ExpressionFigureStageDTO> expressions = new ArrayList<ExpressionFigureStageDTO>();
-        if (startStage.isVisible()) {
+        if (stageSelector.isDualStageMode()) {
             addFigureAnnotationsToList(figureID, startStageID, endStageID, expressions);
         } else {
-            int stageCount = multiStartStageList.getItemCount();
-            for (int index = 0; index < stageCount; index++) {
-                if (multiStartStageList.isItemSelected(index)) {
-                    startStageID = multiStartStageList.getValue(index);
-                    addFigureAnnotationsToList(figureID, startStageID, startStageID, expressions);
-                }
+            List<String> stageIDs = stageSelector.getSelectedStageIDs();
+            for (String stageID : stageIDs) {
+                addFigureAnnotationsToList(figureID, stageID, stageID, expressions);
             }
         }
         return expressions;
     }
 
     private void addFigureAnnotationsToList(String figureID, String startStageID, String endStageID, List<ExpressionFigureStageDTO> expressions) {
-        int expressionCount = experimentList.getItemCount();
-        for (int index = 0; index < expressionCount; index++) {
-            if (experimentList.isItemSelected(index)) {
-                String experimentID = experimentList.getValue(index);
-                ExperimentDTO experiment = getExperimentDtoFromID(experimentID);
-                ExpressionFigureStageDTO newExpression = new ExpressionFigureStageDTO();
-                newExpression.setExperiment(experiment);
-                StageDTO start = new StageDTO();
-                start.setZdbID(startStageID);
-                newExpression.setStart(start);
-                StageDTO end = new StageDTO();
-                end.setZdbID(endStageID);
-                newExpression.setEnd(end);
-                newExpression.setFigureID(figureID);
-                expressions.add(newExpression);
-            }
+        //Window.alert("Experiment size: " + experiments);
+
+        for (ExperimentDTO experiment : getSelectedExperiments()) {
+            ExpressionFigureStageDTO newExpression = new ExpressionFigureStageDTO();
+            newExpression.setExperiment(experiment);
+            StageDTO start = new StageDTO();
+            start.setZdbID(startStageID);
+            newExpression.setStart(start);
+            StageDTO end = new StageDTO();
+            end.setZdbID(endStageID);
+            newExpression.setEnd(end);
+            newExpression.setFigureID(figureID);
+            expressions.add(newExpression);
         }
     }
 
-    private ExperimentDTO getExperimentDtoFromID(String experimentID) {
-        for (ExperimentDTO experiment : experiments) {
-            if (experiment.getExperimentZdbID().equals(experimentID))
-                return experiment;
-        }
-        errorMessage.setText("No experiment found for ID: " + experimentID);
-        return null;
-    }
-
-    private class DeleteFigureAnnotationClickListener implements ClickListener {
+    private class DeleteFigureAnnotationClickHandler implements ClickHandler {
 
         private ExpressionFigureStageDTO expressionFigureStage;
 
-        public DeleteFigureAnnotationClickListener(ExpressionFigureStageDTO expressionFigureStage) {
+        public DeleteFigureAnnotationClickHandler(ExpressionFigureStageDTO expressionFigureStage) {
             this.expressionFigureStage = expressionFigureStage;
         }
 
-        public void onClick(Widget widget) {
+        public void onClick(ClickEvent event) {
+            DOM.eventCancelBubble(Event.getCurrentEvent(), true);
             String message = "Are you sure you want to delete this figure annotation?";
             if (!Window.confirm(message))
                 return;
@@ -710,13 +560,11 @@ public class FxExpressionModule extends Composite {
             // remove from the dashboard list
             displayedExpressions.remove(figureAnnotation);
             selectedExpressions.remove(figureAnnotation);
-            // remove from display
-            int numOfRows = displayTable.getRowCount();
             // re-create the display table
-            createExpressionTable();
+            displayTable.createExpressionTable();
             // update expression list in structure section.
             sendFigureAnnotationsToStructureSection();
-            curationEntryPoint.getExperimentModule().notifyRemovedExpression(figureAnnotation.getExperiment());
+            experimentSection.notifyRemovedExpression(figureAnnotation.getExperiment());
             clearErrorMessages();
         }
 
@@ -766,7 +614,7 @@ public class FxExpressionModule extends Composite {
             }
             //Window.alert("SIZE: " + experiments.size());
             if (sectionVisible)
-                createExpressionTable();
+                displayTable.createExpressionTable();
             recordAllExpressedTerms();
             curationRPCAsync.getFigureAnnotationCheckmarkStatus(publicationID, new FigureAnnotationCheckmarkStatusCallback());
             loadingImage.setVisible(false);
@@ -780,13 +628,13 @@ public class FxExpressionModule extends Composite {
     /**
      * Show or hide expression section
      */
-    private class ShowHideExpressionSectionListener implements ClickListener {
+    private class ShowHideExpressionSectionHandler implements ClickHandler {
 
-        public void onClick(Widget widget) {
+        public void onClick(ClickEvent event) {
             String errorMessage = "Error while trying to save expression visibility";
             if (sectionVisible) {
                 // hide experiments
-                displayTable.setVisible(false);
+                displayPanel.setVisible(false);
                 showExpressionSection.setText(SHOW);
                 sectionVisible = false;
                 curationRPCAsync.setExpressionVisibilitySession(publicationID, false,
@@ -795,7 +643,7 @@ public class FxExpressionModule extends Composite {
                 // display experiments
                 // check if it already exists
                 if (displayTable != null && displayTable.getRowCount() > 0) {
-                    displayTable.setVisible(true);
+                    displayPanel.setVisible(true);
                 } else {
                     retrieveExpressions();
                     if (displayTable.getRowCount() == 0)
@@ -815,17 +663,18 @@ public class FxExpressionModule extends Composite {
      * Push the expression record to Pato, i.e. create a pato expression record.
      * Change the text from 'to pato' to 'in pato'.
      */
-    private class CreatePatoListener implements ClickListener {
+    private class CreatePatoHandler implements ClickHandler {
 
         private int row;
         private ExpressionFigureStageDTO efs;
 
-        private CreatePatoListener(int row, ExpressionFigureStageDTO efs) {
+        private CreatePatoHandler(int row, ExpressionFigureStageDTO efs) {
             this.row = row;
             this.efs = efs;
         }
 
-        public void onClick(Widget widget) {
+        public void onClick(ClickEvent event) {
+            DOM.eventCancelBubble(Event.getCurrentEvent(), true);
             curationRPCAsync.createPatoRecord(efs, new CreatePatoRecordCallback(row));
         }
 
@@ -834,9 +683,9 @@ public class FxExpressionModule extends Composite {
     // avoid double updates
     private boolean addButtonInProgress;
 
-    private class AddExpressionClickListener implements ClickListener {
+    private class AddExpressionClickListener implements ClickHandler {
 
-        public void onClick(Widget widget) {
+        public void onClick(ClickEvent event) {
             // do not proceed if it just has been clicked once
             // and is being worked on
             if (addButtonInProgress) {
@@ -857,7 +706,7 @@ public class FxExpressionModule extends Composite {
                     expressionsExist = true;
                 }
             }
-            if (!startStage.isVisible() && multiStartStageList.getSelectedIndex() < 0) {
+            if (stageSelector.isMultiStageMode() && !stageSelector.isMultiStageSelected()) {
                 errorMessage.setText("No stage selected.  Please select at least one stage.");
                 cleanupOnExit();
                 return;
@@ -883,29 +732,14 @@ public class FxExpressionModule extends Composite {
     /**
      * Reset figure, experiments and stage info to default values.
      */
-    private class ResetExpressionConstructionClickListener implements ClickListener {
+    private class ResetExpressionConstructionClickListener implements ClickHandler {
 
-        public void onClick(Widget widget) {
-            addButton.setEnabled(false);
-            startStageList.setSelectedIndex(0);
-            endStageList.setSelectedIndex(0);
-            experimentList.setSelectedIndex(-1);
+        public void onClick(ClickEvent event) {
             figureList.setSelectedIndex(0);
-            multiStartStageList.setSelectedIndex(-1);
-            multiStageButton.setText(SELECT_MULTIPLE_STAGES);
-            multiStartStageList.setVisible(false);
-            startStage.setVisible(true);
-            endStage.setVisible(true);
-        }
-
-    }
-
-    private class ExperimentClickListener implements ClickListener {
-
-        public void onClick(Widget widget) {
-            addButton.setEnabled(true);
+            stageSelector.setGuiToDefault();
             clearErrorMessages();
         }
+
     }
 
     /**
@@ -951,14 +785,14 @@ public class FxExpressionModule extends Composite {
             return false;
         }
         // check that end stage comes after start stage
-        if (startStage.isVisible()) {
-            if (startStageList.getSelectedIndex() > endStageList.getSelectedIndex()) {
-                errorMessage.setText("Selected Start Stage comes after selected End Stage! Please correct your choices.");
+        if (stageSelector.isDualStageMode()) {
+            if (stageSelector.validDualStageSelection() != null) {
+                errorMessage.setText(stageSelector.validDualStageSelection());
                 return false;
             }
         } else {
-            if (multiStartStageList.getSelectedIndex() < 0) {
-                errorMessage.setText("No stage selected.  Please select at least one stage.");
+            if (stageSelector.validMultiStageSelection() != null) {
+                errorMessage.setText(stageSelector.validMultiStageSelection());
                 return false;
             }
         }
@@ -973,47 +807,167 @@ public class FxExpressionModule extends Composite {
         errorMessage.setText(null);
         if (duplicateRowIndex > 0)
             displayTable.getRowFormatter().setStyleName(duplicateRowIndex, duplicateRowOriginalStyle);
-        curationEntryPoint.getExperimentModule().clearErrorMessages();
+        experimentSection.clearErrorMessages();
     }
 
-    /**
-     * unselect experiment selection box.
-     */
-    private void unselectExperiments() {
-        experimentList.setSelectedIndex(-1);
-    }
-
-    class ZfinFlexTable extends FlexTable implements TableListener {
+    class ExpressionFlexTable extends ZfinFlexTable {
 
         private HeaderName[] headerNames;
 
-        ZfinFlexTable(HeaderName[] headerNames) {
-            super();
+        ExpressionFlexTable(HeaderName[] headerNames) {
+            super(headerNames.length, HeaderName.SELECT.index);
             this.headerNames = headerNames;
-            addTableListener(this);
+            setToggleHyperlink(ToggleLink.SHOW_SELECTED_EXPRESSIONS_ONLY.getText(), ToggleLink.SHOW_ALL_EXPRESSIONS.getText());
+            addToggleHyperlinkClickHandler(new ShowSelectedExpressionClickHandler(showSelectedRecords));
         }
 
-        public void onCellClicked(SourcesTableEvents actor, int row, int cell) {
-            //Window.alert(row + " : " + cell);
-            int firstCell = 0;
-            Widget widget = getWidget(row, firstCell);
-            if (widget == null || !(widget instanceof CheckBox))
-                return;
+        protected void createExpressionTable() {
+            clearTable();
+            createConstructionZone();
+            // header row index = 0
+            createTableHeader();
+            int rowIndex = 1;
+            //Window.alert("Experiment List Size: " + experiments.size());
+            ExpressionFigureStageDTO previousExpression = null;
+            // first element is an odd group element
+            int groupIndex = 1;
 
-            CheckBox checkBox = (CheckBox) widget;
-            (new ExpressionSelectClickListener(row - 1, false)).onClick(checkBox);
+            List<ExpressionFigureStageDTO> expressionFigureStageDTOs;
+            if (showSelectedExpressionOnly) {
+                expressionFigureStageDTOs = new ArrayList<ExpressionFigureStageDTO>();
+                expressionFigureStageDTOs.addAll(selectedExpressions);
+            } else {
+                expressionFigureStageDTOs = displayedExpressions;
+            }
+
+            for (ExpressionFigureStageDTO expression : expressionFigureStageDTOs) {
+
+                // rowindex minus the header row
+                displayTableMap.put(rowIndex, expression);
+                CheckBox checkbbox = new CheckBox(null);
+                checkbbox.setTitle(expression.getUniqueID());
+                // if any figure annotations are already selected make sure they stay checked
+                if (selectedExpressions.contains(expression)) {
+                    checkbbox.setValue(true);
+                    //Window.alert("Checkbox");
+                    //showClearAllLink();
+                }
+                checkbbox.addClickHandler(new ExpressionSelectClickHandler(expression, checkbbox));
+                setWidget(rowIndex, HeaderName.SELECT.getIndex(), checkbbox);
+                setText(rowIndex, HeaderName.FIGURE.getIndex(), expression.getFigureLabel());
+                ExperimentDTO experiment = expression.getExperiment();
+                setText(rowIndex, HeaderName.FISH.getIndex(), experiment.getFishName());
+                setText(rowIndex, HeaderName.GENE.getIndex(), experiment.getGeneName());
+                setText(rowIndex, HeaderName.ENVIRONMENT.getIndex(), experiment.getEnvironmentDisplayValue());
+                String assay = experiment.getAssayAbbreviation();
+                if (!StringUtils.isEmpty(experiment.getGenbankNumber()))
+                    assay += " (" + experiment.getGenbankNumber() + ")";
+                setText(rowIndex, HeaderName.ASSAY.getIndex(), assay);
+                setText(rowIndex, HeaderName.ANTIBODY.getIndex(), experiment.getAntibody());
+                setText(rowIndex, HeaderName.STAGE_RANGE.getIndex(), expression.getStageRange());
+
+                Widget terms = createTermList(expression);
+                setWidget(rowIndex, HeaderName.EXPRESSED_IN.getIndex(), terms);
+
+                Button delete = new Button("X");
+                delete.setTitle(expression.getUniqueID());
+                delete.addClickHandler(new DeleteFigureAnnotationClickHandler(expression));
+                setWidget(rowIndex, HeaderName.DELETE.getIndex(), delete);
+
+                if (expression.isPatoExists()) {
+                    Label inPato = new Label(IN_PATO);
+                    setWidget(rowIndex, HeaderName.PUSH.getIndex(), inPato);
+                } else {
+                    Hyperlink pushToPato = new Hyperlink(PUSH_TO_PATO, PUSH_TO_PATO);
+                    pushToPato.setText(PUSH_TO_PATO);
+                    pushToPato.addClickHandler(new CreatePatoHandler(rowIndex, expression));
+                    setWidget(rowIndex, HeaderName.PUSH.getIndex(), pushToPato);
+                }
+                String previousID = null;
+                if (previousExpression != null)
+                    previousID = previousExpression.getUniqueID();
+
+                groupIndex = setRowStyle(rowIndex, expression.getUniqueID(), previousID, groupIndex);
+                rowIndex++;
+                previousExpression = expression;
+            }
+            createBottomClearAllLinkRow(rowIndex);
+            //Window.alert("HIO");
+            showHideClearAllLink();
+            //Window.alert("HIO II");
         }
 
         /**
-         * Set table header row, assuming it is rowIndex = 0;
+         * Uncheck all checked records.
+         * Save the checkbox status in session.
          */
-        public void setHeaderRow() {
-            int rowIndex = 0;
+        protected void uncheckAllRecords() {
+            super.uncheckAllRecords();
+            unceckAllCheckStatusInSession();
+        }
+
+
+        public void onClick(ClickEvent clickEvent) {
+            HTMLTable.Cell cell = getCellForEvent(clickEvent);
+            Widget widget = getWidget(cell.getRowIndex(), 0);
+            if (widget == null || !(widget instanceof CheckBox))
+                return;
+            CheckBox checkBox = (CheckBox) widget;
+            if (checkBox.getValue())
+                checkBox.setValue(false);
+            else
+                checkBox.setValue(true);
+            checkBox.fireEvent(clickEvent);
+            showSelectedRecords.hideHyperlink(isAllUnchecked());
+        }
+
+        protected void createTableHeader() {
+            super.createTableHeader();
             for (HeaderName name : headerNames) {
-                setText(rowIndex, name.index, name.getName());
-                if (name.equals(HeaderName.EXPRESSED_IN))
-                    getFlexCellFormatter().setWidth(rowIndex, name.index, "25%");
+                if (name.index != 0)
+                    setText(0, name.index, name.getName());
             }
+        }
+
+        /**
+         * Show or hide expression section
+         */
+        private class ShowSelectedExpressionClickHandler implements ClickHandler {
+
+            private ToggleHyperlink showExperiments;
+
+            private ShowSelectedExpressionClickHandler(ToggleHyperlink showExperiments) {
+                this.showExperiments = showExperiments;
+            }
+
+            /**
+             * This onclick handler is called after the intrinsic handler of the ToggleHyperlink
+             * has set the text already.
+             *
+             * @param event click event
+             */
+            public void onClick(ClickEvent event) {
+                boolean showSelectedExperimentsOnly = showExperiments.getToggleStatus();
+                showExpression(!showSelectedExperimentsOnly);
+            }
+
+        }
+
+    }
+
+    protected enum ToggleLink {
+
+        SHOW_SELECTED_EXPRESSIONS_ONLY("Show Selected Expressions Only"),
+        SHOW_ALL_EXPRESSIONS("Show All Expressions");
+
+        private String text;
+
+        private ToggleLink(String value) {
+            this.text = value;
+        }
+
+        public String getText() {
+            return text;
         }
     }
 
@@ -1029,86 +983,20 @@ public class FxExpressionModule extends Composite {
         public void onSuccess(List<ExpressionFigureStageDTO> newAnnotations) {
             displayedExpressions.addAll(newAnnotations);
             Collections.sort(displayedExpressions);
-            createExpressionTable();
+            displayTable.createExpressionTable();
             recordAllExpressedTerms();
             addButtonInProgress = false;
             addButton.setEnabled(true);
             loadingImage.setVisible(false);
             clearErrorMessages();
-            unselectExperiments();
-            curationEntryPoint.getExperimentModule().notifyAddedExpression(getExperiments());
-        }
-
-        // Extract the list of experiments
-        private List<ExperimentDTO> getExperiments() {
-            List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>();
-            if (figureAnnotations == null)
-                return experiments;
-            for (ExpressionFigureStageDTO efs : figureAnnotations) {
-                experiments.add(efs.getExperiment());
-            }
-            return experiments;
+            stageSelector.resetGui();
+            experimentSection.notifyAddedExpression();
         }
 
         public void onFailureCleanup() {
             loadingImage.setVisible(true);
         }
 
-    }
-
-    private class SelectExpressionCheckBox extends CheckBox {
-
-        private ClickListenerCollection clickListener = new ClickListenerCollection();
-
-        public SelectExpressionCheckBox(String name) {
-            super(name);
-            this.sinkEvents(Event.ONCLICK);
-        }
-
-        public void onBrowserEvent(Event event) {
-            switch (DOM.eventGetType(event)) {
-                case Event.ONCLICK:
-                    clickListener.fireClick(this);
-                    DOM.eventCancelBubble(event, true);
-            }
-        }
-
-        public void addClickListener(ClickListener listener) {
-            clickListener.add(listener);
-        }
-
-    }
-
-    private class RemoveButton extends Button {
-
-        private ClickListenerCollection clickListener = new ClickListenerCollection();
-
-        public RemoveButton(String name) {
-            super(name);
-            this.sinkEvents(Event.ONCLICK);
-        }
-
-        public void onBrowserEvent(Event event) {
-            switch (DOM.eventGetType(event)) {
-                case Event.ONCLICK:
-                    clickListener.fireClick(this);
-                    DOM.eventCancelBubble(event, true);
-            }
-        }
-
-        public void addClickListener(ClickListener listener) {
-            clickListener.add(listener);
-        }
-
-    }
-
-    private ErrorMessageCleanupListener errorMessageCleanupListener = new ErrorMessageCleanupListener();
-
-    private class ErrorMessageCleanupListener implements ChangeListener {
-
-        public void onChange(Widget widget) {
-            clearErrorMessages();
-        }
     }
 
     public void setFigureID(String figureID) {
@@ -1119,30 +1007,6 @@ public class FxExpressionModule extends Composite {
 
     public void setExperimentFilter(ExperimentDTO experimentFilter) {
         this.experimentFilter = experimentFilter;
-    }
-
-    private class StartStageChangeListener implements ChangeListener {
-        public void onChange(Widget widget) {
-            int startStageIndex = startStageList.getSelectedIndex();
-            // always set end stage = start stage when changing start stage.
-            endStageList.setSelectedIndex(startStageIndex);
-        }
-    }
-
-    private class MultiStageButtonClickListener implements ClickListener {
-        public void onClick(Widget widget) {
-            if (startStage.isVisible()) {
-                startStage.setVisible(false);
-                endStage.setVisible(false);
-                multiStartStageList.setVisible(true);
-                multiStageButton.setText(SELECT_SINGLE_STAGE);
-            } else {
-                startStage.setVisible(true);
-                endStage.setVisible(true);
-                multiStartStageList.setVisible(false);
-                multiStageButton.setText(SELECT_MULTIPLE_STAGES);
-            }
-        }
     }
 
     private void updateFigureListBox() {
@@ -1184,15 +1048,8 @@ public class FxExpressionModule extends Composite {
 
         public void onSuccess(List<StageDTO> stages) {
 
-            startStageList.clear();
-            endStageList.clear();
-            multiStartStageList.clear();
-            for (StageDTO stageDTO : stages) {
-                startStageList.addItem(stageDTO.getName(), stageDTO.getZdbID());
-                endStageList.addItem(stageDTO.getName(), stageDTO.getZdbID());
-                multiStartStageList.addItem(stageDTO.getName(), stageDTO.getZdbID());
-            }
             //Window.alert("SIZE: " + experiments.size());
+            stageSelector.setStageList(stages);
             loadingImage.setVisible(false);
         }
 
@@ -1212,27 +1069,28 @@ public class FxExpressionModule extends Composite {
 
         public void onSuccess(CheckMarkStatusDTO filterValues) {
             //Window.alert("brought back: " + filterValues.getFigureAnnotations().size());
-            if (filterValues != null) {
-                int maxRows = displayTable.getRowCount();
-                for (int row = 1; row < maxRows; row++) {
-                    if (!displayTable.isCellPresent(row, 0))
-                        continue;
-                    Widget widget = displayTable.getWidget(row, 0);
-                    if (widget == null || !(widget instanceof SelectExpressionCheckBox))
-                        continue;
+            if (filterValues == null)
+                return;
 
-                    SelectExpressionCheckBox checkBox = (SelectExpressionCheckBox) widget;
-                    for (ExpressionFigureStageDTO dto : filterValues.getFigureAnnotations()) {
-                        if (dto.getUniqueID().equals(checkBox.getTitle())) {
-                            checkBox.setChecked(true);
-                            ExpressionFigureStageDTO checkedExpression = displayTableMap.get(row);
-                            selectedExpressions.add(checkedExpression);
-                        }
+            int maxRows = displayTable.getRowCount();
+            for (int row = 1; row < maxRows; row++) {
+                if (!displayTable.isCellPresent(row, 0))
+                    continue;
+                Widget widget = displayTable.getWidget(row, 0);
+                if (widget == null || !(widget instanceof CheckBox))
+                    continue;
+
+                CheckBox checkBox = (CheckBox) widget;
+                for (ExpressionFigureStageDTO dto : filterValues.getFigureAnnotations()) {
+                    if (dto.getUniqueID().equals(checkBox.getTitle())) {
+                        checkBox.setValue(true);
+                        ExpressionFigureStageDTO checkedExpression = displayTableMap.get(row);
+                        selectedExpressions.add(checkedExpression);
                     }
                 }
             }
-            curationEntryPoint.getStructureModule().setSelectedFigureAnnotations(selectedExpressions);
-            curationEntryPoint.getStructureModule().runModule();
+            displayTable.showHideClearAllLink();
+            structurePile.updateFigureAnnotations(selectedExpressions);
         }
     }
 
@@ -1247,7 +1105,8 @@ public class FxExpressionModule extends Composite {
             if (displayedExpressions == null || displayedExpressions.size() == 0) {
                 setInitialValues();
             } else {
-                createExpressionTable();
+                displayTable.createExpressionTable();
+                displayTable.showHideClearAllLink();
             }
             if (sectionVisible) {
                 showExpressionSection.setText(HIDE);
@@ -1267,7 +1126,7 @@ public class FxExpressionModule extends Composite {
      *
      * @param deletedExperiment experiment that was deleted
      */
-    protected void removeFigureAnnotations(ExperimentDTO deletedExperiment) {
+    public void removeFigureAnnotations(ExperimentDTO deletedExperiment) {
         List<ExpressionFigureStageDTO> toBeDeleted = new ArrayList<ExpressionFigureStageDTO>();
         for (ExpressionFigureStageDTO efs : displayedExpressions) {
             ExperimentDTO expDto = efs.getExperiment();
@@ -1277,35 +1136,7 @@ public class FxExpressionModule extends Composite {
         for (ExpressionFigureStageDTO efs : toBeDeleted) {
             displayedExpressions.remove(efs);
         }
-        createExpressionTable();
-    }
-
-    /**
-     * Injection of the experiments
-     *
-     * @param experiments list of ExperimentDTO
-     */
-    protected void setExperiments(List<ExperimentDTO> experiments) {
-        this.experiments = experiments;
-        showExperimentList();
-    }
-
-    /**
-     * Show the list of experiments
-     */
-    private void showExperimentList() {
-        experimentList.clear();
-        if (experiments == null)
-            return;
-
-        int maxVisibleSize = 8;
-        if (experiments.size() < maxVisibleSize)
-            maxVisibleSize = experiments.size();
-        experimentList.setVisibleItemCount(maxVisibleSize);
-        for (ExperimentDTO experiment : experiments) {
-            String displayName = FxExperimentModule.concatenatedExperimentText(experiment);
-            experimentList.addItem(displayName, experiment.getExperimentZdbID());
-        }
+        displayTable.createExpressionTable();
     }
 
     private enum HeaderName {
@@ -1341,4 +1172,6 @@ public class FxExpressionModule extends Composite {
             return FxExpressionModule.HeaderName.values();
         }
     }
+
+
 }
