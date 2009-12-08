@@ -21,8 +21,6 @@ import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.orthology.Species;
 import org.zfin.TestConfiguration;
-import org.zfin.datatransfer.MicroarrayProcessor;
-import org.zfin.datatransfer.MicroarrayBean;
 import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.apache.log4j.Logger;
@@ -94,7 +92,7 @@ public class MicroarrayTest {
 
     public MicroarrayTest(){
         try{
-            driver = new org.zfin.datatransfer.MicroarrayProcessor() ;
+            driver = new MicroarrayProcessor() ;
             driver.init();  // this creates the session so I don't need to do twice
             genBankLinks = sequenceRepository.getUniqueMarkerDBLinks( driver.getGenbankReferenceDatabases()) ;   // 1 - load genbank
             currentMicroarrayLinks = sequenceRepository.getMarkerDBLinks(geoDatabase) ;   // 0 - load microarray

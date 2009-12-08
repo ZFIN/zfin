@@ -4,8 +4,6 @@ import org.junit.Test;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.datatransfer.DefaultGEOSoftParser;
-import org.zfin.datatransfer.MicroarrayBean;
 
 import java.io.File;
 import java.io.IOException;
