@@ -2,6 +2,7 @@ package org.zfin.curation.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.curation.dto.UpdateExpressionDTO;
@@ -103,7 +104,6 @@ public class FxStructureModule extends Composite implements StructurePile {
 
     private void initUpdateButton(Button button) {
         button.setTitle("Update Structures for Expressions");
-        button.addClickHandler(new UpdateStructuresClickListener());
         button.addClickHandler(new UpdateStructuresClickListener());
     }
 
