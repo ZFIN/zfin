@@ -135,7 +135,11 @@
 #
 10 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/LoadGO/loadgo.pl
 #
-# SMTWT    11:20pm   load and update go terms
+# SMTWT    11:10pm   load and update go terms with generic loader
+#
+30 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/LoadOntology/loadOntology.pl "http://www.geneontology.org/ontology/obo_format_1_2/gene_ontology.1_2.obo" "gene_ontology.obo"
+#
+# SMTWT    11:20pm   load and update pato terms
 #
 20 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/PATO/loadpato.pl
 #
