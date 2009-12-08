@@ -18,6 +18,7 @@ public class RecordAttribution implements Serializable {
         MOLECULAR_CHARACTERIZATION("molecular characterization"),
         SEGREGATION("segregation"),
         STANDARD("standard"),
+        TERM_DEFINITION("term definition"),
         FIRST_CURATED_SEQUENCE_PUB("first curated sequence pub");
 
         private final String value;

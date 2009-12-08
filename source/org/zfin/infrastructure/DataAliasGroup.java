@@ -41,7 +41,8 @@ public class DataAliasGroup {
         SECONDARY_ID("secondary id"),
         SEQUENCE_SIMILARITY("sequence similarity"),
         NARROW_ALIAS("narrow alias"),
-        BROAD_ALIAS("broad alias");
+        BROAD_ALIAS("broad alias"),
+        SYSTEMATIC_SYNONYM("systematic_synonym");
 
         private String value;
 
