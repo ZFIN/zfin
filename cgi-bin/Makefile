@@ -26,12 +26,10 @@ GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi \
 	   searchwww.cgi send_request.perl \
 	   mapper_select.cgi mapper_select.pl \
 	   view_mapplet.cgi view_zmapplet.cgi \
-	   internal_protein.cgi \
-	   input_welcome.cgi input_welcome_generic.cgi expired_locus.cgi \
-           publications_today.cgi usersurvey2005.cgi \
-	   upload.cgi pre_vega.cgi send_Judy_your_report.pl \
-	   new_gene.cgi new_line.cgi \
-	   internal_vega.cgi internal_wzest.cgi get_sequence.cgi display_sequence.cgi
+	   input_welcome.cgi input_welcome_generic.cgi  \
+       internal_wzest.cgi publications_today.cgi \
+	   upload.cgi send_Judy_your_report.pl \
+	   new_gene.cgi new_line.cgi 
 
 # ---------------  Production Rules  ------------------------------------
 

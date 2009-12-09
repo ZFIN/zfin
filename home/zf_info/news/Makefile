@@ -28,7 +28,7 @@ GENERATOR = $(TARGETROOT)/server_apps/WebSiteTools
 
 VARIABLE_GENERICS =  curator.html
 
-GENERICS = siteNews_2005.html usersurvey2005.html  $(VARIABLE_GENERICS)
+GENERICS = siteNews_2005.html  $(VARIABLE_GENERICS)
 
 STATICS =  Newsletter_Summer04.pdf Madison_2004_poster.jpg RegistrationForm.pdf newsgroup.html \
  funding_opps.html ISDB2005.pdf Newsletter_Winter05.pdf Newsletters.html Newsletter_Summer05.pdf \
