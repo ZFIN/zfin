@@ -327,7 +327,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
           from data_alias, alias_group
          where dalias_data_zdb_id = '$OID'
            and aliasgrp_pk_id = dalias_group_id
-	   and alias_name = 'alias';">
+	   and aliasgrp_name = 'alias';">
        <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
 	 <?MIVAR NAME=genovw_geno_alias_array>$1<?/MIVAR>
 	 <br>
