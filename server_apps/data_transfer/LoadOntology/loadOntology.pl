@@ -3,11 +3,10 @@
 use MIME::Lite;
 
 #set environment variables
-
-$ENV{"INFORMIXDIR"}="/private/apps/Informix/informix";
-$ENV{"INFORMIXSERVER"}="wanda";
-$ENV{"ONCONFIG"}="onconfig";
-$ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix/etc/sqlhosts";
+$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
+$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
+$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
+$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/LoadOntology/";
 chdir "$dir";
