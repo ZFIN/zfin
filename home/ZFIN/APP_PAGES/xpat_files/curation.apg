@@ -78,8 +78,9 @@ EFFECTS
 <?/MISQL>
 
 
-<?MIVAR NAME=pubcur_category>Feature<?/MIVAR>
+<?MIVAR NAME=pubcur_category>Construct<?/MIVAR>
 <?MIVAR>
+  $(VECAPPEND,$pubcur_category,Feature)
   $(VECAPPEND,$pubcur_category,Genotype)
   $(VECAPPEND,$pubcur_category,Figure)
   $(VECAPPEND,$pubcur_category,Environment)
@@ -362,6 +363,14 @@ function setMarkerTarget(featreli,anchor){
             
             <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$1';"><?/MISQL>
          
+          <?/MISQL>
+        <?/MIBLOCK>
+        <?MIBLOCK COND=$(EC,ZDB-DALIA,$(SUBSTR,$delete_item,1,9))>
+          <?MISQL SQL="delete from record_attribution where recattrib_data_zdb_id='$delete_item';">
+          <?/MISQL>
+          <?MISQL SQL="delete from feature_history where fhist_dalias_zdb_id='$delete_item';">
+          <?/MISQL>
+          <?MISQL SQL="delete from data_alias where dalias_zdb_id='$delete_item';">
           <?/MISQL>
         <?/MIBLOCK>
         <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$delete_item';"><?/MISQL>
@@ -998,6 +1007,9 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <?/MIBLOCK>
 <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Genotype))">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-genotypecuration.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Construct))">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-constrctcuration.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
 

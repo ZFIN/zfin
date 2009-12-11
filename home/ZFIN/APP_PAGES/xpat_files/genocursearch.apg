@@ -51,7 +51,7 @@ PREFIX:   genocursrch_
       <?/MISQL>
       <?MISQL SQL="
         select feature_zdb_id, feature_name
-        from feature, record_attribution 
+        from feature, record_attribution
         where recattrib_source_zdb_id = '$OID'
 	  and recattrib_source_type = 'standard'
           and feature_zdb_id = recattrib_data_zdb_id
