@@ -97,10 +97,10 @@ create function get_mutants_html_link
 	elif (genoCount == 1 ) then
 	-- in this case, the genoZdbId would either be filled with either of the two queris
         -- above but not both in which case genoCount would be 2.
-		return '<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=' || genoZdbId ||'">' || genoCount ||' genotype' || genoSuffix || ' (' || ftrCount || ' allele' || ftrSuffix || ')</A>';
+		return '<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=' || genoZdbId ||'">' || genoCount ||' genotype' || genoSuffix|| '</A>';
 
         else
-		return '<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&query_results=exist&fsel_marker_id=' || geneZdbId ||'">' || genoCount ||' genotype' || genoSuffix || ' (' || ftrCount || ' allele' || ftrSuffix || ')</A>';
+		return '<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&query_results=exist&fsel_marker_id=' || geneZdbId ||'">' || genoCount ||' genotype' || genoSuffix || '</A>';
 
 	end if ;
 

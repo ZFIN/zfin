@@ -38,7 +38,7 @@ create procedure regen_names_feature_list()
 
   set pdqpriority high;
 
-  let namePrecedence = "Genetic feature name";
+  let namePrecedence = "Genomic feature name";
   select nmprec_significance 
     into nameSignificance
     from name_precedence 
@@ -53,7 +53,7 @@ create procedure regen_names_feature_list()
      where feature_zdb_id = rgnz_zdb_id;
 
 
-  let namePrecedence = "Genetic feature abbreviation";
+  let namePrecedence = "Genomic feature abbreviation";
   select nmprec_significance 
     into nameSignificance
     from name_precedence 
@@ -69,7 +69,7 @@ create procedure regen_names_feature_list()
 
   -- get aliases
 
-  let namePrecedence = "Genetic feature alias";
+  let namePrecedence = "Genomic feature alias";
   select nmprec_significance 
     into nameSignificance
     from name_precedence 

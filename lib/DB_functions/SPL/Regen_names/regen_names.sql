@@ -194,9 +194,9 @@ create dba function "informix".regen_names() returning integer
      --   8 Sequence similarity       Marker
      --   9 Clone contains gene       Marker (not used in regen_names)
  
-     -- 101 Genetic feature name               Genotype
-     -- 102 Genetic feature abbreviation       Genotype
-     -- 103 Genetic feature alias              Genotype
+     -- 101 Genomic feature name               Genotype
+     -- 102 Genomic feature abbreviation       Genotype
+     -- 103 Genomic feature alias              Genotype
      -- 105 Gene symbol                        Genotype 
      -- 106 Gene name                          Genotype
      -- 107 Gene alias                         Genotype

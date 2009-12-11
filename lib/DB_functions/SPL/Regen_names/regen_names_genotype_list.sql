@@ -48,7 +48,7 @@ create procedure regen_names_genotype_list()
   -- Feature names/abbrev/alias
   ----------------------------------------
 
-  let namePrecedence = "Genetic feature name";
+  let namePrecedence = "Genomic feature name";
   select nmprec_significance 
     into nameSignificance
     from name_precedence 
@@ -64,7 +64,7 @@ create procedure regen_names_genotype_list()
        and genofeat_feature_zdb_id = feature_zdb_id;
 
 
-  let namePrecedence = "Genetic feature abbreviation";
+  let namePrecedence = "Genomic feature abbreviation";
   select nmprec_significance 
     into nameSignificance
     from name_precedence 
@@ -84,7 +84,7 @@ create procedure regen_names_genotype_list()
   -- the odds that different features of the same genotype
   -- has the same previous names
 
-  let namePrecedence = "Genetic feature alias";
+  let namePrecedence = "Genomic feature alias";
   select nmprec_significance 
     into nameSignificance
     from name_precedence 
