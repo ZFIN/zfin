@@ -1,0 +1,100 @@
+<?MICOMMENT>
+ file: phenotype_miniview.apg
+ prefix: phmview_
+ 
+ This page is webexploded from markerview.apg and genotypeview.apg.
+ If called from gene or MO page, displays the mini format of Phenotype section. 
+ If called from genotype page, output the figure and pub counts, link, and sql for affected entities.
+
+ INPUT:
+    a temp table with one column - t_pato_zdb_id 
+
+ INPUT VAR:
+    phmview_input_table : the temp table passed from gene or MO page
+    phmview_input_figentity_table: the temp table passed from genotype page
+    phmview_morphant : yes or no
+
+ OUTPUT (for gene or MO page):
+    PHENOTYPE:
+      Data:              xx figure(s) from xx publication(s)
+      Affecting: entity1, entity2, entity3, entity4, entity5 ... (all xx)
+
+ OUTPUT VAR (for genotype page): 
+     $phmview_pato_fig_count, $phmview_pato_source_desc, $phmview_pato_link
+
+<?/MICOMMENT>
+
+  <?MIVAR COND="$(XST,$allele_short_list)">$(UNSETVAR,$allele_short_list)<?/MIVAR>  
+  <?MIVAR COND="$(XST,$alleley_long_list)">$(UNSETVAR,$allele_long_list)<?/MIVAR>
+
+<?MICOMMENT> ***  count the figures <?/MICOMMENT>
+
+
+  
+  <?MIVAR NAME=allele_counter>0<?/MIVAR>
+  <?MIVAR NAME=allele_short_list_cap>5<?/MIVAR>
+
+    <?MIVAR NAME=allele_list_sql>
+	     select feature_abbrev,feature_zdb_id from feature, marker, feature_marker_relationship
+              where fmrel_ftr_zdb_id=feature_zdb_id
+              and fmrel_mrkr_zdb_id='$OID'
+              and fmrel_type='is allele of'
+	     UNION
+              select allele,feature_zdb_id from mapped_deletion, feature
+              where present_t='f'
+              and marker_id='$OID'
+              and allele=feature_name
+    <?/MIVAR>
+
+    
+    <?MISQL SQL="$allele_list_sql order by 1;">     
+         <?MIVAR NAME=allele_list_html><span nowrap><a href=/action/feature/detail?feature.zdbID=$2>$1</a></span><?/MIVAR>
+
+      $(SETVAR,$allele_counter,$(+,$allele_counter,1))
+        <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+     	  <?MIVAR NAME=allele_short_list>$allele_list_html<?/MIVAR>
+      	  <?MIVAR NAME=allele_long_list>$allele_list_html<?/MIVAR>         
+	<?MIELSE>
+	  <?MIVAR COND="$(<=,$allele_counter,$allele_short_list_cap)">
+	     $(VECAPPEND,$allele_short_list,$allele_list_html)
+          <?/MIVAR>
+          <?MIVAR>
+            $(VECAPPEND,$allele_long_list,$allele_list_html)
+          <?/MIVAR>
+        <?/MIBLOCK>
+    <?/MISQL>
+
+    <?MIVAR NAME=allele_totalnum>$MI_ROWCOUNT<?/MIVAR>
+
+    <?MIVAR NAME=allele_short_list_sepa SEPARATE=", ">$allele_short_list<?/MIVAR>
+    <?MIVAR NAME=allele_long_list_sepa SEPARATE=", ">$allele_long_list<?/MIVAR>
+    <?MIVAR NAME=allele_short_list_escp>$(REPLACE,$allele_short_list_sepa,"'","")<?/MIVAR>    
+    <?MIVAR NAME=allele_long_list_escp>$(REPLACE,$allele_long_list_sepa,"'","")<?/MIVAR>
+
+        <script>
+           <?MIVAR>
+   	   function expandAlleleList() {
+     	       var elem = document.getElementById("alleleList");
+               elem.innerHTML = "$allele_long_list_escp <a href=javascript:onClick=shrinkAlleleList()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+	   }
+
+   	   function shrinkAlleleList() {
+     	       var elem = document.getElementById("alleleList");
+               elem.innerHTML = "$allele_short_list_escp ... <a href=javascript:onClick=expandAlleleList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+	   }
+
+	   <?/MIVAR>
+        </script> 
+
+        <span id="alleleList">
+         <?MIVAR>$allele_short_list_escp<?/MIVAR>
+
+         <?MIVAR COND="$(>,$MI_ROWCOUNT,$allele_short_list_cap)">   
+	   ... <a href=javascript:onClick=expandAlleleList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+         <?/MIVAR>
+       </span>
+
+
+
+
+
