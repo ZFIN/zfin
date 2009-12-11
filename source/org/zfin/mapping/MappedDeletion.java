@@ -2,6 +2,7 @@ package org.zfin.mapping;
 
 import org.zfin.marker.Marker;
 import org.zfin.people.Person;
+import org.zfin.mutant.Feature;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,6 +17,15 @@ public class MappedDeletion {
     private Marker marker;
     private String allele;
     private boolean present;
+
+    public String getAllele() {
+        return allele;
+    }
+
+    public void setAllele(String allele) {
+        this.allele = allele;
+    }
+
     private Person submitter;
     private Person owner;
     private String lg;
@@ -36,13 +46,7 @@ public class MappedDeletion {
         this.marker = marker;
     }
 
-    public String getAllele() {
-        return allele;
-    }
 
-    public void setAllele(String allele) {
-        this.allele = allele;
-    }
 
     public boolean isPresent() {
         return present;
