@@ -88,7 +88,11 @@ SELECT "marker" AS app_file, mrkr_zdb_id AS oid, get_mrkr_url(mrkr_zdb_id)
 FROM marker
 
 UNION
+--feature
+SELECT "feature" AS app_file, feature_zdb_id AS oid, "" as url
+FROM feature;
 
+UNION
 -- anatomy_item
 SELECT "anatomy_item" AS app_file, anatitem_zdb_id AS oid, "" as url
 FROM anatomy_item
@@ -219,25 +223,32 @@ while (my @row = $sth->fetchrow_array()) {
 	my $app_page = trim($row[0]);
 	my $oid = trim($row[1]);
 	my $url = trim($row[2]);
-
 	# generate specific URL for data-page corresponding to APP_PAGE, OID pairs
     if ($url eq "") {
 	    if ($app_page ne "anatomy_item" ) {
+              if ($app_page eq "feature") {
+	        $url = "http://<!--|DOMAIN_NAME|-->/action/feature/detail?feature.zdbID=".$oid;
+}
+else {
     		my $idName = ($app_page eq "xpatexpcdndisplay") ? "&cdp_exp_zdb_id=" : "&OID=";
     		$url = $urlHead . $app_page . $urlTail . $idName . $oid;
-
-     	} else {
+}
+}
+          else { 
 	        # hardcode the path for Java page. When Java file path name gets standalized,
             # will update here.
 	        $url = "http://<!--|DOMAIN_NAME|-->/action/anatomy/term-detail?anatomyItem.zdbID=".$oid;
-	    }
-	} else {
+	   } 
+}
+else{
 	    #if the url was populated by the query, it won't contain the first bit of the url...
 	    $url = "http://<!--|DOMAIN_NAME|-->" . $url; 
 	}
 	# write URL to file
 	print RESULT "$url\n";
 }
+
+
 
 #The reason we include these in this file is simply so that all the indexed 
 #pages are generated from and maintained in this single file.
