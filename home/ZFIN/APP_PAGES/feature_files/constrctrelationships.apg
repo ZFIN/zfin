@@ -43,7 +43,7 @@ EFFECTS
 <table width=100% border=0 cellspacing=0 cellpadding=3>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">
-      <td>Feature/Marker</td>
+      <td>Construct</td>
       <td>Type</td>
       <td>Relationship</td>
       <td>Target</td>
@@ -57,20 +57,21 @@ EFFECTS
     <?MIVAR NAME=featrel_row_color>#FFFFFF<?/MIVAR>
 
     <?MISQL SQL="
-           select 
-              distinct fmrel_ftr_zdb_id, fmrel_mrkr_zdb_id, fmrel_type, feature_name,
-              mrkr_abbrev, ftrtype_type_display, fmrel_zdb_id, feature_abbrev_order
-           from   
-              feature, feature_marker_relationship, record_attribution, marker, 
-              feature_type
-           where 
-              fmrel_ftr_zdb_id = recattrib_data_zdb_id
-              and recattrib_source_zdb_id='$OID'
-              and fmrel_ftr_zdb_id=feature_zdb_id
-              and fmrel_mrkr_zdb_id=mrkr_zdb_id
-              $(IF,$(AND,$(XST,$featcur_feature_only),$(NE,$featcur_feature_only,)),and feature_zdb_id = '$featcur_feature_only')
-              $(IF,$(AND,$(XST,$featcur_feature_type_only),$(NE,$featcur_feature_type_only,)),and feature_type = '$featcur_feature_type_only')
-              and feature_type=ftrtype_name order by 8
+               select 
+                 mrel_mrkr_1_zdb_id,mrel_mrkr_2_zdb_id, mrel_type, m1.mrkr_name,
+                 m2.mrkr_abbrev, mrkrtype_type_display, mrel_zdb_id
+                from   
+                 marker m1, marker m2, marker_relationship, record_attribution, 
+                 marker_types
+                where 
+                 mrel_mrkr_1_zdb_id = recattrib_data_zdb_id
+                 and recattrib_source_zdb_id='$OID'
+                 and mrel_mrkr_1_zdb_id=m1.mrkr_zdb_id
+                 and mrel_mrkr_2_zdb_id=m2.mrkr_zdb_id
+                 $(IF,$(AND,$(XST,$featcur_feature_only),$(NE,$featcur_feature_only,)),and m1.mrkr_zdb_id = '$featcur_feature_only')
+                 $(IF,$(AND,$(XST,$featcur_feature_type_only),$(NE,$featcur_feature_type_only,)),and m1.mrkr_type = '$featcur_feature_type_only')
+                 and m1.mrkr_type=marker_type
+                 and m1.mrkr_type like '%CONST%'
               ;">
 
               <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featrelation" method=post name=relation >
@@ -85,18 +86,17 @@ EFFECTS
               <?MIVAR NAME="featrel_rel_type">$3<?/MIVAR>
               <?MIVAR NAME="featrel_feat_type">$6<?/MIVAR>
               <?MIVAR NAME="featrel_relation_zdb_id">$7<?/MIVAR>
-              <?MIVAR NAME="featrel_feat_html"><a href=/action/feature/detail?feature.zdbID=$featrel_feat_zdb_id>$featrel_feature_name</a><?/MIVAR>
               <?MIBLOCK COND=$(NE,$featrel_prev_feature_name,$featrel_feature_name)>
                    <?MIVAR NAME=featrel_row_color>$(IF,$(EC,$featrel_row_color,#FFFFFF),<!--|HIGHLIGHT_COLOR|-->,#FFFFFF)<?/MIVAR>     
              <?MIELSE>
                 <?MIVAR NAME=featrel_row_color>$featrel_row_color<?/MIVAR> 
               <?/MIBLOCK>
               <tr bgcolor=$featrel_row_color>
-              <td> $(IF,$(NE,$featrel_prev_feature_name,$featrel_feature_name),$featrel_feat_html,&nbsp;)
+              <td> $(IF,$(NE,$featrel_prev_feature_name,$featrel_feature_name),$featrel_feature_name,&nbsp;)
               </td>
               <td> $featrel_feat_type </td>
               <td> $featrel_rel_type
-              <td><?MIVAR COND=$(NC,$featrel_mrkr_abbrev,NULL)><i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$featrel_mrkr_zdb_id">$featrel_mrkr_abbrev</a></i><?/MIVAR></td>
+              <td><?MIVAR COND=$(NC,$featrel_mrkr_abbrev,NULL)><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$featrel_mrkr_zdb_id">$featrel_mrkr_abbrev</a><?/MIVAR></td>
               <td align=center>
                 <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$featrel_relation_zdb_id','relation')"><?/MIVAR>
               </td> 
@@ -116,7 +116,7 @@ EFFECTS
 <?MICOMMENT> start of relationships entry section <?/MICOMMENT>
 
          <?MIBLOCK COND="$(XST,$featrel_feature_zdb_id)">
-              <?MISQL SQL="select distinct feature_name, ftrtype_type_display, feature_type,feature_zdb_id
+              <?MISQL SQL="select feature_name, ftrtype_type_display, feature_type,feature_zdb_id
                  from feature, feature_type 
                  where feature_name='$featrel_feature_zdb_id'
                  and feature_type = ftrtype_name
@@ -162,13 +162,13 @@ EFFECTS
            <select name="featcur_reln_add_ftr" onChange="setFeatureType(this.value,'featrelation');">
            <option value="">----</option>
            <?MISQL SQL="
-                  select distinct feature_zdb_id, feature_name, feature_type, feature_abbrev_order
-                  from feature, record_attribution
-                  where feature_zdb_id = recattrib_data_zdb_id
+                  select distinct mrkr_zdb_id, mrkr_name, mrkr_type
+                  from marker, record_attribution
+                  where mrkr_zdb_id = recattrib_data_zdb_id
                   and recattrib_source_zdb_id='$OID'
-              $(IF,$(AND,$(XST,$featcur_feature_only),$(NE,$featcur_feature_only,)),and feature_zdb_id = '$featcur_feature_only')
-              $(IF,$(AND,$(XST,$featcur_feature_type_only),$(NE,$featcur_feature_type_only,)),and feature_type = '$featcur_feature_type_only')
-                order by feature_abbrev_order
+                  and mrkr_type like '%CONSTRCT%'
+              $(IF,$(AND,$(XST,$featcur_feature_only),$(NE,$featcur_feature_only,)),and mrkr_zdb_id = '$featcur_feature_only')
+              $(IF,$(AND,$(XST,$featcur_feature_type_only),$(NE,$featcur_feature_type_only,)),and mrkr_type = '$featcur_feature_type_only')
                  ;">
                 <option value="$2"
                     $(IF,$(AND,$(XST,$featcur_reln_add_ftr),$(EC,$featcur_reln_add_ftr,$2)),SELECTED)>$2</option>
@@ -188,7 +188,7 @@ EFFECTS
                        where
                        ftrgrpmem_ftr_type= '$featcur_reln_type'
                        and ftrgrpmem_ftr_type_group=fmreltype_ftr_type_group
-                       $(IF,$(NE,$featcur_reln_add_type,Transgenic Insertion),and fmreltype_name not like 'contains%')
+                       $(IF,$(NE,$featcur_reln_add_type,Transgenic Insertion),and fmreltype_name!='contains sequence feature')
                        union
                        select distinct mreltype_name 
                        from
@@ -202,13 +202,14 @@ EFFECTS
                        ;">
                        <option value="$1"
                          $(IF,$(AND,$(XST,$featcur_reln_add_relation),$(EC,$featcur_reln_add_relation,$1)),SELECTED)>$1</option>
+                <?MIVAR NAME=$featrel_feature_relation>$1<?/MIVAR>
              <?/MISQL>
             </td>
              <td>
              <select name="featcur_reln_add_marker">
              <?MIBLOCK COND="$(XST,$featrel_feature_relation)">
                  <?MISQL SQL="
-                        select distinct mrkr_zdb_id,mrkr_abbrev, mrkr_abbrev_order 
+                        select distinct mrkr_zdb_id,mrkr_abbrev 
                         from marker, feature_marker_relationship_type, 
                         marker_relationship_type, marker_type_group_member,
                         record_attribution
@@ -217,7 +218,7 @@ EFFECTS
                         and mrkr_type=mtgrpmem_mrkr_type
                         and  ((mtgrpmem_mrkr_type_group=mreltype_mrkr_type_group_2 and  mreltype_name='$featrel_feature_relation') or (mtgrpmem_mrkr_type_group=fmreltype_mrkr_type_group
                         and fmreltype_name = '$featrel_feature_relation'))
-                        order by 3;">
+                        order by 2;">
                         <option value="$1"
                             $(IF,$(AND,$(XST,$featcur_reln_add_marker),$(EC,$featcur_reln_add_marker,$1)),SELECTED)>$2</option>
                  <?/MISQL>

@@ -12,28 +12,144 @@ This is the first page of entering a new feature into ZFIN.,
 
 <script>
 
-function validateFeatureForm(featureValue) {
-      if (document.feature_new.featcur_feature_add_name.value == "") {
-        alert("Please enter a feature name.");
-       }
-      else {
+function validateFeatureForm(featureValue,featureType) {
+     if (featureValue==''){
+      window.alert('Feature Name cannot be blank')
+      return false;
+     }
+     if (featureType.search('DELETION') == 0) {
+       if (document.feature_new.featcur_feature_add_note.value == ''){
+          window.alert(' A note to describe this deletion is required');
+          return false;
+      }
+       else {
+
         return true;
-       }
+     }
+}
+     return true;
+
   }
 
 function setAssayDisplay(featureValue) {
-     if (featureValue.search('CONSTRCT') > 0) {
-       document.feature_new.featcur_feature_add_mutagee.disabled = true;
-       document.feature_new.featcur_feature_add_mutagen.disabled = true;
+     if (featureValue.search('POINT') == 0) {
+       document.feature_new.featcur_feature_add_mutagee.disabled = false;
+       document.feature_new.featcur_feature_add_mutagee.style.backgroundColor='#ffffff';
+       document.feature_new.featcur_feature_add_mutagen.disabled = false;
+       document.feature_new.featcur_feature_add_mutagen.style.backgroundColor='#ffffff';
+       document.feature_new.featcur_feature_add_name.disabled = false;
+       document.feature_new.featcur_feature_add_name.style.backgroundColor='#ffffff';
+       document.feature_new.featcur_feature_add_lab.disabled = false;
+       document.feature_new.featcur_feature_add_lab.style.backgroundColor='#ffffff';
+       document.feature_new.featcur_feature_add_alias.disabled = false;
+       document.feature_new.featcur_feature_add_alias.style.backgroundColor='#ffffff';
+       document.feature_new.featcur_feature_add_note.disabled = false;
+       document.feature_new.featcur_feature_add_note.style.backgroundColor='#ffffff';
+       document.feature_new.featcur_feature_private_note.disabled = false;
+       document.feature_new.featcur_feature_private_note.style.backgroundColor='#ffffff';
+       document.feature_new.featcur_feature_add_abbrev.disabled = true;
+       document.feature_new.featcur_feature_add_abbrev.style.backgroundColor='#eeeeee';
      }
-     else if (featureValue.search('GIO') > 0) {
+     else if (featureValue.search('UNSP') == 0) {
+       document.feature_new.featcur_feature_add_lab.disabled = true;
+       document.feature_new.featcur_feature_add_lab.style.backgroundColor='#eeeeee';
        document.feature_new.featcur_feature_add_mutagee.disabled = true;
+       document.feature_new.featcur_feature_add_mutagee.style.backgroundColor='#eeeeee';
        document.feature_new.featcur_feature_add_mutagen.disabled = true;
+       document.feature_new.featcur_feature_add_mutagen.style.backgroundColor='#eeeeee';
+       document.feature_new.featcur_feature_add_abbrev.disabled = true;
+       document.feature_new.featcur_feature_add_abbrev.style.backgroundColor='#eeeeee';
+       document.feature_new.featcur_feature_add_alias.disabled = true;
+       document.feature_new.featcur_feature_add_alias.style.backgroundColor='#eeeeee';
+       document.feature_new.featcur_feature_add_name.disabled = false;
+       document.feature_new.featcur_feature_add_name.style.backgroundColor='#ffffff';
+       document.feature_new.featcur_feature_add_note.disabled = false;
+       document.feature_new.featcur_feature_add_note.style.backgroundColor='#ffffff';
+       document.feature_new.featcur_feature_private_note.disabled = false;
+       document.feature_new.featcur_feature_private_note.style.backgroundColor='#ffffff';
      }
      else {
+       document.feature_new.featcur_feature_add_lab.disabled = false;
+              
+       document.feature_new.featcur_feature_add_mutagee.disabled = false;
+       
+       document.feature_new.featcur_feature_add_mutagen.disabled = false;
+        
+       document.feature_new.featcur_feature_add_abbrev.disabled = false;
+       document.feature_new.featcur_feature_add_alias.disabled = false;
+       document.feature_new.featcur_feature_private_note.disabled = false;
+       document.feature_new.featcur_feature_add_abbrev.disabled = false;
+       document.feature_new.featcur_feature_add_name.disabled = false;
+        document.feature_new.featcur_feature_add_lab.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_abbrev.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_private_note.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_note.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_alias.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_name.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_mutagen.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_mutagee.style.backgroundColor='#ffffff';
+        
+       document.feature_new.featcur_feature_add_note.disabled = false;
+      }
+     if (featureValue.search('DELETION') == 0) {
        document.feature_new.featcur_feature_add_mutagee.disabled = false;
        document.feature_new.featcur_feature_add_mutagen.disabled = false;
-      }
+       document.feature_new.featcur_feature_add_name.disabled = false;
+       document.feature_new.featcur_feature_add_lab.disabled = false;
+       document.feature_new.featcur_feature_add_alias.disabled = false;
+       document.feature_new.featcur_feature_add_note.disabled = false;
+       document.feature_new.featcur_feature_private_note.disabled = false;
+       document.feature_new.featcur_feature_add_lab.style.backgroundColor='#ffffff';
+        
+        document.feature_new.featcur_feature_private_note.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_note.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_alias.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_name.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_mutagen.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_mutagee.style.backgroundColor='#ffffff';
+       
+       document.feature_new.featcur_feature_add_abbrev.disabled = true;
+       document.feature_new.featcur_feature_add_abbrev.style.backgroundColor='#eeeeee';
+     }
+     if (featureValue.search('SEQUENCE') == 0) {
+       document.feature_new.featcur_feature_add_mutagee.disabled = false;
+       document.feature_new.featcur_feature_add_mutagen.disabled = false;
+       document.feature_new.featcur_feature_add_name.disabled = false;
+       document.feature_new.featcur_feature_add_lab.disabled = false;
+       document.feature_new.featcur_feature_add_alias.disabled = false;
+       document.feature_new.featcur_feature_add_note.disabled = false;
+       document.feature_new.featcur_feature_private_note.disabled = false;
+       document.feature_new.featcur_feature_add_abbrev.disabled = true;
+       document.feature_new.featcur_feature_add_abbrev.style.backgroundColor='#eeeeee';
+       document.feature_new.featcur_feature_add_lab.style.backgroundColor='#ffffff';
+        
+        document.feature_new.featcur_feature_private_note.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_note.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_alias.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_name.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_mutagen.style.backgroundColor='#ffffff';
+        document.feature_new.featcur_feature_add_mutagee.style.backgroundColor='#ffffff';
+     }
+     if (featureValue == '') {
+       document.feature_new.featcur_feature_add_mutagee.disabled = true;
+       document.feature_new.featcur_feature_add_mutagen.disabled = true;
+       document.feature_new.featcur_feature_add_name.disabled = true;
+       document.feature_new.featcur_feature_add_lab.disabled = true;
+       document.feature_new.featcur_feature_add_alias.disabled = true;
+       document.feature_new.featcur_feature_add_note.disabled = true;
+       document.feature_new.featcur_feature_private_note.disabled = true;
+       document.feature_new.featcur_feature_add_abbrev.disabled = true;
+       document.feature_new.featcur_feature_add_abbrev.style.backgroundColor='#eeeeee';
+       document.feature_new.featcur_feature_add_lab.style.backgroundColor='#eeeeee';
+        document.feature_new.featcur_feature_add_abbrev.style.backgroundColor='#eeeeee';
+        document.feature_new.featcur_feature_private_note.style.backgroundColor='#eeeeee';
+        document.feature_new.featcur_feature_add_note.style.backgroundColor='#eeeeee';
+        document.feature_new.featcur_feature_add_alias.style.backgroundColor='#eeeeee';
+        document.feature_new.featcur_feature_add_name.style.backgroundColor='#eeeeee';
+        document.feature_new.featcur_feature_add_mutagen.style.backgroundColor='#eeeeee';
+        document.feature_new.featcur_feature_add_mutagee.style.backgroundColor='#eeeeee';
+     }
+
   }
 
 </script>
@@ -69,37 +185,48 @@ function setAssayDisplay(featureValue) {
         <table>
           <tr><td><B>Feature type</b>:
           <td> <select name=featcur_feature_add_type onChange=setAssayDisplay(this.value);>
-               <option value='UNSPECIFIED'>unspecified
+               <option value=''>
                <?MISQL SQL="select ftrtype_name, ftrtype_type_display, 
                             ftrtype_significance as col_order 
                             from feature_type 
-                            where ftrtype_type_display not like 'unspecified' 
-                            union select '-----', '-----',10 as col_order 
-                            from feature_type 
-                            union 
-                            select marker_type, mrkrtype_type_display, 
-                            mrkrtype_significance as col_order 
-                            from marker_types where (marker_type like '%CONSTRCT%' or marker_type like 'REGION') 
-                            and mrkrtype_type_display not like 'unspecified' 
                             order by col_order">
                             <OPTION value='$1'>$2
                 <?/MISQL>
                </select>
+<?MICOMMENT>
+            <tr><td><b>Point mutation info:</b>
+               <td> <b><font size=-1>Nucleotide:</font></b>
+             &nbsp;<select name=featcur_feature_add_ptnuc disabled=disabled>
+                 <option value=ATOT''>A to T
+                 </option>
+                </select>
+      
+            <tr><td>
+                <td><b><font size=-1>Amino Acid:</font></b>
+             &nbsp;<select name=featcur_feature_add_frmamino disabled=disabled>
+                 <option value='MetGlu'>Met, Glu, etc
+                 </option>
+                </select> &nbsp;to
+             &nbsp;<select name=featcur_feature_add_toamino disabled=disabled>
+                 <option value='MetGlu'>Met, Glu, etc
+                 </option>
+                </select>
+<?/MICOMMENT>
             <tr><td><B>Name/Allele Designation:</b>
-            <td><input type=text name=featcur_feature_add_name size=80>
+            <td><input type=text name=featcur_feature_add_name size=80 disabled=disabled>
             <tr><td><b>Abbreviation</b>:
-            <td> <input type=text name=featcur_feature_add_abbrev size=15>
+            <td> <input type=text name=featcur_feature_add_abbrev size=15 disabled=disabled>
             <tr><td><b>Alias</b>:
-            <td> <input type=text name=featcur_feature_add_alias size=15>
+            <td> <input type=text name=featcur_feature_add_alias size=15 disabled=disabled>
             <tr><td><b>Lab of Origin</b>
-            <td> <select name=featcur_feature_add_lab>
+            <td> <select name=featcur_feature_add_lab disabled=disabled>
                  <option value=''>
                  <?MISQL SQL="select distinct name from lab">
                     <OPTION value='$1'>$1
                  <?/MISQL>
                  </select>
              <tr><td><b>Mutagenesis Protocol</b>: 
-             <td> <select name=featcur_feature_add_mutagee>
+             <td> <select name=featcur_feature_add_mutagee disabled=disabled>
                   <option value='not specified'>not specified
                   <?MISQL SQL="select mutagee_name 
                                from mutagee 
@@ -108,7 +235,7 @@ function setAssayDisplay(featureValue) {
                   <?/MISQL>
                   </select>
                   &nbsp;&nbsp;&nbsp;&nbsp;
-                  <b>Treated With : </b> <select name=featcur_feature_add_mutagen>
+                  <b>Treated With : </b> <select name=featcur_feature_add_mutagen disabled=disabled>
 
                   <option value='not specified'>not specified
                   <?MISQL SQL="select mutagen_name 
@@ -122,12 +249,11 @@ function setAssayDisplay(featureValue) {
             <tr><td>     <b>Reservation Comments:</b> <td><input type=text name=featcur_feature_rsrvComment size=50>
             <?/MIBLOCK>
             <tr><td><B>Public Note:</b>
-            <td><input type=text name=featcur_feature_add_note size=80>
+            <td><input type=text name=featcur_feature_add_note size=80 disabled=disabled>
             <tr><td><B>Private Note:</b>
-            <td><TEXTAREA rows=5 cols=50 name=featcur_feature_private_note>
-                </TEXTAREA>
+            <td><textarea name="featcur_feature_private_note" rows=5 cols=50 disabled=disabled></textarea></td>
             <tr><td> 
-            <td><td><input name="featcur_feature_add" type=button value="Create New Feature/Connect to Pub" onClick="if (validateFeatureForm(document.feature_new.featcur_feature_add_name.value)){document.feature_new.submit()}"> 
+            <td><td><input name="featcur_feature_add" type=button value="Create New Feature/Connect to Pub" onClick="if (validateFeatureForm(document.feature_new.featcur_feature_add_name.value,document.feature_new.featcur_feature_add_type.value)){document.feature_new.submit()}"> 
 
   </table> 
 

@@ -18,11 +18,6 @@ EFFECTS: Edits a feature/marker
 <?MIELSE>
   <TITLE>ZFIN : Feature Curation</TITLE>
 <?/MIBLOCK>
-<script>
-<?MIVAR>
-<?/MIVAR>
-
-</script>
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 
@@ -75,7 +70,6 @@ EFFECTS: Edits a feature/marker
             <?MIBLOCK COND="$(AND,$(XST,$featcur_feature_only),$(NC,$featcur_feature_only,))">
                 <?MIVAR NAME=featedit_feature_zdb_id>$featcur_feature_only<?/MIVAR>
             <?/MIBLOCK>
-            <?MIVAR NAME=featcur_feat_zdb_id><?/MIVAR>
             <?MIVAR NAME=featcur_feat_name><?/MIVAR>
             <?MIVAR NAME=featcur_feat_publicnote><?/MIVAR>
             <?MIVAR NAME=featcur_feat_abbrev><?/MIVAR>
@@ -179,18 +173,11 @@ EFFECTS: Edits a feature/marker
         <tr><td><B>Feature Name/Abbrev</b>:
         <td> <select name=featedit_feature_name onChange="setFeatureAttrib(this.value);">
              <?MIVAR COND="$(XST,$featcur_feat_name)"><option select value='$featcur_feat_name'>$featcur_feat_name<?/MIVAR>
-             <?MISQL SQL="select feature_name, feature_zdb_id , feature_abbrev
+             <?MISQL SQL="select distinct feature_name, feature_zdb_id , feature_abbrev
                       from feature, record_attribution 
                       where recattrib_source_zdb_id='$OID' 
                       and recattrib_data_zdb_id=feature_zdb_id 
                       and feature_name not like '$featcur_feat_name'
-                      union 
-                      select mrkr_name ,mrkr_zdb_id, mrkr_abbrev 
-                      from marker, record_attribution 
-                      where recattrib_source_zdb_id='$OID' 
-                      and recattrib_data_zdb_id=mrkr_zdb_id 
-                      and mrkr_name not like '$featcur_feat_name' 
-                      and (mrkr_type like '%CONSTRCT%' or mrkr_type like 'REGION')
               ">
               <OPTION value='$2'>$1/$3</option>
             <?/MISQL>
@@ -239,8 +226,26 @@ EFFECTS: Edits a feature/marker
       <input name="featedit_delete_typeattr" type=submit value="Delete">
 
       <tr><td><b>Alias</b>:
-      <td> <input type=text name=featedit_feature_alias size=15 disabled = true value=<?MIVAR COND="$(XST,$featcur_feat_alias)">'$featcur_feat_alias'<?/MIVAR>>
-    **Use the Feature Details section of a Genotype Page to add/edit feature aliases**
+      <td>
+ <input type=text name=featedit_feature_alias size=15>
+      <input name="featedit_add_alias" type=submit value="Add">
+<?MISQL SQL="
+            select dalias_alias,dalias_zdb_id from data_alias
+            where dalias_data_zdb_id='$featcur_feat_zdb_id'">
+            <?MIVAR NAME=featcur_feat_alias>$1<?/MIVAR>
+            <?MIVAR NAME=featcur_feat_alias_zdbid>$2<?/MIVAR>
+<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+<br>    <?MIVAR COND="$(XST,$featcur_feat_alias)">$featcur_feat_alias<?/MIVAR>
+      <?MIVAR><input type=button onClick="deleteZDB('$featcur_feat_alias_zdbid','edit')" value="Delete alias"><?/MIVAR>
+<?MIELSE><br>
+    <?MIVAR COND="$(XST,$featcur_feat_alias)">$featcur_feat_alias<?/MIVAR>
+      <?MIVAR><input type=button onClick="deleteZDB('$featcur_feat_alias_zdbid','edit')" value="Delete alias"><?/MIVAR>
+
+<?/MIBLOCK>
+<?/MISQL>
+
+
+
       <tr><td><b>Lab of Origin</b>
       <td> <select name=featedit_feature_lab>
              <?MIVAR COND="$(XST,$featcur_feat_lab)"><option select value='$featcur_feat_lab'>$featcur_feat_lab<?/MIVAR>
@@ -268,7 +273,7 @@ EFFECTS: Edits a feature/marker
      <tr><td><B>Public Note:</b>
      <td><input name=featedit_feature_public_note type=text size=110 value=<?MIVAR>"$featcur_feat_publicnote"<?/MIVAR>>
      <tr><td><B>Private Note:</b>
-     <td> <input name="featedit_feature_private_note" type=button value="Add Note" onClick="window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$featcur_feat_zdb_id')">
+     <td> <?MIVAR><input name="featedit_feature_private_note" type=button value="Add Note" onClick=window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=<?MIVAR>$featcur_feat_zdb_id'<?/MIVAR>)><?/MIVAR>
      <INPUT TYPE=HIDDEN NAME=featcur_featedit_feature_zdb_id VALUE="<?MIVAR>$featcur_feat_zdb_id<?/MIVAR>">
      <tr><td>
      <td><td> <input name="featedit_feature_edit" type=submit value="Submit Changes">

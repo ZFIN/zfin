@@ -25,6 +25,7 @@ PREFIX:   featcurup_
   <?MIVAR NAME=$allele_exists><?/MIVAR>
   <?MIVAR NAME=$unspallele_exists><?/MIVAR>
   <?MIVAR NAME=$unspallele_abbrev><?/MIVAR>
+         <?MIVAR COND=$(NXST,$featcur_feature_add_name) NAME=featcur_feature_add_name><?/MIVAR>
 
   <?MICOMMENT>
   Add data to feature/marker tables from Create New Feature section
@@ -67,6 +68,8 @@ PREFIX:   featcurup_
          <?MIVAR COND=$(NXST,$featcur_feature_add_alias) NAME=featcur_feature_add_alias><?/MIVAR>
          <?MIVAR COND=$(NXST,$featcur_feature_add_note) NAME=featcur_feature_add_note><?/MIVAR>
          <?MIVAR COND=$(NXST,$featcur_feature_add_lab) NAME=featcur_feature_add_lab><?/MIVAR>
+         <?MIVAR COND=$(NXST,$featcur_feature_add_mutagen) NAME=featcur_feature_add_mutagen><?/MIVAR>
+         <?MIVAR COND=$(NXST,$featcur_feature_add_mutagee) NAME=featcur_feature_add_mutagee><?/MIVAR>
          <?MIVAR COND=$(NXST,$featcur_feature_private_note) NAME=featcur_feature_private_note><?/MIVAR>
          <?MIVAR COND=$(NXST,$featcurup_feature_lab_zdb_id) NAME=featcurup_feature_lab_zdb_id><?/MIVAR>
          <?MIVAR COND=$(NXST,$anchor) NAME=anchor>featediting<?/MIVAR>
@@ -209,10 +212,12 @@ PREFIX:   featcurup_
              VALUES ($featcur_feature_insert_values)
            ;">
         <?/MISQL>
+<?MIBLOCK COND="$(NE,$featcur_feature_add_mutagen,)">
         <?MISQL SQL="
             INSERT into feature_assay(featassay_feature_zdb_id, featassay_mutagen, featassay_mutagee)
              VALUES ('$featcurup_feature_zdb_id','$featcur_feature_add_mutagen', '$featcur_feature_add_mutagee')">
          <?/MISQL>
+<?/MIBLOCK>
         <?MIBLOCK COND="$(NC,$featcur_feature_add_alias,)">
          <?MISQL SQL="
                 INSERT into data_alias($featcur_feature_dalias_insert_columns)
@@ -314,6 +319,7 @@ PREFIX:   featcurup_
 <?MIVAR COND="$(NXST,$featedit_feature_public_note)" NAME=featedit_feature_public_note><?/MIVAR>
 <?MIVAR COND="$(NXST,$featedit_feature_alias)" NAME=featedit_feature_alias><?/MIVAR>
 <?MIVAR COND="$(NXST,$featedit_feature_lab)" NAME=featedit_feature_lab><?/MIVAR>
+<?MIVAR COND="$(NXST,$featedit_feature_lab_zdb_id)" NAME=featedit_feature_lab_zdb_id><?/MIVAR>
 <?MIVAR COND="$(NXST,$featedit_feature_newname)" NAME=featedit_feature_newname><?/MIVAR>
 <?MIVAR COND="$(NXST,$featedit_feature_newabbrev)" NAME=featedit_feature_newabbrev><?/MIVAR>
 
@@ -415,14 +421,34 @@ PREFIX:   featcurup_
                   where featassay_feature_zdb_id='$featcur_featedit_feature_zdb_id'">
       <?/MISQL>
    <?/MIBLOCK>
-<?MICOMMENT>
-   <?MIBLOCK COND="$(XST,$featedit_feature_alias)">
-      <?MISQL SQL="update data_alias 
-                  set dalias_alias='$featedit_feature_alias' 
-                  where dalias_zdb_id='$featcur_feat_alias_zdbid'">
-      <?/MISQL>
+   <?MIBLOCK COND="$(XST,$featedit_add_alias)">
+   <?MISQL SQL="execute function get_id('DALIAS');">$(SETVAR,$featedit_feature_dalias_zdb_id,$1)<?/MISQL>
+   <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$featedit_feature_dalias_zdb_id');"><?/MISQL>
+   
+          <?MIVAR NAME=featedit_feature_dalias_insert_columns>
+            dalias_zdb_id,
+            dalias_data_zdb_id,
+            dalias_alias,
+            dalias_group,
+            dalias_alias_lower
+         <?/MIVAR>
+         <?MIVAR NAME=featedit_feature_dalias_insert_values>
+            '$featedit_feature_dalias_zdb_id',
+            '$featcur_featedit_feature_zdb_id',
+            '$featedit_feature_alias',
+            'alias',
+            '$featedit_feature_alias'
+        <?/MIVAR>
+         <?MISQL SQL="
+                INSERT into data_alias($featedit_feature_dalias_insert_columns)
+                VALUES ($featedit_feature_dalias_insert_values)
+             ;">
+          <?/MISQL> 
+           <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+            values('$featedit_feature_dalias_zdb_id','$OID');">
+        <?/MISQL>
+     
    <?/MIBLOCK>
-<?/MICOMMENT>
       <?MICOMMENT>First format note text <?/MICOMMENT>
       <?MIVAR NAME=$featedit_feature_public_note>$(TRIM,$featedit_feature_public_note)<?/MIVAR>
       <?MIVAR NAME=$featedit_feature_public_note DELIMIT="'" REPLACE="''">$featedit_feature_public_note<?/MIVAR>

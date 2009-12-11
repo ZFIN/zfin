@@ -1,5 +1,5 @@
 <?MICOMMENT>
-  Main Feature curation page. Calls the create, edit and relationship
+  Main Construct curation page. Calls the create, edit and relationship
   app pages.
 
 EFFECTS
@@ -108,31 +108,31 @@ FILTERs section
     
 <?MICOMMENT> 
 	  =================
-	  =  Feature creation  =
+	  =  construct creation  =
 	  =================
 <?/MICOMMENT>
 
 <a name=featcreation>
-<p><b><font size=3>Feature Builder:</font></b>
-<p><b><font size=3>Create New Feature:</font></b>
+<p><b><font size=3>Construct Builder:</font></b>
+<p><b><font size=3>Create New Construct:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$featcur_featcreation),$(EC,$featcur_featcreation,hide))>
   <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide</a><?/MIVAR>
   <br>
 <?MIELSE>
   <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide</a><?/MIVAR>
   <p>
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-new_feature.apg';">$1<?/MISQL>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-new_constrct.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
   <br>$1 Starting Condition
 <?/MISQL>
 
-
+<?MICOMMENT>
 <hr>
 <?MICOMMENT> 
 	  ===============
-	  =  Feature Editing  =
+	  =  Construct Editing  =
 	  ===============
 <?/MICOMMENT>
 
@@ -147,6 +147,8 @@ FILTERs section
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featureedit.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 <hr>
+
+<?/MICOMMENT>
 
 <?MICOMMENT>
 -----------------------
@@ -164,16 +166,17 @@ FILTER  section
 <tr>
 <TD><b>SHOW: </b></td>
   <td>
-    <b>Feature Name:</b>
+    <b>Construct Name:</b>
     <?MIVAR>
     <select onChange="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_feature_only',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#feature_only');">
     <?/MIVAR>
       <option value="">ALL</option>
       <?MISQL SQL="
-        select feature_zdb_id, feature_name
-        from feature, record_attribution 
-        where recattrib_data_zdb_id=feature_zdb_id
+        select mrkr_zdb_id, mrkr_name
+        from marker, record_attribution 
+        where recattrib_data_zdb_id=mrkr_zdb_id
         and recattrib_source_zdb_id='$OID'
+        and mrkr_type in ('$featcur_mrkr_type_csv')
         ;">
         <option value="$1"
         $(IF,$(AND,$(XST,$featcur_feature_only),$(EC,$featcur_feature_only,$1)),SELECTED)>$2</option>
@@ -182,17 +185,18 @@ FILTER  section
   </td>
   <td>
 
-  <b>Feature Type:</b>
+  <b>Construct Type:</b>
   <?MIVAR>
   <select onChange="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_feature_type_only',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#feature_type_only');">
   <?/MIVAR>
       <option value="">ALL</option>
         <?MISQL SQL="
-          select distinct feature_type, ftrtype_type_display
-          from feature, record_attribution, feature_type
-          where recattrib_data_zdb_id=feature_zdb_id
+          select distinct mrkr_type,mrkrtype_type_display
+          from marker, record_attribution , marker_types
+          where recattrib_data_zdb_id=mrkr_zdb_id
           and recattrib_source_zdb_id='$OID'
-          and feature_type=ftrtype_name
+          and mrkr_type in ('$featcur_mrkr_type_csv')
+          and mrkr_type=marker_type
          ;">
         <option value="$1"
         $(IF,$(AND,$(XST,$featcur_feature_type_only),$(EC,$featcur_feature_type_only,$1)),SELECTED)>$2</option>
@@ -205,7 +209,7 @@ FILTER  section
 
 <?MICOMMENT>
 -----------------------
-Feature Relationship section 
+construct Relationship section 
 -----------------------
 <?/MICOMMENT>
 
@@ -217,7 +221,7 @@ Feature Relationship section
 <?MIELSE>
      <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featrel','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random());">$hide</a><?/MIVAR>
      <br>
-     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featrelationships.apg';">$1<?/MISQL>
+     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-constrctrelationships.apg';">$1<?/MISQL>
 <?/MIBLOCK> 
 
 
