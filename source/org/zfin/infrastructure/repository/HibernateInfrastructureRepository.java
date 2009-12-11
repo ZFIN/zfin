@@ -150,6 +150,18 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (RecordAttribution) criteria.uniqueResult();
     }
 
+public RecordAttribution getRecAttribforFtrType(String dataZdbID){
+            Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(RecordAttribution.class);
+        criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
+         criteria.add(Restrictions.eq("sourceType", RecordAttribution.SourceType.FEATURE_TYPE.toString()));
+
+        return (RecordAttribution) criteria.uniqueResult();
+
+    }
+
+
+
     @SuppressWarnings("unchecked")
     public List<RecordAttribution> getRecordAttributions(ActiveData data) {
 

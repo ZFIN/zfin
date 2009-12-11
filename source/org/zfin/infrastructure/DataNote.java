@@ -4,7 +4,7 @@ import org.zfin.people.Person;
 
 import java.util.Date;
 
-public class DataNote {
+public class DataNote implements Comparable<DataNote>{
     private String zdbID;
     private String dataZdbID;
     private Person curator;
@@ -49,6 +49,11 @@ public class DataNote {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public int compareTo(DataNote anotherNote) {
+        
+        return getDate().compareTo(anotherNote.getDate());
     }
 }
 
