@@ -16,6 +16,8 @@ import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.repository.HibernateMutantRepository;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.feature.repository.HibernateFeatureRepository;
+import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.orthology.repository.HibernateOrthologyRepository;
 import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.people.repository.HibernateProfileRepository;
@@ -50,6 +52,7 @@ public class RepositoryFactory {
     private static AuditLogRepository auditRep;
     private static ProfileRepository profileRep;
     private static MutantRepository mutRep;
+    private static FeatureRepository featRep;
     private static ExpressionRepository xpatsumRep;
     private static MarkerRepository markerRep;
     private static InfrastructureRepository infraRep;
@@ -185,6 +188,17 @@ public class RepositoryFactory {
 
     public static void setMutantRepository(MutantRepository db) {
         mutRep = db;
+    }
+
+     public static FeatureRepository getFeatureRepository() {
+        if (featRep == null) {
+            featRep = new HibernateFeatureRepository();
+        }
+        return featRep;
+    }
+
+    public static void setFeatureRepository(FeatureRepository db) {
+        featRep = db;
     }
 
     public static OrthologyRepository  getOrthologyRepository() {
