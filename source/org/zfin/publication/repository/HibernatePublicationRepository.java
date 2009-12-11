@@ -22,6 +22,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.Feature;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -633,6 +634,80 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return paginationResult;
     }
 
+    public PaginationResult<Figure> getFiguresByGeno(Genotype geno) {
+           Session session = HibernateUtil.currentSession();
+
+           /*String hql = "select distinct figure from Figure figure, Phenotype pheno,  ExperimentCondition con, " +
+                   "GenotypeExperiment exp, Genotype geno, Experiment experiment " +
+                   "where geno.zdbID = :genoID AND " +
+                   "      exp.genotype = geno AND " +
+                   "      pheno.genotypeExperiment = exp  AND " +
+                   "      figure member of pheno.figures AND " +
+                    "      exp.experiment =experiment AND " +
+                   "      con.experiment=experiment AND " +
+   
+                   "      pheno.tag <> 'normal' "+
+                   "order by figure.orderingLabel    ";*/
+         String hql = "select distinct figure from Figure figure, GenotypeFigure genofig " +
+                                      "where genofig.genozdbID = :genoID AND " +
+                   "      genofig.figzdbID=figure.id " +
+                   "order by figure.orderingLabel    ";
+                
+           Query query = session.createQuery(hql);
+           query.setString("genoID", geno.getZdbID());
+
+           PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
+           return paginationResult;
+       }
+
+    public PaginationResult<Figure> getFiguresByGenoMorph(Genotype geno) {
+           Session session = HibernateUtil.currentSession();
+
+           /*String hql = "select distinct figure from Figure figure, Phenotype pheno, " +
+                   "GenotypeExperiment exp, Genotype geno, Marker marker, Experiment experiment, ExperimentCondition con " +
+                   "where geno.zdbID = :genoID AND " +
+                   "      exp.genotype = geno AND " +
+                   "      pheno.genotypeExperiment = exp  AND " +
+                   "      exp.experiment =experiment AND " +
+                   "      con.experiment=experiment AND " +
+                   "      marker= con.morpholino AND " +
+                   "      figure member of pheno.figures  " +
+                   "order by figure.orderingLabel    ";*/
+        String hql = "select distinct figure from Figure figure, GenotypeFigure genofig " +
+                                              "where genofig.genozdbID = :genoID AND " +
+                           "      genofig.figzdbID=figure.id AND " +
+                           " genofig.morphzdbID is not null "   +
+                           "order by figure.orderingLabel    ";
+
+           Query query = session.createQuery(hql);
+           query.setString("genoID", geno.getZdbID());
+           PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
+           return paginationResult;
+       }
+
+
+
+
+
+    public PaginationResult<Figure> getFiguresByGenoExp(Genotype geno) {
+           Session session = HibernateUtil.currentSession();
+
+           String hql = "select distinct figure from Figure figure, ExpressionResult res, ExpressionExperiment exp," +
+                   "GenotypeExperiment genox, Genotype geno, Experiment experiment " +
+                   "where geno.zdbID = :genoID AND " +
+                   "      genox.genotype = geno AND " +
+                "   res.expressionExperiment = exp AND " +
+                "   figure member of res.figures AND " +
+                 "   exp.genotypeExperiment = genox AND " +
+                "   genox.experiment = experiment AND " +
+                "   genox.genotype = geno  " +
+                   "order by figure.orderingLabel    ";
+           Query query = session.createQuery(hql);
+           query.setString("genoID", geno.getZdbID());
+           PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
+           return paginationResult;
+       }
+
     public PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, AnatomyItem aoTerm) {
         Session session = HibernateUtil.currentSession();
         Criteria pubs = session.createCriteria(Publication.class);
@@ -646,6 +721,52 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Criteria geno = genox.createCriteria("genotype");
         geno.add(Restrictions.eq("wildtype", false));
 /*
+        Criteria experiment = genox.createCriteria("experiment");
+        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
+*/
+        pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return new PaginationResult<Publication>((List<Publication>) pubs.list());
+    }
+
+    public PaginationResult<Publication> getPublicationsWithFiguresbyGeno(Genotype genotype) {
+        Session session = HibernateUtil.currentSession();
+        /*Criteria pubs = session.createCriteria(Publication.class);
+        Criteria phenotype = pubs.createCriteria("phenotypes");
+        phenotype.add(Restrictions.isNotEmpty("figures"));
+        Criteria genox = phenotype.createCriteria("genotypeExperiment");
+        genox.add(Restrictions.eq("genotype", genotype));
+        Criteria geno = genox.createCriteria("genotype");
+        geno.add(Restrictions.eq("wildtype", false));
+
+        Criteria experiment = genox.createCriteria("experiment");
+        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
+
+        pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);*/
+         String hql = "select distinct figure.publication  from Figure figure, GenotypeFigure genofig " +
+                                      "where genofig.genozdbID = :genoID AND " +
+                   "      genofig.figzdbID=figure.id " ;
+
+           Query query = session.createQuery(hql);
+           query.setString("genoID", genotype.getZdbID());
+
+           /*PaginationResult<Publication> paginationResult = new PaginationResult<Publication>(query.list());
+           return paginationResult;*/
+     return new PaginationResult<Publication>((List<Publication>) query.list());
+    }
+
+    public PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype) {
+        Session session = HibernateUtil.currentSession();
+        Criteria pubs = session.createCriteria(Publication.class);
+         Criteria expression = pubs.createCriteria("expressionExperiments");
+        Criteria genox = expression.createCriteria("genotypeExperiment");
+        genox.add(Restrictions.eq("genotype", genotype));
+        Criteria result = expression.createCriteria("expressionResults");
+
+        result.add(Restrictions.isNotEmpty("figures"));
+
+
+
+        /*
         Criteria experiment = genox.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
 */
@@ -900,6 +1021,97 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     /**
+     * @param feature
+     * @param maxPubs
+     * @return
+     */
+
+
+public PaginationResult<Publication> getAllAssociatedPublicationsForFeature(Feature feature, int maxPubs){
+
+        PaginationResult<Publication> paginationResult = new PaginationResult<Publication>() ;
+        Set<Publication> pubList = new HashSet<Publication>() ;
+        Query query ;
+        String hql ;
+        List<Publication> resultList ;
+        Session session = HibernateUtil.currentSession() ;
+
+        // short list:
+        hql = "select p.publication " +
+                " from PublicationAttribution p " +
+                " where p.dataZdbID = :featureZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("featureZdbID",feature.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+
+
+
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , DataAlias  da " +
+                "  where p.dataZdbID = da.zdbID " +
+                " and da.dataZdbID = :featureZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("featureZdbID",feature.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+
+
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , FeatureMarkerRelationship fmr " +
+                " where fmr.featureZdbId  = :featureZdbID "+
+                " and fmr.featureZdbId  = p.dataZdbID ";
+
+        query = session.createQuery(hql) ;
+        query.setString("featureZdbID",feature.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , GenotypeFeature gtf " +
+                " where gtf.genotype.zdbID  = p.dataZdbID " +
+                "  and gtf.feature.zdbID = :featureZdbID " ;
+        query = session.createQuery(hql) ;
+        query.setString("featureZdbID",feature.getZdbID()) ;
+        resultList = query.list() ;
+        pubList.addAll(resultList) ;
+
+        String zdbIDs = "" ;
+        for(Publication pub: pubList){
+            zdbIDs += pub.getZdbID()+"\n" ;
+        }
+
+        if(maxPubs>=0){
+            paginationResult.setPopulatedResults((new ArrayList(pubList)).subList(0,maxPubs));
+        }
+        else{
+            paginationResult.setPopulatedResults(new ArrayList(pubList));
+        }
+        paginationResult.setTotalCount(pubList.size());
+        return paginationResult ;
+    }
+
+
+
+
+
+
+
+
+
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
      * Retrieve Figue by ID
      *
      * @param zdbID ID
@@ -929,6 +1141,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         return new PaginationResult<Publication>((List<Publication>) pubs.list());
+    }
+
+    public List<Publication> getPublicationsWithFiguresbygenotype(Genotype genotype) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @SuppressWarnings("unchecked")

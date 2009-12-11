@@ -10,6 +10,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.Feature;
 import org.zfin.mutant.Morpholino;
 import org.zfin.publication.Publication;
 import org.zfin.publication.Journal;
@@ -272,6 +273,12 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of figures.
      */
     PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term);
+    PaginationResult<Figure> getFiguresByGeno(Genotype geno);
+        PaginationResult<Figure> getFiguresByGenoExp(Genotype geno);
+    PaginationResult<Figure> getFiguresByGenoMorph(Genotype geno);
+    PaginationResult<Publication> getPublicationsWithFiguresbyGeno(Genotype genotype);
+    PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype);
+
 
     /**
      * @param genotype Genotype
@@ -308,7 +315,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     Journal getJournalByTitle(String journalTitle);
 
-    public PaginationResult<Publication> getAllAssociatedPublicationsForMarker(Marker marker, int maxPubs) ;
+   PaginationResult<Publication> getAllAssociatedPublicationsForMarker(Marker marker, int maxPubs) ;
+ PaginationResult<Publication> getAllAssociatedPublicationsForFeature(Feature feature, int maxPubs);
 
     /**
      * Retrieve Figue by ID
