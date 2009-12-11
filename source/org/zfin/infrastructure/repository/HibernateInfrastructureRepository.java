@@ -377,6 +377,18 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return rels;
     }
 
+    /**
+     * Fetch a Data Alias Group entity for a given name
+     * @param name alias group object
+     * @return DataAliasGroup entity
+     */
+    public DataAliasGroup getDataAliasGroupByName(String name) {
+        Session session = HibernateUtil.currentSession();
+        Criteria query = session.createCriteria(DataAliasGroup.class);
+        query.add(Restrictions.eq("name", name));
+        return (DataAliasGroup) query.uniqueResult();
+    }
+
     @SuppressWarnings("unchecked")
     private Set<TermAlias> getTermSynonyms(GenericTerm term) {
         Session session = HibernateUtil.currentSession();

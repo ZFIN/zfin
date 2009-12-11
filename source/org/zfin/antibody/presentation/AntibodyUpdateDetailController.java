@@ -143,7 +143,7 @@ public class AntibodyUpdateDetailController extends MultiActionController {
             return errorView;
 
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-        Antibody antibodytoUpdate = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
+        Antibody antibodyUpdate = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         Person currentUser = Person.getCurrentSecurityUser();
@@ -158,9 +158,9 @@ public class AntibodyUpdateDetailController extends MultiActionController {
             tx = session.beginTransaction();
             PublicationRepository pr = RepositoryFactory.getPublicationRepository();
             Publication publication = pr.getPublication(pubID);
-            mr.addMarkerAlias(antibodytoUpdate, bean.getNewAlias(), publication);
+            mr.addMarkerAlias(antibodyUpdate, bean.getNewAlias(), publication);
 
-            ir.insertUpdatesTable(antibodytoUpdate, "alias", "", currentUser);
+            ir.insertUpdatesTable(antibodyUpdate, "alias", "", currentUser);
             tx.commit();
             bean.setNewAlias("");
         } catch (Exception e) {
@@ -172,7 +172,7 @@ public class AntibodyUpdateDetailController extends MultiActionController {
             LOG.error("Error in Transaction", e);
             throw new RuntimeException("Error during transaction. Rolled back.", e);
         }
-        bean.setAntibody(antibodytoUpdate);
+        bean.setAntibody(antibodyUpdate);
         return antibodyData(bean);
     }
 

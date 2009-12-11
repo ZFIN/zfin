@@ -414,7 +414,8 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("query_results", "exist");
         url.addNamevaluePair("START", "0");
         url.addNamevaluePair("TA_selected_structures", getAnatomyItem().getName());
-        url.addNamevaluePair("xpatsel_processed_selected_structures", getAnatomyItem().getName());
+        url.addNamevaluePair("xpatsel_processed_selected_structures", getAnatomyItem().getZdbID());
+        url.addNamevaluePair("xpatsel_processed_selected_structures_names", getAnatomyItem().getName());
         if (includeSubstructures)
             url.addNamevaluePair("include_substructures", "checked");
         url.addNamevaluePair("structure_bool", "and");
@@ -432,7 +433,8 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("query_results", "exist");
         url.addNamevaluePair("START", "1");
         url.addNamevaluePair("TA_selected_structures", getAnatomyItem().getName());
-        url.addNamevaluePair("fsel_processed_selected_structures", getAnatomyItem().getName());
+        url.addNamevaluePair("fsel_processed_selected_structures", getAnatomyItem().getZdbID());
+        url.addNamevaluePair("fsel_processed_selected_structures_names", getAnatomyItem().getName());
         if (includeSubstructures)
             url.addNamevaluePair("include_substructures", "checked");
         url.addNamevaluePair("structure_bool", "and");

@@ -246,6 +246,13 @@ public interface InfrastructureRepository {
      * @return list of relationships
      */
     List<TermRelationship> getTermRelationships(GenericTerm genericTerm);
+
+    /**
+     * Fetch a Data Alias Group entity for a given name
+     * @param name alias group object
+     * @return DataAliasGroup entity
+     */
+    DataAliasGroup getDataAliasGroupByName(String name);
 }
 
 

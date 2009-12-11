@@ -129,7 +129,7 @@
         <property name="dataZdbID" column="dalias_data_zdb_id" update="false" insert="false"/>
 
         <many-to-one name="aliasGroup" class="org.zfin.infrastructure.DataAliasGroup" column="dalias_group_id"
-                     insert="false" update="false"/>
+                     not-null="true"/>
 
         <set name="sources" lazy="true" table="record_attribution">
             <key column="recattrib_data_zdb_id" foreign-key="recattrib_data_zdb_id"/>

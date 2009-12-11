@@ -9,12 +9,14 @@ import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -692,4 +694,14 @@ public class MarkerRepositoryTest {
         assertTrue(notes != null);
     }
 
+    @Test
+    public void createDataAlias(){
+        String pubID = "ZDB-PUB-020723-5";
+        String antibodyID = "ZDB-ATB-081002-16";
+        HibernateUtil.createTransaction();
+        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(antibodyID);
+        Publication publication = publicationRepository.getPublication(pubID);
+        markerRepository.addMarkerAlias(antibody, "Bruno", publication);
+        HibernateUtil.rollbackTransaction();
+    }
 }

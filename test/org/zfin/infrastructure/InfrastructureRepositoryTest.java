@@ -208,6 +208,12 @@ public class InfrastructureRepositoryTest {
         assertTrue(groups.size() > 0);
     }
 
+    @Test
+    public void getSingleDataAliasGroup(){
+        String name = DataAliasGroup.Group.ALIAS.toString();
+        DataAliasGroup group = infrastructureRepository.getDataAliasGroupByName(name);
+        assertNotNull(group);
+    }
 
 }
 
