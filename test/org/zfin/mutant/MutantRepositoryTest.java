@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.publication.Publication;
 import org.zfin.expression.ExpressionExperiment;
@@ -86,8 +87,21 @@ public class MutantRepositoryTest {
 
     }
 
+
     @Test
-    public void checkPhenotypeDescriptions() {
+    public void checkGenotypeRecords() {
+
+        //  ao term: otic placode
+        String name = "ZDB-ALT-000921-6";
+        FeatureRepository mr = RepositoryFactory.getFeatureRepository();
+        Feature ftr=mr.getFeatureByID(name) ;
+
+        List<Genotype> genos = mutantRepository.getGenotypesByFeature(ftr);
+        assertNotNull("genos exist", genos);
+
+    }
+    @Test
+    public void checkPhenotypeDescriptions(){
         //  ao term: otic placode
         String name = "otic placode";
         AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();

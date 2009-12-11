@@ -19,6 +19,7 @@ import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.Feature;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -301,6 +302,48 @@ public class PublicationRepositoryTest {
 //        assertEquals("1 figure", 1, figs.size());
 
     }
+    @Test
+    public void getFiguresForGeno() {
+        //  genotype adss^hi1433Tg
+        String genoZdbID = "ZDB-GENO-980202-822";
+        Genotype geno = new Genotype();
+        geno.setZdbID(genoZdbID);
+        // brain
+
+        PaginationResult<Figure> figs = pr.getFiguresByGeno(geno);
+        assertTrue(figs.getPopulatedResults() != null);
+//        assertEquals("1 figure", 1, figs.size());
+
+    }
+
+
+    @Test
+    public void getPubsForFeature() {
+        //  genotype adss^hi1433Tg
+        String featZdbID = "ZDB-ALT-980413-502";
+        Feature feature = new Feature();
+        feature.setZdbID(featZdbID);
+        // brain
+
+        PaginationResult<Publication> pubs=pr.getAllAssociatedPublicationsForFeature(feature,0);
+        assertTrue(pubs.getPopulatedResults() != null);
+//        assertEquals("1 figure", 1, figs.size());
+
+    }
+    @Test
+    public void getFiguresForGenotypeExp() {
+        //  genotype adss^hi1433Tg
+        String genoZdbID = "ZDB-GENO-020426-5";
+        Genotype geno = new Genotype();
+        geno.setZdbID(genoZdbID);
+        // brain
+        
+
+        PaginationResult<Figure> figs = pr.getFiguresByGenoExp(geno);
+        assertTrue(figs.getPopulatedResults() != null);
+//        assertEquals("1 figure", 1, figs.size());
+
+    }
 
     @Test
     public void getFiguresForMorpholino() {
@@ -330,6 +373,20 @@ public class PublicationRepositoryTest {
         item.setZdbID(aoZdbID);
         int publicationCount = pr.getNumPublicationsWithFiguresPerGenotypeAndAnatomy(geno, item);
         assertTrue(publicationCount > 0);
+//        assertEquals("1 publication", 1, publications.size());
+
+    }
+
+    @Test
+    public void getPublicationsForFiguresForGeno() {
+        //  genotype adss^hi1433Tg
+        String genoZdbID = "ZDB-GENO-070615-1";
+        Genotype geno = new Genotype();
+        geno.setZdbID(genoZdbID);
+        // brain
+
+         PaginationResult<Publication> pubs = pr.getPublicationsWithFiguresbyGeno(geno);
+        assertTrue(pubs.getPopulatedResults() != null);
 //        assertEquals("1 publication", 1, publications.size());
 
     }
@@ -385,10 +442,10 @@ public class PublicationRepositoryTest {
 //        assertEquals("2 pubs", 2, qualityPubs.size());
 
     }
-
-
-
     @Test
+
+
+    
     public void getMarkersPerPublication() {
         String zdbID = "ZDB-PUB-990507-16";
 
