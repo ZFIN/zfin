@@ -1922,6 +1922,11 @@ union
 	$mrkrview_mutants_display
       <?/MIVAR>
     </td></tr>
+      <tr><td> <b>Allele(s): &nbsp; </b> 
+<?MIVAR>
+<?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-allelelist.apg';">$1<?/MISQL>
+<?/MIVAR>
+<td></tr>
     </table>
   <?/MIBLOCK><?MICOMMENT> -- end if there is mutants --<?/MICOMMENT>
 <?/MIBLOCK><?MICOMMENT> -- end if genedom ---<?/MICOMMENT>
