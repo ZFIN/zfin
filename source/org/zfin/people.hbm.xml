@@ -114,6 +114,30 @@
         </subclass>
     </class>
 
+    <class abstract="true" name="org.zfin.people.ObjectSource" table="int_data_source">
+        <composite-id>
+            <key-property name="dataZdbID" column="ids_data_zdb_id"/>
+            <key-many-to-one name="organization" column="ids_source_zdb_id" class="org.zfin.people.Organization"/>
+        </composite-id>
+
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(ids_data_zdb_id)
+                                    WHEN 'ALT' THEN 'Feature'
+                                    WHEN 'GENO' THEN 'Genotype'
+                                    WHEN 'ETCONSTRCT' THEN 'Marker'
+                                    WHEN 'EST' THEN 'Marker'
+                                    WHEN 'GTCONSTRCT' THEN 'Marker'
+                                    WHEN 'TGCONSTRCT' THEN 'Marker'
+                                    ELSE             'other-'
+                                 END)"/>
+
+
+
+        <subclass name="org.zfin.people.FeatureSource" discriminator-value="Feature">
+            <many-to-one name="feature" column="ids_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+    </class>
+
     <class name="org.zfin.people.SourceUrl" table="source_url">
         <composite-id>
             <key-many-to-one name="organization" column="srcurl_source_zdb_id" class="org.zfin.people.Organization"/>

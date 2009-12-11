@@ -127,6 +127,7 @@
             <key column="mrel_mrkr_2_zdb_id"/>
             <one-to-many class="org.zfin.marker.MarkerRelationship"/>
         </set>
+       
 
         <set name="dataNotes" lazy="true">
             <key column="dnote_data_zdb_id"/>

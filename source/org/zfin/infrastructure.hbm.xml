@@ -148,6 +148,9 @@
         <subclass name="org.zfin.marker.MarkerAlias" discriminator-value="Marker">
             <many-to-one name="marker" column="dalias_data_zdb_id" class="org.zfin.marker.Marker"/>
         </subclass>
+        <subclass name="org.zfin.mutant.FeatureAlias" discriminator-value="Feature">
+            <many-to-one name="feature" column="dalias_data_zdb_id" class="org.zfin.mutant.Feature"/>
+        </subclass>
 
         <subclass name="org.zfin.ontology.TermAlias" discriminator-value="Term  ">
             <many-to-one name="term" column="dalias_data_zdb_id" class="org.zfin.ontology.GenericTerm"/>
