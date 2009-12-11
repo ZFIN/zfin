@@ -69,6 +69,8 @@ public class GenotypeStatistics extends EntityStatistics {
                     markers.add(marker);
                 }
             }
+            
+
         }
         return markers;
     }

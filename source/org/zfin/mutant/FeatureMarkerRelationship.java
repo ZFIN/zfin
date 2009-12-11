@@ -1,6 +1,11 @@
 package org.zfin.mutant;
 
 import org.zfin.marker.Marker;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.publication.Publication;
+
+import java.util.Set;
+import java.util.HashSet;
 
 
 /**
@@ -15,13 +20,13 @@ public class FeatureMarkerRelationship {
     private String type;
     private String featureZdbId;
     private Marker marker;
-//    private Feature feature;
+    private Set<PublicationAttribution> publications;
 
 
     public static final String IS_ALLELE_OF = "is allele of";
-    public static final String CONTAINS_INNOCUOUS_SEQUENCE_FEATURE = "contains innocuous sequence feature";
+    public static final String CONTAINS_SEQUENCE_FEATURE = "contains phenotypic sequence feature";
+    public static final String CONTAINS_INNOCSEQUENCE_FEATURE = "contains innocuous sequence feature";
 
-    public static final String CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE = "contains phenotypic sequence feature";
 
     public String getZdbID() {
         return zdbID;
@@ -55,14 +60,6 @@ public class FeatureMarkerRelationship {
         this.marker = marker;
     }
 
-//    public Feature getFeature() {
-//        return feature;
-//    }
-//
-//    public void setFeature(Feature feature) {
-//        this.feature = feature;
-//    }
-
     @Override
     public String toString() {
         return "FeatureMarkerRelationship{" +
@@ -72,6 +69,31 @@ public class FeatureMarkerRelationship {
                 ", marker=" + marker +
 //                ", feature=" + feature +
                 '}';
+    }
+
+     public Set<PublicationAttribution> getPublications() {
+        if (publications == null)
+            return new HashSet<PublicationAttribution>();
+        return publications;
+    }
+
+    public void setPublications(Set<PublicationAttribution> publications) {
+        this.publications = publications;
+    }
+
+    public int getPublicationCount() {
+        if (publications == null)
+            return 0;
+        else
+            return publications.size();
+    }
+
+    public Publication getSinglePublication() {
+        if (getPublicationCount() == 1) {
+            for (PublicationAttribution pubAttr : getPublications())
+                return pubAttr.getPublication();
+        }
+        return null;
     }
 }
 

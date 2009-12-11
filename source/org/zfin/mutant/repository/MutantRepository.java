@@ -1,15 +1,16 @@
 package org.zfin.mutant.repository;
 
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyPhenotype;
 import org.zfin.framework.CachedRepository;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.framework.presentation.client.Ontology;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GoTerm;
+import org.zfin.marker.Marker;
 
 import java.util.List;
+
 
 /**
  * This is the interface that provides access to the persistence layer.
@@ -28,6 +29,8 @@ public interface MutantRepository extends CachedRepository {
      * @return list of genotypes
      */
     PaginationResult<Genotype> getGenotypesByAnatomyTerm(AnatomyItem item, boolean wildtype, int numberOfRecords);
+
+    List<Genotype> getGenotypesByFeature(Feature feature);
 
 
     /**
@@ -62,12 +65,14 @@ public interface MutantRepository extends CachedRepository {
     int getMorhpolinoCountByAnatomy(AnatomyItem item, int numberOfRecords);
 
     /**
-     * Retrieve a genotype object by PK.
+     * Retrieve a genotype,feature and marker object by PK.
      *
-     * @param genoteypZbID pk
+     * @param genotypeZbID pk
      * @return genotype
      */
-    Genotype getGenotypeByID(String genoteypZbID);
+    Genotype getGenotypeByID(String genotypeZbID);
+    Feature getFeatureByID(String featureZdbID);
+    Marker  getMarkerbyFeature(Feature feature);
 
     /**
      * Retrieve a genotype object by handle
@@ -75,6 +80,12 @@ public interface MutantRepository extends CachedRepository {
      * @return genotype
      */
     Genotype getGenotypeByHandle(String genotypeHandle);
+
+
+
+
+    List<Marker> getDeletedMarker(Feature feat);
+    List<String> getDeletedMarkerLG(Feature feat);
 
 
     /**

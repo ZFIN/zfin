@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+
 /**
  *
  */
@@ -57,6 +58,28 @@ public class HibernateMutantRepository implements MutantRepository {
 
         return PaginationResultFactory.createResultFromScrollableResultAndClose(numberOfRecords, query.scroll());
     }
+
+    public List<Genotype> getGenotypesByFeature(Feature feature) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql =
+                "select  geno from Genotype geno, GenotypeFeature genofeat, Feature feat, FeatureType type " +
+                        "WHERE  genofeat.feature.zdbID= :zdbID "+
+                        "AND genofeat.genotype =geno "+
+                        "AND genofeat.feature =feat "+
+                        "AND type.name=feat.featureType.name "+
+                        "ORDER by type.significance, geno.nameOrder ";
+
+
+        Query query = session.createQuery(hql);
+        query.setString("zdbID", feature.getZdbID());
+        List<Genotype> genotypes = query.list();
+        return genotypes;
+
+
+    }
+
+
 
 
     public int getNumberOfImagesPerAnatomyAndMutant(AnatomyItem item, Genotype genotype) {
@@ -229,11 +252,6 @@ public class HibernateMutantRepository implements MutantRepository {
         return criteria.list();
     }
 
-    /**
-     * @param name     go term name
-     * @param ontology subset of GO ontology
-     * @return A list of GoTerms that contain the parameter handed in.
-     */
     @SuppressWarnings("unchecked")
     public List<GoTerm> getGoTermsByNameAndSubtree(String name, Ontology ontology) {
         Session session = HibernateUtil.currentSession();
@@ -259,6 +277,10 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @SuppressWarnings("unchecked")
+    /**
+     * @param name go term name
+     * @return A unique GoTerm.
+     */
     public List<Term> getQualityTermsByName(String name) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Term.class);
@@ -286,7 +308,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 morphs.add(morph);
             }
         }
-        return morphs;
+return morphs;
     }
 
     // ToDo: See FogBugz 1926: Include morpholinos from expression object.
@@ -329,12 +351,12 @@ public class HibernateMutantRepository implements MutantRepository {
     /**
      * Retrieve a genotype object by PK.
      *
-     * @param genoteypZbID pk
+     * @param genotypeZbID pk
      * @return genotype
      */
-    public Genotype getGenotypeByID(String genoteypZbID) {
+    public Genotype getGenotypeByID(String genotypeZbID) {
         Session session = HibernateUtil.currentSession();
-        return (Genotype) session.load(Genotype.class, genoteypZbID);
+        return (Genotype) session.get(Genotype.class, genotypeZbID);
     }
 
     public Genotype getGenotypeByHandle(String handle) {
@@ -345,6 +367,73 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @SuppressWarnings("unchecked")
+
+    public Feature getFeatureByID(String featureZdbID) {
+        Session session = HibernateUtil.currentSession();
+        return (Feature) session.get(Feature.class, featureZdbID);
+    }
+
+    public Marker getMarkerbyFeature(Feature feature) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct marker from Marker marker, FeatureMarkerRelationship fmrel" +
+                "     where fmrel.featureZdbId = :feature" +
+                "           and fmrel.marker = marker " +
+                " and fmrel.type='is allele of' " +
+                "    order by marker.abbreviationOrder ";
+        Query query = session.createQuery(hql);
+        query.setString("feature", feature.getZdbID());
+
+
+        return (Marker) query.uniqueResult();
+    }
+
+
+
+
+
+
+
+    public List<Marker> getDeletedMarker(Feature feat) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select  mapdel.marker from MappedDeletion mapdel, Marker m, Feature f" +
+                " where f.name =mapdel.allele "  +
+                " AND f.name=:ftr" +
+                " AND m.markerType.name =:type"+
+                " AND mapdel.marker =m" ;
+
+
+        Query query = session.createQuery(hql);
+        query.setString("ftr", feat.getName());
+        query.setString("type", Marker.Type.GENE.toString());
+
+        return (List<Marker>) query.list();
+
+
+    }
+
+
+    public List<String> getDeletedMarkerLG(Feature feat) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select  mapdel.lg from MappedDeletion mapdel, Marker m, Feature f" +
+                " where f.name =mapdel.allele "  +
+                " AND f.name=:ftr" +
+                " AND m.markerType.name =:type"+
+                " AND mapdel.marker =m" ;
+
+
+        Query query = session.createQuery(hql);
+        query.setString("ftr", feat.getName());
+        query.setString("type", Marker.Type.GENE.toString());
+
+        return (List<String>) query.list();
+
+
+    }
+
+
     public List<Feature> getFeaturesByAbbreviation(String name) {
         List<Feature> features = new ArrayList<Feature>();
         Session session = currentSession();
@@ -469,4 +558,6 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public void invalidateCachedObjects() {
     }
+
+
 }
