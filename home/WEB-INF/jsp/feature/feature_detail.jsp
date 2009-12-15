@@ -158,8 +158,15 @@ This feature is representative of one or more unknown insertion sites.
         <b>Type:</b>
     </td>
     <td>  ${formBean.feature.featureType.dispName}
-        <c:if test="${formBean.featureStat.ftrTypeAttr ne null}">
-        (<a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${formBean.featureStat.ftrTypeAttr.sourceZdbID}">${1}</a>)
+        <c:if test="${fn:length(formBean.featureStat.ftrTypeAttr) > 0 }">
+         <c:choose>
+                    <c:when test="${fn:length(formBean.featureStat.ftrTypeAttr)== 1 }">
+                        (<a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${formBean.featureStat.singlePublication}">${1}</a>)
+                    </c:when>
+                    <c:otherwise>
+                        (<a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-showpubs.apg&rtype=genotype&recattrsrctype=feature+type&OID=${formBean.feature.zdbID}">${fn:length(formBean.featureStat.ftrTypeAttr)}</a>)
+                    </c:otherwise>
+        </c:choose>
         </c:if>
     </td>
 </tr>
@@ -234,7 +241,7 @@ This feature is representative of one or more unknown insertion sites.
         <b>Map:</b>
     </td>
     <%--<td>  <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}&query_results=true'>Details</a>--%>
-    <%--<zfin2:mappingInformation mappedMarker="${formBean.mappedMarkerBean}"/>--%>
+    
 
     <c:choose>
 
@@ -243,26 +250,32 @@ This feature is representative of one or more unknown insertion sites.
             <td>
                 LG:
                 <c:forEach var="lg" items="${formBean.mappedMarkerBean.unMappedMarkers}" varStatus="index">
-                    ${!index.first ? "," : "" }
-                    <c:if test="${lg != 0}">
+                    <%--${!index.first ? "," : "" }--%>
 
+                      <c:if test="${lg != 0}">
                         ${lg}
-                    </c:if>
+                      </c:if>
+                     <c:if test="${!index.last && lg !=0 }">
+                ,&nbsp;
+            </c:if>
                 </c:forEach>
                 &nbsp;<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
 
             </td>
 
         </c:when>
-        <c:when test="${fn:length(formBean.featureStat.ftrLocations) > 0}">
+        <c:when test="${!empty formBean.featureStat.ftrLocations}">
             <td>
                 LG:
                 <c:forEach var="lg" items="${formBean.featureStat.ftrLocations}" varStatus="index">
-                    ${!index.first ? "," : "" }
+                    <%--${!index.first ? "," : "" }--%>
                     <c:if test="${lg != 0}">
 
                         ${lg}
                     </c:if>
+                     <c:if test="${!index.last}">
+                ,&nbsp;
+            </c:if>
                 </c:forEach>
                 &nbsp;<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
 
@@ -270,6 +283,26 @@ This feature is representative of one or more unknown insertion sites.
 
 
         </c:when>
+        <c:when test="${!empty formBean.featureStat.ftrMap}">
+                    <td>
+                        LG:
+                        <c:forEach var="lg" items="${formBean.featureStat.ftrMap}" varStatus="index">
+                            <%--${!index.first ? "," : "" }--%>
+                            <c:if test="${lg != 0}">
+
+                                ${lg}
+                            </c:if>
+                             <c:if test="${!index.last}">
+                        ,&nbsp;
+                    </c:if>
+                        </c:forEach>
+                        &nbsp;<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
+
+                    </td>
+
+
+                </c:when>
+
 
 
         <c:otherwise>
