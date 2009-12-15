@@ -39,7 +39,7 @@ public interface InfrastructureRepository {
     RecordAttribution getRecordAttribution(String dataZdbID,
                                            String sourceZdbId,
                                            RecordAttribution.SourceType sourceType);
- RecordAttribution getRecAttribforFtrType(String dataZdbID);
+ List<RecordAttribution> getRecAttribforFtrType(String dataZdbID);
 
 
     List<RecordAttribution> getRecordAttributions(ActiveData data);
