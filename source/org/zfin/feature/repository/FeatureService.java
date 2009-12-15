@@ -96,13 +96,52 @@ public class FeatureService {
         return delmarklg;
 
     }
+    public List<String> getFtrMap(){
+           MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+           List<String> lg=mutantRepository.getMappedFeatureLG(feature);
+           List<String> delmarklg = new ArrayList<String>();
 
-    public RecordAttribution getFtrTypeAttr(){
+           for (String lgchr : lg)
+
+                          delmarklg.add(lgchr);
+
+
+           return delmarklg;
+
+       }
+
+
+
+public List<RecordAttribution> getFtrTypeAttr(){
         InfrastructureRepository infRep=RepositoryFactory.getInfrastructureRepository();
-        RecordAttribution recAtt=infRep.getRecAttribforFtrType(feature.getZdbID());
-        return recAtt;
+        List<RecordAttribution> recordAttributions = infRep.getRecAttribforFtrType(feature.getZdbID()) ;
+        List<RecordAttribution> attributions =new ArrayList<RecordAttribution>();
+         for(RecordAttribution recordAttribution: recordAttributions){
+            attributions.add(recordAttribution);
+        }
+
+        return attributions;
 
     }
+
+    public int getPublicationCount() {
+      InfrastructureRepository infRep=RepositoryFactory.getInfrastructureRepository();
+        List<RecordAttribution> recordAttributions = infRep.getRecAttribforFtrType(feature.getZdbID()) ;
+        List<RecordAttribution> attributions =new ArrayList<RecordAttribution>();
+         for(RecordAttribution recordAttribution: recordAttributions){
+            attributions.add(recordAttribution);
+        }
+            return attributions.size();
+    }
+
+    public String getSinglePublication() {
+        if (getPublicationCount() == 1) {
+            for (RecordAttribution pubAttr : getFtrTypeAttr())
+                return pubAttr.getSourceZdbID();
+        }
+        return null;
+    }
+
 
      public Set<FeatureMarkerRelationship> getSortedConstructRelationships() {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
