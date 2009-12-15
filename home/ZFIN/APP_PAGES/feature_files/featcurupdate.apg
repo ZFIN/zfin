@@ -322,6 +322,9 @@ PREFIX:   featcurup_
 <?MIVAR COND="$(NXST,$featedit_feature_lab_zdb_id)" NAME=featedit_feature_lab_zdb_id><?/MIVAR>
 <?MIVAR COND="$(NXST,$featedit_feature_newname)" NAME=featedit_feature_newname><?/MIVAR>
 <?MIVAR COND="$(NXST,$featedit_feature_newabbrev)" NAME=featedit_feature_newabbrev><?/MIVAR>
+<?MISQL SQL="select feature_type from feature where feature_zdb_id='$featcur_featedit_feature_zdb_id'">
+  <?MIVAR NAME=new_feat_type>$1<?/MIVAR>
+<?/MISQL>
 
 <?MIBLOCK COND=$(XST,$featedit_add_typeattr)>
    <?MISQL SQL="select count(*) 
@@ -335,10 +338,29 @@ PREFIX:   featcurup_
           alert("The feature type has already been attributed to this pub")
        </SCRIPT> 
     <?MIELSE>
+
+   <?MISQL SQL="select count(*) 
+                from record_attribution 
+                where recattrib_data_zdb_id = '$featcur_featedit_feature_zdb_id'
+                and recattrib_source_type='feature type'">
+   <?/MISQL>
+   <?MIBLOCK COND="$(!=,0,$1)">
+      <?MIBLOCK COND="$(EC,$new_feat_type,$featedit_feature_type)">
+
       <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id,recattrib_source_type) 
                 values ('$featcur_featedit_feature_zdb_id','$OID', 'feature type')">
       <?/MISQL>
+      <?MIELSE>
+
+      <?MISQL SQL="update record_attribution 
+                   set recattrib_source_zdb_id='$OID'
+                   where recattrib_data_zdb_id='$featcur_featedit_feature_zdb_id'
+                   and recattrib_source_type='feature type'"><?/MISQL>
+
+      <?/MIBLOCK>
+
    <?/MIBLOCK>
+<?/MIBLOCK>
 <?/MIBLOCK>
 
 
