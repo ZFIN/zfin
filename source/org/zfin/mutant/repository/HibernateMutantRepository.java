@@ -26,6 +26,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -416,22 +417,31 @@ return morphs;
 
     public List<String> getDeletedMarkerLG(Feature feat) {
         Session session = HibernateUtil.currentSession();
+       
 
-        String hql = "select  mapdel.lg from MappedDeletion mapdel, Marker m, Feature f" +
+        String hql = "select  distinct mapdel.lg from MappedDeletion mapdel, Marker m, Feature f" +
                 " where f.name =mapdel.allele "  +
-                " AND f.name=:ftr" +
-                " AND m.markerType.name =:type"+
-                " AND mapdel.marker =m" ;
-
-
-        Query query = session.createQuery(hql);
+                " AND mapdel.marker = m "+
+                " AND f.name=:ftr " +
+                " AND m.markerType.name =:type ";
+         Query query = session.createQuery(hql);
         query.setString("ftr", feat.getName());
         query.setString("type", Marker.Type.GENE.toString());
-
         return (List<String>) query.list();
-
-
     }
+
+  public List<String> getMappedFeatureLG(Feature feat){
+     Session session = HibernateUtil.currentSession();
+
+
+        String hql = "select distinct mm.lg" +
+                        "  from MappedMarker mm" +
+                       "   where mm.marker.zdbID=:ftr ";
+       Query query = session.createQuery(hql);
+        query.setString("ftr", feat.getZdbID());
+        return (List<String>) query.list();
+  }
+
 
 
     public List<Feature> getFeaturesByAbbreviation(String name) {

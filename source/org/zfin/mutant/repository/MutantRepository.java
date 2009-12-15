@@ -10,6 +10,7 @@ import org.zfin.ontology.GoTerm;
 import org.zfin.marker.Marker;
 
 import java.util.List;
+import java.util.TreeSet;
 
 
 /**
@@ -86,6 +87,7 @@ public interface MutantRepository extends CachedRepository {
 
     List<Marker> getDeletedMarker(Feature feat);
     List<String> getDeletedMarkerLG(Feature feat);
+    List<String> getMappedFeatureLG(Feature feat);
 
 
     /**
