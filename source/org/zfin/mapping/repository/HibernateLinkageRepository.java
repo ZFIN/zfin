@@ -81,7 +81,7 @@ public class HibernateLinkageRepository implements LinkageRepository{
         lgList.addAll(query.list());
 
         // d) add allele panel mapping
-        query = session.createQuery(
+        /*query = session.createQuery(
                 "select mm.lg" +
                         "  from MappedMarker mm, FeatureMarkerRelationship fmr " +
                         " where fmr.marker.zdbID = :zdbId " +
@@ -90,7 +90,7 @@ public class HibernateLinkageRepository implements LinkageRepository{
 
         query.setParameter("zdbId", marker.getZdbID());
         query.setParameter("relationship", FeatureMarkerRelationship.IS_ALLELE_OF);
-        lgList.addAll(query.list());
+        lgList.addAll(query.list());*/
 
         // e) add self linkage mapping
         query = session.createQuery(
