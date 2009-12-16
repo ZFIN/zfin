@@ -88,7 +88,7 @@
 <zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.anatomyItem}"
                                        recordsExist="${formBean.mutantsExist}"
                                        anatomyStatistics="${formBean.anatomyStatisticsMutant}"
-                                       structureSearchLink="?MIval=aa-fishselect.apg&fsel_anatomy_item_id=${formBean.anatomyItem.zdbID}&WINSIZE=20&include_substructures=unchecked&fselFilterValue=moExcluded"
+                                       structureSearchLink="?MIval=aa-fishselect.apg&compare=contains&fsel_inputname=&lg=0&mutagen=any&chrom_change=any&START=1&query_results=exist&fsel_processed_selected_structures_names=${formBean.anatomyItem.name}&fsel_processed_selected_structures=${formBean.anatomyItem.zdbID}&structure_bool=and&fselFilterValue=moExcluded&WINSIZE=20&fishsel_calledBySelf=true"
                                        substructureSearchLink="/${formBean.mutantSearchLinkSubstructures}"
                                        choicePattern="0# genotypes| 1# genotype| 2# genotypes"
                                        allRecordsAreDisplayed="${formBean.allGenotypesAreDisplayed}"
