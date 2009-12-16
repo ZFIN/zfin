@@ -1,10 +1,6 @@
 package org.zfin.framework.presentation;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
-
-import java.util.List;
-import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
 

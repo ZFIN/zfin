@@ -1,19 +1,19 @@
 package org.zfin.anatomy;
 
-import org.geneontology.oboedit.dataadapter.OBOFileAdapter;
-import org.geneontology.oboedit.datamodel.OBOSession;
-import org.geneontology.oboedit.datamodel.OBOClass;
-import org.geneontology.oboedit.datamodel.Namespace;
-import org.geneontology.oboedit.datamodel.OBORestriction;
-import org.geneontology.oboedit.datamodel.impl.DbxrefImpl;
-import org.geneontology.dataadapter.IOOperation;
 import org.geneontology.dataadapter.DataAdapterException;
+import org.geneontology.dataadapter.IOOperation;
+import org.geneontology.oboedit.dataadapter.OBOFileAdapter;
+import org.geneontology.oboedit.datamodel.Namespace;
+import org.geneontology.oboedit.datamodel.OBOClass;
+import org.geneontology.oboedit.datamodel.OBORestriction;
+import org.geneontology.oboedit.datamodel.OBOSession;
+import org.geneontology.oboedit.datamodel.impl.DbxrefImpl;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
-import java.util.Set;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * This class reads the OBO file for AO and inserts the terms

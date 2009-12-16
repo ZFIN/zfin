@@ -1,35 +1,32 @@
 package org.zfin.sequence.reno.presentation;
 
-import org.zfin.sequence.reno.RenoTestData;
-import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.sequence.reno.NomenclatureRun;
-import org.zfin.sequence.reno.repository.RenoRepository;
-import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.Accession;
-import org.zfin.sequence.ForeignDBDataType;
-import org.zfin.repository.RepositoryFactory;
-import static org.zfin.framework.HibernateUtil.getSessionFactory;
-import static org.zfin.framework.HibernateUtil.currentSession;
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.TestConfiguration;
-import org.zfin.orthology.Species;
 import org.zfin.orthology.OrthoEvidence;
-import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
-import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.zfin.orthology.Species;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.reno.NomenclatureRun;
+import org.zfin.sequence.reno.RenoTestData;
+import org.zfin.sequence.reno.RunCandidate;
+import org.zfin.sequence.reno.repository.RenoRepository;
+import org.zfin.sequence.repository.SequenceRepository;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.framework.HibernateUtil.getSessionFactory;
 
 /**
  * Tests only the nomenclature methods of the CandidateController tests.

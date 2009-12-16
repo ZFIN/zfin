@@ -1,7 +1,5 @@
 package org.zfin.sequence.reno.presentation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
@@ -9,14 +7,17 @@ import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
-import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.sequence.reno.Candidate;
-import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.blast.Query;
+import org.zfin.sequence.reno.Candidate;
+import org.zfin.sequence.reno.RunCandidate;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  */

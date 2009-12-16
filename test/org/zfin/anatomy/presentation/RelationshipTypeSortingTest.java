@@ -1,11 +1,12 @@
 package org.zfin.anatomy.presentation;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test class for sorting relationship types:

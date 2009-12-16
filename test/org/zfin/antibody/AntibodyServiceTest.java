@@ -1,22 +1,23 @@
 package org.zfin.antibody;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.expression.*;
-import org.zfin.ontology.GoTerm;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
-import org.zfin.util.FilterType;
+import org.zfin.expression.*;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.marker.MarkerAlias;
-import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.ontology.GoTerm;
+import org.zfin.util.FilterType;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
+
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests AntibodyService class.

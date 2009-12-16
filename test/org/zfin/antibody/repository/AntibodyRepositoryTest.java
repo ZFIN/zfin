@@ -1,22 +1,18 @@
 package org.zfin.antibody.repository;
 
 import org.hibernate.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.ExternalNote;
 import org.zfin.Species;
 import org.zfin.TestConfiguration;
-import org.zfin.mutant.presentation.AntibodyStatistics;
-import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.antibody.AntibodyType;
+import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Assay;
 import org.zfin.expression.ExpressionExperiment;
@@ -29,7 +25,10 @@ import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.people.*;
+import org.zfin.mutant.presentation.AntibodyStatistics;
+import org.zfin.people.MarkerSupplier;
+import org.zfin.people.Organization;
+import org.zfin.people.SourceUrl;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -38,6 +37,8 @@ import org.zfin.util.FilterType;
 
 import java.util.List;
 import java.util.Set;
+
+import static org.junit.Assert.*;
 
 public class AntibodyRepositoryTest {
 

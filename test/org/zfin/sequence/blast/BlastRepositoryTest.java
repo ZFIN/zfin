@@ -1,24 +1,22 @@
 package org.zfin.sequence.blast;
 
-import org.junit.Test;
+import org.apache.log4j.Logger;
+import org.hibernate.SessionFactory;
 import org.junit.Before;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
-import org.zfin.sequence.blast.repository.BlastRepository;
+import org.junit.Test;
+import org.zfin.TestConfiguration;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.presentation.BlastPresentationService;
 import org.zfin.sequence.blast.presentation.DatabasePresentationBean;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.TestConfiguration;
-import org.hibernate.SessionFactory;
-import org.apache.log4j.Logger;
+import org.zfin.sequence.blast.repository.BlastRepository;
 
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Tests blast repository methods.

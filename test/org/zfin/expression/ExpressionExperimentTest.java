@@ -1,11 +1,12 @@
 package org.zfin.expression;
 
-import static junit.framework.Assert.assertEquals;
 import org.junit.Test;
 import org.zfin.anatomy.DevelopmentStage;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static junit.framework.Assert.assertEquals;
 
 public class ExpressionExperimentTest {
 

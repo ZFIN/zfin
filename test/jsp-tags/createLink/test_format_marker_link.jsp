@@ -1,8 +1,8 @@
 <%@ page import="org.zfin.marker.Marker" %>
-<%@ page import="org.zfin.sequence.reno.Candidate" %>
 <%@ page import="org.zfin.marker.MarkerType" %>
-<%@ page import="java.util.Set" %>
+<%@ page import="org.zfin.sequence.reno.Candidate" %>
 <%@ page import="java.util.HashSet" %>
+<%@ page import="java.util.Set" %>
 <%@ taglib prefix="tagunit" uri="http://www.tagunit.org/tagunit/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>

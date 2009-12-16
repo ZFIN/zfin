@@ -7,14 +7,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.framework.HibernateUtil.getSessionFactory;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.orthology.Species;
@@ -24,6 +21,10 @@ import org.zfin.sequence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.framework.HibernateUtil.getSessionFactory;
 
 /**
  * Tests the xdbget.c function in lib/DB_functions/C, and mapped in blast.hbm.xml
@@ -401,7 +402,7 @@ public class BlastAccessTest {
                 logger.warn("There was a problem validating the curated databases, please check the logs.");
             }
         } catch (BlastDatabaseException e) {
-            logger.error("There was an error validating the curated databases.", e.fillInStackTrace());
+            logger.error("There was an error validating the curated databases.", e);
         }
     }
 
@@ -416,7 +417,7 @@ public class BlastAccessTest {
                 }
             }
         } catch (Exception e) {
-            logger.error("there was a problem validating all of the physical database", e.fillInStackTrace());
+            logger.error("there was a problem validating all of the physical database", e);
         }
     }
 

@@ -1,32 +1,32 @@
 package org.zfin.sequence.reno;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.Session;
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import static org.zfin.framework.HibernateUtil.getSessionFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.TestConfiguration;
+import org.zfin.marker.Marker;
 import org.zfin.orthology.Species;
-import org.zfin.sequence.reno.presentation.CandidateBean;
-import org.zfin.sequence.reno.presentation.NomenclatureCandidateController;
-import org.zfin.sequence.*;
-import org.zfin.sequence.blast.Query;
 import org.zfin.people.repository.ProfileRepository;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.marker.Marker;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-import org.apache.log4j.Logger;
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.*;
+import org.zfin.sequence.blast.Query;
+import org.zfin.sequence.reno.presentation.CandidateBean;
+import org.zfin.sequence.reno.presentation.NomenclatureCandidateController;
 
 import java.util.Date;
 import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.zfin.framework.HibernateUtil.getSessionFactory;
 
 
 public class MultiRunTest {

@@ -1,31 +1,32 @@
 package org.zfin.infrastructure;
 
 
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.HibernateException;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.TermRelationship;
 import org.zfin.expression.ExpressionAssay;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.marker.MarkerType;
-import org.zfin.marker.Marker;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.apache.commons.collections.CollectionUtils;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.assertEquals;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.TermRelationship;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Class InfrastructureRepositoryTest.

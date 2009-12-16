@@ -1,13 +1,14 @@
 package org.zfin.uniquery;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.uniquery.categories.SiteSearchCategories;
 
 import java.io.File;
 import java.util.Map;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 /**
  * Unit Test class.

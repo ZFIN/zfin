@@ -1,13 +1,15 @@
 package org.zfin.marker;
 
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import org.zfin.marker.presentation.RelatedMarkerDisplay;
 import org.zfin.marker.presentation.RelatedMarker;
+import org.zfin.marker.presentation.RelatedMarkerDisplay;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for org.zfin.marker.MarkerService

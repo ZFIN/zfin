@@ -2,7 +2,6 @@ package org.zfin.sequence.reno;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import static org.zfin.framework.HibernateUtil.currentSession ;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.Species;
@@ -16,6 +15,8 @@ import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.Date;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
  * This class adds Reno test data.

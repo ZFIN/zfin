@@ -1,7 +1,6 @@
 package org.zfin.anatomy;
 
 import org.hibernate.SessionFactory;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
@@ -12,6 +11,8 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class DevelopmentStageTest  {
 

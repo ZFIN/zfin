@@ -1,34 +1,35 @@
 package org.zfin.mutant;
 
-import static junit.framework.Assert.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.feature.repository.FeatureRepository;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.publication.Publication;
+import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.AnatomyPhenotype;
+import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.presentation.AnatomySearchBean;
+import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.repository.ExpressionRepository;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.anatomy.AnatomyPhenotype;
-import org.zfin.anatomy.presentation.AnatomySearchBean;
-import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GoTerm;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
+
+import static junit.framework.Assert.*;
+import static org.junit.Assert.fail;
 
 public class MutantRepositoryTest {
 

@@ -1,20 +1,17 @@
 package org.zfin.sequence.blast.presentation;
 
-import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import org.zfin.sequence.blast.*;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.MarkerDefline;
-import org.zfin.sequence.Defline;
-import org.zfin.marker.Marker;
 import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.zfin.sequence.blast.BlastDatabaseException;
+import org.zfin.sequence.blast.Database;
+import org.zfin.sequence.blast.DatabaseRelationship;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.*;
 
 import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for the BlastPresentationService.

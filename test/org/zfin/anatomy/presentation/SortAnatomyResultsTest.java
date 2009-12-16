@@ -1,6 +1,5 @@
 package org.zfin.anatomy.presentation;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyStatistics;
@@ -8,6 +7,8 @@ import org.zfin.anatomy.AnatomyStatistics;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test class for anatomy search results.

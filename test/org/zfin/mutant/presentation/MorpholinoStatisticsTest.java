@@ -1,15 +1,16 @@
 package org.zfin.mutant.presentation;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Experiment;
+import org.zfin.expression.ExperimentCondition;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.GenotypeExperiment;
-import org.junit.Test;
-import org.junit.Before;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 

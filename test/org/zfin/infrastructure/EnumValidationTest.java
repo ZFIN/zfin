@@ -1,22 +1,19 @@
 package org.zfin.infrastructure ;
 
 import org.apache.log4j.Logger;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.presentation.QuartzJobsBean;
-import org.zfin.TestConfiguration;
 import org.hibernate.SessionFactory;
-import org.junit.*;
-import static org.junit.Assert.* ;
-import static org.junit.Assert.assertEquals;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.zfin.TestConfiguration;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.QuartzJobsBean;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**  Tests MarkerEnum
  *

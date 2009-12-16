@@ -1,10 +1,11 @@
 package org.zfin.util;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 import org.zfin.framework.presentation.tags.DeflineTag;
 import org.zfin.marker.presentation.client.SequenceValidator;
-import org.apache.log4j.Logger;
+
+import static org.junit.Assert.assertEquals;
 
 public class SequenceTest {
 

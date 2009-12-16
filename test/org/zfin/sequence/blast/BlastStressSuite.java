@@ -1,10 +1,9 @@
 package org.zfin.sequence.blast;
 
-import org.junit.runners.Suite;
-import org.junit.runner.RunWith;
-import org.zfin.TestConfiguration;
-
 import junit.framework.JUnit4TestAdapter;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.zfin.TestConfiguration;
 
 
 @RunWith(Suite.class)

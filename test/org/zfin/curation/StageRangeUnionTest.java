@@ -2,10 +2,9 @@ package org.zfin.curation;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
 import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
-import org.zfin.framework.presentation.gwtutils.StageRangeUnion;
 import org.zfin.framework.presentation.dto.StageDTO;
+import org.zfin.framework.presentation.gwtutils.StageRangeUnion;
 
 import java.util.ArrayList;
 import java.util.List;

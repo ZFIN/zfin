@@ -1,36 +1,36 @@
 package org.zfin.sequence;
 
-import org.hibernate.SessionFactory;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.sequence.reno.Run;
-import org.zfin.sequence.reno.Candidate;
-import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.sequence.reno.RedundancyRun;
-import org.zfin.sequence.blast.Query;
-import org.zfin.sequence.blast.Hit;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.TestConfiguration;
-import org.zfin.people.repository.ProfileRepository;
-import org.zfin.orthology.Species;
-import org.zfin.orthology.Orthologue;
-import org.zfin.orthology.OrthoEvidence;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.publication.Publication;
-import org.zfin.marker.Marker;
-import org.zfin.marker.repository.MarkerRepository;
+import org.hibernate.SessionFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.After;
-import static org.junit.Assert.*;
-import org.apache.log4j.Logger;
+import org.zfin.TestConfiguration;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.orthology.OrthoEvidence;
+import org.zfin.orthology.Orthologue;
+import org.zfin.orthology.Species;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.blast.Hit;
+import org.zfin.sequence.blast.Query;
+import org.zfin.sequence.reno.Candidate;
+import org.zfin.sequence.reno.RedundancyRun;
+import org.zfin.sequence.reno.RunCandidate;
+import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
+
+import static org.junit.Assert.*;
 
 /**
  * This class tests setting AccessionLink

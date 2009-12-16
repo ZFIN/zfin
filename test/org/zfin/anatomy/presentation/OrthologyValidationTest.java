@@ -1,12 +1,13 @@
 package org.zfin.anatomy.presentation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.zfin.orthology.CriteriaType;
 import org.zfin.orthology.Species;
 import org.zfin.orthology.presentation.OrthologyFormValidator;
 import org.zfin.util.ErrorCollection;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test class for the orthology search validation.

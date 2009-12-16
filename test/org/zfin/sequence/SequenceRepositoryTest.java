@@ -1,31 +1,25 @@
-package org.zfin.sequence ; 
+package org.zfin.sequence ;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull ;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.zfin.TestConfiguration;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.orthology.Species;
-
-import org.zfin.sequence.repository.SequenceRepository  ; 
-import org.zfin.sequence.repository.HibernateSequenceRepository  ;
-import org.zfin.sequence.Accession ;
-import org.zfin.sequence.blast.Origination;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
-
-import org.hibernate.*;
-
-
-import org.zfin.framework.HibernateSessionCreator ;
-import org.zfin.framework.HibernateUtil ;
-import org.zfin.repository.RepositoryFactory ;
-import org.apache.log4j.Logger;
+import org.zfin.sequence.repository.HibernateSequenceRepository;
+import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  *  Class SequenceRepositoryTest.

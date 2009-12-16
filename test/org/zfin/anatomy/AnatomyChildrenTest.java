@@ -1,9 +1,10 @@
 package org.zfin.anatomy;
 
-import static junit.framework.Assert.assertEquals;
 import org.junit.Test;
 
 import java.io.Serializable;
+
+import static junit.framework.Assert.assertEquals;
 
 /**
  */

@@ -1,41 +1,39 @@
 package org.zfin.sequence.reno;
 
-import org.hibernate.SessionFactory;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.zfin.framework.HibernateUtil;
+import org.hibernate.SessionFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.web.servlet.ModelAndView;
 import org.zfin.TestConfiguration;
-import org.zfin.orthology.Species;
-import org.zfin.people.repository.ProfileRepository;
 import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.publication.Publication;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.sequence.blast.Query;
+import org.zfin.orthology.Species;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.Accession;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.blast.Hit;
+import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.reno.presentation.AlignmentsController;
 import org.zfin.sequence.reno.presentation.CandidateBean;
 import org.zfin.sequence.reno.repository.RenoRepository;
-import org.zfin.sequence.Accession;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertNull;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.apache.log4j.Logger;
 
 import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
 Tests the AlignmentController.

@@ -1,25 +1,28 @@
 package org.zfin.marker.repository;
 
-import org.hibernate.*;
-import org.zfin.marker.*;
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.apache.log4j.Logger;
+import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.Transcript;
+import org.zfin.marker.TranscriptType;
+import org.zfin.marker.presentation.TranscriptAddBean;
+import org.zfin.marker.presentation.dto.ReferenceDatabaseDTO;
+import org.zfin.marker.presentation.server.DTOHelper;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.TestConfiguration;
+import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.TranscriptService;
-import org.zfin.sequence.DisplayGroup;
-import org.zfin.marker.Transcript;
-import org.zfin.marker.presentation.server.DTOHelper;
-import org.zfin.marker.presentation.dto.ReferenceDatabaseDTO;
-import org.zfin.marker.presentation.TranscriptAddBean;
 
 import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class TranscriptRepositoryTest {
     private Logger logger = Logger.getLogger(TranscriptRepositoryTest.class) ;

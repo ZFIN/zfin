@@ -1,22 +1,23 @@
 package org.zfin.sequence.blast;
 
 import org.hibernate.SessionFactory;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
+import org.junit.After;
+import org.junit.Before;
 import org.zfin.TestConfiguration;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
-import org.junit.Before;
-import org.junit.After;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  */

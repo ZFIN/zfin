@@ -1,16 +1,15 @@
 package org.zfin.framework.mail;
 
-import org.junit.Before;
+import junit.framework.JUnit4TestAdapter;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue ;
-
 import org.zfin.TestConfiguration;
 import org.zfin.properties.ApplicationProperties;
 import org.zfin.properties.Path;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.impl.ApplicationPropertiesImpl;
 import org.zfin.properties.impl.PathImpl;
-import junit.framework.JUnit4TestAdapter;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests the MailSender classes.

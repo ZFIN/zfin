@@ -4,14 +4,11 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.framework.HibernateUtil.getSessionFactory;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -20,12 +17,16 @@ import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.RenoTestData;
 import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.repository.RenoRepository;
 
 import java.util.Set;
+
+import static org.junit.Assert.*;
+import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.framework.HibernateUtil.getSessionFactory;
 
 
 /**

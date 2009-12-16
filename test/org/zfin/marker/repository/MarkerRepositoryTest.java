@@ -1,8 +1,8 @@
 package org.zfin.marker.repository;
 
+import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
@@ -13,10 +13,8 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -25,15 +23,16 @@ import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.Accession;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.LinkageGroup;
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.*;
-import org.apache.log4j.Logger;
+import org.zfin.sequence.repository.SequenceRepository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 
 

@@ -2,15 +2,15 @@ package org.zfin.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.TestConfiguration;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.repository.RepositoryFactory;
 
-import java.io.File;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;

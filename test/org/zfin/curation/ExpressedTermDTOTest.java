@@ -1,12 +1,13 @@
 package org.zfin.curation;
 
-import static junit.framework.Assert.assertEquals;
 import org.junit.Test;
 import org.zfin.framework.presentation.dto.ExpressedTermDTO;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static junit.framework.Assert.assertEquals;
 
 /**
  * Data Transfer Object for a composed term with expressed-in boolean.

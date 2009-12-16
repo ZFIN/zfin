@@ -2,8 +2,9 @@ package org.zfin.properties;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.zfin.TestConfiguration;
+
+import static org.junit.Assert.*;
 
 /**
  * Test if the property file can be read.

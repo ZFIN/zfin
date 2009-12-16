@@ -1,25 +1,22 @@
 package org.zfin.mapping.repository;
 
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
-import static org.zfin.framework.HibernateUtil.currentSession;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-import org.hibernate.SessionFactory;
-import org.hibernate.Session;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 public class LinkageRepositoryTest {
 

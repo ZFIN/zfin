@@ -1,7 +1,7 @@
 package org.zfin.anatomy;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Please provide JavaDoc info!!!

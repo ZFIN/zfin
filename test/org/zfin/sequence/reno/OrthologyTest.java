@@ -5,17 +5,12 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.infrastructure.Updates;
-import org.zfin.sequence.*;
-import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import static org.zfin.framework.HibernateUtil.getSessionFactory;
+import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.OrthoEvidence;
@@ -25,10 +20,18 @@ import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.Entrez;
+import org.zfin.sequence.EntrezMGI;
+import org.zfin.sequence.EntrezOMIM;
+import org.zfin.sequence.EntrezProtRelation;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.zfin.framework.HibernateUtil.getSessionFactory;
 
 /**
  * Class RenoRepositoryTest.

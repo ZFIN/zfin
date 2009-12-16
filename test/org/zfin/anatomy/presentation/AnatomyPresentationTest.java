@@ -1,7 +1,6 @@
 package org.zfin.anatomy.presentation;
 
 import junit.framework.JUnit4TestAdapter;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyRelationship;
@@ -12,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * This is the test class that tests funcionality of the AnatomyPresentation class,

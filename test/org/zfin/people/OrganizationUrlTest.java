@@ -1,11 +1,12 @@
 package org.zfin.people;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotSame;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotSame;
 
 public class OrganizationUrlTest implements Serializable {
 

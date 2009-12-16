@@ -1,16 +1,16 @@
 package org.zfin.marker.presentation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
-import org.zfin.marker.presentation.MarkerPresentation;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MarkerPresentationTest {
 

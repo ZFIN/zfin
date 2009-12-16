@@ -1,7 +1,7 @@
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
 <%@ page import="org.zfin.anatomy.AnatomyItem" %>
+<%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <%@ taglib prefix="tagunit" uri="http://www.tagunit.org/tagunit/core"  %>
 <%@ taglib prefix="zfin"    uri="/WEB-INF/tld/zfin-tags.tld"%>
 <%

@@ -1,9 +1,10 @@
 package org.zfin.framework.presentation;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Class that is called from JSP through a function call.

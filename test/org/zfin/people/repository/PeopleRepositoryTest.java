@@ -4,22 +4,23 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.people.AccountInfo;
 import org.zfin.people.CuratorSession;
 import org.zfin.people.Organization;
 import org.zfin.people.Person;
-import org.zfin.people.AccountInfo;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.repository.UserRepository;
 
 import java.util.Date;
 import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Class PeopleRepositoryTest.

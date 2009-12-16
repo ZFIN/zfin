@@ -3,10 +3,10 @@ package org.zfin.anatomy.repository;
 import org.zfin.anatomy.*;
 import org.zfin.expression.ExpressionStructure;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 /**
  * Mock implementation to support unit tests.

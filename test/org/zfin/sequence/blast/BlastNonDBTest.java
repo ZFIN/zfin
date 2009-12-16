@@ -1,18 +1,19 @@
 package org.zfin.sequence.blast;
 
-import org.junit.Test;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.junit.Before;
-import static org.junit.Assert.*;
-import org.zfin.sequence.blast.presentation.XMLBlastBean;
-import org.zfin.sequence.Sequence;
-import org.zfin.sequence.Defline;
+import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
-import org.apache.log4j.Logger;
-import org.apache.commons.collections.CollectionUtils;
+import org.zfin.sequence.Defline;
+import org.zfin.sequence.Sequence;
+import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.io.IOException;
 import java.util.List;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -131,7 +132,7 @@ public class BlastNonDBTest {
             assertTrue(xmlBlastBean.getResultFile().getName().startsWith("blast"));
             assertTrue(xmlBlastBean.getResultFile().getName().endsWith(".xml"));
         } catch (IOException e) {
-            fail(e.toString()) ;
+            fail(e.fillInStackTrace().toString()) ;
         }
     }
 

@@ -1,10 +1,11 @@
 package org.zfin.anatomy;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotSame;
 import org.junit.Test;
 
 import java.io.Serializable;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotSame;
 
 /**
  * // ToDo: Need to add more in-depth tests.

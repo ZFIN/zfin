@@ -1,13 +1,12 @@
 package org.zfin.framework.presentation;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 import org.junit.Test;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 
 import java.util.EnumMap;
 import java.util.List;
+
+import static junit.framework.Assert.*;
 
 /**
  * Class used for showing and hiding sections on a detail page.

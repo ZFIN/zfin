@@ -1,12 +1,12 @@
 package org.zfin.sequence.reno.presentation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;import static org.junit.Assert.assertFalse;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.RedundancyRun;
+import org.zfin.sequence.reno.Run;
+
+import static org.junit.Assert.assertEquals;
 
 public class RunPresentationTest {
 

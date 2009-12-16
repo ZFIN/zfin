@@ -1,25 +1,26 @@
 package org.zfin.sequence.reno.presentation;
 
 import org.apache.log4j.Logger;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerType;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.sequence.reno.Candidate;
-import org.zfin.sequence.blast.Query;
-import org.zfin.sequence.blast.Hit;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.Accession;
-import org.zfin.sequence.DBLink;
-import org.zfin.TestConfiguration;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.After;
-import static org.junit.Assert.* ;
+import org.zfin.TestConfiguration;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.MarkerType;
+import org.zfin.sequence.Accession;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.blast.Hit;
+import org.zfin.sequence.blast.Query;
+import org.zfin.sequence.reno.Candidate;
+import org.zfin.sequence.reno.RunCandidate;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Requirements based on errors in FogBugz 2373.

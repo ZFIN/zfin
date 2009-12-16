@@ -1,31 +1,32 @@
 package org.zfin.sequence.blast;
 
-import org.junit.Test;
-import org.junit.Before;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.SessionFactory;
 import org.junit.After;
-import static org.junit.Assert.*;
-import org.zfin.framework.HibernateUtil;
+import org.junit.Before;
+import org.junit.Test;
+import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.sequence.blast.results.BlastOutput;
-import org.zfin.sequence.blast.results.view.*;
-import org.zfin.sequence.blast.presentation.XMLBlastBean;
-import org.zfin.sequence.Sequence;
-import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.orthology.Species;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
-import org.zfin.TestConfiguration;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.orthology.Species;
-import org.zfin.repository.RepositoryFactory;
-import org.apache.log4j.Logger;
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.SessionFactory;
+import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.Sequence;
+import org.zfin.sequence.blast.presentation.XMLBlastBean;
+import org.zfin.sequence.blast.results.BlastOutput;
+import org.zfin.sequence.blast.results.view.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * This tests handles the ExecuteBlast code.

@@ -1,13 +1,13 @@
-<%@ page import="org.zfin.marker.Marker" %>
-<%@ page import="org.zfin.sequence.reno.Candidate" %>
-<%@ page import="org.zfin.marker.MarkerType" %>
-<%@ page import="java.util.Set" %>
-<%@ page import="java.util.HashSet" %>
-<%@ page import="org.zfin.sequence.reno.presentation.CandidateBean" %>
-<%@ page import="org.zfin.sequence.reno.RunCandidate" %>
-<%@ page import="org.zfin.sequence.reno.Run" %>
 <%@ page import="org.zfin.anatomy.AnatomyItem" %>
 <%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
+<%@ page import="org.zfin.marker.Marker" %>
+<%@ page import="org.zfin.marker.MarkerType" %>
+<%@ page import="org.zfin.sequence.reno.Candidate" %>
+<%@ page import="org.zfin.sequence.reno.Run" %>
+<%@ page import="org.zfin.sequence.reno.RunCandidate" %>
+<%@ page import="org.zfin.sequence.reno.presentation.CandidateBean" %>
+<%@ page import="java.util.HashSet" %>
+<%@ page import="java.util.Set" %>
 <%@ taglib prefix="tagunit" uri="http://www.tagunit.org/tagunit/core" %>
 <%@ taglib prefix="zfin" uri="/WEB-INF/tld/zfin-tags.tld" %>
 <%

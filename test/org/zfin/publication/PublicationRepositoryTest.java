@@ -2,32 +2,34 @@ package org.zfin.publication;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.antibody.Antibody;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.expression.*;
+import org.zfin.antibody.Antibody;
+import org.zfin.expression.Experiment;
+import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.Figure;
+import org.zfin.expression.FigureService;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
-import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
-import org.zfin.mutant.Feature;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.MarkerDBLink;
 
 import java.util.GregorianCalendar;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 
 public class PublicationRepositoryTest {

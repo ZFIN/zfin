@@ -1,6 +1,5 @@
 package org.zfin.orthology;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -11,6 +10,8 @@ import org.zfin.util.FilterType;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test for utiltity methods in the repository class.

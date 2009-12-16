@@ -1,7 +1,5 @@
 package org.zfin.httpunittest;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
@@ -24,6 +22,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 
 /**
  * Main Integration Test class.

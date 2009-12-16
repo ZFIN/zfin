@@ -1,8 +1,9 @@
 package org.zfin.curation;
 
-import static junit.framework.Assert.assertEquals;
 import org.junit.Test;
 import org.zfin.framework.presentation.gwtutils.WidgetUtil;
+
+import static junit.framework.Assert.assertEquals;
 //import com.google.gwt.junit.client.GWTTestCase;
 
 public class WidgetUtilTest {//extends GWTTestCase {

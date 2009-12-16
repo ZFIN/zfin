@@ -7,35 +7,36 @@ import org.zfin.anatomy.AnatomyItemTest;
 import org.zfin.anatomy.presentation.*;
 import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
+import org.zfin.curation.ExperimentDTOTest;
+import org.zfin.curation.StageRangeIntersectionTest;
+import org.zfin.curation.StageRangeUnionTest;
+import org.zfin.curation.WidgetUtilTest;
+import org.zfin.datatransfer.microarray.MicroarrayParseTest;
+import org.zfin.expression.CurationExperimentTest;
+import org.zfin.expression.ExpressionExperimentTest;
+import org.zfin.framework.ExecProcessTest;
 import org.zfin.framework.presentation.FunctionsTest;
+import org.zfin.framework.presentation.PaginationBeanTest;
 import org.zfin.framework.presentation.SectionVisibilityTest;
 import org.zfin.framework.presentation.UIFieldTransformerTest;
-import org.zfin.framework.presentation.PaginationBeanTest;
 import org.zfin.infrastructure.ActiveDataTest;
 import org.zfin.infrastructure.ActiveSourceTest;
-import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.marker.MarkerServiceTest;
+import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
 import org.zfin.mutant.presentation.MorpholinoStatisticsTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.people.OrganizationUrlTest;
 import org.zfin.properties.ZfinPropertiesTest;
 import org.zfin.security.Md5PasswordEncoderTest;
+import org.zfin.sequence.blast.BlastNonDBTest;
+import org.zfin.sequence.blast.presentation.BlastPresentationServiceTest;
 import org.zfin.sequence.reno.presentation.RunCandidatePresentationTest;
 import org.zfin.sequence.reno.presentation.RunPresentationTest;
 import org.zfin.sequence.reno.presentation.SingleAssociatedGenesFromQueryTest;
-import org.zfin.sequence.blast.presentation.BlastPresentationServiceTest;
-import org.zfin.sequence.blast.BlastNonDBTest;
-import org.zfin.util.*;
-import org.zfin.framework.ExecProcessTest;
-import org.zfin.expression.ExpressionExperimentTest;
-import org.zfin.expression.CurationExperimentTest;
-import org.zfin.curation.StageRangeIntersectionTest;
-import org.zfin.curation.WidgetUtilTest;
-import org.zfin.curation.ExperimentDTOTest;
-import org.zfin.curation.StageRangeUnionTest;
 import org.zfin.uniquery.SiteSearchTest;
-import org.zfin.datatransfer.microarray.MicroarrayParseTest;
+import org.zfin.util.*;
+import org.zfin.wiki.WikiConnectTest;
 
 
 /**
@@ -83,6 +84,7 @@ import org.zfin.datatransfer.microarray.MicroarrayParseTest;
         UIFieldTransformerTest.class,
         UrlCreatorTest.class,
         WidgetUtilTest.class,
+        WikiConnectTest.class,
         ZfinPropertiesTest.class,
         ExecProcessTest.class
         // this test should be last (or near last)

@@ -1,22 +1,19 @@
 package org.zfin;
 
-import org.junit.Test;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.junit.After;
 import org.junit.Before;
-import static org.junit.Assert.assertEquals;
-import org.hibernate.SessionFactory;
-import org.hibernate.Session;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
+import org.junit.Test;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.repository.PaginationResultFactory;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
 /**
  */

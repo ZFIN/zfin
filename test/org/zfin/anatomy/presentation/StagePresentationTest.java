@@ -1,9 +1,10 @@
 package org.zfin.anatomy.presentation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.zfin.anatomy.DevelopmentStage;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * This is the test class that tests funcionality of the AnatomyPresentation class,

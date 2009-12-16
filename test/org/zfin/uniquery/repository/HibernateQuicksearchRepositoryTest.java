@@ -1,15 +1,11 @@
 package org.zfin.uniquery.repository;
 
 import org.hibernate.SessionFactory;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.TestConfiguration;
-import org.zfin.infrastructure.ReplacementZdbID;
 import org.junit.Before;
-import org.junit.Test;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.assertEquals;
+import org.zfin.TestConfiguration;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.repository.RepositoryFactory;
 
 public class HibernateQuicksearchRepositoryTest  {
 

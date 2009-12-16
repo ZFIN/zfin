@@ -1,11 +1,11 @@
 package org.zfin;
 
-import org.hibernate.cfg.Configuration;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.util.FileUtil;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.anatomy.SetupAnatomyOntology;
 import junit.framework.TestCase;
+import org.hibernate.cfg.Configuration;
+import org.zfin.anatomy.SetupAnatomyOntology;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.util.FileUtil;
 
 /**
  * This class sets up a test database (Hypersonic) for unit testing.

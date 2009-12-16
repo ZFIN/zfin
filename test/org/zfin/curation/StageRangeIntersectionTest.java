@@ -2,15 +2,15 @@ package org.zfin.curation;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
 import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
-import org.zfin.framework.presentation.gwtutils.StageRangeIntersection;
 import org.zfin.framework.presentation.dto.StageDTO;
+import org.zfin.framework.presentation.gwtutils.StageRangeIntersection;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class StageRangeIntersectionTest {
 

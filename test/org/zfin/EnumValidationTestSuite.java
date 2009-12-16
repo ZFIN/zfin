@@ -1,10 +1,9 @@
 package org.zfin;
 
-import org.junit.runners.Suite;
-import org.junit.runner.RunWith;
-import org.zfin.TestConfiguration;
-import org.zfin.infrastructure.EnumValidationTest;
 import junit.framework.JUnit4TestAdapter;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.zfin.infrastructure.EnumValidationTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

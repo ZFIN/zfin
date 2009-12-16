@@ -1,14 +1,11 @@
 package org.zfin.uniquery;
 
-import org.swift.confluence.cli.ConfluenceClient;
-import org.zfin.uniquery.categories.SiteSearchCategories;
-
 import java.io.File;
 
 /**
  * Indexing the Wiki site.
  */
-public class WikiIndexerTest extends ConfluenceClient {
+public class WikiIndexerTest {
 
     public static void main(String[] arguments) {
 

@@ -1,31 +1,33 @@
 package org.zfin.repository;
 
-import org.hibernate.Session;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
-import org.zfin.anatomy.*;
-import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.publication.Publication;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.audit.repository.AuditLogRepository;
-import org.zfin.util.FileUtil;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.people.Person;
-import org.zfin.people.Lab;
-import org.zfin.people.repository.ProfileRepository;
-import org.zfin.marker.Marker;
-import org.zfin.expression.Figure;
-import org.zfin.webdriver.repository.HibernateWebExplodeRepository;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.FileSystemResource;
+import org.zfin.anatomy.*;
+import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.audit.repository.AuditLogRepository;
+import org.zfin.expression.Figure;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.Marker;
+import org.zfin.people.Lab;
+import org.zfin.people.Person;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.util.FileUtil;
+import org.zfin.webdriver.repository.HibernateWebExplodeRepository;
 
-import java.util.List;
-import java.util.HashSet;
-import java.util.Set;
 import java.io.File;
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Please provide JavaDoc info!!!

@@ -1,19 +1,15 @@
 package org.zfin.sequence.reno.repository;
 
-import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomySynonym;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.TestConfiguration;
-import org.zfin.sequence.reno.RunCandidate;
 import org.hibernate.SessionFactory;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert;
+import org.zfin.TestConfiguration;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.reno.RunCandidate;
 
-import java.util.Set;
 import java.util.List;
 
 public class SingleCandidadeRepositoryTest {

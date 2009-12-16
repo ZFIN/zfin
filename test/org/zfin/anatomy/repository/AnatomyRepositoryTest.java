@@ -1,19 +1,18 @@
 package org.zfin.anatomy.repository;
 
 import org.hibernate.SessionFactory;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.infrastructure.DataAliasGroup;
-import org.zfin.antibody.Antibody;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.anatomy.AnatomySynonym;
+import org.zfin.antibody.Antibody;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
@@ -22,6 +21,8 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 import java.util.Set;
+
+import static org.junit.Assert.*;
 
 public class AnatomyRepositoryTest {
 

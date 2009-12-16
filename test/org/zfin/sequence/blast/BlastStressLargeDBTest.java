@@ -1,8 +1,6 @@
 package org.zfin.sequence.blast;
 
 import org.apache.log4j.Logger;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
@@ -10,12 +8,14 @@ import org.zfin.sequence.blast.results.BlastOutput;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * This tests handles the ExecuteBlast code.
@@ -158,7 +158,7 @@ public class BlastStressLargeDBTest extends BlastStressTest{
                 xmlStrings.add(MountedWublastBlastService.getInstance().robustlyBlastOneDBToString(xmlBlastBean,database)) ;
 //                xmlStrings.add(MountedWublastBlastService.getInstance().blastOneDBToString(xmlBlastBean,database)) ;
             } catch (Exception e) {
-                logger.error(e.fillInStackTrace());
+                logger.error(e);
             }
         }
     }

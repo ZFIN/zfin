@@ -1,5 +1,3 @@
-<%@ page import="org.zfin.marker.Marker" %>
-<%@ page import="org.zfin.sequence.blast.Hit" %>
 <%@ page import="org.zfin.anatomy.AnatomyItem" %>
 <%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
 <%@ taglib prefix="tagunit" uri="http://www.tagunit.org/tagunit/core" %>

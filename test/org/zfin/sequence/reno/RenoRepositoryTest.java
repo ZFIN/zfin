@@ -1,27 +1,30 @@
 package org.zfin.sequence.reno;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.orthology.Species;
-import org.zfin.marker.Marker;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.Marker;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.*;
+import org.zfin.sequence.Accession;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.reno.repository.RenoRepository;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * Class RenoRepositoryTest.

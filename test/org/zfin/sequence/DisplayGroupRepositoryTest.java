@@ -1,26 +1,23 @@
-package org.zfin.sequence ; 
+package org.zfin.sequence ;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.zfin.TestConfiguration;
-
-import org.zfin.sequence.repository.SequenceRepository  ; 
-import org.zfin.sequence.repository.HibernateSequenceRepository  ;
-
-import org.hibernate.*;
-
-
-import org.zfin.framework.HibernateSessionCreator ;
-import org.zfin.framework.HibernateUtil ;
-import org.zfin.repository.RepositoryFactory ;
-import org.apache.log4j.Logger;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.repository.HibernateSequenceRepository;
+import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.List;
 import java.util.Set;
+
+import static org.junit.Assert.*;
 
 
 /**
