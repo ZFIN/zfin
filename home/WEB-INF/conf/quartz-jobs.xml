@@ -40,6 +40,7 @@
                 <property name="jobClass" value="org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob"/>
             </bean>
         </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
         <!--a nice lookup-->
         <!--fire at 2 am every day-->
         <property name="cronExpression" value="0 0 2 * * ?"/>
@@ -53,6 +54,7 @@
                 <property name="jobClass" value="org.zfin.sequence.blast.ValidateBlastDatabases"/>
             </bean>
         </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
         <!--a nice lookup-->
         <!--fire at 3 am every day-->
         <property name="cronExpression" value="0 0 3 * * ?"/>
@@ -65,6 +67,7 @@
                 <property name="jobClass" value="org.zfin.wiki.AntibodyWikiSynchronizationJob"/>
             </bean>
         </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
         <!--a nice lookup-->
         <!--fire at 3.12 am every Sunday-->
         <property name="cronExpression" value="0 12 3 ? * SUN"/>
@@ -77,6 +80,7 @@
                 <property name="jobClass" value="org.zfin.wiki.SetPermissionsToOwnerJob"/>
             </bean>
         </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
         <property name="cronExpression">
             <!--goes off every 15 minutes -->
             <value>0 0,15,30,45 * * * ?</value>
@@ -121,6 +125,7 @@
                 </property>
             </bean>
         </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
         <!--goes off every day at 4 am-->
         <property name="cronExpression" value="0 0 4 * * ?"/>
     </bean>
@@ -138,6 +143,7 @@
                 </property>
             </bean>
         </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
         <!--goes off the 21st of each month-->
         <property name="cronExpression" value="0 50 03 21 * ?"/>
     </bean>
@@ -150,6 +156,7 @@
                 <property name="jobClass" value="org.zfin.datatransfer.microarray.MicroarrayJob"/>
             </bean>
         </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
         <!--goes off every Monday at 12.30 am-->
         <property name="cronExpression" value="0 30 0 ? * Mon"/>
     </bean>

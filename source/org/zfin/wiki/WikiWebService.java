@@ -44,16 +44,16 @@ public class WikiWebService {
     public boolean login() throws WikiLoginException {
         try {
             if (StringUtils.isEmpty(wikiUserName)) {
-                throw new WikiLoginException("userName undefined, not executing wiki service.  Please define WIKI_USER");
+                throw new WikiLoginException("userName undefined in ZfinProperties, not executing wiki service.  Please define WIKI_USER");
             }
             if (StringUtils.isEmpty(wikiPassword)) {
-                throw new WikiLoginException("password undefined, not executing wiki service.  Please define WIKI_PASS");
+                throw new WikiLoginException("password undefined in ZfinProperties, not executing wiki service.  Please define WIKI_PASS");
             }
             if (StringUtils.isEmpty(wikiHost)) {
-                throw new WikiLoginException("password undefined, not executing wiki service.  Please define WIKI_HOST");
+                throw new WikiLoginException("wiki host undefined in ZfinProperties, not executing wiki service.  Please define WIKI_HOST");
             }
             if (StringUtils.isEmpty(domainName)) {
-                throw new WikiLoginException("domain undefined, not executing wiki service.  Please define DOMAIN_NAME");
+                throw new WikiLoginException("domain undefined in ZfinProperties, not executing wiki service.  Please define DOMAIN_NAME");
             }
             if (token != null) {
                 try {
@@ -61,7 +61,7 @@ public class WikiWebService {
                     if (service.hasUser(token, ZfinProperties.getWikiUserName())) {
                         return true;
                     } else {
-                        throw new WikiLoginException("Failed to find webservice user.");
+                        throw new WikiLoginException("Failed to find webservice user: "+ZfinProperties.getWikiUserName());
                     }
                 } catch (InvalidSessionException e) {
                     return doLogin();
@@ -145,6 +145,7 @@ public class WikiWebService {
 
         try {
             RemoteSearchResult[] pages = service.getLabelContentByName(token, label);
+            logger.debug("pages to process: "+ pages.length + " for label: "+label);
 
             // for each page:
             // if there is is editing or view restriction, then add an editing one to the creator

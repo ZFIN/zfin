@@ -96,7 +96,7 @@
 
     <bean name="quartzJobs" class="org.zfin.framework.presentation.QuartzJobsController">
         <property name="commandName" value="formBean"/>
-        <property name="commandClass" value="org.zfin.framework.presentation.QuartzJobsCommandBean"/>
+        <property name="commandClass" value="org.zfin.framework.presentation.QuartzJobsBean"/>
         <property name="scheduler" ref="scheduler"/>
     </bean>
 

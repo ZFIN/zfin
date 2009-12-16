@@ -7,6 +7,8 @@ import org.zfin.properties.ZfinProperties;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /**
+ * Set permission of pages with the following labels to the original creator if does not already
+ * have an owner.
  */
 public class SetPermissionsToOwnerJob extends QuartzJobBean {
 
@@ -18,7 +20,6 @@ public class SetPermissionsToOwnerJob extends QuartzJobBean {
                 WikiWebService wikiService = WikiWebService.getInstance();
                 wikiService.setOwnerForLabel("community_protocol");
                 wikiService.setOwnerForLabel("community_antibody");
-                wikiService.setOwnerForLabel("community_antibody_procedure");
             }
         } catch (Exception e) {
             logger.error(e);
