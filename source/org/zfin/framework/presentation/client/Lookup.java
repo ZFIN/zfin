@@ -22,6 +22,7 @@ public class Lookup implements EntryPoint {
     public static final String JSREF_BUTTONTEXT = "buttonText";
     public static final String JSREF_WILDCARD = "wildcard";
     public static final String JSREF_WIDTH = "width";
+    public static final String JSREF_LIMIT = "limit";
     public static final String JSREF_ACTION = "action";
     public static final String JSREF_ONCLICK = "onclick";
     public static final String JSREF_OID = "OID";
@@ -42,7 +43,7 @@ public class Lookup implements EntryPoint {
         }
         catch(Exception nfe){
             // not a proper # so returning
-            return ; 
+            return ;
         }
 
         for (int i = 0; i < numLookups; i++) {
@@ -73,6 +74,9 @@ public class Lookup implements EntryPoint {
             }
             if (keySet.contains(JSREF_OID)) {
                 lookup.setOID((lookupProperties.get(JSREF_OID)));
+            }
+            if (keySet.contains(JSREF_LIMIT)) {
+                lookup.setLimit(Integer.parseInt(lookupProperties.get(JSREF_LIMIT)));
             }
 
             if (keySet.contains(JSREF_ACTION)) {

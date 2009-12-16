@@ -27,7 +27,6 @@ public class CallbackTimer extends Timer {
     }
 
     public void run() {
-        request.setLimit(20);
         if (lookup.getType().equals(LookupComposite.TYPE_SUPPLIER)) {
             LookupService.App.getInstance().getSupplierSuggestions(request, lookup.isWildCard(), callback);
         } else if (lookup.getType().equals(LookupComposite.TYPE_ANATOMY_ONTOLOGY)) {

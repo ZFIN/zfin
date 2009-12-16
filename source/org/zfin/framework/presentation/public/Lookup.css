@@ -6,9 +6,10 @@
 .gwt-SuggestBoxPopup {
   border: 1px solid black;
   background-color: white;
-  overflow: auto; 
+    /*see fogbugz 5183*/
+  /*overflow: auto; */ 
   height: auto;
-  max-height: 400px ;
+  max-height: 50em ;
   min-width: 100px ; 
 }
 

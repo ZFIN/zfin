@@ -81,6 +81,9 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         if (keySet.contains(JSREF_WIDTH)) {
             lookup.setSuggestBoxWidth(Integer.parseInt(lookupProperties.get(JSREF_WIDTH)));
         }
+        if (keySet.contains(JSREF_LIMIT)) {
+            lookup.setLimit(Integer.parseInt(lookupProperties.get(JSREF_LIMIT)));
+        }
         if (keySet.contains(JSREF_DIV_NAME)) {
             setDivName(lookupProperties.get(JSREF_DIV_NAME));
         }

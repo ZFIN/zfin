@@ -11,7 +11,9 @@ public class ItemSuggestOracle extends SuggestOracle {
     private final int DEFAULT_DELAY_TIME = 200 ;
     private int delayTime = DEFAULT_DELAY_TIME ;
     private LookupComposite lookup ;
-
+    public final static int NO_LIMIT = -1 ;
+    private final static int DEFAULT_LIMIT = 25 ;
+    private int limit = DEFAULT_LIMIT ;
 
     public ItemSuggestOracle(LookupComposite lookup){
         this.lookup = lookup ;
@@ -22,6 +24,9 @@ public class ItemSuggestOracle extends SuggestOracle {
 
     public void requestSuggestions(SuggestOracle.Request req, SuggestOracle.Callback callback) {
         String query = req.getQuery() ;
+        if(limit!=NO_LIMIT){
+            req.setLimit(limit);
+        }
         if(query.length()>=lookup.getMinLookupLenth()){
             timer.scheduleCallback(req,callback,delayTime);
             lookup.setNoteString("searching . . .");
@@ -35,13 +40,7 @@ public class ItemSuggestOracle extends SuggestOracle {
         }
     }
 
-    public int getDelayTime() {
-        return delayTime;
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
-
-    public void setDelayTime(int delayTime) {
-        this.delayTime = delayTime;
-    }
-
-    
 }

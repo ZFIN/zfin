@@ -2,6 +2,7 @@ package org.zfin.framework.presentation.server;
 
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.AnatomyItem;
@@ -53,11 +54,11 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         List<AnatomyItem> anatomyItems = RepositoryFactory.getAnatomyRepository().getAnatomyItemsByName(query, false);
         Collections.sort(anatomyItems, new SortAnatomySearchTerm(query));
-        if (wildCard == true && anatomyItems != null && anatomyItems.size() > 0) {
-            suggestions.add(new ItemSuggestion("*" + query + "*", null));
-        }
+        if(CollectionUtils.isNotEmpty(anatomyItems)){
+            if (wildCard == true ) {
+                suggestions.add(new ItemSuggestion("*" + query + "*", null));
+            }
 
-        if (anatomyItems != null) {
             List<AnatomyAutoCompleteTerm> terms = AnatomyPresentation.getAnatomyTermList(anatomyItems, query);
             for (AnatomyAutoCompleteTerm term : terms) {
                 String suggestion = term.getTermName();

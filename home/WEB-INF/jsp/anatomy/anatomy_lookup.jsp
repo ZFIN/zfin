@@ -8,7 +8,8 @@
         showError: true,
         showButton: true,
         action: "ANATOMY_SEARCH",
-        type: "ANATOMY_ONTOLOGY"
+        type: "ANATOMY_ONTOLOGY",
+        limit: 25
     };
 
 </script>

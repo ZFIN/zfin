@@ -68,6 +68,7 @@ public class LookupComposite extends Composite {
     protected boolean wildCard = true;
     protected int suggestBoxWidth = 30;
     protected String OID = null;
+    protected int limit = ItemSuggestOracle.NO_LIMIT ;
 
     // later option
     protected int minLookupLenth = 3;
@@ -368,4 +369,10 @@ public class LookupComposite extends Composite {
     public void addOnFocusHandler(FocusHandler autcompleteFocusHandler) {
         suggestBox.getTextBox().addFocusHandler(autcompleteFocusHandler);
     }
+
+    public void setLimit(int limit) {
+        oracle.setLimit(limit);
+    }
+
+
 }
