@@ -1,10 +1,9 @@
 package org.zfin.ontology;
 
 import org.zfin.anatomy.presentation.RelationshipSorting;
+import org.zfin.framework.presentation.client.Ontology;
 import org.zfin.ontology.presentation.OntologyAutoCompleteTerm;
 import org.zfin.util.ListFormatter;
-import org.zfin.framework.presentation.client.*;
-import org.zfin.framework.presentation.client.Ontology;
 
 import java.util.*;
 

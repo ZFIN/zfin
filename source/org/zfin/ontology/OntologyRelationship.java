@@ -1,7 +1,5 @@
 package org.zfin.ontology;
 
-import org.zfin.anatomy.AnatomyItem;
-
 import java.util.List;
 
 /**

@@ -3,9 +3,9 @@ package org.zfin.ontology;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
 
 /**
  * ToDo: ADD DOCUMENTATION!
