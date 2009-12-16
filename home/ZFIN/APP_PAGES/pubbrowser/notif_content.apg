@@ -155,7 +155,7 @@ Genes and mutants associated with your paper are listed on the publication page 
 <?MIBLOCK COND="$(AND,$(EC,$status,preview),$(XST,$notif_optnote))">
     <?MIVAR NAME=$notif_optnote_display>$(URLENCODE,$notif_optnote)<?/MIVAR>
     <?MIVAR NAME=$notif_optnote_display>$(REPLACE,$notif_optnote_display,%0a,<BR>)<?/MIVAR>
-    <?MIVAR NAME=$notif_optnote_display>$(REPLACE,$notif_optnote_display,++,<span style="border: thin solid white; margin-left: 2em;"></span>)<?/MIVAR>
+    <?MIVAR NAME=$notif_optnote_display>$(REPLACE,$notif_optnote_display,++,+</span>)<?/MIVAR>
     <?MIVAR NAME=$notif_optnote_display>$(URLDECODE,$notif_optnote_display)<?/MIVAR>
 
     <?MIVAR>$notif_optnote_display<?/MIVAR>
