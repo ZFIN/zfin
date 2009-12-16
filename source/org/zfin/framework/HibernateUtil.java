@@ -51,7 +51,7 @@ public class HibernateUtil {
     /**
      * Initialize the session with a given session factory.
      *
-     * @param factory passed in 
+     * @param factory passed in
      */
     public static void init(SessionFactory factory) {
         if (sessionFactory != null)
@@ -59,20 +59,20 @@ public class HibernateUtil {
         sessionFactory = factory;
     }
 
-    public static Transaction createTransaction(){
+    public static Transaction createTransaction() {
         return currentSession().beginTransaction();
     }
 
-    public static void rollbackTransaction(){
+    public static void rollbackTransaction() {
         try {
-            Transaction t = currentSession().getTransaction() ;
+            Transaction t = currentSession().getTransaction();
             t.rollback();
         } catch (HibernateException e) {
-            log.error(e.fillInStackTrace());
+            log.error(e);
         }
     }
 
-    public static void flushAndCommitCurrentSession(){
+    public static void flushAndCommitCurrentSession() {
         currentSession().flush();
         currentSession().getTransaction().commit();
     }
@@ -88,7 +88,7 @@ public class HibernateUtil {
     public static Session currentSession() {
         // if no session factory is created yet we may be in hosted mode. Then
         // initialize
-        if(sessionFactory == null){
+        if (sessionFactory == null) {
             SessionCreator.instantiateDBForHostedMode();
         }
 

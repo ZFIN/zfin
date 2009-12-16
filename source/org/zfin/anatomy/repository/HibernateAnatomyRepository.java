@@ -5,9 +5,9 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.zfin.anatomy.*;
 import org.zfin.expression.ExpressionStructure;
 import org.zfin.framework.HibernateUtil;
@@ -536,6 +536,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
     /*
      * ToDO: Convenience method as long as anatomy_display contains multiple records for a single stage.
      */
+
     private List<AnatomyStatistics> createStatisticsWithTreeInfo(List<Object[]> objects) {
         if (objects == null) {
             return null;

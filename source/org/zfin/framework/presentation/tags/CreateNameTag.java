@@ -1,16 +1,16 @@
 package org.zfin.framework.presentation.tags;
 
+import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 /**

@@ -1,14 +1,11 @@
 package org.zfin.mutant;
 
 
-import org.zfin.mutant.Feature;
-import org.zfin.mutant.FeatureAlias;
-
 import java.util.Date;
 
 public class FeatureHistory {
 
-    public enum Reason{
+    public enum Reason {
         NOT_SPECIFIED("Not Specified"),
         PER_GENE_FAMILIY_REVISION("per gene family revision"),
         PER_PERSONAL_COMMUNICATION_WITH_AUTHORS("per personal communication with authors"),
@@ -24,7 +21,7 @@ public class FeatureHistory {
             this.value = value;
         }
 
-        public String toString(){
+        public String toString() {
             return value;
         }
     }
@@ -38,8 +35,7 @@ public class FeatureHistory {
 
         // previously unmnapped from marker_history_event
         MERGED("merged"),
-        RESERVED("reserved"),
-        ;
+        RESERVED("reserved"),;
 
         private String value;
 
@@ -47,8 +43,8 @@ public class FeatureHistory {
             this.value = value;
         }
 
-        public String toString(){
-            return this.value ;
+        public String toString() {
+            return this.value;
         }
 
     }
@@ -92,7 +88,6 @@ public class FeatureHistory {
     }
 
 
-
     public Reason getReason() {
         return reason;
     }
@@ -133,9 +128,6 @@ public class FeatureHistory {
     public void setDate(Date date) {
         this.date = date;
     }
-
-
-
 
 
     public String getOldMarkerName() {

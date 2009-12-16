@@ -4,7 +4,6 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ public class LookupComposite extends Composite {
     protected SuggestOracle.Suggestion suggestion = null;
     protected Button submitButton;
     protected String currentText = null;
-    //    protected Label noteLabel = new Label();
     protected HTML noteLabel = new HTML("", true);
     protected VerticalPanel rootPanel = new VerticalPanel();
 
@@ -68,7 +66,7 @@ public class LookupComposite extends Composite {
     protected boolean wildCard = true;
     protected int suggestBoxWidth = 30;
     protected String OID = null;
-    protected int limit = ItemSuggestOracle.NO_LIMIT ;
+    protected int limit = ItemSuggestOracle.NO_LIMIT;
 
     // later option
     protected int minLookupLenth = 3;
@@ -156,7 +154,7 @@ public class LookupComposite extends Composite {
                 suggetBoxHasFocus = true;
                 // Add logic to popup suggestion upon focus 
                 String text = suggestBox.getText();
-                if(text == null || text.trim().length() > getMinLookupLenth()){
+                if (text == null || text.trim().length() > getMinLookupLenth()) {
                     ///
                 }
 //                Window.alert("HIOO");

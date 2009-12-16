@@ -1,8 +1,8 @@
 package org.zfin.framework.presentation;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * This class can be used to store the visbility and data existence of a set of sections.

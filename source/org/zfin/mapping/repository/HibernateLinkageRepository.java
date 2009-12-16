@@ -1,38 +1,36 @@
 package org.zfin.mapping.repository;
 
-import org.zfin.mapping.presentation.MappedMarkerBean;
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.zfin.mapping.MappedMarker;
-import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.mutant.FeatureMarkerRelationship;
-import org.hibernate.Session;
-import org.hibernate.Query;
-import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.TreeSet;
-import java.util.Set;
 
-public class HibernateLinkageRepository implements LinkageRepository{
+import static org.zfin.framework.HibernateUtil.currentSession;
 
-    private Logger logger = Logger.getLogger(HibernateLinkageRepository.class) ;
+public class HibernateLinkageRepository implements LinkageRepository {
+
+    private Logger logger = Logger.getLogger(HibernateLinkageRepository.class);
 
 
     public List<String> getDirectMappedMarkers(Marker marker) {
-        Session session = currentSession() ;
+        Session session = currentSession();
 
         String hql = " select distinct  mm.lg " +
                 " from MappedMarker  mm where " +
-                " mm.marker.zdbID = :markerZdbID order by mm.lg  " ;
-        Query query = session.createQuery(hql) ;
+                " mm.marker.zdbID = :markerZdbID order by mm.lg  ";
+        Query query = session.createQuery(hql);
         query.setString("markerZdbID", marker.getZdbID());
 
 
-        List<String> lgs = query.list() ;
+        List<String> lgs = query.list();
 
-        return lgs ;
+        return lgs;
     }
 
 
@@ -41,7 +39,7 @@ public class HibernateLinkageRepository implements LinkageRepository{
         TreeSet<String> lgList = new TreeSet<String>();
 
         // a) add self panel mapping
-        if(marker.getDirectPanelMappings()!=null){
+        if (marker.getDirectPanelMappings() != null) {
             for (MappedMarker mm : marker.getDirectPanelMappings()) {
                 if (mm != null) {
                     lgList.add(mm.getLg());

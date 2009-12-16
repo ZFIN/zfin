@@ -2,8 +2,8 @@ package org.zfin.people;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Date;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Account Info object is a value object of the person object.

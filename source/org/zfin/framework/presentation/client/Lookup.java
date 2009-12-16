@@ -1,12 +1,11 @@
 package org.zfin.framework.presentation.client;
 
-import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.i18n.client.Dictionary;
+import com.google.gwt.user.client.ui.RootPanel;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The structure of this SuggestBox is used in order to capture the extra "Enter" event.
@@ -36,14 +35,14 @@ public class Lookup implements EntryPoint {
     public void onModuleLoad() {
         // init gui
 
-        int numLookups = 0 ;
-        try{
-            String numLookupStrings = Dictionary.getDictionary(LOOKUP_STRING).get(NUMLOOKUPS_STRING) ;
-            numLookups = Integer.parseInt(numLookupStrings) ;
+        int numLookups = 0;
+        try {
+            String numLookupStrings = Dictionary.getDictionary(LOOKUP_STRING).get(NUMLOOKUPS_STRING);
+            numLookups = Integer.parseInt(numLookupStrings);
         }
-        catch(Exception nfe){
+        catch (Exception nfe) {
             // not a proper # so returning
-            return ;
+            return;
         }
 
         for (int i = 0; i < numLookups; i++) {
@@ -100,7 +99,7 @@ public class Lookup implements EntryPoint {
                 RootPanel.get(lookupProperties.get(JSREF_DIV_NAME)).add(lookup);
             }
 
-            lookups.add(lookup) ;
+            lookups.add(lookup);
         }
     }
 

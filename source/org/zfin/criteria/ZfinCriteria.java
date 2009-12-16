@@ -1,8 +1,7 @@
 package org.zfin.criteria;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.List;
 
 /**
  * This class is a basic container to hold criteria related to retrieving

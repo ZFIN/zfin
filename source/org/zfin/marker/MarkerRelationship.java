@@ -1,7 +1,7 @@
 package org.zfin.marker;
 
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.EntityAttribution;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.publication.Publication;
 
 import java.util.HashSet;
@@ -30,8 +30,7 @@ public class MarkerRelationship implements Comparable, EntityAttribution {
         GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY("gene product recognized by antibody"),
         KNOCKDOWN_REAGENT_TARGETS_GENE("knockdown reagent targets gene"),
         TRANSCRIPT_TARGETS_GENE("transcript targets gene"),
-        PROMOTER_OF("promoter of"),
-            ;
+        PROMOTER_OF("promoter of"),;
 
         private final String value;
 
@@ -152,8 +151,7 @@ public class MarkerRelationship implements Comparable, EntityAttribution {
     public Publication getSinglePublication() {
         if (getPublicationCount() == 1) {
             return getPublications().iterator().next().getPublication();
-        }
-        else{
+        } else {
             return null;
         }
     }

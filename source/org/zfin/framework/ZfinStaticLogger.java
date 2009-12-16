@@ -1,14 +1,13 @@
 package org.zfin.framework;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.Appender;
-import org.apache.log4j.RollingFileAppender;
 import org.apache.log4j.PatternLayout;
+import org.apache.log4j.RollingFileAppender;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.util.FileUtil;
 
-import java.util.ArrayList;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Logger that keeps track and logs session events from ZfinSessionListener.
@@ -20,7 +19,8 @@ public class ZfinStaticLogger {
     protected static ArrayList messages = new ArrayList();
 
     private static final Logger logger = Logger.getLogger(ZfinStaticLogger.class);
-    static{
+
+    static {
 
         String logFileName = ZfinProperties.getSessionLogName();
         //TODO: make this access more generic
@@ -34,7 +34,7 @@ public class ZfinStaticLogger {
             appender.setAppend(true);
             appender.setMaxBackupIndex(ZfinProperties.getMaxlogFiles());
         } catch (IOException e) {
-            e.printStackTrace();  
+            e.printStackTrace();
         }
         logger.addAppender(appender);
     }

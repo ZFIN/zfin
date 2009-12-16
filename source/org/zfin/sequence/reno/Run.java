@@ -1,12 +1,11 @@
 package org.zfin.sequence.reno;
 
-import org.zfin.publication.Publication;
-import org.zfin.framework.HibernateUtil;
 import org.apache.log4j.Logger;
+import org.zfin.publication.Publication;
 
 import java.util.Date;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This abstract class represents a single reno run.
@@ -23,7 +22,7 @@ public abstract class Run {
         NOMENCLATURE("Nomenclature");
 
         //        private final String value  ;
-        private String value  ;
+        private String value;
 
         Type(String value) {
             this.value = value;
@@ -35,7 +34,7 @@ public abstract class Run {
 
 
         public static Type getType(String type) {
-            for (Type t : values())  {
+            for (Type t : values()) {
                 if (t.toString().equals(type))
                     return t;
             }
@@ -49,7 +48,7 @@ public abstract class Run {
     private Date date;
     private String markerComment;
     private String blastDatabase;
-    private Set<RunCandidate> candidates = new HashSet<RunCandidate>() ;
+    private Set<RunCandidate> candidates = new HashSet<RunCandidate>();
     private Publication nomenclaturePublication;
 
 
@@ -60,8 +59,8 @@ public abstract class Run {
      */
     public int getQueueCandidateCount() {
         int count = 0;
-        for (RunCandidate rc : candidates)  {
-            if ( !rc.isDone() && !rc.isLocked() )
+        for (RunCandidate rc : candidates) {
+            if (!rc.isDone() && !rc.isLocked())
                 count++;
         }
         return count;
@@ -75,8 +74,8 @@ public abstract class Run {
      */
     public int getPendingCandidateCount() {
         int count = 0;
-        for (RunCandidate rc : candidates)  {
-            if ( !rc.isDone() && rc.isLocked() )
+        for (RunCandidate rc : candidates) {
+            if (!rc.isDone() && rc.isLocked())
                 count++;
         }
         return count;
@@ -90,18 +89,18 @@ public abstract class Run {
     public int getFinishedCandidateCount() {
         int count = 0;
         for (RunCandidate rc : candidates) {
-            if ( rc.isDone() )
+            if (rc.isDone())
                 count++;
         }
         return count;
     }
 
     public boolean isRedundancy() {
-        return getType()==Type.REDUNDANCY ;
+        return getType() == Type.REDUNDANCY;
     }
 
-    public boolean isNomenclature(){
-        return getType()==Type.NOMENCLATURE ;
+    public boolean isNomenclature() {
+        return getType() == Type.NOMENCLATURE;
     }
 
 
@@ -138,7 +137,7 @@ public abstract class Run {
     }
 
 
-    public abstract Type getType() ;
+    public abstract Type getType();
 
 
     public String getMarkerComment() {

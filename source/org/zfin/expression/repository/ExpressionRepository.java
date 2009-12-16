@@ -1,15 +1,15 @@
 package org.zfin.expression.repository;
 
 import org.zfin.expression.*;
+import org.zfin.framework.presentation.dto.ExpressedTermDTO;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
-import org.zfin.marker.Clone;
-import org.zfin.publication.Publication;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.sequence.MarkerDBLink;
 import org.zfin.mutant.Phenotype;
-import org.zfin.framework.presentation.dto.ExpressedTermDTO;
+import org.zfin.publication.Publication;
+import org.zfin.sequence.MarkerDBLink;
 
 import java.util.List;
 
@@ -18,14 +18,17 @@ import java.util.List;
  */
 public interface ExpressionRepository {
     ExpressionStageAnatomyContainer getExpressionStages(Gene gene);
-    int getExpressionPubCount(Marker marker) ;
-    int getExpressionFigureCount(Marker marker) ;
+
+    int getExpressionPubCount(Marker marker);
+
+    int getExpressionFigureCount(Marker marker);
 
     /**
      * @param marker
      * @return List of Object[int figureCount,String pubZdbID,String cloneZdbID)
      */
-    List getDirectlySubmittedExpressionSummaries(Marker marker) ;
+    List getDirectlySubmittedExpressionSummaries(Marker marker);
+
     int getImagesFromPubAndClone(Publication publication, Clone clone);
 
     /**
@@ -138,7 +141,7 @@ public interface ExpressionRepository {
      * If no composed term is provided 'Unspecified is used'
      *
      * @param expressionResult experiment figure stage
-     * @param singleFigure Figure
+     * @param singleFigure     Figure
      */
     void createExpressionResult(ExpressionResult expressionResult, Figure singleFigure);
 
@@ -187,6 +190,7 @@ public interface ExpressionRepository {
     /**
      * Delete an expression result record for a given figure.
      * If the result has more than one figure it only removes the figure-result association.
+     *
      * @param result expression result.
      * @param figure Figure
      */
@@ -199,6 +203,7 @@ public interface ExpressionRepository {
     /**
      * Retrieve a phenotype based on a given phenotype with
      * genox, start, end, pub, superterm = 'unspecified'
+     *
      * @param pheno phenotype
      * @return phenotype
      */
@@ -210,6 +215,7 @@ public interface ExpressionRepository {
      * suberterm
      * subterm
      * publication ID
+     *
      * @param expressedTerm term
      * @param publicationID publication
      * @return boolean

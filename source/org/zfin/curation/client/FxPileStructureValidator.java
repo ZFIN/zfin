@@ -1,8 +1,8 @@
 package org.zfin.curation.client;
 
-import org.zfin.framework.presentation.dto.ExpressedTermDTO;
-import org.zfin.framework.presentation.client.PostComposedPart;
 import org.zfin.framework.presentation.client.Ontology;
+import org.zfin.framework.presentation.client.PostComposedPart;
+import org.zfin.framework.presentation.dto.ExpressedTermDTO;
 
 import java.util.List;
 import java.util.Map;

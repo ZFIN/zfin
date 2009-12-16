@@ -3,17 +3,16 @@
  */
 package org.zfin.sequence;
 
-import org.zfin.marker.Marker;
-import org.zfin.sequence.EntrezProtRelation;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.orthology.Species;
-import org.apache.log4j.Logger;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.Marker;
+import org.zfin.orthology.Species;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
-import java.io.Serializable;
 
 /**
  * A wrapper around the accession_bank table.
@@ -114,6 +113,7 @@ public class Accession implements Comparable, Serializable {
 
 
     //    todo: update to use get/setMarkerDBLinks
+
     public List<Marker> getMarkers() {
         List<Marker> markers = new ArrayList<Marker>();
         for (DBLink link : getDbLinks()) {
@@ -137,11 +137,11 @@ public class Accession implements Comparable, Serializable {
     }
 
     public int compareTo(Object o) {
-        if(o instanceof Accession){
-            Accession a = (Accession) o ;
-            return a.getNumber().compareTo(getNumber()) ; 
-        }else{
-            return 0;              
+        if (o instanceof Accession) {
+            Accession a = (Accession) o;
+            return a.getNumber().compareTo(getNumber());
+        } else {
+            return 0;
         }
     }
 
@@ -192,16 +192,16 @@ public class Accession implements Comparable, Serializable {
     }
 
     public boolean equals(Object o) {
-        if(o instanceof Accession){
-            Accession a = (Accession) o ;
-            if( a.getNumber().equals(getNumber())
+        if (o instanceof Accession) {
+            Accession a = (Accession) o;
+            if (a.getNumber().equals(getNumber())
                     &&
-                  a.getReferenceDatabase().getForeignDB().getDbName().equals(getReferenceDatabase().getForeignDB().getDbName())
-                    ) {                
-                return true ;
+                    a.getReferenceDatabase().getForeignDB().getDbName().equals(getReferenceDatabase().getForeignDB().getDbName())
+                    ) {
+                return true;
             }
         }
-        return false ;
+        return false;
     }
 }
 

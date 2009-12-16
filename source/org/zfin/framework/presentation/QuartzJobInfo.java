@@ -1,27 +1,21 @@
 package org.zfin.framework.presentation;
 
-import org.quartz.Job;
-import org.quartz.JobDetail;
-
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Date;
 
 /**
  */
-public class QuartzJobInfo implements Comparable<QuartzJobInfo>{
+public class QuartzJobInfo implements Comparable<QuartzJobInfo> {
 
-    private String name ;
-    private Date lastExecution ;
-    private Date nextExecution ;
-    private boolean paused ;
+    private String name;
+    private Date lastExecution;
+    private Date nextExecution;
+    private boolean paused;
 
-    public QuartzJobInfo(String name, Date lastExecution, Date nextExecution,boolean paused){
-        this.name = name ;
-        this.lastExecution = lastExecution ;
-        this.nextExecution = nextExecution ;
-        this.paused = paused ;
+    public QuartzJobInfo(String name, Date lastExecution, Date nextExecution, boolean paused) {
+        this.name = name;
+        this.lastExecution = lastExecution;
+        this.nextExecution = nextExecution;
+        this.paused = paused;
     }
 
     public String getName() {
@@ -57,6 +51,6 @@ public class QuartzJobInfo implements Comparable<QuartzJobInfo>{
     }
 
     public int compareTo(QuartzJobInfo o) {
-        return name.compareTo(o.getName()) ;
+        return name.compareTo(o.getName());
     }
 }

@@ -1,19 +1,17 @@
 package org.zfin.framework;
 
+import org.hibernate.stat.Statistics;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.infrastructure.EnumValidationException;
 import org.zfin.infrastructure.EnumValidationService;
 import org.zfin.properties.ZfinProperties;
-import org.zfin.sequence.blast.*;
-import org.zfin.repository.RepositoryFactory;
-import org.hibernate.stat.Statistics;
+import org.zfin.sequence.blast.WebHostDatabaseStatisticsCache;
 import org.zfin.uniquery.categories.SiteSearchCategories;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import java.io.File;
-import java.util.List;
 
 /**
  * Master Servlet that controls each request and resonse.
@@ -51,17 +49,17 @@ public class ZfinActionServlet extends DispatcherServlet {
         // Added this to the application context to make it easier to use global values.
         // ToDo: Should add all global parameters into application context and have it added
         // to the right context. There might be parameters that should only apply on a session scope...
-        config.getServletContext().setAttribute("webdriverURL",ZfinProperties.getWebDriver( ));
+        config.getServletContext().setAttribute("webdriverURL", ZfinProperties.getWebDriver());
         initDatabase();
         startupTests();
-        initBlast() ;
+        initBlast();
     }
 
     private void initBlast() {
-        Thread t = new Thread(){
+        Thread t = new Thread() {
             @Override
             public void run() {
-                WebHostDatabaseStatisticsCache.getInstance().cacheAll() ; 
+                WebHostDatabaseStatisticsCache.getInstance().cacheAll();
                 HibernateUtil.closeSession();
             }
         };
@@ -72,13 +70,13 @@ public class ZfinActionServlet extends DispatcherServlet {
         EnumValidationService service = new EnumValidationService();
         try {
             service.checkAllEnums();
-            if (service.getReport() != null){
+            if (service.getReport() != null) {
                 throw new EnumValidationException(service.getReport());
             }
         }
         catch (EnumValidationException eve) {
             logger.error("Error in enumeration validation.", eve);
-            Throwable rootCause = eve ; // set a default
+            Throwable rootCause = eve; // set a default
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause();
             }
@@ -112,7 +110,7 @@ public class ZfinActionServlet extends DispatcherServlet {
         // initialize Hibernate
         HibernateUtil.init();
 
-        Statistics stats =  HibernateUtil.getSessionFactory().getStatistics();
+        Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
         stats.setStatisticsEnabled(true);
     }
 
@@ -143,6 +141,7 @@ public class ZfinActionServlet extends DispatcherServlet {
 
     // ToDo: create utilities method that takes an array of dir's and creates
     // a valid file name.
+
     private String getConcatenatedDir(String dir1, String dir2) {
         File file1 = new File(dir1);
         File file2 = new File(file1, dir2);

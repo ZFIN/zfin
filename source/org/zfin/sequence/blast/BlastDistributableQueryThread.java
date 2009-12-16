@@ -10,8 +10,8 @@ import org.zfin.sequence.blast.results.view.BlastResultMapper;
 import javax.xml.bind.Marshaller;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
@@ -21,15 +21,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * 1. multiple databases
  * 2. splitting single databases into smaller parts
  */
-public class BlastDistributableQueryThread extends AbstractQueryThread implements BlastThreadCollection{
+public class BlastDistributableQueryThread extends AbstractQueryThread implements BlastThreadCollection {
 
     private final static Logger logger = Logger.getLogger(BlastDistributableQueryThread.class);
 
     private Collection<BlastQueryJob> blastSlices = new ConcurrentLinkedQueue<BlastQueryJob>();
     private BlastHeuristicCollection blastHeuristicCollection;
-    private int totalThreads = 1 ;
-    private int threadSubmitLatency = 200 ;
-    private int checkJobLatency = 200 ;
+    private int totalThreads = 1;
+    private int threadSubmitLatency = 200;
+    private int checkJobLatency = 200;
 
     public BlastDistributableQueryThread(XMLBlastBean xmlBlastBean, BlastHeuristicCollection blastHeuristicCollection) {
         super(xmlBlastBean);
@@ -39,23 +39,24 @@ public class BlastDistributableQueryThread extends AbstractQueryThread implement
     }
 
     private int calculateTotalThreads() {
-        totalThreads = 0  ;
+        totalThreads = 0;
         List<Database> databases = xmlBlastBean.getActualDatabaseTargets();
         for (Database database : databases) {
             int numChunks = blastHeuristicCollection.getNumChunksForDatabase(database);
             if (numChunks < 1) {
                 numChunks = 1;
             }
-            totalThreads += numChunks ;
+            totalThreads += numChunks;
         }
-        return totalThreads ;
+        return totalThreads;
     }
 
     public int getNumberThreads() {
-        return totalThreads ;
+        return totalThreads;
     }
 
     // todo: note that we can  not return until we are done running
+
     public void run() {
 
         startBlast();
@@ -90,7 +91,7 @@ public class BlastDistributableQueryThread extends AbstractQueryThread implement
 
 
             // sleep a few seconds each time
-            while (BlastThreadService.isJobInQueue(xmlBlastBean,blastSlices)) {
+            while (BlastThreadService.isJobInQueue(xmlBlastBean, blastSlices)) {
                 try {
                     Thread.sleep(checkJobLatency);
                 } catch (InterruptedException e) {
@@ -117,7 +118,7 @@ public class BlastDistributableQueryThread extends AbstractQueryThread implement
                 }
                 writer.close();
             } catch (Exception e) {
-                logger.fatal("Failed to write blast result to file" , e.fillInStackTrace());
+                logger.fatal("Failed to write blast result to file", e);
             }
         } finally {
             finishBlast();

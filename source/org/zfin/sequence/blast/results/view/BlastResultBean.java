@@ -4,34 +4,32 @@ import org.zfin.sequence.blast.presentation.DatabasePresentationBean;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.util.List;
-import java.util.Set;
-import java.util.Collection;
 
 /**
- *  This represents the data for a single query.
+ * This represents the data for a single query.
  */
 public class BlastResultBean {
 
     // database info
     private List<DatabasePresentationBean> databases;
-    private int numberOfSequences ;
+    private int numberOfSequences;
 
     // query info
-    private int queryLength ;
-    private String defLine ;
+    private int queryLength;
+    private String defLine;
 
 
     // footer details
-    private String filter ;
+    private String filter;
 
     // blast bean for settingup another blast
-    private XMLBlastBean xmlBlastBean ;
+    private XMLBlastBean xmlBlastBean;
 
     // other data
-    private List<String> tickets ;
+    private List<String> tickets;
 
     // hits
-    private List<HitViewBean> hits ;
+    private List<HitViewBean> hits;
 
     public int getQueryLength() {
         return queryLength;
@@ -89,16 +87,16 @@ public class BlastResultBean {
         this.filter = filter;
     }
 
-    public String getFilterView(){
-        String returnView = this.filter ;
-        final String END_DASH = " -" ;
-        if(returnView.endsWith(END_DASH)){
+    public String getFilterView() {
+        String returnView = this.filter;
+        final String END_DASH = " -";
+        if (returnView.endsWith(END_DASH)) {
             int index = returnView.lastIndexOf(END_DASH);
-            if(index>0){
-                returnView = returnView.replaceAll(END_DASH,"") ;
+            if (index > 0) {
+                returnView = returnView.replaceAll(END_DASH, "");
             }
         }
-        return returnView ;
+        return returnView;
     }
 
     public XMLBlastBean getXmlBlastBean() {

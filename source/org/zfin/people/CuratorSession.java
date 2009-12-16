@@ -1,7 +1,7 @@
 package org.zfin.people;
 
-import org.zfin.publication.Publication;
 import org.zfin.people.presentation.client.CuratorSessionDTO;
+import org.zfin.publication.Publication;
 
 /**
  * A simple class for storing field/value pairs for a given person, optionally
@@ -48,10 +48,11 @@ public class CuratorSession extends CuratorSessionDTO {
         CuratorSession that = (CuratorSession) o;
 
         if (ID != null ? !ID.equals(that.getID()) : that.getID() != null) return false;
-        if (curator != null ? !curator.equals(that.getCurator()) : that.getCurator()!= null) return false;
+        if (curator != null ? !curator.equals(that.getCurator()) : that.getCurator() != null) return false;
         if (field != null ? !field.equals(that.getField()) : that.getField() != null) return false;
-        if (publication != null ? !publication.equals(that.getPublication()) : that.getPublication()!= null) return false;
-        if (value != null ? !value.equals(that.getValue()) : that.getValue()!= null) return false;
+        if (publication != null ? !publication.equals(that.getPublication()) : that.getPublication() != null)
+            return false;
+        if (value != null ? !value.equals(that.getValue()) : that.getValue() != null) return false;
 
         return true;
     }

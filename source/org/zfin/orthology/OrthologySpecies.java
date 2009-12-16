@@ -2,8 +2,8 @@ package org.zfin.orthology;
 
 import org.zfin.marker.Marker;
 
-import java.util.List;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * User: giles
@@ -14,7 +14,7 @@ import java.io.Serializable;
 /**
  * High level business object which contains all of the information for an orthologous gene for a given species.
  */
-public class OrthologySpecies  implements Serializable {
+public class OrthologySpecies implements Serializable {
 
     private Marker marker;
     private Species species;

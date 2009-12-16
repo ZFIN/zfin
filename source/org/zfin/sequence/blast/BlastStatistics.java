@@ -6,31 +6,32 @@ import java.util.Date;
  */
 public class BlastStatistics {
 
-    private static BlastStatistics instance ;
+    private static BlastStatistics instance;
 
     // statistics
-    private Date startTime = new Date() ;
+    private Date startTime = new Date();
 
-    private long runTime = 0 ; /// run time includes ALL threads. time in milliseconds.
-    private long queueTime = 0 ; /// queue time includes ALL threads. time in milliseconds.
-    private long numThreads = 0 ;
-    private long numJobs = 0 ;
+    private long runTime = 0; /// run time includes ALL threads. time in milliseconds.
+    private long queueTime = 0; /// queue time includes ALL threads. time in milliseconds.
+    private long numThreads = 0;
+    private long numJobs = 0;
 
 
-    private BlastStatistics(){}
-
-    public static BlastStatistics getInstance(){
-        if(instance==null){
-            instance = new BlastStatistics();
-        }
-        return instance ;
+    private BlastStatistics() {
     }
 
-    public void recordStatistics(BlastQueryJob blastQueryJob){
-        ++numJobs  ;
+    public static BlastStatistics getInstance() {
+        if (instance == null) {
+            instance = new BlastStatistics();
+        }
+        return instance;
+    }
+
+    public void recordStatistics(BlastQueryJob blastQueryJob) {
+        ++numJobs;
         numThreads += blastQueryJob.getNumberThreads();
-        runTime += blastQueryJob.getFinishTime().getTime()-blastQueryJob.getStartTime().getTime();
-        queueTime += blastQueryJob.getStartTime().getTime()-blastQueryJob.getQueueTime().getTime();
+        runTime += blastQueryJob.getFinishTime().getTime() - blastQueryJob.getStartTime().getTime();
+        queueTime += blastQueryJob.getStartTime().getTime() - blastQueryJob.getQueueTime().getTime();
     }
 
     public Date getStartTime() {
@@ -53,10 +54,10 @@ public class BlastStatistics {
         return numJobs;
     }
 
-    public void clear(){
-        runTime = 0 ;
-        queueTime = 0 ;
-        numThreads = 0 ;
-        numJobs = 0 ; 
+    public void clear() {
+        runTime = 0;
+        queueTime = 0;
+        numThreads = 0;
+        numJobs = 0;
     }
 }

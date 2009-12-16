@@ -1,24 +1,19 @@
 package org.zfin.marker.presentation.dto;
 
-import java.util.List;
-
 /**
  */
 public class TranscriptDTO extends MarkerDTO {
 
-    private String transcriptType ;
-    private String transcriptStatus ;
+    private String transcriptType;
+    private String transcriptStatus;
 
 
-
-    public TranscriptDTO copyFrom(TranscriptDTO otherTranscriptDTO){
+    public TranscriptDTO copyFrom(TranscriptDTO otherTranscriptDTO) {
         setTranscriptType(otherTranscriptDTO.getTranscriptType());
         setTranscriptStatus(otherTranscriptDTO.getTranscriptStatus());
         setName(otherTranscriptDTO.getName());
-        return this ;
+        return this;
     }
-
-
 
 
     public String getTranscriptType() {

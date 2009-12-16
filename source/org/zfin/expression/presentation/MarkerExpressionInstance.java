@@ -1,14 +1,14 @@
 package org.zfin.expression.presentation;
 
-import org.zfin.publication.Publication;
 import org.zfin.marker.Marker;
+import org.zfin.publication.Publication;
 
 public class MarkerExpressionInstance {
     Publication singlePublication;
     Marker marker;
-	int figureCount ;
-	int publicationCount;
-    int imageCount ;
+    int figureCount;
+    int publicationCount;
+    int imageCount;
 
     public Publication getSinglePublication() {
         return singlePublication;
@@ -18,22 +18,22 @@ public class MarkerExpressionInstance {
         this.singlePublication = singlePublication;
     }
 
-	public int getFigureCount(){
-		return figureCount ;
-	}
+    public int getFigureCount() {
+        return figureCount;
+    }
 
-	public void setFigureCount(int figureCount)  {
-		this.figureCount = figureCount ;
-	}
+    public void setFigureCount(int figureCount) {
+        this.figureCount = figureCount;
+    }
 
 
-	public int getPublicationCount(){
-		return publicationCount;
-	}
+    public int getPublicationCount() {
+        return publicationCount;
+    }
 
-	public void setPublicationCount(int publicationCount)  {
-		this.publicationCount = publicationCount;
-	}
+    public void setPublicationCount(int publicationCount) {
+        this.publicationCount = publicationCount;
+    }
 
     public int getImageCount() {
         return imageCount;
@@ -43,8 +43,8 @@ public class MarkerExpressionInstance {
         this.imageCount = imageCount;
     }
 
-    public int getTotalCount(){
-        return figureCount + publicationCount + imageCount ; 
+    public int getTotalCount() {
+        return figureCount + publicationCount + imageCount;
     }
 
     public Marker getMarker() {

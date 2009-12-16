@@ -1,28 +1,25 @@
 package org.zfin.feature.presentation;
 
 import org.apache.log4j.Logger;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.framework.presentation.LookupStrings;
-
-import org.zfin.feature.repository.FeatureRepository;
-import org.zfin.feature.repository.FeatureService;
-import org.zfin.mutant.Feature;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.repository.MutantRepository;
-
-import org.zfin.mutant.presentation.FeatGenoStatistics;
-import org.zfin.mutant.presentation.GenoExpStatistics;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerService;
+import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.validation.BindException;
+import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.feature.repository.FeatureService;
+import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerService;
+import org.zfin.mutant.Feature;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.presentation.FeatGenoStatistics;
+import org.zfin.mutant.presentation.GenoExpStatistics;
+import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class FeatureDetailController extends AbstractCommandController {
@@ -67,18 +64,18 @@ public class FeatureDetailController extends AbstractCommandController {
 
 
     private void retrievePubData(Feature fr, FeatureBean form) {
-        form.setNumPubs(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForFeature(fr,0).getTotalCount());
+        form.setNumPubs(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForFeature(fr, 0).getTotalCount());
     }
 
     //this is to get the affected marker (markers that have 'is allele of relationships' with features. We need this to get Map locations
-     private void retrieveMarkerData(Feature fr, FeatureBean form) {
+    private void retrieveMarkerData(Feature fr, FeatureBean form) {
         Marker marker = RepositoryFactory.getMutantRepository().getMarkerbyFeature(fr);
-         if (marker != null){
-         form.setMappedMarkerBean(MarkerService.getMappedMarkers(marker)) ;
-         }
-     }
-    
-     private List<FeatGenoStatistics> createGenotypeStats(List<Genotype> genotypes, Feature fr) {
+        if (marker != null) {
+            form.setMappedMarkerBean(MarkerService.getMappedMarkers(marker));
+        }
+    }
+
+    private List<FeatGenoStatistics> createGenotypeStats(List<Genotype> genotypes, Feature fr) {
         if (genotypes == null || fr == null)
             return null;
         List<FeatGenoStatistics> stats = new ArrayList<FeatGenoStatistics>();
@@ -89,7 +86,7 @@ public class FeatureDetailController extends AbstractCommandController {
         return stats;
     }
 
-     private List<GenoExpStatistics> createGenotypeExpStats(List<Genotype> genotypes, Feature fr) {
+    private List<GenoExpStatistics> createGenotypeExpStats(List<Genotype> genotypes, Feature fr) {
         if (genotypes == null || fr == null)
             return null;
 
@@ -100,6 +97,6 @@ public class FeatureDetailController extends AbstractCommandController {
         }
         return stats;
     }
-    
+
 }
 

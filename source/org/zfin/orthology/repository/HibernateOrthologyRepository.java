@@ -1,20 +1,24 @@
 package org.zfin.orthology.repository;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.criteria.ZfinCriteria;
 import org.zfin.framework.HibernateUtil;
-import static org.zfin.framework.HibernateUtil.currentSession;
+import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.*;
-import org.zfin.util.FilterType;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.publication.Publication;
-import org.zfin.infrastructure.Updates;
-import org.apache.commons.lang.StringUtils;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.FilterType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
  * This class creates the calls to Hibernate to retrieve the Orthology information.
@@ -613,16 +617,16 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
 
     /**
      * Save a new orthology including evidence codes.
-     * In addition, a record attribution is created as well. 
-     *
+     * In addition, a record attribution is created as well.
+     * <p/>
      * Constraints:
-     *      Each zfin gene can have only one orthologous gene per species.
-     *
+     * Each zfin gene can have only one orthologous gene per species.
+     * <p/>
      * Note: Each evidence code needs to also update the fast search table!
-     *       This method also creates the DB links (related accessions for
-     *       this ZF orthology.
+     * This method also creates the DB links (related accessions for
+     * this ZF orthology.
      *
-     * @param orthologue Orthologue object
+     * @param orthologue  Orthologue object
      * @param publication Publication object
      */
     public void saveOrthology(Orthologue orthologue, Publication publication, Updates up) {
@@ -631,7 +635,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         currentSession().save(up);
         String orthologyZdbID = orthologue.getZdbID();
         Set<OrthoEvidence> evidences = orthologue.getEvidence();
-        for(OrthoEvidence evidence : evidences){
+        for (OrthoEvidence evidence : evidences) {
             evidence.setOrthologueZdbID(orthologyZdbID);
             currentSession().save(evidence);
         }
@@ -639,17 +643,17 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(orthologyZdbID, publication.getZdbID());
         // create DB links
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-        mr.addOrthoDBLink(orthologue,orthologue.getAccession());
+        mr.addOrthoDBLink(orthologue, orthologue.getAccession());
 
     }
 
     public void updateFastSearchEvidenceCodes(Set<Orthologue> orthologues) {
         Set<OrthologyEvidenceFastSearch> fastSearches = OrthologyEvidenceService.getOrthoEvidenceFastSearches(orthologues);
-        for(OrthologyEvidenceFastSearch fastSearch : fastSearches){
+        for (OrthologyEvidenceFastSearch fastSearch : fastSearches) {
             currentSession().save(fastSearch);
             String orthologyFastSearchZdbID = fastSearch.getZdbID();
             RepositoryFactory.getInfrastructureRepository().
-                    insertRecordAttribution(orthologyFastSearchZdbID, fastSearch.getPublication().getZdbID());  
+                    insertRecordAttribution(orthologyFastSearchZdbID, fastSearch.getPublication().getZdbID());
         }
     }
 

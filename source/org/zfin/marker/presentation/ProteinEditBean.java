@@ -1,21 +1,12 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.sequence.MarkerDBLinkList;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.TranscriptDBLink;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.Clone;
-import org.zfin.marker.Marker;
-
-import java.util.List;
-
 /**
  */
 public class ProteinEditBean {
 
-    private String accession ;
-    private String refDBName ;
-    private String zdbID ;
+    private String accession;
+    private String refDBName;
+    private String zdbID;
 
     public String getAccession() {
         return accession;
@@ -34,8 +25,8 @@ public class ProteinEditBean {
     }
 
     public String getZdbID() {
-        if(zdbID==null){
-            return "ZDB-DBLINK-ACCESSION_IS_KEY" ;
+        if (zdbID == null) {
+            return "ZDB-DBLINK-ACCESSION_IS_KEY";
         }
         return zdbID;
     }

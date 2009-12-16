@@ -8,9 +8,9 @@ import org.zfin.sequence.blast.results.HitNum;
 import org.zfin.sequence.blast.results.Iteration;
 import org.zfin.sequence.blast.results.impl.HitNumImpl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Collection;
 
 /**
  * This class merges blast output into a single result.
@@ -39,22 +39,22 @@ public class BlastOutputMerger {
     }
 
     private static BlastOutput mergeBlastOutput(BlastOutput blastOutputA, BlastOutput blastOutputB) {
-        blastOutputA = mergeBlastHits(blastOutputA,blastOutputB) ;
-        blastOutputA = mergeBlastErrors(blastOutputA,blastOutputB) ;
-        return blastOutputA ;
+        blastOutputA = mergeBlastHits(blastOutputA, blastOutputB);
+        blastOutputA = mergeBlastErrors(blastOutputA, blastOutputB);
+        return blastOutputA;
     }
 
     private static BlastOutput mergeBlastErrors(BlastOutput blastOutputA, BlastOutput blastOutputB) {
         String errorA = null;
         String errorB = null;
         try {
-            errorA =  blastOutputA.getZFINParameters().getErrorData().getContent();
+            errorA = blastOutputA.getZFINParameters().getErrorData().getContent();
         } catch (NullPointerException e) {
             logger.debug("no error for blastA output:" + blastOutputA);
         }
 
         try {
-            errorB =  blastOutputB.getZFINParameters().getErrorData().getContent();
+            errorB = blastOutputB.getZFINParameters().getErrorData().getContent();
         } catch (NullPointerException e) {
             logger.debug("no error for blastB output:" + blastOutputB);
         }
@@ -75,6 +75,7 @@ public class BlastOutputMerger {
 
     // this method only merges hits
     //
+
     /**
      * This method merges hits.  There will only be one iteration, because we are splitting queries.
      *

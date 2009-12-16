@@ -1,7 +1,6 @@
 package org.zfin.framework.presentation.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.zfin.framework.presentation.dto.StageDTO;
 
 import java.util.Date;
 

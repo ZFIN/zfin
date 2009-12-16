@@ -4,8 +4,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.util.List;
 
-import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
-
 /**
  * Holds values for the checkmark status.
  */

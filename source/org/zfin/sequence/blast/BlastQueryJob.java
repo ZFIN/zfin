@@ -6,7 +6,7 @@ import java.util.Date;
 
 /**
  */
-public interface BlastQueryJob extends Runnable{
+public interface BlastQueryJob extends Runnable {
     XMLBlastBean getXmlBlastBean();
 
     String getTicket();
@@ -19,11 +19,11 @@ public interface BlastQueryJob extends Runnable{
 
     void finishBlast();
 
-    int getNumberThreads() ;
+    int getNumberThreads();
 
-    public Date getQueueTime() ;
+    public Date getQueueTime();
 
-    public Date getStartTime() ;
+    public Date getStartTime();
 
-    public Date getFinishTime() ;
+    public Date getFinishTime();
 }

@@ -5,14 +5,13 @@ package org.zfin.orthology;
  * Date: Jul 26, 2006
  */
 
-import java.util.Set;
-import java.util.TreeSet;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Business object used to hold a set of evidence codes for an orthologous gene.
  */
-public class Evidence  implements Serializable {
+public class Evidence implements Serializable {
     private Set<EvidenceCode> codes;
 
     public void setCodes(Set<EvidenceCode> codes) {

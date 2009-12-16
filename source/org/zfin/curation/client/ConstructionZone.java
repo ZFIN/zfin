@@ -1,8 +1,8 @@
 package org.zfin.curation.client;
 
-import org.zfin.framework.presentation.dto.ExpressedTermDTO;
-import org.zfin.framework.presentation.client.PostComposedPart;
 import org.zfin.framework.presentation.client.Ontology;
+import org.zfin.framework.presentation.client.PostComposedPart;
+import org.zfin.framework.presentation.dto.ExpressedTermDTO;
 
 /**
  * Defines a Construction zone, such as for FX and PATO.
@@ -38,12 +38,14 @@ public interface ConstructionZone {
 
     /**
      * Set the object that validated a new structure according to given business logic.
+     *
      * @param validator StructureValidator
      */
     void setStructureValidator(StructureValidator validator);
 
     /**
      * Add a change handler.
+     *
      * @param listener handler
      */
     void addCreatePileChangeListener(PileStructureListener listener);

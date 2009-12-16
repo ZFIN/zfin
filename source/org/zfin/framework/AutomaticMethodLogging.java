@@ -1,7 +1,7 @@
 package org.zfin.framework;
 
-import org.springframework.aop.MethodBeforeAdvice;
 import org.apache.log4j.Logger;
+import org.springframework.aop.MethodBeforeAdvice;
 
 import java.lang.reflect.Method;
 
@@ -16,7 +16,7 @@ public class AutomaticMethodLogging implements MethodBeforeAdvice {
 
     public void before(Method method, Object[] args, Object target) throws Throwable {
         Logger log = Logger.getLogger(target.getClass());
-        log.info("Start executing Method " +target.getClass().getName() + "." + method.getName());
+        log.info("Start executing Method " + target.getClass().getName() + "." + method.getName());
         log.info(this);
     }
 }

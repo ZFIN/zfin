@@ -1,10 +1,10 @@
 package org.zfin.mapping;
 
-import org.zfin.people.Person;
-import org.zfin.people.Lab;
 import org.zfin.marker.Marker;
+import org.zfin.people.Lab;
+import org.zfin.people.Person;
 
-public class MappedMarker implements Comparable{
+public class MappedMarker implements Comparable {
     private String zdbID;
     private String refcrossID;
     private Marker marker;
@@ -16,20 +16,17 @@ public class MappedMarker implements Comparable{
     private Float lgLocation;
 
     public int compareTo(Object o) {
-        if (o == null){
-           return -1 ;
-        }
-        else
-        if (false==(o instanceof MappedMarker)){
-           return o.toString().compareTo(toString()) ;
+        if (o == null) {
+            return -1;
+        } else if (false == (o instanceof MappedMarker)) {
+            return o.toString().compareTo(toString());
         }
         // both MappedMarker
-        else{
-            MappedMarker mappedMarker = (MappedMarker) o ;
-            if(false==lg.equalsIgnoreCase(mappedMarker.getLg())){
+        else {
+            MappedMarker mappedMarker = (MappedMarker) o;
+            if (false == lg.equalsIgnoreCase(mappedMarker.getLg())) {
                 return lg.toLowerCase().compareTo(mappedMarker.getLg().toLowerCase());
-            }
-            else{
+            } else {
                 return marker.compareTo(mappedMarker.getMarker());
             }
         }

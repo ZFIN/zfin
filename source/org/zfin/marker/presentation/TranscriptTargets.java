@@ -1,10 +1,9 @@
 package org.zfin.marker.presentation;
 
 import org.zfin.sequence.TranscriptDBLink;
-import org.zfin.marker.presentation.RelatedMarker;
 
-import java.util.TreeSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class TranscriptTargets {
     private TranscriptDBLink predictedTarget;
@@ -21,7 +20,9 @@ public class TranscriptTargets {
 
     public Set<RelatedMarker> getPublishedTargets() {
         //never return a null collection
-        if (publishedTargets == null) { publishedTargets = new TreeSet<RelatedMarker>(); }
+        if (publishedTargets == null) {
+            publishedTargets = new TreeSet<RelatedMarker>();
+        }
         return publishedTargets;
     }
 

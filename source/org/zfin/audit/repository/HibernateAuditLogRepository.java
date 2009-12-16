@@ -2,8 +2,8 @@ package org.zfin.audit.repository;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.framework.HibernateUtil;
 

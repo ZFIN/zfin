@@ -1,12 +1,12 @@
 package org.zfin.antibody.presentation;
 
-import org.springframework.validation.Validator;
-import org.springframework.validation.Errors;
 import org.apache.commons.lang.StringUtils;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.people.repository.ProfileRepository;
-import org.zfin.people.Organization;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 import org.zfin.people.MarkerSupplier;
+import org.zfin.people.Organization;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.repository.RepositoryFactory;
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,15 +1,10 @@
 package org.zfin.mutant;
 
-import org.zfin.marker.Marker;
-
-import java.util.Set;
-
-
 public class FeatureType {
 
     private String name;
     private int significance;
-       private String dispName;
+    private String dispName;
 
     public String getName() {
         return name;

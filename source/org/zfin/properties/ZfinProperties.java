@@ -2,7 +2,6 @@ package org.zfin.properties;
 
 import org.apache.log4j.Logger;
 import org.zfin.util.FileUtil;
-import org.zfin.sequence.blast.BlastProtocolNotImplementedException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -47,8 +46,8 @@ public final class ZfinProperties {
     /**
      * Pass in the path to the property file.
      *
-     * @param dir Directory where property file exists.
-     * @param propFile  The name of  the property file.
+     * @param dir      Directory where property file exists.
+     * @param propFile The name of  the property file.
      */
     public static void init(String dir, String propFile) {
         propertyFile = FileUtil.createFileFromDirAndName(dir, propFile);
@@ -83,9 +82,9 @@ public final class ZfinProperties {
 
     }
 
-    public static String getLN54ContactEmail(){
+    public static String getLN54ContactEmail() {
         checkValidProperties();
-        return stripEmailBackslash(props.getEmail().getLn54Contact()) ;
+        return stripEmailBackslash(props.getEmail().getLn54Contact());
     }
 
     public static String getBackgroundColor() {
@@ -196,6 +195,7 @@ public final class ZfinProperties {
     }
 
     //ToDo: include in zfin-properties file
+
     public static String getSessionLogName() {
 /*
         checkValidProperties();
@@ -206,37 +206,39 @@ public final class ZfinProperties {
 
     // convenience method
     // todo: should be removed at some point as I think that both methods are deprecated
-    public static String getBlastAllBinary(){
-        return getWebHostBinaryPath()+"/"+"wu-blastall" ;
+
+    public static String getBlastAllBinary() {
+        return getWebHostBinaryPath() + "/" + "wu-blastall";
     }
 
     // START - local blast methods
-    public static String getWebHostDatabasePath(){
+
+    public static String getWebHostDatabasePath() {
         checkValidProperties();
-        String blastPath= props.getBlast().getWebHost().getDatabasePath();
-        logger.debug("local blast path: "+ blastPath);
-        return blastPath ;
+        String blastPath = props.getBlast().getWebHost().getDatabasePath();
+        logger.debug("local blast path: " + blastPath);
+        return blastPath;
     }
 
-    public static String getWebHostBlastGetBinary(){
+    public static String getWebHostBlastGetBinary() {
         checkValidProperties();
-        return getWebHostBinaryPath()+"/"+props.getBlast().getWebHost().getGetBinary();
+        return getWebHostBinaryPath() + "/" + props.getBlast().getWebHost().getGetBinary();
     }
 
-    public static String getWebHostBlastPutBinary(){
+    public static String getWebHostBlastPutBinary() {
         checkValidProperties();
-        return getWebHostBinaryPath()+"/"+props.getBlast().getWebHost().getPutBinary();
+        return getWebHostBinaryPath() + "/" + props.getBlast().getWebHost().getPutBinary();
     }
 
 
-    public static String getWebHostUserAtHost(){
+    public static String getWebHostUserAtHost() {
         checkValidProperties();
         return props.getBlast().getWebHost().getUser()
-                +"@"
-                +props.getBlast().getWebHost().getHostName() ;
+                + "@"
+                + props.getBlast().getWebHost().getHostName();
     }
 
-    public static String getWebHostBinaryPath(){
+    public static String getWebHostBinaryPath() {
         checkValidProperties();
         return props.getBlast().getWebHost().getBinaryPath();
     }
@@ -244,53 +246,55 @@ public final class ZfinProperties {
     // END - local blast methods
 
     // START - remote blast methods
-    public static String getBlastServerDatabasePath(){
+
+    public static String getBlastServerDatabasePath() {
         checkValidProperties();
-        String blastPath= props.getBlast().getBlastServer().getDatabasePath();
-        logger.debug("remote blast path: "+ blastPath);
-        return blastPath ;
+        String blastPath = props.getBlast().getBlastServer().getDatabasePath();
+        logger.debug("remote blast path: " + blastPath);
+        return blastPath;
     }
 
-    public static String getBlastServerBinaryPath(){
+    public static String getBlastServerBinaryPath() {
         checkValidProperties();
         return props.getBlast().getBlastServer().getBinaryPath();
     }
 
     public static String getKeyPath() {
         checkValidProperties();
-        String blastPath= props.getBlast().getKeyPath() ;
-        logger.debug("remote blast path: "+ blastPath);
-        return blastPath ;
+        String blastPath = props.getBlast().getKeyPath();
+        logger.debug("remote blast path: " + blastPath);
+        return blastPath;
     }
 
-    public static String getBlastServerPutBinary(){
+    public static String getBlastServerPutBinary() {
         checkValidProperties();
         return props.getBlast().getBlastServer().getPutBinary();
     }
 
-    public static String getBlastServerGetBinary(){
+    public static String getBlastServerGetBinary() {
         checkValidProperties();
         return props.getBlast().getBlastServer().getGetBinary();
     }
 
-    public static String getBlastServerAccessBinary(){
-        return SSH_STRING ;
+    public static String getBlastServerAccessBinary() {
+        return SSH_STRING;
     }
 
-    public static String getBlastServerUserAtHost(){
+    public static String getBlastServerUserAtHost() {
         checkValidProperties();
         return props.getBlast().getBlastServer().getUser()
-                +"@"
-                +props.getBlast().getBlastServer().getHostName() ;
+                + "@"
+                + props.getBlast().getBlastServer().getHostName();
     }
 
-    public static String getBlastServerTarget(){
+    public static String getBlastServerTarget() {
         checkValidProperties();
-        return props.getBlast().getTarget() ;
+        return props.getBlast().getTarget();
     }
-    public static String getDistributedQueryPath(){
+
+    public static String getDistributedQueryPath() {
         checkValidProperties();
-        return props.getBlast().getDistributedQueryPath() ;
+        return props.getBlast().getDistributedQueryPath();
     }
 
 
@@ -305,38 +309,37 @@ public final class ZfinProperties {
 
     public static String getDomain() {
         checkValidProperties();
-        return  props.getWeb().getDomain() ;
+        return props.getWeb().getDomain();
     }
 
     public static String getWikiUserName() {
         checkValidProperties();
-        return  props.getWiki().getUsername() ;
+        return props.getWiki().getUsername();
     }
 
     public static String getWikiPassword() {
         checkValidProperties();
-        return  props.getWiki().getPassword() ;
+        return props.getWiki().getPassword();
     }
 
     public static String getWikiHostname() {
         checkValidProperties();
-        return  props.getWiki().getInterfaceHostname() ;
+        return props.getWiki().getInterfaceHostname();
     }
 
     public static String getIndexerWikiHostname() {
         checkValidProperties();
-        return  props.getWiki().getIndexerHostname() ;
+        return props.getWiki().getIndexerHostname();
     }
 
     public static boolean isPushToWiki() {
         checkValidProperties();
-        if(props.getWiki().isPushToWiki()){
+        if (props.getWiki().isPushToWiki()) {
             logger.debug("Pushing to wiki: " + props.getWiki().isPushToWiki());
-            return true ;
-        }
-        else{
+            return true;
+        } else {
             logger.warn("Not pushing to wiki: " + props.getWiki().isPushToWiki());
-            return false ;
+            return false;
         }
     }
 
@@ -406,6 +409,7 @@ public final class ZfinProperties {
 
     /**
      * Retrieve the poperty file.
+     *
      * @return File handle
      */
     public static File getZfinPropertyFile() {
@@ -414,6 +418,7 @@ public final class ZfinProperties {
 
     // if initialization happens not via applicationProperties include
     // that logic in here.
+
     private static void checkValidProperties() {
         if (props == null)
             throw new RuntimeException("Properties are not yet initialized");

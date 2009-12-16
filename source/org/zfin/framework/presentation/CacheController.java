@@ -1,19 +1,17 @@
 package org.zfin.framework.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.validation.BindException;
-import org.zfin.framework.CacheItem;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.zfin.framework.CacheItem;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Cache;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

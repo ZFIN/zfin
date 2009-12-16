@@ -19,9 +19,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.HashSet;
 
 /**
  * Creates a smart ZDB id as in the web datablade implementation.
@@ -31,7 +31,7 @@ import java.util.HashSet;
  * <p/>
  * If the object is a Marker then this generator will take the object type from
  * marker.getType(). This assumes, the ZDB id will always have the same string
- * as the type! 
+ * as the type!
  * ToDo: Check if this function can be recreated in Java without affecting the c function.
  */
 public class ZdbIdGenerator extends TransactionHelper implements IdentifierGenerator, Configurable {
@@ -51,50 +51,47 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
      * @param type
      * @return
      */
-    public Set<String> generateZdbIDs(SessionImplementor session,int number, String type,
-                                       boolean customInsertActiveData, boolean customInsertActvieSource)
-            throws HibernateException, SQLException
-    {
+    public Set<String> generateZdbIDs(SessionImplementor session, int number, String type,
+                                      boolean customInsertActiveData, boolean customInsertActvieSource)
+            throws HibernateException, SQLException {
 
         if (!session.isTransactionInProgress()) {
             throw new HibernateException("Generating ZdbID without a transaction: " + type);
         }
 
-        objectType = type ; 
+        objectType = type;
         setQueryToRetrieveID();
-
 
 
         InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
-        Set<String> zdbIDs = new HashSet<String>(number) ;
-        long startTime  = System.currentTimeMillis() ;
-        long lastTime = startTime ;
-        long currentTime = 0 ;
-        LOG.debug("generating zdbIDS: "+number) ;
-        for(int i = 0 ; i <  number ; i++){
+        Set<String> zdbIDs = new HashSet<String>(number);
+        long startTime = System.currentTimeMillis();
+        long lastTime = startTime;
+        long currentTime = 0;
+        LOG.debug("generating zdbIDS: " + number);
+        for (int i = 0; i < number; i++) {
             String zdbID = (String) doWorkInCurrentTransaction(session.connection(), query);
             if (customInsertActiveData) {
                 LOG.debug("insertActiveData: " + customInsertActiveData + " for ZdbID[" + zdbID + "]");
                 infrastructureRepository.insertActiveData(zdbID);
             }
             if (customInsertActvieSource) {
-                LOG.debug("insertActiveSource: " + customInsertActvieSource+ " for ZdbID[" + zdbID + "]");
+                LOG.debug("insertActiveSource: " + customInsertActvieSource + " for ZdbID[" + zdbID + "]");
                 infrastructureRepository.insertActiveSource(zdbID);
             }
-            zdbIDs.add(zdbID) ;
-            if(i%1000==0){
-                currentTime = System.currentTimeMillis() ;
-                LOG.debug("zdbIDS generated: "+i + " "+ (i/(number*1.0f)*100.0f)+"% time["+ ((currentTime - lastTime)/1000.0f) +"]")  ;
-                lastTime = currentTime ; 
+            zdbIDs.add(zdbID);
+            if (i % 1000 == 0) {
+                currentTime = System.currentTimeMillis();
+                LOG.debug("zdbIDS generated: " + i + " " + (i / (number * 1.0f) * 100.0f) + "% time[" + ((currentTime - lastTime) / 1000.0f) + "]");
+                lastTime = currentTime;
             }
         }
-       LOG.debug("time to generate ZdbIDs: "+ (currentTime- startTime)) ;
+        LOG.debug("time to generate ZdbIDs: " + (currentTime - startTime));
 
 
-        return zdbIDs ;
+        return zdbIDs;
     }
-
 
 
     /**

@@ -2,8 +2,6 @@ package org.zfin.orthology;
 
 import org.zfin.util.FilterType;
 
-import java.util.List;
-
 /**
  * User: giles
  * Date: Aug 3, 2006
@@ -12,7 +10,7 @@ import java.util.List;
 
 /**
  * Business criteria object for position input created by the OrthologyCriteriaService class which
- * is passed along to the repository by the controller. 
+ * is passed along to the repository by the controller.
  */
 public class PositionCriteria {
     private FilterType type;

@@ -44,7 +44,7 @@ public class FeatureAssay {
         this.featAssayFeature = featAssayFeature;
     }
 
-    public enum Mutagen{
+    public enum Mutagen {
         NOT_SPECIFIED("Not Specified"),
         DNA("DNA"),
         ENU("ENU"),
@@ -60,18 +60,18 @@ public class FeatureAssay {
             this.value = value;
         }
 
-        public String toString(){
+        public String toString() {
             return value;
         }
     }
 
-     public enum Mutagee{
+    public enum Mutagee {
         NOT_SPECIFIED("Not Specified"),
         ADULT_FEMALES("adult females"),
         ADULT_MALES("adult males"),
         EMBRYOS("embryos"),
         SPERM("sperm");
-       
+
 //        RENAMED_THROUGH_THE_NOMENCLATURE_PIPELINE("renamed through the nomenclature pipeline");
 
         private String value;
@@ -80,7 +80,7 @@ public class FeatureAssay {
             this.value = value;
         }
 
-        public String toString(){
+        public String toString() {
             return value;
         }
     }

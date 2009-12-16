@@ -1,8 +1,7 @@
 package org.zfin.publication.presentation;
 
-import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.expression.Image;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.framework.presentation.EntityPresentation;
 
 
 public class ImagePresentation extends EntityPresentation {
@@ -13,6 +12,8 @@ public class ImagePresentation extends EntityPresentation {
         return getWebdriverStartTag(uri, image.getZdbID());
     }
 
-    public static String getLinkEndTag() { return "</a>"; }
+    public static String getLinkEndTag() {
+        return "</a>";
+    }
 
 }

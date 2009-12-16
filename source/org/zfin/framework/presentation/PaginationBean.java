@@ -3,9 +3,9 @@ package org.zfin.framework.presentation;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.util.URLCreator;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Basic bean object that can be used for any form bean to include pagination.
@@ -163,7 +163,8 @@ public class PaginationBean {
 
     /**
      * This return the full url with all query parameters inlcuded
-     * but the page parameter which is set on the JSP page dynamically. 
+     * but the page parameter which is set on the JSP page dynamically.
+     *
      * @return full URL string
      */
     public String getActionUrl() {

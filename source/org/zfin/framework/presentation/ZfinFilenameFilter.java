@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation;
 
-import java.io.FilenameFilter;
 import java.io.File;
+import java.io.FilenameFilter;
 
 /**
  * Created by IntelliJ IDEA.

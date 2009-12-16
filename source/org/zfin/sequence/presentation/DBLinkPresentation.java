@@ -1,46 +1,50 @@
 package org.zfin.sequence.presentation;
 
-import org.zfin.sequence.*;
-import org.zfin.publication.presentation.PublicationPresentation;
-import org.zfin.framework.presentation.EntityPresentation;
 import org.apache.log4j.Logger;
+import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.publication.presentation.PublicationPresentation;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.TranscriptDBLink;
 
 /**
  */
 public class DBLinkPresentation extends EntityPresentation {
 
-    private static Logger logger = Logger.getLogger(DBLinkPresentation.class) ;
+    private static Logger logger = Logger.getLogger(DBLinkPresentation.class);
 
     /**
      * Generates an Accession link
      *
-     * @return html for marker link
      * @param dbLink DBLink
+     * @return html for marker link
      */
     public static String getLink(DBLink dbLink) {
-        StringBuilder sb = new StringBuilder("") ;
-        if(dbLink!=null){
-            sb.append( "<a href=\"" );
+        StringBuilder sb = new StringBuilder("");
+        if (dbLink != null) {
+            sb.append("<a href=\"");
 
-            sb.append(dbLink.getReferenceDatabase().getForeignDB().getDbUrlPrefix() );
+            sb.append(dbLink.getReferenceDatabase().getForeignDB().getDbUrlPrefix());
             sb.append(dbLink.getAccessionNumber());
-            if( dbLink.getReferenceDatabase().getForeignDB().getDbUrlSuffix() != null){
-                sb.append(dbLink.getReferenceDatabase().getForeignDB().getDbUrlSuffix() );
+            if (dbLink.getReferenceDatabase().getForeignDB().getDbUrlSuffix() != null) {
+                sb.append(dbLink.getReferenceDatabase().getForeignDB().getDbUrlSuffix());
             }
-            sb.append( "\">" );
+            sb.append("\">");
 
             sb.append(dbLink.getReferenceDatabase().getForeignDB().getDbName());
-            if(   false==dbLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.MICROARRAY_EXPRESSION) ){
+            if (false == dbLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.MICROARRAY_EXPRESSION)) {
                 sb.append(":");
-                sb.append( (dbLink.getAccessionNumberDisplay()!=null?dbLink.getAccessionNumberDisplay():dbLink.getAccessionNumber()));
+                sb.append((dbLink.getAccessionNumberDisplay() != null ? dbLink.getAccessionNumberDisplay() : dbLink.getAccessionNumber()));
             }
-            sb.append( "</a>" );
+            sb.append("</a>");
         }
-        return sb.toString() ;
+        return sb.toString();
     }
 
     /**
      * Create an attribution link for a MarkerDBLink
+     *
      * @param dblink link to attribute, ok if it has no attributions
      * @return link html
      */

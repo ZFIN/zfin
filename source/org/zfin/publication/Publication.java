@@ -2,14 +2,14 @@ package org.zfin.publication;
 
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
+import org.zfin.mutant.Phenotype;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.mutant.Phenotype;
 
-import java.util.Set;
-import java.util.GregorianCalendar;
-import java.util.Calendar;
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Set;
 
 /**
  * ToDo:
@@ -26,7 +26,7 @@ public class Publication implements Comparable<Publication>, Serializable {
     private String type;
     private String accessionNumber;
     private String fileName;
-    private String doi ;
+    private String doi;
     private GregorianCalendar publicationDate;
     private Journal journal;
     private Set<ExpressionExperiment> expressionExperiments;
@@ -140,13 +140,11 @@ public class Publication implements Comparable<Publication>, Serializable {
         this.fileName = fileName;
     }
 
-    public String getDoi()
-    {
+    public String getDoi() {
         return doi;
     }
-    
-    public void setDoi(String doi)
-    {
+
+    public void setDoi(String doi) {
         this.doi = doi;
     }
 
@@ -180,9 +178,9 @@ public class Publication implements Comparable<Publication>, Serializable {
         sb.append(") ");
         sb.append(title);
         sb.append(". ");
-        if (journal != null){
+        if (journal != null) {
             sb.append(journal.getName());
-            sb.append( ". ");
+            sb.append(". ");
         }
         sb.append(volume);
         if (pages != null)
@@ -193,7 +191,7 @@ public class Publication implements Comparable<Publication>, Serializable {
     }
 
     public int getYear() {
-       return publicationDate.get(Calendar.YEAR);
+        return publicationDate.get(Calendar.YEAR);
     }
 
     public String toString() {

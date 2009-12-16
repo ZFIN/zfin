@@ -1,10 +1,10 @@
 package org.zfin.framework.presentation;
 
-import org.zfin.marker.presentation.MarkerPresentation;
-import org.zfin.marker.Marker;
-import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.sequence.reno.Candidate;
 import org.apache.commons.lang.StringUtils;
+import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.MarkerPresentation;
+import org.zfin.sequence.reno.Candidate;
+import org.zfin.sequence.reno.RunCandidate;
 
 /**
  * Presentation Class to create output from a Candidate object.
@@ -15,10 +15,9 @@ public class RunCandidatePresentation extends EntityPresentation {
 
     public static String getLink(RunCandidate rc) {
         StringBuilder sb = new StringBuilder();
-        if (rc.getCandidate().getSuggestedName() != null){
+        if (rc.getCandidate().getSuggestedName() != null) {
             sb.append(rc.getCandidate().getSuggestedName());
-        }
-        else {
+        } else {
             for (Marker m : rc.getIdentifiedMarkers()) {
                 if (!StringUtils.isEmpty(sb.toString())) sb.append(", ");
                 sb.append(MarkerPresentation.getLink(m));
@@ -36,7 +35,7 @@ public class RunCandidatePresentation extends EntityPresentation {
 
         Candidate candidate = rc.getCandidate();
         if (candidate.getSuggestedName() != null)
-           sb.append(candidate.getSuggestedName());
+            sb.append(candidate.getSuggestedName());
         else {
             for (Marker m : rc.getIdentifiedMarkers()) {
                 if (!StringUtils.isEmpty(sb.toString())) sb.append(", ");
@@ -44,7 +43,7 @@ public class RunCandidatePresentation extends EntityPresentation {
             }
         }
 
-        if (rc.getCandidate().isProblem()){
+        if (rc.getCandidate().isProblem()) {
             sb.append(PROBLEM);
         }
 

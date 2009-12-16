@@ -2,9 +2,9 @@ package org.zfin.anatomy;
 
 import org.zfin.anatomy.presentation.AnatomyPresentation;
 
+import java.io.Serializable;
 import java.text.ChoiceFormat;
 import java.util.Set;
-import java.io.Serializable;
 
 /**
  * Please provide JavaDoc info!!!
@@ -95,6 +95,7 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     }
 
     //ToDo: Move comma delimited list into utility class.
+
     public String getFormattedSynonymList() {
         return AnatomyPresentation.createFormattedSynonymList(anatomyItem);
     }

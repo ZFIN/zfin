@@ -1,16 +1,10 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.expression.Figure;
-import org.zfin.marker.Marker;
-import org.zfin.publication.Publication;
+import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.anatomy.AnatomyItem;
-
-import java.text.ChoiceFormat;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
+import org.zfin.marker.Marker;
+import org.zfin.publication.Publication;
 
 /**
  * Container to hold Gene and EST info.
@@ -28,6 +22,7 @@ public class HighQualityProbe extends EntityStatistics {
     public Marker getProbe() {
         return probe;
     }
+
     protected PaginationResult<Publication> getPublicationPaginationResult() {
         return null;
     }

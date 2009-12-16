@@ -3,14 +3,13 @@ package org.zfin.framework.presentation;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ReferenceDatabase;
 
-import java.util.List;
 import java.util.Set;
 
 public class DisplayGroupBean {
 
     private Long displayGroupToEditID;
-    private String referenceDatabaseToAddZdbID ;
-    private String referenceDatabaseToRemoveZdbID ;
+    private String referenceDatabaseToAddZdbID;
+    private String referenceDatabaseToRemoveZdbID;
 
     private Set<ReferenceDatabase> referenceDatabases;
     private Set<DisplayGroup> displayGroups;
@@ -56,10 +55,9 @@ public class DisplayGroupBean {
     }
 
 
-
-    public void clear(){
-        displayGroupToEditID = null ;
-        referenceDatabaseToAddZdbID = null ;
-        referenceDatabaseToRemoveZdbID = null ;
+    public void clear() {
+        displayGroupToEditID = null;
+        referenceDatabaseToAddZdbID = null;
+        referenceDatabaseToRemoveZdbID = null;
     }
 }

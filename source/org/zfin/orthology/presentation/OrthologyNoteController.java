@@ -15,8 +15,8 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.OrthologyNote;
 import org.zfin.marker.presentation.OrthologyNoteBean;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,8 +78,8 @@ public class OrthologyNoteController extends SimpleFormController {
         return new ModelAndView(new RedirectView(createMarkerUpdateLink(formBean.getGeneID()), false));
     }
 
-    private String createMarkerUpdateLink(String geneID){
-        URLCreator url = new URLCreator("/"+ZfinProperties.getWebDriver());
+    private String createMarkerUpdateLink(String geneID) {
+        URLCreator url = new URLCreator("/" + ZfinProperties.getWebDriver());
         url.addNamevaluePair("MIval", "aa-markerview.apg");
         url.addNamevaluePair("UPDATE", "1");
         url.addNamevaluePair("OID", geneID);

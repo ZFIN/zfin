@@ -1,19 +1,13 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.sequence.MarkerDBLinkList;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.Clone;
-
-import java.util.List;
-
 /**
  */
 public class CloneAddBean {
 
-    private String zdbID ;
-    private String name ;
-    private String libraryZdbID ;
-    private String markerType ;
+    private String zdbID;
+    private String name;
+    private String libraryZdbID;
+    private String markerType;
     private String ownerZdbID;
 
     public String getZdbID() {

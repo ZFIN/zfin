@@ -6,13 +6,13 @@ package org.zfin.orthology;
  * Time: 2:39:13 PM
  */
 
-import java.util.List;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Business object which holds all the chromosome/gene symbol/position info for a single species.
  */
-public class OrthologyItem  implements Serializable {
+public class OrthologyItem implements Serializable {
     private String symbol;
     private List<Chromosome> chromosomes;
     private List<AccessionItem> accessionItems;

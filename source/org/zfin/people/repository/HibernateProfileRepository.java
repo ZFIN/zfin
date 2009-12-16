@@ -1,22 +1,23 @@
 package org.zfin.people.repository;
 
-import org.zfin.people.*;
-import org.zfin.framework.HibernateUtil;
-import static org.zfin.framework.HibernateUtil.currentSession;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.marker.Marker;
-import org.zfin.infrastructure.Updates;
-import org.hibernate.Session;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.apache.commons.lang.StringUtils;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.Updates;
+import org.zfin.marker.Marker;
+import org.zfin.people.*;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
 
-import java.util.List;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
  * Persistence storage of profile data.
@@ -34,11 +35,12 @@ public class HibernateProfileRepository implements ProfileRepository {
         MarkerSupplier supplier = (MarkerSupplier) session.get(MarkerSupplier.class, zdbID);
         return supplier;
     }
+
     public int removeSource(String supplierZdbID, String dataZdbID) {
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery("delete from MarkerSupplier sup where sup.org =:supplierZdbID and sup.dataZdbID=:dataZdbID");
         query.setParameter("supplierZdbID", supplierZdbID);
-         query.setParameter("dataZdbID", dataZdbID);
+        query.setParameter("dataZdbID", dataZdbID);
         return query.executeUpdate();
     }
 
@@ -223,7 +225,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     /**
      * Persist curator session info
      *
-     * @param pubID                 pub ID
+     * @param pubID       pub ID
      * @param showSection attribute name
      * @param visibility  attribute value
      */
@@ -235,7 +237,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         else {
             Person curator = Person.getCurrentSecurityUser();
             // ToDo: IS this the right thing to do?
-            if(curator == null)
+            if (curator == null)
                 return;
 
             Publication pub = RepositoryFactory.getPublicationRepository().getPublication(pubID);
@@ -250,9 +252,10 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     /**
      * Persist curation attribute.
+     *
      * @param publicationID pub ID
      * @param attributeName attribute name
-     * @param zdbID zdbID
+     * @param zdbID         zdbID
      */
     public void setCuratorSession(String publicationID, CuratorSession.Attribute attributeName, String zdbID) {
         Session session = HibernateUtil.currentSession();
@@ -262,7 +265,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         else {
             Person curator = Person.getCurrentSecurityUser();
             // ToDo: IS this the right thing to do?
-            if(curator == null)
+            if (curator == null)
                 return;
 
             Publication pub = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
@@ -277,6 +280,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     /**
      * Retrieve a person record by login name.
+     *
      * @param login login
      * @return person
      */
@@ -290,6 +294,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     /**
      * Delete a curator session element.
+     *
      * @param curatorSession CuratorSession
      */
     public void deleteCuratorSession(CuratorSession curatorSession) {

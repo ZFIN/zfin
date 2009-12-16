@@ -1,19 +1,18 @@
 package org.zfin.framework.presentation;
 
-import org.zfin.framework.ZfinSession;
-import org.zfin.security.repository.UserRepository;
-import org.zfin.repository.RepositoryFactory;
 import org.apache.log4j.Logger;
+import org.zfin.framework.ZfinSession;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.security.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.ArrayList;
 import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -101,7 +100,7 @@ public class ZfinSessionBean {
         }
         catch (Exception e) {
             LOG.error("Could not get the session size", e);
-            if(oos != null)
+            if (oos != null)
                 try {
                     oos.close();
                     baos.close();

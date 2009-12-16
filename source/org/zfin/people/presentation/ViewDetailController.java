@@ -1,14 +1,14 @@
 package org.zfin.people.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.validation.BindException;
 import org.apache.log4j.Logger;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.people.repository.ProfileRepository;
-import org.zfin.people.Person;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.people.AccountInfo;
+import org.zfin.people.Person;
 import org.zfin.people.UserService;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,9 +21,10 @@ public class ViewDetailController extends AbstractCommandController {
     private static Logger LOG = Logger.getLogger(ViewDetailController.class);
     private ProfileRepository profileRep = RepositoryFactory.getProfileRepository();
 
-    public ViewDetailController(){
+    public ViewDetailController() {
         setCommandClass(ProfileBean.class);
     }
+
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command,
                                   BindException errors) throws Exception {
 
@@ -34,7 +35,7 @@ public class ViewDetailController extends AbstractCommandController {
         profileForm.setPerson(person);
 
         AccountInfo accountInfo = null;
-        if(UserService.isRootUser() || UserService.isOwner(person.getZdbID(), Person.class)){
+        if (UserService.isRootUser() || UserService.isOwner(person.getZdbID(), Person.class)) {
             Person pers = profileRep.getPerson(person.getZdbID());
             accountInfo = pers.getAccountInfo();
             profileForm.setAccountInfo(accountInfo);

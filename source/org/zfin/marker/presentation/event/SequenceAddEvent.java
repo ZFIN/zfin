@@ -1,22 +1,26 @@
 package org.zfin.marker.presentation.event;
 
-import org.zfin.marker.presentation.dto.*;
+import org.zfin.marker.presentation.dto.DBLinkDTO;
+import org.zfin.marker.presentation.dto.MarkerDTO;
+import org.zfin.marker.presentation.dto.ReferenceDatabaseDTO;
+import org.zfin.marker.presentation.dto.SequenceDTO;
 
 /**
  */
 public class SequenceAddEvent {
     private MarkerDTO markerDTO;
-    private SequenceDTO sequenceDTO ;
-    private DBLinkDTO dbLinkDTO ;
+    private SequenceDTO sequenceDTO;
+    private DBLinkDTO dbLinkDTO;
     private ReferenceDatabaseDTO referenceDatabaseDTO;
 
-    public SequenceAddEvent() { }
+    public SequenceAddEvent() {
+    }
 
 
-    public SequenceAddEvent(MarkerDTO markerDTO,SequenceDTO sequenceDTO, ReferenceDatabaseDTO referenceDatabaseDTO) {
-        this.markerDTO = markerDTO ;
-        this.sequenceDTO = sequenceDTO ;
-        this.referenceDatabaseDTO = referenceDatabaseDTO ;
+    public SequenceAddEvent(MarkerDTO markerDTO, SequenceDTO sequenceDTO, ReferenceDatabaseDTO referenceDatabaseDTO) {
+        this.markerDTO = markerDTO;
+        this.sequenceDTO = sequenceDTO;
+        this.referenceDatabaseDTO = referenceDatabaseDTO;
     }
 
 

@@ -2,8 +2,8 @@ package org.zfin.sequence.reno.presentation;
 
 import org.zfin.sequence.reno.*;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 public class RunBean {
 
@@ -28,7 +28,7 @@ public class RunBean {
     private String orthologyPublicationZdbID;  // used by nomenclature only
     private String relationPublicationZdbID; // attribute used by redundancy only
     private String comparator;
-    private String action ;
+    private String action;
 
     public List<RedundancyRun> getRedundancyRuns() {
         return redundancyRuns;
@@ -104,29 +104,29 @@ public class RunBean {
         this.nomenclaturePublicationZdbID = nomenclaturePublicationZdbID;
     }
 
-  /**
-   * This method sorts the results in the
-   * <code>runCandidates</code> property of this
-   * <code>RunBean</code> object.  If the
-   * <code>runCandidates</code> property is null, this
-   * method returns false.
-   *
-   * @param propertyName Property to sort by
-   * @return <code>true</code> if and only if the
-   *         <code>runCandidates</code> property is
-   *         successfully sorted.
-   */
-  public boolean sortRunCandidates( String propertyName ) {
-    if ( runCandidates == null ) {
-      return false;
-    } else if ( propertyName.equals( "name" )) {
-       RunCandidateComparatorByName c = new RunCandidateComparatorByName();
-       Collections.sort ( runCandidates, c);
-       return true;
-    } else {
-      return false;
+    /**
+     * This method sorts the results in the
+     * <code>runCandidates</code> property of this
+     * <code>RunBean</code> object.  If the
+     * <code>runCandidates</code> property is null, this
+     * method returns false.
+     *
+     * @param propertyName Property to sort by
+     * @return <code>true</code> if and only if the
+     *         <code>runCandidates</code> property is
+     *         successfully sorted.
+     */
+    public boolean sortRunCandidates(String propertyName) {
+        if (runCandidates == null) {
+            return false;
+        } else if (propertyName.equals("name")) {
+            RunCandidateComparatorByName c = new RunCandidateComparatorByName();
+            Collections.sort(runCandidates, c);
+            return true;
+        } else {
+            return false;
+        }
     }
-  }
 
     public String getComparator() {
         return comparator;

@@ -1,6 +1,5 @@
 package org.zfin.curation.client;
 
-import org.zfin.curation.client.ZfinAsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 

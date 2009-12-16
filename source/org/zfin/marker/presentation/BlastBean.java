@@ -1,23 +1,23 @@
 package org.zfin.marker.presentation;
 
+import org.zfin.marker.Marker;
+import org.zfin.marker.Transcript;
 import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.Database;
-import org.zfin.marker.Transcript;
-import org.zfin.marker.Marker;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This bean contains data necessary for executing a blast query.
  */
 public class BlastBean {
 
-    private Map<String,String> hiddenProperties;
-    private List<Sequence> sequences ;
-    private Database database ; /// database to blast against
+    private Map<String, String> hiddenProperties;
+    private List<Sequence> sequences;
+    private Database database; /// database to blast against
 
-    private Marker gene ;
+    private Marker gene;
     private Transcript transcript;
 
     public Map<String, String> getHiddenProperties() {
@@ -29,7 +29,7 @@ public class BlastBean {
     }
 
     public Sequence getSequence() {
-        return ( ( sequences==null || sequences.size()==0 ) ? null : sequences.get(0)) ;
+        return ((sequences == null || sequences.size() == 0) ? null : sequences.get(0));
     }
 
     public List<Sequence> getSequences() {

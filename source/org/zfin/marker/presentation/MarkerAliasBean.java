@@ -1,9 +1,9 @@
 package org.zfin.marker.presentation;
 
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.marker.MarkerAlias;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationListBean;
-import org.zfin.marker.MarkerAlias;
-import org.zfin.infrastructure.PublicationAttribution;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +35,7 @@ public class MarkerAliasBean extends PublicationListBean {
             for (PublicationAttribution attr : pubAttributions) {
                 Publication pub = attr.getPublication();
                 if (pub != null)
-                  publications.add(pub);
+                    publications.add(pub);
             }
         }
 

@@ -2,7 +2,6 @@ package org.zfin.curation.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.curation.dto.UpdateExpressionDTO;
@@ -139,6 +138,7 @@ public class FxStructureModule extends Composite implements StructurePile {
     }
 
     // Retrieve pile structures from the server
+
     protected void retrievePileStructures() {
         loadingImage.setVisible(true);
         curationRPCAsync.getStructures(publicationID, new RetrieveStructuresCallback());

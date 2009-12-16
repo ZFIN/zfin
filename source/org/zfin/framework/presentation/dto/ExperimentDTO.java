@@ -1,7 +1,6 @@
 package org.zfin.framework.presentation.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.google.gwt.user.client.Window;
 import org.zfin.framework.presentation.gwtutils.StringUtils;
 
 /**
@@ -192,7 +191,7 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
         this.genotypeExperimentID = genotypeExperimentID;
     }
 
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         if (StringUtils.isNotEmpty(getGeneName())) {
             sb.append(getGeneName());

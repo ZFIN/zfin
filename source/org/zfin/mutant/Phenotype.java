@@ -1,13 +1,13 @@
 package org.zfin.mutant;
 
-import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Figure;
 import org.zfin.ontology.OntologyTerm;
 import org.zfin.publication.Publication;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * ZFIN Domain object.
@@ -150,12 +150,12 @@ public class Phenotype {
     }
 
     public void addFigure(Figure figure) {
-        if(figures == null)
-             figures = new HashSet<Figure>();
+        if (figures == null)
+            figures = new HashSet<Figure>();
         figures.add(figure);
     }
 
-    public static enum Tag{
+    public static enum Tag {
         NORMAL("normal"),
         ABNORMAL("abnormal");
 
@@ -165,7 +165,7 @@ public class Phenotype {
             this.value = value;
         }
 
-        public String toString(){
+        public String toString() {
             return value;
         }
     }

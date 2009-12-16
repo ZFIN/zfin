@@ -1,17 +1,15 @@
 package org.zfin.marker.presentation.dto;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
-import java.util.List;
 import java.io.Serializable;
+import java.util.List;
 
 public class CloneTypesDTO implements Serializable {
 
-    private List<String> vectorNames ;
+    private List<String> vectorNames;
     private List<String> polymeraseNames;
     private List<String> probeLibraries;
-    private List<String> digests ;
-    private List<String> cloneSites ;
+    private List<String> digests;
+    private List<String> cloneSites;
     private List<String> problemTypes;
 
     public List<String> getVectorNames() {

@@ -8,10 +8,10 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
-import static org.zfin.framework.HibernateUtil.currentSession;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.framework.presentation.client.Ontology;
@@ -20,13 +20,13 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GoTerm;
 import org.zfin.repository.PaginationResultFactory;
-import org.zfin.expression.Experiment;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 
 /**
@@ -65,10 +65,10 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql =
                 "select  geno from Genotype geno, GenotypeFeature genofeat, Feature feat, FeatureType type " +
-                        "WHERE  genofeat.feature.zdbID= :zdbID "+
-                        "AND genofeat.genotype =geno "+
-                        "AND genofeat.feature =feat "+
-                        "AND type.name=feat.featureType.name "+
+                        "WHERE  genofeat.feature.zdbID= :zdbID " +
+                        "AND genofeat.genotype =geno " +
+                        "AND genofeat.feature =feat " +
+                        "AND type.name=feat.featureType.name " +
                         "ORDER by type.significance, geno.nameOrder ";
 
 
@@ -79,8 +79,6 @@ public class HibernateMutantRepository implements MutantRepository {
 
 
     }
-
-
 
 
     public int getNumberOfImagesPerAnatomyAndMutant(AnatomyItem item, Genotype genotype) {
@@ -309,10 +307,11 @@ public class HibernateMutantRepository implements MutantRepository {
                 morphs.add(morph);
             }
         }
-return morphs;
+        return morphs;
     }
 
     // ToDo: See FogBugz 1926: Include morpholinos from expression object.
+
     private String getMorpholinosByAnatomyTermQueryBlock() {
         String hql = "FROM  Marker marker, Experiment exp, " +
                 "      Phenotype pheno, ExperimentCondition con, GenotypeExperiment geno " +
@@ -362,8 +361,8 @@ return morphs;
 
     public Genotype getGenotypeByHandle(String handle) {
         Criteria criteria = currentSession().createCriteria(Genotype.class);
-        criteria.add(Restrictions.eq("handle",handle));
-        
+        criteria.add(Restrictions.eq("handle", handle));
+
         return (Genotype) criteria.uniqueResult();
     }
 
@@ -390,19 +389,14 @@ return morphs;
     }
 
 
-
-
-
-
-
     public List<Marker> getDeletedMarker(Feature feat) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select  mapdel.marker from MappedDeletion mapdel, Marker m, Feature f" +
-                " where f.name =mapdel.allele "  +
+                " where f.name =mapdel.allele " +
                 " AND f.name=:ftr" +
-                " AND m.markerType.name =:type"+
-                " AND mapdel.marker =m" ;
+                " AND m.markerType.name =:type" +
+                " AND mapdel.marker =m";
 
 
         Query query = session.createQuery(hql);
@@ -417,31 +411,30 @@ return morphs;
 
     public List<String> getDeletedMarkerLG(Feature feat) {
         Session session = HibernateUtil.currentSession();
-       
+
 
         String hql = "select  distinct mapdel.lg from MappedDeletion mapdel, Marker m, Feature f" +
-                " where f.name =mapdel.allele "  +
-                " AND mapdel.marker = m "+
+                " where f.name =mapdel.allele " +
+                " AND mapdel.marker = m " +
                 " AND f.name=:ftr " +
                 " AND m.markerType.name =:type ";
-         Query query = session.createQuery(hql);
+        Query query = session.createQuery(hql);
         query.setString("ftr", feat.getName());
         query.setString("type", Marker.Type.GENE.toString());
         return (List<String>) query.list();
     }
 
-  public List<String> getMappedFeatureLG(Feature feat){
-     Session session = HibernateUtil.currentSession();
+    public List<String> getMappedFeatureLG(Feature feat) {
+        Session session = HibernateUtil.currentSession();
 
 
         String hql = "select distinct mm.lg" +
-                        "  from MappedMarker mm" +
-                       "   where mm.marker.zdbID=:ftr ";
-       Query query = session.createQuery(hql);
+                "  from MappedMarker mm" +
+                "   where mm.marker.zdbID=:ftr ";
+        Query query = session.createQuery(hql);
         query.setString("ftr", feat.getZdbID());
         return (List<String>) query.list();
-  }
-
+    }
 
 
     public List<Feature> getFeaturesByAbbreviation(String name) {

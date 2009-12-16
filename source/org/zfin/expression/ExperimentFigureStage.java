@@ -3,10 +3,10 @@ package org.zfin.expression;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.ontology.ComposedFxTerm;
 
-import java.util.Set;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Domain object that does not map to a database table directly.

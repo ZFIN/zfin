@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 public class BlastJobsController extends AbstractCommandController {
 
     protected ModelAndView handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, BindException e) throws Exception {
-        BlastJobsBean blastJobsBean = (BlastJobsBean) o ;
+        BlastJobsBean blastJobsBean = (BlastJobsBean) o;
 
         blastJobsBean.setBlastThreadCollection(BlastQueryThreadCollection.getInstance());
         blastJobsBean.setBlastStatistics(BlastStatistics.getInstance());

@@ -1,13 +1,11 @@
 package org.zfin.marker.presentation.client;
 
 import com.google.gwt.user.client.ui.*;
-
-import java.util.List;
-import java.util.ArrayList;
-
 import org.zfin.marker.presentation.event.NoteEvent;
 import org.zfin.marker.presentation.event.NoteListener;
-import org.zfin.marker.presentation.dto.NoteDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  */
@@ -15,45 +13,44 @@ public class NoteListBox extends Composite {
 
     // gui elements
     private VerticalPanel panel = new VerticalPanel();
-    private FlexTable noteTable = new FlexTable() ;
-    private HorizontalPanel addNewNoteField = new HorizontalPanel() ;
-    private Button addButton = new Button("Add Note") ;
-    private NoteBoxPopup newNoteBoxPopup = null ;
-    private boolean multipleNotes = true  ;
+    private FlexTable noteTable = new FlexTable();
+    private HorizontalPanel addNewNoteField = new HorizontalPanel();
+    private Button addButton = new Button("Add Note");
+    private NoteBoxPopup newNoteBoxPopup = null;
+    private boolean multipleNotes = true;
 
     // internal data
-    private List notes ;
-    private String zdbID ;
-    private String curatorZdbID ;
+    private List notes;
+    private String zdbID;
+    private String curatorZdbID;
 
     // listeners
-    private List<NoteListener> noteListeners = new ArrayList<NoteListener>() ;
+    private List<NoteListener> noteListeners = new ArrayList<NoteListener>();
 
-    public NoteListBox(boolean multipleNotes){
+    public NoteListBox(boolean multipleNotes) {
         this.multipleNotes = multipleNotes;
-        initGui() ;
+        initGui();
         initWidget(panel);
     }
 
 
-    public NoteListBox(){
-        this(true) ;
+    public NoteListBox() {
+        this(true);
     }
 
-    protected void initGui(){
+    protected void initGui() {
 
         panel.add(noteTable);
 
-        addNewNoteField.add(addButton) ;
+        addNewNoteField.add(addButton);
         panel.add(addNewNoteField);
 
-        addButton.addClickListener(new ClickListener(){
+        addButton.addClickListener(new ClickListener() {
             public void onClick(Widget widget) {
-                if(newNoteBoxPopup ==null){
-                    newNoteBoxPopup = new NewNoteBoxPopup(getNoteListBoxInstance()) ;
-                }
-                else{
-                    newNoteBoxPopup.reset() ;
+                if (newNoteBoxPopup == null) {
+                    newNoteBoxPopup = new NewNoteBoxPopup(getNoteListBoxInstance());
+                } else {
+                    newNoteBoxPopup.reset();
                     newNoteBoxPopup.checkButtonStatus();
                     newNoteBoxPopup.show();
                 }
@@ -62,56 +59,56 @@ public class NoteListBox extends Composite {
     }
 
 
-    public NoteListBox getNoteListBoxInstance(){
-        return this ;
+    public NoteListBox getNoteListBoxInstance() {
+        return this;
     }
 
-    public void addNoteListener(NoteListener noteListener){
-        noteListeners.add(noteListener) ;
+    public void addNoteListener(NoteListener noteListener) {
+        noteListeners.add(noteListener);
     }
 
-    public void removeNoteListener(NoteListener noteListener){
-        noteListeners.remove(noteListener) ;
+    public void removeNoteListener(NoteListener noteListener) {
+        noteListeners.remove(noteListener);
     }
 
-    public void clearNoteListeners(){
+    public void clearNoteListeners() {
         noteListeners.clear();
     }
 
-    public void fireAddNoteListener(NoteEvent noteEvent){
-        for(NoteListener noteListener: noteListeners){
+    public void fireAddNoteListener(NoteEvent noteEvent) {
+        for (NoteListener noteListener : noteListeners) {
             noteListener.addNote(noteEvent);
         }
     }
 
-    public void fireRemoveNoteListener(NoteEvent noteEvent){
-        for(NoteListener noteListener: noteListeners){
+    public void fireRemoveNoteListener(NoteEvent noteEvent) {
+        for (NoteListener noteListener : noteListeners) {
             noteListener.removeNote(noteEvent);
         }
     }
 
-    public void fireEditNoteListener(NoteEvent noteEvent){
-        for(NoteListener noteListener: noteListeners){
+    public void fireEditNoteListener(NoteEvent noteEvent) {
+        for (NoteListener noteListener : noteListeners) {
             noteListener.editNote(noteEvent);
         }
     }
 
-    public void updateNoteTable(){
+    public void updateNoteTable() {
         // remove all notes
-        while (noteTable.getRowCount() > 0){
-            noteTable.removeRow(noteTable.getRowCount()-1);
+        while (noteTable.getRowCount() > 0) {
+            noteTable.removeRow(noteTable.getRowCount() - 1);
         }
 
         // add all notes
-        for(int i = 0 ; (notes!=null && i < notes.size()) ; i++){
-            if(notes.get(i)!=null){
-                NoteLine noteLine = new NoteLine( notes.get(i).toString() , this) ;
+        for (int i = 0; (notes != null && i < notes.size()); i++) {
+            if (notes.get(i) != null) {
+                NoteLine noteLine = new NoteLine(notes.get(i).toString(), this);
 //                noteTable.insertRow(i) ;
-                noteTable.setWidget(i,0,noteLine);
+                noteTable.setWidget(i, 0, noteLine);
             }
         }
 
-        if(noteTable.getRowCount()>0){
+        if (noteTable.getRowCount() > 0) {
             addButton.setVisible(multipleNotes);
         }
     }
@@ -123,51 +120,50 @@ public class NoteListBox extends Composite {
     }
 
 
-    public void addNoteToGui(NoteEvent noteEvent){
-        NoteLine noteLine = new NoteLine( noteEvent.getNoteDTO().getNoteData() , this) ;
-        int rowCount = noteTable.getRowCount() ;
-        noteTable.insertRow( rowCount );
-        noteTable.setWidget(rowCount,0,noteLine);
+    public void addNoteToGui(NoteEvent noteEvent) {
+        NoteLine noteLine = new NoteLine(noteEvent.getNoteDTO().getNoteData(), this);
+        int rowCount = noteTable.getRowCount();
+        noteTable.insertRow(rowCount);
+        noteTable.setWidget(rowCount, 0, noteLine);
 
-        if(noteTable.getRowCount()>0){
+        if (noteTable.getRowCount() > 0) {
             addButton.setVisible(multipleNotes);
         }
     }
 
-    public int getRowForNote(String note){
-        for(int i = 0 ; i < noteTable.getRowCount() ; i++){
-            if(((NoteLine) noteTable.getWidget(i,0)).getNote().equals(note)){
-                return i ;
+    public int getRowForNote(String note) {
+        for (int i = 0; i < noteTable.getRowCount(); i++) {
+            if (((NoteLine) noteTable.getWidget(i, 0)).getNote().equals(note)) {
+                return i;
             }
         }
-        return -1 ;
+        return -1;
     }
 
-    public NoteLine getNoteLineForNote(String note){
-        int i = getRowForNote(note) ;
-        if(i >= 0){
-            return (NoteLine) noteTable.getWidget(i,0) ;
-        }
-        else{
-            return null ;
+    public NoteLine getNoteLineForNote(String note) {
+        int i = getRowForNote(note);
+        if (i >= 0) {
+            return (NoteLine) noteTable.getWidget(i, 0);
+        } else {
+            return null;
         }
     }
 
-    public void removeNoteInGUI(NoteEvent noteEvent){
-        int index = getRowForNote(noteEvent.getNoteDTO().getIndexNote() ) ;
-        if(index>=0){
+    public void removeNoteInGUI(NoteEvent noteEvent) {
+        int index = getRowForNote(noteEvent.getNoteDTO().getIndexNote());
+        if (index >= 0) {
             noteTable.removeRow(index);
         }
 
         // if it was not visible, make sure to show, will assume that it was more than 1 prior
-        if(noteTable.getRowCount()==0 || multipleNotes==false){
+        if (noteTable.getRowCount() == 0 || multipleNotes == false) {
             addButton.setVisible(true);
         }
     }
 
-    public void editNoteInGUI(NoteEvent noteEvent){
-        NoteLine noteLine = getNoteLineForNote(noteEvent.getNoteDTO().getIndexNote()) ;
-        if(noteLine!=null){
+    public void editNoteInGUI(NoteEvent noteEvent) {
+        NoteLine noteLine = getNoteLineForNote(noteEvent.getNoteDTO().getIndexNote());
+        if (noteLine != null) {
             noteLine.setNote(noteEvent.getNoteDTO().getNoteData());
         }
     }

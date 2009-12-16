@@ -1,15 +1,11 @@
 package org.zfin.mutant;
 
-import org.zfin.mutant.FeatureAlias;
-import org.zfin.people.FeatureSource;
-import org.zfin.people.MarkerSupplier;
 import org.zfin.infrastructure.DataNote;
-import org.zfin.mapping.MappedMarker;
 import org.zfin.mapping.MappedDeletion;
+import org.zfin.people.FeatureSource;
 
 import java.util.Date;
 import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -70,7 +66,7 @@ public class Feature {
     private Type type;
 
 
-    public enum Type{
+    public enum Type {
         DEFICIENCY("DEFICIENCY"),
         POINT_MUTATION("POINT_MUTATION"),
         TRANSLOC("TRANSLOC"),
@@ -89,7 +85,7 @@ public class Feature {
             this.value = value;
         }
 
-        public String toString(){
+        public String toString() {
             return value;
         }
     }
@@ -111,8 +107,7 @@ public class Feature {
         this.featureAssay = featureAssay;
     }
 
-    private  FeatureAssay featureAssay;
-
+    private FeatureAssay featureAssay;
 
 
     public Set<FeatureAlias> getAliases() {
@@ -172,6 +167,7 @@ public class Feature {
     public void setFeatureMarkerRelations(Set<FeatureMarkerRelationship> featureMarkerRelations) {
         this.featureMarkerRelations = featureMarkerRelations;
     }
+
     public int compareTo(Object otherFeature) {
         return getAbbreviationOrder().compareTo(((Feature) otherFeature).getAbbreviationOrder());
     }

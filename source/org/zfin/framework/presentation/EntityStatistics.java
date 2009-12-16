@@ -4,8 +4,6 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.HashSet;
 import java.util.List;
@@ -36,8 +34,6 @@ public abstract class EntityStatistics {
         }
         return numberOfPublications;
     }
-
-    
 
 
     /**

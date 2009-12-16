@@ -1,22 +1,23 @@
 package org.zfin.feature.presentation;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.zfin.feature.repository.FeatureService;
+import org.zfin.mapping.presentation.MappedMarkerBean;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.FeatGenoStatistics;
 import org.zfin.mutant.presentation.GenoExpStatistics;
-import org.zfin.feature.repository.FeatureService;
-import org.zfin.mapping.presentation.MappedMarkerBean;
-import org.zfin.marker.Marker;
-import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 
-public class FeatureBean  {
+public class FeatureBean {
     protected FeatureService featureStat;
     private List<Genotype> genotypes;
     protected Feature feature;
     private List<FeatGenoStatistics> featgenoStats;
     private Marker marker;
-    private int numPubs ;
+    private int numPubs;
     private List<GenoExpStatistics> genoexpStats;
     private MappedMarkerBean mappedMarkerBean;
 
@@ -41,7 +42,6 @@ public class FeatureBean  {
     }
 
 
-
     public Marker getMarker() {
         return marker;
     }
@@ -59,7 +59,6 @@ public class FeatureBean  {
     }
 
 
-
     public List<GenoExpStatistics> getGenoexpStats() {
         return genoexpStats;
     }
@@ -75,6 +74,7 @@ public class FeatureBean  {
     public void setFeatgenoStats(List<FeatGenoStatistics> featgenoStats) {
         this.featgenoStats = featgenoStats;
     }
+
     public boolean isMutantsExist() {
         return !CollectionUtils.isEmpty(featgenoStats);
     }
@@ -89,7 +89,7 @@ public class FeatureBean  {
     }
 
     public void setFeature(Feature feature) {
-        this.feature=feature;
+        this.feature = feature;
     }
 
     public FeatureService getFeatureStat() {

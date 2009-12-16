@@ -1,10 +1,10 @@
 package org.zfin.framework.filter;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.ServletInputStream;
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.

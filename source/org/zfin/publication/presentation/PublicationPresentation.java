@@ -1,10 +1,8 @@
 package org.zfin.publication.presentation;
 
 import org.zfin.framework.presentation.EntityPresentation;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.presentation.AnatomyItemPresentation;
-import org.zfin.publication.Publication;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.publication.Publication;
 
 /**
  * Presentation Class to create output from a Publication object.
@@ -16,8 +14,8 @@ public class PublicationPresentation extends EntityPresentation {
     /**
      * Generates a Publication link using the name.
      *
-     * @return html for Publication link
      * @param publication Publication
+     * @return html for Publication link
      */
     public static String getLink(Publication publication) {
         return getWebdriverLink(uri, publication.getZdbID(), publication.getShortAuthorList());
@@ -28,6 +26,6 @@ public class PublicationPresentation extends EntityPresentation {
     }
 
     public static String getWikiLink(Publication publication) {
-        return getWikiLink(ZfinProperties.getWebDriver()+uri,publication.getZdbID(),publication.getAuthors(),publication.getTitle()) ;
+        return getWikiLink(ZfinProperties.getWebDriver() + uri, publication.getZdbID(), publication.getAuthors(), publication.getTitle());
     }
 }

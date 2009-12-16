@@ -1,8 +1,8 @@
 package org.zfin.framework.presentation.gwtutils;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.zfin.framework.presentation.dto.StageDTO;
 import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
+import org.zfin.framework.presentation.dto.StageDTO;
 
 import java.util.List;
 

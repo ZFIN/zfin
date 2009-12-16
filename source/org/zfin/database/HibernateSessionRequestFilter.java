@@ -1,7 +1,7 @@
 package org.zfin.database;
 
-import org.zfin.framework.HibernateUtil;
 import org.apache.log4j.Logger;
+import org.zfin.framework.HibernateUtil;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +27,7 @@ public class HibernateSessionRequestFilter implements Filter {
     // This could also include the transaction definition but needs some work
     // to handle exceptions: how does this filter know where to redirect if
     // a transaction fails. Maybe back to the previous page?
+
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
             chain.doFilter(request, response);
@@ -37,7 +38,7 @@ public class HibernateSessionRequestFilter implements Filter {
             message.append("Request URL: ").append(req.getRequestURL());
             message.append(System.getProperty("line.separator"));
             String requestQueryString = req.getQueryString();
-            if(requestQueryString != null) {
+            if (requestQueryString != null) {
                 message.append("Query parameters: ").append(URLDecoder.decode(requestQueryString));
             }
             LOG.error(message, e);

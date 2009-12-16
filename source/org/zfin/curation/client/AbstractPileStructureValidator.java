@@ -1,13 +1,13 @@
 package org.zfin.curation.client;
 
+import org.zfin.framework.presentation.client.Ontology;
+import org.zfin.framework.presentation.client.PostComposedPart;
 import org.zfin.framework.presentation.dto.ExpressedTermDTO;
 import org.zfin.framework.presentation.gwtutils.StringUtils;
-import org.zfin.framework.presentation.client.PostComposedPart;
-import org.zfin.framework.presentation.client.Ontology;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 /**
  * ToDo: ADD DOCUMENTATION!

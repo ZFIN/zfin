@@ -1,8 +1,8 @@
 package org.zfin.framework.presentation;
 
 import org.quartz.Scheduler;
-import org.quartz.Trigger;
 import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Random;
 
 /**
  * Liberally borrowed from the Confluence Plugin Job Manager, JobManagerAction class.
@@ -22,8 +21,8 @@ public class QuartzJobsController extends AbstractCommandController {
 
     private Scheduler scheduler;
 
-    public static final String MANUAL_TRIGGER_GROUP = "MANUAL_TRIGGER" ;
-    private Integer alreadyRunRequestID = -10 ;
+    public static final String MANUAL_TRIGGER_GROUP = "MANUAL_TRIGGER";
+    private Integer alreadyRunRequestID = -10;
 
     protected ModelAndView handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, BindException e) throws Exception {
         ModelAndView modelAndView = new ModelAndView("quartz-jobs.page");
@@ -32,60 +31,52 @@ public class QuartzJobsController extends AbstractCommandController {
         modelAndView.addObject(LookupStrings.FORM_BEAN, quartzJobsBean);
 
 
-        if(alreadyRunRequestID !=quartzJobsBean.getRequestID()){
-            logger.debug("RUNNING: "+ quartzJobsBean.getRequestID()+ " vs "+ alreadyRunRequestID);
-            handleAction(quartzJobsBean) ;
-            alreadyRunRequestID = quartzJobsBean.getRequestID() ;
-        }
-        else{
-            logger.debug("ALREADY RUN: "+ alreadyRunRequestID);
+        if (alreadyRunRequestID != quartzJobsBean.getRequestID()) {
+            logger.debug("RUNNING: " + quartzJobsBean.getRequestID() + " vs " + alreadyRunRequestID);
+            handleAction(quartzJobsBean);
+            alreadyRunRequestID = quartzJobsBean.getRequestID();
+        } else {
+            logger.debug("ALREADY RUN: " + alreadyRunRequestID);
         }
 
-        retrieveJobDetails(quartzJobsBean) ;
-        retrieveManualJobs(quartzJobsBean) ;
+        retrieveJobDetails(quartzJobsBean);
+        retrieveManualJobs(quartzJobsBean);
 
         return modelAndView;
     }
 
     private void handleAction(QuartzJobsBean quartzJobsBean) throws SchedulerException {
 
-        if (quartzJobsBean.getAction()!=null) {
-            QuartzJobsBean.Action action = QuartzJobsBean.Action.getType(quartzJobsBean.getAction()) ;
+        if (quartzJobsBean.getAction() != null) {
+            QuartzJobsBean.Action action = QuartzJobsBean.Action.getType(quartzJobsBean.getAction());
 
             // if we have a valid action that is not pauseAll
-            if( false==action.isPauseAction() ){
-                if(false==scheduler.isStarted()){
+            if (false == action.isPauseAction()) {
+                if (false == scheduler.isStarted()) {
                     scheduler.start();
                 }
             }
 
-            if(action.isIndividualAction() && quartzJobsBean.getJob()!=null){
+            if (action.isIndividualAction() && quartzJobsBean.getJob() != null) {
                 String job = quartzJobsBean.getJob();
                 String group = quartzJobsBean.getGroup();
                 if (group == null) {
                     group = "DEFAULT";
                 }
-                logger.info("action :" + action+" for job: " + job);
+                logger.info("action :" + action + " for job: " + job);
 
-                if (action== QuartzJobsBean.Action.RUN) {
+                if (action == QuartzJobsBean.Action.RUN) {
                     scheduler.triggerJob(job, group);
-                }
-                else
-                if (action==QuartzJobsBean.Action.PAUSE) {
+                } else if (action == QuartzJobsBean.Action.PAUSE) {
                     scheduler.pauseJob(job, group);
-                }
-                else
-                if (action==QuartzJobsBean.Action.RESUME) {
+                } else if (action == QuartzJobsBean.Action.RESUME) {
                     scheduler.resumeJob(job, group);
                 }
-            }
-            else{
+            } else {
                 logger.info("ALL action :" + action);
-                if (action== QuartzJobsBean.Action.PAUSE_ALL) {
+                if (action == QuartzJobsBean.Action.PAUSE_ALL) {
                     scheduler.pauseAll();
-                }
-                else
-                if (action== QuartzJobsBean.Action.RESUME_ALL) {
+                } else if (action == QuartzJobsBean.Action.RESUME_ALL) {
                     scheduler.resumeAll();
                 }
             }
@@ -93,13 +84,13 @@ public class QuartzJobsController extends AbstractCommandController {
         quartzJobsBean.clearLastAction();
     }
 
-    private void retrieveManualJobs(QuartzJobsBean quartzJobsBean) throws SchedulerException{
+    private void retrieveManualJobs(QuartzJobsBean quartzJobsBean) throws SchedulerException {
         Set<QuartzJobInfo> jobs = new TreeSet<QuartzJobInfo>();
-        String[] manualTriggerNames = scheduler.getTriggerNames(MANUAL_TRIGGER_GROUP) ;
-        for(String triggerName : manualTriggerNames){
-            Trigger trigger = scheduler.getTrigger(triggerName,MANUAL_TRIGGER_GROUP) ;
+        String[] manualTriggerNames = scheduler.getTriggerNames(MANUAL_TRIGGER_GROUP);
+        for (String triggerName : manualTriggerNames) {
+            Trigger trigger = scheduler.getTrigger(triggerName, MANUAL_TRIGGER_GROUP);
             jobs.add(new QuartzJobInfo(trigger.getJobName(), trigger.getPreviousFireTime(),
-                    trigger.getNextFireTime(), scheduler.getTriggerState(triggerName,MANUAL_TRIGGER_GROUP)==Trigger.STATE_PAUSED));
+                    trigger.getNextFireTime(), scheduler.getTriggerState(triggerName, MANUAL_TRIGGER_GROUP) == Trigger.STATE_PAUSED));
         }
         quartzJobsBean.setManualJobsList(jobs);
     }
@@ -107,12 +98,12 @@ public class QuartzJobsController extends AbstractCommandController {
 
     private QuartzJobsBean retrieveJobDetails(QuartzJobsBean quartzJobsBean) throws SchedulerException {
 
-        int pauseCount = 0 ;
+        int pauseCount = 0;
         Set<QuartzJobInfo> jobs = new TreeSet<QuartzJobInfo>();
         String[] groups = scheduler.getJobGroupNames();
-        for (String group: groups) {
+        for (String group : groups) {
             String[] jobNames = scheduler.getJobNames(group);
-            for (String jobName: jobNames) {
+            for (String jobName : jobNames) {
                 Trigger[] triggers = scheduler.getTriggersOfJob(jobName, group);
                 boolean paused = false;
                 Date nextExecution = null;
@@ -121,13 +112,13 @@ public class QuartzJobsController extends AbstractCommandController {
                 // We only need the first trigger to determine if paused
                 if (triggers != null && triggers.length > 0) {
                     paused = scheduler.getTriggerState(triggers[0].getName(), triggers[0].getGroup()) == Trigger.STATE_PAUSED;
-                    if(paused) {
-                        ++pauseCount ;
+                    if (paused) {
+                        ++pauseCount;
                     }
                     for (Trigger trigger : triggers) {
                         nextExecution = trigger.getNextFireTime();
                         lastExecution = trigger.getPreviousFireTime();
-                        if (nextExecution != null){
+                        if (nextExecution != null) {
                             break;
                         }
                     }
@@ -139,11 +130,10 @@ public class QuartzJobsController extends AbstractCommandController {
 
         quartzJobsBean.setQuartzJobInfoList(jobs);
 
-        if(scheduler.isStarted()){
-            quartzJobsBean.setJobsRunning( pauseCount!=jobs.size()  );
-        }
-        else{
-            quartzJobsBean.setJobsRunning( false );
+        if (scheduler.isStarted()) {
+            quartzJobsBean.setJobsRunning(pauseCount != jobs.size());
+        } else {
+            quartzJobsBean.setJobsRunning(false);
         }
         return quartzJobsBean;
     }

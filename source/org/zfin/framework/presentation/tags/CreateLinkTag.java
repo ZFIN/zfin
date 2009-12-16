@@ -1,5 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
@@ -9,36 +11,36 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.expression.presentation.ExperimentConditionPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
-import org.zfin.sequence.presentation.DBLinkPresentation;
 import org.zfin.marker.Marker;
-import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.marker.presentation.GenotypePresentation;
 import org.zfin.marker.presentation.MarkerPresentation;
+import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GoTerm;
 import org.zfin.ontology.presentation.GoTermPresentation;
 import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
+import org.zfin.people.Organization;
+import org.zfin.people.presentation.SourcePresentation;
 import org.zfin.publication.Publication;
-import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.publication.presentation.FigurePresentation;
 import org.zfin.publication.presentation.ImagePresentation;
+import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.DBLink;
-import org.zfin.sequence.blast.results.view.HitViewBean;
-import org.zfin.sequence.blast.presentation.BlastPresentationService;
 import org.zfin.sequence.blast.presentation.BlastLinkPresentation;
+import org.zfin.sequence.blast.results.view.HitViewBean;
 import org.zfin.sequence.presentation.AccessionPresentation;
+import org.zfin.sequence.presentation.DBLinkPresentation;
 import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.presentation.RunPresentation;
-import org.zfin.people.Organization;
-import org.zfin.people.presentation.SourcePresentation;
-import org.apache.log4j.Logger;
-import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.*;
+import javax.servlet.jsp.tagext.BodyContent;
+import javax.servlet.jsp.tagext.BodyTag;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.servlet.jsp.tagext.Tag;
 import java.io.IOException;
 import java.util.Collection;
 
@@ -68,7 +70,7 @@ public class CreateLinkTag extends BodyTagSupport {
         if (o instanceof Marker)  //handling of marker subtypes is taken care of in the getLink method
             link = MarkerPresentation.getLink((Marker) o);
         else if (o instanceof RelatedMarker)
-            link = MarkerPresentation.getLink(((RelatedMarker)o).getMarker());
+            link = MarkerPresentation.getLink(((RelatedMarker) o).getMarker());
         else if (o instanceof RunCandidate)
             link = RunCandidatePresentation.getLink((RunCandidate) o);
         else if (o instanceof Run)

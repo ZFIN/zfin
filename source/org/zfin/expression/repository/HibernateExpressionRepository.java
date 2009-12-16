@@ -3,30 +3,28 @@ package org.zfin.expression.repository;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.FetchMode;
-import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.framework.presentation.dto.ExpressedTermDTO;
 import org.zfin.expression.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.client.Ontology;
-import static org.zfin.framework.HibernateUtil.currentSession;
-import org.zfin.marker.Gene;
-import org.zfin.marker.Marker;
-import org.zfin.marker.Clone;
-import org.zfin.publication.Publication;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.framework.presentation.dto.ExpressedTermDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.marker.Clone;
+import org.zfin.marker.Gene;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.GoTerm;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -34,9 +32,11 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Iterator;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
  * Repository that is used for curation actions, such as dealing with expression experiments.
@@ -77,6 +77,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     // todo: I think that these are wrong
+
     public int getExpressionPubCount(Marker marker) {
         Session session = currentSession();
         String hql = "" +
@@ -92,6 +93,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     // todo: I think that these are wrong
+
     public int getExpressionFigureCount(Marker marker) {
         Session session = currentSession();
         String hql = "" +
@@ -475,6 +477,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     // run the script to update the fast search table for antibodies-anatomy
+
     public void runAntibodyAnatomyFastSearchUpdate(ExpressionResult result) {
         Session session = currentSession();
         Connection connection = session.connection();

@@ -28,19 +28,19 @@ public class CallbackTimer extends Timer {
 
     public void run() {
         if (lookup.getType().equals(LookupComposite.TYPE_SUPPLIER)) {
-            LookupService.App.getInstance().getSupplierSuggestions(request, lookup.isWildCard(), callback);
+            LookupService.App.getInstance().getSupplierSuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.TYPE_ANATOMY_ONTOLOGY)) {
-            LookupService.App.getInstance().getAnatomySuggestions(request, lookup.isWildCard(), callback);
+            LookupService.App.getInstance().getAnatomySuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.TYPE_GENE_ONTOLOGY)) {
-            LookupService.App.getInstance().getGOSuggestions(request, lookup.isWildCard(), lookup.getGoOntology(), callback);
+            LookupService.App.getInstance().getGOSuggestions(request, lookup.getGoOntology(), callback);
         } else if (lookup.getType().equals(LookupComposite.TYPE_QUALITY)) {
-            LookupService.App.getInstance().getQualitySuggestions(request, lookup.isWildCard(), callback);
+            LookupService.App.getInstance().getQualitySuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.MARKER_LOOKUP)) {
-            LookupService.App.getInstance().getMarkerSuggestions(request, lookup.isWildCard(), callback);
+            LookupService.App.getInstance().getMarkerSuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.GENEDOM_AND_EFG)) {
-            LookupService.App.getInstance().getGenedomAndEFGSuggestions(request, lookup.isWildCard(), callback);
+            LookupService.App.getInstance().getGenedomAndEFGSuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.FEATURE_LOOKUP)) {
-            LookupService.App.getInstance().getFeatureSuggestions(request, lookup.isWildCard(), callback);
+            LookupService.App.getInstance().getFeatureSuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.GDAG_TERM_LOOKUP)) {
             LookupService.App.getInstance().getOntologySuggestions(request, lookup.isWildCard(), lookup.getGoOntology(), callback);
         }

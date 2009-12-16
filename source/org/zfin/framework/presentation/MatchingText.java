@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class facilitates the search result page in displaying matching entities.

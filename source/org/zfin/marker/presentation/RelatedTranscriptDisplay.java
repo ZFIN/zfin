@@ -1,12 +1,11 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.marker.Transcript;
 
-import java.util.TreeSet;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 public class RelatedTranscriptDisplay extends TreeSet<RelatedMarker> {
 
@@ -18,8 +17,8 @@ public class RelatedTranscriptDisplay extends TreeSet<RelatedMarker> {
 
         public int compare(RelatedMarker rmA, RelatedMarker rmB) {
 
-            Transcript tA = (Transcript)rmA.getMarker();
-            Transcript tB = (Transcript)rmB.getMarker();
+            Transcript tA = (Transcript) rmA.getMarker();
+            Transcript tB = (Transcript) rmB.getMarker();
 
             int typeCompare = tB.getTranscriptType().toString().compareTo(tA.getTranscriptType().toString());
             //if the types aren't equal, sort on that

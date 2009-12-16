@@ -2,14 +2,13 @@ package org.zfin.mutant.presentation;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerTypeGroup;
-import org.zfin.mutant.*;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.framework.presentation.EntityStatistics;
+import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.marker.Marker;
+import org.zfin.mutant.*;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -69,7 +68,7 @@ public class GenotypeStatistics extends EntityStatistics {
                     markers.add(marker);
                 }
             }
-            
+
 
         }
         return markers;

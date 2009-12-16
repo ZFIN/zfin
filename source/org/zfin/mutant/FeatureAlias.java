@@ -1,7 +1,6 @@
 package org.zfin.mutant;
 
 import org.zfin.infrastructure.DataAlias;
-import org.zfin.mutant.Feature;
 
 
 public class FeatureAlias extends DataAlias {

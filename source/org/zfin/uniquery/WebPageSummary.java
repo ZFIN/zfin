@@ -5,8 +5,8 @@ import org.zfin.uniquery.categories.SiteSearchCategories;
 
 import java.net.URL;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Convenience class to hold info for the indexer.

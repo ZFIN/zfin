@@ -1,19 +1,13 @@
 package org.zfin.feature.repository;
 
-import org.zfin.mutant.Feature;
-import org.zfin.mutant.FeatureMarkerRelationship;
-import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.Marker;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.sequence.LinkageGroup;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.mapping.MappedDeletion;
-import org.apache.commons.collections.CollectionUtils;
+import org.zfin.marker.Marker;
+import org.zfin.mutant.Feature;
+import org.zfin.mutant.FeatureMarkerRelationship;
+import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -35,21 +29,21 @@ public class FeatureService {
         this.feature = feature;
     }
 
-   public  List<DataNote> getFeatureNote(){
-           Set<DataNote> datanotes=feature.getDataNote();
-           if (datanotes == null) {
+    public List<DataNote> getFeatureNote() {
+        Set<DataNote> datanotes = feature.getDataNote();
+        if (datanotes == null) {
             return new ArrayList<DataNote>();
         }
         List<DataNote> privateNote = new ArrayList<DataNote>();
         for (DataNote prnotes : datanotes) {
             if (prnotes != null)
-                  privateNote.add(prnotes);
-                }
-       Collections.sort(privateNote);
-       return privateNote;
-   }
+                privateNote.add(prnotes);
+        }
+        Collections.sort(privateNote);
+        return privateNote;
+    }
 
-    public  SortedSet<FeatureMarkerRelationship> getSortedMarkerRelationships() {
+    public SortedSet<FeatureMarkerRelationship> getSortedMarkerRelationships() {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
         if (fmrelationships == null) {
             return new TreeSet<FeatureMarkerRelationship>();
@@ -57,66 +51,64 @@ public class FeatureService {
         SortedSet<FeatureMarkerRelationship> affectedGenes = new TreeSet<FeatureMarkerRelationship>();
         for (FeatureMarkerRelationship ftrmrkrRelation : fmrelationships) {
             if (ftrmrkrRelation != null)
-                if(ftrmrkrRelation.getType().equals(FeatureMarkerRelationship.IS_ALLELE_OF)){
-                            affectedGenes.add(ftrmrkrRelation);
+                if (ftrmrkrRelation.getType().equals(FeatureMarkerRelationship.IS_ALLELE_OF)) {
+                    affectedGenes.add(ftrmrkrRelation);
                 }
         }
-        
 
-                return affectedGenes;
+
+        return affectedGenes;
     }
 
 
-
-    
-    public List<Marker> getMappedDeletions(){
+    public List<Marker> getMappedDeletions() {
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-        List<Marker> mkr=mutantRepository.getDeletedMarker(feature);
+        List<Marker> mkr = mutantRepository.getDeletedMarker(feature);
         List<Marker> delmark = new ArrayList<Marker>();
 
-        for (Marker mark : mkr){
-               delmark.add(mark);
-    }
+        for (Marker mark : mkr) {
+            delmark.add(mark);
+        }
 
         return delmark;
 
     }
 
 
-    public List<String> getFtrLocations(){
+    public List<String> getFtrLocations() {
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-        List<String> lg=mutantRepository.getDeletedMarkerLG(feature);
+        List<String> lg = mutantRepository.getDeletedMarkerLG(feature);
         List<String> delmarklg = new ArrayList<String>();
 
         for (String lgchr : lg)
 
-                       delmarklg.add(lgchr);
+            delmarklg.add(lgchr);
 
 
         return delmarklg;
 
     }
-    public List<String> getFtrMap(){
-           MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-           List<String> lg=mutantRepository.getMappedFeatureLG(feature);
-           List<String> delmarklg = new ArrayList<String>();
 
-           for (String lgchr : lg)
+    public List<String> getFtrMap() {
+        MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+        List<String> lg = mutantRepository.getMappedFeatureLG(feature);
+        List<String> delmarklg = new ArrayList<String>();
 
-                          delmarklg.add(lgchr);
+        for (String lgchr : lg)
 
-
-           return delmarklg;
-
-       }
+            delmarklg.add(lgchr);
 
 
+        return delmarklg;
 
-public List<RecordAttribution> getFtrTypeAttr(){
-        InfrastructureRepository infRep=RepositoryFactory.getInfrastructureRepository();
-        List<RecordAttribution> recordAttributions = infRep.getRecAttribforFtrType(feature.getZdbID()) ;
-        List<RecordAttribution> attributions =new ArrayList<RecordAttribution>();
-         for(RecordAttribution recordAttribution: recordAttributions){
+    }
+
+
+    public List<RecordAttribution> getFtrTypeAttr() {
+        InfrastructureRepository infRep = RepositoryFactory.getInfrastructureRepository();
+        List<RecordAttribution> recordAttributions = infRep.getRecAttribforFtrType(feature.getZdbID());
+        List<RecordAttribution> attributions = new ArrayList<RecordAttribution>();
+        for (RecordAttribution recordAttribution : recordAttributions) {
             attributions.add(recordAttribution);
         }
 
@@ -125,13 +117,13 @@ public List<RecordAttribution> getFtrTypeAttr(){
     }
 
     public int getPublicationCount() {
-      InfrastructureRepository infRep=RepositoryFactory.getInfrastructureRepository();
-        List<RecordAttribution> recordAttributions = infRep.getRecAttribforFtrType(feature.getZdbID()) ;
-        List<RecordAttribution> attributions =new ArrayList<RecordAttribution>();
-         for(RecordAttribution recordAttribution: recordAttributions){
+        InfrastructureRepository infRep = RepositoryFactory.getInfrastructureRepository();
+        List<RecordAttribution> recordAttributions = infRep.getRecAttribforFtrType(feature.getZdbID());
+        List<RecordAttribution> attributions = new ArrayList<RecordAttribution>();
+        for (RecordAttribution recordAttribution : recordAttributions) {
             attributions.add(recordAttribution);
         }
-            return attributions.size();
+        return attributions.size();
     }
 
     public String getSinglePublication() {
@@ -143,7 +135,7 @@ public List<RecordAttribution> getFtrTypeAttr(){
     }
 
 
-     public Set<FeatureMarkerRelationship> getSortedConstructRelationships() {
+    public Set<FeatureMarkerRelationship> getSortedConstructRelationships() {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
         if (fmrelationships == null) {
             return new TreeSet<FeatureMarkerRelationship>();
@@ -151,15 +143,15 @@ public List<RecordAttribution> getFtrTypeAttr(){
         SortedSet<FeatureMarkerRelationship> constructMarkers = new TreeSet<FeatureMarkerRelationship>();
         for (FeatureMarkerRelationship ftrmrkrRelation : fmrelationships) {
             if (ftrmrkrRelation != null)
-              if (ftrmrkrRelation.getType().equals(FeatureMarkerRelationship.CONTAINS_SEQUENCE_FEATURE)){
-                   constructMarkers.add(ftrmrkrRelation);
-              }
-             if (ftrmrkrRelation.getType().equals(FeatureMarkerRelationship.CONTAINS_INNOCSEQUENCE_FEATURE)){
-                   constructMarkers.add(ftrmrkrRelation);
-              }
+                if (ftrmrkrRelation.getType().equals(FeatureMarkerRelationship.CONTAINS_SEQUENCE_FEATURE)) {
+                    constructMarkers.add(ftrmrkrRelation);
+                }
+            if (ftrmrkrRelation.getType().equals(FeatureMarkerRelationship.CONTAINS_INNOCSEQUENCE_FEATURE)) {
+                constructMarkers.add(ftrmrkrRelation);
+            }
         }
         return constructMarkers;
 
-}
+    }
 
-     }
+}

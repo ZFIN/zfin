@@ -3,8 +3,8 @@ package org.zfin.security;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.ui.logout.SecurityContextLogoutHandler;
 import org.springframework.util.Assert;
-import org.zfin.security.repository.UserRepository;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.security.repository.UserRepository;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ public class ZfinSecurityContextLogoutHandler extends SecurityContextLogoutHandl
                 response.addCookie(cookie);
             }
             if (cookie.getName().equals(ZfinAuthenticationProcessingFilter.JSESSIONID)) {
-                 ZfinAuthenticationProcessingFilter.removeSession(cookie.getValue());
+                ZfinAuthenticationProcessingFilter.removeSession(cookie.getValue());
             }
         }
 

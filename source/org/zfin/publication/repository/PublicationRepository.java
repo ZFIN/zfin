@@ -2,22 +2,21 @@ package org.zfin.publication.repository;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.CanonicalMarker;
+import org.zfin.antibody.Antibody;
+import org.zfin.expression.Experiment;
+import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.Experiment;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Feature;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
-import org.zfin.publication.Publication;
 import org.zfin.publication.Journal;
+import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationParameter;
-import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.antibody.Antibody;
-import org.zfin.sequence.DBLink;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.List;
@@ -273,10 +272,15 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of figures.
      */
     PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term);
+
     PaginationResult<Figure> getFiguresByGeno(Genotype geno);
-        PaginationResult<Figure> getFiguresByGenoExp(Genotype geno);
+
+    PaginationResult<Figure> getFiguresByGenoExp(Genotype geno);
+
     PaginationResult<Figure> getFiguresByGenoMorph(Genotype geno);
+
     PaginationResult<Publication> getPublicationsWithFiguresbyGeno(Genotype genotype);
+
     PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype);
 
 
@@ -315,15 +319,18 @@ public interface PublicationRepository extends PaginationParameter {
 
     Journal getJournalByTitle(String journalTitle);
 
-   PaginationResult<Publication> getAllAssociatedPublicationsForMarker(Marker marker, int maxPubs) ;
- PaginationResult<Publication> getAllAssociatedPublicationsForFeature(Feature feature, int maxPubs);
+    PaginationResult<Publication> getAllAssociatedPublicationsForMarker(Marker marker, int maxPubs);
+
+    PaginationResult<Publication> getAllAssociatedPublicationsForFeature(Feature feature, int maxPubs);
 
     /**
      * Retrieve Figue by ID
+     *
      * @param zdbID ID
      * @return Figure
      */
     Figure getFigure(String zdbID);
+
     Image getImageById(String zdbID);
 
     /**
@@ -455,14 +462,16 @@ public interface PublicationRepository extends PaginationParameter {
 
     /**
      * Retrieve db link object of a clone for a gene and pub.
-     * @param pubID pub is
-     * @param geneID       gene ID
+     *
+     * @param pubID  pub is
+     * @param geneID gene ID
      * @return list of MarkerDBLinks
      */
     List<MarkerDBLink> getDBLinksForCloneByGene(String pubID, String geneID);
 
     /**
      * Retrieve all figures that are associated to a given publication.
+     *
      * @param pubID publication ID
      * @return list of figures
      */

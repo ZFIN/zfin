@@ -2,10 +2,8 @@ package org.zfin.framework.presentation.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import java.util.List;
 import java.util.ArrayList;
-
-import org.zfin.framework.presentation.dto.StageDTO;
+import java.util.List;
 
 /**
  * Data Transfer Object corresponding to a unique combination of

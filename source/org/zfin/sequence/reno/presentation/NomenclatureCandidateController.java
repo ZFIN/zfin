@@ -2,23 +2,26 @@ package org.zfin.sequence.reno.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zfin.marker.*;
-import org.zfin.people.Person;
-import org.zfin.sequence.reno.*;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.ForeignDBDataType;
-import org.zfin.repository.RepositoryFactory;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerFamilyName;
 import org.zfin.orthology.Species;
-import org.zfin.framework.HibernateUtil;
+import org.zfin.people.Person;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.reno.NomenclatureRun;
+import org.zfin.sequence.reno.RenoService;
+import org.zfin.sequence.reno.RunCandidate;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**
  * Class CandidateController.
  */
-public class NomenclatureCandidateController extends AbstractCandidateController{
+public class NomenclatureCandidateController extends AbstractCandidateController {
 
     private static final Logger LOG = Logger.getLogger(NomenclatureCandidateController.class);
 
@@ -61,10 +64,10 @@ public class NomenclatureCandidateController extends AbstractCandidateController
                 ForeignDBDataType.SuperType.ORTHOLOGUE,
                 Species.MOUSE));
 
-        if (nomenclatureRun.getOrthologyPublication() != null){
+        if (nomenclatureRun.getOrthologyPublication() != null) {
             candidateBean.setOrthologyPublicationZdbID(((NomenclatureRun) rc.getRun()).getOrthologyPublication().getZdbID());
         }
-        if (nomenclatureRun.getNomenclaturePublication() != null){
+        if (nomenclatureRun.getNomenclaturePublication() != null) {
             candidateBean.setNomenclaturePublicationZdbID(rc.getRun().getNomenclaturePublication().getZdbID());
         }
 

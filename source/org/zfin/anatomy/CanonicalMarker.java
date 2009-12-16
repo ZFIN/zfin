@@ -3,8 +3,8 @@ package org.zfin.anatomy;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
-import java.util.Set;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Canonical Marker?????.

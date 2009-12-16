@@ -1,7 +1,6 @@
 package org.zfin.orthology;
 
 import org.zfin.marker.Marker;
-import org.zfin.sequence.Accession;
 import org.zfin.sequence.EntrezProtRelation;
 
 import java.util.Set;
@@ -25,7 +24,7 @@ public class Orthologue implements Comparable {
     private String abbreviation;
     private String name;
 
-       private Set<OrthoEvidence> evidence;
+    private Set<OrthoEvidence> evidence;
 
 
     public EntrezProtRelation getAccession() {

@@ -1,6 +1,5 @@
 package org.zfin.expression;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.ontology.GoTerm;
 
 /**

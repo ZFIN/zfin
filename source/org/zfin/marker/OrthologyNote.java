@@ -1,7 +1,6 @@
 package org.zfin.marker;
 
 import org.zfin.ExternalNote;
-import org.zfin.infrastructure.PublicationAttribution;
 
 /**
  * Note entered by Curators concerning the existence or absence of orthology.

@@ -1,7 +1,5 @@
 package org.zfin.infrastructure;
 
-import org.zfin.people.Person;
-
 import java.util.Date;
 
 public class Updates {
@@ -31,7 +29,6 @@ public class Updates {
     public void setRecID(String recID) {
         this.recID = recID;
     }
-
 
 
     public String getFieldName() {
@@ -82,7 +79,8 @@ public class Updates {
     public void setWhenUpdated(Date whenUpdated) {
         this.whenUpdated = whenUpdated;
     }
-     public String getSubmitterName() {
+
+    public String getSubmitterName() {
         return submitterName;
     }
 

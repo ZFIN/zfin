@@ -1,11 +1,11 @@
 package org.zfin.marker;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TranscriptType {
 
-    private Long id ;
+    private Long id;
     private Type type;
     private String display;
     private String order;
@@ -86,7 +86,7 @@ public class TranscriptType {
             this.value = value;
         }
 
-        public String toString(){
+        public String toString() {
             return value;
         }
 
@@ -98,29 +98,26 @@ public class TranscriptType {
             throw new RuntimeException("No transcript type of string " + type + " found.");
         }
 
-        public static List<TranscriptStatus.Status> getStatusList(Type transcriptType){
-            List<TranscriptStatus.Status> statuses = new ArrayList<TranscriptStatus.Status>() ;
-            if(transcriptType==Type.MIRNA){
-                statuses.add(TranscriptStatus.Status.NONE) ;
-                statuses.add(TranscriptStatus.Status.PUBLISHED) ;
-                statuses.add(TranscriptStatus.Status.MICRORNA_REGISTRY) ;
-            }
-            else
-            if(transcriptType==Type.PIRNA || transcriptType==Type.PRE_MIRNA || transcriptType== Type.RRNA || transcriptType==Type.SNRNA
-                    || transcriptType==Type.SNORNA || transcriptType==Type.SCRNA || transcriptType==Type.TRNA){
-                statuses.add(TranscriptStatus.Status.NONE) ;
-                statuses.add(TranscriptStatus.Status.PUBLISHED) ;
-            }
-            else{
-                for(TranscriptStatus.Status status: TranscriptStatus.Status.values()){
-                    if(status!=TranscriptStatus.Status.MICRORNA_REGISTRY){
-                        statuses.add(status) ;
+        public static List<TranscriptStatus.Status> getStatusList(Type transcriptType) {
+            List<TranscriptStatus.Status> statuses = new ArrayList<TranscriptStatus.Status>();
+            if (transcriptType == Type.MIRNA) {
+                statuses.add(TranscriptStatus.Status.NONE);
+                statuses.add(TranscriptStatus.Status.PUBLISHED);
+                statuses.add(TranscriptStatus.Status.MICRORNA_REGISTRY);
+            } else if (transcriptType == Type.PIRNA || transcriptType == Type.PRE_MIRNA || transcriptType == Type.RRNA || transcriptType == Type.SNRNA
+                    || transcriptType == Type.SNORNA || transcriptType == Type.SCRNA || transcriptType == Type.TRNA) {
+                statuses.add(TranscriptStatus.Status.NONE);
+                statuses.add(TranscriptStatus.Status.PUBLISHED);
+            } else {
+                for (TranscriptStatus.Status status : TranscriptStatus.Status.values()) {
+                    if (status != TranscriptStatus.Status.MICRORNA_REGISTRY) {
+                        statuses.add(status);
                     }
                 }
             }
 
 
-            return statuses ;
+            return statuses;
         }
     }
 

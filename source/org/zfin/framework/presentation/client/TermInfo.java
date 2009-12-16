@@ -2,7 +2,10 @@ package org.zfin.framework.presentation.client;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * ToDo: ADD DOCUMENTATION!
@@ -77,7 +80,7 @@ public class TermInfo implements IsSerializable {
 
     public void addRelatedTermInfo(String relationship, TermInfo termInfo) {
         List<TermInfo> terms = relatedTermInfos.get(relationship);
-        if(terms == null){
+        if (terms == null) {
             terms = new ArrayList<TermInfo>();
             relatedTermInfos.put(relationship, terms);
         }

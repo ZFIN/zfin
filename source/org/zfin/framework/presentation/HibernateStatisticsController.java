@@ -1,10 +1,10 @@
 package org.zfin.framework.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.validation.BindException;
-import org.zfin.framework.HibernateUtil;
 import org.hibernate.stat.Statistics;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.zfin.framework.HibernateUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,17 +14,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HibernateStatisticsController extends AbstractCommandController {
 
-    public HibernateStatisticsController(){
+    public HibernateStatisticsController() {
         setCommandClass(HibernateStatisticsBean.class);
     }
+
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         HibernateStatisticsBean form = (HibernateStatisticsBean) command;
 
-        Statistics stats =  HibernateUtil.getSessionFactory().getStatistics();
+        Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
 
-        String reset =  request.getParameter("reset") ;
-        if(reset!=null){
-            if(reset.equals("true")){
+        String reset = request.getParameter("reset");
+        if (reset != null) {
+            if (reset.equals("true")) {
                 stats.clear();
                 return new ModelAndView("redirect:/action/dev-tools/view-hibernate-statistics");
             }

@@ -1,9 +1,9 @@
 package org.zfin.framework.presentation.client;
 
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.SuggestOracle;
 
 /**
  */
@@ -25,19 +25,19 @@ public interface LookupService extends RemoteService {
         }
     }
 
-    public SuggestOracle.Response getAnatomySuggestions(SuggestOracle.Request req, boolean wildCard);
+    public SuggestOracle.Response getAnatomySuggestions(SuggestOracle.Request req);
 
-    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req, boolean wildCard, Ontology ontology);
+    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req, Ontology ontology);
 
-    public SuggestOracle.Response getQualitySuggestions(SuggestOracle.Request req, boolean wildCard);
+    public SuggestOracle.Response getQualitySuggestions(SuggestOracle.Request req);
 
-    public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req, boolean wildCard);
+    public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req);
 
-    public SuggestOracle.Response getGenedomAndEFGSuggestions(SuggestOracle.Request req, boolean wildCard);
+    public SuggestOracle.Response getGenedomAndEFGSuggestions(SuggestOracle.Request req);
 
-    public SuggestOracle.Response getSupplierSuggestions(SuggestOracle.Request req, boolean wildCard);
+    public SuggestOracle.Response getSupplierSuggestions(SuggestOracle.Request req);
 
-    public SuggestOracle.Response getFeatureSuggestions(SuggestOracle.Request req, boolean wildCard);
+    public SuggestOracle.Response getFeatureSuggestions(SuggestOracle.Request req);
 
     /**
      * Retrieve the terminfo for a given term id and ontology.
@@ -52,22 +52,25 @@ public interface LookupService extends RemoteService {
     /**
      * Retrieve the term info for a given ontology and term name.
      *
-     * @param ontology         Ontology
-     * @param termName         term Name
+     * @param ontology Ontology
+     * @param termName term Name
      * @return TermInfo
      */
     TermInfo getTermInfoByName(Ontology ontology, String termName);
 
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)
-     * @param request request
-     * @param wildCard true or false
+     *
+     * @param request    request
+     * @param wildCard   true or false
      * @param goOntology ontology name
      * @return suggestions
      */
     public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean wildCard, Ontology goOntology);
 
     // validation methods
-    public TermStatus validateAnatomyTerm(String term) ;
-    public TermStatus validateMarkerTerm(String term) ;
+
+    public TermStatus validateAnatomyTerm(String term);
+
+    public TermStatus validateMarkerTerm(String term);
 }

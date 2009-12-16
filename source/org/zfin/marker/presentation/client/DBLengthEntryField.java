@@ -1,47 +1,47 @@
 package org.zfin.marker.presentation.client;
 
 import com.google.gwt.user.client.ui.*;
-import org.zfin.marker.presentation.event.DBLinkTableEvent;
 import org.zfin.marker.presentation.dto.DBLinkDTO;
+import org.zfin.marker.presentation.event.DBLinkTableEvent;
 
 /**
  */
 public class DBLengthEntryField extends Composite {
 
     // gui elements
-    private TextBox lengthField = new TextBox() ;
-    private Button updateButton = new Button("update") ;
-    private Button revertButton = new Button("revert") ;
-    private HorizontalPanel panel = new HorizontalPanel() ;
+    private TextBox lengthField = new TextBox();
+    private Button updateButton = new Button("update");
+    private Button revertButton = new Button("revert");
+    private HorizontalPanel panel = new HorizontalPanel();
 
-    private Label lengthLabel ;
-    HTML spacerLabel = new HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") ;
+    private Label lengthLabel;
+    HTML spacerLabel = new HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
     // internal data
-    private DBLinkDTO dbLinkDTO = null ;
+    private DBLinkDTO dbLinkDTO = null;
 
     // parent
     // todo: change to use listener later?
-    private DBLinkTable parent = null ;
+    private DBLinkTable parent = null;
 
-    public DBLengthEntryField(DBLinkTable dbLinkTable , DBLinkDTO dbLinkDTO){
-        this.parent = dbLinkTable ;
+    public DBLengthEntryField(DBLinkTable dbLinkTable, DBLinkDTO dbLinkDTO) {
+        this.parent = dbLinkTable;
         setDbLinkDTO(dbLinkDTO);
-        initGUI() ;
+        initGUI();
         initWidget(panel);
     }
 
-    protected void initGUI(){
+    protected void initGUI() {
 
-        lengthLabel = new Label((dbLinkDTO.getLength()==null?"":dbLinkDTO.getLength().toString())) ;
-        
+        lengthLabel = new Label((dbLinkDTO.getLength() == null ? "" : dbLinkDTO.getLength().toString()));
+
         // if not editable, then create other widgets
-        if(false==dbLinkDTO.isEditable()){
+        if (false == dbLinkDTO.isEditable()) {
 //            spacerLabel.setHTML();
-            HTML readOnlyLabel = new HTML("<font size=-1>(read-only)</font>") ;
+            HTML readOnlyLabel = new HTML("<font size=-1>(read-only)</font>");
             panel.add(readOnlyLabel);
 
-            return ;
+            return;
         }
 
         panel.add(spacerLabel);
@@ -56,13 +56,13 @@ public class DBLengthEntryField extends Composite {
 //        panel.add(updateButton);
 //        panel.add(revertButton);
 
-        lengthField.addKeyboardListener(new KeyboardListenerAdapter(){
+        lengthField.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyUp(Widget widget, char c, int i) {
                 checkDirty();
             }
         });
 
-        updateButton.addClickListener(new ClickListener(){
+        updateButton.addClickListener(new ClickListener() {
             public void onClick(Widget widget) {
                 DBLinkDTO newDTO = dbLinkDTO.deepCopy();
                 newDTO.setLength(Integer.valueOf(lengthField.getText()));
@@ -72,55 +72,48 @@ public class DBLengthEntryField extends Composite {
         });
 
 
-        revertButton.addClickListener(new ClickListener(){
+        revertButton.addClickListener(new ClickListener() {
             public void onClick(Widget widget) {
                 revert();
-                checkDirty() ;
+                checkDirty();
             }
         });
 
-        checkDirty() ;
+        checkDirty();
     }
 
 
     public void setDbLinkDTO(DBLinkDTO dbLinkDTO) {
         this.dbLinkDTO = dbLinkDTO;
-        if(this.dbLinkDTO !=null && this.dbLinkDTO.getLength()!=null){
+        if (this.dbLinkDTO != null && this.dbLinkDTO.getLength() != null) {
             lengthField.setText(this.dbLinkDTO.getLength().toString());
-        }
-        else{
+        } else {
             lengthField.setText("");
         }
-        checkDirty(); 
+        checkDirty();
     }
 
     public DBLinkDTO getDbLinkDTO() {
         return dbLinkDTO;
     }
 
-    public void checkDirty(){
-        if(dbLinkDTO !=null && lengthField.getText()!=null && dbLinkDTO.getLength()!=null){
-            updateButton.setEnabled(false==lengthField.getText().equals(dbLinkDTO.getLength().toString()));
-            revertButton.setEnabled(false==lengthField.getText().equals(dbLinkDTO.getLength().toString()));
-        }
-        else
-        if(dbLinkDTO ==null || lengthField.getText()==null ){
+    public void checkDirty() {
+        if (dbLinkDTO != null && lengthField.getText() != null && dbLinkDTO.getLength() != null) {
+            updateButton.setEnabled(false == lengthField.getText().equals(dbLinkDTO.getLength().toString()));
+            revertButton.setEnabled(false == lengthField.getText().equals(dbLinkDTO.getLength().toString()));
+        } else if (dbLinkDTO == null || lengthField.getText() == null) {
             updateButton.setEnabled(false);
             revertButton.setEnabled(false);
-        }
-        else
-        if(dbLinkDTO.getLength() ==null && lengthField.getText().trim().length()==0 ){
+        } else if (dbLinkDTO.getLength() == null && lengthField.getText().trim().length() == 0) {
             updateButton.setEnabled(false);
             revertButton.setEnabled(false);
-        }
-        else
-        if(dbLinkDTO.getLength() ==null && lengthField.getText().trim().length()>0 ){
+        } else if (dbLinkDTO.getLength() == null && lengthField.getText().trim().length() > 0) {
             updateButton.setEnabled(true);
             revertButton.setEnabled(true);
         }
     }
 
-    public void revert(){
+    public void revert() {
         lengthField.setText(dbLinkDTO.getLength().toString());
     }
 }

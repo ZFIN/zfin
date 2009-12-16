@@ -1,38 +1,42 @@
 package org.zfin.antibody.presentation;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
-import org.springframework.validation.*;
-import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.repository.AntibodyRepository;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MarkerAlias;
-import org.zfin.people.repository.ProfileRepository;
-import org.zfin.people.*;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.DataAlias;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.people.MarkerSupplier;
+import org.zfin.people.Organization;
+import org.zfin.people.Person;
+import org.zfin.people.repository.ProfileRepository;
+import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.publication.Publication;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.HibernateException;
-import org.apache.log4j.Logger;
-import org.apache.commons.lang.StringUtils;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller that updates antibody attributes.
@@ -266,7 +270,7 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         if (PublicationValidator.isShortVersion(pubZdbID))
             bean.setAntibodyDefPubZdbID(PublicationValidator.completeZdbID(pubZdbID));
         else
-             bean.setAntibodyDefPubZdbID(pubZdbID);
+            bean.setAntibodyDefPubZdbID(pubZdbID);
         String pubID = bean.getAntibodyDefPubZdbID();
 
         addPubIdToPublicationList(request, bean, pubID);
@@ -355,7 +359,7 @@ public class AntibodyUpdateDetailController extends MultiActionController {
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         String relID = bean.getAntibodyAntigenzdbID();
-        MarkerRelationship mrel = markerRepository.getMarkerRelationshipByID(relID);       
+        MarkerRelationship mrel = markerRepository.getMarkerRelationshipByID(relID);
         addPubIdToPublicationList(request, bean, bean.getAntibodyDefPubZdbID());
 
         Session session = HibernateUtil.currentSession();

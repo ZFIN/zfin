@@ -1,13 +1,14 @@
 package org.zfin.orthology.presentation;
 
-import org.zfin.orthology.*;
-import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.util.FilterType;
 import org.zfin.criteria.ZfinCriteria;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.orthology.Orthologs;
+import org.zfin.orthology.Species;
+import org.zfin.util.FilterType;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Form bean that is used for the orthology web search

@@ -1,7 +1,7 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.marker.Marker;
 import org.zfin.framework.presentation.AnatomyFact;
+import org.zfin.marker.Marker;
 
 /**
  * Class that maps to a statistics table for probes.

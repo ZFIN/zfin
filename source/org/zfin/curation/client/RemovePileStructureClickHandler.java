@@ -1,12 +1,12 @@
 package org.zfin.curation.client;
 
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
-import org.zfin.framework.presentation.dto.PileStructureDTO;
 import org.zfin.framework.presentation.dto.ExpressedTermDTO;
+import org.zfin.framework.presentation.dto.PileStructureDTO;
 
 /**
  * ToDo: ADD DOCUMENTATION!

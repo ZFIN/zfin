@@ -1,8 +1,12 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.sequence.*;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.ForeignDBDataType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  */
@@ -12,8 +16,8 @@ public class SequenceInfo extends TreeSet<DBLink> {
         super(new LengthSorting());
     }
 
-    public void addDBLinks(List<DBLink> links){
-        for(DBLink dbLink: links){
+    public void addDBLinks(List<DBLink> links) {
+        for (DBLink dbLink : links) {
             addDBLink(dbLink);
         }
     }
@@ -39,7 +43,7 @@ public class SequenceInfo extends TreeSet<DBLink> {
             if (!typeA.equals(typeB)) {
                 return typeA.compareTo(typeB);
             }
-            
+
 
             //fdb_db_significance
             Integer sigA = dblinkA.getReferenceDatabase().getForeignDB().getSignificance();
@@ -68,7 +72,7 @@ public class SequenceInfo extends TreeSet<DBLink> {
 
     }
 
-    public  List<DBLink> getList() {
+    public List<DBLink> getList() {
         ArrayList<DBLink> list = new ArrayList<DBLink>();
         list.addAll(this);
         return list;

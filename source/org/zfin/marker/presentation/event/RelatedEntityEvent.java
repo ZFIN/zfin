@@ -1,6 +1,5 @@
 package org.zfin.marker.presentation.event;
 
-import com.google.gwt.user.client.Window;
 import org.zfin.marker.presentation.dto.RelatedEntityDTO;
 
 /**
@@ -8,10 +7,9 @@ import org.zfin.marker.presentation.dto.RelatedEntityDTO;
 public class RelatedEntityEvent<U extends RelatedEntityDTO> {
 
 
+    private U relatedEntityDTO;
 
-    private U relatedEntityDTO ;
-
-    public RelatedEntityEvent(U relatedEntityDTO){
+    public RelatedEntityEvent(U relatedEntityDTO) {
         this.relatedEntityDTO = relatedEntityDTO;
     }
 

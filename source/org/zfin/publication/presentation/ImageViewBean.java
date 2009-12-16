@@ -2,12 +2,8 @@ package org.zfin.publication.presentation;
 
 import org.zfin.expression.Image;
 import org.zfin.marker.Marker;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.mutant.Feature;
-import org.zfin.mutant.Genotype;
 
 import java.util.List;
-import java.awt.*;
 
 public class ImageViewBean {
     private Image image;
@@ -26,7 +22,7 @@ public class ImageViewBean {
 
 
     public Image getImage() {
-        if (image == null) 
+        if (image == null)
             image = new Image();
         return image;
     }

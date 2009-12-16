@@ -1,21 +1,19 @@
 package org.zfin.marker.repository;
 
+import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.orthology.Orthologue;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
-import org.zfin.sequence.EntrezProtRelation;
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.DBLink;
-import org.zfin.marker.Transcript;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.mutant.presentation.AntibodyStatistics;
+import org.zfin.sequence.EntrezProtRelation;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -24,9 +22,13 @@ public interface MarkerRepository {
     Marker getMarker(Marker marker);
 
     Marker getMarkerByID(String zdbID);
+
     Clone getCloneById(String zdbID);
+
     Transcript getTranscriptByZdbID(String zdbID);
+
     Transcript getTranscriptByName(String name);
+
     Transcript getTranscriptByVegaID(String vegaID);
 
     List<String> getTranscriptTypes();
@@ -36,9 +38,10 @@ public interface MarkerRepository {
     Marker getMarkerByName(String name);
 
     //Todo: should this move to another class?
+
     MarkerRelationship getMarkerRelationship(Marker firstMarker,
-                                                     Marker secondMarker,
-                                                     MarkerRelationship.Type type);
+                                             Marker secondMarker,
+                                             MarkerRelationship.Type type);
 
     List<Marker> getMarkersByAbbreviation(String name);
 
@@ -62,6 +65,7 @@ public interface MarkerRepository {
      * create a new one, if there is already one available then it gets replaced
      * with this one (updated) as we typically display the old note in the updates field.
      * Attribution is done on the current security person.
+     *
      * @param gene gene
      * @param note note text
      */
@@ -72,21 +76,23 @@ public interface MarkerRepository {
     /**
      * Create a new alias for a given marker. IF no alias is found no alias is crerated.
      *
-     * @param marker valid marker object.
-     * @param alias alias string
-     * @param publication  publication object
+     * @param marker      valid marker object.
+     * @param alias       alias string
+     * @param publication publication object
      */
     void addMarkerAlias(Marker marker, String alias, Publication publication);
 
     /**
      * Delete an existing alias that belongs to a given marker.
+     *
      * @param marker Marker Object
-     * @param alias Marker alias object
+     * @param alias  Marker alias object
      */
     void deleteMarkerAlias(Marker marker, MarkerAlias alias);
 
     /**
      * Delete a marker relationship
+     *
      * @param mrel
      */
     void deleteMarkerRelationship(MarkerRelationship mrel);
@@ -97,10 +103,11 @@ public interface MarkerRepository {
 
     /**
      * Add a publication to a given marker: Attribution.
-     * @param marker valid marker object
+     *
+     * @param marker      valid marker object
      * @param publication publication object
      */
-    void addMarkerPub(Marker marker,  Publication publication);
+    void addMarkerPub(Marker marker, Publication publication);
 
     MarkerDBLink getDBLink(Marker marker, String accessionNumber, ReferenceDatabase refdb);
 
@@ -149,9 +156,8 @@ public interface MarkerRepository {
 
 
     /**
-     *
      * @param associatedMarker Associated Marker.
-     * @param transcript Transcript
+     * @param transcript       Transcript
      * @return Marker has a relationship with this Transcript.
      */
     boolean hasTranscriptRelationship(Marker associatedMarker, Marker transcript);
@@ -167,16 +173,24 @@ public interface MarkerRepository {
     List<Marker> getMarkersByAbbreviationAndGroup(String name, Marker.TypeGroup markerType);
 
     // clone methods
-    List<String> getPolymeraseNames() ;
-    List<String> getVectorNames() ;
-    List<String> getProbeLibraryNames() ;
-    List<ProbeLibrary> getProbeLibraries() ;
-    ProbeLibrary getProbeLibrary(String zdbID) ;
-    List<String> getDigests() ;
-    List<String> getCloneSites() ;
+
+    List<String> getPolymeraseNames();
+
+    List<String> getVectorNames();
+
+    List<String> getProbeLibraryNames();
+
+    List<ProbeLibrary> getProbeLibraries();
+
+    ProbeLibrary getProbeLibrary(String zdbID);
+
+    List<String> getDigests();
+
+    List<String> getCloneSites();
 
     /**
      * Retrieve a marker alias by zdb ID
+     *
      * @param aliasZdbID id
      * @return Marker Alias object
      */
@@ -184,18 +198,24 @@ public interface MarkerRepository {
 
 
     List<TranscriptTypeStatusDefinition> getAllTranscriptTypeStatusDefinitions();
+
     List<TranscriptType> getAllTranscriptTypes();
 
-    TranscriptType getTranscriptTypeForName(String typeString) ;
-    TranscriptStatus getTranscriptStatusForName(String statusString) ;
+    TranscriptType getTranscriptTypeForName(String typeString);
+
+    TranscriptStatus getTranscriptStatusForName(String statusString);
 
     //these are pulled from push4genomix.pl
 
-    boolean getGeneHasExpression(Marker gene ) ;
-    boolean getGeneHasExpressionImages(Marker gene) ;
-    boolean getGeneHasGOEvidence(Marker gene) ;
-    boolean getGeneHasPhenotype(Marker gene ) ;
-    boolean getGeneHasPhenotypeImage(Marker gene ) ;
+    boolean getGeneHasExpression(Marker gene);
+
+    boolean getGeneHasExpressionImages(Marker gene);
+
+    boolean getGeneHasGOEvidence(Marker gene);
+
+    boolean getGeneHasPhenotype(Marker gene);
+
+    boolean getGeneHasPhenotypeImage(Marker gene);
 
 
     /**
@@ -203,8 +223,8 @@ public interface MarkerRepository {
      * Note: for the case to include substructures the result set is not returned just the total number
      * in the PaginationResult object!
      *
-     * @param aoTerm ao term
-     * @param pagination pagination bean
+     * @param aoTerm               ao term
+     * @param pagination           pagination bean
      * @param includeSubstructures boolean
      * @return pagination result
      */
@@ -221,6 +241,7 @@ public interface MarkerRepository {
 
     /**
      * Retrieve marker types by marker type groups
+     *
      * @param typeGroup type group
      * @return list of marker types
      */

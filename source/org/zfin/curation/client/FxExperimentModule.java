@@ -4,17 +4,17 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.framework.presentation.dto.*;
 import org.zfin.framework.presentation.gwtutils.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 /**
  * Experiment section of the FX curation page.
@@ -82,7 +82,7 @@ import java.util.HashSet;
  * message is displayed when the update matches another existing experiment. Before an experiment is
  * updated a JavaScript alert box pops up to ask for confirmation.
  */
-public class FxExperimentModule extends Composite implements ExperimentSection{
+public class FxExperimentModule extends Composite implements ExperimentSection {
 
     // div-elements
     public static final String SHOW_HIDE_EXPERIMENTS = "show-hide-experiments";
@@ -134,7 +134,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection{
 
 
     public FxExperimentModule(String publicationID) {
-        this.publicationID= publicationID;
+        this.publicationID = publicationID;
         displayTable = new ExperimentFlexTable(HeaderName.getHeaderNames());
         initGUI();
     }
@@ -211,6 +211,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection{
     }
 
     // Retrieve experiments from the server
+
     protected void retrieveExperiments() {
         loadingImage.setVisible(true);
         curationExperimentRPCAsync.getExperimentsByFilter(experimentFilter, new RetrieveExperimentsCallback(experiments));
@@ -239,6 +240,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection{
 
 
     //ToDo: implements debug feature
+
     private boolean isDebug() {
         return false;
     }
@@ -429,6 +431,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection{
         }
 
         // create gene list and select the gene of the experiment
+
         private void selectGene() {
             // first retrieve the full list of genes and then
             // select the gene in question.
@@ -436,6 +439,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection{
         }
 
         // create antibody list and select the antibody of the experiment
+
         private void selectAntibody() {
             // first retrieve the full list of genes and then
             // select the gene in question.
@@ -1106,6 +1110,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection{
         }
 
         // Refresh the experiment list
+
         public void onSuccess(ExperimentDTO updatedExperiment) {
             // update inline without reading all experiments again
             //retrieveExperiments();

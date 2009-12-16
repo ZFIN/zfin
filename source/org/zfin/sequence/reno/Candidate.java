@@ -1,10 +1,7 @@
 /**
  *  Class Candidate.
  */
-package org.zfin.sequence.reno ;
-
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerType;
+package org.zfin.sequence.reno;
 
 import java.util.Date;
 
@@ -12,12 +9,14 @@ import java.util.Date;
  */
 public class Candidate {
     private String zdbID;
-/**    private Accession accession; */
+    /**
+     * private Accession accession;
+     */
     private String note;
     private boolean problem;
     private Integer runCount;
     private Date lastFinishedDate;
-    private String markerType ;
+    private String markerType;
 //    private Marker identifiedMarker;
     private String suggestedName;
 
@@ -25,16 +24,16 @@ public class Candidate {
      * Get the "name" of the Candidate.
      * If the suggestedName is not null, return it as the candidate name;
      * Otherwise, will need to go to its RunCandiate (not mapped yet), and
-     * get the best hit from all of its queries and use that Marker's name.  
+     * get the best hit from all of its queries and use that Marker's name.
      * Currently it is believed that suggestedName is always populated.
+     *
      * @return a <code>String</code> object.
      */
     public String getName() {
-        if ( suggestedName != null) {
+        if (suggestedName != null) {
             return suggestedName;
-        } 
-        else{
-            return "no suggested name see FB:2070" ; 
+        } else {
+            return "no suggested name see FB:2070";
         }
     }
 
@@ -92,8 +91,7 @@ public class Candidate {
      *
      * @return markerType as String.
      */
-    public String getMarkerType()
-    {
+    public String getMarkerType() {
         return markerType;
     }
 
@@ -102,8 +100,7 @@ public class Candidate {
      *
      * @param markerType the value to set.
      */
-    public void setMarkerType(String markerType)
-    {
+    public void setMarkerType(String markerType) {
         this.markerType = markerType;
     }
 
@@ -115,8 +112,8 @@ public class Candidate {
         this.suggestedName = suggestedName;
     }
 
-    public String toString(){
-		String newline = System.getProperty("line.separator");
+    public String toString() {
+        String newline = System.getProperty("line.separator");
         StringBuilder sb = new StringBuilder();
         sb.append("zdbID: ").append(zdbID);
         sb.append(newline);

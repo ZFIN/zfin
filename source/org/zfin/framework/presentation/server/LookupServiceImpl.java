@@ -47,18 +47,14 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
      * Gets suggestions from the anatomy repository.
      * Note that we do not use limits on the request for this implementation.
      */
-    public SuggestOracle.Response getAnatomySuggestions(SuggestOracle.Request req, boolean wildCard) {
+    public SuggestOracle.Response getAnatomySuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         List<AnatomyItem> anatomyItems = RepositoryFactory.getAnatomyRepository().getAnatomyItemsByName(query, false);
         Collections.sort(anatomyItems, new SortAnatomySearchTerm(query));
-        if(CollectionUtils.isNotEmpty(anatomyItems)){
-            if (wildCard == true ) {
-                suggestions.add(new ItemSuggestion("*" + query + "*", null));
-            }
-
+        if (CollectionUtils.isNotEmpty(anatomyItems)) {
             List<AnatomyAutoCompleteTerm> terms = AnatomyPresentation.getAnatomyTermList(anatomyItems, query);
             for (AnatomyAutoCompleteTerm term : terms) {
                 String suggestion = term.getTermName();
@@ -88,7 +84,7 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
         return builder.toString();
     }
 
-    public SuggestOracle.Response getSupplierSuggestions(SuggestOracle.Request req, boolean wildCard) {
+    public SuggestOracle.Response getSupplierSuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
 
@@ -185,7 +181,7 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
 
     }
 
-    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req, boolean wildCard, Ontology ontology) {
+    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req, Ontology ontology) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String termQuery = req.getQuery();
 
@@ -199,9 +195,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
                 suggestions.add(new ItemSuggestion(goTerm.getName().replaceAll(termQuery, "<strong>" + termQuery + "</strong>"), goTerm.getName()));
             }
         }
-        if (wildCard == true) {
-            suggestions.add(new ItemSuggestion("*" + termQuery + "*", null));
-        }
         resp.setSuggestions(suggestions);
 
         logger.info("returned with no error: " + req + " " + suggestions.size() + " suggestions ");
@@ -209,7 +202,7 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
         return resp;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public SuggestOracle.Response getQualitySuggestions(SuggestOracle.Request req, boolean wildCard) {
+    public SuggestOracle.Response getQualitySuggestions(SuggestOracle.Request req) {
         MutantRepository repository = RepositoryFactory.getMutantRepository();
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
@@ -225,9 +218,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
                 suggestions.add(new ItemSuggestion(term.getName().replaceAll(query, "<strong>" + query + "</strong>"), term.getName()));
             }
         }
-        if (wildCard == true) {
-            suggestions.add(new ItemSuggestion("*" + query + "*", null));
-        }
         resp.setSuggestions(suggestions);
 
         logger.info("returned with no error: " + req + " " + suggestions.size() + " suggestions ");
@@ -235,7 +225,7 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
         return resp;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req, boolean wildCard) {
+    public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
 
@@ -250,9 +240,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
                         marker.getAbbreviation().replaceAll(query.replace("(", "\\(").replace(")", "\\)"), "<strong>" + query + "</strong>"), marker.getAbbreviation()));
             }
         }
-        if (wildCard == true) {
-            suggestions.add(0, new ItemSuggestion("*" + query + "*", null));
-        }
         resp.setSuggestions(suggestions);
 
         logger.info("returned with no error: " + req + " " + suggestions.size() + " suggestions ");
@@ -260,7 +247,7 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
         return resp;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public SuggestOracle.Response getGenedomAndEFGSuggestions(SuggestOracle.Request req, boolean wildCard) {
+    public SuggestOracle.Response getGenedomAndEFGSuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
 
@@ -272,9 +259,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
                 suggestions.add(new ItemSuggestion(marker.getAbbreviation().replaceAll(query, "<strong>" + query + "</strong>"), marker.getAbbreviation()));
             }
         }
-        if (wildCard == true) {
-            suggestions.add(0, new ItemSuggestion("*" + query + "*", null));
-        }
         resp.setSuggestions(suggestions);
 
         logger.info("returned with no error: " + req + " " + suggestions.size() + " suggestions ");
@@ -282,7 +266,7 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
         return resp;
     }
 
-    public SuggestOracle.Response getFeatureSuggestions(SuggestOracle.Request req, boolean wildCard) {
+    public SuggestOracle.Response getFeatureSuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
 
@@ -296,9 +280,6 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
                 suggestions.add(new ItemSuggestion(
                         feature.getAbbreviation().replaceAll(query.replace("(", "\\(").replace(")", "\\)"), "<strong>" + query + "</strong>"), feature.getAbbreviation()));
             }
-        }
-        if (wildCard == true) {
-            suggestions.add(0, new ItemSuggestion("*" + query + "*", null));
         }
         resp.setSuggestions(suggestions);
 

@@ -1,6 +1,5 @@
-package org.zfin.marker ;
+package org.zfin.marker;
 
-import org.zfin.properties.ZfinProperties;
 import org.zfin.framework.NamedData;
 
 public class Gene implements NamedData, Comparable<Gene> {

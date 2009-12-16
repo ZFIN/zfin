@@ -4,14 +4,14 @@ import org.apache.commons.lang.StringUtils;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
+import org.zfin.framework.presentation.EntityStatistics;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.publication.Publication;
-import org.zfin.framework.presentation.EntityStatistics;
-import org.zfin.framework.presentation.PaginationResult;
 
 import java.util.*;
 

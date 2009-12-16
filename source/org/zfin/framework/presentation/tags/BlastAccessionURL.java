@@ -1,8 +1,8 @@
 package org.zfin.framework.presentation.tags;
 
+import org.apache.commons.lang.StringUtils;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.blast.Database;
-import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
@@ -12,10 +12,10 @@ import java.io.IOException;
 /**
  * Creates a blast URL
  */
-public class BlastAccessionURL extends TagSupport{
+public class BlastAccessionURL extends TagSupport {
 
-    private DBLink dbLink ;
-    private Database blastDB ;
+    private DBLink dbLink;
+    private Database blastDB;
 
 //            <c:choose>
 //    <c:when test="${empty blastDB.location}">
@@ -43,33 +43,31 @@ public class BlastAccessionURL extends TagSupport{
         dbLink = getDbLink();
         blastDB = getBlastDB();
 
-        if(dbLink==null || blastDB==null){
-            return SKIP_BODY ;
+        if (dbLink == null || blastDB == null) {
+            return SKIP_BODY;
         }
 
         try {
-            String sequenceType ;
-            String program ;
-            String blastDBString ;
-            if(StringUtils.isEmpty(blastDB.getLocation())){
-                if(blastDB.getType().isNucleotide()){
-                    sequenceType = "nt" ;
-                    program = "blastn" ;
-                    blastDBString = "RNASequences" ;
-                }
-                else{
-                    sequenceType = "pt" ;
-                    program = "blastp" ;
-                    blastDBString = "zfin_all_aa" ;
+            String sequenceType;
+            String program;
+            String blastDBString;
+            if (StringUtils.isEmpty(blastDB.getLocation())) {
+                if (blastDB.getType().isNucleotide()) {
+                    sequenceType = "nt";
+                    program = "blastn";
+                    blastDBString = "RNASequences";
+                } else {
+                    sequenceType = "pt";
+                    program = "blastp";
+                    blastDBString = "zfin_all_aa";
                 }
                 linkBuffer.append("/action/blast/blast?");
-                linkBuffer.append("program=").append(program) ;
-                linkBuffer.append("&sequenceType=").append(sequenceType) ;
-                linkBuffer.append("&queryType=SEQUENCE_ID&dataLibraryString="+blastDBString) ;
-                linkBuffer.append("&sequenceID=").append(dbLink.getAccessionNumber()) ;
-            }
-            else{
-                linkBuffer.append(blastDB.getLocation()).append(dbLink.getAccessionNumber()) ;
+                linkBuffer.append("program=").append(program);
+                linkBuffer.append("&sequenceType=").append(sequenceType);
+                linkBuffer.append("&queryType=SEQUENCE_ID&dataLibraryString=" + blastDBString);
+                linkBuffer.append("&sequenceID=").append(dbLink.getAccessionNumber());
+            } else {
+                linkBuffer.append(blastDB.getLocation()).append(dbLink.getAccessionNumber());
             }
 
             pageContext.getOut().print(linkBuffer.toString());

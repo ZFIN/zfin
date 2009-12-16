@@ -1,19 +1,23 @@
 package org.zfin.mutant.presentation;
 
-import org.zfin.framework.presentation.EntityStatistics;
-import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.mutant.*;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
-import org.zfin.repository.RepositoryFactory;
+import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.marker.Marker;
+import org.zfin.mutant.Feature;
+import org.zfin.mutant.FeatureMarkerRelationship;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeFeature;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.marker.Marker;
+import org.zfin.repository.RepositoryFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-public  class FeatGenoStatistics  {
+public class FeatGenoStatistics {
 
     private Genotype genotype;
     private Feature feature;
@@ -28,7 +32,7 @@ public  class FeatGenoStatistics  {
     private int numberOfImgFigures;
     private int numberOfImages;
     private int numberOfExpImgs;
-    private Figure figure ;
+    private Figure figure;
     private Figure imgfigure;
     private Figure expimg;
     private Figure expFigure;
@@ -47,10 +51,9 @@ public  class FeatGenoStatistics  {
     private Boolean isImageExp;
 
 
-
     public FeatGenoStatistics(Genotype genotype, Feature feature) {
         this.genotype = genotype;
-        this.feature=feature;
+        this.feature = feature;
     }
 
     public Genotype getGenotype() {
@@ -58,12 +61,11 @@ public  class FeatGenoStatistics  {
     }
 
 
-
     public int getNumberOfFigures() {
         if (figureResults == null) {
             figureResults = RepositoryFactory.getPublicationRepository().getFiguresByGeno(genotype);
         }
-        numberOfFigures=figureResults.getTotalCount();
+        numberOfFigures = figureResults.getTotalCount();
         return numberOfFigures;
 
     }
@@ -72,19 +74,20 @@ public  class FeatGenoStatistics  {
         if (expfigureResults == null) {
             expfigureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoExp(genotype);
         }
-        numberOfExpFigures=expfigureResults.getTotalCount();
+        numberOfExpFigures = expfigureResults.getTotalCount();
         return numberOfExpFigures;
     }
 
-    public Boolean getIsMorpholino(){
+    public Boolean getIsMorpholino() {
 
         morphfigureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoMorph(genotype);
-        numberOfMorphFigures=morphfigureResults.getTotalCount();
-        if (numberOfMorphFigures !=0){
-            return   isMorpholino=true;
+        numberOfMorphFigures = morphfigureResults.getTotalCount();
+        if (numberOfMorphFigures != 0) {
+            return isMorpholino = true;
         }
         return isMorpholino;
     }
+
     /**
      * @return There should be a single figure per GenotypeStatistics
      */
@@ -95,39 +98,39 @@ public  class FeatGenoStatistics  {
         if (figureResults == null || figureResults.getTotalCount() != 1) {
             throw new RuntimeException("Can call this method only when there is exactly one figure");
         }
-        figure= figureResults.getPopulatedResults().get(0);
-        return figure ;
+        figure = figureResults.getPopulatedResults().get(0);
+        return figure;
     }
 
 
-    public Boolean getIsImage(){
-        isImage=false;
+    public Boolean getIsImage() {
+        isImage = false;
         imgfigureResults = RepositoryFactory.getPublicationRepository().getFiguresByGeno(genotype);
-        numberOfImgFigures=imgfigureResults.getTotalCount();
+        numberOfImgFigures = imgfigureResults.getTotalCount();
         /*     if (figureResults == null || figureResults.getTotalCount() != 1) {
             throw new RuntimeException("Can call this method only when there is exactly one figure");
         }*/
-        if (numberOfImgFigures != 0){
-            imgfigure= imgfigureResults.getPopulatedResults().get(0);
+        if (numberOfImgFigures != 0) {
+            imgfigure = imgfigureResults.getPopulatedResults().get(0);
             if (imgfigure.getImages() != null && imgfigure.getImages().size() > 0) {
-                return isImage=true;
+                return isImage = true;
             }
         }
         return isImage;
     }
 
 
-    public Boolean getIsImageExp(){
-        isImageExp=false;
+    public Boolean getIsImageExp() {
+        isImageExp = false;
         expimgfigureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoExp(genotype);
-        numberOfExpImgs=expimgfigureResults.getTotalCount();
+        numberOfExpImgs = expimgfigureResults.getTotalCount();
         /*     if (figureResults == null || figureResults.getTotalCount() != 1) {
             throw new RuntimeException("Can call this method only when there is exactly one figure");
         }*/
-        if (numberOfExpImgs != 0){
-            expimg= expimgfigureResults.getPopulatedResults().get(0);
+        if (numberOfExpImgs != 0) {
+            expimg = expimgfigureResults.getPopulatedResults().get(0);
             if (expimg.getImages() != null && expimg.getImages().size() > 0) {
-                return isImageExp=true;
+                return isImageExp = true;
             }
         }
         return isImageExp;
@@ -141,10 +144,9 @@ public  class FeatGenoStatistics  {
         if (expfigureResults == null || expfigureResults.getTotalCount() != 1) {
             throw new RuntimeException("Can call this method only when there is exactly one figure");
         }
-        expFigure= expfigureResults.getPopulatedResults().get(0);
+        expFigure = expfigureResults.getPopulatedResults().get(0);
         return expFigure;
     }
-
 
 
     protected PaginationResult<Publication> getPublicationPaginationResult() {
@@ -160,7 +162,6 @@ public  class FeatGenoStatistics  {
     }
 
 
-
     public List<Marker> getAffectedMarkers() {
         Set<GenotypeFeature> features = genotype.getGenotypeFeatures();
         List<Marker> markers = new ArrayList<Marker>();
@@ -174,14 +175,13 @@ public  class FeatGenoStatistics  {
                     markers.add(marker);
                 }
             }
-            List<Marker> mkr=RepositoryFactory.getMutantRepository().getDeletedMarker(feature);
-            if (mkr!=null)
+            List<Marker> mkr = RepositoryFactory.getMutantRepository().getDeletedMarker(feature);
+            if (mkr != null)
                 for (Marker mark : mkr)
                     markers.add(mark);
         }
         return markers;
     }
-
 
 
     public int getNumberOfPublications() {
@@ -219,7 +219,7 @@ public  class FeatGenoStatistics  {
         }
         if (publications == null || publications.size() != 1)
             throw new RuntimeException("Can call this method only when there is exactly one publication");
-        singlePublication=publications.iterator().next();
+        singlePublication = publications.iterator().next();
         return singlePublication;
     }
 
@@ -230,7 +230,7 @@ public  class FeatGenoStatistics  {
         }
         if (exppublications == null || exppublications.size() != 1)
             throw new RuntimeException("Can call this method only when there is exactly one publication");
-        singleExpPublication= exppublications.iterator().next();
+        singleExpPublication = exppublications.iterator().next();
         return singleExpPublication;
     }
 
@@ -243,6 +243,7 @@ public  class FeatGenoStatistics  {
             throw new RuntimeException("Can call this method only when there is exactly one publication");
         return pubs.iterator().next();
     }
+
     public Publication getSingleExpPub() {
         if (pubs == null || pubs.size() != 1)
             throw new RuntimeException("Can call this method only when there is exactly one publication");
@@ -266,8 +267,8 @@ public  class FeatGenoStatistics  {
 
 
     public int getNumberOfImages() {
-        numberOfImages=images.size();
-        return  numberOfImages;
+        numberOfImages = images.size();
+        return numberOfImages;
     }
 
     public Image getImage() {

@@ -3,8 +3,8 @@ package org.zfin.people.presentation;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import org.zfin.people.Person;
 import org.zfin.people.AccountInfo;
+import org.zfin.people.Person;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
 

@@ -1,7 +1,5 @@
 package org.zfin.expression;
 
-import org.zfin.marker.Marker;
-
 /**
  * ToDo: Please add documentation for this class.
  */

@@ -1,25 +1,24 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.sequence.MarkerDBLinkList;
-import org.zfin.marker.Clone;
-import org.zfin.expression.presentation.MarkerExpression;
-import org.zfin.mapping.MappedMarker;
-import org.zfin.mapping.presentation.MappedMarkerBean;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
+import org.zfin.expression.presentation.MarkerExpression;
+import org.zfin.mapping.presentation.MappedMarkerBean;
+import org.zfin.marker.Clone;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.MarkerDBLinkList;
 
 /**
  */
-public class CloneViewBean extends MarkerBean{
+public class CloneViewBean extends MarkerBean {
 
     // list
     //protected List<MarkerRelationship> markerRelationships;
-    private SequenceInfo sequenceInfo ;
-    private int numPubs ;
+    private SequenceInfo sequenceInfo;
+    private int numPubs;
     private MarkerDBLinkList otherTranscripts;
-    private boolean isThisseProbe ;
+    private boolean isThisseProbe;
     private MarkerExpression markerExpression;
     private RelatedMarkerDisplay markerRelationships;
     private MappedMarkerBean mappedMarkerBean;
@@ -59,11 +58,11 @@ public class CloneViewBean extends MarkerBean{
     }
 
     public Clone getClone() {
-        return (Clone) marker ;
+        return (Clone) marker;
     }
 
     public void setClone(Clone clone) {
-        this.marker = clone ;
+        this.marker = clone;
     }
 
     public boolean isThisseProbe() {

@@ -7,8 +7,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.ZfinSession;
-import org.zfin.people.Person;
 import org.zfin.people.AccountInfo;
+import org.zfin.people.Person;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.repository.UserRepository;
@@ -17,9 +17,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Date;
 
 /**
  * This class is needed to add a new cookie to the response object when the
@@ -67,6 +67,7 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
      * Pass in a Tomcat cookie and return an apg cookie.
      * APG cookies are shorter than Tomcat cookies and typically
      * are truncated.
+     *
      * @param id Tomcat cookie
      * @return
      */
@@ -79,6 +80,7 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
     // with the now known user name and userID.
     // updating the cookie into the user and creating or updating the session
     // is done in a single transcation.
+
     private void setCookieAndSession(String login, String sessionID, String value) {
 
         Session session = HibernateUtil.currentSession();
@@ -122,7 +124,7 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
         return authenticatedSessions;
     }
 
-    public static void addAuthenticatedSession(String sessionID){
+    public static void addAuthenticatedSession(String sessionID) {
         ZfinSession newSession = new ZfinSession();
         newSession.setSessionID(sessionID);
         authenticatedSessions.put(sessionID, newSession);

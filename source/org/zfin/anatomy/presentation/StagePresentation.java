@@ -1,7 +1,7 @@
 package org.zfin.anatomy.presentation;
 
-import org.zfin.anatomy.DevelopmentStage;
 import org.apache.commons.lang.StringUtils;
+import org.zfin.anatomy.DevelopmentStage;
 
 /**
  * This class contains methods being used for display purposes.

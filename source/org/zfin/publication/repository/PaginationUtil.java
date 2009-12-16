@@ -1,7 +1,7 @@
 package org.zfin.publication.repository;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,7 +41,7 @@ public class PaginationUtil {
         this.usePagination = usePagination;
     }
 
-    public void addOrdering(String orderVariable){
+    public void addOrdering(String orderVariable) {
         orderBy.add(orderVariable);
     }
 
@@ -49,11 +49,11 @@ public class PaginationUtil {
         orderBy.clear();
     }
 
-    public String getOrderByClause(){
+    public String getOrderByClause() {
         StringBuilder sb = new StringBuilder();
-        if(orderBy.size() > 0){
+        if (orderBy.size() > 0) {
             sb.append(" ORDER BY ");
-            for (String variable: orderBy){
+            for (String variable : orderBy) {
                 sb.append(variable);
             }
         }

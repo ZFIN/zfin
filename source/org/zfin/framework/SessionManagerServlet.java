@@ -3,10 +3,10 @@ package org.zfin.framework;
 import org.apache.catalina.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.ZfinAuthenticationProcessingFilter;
 import org.zfin.security.repository.UserRepository;
-import org.zfin.repository.RepositoryFactory;
-import org.hibernate.HibernateException;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -116,7 +116,7 @@ public class SessionManagerServlet extends HttpServlet implements ContainerServl
             return;
 
         for (Session session : sessions) {
-        ZfinAuthenticationProcessingFilter.addAuthenticatedSession(session.getId());
+            ZfinAuthenticationProcessingFilter.addAuthenticatedSession(session.getId());
             try {
                 org.hibernate.Session hSession = HibernateUtil.currentSession();
                 try {

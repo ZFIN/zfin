@@ -1,16 +1,14 @@
 package org.zfin.framework.presentation.client;
 
-import com.google.gwt.user.client.Window;
-
 /**
  */
-public class LookupInTableComposite extends LookupComposite{
+public class LookupInTableComposite extends LookupComposite {
 
-    LookupTable parentTable ;
+    LookupTable parentTable;
 
-    public LookupInTableComposite(LookupTable parentTable){
-        super() ;
-        this.parentTable = parentTable ;
+    public LookupInTableComposite(LookupTable parentTable) {
+        super();
+        this.parentTable = parentTable;
     }
 
     protected void doSubmit(String text) {

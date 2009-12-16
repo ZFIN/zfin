@@ -3,15 +3,10 @@ package org.zfin.mutant.presentation;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.repository.AntibodyRepository;
-import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This class is a statistics class about Morpholinos on the Anatomy Detail page.

@@ -1,7 +1,7 @@
- package org.zfin.marker;
+package org.zfin.marker;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 public class MarkerType implements Comparable {
 
@@ -11,26 +11,26 @@ public class MarkerType implements Comparable {
     private Set<Marker.TypeGroup> typeGroups;
     private String displayName;
 
-    public String toString(){
-        String returnString = "" ;
-        returnString += "name["+name+"]" ;
-        if(type!=null) returnString += "type["+type.name()+"]" ;
-        if(typeGroupStrings!=null) {
-            returnString += "typeGroupStrings[" ;
-            for(String typeGroupString : typeGroupStrings){
-                returnString += typeGroupString + " " ;
+    public String toString() {
+        String returnString = "";
+        returnString += "name[" + name + "]";
+        if (type != null) returnString += "type[" + type.name() + "]";
+        if (typeGroupStrings != null) {
+            returnString += "typeGroupStrings[";
+            for (String typeGroupString : typeGroupStrings) {
+                returnString += typeGroupString + " ";
             }
-            returnString += "]" ;
+            returnString += "]";
         }
-        if(typeGroups!=null){
-            returnString += "typeGroups[" ;
-            for(Marker.TypeGroup markerTypeGroup : typeGroups){
-                returnString += markerTypeGroup.name() + " " ;
+        if (typeGroups != null) {
+            returnString += "typeGroups[";
+            for (Marker.TypeGroup markerTypeGroup : typeGroups) {
+                returnString += markerTypeGroup.name() + " ";
             }
-            returnString += "]" ;
+            returnString += "]";
         }
 
-        return returnString ;
+        return returnString;
     }
 
     public String getName() {
@@ -82,7 +82,7 @@ public class MarkerType implements Comparable {
 
     //todo: this comparison should be something a little more interesting than type name
     public int compareTo(Object o) {
-        MarkerType mt = (MarkerType)o;
+        MarkerType mt = (MarkerType) o;
         if (mt == null)
             return +1;
         else return displayName.compareTo(mt.getDisplayName());

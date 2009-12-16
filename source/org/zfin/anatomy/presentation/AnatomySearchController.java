@@ -5,18 +5,18 @@ import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.zfin.anatomy.AnatomyStatistics;
-import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.AnatomySynonym;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.presentation.LookupStrings;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Action class that serves the anatomy search page.

@@ -1,6 +1,5 @@
 package org.zfin.sequence;
 
-import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
 

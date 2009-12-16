@@ -3,11 +3,11 @@ package org.zfin.marker;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.EntityStatistics;
+import org.zfin.framework.presentation.FigureStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.framework.presentation.FigureStatistics;
 
 import java.util.List;
 import java.util.Set;
@@ -27,6 +27,7 @@ public class MarkerStatistic extends EntityStatistics {
 
     // Do not use!
     // Only used for Hibernate.
+
     public MarkerStatistic() {
     }
 

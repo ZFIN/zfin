@@ -2,8 +2,8 @@ package org.zfin.infrastructure;
 
 import org.zfin.publication.Publication;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Base class for alias records. You need to extend this class

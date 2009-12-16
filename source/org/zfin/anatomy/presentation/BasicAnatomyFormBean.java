@@ -2,9 +2,7 @@ package org.zfin.anatomy.presentation;
 
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.antibody.Antibody;
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.LinkedHashMap;

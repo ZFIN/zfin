@@ -3,9 +3,9 @@ package org.zfin.framework.presentation.tags;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 
-import javax.servlet.jsp.tagext.TagSupport;
-import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 /**

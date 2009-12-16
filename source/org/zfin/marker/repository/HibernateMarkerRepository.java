@@ -9,24 +9,20 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.ExternalNote;
-import org.zfin.mapping.MappedMarker;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.expression.Figure;
-import org.zfin.expression.Image;
 import org.zfin.expression.FigureFigure;
+import org.zfin.expression.Image;
 import org.zfin.expression.TextOnlyFigure;
 import org.zfin.framework.HibernateUtil;
-
-import static org.zfin.framework.HibernateUtil.currentSession;
-
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.*;
-
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
 import org.zfin.mutant.FeatureMarkerRelationship;
@@ -42,6 +38,8 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 
 public class HibernateMarkerRepository implements MarkerRepository {

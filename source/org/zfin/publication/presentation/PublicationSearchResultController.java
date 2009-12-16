@@ -1,20 +1,21 @@
 package org.zfin.publication.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.validation.BindException;
 import org.apache.log4j.Logger;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.publication.Publication;
-import org.zfin.marker.Marker;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.marker.Marker;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Action class that serves the page that displays a list of publications.
@@ -48,7 +49,7 @@ public class PublicationSearchResultController extends AbstractCommandController
         List<Publication> publications = marker.getPublications(form.getAnatomyItem().getZdbID());
         Collections.sort(publications, new SortPublicationResults("date", true));
         form.setPublications(publications);
-        int totalNumberOfPublication = pr.getNumberOfExpressedGenePublications(form.getMarker().getZdbID(), form.getAnatomyItem().getZdbID() );
+        int totalNumberOfPublication = pr.getNumberOfExpressedGenePublications(form.getMarker().getZdbID(), form.getAnatomyItem().getZdbID());
         form.setTotalRecords(totalNumberOfPublication);
         form.addRequestParameter("anatomyItem.zdbID", ai.getZdbID());
         form.addRequestParameter("marker.zdbID", marker.getZdbID());

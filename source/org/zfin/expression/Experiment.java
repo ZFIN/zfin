@@ -2,10 +2,10 @@ package org.zfin.expression;
 
 import org.zfin.publication.Publication;
 
-import java.util.Set;
-import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Domain object.
@@ -64,8 +64,8 @@ public class Experiment {
 
         Set<ExperimentCondition> morpholinoConditions = new HashSet<ExperimentCondition>();
         for (ExperimentCondition cond : experimentConditions) {
-            if(cond.getMorpholino() != null)
-                 morpholinoConditions.add(cond);
+            if (cond.getMorpholino() != null)
+                morpholinoConditions.add(cond);
         }
         return morpholinoConditions;
     }

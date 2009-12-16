@@ -1,7 +1,6 @@
 package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.biojava.bio.BioException;
 import org.biojavax.SimpleNamespace;
@@ -40,10 +39,11 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
     protected String keyPath = "";
 
-    private int maxAttempts = 5 ;
+    private int maxAttempts = 5;
 
 
     // regeneration methods
+
     protected abstract File dumpDatabaseAsFastaForAccessions(Database database, File accessionFile) throws IOException;
 
     protected abstract void createDatabaseFromFasta(Database database, File fastaFile) throws BlastDatabaseException;
@@ -65,6 +65,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
 
     // appending methods
+
     /**
      * This methods obliterats
      *
@@ -83,6 +84,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
     protected abstract void appendDatabase(Database oldDatabase, Database newDatabase) throws BlastDatabaseException;
 
     // specific commands
+
     protected List<String> getPrefixCommands() {
         return prefixCommands;
     }
@@ -386,7 +388,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
             logger.info("validating: " + database.getName());
             validateDatabase(database);
         }
-        return true ;
+        return true;
     }
 
 
@@ -607,7 +609,6 @@ public abstract class AbstractWublastBlastService implements BlastService {
         if (blastResultFile == null) {
             blastResultFile = File.createTempFile("blast", ".xml");
             logger.debug("setting blast result file: " + blastResultFile);
-            ;
             xmlBlastBean.setResultFile(blastResultFile);
         }
     }
@@ -667,34 +668,33 @@ public abstract class AbstractWublastBlastService implements BlastService {
                 }
             }
         } catch (Exception e) {
-            logger.warn(e.fillInStackTrace().toString());
+            logger.warn("Unable to get sequences from dblinks", e);
             throw new BlastDatabaseException("Failed to get Sequences for accession and reference DB, remote or local", e);
         }
         return sequences;
     }
 
-    public String robustlyBlastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException , BusException{
-        String xml = null ;
-        for(int attempts = 0 ; xml==null && attempts<maxAttempts ; ++attempts){
+    public String robustlyBlastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException, BusException {
+        String xml = null;
+        for (int attempts = 0; xml == null && attempts < maxAttempts; ++attempts) {
             try {
-                xml = MountedWublastBlastService.getInstance().blastOneDBToString(xmlBlastBean,database) ;
+                xml = MountedWublastBlastService.getInstance().blastOneDBToString(xmlBlastBean, database);
             } catch (BusException e) {
-                if(attempts==maxAttempts-1){
+                if (attempts == maxAttempts - 1) {
 //                    throw new BlastDatabaseException("too many bus errors: "+maxAttempts + " for ticket: "+ xmlBlastBean.getTicketNumber()+"\n"+xmlBlastBean) ;
-                    throw new BusException("too many bus errors: "+maxAttempts + " for ticket: "+ xmlBlastBean.getTicketNumber()+"\n"+xmlBlastBean,e.getReturnXML()) ;
-                }
-                else{
-                    logger.warn("Bus exception for ticket, re-submitting ticket: "+xmlBlastBean.getTicketNumber(),e);
+                    throw new BusException("too many bus errors: " + maxAttempts + " for ticket: " + xmlBlastBean.getTicketNumber() + "\n" + xmlBlastBean, e.getReturnXML());
+                } else {
+                    logger.warn("Bus exception for ticket, re-submitting ticket: " + xmlBlastBean.getTicketNumber(), e);
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException ie) {
-                        throw new BlastDatabaseException("sleeping thread interrupted for ticket: "+
-                                xmlBlastBean.getTicketNumber()+"\n"+xmlBlastBean,ie.fillInStackTrace()) ;
+                        throw new BlastDatabaseException("sleeping thread interrupted for ticket: " +
+                                xmlBlastBean.getTicketNumber() + "\n" + xmlBlastBean, ie);
                     }
                 }
             }
         }
-        return xml ;
+        return xml;
     }
 
     public List<Sequence> getSequencesForMarker(Marker marker, ReferenceDatabase... referenceDatabases) throws BlastDatabaseException {
@@ -744,7 +744,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
      * @throws org.zfin.sequence.blast.BlastDatabaseException
      *
      */
-    public String blastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException , BusException {
+    public String blastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException, BusException {
         throw new BlastDatabaseException("Function not implemented");
     }
 
@@ -781,7 +781,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
             return execProcess.getSequences();
         }
         catch (Exception e) {
-            logger.error("Failed to retrieve sequences with command ["+commandList.toString().toString().replaceAll(",", " ") + "\n", e.fillInStackTrace());
+            logger.error("Failed to retrieve sequences with command [" + commandList.toString().toString().replaceAll(",", " ") + "\n", e);
             return new ArrayList<Sequence>();
         }
         finally {
@@ -858,17 +858,17 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
 
     public String removeLeadingNumbers(String fileData) {
-        String[] lines = fileData.split("\n") ;
-        StringBuilder sb = new StringBuilder() ;
-        for(String line: lines){
-            line = line.trim() ;
-            if(line.indexOf(">")<0){
+        String[] lines = fileData.split("\n");
+        StringBuilder sb = new StringBuilder();
+        for (String line : lines) {
+            line = line.trim();
+            if (line.indexOf(">") < 0) {
                 line = line.replaceAll("[0-9]", "").trim();
             }
-            sb.append(line).append("\n")  ;
+            sb.append(line).append("\n");
         }
-        logger.debug("input:\n["+fileData+"]");
-        logger.debug("output:\n["+sb.toString()+"]");
+        logger.debug("input:\n[" + fileData + "]");
+        logger.debug("output:\n[" + sb.toString() + "]");
         return sb.toString();
     }
 

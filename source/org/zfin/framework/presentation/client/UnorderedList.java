@@ -1,8 +1,8 @@
 package org.zfin.framework.presentation.client;
 
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.DOM;
 
 /**
  * ToDo: ADD DOCUMENTATION!

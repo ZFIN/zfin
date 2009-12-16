@@ -2,18 +2,18 @@ package org.zfin.marker;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.zfin.sequence.*;
-import org.zfin.marker.presentation.*;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.repository.RepositoryFactory;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.AttributionService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.people.Person;
-import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.mapping.presentation.MappedMarkerBean;
+import org.zfin.mapping.repository.LinkageRepository;
+import org.zfin.marker.presentation.*;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.people.Person;
 import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.*;
 
 import java.util.*;
 
@@ -33,12 +33,12 @@ public class MarkerService {
      * @return Retuns set of marker relationships related by GENEDOM.
      */
     public static Set<MarkerRelationship> getRelatedGenedomMarkerRelations(Marker marker) {
-        Set<MarkerRelationship> markerRelationships= new HashSet<MarkerRelationship>();
+        Set<MarkerRelationship> markerRelationships = new HashSet<MarkerRelationship>();
         Set<MarkerRelationship> relationTwo = marker.getSecondMarkerRelationships();
 
-        if (relationTwo != null){
-            for (MarkerRelationship rel : relationTwo){
-                if(rel.getFirstMarker().isInTypeGroup(Marker.TypeGroup.GENEDOM)){
+        if (relationTwo != null) {
+            for (MarkerRelationship rel : relationTwo) {
+                if (rel.getFirstMarker().isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                     markerRelationships.add(rel);
                 }
             }
@@ -48,11 +48,10 @@ public class MarkerService {
     }
 
     public static SequenceInfo getSequenceInfo(Marker marker) {
-        SequenceInfo sequenceInfo = new SequenceInfo() ;
+        SequenceInfo sequenceInfo = new SequenceInfo();
 
 
-
-        if(marker.getDbLinks()!=null){
+        if (marker.getDbLinks() != null) {
             logger.debug(marker.getDbLinks().size() + " total marker dblinks");
             for (MarkerDBLink dblink : marker.getDbLinks()) {
                 if (dblink.getReferenceDatabase().getForeignDBDataType().getSuperType().equals(ForeignDBDataType.SuperType.SEQUENCE))
@@ -62,7 +61,7 @@ public class MarkerService {
 
         logger.debug(sequenceInfo.size() + " marker linked sequence dblinks");
 
-        return sequenceInfo ;
+        return sequenceInfo;
     }
 
 
@@ -125,8 +124,9 @@ public class MarkerService {
     /**
      * Retried a target marker that is related to the source marker via a single relationship type
      * (this is a convenience method for passing only a single type into getRelatedMarker(marker, types))
- * @param type Type of marker relationship
- * @return Gets a set of related markers by type.
+     *
+     * @param type Type of marker relationship
+     * @return Gets a set of related markers by type.
      */
     public static Set<Marker> getRelatedMarker(Marker marker, MarkerRelationship.Type type) {
         TreeSet<MarkerRelationship.Type> types = new TreeSet<MarkerRelationship.Type>();
@@ -137,14 +137,14 @@ public class MarkerService {
 
     /**
      * Get RelatedMarker TreeSet (ordered) for a specific relationship type.
-     *
+     * <p/>
      * This queries for the incoming marker in both the first and second positions,
      * often, this will get you exactly what you want.  Use care if you use this
      * method for a situation like overlapping clones, where the marker coming in
      * is likely to occur on both sides of the relationship.
      *
      * @param marker "this" marker, RelatedMarker.getMarker() will get you the "other" marker.
-     * @param type MarkerRelationship type
+     * @param type   MarkerRelationship type
      * @return ordered set of RelatedMarkers
      */
     public static TreeSet<RelatedMarker> getRelatedMarkers(Marker marker, MarkerRelationship.Type type) {
@@ -152,11 +152,11 @@ public class MarkerService {
 
         for (MarkerRelationship mrel : marker.getFirstMarkerRelationships()) {
             if (mrel.getType().equals(type))
-                relatedMarkers.add(new RelatedMarker(marker,mrel));
+                relatedMarkers.add(new RelatedMarker(marker, mrel));
         }
         for (MarkerRelationship mrel : marker.getSecondMarkerRelationships()) {
             if (mrel.getType().equals(type)) {
-                relatedMarkers.add(new RelatedMarker(marker,mrel));
+                relatedMarkers.add(new RelatedMarker(marker, mrel));
             }
         }
 
@@ -192,22 +192,19 @@ public class MarkerService {
         Set<Marker> genes = getRelatedMarker(clone, types);
 
         if (CollectionUtils.isEmpty(genes)) {
-            return genes ;
+            return genes;
         }
 
-        if(genes.size()>1){
-            logger.info("clone "+clone.toString()+" \n has more than one genes associated [" + genes.size()+"]");
+        if (genes.size() > 1) {
+            logger.info("clone " + clone.toString() + " \n has more than one genes associated [" + genes.size() + "]");
         }
-        return genes ;
+        return genes;
     }
-
-
-
 
 
     /**
      * Retrieve LG for clone or gene.
-     *
+     * <p/>
      * If a clone it returns all LinkageGroups contained by or encoded by the clone's small segments.
      *
      * @param marker Marker
@@ -215,14 +212,14 @@ public class MarkerService {
      */
     public static Set<LinkageGroup> getLinkageGroups(Marker marker) {
         LinkageRepository lr = RepositoryFactory.getLinkageRepository();
-        if (marker == null){
+        if (marker == null) {
             return null;
         }
 
         Set<LinkageGroup> groups = new TreeSet<LinkageGroup>();
         // if it is a clone (non-gene) check lg for clone first then the gene.
         Set<String> linkageGroups = lr.getLG(marker);
-        if(marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)){
+        if (marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
             // if no linkage group found for transcript
             // check the associated gene
             if (CollectionUtils.isEmpty(linkageGroups)) {
@@ -230,22 +227,20 @@ public class MarkerService {
 //                Set<Marker> genes = getRelatedSmallSegmentGenesFromClone(marker);S
 
                 Set<Marker> genes = TranscriptService.getRelatedGenesFromTranscript(markerRepository.getTranscriptByZdbID(marker.getZdbID()));
-                for(Marker gene: genes){
+                for (Marker gene : genes) {
                     if (gene != null) {
 //                        linkageGroups = mr.getLG(gene);
                         linkageGroups.addAll(lr.getLG(gene));
                     }
                 }
             }
-        }
-        else
-        if (!marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+        } else if (!marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             // if no linkage group found for clone
             // check the associated gene
             if (CollectionUtils.isEmpty(linkageGroups)) {
 //                Marker gene = getRelatedGeneFromClone(marker);
                 Set<Marker> genes = getRelatedSmallSegmentGenesFromClone(marker);
-                for(Marker gene: genes){
+                for (Marker gene : genes) {
                     if (gene != null) {
 //                        linkageGroups = mr.getLG(gene);
                         linkageGroups.addAll(lr.getLG(gene));
@@ -264,34 +259,35 @@ public class MarkerService {
         return groups;
     }
 
-    public static MappedMarkerBean getMappedMarkers(Marker marker){
-        LinkageRepository linkageRepository = RepositoryFactory.getLinkageRepository() ;
+    public static MappedMarkerBean getMappedMarkers(Marker marker) {
+        LinkageRepository linkageRepository = RepositoryFactory.getLinkageRepository();
 
-        MappedMarkerBean mappedMarkerBean = new MappedMarkerBean() ;
-        List<String> directMappedMarkers = linkageRepository.getDirectMappedMarkers(marker) ;
-        mappedMarkerBean.setHasMappedMarkers( (directMappedMarkers.size() > 0) );
-        mappedMarkerBean.setMarker( marker );
-        mappedMarkerBean.setUnMappedMarkers( new ArrayList<String>(linkageRepository.getLG(marker)));
+        MappedMarkerBean mappedMarkerBean = new MappedMarkerBean();
+        List<String> directMappedMarkers = linkageRepository.getDirectMappedMarkers(marker);
+        mappedMarkerBean.setHasMappedMarkers((directMappedMarkers.size() > 0));
+        mappedMarkerBean.setMarker(marker);
+        mappedMarkerBean.setUnMappedMarkers(new ArrayList<String>(linkageRepository.getLG(marker)));
 
-        return mappedMarkerBean ;
+        return mappedMarkerBean;
     }
 
-    /**  Cleans up dblink records that shouldn't exist.
+    /**
+     * Cleans up dblink records that shouldn't exist.
+     * <p/>
+     * turns:
+     * accession ---------------------------> gene
+     * `---------> segment -------------^
+     * <p/>
+     * into:
+     * accession--------> segment ---------> gene
+     * <p/>
+     * (an accession is connected to a gene the good way, through a marker relationship
+     * and also connected directly.  We want to remove the direct connection)
+     * <p/>
+     * There is one case where the link is not removed, if the dblink between
+     * the accession & gene is attributed to a journal publication.
      *
-     *   turns:
-     *   accession ---------------------------> gene
-     *          `---------> segment -------------^
-     *
-     *   into:
-     *   accession--------> segment ---------> gene
-     *
-     *  (an accession is connected to a gene the good way, through a marker relationship
-     *   and also connected directly.  We want to remove the direct connection)
-     *
-     *  There is one case where the link is not removed, if the dblink between
-     *  the accession & gene is attributed to a journal publication.
-     *
-     * @param gene Gene to remove unnecessary dblinks from
+     * @param gene       Gene to remove unnecessary dblinks from
      * @param accessions Set of accessions to check for redundancy in
      */
     public static void removeRedundantDBLinks(Marker gene, Set<Accession> accessions) {
@@ -304,7 +300,7 @@ public class MarkerService {
                         && acc.getBlastableMarkers().contains(segment)) {
                     //Now we have an accession connected to a gene both directly
                     //and through a marker relationship.
-                    for (MarkerDBLink dblink : acc.getBlastableMarkerDBLinks() ) {
+                    for (MarkerDBLink dblink : acc.getBlastableMarkerDBLinks()) {
                         if (AttributionService.dataSupportedOnlyByCurationPubs(dblink.getZdbID())
                                 && dblink.getMarker().equals(gene)) {
                             logger.info("deleting " + dblink.getZdbID()
@@ -320,13 +316,14 @@ public class MarkerService {
 
     /**
      * Adds an attribution for a marker relationship of a given type.
-     * @param marker1  First marker in marker relationship.
-     * @param marker2  Second marker in marker relationship.
-     * @param pubZdbID  Attribute Pub ZdbID.
-     * @param markerRelationshipType   Marker relationship type to create.
+     *
+     * @param marker1                First marker in marker relationship.
+     * @param marker2                Second marker in marker relationship.
+     * @param pubZdbID               Attribute Pub ZdbID.
+     * @param markerRelationshipType Marker relationship type to create.
      */
     public static void addMarkerRelationship(Marker marker1, Marker marker2, String pubZdbID,
-                                                        MarkerRelationship.Type markerRelationshipType){
+                                             MarkerRelationship.Type markerRelationshipType) {
         // adds the marker relation and attributes it
 //        MarkerRelationship markerRelationship = RepositoryFactory.getMarkerRepository().getSpecificMarkerRelationship(marker1,marker2,markerRelationshipType) ;
         MarkerRelationship markerRelationship = new MarkerRelationship();
@@ -340,35 +337,37 @@ public class MarkerService {
 
     /**
      * Adds an attribution for a marker relationship of a given type.
-     * @param marker1  First marker in marker relationship.
-     * @param marker2  Second marker in marker relationship.
-     * @param pubZdbID  Attribute Pub ZdbID.
-     * @param markerRelationshipType   Marker relationship type to create.
+     *
+     * @param marker1                First marker in marker relationship.
+     * @param marker2                Second marker in marker relationship.
+     * @param pubZdbID               Attribute Pub ZdbID.
+     * @param markerRelationshipType Marker relationship type to create.
      */
     public static void addMarkerRelationshipAttribution(Marker marker1, Marker marker2, String pubZdbID,
-                                          MarkerRelationship.Type markerRelationshipType){
-        MarkerRelationship markerRelationship = RepositoryFactory.getMarkerRepository().getMarkerRelationship(marker1,marker2,markerRelationshipType) ;
+                                                        MarkerRelationship.Type markerRelationshipType) {
+        MarkerRelationship markerRelationship = RepositoryFactory.getMarkerRepository().getMarkerRelationship(marker1, marker2, markerRelationshipType);
         //now deal with attribution
-        if(pubZdbID!=null && pubZdbID.length()>0){
+        if (pubZdbID != null && pubZdbID.length() > 0) {
             infrastructureRepository.insertRecordAttribution(markerRelationship.getZdbID(), pubZdbID);
         }
     }
 
     /**
      * Removes a reference of marker relationship of a given type.
-     * @param marker1  First marker in marker relationship.
-     * @param marker2  Second marker in marker relationship.
-     * @param pubZdbID  Attribute Pub ZdbID.
-     * @param markerRelationshipType   Marker relationship type to remove.
+     *
+     * @param marker1                First marker in marker relationship.
+     * @param marker2                Second marker in marker relationship.
+     * @param pubZdbID               Attribute Pub ZdbID.
+     * @param markerRelationshipType Marker relationship type to remove.
      */
     public static void deleteMarkerRelationshipAttribution(Marker marker1, Marker marker2, String pubZdbID,
-                                             MarkerRelationship.Type markerRelationshipType){
-        MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1,marker2,markerRelationshipType) ;
+                                                           MarkerRelationship.Type markerRelationshipType) {
+        MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2, markerRelationshipType);
 
         //now deal with attribution
-        if(pubZdbID!=null && pubZdbID.length()>0){
+        if (pubZdbID != null && pubZdbID.length() > 0) {
             int deletedRecord = infrastructureRepository.deleteRecordAttribution(markerRelationship.getZdbID(), pubZdbID);
-            logger.info("deleted record attrs: "+deletedRecord);
+            logger.info("deleted record attrs: " + deletedRecord);
         }
     }
 
@@ -380,9 +379,10 @@ public class MarkerService {
     /**
      * Strange that it takes ids as strings, but until we have full access to entity objects in gwt,
      * this makes the code quite a bit smaller
+     *
      * @param marker1 marker in first position
      * @param marker2 marker in second position
-     * @param type type of relationship
+     * @param type    type of relationship
      */
     public static void deleteMarkerRelationship(Marker marker1, Marker marker2, MarkerRelationship.Type type) {
         MarkerRelationship mrel = RepositoryFactory.getMarkerRepository().getMarkerRelationship(marker1, marker2, type);
@@ -390,27 +390,27 @@ public class MarkerService {
     }
 
     public static Clone createClone(CloneAddBean cloneAddBean) {
-        Clone clone = new Clone() ;
+        Clone clone = new Clone();
         clone.setName(cloneAddBean.getName());
         clone.setAbbreviation(cloneAddBean.getName());
         clone.setProbeLibrary(RepositoryFactory.getMarkerRepository().getProbeLibrary(cloneAddBean.getLibraryZdbID()));
 
-        Person person = RepositoryFactory.getProfileRepository().getPerson(cloneAddBean.getOwnerZdbID()) ;
-        clone.setOwner(person) ;
+        Person person = RepositoryFactory.getProfileRepository().getPerson(cloneAddBean.getOwnerZdbID());
+        clone.setOwner(person);
 
         // set marker types
-        Marker.Type markerType = Marker.Type.getType(cloneAddBean.getMarkerType()) ;
-        MarkerType realMarkerType = new MarkerType() ;
+        Marker.Type markerType = Marker.Type.getType(cloneAddBean.getMarkerType());
+        MarkerType realMarkerType = new MarkerType();
         realMarkerType.setName(cloneAddBean.getMarkerType());
         realMarkerType.setType(markerType);
         Set<Marker.TypeGroup> typeGroup = new HashSet<Marker.TypeGroup>();
-        typeGroup.add(Marker.TypeGroup.getType(cloneAddBean.getMarkerType())) ;
+        typeGroup.add(Marker.TypeGroup.getType(cloneAddBean.getMarkerType()));
         realMarkerType.setTypeGroups(typeGroup);
         clone.setMarkerType(realMarkerType);
 
-        HibernateUtil.currentSession().save(clone) ;
+        HibernateUtil.currentSession().save(clone);
 
-        return clone ;
+        return clone;
     }
 
     public static Set<Publication> getAliasAttributions(Marker marker) {
@@ -448,7 +448,7 @@ public class MarkerService {
                     publications.add(pubAttr.getPublication());
             }
         }
-        
+
         return publications;
     }
 
@@ -467,15 +467,15 @@ public class MarkerService {
     }
 
 
-    public static List<String> getCloneMarkerTypes(){
+    public static List<String> getCloneMarkerTypes() {
         // set clone marker types
-        List<String> typeList = new ArrayList<String>() ;
+        List<String> typeList = new ArrayList<String>();
         typeList.add(Marker.Type.BAC.toString());
         typeList.add(Marker.Type.PAC.toString());
         typeList.add(Marker.Type.FOSMID.toString());
         typeList.add(Marker.Type.EST.toString());
         typeList.add(Marker.Type.CDNA.toString());
-        return typeList ;
+        return typeList;
     }
 
 

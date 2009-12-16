@@ -187,7 +187,6 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
                 returnValue = execProcess.exec();
                 logger.debug("return value: " + returnValue);
             } catch (Exception e) {
-                e.fillInStackTrace();
                 String errorString = "";
                 errorString += "command line:[" + commandLine.toString().replaceAll(",", " ") + "]\n";
                 String standardError = execProcess.getStandardError();
@@ -208,9 +207,8 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
                 xmlBlastBean.setErrorString(standardError);
             }
             // bus error
-            else
-            if(returnValue== WuBlastExitEnum.BUS_ERROR.getValue()){
-                logger.warn("bus exception for, will we re-run?: "+xmlBlastBean.getTicketNumber());
+            else if (returnValue == WuBlastExitEnum.BUS_ERROR.getValue()) {
+                logger.warn("bus exception for, will we re-run?: " + xmlBlastBean.getTicketNumber());
                 xmlBlastBean.setErrorString("Some hits may not be shown due to a system error.  You may wish to resubmit the job.");
             }
 
@@ -220,15 +218,15 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
             String returnXML = fixBlastXML(execProcess.getStandardOutput().trim(), xmlBlastBean);
 
             // bus error
-            if(returnValue== WuBlastExitEnum.BUS_ERROR.getValue()){
-                throw new BusException("Bus Error for blast:\n" + xmlBlastBean  ,returnXML) ;
+            if (returnValue == WuBlastExitEnum.BUS_ERROR.getValue()) {
+                throw new BusException("Bus Error for blast:\n" + xmlBlastBean, returnXML);
             }
 
-            return returnXML ;
+            return returnXML;
 
         }
-        catch(BusException busException){
-            throw busException ;
+        catch (BusException busException) {
+            throw busException;
         }
         catch (Exception e) {
             e.fillInStackTrace();
@@ -244,12 +242,11 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
         commandLine.add(fastaSequenceFile.getAbsolutePath());
         ExecProcess execProcess = new ExecProcess(commandLine);
         logger.info("command line: " + commandLine);
-        logger.debug("exec process: "  +execProcess);
+        logger.debug("exec process: " + execProcess);
         try {
             int returnValue = execProcess.exec();
             logger.debug("return value: " + returnValue);
         } catch (Exception e) {
-            e.fillInStackTrace();
             String errorString = "Failed to fix file permissions\n";
             errorString += "command line:[" + commandLine.toString().replaceAll(",", " ") + "]\n";
             if (execProcess != null) {

@@ -2,27 +2,25 @@ package org.zfin.framework.presentation.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import org.zfin.curation.client.PileConstructionZoneModule;
 
 /**
  */
 public interface LookupServiceAsync {
 
 
-    void getAnatomySuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback<SuggestOracle.Response> async);
+    void getAnatomySuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
-    void getGOSuggestions(SuggestOracle.Request req, boolean wildCard, Ontology ontology, AsyncCallback<SuggestOracle.Response> async);
+    void getGOSuggestions(SuggestOracle.Request req, Ontology ontology, AsyncCallback<SuggestOracle.Response> async);
 
-    void getQualitySuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback<SuggestOracle.Response> async);
+    void getQualitySuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
-    void getMarkerSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback<SuggestOracle.Response> async);
+    void getMarkerSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
-    void getGenedomAndEFGSuggestions(SuggestOracle.Request req, boolean wildCard,
-                                     AsyncCallback<SuggestOracle.Response> async);
+    void getGenedomAndEFGSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
-    void getSupplierSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback<SuggestOracle.Response> async);
+    void getSupplierSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
-    void getFeatureSuggestions(SuggestOracle.Request req, boolean wildCard, AsyncCallback<SuggestOracle.Response> async);
+    void getFeatureSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
     /**
      * Retrieve the terminfo for a given term id and ontology.
@@ -34,6 +32,7 @@ public interface LookupServiceAsync {
     void getTermInfo(Ontology ontology, String termID, AsyncCallback<TermInfo> async);
 
     // validation methods
+
     void validateAnatomyTerm(String term, AsyncCallback<TermStatus> async);
 
     void validateMarkerTerm(String term, AsyncCallback<TermStatus> async);

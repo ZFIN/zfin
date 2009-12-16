@@ -3,10 +3,10 @@ package org.zfin.sequence.blast;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /**
  */

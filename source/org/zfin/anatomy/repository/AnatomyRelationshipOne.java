@@ -1,7 +1,7 @@
 package org.zfin.anatomy.repository;
 
-import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.util.EqualsUtil;
 
 import java.io.Serializable;
@@ -21,7 +21,7 @@ public class AnatomyRelationshipOne extends AnatomyRelationship implements Seria
     private AnatomyRelationshipTypePersistence type;
 
     @Override
-    public AnatomyItem getAnatomyItem(){
+    public AnatomyItem getAnatomyItem() {
         return anatomyItemTwo;
     }
 

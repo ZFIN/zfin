@@ -1,13 +1,13 @@
 package org.zfin.publication.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.validation.BindException;
 import org.apache.log4j.Logger;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.publication.Publication;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,9 +20,10 @@ public class ViewPublicationDetailController extends AbstractCommandController {
     private static Logger LOG = Logger.getLogger(ViewPublicationDetailController.class);
     private PublicationRepository publicationRep = RepositoryFactory.getPublicationRepository();
 
-    public ViewPublicationDetailController(){
+    public ViewPublicationDetailController() {
         setCommandClass(PublicationBean.class);
     }
+
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command,
                                   BindException errors) throws Exception {
 

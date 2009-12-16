@@ -1,26 +1,25 @@
 package org.zfin.sequence;
 
-import java.util.Set;
-
 /**
 
  */
 public class ForeignDB {
 
-    private Long dbID ;
-    private AvailableName dbName ;
+    private Long dbID;
+    private AvailableName dbName;
     private String dbUrlPrefix;
     private String dbUrlSuffix;
     private Integer significance;
-    private String displayName ;
+    private String displayName;
 
-   public Long getDbID() {
+    public Long getDbID() {
         return dbID;
     }
 
     public void setDbID(Long dbID) {
         this.dbID = dbID;
     }
+
     public String getDbUrlPrefix() {
         return dbUrlPrefix;
     }
@@ -56,6 +55,7 @@ public class ForeignDB {
     public String isDisplayName() {
         return displayName;
     }
+
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
@@ -112,8 +112,7 @@ public class ForeignDB {
         WASHU("WashU"),
         WASHUZ("WashUZ"),
         ZF_ESPRESSO("ZF-Espresso"),
-        ZFIN_PROT("ZFIN_PROT"),
-            ;
+        ZFIN_PROT("ZFIN_PROT"),;
 
 
         private final String value;
@@ -121,7 +120,6 @@ public class ForeignDB {
         private AvailableName(String type) {
             this.value = type;
         }
-
 
 
         public String toString() {

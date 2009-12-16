@@ -1,23 +1,22 @@
 package org.zfin.marker;
 
-import org.zfin.Species;
-import org.zfin.mutant.Genotype;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.mutant.Genotype;
 
 /**
  */
 public class ProbeLibrary {
-    private String zdbID ;
-    private String name ;
-    private String url ;
-    private String species ;
-    private String nonZfinStrain ;
-    private Genotype strain ;
-    private String sex ;
-    private String nonZfinTissue ;
-    private AnatomyItem tissue ;
-    private String host ;
-    private String restrictionSites ;
+    private String zdbID;
+    private String name;
+    private String url;
+    private String species;
+    private String nonZfinStrain;
+    private Genotype strain;
+    private String sex;
+    private String nonZfinTissue;
+    private AnatomyItem tissue;
+    private String host;
+    private String restrictionSites;
 
 
     public String getZdbID() {

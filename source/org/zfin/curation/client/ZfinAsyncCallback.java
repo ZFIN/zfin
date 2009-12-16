@@ -1,7 +1,7 @@
 package org.zfin.curation.client;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 
 /**
@@ -21,7 +21,7 @@ public abstract class ZfinAsyncCallback<T> implements AsyncCallback<T> {
         this.errorLabel = errorLabel;
     }
 
-    public void onFailure(Throwable throwable){
+    public void onFailure(Throwable throwable) {
         onFailureCleanup();
         if (handleConnectionError(throwable)) return;
         if (handleDuplicateRecords(throwable)) return;
@@ -31,7 +31,7 @@ public abstract class ZfinAsyncCallback<T> implements AsyncCallback<T> {
 
     private boolean handleDuplicateRecords(Throwable throwable) {
         String message = throwable.getMessage();
-        if(throwable instanceof Exception && message!= null && !message.equals(LOGIN_REQUIRED)){
+        if (throwable instanceof Exception && message != null && !message.equals(LOGIN_REQUIRED)) {
             displayMessage(throwable.getMessage());
             return true;
         }
@@ -46,22 +46,21 @@ public abstract class ZfinAsyncCallback<T> implements AsyncCallback<T> {
         );
     }
 
-    public void displayMessage(String s){
-        if(errorLabel !=null){
+    public void displayMessage(String s) {
+        if (errorLabel != null) {
             errorLabel.setText(s);
-        }
-        else{
+        } else {
             Window.alert(s);
         }
     }
 
-    private boolean checkLogin(Throwable t){
+    private boolean checkLogin(Throwable t) {
         String message = t.getMessage();
         if (message != null && message.indexOf(LOGIN_REQUIRED) > -1) {
             Window.open("/action/login", "_blank", "status=1,toolbar=1,menubar=1,location=1,resizable=0,height=400,width=600");
-            return true ;
+            return true;
         }
-        return false ;
+        return false;
     }
 
     protected abstract void onFailureCleanup();

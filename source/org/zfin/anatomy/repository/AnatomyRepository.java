@@ -1,8 +1,8 @@
 package org.zfin.anatomy.repository;
 
 import org.zfin.anatomy.*;
-import org.zfin.framework.CachedRepository;
 import org.zfin.expression.ExpressionStructure;
+import org.zfin.framework.CachedRepository;
 
 import java.util.List;
 
@@ -223,12 +223,14 @@ public interface AnatomyRepository extends CachedRepository {
 
     /**
      * Create a new structure - post-composed - for the structure pile.
+     *
      * @param structure structure
      */
     void createPileStructure(ExpressionStructure structure);
 
     /**
      * Retrieve an anatomical structure by OBO id;
+     *
      * @param termID obo id
      * @return anatomical structure
      */

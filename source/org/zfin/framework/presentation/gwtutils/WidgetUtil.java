@@ -1,8 +1,6 @@
 package org.zfin.framework.presentation.gwtutils;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.ListBox;
-import org.zfin.curation.client.FxExperimentModule;
 
 /**
  * Some convenience methods to handle widgets.
@@ -13,7 +11,7 @@ public final class WidgetUtil {
     public static final String RED = "red";
     public static final String ERROR = "error";
     public static final String RED_MOLDIFIER = "red-modifier";
-    public static final String GREEN= "green";
+    public static final String GREEN = "green";
     public static final String CSS_CLASS_DELIMITER = " ";
     public static final String RED_HYPERLINK = "red-modifier-hyperlink";
 
@@ -49,7 +47,7 @@ public final class WidgetUtil {
                     cssNames.append(cssName);
                 cssNames.append(CSS_CLASS_DELIMITER);
             }
-            cssNames.deleteCharAt(cssNames.length()-1);
+            cssNames.deleteCharAt(cssNames.length() - 1);
         }
         return cssNames.toString();
     }

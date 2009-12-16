@@ -1,19 +1,17 @@
 package org.zfin.framework.presentation.tags;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerService;
-import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.TranscriptService;
-import org.zfin.repository.RepositoryFactory;
-import org.apache.log4j.Logger;
-import org.apache.commons.collections.CollectionUtils;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.servlet.jsp.tagext.Tag;
 import java.io.IOException;
 import java.util.*;
 
@@ -24,19 +22,20 @@ import java.util.*;
  */
 public class GeneEncodedRelationLinkTag extends BodyTagSupport {
 
-    transient Logger logger = Logger.getLogger(GeneEncodedRelationLinkTag.class) ;
+    transient Logger logger = Logger.getLogger(GeneEncodedRelationLinkTag.class);
 
-    private Accession accession ;
+    private Accession accession;
     private boolean showParenthesis;
 
-    public GeneEncodedRelationLinkTag(){}
+    public GeneEncodedRelationLinkTag() {
+    }
 
-    public void listMarkers(StringBuilder sb, Collection<Marker> markers){
-        if(CollectionUtils.isNotEmpty(markers)){
-            for(Iterator<Marker> iterator = markers.iterator(); iterator.hasNext() ;  ){
+    public void listMarkers(StringBuilder sb, Collection<Marker> markers) {
+        if (CollectionUtils.isNotEmpty(markers)) {
+            for (Iterator<Marker> iterator = markers.iterator(); iterator.hasNext();) {
                 Marker marker = iterator.next();
                 sb.append(MarkerPresentation.getLink(marker));
-                if(iterator.hasNext()){
+                if (iterator.hasNext()) {
                     sb.append(",");
                 }
             }
@@ -48,31 +47,28 @@ public class GeneEncodedRelationLinkTag extends BodyTagSupport {
 
         StringBuilder sb = new StringBuilder();
         try {
-            if (this.accession!= null) {
+            if (this.accession != null) {
                 Set<MarkerDBLink> markerLinks = accession.getBlastableMarkerDBLinks();
-                List<Marker> markers = new ArrayList<Marker>() ;
-                for(MarkerDBLink link : markerLinks){
-                    if(link.getMarker()!=null){
-                        markers.add(link.getMarker()) ;
+                List<Marker> markers = new ArrayList<Marker>();
+                for (MarkerDBLink link : markerLinks) {
+                    if (link.getMarker() != null) {
+                        markers.add(link.getMarker());
                     }
                 }
-                if(markers.size()>0){
+                if (markers.size() > 0) {
 
                     if (showParenthesis) {
                         sb.append("(");
                     }
-                    for(Marker marker: markers){
+                    for (Marker marker : markers) {
                         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                             sb.append(MarkerPresentation.getLink(marker));
-                        }
-                        else
-                        if (marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
-                            Set<Marker> genes = TranscriptService.getRelatedGenesFromTranscript(marker) ;
-                            listMarkers(sb,genes);
-                        }
-                        else {
+                        } else if (marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
+                            Set<Marker> genes = TranscriptService.getRelatedGenesFromTranscript(marker);
+                            listMarkers(sb, genes);
+                        } else {
                             Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(marker);
-                            listMarkers(sb,genes);
+                            listMarkers(sb, genes);
                         }
 
                         if (showParenthesis) {
@@ -81,9 +77,8 @@ public class GeneEncodedRelationLinkTag extends BodyTagSupport {
                     }
                     pageContext.getOut().print(sb);
                     release();
-                }
-                else{
-                    logger.info("No blastable marker found for this accession so displaying error text, instead: "+accession.getNumber());
+                } else {
+                    logger.info("No blastable marker found for this accession so displaying error text, instead: " + accession.getNumber());
                     return EVAL_BODY_INCLUDE;
                 }
             }
@@ -92,12 +87,12 @@ public class GeneEncodedRelationLinkTag extends BodyTagSupport {
             throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
         }
 
-        return Tag.SKIP_BODY ;
+        return Tag.SKIP_BODY;
     }
 
 
-    public Accession getAccession(){
-        return this.accession ;
+    public Accession getAccession() {
+        return this.accession;
     }
 
     public void setAccession(Accession accession) {

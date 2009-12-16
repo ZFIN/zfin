@@ -9,9 +9,9 @@ import org.zfin.orthology.OrthoEvidence;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.Accession;
 import org.zfin.sequence.LinkageGroup;
 import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.Accession;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.reno.presentation.CandidateBean;
@@ -163,7 +163,7 @@ public class RenoService {
     public static void moveNoteToGene(RunCandidate rc, Marker gene) {
 
         logger.info("enter moveNoteToGene");
-        logger.info("existingGene abbrev: " + gene.getAbbreviation() + " "+gene.getZdbID()+ " rc:"+rc.getZdbID());
+        logger.info("existingGene abbrev: " + gene.getAbbreviation() + " " + gene.getZdbID() + " rc:" + rc.getZdbID());
         if (!StringUtils.isEmpty(rc.getCandidate().getNote())) {
             logger.debug("attach a data note to the gene");
             RepositoryFactory.getMarkerRepository().addMarkerDataNote(gene, rc.getCandidate().getNote(), rc.getLockPerson());
@@ -183,7 +183,7 @@ public class RenoService {
      */
     public static void handleLock(CandidateBean candidateBean) {
 
-        RenoRepository rr = RepositoryFactory.getRenoRepository() ;
+        RenoRepository rr = RepositoryFactory.getRenoRepository();
         Person currentUser = Person.getCurrentSecurityUser();
         RunCandidate rc = candidateBean.getRunCandidate();
 
@@ -202,31 +202,32 @@ public class RenoService {
 
     /**
      * Finishes all in-queue runs.
+     *
      * @param run Run to finish.
      */
     public static void finishRemainderRedundancy(Run run) {
-        List<RunCandidate> runCandidates = RepositoryFactory.getRenoRepository().getSangerRunCandidatesInQueue(run) ;
+        List<RunCandidate> runCandidates = RepositoryFactory.getRenoRepository().getSangerRunCandidatesInQueue(run);
         RenoRepository rr = RepositoryFactory.getRenoRepository();
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         Person currentUser = Person.getCurrentSecurityUser();
 
 
         // these are all unlocked, so must lock all of them first.
-        for(RunCandidate runCandidate: runCandidates){
+        for (RunCandidate runCandidate : runCandidates) {
             rr.lock(currentUser, runCandidate);
         }
 
         // now handle them
-        for(RunCandidate runCandidate: runCandidates){
+        for (RunCandidate runCandidate : runCandidates) {
 
-            if(mr.getMarkerByName(runCandidate.getCandidate().getSuggestedName())==null &&
-                    mr.getMarkerByAbbreviation(runCandidate.getCandidate().getSuggestedName().toLowerCase())==null){
+            if (mr.getMarkerByName(runCandidate.getCandidate().getSuggestedName()) == null &&
+                    mr.getMarkerByAbbreviation(runCandidate.getCandidate().getSuggestedName().toLowerCase()) == null) {
                 handleRedundancyNovelGene(runCandidate);
                 runCandidate.setDone(true);
                 runCandidate.getCandidate().setLastFinishedDate(new Date());
 
-            }else{
-                logger.warn("marker exists, can not assign name to it: "+ runCandidate.getCandidate().getSuggestedName());
+            } else {
+                logger.warn("marker exists, can not assign name to it: " + runCandidate.getCandidate().getSuggestedName());
             }
         }
     }
@@ -245,9 +246,9 @@ public class RenoService {
 
         novelGene.setName(runCandidate.getCandidate().getSuggestedName());
         novelGene.setOwner(runCandidate.getLockPerson());
-        logger.info("novelGene is set: "+ novelGene.getName());
+        logger.info("novelGene is set: " + novelGene.getName());
 
-        MarkerRepository mr = RepositoryFactory.getMarkerRepository() ;
+        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         MarkerType mt = mr.getMarkerTypeByName(runCandidate.getCandidate().getMarkerType());
         if (mt == null) {
             String newline = System.getProperty("line.separator");

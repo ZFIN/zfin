@@ -1,42 +1,43 @@
 package org.zfin.antibody.presentation;
 
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.web.servlet.view.RedirectView;
 import org.zfin.antibody.Antibody;
-import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.marker.MarkerType;
+import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.people.Person;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.HibernateException;
-import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class AntibodyCreateController extends SimpleFormController {
     private static Logger LOG = Logger.getLogger(AntibodyCreateController.class);
 
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) {
-       CreateAntibodyFormBean formBean = (CreateAntibodyFormBean) command;
+        CreateAntibodyFormBean formBean = (CreateAntibodyFormBean) command;
         Map<String, Object> map = new HashMap<String, Object>();
         map.put(LookupStrings.FORM_BEAN, formBean);
-        return map;       
+        return map;
     }
+
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
                                     Object command, BindException errors) throws Exception {
 
@@ -83,10 +84,9 @@ public class AntibodyCreateController extends SimpleFormController {
         }
 
 
+        //   return new ModelAndView("antibody-detail-update.page", LookupStrings.FORM_BEAN, formBean);
 
-     //   return new ModelAndView("antibody-detail-update.page", LookupStrings.FORM_BEAN, formBean);
-
-        return new ModelAndView(new RedirectView("update-details?antibody.zdbID="+newAntibody.getZdbID()+"&antibodyDefPubZdbID="+antibodyPub.getZdbID()));
+        return new ModelAndView(new RedirectView("update-details?antibody.zdbID=" + newAntibody.getZdbID() + "&antibodyDefPubZdbID=" + antibodyPub.getZdbID()));
     }
 
 

@@ -1,9 +1,9 @@
 package org.zfin.people.presentation;
 
-import org.zfin.people.Person;
-import org.zfin.people.AccountInfo;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
+import org.zfin.people.AccountInfo;
+import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 
 /**
@@ -56,6 +56,7 @@ public class ProfileBean {
     }//ToDo; This is a recurring method for many pages.
 
     // Make it reusable: jsp tag definition or
+
     public AuditLogItem getLatestUpdate() {
         AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
         return alr.getLatestAuditLogItem(person.getZdbID());

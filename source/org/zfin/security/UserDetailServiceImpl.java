@@ -3,9 +3,9 @@ package org.zfin.security;
 import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.UserDetailsService;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
+import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.repository.UserRepository;
-import org.zfin.people.Person;
 
 /**
  * Retrieves user details from the database.

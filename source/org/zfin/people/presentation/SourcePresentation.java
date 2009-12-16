@@ -1,9 +1,7 @@
 package org.zfin.people.presentation;
 
-import org.zfin.people.Company;
-import org.zfin.people.Lab;
-import org.zfin.people.Organization;
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.people.Organization;
 import org.zfin.properties.ZfinProperties;
 
 public class SourcePresentation extends EntityPresentation {
@@ -12,11 +10,11 @@ public class SourcePresentation extends EntityPresentation {
 
     public static String getLink(Organization org) {
         if (org.getLab())
-          return getLabLink(org);
+            return getLabLink(org);
         else if (org.getCompany())
-          return getCompanyLink(org);
+            return getCompanyLink(org);
         else
-          return "";  //zfin jump as a punt?
+            return "";  //zfin jump as a punt?
     }
 
     public static String getLabLink(Organization org) {
@@ -30,11 +28,12 @@ public class SourcePresentation extends EntityPresentation {
     /**
      * Should be of the form.
      * [atp6va0a1|http://zfin.org/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
+     *
      * @param organization Organization to render.
      * @return A rendered wiki link.
      */
-    public static String getWikiLink(Organization organization){
-        return getWikiLink(ZfinProperties.getWebDriver()+ (organization.getLab()?lab_uri:company_uri)
-                ,organization.getZdbID(),organization.getName(),organization.getName()) ;
+    public static String getWikiLink(Organization organization) {
+        return getWikiLink(ZfinProperties.getWebDriver() + (organization.getLab() ? lab_uri : company_uri)
+                , organization.getZdbID(), organization.getName(), organization.getName());
     }
 }

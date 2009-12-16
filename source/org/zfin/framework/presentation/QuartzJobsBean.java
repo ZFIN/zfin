@@ -1,33 +1,29 @@
 package org.zfin.framework.presentation;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.util.List;
-import java.util.Set;
 import java.util.Random;
+import java.util.Set;
 
 /**
  */
 public class QuartzJobsBean {
 
-    private String action ;
-    private String job ;
-    private String group ;
+    private String action;
+    private String job;
+    private String group;
     private Set<QuartzJobInfo> quartzJobInfoList;
-    private Set<QuartzJobInfo> manualJobsList ;
-    private String message ;
-    private boolean jobsRunning ;
-    public static final int JOB_NOT_RUN = -1 ;
-    private int requestID = JOB_NOT_RUN  ;
-    private Random random = new Random() ;
+    private Set<QuartzJobInfo> manualJobsList;
+    private String message;
+    private boolean jobsRunning;
+    public static final int JOB_NOT_RUN = -1;
+    private int requestID = JOB_NOT_RUN;
+    private Random random = new Random();
 
-    public static enum Action{
+    public static enum Action {
         RUN("run"),
         PAUSE("pause"),
         RESUME("resume"),
         PAUSE_ALL("pauseAll"),
-        RESUME_ALL("resumeAll"),
-        ;
+        RESUME_ALL("resumeAll"),;
 
 
         private final String value;
@@ -49,12 +45,12 @@ public class QuartzJobsBean {
         }
 
         public boolean isPauseAction() {
-            return value.equals(PAUSE.value) || value.equals(PAUSE_ALL.value) ;
+            return value.equals(PAUSE.value) || value.equals(PAUSE_ALL.value);
         }
 
 
         public boolean isIndividualAction() {
-            return value.equals(PAUSE.value) || value.equals(RUN.value) || value.equals(RESUME.value) ;
+            return value.equals(PAUSE.value) || value.equals(RUN.value) || value.equals(RESUME.value);
         }
     }
 
@@ -115,11 +111,11 @@ public class QuartzJobsBean {
     }
 
     public void clearLastAction() {
-        if(action!=null){
-            this.message = action + " " + job ;
-            this.group= null ;
-            this.action= null ;
-            this.job= null ;
+        if (action != null) {
+            this.message = action + " " + job;
+            this.group = null;
+            this.action = null;
+            this.job = null;
         }
     }
 
@@ -131,7 +127,7 @@ public class QuartzJobsBean {
         this.requestID = requestID;
     }
 
-    public int getNewRequestID(){
-        return random.nextInt() ;
+    public int getNewRequestID() {
+        return random.nextInt();
     }
 }

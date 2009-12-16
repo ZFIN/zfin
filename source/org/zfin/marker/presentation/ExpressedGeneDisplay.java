@@ -3,8 +3,8 @@ package org.zfin.marker.presentation;
 import org.zfin.expression.Figure;
 import org.zfin.marker.MarkerStatistic;
 
-import java.util.Set;
 import java.text.ChoiceFormat;
+import java.util.Set;
 
 /**
  * This business object defines a single gene, the publications and the images.
@@ -24,7 +24,8 @@ public class ExpressedGeneDisplay {
     /**
      * Calculates the number of figures found in all publications that are annotated
      * to the gene.
- * @return Number of figures as a string.
+     *
+     * @return Number of figures as a string.
      */
     public String getNumberOfFigures() {
         int numberOfPublication = markerStat.getNumberOfFigures();
@@ -38,7 +39,8 @@ public class ExpressedGeneDisplay {
 
     /**
      * Calculates the number of images found in all images from all publications for the gene.
- * @return Number of images as a String
+     *
+     * @return Number of images as a String
      */
     public String getNumberOfImages() {
         Set<Figure> figures = markerStat.getGene().getFigures();

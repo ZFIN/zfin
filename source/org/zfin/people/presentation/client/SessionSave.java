@@ -2,7 +2,6 @@ package org.zfin.people.presentation.client;
 
 import com.google.gwt.core.client.EntryPoint;
 
-import java.util.List;
 import java.util.ArrayList;
 
 /**
@@ -11,9 +10,9 @@ import java.util.ArrayList;
 public class SessionSave implements EntryPoint {
 
     // a list of CuratorSessionUpdateObjects
-    private static SessionUpdateCallbackTimer timer = new SessionUpdateCallbackTimer() ;
-    private static final int DEFAULT_DELAY_TIME = 400 ;
-    private static int delayTime = DEFAULT_DELAY_TIME ;
+    private static SessionUpdateCallbackTimer timer = new SessionUpdateCallbackTimer();
+    private static final int DEFAULT_DELAY_TIME = 400;
+    private static int delayTime = DEFAULT_DELAY_TIME;
 
 
     /**
@@ -24,26 +23,25 @@ public class SessionSave implements EntryPoint {
     }
 
     public static void store(String personZdbID, String publicationZdbID, String field, String value) {
-        CuratorSessionDTO curatorSessionUpdate = new CuratorSessionDTO() ;
+        CuratorSessionDTO curatorSessionUpdate = new CuratorSessionDTO();
         curatorSessionUpdate.setCuratorZdbID(personZdbID);
         curatorSessionUpdate.setPublicationZdbID(publicationZdbID);
         curatorSessionUpdate.setField(field);
         curatorSessionUpdate.setValue(value);
-        timer.scheduleCallback(curatorSessionUpdate,delayTime);
+        timer.scheduleCallback(curatorSessionUpdate, delayTime);
     }
 
     public static void storeRefresh(String personZdbID, String publicationZdbID, String field, String value, String anchor) {
-        CuratorSessionDTO curatorSessionUpdate = new CuratorSessionDTO() ;
+        CuratorSessionDTO curatorSessionUpdate = new CuratorSessionDTO();
         curatorSessionUpdate.setCuratorZdbID(personZdbID);
         curatorSessionUpdate.setPublicationZdbID(publicationZdbID);
         curatorSessionUpdate.setField(field);
         curatorSessionUpdate.setValue(value);
-        ArrayList<CuratorSessionDTO> sessionList = new ArrayList<CuratorSessionDTO>() ;
-        sessionList.add(curatorSessionUpdate) ;
-        SessionUpdateCallbackWithURL callbackRefresh = new SessionUpdateCallbackWithURL(anchor) ;
-        SessionSaveService.App.getInstance().saveCuratorUpdate( sessionList, callbackRefresh);
+        ArrayList<CuratorSessionDTO> sessionList = new ArrayList<CuratorSessionDTO>();
+        sessionList.add(curatorSessionUpdate);
+        SessionUpdateCallbackWithURL callbackRefresh = new SessionUpdateCallbackWithURL(anchor);
+        SessionSaveService.App.getInstance().saveCuratorUpdate(sessionList, callbackRefresh);
     }
-
 
 
     private native void exposeMethodToJavascript()/*-{
@@ -56,8 +54,6 @@ public class SessionSave implements EntryPoint {
       };
 
     }-*/;
-
-
 
 
 }

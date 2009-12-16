@@ -1,9 +1,9 @@
 package org.zfin.framework.presentation;
 
 import javax.servlet.ServletContext;
-import java.util.HashSet;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.StringTokenizer;
 
 /**
@@ -14,11 +14,11 @@ public class ServletInfoBean {
     private HashSet attributes;
     private ServletContext context;
 
-    public HashMap getAttributes(){
+    public HashMap getAttributes() {
         Enumeration num = context.getAttributeNames();
         HashMap set = new HashMap();
-        if(num != null){
-            while (num.hasMoreElements()){
+        if (num != null) {
+            while (num.hasMoreElements()) {
                 String name = (String) num.nextElement();
                 set.put(name, context.getAttribute(name));
             }
@@ -26,11 +26,11 @@ public class ServletInfoBean {
         return set;
     }
 
-    public HashMap getInitializationParameters(){
+    public HashMap getInitializationParameters() {
         Enumeration num = context.getInitParameterNames();
         HashMap set = new HashMap();
-        if(num != null){
-            while (num.hasMoreElements()){
+        if (num != null) {
+            while (num.hasMoreElements()) {
                 String name = (String) num.nextElement();
                 set.put(name, context.getInitParameter(name));
             }
@@ -46,17 +46,17 @@ public class ServletInfoBean {
         this.context = context;
     }
 
-    public String getRealPath(){
+    public String getRealPath() {
         return context.getRealPath("");
     }
 
-    public HashSet getClasspath(){
+    public HashSet getClasspath() {
         HashSet<String> set = new HashSet<String>();
         String classpath = (String) context.getAttribute("org.apache.catalina.jsp_classpath");
         String delimiter = System.getProperty("path.separator");
-        if(classpath != null){
+        if (classpath != null) {
             StringTokenizer st = new StringTokenizer(classpath, delimiter);
-            while(st.hasMoreTokens()){
+            while (st.hasMoreTokens()) {
                 set.add(st.nextToken());
             }
         }

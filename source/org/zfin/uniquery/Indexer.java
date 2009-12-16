@@ -4,13 +4,15 @@ import cvu.html.HTMLTokenizer;
 import cvu.html.TagToken;
 import cvu.html.TextToken;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.uniquery.categories.SiteSearchCategories;
 import org.zfin.uniquery.presentation.SearchBean;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.wiki.WikiLoginException;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -53,6 +55,7 @@ import java.util.*;
 public class Indexer implements Runnable {
 
     private static final String lineSep = System.getProperty("line.separator");
+    private static final Logger logger = Logger.getLogger(Indexer.class);
 
     private String indexDir;
     private List<String> URLsToIndex;
@@ -202,7 +205,7 @@ public class Indexer implements Runnable {
 
         // index the community wiki
         //todo: enable after wiki goes live: 
-	indexWiki();
+        indexWiki();
 
         // after all threads have completed, close the index and write appropriate logs
         log.println("Indexed " + filesIndexed + " URLs (" + (bytes / 1024) + " KB) in " + (elapsed / 1000) + " seconds");
@@ -281,9 +284,13 @@ public class Indexer implements Runnable {
      */
     private void indexWiki() {
         WikiIndexer wikiIndexer = new WikiIndexer();
-        List<WebPageSummary> urlSummaryList = wikiIndexer.getUrlSummary();
-        if (urlSummaryList == null)
+        List<WebPageSummary> urlSummaryList = null;
+        try {
+            urlSummaryList = wikiIndexer.getUrlSummary();
+        } catch (WikiLoginException e) {
+            logger.error("Failed to index the wiki", e);
             return;
+        }
 
         for (WebPageSummary summary : urlSummaryList) {
             addToIndexer(summary);
@@ -644,6 +651,7 @@ public class Indexer implements Runnable {
 
 
     // converts relative URL to absolute URL
+
     private String formURL(URL origURL, String newURL) {
         StringBuffer base = new StringBuffer(origURL.getProtocol());
         base.append("://").append(origURL.getHost());

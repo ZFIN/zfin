@@ -16,8 +16,6 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.wiki.AntibodyWikiWebService;
-import org.zfin.wiki.WikiLoginException;
 
 import java.util.*;
 

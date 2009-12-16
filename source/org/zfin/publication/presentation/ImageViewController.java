@@ -1,12 +1,12 @@
 package org.zfin.publication.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.validation.BindException;
 import org.apache.log4j.Logger;
-import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.expression.Image;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.expression.FigureService;
+import org.zfin.expression.Image;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -20,13 +20,14 @@ public class ImageViewController extends AbstractCommandController {
     private static Logger LOG = Logger.getLogger(PublicationSearchResultController.class);
     private String successView;
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-    
+
     public ImageViewController() {
         setCommandClass(ImageViewBean.class);
     }
+
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         LOG.info("Start Image View Controller");
-        ImageViewBean form = (ImageViewBean)command;
+        ImageViewBean form = (ImageViewBean) command;
         getFigureData(form);
         return new ModelAndView(successView, LookupStrings.FORM_BEAN, form);
     }
@@ -47,7 +48,7 @@ public class ImageViewController extends AbstractCommandController {
         form.setImage(image);
 
         form.setExpressionGenes(FigureService.getExpressionGenes(image.getFigure()));
-        
+
 
         return image;
     }

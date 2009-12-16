@@ -1,51 +1,50 @@
 package org.zfin.framework.presentation.client;
 
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Frame;
+import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
  */
 public class LookupPopup extends PopupPanel {
 
-    private final String ANATOMY_BASE_URL =  "/action/anatomy/term-info?anatomyItem.zdbID=" ;
-    private final String MARKER_BASE_URL =  "/action/marker/mini-gene?zdbID=" ;
-    private Frame frame ;
-    private int  height = 600 ; 
-    private int  width = 400 ;
-    private String type ;
+    private final String ANATOMY_BASE_URL = "/action/anatomy/term-info?anatomyItem.zdbID=";
+    private final String MARKER_BASE_URL = "/action/marker/mini-gene?zdbID=";
+    private Frame frame;
+    private int height = 600;
+    private int width = 400;
+    private String type;
 
-    public LookupPopup(String type){
-        super(true,true) ;
-        this.type = type ;
+    public LookupPopup(String type) {
+        super(true, true);
+        this.type = type;
 //        super(false,false) ;
         initGUI();
     }
 
-    public LookupPopup(String type,String zdbID){
-        this(type) ;
-        showPopup(zdbID) ;
+    public LookupPopup(String type, String zdbID) {
+        this(type);
+        showPopup(zdbID);
     }
 
 
-
-    private void initGUI(){
-        frame = new Frame() ;
-        frame.setHeight(""+height);
-        frame.setWidth(""+width);
+    private void initGUI() {
+        frame = new Frame();
+        frame.setHeight("" + height);
+        frame.setWidth("" + width);
         frame.setStylePrimaryName("gwt-Frame");
-        setWidget(frame) ;
+        setWidget(frame);
     }
 
 
-
-    public void showPopup(String zdbID){
-        String url ;
-        if(type.equals(LookupComposite.MARKER_LOOKUP)){
-            url = MARKER_BASE_URL + zdbID ;
-        }else{
-            url = ANATOMY_BASE_URL + zdbID ;
+    public void showPopup(String zdbID) {
+        String url;
+        if (type.equals(LookupComposite.MARKER_LOOKUP)) {
+            url = MARKER_BASE_URL + zdbID;
+        } else {
+            url = ANATOMY_BASE_URL + zdbID;
         }
 
-        center() ; 
+        center();
         // the  offset width/height is the same as that of the frame
 //        setPopupPositionAndShow(new PopupPanel.PositionCallback(){
 //            public void setPosition(int offsetWidth, int offsetHeight) {

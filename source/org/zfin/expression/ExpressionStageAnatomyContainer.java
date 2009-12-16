@@ -1,11 +1,10 @@
 package org.zfin.expression;
 
-import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.expression.Figure;
+import org.zfin.anatomy.DevelopmentStage;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -16,7 +15,7 @@ import java.util.ArrayList;
  * stage1  anat1  fig1
  * stage1  anat2  fig2
  * stage2  anat2  fig1
- *
+ * <p/>
  * will result in
  * xsa1 is [stage1 & [anat1, anat2] & [fig1, fig2]]
  * xsa2 is [stage2 & [anat2] & [fig1]]

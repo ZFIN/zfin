@@ -6,8 +6,8 @@ import org.zfin.sequence.DBLink;
  */
 public class IncludeExternalBlastBean {
 
-    private String zdbID ;
-    private DBLink dbLink ;
+    private String zdbID;
+    private DBLink dbLink;
 
     public String getZdbID() {
         return zdbID;

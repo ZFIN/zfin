@@ -6,10 +6,10 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 import org.zfin.publication.Publication;
 
-import java.util.List;
-import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * Test class fot eh publication sorting comparator.
@@ -34,7 +34,7 @@ public class SortPublicationResultsTest extends TestCase {
     /**
      * Oldest publication first, most recent pub last.
      */
-    public void testDateSortingAscending(){
+    public void testDateSortingAscending() {
         boolean ascending = true;
         Collections.sort(publications, new SortPublicationResults("date", ascending));
         Publication first = publications.get(0);
@@ -50,7 +50,7 @@ public class SortPublicationResultsTest extends TestCase {
     /**
      * Most recent publication first oldest publication last.
      */
-    public void testDateSortingDescending(){
+    public void testDateSortingDescending() {
         boolean ascending = false;
         Collections.sort(publications, new SortPublicationResults("date", ascending));
         Publication first = publications.get(0);
@@ -63,7 +63,7 @@ public class SortPublicationResultsTest extends TestCase {
         assertEquals("Four Publication", "ZDB-PUB-950513-3", four.getZdbID());
     }
 
-    private void createPublications(){
+    private void createPublications() {
         Publication pubOne = new Publication();
         pubOne.setZdbID("ZDB-PUB-051203-1");
         pubOne.setTitle("Evolutionary Theory of Zebrafish and Human");

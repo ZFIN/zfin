@@ -1,18 +1,13 @@
 package org.zfin.framework.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.validation.BindException;
-import org.hibernate.stat.Statistics;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.properties.ZfinProperties;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.util.FileUtil;
-import org.geneontology.io.ExtensionFilenameFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.List;
 
 /**

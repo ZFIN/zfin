@@ -5,20 +5,20 @@ package org.zfin.sequence.reno.repository;
 
 //import org.apache.log4j.Logger;
 
+import org.apache.log4j.Logger;
+import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.CacheMode;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.people.Person;
 import org.zfin.sequence.blast.Hit;
+import org.zfin.sequence.reno.NomenclatureRun;
+import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.sequence.reno.RedundancyRun;
-import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.presentation.RunBean;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class HibernateRenoRepository implements RenoRepository {
         Query query = session.createQuery("select count(*) from RunCandidate rc " +
                 "where rc.run = :run and rc.done = 'f' and rc.lockPerson is null");
         query.setParameter("run", oneRun);
-        return ((Number) query.uniqueResult()).intValue() ;
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     public int getPendingCandidateCount(Run oneRun) {
@@ -64,7 +64,7 @@ public class HibernateRenoRepository implements RenoRepository {
         Query query = session.createQuery("select count(*) from RunCandidate rc " +
                 "where rc.run = :run and rc.done = 'f' and rc.lockPerson is not null");
         query.setParameter("run", oneRun);
-        return ((Number) query.uniqueResult()).intValue() ;
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     public int getFinishedCandidateCount(Run oneRun) {
@@ -72,7 +72,7 @@ public class HibernateRenoRepository implements RenoRepository {
         Query query = session.createQuery("select count(*) from RunCandidate rc " +
                 "where rc.run = :run and rc.done = 't' and rc.lockPerson is null");
         query.setParameter("run", oneRun);
-        return ((Number) query.uniqueResult()).intValue() ;
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     /**
@@ -193,7 +193,6 @@ public class HibernateRenoRepository implements RenoRepository {
         }
 
 
-
         session.setCacheMode(oldCacheMode);
 
         return list;
@@ -221,12 +220,12 @@ public class HibernateRenoRepository implements RenoRepository {
                 " and accession.number  = entrezProtRelation.proteinAccNum " +
                 " and hit.expectValue = (select min(bh.expectValue)" +
                 "                            from Hit bh,Accession ab, EntrezProtRelation ep" +
-                "                          where bh.query = query "+
+                "                          where bh.query = query " +
                 "                            and bh.targetAccession.ID  =ab.ID " +
                 "                            and ab.number = ep.proteinAccNum " +
                 "                        ) " +
                 "GROUP BY runCandidate.zdbID , runCandidate.candidate.problem,hit.expectValue , runCandidate.candidate.lastFinishedDate , runCandidate.occurrenceOrder " +
-                "ORDER BY " ;
+                "ORDER BY ";
 
         if (comparator.equals(RunBean.SORT_BY_OCCURRENCE_DSC)) {
             orderBy = "runCandidate.candidate.problem asc, runCandidate.occurrenceOrder desc, hit.expectValue asc, max(hit.score) desc";
@@ -239,7 +238,7 @@ public class HibernateRenoRepository implements RenoRepository {
         } else {
             orderBy = "runCandidate.candidate.problem asc, hit.expectValue asc, max(hit.score) desc";
         }
-        hql += orderBy ;
+        hql += orderBy;
 
         Query query = session.createQuery(hql);
         query.setString("zdbID", runZdbId);

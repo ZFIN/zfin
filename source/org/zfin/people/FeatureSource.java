@@ -1,8 +1,7 @@
 package org.zfin.people;
 
-import org.zfin.marker.Marker;
-import org.zfin.mutant.Feature;
 import org.apache.commons.lang.ObjectUtils;
+import org.zfin.mutant.Feature;
 
 import java.io.Serializable;
 
@@ -58,7 +57,6 @@ public class FeatureSource extends ObjectSource implements Serializable, Compara
         return getOrganization().getName().compareToIgnoreCase(anotherSource.getOrganization().getName());
     }
 
-   
 
     public Feature getFeature() {
         return feature;

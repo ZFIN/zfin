@@ -1,18 +1,13 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.sequence.MarkerDBLinkList;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
-
-import java.util.List;
 
 /**
  */
 public class ProteinAddBean {
 
-    private Marker marker ;
-    private String accession ;
+    private Marker marker;
+    private String accession;
 
     public Marker getMarker() {
         return marker;

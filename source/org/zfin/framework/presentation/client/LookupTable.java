@@ -1,9 +1,11 @@
 package org.zfin.framework.presentation.client;
 
-import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.*;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.i18n.client.Dictionary;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.*;
 
 import java.util.*;
 
@@ -119,11 +121,11 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
             table.insertRow(table.getRowCount());
             int currentRow = table.getRowCount() - 1;
 
-            final Hyperlink link = new Hyperlink(term.getTerm(),false,term.getTerm()+"#bottom") ;
-            link.addClickListener(new ClickListener(){
+            final Hyperlink link = new Hyperlink(term.getTerm(), false, term.getTerm() + "#bottom");
+            link.addClickListener(new ClickListener() {
                 public void onClick(Widget widget) {
-                // this is new each time . . I think so that we never inadvertently browse to new events
-                    lookupPopup = new LookupPopup(lookup.getType(),term.getZdbID()) ;
+                    // this is new each time . . I think so that we never inadvertently browse to new events
+                    lookupPopup = new LookupPopup(lookup.getType(), term.getZdbID());
                 }
             });
 

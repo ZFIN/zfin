@@ -1,11 +1,11 @@
 package org.zfin.framework.filter;
 
-import org.zfin.framework.ZfinStaticLogger;
 import org.apache.log4j.Logger;
+import org.zfin.framework.ZfinStaticLogger;
 
 import javax.servlet.*;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**

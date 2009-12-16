@@ -12,8 +12,8 @@ import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.repository.RenoRepository;
 
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -41,7 +41,7 @@ public class RedundancyCandidateValidator extends AbstractRunCandidateValidator 
         //we need to be sure that the RunCandidate is in a state that the controller
         //can work with.   (more documentation below)
         if (StringUtils.equals(candidateBean.getAssociatedGeneField(), CandidateBean.IGNORE)
-                || (candidateBean.getAssociatedGeneField() == null)){
+                || (candidateBean.getAssociatedGeneField() == null)) {
             candidateGene = validateRunCandidate(candidateBean, errors);
         }
 
@@ -55,24 +55,23 @@ public class RedundancyCandidateValidator extends AbstractRunCandidateValidator 
 
         LOG.info("Validating redundancy pipeline submission");
 
-        RunCandidate runCandidate =  candidateBean.getRunCandidate();
+        RunCandidate runCandidate = candidateBean.getRunCandidate();
         // If it is null, but should have associated markers, then we have a serious problem.
-        List<Marker> markers = runCandidate.getIdentifiedMarkers() ;
+        List<Marker> markers = runCandidate.getIdentifiedMarkers();
         boolean isTransript = true;
-        for(Marker marker : markers){
-            if(false==marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)){
-                isTransript = false ;
+        for (Marker marker : markers) {
+            if (false == marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
+                isTransript = false;
             }
         }
-        if(false==isTransript && runCandidate.getIdentifiedMarker()==null){
-            Set<Query> queries = runCandidate.getCandidateQueries() ;
+        if (false == isTransript && runCandidate.getIdentifiedMarker() == null) {
+            Set<Query> queries = runCandidate.getCandidateQueries();
             // just grab the first query and report the error if there is one query
-            Object[] args = new Object[1] ;
-            args[0] = queries.iterator().next().getAccession().getNumber() ;
-            errors.rejectValue("action","code note used",args,"Can not resolve because accession {0} has no corresponding zfin gene." +
+            Object[] args = new Object[1];
+            args[0] = queries.iterator().next().getAccession().getNumber();
+            errors.rejectValue("action", "code note used", args, "Can not resolve because accession {0} has no corresponding zfin gene." +
                     "  Either manually fix or wait for GenBank to fix and to be subsequently loaded.");
         }
-
 
 
         //check that the pubs aren't null
@@ -145,8 +144,6 @@ public class RedundancyCandidateValidator extends AbstractRunCandidateValidator 
             errors.rejectValue("geneAbbreviation", "code", "Can't rename a novel gene");
         }
     }
-
-
 
 
 }

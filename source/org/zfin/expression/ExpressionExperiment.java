@@ -1,15 +1,15 @@
 package org.zfin.expression;
 
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
-import org.zfin.anatomy.DevelopmentStage;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Main Experiment object that contains expression annotations.
@@ -151,8 +151,8 @@ public class ExpressionExperiment {
         return distinctSet.size();
     }
 
-    public void addExpressionResult(ExpressionResult newResult){
-        if(expressionResults == null)
+    public void addExpressionResult(ExpressionResult newResult) {
+        if (expressionResults == null)
             expressionResults = new HashSet<ExpressionResult>();
         expressionResults.add(newResult);
     }

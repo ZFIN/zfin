@@ -17,14 +17,14 @@ import org.zfin.curation.client.CurationExperimentRPC;
 import org.zfin.curation.client.PileStructureExistsException;
 import org.zfin.curation.client.PublicationNotFoundException;
 import org.zfin.curation.client.SessionVariable;
-import org.zfin.framework.presentation.gwtutils.TermNotFoundException;
-import org.zfin.curation.dto.*;
+import org.zfin.curation.dto.UpdateExpressionDTO;
 import org.zfin.expression.*;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.client.Ontology;
 import org.zfin.framework.presentation.dto.*;
 import org.zfin.framework.presentation.gwtutils.StageRangeIntersection;
+import org.zfin.framework.presentation.gwtutils.TermNotFoundException;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -406,6 +406,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
     }
 
     // ToDo: This will be done much more elegantly within an interceptor class in Hibernate.
+
     private void createAuditRecordsForModifications(ExpressionExperiment expressionExperiment, ExperimentDTO experimentDTO) {
         // check which attributes have changed when updating an experiment
         String comment = "updated Experiment";
@@ -1262,6 +1263,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
 
     /**
      * Save a given session variable in Application session.
+     *
      * @param sessionVariable session variable
      */
     public void saveSessionVisibility(SessionVariable sessionVariable) {

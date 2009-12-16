@@ -1,76 +1,74 @@
 package org.zfin.marker.presentation.client;
 
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.Window;
-import org.zfin.marker.presentation.event.SequenceAddListener;
-import org.zfin.marker.presentation.event.SequenceAddEvent;
-import org.zfin.marker.presentation.event.PublicationChangeListener;
-import org.zfin.marker.presentation.event.PublicationChangeEvent;
 import org.zfin.marker.presentation.dto.ReferenceDatabaseDTO;
+import org.zfin.marker.presentation.event.PublicationChangeEvent;
+import org.zfin.marker.presentation.event.PublicationChangeListener;
+import org.zfin.marker.presentation.event.SequenceAddEvent;
+import org.zfin.marker.presentation.event.SequenceAddListener;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-public class ProteinSequenceArea extends Composite implements HandlesError,RequiresAttribution, PublicationChangeListener{
+public class ProteinSequenceArea extends Composite implements HandlesError, RequiresAttribution, PublicationChangeListener {
 
     // gui
-    private VerticalPanel panel = new VerticalPanel() ;
-    private HorizontalPanel blastDatabasePanel = new HorizontalPanel() ;
-    private Label listBoxLabel = new Label("Blast Database:") ;
-    private EasyListBox databaseListBoxWrapper = new EasyListBox() ;
-    private Hyperlink link = new Hyperlink() ;
-    private NewSequenceBox newSequenceBox = new NewSequenceBox() ;
-    private Label errorLabel = new Label() ;
+    private VerticalPanel panel = new VerticalPanel();
+    private HorizontalPanel blastDatabasePanel = new HorizontalPanel();
+    private Label listBoxLabel = new Label("Blast Database:");
+    private EasyListBox databaseListBoxWrapper = new EasyListBox();
+    private Hyperlink link = new Hyperlink();
+    private NewSequenceBox newSequenceBox = new NewSequenceBox();
+    private Label errorLabel = new Label();
 
-    private final static String RIGHT_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/right.gif\" >Add Protein</a>" ;
-    private final static String DOWN_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/down.gif\" >Add Protein</a>" ;
+    private final static String RIGHT_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/right.gif\" >Add Protein</a>";
+    private final static String DOWN_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/down.gif\" >Add Protein</a>";
 
     // listeners
-    private List<SequenceAddListener> sequenceAddListeners = new ArrayList<SequenceAddListener>() ;
-    private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>() ;
+    private List<SequenceAddListener> sequenceAddListeners = new ArrayList<SequenceAddListener>();
+    private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
     private boolean attributionRequired = true;
-    private String publicationZdbID = "" ;
+    private String publicationZdbID = "";
 
-    public ProteinSequenceArea(String div){
-        this() ;
+    public ProteinSequenceArea(String div) {
+        this();
         RootPanel.get(div).add(this);
     }
 
-    public ProteinSequenceArea(){
-        initGUI() ;
+    public ProteinSequenceArea() {
+        initGUI();
         initWidget(panel);
     }
 
 
-    protected void initGUI(){
+    protected void initGUI() {
         link.setTargetHistoryToken("proteinLookup");
         link.setHTML(RIGHT_ARROW);
 
         link.setVisible(true);
 
-        blastDatabasePanel.add(listBoxLabel) ;
+        blastDatabasePanel.add(listBoxLabel);
         blastDatabasePanel.add(databaseListBoxWrapper);
-        blastDatabasePanel.setVisible(false) ; 
+        blastDatabasePanel.setVisible(false);
         newSequenceBox.setVisible(false);
-        blastDatabasePanel.setVisible(false) ;
+        blastDatabasePanel.setVisible(false);
 
         panel.add(link);
 
         panel.add(blastDatabasePanel);
         errorLabel.setStyleName("error");
-        panel.add(errorLabel) ;
+        panel.add(errorLabel);
         panel.add(newSequenceBox);
 
 
-        link.addClickListener(new ClickListener(){
+        link.addClickListener(new ClickListener() {
             public void onClick(Widget widget) {
-                if(true==newSequenceBox.isVisible()){
+                if (true == newSequenceBox.isVisible()) {
                     link.setHTML(RIGHT_ARROW);
                     newSequenceBox.setVisible(false);
                     blastDatabasePanel.setVisible(false);
                     fireSequenceAddCancelListeners(new SequenceAddEvent());
-                }
-                else{
+                } else {
                     link.setHTML(DOWN_ARROW);
                     newSequenceBox.setVisible(true);
                     blastDatabasePanel.setVisible(true);
@@ -80,27 +78,27 @@ public class ProteinSequenceArea extends Composite implements HandlesError,Requi
         });
 
 
-        newSequenceBox.addSequenceAddListener(new SequenceAddListener(){
+        newSequenceBox.addSequenceAddListener(new SequenceAddListener() {
             public void add(final SequenceAddEvent sequenceAddEvent) {
-                if(publicationZdbID==null || publicationZdbID.length()<16){
+                if (publicationZdbID == null || publicationZdbID.length() < 16) {
                     setError("Attribution required to add sequence.");
-                    return ; 
+                    return;
                 }
-                if(databaseListBoxWrapper.getSelectedString()==null
+                if (databaseListBoxWrapper.getSelectedString() == null
                         ||
-                        EasyListBox.NULL_STRING.equals(databaseListBoxWrapper.getSelectedString())){
+                        EasyListBox.NULL_STRING.equals(databaseListBoxWrapper.getSelectedString())) {
                     setError("Please select a blast database.");
-                    return ;
+                    return;
                 }
-                String validationError = newSequenceBox.checkSequence() ;
-                if(validationError!=null){
+                String validationError = newSequenceBox.checkSequence();
+                if (validationError != null) {
                     setError(validationError);
-                    return ;
+                    return;
                 }
 
 
                 // on the way back, we should set the reference Database
-                ReferenceDatabaseDTO referenceDatabaseDTO = new ReferenceDatabaseDTO() ;
+                ReferenceDatabaseDTO referenceDatabaseDTO = new ReferenceDatabaseDTO();
                 referenceDatabaseDTO.setZdbID(databaseListBoxWrapper.getSelectedString());
                 sequenceAddEvent.setReferenceDatabaseDTO(referenceDatabaseDTO);
 
@@ -119,55 +117,54 @@ public class ProteinSequenceArea extends Composite implements HandlesError,Requi
 
     }
 
-    public String checkSequence(){
-        return newSequenceBox.checkSequence() ;
+    public String checkSequence() {
+        return newSequenceBox.checkSequence();
     }
 
-    public void activate(){
-        newSequenceBox.activate() ;
+    public void activate() {
+        newSequenceBox.activate();
 
-        if(databaseListBoxWrapper.getItemCount()==2){
+        if (databaseListBoxWrapper.getItemCount() == 2) {
             databaseListBoxWrapper.setSelectedIndex(1);
-        }
-        else{
+        } else {
             databaseListBoxWrapper.setSelectedIndex(0);
         }
     }
 
-    public void inactivate(){
-        newSequenceBox.inactivate() ;
+    public void inactivate() {
+        newSequenceBox.inactivate();
     }
 
-    public void resetAndHide(){
+    public void resetAndHide() {
         newSequenceBox.reset();
         newSequenceBox.hideProteinBox();
         blastDatabasePanel.setVisible(false);
         link.setHTML(RIGHT_ARROW);
     }
 
-    protected void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent){
+    protected void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
-        for(SequenceAddListener sequenceAddListener: sequenceAddListeners){
+        for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.add(sequenceAddEvent);
         }
     }
 
 
-    protected void fireSequenceAddStartListeners(SequenceAddEvent sequenceAddEvent){
+    protected void fireSequenceAddStartListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
-        for(SequenceAddListener sequenceAddListener: sequenceAddListeners){
+        for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.start(sequenceAddEvent);
         }
     }
 
-    protected void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent){
+    protected void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
-        for(SequenceAddListener sequenceAddListener: sequenceAddListeners){
+        for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.cancel(sequenceAddEvent);
         }
     }
 
-    public void addSequenceAddListener(SequenceAddListener sequenceAddListener){
+    public void addSequenceAddListener(SequenceAddListener sequenceAddListener) {
         clearError();
         sequenceAddListeners.add(sequenceAddListener);
     }
@@ -189,23 +186,23 @@ public class ProteinSequenceArea extends Composite implements HandlesError,Requi
     }
 
     public void setAttributionRequired(boolean isAttributionRequired) {
-        this.attributionRequired = isAttributionRequired ;
+        this.attributionRequired = isAttributionRequired;
     }
 
     public void publicationChanged(PublicationChangeEvent event) {
-        this.publicationZdbID = event.getPublication() ;
+        this.publicationZdbID = event.getPublication();
     }
 
     public String getPublication() {
         return publicationZdbID;
     }
 
-    public void addHandlesErrorListener(HandlesError handlesError){
-        handlesErrorListeners.add(handlesError) ;
+    public void addHandlesErrorListener(HandlesError handlesError) {
+        handlesErrorListeners.add(handlesError);
     }
 
-    public void fireEventSuccess(){
-        for(HandlesError handlesError: handlesErrorListeners){
+    public void fireEventSuccess() {
+        for (HandlesError handlesError : handlesErrorListeners) {
             handlesError.clearError();
         }
     }

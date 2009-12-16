@@ -3,26 +3,26 @@ package org.zfin.people.presentation;
 import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.zfin.framework.presentation.LookupStrings;
+import org.springframework.web.servlet.view.RedirectView;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.people.AccountInfo;
 import org.zfin.people.Person;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.HibernateException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Date;
 
 /**
  */
@@ -128,9 +128,9 @@ public class EditUserPasswordController extends SimpleFormController {
                 if (bean.isNewUser()) {
                     accountInfo.setAccountCreationDate(new Date());
                     accountInfo.setCookie(Math.random() + "-" + bean.getAccountInfo().getLogin());
-                    accountInfo.setLogin( bean.getAccountInfo().getLogin());
-                    accountInfo.setRole( bean.getAccountInfo().getRole());
-                    accountInfo.setName( bean.getAccountInfo().getName());
+                    accountInfo.setLogin(bean.getAccountInfo().getLogin());
+                    accountInfo.setRole(bean.getAccountInfo().getRole());
+                    accountInfo.setName(bean.getAccountInfo().getName());
                     person.setAccountInfo(accountInfo);
                 } else {
                     profileRepository.updateAccountInfo(person, bean.getAccountInfo());

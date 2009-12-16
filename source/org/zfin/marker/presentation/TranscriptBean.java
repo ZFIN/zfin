@@ -1,37 +1,38 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.marker.*;
-import org.zfin.sequence.Sequence;
-import org.zfin.sequence.DBLink;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.audit.AuditLogItem;
-import org.zfin.repository.RepositoryFactory;
+import org.zfin.audit.repository.AuditLogRepository;
+import org.zfin.marker.Transcript;
+import org.zfin.marker.TranscriptType;
+import org.zfin.marker.TranscriptTypeStatusDefinition;
 import org.zfin.mutant.Genotype;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.Sequence;
 
 import java.util.List;
-import java.util.TreeSet;
-import java.util.SortedSet;
 import java.util.Set;
+import java.util.SortedSet;
 
 /**
  */
 public class TranscriptBean extends MarkerBean {
 
 
-    private RelatedMarkerDisplay transcriptRelationships ;
+    private RelatedMarkerDisplay transcriptRelationships;
     private Set<RelatedMarker> relatedGenes;
     private List<RelatedTranscriptDisplay> relatedTranscriptDisplayList;
     private Set<RelatedMarker> microRNARelatedTranscripts;
     private RelatedTranscriptDisplay relatedTranscriptDisplay;
-    private SequenceInfo sequenceInfo ;
+    private SequenceInfo sequenceInfo;
     private SummaryDBLinkDisplay summaryDBLinkDisplay;
     private SummaryDBLinkDisplay proteinProductDBLinkDisplay;
     private TranscriptTargets transcriptTargets;
     private SortedSet<Genotype> nonReferenceStrains;
-    private int numPubs ;
-    private List<Sequence> nucleotideSequences ;
-    private List<Sequence> proteinSequences ;
+    private int numPubs;
+    private List<Sequence> nucleotideSequences;
+    private List<Sequence> proteinSequences;
     private List<TranscriptTypeStatusDefinition> transcriptTypeStatusDefinitionList;
     private List<TranscriptType> transcriptTypeList;
     private String vegaID;
@@ -119,7 +120,7 @@ public class TranscriptBean extends MarkerBean {
     }
 
     public Transcript getTranscript() {
-        return (Transcript) marker ;
+        return (Transcript) marker;
     }
 
     public void setTranscript(Transcript transcript) {
@@ -182,14 +183,14 @@ public class TranscriptBean extends MarkerBean {
         this.unableToFindDBLinks = unableToFindDBLinks;
     }
 
-    public String toString(){
+    public String toString() {
         String returnString = "";
 
-        returnString += numPubs ;
-        returnString += "asdfadfasF" ;
+        returnString += numPubs;
+        returnString += "asdfadfasF";
 
 
-        return returnString ;
+        return returnString;
     }
 
 

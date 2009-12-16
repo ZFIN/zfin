@@ -1,7 +1,7 @@
 package org.zfin.util;
 
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * User: giles
@@ -32,7 +32,7 @@ public class FilterType {
         return name;
     }
 
-    public String toString(){
+    public String toString() {
         return name;
     }
 

@@ -1,14 +1,14 @@
 package org.zfin.sequence;
 
 import org.zfin.orthology.Species;
-import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.repository.SequenceRepository;
 
 /**
  */
 public class SequenceService {
 
-    private final static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository() ;
+    private final static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
 
     public static ReferenceDatabase getOMIMHumanOrthologue() {

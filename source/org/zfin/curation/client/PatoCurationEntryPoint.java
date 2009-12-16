@@ -6,7 +6,10 @@ import com.google.gwt.user.client.Window;
 import org.zfin.framework.presentation.client.Ontology;
 import org.zfin.framework.presentation.client.PostComposedPart;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Main class for the curation module
@@ -87,6 +90,7 @@ public class PatoCurationEntryPoint implements EntryPoint {
     }
 
     // Load properties from JavaScript.
+
     private void loadPublicationAndFilterElements() {
 
         try {

@@ -6,10 +6,6 @@ import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
-
-import static org.hibernate.criterion.Restrictions.eq;
-import static org.hibernate.criterion.Restrictions.isNotEmpty;
-
 import org.zfin.Species;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
@@ -39,6 +35,9 @@ import org.zfin.util.FilterType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import static org.hibernate.criterion.Restrictions.eq;
+import static org.hibernate.criterion.Restrictions.isNotEmpty;
 
 
 /**
@@ -410,7 +409,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
      * 2) host Species if not 'ANY" is set
      * 3) immunogen species if not 'ANY" is set
      *
-     * @param searchCriteria antibody criteria
+     * @param searchCriteria     antibody criteria
      * @param retrieveAntibodies true or false
      * @return string
      */
@@ -429,7 +428,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append(",  AllMarkerNamesFastSearch mapAntibody   ");
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName()))
             hql.append(",  AllMarkerNamesFastSearch mapGene   ");
-        if (retrieveAntibodies){
+        if (retrieveAntibodies) {
             hql.append(" left join fetch antibody.antibodyLabelings   ");
             hql.append(" left join fetch antibody.secondMarkerRelationships   ");
         }

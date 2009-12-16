@@ -1,5 +1,6 @@
 package org.zfin.antibody;
 
+import org.apache.commons.lang.StringUtils;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyLabel;
@@ -15,7 +16,6 @@ import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GoTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
 
@@ -299,7 +299,7 @@ public class AntibodyService {
 
     protected void addMatchingAntibodyName(List<MatchingText> matchingTexts) {
 
-        if(StringUtils.isEmpty(antibodySerachCriteria.getName()))
+        if (StringUtils.isEmpty(antibodySerachCriteria.getName()))
             return;
 
         String antibodyNamefilterString = antibodySerachCriteria.getName().trim();
@@ -371,9 +371,9 @@ public class AntibodyService {
             Set<ExpressionResult> results = labeling.getExpressionResults();
             // exclude those assays with no expression result record
             if (results != null && !results.isEmpty()) {
-              String assayName = labeling.getAssay().getName();
-              if (assayName != null)
-                assayNames.add(assayName);
+                String assayName = labeling.getAssay().getName();
+                if (assayName != null)
+                    assayNames.add(assayName);
             }
         }
         return assayNames;
@@ -432,11 +432,10 @@ public class AntibodyService {
                             cc = goResult.getSubterm();
                         }
                         String ccName;
-                        if (cc == null){
-                          ccName = "";
-                        }
-                        else{
-                          ccName = cc.getName();
+                        if (cc == null) {
+                            ccName = "";
+                        } else {
+                            ccName = cc.getName();
                         }
 
                         // form the key

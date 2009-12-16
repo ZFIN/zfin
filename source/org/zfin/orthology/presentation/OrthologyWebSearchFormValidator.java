@@ -2,7 +2,6 @@ package org.zfin.orthology.presentation;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.zfin.orthology.Species;
 
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class OrthologyWebSearchFormValidator implements Validator {
                     "symbol", criteria.getGeneSymbolFilterType(), criteria.getGeneSearchTerm());
             String errorField = getErrorFieldValue(criteria);
             if (!validator.isValid()) {
-                errors.rejectValue(errorField+".geneSearchTerm", "code", validator.getErrors().getErrors().get(0));
+                errors.rejectValue(errorField + ".geneSearchTerm", "code", validator.getErrors().getErrors().get(0));
             }
 
             validator = new OrthologyFormValidator(criteria.getName(),
@@ -49,6 +48,6 @@ public class OrthologyWebSearchFormValidator implements Validator {
     }
 
     private String getErrorFieldValue(SpeciesCriteriaBean criteria) {
-            return criteria.getName().toLowerCase() + "CriteriaBean";
+        return criteria.getName().toLowerCase() + "CriteriaBean";
     }
 }

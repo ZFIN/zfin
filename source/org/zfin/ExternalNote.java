@@ -1,7 +1,7 @@
 package org.zfin;
 
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.PersonAttribution;
+import org.zfin.infrastructure.PublicationAttribution;
 
 import java.util.Set;
 
@@ -56,7 +56,7 @@ public abstract class ExternalNote {
         this.personAttributions = personAttributions;
     }
 
-    public enum Type{
+    public enum Type {
         ORTHOLOGY("orthology"),
         ANTIBODY("antibody");
 

@@ -1,7 +1,5 @@
 package org.zfin.people;
 
-import java.util.Set;
-
 /**
  * Company domain model.
  */
@@ -24,10 +22,10 @@ public class Company extends Organization {
     }
 
     public boolean getLab() {
-        return false ;
+        return false;
     }
 
     public boolean getCompany() {
-        return true ;
+        return true;
     }
 }

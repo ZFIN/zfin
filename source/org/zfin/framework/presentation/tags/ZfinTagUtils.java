@@ -5,15 +5,16 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
-import static javax.servlet.jsp.PageContext.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static javax.servlet.jsp.PageContext.*;
+
 /**
  * This class provides a means to retrieve a property value from a
  * bean being found in a pageContext of a JSP page.
- *
+ * <p/>
  * Most of this code is taken from TagUtils out of the Struts library.
  */
 public class ZfinTagUtils {

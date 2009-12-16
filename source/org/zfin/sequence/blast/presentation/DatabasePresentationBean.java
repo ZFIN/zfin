@@ -6,22 +6,21 @@ import org.zfin.sequence.blast.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.io.IOException;
 
 /**
  * Object that represents a database in the interface.
  */
-public class DatabasePresentationBean implements Comparable<DatabasePresentationBean>{
+public class DatabasePresentationBean implements Comparable<DatabasePresentationBean> {
 
-    private final static Logger logger = Logger.getLogger(DatabasePresentationBean.class) ;
+    private final static Logger logger = Logger.getLogger(DatabasePresentationBean.class);
 
     private Database database;
-    private int indent = 0 ;
-    private List<String> childNames = new ArrayList<String>() ;
-    private Integer order  = -1 ;
-    private List<Database> directChildren ;
-    private List<Database> leaves ;
-    private DatabaseStatistics databaseStatistics ;
+    private int indent = 0;
+    private List<String> childNames = new ArrayList<String>();
+    private Integer order = -1;
+    private List<Database> directChildren;
+    private List<Database> leaves;
+    private DatabaseStatistics databaseStatistics;
 
     public Integer getOrder() {
         return order;
@@ -47,101 +46,98 @@ public class DatabasePresentationBean implements Comparable<DatabasePresentation
         this.indent = indent;
     }
 
-    public void addChild(String newChild){
-        childNames.add(newChild) ;
+    public void addChild(String newChild) {
+        childNames.add(newChild);
     }
 
-    public void clearChildren(){
+    public void clearChildren() {
         childNames.clear();
     }
 
-    public String getChildren(){
-        String returnString = "" ;
-        for(int i = 0 ; i < childNames.size() ; i++){
-            returnString += childNames.get(i)  ;
-            if(i < childNames.size()-1){
-                returnString += "::" ;
+    public String getChildren() {
+        String returnString = "";
+        for (int i = 0; i < childNames.size(); i++) {
+            returnString += childNames.get(i);
+            if (i < childNames.size() - 1) {
+                returnString += "::";
             }
         }
-        return returnString ;
+        return returnString;
     }
 
     public int compareTo(DatabasePresentationBean databasePresentationBean) {
         // we only compare the order, which comes from the DatabaseRelationship
         // object
-        return (getOrder() - databasePresentationBean.getOrder()) ;
+        return (getOrder() - databasePresentationBean.getOrder());
     }
 
-    public boolean isEmpty(){
-        if(database.getOrigination().getType()==Origination.Type.GENERATED){
-            List<Database> leaves = getLeaves() ;
-            if(CollectionUtils.isEmpty(leaves)){
-                logger.error("somehow database has no leaves: "+ database);
-                return true ;
+    public boolean isEmpty() {
+        if (database.getOrigination().getType() == Origination.Type.GENERATED) {
+            List<Database> leaves = getLeaves();
+            if (CollectionUtils.isEmpty(leaves)) {
+                logger.error("somehow database has no leaves: " + database);
+                return true;
             }
-            for(Database databaseLeaf : leaves){
+            for (Database databaseLeaf : leaves) {
                 try {
-                    DatabaseStatistics databaseStatistic = WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(databaseLeaf) ;
-                    if(databaseStatistic.getNumSequences()==0){
-                        return true ;
+                    DatabaseStatistics databaseStatistic = WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(databaseLeaf);
+                    if (databaseStatistic.getNumSequences() == 0) {
+                        return true;
                     }
                 } catch (BlastDatabaseException e) {
                     logger.error(e);
-                    return true ;
+                    return true;
                 }
             }
-            return false ;
-        }
-        else{
-            return databaseStatistics.getNumSequences()==0 ;
+            return false;
+        } else {
+            return databaseStatistics.getNumSequences() == 0;
         }
     }
 
-    public boolean isUnavailable(){
+    public boolean isUnavailable() {
         try {
-            if(database.getOrigination().getType()==Origination.Type.GENERATED){
-            List<Database> leaves = getLeaves() ;
-                if(CollectionUtils.isEmpty(leaves)){
-                    logger.error("somehow database has no leaves: "+ database);
-                    return true ;
+            if (database.getOrigination().getType() == Origination.Type.GENERATED) {
+                List<Database> leaves = getLeaves();
+                if (CollectionUtils.isEmpty(leaves)) {
+                    logger.error("somehow database has no leaves: " + database);
+                    return true;
                 }
-                for(Database databaseLeaf : leaves){
+                for (Database databaseLeaf : leaves) {
                     try {
-                        DatabaseStatistics databaseStatistic = WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(databaseLeaf) ;
-                        if(databaseStatistic.getNumSequences()<0){
-                            return true ;
+                        DatabaseStatistics databaseStatistic = WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(databaseLeaf);
+                        if (databaseStatistic.getNumSequences() < 0) {
+                            return true;
                         }
                     } catch (BlastDatabaseException e) {
                         logger.error(e);
-                        return true ;
+                        return true;
                     }
                 }
-                return false ;
-            }
-            else{
-                return databaseStatistics.getNumSequences()<0 ;
+                return false;
+            } else {
+                return databaseStatistics.getNumSequences() < 0;
             }
         } catch (Exception e) {
             logger.error(e);
-            return true ; 
+            return true;
         }
     }
 
-    public Integer getTotalNumSequences(){
-       if(CollectionUtils.isEmpty(getLeaves())) {
-           return databaseStatistics.getNumSequences();
-       }
-       else{
-           int totalNumSequences = 0 ;
-           for(Database database : getLeaves()){
-               try {
-                   totalNumSequences += WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(database).getNumSequences();
-               } catch (BlastDatabaseException e) {
-                   logger.error("Error retrieving sequences for: "+ database);
-               }
-           }
-           return totalNumSequences ;
-       }
+    public Integer getTotalNumSequences() {
+        if (CollectionUtils.isEmpty(getLeaves())) {
+            return databaseStatistics.getNumSequences();
+        } else {
+            int totalNumSequences = 0;
+            for (Database database : getLeaves()) {
+                try {
+                    totalNumSequences += WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(database).getNumSequences();
+                } catch (BlastDatabaseException e) {
+                    logger.error("Error retrieving sequences for: " + database);
+                }
+            }
+            return totalNumSequences;
+        }
     }
 
     public DatabaseStatistics getDatabaseStatistics() {
@@ -161,11 +157,11 @@ public class DatabasePresentationBean implements Comparable<DatabasePresentation
     }
 
     public List<Database> getLeaves() {
-        if(leaves==null){
+        if (leaves == null) {
             try {
                 setLeaves(BlastPresentationService.getLeaves(database));
             } catch (BlastDatabaseException e) {
-                logger.error("failed to find leaves for database ["+database.getAbbrev()+"]",e);
+                logger.error("failed to find leaves for database [" + database.getAbbrev() + "]", e);
             }
         }
         return leaves;
@@ -184,17 +180,17 @@ public class DatabasePresentationBean implements Comparable<DatabasePresentation
         sb.append(", childNames =").append(childNames);
         sb.append(", order=").append(order);
         sb.append(", databaseStatistics=").append(databaseStatistics);
-        if(CollectionUtils.isNotEmpty(directChildren)){
-            String directChildrenString = "" ;
-            for(Database database : directChildren){
-                directChildrenString.concat(database.getAbbrev().toString()) ;
+        if (CollectionUtils.isNotEmpty(directChildren)) {
+            String directChildrenString = "";
+            for (Database database : directChildren) {
+                directChildrenString.concat(database.getAbbrev().toString());
             }
             sb.append(", directChildren=").append(directChildrenString);
         }
-        if(CollectionUtils.isNotEmpty(leaves)){
-            String leavesString = "" ;
-            for(Database database : leaves){
-                leavesString.concat(database.getAbbrev().toString()) ;
+        if (CollectionUtils.isNotEmpty(leaves)) {
+            String leavesString = "";
+            for (Database database : leaves) {
+                leavesString.concat(database.getAbbrev().toString());
             }
             sb.append(", leaves=").append(leavesString);
         }

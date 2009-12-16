@@ -8,13 +8,13 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.util.FileWrapper;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
+import java.io.File;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.*;
-import java.io.File;
 
 /**
  * Controller that obtains the meta data for the database.
@@ -69,7 +69,7 @@ public class DatabaseInfoController extends MultiActionController {
             throws ServletException {
         HashMap map = new HashMap();
         Enumeration en = request.getHeaderNames();
-        while(en.hasMoreElements()){
+        while (en.hasMoreElements()) {
             String key = (String) en.nextElement();
             map.put(key, (Object) request.getHeader(key));
         }
@@ -92,10 +92,10 @@ public class DatabaseInfoController extends MultiActionController {
 
     public ModelAndView svnVersionHandler(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
-        ModelAndView modelAndView = new ModelAndView() ;
+        ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("svn-version");
 
-        return modelAndView ;
+        return modelAndView;
     }
 
     public ModelAndView zfinPropertyHandler(HttpServletRequest request, HttpServletResponse response)

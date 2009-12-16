@@ -1,6 +1,5 @@
 package org.zfin.sequence.blast;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,11 +8,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractDatabaseStatisticsCache implements DatabaseStatisticsCache {
 
-    protected Map<Database.AvailableAbbrev,DatabaseStatistics> map = new ConcurrentHashMap<Database.AvailableAbbrev,DatabaseStatistics>() ;
+    protected Map<Database.AvailableAbbrev, DatabaseStatistics> map = new ConcurrentHashMap<Database.AvailableAbbrev, DatabaseStatistics>();
 
-    public int clearCache(){
-        int returnValue = map.size() ;
+    public int clearCache() {
+        int returnValue = map.size();
         map.clear();
-        return returnValue ;
+        return returnValue;
     }
 }

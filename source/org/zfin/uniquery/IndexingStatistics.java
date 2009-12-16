@@ -2,9 +2,9 @@ package org.zfin.uniquery;
 
 import org.zfin.uniquery.categories.SiteSearchCategories;
 
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ToDo: ADD DOCUMENTATION!

@@ -14,7 +14,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.marker.*;
+import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.OrthoEvidence;
 import org.zfin.orthology.Orthologue;
@@ -25,7 +25,8 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.EntrezProtRelation;
-import org.zfin.sequence.reno.*;
+import org.zfin.sequence.reno.RenoService;
+import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.repository.RenoRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,11 +51,12 @@ public abstract class AbstractCandidateController extends SimpleFormController {
      *
      * @param candidateBean bean...with data
      */
-    public abstract void handleView(CandidateBean candidateBean) ;
+    public abstract void handleView(CandidateBean candidateBean);
 
-    public abstract void handleRunCandidate(CandidateBean candidateBean) ;
+    public abstract void handleRunCandidate(CandidateBean candidateBean);
 
     //override POST vs GET distinction and make it explicitly all about the "done" boolean
+
     protected boolean isFormSubmission(HttpServletRequest request) {
         return request.getParameter("action") != null &&
                 StringUtils.equals(request.getParameter("action"), CandidateBean.DONE);
@@ -64,6 +66,7 @@ public abstract class AbstractCandidateController extends SimpleFormController {
     /*
     * Populate candidateBean, handle note saving and locking
     */
+
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) {
         CandidateBean candidateBean = (CandidateBean) command;
 

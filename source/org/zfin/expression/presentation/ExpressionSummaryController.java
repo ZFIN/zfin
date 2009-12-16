@@ -1,14 +1,14 @@
 package org.zfin.expression.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
+import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
-import org.zfin.expression.repository.ExpressionRepository;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.expression.ExpressionStageAnatomyContainer;
+import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Gene;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.framework.presentation.LookupStrings;
-import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +31,7 @@ public class ExpressionSummaryController extends AbstractCommandController {
         ModelAndView modelAndView = new ModelAndView("expression-summary.page", LookupStrings.FORM_BEAN, form);
 
         Gene gene = form.getGene();
-        
+
 
         ExpressionStageAnatomyContainer xsac = xsr.getExpressionStages(gene);
 

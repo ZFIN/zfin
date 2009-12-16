@@ -1,18 +1,17 @@
 package org.zfin.curation.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-
-import java.util.List;
-import java.util.ArrayList;
-
-import org.zfin.framework.presentation.dto.PileStructureAnnotationDTO;
 import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
+import org.zfin.framework.presentation.dto.PileStructureAnnotationDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Transfer object related to updating figure annotations with structures
  * from the pile.
  */
-public class UpdateExpressionDTO implements IsSerializable{
+public class UpdateExpressionDTO implements IsSerializable {
 
     private String publicationID;
     private List<PileStructureAnnotationDTO> structures = new ArrayList<PileStructureAnnotationDTO>();

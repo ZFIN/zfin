@@ -1,5 +1,6 @@
 package org.zfin.sequence.blast.presentation;
 
+import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
@@ -8,13 +9,12 @@ import org.zfin.sequence.blast.BlastQueryThreadCollection;
 import org.zfin.sequence.blast.BlastThreadService;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastResultMapper;
-import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -23,18 +23,18 @@ import java.io.FileInputStream;
  */
 public class XMLBlastViewController extends AbstractCommandController {
 
-    private int maxTries = 5 ;
-    private long initPauseTimeMs = 2000 ; // 2 seconds
-    private long pauseTimeBewteenTriesMs = 5000 ; // 5 seconds
-    private JAXBContext jc = null ;
+    private int maxTries = 5;
+    private long initPauseTimeMs = 2000; // 2 seconds
+    private long pauseTimeBewteenTriesMs = 5000; // 5 seconds
+    private JAXBContext jc = null;
 
-    private Logger logger = Logger.getLogger(XMLBlastViewController.class) ;
+    private Logger logger = Logger.getLogger(XMLBlastViewController.class);
 
-    public XMLBlastViewController(){
+    public XMLBlastViewController() {
         try {
             jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
         } catch (JAXBException e) {
-            logger.error("Failed to instantiate JAXContext for org.zfin.sequence.blast.results: ",e.fillInStackTrace());
+            logger.error("Failed to instantiate JAXContext for org.zfin.sequence.blast.results: ", e);
         }
     }
 
@@ -44,8 +44,8 @@ public class XMLBlastViewController extends AbstractCommandController {
         XMLBlastBean xmlBlastBean = (XMLBlastBean) command;
 
         ModelAndView modelAndView = new ModelAndView();
-        String fileName = null ;
-        int tries = 0 ;
+        String fileName = null;
+        int tries = 0;
 
         try {
             // handle file name issues
@@ -70,7 +70,7 @@ public class XMLBlastViewController extends AbstractCommandController {
 
 
             // if the thread is still processing
-            if (BlastThreadService.isJobInQueue(xmlBlastBean,BlastQueryThreadCollection.getInstance())) {
+            if (BlastThreadService.isJobInQueue(xmlBlastBean, BlastQueryThreadCollection.getInstance())) {
 //                if (false == BlastQueryThreadCollection.getInstance().isBlastThreadDone(xmlBlastBean)) {
                 modelAndView.setViewName("blast-processing.page");
                 modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
@@ -79,39 +79,37 @@ public class XMLBlastViewController extends AbstractCommandController {
             else {
                 // if it is done processing and no file exists, then there is a serious problem
                 // failed to find the blast ticket
-                if (false == xmlBlastBean.isFileExists() ){
+                if (false == xmlBlastBean.isFileExists()) {
                     modelAndView.setViewName("bad-blast-ticket.page");
                     modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
                 }
                 // if the file exists, then life is good and we can return the result
-                else{
+                else {
                     // the file does exist
                     // create a bean from the JAXB
-                    File resultFile = xmlBlastBean.getResultFile() ;
-                    BlastOutput blastOutput = null ;
-                    boolean done = false ;
-                    while(done==false && tries < maxTries){
-                        logger.debug("try: "+ tries + " of "+maxTries);
+                    File resultFile = xmlBlastBean.getResultFile();
+                    BlastOutput blastOutput = null;
+                    boolean done = false;
+                    while (done == false && tries < maxTries) {
+                        logger.debug("try: " + tries + " of " + maxTries);
                         try {
-                            ++tries ;
+                            ++tries;
                             // wait 2 seconds to allow the file time to finish writing
                             Thread.sleep(initPauseTimeMs);
                             Unmarshaller u = jc.createUnmarshaller();
                             blastOutput = (BlastOutput) u.unmarshal(new FileInputStream(resultFile));
-                            done = true ;
+                            done = true;
                         }
                         catch (Exception e) {
-                            e.fillInStackTrace() ;
                             // if it throws premature end of file exception,
                             // then we are probably not done writing to it, so try again
-                            if(e.getMessage().contains("Premature end of file.")){
+                            if (e.getMessage().contains("Premature end of file.")) {
 //                            if(e instanceof org.xml.sax.SAXParseException){
-                                logger.warn("sax exception while parsing: "+resultFile,e);
-                                done = false ;
+                                logger.warn("sax exception while parsing: " + resultFile, e);
+                                done = false;
                                 Thread.sleep(pauseTimeBewteenTriesMs);
-                            }
-                            else {
-                                throw e ;
+                            } else {
+                                throw e;
                             }
                         }
                     }
@@ -127,11 +125,10 @@ public class XMLBlastViewController extends AbstractCommandController {
             }
             return modelAndView;
         } catch (Exception e) {
-            e.fillInStackTrace();
-            String errorString =  "problem viewing executed blast: " ;
-            errorString += fileName ;
-            errorString += " tries: "+ tries ;
-            logger.error(errorString,e);
+            String errorString = "problem viewing executed blast: ";
+            errorString += fileName;
+            errorString += " tries: " + tries;
+            logger.error(errorString, e);
             modelAndView.setViewName("bad-blast-result.page");
             modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);
             return modelAndView;

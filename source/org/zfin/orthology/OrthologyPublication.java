@@ -1,6 +1,7 @@
 package org.zfin.orthology;
 
-import org.zfin.publication.*;
+import org.zfin.publication.Publication;
+
 import java.util.List;
 
 /**

@@ -1,10 +1,11 @@
 package org.zfin.marker.presentation.client;
 
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.core.client.GWT;
-import org.zfin.framework.presentation.client.TermNotFoundException;
-import org.zfin.marker.presentation.dto.*;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import org.zfin.marker.presentation.dto.CloneDTO;
+import org.zfin.marker.presentation.dto.CloneTypesDTO;
+import org.zfin.marker.presentation.dto.ReferenceDatabaseDTO;
 
 import java.util.List;
 
@@ -30,8 +31,11 @@ public interface CloneRPCService extends RemoteService {
     }
 
     // clone transfer
-    CloneDTO getCloneForZdbID(String zdbID) ;
-    CloneTypesDTO getCloneTypes() ;
+
+    CloneDTO getCloneForZdbID(String zdbID);
+
+    CloneTypesDTO getCloneTypes();
+
     CloneDTO updateCloneData(CloneDTO cloneDTO);
 
     List<ReferenceDatabaseDTO> getCloneDBLinkAddReferenceDatabases(String markerZdbID);

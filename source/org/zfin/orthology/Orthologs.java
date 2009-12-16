@@ -1,9 +1,9 @@
 package org.zfin.orthology;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.io.Serializable;
 
 /**
  * Highest level business object which holds all the information about each single orthologous gene record.

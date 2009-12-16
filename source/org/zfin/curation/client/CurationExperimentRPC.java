@@ -3,7 +3,7 @@ package org.zfin.curation.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import org.zfin.curation.dto.*;
+import org.zfin.curation.dto.UpdateExpressionDTO;
 import org.zfin.framework.presentation.dto.*;
 import org.zfin.framework.presentation.gwtutils.StageRangeIntersection;
 import org.zfin.framework.presentation.gwtutils.TermNotFoundException;
@@ -287,16 +287,18 @@ public interface CurationExperimentRPC extends RemoteService {
     /**
      * Retrieve a list of structures that could be used instead of the selected
      * structure with a stage overlap given by start and end.
+     *
      * @param selectedPileStructure pilse structure
-     * @param intersection intersection
+     * @param intersection          intersection
      * @return list of PileStructureDTO,
      */
     List<RelatedPileStructureDTO> getTermsWithStageOverlap(PileStructureDTO selectedPileStructure,
-                                                    StageRangeIntersection intersection);
+                                                           StageRangeIntersection intersection);
 
     /**
      * Create a new structure for the pile.
-     * @param expressedTerm  Expressed Term dto
+     *
+     * @param expressedTerm Expressed Term dto
      * @param publicationID pub id
      */
     PileStructureDTO createPileStructure(ExpressedTermDTO expressedTerm, String publicationID)
@@ -305,6 +307,7 @@ public interface CurationExperimentRPC extends RemoteService {
 
     /**
      * Save a given session variable in Application session.
+     *
      * @param sessionVariable session variable
      */
     void saveSessionVisibility(SessionVariable sessionVariable);

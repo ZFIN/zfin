@@ -1,8 +1,8 @@
 package org.zfin.orthology.presentation;
 
 import org.zfin.framework.presentation.SearchFormValidator;
-import org.zfin.orthology.Species;
 import org.zfin.orthology.CriteriaType;
+import org.zfin.orthology.Species;
 import org.zfin.util.ErrorCollection;
 
 /**
@@ -230,8 +230,7 @@ public class OrthologyFormValidator implements SearchFormValidator {
                     errors.addError("The position field for Human must be a number and must begin with either p or q.");
                 }
             } else if (filterType.equals("range")) {
-                if ((criteria.matches("(p[1-9]\\d*\\.*\\d*)\\-(p[1-9]\\d*\\.*\\d*)") || criteria.matches("(q[1-9]\\d*\\.*\\d*)\\-(q[1-9]\\d*\\.*\\d*)")) && !criteria.contains(".."))
-                {
+                if ((criteria.matches("(p[1-9]\\d*\\.*\\d*)\\-(p[1-9]\\d*\\.*\\d*)") || criteria.matches("(q[1-9]\\d*\\.*\\d*)\\-(q[1-9]\\d*\\.*\\d*)")) && !criteria.contains("..")) {
                     String[] tokens = criteria.split("-");
                     double min = Double.parseDouble(tokens[0].substring(1)); // (chop off first character, then parse)
                     double max = Double.parseDouble(tokens[1].substring(1));
@@ -354,8 +353,7 @@ public class OrthologyFormValidator implements SearchFormValidator {
                     isValid = false;
                 }
             } else if (filterType.equals("range")) {
-                if (criteria.matches("([1-9]\\d*R)\\-([1-9]\\d*R)") || criteria.matches("([1-9]\\d*L)\\-([1-9]\\d*L)"))
-                {
+                if (criteria.matches("([1-9]\\d*R)\\-([1-9]\\d*R)") || criteria.matches("([1-9]\\d*L)\\-([1-9]\\d*L)")) {
                     String[] tokens = criteria.split("-");
                     int min = Integer.parseInt(tokens[0].substring(0, tokens[0].length() - 1));
                     int max = Integer.parseInt(tokens[1].substring(0, tokens[1].length() - 1));

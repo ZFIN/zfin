@@ -5,10 +5,10 @@
 <c:choose>
     <c:when test="${formBean.jobsRunning}">
         Running
-        <a href="?action=<%=QuartzJobsBean.Action.PAUSE_ALL%>&requestID=${formBean.requestID}">Pause</a>
+        <a href="?action=<%=QuartzJobsBean.Action.PAUSE_ALL%>&requestID=${formBean.newRequestID}">Pause</a>
     </c:when>
     <c:otherwise>
-        <a href="?action=<%=QuartzJobsBean.Action.RESUME_ALL%>&requestID=${formBean.requestID}">Start</a>
+        <a href="?action=<%=QuartzJobsBean.Action.RESUME_ALL%>&requestID=${formBean.newRequestID}">Start</a>
         Paused
     </c:otherwise>
 </c:choose>
@@ -16,7 +16,6 @@
 
 requestID=${formBean.requestID}
 <br>
-
 
 
 <c:if test="${!empty formBean.message}">
@@ -43,7 +42,7 @@ requestID=${formBean.requestID}
 
 <c:if test="${!empty formBean.quartzJobInfoList}">
     <h3>Scheduled Quartz Jobs</h3>
-    <zfin2:quartzJobsList jobs="${formBean.quartzJobInfoList}"  requestID="${formBean.newRequestID}"/>
+    <zfin2:quartzJobsList jobs="${formBean.quartzJobInfoList}" requestID="${formBean.newRequestID}"/>
 </c:if>
 
 

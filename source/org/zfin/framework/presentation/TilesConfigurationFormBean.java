@@ -3,8 +3,8 @@ package org.zfin.framework.presentation;
 import org.apache.struts.tiles.DefinitionsFactoryConfig;
 
 import java.util.HashSet;
-import java.util.StringTokenizer;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * Created by IntelliJ IDEA.

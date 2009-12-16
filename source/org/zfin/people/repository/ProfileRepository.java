@@ -1,7 +1,7 @@
 package org.zfin.people.repository;
 
-import org.zfin.people.*;
 import org.zfin.marker.Marker;
+import org.zfin.people.*;
 
 import java.util.List;
 
@@ -62,12 +62,12 @@ public interface ProfileRepository {
     /**
      * Retrieve a Curator Session by pub and field name.
      * This requires to have a security login, i.e. a Person record.
-     * 
-     * @param pubZdbID     pub that the session value is associated with [can be null!]
-     * @param field        field name
+     *
+     * @param pubZdbID pub that the session value is associated with [can be null!]
+     * @param field    field name
      * @return CuratorSession object from the database, if there is one
      */
-    CuratorSession getCuratorSession(String pubZdbID,CuratorSession.Attribute field);
+    CuratorSession getCuratorSession(String pubZdbID, CuratorSession.Attribute field);
 
     /**
      * @param curatorZdbID person for whom the session value is being saved for
@@ -125,28 +125,32 @@ public interface ProfileRepository {
     /**
      * Update a users account info and record the changes.
      *
-     * @param currentPerson person info on which updates are applied
-     * @param newAccountInfo     new account info
+     * @param currentPerson  person info on which updates are applied
+     * @param newAccountInfo new account info
      */
     void updateAccountInfo(Person currentPerson, AccountInfo newAccountInfo);
+
     /**
      * Persist section visibility
-     * @param pubID pub ID
+     *
+     * @param pubID       pub ID
      * @param showSection attribute name
-     * @param visibility attribute value
+     * @param visibility  attribute value
      */
     void setCuratorSession(String pubID, CuratorSession.Attribute showSection, boolean visibility);
 
     /**
      * Persist experiment section visibility
+     *
      * @param publicationID pub ID
      * @param attributeName attribute name
-     * @param zdbID zdbID 
+     * @param zdbID         zdbID
      */
     void setCuratorSession(String publicationID, CuratorSession.Attribute attributeName, String zdbID);
 
     /**
      * Retrieve a person record by login name.
+     *
      * @param login login
      * @return person
      */
@@ -154,6 +158,7 @@ public interface ProfileRepository {
 
     /**
      * Delete a curator session element.
+     *
      * @param session element
      */
     void deleteCuratorSession(CuratorSession session);

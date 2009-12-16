@@ -1,7 +1,7 @@
 package org.zfin.expression.presentation;
 
-import org.zfin.marker.Gene;
 import org.zfin.expression.ExpressionStageAnatomy;
+import org.zfin.marker.Gene;
 
 import java.util.List;
 
@@ -11,7 +11,9 @@ public class ExpressionSummaryBean {
 
 
     public Gene getGene() {
-        if (gene == null) { gene = new Gene(); }
+        if (gene == null) {
+            gene = new Gene();
+        }
         return gene;
     }
 

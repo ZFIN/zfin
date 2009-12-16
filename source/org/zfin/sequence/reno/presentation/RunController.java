@@ -2,10 +2,10 @@ package org.zfin.sequence.reno.presentation;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
-import org.zfin.sequence.reno.RedundancyRun;
-import org.zfin.sequence.reno.NomenclatureRun;
-import org.zfin.sequence.reno.repository.RenoRepository;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.sequence.reno.NomenclatureRun;
+import org.zfin.sequence.reno.RedundancyRun;
+import org.zfin.sequence.reno.repository.RenoRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +27,7 @@ public class RunController extends AbstractController {
         form.setRedundancyRuns(redundancyRuns);
         form.setNomenclatureRuns(nomenclatureRuns);
 
-        return new ModelAndView(successView, LookupStrings.FORM_BEAN, form) ; 
+        return new ModelAndView(successView, LookupStrings.FORM_BEAN, form);
     }
 
     public void setSuccessView(String successView) {

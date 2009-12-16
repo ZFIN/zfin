@@ -5,12 +5,11 @@ import org.zfin.framework.CachedRepository;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.framework.presentation.client.Ontology;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GoTerm;
-import org.zfin.marker.Marker;
 
 import java.util.List;
-import java.util.TreeSet;
 
 
 /**
@@ -72,21 +71,24 @@ public interface MutantRepository extends CachedRepository {
      * @return genotype
      */
     Genotype getGenotypeByID(String genotypeZbID);
+
     Feature getFeatureByID(String featureZdbID);
-    Marker  getMarkerbyFeature(Feature feature);
+
+    Marker getMarkerbyFeature(Feature feature);
 
     /**
      * Retrieve a genotype object by handle
-     * @param genotypeHandle handle 
+     *
+     * @param genotypeHandle handle
      * @return genotype
      */
     Genotype getGenotypeByHandle(String genotypeHandle);
 
 
-
-
     List<Marker> getDeletedMarker(Feature feat);
+
     List<String> getDeletedMarkerLG(Feature feat);
+
     List<String> getMappedFeatureLG(Feature feat);
 
 
@@ -144,7 +146,7 @@ public interface MutantRepository extends CachedRepository {
     List<GoTerm> getGoTermsByName(String name);
 
     /**
-     * @param name go term name
+     * @param name     go term name
      * @param ontology subset of GO ontology
      * @return A list of GoTerms that contain the parameter handed in.
      */
@@ -200,6 +202,7 @@ public interface MutantRepository extends CachedRepository {
 
     /**
      * Lookup a term by name. Term must not be obsolete.
+     *
      * @param termName term name
      * @return Term object
      */

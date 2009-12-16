@@ -1,17 +1,15 @@
 package org.zfin.mutant;
 
-import org.zfin.marker.Marker;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 
 /**
-
  * map as string for now
-
  */
 
 public class FeatureMarkerRelationship {
@@ -71,7 +69,7 @@ public class FeatureMarkerRelationship {
                 '}';
     }
 
-     public Set<PublicationAttribution> getPublications() {
+    public Set<PublicationAttribution> getPublications() {
         if (publications == null)
             return new HashSet<PublicationAttribution>();
         return publications;

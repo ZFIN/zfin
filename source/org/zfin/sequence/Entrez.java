@@ -1,8 +1,5 @@
 package org.zfin.sequence;
 
-import org.zfin.sequence.EntrezOMIM;
-import org.zfin.sequence.EntrezMGI;
-
 import java.util.Set;
 
 

@@ -1,13 +1,11 @@
 package org.zfin.expression;
 
-import org.zfin.expression.Figure;
-import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.DevelopmentStage;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class ExpressionStageAnatomy {
     private DevelopmentStage stage;

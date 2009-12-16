@@ -1,10 +1,10 @@
 package org.zfin.framework.presentation;
 
-import org.hibernate.stat.Statistics;
 import org.hibernate.stat.QueryStatistics;
+import org.hibernate.stat.Statistics;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.

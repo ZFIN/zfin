@@ -1,9 +1,8 @@
 /**
  *  Class ReferenceDatabase.
  */
-package org.zfin.sequence ;
+package org.zfin.sequence;
 
-import org.zfin.Species;
 import org.zfin.sequence.blast.Database;
 
 import java.util.*;
@@ -14,7 +13,7 @@ public class ReferenceDatabase implements Comparable<ReferenceDatabase> {
     private ForeignDB foreignDB;
     private String organism;
     private ForeignDBDataType foreignDBDataType;
-    private Database primaryBlastDatabase ;
+    private Database primaryBlastDatabase;
     private Set<DisplayGroup> displayGroups;
     private List<Database> relatedBlastDbs;
 
@@ -82,17 +81,17 @@ public class ReferenceDatabase implements Comparable<ReferenceDatabase> {
         this.displayGroups = displayGroups;
     }
 
-    public String toString(){
-        String returnString = "" ;
-        returnString += zdbID + " " ;
-        returnString += organism + " " ;
-        if(foreignDB!=null){
-            returnString += foreignDB.getDbName() + " " ;
+    public String toString() {
+        String returnString = "";
+        returnString += zdbID + " ";
+        returnString += organism + " ";
+        if (foreignDB != null) {
+            returnString += foreignDB.getDbName() + " ";
         }
-        if(primaryBlastDatabase!=null){
-            returnString += primaryBlastDatabase.toString() ;
+        if (primaryBlastDatabase != null) {
+            returnString += primaryBlastDatabase.toString();
         }
-        return returnString ;
+        return returnString;
     }
 
     public int compareTo(ReferenceDatabase otherRefDB) {
@@ -100,46 +99,41 @@ public class ReferenceDatabase implements Comparable<ReferenceDatabase> {
         return foreignDB.getDbName().compareTo(otherRefDB.getForeignDB().getDbName());
     }
 
-    public boolean isInDisplayGroup(DisplayGroup.GroupName groupName){
-        for(DisplayGroup displayGroup: getDisplayGroups()){
-            if(displayGroup.getGroupName()==groupName){
-                return true ;
+    public boolean isInDisplayGroup(DisplayGroup.GroupName groupName) {
+        for (DisplayGroup displayGroup : getDisplayGroups()) {
+            if (displayGroup.getGroupName() == groupName) {
+                return true;
             }
         }
-        return false ;
+        return false;
     }
 
-    public String getView(){
-        return foreignDB.getDbName().toString() + " " + foreignDBDataType.getDataType() + " " + foreignDBDataType.getSuperType() ;
+    public String getView() {
+        return foreignDB.getDbName().toString() + " " + foreignDBDataType.getDataType() + " " + foreignDBDataType.getSuperType();
     }
 
-    public List<Database> getOrderedRelatedBlastDB(){
-        List<Database> sortedDatabases = new ArrayList<Database>() ;
-        sortedDatabases.addAll(relatedBlastDbs) ;
-        Collections.sort(sortedDatabases,new Comparator<Database>(){
+    public List<Database> getOrderedRelatedBlastDB() {
+        List<Database> sortedDatabases = new ArrayList<Database>();
+        sortedDatabases.addAll(relatedBlastDbs);
+        Collections.sort(sortedDatabases, new Comparator<Database>() {
             public int compare(Database o1, Database o2) {
-                if(o1.getToolDisplayOrder()!=null && o2.getToolDisplayOrder()!=null){
-                    return o1.getToolDisplayOrder().compareTo(o2.getToolDisplayOrder()) ;
-                }
-                else
-                if(o1.getToolDisplayOrder()==null && o2.getToolDisplayOrder()==null){
-                    return o1.getName().compareTo(o2.getName()) ;
-                }
-                else
-                if(o1.getToolDisplayOrder()==null && o2.getToolDisplayOrder()!=null){
-                    return 1 ;
-                }
-                else{
-                    return -1 ;
+                if (o1.getToolDisplayOrder() != null && o2.getToolDisplayOrder() != null) {
+                    return o1.getToolDisplayOrder().compareTo(o2.getToolDisplayOrder());
+                } else if (o1.getToolDisplayOrder() == null && o2.getToolDisplayOrder() == null) {
+                    return o1.getName().compareTo(o2.getName());
+                } else if (o1.getToolDisplayOrder() == null && o2.getToolDisplayOrder() != null) {
+                    return 1;
+                } else {
+                    return -1;
                 }
             }
         });
-        return sortedDatabases ;
+        return sortedDatabases;
     }
 
     public boolean isShortSequence() {
         String abbrevString = foreignDB.getDbName().toString();
-        return  abbrevString.contains("miRNA") ||
+        return abbrevString.contains("miRNA") ||
                 abbrevString.contains("miRBASE")
                 ;
     }

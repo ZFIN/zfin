@@ -2,8 +2,8 @@ package org.zfin.expression;
 
 import org.zfin.publication.Publication;
 
-import java.util.Set;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Figure domain business object. It is a figure referenced in a publication.
@@ -113,5 +113,5 @@ public abstract class Figure implements Serializable {
         return zdbID.hashCode();
     }
 
-    
+
 }

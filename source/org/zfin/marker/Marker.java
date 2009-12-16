@@ -1,20 +1,20 @@
 package org.zfin.marker;
 
+import org.apache.log4j.Logger;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.DataNote;
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.EntityAlias;
 import org.zfin.infrastructure.EntityNotes;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.MappedMarker;
 import org.zfin.orthology.Orthologue;
-import org.zfin.people.Person;
 import org.zfin.people.MarkerSupplier;
+import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
-import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.*;
@@ -23,10 +23,10 @@ import java.util.*;
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
  * ToDo: needs more modelling...
  */
-public class Marker implements Serializable, Comparable , EntityAlias, EntityNotes {
+public class Marker implements Serializable, Comparable, EntityAlias, EntityNotes {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
-    
+
     private String zdbID;
     private String name;
     private String abbreviation;
@@ -150,7 +150,7 @@ public class Marker implements Serializable, Comparable , EntityAlias, EntityNot
      * the given anatomical structure.
      *
      * @param aoZdbID ZdbID of anatomy object.
- * @return List of publications.
+     * @return List of publications.
      */
     public List<Publication> getPublications(String aoZdbID) {
         List<Publication> pubs;
@@ -188,11 +188,11 @@ public class Marker implements Serializable, Comparable , EntityAlias, EntityNot
         this.orthologyNotes = orthologyNotes;
     }
 
-    public OrthologyNote getOrthologyNote(){
-        if(orthologyNotes == null || orthologyNotes.size() ==0)
+    public OrthologyNote getOrthologyNote() {
+        if (orthologyNotes == null || orthologyNotes.size() == 0)
             return null;
 
-        if(orthologyNotes.size() > 1) {
+        if (orthologyNotes.size() > 1) {
             String message = "More than one Ortholgoy notes found. This is not allowed!";
             LOG.error(message);
         }
@@ -384,7 +384,7 @@ public class Marker implements Serializable, Comparable , EntityAlias, EntityNot
         ATB("ATB"),
         BAC("BAC"),
         BAC_END("BAC_END"),
-	CAN_BE_PROMOTER("CAN_BE_PROMOTER"),
+        CAN_BE_PROMOTER("CAN_BE_PROMOTER"),
         CAN_HAVE_MRPHLN("CAN_HAVE_MRPHLN"),
         CDNA("CDNA"),
         CDNA_AND_EST("CDNA_AND_EST"),
@@ -414,8 +414,7 @@ public class Marker implements Serializable, Comparable , EntityAlias, EntityNot
         SSLP("SSLP"),
         STS("STS"),
         TGCONSTRUCT("TGCONSTRUCT"),
-        TRANSCRIPT("TRANSCRIPT")
-        ;
+        TRANSCRIPT("TRANSCRIPT");
 
         private final String value;
 

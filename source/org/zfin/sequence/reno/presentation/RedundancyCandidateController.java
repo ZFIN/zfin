@@ -2,11 +2,10 @@ package org.zfin.sequence.reno.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zfin.marker.*;
+import org.zfin.marker.Marker;
 import org.zfin.people.Person;
 import org.zfin.sequence.reno.RenoService;
 import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.framework.HibernateUtil;
 
 import java.util.List;
 
@@ -47,7 +46,7 @@ public class RedundancyCandidateController extends AbstractCandidateController {
 
         Person currentUser = Person.getCurrentSecurityUser();
 
-        if (rc.getLockPerson() != null && !currentUser.equals(rc.getLockPerson())){
+        if (rc.getLockPerson() != null && !currentUser.equals(rc.getLockPerson())) {
             logger.debug(" Person records are not equal.. ");
         }
 
@@ -128,8 +127,6 @@ public class RedundancyCandidateController extends AbstractCandidateController {
         RenoService.moveNoteToGene(rc, existingGene);
         logger.info("handling an existing gene - exit");
     }
-
-
 
 
 }

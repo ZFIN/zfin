@@ -3,8 +3,8 @@ package org.zfin.sequence.blast.presentation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.sequence.blast.BlastQueryThreadCollection;
-import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.blast.BlastThreadService;
+import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastResultBean;
 
@@ -256,7 +256,7 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
     public boolean isFileExists() {
         return resultFile != null
                 && resultFile.exists()
-                && false== BlastThreadService.isJobInQueue(this,BlastQueryThreadCollection.getInstance().getQueue());
+                && false == BlastThreadService.isJobInQueue(this, BlastQueryThreadCollection.getInstance().getQueue());
     }
 
     public BlastOutput getBlastOutput() {

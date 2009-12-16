@@ -1,12 +1,11 @@
 package org.zfin.orthology.repository;
 
-import org.zfin.framework.CachedRepository;
-import org.zfin.orthology.SpeciesCriteria;
-import org.zfin.orthology.Orthologue;
-import org.zfin.orthology.OrthoEvidence;
 import org.zfin.criteria.ZfinCriteria;
-import org.zfin.publication.Publication;
+import org.zfin.framework.CachedRepository;
 import org.zfin.infrastructure.Updates;
+import org.zfin.orthology.Orthologue;
+import org.zfin.orthology.SpeciesCriteria;
+import org.zfin.publication.Publication;
 
 import java.util.List;
 import java.util.Set;
@@ -26,6 +25,7 @@ public interface OrthologyRepository extends CachedRepository {
     /**
      * Update a fast-search table to hold info about evidence codes. In order
      * to display them correctly evidence codes have to be stored in a particular way
+     *
      * @param orthologue
      */
     public void updateFastSearchEvidenceCodes(Set<Orthologue> orthologue);

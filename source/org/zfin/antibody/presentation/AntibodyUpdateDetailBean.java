@@ -1,20 +1,20 @@
 package org.zfin.antibody.presentation;
 
-import org.zfin.antibody.Antibody;
-import org.zfin.antibody.Isotype;
-import org.zfin.antibody.AntibodyType;
-import org.zfin.antibody.repository.AntibodyRepository;
-import org.zfin.marker.MarkerAlias;
-import org.zfin.marker.Marker;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.Species;
-import org.zfin.publication.Publication;
+import org.zfin.antibody.Antibody;
+import org.zfin.antibody.AntibodyType;
+import org.zfin.antibody.Isotype;
+import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerAlias;
+import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
 public class AntibodyUpdateDetailBean extends AntibodyBean {
-    private String  pubAttribData;
+    private String pubAttribData;
     private String supplierName;
     private String newNote;
     private String[] usageNote;
@@ -26,8 +26,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     private List<Publication> mostRecentPubs;
 
     public String getSupplierzdbID() {
-    return supplierzdbID;
-}
+        return supplierzdbID;
+    }
 
     public void setSupplierzdbID(String supplierzdbID) {
         this.supplierzdbID = supplierzdbID;
@@ -42,8 +42,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     }
 
     public String getAntigenpubzdbid() {
-    return antigenpubzdbid;
-}   
+        return antigenpubzdbid;
+    }
 
     public void setAntigenpubzdbid(String antigenpubzdbid) {
         this.antigenpubzdbid = antigenpubzdbid;
@@ -60,16 +60,16 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     }
 
     public String getAntibodyAntigenzdbID() {
-    return antibodyAntigenzdbID;
-}
+        return antibodyAntigenzdbID;
+    }
 
     public void setAntibodyAntigenzdbID(String antibodyAntigenzdbID) {
         this.antibodyAntigenzdbID = antibodyAntigenzdbID;
     }
 
     public String getAntibodyAliaszdbID() {
-    return antibodyAliaszdbID;
-}
+        return antibodyAliaszdbID;
+    }
 
     public void setAntibodyAliaszdbID(String antibodyAliaszdbID) {
         this.antibodyAliaszdbID = antibodyAliaszdbID;
@@ -80,8 +80,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     }
 
     public int getAliasAttribIndex() {
-    return aliasAttribIndex;
-}
+        return aliasAttribIndex;
+    }
 
     public void setAliasAttribIndex(int aliasAttribIndex) {
         this.aliasAttribIndex = aliasAttribIndex;
@@ -100,8 +100,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     private int aliasAttribIndex;
 
     public String getAliasRef() {
-    return aliasRef;
-}
+        return aliasRef;
+    }
 
     public void setAliasRef(String aliasRef) {
         this.aliasRef = aliasRef;
@@ -109,9 +109,10 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
 
     private String aliasRef;
     private String antigenRef;
+
     public String getAntigenRef() {
-    return antigenRef;
-}
+        return antigenRef;
+    }
 
     public void setAntigenRef(String antigenRef) {
         this.antigenRef = antigenRef;
@@ -141,7 +142,7 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
         this.attribution = attribution;
     }
 
-    public String getNoteZdbId() {                                                             
+    public String getNoteZdbId() {
         return noteZdbId;
     }
 
@@ -158,14 +159,13 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     }
 
     public String getNewNote() {
-    return newNote;
-}
+        return newNote;
+    }
 
     public void setNewNote(String newNote) {
         this.newNote = newNote;
     }
 
-    
 
     private String newAlias;
 
@@ -176,8 +176,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     private String attribAntigen;
 
     public String getAttribAntigen() {
-    return attribAntigen;
-}
+        return attribAntigen;
+    }
 
     public void setAttribAntigen(String attribAntigen) {
         this.attribAntigen = attribAntigen;
@@ -192,8 +192,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     }
 
     public String getNewAntigenGene() {
-    return newAntigenGene;
-}
+        return newAntigenGene;
+    }
 
     public void setNewAntigenGene(String newAntigenGene) {
         this.newAntigenGene = newAntigenGene;
@@ -210,7 +210,7 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
         this.antibodyDefPubZdbID = antibodyDefPubZdbID;
     }
 
-    private String    antibodyDefPubZdbID;
+    private String antibodyDefPubZdbID;
 
 
     public String getRelAttribData() {
@@ -247,7 +247,6 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
     public void setAntibody(Antibody antibody) {
         this.antibody = antibody;
     }
-
 
 
     public Map<String, String> getImmunogenOrganismList() {
@@ -297,8 +296,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
         return typeList;
     }
 
-     public List<Publication> getPublication() {
-         List<Publication> publication = new ArrayList<Publication>();
+    public List<Publication> getPublication() {
+        List<Publication> publication = new ArrayList<Publication>();
 
 
         if (antibody == null)
@@ -315,8 +314,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
                 }
             }
         }
-    return publication;
-     }
+        return publication;
+    }
 
     public void setMostRecentPubs(List<Publication> mostRecentPubs) {
         this.mostRecentPubs = mostRecentPubs;
@@ -328,9 +327,10 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
      * Then add non-standard publications that were selected during
      * a user session. They get added to the list in the order of most recent usage.
      * Make sure that the standard publications are not included in the list of
-     * most recent pubs as we do not want to have it be displayed more than once. 
+     * most recent pubs as we do not want to have it be displayed more than once.
+     *
      * @return map of publications.
-     * ToDO: Make the standard pubs be more configurable so this method can be reused elsewhere.
+     *         ToDO: Make the standard pubs be more configurable so this method can be reused elsewhere.
      */
     public Map<String, String> getDefPubList() {
         Map<String, String> entries = new LinkedHashMap<String, String>();
@@ -344,8 +344,8 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
         // check if the the pubs used are different from the default publication list.
         boolean defaultPubsOnly = true;
         for (Publication publication : mostRecentPubs) {
-            if(publication == null)
-                    continue;
+            if (publication == null)
+                continue;
             // if a non-default publication is found continue otherwise only
             //return the default list
             if (!entries.containsKey(publication.getZdbID())) {
@@ -362,7 +362,7 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
             if (pub != null) {
                 String labelString = pub.getShortAuthorList();
                 if (!entries.containsKey(pub.getZdbID()))
-                entries.put(pub.getZdbID(), labelString);
+                    entries.put(pub.getZdbID(), labelString);
             }
         }
         return entries;

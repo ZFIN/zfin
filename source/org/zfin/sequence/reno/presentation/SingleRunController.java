@@ -1,5 +1,6 @@
 package org.zfin.sequence.reno.presentation;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.validation.BindException;
@@ -10,17 +11,16 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.RenoService;
+import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.repository.RenoRepository;
-import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class SingleRunController.
@@ -46,7 +46,7 @@ public class SingleRunController extends SimpleFormController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put(LookupStrings.FORM_BEAN, form);
 
-        if(run!=null){
+        if (run != null) {
             setFormData(request, form, run);
             map.put(LookupStrings.DYNAMIC_TITLE, run.getName());
         } else {
@@ -70,17 +70,15 @@ public class SingleRunController extends SimpleFormController {
         Transaction tx = null;
 
         try {
-             
+
 
             tx = session.beginTransaction();
 
-            handleNomenclatureAttributionUpdate(form,run) ;
+            handleNomenclatureAttributionUpdate(form, run);
 
             if (run.isNomenclature()) {
-                handleOrthologyAttributionUpdate(form,(NomenclatureRun) run);
-            }
-            else
-            if (run.isRedundancy()) {
+                handleOrthologyAttributionUpdate(form, (NomenclatureRun) run);
+            } else if (run.isRedundancy()) {
                 handleRelationUpdate(form, (RedundancyRun) run);
             }
 
@@ -105,8 +103,8 @@ public class SingleRunController extends SimpleFormController {
      * save the ordered list to the form bean.
      *
      * @param request HttpRequest
-     * @param runBean   RunBean
-     * @param run    Actual Run 
+     * @param runBean RunBean
+     * @param run     Actual Run
      */
     private void setFormData(HttpServletRequest request, RunBean runBean, Run run) {
 
@@ -116,22 +114,18 @@ public class SingleRunController extends SimpleFormController {
         if (run.isNomenclature()) {
             // we've seen orthologyAttribution being null in db
             // thus check it to avoid null-pointer error
-            NomenclatureRun nomenRun = (NomenclatureRun) run ;
-            if ( nomenRun.getOrthologyPublication() == null)   {
+            NomenclatureRun nomenRun = (NomenclatureRun) run;
+            if (nomenRun.getOrthologyPublication() == null) {
                 runBean.setOrthologyPublicationZdbID(null);
-            }
-            else{
+            } else {
                 runBean.setOrthologyPublicationZdbID(nomenRun.getOrthologyPublication().getZdbID());
             }
-        }
-        else
-        if (run.isRedundancy()) {
-            RedundancyRun redunRun = (RedundancyRun) run ;
+        } else if (run.isRedundancy()) {
+            RedundancyRun redunRun = (RedundancyRun) run;
 
-            if (redunRun.getRelationPublication() == null)   {
+            if (redunRun.getRelationPublication() == null) {
                 runBean.setRelationPublicationZdbID(null);
-            }
-            else{
+            } else {
                 runBean.setRelationPublicationZdbID(redunRun.getRelationPublication().getZdbID());
             }
 
@@ -139,35 +133,30 @@ public class SingleRunController extends SimpleFormController {
 
 
         if (candidateType.equals(INQUEUE_CANDIDATES)) {
-            if(runBean.getAction()!=null&& runBean.getAction().equals(RunBean.FINISH_REMAINDER) && run.isRedundancy()){
+            if (runBean.getAction() != null && runBean.getAction().equals(RunBean.FINISH_REMAINDER) && run.isRedundancy()) {
                 HibernateUtil.createTransaction();
                 try {
                     RenoService.finishRemainderRedundancy(runBean.getRun());
                     HibernateUtil.flushAndCommitCurrentSession();
 //                    HibernateUtil.rollbackTransaction();
                 } catch (Exception e) {
-                    logger.error(e.fillInStackTrace());
+                    logger.error("Problem finishing remainder of the reno jobs", e);
                     HibernateUtil.rollbackTransaction();
                 }
             }
 
-            if (request.getParameter("comparator") != null){
+            if (request.getParameter("comparator") != null) {
                 runBean.setComparator(request.getParameter("comparator"));
-            }
-            else{
+            } else {
                 runBean.setComparator("expectValue");
             }
 
             if (run.isRedundancy()) {
                 runBean.setRunCandidates(renoRepository.getSortedRunCandidates(run.getZdbID(), runBean.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
-            }
-            else
-            if (run.isNomenclature()) {
+            } else if (run.isNomenclature()) {
                 runBean.setRunCandidates(renoRepository.getSortedNonZFRunCandidates(run.getZdbID(), runBean.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
             }
-        }
-        else
-        if (candidateType.equals(PENDING_CANDIDATES)) {
+        } else if (candidateType.equals(PENDING_CANDIDATES)) {
             runBean.setComparator("name");
             runBean.setRunCandidates(renoRepository.getPendingCandidates(run));
         }
@@ -176,7 +165,7 @@ public class SingleRunController extends SimpleFormController {
     private void handleOrthologyAttributionUpdate(RunBean form, NomenclatureRun nomenRun) {
         if (nomenRun.getOrthologyPublication() == null
                 ||
-                false==form.getOrthologyPublicationZdbID().equals(nomenRun.getOrthologyPublication().getZdbID())
+                false == form.getOrthologyPublicationZdbID().equals(nomenRun.getOrthologyPublication().getZdbID())
                 ) {
 
             Publication attribution = publicationRepository.getPublication(form.getOrthologyPublicationZdbID());
@@ -184,7 +173,7 @@ public class SingleRunController extends SimpleFormController {
         }
     }
 
-    private void handleNomenclatureAttributionUpdate(RunBean form,Run run){
+    private void handleNomenclatureAttributionUpdate(RunBean form, Run run) {
         if (run.getNomenclaturePublication() == null
                 || !form.getNomenclaturePublicationZdbID().equals(run.getNomenclaturePublication().getZdbID())
                 ) {
@@ -195,18 +184,17 @@ public class SingleRunController extends SimpleFormController {
     }
 
     /**
-     *
-     * @param form  RunBean that contains form data.
+     * @param form          RunBean that contains form data.
      * @param redundancyRun Run to manipuluate
      */
     private void handleRelationUpdate(RunBean form, RedundancyRun redundancyRun) {
-        LOG.info("form: " + form) ;
-        LOG.info("form.getRelationPublicationZdbID: " + form.getRelationPublicationZdbID()) ; 
-        if( 
-            redundancyRun.getRelationPublication()==null
-             ||
-          false==form.getRelationPublicationZdbID().equals(redundancyRun.getRelationPublication().getZdbID())
-                ){
+        LOG.info("form: " + form);
+        LOG.info("form.getRelationPublicationZdbID: " + form.getRelationPublicationZdbID());
+        if (
+                redundancyRun.getRelationPublication() == null
+                        ||
+                        false == form.getRelationPublicationZdbID().equals(redundancyRun.getRelationPublication().getZdbID())
+                ) {
             Publication attribution = publicationRepository.getPublication(form.getRelationPublicationZdbID());
             redundancyRun.setRelationPublication(attribution);
         }

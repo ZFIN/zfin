@@ -1,27 +1,27 @@
 package org.zfin.marker.presentation.client;
 
+import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.marker.presentation.dto.NoteDTO;
 import org.zfin.marker.presentation.event.NoteEvent;
 import org.zfin.marker.presentation.event.NoteListener;
-import org.zfin.marker.presentation.dto.NoteDTO;
-import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * This widget contains all of its own listeners.
  */
-public class PublicNoteBox extends NoteListBox{
+public class PublicNoteBox extends NoteListBox {
 
-    public PublicNoteBox(String div){
-        super(false) ;
-        addInternalListeners() ;
+    public PublicNoteBox(String div) {
+        super(false);
+        addInternalListeners();
         RootPanel.get(div).add(this);
     }
 
-    public void resetInternalListeners(){
+    public void resetInternalListeners() {
         clearNoteListeners();
         addInternalListeners();
     }
 
-    protected void addInternalListeners(){
+    protected void addInternalListeners() {
         addNoteListener(new NoteListener() {
             public void addNote(final NoteEvent noteEvent) {
                 NoteDTO noteDTO = noteEvent.getNoteDTO();

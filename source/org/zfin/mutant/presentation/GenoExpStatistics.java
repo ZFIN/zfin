@@ -1,20 +1,13 @@
 package org.zfin.mutant.presentation;
 
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.Feature;
-import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.FeatureMarkerRelationship;
 import org.zfin.expression.Figure;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.framework.presentation.EntityStatistics;
-import org.zfin.repository.RepositoryFactory;
+import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.mutant.Feature;
+import org.zfin.mutant.Genotype;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.marker.Marker;
-
-import java.util.List;
-import java.util.Set;
-import java.util.ArrayList;
+import org.zfin.repository.RepositoryFactory;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,13 +24,12 @@ public class GenoExpStatistics extends EntityStatistics {
 
     public GenoExpStatistics(Genotype genotype, Feature feature) {
         this.genotype = genotype;
-        this.feature=feature;
+        this.feature = feature;
     }
 
     public Genotype getGenotype() {
         return genotype;
     }
-
 
 
     public int getNumberOfFigures() {
@@ -50,7 +42,7 @@ public class GenoExpStatistics extends EntityStatistics {
     /**
      * @return There should be a single figure per GenotypeStatistics
      */
-   public Figure getFigure() {
+    public Figure getFigure() {
         if (figureResults == null || figureResults.getTotalCount() != 1) {
             figureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoExp(genotype);
         }
@@ -66,12 +58,11 @@ public class GenoExpStatistics extends EntityStatistics {
     }
 
 
-
     /*public Map<String, Set> getPhenotypeDescriptions() {
-        Map<String, Set> phenotypes = new HashMap<String, Set>();
-        Set<GenotypeExperiment> genotypeExperiments = genotype.getGenotypeExperiments();
-        for (GenotypeExperiment genoExperiment : genotypeExperiments) {
-            phenotypes.putAll(PhenotypeService.getPhenotypesGroupedByOntology(genoExperiment, anatomyItem));
-        }
-        return phenotypes;*/
-    }
+   Map<String, Set> phenotypes = new HashMap<String, Set>();
+   Set<GenotypeExperiment> genotypeExperiments = genotype.getGenotypeExperiments();
+   for (GenotypeExperiment genoExperiment : genotypeExperiments) {
+       phenotypes.putAll(PhenotypeService.getPhenotypesGroupedByOntology(genoExperiment, anatomyItem));
+   }
+   return phenotypes;*/
+}

@@ -4,18 +4,17 @@
 package org.zfin.infrastructure.repository;
 
 import org.zfin.ExternalNote;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.TermRelationship;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.TermRelationship;
 import org.zfin.people.Person;
 
 import java.util.List;
-import java.util.Collection;
 
 public interface InfrastructureRepository {
 
@@ -39,7 +38,8 @@ public interface InfrastructureRepository {
     RecordAttribution getRecordAttribution(String dataZdbID,
                                            String sourceZdbId,
                                            RecordAttribution.SourceType sourceType);
- List<RecordAttribution> getRecAttribforFtrType(String dataZdbID);
+
+    List<RecordAttribution> getRecAttribforFtrType(String dataZdbID);
 
 
     List<RecordAttribution> getRecordAttributions(ActiveData data);
@@ -71,6 +71,7 @@ public interface InfrastructureRepository {
     PublicationAttribution getPublicationAttribution(PublicationAttribution attribution);
 
     // TODO: RecordAttribution has a composite primary key, so not needed just yet
+
     RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID);
 
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID);
@@ -230,6 +231,7 @@ public interface InfrastructureRepository {
 
     /**
      * Retrieve Term by ZDB ID.
+     *
      * @param termID term id
      * @return Generic Term
      */
@@ -237,6 +239,7 @@ public interface InfrastructureRepository {
 
     /**
      * Retrieve Term by OBO ID.
+     *
      * @param termID term id
      * @return Generic Term
      */
@@ -244,6 +247,7 @@ public interface InfrastructureRepository {
 
     /**
      * Retrieve all related Terms.
+     *
      * @param genericTerm term
      * @return list of relationships
      */
@@ -251,6 +255,7 @@ public interface InfrastructureRepository {
 
     /**
      * Fetch a Data Alias Group entity for a given name
+     *
      * @param name alias group object
      * @return DataAliasGroup entity
      */

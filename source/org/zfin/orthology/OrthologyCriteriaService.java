@@ -1,12 +1,12 @@
 package org.zfin.orthology;
 
+import org.apache.commons.lang.StringUtils;
 import org.zfin.orthology.presentation.SpeciesCriteriaBean;
 import org.zfin.util.FilterType;
-import org.apache.commons.lang.StringUtils;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * User: giles

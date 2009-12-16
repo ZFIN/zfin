@@ -1,13 +1,10 @@
 package org.zfin.curation.client;
 
 import org.zfin.framework.presentation.dto.ExperimentDTO;
-import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
 import org.zfin.framework.presentation.dto.ExpressedTermDTO;
-import cvu.html.AttributeList;
+import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
 
 import java.util.List;
-import java.util.Map;
-import java.util.AbstractSet;
 import java.util.Set;
 
 /**

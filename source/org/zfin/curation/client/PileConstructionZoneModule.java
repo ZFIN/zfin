@@ -2,8 +2,8 @@ package org.zfin.curation.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
@@ -170,7 +170,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
      * Display the term info for a given term name in a given ontology.
      *
      * @param ontology Ontology
-     * @param termName   term name: zdb ID or obo ID
+     * @param termName term name: zdb ID or obo ID
      */
     public void showTermInfoByName(Ontology ontology, String termName) {
         //Window.alert("Show Term:: " + ontology + ":" + termID);
@@ -323,6 +323,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     }
 
     // ************************* ClickListener, ChangeListener, Callbacks, ....
+
     private class SwapTermsClickListener implements ClickHandler {
 
         public void onClick(ClickEvent widget) {

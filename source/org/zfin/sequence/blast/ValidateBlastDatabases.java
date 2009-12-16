@@ -1,15 +1,15 @@
 package org.zfin.sequence.blast;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.SessionFactory;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.apache.log4j.Logger;
-import org.apache.commons.collections.CollectionUtils;
-import org.zfin.framework.mail.IntegratedJavaMailSender;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.properties.ZfinProperties;
-import org.hibernate.SessionFactory;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.mail.IntegratedJavaMailSender;
+import org.zfin.properties.ZfinProperties;
 
 import java.util.List;
 
@@ -17,22 +17,21 @@ import java.util.List;
  */
 public class ValidateBlastDatabases extends QuartzJobBean {
 
-    private Logger logger  = Logger.getLogger(ValidateBlastDatabases.class) ;
+    private Logger logger = Logger.getLogger(ValidateBlastDatabases.class);
 
 
-    public void validateDatabase(){
-        List<String> failures = MountedWublastBlastService.getInstance().validateAllPhysicalDatabasesReadable() ;
-        if(CollectionUtils.isNotEmpty(failures)){
-            StringBuilder sb = new StringBuilder() ;
-            sb.append("Failed to validate remote databases:\n") ;
-            for(String failure : failures){
+    public void validateDatabase() {
+        List<String> failures = MountedWublastBlastService.getInstance().validateAllPhysicalDatabasesReadable();
+        if (CollectionUtils.isNotEmpty(failures)) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Failed to validate remote databases:\n");
+            for (String failure : failures) {
                 logger.error(failure);
-                sb.append(failure).append("\n") ;
+                sb.append(failure).append("\n");
             }
-            (new IntegratedJavaMailSender()).sendMail("Failed to validate "+ failures.size() + " remote databases",
+            (new IntegratedJavaMailSender()).sendMail("Failed to validate " + failures.size() + " remote databases",
                     sb.toString(), ZfinProperties.getValidationOtherEmailAddresses());
-        }
-        else{
+        } else {
             logger.info("No failed databases found.");
         }
         HibernateUtil.closeSession();
@@ -44,7 +43,7 @@ public class ValidateBlastDatabases extends QuartzJobBean {
     }
 
 
-    public void initDatabase(){
+    public void initDatabase() {
         String[] hibernateConfiguration =
                 new String[]{
                         "filters.hbm.xml",
@@ -64,17 +63,17 @@ public class ValidateBlastDatabases extends QuartzJobBean {
                         "sequence.hbm.xml",
                 };
 
-        SessionFactory sessionFactory=HibernateUtil.getSessionFactory();
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
-        if(sessionFactory == null){
-            new HibernateSessionCreator(false,hibernateConfiguration) ;
+        if (sessionFactory == null) {
+            new HibernateSessionCreator(false, hibernateConfiguration);
 
-            ZfinProperties.init("test","zfin-properties-test.xml");
+            ZfinProperties.init("test", "zfin-properties-test.xml");
         }
     }
 
-    public static void main(String args[]){
-        ValidateBlastDatabases validateBlastDatabases = new ValidateBlastDatabases() ;
+    public static void main(String args[]) {
+        ValidateBlastDatabases validateBlastDatabases = new ValidateBlastDatabases();
         validateBlastDatabases.initDatabase();
         validateBlastDatabases.validateDatabase();
     }

@@ -8,16 +8,16 @@ import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.audit.repository.HibernateAuditLogRepository;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.repository.HibernateExpressionRepository;
-import org.zfin.expression.repository.ExpressionRepository;
-import org.zfin.expression.repository.HibernateExpressionRepository;
+import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.feature.repository.HibernateFeatureRepository;
 import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.repository.HibernateLinkageRepository;
+import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.repository.HibernateMutantRepository;
 import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.feature.repository.HibernateFeatureRepository;
-import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.orthology.repository.HibernateOrthologyRepository;
 import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.people.repository.HibernateProfileRepository;
@@ -26,18 +26,16 @@ import org.zfin.publication.repository.HibernatePublicationRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.security.repository.HibernateUserRepository;
 import org.zfin.security.repository.UserRepository;
-import org.zfin.sequence.reno.repository.HibernateRenoRepository;
-import org.zfin.sequence.reno.repository.RenoRepository;
-import org.zfin.sequence.repository.HibernateSequenceRepository;
-import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.sequence.repository.DisplayGroupRepository;
-import org.zfin.sequence.repository.HibernateDisplayGroupRepository;
 import org.zfin.sequence.blast.repository.BlastRepository;
 import org.zfin.sequence.blast.repository.HibernateBlastRepository;
-import org.zfin.mapping.repository.LinkageRepository;
-import org.zfin.mapping.repository.HibernateLinkageRepository;
-import org.zfin.uniquery.repository.QuicksearchRepository;
+import org.zfin.sequence.reno.repository.HibernateRenoRepository;
+import org.zfin.sequence.reno.repository.RenoRepository;
+import org.zfin.sequence.repository.DisplayGroupRepository;
+import org.zfin.sequence.repository.HibernateDisplayGroupRepository;
+import org.zfin.sequence.repository.HibernateSequenceRepository;
+import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.uniquery.repository.HibernateQuicksearchRepository;
+import org.zfin.uniquery.repository.QuicksearchRepository;
 
 /**
  * Please provide JavaDoc info!!!
@@ -102,17 +100,18 @@ public class RepositoryFactory {
         if (renoRep == null) {
             renoRep = new HibernateRenoRepository();
         }
-        return renoRep ;
+        return renoRep;
     }
 
     public static void setSequenceRepository(SequenceRepository sr) {
         seqRep = sr;
     }
-      public static SequenceRepository getSequenceRepository() {
+
+    public static SequenceRepository getSequenceRepository() {
         if (seqRep == null) {
             seqRep = new HibernateSequenceRepository();
         }
-        return seqRep ;
+        return seqRep;
     }
 
     public static void setRenoRepository(RenoRepository rr) {
@@ -190,7 +189,7 @@ public class RepositoryFactory {
         mutRep = db;
     }
 
-     public static FeatureRepository getFeatureRepository() {
+    public static FeatureRepository getFeatureRepository() {
         if (featRep == null) {
             featRep = new HibernateFeatureRepository();
         }
@@ -201,7 +200,7 @@ public class RepositoryFactory {
         featRep = db;
     }
 
-    public static OrthologyRepository  getOrthologyRepository() {
+    public static OrthologyRepository getOrthologyRepository() {
         if (orthoRep == null)
             orthoRep = new HibernateOrthologyRepository();
         return orthoRep;
@@ -215,7 +214,7 @@ public class RepositoryFactory {
     }
 
     public static void setOrthologyRepository(OrthologyRepository orthoRep) {
-        RepositoryFactory.orthoRep = orthoRep; 
+        RepositoryFactory.orthoRep = orthoRep;
     }
 
     public static BlastRepository getBlastRepository() {
@@ -226,7 +225,7 @@ public class RepositoryFactory {
 
 
     public static DisplayGroupRepository getDisplayGroupRepository() {
-        if (displayGroupRepository== null)
+        if (displayGroupRepository == null)
             displayGroupRepository = new HibernateDisplayGroupRepository();
         return displayGroupRepository;
     }

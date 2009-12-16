@@ -1,7 +1,7 @@
 package org.zfin.people;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Set;
 
@@ -162,7 +162,8 @@ public abstract class Organization implements Comparable<Organization> {
         return hash;
     }
 
-    public abstract boolean getLab() ;
-    public abstract boolean getCompany() ;
+    public abstract boolean getLab();
+
+    public abstract boolean getCompany();
 
 }

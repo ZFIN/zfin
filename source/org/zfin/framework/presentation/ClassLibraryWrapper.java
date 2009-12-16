@@ -2,9 +2,9 @@ package org.zfin.framework.presentation;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.jar.Attributes;
 
 /**
  * Wrapper class that holds a class libary and if the file is found.
@@ -45,10 +45,10 @@ public class ClassLibraryWrapper {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         Attributes attribute = manifest.getMainAttributes();
-        if(attribute == null)
+        if (attribute == null)
             return temp;
         String value = attribute.getValue("Implementation-Version");
-        if(value == null)
+        if (value == null)
             return temp;
         return value;
     }

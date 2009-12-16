@@ -45,7 +45,8 @@
     <property name="jsp-version.file" value="${home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
     <property name="pre.jsp-version.file" value="${pre-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
     <property name="post.jsp-version.file" value="${post-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
-    <property name="archive.jsp-version.file" value="${archive-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
+    <property name="archive.jsp-version.file"
+              value="${archive-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
 
     <!-- gwt targets -->
     <property name="gwt.target" value="${home.target}/gwt"/>
@@ -55,9 +56,9 @@
 
     <!-- web-inf targets -->
     <property name="web-inf.target" value="${home.target}/WEB-INF"/>
-    <property name="pre-web-inf" value="${pre-home.target}/WEB-INF" />
-    <property name="post-web-inf" value="${post-home.target}/WEB-INF" />
-    <property name="archive-web-inf" value="${archive-home.target}/WEB-INF" />
+    <property name="pre-web-inf" value="${pre-home.target}/WEB-INF"/>
+    <property name="post-web-inf" value="${post-home.target}/WEB-INF"/>
+    <property name="archive-web-inf" value="${archive-home.target}/WEB-INF"/>
 
     <property name="tomcat-temp" value="${env.CATALINA_BASE}/temp"/>
     <property name="tomcat-work" value="${env.CATALINA_BASE}/work/Catalina/${env.DOMAIN_NAME}/_"/>
@@ -80,9 +81,6 @@
         <fileset dir="${lib}">
             <include name="*.jar"/>
             <include name="*.zip"/>
-        </fileset>
-        <fileset dir="${lib}/confluence">
-            <include name="*.jar"/>
         </fileset>
         <fileset dir="${gwt.lib}">
             <include name="*.jar"/>
@@ -147,7 +145,7 @@
         <and>
             <equals arg1="${env.DBNAME}" arg2="zfindb"/>
             <equals arg1="${env.INFORMIX_SERVER}" arg2="wanda"/>
-	    <equals arg1="${env.USER}" arg2="informix"/>
+            <equals arg1="${env.USER}" arg2="informix"/>
         </and>
     </condition>
 
@@ -155,21 +153,21 @@
         <and>
             <equals arg1="${env.DBNAME}" arg2="zfindb"/>
             <equals arg1="${env.INFORMIX_SERVER}" arg2="wildtype"/>
-	    <equals arg1="${env.USER}" arg2="informix"/>
+            <equals arg1="${env.USER}" arg2="informix"/>
         </and>
     </condition>
- 
-   <condition property="isalmostorproduction">
-     <or> 
-       <equals arg1="${isalmost}" arg2="true"/>
-       <equals arg1="${iszfinonhelix}" arg2="true"/>
-     </or>
-   </condition>
+
+    <condition property="isalmostorproduction">
+        <or>
+            <equals arg1="${isalmost}" arg2="true"/>
+            <equals arg1="${iszfinonhelix}" arg2="true"/>
+        </or>
+    </condition>
 
 
     <condition property="notproduction">
         <not>
-        <equals arg1="${env.DBNAME}" arg2="zfindb"/>
+            <equals arg1="${env.DBNAME}" arg2="zfindb"/>
         </not>
     </condition>
 
@@ -184,8 +182,8 @@
 
     <condition property="has.pre-directories">
         <and>
-        <available file="${pre-web-inf}"/>
-         <available file="${gwt.pre-target}"/>
+            <available file="${pre-web-inf}"/>
+            <available file="${gwt.pre-target}"/>
         </and>
     </condition>
 
@@ -195,15 +193,14 @@
 
     <condition property="has.post-directories">
         <and>
-        <available file="${post-web-inf}"/>
-         <available file="${gwt.post-target}"/>
+            <available file="${post-web-inf}"/>
+            <available file="${gwt.post-target}"/>
         </and>
     </condition>
 
     <condition property="has.tomcat.symlink">
-            <available type="dir" file="${tomcat-work}/org"/>
+        <available type="dir" file="${tomcat-work}/org"/>
     </condition>
-
 
 
 </project>

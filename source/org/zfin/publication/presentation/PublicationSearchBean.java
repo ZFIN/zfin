@@ -1,9 +1,9 @@
 package org.zfin.publication.presentation;
 
-import org.zfin.publication.Publication;
-import org.zfin.marker.Marker;
-import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.marker.Marker;
+import org.zfin.publication.Publication;
 
 import java.util.List;
 

@@ -3,13 +3,13 @@ package org.zfin.curation.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Window;
-import org.zfin.framework.presentation.client.PostComposedPart;
 import org.zfin.framework.presentation.client.Ontology;
+import org.zfin.framework.presentation.client.PostComposedPart;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.ArrayList;
 
 /**
  * Main class for the curation module
@@ -64,6 +64,7 @@ public class FXCurationEntryPoint implements EntryPoint {
     }
 
     // Load properties from JavaScript.
+
     private void loadPublicationAndFilterElements() {
 
         try {
@@ -79,7 +80,8 @@ public class FXCurationEntryPoint implements EntryPoint {
 
     /**
      * Used to support the mouseOver Event on the popup suggestion box.
-     * @param constructionZoneModule  StructureConstructionZoneModule
+     *
+     * @param constructionZoneModule StructureConstructionZoneModule
      */
     private native void showTermInfo(PileConstructionZoneModule constructionZoneModule)/*-{
       $wnd.showTermInfoString = function (ontology, termID) {

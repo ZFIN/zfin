@@ -1,9 +1,8 @@
 package org.zfin.people.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractFormController;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.presentation.LookupStrings;
 
 import javax.servlet.http.HttpServletRequest;

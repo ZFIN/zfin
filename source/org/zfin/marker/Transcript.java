@@ -1,20 +1,20 @@
 package org.zfin.marker;
 
-import org.zfin.marker.Marker;
-import org.zfin.sequence.*;
-import org.apache.commons.collections.CollectionUtils;
+import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.TranscriptDBLink;
+import org.zfin.sequence.TranscriptService;
 
-import java.util.Set;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  */
 public class Transcript extends Marker {
 
     private TranscriptType transcriptType;
-    private TranscriptStatus status ;
-    private Set<TranscriptDBLink> transcriptDBLinks ;
+    private TranscriptStatus status;
+    private Set<TranscriptDBLink> transcriptDBLinks;
 
     public TranscriptType getTranscriptType() {
         return transcriptType;
@@ -34,7 +34,7 @@ public class Transcript extends Marker {
     }
 
     public Set<TranscriptDBLink> getTranscriptDBLinks() {
-        return transcriptDBLinks ;
+        return transcriptDBLinks;
     }
 
     public void setTranscriptDBLinks(Set<TranscriptDBLink> transcriptDBLinks) {
@@ -43,19 +43,18 @@ public class Transcript extends Marker {
 
 
     public Integer getLength() {
-        return TranscriptService.getTranscriptLength(this,DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE);
+        return TranscriptService.getTranscriptLength(this, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE);
     }
 
     public List<TranscriptDBLink> getTranscriptDBLinksForDisplayGroup(DisplayGroup.GroupName displayGroup) {
-        List<TranscriptDBLink> returnDBLinks = new ArrayList<TranscriptDBLink>() ;
-        for(TranscriptDBLink transcriptDBLink: getTranscriptDBLinks()){
-            if( transcriptDBLink.getReferenceDatabase().isInDisplayGroup(displayGroup)  ){
-                returnDBLinks.add(transcriptDBLink) ;
+        List<TranscriptDBLink> returnDBLinks = new ArrayList<TranscriptDBLink>();
+        for (TranscriptDBLink transcriptDBLink : getTranscriptDBLinks()) {
+            if (transcriptDBLink.getReferenceDatabase().isInDisplayGroup(displayGroup)) {
+                returnDBLinks.add(transcriptDBLink);
             }
         }
-        return returnDBLinks ;
+        return returnDBLinks;
     }
-
 
 
     public String toString() {

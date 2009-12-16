@@ -1,14 +1,9 @@
 package org.zfin.sequence;
 
-import org.zfin.sequence.Accession;
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.Entrez;
-import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.orthology.Species;
-import org.zfin.repository.RepositoryFactory;
 
 
-public class EntrezProtRelation implements Comparable<EntrezProtRelation>{
+public class EntrezProtRelation implements Comparable<EntrezProtRelation> {
 
     private long epID;
     private Species organism;

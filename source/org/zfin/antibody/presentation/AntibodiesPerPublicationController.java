@@ -2,12 +2,12 @@ package org.zfin.antibody.presentation;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.throwaway.ThrowawayController;
+import org.zfin.antibody.Antibody;
+import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.antibody.Antibody;
-import org.zfin.antibody.repository.AntibodyRepository;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class AntibodiesPerPublicationController implements ThrowawayController {
     public ModelAndView execute() throws Exception {
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         Publication publication = pr.getPublication(publicationZdbID);
-        if (publication == null )
+        if (publication == null)
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, publicationZdbID);
 
         AntibodyRepository ar = RepositoryFactory.getAntibodyRepository();

@@ -1,22 +1,22 @@
 package org.zfin.antibody.presentation;
 
-import org.springframework.validation.Errors;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.BindException;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
-import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.repository.RepositoryFactory;
+import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.repository.AntibodyRepository;
-import org.zfin.anatomy.DevelopmentStage;
-import org.apache.commons.lang.StringUtils;
+import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class serves the antibody search page.
@@ -27,11 +27,12 @@ public class AntibodySearchController extends SimpleFormController {
 
     /**
      * This sets the default filter values for the form
+     *
      * @param request request object
      * @return form bean
      * @throws Exception
      */
-    protected Object formBackingObject(HttpServletRequest request) throws Exception{
+    protected Object formBackingObject(HttpServletRequest request) throws Exception {
         AntibodySearchFormBean formBean = (AntibodySearchFormBean) super.formBackingObject(request);
         AntibodySearchCriteria antibodySearchCriteria = new AntibodySearchCriteria();
         antibodySearchCriteria.setClonalType(AntibodyType.ANY.getName());
@@ -77,7 +78,7 @@ public class AntibodySearchController extends SimpleFormController {
 
     }
 
-    
+
     protected boolean isFormSubmission(HttpServletRequest request) {
         return request.getParameter(AntibodySearchFormBean.ACTION) != null &&
                 StringUtils.equals(request.getParameter(AntibodySearchFormBean.ACTION), AntibodySearchFormBean.Type.SEARCH.toString());

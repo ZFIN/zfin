@@ -1,9 +1,5 @@
 package org.zfin.people;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Set;
-
 /**
  * Lab domain model.
  */
@@ -26,7 +22,7 @@ public class Lab extends Organization {
     }
 
     public boolean getLab() {
-        return true ;
+        return true;
     }
 
     public boolean getCompany() {

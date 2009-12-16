@@ -1,15 +1,14 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.marker.Marker;
-import org.zfin.marker.presentation.RelatedMarker;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.framework.presentation.EntityPresentation;
-import org.zfin.publication.presentation.PublicationPresentation;
-import org.zfin.properties.ZfinProperties;
 import org.apache.commons.collections.CollectionUtils;
+import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.publication.presentation.PublicationPresentation;
 
-import java.util.Set;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Presentation Class to create output from a marker object.
@@ -26,8 +25,8 @@ public class MarkerPresentation extends EntityPresentation {
     /**
      * Generates an html formatted marker name
      *
-     * @return html for marker link
      * @param marker Marker
+     * @return html for marker link
      */
     public static String getName(Marker marker) {
         String cssClassName;
@@ -63,11 +62,12 @@ public class MarkerPresentation extends EntityPresentation {
     /**
      * Should be of the form.
      * [atp6va0a1|http://zfin.org/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
+     *
      * @param marker Marker to render.
      * @return A rendered wiki link.
      */
-    public static String getWikiLink(Marker marker){
-        return getWikiLink(ZfinProperties.getWebDriver()+marker_uri,marker.getZdbID(),"_"+marker.getAbbreviation()+"_",marker.getName()) ;
+    public static String getWikiLink(Marker marker) {
+        return getWikiLink(ZfinProperties.getWebDriver() + marker_uri, marker.getZdbID(), "_" + marker.getAbbreviation() + "_", marker.getName());
     }
 
 
@@ -98,57 +98,51 @@ public class MarkerPresentation extends EntityPresentation {
      * estZ[none]
      *
      * @param markerRelationships Set<MarkerRelationship>
-     * @param doAbbrev Add an abbreviation.
- * @return html for marker link
+     * @param doAbbrev            Add an abbreviation.
+     * @return html for marker link
      */
-    public static String getRelationLinks(Set<MarkerRelationship> markerRelationships,boolean doAbbrev) {
+    public static String getRelationLinks(Set<MarkerRelationship> markerRelationships, boolean doAbbrev) {
 
-        if(CollectionUtils.isEmpty(markerRelationships)){
-            return null ;
+        if (CollectionUtils.isEmpty(markerRelationships)) {
+            return null;
         }
 
-        StringBuffer sb = new StringBuffer() ;
+        StringBuffer sb = new StringBuffer();
 
-        Marker secondMarker = markerRelationships.iterator().next().getSecondMarker() ;
-        sb.append(getLink(secondMarker)) ;
+        Marker secondMarker = markerRelationships.iterator().next().getSecondMarker();
+        sb.append(getLink(secondMarker));
 
-     MarkerRelationship markerRelationship ;
-        for(
-                Iterator<MarkerRelationship> iter = markerRelationships.iterator() ;
-                iter.hasNext() ;
-        ){
-            markerRelationship = iter.next() ; 
-            Marker firstMarker = markerRelationship.getFirstMarker() ;
-            MarkerRelationship.Type type = markerRelationship.getType() ;
-            sb.append("[") ;
+        MarkerRelationship markerRelationship;
+        for (
+                Iterator<MarkerRelationship> iter = markerRelationships.iterator();
+                iter.hasNext();
+                ) {
+            markerRelationship = iter.next();
+            Marker firstMarker = markerRelationship.getFirstMarker();
+            MarkerRelationship.Type type = markerRelationship.getType();
+            sb.append("[");
 
-            if(doAbbrev){
-                if(type.equals(MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT)){
-                    sb.append("CO")  ;
+            if (doAbbrev) {
+                if (type.equals(MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT)) {
+                    sb.append("CO");
+                } else if (type.equals(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT)) {
+                    sb.append("EN");
+                } else if (type.equals(MarkerRelationship.Type.GENE_HYBRIDIZED_BY_SMALL_SEGMENT)) {
+                    sb.append("HY");
+                } else {
+                    sb.append(type);
                 }
-                else
-                if(type.equals(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT)){
-                    sb.append("EN")  ;
-                }
-                else
-                if(type.equals(MarkerRelationship.Type.GENE_HYBRIDIZED_BY_SMALL_SEGMENT)){
-                    sb.append("HY")  ;
-                }
-                else{
-                    sb.append(type)  ;
-                }
+            } else {
+                sb.append(type);
             }
-            else{
-                sb.append(type)  ;
-            }
-            sb.append("]") ; 
-            sb.append(getLink(firstMarker)) ;
-            if(iter.hasNext()){
-                sb.append(",") ; 
+            sb.append("]");
+            sb.append(getLink(firstMarker));
+            if (iter.hasNext()) {
+                sb.append(",");
             }
         }
 
-        return sb.toString() ;
+        return sb.toString();
     }
 
     /**
@@ -168,6 +162,7 @@ public class MarkerPresentation extends EntityPresentation {
 
     /**
      * Create an attribution link for a MarkerDBLink
+     *
      * @param relatedMarker to attribute, ok if it has no attributions
      * @return link html
      */
@@ -197,7 +192,6 @@ public class MarkerPresentation extends EntityPresentation {
 
         return sb.toString();
     }
-
 
 
 }

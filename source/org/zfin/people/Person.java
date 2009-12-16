@@ -1,22 +1,21 @@
 package org.zfin.people;
 
-import org.zfin.publication.Publication;
-import org.acegisecurity.userdetails.UserDetails;
+import org.acegisecurity.Authentication;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.context.SecurityContext;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.userdetails.UserDetails;
+import org.zfin.publication.Publication;
 
+import java.io.Serializable;
 import java.util.Set;
-
-import java.io.Serializable ;
 
 /**
  * Domain business object that describes a single person.
  * AccountInfo composite contains login information which is optional.
  */
-public class Person implements UserDetails , Serializable,Comparable<Person>{
+public class Person implements UserDetails, Serializable, Comparable<Person> {
 
     private String zdbID;
     private String fullName;
@@ -210,11 +209,11 @@ public class Person implements UserDetails , Serializable,Comparable<Person>{
      * @return Is user root?
      */
     public static boolean isCurrentSecurityUserRoot() {
-        Person person = getCurrentSecurityUser() ;
-        if(person == null || person.getAccountInfo()==null){
-            return false ;
+        Person person = getCurrentSecurityUser();
+        if (person == null || person.getAccountInfo() == null) {
+            return false;
         }
-        return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString()) ;
+        return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString());
     }
 
     public int hashCode() {
@@ -240,6 +239,6 @@ public class Person implements UserDetails , Serializable,Comparable<Person>{
 
         // in case the 2 persons have the same name?
         // I guess as a tie-breaker we can use the zdbID, which includes date
-        return zdbID.compareTo(anotherPerson.getZdbID()) ;
+        return zdbID.compareTo(anotherPerson.getZdbID());
     }
 }

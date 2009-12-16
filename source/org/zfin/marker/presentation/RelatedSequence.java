@@ -1,10 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.DBLink;
 import org.zfin.sequence.MarkerDBLink;
-
-import java.util.List;
 
 
 public class RelatedSequence {

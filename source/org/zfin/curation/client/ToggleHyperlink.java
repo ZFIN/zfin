@@ -3,7 +3,6 @@ package org.zfin.curation.client;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.Window;
 
 /**
  * This Hyperlink class can be used in case you need to toggle between two
@@ -66,6 +65,7 @@ public class ToggleHyperlink extends Hyperlink {
     }
 
     // ************* Handler
+
     protected class ToggleHyperlinkClickHandler implements ClickHandler {
         private String textTrue;
         private String textFalse;

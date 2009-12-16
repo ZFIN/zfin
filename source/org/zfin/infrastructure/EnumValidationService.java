@@ -1,7 +1,6 @@
 package org.zfin.infrastructure;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Closure;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -12,18 +11,18 @@ import org.zfin.marker.*;
 import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.orthology.OrthoEvidence;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.DisplayGroup;
-import org.zfin.sequence.reno.Run;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.blast.Origination;
-import org.zfin.marker.Transcript;
+import org.zfin.sequence.reno.Run;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Service validates java Enumerations versus their database counterparts for controlled vocabulary clases.
@@ -233,41 +232,41 @@ public class EnumValidationService {
     public void validateTranscriptType() throws EnumValidationException {
         String sql = "select tt.type from TranscriptType tt";
         List<TranscriptType> typeList = HibernateUtil.currentSession().createQuery(sql).list();
-        checkEnumVersusDatabaseCollection(typeList, TranscriptType.Type.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, TranscriptType.Type.values());
     }
 
     @ServiceTest
     public void validateBlastDatabaseType() throws EnumValidationException {
         String sql = "select bd.type from Database bd group by bd.type ";
         List<Database.Type> typeList = HibernateUtil.currentSession().createQuery(sql).list();
-        checkEnumVersusDatabaseCollection(typeList, Database.Type.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, Database.Type.values());
     }
 
     @ServiceTest
     public void validateBlastDatabaseEnumeration() throws EnumValidationException {
         String sql = "select bd.abbrev from Database bd";
         List<Database.AvailableAbbrev> typeList = HibernateUtil.currentSession().createQuery(sql).list();
-        checkEnumVersusDatabaseCollection(typeList, Database.AvailableAbbrev.values()) ;
+        checkEnumVersusDatabaseCollection(typeList, Database.AvailableAbbrev.values());
     }
 
     @ServiceTest
     public void validateTranscriptStatus() throws EnumValidationException {
         String sql = "select ts.status from TranscriptStatus  ts";
         List<TranscriptStatus> typeList = HibernateUtil.currentSession().createQuery(sql).list();
-        checkEnumVersusDatabaseCollection(typeList, TranscriptStatus.Status.values(),true) ;
+        checkEnumVersusDatabaseCollection(typeList, TranscriptStatus.Status.values(), true);
     }
 
     @ServiceTest
     public void validateDisplayGroups() throws EnumValidationException {
         String sql = "select dg.groupName from DisplayGroup dg ";
         List<String> typeList = HibernateUtil.currentSession().createQuery(sql).list();
-        checkEnumVersusDatabaseCollection(typeList, DisplayGroup.GroupName.values(),true) ;
+        checkEnumVersusDatabaseCollection(typeList, DisplayGroup.GroupName.values(), true);
     }
 
     @ServiceTest
     public void validateGenotypeWildtypeEnum() throws EnumValidationException {
         String hql = "select g.handle from Genotype g where g.wildtype = :isWildtype";
-        List<String> typeList = HibernateUtil.currentSession().createQuery(hql).setBoolean("isWildtype",true).list();
+        List<String> typeList = HibernateUtil.currentSession().createQuery(hql).setBoolean("isWildtype", true).list();
         checkEnumValuesPresentInDatabase(typeList, Genotype.Wildtype.values());
     }
 
@@ -275,7 +274,7 @@ public class EnumValidationService {
     public void validateBlastOriginationTypes() throws EnumValidationException {
         String sql = "select o.type from Origination o";
         List<String> typeList = HibernateUtil.currentSession().createQuery(sql).list();
-        checkEnumVersusDatabaseCollection(typeList, Origination.Type.values() ,true) ;
+        checkEnumVersusDatabaseCollection(typeList, Origination.Type.values(), true);
     }
 
     public <T extends Object> void checkEnumValuesPresentInDatabase(List<T> databaseList, Enum[] enumValues) {
@@ -298,24 +297,23 @@ public class EnumValidationService {
     }
 
 
-    public <T extends Object> void checkEnumVersusDatabaseCollection(List<T> list,Enum[] enumValues) throws EnumValidationException{
-        checkEnumVersusDatabaseCollection(list,enumValues,false);
+    public <T extends Object> void checkEnumVersusDatabaseCollection(List<T> list, Enum[] enumValues) throws EnumValidationException {
+        checkEnumVersusDatabaseCollection(list, enumValues, false);
     }
 
-    public <T extends Object> void checkEnumVersusDatabaseCollection(List<T> databaseList,Enum[] enumValues,boolean allowNullEnumValue)
-            throws EnumValidationException
-    {
-        List<String> enumList = new ArrayList<String>() ;
+    public <T extends Object> void checkEnumVersusDatabaseCollection(List<T> databaseList, Enum[] enumValues, boolean allowNullEnumValue)
+            throws EnumValidationException {
+        List<String> enumList = new ArrayList<String>();
         Enum enumType = null;
-        for(Enum type : enumValues){
-            if(type.toString() != null || allowNullEnumValue==false){
-                enumList.add(type.toString()) ;
-            enumType = type;
-        }
+        for (Enum type : enumValues) {
+            if (type.toString() != null || allowNullEnumValue == false) {
+                enumList.add(type.toString());
+                enumType = type;
+            }
         }
 
-        List<String> databaseStringList = new ArrayList<String>() ;
-        for(T type: databaseList){
+        List<String> databaseStringList = new ArrayList<String>();
+        for (T type : databaseList) {
             databaseStringList.add(type.toString());
         }
 
@@ -347,7 +345,7 @@ public class EnumValidationService {
             return null;
 
         Collection<String> differences = CollectionUtils.disjunction(enumList, databaseList);
-        if (differences == null){
+        if (differences == null) {
             return null;
         }
 

@@ -1,9 +1,8 @@
 package org.zfin.framework.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.validation.BindException;
-import org.zfin.properties.ZfinProperties;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.util.FileWrapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,9 +14,10 @@ import java.io.File;
  */
 public class FileContentController extends AbstractCommandController {
 
-    public FileContentController(){
+    public FileContentController() {
         setCommandClass(FileContentBean.class);
     }
+
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
 
         FileContentBean form = (FileContentBean) command;

@@ -1,19 +1,19 @@
 package org.zfin.uniquery.categories;
 
-import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
-import org.zfin.util.FileUtil;
+import org.apache.log4j.Logger;
 import org.zfin.uniquery.SearchCategory;
 import org.zfin.uniquery.UrlPattern;
 import org.zfin.uniquery.ZfinAnalyzer;
+import org.zfin.util.FileUtil;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class that contains global properties for the application, such as
@@ -98,6 +98,7 @@ public final class SiteSearchCategories {
 
     // if initialization happens not via applicationProperties include
     // that logic in here.
+
     private static void checkValidProperties() {
         if (props == null)
             throw new RuntimeException("Properties are not yet initialized");
@@ -182,7 +183,8 @@ public final class SiteSearchCategories {
                         if (StringUtils.isEmpty(environmentVariable))
                             environmentVariable = System.getenv(matchedString);
 
-                            LOG.info("Environment variable for " + matchedString + " found: " + environmentVariable);                        if (StringUtils.isEmpty(environmentVariable))
+                        LOG.info("Environment variable for " + matchedString + " found: " + environmentVariable);
+                        if (StringUtils.isEmpty(environmentVariable))
                             LOG.error("No environment variable for " + matchedString + " found");
                         else
                             urlPatternString = matcher.replaceAll(environmentVariable);
@@ -223,6 +225,7 @@ public final class SiteSearchCategories {
     *  Based on the URL and data page naming conventions,
     *  we assign the SearchCategory (or DocType) accordingly.
     */
+
     public static String getDocType(String url) {
         if (categoriesWithoutAllAndOthers == null)
             getSearchCategories();

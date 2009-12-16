@@ -2,7 +2,6 @@ package org.zfin.mapping;
 
 import org.zfin.marker.Marker;
 import org.zfin.people.Person;
-import org.zfin.mutant.Feature;
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,7 +44,6 @@ public class MappedDeletion {
     public void setMarker(Marker marker) {
         this.marker = marker;
     }
-
 
 
     public boolean isPresent() {

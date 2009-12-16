@@ -1,10 +1,10 @@
 package org.zfin.framework.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.support.RequestContextUtils;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.validation.BindException;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,9 +14,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ApplicationContextController extends AbstractCommandController {
 
-    public ApplicationContextController(){
+    public ApplicationContextController() {
         setCommandClass(ApplicationContextBean.class);
     }
+
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
 
         ApplicationContextBean form = (ApplicationContextBean) command;

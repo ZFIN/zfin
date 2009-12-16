@@ -9,43 +9,43 @@ import java.util.Date;
 
 
 /**
- *  Class DoBlastThread provides a thread for the blast process to run it
- *  so that it doesn't hang the calling process but is allowed to finish.
+ * Class DoBlastThread provides a thread for the blast process to run it
+ * so that it doesn't hang the calling process but is allowed to finish.
  */
 public abstract class AbstractQueryThread implements BlastQueryJob {
 
-    private final static Logger logger = Logger.getLogger(AbstractQueryThread.class) ;
+    private final static Logger logger = Logger.getLogger(AbstractQueryThread.class);
 
-    protected boolean finished = false ;
-    protected boolean running = false ;
-    protected Date queueTime ;
-    protected Date startTime ;
-    protected Date finishTime ;
+    protected boolean finished = false;
+    protected boolean running = false;
+    protected Date queueTime;
+    protected Date startTime;
+    protected Date finishTime;
 
-    protected XMLBlastBean xmlBlastBean ;
+    protected XMLBlastBean xmlBlastBean;
     private JAXBContext JAXBBlastContext;
     private BlastStatistics blastStatistics = BlastStatistics.getInstance();
 
-    public AbstractQueryThread(XMLBlastBean xmlBlastBean){
-        this.xmlBlastBean = xmlBlastBean ;
-        this.queueTime = new Date() ;
+    public AbstractQueryThread(XMLBlastBean xmlBlastBean) {
+        this.xmlBlastBean = xmlBlastBean;
+        this.queueTime = new Date();
         try {
             JAXBBlastContext = JAXBContext.newInstance("org.zfin.sequence.blast.results");
         } catch (JAXBException e) {
-            logger.error("Failed to instantiate a new context",e.fillInStackTrace());
+            logger.error("Failed to instantiate a new context", e);
         }
     }
 
 
-    public void startBlast(){
-        running = true ;
-        this.startTime = new Date() ;
+    public void startBlast() {
+        running = true;
+        this.startTime = new Date();
     }
 
-    public void finishBlast(){
-        finished = true ;
-        running = false ;
-        this.finishTime = new Date() ;
+    public void finishBlast() {
+        finished = true;
+        running = false;
+        this.finishTime = new Date();
         blastStatistics.recordStatistics(this);
     }
 
@@ -65,12 +65,14 @@ public abstract class AbstractQueryThread implements BlastQueryJob {
         return 1;
     }
 
-    public XMLBlastBean getXmlBlastBean(){
-        return xmlBlastBean ;
+    public XMLBlastBean getXmlBlastBean() {
+        return xmlBlastBean;
     }
 
     public String getTicket() {
-        if(xmlBlastBean==null){ return null ; }
+        if (xmlBlastBean == null) {
+            return null;
+        }
         return xmlBlastBean.getTicketNumber();
     }
 
