@@ -172,7 +172,6 @@ public class WikiWebService {
                 }
             }  // end of for loop
         } catch (Exception e) {
-            e.fillInStackTrace();
             logger.error("Unable to set owner for label[" + label + "]", e);
             throw e;
         }
@@ -235,4 +234,7 @@ public class WikiWebService {
         return remoteContentPermissions ;
     }
 
+    public RemotePage getPage(long id) throws Exception{
+        return service.getPage(token,id) ;
+    }
 }

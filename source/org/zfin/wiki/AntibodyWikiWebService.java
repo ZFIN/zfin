@@ -125,7 +125,6 @@ public class AntibodyWikiWebService extends WikiWebService {
                 antibodyTemplateData = stringBuffer.toString();
             }
         } catch (IOException e) {
-            e.fillInStackTrace() ;
             String errorString =  "Failed to read template file"+FileUtil.LINE_SEPARATOR ;
             if(file!=null){
                 errorString += "exists: " + file.exists() +FileUtil.LINE_SEPARATOR ;
@@ -340,12 +339,10 @@ public class AntibodyWikiWebService extends WikiWebService {
             }
         }
         catch (FileNotFoundException e) {
-            e.fillInStackTrace();
             throw e ;
         }
         catch (Exception e) {
-            e.fillInStackTrace();
-            logger.error(e);
+            logger.error("Couldnot synchronoize the Antibody with the wiki for antibody: "+antibody,e);
             return ReturnStatus.ERROR;
         }
     }
@@ -589,7 +586,7 @@ public class AntibodyWikiWebService extends WikiWebService {
             }
         }
         catch (Exception e) {
-            logger.warn(e.fillInStackTrace());
+            logger.warn("Problem getting wiki link for ["+name+"]",e);
             return null;
         }
     }

@@ -3,8 +3,8 @@ package org.zfin.wiki;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.zfin.properties.ZfinProperties;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.zfin.properties.ZfinProperties;
 
 /**
  * Set permission of pages with the following labels to the original creator if does not already

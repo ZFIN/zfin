@@ -1,9 +1,9 @@
 package org.zfin.wiki;
 
-import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.apache.log4j.Logger;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /**
  * Cleans sandbox.

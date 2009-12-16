@@ -1,14 +1,14 @@
 package org.zfin.wiki;
 
-import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.apache.log4j.Logger;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class makes sure that every page with the label "zebrafish_book" can be edited by "zfin-users".
