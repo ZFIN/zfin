@@ -439,10 +439,12 @@
                 <include name="home/WEB-INF/**/*.jsp"/>
                 <include name="${source.dir}/**/*.gwt.xml"/>
                 <include name="home/index-java.html"/>
+                <include name="home/WEB-INF/conf/*.xml"/>
                 <exclude name="**/.svn"/>
             </fileset>
             <filterset>
                 <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
+                <filter token="RUN_QUARTZ_JOBS" value="${env.RUN_QUARTZ_JOBS}"/>
             </filterset>
         </copy>
         <copy todir="${env.TARGETROOT}">
@@ -454,9 +456,6 @@
                 <include name="home/anatomy/**"/>
                 <exclude name="**/.svn"/>
             </fileset>
-            <filterset>
-                <filter token="RUN_QUARTZ_JOBS" value="${env.RUN_QUARTZ_JOBS}"/>
-            </filterset>
         </copy>
 
 
