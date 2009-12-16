@@ -184,7 +184,7 @@ PREFIX:   featcurup_
             '$featcurup_feature_dalias_zdb_id',
             '$featcurup_marker_zdb_id',
             '$featcur_feature_add_alias',
-            'alias',
+            (select aliasgrp_pk_id from alias_group where aliasgrp_name='alias'),
             '$featcur_feature_add_alias'
        <?/MIVAR>
 
@@ -322,9 +322,11 @@ PREFIX:   featcurup_
 <?MIVAR COND="$(NXST,$featedit_feature_lab_zdb_id)" NAME=featedit_feature_lab_zdb_id><?/MIVAR>
 <?MIVAR COND="$(NXST,$featedit_feature_newname)" NAME=featedit_feature_newname><?/MIVAR>
 <?MIVAR COND="$(NXST,$featedit_feature_newabbrev)" NAME=featedit_feature_newabbrev><?/MIVAR>
+   <?MIBLOCK COND="$(XST,$featcur_featedit_feature_zdb_id)">
 <?MISQL SQL="select feature_type from feature where feature_zdb_id='$featcur_featedit_feature_zdb_id'">
   <?MIVAR NAME=new_feat_type>$1<?/MIVAR>
 <?/MISQL>
+<?/MIBLOCK>
 
 <?MIBLOCK COND=$(XST,$featedit_add_typeattr)>
    <?MISQL SQL="select count(*) 
@@ -451,14 +453,14 @@ PREFIX:   featcurup_
             dalias_zdb_id,
             dalias_data_zdb_id,
             dalias_alias,
-            dalias_group,
+            dalias_group_id,
             dalias_alias_lower
          <?/MIVAR>
          <?MIVAR NAME=featedit_feature_dalias_insert_values>
             '$featedit_feature_dalias_zdb_id',
             '$featcur_featedit_feature_zdb_id',
             '$featedit_feature_alias',
-            'alias',
+            1,
             '$featedit_feature_alias'
         <?/MIVAR>
          <?MISQL SQL="
