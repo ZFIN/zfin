@@ -28,8 +28,6 @@ import java.util.*;
 public class AntibodyWikiWebService extends WikiWebService {
 
     private final Logger logger = Logger.getLogger(AntibodyWikiWebService.class);
-    private final String SPACE_KEY = "AB";
-    private final String ZFIN_ANTIBODY_LABEL = "zfin_antibody";
 
     // Antibody Homepage page ID
     private final long PARENT_PAGE_ID = 131090;
@@ -63,8 +61,8 @@ public class AntibodyWikiWebService extends WikiWebService {
         RemotePage page = null;
 
         try {
-            page = service.getPage(token, SPACE_KEY, pageTitle);
-            boolean isZfinAntibodyLabeledPage = pageHasLabel(page, ZFIN_ANTIBODY_LABEL);
+            page = service.getPage(token, Space.ANTIBODY.getValue(), pageTitle);
+            boolean isZfinAntibodyLabeledPage = pageHasLabel(page, Label.ZFIN_ANTIBODY_LABEL.getValue());
             if (isZfinAntibodyLabeledPage == true) {
                 logger.debug("is ZFIN Antibody Page: " + pageTitle);
             } else {
@@ -83,15 +81,15 @@ public class AntibodyWikiWebService extends WikiWebService {
 
     public void setZfinAntibodyPageMetaData(RemotePage page) throws Exception {
         // we label these pages zfin_antibody so that we know they came from ZFIN
-        service.addLabelByName(token, ZFIN_ANTIBODY_LABEL, page.getId());
+        service.addLabelByName(token, Label.ZFIN_ANTIBODY_LABEL.getValue(), page.getId());
 
         // only zfin-users may edit these
         RemoteContentPermission[] remoteContentPermissions = new RemoteContentPermission[1];
         RemoteContentPermission remoteContentPermission = new RemoteContentPermission();
-        remoteContentPermission.setGroupName("zfin-users");
-        remoteContentPermission.setType(EDIT_PERMISSION);
+        remoteContentPermission.setGroupName(Group.ZFIN_USERS.getValue());
+        remoteContentPermission.setType(Permission.EDIT.getValue());
         remoteContentPermissions[0] = remoteContentPermission;
-        service.setContentPermissions(token, page.getId(), EDIT_PERMISSION, remoteContentPermissions);
+        service.setContentPermissions(token, page.getId(), Permission.EDIT.getValue(), remoteContentPermissions);
     }
 
     /**
@@ -354,7 +352,16 @@ public class AntibodyWikiWebService extends WikiWebService {
 
 
     /**
-     * Syncrhonizes the antibody wiki and the antibodies in ZFIN, adding, updating, and dropping where appropriate.
+     * Synchronizes the antibody wiki and the antibodies in ZFIN, adding, updating, and dropping where appropriate.
+     *
+     * 1. Loads all antibodies from ZFIN.
+     * 2. Loads template file.
+     * 3. From each antibody, renders the wiki page and evaluates if there are any changes (new or update) and
+     *    updates/creates if necessary.
+     * 4. Counts the file set of antibodies and deterimines if any pages need to be removed
+     *    (will need to be manually remoevd if comments).
+     *
+     * @throws FileNotFoundException Thrown if unable to find the template file.
      */
     public void synchronizeAntibodiesOnWikiWithZFIN() throws FileNotFoundException{
         if (false == ZfinProperties.isPushToWiki()) {
@@ -420,7 +427,7 @@ public class AntibodyWikiWebService extends WikiWebService {
 
     public RemotePage updatePageForAntibody(Antibody antibody, String oldName) throws Exception {
         if (false == ZfinProperties.isPushToWiki()) {
-            logger.info("not authorized to push to wiki");
+            logger.info("not authorized to push to wiki by ZfinProperties");
             return null;
         }
 
@@ -457,14 +464,14 @@ public class AntibodyWikiWebService extends WikiWebService {
         page.setModified(Calendar.getInstance());
         page.setModifier(wikiUserName);
         page.setParentId(PARENT_PAGE_ID);
-        page.setSpace(SPACE_KEY);
+        page.setSpace(Space.ANTIBODY.getValue());
         page.setTitle(pageTitle);
         page.setVersion(1);
 
         service.storePage(token, page);
 
         try {
-            page = service.getPage(token, SPACE_KEY, pageTitle);
+            page = service.getPage(token, Space.ANTIBODY.getValue(), pageTitle);
         } catch (java.rmi.RemoteException e) {
             logger.error("failed to create page:" + pageTitle);
             throw new FailedToCreatePageException(pageTitle);
@@ -493,7 +500,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         // get all pages for the zfin_antibody label
         RemoteSearchResult[] remoteSearchResults = new RemoteSearchResult[0];
         try {
-            remoteSearchResults = service.getLabelContentByName(token, ZFIN_ANTIBODY_LABEL);
+            remoteSearchResults = service.getLabelContentByName(token, Label.ZFIN_ANTIBODY_LABEL.getValue());
         } catch (Exception e) {
             logger.error("Failed to drop pages because of error", e);
             return wikiSynchronizationReport;
@@ -570,11 +577,11 @@ public class AntibodyWikiWebService extends WikiWebService {
 
             String pageTitle = getWikiTitleFromAntibodyName(name);
 
-            page = service.getPage(token, SPACE_KEY, pageTitle);
+            page = service.getPage(token, Space.ANTIBODY.getValue(), pageTitle);
             if (page == null) {
                 return null;
             } else {
-                if (pageHasLabel(page, ZFIN_ANTIBODY_LABEL)) {
+                if (pageHasLabel(page, Label.ZFIN_ANTIBODY_LABEL.getValue())) {
                     return page.getUrl();
                 } else {
                     return null;

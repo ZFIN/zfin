@@ -4,17 +4,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
 
+import java.util.GregorianCalendar;
+
 /**
  * Please see http://confluence.atlassian.com/display/DOC/Remote+API+Specification
- * for further docuementation of the service class.
+ * for further documentation of the service class.
  */
 public class WikiWebService {
 
     protected String token = null;
     protected ConfluenceSoapService service = null;
-    protected final String EDIT_PERMISSION = "Edit";
-    protected final String VIEW_PERMISSION = "View";
-    protected final String ZFIN_GROUP = "zfin-users";
     protected final String PAGE_TYPE = "page";
     protected final String ENDPOINT_SUFFIX = "/rpc/soap-axis/confluenceservice-v1";
     protected final String WEBSERVICE_PROTOCOL = "https://";
@@ -150,7 +149,7 @@ public class WikiWebService {
             // for each page:
             // if there is is editing or view restriction, then add an editing one to the creator
             for (RemoteSearchResult page : pages) {
-                logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "]") ; 
+                logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "]") ;
                 if (page.getType().equals(PAGE_TYPE) && service.getContentPermissionSets(token, page.getId()).length == 0) {
                     logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "] # perm["
                             + service.getContentPermissionSets(token, page.getId()).length + "]");
@@ -158,17 +157,17 @@ public class WikiWebService {
                     RemotePage remotePage = service.getPage(token, page.getId());
                     permissionForUser.setUserName(remotePage.getCreator());
                     logger.info(" setting permission for: " + page.getTitle() + " to " + remotePage.getCreator());
-                    permissionForUser.setType(EDIT_PERMISSION);
+                    permissionForUser.setType(Permission.EDIT.getValue());
                     RemoteContentPermission[] permissions = new RemoteContentPermission[2];
                     permissions[0] = permissionForUser;
 
                     RemoteContentPermission permissionForZfinGroup = new RemoteContentPermission();
-                    permissionForZfinGroup.setGroupName(ZFIN_GROUP);
-                    logger.info(" setting permission for: " + page.getTitle() + " to group " + ZFIN_GROUP);
-                    permissionForZfinGroup.setType(EDIT_PERMISSION);
+                    permissionForZfinGroup.setGroupName(Group.ZFIN_USERS.getValue());
+                    logger.info(" setting permission for: " + page.getTitle() + " to group " + Group.ZFIN_USERS);
+                    permissionForZfinGroup.setType(Permission.EDIT.getValue());
                     permissions[1] = permissionForZfinGroup ;
 
-                    service.setContentPermissions(token, page.getId(), EDIT_PERMISSION, permissions);
+                    service.setContentPermissions(token, page.getId(), Permission.EDIT.getValue(), permissions);
                 }
             }  // end of for loop
         } catch (Exception e) {
@@ -178,4 +177,61 @@ public class WikiWebService {
         }
 
     }
+
+    /**
+     * Code to clean the sandbox space.
+     * Removes all pages individually and then creates a new home page.
+     * Was previously dropping the entire space, but makes the space look like it is new, not cleaned.
+     * see fogbugz 5179 for more details.
+     * @throws Exception Thrown if problems during the process.
+     */
+    public void cleanSandbox() throws Exception{
+
+        if (false == ZfinProperties.isPushToWiki()) {
+            return;
+        }
+
+        RemotePageSummary[] pages = service.getPages(token,Space.SANDBOX.getValue()) ;
+        if(pages!=null && pages.length>0){
+            for(RemotePageSummary page: pages){
+                logger.debug("removing page: "+ page.getTitle());
+                service.removePage(token,page.getId()) ;
+            }
+        }
+
+        RemotePage homePage = new RemotePage() ;
+        homePage.setContent("This is the home of the SandBox space.\n\n" +
+                "To help you on your way, we've inserted some of our favourite macros on this home page. As you start creating pages, adding news items and commenting you'll see the macros below fill up with all the activity in your space.\n\n" +
+                "{section}\n" +
+                "{column:width=60%}\n" +
+                "{recently-updated}\n\n\n" +
+                "{column}\n\n" +
+                "{column:width=5%}\n" +
+                "{column}\n\n" +
+                "{column:width=35%}\n" +
+                "Navigate space\n" +
+                "{pagetreesearch}\n\n" +
+                "{pagetree}\n\n" +
+                "{column}\n\n" +
+                "{section}");
+        homePage.setCreated(GregorianCalendar.getInstance());
+        homePage.setCreator(wikiUserName);
+        homePage.setHomePage(true);
+        homePage.setCurrent(true);
+        homePage.setSpace(Space.SANDBOX.getValue());
+        homePage.setTitle("Home");
+        service.storePage(token,homePage) ;
+
+    }
+
+    public RemoteSearchResult[] getLabelContent(String label) throws Exception{
+        return service.getLabelContentByName(token,label) ;
+    }
+
+    public RemoteContentPermission[] getRemoteContentPermissions(long id,String type) throws Exception{
+        RemoteContentPermissionSet remoteContentPermissionSet = service.getContentPermissionSet(token,id,type) ;
+        RemoteContentPermission[] remoteContentPermissions = remoteContentPermissionSet.getContentPermissions() ;
+        return remoteContentPermissions ;
+    }
+
 }

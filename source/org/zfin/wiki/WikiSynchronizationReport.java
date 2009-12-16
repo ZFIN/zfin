@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Report object for the antibody wiki synchronization job, records updates (or lack thereof) to each page.
  */
 public class WikiSynchronizationReport {
 
-    private List<String> createdPages = new ArrayList<String>();
-    private List<String> droppedPages = new ArrayList<String>();
-    private List<String> updatedPages = new ArrayList<String>();
-    private List<String> errorPages = new ArrayList<String>();
-    private List<String> nochangedPages = new ArrayList<String>();
+    private final List<String> createdPages = new ArrayList<String>();
+    private final List<String> droppedPages = new ArrayList<String>();
+    private final List<String> updatedPages = new ArrayList<String>();
+    private final List<String> errorPages = new ArrayList<String>();
+    private final List<String> nochangedPages = new ArrayList<String>();
 
     private boolean verbose = false;
 
@@ -23,17 +24,9 @@ public class WikiSynchronizationReport {
         this(false);
     }
 
-    public List<String> getCreatedPages() {
-        return createdPages;
-    }
-
     public void addCreatedPage(String title) {
         createdPages.add(title);
         if (verbose) System.out.print("C");
-    }
-
-    public List<String> getDroppedPages() {
-        return droppedPages;
     }
 
     public void addDroppedPage(String title) {
@@ -41,26 +34,14 @@ public class WikiSynchronizationReport {
         if (verbose) System.out.print("D");
     }
 
-    public List<String> getUpdatedPages() {
-        return updatedPages;
-    }
-
     public void addUpdatedPage(String title) {
         updatedPages.add(title);
         if (verbose) System.out.print("U");
     }
 
-    public List<String> getErrorPages() {
-        return errorPages;
-    }
-
     public void addErrorPage(String title) {
         errorPages.add(title);
         if (verbose) System.out.print("E");
-    }
-
-    public List<String> getNochangedPages() {
-        return nochangedPages;
     }
 
     public void addNoChangePage(String title) {

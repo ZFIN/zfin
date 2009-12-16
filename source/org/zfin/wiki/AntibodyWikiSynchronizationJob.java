@@ -7,17 +7,16 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /**
  */
-public class SynchronizeZFINAntibodiesWithWikiJob extends QuartzJobBean {
+public class AntibodyWikiSynchronizationJob extends QuartzJobBean {
 
-    private final Logger logger = Logger.getLogger(SynchronizeZFINAntibodiesWithWikiJob.class);
+    private final Logger logger = Logger.getLogger(AntibodyWikiSynchronizationJob.class);
 
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         logger.info("pushing antibodies to antibody wiki");
         try {
             AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
         } catch (Exception e) {
-            e.fillInStackTrace();
-            logger.error(e);
+            logger.error("Failed to synchronize ZFIN antibodies with wiki antibodies",e);
             throw new JobExecutionException(e);
         }
     }
