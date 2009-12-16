@@ -32,7 +32,7 @@
         </tiles:insert>
     </td>
 </tr>
-<c:if test="${formBean.feature.type == 'UNSPECIFIED'}">
+<c:if test="${formBean.feature.featureType.dispName == 'unspecified'}">
 
     <br style="font-size:small;">    Note: Unspecified  genomic feature records have been created in support of data for which a publication has not specified a genomic feature. </br>
 
@@ -110,7 +110,7 @@
             </td>
         </c:when>
         <c:otherwise>
-            <c:if test="${formBean.feature.type == 'TRANSGENIC_INSERTION'}">
+            <c:if test="${formBean.feature.featureType.dispName == 'Transgenic Insertion'}">
                 <td>
                     This feature is representative of one or more unknown insertion sites.
                 </td>
@@ -125,7 +125,7 @@ This feature is representative of one or more unknown insertion sites.
 
 
 
-<c:if test="${formBean.feature.type == 'TRANSGENIC_INSERTION'}">
+<c:if test="${formBean.feature.featureType.dispName == 'Transgenic Insertion'}">
 <tr>
     <td width="180">
         <b>Construct:</b>
