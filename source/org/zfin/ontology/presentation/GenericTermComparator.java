@@ -1,6 +1,5 @@
 package org.zfin.ontology.presentation;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.ontology.GenericTerm;
 
 import java.util.Comparator;
