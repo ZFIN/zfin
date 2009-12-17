@@ -149,13 +149,13 @@ public class AnatomyRepositoryTest {
     public void getAnatomyItemsWithoutDataAlias() {
         // 1 - get by name
         List<AnatomyItem> terms;
-        terms = aoRepository.getAnatomyItemsByName("extrascapular", false);
+        terms = aoRepository.getAnatomyItemsByName("extrascapula", false);
         assertNotNull(terms);
         assertTrue(terms.size() == 1);
 
         AnatomyItem item = terms.get(0);
         Set<AnatomySynonym> synonyms = item.getSynonyms();
-        assertEquals("Should be 1 synonym because filtered secondary", synonyms.size(), 1);
+        assertEquals("Should be 2 synonym because filtered secondary", synonyms.size(), 2);
 
         // 2- get by synonym
         terms = aoRepository.getAnatomyItemsByName("supratemporal", false);
