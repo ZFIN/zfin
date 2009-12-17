@@ -42,8 +42,6 @@ GENERICS = xpatview.apg xpatselect.apg \
 	curation_filters.apg patoupdate_addmutant.apg xpatcurupdatecondition.apg gocuration.apg \
 	xpatselect_resultsasimages.apg fxlabelinfo.apg  xpatfeatexpcondn.apg  xpatexpcdnlist.apg
 
-
-
 # Use default rules for app page directories. 
 
 include $(TOP)/make.default.apg.rules

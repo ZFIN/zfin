@@ -1,28 +1,10 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
-<script type="text/javascript" src="/javascript/control.modal.js"></script>
-<a id="search-tips" href="#searchTips">Search Tips</a>
-
 <div id="searchTips">
-
-    <style>
-        a.close_link {
-            color: #333333;
-            float: right;
-            font-family: sans-serif;
-            font-size: Large;
-            font-weight: bold;
-            text-decoration: none;
-        }
-    </style>
-
-    <a class="close_link" href="javascript:;" onclick="parent.Control.Modal.close();" target="_top">x</a>
-    <br>
 
     <h2 style="text-align:center;">Antibody Search Tips</h2>
     <ol>
         <li>
             To find immuno-labeling described in older publications, or in mutant fish, try a
-            <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect.apg" target=new>
+            <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg" target=new>
                 Gene Expression Search</a>
             with Assay set to immunohistochemistry (IHC) or Western blot (WB).
         </li>
@@ -47,8 +29,3 @@
     <p>If you have questions or suggestions, please <a href="mailto:zfinadmn@zfin.org">contact us</a>.
     </p>
 </div>
-<script type="text/javascript">
-    // used as part of control.modal.js.
-    // Needs to be out here because functions weird if within MIVAR apg calls.
-    new Control.Modal('search-tips', {opacity: 0.3, width: 400, height: 600, iframe: true});
-</script>

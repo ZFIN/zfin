@@ -4,6 +4,13 @@
 <%@ page import="org.zfin.framework.presentation.PaginationBean" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<script type="text/javascript">
+function start_tips() {
+  top.zfinhelp=open("/ZFIN/misc_html/antibody_search_tips.html","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=500,height=400");
+}
+</script>
+
+
 <c:choose>
     <c:when test="${formBean.searchResults == false}">
         <table width="100%" cellpadding="0" cellspacing="0">
@@ -12,8 +19,7 @@
                 <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
                         Search for Antibodies
             </span>
-                    &nbsp;&nbsp;
-                    <c:import url="/WEB-INF/jsp/antibody/antibody_search_tip.jsp"/>
+                    &nbsp;&nbsp; <a href="javascript:start_tips();">Search Tips</a>                   
                 </td>
                 <td align="right" class="titlebar">
                     <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -146,8 +152,7 @@
                 <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
                         <a name="modify-search"/>Modify your search
             </span>
-                &nbsp;&nbsp;
-                <c:import url="/WEB-INF/jsp/antibody/antibody_search_tip.jsp"/>
+                &nbsp;&nbsp; <a href="javascript:start_tips();">Search Tips</a>
             </td>
         </tr>
     </table>

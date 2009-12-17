@@ -124,6 +124,11 @@ function start_note() {
   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500");
 }
 
+function start_tips() {
+  top.zfinhelp=open("/ZFIN/misc_html/xpatselect_search_tips.html","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=500,height=400");
+
+}
+
 var intervalId = 0 ; 
 
 function call_submit() {
@@ -753,59 +758,8 @@ function openChild(childWinUrl,childWinName) {
 	<?MIELSE>
           <a name=modify></a><b>Modify your search.</b> 
 	<?/MIBLOCK>
-    <script type="text/javascript" src="/javascript/control.modal.js"></script>
     &nbsp;&nbsp; &ndash; &nbsp;&nbsp; 
-    <a id="xpsel_expression_details" href="#note_contents">Search Tips</a>
-    <div id="note_contents">
-
-    <style>
-a.close_link {
-color:#333333;
-float:right;
-font-family:sans-serif;
-font-size: Large ;
-font-weight:bold;
-text-decoration:none;
-}
-    </style>
-
-<a class="close_link" href="javascript:;" onclick="parent.Control.Modal.close();" target="_top">x</a>
-<br>
-<p>ZFIN now displays three kinds of gene expression data:</p>
-
-<ol>
-<li>  annotated images that have been directly submitted to ZFIN by
-researchers.
-<li>  annotated figures from the current literature. Images and captions are displayed when copyright permissions are available. 
-<li> an index of gene expression data from older publications
-</ol>
-
-<p>ZFIN began to include published figures in 2004.  We are currently
-able to add figures from older publications only on an ad hoc basis.
-A more complete incorporation of figures from the older literature is
-a long-term goal.</p>
-
-<p>
-Reporter gene constructs can employ a variety of different engineered foreign genes.  If, for example, a search for GFP expression yields no results, try RFP, YFP etc.  For a full list, see
-<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=EFG&query_results=t" target=new>all current EFG's</a>
-
-<p>If you have questions or suggestions or would like to submit
-expression pattern images to ZFIN, please <a href="mailto:zfinadmn@zfin.org">contact us</a>. </p>
-    </div>
-    <script type="text/javascript">
-    // used as part of control.modal.js.  
-    // Needs to be out here because functions weird if within MIVAR apg calls.
-    new Control.Modal('xpsel_expression_details',{
-                    // hover: true,
-                    // position: 'relative',
-                    opacity: 0.3,
-                    //offsetLeft: 20,
-                    //offsetTop: -200,
-                    width: 400,
-                    height: 600,
-                    iframe: true
-            });
-    </script>
+    <a id="xpsel_expression_details" href="javascript:start_tips();">Search Tips</a>
 
       </td>
 
