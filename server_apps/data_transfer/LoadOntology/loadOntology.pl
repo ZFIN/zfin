@@ -15,25 +15,25 @@ chdir "$dir";
 my $fileUrl = $ARGV[0];
 my $fileName = $ARGV[1];
 
-#http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo
+# see paths.txt for paths to the fileName and the fileName itself.
 #-------------------SubRoutines-------------#
 
 sub downloadOntologyTermFiles () { # download the obo file from passed in fileUrl
-    system("/local/bin/curl -s $fileUrl -o $fileName") and die "can not download quality.obo";
+    system("/local/bin/curl -s $fileUrl -o $fileName") and die "can not download $fileName";
 
-    if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName.old") {
+    #if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName.old") {
 
-	system("/bin/rm <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName.old") and die "can not rm $fileName.old" ;
+	#system("/bin/rm <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName.old") and die "can not rm $fileName.old" ;
 
-	print "rm'd $fileName.old\n" ;
-    }
+	#print "rm'd $fileName.old\n" ;
+    #}
 
-    if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName") {
+    #if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName") {
 	
-	system("/bin/mv <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName.old") and die "can not mv $fileName.old" ;
+	#system("/bin/mv <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName.old") and die "can not mv $fileName.old" ;
     
-	print "mv'd $fileName.old to $fileName.old\n" ;
-    }
+	#print "mv'd $fileName.old to $fileName.old\n" ;
+    #}
 }
 
 sub sendLoadReport ($) { # send email on error or completion
@@ -182,7 +182,7 @@ $count++ while <DEFS_PARSED>;
 
 if ($count < 10) {
 
-    &sendLoadReport("parseObo.pl failed","staylor\@cs.uoregon.edu", "./term_parsed.unl") ;
+    &sendLoadReport("parseObo.pl failed","<!--|VALIDATION_EMAIL_DBA|-->\@cs.uoregon.edu", "./term_parsed.unl") ;
 
 }
 else {	 
@@ -224,7 +224,7 @@ if ($fileName eq "sequence_ontology.obo"){
 # else, send the file to the curators.  Do this for both the secondary
 # term report and the obsolete term report. first, reset the count variable.
 
-#&isEmptyFile ("newannotsecterms.unl","No new secondary terms\n","staylor\@cs.uoregon.edu","Terms now secondary");
+#&isEmptyFile ("newannotsecterms.unl","No new secondary terms\n","<!--|VALIDATION_EMAIL_DBA|-->\@cs.uoregon.edu","Terms now secondary");
 
 
 &isEmptyFile ("report.txt","loadterms.sql failed to run\n","<!--|VALIDATION_EMAIL_DBA|-->","SQL term load results");
