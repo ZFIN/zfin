@@ -50,7 +50,7 @@ class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response> {
         if (lookup.isWildCard()) {
             Collection suggestions = response.getSuggestions();
             List newSuggestions = new ArrayList();
-            newSuggestions.add(new ItemSuggestion("*" + request.getQuery() + "*", null));
+            newSuggestions.add(new ItemSuggestion("*" + request.getQuery() + "*", request.getQuery() ));
             newSuggestions.addAll(suggestions);
             response.setSuggestions(newSuggestions);
         }
@@ -66,7 +66,7 @@ class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response> {
                 iterator.next();
                 iterator.remove();
             }
-            suggestions.add(new ItemSuggestion("...", null));
+            suggestions.add(new ItemSuggestion("...",  request.getQuery()));
         }
 
         if (lookup.getTextBox().getText().equalsIgnoreCase(request.getQuery())) {
