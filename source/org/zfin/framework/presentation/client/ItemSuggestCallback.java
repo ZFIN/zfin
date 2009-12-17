@@ -66,7 +66,12 @@ class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response> {
                 iterator.next();
                 iterator.remove();
             }
-            suggestions.add(new ItemSuggestion("...",  request.getQuery()));
+            if(lookup.isWildCard()){
+                suggestions.add(new ItemSuggestion("...",  request.getQuery()));
+            }
+            else{
+                suggestions.add(new ItemSuggestion("...",  null ));
+            }
         }
 
         if (lookup.getTextBox().getText().equalsIgnoreCase(request.getQuery())) {
