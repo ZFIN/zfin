@@ -26,6 +26,7 @@ import org.zfin.sequence.reno.MultiRunTest;
 import org.zfin.sequence.reno.OrthologyTest;
 import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.presentation.RedundancyCandidateControllerTest;
+import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite)
@@ -56,6 +57,7 @@ import org.zfin.sequence.reno.presentation.RedundancyCandidateControllerTest;
         ExpressionRepositoryTest.class,
         OrthologyRepositoryTest.class,
         LinkageRepositoryTest.class,
+        SingleCandidateRepositoryTest.class,
         TranscriptRepositoryTest.class,
         DisplayGroupRepositoryTest.class,
         BlastRepositoryTest.class

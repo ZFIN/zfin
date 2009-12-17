@@ -46,7 +46,7 @@
             <td>
               <a href="/action/reno/candidate-view?runCandidate.zdbID=${rc.zdbID}">
 		        <c:if test="${rc.owner}">
-		           <img src=/images/continue.jpg height=30 border=0>
+		           <img src=/images/continue.gif height=47 border=0>
 		        </c:if>
 		        <c:if test="${!rc.owner}">
 		           <img src=/images/glasses.jpg height=25 border=0>

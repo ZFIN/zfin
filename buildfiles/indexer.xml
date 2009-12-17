@@ -33,10 +33,6 @@
             <include name="*.jar"/>
             <include name="*.zip"/>
         </fileset>
-        <fileset dir="${lib}/confluence">
-            <include name="*.jar"/>
-            <include name="*.zip"/>
-        </fileset>
         <fileset dir="${lib}/jaxws">
             <include name="*.jar"/>
             <include name="*.zip"/>

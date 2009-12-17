@@ -96,7 +96,7 @@ public class HibernateRenoRepository implements RenoRepository {
 
     public Run getRunByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(org.zfin.sequence.reno.Run.class);
+        Criteria criteria = session.createCriteria(Run.class);
         criteria.add(Restrictions.eq("zdbID", zdbID));
         return (Run) criteria.uniqueResult();
     }
@@ -122,11 +122,11 @@ public class HibernateRenoRepository implements RenoRepository {
      * Additionally, we want to make sure that we go directly to the database and update the cache
      * as triggers may have run in the background effecting sorting.
      *
-     * @param runZdbId   run zdbID
+     * @param run        Run
      * @param comparator Order by statement
      * @return list of RunCandidates
      */
-    public List<RunCandidate> getSortedRunCandidates(String runZdbId, String comparator, int maxNumRecords) {
+    public List<RunCandidate> getSortedRunCandidates(Run run, String comparator, int maxNumRecords) {
         Session session = HibernateUtil.currentSession();
         CacheMode oldCacheMode = session.getCacheMode();
         LOG.info("old cache mode: " + oldCacheMode);
@@ -152,7 +152,7 @@ public class HibernateRenoRepository implements RenoRepository {
         String hql = "SELECT runCandidate.zdbID, hit.expectValue, max(hit.score), runCandidate.candidate.lastFinishedDate, " +
                 "            runCandidate.occurrenceOrder, runCandidate.candidate.problem " +
                 "FROM RunCandidate runCandidate, Hit hit, Query query " +
-                "WHERE runCandidate.run.zdbID = :zdbID AND " +
+                "WHERE runCandidate.run = :run AND " +
                 "      hit.query = query AND " +
                 "      query.runCandidate = runCandidate AND " +
                 "      runCandidate.done = :done AND " +
@@ -163,12 +163,12 @@ public class HibernateRenoRepository implements RenoRepository {
                 "         runCandidate.occurrenceOrder " +
                 "ORDER BY " + orderBy;
         Query query = session.createQuery(hql);
-        query.setString("zdbID", runZdbId);
+        query.setParameter("run", run);
         query.setBoolean("done", false);
         query.setMaxResults(maxNumRecords);
         List<Object> runs = query.list();
-        for (Object run : runs) {
-            Object[] tuple = (Object[]) run;
+        for (Object runObjects : runs) {
+            Object[] tuple = (Object[]) runObjects;
             Hit bestHit1 = new Hit();
             bestHit1.setExpectValue((Double) tuple[1]);
             bestHit1.setScore((Integer) tuple[2]);
@@ -177,28 +177,23 @@ public class HibernateRenoRepository implements RenoRepository {
 
         if (runs.size() < maxNumRecords) {
             String hql1 = "select runCandidate from RunCandidate runCandidate, Query query " +
-                    "WHERE runCandidate.run.zdbID = :zdbID AND " +
+                    "WHERE runCandidate.run = :run AND " +
                     "      query.runCandidate = runCandidate AND " +
                     "      runCandidate.done = :done AND " +
                     "      runCandidate.lockPerson is null  AND " +
                     "      not exists (select 1 from Hit hit where hit.query = query) ";
             Query nonHitQuery = session.createQuery(hql1);
-            nonHitQuery.setString("zdbID", runZdbId);
+            nonHitQuery.setParameter("run", run);
             nonHitQuery.setBoolean("done", false);
             nonHitQuery.setMaxResults(maxNumRecords - runs.size());
             List<RunCandidate> nonHitRuns = nonHitQuery.list();
-            for (RunCandidate cand : nonHitRuns) {
-                list.add(cand);
-            }
+            list.addAll(nonHitRuns);
         }
-
-
         session.setCacheMode(oldCacheMode);
-
         return list;
     }
 
-    public List<RunCandidate> getSortedNonZFRunCandidates(String runZdbId, String comparator, int maxNumRecords) {
+    public List<RunCandidate> getSortedNonZFRunCandidates(Run run, String comparator, int maxNumRecords) {
         Session session = HibernateUtil.currentSession();
         CacheMode oldCacheMode = session.getCacheMode();
         LOG.info("old cache mode: " + oldCacheMode);
@@ -212,9 +207,10 @@ public class HibernateRenoRepository implements RenoRepository {
 
         String hql = "SELECT runCandidate.zdbID , hit.expectValue, max(hit.score ), runCandidate.candidate.lastFinishedDate , runCandidate.occurrenceOrder, runCandidate.candidate.problem " +
                 "FROM RunCandidate runCandidate, Query query , Hit hit, Accession accession , EntrezProtRelation  entrezProtRelation " +
-                "WHERE runCandidate.run.zdbID = :zdbID" +
+                "WHERE runCandidate.run = :run" +
                 " and runCandidate.done  = :done" +
                 " and runCandidate= query.runCandidate " +
+                " and runCandidate.lockPerson is null  " +
                 " and hit.query = query " +
                 " and hit.targetAccession  = accession " +
                 " and accession.number  = entrezProtRelation.proteinAccNum " +
@@ -241,12 +237,12 @@ public class HibernateRenoRepository implements RenoRepository {
         hql += orderBy;
 
         Query query = session.createQuery(hql);
-        query.setString("zdbID", runZdbId);
+        query.setParameter("run", run);
         query.setBoolean("done", false);
         query.setMaxResults(maxNumRecords);
         List runs = query.list();
-        for (Object run : runs) {
-            Object[] tuple = (Object[]) run;
+        for (Object runObjects : runs) {
+            Object[] tuple = (Object[]) runObjects;
             Hit bestHit1 = new Hit();
             bestHit1.setExpectValue((Double) tuple[1]);
             bestHit1.setScore((Integer) tuple[2]);
@@ -255,19 +251,17 @@ public class HibernateRenoRepository implements RenoRepository {
 
         if (runs.size() < maxNumRecords) {
             String hql1 = "select runCandidate from RunCandidate runCandidate, Query query " +
-                    "WHERE runCandidate.run.zdbID = :zdbID AND " +
+                    "WHERE runCandidate.run = :run AND " +
                     "      query.runCandidate = runCandidate AND " +
                     "      runCandidate.done = :done AND " +
                     "      runCandidate.lockPerson is null  AND " +
                     "      not exists (select 1 from Hit hit where hit.query = query) ";
             Query nonHitQuery = session.createQuery(hql1);
-            nonHitQuery.setString("zdbID", runZdbId);
+            nonHitQuery.setParameter("run", run);
             nonHitQuery.setBoolean("done", false);
             nonHitQuery.setMaxResults(maxNumRecords - runs.size());
             List<RunCandidate> nonHitRuns = nonHitQuery.list();
-            for (RunCandidate cand : nonHitRuns) {
-                list.add(cand);
-            }
+            list.addAll(nonHitRuns);
         }
         session.setCacheMode(oldCacheMode);
 

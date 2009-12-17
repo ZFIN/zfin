@@ -138,7 +138,6 @@ public class SingleRunController extends SimpleFormController {
                 try {
                     RenoService.finishRemainderRedundancy(runBean.getRun());
                     HibernateUtil.flushAndCommitCurrentSession();
-//                    HibernateUtil.rollbackTransaction();
                 } catch (Exception e) {
                     logger.error("Problem finishing remainder of the reno jobs", e);
                     HibernateUtil.rollbackTransaction();
@@ -152,9 +151,9 @@ public class SingleRunController extends SimpleFormController {
             }
 
             if (run.isRedundancy()) {
-                runBean.setRunCandidates(renoRepository.getSortedRunCandidates(run.getZdbID(), runBean.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
+                runBean.setRunCandidates(renoRepository.getSortedRunCandidates(run, runBean.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
             } else if (run.isNomenclature()) {
-                runBean.setRunCandidates(renoRepository.getSortedNonZFRunCandidates(run.getZdbID(), runBean.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
+                runBean.setRunCandidates(renoRepository.getSortedNonZFRunCandidates(run, runBean.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
             }
         } else if (candidateType.equals(PENDING_CANDIDATES)) {
             runBean.setComparator("name");

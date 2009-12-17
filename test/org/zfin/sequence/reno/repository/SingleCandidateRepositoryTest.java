@@ -8,11 +8,12 @@ import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.RunCandidate;
 
 import java.util.List;
 
-public class SingleCandidadeRepositoryTest {
+public class SingleCandidateRepositoryTest {
 
     private static RenoRepository renoRepository = RepositoryFactory.getRenoRepository();
 
@@ -29,14 +30,15 @@ public class SingleCandidadeRepositoryTest {
     }
 
     /**
-     * Check that synonyms are not of group 'seconday id'
+     * Check that synonyms are not of group 'secondary id'
      */
     @Test
-    public void getSingleRunCnadidates() {
+    public void getSingleRunCandidates() {
         // optic primordium
         String runZDB = "ZDB-RUN-071001-2";
+        Run run = renoRepository.getRunByID(runZDB);
 
-        List<RunCandidate> runCandidates = renoRepository.getSortedRunCandidates(runZDB, "", 5 );
+        List<RunCandidate> runCandidates = renoRepository.getSortedRunCandidates(run, "", 5);
         Assert.assertTrue(runCandidates != null);
     }
 

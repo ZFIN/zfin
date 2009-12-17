@@ -294,19 +294,19 @@ public class RenoRepositoryTest {
     @Test
     public void testRunSetAttribution() {
         Session session = HibernateUtil.currentSession();
-         session.beginTransaction();
-         try {
-             Map<String, Object> returnMap = insertTestData();
-             Run run1 = (Run) returnMap.get("run1");
-             assertTrue("Is redundancy run",run1.isRedundancy()) ; 
-             assertFalse("Not nomenclature run",run1.isNomenclature()) ; 
-             RedundancyRun redunRun = (RedundancyRun) run1 ;
-             Publication publication2 = (Publication) returnMap.get("publication2");
-             assertNotSame("Run attribution has an expected initial value",publication2, redunRun.getNomenclaturePublication());
+        session.beginTransaction();
+        try {
+            Map<String, Object> returnMap = insertTestData();
+            Run run1 = (Run) returnMap.get("run1");
+            assertTrue("Is redundancy run", run1.isRedundancy());
+            assertFalse("Not nomenclature run", run1.isNomenclature());
+            RedundancyRun redunRun = (RedundancyRun) run1;
+            Publication publication2 = (Publication) returnMap.get("publication2");
+            assertNotSame("Run attribution has an expected initial value", publication2, redunRun.getNomenclaturePublication());
 
-             redunRun.setRelationPublication(publication2);
-             assertSame("Run attribution update is successful",publication2, redunRun.getRelationPublication());
-             }
+            redunRun.setRelationPublication(publication2);
+            assertSame("Run attribution update is successful", publication2, redunRun.getRelationPublication());
+        }
         catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -320,19 +320,19 @@ public class RenoRepositoryTest {
     @Test
     public void testRunSetOrthologyAttribution() {
         Session session = HibernateUtil.currentSession();
-         session.beginTransaction();
-         try {
-             Map<String, Object> returnMap = insertTestData();
-             Run run2 = (Run) returnMap.get("run2");
-             assertTrue("Is nomenclature run",run2.isNomenclature()) ;
-             assertFalse("Not redundancy run",run2.isRedundancy()) ;
-             NomenclatureRun nomenRun = (NomenclatureRun) run2 ;
-             Publication publication1 = (Publication) returnMap.get("publication1");
-             assertNotSame("Run orthology attribution has an expected initial value",publication1, nomenRun.getNomenclaturePublication());
+        session.beginTransaction();
+        try {
+            Map<String, Object> returnMap = insertTestData();
+            Run run2 = (Run) returnMap.get("run2");
+            assertTrue("Is nomenclature run", run2.isNomenclature());
+            assertFalse("Not redundancy run", run2.isRedundancy());
+            NomenclatureRun nomenRun = (NomenclatureRun) run2;
+            Publication publication1 = (Publication) returnMap.get("publication1");
+            assertNotSame("Run orthology attribution has an expected initial value", publication1, nomenRun.getNomenclaturePublication());
 
-             nomenRun.setOrthologyPublication(publication1);
-             assertSame("Run orthology attribution update is successful",publication1, nomenRun.getOrthologyPublication());
-             }
+            nomenRun.setOrthologyPublication(publication1);
+            assertSame("Run orthology attribution update is successful", publication1, nomenRun.getOrthologyPublication());
+        }
         catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -351,34 +351,34 @@ public class RenoRepositoryTest {
         try {
             Map<String, Object> returnMap = insertTestData();
             Run run1 = (Run) returnMap.get("run1");
-			List runCandidates ;
-            Hit bestHit ;
-            RunCandidate runCandidate ;
-            runCandidates =  repository.getSortedRunCandidates( run1.getZdbID(),"other", 3  ) ;
-			runCandidate = (RunCandidate) runCandidates.get(0) ;
-			bestHit = runCandidate.getBestHit() ;
-			Hit hit1 = (Hit) returnMap.get("hit1");
-			assertEquals( bestHit.getExpectValue() , hit1.getExpectValue() );
-			assertEquals( bestHit.getScore() , hit1.getScore() );
+            List runCandidates;
+            Hit bestHit;
+            RunCandidate runCandidate;
+            runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
+            runCandidate = (RunCandidate) runCandidates.get(0);
+            bestHit = runCandidate.getBestHit();
+            Hit hit1 = (Hit) returnMap.get("hit1");
+            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue());
+            assertEquals(bestHit.getScore(), hit1.getScore());
 
             // should choose the same score, because still has the best expect value
             hit1.setScore(600);
             session.update(hit1);
-            runCandidates =  repository.getSortedRunCandidates( run1.getZdbID(),"other", 3  ) ;
-            runCandidate = (RunCandidate) runCandidates.get(0) ;
-            bestHit = runCandidate.getBestHit() ;
-            assertEquals( bestHit.getExpectValue() , hit1.getExpectValue() );
-            assertEquals( bestHit.getScore() , hit1.getScore() );
+            runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
+            runCandidate = (RunCandidate) runCandidates.get(0);
+            bestHit = runCandidate.getBestHit();
+            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue());
+            assertEquals(bestHit.getScore(), hit1.getScore());
 
             // make hit1 and hit2 the same expect value, so now should take hit2 value as 800 > 600
             Hit hit2 = (Hit) returnMap.get("hit2");
             hit2.setExpectValue(0);
             session.update(hit2);
-            runCandidates =  repository.getSortedRunCandidates( run1.getZdbID(),"other", 3  ) ;
-            runCandidate = (RunCandidate) runCandidates.get(0) ;
-            bestHit = runCandidate.getBestHit() ;
-            assertEquals( bestHit.getExpectValue() , hit2.getExpectValue() );// would work for either hit1 or hit2
-            assertEquals( bestHit.getScore() , hit2.getScore() );
+            runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
+            runCandidate = (RunCandidate) runCandidates.get(0);
+            bestHit = runCandidate.getBestHit();
+            assertEquals(bestHit.getExpectValue(), hit2.getExpectValue());// would work for either hit1 or hit2
+            assertEquals(bestHit.getScore(), hit2.getScore());
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -469,6 +469,7 @@ public class RenoRepositoryTest {
 
     /**
      * Returns ZdbID
+     *
      * @return Map of Runs, candidates, Persons
      */
     private Map<String, Object> insertTestData() {
@@ -537,7 +538,7 @@ public class RenoRepositoryTest {
         run2.setProgram("BLASTP");
         run2.setBlastDatabase("sptr_hssptr_mssptr_zf");
         Date date2 = new Date();
-        run2.setDate(date2) ;
+        run2.setDate(date2);
         session.save(run2);
         returnMap.put("run2", run2);
 
@@ -576,7 +577,7 @@ public class RenoRepositoryTest {
         session.save(query);
 
         // create 5 Hits
-       Hit hit1 = new Hit();
+        Hit hit1 = new Hit();
         hit1.setQuery(query);
         hit1.setHitNumber(1);
         hit1.setTargetAccession(accession1);
@@ -646,78 +647,77 @@ public class RenoRepositoryTest {
 
 
     @Test
-    public void zdbGeneratorRollBack(){
-        Session session = null ; 
-        try{
-         session = HibernateUtil.currentSession();
-         session.beginTransaction();
-         Map<String, Object> returnMap1 = insertTestData();
-         session.getTransaction().rollback() ; 
-         HibernateUtil.closeSession() ;  // use the HibernateUtil since it knows about closing and opening sessions
+    public void zdbGeneratorRollBack() {
+        Session session = null;
+        try {
+            session = HibernateUtil.currentSession();
+            session.beginTransaction();
+            Map<String, Object> returnMap1 = insertTestData();
+            session.getTransaction().rollback();
+            HibernateUtil.closeSession();  // use the HibernateUtil since it knows about closing and opening sessions
 
-         session = HibernateUtil.currentSession(); // get a new open session from the sssion factory
-         session.beginTransaction();
-         Map<String, Object> returnMap2 = insertTestData();
+            session = HibernateUtil.currentSession(); // get a new open session from the sssion factory
+            session.beginTransaction();
+            Map<String, Object> returnMap2 = insertTestData();
 
-         assertEquals( 
-             "person1 should have same zdbID for both maps",
-             ((Person) returnMap1.get("person1") ).getZdbID() , 
-             ((Person) returnMap2.get("person1") ).getZdbID() 
-             ) ; 
+            assertEquals(
+                    "person1 should have same zdbID for both maps",
+                    ((Person) returnMap1.get("person1")).getZdbID(),
+                    ((Person) returnMap2.get("person1")).getZdbID()
+            );
 
-         assertFalse( 
-             "person1 and person2 should not have the same zdbID in the first map",
-             ((Person) returnMap1.get("person1") ).getZdbID().equals(
-             ((Person) returnMap1.get("person2") ).getZdbID() 
-             )
-             ) ; 
+            assertFalse(
+                    "person1 and person2 should not have the same zdbID in the first map",
+                    ((Person) returnMap1.get("person1")).getZdbID().equals(
+                            ((Person) returnMap1.get("person2")).getZdbID()
+                    )
+            );
 
-         assertFalse( 
-             "person1 and person2 should not have the same zdbID in the second map",
-             ((Person) returnMap2.get("person1") ).getZdbID() .equals(
-             ((Person) returnMap2.get("person2") ).getZdbID() 
-             )
-             ) ; 
+            assertFalse(
+                    "person1 and person2 should not have the same zdbID in the second map",
+                    ((Person) returnMap2.get("person1")).getZdbID().equals(
+                            ((Person) returnMap2.get("person2")).getZdbID()
+                    )
+            );
 
-         assertEquals( 
-             "person2 should have same zdbID for both maps",
-             ((Person) returnMap1.get("person2") ).getZdbID() , 
-             ((Person) returnMap2.get("person2") ).getZdbID() 
-             ) ; 
+            assertEquals(
+                    "person2 should have same zdbID for both maps",
+                    ((Person) returnMap1.get("person2")).getZdbID(),
+                    ((Person) returnMap2.get("person2")).getZdbID()
+            );
 
-         assertEquals( 
-             "run1 should have same zdbID for both maps",
-             ((Run) returnMap1.get("run1") ).getZdbID() , 
-             ((Run) returnMap2.get("run1") ).getZdbID() 
-             ) ; 
+            assertEquals(
+                    "run1 should have same zdbID for both maps",
+                    ((Run) returnMap1.get("run1")).getZdbID(),
+                    ((Run) returnMap2.get("run1")).getZdbID()
+            );
 
-         assertEquals( 
-             "run2 should have same zdbID for both maps",
-             ((Run) returnMap1.get("run2") ).getZdbID() , 
-             ((Run) returnMap2.get("run2") ).getZdbID() 
-             ) ; 
+            assertEquals(
+                    "run2 should have same zdbID for both maps",
+                    ((Run) returnMap1.get("run2")).getZdbID(),
+                    ((Run) returnMap2.get("run2")).getZdbID()
+            );
 
-         assertEquals( 
-             "runCandidate1 should have same zdbID for both maps",
-             ((RunCandidate) returnMap1.get("runCandidate1") ).getZdbID() , 
-             ((RunCandidate) returnMap2.get("runCandidate1") ).getZdbID() 
-             ) ; 
+            assertEquals(
+                    "runCandidate1 should have same zdbID for both maps",
+                    ((RunCandidate) returnMap1.get("runCandidate1")).getZdbID(),
+                    ((RunCandidate) returnMap2.get("runCandidate1")).getZdbID()
+            );
 
-         assertEquals( 
-             "runCandidate2 should have same zdbID for both maps",
-             ((RunCandidate) returnMap1.get("runCandidate2") ).getZdbID() , 
-             ((RunCandidate) returnMap2.get("runCandidate2") ).getZdbID() 
-             ) ; 
+            assertEquals(
+                    "runCandidate2 should have same zdbID for both maps",
+                    ((RunCandidate) returnMap1.get("runCandidate2")).getZdbID(),
+                    ((RunCandidate) returnMap2.get("runCandidate2")).getZdbID()
+            );
 
-         
 
         }
-        catch(Exception e){
+        catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
-        finally{
-            session.getTransaction().rollback() ; 
+        finally {
+            session.getTransaction().rollback();
         }
 
     }
@@ -727,11 +727,11 @@ public class RenoRepositoryTest {
      * mostly just want to test failure
      */
     @Test
-    public void populateLinkageGroups(){
+    public void populateLinkageGroups() {
         // in general, can just grab the first one
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(RunCandidate.class) ;
-        criteria.add(Restrictions.eq("zdbID","ZDB-RUNCAN-080514-255")) ;
-        criteria.setMaxResults(1) ;
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(RunCandidate.class);
+        criteria.add(Restrictions.eq("zdbID", "ZDB-RUNCAN-080514-255"));
+        criteria.setMaxResults(1);
 
         RunCandidate rc = (RunCandidate) criteria.list().get(0);
         assertNotNull(rc);
