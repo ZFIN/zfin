@@ -354,7 +354,7 @@ function hdrSetTabs() {
     <div id="hdr-generallinks" class="hdr-linkbar" style="display: none;">
      <a href="/">Home</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="http://wiki.zfin.org" title="ZFIN-hosted community wiki: browse, contribute and export">Wiki</A>
+     <a href="http://azraelwiki.zfin.org" title="ZFIN-hosted community wiki: browse, contribute and export">Wiki</A>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
      <a href="/zf_info/news/jobs.html" title="Zebrafish-related job announcements">Jobs</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
