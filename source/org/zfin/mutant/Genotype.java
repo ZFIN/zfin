@@ -92,26 +92,30 @@ public class Genotype implements Comparable {
      *
      * @return genotype
      */
-    public Genotype getBackground() {
-        if (CollectionUtils.isEmpty(associatedGenotypes))
-            return null;
+    public Set<Genotype> getAssociatedGenotypes() {
+        return associatedGenotypes;
+    }
 
-        if (associatedGenotypes.size() > 1)
-            throw new RuntimeException("Found more than one associated genotype (Background)! " + associatedGenotypes);
+    public void setAssociatedGenotypes(Set<Genotype> associatedGenotypes) {
+        this.associatedGenotypes = associatedGenotypes;
+    }
+    /*public Genotype getBackground() {
+      if (CollectionUtils.isEmpty(associatedGenotypes))
+          return null;
+
+    *//*  if (associatedGenotypes.size() > 1)
+            throw new RuntimeException("Found more than one associated genotype (Background)! " + associatedGenotypes);*//*
         Iterator<Genotype> iterator = associatedGenotypes.iterator();
         return iterator.next();
     }
 
-    /**
-     * Make sure we have not already added a background. Only one allowed.
-     * @param background Genotype
-     */
+    *
     public void setBackground(Genotype background) {
-       if (!CollectionUtils.isEmpty(associatedGenotypes))
-            throw new RuntimeException("Found already one associated genotype (Background)! " + associatedGenotypes);
+       *//*if (!CollectionUtils.isEmpty(associatedGenotypes))
+            throw new RuntimeException("Found already one associated genotype (Background)! " + associatedGenotypes);*//*
         associatedGenotypes = new HashSet<Genotype>();
         associatedGenotypes.add(background);
-    }
+    }*/
 
     public Set<GenotypeFeature> getGenotypeFeatures() {
         return genotypeFeatures;
