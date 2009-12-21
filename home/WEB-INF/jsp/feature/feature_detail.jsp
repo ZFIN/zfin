@@ -390,9 +390,20 @@ This feature is representative of one or more unknown insertion sites.
                 <tr class="search-result-table-entries">
                     <td>
                         <zfin:link entity="${featgenoStat.genotype}"/>
-                        <c:if test="${featgenoStat.genotype.background ne null}">
+                        <%--<c:if test="${featgenoStat.genotype.background ne null}">
                             (${featgenoStat.genotype.background.name})
+                        </c:if>--%>
+                        <%--<c:forEach var="genoBack" items="${featgenoStat.genotype.associatedGenotypes}" varStatus="loop">--%>
+                        <c:if test="${fn:length(featgenoStat.genotype.associatedGenotypes)>0}">
+                   (<zfin:link entity="${featgenoStat.genotype.associatedGenotypes}"/>)
+                   <%-- <c:if test="${!loop.last}">
+                        ,&nbsp;
+                    </c:if>
+                            <c:if test="${loop.last}">
+                    )
+                    </c:if>--%>
                         </c:if>
+                <%--</c:forEach>--%>
 
                     </td>
                     <td>
@@ -524,9 +535,18 @@ This feature is representative of one or more unknown insertion sites.
         <tr class="search-result-table-entries">
             <td>
                 <zfin:link entity="${featgenoStat.genotype}"/>
-                <c:if test="${featgenoStat.genotype.background ne null}">
+               <%-- <c:if test="${featgenoStat.genotype.background ne null}">
                     (${featgenoStat.genotype.background.name})
-                </c:if>
+                </c:if>--%>
+                 <c:forEach var="genoBack" items="${featgenoStat.genotype.associatedGenotypes}" varStatus="loop">
+                    ({<zfin:link entity="${featgenoStat.genotype.associatedGenotypes}"/>})
+                    <c:if test="${!loop.last}">
+                        ,&nbsp;
+                    </c:if>
+                            <c:if test="${loop.last}">
+                        );
+                    </c:if>
+                </c:forEach>
 
             </td>
             <td>
