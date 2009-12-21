@@ -391,18 +391,9 @@ marker.<?/MIVAR>
   
   <!-- Special case for adding new sequence db link -->
   <?MIBLOCK COND="$(OR,$(EC,$attr_type,special-newseqnum),$(XST,$donecheck))">
-    <?MISQL SQL="
-      select fdbcont_zdb_id
-        from foreign_db_contains, foreign_db, foreign_db_data_type
-       where fdbdt_super_type = '$fdbcont_super'
-         and fdbdt_data_type = '$fdbcont_data'
-         and fdb_db_name = '$old_value'
-	 and fdbcont_fdb_db_id = fdb_db_pk_id
-	 and fdbcont_fdbdt_id = fdbdt_pk_id;">
         
-        $(SETVAR,fdbcont_zdb_id,$1)
-        
-    <?/MISQL>
+    <?MIVAR COND="$(XST,$xtra_param)" 
+            NAME="$fdbcont_zdb_id">$xtra_param<?/MIVAR>        
 
     <?MIBLOCK COND="$(NXST,$fdbcont_zdb_id)">
 	<?MIVAR>
