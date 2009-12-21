@@ -198,6 +198,12 @@
        <?/MICOMMENT>
        
        
+                <li>
+         <a href="/zf_info/news/vega17">
+           December 21 - New Vega Release available 
+         </a>
+       </li> 
+       
           <li>
          <a href="/zf_info/news/siteNews.html#chem">
            December 1 - Chemical Biology Session
@@ -205,11 +211,7 @@
        </li> 
        
        
-              <li>
-         <a href="/zf_info/news/ZNEWS_fall_09.pdf">
-           November 12 - Fall 2009 ZFIN Newsletter 
-         </a>
-       </li> 
+     
        
       
        
