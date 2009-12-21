@@ -589,8 +589,8 @@ sub featureAssociatedWithGenotype($$$) {
 #---------------------------------------------------------------
 # unFeatureNameAbbrevUpdate
 #
-# features with names like un_* related to genes, must be kept up to 
-# date.  feature_names/abbrevs should equal current gene abbrev plus un_* prefix
+# features with names like unspecified_* related to genes, must be kept up to 
+# date.  feature_names/abbrevs should equal current gene abbrev plus unspecified_* prefix
 #
 # Parameter
 # $ Email Address for recipients
@@ -602,9 +602,9 @@ sub unFeatureNameAbbrevUpdate($) {
                from feature, marker, feature_marker_relationship
                where feature_zdb_id = fmrel_ftr_zdb_id
                and mrkr_zdb_id = fmrel_mrkr_zdb_id
-               and feature_name like 'un\_%'
+               and feature_name like 'unspecified\_%'
                and feature_type = 'UNSPECIFIED'
-               and feature_name != 'un\_'||mrkr_abbrev;";
+               and feature_name != 'unspecified\_'||mrkr_abbrev;";
 
   my @colDesc = ("Feature name         ",
 		 "Feature mrkr_abbrev      ");
@@ -617,32 +617,32 @@ sub unFeatureNameAbbrevUpdate($) {
 		       	    feature_marker_relationship
                        where mrkr_zdb_id = fmrel_mrkr_zdb_id
                        and feature_zdb_id = fmrel_ftr_zdb_id
-                       and feature_name like 'un\_%')
-                 where feature_name like 'un\_%' 
+                       and feature_name like 'unspecified\_%')
+                 where feature_name like 'unspecified\_%' 
                and feature_type = 'UNSPECIFIED'
                  and not exists (Select 'x'
      	 		           from feature_marker_relationship,
 			                marker
 			           where mrkr_Zdb_id = fmrel_mrkr_Zdb_id
 			           and feature_zdb_id = fmrel_ftr_zdb_id
-			           and feature_name = 'un\_'||mrkr_abbrev);" );
+			           and feature_name = 'unspecified\_'||mrkr_abbrev);" );
 
   $sth = $dbh->do("update feature
                 set feature_abbrev = 
-		    (select 'un\_'||mrkr_abbrev
+		    (select 'unspecified\_'||mrkr_abbrev
                        from marker, 
 		       	    feature_marker_relationship
                        where mrkr_zdb_id = fmrel_mrkr_zdb_id
                        and feature_zdb_id = fmrel_ftr_zdb_id
-                       and feature_abbrev like 'un\_%')
-                 where feature_name like 'un\_%' 
+                       and feature_abbrev like 'unspecified\_%')
+                 where feature_name like 'unspecified\_%' 
                and feature_type = 'UNSPECIFIED'
                  and not exists (Select 'x'
      	 		           from feature_marker_relationship,
 			                marker
 			           where mrkr_Zdb_id = fmrel_mrkr_Zdb_id
 			           and feature_zdb_id = fmrel_ftr_zdb_id
-			           and feature_abbrev = 'un\_'||mrkr_abbrev);" );
+			           and feature_abbrev = 'unspecified\_'||mrkr_abbrev);" );
   
  if ( $nRecords > 0 ) {
   my $sendToAddress = $_[0];
