@@ -90,7 +90,7 @@ FROM marker
 UNION
 --feature
 SELECT "feature" AS app_file, feature_zdb_id AS oid, "" as url
-FROM feature;
+FROM feature
 
 UNION
 -- anatomy_item
