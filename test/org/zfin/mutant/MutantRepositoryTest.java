@@ -6,6 +6,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.marker.Marker;
+import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.publication.Publication;
+import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.Figure;
+import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyPhenotype;
 import org.zfin.anatomy.DevelopmentStage;
@@ -27,6 +34,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static junit.framework.Assert.*;
 import static org.junit.Assert.fail;
@@ -62,9 +70,9 @@ public class MutantRepositoryTest {
 
         //  background genotype AB
         String bgZdbID = "ZDB-GENO-960809-7";
-        Genotype background = mutantRepository.getGenotypeByID(bgZdbID);
-        assertNotNull("Background exists", geno.getBackground());
-        assertEquals("Background AB", background, geno.getBackground());
+        //List<Genotype> background = mutantRepository.getGenotypeByID(bgZdbID);
+        assertNotNull("Background exists", geno.getAssociatedGenotypes());
+        //assertEquals("Background AB", background, geno.getAssociatedGenotypes());
 
     }
 
@@ -101,6 +109,19 @@ public class MutantRepositoryTest {
         assertNotNull("genos exist", genos);
 
     }
+/*@Test
+
+        public void getLG(){
+    String name="ZDB-ALT-991130-131"                                                         ;
+            FeatureRepository mr = RepositoryFactory.getFeatureRepository();
+           Feature ftr=mr.getFeatureByID(name);
+          Marker mkr= mutantRepository.getMarkerbyFeature(ftr);
+           TreeSet<String> lg=mutantRepository.getDeletedMarkerLG(ftr,mkr);
+    assertNotNull("lg exist", lg);
+
+}*/
+
+
     @Test
     public void checkPhenotypeDescriptions(){
         //  ao term: otic placode
