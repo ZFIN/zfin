@@ -24,8 +24,10 @@
             <tr class="search-result-table-entries">
                 <td>
                     <zfin:link entity="${genoStat.genotype}"/>
-                    <c:if test="${genoStat.genotype.background ne null}">
-                        (${genoStat.genotype.background.name})
+                    <c:if test="${fn:length(genoStat.genotype.associatedGenotypes)>0}">
+                    <%--<c:if test="${genoStat.genotype.background ne null}">--%>
+                        <%--(${genoStat.genotype.background.name})--%>
+                        (<zfin:link entity="${genoStat.genotype.associatedGenotypes}"/>)
                     </c:if>
 
                 </td>
