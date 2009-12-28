@@ -2709,7 +2709,7 @@ sub removeGOTermsFromWithdrawnMarkers ($) {
 
   my $routineName = "removeGOTermsFromWithdrawnMarkers";
   
- my $sql = "select distinct goterm_name, mrkrgoev_mrkr_zdb_id
+ my $sql = "select goterm_name, mrkrgoev_mrkr_zdb_id
               from marker_go_term_evidence, marker,go_term
               where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
               and mrkr_abbrev like 'WITHDRAWN%'
@@ -2720,10 +2720,10 @@ sub removeGOTermsFromWithdrawnMarkers ($) {
 
   my $nRecords = execSql ($sql, undef, @colDesc);
   
-  my $sth = $dbh->do("delete from marker_go_term_Evidence
+  my $sth = $dbh->do("delete from marker_go_term_evidence
                         where exists (Select 'x' from marker
                                         where mrkr_zdb_id = mrkrgoev_mrkr_zdb_id
-                                        and mrkr_abbrev like 'WITHDRAWN%';" );
+                                        and mrkr_abbrev like 'WITHDRAWN%');" );
   
  if ( $nRecords > 0 ) {
   my $sendToAddress = $_[0];
