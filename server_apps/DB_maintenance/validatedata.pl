@@ -2702,6 +2702,40 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
   &recordResult($routineName, $nRecords);
 } 
 
+# Parameter
+#  $     Email Address for recipient
+#
+sub removeGOTermsFromWithdrawnMarkers ($) {
+
+  my $routineName = "removeGOTermsFromWithdrawnMarkers";
+  
+ my $sql = "select distinct goterm_name, mrkrgoev_mrkr_zdb_id
+              from marker_go_term_evidence, marker,go_term
+              where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
+              and mrkr_abbrev like 'WITHDRAWN%'
+              and goterm_zdb_id = mrkrgoev_go_term_zdb_id;";
+
+  my @colDesc = ("GO Term name       ",
+		 "Marker zdb id      ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+  
+  my $sth = $dbh->do("delete from marker_go_term_Evidence
+                        where exists (Select 'x' from marker
+                                        where mrkr_zdb_id = mrkrgoev_mrkr_zdb_id
+                                        and mrkr_abbrev like 'WITHDRAWN%';" );
+  
+ if ( $nRecords > 0 ) {
+  my $sendToAddress = $_[0];
+  my $subject = "Go terms have been removed from withdrawn markers";
+  my $errMsg = "There are $nRecords go record(s) that have been removed because their referenced genes have been withdrawn. ";
+    
+  logError ($errMsg);
+  &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  &recordResult($routineName, $nRecords);
+ }
+} 
+
 #----------------------
 # Parameters
 #     $     mrkrgoev zdb id  1
@@ -2733,7 +2767,6 @@ sub subMrkrgoevInfgrpDuplicatesFound($) {
     return ($result_a[0] == $result_b[0] && $result_a[0] == $infgrmem_count) ? 1 : 0 ;
  
 }
-
 
 
 #--------------------------------------------------------------------------------------
@@ -3295,6 +3328,7 @@ my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
 
 
 if($daily) {
+    removeGOTermsFromWithdrawnMarkers($dbaEmail);
     allZFINAccessionsHaveRecordsInZFINAccessionTable($dbaEmail);
     transcriptsOnMoreThanOneGene($dbaEmail);
     findWithdrawnMarkerMismatch($geneEmail); 
