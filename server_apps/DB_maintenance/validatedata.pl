@@ -2728,7 +2728,7 @@ sub removeGOTermsFromWithdrawnMarkers ($) {
  if ( $nRecords > 0 ) {
   my $sendToAddress = $_[0];
   my $subject = "Go terms have been removed from withdrawn markers";
-  my $errMsg = "There are $nRecords go record(s) that have been removed because their referenced genes have been withdrawn. ";
+  my $errMsg = "There are $nRecords go/evidence record(s) that have been removed because their referenced genes have been withdrawn. ";
     
   logError ($errMsg);
   &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
