@@ -228,12 +228,11 @@
     <br>
 
      </ul>
-
-     <?MICOMMENT>  *** hiding the fish while the survey-fish is up ***      
+  
      <img id="zdbhome-fishimg" src="/images/betterfish.jpg">
 
-     <?/MICOMMENT>
-     <a href="http://www.surveymonkey.com/s.aspx?sm=4Rw1GmMrvPwW1Vv2xPv_2fnA_3d_3d" border="0"><img src="/images/survey_fish.png"></a>
+
+
 
 
      <?MICOMMENT> ** Adjust the number of breaks here to keep the columns
