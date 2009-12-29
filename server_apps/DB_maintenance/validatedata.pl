@@ -2709,18 +2709,17 @@ sub removeGOTermsFromWithdrawnMarkers ($) {
 
   my $routineName = "removeGOTermsFromWithdrawnMarkers";
   
- my $sql = "select goterm_name, mrkrgoev_mrkr_zdb_id, mrkrgoev_source_Zdb_id, mrkrgoev_evidence_code, mrkrgoev_notes
+ my $sql = "select mrkrgoev_mrkr_zdb_id, mrkrgoev_source_Zdb_id,goterm_name, mrkrgoev_evidence_code
               from marker_go_term_evidence, marker,go_term
               where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
               and mrkr_abbrev like 'WITHDRAWN%'
               and goterm_zdb_id = mrkrgoev_go_term_zdb_id
               order by mrkrgoev_mrkr_Zdb_id;";
 
-  my @colDesc = ("GO Term name       ",
-		 "Marker zdb id      ",
+  my @colDesc = ("marker zdb id      ",
                  "pub id             ",
-		 "evidence code      ",
-                 "notes              ");
+		 "goterm name        ",
+		 "evidence code      ");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
   
