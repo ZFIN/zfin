@@ -2709,14 +2709,18 @@ sub removeGOTermsFromWithdrawnMarkers ($) {
 
   my $routineName = "removeGOTermsFromWithdrawnMarkers";
   
- my $sql = "select distinct goterm_name, mrkrgoev_mrkr_zdb_id
+ my $sql = "select goterm_name, mrkrgoev_mrkr_zdb_id, mrkrgoev_source_Zdb_id, mrkrgoev_evidence_code, mrkrgoev_notes
               from marker_go_term_evidence, marker,go_term
               where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
               and mrkr_abbrev like 'WITHDRAWN%'
-              and goterm_zdb_id = mrkrgoev_go_term_zdb_id;";
+              and goterm_zdb_id = mrkrgoev_go_term_zdb_id
+              order by mrkrgoev_mrkr_Zdb_id;";
 
   my @colDesc = ("GO Term name       ",
-		 "Marker zdb id      ");
+		 "Marker zdb id      ",
+                 "pub id             ",
+		 "evidence code      ",
+                 "notes              ");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
   
@@ -3328,7 +3332,7 @@ my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
 
 
 if($daily) {
-    removeGOTermsFromWithdrawnMarkers($dbaEmail);
+    removeGOTermsFromWithdrawnMarkers($goEmail);
     allZFINAccessionsHaveRecordsInZFINAccessionTable($dbaEmail);
     transcriptsOnMoreThanOneGene($dbaEmail);
     findWithdrawnMarkerMismatch($geneEmail); 
