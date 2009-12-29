@@ -2731,7 +2731,7 @@ sub removeGOTermsFromWithdrawnMarkers ($) {
  if ( $nRecords > 0 ) {
   my $sendToAddress = $_[0];
   my $subject = "Go annotations have been removed from withdrawn markers";
-  my $errMsg = "There are $nRecords GO annotation(s) that have been removed because their referenced genes have been withdrawn. ";
+  my $errMsg = "There are $nRecords GO annotation(s) that have been removed because their referenced genes have been withdrawn. There may be some duplicates because we are not including inferred from information in this report.";
     
   logError ($errMsg);
   &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
