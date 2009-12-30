@@ -20,6 +20,12 @@
             <urlPattern type="MarkerView" boostValue="8">clone-view</urlPattern>
         </UrlMapping>
     </Category>
+    <Category ID="FEATURES" order="15">
+        <DisplayName>Features</DisplayName>
+        <UrlMapping>
+            <urlPattern type="FeatureView">feature/detail</urlPattern>
+        </UrlMapping>
+    </Category>
     <Category ID="MUTANTS" order="20">
         <DisplayName>Mutants/Transgenics</DisplayName>
         <UrlMapping>
