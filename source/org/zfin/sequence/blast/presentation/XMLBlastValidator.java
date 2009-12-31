@@ -51,10 +51,6 @@ public class XMLBlastValidator implements Validator {
             return;
         }
 
-        if (StringUtils.isEmpty(xmlBlastBean.getDataLibraryString())) {
-            errors.rejectValue("dataLibraryString", "code", "Select sequence database.");
-            return;
-        }
 
         if (xmlBlastBean.getQueryType().equals(XMLBlastBean.QueryTypes.SEQUENCE_ID.toString())) {
             validateFASTASequence(xmlBlastBean, errors, "sequenceID");

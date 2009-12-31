@@ -229,6 +229,11 @@ public class XMLBlastController extends SimpleFormController {
 
     private void bindDatabases(XMLBlastBean inputXMLBlastBean, BindException errors) throws BlastDatabaseException {
 
+        if (StringUtils.isEmpty(inputXMLBlastBean.getDataLibraryString())) {
+            errors.rejectValue("dataLibraryString", "code", "Select sequence database.");
+            return;
+        }
+
         // Get the blast database string (from the database drop-down).
         // For the unauthorized users this is only ever one string (the blast abbreviation).
         // If an authorized user selects more than one database it will be comma separated and will need to be tokenized.
