@@ -246,6 +246,7 @@ public class Database {
         VEGA_TRANSCRIPT("vega_transcript"),
         VEGA("Vega"),
         VEGA_ZFIN("vega_zfin"),
+        VEGA_ATTIC("vega_attic"),
         VEGA_BLAST("VEGA_BLAST"),
         WGS_ZF("wgs_zf"),
         ZFIN_ALL_AA("zfin_all_aa"),

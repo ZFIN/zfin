@@ -106,6 +106,7 @@ public class ForeignDB {
         UNIPROTKB("UniProtKB"),
         UNISTS("UniSTS"),
         VEGA("VEGA"),
+        VEGA_ATTIC("Vega_Attic"),
         VEGA_CLONE("VEGA_Clone"),
         VEGA_TRANS("Vega_Trans"),
         VEGAPROT("VEGAPROT"),
