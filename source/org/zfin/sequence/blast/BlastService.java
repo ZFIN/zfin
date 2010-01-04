@@ -145,5 +145,5 @@ public interface BlastService {
      * @param fileData Sequence to filter.
      * @return Filtered sequence.
      */
-    public String removeLeadingNumbers(String fileData);
+    public String removeLeadingNumbers(String fileData,XMLBlastBean.SequenceType sequenceType) ;
 }

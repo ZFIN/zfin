@@ -20,6 +20,8 @@ import org.zfin.sequence.repository.SequenceRepository;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class
@@ -40,6 +42,8 @@ public abstract class AbstractWublastBlastService implements BlastService {
     protected String keyPath = "";
 
     private int maxAttempts = 5;
+    public static final Pattern nucleotideSequencePattern = Pattern.compile("[ATCGUMKRYVBHDWSNatcgumkryvbhdwsn\\-]{40,}") ;
+    public static final Pattern proteinSequencePattern = Pattern.compile("[LSEFAVGKTRPDIQNFYHMCWBZJXlsefavgktrpdiqnfyhmcwbzjx\\-\\*]{40,}") ;
 
 
     // regeneration methods
@@ -794,7 +798,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
      *
      * @param blastDatabase Blast database to retrieve sequences from.
      * @return The number of sequences.
-     * @throws java.io.IOException
+     * @throws BlastDatabaseException Thrown if it fails to get to the database.
      */
     public DatabaseStatistics getDatabaseStatistics(Database blastDatabase) throws BlastDatabaseException {
         DatabaseStatistics databaseStatistics = new DatabaseStatistics();
@@ -857,13 +861,22 @@ public abstract class AbstractWublastBlastService implements BlastService {
     }
 
 
-    public String removeLeadingNumbers(String fileData) {
-        String[] lines = fileData.split("\n");
-        StringBuilder sb = new StringBuilder();
-        for (String line : lines) {
-            line = line.trim();
-            if (line.indexOf(">") < 0) {
-                line = line.replaceAll("[0-9]", "").trim();
+    public String removeLeadingNumbers(String fileData,XMLBlastBean.SequenceType sequenceType) {
+        String[] lines = fileData.split("[\n]") ;
+        logger.debug("# lines: "+ lines.length);
+        if(lines.length==1){
+            if(sequenceType==XMLBlastBean.SequenceType.NUCLEOTIDE){
+				lines = fixDeflineNucleotideSequence(lines[0]) ;
+            }
+            else{
+                lines = fixDeflineProteinSequence(lines[0]) ;
+            }
+        }
+        StringBuilder sb = new StringBuilder() ;
+        for(String line: lines){
+            line = line.trim() ;
+            if(line.indexOf(">")<0){
+                line = line.replaceAll("[0-9, ]", "").trim();
             }
             sb.append(line).append("\n");
         }
@@ -872,4 +885,41 @@ public abstract class AbstractWublastBlastService implements BlastService {
         return sb.toString();
     }
 
+    /**
+     * If the sequence is only a single line (no return after the defline), it looks for the sequence and
+     * automatically breaks the line.
+     * @param line Unformatted sequence.
+     * @return The first string is the defline, the second string is the sequence.
+     */
+    public String[] fixDeflineNucleotideSequence(String line) {
+        Matcher m = nucleotideSequencePattern.matcher(line) ;
+        if(m.find()){
+            String[] returnStrings = new String[2] ;
+            returnStrings[0] = line.substring(0,m.start()) ;
+            returnStrings[1] = line.substring(m.start()) ;
+            return returnStrings ;
+        }
+        String[] returnString = new String[1] ;
+        returnString[0] = line  ;
+        return returnString ;
+    }
+
+    /**
+     * If the sequence is only a single line (no return after the defline), it looks for the sequence and
+     * automatically breaks the line.
+     * @param line Unformatted sequence.
+     * @return The first string is the defline, the second string is the sequence.
+     */
+    public String[] fixDeflineProteinSequence(String line) {
+        Matcher m = proteinSequencePattern.matcher(line) ;
+        if(m.find()){
+            String[] returnStrings = new String[2] ;
+            returnStrings[0] = line.substring(0,m.start()) ;
+            returnStrings[1] = line.substring(m.start()) ;
+            return returnStrings ;
+        }
+        String[] returnString = new String[1] ;
+        returnString[0] = line  ;
+        return returnString ;
+    }
 }

@@ -177,8 +177,8 @@ public class XMLBlastController extends SimpleFormController {
         }
         String fileData = xmlBlastBean.getSequenceFile();
 //        if(StringUtils.isNotEmpty(fileData)){
-        logger.info("fileData is not null: " + fileData);
-        fileData = MountedWublastBlastService.getInstance().removeLeadingNumbers(fileData);
+        logger.info("fileData is not null: " + fileData) ;
+        fileData = MountedWublastBlastService.getInstance().removeLeadingNumbers(fileData,XMLBlastBean.SequenceType.getSequenceType(xmlBlastBean.getSequenceType()));
         fileData = prependSequenceWithDefline(fileData);
         // need to do a validation
         // clip off sequence file and/or validate against
@@ -195,7 +195,7 @@ public class XMLBlastController extends SimpleFormController {
         xmlBlastBean.setQuerySequence(xmlBlastBean.getQuerySequence().trim());
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "querySequence", "Missing sequence.", "Missing sequence.");
         String querySequence = xmlBlastBean.getQuerySequence();
-        querySequence = MountedWublastBlastService.getInstance().removeLeadingNumbers(querySequence);
+        querySequence = MountedWublastBlastService.getInstance().removeLeadingNumbers(querySequence,XMLBlastBean.SequenceType.getSequenceType(xmlBlastBean.getSequenceType()));
         querySequence = prependSequenceWithDefline(querySequence);
         xmlBlastBean.setQuerySequence(querySequence);
     }

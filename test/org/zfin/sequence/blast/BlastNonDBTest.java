@@ -12,6 +12,8 @@ import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import static org.junit.Assert.*;
 
@@ -23,6 +25,8 @@ public class BlastNonDBTest {
 
     private final Logger logger = Logger.getLogger(BlastNonDBTest.class) ;
 
+    private MountedWublastBlastService service = MountedWublastBlastService.getInstance() ;
+
     private final String seq1  = ">ga17\n" +
             "  GCACAGATAAAAATCCACGCTCGCA\n" +
             " >hlx1\n" +
@@ -30,7 +34,7 @@ public class BlastNonDBTest {
             " >meis2.2\n" +
             "  CTGTGTCGTAGATTTAATTTCCCAG\n" +
             " >nostrin\n" +
-            "  GTCCTTCATCTTCACTCACGCTGGT\n" ;
+            "  GTCCTTCATCTTCACTC ACGCTGGT\n" ;
 
 
     private final String seq2  = ">ga17\n" +
@@ -40,7 +44,7 @@ public class BlastNonDBTest {
             " >meis2.2\n" +
             "  1 CTGTGTCGTAGATTTAATTTCCCAG\n" +
             " >nostrin\n" +
-            "  1 GTCCTTCATCTTCACTCACGCTGGT\n" ;
+            "  1 GTCCTTCATCTTCACTCA CGCTGGT\n" ;
 
     private final String seq1And2Result  = ">ga17\n" +
             "GCACAGATAAAAATCCACGCTCGCA\n" +
@@ -56,7 +60,7 @@ public class BlastNonDBTest {
             "  2 AGCCGAACAATACGCAGTCCACAGG\n" +
             " >meis2.2\n" +
             "  1 CTGTGTCGTAGATTTAATTTCCCAG\n" +
-            "  2 GTCCTTCATCTTCACTCACGCTGGT\n" ;
+            "  2 GTCCTTCATCTTCAC   TCACGCTGGT\n" ;
 
     private final String seq3result  = ">ga17\n" +
             "GCACAGATAAAAATCCACGCTCGCA\n" +
@@ -64,6 +68,16 @@ public class BlastNonDBTest {
             ">meis2.2\n" +
             "CTGTGTCGTAGATTTAATTTCCCAG\n" +
             "GTCCTTCATCTTCACTCACGCTGGT\n" ;
+
+
+    private final String seq4 = ">ga17 CAATATAGATAGATAGATAGATATATAGAGATAGATATATAGATATATAGTAGATATAC ACACTCCCTACATACGATATATAGATAGATAGATAGATATATAGAGATAGATATATAGATATATAGTAGATATAC ACACTCCCTACATACGATA" ;
+    private final String seq4result = ">ga17\nCAATATAGATAGATAGATAGATATATAGAGATAGATATATAGATATATAGTAGATATACACACTCCCTACATACGATATATAGATAGATAGATAGATATATAGAGATAGATATATAGATATATAGTAGATATACACACTCCCTACATACGATA\n" ;
+
+    private final String seq5 = ">ga17 CAATATAGATAGATAGATAgumkryvbhdwsn-ACACACTCCCTACATACGATAT ATAGATAGATAGATAGATATATAGAGATAGATATATAGATATATAGTAGATATAC ACACTCCCTACATACGATA" ;
+    private final String seq5result = ">ga17\nCAATATAGATAGATAGATAgumkryvbhdwsn-ACACACTCCCTACATACGATATATAGATAGATAGATAGATATATAGAGATAGATATATAGATATATAGTAGATATACACACTCCCTACATACGATA\n" ;
+
+    private final String seq6 = ">ga17 CAATATAGATAGATAGATAGATATACWBZJXlsefavgktrpdiqnfyhmcwbzjx-*ACAC   TCCCTACATACGATATATAGATAGATAGATAGATATATAGAGATAGATATATAGATATATAGTAGATATAC ACACTCCCTACATACGATA" ;
+    private final String seq6result = ">ga17\nCAATATAGATAGATAGATAGATATACWBZJXlsefavgktrpdiqnfyhmcwbzjx-*ACACTCCCTACATACGATATATAGATAGATAGATAGATATATAGAGATAGATATATAGATATATAGTAGATATACACACTCCCTACATACGATA\n" ;
 
     @Before
     public void setUp() {
@@ -109,13 +123,19 @@ public class BlastNonDBTest {
         assertTrue(defline.toString().length()>20);
     }
 
+    @Test
+    public void removeSpacesFromSequence(){
+        String inputString = "TTGTACATTACTTTGTATTT ATTATATCAGTTAAT" ;
+        String outputString = "TTGTACATTACTTTGTATTTATTATATCAGTTAAT\n" ;
+        assertEquals(outputString,service.removeLeadingNumbers(inputString,XMLBlastBean.SequenceType.NUCLEOTIDE));
+    }
+
 
     /**
      * todo: does not really need to be in a database class, but really isn't a databasepresentation service, either.
      */
     @Test
     public void polyATest(){
-        MountedWublastBlastService service = MountedWublastBlastService.getInstance() ;
         assertEquals("T",service.clipPolyATail("TAAAAAA")) ;
         assertEquals("TAAAAAAT",service.clipPolyATail("TAAAAAAT")) ;
         assertEquals("TTAAAAA",service.clipPolyATail("TTAAAAA")) ;
@@ -127,7 +147,7 @@ public class BlastNonDBTest {
     public void setBlastResultFile(){
         XMLBlastBean xmlBlastBean = new XMLBlastBean() ;
         try {
-            MountedWublastBlastService.getInstance().setBlastResultFile(xmlBlastBean);
+            service.setBlastResultFile(xmlBlastBean);
             assertNotNull(xmlBlastBean.getResultFile());
             assertTrue(xmlBlastBean.getResultFile().getName().startsWith("blast"));
             assertTrue(xmlBlastBean.getResultFile().getName().endsWith(".xml"));
@@ -138,9 +158,28 @@ public class BlastNonDBTest {
 
     @Test
     public void removeLeadingNumbersFromSequences(){
-        assertEquals(seq1And2Result,MountedWublastBlastService.getInstance().removeLeadingNumbers(seq1)) ;
-        assertEquals(seq1And2Result,MountedWublastBlastService.getInstance().removeLeadingNumbers(seq2)) ;
-        assertEquals(seq3result,MountedWublastBlastService.getInstance().removeLeadingNumbers(seq3)) ;
+        assertEquals(seq1And2Result,service.removeLeadingNumbers(seq1,XMLBlastBean.SequenceType.NUCLEOTIDE)) ;
+        assertEquals(seq1And2Result,service.removeLeadingNumbers(seq2,XMLBlastBean.SequenceType.NUCLEOTIDE)) ;
+        assertEquals(seq3result,service.removeLeadingNumbers(seq3,XMLBlastBean.SequenceType.NUCLEOTIDE)) ;
+    }
+
+    @Test
+    public void fixDeflineValue(){
+
+        String[] strings = service.fixDeflineNucleotideSequence(seq4) ;
+        assertEquals(2,strings.length);
+        assertEquals(seq4result,service.removeLeadingNumbers(seq4,XMLBlastBean.SequenceType.NUCLEOTIDE));
+
+        strings = service.fixDeflineNucleotideSequence(seq5) ;
+        assertEquals(2,strings.length);
+        assertEquals(seq5result,service.removeLeadingNumbers(seq5,XMLBlastBean.SequenceType.NUCLEOTIDE));
+
+        Matcher m = AbstractWublastBlastService.proteinSequencePattern.matcher(seq6) ;
+        assertTrue(m.find()) ; 
+
+        strings = service.fixDeflineProteinSequence(seq6) ;
+        assertEquals(2,strings.length);
+        assertEquals(seq6result,service.removeLeadingNumbers(seq6,XMLBlastBean.SequenceType.PROTEIN));
     }
 
 }

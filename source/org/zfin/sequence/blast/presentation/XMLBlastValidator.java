@@ -128,12 +128,13 @@ public class XMLBlastValidator implements Validator {
                     String sequence = richSequence.getInternalSymbolList().seqString();
                     if (StringUtils.isEmpty(sequence)
                             &&
-                            false == errors.hasErrors()
-                            ) {
-                        errors.rejectValue(field, "code", "Empty sequence.");
-                    } else {
-                        if (sequence.length() > querySequenceLimit) {
-                            errors.rejectValue(field, "code", "Sequence must not exceed " + querySequenceLimit + " characters.");
+                            false==errors.hasErrors()
+                            ){
+                        errors.rejectValue(field,"code","Problem parsing sequence for accession: "+richSequence.getAccession());
+                    }
+                    else{
+                        if(sequence.length()>querySequenceLimit){
+                            errors.rejectValue(field,"code","Sequence must not exceed "+ querySequenceLimit + " characters.");
                         }
                     }
                 }
