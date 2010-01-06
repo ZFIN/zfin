@@ -323,7 +323,7 @@ marker.<?/MIVAR>
     <?/MIBLOCK>
   <?/MIBLOCK>
 
-	<?MIVAR NAME=$fdbcont_zdb_id>$xtra_param<?/MIVAR>
+	<?MIVAR COND="$(EQ,$(POSITION,$xtra_param,ZDB-FDBCONT,1),1)" NAME=$fdbcont_zdb_id>$xtra_param<?/MIVAR>
 
   <!-- Special case for checking new sequence db link -->
   <?MIBLOCK COND="$(EC,$attr_type,special-check-newseqnum)">
