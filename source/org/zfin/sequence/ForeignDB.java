@@ -109,6 +109,7 @@ public class ForeignDB {
         VEGA_ATTIC("Vega_Attic"),
         VEGA_CLONE("VEGA_Clone"),
         VEGA_TRANS("Vega_Trans"),
+        VEGA_WITHDRAWN("Vega_Withdrawn"), 
         VEGAPROT("VEGAPROT"),
         WASHU("WashU"),
         WASHUZ("WashUZ"),
