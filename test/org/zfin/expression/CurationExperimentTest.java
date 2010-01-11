@@ -1,8 +1,8 @@
 package org.zfin.expression;
 
 import org.junit.Test;
-import org.zfin.curation.server.CurationExperimentRPCImpl;
-import org.zfin.framework.presentation.dto.ExpressionFigureStageDTO;
+import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
+import org.zfin.gwt.root.dto.ExpressionFigureStageDTO;
 
 import java.util.HashSet;
 import java.util.Set;

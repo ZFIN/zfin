@@ -1,7 +1,7 @@
 package org.zfin.expression.repository;
 
 import org.zfin.expression.*;
-import org.zfin.framework.presentation.dto.ExpressedTermDTO;
+import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;

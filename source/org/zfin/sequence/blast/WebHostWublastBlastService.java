@@ -5,7 +5,7 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.log4j.Logger;
 import org.zfin.framework.exec.ExecProcess;
-import org.zfin.marker.presentation.client.SequenceValidator;
+import org.zfin.gwt.marker.ui.SequenceValidator;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.Sequence;

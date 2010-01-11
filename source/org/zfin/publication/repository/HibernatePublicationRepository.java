@@ -1215,7 +1215,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             hql += "           and geno.zdbID = :fishID ";
         }
         hql += "    order by gene.abbreviationOrder, " +
-                "             experiment.genotypeExperiment.genotype.nickname, " +
+                "             experiment.genotypeExperiment.genotype.nameOrder, " +
+                "             experiment.genotypeExperiment.experiment.name, " +
                 "             experiment.assay.displayOrder ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);

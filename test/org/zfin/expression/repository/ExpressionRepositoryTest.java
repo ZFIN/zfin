@@ -10,13 +10,13 @@ import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.curation.server.CurationExperimentRPCImpl;
+import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.DirectlySubmittedExpression;
 import org.zfin.expression.presentation.MarkerExpressionInstance;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
@@ -71,7 +71,6 @@ public class ExpressionRepositoryTest {
     @Test
     public void getMarkerDBLinkByID() {
         String dblinkID = "ZDB-DBLINK-020710-33129";
-        ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
         MarkerDBLink experiment = expRep.getMarkDBLink(dblinkID);
         assertTrue(experiment != null);
 
@@ -81,7 +80,6 @@ public class ExpressionRepositoryTest {
     public void getGenotypeExperimentByExperiment() {
         String experimentID = "ZDB-EXP-070511-5";
         String genotypeID = "ZDB-GENO-960809-7";
-        ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
         GenotypeExperiment experiment = expRep.getGenotypeExperimentByExperimentIDAndGenotype(experimentID, genotypeID);
         assertTrue(experiment != null);
 

@@ -1,6 +1,6 @@
 package org.zfin.people;
 
-import org.zfin.people.presentation.client.CuratorSessionDTO;
+import org.zfin.gwt.curation.dto.CuratorSessionDTO;
 import org.zfin.publication.Publication;
 
 /**
@@ -71,7 +71,7 @@ public class CuratorSession extends CuratorSessionDTO {
         SHOW_EXPERIMENT_SECTION,
         SHOW_EXPRESSION_SECTION,
         SHOW_STRUCTURE_SECTION,
-        FIGURE_ID;
+        FIGURE_ID
 
     }
 }

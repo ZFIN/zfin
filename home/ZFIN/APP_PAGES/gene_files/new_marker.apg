@@ -380,9 +380,8 @@ var ENTER_KEY = 13;
 
 
 
-        <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.Lookup/Lookup.css"/>
+        <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
         <script type="text/javascript">
-                        var LookupProperties = { NumLookups: "1" } ;
                         var LookupProperties0 = {
                             divName: "targetgene",
                             inputName: "newmrkrTargetGene",
@@ -394,7 +393,7 @@ var ENTER_KEY = 13;
          </script>
 
         <?MIBLOCK COND="$(EC,$marker_type_display,Morpholino)">
-             <script language="javascript" src="/gwt/org.zfin.framework.presentation.Lookup/org.zfin.framework.presentation.Lookup.nocache.js"></script>
+             <script language="javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
              Add Target Gene:
              <div id="targetgene" onkeypress="return noenter(event)"></div>
 

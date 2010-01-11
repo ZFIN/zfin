@@ -14,7 +14,7 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.framework.presentation.client.Ontology;
+import org.zfin.gwt.root.dto.Ontology;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;

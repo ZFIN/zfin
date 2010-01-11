@@ -1,8 +1,7 @@
-<link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.Lookup/Lookup.css"/>
+<link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 
 <script type="text/javascript">
-    var LookupProperties = { NumLookups: "1"} ;
-    var LookupProperties0 = {
+    var LookupProperties = {
         divName: "anatomyTerm",
         inputName: "searchTerm",
         showError: true,
@@ -14,5 +13,5 @@
 
 </script>
 
-<script type="text/javascript" src="/gwt/org.zfin.framework.presentation.Lookup/org.zfin.framework.presentation.Lookup.nocache.js"></script>
+<script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 <span id="anatomyTerm"></span>

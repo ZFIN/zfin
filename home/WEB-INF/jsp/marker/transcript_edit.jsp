@@ -6,25 +6,13 @@
 <script type="text/javascript">
     var MarkerProperties= {
         zdbID : "${formBean.marker.zdbID}",
-        curatorID : "${formBean.user.zdbID}"
     } ;
-
-    var LookupProperties = { NumLookups: "1" } ;
-    var LookupProperties0 = {
-        //        divName: "featureTerm",
-        //        inputName: "searchTerm",
-        showError: true,
-        buttonText: "Add",
-        type: "MARKER_LOOKUP",
-        showError: true,
-        wildcard: false
-    };
 
 </script>
 
 <%--Adds the TranscriptEditController.--%>
-<link rel="stylesheet" type="text/css" href="/gwt/org.zfin.marker.presentation.Marker/Marker.css"/>
-<script language="javascript" src="/gwt/org.zfin.marker.presentation.Marker/org.zfin.marker.presentation.Marker.nocache.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+<script language="javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
 <input type="hidden" name="hiddenName" id="hiddenName"/>
 

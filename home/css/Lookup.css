@@ -1,0 +1,71 @@
+.gwt-SuggestBox { 
+   border: 1x solid #666; 
+   text-align: left;
+}
+
+.gwt-SuggestBoxPopup {
+  border: 1px solid black;
+  background-color: white;
+    /*see fogbugz 5183*/
+  /*overflow: auto; */ 
+  height: auto;
+  max-height: 50em ;
+  min-width: 100px ; 
+}
+
+.gwt-SuggestBoxPopup .item {
+  padding: 2px;
+  font-size:0.9em;
+  margin:0pt;
+}
+
+.gwt-SuggestBoxPopup .item-selected {
+  background-color: #FFFFBB;
+  padding: 2px;
+}
+
+/*same as zfin one, maybe should go there instead*/
+.gwt-lookup-error{
+    color: red;
+    display: block;
+}
+
+.gwt-lookup-note{
+    color: blue;
+    display: block;
+}
+
+.gwt-PushButton-up{
+    background-color: #eee;
+}
+
+.gwt-PushButton-down{
+    background-color: white
+}
+
+.gwt-table-full{
+    color: black ;
+    font-style: normal;
+}
+
+.gwt-table-empty{
+    color: gray ;
+    font-style: italic;
+}
+
+.gwt-Hyperlink {
+   color: blue;
+    text-decoration: underline;
+    cursor: pointer ; 
+}
+
+.gwt-Frame {
+    background: white ;
+    border-color: black ;
+    box-shadow: 0.2em 0.2em #CCC ;
+    border: thin black solid ;  
+    position: relative ; 
+}
+
+
+

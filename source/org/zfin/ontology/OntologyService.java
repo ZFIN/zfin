@@ -1,7 +1,7 @@
 package org.zfin.ontology;
 
 import org.zfin.anatomy.presentation.RelationshipSorting;
-import org.zfin.framework.presentation.client.Ontology;
+import org.zfin.gwt.root.dto.Ontology;
 import org.zfin.ontology.presentation.OntologyAutoCompleteTerm;
 import org.zfin.util.ListFormatter;
 

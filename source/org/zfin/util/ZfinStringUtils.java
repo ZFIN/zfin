@@ -1,5 +1,7 @@
 package org.zfin.util;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Utilities that are not in StringUtils.
  */
@@ -32,9 +34,9 @@ public class ZfinStringUtils {
 
         char[] characters = replace.toCharArray();
         for (char character : characters) {
-            //        if (Character.isLowerCase(character))
+    //        if (Character.isLowerCase(character))
 //                char lowerCase = Character.toLowerCase(character);
-            //          text = StringUtils.replaceChars(text, lowerCase, )
+  //          text = StringUtils.replaceChars(text, lowerCase, )
         }
         return null;
     }

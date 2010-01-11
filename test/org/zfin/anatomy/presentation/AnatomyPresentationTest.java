@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This is the test class that tests funcionality of the AnatomyPresentation class,
@@ -367,5 +369,16 @@ public class AnatomyPresentationTest {
                 assertEquals(false, autoTerm.isMatchOnTermName());
 
         }
+    }
+
+    @Test
+    public void wildCard(){
+        AnatomySearchBean anatomySearchBean = new AnatomySearchBean();
+        anatomySearchBean.setSearchTerm("bob");
+        assertEquals("bob",anatomySearchBean.getSearchTerm());
+        assertFalse(anatomySearchBean.isWildCard());
+        anatomySearchBean.setSearchTerm("bob*");
+        assertTrue(anatomySearchBean.isWildCard());
+        assertEquals("bob",anatomySearchBean.getSearchTerm());
     }
 }

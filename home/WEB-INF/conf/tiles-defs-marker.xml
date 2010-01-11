@@ -38,11 +38,6 @@
         <put name="body" value="/WEB-INF/jsp/marker/clone_add.jsp"/>
     </definition>
 
-    <definition name="protein-edit.page" extends="main_layout">
-        <put name="staticTitle" value="Edit Protein" />
-        <put name="body" value="/WEB-INF/jsp/marker/protein_edit.jsp"/>
-    </definition>
-
     <definition name="clone-view.page" extends="main_layout">
         <put name="staticTitle" value="ZFIN: Clone: " />
         <put name="body" value="/WEB-INF/jsp/marker/clone_view.jsp"/>

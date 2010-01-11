@@ -10,11 +10,12 @@ import java.util.Set;
 /**
  * Domain object.
  */
+@SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
 public class Experiment {
 
     public static final String STANDARD = "_Standard";
     public static final String GENERIC_CONTROL = "_Generic-control";
-    public static final List<String> STANDARD_CONDITIONS = new ArrayList<String>();
+    public static final List<String> STANDARD_CONDITIONS = new ArrayList<String>(2);
 
     static {
         STANDARD_CONDITIONS.add(STANDARD);
@@ -62,10 +63,10 @@ public class Experiment {
         if (experimentConditions == null)
             return null;
 
-        Set<ExperimentCondition> morpholinoConditions = new HashSet<ExperimentCondition>();
-        for (ExperimentCondition cond : experimentConditions) {
-            if (cond.getMorpholino() != null)
-                morpholinoConditions.add(cond);
+        Set<ExperimentCondition> morpholinoConditions = new HashSet<ExperimentCondition>(4);
+        for (ExperimentCondition condition : experimentConditions) {
+            if (condition.getMorpholino() != null)
+                morpholinoConditions.add(condition);
         }
         return morpholinoConditions;
     }

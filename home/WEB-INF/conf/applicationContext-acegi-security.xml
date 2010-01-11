@@ -22,25 +22,19 @@
     </bean>
 
     <bean id="concurrentSessionHandlingFilter" class="org.acegisecurity.concurrent.ConcurrentSessionFilter">
-        <property name="sessionRegistry">
-            <ref bean="sessionRegistry"/>
-        </property>
-        <property name="expiredUrl">
-            <value>/WEB-INF/</value>
-        </property>
+        <property name="sessionRegistry" ref="sessionRegistry"/>
+        <property name="expiredUrl" value="/WEB-INF/"/>
     </bean>
 
     <bean id="sessionRegistry" class="org.acegisecurity.concurrent.SessionRegistryImpl"/>
 
     <bean id="channelProcessingFilter" class="org.acegisecurity.securechannel.ChannelProcessingFilter">
-        <property name="channelDecisionManager">
-            <ref bean="channelDecisionManager"/>
-        </property>
-	<property name="filterInvocationDefinitionSource">
+        <property name="channelDecisionManager" ref="channelDecisionManager"/>
+        <property name="filterInvocationDefinitionSource">
             <value>
                 CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
                 PATTERN_TYPE_APACHE_ANT
-		        <!--/action/dev-tools/**=REQUIRES_SECURE_CHANNEL-->
+                <!--/action/dev-tools/**=REQUIRES_SECURE_CHANNEL-->
                 /action/audit-log/**=REQUIRES_SECURE_CHANNEL
                 /action/security-check=REQUIRES_SECURE_CHANNEL
                 /action/people/edit-user=REQUIRES_SECURE_CHANNEL
@@ -63,27 +57,19 @@
     </bean>
 
     <bean id="secureChannelProcessor" class="org.acegisecurity.securechannel.SecureChannelProcessor">
-        <property name="entryPoint">
-            <ref bean="retryWithHttpsEntryPoint"/>
-        </property>
+        <property name="entryPoint" ref="retryWithHttpsEntryPoint"/>
     </bean>
 
     <bean id="retryWithHttpsEntryPoint" class="org.acegisecurity.securechannel.RetryWithHttpsEntryPoint">
-        <property name="portMapper">
-            <ref bean="portMapper"/>
-        </property>
+        <property name="portMapper" ref="portMapper"/>
     </bean>
 
     <bean id="retryWithHttpEntryPoint" class="org.acegisecurity.securechannel.RetryWithHttpEntryPoint">
-        <property name="portMapper">
-            <ref bean="portMapper"/>
-        </property>
+        <property name="portMapper" ref="portMapper"/>
     </bean>
 
     <bean id="insecureChannelProcessor" class="org.acegisecurity.securechannel.InsecureChannelProcessor">
-        <property name="entryPoint">
-            <ref bean="retryWithHttpEntryPoint"/>
-        </property>
+        <property name="entryPoint" ref="retryWithHttpEntryPoint"/>
     </bean>
 
     <bean id="httpSessionContextIntegrationFilter"
@@ -155,16 +141,14 @@
 
     <bean id="authorizationProcessingFilter" class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
         <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="accessDecisionManager">
-            <ref bean="accessDecisionManager"/>
-        </property>
+        <property name="accessDecisionManager" ref="accessDecisionManager"/>
         <property name="objectDefinitionSource">
             <value>
                 CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
                 PATTERN_TYPE_APACHE_ANT
                 /login_form.jsp=guest
                 /action/*=guest,root,submit
-				/action/dev-tools/*=root
+                /action/dev-tools/*=root
                 /action/audit-log/*=root
                 /action/reno/*=root
                 /action/marker/transcript-add=root
@@ -173,11 +157,11 @@
                 /action/webdriver/secure/*=root,submit
                 /action/antibody/create=root
                 /action/antibody/update-details=root
-				/ajax/session-save=root
-				/action/marker/marker-edit=root
-				/ajax/transcriptservice=root
-				/ajax/markerservice=root
-				/ajax/cloneservice=root
+                /ajax/session-save=root
+                /action/marker/marker-edit=root
+                /ajax/transcriptservice=root
+                /ajax/markerservice=root
+                /ajax/cloneservice=root
                 /ajax/curation=root
             </value>
         </property>
@@ -198,15 +182,11 @@
                 <ref local="daoAuthenticationProvider"/>
             </list>
         </property>
-        <property name="sessionController">
-            <ref bean="concurrentSessionController"/>
-        </property>
+        <property name="sessionController" ref="concurrentSessionController"/>
     </bean>
 
     <bean id="concurrentSessionController" class="org.acegisecurity.concurrent.ConcurrentSessionControllerImpl">
-        <property name="maximumSessions">
-            <value>1</value>
-        </property>
+        <property name="maximumSessions" value="1"/>
         <property name="sessionRegistry">
             <ref local="sessionRegistry"/>
         </property>
@@ -228,15 +208,9 @@
     <bean id="userDetailsService" class="org.zfin.security.UserDetailServiceImpl"/>
 
     <bean id="personSecurity" class="org.acegisecurity.intercept.method.aopalliance.MethodSecurityInterceptor">
-        <property name="validateConfigAttributes">
-            <value>true</value>
-        </property>
-        <property name="authenticationManager">
-            <ref bean="authenticationManager"/>
-        </property>
-        <property name="accessDecisionManager">
-            <ref bean="accessDecisionManager"/>
-        </property>
+        <property name="validateConfigAttributes" value="true"/>
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="accessDecisionManager" ref="accessDecisionManager"/>
         <!--
                 <property name="runAsManager">
                     <ref bean="runAsManager" />
@@ -245,9 +219,8 @@
                     <ref bean="afterInvocationManager"/>
                 </property>
         -->
-        <property name="objectDefinitionSource">
-            <value>org.zfin.security.repository.UserRepository.createPerson=root</value>
-        </property>
+        <property name="objectDefinitionSource"
+                  value="org.zfin.security.repository.UserRepository.createPerson=root"/>
 
     </bean>
 

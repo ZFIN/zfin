@@ -1,0 +1,9 @@
+<module>
+
+    <inherits name='com.google.gwt.user.User'/>
+    <source path='dto'/>
+    <source path='ui'/>
+    <source path='util'/>
+
+    <servlet path="/ajax/anatomylookup" class="org.zfin.gwt.root.server.LookupServiceImpl"/>
+</module>

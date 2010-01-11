@@ -1,0 +1,55 @@
+package org.zfin.gwt.root.util;
+
+import com.google.gwt.user.client.ui.Widget;
+
+/**
+ * Some convenience methods to handle widgets.
+ */
+public final class WidgetUtil {
+
+    public static final String BOLD = "bold";
+    public static final String RED = "red";
+    public static final String ERROR = "error";
+    public static final String RED_MODIFIER = "red-modifier";
+    public static final String GREEN = "green";
+    public static final String CSS_CLASS_DELIMITER = " ";
+    public static final String RED_HYPERLINK = "red-modifier-hyperlink";
+
+    /**
+     * Adds or removes a css class name to the class attribute of the given widget.
+     *
+     * @param widget    GWT widget
+     * @param className css class name to be added or removed
+     * @param addClass  boolean: add (true) the class or remove (false) it
+     */
+    public static void addOrRemoveCssStyle(Widget widget, String className, boolean addClass) {
+        String currentClasses = widget.getStyleName();
+        String cssNames = addOrRemoveCssClass(className, addClass, currentClasses);
+        if (cssNames == null)
+            return;
+
+        widget.setStyleName(cssNames);
+    }
+
+    public static String addOrRemoveCssClass(String className, boolean addClass, String currentClasses) {
+        StringBuilder cssNames = new StringBuilder(15);
+        if (addClass) {
+            cssNames.append(currentClasses);
+            if (currentClasses.length() > 0)
+                cssNames.append(CSS_CLASS_DELIMITER);
+            cssNames.append(className);
+        } else {
+            String[] classes = currentClasses.split(CSS_CLASS_DELIMITER);
+            if (classes == null)
+                return null;
+            for (String cssName : classes) {
+                if (!cssName.equals(className))
+                    cssNames.append(cssName);
+                cssNames.append(CSS_CLASS_DELIMITER);
+            }
+            cssNames.deleteCharAt(cssNames.length() - 1);
+        }
+        return cssNames.toString();
+    }
+
+}

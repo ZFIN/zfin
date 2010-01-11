@@ -173,7 +173,7 @@
 
     <servlet>
         <servlet-name>AnatomyLookupService</servlet-name>
-        <servlet-class>org.zfin.framework.presentation.server.LookupServiceImpl</servlet-class>
+        <servlet-class>org.zfin.gwt.root.server.LookupServiceImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -183,12 +183,12 @@
 
     <servlet>
         <servlet-name>SessionSaveService</servlet-name>
-        <servlet-class>org.zfin.people.presentation.server.SessionSaveServiceImpl</servlet-class>
+        <servlet-class>org.zfin.gwt.curation.server.SessionSaveServiceImpl</servlet-class>
     </servlet>
 
     <servlet>
         <servlet-name>CurationService</servlet-name>
-        <servlet-class>org.zfin.curation.server.CurationExperimentRPCImpl</servlet-class>
+        <servlet-class>org.zfin.gwt.curation.server.CurationExperimentRPCImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -198,7 +198,7 @@
 
     <servlet>
         <servlet-name>TranscriptService</servlet-name>
-        <servlet-class>org.zfin.marker.presentation.server.TranscriptRPCServiceImpl</servlet-class>
+        <servlet-class>org.zfin.gwt.marker.server.TranscriptRPCServiceImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -208,7 +208,7 @@
 
     <servlet>
         <servlet-name>MarkerService</servlet-name>
-        <servlet-class>org.zfin.marker.presentation.server.MarkerRPCServiceImpl</servlet-class>
+        <servlet-class>org.zfin.gwt.marker.server.MarkerRPCServiceImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -218,7 +218,7 @@
 
     <servlet>
         <servlet-name>CloneService</servlet-name>
-        <servlet-class>org.zfin.marker.presentation.server.CloneRPCServiceImpl</servlet-class>
+        <servlet-class>org.zfin.gwt.marker.server.CloneRPCServiceImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>

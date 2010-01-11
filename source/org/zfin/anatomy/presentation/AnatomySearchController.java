@@ -86,7 +86,8 @@ public class AnatomySearchController extends AbstractCommandController {
     private void runTermSearch(AnatomySearchBean anatomyForm) {
         String searchTerm = anatomyForm.getSearchTerm();
         AnatomyItem term = anatomyRepository.getAnatomyItem(searchTerm);
-        if (term != null) {
+        // if the search contains a wild-card, then don't return a single item
+        if (term != null && false==anatomyForm.isWildCard()) {
             AnatomyStatistics stat = new AnatomyStatistics();
             stat.setAnatomyItem(term);
             List<AnatomyStatistics> stats = new ArrayList<AnatomyStatistics>();

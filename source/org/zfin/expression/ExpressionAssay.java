@@ -53,12 +53,12 @@ public class ExpressionAssay implements Comparable<ExpressionAssay> {
 
     public int compareTo(ExpressionAssay anotherAssay) {
         if (anotherAssay == null)
-            return +1;
+            return 1;
         return displayOrder - anotherAssay.getDisplayOrder();
     }
 
     public static boolean isAntibodyAssay(String assayName) {
-        Type assay = Type.getAsssay(assayName);
+        Type assay = Type.getAssay(assayName);
         return assay == Type.WESTERN_BLOT || assay == Type.IMMUNOHISTOCHEMISTRY || assay == Type.OTHER;
     }
 
@@ -79,7 +79,7 @@ public class ExpressionAssay implements Comparable<ExpressionAssay> {
             return name;
         }
 
-        public static Type getAsssay(String assayName) {
+        public static Type getAssay(String assayName) {
             for (Type t : values()) {
                 if (t.getName().equals(assayName))
                     return t;

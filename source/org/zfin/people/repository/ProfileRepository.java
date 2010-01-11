@@ -1,5 +1,6 @@
 package org.zfin.people.repository;
 
+import org.zfin.people.CuratorSession;
 import org.zfin.marker.Marker;
 import org.zfin.people.*;
 

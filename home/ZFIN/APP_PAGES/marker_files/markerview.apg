@@ -483,15 +483,14 @@ function jump(form_select){
     <script type="text/javascript">
         var MarkerProperties= {
             zdbID: "$OID",
-            curatorID : "$ZDB_ident"
         };
     </script>
 
               <?MICOMMENT>
               Adds the GeneEditController.
               <?/MICOMMENT>
-        <link rel="stylesheet" type="text/css" href="/org.zfin.marker.presentation.Marker/Marker.css"/>
-    <script type="text/javascript" language="javascript" src="/gwt/org.zfin.marker.presentation.Marker/org.zfin.marker.presentation.Marker.nocache.js"></script>
+        <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+    <script type="text/javascript" language="javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
     <?/MIVAR>
 
 

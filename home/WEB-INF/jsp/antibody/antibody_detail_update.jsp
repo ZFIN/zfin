@@ -3,7 +3,7 @@
 <%@ page import="org.zfin.antibody.presentation.AntibodySearchFormBean" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ page import="org.zfin.antibody.presentation.AntibodyUpdateDetailBean" %>
-<%@ page import="org.zfin.framework.presentation.client.LookupComposite" %>
+<%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
 <script type="text/javascript">
 
 var gref = "Def-Pub";
@@ -340,7 +340,6 @@ function subAntigenRef(element, urlsubmit) {
             <tr>
                 <td style="text-align:right" valign="top">
                     <script type="text/javascript">
-                        var LookupProperties = { NumLookups: "2"} ;
                         var LookupProperties0 = {
                             divName: "newAntigenGene",
                             inputName: "newAntigenGene",
@@ -494,9 +493,9 @@ function subAntigenRef(element, urlsubmit) {
 
             </script>
 
-            <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.Lookup/Lookup.css"/>
+            <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.gwt.lookup.Lookup/Lookup.css"/>
             <script language="javascript"
-                    src="/gwt/org.zfin.framework.presentation.Lookup/org.zfin.framework.presentation.Lookup.nocache.js"></script>
+                    src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
             <span id="supplierNameSpan"></span>
             <form:errors path="supplierNameErrorString" cssClass="error"/>
             <form:hidden path="supplierName"/>

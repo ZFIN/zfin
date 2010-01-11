@@ -7,6 +7,7 @@ import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.datatransfer.doi.DOITest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
+import org.zfin.gwt.curation.ui.CurationRPCTest;
 import org.zfin.infrastructure.EnumValidationTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
@@ -15,7 +16,7 @@ import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.MutantRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.people.repository.PeopleRepositoryTest;
-import org.zfin.publication.PublicationRepositoryTest;
+import org.zfin.publication.repository.PublicationRepositoryTest;
 import org.zfin.sequence.DisplayGroupRepositoryTest;
 import org.zfin.sequence.MapAccessionDbLinkTest;
 import org.zfin.sequence.SequenceRepositoryTest;
@@ -38,6 +39,7 @@ import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
         AlignmentsControllerTest.class,
         AnatomyRepositoryTest.class,
         AntibodyRepositoryTest.class,
+        CurationRPCTest.class,
         DOITest.class,
         InfrastructureRepositoryTest.class,
         MarkerRepositoryTest.class,
@@ -62,7 +64,7 @@ import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
         DisplayGroupRepositoryTest.class,
         BlastRepositoryTest.class
 //         MicroArrayTest.class     // Takes 1.5 min to run, but works.
-        })
+})
 
 public class DbUnitTests {
 

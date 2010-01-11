@@ -1,0 +1,15 @@
+<module>
+
+    <inherits name='com.google.gwt.user.User'/>
+    <inherits name="org.zfin.gwt.root.Root" />
+
+    <source path='ui'/>
+    <source path='event'/>
+
+    <entry-point class='org.zfin.gwt.marker.ui.MarkerEditEntryPoint'/>
+
+    <servlet path="/ajax/transcriptservice" class="org.zfin.gwt.marker.server.TranscriptRPCServiceImpl"/>
+    <servlet path="/ajax/cloneservice" class="org.zfin.gwt.marker.server.CloneRPCServiceImpl"/>
+    <servlet path="/ajax/markerservice" class="org.zfin.gwt.marker.server.MarkerRPCServiceImpl"/>
+    <servlet path="/ajax/anatomylookup" class="org.zfin.gwt.root.server.LookupServiceImpl"/>
+</module>

@@ -2,9 +2,9 @@ package org.zfin.datatransfer.doi;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.scheduling.quartz.QuartzJobBean;
-import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.framework.mail.IntegratedJavaMailSender;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.util.Date;
 

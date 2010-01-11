@@ -22,7 +22,7 @@
 #  home/graphics         went to home/images/LOCAL
 #  home/ZFIN/gifs        went to home/images/LOCAL
 #
-# Note also that the Apache set of icons are also accessable via http through
+# Note also that the Apache set of icons are also accessible via http through
 # /icons.  That path is defined in the http.conf file.
 
 

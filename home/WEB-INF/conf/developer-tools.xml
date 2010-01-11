@@ -34,6 +34,10 @@
                 <prop key="/dev-tools/gwt/modules">gwtModules</prop>
                 <prop key="/dev-tools/gwt/fx-curation">fxCuration</prop>
                 <prop key="/dev-tools/gwt/lookup">lookup</prop>
+                <prop key="/dev-tools/gwt/lookup-table">lookupTable</prop>
+                <prop key="/dev-tools/gwt/transcript-edit">transcriptEdit</prop>
+                <prop key="/dev-tools/gwt/clone-edit">cloneEdit</prop>
+                <prop key="/dev-tools/gwt/antibody-edit">antibodyEdit</prop>
                 <prop key="/dev-tools/svn-version">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/display-groups">displayGroups</prop>
                 <prop key="/dev-tools/second-level-cache">cacheHandler</prop>
@@ -57,6 +61,22 @@
 
     <bean name="lookup" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
         <property name="viewName" value="lookup"/>
+    </bean>
+
+    <bean name="lookupTable" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="lookup-table"/>
+    </bean>
+
+    <bean name="transcriptEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="transcript-edit"/>
+    </bean>
+
+    <bean name="cloneEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="clone-edit"/>
+    </bean>
+
+    <bean name="antibodyEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="antibody-edit"/>
     </bean>
 
     <bean name="log4jConfiguration" class="org.zfin.framework.presentation.Log4jConfigurationController"/>

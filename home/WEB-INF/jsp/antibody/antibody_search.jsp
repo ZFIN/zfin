@@ -213,7 +213,6 @@ function start_tips() {
                     divName: "anatomyTerm",
                     inputName: "searchTerm",
                     showError: true,
-                    imageURL: "/gwt/org.zfin.framework.presentation.LookupTable/",
                     <c:if test='${formBean.antibodyCriteria.anatomyTermNames != null}' >
                     previousTableValues: "${formBean.antibodyCriteria.anatomyTermNames}",
                     </c:if>
@@ -221,7 +220,8 @@ function start_tips() {
                     hiddenIds: "antibodyCriteria.anatomyTermIDs",
                     type: "ANATOMY_ONTOLOGY",
                     width: 40,
-                    wildcard: false
+                    wildcard: false,
+                    useTermTable: true
                 };
             </script>
             <style type="text/css">
@@ -230,9 +230,9 @@ function start_tips() {
                 }
             </style>
 
-            <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.LookupTable/Lookup.css"/>
+            <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
             <script language="javascript"
-                    src="/gwt/org.zfin.framework.presentation.LookupTable/org.zfin.framework.presentation.LookupTable.nocache.js"></script>
+                    src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 
             <div id="anatomyTerm"></div>
             <table>

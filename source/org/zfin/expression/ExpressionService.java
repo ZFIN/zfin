@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Sevice Class that deals with Marker related logic.
+ * Service Class that deals with Marker related logic.
  */
 public class ExpressionService {
 
@@ -34,7 +34,7 @@ public class ExpressionService {
 
 
     public static Set<String> getThissePublicationZdbIDs() {
-        Set<String> pubZdbIDS = new HashSet<String>();
+        Set<String> pubZdbIDS = new HashSet<String>(5);
         pubZdbIDS.add("ZDB-PUB-051025-1");
         pubZdbIDS.add("ZDB-PUB-040907-1");
         pubZdbIDS.add("ZDB-PUB-010810-1");
@@ -45,14 +45,14 @@ public class ExpressionService {
         // get all expression experiments
         Set<ExpressionExperiment> expressionExperiments = clone.getExpressionExperiments();
         InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-        Set<String> thissePubblications = getThissePublicationZdbIDs();
+        Set<String> thissePublications = getThissePublicationZdbIDs();
 
         for (ExpressionExperiment expressionExperiment : expressionExperiments) {
-            // is there a record attribution for this expression experement
+            // is there a record attribution for this expression experiment
             if (infrastructureRepository.getRecordAttribution(expressionExperiment.getZdbID(), expressionExperiment.getPublication().getZdbID(),
                     RecordAttribution.SourceType.STANDARD) != null
                     &&
-                    thissePubblications.contains(expressionExperiment.getPublication().getZdbID())
+                    thissePublications.contains(expressionExperiment.getPublication().getZdbID())
                     ) {
                 return true;
             }
@@ -100,9 +100,9 @@ public class ExpressionService {
         }
 
         // directly submitted
-        logger.info("setting directly subbmitted expression");
+        logger.info("setting directly submitted expression");
         markerExpression.setDirectlySubmittedExpression(getDirectlySubmittedExpressionSummaries(marker));
-        logger.info("got directly subbmitted expression");
+        logger.info("got directly submitted expression");
 
 
         // wildtype stages
@@ -110,7 +110,7 @@ public class ExpressionService {
         if (marker.getMarkerType().getType().equals(Marker.Type.GENE)) {
             List<String> wildTypeExpressionData = new ArrayList<String>();
             markerExpression.setWildTypeStageExpression(wildTypeExpressionData);
-            logger.fatal("have not imlemented ExpressionService wild type processing");
+            logger.fatal("have not implemented ExpressionService wild type processing");
         }
 
 

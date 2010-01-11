@@ -6,11 +6,15 @@ import java.util.Set;
  */
 public interface SoftParser {
 
-    public String parseLine(String line) ;
+    String parseLine(String line) ;
 
-    public Set<String> parseUniqueNumbers(String fileName, int column) ;
+    Set<String> parseUniqueNumbers(String fileName, int column) ;
 
-    public Set<String> parseUniqueNumbers(String fileName, int column,String[] includePattern)  ;
+    Set<String> parseUniqueNumbers(String fileName, int column,String[] includePattern)  ;
 
-    public Set<String> parseUniqueNumbers(String fileName, int column,String[] includePattern,String[] excludePattern)  ;
+    Set<String> parseUniqueNumbers(String fileName, int column,String[] includePattern,String[] excludePattern)  ;
+
+    void setAlwaysUseExistingFile(boolean alwaysUseExistingFile) ;
+
+    boolean isAlwaysUseExistingFile() ;
 }

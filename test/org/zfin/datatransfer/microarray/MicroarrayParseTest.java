@@ -79,7 +79,7 @@ public class MicroarrayParseTest {
     public void testIndividualGPL(){
         Set<String> newGEOAccessions = new HashSet<String>() ;
         DefaultGEOSoftParser defaultSoftParser = new DefaultGEOSoftParser() ;
-
+        defaultSoftParser.setAlwaysUseExistingFile(true);
         newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL1319",2,new String[]{"Danio rerio"},new String[]{"Control"}) );
     }
 

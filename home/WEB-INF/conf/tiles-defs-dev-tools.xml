@@ -23,8 +23,6 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/home.jsp"/>
     </definition>
 
-
-
     <definition name="login" extends="home_layout">
         <put name="staticTitle" value="ZFIN Login"/>
         <put name="body" value="/WEB-INF/jsp/login_form.jsp"/>
@@ -145,9 +143,29 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/fx_curation.jsp"/>
     </definition>
 
+    <definition name="transcript-edit" extends="dev_layout">
+        <put name="staticTitle" value="GWT Transcript Edit"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/transcript_edit.jsp"/>
+    </definition>
+
+    <definition name="clone-edit" extends="dev_layout">
+        <put name="staticTitle" value="GWT Clone Edit"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/clone_edit.jsp"/>
+    </definition>
+
+    <definition name="antibody-edit" extends="dev_layout">
+        <put name="staticTitle" value="GWT Antibody Edit"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/antibody_edit.jsp"/>
+    </definition>
+
     <definition name="lookup" extends="dev_layout">
         <put name="staticTitle" value="GWT Lookup"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/lookup.jsp"/>
+    </definition>
+
+    <definition name="lookup-table" extends="dev_layout">
+        <put name="staticTitle" value="GWT Lookup Table"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/lookup_table.jsp"/>
     </definition>
 
     <definition name="svn-version" extends="dev_layout">

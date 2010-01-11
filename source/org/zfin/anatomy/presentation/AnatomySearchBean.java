@@ -133,8 +133,9 @@ public class AnatomySearchBean extends PaginationBean {
         return action != null && action.equals(AnatomySearchBean.Action.STAGE_SEARCH.toString());
     }
 
+    // remove wild-card term
     public String getSearchTerm() {
-        return searchTerm;
+        return (isWildCard() ?  searchTerm.substring(0,searchTerm.length()-1): searchTerm) ;
     }
 
     public void setSearchTerm(String searchTerm) {
@@ -280,6 +281,10 @@ public class AnatomySearchBean extends PaginationBean {
 
     public void setNonWildtypeMorpholinos(List<MorpholinoStatistics> nonWildtypeMorpholinos) {
         this.nonWildtypeMorpholinos = nonWildtypeMorpholinos;
+    }
+
+    public boolean isWildCard() {
+        return (searchTerm.endsWith("*"));
     }
 
     public static enum Action {

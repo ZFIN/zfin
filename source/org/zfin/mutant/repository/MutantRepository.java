@@ -4,7 +4,7 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.CachedRepository;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.framework.presentation.client.Ontology;
+import org.zfin.gwt.root.dto.Ontology;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GoTerm;

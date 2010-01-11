@@ -3,7 +3,7 @@ package org.zfin.util;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.zfin.framework.presentation.tags.DeflineTag;
-import org.zfin.marker.presentation.client.SequenceValidator;
+import org.zfin.gwt.marker.ui.SequenceValidator;
 
 import static org.junit.Assert.assertEquals;
 

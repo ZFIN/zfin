@@ -1,5 +1,5 @@
-<script type="text/javascript" language="javascript"
-        src="/gwt/org.zfin.framework.presentation.Lookup/org.zfin.framework.presentation.Lookup.nocache.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
+<script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 
 
 <!-- -->
@@ -97,7 +97,7 @@
         </tr>
         <tr>
             <td>
-                <div id="anatomyTerm"></div>
+                <span id="anatomyTerm"></span>
             </td>
         </tr>
     </table>

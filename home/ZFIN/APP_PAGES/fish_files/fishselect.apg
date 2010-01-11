@@ -1968,13 +1968,13 @@ return false ; ">
         inputName: "searchTerm",
         showError: true,
         // buttonText: "Add Term",
-        imageURL: "/gwt/org.zfin.framework.presentation.LookupTable/",
         <?MIVAR COND=$(XST,$fsel_processed_selected_structures_names)>previousTableValues: "$fsel_processed_selected_structures_names",<?/MIVAR>
         hiddenIds: "fsel_processed_selected_structures",
         hiddenNames: "fsel_processed_selected_structures_names",
         type: "ANATOMY_ONTOLOGY",
         width: 40, 
-        wildcard: false
+        wildcard: false,
+        useTermTable: true
     };
 </script>
 
@@ -1982,8 +1982,8 @@ return false ; ">
     .accessoryLabel { font-size: .75em; }
     </style>
 
-    <link rel="stylesheet" type="text/css" href="/gwt/org.zfin.framework.presentation.LookupTable/Lookup.css"/>
-    <script language="javascript" src="/gwt/org.zfin.framework.presentation.LookupTable/org.zfin.framework.presentation.LookupTable.nocache.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
+    <script language="javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 
     <div id="anatomyTerm"> </div> 
 
