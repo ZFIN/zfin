@@ -70,9 +70,7 @@ EFFECTS:
 	       from all_map_names
 	       where allmapnm_zdb_id ='$new_oid'
                  and allmapnm_precedence in 
-                      ( 'Current symbol',
-                        'Clone name', 'Current name',
-                        'Previous name' );">
+                      ( 'Current symbol');">
 	     <?MIVAR NAME=$new_name>$1<?/MIVAR>
 	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$zdbhist_appPage&OID=$new_oid">$new_name</a>
 	   <?/MISQL>
