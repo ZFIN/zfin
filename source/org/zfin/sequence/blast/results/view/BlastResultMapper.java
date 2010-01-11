@@ -3,9 +3,7 @@ package org.zfin.sequence.blast.results.view;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MarkerService;
+import org.zfin.marker.*;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.Accession;
@@ -285,6 +283,8 @@ public class BlastResultMapper {
                     hitMarker = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(transcriptDBLink.getDataZdbID());
                     genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
                     hitViewBean.setHitDBLink(transcriptDBLink);
+                    TranscriptStatus transcriptStatus = ((Transcript) hitMarker).getStatus();
+                    hitViewBean.setWithdrawn( transcriptStatus==null ? false : transcriptStatus.getStatus()==TranscriptStatus.Status.WITHDRAWN_BY_SANGER);
                 } else if (geneDBLink != null) {
                     genes.add(RepositoryFactory.getMarkerRepository().getMarkerByID(geneDBLink.getDataZdbID()));
                     hitViewBean.setHitDBLink(geneDBLink);

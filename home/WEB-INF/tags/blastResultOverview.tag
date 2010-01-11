@@ -10,6 +10,7 @@
 <img src="/images/P_letter.png" class="blast-key"> Phenotype Data
 <img src="/images/P_camera.png" class="blast-key"> with Images
 
+<img src="/images/warning-noborder.gif" alt="transcript withdrawn" width="20" height="20" align="top" class="blast-key" > Withdrawn
 <table class="searchresults rowstripes">
     <%--<tr bgcolor="darkgray">--%>
     <tr>
@@ -48,6 +49,7 @@
             <td>
                 <c:if test="${!hit.markerIsHit}">
                     <zfin:link entity="${hit.hitMarker}"/>
+                    ${hit.withdrawn ? '<img src="/images/warning-noborder.gif" alt="transcript withdrawn" width="20" height="20" align="top"/>' : ""}
                 </c:if>
             </td>
             <td>

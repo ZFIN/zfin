@@ -20,7 +20,6 @@ public class Transcript extends Marker {
         return transcriptType;
     }
 
-
     public void setTranscriptType(TranscriptType transcriptType) {
         this.transcriptType = transcriptType;
     }
@@ -44,6 +43,13 @@ public class Transcript extends Marker {
 
     public Integer getLength() {
         return TranscriptService.getTranscriptLength(this, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE);
+    }
+
+    public boolean isWithdrawn(){
+        if(status!=null){
+            return status.getStatus()== TranscriptStatus.Status.WITHDRAWN_BY_SANGER;
+        }
+        return false ;
     }
 
     public List<TranscriptDBLink> getTranscriptDBLinksForDisplayGroup(DisplayGroup.GroupName displayGroup) {

@@ -17,43 +17,56 @@ public class BlastLinkPresentation extends EntityPresentation{
 
     public static String getLink(HitViewBean hitViewBean) {
         if(hitViewBean.getHitDBLink()!=null){
+            // in this case we don't want a link
             DBLink dbLink =  hitViewBean.getHitDBLink() ;
+            ForeignDB foreignDB = dbLink.getReferenceDatabase().getForeignDB() ;
+            ForeignDB.AvailableName availableName = foreignDB.getDbName();
             StringBuilder sb = new StringBuilder("") ;
             sb.append(dbLink.getAccessionNumber());
             sb.append("&nbsp;");
-            sb.append( LINK_PREFIX );
-            sb.append(dbLink.getReferenceDatabase().getForeignDB().getDbUrlPrefix() );
-            sb.append(dbLink.getAccessionNumber());
-            if( dbLink.getReferenceDatabase().getForeignDB().getDbUrlSuffix() != null){
-                sb.append(dbLink.getReferenceDatabase().getForeignDB().getDbUrlSuffix() );
-            }
-            sb.append("\"") ;
-            sb.append("title=\"") ;
-            sb.append(dbLink.getAccessionNumber()).append(" at ") ;
-            String foreignDBName ;
-            if(dbLink.getReferenceDatabase().getForeignDB().getDbName()== ForeignDB.AvailableName.VEGA
-                    ||
-                    dbLink.getReferenceDatabase().getForeignDB().getDbName()== ForeignDB.AvailableName.VEGA_TRANS
-                    ){
-                foreignDBName = "Vega" ;
-            }
-            else
-            if( dbLink.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.ZFIN_PROT
-                    ||
-                    dbLink.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.PUBPROT
-                    ||
-                    dbLink.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.PUBRNA
-                    ){
-                foreignDBName = "ZFIN" ;
+
+            if(hitViewBean.isWithdrawn()){
+                if(availableName.toString().equals("Vega_Withdrawn")){
+//                if(availableName== ForeignDB.AvailableName.VEGA_WITHDRAWN
+//                    if(availableName.toString().startsWith("Vega")){
+                    sb.append("<img src='/images/warning-noborder.gif' alt='transcript withdrawn' width='20' height='20' align='top' class='blast-key' > ") ;
+                }
             }
             else{
-                foreignDBName = dbLink.getReferenceDatabase().getForeignDB().getDbName().toString() ;
+                sb.append( LINK_PREFIX );
+                sb.append(foreignDB.getDbUrlPrefix() );
+                sb.append(dbLink.getAccessionNumber());
+                if( foreignDB.getDbUrlSuffix() != null){
+                    sb.append(foreignDB.getDbUrlSuffix() );
+                }
+                sb.append("\"") ;
+                sb.append("title=\"") ;
+                sb.append(dbLink.getAccessionNumber()).append(" at ") ;
+                String foreignDBName ;
+                if(availableName== ForeignDB.AvailableName.VEGA
+                        ||
+                        availableName== ForeignDB.AvailableName.VEGA_TRANS
+                        ){
+                    foreignDBName = "Vega" ;
+                }
+                else
+                if( availableName == ForeignDB.AvailableName.ZFIN_PROT
+                        ||
+                        availableName == ForeignDB.AvailableName.PUBPROT
+                        ||
+                        availableName == ForeignDB.AvailableName.PUBRNA
+                        ){
+                    foreignDBName = "ZFIN" ;
+                }
+                else{
+                    foreignDBName = availableName.toString() ;
+                }
+                sb.append(foreignDBName) ;
+                sb.append("\"") ;
+                sb.append(">" );
+                sb.append("["+foreignDBName+"]");
+                sb.append( "</a>" );
             }
-            sb.append(foreignDBName) ;
-            sb.append("\"") ;
-            sb.append(">" );
-            sb.append("["+foreignDBName+"]");
-            sb.append( "</a>" );
             return sb.toString();
         }
         else

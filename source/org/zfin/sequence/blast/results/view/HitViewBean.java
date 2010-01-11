@@ -20,6 +20,7 @@ public class HitViewBean extends ExpressionMapBean{
     private Accession zfinAccession; // if no DBLink is found
     private Marker hitMarker ; // this is usuae ly a clone or transcript, comes through marker relation
     private boolean isMarkerIsHit = false ;
+    private boolean withdrawn = false ;
     private int hitNumber;
     private int hitLength ;
     private int score ;
@@ -154,6 +155,14 @@ public class HitViewBean extends ExpressionMapBean{
         this.highScoringPairs = highScoringPairs;
     }
 
+    public boolean isWithdrawn() {
+        return withdrawn;
+    }
+
+    public void setWithdrawn(boolean withdrawn) {
+        this.withdrawn = withdrawn;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -217,6 +226,7 @@ public class HitViewBean extends ExpressionMapBean{
                 ", nValue=" + nValue +
                 ", genes=" + genes +
                 ", definition='" + definition + '\'' +
+                ", withdrawn='" + withdrawn+ '\'' +
                 ", highScoringPairs=" + highScoringPairs +
                 '}';
     }

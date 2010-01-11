@@ -18,6 +18,7 @@
 
     <c:if test="${!hit.markerIsHit}">
         <zfin:link entity="${hit.hitMarker}"/>
+        ${hit.withdrawn ? '<img src="/images/warning-noborder.gif" alt="transcript withdrawn" width="20" height="20" align="top"/>' : ""}
     </c:if>
 
     <br>

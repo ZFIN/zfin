@@ -14,6 +14,9 @@ Transcript Name: <zfin:name entity="${transcript}"/>
 <c:if test="${!empty transcript.status}">
     <div style="font-size: large; font-weight: bold;">
     <a href="/action/marker/transcript-definitions#status">Annotation Status</a>: ${transcript.status.display}
+        <c:if test="${transcript.withdrawn}">
+            <img src="/images/warning-noborder.gif" alt="transcript withdrawn" width="20" height="20" align="top"/>
+        </c:if>
     </div>
 </c:if>
 

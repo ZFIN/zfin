@@ -23,7 +23,16 @@
 </script>
 
 
-<zfin2:sequenceView sequences="${formBean.nucleotideSequences}"/>
+<c:choose>
+    <c:when test="${formBean.marker.withdrawn}">
+        <authz:authorize ifAllGranted="root">
+            <zfin2:sequenceView sequences="${formBean.nucleotideSequences}"/>
+        </authz:authorize>
+    </c:when>
+    <c:otherwise>
+        <zfin2:sequenceView sequences="${formBean.nucleotideSequences}"/>
+    </c:otherwise>
+</c:choose>
 
 
 <c:if test="${!empty formBean.unableToFindDBLinks}">
@@ -88,8 +97,6 @@
 <zfin2:markerSummaryPages marker="${formBean.marker}" links="${formBean.summaryDBLinkDisplay}"/>
 
 <zfin2:markerSummaryPages marker="${formBean.marker}" links="${formBean.proteinProductDBLinkDisplay}" title="${fn:toUpperCase('Protein Products')}" />
-
-
 
 <zfin2:transcriptSequenceInformation sequenceInfo="${formBean.sequenceInfo}" title="${fn:toUpperCase('Zebrafish Supporting Sequences')}" showAllSequences="true"/>
 
