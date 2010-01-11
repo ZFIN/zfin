@@ -13,7 +13,7 @@ document.write("   <div id=\"footercredits\"> ");
 document.write("     <center> ");
 document.write("       <span id=\"footer-generous-support\">Development of the Zebrafish Database is generously supported by the NIH (P41 HG002659). <br></span> ");
 document.write("       <a href=\"/warranty.html\">Disclaimer, limitations, copyright &copy;  </a> <a href=\"http://www.uoregon.edu\"> ");
-document.write("       University of Oregon</a>, 1994-2009,<a href=\"http://www.ci.eugene.or.us\"> Eugene</a>, Oregon. <br> ");
+document.write("       University of Oregon</a>, 1994-2010,<a href=\"http://www.ci.eugene.or.us\"> Eugene</a>, Oregon. <br> ");
 document.write("       <small>ZFIN logo design by Kari Pape, <A HREF=\"http://www.uoregon.edu\">University of Oregon</a></small><br> ");
 document.write("    </center>  ");
 document.write("   </div> ");
