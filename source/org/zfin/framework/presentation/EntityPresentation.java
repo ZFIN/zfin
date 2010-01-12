@@ -12,6 +12,8 @@ public abstract class EntityPresentation {
 
     protected static final Logger logger = Logger.getLogger(EntityPresentation.class);
     protected static final String NONGENEDOMMARKER = "nongenedommarker";
+    protected static final String WITHDRAWN_PREFIX = "&nbsp;<img src='/images/warning-noborder.gif' title='Withdrawn' alt='Withdrawn' width='20' height='20'";
+    public static final String WITHDRAWN = WITHDRAWN_PREFIX + " align='top' />";
 
     /**
      * Uses ZfinProperties to get webdriver link information

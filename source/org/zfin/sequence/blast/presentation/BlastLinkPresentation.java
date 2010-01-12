@@ -14,6 +14,7 @@ import org.zfin.sequence.blast.results.view.HitViewBean;
 public class BlastLinkPresentation extends EntityPresentation{
 
     public final static String LINK_PREFIX = "<a target=_blank style=\"font-size: small;\" href=\"" ;
+    protected final static String WITHDRAWN_BLAST = WITHDRAWN_PREFIX + " class='blast-key' />" ;
 
     public static String getLink(HitViewBean hitViewBean) {
         if(hitViewBean.getHitDBLink()!=null){
@@ -25,13 +26,16 @@ public class BlastLinkPresentation extends EntityPresentation{
             sb.append(dbLink.getAccessionNumber());
             sb.append("&nbsp;");
 
-            if(hitViewBean.isWithdrawn()){
-                if(availableName.toString().equals("Vega_Withdrawn")){
-//                if(availableName== ForeignDB.AvailableName.VEGA_WITHDRAWN
+//            if(hitViewBean.isWithdrawn()){
+            // todo: change this with new reno load changes
+            if(availableName.toString().startsWith("Vega") && hitViewBean.isWithdrawn()){
+//                if(availableName.toString().equals("Vega_Withdrawn") && hitViewBean.isWithdrawn()){
+//                if(availableName== ForeignDB.AvailableName.VEGA_WITHDRAWN && hitViewBeain.isWithdrawn()){
 //                    if(availableName.toString().startsWith("Vega")){
-                    sb.append("<img src='/images/warning-noborder.gif' alt='transcript withdrawn' width='20' height='20' align='top' class='blast-key' > ") ;
-                }
+//                sb.append("<img src='/images/warning-noborder.gif' alt='transcript withdrawn' width='20' height='20' valign='top' class='blast-key' > ") ;
+                sb.append(WITHDRAWN_BLAST) ;
             }
+//            }
             else{
                 sb.append( LINK_PREFIX );
                 sb.append(foreignDB.getDbUrlPrefix() );

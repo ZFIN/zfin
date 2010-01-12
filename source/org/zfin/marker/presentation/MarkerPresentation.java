@@ -4,8 +4,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.Transcript;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.presentation.PublicationPresentation;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -48,7 +50,12 @@ public class MarkerPresentation extends EntityPresentation {
      */
     public static String getLink(Marker marker) {
         if (marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
-            return getTranscriptLink(marker);
+            try {
+                return getTranscriptLink((Transcript) marker);
+            } catch (ClassCastException e) {
+                logger.error("failed to cast: " + marker.getZdbID());
+                return getTranscriptLink(RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(marker.getZdbID()));
+            }
         } else if (marker.isInTypeGroup(Marker.TypeGroup.ATB)) {
             return getAntibodyLink(marker);
         } else if (marker.isInTypeGroup(Marker.TypeGroup.CLONE) || marker.isInTypeGroup(Marker.TypeGroup.SMALLSEG)) {
@@ -75,8 +82,8 @@ public class MarkerPresentation extends EntityPresentation {
         return getWebdriverLink(marker_uri, marker.getZdbID(), getAbbreviation(marker));
     }
 
-    public static String getTranscriptLink(Marker marker) {
-        return getTomcatLink(transcript_uri, marker.getZdbID(), getName(marker), null);
+    public static String getTranscriptLink(Transcript transcript) {
+        return getTomcatLink(transcript_uri, transcript.getZdbID(), getName(transcript), null)  + (transcript.isWithdrawn() ? WITHDRAWN: "") ;
     }
 
     public static String getCloneLink(Marker marker) {

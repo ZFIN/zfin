@@ -1,3 +1,4 @@
+<%@ tag import="org.zfin.framework.presentation.EntityPresentation" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="transcript" type="org.zfin.marker.Transcript"
@@ -15,7 +16,7 @@ Transcript Name: <zfin:name entity="${transcript}"/>
     <div style="font-size: large; font-weight: bold;">
     <a href="/action/marker/transcript-definitions#status">Annotation Status</a>: ${transcript.status.display}
         <c:if test="${transcript.withdrawn}">
-            <img src="/images/warning-noborder.gif" alt="transcript withdrawn" width="20" height="20" align="top"/>
+            <%=EntityPresentation.WITHDRAWN%>
         </c:if>
     </div>
 </c:if>
