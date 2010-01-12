@@ -1,0 +1,8 @@
+
+--This line, and those below, will be ignored--
+
+M    DB_triggers/Makefile
+A    DB_triggers/clone_problem_type_insert_trigger.sql
+A    DB_triggers/clone_problem_type_update_trigger.sql
+A    DB_functions/SPL/p_update_clone_relationship.sql
+M    DB_functions/SPL/Makefile

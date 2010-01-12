@@ -98,6 +98,8 @@ TRIGGERS = \
 	run_candidate_insert_trigger.sql \
 	stage_insert_trigger.sql \
 	stage_update_trigger.sql \
+	transcript_insert_trigger.sql \
+	transcript_update_trigger.sql \
 	updates_insert_trigger.sql \
 	zdb_object_type_insert_trigger.sql \
 	zdb_object_type_update_trigger.sql \

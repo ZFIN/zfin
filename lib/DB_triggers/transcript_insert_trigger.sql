@@ -1,0 +1,6 @@
+create trigger transcript_insert_trigger insert on transcript
+  referencing new as new_tscript
+    for each row
+        (
+        execute function setTscriptLoadId(new_tscript.tscript_mrkr_zdb_id, new_tscript.tscript_load_id) into transcript.tscript_load_id
+    ) ;
