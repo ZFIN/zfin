@@ -1,4 +1,4 @@
-create function setTscriptLoadId5286  (vTscriptMrkrZdbId varchar(50),
+create function setTscriptLoadId  (vTscriptMrkrZdbId varchar(50),
        				 vTscriptLoadId varchar(50))
 
        returning varchar(50);
