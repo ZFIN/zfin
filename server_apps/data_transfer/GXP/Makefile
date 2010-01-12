@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/GXP
 
-SUBDIRS = Thisse
+SUBDIRS = Thisse KKawakami
 
 STATICS = README pre_gxp_load.sql gxp_load_func.sql \
 	gxp_load_quantity_check.sql processImage.sh \
