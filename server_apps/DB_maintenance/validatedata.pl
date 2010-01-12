@@ -2163,6 +2163,38 @@ sub allTranscriptsHaveAtLeastOneDbLink ($) {
     &recordResult($routineName, $nRecords);
 }
 #----------------------------------------------
+
+#----------------------------------------------
+# Parameter
+# $      Email Address for recipients
+#
+# 
+sub tscriptLoadIdMatchesDBLink ($) {
+    my $routineName = "tscriptLoadIdMatchesDBLink";
+    my $sql = 'select tscript_mrkr_zdb_id, tscript_load_id
+                 from transcript
+                 where not exists (Select "x"
+                                     from db_link
+                                     where dblink_linked_recid = tscript_mrkr_zdb_id
+                                       and dblink_Acc_num = tscript_load_id)
+                 and tscript_load_id != tscript_mrkr_zdb_id';
+
+    my @colDesc =("tscript zdb id, tscript_load_id");
+
+    my $nRecords = execSql ($sql, undef, @colDesc);
+
+    if ( $nRecords > 0 ) {
+
+	my $sendToAddress = $_[0];
+	my $subject = "AutoGen: Transcripts with mismatched tscript_load_id/dblink records";
+	my $errMsg = "In transcripts, $nRecords have no dblinks with that match tscript_load_id";
+	
+	logError ($errMsg); 
+	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    }
+    &recordResult($routineName, $nRecords);
+}
+#----------------------------------------------
 # Parameter
 # $      Email Address for recipients
 #
@@ -3334,6 +3366,7 @@ if($daily) {
     removeGOTermsFromWithdrawnMarkers($goEmail);
     allZFINAccessionsHaveRecordsInZFINAccessionTable($dbaEmail);
     transcriptsOnMoreThanOneGene($dbaEmail);
+    tscriptLoadIdMatchesDBLink($dbaEmail);
     findWithdrawnMarkerMismatch($geneEmail); 
     onlyProblemClonesHaveArtifactOf($geneEmail); 
     unFeatureNameAbbrevUpdate($dbaEmail);
