@@ -28,9 +28,9 @@ public class BlastLinkPresentation extends EntityPresentation{
 
 //            if(hitViewBean.isWithdrawn()){
             // todo: change this with new reno load changes
-            if(availableName.toString().startsWith("Vega") && hitViewBean.isWithdrawn()){
+//            if(availableName.toString().startsWith("Vega") && hitViewBean.isWithdrawn()){
 //                if(availableName.toString().equals("Vega_Withdrawn") && hitViewBean.isWithdrawn()){
-//                if(availableName== ForeignDB.AvailableName.VEGA_WITHDRAWN && hitViewBeain.isWithdrawn()){
+            if(availableName== ForeignDB.AvailableName.VEGA_WITHDRAWN && hitViewBean.isWithdrawn()){
 //                    if(availableName.toString().startsWith("Vega")){
 //                sb.append("<img src='/images/warning-noborder.gif' alt='transcript withdrawn' width='20' height='20' valign='top' class='blast-key' > ") ;
                 sb.append(WITHDRAWN_BLAST) ;
