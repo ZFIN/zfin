@@ -624,12 +624,38 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
       <?/MIBLOCK>
 
       <!-- add attribution-->
-      <?MIBLOCK COND="$(AND,$(EC,$attr,recattrib),$(NE,$info,mrel))">
+      <?MIBLOCK COND="$(AND,$(EC,$attr,recattrib),$(NE,$info,mrel),$(NE,$info,seqacc))">
 
          <?MISQL SQL="
 	    insert into record_attribution
 		(recattrib_data_zdb_id, recattrib_source_zdb_id) 
               values('$old_value', '$new_value') 	
+                ;">
+         <?/MISQL>
+
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(AND,$(EC,$attr,recattrib),$(EC,$info,seqacc))">
+
+	<?MIVAR NAME="$dblink_value"><?/MIVAR>
+
+    <?MICOMMENT>
+  Not having the fdbcont_zdb_id should work for everything but the odd GEO db_link, which isn't updated this way anyway.
+    <?/MICOMMENT>
+      <?MISQL COND="$(EC,$info,seqacc)" SQL="
+	   select dblink_zdb_id
+       from db_link dbl join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id
+	    where dbl.dblink_linked_recid = '$OID'
+	      and dbl.dblink_acc_num = '$old_value';
+	      and fdbc.fdbcont_zdb_id <> 'ZDB-FDBCONT-070919-1'; -- not GEO
+	      -- and fdbc.fdbcont_zdb_id = '$xtra_param';
+          ">
+	<?MIVAR NAME="$dblink_value">$1<?/MIVAR>
+      <?/MISQL>	
+         <?MISQL SQL="
+	    insert into record_attribution
+		(recattrib_data_zdb_id, recattrib_source_zdb_id) 
+              values('$dblink_value', '$new_value') 	
                 ;">
          <?/MISQL>
 
