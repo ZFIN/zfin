@@ -77,7 +77,7 @@
                         related transcript is empty
                     </c:if>
                    <c:if test="${empty relatedTranscript.displayedSequenceDBLinks}">
-                          relatedTranscript.displayedSequenceDBLinks is empty
+                          no sequence available
                     </c:if>
                   <c:if test="${unlinkedTranscript eq null || unlinkedTranscript ne relatedTranscript.marker}">
                         <c:choose>
