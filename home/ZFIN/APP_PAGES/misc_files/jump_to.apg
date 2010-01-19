@@ -19,70 +19,71 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <!-- now if a start page is passed in, set second frame to it! -->
 <?MIBLOCK COND="$(XST,$record)">
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-LAB-),0)">MIval=aa-labview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PERS),0)">MIval=aa-persview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PUB),0)">MIval=aa-pubview2.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENE),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-PERS-),0)">MIval=aa-persview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-PUB-),0)">MIval=aa-pubview2.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-GENE-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MICOMMENT>locus gets merged into gene, markerview page checks the zdb_replaced_data 
             and displays the merge info <?/MICOMMENT>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,LOCUS),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENEP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,MRPHLNO),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-LOCUS-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-GENEP-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-MRPHLNO-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-TSCRIPT-),0)">/action/marker/transcript-view?zdbID=$record<?/MIVAR>
 
 <?MICOMMENT>  ** todo: when we wish to link to clone_view, this is what we'll use
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EST),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,CDNA),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SSLP),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,STS),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,BAC),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PAC),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FOSMID),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,BAC_END),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PAC_END),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,RAPD),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-EST-),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-CDNA-),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-SSLP-),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-STS-),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-BAC-),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-PAC-),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-FOSMID-),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-BAC_END-),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-PAC_END-),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-RAPD-),0)">/action/marker/clone-view?zdbID=$record<?/MIVAR>
 <?/MICOMMENT>
 
 <?MICOMMENT> ** these may all link to clone_view, eventually ** <?/MICOMMENT>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EST),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,CDNA),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SSLP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,STS),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,BAC),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PAC),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FOSMID),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,BAC_END),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PAC_END),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,RAPD),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-EST-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-CDNA-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-SSLP-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-STS-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-BAC-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-PAC-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-FOSMID-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-BAC_END-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-PAC_END-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-RAPD-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 
 
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SNP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REFCROSS),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,IMAGE),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FIG),0)">MIval=aa-fxfigureview.apg&OID=$record<?/MIVAR> 
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,COMPANY),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,ANAT),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,ATB),0)">/action/antibody/detail?antibody.zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENO),0)">MIval=aa-genotypeview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-SNP-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-REFCROSS-),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-IMAGE-),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-FIG-),0)">MIval=aa-fxfigureview.apg&OID=$record<?/MIVAR> 
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-COMPANY-),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ANAT-),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ATB-),0)">/action/antibody/detail?antibody.zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-GENO-),0)">MIval=aa-genotypeview.apg&OID=$record<?/MIVAR>
 <?MICOMMENT>fish gets replaced by genotype, genotypeview page checks zdb_replaced_data 
             and displays history info <?/MICOMMENT>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FISH),0)">MIval=aa-genotypeview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,CONSTRCT),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REGION),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-FISH-),0)">MIval=aa-genotypeview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-CONSTRCT-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-REGION-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 
 <?MICOMMENT>not certain those records would be created and used, it is a product of first phase Frodo <?/MICOMMENT>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENEFAMILY),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-GENEFAMILY-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 
 <?MICOMMENT>not sure whether ZDB-ALT- ids would participate in jump_to.apg, just in case.<?/MICOMMENT>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ALT-),0)">MIval=aa-fishselect.apg&query_results=exist&fsel_allele_id=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ALT-),0)">/action/feature/detail?feature.zdbID=$record<?/MIVAR>
 
 
 <?MICOMMENT>environment condition (ZDB-EXP- id) is provided in the download xpat.txt file<?/MICOMMENT>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EXP),0)">MIval=aa-xpatexpcdndisplay.apg&cdp_exp_zdb_id=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-EXP-),0)">MIval=aa-xpatexpcdndisplay.apg&cdp_exp_zdb_id=$record<?/MIVAR>
 
 <?MICOMMENT> there is no longer an expression page, a publication's all figure page is 
       the best place to go right now. For direct submission pub, like Thisse, there isn't 
       a truely all figures page, but all figures page per probe. 
 <?/MICOMMENT>
-<?MIBLOCK COND="$(>,$(POSITION,$record,XPAT),0)">
+<?MIBLOCK COND="$(>,$(POSITION,$record,-XPAT-),0)">
     <?MISQL SQL="
 		select xpatex_source_zdb_id,jtype, xpatex_probe_feature_zdb_id
                   from expression_experiment
