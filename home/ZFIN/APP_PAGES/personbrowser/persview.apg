@@ -368,7 +368,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <INPUT TYPE=button value=Update onClick="doit('nonZF_pubs','textarea')">
 <?/MIVAR> 
 <BR>
-<B> Publications not related to Zebrafish:</B></TD></TR> <p>
+<B> Non-Zebrafish Publications:</B></TD></TR> <p>
 <?MIVAR COND=$(NE,$nonZF_pubs,)><TR><TD>$nonZF_pubs</TD></TR>
 <p>
 <?/MIVAR>
