@@ -959,7 +959,7 @@ Only need to update clones, etc., which should be the only things that will have
      </form>
   <?/MIBLOCK>
 
-  <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev, mrel_zdb_id
+  <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev, mrel_zdb_id, get_mrkr_abbrev_html_link(mrkr_zdb_id)
 	       from marker_relationship
 		    join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id
 	      where mrel_mrkr_1_zdb_id = '$OID'
@@ -968,6 +968,7 @@ Only need to update clones, etc., which should be the only things that will have
     <?MIVAR NAME=mrkrview_trg_gene_zdb_id>$1<?/MIVAR>
     <?MIVAR NAME=mrkrview_trg_gene_sym>$2<?/MIVAR>
     <?MIVAR NAME=mrkrview_trg_mrel_zdb_id>$3<?/MIVAR>
+    <?MIVAR NAME="mrkrview_trg_gene_link">$4<?/MIVAR>
     <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 	<b> Target Gene: </b>
     <?MIELSE>
@@ -978,8 +979,8 @@ Only need to update clones, etc., which should be the only things that will have
        <input type=button value=Delete
          onClick="Delete_mrel('$mrkrview_trg_gene_zdb_id','knockdown reagent targets gene')">
     <?/MIVAR>
-
-    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_trg_gene_zdb_id">$mrkrview_trg_gene_sym</a>
+    $mrkrview_trg_gene_link
+    <!-- <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_trg_gene_zdb_id">$mrkrview_trg_gene_sym</a> -->
     <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_trg_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <?/MISQL>
   <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">

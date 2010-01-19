@@ -348,6 +348,12 @@ var ENTER_KEY = 13;
           <p><b>Abbreviation</b> (required):
           <input type=text onkeypress="return noenter(event)" name=abbrev size=15>
         <?/MIBLOCK>
+
+        <?MIBLOCK COND="$(EC,$marker_type_display,Morpholino)">
+          <?MIVAR><p><b>$marker_type_display</b> alias:<?/MIVAR>
+          <input type=text onkeypress="return noenter(event)" name="alias" size=30>
+        <?/MIBLOCK>
+
         
         <p>
         <b>Note:</b><br>
@@ -483,6 +489,39 @@ var ENTER_KEY = 13;
         insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
         values ('$new_id','$newmrkrSource');">
     <?/MISQL>
+
+   
+
+    <?MICOMMENT> ** make a new data alias, if one one specified ** <?/MICOMMENT>    
+
+    <?MIVAR COND="$(XST,$alias)" NAME="$alias">$(TRIM,$alias)<?/MIVAR>
+
+    <?MIBLOCK COND="$(AND,$(XST,$alias),$(NE,$alias,))">
+        
+        <?MISQL SQL="execute function get_id('DALIAS');">
+            <?MIVAR NAME=$new_alias_id>$1<?/MIVAR>
+        <?/MISQL>
+        <?MISQL SQL=" insert into zdb_active_data (zactvd_zdb_id) values ('$new_alias_id');">
+
+        <?MICOMMENT> * not a fancy special kind of alias, just a normal one * <?/MICOMMENT>
+        <?MISQL SQL="select aliasgrp_pk_id from alias_group where aliasgrp_name = 'alias';">
+            <?MIVAR NAME="$alias_group_id">$1<?/MIVAR>
+        <?/MISQL>
+
+        <?MISQL SQL=" insert into data_alias  (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, 
+                                               dalias_group_id, dalias_alias_lower)
+                                      values ('$new_alias_id', '$new_id', '$alias', 
+                                               '$alias_group_id', '$(LOWER,$alias)');">
+        <?/MISQL>
+
+        <?MISQL COND=$(XST,$newmrkrSource) SQL="
+          insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+          values ('$new_alias_id','$newmrkrSource');">
+        <?/MISQL>
+    <?/MISQL>
+
+    <?/MIBLOCK>
+
 
     <?MIBLOCK COND=$(EC,$reserve,yes)>
       <?MISQL SQL="execute function get_id('NOMEN');"><?/MISQL>
