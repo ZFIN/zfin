@@ -1,18 +1,13 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 
-<table bgcolor="#eeeeee" border="0" width="100%">
-    <tbody>
-    <tr align="center">
-        <td>
-            <font size="-1"><b>ZFIN ID:</b>
-                ${formBean.feature.zdbID}
-            </font>
-        </td>
-        
-    </tr>
-    </tbody>
-</table>
+<zfin2:dataManager zdbID="${formBean.feature.zdbID}"
+                   editURL="${formBean.editURL}"
+                   deleteURL="${formBean.deleteURL}"
+                   latestUpdate="${formBean.latestUpdate}"
+        rtype="feature"/>
+
+
 
 <table width="100%" border="0">
 <tr>
@@ -217,17 +212,7 @@ This feature is representative of one or more unknown insertion sites.
     <c:forEach var="source" items="${formBean.feature.sources}" varStatus="status">
 
     <td>
-            <%-- <c:choose>
-                <c:when test="${source.organization.url == null}">
-                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}">
-                            ${source.organization.name}
-                    </a>
-                </c:when>
-                <c:otherwise>
-                    <a href="${source.organization.url}">${source.organization.name}</a>
-                </c:otherwise>
 
-            </c:choose>--%>
         <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
                 ${source.organization.name}
         </a>
@@ -240,7 +225,7 @@ This feature is representative of one or more unknown insertion sites.
     <td width="180">
         <b>Map:</b>
     </td>
-    <%--<td>  <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}&query_results=true'>Details</a>--%>
+
     
 
     <c:choose>
@@ -250,9 +235,7 @@ This feature is representative of one or more unknown insertion sites.
             <td>
                 LG:
                 <c:forEach var="lg" items="${formBean.mappedMarkerBean.unMappedMarkers}" varStatus="index">
-                    <%--${!index.first ? "," : "" }--%>
-
-                      <c:if test="${lg != 0}">
+                   <c:if test="${lg != 0}">
                         ${lg}
                       </c:if>
                      <c:if test="${!index.last && lg !=0 }">
@@ -268,7 +251,6 @@ This feature is representative of one or more unknown insertion sites.
             <td>
                 LG:
                 <c:forEach var="lg" items="${formBean.featureStat.ftrLocations}" varStatus="index">
-                    <%--${!index.first ? "," : "" }--%>
                     <c:if test="${lg != 0}">
 
                         ${lg}
@@ -287,7 +269,7 @@ This feature is representative of one or more unknown insertion sites.
                     <td>
                         LG:
                         <c:forEach var="lg" items="${formBean.featureStat.ftrMap}" varStatus="index">
-                            <%--${!index.first ? "," : "" }--%>
+
                             <c:if test="${lg != 0}">
 
                                 ${lg}
@@ -334,20 +316,7 @@ This feature is representative of one or more unknown insertion sites.
             <b>Curator Notes:</b>
         </td>
          <td>
-         <%--<c:choose>
-    <c:when test="${formBean.feature.dataNote ne null && fn:length(formBean.feature.dataNote) > 0}">
 
-    <c:forEach var="note" items="${formBean.feature.dataNote}" varStatus="status">
-                                  
-                ${note.note}
-                <c:if test="${!loop.last}">
-                <br>
-            </c:if>
-
-        </c:forEach>
-
-        </c:when>
-        </c:choose>--%>
         <c:if test="${fn:length(formBean.featureStat.featureNote)>0}">
             <c:forEach var="datanote" items="${formBean.featureStat.featureNote}" varStatus="status">
 
@@ -390,20 +359,12 @@ This feature is representative of one or more unknown insertion sites.
                 <tr class="search-result-table-entries">
                     <td>
                         <zfin:link entity="${featgenoStat.genotype}"/>
-                        <%--<c:if test="${featgenoStat.genotype.background ne null}">
-                            (${featgenoStat.genotype.background.name})
-                        </c:if>--%>
-                        <%--<c:forEach var="genoBack" items="${featgenoStat.genotype.associatedGenotypes}" varStatus="loop">--%>
+
                         <c:if test="${fn:length(featgenoStat.genotype.associatedGenotypes)>0}">
                    (<zfin:link entity="${featgenoStat.genotype.associatedGenotypes}"/>)
-                   <%-- <c:if test="${!loop.last}">
-                        ,&nbsp;
-                    </c:if>
-                            <c:if test="${loop.last}">
-                    )
-                    </c:if>--%>
+
                         </c:if>
-                <%--</c:forEach>--%>
+
 
                     </td>
                     <td>
@@ -535,18 +496,11 @@ This feature is representative of one or more unknown insertion sites.
         <tr class="search-result-table-entries">
             <td>
                 <zfin:link entity="${featgenoStat.genotype}"/>
-               <%-- <c:if test="${featgenoStat.genotype.background ne null}">
-                    (${featgenoStat.genotype.background.name})
-                </c:if>--%>
-                 <c:forEach var="genoBack" items="${featgenoStat.genotype.associatedGenotypes}" varStatus="loop">
-                    ({<zfin:link entity="${featgenoStat.genotype.associatedGenotypes}"/>})
-                    <c:if test="${!loop.last}">
-                        ,&nbsp;
-                    </c:if>
-                            <c:if test="${loop.last}">
-                        );
-                    </c:if>
-                </c:forEach>
+
+                <c:if test="${fn:length(featgenoStat.genotype.associatedGenotypes)>0}">
+                   (<zfin:link entity="${featgenoStat.genotype.associatedGenotypes}"/>)
+
+                        </c:if>
 
             </td>
             <td>
@@ -620,9 +574,7 @@ This feature is representative of one or more unknown insertion sites.
                                  integerEntity="${featgenoStat.numberOfExpPublications}"
                                  includeNumber="true"/>
                 </c:if>
-                    <%-- <c:if test="${featgenoStat.isImageExp}">
-                           <img src="/images/camera_icon.gif" alt="with image" image="" border="0">
-                    </c:if>--%>
+                    
                 <c:if test="${featgenoStat.isImageExp}">
                     <img src="/images/camera_icon.gif" alt="with image" image="" border="0">
                 </c:if>
