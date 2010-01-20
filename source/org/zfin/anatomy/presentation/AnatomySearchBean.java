@@ -284,6 +284,8 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public boolean isWildCard() {
+        if (searchTerm == null)
+            return false;
         return (searchTerm.endsWith("*"));
     }
 

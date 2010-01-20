@@ -30,7 +30,7 @@
             <a href='/action/anatomy/term-detail?anatomyItem.zdbID=<c:out value="${ao.zdbID}"/>'>
                 <!-- Highlight the search term or the hightlight term if provided -->
                 <c:choose>
-                    <c:when test="${formBean.stageSearch}">
+                    <c:when test="${formBean.stageSearch || formBean.termSearch}">
                         <zfin:hightlight highlightEntity="${ao.anatomyItem.name}"
                                          highlightString="${formBean.highlightText}"/>
                     </c:when>
@@ -52,7 +52,7 @@
                         <span class="anatomy-list-notes">
                             <!-- Highlight the search term or the hightlight term if provided -->
                             <c:choose>
-                                <c:when test="${formBean.stageSearch}">
+                                <c:when test="${formBean.stageSearch || formBean.termSearch} ">
                                     <zfin:hightlight highlightEntity="${ao.formattedSynonymList}"
                                                      highlightString="${formBean.highlightText}"/>
                                 </c:when>
