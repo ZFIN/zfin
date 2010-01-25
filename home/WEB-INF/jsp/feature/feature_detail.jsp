@@ -284,7 +284,25 @@ This feature is representative of one or more unknown insertion sites.
 
 
                 </c:when>
+         <c:when test="${!empty formBean.featureStat.ftrLinkage}">
+                    <td>
+                        LG:
+                        <c:forEach var="lg" items="${formBean.featureStat.ftrLinkage}" varStatus="index">
 
+                            <c:if test="${lg != 0}">
+
+                                ${lg}
+                            </c:if>
+                             <c:if test="${!index.last}">
+                        ,&nbsp;
+                    </c:if>
+                        </c:forEach>
+                        &nbsp;<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
+
+                    </td>
+
+
+                </c:when>
 
 
         <c:otherwise>
