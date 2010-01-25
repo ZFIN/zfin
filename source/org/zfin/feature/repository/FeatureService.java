@@ -103,6 +103,20 @@ public class FeatureService {
 
     }
 
+    public List<String> getFtrLinkage() {
+        MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+        List<String> lg = mutantRepository.getLinkageFeatureLG(feature);
+        List<String> delmarklg = new ArrayList<String>();
+
+        for (String lgchr : lg)
+
+            delmarklg.add(lgchr);
+
+
+        return delmarklg;
+
+    }
+
 
     public List<RecordAttribution> getFtrTypeAttr() {
         InfrastructureRepository infRep = RepositoryFactory.getInfrastructureRepository();
