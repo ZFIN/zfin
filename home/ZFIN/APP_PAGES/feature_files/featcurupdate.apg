@@ -53,9 +53,9 @@ PREFIX:   featcurup_
             alert("The marker  '<?MIVAR>$featcur_feature_add_name<?/MIVAR>' - already exists")
          </SCRIPT> 
        <?MIELSE> 
-        <?MIBLOCK COND="$(AND,$(EC,$featcur_feature_add_type,unspecified),$(NE,$(SUBSTR,$featcur_feature_add_name,1,3),un_))">
+        <?MIBLOCK COND="$(AND,$(EC,$featcur_feature_add_type,unspecified),$(NE,$(SUBSTR,$featcur_feature_add_name,1,12),unspecified_))">
               <SCRIPT>
-                 alert("A feature of type unspecified must always be named un_")
+                 alert("A feature of type unspecified must always be named unspecified_")
               </SCRIPT> 
        <?MIELSE>
         <?MIBLOCK COND="$(AND,$(EC,$(SUBSTR,$featcur_feature_add_name,1,3),un_),$(NE,$featcur_feature_add_type,UNSPECIFIED))">
