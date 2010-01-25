@@ -76,7 +76,7 @@ public class WikiConnectTest {
         try {
             String linkName = AntibodyWikiWebService.getInstance().getWikiLink("zn-5") ;
             assertNotNull(linkName) ;
-            assertEquals("http://"+ZfinProperties.getWikiHostname()+"/display/AB/zn-5",linkName) ;
+            assertTrue(linkName.endsWith("/display/AB/zn-5")) ;
         } catch (Exception e) {
             fail(e.fillInStackTrace().toString()) ;
         }
