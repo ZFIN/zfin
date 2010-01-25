@@ -2958,6 +2958,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
       <?MIVAR NAME=vDBnameColumn>
         $vDBnameColumn
        <nobr><LI>
+       $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>") 
        <?MIVAR><A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref <?/MIVAR>
         </LI></nobr>
 

@@ -515,18 +515,20 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
        where dblink_zdb_id = '$dataOID';">
      <?/MISQL>
 	 <?MISQL SQL="
- 			select fdb_db_name 
+ 			select fdb_db_name, fdbcont_organism_common_name
               from db_link, foreign_db_contains, foreign_db
              where dblink_zdb_id = '$dataOID'
 	     and fdbcont_fdb_db_id = fdb_db_pk_id
                and dblink_fdbcont_zdb_id = fdbcont_zdb_id;">
      <?/MISQL>     
      <?MIVAR NAME=$fdb_name>$1<?/MIVAR>
+     <?MIVAR NAME="$domrkrup_fdbcont_organism_common_name">$2<?/MIVAR>
      <?MISQL SQL="
         select fdbcont_zdb_id
          from foreign_db_contains, foreign_db, foreign_db_data_type
         where fdbdt_super_type = 'sequence'
           and fdbdt_data_type = '$xtra_param'
+          and fdbcont_organism_common_name = '$domrkrup_fdbcont_organism_common_name'
           and fdb_db_name = '$fdb_name' 
 	  and fdbcont_fdb_db_id = fdb_db_pk_id
 	  and fdbcont_fdbdt_id = fdbdt_pk_id;">
@@ -592,6 +594,7 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
 	    where dblink_linked_recid = '$OID'
 	      and dblink_acc_num = '$old_value';">
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
+        <?MIVAR NAME="$domrkrup_dblink_zdb_id">$1<?/MIVAR>
       <?/MISQL>
       <?MIELSE>
       <?MISQL COND="$(EC,$info,seqacc)" SQL="
@@ -602,6 +605,7 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
 	      and fdbc.fdbcont_zdb_id = '$domrkrup_fdbcont_zdb_id';
           ">
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
+        <?MIVAR NAME="$domrkrup_dblink_zdb_id">$1<?/MIVAR>
       <?/MISQL>	
       <?/MIBLOCK>
    
@@ -635,34 +639,34 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
 
       <?/MIBLOCK>
 
-      <?MIBLOCK COND="$(AND,$(EC,$attr,recattrib),$(EC,$info,seqacc))">
+  <?MIBLOCK COND="$(AND,$(EC,$attr,recattrib),$(EC,$info,seqacc))">
 
-	<?MIVAR NAME="$dblink_value"><?/MIVAR>
+    <?MIVAR NAME="$dblink_value"><?/MIVAR>
 
     <?MICOMMENT>
-  Not having the fdbcont_zdb_id should work for everything but the odd GEO db_link, which isn't updated this way anyway.
+      Not having the fdbcont_zdb_id should work for everything but the odd GEO db_link, which isn't updated this way anyway.
+      excluding GEO with ZDB-FDBCONT-070919-1
     <?/MICOMMENT>
-      <?MISQL COND="$(EC,$info,seqacc)" SQL="
-	   select dblink_zdb_id
-       from db_link dbl join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id
-	    where dbl.dblink_linked_recid = '$OID'
-	      and dbl.dblink_acc_num = '$old_value';
-	      and fdbc.fdbcont_zdb_id <> 'ZDB-FDBCONT-070919-1'; -- not GEO
-	      -- and fdbc.fdbcont_zdb_id = '$xtra_param';
-          ">
-	<?MIVAR NAME="$dblink_value">$1<?/MIVAR>
-      <?/MISQL>	
-         <?MISQL SQL="
-	    insert into record_attribution
-		(recattrib_data_zdb_id, recattrib_source_zdb_id) 
-              values('$dblink_value', '$new_value') 	
-                ;">
-         <?/MISQL>
-
-      <?/MIBLOCK>
 
 
-      <?MIBLOCK COND="$(EC,$info,mrel)">
+    <?MISQL COND="$(NXST,$domrkrup_dblink_zdb_id)" 
+            SQL="select dblink_zdb_id
+            from db_link  
+           where dblink_linked_recid = '$OID'
+             and dblink_acc_num = '$old_value'
+             and dblink_fdbcont_zdb_id <> 'ZDB-FDBCONT-070919-1';"> 
+           <?MIVAR NAME="$domrkrup_dblink_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MISQL SQL="insert into record_attribution
+                       (recattrib_data_zdb_id, recattrib_source_zdb_id) 
+                 values('$domrkrup_dblink_zdb_id', '$new_value');">
+    <?/MISQL>
+
+  <?/MIBLOCK>  <?MICOMMENT> * end attr=recattrib info=seqacc * <?/MICOMMENT>
+
+
+  <?MIBLOCK COND="$(EC,$info,mrel)">
         <!-- check whether the mrkr abbrev is valid. -->
         <?MISQL SQL="
 	   select * from marker
