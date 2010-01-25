@@ -293,7 +293,8 @@ unload to term_no_longer_secondary.txt
     where term_is_secondary = 't'
     and not exists (Select 'x'
 		  from sec_oks
-		  where term_ont_id = sec_id) ;
+		  where term_ont_id = sec_id
+		  and term_ontology = 'pato.quality') ;
 
 --set these back to primary for now
 
@@ -301,7 +302,8 @@ update term
   set term_is_secondary = 'f'
   where not exists (Select 'x'
 		  from sec_oks
-		  where term_ont_id = sec_id) 
+		  where term_ont_id = sec_id
+		  and term_ontology = 'pato.quality') 
   and term_is_secondary = 't';
 
 
@@ -331,7 +333,8 @@ insert into sec_unload (sec_id, prim_id)
   select sec_id, prim_id
     from sec_oks
     where exists (select 'x' from
-		    term where term_ont_id = sec_id) ;
+		    term where term_ont_id = sec_id
+		    and term_ontology = 'pato.quality') ;
 
 
 create temp table sec_unload_report 
@@ -363,7 +366,8 @@ insert into sec_unload_report
     and apato_quality_zdb_id = term_zdb_id
     and apato_genox_zdb_id = genox_zdb_id
     and genox_exP_zdb_id = exp_zdb_id
-    and genox_geno_zdb_id = geno_zdb_id ;
+    and genox_geno_zdb_id = geno_zdb_id 
+    and term_ontology = 'pato.quality';
 
 unload to 'sec_unload_report'
   select * from sec_unload_report;
