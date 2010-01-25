@@ -90,6 +90,7 @@ public interface MutantRepository extends CachedRepository {
     List<String> getDeletedMarkerLG(Feature feat);
 
     List<String> getMappedFeatureLG(Feature feat);
+    List<String> getLinkageFeatureLG(Feature feat);
 
 
     /**

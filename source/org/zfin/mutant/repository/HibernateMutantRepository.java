@@ -436,6 +436,17 @@ public class HibernateMutantRepository implements MutantRepository {
         return (List<String>) query.list();
     }
 
+    public List<String> getLinkageFeatureLG(Feature feat) {
+        Session session = HibernateUtil.currentSession();
+
+    Query query = session.createQuery(
+                "select l.lg " +
+                        "from Linkage l join l.linkageMemberFeatures as m " +
+                        " where m.zdbID = :zdbId ");
+        query.setParameter("zdbId", feat.getZdbID());
+        return (List<String>) query.list();
+
+    }
 
     public List<Feature> getFeaturesByAbbreviation(String name) {
         List<Feature> features = new ArrayList<Feature>();
