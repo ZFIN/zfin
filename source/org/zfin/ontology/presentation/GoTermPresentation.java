@@ -8,7 +8,7 @@ import org.zfin.ontology.GoTerm;
  */
 public class GoTermPresentation extends EntityPresentation {
 
-    private static final String uri = "http://www.ebi.ac.uk/ego/GTerm?id=GO:";
+    public static final String uri = "http://www.ebi.ac.uk/ego/GTerm?id=GO:";
 
     /**
      * Generates a Go term link using the go id

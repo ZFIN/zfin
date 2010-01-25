@@ -60,6 +60,16 @@ public abstract class EntityPresentation {
         }
     }
 
+    protected static String getExternalWikiLink(String link, String name) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        sb.append(name);
+        sb.append("|");
+        sb.append(link);
+        sb.append("]");
+        return sb.toString();
+    }
+
     protected static String getTomcatLink(String uri, String zdbID, String abbreviation, String name) {
         StringBuilder sb = getTomcatHyperLinkStart();
         sb.append(uri);

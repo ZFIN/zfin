@@ -231,8 +231,23 @@ public class AntibodyWikiWebService extends WikiWebService {
 
         // anatomical structures 
         StringBuilder anatomyStringBuilder = new StringBuilder();
+        Set<String> antibodyLinks = new TreeSet<String>(new Comparator<String>(){
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.toLowerCase().compareTo(o2.toLowerCase());
+            }
+        });
         for (AnatomyLabel anatomyLabel : antibodyService.getAntibodyLabelings()) {
-            anatomyStringBuilder.append(AnatomyItemPresentation.getWikiLink(anatomyLabel.getAnatomyItem()));
+            antibodyLinks.add(AnatomyItemPresentation.getWikiLink(anatomyLabel.getAnatomyItem()));
+            if(anatomyLabel.getSecondaryAnatomyItem()!=null){
+                antibodyLinks.add(AnatomyItemPresentation.getWikiLink(anatomyLabel.getSecondaryAnatomyItem()));
+            }
+            if(anatomyLabel.getCellularComponent()!=null){
+                antibodyLinks.add(AnatomyItemPresentation.getWikiLink(anatomyLabel.getCellularComponent()));
+            }
+        }
+        for(String antibodyLink : antibodyLinks){
+            anatomyStringBuilder.append(antibodyLink);
             anatomyStringBuilder.append(" &nbsp;");
         }
         content = content.replace("{text-data:AnatomicalStructuresRecognized}{text-data}", anatomyStringBuilder.toString());

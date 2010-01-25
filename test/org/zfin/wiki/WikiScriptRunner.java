@@ -23,7 +23,7 @@ public class WikiScriptRunner {
      * Adds a web page for a single antibody.
      * @param antibodyName
      */
-    public void addWebPage(String antibodyName) {
+    public void syncrhonizeWebPage(String antibodyName) {
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByName(antibodyName);
         if (antibody != null) {
 //            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
@@ -60,13 +60,15 @@ public class WikiScriptRunner {
         File file = new File("test", "log4j.xml");
         DOMConfigurator.configure(file.getAbsolutePath());
         ZfinProperties.init("test", "zfin-properties-test.xml");
+//        ZfinProperties.setWebRootDirectory(new File(".").getAbsolutePath());
+        ZfinProperties.setWebRootDirectory("home");
         try {
             WikiScriptRunner wikiScriptRunner = new WikiScriptRunner();
 //            wikiScriptRunner.addWebPage("zn-5");
 //            wikiScriptRunner.addWebPage("Ab-10E4");
 //            wikiScriptRunner.addWebPage("Ab-3A10");
-//            wikiScriptRunner.addWebPage("anti-DLX3b");
-            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
+            wikiScriptRunner.syncrhonizeWebPage("Ab1-tuba");
+//            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
 
 //            AntibodyWikiWebService.login();
 //            wikiScriptRunner.addWebPage("Ab-2F11");

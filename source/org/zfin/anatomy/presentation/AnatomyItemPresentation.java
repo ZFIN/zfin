@@ -2,6 +2,8 @@ package org.zfin.anatomy.presentation;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.presentation.GoTermPresentation;
 
 /**
  * Presentation Class to create output from a Run object.
@@ -37,4 +39,9 @@ public class AnatomyItemPresentation extends EntityPresentation {
     public static String getWikiLink(AnatomyItem anatomyItem) {
         return getWikiLink("/action/"+uri,anatomyItem.getZdbID(),anatomyItem.getName()) ;
     }
+
+    public static String getWikiLink(GoTerm goTerm) {
+        return getExternalWikiLink(GoTermPresentation.uri+goTerm.getGoID(),goTerm.getName())  ;
+    }
+
 }
