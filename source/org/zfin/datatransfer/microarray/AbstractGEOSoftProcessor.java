@@ -23,7 +23,8 @@ public abstract class AbstractGEOSoftProcessor implements SoftParser{
     private int  accessionColumn = 2 ;
     private String[] includePatterns = null ;
     private String[] excludePatterns = null ;
-    private String[] defaultAccessionExcludePatterns = new String[]{"XM_","XR_","ENSDART","ETG","NC_","NG_","DRPTA","A_","DCP_"};
+    private String[] defaultAccessionExcludePatterns = new String[]{"XM_","XR_","ENSDART","ETG","NC_","NG_","DRPTA",
+            "A_","DCP_","NP_","NR_","TC"};
     private final static String DOT = "." ;
     private final static String UNDERSCORE = "_" ;
 
