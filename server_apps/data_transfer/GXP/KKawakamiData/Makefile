@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/GXP/KKawakami
 
-STATICS = KKawakami.unl loadKKawakamiData.sql
+STATICS = KKawakami.unl loadKKawakamiData.sql KKawakamiPub08121712.unl loadKKawakamiPub081217-17.sql
  
 
 
