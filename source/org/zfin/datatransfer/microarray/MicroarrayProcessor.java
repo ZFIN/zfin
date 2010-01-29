@@ -337,8 +337,7 @@ public final class MicroarrayProcessor {
     }
 
     public MicroarrayBean run() {
-        Session session = HibernateUtil.currentSession() ;
-        session.beginTransaction() ;
+        HibernateUtil.createTransaction();
 
         MicroarrayBean microarrayBean = null ;
 
@@ -353,9 +352,8 @@ public final class MicroarrayProcessor {
 //            microarrayLinks = sequenceRepository.getMarkerDBLinks(null, zfEspressoDatabase ,arrayExpressDatabase) ;   // 0 - load microarray
 //            processNewLinks( newOtherAccessions , microarrayLinks,zfEspressoDatabase,arrayExpressDatabase) ;  // 2
 
-
-//            session.getTransaction().rollback(); 
-            session.getTransaction().commit() ;
+//            HibernateUtil.rollbackTransaction();
+            HibernateUtil.flushAndCommitCurrentSession();
         }
         catch(Exception e){
             logger.error("failed to do microarray update",e.fillInStackTrace());
@@ -364,10 +362,10 @@ public final class MicroarrayProcessor {
             } catch (IOException e1) {
                 logger.error(e.fillInStackTrace()) ; 
             }
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
         finally{
-            session.close();
+            HibernateUtil.closeSession();
         }
         return microarrayBean ;
     }
