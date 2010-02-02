@@ -25,8 +25,17 @@ Input:
        </TD> 
      <?/MIBLOCK>
 
+    <?MICOMMENT> ** You may notice that the form below uses a post, and think,
+                       "I'm not uploading a file or changing the state 
+                        of the system, that should be a get!" 
+                    ..and you'd be right, except that to handle a multiselect
+                    input box datablade requires that a post be used.  It's on
+                    page 5-8 of the informix manual ...and they should be deeply
+                    embarassed about it.    ** 
+     <?/MICOMMENT>
+
     </TR>
-     <FORM name="critform" method="get" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+     <FORM name="critform" method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
         <input type=hidden name=MIval value=aa-newmrkrselect.apg>
       <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
       <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
