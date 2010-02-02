@@ -48,7 +48,6 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
                 publicationChanged(new PublicationChangeEvent(curatorPubList.getValue(0)));
             }
         });
-        RootPanel.get(StandardMarkerDivNames.publicationLookupDiv).add(this);
     }
 
 
