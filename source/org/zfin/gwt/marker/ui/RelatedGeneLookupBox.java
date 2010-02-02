@@ -7,10 +7,11 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.ui.ItemSuggestion;
 import org.zfin.gwt.root.util.LookupService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * This class is the complete implementation, but it also positions itself and contains all of its handlers.
@@ -24,7 +25,7 @@ public class RelatedGeneLookupBox extends RelatedMarkerBox {
         super(type, zdbIDThenAbbrev, div);
     }
 
-    protected void initGui() {
+    protected void initGUI() {
         relatedEntityTable.setStyleName("relatedEntityTable");
 
         // init table
@@ -41,6 +42,7 @@ public class RelatedGeneLookupBox extends RelatedMarkerBox {
 
         errorLabel.setStyleName("error");
         panel.add(errorLabel);
+        panel.setStyleName("gwt-editbox");
 
         publicationLabel.setStyleName("relatedEntityDefaultPub");
     }
@@ -64,7 +66,7 @@ public class RelatedGeneLookupBox extends RelatedMarkerBox {
                 public void onSuccess(String transcriptType) {
                     if (false == transcriptType.equals("miRNA")) {
                         boolean confirmed = Window.confirm("Are you sure you want to associate more than one gene to this transcript?");
-                        if (true == confirmed) {
+                        if (confirmed) {
                             fireRelatedEntityAdded(new RelatedEntityEvent<MarkerDTO>(dto));
                         }
                     } else {
@@ -93,19 +95,22 @@ public class RelatedGeneLookupBox extends RelatedMarkerBox {
                     }
 
                     public void onSuccess(Response response) {
-                        List newSuggestions = new ArrayList();
-                        newSuggestions.add(new Suggestion() {
-                            @Override
-                            public String getDisplayString() {
-                                return "*" + request.getQuery() + "*";
+                        Collection collection = response.getSuggestions();
+                        int limit = 15 ;
+                        if(collection.size()>limit){
+                            Iterator iterator = collection.iterator();
+                            int i = 0 ;
+                            while(iterator.hasNext()){
+                                iterator.next();
+                                ++i ;
+                                if(i > limit){
+                                    iterator.remove();
+                                }
                             }
+                            collection.add(new ItemSuggestion("...",null));
+                        }
 
-                            @Override
-                            public String getReplacementString() {
-                                return null; 
-                            }
-                        });
-                        response.getSuggestions();
+
                         callback.onSuggestionsReady(request, response);
                     }
                 });

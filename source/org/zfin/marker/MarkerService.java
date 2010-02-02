@@ -478,5 +478,14 @@ public class MarkerService {
         return typeList;
     }
 
+    public static SummaryDBLinkDisplay getProteinProductDBLinks(Marker marker) {
+        SummaryDBLinkDisplay sp = new SummaryDBLinkDisplay();
+        for (DBLink dblink : marker.getDbLinks()) {
+            if (dblink.isInDisplayGroup(DisplayGroup.GroupName.DISPLAYED_PROTEIN_SEQUENCE))
+                sp.addDBLink(dblink);
+        }
+
+        return sp;
+    }
 
 }

@@ -13,8 +13,8 @@ public class MarkerDTO extends RelatedEntityDTO {
     protected String abbreviationOrder;
     protected String markerType;
     protected List<String> recordAttributions;
-    protected List<String> publicNotes;
-    protected List<String> curatorNotes;
+    protected NoteDTO publicNote;
+    protected List<NoteDTO> curatorNotes;
     protected List<RelatedEntityDTO> aliasRelatedEntities;
     protected List<MarkerDTO> relatedGeneAttributes;
     private List<MarkerDTO> relatedCloneAttributes;
@@ -71,19 +71,19 @@ public class MarkerDTO extends RelatedEntityDTO {
         this.markerType = markerType;
     }
 
-    public List<String> getPublicNotes() {
-        return publicNotes;
+    public NoteDTO getPublicNote() {
+        return publicNote;
     }
 
-    public void setPublicNotes(List<String> publicNotes) {
-        this.publicNotes = publicNotes;
+    public void setPublicNote(NoteDTO publicNote) {
+        this.publicNote = publicNote;
     }
 
-    public List<String> getCuratorNotes() {
+    public List<NoteDTO> getCuratorNotes() {
         return curatorNotes;
     }
 
-    public void setCuratorNotes(List<String> curatorNotes) {
+    public void setCuratorNotes(List<NoteDTO> curatorNotes) {
         this.curatorNotes = curatorNotes;
     }
 
@@ -223,7 +223,7 @@ public class MarkerDTO extends RelatedEntityDTO {
         sb.append(", abbreviationOrder='").append(abbreviationOrder).append('\'');
         sb.append(", markerType='").append(markerType).append('\'');
         sb.append(", recordAttributions=").append(recordAttributions);
-        sb.append(", publicNotes=").append(publicNotes);
+        sb.append(", publicNote=").append(publicNote);
         sb.append(", curatorNotes=").append(curatorNotes);
         sb.append(", relatedGeneAttributes=").append(relatedGeneAttributes);
         sb.append(", suppliers=").append(suppliers);

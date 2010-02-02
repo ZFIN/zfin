@@ -29,14 +29,6 @@
         <put name="staticTitle" value="Create Antibody" />
         <put name="body" value="/WEB-INF/jsp/antibody/antibody_create.jsp"/>
     </definition>
-    <definition name="antibody-update.page" extends="main_layout">
-        <put name="staticTitle" value="Update Antibody Name" />
-        <put name="body" value="/WEB-INF/jsp/antibody/antibody_name_update.jsp"/>
-    </definition>
-    <definition name="antibody-detail-update.page" extends="main_layout">
-        <put name="staticTitle" value="Update Antibody Details" />
-        <put name="body" value="/WEB-INF/jsp/antibody/antibody_detail_update.jsp"/>
-    </definition>
 
     <definition name="antibodies-per-publication.page" extends="main_layout">
         <put name="staticTitle" value="Antibodies per Publication"/>

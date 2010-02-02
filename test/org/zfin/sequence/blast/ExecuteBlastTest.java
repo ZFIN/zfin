@@ -376,8 +376,17 @@ public class ExecuteBlastTest {
             assertEquals("has 21 hits",21,blastResultBean.getHits().size()) ;
             HitViewBean hitViewBean = blastResultBean.getHits().get(17) ;
 
+            // this used to be a test for accessions withotu db_links, but now this accession has a db_link
+            // use SQL to find new ones:
+//select
+//ab.accbk_acc_num from accession_bank ab
+//where not exists
+//(
+//select 'x' from db_link dbl
+//where ab.accbk_acc_num=dbl.dblink_acc_num
+//)
             assertEquals(18,hitViewBean.getHitNumber());
-            assertEquals("CU927933",hitViewBean.getAccessionNumber());
+            assertEquals("CW672524",hitViewBean.getAccessionNumber());
             List<HighScoringPair> highScoringPairList = hitViewBean.getHighScoringPairs() ;
             assertEquals(1,highScoringPairList.size());
             assertEquals(0,hitViewBean.getGenes().size()) ;

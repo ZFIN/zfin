@@ -34,7 +34,7 @@ public interface MarkerRPCService extends RemoteService {
 
     // note methods
 
-    void addCuratorNote(NoteDTO noteDTO);
+    NoteDTO addCuratorNote(NoteDTO noteDTO);
 
     void editCuratorNote(NoteDTO noteDTO);
 
@@ -48,12 +48,6 @@ public interface MarkerRPCService extends RemoteService {
 
     void removeMarkerAttribution(String zdbID, String pubZdbID);
 
-
-    /**
-     * @param zdbID ZdbID of Marker to return attributions for.
-     * @return Returns accession numbers as strings.
-     */
-    List<String> getMarkerAttributions(String zdbID);
 
     // alias attribution list
 
@@ -69,15 +63,6 @@ public interface MarkerRPCService extends RemoteService {
 
     DBLinkDTO addInternalNucleotideSequence(String markerZdbID, String sequence, String pubZdbID, String referenceZdbID) throws BlastDatabaseAccessException;
 
-
-    /**
-     * @return List of dblinks
-     */
-    List<DBLinkDTO> getMarkerDBLinksForAccession(String accession);
-
-    // MarkerDBLink methods
-
-    DBLinkDTO getDBLink(String zdbID);
 
     DBLinkDTO addDBLink(DBLinkDTO dbLinkDTO, List<ReferenceDatabaseDTO> referenceDatabaseDTOs) throws DBLinkNotFoundException;
 
@@ -121,4 +106,13 @@ public interface MarkerRPCService extends RemoteService {
     void removeRelatedMarkerAttribution(MarkerDTO markerDTO);
 
     String validateDBLink(DBLinkDTO dbLinkDTO);
+
+    NoteDTO addExternalNote(NoteDTO noteDTO);
+
+    void editExternalNote(NoteDTO noteDTO);
+
+    void removeExternalNote(NoteDTO noteDTO);
+
+    void updateMarkerHeaders(MarkerDTO markerDTO);
+
 }

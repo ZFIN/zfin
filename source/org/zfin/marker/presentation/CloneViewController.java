@@ -18,43 +18,43 @@ public class CloneViewController extends AbstractController {
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest,
                                                  HttpServletResponse httpServletResponse) throws Exception {
         // set base bean
-        CloneViewBean cloneViewBean = new CloneViewBean();
+        CloneBean cloneBean = new CloneBean();
 
         String zdbID = httpServletRequest.getParameter(LookupStrings.ZDB_ID);
         logger.info("zdbID: " + zdbID);
         Clone clone = RepositoryFactory.getMarkerRepository().getCloneById(zdbID);
         logger.info("clone: " + clone);
-        cloneViewBean.setMarker(clone);
+        cloneBean.setMarker(clone);
 
-        cloneViewBean.setMarkerExpression(ExpressionService.getExpressionForMarker(clone));
+        cloneBean.setMarkerExpression(ExpressionService.getExpressionForMarker(clone));
 
         // setting clone relationshi8ps
         RelatedMarkerDisplay cloneRelationships = MarkerService.getRelatedMarkerDisplay(clone);
-        cloneViewBean.setMarkerRelationships(cloneRelationships);
+        cloneBean.setMarkerRelationships(cloneRelationships);
 
 
         //setting supporting sequences
         SequenceInfo sequenceInfo = MarkerService.getSequenceInfo(clone);
-        cloneViewBean.setSequenceInfo(sequenceInfo);
+        cloneBean.setSequenceInfo(sequenceInfo);
 
-        cloneViewBean.setSummaryDBLinkDisplay(MarkerService.getSummaryPages(clone));
+        cloneBean.setSummaryDBLinkDisplay(MarkerService.getSummaryPages(clone));
 
         // setting other clones
 //        MarkerDBLinkList otherClones = RepositoryFactory.getSequenceRepository().getSummaryMarkerDBLinksForMarker( clone) ;
 //        cloneBean.setOtherClones(otherClones);
 
         // set mapping data
-        cloneViewBean.setMappedMarkerBean(MarkerService.getMappedMarkers(clone));
+        cloneBean.setMappedMarkerBean(MarkerService.getMappedMarkers(clone));
 
         // check whether we are a thisse probe
-        cloneViewBean.setThisseProbe(ExpressionService.isThisseProbe(clone));
+        cloneBean.setThisseProbe(ExpressionService.isThisseProbe(clone));
 
         // setting publications
-        cloneViewBean.setNumPubs(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForMarker(
+        cloneBean.setNumPubs(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForMarker(
                 clone, 0).getTotalCount());
 
         ModelAndView modelAndView = new ModelAndView("clone-view.page");
-        modelAndView.addObject(LookupStrings.FORM_BEAN, cloneViewBean);
+        modelAndView.addObject(LookupStrings.FORM_BEAN, cloneBean);
         modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, clone.getAbbreviation());
 
         return modelAndView;

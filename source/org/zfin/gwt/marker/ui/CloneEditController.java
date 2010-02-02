@@ -5,77 +5,65 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.marker.event.*;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.CloneDTO;
+import org.zfin.gwt.root.dto.DBLinkDTO;
+import org.zfin.gwt.root.dto.PublicationDTO;
+import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  */
-public final class CloneEditController implements PublicationChangeListener , HandlesError{
+public final class CloneEditController extends AbstractFullMarkerEditController<CloneDTO>{
 
 
     // hidable titles
-    private String targetedGenesTitle = "geneTitle";
+    public static final String genesTitle = "geneTitle";
 
     // gui elements
+    private ViewMarkerLabel cloneViewMarkerLabel = new ViewMarkerLabel("[View Clone]", "/action/marker/clone-view?zdbID=","Discard");
     private HTML relatedGeneTitle = new HTML("Contains Gene:");
-    private CloneHeaderEdit cloneHeaderEdit = new CloneHeaderEdit("markerName");
-    private CloneBox cloneBox = new HandledCloneBox("cloneDataName");
-    private DirectAttributionTable directAttributionTable = new HandledDirectAttributionTable("directAttributionName");
-    private PreviousNamesBox previousNamesBox = new PreviousNamesBox("aliasName");
-    private RelatedMarkerBox relatedGenesBox = new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.CLONE_CONTAINS_GENE, true, "geneName");
-    private PublicationLookupBox publicationLookupBox = new PublicationLookupBox("publicationName");
-    private DBLinkTable dbLinkTable = new HandledDBLinkTable("dbLinksName");
-    private SupplierNameList supplierNameList = new SupplierNameList("supplierName");
-    private CuratorNoteBox curatorNoteBox = new CuratorNoteBox("curatorNoteName");
-    private PublicNoteBox publicNoteBox = new PublicNoteBox("publicNoteName");
+    private CloneHeaderEdit cloneHeaderEdit = new CloneHeaderEdit(headerDiv);
+    private CloneBox cloneBox = new CloneBox(dataDiv);
+    private RelatedMarkerBox relatedGenesBox = new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.CLONE_CONTAINS_GENE, true, geneDiv);
+    private SupplierNameList supplierNameList = new SupplierNameList();
+    private DBLinkTable dbLinkTable = new HandledDBLinkTable();
 
-    // internal data
-    private String publication;
-    private String cloneZdbID;
-    private CloneDTO cloneDTO;
-
-    // lookup
-    private static final String LOOKUP_TRANSCRIPT_ZDBID = "zdbID";
-
-    // listeners
-    private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
-    private List<MarkerLoadListener> markerLoadListeners = new ArrayList<MarkerLoadListener>();
 
     public void initGUI() {
 
-        RootPanel.get(targetedGenesTitle).add(relatedGeneTitle);
+        RootPanel.get(genesTitle).add(relatedGeneTitle);
 
         addListeners();
         setValues();
 
         DeferredCommand.addCommand(new Command() {
             public void execute() {
-                loadClone();
+                loadDTO();
             }
         });
     }
 
-    private void setValues() {
+    protected void setValues() {
         publicationLookupBox.clearPublications();
         publicationLookupBox.addPublication(new PublicationDTO("VEGA Database Links", "ZDB-PUB-030703-1"));
+        publicationLookupBox.addRecentPubs() ;
 
+        noteBox.removeEditMode(NoteBox.EditMode.EXTERNAL);
     }
 
-    protected void loadClone() {
+    protected void loadDTO() {
 
         try {
             Dictionary transcriptDictionary = Dictionary.getDictionary("MarkerProperties");
-            cloneZdbID = transcriptDictionary.get(LOOKUP_TRANSCRIPT_ZDBID);
+            String zdbID = transcriptDictionary.get(LOOKUP_ZDBID);
 
-            CloneRPCService.App.getInstance().getCloneForZdbID(cloneZdbID,
+            CloneRPCService.App.getInstance().getCloneForZdbID(zdbID,
                     new MarkerEditCallBack<CloneDTO>("failed to find clone: ") {
                         public void onSuccess(CloneDTO returnedCloneDTO) {
-                            setCloneDomain(returnedCloneDTO);
+                            setDTO(returnedCloneDTO);
                         }
                     });
         } catch (Exception e) {
@@ -84,79 +72,110 @@ public final class CloneEditController implements PublicationChangeListener , Ha
     }
 
     protected void addListeners() {
+        super.addListeners();
 
-        cloneHeaderEdit.setPreviousNamesBox(previousNamesBox);
-        cloneHeaderEdit.addMarkerChangeListener(new CloneChangeListener() {
-            public void changeCloneProperties(CloneChangeEvent cloneChangeEvent) {
-                if (false == cloneChangeEvent.getDTO().getName().equals(getCloneDTO().getName())) {
+        cloneHeaderEdit.addChangeListener(new RelatedEntityChangeListener<CloneDTO>() {
+            public void dataChanged(RelatedEntityEvent<CloneDTO> cloneChangeEvent) {
+                if (false == cloneChangeEvent.getDTO().getName().equals(dto.getName())) {
                     if (null == previousNamesBox.validateNewRelatedEntity(cloneChangeEvent.getDTO().getName())) {
-                        previousNamesBox.addRelatedEntity(getCloneDTO().getName(), publication);
+                        previousNamesBox.addRelatedEntity(dto.getName(), publicationZdbID);
                     }
                 }
-                getCloneDTO().copyFrom(cloneChangeEvent.getDTO());
+                dto.copyFrom(cloneChangeEvent.getDTO());
             }
         });
 
         // direct attribution listeners
+        relatedGenesBox.addRelatedEntityCompositeListener(new DirectAttributionAddsRelatedEntityListener(directAttributionTable));
         dbLinkTable.addDBLinkTableListener(new DirectAttributionDBLinkTableListener(directAttributionTable));
 
-        previousNamesBox.addRelatedEntityCompositeListener(new DirectAttributionAddsRelatedEntityListener(directAttributionTable));
-        relatedGenesBox.addRelatedEntityCompositeListener(new DirectAttributionAddsRelatedEntityListener(directAttributionTable));
-
-        addMarkerDomainListener(new MarkerLoadListener() {
-            public void markerDomainLoaded(MarkerLoadEvent markerLoadEvent) {
-                MarkerDTO dto = markerLoadEvent.getMarkerDTO();
+        addMarkerLoadListener(new MarkerLoadListener<CloneDTO>() {
+            public void markerLoaded(MarkerLoadEvent<CloneDTO> markerLoadEvent) {
+                final CloneDTO dto = markerLoadEvent.getMarkerDTO();
                 directAttributionTable.setZdbID(dto.getZdbID());
                 directAttributionTable.setRecordAttributions(dto.getRecordAttributions());
-                cloneHeaderEdit.setDomain((CloneDTO) dto);
-                previousNamesBox.setRelatedEntities(cloneDTO.getZdbID(), cloneDTO.getAliasAttributes());
-                curatorNoteBox.setZdbID(dto.getZdbID());
-                curatorNoteBox.setNotes(dto.getCuratorNotes());
-                publicNoteBox.setZdbID(dto.getZdbID());
-                publicNoteBox.setNotes(dto.getPublicNotes());
-                cloneBox.setDomain((CloneDTO) dto);
+                cloneHeaderEdit.setDTO(dto);
+                previousNamesBox.setRelatedEntities(dto.getZdbID(), dto.getAliasAttributes());
+                noteBox.setDTO(dto);
+                cloneViewMarkerLabel.setDTO(dto);
+                cloneBox.setDTO(dto);
                 supplierNameList.setDomain(dto);
-                relatedGenesBox.setRelatedEntities(cloneDTO.getZdbID(), cloneDTO.getRelatedGeneAttributes());
+                relatedGenesBox.setRelatedEntities(dto.getZdbID(), dto.getRelatedGeneAttributes());
 
-                final List<DBLinkDTO> supportinSequenceLinks = cloneDTO.getSupportingSequenceLinks();
+                final List<DBLinkDTO> supportinSequenceLinks = dto.getSupportingSequenceLinks();
                 CloneRPCService.App.getInstance().getCloneDBLinkAddReferenceDatabases(dto.getZdbID(),
                         new MarkerEditCallBack<List<ReferenceDatabaseDTO>>("error loading available sequence databases: ") {
                             public void onSuccess(List<ReferenceDatabaseDTO> referenceDatabases) {
                                 dbLinkTable.setReferenceDatabases(referenceDatabases);
-                                dbLinkTable.setZdbID(cloneZdbID);
+                                dbLinkTable.setZdbID(dto.getZdbID());
                                 dbLinkTable.setDBLinks(supportinSequenceLinks);
                             }
                         });
             }
         });
 
+        cloneViewMarkerLabel.addViewMarkerListeners(new ViewMarkerListener(){
+            @Override
+            public void finishedView() {
+                if(cloneHeaderEdit.isDirty()){
+                    String error = "Name / type has unsaved change.";
+                    cloneHeaderEdit.setError(error);
+                    cloneViewMarkerLabel.setError(error);
+                }
+                else
+                if(noteBox.isDirty() || noteBox.hasDirtyNotes()){
+                    String error = "A note not saved.";
+                    noteBox.setError(error);
+                    cloneViewMarkerLabel.setError(error);
+                }
+                else
+                if(cloneBox.isDirty()){
+                    String error = "Clone data is dirty.";
+                    cloneBox.setError(error);
+                    cloneViewMarkerLabel.setError(error);
+                }
+                else
+                if(previousNamesBox.isDirty()){
+                    String error = "Alias entry not added.";
+                    cloneViewMarkerLabel.setError(error);
+                    previousNamesBox.setError(error);
+                }
+                else
+                if(relatedGenesBox.isDirty()){
+                    String error = "Gene entry not added.";
+                    cloneViewMarkerLabel.setError(error);
+                    relatedGenesBox.setError(error);
+                }
+                else
+                if(dbLinkTable.isDirty()){
+                    String error = "Sequence not added.";
+                    cloneViewMarkerLabel.setError(error);
+                    dbLinkTable.setError(error);
+                }
+                else {
+                    cloneViewMarkerLabel.continueToViewTranscript();
+                }
 
-        publicationLookupBox.addPublicationChangeListener(cloneHeaderEdit);
-        publicationLookupBox.addPublicationChangeListener(previousNamesBox);
-        publicationLookupBox.addPublicationChangeListener(relatedGenesBox);
+            }
+        });
+
+
         publicationLookupBox.addPublicationChangeListener(dbLinkTable);
-        publicationLookupBox.addPublicationChangeListener(directAttributionTable);
-        publicationLookupBox.addPublicationChangeListener(this);
+        publicationLookupBox.addPublicationChangeListener(cloneHeaderEdit);
+        publicationLookupBox.addPublicationChangeListener(relatedGenesBox);
 
-        addHandlesErrorListener(cloneHeaderEdit);
-        cloneHeaderEdit.addHandlesErrorListener(this);
-        addHandlesErrorListener(previousNamesBox);
-        previousNamesBox.addHandlesErrorListener(this);
-        addHandlesErrorListener(directAttributionTable);
-        directAttributionTable.addHandlesErrorListener(this);
-        addHandlesErrorListener(relatedGenesBox);
-        relatedGenesBox.addHandlesErrorListener(this);
-        addHandlesErrorListener(cloneBox);
-        cloneBox.addHandlesErrorListener(this);
-        addHandlesErrorListener(dbLinkTable);
-        dbLinkTable.addHandlesErrorListener(this);
+        synchronizeHandlesErrorListener(cloneViewMarkerLabel);
+        synchronizeHandlesErrorListener(cloneHeaderEdit);
+        synchronizeHandlesErrorListener(relatedGenesBox);
+        synchronizeHandlesErrorListener(noteBox);
+        synchronizeHandlesErrorListener(cloneBox);
+        synchronizeHandlesErrorListener(dbLinkTable);
     }
 
 
-    protected void setCloneDomain(CloneDTO newCloneDTO) {
-        cloneDTO = newCloneDTO;
-        cloneZdbID = cloneDTO.getZdbID();
-        if(cloneZdbID.startsWith("ZDB-EST") || cloneZdbID.startsWith("ZDB-CDNA")){
+    protected void setDTO(CloneDTO newCloneDTO) {
+        super.setDTO(newCloneDTO);
+        if(dto.getZdbID().startsWith("ZDB-EST") || dto.getZdbID().startsWith("ZDB-CDNA")){
             relatedGeneTitle.setHTML("<b>Encoded by Gene:</b>");
             relatedGenesBox.setType(MarkerRelationshipEnumTypeGWTHack.GENE_ENCODES_SMALL_SEGMENT);
             relatedGenesBox.setZdbIDThenAbbrev(false);
@@ -164,43 +183,6 @@ public final class CloneEditController implements PublicationChangeListener , Ha
         else{
             relatedGeneTitle.setHTML("<b>Clone contains Gene:</b>");
         }
-        fireMarkerDomainLoaded(new MarkerLoadEvent(cloneDTO));
     }
 
-
-    public void publicationChanged(PublicationChangeEvent event) {
-        publication = event.getPublication();
-    }
-
-    public CloneDTO getCloneDTO() {
-        return cloneDTO;
-    }
-
-    public void addMarkerDomainListener(MarkerLoadListener markerLoadListener) {
-        markerLoadListeners.add(markerLoadListener);
-    }
-
-    public void fireMarkerDomainLoaded(MarkerLoadEvent markerLoadEvent) {
-        for (MarkerLoadListener markerLoadListener : markerLoadListeners) {
-            markerLoadListener.markerDomainLoaded(markerLoadEvent);
-        }
-    }
-
-    public void fireEventSuccess() {
-        for (HandlesError handlesError : handlesErrorListeners) {
-            handlesError.clearError();
-        }
-    }
-
-    public void addHandlesErrorListener(HandlesError handlesError) {
-        handlesErrorListeners.add(handlesError);
-    }
-
-    public void setError(String message) {
-        // not doing anything with this
-    }
-
-    public void clearError() {
-        fireEventSuccess();
-    }
 }

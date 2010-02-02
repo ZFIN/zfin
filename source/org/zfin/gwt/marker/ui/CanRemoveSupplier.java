@@ -1,7 +1,8 @@
 package org.zfin.gwt.marker.ui;
 
-import org.zfin.gwt.marker.event.SupplierChangeEvent;
-
+/**
+ * Components that require remove suppliers.
+ */
 public interface CanRemoveSupplier {
-    public void fireSupplierRemoved(SupplierChangeEvent supplierChangeEvent) ;
+    public void fireSupplierRemoved(String supplierName) ;
 }

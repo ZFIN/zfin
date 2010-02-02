@@ -24,7 +24,16 @@ public class MarkerEditEntryPoint implements EntryPoint {
         }
         else
         if(zdbID.indexOf("GENE")>0){
-            (new GeneEditController()).initGUI();
+            if(zdbID.startsWith("Alternate")){
+                (new AlternateGeneEditController()).initGUI();
+            }
+            else{
+                (new GeneEditController()).initGUI();
+            }
+        }
+        else
+        if(zdbID.indexOf("ATB")>0){
+            (new AntibodyEditController()).initGUI();
         }
         else{
             (new CloneEditController()).initGUI();

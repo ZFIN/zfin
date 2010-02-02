@@ -1,5 +1,8 @@
 package org.zfin.gwt.marker.ui;
 
+/**
+ * Validates sequences.
+ */
 public class SequenceValidator {
 
     public final static int NOT_FOUND = -1 ;

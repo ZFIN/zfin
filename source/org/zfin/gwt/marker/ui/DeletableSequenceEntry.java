@@ -15,17 +15,17 @@ import java.util.List;
 public class DeletableSequenceEntry extends Composite {
 
     // gui components
-    private VerticalPanel panel = new VerticalPanel();
-    private HorizontalPanel deflinePanel = new HorizontalPanel();
-    private Label deflineLabel = new Label();
-    private HTML sequenceHTML = new HTML();
+    private final VerticalPanel panel = new VerticalPanel();
+    private final HorizontalPanel deflinePanel = new HorizontalPanel();
+    private final Label deflineLabel = new Label();
+    private final HTML sequenceHTML = new HTML();
     private final int DEFAULT_LENGTH = 60;
     private int lineLength;
-    private AttributionList attributionList = new AttributionList();
-    private String imageURL = "/images/";
+    private final AttributionList attributionList = new AttributionList();
+    private final String imageURL = "/images/";
 
-    private Image addAttributionButton = new Image(imageURL + "new-attribution.png");
-    private Image removeSequenceButton = new Image(imageURL + "delete-button.png");
+    private final Image addAttributionButton = new Image(imageURL + "new-attribution.png");
+    private final Image removeSequenceButton = new Image(imageURL + "delete-button.png");
 
     // types
     private static final String NUCLEOTIDE_SEQUENCE = "NUCLEOTIDE_SEQUENCE";
@@ -54,7 +54,7 @@ public class DeletableSequenceEntry extends Composite {
         return sequenceDTO.getDataZdbID();
     }
 
-    protected void initGUI() {
+    void initGUI() {
         deflineLabel.setText(sequenceDTO.getDefLine());
         sequenceHTML.setHTML(insertLineReturns(sequenceDTO.getSequence(), getLineLength()));
         sequenceHTML.setStyleName("sequenceDisplay");
@@ -91,7 +91,7 @@ public class DeletableSequenceEntry extends Composite {
         });
     }
 
-    public DeletableSequenceEntry getDelatableSequence() {
+    DeletableSequenceEntry getDelatableSequence() {
         return this;
     }
 
@@ -126,7 +126,7 @@ public class DeletableSequenceEntry extends Composite {
         return sequenceHTML.getText();
     }
 
-    protected String insertLineReturns(String string, int numCharsPerLine) {
+    String insertLineReturns(String string, int numCharsPerLine) {
         this.lineLength = numCharsPerLine;
         char[] chars = string.toCharArray();
         StringBuffer buffer = new StringBuffer();
@@ -210,7 +210,7 @@ public class DeletableSequenceEntry extends Composite {
         return null;
     }
 
-    public int getLineLength() {
+    int getLineLength() {
         return (lineLength == 0 ? lineLength = DEFAULT_LENGTH : lineLength);
     }
 

@@ -22,12 +22,12 @@ import java.util.List;
  */
 public class StageSelector extends VerticalPanel {
 
-    public static final String SELECT_MULTIPLE_STAGES = "Select Multiple Stages";
-    public static final String SELECT_SINGLE_STAGE = "Select a Stage Range";
-    public static final String STAGE_RANGE = "Stage Range";
-    public static final String MULTIPLE_STAGES = "Multiple Stages";
-    public static final String START = "Start:";
-    public static final String END = "End:";
+    private static final String SELECT_MULTIPLE_STAGES = "Select Multiple Stages";
+    private static final String SELECT_SINGLE_STAGE = "Select a Stage Range";
+    private static final String STAGE_RANGE = "Stage Range";
+    private static final String MULTIPLE_STAGES = "Multiple Stages";
+    private static final String START = "Start:";
+    private static final String END = "End:";
 
     private static final HTML HTML_NBSP = new HTML("&nbsp");
 
@@ -44,7 +44,7 @@ public class StageSelector extends VerticalPanel {
         initGui();
     }
 
-    public void initGui() {
+    void initGui() {
 
         multiStartStageList.setVisibleItemCount(6);
         panelTitle = new Label(STAGE_RANGE);
@@ -207,7 +207,7 @@ public class StageSelector extends VerticalPanel {
         return multiStartStageList;
     }
 
-    public void setMultiStageMode() {
+    void setMultiStageMode() {
         startStage.setVisible(false);
         endStage.setVisible(false);
         multiStartStageList.setVisible(true);
@@ -215,7 +215,7 @@ public class StageSelector extends VerticalPanel {
         panelTitle.setText(MULTIPLE_STAGES);
     }
 
-    public void setSingleStageMode() {
+    void setSingleStageMode() {
         multiStageButton.setText(SELECT_MULTIPLE_STAGES);
         panelTitle.setText(STAGE_RANGE);
         multiStartStageList.setVisible(false);

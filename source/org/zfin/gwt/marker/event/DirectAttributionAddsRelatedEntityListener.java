@@ -10,16 +10,16 @@ public class DirectAttributionAddsRelatedEntityListener<U extends RelatedEntityD
 
     private DirectAttributionTable directAttributionTable;
 
-    public DirectAttributionAddsRelatedEntityListener(DirectAttributionTable directAttributionTable) {
+    public DirectAttributionAddsRelatedEntityListener( DirectAttributionTable directAttributionTable ) {
         this.directAttributionTable = directAttributionTable;
     }
 
     public void addRelatedEntity(RelatedEntityEvent<U> relatedEntityEvent) {
-        addPublication(relatedEntityEvent.getRelatedEntityDTO().getPublicationZdbID());
+        addPublication(relatedEntityEvent.getDTO().getPublicationZdbID());
     }
 
     public void addAttribution(RelatedEntityEvent<U> relatedEntityEvent) {
-        addPublication(relatedEntityEvent.getRelatedEntityDTO().getPublicationZdbID());
+        addPublication(relatedEntityEvent.getDTO().getPublicationZdbID());
     }
 
     public void removeRelatedEntity(RelatedEntityEvent<U> relatedEntityEvent) {

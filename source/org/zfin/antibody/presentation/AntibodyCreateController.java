@@ -86,7 +86,7 @@ public class AntibodyCreateController extends SimpleFormController {
 
         //   return new ModelAndView("antibody-detail-update.page", LookupStrings.FORM_BEAN, formBean);
 
-        return new ModelAndView(new RedirectView("update-details?antibody.zdbID=" + newAntibody.getZdbID() + "&antibodyDefPubZdbID=" + antibodyPub.getZdbID()));
+        return new ModelAndView(new RedirectView("/action/marker/marker-edit?zdbID=" + newAntibody.getZdbID() + "&antibodyDefPubZdbID=" + antibodyPub.getZdbID()));
     }
 
 

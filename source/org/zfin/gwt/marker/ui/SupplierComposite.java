@@ -3,21 +3,20 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.SupplierChangeEvent;
 
 /**
  */
-public class SupplierComposite extends Composite {
+class SupplierComposite extends Composite {
 
     // internal data
     private String name ;
-    private CanRemoveSupplier parentTable;
+    private final CanRemoveSupplier parentTable;
 
 
-    private HorizontalPanel panel = new HorizontalPanel() ;
+    private final HorizontalPanel panel = new HorizontalPanel() ;
     private Widget nameLabel = null ;
-    private String imageURL = "/images/";
-    private Image removeAttributionButton = new Image(imageURL+"delete-button.png") ;
+    private final String imageURL = "/images/";
+    private final Image removeAttributionButton = new Image(imageURL+"delete-button.png") ;
 
     private boolean visibleName ;
 
@@ -25,11 +24,11 @@ public class SupplierComposite extends Composite {
         this(parentTable,attributeName,true) ;
     }
 
-    public SupplierComposite(CanRemoveSupplier parentTable,String attributeName,boolean visibleName){
+    private SupplierComposite(CanRemoveSupplier parentTable,String attributeName,boolean visibleName){
         this.name = attributeName ;
         this.parentTable = parentTable;
         this.visibleName = visibleName ;
-        initGui() ;
+        initGUI() ;
         initWidget(panel);
     }
 
@@ -41,7 +40,7 @@ public class SupplierComposite extends Composite {
         removeAttributionButton.setVisible(visibleName);
     }
 
-    private void initGui(){
+    private void initGUI(){
         nameLabel = new Label(name) ;
         nameLabel.setVisible(visibleName);
         removeAttributionButton.setVisible(visibleName);
@@ -53,7 +52,7 @@ public class SupplierComposite extends Composite {
 
         removeAttributionButton.addClickHandler(new ClickHandler(){
             public void onClick(ClickEvent event) {
-                parentTable.fireSupplierRemoved(new SupplierChangeEvent(name)) ;
+                parentTable.fireSupplierRemoved(name) ;
             }
         });
     }
@@ -66,7 +65,4 @@ public class SupplierComposite extends Composite {
         this.name = name;
     }
 
-    public boolean isVisibleName() {
-        return visibleName;
-    }
 }

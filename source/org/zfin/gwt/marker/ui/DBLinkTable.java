@@ -2,43 +2,44 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.TextBox;
-import org.zfin.gwt.marker.event.DBLinkTableEvent;
 import org.zfin.gwt.marker.event.DBLinkTableListener;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.ui.IntegerTextBox;
+import org.zfin.gwt.root.ui.StringListBox;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
+ * This copmonent handles DBLinks.
  */
 public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
 
 
     // gui elements
-    protected String SPACER;
-    protected HTML dbNameLabel;
-    protected EasyListBox referenceListBox;
-    protected HTML lengthLabel;
-    protected TextBox lengthField;
-    protected int MAX_LENGTH;
+    private String SPACER;
+    private HTML dbNameLabel;
+    private StringListBox referenceListBox;
+    private HTML lengthLabel;
+    private IntegerTextBox lengthField;
+    private int MAX_LENGTH;
 
     private List<ReferenceDatabaseDTO> referenceDatabases = new ArrayList<ReferenceDatabaseDTO>();
 
     // listeners
-    private List<DBLinkTableListener> dbLinkTableListeners = new ArrayList<DBLinkTableListener>();
+    private final List<DBLinkTableListener> dbLinkTableListeners = new ArrayList<DBLinkTableListener>();
 
-    protected void initGui() {
+    protected void initGUI() {
         // has to be instantiated here because called from a sub-class initGUI;
         SPACER = "&nbsp;&nbsp;";
         dbNameLabel = new HTML(SPACER + "DbName:");
-        referenceListBox = new EasyListBox();
+        referenceListBox = new StringListBox();
         lengthLabel = new HTML(SPACER + "Length:");
-        lengthField = new TextBox();
+        lengthField = new IntegerTextBox();
         MAX_LENGTH = 6;
 
         lengthField.setMaxLength(MAX_LENGTH);
@@ -60,6 +61,7 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
         panel.add(newRelatedEntityPanel);
         errorLabel.setStyleName("error");
         panel.add(errorLabel);
+        panel.setStyleName("gwt-editbox");
 
         // init current alias row
         publicationLabel.setStyleName("relatedEntityDefaultPub");
@@ -70,7 +72,7 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
         refreshReferenceDatabases();
     }
 
-    public void refreshReferenceDatabases() {
+    void refreshReferenceDatabases() {
         referenceListBox.clear();
         referenceListBox.addItem("-- lookup database --", "null");
         for (ReferenceDatabaseDTO referenceDatabaseDTO : referenceDatabases) {
@@ -82,7 +84,7 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
         }
     }
 
-    public List<ReferenceDatabaseDTO> getReferenceDatabases() {
+    List<ReferenceDatabaseDTO> getReferenceDatabases() {
         return referenceDatabases;
     }
 
@@ -136,7 +138,7 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
      * @param attributionName Name of the accession to add.
      * @return Error string to be displayed.
      */
-    protected String validateNewDBLink(String attributionName) {
+    String validateNewDBLink(String attributionName) {
         if (getRelatedEntityIndex(attributionName) >= 0) {
             return "Attribution [" + attributionName + "] exists.";
         }
@@ -166,7 +168,7 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
 
         ReferenceDatabaseDTO referenceDatabaseDTO = null;
         String referenceDBString = referenceListBox.getItemText(referenceListBox.getSelectedIndex());
-        String referenceDBZdbID = referenceListBox.getSelectedString();
+        String referenceDBZdbID = referenceListBox.getSelected();
         if (referenceDBZdbID != null) {
             referenceDatabaseDTO = new ReferenceDatabaseDTO();
             String[] refStrings = referenceDBString.split(" - ");
@@ -222,7 +224,7 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
     }
 
 
-    public void updatedLength(DBLinkDTO newDTO) {
+    void updatedLength(DBLinkDTO newDTO) {
 
         //drop this DTO into the correct length widget
         int rowcount = relatedEntityTable.getRowCount();
@@ -251,7 +253,7 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
         return relatedEntityList;
     }
 
-    public void resetInput() {
+    void resetInput() {
         lengthField.setText("");
         referenceListBox.setItemSelected(0, true);
     }
@@ -269,14 +271,16 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
         dbLinkTableListeners.add(dbLinkTableListener);
     }
 
-    protected void fireDBLinkUpdated(DBLinkTableEvent tableEvent) {
+    void fireDBLinkUpdated(RelatedEntityEvent<DBLinkDTO> tableEvent) {
         for (DBLinkTableListener dbLinkTableListener : dbLinkTableListeners) {
-            dbLinkTableListener.updateDBLink(tableEvent);
+            dbLinkTableListener.dataChanged(tableEvent);
         }
     }
 
-    public String getNewDBLinkField() {
-        return newRelatedEntityField.getText().trim();
+    void fireDBLinkAttributed(RelatedEntityEvent<DBLinkDTO> tableEvent) {
+        for (DBLinkTableListener dbLinkTableListener : dbLinkTableListeners) {
+            dbLinkTableListener.addAttribution(tableEvent);
+        }
     }
 
 }

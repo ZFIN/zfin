@@ -7,6 +7,7 @@ import org.zfin.gwt.marker.event.PublicationChangeListener;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.marker.event.RelatedEntityListener;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.ui.HandlesError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +25,14 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
     private boolean attributionRequired = true;
 
     // listeners
-    private List<RelatedEntityListener<U>> relatedEntityListeners = new ArrayList<RelatedEntityListener<U>>();
-    private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
+    private final List<RelatedEntityListener<U>> relatedEntityListeners = new ArrayList<RelatedEntityListener<U>>();
+    private final List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
 
     // common GUI elements
-    protected Label publicationLabel = new Label();
+    final Label publicationLabel = new Label();
 
     // error label
-    protected Label errorLabel = new Label();
+    final Label errorLabel = new Label();
 
     protected abstract List<String> getRelatedEntityAttributionsForName(String relatedEntityName);
 
@@ -43,7 +44,9 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
 
     public abstract void removeRelatedEntityFromGUI(U relatedEntityDTO);
 
-    public AbstractRelatedEntityContainer() {
+    public abstract boolean isDirty() ;
+
+    AbstractRelatedEntityContainer() {
     }
 
     public AbstractRelatedEntityContainer(boolean attributionRequired) {
@@ -59,11 +62,11 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
         this.zdbID = zdbID;
     }
 
-    protected String getPublication() {
+    String getPublication() {
         return publicationLabel.getText().trim();
     }
 
-    public void setPublication(String publicationZdbID) {
+    void setPublication(String publicationZdbID) {
         publicationLabel.setText(publicationZdbID);
     }
 
@@ -90,7 +93,7 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
     /**
      * Clears the from
      */
-    protected void reset() {
+    void reset() {
         for (U dto : getRelatedEntityDTOs()) {
             removeRelatedEntity(dto);
         }
@@ -106,7 +109,7 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
     }
 
 
-    protected String validateNewAttribution(RelatedEntityDTO dto) {
+    String validateNewAttribution(RelatedEntityDTO dto) {
         String name = dto.getName();
         String pub = dto.getPublicationZdbID();
 
@@ -124,7 +127,7 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
         return null;
     }
 
-    protected int getRelatedEntityIndex(String name) {
+    int getRelatedEntityIndex(String name) {
         List relatedEntityNames = getRelatedEntityNames();
         return (relatedEntityNames.indexOf(name));
     }
@@ -140,7 +143,7 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
      * @param name Name of the related entity to add.
      * @return Error string to be displayed.
      */
-    protected String validateNewRelatedEntity(String name) {
+    String validateNewRelatedEntity(String name) {
         if (getRelatedEntityIndex(name) >= 0) {
             return "Related entity [" + name + "] exists.";
         }
@@ -165,14 +168,14 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
         relatedEntityListeners.add(relatedEntityListener);
     }
 
-    protected void fireRelatedEntityAdded(RelatedEntityEvent<U> relatedEntityEvent) {
+    void fireRelatedEntityAdded(RelatedEntityEvent<U> relatedEntityEvent) {
         fireEventSuccess();
         for (RelatedEntityListener<U> relatedEntityListener : relatedEntityListeners) {
             relatedEntityListener.addRelatedEntity(relatedEntityEvent);
         }
     }
 
-    protected void fireAttributionAdded(RelatedEntityEvent<U> relatedEntityEvent) {
+    void fireAttributionAdded(RelatedEntityEvent<U> relatedEntityEvent) {
         fireEventSuccess();
         for (RelatedEntityListener<U> relatedEntityListener : relatedEntityListeners) {
             relatedEntityListener.addAttribution(relatedEntityEvent);
@@ -180,14 +183,14 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
     }
 
 
-    protected void fireRelatedEntityRemoved(RelatedEntityEvent<U> relatedEntityEvent) {
+    void fireRelatedEntityRemoved(RelatedEntityEvent<U> relatedEntityEvent) {
         fireEventSuccess();
         for (RelatedEntityListener<U> relatedEntityListener : relatedEntityListeners) {
             relatedEntityListener.removeRelatedEntity(relatedEntityEvent);
         }
     }
 
-    protected void fireAttributionRemoved(RelatedEntityEvent<U> relatedEntityEvent) {
+    void fireAttributionRemoved(RelatedEntityEvent<U> relatedEntityEvent) {
         fireEventSuccess();
         for (RelatedEntityListener<U> relatedEntityListener : relatedEntityListeners) {
             relatedEntityListener.removeAttribution(relatedEntityEvent);
@@ -199,7 +202,7 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
         setPublication(event.getPublication());
     }
 
-    protected boolean attributionIsValid() {
+    boolean attributionIsValid() {
         if (isAttributionRequired()
                 && (publicationLabel.getText() == null
                 || publicationLabel.getText().equals(""))) {

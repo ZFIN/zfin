@@ -1,0 +1,141 @@
+package org.zfin.gwt.marker.ui;
+
+import com.google.gwt.event.dom.client.*;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.TextArea;
+import org.zfin.gwt.marker.event.NoteEvent;
+import org.zfin.gwt.marker.event.RemovableNoteListener;
+import org.zfin.gwt.root.dto.NoteDTO;
+import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.IsDirty;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * This class contains the text area field and the update/revert buttons
+ */
+public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
+
+    private final HorizontalPanel panel = new HorizontalPanel();
+    private final String imageURL = "/images/";
+    final Image removeNoteButton = new Image(imageURL + "delete-button.png");
+    final TextArea noteText = new TextArea();
+
+    // internal data
+    final NoteDTO noteDTO;
+    final HandlesError parent;
+
+    // listeners
+    private final List<RemovableNoteListener> removableNoteListeners = new ArrayList<RemovableNoteListener>() ;
+
+    AbstractNoteEntry(NoteDTO noteDTO,HandlesError parent) {
+        this.noteDTO  = noteDTO;
+        this.parent = parent;
+        noteText.setText(noteDTO.getNoteData());
+        initGUI();
+        addInternalListeners(this);
+        initWidget(panel);
+    }
+
+    protected void initGUI() {
+
+        noteText.setWidth("400");
+        panel.add(noteText);
+
+        removeNoteButton.setStyleName("relatedEntityPubLink");
+        removeNoteButton.setTitle("Delete note.");
+        panel.add(removeNoteButton);
+
+        panel.add(saveButton);
+        panel.add(revertButton);
+
+        noteText.setText(noteDTO.getNoteData());
+
+        checkDirty();
+//        updateNoteStatus();
+
+    }
+
+    @Override
+    protected void addInternalListeners(HandlesError handlesError) {
+
+        noteText.addChangeHandler(new ChangeHandler(){
+            @Override
+            public void onChange(ChangeEvent event) {
+                checkDirty();
+            }
+        });
+
+        noteText.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent event) {
+                checkDirty();
+            }
+        });
+
+        noteText.addKeyPressHandler(new KeyPressHandler(){
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+                boolean dirty = isDirty();
+                saveButton.setEnabled(dirty);
+                revertButton.setEnabled(dirty);
+                noteText.setFocus(true);
+                // changing the style messes stuff up
+            }
+        });
+
+        revertButton.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent event) {
+                revertGUI();
+            }
+        });
+
+    }
+
+    public NoteDTO getNoteDTO(){
+        return noteDTO;
+    }
+
+
+    public boolean checkDirty() {
+        boolean dirty = isDirty();
+        saveButton.setEnabled(dirty);
+        revertButton.setEnabled(dirty);
+        if(dirty){
+            noteText.setStyleName(IsDirty.DIRTY_STYLE);
+        }
+        else{
+            noteText.setStyleName(IsDirty.CLEAN_STYLE);
+            fireEventSuccess();
+        }
+        return dirty ; 
+    }
+
+
+
+    @Override
+    public boolean isDirty() {
+        return (false==noteText.getText().equals(noteDTO.getNoteData())) ;
+    }
+
+    @Override
+    protected void revertGUI() {
+        noteText.setText(noteDTO.getNoteData());
+        checkDirty();
+    }
+
+    public void addNoteListener(RemovableNoteListener removableNoteListener){
+        removableNoteListeners.add(removableNoteListener);
+    }
+
+
+    void fireRemoveNote(NoteEvent noteEvent) {
+        for(RemovableNoteListener removableNoteListener : removableNoteListeners){
+            removableNoteListener.removeNote(noteEvent);
+        }
+    }
+}

@@ -8,15 +8,16 @@ import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 
 /**
+ * A related marker box.
  */
 public abstract class RelatedMarkerBox extends AbstractRelatedEntityBox<MarkerDTO> {
 
 
-    protected MarkerRelationshipEnumTypeGWTHack type;
-    protected boolean zdbIDThenAbbrev;
+    MarkerRelationshipEnumTypeGWTHack type;
+    private boolean zdbIDThenAbbrev;
 
 
-    public RelatedMarkerBox(MarkerRelationshipEnumTypeGWTHack type, boolean zdbIDThenAbbrev, String div) {
+    RelatedMarkerBox(MarkerRelationshipEnumTypeGWTHack type, boolean zdbIDThenAbbrev, String div) {
         super();
         this.type = type;
         this.zdbIDThenAbbrev = zdbIDThenAbbrev;
@@ -46,7 +47,7 @@ public abstract class RelatedMarkerBox extends AbstractRelatedEntityBox<MarkerDT
     }
 
 
-    public void addInternalListeners(final RelatedMarkerBox relatedMarkerbox) {
+    void addInternalListeners(final RelatedMarkerBox relatedMarkerbox) {
         addRelatedEntityCompositeListener(new RelatedMarkerListener(this));
     }
 

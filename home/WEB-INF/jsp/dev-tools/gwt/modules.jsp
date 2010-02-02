@@ -40,4 +40,16 @@
             <a href="/action/dev-tools/gwt/antibody-edit">Marker Edit: Antibody</a>
         </td>
     </tr>
+    <tr>
+        <td class="sectionTitle">Gene Edit</td>
+        <td width="120" colspan="2" class="sectionTitle">
+            <a href="/action/dev-tools/gwt/gene-edit">Marker Edit: Gene on markerview.apg</a>
+        </td>
+    </tr>
+    <tr>
+        <td class="sectionTitle">Alternate/New Gene Edit</td>
+        <td width="120" colspan="2" class="sectionTitle">
+            <a href="/action/dev-tools/gwt/alternate-gene-edit">Marker Edit: Gene</a>
+        </td>
+    </tr>
 </table>

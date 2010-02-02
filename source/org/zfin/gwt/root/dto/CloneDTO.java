@@ -25,9 +25,18 @@ public class CloneDTO extends MarkerDTO {
         return this ;
     }
 
-    public CloneDTO copyFrom(CloneDTO otherCloneDTO){
-        setName(otherCloneDTO.getName());
-        return this ;
+    public CloneDTO deepCopy() {
+        CloneDTO cloneDTO = new CloneDTO();
+        cloneDTO.supportingSequenceLinks = supportingSequenceLinks;
+        cloneDTO.zdbID = zdbID;
+        cloneDTO.name = name;
+        cloneDTO.abbreviationOrder = abbreviationOrder;
+        cloneDTO.markerType = markerType;
+        cloneDTO.setLink(link);
+        cloneDTO.setPublicationZdbID(publicationZdbID);
+        cloneDTO.markerRelationshipType = markerRelationshipType;
+        cloneDTO.zdbIDThenAbbrev = zdbIDThenAbbrev;
+        return cloneDTO;
     }
 
     public String getProblemType() {

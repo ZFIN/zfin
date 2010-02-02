@@ -5,7 +5,7 @@
 
 <c:if test="${fn:length(entity.aliases)>0}">
 <div>
-    <b>Previous Names:</b>
+    <b>Alias:</b>
 <c:forEach  var="markerAlias" items="${entity.aliases}" varStatus="loop">
     ${markerAlias.alias} <zfin:attribution entity="${markerAlias}"/><c:if test="${!loop.last}">, </c:if>
 </c:forEach>

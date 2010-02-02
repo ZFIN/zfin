@@ -354,7 +354,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-    public void addMarkerDataNote(Marker marker, String note, Person curator) {
+    public DataNote addMarkerDataNote(Marker marker, String note, Person curator) {
         LOG.debug("enter addMarDataNote");
         DataNote dnote = new DataNote();
         dnote.setDataZdbID(marker.getZdbID());
@@ -362,7 +362,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         dnote.setCurator(curator);
         dnote.setDate(new Date());
         dnote.setNote(note);
-        LOG.debug("data note curator: " + curator.toString());
+        LOG.debug("data note curator: " + curator);
         Set<DataNote> dataNotes = marker.getDataNotes();
         if (dataNotes == null) {
             dataNotes = new HashSet<DataNote>();
@@ -373,9 +373,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         HibernateUtil.currentSession().save(dnote);
         LOG.debug("dnote zdb_id: " + dnote.getZdbID());
+        return dnote ;
     }
 
-    public void addAntibodyExternalNote(Antibody antibody, String note, String sourceZdbID) {
+    public AntibodyExternalNote addAntibodyExternalNote(Antibody antibody, String note, String sourceZdbID) {
         LOG.debug("enter addExtDataNote");
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         Person currentUser = Person.getCurrentSecurityUser();
@@ -406,6 +407,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             addMarkerPub(antibody, publication);
         }
         ir.insertUpdatesTable(antibody, "notes", "", currentUser, note, "");
+        return externalNote ;
     }
 
     public void createOrUpdateOrthologyExternalNote(Marker gene, String note) {
@@ -442,10 +444,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public void editAntibodyExternalNote(String notezdbid, String note) {
         LOG.debug("enter addExtDataNote");
-
         ExternalNote extnote = RepositoryFactory.getInfrastructureRepository().getExternalNoteByID(notezdbid);
         extnote.setNote(note);
-        HibernateUtil.currentSession().save(extnote);
+        HibernateUtil.currentSession().update(extnote);
     }
 
 

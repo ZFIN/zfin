@@ -39,6 +39,7 @@ public class MarkerEditController extends AbstractController {
         if (zdbID.startsWith("ZDB-ATB-")) {
             Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
             if (antibody != null) {
+                markerBean.setMarker(antibody);
                 ModelAndView modelAndView = new ModelAndView("antibody-edit.page", LookupStrings.FORM_BEAN, markerBean);
                 modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, antibody.getAbbreviation());
                 return modelAndView;

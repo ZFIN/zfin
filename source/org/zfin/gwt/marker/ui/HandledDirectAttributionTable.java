@@ -1,33 +1,32 @@
 package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.DirectAttributionEvent;
 import org.zfin.gwt.marker.event.DirectAttributionListener;
 
-public class HandledDirectAttributionTable extends DirectAttributionTable {
+class HandledDirectAttributionTable extends DirectAttributionTable {
 
-    public HandledDirectAttributionTable(String div) {
+    public HandledDirectAttributionTable() {
         super();
         addInternalListeners(this);
-        RootPanel.get(div).add(this);
+        RootPanel.get(StandardMarkerDivNames.directAttributionDiv).add(this);
     }
 
-    public void addInternalListeners(final DirectAttributionTable directAttributionTable) {
+    void addInternalListeners(final DirectAttributionTable directAttributionTable) {
         addDirectAttributionListener(new DirectAttributionListener() {
-            public void remove(final DirectAttributionEvent directAttributionEvent) {
-                MarkerRPCService.App.getInstance().removeMarkerAttribution(getZdbID(), directAttributionEvent.getPubZdbID(),
+            public void remove(final String pubZdbID) {
+                MarkerRPCService.App.getInstance().removeMarkerAttribution(getZdbID(), pubZdbID,
                         new MarkerEditCallBack<Void>("failed to remove a publication: ", directAttributionTable) {
                             public void onSuccess(Void o) {
-                                removeReferenceFromGUI(directAttributionEvent.getPubZdbID());
+                                removeReferenceFromGUI(pubZdbID);
                             }
                         });
             }
 
-            public void add(final DirectAttributionEvent directAttributionEvent) {
-                MarkerRPCService.App.getInstance().addMarkerAttribution(getZdbID(), directAttributionEvent.getPubZdbID(),
+            public void add(final String pubZdbID) {
+                MarkerRPCService.App.getInstance().addMarkerAttribution(getZdbID(), pubZdbID,
                         new MarkerEditCallBack<Void>("failed to add a publication: ", directAttributionTable) {
                             public void onSuccess(Void o) {
-                                addPublicationToGUI(directAttributionEvent.getPubZdbID());
+                                addPublicationToGUI(pubZdbID);
                             }
                         });
             }

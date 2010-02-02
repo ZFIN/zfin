@@ -21,20 +21,20 @@ import java.util.List;
 public class LookupComposite extends Composite {
 
     // gui components
-    protected HorizontalPanel lookupPanel = new HorizontalPanel();
-    protected ItemSuggestOracle oracle = new ItemSuggestOracle(this);
-    protected TextBox textBox = new TextBox();
-    protected SuggestBox suggestBox;
-    protected SuggestOracle.Suggestion suggestion = null;
-    protected Button submitButton;
-    protected String currentText = null;
-    protected HTML noteLabel = new HTML("", true);
-    protected VerticalPanel rootPanel = new VerticalPanel();
+    private HorizontalPanel lookupPanel = new HorizontalPanel();
+    private ItemSuggestOracle oracle = new ItemSuggestOracle(this);
+    private TextBox textBox = new TextBox();
+    private SuggestBox suggestBox;
+    private SuggestOracle.Suggestion suggestion = null;
+    private Button submitButton;
+    private String currentText = null;
+    private HTML noteLabel = new HTML("", true);
+    private VerticalPanel rootPanel = new VerticalPanel();
 
     // internal ui data
-    protected String noteString = "";
-    protected String errorString = "";
-    protected boolean suggestBoxHasFocus = true;
+    private String noteString = "";
+    private String errorString = "";
+    private boolean suggestBoxHasFocus = true;
 
     // lookup types
     public final static String TYPE_ANATOMY_ONTOLOGY = "ANATOMY_ONTOLOGY";
@@ -60,17 +60,17 @@ public class LookupComposite extends Composite {
     private String onclick;
 
     // options
-    protected String inputName = "search";
-    protected boolean showError = true;
-    protected String buttonText = null;
-    protected String type = TYPE_ANATOMY_ONTOLOGY;
-    protected boolean wildCard = true;
-    protected int suggestBoxWidth = 30;
-    protected String oId = null;
+    private String inputName = "search";
+    private boolean showError = true;
+    private String buttonText = null;
+    private String type = TYPE_ANATOMY_ONTOLOGY;
+    private boolean wildCard = true;
+    private int suggestBoxWidth = 30;
+    private String oId = null;
     protected int limit = ItemSuggestOracle.NO_LIMIT;
 
     // later option
-    protected int minLookupLength = 3;
+    private int minLookupLength = 3;
 
     public LookupComposite() {
         types.add(TYPE_ANATOMY_ONTOLOGY);
@@ -109,7 +109,7 @@ public class LookupComposite extends Composite {
         initWidget(rootPanel);
     }
 
-    protected void addSubmitButtonHandler() {
+    void addSubmitButtonHandler() {
         submitButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent sender) {
                 doSubmit(textBox.getText());
@@ -118,7 +118,7 @@ public class LookupComposite extends Composite {
 
     }
 
-    protected void addSuggestBoxHandlers() {
+    void addSuggestBoxHandlers() {
         suggestBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
             public void onSelection(SelectionEvent event) {
                 suggestion = (SuggestOracle.Suggestion) event.getSelectedItem();
@@ -173,7 +173,7 @@ public class LookupComposite extends Composite {
 
     }
 
-    protected void initNoteGui() {
+    void initNoteGui() {
         noteLabel.setVisible(true);
         noteLabel.setWordWrap(true);
         rootPanel.add(noteLabel);

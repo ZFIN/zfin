@@ -10,12 +10,7 @@
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="marker"/>
 
-<div style="float: right">
-    <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:put name="subjectName" value="${formBean.marker.name}"/>
-        <tiles:put name="subjectID" value="${formBean.marker.zdbID}"/>
-    </tiles:insert>
-</div>
+<zfin2:inputWelcome marker="${formBean.marker}"/>
 
 <zfin2:transcriptHead transcript="${formBean.marker}"/>
 
@@ -69,7 +64,7 @@
 </zfin2:subsection>
 
 
-<zfin2:markerRelationships relationships="${formBean.transcriptRelationships}" marker="${formBean.marker}"
+<zfin2:markerRelationships relationships="${formBean.markerRelationships}" marker="${formBean.marker}"
                            title="${fn:toUpperCase('Segment (Clone and Probe) Relationships')}" />
 <%-- This section shows a flat list of related transcripts--%>
 

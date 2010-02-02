@@ -12,21 +12,21 @@ import java.util.List;
 
 /**
  */
-public class NewSequenceBox extends Composite {
+class NewSequenceBox extends Composite {
 
     // gui components
-    private VerticalPanel panel = new VerticalPanel();
-    private HTML sequenceHTML = new HTML();
-    private SequenceBox sequenceBox = new SequenceBox(SequenceBox.PROTEIN_SEQUENCE);
-    private HorizontalPanel buttonPanel = new HorizontalPanel();
-    private Label nameLabel = new Label();
-    private Label publicationLabel = new Label();
-    private Button addButton = new Button("Add Protein Sequence");
-    private Button cancelButton = new Button("Cancel");
+    private final VerticalPanel panel = new VerticalPanel();
+    private final HTML sequenceHTML = new HTML();
+    private final SequenceBox sequenceBox = new SequenceBox(SequenceBox.PROTEIN_SEQUENCE);
+    private final HorizontalPanel buttonPanel = new HorizontalPanel();
+    private final Label nameLabel = new Label();
+    private final Label publicationLabel = new Label();
+    private final Button addButton = new Button("Add Protein Sequence");
+    private final Button cancelButton = new Button("Cancel");
 
 
     // listeners
-    private List<SequenceAddListener> sequenceAddListeners = new ArrayList<SequenceAddListener>();
+    private final List<SequenceAddListener> sequenceAddListeners = new ArrayList<SequenceAddListener>();
 
 
     public NewSequenceBox() {
@@ -36,7 +36,7 @@ public class NewSequenceBox extends Composite {
     }
 
 
-    protected void initGUI() {
+    void initGUI() {
         sequenceHTML.setHTML("<b>Sequence:</b>");
         panel.add(sequenceHTML);
 //        panel.setStyleName("newProteinBox");
@@ -115,13 +115,13 @@ public class NewSequenceBox extends Composite {
         nameLabel.setText(generatedName);
     }
 
-    protected void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent) {
+    void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent) {
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.add(sequenceAddEvent);
         }
     }
 
-    protected void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
+    void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.cancel(sequenceAddEvent);
         }

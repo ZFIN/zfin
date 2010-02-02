@@ -16,7 +16,7 @@ public class RelatedMarkerListener implements RelatedEntityListener<MarkerDTO> {
 
     public void addRelatedEntity(RelatedEntityEvent<MarkerDTO> relatedEntityEvent) {
 
-        final MarkerDTO dto = relatedEntityEvent.getRelatedEntityDTO() ;
+        final MarkerDTO dto = relatedEntityEvent.getDTO() ;
         dto.setZdbID(relatedMarkerBox.getZdbID());
         dto.setName(dto.getName());
         dto.setPublicationZdbID(dto.getPublicationZdbID());
@@ -35,7 +35,7 @@ public class RelatedMarkerListener implements RelatedEntityListener<MarkerDTO> {
     }
 
     public void addAttribution(RelatedEntityEvent<MarkerDTO> relatedEntityEvent) {
-        final MarkerDTO dto = relatedEntityEvent.getRelatedEntityDTO();
+        final MarkerDTO dto = relatedEntityEvent.getDTO();
         dto.setZdbID(relatedMarkerBox.getZdbID());
         dto.setName(dto.getName());
         dto.setPublicationZdbID(dto.getPublicationZdbID());
@@ -51,7 +51,7 @@ public class RelatedMarkerListener implements RelatedEntityListener<MarkerDTO> {
     }
 
     public void removeRelatedEntity(RelatedEntityEvent<MarkerDTO> relatedEntityEvent) {
-        final MarkerDTO dto = relatedEntityEvent.getRelatedEntityDTO();
+        final MarkerDTO dto = relatedEntityEvent.getDTO();
         dto.setZdbID(relatedMarkerBox.getZdbID());
         dto.setName(dto.getName());
         dto.setPublicationZdbID(dto.getPublicationZdbID());
@@ -68,7 +68,7 @@ public class RelatedMarkerListener implements RelatedEntityListener<MarkerDTO> {
     }
 
     public void removeAttribution(RelatedEntityEvent<MarkerDTO> relatedEntityEvent) {
-        final MarkerDTO dto = relatedEntityEvent.getRelatedEntityDTO();
+        final MarkerDTO dto = relatedEntityEvent.getDTO();
         dto.setZdbID(relatedMarkerBox.getZdbID());
         dto.setName(dto.getName());
         dto.setPublicationZdbID(dto.getPublicationZdbID());

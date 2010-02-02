@@ -13,7 +13,7 @@ public interface MarkerRPCServiceAsync {
     void getPublicationAbstract(String zdbID, AsyncCallback<PublicationDTO> async);
 
     // note methods
-    void addCuratorNote(NoteDTO noteDTO, AsyncCallback<Void> async);
+    void addCuratorNote(NoteDTO noteDTO, AsyncCallback<NoteDTO> async);
 
     void editCuratorNote(NoteDTO noteDTO, AsyncCallback<Void> async);
 
@@ -25,12 +25,6 @@ public interface MarkerRPCServiceAsync {
     void addMarkerAttribution(String zdbID, String pubZdbID, AsyncCallback<Void> async);
 
     void removeMarkerAttribution(String zdbID, String pubZdbID, AsyncCallback<Void> async);
-
-    /**
-     * @param zdbID ZdbID of Marker to return attributions for.
-     * @return Returns accession numbers as strings.
-     */
-    void getMarkerAttributions(String zdbID, AsyncCallback<List<String>> async);
 
     // alias attribution list
     void addDataAliasRelatedEntity(RelatedEntityDTO relatedEntityDTO, AsyncCallback<RelatedEntityDTO> async);
@@ -44,14 +38,6 @@ public interface MarkerRPCServiceAsync {
     void addInternalProteinSequence(String markerZdbID, String sequence, String pubZdbID, String referenceZdbID, AsyncCallback<DBLinkDTO> async);
 
     void addInternalNucleotideSequence(String markerZdbID, String sequence, String pubZdbID, String referenceZdbID, AsyncCallback<DBLinkDTO> async);
-
-    /**
-     * @return List of dblinks
-     */
-    void getMarkerDBLinksForAccession(String accession, AsyncCallback<List<DBLinkDTO>> async);
-
-    // MarkerDBLink methods
-    void getDBLink(String zdbID, AsyncCallback<DBLinkDTO> async);
 
     void addDBLink(DBLinkDTO dbLinkDTO, List<ReferenceDatabaseDTO> referenceDatabaseDTOs, AsyncCallback<DBLinkDTO> async);
 
@@ -73,6 +59,7 @@ public interface MarkerRPCServiceAsync {
     // supplier methods
     /**
      * Returns list of supplier names
+     * @param async Callback list.
      */
     void getAllSupplierNames(AsyncCallback<List<String>> async);
 
@@ -92,4 +79,12 @@ public interface MarkerRPCServiceAsync {
     void removeRelatedMarkerAttribution(MarkerDTO markerDTO, AsyncCallback<Void> async);
 
     void validateDBLink(DBLinkDTO dbLinkDTO, AsyncCallback<String> async);
+
+    void addExternalNote(NoteDTO noteDTO, AsyncCallback<NoteDTO> async);
+
+    void editExternalNote(NoteDTO noteDTO, AsyncCallback<Void> async);
+
+    void removeExternalNote(NoteDTO noteDTO, AsyncCallback<Void> asyncCallback);
+
+    void updateMarkerHeaders(MarkerDTO markerDTO, AsyncCallback<Void> async);
 }

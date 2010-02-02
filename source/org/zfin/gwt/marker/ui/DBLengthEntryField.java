@@ -2,16 +2,24 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.DBLinkTableEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.DBLinkDTO;
+import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.IntegerTextBox;
+import org.zfin.gwt.root.ui.Revertible;
 
 /**
  */
-public class DBLengthEntryField extends Composite {
+public class DBLengthEntryField extends AbstractComposite implements Revertible {
 
     // gui elements
-    private TextBox lengthField = new TextBox();
+    private IntegerTextBox lengthField = new IntegerTextBox();
     private Button updateButton = new Button("update");
     private Button revertButton = new Button("revert");
     private HorizontalPanel panel = new HorizontalPanel();
@@ -49,17 +57,19 @@ public class DBLengthEntryField extends Composite {
         panel.add(spacerLabel);
         panel.add(lengthLabel);
 
-//        lengthField.setVisibleLength(7);
-//
-//        //Right now, we don't actually want to do updates, for now, that
-//        //means I'm going to disable the length field
-//        lengthField.setEnabled(false);
-//        panel.add(lengthField);
-//        panel.add(updateButton);
-//        panel.add(revertButton);
+        checkDirty();
+    }
 
-        lengthField.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyUp(Widget widget, char c, int i) {
+    @Override
+    protected void revertGUI() {
+        lengthField.setText(dbLinkDTO.getLength().toString());
+    }
+
+    @Override
+    protected void addInternalListeners(HandlesError handlesError) {
+        lengthField.addKeyUpHandler(new KeyUpHandler() {
+            @Override
+            public void onKeyUp(KeyUpEvent event) {
                 checkDirty();
             }
         });
@@ -67,8 +77,8 @@ public class DBLengthEntryField extends Composite {
         updateButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 DBLinkDTO newDTO = dbLinkDTO.deepCopy();
-                newDTO.setLength(Integer.valueOf(lengthField.getText()));
-                parent.fireDBLinkUpdated(new DBLinkTableEvent(newDTO));
+                newDTO.setLength(lengthField.getBoxValue());
+                parent.fireDBLinkUpdated(new RelatedEntityEvent<DBLinkDTO>(newDTO));
 
             }
         });
@@ -76,14 +86,12 @@ public class DBLengthEntryField extends Composite {
 
         revertButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                revert();
+                revertGUI();
                 checkDirty();
             }
         });
 
-        checkDirty();
     }
-
 
     public void setDbLinkDTO(DBLinkDTO dbLinkDTO) {
         this.dbLinkDTO = dbLinkDTO;
@@ -99,23 +107,35 @@ public class DBLengthEntryField extends Composite {
         return dbLinkDTO;
     }
 
-    public void checkDirty() {
-        if (dbLinkDTO != null && lengthField.getText() != null && dbLinkDTO.getLength() != null) {
-            updateButton.setEnabled(false == lengthField.getText().equals(dbLinkDTO.getLength().toString()));
-            revertButton.setEnabled(false == lengthField.getText().equals(dbLinkDTO.getLength().toString()));
-        } else if (dbLinkDTO == null || lengthField.getText() == null) {
-            updateButton.setEnabled(false);
-            revertButton.setEnabled(false);
-        } else if (dbLinkDTO.getLength() == null && lengthField.getText().trim().length() == 0) {
-            updateButton.setEnabled(false);
-            revertButton.setEnabled(false);
-        } else if (dbLinkDTO.getLength() == null && lengthField.getText().trim().length() > 0) {
-            updateButton.setEnabled(true);
-            revertButton.setEnabled(true);
-        }
+    @Override
+    public boolean isDirty() {
+        return lengthField.isDirty(dbLinkDTO.getLength());
     }
 
-    public void revert() {
-        lengthField.setText(dbLinkDTO.getLength().toString());
+    @Override
+    public void working() {
+        updateButton.setText(TEXT_WORKING);
+        updateButton.setEnabled(false);
+        revertButton.setEnabled(false);
+        lengthField.setEnabled(false);
     }
+
+    @Override
+    public void notWorking() {
+        updateButton.setText(TEXT_SAVE);
+        updateButton.setEnabled(true);
+        revertButton.setEnabled(true);
+        lengthField.setEnabled(true);
+    }
+
+    public boolean checkDirty() {
+        boolean dirty = lengthField.isDirty(dbLinkDTO.getLength()) ;
+        updateButton.setEnabled(dirty);
+        revertButton.setEnabled(dirty);
+        if(false==dirty){
+            fireEventSuccess();
+        }
+        return dirty ;
+    }
+
 }

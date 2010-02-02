@@ -6,7 +6,7 @@ import org.zfin.gwt.root.util.LookupService;
 
 /**
  */
-public class CallbackTimer extends Timer {
+class CallbackTimer extends Timer {
 
     private SuggestOracle.Request request;
     private ItemSuggestCallback callback;

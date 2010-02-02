@@ -7,17 +7,29 @@ import org.zfin.gwt.root.dto.RelatedEntityDTO;
 public class RelatedEntityEvent<U extends RelatedEntityDTO> {
 
 
-    private U relatedEntityDTO;
+    private U dto;
+    private String previousName ;
 
-    public RelatedEntityEvent(U relatedEntityDTO) {
-        this.relatedEntityDTO = relatedEntityDTO;
+    public RelatedEntityEvent() { }
+
+    public RelatedEntityEvent(U dto) {
+        this.dto = dto;
     }
 
-    public U getRelatedEntityDTO() {
-        return relatedEntityDTO;
+    public RelatedEntityEvent(U dto,String previousName) {
+        this(dto);
+        this.previousName = previousName;
     }
 
-    public void setRelatedEntityDTO(U relatedEntityDTO) {
-        this.relatedEntityDTO = relatedEntityDTO;
+    public U getDTO() {
+        return dto;
+    }
+
+    public String getPreviousName() {
+        return previousName;
+    }
+
+    public boolean isNameChanged(){
+        return false==previousName.equals(getDTO().getName()) ;
     }
 }

@@ -6,82 +6,49 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.TranscriptChangeEvent;
-import org.zfin.gwt.marker.event.TranscriptChangeListener;
+import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
+import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.TranscriptDTO;
+import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.StringListBox;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  */
-public class TranscriptHeaderEdit extends AbstractHeaderEdit{
+public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO>{
 
     // GUI name/type elements
-    protected HTMLTable table = new Grid(4, 2);
-    private EasyListBox typeListBox = new EasyListBox(false);
-    private EasyListBox statusListBox = new EasyListBox(false);
+    private final HTMLTable table = new Grid(4, 2);
+    private final StringListBox typeListBox = new StringListBox(false);
+    private final StringListBox statusListBox = new StringListBox(false);
 
     // listeners
-    private List<TranscriptChangeListener> transcriptChangeListeners = new ArrayList<TranscriptChangeListener>();
 
-    // internal data
-    private TranscriptDTO transcriptDTO;
-
-    public TranscriptHeaderEdit(String div) {
+    public TranscriptHeaderEdit() {
         initGUI();
         initWidget(panel);
         addInternalListeners(this);
-        RootPanel.get(div).add(this);
+        RootPanel.get(StandardMarkerDivNames.headerDiv).add(this);
     }
 
     protected void addInternalListeners(final HandlesError handlesError) {
-        addTranscriptListeners(new TranscriptChangeListener() {
-            public void changeTranscriptProperties(final TranscriptChangeEvent transcriptChangeEvent) {
-                final TranscriptDTO newTranscriptDTO = transcriptChangeEvent.getDTO();
-                working();
-                TranscriptRPCService.App.getInstance().changeTranscriptHeaders(newTranscriptDTO,
-                        new MarkerEditCallBack<TranscriptDTO>("failed to change transcript properties: ", handlesError) {
-                            public void onSuccess(TranscriptDTO newTranscriptDTO) {
-                                if (transcriptChangeEvent.isNameChanged()) {
-                                    if (null == previousNamesBox.validateNewRelatedEntity(transcriptChangeEvent.getDTO().getName())) {
-                                        previousNamesBox.addRelatedEntity(transcriptChangeEvent.getPreviousName(), publicationZdbID);
-                                    }
-                                }
+        super.addInternalListeners(this);
 
-                                handleChangeSuccess(transcriptDTO);
-                                fireEventSuccess();
-                            }
+        typeListBox.addChangeHandler(new ChangeHandler() {
+            public void onChange(ChangeEvent event) {
+                DeferredCommand.addCommand(new CompareCommand());
+            }
+        });
 
-                            @Override
-                            public void onFailure(Throwable throwable) {
-                                if (throwable instanceof TranscriptTypeStatusMismatchException) {
-                                    TranscriptTypeStatusMismatchException e = (TranscriptTypeStatusMismatchException) throwable;
-                                    setError("Bad status for type.  Allowable types: " + e.getAllowableStatuses());
-                                } else {
-                                    super.onFailure(throwable);
-                                }
-                                TranscriptRPCService.App.getInstance().getTranscriptForZdbID(transcriptDTO.getZdbID(),
-                                        new MarkerEditCallBack<TranscriptDTO>("failed to retrieve transcript: " ,handlesError){
-                                            @Override
-                                            public void onSuccess(TranscriptDTO result) {
-                                                transcriptDTO = transcriptDTO.copyFrom(result);
-                                                DeferredCommand.addCommand(new CompareCommand());
-                                            }
-                                        });
-                            }
-                        });
-                notWorking();
+        statusListBox.addChangeHandler(new ChangeHandler() {
+            public void onChange(ChangeEvent event) {
+                DeferredCommand.addCommand(new CompareCommand());
             }
         });
     }
 
-
-    public void setTranscriptDomain(TranscriptDTO transcriptDTO) {
-        this.transcriptDTO = transcriptDTO;
-        refreshGUI();
-    }
 
 
     protected void initGUI() {
@@ -95,10 +62,11 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit{
         table.setWidget(3, 1, statusListBox);
 
         panel.add(table);
-        buttonPanel.add(updateButton);
+        buttonPanel.add(saveButton);
         buttonPanel.add(new HTML("&nbsp;"));
         buttonPanel.add(revertButton);
         panel.add(buttonPanel);
+        panel.setStyleName("gwt-editbox");
 
         panel.add(new HTML("<br>")); // spacer
 
@@ -106,109 +74,84 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit{
         panel.add(errorLabel);
 
 
-        typeListBox.addChangeHandler(new ChangeHandler() {
-            public void onChange(ChangeEvent event) {
-                DeferredCommand.addCommand(new CompareCommand());
-            }
-        });
-
-        statusListBox.addChangeHandler(new ChangeHandler() {
-            public void onChange(ChangeEvent event) {
-                DeferredCommand.addCommand(new CompareCommand());
-            }
-        });
-
-        nameBox.addKeyPressHandler(new KeyPressHandler() {
-            @Override
-            public void onKeyPress(KeyPressEvent event) {
-                DeferredCommand.addCommand(new CompareCommand());
-            }
-        });
-
-
-        updateButton.setEnabled(false);
-        updateButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                sendUpdates();
-            }
-        });
-
-        revertButton.setEnabled(false);
-        revertButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                revert();
-            }
-        });
     }
 
 
-    protected void refreshGUI() {
-        revert();
-        zdbIDHTML.setHTML("<div class=\"attributionDefaultPub\">" + transcriptDTO.getZdbID() + "</font>");
-    }
-
-    public void revert() {
-        nameBox.setText(transcriptDTO.getName());
-        typeListBox.setIndexForValue(transcriptDTO.getTranscriptType());
-        statusListBox.setIndexForValue(transcriptDTO.getTranscriptStatus());
-        DeferredCommand.addCommand(new CompareCommand());
+    protected void revertGUI() {
+        zdbIDHTML.setHTML("<div class=\"attributionDefaultPub\">" + dto.getZdbID() + "</font>");
+        nameBox.setText(dto.getName());
+        typeListBox.setIndexForValue(dto.getTranscriptType());
+        statusListBox.setIndexForValue(dto.getTranscriptStatus());
+        checkDirty();
     }
 
     protected void sendUpdates() {
 
         // on success
         // set choices appropriates
-        TranscriptDTO newTranscriptDTO = new TranscriptDTO();
+        final TranscriptDTO newTranscriptDTO = new TranscriptDTO();
         newTranscriptDTO.setName(nameBox.getText());
-        newTranscriptDTO.setTranscriptStatus(statusListBox.getSelectedString());
-        newTranscriptDTO.setTranscriptType(typeListBox.getSelectedString());
-        newTranscriptDTO.setZdbID(this.transcriptDTO.getZdbID());
-        if (isDirty() == true) {
-            if ((publicationZdbID == null || publicationZdbID.length() < 16) && false == newTranscriptDTO.getName().equals(this.transcriptDTO.getName())) {
+        newTranscriptDTO.setTranscriptStatus(statusListBox.getSelected());
+        newTranscriptDTO.setTranscriptType(typeListBox.getSelected());
+        newTranscriptDTO.setZdbID(dto.getZdbID());
+
+
+
+        if (isDirty()) {
+            if ((publicationZdbID == null || publicationZdbID.length() < 16) && false == newTranscriptDTO.getName().equals(dto.getName())) {
                 setError("Need to attribute name changes.");
                 return;
             }
-            fireTranscriptChangeEvent(new TranscriptChangeEvent(newTranscriptDTO,transcriptDTO.getName()));
+
+            working();
+            TranscriptRPCService.App.getInstance().changeTranscriptHeaders(newTranscriptDTO,
+                    new MarkerEditCallBack<TranscriptDTO>("failed to change transcript properties: ", this) {
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            if (throwable instanceof TranscriptTypeStatusMismatchException) {
+                                TranscriptTypeStatusMismatchException e = (TranscriptTypeStatusMismatchException) throwable;
+                                setError("Bad status for type.  Allowable types: " + e.getAllowableStatuses());
+                                return ;
+                            }
+
+                            super.onFailure(throwable);
+                            revertGUI();
+                            notWorking();
+                            setError(throwable.getMessage());
+//                            TranscriptRPCService.App.getInstance().getTranscriptForZdbID(dto.getZdbID(),
+//                                    new MarkerEditCallBack<TranscriptDTO>("failed to retrieve transcript: " ,handlesError){
+//                                        @Override
+//                                        public void onSuccess(TranscriptDTO result) {
+//                                            dto.copyFrom(result);
+//                                            DeferredCommand.addCommand(new CompareCommand());
+//                                        }
+//                                    });
+                        }
+
+                        @Override
+                        public void onSuccess(TranscriptDTO returnedTranscriptDTO) {
+                            String oldName = dto.getName();
+                            handleChangeSuccess(returnedTranscriptDTO);
+                            fireEventSuccess();
+                            fireChangeEvent(new RelatedEntityEvent<TranscriptDTO>(dto,oldName));
+                            notWorking();
+                        }
+
+                    });
         }
     }
 
-    public void handleChangeSuccess(TranscriptDTO transcriptDTO) {
-        this.transcriptDTO = transcriptDTO;
-
+    void handleChangeSuccess(TranscriptDTO transcriptDTO) {
+        this.dto = transcriptDTO;
         DeferredCommand.addCommand(new CompareCommand());
     }
 
-    protected void fireTranscriptChangeEvent(TranscriptChangeEvent transcriptChangeEvent) {
-        for (TranscriptChangeListener transcriptChangeListener : transcriptChangeListeners) {
-            transcriptChangeListener.changeTranscriptProperties(transcriptChangeEvent);
-        }
-    }
-
-    protected boolean isDirty() {
+    public boolean isDirty() {
         boolean isDirty = false;
-
-        // check names
-        if (false == nameBox.getText().equals(transcriptDTO.getName())) {
-            isDirty = true;
-        }
-
-        // check type box
-        if (false == typeListBox.isFieldEqual(transcriptDTO.getTranscriptType())) {
-            isDirty = true;
-        }
-
-
-        // check type box
-        if (false == statusListBox.isFieldEqual(transcriptDTO.getTranscriptStatus())) {
-            isDirty = true;
-        }
-//        Window.alert("is dirty 2: "+ isDirty + " chosenType: "+ chosenType + " typeListBox: "+typeListBox.getItemText(typeListBox.getSelectedIndex()));
+        isDirty = nameBox.isDirty(dto.getName()) || isDirty ;
+        isDirty = typeListBox.isDirty(dto.getTranscriptType()) || isDirty ;
+        isDirty = statusListBox.isDirty(dto.getTranscriptStatus()) || isDirty ;
         return isDirty;
-    }
-
-
-    public void addTranscriptListeners(TranscriptChangeListener transcriptChangeListener) {
-        transcriptChangeListeners.add(transcriptChangeListener);
     }
 
 
@@ -227,4 +170,17 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit{
         }
     }
 
+    @Override
+    public void working() {
+        super.working();    //To change body of overridden methods use File | Settings | File Templates.
+        typeListBox.setEnabled(false);
+        statusListBox.setEnabled(false);
+    }
+
+    @Override
+    public void notWorking() {
+        super.notWorking();    //To change body of overridden methods use File | Settings | File Templates.
+        typeListBox.setEnabled(true);
+        statusListBox.setEnabled(true);
+    }
 }

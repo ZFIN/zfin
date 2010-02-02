@@ -226,6 +226,15 @@
         <url-pattern>/ajax/cloneservice</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>AntibodyService</servlet-name>
+        <servlet-class>org.zfin.gwt.marker.server.AntibodyRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AntibodyService</servlet-name>
+        <url-pattern>/ajax/antibodyservice</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>CurationService</servlet-name>

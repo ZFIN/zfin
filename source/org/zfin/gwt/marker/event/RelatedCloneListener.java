@@ -17,7 +17,7 @@ public class RelatedCloneListener extends RelatedMarkerListener {
     }
 
     public void addRelatedEntity(RelatedEntityEvent<MarkerDTO> relatedEntityEvent) {
-        final MarkerDTO dto = relatedEntityEvent.getRelatedEntityDTO();
+        final MarkerDTO dto = relatedEntityEvent.getDTO();
         dto.setZdbID(relatedMarkerBox.getZdbID());
         dto.setName(dto.getName());
         dto.setPublicationZdbID(dto.getPublicationZdbID());

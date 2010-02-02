@@ -3,8 +3,11 @@ package org.zfin.gwt.root.util;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import org.zfin.gwt.root.dto.Ontology;
+import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.TermInfo;
 import org.zfin.gwt.root.dto.TermStatus;
+
+import java.util.List;
 
 /**
  */
@@ -58,4 +61,8 @@ public interface LookupServiceAsync {
      * @param termInfoCallback callback
      */
     void getTermInfoByName(Ontology ontology, String termName, AsyncCallback<TermInfo> termInfoCallback);
+
+    void getRecentPublications(AsyncCallback<List<PublicationDTO>> asyncCallback);
+
+    void setRecentPublication(String zdbID, AsyncCallback<PublicationDTO > async);
 }

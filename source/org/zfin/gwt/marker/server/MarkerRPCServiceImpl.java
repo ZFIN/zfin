@@ -8,9 +8,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.zfin.antibody.Antibody;
+import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.marker.ui.BlastDatabaseAccessException;
 import org.zfin.gwt.marker.ui.DBLinkNotFoundException;
+import org.zfin.gwt.marker.ui.MarkerEditCallBack;
 import org.zfin.gwt.marker.ui.MarkerRPCService;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.infrastructure.*;
@@ -53,30 +56,31 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         PublicationDTO publicationAbstractDTO = new PublicationDTO();
         publicationAbstractDTO.setZdbID(publication.getZdbID());
         publicationAbstractDTO.setTitle(publication.getTitle());
-        publicationAbstractDTO.setAuthors(publication.getShortAuthorList());
+        publicationAbstractDTO.setAuthors(publication.getAuthors());
         publicationAbstractDTO.setDoi(publication.getDoi());
         publicationAbstractDTO.setAbstractText(publication.getAbstractText());
         publicationAbstractDTO.setAccession(publication.getAccessionNumber());
         publicationAbstractDTO.setCitation(publication.getCitation());
+        publicationAbstractDTO.setMiniRef(publication.getShortAuthorList());
 
 
         return publicationAbstractDTO;
     }
 
-    public void addCuratorNote(NoteDTO noteDTO) {
+    public NoteDTO addCuratorNote(NoteDTO noteDTO) {
         logger.info("adding curator note: " + noteDTO.getDataZdbID() + " - " + noteDTO.getNoteData());
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
         Marker marker = markerRepository.getMarkerByID(noteDTO.getDataZdbID());
         Person person = Person.getCurrentSecurityUser();
-        markerRepository.addMarkerDataNote(marker, noteDTO.getNoteData(), person);
+        DataNote dataNote = markerRepository.addMarkerDataNote(marker, noteDTO.getNoteData(), person);
         InfrastructureService.insertUpdate(marker, "added curator note: " + noteDTO);
         transaction.commit();
+        noteDTO.setZdbID(dataNote.getZdbID());
+        return noteDTO;
     }
 
     /**
-     * The indexNote is the previous name of the note and note is what it is being changed to.
-     *
      * @param noteDTO NoteDTO
      */
     public void editCuratorNote(NoteDTO noteDTO) {
@@ -84,7 +88,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         Marker marker = markerRepository.getMarkerByID(noteDTO.getDataZdbID());
         Set<DataNote> dataNotes = marker.getDataNotes();
         for (DataNote dataNote : dataNotes) {
-            if (dataNote.getNote().equals(noteDTO.getIndexNote())) {
+            if (dataNote.getZdbID().equals(noteDTO.getZdbID())) {
                 dataNote.setNote(noteDTO.getNoteData());
                 InfrastructureService.insertUpdate(marker, "updated note: " + noteDTO);
                 HibernateUtil.currentSession().update(dataNote);
@@ -92,20 +96,18 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
                 return;
             }
         }
-        logger.error("note not found with index: " + noteDTO.getIndexNote());
+        logger.error("note not found with zdbID: " + noteDTO.getZdbID());
     }
 
     /**
-     * The indexNote is the name of the note that is updated.
-     *
      * @param noteDTO Note DTO
      */
     public void removeCuratorNote(NoteDTO noteDTO) {
-        logger.info("remove curator note: " + noteDTO.getNoteData() + " - " + noteDTO.getIndexNote());
+        logger.info("remove curator note: " + noteDTO.getNoteData() + " - " + noteDTO.getZdbID());
         Marker marker = markerRepository.getMarkerByID(noteDTO.getDataZdbID());
         Set<DataNote> dataNotes = marker.getDataNotes();
         for (DataNote dataNote : dataNotes) {
-            if (dataNote.getNote() != null && dataNote.getNote().equals(noteDTO.getIndexNote())) {
+            if (dataNote.getZdbID().equals(noteDTO.getZdbID())) {
                 HibernateUtil.createTransaction();
                 InfrastructureService.insertUpdate(marker, "removed curator note " + dataNote.getNote());
                 HibernateUtil.currentSession().delete(dataNote);
@@ -113,7 +115,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
                 return;
             }
         }
-        logger.error("note not found with index: " + noteDTO.getIndexNote());
+        logger.error("note not found with zdbID: " + noteDTO.getZdbID());
     }
 
 
@@ -147,17 +149,6 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         RepositoryFactory.getInfrastructureRepository().deleteRecordAttribution(marker.getZdbID(), pubZdbID);
         InfrastructureService.insertUpdate(marker, "removed direct attribution: " + pubZdbID);
         HibernateUtil.flushAndCommitCurrentSession();
-    }
-
-    public List<String> getMarkerAttributions(String zdbID) {
-        ActiveData activeData = new ActiveData();
-        activeData.setZdbID(zdbID);
-        List<RecordAttribution> recordAttributions = RepositoryFactory.getInfrastructureRepository().getRecordAttributions(activeData);
-        List<String> attributions = new ArrayList<String>();
-        for (RecordAttribution recordAttribution : recordAttributions) {
-            attributions.add(recordAttribution.getSourceZdbID());
-        }
-        return attributions;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
 
@@ -266,7 +257,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
             Sequence sequence = MountedWublastBlastService.getInstance().addProteinToMarker(marker, sequenceData, pubZdbID, referenceDatabase);
 
-            List<DBLinkDTO> dbLinkDTOs = DTOHelper.createDBLinkDTOsFromMarkerDBLink((MarkerDBLink) sequence.getDbLink());
+            List<DBLinkDTO> dbLinkDTOs = DTOService.createDBLinkDTOsFromMarkerDBLink((MarkerDBLink) sequence.getDbLink());
             DBLinkDTO dbLinkDTO = dbLinkDTOs.get(0);
             dbLinkDTO.setPublicationZdbID(pubZdbID);
 
@@ -303,7 +294,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             Sequence sequence = MountedWublastBlastService.getInstance().
                     addSequenceToMarker(marker, sequenceData, pubZdbID, referenceDatabase);
 
-            List<DBLinkDTO> dbLinkDTOs = DTOHelper.createDBLinkDTOsFromMarkerDBLink((MarkerDBLink) sequence.getDbLink());
+            List<DBLinkDTO> dbLinkDTOs = DTOService.createDBLinkDTOsFromMarkerDBLink((MarkerDBLink) sequence.getDbLink());
             DBLinkDTO dbLinkDTO = dbLinkDTOs.get(0);
             dbLinkDTO.setPublicationZdbID(pubZdbID);
 
@@ -440,7 +431,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
 
-        DBLink dbLink = DTOHelper.createDBLinkFromDBLinkDTO(dbLinkDTO);
+        DBLink dbLink = DTOService.createDBLinkFromDBLinkDTO(dbLinkDTO);
 
         Accession accession = RepositoryFactory.getSequenceRepository().getAccessionByAlternateKey(dbLink.getAccessionNumber(), dbLink.getReferenceDatabase());
         if (accession == null) {
@@ -495,7 +486,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         Marker marker = (Marker) session.get(Marker.class, dbLink.getDataZdbID());
 
-        List<DBLinkDTO> dbLinkDTOs = DTOHelper.createDBLinkDTOsFromDBLink(dbLink, marker.getZdbID(), marker.getAbbreviation());
+        List<DBLinkDTO> dbLinkDTOs = DTOService.createDBLinkDTOsFromDBLink(dbLink, marker.getZdbID(), marker.getAbbreviation());
         // if it fails, it will automatically roll-back and automatically throws exception up
         transaction.commit();
 
@@ -517,7 +508,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         DBLink dbLink = null;
         if (dblinkZdbID == null && sequenceDTO.getDataName() != null && sequenceDTO.getDataZdbID() != null) {
             dbLink = RepositoryFactory.getSequenceRepository().getDBLinkByAlternateKey(sequenceDTO.getName(),
-                    dblinkDataZdbID, DTOHelper.getReferenceDatabase(sequenceDTO.getReferenceDatabaseDTO()));
+                    dblinkDataZdbID, DTOService.getReferenceDatabase(sequenceDTO.getReferenceDatabaseDTO()));
             if (dbLink == null) {
                 throw new RuntimeException("Faild to get a dblink for dblinkdto: " + sequenceDTO);
             }
@@ -552,7 +543,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             dbLink = RepositoryFactory.getSequenceRepository().getDBLinkByID(dblinkZdbID);
         } else if (dbLinkDTO.getDataName() != null && dbLinkDTO.getDataZdbID() != null) {
             dbLink = RepositoryFactory.getSequenceRepository().getDBLinkByAlternateKey(dbLinkDTO.getName(),
-                    dblinkDataZdbID, DTOHelper.getReferenceDatabase(dbLinkDTO.getReferenceDatabaseDTO()));
+                    dblinkDataZdbID, DTOService.getReferenceDatabase(dbLinkDTO.getReferenceDatabaseDTO()));
             if (dbLink == null) {
                 throw new RuntimeException("Faild to get a dblink for dblinkdto: " + dbLinkDTO);
             }
@@ -563,7 +554,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         RepositoryFactory.getInfrastructureRepository().insertPublicAttribution(dblinkZdbID, dbLinkDTO.getPublicationZdbID());
         session.flush();
 
-        DTOHelper.createDBLinkDTOFromDBLinkForPub(dbLink, dbLinkDTO.getDataZdbID(), dbLinkDTO.getDataName(), dbLinkDTO.getPublicationZdbID());
+        DTOService.createDBLinkDTOFromDBLinkForPub(dbLink, dbLinkDTO.getDataZdbID(), dbLinkDTO.getDataName(), dbLinkDTO.getPublicationZdbID());
         // if it fails, it will automatically roll-back and automatically throws exception up
         transaction.commit();
         return dbLinkDTO;
@@ -649,7 +640,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         dbLink = RepositoryFactory.getSequenceRepository().getDBLinkByID(dbLink.getZdbID());
 
-        return DTOHelper.createDBLinkDTOFromDBLinkForPub(dbLink, marker.getZdbID(), marker.getName(), pub.getZdbID());
+        return DTOService.createDBLinkDTOFromDBLinkForPub(dbLink, marker.getZdbID(), marker.getName(), pub.getZdbID());
     }
 
     public MarkerDTO getMarkerForName(String name) {
@@ -658,7 +649,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             return null;
         }
 
-        return DTOHelper.createMarkerDTOFromMarker(marker);
+        return DTOService.createMarkerDTOFromMarker(marker);
     }
 
     public MarkerDTO getGeneForZdbID(String zdbID) {
@@ -672,7 +663,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 //            return null ;
 //        }
 
-        return DTOHelper.createMarkerDTOFromMarker(marker);
+        return DTOService.createMarkerDTOFromMarker(marker);
     }
 
     // get all existing supplier names
@@ -761,7 +752,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         HibernateUtil.flushAndCommitCurrentSession();
 
         // always return the abbreviation
-        MarkerDTO dto = DTOHelper.createMarkerDTOFromMarker(secondMarker);
+        MarkerDTO dto = DTOService.createMarkerDTOFromMarker(secondMarker);
         dto.setPublicationZdbID(markerDTO.getPublicationZdbID());
         dto.setDataZdbID(firstMarker.getZdbID());
         return dto;
@@ -779,7 +770,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         }
         HibernateUtil.flushAndCommitCurrentSession();
 
-        MarkerDTO dto = DTOHelper.createMarkerDTOFromMarker(secondMarker);
+        MarkerDTO dto = DTOService.createMarkerDTOFromMarker(secondMarker);
         dto.setPublicationZdbID(markerDTO.getPublicationZdbID());
         dto.setDataZdbID(firstMarker.getZdbID());
         return dto;
@@ -823,7 +814,6 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
      * @return Any sort of warning strings.
      */
     public String validateDBLink(DBLinkDTO dbLinkDTO) {
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(dbLinkDTO.getDataZdbID());
         List<DBLink> dbLinks = RepositoryFactory.getSequenceRepository().getDBLinksForAccession(dbLinkDTO.getName());
         if (dbLinks == null || dbLinks.size() == 0) {
             return null;
@@ -838,5 +828,70 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
                 return null;
             }
         }
+    }
+
+    @Override
+    public NoteDTO addExternalNote(NoteDTO noteDTO) {
+        HibernateUtil.createTransaction();
+        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(noteDTO.getDataZdbID());
+        AntibodyExternalNote antibodyExternalNote = markerRepository.addAntibodyExternalNote(antibody,noteDTO.getNoteData(),noteDTO.getPublicationZdbID());
+        noteDTO.setZdbID(antibodyExternalNote.getZdbID());
+        infrastructureRepository.insertUpdatesTable(antibody,"notes","",Person.getCurrentSecurityUser());
+        HibernateUtil.flushAndCommitCurrentSession();
+        return noteDTO;
+    }
+
+    @Override
+    public void editExternalNote(NoteDTO noteDTO) {
+        HibernateUtil.createTransaction();
+        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(noteDTO.getDataZdbID());
+        markerRepository.editAntibodyExternalNote(noteDTO.getZdbID(), noteDTO.getNoteData());
+        infrastructureRepository.insertUpdatesTable(antibody, "updated notes", "", Person.getCurrentSecurityUser());
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    @Override
+    public void removeExternalNote(NoteDTO noteDTO) {
+        logger.info("remove external note: " + noteDTO.getNoteData() + " - " + noteDTO.getZdbID());
+        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(noteDTO.getDataZdbID());
+        Set<AntibodyExternalNote> dataNotes = antibody.getExternalNotes();
+        for (AntibodyExternalNote dataNote : dataNotes) {
+            if (dataNote.getZdbID().equals(noteDTO.getZdbID())) {
+                HibernateUtil.createTransaction();
+
+                infrastructureRepository.deleteActiveDataByZdbID(noteDTO.getZdbID());
+                infrastructureRepository.insertUpdatesTable(antibody,"deleted notes", "",Person.getCurrentSecurityUser());
+                HibernateUtil.flushAndCommitCurrentSession();
+                return;
+            }
+        }
+        logger.error("note not found with zdbID: " + noteDTO.getZdbID());
+    }
+
+    @Override
+    public void updateMarkerHeaders(MarkerDTO markerDTO) {
+        Session session = HibernateUtil.currentSession();
+        Transaction transaction = session.beginTransaction();
+        Marker gene = (Marker) session.get(Marker.class, markerDTO.getZdbID());
+
+        // set name
+
+        if (!gene.getName().equals(markerDTO.getName())) {
+            String oldName = gene.getName();
+
+            gene.setAbbreviation(markerDTO.getName());
+//            clone.setName(markerDTO.getName());
+
+            InfrastructureService.insertUpdate(gene, "Name", oldName, gene.getName());
+            //run regen script
+            markerRepository.runMarkerNameFastSearchUpdate(gene);
+        }
+
+
+        session.update(gene);
+        session.flush();
+
+        // if it fails, it will automatically roll-back and automatically throws exception up
+        transaction.commit();
     }
 }

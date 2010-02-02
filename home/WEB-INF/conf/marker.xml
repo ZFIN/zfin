@@ -14,6 +14,8 @@
                 <prop key="/marker/transcript-definitions">transcriptDefinitions</prop>
                 <prop key="/marker/clone-add">cloneAdd</prop>
 				<prop key="/marker/clone-view">cloneView</prop>
+                <prop key="/marker/gene-view">geneView</prop>
+                <prop key="/marker/sequence-view">sequenceView</prop>
                 <prop key="/marker/mini-gene">miniGeneBean</prop>
 				<prop key="/marker/marker-edit">markerEdit</prop>
                 <prop key="/marker/stemloop-sequence">stemLoopSequence</prop>
@@ -42,6 +44,10 @@
     </bean>
 
     <bean name="cloneView" class="org.zfin.marker.presentation.CloneViewController"/>
+
+    <bean name="geneView" class="org.zfin.marker.presentation.GeneViewController"/>
+
+    <bean name="sequenceView" class="org.zfin.marker.presentation.SequenceViewController"/>
 
     <bean name="markerEdit" class="org.zfin.marker.presentation.MarkerEditController"/>
 

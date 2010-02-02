@@ -7,7 +7,8 @@ public enum AntibodyType {
     ANY("Any"),
     MONOCLONAL("monoclonal"),
     POLYCLONAL("polyclonal"),
-    UNSPECIFIED("");
+    UNSPECIFIED(""),
+    ;
 
     private final String name;
 

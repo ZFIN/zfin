@@ -43,9 +43,24 @@
         <put name="body" value="/WEB-INF/jsp/marker/clone_view.jsp"/>
     </definition>
 
+    <definition name="gene-view.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Gene: " />
+        <put name="body" value="/WEB-INF/jsp/marker/gene_view.jsp"/>
+    </definition>
+
+    <definition name="sequence-view.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Sequences for Gene: " />
+        <put name="body" value="/WEB-INF/jsp/marker/sequence_view.jsp"/>
+    </definition>
+
     <definition name="clone-edit.page" extends="main_layout">
         <put name="staticTitle" value="Edit Clone" />
         <put name="body" value="/WEB-INF/jsp/marker/clone_edit.jsp"/>
+    </definition>
+
+    <definition name="antibody-edit.page" extends="main_layout">
+        <put name="staticTitle" value="Edit Antibody" />
+        <put name="body" value="/WEB-INF/jsp/marker/antibody_edit.jsp"/>
     </definition>
 
     <definition name="transcript-edit.page" extends="main_layout">

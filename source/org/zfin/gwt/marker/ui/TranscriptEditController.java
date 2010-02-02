@@ -10,51 +10,37 @@ import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.dto.TranscriptDTO;
+import org.zfin.gwt.root.ui.AbstractListBox;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  */
-public final class TranscriptEditController implements PublicationChangeListener, HandlesError {
+public final class TranscriptEditController extends AbstractFullMarkerEditController<TranscriptDTO>{
 
-    private String targetedGenesTitle = "targetedGeneTitle";
-    private String proteinTitle = "proteinTitle";
-    private String curatorNoteDiv = "curatorNoteName";
-    private String publicNoteDiv = "publicNoteName";
+    public static final String targetedGenesTitle = "targetedGeneTitle";
+    public static final String proteinTitle = "proteinTitle";
+    public static final String proteinDiv = "proteinName";
+    public static final String newProteinDiv = "newProteinName";
+    public static final String rnaDiv = "rnaName";
+    public static final String targetedGeneDiv = "targetedGeneName";
+    public static final String cloneRelatedDiv = "cloneRelatedName";
 
 
     // gui elements
-    private ViewTranscriptLabel viewTranscriptLabel = new ViewTranscriptLabel("viewTranscript");
-    private TranscriptHeaderEdit transcriptHeaderEdit = new TranscriptHeaderEdit("markerName");
-    private DirectAttributionTable directAttributionTable = new HandledDirectAttributionTable("directAttributionName");
-    private PreviousNamesBox previousNamesBox = new PreviousNamesBox("aliasName");
-    private RelatedMarkerBox relatedGenesBox =
-            new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCES_TRANSCRIPT, false, "geneName");
-    private RelatedMarkerBox targetedGenesBox =
-            new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.TRANSCRIPT_TARGETS_GENE, true, "targetedGeneName");
-    private RelatedMarkerBox relatedClonesBox =
-            new RelatedCloneBox(MarkerRelationshipEnumTypeGWTHack.CLONE_CONTAINS_TRANSCRIPT, false, "cloneRelatedName");
-    private RelatedEntityBox relatedProteinsBox = new RelatedProteinBox("proteinName");
-    private ProteinSequenceArea proteinSequenceArea = new ProteinSequenceArea("newProteinName");
-    private NucleotideSequenceArea nucleotideSequenceArea = new NucleotideTranscriptSequenceArea("rnaName");
-    private PublicationLookupBox publicationLookupBox = new PublicationLookupBox("publicationName");
-    private DBLinkTable supportingSequencesTable = new HandledDBLinkTable("dbLinksName");
-    private CuratorNoteBox curatorNoteBox = new CuratorNoteBox(curatorNoteDiv);
-    private PublicNoteBox publicNoteBox = new PublicNoteBox(publicNoteDiv);
+    private final ViewMarkerLabel transcriptViewMarkerLabel = new ViewMarkerLabel("[View Transcript]","/action/marker/transcript-view?zdbID=","Ignore");
+    private final TranscriptHeaderEdit transcriptHeaderEdit = new TranscriptHeaderEdit();
+    private final RelatedMarkerBox relatedGenesBox =
+            new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCES_TRANSCRIPT, false, geneDiv);
+    private final RelatedMarkerBox targetedGenesBox =
+            new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.TRANSCRIPT_TARGETS_GENE, true, targetedGeneDiv);
+    private final RelatedMarkerBox relatedClonesBox =
+            new RelatedCloneBox(MarkerRelationshipEnumTypeGWTHack.CLONE_CONTAINS_TRANSCRIPT, false, cloneRelatedDiv);
+    private final RelatedEntityBox relatedProteinsBox = new RelatedProteinBox(proteinDiv);
+    private final ProteinSequenceArea proteinSequenceArea = new ProteinSequenceArea(newProteinDiv);
+    private final NucleotideSequenceArea nucleotideSequenceArea = new NucleotideTranscriptSequenceArea(rnaDiv);
+    private final DBLinkTable dbLinkTable = new HandledDBLinkTable();
 
-    // internal data
-    private String publicationZdbID;
-    private String zdbID;
-    private TranscriptDTO transcriptDTO;
-
-    // listeners
-    private List<MarkerLoadListener> markerLoadListeners = new ArrayList<MarkerLoadListener>();
-    private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
-
-
-    // lookup
-    private static final String LOOKUP_TRANSCRIPT_ZDBID = "zdbID";
 
     public void initGUI() {
         // constructors if not set
@@ -65,18 +51,24 @@ public final class TranscriptEditController implements PublicationChangeListener
         // load transcript
         DeferredCommand.addCommand(new Command() {
             public void execute() {
-                loadTranscript();
+                loadDTO();
             }
         });
     }
 
 
-    private void addListeners() {
-        transcriptHeaderEdit.setPreviousNamesBox(previousNamesBox);
-        transcriptHeaderEdit.addTranscriptListeners(new TranscriptChangeListener() {
-            public void changeTranscriptProperties(TranscriptChangeEvent transcriptChangeEvent) {
+    protected void addListeners() {
+        super.addListeners();
+        transcriptHeaderEdit.addChangeListener(new RelatedEntityChangeListener<TranscriptDTO>() {
+            public void dataChanged(RelatedEntityEvent<TranscriptDTO> changeEvent) {
+                if (false == changeEvent.getDTO().getName().equals(dto.getName())) {
+                    if (null == previousNamesBox.validateNewRelatedEntity(changeEvent.getDTO().getName())) {
+                        previousNamesBox.addRelatedEntity(dto.getName(), publicationZdbID);
+                    }
+                }
+
                 // set to the new one
-                transcriptDTO.copyFrom(transcriptChangeEvent.getDTO());
+                dto.copyFrom(changeEvent.getDTO());
 
                 handleTranscriptTypes();
             }
@@ -92,12 +84,12 @@ public final class TranscriptEditController implements PublicationChangeListener
                     proteinSequenceArea.activate();
                     return;
                 }
-                if (false == transcriptDTO.getTranscriptType().equals("mRNA")) {
+                if (false == dto.getTranscriptType().equals("mRNA")) {
                     Window.alert("Can only add protein if transcript type is mRNA");
                     proteinSequenceArea.activate();
                     return;
                 }
-                TranscriptRPCService.App.getInstance().addProteinSequence(zdbID, sequenceAddEvent.getSequenceDTO().getSequence(),
+                TranscriptRPCService.App.getInstance().addProteinSequence(dto.getZdbID(), sequenceAddEvent.getSequenceDTO().getSequence(),
                         publicationZdbID,
                         sequenceAddEvent.getReferenceDatabaseDTO().getZdbID(),
                         new MarkerEditCallBack<DBLinkDTO>("failed to add sequence: ", proteinSequenceArea) {
@@ -129,58 +121,97 @@ public final class TranscriptEditController implements PublicationChangeListener
             }
         });
 
-        viewTranscriptLabel.addViewTranscriptListeners(new ViewTranscriptListener() {
+        transcriptViewMarkerLabel.addViewMarkerListeners(new ViewMarkerListener() {
             /**
              * from fogbugz 4357, check direct attribution, nucleotide sequence + attribution
              */
             public void finishedView() {
                 if (directAttributionTable.getNumberOfPublications() == 0) {
-                    viewTranscriptLabel.setError("Transcript requires attribution");
+                    transcriptViewMarkerLabel.setError("Transcript requires attribution");
                     directAttributionTable.setError("Transcript requires attribution");
-                } else if (nucleotideSequenceArea.getNumberOfSequences() == 0) {
-                    viewTranscriptLabel.setError("Transcript requires sequence");
-                    nucleotideSequenceArea.setError("Transcript requires sequence");
-                } else if (nucleotideSequenceArea.getNumberOfAttributions() == 0) {
-                    viewTranscriptLabel.setError("Transcript sequence requires attribution");
-                    nucleotideSequenceArea.setError("Transcript sequence requires attribution");
-                } else {
-                    viewTranscriptLabel.continueToViewTranscript();
                 }
+                else
+                if (nucleotideSequenceArea.getNumberOfSequences() == 0) {
+                    transcriptViewMarkerLabel.setError("Transcript requires sequence");
+                    nucleotideSequenceArea.setError("Transcript requires sequence");
+                }
+                else
+                if (nucleotideSequenceArea.getNumberOfAttributions() == 0) {
+                    transcriptViewMarkerLabel.setError("Transcript sequence requires attribution");
+                    nucleotideSequenceArea.setError("Transcript sequence requires attribution");
+                }
+                else
+                if(transcriptHeaderEdit.isDirty()){
+                    String error = "Name/type/status has unsaved changes.";
+                    transcriptViewMarkerLabel.setError(error);
+                    transcriptHeaderEdit.setError(error);
+                }
+                else
+                if(noteBox.isDirty() || noteBox.hasDirtyNotes()){
+                    String error = "Note changes not saved.";
+                    transcriptViewMarkerLabel.setError(error);
+                    noteBox.setError(error);
+                }
+                else
+                if(relatedGenesBox.isDirty()){
+                    String error = "Gene entry not added.";
+                    transcriptViewMarkerLabel.setError(error);
+                    relatedGenesBox.setError(error);
+                }
+                else
+                if(relatedClonesBox.isDirty()){
+                    String error = "Clone entry not added.";
+                    transcriptViewMarkerLabel.setError(error);
+                    relatedClonesBox.setError(error);
+                }
+                else
+                if(previousNamesBox.isDirty()){
+                    String error = "Alias entry not added.";
+                    transcriptViewMarkerLabel.setError(error);
+                    previousNamesBox.setError(error);
+                }
+                else
+                if(dbLinkTable.isDirty()){
+                    String error = "Supporting sequence not added.";
+                    transcriptViewMarkerLabel.setError(error);
+                    dbLinkTable.setError(error);
+                }
+                else {
+                    transcriptViewMarkerLabel.continueToViewTranscript();
+                }
+
             }
         });
 
-        previousNamesBox.addRelatedEntityCompositeListener(new DirectAttributionAddsRelatedEntityListener(directAttributionTable));
         relatedGenesBox.addRelatedEntityCompositeListener(new DirectAttributionAddsRelatedEntityListener(directAttributionTable));
         targetedGenesBox.addRelatedEntityCompositeListener(new DirectAttributionAddsRelatedEntityListener(directAttributionTable));
         relatedClonesBox.addRelatedEntityCompositeListener(new DirectAttributionAddsRelatedEntityListener(directAttributionTable));
         relatedProteinsBox.addRelatedEntityCompositeListener(new DirectAttributionAddsRelatedEntityListener(directAttributionTable));
         nucleotideSequenceArea.addRelatedEntityCompositeListener(new DirectAttributionAddsRelatedEntityListener(directAttributionTable));
+        dbLinkTable.addDBLinkTableListener(new DirectAttributionDBLinkTableListener(directAttributionTable));
 
-        addMarkerDomainListener(new MarkerLoadListener() {
-            public void markerDomainLoaded(MarkerLoadEvent markerLoadEvent) {
-                directAttributionTable.setZdbID(zdbID);
-                directAttributionTable.setRecordAttributions(transcriptDTO.getRecordAttributions());
-                curatorNoteBox.setZdbID(zdbID);
-                viewTranscriptLabel.setZdbID(zdbID);
-                curatorNoteBox.setNotes(transcriptDTO.getCuratorNotes());
-                publicNoteBox.setZdbID(zdbID);
-                publicNoteBox.setNotes(transcriptDTO.getPublicNotes());
-                transcriptHeaderEdit.setTranscriptDomain(transcriptDTO);
-                previousNamesBox.setRelatedEntities(transcriptDTO.getZdbID(), transcriptDTO.getAliasAttributes());
-                relatedProteinsBox.setRelatedEntities(transcriptDTO.getZdbID(), transcriptDTO.getRelatedProteinAttributes());
-                nucleotideSequenceArea.setMarkerDTO(transcriptDTO);
-                targetedGenesBox.setRelatedEntities(transcriptDTO.getZdbID(), transcriptDTO.getTargetedGeneAttributes());
-                relatedClonesBox.setRelatedEntities(transcriptDTO.getZdbID(), transcriptDTO.getRelatedCloneAttributes());
-                relatedGenesBox.setRelatedEntities(transcriptDTO.getZdbID(), transcriptDTO.getRelatedGeneAttributes());
+        addMarkerLoadListener(new MarkerLoadListener<TranscriptDTO>() {
+            public void markerLoaded(MarkerLoadEvent<TranscriptDTO> markerLoadEvent) {
+                // ignores DTO? assume already set
+                directAttributionTable.setZdbID(dto.getZdbID());
+                directAttributionTable.setRecordAttributions(dto.getRecordAttributions());
+                noteBox.setDTO(dto);
+                transcriptViewMarkerLabel.setDTO(dto);
+                transcriptHeaderEdit.setDTO(dto);
+                previousNamesBox.setRelatedEntities(dto.getZdbID(), dto.getAliasAttributes());
+                relatedProteinsBox.setRelatedEntities(dto.getZdbID(), dto.getRelatedProteinAttributes());
+                nucleotideSequenceArea.setMarkerDTO(dto);
+                targetedGenesBox.setRelatedEntities(dto.getZdbID(), dto.getTargetedGeneAttributes());
+                relatedClonesBox.setRelatedEntities(dto.getZdbID(), dto.getRelatedCloneAttributes());
+                relatedGenesBox.setRelatedEntities(dto.getZdbID(), dto.getRelatedGeneAttributes());
                 // has to be done in this order, otherwise, its not sure which ones are read only or not
-                supportingSequencesTable.addDBLinkTableListener(new DirectAttributionDBLinkTableListener(directAttributionTable));
-                final List<DBLinkDTO> supportingSequencesLinks = transcriptDTO.getSupportingSequenceLinks();
+                final List<DBLinkDTO> supportingSequencesLinks = dto.getSupportingSequenceLinks();
                 TranscriptRPCService.App.getInstance().getTranscriptSupportingSequencesReferenceDatabases(
                         new MarkerEditCallBack<List<ReferenceDatabaseDTO>>("error loading available sequence databases: ") {
                             public void onSuccess(List<ReferenceDatabaseDTO> referenceDatabaseDTOs) {
-                                supportingSequencesTable.setReferenceDatabases(referenceDatabaseDTOs);
-                                supportingSequencesTable.setZdbID(zdbID);
-                                supportingSequencesTable.setDBLinks(supportingSequencesLinks);
+                                dbLinkTable.setReferenceDatabases(referenceDatabaseDTOs);
+                                dbLinkTable.setZdbID(dto.getZdbID());
+                                dbLinkTable.setDBLinks(supportingSequencesLinks);
                             }
                         });
 
@@ -189,45 +220,34 @@ public final class TranscriptEditController implements PublicationChangeListener
         });
 
         publicationLookupBox.addPublicationChangeListener(transcriptHeaderEdit);
-        publicationLookupBox.addPublicationChangeListener(previousNamesBox);
-        publicationLookupBox.addPublicationChangeListener(directAttributionTable);
         publicationLookupBox.addPublicationChangeListener(relatedGenesBox);
         publicationLookupBox.addPublicationChangeListener(targetedGenesBox);
         publicationLookupBox.addPublicationChangeListener(relatedClonesBox);
         publicationLookupBox.addPublicationChangeListener(relatedProteinsBox);
-        publicationLookupBox.addPublicationChangeListener(supportingSequencesTable);
         publicationLookupBox.addPublicationChangeListener(nucleotideSequenceArea);
         publicationLookupBox.addPublicationChangeListener(proteinSequenceArea);
-        publicationLookupBox.addPublicationChangeListener(this);
+        publicationLookupBox.addPublicationChangeListener(dbLinkTable);
 
-        addHandlesErrorListener(transcriptHeaderEdit);
-        transcriptHeaderEdit.addHandlesErrorListener(this);
-        addHandlesErrorListener(previousNamesBox);
-        previousNamesBox.addHandlesErrorListener(this);
-        addHandlesErrorListener(directAttributionTable);
-        directAttributionTable.addHandlesErrorListener(this);
-        addHandlesErrorListener(relatedGenesBox);
-        relatedGenesBox.addHandlesErrorListener(this);
-        addHandlesErrorListener(targetedGenesBox);
-        targetedGenesBox.addHandlesErrorListener(this);
-        addHandlesErrorListener(relatedClonesBox);
-        relatedClonesBox.addHandlesErrorListener(this);
-        addHandlesErrorListener(relatedProteinsBox);
-        relatedProteinsBox.addHandlesErrorListener(this);
-        addHandlesErrorListener(supportingSequencesTable);
-        supportingSequencesTable.addHandlesErrorListener(this);
-        addHandlesErrorListener(nucleotideSequenceArea);
-        nucleotideSequenceArea.addHandlesErrorListener(this);
-        addHandlesErrorListener(proteinSequenceArea);
-        proteinSequenceArea.addHandlesErrorListener(this);
+        synchronizeHandlesErrorListener(transcriptViewMarkerLabel);
+        synchronizeHandlesErrorListener(transcriptHeaderEdit);
+        synchronizeHandlesErrorListener(relatedGenesBox);
+        synchronizeHandlesErrorListener(relatedClonesBox);
+        synchronizeHandlesErrorListener(relatedProteinsBox);
+        synchronizeHandlesErrorListener(noteBox);
+        synchronizeHandlesErrorListener(nucleotideSequenceArea);
+        synchronizeHandlesErrorListener(proteinSequenceArea);
+        synchronizeHandlesErrorListener(dbLinkTable);
     }
 
-    private void setValues() {
+    protected void setValues() {
         publicationLookupBox.clearPublications();
         publicationLookupBox.addPublication(new PublicationDTO("VEGA Database Links", "ZDB-PUB-030703-1"));
         publicationLookupBox.addPublication(new PublicationDTO("Microarray Expression to Gene Association in ZFIN", "ZDB-PUB-071218-1"));
         publicationLookupBox.addPublication(new PublicationDTO("miRBase", "ZDB-PUB-081217-13"));
+        publicationLookupBox.addPublication(new PublicationDTO("Manual Annotation of Genome", "ZDB-PUB-091007-1"));
+        publicationLookupBox.addRecentPubs() ;
 
+        noteBox.removeEditMode(NoteBox.EditMode.EXTERNAL);
 
         TranscriptRPCService.App.getInstance().getTranscriptTypes(
                 new MarkerEditCallBack<List<String>>("failed to load types: ") {
@@ -247,8 +267,8 @@ public final class TranscriptEditController implements PublicationChangeListener
         TranscriptRPCService.App.getInstance().getTranscriptEditAddProteinSequenceReferenceDatabases(
                 new MarkerEditCallBack<List<ReferenceDatabaseDTO>>("failed to load  sequence databases: ") {
                     public void onSuccess(List<ReferenceDatabaseDTO> referenceDatabaseDTOs) {
-                        EasyListBox databaseListBoxWrapper = proteinSequenceArea.getDatabaseListBoxWrapper();
-                        databaseListBoxWrapper.addItem(EasyListBox.EMPTY_CHOICE, EasyListBox.NULL_STRING);
+                        AbstractListBox databaseListBoxWrapper = proteinSequenceArea.getDatabaseListBoxWrapper();
+                        databaseListBoxWrapper.addItem(AbstractListBox.EMPTY_CHOICE, AbstractListBox.NULL_STRING);
                         for (ReferenceDatabaseDTO referenceDatabaseDTO : referenceDatabaseDTOs) {
                             databaseListBoxWrapper.addItem(referenceDatabaseDTO.getBlastName(), referenceDatabaseDTO.getZdbID());
                         }
@@ -258,22 +278,22 @@ public final class TranscriptEditController implements PublicationChangeListener
                 });
     }
 
-    protected void handleTranscriptTypes() {
-        boolean proteinsVisible = transcriptDTO.getTranscriptType().equals("mRNA"); //messenger, not micro!
+    void handleTranscriptTypes() {
+        boolean proteinsVisible = dto.getTranscriptType().equals("mRNA"); //messenger, not micro!
         proteinSequenceArea.setVisible(proteinsVisible);
         relatedProteinsBox.setVisible(proteinsVisible);
         RootPanel.get(proteinTitle).setVisible(proteinsVisible);
 
-        boolean targetedGenesVisible = transcriptDTO.getTranscriptType().equals("miRNA");
+        boolean targetedGenesVisible = dto.getTranscriptType().equals("miRNA");
         RootPanel.get(targetedGenesTitle).setVisible(targetedGenesVisible);
         targetedGenesBox.setVisible(targetedGenesVisible);
 
-        TranscriptRPCService.App.getInstance().getTranscriptAddableNucleotideSequenceReferenceDatabases(transcriptDTO,
+        TranscriptRPCService.App.getInstance().getTranscriptAddableNucleotideSequenceReferenceDatabases(dto,
                 new MarkerEditCallBack<List<ReferenceDatabaseDTO>>("error loading available sequence databases: ") {
                     public void onSuccess(List<ReferenceDatabaseDTO> referenceDatabaseDTOs) {
-                        EasyListBox databaseListBoxWrapper = nucleotideSequenceArea.getDatabaseListBoxWrapper();
+                        AbstractListBox databaseListBoxWrapper = nucleotideSequenceArea.getDatabaseListBoxWrapper();
                         databaseListBoxWrapper.clear();
-                        databaseListBoxWrapper.addItem(EasyListBox.EMPTY_CHOICE, EasyListBox.NULL_STRING);
+                        databaseListBoxWrapper.addItem(AbstractListBox.EMPTY_CHOICE, AbstractListBox.NULL_STRING);
                         for (ReferenceDatabaseDTO referenceDatabaseDTO : referenceDatabaseDTOs) {
                             databaseListBoxWrapper.addItem(referenceDatabaseDTO.getBlastName(), referenceDatabaseDTO.getZdbID());
                         }
@@ -282,15 +302,15 @@ public final class TranscriptEditController implements PublicationChangeListener
                 });
     }
 
-    protected void loadTranscript() {
+    protected void loadDTO() {
         try {
             // load properties
             Dictionary transcriptDictionary = Dictionary.getDictionary("MarkerProperties");
-            zdbID = transcriptDictionary.get(LOOKUP_TRANSCRIPT_ZDBID);
+            String zdbID = transcriptDictionary.get(LOOKUP_ZDBID);
             TranscriptRPCService.App.getInstance().getTranscriptForZdbID(zdbID,
                     new MarkerEditCallBack<TranscriptDTO>("failed to find zdbID: " + zdbID + " ") {
                         public void onSuccess(TranscriptDTO transcriptDTO) {
-                            setTranscriptDomain(transcriptDTO);
+                            setDTO(transcriptDTO);
                             handleTranscriptTypes();
                         }
                     });
@@ -300,49 +320,5 @@ public final class TranscriptEditController implements PublicationChangeListener
     }
 
 
-    public void setTranscriptDomain(TranscriptDTO transcriptDTO) {
-        this.transcriptDTO = transcriptDTO;
-        zdbID = this.transcriptDTO.getZdbID();
-        fireMarkerDomainLoaded(new MarkerLoadEvent(transcriptDTO));
-    }
 
-    public void publicationChanged(PublicationChangeEvent event) {
-        publicationZdbID = event.getPublication();
-    }
-
-    public TranscriptDTO getTranscriptDTO() {
-        return transcriptDTO;
-    }
-
-    public void setTranscriptDTO(TranscriptDTO transcriptDTO) {
-        this.transcriptDTO = transcriptDTO;
-    }
-
-    public void addMarkerDomainListener(MarkerLoadListener markerLoadListener) {
-        markerLoadListeners.add(markerLoadListener);
-    }
-
-    public void fireMarkerDomainLoaded(MarkerLoadEvent markerLoadEvent) {
-        for (MarkerLoadListener markerLoadListener : markerLoadListeners) {
-            markerLoadListener.markerDomainLoaded(markerLoadEvent);
-        }
-    }
-
-    public void fireEventSuccess() {
-        for (HandlesError handlesError : handlesErrorListeners) {
-            handlesError.clearError();
-        }
-    }
-
-    public void addHandlesErrorListener(HandlesError handlesError) {
-        handlesErrorListeners.add(handlesError);
-    }
-
-    public void setError(String message) {
-        // not doing anything with this
-    }
-
-    public void clearError() {
-        fireEventSuccess();
-    }
 }

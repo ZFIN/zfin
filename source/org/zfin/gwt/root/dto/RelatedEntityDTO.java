@@ -17,14 +17,6 @@ public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable  {
 
     public RelatedEntityDTO(){}
 
-    public RelatedEntityDTO(String dataZdbID, String name,String publicationZdbID){
-        this.dataZdbID = dataZdbID;
-        this.name = name ;
-        if(publicationZdbID!=null && true==publicationZdbID.startsWith("ZDB-PUB-")){
-            this.publicationZdbID = publicationZdbID;
-        }
-    }
-
     public String getName() {
         return name;
     }
@@ -38,7 +30,12 @@ public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable  {
     }
 
     public void setPublicationZdbID(String publicationZdbID) {
-        this.publicationZdbID = publicationZdbID;
+        if(publicationZdbID==null || publicationZdbID.startsWith("ZDB-PUB-")){
+            this.publicationZdbID = publicationZdbID;
+        }
+        else {
+            throw new RuntimeException("publication is not a valid zdbID: "+publicationZdbID);
+        }
     }
 
     public boolean isEditable() {

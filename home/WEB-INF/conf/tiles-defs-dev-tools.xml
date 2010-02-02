@@ -148,6 +148,11 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/transcript_edit.jsp"/>
     </definition>
 
+    <definition name="alternate-gene-edit" extends="dev_layout">
+        <put name="staticTitle" value="GWT Transcript Edit"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/alternate_gene_edit.jsp"/>
+    </definition>
+
     <definition name="clone-edit" extends="dev_layout">
         <put name="staticTitle" value="GWT Clone Edit"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/clone_edit.jsp"/>
@@ -156,6 +161,11 @@
     <definition name="antibody-edit" extends="dev_layout">
         <put name="staticTitle" value="GWT Antibody Edit"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/antibody_edit.jsp"/>
+    </definition>
+
+    <definition name="gene-edit" extends="dev_layout">
+        <put name="staticTitle" value="GWT Antibody Edit"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/gene_edit.jsp"/>
     </definition>
 
     <definition name="lookup" extends="dev_layout">

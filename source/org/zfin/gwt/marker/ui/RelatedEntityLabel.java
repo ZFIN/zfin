@@ -9,21 +9,22 @@ import com.google.gwt.user.client.ui.Image;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 
 /**
+ * A label for related entities.
  */
 public class RelatedEntityLabel<U extends RelatedEntityDTO> extends Composite {
 
     // internal data
     private String name ;
-    private HasRelatedEntities parentTable;
+    private final HasRelatedEntities parentTable;
     // this is just meta-data
     private U linkableData;
 
 
-    private HorizontalPanel panel = new HorizontalPanel() ;
+    private final HorizontalPanel panel = new HorizontalPanel() ;
     private HTML displayHTML = null ;
-    private String imageURL = "/images/";
-    private Image addAttributionButton = new Image(imageURL+"new-attribution.png");
-    private Image removeRelatedEntityButton = new Image(imageURL+"delete-button.png") ;
+    private final String imageURL = "/images/";
+    private final Image addAttributionButton = new Image(imageURL+"new-attribution.png");
+    private final Image removeRelatedEntityButton = new Image(imageURL+"delete-button.png") ;
 
     private boolean visibleName ;
 
@@ -87,7 +88,7 @@ public class RelatedEntityLabel<U extends RelatedEntityDTO> extends Composite {
         });
     }
 
-    public RelatedEntityLabel getAttributeNameWidget(){
+    RelatedEntityLabel getAttributeNameWidget(){
         return this ;
     }
 

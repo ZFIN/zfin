@@ -1,3 +1,5 @@
+<%@ page import="org.zfin.gwt.marker.ui.StandardMarkerDivNames" %>
+<%@ page import="org.zfin.gwt.marker.ui.TranscriptEditController" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
@@ -5,7 +7,7 @@
 
 <script type="text/javascript">
     var MarkerProperties= {
-        zdbID : "${formBean.marker.zdbID}",
+        zdbID : "${formBean.marker.zdbID}"
     } ;
 
 </script>
@@ -14,52 +16,47 @@
 <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
 <script language="javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
-<input type="hidden" name="hiddenName" id="hiddenName"/>
-
-
 
 <table cellpadding="10">
     <tr><td align="center" colspan="2">
-        <div id="viewTranscript"></div>
+        <div id="<%=StandardMarkerDivNames.viewDiv%>"></div>
     </td></tr>
     <tr>
         <td>
-            <div id="markerName"></div>
-            <div id="directAttributionName"></div>
+            <div id="<%=StandardMarkerDivNames.headerDiv%>"></div>
             <br>
-            <div class="summaryTitle">Previous Name(s):</div>
-            <div id="aliasName"></div>
+            <br>
+            <div id="<%=StandardMarkerDivNames.directAttributionDiv%>"></div>
+            <br>
+            <div class="summaryTitle">Alias:</div>
+            <div id="<%=StandardMarkerDivNames.previousNameDiv%>"></div>
         </td>
         <td valign="top">
-            <div id="publicationName"></div>
+            <div id="<%=StandardMarkerDivNames.publicationLookupDiv%>"></div>
         </td>
     </tr>
     <tr>
-        <td>
-            <div class="summaryTitle">Curator Notes:</div>
-            <div id="curatorNoteName"></div>
-        </td>
-        <td>
-            <div class="summaryTitle">Public Notes:</div>
-            <div id="publicNoteName"></div>
+        <td colspan="2">
+            <div class="summaryTitle">Notes:</div>
+            <div id="<%=StandardMarkerDivNames.noteDiv%>"></div>
         </td>
     </tr>
     <tr>
         <td>
             <div class="summaryTitle">Produced by Genes:</div>
-            <div id="geneName"></div>
+            <div id="<%=StandardMarkerDivNames.geneDiv%>"></div>
         </td>
         <td colspan="1" valign="top">
             <div class="summaryTitle">Contained in Clone</div>
-            <div id="cloneRelatedName"></div>
+            <div id="<%=TranscriptEditController.cloneRelatedDiv%>"></div>
             <a target="_blank" href="/action/marker/clone-add" class="external">Add New Clone</a>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <div class="summaryTitle"
-                 id="targetedGeneTitle">Targeted Genes:</div>
-            <div id="targetedGeneName"></div>          
+                 id="<%=TranscriptEditController.targetedGenesTitle%>">Targeted Genes:</div>
+            <div id="<%=TranscriptEditController.targetedGeneDiv%>"></div>
         </td>
 
     </tr>
@@ -67,9 +64,9 @@
         <td>
             <a name="proteinLookup"/>
             <div class="summaryTitle"
-                 id="proteinTitle">Protein Products:</div>
-            <div id="proteinName"></div>
-            <div id="newProteinName"></div>
+                 id="<%=TranscriptEditController.proteinTitle%>">Protein Products:</div>
+            <div id="<%=TranscriptEditController.proteinDiv%>"></div>
+            <div id="<%=TranscriptEditController.newProteinDiv%>"></div>
         </td>
     </tr>
     <tr>
@@ -80,16 +77,14 @@
     <tr>
         <td colspan="2">
             <div class="summaryTitle">Supporting Sequences:</div>
-            <div id="dbLinksName"></div>
+            <div id="<%=StandardMarkerDivNames.dbLinkDiv%>"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <a name="sequence"></a>
             <div class="summaryTitle">RNA Sequences:</div>
-            <div id="rnaName"></div>
-            <!--<br>-->
-            <!--<div id="rnaUpdateName"></div>-->
+            <div id="<%=TranscriptEditController.rnaDiv%>"></div>
         </td>
      </tr>
 </table>

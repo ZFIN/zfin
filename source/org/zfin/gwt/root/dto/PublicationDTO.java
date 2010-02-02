@@ -12,6 +12,7 @@ public class PublicationDTO implements IsSerializable {
     private String doi ;
     private String accession;
     private String citation ;
+    private String miniRef;
 
     public PublicationDTO(){}
 
@@ -74,5 +75,13 @@ public class PublicationDTO implements IsSerializable {
 
     public void setCitation(String citation) {
         this.citation = citation;
+    }
+
+    public String getMiniRef() {
+        return miniRef;
+    }
+
+    public void setMiniRef(String miniRef) {
+        this.miniRef = miniRef;
     }
 }

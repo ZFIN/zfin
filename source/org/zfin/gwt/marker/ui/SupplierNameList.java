@@ -5,38 +5,39 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.SupplierChangeEvent;
 import org.zfin.gwt.marker.event.SupplierChangeListener;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.ui.StringListBox;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * A list of supplier names.
  */
 public class SupplierNameList extends Composite implements CanRemoveSupplier {
 
     // GUI elements
-    private VerticalPanel panel = new VerticalPanel();
+    private final VerticalPanel panel = new VerticalPanel();
 
     // GUI suppliers panel
-    private HorizontalPanel supplierPanel = new HorizontalPanel();
-    private EasyListBox supplierListBox = new EasyListBox();
-    private Button supplierAddButton = new Button("Add Supplier");
-    private FlexTable supplierTable = new FlexTable();// contains the supplier names
+    private final HorizontalPanel supplierPanel = new HorizontalPanel();
+    private final StringListBox supplierListBox = new StringListBox();
+    private final Button supplierAddButton = new Button("Add Supplier");
+    private final FlexTable supplierTable = new FlexTable();// contains the supplier names
 
     // listeners
-    private List<SupplierChangeListener> supplierChangeListeners = new ArrayList<SupplierChangeListener>();
+    private final List<SupplierChangeListener> supplierChangeListeners = new ArrayList<SupplierChangeListener>();
 
     // internal data
     private MarkerDTO markerDTO;
 
-    public SupplierNameList(String div) {
+    public SupplierNameList() {
         super();
-        initGui();
+        initGUI();
         initWidget(panel);
         initInternalListeners();
-        RootPanel.get(div).add(this);
+        RootPanel.get(StandardMarkerDivNames.supplierDiv).add(this);
     }
 
     public void setDomain(MarkerDTO markerDTO) {
@@ -44,7 +45,7 @@ public class SupplierNameList extends Composite implements CanRemoveSupplier {
         refreshGUI();
     }
 
-    public void refreshGUI() {
+    void refreshGUI() {
         supplierTable.clear();
 
         for (String supplier : markerDTO.getSuppliers()) {
@@ -54,32 +55,33 @@ public class SupplierNameList extends Composite implements CanRemoveSupplier {
 
     private void initInternalListeners() {
         addSupplierChangeListener(new SupplierChangeListener() {
-            public void addSupplier(final SupplierChangeEvent supplierChangeEvent) {
-                MarkerRPCService.App.getInstance().addMarkerSupplier(supplierChangeEvent.getSupplierName(), getZdbID(),
+            public void addSupplier(final String supplierName) {
+                MarkerRPCService.App.getInstance().addMarkerSupplier(supplierName, getZdbID(),
                         new MarkerEditCallBack<Void>("failed to add supplier to marker: ") {
                             public void onSuccess(Void o) {
-                                addSupplierToGUI(supplierChangeEvent.getSupplierName());
+                                addSupplierToGUI(supplierName);
                             }
                         });
             }
 
-            public void removeSupplier(final SupplierChangeEvent supplierChangeEvent) {
-                MarkerRPCService.App.getInstance().removeMarkerSupplier(supplierChangeEvent.getSupplierName(), getZdbID(),
+            public void removeSupplier(final String supplierName) {
+                MarkerRPCService.App.getInstance().removeMarkerSupplier(supplierName, getZdbID(),
                         new MarkerEditCallBack<Void>("failed to remove supplier to marker: ") {
                             public void onSuccess(Void o) {
-                                removeSupplierFromGUI(supplierChangeEvent.getSupplierName());
+                                removeSupplierFromGUI(supplierName);
                             }
                         });
             }
         });
     }
 
-    private void initGui() {
+    private void initGUI() {
         supplierPanel.add(supplierListBox);
         supplierPanel.add(supplierAddButton);
         panel.add(supplierTable);
         panel.add(supplierPanel);
         panel.add(new HTML("<br>")); // spacer
+        panel.setStyleName("gwt-editbox");
 
 
         MarkerRPCService.App.getInstance().getAllSupplierNames(new AsyncCallback<List<String>>() {
@@ -94,31 +96,31 @@ public class SupplierNameList extends Composite implements CanRemoveSupplier {
 
         supplierAddButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                fireSupplierAdded(new SupplierChangeEvent(supplierListBox.getSelectedString()));
+                fireSupplierAdded(supplierListBox.getSelected());
             }
         });
 
 
     }
 
-    protected void fireSupplierAdded(SupplierChangeEvent supplierChangedEvent) {
+    void fireSupplierAdded(String supplierName) {
         for (SupplierChangeListener supplierChangeListener : supplierChangeListeners) {
-            supplierChangeListener.addSupplier(supplierChangedEvent);
+            supplierChangeListener.addSupplier(supplierName);
         }
     }
 
-    public void fireSupplierRemoved(SupplierChangeEvent supplierChangedEvent) {
+    public void fireSupplierRemoved(String supplierName) {
         for (SupplierChangeListener supplierChangeListener : supplierChangeListeners) {
-            supplierChangeListener.removeSupplier(supplierChangedEvent);
+            supplierChangeListener.removeSupplier(supplierName);
         }
     }
 
-    public void addSupplierToGUI(String supplierName) {
+    void addSupplierToGUI(String supplierName) {
         supplierTable.setWidget(supplierTable.getRowCount(), 0, new SupplierComposite(this, supplierName));
         supplierListBox.setSelectedIndex(0);
     }
 
-    public void removeSupplierFromGUI(String supplierName) {
+    void removeSupplierFromGUI(String supplierName) {
         int rowCount = supplierTable.getRowCount();
         for (int i = 0; i < rowCount; i++) {
             String widgetName = ((SupplierComposite) supplierTable.getWidget(i, 0)).getName();
@@ -131,12 +133,12 @@ public class SupplierNameList extends Composite implements CanRemoveSupplier {
     }
 
 
-    public void addSupplierChangeListener(SupplierChangeListener supplierChangeListener) {
+    void addSupplierChangeListener(SupplierChangeListener supplierChangeListener) {
         supplierChangeListeners.add(supplierChangeListener);
     }
 
 
-    public String getZdbID() {
+    String getZdbID() {
         return markerDTO.getZdbID();
     }
 

@@ -482,7 +482,7 @@ function jump(form_select){
     <?MIVAR COND="$(AND,$(XST,$UPDATE),$(EQ,$marker_type,GENE))">
     <script type="text/javascript">
         var MarkerProperties= {
-            zdbID: "$OID",
+            zdbID: "$OID"
         };
     </script>
 

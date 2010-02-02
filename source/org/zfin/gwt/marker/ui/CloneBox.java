@@ -3,52 +3,40 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.CloneDataChangedEvent;
-import org.zfin.gwt.marker.event.CloneDataListener;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.CloneDTO;
 import org.zfin.gwt.root.dto.CloneTypesDTO;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.zfin.gwt.root.ui.*;
 
 /**
  */
-public class CloneBox extends Composite implements HandlesError {
-    private VerticalPanel panel = new VerticalPanel();
-    private Button updateButton = new Button("update");
-    private Button revertButton = new Button("revert");
-    private HorizontalPanel buttonPanel = new HorizontalPanel();
-
-    // error label
-    private Label errorLabel = new Label();
+public class CloneBox extends AbstractDataBox<CloneDTO>{
 
     // table
     private Grid table = new Grid(5, 4);
-    private EasyListBox libraryListBox = new EasyListBox();
-    private EasyListBox cloneRatingListBox = new EasyListBox();
-    private EasyListBox vectorListBox = new EasyListBox();
-    private EasyListBox digestListBox = new EasyListBox();
-    private EasyListBox polymeraseListBox = new EasyListBox();
-    private TextBoxWrapper insertSizeTextBox = new TextBoxWrapper();
-    private TextBoxWrapper cloneComments = new TextBoxWrapper();
-    private TextBoxWrapper pcrAmplificationTextBox = new TextBoxWrapper();
-    private EasyListBox cloningSiteListBox = new EasyListBox();
+    private StringListBox libraryListBox = new StringListBox();
+    private IntegerListBox cloneRatingListBox = new IntegerListBox();
+    private StringListBox vectorListBox = new StringListBox();
+    private StringListBox digestListBox = new StringListBox();
+    private StringListBox polymeraseListBox = new StringListBox();
+    private IntegerTextBox insertSizeTextBox = new IntegerTextBox();
+    private StringTextBox cloneComments = new StringTextBox();
+    private StringTextBox pcrAmplificationTextBox = new StringTextBox();
+    private StringListBox cloningSiteListBox = new StringListBox();
 
 
-    // internal data
-    private CloneDTO cloneDTO;
 
-    // listeners
-    private List<CloneDataListener> cloneDataListeners = new ArrayList<CloneDataListener>();
-    private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
-
-    public CloneBox() {
+    public CloneBox(String div) {
+        super();
         initGUI();
+        addInternalListeners(this);
         initWidget(panel);
+        RootPanel.get(div).add(this);
     }
 
     protected void initGUI() {
+        super.initGUI();
         table.setText(0, 0, "Cloning Site:");
         table.setWidget(0, 1, cloningSiteListBox);
         table.setText(1, 0, "Library:");
@@ -59,7 +47,7 @@ public class CloneBox extends Composite implements HandlesError {
         table.setWidget(4, 1, digestListBox);
 
 
-        cloneRatingListBox.addItem(EasyListBox.EMPTY_CHOICE, null);
+        cloneRatingListBox.addItem(AbstractListBox.EMPTY_CHOICE, null);
         cloneRatingListBox.addItem("0", "0");
         cloneRatingListBox.addItem("1", "1");
         cloneRatingListBox.addItem("2", "2");
@@ -80,10 +68,11 @@ public class CloneBox extends Composite implements HandlesError {
         table.setWidget(4, 3, pcrAmplificationTextBox);
 
         panel.add(table);
+        panel.setStyleName("gwt-editbox");
 
         CloneRPCService.App.getInstance().getCloneTypes(new AsyncCallback<CloneTypesDTO>() {
             public void onFailure(Throwable throwable) {
-                Window.alert("failure to load problem types: " + throwable);
+                Window.alert("failure to load clone types: " + throwable);
             }
 
             public void onSuccess(CloneTypesDTO cloneTypesDTO) {
@@ -93,25 +82,20 @@ public class CloneBox extends Composite implements HandlesError {
                 digestListBox.addNullAndItems(cloneTypesDTO.getDigests());
                 polymeraseListBox.addNullAndItems(cloneTypesDTO.getPolymeraseNames());
 
-                refreshGUI();
+                revertGUI();
             }
         });
 
 
-        buttonPanel.add(updateButton);
-        buttonPanel.add(revertButton);
         panel.add(buttonPanel);
-
-        errorLabel.setStyleName("error");
         panel.add(errorLabel);
 
 
+
+    }
+
+    public void addInternalListeners(HandlesError handlesError){
         libraryListBox.addChangeHandler(new ChangeHandler() {
-            public void onChange(ChangeEvent event) {
-                checkDirty();
-            }
-        });
-        cloneRatingListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
                 checkDirty();
             }
@@ -143,12 +127,6 @@ public class CloneBox extends Composite implements HandlesError {
                 checkDirty();
             }
         });
-        cloneComments.addKeyPressHandler(new KeyPressHandler() {
-            @Override
-            public void onKeyPress(KeyPressEvent event) {
-                checkDirty();
-            }
-        });
         pcrAmplificationTextBox.addKeyPressHandler(new KeyPressHandler() {
             @Override
             public void onKeyPress(KeyPressEvent event) {
@@ -156,128 +134,94 @@ public class CloneBox extends Composite implements HandlesError {
             }
         });
 
-
-        updateButton.addClickHandler(new ClickHandler() {
+        saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                if (isDirty() == true) {
-                    fireCloneDataUpdated(new CloneDataChangedEvent(createCloneDTOFromGUI()));
-                    checkDirty();
+                if (isDirty()) {
+                    working();
+                    CloneRPCService.App.getInstance().updateCloneData(createDTOFromGUI(), new MarkerEditCallBack<CloneDTO>("Failed to update clone: ") {
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            super.onFailure(throwable);    //To change body of overridden methods use File | Settings | File Templates.
+                            notWorking();
+                        }
+
+                        public void onSuccess(CloneDTO updatedDTO) {
+                            setDTO(updatedDTO);
+                            clearError();
+                            notWorking();
+                            revertGUI();
+                        }
+                    });
                 } else {
-                    Window.alert("No fields changed.  Not sending update.");
+                    setError("No fields changed.  Not sending update.");
                 }
             }
         });
 
         revertButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                refreshGUI();
+                revertGUI();
                 checkDirty();
             }
         });
-
     }
 
-    protected void checkDirty() {
-        boolean dirty = isDirty();
-        updateButton.setEnabled(true == dirty);
-        revertButton.setEnabled(true == dirty);
-        if (false == dirty) {
-            fireEventSuccess();
-        }
-    }
-
-    protected boolean isDirty() {
-        try {
-            if (false == cloneRatingListBox.isFieldEqual(cloneDTO.getRating())) return true;
-            if (false == vectorListBox.isFieldEqual(cloneDTO.getVectorName())) return true;
-            if (false == digestListBox.isFieldEqual(cloneDTO.getDigest())) return true;
-            if (false == libraryListBox.isFieldEqual(cloneDTO.getProbeLibraryName())) return true;
-            if (false == polymeraseListBox.isFieldEqual(cloneDTO.getPolymerase())) return true;
-            if (false == insertSizeTextBox.isFieldEqual(cloneDTO.getInsertSize())) return true;
-            if (false == cloneComments.isFieldEqual(cloneDTO.getCloneComments())) return true;
-            if (false == pcrAmplificationTextBox.isFieldEqual(cloneDTO.getPcrAmplification())) return true;
-            if (false == cloningSiteListBox.isFieldEqual(cloneDTO.getCloningSite())) return true;
-        }
-        catch (Exception e) {
-            return true;
-        }
-
-        return false;
+    public boolean isDirty() {
+//            if (cloneRatingListBox.isDirty(dto.getRating())) return true;
+//            if (cloneComments.isDirty(dto.getCloneComments())) return true;
+        boolean isDirty = false ;
+        isDirty = (vectorListBox.isDirty(dto.getVectorName()) || isDirty)  ;
+        isDirty = (digestListBox.isDirty(dto.getDigest())|| isDirty);
+        isDirty = (libraryListBox.isDirty(dto.getProbeLibraryName())|| isDirty);
+        isDirty = (polymeraseListBox.isDirty(dto.getPolymerase())|| isDirty);
+        isDirty = (insertSizeTextBox.isDirty(dto.getInsertSize())|| isDirty);
+        isDirty = (pcrAmplificationTextBox.isDirty(dto.getPcrAmplification())|| isDirty);
+        isDirty = (cloningSiteListBox.isDirty(dto.getCloningSite())|| isDirty);
+        return isDirty ;
     }
 
 
-    public void setDomain(CloneDTO cloneDTO) {
-        this.cloneDTO = cloneDTO;
-        refreshGUI();
-        checkDirty();
-    }
 
-
-    protected CloneDTO createCloneDTOFromGUI() {
+    protected CloneDTO createDTOFromGUI() {
         CloneDTO newCloneDTO = new CloneDTO();
-
-        newCloneDTO.setRating(cloneRatingListBox.getSelectedInteger());
-        newCloneDTO.setVectorName(vectorListBox.getSelectedString());
-        newCloneDTO.setDigest(digestListBox.getSelectedString());
-        newCloneDTO.setProbeLibraryName(libraryListBox.getSelectedString());
-        newCloneDTO.setPolymerase(polymeraseListBox.getSelectedString());
-        newCloneDTO.setInsertSize(insertSizeTextBox.getInteger());
-        newCloneDTO.setCloneComments(cloneComments.getText());
-        newCloneDTO.setPcrAmplification(pcrAmplificationTextBox.getText());
-        newCloneDTO.setCloningSite(cloningSiteListBox.getSelectedString());
+        newCloneDTO.setZdbID(dto.getZdbID());
+        newCloneDTO.setRating(cloneRatingListBox.getSelected());
+        newCloneDTO.setVectorName(vectorListBox.getSelected());
+        newCloneDTO.setDigest(digestListBox.getSelected());
+        newCloneDTO.setProbeLibraryName(libraryListBox.getSelected());
+        newCloneDTO.setPolymerase(polymeraseListBox.getSelected());
+        newCloneDTO.setInsertSize(insertSizeTextBox.getBoxValue());
+        newCloneDTO.setCloneComments(cloneComments.getBoxValue());
+        newCloneDTO.setPcrAmplification(pcrAmplificationTextBox.getBoxValue());
+        newCloneDTO.setCloningSite(cloningSiteListBox.getSelected());
 
         // do not assing
         return newCloneDTO;
     }
 
-    // todo: implement
-
-    public void refreshGUI() {
-        if (cloneDTO != null) {
-            cloneRatingListBox.setIndexForValue(cloneDTO.getRating());
-
-            libraryListBox.setIndexForValue(cloneDTO.getProbeLibraryName());
-            vectorListBox.setIndexForValue(cloneDTO.getVectorName());
-            digestListBox.setIndexForValue(cloneDTO.getDigest());
-            polymeraseListBox.setIndexForValue(cloneDTO.getPolymerase());
-            insertSizeTextBox.setText((cloneDTO.getInsertSize() == null ? "" : cloneDTO.getInsertSize().toString()));
-            cloneComments.setText(cloneDTO.getCloneComments());
-            pcrAmplificationTextBox.setText(cloneDTO.getPcrAmplification());
-            cloningSiteListBox.setIndexForValue(cloneDTO.getCloningSite());
+    public void revertGUI() {
+        if (dto != null) {
+            cloneRatingListBox.setIndexForValue(dto.getRating());
+            libraryListBox.setIndexForValue(dto.getProbeLibraryName());
+            vectorListBox.setIndexForValue(dto.getVectorName());
+            digestListBox.setIndexForValue(dto.getDigest());
+            polymeraseListBox.setIndexForValue(dto.getPolymerase());
+            insertSizeTextBox.setText((dto.getInsertSize() == null ? "" : dto.getInsertSize().toString()));
+            cloneComments.setText(dto.getCloneComments());
+            pcrAmplificationTextBox.setText(dto.getPcrAmplification());
+            cloningSiteListBox.setIndexForValue(dto.getCloningSite());
         }
     }
 
-
-    protected void fireCloneDataUpdated(CloneDataChangedEvent cloneDataChangedEvent) {
-        for (CloneDataListener cloneDataListener : cloneDataListeners) {
-            cloneDataListener.cloneDataChanged(cloneDataChangedEvent);
+    public boolean checkDirty() {
+        boolean dirty = isDirty();
+        saveButton.setEnabled(dirty);
+        revertButton.setEnabled(dirty);
+        if (false == dirty) {
+            fireEventSuccess();
         }
+        return dirty ;
     }
 
-    public void addCloneDataListener(CloneDataListener cloneDataListener) {
-        cloneDataListeners.add(cloneDataListener);
-    }
 
-    public CloneDTO getCloneDTO() {
-        return cloneDTO;
-    }
-
-    public void setError(String message) {
-        errorLabel.setText(message);
-    }
-
-    public void clearError() {
-        errorLabel.setText("");
-    }
-
-    public void addHandlesErrorListener(HandlesError handlesError) {
-        handlesErrorListeners.add(handlesError);
-    }
-
-    public void fireEventSuccess() {
-        clearError();
-        for (HandlesError handlesError : handlesErrorListeners) {
-            handlesError.clearError();
-        }
-    }
 }

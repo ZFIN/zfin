@@ -3,42 +3,45 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.DirectAttributionEvent;
 import org.zfin.gwt.marker.event.DirectAttributionListener;
 import org.zfin.gwt.marker.event.PublicationChangeEvent;
 import org.zfin.gwt.marker.event.PublicationChangeListener;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.ui.HandlesError;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A composite for adding direcct attributions.
+ */
 public class DirectAttributionTable extends Composite
         implements CanRemoveReference, PublicationChangeListener, HandlesError {
 
     // gui
-    private HorizontalPanel attributionPanel = new HorizontalPanel();
-    private Button attributePubButton = new Button("Attribute Pub");
-    private Label defaultPubLabel = new Label();
-    private Label errorLabel = new Label();
-    private FlexTable attributedPubTable = new FlexTable();// contains the pubs
+    private final HorizontalPanel attributionPanel = new HorizontalPanel();
+    private final Button attributePubButton = new Button("Attribute Pub");
+    private final Label defaultPubLabel = new Label();
+    private final Label errorLabel = new Label();
+    private final FlexTable attributedPubTable = new FlexTable();// contains the pubs
 
-    private VerticalPanel panel = new VerticalPanel();
+    private final VerticalPanel panel = new VerticalPanel();
 
     // listeners
-    private List<DirectAttributionListener> directAttributionListeners = new ArrayList<DirectAttributionListener>();
-    private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
+    private final List<DirectAttributionListener> directAttributionListeners = new ArrayList<DirectAttributionListener>();
+    private final List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
 
     // internal data
     private List<String> recordAttributions;
     private String zdbID;
 
-    public DirectAttributionTable() {
+    DirectAttributionTable() {
         initGUI();
         initWidget(panel);
     }
 
 
-    public void initGUI() {
+    void initGUI() {
         attributionPanel.add(attributePubButton);
         attributionPanel.add(new HTML("&nbsp;"));
         defaultPubLabel.setStyleName("relatedEntityDefaultPub");
@@ -46,6 +49,7 @@ public class DirectAttributionTable extends Composite
 
         panel.add(attributedPubTable);
         panel.add(attributionPanel);
+        panel.setStyleName("gwt-editbox");
 
         errorLabel.setStyleName("error");
         panel.add(errorLabel);
@@ -63,9 +67,11 @@ public class DirectAttributionTable extends Composite
         refreshGUI();
     }
 
-    public void refreshGUI() {
-        for (String recordAttribution : recordAttributions) {
-            addPublicationToGUI(recordAttribution);
+    void refreshGUI() {
+        if(recordAttributions!=null){
+            for (String recordAttribution : recordAttributions) {
+                addPublicationToGUI(recordAttribution);
+            }
         }
     }
 
@@ -73,21 +79,21 @@ public class DirectAttributionTable extends Composite
         if (publicationZdbID == null || publicationZdbID.length() < 16) {
             setError("Must select a valid publication: " + publicationZdbID);
             return false;
-        } else if (true == containsPublication(publicationZdbID)) {
+        } else if (containsPublication(publicationZdbID)) {
             setError("Already contains publication: " + publicationZdbID);
             return false;
         }
 
-        fireAttributionAdded(new DirectAttributionEvent(publicationZdbID));
+        fireAttributionAdded(publicationZdbID);
 
         return true;
     }
 
-    public void setPublication(String publicationZdbID) {
+    void setPublication(String publicationZdbID) {
         defaultPubLabel.setText(publicationZdbID);
     }
 
-    public int getPublicationIndex(String publicationZdbID) {
+    int getPublicationIndex(String publicationZdbID) {
         for (int i = 0; i < attributedPubTable.getRowCount(); i++) {
             if (((PublicationAttributionLabel) attributedPubTable.getWidget(i, 0)).getPublication().equals(publicationZdbID)) {
                 return i;
@@ -104,7 +110,7 @@ public class DirectAttributionTable extends Composite
         return getPublicationIndex(publicationZdbID) >= 0;
     }
 
-    public boolean addPublicationToGUI(String publicationZdbID) {
+    boolean addPublicationToGUI(String publicationZdbID) {
         if (containsPublication(publicationZdbID)) {
             return false;
         }
@@ -121,7 +127,7 @@ public class DirectAttributionTable extends Composite
     }
 
 
-    public boolean removeReferenceFromGUI(String publicationZdbID) {
+    boolean removeReferenceFromGUI(String publicationZdbID) {
         int size = attributedPubTable.getRowCount();
         for (int i = 0; i < size; i++) {
             if (((PublicationAttributionLabel) attributedPubTable.getWidget(i, 0)).getPublication().equals(publicationZdbID)) {
@@ -135,7 +141,7 @@ public class DirectAttributionTable extends Composite
 
     public void removeAttribution(RelatedEntityDTO relatedEntityDTO) {
         String publicationZdbID = relatedEntityDTO.getPublicationZdbID();
-        fireAttributionRemoved(new DirectAttributionEvent(publicationZdbID));
+        fireAttributionRemoved(publicationZdbID);
     }
 
 
@@ -147,18 +153,18 @@ public class DirectAttributionTable extends Composite
         this.zdbID = zdbID;
     }
 
-    public void fireAttributionRemoved(DirectAttributionEvent directAttributionEvent) {
+    void fireAttributionRemoved(String pubZdbID) {
         fireEventSuccess();
         for (DirectAttributionListener directAttributionListener : directAttributionListeners) {
-            directAttributionListener.remove(directAttributionEvent);
+            directAttributionListener.remove(pubZdbID);
         }
     }
 
 
-    public void fireAttributionAdded(DirectAttributionEvent directAttributionEvent) {
+    void fireAttributionAdded(String pubZdbID) {
         fireEventSuccess();
         for (DirectAttributionListener directAttributionListener : directAttributionListeners) {
-            directAttributionListener.add(directAttributionEvent);
+            directAttributionListener.add(pubZdbID);
         }
     }
 

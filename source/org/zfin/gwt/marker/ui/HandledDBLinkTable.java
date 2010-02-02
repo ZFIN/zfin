@@ -2,7 +2,6 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.DBLinkTableEvent;
 import org.zfin.gwt.marker.event.DBLinkTableListener;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.marker.event.RelatedEntityListener;
@@ -10,23 +9,23 @@ import org.zfin.gwt.root.dto.DBLinkDTO;
 
 
 /**
- * This class simply has handles.
+ * This class simples DBLink tables.
  */
-public class HandledDBLinkTable extends DBLinkTable {
+class HandledDBLinkTable extends DBLinkTable {
 
 
-    public HandledDBLinkTable(String div) {
+    public HandledDBLinkTable() {
         super();
         addInternalListeners(this);
-        RootPanel.get(div).add(this);
+        RootPanel.get(StandardMarkerDivNames.dbLinkDiv).add(this);
     }
 
 
-    public void addInternalListeners(final DBLinkTable dbLinkTable) {
+    void addInternalListeners(final DBLinkTable dbLinkTable) {
 
         addRelatedEntityCompositeListener(new RelatedEntityListener<DBLinkDTO>() {
             public void addRelatedEntity(RelatedEntityEvent<DBLinkDTO> dbLinkDTORelatedEntityEvent) {
-                final DBLinkDTO dbLinkDTO = dbLinkDTORelatedEntityEvent.getRelatedEntityDTO();
+                final DBLinkDTO dbLinkDTO = dbLinkDTORelatedEntityEvent.getDTO();
                 dbLinkDTO.setDataZdbID(getZdbID());
 
                 // validate data
@@ -39,7 +38,7 @@ public class HandledDBLinkTable extends DBLinkTable {
                                     confirmed = Window.confirm(warning + "\nContinue?");
                                 }
 
-                                if (true == confirmed) {
+                                if (confirmed) {
                                     MarkerRPCService.App.getInstance().addDBLink(dbLinkDTO, getReferenceDatabases(),
                                             new MarkerEditCallBack<DBLinkDTO>("failed to add dblink: ", dbLinkTable) {
                                                 public void onSuccess(DBLinkDTO dbLinkDTO) {
@@ -55,7 +54,7 @@ public class HandledDBLinkTable extends DBLinkTable {
             }
 
             public void addAttribution(RelatedEntityEvent<DBLinkDTO> dbLinkDTORelatedEntityEvent) {
-                final DBLinkDTO dbLinkDTO = dbLinkDTORelatedEntityEvent.getRelatedEntityDTO();
+                final DBLinkDTO dbLinkDTO = dbLinkDTORelatedEntityEvent.getDTO();
                 dbLinkDTO.setDataZdbID(getZdbID());
                 // don't think that we need this, hopefully
                 MarkerRPCService.App.getInstance().addDBLinkAttribution(dbLinkDTO,
@@ -63,12 +62,13 @@ public class HandledDBLinkTable extends DBLinkTable {
                             public void onSuccess(DBLinkDTO o) {
                                 addAttributionToGUI(o);
                                 resetInput();
+                                fireDBLinkAttributed(new RelatedEntityEvent<DBLinkDTO>(o));
                             }
                         });
             }
 
             public void removeRelatedEntity(RelatedEntityEvent<DBLinkDTO> dbLinkDTORelatedEntityEvent) {
-                final DBLinkDTO dbLinkDTO = dbLinkDTORelatedEntityEvent.getRelatedEntityDTO();
+                final DBLinkDTO dbLinkDTO = dbLinkDTORelatedEntityEvent.getDTO();
                 dbLinkDTO.setDataZdbID(getZdbID());
                 MarkerRPCService.App.getInstance().removeDBLink(dbLinkDTO,
                         new MarkerEditCallBack<DBLinkDTO>("failed to remove dblink: ", dbLinkTable) {
@@ -79,7 +79,7 @@ public class HandledDBLinkTable extends DBLinkTable {
             }
 
             public void removeAttribution(RelatedEntityEvent<DBLinkDTO> dbLinkDTORelatedEntityEvent) {
-                final DBLinkDTO dbLinkDTO = dbLinkDTORelatedEntityEvent.getRelatedEntityDTO();
+                final DBLinkDTO dbLinkDTO = dbLinkDTORelatedEntityEvent.getDTO();
                 dbLinkDTO.setDataZdbID(getZdbID());
                 MarkerRPCService.App.getInstance().removeDBLinkAttribution(dbLinkDTO,
                         new MarkerEditCallBack<DBLinkDTO>("failed to remove dblink reference: ", dbLinkTable) {
@@ -91,8 +91,12 @@ public class HandledDBLinkTable extends DBLinkTable {
         });
 
         addDBLinkTableListener(new DBLinkTableListener() {
-            public void updateDBLink(DBLinkTableEvent dbLinkTableEvent) {
-                final DBLinkDTO dbLinkDTO = dbLinkTableEvent.getDBLinkDTO();
+            @Override
+            public void addAttribution(RelatedEntityEvent<DBLinkDTO> dbLinkDTORelatedEntityEvent) { }
+
+            @Override
+            public void dataChanged(RelatedEntityEvent<DBLinkDTO> dataChangedEvent) {
+                final DBLinkDTO dbLinkDTO = dataChangedEvent.getDTO();
                 MarkerRPCService.App.getInstance().updateDBLinkLength(dbLinkDTO,
                         new MarkerEditCallBack<DBLinkDTO>("failed to update dblink attributes: ", dbLinkTable) {
                             public void onSuccess(DBLinkDTO dbLinkDTO) {

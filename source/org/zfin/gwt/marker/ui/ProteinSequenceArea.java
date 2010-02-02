@@ -8,6 +8,9 @@ import org.zfin.gwt.marker.event.PublicationChangeListener;
 import org.zfin.gwt.marker.event.SequenceAddEvent;
 import org.zfin.gwt.marker.event.SequenceAddListener;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
+import org.zfin.gwt.root.ui.AbstractListBox;
+import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.StringListBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,20 +18,20 @@ import java.util.List;
 public class ProteinSequenceArea extends Composite implements HandlesError, RequiresAttribution, PublicationChangeListener {
 
     // gui
-    private VerticalPanel panel = new VerticalPanel();
-    private HorizontalPanel blastDatabasePanel = new HorizontalPanel();
-    private Label listBoxLabel = new Label("Blast Database:");
-    private EasyListBox databaseListBoxWrapper = new EasyListBox();
-    private Hyperlink link = new Hyperlink();
-    private NewSequenceBox newSequenceBox = new NewSequenceBox();
-    private Label errorLabel = new Label();
+    private final VerticalPanel panel = new VerticalPanel();
+    private final HorizontalPanel blastDatabasePanel = new HorizontalPanel();
+    private final Label listBoxLabel = new Label("Blast Database:");
+    private final StringListBox databaseListBoxWrapper = new StringListBox();
+    private final HTML link = new HTML();
+    private final NewSequenceBox newSequenceBox = new NewSequenceBox();
+    private final Label errorLabel = new Label();
 
     private final static String RIGHT_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/right.gif\" >Add Protein</a>";
     private final static String DOWN_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/down.gif\" >Add Protein</a>";
 
     // listeners
-    private List<SequenceAddListener> sequenceAddListeners = new ArrayList<SequenceAddListener>();
-    private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
+    private final List<SequenceAddListener> sequenceAddListeners = new ArrayList<SequenceAddListener>();
+    private final List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
     private boolean attributionRequired = true;
     private String publicationZdbID = "";
 
@@ -43,8 +46,8 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
     }
 
 
-    protected void initGUI() {
-        link.setTargetHistoryToken("proteinLookup");
+    void initGUI() {
+//        link.setTargetHistoryToken("proteinLookup");
         link.setHTML(RIGHT_ARROW);
 
         link.setVisible(true);
@@ -65,7 +68,7 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
 
         link.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                if (true == newSequenceBox.isVisible()) {
+                if (newSequenceBox.isVisible()) {
                     link.setHTML(RIGHT_ARROW);
                     newSequenceBox.setVisible(false);
                     blastDatabasePanel.setVisible(false);
@@ -86,9 +89,9 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
                     setError("Attribution required to add sequence.");
                     return;
                 }
-                if (databaseListBoxWrapper.getSelectedString() == null
+                if (databaseListBoxWrapper.getSelected() == null
                         ||
-                        EasyListBox.NULL_STRING.equals(databaseListBoxWrapper.getSelectedString())) {
+                        AbstractListBox.NULL_STRING.equals(databaseListBoxWrapper.getSelected())) {
                     setError("Please select a blast database.");
                     return;
                 }
@@ -101,7 +104,7 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
 
                 // on the way back, we should set the reference Database
                 ReferenceDatabaseDTO referenceDatabaseDTO = new ReferenceDatabaseDTO();
-                referenceDatabaseDTO.setZdbID(databaseListBoxWrapper.getSelectedString());
+                referenceDatabaseDTO.setZdbID(databaseListBoxWrapper.getSelected());
                 sequenceAddEvent.setReferenceDatabaseDTO(referenceDatabaseDTO);
 
                 // now we can fire the listeners
@@ -144,7 +147,7 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
         link.setHTML(RIGHT_ARROW);
     }
 
-    protected void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent) {
+    void fireSequenceAddListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.add(sequenceAddEvent);
@@ -152,14 +155,14 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
     }
 
 
-    protected void fireSequenceAddStartListeners(SequenceAddEvent sequenceAddEvent) {
+    void fireSequenceAddStartListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.start(sequenceAddEvent);
         }
     }
 
-    protected void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
+    void fireSequenceAddCancelListeners(SequenceAddEvent sequenceAddEvent) {
         clearError();
         for (SequenceAddListener sequenceAddListener : sequenceAddListeners) {
             sequenceAddListener.cancel(sequenceAddEvent);
@@ -171,7 +174,7 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
         sequenceAddListeners.add(sequenceAddListener);
     }
 
-    public EasyListBox getDatabaseListBoxWrapper() {
+    public AbstractListBox getDatabaseListBoxWrapper() {
         return databaseListBoxWrapper;
     }
 

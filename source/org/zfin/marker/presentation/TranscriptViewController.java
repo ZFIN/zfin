@@ -52,7 +52,7 @@ public class TranscriptViewController extends AbstractCommandController {
         // setting transcript relationships
 
         RelatedMarkerDisplay transcriptRelationships = TranscriptService.getRelatedMarkerDisplay(transcript)  ;
-        transcriptBean.setRelationships(transcriptRelationships);
+        transcriptBean.setMarkerRelationships(transcriptRelationships);
 
         transcriptBean.setRelatedGenes(TranscriptService.getRelatedGenes(transcript));
 

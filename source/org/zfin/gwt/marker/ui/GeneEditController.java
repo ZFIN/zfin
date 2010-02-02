@@ -10,49 +10,44 @@ import org.zfin.gwt.marker.event.SequenceAddListener;
 import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
+import org.zfin.gwt.root.ui.AbstractListBox;
 
 import java.util.List;
 
 /**
  * A GWT class for adding proteins to genes on the markerview.apg page.
  */
-public final class GeneEditController {
+public final class GeneEditController extends AbstractMarkerEditController<MarkerDTO>{
 
-    private String newProteinSequenceDiv = "newProteinSequence";
-    private String newStemLoopSequenceDiv = "newStemLoopSequence";
+    private final String newProteinSequenceDiv = "newProteinSequence";
+    private final String newStemLoopSequenceDiv = "newStemLoopSequence";
 
     // lookup
-    public static final String LOOKUP_TRANSCRIPT_ZDBID = "zdbID";
-
-    // gui data
-    private final int DEFAULT_LENGTH = 60;
-    private int lineLength;
+    private static final String LOOKUP_TRANSCRIPT_ZDBID = "zdbID";
 
     // gui elements
-    private ProteinSequenceArea proteinSequenceArea = new ProteinSequenceArea();
-    private NotificationPanel proteinNotificationPanel = new NotificationPanel();
-    private NotificationPanel stemLoopNotificationPanel = new NotificationPanel();
-    private DockPanel proteinPublicationPanel = new DockPanel();
-    private PublicationLookupBox proteinPublicationLookupBox = new PublicationLookupBox();
-    private NucleotideSequenceArea nucleotideSequenceArea = new NucleotideSequenceArea();
-    private DockPanel proteinAddPanel = new DockPanel();
-    private DockPanel stemLoopAddPanel = new DockPanel();
-    private DockPanel stemLoopPublicationPanel = new DockPanel();
-    private PublicationLookupBox stemLoopPublicationLookupBox = new PublicationLookupBox();
+    private final ProteinSequenceArea proteinSequenceArea = new ProteinSequenceArea();
+    private final NotificationPanel proteinNotificationPanel = new NotificationPanel();
+    private final NotificationPanel stemLoopNotificationPanel = new NotificationPanel();
+    private final DockPanel proteinPublicationPanel = new DockPanel();
+    private final PublicationLookupBox proteinPublicationLookupBox = new PublicationLookupBox();
+    private final NucleotideSequenceArea nucleotideSequenceArea = new NucleotideSequenceArea();
+    private final DockPanel proteinAddPanel = new DockPanel();
+    private final DockPanel stemLoopAddPanel = new DockPanel();
+    private final DockPanel stemLoopPublicationPanel = new DockPanel();
+    private final PublicationLookupBox stemLoopPublicationLookupBox = new PublicationLookupBox();
 
 
     // internal data
-    private String geneZdbID;
-    private MarkerDTO gene;
     private String url;
-    private String urlHeader = "?MIval=aa-markerview.apg&UPDATE=1&OID=";
+    private final String urlHeader = "?MIval=aa-markerview.apg&UPDATE=1&OID=";
 
 
     private class NotificationPanel extends Composite {
 
-        private VerticalPanel panel = new VerticalPanel();
-        private Label messageLabel = new Label();
-        private Button button = new Button("Okay");
+        private final VerticalPanel panel = new VerticalPanel();
+        private final Label messageLabel = new Label();
+        private final Button button = new Button("Okay");
 
         public NotificationPanel() {
             initGUI();
@@ -71,7 +66,7 @@ public final class GeneEditController {
                     setVisible(false);
                     proteinSequenceArea.activate();
                     proteinSequenceArea.resetAndHide();
-                    Window.open(url + urlHeader + geneZdbID, "_self", "");
+                    Window.open(url + urlHeader + dto.getZdbID(), "_self", "");
                 }
             });
         }
@@ -102,7 +97,7 @@ public final class GeneEditController {
 
         nucleotideSequenceArea.setRightArrowHTMLString("<a href=#addStemLoop><img align=\"top\" src=\"/images/right.gif\" >Add Stem Loop Sequence</a>");
         nucleotideSequenceArea.setDownArrowHTMLString("<a href=#addStemLoop><img align=\"top\" src=\"/images/down.gif\" >Add Stem Loop Sequence</a>");
-        nucleotideSequenceArea.setHistoryToken("addStemLoop");
+//        nucleotideSequenceArea.setHistoryToken("addStemLoop");
         nucleotideSequenceArea.closeBox();
 
 
@@ -117,21 +112,21 @@ public final class GeneEditController {
 
         RootPanel.get(newStemLoopSequenceDiv).add(stemLoopAddPanel);
 
-        loadGene();
+        loadDTO();
 
         setValues();
-        addHandlers();
+        addListeners();
 
 
     }
 
-    private void setValues() {
+    protected void setValues() {
         // load databases
         TranscriptRPCService.App.getInstance().getGeneEditAddProteinSequenceReferenceDatabases(
                 new MarkerEditCallBack<List<ReferenceDatabaseDTO>>("failed to load  sequence databases: ", proteinSequenceArea) {
                     public void onSuccess(List<ReferenceDatabaseDTO> referenceDatabaseDTOs) {
-                        EasyListBox databaseListBoxWrapper = proteinSequenceArea.getDatabaseListBoxWrapper();
-                        databaseListBoxWrapper.addItem(EasyListBox.EMPTY_CHOICE, EasyListBox.NULL_STRING);
+                        AbstractListBox databaseListBoxWrapper = proteinSequenceArea.getDatabaseListBoxWrapper();
+                        databaseListBoxWrapper.addItem(AbstractListBox.EMPTY_CHOICE, AbstractListBox.NULL_STRING);
                         for (ReferenceDatabaseDTO referenceDatabaseDTO : referenceDatabaseDTOs) {
                             databaseListBoxWrapper.addItem(referenceDatabaseDTO.getBlastName(), referenceDatabaseDTO.getZdbID());
                         }
@@ -142,8 +137,8 @@ public final class GeneEditController {
         TranscriptRPCService.App.getInstance().getGeneEditAddableStemLoopNucleotideSequenceReferenceDatabases(
                 new MarkerEditCallBack<List<ReferenceDatabaseDTO>>("failed to load  sequence databases: ", nucleotideSequenceArea) {
                     public void onSuccess(List<ReferenceDatabaseDTO> referenceDatabaseDTOs) {
-                        EasyListBox databaseListBoxWrapper = nucleotideSequenceArea.getDatabaseListBoxWrapper();
-                        databaseListBoxWrapper.addItem(EasyListBox.EMPTY_CHOICE, EasyListBox.NULL_STRING);
+                        AbstractListBox databaseListBoxWrapper = nucleotideSequenceArea.getDatabaseListBoxWrapper();
+                        databaseListBoxWrapper.addItem(AbstractListBox.EMPTY_CHOICE, AbstractListBox.NULL_STRING);
                         for (ReferenceDatabaseDTO referenceDatabaseDTO : referenceDatabaseDTOs) {
                             databaseListBoxWrapper.addItem(referenceDatabaseDTO.getName(), referenceDatabaseDTO.getZdbID());
                         }
@@ -160,7 +155,7 @@ public final class GeneEditController {
                 });
     }
 
-    private void addHandlers() {
+    protected void addListeners() {
 
         proteinSequenceArea.addSequenceAddListener(new SequenceAddListener() {
             public void add(SequenceAddEvent sequenceAddEvent) {
@@ -178,7 +173,7 @@ public final class GeneEditController {
                 }
 
                 // accession, defline, sequence
-                MarkerRPCService.App.getInstance().addInternalProteinSequence(geneZdbID,
+                MarkerRPCService.App.getInstance().addInternalProteinSequence(dto.getZdbID(),
                         sequenceAddEvent.getSequenceDTO().getSequence(),
                         proteinSequenceArea.getPublication(),
                         sequenceAddEvent.getReferenceDatabaseDTO().getZdbID(),
@@ -219,7 +214,7 @@ public final class GeneEditController {
                 nucleotideSequenceArea.clearError();
                 nucleotideSequenceArea.inactivate();
 
-                MarkerRPCService.App.getInstance().addInternalNucleotideSequence(geneZdbID,
+                MarkerRPCService.App.getInstance().addInternalNucleotideSequence(dto.getZdbID(),
                         sequenceAddEvent.getSequenceDTO().getSequence(),
                         nucleotideSequenceArea.getPublication(),
                         sequenceAddEvent.getReferenceDatabaseDTO().getZdbID(),
@@ -254,42 +249,25 @@ public final class GeneEditController {
     }
 
 
-    public void loadGene() {
+    protected void loadDTO() {
 // load properties
         Dictionary transcriptDictionary = Dictionary.getDictionary("MarkerProperties");
-        geneZdbID = transcriptDictionary.get(LOOKUP_TRANSCRIPT_ZDBID);
+        final String zdbID = transcriptDictionary.get(LOOKUP_TRANSCRIPT_ZDBID);
 
-        MarkerRPCService.App.getInstance().getGeneForZdbID(geneZdbID,
+        MarkerRPCService.App.getInstance().getGeneForZdbID(zdbID,
                 new MarkerEditCallBack<MarkerDTO>("failed to find zdbID: ", nucleotideSequenceArea) {
                     public void onSuccess(MarkerDTO markerDTO) {
                         if (markerDTO == null) {
-                            Window.alert("failed to find gene for zdbID: " + geneZdbID);
+                            Window.alert("failed to find gene for zdbID: " + zdbID);
                         }
-                        gene = markerDTO;
-                        nucleotideSequenceArea.setMarkerDTO(gene);
+                        setDTO(markerDTO);
                     }
                 });
     }
 
-
-    public String insertLineReturns(String string, int numCharsPerLine) {
-        this.lineLength = numCharsPerLine;
-        char[] chars = string.toCharArray();
-        StringBuffer buffer = new StringBuffer();
-        for (int i = 1; i <= chars.length; i++) {
-            if (Character.isLetter(chars[i - 1])) {
-                buffer.append(chars[i - 1]);
-            }
-            if (i % numCharsPerLine == 0) {
-                buffer.append("<br>");
-            }
-        }
-
-        return buffer.toString().toUpperCase();
+    protected void setDTO(MarkerDTO dto){
+        this.dto = dto;
+        nucleotideSequenceArea.setMarkerDTO(this.dto);
     }
 
-
-    public int getLineLength() {
-        return (lineLength == 0 ? lineLength = DEFAULT_LENGTH : lineLength);
-    }
 }

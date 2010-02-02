@@ -1,32 +1,30 @@
 package org.zfin.gwt.marker.ui;
 
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.CloneChangeEvent;
-import org.zfin.gwt.marker.event.CloneChangeListener;
+import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
+import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.CloneDTO;
+import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.StringListBox;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  */
-public class CloneHeaderEdit extends AbstractHeaderEdit{
+public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO>{
 
     // GUI name/type elements
-    private HTMLTable table = new Grid(5, 2);
+    private HTMLTable table = new Grid(4, 2);
     private HTML typeLabel = new HTML("");
-    private EasyListBox problemTypeListBox = new EasyListBox();
-
-    // listeners
-    private List<CloneChangeListener> cloneChangeListeners = new ArrayList<CloneChangeListener>();
-
-    // internal data
-    private CloneDTO cloneDTO;
+    private StringListBox problemTypeListBox = new StringListBox();
 
     public CloneHeaderEdit(String div) {
         super();
@@ -37,40 +35,25 @@ public class CloneHeaderEdit extends AbstractHeaderEdit{
     }
 
     protected void addInternalListeners(final HandlesError handlesError) {
-        addMarkerChangeListener(new CloneChangeListener() {
-            public void changeCloneProperties(final CloneChangeEvent cloneChangeEvent) {
-                final CloneDTO markerDTO = cloneChangeEvent.getDTO();
-                CloneRPCService.App.getInstance().updateCloneHeaders(markerDTO,
-                        new MarkerEditCallBack<Void>("failed to change clone name and type: ",handlesError) {
-                            public void onFailure(Throwable throwable) {
-                                super.onFailure(throwable);
-                                revert();
-                                //To change body of implemented methods use File | Settings | File Templates.
-                            }
 
-                            public void onSuccess(Void o) {
-                                handleChangeSuccess(markerDTO);
-//                                fireCloneChangeEvent(new CloneChangeEvent(markerDTO,cloneDTO.getName()));
-                                fireEventSuccess();
-                                //To change body of implemented methods use File | Settings | File Templates.
-//                        aliasRelatedEntities.addNewRelatedEntityToGUI(oldTranscriptName,publication);
-                            }
-                        });
+        super.addInternalListeners(handlesError);
+
+        problemTypeListBox.addChangeHandler(new ChangeHandler(){
+            @Override
+            public void onChange(ChangeEvent event) {
+                DeferredCommand.addCommand(new CompareCommand());
             }
         });
+
     }
 
-    public void setDomain(CloneDTO markerDTO) {
-        this.cloneDTO = markerDTO;
-        refreshGUI();
-    }
-
-    public void refreshGUI() {
-        zdbIDHTML.setHTML("<div class=\"attributionDefaultPub\">" + cloneDTO.getZdbID() + "</font>");
-        nameBox.setText(cloneDTO.getName());
-        typeLabel.setHTML("<div class=\"attributionDefaultPub\">" + cloneDTO.getMarkerType() + "</font>");
-        problemTypeListBox.addNullAndItems(cloneDTO.getProblemTypes()) ;
-        problemTypeListBox.setIndexForValue(cloneDTO.getProblemType());
+    public void revertGUI() {
+        zdbIDHTML.setHTML("<div class=\"attributionDefaultPub\">" + dto.getZdbID() + "</font>");
+        nameBox.setText(dto.getName());
+        typeLabel.setHTML("<div class=\"attributionDefaultPub\">" + dto.getMarkerType() + "</font>");
+        problemTypeListBox.addNullAndItems(dto.getProblemTypes()) ;
+        problemTypeListBox.setIndexForValue(dto.getProblemType());
+        checkDirty();
     }
 
 
@@ -84,111 +67,84 @@ public class CloneHeaderEdit extends AbstractHeaderEdit{
         table.setWidget(2, 1, typeLabel);
         table.setText(3, 0, "Problem Type:");
         table.setWidget(3, 1, problemTypeListBox);
-        table.setWidget(4, 1, errorLabel);
         panel.add(table);
+
+        panel.setStyleName("gwt-editbox");
 
         errorLabel.setStyleName("error");
 
-        buttonPanel.add(updateButton);
+        buttonPanel.add(saveButton);
         buttonPanel.add(new HTML("&nbsp;"));
         buttonPanel.add(revertButton);
         panel.add(buttonPanel);
-        panel.add(new HTML("<br>")); // spacer
+        panel.add(errorLabel);
 
-
-        nameBox.addKeyPressHandler(new KeyPressHandler() {
-            @Override
-            public void onKeyPress(KeyPressEvent event) {
-                DeferredCommand.addCommand(new CompareCommand());
-            }
-        });
-
-        problemTypeListBox.addChangeHandler(new ChangeHandler(){
-            @Override
-            public void onChange(ChangeEvent event) {
-                DeferredCommand.addCommand(new CompareCommand());
-            }
-        });
-
-
-        updateButton.setEnabled(false);
-        updateButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                sendUpdates();
-            }
-        });
-
+        saveButton.setEnabled(false);
         revertButton.setEnabled(false);
-        revertButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                revert();
-            }
-        });
-    }
 
-
-    public void revert() {
-        nameBox.setText(cloneDTO.getName());
-        problemTypeListBox.setIndexForValue(cloneDTO.getProblemType());
-        DeferredCommand.addCommand(new CompareCommand());
     }
 
     protected void sendUpdates() {
         // on success
         // set choices appropriates
-        if (isDirty() == true) {
-            CloneDTO newCloneDTO = new CloneDTO();
-            newCloneDTO.setZdbID(cloneDTO.getZdbID());
+        if (isDirty()) {
+            final CloneDTO newCloneDTO = dto.deepCopy();
             newCloneDTO.setName(nameBox.getText());
-            newCloneDTO.setProblemType(problemTypeListBox.getSelectedString());
+            newCloneDTO.setProblemType(problemTypeListBox.getSelected());
 
 
             if (newCloneDTO.getProblemType() != null &&
-                    ((false == cloneDTO.getZdbID().startsWith("ZDB-EST"))
+                    ((false == dto.getZdbID().startsWith("ZDB-EST"))
                             &&
-                            (false == cloneDTO.getZdbID().startsWith("ZDB-CDNA")))
+                            (false == dto.getZdbID().startsWith("ZDB-CDNA")))
                     ) {
                 setError("Only EST's and CDNA's can have problem types.");
                 return;
             }
 
-            if ((publicationZdbID == null || publicationZdbID.length() < 16) && false == newCloneDTO.getName().equals(this.cloneDTO.getName())) {
+            if(nameBox.getText()==null || nameBox.getText().trim().length()<3){
+                setError("Name must be atleast 3 characters long");
+                return ;
+            }
+
+            if ((publicationZdbID == null || publicationZdbID.length() < 16) && false == newCloneDTO.getName().equals(dto.getName())) {
                 setError("Need to attribute name changes.");
                 return;
             }
-            fireCloneChangeEvent(new CloneChangeEvent(newCloneDTO,cloneDTO.getName()));
+            working();
+            CloneRPCService.App.getInstance().updateCloneHeaders(newCloneDTO,
+                    new MarkerEditCallBack<Void>("failed to change clone name and type: ",this) {
+                        public void onFailure(Throwable throwable) {
+                            super.onFailure(throwable);
+                            revertGUI();
+                            notWorking();
+                            setError(throwable.getMessage());
+                        }
+
+                        public void onSuccess(Void o) {
+                            handleChangeSuccess(newCloneDTO);
+                            fireEventSuccess();
+                            fireChangeEvent(new RelatedEntityEvent<CloneDTO>(newCloneDTO,dto.getName()));
+                            notWorking();
+                        }
+                    });
         }
     }
 
     // the only thing that we chan change, I think.
 
-    public void handleChangeSuccess(CloneDTO dto) {
-        cloneDTO = dto ;
+    public void handleChangeSuccess(CloneDTO cloneDTO) {
+        this.dto= cloneDTO;
 //        cloneDTO.setName(dto.getName());
 //        cloneDTO.setProblemType(dto.getProblemType());
         DeferredCommand.addCommand(new CompareCommand());
     }
 
-    public void fireCloneChangeEvent(CloneChangeEvent cloneChangeEvent) {
-        for (CloneChangeListener cloneChangeListener : cloneChangeListeners) {
-            cloneChangeListener.changeCloneProperties(cloneChangeEvent);
-        }
-    }
-
-    protected boolean isDirty() {
-        // check names
-        if (false == nameBox.getText().equals(cloneDTO.getName())) return true ;
-        if (false == problemTypeListBox.isFieldEqual(cloneDTO.getProblemType())) return true;
+    public boolean isDirty() {
+        if (nameBox.isDirty(dto.getName())) return true ;
+        if (problemTypeListBox.isDirty(dto.getProblemType())) return true;
 
         return false;
-    }
-
-    public void addMarkerChangeListener(CloneChangeListener cloneChangeListener) {
-        cloneChangeListeners.add(cloneChangeListener);
-    }
-
-    public String getZdbID() {
-        return cloneDTO.getZdbID();
     }
 
 }

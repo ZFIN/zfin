@@ -12,7 +12,7 @@ public class RelatedEntityMarkerLoadedListener implements MarkerLoadListener {
         this.abstractRelatedEntityBox = abstractRelatedEntityBox ;
     }
 
-    public void markerDomainLoaded(MarkerLoadEvent markerLoadEvent) {
+    public void markerLoaded(MarkerLoadEvent markerLoadEvent) {
         abstractRelatedEntityBox.setRelatedEntities(markerLoadEvent.getMarkerDTO().getZdbID(),
                 markerLoadEvent.getMarkerDTO().getRelatedGeneAttributes());
     }

@@ -2,9 +2,11 @@ package org.zfin.marker.repository;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
+import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
+import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.orthology.Orthologue;
@@ -55,9 +57,9 @@ public interface MarkerRepository {
 
     void addSmallSegmentToGene(Marker gene, Marker segment, String attributionZdbID);
 
-    void addMarkerDataNote(Marker marker, String note, Person curator);
+    DataNote addMarkerDataNote(Marker marker, String note, Person curator);
 
-    void addAntibodyExternalNote(Antibody antibody, String note, String sourcezdbid);
+    AntibodyExternalNote addAntibodyExternalNote(Antibody antibody, String note, String sourcezdbid);
 
     /**
      * Creates a new note in regards to the orthololgy to a gene.

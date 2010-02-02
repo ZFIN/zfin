@@ -10,36 +10,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Base component had related entities.
  */
 public abstract class AbstractRelatedEntityBox<U extends RelatedEntityDTO> extends AbstractRelatedEntityContainer<U> {
 
 
-    // gui componenents
-    protected VerticalPanel panel = new VerticalPanel();
+    // gui components
+    final VerticalPanel panel = new VerticalPanel();
 
-    // table componenents
-    protected FlexTable relatedEntityTable = new FlexTable();
+    // table components
+    final FlexTable relatedEntityTable = new FlexTable();
 
     // first row components
-    protected HorizontalPanel newRelatedEntityPanel = new HorizontalPanel();
-    protected TextBox newRelatedEntityField = new TextBox();
-    protected Button addRelatedEntityButton = new Button("Add");
-
-
-    // listeners
+    final HorizontalPanel newRelatedEntityPanel = new HorizontalPanel();
+    final TextBox newRelatedEntityField = new TextBox();
+    final Button addRelatedEntityButton = new Button("Add");
 
 
     // abstract method
 
-    public abstract void addRelatedEntity(final String name, final String pubZdbID);
+    protected abstract void addRelatedEntity(final String name, final String pubZdbID);
 
-    public AbstractRelatedEntityBox() {
-        initGui();
+    AbstractRelatedEntityBox() {
+        initGUI();
         addHandlers();
         initWidget(panel);
     }
 
-    protected void initGui() {
+    void initGUI() {
         relatedEntityTable.setStyleName("relatedEntityTable");
 
         // init table
@@ -53,13 +51,14 @@ public abstract class AbstractRelatedEntityBox<U extends RelatedEntityDTO> exten
 
         errorLabel.setStyleName("error");
         panel.add(errorLabel);
+        panel.setStyleName("gwt-editbox");
 
 
         publicationLabel.setStyleName("relatedEntityDefaultPub");
 
     }
 
-    protected void addHandlers() {
+    void addHandlers() {
         addRelatedEntityButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (false == attributionIsValid()) return;
@@ -91,7 +90,7 @@ public abstract class AbstractRelatedEntityBox<U extends RelatedEntityDTO> exten
         return attributionList;
     }
 
-    protected PublicationAttributionLabel getPublicationWidget(int row) {
+    PublicationAttributionLabel getPublicationWidget(int row) {
         if (row < relatedEntityTable.getRowCount()) {
             return (PublicationAttributionLabel) relatedEntityTable.getWidget(row, 1);
         } else {
@@ -99,7 +98,7 @@ public abstract class AbstractRelatedEntityBox<U extends RelatedEntityDTO> exten
         }
     }
 
-    protected RelatedEntityLabel<U> getNameWidget(int row) {
+    RelatedEntityLabel<U> getNameWidget(int row) {
         if (row < relatedEntityTable.getRowCount()) {
             return (RelatedEntityLabel<U>) relatedEntityTable.getWidget(row, 0);
         } else {
@@ -195,13 +194,18 @@ public abstract class AbstractRelatedEntityBox<U extends RelatedEntityDTO> exten
             relatedEntityTable.removeRow(aliasIndex);
         } else {
             for (int i = numPubsForAttribution - 1; i >= 0; i--) {
-                // do databasey stuff
+                // do database stuff
                 relatedEntityTable.removeRow(i + aliasIndex);
             }
         }
     }
 
-    protected int getAttributionIndex(String aliasName, String publication) {
+    @Override
+    public boolean isDirty() {
+        return newRelatedEntityField.getText().trim().length()>0;
+    }
+
+    int getAttributionIndex(String aliasName, String publication) {
         int rowCount = relatedEntityTable.getRowCount();
         for (int i = 0; i < rowCount; ++i) {
             if (relatedEntityTable.getWidget(i, 1) != null) {
@@ -233,7 +237,7 @@ public abstract class AbstractRelatedEntityBox<U extends RelatedEntityDTO> exten
         if (((RelatedEntityLabel<U>) relatedEntityTable.getWidget(pubIndex, 0)).isVisibleName() == false) {
             relatedEntityTable.removeRow(pubIndex);
         }
-        // case 2, the first row, but the only elemnt
+        // case 2, the first row, but the only element
         else if (pubIndexForName == 0 && numPubsForName == 1) {
             ((PublicationAttributionLabel) relatedEntityTable.getWidget(pubIndex, 1)).clearPublication();
         }
@@ -250,7 +254,7 @@ public abstract class AbstractRelatedEntityBox<U extends RelatedEntityDTO> exten
     }
 
 
-    protected void resetRelatedEntityAdd() {
+    void resetRelatedEntityAdd() {
         newRelatedEntityField.setText("");
     }
 

@@ -1,12 +1,13 @@
 package org.zfin.gwt.marker.event;
 
 import org.zfin.gwt.marker.ui.DirectAttributionTable;
+import org.zfin.gwt.root.dto.DBLinkDTO;
 
 /**
  * Class DirectAttributionDBLinkTableListener.
  */
 
-public class DirectAttributionDBLinkTableListener implements DBLinkTableListener {
+public class DirectAttributionDBLinkTableListener extends DBLinkTableListener {
 
     private DirectAttributionTable directAttributionTable;
 
@@ -14,26 +15,16 @@ public class DirectAttributionDBLinkTableListener implements DBLinkTableListener
         this.directAttributionTable = directAttributionTable;
     }
 
-    public void addDBLink(DBLinkTableEvent dbLinkTableEvent) {
-        if (false == directAttributionTable.containsPublication(dbLinkTableEvent.getDBLinkDTO().getPublicationZdbID())) {
-            directAttributionTable.addPublication(dbLinkTableEvent.getDBLinkDTO().getPublicationZdbID());
+    @Override
+    public void addAttribution(RelatedEntityEvent<DBLinkDTO> event) {
+        if (false == directAttributionTable.containsPublication(event.getDTO().getPublicationZdbID())) {
+            directAttributionTable.addPublication(event.getDTO().getPublicationZdbID());
         }
     }
 
-    public void addDBLinkAttribution(DBLinkTableEvent dbLinkTableEvent) {
-        if (false == directAttributionTable.containsPublication(dbLinkTableEvent.getDBLinkDTO().getPublicationZdbID())) {
-            directAttributionTable.addPublication(dbLinkTableEvent.getDBLinkDTO().getPublicationZdbID());
-        }
-    }
+    @Override
+    public void dataChanged(RelatedEntityEvent<DBLinkDTO> dataChangedEvent) { }
 
-    public void removeDBLink(DBLinkTableEvent dbLinkTableEvent) {
-    }
-
-    public void removeDBLinkAttribution(DBLinkTableEvent dbLinkTableEvent) {
-    }
-
-    public void updateDBLink(DBLinkTableEvent dbLinkTableEvent) {
-    }
 
 } 
 

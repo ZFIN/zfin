@@ -2,40 +2,44 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.marker.event.DirectAttributionListener;
 import org.zfin.gwt.marker.event.PublicationChangeEvent;
 import org.zfin.gwt.marker.event.PublicationChangeListener;
 import org.zfin.gwt.root.dto.PublicationDTO;
+import org.zfin.gwt.root.ui.StringListBox;
+import org.zfin.gwt.root.util.LookupService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  */
-public class PublicationLookupBox extends Composite {
+public class PublicationLookupBox extends Composite implements DirectAttributionListener{
 
-    private ListBox curatorPubList = new ListBox();
-    private TextBox pubField = new TextBox();
-    private VerticalPanel panel = new VerticalPanel();
-    private VerticalPanel lookupPanel = new VerticalPanel();
-    private PublicationDisplayPanel publicationDisplayPanel = new PublicationDisplayPanel();
+    private final StringListBox curatorPubList = new StringListBox();
+    private final TextBox pubField = new TextBox();
+    private final VerticalPanel panel = new VerticalPanel();
+    private final VerticalPanel lookupPanel = new VerticalPanel();
+    private final PublicationDisplayPanel publicationDisplayPanel = new PublicationDisplayPanel();
+    private static final String SEPARATOR = "-------------" ;
+    private static final String ZDB_PUB_PREFIX = "ZDB-PUB-"  ;
 
-    private List<PublicationChangeListener> publicationChangeListeners = new ArrayList<PublicationChangeListener>();
+    private final List<PublicationChangeListener> publicationChangeListeners = new ArrayList<PublicationChangeListener>();
+    private static final int MAX_LENGTH = 30;
 
     // internal data
     private PublicationDTO publicationAbstractDTO;
 
-    public PublicationLookupBox(String div) {
-        this();
-        RootPanel.get(div).add(this);
-    }
 
     public PublicationLookupBox() {
-
-        initGui();
+        initGUI();
         initWidget(panel);
 
         // this won't run
@@ -44,11 +48,15 @@ public class PublicationLookupBox extends Composite {
                 publicationChanged(new PublicationChangeEvent(curatorPubList.getValue(0)));
             }
         });
+        RootPanel.get(StandardMarkerDivNames.publicationLookupDiv).add(this);
     }
 
-    protected void initGui() {
-        lookupPanel.setStyleName("publicationlookup");
+
+    void initGUI() {
+        panel.setWidth("300px");
+        panel.setStyleName("publicationlookup");
         HTML defaultPublicationLabel = new HTML("<b>Default Publication</b>");
+        publicationDisplayPanel.setWidth("300px");
         lookupPanel.add(defaultPublicationLabel);
         Label enterPubLabel = new Label("Enter Pub:");
         HorizontalPanel panel1 = new HorizontalPanel();
@@ -86,8 +94,9 @@ public class PublicationLookupBox extends Composite {
                 publicationChanged(new PublicationChangeEvent(pubField.getText().trim()));
             }
         });
-        pubField.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyUp(Widget widget, char c, int i) {
+        pubField.addKeyPressHandler(new KeyPressHandler() {
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
                 publicationChanged(new PublicationChangeEvent(pubField.getText().trim()));
             }
         });
@@ -105,26 +114,37 @@ public class PublicationLookupBox extends Composite {
             curatorPubList.addItem("Choose Pub:");
             curatorPubList.addItem("Scientific Curation", "ZDB-PUB-020723-5");
             curatorPubList.addItem("Nomenclature", "ZDB-PUB-030508-1");
+            addRecentPubs() ;
         }
-        if (publicationAbstractDTO != null) {
-            curatorPubList.addItem(publicationAbstractDTO.getTitle(), publicationAbstractDTO.getZdbID());
+        if (publicationAbstractDTO != null && false==curatorPubList.containsValue(publicationAbstractDTO.getZdbID())) {
+            if(publicationAbstractDTO.getTitle().length()< MAX_LENGTH){
+                curatorPubList.addItem(publicationAbstractDTO.getTitle(), publicationAbstractDTO.getZdbID());
+            }
+            else{
+                curatorPubList.addItem(publicationAbstractDTO.getTitle().substring(0,MAX_LENGTH)+"...", publicationAbstractDTO.getZdbID());
+            }
+
         }
     }
 
-    public void publicationChanged(PublicationChangeEvent event) {
+    void publicationChanged(PublicationChangeEvent event) {
 
         final String pubChangeZdbID = event.getPublication();
         if (pubChangeZdbID.length() == 0) {
             clearPubBox();
         } else {
-            MarkerRPCService.App.getInstance().getPublicationAbstract(pubField.getText().trim(), new AsyncCallback<PublicationDTO>() {
+            String lookupString = pubField.getText().trim();
+            if(false==lookupString.startsWith(ZDB_PUB_PREFIX)){
+                lookupString = ZDB_PUB_PREFIX + lookupString;
+            }
+            MarkerRPCService.App.getInstance().getPublicationAbstract(lookupString, new AsyncCallback<PublicationDTO>() {
                 public void onFailure(Throwable throwable) {
                     setPublicationAbstractDTO(null);
 //                Window.alert("failure!!: "+ throwable);
                     clearPubBox();
                 }
 
-                public void onSuccess(PublicationDTO publicationAbstractDTO) {
+                public void onSuccess(final PublicationDTO publicationAbstractDTO) {
                     setPublicationAbstractDTO(publicationAbstractDTO);
                     if (publicationAbstractDTO == null) {
                         clearPubBox();
@@ -137,45 +157,75 @@ public class PublicationLookupBox extends Composite {
         }
     }
 
+    public void addRecentPublicationDTO(String publicationZdbID){
+        if(false==curatorPubList.containsValue(publicationZdbID)){
+            publicationAbstractDTO.setZdbID(publicationZdbID);
+            LookupService.App.getInstance().setRecentPublication(publicationZdbID,
+                    new MarkerEditCallBack<PublicationDTO>(publicationZdbID){
+                        @Override
+                        public void onSuccess(PublicationDTO result) {
+                            publicationAbstractDTO = result ; 
+                            addPublication(publicationAbstractDTO);
+                        }
+                    });
+        }
+    }
+
     public PublicationDTO getPublicationAbstractDTO() {
         return publicationAbstractDTO;
     }
 
-    public void setPublicationAbstractDTO(PublicationDTO publicationAbstractDTO) {
+    void setPublicationAbstractDTO(PublicationDTO publicationAbstractDTO) {
         this.publicationAbstractDTO = publicationAbstractDTO;
     }
 
-    protected void firePublicationChanged(PublicationChangeEvent publicationChangeEvent) {
+    void firePublicationChanged(PublicationChangeEvent publicationChangeEvent) {
         for (PublicationChangeListener publicationChangeListener : publicationChangeListeners) {
             publicationChangeListener.publicationChanged(publicationChangeEvent);
         }
     }
 
+    // nothing to do
+    @Override
+    public void remove(String pubZdbID) { }
 
-    public void clearPubBox() {
+    @Override
+    public void add(String pubZdbID) {
+        addRecentPublicationDTO(pubZdbID);
+    }
+
+    void clearPubBox() {
 //        publicationDisplayPanel.setVisible(false);
-        publicationDisplayPanel.setError();
+        publicationDisplayPanel.setHasNoPub();
         firePublicationChanged(new PublicationChangeEvent(""));
     }
 
-    public void setPubBox(PublicationDTO publicationAbstractDTO) {
+    void setPubBox(PublicationDTO publicationAbstractDTO) {
 //       Window.alert(publicationAbstractDomain.getTitle());
         publicationDisplayPanel.setPublicationAbstractDomain(publicationAbstractDTO);
-    }
-
-    public void clearPublicationChangeListeners() {
-        publicationChangeListeners.clear();
     }
 
     public void addPublicationChangeListener(PublicationChangeListener listener) {
         publicationChangeListeners.add(listener);
     }
 
-    public void removePublicationChangeListener(PublicationChangeListener listener) {
-        publicationChangeListeners.remove(listener);
-    }
-
     public boolean isValidPublication() {
         return publicationDisplayPanel.isValidPub();
+    }
+
+    public void addRecentPubs() {
+
+        LookupService.App.getInstance().getRecentPublications(new MarkerEditCallBack<List<PublicationDTO>>("Failed to find recent publications: "){
+            @Override
+            public void onSuccess(List<PublicationDTO> results) {
+                if(results!=null && results.size()>0){
+                    addPublication(new PublicationDTO(SEPARATOR,null));
+                    Collections.reverse(results);
+                    for(PublicationDTO publicationDTO: results){
+                        addPublication(publicationDTO);
+                    }
+                }
+            }
+        });
     }
 }

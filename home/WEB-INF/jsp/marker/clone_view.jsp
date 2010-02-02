@@ -8,10 +8,8 @@
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="marker" />
 
-<tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-    <tiles:put name="subjectName" value="${formBean.marker.name}"/>
-    <tiles:put name="subjectID" value="${formBean.marker.zdbID}"/>
-</tiles:insert>
+
+<zfin2:inputWelcome marker="${formBean.clone}"/>
 
 <zfin2:cloneHead clone="${formBean.clone}" />
 

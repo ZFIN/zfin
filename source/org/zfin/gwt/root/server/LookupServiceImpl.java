@@ -13,6 +13,7 @@ import org.zfin.anatomy.presentation.RelationshipPresentation;
 import org.zfin.anatomy.presentation.SortAnatomySearchTerm;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.gwt.root.dto.Ontology;
+import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.TermInfo;
 import org.zfin.gwt.root.dto.TermStatus;
 import org.zfin.gwt.root.ui.ItemSuggestion;
@@ -31,6 +32,7 @@ import org.zfin.ontology.presentation.GenericTermComparator;
 import org.zfin.ontology.presentation.OntologyAutoCompleteTerm;
 import org.zfin.people.Organization;
 import org.zfin.people.repository.ProfileRepository;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
     private Logger logger = Logger.getLogger(LookupServiceImpl.class);
     private AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
     private InfrastructureRepository infrastructureRep = RepositoryFactory.getInfrastructureRepository();
+    private static final String MOST_RECENT_PUBLICATIONS = "MostRecentPublications";
 
     /**
      * Gets suggestions from the anatomy repository.
@@ -427,6 +430,44 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
         return info;
     }
 
+    @Override
+    public List<PublicationDTO> getRecentPublications() {
+        List<Publication> mostRecentsPubs = (List<Publication>) getServletContext().getAttribute(MOST_RECENT_PUBLICATIONS);
+        List<PublicationDTO> publicationDTOs = new ArrayList<PublicationDTO>();
+
+        if (CollectionUtils.isNotEmpty(mostRecentsPubs)){
+            for(Publication publication: mostRecentsPubs){
+                PublicationDTO publicationDTO = new PublicationDTO();
+                publicationDTO.setZdbID(publication.getZdbID());
+                publicationDTO.setTitle(publication.getTitle());
+                publicationDTOs.add(publicationDTO);
+            }
+        }
+        return publicationDTOs ;
+    }
+
+    @Override
+    public PublicationDTO setRecentPublication(String zdbID) {
+        List<Publication> mostRecentsPubs = (List<Publication>) getServletContext().getAttribute(MOST_RECENT_PUBLICATIONS);
+        if (mostRecentsPubs == null){
+            mostRecentsPubs = new ArrayList<Publication>();
+        }
+
+        if (StringUtils.isNotEmpty(zdbID)) {
+            Publication publication = RepositoryFactory.getPublicationRepository().getPublication(zdbID);
+            mostRecentsPubs.add(publication);
+            getServletContext().setAttribute(MOST_RECENT_PUBLICATIONS, mostRecentsPubs);
+            PublicationDTO publicationDTO = new PublicationDTO();
+            publicationDTO.setZdbID(publication.getZdbID());
+            publicationDTO.setTitle(publication.getTitle());
+            publicationDTO.setAuthors(publication.getAuthors());
+            publicationDTO.setMiniRef(publication.getShortAuthorList());
+            return publicationDTO;
+        }
+        else{
+            return null ;
+        }
+    }
 }
 
 

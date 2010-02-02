@@ -4,26 +4,22 @@ import org.zfin.gwt.root.dto.MarkerDTO;
 
 /**
  */
-public class MarkerLoadEvent {
+public class MarkerLoadEvent<T extends MarkerDTO> {
 
 
-    private MarkerDTO markerDTO;
+    private T markerDTO;
     private String curatorZdbID ;
 
-    public MarkerLoadEvent(MarkerDTO markerDTO,String curatorZdbID){
+    public MarkerLoadEvent(T markerDTO,String curatorZdbID){
         this.markerDTO = markerDTO;
         this.curatorZdbID = curatorZdbID ;
     }
 
-    public MarkerLoadEvent(MarkerDTO markerDTO){
+    public MarkerLoadEvent(T markerDTO){
         this.markerDTO = markerDTO;
     }
 
-    public MarkerDTO getMarkerDTO() {
+    public T getMarkerDTO() {
         return markerDTO;
-    }
-
-    public String getCuratorZdbID() {
-        return curatorZdbID;
     }
 }

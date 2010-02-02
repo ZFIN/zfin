@@ -1,100 +1,82 @@
 package org.zfin.gwt.marker.ui;
 
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.PublicationChangeEvent;
-import org.zfin.gwt.marker.event.PublicationChangeListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
+import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
+import org.zfin.gwt.marker.event.RelatedEntityEvent;
+import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.StringTextBox;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * A base header class for MarkerDTO's.
  */
-public abstract class AbstractHeaderEdit extends Composite implements HandlesError, PublicationChangeListener {
+public abstract class AbstractHeaderEdit<T extends MarkerDTO>  extends AbstractRevertibleComposite<T> {
 
 
-    // GUI
-    protected final String TEXT_WORKING = "working...";
-    protected final String TEXT_UPDATE = "update";
-
-    // GUI elements
-    protected VerticalPanel panel = new VerticalPanel();
 
     // GUI name/type elements
-    protected Label zdbIDLabel = new Label("ZdbID: ");
-    protected HTML zdbIDHTML = new HTML();
-    protected TextBox nameBox = new TextBox();
-    protected HorizontalPanel buttonPanel = new HorizontalPanel();
-    protected Button updateButton = new Button(TEXT_UPDATE);
-    protected Button revertButton = new Button("revert");
-    protected Label errorLabel = new Label();
+    final Label zdbIDLabel = new Label("ZdbID: ");
+    final HTML zdbIDHTML = new HTML();
+    final StringTextBox nameBox = new StringTextBox();
 
+    protected abstract void sendUpdates() ;
 
     // listeners
-    protected List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
-
-    // internal data
-    protected String publicationZdbID;
-
-    // interactive elements
-    protected PreviousNamesBox previousNamesBox = null ;
-
-    protected abstract void initGUI();
-    protected abstract void addInternalListeners(HandlesError handlesError);
-    protected abstract void refreshGUI();
-    protected abstract void revert();
-    protected abstract boolean isDirty();
-    protected abstract void sendUpdates();
+    private final List<RelatedEntityChangeListener<T>> changeListeners = new ArrayList<RelatedEntityChangeListener<T>>();
 
 
-
+    @Override
     public void working() {
-        updateButton.setText(TEXT_WORKING);
-        updateButton.setEnabled(false);
-        revertButton.setEnabled(false);
+        super.working();
+        nameBox.setEnabled(false);
     }
 
+    @Override
     public void notWorking() {
-        updateButton.setText(TEXT_UPDATE);
+        super.notWorking();   
+        nameBox.setEnabled(true);
     }
 
-    protected class CompareCommand implements Command {
-        public void execute() {
-            boolean isDirty = isDirty();
-
-            if (true == isDirty) {
-                updateButton.setEnabled(true);
-                revertButton.setEnabled(true);
-            } else {
-                updateButton.setEnabled(false);
-                revertButton.setEnabled(false);
+    @Override
+    protected void addInternalListeners(HandlesError handlesError) {
+        nameBox.addKeyPressHandler(new KeyPressHandler() {
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+                DeferredCommand.addCommand(new CompareCommand());
             }
+        });
+
+
+        saveButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                sendUpdates();
+            }
+        });
+
+        revertButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                revertGUI();
+            }
+        });
+    }
+
+    protected void fireChangeEvent(RelatedEntityEvent<T> relatedEntityEvent) {
+        for (RelatedEntityChangeListener<T> changeListener : changeListeners) {
+            changeListener.dataChanged(relatedEntityEvent);
         }
     }
 
-    public void setError(String message) {
-        errorLabel.setText(message);
+    public void addChangeListener(RelatedEntityChangeListener<T> relatedEntityChangeListener){
+        changeListeners.add(relatedEntityChangeListener);
     }
 
-    public void clearError() {
-        errorLabel.setText("");
-    }
-
-    public void publicationChanged(PublicationChangeEvent event) {
-        publicationZdbID = event.getPublication();
-    }
-
-    public void fireEventSuccess() {
-        for (HandlesError handlesError : handlesErrorListeners) {
-            handlesError.clearError();
-        }
-    }
-
-    public void addHandlesErrorListener(HandlesError handlesError) {
-        handlesErrorListeners.add(handlesError);
-    }
-
-    public void setPreviousNamesBox(PreviousNamesBox previousNamesBox) {
-        this.previousNamesBox = previousNamesBox;
-    }
 }

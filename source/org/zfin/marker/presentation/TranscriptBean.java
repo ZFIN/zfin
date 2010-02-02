@@ -20,17 +20,13 @@ import java.util.SortedSet;
 public class TranscriptBean extends MarkerBean {
 
 
-    private RelatedMarkerDisplay transcriptRelationships;
     private Set<RelatedMarker> relatedGenes;
     private List<RelatedTranscriptDisplay> relatedTranscriptDisplayList;
     private Set<RelatedMarker> microRNARelatedTranscripts;
     private RelatedTranscriptDisplay relatedTranscriptDisplay;
-    private SequenceInfo sequenceInfo;
     private SummaryDBLinkDisplay summaryDBLinkDisplay;
-    private SummaryDBLinkDisplay proteinProductDBLinkDisplay;
     private TranscriptTargets transcriptTargets;
     private SortedSet<Genotype> nonReferenceStrains;
-    private int numPubs;
     private List<Sequence> nucleotideSequences;
     private List<Sequence> proteinSequences;
     private List<TranscriptTypeStatusDefinition> transcriptTypeStatusDefinitionList;
@@ -38,14 +34,6 @@ public class TranscriptBean extends MarkerBean {
     private String vegaID;
     private List<DBLink> unableToFindDBLinks;
 
-
-    public RelatedMarkerDisplay getTranscriptRelationships() {
-        return transcriptRelationships;
-    }
-
-    public void setRelationships(RelatedMarkerDisplay transcriptRelationships) {
-        this.transcriptRelationships = transcriptRelationships;
-    }
 
     public Set<RelatedMarker> getRelatedGenes() {
         return relatedGenes;
@@ -71,28 +59,12 @@ public class TranscriptBean extends MarkerBean {
         this.microRNARelatedTranscripts = microRNARelatedTranscripts;
     }
 
-    public SequenceInfo getSequenceInfo() {
-        return sequenceInfo;
-    }
-
-    public void setSequenceInfo(SequenceInfo sequenceInfo) {
-        this.sequenceInfo = sequenceInfo;
-    }
-
     public SummaryDBLinkDisplay getSummaryDBLinkDisplay() {
         return summaryDBLinkDisplay;
     }
 
     public void setSummaryDBLinkDisplay(SummaryDBLinkDisplay summaryDBLinkDisplay) {
         this.summaryDBLinkDisplay = summaryDBLinkDisplay;
-    }
-
-    public SummaryDBLinkDisplay getProteinProductDBLinkDisplay() {
-        return proteinProductDBLinkDisplay;
-    }
-
-    public void setProteinProductDBLinkDisplay(SummaryDBLinkDisplay proteinProductDBLinkDisplay) {
-        this.proteinProductDBLinkDisplay = proteinProductDBLinkDisplay;
     }
 
     public TranscriptTargets getTranscriptTargets() {
@@ -109,14 +81,6 @@ public class TranscriptBean extends MarkerBean {
 
     public void setNonReferenceStrains(SortedSet<Genotype> nonReferenceStrains) {
         this.nonReferenceStrains = nonReferenceStrains;
-    }
-
-    public int getNumPubs() {
-        return numPubs;
-    }
-
-    public void setNumPubs(int numPubs) {
-        this.numPubs = numPubs;
     }
 
     public Transcript getTranscript() {

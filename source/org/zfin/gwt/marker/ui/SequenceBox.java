@@ -1,12 +1,9 @@
 package org.zfin.gwt.marker.ui;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.SequenceChangeEvent;
-import org.zfin.gwt.marker.event.SequenceChangeListener;
+import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
+import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.SequenceDTO;
 
 import java.util.ArrayList;
@@ -14,13 +11,13 @@ import java.util.List;
 
 /**
  */
-public class SequenceBox extends Composite implements SequenceChangeListener {
+class SequenceBox extends Composite implements RelatedEntityChangeListener<SequenceDTO>{
 
     // gui components
-    private VerticalPanel panel = new VerticalPanel();
-    private TextBox lengthField = new TextBox();
-    private Label deflineLabel = new Label();
-    private TextArea sequenceArea = new TextArea();
+    private final VerticalPanel panel = new VerticalPanel();
+    private final TextBox lengthField = new TextBox();
+    private final Label deflineLabel = new Label();
+    private final TextArea sequenceArea = new TextArea();
     private final int DEFAULT_LENGTH = 60;
     private int numLines;
     private int lineLength;
@@ -35,7 +32,7 @@ public class SequenceBox extends Composite implements SequenceChangeListener {
 
 
     // listeners
-    private List<SequenceChangeListener> sequenceBoxChangeListeners = new ArrayList<SequenceChangeListener>();
+    private final List<RelatedEntityChangeListener> sequenceBoxChangeListeners = new ArrayList<RelatedEntityChangeListener>();
 
     public SequenceBox(String type) {
         if (type.equals(NUCLEOTIDE_SEQUENCE) || type.equals(PROTEIN_SEQUENCE)) {
@@ -47,7 +44,7 @@ public class SequenceBox extends Composite implements SequenceChangeListener {
         initWidget(panel);
     }
 
-    protected void initGui() {
+    void initGui() {
         HorizontalPanel horizontalPanel = new HorizontalPanel();
         Label lengthLabel = new Label("Length:");
         lengthField.setEnabled(false);
@@ -58,19 +55,20 @@ public class SequenceBox extends Composite implements SequenceChangeListener {
         panel.add(deflineLabel);
         panel.add(sequenceArea);
 
-        sequenceArea.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyUp(Widget widget, char c, int i) {
-                fireSequenceBoxChangeEvent(new SequenceChangeEvent());
+        sequenceArea.addKeyUpHandler(new KeyUpHandler() {
+            @Override
+            public void onKeyUp(KeyUpEvent event) {
+                fireSequenceBoxChangeEvent();
             }
         });
         sequenceArea.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                fireSequenceBoxChangeEvent(new SequenceChangeEvent());
+                fireSequenceBoxChangeEvent();
             }
         });
         sequenceArea.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                fireSequenceBoxChangeEvent(new SequenceChangeEvent());
+                fireSequenceBoxChangeEvent();
             }
         });
         sequenceArea.setStyleName("sequenceArea");
@@ -92,17 +90,9 @@ public class SequenceBox extends Composite implements SequenceChangeListener {
         return buffer.toString().toUpperCase();
     }
 
-    public SequenceDTO getSequenceDTO() {
-        return this.sequenceDTO;
-    }
-
-    public void updateSequence() {
-        this.sequenceDTO.setSequence(this.sequenceArea.getText());
-    }
-
     public void clearSequence() {
         sequenceArea.setText("");
-        changed(new SequenceChangeEvent());
+        dataChanged(null);
     }
 
     public void revert() {
@@ -110,11 +100,7 @@ public class SequenceBox extends Composite implements SequenceChangeListener {
 //        sequenceChanged(null);
     }
 
-    public String getSequence() {
-        return sequenceArea.getText();
-    }
-
-    protected String insertLineReturns(String string, int numCharsPerLine) {
+    String insertLineReturns(String string, int numCharsPerLine) {
         numLines = 0;
         this.lineLength = numCharsPerLine;
         char[] chars = string.toCharArray();
@@ -140,25 +126,17 @@ public class SequenceBox extends Composite implements SequenceChangeListener {
             sequenceArea.setVisibleLines(numLines + 2);
             deflineLabel.setText(sequenceDTO.getDefLine());
         }
-        changed(new SequenceChangeEvent());
+        dataChanged(null);
     }
 
     public boolean isDirty() {
         return false == sequenceDTO.getSequence().equals(sequenceArea.getText());
     }
 
-    protected void fireSequenceBoxChangeEvent(SequenceChangeEvent sequenceChangeEvent) {
-        for (SequenceChangeListener sequenceChangeListener : sequenceBoxChangeListeners) {
-            sequenceChangeListener.changed(sequenceChangeEvent);
+    void fireSequenceBoxChangeEvent() {
+        for (RelatedEntityChangeListener<SequenceDTO> sequenceChangeListener : sequenceBoxChangeListeners) {
+            sequenceChangeListener.dataChanged(null);
         }
-    }
-
-    public void addSequenceBoxChangeListener(SequenceChangeListener sequenceChangeListener) {
-        sequenceBoxChangeListeners.add(sequenceChangeListener);
-    }
-
-    public void removeSequenceBoxChangeListener(SequenceChangeListener sequenceChangeListener) {
-        sequenceBoxChangeListeners.remove(sequenceChangeListener);
     }
 
     /**
@@ -188,11 +166,12 @@ public class SequenceBox extends Composite implements SequenceChangeListener {
         return null;
     }
 
-    public void changed(SequenceChangeEvent sequenceChangeEvent) {
+    @Override
+    public void dataChanged(RelatedEntityEvent<SequenceDTO> dataChangedEvent) {
         lengthField.setText(String.valueOf(getSequenceAsString().length()));
     }
 
-    public int getLineLength() {
+    int getLineLength() {
         return (lineLength == 0 ? lineLength = DEFAULT_LENGTH : lineLength);
     }
 

@@ -4,24 +4,25 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.marker.event.RelatedEntityListener;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.ui.HandlesError;
 
 /**
  */
 public class PreviousNamesBox extends RelatedEntityBox {
 
 
-    public PreviousNamesBox(String div) {
+    public PreviousNamesBox() {
         super();
         addInternalListeners(this);
-        RootPanel.get(div).add(this);
+        RootPanel.get(StandardMarkerDivNames.previousNameDiv).add(this);
     }
 
 
-    public void addInternalListeners(final HandlesError handlesError) {
+    void addInternalListeners(final HandlesError handlesError) {
         addRelatedEntityCompositeListener(new RelatedEntityListener<RelatedEntityDTO>() {
             public void addRelatedEntity(RelatedEntityEvent<RelatedEntityDTO> event) {
 
-                MarkerRPCService.App.getInstance().addDataAliasRelatedEntity(event.getRelatedEntityDTO(),
+                MarkerRPCService.App.getInstance().addDataAliasRelatedEntity(event.getDTO(),
                         new MarkerEditCallBack<RelatedEntityDTO>("Failed to add name: ", handlesError) {
                             public void onSuccess(RelatedEntityDTO relatedEntityDTO) {
                                 addRelatedEntityToGUI(relatedEntityDTO);
@@ -31,7 +32,7 @@ public class PreviousNamesBox extends RelatedEntityBox {
             }
 
             public void addAttribution(RelatedEntityEvent<RelatedEntityDTO> event) {
-                MarkerRPCService.App.getInstance().addDataAliasAttribution(event.getRelatedEntityDTO(),
+                MarkerRPCService.App.getInstance().addDataAliasAttribution(event.getDTO(),
                         new MarkerEditCallBack<RelatedEntityDTO>("failed to add attribution: ", handlesError) {
                             public void onSuccess(RelatedEntityDTO relatedEntityDTO) {
                                 addAttributionToGUI(relatedEntityDTO);
@@ -41,8 +42,8 @@ public class PreviousNamesBox extends RelatedEntityBox {
             }
 
             public void removeRelatedEntity(RelatedEntityEvent<RelatedEntityDTO> event) {
-                final RelatedEntityDTO dto = event.getRelatedEntityDTO();
-                MarkerRPCService.App.getInstance().removeDataAliasRelatedEntity(event.getRelatedEntityDTO(),
+                final RelatedEntityDTO dto = event.getDTO();
+                MarkerRPCService.App.getInstance().removeDataAliasRelatedEntity(event.getDTO(),
                         new MarkerEditCallBack<Void>("failed to remove name: ", handlesError) {
                             public void onSuccess(Void o) {
                                 removeRelatedEntityFromGUI(dto);
@@ -51,8 +52,8 @@ public class PreviousNamesBox extends RelatedEntityBox {
             }
 
             public void removeAttribution(RelatedEntityEvent<RelatedEntityDTO> event) {
-                final RelatedEntityDTO dto = event.getRelatedEntityDTO();
-                MarkerRPCService.App.getInstance().removeDataAliasAttribution(event.getRelatedEntityDTO(),
+                final RelatedEntityDTO dto = event.getDTO();
+                MarkerRPCService.App.getInstance().removeDataAliasAttribution(event.getDTO(),
                         new MarkerEditCallBack<Void>("failed to remove attribution: ", handlesError) {
                             public void onSuccess(Void o) {
                                 removeAttributionFromGUI(dto);

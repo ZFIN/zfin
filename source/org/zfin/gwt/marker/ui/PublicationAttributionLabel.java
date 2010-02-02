@@ -11,17 +11,17 @@ import org.zfin.gwt.root.dto.RelatedEntityDTO;
 public class PublicationAttributionLabel<U extends RelatedEntityDTO> extends Composite {
 
     // internal data
-    private CanRemoveReference parent;
+    private final CanRemoveReference parent;
     private String publication;
-    private U linkableData;
+    private final U linkableData;
     private String attributionType;
 
     // gui components
-    private String imageURL = "/images/";
-    private HorizontalPanel panel = new HorizontalPanel();
-    private Hyperlink pubLink = new Hyperlink();
-    private String associatedName;
-    private Image removeReferenceButton = new Image(imageURL + "delete-attribution.png");
+    private final String imageURL = "/images/";
+    private final HorizontalPanel panel = new HorizontalPanel();
+    private final Hyperlink pubLink = new Hyperlink();
+    private final String associatedName;
+    private final Image removeReferenceButton = new Image(imageURL + "delete-attribution.png");
 
     public PublicationAttributionLabel(CanRemoveReference parent, String publication, String associatedName, U linkableData, String attributionType) {
         this.parent = parent;

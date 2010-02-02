@@ -1,4 +1,6 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.gwt.marker.ui.StandardMarkerDivNames" %>
+<%@ page import="org.zfin.gwt.marker.ui.CloneEditController" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
@@ -6,7 +8,7 @@
 
 <script type="text/javascript">
     var MarkerProperties= {
-        zdbID : "${formBean.marker.zdbID}",
+        zdbID : "${formBean.marker.zdbID}"
     } ;
 
 </script>
@@ -15,49 +17,42 @@
 <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
 <script language="javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
-<input type="hidden" name="hiddenName" id="hiddenName"/>
-
 <table cellpadding="10">
     <tr><td align="center" colspan="2">
-        <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&OID=${formBean.marker.zdbID}">[View Clone]</a>
+        <div id="<%=StandardMarkerDivNames.viewDiv%>"></div>
     </td></tr>
     <tr>
         <td>
-            <div id="markerName"></div>
+            <div id="<%=StandardMarkerDivNames.headerDiv%>"></div>
             <br>
-            <div id="supplierName"></div>
+            <div id="<%=StandardMarkerDivNames.supplierDiv%>"></div>
             <br>
-            <div id="directAttributionName"></div>
+            <div id="<%=StandardMarkerDivNames.directAttributionDiv%>"></div>
             <br>
             <b>Previous Name(s):</b>
-            <div id="aliasName"></div>
+            <div id="<%=StandardMarkerDivNames.previousNameDiv%>"></div>
         </td>
         <td valign="top">
-            <div id="publicationName"></div>
+            <div id="<%=StandardMarkerDivNames.publicationLookupDiv%>"></div>
         </td>
     </tr>
     <tr>
-        <td>
-            <b>Curator Notes:</b>
+        <td colspan="2">
+            <b>Notes:</b>
             <br>
-            <div id="curatorNoteName"></div>
-        </td>
-        <td>
-            <b>Public Notes:</b>
-            <div id="publicNoteName"></div>
+            <div id="<%=StandardMarkerDivNames.noteDiv%>"></div>
         </td>
     </tr>
     <tr>
         <td>
-            <div id="geneTitle"></div>
-            <div id="geneName"></div>
+            <div id="<%=CloneEditController.genesTitle%>"></div>
+            <div id="<%=StandardMarkerDivNames.geneDiv%>"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <h3>Clone Data</h3>
-            <div id="cloneDataName"></div>
-            <div id="cloneName"></div>
+            <div id="<%=StandardMarkerDivNames.dataDiv%>"></div>
         </td>
     </tr>
     <tr>
@@ -69,7 +64,7 @@
         <td colspan="2">
             <b>Sequences:</b>
             <br>
-            <div id="dbLinksName"></div>
+            <div id="<%=StandardMarkerDivNames.dbLinkDiv%>"></div>
         </td>
     </tr>
 </table>

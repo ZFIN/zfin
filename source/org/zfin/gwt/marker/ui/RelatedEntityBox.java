@@ -4,6 +4,7 @@ import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 
 /**
+ * This is a composite for related entities.
  */
 public class RelatedEntityBox extends AbstractRelatedEntityBox<RelatedEntityDTO> {
 
@@ -15,7 +16,10 @@ public class RelatedEntityBox extends AbstractRelatedEntityBox<RelatedEntityDTO>
             setError(validationError);
             return ;
         }
-        RelatedEntityDTO dto = new RelatedEntityDTO(getZdbID(), name,pubZdbID);
+        RelatedEntityDTO dto = new RelatedEntityDTO();
+        dto.setDataZdbID(getZdbID());
+        dto.setName(name);
+        dto.setPublicationZdbID(pubZdbID);
         fireRelatedEntityAdded(new RelatedEntityEvent<RelatedEntityDTO>(dto));
     }
 

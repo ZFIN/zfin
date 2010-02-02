@@ -1,12 +1,23 @@
 package org.zfin.gwt.marker.event;
 
+import org.zfin.gwt.root.dto.DBLinkDTO;
+
 /**
  */
-public interface DBLinkTableListener {
-//    public void addDBLink(DBLinkTableEvent dbLinkTableEvent) ;
-//    public void addDBLinkAttribution(DBLinkTableEvent dbLinkTableEvent) ;
-//    public void removeDBLink(DBLinkTableEvent dbLinkTableEvent) ;
-//    public void removeDBLinkAttribution(DBLinkTableEvent dbLinkTableEvent) ;
+public abstract class DBLinkTableListener implements RelatedEntityListener<DBLinkDTO>,RelatedEntityChangeListener<DBLinkDTO>{
+    
+//    public void addDBLinkAttribution(RelatedEntityEvent<DBLinkDTO> dbLinkTableEvent) ;
+//    public void updateDBLink(RelatedEntityEvent<DBLinkDTO> dbLinkTableEvent) ;
 
-    public void updateDBLink(DBLinkTableEvent dbLinkTableEvent) ;
+
+    // these methods do nothing.
+
+    @Override
+    public void addRelatedEntity(RelatedEntityEvent<DBLinkDTO> dbLinkDTORelatedEntityEvent) { }
+
+    @Override
+    public void removeRelatedEntity(RelatedEntityEvent<DBLinkDTO> dbLinkDTORelatedEntityEvent) { }
+
+    @Override
+    public void removeAttribution(RelatedEntityEvent<DBLinkDTO> dbLinkDTORelatedEntityEvent) { }
 }

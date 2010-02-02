@@ -38,6 +38,8 @@
                 <prop key="/dev-tools/gwt/transcript-edit">transcriptEdit</prop>
                 <prop key="/dev-tools/gwt/clone-edit">cloneEdit</prop>
                 <prop key="/dev-tools/gwt/antibody-edit">antibodyEdit</prop>
+                <prop key="/dev-tools/gwt/gene-edit">geneEdit</prop>
+                <prop key="/dev-tools/gwt/alternate-gene-edit">alternateGeneEdit</prop>
                 <prop key="/dev-tools/svn-version">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/display-groups">displayGroups</prop>
                 <prop key="/dev-tools/second-level-cache">cacheHandler</prop>
@@ -77,6 +79,14 @@
 
     <bean name="antibodyEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
         <property name="viewName" value="antibody-edit"/>
+    </bean>
+
+    <bean name="geneEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="gene-edit"/>
+    </bean>
+
+    <bean name="alternateGeneEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="alternate-gene-edit"/>
     </bean>
 
     <bean name="log4jConfiguration" class="org.zfin.framework.presentation.Log4jConfigurationController"/>
