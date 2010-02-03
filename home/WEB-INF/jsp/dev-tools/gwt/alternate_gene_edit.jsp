@@ -38,8 +38,6 @@
             <br>
             <div id="<%=StandardMarkerDivNames.supplierDiv%>"></div>
             <br>
-            <div id="<%=StandardMarkerDivNames.directAttributionDiv%>"></div>
-            <br>
             <b>Previous Name(s):</b>
             <div id="<%=StandardMarkerDivNames.previousNameDiv%>"></div>
         </td>
@@ -69,6 +67,12 @@
             <b>Sequences:</b>
             <br>
             <div id="<%=StandardMarkerDivNames.dbLinkDiv%>"></div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div id="<%=StandardMarkerDivNames.directAttributionDiv%>"></div>
+            <br>
         </td>
     </tr>
 </table>

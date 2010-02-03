@@ -100,11 +100,12 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
     }
 
     public void setRelatedEntities(String zdbID, List<U> relatedEntityList) {
-        this.zdbID = zdbID;
-        reset();
-
-        for (U relatedEntityDTO : relatedEntityList) {
-            addRelatedEntityToGUI(relatedEntityDTO);
+        if(relatedEntityList!=null){
+            this.zdbID = zdbID;
+            reset();
+            for (U relatedEntityDTO : relatedEntityList) {
+                addRelatedEntityToGUI(relatedEntityDTO);
+            }
         }
     }
 

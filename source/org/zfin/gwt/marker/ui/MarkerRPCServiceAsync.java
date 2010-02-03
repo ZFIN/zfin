@@ -54,7 +54,9 @@ public interface MarkerRPCServiceAsync {
     // marker update
     void getMarkerForName(String name, AsyncCallback<MarkerDTO> async);
 
-    void getGeneForZdbID(String zdbID, AsyncCallback<MarkerDTO> async);
+    void getGeneOnlyForZdbID(String zdbID, AsyncCallback<MarkerDTO> async);
+
+    void getGeneForZdbID(String zdbID,AsyncCallback<MarkerDTO> async) ;
 
     // supplier methods
     /**
@@ -87,4 +89,6 @@ public interface MarkerRPCServiceAsync {
     void removeExternalNote(NoteDTO noteDTO, AsyncCallback<Void> asyncCallback);
 
     void updateMarkerHeaders(MarkerDTO markerDTO, AsyncCallback<Void> async);
+
+    void getGeneDBLinkAddReferenceDatabases(String markerZdbID, AsyncCallback<List<ReferenceDatabaseDTO>> asyncCallback) ;
 }

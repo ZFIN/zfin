@@ -35,6 +35,10 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
     private boolean attributionRequired = true;
     private String publicationZdbID = "";
 
+    // validator
+    private final PublicationValidator publicationValidator = new PublicationValidator();
+
+
     public ProteinSequenceArea(String div) {
         this();
         RootPanel.get(div).add(this);
@@ -42,8 +46,10 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
 
     public ProteinSequenceArea() {
         initGUI();
+        addInternalListeners(this);
         initWidget(panel);
     }
+
 
 
     void initGUI() {
@@ -66,6 +72,11 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
         panel.add(newSequenceBox);
 
 
+
+    }
+
+    private void addInternalListeners(final HandlesError handlesError){
+
         link.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (newSequenceBox.isVisible()) {
@@ -85,10 +96,7 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
 
         newSequenceBox.addSequenceAddListener(new SequenceAddListener() {
             public void add(final SequenceAddEvent sequenceAddEvent) {
-                if (publicationZdbID == null || publicationZdbID.length() < 16) {
-                    setError("Attribution required to add sequence.");
-                    return;
-                }
+                if(false==publicationValidator.validate(publicationZdbID,handlesError)) return ;
                 if (databaseListBoxWrapper.getSelected() == null
                         ||
                         AbstractListBox.NULL_STRING.equals(databaseListBoxWrapper.getSelected())) {
@@ -119,7 +127,6 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
                 fireSequenceAddStartListeners(sequenceAddEvent);
             }
         });
-
     }
 
     public String checkSequence() {

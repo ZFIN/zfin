@@ -11,10 +11,7 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.marker.ui.BlastDatabaseAccessException;
-import org.zfin.gwt.marker.ui.DBLinkNotFoundException;
-import org.zfin.gwt.marker.ui.MarkerEditCallBack;
-import org.zfin.gwt.marker.ui.MarkerRPCService;
+import org.zfin.gwt.marker.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -23,6 +20,7 @@ import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerService;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.orthology.Species;
 import org.zfin.people.MarkerSupplier;
 import org.zfin.people.Organization;
 import org.zfin.people.Person;
@@ -45,6 +43,8 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
     private transient Logger logger = Logger.getLogger(MarkerRPCServiceImpl.class);
 
     private List<String> suppliers = null;
+
+    private transient List<ReferenceDatabaseDTO> dblinkGeneAddReferenceDatabases = new ArrayList<ReferenceDatabaseDTO>();
 
     public PublicationDTO getPublicationAbstract(String zdbID) {
 
@@ -652,7 +652,37 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         return DTOService.createMarkerDTOFromMarker(marker);
     }
 
+
     public MarkerDTO getGeneForZdbID(String zdbID) {
+        Marker marker = markerRepository.getMarkerByID(zdbID);
+        MarkerDTO geneDTO = new MarkerDTO();
+
+        // get simple attributes
+        geneDTO.setZdbID(marker.getZdbID());
+        geneDTO.setName(marker.getName());
+        geneDTO.setMarkerType(marker.getMarkerType().getType().name());
+
+
+        geneDTO.setSuppliers(DTOService.getSuppliers(marker));
+
+        geneDTO.setRecordAttributions(DTOService.getDirectAttributions(marker));
+
+        geneDTO.setCuratorNotes(DTOService.getCuratorNotes(marker));
+        geneDTO.setPublicNote(DTOService.getPublicNote(marker));
+
+        geneDTO.setAliasAttributes(DTOService.getAliases(marker));
+
+        // get related genes
+        // todo: this is the wrong method for this
+        geneDTO.setRelatedGeneAttributes(DTOService.getRelatedGenes(marker));
+
+        // todo: this is the wrong method for this
+        geneDTO.setSupportingSequenceLinks(DTOService.getSupportingSequences(marker));
+
+        return geneDTO;
+    }
+
+    public MarkerDTO getGeneOnlyForZdbID(String zdbID) {
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
         if (marker == null) {
             logger.error("marker: " + zdbID + " is NULL");
@@ -893,5 +923,38 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         // if it fails, it will automatically roll-back and automatically throws exception up
         transaction.commit();
+    }
+
+
+    public List<ReferenceDatabaseDTO> getGeneDBLinkAddReferenceDatabases(String markerZdbID) {
+        if(dblinkGeneAddReferenceDatabases.size()>0){
+            return dblinkGeneAddReferenceDatabases ;
+        }
+        
+        dblinkGeneAddReferenceDatabases.clear();
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(markerZdbID);
+        List<ReferenceDatabase> referenceDatabases = new ArrayList<ReferenceDatabase>();
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG)) {
+            referenceDatabases.add(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
+                    ForeignDB.AvailableName.GENBANK,
+                    ForeignDBDataType.DataType.GENOMIC,
+                    ForeignDBDataType.SuperType.SEQUENCE,
+                    Species.ZEBRAFISH
+            ));
+
+            referenceDatabases.add(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
+                    ForeignDB.AvailableName.GENBANK,
+                    ForeignDBDataType.DataType.RNA,
+                    ForeignDBDataType.SuperType.SEQUENCE,
+                    Species.ZEBRAFISH
+            ));
+
+        }
+
+        if (false==referenceDatabases.isEmpty()) {
+            dblinkGeneAddReferenceDatabases.addAll(DTOService.convertReferenceDTOs(referenceDatabases));
+        }
+
+        return dblinkGeneAddReferenceDatabases;
     }
 }

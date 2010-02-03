@@ -99,11 +99,7 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
                             }
 
                             public void onSuccess(DBLinkDTO dbLinkDTO) {
-                                // already added to database, so just update GUI
                                 relatedProteinsBox.addRelatedEntityToGUI(dbLinkDTO);
-//                                if(publicationZdbID!=null && publicationZdbID.length()>=16){
-//                                    directAttributionTable.addPublication(publicationZdbID) ;
-//                                }
                                 proteinSequenceArea.resetAndHide();
                                 proteinSequenceArea.activate();
                             }

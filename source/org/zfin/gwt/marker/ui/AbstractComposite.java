@@ -27,6 +27,9 @@ public abstract class AbstractComposite<T extends MarkerDTO> extends Composite i
     String publicationZdbID;
     T dto ;
 
+    // validator
+    protected final PublicationValidator publicationValidator = new PublicationValidator();
+
 
     protected abstract void revertGUI();
     protected abstract void initGUI();

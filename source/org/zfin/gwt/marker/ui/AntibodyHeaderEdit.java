@@ -76,14 +76,10 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO>{
             antibodyDTO.setZdbID(this.dto.getZdbID());
             antibodyDTO.setName(nameBox.getText());
 
-            if(nameBox.getText()==null || nameBox.getText().length()<3){
-                setError("Name should be at least 3 characters long.");
-                return ; 
-            }
+            if(false == nameValidator.validate(nameBox.getText(),this)) return ;
 
-            if (publicationZdbID == null || publicationZdbID.trim().length() < 16)  {
-                setError("Need to attribute name changes.");
-                return;
+            if(false == antibodyDTO.getName().equals(dto.getName())){
+                if(false == publicationValidator.validate(publicationZdbID,this)) return ;
             }
 
             working();

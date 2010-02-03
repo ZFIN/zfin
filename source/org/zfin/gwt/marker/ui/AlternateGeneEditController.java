@@ -7,6 +7,8 @@ import com.google.gwt.user.client.Window;
 import org.zfin.gwt.marker.event.*;
 import org.zfin.gwt.root.dto.*;
 
+import java.util.List;
+
 
 /**
  */
@@ -15,7 +17,6 @@ public final class AlternateGeneEditController extends AbstractFullMarkerEditCon
     // gui elements
     private ViewMarkerLabel<MarkerDTO> geneViewMarkerLabel = new ViewMarkerLabel<MarkerDTO>("[View Gene]", "/action/marker/gene-view?zdbID=","Discard");
     private GeneHeaderEdit geneHeaderEdit = new GeneHeaderEdit(headerDiv);
-    private SupplierNameList supplierNameList = new SupplierNameList();
     private DBLinkTable dbLinkTable = new HandledDBLinkTable();
 
 
@@ -85,17 +86,16 @@ public final class AlternateGeneEditController extends AbstractFullMarkerEditCon
                 previousNamesBox.setRelatedEntities(markerDTO.getZdbID(), dto.getAliasAttributes());
                 noteBox.setDTO(markerDTO);
                 geneViewMarkerLabel.setDTO(markerDTO);
-                supplierNameList.setDomain(markerDTO);
 
-//                final List<DBLinkDTO> supportingSequenceLinks = markerDTO.getSupportingSequenceLinks();
-//                MarkerRPCService.App.getInstance().getMarkerDBLinkAddReferenceDatabases(dto.getZdbID(),
-//                        new MarkerEditCallBack<List<ReferenceDatabaseDTO>>("error loading available sequence databases: ") {
-//                            public void onSuccess(List<ReferenceDatabaseDTO> referenceDatabases) {
-//                                dbLinkTable.setReferenceDatabases(referenceDatabases);
-//                                dbLinkTable.setZdbID(dto.getZdbID());
-//                                dbLinkTable.setDBLinks(supportinSequenceLinks);
-//                            }
-//                        });
+                final List<DBLinkDTO> supportingSequenceLinks = markerDTO.getSupportingSequenceLinks();
+                MarkerRPCService.App.getInstance().getGeneDBLinkAddReferenceDatabases(dto.getZdbID(),
+                        new MarkerEditCallBack<List<ReferenceDatabaseDTO>>("error loading available sequence databases: ") {
+                            public void onSuccess(List<ReferenceDatabaseDTO> referenceDatabases) {
+                                dbLinkTable.setReferenceDatabases(referenceDatabases);
+                                dbLinkTable.setZdbID(dto.getZdbID());
+                                dbLinkTable.setDBLinks(supportingSequenceLinks);
+                            }
+                        });
             }
         });
 

@@ -254,7 +254,7 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
         Dictionary transcriptDictionary = Dictionary.getDictionary("MarkerProperties");
         final String zdbID = transcriptDictionary.get(LOOKUP_TRANSCRIPT_ZDBID);
 
-        MarkerRPCService.App.getInstance().getGeneForZdbID(zdbID,
+        MarkerRPCService.App.getInstance().getGeneOnlyForZdbID(zdbID,
                 new MarkerEditCallBack<MarkerDTO>("failed to find zdbID: ", nucleotideSequenceArea) {
                     public void onSuccess(MarkerDTO markerDTO) {
                         if (markerDTO == null) {

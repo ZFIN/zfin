@@ -102,15 +102,12 @@ public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO>{
                 return;
             }
 
-            if(nameBox.getText()==null || nameBox.getText().trim().length()<3){
-                setError("Name must be atleast 3 characters long");
-                return ;
+            if(false == nameValidator.validate(nameBox.getText(),this)) return ;
+
+            if(false == newCloneDTO.getName().equals(dto.getName())){
+                if(false == publicationValidator.validate(publicationZdbID,this)) return ;
             }
 
-            if ((publicationZdbID == null || publicationZdbID.length() < 16) && false == newCloneDTO.getName().equals(dto.getName())) {
-                setError("Need to attribute name changes.");
-                return;
-            }
             working();
             CloneRPCService.App.getInstance().updateCloneHeaders(newCloneDTO,
                     new MarkerEditCallBack<Void>("failed to change clone name and type: ",this) {

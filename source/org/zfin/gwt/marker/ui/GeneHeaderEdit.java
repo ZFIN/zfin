@@ -73,10 +73,8 @@ public class GeneHeaderEdit extends AbstractHeaderEdit<MarkerDTO>{
             final MarkerDTO markerDTO = dto.deepCopy();
             markerDTO.setName(nameBox.getText());
 
-            if ((publicationZdbID == null || publicationZdbID.length() < 16) && false == markerDTO.getName().equals(this.dto.getName())) {
-                setError("Need to attribute name changes.");
-                return;
-            }
+            if(false == nameValidator.validate(nameBox.getText(),this)) return ;
+            if(false==publicationValidator.validate(publicationZdbID,this)) return ;
 
             working();
             MarkerRPCService.App.getInstance().updateMarkerHeaders(markerDTO,

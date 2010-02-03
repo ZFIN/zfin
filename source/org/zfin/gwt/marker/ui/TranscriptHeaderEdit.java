@@ -98,9 +98,11 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO>{
 
 
         if (isDirty()) {
-            if ((publicationZdbID == null || publicationZdbID.length() < 16) && false == newTranscriptDTO.getName().equals(dto.getName())) {
-                setError("Need to attribute name changes.");
-                return;
+
+            if(false == nameValidator.validate(nameBox.getText(),this)) return ;
+
+            if(false == newTranscriptDTO.getName().equals(dto.getName())){
+                if(false == publicationValidator.validate(publicationZdbID,this)) return ;
             }
 
             working();

@@ -68,105 +68,24 @@ public class CloneRPCServiceImpl extends RemoteServiceServlet implements CloneRP
             cloneDTO.setProbeLibraryName(probeLibrary.getName());
         }
 
-
-        Set<MarkerSupplier> markerSuppliers = clone.getSuppliers();
-        List<String> supplierList = new ArrayList<String>();
-        for (MarkerSupplier markerSupplier : markerSuppliers) {
-            supplierList.add(markerSupplier.getOrganization().getName());
-        }
-        cloneDTO.setSuppliers(supplierList);
-
+        cloneDTO.setSuppliers(DTOService.getSuppliers(clone));
 
         // get direct attributions
-        ActiveData activeData = new ActiveData();
-        activeData.setZdbID(zdbID);
-        List<RecordAttribution> recordAttributions = RepositoryFactory.getInfrastructureRepository().getRecordAttributions(activeData);
-        List<String> attributions = new ArrayList<String>();
-        for (RecordAttribution recordAttribution : recordAttributions) {
-            attributions.add(recordAttribution.getSourceZdbID());
-        }
-        cloneDTO.setRecordAttributions(attributions);
+        cloneDTO.setRecordAttributions(DTOService.getDirectAttributions(clone));
 
         // get notes
-        List<NoteDTO> curatorNotes = new ArrayList<NoteDTO>();
-        Set<DataNote> dataNotes = clone.getDataNotes();
-        for (DataNote dataNote : dataNotes) {
-            NoteDTO noteDTO = new NoteDTO();
-            noteDTO.setNoteData(dataNote.getNote());
-            noteDTO.setZdbID(dataNote.getZdbID());
-//            noteDTO.setDataZdbID(dataNote.getDataZdbID());
-            noteDTO.setDataZdbID(clone.getZdbID());
-            noteDTO.setEditMode(NoteBox.EditMode.PRIVATE.name());
-            curatorNotes.add(noteDTO);
-        }
-        cloneDTO.setCuratorNotes(curatorNotes);
+        cloneDTO.setCuratorNotes(DTOService.getCuratorNotes(clone));
 
-        NoteDTO publicNoteDTO = new NoteDTO();
-        publicNoteDTO.setNoteData(clone.getPublicComments());
-        publicNoteDTO.setZdbID(clone.getZdbID());
-        publicNoteDTO.setDataZdbID(clone.getZdbID());
-        publicNoteDTO.setEditMode(NoteBox.EditMode.PUBLIC.name());
-        cloneDTO.setPublicNote(publicNoteDTO);
+        cloneDTO.setPublicNote(DTOService.getPublicNote(clone));
 
         // get alias's
-        Set<MarkerAlias> aliases = clone.getAliases();
-        List<RelatedEntityDTO> aliasRelatedEntities = new ArrayList<RelatedEntityDTO>();
-        if (aliases != null) {
-            for (MarkerAlias alias : aliases) {
-                Set<PublicationAttribution> publicationAttributions = alias.getPublications();
-                aliasRelatedEntities.addAll(DTOService.createRelatedEntitiesForPublications(clone.getZdbID(), alias.getAlias(), publicationAttributions));
-            }
-        }
-        cloneDTO.setAliasAttributes(aliasRelatedEntities);
+        cloneDTO.setAliasAttributes(DTOService.getAliases(clone));
 
         // get related genes
-        Set<MarkerRelationship> markerRelationships = clone.getFirstMarkerRelationships();
-        logger.debug("# of marker relationships: " + markerRelationships.size());
-        List<MarkerDTO> relatedGenes = new ArrayList<MarkerDTO>();
-        for (MarkerRelationship markerRelationship : markerRelationships) {
-            if (
-                    markerRelationship.getSecondMarker().isInTypeGroup(Marker.TypeGroup.GENE)
-                // todo: should use a different type
-//                  &&
-//                   markerRelationship.getType().equals(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT)
-                    ) {
-                Marker gene = markerRelationship.getSecondMarker();
-//                relatedGenes.addAll(DTOHelper.createAttributesForPublication(gene.getAbbreviation(),markerRelationship.getPublications())) ;
-                relatedGenes.addAll(DTOService.createLinksForPublication(DTOService.createMarkerDTOFromMarker(gene), markerRelationship.getPublications()));
-            }
-        }
-        logger.debug("# of related genes: " + relatedGenes.size());
-
-        cloneDTO.setRelatedGeneAttributes(relatedGenes);
+        cloneDTO.setRelatedGeneAttributes(DTOService.getRelatedGenes(clone));
 
         // get sequences
-        List<ReferenceDatabase> referenceDatabases = RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
-                DisplayGroup.GroupName.DBLINK_ADDING_ON_CLONE_EDIT);
-        List<MarkerDBLink> dbLinks = RepositoryFactory.getSequenceRepository().getDBLinksForMarker(clone, (ReferenceDatabase[]) referenceDatabases.toArray(new ReferenceDatabase[referenceDatabases.size()]));
-        List<DBLinkDTO> dbLinkDTOList = new ArrayList<DBLinkDTO>();
-        for (MarkerDBLink markerDBLink : dbLinks) {
-            DBLinkDTO dbLinkDTO = new DBLinkDTO();
-            dbLinkDTO.setDataZdbID(markerDBLink.getDataZdbID());
-            dbLinkDTO.setDbLinkZdbID(markerDBLink.getZdbID());
-            dbLinkDTO.setName(markerDBLink.getAccessionNumber());
-            Publication publication = markerDBLink.getSinglePublication();
-            if (publication != null) {
-                dbLinkDTO.setPublicationZdbID(publication.getZdbID());
-            }
-            dbLinkDTO.setLength(markerDBLink.getLength());
-
-            ReferenceDatabase referenceDatabase = markerDBLink.getReferenceDatabase();
-            ReferenceDatabaseDTO referenceDatabaseDTO = new ReferenceDatabaseDTO();
-            referenceDatabaseDTO.setName(referenceDatabase.getForeignDB().getDbName().toString());
-            referenceDatabaseDTO.setType(referenceDatabase.getForeignDBDataType().getDataType().toString());
-            referenceDatabaseDTO.setSuperType(referenceDatabase.getForeignDBDataType().getSuperType().toString());
-            referenceDatabaseDTO.setZdbID(referenceDatabase.getZdbID());
-
-            dbLinkDTO.setReferenceDatabaseDTO(referenceDatabaseDTO);
-            dbLinkDTOList.addAll(DTOService.createDBLinkDTOsFromMarkerDBLink(markerDBLink));
-//            markerDbLinkDTOList.add(markerDbLinkDTO);
-        }
-        cloneDTO.setSupportingSequenceLinks(dbLinkDTOList);
+        cloneDTO.setSupportingSequenceLinks(DTOService.getSupportingSequences(clone));
 
         Clone.ProblemType[] problemTypeEnums = Clone.ProblemType.values();
         List<String> problemTypes = new ArrayList<String>();

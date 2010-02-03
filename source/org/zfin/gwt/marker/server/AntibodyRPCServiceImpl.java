@@ -47,71 +47,19 @@ public class AntibodyRPCServiceImpl extends RemoteServiceServlet implements Anti
         antibodyDTO.setType(antibody.getClonalType());
 
 
-        Set<MarkerSupplier> markerSuppliers = antibody.getSuppliers();
-        List<String> supplierList = new ArrayList<String>();
-        for (MarkerSupplier markerSupplier : markerSuppliers) {
-            supplierList.add(markerSupplier.getOrganization().getName());
-        }
-        antibodyDTO.setSuppliers(supplierList);
-
+        antibodyDTO.setSuppliers(DTOService.getSuppliers(antibody));
 
         // get direct attributions
-        ActiveData activeData = new ActiveData();
-        activeData.setZdbID(zdbID);
-        List<RecordAttribution> recordAttributions = RepositoryFactory.getInfrastructureRepository().getRecordAttributions(activeData);
-        List<String> attributions = new ArrayList<String>();
-        for (RecordAttribution recordAttribution : recordAttributions) {
-            attributions.add(recordAttribution.getSourceZdbID());
-        }
-        antibodyDTO.setRecordAttributions(attributions);
+        antibodyDTO.setRecordAttributions(DTOService.getDirectAttributions(antibody));
 
         // get notes
-        List<NoteDTO> curatorNotes = new ArrayList<NoteDTO>();
-        Set<DataNote> dataNotes = antibody.getDataNotes();
-        for (DataNote dataNote : dataNotes) {
-            NoteDTO noteDTO = new NoteDTO();
-            noteDTO.setNoteData(dataNote.getNote());
-            noteDTO.setZdbID(dataNote.getZdbID());
-//            noteDTO.setDataZdbID(dataNote.getDataZdbID());
-            noteDTO.setDataZdbID(antibody.getZdbID());
-            noteDTO.setEditMode(NoteBox.EditMode.PRIVATE.name());
-            curatorNotes.add(noteDTO);
-        }
-        antibodyDTO.setCuratorNotes(curatorNotes);
+        antibodyDTO.setCuratorNotes(DTOService.getCuratorNotes(antibody));
+        antibodyDTO.setPublicNote(DTOService.getPublicNote(antibody));
 
-        NoteDTO publicNoteDTO = new NoteDTO();
-        publicNoteDTO.setNoteData(antibody.getPublicComments());
-        publicNoteDTO.setZdbID(antibody.getZdbID());
-        publicNoteDTO.setDataZdbID(antibody.getZdbID());
-        publicNoteDTO.setEditMode(NoteBox.EditMode.PUBLIC.name());
-        antibodyDTO.setPublicNote(publicNoteDTO);
-
-
-        List<NoteDTO> externalNotes = new ArrayList<NoteDTO>();
-        for (AntibodyExternalNote antibodyExternalNote: antibody.getExternalNotes()) {
-            NoteDTO antibodyExternalNoteDTO = new NoteDTO();
-            antibodyExternalNoteDTO.setZdbID(antibodyExternalNote.getZdbID());
-            antibodyExternalNoteDTO.setEditMode(NoteBox.EditMode.EXTERNAL.name());
-            antibodyExternalNoteDTO.setDataZdbID(antibody.getZdbID());
-            if(antibodyExternalNote.getSinglePubAttribution()!=null){
-                antibodyExternalNoteDTO.setPublicationZdbID(antibodyExternalNote.getSinglePubAttribution().getPublication().getZdbID());
-            }
-            antibodyExternalNoteDTO.setNoteData(antibodyExternalNote.getNote());
-            externalNotes.add(antibodyExternalNoteDTO);
-        }
-        antibodyDTO.setExternalNotes(externalNotes);
-
+        antibodyDTO.setExternalNotes(DTOService.getExternalNotes(antibody));
 
         // get alias's
-        Set<MarkerAlias> aliases = antibody.getAliases();
-        List<RelatedEntityDTO> aliasRelatedEntities = new ArrayList<RelatedEntityDTO>();
-        if (aliases != null) {
-            for (MarkerAlias alias : aliases) {
-                Set<PublicationAttribution> publicationAttributions = alias.getPublications();
-                aliasRelatedEntities.addAll(DTOService.createRelatedEntitiesForPublications(zdbID, alias.getAlias(), publicationAttributions));
-            }
-        }
-        antibodyDTO.setAliasAttributes(aliasRelatedEntities);
+        antibodyDTO.setAliasAttributes(DTOService.getAliases(antibody));
 
         // get antigen genes
         Set<MarkerRelationship> markerRelationships = antibody.getSecondMarkerRelationships();

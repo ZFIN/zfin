@@ -1,6 +1,7 @@
 package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.root.dto.*;
@@ -79,7 +80,9 @@ public interface MarkerRPCService extends RemoteService {
     // marker update
     MarkerDTO getMarkerForName(String name);
 
-    MarkerDTO getGeneForZdbID(String zdbID);
+    MarkerDTO getGeneOnlyForZdbID(String zdbID);
+
+    MarkerDTO getGeneForZdbID(String zdbID) ;
 
     // supplier methods
 
@@ -115,4 +118,5 @@ public interface MarkerRPCService extends RemoteService {
 
     void updateMarkerHeaders(MarkerDTO markerDTO);
 
+    List<ReferenceDatabaseDTO> getGeneDBLinkAddReferenceDatabases(String markerZdbID);
 }

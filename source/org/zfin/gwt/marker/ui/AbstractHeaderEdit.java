@@ -28,6 +28,9 @@ public abstract class AbstractHeaderEdit<T extends MarkerDTO>  extends AbstractR
     final HTML zdbIDHTML = new HTML();
     final StringTextBox nameBox = new StringTextBox();
 
+    // validator
+    protected final NameValidator nameValidator = new NameValidator();
+
     protected abstract void sendUpdates() ;
 
     // listeners

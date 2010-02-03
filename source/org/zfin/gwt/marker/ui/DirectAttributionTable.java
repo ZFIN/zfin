@@ -35,6 +35,9 @@ public class DirectAttributionTable extends Composite
     private List<String> recordAttributions;
     private String zdbID;
 
+    // validator
+    private PublicationValidator publicationValidator = new PublicationValidator();
+
     DirectAttributionTable() {
         initGUI();
         initWidget(panel);
@@ -76,10 +79,11 @@ public class DirectAttributionTable extends Composite
     }
 
     public boolean addPublication(final String publicationZdbID) {
-        if (publicationZdbID == null || publicationZdbID.length() < 16) {
-            setError("Must select a valid publication: " + publicationZdbID);
-            return false;
-        } else if (containsPublication(publicationZdbID)) {
+        if(false==publicationValidator.validate(publicationZdbID,this)){
+            return false ;
+        }
+
+        if (containsPublication(publicationZdbID)) {
             setError("Already contains publication: " + publicationZdbID);
             return false;
         }

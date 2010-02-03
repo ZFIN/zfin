@@ -35,8 +35,4 @@ public abstract class AbstractFullMarkerEditController<T extends MarkerDTO> exte
         synchronizeHandlesErrorListener(directAttributionTable);
     }
 
-
-    public void publicationAttributed(PublicationChangeEvent event) {
-        publicationLookupBox.addRecentPublicationDTO(event.getPublication());
-    }
 }

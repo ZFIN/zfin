@@ -161,46 +161,14 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
 
 
         // get direct attributions
-        ActiveData activeData = new ActiveData();
-        activeData.setZdbID(zdbID);
-        List<RecordAttribution> recordAttributions = RepositoryFactory.getInfrastructureRepository().getRecordAttributions(activeData);
-        ArrayList<String> attributions = new ArrayList<String>();
-        for (RecordAttribution recordAttribution : recordAttributions) {
-            attributions.add(recordAttribution.getSourceZdbID());
-        }
-        transcriptDTO.setRecordAttributions(attributions);
+        transcriptDTO.setRecordAttributions(DTOService.getDirectAttributions(transcript));
 
         // get notes
-        ArrayList<NoteDTO> curatorNotes = new ArrayList<NoteDTO>();
-        Set<DataNote> dataNotes = transcript.getDataNotes();
-        for (DataNote dataNote : dataNotes) {
-            NoteDTO noteDTO = new NoteDTO();
-            noteDTO.setNoteData(dataNote.getNote());
-            noteDTO.setZdbID(dataNote.getZdbID());
-//            noteDTO.setDataZdbID(dataNote.getDataZdbID());
-            noteDTO.setDataZdbID(transcript.getZdbID());
-            noteDTO.setEditMode(NoteBox.EditMode.PRIVATE.name());
-            curatorNotes.add(noteDTO);
-        }
-        transcriptDTO.setCuratorNotes(curatorNotes);
-
-        NoteDTO publicNoteDTO = new NoteDTO();
-        publicNoteDTO.setNoteData(transcript.getPublicComments());
-        publicNoteDTO.setZdbID(transcript.getZdbID());
-        publicNoteDTO.setDataZdbID(transcript.getZdbID());
-        publicNoteDTO.setEditMode(NoteBox.EditMode.PUBLIC.name());
-        transcriptDTO.setPublicNote(publicNoteDTO);
+        transcriptDTO.setCuratorNotes(DTOService.getCuratorNotes(transcript));
+        transcriptDTO.setPublicNote(DTOService.getPublicNote(transcript));
 
         // get alias's
-        Set<MarkerAlias> aliases = transcript.getAliases();
-        ArrayList<RelatedEntityDTO> aliasRelatedEntities = new ArrayList<RelatedEntityDTO>();
-        if (aliases != null) {
-            for (MarkerAlias alias : aliases) {
-                Set<PublicationAttribution> publicationAttributions = alias.getPublications();
-                aliasRelatedEntities.addAll(DTOService.createRelatedEntitiesForPublications(transcript.getZdbID(), alias.getAlias(), publicationAttributions));
-            }
-        }
-        transcriptDTO.setAliasAttributes(aliasRelatedEntities);
+        transcriptDTO.setAliasAttributes(DTOService.getAliases(transcript));
 
         // get related genes
         // get related clones

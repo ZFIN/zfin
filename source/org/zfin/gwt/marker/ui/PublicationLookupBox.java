@@ -29,7 +29,6 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
     private final VerticalPanel lookupPanel = new VerticalPanel();
     private final PublicationDisplayPanel publicationDisplayPanel = new PublicationDisplayPanel();
     private static final String SEPARATOR = "-------------" ;
-    private static final String ZDB_PUB_PREFIX = "ZDB-PUB-"  ;
 
     private final List<PublicationChangeListener> publicationChangeListeners = new ArrayList<PublicationChangeListener>();
     private static final int MAX_LENGTH = 30;
@@ -37,10 +36,12 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
     // internal data
     private PublicationDTO publicationAbstractDTO;
 
-
     public PublicationLookupBox() {
         initGUI();
+        addInternalListeners();
         initWidget(panel);
+
+        RootPanel.get(StandardMarkerDivNames.publicationLookupDiv).add(this);
 
         // this won't run
         DeferredCommand.addCommand(new Command() {
@@ -48,6 +49,34 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
                 publicationChanged(new PublicationChangeEvent(curatorPubList.getValue(0)));
             }
         });
+    }
+
+    protected void addInternalListeners(){
+        // default items
+//        curatorPubList.addItem("No default pubs");
+        curatorPubList.addChangeHandler(new ChangeHandler() {
+            public void onChange(ChangeEvent event) {
+                String selectedPub = curatorPubList.getValue(curatorPubList.getSelectedIndex());
+                if (false == selectedPub.startsWith(PublicationValidator.ZDB_PUB_PREFIX)) {
+                    selectedPub = "";
+                }
+                pubField.setText(selectedPub);
+                publicationChanged(new PublicationChangeEvent(pubField.getText().trim()));
+            }
+        });
+
+        pubField.addChangeHandler(new ChangeHandler() {
+            public void onChange(ChangeEvent event) {
+                publicationChanged(new PublicationChangeEvent(pubField.getText().trim()));
+            }
+        });
+        pubField.addKeyPressHandler(new KeyPressHandler() {
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+                publicationChanged(new PublicationChangeEvent(pubField.getText().trim()));
+            }
+        });
+
     }
 
 
@@ -74,31 +103,6 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
         lookupPanel.add(panel2);
 
         publicationDisplayPanel.setVisible(true);
-
-        // default items
-//        curatorPubList.addItem("No default pubs");
-        curatorPubList.addChangeHandler(new ChangeHandler() {
-            public void onChange(ChangeEvent event) {
-                String selectedPub = curatorPubList.getValue(curatorPubList.getSelectedIndex());
-                if (false == selectedPub.startsWith("ZDB-PUB")) {
-                    selectedPub = "";
-                }
-                pubField.setText(selectedPub);
-                publicationChanged(new PublicationChangeEvent(pubField.getText().trim()));
-            }
-        });
-
-        pubField.addChangeHandler(new ChangeHandler() {
-            public void onChange(ChangeEvent event) {
-                publicationChanged(new PublicationChangeEvent(pubField.getText().trim()));
-            }
-        });
-        pubField.addKeyPressHandler(new KeyPressHandler() {
-            @Override
-            public void onKeyPress(KeyPressEvent event) {
-                publicationChanged(new PublicationChangeEvent(pubField.getText().trim()));
-            }
-        });
 
         panel.add(lookupPanel);
         panel.add(publicationDisplayPanel);
@@ -133,13 +137,12 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
             clearPubBox();
         } else {
             String lookupString = pubField.getText().trim();
-            if(false==lookupString.startsWith(ZDB_PUB_PREFIX)){
-                lookupString = ZDB_PUB_PREFIX + lookupString;
+            if(false==lookupString.startsWith(PublicationValidator.ZDB_PUB_PREFIX)){
+                lookupString = PublicationValidator.ZDB_PUB_PREFIX + lookupString;
             }
             MarkerRPCService.App.getInstance().getPublicationAbstract(lookupString, new AsyncCallback<PublicationDTO>() {
                 public void onFailure(Throwable throwable) {
                     setPublicationAbstractDTO(null);
-//                Window.alert("failure!!: "+ throwable);
                     clearPubBox();
                 }
 
@@ -200,7 +203,6 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
     }
 
     void setPubBox(PublicationDTO publicationAbstractDTO) {
-//       Window.alert(publicationAbstractDomain.getTitle());
         publicationDisplayPanel.setPublicationAbstractDomain(publicationAbstractDTO);
     }
 

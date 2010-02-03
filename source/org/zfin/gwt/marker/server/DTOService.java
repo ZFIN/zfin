@@ -2,14 +2,20 @@ package org.zfin.gwt.marker.server;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zfin.antibody.Antibody;
+import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.marker.ui.NoteBox;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.infrastructure.InfrastructureService;
-import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.orthology.Species;
+import org.zfin.people.MarkerSupplier;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.presentation.DBLinkPresentation;
@@ -304,4 +310,141 @@ public class DTOService {
         String newValueString = (newValue == null ? null : newValue.toString());
         handleUpdatesTable(marker, fieldname, oldValueString, newValueString);
     }
+
+
+    public static List<String> getSuppliers(Marker marker) {
+        Set<MarkerSupplier> markerSuppliers = marker.getSuppliers();
+        List<String> supplierList = new ArrayList<String>();
+        for (MarkerSupplier markerSupplier : markerSuppliers) {
+            supplierList.add(markerSupplier.getOrganization().getName());
+        }
+        return supplierList;
+    }
+
+    public static List<String> getDirectAttributions(Marker marker){
+        // get direct attributions
+        ActiveData activeData = new ActiveData();
+        activeData.setZdbID(marker.getZdbID());
+        List<RecordAttribution> recordAttributions = RepositoryFactory.getInfrastructureRepository().getRecordAttributions(activeData);
+        List<String> attributions = new ArrayList<String>();
+        for (RecordAttribution recordAttribution : recordAttributions) {
+            attributions.add(recordAttribution.getSourceZdbID());
+        }
+        return attributions ;
+    }
+
+    public static List<NoteDTO> getCuratorNotes(Marker marker){
+        // get notes
+        List<NoteDTO> curatorNotes = new ArrayList<NoteDTO>();
+        Set<DataNote> dataNotes = marker.getDataNotes();
+        for (DataNote dataNote : dataNotes) {
+            NoteDTO noteDTO = new NoteDTO();
+            noteDTO.setNoteData(dataNote.getNote());
+            noteDTO.setZdbID(dataNote.getZdbID());
+//            noteDTO.setDataZdbID(dataNote.getDataZdbID());
+            noteDTO.setDataZdbID(marker.getZdbID());
+            noteDTO.setEditMode(NoteBox.EditMode.PRIVATE.name());
+            curatorNotes.add(noteDTO);
+        }
+        return curatorNotes;
+    }
+
+    public static NoteDTO getPublicNote(Marker marker){
+
+        NoteDTO publicNoteDTO = new NoteDTO();
+        publicNoteDTO.setNoteData(marker.getPublicComments());
+        publicNoteDTO.setZdbID(marker.getZdbID());
+        publicNoteDTO.setDataZdbID(marker.getZdbID());
+        publicNoteDTO.setEditMode(NoteBox.EditMode.PUBLIC.name());
+        return publicNoteDTO;
+    }
+
+    public static List<RelatedEntityDTO> getAliases(Marker marker){
+        // get alias's
+        Set<MarkerAlias> aliases = marker.getAliases();
+        List<RelatedEntityDTO> aliasRelatedEntities = new ArrayList<RelatedEntityDTO>();
+        if (aliases != null) {
+            for (MarkerAlias alias : aliases) {
+                Set<PublicationAttribution> publicationAttributions = alias.getPublications();
+                aliasRelatedEntities.addAll(DTOService.createRelatedEntitiesForPublications(marker.getZdbID(), alias.getAlias(), publicationAttributions));
+            }
+        }
+        return aliasRelatedEntities;
+    }
+
+
+    /**
+     * @param marker
+     * @return
+     */
+    public static List<MarkerDTO> getRelatedGenes(Marker marker){
+        Set<MarkerRelationship> markerRelationships = marker.getFirstMarkerRelationships();
+        logger.debug("# of marker relationships: " + markerRelationships.size());
+        List<MarkerDTO> relatedGenes = new ArrayList<MarkerDTO>();
+        for (MarkerRelationship markerRelationship : markerRelationships) {
+            if (
+                    markerRelationship.getSecondMarker().isInTypeGroup(Marker.TypeGroup.GENE)
+                // todo: should use a different type
+//                  &&
+//                   markerRelationship.getType().equals(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT)
+                    ) {
+                Marker internalGene = markerRelationship.getSecondMarker();
+//                relatedGenes.addAll(DTOHelper.createAttributesForPublication(gene.getAbbreviation(),markerRelationship.getPublications())) ;
+                relatedGenes.addAll(DTOService.createLinksForPublication(DTOService.createMarkerDTOFromMarker(internalGene), markerRelationship.getPublications()));
+            }
+        }
+        logger.debug("# of related genes: " + relatedGenes.size());
+        return relatedGenes ;
+    }
+
+    /**
+     * @param marker
+     * @return
+     */
+    public static List<DBLinkDTO> getSupportingSequences(Marker marker){
+        // get sequences
+        List<ReferenceDatabase> referenceDatabases = RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
+                DisplayGroup.GroupName.DBLINK_ADDING_ON_CLONE_EDIT);
+        List<MarkerDBLink> dbLinks = RepositoryFactory.getSequenceRepository().getDBLinksForMarker(marker, (ReferenceDatabase[]) referenceDatabases.toArray(new ReferenceDatabase[referenceDatabases.size()]));
+        List<DBLinkDTO> dbLinkDTOList = new ArrayList<DBLinkDTO>();
+        for (MarkerDBLink markerDBLink : dbLinks) {
+            DBLinkDTO dbLinkDTO = new DBLinkDTO();
+            dbLinkDTO.setDataZdbID(markerDBLink.getDataZdbID());
+            dbLinkDTO.setDbLinkZdbID(markerDBLink.getZdbID());
+            dbLinkDTO.setName(markerDBLink.getAccessionNumber());
+            Publication publication = markerDBLink.getSinglePublication();
+            if (publication != null) {
+                dbLinkDTO.setPublicationZdbID(publication.getZdbID());
+            }
+            dbLinkDTO.setLength(markerDBLink.getLength());
+
+            ReferenceDatabase referenceDatabase = markerDBLink.getReferenceDatabase();
+            ReferenceDatabaseDTO referenceDatabaseDTO = new ReferenceDatabaseDTO();
+            referenceDatabaseDTO.setName(referenceDatabase.getForeignDB().getDbName().toString());
+            referenceDatabaseDTO.setType(referenceDatabase.getForeignDBDataType().getDataType().toString());
+            referenceDatabaseDTO.setSuperType(referenceDatabase.getForeignDBDataType().getSuperType().toString());
+            referenceDatabaseDTO.setZdbID(referenceDatabase.getZdbID());
+
+            dbLinkDTO.setReferenceDatabaseDTO(referenceDatabaseDTO);
+            dbLinkDTOList.addAll(DTOService.createDBLinkDTOsFromMarkerDBLink(markerDBLink));
+        }
+        return dbLinkDTOList;
+    }
+
+    public static List<NoteDTO> getExternalNotes(Antibody antibody){
+        List<NoteDTO> externalNotes = new ArrayList<NoteDTO>();
+        for (AntibodyExternalNote antibodyExternalNote: antibody.getExternalNotes()) {
+            NoteDTO antibodyExternalNoteDTO = new NoteDTO();
+            antibodyExternalNoteDTO.setZdbID(antibodyExternalNote.getZdbID());
+            antibodyExternalNoteDTO.setEditMode(NoteBox.EditMode.EXTERNAL.name());
+            antibodyExternalNoteDTO.setDataZdbID(antibody.getZdbID());
+            if(antibodyExternalNote.getSinglePubAttribution()!=null){
+                antibodyExternalNoteDTO.setPublicationZdbID(antibodyExternalNote.getSinglePubAttribution().getPublication().getZdbID());
+            }
+            antibodyExternalNoteDTO.setNoteData(antibodyExternalNote.getNote());
+            externalNotes.add(antibodyExternalNoteDTO);
+        }
+        return externalNotes ;
+    }
+
 }
