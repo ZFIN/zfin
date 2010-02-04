@@ -917,7 +917,7 @@ select dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, m
    and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
    and genofeat_feature_zdb_id = feature_zdb_id
    and genofeat_feature_zdb_id = idsup_data_zdB_id
-   and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53'
+--   and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53'
    and genofeat_geno_zdb_id = geno_zdb_id
 into temp lamhdi_tmp   
 ;
@@ -935,8 +935,27 @@ select dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, m
    and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
    and genofeat_geno_zdb_id = idsup_data_zdB_id
    and genofeat_geno_zdb_id = geno_zdb_id
-   and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53' 
+--   and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53' 
    ;
+
+
+insert into lamhdi_tmp(dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, mrkr_abbrev, genofeat_geno_zdb_id, geno_display_name)
+select distinct dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, mrkr_abbrev, genofeat_geno_zdb_id, geno_display_name
+  from db_link, foreign_db_contains fdbc, foreign_db fdb, orthologue, feature_marker_relationship, marker, genotype_feature, genotype
+ where fdb.fdb_db_name = 'OMIM'
+   and fdb.fdb_db_pk_id = fdbc.fdbcont_fdb_db_id
+   and fdbc.fdbcont_zdb_id = dblink_fdbcont_zdb_id
+   and dblink_linked_recid = zdb_id
+   and c_gene_id = fmrel_mrkr_zdb_id
+   and fmrel_mrkr_zdb_id = mrkr_zdb_id
+   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+--   and genofeat_geno_zdb_id = idsup_data_zdB_id
+   and genofeat_geno_zdb_id = geno_zdb_id
+--   and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53' 
+   and not exists (select * from int_data_supplier where genofeat_geno_zdb_id = idsup_data_zdB_id)
+   and not exists (select * from int_data_supplier where genofeat_feature_zdb_id = idsup_data_zdB_id)
+   ;
+
 
 update lamhdi_tmp
 set geno_display_name = geno_display_name || " (" || get_genotype_backgrounds(genofeat_geno_zdb_id) || ")" 
@@ -944,7 +963,7 @@ where exists (select * from genotype_background where genoback_geno_zdb_id = gen
 
 
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/lamhdi.unl'
-select dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, mrkr_abbrev, genofeat_geno_zdb_id, geno_display_name, feature_name, feature_zdb_id
+select distinct dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, mrkr_abbrev, genofeat_geno_zdb_id, geno_display_name, feature_name, feature_zdb_id
 from lamhdi_tmp;
 
 -- download file Case 4200 as reuqested by uniprot
