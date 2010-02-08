@@ -110,7 +110,7 @@ OUPUT:
 	  	   
            <?MIBLOCK COND="$(OR,$(NC,$cds_cdt_group_pre,),$(NC,$cds_cdt_group,$cds_cdt_group_pre))">
 	     <?MIVAR>
-		$(SETVAR, $cds_display,$cds_display$cds_cdt_group:$cds_cdt_name)
+		$(SETVAR, $cds_display,$cds_display$cds_delimiter $cds_cdt_group:$cds_cdt_name)
              <?/MIVAR>	
 	    <?MIELSE>
 	       $(SETVAR,$cds_display,$cds_display$cds_delimiter$cds_cdt_name)
