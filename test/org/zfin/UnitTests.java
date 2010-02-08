@@ -84,7 +84,6 @@ import org.zfin.wiki.WikiConnectTest;
         UIFieldTransformerTest.class,
         UrlCreatorTest.class,
         WidgetUtilTest.class,
-        WikiConnectTest.class,
         ZfinPropertiesTest.class,
         ExecProcessTest.class
         // this test should be last (or near last)

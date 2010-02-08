@@ -3,7 +3,11 @@ package org.zfin;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.zfin.datatransfer.doi.DOITest;
+import org.zfin.datatransfer.microarray.MicroarrayServiceTest;
 import org.zfin.sequence.PostForeignTest;
+import org.zfin.sequence.blast.BlastServiceTest;
+import org.zfin.wiki.WikiConnectTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite).
@@ -11,7 +15,11 @@ import org.zfin.sequence.PostForeignTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        PostForeignTest.class
+        WikiConnectTest.class,
+        MicroarrayServiceTest.class,
+        BlastServiceTest.class,
+        DOITest.class
+//        PostForeignTest.class
         })
 
 public class ThirdPartyServiceTests {

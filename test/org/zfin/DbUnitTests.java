@@ -40,7 +40,6 @@ import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
         AnatomyRepositoryTest.class,
         AntibodyRepositoryTest.class,
         CurationRPCTest.class,
-        DOITest.class,
         InfrastructureRepositoryTest.class,
         MarkerRepositoryTest.class,
         TranscriptServiceTest.class,

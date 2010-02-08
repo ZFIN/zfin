@@ -74,14 +74,6 @@ public class MicroarrayParseTest {
         assertEquals("NM_ABC123",accession);
     }
 
-    // this is more for convenience and shouldn't be run as a regular test
-    @Test
-    public void testIndividualGPL(){
-        Set<String> newGEOAccessions = new HashSet<String>() ;
-        DefaultGEOSoftParser defaultSoftParser = new DefaultGEOSoftParser() ;
-        defaultSoftParser.setAlwaysUseExistingFile(true);
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL1319",2,new String[]{"Danio rerio"},new String[]{"Control"}) );
-    }
 
 
     @Test

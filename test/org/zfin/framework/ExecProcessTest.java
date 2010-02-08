@@ -107,6 +107,26 @@ public class ExecProcessTest {
 
     }
 
+    @Test
+    public void javaVersion(){
+        DefaultExecutor defaultExecutor = new DefaultExecutor();
+        CommandLine commandLine = new CommandLine("which") ;
+        commandLine.addArgument("java") ;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream() ;
+        ByteArrayOutputStream byteArrayErrorStream = new ByteArrayOutputStream() ;
+        try {
+            PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(byteArrayOutputStream,byteArrayErrorStream) ;
+            defaultExecutor.setStreamHandler(pumpStreamHandler);
+            int exitValue = defaultExecutor.execute(commandLine) ;
+//            System.out.println("output: " + byteArrayOutputStream.toString()) ;
+            assertFalse(defaultExecutor.isFailure(exitValue));
+        } catch (Exception e) {
+            fail(e.toString()) ;
+        }
+
+
+    }
+
     private void method1() throws T1{
         try {
             method2() ;

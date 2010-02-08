@@ -21,25 +21,6 @@ public class WikiConnectTest {
         TestConfiguration.initApplicationProperties();
     }
 
-    @Test
-    public void javaVersion(){
-        DefaultExecutor defaultExecutor = new DefaultExecutor();
-        CommandLine commandLine = new CommandLine("which") ;
-        commandLine.addArgument("java") ;
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream() ;
-        ByteArrayOutputStream byteArrayErrorStream = new ByteArrayOutputStream() ;
-        try {
-            PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(byteArrayOutputStream,byteArrayErrorStream) ;
-            defaultExecutor.setStreamHandler(pumpStreamHandler);
-            int exitValue = defaultExecutor.execute(commandLine) ;
-//            System.out.println("output: " + byteArrayOutputStream.toString()) ;
-            assertFalse(defaultExecutor.isFailure(exitValue));
-        } catch (Exception e) {
-            fail(e.toString()) ;
-        }
-
-
-    }
 
     @Test
     public void login(){
@@ -52,10 +33,13 @@ public class WikiConnectTest {
         }
     }
 
+    /**
+     * This test verifies that the protocol space has at least 100 pages in it.
+     */
     @Test
     public void getPagesForspace(){
         try {
-            assertTrue(WikiWebService.getInstance().getAllPagesForSpace("prot").length>10);
+            assertTrue(WikiWebService.getInstance().getAllPagesForSpace("prot").length>100);
         } catch (WikiLoginException e) {
             fail(e.fillInStackTrace().toString()) ;
         }

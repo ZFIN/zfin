@@ -1,6 +1,8 @@
 package org.zfin.datatransfer.doi;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -40,14 +43,21 @@ public class DOITest {
     }
 
 
+    /**
+     * get 2 pubs with valid dois, set them to null and repopulate them using the service class
+     */
     @Test
     public void testDOIConnectivity(){
         HibernateUtil.createTransaction();
         Citexplore citexplore = new Citexplore();
         List<Publication> pubs = new ArrayList<Publication>();
-        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-        Publication pub1 = publicationRepository.getPublication("ZDB-PUB-090324-13") ;
-        Publication pub2 = publicationRepository.getPublication("ZDB-PUB-090526-18") ;
+        Criteria crit = HibernateUtil.currentSession().createCriteria(Publication.class) ;
+        crit.setMaxResults(2);
+        crit.add(Restrictions.isNotNull("doi"));
+        List<Publication> publications = (List<Publication>) crit.list();
+        assertEquals(2,publications.size());
+        Publication pub1 = publications.get(0);
+        Publication pub2 = publications.get(1);
         pub1.setDoi(null);
         pubs.add(pub1) ;
         pub2.setDoi(null);

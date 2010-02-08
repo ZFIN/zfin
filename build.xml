@@ -323,7 +323,7 @@
     </target>
 
 
-    <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,test,advance-build,restart"
+    <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,test,advance-build,restart,smokeTests"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release"

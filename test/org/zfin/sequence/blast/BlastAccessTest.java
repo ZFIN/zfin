@@ -644,7 +644,6 @@ public class BlastAccessTest {
         }
     }
 
-
     @Test
     public void getProperDefline() {
         Marker marker = new Marker();
@@ -656,6 +655,5 @@ public class BlastAccessTest {
         Defline defline = new MarkerDefline(markerDBLink);
         String returnedAccession = defline.toString().split("\\|")[1];
         assertEquals("Accessions should be the same", accession, returnedAccession);
-
     }
 }
