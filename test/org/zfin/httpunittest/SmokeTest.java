@@ -82,7 +82,7 @@ public class SmokeTest {
         testUrl.append("http://").append(domain);
     }
 
-    @Test
+//    @Test
     public void markerViewPages() throws Exception {
         testUrl.append("/");
         testUrl.append(mutant);
