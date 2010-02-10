@@ -21,6 +21,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.wiki.AntibodyWikiWebService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,6 +74,11 @@ public class AntibodyCreateController extends SimpleFormController {
             ir.insertUpdatesTable(newAntibody, "new Antibody", "", currentUser);
 
             tx.commit();
+
+
+            session.merge(newAntibody);
+            createAntibodyWiki(newAntibody) ;
+
         } catch (Exception e) {
             try {
                 tx.rollback();
@@ -87,6 +93,14 @@ public class AntibodyCreateController extends SimpleFormController {
         //   return new ModelAndView("antibody-detail-update.page", LookupStrings.FORM_BEAN, formBean);
 
         return new ModelAndView(new RedirectView("/action/marker/marker-edit?zdbID=" + newAntibody.getZdbID() + "&antibodyDefPubZdbID=" + antibodyPub.getZdbID()));
+    }
+
+    private void createAntibodyWiki(Antibody antibody) {
+        try {
+            AntibodyWikiWebService.getInstance().createWikiPageContentForAntibodyFromTemplate(antibody);
+        } catch (Exception e) {
+            logger.error("Unable to create antibody wiki: "+antibody,e);
+        }
     }
 
 
