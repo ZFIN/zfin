@@ -8,21 +8,23 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# This makefile produces the script that creates data files for public 
+# This makefile produces the script that creates data files for public
 # download.
 # The script is run by cron every week.  It invokes the sql script.
 # The dump uses the HTTP directory structure.
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../../..
+TOP = ../../../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads
+TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads/GFF3
 
-SUBDIRS = GFF3
+GENERICS = load_drerio_vega_id.sql unload_pheno_gff.sql unload_zfin_genes_gff.sql \
+unload_mutant_gff.sql unload_xpat_gff.sql unload_alias_scattered.sql GFF3Files.pl \
+unload_zfin_transcript.sql
 
-GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql
+STATICS = gather_alias.awk get_final_gene.awk rollback.sql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -30,6 +32,8 @@ GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql
 HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/Downloads
 
 ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
+
+# data source is /research/zprodmore/gff3/
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -46,12 +50,12 @@ $(HTTP_DATA_TRANSFER_DIR) :
 
 # ---------------  Misc Targets  ----------------------------------------
 
-# Run the download script.  This extracts data from ZFIN and places it in 
+# Run the download script.  This extracts data from ZFIN and places it in
 # the public http directory
 
-run : $(TARGETDIR)/DownloadFiles.pl
-	$(TARGETDIR)/DownloadFiles.pl
-	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*
-	rm -f $(HTTP_DATA_TRANSFER_DIR)/swissprot.txt
-	ln -s $(HTTP_DATA_TRANSFER_DIR)/uniprot.txt $(HTTP_DATA_TRANSFER_DIR)/swissprot.txt
+run : $(TARGETDIR)/GFF3Files.pl $(TARGETDIR)/load_drerio_vega_id.sql $(TARGETDIR)/unload_pheno_gff.sql $(TARGETDIR)/unload_zfin_genes_gff.sql \
+$(TARGETDIR)/unload_mutant_gff.sql $(TARGETDIR)/unload_xpat_gff.sql $(TARGETDIR)/unload_alias_scattered.sql $(TARGETDIR)/GFF3Files.pl \
+$(TARGETDIR)/gather_alias.awk $(TARGETDIR)/get_final_gene.awk $(TARGETDIR)/rollback.sql
+	$(TARGETDIR)/GFF3Files.pl
+	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*.gff3
 
