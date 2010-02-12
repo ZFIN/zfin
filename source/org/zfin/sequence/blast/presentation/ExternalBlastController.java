@@ -112,7 +112,6 @@ public class ExternalBlastController extends AbstractController {
             // ucsc
             else if (database.getAbbrev() == Database.AvailableAbbrev.UCSC_BLAT) {
                 hiddenVariables.put("org", "Zebrafish");
-                hiddenVariables.put("db", "danRer5");
                 hiddenVariables.put("type", "hyperlink");
                 hiddenVariables.put("userSeq", sequence.getData());
             }
