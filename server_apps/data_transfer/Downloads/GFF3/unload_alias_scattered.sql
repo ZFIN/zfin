@@ -1,6 +1,6 @@
-! echo "unload_alias_scattered.sql -> zfin_gene_alias_scattered.gff3"
+! echo "unload_alias_scattered.sql -> zfin_gene_alias_scattered.tmp(deleted)"
 
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_gene_alias_scattered.gff3' DELIMITER "	"
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_gene_alias_scattered.tmp' DELIMITER "	"
 
 select vg.seqname,
            "ZFIN" source,
@@ -81,7 +81,9 @@ select vg.seqname,
 
 --! <!--|ROOT_PATH|-->/home/data_transfer/Downloads/GFF3/
 ! /usr/bin/rm -f <!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_gene_alias.gff3
-! gather_alias.awk <!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_gene_alias_scattered.gff3 >  <!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_gene_alias.gff3
+! gather_alias.awk <!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_gene_alias_scattered.tmp >  <!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_gene_alias.gff3
 
 ! echo "gather_alias.awk -> zfin_gene_alias.gff3"
 ! /usr/bin/wc -l <!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_gene_alias.gff3
+! /usr/bin/rm -f <!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_gene_alias_scattered.tmp
+! echo ""
