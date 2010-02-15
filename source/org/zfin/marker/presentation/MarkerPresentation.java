@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -19,6 +20,7 @@ import java.util.Set;
  */
 public class MarkerPresentation extends EntityPresentation {
 
+    private static final Logger logger = Logger.getLogger(MarkerPresentation.class);
     public static final String marker_uri = "?MIval=aa-markerview.apg&OID=";
     public static final String transcript_uri = "marker/transcript-view?zdbID=";
     public static final String clone_uri = "marker/clone-view?zdbID=";
@@ -53,7 +55,7 @@ public class MarkerPresentation extends EntityPresentation {
             try {
                 return getTranscriptLink((Transcript) marker);
             } catch (ClassCastException e) {
-                logger.error("failed to cast: " + marker.getZdbID());
+                logger.error("failed to cast, refetching transcript explicitly: " + marker.getZdbID(),e);
                 return getTranscriptLink(RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(marker.getZdbID()));
             }
         } else if (marker.isInTypeGroup(Marker.TypeGroup.ATB)) {
