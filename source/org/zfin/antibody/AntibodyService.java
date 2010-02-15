@@ -1,5 +1,6 @@
 package org.zfin.antibody;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
@@ -408,51 +409,52 @@ public class AntibodyService {
         Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
 
         // loop thru the set of ExpressionExperiment objects to get the related data
-        for (ExpressionExperiment exp : experiments) {
+        if(CollectionUtils.isNotEmpty(experiments)){
+            for (ExpressionExperiment exp : experiments) {
 
-            // need to get a Genotype object to check for wildtype; do nothing if not wildtype
-            Genotype geno = exp.getGenotypeExperiment().getGenotype();
+                // need to get a Genotype object to check for wildtype; do nothing if not wildtype
+                Genotype geno = exp.getGenotypeExperiment().getGenotype();
 
-            // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment experiment = exp.getGenotypeExperiment().getExperiment();
+                // need to get an Experiment object to check for standard environment; do nothing if not standard
+                Experiment experiment = exp.getGenotypeExperiment().getExperiment();
 
-            if (geno.isWildtype() && experiment.isStandard()) {
+                if (geno.isWildtype() && experiment.isStandard()) {
 
-                // get a set of ExpressionResult objects
-                Set<ExpressionResult> results = exp.getExpressionResults();
+                    // get a set of ExpressionResult objects
+                    Set<ExpressionResult> results = exp.getExpressionResults();
 
-                // loop thru the set of ExpressionResult objects to get the related data
-                for (ExpressionResult result : results) {
-                    if (result.isExpressionFound()) {
-                        AnatomyItem ao = result.getAnatomyTerm();
+                    // loop thru the set of ExpressionResult objects to get the related data
+                    for (ExpressionResult result : results) {
+                        if (result.isExpressionFound()) {
+                            AnatomyItem ao = result.getAnatomyTerm();
 
-                        GoTerm cc = null;
-                        if (result instanceof GoTermExpressionResult) {
-                            GoTermExpressionResult goResult = (GoTermExpressionResult) result;
-                            cc = goResult.getSubterm();
-                        }
-                        String ccName;
-                        if (cc == null) {
-                            ccName = "";
-                        } else {
-                            ccName = cc.getName();
-                        }
+                            GoTerm cc = null;
+                            if (result instanceof GoTermExpressionResult) {
+                                GoTermExpressionResult goResult = (GoTermExpressionResult) result;
+                                cc = goResult.getSubterm();
+                            }
+                            String ccName;
+                            if (cc == null) {
+                                ccName = "";
+                            } else {
+                                ccName = cc.getName();
+                            }
 
-                        // form the key
-                        String key = ao.getName() + ccName;
+                            // form the key
+                            String key = ao.getName() + ccName;
 
-                        AnatomyLabel labeling;
+                            AnatomyLabel labeling;
 
-                        // if the ao is not a key in the map, instantiate a display object and add it to the map
-                        // otherwise, get the display object from the map
-                        if (!map.containsKey(key)) {
-                            labeling = new AnatomyLabel(ao, cc, null, null);
-                            map.put(key, labeling);
-                        } else {
-                            labeling = map.get(key);
-                        }
+                            // if the ao is not a key in the map, instantiate a display object and add it to the map
+                            // otherwise, get the display object from the map
+                            if (!map.containsKey(key)) {
+                                labeling = new AnatomyLabel(ao, cc, null, null);
+                                map.put(key, labeling);
+                            } else {
+                                labeling = map.get(key);
+                            }
 
-                        /* decided not to display stage info in the Labeling section on AB details page
+                            /* decided not to display stage info in the Labeling section on AB details page
                         DevelopmentStage startStage = result.getStartStage();
                         DevelopmentStage AOstartSt = labeling.getStartStage();
                         // calculate and set the start stage
@@ -466,28 +468,29 @@ public class AntibodyService {
                             labeling.setEndStage(endStage);
                             */
 
-                        Set<Figure> figures = result.getFigures();
+                            Set<Figure> figures = result.getFigures();
 
-                        if (figures != null && !figures.isEmpty()) {
-                            labeling.getFigures().addAll(figures);
-                            // if there is one figure with image, set the flag
-                            for (Figure fig : figures) {
-                                if (fig.getImages() != null && fig.getImages().size() > 0) {
-                                    labeling.setFigureWithImage(true);
-                                    break;
+                            if (figures != null && !figures.isEmpty()) {
+                                labeling.getFigures().addAll(figures);
+                                // if there is one figure with image, set the flag
+                                for (Figure fig : figures) {
+                                    if (fig.getImages() != null && fig.getImages().size() > 0) {
+                                        labeling.setFigureWithImage(true);
+                                        break;
+                                    }
                                 }
                             }
-                        }
 
-                        Publication pub = exp.getPublication();
-                        if (pub != null)
-                            labeling.getPublications().add(pub);
+                            Publication pub = exp.getPublication();
+                            if (pub != null)
+                                labeling.getPublications().add(pub);
 
-                        Set<Figure> allFigures = labeling.getFigures();
-                        for (Figure fig : allFigures) {
-                            if (fig.getType() == Figure.Type.FIGURE) {
-                                labeling.setNotAllFiguresTextOnly(true);
-                                break;
+                            Set<Figure> allFigures = labeling.getFigures();
+                            for (Figure fig : allFigures) {
+                                if (fig.getType() == Figure.Type.FIGURE) {
+                                    labeling.setNotAllFiguresTextOnly(true);
+                                    break;
+                                }
                             }
                         }
                     }
