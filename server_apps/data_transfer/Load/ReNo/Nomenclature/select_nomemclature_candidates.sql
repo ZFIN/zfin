@@ -71,8 +71,8 @@ update tmp_xpat_genes set priority = priority + 32
 
 ! echo "find the longest protein associated with each gene"
 
-select mrkr_zdb_id, g.mrkr_abbrev, gdbl.dblink_acc_num, gdbl.dblink_length,g.priority, fdb_db_name,fdbdt_data_type
- from   tmp_xpat_genes g, db_link gdbl, foreign_db_contains, foreign_db, 
+select mrkr_zdb_id, g.mrkr_abbrev, gdbl.dblink_acc_num, gdbl.dblink_length,g.priority, fdb_db_name  db_name,fdbdt_data_type fdata_type
+ from   tmp_xpat_genes g, db_link gdbl, foreign_db_contains, foreign_db,
          foreign_db_data_type
  where  g.mrkr_zdb_id  =  gdbl.dblink_linked_recid
  and    gdbl.dblink_fdbcont_zdb_id = fdbcont_zdb_id
@@ -81,9 +81,9 @@ select mrkr_zdb_id, g.mrkr_abbrev, gdbl.dblink_acc_num, gdbl.dblink_length,g.pri
  and    fdbcont_fdb_db_id = fdb_db_pk_id
  and    fdbcont_fdbdt_id = fdbdt_pk_id
  union
-select g.mrkr_zdb_id, g.mrkr_abbrev, edbl.dblink_acc_num, edbl.dblink_length,g.priority, fdb_db_name as db_name,fdbdt_data_type as fdata_type
+select g.mrkr_zdb_id, g.mrkr_abbrev, edbl.dblink_acc_num, edbl.dblink_length,g.priority, fdb_db_name,fdbdt_data_type
  from tmp_xpat_genes g, db_link edbl,
-  foreign_db_contains, foreign_db, foreign_db_data_type,emarker_relationship, marker e
+  foreign_db_contains, foreign_db, foreign_db_data_type, marker_relationship, marker e
  where  g.mrkr_zdb_id = mrel_mrkr_1_zdb_id
  and    e.mrkr_zdb_id = mrel_mrkr_2_zdb_id
  and    mrel_type = 'gene encodes small segment'

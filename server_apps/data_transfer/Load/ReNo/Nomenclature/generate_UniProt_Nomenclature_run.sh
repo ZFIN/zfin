@@ -2,12 +2,13 @@
 # generate_nom_can_fasta.sh
 
 # find and rank zfin objects in need of renaming.
-# generated longest protenin fasta file to blast 
-# 
+# generated longest protenin fasta file to blast
+#
 
 
 set bin_pth="/private/apps/wublast";
-set current="/research/zblastdb/db/Current";
+# path from $WEBHOST_BLAST_DATABASE_PATH/Current
+set current="/research/zprodmore/blastdb/Current";
 set timestamp="`date +%Y%m%d`"
 set here="`pwd`"
 set quote='"'
@@ -31,7 +32,7 @@ foreach key (`cat keys.txt`)
 			$bin_pth/xdget -p  $current/sptr_zf `grep $key nomenclature_candidate_pp.unl | cut -f3 -d \|` >> accession.pp
 		breaksw
 		case "cDNA|Genbank":
-			$bin_pth/xdget -n  $current/gbk_gb_zf `grep $key nomenclature_candidate_nt.unl | cut -f3 -d \|` >> accession.nt
+			$bin_pth/xdget -n  $current/gbk_zf_rna `grep $key nomenclature_candidate_nt.unl | cut -f3 -d \|` >> accession.nt
 		breaksw
 		case "cDNA|RefSeq":
 			$bin_pth/xdget -n  $current/refseq_zf_rna `grep $key nomenclature_candidate_nt.unl | cut -f3 -d \|` >> accession.nt
@@ -49,4 +50,4 @@ echo "on EMBRYONIX blast the nomenclature set against Human & mouse & zebrafish 
 
 ssh embryonix "cd $here;nice +10 $bin_pth/blastp $quote$current/sptr_hs $current/sptr_ms $current/sptr_zf$quote accession.pp -E e-50 >! UniProt_$timestamp.out"
 
-/research/zcentral/Commons/bin/parse-blast-reno.r UniProt_$timestamp.out "UniProt_$timestamp" 
+/research/zcentral/Commons/bin/parse-blast-reno.r UniProt_$timestamp.out "UniProt_$timestamp"
