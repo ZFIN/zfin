@@ -1,10 +1,8 @@
 package org.zfin.gwt.marker.ui;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
@@ -70,9 +68,9 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
                 publicationChanged(new PublicationChangeEvent(pubField.getText().trim()));
             }
         });
-        pubField.addKeyPressHandler(new KeyPressHandler() {
+        pubField.addKeyUpHandler(new KeyUpHandler() {
             @Override
-            public void onKeyPress(KeyPressEvent event) {
+            public void onKeyUp(KeyUpEvent event) {
                 publicationChanged(new PublicationChangeEvent(pubField.getText().trim()));
             }
         });
@@ -90,6 +88,7 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
         HorizontalPanel panel1 = new HorizontalPanel();
         panel1.add(enterPubLabel);
         panel1.add(pubField);
+        DOM.setElementAttribute(pubField.getElement(), "autocomplete", "off");
         lookupPanel.add(panel1);
 
 

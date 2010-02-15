@@ -79,7 +79,7 @@ public class PublicationDisplayPanel extends VerticalPanel {
             authorsLabel.setHTML(publicationAbstractDTO.getAuthors());
         }
         zdbIDLink.setText(publicationAbstractDTO.getZdbID());
-        miniRefLabel.setText(publicationAbstractDTO.getMiniRef());
+        miniRefLabel.setHTML(publicationAbstractDTO.getMiniRef());
         validPub = true;
     }
 
