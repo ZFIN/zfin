@@ -401,6 +401,7 @@ public class AntibodyService {
         return antibody;
     }
 
+
     public List<AnatomyLabel> getAntibodyLabelings() {
         // a map of AOname-CCnames as keys and display obejects as values
         Map<String, AnatomyLabel> map = new HashMap<String, AnatomyLabel>();
@@ -410,92 +411,7 @@ public class AntibodyService {
 
         // loop thru the set of ExpressionExperiment objects to get the related data
         if(CollectionUtils.isNotEmpty(experiments)){
-            for (ExpressionExperiment exp : experiments) {
-
-                // need to get a Genotype object to check for wildtype; do nothing if not wildtype
-                Genotype geno = exp.getGenotypeExperiment().getGenotype();
-
-                // need to get an Experiment object to check for standard environment; do nothing if not standard
-                Experiment experiment = exp.getGenotypeExperiment().getExperiment();
-
-                if (geno.isWildtype() && experiment.isStandard()) {
-
-                    // get a set of ExpressionResult objects
-                    Set<ExpressionResult> results = exp.getExpressionResults();
-
-                    // loop thru the set of ExpressionResult objects to get the related data
-                    for (ExpressionResult result : results) {
-                        if (result.isExpressionFound()) {
-                            AnatomyItem ao = result.getAnatomyTerm();
-
-                            GoTerm cc = null;
-                            if (result instanceof GoTermExpressionResult) {
-                                GoTermExpressionResult goResult = (GoTermExpressionResult) result;
-                                cc = goResult.getSubterm();
-                            }
-                            String ccName;
-                            if (cc == null) {
-                                ccName = "";
-                            } else {
-                                ccName = cc.getName();
-                            }
-
-                            // form the key
-                            String key = ao.getName() + ccName;
-
-                            AnatomyLabel labeling;
-
-                            // if the ao is not a key in the map, instantiate a display object and add it to the map
-                            // otherwise, get the display object from the map
-                            if (!map.containsKey(key)) {
-                                labeling = new AnatomyLabel(ao, cc, null, null);
-                                map.put(key, labeling);
-                            } else {
-                                labeling = map.get(key);
-                            }
-
-                            /* decided not to display stage info in the Labeling section on AB details page
-                        DevelopmentStage startStage = result.getStartStage();
-                        DevelopmentStage AOstartSt = labeling.getStartStage();
-                        // calculate and set the start stage
-                        if (AOstartSt == null || startStage.earlierThan(AOstartSt))
-                            labeling.setStartStage(startStage);
-
-                        DevelopmentStage endStage = result.getEndStage();
-                        DevelopmentStage AOendSt = labeling.getEndStage();
-                        // calculate and set the end stage
-                        if (AOendSt == null || AOendSt.earlierThan(endStage))
-                            labeling.setEndStage(endStage);
-                            */
-
-                            Set<Figure> figures = result.getFigures();
-
-                            if (figures != null && !figures.isEmpty()) {
-                                labeling.getFigures().addAll(figures);
-                                // if there is one figure with image, set the flag
-                                for (Figure fig : figures) {
-                                    if (fig.getImages() != null && fig.getImages().size() > 0) {
-                                        labeling.setFigureWithImage(true);
-                                        break;
-                                    }
-                                }
-                            }
-
-                            Publication pub = exp.getPublication();
-                            if (pub != null)
-                                labeling.getPublications().add(pub);
-
-                            Set<Figure> allFigures = labeling.getFigures();
-                            for (Figure fig : allFigures) {
-                                if (fig.getType() == Figure.Type.FIGURE) {
-                                    labeling.setNotAllFiguresTextOnly(true);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            processExperiments(map,experiments) ;
         }
 
         List<AnatomyLabel> labelingDisplays = new ArrayList<AnatomyLabel>();
@@ -508,6 +424,95 @@ public class AntibodyService {
         setNumOfLabelings(labelingDisplays.size());
 
         return labelingDisplays;
+    }
+
+    private void processExperiments(Map<String, AnatomyLabel> map, Set<ExpressionExperiment> experiments) {
+        for (ExpressionExperiment exp : experiments) {
+
+            // need to get a Genotype object to check for wildtype; do nothing if not wildtype
+            Genotype geno = exp.getGenotypeExperiment().getGenotype();
+
+            // need to get an Experiment object to check for standard environment; do nothing if not standard
+            Experiment experiment = exp.getGenotypeExperiment().getExperiment();
+
+            if (geno.isWildtype() && experiment.isStandard()) {
+
+                // get a set of ExpressionResult objects
+                Set<ExpressionResult> results = exp.getExpressionResults();
+
+                // loop thru the set of ExpressionResult objects to get the related data
+                for (ExpressionResult result : results) {
+                    if (result.isExpressionFound()) {
+                        AnatomyItem ao = result.getAnatomyTerm();
+
+                        GoTerm cc = null;
+                        if (result instanceof GoTermExpressionResult) {
+                            GoTermExpressionResult goResult = (GoTermExpressionResult) result;
+                            cc = goResult.getSubterm();
+                        }
+                        String ccName;
+                        if (cc == null) {
+                            ccName = "";
+                        } else {
+                            ccName = cc.getName();
+                        }
+
+                        // form the key
+                        String key = ao.getName() + ccName;
+
+                        AnatomyLabel labeling;
+
+                        // if the ao is not a key in the map, instantiate a display object and add it to the map
+                        // otherwise, get the display object from the map
+                        if (!map.containsKey(key)) {
+                            labeling = new AnatomyLabel(ao, cc, null, null);
+                            map.put(key, labeling);
+                        } else {
+                            labeling = map.get(key);
+                        }
+
+                        /* decided not to display stage info in the Labeling section on AB details page
+                    DevelopmentStage startStage = result.getStartStage();
+                    DevelopmentStage AOstartSt = labeling.getStartStage();
+                    // calculate and set the start stage
+                    if (AOstartSt == null || startStage.earlierThan(AOstartSt))
+                        labeling.setStartStage(startStage);
+
+                    DevelopmentStage endStage = result.getEndStage();
+                    DevelopmentStage AOendSt = labeling.getEndStage();
+                    // calculate and set the end stage
+                    if (AOendSt == null || AOendSt.earlierThan(endStage))
+                        labeling.setEndStage(endStage);
+                        */
+
+                        Set<Figure> figures = result.getFigures();
+
+                        if (figures != null && !figures.isEmpty()) {
+                            labeling.getFigures().addAll(figures);
+                            // if there is one figure with image, set the flag
+                            for (Figure fig : figures) {
+                                if (fig.getImages() != null && fig.getImages().size() > 0) {
+                                    labeling.setFigureWithImage(true);
+                                    break;
+                                }
+                            }
+                        }
+
+                        Publication pub = exp.getPublication();
+                        if (pub != null)
+                            labeling.getPublications().add(pub);
+
+                        Set<Figure> allFigures = labeling.getFigures();
+                        for (Figure fig : allFigures) {
+                            if (fig.getType() == Figure.Type.FIGURE) {
+                                labeling.setNotAllFiguresTextOnly(true);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public List<AnatomyLabel> getAntibodyDetailedLabelings() {
