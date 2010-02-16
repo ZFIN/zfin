@@ -730,7 +730,7 @@ public class RenoRepositoryTest {
     public void populateLinkageGroups() {
         // in general, can just grab the first one
         Criteria criteria = HibernateUtil.currentSession().createCriteria(RunCandidate.class);
-        criteria.add(Restrictions.eq("zdbID", "ZDB-RUNCAN-080514-255"));
+//        criteria.add(Restrictions.eq("zdbID", "ZDB-RUNCAN-080514-255"));
         criteria.setMaxResults(1);
 
         RunCandidate rc = (RunCandidate) criteria.list().get(0);
