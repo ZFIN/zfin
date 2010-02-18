@@ -34,12 +34,14 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
     // internal data
     private PublicationDTO publicationAbstractDTO;
 
-    public PublicationLookupBox() {
+    public PublicationLookupBox(String div){
         initGUI();
         addInternalListeners();
         initWidget(panel);
 
-        RootPanel.get(StandardMarkerDivNames.publicationLookupDiv).add(this);
+        if(div!=null){
+            RootPanel.get(div).add(this);
+        }
 
         // this won't run
         DeferredCommand.addCommand(new Command() {
@@ -47,6 +49,10 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
                 publicationChanged(new PublicationChangeEvent(curatorPubList.getValue(0)));
             }
         });
+    }
+
+    public PublicationLookupBox() {
+        this(StandardMarkerDivNames.publicationLookupDiv);
     }
 
     protected void addInternalListeners(){
@@ -165,7 +171,7 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
                     new MarkerEditCallBack<PublicationDTO>(publicationZdbID){
                         @Override
                         public void onSuccess(PublicationDTO result) {
-                            publicationAbstractDTO = result ; 
+                            publicationAbstractDTO = result ;
                             addPublication(publicationAbstractDTO);
                         }
                     });

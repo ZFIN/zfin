@@ -30,12 +30,12 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
     private final NotificationPanel proteinNotificationPanel = new NotificationPanel();
     private final NotificationPanel stemLoopNotificationPanel = new NotificationPanel();
     private final DockPanel proteinPublicationPanel = new DockPanel();
-    private final PublicationLookupBox proteinPublicationLookupBox = new PublicationLookupBox();
+    private final PublicationLookupBox proteinPublicationLookupBox = new PublicationLookupBox(null);
     private final NucleotideSequenceArea nucleotideSequenceArea = new NucleotideSequenceArea();
     private final DockPanel proteinAddPanel = new DockPanel();
     private final DockPanel stemLoopAddPanel = new DockPanel();
     private final DockPanel stemLoopPublicationPanel = new DockPanel();
-    private final PublicationLookupBox stemLoopPublicationLookupBox = new PublicationLookupBox();
+    private final PublicationLookupBox stemLoopPublicationLookupBox = new PublicationLookupBox(null);
 
 
     // internal data
