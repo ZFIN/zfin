@@ -103,17 +103,22 @@
                 <tr>
                     <td><input type="submit" value="Submit publication update"></td>
 
-                    <td><a onclick="setRemainderToNovel = function () {
-                 var really = confirm('Really set remainder to novel?');
-                 if(really){
-                     window.location = '/action/reno/candidate-inqueue?zdbID=${formBean.run.zdbID}&action=<%=RunBean.FINISH_REMAINDER%>' ;
-                  }
-                  else{
-                   alert('too chicken?') ;
-                }
-
-            };
-setRemainderToNovel()" style="font-size:smaller;color:red;" href="javascript:">Set remainder to <b>Novel</b></a> </td>
+                    <td>
+                        <c:if test="${formBean.run.type eq 'Redundancy'}">
+                        <a onclick="setRemainderToNovel = function () {
+                     var really = confirm('Really set remainder to novel?');
+                     if(really){
+                       window.location = '/action/reno/candidate-inqueue?zdbID=${formBean.run.zdbID}&action=<%=RunBean.FINISH_REMAINDER%>' ;
+                     }
+                     else{
+                       alert('too chicken?') ;
+                     }
+                };
+                setRemainderToNovel()" style="font-size:smaller;color:red;" href="javascript:">
+                            Set remainder to <b>Novel</b>
+                        </a>
+                        </c:if>
+                    </td>
                 </tr>
             </form:form>
         </table>
