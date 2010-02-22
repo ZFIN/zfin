@@ -50,7 +50,8 @@ public class FeatureAssay {
         ENU("ENU"),
         TMP("TMP"),
         G_RAYS("g-rays"),
-        SPONTANEOUS("spontaneous");
+        SPONTANEOUS("spontaneous"),
+        EMS("ems");
 
 //        RENAMED_THROUGH_THE_NOMENCLATURE_PIPELINE("renamed through the nomenclature pipeline");
 
