@@ -9,6 +9,7 @@ import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.*;
 import org.zfin.mutant.Feature;
+import org.zfin.mutant.FeatureAssay;
 import org.zfin.mutant.Genotype;
 import org.zfin.orthology.OrthoEvidence;
 import org.zfin.sequence.DisplayGroup;
@@ -169,6 +170,18 @@ public class EnumValidationService {
         checkEnumVersusDatabaseCollection(typeList, Feature.Type.values());
     }
 
+    @ServiceTest
+    public void validateFeatMutagen() throws EnumValidationException {
+        String hql = "select * from mutagen";
+        List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        checkEnumVersusDatabaseCollection(typeList, FeatureAssay.Mutagen.values());
+    }
+     @ServiceTest
+    public void validateFeatMutagee() throws EnumValidationException {
+        String hql = "select * from mutagee";
+        List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        checkEnumVersusDatabaseCollection(typeList, FeatureAssay.Mutagee.values());
+    }
     /**
      * @throws EnumValidationException
      */
@@ -262,6 +275,7 @@ public class EnumValidationService {
         List<String> typeList = HibernateUtil.currentSession().createQuery(sql).list();
         checkEnumVersusDatabaseCollection(typeList, DisplayGroup.GroupName.values(), true);
     }
+   
 
     @ServiceTest
     public void validateGenotypeWildtypeEnum() throws EnumValidationException {
