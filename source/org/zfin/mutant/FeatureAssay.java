@@ -45,13 +45,14 @@ public class FeatureAssay {
     }
 
     public enum Mutagen {
-        NOT_SPECIFIED("Not Specified"),
+        NOT_SPECIFIED("not specified"),
         DNA("DNA"),
         ENU("ENU"),
         TMP("TMP"),
         G_RAYS("g-rays"),
         SPONTANEOUS("spontaneous"),
-        EMS("ems");
+        EMS("EMS"),
+        ZINC_FINGER_NUCLEASE("zinc finger nuclease");
 
 //        RENAMED_THROUGH_THE_NOMENCLATURE_PIPELINE("renamed through the nomenclature pipeline");
 
@@ -67,7 +68,7 @@ public class FeatureAssay {
     }
 
     public enum Mutagee {
-        NOT_SPECIFIED("Not Specified"),
+        NOT_SPECIFIED("not specified"),
         ADULT_FEMALES("adult females"),
         ADULT_MALES("adult males"),
         EMBRYOS("embryos"),
