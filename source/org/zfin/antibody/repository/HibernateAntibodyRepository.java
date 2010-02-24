@@ -95,7 +95,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     public List<Antibody> getAntibodies(AntibodySearchCriteria searchCriteria) {
         Session session = HibernateUtil.currentSession();
         StringBuilder hql = new StringBuilder("select distinct antibody ");
-        hql.append(getAntibodiesByNameAndLabelingQueryBlock(searchCriteria, true));
+        hql.append(getAntibodiesByNameAndLabelingQueryBlock(searchCriteria));
         hql.append("order by antibody.abbreviationOrder");
         Query query = session.createQuery(hql.toString());
         if (!StringUtils.isEmpty(searchCriteria.getName())) {
@@ -148,7 +148,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     public int getNumberOfAntibodies(AntibodySearchCriteria searchCriteria) {
         Session session = HibernateUtil.currentSession();
         StringBuilder hql = new StringBuilder("select count(distinct antibody)");
-        hql.append(getAntibodiesByNameAndLabelingQueryBlock(searchCriteria, false));
+        hql.append(getAntibodiesByNameAndLabelingQueryBlock(searchCriteria));
         Query query = session.createQuery(hql.toString());
         if (!StringUtils.isEmpty(searchCriteria.getName())) {
             // antibody name and abbreviation is the same
@@ -413,7 +413,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
      * @param retrieveAntibodies true or false
      * @return string
      */
-    private String getAntibodiesByNameAndLabelingQueryBlock(AntibodySearchCriteria searchCriteria, boolean retrieveAntibodies) {
+    private String getAntibodiesByNameAndLabelingQueryBlock(AntibodySearchCriteria searchCriteria) {
         // Todo: need to do a better job!!!
         boolean hasOneWhereClause = false;
         StringBuilder hql = new StringBuilder(" from Antibody antibody ");
@@ -428,10 +428,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append(",  AllMarkerNamesFastSearch mapAntibody   ");
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName()))
             hql.append(",  AllMarkerNamesFastSearch mapGene   ");
-        if (retrieveAntibodies) {
-            hql.append(" left join fetch antibody.antibodyLabelings   ");
-            hql.append(" left join fetch antibody.secondMarkerRelationships   ");
-        }
+
         if (searchCriteria.isAny())
             hql.append("where ");
         if (!StringUtils.isEmpty(searchCriteria.getName())) {
