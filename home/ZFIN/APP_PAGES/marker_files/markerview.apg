@@ -1814,13 +1814,13 @@ union
   <?MIVAR NAME=mkvw_geno_short_list_cap>5<?/MIVAR>
 
   <?MISQL SQL="
-	select get_geno_name_with_bg_html_link(genofeat_geno_zdb_id)
+	select distinct genofeat_geno_zdb_id, get_geno_name_with_bg_html_link(genofeat_geno_zdb_id)
  	  from genotype_feature, feature_marker_relationship
          where fmrel_mrkr_zdb_id = '$OID'
            and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
            and fmrel_type like 'contains%'">
 
-	<?MIVAR NAME=mkvw_geno_html>$1<?/MIVAR>
+	<?MIVAR NAME=mkvw_geno_html>$2<?/MIVAR>
 
         $(SETVAR,$mkvw_geno_counter,$(+,$mkvw_geno_counter,1))
 
