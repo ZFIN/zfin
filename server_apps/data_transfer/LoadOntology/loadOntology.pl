@@ -138,7 +138,8 @@ print "loadOntology.pl running in: $dir"."\n" ;
 system("/bin/rm -f *.unl") and die "can not rm unl" ;
 system("/bin/rm -f *.txt") and die "can not rm txt" ;
 system("/bin/rm -f *.obo") and die "can not rm obo" ;
-
+system("/bin/rm -f sec_unload_report") and die "can not remove sec_unload_report";
+system("/bin/rm -f *.ontology") and die "can not rm ontology";
 
 &downloadOntologyTermFiles();
 
