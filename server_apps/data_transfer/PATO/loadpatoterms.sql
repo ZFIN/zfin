@@ -294,6 +294,7 @@ unload to term_no_longer_secondary.txt
   select term_name, term_ont_id, term_zdb_id
     from term
     where term_is_secondary = 't'
+    and term_ontology = 'pato.quality'
     and not exists (Select 'x'
 		  from sec_oks
 		  where term_ont_id = sec_id
@@ -307,7 +308,8 @@ update term
 		  from sec_oks
 		  where term_ont_id = sec_id
 		  ) 
-  and term_is_secondary = 't';
+  and term_is_secondary = 't'
+  and term_ontology = 'pato.quality';
 
 
 update atomic_phenotype
