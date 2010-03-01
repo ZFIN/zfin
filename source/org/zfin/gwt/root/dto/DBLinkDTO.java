@@ -10,7 +10,6 @@ public class DBLinkDTO extends RelatedEntityDTO {
     protected ReferenceDatabaseDTO referenceDatabaseDTO = new ReferenceDatabaseDTO(); // will have to be defined to propagate
     protected Integer length ;
     protected String dataName ;
-    protected String dbLinkZdbID;
 
     protected List<String> recordAttributions;
 
@@ -52,14 +51,6 @@ public class DBLinkDTO extends RelatedEntityDTO {
         this.length = length;
     }
 
-    public String getDbLinkZdbID() {
-        return dbLinkZdbID;
-    }
-
-    public void setDbLinkZdbID(String dbLinkZdbID) {
-        this.dbLinkZdbID = dbLinkZdbID;
-    }
-
     public List<String> getRecordAttributions() {
         return recordAttributions;
     }
@@ -82,7 +73,7 @@ public class DBLinkDTO extends RelatedEntityDTO {
 
         cloneDTO.dataZdbID = dataZdbID;
         cloneDTO.dataName = dataName;
-        cloneDTO.dbLinkZdbID = dbLinkZdbID;
+        cloneDTO.zdbID = zdbID;
         cloneDTO.length = length;
         cloneDTO.setEditable(isEditable());
         cloneDTO.setLink(getLink());
@@ -102,7 +93,7 @@ public class DBLinkDTO extends RelatedEntityDTO {
         returnString += "dataZdbID: " + dataZdbID + "\n";
         returnString += "dataName: " + dataName+ "\n";
         returnString += "publicationZdbID: " + publicationZdbID + "\n";
-        returnString += "dbLinkZdbID: " + dbLinkZdbID + "\n";
+        returnString += "dbLinkZdbID: " + zdbID + "\n";
         returnString += "markerZdbID: " + dataZdbID + "\n";
         returnString += "length: " + length + "\n";
         returnString += "referenceDatabaseDTO: " + referenceDatabaseDTO+ "\n";

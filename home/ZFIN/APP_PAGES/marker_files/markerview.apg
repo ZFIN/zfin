@@ -2073,7 +2073,7 @@ union
 <?/MISQL>
 <?MIBLOCK INDEX=$ontology FOREACH=$ontologies>
     <?MISQL SQL="
-      select first 1 mrkrgoev_zdb_id, go_term
+      select first 1 mrkrgoev_zdb_id, go_term, mrkrgoev_gflag_name
         from go_term,go_evidence_code, marker_go_term_evidence
         where mrkrgoev_mrkr_zdb_id = '$OID'
           and mrkrgoev_go_term_zdb_id = goterm_zdb_id
@@ -2082,8 +2082,7 @@ union
         order by goev_display_order, goterm_name">
     <?/MISQL>
    <?MIVAR NAME=$evid>$1<?/MIVAR>
-   <?MISQL SQL="select count(*) from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$evid'">
-   <?MIBLOCK COND="$(>,$1,0)">
+   <?MIBLOCK COND="$(NE,$3,)">
     <?MIVAR NAME=qualifier>true<?/MIVAR>
    <?/MIBLOCK>
   <?/MISQL>
@@ -2139,7 +2138,7 @@ union
     <?MIVAR NAME=contribs>f<?/MIVAR>
 
     <?MISQL SQL="
-      select first 1 goterm_go_id, goev_display_order, goterm_name, mrkrgoev_zdb_id
+      select first 1 goterm_go_id, goev_display_order, goterm_name, mrkrgoev_zdb_id,mrkrgoev_gflag_name
         from go_term, go_evidence_code, marker_go_term_evidence
         where mrkrgoev_mrkr_zdb_id = '$OID'
           and mrkrgoev_go_term_zdb_id = goterm_zdb_id
@@ -2152,10 +2151,7 @@ union
     <?MIVAR NAME=$moldisp>$2<?/MIVAR>
     <?MIVAR NAME=$molterm>$3<?/MIVAR>
     <?MIVAR NAME=$molmrkrgoevid>$4<?/MIVAR>
-
-    <?MISQL SQL="select goevflag_gflag_name from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$molmrkrgoevid'"><?/MISQL>
-    <?MIVAR NAME=flgct>$MI_ROWCOUNT<?/MIVAR>
-    <?MIVAR NAME=flag>$1<?/MIVAR>
+    <?MIVAR NAME=flag>$5<?/MIVAR>
 
     <?MICOMMENT>??? donot know what "'f' as mrkrgo_is_false_ref" is for ???<?/MICOMMENT>
     <?MISQL SQL="select distinct goterm_go_id,goev_display_order,goterm_name,'f' as mrkrgo_is_false_ref from go_term,go_evidence_code,marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID' and mrkrgoev_go_term_zdb_id=goterm_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='$ontology' order by goev_display_order"><?/MISQL>

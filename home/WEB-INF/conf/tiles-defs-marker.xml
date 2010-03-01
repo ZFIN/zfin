@@ -68,6 +68,13 @@
         <put name="body" value="/WEB-INF/jsp/marker/transcript_edit.jsp"/>
     </definition>
 
+    <definition name="go-edit.page" page="/WEB-INF/jsp/marker/go_edit.jsp">
+    </definition>
+
+    <!--<definition name="go-edit.page">-->
+        <!--<put name="staticTitle" value="Edit Marker GO Evidence" />-->
+        <!--<put name="body" value="/WEB-INF/jsp/marker/go_edit.jsp"/>-->
+    <!--</definition>-->
 
 </tiles-definitions>
 

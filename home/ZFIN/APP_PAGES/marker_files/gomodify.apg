@@ -108,7 +108,7 @@ function call_done() {
 
     <h1 align=center>GO Annotation Editor</h1>
     <?MISQL SQL="
-        select goterm_go_id,mrkrgoev_evidence_code,mrkrgoev_notes,mrkrgoev_source_zdb_id, goterm_name
+        select goterm_go_id,mrkrgoev_evidence_code,mrkrgoev_notes,mrkrgoev_source_zdb_id, goterm_name,mrkrgoev_zdb_id,mrkrgoev_gflag_name
 	from marker_go_term_evidence,go_term
 	where mrkrgoev_zdb_id='$OID'  
 	  and mrkrgoev_go_term_zdb_id=goterm_zdb_id;">
@@ -118,11 +118,10 @@ function call_done() {
       <?MIVAR NAME=$notes>$3<?/MIVAR>
       <?MIVAR NAME=$pub_id>$4<?/MIVAR> 
       <?MIVAR NAME=$go_term>$5<?/MIVAR>
+      <?MIVAR NAME=$flag>$6<?/MIVAR>
    <?/MISQL>
 
 <!--flag logic here-->    
-  <?MISQL SQL="select goevflag_gflag_name from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$OID'">
-  <?MIVAR NAME=$flag>$1<?/MIVAR>
   <?MIBLOCK COND="$(NC,$flag,NOVALUE)">
     <?MIBLOCK COND="$(EC,$flag,not)">
       <?MIVAR NAME=$is_not>yes<?/MIVAR>

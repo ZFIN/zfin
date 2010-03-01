@@ -1,6 +1,6 @@
 <link rel="stylesheet" type="text/css" href="/Marker.css"/>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
-<%@ page import="org.zfin.gwt.marker.ui.StandardMarkerDivNames" %>
+<%@ page import="org.zfin.gwt.marker.ui.StandardDivNames" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
@@ -10,6 +10,11 @@
     if(zdbID==null){
         zdbID = "ZDB-ATB-081002-19" ;
     }
+
+    String antibodyDefPubZdbID = request.getParameter("antibodyDefPubZdbID");
+//    if(antibodyDefPubZdbID==null){
+//        antibodyDefPubZdbID = "" ;
+//    }
     String personID = request.getParameter("personID");
     if(personID==null){
         personID = "ZDB-PERS-960805-676";
@@ -18,7 +23,8 @@
 
 <script type="text/javascript">
     var MarkerProperties= {
-        zdbID : "<%= zdbID %>"
+        zdbID : "<%= zdbID %>",
+        antibodyDefPubZdbID: "<%=antibodyDefPubZdbID%>"
     } ;
 </script>
 
@@ -28,48 +34,48 @@
 
 <table cellpadding="10">
     <tr><td align="center" colspan="2">
-        <div id="<%=StandardMarkerDivNames.viewDiv%>"></div>
+        <div id="<%=StandardDivNames.viewDiv%>"></div>
         <%--<a href="/action/antibody/detail?antibody.zdbID=${formBean.marker.zdbID}">[View Antibody]</a>--%>
     </td></tr>
     <tr>
         <td>
-            <div id="<%=StandardMarkerDivNames.headerDiv%>"></div>
+            <div id="<%=StandardDivNames.headerDiv%>"></div>
             <br>
             <b>Alias:</b>
-            <div id="<%=StandardMarkerDivNames.previousNameDiv%>"></div>
+            <div id="<%=StandardDivNames.previousNameDiv%>"></div>
             <br>
         </td>
         <td valign="top">
-            <div id="<%=StandardMarkerDivNames.publicationLookupDiv%>"></div>
+            <div id="<%=StandardDivNames.publicationLookupDiv%>"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <h3>Antibody Data</h3>
-            <div id="<%=StandardMarkerDivNames.dataDiv%>"></div>
+            <div id="<%=StandardDivNames.dataDiv%>"></div>
         </td>
     </tr>
     <tr>
         <td>
             <b>Antigen Genes:</b>
-            <div id="<%=StandardMarkerDivNames.geneDiv%>"></div>
+            <div id="<%=StandardDivNames.geneDiv%>"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <b>Notes:</b>
             <br>
-            <div id="<%=StandardMarkerDivNames.noteDiv%>"></div>
+            <div id="<%=StandardDivNames.noteDiv%>"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
-            <div id="<%=StandardMarkerDivNames.supplierDiv%>"></div>
+            <div id="<%=StandardDivNames.supplierDiv%>"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
-            <div id="<%=StandardMarkerDivNames.directAttributionDiv%>"></div>
+            <div id="<%=StandardDivNames.directAttributionDiv%>"></div>
         </td>
     </tr>
 </table>

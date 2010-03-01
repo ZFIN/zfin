@@ -1,7 +1,6 @@
 package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.root.dto.*;
@@ -14,8 +13,6 @@ import java.util.List;
 public interface MarkerRPCService extends RemoteService {
 
     /**
-     * Utility/Convenience class.
-     * Use TranscriptService.App.getInstance() to access static instance of TranscriptServiceAsync
      */
     public static class App {
         private static MarkerRPCServiceAsync ourInstance = null;

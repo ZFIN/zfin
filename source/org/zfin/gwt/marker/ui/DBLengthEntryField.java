@@ -38,6 +38,7 @@ public class DBLengthEntryField extends AbstractComposite implements Revertible 
         this.parent = dbLinkTable;
         setDbLinkDTO(dbLinkDTO);
         initGUI();
+        setValues();
         initWidget(panel);
     }
 
@@ -45,6 +46,14 @@ public class DBLengthEntryField extends AbstractComposite implements Revertible 
 
         lengthLabel = new Label((dbLinkDTO.getLength() == null ? "" : dbLinkDTO.getLength().toString()));
 
+        panel.add(spacerLabel);
+        panel.add(lengthLabel);
+
+        handleDirty();
+    }
+
+    @Override
+    protected void setValues() {
         // if not editable, then create other widgets
         if (false == dbLinkDTO.isEditable()) {
 //            spacerLabel.setHTML();
@@ -54,10 +63,6 @@ public class DBLengthEntryField extends AbstractComposite implements Revertible 
             return;
         }
 
-        panel.add(spacerLabel);
-        panel.add(lengthLabel);
-
-        checkDirty();
     }
 
     @Override
@@ -70,7 +75,7 @@ public class DBLengthEntryField extends AbstractComposite implements Revertible 
         lengthField.addKeyUpHandler(new KeyUpHandler() {
             @Override
             public void onKeyUp(KeyUpEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
 
@@ -87,7 +92,7 @@ public class DBLengthEntryField extends AbstractComposite implements Revertible 
         revertButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 revertGUI();
-                checkDirty();
+                handleDirty();
             }
         });
 
@@ -100,7 +105,7 @@ public class DBLengthEntryField extends AbstractComposite implements Revertible 
         } else {
             lengthField.setText("");
         }
-        checkDirty();
+        handleDirty();
     }
 
     public DBLinkDTO getDbLinkDTO() {
@@ -128,7 +133,7 @@ public class DBLengthEntryField extends AbstractComposite implements Revertible 
         lengthField.setEnabled(true);
     }
 
-    public boolean checkDirty() {
+    public boolean handleDirty() {
         boolean dirty = lengthField.isDirty(dbLinkDTO.getLength()) ;
         updateButton.setEnabled(dirty);
         revertButton.setEnabled(dirty);

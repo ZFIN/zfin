@@ -187,7 +187,7 @@ table.data_manager a.root { color: red }
 
 /** indicates that it is updated **/
 .dirty{
-    color: black;
+    color: darkgreen;
     background-color: lightblue;
 }
 
@@ -406,9 +406,19 @@ img.clickable{
     font-size:8pt;
 }
 
+/*.gwt-SuggestBoxPopup {*/
+    /*background: gray;*/
+    /*font-size:8pt;*/
+/*}*/
+
 .gwt-SuggestBoxPopup {
-    background: gray;
-    font-size:8pt;
+    border: 1px solid black;
+    background-color: white;
+/*see fogbugz 5183*/
+/*overflow: auto; */
+    height: auto;
+    max-height: 50em ;
+    min-width: 100px ;
 }
 
 .gwt-Hyperlink {

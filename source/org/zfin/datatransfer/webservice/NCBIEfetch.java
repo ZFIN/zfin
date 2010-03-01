@@ -31,35 +31,49 @@ public class NCBIEfetch {
 
         List<Sequence> fastaStrings = new ArrayList<Sequence>();
         // fetch a record from Taxonomy database
-        try {
+        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession,isNucleotide) ;
+        if(result==null) return fastaStrings;
+        // results output
+        for (int i = 0; i < result.getGBSet().getGBSetSequence().length; i++) {
+            EFetchSequenceServiceStub.GBSeq_type0 gbSeq = result.getGBSet().getGBSetSequence()[i].getGBSeq();
+            Sequence sequence = new Sequence();
+            sequence.setData(gbSeq.getGBSeq_sequence());
+            sequence.setDefLine(new EFetchDefline(gbSeq));
+            logger.debug(sequence.getDefLine().toString());
+            fastaStrings.add(sequence);
+        }
+
+        return fastaStrings;
+    }
+
+    public static Boolean validateAccession(String accession,boolean isNucleotide) {
+        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession,isNucleotide);
+        if(result==null) return false ;
+        if (result.getGBSet().getGBSetSequence().length > 1) {
+            logger.info(result.getGBSet().getGBSetSequence().length + " sequences returned via EFetch for accession: " + accession);
+        }
+        return result.getGBSet().getGBSetSequence().length > 0;
+    }
+
+
+    private static EFetchSequenceServiceStub.EFetchResult getFetchResults(String accession, boolean isNucleotide){
+
+        try{
             EFetchSequenceServiceStub service = new EFetchSequenceServiceStub();
             // call NCBI EFetch utility
             EFetchSequenceServiceStub.EFetchRequest req = new EFetchSequenceServiceStub.EFetchRequest();
             req.setDb((isNucleotide ? NUCLEOTIDE_DB : POLYPEPTIDE_DB));
             req.setId(accession.toUpperCase());
             req.setRetmax("1");
-            EFetchSequenceServiceStub.EFetchResult res = service.run_eFetch(req);
-            if (res.getGBSet().getGBSetSequence().length > 1) {
-                logger.info(res.getGBSet().getGBSetSequence().length + " sequences returned via EFetch for accession: " + accession);
-            }
-            // results output
-            for (int i = 0; i < res.getGBSet().getGBSetSequence().length; i++) {
-                EFetchSequenceServiceStub.GBSeq_type0 gbSeq = res.getGBSet().getGBSetSequence()[i].getGBSeq();
-                Sequence sequence = new Sequence();
-                sequence.setData(gbSeq.getGBSeq_sequence());
-                sequence.setDefLine(new EFetchDefline(gbSeq));
-                logger.debug(sequence.getDefLine().toString());
-                fastaStrings.add(sequence);
-            }
+            return service.run_eFetch(req);
         }
         catch (Exception e) {
             if (e.getMessage().contains("Unexpected subelement Error")) {
-                logger.info("Sequence not found at NCBI[" + accession.toUpperCase() + "]", e);
+                logger.info("Sequence not found at NCBI[" + accession.toUpperCase() + "]");
             } else {
                 logger.error("Error trying to find sequence at NCBI[" + accession.toUpperCase() + "]", e);
             }
+            return null ;
         }
-        return fastaStrings;
     }
-
 }

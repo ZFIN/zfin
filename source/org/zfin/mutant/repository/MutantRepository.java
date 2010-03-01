@@ -8,8 +8,11 @@ import org.zfin.gwt.root.dto.Ontology;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GoTerm;
+import org.zfin.publication.Publication;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -208,5 +211,17 @@ public interface MutantRepository extends CachedRepository {
      * @return Term object
      */
     Term getQualityTermByName(String termName);
+
+    List<Feature> getFeaturesForStandardAttribution(Publication publication);
+
+    List<Genotype> getGenotypesForStandardAttribution(Publication publication);
+
+    List<GoTerm> getGoTermsByMarkerAndPublication(Marker marker, Publication publication);
+
+    List<GoTerm> getGoTermsByPhenotypeAndPublication(Publication publication);
+
+    InferenceGroupMember addInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inferenceToAdd);
+
+    void removeInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inference);
 }
 

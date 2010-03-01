@@ -9,7 +9,6 @@ import java.util.List;
  */
 public abstract class AbstractListBox<T extends Object> extends ListBox implements IsDirty<T>{
 
-    public static final String NULL_STRING = "null";
     public static final String EMPTY_CHOICE = "---";
     public static final String NONE = "none";
 
@@ -26,6 +25,16 @@ public abstract class AbstractListBox<T extends Object> extends ListBox implemen
     public abstract boolean isFieldEqual(T value) ;
 
     public abstract void setIndexForValue(T value) ;
+
+    public String getSelectedText() {
+        String value = getItemText(getSelectedIndex());
+        if (value.equals(NULL_STRING)) {
+            return null;
+        } else {
+            return value;
+        }
+    }
+
 
     public int addNullAndItems(List<String> items) {
         clear();

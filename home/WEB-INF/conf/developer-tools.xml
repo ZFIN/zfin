@@ -40,6 +40,11 @@
                 <prop key="/dev-tools/gwt/antibody-edit">antibodyEdit</prop>
                 <prop key="/dev-tools/gwt/gene-edit">geneEdit</prop>
                 <prop key="/dev-tools/gwt/alternate-gene-edit">alternateGeneEdit</prop>
+                <prop key="/dev-tools/gwt/go-edit">goEdit</prop>
+                <prop key="/dev-tools/gwt/go-add">goAdd</prop>
+                <prop key="/dev-tools/gwt/go-clone">goClone</prop>
+                <prop key="/dev-tools/gwt/alternate-go-edit">alternateGoEdit</prop>
+                <prop key="/dev-tools/gwt/test-composite">testComposite</prop>
                 <prop key="/dev-tools/svn-version">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/display-groups">displayGroups</prop>
                 <prop key="/dev-tools/second-level-cache">cacheHandler</prop>
@@ -77,6 +82,22 @@
         <property name="viewName" value="clone-edit"/>
     </bean>
 
+    <bean name="goEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="go-edit"/>
+    </bean>
+
+    <bean name="goAdd" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="go-add"/>
+    </bean>
+
+    <bean name="goClone" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="go-clone"/>
+    </bean>
+
+    <bean name="alternateGoEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="alternate-go-edit"/>
+    </bean>
+
     <bean name="antibodyEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
         <property name="viewName" value="antibody-edit"/>
     </bean>
@@ -87,6 +108,10 @@
 
     <bean name="alternateGeneEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
         <property name="viewName" value="alternate-gene-edit"/>
+    </bean>
+
+    <bean name="testComposite" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="test-composite"/>
     </bean>
 
     <bean name="log4jConfiguration" class="org.zfin.framework.presentation.Log4jConfigurationController"/>

@@ -46,7 +46,7 @@
 <SCRIPT>
 
  function edit_rec(mrkrgoevid) {
-     helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-gomodify.apg&OID="+mrkrgoevid,"helpwindow","scrollbars=yes,height=850,width=550,resizable=yes");
+     helpwin = open("/action/marker/go-edit?zdbID="+mrkrgoevid,"helpwindow","scrollbars=yes,height=650,width=900,resizable=yes");
  }
 
  function view_notes(mrkrgoevid) {
@@ -57,82 +57,10 @@
     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+mrkrgoevid+'&attr=delall'); 
  }
 
+function new_GO(mrkrzdbid){
+     helpwin = open("/action/marker/go-edit?zdbID=ADD-MRKRGOEV&geneZdbID="+mrkrzdbid+"&state=ADD","helpwindow","scrollbars=yes,height=650,width=900,resizable=yes");
+}
  
-function new_go(mrkrid) {
-       var goterm = document.newdata.goterm.value;
-       var evind = document.newdata.evidence.selectedIndex;
-       var evi_code = document.newdata.evidence[evind].value; 
-       var infind = document.newdata.infdb.selectedIndex;
-       var infdbase = document.newdata.infdb[infind].value; 
-       var pub = document.newdata.pub.value;
-       var notes = document.newdata.comments.value;
-       var inf = document.newdata.inf.value;
-       var mod='new';
-           if ( document.newdata.isnot.checked == true )
-           {
-              var isnot = 'true';
-           }
-           else
-           {
-             var isnot='false';
-           }
-           if ( document.newdata.contributes.checked == true )
-           {
-              var contributes = 'true';
-           }
-           else
-           {
-             var contributes='false';
-           }
-       if (pub.length==0)
-       {
-        window.alert("Publication cannot be null");
-       }
-      else
-       { 
-        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markergoupdate.apg&OID='+mrkrid+'&go_id='+goterm+'&pub_id='+pub+'&evidence_code='+evi_code+'&inf_db='+infdbase+'&inf_mem='+inf+'&notes='+notes+'&contributes='+contributes+'&is_not='+isnot);
-       }
- }
- 
-function call_reset() {
-    document.newdata.goterm.value='';
-    document.newdata.pub.value='';
-    document.newdata.inf.value='';
-    document.newdata.comments.value='';
-    var infdbase=document.newdata.infdb[0].value;
-    document.newdata.infdb.value=infdbase;
-    document.newdata.evidence.value=document.newdata.evidence[0].value;
-    document.newdata.goterm.focus();
- }
-
- function call_validate(geneid) {
-    var GOid=document.newdata.goterm.value;
-    var evind = document.newdata.evidence.selectedIndex;
-    var evi_code = document.newdata.evidence[evind].value; 
-    var infind = document.newdata.infdb.selectedIndex;
-    var infdbase = document.newdata.infdb[infind].value; 
-    var pub = document.newdata.pub.value;
-    var notes = document.newdata.comments.value;
-    var inf = document.newdata.inf.value;
-    var mod='new';
-           if ( document.newdata.isnot.checked == true )
-           {
-              var isnot = 'true';
-           }
-           else
-           {
-             var isnot='false';
-           }
-           if ( document.newdata.contributes.checked == true )
-           {
-              var contributes = 'true';
-           }
-           else
-           {
-             var contributes='false';
-           }
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergovalidate.apg&attr=goid&value='+GOid+'&pub_id='+pub+'&evidence_code='+evi_code+'&inf_db='+infdbase+'&inf_mem='+inf+'&notes='+notes+'&contributes='+contributes+'&is_not='+isnot+'&return_page=markergoentry.apg&return_id='+geneid);
- }
 
 </SCRIPT>  
 
@@ -140,15 +68,8 @@ function call_reset() {
   <?MIVAR>
   <form name=newdata method = post>
   <INPUT TYPE="hidden" name="MIval" value="aa-markergoentry.apg">
-  <center><b>GO annotations for <i><?MIVAR>$mrkr_sym<?/MIVAR></i></b></center>
+  <center><b>GO annotations for <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID"><i><?MIVAR>$mrkr_sym<?/MIVAR></i></a></b></center>
   <p>
-  <center>
-       <a 
-       style="font-size: large;"
-       href="javascript:" 
-        onclick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"
-       >[View GO]</a>
-  </center> 
   <?MIVAR COND="$(NXST,$inf_db)" NAME=$inf_db><?/MIVAR>
   <?MIVAR COND="$(NXST,$evidence_code)" NAME=$evidence_code><?/MIVAR>
   <?MIVAR COND="$(NXST,$go_term)" NAME=$go_term><?/MIVAR>
@@ -167,94 +88,11 @@ function call_reset() {
   <?MIVAR COND="$(NXST,$clone_note_id)" NAME=$clone_note_id><?/MIVAR>
 
   <p>
-  <p> 
-  <p>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.godatabase.org/cgi-bin/go.cgi" target="_window"><b>AmiGO</b></a>
-  &nbsp;&nbsp;&nbsp;
-  <a href="http://www.ebi.ac.uk/ego/" target="_window"><b>QuickGO</b></a>
-  &nbsp;&nbsp;&nbsp;
-  <a href="http://www.informatics.jax.org/searches/GO_form.shtml" target="_window"><b>MGI GO</b></a>
-  <p>
-
-  <!--Creating the entry form-->
-  <table border=0 width = 100% cellspacing=10 cellpadding=0>
-
-  <tr>
-    <td align=right><b>GO Term ID</b></td>
-    <td colspan=2> <input type=text 
-	NAME ="goterm" size = "23" tabindex = 1 onChange=call_validate('$OID') <?MIVAR COND="$(XST,$go_id)">value=$go_id<?/MIVAR> >
-    &nbsp;&nbsp;
-    <b><i><?MIVAR>$go_term<?/MIVAR></i></b></td>
-   </tr>
-   <tr>
-    <td align=right><b>Publication</b></td>
-    <?MIVAR>     
-       <td><input type = text NAME = "pub" tabindex = 2 size = "23" value=<?MIVAR>$pub_id<?/MIVAR>> </td>
-    <?/MIVAR>
-    <?MIBLOCK COND="$(>,$(STRLEN,$go_term),0)">
-     <script>
-       document.newdata.pub.focus();
-     </script>
-   <?MIELSE>
-     <script>
-       document.newdata.goterm.focus();
-     </script>
-   <?/MIBLOCK>
-   </tr>
-   <tr> 
-    <td align=right><b>Evidence Code </b></td> 
-    
-    <td><select name=evidence>
-	<?MISQL SQL="select goev_code from go_evidence_code where goev_code <> 'TAS' and goev_code <> 'NAS' ">
-  	  <option value="$(TRIM,$1)" $(IF,$(EC,$evidence_code,$(TRIM,$1)),SELECTED)>$1
-        <?/MISQL>
-        </select>
-    </td>
-    <td>
-      <b>Inferred from</b>&nbsp;&nbsp;
-      <?MISQL SQL="
-        select WebExplode(object,'goinfent_formDbName=infdb&goinfent_formSelectDb=$inf_db&goinfent_formAccName=inf&$(IF,$(XST,$inf_mem),&goinfent_formSelectAcc=$inf_mem)') 
-          from webPages 
-          where ID='aa-goinferenceentry.apg';">
-        $1
-      <?/MISQL>
-    </td>
-  </tr>
-
-  <tr>
-  <td align=right><b>Notes</b></br></td>
-  <?MIVAR>
-  <td><textarea rows=5 cols=40 tabindex = 6 name=comments>$notes</textarea>
-  <?/MIVAR>
-  </td>
- 
-  <td><table border=0 width = 50% cellspacing = 5>
-  <caption><b>Qualifiers</b></caption>
-    <tr>
-    <td align=right>NOT
-    <?MIVAR COND="$(EC,NOT,$is_not)">
-    <td><input type=checkbox name=isnot checked></td></tr>
-    <?/MIVAR>
-    <?MIVAR COND="$(NC,NOT,$is_not)">
-    <td><input type=checkbox name=isnot></td></tr>
-    <?/MIVAR>
-    <tr><td nowrap align=right>Contributes to
-    <?MIVAR COND="$(NXST,$contributes)" NAME=$contributes><?/MIVAR>
-    </td>
-    <td nowrap><input type=checkbox name=contributes 
-    <?MIVAR COND="$(EC,t,$contributes)">checked<?/MIVAR>
-    >&nbsp;(<i>For Mol. Func. ONLY</i>)</td> 
-    </tr>
-   </table>
-  </td>
-</table>
-  <p>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <?MIVAR>
-    <input type=button name=addnew value="Add GO Annotation" size = "10" align = center onClick=new_go('$OID')>
+<a href="javascript:;" onClick=new_GO('$OID') >[Add New GO for <i>$mrkr_sym</i>]</a>
   <?/MIVAR>
 
-  <input type = button name = clear value = "Clear" size = "10" align = "center" onClick=call_reset()>
   <p>
   <hr><!--------------------  the second half is display section --------------------------------->
 
@@ -270,10 +108,9 @@ function call_reset() {
  <!--determining if there is atleast one term with a qualifier-->
 
 
-  <?MISQL SQL="select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID'">
+  <?MISQL SQL="select mrkrgoev_zdb_id,mrkrgoev_gflag_name from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID'">
    <?MIVAR NAME=evid>$1<?/MIVAR>
-  <?MISQL SQL="select count(*) from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$evid'">
-   <?MIBLOCK COND="$(>,$1,0)">
+   <?MIBLOCK COND="$(NE,$2,)">
     <?MIVAR NAME=qualifier>true<?/MIVAR>
    <?/MIBLOCK>
   <?/MISQL>
@@ -308,7 +145,7 @@ function call_reset() {
 
 <?MISQL SQL="
        select goterm_ontology,goterm_name,mrkrgoev_evidence_code,gont_order,goterm_go_id,mrkrgoev_go_term_zdb_id,
-	      mrkrgoev_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_notes
+	      mrkrgoev_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_notes,mrkrgoev_gflag_name
 	 from go_term g, marker_go_term_evidence e, go_ontology o
 	where mrkrgoev_mrkr_zdb_id='$OID' 
 	  and mrkrgoev_go_term_zdb_id=goterm_zdb_id 
@@ -323,23 +160,15 @@ function call_reset() {
    <?MIVAR NAME=$markergoevid>$7<?/MIVAR>
    <?MIVAR NAME=$sourcezdbid>$8<?/MIVAR>
    <?MIVAR NAME=$markergonotes>$9<?/MIVAR>
+   <?MIVAR NAME=$flag>$10<?/MIVAR>
 
   <?MIVAR NAME=isnot>f<?/MIVAR>
   <?MIVAR NAME=contribs>f<?/MIVAR>
- 
-  <?MISQL SQL="select goevflag_gflag_name from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$markergoevid'"><?/MISQL>
-  <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
-    <?MISQL SQL="select goevflag_gflag_name from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$markergoevid'"><?/MISQL>
-    <?MIVAR COND="$(EC,$1,not)" NAME=$isnot>t<?/MIVAR>
- 
-    <?MIVAR COND="$(EC,$1,contributes to)" NAME=$contribs>t<?/MIVAR>
 
-  <?MIELSE>
-    <?MIBLOCK COND="$(=,$MI_ROWCOUNT,2)">
-     	<?MIVAR NAME=$isnot>t<?/MIVAR>
-     	<?MIVAR NAME=$contribs>t<?/MIVAR>
-    <?/MIBLOCK>
-  <?/MIBLOCK>
+ 
+  <?MIVAR COND="$(EC,$flag,not)" NAME=$isnot>t<?/MIVAR>
+  <?MIVAR COND="$(EC,$flag,contributes to)" NAME=$contribs>t<?/MIVAR>
+
 
   <?MIBLOCK COND="$(EC,$isnot,t)">
   	<?MIVAR NAME=not>NOT<?/MIVAR>

@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 
 import java.util.ArrayList;
@@ -20,26 +20,33 @@ import java.util.List;
  *
  * The ignore button proceeds to where you are planning to go without revalidating.
  */
-public class ViewMarkerLabel<T extends MarkerDTO> extends AbstractComposite<T> {
+public class ViewClickLabel<T extends RelatedEntityDTO> extends AbstractComposite<T> {
 
     private final String viewText ;
     private final String linkPrefix ;
 
     // listeners
-    private final List<ViewMarkerListener> viewMarkerListeners = new ArrayList<ViewMarkerListener>();
+    private final List<ViewClickedListener> viewClickedListeners = new ArrayList<ViewClickedListener>();
 
-    private HTML label = new HTML("[View Transcript]");
-    private final HorizontalPanel buttonPanel = new HorizontalPanel();
+    private HTML label = new HTML("[View]");
+    protected final HorizontalPanel buttonPanel = new HorizontalPanel();
     private final Button ignoreButton = new Button("Ignore");
+    protected final HTML messageLabel = new HTML("");
 
-    public ViewMarkerLabel(String viewText, String linkPrefix, String ignoreButtonText) {
+    public ViewClickLabel(String viewText, String linkPrefix, String ignoreButtonText,String div) {
         this.viewText = viewText ;
         this.linkPrefix = linkPrefix ;
         ignoreButton.setText(ignoreButtonText);
         initGUI();
         initWidget(panel);
         addInternalListeners(this);
-        RootPanel.get(StandardMarkerDivNames.viewDiv).add(this);
+        if(div!=null){
+            RootPanel.get(div).add(this);
+        }
+    }
+
+    public ViewClickLabel(String viewText, String linkPrefix, String ignoreButtonText) {
+        this(viewText,linkPrefix,ignoreButtonText,StandardDivNames.viewDiv) ;
     }
 
     protected void initGUI() {
@@ -48,22 +55,28 @@ public class ViewMarkerLabel<T extends MarkerDTO> extends AbstractComposite<T> {
         panel.add(label);
         errorLabel.setStyleName("error");
         panel.add(errorLabel);
+        messageLabel.setVisible(false);
+        panel.add(messageLabel);
 
         buttonPanel.add(ignoreButton);
-//        buttonPanel.add(continueButton);
         buttonPanel.setVisible(false);
         panel.add(buttonPanel);
     }
 
 
     public void continueToViewTranscript() {
-        String url = linkPrefix + dto.getZdbID();
-        Window.open(url,
-                "_self", "");
+        if(false==linkPrefix.isEmpty()){
+            String url = linkPrefix + dto.getZdbID();
+            Window.open(url,
+                    "_self", "");
+        }
     }
 
     @Override
     protected void revertGUI() { }
+
+    @Override
+    protected void setValues() { }
 
 
     public void clearError() {
@@ -74,12 +87,21 @@ public class ViewMarkerLabel<T extends MarkerDTO> extends AbstractComposite<T> {
     public void setError(String message) {
         errorLabel.setText(message);
         buttonPanel.setVisible(true);
+        messageLabel.setHTML("");
+        messageLabel.setVisible(false);
     }
+
+    public void setMessage(String s) {
+        clearError();
+        messageLabel.setHTML(s);
+        messageLabel.setVisible(true);
+    }
+
 
     protected void addInternalListeners(HandlesError handlesError) {
         label.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                fireViewTranscript();
+                fireViewClicked();
             }
         });
 
@@ -98,13 +120,13 @@ public class ViewMarkerLabel<T extends MarkerDTO> extends AbstractComposite<T> {
 //        });
     }
 
-    public void addViewMarkerListeners(ViewMarkerListener viewMarkerListener) {
-        viewMarkerListeners.add(viewMarkerListener);
+    public void addViewClickedListeners(ViewClickedListener viewClickedListener) {
+        viewClickedListeners.add(viewClickedListener);
     }
 
-    void fireViewTranscript() {
-        for (ViewMarkerListener viewMarkerListener : viewMarkerListeners) {
-            viewMarkerListener.finishedView();
+    void fireViewClicked() {
+        for (ViewClickedListener viewClickedListener : viewClickedListeners) {
+            viewClickedListener.finishedView();
         }
     }
 

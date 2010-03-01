@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.TermStatus;
 import org.zfin.gwt.root.ui.LookupComposite;
 import org.zfin.gwt.root.util.JavaScriptPropertyReader;
-import org.zfin.gwt.root.util.LookupService;
+import org.zfin.gwt.root.util.LookupRPCService;
 
 import java.util.*;
 
@@ -196,7 +196,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         if (term != null && term.length() >= lookup.getMinLookupLength() && false == termStatus.isLooking()) {
 //            Window.alert("term status making call: "+ termStatus.getStatus());
             termStatus.setStatus(TermStatus.Status.LOOKING);
-            LookupService.App.getInstance().validateAnatomyTerm(term, new AsyncCallback<TermStatus>() {
+            LookupRPCService.App.getInstance().validateAnatomyTerm(term, new AsyncCallback<TermStatus>() {
                 public void onFailure(Throwable throwable) {
 //                    lookup.setErrorString(throwable.toString());
                     termStatus.setStatus(TermStatus.Status.FAILURE);
@@ -354,7 +354,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         final Set<String> termsFoundMany = new HashSet<String>();
 
         for (String tokenizedTerm : terms) {
-            LookupService.App.getInstance().validateAnatomyTerm(tokenizedTerm, new AsyncCallback<TermStatus>() {
+            LookupRPCService.App.getInstance().validateAnatomyTerm(tokenizedTerm, new AsyncCallback<TermStatus>() {
                 public void onFailure(Throwable throwable) {
                     lookup.setErrorString(throwable.toString());
                     termStatus.setStatus(TermStatus.Status.FAILURE);

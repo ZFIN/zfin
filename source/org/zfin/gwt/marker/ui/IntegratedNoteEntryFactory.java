@@ -12,15 +12,15 @@ class IntegratedNoteEntryFactory {
     public static AbstractNoteEntry createIntegratedNoteEntry(NoteDTO noteDTO, HandlesError handlesError){
         AbstractNoteEntry noteEntry = null ;
 
-        if(noteDTO.getEditMode().equals(NoteBox.EditMode.PUBLIC.name())){
-            noteEntry = new PublicNoteEntry(noteDTO,handlesError) ;
+        if(noteDTO.getEditMode().equals(MarkerNoteBox.EditMode.PUBLIC.name())){
+                noteEntry = new PublicNoteEntry(noteDTO,handlesError) ;
         }
         else
-        if(noteDTO.getEditMode().equals(NoteBox.EditMode.PRIVATE.name())){
+        if(noteDTO.getEditMode().equals(MarkerNoteBox.EditMode.PRIVATE.name())){
             noteEntry = new PrivateNoteEntry(noteDTO,handlesError) ;
         }
         else
-        if(noteDTO.getEditMode().equals(NoteBox.EditMode.EXTERNAL.name())){
+        if(noteDTO.getEditMode().equals(MarkerNoteBox.EditMode.EXTERNAL.name())){
             noteEntry = new ExternalNoteEntry(noteDTO,handlesError) ;
         }
 

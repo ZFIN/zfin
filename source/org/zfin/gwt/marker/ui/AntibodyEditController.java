@@ -14,12 +14,14 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
 
 
     // gui elements
-    private final ViewMarkerLabel antibodyViewMarkerLabel = new ViewMarkerLabel("[View Antibody]","/action/antibody/detail?antibody.zdbID=","Discard");
+    private final ViewClickLabel antibodyViewClickLabel = new ViewClickLabel("[View Antibody]","/action/antibody/detail?antibody.zdbID=","Discard");
     private final AntibodyHeaderEdit antibodyHeaderEdit = new AntibodyHeaderEdit();
     private final AntibodyBox antibodyBox = new AntibodyBox();
     private final RelatedMarkerBox relatedGenesBox = new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY, true, geneDiv);
     private final SupplierNameList supplierNameList = new SupplierNameList();
 
+    // internal data
+    private String defaultPubzdbID = null ;
 
     public void initGUI() {
 
@@ -35,7 +37,7 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
 
     protected void setValues() {
 
-        noteBox.setDefaultEditMode(NoteBox.EditMode.EXTERNAL);
+        markerNoteBox.setDefaultEditMode(MarkerNoteBox.EditMode.EXTERNAL);
 
         publicationLookupBox.clearPublications();
         publicationLookupBox.addPublication(new PublicationDTO("Antibody Data Submissions","ZDB-PUB-080117-1" ));
@@ -50,6 +52,14 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
         try {
             Dictionary transcriptDictionary = Dictionary.getDictionary("MarkerProperties");
             String zdbID = transcriptDictionary.get(LOOKUP_ZDBID);
+            try {
+                defaultPubzdbID = transcriptDictionary.get("antibodyDefPubZdbID");
+                if(defaultPubzdbID!=null){
+                    publicationLookupBox.publicationChanged(new PublicationChangeEvent(defaultPubzdbID));
+                }
+            } catch (Exception e) {
+                // no default pub, thats okay.
+            }
 
             AntibodyRPCService.App.getInstance().getAntibodyForZdbID(zdbID,
                     new MarkerEditCallBack<AntibodyDTO>("failed to find antibody: ") {
@@ -65,40 +75,40 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
     protected void addListeners() {
         super.addListeners();
 
-        antibodyViewMarkerLabel.addViewMarkerListeners(new ViewMarkerListener(){
+        antibodyViewClickLabel.addViewClickedListeners(new ViewClickedListener(){
             @Override
             public void finishedView() {
                 if(antibodyBox.isDirty()){
                     String error = "Antibody has unsaved data change(s).";
-                    antibodyViewMarkerLabel.setError(error);
+                    antibodyViewClickLabel.setError(error);
                     antibodyBox.setError(error);
                 }
                 else
                 if(antibodyHeaderEdit.isDirty()){
                     String error = "Antibody has unsaved name change.";
-                    antibodyViewMarkerLabel.setError(error);
+                    antibodyViewClickLabel.setError(error);
                     antibodyHeaderEdit.setError(error);
                 }
                 else
-                if(noteBox.isDirty() || noteBox.hasDirtyNotes()){
+                if(markerNoteBox.isDirty() || markerNoteBox.hasDirtyNotes()){
                     String error = "Antibody has unsaved note change(s).";
-                    antibodyViewMarkerLabel.setError(error);
-                    noteBox.setError(error);
+                    antibodyViewClickLabel.setError(error);
+                    markerNoteBox.setError(error);
                 }
                 else
                 if(previousNamesBox.isDirty()){
                     String error = "Alias entry not added.";
-                    antibodyViewMarkerLabel.setError(error);
+                    antibodyViewClickLabel.setError(error);
                     previousNamesBox.setError(error);
                 }
                 else
                 if(relatedGenesBox.isDirty()){
                     String error = "Gene entry not added.";
-                    antibodyViewMarkerLabel.setError(error);
+                    antibodyViewClickLabel.setError(error);
                     relatedGenesBox.setError(error);
                 }
                 else{
-                    antibodyViewMarkerLabel.continueToViewTranscript();
+                    antibodyViewClickLabel.continueToViewTranscript();
                 }
 
             }
@@ -126,12 +136,12 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
                 AntibodyDTO dto = markerLoadEvent.getMarkerDTO();
                 directAttributionTable.setZdbID(dto.getZdbID());
                 directAttributionTable.setRecordAttributions(dto.getRecordAttributions());
-                antibodyViewMarkerLabel.setDTO(dto);
+                antibodyViewClickLabel.setDTO(dto);
                 antibodyHeaderEdit.setDTO(dto);
                 previousNamesBox.setRelatedEntities(dto.getZdbID(), dto.getAliasAttributes());
                 antibodyBox.setDTO(dto);
-                noteBox.setDTO(dto);
-                supplierNameList.setDomain(dto);
+                markerNoteBox.setDTO(dto);
+                supplierNameList.setDTO(dto);
                 relatedGenesBox.setRelatedEntities(dto.getZdbID(), dto.getRelatedGeneAttributes());
             }
         });
@@ -139,13 +149,13 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
 
         publicationLookupBox.addPublicationChangeListener(antibodyHeaderEdit);
         publicationLookupBox.addPublicationChangeListener(relatedGenesBox);
-        publicationLookupBox.addPublicationChangeListener(noteBox);
+        publicationLookupBox.addPublicationChangeListener(markerNoteBox);
 
         synchronizeHandlesErrorListener(antibodyHeaderEdit);
         synchronizeHandlesErrorListener(relatedGenesBox);
         synchronizeHandlesErrorListener(antibodyBox);
-        synchronizeHandlesErrorListener(noteBox);
-        synchronizeHandlesErrorListener(antibodyViewMarkerLabel);
+        synchronizeHandlesErrorListener(markerNoteBox);
+        synchronizeHandlesErrorListener(antibodyViewClickLabel);
     }
 
 

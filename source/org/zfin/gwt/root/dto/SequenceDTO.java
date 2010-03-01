@@ -37,7 +37,7 @@ public class SequenceDTO extends DBLinkDTO{
 
         dto.setDataZdbID(dataZdbID);
         dto.setDataName(dataName);
-        dto.setDbLinkZdbID(dbLinkZdbID);
+        dto.setZdbID(zdbID);
         dto.setLength(length);
         dto.setEditable(isEditable());
         dto.setLink(getLink());

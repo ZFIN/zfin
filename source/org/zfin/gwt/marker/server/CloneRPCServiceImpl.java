@@ -9,20 +9,23 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.marker.ui.CloneRPCService;
-import org.zfin.gwt.marker.ui.NoteBox;
-import org.zfin.gwt.root.dto.*;
-import org.zfin.infrastructure.*;
-import org.zfin.marker.*;
+import org.zfin.gwt.root.dto.CloneDTO;
+import org.zfin.gwt.root.dto.CloneTypesDTO;
+import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
+import org.zfin.infrastructure.InfrastructureService;
+import org.zfin.marker.Clone;
+import org.zfin.marker.Marker;
+import org.zfin.marker.ProbeLibrary;
+import org.zfin.marker.Vector;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.Species;
-import org.zfin.people.MarkerSupplier;
-import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.*;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  */

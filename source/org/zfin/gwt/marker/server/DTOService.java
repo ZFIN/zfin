@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.marker.ui.NoteBox;
+import org.zfin.gwt.marker.ui.MarkerNoteBox;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
@@ -13,6 +13,9 @@ import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.MarkerPresentation;
+import org.zfin.mutant.Feature;
+import org.zfin.mutant.Genotype;
+import org.zfin.ontology.GoTerm;
 import org.zfin.orthology.Species;
 import org.zfin.people.MarkerSupplier;
 import org.zfin.publication.Publication;
@@ -69,7 +72,7 @@ public class DTOService {
         DBLink dbLink = sequence.getDbLink();
         sequenceDTO.setDataZdbID(dbLink.getDataZdbID());
         sequenceDTO.setDataName(markerName);
-        sequenceDTO.setDbLinkZdbID(dbLink.getZdbID());
+        sequenceDTO.setZdbID(dbLink.getZdbID());
         if (dbLink.getLength() == null) {
             sequenceDTO.setLength(sequence.getData().length());
         } else {
@@ -112,6 +115,14 @@ public class DTOService {
 
     public static List<DBLinkDTO> createDBLinkDTOsFromTranscriptDBLink(TranscriptDBLink transcriptDBLink) {
         return createDBLinkDTOsFromDBLink(transcriptDBLink, transcriptDBLink.getTranscript().getZdbID(), transcriptDBLink.getTranscript().getAbbreviation());
+    }
+
+    public static List<DBLinkDTO> createDBLinkDTOsFromMarkerDBLinks(List<MarkerDBLink> markerDBLinks) {
+        List<DBLinkDTO> markerDBLinkDTOs = new ArrayList<DBLinkDTO>() ;
+        for(MarkerDBLink markerDBLink: markerDBLinks){
+            markerDBLinkDTOs.addAll(createDBLinkDTOsFromMarkerDBLink(markerDBLink)) ;
+        }
+        return markerDBLinkDTOs ;
     }
 
     public static List<DBLinkDTO> createDBLinkDTOsFromMarkerDBLink(MarkerDBLink markerDBLink) {
@@ -172,7 +183,7 @@ public class DTOService {
 
     public static DBLinkDTO createDBLinkDTOFromDBLinkForPub(DBLink dbLink, String markerZdbID, String markerName, String publicationZdbID) {
         DBLinkDTO dbLinkDTO = new DBLinkDTO();
-        dbLinkDTO.setDbLinkZdbID(dbLink.getZdbID());
+        dbLinkDTO.setZdbID(dbLink.getZdbID());
         dbLinkDTO.setDataZdbID(markerZdbID);
         dbLinkDTO.setDataName(markerName);
         dbLinkDTO.setName(dbLink.getAccessionNumber());
@@ -289,7 +300,8 @@ public class DTOService {
 
     public static MarkerDTO createMarkerDTOFromMarker(Marker marker) {
         MarkerDTO markerDTO = new MarkerDTO();
-        markerDTO.setName(marker.getAbbreviation());
+        markerDTO.setName(marker.getName());
+        markerDTO.setAbbreviation(marker.getAbbreviation());
         markerDTO.setAbbreviationOrder(marker.getAbbreviationOrder());
         markerDTO.setZdbID(marker.getZdbID());
         markerDTO.setLink(MarkerPresentation.getLink(marker));
@@ -343,7 +355,7 @@ public class DTOService {
             noteDTO.setZdbID(dataNote.getZdbID());
 //            noteDTO.setDataZdbID(dataNote.getDataZdbID());
             noteDTO.setDataZdbID(marker.getZdbID());
-            noteDTO.setEditMode(NoteBox.EditMode.PRIVATE.name());
+            noteDTO.setEditMode(MarkerNoteBox.EditMode.PRIVATE.name());
             curatorNotes.add(noteDTO);
         }
         return curatorNotes;
@@ -355,7 +367,7 @@ public class DTOService {
         publicNoteDTO.setNoteData(marker.getPublicComments());
         publicNoteDTO.setZdbID(marker.getZdbID());
         publicNoteDTO.setDataZdbID(marker.getZdbID());
-        publicNoteDTO.setEditMode(NoteBox.EditMode.PUBLIC.name());
+        publicNoteDTO.setEditMode(MarkerNoteBox.EditMode.PUBLIC.name());
         return publicNoteDTO;
     }
 
@@ -410,7 +422,7 @@ public class DTOService {
         for (MarkerDBLink markerDBLink : dbLinks) {
             DBLinkDTO dbLinkDTO = new DBLinkDTO();
             dbLinkDTO.setDataZdbID(markerDBLink.getDataZdbID());
-            dbLinkDTO.setDbLinkZdbID(markerDBLink.getZdbID());
+            dbLinkDTO.setZdbID(markerDBLink.getZdbID());
             dbLinkDTO.setName(markerDBLink.getAccessionNumber());
             Publication publication = markerDBLink.getSinglePublication();
             if (publication != null) {
@@ -436,7 +448,7 @@ public class DTOService {
         for (AntibodyExternalNote antibodyExternalNote: antibody.getExternalNotes()) {
             NoteDTO antibodyExternalNoteDTO = new NoteDTO();
             antibodyExternalNoteDTO.setZdbID(antibodyExternalNote.getZdbID());
-            antibodyExternalNoteDTO.setEditMode(NoteBox.EditMode.EXTERNAL.name());
+            antibodyExternalNoteDTO.setEditMode(MarkerNoteBox.EditMode.EXTERNAL.name());
             antibodyExternalNoteDTO.setDataZdbID(antibody.getZdbID());
             if(antibodyExternalNote.getSinglePubAttribution()!=null){
                 antibodyExternalNoteDTO.setPublicationZdbID(antibodyExternalNote.getSinglePubAttribution().getPublication().getZdbID());
@@ -447,4 +459,26 @@ public class DTOService {
         return externalNotes ;
     }
 
+    public static FeatureDTO createFeatureDTOFromFeature(Feature feature) {
+        FeatureDTO featureDTO = new FeatureDTO();
+        featureDTO.setName(feature.getAbbreviation());
+        featureDTO.setZdbID(feature.getZdbID());
+        return featureDTO;
+    }
+
+    public static GenotypeDTO createGenotypeDTOFromGenotype(Genotype genotype) {
+        GenotypeDTO genotypeDTO = new GenotypeDTO();
+        genotypeDTO.setName(genotype.getHandle());
+        genotypeDTO.setZdbID(genotype.getZdbID());
+        return genotypeDTO;
+    }
+
+    public static GoTermDTO createGoTermDTOFromGoTerm(GoTerm goTerm) {
+        GoTermDTO goTermDTO = new GoTermDTO();
+        goTermDTO.setZdbID(goTerm.getZdbID());
+        goTermDTO.setName(goTerm.getName());
+        goTermDTO.setDataZdbID(goTerm.getGoID());
+        goTermDTO.setSubOntology(goTerm.getSubOntology());
+        return goTermDTO ;  //To change body of created methods use File | Settings | File Templates.
+    }
 }

@@ -1,9 +1,10 @@
 package org.zfin.gwt.root.dto;
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.util.List;
 
-public class CloneTypesDTO implements Serializable {
+public class CloneTypesDTO implements IsSerializable {
 
     private List<String> vectorNames;
     private List<String> polymeraseNames;

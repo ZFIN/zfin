@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.gwt.marker.ui.StandardMarkerDivNames" %>
+<%@ page import="org.zfin.gwt.marker.ui.StandardDivNames" %>
 <%@ page import="org.zfin.gwt.marker.ui.TranscriptEditController" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
@@ -28,32 +28,32 @@
 
 <table cellpadding="10">
     <tr><td align="center" colspan="2">
-        <div id="<%=StandardMarkerDivNames.viewDiv%>"></div>
+        <div id="<%=StandardDivNames.viewDiv%>"></div>
     </td></tr>
     <tr>
         <td>
-            <div id="<%=StandardMarkerDivNames.headerDiv%>"></div>
+            <div id="<%=StandardDivNames.headerDiv%>"></div>
             <br>
             <br>
-            <div id="<%=StandardMarkerDivNames.directAttributionDiv%>"></div>
+            <div id="<%=StandardDivNames.directAttributionDiv%>"></div>
             <br>
             <div class="summaryTitle">Alias:</div>
-            <div id="<%=StandardMarkerDivNames.previousNameDiv%>"></div>
+            <div id="<%=StandardDivNames.previousNameDiv%>"></div>
         </td>
         <td valign="top">
-            <div id="<%=StandardMarkerDivNames.publicationLookupDiv%>"></div>
+            <div id="<%=StandardDivNames.publicationLookupDiv%>"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <div class="summaryTitle">Notes:</div>
-            <div id="<%=StandardMarkerDivNames.noteDiv%>"></div>
+            <div id="<%=StandardDivNames.noteDiv%>"></div>
         </td>
     </tr>
     <tr>
         <td>
             <div class="summaryTitle">Produced by Genes:</div>
-            <div id="<%=StandardMarkerDivNames.geneDiv%>"></div>
+            <div id="<%=StandardDivNames.geneDiv%>"></div>
         </td>
         <td colspan="1" valign="top">
             <div class="summaryTitle">Contained in Clone</div>
@@ -86,7 +86,7 @@
     <tr>
         <td colspan="2">
             <div class="summaryTitle">Supporting Sequences:</div>
-            <div id="<%=StandardMarkerDivNames.dbLinkDiv%>"></div>
+            <div id="<%=StandardDivNames.dbLinkDiv%>"></div>
         </td>
     </tr>
     <tr>

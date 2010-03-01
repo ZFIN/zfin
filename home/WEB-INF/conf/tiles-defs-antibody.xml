@@ -31,7 +31,7 @@
     </definition>
 
     <definition name="antibodies-per-publication.page" extends="main_layout">
-        <put name="staticTitle" value="Antibodies per Publication"/>
+        <put name="staticTitle" value="Antibodies "/>
         <put name="body" value="/WEB-INF/jsp/antibody/antibodies_per_publication.jsp"/>
     </definition>
 

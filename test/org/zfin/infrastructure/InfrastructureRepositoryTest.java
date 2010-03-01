@@ -216,6 +216,10 @@ public class InfrastructureRepositoryTest {
         assertNotNull(group);
     }
 
+    @Test
+    public void getGenesForStandardAttribution(){
+        
+    }
 }
 
 

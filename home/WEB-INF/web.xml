@@ -173,7 +173,7 @@
 
     <servlet>
         <servlet-name>AnatomyLookupService</servlet-name>
-        <servlet-class>org.zfin.gwt.root.server.LookupServiceImpl</servlet-class>
+        <servlet-class>org.zfin.gwt.root.server.LookupRPCServiceImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -204,6 +204,16 @@
     <servlet-mapping>
         <servlet-name>TranscriptService</servlet-name>
         <url-pattern>/ajax/transcriptservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TermService</servlet-name>
+        <servlet-class>org.zfin.gwt.marker.server.TermRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TermService</servlet-name>
+        <url-pattern>/ajax/termservice</url-pattern>
     </servlet-mapping>
 
     <servlet>

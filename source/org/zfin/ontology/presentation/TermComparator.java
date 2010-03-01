@@ -1,6 +1,6 @@
 package org.zfin.ontology.presentation;
 
-import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.OntologyTerm;
 
 import java.util.Comparator;
 
@@ -9,15 +9,15 @@ import java.util.Comparator;
  * 1) By Non-obsolete - Obsolete
  * 2) By name
  */
-public class GenericTermComparator implements Comparator<GenericTerm> {
+public class TermComparator implements Comparator<OntologyTerm> {
 
     private String searchTerm;
 
-    public GenericTermComparator(String searchTerm) {
+    public TermComparator(String searchTerm) {
         this.searchTerm = searchTerm;
     }
 
-    public int compare(GenericTerm termOne, GenericTerm termTwo) {
+    public int compare(OntologyTerm termOne, OntologyTerm termTwo) {
 
         String nameOne = termOne.getTermName();
         String nameTwo = termTwo.getTermName();

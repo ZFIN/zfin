@@ -13,8 +13,10 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermRelationship;
 import org.zfin.people.Person;
+import org.zfin.publication.Publication;
 
 import java.util.List;
+import java.util.Set;
 
 public interface InfrastructureRepository {
 
@@ -77,6 +79,8 @@ public interface InfrastructureRepository {
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID);
 
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
+
+    void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, Person person );
 
     void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, String submitterID, String submitterName);
 

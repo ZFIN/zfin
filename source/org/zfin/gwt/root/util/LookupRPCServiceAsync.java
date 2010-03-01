@@ -11,12 +11,12 @@ import java.util.List;
 
 /**
  */
-public interface LookupServiceAsync {
+public interface LookupRPCServiceAsync {
 
 
     void getAnatomySuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
-    void getGOSuggestions(SuggestOracle.Request req, Ontology ontology, AsyncCallback<SuggestOracle.Response> async);
+    void getGOSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
     void getQualitySuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 

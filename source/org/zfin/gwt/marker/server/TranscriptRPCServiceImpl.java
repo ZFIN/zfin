@@ -7,11 +7,12 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.marker.ui.BlastDatabaseAccessException;
-import org.zfin.gwt.marker.ui.NoteBox;
 import org.zfin.gwt.marker.ui.TranscriptRPCService;
 import org.zfin.gwt.marker.ui.TranscriptTypeStatusMismatchException;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.infrastructure.*;
+import org.zfin.infrastructure.InfrastructureService;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.repository.MarkerRepository;
@@ -424,11 +425,11 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
             sequenceDTO.setDefLine(sequence.getDefLine().toString());
             sequenceDTO.setName(dbLink.getAccessionNumber());
             sequenceDTO.setDataZdbID(dbLink.getDataZdbID());
-            sequenceDTO.setDbLinkZdbID(dbLink.getZdbID());
+            sequenceDTO.setZdbID(dbLink.getZdbID());
             Transcript transcript = markerRepository.getTranscriptByZdbID(transcriptDTO.getZdbID());
 
             if (StringUtils.isNotEmpty(sequenceDTO.getPublicationZdbID().trim())) {
-                List<PublicationAttribution> publicationAttributions = infrastructureRepository.getPublicationAttributions(sequenceDTO.getDbLinkZdbID());
+                List<PublicationAttribution> publicationAttributions = infrastructureRepository.getPublicationAttributions(sequenceDTO.getZdbID());
                 if (publicationAttributions.size() > 0) {
                     RepositoryFactory.getInfrastructureRepository().insertPublicAttribution(sequence.getDbLink().getZdbID(), sequenceDTO.getPublicationZdbID());
                     sequenceDTO.setAttributionType(RecordAttribution.SourceType.STANDARD.toString());

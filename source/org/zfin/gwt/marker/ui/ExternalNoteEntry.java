@@ -11,7 +11,7 @@ import org.zfin.gwt.root.ui.HandlesError;
 public class ExternalNoteEntry extends AbstractNoteEntry {
     public ExternalNoteEntry(NoteDTO noteDTO, HandlesError handlesError) {
         super(noteDTO,handlesError);
-        noteDTO.setEditMode(NoteBox.EditMode.EXTERNAL.name());
+        noteDTO.setEditMode(MarkerNoteBox.EditMode.EXTERNAL.name());
     }
 
     @Override

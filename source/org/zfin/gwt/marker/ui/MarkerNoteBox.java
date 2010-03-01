@@ -1,56 +1,29 @@
 package org.zfin.gwt.marker.ui;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.IsSerializable;
-import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.NoteEvent;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.marker.event.RemovableNoteListener;
 import org.zfin.gwt.root.dto.AntibodyDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.IsDirty;
-import org.zfin.gwt.root.ui.StringListBox;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Integrates curated/private, public, and external notes.
  * We need to configure this so that only a set number of things to add/edit.
  */
-public class NoteBox<T extends MarkerDTO> extends AbstractRevertibleComposite<T> implements RemovableNoteListener {
+public class MarkerNoteBox<T extends MarkerDTO> extends AbstractNoteBox<T> implements RemovableNoteListener {
 
-    public enum EditMode implements IsSerializable{
-        PUBLIC,
-        PRIVATE,
-        EXTERNAL,;
-    }
 
-    // gui components
-    private VerticalPanel panel = new VerticalPanel();
-    private FlexTable table = new FlexTable();
-
-    // add stuff
-    private HorizontalPanel southPanel = new HorizontalPanel();
-    private Button addButton = new Button("Add Note");
-    private Button cancelButton = new Button("Cancel");
-    private StringListBox typeListBox = new StringListBox();
-    private TextArea newNoteTextArea = new TextArea();
-
-    // internal data
-    Set<EditMode> editModes = new HashSet<EditMode>();
-    private EditMode defaultEditMode = null ;
-
-    public NoteBox(String div){
+    public MarkerNoteBox(){
         for(EditMode editMode : EditMode.values()){
             addEditMode(editMode);
         }
@@ -59,18 +32,18 @@ public class NoteBox<T extends MarkerDTO> extends AbstractRevertibleComposite<T>
         setValues() ;
         initWidget(panel);
         addInternalListeners(this);
-        RootPanel.get(div).add(this);
+        RootPanel.get(StandardDivNames.noteDiv).add(this);
     }
 
-    private void setValues() {
+    public void setValues() {
         typeListBox.clear();
         List<String> items = new ArrayList<String>() ;
         for(EditMode editMode: editModes){
-            if(editMode==EditMode.PUBLIC && false==containsPublicNote()){
+            if(editMode== EditMode.PUBLIC && false==containsPublicNote()){
                 items.add(editMode.name());
             }
             else
-            if(editMode!=EditMode.PUBLIC)
+            if(editMode!= EditMode.PUBLIC)
             {
                 items.add(editMode.name());
             }
@@ -84,32 +57,10 @@ public class NoteBox<T extends MarkerDTO> extends AbstractRevertibleComposite<T>
         }
     }
 
-    protected void initGUI() {
-
-        panel.add(table);
-        panel.setStyleName("gwt-editbox");
-
-
-        newNoteTextArea.setWidth("400");
-        southPanel.add(typeListBox);
-        southPanel.add(newNoteTextArea);
-        southPanel.add(addButton);
-        southPanel.add(cancelButton);
-
-        panel.add(southPanel);
-        errorLabel.setStyleName("error");
-        panel.add(errorLabel);
-    }
-
 
     protected void addInternalListeners(final HandlesError handlesError) {
 
-        newNoteTextArea.addChangeHandler(new ChangeHandler(){
-            @Override
-            public void onChange(ChangeEvent event) {
-                checkDirty();
-            }
-        });
+        super.addInternalListeners(handlesError);
 
         addButton.addClickHandler(new ClickHandler(){
             @Override
@@ -177,20 +128,6 @@ public class NoteBox<T extends MarkerDTO> extends AbstractRevertibleComposite<T>
 
             }
         });
-
-        cancelButton.addClickHandler(new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent event) {
-                resetAddNote() ;
-            }
-        });
-    }
-
-    private void resetAddNote() {
-        newNoteTextArea.setText("");
-        setValues();
-        checkDirty();
-//        typeListBox.setSelectedIndex(0);
     }
 
 
@@ -265,58 +202,6 @@ public class NoteBox<T extends MarkerDTO> extends AbstractRevertibleComposite<T>
                 ;
     }
 
-    public void addEditMode(EditMode editMode){
-        editModes.add(editMode) ;
-    }
 
-    public boolean checkDirty() {
-        boolean dirty = isDirty();
-        saveButton.setEnabled(dirty);
-        revertButton.setEnabled(dirty);
-        if (dirty) {
-            newNoteTextArea.setStyleName(IsDirty.DIRTY_STYLE);
-        }
-        else{
-            newNoteTextArea.setStyleName(IsDirty.CLEAN_STYLE);
-            fireEventSuccess();
-        }
-        return dirty ;
-    }
-
-    public boolean hasDirtyNotes() {
-        int numRows = table.getRowCount();
-        for(int i = 0 ; i < numRows ; i++){
-            if( ((AbstractNoteEntry) table.getWidget(i,1)).isDirty() ) return true ;
-        }
-        return false;
-    }
-
-    @Override
-    public void removeNote(NoteEvent noteEvent) {
-        NoteDTO noteDTO = noteEvent.getNoteDTO();
-        int row = getRowForNote(noteDTO);
-        table.removeRow(row);
-        setValues();
-    }
-
-    private int getRowForNote(NoteDTO noteDTO) {
-        for(int i = 0 ; i < table.getRowCount() ; i++){
-            if(((AbstractNoteEntry) table.getWidget(i,1)).getNoteDTO().equals(noteDTO)){
-                return i ;
-            }
-        }
-        return -1 ;
-    }
-
-
-    public void removeEditMode(EditMode editMode){
-        if(editModes.contains(editMode)){
-            editModes.remove(editMode);
-        }
-    }
-
-    public void setDefaultEditMode(EditMode editMode){
-        this.defaultEditMode = editMode;
-    }
 
 }

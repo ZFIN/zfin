@@ -54,10 +54,13 @@ public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
 
         noteText.setText(noteDTO.getNoteData());
 
-        checkDirty();
+        handleDirty();
 //        updateNoteStatus();
 
     }
+
+    @Override
+    protected void setValues() { }
 
     @Override
     protected void addInternalListeners(HandlesError handlesError) {
@@ -65,14 +68,14 @@ public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
         noteText.addChangeHandler(new ChangeHandler(){
             @Override
             public void onChange(ChangeEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
 
         noteText.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
 
@@ -101,7 +104,7 @@ public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
     }
 
 
-    public boolean checkDirty() {
+    public boolean handleDirty() {
         boolean dirty = isDirty();
         saveButton.setEnabled(dirty);
         revertButton.setEnabled(dirty);
@@ -125,7 +128,7 @@ public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
     @Override
     protected void revertGUI() {
         noteText.setText(noteDTO.getNoteData());
-        checkDirty();
+        handleDirty();
     }
 
     public void addNoteListener(RemovableNoteListener removableNoteListener){

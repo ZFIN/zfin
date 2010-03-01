@@ -7,6 +7,7 @@ import org.zfin.anatomy.AnatomyItemTest;
 import org.zfin.anatomy.presentation.*;
 import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
+import org.zfin.gwt.InferenceCategoryUnitTest;
 import org.zfin.gwt.root.dto.ExperimentDTOTest;
 import org.zfin.gwt.root.util.StageRangeIntersectionTest;
 import org.zfin.gwt.root.util.StageRangeUnionTest;
@@ -58,6 +59,7 @@ import org.zfin.wiki.WikiConnectTest;
         ExperimentDTOTest.class,
         FileUtilTest.class,
         FunctionsTest.class,
+        InferenceCategoryUnitTest.class,
         HighlightUtilTest.class,
         ListFormatterTest.class,
         MarkerPresentationTest.class,

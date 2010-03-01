@@ -242,5 +242,22 @@ public class MutantRepositoryTest {
         assertNotNull(terms);
     }
 
+    @Test
+    public void goTermsByMarkerAndPublication(){
+        Marker marker  = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-040624-2") ;
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-020724-1") ;
+        List<GoTerm> goTerms = mutantRepository.getGoTermsByMarkerAndPublication(marker,publication);
+        System.out.println(goTerms.size());
+        assertTrue(goTerms.size()==0);
+    }
+
+    @Test
+    public void goTermsByPhemotypeAndPublication(){
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-080501-11") ;
+        List<GoTerm> goTerms = mutantRepository.getGoTermsByPhenotypeAndPublication(publication);
+        System.out.println(goTerms.size());
+        assertTrue(goTerms.size()>0);
+    }
+
 
 }

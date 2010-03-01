@@ -249,4 +249,6 @@ public interface MarkerRepository {
      */
     List<MarkerType> getMarkerTypesByGroup(Marker.TypeGroup typeGroup);
 
+
+    List<Marker> getMarkersForStandardAttributionAndType(Publication publication,String type);
 }

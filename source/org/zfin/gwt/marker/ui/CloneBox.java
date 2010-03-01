@@ -30,6 +30,7 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
     public CloneBox(String div) {
         super();
         initGUI();
+        setValues();
         addInternalListeners(this);
         initWidget(panel);
         RootPanel.get(div).add(this);
@@ -70,6 +71,13 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
         panel.add(table);
         panel.setStyleName("gwt-editbox");
 
+        panel.add(buttonPanel);
+        panel.add(errorLabel);
+    }
+
+    @Override
+    protected void setValues() {
+
         CloneRPCService.App.getInstance().getCloneTypes(new AsyncCallback<CloneTypesDTO>() {
             public void onFailure(Throwable throwable) {
                 Window.alert("failure to load clone types: " + throwable);
@@ -86,51 +94,45 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
             }
         });
 
-
-        panel.add(buttonPanel);
-        panel.add(errorLabel);
-
-
-
     }
 
     public void addInternalListeners(HandlesError handlesError){
         libraryListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
         vectorListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
         digestListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
         polymeraseListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
         cloningSiteListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
 
         insertSizeTextBox.addKeyPressHandler(new KeyPressHandler(){
             @Override
             public void onKeyPress(KeyPressEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
         pcrAmplificationTextBox.addKeyPressHandler(new KeyPressHandler() {
             @Override
             public void onKeyPress(KeyPressEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
 
@@ -161,7 +163,7 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
         revertButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 revertGUI();
-                checkDirty();
+                handleDirty();
             }
         });
     }
@@ -213,7 +215,7 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
         }
     }
 
-    public boolean checkDirty() {
+    public boolean handleDirty() {
         boolean dirty = isDirty();
         saveButton.setEnabled(dirty);
         revertButton.setEnabled(dirty);

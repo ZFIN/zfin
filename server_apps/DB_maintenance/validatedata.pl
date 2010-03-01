@@ -2617,8 +2617,7 @@ sub foreigndbNotInFdbcontains ($) {
 # (no AK on the four columns).  Instead, duplicate values of these 4 colums
 # can exist in this table if and only if the 2 duplicate records also contain
 # references to a unique combination of inference data (in the table
-# inference_group_member) and go_evidence_flags (in the go_evidence_flag 
-# table).  However, we can not enforce this relationship via a 
+# inference_group_member).  However, we can not enforce this relationship via a 
 # table constraint as some marker, go_term, evidence_code, pub records will
 # have no inference data or flags.  Therefore, on entering data into 
 # the marker_go_term_evidence table, it is impossible to know if a user
@@ -2643,11 +2642,8 @@ sub mrkrgoevDuplicatesFound ($) {
                                    from inference_group_member
                                    where mrkrgoev_zdb_id = 
                                             infgrmem_mrkrgoev_zdb_id)
-               and not exists (select * 
-                                   from go_evidence_flag
-                                   where mrkrgoev_zdb_id = 
-                                            goevflag_mrkrgoev_zdb_id)
-               group by mrkrgoev_mrkr_zdb_id, 
+               and mrkrgoev_gflag_name is null
+               group by mrkrgoev_mrkr_zdb_id,
                         mrkrgoev_go_term_zdb_id,
                         mrkrgoev_source_zdb_id,
                         mrkrgoev_evidence_code
@@ -2820,14 +2816,14 @@ sub mrkrgoevGoevflagDuplicatesFound ($) {
                     mrkrgoev_go_term_zdb_id, 
                     mrkrgoev_source_zdb_id, 
                     mrkrgoev_evidence_code, 
-                    goevflag_gflag_name
-               from marker_go_term_evidence, go_evidence_flag
+                    mrkrgoev_gflag_name
+               from marker_go_term_evidence
                where not exists (select * 
                                    from inference_group_member
                                    where mrkrgoev_zdb_id = 
                                             infgrmem_mrkrgoev_zdb_id)
-               and mrkrgoev_zdb_id = goevflag_mrkrgoev_zdb_id
-               group by mrkrgoev_mrkr_zdb_id, 
+               and mrkrgoev_gflag_name is not null
+               group by mrkrgoev_mrkr_zdb_id,
                         mrkrgoev_go_term_zdb_id,
                         mrkrgoev_source_zdb_id,
                         mrkrgoev_evidence_code,
@@ -2844,8 +2840,8 @@ sub mrkrgoevGoevflagDuplicatesFound ($) {
   my $nRecords = execSql ($sql, undef, @colDesc);
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Possible duplicate records in marker_go_term_evidence, go_evidence_flag";
-    my $errMsg = "$nRecords are possible duplicates in marker_go_term_evidence, go_evidence_flag";
+    my $subject = "Possible duplicate records in marker_go_term_evidence";
+    my $errMsg = "$nRecords are possible duplicates in marker_go_term_evidence";
     logError($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
   }

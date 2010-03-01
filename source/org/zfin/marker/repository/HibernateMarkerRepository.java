@@ -1243,6 +1243,20 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return type;
     }
 
+
+    @Override
+    public List<Marker> getMarkersForStandardAttributionAndType(Publication publication,String type) {
+        String hql = "select m from PublicationAttribution pa , Marker m " +
+                " where pa.dataZdbID=m.zdbID and pa.publication.zdbID= :pubZdbID  " +
+                " and pa.sourceType= :sourceType and m.zdbID like :markerType ";
+        Query query = HibernateUtil.currentSession().createQuery(hql) ;
+        query.setString("pubZdbID",publication.getZdbID());
+        query.setString("sourceType", RecordAttribution.SourceType.STANDARD.toString());
+        // yes, this is a hack, should use typeGroup, I guess
+        query.setParameter("markerType", "ZDB-"+type+"%");
+        return query.list();
+    }
+
     @SuppressWarnings("unchecked")
     public List<Publication> getHighQualityProbePublications(AnatomyItem anatomyTerm) {
         Session session = HibernateUtil.currentSession();

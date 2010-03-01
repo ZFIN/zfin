@@ -231,9 +231,9 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
         for (int i = 0; i < rowcount; i++) {
             DBLengthEntryField dbLengthEntryField = (DBLengthEntryField) relatedEntityTable.getWidget(i, 2);
 
-            if (dbLengthEntryField.getDbLinkDTO().getDbLinkZdbID().equals(newDTO.getDbLinkZdbID())) {
+            if (dbLengthEntryField.getDbLinkDTO().getZdbID().equals(newDTO.getZdbID())) {
                 dbLengthEntryField.setDbLinkDTO(newDTO);
-                dbLengthEntryField.checkDirty();
+                dbLengthEntryField.handleDirty();
             }
         }
     }

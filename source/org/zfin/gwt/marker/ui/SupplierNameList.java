@@ -1,89 +1,93 @@
 package org.zfin.gwt.marker.ui;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.SupplierChangeListener;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.marker.event.RelatedEntityAdapter;
+import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.ui.StringListBox;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A list of supplier names.
  */
-public class SupplierNameList extends Composite implements CanRemoveSupplier {
+public class SupplierNameList extends AbstractStackComposite<MarkerDTO>{
 
-    // GUI elements
-    private final VerticalPanel panel = new VerticalPanel();
 
     // GUI suppliers panel
-    private final HorizontalPanel supplierPanel = new HorizontalPanel();
     private final StringListBox supplierListBox = new StringListBox();
-    private final Button supplierAddButton = new Button("Add Supplier");
-    private final FlexTable supplierTable = new FlexTable();// contains the supplier names
 
-    // listeners
-    private final List<SupplierChangeListener> supplierChangeListeners = new ArrayList<SupplierChangeListener>();
-
-    // internal data
-    private MarkerDTO markerDTO;
 
     public SupplierNameList() {
         super();
         initGUI();
+        addInternalListeners(this);
         initWidget(panel);
-        initInternalListeners();
-        RootPanel.get(StandardMarkerDivNames.supplierDiv).add(this);
+        RootPanel.get(StandardDivNames.supplierDiv).add(this);
     }
 
-    public void setDomain(MarkerDTO markerDTO) {
-        this.markerDTO = markerDTO;
-        refreshGUI();
+    @Override
+    public void setDTO(MarkerDTO dto) {
+        super.setDTO(dto);
+        setValues();
     }
 
-    void refreshGUI() {
-        supplierTable.clear();
-
-        for (String supplier : markerDTO.getSuppliers()) {
-            addSupplierToGUI(supplier);
-        }
-    }
-
-    private void initInternalListeners() {
-        addSupplierChangeListener(new SupplierChangeListener() {
-            public void addSupplier(final String supplierName) {
-                MarkerRPCService.App.getInstance().addMarkerSupplier(supplierName, getZdbID(),
-                        new MarkerEditCallBack<Void>("failed to add supplier to marker: ") {
-                            public void onSuccess(Void o) {
-                                addSupplierToGUI(supplierName);
-                            }
-                        });
-            }
-
-            public void removeSupplier(final String supplierName) {
-                MarkerRPCService.App.getInstance().removeMarkerSupplier(supplierName, getZdbID(),
-                        new MarkerEditCallBack<Void>("failed to remove supplier to marker: ") {
-                            public void onSuccess(Void o) {
-                                removeSupplierFromGUI(supplierName);
-                            }
-                        });
-            }
-        });
-    }
-
-    private void initGUI() {
-        supplierPanel.add(supplierListBox);
-        supplierPanel.add(supplierAddButton);
-        panel.add(supplierTable);
-        panel.add(supplierPanel);
+    @Override
+    protected void initGUI() {
+        addPanel.add(supplierListBox);
+        addPanel.add(addButton);
+        panel.add(stackTable);
+        panel.add(addPanel);
+        panel.add(errorLabel);
+        errorLabel.setStyleName("error");
         panel.add(new HTML("<br>")); // spacer
         panel.setStyleName("gwt-editbox");
 
+    }
 
+
+    @Override
+    public void sendUpdates() {
+        final String valueToAdd = supplierListBox.getSelected();
+        if(containsName(valueToAdd)){
+            setError("Supplied already added: "+valueToAdd);
+            notWorking();
+            return;
+        }
+        working();
+        MarkerRPCService.App.getInstance().addMarkerSupplier(valueToAdd, dto.getZdbID(),
+                new MarkerEditCallBack<Void>("failed to add supplier to marker: ") {
+                    public void onFailure(Throwable t) {
+                        setError("Failed to remove supplier.");
+                        notWorking();
+                    }
+
+
+                    public void onSuccess(Void o) {
+                        addToGUI(valueToAdd);
+                        notWorking();
+                        fireEventSuccess();
+                    }
+                });
+    }
+
+    @Override
+    public void working() {
+        addButton.setEnabled(false);
+        supplierListBox.setEnabled(false);
+    }
+
+    @Override
+    public void notWorking() {
+        addButton.setEnabled(true);
+        supplierListBox.setEnabled(true);
+    }
+
+    @Override
+    protected void setValues() {
         MarkerRPCService.App.getInstance().getAllSupplierNames(new AsyncCallback<List<String>>() {
             public void onFailure(Throwable throwable) {
                 Window.alert("Failed to load available marker suppliers: " + throwable);
@@ -93,53 +97,52 @@ public class SupplierNameList extends Composite implements CanRemoveSupplier {
                 supplierListBox.addNullAndItems(list);
             }
         });
+    }
 
-        supplierAddButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                fireSupplierAdded(supplierListBox.getSelected());
-            }
+    @Override
+    public void revertGUI() {
+        stackTable.clear();
+        for (String supplier : dto.getSuppliers()) {
+            addToGUI(supplier);
+        }
+    }
+
+    public MarkerDTO createDTOFromGUI() {
+        // since all we handle is the inferreds, we will assume that we have the correct DTO.
+        if(dto==null) return null ;
+        MarkerDTO relatedEntityDTO = new MarkerDTO();
+        relatedEntityDTO.setName(supplierListBox.getSelected());
+        relatedEntityDTO.setZdbID(dto.getZdbID());
+        relatedEntityDTO.setDataZdbID(dto.getDataZdbID());
+        return relatedEntityDTO;
+    }
+
+    protected void addToGUI(String name) {
+        MarkerDTO relatedEntityDTO = createDTOFromGUI();
+        StackComposite<MarkerDTO> stackComposite = new StackComposite<MarkerDTO>(relatedEntityDTO) ;
+        stackComposite.addRelatedEntityListener(new RelatedEntityAdapter<MarkerDTO>(){
+            @Override
+            public void removeRelatedEntity(final RelatedEntityEvent<MarkerDTO> event) {
+
+                final String value = event.getDTO().getName();
+                    MarkerRPCService.App.getInstance().removeMarkerSupplier(value, event.getDTO().getZdbID(),
+                            new MarkerEditCallBack<Void>("failed to remove supplier to marker: ") {
+                                public void onSuccess(Void o) {
+                                    removeFromGUI(value);
+                                }
+                            });
+                }
         });
-
-
+        stackTable.setWidget(stackTable.getRowCount(), 0, stackComposite);
+        resetInput();
     }
 
-    void fireSupplierAdded(String supplierName) {
-        for (SupplierChangeListener supplierChangeListener : supplierChangeListeners) {
-            supplierChangeListener.addSupplier(supplierName);
-        }
-    }
 
-    public void fireSupplierRemoved(String supplierName) {
-        for (SupplierChangeListener supplierChangeListener : supplierChangeListeners) {
-            supplierChangeListener.removeSupplier(supplierName);
-        }
-    }
 
-    void addSupplierToGUI(String supplierName) {
-        supplierTable.setWidget(supplierTable.getRowCount(), 0, new SupplierComposite(this, supplierName));
+    @Override
+    public void resetInput() {
         supplierListBox.setSelectedIndex(0);
     }
 
-    void removeSupplierFromGUI(String supplierName) {
-        int rowCount = supplierTable.getRowCount();
-        for (int i = 0; i < rowCount; i++) {
-            String widgetName = ((SupplierComposite) supplierTable.getWidget(i, 0)).getName();
-            if (widgetName.equals(supplierName)) {
-                supplierTable.removeRow(i);
-                return;
-            }
-        }
-        Window.alert("supplier not found to remove: " + supplierName);
-    }
-
-
-    void addSupplierChangeListener(SupplierChangeListener supplierChangeListener) {
-        supplierChangeListeners.add(supplierChangeListener);
-    }
-
-
-    String getZdbID() {
-        return markerDTO.getZdbID();
-    }
 
 }

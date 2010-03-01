@@ -17,7 +17,7 @@ import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.TermInfo;
 import org.zfin.gwt.root.dto.TermStatus;
 import org.zfin.gwt.root.ui.ItemSuggestion;
-import org.zfin.gwt.root.util.LookupService;
+import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -28,11 +28,12 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.GoTerm;
 import org.zfin.ontology.OntologyService;
-import org.zfin.ontology.presentation.GenericTermComparator;
+import org.zfin.ontology.presentation.TermComparator;
 import org.zfin.ontology.presentation.OntologyAutoCompleteTerm;
 import org.zfin.people.Organization;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationService;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -43,12 +44,11 @@ import java.util.List;
 /**
  *
  */
-public class LookupServiceImpl extends RemoteServiceServlet implements LookupService {
+public class LookupRPCServiceImpl extends RemoteServiceServlet implements LookupRPCService {
 
-    private Logger logger = Logger.getLogger(LookupServiceImpl.class);
+    private Logger logger = Logger.getLogger(LookupRPCServiceImpl.class);
     private AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
     private InfrastructureRepository infrastructureRep = RepositoryFactory.getInfrastructureRepository();
-    private static final String MOST_RECENT_PUBLICATIONS = "MostRecentPublications";
 
     /**
      * Gets suggestions from the anatomy repository.
@@ -164,7 +164,7 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         org.zfin.ontology.Ontology ontologyEnum = org.zfin.ontology.Ontology.getOntology(ontology.getDBName());
         List<GenericTerm> genericTerms = RepositoryFactory.getInfrastructureRepository().getTermsByName(query, ontologyEnum);
-        Collections.sort(genericTerms, new GenericTermComparator(query));
+        Collections.sort(genericTerms, new TermComparator(query));
         if (wildCard && genericTerms != null && genericTerms.size() > 0) {
             suggestions.add(new ItemSuggestion("*" + query + "*", null));
         }
@@ -188,19 +188,22 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
 
     }
 
-    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req, Ontology ontology) {
+    public SuggestOracle.Response getGOSuggestions(SuggestOracle.Request request) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
-        String termQuery = req.getQuery();
+        String termQuery = request.getQuery();
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         if (termQuery.length() > 2) {
-            for (GoTerm goTerm : RepositoryFactory.getMutantRepository().getGoTermsByNameAndSubtree(termQuery, ontology)) {
+            List<GoTerm> goTerms = RepositoryFactory.getMutantRepository().getGoTermsByName(termQuery);
+            Collections.sort(goTerms, new TermComparator(termQuery));
+
+            for (GoTerm goTerm : goTerms) {
                 suggestions.add(new ItemSuggestion(goTerm.getName().replaceAll(termQuery, "<strong>" + termQuery + "</strong>"), goTerm.getName()));
             }
         }
         resp.setSuggestions(suggestions);
 
-        logger.info("found " +suggestions.size() + " suggestions for " + req);
+        logger.info("found " +suggestions.size() + " suggestions for " + request);
         return resp;
     }
 
@@ -432,7 +435,7 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
 
     @Override
     public List<PublicationDTO> getRecentPublications() {
-        List<Publication> mostRecentsPubs = (List<Publication>) getServletContext().getAttribute(MOST_RECENT_PUBLICATIONS);
+        List<Publication> mostRecentsPubs = PublicationService.getRecentPublications(getServletContext());
         List<PublicationDTO> publicationDTOs = new ArrayList<PublicationDTO>();
 
         if (CollectionUtils.isNotEmpty(mostRecentsPubs)){
@@ -448,15 +451,10 @@ public class LookupServiceImpl extends RemoteServiceServlet implements LookupSer
 
     @Override
     public PublicationDTO setRecentPublication(String zdbID) {
-        List<Publication> mostRecentsPubs = (List<Publication>) getServletContext().getAttribute(MOST_RECENT_PUBLICATIONS);
-        if (mostRecentsPubs == null){
-            mostRecentsPubs = new ArrayList<Publication>();
-        }
-
         if (StringUtils.isNotEmpty(zdbID)) {
             Publication publication = RepositoryFactory.getPublicationRepository().getPublication(zdbID);
-            mostRecentsPubs.add(publication);
-            getServletContext().setAttribute(MOST_RECENT_PUBLICATIONS, mostRecentsPubs);
+            PublicationService.addRecentPublications(getServletContext(),publication);
+
             PublicationDTO publicationDTO = new PublicationDTO();
             publicationDTO.setZdbID(publication.getZdbID());
             publicationDTO.setTitle(publication.getTitle());

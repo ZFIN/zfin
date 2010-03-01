@@ -1,7 +1,6 @@
 package org.zfin.gwt.marker.ui;
 
 import org.zfin.gwt.marker.event.DirectAttributionAddsRelatedEntityListener;
-import org.zfin.gwt.marker.event.PublicationChangeEvent;
 import org.zfin.gwt.root.dto.MarkerDTO;
 
 /**
@@ -14,7 +13,7 @@ public abstract class AbstractFullMarkerEditController<T extends MarkerDTO> exte
     final DirectAttributionTable directAttributionTable = new HandledDirectAttributionTable();
     final PreviousNamesBox previousNamesBox = new PreviousNamesBox();
     final PublicationLookupBox publicationLookupBox = new PublicationLookupBox();
-    final NoteBox<T> noteBox = new NoteBox<T>(noteDiv) ;
+    final MarkerNoteBox<T> markerNoteBox = new MarkerNoteBox<T>() ;
 
 
     protected void addListeners() {

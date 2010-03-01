@@ -5,19 +5,15 @@ import java.util.Set;
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public interface Term {
+public interface Term extends OntologyTerm{
 
     String getID();
-
-    String getTermName();
 
     String getOboID();
 
     String getOntologyName();
 
     String getComment();
-
-    boolean isObsolete();
 
     boolean isRoot();
 

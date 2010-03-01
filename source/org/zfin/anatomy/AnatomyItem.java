@@ -157,7 +157,7 @@ public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
         this.nameOrder = nameOrder;
     }
 
-    public String getId() {
+    public String getID() {
         return zdbID;
     }
 

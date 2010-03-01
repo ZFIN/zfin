@@ -3,13 +3,13 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.Revertible;
 
 /**
  * Base component that is revertible.
  */
-public abstract class AbstractRevertibleComposite<T extends MarkerDTO> extends AbstractComposite<T> implements Revertible {
+public abstract class AbstractRevertibleComposite<T extends RelatedEntityDTO> extends AbstractComposite<T> implements Revertible {
 
 
     // GUI name/type elements
@@ -47,7 +47,7 @@ public abstract class AbstractRevertibleComposite<T extends MarkerDTO> extends A
      * If not, the fire success.
      * @return Component has dirty data.
      */
-    public boolean checkDirty() {
+    public boolean handleDirty() {
         boolean dirty = isDirty();
         saveButton.setEnabled(dirty);
         revertButton.setEnabled(dirty);
@@ -61,6 +61,6 @@ public abstract class AbstractRevertibleComposite<T extends MarkerDTO> extends A
     @Override
     public void setDTO(T dto) {
         super.setDTO(dto);
-        checkDirty();
+        handleDirty();
     }
 }

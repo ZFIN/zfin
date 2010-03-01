@@ -52,4 +52,22 @@
             <a href="/action/dev-tools/gwt/alternate-gene-edit">Marker Edit: Gene</a>
         </td>
     </tr>
+    <tr>
+        <td class="sectionTitle">Test/TestComposite</td>
+        <td width="120" colspan="2" class="sectionTitle">
+            <a href="/action/dev-tools/gwt/test-composite">Test: TestComposite</a>
+        </td>
+    </tr>
+    <tr>
+        <td class="sectionTitle">GO/Go Edit</td>
+        <td width="120" colspan="2" class="sectionTitle">
+            <a href="/action/dev-tools/gwt/go-edit">GO: GO Edit</a>
+        </td>
+    </tr>
+    <tr>
+        <td class="sectionTitle">GO/Alternate Go Edit</td>
+        <td width="120" colspan="2" class="sectionTitle">
+            <a href="/action/dev-tools/gwt/alternate-go-edit">GO: Alternate GO Edit</a>
+        </td>
+    </tr>
 </table>

@@ -8,7 +8,6 @@ import java.util.List;
 public class MarkerDTO extends RelatedEntityDTO {
 
     protected List<DBLinkDTO> supportingSequenceLinks;
-    protected String zdbID;  // this is the attached zdbID
     private String abbreviation;
     protected String abbreviationOrder;
     protected String markerType;
@@ -38,14 +37,6 @@ public class MarkerDTO extends RelatedEntityDTO {
         }
     }
 
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
 
     public String getName() {
         return name;

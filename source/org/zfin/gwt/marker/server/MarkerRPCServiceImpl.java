@@ -11,7 +11,9 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.marker.ui.*;
+import org.zfin.gwt.marker.ui.BlastDatabaseAccessException;
+import org.zfin.gwt.marker.ui.DBLinkNotFoundException;
+import org.zfin.gwt.marker.ui.MarkerRPCService;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -326,7 +328,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         for (MarkerDBLink markerDBLink : dbLinks) {
             DBLinkDTO dbLinkDTO = new DBLinkDTO();
-            dbLinkDTO.setDbLinkZdbID(markerDBLink.getZdbID());
+            dbLinkDTO.setZdbID(markerDBLink.getZdbID());
             dbLinkDTO.setLength(markerDBLink.getLength());
             dbLinkDTO.setDataZdbID(markerDBLink.getMarker().getZdbID());
             dbLinkDTO.setName(markerDBLink.getAccessionNumber());
@@ -362,7 +364,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         MarkerDBLink markerDBLink = (MarkerDBLink) session.get(MarkerDBLink.class, zdbID);
 
         DBLinkDTO DBLinkDTO = new DBLinkDTO();
-        DBLinkDTO.setDbLinkZdbID(markerDBLink.getZdbID());
+        DBLinkDTO.setZdbID(markerDBLink.getZdbID());
         DBLinkDTO.setLength(markerDBLink.getLength());
         DBLinkDTO.setDataZdbID(markerDBLink.getMarker().getZdbID());
         DBLinkDTO.setName(markerDBLink.getAccessionNumber());
@@ -469,13 +471,13 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         session.save(dbLink);
         session.flush();
-        dbLinkDTO.setDbLinkZdbID(dbLink.getZdbID());
+        dbLinkDTO.setZdbID(dbLink.getZdbID());
 
         // set publicationattribution
         if (StringUtils.isNotEmpty(dbLinkDTO.getPublicationZdbID())) {
             Set<PublicationAttribution> publications = new HashSet<PublicationAttribution>();
             PublicationAttribution publicationAttribution =
-                    RepositoryFactory.getInfrastructureRepository().insertPublicAttribution(dbLinkDTO.getDbLinkZdbID(),
+                    RepositoryFactory.getInfrastructureRepository().insertPublicAttribution(dbLinkDTO.getZdbID(),
                             dbLinkDTO.getPublicationZdbID());
             publications.add(publicationAttribution);
             dbLink.setPublications(publications);
@@ -502,7 +504,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
     public SequenceDTO addSequenceAttribution(SequenceDTO sequenceDTO) {
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
-        String dblinkZdbID = sequenceDTO.getDbLinkZdbID();
+        String dblinkZdbID = sequenceDTO.getZdbID();
         String dblinkDataZdbID = sequenceDTO.getDataZdbID();
 
         DBLink dbLink = null;
@@ -513,7 +515,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
                 throw new RuntimeException("Faild to get a dblink for dblinkdto: " + sequenceDTO);
             }
             dblinkZdbID = dbLink.getZdbID();
-            sequenceDTO.setDbLinkZdbID(dblinkZdbID);
+            sequenceDTO.setZdbID(dblinkZdbID);
         }
         InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
         List<PublicationAttribution> publicationAttributions = infrastructureRepository.getPublicationAttributions(dblinkZdbID);
@@ -535,7 +537,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
     public DBLinkDTO addDBLinkAttribution(DBLinkDTO dbLinkDTO) {
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
-        String dblinkZdbID = dbLinkDTO.getDbLinkZdbID();
+        String dblinkZdbID = dbLinkDTO.getZdbID();
         String dblinkDataZdbID = dbLinkDTO.getDataZdbID();
 
         DBLink dbLink = null;
@@ -548,7 +550,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
                 throw new RuntimeException("Faild to get a dblink for dblinkdto: " + dbLinkDTO);
             }
             dblinkZdbID = dbLink.getZdbID();
-            dbLinkDTO.setDbLinkZdbID(dblinkZdbID);
+            dbLinkDTO.setZdbID(dblinkZdbID);
         }
 
         RepositoryFactory.getInfrastructureRepository().insertPublicAttribution(dblinkZdbID, dbLinkDTO.getPublicationZdbID());
@@ -563,7 +565,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
     public DBLinkDTO removeDBLink(DBLinkDTO dbLinkDTO) {
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
-        DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getDbLinkZdbID());
+        DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getZdbID());
         if (dbLink == null && dbLinkDTO.getDataZdbID() != null && dbLinkDTO.getName() != null) {
             dbLink = RepositoryFactory.getSequenceRepository().
                     getDBLink(dbLinkDTO.getDataZdbID(),
@@ -590,12 +592,12 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
         // need to get the marker for the dblink
-        DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getDbLinkZdbID());
+        DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getZdbID());
 //                RepositoryFactory.getSequenceRepository().
 //                        getDBLink(dbLinkDTO.getDbLinkZdbID(),
 //                                dbLinkDTO.getName(), dbLinkDTO.getReferenceDatabaseDTO().getName());
 
-        dbLinkDTO.setDbLinkZdbID(dbLink.getZdbID());
+        dbLinkDTO.setZdbID(dbLink.getZdbID());
         RepositoryFactory.getInfrastructureRepository().deleteRecordAttribution(dbLink.getZdbID(), dbLinkDTO.getPublicationZdbID());
         session.flush();
 
@@ -611,7 +613,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         Publication pub = publicationRepository.getPublication(dbLinkDTO.getPublicationZdbID());
         Marker marker = markerRepository.getMarkerByID(dbLinkDTO.getDataZdbID());
-        DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getDbLinkZdbID());
+        DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getZdbID());
 
         String updateComment = "Updating " + dbLink.getAccessionNumber()
                 + " length, changing from " + dbLink.getLength()
@@ -659,6 +661,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         // get simple attributes
         geneDTO.setZdbID(marker.getZdbID());
+        geneDTO.setAbbreviation(marker.getAbbreviation());
         geneDTO.setName(marker.getName());
         geneDTO.setMarkerType(marker.getMarkerType().getType().name());
 
@@ -930,7 +933,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         if(dblinkGeneAddReferenceDatabases.size()>0){
             return dblinkGeneAddReferenceDatabases ;
         }
-        
+
         dblinkGeneAddReferenceDatabases.clear();
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(markerZdbID);
         List<ReferenceDatabase> referenceDatabases = new ArrayList<ReferenceDatabase>();
@@ -957,4 +960,5 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         return dblinkGeneAddReferenceDatabases;
     }
+
 }

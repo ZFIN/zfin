@@ -1,0 +1,199 @@
+package org.zfin.gwt;
+
+import com.gargoylesoftware.htmlunit.AlertHandler;
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.*;
+import net.sourceforge.jwebunit.junit.WebTestCase;
+import net.sourceforge.jwebunit.util.TestingEngineRegistry;
+import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.zfin.TestConfiguration;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.Marker;
+import org.zfin.people.AccountInfo;
+import org.zfin.people.Person;
+import org.zfin.repository.RepositoryFactory;
+
+import java.io.IOException;
+import java.util.Date;
+
+/**
+ * This class uses the more raw HtmlUnit protocols.
+ */
+public class GeneralJWebUnitTest extends AbstractJWebUnitTest{
+
+    public void testSimpleComposite(){
+        try {
+            HtmlPage page = webClient.getPage("https://"+domain +"/action/dev-tools/gwt/modules");
+            webClient.setJavaScriptEnabled(true);
+            assertEquals("GWT Modules",page.getTitleText());
+            HtmlAnchor htmlAnchor = (HtmlAnchor) page.getByXPath("//a[ . = 'Test: TestComposite']").get(0);
+            assertNotNull(htmlAnchor);
+            page = htmlAnchor.click();
+            webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+            HtmlButton htmlButton1 = (HtmlButton) page.getByXPath("//button[. = 'b1']").get(0);
+            assertNotNull(htmlButton1);
+            HtmlButton htmlButton2 = (HtmlButton) page.getByXPath("//button[. = 'b2']").get(0);
+            assertNotNull(htmlButton2);
+            HtmlButton htmlButton3 = (HtmlButton) page.getByXPath("//button[. = 'b3']").get(0);
+            assertNotNull(htmlButton3);
+            HtmlDivision htmlDivision = (HtmlDivision) page.getByXPath("//div[@class='gwt-Label']").get(0);
+            assertNotNull(htmlDivision);
+            assertEquals("dogz",htmlDivision.getTextContent());
+            htmlButton1.click();
+            assertEquals("catz",htmlDivision.getTextContent());
+            htmlButton2.click();
+            assertEquals("dogz",htmlDivision.getTextContent());
+
+            webClient.setAlertHandler(new AlertHandler(){
+                @Override
+                public void handleAlert(Page page, String s) {
+                    assertEquals("red alert",s);
+                }
+            });
+            htmlButton3.click();
+        } catch (IOException e) {
+            fail(e.toString());
+        }
+    }
+
+    public void testAlternateGeneNote(){
+
+        try {
+            // first we have to guarantee that we always have a note there
+            Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-001103-2") ;
+            String oldNote = gene.getPublicComments();
+            if(StringUtils.isEmpty(oldNote)){
+                HibernateUtil.createTransaction();
+                gene.setPublicComments("new note");
+                HibernateUtil.flushAndCommitCurrentSession();
+            }
+
+//            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
+            HtmlPage page = webClient.getPage("https://"+domain +"/action/dev-tools/gwt/alternate-gene-edit");
+            webClient.setJavaScriptEnabled(true);
+            webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
+            assertEquals("GWT Gene Edit",page.getTitleText());
+            final HtmlDivision div = (HtmlDivision) page.getByXPath("//div[@id='curatorNoteName']").get(0);
+            assertNotNull(div);
+            final HtmlTable table = (HtmlTable) page.getByXPath("//table[@class='gwt-editbox']").get(0);
+            assertNotNull(table);
+            final HtmlTableDataCell cell = (HtmlTableDataCell) page.getByXPath("//td[. = 'PUBLIC']").get(0);
+            assertNotNull(cell);
+            final HtmlTextArea textArea = (HtmlTextArea) page.getByXPath("//td[. = 'PUBLIC']/..//textarea").get(0);
+            assertNotNull(textArea);
+
+            final HtmlButton saveButton = (HtmlButton) page.getByXPath("//td[. = 'PUBLIC']/..//button[. = 'Save']").get(0);
+            assertNotNull(saveButton);
+
+            final HtmlButton revertButton = (HtmlButton) page.getByXPath("//td[. = 'PUBLIC']/..//button[. = 'Revert']").get(0);
+            assertNotNull(revertButton);
+
+            // init satate
+            assertTrue(saveButton.isDisabled()) ;
+            assertTrue(saveButton.isDisabled()) ;
+
+            String oldText= textArea.getText();
+            String newText =  "very unique updated text super uniqueness";
+
+            // put in new text
+            textArea.setText(newText);
+            assertFalse(saveButton.isDisabled()) ;
+            assertFalse(revertButton.isDisabled()) ;
+            assertEquals(newText,textArea.getText()) ;
+
+            // revert
+            revertButton.click();
+            assertEquals(oldText,textArea.getText()) ;
+            assertTrue(saveButton.isDisabled()) ;
+            assertTrue(saveButton.isDisabled()) ;
+
+            // try saving this time
+            textArea.setText(newText);
+            assertFalse(saveButton.isDisabled()) ;
+            assertFalse(revertButton.isDisabled()) ;
+            saveButton.click();
+            webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
+            assertEquals(newText,textArea.getText()) ;
+            assertTrue(saveButton.isDisabled()) ;
+            assertTrue(saveButton.isDisabled()) ;
+
+
+            // put back
+            textArea.setText(oldText);
+            saveButton.click();
+            webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
+            assertEquals(oldText,textArea.getText()) ;
+
+            if(StringUtils.isEmpty(oldNote)){
+                HibernateUtil.createTransaction();
+                gene.setPublicComments(oldNote);
+                HibernateUtil.flushAndCommitCurrentSession();
+            }
+
+
+        } catch (IOException e) {
+            fail(e.toString());
+        }
+
+    }
+
+    public void testAnatomyLookupForm(){
+
+        try {
+            webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+            HtmlPage page = webClient.getPage("http://"+domain +"/action/dev-tools/gwt/lookup-table");
+            assertEquals("GWT Lookup Table",page.getTitleText());
+            assertNotNull(page.getByXPath("//button[. = 'search']").get(0));
+            assertNotNull(page.getByXPath("//td[. = 'Enter search terms']").get(0));
+            assertEquals( "Enter search terms",((HtmlTableDataCell) page.getByXPath("//td[. = 'Enter search terms']").get(0)).getTextContent());
+            assertNotNull(page.getByXPath("//div[@class='gwt-Label']").get(0));
+            HtmlInput htmlInput = (HtmlInput) page.getByXPath("//input[@id = 'searchTerm']").get(0);
+            assertEquals("",htmlInput.getValueAttribute());
+            htmlInput.setValueAttribute("pelv");
+            assertEquals("pelv",htmlInput.getValueAttribute());
+        } catch (IOException e) {
+            fail(e.toString());
+        }
+    }
+
+    public void testAnatomyLookupTyping(){
+        try {
+            webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
+            HtmlPage page = webClient.getPage("http://"+domain +"/action/dev-tools/gwt/lookup-table");
+            webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
+            assertEquals("GWT Lookup Table",page.getTitleText());
+            final HtmlForm form = page.getFormByName("lookupTable");
+            final HtmlTextInput textField = form.getInputByName("searchTerm");
+
+            assertEquals("Lookup Table Application", ( (HtmlHeading1) page.getByXPath("//h1").get(0) ).getTextContent());
+            assertEquals("",textField.getValueAttribute());
+
+            textField.type("pelv");
+            webClient.waitForBackgroundJavaScript(2000) ;
+
+            assertEquals("pelv",textField.getValueAttribute());
+
+            webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
+
+            assertNotNull(page.getByXPath("//div[@class='gwt-SuggestBoxPopup']"));
+            assertEquals(25,page.getByXPath("//span[@class='autocomplete-plain']").size() );
+            assertTrue( ((HtmlSpan) page.getByXPath("//span[@class='autocomplete-plain']").get(24)).getTextContent().contains("pelv") );
+
+            // the very first element is selected by default
+            assertEquals(1,page.getByXPath("//td[@class='item item-selected']").size() );
+            assertEquals(25,page.getByXPath("//td[@class='item']").size() );
+            assertEquals("...",((HtmlTableDataCell) page.getByXPath("//td[@class='item']").get(24)).getTextContent());
+
+        } catch (IOException e) {
+            fail(e.toString());
+        }
+
+    }
+
+}

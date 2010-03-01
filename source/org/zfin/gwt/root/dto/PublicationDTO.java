@@ -16,6 +16,11 @@ public class PublicationDTO implements IsSerializable {
 
     public PublicationDTO(){}
 
+    public PublicationDTO(PubEnum pubEnum){
+        this.title = pubEnum.title();
+        this.zdbID = pubEnum.zdbID();
+    }
+
     public PublicationDTO(String title,String zdbID){
         this.title = title ;
         this.zdbID = zdbID ; 

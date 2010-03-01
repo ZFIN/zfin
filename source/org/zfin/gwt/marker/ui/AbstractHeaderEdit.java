@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
-import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.StringTextBox;
 
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * A base header class for MarkerDTO's.
  */
-public abstract class AbstractHeaderEdit<T extends MarkerDTO>  extends AbstractRevertibleComposite<T> {
+public abstract class AbstractHeaderEdit<T extends RelatedEntityDTO>  extends AbstractRevertibleComposite<T> {
 
 
 
@@ -32,6 +32,8 @@ public abstract class AbstractHeaderEdit<T extends MarkerDTO>  extends AbstractR
     protected final NameValidator nameValidator = new NameValidator();
 
     protected abstract void sendUpdates() ;
+    @Override
+    protected void setValues() {}
 
     // listeners
     private final List<RelatedEntityChangeListener<T>> changeListeners = new ArrayList<RelatedEntityChangeListener<T>>();

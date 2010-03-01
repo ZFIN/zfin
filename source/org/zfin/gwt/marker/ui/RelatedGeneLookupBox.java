@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.ui.ItemSuggestion;
-import org.zfin.gwt.root.util.LookupService;
+import org.zfin.gwt.root.util.LookupRPCService;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -89,7 +89,7 @@ public class RelatedGeneLookupBox extends RelatedMarkerBox {
         public void requestSuggestions(final Request request, final Callback callback) {
             String query = request.getQuery();
             if (query.length() >= 3) {
-                LookupService.App.getInstance().getGenedomAndEFGSuggestions(request, new AsyncCallback<Response>() {
+                LookupRPCService.App.getInstance().getGenedomAndEFGSuggestions(request, new AsyncCallback<Response>() {
                     public void onFailure(Throwable throwable) {
                         callback.onSuggestionsReady(request, new Response());
                     }

@@ -11,7 +11,7 @@ import org.zfin.gwt.root.ui.HandlesError;
 public class PublicNoteEntry extends AbstractNoteEntry {
     public PublicNoteEntry(NoteDTO noteDTO, HandlesError handlesError) {
         super(noteDTO,handlesError);
-        noteDTO.setEditMode(NoteBox.EditMode.PUBLIC.name());
+        noteDTO.setEditMode(MarkerNoteBox.EditMode.PUBLIC.name());
     }
 
     @Override

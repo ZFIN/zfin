@@ -21,7 +21,15 @@
     <typedef class="org.zfin.database.StringEnumUserType" name="featAssayMutagee">
         <param name="enumClassname">org.zfin.mutant.FeatureAssay$Mutagee</param>
     </typedef>
-   <!-- <typedef class="org.zfin.database.StringEnumUserType" name="featureType">
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="goEvidenceCode">
+        <param name="enumClassname">org.zfin.gwt.root.dto.GoEvidenceCodeEnum</param>
+    </typedef>
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="goFlag">
+        <param name="enumClassname">org.zfin.gwt.root.dto.GoFlagEnum</param>
+    </typedef>
+    <!-- <typedef class="org.zfin.database.StringEnumUserType" name="featureType">
         <param name="enumClassname">org.zfin.mutant.Feature$Type</param>
     </typedef>-->
 
@@ -56,15 +64,53 @@
 
     </class>
 
+    <class name="org.zfin.mutant.GoEvidenceCode" table="go_evidence_code" mutable="false">
+        <id name="code" column="goev_code" type="string"/>
+        <property name="name" column="goev_name"/>
+        <property name="order" column="goev_display_order"/>
+    </class>
+
+    <class name="org.zfin.mutant.GoFlag" table="go_flag" mutable="false">
+        <id column="gflag_name" name="name" type="string"/>
+        <property name="displayOrder" column="gflag_display_order" type="integer"/>
+    </class>
+
     <class name="org.zfin.mutant.MarkerGoTermEvidence" table="marker_go_term_evidence">
         <id name="zdbID" type="string">
             <column name="mrkrgoev_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <param name="type">MRKRGOEV</param>
+                <param name="insertActiveData">true</param>
             </generator>
         </id>
         <many-to-one name="marker" column="mrkrgoev_mrkr_zdb_id" not-null="true"/>
+        <many-to-one name="source" column="mrkrgoev_source_zdb_id" not-null="true"/>
+        <many-to-one name="goTerm" column="mrkrgoev_go_term_zdb_id" not-null="true"/>
+        <property name="note" column="mrkrgoev_notes" not-null="false"/>
+        <many-to-one name="evidenceCode" column="mrkrgoev_evidence_code" class="org.zfin.mutant.GoEvidenceCode" not-null="false"/>
+
+        <property name="createdBy" column="mrkrgoev_contributed_by" not-null="false"/>
+        <property name="createdWhen" column="mrkrgoev_date_entered" not-null="false"/>
+        <property name="modifiedBy" column="mrkrgoev_modified_by" not-null="false"/>
+        <property name="modifiedWhen" column="mrkrgoev_date_modified" not-null="false"/>
+
+        <property name="flag" column="mrkrgoev_gflag_name" not-null="false" type="goFlag"/>
+
+        <set name="inferredFrom" lazy="false" inverse="true">
+            <key column="infgrmem_mrkrgoev_zdb_id"/>
+            <one-to-many class="InferenceGroupMember"/>
+        </set>
+
     </class>
+
+    <class name="InferenceGroupMember" table="inference_group_member"  >
+        <composite-id>
+            <key-property name="markerGoTermEvidenceZdbID" column="infgrmem_mrkrgoev_zdb_id" />
+            <key-property name="inferredFrom" column="infgrmem_inferred_from"/>
+        </composite-id>
+    </class>
+
+
 
     <class name="org.zfin.mutant.GenotypeFeature" table="genotype_feature">
         <id name="zdbID" type="string">
@@ -165,14 +211,14 @@
             <key column="fmrel_ftr_zdb_id"/>
             <one-to-many class="org.zfin.mutant.FeatureMarkerRelationship"/>
         </set>
-         <set name="sources">
+        <set name="sources">
             <key column="ids_data_zdb_id" update="false"/>
             <one-to-many class="org.zfin.people.FeatureSource" />
         </set>
         <many-to-one name="featureType" column="feature_type"
                      foreign-key="feature_type" not-null="true"
                      class="org.zfin.mutant.FeatureType"/>
-        
+
         <set name="aliases" lazy="true" table="data_alias"  order-by="dalias_alias_lower" inverse="false">
             <key column="dalias_data_zdb_id" />
             <one-to-many class="org.zfin.mutant.FeatureAlias" />
@@ -189,7 +235,7 @@
                 <property name="mutagen" type="featAssayMutagen">
                     <column name="featassay_mutagen"/>
                 </property>
-              <property name="mutagee" type="featAssayMutagee">
+                <property name="mutagee" type="featAssayMutagee">
                     <column name="featassay_mutagee"/>
                 </property>
             </component>
@@ -205,7 +251,7 @@
         <property name="type" column="fmrel_type" not-null="true"/>
         <property name="featureZdbId" column="fmrel_ftr_zdb_id" not-null="true"/>
         <!--<many-to-one name="feature" class="org.zfin.mutant.Feature">-->
-            <!--<column name="fmrel_ftr_zdb_id"/>-->
+        <!--<column name="fmrel_ftr_zdb_id"/>-->
         <!--</many-to-one>-->
         <many-to-one name="marker" class="org.zfin.marker.Marker">
             <column name="fmrel_mrkr_zdb_id"/>
@@ -235,7 +281,7 @@
         <many-to-one name="experiment" class="org.zfin.expression.Experiment">
             <column name="expcond_exp_zdb_id"/>
         </many-to-one>
-        
+
 
         <many-to-one name="unit" class="org.zfin.expression.ExperimentUnit">
             <column name="expcond_expunit_zdb_id"/>
@@ -295,64 +341,62 @@
 
 
     <class name="org.zfin.mutant.FeatureHistory" table="feature_history">
-            <id name="zdbID">
-                <column name="fhist_zdb_id"/>
-                <generator class="org.zfin.database.ZdbIdGenerator">
-                    <param name="type">NOMEN</param>
-                    <param name="insertActiveData">true</param>
-                </generator>
-            </id>
-            <property name="reason" type="featureHistoryReason">
-                <column name="fhist_reason"/>
-            </property>
-            <property name="event">
-                <column name="fhist_event"/>
-            </property>
-            <property name="name">
-                <column name="fhist_ftr_name_on_fhist_date"/>
-            </property>
-            <property name="abbreviation">
-                <column name="fhist_ftr_abbrev_on_fhist_date"/>
-            </property>
-            <property name="date">
-                <column name="fhist_date"/>
-            </property>
+        <id name="zdbID">
+            <column name="fhist_zdb_id"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">NOMEN</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+        <property name="reason" type="featureHistoryReason">
+            <column name="fhist_reason"/>
+        </property>
+        <property name="event">
+            <column name="fhist_event"/>
+        </property>
+        <property name="name">
+            <column name="fhist_ftr_name_on_fhist_date"/>
+        </property>
+        <property name="abbreviation">
+            <column name="fhist_ftr_abbrev_on_fhist_date"/>
+        </property>
+        <property name="date">
+            <column name="fhist_date"/>
+        </property>
 
-            <!-- todo: figure out if this should be one to one -->
-            <many-to-one name="featureAlias" column="fhist_dalias_zdb_id" class="org.zfin.mutant.FeatureAlias"/>
+        <!-- todo: figure out if this should be one to one -->
+        <many-to-one name="featureAlias" column="fhist_dalias_zdb_id" class="org.zfin.mutant.FeatureAlias"/>
 
-            <many-to-one name="feature" column="fhist_ftr_zdb_id" class="org.zfin.mutant.Feature"/>
-        </class>
+        <many-to-one name="feature" column="fhist_ftr_zdb_id" class="org.zfin.mutant.Feature"/>
+    </class>
 
-   <class name="org.zfin.mutant.FeatureAssay" table="feature_assay">
-       <id name="zdbID" column="featassay_feature_zdb_id" access="field">
-       <generator class="foreign">
+    <class name="org.zfin.mutant.FeatureAssay" table="feature_assay">
+        <id name="zdbID" column="featassay_feature_zdb_id" access="field">
+            <generator class="foreign">
                 <param name="property">featureAssay</param>
             </generator>
-       </id>        
-                <property name="mutagen" type="featAssayMutagen">
-                    <column name="featassay_mutagen"/>
-                </property>
-              <property name="mutagee" type="featAssayMutagee">
-                    <column name="featassay_mutagee"/>
-                </property>
-
-            </class>
-
-
-<class name="org.zfin.mutant.FeatureType" table="feature_type" >
-        <id name="name">
-            <column name="ftrtype_name"/>
         </id>
-          <property name="significance">
-                    <column name="ftrtype_significance"/>
-                </property>
-              <property name="dispName">
-                    <column name="ftrtype_type_display"/>
-                </property>
+        <property name="mutagen" type="featAssayMutagen">
+            <column name="featassay_mutagen"/>
+        </property>
+        <property name="mutagee" type="featAssayMutagee">
+            <column name="featassay_mutagee"/>
+        </property>
+
     </class>
 
 
+    <class name="org.zfin.mutant.FeatureType" table="feature_type" >
+        <id name="name">
+            <column name="ftrtype_name"/>
+        </id>
+        <property name="significance">
+            <column name="ftrtype_significance"/>
+        </property>
+        <property name="dispName">
+            <column name="ftrtype_type_display"/>
+        </property>
+    </class>
 
 
     <class name="org.zfin.mutant.GenotypeFigure" table="genotype_figure_fast_search">

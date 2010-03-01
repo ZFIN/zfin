@@ -23,7 +23,7 @@
 
 <h1>Lookup Table Application</h1>
 
-<form action="run">
+<form name="lookupTable" action="run">
     <table>
         <tr>
             <td>Anatomy Term Table</td>

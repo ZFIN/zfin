@@ -19,7 +19,7 @@ This page is the GO tab.
 <SCRIPT>
 
  function edit_rec(mrkrgoevid) {
-     helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-gomodify.apg&OID="+mrkrgoevid,"helpwindow","scrollbars=yes,height=850,width=550,resizable=yes");
+     helpwin = open("/action/marker/go-edit?zdbID="+mrkrgoevid,"helpwindow","scrollbars=yes,height=650,width=900,resizable=yes");
  }
 
  function view_notes(mrkrgoevid) {
@@ -33,13 +33,13 @@ This page is the GO tab.
     }
  }
 
-function new_clone(pubid,mrkrzdbid,goid,goterm,evidencecode,infdb,mgte_id,isnot,contributes,infmem){
-     helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&pub_id="+pubid+"&OID="+mrkrzdbid+"&go_id="+goid+"&go_term="+goterm+"&evidence_code="+evidencecode+"&inf_db="+infdb+"&clone_note_id="+mgte_id+"&contributes="+contributes+"&is_not="+isnot+"&inf_mem="+infmem,"helpwindow","scrollbars=yes,height=850,width=850,resizable=yes");
-}
+ function clone_rec(mrkrgoevid,pubID) {
+     helpwin = open("/action/marker/go-edit?zdbID="+mrkrgoevid+"&pubID="+pubID+"&state=CLONE","helpwindow","scrollbars=yes,height=650,width=900,resizable=yes");
+ }
 
 
 function new_GO(pubid,mrkrzdbid){
-     helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&pub_id="+pubid+"&OID="+mrkrzdbid+"","helpwindow","scrollbars=yes,height=850,width=850,resizable=yes");
+     helpwin = open("/action/marker/go-edit?zdbID=ADD-MRKRGOEV&geneZdbID="+mrkrzdbid+"&pubID="+pubid+"&state=ADD","helpwindow","scrollbars=yes,resizable=yes");
 }
 
 </SCRIPT>  
@@ -71,7 +71,7 @@ function new_GO(pubid,mrkrzdbid){
 <form name=newgo method=query action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-markergoentry.apg">
 <?MIVAR>
-    <INPUT TYPE=HIDDEN NAME=pub_id VALUE="'$OID'"> 
+    <INPUT TYPE=HIDDEN NAME=pub_id VALUE="$OID"> 
 <?/MIVAR>
     <a href="javascript:;" onClick=new_GO(document.newgo.pub_id.value,document.newgo.OID.value) >[Add New GO]</a>:
     <select name=OID>
@@ -114,13 +114,12 @@ function new_GO(pubid,mrkrzdbid){
 select count(*)
 from 
 publication p,
-marker_go_term_evidence mgte,
-go_evidence_flag gf
+marker_go_term_evidence mgte
 where
 p.zdb_id=mgte.mrkrgoev_source_zdb_id
 and
-gf.goevflag_mrkrgoev_zdb_id=mgte.mrkrgoev_zdb_id
-and 
+mrkrgoev_gflag_name is not null
+and
 p.zdb_id = '$OID'
 ">
  <?MIBLOCK COND="$(>,$1,0)">
@@ -135,7 +134,7 @@ p.zdb_id = '$OID'
 <tr  height=25 align=left bgcolor=#cccccc> 
 <th> Gene </th>
 <?MIVAR COND="$(EC,$qualifier,true)">
-<th nowrap> Contributes to </th>
+<th nowrap> Qualifier </th>
 <?/MIVAR>
 <th> GO Term </th>
 <th> Evidence </th>
@@ -151,18 +150,16 @@ select
 mgte.mrkrgoev_mrkr_zdb_id,mgte.mrkrgoev_go_term_zdb_id, mgte.mrkrgoev_evidence_code,
 gt.goterm_name,gt.goterm_go_id,
 m.mrkr_abbrev,
-goevflag_gflag_name,
+mrkrgoev_gflag_name,
 mgte.mrkrgoev_zdb_id,
 mgte.mrkrgoev_notes
- from marker_go_term_evidence mgte, go_term gt, marker m, outer go_evidence_flag 
+ from marker_go_term_evidence mgte, go_term gt, marker m
 where 
 m.mrkr_zdb_id=mgte.mrkrgoev_mrkr_zdb_id
 and
 gt.goterm_zdb_id=mgte.mrkrgoev_go_term_zdb_id
 and
 mgte.mrkrgoev_source_zdb_id='$OID'
-and 
-mgte.mrkrgoev_zdb_id = goevflag_mrkrgoev_zdb_id
 order by
 m.mrkr_abbrev,
 gt.goterm_name
@@ -307,7 +304,7 @@ gt.goterm_name
 <td>
 <?MIVAR NAME=gocur_term_name_encode>$(REPLACE,$gocur_term_name," ","%20")<?/MIVAR>
 <?MIVAR>
-<a href="javascript:;" onClick=new_clone('$OID','$gocur_mrkr_zdb_id','GO:$goid','$gocur_term_name_encode','$gocur_evidence_code','$dbase','$gocur_mrkrgoevid_zdb_id','$not','$contribs',escape('$inf_comma')) >[clone Annotation]</a>
+<a href="javascript:;" onClick=clone_rec('$gocur_mrkrgoevid_zdb_id','$OID') >[clone Annotation]</a>
 <a href="javascript:;" onClick=edit_rec('$gocur_mrkrgoevid_zdb_id')>[edit]</a>
 <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID" onClick=delete_rec('$gocur_mrkrgoevid_zdb_id')>[delete]</a>
 <?/MIVAR>

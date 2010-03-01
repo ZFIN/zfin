@@ -23,7 +23,7 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
     public static final String genesTitle = "geneTitle";
 
     // gui elements
-    private ViewMarkerLabel cloneViewMarkerLabel = new ViewMarkerLabel("[View Clone]", "/action/marker/clone-view?zdbID=","Discard");
+    private ViewClickLabel cloneViewClickLabel = new ViewClickLabel("[View Clone]", "/action/marker/clone-view?zdbID=","Discard");
     private HTML relatedGeneTitle = new HTML("Contains Gene:");
     private CloneHeaderEdit cloneHeaderEdit = new CloneHeaderEdit(headerDiv);
     private CloneBox cloneBox = new CloneBox(dataDiv);
@@ -51,7 +51,7 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
         publicationLookupBox.addPublication(new PublicationDTO("VEGA Database Links", "ZDB-PUB-030703-1"));
         publicationLookupBox.addRecentPubs() ;
 
-        noteBox.removeEditMode(NoteBox.EditMode.EXTERNAL);
+        markerNoteBox.removeEditMode(MarkerNoteBox.EditMode.EXTERNAL);
     }
 
     protected void loadDTO() {
@@ -96,10 +96,10 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
                 directAttributionTable.setRecordAttributions(dto.getRecordAttributions());
                 cloneHeaderEdit.setDTO(dto);
                 previousNamesBox.setRelatedEntities(dto.getZdbID(), dto.getAliasAttributes());
-                noteBox.setDTO(dto);
-                cloneViewMarkerLabel.setDTO(dto);
+                markerNoteBox.setDTO(dto);
+                cloneViewClickLabel.setDTO(dto);
                 cloneBox.setDTO(dto);
-                supplierNameList.setDomain(dto);
+                supplierNameList.setDTO(dto);
                 relatedGenesBox.setRelatedEntities(dto.getZdbID(), dto.getRelatedGeneAttributes());
 
                 final List<DBLinkDTO> supportinSequenceLinks = dto.getSupportingSequenceLinks();
@@ -114,46 +114,46 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
             }
         });
 
-        cloneViewMarkerLabel.addViewMarkerListeners(new ViewMarkerListener(){
+        cloneViewClickLabel.addViewClickedListeners(new ViewClickedListener(){
             @Override
             public void finishedView() {
                 if(cloneHeaderEdit.isDirty()){
                     String error = "Name / type has unsaved change.";
                     cloneHeaderEdit.setError(error);
-                    cloneViewMarkerLabel.setError(error);
+                    cloneViewClickLabel.setError(error);
                 }
                 else
-                if(noteBox.isDirty() || noteBox.hasDirtyNotes()){
+                if(markerNoteBox.isDirty() || markerNoteBox.hasDirtyNotes()){
                     String error = "A note not saved.";
-                    noteBox.setError(error);
-                    cloneViewMarkerLabel.setError(error);
+                    markerNoteBox.setError(error);
+                    cloneViewClickLabel.setError(error);
                 }
                 else
                 if(cloneBox.isDirty()){
                     String error = "Clone data is dirty.";
                     cloneBox.setError(error);
-                    cloneViewMarkerLabel.setError(error);
+                    cloneViewClickLabel.setError(error);
                 }
                 else
                 if(previousNamesBox.isDirty()){
                     String error = "Alias entry not added.";
-                    cloneViewMarkerLabel.setError(error);
+                    cloneViewClickLabel.setError(error);
                     previousNamesBox.setError(error);
                 }
                 else
                 if(relatedGenesBox.isDirty()){
                     String error = "Gene entry not added.";
-                    cloneViewMarkerLabel.setError(error);
+                    cloneViewClickLabel.setError(error);
                     relatedGenesBox.setError(error);
                 }
                 else
                 if(dbLinkTable.isDirty()){
                     String error = "Sequence not added.";
-                    cloneViewMarkerLabel.setError(error);
+                    cloneViewClickLabel.setError(error);
                     dbLinkTable.setError(error);
                 }
                 else {
-                    cloneViewMarkerLabel.continueToViewTranscript();
+                    cloneViewClickLabel.continueToViewTranscript();
                 }
 
             }
@@ -164,10 +164,10 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
         publicationLookupBox.addPublicationChangeListener(cloneHeaderEdit);
         publicationLookupBox.addPublicationChangeListener(relatedGenesBox);
 
-        synchronizeHandlesErrorListener(cloneViewMarkerLabel);
+        synchronizeHandlesErrorListener(cloneViewClickLabel);
         synchronizeHandlesErrorListener(cloneHeaderEdit);
         synchronizeHandlesErrorListener(relatedGenesBox);
-        synchronizeHandlesErrorListener(noteBox);
+        synchronizeHandlesErrorListener(markerNoteBox);
         synchronizeHandlesErrorListener(cloneBox);
         synchronizeHandlesErrorListener(dbLinkTable);
     }

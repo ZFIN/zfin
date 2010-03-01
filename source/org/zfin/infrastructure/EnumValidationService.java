@@ -7,6 +7,9 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
+import org.zfin.gwt.root.dto.InferenceCategory;
+import org.zfin.gwt.root.dto.GoFlagEnum;
 import org.zfin.marker.*;
 import org.zfin.mutant.Feature;
 import org.zfin.mutant.FeatureAssay;
@@ -21,9 +24,7 @@ import org.zfin.sequence.reno.Run;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Service validates java Enumerations versus their database counterparts for controlled vocabulary clases.
@@ -291,6 +292,46 @@ public class EnumValidationService {
         checkEnumVersusDatabaseCollection(typeList, Origination.Type.values(), true);
     }
 
+    @ServiceTest
+    public void validateGoFlags(){
+        String hql = "select f.name from GoFlag f  order by f.displayOrder ";
+        List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list();
+        checkEnumValuesPresentInDatabase(typeList, GoFlagEnum.values());
+    }
+
+
+    @ServiceTest
+    public void validateGoEvidenceCodes(){
+        String hql = "select g.code from GoEvidenceCode g order by g.order";
+        List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list();
+        checkEnumValuesPresentInDatabase(typeList, GoEvidenceCodeEnum.values());
+    }
+
+
+    @ServiceTest
+    public void validateInferenceCategory(){
+        String hql = "select f.dbName from ForeignDB f";
+        List<ForeignDB.AvailableName> typeList = HibernateUtil.currentSession().createQuery(hql).list();
+        List<String> names = new ArrayList<String>();
+        for(ForeignDB.AvailableName name: typeList){
+            names.add(name.toString());
+        }
+
+        // 3 is the exclude list, maybe there is a better way to represent this
+        Enum[] enums = new Enum[InferenceCategory.values().length-3] ;
+        int i =0 ;
+        for(InferenceCategory inferenceCategory: InferenceCategory.values()){
+            if(inferenceCategory!= InferenceCategory.ZFIN_MRPH_GENO
+                    && inferenceCategory!=InferenceCategory.ZFIN_GENE
+                    && inferenceCategory!=InferenceCategory.GO
+                    ){
+                enums[i] = inferenceCategory ;
+                ++i ;
+            }
+        }
+        checkEnumValuesPresentInDatabase(names, enums);
+    }
+
     public <T extends Object> void checkEnumValuesPresentInDatabase(List<T> databaseList, Enum[] enumValues) {
         List<String> enumList = new ArrayList<String>();
         for (Enum wt : enumValues) {
@@ -298,7 +339,7 @@ public class EnumValidationService {
         }
         for (String enumString : enumList) {
             if (!databaseList.contains(enumString)) {
-                String message = "Wildtype " + enumString + " is present in the code but not in the database.";
+                String message = "Enum " + enumString + " is present in the code but not in the database.";
                 String reason = System.getProperty("line.separator") + "*******************************************************************************";
                 reason += System.getProperty("line.separator");
                 reason += "ENUMERATION VALIDATION REPORT: " + System.getProperty("line.separator") + message;
@@ -309,7 +350,6 @@ public class EnumValidationService {
         }
 
     }
-
 
     public <T extends Object> void checkEnumVersusDatabaseCollection(List<T> list, Enum[] enumValues) throws EnumValidationException {
         checkEnumVersusDatabaseCollection(list, enumValues, false);

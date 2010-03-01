@@ -13,18 +13,18 @@ import java.util.List;
 
 /**
  */
-public interface LookupService extends RemoteService {
+public interface LookupRPCService extends RemoteService {
 
     /**
      * Utility/Convenience class.
      * Use AnatomyLookupService.App.getInstance() to access static instance of AnatomyLookupServiceAsync
      */
     static class App {
-        private static LookupServiceAsync ourInstance = null;
+        private static LookupRPCServiceAsync ourInstance = null;
 
-        public static synchronized LookupServiceAsync getInstance() {
+        public static synchronized LookupRPCServiceAsync getInstance() {
             if (ourInstance == null) {
-                ourInstance = (LookupServiceAsync) GWT.create(LookupService.class);
+                ourInstance = (LookupRPCServiceAsync) GWT.create(LookupRPCService.class);
                 ((ServiceDefTarget) ourInstance).setServiceEntryPoint("/ajax/anatomylookup");
             }
             return ourInstance;
@@ -33,7 +33,7 @@ public interface LookupService extends RemoteService {
 
     SuggestOracle.Response getAnatomySuggestions(SuggestOracle.Request req);
 
-    SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req, Ontology ontology);
+    SuggestOracle.Response getGOSuggestions(SuggestOracle.Request req);
 
     SuggestOracle.Response getQualitySuggestions(SuggestOracle.Request req);
 

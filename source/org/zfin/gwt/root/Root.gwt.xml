@@ -5,5 +5,5 @@
     <source path='ui'/>
     <source path='util'/>
 
-    <servlet path="/ajax/anatomylookup" class="org.zfin.gwt.root.server.LookupServiceImpl"/>
+    <servlet path="/ajax/anatomylookup" class="org.zfin.gwt.root.server.LookupRPCServiceImpl"/>
 </module>

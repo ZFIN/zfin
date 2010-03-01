@@ -1,5 +1,7 @@
 package org.zfin.gwt.marker.event;
 
+import org.zfin.gwt.marker.ui.PublicationValidator;
+
 /**
  */
 public class PublicationChangeEvent {
@@ -14,4 +16,7 @@ public class PublicationChangeEvent {
         return publication;
     }
 
+    public boolean isNotEmpty() {
+        return new PublicationValidator().validate(publication,null) ; 
+    }
 }

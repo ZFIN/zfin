@@ -598,10 +598,10 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
                 termDto.setExpressionFound(term.isExpressionFound());
                 if (term.getSubterm() != null) {
                     termDto.setSubtermName(term.getSubterm().getTermName());
-                    termDto.setSubtermID(term.getSubterm().getId());
+                    termDto.setSubtermID(term.getSubterm().getID());
                 }
                 termDto.setSupertermName(term.getSuperTerm().getName());
-                termDto.setSupertermID(term.getSuperTerm().getId());
+                termDto.setSupertermID(term.getSuperTerm().getID());
                 termStrings.add(termDto);
             }
             //dto.setExpressedIn(formatter.getFormattedString());
@@ -1213,7 +1213,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         RelatedPileStructureDTO dto = new RelatedPileStructureDTO();
         ExpressedTermDTO expDto = new ExpressedTermDTO();
         expDto.setSupertermName(term.getName());
-        expDto.setSupertermID(term.getId());
+        expDto.setSupertermID(term.getID());
         expDto.setSupertermOboID(term.getOboID());
         dto.setExpressedTerm(expDto);
         return dto;
@@ -1275,7 +1275,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         PileStructureDTO dto = new RelatedPileStructureDTO();
         ExpressedTermDTO expDto = new ExpressedTermDTO();
         expDto.setSupertermName(structure.getSuperterm().getName());
-        expDto.setSupertermID(structure.getSuperterm().getId());
+        expDto.setSupertermID(structure.getSuperterm().getID());
         expDto.setSupertermOboID(structure.getSuperterm().getOboID());
         dto.setExpressedTerm(expDto);
         dto.setZdbID(structure.getZdbID());
@@ -1388,7 +1388,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
                 String subtermID = null;
                 OntologyTerm term = result.getSubTerm();
                 if (term != null)
-                    subtermID = term.getId();
+                    subtermID = term.getID();
                 // check if subterms are equal or both null
                 if (subtermID == null && expressionStructure.getSubtermID() == null && expressed == result.isExpressionFound()) {
                     termBeingUsed = true;
@@ -1430,7 +1430,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
             setMainAttributes(experiment, expressionStructure, expressed, newExpression);
             expRepository.createExpressionResult(newExpression, experiment.getFigure());
         }
-        expressedTerm.setSubtermID(expressionStructure.getSuperterm().getId());
+        expressedTerm.setSubtermID(expressionStructure.getSuperterm().getID());
         expressedTerm.setSupertermName(expressionStructure.getSuperterm().getName());
         expressedTerm.setExpressionFound(expressed);
         return expressedTerm;
@@ -1451,7 +1451,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
                 String subtermID = null;
                 OntologyTerm term = result.getSubTerm();
                 if (term != null)
-                    subtermID = term.getId();
+                    subtermID = term.getID();
                 // check if subterms are equal or both null
                 if (subtermID == null && expressionStructure.getSubtermID() == null && expressed == result.isExpressionFound()) {
                     expRepository.deleteExpressionResultPerFigure(result, experiment.getFigure());

@@ -30,9 +30,10 @@ public class AntibodyBox extends AbstractDataBox<AntibodyDTO>{
     public AntibodyBox() {
         super();
         initGUI();
+        setValues();
         addInternalListeners(this);
         initWidget(panel);
-        RootPanel.get(StandardMarkerDivNames.dataDiv).add(this);
+        RootPanel.get(StandardDivNames.dataDiv).add(this);
     }
 
     protected void initGUI() {
@@ -43,7 +44,7 @@ public class AntibodyBox extends AbstractDataBox<AntibodyDTO>{
         table.setWidget(0, 3, immunogenOrganismListBox);
         table.setText(1, 0, "Isotype Heavy Chain:");
         table.setWidget(1, 1, heavyChainListBox);
-        table.setText(2, 0, "Isotype Heavy Chain:");
+        table.setText(2, 0, "Isotype Light Chain:");
         table.setWidget(2, 1, lightChainListBox);
         table.setText(2, 2, "Type:");
         table.setWidget(2, 3, typeListBox);
@@ -53,6 +54,10 @@ public class AntibodyBox extends AbstractDataBox<AntibodyDTO>{
         panel.add(table);
         panel.add(buttonPanel);
         panel.add(errorLabel);
+    }
+
+    @Override
+    protected void setValues() {
 
         AntibodyRPCService.App.getInstance().getAntibodyTypes(new AsyncCallback<AntibodyTypesDTO>() {
             public void onFailure(Throwable throwable) {
@@ -69,8 +74,6 @@ public class AntibodyBox extends AbstractDataBox<AntibodyDTO>{
                 revertGUI();
             }
         });
-
-
     }
 
     @Override
@@ -78,27 +81,27 @@ public class AntibodyBox extends AbstractDataBox<AntibodyDTO>{
 
         hostOrganismListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
         immunogenOrganismListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
         heavyChainListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
         lightChainListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
         typeListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                checkDirty();
+                handleDirty();
             }
         });
 
@@ -130,7 +133,7 @@ public class AntibodyBox extends AbstractDataBox<AntibodyDTO>{
         revertButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 revertGUI();
-                checkDirty();
+                handleDirty();
             }
         });
     }

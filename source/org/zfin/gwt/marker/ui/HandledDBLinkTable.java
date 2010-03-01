@@ -17,7 +17,7 @@ class HandledDBLinkTable extends DBLinkTable {
     public HandledDBLinkTable() {
         super();
         addInternalListeners(this);
-        RootPanel.get(StandardMarkerDivNames.dbLinkDiv).add(this);
+        RootPanel.get(StandardDivNames.dbLinkDiv).add(this);
     }
 
 

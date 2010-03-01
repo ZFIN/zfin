@@ -155,9 +155,9 @@
                 /action/people/edit-user=root,submit
                 /action/webdriver/secure/*=root,submit
                 /action/antibody/create=root
-                /action/antibody/update-details=root
                 /ajax/session-save=root
                 /action/dev-tools/*=root
+                /action/dev-tools/gwt/*=root
                 /action/marker/marker-edit=root
                 /ajax/transcriptservice=root
                 /ajax/markerservice=root

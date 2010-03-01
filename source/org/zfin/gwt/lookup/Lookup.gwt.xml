@@ -6,5 +6,5 @@
 
     <entry-point class='org.zfin.gwt.lookup.ui.LookupTable'/>
 
-    <servlet path="/ajax/anatomylookup" class="org.zfin.gwt.root.server.LookupServiceImpl"/>
+    <servlet path="/ajax/anatomylookup" class="org.zfin.gwt.root.server.LookupRPCServiceImpl"/>
 </module>

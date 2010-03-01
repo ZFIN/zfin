@@ -14,6 +14,11 @@ public class StringTextBox extends AbstractTextBox<String> {
         }
     }
 
+    public boolean isEmpty(){
+        return getBoxValue()==null ;
+    }
+
+
     @Override
     public boolean isFieldEqual(String string) {
         String text = getText();

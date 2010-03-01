@@ -11,8 +11,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.LookupComposite;
-import org.zfin.gwt.root.util.LookupService;
-import org.zfin.gwt.root.util.LookupServiceAsync;
+import org.zfin.gwt.root.util.LookupRPCService;
+import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     private TermInfo currentTermInfo;
 
     // RPC classes being used for this section.
-    private LookupServiceAsync lookupRPCAsync = LookupService.App.getInstance();
+    private LookupRPCServiceAsync lookupRPCAsync = LookupRPCService.App.getInstance();
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
 
     // injected variables

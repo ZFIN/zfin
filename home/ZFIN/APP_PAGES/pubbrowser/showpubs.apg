@@ -882,7 +882,9 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
 	   and mrkrgoev_go_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
-	   and p.jtype not in ('Curation','Unpublished')and mrkrgoev_zdb_id not in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id) $infwhere order by $pubOrder;">
+	   and p.jtype not in ('Curation','Unpublished')
+       and mrkrgoev_gflag_name is null
+       $infwhere order by $pubOrder;">
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">
@@ -918,7 +920,9 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	   and mrkrgoev_go_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
-	   and p.jtype in ('Curation','Unpublished')and mrkrgoev_zdb_id not in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id) $infwhere;">
+	   and p.jtype in ('Curation','Unpublished')
+       and mrkrgoev_gflag_name is null
+        $infwhere;">
 
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
@@ -953,7 +957,9 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
 	   and mrkrgoev_go_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
-	   and p.jtype not in ('Curation','Unpublished')and mrkrgoev_zdb_id  in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id and goevflag_gflag_name='$goflag') $infwhere;">
+	   and p.jtype not in ('Curation','Unpublished')
+       and mrkrgoev_gflag_name is null
+       $infwhere;">
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">
@@ -988,7 +994,9 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
 	   and mrkrgoev_go_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
-	   and p.jtype  in ('Curation','Unpublished')and mrkrgoev_zdb_id  in (select goevflag_mrkrgoev_zdb_id from go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id and goevflag_gflag_name='$goflag') $infwhere;">
+	   and p.jtype  in ('Curation','Unpublished')
+        and mrkrgoev_gflag_name is null
+         $infwhere;">
   	<TR bgcolor=$showpubs_tr_bg>
     	<TD align=left>
       	<DIV class="show_pubs">

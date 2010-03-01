@@ -1,7 +1,6 @@
 package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -23,7 +22,7 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO>{
         initGUI();
         addInternalListeners(this);
         initWidget(panel);
-        RootPanel.get(StandardMarkerDivNames.headerDiv).add(this);
+        RootPanel.get(StandardDivNames.headerDiv).add(this);
     }
 
     protected void addInternalListeners(final HandlesError handlesError) {

@@ -149,13 +149,33 @@
     </definition>
 
     <definition name="alternate-gene-edit" extends="dev_layout">
-        <put name="staticTitle" value="GWT Transcript Edit"/>
+        <put name="staticTitle" value="GWT Gene Edit"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/alternate_gene_edit.jsp"/>
     </definition>
 
     <definition name="clone-edit" extends="dev_layout">
         <put name="staticTitle" value="GWT Clone Edit"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/clone_edit.jsp"/>
+    </definition>
+
+    <definition name="go-edit" extends="dev_layout">
+        <put name="staticTitle" value="GWT GO Edit"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_edit.jsp"/>
+    </definition>
+
+    <definition name="go-add" extends="dev_layout">
+        <put name="staticTitle" value="GWT GO Add"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_add.jsp"/>
+    </definition>
+
+    <definition name="go-clone" extends="dev_layout">
+        <put name="staticTitle" value="GWT GO Clone"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_clone.jsp"/>
+    </definition>
+
+    <definition name="alternate-go-edit" extends="dev_layout">
+        <put name="staticTitle" value="GWT Alternate GO Edit"/>
+        <put name="body" value="/jsp/dev-tools/gwt/modular_go_edit.jsp"/>
     </definition>
 
     <definition name="antibody-edit" extends="dev_layout">
@@ -166,6 +186,11 @@
     <definition name="gene-edit" extends="dev_layout">
         <put name="staticTitle" value="GWT Antibody Edit"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/gene_edit.jsp"/>
+    </definition>
+
+    <definition name="test-composite" extends="dev_layout">
+        <put name="staticTitle" value="Test Composite"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/test_composite.jsp"/>
     </definition>
 
     <definition name="lookup" extends="dev_layout">

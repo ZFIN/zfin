@@ -11,7 +11,7 @@ import org.zfin.gwt.marker.event.PublicationChangeEvent;
 import org.zfin.gwt.marker.event.PublicationChangeListener;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.ui.StringListBox;
-import org.zfin.gwt.root.util.LookupService;
+import org.zfin.gwt.root.util.LookupRPCService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class PublicationLookupBox extends Composite implements DirectAttributionListener{
 
-    private final StringListBox curatorPubList = new StringListBox();
+    private final StringListBox defaultPubList = new StringListBox();
     private final TextBox pubField = new TextBox();
     private final VerticalPanel panel = new VerticalPanel();
     private final VerticalPanel lookupPanel = new VerticalPanel();
@@ -46,21 +46,22 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
         // this won't run
         DeferredCommand.addCommand(new Command() {
             public void execute() {
-                publicationChanged(new PublicationChangeEvent(curatorPubList.getValue(0)));
+                publicationChanged(new PublicationChangeEvent(defaultPubList.getValue(0)));
             }
         });
+
     }
 
     public PublicationLookupBox() {
-        this(StandardMarkerDivNames.publicationLookupDiv);
+        this(StandardDivNames.publicationLookupDiv) ;
     }
 
     protected void addInternalListeners(){
         // default items
 //        curatorPubList.addItem("No default pubs");
-        curatorPubList.addChangeHandler(new ChangeHandler() {
+        defaultPubList.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                String selectedPub = curatorPubList.getValue(curatorPubList.getSelectedIndex());
+                String selectedPub = defaultPubList.getValue(defaultPubList.getSelectedIndex());
                 if (false == selectedPub.startsWith(PublicationValidator.ZDB_PUB_PREFIX)) {
                     selectedPub = "";
                 }
@@ -104,7 +105,7 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
         Label curatorPubLabel = new Label("Curator Pub:");
         HorizontalPanel panel2 = new HorizontalPanel();
         panel2.add(curatorPubLabel);
-        panel2.add(curatorPubList);
+        panel2.add(defaultPubList);
         lookupPanel.add(panel2);
 
         publicationDisplayPanel.setVisible(true);
@@ -114,24 +115,23 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
     }
 
     public void clearPublications() {
-        curatorPubList.clear();
+        defaultPubList.clear();
+        defaultPubList.addItem("Choose Pub:",null);
+    }
+
+    public void addInitPublications(){
+        defaultPubList.addItem("Scientific Curation", "ZDB-PUB-020723-5");
+        defaultPubList.addItem("Nomenclature", "ZDB-PUB-030508-1");
     }
 
     public void addPublication(PublicationDTO publicationAbstractDTO) {
-        if (curatorPubList.getItemCount() == 0) {
-            curatorPubList.addItem("Choose Pub:");
-            curatorPubList.addItem("Scientific Curation", "ZDB-PUB-020723-5");
-            curatorPubList.addItem("Nomenclature", "ZDB-PUB-030508-1");
-            addRecentPubs() ;
-        }
-        if (publicationAbstractDTO != null && false==curatorPubList.containsValue(publicationAbstractDTO.getZdbID())) {
+        if (publicationAbstractDTO != null && false== defaultPubList.containsValue(publicationAbstractDTO.getZdbID())) {
             if(publicationAbstractDTO.getTitle().length()< MAX_LENGTH){
-                curatorPubList.addItem(publicationAbstractDTO.getTitle(), publicationAbstractDTO.getZdbID());
+                defaultPubList.addItem(publicationAbstractDTO.getTitle(), publicationAbstractDTO.getZdbID());
             }
             else{
-                curatorPubList.addItem(publicationAbstractDTO.getTitle().substring(0,MAX_LENGTH)+"...", publicationAbstractDTO.getZdbID());
+                defaultPubList.addItem(publicationAbstractDTO.getTitle().substring(0,MAX_LENGTH)+"...", publicationAbstractDTO.getZdbID());
             }
-
         }
     }
 
@@ -141,7 +141,8 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
         if (pubChangeZdbID.length() == 0) {
             clearPubBox();
         } else {
-            String lookupString = pubField.getText().trim();
+//            String lookupString = pubField.getText().trim();
+            String lookupString = pubChangeZdbID.trim();
             if(false==lookupString.startsWith(PublicationValidator.ZDB_PUB_PREFIX)){
                 lookupString = PublicationValidator.ZDB_PUB_PREFIX + lookupString;
             }
@@ -165,9 +166,13 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
     }
 
     public void addRecentPublicationDTO(String publicationZdbID){
-        if(false==curatorPubList.containsValue(publicationZdbID)){
+        if(false== defaultPubList.containsValue(publicationZdbID)){
+            if(publicationAbstractDTO==null){
+                publicationAbstractDTO = new PublicationDTO();
+                publicationAbstractDTO.setZdbID(publicationZdbID);
+            }
             publicationAbstractDTO.setZdbID(publicationZdbID);
-            LookupService.App.getInstance().setRecentPublication(publicationZdbID,
+            LookupRPCService.App.getInstance().setRecentPublication(publicationZdbID,
                     new MarkerEditCallBack<PublicationDTO>(publicationZdbID){
                         @Override
                         public void onSuccess(PublicationDTO result) {
@@ -221,7 +226,7 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
 
     public void addRecentPubs() {
 
-        LookupService.App.getInstance().getRecentPublications(new MarkerEditCallBack<List<PublicationDTO>>("Failed to find recent publications: "){
+        LookupRPCService.App.getInstance().getRecentPublications(new MarkerEditCallBack<List<PublicationDTO>>("Failed to find recent publications: "){
             @Override
             public void onSuccess(List<PublicationDTO> results) {
                 if(results!=null && results.size()>0){

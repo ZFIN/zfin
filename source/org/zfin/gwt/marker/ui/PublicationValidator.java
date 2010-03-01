@@ -15,11 +15,11 @@ public class PublicationValidator implements Validator{
         if ((publicationZdbID == null ||
                 publicationZdbID.length() < MIN_LENGTH ||
                 false==publicationZdbID.startsWith(ZDB_PUB_PREFIX))){
-            handlesError.setError("Need to attribute name changes. Pub is invalid: "+publicationZdbID);
+            if(handlesError!=null){
+                handlesError.setError("Need to attribute name changes. Pub is invalid: "+publicationZdbID);
+            }
             return false ;
         }
-
         return true ;
-
     }
 }

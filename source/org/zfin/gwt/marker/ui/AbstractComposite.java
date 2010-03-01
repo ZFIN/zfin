@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import org.zfin.gwt.marker.event.PublicationChangeEvent;
 import org.zfin.gwt.marker.event.PublicationChangeListener;
-import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * This class provides basic composite.
  */
-public abstract class AbstractComposite<T extends MarkerDTO> extends Composite implements HandlesError, PublicationChangeListener {
+public abstract class AbstractComposite<T extends RelatedEntityDTO> extends Composite implements HandlesError, PublicationChangeListener {
 
     // GUI elements
     final VerticalPanel panel = new VerticalPanel();
@@ -33,6 +33,7 @@ public abstract class AbstractComposite<T extends MarkerDTO> extends Composite i
 
     protected abstract void revertGUI();
     protected abstract void initGUI();
+    protected abstract void setValues();
     protected abstract void addInternalListeners(HandlesError handlesError);
 
     public void setError(String message) {
@@ -60,6 +61,9 @@ public abstract class AbstractComposite<T extends MarkerDTO> extends Composite i
         handlesErrorListeners.add(handlesError);
     }
 
+    public T getDTO() {
+        return dto;
+    }
 
     public void setDTO(T dto) {
         this.dto = dto;

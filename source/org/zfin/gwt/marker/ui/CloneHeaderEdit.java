@@ -3,19 +3,14 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.CloneDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.StringListBox;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  */
@@ -53,7 +48,7 @@ public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO>{
         typeLabel.setHTML("<div class=\"attributionDefaultPub\">" + dto.getMarkerType() + "</font>");
         problemTypeListBox.addNullAndItems(dto.getProblemTypes()) ;
         problemTypeListBox.setIndexForValue(dto.getProblemType());
-        checkDirty();
+        handleDirty();
     }
 
 

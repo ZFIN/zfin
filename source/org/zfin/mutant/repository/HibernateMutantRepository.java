@@ -14,17 +14,18 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.Ontology;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GoTerm;
+import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
@@ -245,10 +246,17 @@ public class HibernateMutantRepository implements MutantRepository {
 
     @SuppressWarnings("unchecked")
     public List<GoTerm> getGoTermsByName(String name) {
+        String hql = "select distinct term from GoTerm term  " +
+                "where lower(term.name) like :name " +
+                " AND term.obsolete = :obsolete " ;
+        // we don't order, let client take care of it
+//                " order by term.name";
+
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(GoTerm.class);
-        criteria.add(Restrictions.like("name", "%" + name + "%"));
-        return criteria.list();
+        Query query = session.createQuery(hql);
+        query.setString("name", "%" + name.toLowerCase() + "%");
+        query.setBoolean("obsolete", false);
+        return query.list();
     }
 
     @SuppressWarnings("unchecked")
@@ -439,7 +447,7 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<String> getLinkageFeatureLG(Feature feat) {
         Session session = HibernateUtil.currentSession();
 
-    Query query = session.createQuery(
+        Query query = session.createQuery(
                 "select l.lg " +
                         "from Linkage l join l.linkageMemberFeatures as m " +
                         " where m.zdbID = :zdbId ");
@@ -569,9 +577,97 @@ public class HibernateMutantRepository implements MutantRepository {
         return (Term) crit.uniqueResult();
     }
 
-
-    public void invalidateCachedObjects() {
+    @Override
+    public List<Feature> getFeaturesForStandardAttribution(Publication publication) {
+        String hql = "select f from PublicationAttribution pa , Feature f " +
+                " where pa.dataZdbID=f.zdbID and pa.publication.zdbID= :pubZdbID  " +
+                " and pa.sourceType= :sourceType  ";
+        Query query = HibernateUtil.currentSession().createQuery(hql) ;
+        query.setString("pubZdbID",publication.getZdbID());
+        query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
+        return query.list();
     }
+
+    @Override
+    public List<Genotype> getGenotypesForStandardAttribution(Publication publication) {
+        String hql = "select distinct g from PublicationAttribution pa , Genotype g " +
+                " where pa.dataZdbID=g.zdbID and pa.publication.zdbID= :pubZdbID  " +
+                " and pa.sourceType= :sourceType  ";
+        Query query = HibernateUtil.currentSession().createQuery(hql) ;
+        query.setString("pubZdbID",publication.getZdbID());
+        query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
+        return query.list();
+    }
+
+    /**
+     * Go terms attributed as evidence to this marker by this pub.
+     * todo: Don't include IEA, IC .
+     * @param marker
+     * @param publication
+     * @return
+     */
+    @Override
+    public List<GoTerm> getGoTermsByMarkerAndPublication(Marker marker, Publication publication) {
+        String hql = "select distinct g from PublicationAttribution pa , GoTerm g , MarkerGoTermEvidence ev " +
+                " where pa.dataZdbID=ev.zdbID " +
+                " and pa.publication.zdbID= :pubZdbID  " +
+                " and ev.marker.zdbID = :markerZdbID " +
+                " and ev.evidenceCode.code not in (:excludedEvidenceCodes) " +
+                " and g.zdbID= ev.goTerm.id " +
+                " and pa.sourceType= :sourceType  ";
+        Query query = HibernateUtil.currentSession().createQuery(hql) ;
+        query.setString("pubZdbID",publication.getZdbID());
+        query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()} );
+        query.setString("markerZdbID",marker.getZdbID());
+        query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
+        return query.list();
+    }
+
+
+
+    @Override
+    public List<GoTerm> getGoTermsByPhenotypeAndPublication(Publication publication) {
+        String hql = "select distinct g from Phenotype p , GoTerm g  " +
+                " where p.publication.zdbID= :pubZdbID  " +
+                " and ( p.patoSuperTermzdbID = g.id " +
+                " or p.patoSubTermzdbID = g.id )" ;
+        Query query = HibernateUtil.currentSession().createQuery(hql) ;
+        query.setString("pubZdbID",publication.getZdbID());
+        return query.list();
+    }
+
+    @Override
+    public InferenceGroupMember addInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inferenceToAdd) {
+        InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
+        inferenceGroupMember.setMarkerGoTermEvidenceZdbID(markerGoTermEvidence.getZdbID());
+        inferenceGroupMember.setInferredFrom(inferenceToAdd);
+        if(markerGoTermEvidence.getInferredFrom()==null){
+            markerGoTermEvidence.setInferredFrom(new HashSet<InferenceGroupMember>());
+        }
+        markerGoTermEvidence.getInferredFrom().add(inferenceGroupMember) ;
+
+        HibernateUtil.currentSession().save(inferenceGroupMember);
+        return inferenceGroupMember ;
+    }
+
+    @Override
+    public void removeInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inference) {
+        for(Iterator<InferenceGroupMember> iterator = markerGoTermEvidence.getInferredFrom().iterator(); iterator.hasNext() ; ){
+            if(iterator.next().getInferredFrom().equals(inference)){
+                iterator.remove();
+                Criteria criteria2 = HibernateUtil.currentSession().createCriteria(InferenceGroupMember.class) ;
+                criteria2.add(Restrictions.eq("inferredFrom",inference)) ;
+                criteria2.add(Restrictions.eq("markerGoTermEvidenceZdbID",markerGoTermEvidence.getZdbID())) ;
+                InferenceGroupMember inferenceGroupMember = (InferenceGroupMember) criteria2.uniqueResult();
+                HibernateUtil.currentSession().delete(inferenceGroupMember);
+                return ;
+            }
+        }
+
+    }
+
+
+    public void invalidateCachedObjects() { }
 
 
 }

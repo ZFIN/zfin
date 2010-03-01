@@ -120,6 +120,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return publicationAttribution;
     }
 
+    @Override
+    public void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, Person person) {
+        insertUpdatesTable(recID,fieldName,new_value,comments,person.getZdbID(),person.getFullName());
+    }
+
     //retrieve a dataNote by its zdb_id
     public DataNote getDataNoteByID(String zdbID) {
         Session session = HibernateUtil.currentSession();

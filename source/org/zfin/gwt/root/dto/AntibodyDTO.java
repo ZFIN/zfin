@@ -1,7 +1,6 @@
 package org.zfin.gwt.root.dto;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents Clone object

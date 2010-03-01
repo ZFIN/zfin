@@ -29,6 +29,7 @@ public abstract class AbstractDataBox<T extends MarkerDTO> extends AbstractRever
         errorLabel.setStyleName("error");
     }
 
+
     public void setError(String message) {
         errorLabel.setText(message);
     }

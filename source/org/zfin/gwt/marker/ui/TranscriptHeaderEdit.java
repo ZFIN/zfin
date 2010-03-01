@@ -1,12 +1,12 @@
 package org.zfin.gwt.marker.ui;
 
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.TranscriptDTO;
 import org.zfin.gwt.root.ui.HandlesError;
@@ -30,7 +30,7 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO>{
         initGUI();
         initWidget(panel);
         addInternalListeners(this);
-        RootPanel.get(StandardMarkerDivNames.headerDiv).add(this);
+        RootPanel.get(StandardDivNames.headerDiv).add(this);
     }
 
     protected void addInternalListeners(final HandlesError handlesError) {
@@ -82,7 +82,7 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO>{
         nameBox.setText(dto.getName());
         typeListBox.setIndexForValue(dto.getTranscriptType());
         statusListBox.setIndexForValue(dto.getTranscriptStatus());
-        checkDirty();
+        handleDirty();
     }
 
     protected void sendUpdates() {

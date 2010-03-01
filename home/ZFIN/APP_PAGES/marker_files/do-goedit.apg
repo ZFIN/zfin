@@ -127,44 +127,6 @@ optional:
 <?/MIBLOCK>
   
 
-<?MIBLOCK COND="$(EC,$attr,flag)">
-     <?MIBLOCK COND="$(EC,$oldisnot,yes)">
-         <?MISQL COND="$(EC,$isnot,f)" SQL="
-  		delete from go_evidence_flag 
-				    where goevflag_mrkrgoev_zdb_id='$OID' 
-				      and goevflag_gflag_name     ='not'">
-	 <?/MISQL>
-     <?MIELSE>
-        <?MISQL COND="$(EC,$isnot,t)" SQL="
-	    insert into go_evidence_flag (goevflag_mrkrgoev_zdb_id, goevflag_gflag_name) 
-					values ('$OID','not')">
-	<?/MISQL>
- 
-     <?/MIBLOCK>
-
-     <?MIBLOCK COND="$(EC,$oldcontribs,yes)">
-         <?MISQL COND="$(EC,$contribs,f)" SQL="
-		delete from go_evidence_flag 
-				where goevflag_mrkrgoev_zdb_id='$OID' 
-				  and goevflag_gflag_name='contributes to'">
-	 <?/MISQL>
-     
-     <?MIELSE>
-        <?MISQL COND="$(EC,$contribs,t)" SQL="
-	    insert into go_evidence_flag  (goevflag_mrkrgoev_zdb_id, goevflag_gflag_name)
-				values ('$OID','contributes to')">
-	<?/MISQL>
-
-     <?/MIBLOCK>
-     <?MISQL SQL="
-    	update marker_go_term_evidence set mrkrgoev_date_modified = CURRENT,
-				           mrkrgoev_modified_by   = '$ZDB_name'	
-      				where mrkrgoev_zdb_id='$OID'; ">
-     <?/MISQL>
-
-<?/MIBLOCK>
-
-
 <?MIBLOCK COND="$(EC,$attr,inference)">
    <?MISQL SQL=" select mrkrgoev_evidence_code 
 		     from marker_go_term_evidence

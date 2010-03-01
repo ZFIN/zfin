@@ -28,7 +28,7 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
 
 
     // gui elements
-    private final ViewMarkerLabel transcriptViewMarkerLabel = new ViewMarkerLabel("[View Transcript]","/action/marker/transcript-view?zdbID=","Ignore");
+    private final ViewClickLabel transcriptViewClickLabel = new ViewClickLabel("[View Transcript]","/action/marker/transcript-view?zdbID=","Ignore");
     private final TranscriptHeaderEdit transcriptHeaderEdit = new TranscriptHeaderEdit();
     private final RelatedMarkerBox relatedGenesBox =
             new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCES_TRANSCRIPT, false, geneDiv);
@@ -117,63 +117,63 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
             }
         });
 
-        transcriptViewMarkerLabel.addViewMarkerListeners(new ViewMarkerListener() {
+        transcriptViewClickLabel.addViewClickedListeners(new ViewClickedListener() {
             /**
              * from fogbugz 4357, check direct attribution, nucleotide sequence + attribution
              */
             public void finishedView() {
                 if (directAttributionTable.getNumberOfPublications() == 0) {
-                    transcriptViewMarkerLabel.setError("Transcript requires attribution");
+                    transcriptViewClickLabel.setError("Transcript requires attribution");
                     directAttributionTable.setError("Transcript requires attribution");
                 }
                 else
                 if (nucleotideSequenceArea.getNumberOfSequences() == 0) {
-                    transcriptViewMarkerLabel.setError("Transcript requires sequence");
+                    transcriptViewClickLabel.setError("Transcript requires sequence");
                     nucleotideSequenceArea.setError("Transcript requires sequence");
                 }
                 else
                 if (nucleotideSequenceArea.getNumberOfAttributions() == 0) {
-                    transcriptViewMarkerLabel.setError("Transcript sequence requires attribution");
+                    transcriptViewClickLabel.setError("Transcript sequence requires attribution");
                     nucleotideSequenceArea.setError("Transcript sequence requires attribution");
                 }
                 else
                 if(transcriptHeaderEdit.isDirty()){
                     String error = "Name/type/status has unsaved changes.";
-                    transcriptViewMarkerLabel.setError(error);
+                    transcriptViewClickLabel.setError(error);
                     transcriptHeaderEdit.setError(error);
                 }
                 else
-                if(noteBox.isDirty() || noteBox.hasDirtyNotes()){
+                if(markerNoteBox.isDirty() || markerNoteBox.hasDirtyNotes()){
                     String error = "Note changes not saved.";
-                    transcriptViewMarkerLabel.setError(error);
-                    noteBox.setError(error);
+                    transcriptViewClickLabel.setError(error);
+                    markerNoteBox.setError(error);
                 }
                 else
                 if(relatedGenesBox.isDirty()){
                     String error = "Gene entry not added.";
-                    transcriptViewMarkerLabel.setError(error);
+                    transcriptViewClickLabel.setError(error);
                     relatedGenesBox.setError(error);
                 }
                 else
                 if(relatedClonesBox.isDirty()){
                     String error = "Clone entry not added.";
-                    transcriptViewMarkerLabel.setError(error);
+                    transcriptViewClickLabel.setError(error);
                     relatedClonesBox.setError(error);
                 }
                 else
                 if(previousNamesBox.isDirty()){
                     String error = "Alias entry not added.";
-                    transcriptViewMarkerLabel.setError(error);
+                    transcriptViewClickLabel.setError(error);
                     previousNamesBox.setError(error);
                 }
                 else
                 if(dbLinkTable.isDirty()){
                     String error = "Supporting sequence not added.";
-                    transcriptViewMarkerLabel.setError(error);
+                    transcriptViewClickLabel.setError(error);
                     dbLinkTable.setError(error);
                 }
                 else {
-                    transcriptViewMarkerLabel.continueToViewTranscript();
+                    transcriptViewClickLabel.continueToViewTranscript();
                 }
 
             }
@@ -191,8 +191,8 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
                 // ignores DTO? assume already set
                 directAttributionTable.setZdbID(dto.getZdbID());
                 directAttributionTable.setRecordAttributions(dto.getRecordAttributions());
-                noteBox.setDTO(dto);
-                transcriptViewMarkerLabel.setDTO(dto);
+                markerNoteBox.setDTO(dto);
+                transcriptViewClickLabel.setDTO(dto);
                 transcriptHeaderEdit.setDTO(dto);
                 previousNamesBox.setRelatedEntities(dto.getZdbID(), dto.getAliasAttributes());
                 relatedProteinsBox.setRelatedEntities(dto.getZdbID(), dto.getRelatedProteinAttributes());
@@ -224,12 +224,12 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
         publicationLookupBox.addPublicationChangeListener(proteinSequenceArea);
         publicationLookupBox.addPublicationChangeListener(dbLinkTable);
 
-        synchronizeHandlesErrorListener(transcriptViewMarkerLabel);
+        synchronizeHandlesErrorListener(transcriptViewClickLabel);
         synchronizeHandlesErrorListener(transcriptHeaderEdit);
         synchronizeHandlesErrorListener(relatedGenesBox);
         synchronizeHandlesErrorListener(relatedClonesBox);
         synchronizeHandlesErrorListener(relatedProteinsBox);
-        synchronizeHandlesErrorListener(noteBox);
+        synchronizeHandlesErrorListener(markerNoteBox);
         synchronizeHandlesErrorListener(nucleotideSequenceArea);
         synchronizeHandlesErrorListener(proteinSequenceArea);
         synchronizeHandlesErrorListener(dbLinkTable);
@@ -243,7 +243,7 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
         publicationLookupBox.addPublication(new PublicationDTO("Manual Annotation of Genome", "ZDB-PUB-091007-1"));
         publicationLookupBox.addRecentPubs() ;
 
-        noteBox.removeEditMode(NoteBox.EditMode.EXTERNAL);
+        markerNoteBox.removeEditMode(MarkerNoteBox.EditMode.EXTERNAL);
 
         TranscriptRPCService.App.getInstance().getTranscriptTypes(
                 new MarkerEditCallBack<List<String>>("failed to load types: ") {

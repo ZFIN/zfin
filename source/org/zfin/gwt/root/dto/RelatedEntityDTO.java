@@ -7,7 +7,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable  {
 
     // data
-    protected String dataZdbID;
+    protected String zdbID ;  // the primary key of this object
+    protected String dataZdbID; // the attached value
     protected String publicationZdbID;
 
     // display
@@ -52,6 +53,14 @@ public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable  {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getZdbID() {
+        return zdbID;
+    }
+
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
     }
 
     public String getDataZdbID() {

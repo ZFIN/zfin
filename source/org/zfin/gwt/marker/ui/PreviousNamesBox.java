@@ -14,7 +14,7 @@ public class PreviousNamesBox extends RelatedEntityBox {
     public PreviousNamesBox() {
         super();
         addInternalListeners(this);
-        RootPanel.get(StandardMarkerDivNames.previousNameDiv).add(this);
+        RootPanel.get(StandardDivNames.previousNameDiv).add(this);
     }
 
 

@@ -67,12 +67,17 @@ public class StringEnumUserType implements UserType, ParameterizedType {
             return null;
         // convert enumeration name into upper case as the names are always all upper case.
         // this needs to be done if the enumeration string is not all caps.
+        return Enum.valueOf(enumClass,mapName(name)) ; 
+    }
+
+    public static String mapName(String name){
         name = name.replace('-', '_');
         name = name.replace('+', '_');
         name = name.replace(' ', '_');
         name = name.replace('(', '_');
         name = name.replace(')', '_');
-        return Enum.valueOf(enumClass, name.toUpperCase());
+        name = name.toUpperCase();
+        return name ;
     }
 
     public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {

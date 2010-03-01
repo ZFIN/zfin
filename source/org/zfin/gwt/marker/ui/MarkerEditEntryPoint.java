@@ -2,6 +2,7 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.i18n.client.Dictionary;
+import org.zfin.gwt.root.ui.TestComposite;
 
 /**
  */
@@ -34,6 +35,19 @@ public class MarkerEditEntryPoint implements EntryPoint {
         else
         if(zdbID.indexOf("ATB")>0){
             (new AntibodyEditController()).initGUI();
+        }
+        else
+        if(zdbID.indexOf("MRKRGOEV")>=0 ){
+            if(zdbID.startsWith("Alternate")){
+                (new ModularGoEvidenceEditController()).initGUI();
+            }
+            else{
+                (new GoEvidenceEditController()).initGUI();
+            }
+        }
+        else
+        if(zdbID.equals("test")){
+            (new TestComposite()).initGUI();
         }
         else{
             (new CloneEditController()).initGUI();

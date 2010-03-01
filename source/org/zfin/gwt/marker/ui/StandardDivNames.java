@@ -3,7 +3,7 @@ package org.zfin.gwt.marker.ui;
 /**
  * Div names to connect.
  */
-public interface StandardMarkerDivNames {
+public interface StandardDivNames {
 
     static final String viewDiv = "viewName";
     static final String headerDiv = "headerName";

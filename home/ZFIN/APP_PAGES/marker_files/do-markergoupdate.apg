@@ -124,17 +124,18 @@ PREFIX: mkrgoupdate_
    <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values('$evnew_id');"><?/MISQL>
    <?MICOMMENT>GO attribution in record_attribution is added by the db trigger. <?/MICOMMENT>
    <?MIVAR NAME=$notes>$(REPLACE,$notes,','')<?/MIVAR>
-   <?MISQL SQL="
+   <?MIVAR NAME=flag><?/MIVAR>
+   <?MIVAR COND="$(EC,$is_not,true)" NAME="flag">not<?/MIVAR> 
+   <?MIVAR COND="$(EC,$contributes,true)" NAME="flag">contributes to<?/MIVAR> 
+   <?MISQL COND="$(NE,$flag,)" SQL="
+	insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id,mrkrgoev_go_term_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_evidence_code, mrkrgoev_notes, mrkrgoev_date_entered, mrkrgoev_date_modified, mrkrgoev_contributed_by, mrkrgoev_modified_by,mrkrgoev_gflag_name)
+        		values ('$evnew_id','$OID','$go_zdb_id','$pub_id', '$evidence_code', '$notes', CURRENT, CURRENT, '$ZDB_name', '$ZDB_name','$flag');">
+   <?/MISQL>
+   <?MISQL COND="$(EC,$flag,)" SQL="
 	insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id,mrkrgoev_go_term_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_evidence_code, mrkrgoev_notes, mrkrgoev_date_entered, mrkrgoev_date_modified, mrkrgoev_contributed_by, mrkrgoev_modified_by)
         		values ('$evnew_id','$OID','$go_zdb_id','$pub_id', '$evidence_code', '$notes', CURRENT, CURRENT, '$ZDB_name', '$ZDB_name');">
    <?/MISQL>
 
-   <?MISQL COND="$(EC,$is_not,true)" SQL="insert into go_evidence_flag (goevflag_gflag_name,goevflag_mrkrgoev_zdb_id) 
-						values ('not', '$evnew_id')">
-   <?/MISQL>
-   <?MISQL COND="$(EC,$contributes,true)" SQL="insert into go_evidence_flag (goevflag_gflag_name,goevflag_mrkrgoev_zdb_id) 
-						values ('contributes to', '$evnew_id')">
-   <?/MISQL>
 
    <!--now processing those entries that have inference data-->
 

@@ -5,9 +5,10 @@ package org.zfin.ontology;
  */
 public interface OntologyTerm {
 
-    String getId();
+    String getID();
 
     String getTermName();
 
+    boolean isObsolete() ;
 
 }

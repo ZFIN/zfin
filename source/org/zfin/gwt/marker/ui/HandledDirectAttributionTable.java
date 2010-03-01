@@ -8,7 +8,7 @@ class HandledDirectAttributionTable extends DirectAttributionTable {
     public HandledDirectAttributionTable() {
         super();
         addInternalListeners(this);
-        RootPanel.get(StandardMarkerDivNames.directAttributionDiv).add(this);
+        RootPanel.get(StandardDivNames.directAttributionDiv).add(this);
     }
 
     void addInternalListeners(final DirectAttributionTable directAttributionTable) {

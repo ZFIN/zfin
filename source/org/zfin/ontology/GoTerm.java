@@ -35,7 +35,7 @@ public class GoTerm implements OntologyTerm, Comparable<GoTerm> {
         this.goID = goID;
     }
 
-    public String getId() {
+    public String getID() {
         return zdbID;
     }
 
@@ -71,4 +71,5 @@ public class GoTerm implements OntologyTerm, Comparable<GoTerm> {
             return 1;
         return name.compareTo(goTerm.getName());
     }
+
 }

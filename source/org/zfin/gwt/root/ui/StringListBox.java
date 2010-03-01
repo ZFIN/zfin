@@ -12,6 +12,10 @@ public class StringListBox extends AbstractListBox<String>{
         super();
     }
 
+    public boolean isSelectedNull(){
+        return getSelected()==null ; 
+    }
+
     public String getSelected() {
         String value = getValue(getSelectedIndex());
         if (value.equals(NULL_STRING)) {
