@@ -263,13 +263,15 @@ insert into sec_oks (sec_id, prim_id)
 update sec_oks
   set prim_zdb_id = (select term_zdb_id 
       		       from term
-		       where term_ont_id = prim_id);
+		       where term_ont_id = prim_id
+		       and term_ontology ='pato.quality');
 
  
 update sec_oks
   set sec_zdb_id = (select term_zdb_id 
       		       from term
-		       where term_ont_id = sec_id);
+		       where term_ont_id = sec_id
+		       and term_ontology='pato.quality');
 
 create temp table sec_unload 
   (
@@ -285,7 +287,8 @@ update term
   set term_is_secondary = 't'
   where exists (Select 'x'
 		  from sec_oks
-		  where term_ont_id = sec_id) ;
+		  where term_ont_id = sec_id
+		  and term_ontology ='pato.quality') ;
 
 unload to term_no_longer_secondary.txt
   select term_name, term_ont_id, term_zdb_id
@@ -294,7 +297,7 @@ unload to term_no_longer_secondary.txt
     and not exists (Select 'x'
 		  from sec_oks
 		  where term_ont_id = sec_id
-		  and term_ontology = 'pato.quality') ;
+		  ) ;
 
 --set these back to primary for now
 
@@ -303,7 +306,7 @@ update term
   where not exists (Select 'x'
 		  from sec_oks
 		  where term_ont_id = sec_id
-		  and term_ontology = 'pato.quality') 
+		  ) 
   and term_is_secondary = 't';
 
 
