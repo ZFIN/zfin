@@ -48,6 +48,8 @@ public interface TermRPCService extends RemoteService {
 
     Set<String> getInferencesByMarkerAndType(GoEvidenceDTO dto, String inferenceCategory);
 
+    boolean validateAccession(String accession, String inferenceCategory) ;
+
     GoEvidenceDTO createMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO);
 
     GoTermDTO getGOTermByName(String value);

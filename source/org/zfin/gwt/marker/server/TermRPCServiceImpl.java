@@ -265,8 +265,8 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
         return getMarkerGoTermEvidenceDTO(dto.getDataZdbID());
     }
 
-    private boolean validateAccession(String accession, String inferenceCategory) {
-//        InferenceCategory.
+    @Override
+    public boolean validateAccession(String accession, String inferenceCategory) {
         if( inferenceCategory.equals(InferenceCategory.GENBANK.name())
                 ||
                 inferenceCategory.equals(InferenceCategory.REFSEQ.name())

@@ -31,4 +31,6 @@ public interface TermRPCServiceAsync {
     void createMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO, AsyncCallback<GoEvidenceDTO> async);
 
     void getGOTermByName(String value, AsyncCallback<GoTermDTO> asyncCallback);
+
+    void validateAccession(String accession, String inferenceCategory, AsyncCallback<Boolean> async);
 }

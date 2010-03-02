@@ -2,6 +2,7 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.marker.event.RelatedEntityAdapter;
 import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
@@ -236,7 +237,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
 
         Set<String> inferredFrom = dto.getInferredFrom();
         if(inferredFrom!=null){
-            for(String inference : inferredFrom){
+            for(final String inference : inferredFrom){
                 addToGUI(inference);
             }
         }
@@ -349,8 +350,28 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
         }
         prefixToSend = inferenceCategory.prefix();
 
-        addToGUI(fullAccession);
-        handleDirty();
+        TermRPCService.App.getInstance().validateAccession(valueToSend,inferenceCategoryList.getSelected(),
+                new MarkerEditCallBack<Boolean>("Failed to validate accession ["+valueToSend+ "] " +
+                        "for inference ["+inferenceCategoryList.getSelected()+"]"){
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        if(result){
+                            addToGUI(fullAccession);
+                            handleDirty();
+                        }
+                        else{
+                            setError("Invalid accession["+valueToSend+"] for category["+inferenceCategoryList.getSelected()+"]");
+                        }
+                        notWorking();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        super.onFailure(throwable);
+                        handleDirty();
+                        notWorking();
+                    }
+                });
     }
 
     protected void addToGUI(String name) {

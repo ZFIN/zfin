@@ -34,18 +34,6 @@ public class InferenceListBoxComposite extends AbstractInferenceListBox{
         // add additional button for handling button adds?
     }
 
-//    @Override
-//    public boolean isDirty(GoEvidenceDTO externalDTO) {
-//        if(externalDTO==null) return false ;
-//        Set<String> inferences = externalDTO.getInferredFrom();
-//        for(String internalInference : dto.getInferredFrom()){
-//            if(false == inferences.contains(internalInference)){
-//                return true ;
-//            }
-//        }
-//        return false ;
-//    }
-
     @Override
     public boolean isDirty() {
 
