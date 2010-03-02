@@ -20,10 +20,12 @@ public class GoEvidenceValidator {
         String pubName = null ;
 
         GoPubEnum pubEnum = GoPubEnum.getPubForZdbID(dto.getPublicationZdbID());
-        switch (pubEnum){
-            case INTERPRO: case SPKW: case EC: case ROOT:
-                pubName = pubEnum.title();
-                break ;
+        if(pubEnum!=null){
+            switch (pubEnum){
+                case INTERPRO: case SPKW: case EC: case ROOT:
+                    pubName = pubEnum.title();
+                    break ;
+            }
         }
 
         return generateErrorString(dto,pubName) ;
