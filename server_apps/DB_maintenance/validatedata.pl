@@ -2698,7 +2698,6 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
   my $sql = 'select a.mrkrgoev_zdb_id, 
                     a.mrkrgoev_mrkr_zdb_id,
                     b.mrkrgoev_zdb_id,
-                    b.mrkrgoev_mrkr_zdb_id,
                     count(*)
 	       from marker_go_term_evidence a, inference_group_member ia,
 		    marker_go_Term_evidence b, inference_group_member ib
