@@ -2826,7 +2826,7 @@ sub mrkrgoevGoevflagDuplicatesFound ($) {
                         mrkrgoev_go_term_zdb_id,
                         mrkrgoev_source_zdb_id,
                         mrkrgoev_evidence_code,
-                        goevflag_gflag_name
+                        mrkrgoev_gflag_name
                having count(*) > 1 ';
 
   my @colDesc = ("count", 
@@ -2834,7 +2834,7 @@ sub mrkrgoevGoevflagDuplicatesFound ($) {
 		 "mrkrgoev_go_term_zdb_id",
 		 "mrkrgoev_source_zdb_id",
 		 "mrkrgoev_evidence_code",
-                 "goevflag_gflag_name");
+         "mrkrgoev_gflag_name");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
   if ( $nRecords > 0 ) {
