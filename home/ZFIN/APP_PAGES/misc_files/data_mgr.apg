@@ -157,7 +157,7 @@ c.clone_mrkr_zdb_id='$OID';
   <?MIELSE> <!--GO records-->
 
 <TD>
-    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$OID"><font size=-1>Add/Update GO annotations</a><?/MIVAR>
+    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$OID"><font color=red size=-1>Add/Update GO annotations</a><?/MIVAR>
 </TD>
 <?/MIBLOCK>
 
