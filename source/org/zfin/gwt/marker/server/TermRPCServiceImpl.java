@@ -8,8 +8,11 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.datatransfer.webservice.EBIFetch;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.marker.ui.GoEvidenceEditController;
+import org.zfin.gwt.marker.ui.ModularGoEvidenceEditController;
 import org.zfin.gwt.marker.ui.TermRPCService;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.PublicationSessionKey;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -22,10 +25,13 @@ import org.zfin.ontology.GoTerm;
 import org.zfin.orthology.Species;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
-import org.zfin.publication.PublicationService;
+import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.*;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.*;
 
@@ -97,7 +103,7 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(goEvidenceDTO.getPublicationZdbID());
         markerGoTermEvidence.setSource(publication);
 
-        PublicationService.addRecentPublications(getServletContext(),publication) ;
+        PublicationService.addRecentPublications(getServletContext(),publication, ModularGoEvidenceEditController.PUB_KEY) ;
 
         GoEvidenceCode goEvidenceCode = (GoEvidenceCode) HibernateUtil.currentSession().createCriteria(GoEvidenceCode.class).add(Restrictions.eq("code",goEvidenceDTO.getEvidenceCode().name())).uniqueResult();
         markerGoTermEvidence.setEvidenceCode(goEvidenceCode);
@@ -420,7 +426,7 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
         markerGoTermEvidence.setSource(publication);
 
         try{
-            PublicationService.addRecentPublications(getServletContext(),publication) ;
+            PublicationService.addRecentPublications(getServletContext(),publication, PublicationSessionKey.GOCURATION) ;
         }catch(NullPointerException npe){
             // this is normal for test mode
         }

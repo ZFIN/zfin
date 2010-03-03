@@ -9,6 +9,7 @@ import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
+import org.zfin.gwt.root.ui.PublicationSessionKey;
 
 import java.util.List;
 
@@ -38,7 +39,8 @@ public final class AlternateGeneEditController extends AbstractFullMarkerEditCon
     protected void setValues() {
         publicationLookupBox.clearPublications();
         publicationLookupBox.addPublication(new PublicationDTO("VEGA Database Links", "ZDB-PUB-030703-1"));
-        publicationLookupBox.addRecentPubs() ;
+        publicationLookupBox.setKey(PublicationSessionKey.GENE);
+        publicationLookupBox.getRecentPubs() ;
 
         markerNoteBox.removeEditMode(MarkerNoteBox.EditMode.EXTERNAL);
     }

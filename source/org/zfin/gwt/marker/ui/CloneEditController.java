@@ -11,6 +11,7 @@ import org.zfin.gwt.root.dto.CloneDTO;
 import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
+import org.zfin.gwt.root.ui.PublicationSessionKey;
 
 import java.util.List;
 
@@ -49,7 +50,8 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
     protected void setValues() {
         publicationLookupBox.clearPublications();
         publicationLookupBox.addPublication(new PublicationDTO("VEGA Database Links", "ZDB-PUB-030703-1"));
-        publicationLookupBox.addRecentPubs() ;
+        publicationLookupBox.setKey(PublicationSessionKey.CLONE);
+        publicationLookupBox.getRecentPubs() ;
 
         markerNoteBox.removeEditMode(MarkerNoteBox.EditMode.EXTERNAL);
     }

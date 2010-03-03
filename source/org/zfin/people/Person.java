@@ -189,8 +189,9 @@ public class Person implements UserDetails, Serializable, Comparable<Person> {
      */
     public static Person getCurrentSecurityUser() {
         SecurityContext context = SecurityContextHolder.getContext();
-        if (context == null)
+        if (context == null) {
             return null;
+        }
         Authentication authentication = context.getAuthentication();
         if (authentication == null)
             return null;

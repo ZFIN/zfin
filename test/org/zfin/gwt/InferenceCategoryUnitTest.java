@@ -1,7 +1,6 @@
 package org.zfin.gwt;
 
 import org.junit.Test;
-import org.zfin.gwt.root.dto.GoPubEnum;
 import org.zfin.gwt.root.dto.InferenceCategory;
 
 import static org.junit.Assert.assertEquals;

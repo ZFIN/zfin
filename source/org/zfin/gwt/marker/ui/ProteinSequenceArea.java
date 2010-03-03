@@ -201,7 +201,7 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
         this.attributionRequired = isAttributionRequired;
     }
 
-    public void publicationChanged(PublicationChangeEvent event) {
+    public void onPublicationChanged(PublicationChangeEvent event) {
         this.publicationZdbID = event.getPublication();
     }
 

@@ -1,7 +1,10 @@
 package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.GoEvidenceDTO;
+import org.zfin.gwt.root.dto.GoTermDTO;
+import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.RelatedEntityDTO;
 
 import java.util.List;
 import java.util.Set;

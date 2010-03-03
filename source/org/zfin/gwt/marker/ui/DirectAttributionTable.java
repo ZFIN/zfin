@@ -176,7 +176,7 @@ public class DirectAttributionTable extends Composite
         directAttributionListeners.add(directAttributionListener);
     }
 
-    public void publicationChanged(PublicationChangeEvent event) {
+    public void onPublicationChanged(PublicationChangeEvent event) {
         fireEventSuccess();
         setPublication(event.getPublication());
     }

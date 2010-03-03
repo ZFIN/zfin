@@ -2,7 +2,7 @@
 <%
     String state = request.getParameter(GoEvidenceEditController.STATE_STRING);
     if(state==null){
-        state = GoEvidenceEditController.State.EDIT.name();
+        state = GoEvidenceEditController.Action.EDIT.name();
     }
     String zdbID = request.getParameter(GoEvidenceEditController.LOOKUP_ZDBID);
     String pubID = request.getParameter(GoEvidenceEditController.PUB_ZDBID);

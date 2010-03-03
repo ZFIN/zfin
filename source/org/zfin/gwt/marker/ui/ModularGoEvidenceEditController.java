@@ -3,9 +3,10 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.i18n.client.Dictionary;
 import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
+import org.zfin.gwt.root.dto.GoCurationDefaultPublications;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.dto.GoPubEnum;
 import org.zfin.gwt.root.dto.PublicationDTO;
+import org.zfin.gwt.root.ui.PublicationSessionKey;
 
 /**
  * A GWT class for adding proteins to genes on the markerview.apg page.
@@ -18,6 +19,8 @@ public final class ModularGoEvidenceEditController extends AbstractRelatedEntity
     private final HandledInferenceListBox inferenceListBox = new HandledInferenceListBox();
     private final GoDetailsBox goTextArea = new GoDetailsBox();
 
+    // lookup key
+    public final static String PUB_KEY = "GO" ;
 
     public void initGUI() {
         loadDTO();
@@ -27,13 +30,14 @@ public final class ModularGoEvidenceEditController extends AbstractRelatedEntity
 
     protected void setValues() {
         publicationLookupBox.clearPublications();
-        publicationLookupBox.addPublication(new PublicationDTO(GoPubEnum.INTERPRO));
-        publicationLookupBox.addPublication(new PublicationDTO(GoPubEnum.SPKW));
-        publicationLookupBox.addPublication(new PublicationDTO(GoPubEnum.EC));
-        publicationLookupBox.addPublication(new PublicationDTO(GoPubEnum.ROOT));
+        publicationLookupBox.addPublication(new PublicationDTO(GoCurationDefaultPublications.INTERPRO));
+        publicationLookupBox.addPublication(new PublicationDTO(GoCurationDefaultPublications.SPKW));
+        publicationLookupBox.addPublication(new PublicationDTO(GoCurationDefaultPublications.EC));
+        publicationLookupBox.addPublication(new PublicationDTO(GoCurationDefaultPublications.ROOT));
         publicationLookupBox.addPublication(new PublicationDTO("ISS from Ref. Genome", "ZDB-PUB-071010-1"));
         publicationLookupBox.addPublication(new PublicationDTO("ISS from Manually Curated Orthology", "ZDB-PUB-040216-1"));
-        publicationLookupBox.addRecentPubs() ;
+        publicationLookupBox.setKey(PublicationSessionKey.GOCURATION) ;
+        publicationLookupBox.getRecentPubs() ;
     }
 
     protected void addListeners() {

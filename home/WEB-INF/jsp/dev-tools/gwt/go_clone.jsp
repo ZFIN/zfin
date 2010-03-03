@@ -32,7 +32,7 @@
 <script type="text/javascript">
     var MarkerProperties= {
         <%--zdbID : "<%= zdbID%>",--%>
-        <%=GoEvidenceEditController.STATE_STRING%>: "<%=GoEvidenceEditController.State.CLONE%>",
+        <%=GoEvidenceEditController.STATE_STRING%>: "<%=GoEvidenceEditController.Action.CLONE%>",
         <%=GoEvidenceEditController.PUB_ZDBID%>: "<%= pubID%>",
         <%=GoEvidenceEditController.LOOKUP_ZDBID%> : "<%= zdbID%>"
     } ;

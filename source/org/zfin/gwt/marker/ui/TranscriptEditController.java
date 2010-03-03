@@ -11,6 +11,7 @@ import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.dto.TranscriptDTO;
 import org.zfin.gwt.root.ui.AbstractListBox;
+import org.zfin.gwt.root.ui.PublicationSessionKey;
 
 import java.util.List;
 
@@ -241,7 +242,8 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
         publicationLookupBox.addPublication(new PublicationDTO("Microarray Expression to Gene Association in ZFIN", "ZDB-PUB-071218-1"));
         publicationLookupBox.addPublication(new PublicationDTO("miRBase", "ZDB-PUB-081217-13"));
         publicationLookupBox.addPublication(new PublicationDTO("Manual Annotation of Genome", "ZDB-PUB-091007-1"));
-        publicationLookupBox.addRecentPubs() ;
+        publicationLookupBox.setKey(PublicationSessionKey.TRANSCRIPT);
+        publicationLookupBox.getRecentPubs() ;
 
         markerNoteBox.removeEditMode(MarkerNoteBox.EditMode.EXTERNAL);
 

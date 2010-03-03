@@ -273,12 +273,12 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
 
 
     @Override
-    public void publicationChanged(PublicationChangeEvent event) {
+    public void onPublicationChanged(PublicationChangeEvent event) {
         if(event.isNotEmpty()){
-            super.publicationChanged(event);
+            super.onPublicationChanged(event);
             pubLabel.setText(publicationZdbID);
 
-            GoPubEnum goPubEnum = GoPubEnum.getPubForZdbID(publicationZdbID) ;
+            GoCurationDefaultPublications goPubEnum = GoCurationDefaultPublications.getPubForZdbID(publicationZdbID) ;
             if(goPubEnum!=null){
                 switch(goPubEnum){
                     case INTERPRO:

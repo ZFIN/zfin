@@ -12,13 +12,14 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.zfin.antibody.Antibody;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.ui.PublicationSessionKey;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
-import org.zfin.publication.PublicationService;
+import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -73,7 +74,7 @@ public class AntibodyCreateController extends SimpleFormController {
 
             mr.createMarker(newAntibody, antibodyPub);
             ir.insertUpdatesTable(newAntibody, "new Antibody", "", currentUser);
-            PublicationService.addRecentPublications(getServletContext(),antibodyPub) ;
+            PublicationService.addRecentPublications(getServletContext(),antibodyPub, PublicationSessionKey.ANTIBODY) ;
 
             tx.commit();
 

@@ -1,6 +1,9 @@
 package org.zfin.gwt.marker.ui;
 
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
@@ -33,6 +36,7 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
 
     // internal data
     private PublicationDTO publicationAbstractDTO;
+    private String key ;
 
     public PublicationLookupBox(String div){
         initGUI();
@@ -172,7 +176,8 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
                 publicationAbstractDTO.setZdbID(publicationZdbID);
             }
             publicationAbstractDTO.setZdbID(publicationZdbID);
-            LookupRPCService.App.getInstance().setRecentPublication(publicationZdbID,
+            LookupRPCService.App.getInstance().addRecentPublication(
+                    publicationZdbID,this.key,
                     new MarkerEditCallBack<PublicationDTO>(publicationZdbID){
                         @Override
                         public void onSuccess(PublicationDTO result) {
@@ -193,7 +198,7 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
 
     void firePublicationChanged(PublicationChangeEvent publicationChangeEvent) {
         for (PublicationChangeListener publicationChangeListener : publicationChangeListeners) {
-            publicationChangeListener.publicationChanged(publicationChangeEvent);
+            publicationChangeListener.onPublicationChanged(publicationChangeEvent);
         }
     }
 
@@ -224,9 +229,9 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
         return publicationDisplayPanel.isValidPub();
     }
 
-    public void addRecentPubs() {
+    public void getRecentPubs() {
 
-        LookupRPCService.App.getInstance().getRecentPublications(new MarkerEditCallBack<List<PublicationDTO>>("Failed to find recent publications: "){
+        LookupRPCService.App.getInstance().getRecentPublications(this.key,new MarkerEditCallBack<List<PublicationDTO>>("Failed to find recent publications: "){
             @Override
             public void onSuccess(List<PublicationDTO> results) {
                 if(results!=null && results.size()>0){
@@ -238,5 +243,9 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
                 }
             }
         });
+    }
+
+    public void setKey(String key){
+        this.key = key ;
     }
 }

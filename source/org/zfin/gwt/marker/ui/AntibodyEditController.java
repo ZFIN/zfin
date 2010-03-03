@@ -7,10 +7,11 @@ import com.google.gwt.user.client.Window;
 import org.zfin.gwt.marker.event.*;
 import org.zfin.gwt.root.dto.AntibodyDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
+import org.zfin.gwt.root.ui.PublicationSessionKey;
 
 /**
  */
-public final class AntibodyEditController extends AbstractFullMarkerEditController<AntibodyDTO>{
+public final class AntibodyEditController extends AbstractFullMarkerEditController<AntibodyDTO> {
 
 
     // gui elements
@@ -19,9 +20,6 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
     private final AntibodyBox antibodyBox = new AntibodyBox();
     private final RelatedMarkerBox relatedGenesBox = new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY, true, geneDiv);
     private final SupplierNameList supplierNameList = new SupplierNameList();
-
-    // internal data
-    private String defaultPubzdbID = null ;
 
     public void initGUI() {
 
@@ -43,7 +41,8 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
         publicationLookupBox.addPublication(new PublicationDTO("Antibody Data Submissions","ZDB-PUB-080117-1" ));
         publicationLookupBox.addPublication(new PublicationDTO("Manually Curated Data","ZDB-PUB-020723-5" ));
         publicationLookupBox.addPublication(new PublicationDTO("Antibody information from supplier","ZDB-PUB-081107-1"));
-        publicationLookupBox.addRecentPubs() ;
+        publicationLookupBox.setKey(PublicationSessionKey.ANTIBODY);
+        publicationLookupBox.getRecentPubs() ;
 
     }
 
@@ -53,7 +52,7 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
             Dictionary transcriptDictionary = Dictionary.getDictionary("MarkerProperties");
             String zdbID = transcriptDictionary.get(LOOKUP_ZDBID);
             try {
-                defaultPubzdbID = transcriptDictionary.get("antibodyDefPubZdbID");
+                String defaultPubzdbID = transcriptDictionary.get("antibodyDefPubZdbID");
                 if(defaultPubzdbID!=null){
                     publicationLookupBox.publicationChanged(new PublicationChangeEvent(defaultPubzdbID));
                 }

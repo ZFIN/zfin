@@ -4,5 +4,5 @@ package org.zfin.gwt.marker.event;
  */
 public interface PublicationChangeListener {
 
-    public void publicationChanged(PublicationChangeEvent event) ; 
+    public void onPublicationChanged(PublicationChangeEvent event) ;
 }

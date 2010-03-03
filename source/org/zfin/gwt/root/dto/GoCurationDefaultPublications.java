@@ -2,7 +2,7 @@ package org.zfin.gwt.root.dto;
 
 /**
  */
-public enum GoPubEnum implements PubEnum {
+public enum GoCurationDefaultPublications implements PubEnum {
     INTERPRO("InterPro2GO Mapping","ZDB-PUB-020724-1") ,
     SPKW("SPKW2GO Mapping","ZDB-PUB-020723-1"),
     EC("EC2GO Mapping","ZDB-PUB-031118-3") ,
@@ -13,7 +13,7 @@ public enum GoPubEnum implements PubEnum {
     private final String title;
     private final String zdbID ;
 
-    GoPubEnum(String title,String zdbID){
+    private GoCurationDefaultPublications(String title,String zdbID){
         this.title = title;
         this.zdbID = zdbID ;
     }
@@ -35,8 +35,8 @@ public enum GoPubEnum implements PubEnum {
         }
     }
 
-    public static GoPubEnum getPubForZdbID(String zdbID){
-        for (GoPubEnum t : values()) {
+    public static GoCurationDefaultPublications getPubForZdbID(String zdbID){
+        for (GoCurationDefaultPublications t : values()) {
             if (t.equals(zdbID.trim()))
                 return t;
         }

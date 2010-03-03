@@ -53,7 +53,7 @@ public abstract class AbstractRelatedEntityEditController<T extends RelatedEntit
     }
 
     @Override
-    public void publicationChanged(PublicationChangeEvent event) {
+    public void onPublicationChanged(PublicationChangeEvent event) {
         publicationZdbID = event.getPublication();
     }
 

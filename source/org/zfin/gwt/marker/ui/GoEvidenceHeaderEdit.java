@@ -3,11 +3,7 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
-import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.dto.GoFlagEnum;
-
-import java.util.Date;
 
 /**
  * This code header houses 4 things

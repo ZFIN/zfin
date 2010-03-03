@@ -237,21 +237,21 @@ public class StandAloneGoEvdidenceHeaderEdit extends AbstractHeaderEdit<GoEviden
     }
 
     @Override
-    public void publicationChanged(PublicationChangeEvent event) {
+    public void onPublicationChanged(PublicationChangeEvent event) {
         if(event.isNotEmpty()){
-            super.publicationChanged(event);
+            super.onPublicationChanged(event);
             pubLabel.setText(event.getPublication());
 
-            if( GoPubEnum.INTERPRO.equals(event.getPublication())
+            if( GoCurationDefaultPublications.INTERPRO.equals(event.getPublication())
                     ||
-                    GoPubEnum.SPKW.equals(event.getPublication())
+                    GoCurationDefaultPublications.SPKW.equals(event.getPublication())
                     ||
-                    GoPubEnum.EC.equals(event.getPublication())
+                    GoCurationDefaultPublications.EC.equals(event.getPublication())
                     ){
                 evidenceCodeBox.setIndexForValue(GoEvidenceCodeEnum.IEA.name());
             }
             else
-            if(GoPubEnum.ROOT.equals(event.getPublication())){
+            if(GoCurationDefaultPublications.ROOT.equals(event.getPublication())){
                 evidenceCodeBox.setIndexForValue(GoEvidenceCodeEnum.ND.name());
             }
 

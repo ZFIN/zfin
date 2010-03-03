@@ -1,8 +1,8 @@
 package org.zfin.gwt.marker.ui;
 
+import org.zfin.gwt.root.dto.GoCurationDefaultPublications;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.dto.GoPubEnum;
 import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.gwt.root.ui.HandlesError;
 
@@ -19,7 +19,7 @@ public class GoEvidenceValidator {
     private static String generateErrorString(GoEvidenceDTO dto){
         String pubName = null ;
 
-        GoPubEnum pubEnum = GoPubEnum.getPubForZdbID(dto.getPublicationZdbID());
+        GoCurationDefaultPublications pubEnum = GoCurationDefaultPublications.getPubForZdbID(dto.getPublicationZdbID());
         if(pubEnum!=null){
             switch (pubEnum){
                 case INTERPRO: case SPKW: case EC: case ROOT:
@@ -72,37 +72,37 @@ public class GoEvidenceValidator {
         }
 
         if( dto.getEvidenceCode().equals(GoEvidenceCodeEnum.ND) &&
-                false==dto.getPublicationZdbID().equals(GoPubEnum.ROOT.zdbID()) ){
-            viewClickLabel.setError("Annotations with evidence code ND must have default pub "+GoPubEnum.ROOT.title()+".") ;
+                false==dto.getPublicationZdbID().equals(GoCurationDefaultPublications.ROOT.zdbID()) ){
+            viewClickLabel.setError("Annotations with evidence code ND must have default pub "+ GoCurationDefaultPublications.ROOT.title()+".") ;
             return false ;
         }
         else
         if( (false==dto.getEvidenceCode().equals(GoEvidenceCodeEnum.ND) &&
-                dto.getPublicationZdbID().equals(GoPubEnum.ROOT.zdbID()) )
+                dto.getPublicationZdbID().equals(GoCurationDefaultPublications.ROOT.zdbID()) )
                 ) {
-            viewClickLabel.setError("Annotations with default pub "+GoPubEnum.ROOT.title()+ " must have evidence code ND.") ;
+            viewClickLabel.setError("Annotations with default pub "+ GoCurationDefaultPublications.ROOT.title()+ " must have evidence code ND.") ;
             return false ;
         }
         else
         if(dto.getEvidenceCode().equals(GoEvidenceCodeEnum.IEA)){
             String inference = dto.getInferredFrom().iterator().next();
-            if(dto.getPublicationZdbID().equals(GoPubEnum.INTERPRO.zdbID())){
+            if(dto.getPublicationZdbID().equals(GoCurationDefaultPublications.INTERPRO.zdbID())){
                 if(false==inference.startsWith(InferenceCategory.INTERPRO.prefix())){
-                    viewClickLabel.setError(generateErrorString(dto,GoPubEnum.INTERPRO.title()));
+                    viewClickLabel.setError(generateErrorString(dto, GoCurationDefaultPublications.INTERPRO.title()));
                     return false ;
                 }
             }
             else
-            if(dto.getPublicationZdbID().equals(GoPubEnum.SPKW.zdbID())){
+            if(dto.getPublicationZdbID().equals(GoCurationDefaultPublications.SPKW.zdbID())){
                 if(false==inference.startsWith(InferenceCategory.SP_KW.prefix())){
-                    viewClickLabel.setError(generateErrorString(dto,GoPubEnum.SPKW.title()));
+                    viewClickLabel.setError(generateErrorString(dto, GoCurationDefaultPublications.SPKW.title()));
                     return false ;
                 }
             }
             else
-            if(dto.getPublicationZdbID().equals(GoPubEnum.EC.zdbID())){
+            if(dto.getPublicationZdbID().equals(GoCurationDefaultPublications.EC.zdbID())){
                 if(false==inference.startsWith(InferenceCategory.EC.prefix())){
-                    viewClickLabel.setError(generateErrorString(dto,GoPubEnum.EC.title()));
+                    viewClickLabel.setError(generateErrorString(dto, GoCurationDefaultPublications.EC.title()));
                     return false ;
                 }
             }
@@ -113,13 +113,13 @@ public class GoEvidenceValidator {
         }
         // not an IEA EC, but having an IEA pub
         else
-        if( dto.getPublicationZdbID().equals(GoPubEnum.INTERPRO.zdbID())
+        if( dto.getPublicationZdbID().equals(GoCurationDefaultPublications.INTERPRO.zdbID())
                 ||
-                dto.getPublicationZdbID().equals(GoPubEnum.SPKW.zdbID())
+                dto.getPublicationZdbID().equals(GoCurationDefaultPublications.SPKW.zdbID())
                 ||
-                dto.getPublicationZdbID().equals(GoPubEnum.EC.zdbID())
+                dto.getPublicationZdbID().equals(GoCurationDefaultPublications.EC.zdbID())
                 ){
-            viewClickLabel.setError("Evidence code should be IEA for this default pub: " + GoPubEnum.getPubForZdbID(dto.getPublicationZdbID()).title()) ;
+            viewClickLabel.setError("Evidence code should be IEA for this default pub: " + GoCurationDefaultPublications.getPubForZdbID(dto.getPublicationZdbID()).title()) ;
             return false ;
         }
         

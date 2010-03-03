@@ -62,7 +62,7 @@ public interface LookupRPCServiceAsync {
      */
     void getTermInfoByName(Ontology ontology, String termName, AsyncCallback<TermInfo> termInfoCallback);
 
-    void getRecentPublications(AsyncCallback<List<PublicationDTO>> asyncCallback);
+    void getRecentPublications(String key,AsyncCallback<List<PublicationDTO>> asyncCallback);
 
-    void setRecentPublication(String zdbID, AsyncCallback<PublicationDTO > async);
+    void addRecentPublication(String zdbID, String key,AsyncCallback<PublicationDTO > async);
 }

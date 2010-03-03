@@ -198,7 +198,7 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
         }
     }
 
-    public void publicationChanged(PublicationChangeEvent event) {
+    public void onPublicationChanged(PublicationChangeEvent event) {
         fireEventSuccess();
         setPublication(event.getPublication());
     }

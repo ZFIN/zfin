@@ -80,7 +80,7 @@ public interface LookupRPCService extends RemoteService {
 
     TermStatus validateMarkerTerm(String term);
 
-    List<PublicationDTO> getRecentPublications();
+    List<PublicationDTO> getRecentPublications(String key);
 
-    PublicationDTO setRecentPublication(String zdbID);
+    PublicationDTO addRecentPublication(String zdbID,String key);
 }

@@ -31,7 +31,7 @@
 
 <script type="text/javascript">
     var MarkerProperties= {
-        <%=GoEvidenceEditController.STATE_STRING%>: "<%=GoEvidenceEditController.State.ADD%>",
+        <%=GoEvidenceEditController.STATE_STRING%>: "<%=GoEvidenceEditController.Action.ADD%>",
     <%=GoEvidenceEditController.LOOKUP_ZDBID%>: "ADD-MRKRGOEV" ,
     <%=GoEvidenceEditController.PUB_ZDBID%>: "<%= pubID%>",
     <%=GoEvidenceEditController.GENE_ZDBID%>: "<%= markerID %>"

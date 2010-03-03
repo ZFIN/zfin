@@ -28,12 +28,12 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.GoTerm;
 import org.zfin.ontology.OntologyService;
-import org.zfin.ontology.presentation.TermComparator;
 import org.zfin.ontology.presentation.OntologyAutoCompleteTerm;
+import org.zfin.ontology.presentation.TermComparator;
 import org.zfin.people.Organization;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.Publication;
-import org.zfin.publication.PublicationService;
+import org.zfin.publication.presentation.PublicationService;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -434,8 +434,8 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
     }
 
     @Override
-    public List<PublicationDTO> getRecentPublications() {
-        List<Publication> mostRecentsPubs = PublicationService.getRecentPublications(getServletContext());
+    public List<PublicationDTO> getRecentPublications(String key) {
+        List<Publication> mostRecentsPubs = PublicationService.getRecentPublications(getServletContext(),key);
         List<PublicationDTO> publicationDTOs = new ArrayList<PublicationDTO>();
 
         if (CollectionUtils.isNotEmpty(mostRecentsPubs)){
@@ -450,10 +450,10 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
     }
 
     @Override
-    public PublicationDTO setRecentPublication(String zdbID) {
+    public PublicationDTO addRecentPublication(String zdbID,String key) {
         if (StringUtils.isNotEmpty(zdbID)) {
             Publication publication = RepositoryFactory.getPublicationRepository().getPublication(zdbID);
-            PublicationService.addRecentPublications(getServletContext(),publication);
+            PublicationService.addRecentPublications(getServletContext(),publication,key);
 
             PublicationDTO publicationDTO = new PublicationDTO();
             publicationDTO.setZdbID(publication.getZdbID());

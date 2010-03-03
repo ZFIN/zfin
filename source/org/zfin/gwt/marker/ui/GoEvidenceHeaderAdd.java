@@ -1,18 +1,12 @@
 package org.zfin.gwt.marker.ui;
 
-import com.google.gwt.event.dom.client.*;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.PublicationChangeEvent;
-import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
-import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.ui.*;
-import org.zfin.gwt.root.util.LookupRPCService;
-
-import java.util.*;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
+import org.zfin.gwt.root.dto.GoEvidenceDTO;
 
 /**
  * This code header houses 4 things

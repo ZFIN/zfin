@@ -43,15 +43,15 @@ public enum GoEvidenceCodeEnum implements IsSerializable  {
     public InferenceCategory[] getInferenceCategories(String pubZdbID) {
         switch (this) {
             case IEA:
-                if(pubZdbID.equals(GoPubEnum.EC.zdbID())){
+                if(pubZdbID.equals(GoCurationDefaultPublications.EC.zdbID())){
                     return new InferenceCategory[]{InferenceCategory.EC};
                 }
                 else
-                if(pubZdbID.equals(GoPubEnum.SPKW.zdbID())){
+                if(pubZdbID.equals(GoCurationDefaultPublications.SPKW.zdbID())){
                     return new InferenceCategory[]{InferenceCategory.SP_KW};
                 }
                 else
-                if(pubZdbID.equals(GoPubEnum.INTERPRO.zdbID())){
+                if(pubZdbID.equals(GoCurationDefaultPublications.INTERPRO.zdbID())){
                     return new InferenceCategory[]{InferenceCategory.INTERPRO};
                 }
                 else{
