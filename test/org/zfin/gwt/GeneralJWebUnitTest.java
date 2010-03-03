@@ -1,26 +1,14 @@
 package org.zfin.gwt;
 
 import com.gargoylesoftware.htmlunit.AlertHandler;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
-import net.sourceforge.jwebunit.junit.WebTestCase;
-import net.sourceforge.jwebunit.util.TestingEngineRegistry;
-import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
-import org.zfin.people.AccountInfo;
-import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.IOException;
-import java.util.Date;
 
 /**
  * This class uses the more raw HtmlUnit protocols.
@@ -31,6 +19,7 @@ public class GeneralJWebUnitTest extends AbstractJWebUnitTest{
         try {
             HtmlPage page = webClient.getPage("https://"+domain +"/action/dev-tools/gwt/modules");
             webClient.setJavaScriptEnabled(true);
+            webClient.waitForBackgroundJavaScriptStartingBefore(2000);
             assertEquals("GWT Modules",page.getTitleText());
             HtmlAnchor htmlAnchor = (HtmlAnchor) page.getByXPath("//a[ . = 'Test: TestComposite']").get(0);
             assertNotNull(htmlAnchor);

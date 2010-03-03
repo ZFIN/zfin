@@ -1,24 +1,20 @@
 package org.zfin.gwt;
 
-import com.gargoylesoftware.htmlunit.AlertHandler;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.*;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import net.sourceforge.jwebunit.junit.WebTestCase;
 import net.sourceforge.jwebunit.util.TestingEngineRegistry;
 import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.marker.Marker;
 import org.zfin.people.AccountInfo;
 import org.zfin.people.Person;
-import org.zfin.repository.RepositoryFactory;
 
-import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -28,6 +24,7 @@ public class AbstractJWebUnitTest extends WebTestCase{
 
     protected String mutant = System.getenv("MUTANT_NAME");
     protected String domain = System.getenv("DOMAIN_NAME");
+//    protected String domain = "ogon.zfin.org" ;
     protected final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
     protected Person person = null ;
     protected String password = "veryeasypass";
@@ -53,6 +50,7 @@ public class AbstractJWebUnitTest extends WebTestCase{
 
     @Override
     protected void tearDown() throws Exception {
+        webClient.closeAllWindows();
         deletePerson();
     }
 
@@ -89,7 +87,8 @@ public class AbstractJWebUnitTest extends WebTestCase{
     }
 
     public void login() throws Exception{
-        HtmlPage page = webClient.getPage("https://"+domain +"/action/login-redirect");
+        webClient.setRedirectEnabled(true);
+        HtmlPage page = webClient.getPage("http://"+domain +"/action/login");
         HtmlForm loginForm = page.getFormByName("login");
         HtmlInput nameField = loginForm.getInputByName("j_username");
         nameField.setValueAttribute(person.getAccountInfo().getLogin());
@@ -99,6 +98,7 @@ public class AbstractJWebUnitTest extends WebTestCase{
         try {
             loginButton.click();
         } catch (Throwable t) {
+//            t.printStackTrace();
             // ignore the 404 error
         }
     }
