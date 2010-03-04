@@ -13,8 +13,8 @@ import org.zfin.httpunittest.SmokeTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         SmokeTest.class,
-        GeneralJWebUnitTest.class,
-        GOEvidenceUnitTest.class
+        GeneralJWebUnitTest.class
+//        GOEvidenceUnitTest.class
 })
 public class SmokeTests {
 

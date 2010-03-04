@@ -51,7 +51,7 @@ public class GeneralJWebUnitTest extends AbstractJWebUnitTest{
         }
     }
 
-    public void noTestAlternateGeneNote(){
+    public void testAlternateGeneNote(){
 
         try {
             // first we have to guarantee that we always have a note there
@@ -151,7 +151,7 @@ public class GeneralJWebUnitTest extends AbstractJWebUnitTest{
         }
     }
 
-    public void noTestAnatomyLookupTyping(){
+    public void testAnatomyLookupTyping(){
         try {
             webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
             HtmlPage page = webClient.getPage("http://"+domain +"/action/dev-tools/gwt/lookup-table");
