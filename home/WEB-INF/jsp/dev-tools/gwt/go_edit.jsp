@@ -6,6 +6,10 @@
         state = GoEvidenceEditController.Action.EDIT.name();
     }
     String zdbID = request.getParameter(GoEvidenceEditController.LOOKUP_ZDBID);
+    if(zdbID ==null){
+//        zdbID = "ZDB-MRKRGOEV-031121-24";
+        zdbID = "ZDB-MRKRGOEV-090309-5";
+    }
     String pubID = request.getParameter(GoEvidenceEditController.PUB_ZDBID);
     String markerID = request.getParameter(GoEvidenceEditController.GENE_ZDBID);
 %>
