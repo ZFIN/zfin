@@ -14,35 +14,92 @@
 
 <hr>
 
-<p>ZFIN welcomes direct data submissions. If you would like to make your unpublished expression or phenotype data available to the community, you can submit this data to ZFIN using the <a href=" http://www.phenote.org/" title="Phenote: A Phenotype Annotation Tool Using Ontologies">Phenote</a> software.</p>
+<p>ZFIN welcomes direct data submissions. If you would like to make your
+unpublished expression or phenotype data available to the community,
+you can submit this data to ZFIN using Phenote program.
 
-<p><blockquote><a href=" http://www.phenote.org/" title="Phenote: A Phenotype Annotation Tool Using Ontologies"><img src="/images/phenote.jpg" border=0></a></blockquote></p>
+<p>Phenote allows you to save and load your expression or phenotype
+annotations in a tab-delimited file that can be read by Microsoft
+Excel. Phenote is advantageous because it uses ZFIN anatomy and
+phenotype ontology terms, so you (and ZFIN) don't have to go looking
+for them. It also allows basic browsing for terms, which should
+expedite annotation. We hope that you will find this new tool helpful
+for annotation of mutant phenotypes or gene expression.
 
-<p>Phenote allows you to save and load your expression or phenotype annotations in a tab-delimited file that can be read by Microsoft Excel. Phenote is advantageous because it uses ZFIN anatomy and phenotype ontology terms, so you (and ZFIN) don't have to go looking for them. It also allows basic browsing for terms, which should expedite annotation. We hope that you will find this new tool helpful for annotation of mutant phenotypes or gene expression.</p>
 
-<p>You can download the current stable <a href=" http://www.phenote.org/download.shtml" title="Phenote: Downloads">Phenote release</a> or check out the more recent <a href=" https://sourceforge.net/project/showfiles.php?group_id=76834" title="Phenote beta releases">beta versions</a>.<br><br></p>
+<p>You can download the current stable <a href="https://sourceforge.net/projects/obo/files/Phenote - betas/phenote_1.6_beta9/" title="Phenote: Downloads">Phenote release</a> or check out the more recent <a href=" https://sourceforge.net/projects/obo/files/Phenote - betas/" title="Phenote beta releases">beta versions</a>. The current Phenote beta is known to work on Windows XP, MacOSX, MacOSXI.<br><br></p>
 
-<p><b>Instructions for using Phenote to submit phenotype or expression data to ZFIN:</b></p>
+<p>Instructions for using Phenote to submit phenotype or expression data to ZFIN:
 
-<p>There are 2 versions of the program: Phenote and Phenote+. Phenote+ has some features that help browse the ontologies but, if the Phenote+ version does not work well for you, use the older Phenote version. Both versions of Phenote produce the same output files.</p>
+<p>Phenote takes a couple of minutes to start up, because it downloads
+the most current Gene and zebrafish anatomy ontologies. Phenote
+requires <a href="http://www.java.com/en/download/">Java</a> on your
+machine.  Phenote opens dialog windows in the background as it loads
+and needs you to interact with these windows to finish loading.
+  Mac users who, for security reasons, use a non-administrator user
+account should install Phenote somewhere in their home folder (i.e.,
+not in the Applications folder). The beta versions are fully
+functional, but there are always some rough edges in betas -
+sometimes rows in the main Annotation Table seem to be grayed-out.
+Clicking on the missing rows will reveal them again.  You may also
+need to configure your firewall software to allow Phenote to access
+the newest versions of the ontologies.
 
-<p>Phenote can take a couple of minutes to start up, because it downloads the most current Gene and zebrafish anatomy ontologies. Phenote requires <a href="http://www.java.com/en/download/" title="Learn About and Download Java">Java</a> on your machine. Mac users who, for security reasons, use a non-administrator user account should install Phenote somewhere in their home folder (i.e., not in the Applications folder). The beta versions are fully functional, but there are always some rough edges in betas - sometimes rows in the main Annotation Table seem to be grayed-out. Clicking on the missing rows will reveal them again.</p>
+<p>After starting up Phenote, under Settings at the top, choose
+zfin-phenotype or zfin-expression from the "Set Configuration..."
+menu. Then restart Phenote.
 
-<p>After starting up Phenote, under Settings at the top, choose zfin-phenotype or zfin-expression from the "Set Configuration..." menu. Then restart Phenote.</p>
+<p>Phenote is an ontology smart spreadsheet that can save in a
+tab-delimited format which is compatible with MS Excel. Each line at
+the bottom is one annotation. As you type in the fields in the upper
+half, you will see your annotation filled in the bottom half. To
+create a new annotation, click on the new button at the bottom. You
+can delete or undo with the buttons at the bottom, and simply
+clicking on a line will bring up the annotation at the top of Phenote.
 
-<p>Phenote is an ontology smart spreadsheet that can save in a tab-delimited format which is compatible with MS Excel. Each line at the bottom is one annotation. As you type in the fields in the upper half, you will see your annotation filled in the bottom half. To create a new annotation, click on the new button at the bottom. You can delete or undo with the buttons at the bottom, and simply clicking on a line will bring up the annotation at the top of Phenote.</p>
+<p>For pub, Image file, gene, and genotype (line name) you can type in
+free text.  ZFIN can help you update these later.  If you are
+submitting images the file names need to be unique.  ZFIN recommends
+using  a combination of feature name and stage to give each file a
+unique name e.g.  b215prim5a, b215prim5b b215day5a.
 
-<p>For pub, Image file, gene, and genotype (line name) you can type in free text or leave blank as necessary. ZFIN can update these later, if required.</p>
 
-<p>The entity is the anatomical structure in which you see the phenotype or expression. You can choose between two ontologies, the ZFIN anatomy ontology, or the Gene Ontology Cellular Component ontology. There is a type ahead feature for this field, and you can view details about a given term in the term info box to the right. To make a post-composed entity, you hit the comp button, and get three fields. You might want something like, GOcc:mitochondrion part_of ZF:neuron. This means that the expression is in the mitochondria in neurons. The stages are standard from our <a href="http://zfin.org/zf_info/zfbook/stages/index.html" title="Zebrafish Developmental Staging Series">stage ontology</a>. You may wish use the <a href=" http://www.ebi.ac.uk/ontology-lookup/" title="Ontology Lookup Service (OLS) at EBI">EBI lookup tool</a> and/or the <a href=" http://zfin.org/action/anatomy/search" title="Anatomical Ontology Browser at ZFIN">ZFIN Anatomy search</a> to find terms by context if you cannot locate them through the Phenote interface.</p>
+<p>The entity is the anatomical structure in which you see the phenotype
+or expression. You can choose between two ontologies, the ZFIN
+anatomy ontology, or the Gene Ontology Cellular Component ontology.
+There is a type ahead feature for this field, and you can view
+details about a given term in the term info box to the right. To make
+a more complex structure called a post-composed entity, you hit the
+comp button, and get three fields. You might want something like,
+GOcc:mitochondrion part_of ZF:neuron. This means that the expression
+is in the mitochondria in neurons. The stages are standard from our
+<a href="http://zfin.org/zf_info/zfbook/stages/index.html">stage ontology</a>. You
+may wish use the <a href="http://www.ebi.ac.uk/ontology-lookup/">EBI lookup</a>
+tool and/or the <a href="http://zfin.org/action/anatomy/search">ZFIN Anatomy search</a> to find terms by context if you cannot locate them through the
+Phenote interface.  If you cannot find the zebrafish structure you
+need please fill out the <a href="http://zfin.org/action/anatomy/request-new-term">term request form</a>.  Please
+include the structure name, the stage the structure becomes apparent
+and any other useful information so we can update the ontology.
 
-<p>For phenotypic qualities, you will choose a term from the <a href="http://obofoundry.org/wiki/index.php/PATO:About" title="About PATO at OBOFoundry">PATO ontology</a>. The quality is the adjective that describes the phenotype. This ontology can also be browsed at the <a href=" http://www.ebi.ac.uk/ontology-lookup/" title="Ontology Lookup Service (OLS) at EBI">ontology lookup service</a> if you cannot find the term you are looking for. Please contact either <a href="mailto:zfinadmn@zfin.org" title="Email ZFIN">ZFIN</a> or submit to the <a href=" http://sourceforge.net/tracker/?group_id=76834&atid=595654" title="Phenotypic quality (PATO) requests at SourceForge.net">PATO tracker</a> if the term you need isn't in PATO.</p>
+<p>For phenotypic qualities, you will choose a term from the
+<a href="http://obofoundry.org/wiki/index.php/PATO:About">PATO ontology</a>. The
+quality is the adjective that describes the phenotype. This ontology
+can also be browsed at the
+<a href="http://www.ebi.ac.uk/ontology-lookup/">ontology lookup service</a> if you
+cannot find the term you are looking for. Please contact either
+<a href="mailto:zfinadmn@zfin.org">ZFIN</a> or submit to the
+<a href="http://sourceforge.net/tracker/?group_id=76834&amp;atid=595654">PATO tracker</a> if the term you need isn't in PATO.
 
-<p>You can make multiple annotations for the same line; for instance, if you want to record phenotype in more than one structure. Just hit the Duplicate button at the bottom and change the field that is different.</p>
+<p>You can make multiple annotations for the same line; for instance, if
+you want to record phenotype in more than one structure. Just hit the
+Duplicate button (two overlapping +) and change the field that is different.
 
-<p>To save, hit the "Save Data" button at the bottom, and your data will be saved as a tab-delimited file.<br><br></p>
+<p>To save, hit the "Save Data" button at the bottom, and your data will
+be saved as a tab-delimited file.
 
-<p><b>Visit the <a href="http://www.phenote.org/faq.shtml" title="Phenote: Frequently Asked Questions (FAQ)">Phenote FAQ</a> for answers to frequently asked questions or <a href="mailto:zfinadmn@zfin.org" title="Email your questions/files to ZFIN">email ZFIN</a> with questions, test files or your final data submission files.</b><br><br></p>
+<p>Visit the <a href="http://www.phenote.org/faq.shtml">Phenote FAQ</a> for answers
+to frequently asked questions or email <a href="mailto:zfinadmn@zfin.org">ZFIN</a>
+with questions, test files or your final data submission files.
 
 <hr>
 
