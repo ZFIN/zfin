@@ -276,13 +276,13 @@ test(s) need to be run before committing changes or pushing files to production 
     </target>
 
 
-    <target name="smokeTests" depends="compile,build-tests" description="Tests to make sure that the system is alive.">
+    <target name="smokeTests" if="notproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive."  >
 
         <junit fork="yes"
                printsummary="yes"
                haltonfailure="false"
                haltonerror="false"
-               showoutput="true">
+               showoutput="false">
             <jvmarg line="${junit.jvmargs}"/>
             <classpath refid="extended.classpath"/>
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
