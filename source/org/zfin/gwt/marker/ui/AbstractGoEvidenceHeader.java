@@ -103,7 +103,6 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
                         GoEvidenceDTO goEvidenceDTO = dto.deepCopy();
                         goEvidenceDTO.setGoTerm(temporaryGoTermDTO);
                         fireGoTermChanged(new RelatedEntityEvent<GoEvidenceDTO>(goEvidenceDTO));
-                        fireEventSuccess();
                         handleDirty();
                     }
                 });
@@ -124,6 +123,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         ++rowCount;
         goTermBox.setType(LookupComposite.TYPE_GENE_ONTOLOGY);
         goTermBox.setWildCard(false);
+        goTermBox.setSuggestBoxWidth(60);
         goTermBox.initGui();
         table.setHTML(rowCount, 0, "<b>GO Term:</b>");
         table.setWidget(rowCount, 1, goTermBox);
@@ -164,18 +164,24 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         errorLabel.setStyleName("error");
         panel.add(errorLabel);
 
+
     }
 
 
     protected void revertGUI() {
         geneHTML.setHTML("<a class='external' href='/cgi-bin/webdriver?MIval=aa-markerview.apg&OID="+dto.getMarkerDTO().getZdbID()+"'>"+
                 dto.getMarkerDTO().getAbbreviation()+"</a>");
-        zdbIDHTML.setHTML("<div style=\"font-size: small;\">" + dto.getZdbID() + "</font>");
+        if(dto.getZdbID()==null || dto.getZdbID().equals("null")){
+            zdbIDHTML.setHTML("<font color=red>Not Created</font>");
+        }else{
+            zdbIDHTML.setHTML("<div style=\"font-size: small;\">" + dto.getZdbID() + "</font>");
+
+        }
         if(dto.getGoTerm()!=null){
             nameBox.setText(dto.getGoTerm().getName());
         }
         if(dto.getEvidenceCode()!=null){
-            evidenceCodeBox.setIndexForValue(dto.getEvidenceCode().name());
+            evidenceCodeBox.setIndexForText(dto.getEvidenceCode().name());
         }
 
 
@@ -193,7 +199,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
             evidenceFlagBox.setItemSelected(0,true);
         }
         else{
-            evidenceFlagBox.setIndexForValue( dto.getFlag().toString());
+            evidenceFlagBox.setIndexForText( dto.getFlag().toString());
         }
         pubLabel.setText(dto.getPublicationZdbID());
         noteBox.setText(dto.getNote());
@@ -255,7 +261,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
 
     @Override
     public void working() {
-        super.working();    //To change body of overridden methods use File | Settings | File Templates.
+        super.working();
         evidenceCodeBox.setEnabled(false);
         pubLabel.setEnabled(false);
         evidenceFlagBox.setEnabled(false);
@@ -264,7 +270,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
 
     @Override
     public void notWorking() {
-        super.notWorking();    //To change body of overridden methods use File | Settings | File Templates.
+        super.notWorking();
         evidenceCodeBox.setEnabled(true);
         evidenceFlagBox.setEnabled(true);
         nameBox.setEnabled(false);
@@ -284,14 +290,14 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
                     case INTERPRO:
                     case SPKW:
                     case EC:
-                        evidenceCodeBox.setIndexForValue(GoEvidenceCodeEnum.IEA.name());
+                        evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.IEA.name());
                         break;
                     case ISS_REF_GENOME:
                     case ISS_MANUAL_CURATED:
-                        evidenceCodeBox.setIndexForValue(GoEvidenceCodeEnum.ISS.name());
+                        evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.ISS.name());
                         break ;
                     case ROOT:
-                        evidenceCodeBox.setIndexForValue(GoEvidenceCodeEnum.ND.name());
+                        evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.ND.name());
                         break;
                     default:
                 }
@@ -311,11 +317,6 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         }
         temporaryGoTermDTO = this.dto.getGoTerm();
     }
-
-
-//    public void addGoTermChangeListeners(RelatedEntityChangeListener<GoEvidenceDTO> changeListener) {
-//        inferenceListBox.addGoTermChangeListeners(changeListener);
-//    }
 
 
     public void addGoTermChangeListeners(RelatedEntityChangeListener<GoEvidenceDTO> changeListener) {

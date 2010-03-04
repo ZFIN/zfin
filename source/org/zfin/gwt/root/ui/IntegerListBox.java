@@ -38,7 +38,7 @@ public class IntegerListBox extends AbstractListBox<Integer> {
         if ((integer == selectedInteger) || integer.equals(selectedInteger)) {
             return true;
         }
-        else 
+        else
         if (integer.equals(selectedInteger)) {
             return true;
         }
@@ -48,7 +48,7 @@ public class IntegerListBox extends AbstractListBox<Integer> {
         }
     }
 
-    public void setIndexForValue(Integer value) {
+    public void setIndexForText(Integer value) {
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             if (
@@ -62,14 +62,29 @@ public class IntegerListBox extends AbstractListBox<Integer> {
         }
     }
 
+    @Override
+    public void setIndexForValue(Integer value) {
+        int count = getItemCount();
+        for (int i = 0; i < count; i++) {
+            if (
+                    (value != null && value.equals(Integer.valueOf(getValue(i))))
+                            ||
+                            (value == null && (getValue(i).equals(EMPTY_CHOICE) || getValue(i).equals(NONE) || getValue(i) == null))
+                    ) {
+                setItemSelected(i, true);
+                return;
+            }
+        }
+    }
+
     public boolean isDirty(Integer value) {
-            if( isFieldEqual( value)){
-                setStyleName(CLEAN_STYLE);
-                return false ;
-            }
-            else{
-                setStyleName(DIRTY_STYLE);
-                return true ;
-            }
+        if( isFieldEqual( value)){
+            setStyleName(CLEAN_STYLE);
+            return false ;
+        }
+        else{
+            setStyleName(DIRTY_STYLE);
+            return true ;
+        }
     }
 }

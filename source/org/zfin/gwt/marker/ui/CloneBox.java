@@ -203,15 +203,15 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
 
     public void revertGUI() {
         if (dto != null) {
-            cloneRatingListBox.setIndexForValue(dto.getRating());
-            libraryListBox.setIndexForValue(dto.getProbeLibraryName());
-            vectorListBox.setIndexForValue(dto.getVectorName());
-            digestListBox.setIndexForValue(dto.getDigest());
-            polymeraseListBox.setIndexForValue(dto.getPolymerase());
+            cloneRatingListBox.setIndexForText(dto.getRating());
+            libraryListBox.setIndexForText(dto.getProbeLibraryName());
+            vectorListBox.setIndexForText(dto.getVectorName());
+            digestListBox.setIndexForText(dto.getDigest());
+            polymeraseListBox.setIndexForText(dto.getPolymerase());
             insertSizeTextBox.setText((dto.getInsertSize() == null ? "" : dto.getInsertSize().toString()));
             cloneComments.setText(dto.getCloneComments());
             pcrAmplificationTextBox.setText(dto.getPcrAmplification());
-            cloningSiteListBox.setIndexForValue(dto.getCloningSite());
+            cloningSiteListBox.setIndexForText(dto.getCloningSite());
         }
     }
 

@@ -53,7 +53,7 @@ public class MarkerNoteBox<T extends MarkerDTO> extends AbstractNoteBox<T> imple
             typeListBox.setSelectedIndex(1);
         }
         if(defaultEditMode!=null){
-            typeListBox.setIndexForValue(defaultEditMode.name());
+            typeListBox.setIndexForText(defaultEditMode.name());
         }
     }
 

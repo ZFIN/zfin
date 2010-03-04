@@ -139,7 +139,7 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
         }
     }
 
-    void publicationChanged(PublicationChangeEvent event) {
+    public void publicationChanged(PublicationChangeEvent event) {
 
         final String pubChangeZdbID = event.getPublication();
         if (pubChangeZdbID.length() == 0) {
@@ -163,6 +163,12 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
                         return;
                     }
                     setPubBox(publicationAbstractDTO);
+                    // put in type
+                    pubField.setText(publicationAbstractDTO.getZdbID());
+
+                    // select if in default pub list
+                    defaultPubList.setIndexForValue(publicationAbstractDTO.getZdbID());
+
                     firePublicationChanged(new PublicationChangeEvent(publicationAbstractDTO.getZdbID()));
                 }
             });
@@ -247,5 +253,9 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
 
     public void setKey(String key){
         this.key = key ;
+    }
+
+    public void setNoPubSelectedMessage(String message){
+        publicationDisplayPanel.setNoPubSelectedMessage(message);
     }
 }

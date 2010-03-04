@@ -80,8 +80,8 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO>{
     protected void revertGUI() {
         zdbIDHTML.setHTML("<div class=\"attributionDefaultPub\">" + dto.getZdbID() + "</font>");
         nameBox.setText(dto.getName());
-        typeListBox.setIndexForValue(dto.getTranscriptType());
-        statusListBox.setIndexForValue(dto.getTranscriptStatus());
+        typeListBox.setIndexForText(dto.getTranscriptType());
+        statusListBox.setIndexForText(dto.getTranscriptStatus());
         handleDirty();
     }
 

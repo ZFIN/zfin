@@ -24,6 +24,8 @@ public abstract class AbstractListBox<T extends Object> extends ListBox implemen
 
     public abstract boolean isFieldEqual(T value) ;
 
+    public abstract void setIndexForText(T value) ;
+
     public abstract void setIndexForValue(T value) ;
 
     public String getSelectedText() {

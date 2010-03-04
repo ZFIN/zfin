@@ -48,13 +48,28 @@ public class StringListBox extends AbstractListBox<String>{
         }
     }
 
-    public void setIndexForValue(String value) {
+    public void setIndexForText(String value) {
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             if (
                     (value != null && value.equals(getItemText(i)))
                             ||
                             (value == null && (getItemText(i).equals(EMPTY_CHOICE) || getItemText(i).equals(NONE) || getItemText(i) == null))
+                    ) {
+                setItemSelected(i, true);
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void setIndexForValue(String value) {
+        int count = getItemCount();
+        for (int i = 0; i < count; i++) {
+            if (
+                    (value != null && value.equals(getValue(i)))
+                            ||
+                            (value == null && (getValue(i).equals(EMPTY_CHOICE) || getValue(i).equals(NONE) || getValue(i) == null))
                     ) {
                 setItemSelected(i, true);
                 return;

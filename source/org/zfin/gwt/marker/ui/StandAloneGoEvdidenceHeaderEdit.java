@@ -149,7 +149,7 @@ public class StandAloneGoEvdidenceHeaderEdit extends AbstractHeaderEdit<GoEviden
                 dto.getMarkerDTO().getName()+"</a>");
 //        zdbIDHTML.setHTML("<div class=\"attributionDefaultPub\">" + dto.getZdbID() + "</font>");
         nameBox.setText(dto.getName());
-        evidenceCodeBox.setIndexForValue(dto.getEvidenceCode().name());
+        evidenceCodeBox.setIndexForText(dto.getEvidenceCode().name());
 
 
         evidenceFlagBox.clear();
@@ -164,7 +164,7 @@ public class StandAloneGoEvdidenceHeaderEdit extends AbstractHeaderEdit<GoEviden
             evidenceFlagBox.setItemSelected(0,true);
         }
         else{
-            evidenceFlagBox.setIndexForValue( dto.getFlag().toString());
+            evidenceFlagBox.setIndexForText( dto.getFlag().toString());
         }
         pubLabel.setText(dto.getPublicationZdbID());
 
@@ -248,11 +248,11 @@ public class StandAloneGoEvdidenceHeaderEdit extends AbstractHeaderEdit<GoEviden
                     ||
                     GoCurationDefaultPublications.EC.equals(event.getPublication())
                     ){
-                evidenceCodeBox.setIndexForValue(GoEvidenceCodeEnum.IEA.name());
+                evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.IEA.name());
             }
             else
             if(GoCurationDefaultPublications.ROOT.equals(event.getPublication())){
-                evidenceCodeBox.setIndexForValue(GoEvidenceCodeEnum.ND.name());
+                evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.ND.name());
             }
 
             handleDirty();

@@ -166,11 +166,11 @@ public class AntibodyBox extends AbstractDataBox<AntibodyDTO>{
 
     protected void revertGUI() {
         if (dto != null) {
-            hostOrganismListBox.setIndexForValue(dto.getHostOrganism());
-            immunogenOrganismListBox.setIndexForValue(dto.getImmunogenOrganism());
-            heavyChainListBox.setIndexForValue(dto.getHeavyChain());
-            lightChainListBox.setIndexForValue(dto.getLightChain());
-            typeListBox.setIndexForValue(dto.getType());
+            hostOrganismListBox.setIndexForText(dto.getHostOrganism());
+            immunogenOrganismListBox.setIndexForText(dto.getImmunogenOrganism());
+            heavyChainListBox.setIndexForText(dto.getHeavyChain());
+            lightChainListBox.setIndexForText(dto.getLightChain());
+            typeListBox.setIndexForText(dto.getType());
         }
     }
 

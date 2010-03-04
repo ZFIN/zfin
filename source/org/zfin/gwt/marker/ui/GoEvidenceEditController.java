@@ -3,6 +3,7 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.marker.event.PublicationChangeEvent;
 import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
 import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.*;
@@ -52,6 +53,8 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
 
     public void initGUI() {
         mainPanel.add(publicationLookupBox, DockPanel.EAST);
+        publicationLookupBox.setNoPubSelectedMessage(
+                "<strong><font color=red>Please select a valid pub to display available inferences</font></strong>");
         // center panel
         mainPanel.add(headerEdit, DockPanel.CENTER);
         mainPanel.add(goTextArea, DockPanel.SOUTH);
@@ -100,11 +103,28 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
 
 
     protected void loadDTO() {
+        String markerGoEvidenceZdbID ;
 // load properties
         switch (action) {
             case EDIT:
+                markerGoEvidenceZdbID = dictionary.get(LOOKUP_ZDBID);
+                TermRPCService.App.getInstance().getMarkerGoTermEvidenceDTO(markerGoEvidenceZdbID,
+                        new MarkerEditCallBack<GoEvidenceDTO>("failed to find markergoevidence: ") {
+                            public void onSuccess(GoEvidenceDTO returnDTO) {
+                                if(action==Action.CLONE){
+                                    publicationZdbID = dictionary.get(PUB_ZDBID);
+                                    returnDTO.setPublicationZdbID(publicationZdbID);
+                                    returnDTO.setZdbID(null);
+                                }
+                                setDTO(returnDTO);
+                                publicationZdbID = dto.getPublicationZdbID();
+                                publicationLookupBox.publicationChanged(new PublicationChangeEvent(publicationZdbID));
+//                                publicationLookupBox.set
+                            }
+                        });
+                break;
             case CLONE:
-                final String markerGoEvidenceZdbID = dictionary.get(LOOKUP_ZDBID);
+                markerGoEvidenceZdbID = dictionary.get(LOOKUP_ZDBID);
                 TermRPCService.App.getInstance().getMarkerGoTermEvidenceDTO(markerGoEvidenceZdbID,
                         new MarkerEditCallBack<GoEvidenceDTO>("failed to find markergoevidence: ") {
                             public void onSuccess(GoEvidenceDTO returnDTO) {
@@ -116,10 +136,18 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
                                 setDTO(returnDTO);
                             }
                         });
+                publicationLookupBox.setVisible(false);
                 break;
             case ADD:
                 String geneZdbID = dictionary.get(GENE_ZDBID);
                 publicationZdbID = dictionary.get(PUB_ZDBID);
+                // if adding where pub is not given, then must be null
+                if(publicationZdbID.equals("null")){
+                    publicationLookupBox.setVisible(true);
+                }
+                else{
+                    publicationLookupBox.setVisible(false);
+                }
                 MarkerRPCService.App.getInstance().getGeneForZdbID(geneZdbID,
                         new MarkerEditCallBack<MarkerDTO>("failed to find marker: ") {
                             public void onSuccess(MarkerDTO returnDTO) {

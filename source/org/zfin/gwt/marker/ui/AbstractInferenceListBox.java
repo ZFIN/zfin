@@ -118,7 +118,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
             working();
             if(dto.getPublicationZdbID()==null || dto.getPublicationZdbID().isEmpty() || dto.getPublicationZdbID().equals(IsDirty.NULL_STRING)){
                 notWorking();
-                setError("Please select a valid pub to display available options.");
+//                setError("Please select a valid pub to display available options.");
                 return ;
             }
             TermRPCService.App.getInstance().getGenoTypesAndMorpholinosForGOAttributions(dto,

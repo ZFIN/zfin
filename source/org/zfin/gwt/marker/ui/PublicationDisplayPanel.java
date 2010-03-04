@@ -92,4 +92,8 @@ public class PublicationDisplayPanel extends VerticalPanel {
     public boolean isValidPub() {
         return validPub;
     }
+
+    public void setNoPubSelectedMessage(String message) {
+        noPubLabel.setHTML(message);
+    }
 }

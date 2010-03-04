@@ -47,7 +47,7 @@ public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO>{
         nameBox.setText(dto.getName());
         typeLabel.setHTML("<div class=\"attributionDefaultPub\">" + dto.getMarkerType() + "</font>");
         problemTypeListBox.addNullAndItems(dto.getProblemTypes()) ;
-        problemTypeListBox.setIndexForValue(dto.getProblemType());
+        problemTypeListBox.setIndexForText(dto.getProblemType());
         handleDirty();
     }
 

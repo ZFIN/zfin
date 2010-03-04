@@ -369,5 +369,8 @@ public class LookupComposite extends Composite {
         oracle.setLimit(limit);
     }
 
+    public void setEnabled(boolean enabled){
+        textBox.setEnabled(enabled);
+    }
 
 }

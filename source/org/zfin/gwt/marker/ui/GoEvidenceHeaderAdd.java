@@ -42,7 +42,7 @@ public class GoEvidenceHeaderAdd extends AbstractGoEvidenceHeader{
     protected void setValues() {
         super.setValues();
         if(dto!=null){
-            evidenceCodeBox.setIndexForValue(GoEvidenceCodeEnum.IMP.name());
+            evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.IMP.name());
             dto.setEvidenceCode(GoEvidenceCodeEnum.IMP);
             inferenceListBox.setDTO(dto);
         }
@@ -70,30 +70,16 @@ public class GoEvidenceHeaderAdd extends AbstractGoEvidenceHeader{
                     notWorking();
                     saveButton.setEnabled(false);
                     revertButton.setEnabled(false);
-                    goTermBox.setVisible(false);
-                    nameBox.setText(goTermBox.getCurrentText());
-                    nameBox.setEnabled(false);
-//                    boolean doEdit = Window.confirm("Do you want to Edit this record?") ;
-//                    if(doEdit){
-//                        DeferredCommand.addCommand(new Command(){
-//                            @Override
-//                            public void execute() {
-//                                Window.open("/action/marker/go-edit?zdbID="+result.getZdbID(),"_self","");
-//                            }
-//                        });
-//                    }
-//                    else{
-                        Window.alert("Please close this record when finished viewing.");
-                        Button button = new Button("Edit", new ClickHandler(){
-                            @Override
-                            public void onClick(ClickEvent event) {
-                                Window.open("/action/marker/go-edit?zdbID="+result.getZdbID(),"_self","");
-                            }
-                        });
-                        panel.add(button);
-//                    }
-//                    fireChangeEvent(new RelatedEntityEvent<GoEvidenceDTO>(result));
-//                    DeferredCommand.addCommand(new CompareCommand());
+                    goTermBox.setEnabled(false);
+                    inferenceListBox.setStackToDirty(false);
+                    Window.alert("Please close this record when finished viewing.");
+                    Button button = new Button("Edit", new ClickHandler(){
+                        @Override
+                        public void onClick(ClickEvent event) {
+                            Window.open("/action/marker/go-edit?zdbID="+result.getZdbID(),"_self","");
+                        }
+                    });
+                    panel.add(button);
                 }
             });
         }

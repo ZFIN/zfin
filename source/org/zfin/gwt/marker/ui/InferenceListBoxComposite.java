@@ -55,7 +55,7 @@ public class InferenceListBoxComposite extends AbstractInferenceListBox{
         return setStackToDirty(false);
     }
 
-    private boolean setStackToDirty(boolean dirty) {
+    public boolean setStackToDirty(boolean dirty) {
         int rowCount = stackTable.getRowCount();
         for (int i = 0; i < rowCount; i++) {
             ((StackComposite) stackTable.getWidget(i, 0)).setDirty(dirty);
