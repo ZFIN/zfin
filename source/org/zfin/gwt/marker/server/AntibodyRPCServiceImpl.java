@@ -168,7 +168,7 @@ public class AntibodyRPCServiceImpl extends RemoteServiceServlet implements Anti
         if (!antibody.getName().equals(dto.getName())) {
             String oldName = antibody.getName();
 
-            antibody.setAbbreviation(dto.getName());
+            antibody.setAbbreviation(dto.getName().toLowerCase());
             antibody.setName(dto.getName());
 
             InfrastructureService.insertUpdate(antibody, "Antibody Name", oldName, antibody.getName());
