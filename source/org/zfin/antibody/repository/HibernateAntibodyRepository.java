@@ -72,22 +72,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
         Criteria query = session.createCriteria(Antibody.class);
         query.add(Restrictions.eq("zdbID", zdbID));
-        query.setFetchMode("externalNotes", FetchMode.JOIN);
-        query.setFetchMode("aliases", FetchMode.JOIN);
-        //query.setFetchMode("aliases.publications", FetchMode.JOIN);
-        query.setFetchMode("suppliers", FetchMode.JOIN);
-        query.setFetchMode("suppliers.organization", FetchMode.JOIN);
-        query.setFetchMode("secondMarkerRelationships", FetchMode.JOIN);
-        query.setFetchMode("antibodyLabelings", FetchMode.JOIN);
-        query.setFetchMode("antibodyLabelings.publication", FetchMode.JOIN);
-        query.setFetchMode("antibodyLabelings.assay", FetchMode.JOIN);
-        query.setFetchMode("antibodyLabelings.expressionResults", FetchMode.JOIN);
-        query.setFetchMode("antibodyLabelings.expressionResults.figures", FetchMode.JOIN);
-        query.setFetchMode("antibodyLabelings.expressionResults.figures.images", FetchMode.JOIN);
-        query.setFetchMode("antibodyLabelings.expressionResults.anatomyTerm", FetchMode.JOIN);
-        query.setFetchMode("antibodyLabelings.genotypeExperiment", FetchMode.JOIN);
-        query.setFetchMode("antibodyLabelings.genotypeExperiment.genotype", FetchMode.JOIN);
-        query.setFetchMode("antibodyLabelings.genotypeExperiment.experiment", FetchMode.JOIN);
         return (Antibody) query.uniqueResult();
     }
 
@@ -410,7 +394,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
      * 3) immunogen species if not 'ANY" is set
      *
      * @param searchCriteria     antibody criteria
-     * @param retrieveAntibodies true or false
      * @return string
      */
     private String getAntibodiesByNameAndLabelingQueryBlock(AntibodySearchCriteria searchCriteria) {
