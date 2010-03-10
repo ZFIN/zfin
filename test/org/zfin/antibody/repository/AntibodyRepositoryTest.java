@@ -646,17 +646,20 @@ public class AntibodyRepositoryTest {
 
     @Test
     public void getPublicationsPerAntibodyAndAOTerm() {
-        String abName = "zn-5";
+        String abName = "Ab2-dag1";
         Antibody antibody = antibodyRep.getAntibodyByName(abName);
+        assertNotNull(antibody);
         // brain
-        String aoID = "ZDB-ANAT-010921-415";
+//        String aoID = "ZDB-ANAT-010921-415"; // this is a text-only figure for the anatomy item
+
+        // cerebellum
+        String aoID = "ZDB-ANAT-010921-522";
         AnatomyItem aoTerm = new AnatomyItem();
         aoTerm.setZdbID(aoID);
 
         PaginationResult<Publication> pubs = antibodyRep.getPublicationsWithFigures(antibody, aoTerm);
-        assertTrue(pubs != null);
-
-        assertEquals(true, pubs.getPopulatedResults().size() > 0);
+        assertNotNull(pubs);
+        assertTrue(pubs.getPopulatedResults().size() > 0);
     }
 
     @Test
