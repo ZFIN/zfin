@@ -419,7 +419,7 @@ function start_tips() {
 
         // either there was an asynchronous connection failure, or we are still waiting,
         // in which case we should resubmit the query
-        if (termStatus == "TERM_STATUS_LOOKING" || termStatus == "TERM_STATUS_FAILURE" && diff < maxTime) {
+        if (termStatus == "LOOKING" || termStatus == "FAILURE" && diff < maxTime) {
             validateLookup();
             return;
         }

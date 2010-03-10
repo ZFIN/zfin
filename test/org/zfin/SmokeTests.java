@@ -3,8 +3,8 @@ package org.zfin;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.zfin.gwt.GeneralJWebUnitTest;
-import org.zfin.gwt.GOEvidenceUnitTest;
+import org.zfin.gwt.ExpressionJWebUnitTest;
+import org.zfin.gwt.GeneralSecureJWebUnitTest;
 import org.zfin.httpunittest.SmokeTest;
 
 /**
@@ -13,7 +13,8 @@ import org.zfin.httpunittest.SmokeTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         SmokeTest.class,
-        GeneralJWebUnitTest.class
+        GeneralSecureJWebUnitTest.class,
+        ExpressionJWebUnitTest.class
 //        GOEvidenceUnitTest.class
 })
 public class SmokeTests {

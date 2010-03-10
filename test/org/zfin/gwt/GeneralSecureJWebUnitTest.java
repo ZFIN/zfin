@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * This class uses the more raw HtmlUnit protocols.
  */
-public class GeneralJWebUnitTest extends AbstractJWebUnitTest{
+public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
 
     public void testSimpleComposite(){
         try {

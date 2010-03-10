@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * This class uses the more raw HtmlUnit protocols.
  */
-public class GOEvidenceUnitTest extends AbstractJWebUnitTest {
+public class GOEvidenceUnitTest extends AbstractSecureJWebUnitTest {
 
     private String oldPubID;
     private Set<String> oldInferences;
