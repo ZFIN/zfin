@@ -2,6 +2,7 @@ package org.zfin.gwt.root.ui;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import org.zfin.gwt.root.dto.TermNotFoundException;
 
 /**
@@ -35,6 +36,7 @@ public abstract class HandlesErrorCallBack<T> implements AsyncCallback<T> {
     public void onFailure(Throwable throwable) {
         if (handleConnectionError(throwable)) return;
         if (checkLogin(throwable)) return;
+        if (handleOutOfDateError(throwable)) return;
         if (handleTermNotFound(throwable)) return;
         displayMessage(message + throwable);
     }
@@ -64,4 +66,14 @@ public abstract class HandlesErrorCallBack<T> implements AsyncCallback<T> {
         }
         return false;
     }
+
+    protected boolean handleOutOfDateError(Throwable t) {
+        if (t instanceof IncompatibleRemoteServiceException) {
+            IncompatibleRemoteServiceException remoteServiceException = (IncompatibleRemoteServiceException) t;
+            Window.alert("This application is out of date, please click the refresh button on your browser");
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -21,6 +21,7 @@ public abstract class MarkerEditCallBack<T> extends HandlesErrorCallBack<T> {
     public void onFailure(Throwable throwable) {
         if (handleConnectionError(throwable)) return;
         if (checkLogin(throwable)) return;
+        if (handleOutOfDateError(throwable)) return;
         if (handleTermNotFound(throwable)) return;
         // only new one here
         if (handleDBLinkNotFound(throwable)) return;
