@@ -62,7 +62,8 @@ select
     ";Name="    || Name    ||
     ";Parent="  || Parent  ||
     ";biotype=" || biotype ||
-    ";zdb_id="  || case tscript_mrkr_zdb_id when NULL then "" else tscript_mrkr_zdb_id end
+    ";zdb_id="  || case tscript_mrkr_zdb_id when NULL then "" else tscript_mrkr_zdb_id end ||
+    ";Alias="   || id
     when 'gene' then
     "ID="       || ID      ||
     ";Name="    || Name    ||

@@ -5,7 +5,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_tscript.gff3' DE
 select seqname,'ZFIN_transcript' source,feature,start,end,score,strand,frame,
 
 case feature when 'transcript' then
- "ID="|| id||";Name="||mrkr_name||";Parent="||parent||";biotype="||tscriptt_type||";zdb_id=" || mrkr_zdb_id
+ "ID="||id||";Name="||mrkr_name||";Parent="||parent||";biotype="||tscriptt_type||";zdb_id="||mrkr_zdb_id
 else
  "ID="||id||";Name="||name||";Parent="|| parent
 end attribute
