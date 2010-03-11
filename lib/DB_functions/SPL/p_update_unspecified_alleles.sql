@@ -16,7 +16,7 @@ create procedure p_update_unspecified_alleles (vMarkerZdbId varchar(50),
         let vUnExists = (Select count(*) 
     	          	     from feature, feature_marker_relationship
 			     where feature_zdb_id = fmrel_ftr_zdb_id
-                     	     and feature_name like 'un_%'
+                     	     and feature_name like 'unspecified_%'
 			     and fmrel_type = 'is allele of'
 		     	     and fmrel_mrkr_zdb_id = vMarkerZdbId);
 
