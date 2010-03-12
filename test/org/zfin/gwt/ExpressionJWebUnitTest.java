@@ -83,7 +83,7 @@ public class ExpressionJWebUnitTest extends AbstractJWebUnitTest{
 
 
             // assert that the 'search' button is there
-            HtmlButton searchButton = (HtmlButton) page.getByXPath("//input[. = 'Search']").get(0) ;
+            HtmlButtonInput searchButton = (HtmlButtonInput) page.getByXPath("//input[@value = 'Search']").get(0) ;
             assertNotNull(searchButton);
             searchButton.click();
 

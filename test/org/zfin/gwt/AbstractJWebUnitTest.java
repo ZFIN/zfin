@@ -23,9 +23,9 @@ import java.util.Date;
 public class AbstractJWebUnitTest extends WebTestCase{
 
     protected String mutant = System.getenv("MUTANT_NAME");
-//    protected String mutant = "ogon" ;
+//    protected String mutant = "almost" ;
     protected String domain = System.getenv("DOMAIN_NAME");
-//    protected String domain = "ogon.zfin.org" ;
+//    protected String domain = "almost.zfin.org" ;
     protected final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
 
     static {
