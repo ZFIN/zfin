@@ -268,9 +268,11 @@ public class AntibodyWikiWebService extends WikiWebService {
 
         // Supplier page 
         StringBuilder supplierStringBuilder = new StringBuilder();
-        for (MarkerSupplier supplier : antibody.getSuppliers()) {
-            supplierStringBuilder.append(SourcePresentation.getWikiLink(supplier.getOrganization()));
-            supplierStringBuilder.append(" &nbsp;");
+        if(antibody.getSuppliers()!=null){
+            for (MarkerSupplier supplier : antibody.getSuppliers()) {
+                supplierStringBuilder.append(SourcePresentation.getWikiLink(supplier.getOrganization()));
+                supplierStringBuilder.append(" &nbsp;");
+            }
         }
         content = content.replace("{text-data:Suppliers}{text-data}", supplierStringBuilder.toString());
 

@@ -25,6 +25,23 @@ public class WikiWebService {
 
     private final Logger logger = Logger.getLogger(WikiWebService.class);
 
+    private final static String SANDBOX_DEFAULT_CONTENT =
+            "This is the home of the SandBox space.\n\n" +
+                    "To help you on your way, we've inserted some of our favourite macros on this home page. As you start creating pages, adding news items and commenting you'll see the macros below fill up with all the activity in your space.\n\n" +
+                    "{section}\n" +
+                    "{column:width=60%}\n" +
+                    "{recently-updated}\n\n\n" +
+                    "{column}\n\n" +
+                    "{column:width=5%}\n" +
+                    "{column}\n\n" +
+                    "{column:width=35%}\n" +
+                    "Navigate space\n" +
+                    "{pagetreesearch}\n\n" +
+                    "{pagetree}\n\n" +
+                    "{column}\n\n" +
+                    "{section}"
+            ;
+
 
     private static WikiWebService instance = null;
 
@@ -192,6 +209,14 @@ public class WikiWebService {
         }
 
         RemotePageSummary[] pages = service.getPages(token,Space.SANDBOX.getValue()) ;
+        if(pages.length==1){
+            if(service.getPage(token,pages[0].getId()).getContent().equals(SANDBOX_DEFAULT_CONTENT)){
+                logger.info("Nothing changed in wiki sandbox homepage, doing nothing");
+                return ;
+            }
+        }
+        logger.info("Wiki sandbox changed, reverting.");
+
         if(pages!=null && pages.length>0){
             for(RemotePageSummary page: pages){
                 logger.debug("removing page: "+ page.getTitle());
@@ -199,21 +224,9 @@ public class WikiWebService {
             }
         }
 
+
         RemotePage homePage = new RemotePage() ;
-        homePage.setContent("This is the home of the SandBox space.\n\n" +
-                "To help you on your way, we've inserted some of our favourite macros on this home page. As you start creating pages, adding news items and commenting you'll see the macros below fill up with all the activity in your space.\n\n" +
-                "{section}\n" +
-                "{column:width=60%}\n" +
-                "{recently-updated}\n\n\n" +
-                "{column}\n\n" +
-                "{column:width=5%}\n" +
-                "{column}\n\n" +
-                "{column:width=35%}\n" +
-                "Navigate space\n" +
-                "{pagetreesearch}\n\n" +
-                "{pagetree}\n\n" +
-                "{column}\n\n" +
-                "{section}");
+        homePage.setContent(SANDBOX_DEFAULT_CONTENT);
         homePage.setCreated(GregorianCalendar.getInstance());
         homePage.setCreator(wikiUserName);
         homePage.setHomePage(true);
