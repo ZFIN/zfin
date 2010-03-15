@@ -66,6 +66,15 @@ public interface BlastService {
     String robustlyBlastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException, BusException;
 
     /**
+     * This method wraps blastOneDBToString using only actualDatabaseTargets from xmlBlastBean.
+     *
+     * @param xmlBlastBean Blast parameters beans.
+     * @return An output stream of an ExecuteBlastBean with populated results.
+     * @throws BlastDatabaseException Operation failure.
+     */
+    String robustlyBlastOneDBToString(XMLBlastBean xmlBlastBean) throws BlastDatabaseException, BusException;
+
+    /**
      * This method performs a remote blast using ssh and returns the output stream
      *
      * @param xmlBlastBean Blast parameters beans.
@@ -75,6 +84,16 @@ public interface BlastService {
      * @throws BusException           Bus error has been thrown.
      */
     String blastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException, BusException;
+
+    /**
+     * This method wraps blastOneDBToString using only actualDatabaseTargets from xmlBlastBean.
+     *
+     * @param xmlBlastBean Blast parameters beans.
+     * @return An output stream of an ExecuteBlastBean with populated results.
+     * @throws BlastDatabaseException Operation failure.
+     * @throws BusException           Bus error has been thrown.
+     */
+    String blastOneDBToString(XMLBlastBean xmlBlastBean) throws BlastDatabaseException, BusException;
 
     /**
      * This method returns the number of sequences in a blast database.

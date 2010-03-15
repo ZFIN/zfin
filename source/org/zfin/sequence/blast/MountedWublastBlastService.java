@@ -1,5 +1,6 @@
 package org.zfin.sequence.blast;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.framework.exec.ExecProcess;
@@ -72,6 +73,15 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
         return remoteFile;
     }
 
+    @Override
+    public String blastOneDBToString(XMLBlastBean xmlBlastBean) throws BlastDatabaseException, BusException {
+        if(CollectionUtils.isNotEmpty(xmlBlastBean.getActualDatabaseTargets())){
+            return blastOneDBToString(xmlBlastBean,xmlBlastBean.getActualDatabaseTargets().get(0)) ;
+        }
+        else{
+            throw new BlastDatabaseException("Actual database targets not specified for:\n"+ xmlBlastBean) ;
+        }
+    }
 
     @Override
     /**

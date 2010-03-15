@@ -12,22 +12,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-public class BlastServerSGEWublastService extends AbstractWublastBlastService {
+public abstract class BlastServerSGEWublastService extends AbstractWublastBlastService {
 
     private static final Logger logger = Logger.getLogger(BlastServerSGEWublastService.class);
 
-
-    private static BlastServerSGEWublastService instance;
-
-    protected BlastServerSGEWublastService() {
-    }
-
-    public static BlastServerSGEWublastService getInstance() {
-        if (instance == null) {
-            instance = new BlastServerSGEWublastService();
-        }
-        return instance;
-    }
 
     protected List<String> getPrefixCommands() {
         List<String> prefixCommands = getPrefixCommands();

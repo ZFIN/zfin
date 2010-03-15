@@ -5,30 +5,27 @@ import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.List;
 
 /**
  * Class DoBlastThread provides a thread for the blast process to run it
  * so that it doesn't hang the calling process but is allowed to finish.
  */
-@Deprecated
-public class BlastSingleQueryThread extends AbstractQueryThread {
+public class SMPBlastQueryThread extends AbstractQueryThread {
 
-    private final static Logger logger = Logger.getLogger(BlastSingleQueryThread.class);
+    private final static Logger logger = Logger.getLogger(SMPBlastQueryThread.class);
 
-    public BlastSingleQueryThread(XMLBlastBean xmlBlastBean) {
+    private BlastService blastService ;
+
+    public SMPBlastQueryThread(XMLBlastBean xmlBlastBean,BlastService blastService) {
         super(xmlBlastBean);
+        this.blastService = blastService ;
     }
 
     public void run() {
         try {
             startBlast();
-            List<Database> databases = xmlBlastBean.getActualDatabaseTargets();
-            if (databases.size() != 1) {
-                throw new BlastDatabaseException("wrong number of databases: " + databases.size());
-            }
 
-            String xml = MountedWublastBlastService.getInstance().robustlyBlastOneDBToString(xmlBlastBean, databases.get(0));
+            String xml = blastService.robustlyBlastOneDBToString(xmlBlastBean);
 
             // return if no way to process
             if (xml == null) {
@@ -45,6 +42,7 @@ public class BlastSingleQueryThread extends AbstractQueryThread {
         }
         finishBlast();
     }
+
 }
 
 

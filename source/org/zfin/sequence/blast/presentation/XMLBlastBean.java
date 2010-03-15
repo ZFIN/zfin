@@ -395,6 +395,7 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
         xmlBlastBean.setActualDatabaseTargets(actualDatabaseTargets);
         xmlBlastBean.setDataLibraryString(dataLibraryString);
         xmlBlastBean.setProgram(program);
+        xmlBlastBean.setNumChunks(numChunks);
         xmlBlastBean.setQuerySequence(querySequence);
         xmlBlastBean.setAlignmentView(alignmentView);
         xmlBlastBean.setDust(dust);

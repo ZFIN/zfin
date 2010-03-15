@@ -249,15 +249,17 @@ public class BlastResultMapper {
                 // if there are no hits in sequences, then assume we have a genomic clone
                 if (geneDBLink == null && cloneDBLink == null && transcriptDBLink == null) {
                     for (DBLink dbLink : dbLinks) {
-                        logger.debug("geneDBLink is null so setting cloneDBLink for a genomic: " + dbLink);
-                        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(dbLink.getDataZdbID());
-                        // if a genomic clone then we handle appropriately
-                        if (marker.isInTypeGroup(Marker.TypeGroup.CLONE)) {
-                            cloneDBLink = dbLink;
-                            // not all clones are mapped to the clone table, so we will just assume its a marker
-                            hitMarker = RepositoryFactory.getMarkerRepository().getMarkerByID(cloneDBLink.getDataZdbID());
-                            hitViewBean.setHitDBLink(cloneDBLink);
-                            genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
+                        if(false==dbLink.getDataZdbID().startsWith("ZDB-ORTHO-")){
+                            logger.debug("geneDBLink is null so setting cloneDBLink for a genomic: " + dbLink);
+                            Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(dbLink.getDataZdbID());
+                            // if a genomic clone then we handle appropriately
+                            if (marker.isInTypeGroup(Marker.TypeGroup.CLONE)) {
+                                cloneDBLink = dbLink;
+                                // not all clones are mapped to the clone table, so we will just assume its a marker
+                                hitMarker = RepositoryFactory.getMarkerRepository().getMarkerByID(cloneDBLink.getDataZdbID());
+                                hitViewBean.setHitDBLink(cloneDBLink);
+                                genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
+                            }
                         }
                     }
 
@@ -377,7 +379,9 @@ public class BlastResultMapper {
                     HighScoringPair highScoringPair = new HighScoringPair();
                     highScoringPair.setHspNumber(Integer.parseInt(hsp.getHspNum().getContent()));
                     highScoringPair.setQueryStrand(hsp.getHspQseq().getContent());
-                    highScoringPair.setMidlineStrand(hsp.getHspMidline().getContent());
+                    if(hsp.getHspMidline()!=null){
+                        highScoringPair.setMidlineStrand(hsp.getHspMidline().getContent());
+                    }
                     highScoringPair.setHitStrand(hsp.getHspHseq().getContent());
                     highScoringPair.setQueryFrom(Integer.parseInt(hsp.getHspQueryFrom().getContent()));
                     highScoringPair.setQueryTo(Integer.parseInt(hsp.getHspQueryTo().getContent()));
@@ -386,9 +390,13 @@ public class BlastResultMapper {
                     highScoringPair.setBitScore(Float.parseFloat(hsp.getHspBitScore().getContent()));
                     highScoringPair.setScore(Integer.parseInt(hsp.getHspScore().getContent()));
                     highScoringPair.setEValue(Float.parseFloat(hsp.getHspEvalue().getContent()));
-                    highScoringPair.setAlignmentLength(Integer.parseInt(hsp.getHspAlignLen().getContent()));
+                    if(hsp.getHspAlignLen()!=null){
+                        highScoringPair.setAlignmentLength(Integer.parseInt(hsp.getHspAlignLen().getContent()));
+                    }
                     highScoringPair.setIdentity(Integer.parseInt(hsp.getHspIdentity().getContent()));
-                    highScoringPair.setPositive(Integer.parseInt(hsp.getHspPositive().getContent()));
+                    if(hsp.getHspPositive()!=null){
+                        highScoringPair.setPositive(Integer.parseInt(hsp.getHspPositive().getContent()));
+                    }
 
                     // set hits as those with max hsp score
                     if (highScoringPair.getScore() > highScore) {

@@ -33,8 +33,12 @@ public class ExecProcess {
         setCommand(command);
     }
 
+    public ExecProcess(List<String> commandList,boolean handleQuoting) {
+        setCommand(commandList,handleQuoting);
+    }
+
     public ExecProcess(List<String> commandList) {
-        setCommand(commandList);
+        this(commandList,true);
     }
 
     public int exec() throws IOException, InterruptedException {
@@ -55,11 +59,15 @@ public class ExecProcess {
         commandLine = CommandLine.parse(command);
     }
 
-    public void setCommand(List<String> commandList) {
+    public void setCommand(List<String> commandList,boolean handleQuoting) {
         commandLine = new CommandLine(commandList.get(0));
         for (int i = 1; i < commandList.size(); i++) {
-            commandLine.addArgument(commandList.get(i));
+            commandLine.addArgument(commandList.get(i),handleQuoting);
         }
+    }
+
+    public void setCommand(List<String> commandList) {
+        setCommand(commandList,true);
     }
 
     public String getStandardError() {

@@ -17,14 +17,14 @@ import java.util.concurrent.ThreadFactory;
 public class BlastQueryThreadCollection implements BlastThreadCollection {
 
     private final static Logger logger = Logger.getLogger(BlastQueryThreadCollection.class);
-
-    private Collection<BlastQueryJob> jobCollection = new ConcurrentLinkedQueue<BlastQueryJob>();
     private static BlastQueryThreadCollection instance = null;
-    private static BlastScheduler blastScheduler = null;
-    private static ThreadFactory blastThreadFactory = Executors.defaultThreadFactory();
-    private static Thread blastSchedulerThread = null;
 
-    private BlastQueryThreadCollection() {
+    protected Collection<BlastQueryJob> jobCollection = new ConcurrentLinkedQueue<BlastQueryJob>();
+    protected static BlastScheduler blastScheduler = null;
+    protected static ThreadFactory blastThreadFactory = Executors.defaultThreadFactory();
+    protected static Thread blastSchedulerThread = null;
+
+    protected BlastQueryThreadCollection() {
         blastScheduler = new BlastScheduler(this);
     }
 
@@ -54,18 +54,22 @@ public class BlastQueryThreadCollection implements BlastThreadCollection {
         return true;
     }
 
-    public synchronized void executeBlastThread(XMLBlastBean xmlBlastBean) {
-        logger.debug("sheduling blast ticket: " + xmlBlastBean.getTicketNumber());
-        BlastHeuristicFactory productionBlastHeuristicFactory = new ProductionBlastHeuristicFactory();
-        BlastHeuristicCollection blastHeuristicCollection = productionBlastHeuristicFactory.createBlastHeuristics(xmlBlastBean);
-        BlastQueryJob blastSingleTicketQueryThread
-                = new BlastDistributableQueryThread(xmlBlastBean, blastHeuristicCollection);
-        jobCollection.add(blastSingleTicketQueryThread);
+//    public synchronized void executeBlastThread(XMLBlastBean xmlBlastBean) {
+//        logger.debug("sheduling blast ticket: " + xmlBlastBean.getTicketNumber());
+//        BlastHeuristicFactory productionBlastHeuristicFactory = new ProductionBlastHeuristicFactory();
+//        BlastHeuristicCollection blastHeuristicCollection = productionBlastHeuristicFactory.createBlastHeuristics(xmlBlastBean);
+//        BlastQueryJob blastSingleTicketQueryThread = new BlastDistributableQueryThread(xmlBlastBean, blastHeuristicCollection);
+//        jobCollection.add(blastSingleTicketQueryThread);
+//
+//        startScheduler();
+//    }
 
+    public void addJobAndStart(BlastQueryJob blastSingleTicketQueryThread) {
+        jobCollection.add(blastSingleTicketQueryThread);
         startScheduler();
     }
 
-    private void startScheduler() {
+    protected void startScheduler() {
         if (blastSchedulerThread == null || false == blastSchedulerThread.isAlive()) {
             blastSchedulerThread = null; // a little redundant
             blastSchedulerThread = blastThreadFactory.newThread(blastScheduler);

@@ -17,18 +17,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class WebHostWublastBlastService extends AbstractWublastBlastService {
+public abstract class WebHostWublastBlastService extends AbstractWublastBlastService {
 
     private static final Logger logger = Logger.getLogger(WebHostWublastBlastService.class);
-
-    private static WebHostWublastBlastService instance;
-
-    public static WebHostWublastBlastService getInstance() {
-        if (instance == null) {
-            instance = new WebHostWublastBlastService();
-        }
-        return instance;
-    }
 
     @Override
     public List<String> getPrefixCommands() {

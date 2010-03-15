@@ -61,6 +61,7 @@ public abstract class AbstractQueryThread implements BlastQueryJob {
         return finishTime;
     }
 
+
     public int getNumberThreads() {
         return 1;
     }

@@ -678,11 +678,34 @@ public abstract class AbstractWublastBlastService implements BlastService {
         return sequences;
     }
 
+    public String robustlyBlastOneDBToString(XMLBlastBean xmlBlastBean) throws BlastDatabaseException, BusException {
+        String xml = null;
+        for (int attempts = 0; xml == null && attempts < maxAttempts; ++attempts) {
+            try {
+                xml = blastOneDBToString(xmlBlastBean);
+            } catch (BusException e) {
+                if (attempts == maxAttempts - 1) {
+//                    throw new BlastDatabaseException("too many bus errors: "+maxAttempts + " for ticket: "+ xmlBlastBean.getTicketNumber()+"\n"+xmlBlastBean) ;
+                    throw new BusException("too many bus errors: " + maxAttempts + " for ticket: " + xmlBlastBean.getTicketNumber() + "\n" + xmlBlastBean, e.getReturnXML());
+                } else {
+                    logger.warn("Bus exception for ticket, re-submitting ticket: " + xmlBlastBean.getTicketNumber(), e);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ie) {
+                        throw new BlastDatabaseException("sleeping thread interrupted for ticket: " +
+                                xmlBlastBean.getTicketNumber() + "\n" + xmlBlastBean, ie);
+                    }
+                }
+            }
+        }
+        return xml;
+    }
+
     public String robustlyBlastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException, BusException {
         String xml = null;
         for (int attempts = 0; xml == null && attempts < maxAttempts; ++attempts) {
             try {
-                xml = MountedWublastBlastService.getInstance().blastOneDBToString(xmlBlastBean, database);
+                xml = blastOneDBToString(xmlBlastBean, database);
             } catch (BusException e) {
                 if (attempts == maxAttempts - 1) {
 //                    throw new BlastDatabaseException("too many bus errors: "+maxAttempts + " for ticket: "+ xmlBlastBean.getTicketNumber()+"\n"+xmlBlastBean) ;
@@ -739,18 +762,6 @@ public abstract class AbstractWublastBlastService implements BlastService {
         return sequences;
     }
 
-
-    /**
-     * This is the "blastn" implementation
-     *
-     * @param xmlBlastBean Blast parameters
-     * @return XML as String.
-     * @throws org.zfin.sequence.blast.BlastDatabaseException
-     *
-     */
-    public String blastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException, BusException {
-        throw new BlastDatabaseException("Function not implemented");
-    }
 
     /**
      * todo: will this ever get used?

@@ -345,7 +345,9 @@ public class XMLBlastController extends SimpleFormController {
             // set the multiple query files
             blastBean.setOtherQueries(resultXMLBlastBeans);
             // execute thread
-            BlastQueryThreadCollection.getInstance().executeBlastThread(blastBean);
+//            BlastQueryThreadCollection.getInstance().executeBlastThread(blastBean);
+            logger.debug("sheduling blast ticket: " + blastBean.getTicketNumber());
+            scheduleBlast(blastBean) ;
         }
 
         // set the inputXMLBlastBean to the first result bean
@@ -361,6 +363,15 @@ public class XMLBlastController extends SimpleFormController {
 //        modelAndView.addObject(LookupStrings.FORM_BEAN, inputXMLBlastBean) ;
         return modelAndView;
     }
+
+    protected void scheduleBlast(XMLBlastBean blastBean){
+        BlastHeuristicFactory productionBlastHeuristicFactory = new ProductionBlastHeuristicFactory();
+        BlastHeuristicCollection blastHeuristicCollection = productionBlastHeuristicFactory.createBlastHeuristics(blastBean);
+        BlastQueryJob blastSingleTicketQueryThread = new BlastDistributableQueryThread(blastBean, blastHeuristicCollection);
+        BlastQueryThreadCollection.getInstance().addJobAndStart(blastSingleTicketQueryThread) ;
+    }
+
+
 
 
 }

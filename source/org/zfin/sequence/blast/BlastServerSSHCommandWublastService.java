@@ -4,6 +4,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,6 +29,16 @@ public final class BlastServerSSHCommandWublastService extends BlastServerSGEWub
             instance = new BlastServerSSHCommandWublastService();
         }
         return instance;
+    }
+
+    @Override
+    public String blastOneDBToString(XMLBlastBean xmlBlastBean) throws BlastDatabaseException, BusException {
+        throw new BlastDatabaseException("blast not implemented ") ;
+    }
+
+    @Override
+    public String blastOneDBToString(XMLBlastBean xmlBlastBean, Database database) throws BlastDatabaseException, BusException {
+        throw new BlastDatabaseException("blast not implemented ") ;
     }
 
     /**

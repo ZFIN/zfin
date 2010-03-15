@@ -14,6 +14,8 @@
                 <prop key="/blast/external-blast">externalBlast</prop>
                 <prop key="/blast/include-external-blast">includeExternalBlast</prop>
                 <prop key="/blast/blast">blastXML</prop>
+                <prop key="/blast/blast-smp">blastSMP</prop>
+                <prop key="/blast/blast-ncbi">blastNCBI</prop>
                 <prop key="/blast/blast-view">blastView</prop>
             </props>
         </property>
@@ -54,11 +56,18 @@
         </property>
     </bean>
 
+    <bean name="blastSMP" parent="blastXML" class="org.zfin.sequence.blast.presentation.SMPBlastController">
+    </bean>
+
+    <bean name="blastNCBI" parent="blastXML" class="org.zfin.sequence.blast.presentation.NCBIBlastController">
+    </bean>
+
     <!-- ================================== Multipart resolver ==================================-->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="1048576" />
         <property name="defaultEncoding" value="utf8" />
     </bean>
+
 
     <bean name="blastView" class="org.zfin.sequence.blast.presentation.XMLBlastViewController">
         <property name="commandClass" value="org.zfin.sequence.blast.presentation.XMLBlastBean"/>
@@ -67,6 +76,5 @@
         <property name="pauseTimeBewteenTriesMs" value="5000"/>
         <property name="maxTries" value="3"/>
     </bean>
-
 
 </beans>

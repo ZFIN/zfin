@@ -6,6 +6,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.sequence.blast.BlastQueryThreadCollection;
+import org.zfin.sequence.blast.BlastThreadCollection;
 import org.zfin.sequence.blast.BlastThreadService;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastResultMapper;
@@ -27,6 +28,7 @@ public class XMLBlastViewController extends AbstractCommandController {
     private long initPauseTimeMs = 2000; // 2 seconds
     private long pauseTimeBewteenTriesMs = 5000; // 5 seconds
     private JAXBContext jc = null;
+    private BlastThreadCollection blastThreadCollection ;
 
     private Logger logger = Logger.getLogger(XMLBlastViewController.class);
 
@@ -36,6 +38,10 @@ public class XMLBlastViewController extends AbstractCommandController {
         } catch (JAXBException e) {
             logger.error("Failed to instantiate JAXContext for org.zfin.sequence.blast.results: ", e);
         }
+    }
+
+    protected BlastThreadCollection getQueryThreadCollection(){
+        return BlastQueryThreadCollection.getInstance();
     }
 
     @Override
@@ -70,7 +76,8 @@ public class XMLBlastViewController extends AbstractCommandController {
 
 
             // if the thread is still processing
-            if (BlastThreadService.isJobInQueue(xmlBlastBean, BlastQueryThreadCollection.getInstance())) {
+//            if (BlastThreadService.isJobInQueue(xmlBlastBean, BlastQueryThreadCollection.getInstance())) {
+            if (BlastThreadService.isJobInQueue(xmlBlastBean, getQueryThreadCollection() )) {
 //                if (false == BlastQueryThreadCollection.getInstance().isBlastThreadDone(xmlBlastBean)) {
                 modelAndView.setViewName("blast-processing.page");
                 modelAndView.addObject(LookupStrings.FORM_BEAN, xmlBlastBean);

@@ -172,7 +172,10 @@ public class BlastStressLargeSequenceDBTest extends BlastStressTest{
 
 
         public void run(){
-            BlastQueryThreadCollection.getInstance().executeBlastThread(xmlBlastBean);
+            BlastHeuristicFactory productionBlastHeuristicFactory = new ProductionBlastHeuristicFactory();
+            BlastHeuristicCollection blastHeuristicCollection = productionBlastHeuristicFactory.createBlastHeuristics(xmlBlastBean);
+            BlastQueryJob blastSingleTicketQueryThread = new BlastDistributableQueryThread(xmlBlastBean, blastHeuristicCollection);
+            BlastQueryThreadCollection.getInstance().addJobAndStart(blastSingleTicketQueryThread) ;
         }
     }
 }
