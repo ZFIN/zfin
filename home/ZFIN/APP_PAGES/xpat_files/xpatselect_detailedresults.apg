@@ -163,7 +163,7 @@ from $xpdetres_resultTable
      join expression_experiment on xpatex_zdb_id = xpat_xpatex_zdb_id
      left outer join marker probe on xpatex_probe_feature_zdb_id  = probe.mrkr_zdb_id
 $xpdetres_imagesOnlyConstraint
-order by date desc, pub_mini_ref, probe_abbrev_order, fig_full_label
+order by date desc, pub_mini_ref, publication.zdb_id, probe_abbrev_order, fig_full_label
 
 ;">   
  
@@ -242,7 +242,7 @@ order by date desc, pub_mini_ref, probe_abbrev_order, fig_full_label
       <?MICOMMENT> *** stage range column ***  <?/MICOMMENT>
       <td>
         <?MISQL SQL="
-	  select WebExplode(object, 'fxfigst_fig_zdb_id=$xpdetres_figZdbId&fxfigst_gene_zdb_id=$xpdetres_geneZdbId')
+	  select WebExplode(object, 'fxfigst_fig_zdb_id=$xpdetres_figZdbId&fxfigst_gene_zdb_id=$xpdetres_geneZdbId&fxfigst_result_table=$xpdetres_resultTable&fxfigst_result_table_xpat_column=xpat_xpatex_zdb_id&fxfigst_result_table_gene_column=xpat_gene_zdb_id')
 	  from webpages
 	  where id = 'aa-fxfigstgrng.apg';">$1<?/MISQL>
 
