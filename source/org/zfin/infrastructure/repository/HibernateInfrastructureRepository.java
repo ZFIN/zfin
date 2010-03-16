@@ -82,6 +82,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (ActiveData) criteria.uniqueResult();
     }
 
+    public ActiveSource getActiveSource(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(ActiveSource.class);
+        criteria.add(Restrictions.eq("zdbID", zdbID));
+        return (ActiveSource) criteria.uniqueResult();
+    }
 
     //todo: add a getter here, or do some mapping to objects so that we can test the insert in a routine way
     public RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID) {

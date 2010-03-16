@@ -12,8 +12,11 @@ import org.hibernate.SessionFactory;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.ActiveSource;
 import org.zfin.people.AccountInfo;
 import org.zfin.people.Person;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.Date;
 
@@ -23,8 +26,8 @@ import java.util.Date;
 public class AbstractSecureJWebUnitTest extends WebTestCase{
 
     protected String mutant = System.getenv("MUTANT_NAME");
-    protected String domain = System.getenv("DOMAIN_NAME");
-//    protected String domain = "ogon.zfin.org" ;
+//    protected String domain = System.getenv("DOMAIN_NAME");
+    protected String domain = "ogon.zfin.org" ;
     protected final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
     protected Person person = null ;
     protected String password = "veryeasypass";
@@ -40,25 +43,16 @@ public class AbstractSecureJWebUnitTest extends WebTestCase{
     public void setUp() {
         TestConfiguration.configure();
         setTestingEngineKey(TestingEngineRegistry.TESTING_ENGINE_HTMLUNIT);
-        try {
-            createPerson() ;
-            login();
-        } catch (Exception e) {
-            fail(e.toString()) ;
-        }
+        HibernateUtil.createTransaction();
+        createPerson();
     }
 
     @Override
     protected void tearDown() throws Exception {
         webClient.closeAllWindows();
-        deletePerson();
+        HibernateUtil.rollbackTransaction();
     }
 
-    protected void deletePerson(){
-        HibernateUtil.createTransaction();
-        HibernateUtil.currentSession().delete(person);
-        HibernateUtil.flushAndCommitCurrentSession();
-    }
 
 
     public Person getTestPerson() {
@@ -80,10 +74,17 @@ public class AbstractSecureJWebUnitTest extends WebTestCase{
     }
 
     protected void createPerson() {
-        HibernateUtil.createTransaction();
         person = getTestPerson();
         HibernateUtil.currentSession().save(person);
-        HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.currentSession().flush();
+
+        // need to evict object so that it can be reloaded later
+        HibernateUtil.currentSession().evict(person);
+
+        // because persons add active source is added with person, need to evict it, too
+        ActiveSource activeSource = RepositoryFactory.getInfrastructureRepository().getActiveSource(person.getZdbID()) ;
+        assertNotNull(activeSource);
+        HibernateUtil.currentSession().evict(activeSource);
     }
 
     public void login() throws Exception{

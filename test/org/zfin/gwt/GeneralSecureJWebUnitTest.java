@@ -17,6 +17,7 @@ public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
 
     public void testSimpleComposite(){
         try {
+            login();
             HtmlPage page = webClient.getPage("https://"+domain +"/action/dev-tools/gwt/modules");
             webClient.setJavaScriptEnabled(true);
             webClient.waitForBackgroundJavaScriptStartingBefore(2000);
@@ -46,7 +47,7 @@ public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
                 }
             });
             htmlButton3.click();
-        } catch (IOException e) {
+        } catch (Exception e) {
             fail(e.toString());
         }
     }
@@ -54,6 +55,7 @@ public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
     public void testAlternateGeneNote(){
 
         try {
+            login();
             // first we have to guarantee that we always have a note there
             Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-001103-2") ;
             String oldNote = gene.getPublicComments();
@@ -126,7 +128,7 @@ public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
             }
 
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             fail(e.toString());
         }
 
@@ -135,6 +137,7 @@ public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
     public void testAnatomyLookupForm(){
 
         try {
+            login();
             webClient.waitForBackgroundJavaScriptStartingBefore(2000);
             HtmlPage page = webClient.getPage("http://"+domain +"/action/dev-tools/gwt/lookup-table");
             assertEquals("GWT Lookup Table",page.getTitleText());
@@ -146,13 +149,14 @@ public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
             assertEquals("",htmlInput.getValueAttribute());
             htmlInput.setValueAttribute("pelv");
             assertEquals("pelv",htmlInput.getValueAttribute());
-        } catch (IOException e) {
+        } catch (Exception e) {
             fail(e.toString());
         }
     }
 
     public void testAnatomyLookupTyping(){
         try {
+            login();
             webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
             HtmlPage page = webClient.getPage("http://"+domain +"/action/dev-tools/gwt/lookup-table");
             webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
@@ -179,7 +183,7 @@ public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
             assertEquals(25,page.getByXPath("//td[@class='item']").size() );
             assertEquals("...",((HtmlTableDataCell) page.getByXPath("//td[@class='item']").get(24)).getTextContent());
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             fail(e.toString());
         }
 
