@@ -8,8 +8,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
 
-import java.io.IOException;
-
 /**
  * This class uses the more raw HtmlUnit protocols.
  */

@@ -12,7 +12,6 @@ import org.hibernate.SessionFactory;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.people.AccountInfo;
 import org.zfin.people.Person;
@@ -26,8 +25,8 @@ import java.util.Date;
 public class AbstractSecureJWebUnitTest extends WebTestCase{
 
     protected String mutant = System.getenv("MUTANT_NAME");
-//    protected String domain = System.getenv("DOMAIN_NAME");
-    protected String domain = "ogon.zfin.org" ;
+    protected String domain = System.getenv("DOMAIN_NAME");
+//    protected String domain = "ogon.zfin.org" ;
     protected final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
     protected Person person = null ;
     protected String password = "veryeasypass";
