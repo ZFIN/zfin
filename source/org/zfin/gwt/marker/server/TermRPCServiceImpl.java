@@ -112,7 +112,7 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
         markerGoTermEvidence.setNote(goEvidenceDTO.getNote());
 
         if(person!=null){
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerGoTermEvidence.getZdbID(),"MarkerGoTermEvidence",markerGoTermEvidence.toString(),"Updated MarkerGoTermEvidence record",person);
+            infrastructureRepository.insertUpdatesTable(markerGoTermEvidence.getZdbID(),"MarkerGoTermEvidence",markerGoTermEvidence.toString(),"Updated MarkerGoTermEvidence record",person);
             markerGoTermEvidence.setModifiedBy(person.getName());
         }
         markerGoTermEvidence.setModifiedWhen(goEvidenceDTO.getModifiedDate());
@@ -447,7 +447,7 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
 
         if(person!=null){
             markerGoTermEvidence.setModifiedBy(person.getName());
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerGoTermEvidence.getZdbID(),"MarkerGoTermEvidence",markerGoTermEvidence.toString(),"Created new MarkerGoTermEvidence record",person);
+            infrastructureRepository.insertUpdatesTable(markerGoTermEvidence.getZdbID(),"MarkerGoTermEvidence",markerGoTermEvidence.toString(),"Created new MarkerGoTermEvidence record",person);
         }
         markerGoTermEvidence.setModifiedWhen(goEvidenceDTO.getModifiedDate());
 

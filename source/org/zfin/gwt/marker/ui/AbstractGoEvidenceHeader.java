@@ -96,6 +96,10 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         goTermBox.setAction(new SubmitAction(){
             @Override
             public void doSubmit(String value) {
+                if(value.isEmpty()){
+                    setError("Go term is invalid ["+value+"].  Please add a valid go term.");
+                    return ;
+                }
                 TermRPCService.App.getInstance().getGOTermByName(value, new MarkerEditCallBack<GoTermDTO>("Failed to retrieve GO value"){
                     @Override
                     public void onSuccess(GoTermDTO result) {
