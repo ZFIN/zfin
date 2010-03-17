@@ -1,10 +1,15 @@
 
+
+
 function setOption () {
     if (document.getElementById('program').value == "blastn") {
 
         document.getElementById('xnu1').checked = false;
         document.getElementById('seg1').checked = false;
         document.getElementById('matrix').selectedIndex = 0;
+        document.getElementById('filterDNA').style.display = 'inline';
+        document.getElementById('filterProteins').style.display = 'none' ;
+        document.getElementById('SHORT').disabled = false;
 
         if (document.getElementById('SHORT').checked) {
 
@@ -24,6 +29,8 @@ function setOption () {
         document.getElementById('dust1').checked = false;
         document.getElementById('poly_a1').checked = false;
         document.getElementById('matrix').selectedIndex = 1;
+        document.getElementById('filterDNA').style.display = 'none';
+        document.getElementById('filterProteins').style.display= 'inline' ;
 
         if ( document.getElementById('program').value == "blastp" ) {
             document.getElementById('SHORT').disabled = false;
@@ -85,4 +92,3 @@ function setInfo (form_select) {
 
     setOption();
 }
-
