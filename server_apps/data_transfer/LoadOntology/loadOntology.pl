@@ -1,4 +1,4 @@
-d#!/private/bin/perl 
+#!/private/bin/perl 
 
 use MIME::Lite;
 
