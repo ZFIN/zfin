@@ -1,7 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
-import org.zfin.gwt.root.dto.Ontology;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.PostComposedPart;
 import org.zfin.gwt.root.util.StringUtils;
 
@@ -12,15 +12,15 @@ import java.util.Map;
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-abstract public class AbstractPileStructureValidator implements StructureValidator {
+abstract public class AbstractPileStructureValidator<T extends ExpressedTermDTO> implements StructureValidator<T> {
 
     // injected
-    private Map<PostComposedPart, List<Ontology>> termEntryMap;
+    private Map<PostComposedPart, List<OntologyDTO>> termEntryMap;
     // calculated
-    private List<String> errorMessages = new ArrayList<String>(5);
+    protected List<String> errorMessages = new ArrayList<String>(5);
 
 
-    public AbstractPileStructureValidator(Map<PostComposedPart, List<Ontology>> termEntryMap) {
+    public AbstractPileStructureValidator(Map<PostComposedPart, List<OntologyDTO>> termEntryMap) {
         this.termEntryMap = termEntryMap;
     }
 
@@ -33,17 +33,18 @@ abstract public class AbstractPileStructureValidator implements StructureValidat
      * @param expressedTerm structure to be validated
      * @return true or false new structure.
      */
-    public boolean isValidNewPileStructure(ExpressedTermDTO expressedTerm) {
-        if (expressedTerm == null || StringUtils.isEmpty(expressedTerm.getSupertermName())) {
+    public boolean isValidNewPileStructure(T expressedTerm) {
+        errorMessages.clear();
+        if (expressedTerm == null || StringUtils.isEmpty(expressedTerm.getSuperterm().getTermName())) {
             errorMessages.add("No Superterm provided");
             return false;
         }
-        List<Ontology> validSupertermOntologies = termEntryMap.get(PostComposedPart.SUPERTERM);
-        for (Ontology ontology : validSupertermOntologies) {
-            if (ontology == expressedTerm.getSupertermOntology())
+        List<OntologyDTO> validSupertermOntologies = termEntryMap.get(PostComposedPart.SUPERTERM);
+        for (OntologyDTO ontology : validSupertermOntologies) {
+            if (ontology == expressedTerm.getSuperterm().getOntology())
                 return true;
         }
-        errorMessages.add("Ontology " + expressedTerm.getSupertermOntology().getDisplayName() + " not found in list" +
+        errorMessages.add("Ontology " + expressedTerm.getSuperterm().getOntology().getDisplayName() + " not found in list" +
                 "of allowed ontologies: " + validSupertermOntologies);
         return false;
     }

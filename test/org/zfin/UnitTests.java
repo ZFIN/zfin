@@ -7,11 +7,6 @@ import org.zfin.anatomy.AnatomyItemTest;
 import org.zfin.anatomy.presentation.*;
 import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
-import org.zfin.gwt.InferenceCategoryUnitTest;
-import org.zfin.gwt.root.dto.ExperimentDTOTest;
-import org.zfin.gwt.root.util.StageRangeIntersectionTest;
-import org.zfin.gwt.root.util.StageRangeUnionTest;
-import org.zfin.gwt.root.util.WidgetUtilTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
 import org.zfin.expression.CurationExperimentTest;
 import org.zfin.expression.ExpressionExperimentTest;
@@ -20,12 +15,20 @@ import org.zfin.framework.presentation.FunctionsTest;
 import org.zfin.framework.presentation.PaginationBeanTest;
 import org.zfin.framework.presentation.SectionVisibilityTest;
 import org.zfin.framework.presentation.UIFieldTransformerTest;
+import org.zfin.gwt.InferenceCategoryUnitTest;
+import org.zfin.gwt.root.dto.EnvironmentDTOTest;
+import org.zfin.gwt.root.dto.ExperimentDTOTest;
+import org.zfin.gwt.root.util.StageRangeIntersectionTest;
+import org.zfin.gwt.root.util.StageRangeUnionTest;
+import org.zfin.gwt.root.util.WidgetUtilTest;
 import org.zfin.infrastructure.ActiveDataTest;
 import org.zfin.infrastructure.ActiveSourceTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
+import org.zfin.mutant.PhenotypeStructureTest;
 import org.zfin.mutant.presentation.MorpholinoStatisticsTest;
+import org.zfin.ontology.MatchingTermServiceTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.people.OrganizationUrlTest;
 import org.zfin.properties.ZfinPropertiesTest;
@@ -37,7 +40,6 @@ import org.zfin.sequence.reno.presentation.RunPresentationTest;
 import org.zfin.sequence.reno.presentation.SingleAssociatedGenesFromQueryTest;
 import org.zfin.uniquery.SiteSearchTest;
 import org.zfin.util.*;
-import org.zfin.wiki.WikiConnectTest;
 
 
 /**
@@ -55,6 +57,7 @@ import org.zfin.wiki.WikiConnectTest;
         BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
         CurationExperimentTest.class,
+        EnvironmentDTOTest.class,
         ExpressionExperimentTest.class,
         ExperimentDTOTest.class,
         FileUtilTest.class,
@@ -64,6 +67,7 @@ import org.zfin.wiki.WikiConnectTest;
         ListFormatterTest.class,
         MarkerPresentationTest.class,
         MarkerServiceTest.class,
+        MatchingTermServiceTest.class,
         Md5PasswordEncoderTest.class,
         MicroarrayParseTest.class,
         MorpholinoStatisticsTest.class,
@@ -72,21 +76,23 @@ import org.zfin.wiki.WikiConnectTest;
         OrthologyValidationTest.class,
         PaginationBeanTest.class,
         PhenotypeServiceTest.class,
+        PhenotypeStructureTest.class,
         RelationshipTypeSortingTest.class,
         RunCandidatePresentationTest.class,
-        SequenceTest.class,
         RunPresentationTest.class,
         SectionVisibilityTest.class,
+        SequenceTest.class,
         SingleAssociatedGenesFromQueryTest.class,
-        SortAnatomyResultsTest.class,
         SiteSearchTest.class,
+        SortAnatomyResultsTest.class,
+        StagePresentationTest.class,
         StageRangeIntersectionTest.class,
         StageRangeUnionTest.class,
-        StagePresentationTest.class,
         UIFieldTransformerTest.class,
         UrlCreatorTest.class,
         WidgetUtilTest.class,
         ZfinPropertiesTest.class,
+
         ExecProcessTest.class
         // this test should be last (or near last)
         // because we need to make sure that it waits

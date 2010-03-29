@@ -17,9 +17,15 @@
         </td>
     </tr>
     <tr>
-        <td class="sectionTitle">Curation Interface</td>
+        <td class="sectionTitle">FX Curation Interface</td>
         <td width="120" colspan="2" class="sectionTitle">
-            <a href="/action/dev-tools/gwt/fx-curation">Curation Interface: FX Experiments Section</a>
+            <a href="/action/dev-tools/gwt/fx-curation">Curation Interface: Expression Section</a>
+        </td>
+    </tr>
+    <tr>
+        <td class="sectionTitle">Phenotype Curation Interface</td>
+        <td width="120" colspan="2" class="sectionTitle">
+            <a href="/action/dev-tools/gwt/phenotype-curation">Curation Interface: Phenotype Section</a>
         </td>
     </tr>
     <tr>

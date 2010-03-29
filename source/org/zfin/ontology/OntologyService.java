@@ -1,7 +1,7 @@
 package org.zfin.ontology;
 
 import org.zfin.anatomy.presentation.RelationshipSorting;
-import org.zfin.gwt.root.dto.Ontology;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.ontology.presentation.OntologyAutoCompleteTerm;
 import org.zfin.util.ListFormatter;
 
@@ -21,7 +21,7 @@ public final class OntologyService {
      * @param anatomyItem anatomy term
      * @return string
      */
-    public static String createFormattedSynonymList(GenericTerm anatomyItem) {
+    public static String createFormattedSynonymList(Term anatomyItem) {
         Set<TermAlias> synonyms = sortSynonyms(anatomyItem);
         if (synonyms == null) {
             return "";
@@ -50,12 +50,12 @@ public final class OntologyService {
      * @param anatomyItem anatomy term
      * @return set of synonyms
      */
-    private static Set<TermAlias> sortSynonyms(GenericTerm anatomyItem) {
-        if (anatomyItem.getSynonyms() == null)
+    private static Set<TermAlias> sortSynonyms(Term anatomyItem) {
+        if (anatomyItem.getAliases() == null)
             return null;
-        Set syns = anatomyItem.getSynonyms();
+        Set aliases = anatomyItem.getAliases();
         Set<TermAlias> synonyms = new TreeSet<TermAlias>(new SynonymSorting());
-        for (Object syn : syns) {
+        for (Object syn : aliases) {
             TermAlias synonym = (TermAlias) syn;
             synonyms.add(synonym);
         }
@@ -115,10 +115,10 @@ public final class OntologyService {
         return list;
     }
 
-    public static List<RelationshipPresentation> getRelatedTerms(GenericTerm term) {
-        Set<String> types = new HashSet<String>();
+    public static List<RelationshipPresentation> getRelatedTerms(Term term) {
+        Set<String> types = new HashSet<String>(5);
         List<TermRelationship> relatedItems = term.getRelatedTerms();
-        List<String> uniqueTypes = new ArrayList<String>();
+        List<String> uniqueTypes = new ArrayList<String>(5);
         if (relatedItems != null) {
             for (TermRelationship rel : relatedItems) {
                 types.add(rel.getRelationshipType().getTypeName());
@@ -136,23 +136,23 @@ public final class OntologyService {
      * @return list of Presentation objects
      */
     public static List<RelationshipPresentation> createRelationshipPresentation(Set<String> relationshipTypes,
-                                                                                GenericTerm term) {
+                                                                                Term term) {
         if (relationshipTypes == null)
             return null;
         if (term == null)
             return null;
 
-        List<RelationshipPresentation> relList = new ArrayList<RelationshipPresentation>();
+        List<RelationshipPresentation> relList = new ArrayList<RelationshipPresentation>(10);
         for (String type : relationshipTypes) {
             RelationshipPresentation rel = new RelationshipPresentation();
-            List<GenericTerm> items = new ArrayList<GenericTerm>();
+            List<Term> items = new ArrayList<Term>(10);
             rel.setType(type);
             for (TermRelationship relatedItem : term.getRelatedTerms()) {
                 if (relatedItem.getRelationshipType().getTypeName().equals(type)) {
                     items.add(relatedItem.getRelatedTerm(term));
                 }
             }
-            if (items.size() > 0) {
+            if (!items.isEmpty()) {
                 rel.setItems(items);
                 relList.add(rel);
             }
@@ -160,15 +160,15 @@ public final class OntologyService {
         return relList;
     }
 
-    public static org.zfin.ontology.Ontology convertOntology(Ontology ontology) {
+    public static Ontology convertOntology(OntologyDTO ontology) {
         if (ontology == null)
             return null;
 
         switch (ontology) {
             case ANATOMY:
-                return org.zfin.ontology.Ontology.ANATOMY;
+                return Ontology.ANATOMY;
             case GO_CC:
-                return org.zfin.ontology.Ontology.GO_CC;
+                return Ontology.GO_CC;
             case GO:
                 return org.zfin.ontology.Ontology.GO;
         }

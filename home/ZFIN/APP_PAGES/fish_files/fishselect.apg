@@ -1971,7 +1971,8 @@ return false ; ">
         <?MIVAR COND=$(XST,$fsel_processed_selected_structures_names)>previousTableValues: "$fsel_processed_selected_structures_names",<?/MIVAR>
         hiddenIds: "fsel_processed_selected_structures",
         hiddenNames: "fsel_processed_selected_structures_names",
-        type: "ANATOMY_ONTOLOGY",
+        ontologyName: "zebrafish_anatomy",
+        type: "GDAG_TERM_LOOKUP",
         width: 40, 
         wildcard: false,
         useTermTable: true

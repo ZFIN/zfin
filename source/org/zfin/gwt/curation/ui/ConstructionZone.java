@@ -1,8 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.ExpressedTermDTO;
-import org.zfin.gwt.root.dto.Ontology;
-import org.zfin.gwt.root.dto.PostComposedPart;
+import org.zfin.gwt.root.dto.*;
 
 /**
  * Defines a Construction zone, such as for FX and PATO.
@@ -21,6 +19,17 @@ public interface ConstructionZone {
     void prepopulateConstructionZone(ExpressedTermDTO term, PostComposedPart selectedEntity);
 
     /**
+     * This method takes an PhenotypeTermDTO and pre-populates the construction
+     * zone with the given entities. The PostComposedPart defines which part
+     * should be displayed in the term info box.
+     * A pile structure consists (currently) of Superterm : Subterm : Quality
+     *
+     * @param term           full post-composed structure
+     * @param selectedEntity entity
+     */
+    void prepopulateConstructionZoneWithPhenotype(PhenotypeTermDTO term, PostComposedPart selectedEntity);
+
+    /**
      * Sets the construction zone to the default setting:
      * 1. all post-composed parts set to an empty string
      * 2. set ontology selectors to AO
@@ -34,7 +43,7 @@ public interface ConstructionZone {
      * @param ontology Ontology
      * @param termID   term ID: zdb ID or obo ID
      */
-    void showTermInfo(Ontology ontology, String termID);
+    void showTermInfo(OntologyDTO ontology, String termID);
 
     /**
      * Set the object that validated a new structure according to given business logic.
@@ -49,4 +58,12 @@ public interface ConstructionZone {
      * @param listener handler
      */
     void addCreatePileChangeListener(PileStructureListener listener);
+
+    /**
+     * Convenience method: Needed as we expose this to an external JS.
+     *
+     * @param ontology ontology
+     * @param termID   term ID
+     */
+    public void showTermInfoString(String ontology, String termID);
 }

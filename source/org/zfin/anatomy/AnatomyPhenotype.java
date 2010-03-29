@@ -1,21 +1,26 @@
 package org.zfin.anatomy;
 
 import org.zfin.mutant.Phenotype;
+import org.zfin.ontology.Term;
 
 /**
  * Phenotype that is associated to anatomical structures.
  */
 public class AnatomyPhenotype extends Phenotype {
 
-    private AnatomyItem anatomyTerm;
+    private AnatomyItem anatomySubTerm;
 
 
-    public AnatomyItem getAnatomyTerm() {
-        return anatomyTerm;
+    public AnatomyItem getAnatomySubTerm() {
+        return anatomySubTerm;
     }
 
-    public void setAnatomyTerm(AnatomyItem anatomyTerm) {
-        this.anatomyTerm = anatomyTerm;
+    public void setAnatomySubTerm(AnatomyItem anatomySubTerm) {
+        this.anatomySubTerm = anatomySubTerm;
     }
-    
+
+    @Override
+    public Term getSubTerm() {
+        return anatomySubTerm;
+    }
 }

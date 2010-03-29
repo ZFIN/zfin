@@ -3,16 +3,16 @@ package org.zfin.gwt.root.dto;
 /**
  * Data Transfer Object individual structures on the pile related to a given structure.
  */
-public class RelatedPileStructureDTO extends PileStructureDTO {
+public class RelatedPileStructureDTO extends ExpressionPileStructureDTO {
 
-    private PileStructureDTO relatedStructure;
+    private ExpressionPileStructureDTO relatedStructure;
     private String relationship;
 
-    public PileStructureDTO getRelatedStructure() {
+    public ExpressionPileStructureDTO getRelatedStructure() {
         return relatedStructure;
     }
 
-    public void setRelatedStructure(PileStructureDTO relatedStructure) {
+    public void setRelatedStructure(ExpressionPileStructureDTO relatedStructure) {
         this.relatedStructure = relatedStructure;
     }
 

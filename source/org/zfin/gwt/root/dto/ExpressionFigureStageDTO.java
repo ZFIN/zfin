@@ -1,61 +1,17 @@
 package org.zfin.gwt.root.dto;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Data Transfer Object corresponding to a unique combination of
  * Experiment, Figure and Stage range.
  */
-public class ExpressionFigureStageDTO implements IsSerializable, Comparable<ExpressionFigureStageDTO> {
+public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTermDTO> implements Comparable<ExpressionFigureStageDTO> {
 
     private ExperimentDTO experiment;
-    private String figureID;
-    private String figureLabel;
-    private String figureOrderingLabel;
-    private StageDTO start;
-    private StageDTO end;
     private String expressedIn;
     private boolean patoExists;
-    private List<ExpressedTermDTO> expressedTerms = new ArrayList<ExpressedTermDTO>(10);
-
-    public String getFigureID() {
-        return figureID;
-    }
-
-    public void setFigureID(String figureID) {
-        this.figureID = figureID;
-    }
-
-    public String getFigureLabel() {
-        return figureLabel;
-    }
-
-    public void setFigureLabel(String figureLabel) {
-        this.figureLabel = figureLabel;
-    }
 
     public String getExperimentName() {
-        return experiment.getEnvironmentDisplayValue();
-    }
-
-    /**
-     * Return the stage range in the format:
-     * [start stage] - [end stage]
-     * if start and end stage are the same only return the start stage name.
-     *
-     * @return stage range.
-     */
-    public String getStageRange() {
-        if (start.getZdbID().equals(end.getZdbID()))
-            return start.getName();
-        return start.getName() + " - " + end.getName();
-    }
-
-    public String getAnatomyTerms() {
-        return null;
+        return experiment.getEnvironment().getName();
     }
 
     public ExperimentDTO getExperiment() {
@@ -82,46 +38,11 @@ public class ExpressionFigureStageDTO implements IsSerializable, Comparable<Expr
         this.patoExists = patoExists;
     }
 
-    public List<ExpressedTermDTO> getExpressedTerms() {
-        return expressedTerms;
-    }
-
-    public void setExpressedTerms(List<ExpressedTermDTO> expressedTerms) {
-        this.expressedTerms = expressedTerms;
-    }
-
-    public StageDTO getStart() {
-        return start;
-    }
-
-    public void setStart(StageDTO start) {
-        this.start = start;
-    }
-
-    public StageDTO getEnd() {
-        return end;
-    }
-
-    public void setEnd(StageDTO end) {
-        this.end = end;
-    }
-
-    public String getFigureOrderingLabel() {
-        return figureOrderingLabel;
-    }
-
-    public void setFigureOrderingLabel(String figureOrderingLabel) {
-        this.figureOrderingLabel = figureOrderingLabel;
-    }
-
-    public void addExpressedTerm(ExpressedTermDTO term) {
-        expressedTerms.add(term);
-    }
-
+    @Override
     public String getUniqueID() {
         StringBuilder sb = new StringBuilder(experiment.getExperimentZdbID());
         sb.append(":");
-        sb.append(figureID);
+        sb.append(figure.getZdbID());
         sb.append(":");
         sb.append(start.getZdbID());
         sb.append(":");
@@ -135,6 +56,7 @@ public class ExpressionFigureStageDTO implements IsSerializable, Comparable<Expr
      *
      * @param uniqueID concatenated unique ID.
      */
+    @Override
     public void setUniqueID(String uniqueID) {
         String[] ids = uniqueID.split(":");
         if (ids.length != 4)
@@ -142,7 +64,9 @@ public class ExpressionFigureStageDTO implements IsSerializable, Comparable<Expr
         if (experiment == null)
             experiment = new ExperimentDTO();
         experiment.setExperimentZdbID(ids[0]);
-        figureID = ids[1];
+        if (figure == null)
+            figure = new FigureDTO();
+        figure.setZdbID(ids[1]);
         if (start == null)
             start = new StageDTO();
         if (end == null)
@@ -154,8 +78,8 @@ public class ExpressionFigureStageDTO implements IsSerializable, Comparable<Expr
     public int compareTo(ExpressionFigureStageDTO efs) {
         if (efs == null)
             return -1;
-        if (!figureOrderingLabel.equals(efs.getFigureOrderingLabel()))
-            return figureOrderingLabel.compareTo(efs.getFigureOrderingLabel());
+        if (!figure.getOrderingLabel().equals(efs.figure.getOrderingLabel()))
+            return figure.getOrderingLabel().compareTo(efs.figure.getOrderingLabel());
         if (!experiment.equals(efs.getExperiment()))
             return experiment.compareTo(efs.getExperiment());
         if (!start.getName().equals(efs.getStart().getName()))

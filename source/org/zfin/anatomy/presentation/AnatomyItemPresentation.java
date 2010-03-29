@@ -41,7 +41,7 @@ public class AnatomyItemPresentation extends EntityPresentation {
     }
 
     public static String getWikiLink(GoTerm goTerm) {
-        return getExternalWikiLink(GoTermPresentation.uri+goTerm.getGoID(),goTerm.getName())  ;
+        return getExternalWikiLink(GoTermPresentation.uri+goTerm.getOboID(),goTerm.getName())  ;
     }
 
 }

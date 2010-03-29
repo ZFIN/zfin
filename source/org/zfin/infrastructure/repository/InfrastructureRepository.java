@@ -9,9 +9,7 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.TermRelationship;
+import org.zfin.ontology.*;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 
@@ -211,10 +209,10 @@ public interface InfrastructureRepository {
      * No obsolete terms are included.
      *
      * @param termName term name (contains)
-     * @param ontology Ontology
+     * @param ontologies Ontology
      * @return list of GenericTerm
      */
-    List<GenericTerm> getTermsByName(String termName, Ontology ontology);
+    List<GenericTerm> getTermsByName(String termName, List<Ontology> ontologies);
 
     /**
      * Retrieve terms by synonym match.
@@ -236,6 +234,16 @@ public interface InfrastructureRepository {
     GenericTerm getTermByName(String termName, Ontology ontology);
 
     /**
+     * Retrieve a single term by name and a list of ontologies. Checks for all ontologies and picks the first one.
+     * Hopefully, there term is only found in a single ontology. Match has to be exact.
+     *
+     * @param termName name
+     * @param ontologies Ontology
+     * @return Term
+     */
+    GenericTerm getTermByName(String termName, List<Ontology> ontologies);
+
+    /**
      * Retrieve Term by ZDB ID.
      *
      * @param termID term id
@@ -244,28 +252,26 @@ public interface InfrastructureRepository {
     GenericTerm getTermByID(String termID);
 
     /**
-     * Retrieve Term by OBO ID.
-     *
-     * @param termID term id
-     * @return Generic Term
-     */
-    GenericTerm getTermByOboID(String termID);
-
-    /**
-     * Retrieve all related Terms.
-     *
-     * @param genericTerm term
-     * @return list of relationships
-     */
-    List<TermRelationship> getTermRelationships(GenericTerm genericTerm);
-
-    /**
      * Fetch a Data Alias Group entity for a given name
      *
      * @param name alias group object
      * @return DataAliasGroup entity
      */
     DataAliasGroup getDataAliasGroupByName(String name);
+
+    /**
+     * Retrieve a goterm by PK
+     * @param termID term pk
+     * @return goterm
+     */
+    public GoTerm getGoTermById(String termID);
+
+    /**
+     * Retrieve Root of given ontology.
+     * @param ontologyName ontology name
+     * @return Term
+     */
+    GenericTerm getRootTerm(String ontologyName);
 }
 
 

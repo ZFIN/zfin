@@ -18,7 +18,12 @@ body {
 
 }
 
-hr { background-color: #FFFFFF;  border: 0; height: 1px; width: 80%; }
+hr {
+    background-color: #FFFFFF;
+    border: 0;
+    height: 1px;
+    width: 80%;
+}
 
 .allcontent {
     margin-left: 5px;
@@ -120,16 +125,29 @@ td.submitbar {
     display: none;
 }
 
-
 table.clonedata td {
     padding: 5px;
 }
 
-table.data_manager { width: 100% ; border-collapse: collapse ; background: #eee; }
-table.data_manager tr { text-align: center; }
-table.data_manager td { text-align: center; font-size: small ; padding: .3em;}
-table.data_manager a.root { color: red }
+table.data_manager {
+    width: 100%;
+    border-collapse: collapse;
+    background: #eee;
+}
 
+table.data_manager tr {
+    text-align: center;
+}
+
+table.data_manager td {
+    text-align: center;
+    font-size: small;
+    padding: .3em;
+}
+
+table.data_manager a.root {
+    color: red
+}
 
 /*** gene name & abbrev ***/
 
@@ -233,27 +251,36 @@ div.auto_complete ul strong.highlight {
 
 .bold {
     font-weight: bold;
-    text-align:center;
+    text-align: center;
 }
 
 .left-align {
-    text-align:left;
+    text-align: left;
 }
 
 .right-align {
-    text-align:right;
+    text-align: right;
+}
+
+.right-align-box {
+    float: right;
 }
 
 .bold-red {
     font-weight: bold;
-    color:red;
-    text-align:center;
+    color: red;
+    text-align: center;
 }
 
-
 .green {
-    color:green;
-    text-align:center;
+    color: green;
+    text-align: center;
+}
+
+.phenotype-normal {
+    color: #33cc99;
+    text-align: center;
+    font-weight:bold;
 }
 
 .search-result-table-entries {
@@ -342,25 +369,23 @@ a.external {
     padding-right: 13px;
 }
 
-
-img.blast-key{
+img.blast-key {
     position: relative;
     bottom: -0.3em;
 }
 
-img.blast{
+img.blast {
     position: relative;
-    vertical-align: top; 
+    vertical-align: top;
     bottom: 0.1em;
 }
 
-
-.indented-section{
-     margin-left:18pt;
+.indented-section {
+    margin-left: 18pt;
 }
 
-img.clickable{
-    cursor: pointer ;
+img.clickable {
+    cursor: pointer;
 }
 
 .table-header {
@@ -376,34 +401,34 @@ img.clickable{
 }
 
 .term-unspecified {
-    color:orange;
+    color: orange;
 }
 
 .red-modifier {
-    color:red;
-    font-style:italic;
+    color: red;
+    font-style: italic;
 }
 
 .red {
-    color:red;
+    color: red;
 }
 
 .red-modifier-hyperlink a {
-    color:red;
-    font-style:italic;
+    color: red;
+    font-style: italic;
 }
 
 .left-top-aligned {
-    text-align:left;
-    vertical-align:top;
+    text-align: left;
+    vertical-align: top;
 }
 
 .nowrap {
-    white-space:nowrap;
+    white-space: nowrap;
 }
 
 .autocomplete-plain {
-    font-size:8pt;
+    font-size: 8pt;
 }
 
 /*.gwt-SuggestBoxPopup {*/
@@ -419,17 +444,22 @@ img.clickable{
     height: auto;
     max-height: 50em ;
     min-width: 100px ;
+    font-size: 8pt;
 }
 
 .gwt-Hyperlink {
-   display: inline;
+    display: inline;
 }
 
 .gwt-HTML {
-   display: inline-block;
+    display: inline-block;
 }
 
-a.wiki-link{
+.phenotype-table {
+    line-height:90%;
+}
+
+a.wiki-link {
     font-size: small;
     background: transparent url(/images/external.png) no-repeat scroll right center;
     padding-right: 13px;
@@ -442,3 +472,10 @@ a.wiki-link{
 .gwt-editbox{
     background-color: lightgray;
 }
+
+.dots {
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: thin dotted
+}
+

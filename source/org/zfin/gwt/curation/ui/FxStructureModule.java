@@ -5,23 +5,19 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
-import org.zfin.gwt.root.dto.ExpressedTermDTO;
-import org.zfin.gwt.root.dto.ExpressionFigureStageDTO;
-import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
-import org.zfin.gwt.root.dto.PileStructureDTO;
+import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.ErrorHandler;
+import org.zfin.gwt.root.ui.SimpleErrorElement;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.CollectionUtils;
 import org.zfin.gwt.root.util.StageRangeIntersection;
 import org.zfin.gwt.root.util.StageRangeUnion;
-import org.zfin.gwt.root.util.WidgetUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  */
-public class FxStructureModule extends Composite implements StructurePile {
+public class FxStructureModule extends Composite implements StructurePile<ExpressedTermDTO, ExpressionFigureStageDTO, ExpressionPileStructureDTO> {
 
     // div-elements
     public static final String SHOW_HIDE_STRUCTURES = "show-hide-structures";
@@ -39,13 +35,13 @@ public class FxStructureModule extends Composite implements StructurePile {
     private Hyperlink showStructureSection = new Hyperlink();
     private StructurePileTable displayTable;
     private Image loadingImage = new Image();
-    private Label errorMessage = new Label();
+    private ErrorHandler errorElement = new SimpleErrorElement(STRUCTURES_DISPLAY_ERRORS);
     private Button updateButtonAbove = new Button("Update Structures for Expressions");
     private Button updateButtonBelow = new Button("Update Structures for Expressions");
     private StructureAlternateComposite structureSuggestionBox;
 
     // all expressions displayed on the page (all or a subset defined by the filter elements)
-    private List<PileStructureDTO> displayedStructures = new ArrayList<PileStructureDTO>();
+    private List<ExpressionPileStructureDTO> displayedStructures = new ArrayList<ExpressionPileStructureDTO>(10);
 
     // flag that indicates if the experiment section is visible or not.
     private boolean sectionVisible;
@@ -84,14 +80,9 @@ public class FxStructureModule extends Composite implements StructurePile {
         panel.add(new HTML("&nbsp"));
         RootPanel.get(UPDATE_EXPERIMENTS_TOP).add(panel);
 
-        RootPanel.get(STRUCTURES_DISPLAY_ERRORS).add(errorMessage);
-        RootPanel.get(IMAGE_LOADING_STRUCTURE_SECTION).add(loadingImage);
-        errorMessage.setStyleName(WidgetUtil.ERROR);
-        loadingImage.setUrl("/images/ajax-loader.gif");
-
         structureSuggestionBox = new StructureAlternateComposite();
         RootPanel.get(NEW_TERM_SUGGESTION).add(structureSuggestionBox);
-        displayTable = new StructurePileTable(displayedStructures, structureSuggestionBox, errorMessage);
+        displayTable = new StructurePileTable(displayedStructures, structureSuggestionBox, errorElement);
         displayTable.setRemoveStructureCallBack(new RemovePileStructureCallback());
         displayTable.setCreateStructureCallback(new CreatePileStructureCallback());
         displayTable.setPublicationID(publicationID);
@@ -164,9 +155,10 @@ public class FxStructureModule extends Composite implements StructurePile {
         displayTable.markOverlappingStructures(stageIntersection);
     }
 
+
     @SuppressWarnings("unchecked")
-    private List<ExpressedTermDTO> createIntersectionOfStructures(List<ExpressionFigureStageDTO> figureAnnotations) {
-        List<ExpressedTermDTO> intersectionOfStructures = new ArrayList<ExpressedTermDTO>();
+    private List<ExpressedTermDTO> createIntersectionOfStructures(Collection<ExpressionFigureStageDTO> figureAnnotations) {
+        List<ExpressedTermDTO> intersectionOfStructures = new ArrayList<ExpressedTermDTO>(figureAnnotations.size());
         int index = 0;
         for (ExpressionFigureStageDTO figureAnnotation : figureAnnotations) {
             if (index == 0)
@@ -200,13 +192,17 @@ public class FxStructureModule extends Composite implements StructurePile {
      *
      * @param pileStructure PileStructureDTO
      */
-    public void onPileStructureCreation(PileStructureDTO pileStructure) {
+    public void onPileStructureCreation(ExpressionPileStructureDTO pileStructure) {
         displayedStructures.add(pileStructure);
         Collections.sort(displayedStructures);
         displayTable.createStructureTable();
         updateFigureAnnotations(expressionSection.getSelectedExpressions());
         structureSuggestionBox.setVisible(false);
         clearErrorMessages();
+    }
+
+    public void onPileStructureCreation(PhenotypePileStructureDTO pileStructure) {
+        // ignored as it is not used in this class.
     }
 
     public void setPileStructureClickListener(ConstructionZone pileStructureClickListener) {
@@ -228,11 +224,15 @@ public class FxStructureModule extends Composite implements StructurePile {
         if (expressedTerm == null)
             return false;
 
-        for (PileStructureDTO structure : displayedStructures) {
+        for (ExpressionPileStructureDTO structure : displayedStructures) {
             if (expressedTerm.equalsByNameOnly(structure.getExpressedTerm()))
                 return true;
         }
         return false;
+    }
+
+    public boolean hasStructureOnPile(PhenotypeTermDTO expressedTerm) {
+        return false;  
     }
 
 
@@ -240,21 +240,21 @@ public class FxStructureModule extends Composite implements StructurePile {
 
     //      Listener: click, callback, change
 
-    private class RetrieveStructuresCallback extends ZfinAsyncCallback<List<PileStructureDTO>> {
+    private class RetrieveStructuresCallback extends ZfinAsyncCallback<List<ExpressionPileStructureDTO>> {
 
         public RetrieveStructuresCallback() {
-            super("Error while reading Structures", errorMessage);
+            super("Error while reading Structures", errorElement);
         }
 
-        public void onSuccess(List<PileStructureDTO> list) {
+        public void onSuccess(List<ExpressionPileStructureDTO> list) {
 
             displayedStructures.clear();
             if (list == null)
                 return;
 
-            for (PileStructureDTO structure : list) {
+            for (ExpressionPileStructureDTO structure : list) {
                 // do not add 'unspecified'
-                if (!structure.getExpressedTerm().getSupertermName().equals(UNSPECIFIED))
+                if (!structure.getExpressedTerm().getSuperterm().getTermName().equals(UNSPECIFIED))
                     displayedStructures.add(structure);
             }
             //Window.alert("SIZE: " + experiments.size());
@@ -281,7 +281,7 @@ public class FxStructureModule extends Composite implements StructurePile {
                 showStructureSection.setText(SHOW);
                 sectionVisible = false;
                 curationRPCAsync.setStructureVisibilitySession(publicationID, false,
-                        new VoidAsyncCallback(new Label(errorMessage), loadingImage));
+                        new VoidAsyncCallback(errorMessage, errorElement, IMAGE_LOADING_STRUCTURE_SECTION));
             } else {
                 // display structure pile
                 // check if it already exists
@@ -293,7 +293,7 @@ public class FxStructureModule extends Composite implements StructurePile {
                 showStructureSection.setText(HIDE);
                 sectionVisible = true;
                 curationRPCAsync.setStructureVisibilitySession(publicationID, true,
-                        new VoidAsyncCallback(new Label(errorMessage), loadingImage));
+                        new VoidAsyncCallback(errorMessage, errorElement, IMAGE_LOADING_STRUCTURE_SECTION));
             }
             clearErrorMessages();
         }
@@ -321,17 +321,17 @@ public class FxStructureModule extends Composite implements StructurePile {
 
     /**
      * Remove error messages.
-     * Unmark structures in figure annotations.
+     * Un-mark structures in figure annotations.
      */
     public void clearErrorMessages() {
-        errorMessage.setText(null);
+        errorElement.clearAllErrors();
         expressionSection.markStructuresForDeletion(null, false);
     }
 
 
     private class SectionVisibilityCallback extends ZfinAsyncCallback<Boolean> {
         public SectionVisibilityCallback(String message) {
-            super(message, FxStructureModule.this.errorMessage);
+            super(message, FxStructureModule.this.errorElement);
         }
 
         public void onSuccess(Boolean visible) {
@@ -372,7 +372,7 @@ public class FxStructureModule extends Composite implements StructurePile {
     private class UpdateExpressionCallback extends ZfinAsyncCallback<List<ExpressionFigureStageDTO>> {
 
         UpdateExpressionCallback() {
-            super("Error while update Figure Annotations with pile structures ", errorMessage);
+            super("Error while update Figure Annotations with pile structures ", errorElement);
         }
 
         public void onSuccess(List<ExpressionFigureStageDTO> updatedFigureAnnotations) {
@@ -408,7 +408,7 @@ public class FxStructureModule extends Composite implements StructurePile {
             CheckBox modifier = displayTable.getNotCheckBox(row);
             PileStructureAnnotationDTO psa = new PileStructureAnnotationDTO();
             if (add.getValue() || remove.getValue()) {
-                PileStructureDTO term = displayTable.getDisplayTableMap().get(row).copy();
+                ExpressionPileStructureDTO term = displayTable.getDisplayTableMap().get(row).copy();
                 psa.setExpressedTerm(term.getExpressedTerm());
                 psa.setExpressed(!modifier.getValue());
                 psa.setZdbID(term.getZdbID());
@@ -423,13 +423,13 @@ public class FxStructureModule extends Composite implements StructurePile {
         return dto;
     }
 
-    protected class RemovePileStructureCallback extends ZfinAsyncCallback<PileStructureDTO> {
+    private class RemovePileStructureCallback extends ZfinAsyncCallback<ExpressionPileStructureDTO> {
 
         public RemovePileStructureCallback() {
-            super("Error while deleting Figure Annotation", errorMessage);
+            super("Error while deleting Figure Annotation", errorElement);
         }
 
-        public void onSuccess(PileStructureDTO structure) {
+        public void onSuccess(ExpressionPileStructureDTO structure) {
             //Window.alert("Success");
             // remove from the dashboard list
             displayedStructures.remove(structure);
@@ -445,16 +445,16 @@ public class FxStructureModule extends Composite implements StructurePile {
         }
     }
 
-    class CreatePileStructureCallback implements AsyncCallback<PileStructureDTO> {
+    class CreatePileStructureCallback implements AsyncCallback<ExpressionPileStructureDTO> {
 
         public void onFailure(Throwable throwable) {
             if (throwable instanceof PileStructureExistsException) {
-                errorMessage.setText(throwable.getMessage());
+                errorElement.setError(throwable.getMessage());
             }
-            errorMessage.setText(throwable.getMessage());
+            errorElement.setError(throwable.getMessage());
         }
 
-        public void onSuccess(PileStructureDTO pileStructure) {
+        public void onSuccess(ExpressionPileStructureDTO pileStructure) {
             //Window.alert("Success");
             displayedStructures.add(pileStructure);
             Collections.sort(displayedStructures);

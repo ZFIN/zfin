@@ -17,7 +17,11 @@ import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.repository.HibernateMutantRepository;
+import org.zfin.mutant.repository.HibernatePhenotypeRepository;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.mutant.repository.PhenotypeRepository;
+import org.zfin.ontology.repository.HibernateOntologyRepository;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.repository.HibernateOrthologyRepository;
 import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.people.repository.HibernateProfileRepository;
@@ -61,6 +65,8 @@ public class RepositoryFactory {
     private static BlastRepository blastRepository;
     private static DisplayGroupRepository displayGroupRepository;
     private static ExpressionRepository expressionRep;
+    private static PhenotypeRepository phenotypeRep = new HibernatePhenotypeRepository();
+    private static OntologyRepository ontologyRepository = new HibernateOntologyRepository();
 
     public static ExpressionRepository getExpressionSummaryRepository() {
         if (xpatsumRep == null) {
@@ -246,7 +252,23 @@ public class RepositoryFactory {
         return expressionRep;
     }
 
-    public static void setExpressionRepository(ExpressionRepository expressionRep) {
-        RepositoryFactory.expressionRep = expressionRep;
+    public static void setExpressionRepository(ExpressionRepository expressionRepository) {
+        expressionRep = expressionRepository;
+    }
+
+    public static PhenotypeRepository getPhenotypeRepository() {
+        return phenotypeRep;
+    }
+
+    public static void setPhenotypeRepository(PhenotypeRepository phenotypeRepository) {
+        phenotypeRep = phenotypeRepository;
+    }
+
+    public static OntologyRepository getOntologyRepository() {
+        return ontologyRepository;
+    }
+
+    public static void setOntologyRepository(OntologyRepository repository) {
+        ontologyRepository = repository;
     }
 }

@@ -38,7 +38,7 @@ public final class AnatomyPresentation {
                     items.add(relatedItem.getAnatomyItem());
                 }
             }
-            if (items.size() > 0) {
+            if (!items.isEmpty()) {
                 rel.setItems(items);
                 relList.add(rel);
             }
@@ -73,7 +73,7 @@ public final class AnatomyPresentation {
      * @param items string list
      * @return string
      */
-    public static String createFormattedList(List<String> items) {
+    public static String createFormattedList(Collection<String> items) {
         ListFormatter formatter = new ListFormatter(",", '\"');
         formatter.addStringList(items);
         return formatter.getFormattedString();
@@ -84,12 +84,11 @@ public final class AnatomyPresentation {
      * @return set of synonyms
      */
     private static Set<AnatomySynonym> sortSynonyms(AnatomyItem anatomyItem) {
-        Set syns = anatomyItem.getSynonyms();
-        if (syns == null)
+        Set<AnatomySynonym> unsortedSynonyms = anatomyItem.getSynonyms();
+        if (unsortedSynonyms == null)
             return null;
         Set<AnatomySynonym> synonyms = new TreeSet<AnatomySynonym>(new SynonymSorting());
-        for (Object syn : syns) {
-            AnatomySynonym synonym = (AnatomySynonym) syn;
+        for (AnatomySynonym synonym : unsortedSynonyms) {
             synonyms.add(synonym);
         }
         return synonyms;

@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.throwaway.ThrowawayController;
  */
 public class SimplePassThroughController implements ThrowawayController {
 
-    private String viewName;
+    protected String viewName;
 
     public ModelAndView execute() throws Exception {
         return new ModelAndView(viewName);

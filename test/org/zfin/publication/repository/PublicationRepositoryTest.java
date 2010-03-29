@@ -214,7 +214,7 @@ public class PublicationRepositoryTest {
         String aoZdbID = "ZDB-ANAT-011113-460";
         AnatomyItem item = new AnatomyItem();
         item.setZdbID(aoZdbID);
-        List<Morpholino> morphs = mutantRepository.getPhenotypeMorhpolinosByAnatomy(item, 4);
+        List<Morpholino> morphs = mutantRepository.getPhenotypeMorpholinos(item, 4);
         assertTrue(morphs != null);
 //        assertEquals("13 figures", 3, morphs.size());
 
@@ -482,10 +482,18 @@ public class PublicationRepositoryTest {
     }
 
     @Test
-    public void getFishByPublication() {
+    public void getFishByPublicationInExperiment() {
         String zdbID = "ZDB-PUB-990507-16";
 
         List<Genotype> experiments = publicationRepository.getFishUsedInExperiment(zdbID);
+        assertTrue(experiments != null);
+    }
+
+    @Test
+    public void getFishByPublication() {
+        String zdbID = "ZDB-PUB-970210-18";
+
+        List<Genotype> experiments = publicationRepository.getGenotypesInPublication(zdbID);
         assertTrue(experiments != null);
     }
 
@@ -501,7 +509,7 @@ public class PublicationRepositoryTest {
     public void getWTGenotype() {
         String nickname = "WT";
 
-        Genotype geno = publicationRepository.getGenotypeByNickname(nickname);
+        Genotype geno = publicationRepository.getGenotypeByHandle(nickname);
         assertTrue(geno != null);
     }
 

@@ -12,10 +12,12 @@ public class FilterValuesDTO implements IsSerializable {
     private FigureDTO figure;
     private MarkerDTO marker;
     private FishDTO fish;
+    private FeatureDTO feature;
 
     private List<FigureDTO> figures;
     private List<MarkerDTO> markers;
     private List<FishDTO> fishes;
+    private List<FeatureDTO> features;
 
     public List<FigureDTO> getFigures() {
         return figures;
@@ -63,5 +65,21 @@ public class FilterValuesDTO implements IsSerializable {
 
     public void setFish(FishDTO fish) {
         this.fish = fish;
+    }
+
+    public FeatureDTO getFeature() {
+        return feature;
+    }
+
+    public void setFeature(FeatureDTO feature) {
+        this.feature = feature;
+    }
+
+    public List<FeatureDTO> getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(List<FeatureDTO> features) {
+        this.features = features;
     }
 }

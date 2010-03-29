@@ -5,10 +5,12 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.dto.Ontology;
+import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.util.LookupRPCService;
+import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This is a lookup box composite.  It allows the following options:
@@ -16,7 +18,8 @@ import java.util.List;
  * - show errors
  * - show button
  * - type (GO, PATO, QUALITY)
- * - showSynons
+ * - show synonyms
+ * - ontology the ontology used for lookup purposes
  */
 public class LookupComposite extends Composite {
 
@@ -30,6 +33,8 @@ public class LookupComposite extends Composite {
     private String currentText = null;
     private HTML noteLabel = new HTML("", true);
     private VerticalPanel rootPanel = new VerticalPanel();
+    private TermInfoComposite termInfoTable;
+
 
     // internal ui data
     private String noteString = "";
@@ -37,16 +42,13 @@ public class LookupComposite extends Composite {
     private boolean suggestBoxHasFocus = true;
 
     // lookup types
-    public final static String TYPE_ANATOMY_ONTOLOGY = "ANATOMY_ONTOLOGY";
-    public final static String TYPE_GENE_ONTOLOGY = "GENE_ONTOLOGY";
-    public final static String TYPE_QUALITY = "QUALITY_ONTOLOGY";
     public final static String GENEDOM_AND_EFG = "GENEDOM_AND_EFG_LOOKUP";
     public final static String MARKER_LOOKUP = "MARKER_LOOKUP";
     public final static String TYPE_SUPPLIER = "SUPPLIER";
     public final static String FEATURE_LOOKUP = "FEATURE_LOOKUP";
     public final static String GDAG_TERM_LOOKUP = "GDAG_TERM_LOOKUP";
-    private List<String> types = new ArrayList<String>(10);
-    private Ontology goOntology;
+    private Collection<String> types = new ArrayList<String>(10);
+    private OntologyDTO ontology;
 
     // variables
     private final static String EMPTY_STRING = "&nbsp;";
@@ -60,22 +62,22 @@ public class LookupComposite extends Composite {
     private String onclick;
 
     // options
-    private String inputName = "search";
-    private boolean showError = true;
-    private String buttonText = null;
-    private String type = TYPE_ANATOMY_ONTOLOGY;
-    private boolean wildCard = true;
-    private int suggestBoxWidth = 30;
-    private String oId = null;
+    protected String inputName = "search";
+    protected boolean showError = true;
+    protected String buttonText = null;
+    protected String type = GDAG_TERM_LOOKUP;
+    protected boolean wildCard = true;
+    protected int suggestBoxWidth = 30;
+    protected String oId = null;
     protected int limit = ItemSuggestOracle.NO_LIMIT;
 
     // later option
     private int minLookupLength = 3;
+    private static final String TERM_INFO = "term-info";
+
+    private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
     public LookupComposite() {
-        types.add(TYPE_ANATOMY_ONTOLOGY);
-        types.add(TYPE_GENE_ONTOLOGY);
-        types.add(TYPE_QUALITY);
         types.add(TYPE_SUPPLIER);
         types.add(MARKER_LOOKUP);
         types.add(GENEDOM_AND_EFG);
@@ -107,6 +109,12 @@ public class LookupComposite extends Composite {
         }
         textBox.setFocus(true);
         initWidget(rootPanel);
+        RootPanel panel = RootPanel.get(TERM_INFO);
+        if (panel != null) {
+            termInfoTable = new TermInfoComposite(false);
+            termInfoTable.clear();
+            panel.add(termInfoTable);
+        }
     }
 
     void addSubmitButtonHandler() {
@@ -353,12 +361,16 @@ public class LookupComposite extends Composite {
         return suggestBox.getText();
     }
 
-    public void setGoOntology(Ontology goOntology) {
-        this.goOntology = goOntology;
+    public void setOntologyName(String ontologyName) {
+        ontology = OntologyDTO.getOntologyByDescriptor(ontologyName);
     }
 
-    public Ontology getGoOntology() {
-        return goOntology;
+    public void setOntology(OntologyDTO ontology) {
+        this.ontology = ontology;
+    }
+
+    public OntologyDTO getOntology() {
+        return ontology;
     }
 
     public void addOnFocusHandler(FocusHandler autocompleteFocusHandler) {
@@ -372,5 +384,18 @@ public class LookupComposite extends Composite {
     public void setEnabled(boolean enabled){
         textBox.setEnabled(enabled);
     }
+
+    /**
+     * Display the term info for a given term ID in a given ontology.
+     *
+     * @param ontologyName Ontology Name
+     * @param termID   term ID: zdb ID or obo ID
+     */
+    public void showTermInfo(String ontologyName, String termID) {
+        //Window.alert("Show Term:: " + ontology + ":" + termID);
+        OntologyDTO ontology = OntologyDTO.getOntologyByDescriptor(ontologyName);
+        lookupRPC.getTermInfo(ontology, termID, new TermInfoCallBack(termInfoTable, termID));
+    }
+
 
 }

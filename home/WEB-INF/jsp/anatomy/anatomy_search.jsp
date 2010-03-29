@@ -1,4 +1,6 @@
 <%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
+<%@ page import="org.zfin.ontology.Ontology" %>
+<%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <script src="/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
@@ -16,13 +18,12 @@
         </td>
         <td class="titlebar" align="right">
             <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-            <tiles:put name="subjectName" value="Anatomical Ontology Browser"/>
-            <tiles:put name="subjectID" value=""/>
-        </tiles:insert>
+                <tiles:put name="subjectName" value="Anatomical Ontology Browser"/>
+                <tiles:put name="subjectID" value=""/>
+            </tiles:insert>
         </td>
     </tr>
 </table>
-
 
 <form:form method="GET" action="/action/anatomy/search" commandName="formBean" name="formBean">
 
@@ -47,7 +48,8 @@
                     <TR bgcolor="">
                         <TD width=45%>
                             <label for="anatomySearchTerm" class="indented-label">Anatomical Term</label><br>
-                            <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_lookup.jsp" flush="false"/>
+                            <zfin2:lookup ontologyName="<%= Ontology.ANATOMY.getOntologyName()%>"
+                                          action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>"/>
                         </TD>
                         <TD width=10%>
                             <b>or</b>

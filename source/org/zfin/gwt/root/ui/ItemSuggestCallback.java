@@ -6,9 +6,10 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response> {
+
+    private static final int MAXIMUM_NUMBER_OF_MATCHES = 25;
     private SuggestOracle.Request request;
     private SuggestOracle.Callback callback;
     private LookupComposite lookup;
@@ -23,22 +24,6 @@ class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response> {
 //        lookup.setErrorString("error contacting server . . .\n"+error.toString());
     }
 
-    private boolean containsPunctuation(String term) {
-        char[] charArray = term.toCharArray();
-        char c;
-        for (char aCharArray : charArray) {
-            c = aCharArray;
-            if (
-                    false == Character.isLetterOrDigit(c)
-                            &&
-                            c != ' '
-                    ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void onSuccess(SuggestOracle.Response response) {
         lookup.clearError();
         lookup.clearNote();
@@ -48,9 +33,10 @@ class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response> {
         }
 
         if (lookup.isWildCard()) {
-            Collection suggestions = response.getSuggestions();
-            List<ItemSuggestion> newSuggestions = new ArrayList<ItemSuggestion>();
-            newSuggestions.add(new ItemSuggestion("*" + request.getQuery() + "*", request.getQuery()+"*" ));
+            @SuppressWarnings({"unchecked"})
+            Collection<ItemSuggestion> suggestions = (Collection<ItemSuggestion>) response.getSuggestions();
+            Collection<ItemSuggestion> newSuggestions = new ArrayList<ItemSuggestion>(MAXIMUM_NUMBER_OF_MATCHES);
+            newSuggestions.add(new ItemSuggestion("*" + request.getQuery() + "*", request.getQuery() + "*"));
             newSuggestions.addAll(suggestions);
             response.setSuggestions(newSuggestions);
         }
@@ -66,24 +52,19 @@ class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response> {
                 iterator.next();
                 iterator.remove();
             }
-            if(lookup.isWildCard()){
-                suggestions.add(new ItemSuggestion("...",  request.getQuery()));
-            }
-            else{
-                suggestions.add(new ItemSuggestion("...",  null ));
+            if (lookup.isWildCard()) {
+                suggestions.add(new ItemSuggestion("...", request.getQuery()));
+            } else {
+                suggestions.add(new ItemSuggestion("...", null));
             }
         }
 
-        if (lookup.getTextBox().getText().equalsIgnoreCase(request.getQuery())) {
+        if (lookup.getTextBox().getText().trim().equalsIgnoreCase(request.getQuery().trim())) {
             if (response.getSuggestions().isEmpty()) {
-                if (containsPunctuation(request.getQuery())) {
-                    lookup.setErrorString("Please select one term at a time without punctuation");
-                } else {
-                    if (!lookup.getType().equals(LookupComposite.TYPE_SUPPLIER))
-                        lookup.setErrorString("Term not found '" + request.getQuery() + "'");
-                    else
-                        lookup.setErrorString("Supplier name '" + request.getQuery() + "' not found.");
-                }
+                if (!lookup.getType().equals(LookupComposite.TYPE_SUPPLIER))
+                    lookup.setErrorString("Term not found '" + request.getQuery() + "'");
+                else
+                    lookup.setErrorString("Supplier name '" + request.getQuery() + "' not found.");
             }
             callback.onSuggestionsReady(request, response);
         }

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CloneViewController extends AbstractController {
 
+    @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest,
                                                  HttpServletResponse httpServletResponse) throws Exception {
         // set base bean
@@ -28,7 +29,7 @@ public class CloneViewController extends AbstractController {
 
         cloneBean.setMarkerExpression(ExpressionService.getExpressionForMarker(clone));
 
-        // setting clone relationshi8ps
+        // setting clone relationships
         RelatedMarkerDisplay cloneRelationships = MarkerService.getRelatedMarkerDisplay(clone);
         cloneBean.setMarkerRelationships(cloneRelationships);
 

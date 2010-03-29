@@ -1,13 +1,13 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.PileStructureDTO;
+import org.zfin.gwt.root.dto.AbstractPileStructureDTO;
 
 import java.util.EventListener;
 
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public interface PileStructureListener extends EventListener {
+public interface PileStructureListener<T extends AbstractPileStructureDTO> extends EventListener {
 
     /**
      * This method takes a new PileStructureDTO object:
@@ -15,6 +15,6 @@ public interface PileStructureListener extends EventListener {
      * 2) re-displays the pile
      * @param pileStructure PileStructure
      */
-    public void onPileStructureCreation(PileStructureDTO pileStructure);
+    public void onPileStructureCreation(T pileStructure);
 
 }

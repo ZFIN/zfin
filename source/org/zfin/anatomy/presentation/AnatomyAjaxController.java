@@ -218,7 +218,7 @@ public class AnatomyAjaxController extends MultiActionController {
     protected void retrieveMorpholinoData(AnatomyItem ai, AnatomySearchBean form, boolean wildtype) {
 
         PaginationResult<GenotypeExperiment> wildtypeMorphResults =
-                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(ai, wildtype, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+                mutantRepository.getGenotypeExperimentMorpholinos(ai, wildtype, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         int count = wildtypeMorphResults.getTotalCount();
         List<GenotypeExperiment> experiments = wildtypeMorphResults.getPopulatedResults();
 

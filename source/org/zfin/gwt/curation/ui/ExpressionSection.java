@@ -1,8 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.ExperimentDTO;
-import org.zfin.gwt.root.dto.ExpressedTermDTO;
-import org.zfin.gwt.root.dto.ExpressionFigureStageDTO;
+import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
 import java.util.Set;
@@ -10,7 +8,7 @@ import java.util.Set;
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public interface ExpressionSection {
+public interface ExpressionSection<T extends ExpressedTermDTO, W extends AbstractFigureStageDTO> {
 
     /**
      * Inject a pile structure object into the section.
@@ -28,7 +26,7 @@ public interface ExpressionSection {
     void removeFigureAnnotations(ExperimentDTO experiment);
 
     /**
-     * Re-read the expressions in case something has changed the epxressions,
+     * Re-read the expressions in case something has changed the expressions,
      * e.g. modified experiments whose attributes are displayed.
      */
     void retrieveExpressions();
@@ -38,14 +36,14 @@ public interface ExpressionSection {
      *
      * @return list of expression.
      */
-    List<ExpressionFigureStageDTO> getSelectedExpressions();
+    List<W> getSelectedExpressions();
 
     /**
      * Retrieve all expressed Terms.
      *
      * @return set of expressed terms.
      */
-    Set<ExpressedTermDTO> getExpressedTermDTOs();
+    Set<T> getExpressedTermDTOs();
 
     /**
      * Use to re-display (if visible) the figure annotations and highlight the given

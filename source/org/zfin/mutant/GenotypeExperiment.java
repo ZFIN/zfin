@@ -1,7 +1,9 @@
 package org.zfin.mutant;
 
 import org.zfin.expression.Experiment;
+import org.zfin.expression.ExpressionExperiment;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -12,7 +14,7 @@ public class GenotypeExperiment {
     private Experiment experiment;
     private Genotype genotype;
     private Set<Phenotype> phenotypes;
-
+    private Set<ExpressionExperiment> expressionExperiments;
 
     public String getZdbID() {
         return zdbID;
@@ -38,11 +40,28 @@ public class GenotypeExperiment {
         this.genotype = genotype;
     }
 
+    public Set<ExpressionExperiment> getExpressionExperiments() {
+        return expressionExperiments;
+    }
+
+    public void setExpressionExperiments(Set<ExpressionExperiment> expressionExperiments) {
+        this.expressionExperiments = expressionExperiments;
+    }
+
     public Set<Phenotype> getPhenotypes() {
+        if (phenotypes == null)
+            return null;
         return phenotypes;
     }
 
     public void setPhenotypes(Set<Phenotype> phenotypes) {
         this.phenotypes = phenotypes;
     }
+
+    public void addPhenotype(Phenotype phenotype) {
+        if (phenotypes == null)
+            phenotypes = new HashSet<Phenotype>(5);
+        phenotypes.add(phenotype);
+    }
+
 }

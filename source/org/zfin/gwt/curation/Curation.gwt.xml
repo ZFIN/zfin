@@ -6,9 +6,14 @@
     <source path='dto'/>
     <source path='ui'/>
 
-    <entry-point class='org.zfin.gwt.curation.ui.FXCurationEntryPoint'/>
+    <entry-point class='org.zfin.gwt.curation.ui.CurationEntryPoint'/>
 
     <servlet path="/ajax/curation" class="org.zfin.gwt.curation.server.CurationExperimentRPCImpl"/>
-    <servlet path="/ajax/session-save" class='org.zfin.gwt.curation.server.SessionSaveServiceImpl'/>
-
+    <servlet path="/ajax/curation-structures" class="org.zfin.gwt.curation.server.StructureRPCImpl"/>
+    <servlet path="/ajax/curation-phenotype" class='org.zfin.gwt.curation.server.CurationPhenotypeRPCImpl'/>
+    <servlet path="/ajax/curation-filter" class='org.zfin.gwt.curation.server.CurationFilterRPCImpl'/>
+    <!--
+        <define-property name="user.agent" values="gecko" />
+    <define-property name="locale" values="en"/>
+    -->
 </module>

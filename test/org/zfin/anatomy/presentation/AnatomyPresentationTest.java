@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
  * This is the test class that tests funcionality of the AnatomyPresentation class,
  * a helper class to provide convenience methods for presentation.
  */
+@SuppressWarnings({"FeatureEnvy"})
 public class AnatomyPresentationTest {
 
     public static junit.framework.Test suite() {
@@ -27,8 +28,8 @@ public class AnatomyPresentationTest {
     }
 
     @Test
-    public void DisplayRelationshipsOnDetailPage() {
-        List<String> types = new ArrayList<String>();
+    public void displayRelationshipsOnDetailPage() {
+        List<String> types = new ArrayList<String>(10);
         String typeOne = "develops into";
         String typeTwo = "develops from";
         String typeThree = "has instance";
@@ -70,7 +71,7 @@ public class AnatomyPresentationTest {
         relatedItemThree.setName("yolk");
         arThree.setAnatomyItem(relatedItemThree);
 
-        List<AnatomyRelationship> relatedItems = new ArrayList<AnatomyRelationship>();
+        List<AnatomyRelationship> relatedItems = new ArrayList<AnatomyRelationship>(3);
         relatedItems.add(arOne);
         relatedItems.add(arTwo);
         relatedItems.add(arThree);
@@ -100,10 +101,10 @@ public class AnatomyPresentationTest {
     /**
      * Create a list of four synonyms. The list should be a comma delimited
      * String with white spaces added after the comma.
-     * The list uses the sysnonym comparator to order the items (alpabetically).
+     * The list uses the synonym comparator to order the items (alphabetically).
      */
  @Test
-    public void MulipleSynonymList() {
+    public void multipleSynonymList() {
         AnatomyItem item = new AnatomyItem();
          DataAliasGroup dag1=new DataAliasGroup();
         dag1.setName("exact alias");
@@ -130,7 +131,7 @@ public class AnatomyPresentationTest {
         dag4.setSignificance(4);
         syn4.setName("fourth");
         syn4.setAliasGroup(dag4);
-        Set<AnatomySynonym> synonyms = new HashSet<AnatomySynonym>();
+        Set<AnatomySynonym> synonyms = new HashSet<AnatomySynonym>(4);
         synonyms.add(syn1);
         synonyms.add(syn2);
         synonyms.add(syn3);
@@ -146,11 +147,11 @@ public class AnatomyPresentationTest {
      * should be added.
      */
     @Test
-    public void SingleSynonymList() {
+    public void singleSynonymList() {
         AnatomyItem item = new AnatomyItem();
         AnatomySynonym syn1 = new AnatomySynonym();
         syn1.setName("first");
-        Set<AnatomySynonym> synonyms = new HashSet<AnatomySynonym>();
+        Set<AnatomySynonym> synonyms = new HashSet<AnatomySynonym>(1);
         synonyms.add(syn1);
         item.setSynonyms(synonyms);
 
@@ -180,8 +181,6 @@ public class AnatomyPresentationTest {
 
         list = AnatomyPresentation.getAnatomyTermList(null, "harry");
         assertEquals(0, list.size());
-
-        List<AnatomyItem> terms = null;
     }
 
     /**
@@ -191,7 +190,7 @@ public class AnatomyPresentationTest {
     @Test
     public void aoAutoCompleteTermListNoQuery() {
 
-        List<AnatomyItem> terms = new ArrayList<AnatomyItem>();
+        List<AnatomyItem> terms = new ArrayList<AnatomyItem>(1);
         AnatomyItem term = new AnatomyItem();
         term.setName("neural rod");
         terms.add(term);
@@ -220,7 +219,7 @@ public class AnatomyPresentationTest {
     public void aoAutoCompleteTermListWithQuery() {
 
         String query = "neur";
-        List<AnatomyItem> terms = new ArrayList<AnatomyItem>();
+        List<AnatomyItem> terms = new ArrayList<AnatomyItem>(2);
         AnatomyItem term = new AnatomyItem();
         String firstTermName = "neural rod";
         term.setName(firstTermName);
@@ -237,7 +236,7 @@ public class AnatomyPresentationTest {
 
         AnatomySynonym syn = new AnatomySynonym();
         syn.setName("neuron");
-        Set<AnatomySynonym> syns = new HashSet<AnatomySynonym>();
+        Set<AnatomySynonym> syns = new HashSet<AnatomySynonym>(1);
         syns.add(syn);
         termTwo.setSynonyms(syns);
 
@@ -259,10 +258,10 @@ public class AnatomyPresentationTest {
      * Check that matches are case-insensitive
      */
     @Test
-    public void aoAutoCompleteTermListWithQueryCaseInsensitive() {
+    public void aoAutoCompleteWithQueryCaseInsensitive() {
 
         String query = "Neur";
-        List<AnatomyItem> terms = new ArrayList<AnatomyItem>();
+        List<AnatomyItem> terms = new ArrayList<AnatomyItem>(2);
         AnatomyItem term = new AnatomyItem();
         String firstTermName = "neural rod";
         term.setName(firstTermName);
@@ -279,9 +278,9 @@ public class AnatomyPresentationTest {
 
         AnatomySynonym syn = new AnatomySynonym();
         syn.setName("neuron");
-        Set<AnatomySynonym> syns = new HashSet<AnatomySynonym>();
-        syns.add(syn);
-        termTwo.setSynonyms(syns);
+        Set<AnatomySynonym> synonyms = new HashSet<AnatomySynonym>(1);
+        synonyms.add(syn);
+        termTwo.setSynonyms(synonyms);
 
         // match on first term and second terms synonym
         list = AnatomyPresentation.getAnatomyTermList(terms, query);
@@ -296,9 +295,9 @@ public class AnatomyPresentationTest {
 
         syn = new AnatomySynonym();
         syn.setName("Neuron");
-        syns.clear();
-        syns.add(syn);
-        termTwo.setSynonyms(syns);
+        synonyms.clear();
+        synonyms.add(syn);
+        termTwo.setSynonyms(synonyms);
 
         // match on first term and second terms synonym
         list = AnatomyPresentation.getAnatomyTermList(terms, query);
@@ -318,10 +317,10 @@ public class AnatomyPresentationTest {
      * Check that matches ignore white space at the end
      */
     @Test
-    public void aoAutoCompleteTermListWithQueryWhiteSpaceIgnorance() {
+    public void aoAutoCompleteWithQueryWhiteSpaceIgnore() {
 
         String query = "Neur  ";
-        List<AnatomyItem> terms = new ArrayList<AnatomyItem>();
+        List<AnatomyItem> terms = new ArrayList<AnatomyItem>(2);
         AnatomyItem term = new AnatomyItem();
         String firstTermName = "neural rod";
         term.setName(firstTermName);
@@ -338,7 +337,7 @@ public class AnatomyPresentationTest {
 
         AnatomySynonym syn = new AnatomySynonym();
         syn.setName("neuron  ");
-        Set<AnatomySynonym> syns = new HashSet<AnatomySynonym>();
+        Set<AnatomySynonym> syns = new HashSet<AnatomySynonym>(1);
         syns.add(syn);
         termTwo.setSynonyms(syns);
 

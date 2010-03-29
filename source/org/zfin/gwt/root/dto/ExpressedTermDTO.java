@@ -8,53 +8,11 @@ import org.zfin.gwt.root.util.StringUtils;
  */
 public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTermDTO> {
 
-    private String supertermID;
-    private String supertermName;
-    private String supertermOboID;
-    private String subtermID;
-    private String subtermName;
-    private String subtermOboID;
-    private String qualityID;
-    private String qualityName;
-    private String qualityOboID;
-    private Ontology subtermOntology;
-    private Ontology supertermOntology;
-    private Ontology qualityOntology;
-
+    protected String zdbID;
+    protected TermDTO superterm;
+    protected TermDTO subterm;
 
     private boolean expressionFound;
-
-    public String getSubtermName() {
-        return subtermName;
-    }
-
-    public void setSubtermName(String subtermName) {
-        this.subtermName = subtermName;
-    }
-
-    public String getSupertermName() {
-        return supertermName;
-    }
-
-    public void setSupertermName(String supertermName) {
-        this.supertermName = supertermName;
-    }
-
-    public String getSubtermID() {
-        return subtermID;
-    }
-
-    public void setSubtermID(String subtermID) {
-        this.subtermID = subtermID;
-    }
-
-    public String getSupertermID() {
-        return supertermID;
-    }
-
-    public void setSupertermID(String supertermID) {
-        this.supertermID = supertermID;
-    }
 
     public boolean isExpressionFound() {
         return expressionFound;
@@ -65,76 +23,34 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     }
 
     public String getDisplayName() {
-        String composedTerm = supertermName;
-        if (subtermName != null)
-            composedTerm += ":" + subtermName;
-        if (qualityName != null)
-            composedTerm += ":" + qualityName;
+        String composedTerm = superterm.getTermName();
+        if (subterm != null)
+            composedTerm += ":" + subterm.getTermName();
         return composedTerm;
     }
 
-    public String getSupertermOboID() {
-        return supertermOboID;
+    public TermDTO getSuperterm() {
+        return superterm;
     }
 
-    public void setSupertermOboID(String supertermOboID) {
-        this.supertermOboID = supertermOboID;
+    public void setSuperterm(TermDTO superterm) {
+        this.superterm = superterm;
     }
 
-    public String getSubtermOboID() {
-        return subtermOboID;
+    public TermDTO getSubterm() {
+        return subterm;
     }
 
-    public void setSubtermOboID(String subtermOboID) {
-        this.subtermOboID = subtermOboID;
+    public void setSubterm(TermDTO subterm) {
+        this.subterm = subterm;
     }
 
-    public Ontology getSubtermOntology() {
-        return subtermOntology;
+    public String getZdbID() {
+        return zdbID;
     }
 
-    public void setSubtermOntology(Ontology subtermOntology) {
-        this.subtermOntology = subtermOntology;
-    }
-
-    public String getQualityID() {
-        return qualityID;
-    }
-
-    public void setQualityID(String qualityID) {
-        this.qualityID = qualityID;
-    }
-
-    public String getQualityName() {
-        return qualityName;
-    }
-
-    public void setQualityName(String qualityName) {
-        this.qualityName = qualityName;
-    }
-
-    public String getQualityOboID() {
-        return qualityOboID;
-    }
-
-    public void setQualityOboID(String qualityOboID) {
-        this.qualityOboID = qualityOboID;
-    }
-
-    public Ontology getSupertermOntology() {
-        return supertermOntology;
-    }
-
-    public void setSupertermOntology(Ontology supertermOntology) {
-        this.supertermOntology = supertermOntology;
-    }
-
-    public Ontology getQualityOntology() {
-        return qualityOntology;
-    }
-
-    public void setQualityOntology(Ontology qualityOntology) {
-        this.qualityOntology = qualityOntology;
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
     }
 
     @Override
@@ -144,25 +60,36 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
 
         ExpressedTermDTO termDTO = (ExpressedTermDTO) o;
 
-        if (subtermID != null ? !subtermID.equals(termDTO.subtermID) : termDTO.subtermID != null)
-            return false;
-        if (supertermID != null ? !supertermID.equals(termDTO.supertermID) : termDTO.supertermID != null)
+        String supertermID = superterm.getTermID();
+        if (supertermID != null ? !supertermID.equals(termDTO.getSuperterm().getTermID()) : termDTO.getSuperterm().getTermID() != null)
             return false;
 
-        return true;
+        if (subterm == null && termDTO.getSubterm() == null)
+            return true;
+        if ((subterm != null && termDTO.getSubterm() == null) ||
+                (subterm == null && termDTO.getSubterm() != null))
+            return false;
+
+        if (subterm.getTermID().equals(termDTO.getSubterm().getTermID()))
+            return true;
+
+        return false;
     }
 
     @Override
+    @SuppressWarnings({"NonFinalFieldReferencedInHashCode", "SuppressionAnnotation"})
     public int hashCode() {
-        int result = subtermID != null ? subtermID.hashCode() : 0;
-        result = 31 * result + (supertermID != null ? supertermID.hashCode() : 0);
+        int result = (superterm.getTermID() != null ? superterm.getTermID().hashCode() : 0);
+        if (subterm != null)
+            result = 31 * result + subterm.getTermID().hashCode();
+        result += expressionFound ? 43 : 13;
         return result;
     }
 
     public String getUniqueID() {
-        String composedID = supertermID;
-        if (subtermID != null)
-            composedID += ":" + subtermID;
+        String composedID = superterm.getTermID();
+        if (subterm != null)
+            composedID += ":" + subterm.getTermID();
         return composedID;
     }
 
@@ -170,18 +97,24 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
         if (o == null)
             return 1;
         // if the superterms are different sort by superterm
-        if (!supertermName.equals(o.getSupertermName()))
-            return supertermName.compareTo(o.getSupertermName());
+        if (!superterm.getTermName().equals(o.getSuperterm().getTermName()))
+            return superterm.getTermName().compareToIgnoreCase(o.getSuperterm().getTermName());
 
         // if superterms are the same sort by subterm.
-        if (subtermName == null && o.getSubtermName() != null)
+        if (subterm == null && o.getSubterm() != null)
             return -1;
-        if (subtermName != null && o.getSubtermName() == null)
+        if (subterm != null && o.getSubterm() == null)
             return 1;
-        if (subtermName == null && o.getSubtermName() == null)
-            return supertermName.compareTo(o.getSupertermName());
+        if (subterm == null && o.getSubterm() == null)
+            return 0;
 
-        return subtermName.compareTo(o.getSubtermName());
+        if (subterm.getTermName().equalsIgnoreCase(o.getSubterm().getTermName())) {
+            if (expressionFound && !o.isExpressionFound())
+                return -1;
+            if (!expressionFound && o.isExpressionFound())
+                return 1;
+        }
+        return subterm.getTermName().compareToIgnoreCase(o.getSubterm().getTermName());
     }
 
     /**
@@ -192,11 +125,14 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
      * @return true or false
      */
     public boolean equalsByNameOnly(ExpressedTermDTO expressedTerm) {
-        if (!StringUtils.equals(supertermName, expressedTerm.getSupertermName()))
+        if (!StringUtils.equals(superterm.getTermName(), expressedTerm.getSuperterm().getTermName()))
             return false;
-        if (!StringUtils.equals(subtermName, expressedTerm.getSubtermName()))
+        if (subterm == null && expressedTerm.getSubterm() == null)
+            return true;
+        if ((subterm != null && expressedTerm.getSubterm() == null) ||
+                (subterm == null && expressedTerm.getSubterm() != null))
             return false;
-        if (!StringUtils.equals(qualityName, expressedTerm.getQualityName()))
+        if (!StringUtils.equals(subterm.getTermName(), expressedTerm.getSubterm().getTermName()))
             return false;
         return true;
     }

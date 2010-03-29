@@ -947,7 +947,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
     <?/MISQL>
     <option value="-">***GENOTYPE</option>
     <?MISQL SQL="
-      select distinct geno_zdb_id, geno_handle, zero_pad(geno_nickname)
+      select distinct geno_zdb_id, geno_handle, zero_pad(geno_handle)
         from genotype, record_attribution
        where recattrib_data_zdb_id = geno_zdb_id
          and recattrib_source_zdb_id = '$OID' 

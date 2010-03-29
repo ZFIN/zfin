@@ -163,6 +163,8 @@
                 /ajax/cloneservice=root
                 /ajax/antibodyservice=root
                 /ajax/curation=root
+                /ajax/curation-structures=root
+                /ajax/curation-filter=root
             </value>
         </property>
     </bean>

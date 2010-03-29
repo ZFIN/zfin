@@ -28,6 +28,7 @@ public class Publication implements Comparable<Publication>, Serializable {
     private String fileName;
     private String doi;
     private GregorianCalendar publicationDate;
+    private GregorianCalendar closeDate;
     private Journal journal;
     private Set<ExpressionExperiment> expressionExperiments;
     private Set<Phenotype> phenotypes;
@@ -102,6 +103,14 @@ public class Publication implements Comparable<Publication>, Serializable {
 
     public void setPublicationDate(GregorianCalendar publicationDate) {
         this.publicationDate = publicationDate;
+    }
+
+    public GregorianCalendar getCloseDate() {
+        return closeDate;
+    }
+
+    public void setCloseDate(GregorianCalendar closeDate) {
+        this.closeDate = closeDate;
     }
 
     public Journal getJournal() {

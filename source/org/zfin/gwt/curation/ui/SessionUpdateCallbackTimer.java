@@ -2,15 +2,17 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.zfin.gwt.curation.dto.CuratorSessionDTO;
+import org.zfin.gwt.root.dto.CuratorSessionDTO;
+import org.zfin.gwt.root.ui.SessionSaveService;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  */
 public class SessionUpdateCallbackTimer extends Timer {
 
-    private ArrayList<CuratorSessionDTO> sessionList = new ArrayList<CuratorSessionDTO>(10);
+    private List<CuratorSessionDTO> sessionList = new ArrayList<CuratorSessionDTO>(10);
 
     public void scheduleCallback(CuratorSessionDTO sessionUpdate, int time) {
         cancel();
@@ -18,6 +20,7 @@ public class SessionUpdateCallbackTimer extends Timer {
         schedule(time);
     }
 
+    @Override
     public void run() {
         if (!sessionList.isEmpty()) {
             SessionSaveService.App.getInstance().saveCuratorUpdate(sessionList, new AsyncCallback() {

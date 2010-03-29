@@ -8,7 +8,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.ui.StageSelector;
+import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.gwt.root.util.WidgetUtil;
 
@@ -24,8 +24,8 @@ import java.util.*;
  * Ad 1)
  * A) The expression section can be hidden by clicking on 'hide' which then hides the display
  * part and the construction zone as well.
- * B) The state of the visiblity is saved in the database and remembered for this publication for future.
- * in the curation_sesion table.
+ * B) The state of the visibility is saved in the database and remembered for this publication for future.
+ * in the curation_session table.
  * <p/>
  * Ad 2)
  * A) Displayed are all expressions (unless the experiment filter, aka banana bar when it was yellow instead of
@@ -39,7 +39,7 @@ import java.util.*;
  * E) Clicking anywhere on an experiment row sets the selection check box and copies the values into the
  * construction zone. It keeps the light green-blue background color until this expression is unchecked.
  * F) expressed in: List all terms in alphabetical order by the superterm. Display composed terms using the format
- * [superterm:subterm]. If the term is 'unspecified' then hightlight the term in orange. If a term is NOT expressed
+ * [superterm:subterm]. If the term is 'unspecified' then highlight the term in orange. If a term is NOT expressed
  * the term should be highlighted in red (formerly [(not)])
  * <p/>
  * Ad 3)
@@ -62,21 +62,21 @@ import java.util.*;
  * I) Antibody-Selection-Box: If an antibody assay is selected (currently: IHC, WB or OTHER) the
  * Antibody-Selection-Box is enabled. If a different assay is selected then this selection box is disabled.
  * F) Antibody-Selection-Box: This box is only enabled if an antibody assay is selected.
- * G) Update-Button: The update buttton is disabled by default and will only be enabled when an existing experiment
+ * G) Update-Button: The update button is disabled by default and will only be enabled when an existing experiment
  * is selected (and copied into the construction zone).
  * H) Add an experiment:
  * I)   Adding an experiment requires to either selecting a gene or an antibody or both and all other
  * attributes except the GenBank accession number which is optional.
- * II) Experiments have to be unqiue according to the combination
+ * II) Experiments have to be unique according to the combination
  * Gene/Fish/Environment/Assay/Antibody/GenBank, i.e. you cannot create two experiments with the same
  * values for these attributes. An error message is displayed below the construction zone if a new
- * experiment equals an existing one while hightlighting the existing experiment in the list purple that
+ * experiment equals an existing one while highlighting the existing experiment in the list purple that
  * that the new experiment is conflicting with.
  * III) Updating an existing experiment is validated against the uniqueness constraint of II). An error
  * message is displayed when the update matches another existing experiment. Before an experiment is
  * updated a JavaScript alert box pops up to ask for confirmation.
  */
-public class FxExpressionModule extends Composite implements ExpressionSection {
+public class FxExpressionModule extends Composite implements ExpressionSection<ExpressedTermDTO, ExpressionFigureStageDTO> {
 
     // div-elements
     public static final String SHOW_HIDE_EXPRESSIONS = "show-hide-expressions";
@@ -92,7 +92,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
     private FlexTable constructionRow = new FlexTable();
     private ExpressionFlexTable displayTable;
     private Image loadingImage = new Image();
-    private Label errorMessage = new Label();
+    private ErrorHandler errorElement = new SimpleErrorElement();
 
     // construction zone
     private Button addButton = new Button("Add");
@@ -104,12 +104,12 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
     private boolean showSelectedExpressionOnly;
 
     // all annotations that are selected
-    private List<ExpressionFigureStageDTO> selectedExpressions = new ArrayList<ExpressionFigureStageDTO>();
+    private List<ExpressionFigureStageDTO> selectedExpressions = new ArrayList<ExpressionFigureStageDTO>(5);
     // all expressions displayed on the page (all or a subset defined by the filter elements)
-    private List<ExpressionFigureStageDTO> displayedExpressions = new ArrayList<ExpressionFigureStageDTO>();
+    private List<ExpressionFigureStageDTO> displayedExpressions = new ArrayList<ExpressionFigureStageDTO>(15);
     // This maps the display table and contains the full objects that each
     // row is made up from
-    private Map<Integer, ExpressionFigureStageDTO> displayTableMap = new HashMap<Integer, ExpressionFigureStageDTO>();
+    private Map<Integer, ExpressionFigureStageDTO> displayTableMap = new HashMap<Integer, ExpressionFigureStageDTO>(15);
 
     // attributes for duplicate row
     private String duplicateRowOriginalStyle;
@@ -123,18 +123,22 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
 
     // RPC class being used for this section.
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
-
+    private SessionSaveServiceAsync sessionRPC = SessionSaveService.App.getInstance();
     public static final String HIDE = "hide";
     public static final String SHOW = "show";
     public static final String PUSH_TO_PATO = "to pato";
     public static final String IN_PATO = "in pato";
     public static final String PUSHED = "pushed";
 
-    private Set<ExpressedTermDTO> expressedTerms = new HashSet<ExpressedTermDTO>();
+    // 20 expressed terms is a bit higher than the average
+    // number of expressed terms used in a single publication.
+    // Contains all distinct expressed terms for this publication 
+    private Set<ExpressedTermDTO> expressedTerms = new HashSet<ExpressedTermDTO>(20);
     // used for highlighting structures
     private ExpressedTermDTO expressedStructure;
     private boolean markStructures;
-    private List<FigureDTO> allFigureDtos = new ArrayList<FigureDTO>();
+    // Typical number of figures used per publication is less than 5.
+    private List<FigureDTO> allFigureDtos = new ArrayList<FigureDTO>(5);
 
     // injected variables
     private ExperimentSection experimentSection;
@@ -148,11 +152,12 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
     public FxExpressionModule(ExperimentSection experimentSection, String publicationID) {
         this.experimentSection = experimentSection;
         this.publicationID = publicationID;
+        stageSelector.setPublicationID(publicationID);
         displayTable = new ExpressionFlexTable(HeaderName.getHeaderNames());
         initGUI();
     }
 
-    public void setPileStructure(StructurePile structurePile){
+    public void setPileStructure(StructurePile structurePile) {
         this.structurePile = structurePile;
     }
 
@@ -175,9 +180,6 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
         displayPanel.add(new HTML("&nbsp;"));
         displayPanel.add(displayTable);
         RootPanel.get(EXPRESSIONS_DISPLAY).add(displayPanel);
-        RootPanel.get(IMAGE_LOADING_EXPRESSION_SECTION).add(loadingImage);
-        errorMessage.setStyleName("error");
-        loadingImage.setUrl("/images/ajax-loader.gif");
     }
 
     private void initShowHideGUI() {
@@ -212,9 +214,12 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
         // stage list
         curationRPCAsync.getStages(new RetrieveStageListCallback());
 
+        // stage selector
+        sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(errorElement, stageSelector));
     }
 
     // Retrieve experiments from the server
+
     public void retrieveExpressions() {
         loadingImage.setVisible(true);
         curationRPCAsync.getExpressionsByFilter(experimentFilter, figureID, new RetrieveExpressionsCallback());
@@ -237,7 +242,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
             String classSpan;
             if (!term.isExpressionFound()) {
                 classSpan = createSpanElement(term, WidgetUtil.RED);
-            } else if (term.getSupertermName().equals("unspecified")) {
+            } else if (term.getSuperterm().getTermName().equals("unspecified")) {
                 classSpan = createSpanElement(term, "term-unspecified");
             } else {
                 classSpan = createSpanElement(term, null);
@@ -282,7 +287,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
         constructionRow.setWidget(1, 3, resetButton);
         constructionRow.setWidget(2, 2, stageSelector.getEndStagePanel());
         constructionRow.setWidget(3, 2, stageSelector.getTogglePanel());
-        constructionRow.setWidget(4, 0, errorMessage);
+//        constructionRow.setWidget(4, 0, errorMessage);
         constructionRow.getFlexCellFormatter().setColSpan(4, 0, 4);
 
     }
@@ -331,7 +336,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
      * 1) Retrieve the expression list again.
      * 2) remove check marks from expressions.
      * 3) update expressedTerms collection.
-     * 4) un-check all experiments in the experiment section. 
+     * 4) un-check all experiments in the experiment section.
      */
     public void postUpdateStructuresOnExpression() {
         selectedExpressions.clear();
@@ -350,7 +355,8 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
 
     private void saveCheckStatusInSession(ExpressionFigureStageDTO checkedExpression, boolean isChecked) {
         String errorMessage = "Error while saving expression check mark status.";
-        curationRPCAsync.setFigureAnnotationStatus(checkedExpression, isChecked, new VoidAsyncCallback(new Label(errorMessage), null));
+        curationRPCAsync.setFigureAnnotationStatus(checkedExpression, isChecked,
+                new VoidAsyncCallback(errorMessage, errorElement, IMAGE_LOADING_EXPRESSION_SECTION));
     }
 
     private void unceckAllCheckStatusInSession() {
@@ -387,14 +393,14 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
         this.experimentFilter = experimentFilter;
         // un-check all checked expressions if any of the filters is set except the ones that are not hidden
         // by the filter
-        if (StringUtils.isNotEmpty(figureID) || StringUtils.isNotEmpty(experimentFilter.getGeneZdbID())
+        if (StringUtils.isNotEmpty(figureID) || experimentFilter.getGene() != null
                 || StringUtils.isNotEmpty(experimentFilter.getFishID())) {
             for (ExpressionFigureStageDTO expression : selectedExpressions) {
-                if (StringUtils.isNotEmpty(figureID) && !expression.getFigureID().equals(figureID)) {
+                if (StringUtils.isNotEmpty(figureID) && !expression.getFigure().getZdbID().equals(figureID)) {
                     uncheckExpressionRecord(expression);
                 }
-                if (StringUtils.isNotEmpty(experimentFilter.getGeneZdbID()) &&
-                        !expression.getExperiment().getGeneZdbID().equals(experimentFilter.getGeneZdbID())) {
+                if (experimentFilter.getGene() != null &&
+                        !expression.getExperiment().getGene().getZdbID().equals(experimentFilter.getGene().getZdbID())) {
                     uncheckExpressionRecord(expression);
                 }
                 if (StringUtils.isNotEmpty(experimentFilter.getFishID()) &&
@@ -415,6 +421,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
     }
 
     // ****************** Handlers, Callbacks, etc.
+
     /**
      * This Click Listener is activated upon clicking the selection check box in the
      * Expression display section. It should do two things:
@@ -454,8 +461,9 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
         }
 
         // select or un-select (checkbox) the figure in the figure list
+
         private void selectUnselectFigure() {
-            String figureID = checkedExpression.getFigureID();
+            String figureID = checkedExpression.getFigure().getZdbID();
             int totalFigs = figureList.getItemCount();
             for (int index = 0; index < totalFigs; index++) {
                 String value = figureList.getValue(index);
@@ -501,7 +509,9 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
             StageDTO end = new StageDTO();
             end.setZdbID(endStageID);
             newExpression.setEnd(end);
-            newExpression.setFigureID(figureID);
+            FigureDTO figureDTO = new FigureDTO();
+            figureDTO.setZdbID(figureID);
+            newExpression.setFigure(figureDTO);
             expressions.add(newExpression);
         }
     }
@@ -551,7 +561,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
         private ExpressionFigureStageDTO figureAnnotation;
 
         DeleteFigureAnnotationCallback(ExpressionFigureStageDTO figureAnnotation) {
-            super("Error while deleting Figure Annotation", errorMessage);
+            super("Error while deleting Figure Annotation", errorElement);
             this.figureAnnotation = figureAnnotation;
         }
 
@@ -578,7 +588,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
         private int row;
 
         CreatePatoRecordCallback(int row) {
-            super("Error while deleting Figure Annotation", errorMessage);
+            super("Error while deleting Figure Annotation", errorElement);
             this.row = row;
         }
 
@@ -597,7 +607,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
     private class RetrieveExpressionsCallback extends ZfinAsyncCallback<List<ExpressionFigureStageDTO>> {
 
         public RetrieveExpressionsCallback() {
-            super("Error while reading Experiment Filters", errorMessage);
+            super("Error while reading Experiment Filters", errorElement);
         }
 
         public void onSuccess(List<ExpressionFigureStageDTO> list) {
@@ -608,8 +618,8 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
 
             for (ExpressionFigureStageDTO id : list) {
                 ExperimentDTO experiment = id.getExperiment();
-                if (experiment.getEnvironment().startsWith("_"))
-                    experiment.setEnvironment(experiment.getEnvironment().substring(1));
+                if (experiment.getEnvironment().getName().startsWith("_"))
+                    experiment.getEnvironment().setName(experiment.getEnvironment().getName().substring(1));
                 displayedExpressions.add(id);
             }
             //Window.alert("SIZE: " + experiments.size());
@@ -638,7 +648,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
                 showExpressionSection.setText(SHOW);
                 sectionVisible = false;
                 curationRPCAsync.setExpressionVisibilitySession(publicationID, false,
-                        new VoidAsyncCallback(new Label(errorMessage), loadingImage));
+                        new VoidAsyncCallback(errorMessage, errorElement, IMAGE_LOADING_EXPRESSION_SECTION));
             } else {
                 // display experiments
                 // check if it already exists
@@ -652,7 +662,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
                 showExpressionSection.setText(HIDE);
                 sectionVisible = true;
                 curationRPCAsync.setExpressionVisibilitySession(publicationID, true,
-                        new VoidAsyncCallback(new Label(errorMessage), loadingImage));
+                        new VoidAsyncCallback(errorMessage, errorElement, IMAGE_LOADING_EXPRESSION_SECTION));
             }
             clearErrorMessages();
         }
@@ -701,18 +711,18 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
                     return;
                 }
                 if (expressionFigureStageExists(expression)) {
-                    errorMessage.setText("Expression already exists. Expressions have to be unique!");
+                    errorElement.setError("Expression already exists. Expressions have to be unique!");
                     cleanupOnExit();
                     expressionsExist = true;
                 }
             }
             if (stageSelector.isMultiStageMode() && !stageSelector.isMultiStageSelected()) {
-                errorMessage.setText("No stage selected.  Please select at least one stage.");
+                errorElement.setError("No stage selected.  Please select at least one stage.");
                 cleanupOnExit();
                 return;
             }
             if (newFigureAnnotations.isEmpty()) {
-                errorMessage.setText("No experiment selected. Please select at least one experiment!");
+                errorElement.setError("No experiment selected. Please select at least one experiment!");
                 cleanupOnExit();
                 return;
             }
@@ -778,21 +788,21 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
             return false;
         if (StringUtils.isEmpty(expression.getEnd().getZdbID()))
             return false;
-        if (StringUtils.isEmpty(expression.getFigureID()))
+        if (StringUtils.isEmpty(expression.getFigure().getZdbID()))
             return false;
         if (expression.getExperiment() == null || StringUtils.isEmpty(expression.getExperiment().getExperimentZdbID())) {
-            errorMessage.setText("No Experiment is selected!");
+            errorElement.setError("No Experiment is selected!");
             return false;
         }
         // check that end stage comes after start stage
         if (stageSelector.isDualStageMode()) {
             if (stageSelector.validDualStageSelection() != null) {
-                errorMessage.setText(stageSelector.validDualStageSelection());
+                errorElement.setError(stageSelector.validDualStageSelection());
                 return false;
             }
         } else {
             if (stageSelector.validMultiStageSelection() != null) {
-                errorMessage.setText(stageSelector.validMultiStageSelection());
+                errorElement.setError(stageSelector.validMultiStageSelection());
                 return false;
             }
         }
@@ -804,7 +814,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
      * un-mark duplicate experiments
      */
     public void clearErrorMessages() {
-        errorMessage.setText(null);
+        errorElement.clearAllErrors();
         if (duplicateRowIndex > 0)
             displayTable.getRowFormatter().setStyleName(duplicateRowIndex, duplicateRowOriginalStyle);
         experimentSection.clearErrorMessages();
@@ -854,16 +864,22 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
                 }
                 checkbbox.addClickHandler(new ExpressionSelectClickHandler(expression, checkbbox));
                 setWidget(rowIndex, HeaderName.SELECT.getIndex(), checkbbox);
-                setText(rowIndex, HeaderName.FIGURE.getIndex(), expression.getFigureLabel());
+
                 ExperimentDTO experiment = expression.getExperiment();
-                setText(rowIndex, HeaderName.FISH.getIndex(), experiment.getFishName());
-                setText(rowIndex, HeaderName.GENE.getIndex(), experiment.getGeneName());
-                setText(rowIndex, HeaderName.ENVIRONMENT.getIndex(), experiment.getEnvironmentDisplayValue());
+                setWidgetWithNameAndIdLabel(rowIndex, HeaderName.FIGURE.getIndex(), expression.getFigure().getLabel(), expression.getFigure().getZdbID());
+                setWidgetWithNameAndIdLabel(rowIndex, HeaderName.FISH.getIndex(), experiment.getFishName(), experiment.getFishID());
+                MarkerDTO gene = experiment.getGene();
+                if (gene != null)
+                    setWidgetWithNameAndIdLabel(rowIndex, HeaderName.GENE.getIndex(), experiment.getGene().getAbbreviation(), gene.getZdbID());
+                setWidgetWithNameAndIdLabel(rowIndex, HeaderName.ENVIRONMENT.getIndex(), experiment.getEnvironment().getName(), experiment.getEnvironment().getZdbID());
+
                 String assay = experiment.getAssayAbbreviation();
                 if (!StringUtils.isEmpty(experiment.getGenbankNumber()))
                     assay += " (" + experiment.getGenbankNumber() + ")";
                 setText(rowIndex, HeaderName.ASSAY.getIndex(), assay);
-                setText(rowIndex, HeaderName.ANTIBODY.getIndex(), experiment.getAntibody());
+                MarkerDTO antibody = experiment.getAntibodyMarker();
+                if (antibody != null)
+                    setText(rowIndex, HeaderName.ANTIBODY.getIndex(), antibody.getAbbreviation());
                 setText(rowIndex, HeaderName.STAGE_RANGE.getIndex(), expression.getStageRange());
 
                 Widget terms = createTermList(expression);
@@ -895,6 +911,19 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
             //Window.alert("HIO");
             showHideClearAllLink();
             //Window.alert("HIO II");
+        }
+
+        /**
+         * Add a label to the composite
+         *
+         * @param rowIndex index
+         * @param name     name of label
+         * @param title    name of title
+         */
+        private void setWidgetWithNameAndIdLabel(int rowIndex, int columnIndex, String name, String title) {
+            Widget widget = new Label(name);
+            widget.setTitle(title);
+            setWidget(rowIndex, columnIndex, widget);
         }
 
         /**
@@ -976,7 +1005,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
         private List<ExpressionFigureStageDTO> figureAnnotations;
 
         public AddExpressionCallback(List<ExpressionFigureStageDTO> experiment) {
-            super("Error while creating experiment", errorMessage);
+            super("Error while creating experiment", errorElement);
             this.figureAnnotations = experiment;
         }
 
@@ -991,10 +1020,11 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
             clearErrorMessages();
             stageSelector.resetGui();
             experimentSection.notifyAddedExpression();
+            loadingImage.setVisible(false);
         }
 
         public void onFailureCleanup() {
-            loadingImage.setVisible(true);
+            loadingImage.setVisible(false);
         }
 
     }
@@ -1021,7 +1051,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
 
 
         public RetrieveFiguresCallback() {
-            super("Error while reading Figure Filters", errorMessage);
+            super("Error while reading Figure Filters", errorElement);
         }
 
         public void onSuccess(List<FigureDTO> list) {
@@ -1043,7 +1073,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
     public class RetrieveStageListCallback extends ZfinAsyncCallback<List<StageDTO>> {
 
         public RetrieveStageListCallback() {
-            super("Error while reading Figure Filters", errorMessage);
+            super("Error while reading Figure Filters", errorElement);
         }
 
         public void onSuccess(List<StageDTO> stages) {
@@ -1096,7 +1126,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection {
 
     private class SectionVisibilityCallback extends ZfinAsyncCallback<Boolean> {
         public SectionVisibilityCallback(String message) {
-            super(message, errorMessage);
+            super(message, errorElement);
         }
 
         public void onSuccess(Boolean visible) {

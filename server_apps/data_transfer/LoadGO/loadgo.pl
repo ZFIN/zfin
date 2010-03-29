@@ -37,18 +37,6 @@ sub downloadGOtermFiles () { # download the obo file from GO
     system("/local/bin/curl -s http://www.geneontology.org/ontology/obo_format_1_0/gene_ontology.1_0.obo -o gene_ontology.obo") and die "can not download gene_ontology.obo";
 
     print "download done.\n" ;
-
-    if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/gene_ontology_old.obo") {   
-	
-	system("/bin/rm <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/gene_ontology_old.obo") and die "can not rm gene_ontology_old.obo" ;
-
-	print "rm'd gene_ontology_old.obo\n" ;
-    }
-
-    if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/gene_ontology.obo") {
-	system("/bin/mv <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/gene_ontology.obo <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/gene_ontology_old.obo") and die "can not mv gene_ontology_old.obo" ;
-
-	print "mv'd gene_ontology.obo to gene_ontology_old.obo\n" ;
     }
 
 }

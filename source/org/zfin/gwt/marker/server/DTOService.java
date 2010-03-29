@@ -386,8 +386,8 @@ public class DTOService {
 
 
     /**
-     * @param marker
-     * @return
+     * @param marker Marker
+     * @return list of marker DTOs
      */
     public static List<MarkerDTO> getRelatedGenes(Marker marker){
         Set<MarkerRelationship> markerRelationships = marker.getFirstMarkerRelationships();
@@ -410,8 +410,8 @@ public class DTOService {
     }
 
     /**
-     * @param marker
-     * @return
+     * @param marker Marker
+     * @return list of DBlinkDTOs
      */
     public static List<DBLinkDTO> getSupportingSequences(Marker marker){
         // get sequences
@@ -477,7 +477,7 @@ public class DTOService {
         GoTermDTO goTermDTO = new GoTermDTO();
         goTermDTO.setZdbID(goTerm.getZdbID());
         goTermDTO.setName(goTerm.getName());
-        goTermDTO.setDataZdbID(goTerm.getGoID());
+        goTermDTO.setDataZdbID(goTerm.getOboID());
         goTermDTO.setSubOntology(goTerm.getSubOntology());
         return goTermDTO ;  //To change body of created methods use File | Settings | File Templates.
     }

@@ -17,6 +17,10 @@
         <param name="enumClassname">org.zfin.infrastructure.DataAliasGroup$Group</param>
     </typedef>
 
+    <typedef class="org.zfin.database.StringEnumUserType" name="ontologyEnumeration">
+        <param name="enumClassname">org.zfin.ontology.Ontology</param>
+    </typedef>
+
     <class name="org.zfin.infrastructure.ActiveData" table="zdb_active_data">
         <id name="zdbID" type="string">
             <column name="zactvd_zdb_id" not-null="true"/>
@@ -232,7 +236,7 @@
         <property name="oldName" column="zrepld_old_name"/>
     </class>
 
-    <class name="org.zfin.ontology.GenericTerm" table="TERM">
+    <class name="org.zfin.ontology.Term" table="TERM">
 
         <id name="ID" type="string">
             <column name="term_zdb_id" not-null="true"/>
@@ -241,19 +245,28 @@
             </generator>
         </id>
 
+        <!--ToDO: Map ao and GO once they are moved into the TERM table -->
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(term_zdb_id)
+                                    WHEN 'TERM'  THEN 'Generic-Term'
+                                    ELSE              'Generic-Term'
+                                 END)"/>
+
         <property name="termName" column="term_name"/>
         <property name="oboID" column="term_ont_id"/>
-        <property name="ontologyName" column="term_ontology"/>
+        <property name="ontology" column="term_ontology" type="ontologyEnumeration"/>
         <property name="obsolete" column="term_is_obsolete"/>
         <property name="root" column="term_is_root"/>
         <property name="secondary" column="term_is_secondary"/>
         <property name="comment" column="term_comment"/>
         <property name="definition" column="term_definition"/>
 
-        <set name="synonyms" lazy="true">
+        <set name="aliases" lazy="true">
             <key column="dalias_data_zdb_id"/>
             <one-to-many class="org.zfin.ontology.TermAlias"/>
         </set>
+
+        <subclass name="org.zfin.ontology.GenericTerm" discriminator-value="Generic-Term"/>
 
     </class>
 

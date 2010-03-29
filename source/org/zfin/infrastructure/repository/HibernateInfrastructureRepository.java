@@ -90,6 +90,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     //todo: add a getter here, or do some mapping to objects so that we can test the insert in a routine way
+
     public RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID) {
         Session session = HibernateUtil.currentSession();
 
@@ -132,6 +133,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     //retrieve a dataNote by its zdb_id
+
     public DataNote getDataNoteByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(DataNote.class);
@@ -161,16 +163,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (RecordAttribution) criteria.uniqueResult();
     }
 
-public List<RecordAttribution> getRecAttribforFtrType(String dataZdbID){
-            Session session = HibernateUtil.currentSession();
+    public List<RecordAttribution> getRecAttribforFtrType(String dataZdbID) {
+        Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(RecordAttribution.class);
         criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
-         criteria.add(Restrictions.eq("sourceType", RecordAttribution.SourceType.FEATURE_TYPE.toString()));
+        criteria.add(Restrictions.eq("sourceType", RecordAttribution.SourceType.FEATURE_TYPE.toString()));
 
         return criteria.list();
 
     }
-
 
 
     @SuppressWarnings("unchecked")
@@ -222,38 +223,55 @@ public List<RecordAttribution> getRecAttribforFtrType(String dataZdbID){
     /**
      * Retrieve terms by name (contains) and ontology
      *
-     * @param termName term name (contains)
-     * @param ontology Ontology
+     * @param termName   term name (contains)
+     * @param ontologies Ontology
      * @return list of GenericTerm
      *         exception: If no ontology provided a NullPointerException is thrown.
      */
     @SuppressWarnings("unchecked")
-    public List<GenericTerm> getTermsByName(String termName, Ontology ontology) {
-        if (ontology == null)
+    public List<GenericTerm> getTermsByName(String termName, List<Ontology> ontologies) {
+        if (ontologies == null || ontologies.isEmpty())
             throw new NullPointerException("No Ontology provided");
+        List<String> ontologyNameStrings = new ArrayList<String>(2);
+        for (Ontology ontology : ontologies) {
+            ontologyNameStrings.add(ontology.getOntologyName());
+        }
+
 
         String hql = "select distinct term from GenericTerm term  " +
                 "where lower(term.termName) like :name " +
-                " AND term.obsolete = :obsolete " +
-                " AND term.ontologyName = :ontology " +
-                " order by term.termName";
+                " AND term.obsolete = :obsolete ";
+        if (ontologies.size() == 1)
+            hql += " AND term.ontology = :ontology ";
+        else
+            hql += " AND term.ontology in (:ontology) ";
+        hql += " order by term.termName";
 
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery(hql);
         query.setString("name", "%" + termName.toLowerCase() + "%");
-        query.setString("ontology", ontology.getOntologyName());
+        if (ontologies.size() == 1)
+            query.setParameter("ontology", ontologies.get(0));
+        else
+            query.setParameterList("ontology", ontologyNameStrings);
         query.setBoolean("obsolete", false);
         List<GenericTerm> list = (List<GenericTerm>) query.list();
 
         hql = "select term from GenericTerm term, TermAlias alias " +
-                "where alias member of term.synonyms " +
+                "where alias member of term.aliases " +
                 " AND alias.aliasLowerCase like :name " +
-                " AND term.obsolete = :obsolete " +
-                " AND term.ontologyName = :ontology " +
-                " order by term.termName";
+                " AND term.obsolete = :obsolete ";
+        if (ontologies.size() == 1)
+            hql += " AND term.ontology = :ontology ";
+        else
+            hql += " AND term.ontology in  (:ontology) ";
+        hql += " order by term.termName";
         Query queryTwo = session.createQuery(hql);
         queryTwo.setString("name", "%" + termName.toLowerCase() + "%");
-        queryTwo.setString("ontology", ontology.getOntologyName());
+        if (ontologies.size() == 1)
+            queryTwo.setParameter("ontology", ontologies.get(0));
+        else
+            queryTwo.setParameterList("ontology", ontologies);
         queryTwo.setBoolean("obsolete", false);
         List<GenericTerm> synonyms = (List<GenericTerm>) queryTwo.list();
         list.addAll(synonyms);
@@ -280,7 +298,7 @@ public List<RecordAttribution> getRecAttribforFtrType(String dataZdbID){
         Criteria criteria = session.createCriteria(TermAlias.class);
         criteria.add(Restrictions.like("alias", queryString, MatchMode.ANYWHERE));
         Criteria termCriteria = criteria.createCriteria("term");
-        termCriteria.add(Restrictions.eq("ontologyName", ontology.getOntologyName()));
+        termCriteria.add(Restrictions.eq("ontology", ontology));
         termCriteria.add(Restrictions.eq("obsolete", false));
         return (List<GenericTerm>) criteria.list();
     }
@@ -301,6 +319,7 @@ public List<RecordAttribution> getRecAttribforFtrType(String dataZdbID){
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(GenericTerm.class);
         criteria.add(Restrictions.eq("termName", termName));
+        criteria.add(Restrictions.eq("obsolete", false));
         GenericTerm term = (GenericTerm) criteria.uniqueResult();
         if (term == null)
             return null;
@@ -308,8 +327,27 @@ public List<RecordAttribution> getRecAttribforFtrType(String dataZdbID){
     }
 
     /**
+     * Retrieve a single term by name and a list of ontologies. Checks for all ontologies and picks the first one.
+     * Hopefully, there term is only found in a single ontology. Match has to be exact.
+     *
+     * @param termName name
+     * @param ontologies list of ontologies
+     * @return Term
+     */
+    public GenericTerm getTermByName(String termName, List<Ontology> ontologies) {
+        if(ontologies == null)
+            return null;
+        for(Ontology ontology: ontologies){
+            GenericTerm term = getTermByName(termName, ontology);
+            if(term != null)
+                return term; 
+        }
+        return null;
+    }
+
+    /**
      * Retrieve Term by ZDB ID from the gDAG table.
-     * If the ID is from the GOTERM table retreive the corresponding term ID first.
+     * If the ID is from the GOTERM table retrieve the corresponding term ID first.
      *
      * @param termID term id
      * @return Generic Term
@@ -342,66 +380,29 @@ public List<RecordAttribution> getRecAttribforFtrType(String dataZdbID){
         return (GenericTerm) criteria.uniqueResult();
     }
 
-    /**
-     * Retrieve Term by OBO ID.
-     *
-     * @param termID term id
-     * @return Generic Term
-     */
     @SuppressWarnings("unchecked")
-    public GenericTerm getTermByOboID(String termID) {
-
+    public GoTerm getGoTermById(String termID) {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(GenericTerm.class);
-        criteria.add(Restrictions.eq("oboID", termID));
-        criteria.setFetchMode("definition", FetchMode.JOIN);
-        criteria.setFetchMode("synonyms", FetchMode.JOIN);
-        GenericTerm term = (GenericTerm) criteria.uniqueResult();
-        if (term == null)
-            return null;
-        return term;
+        return (GoTerm) session.get(GoTerm.class, termID);
     }
 
     /**
-     * Retrieve all related Terms and populate the correct relationship types.
-     *
-     * @param genericTerm term
-     * @return list of relationships
+     * Retrieve Root of given ontology.
+     * @param ontologyName ontology name
+     * @return Term
      */
-    @SuppressWarnings("unchecked")
-    public List<TermRelationship> getTermRelationships(GenericTerm genericTerm) {
+    public GenericTerm getRootTerm(String ontologyName) {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(TermRelationship.class);
-        criteria.add(Restrictions.eq("termOne.ID", genericTerm.getID()));
-        criteria.setFetchMode("termTwo", FetchMode.JOIN);
-        criteria.setFetchMode("termTwo.definition", FetchMode.JOIN);
-        List<TermRelationship> rels = (List<TermRelationship>) criteria.list();
-        if (rels != null) {
-            for (TermRelationship relationship : rels) {
-                RelationshipType type = RelationshipType.getInverseRelationshipByName(relationship.getType());
-                relationship.setRelationshipType(type);
-            }
-        }
-
-        Criteria criteriaTwo = session.createCriteria(TermRelationship.class);
-        criteriaTwo.add(Restrictions.eq("termTwo.ID", genericTerm.getID()));
-        criteriaTwo.setFetchMode("termOne", FetchMode.JOIN);
-        criteriaTwo.setFetchMode("termOne.definition", FetchMode.JOIN);
-        List<TermRelationship> relationshipListTwo = (List<TermRelationship>) criteriaTwo.list();
-        if (relationshipListTwo != null) {
-            for (TermRelationship relationship : relationshipListTwo) {
-                RelationshipType type = RelationshipType.getRelationshipTypeByRelName(relationship.getType());
-                relationship.setRelationshipType(type);
-                if (rels == null)
-                    rels = new ArrayList<TermRelationship>();
-                rels.add(relationship);
-            }
-        }
-        return rels;
+        Criteria crit = session.createCriteria(GenericTerm.class);
+        Ontology ontology = Ontology.getOntology(ontologyName);
+        crit.add(Restrictions.eq("ontology", ontology));
+        crit.add(Restrictions.eq("root", true));
+        return (GenericTerm) crit.uniqueResult();
     }
 
     /**
      * Fetch a Data Alias Group entity for a given name
+     *
      * @param name alias group object
      * @return DataAliasGroup entity
      */
@@ -600,6 +601,7 @@ public List<RecordAttribution> getRecAttribforFtrType(String dataZdbID){
     // Todo: ReplacementZdbID is a composite key (why?) and thus this
     // could retrieve more than one record. If so then it throws an exception,
     // meaning the id was replaced more than once and then we would not know whic one to use.
+
     public ReplacementZdbID getReplacementZdbId(String oldZdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria query = session.createCriteria(ReplacementZdbID.class);

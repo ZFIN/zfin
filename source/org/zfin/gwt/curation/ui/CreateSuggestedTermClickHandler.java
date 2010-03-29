@@ -14,7 +14,7 @@ public class CreateSuggestedTermClickHandler implements ClickHandler {
     private String publicationID;
     private AsyncCallback callback;
     // RPC class being used for this section.
-    private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
+    private PileStructuresRPCAsync pileStructureRPCAsync = PileStructuresRPC.App.getInstance();
 
     public CreateSuggestedTermClickHandler(ExpressedTermDTO expressedTerm, String publicationID, AsyncCallback callback) {
         this.expressedTerm = expressedTerm;
@@ -24,6 +24,6 @@ public class CreateSuggestedTermClickHandler implements ClickHandler {
 
     public void onClick(ClickEvent event) {
         //Window.alert("Create new post-composed term: " + expressedTerm.getDisplayName());
-        curationRPCAsync.createPileStructure(expressedTerm, publicationID, callback);
+        pileStructureRPCAsync.createPileStructure(expressedTerm, publicationID, callback);
     }
 }

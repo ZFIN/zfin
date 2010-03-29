@@ -31,33 +31,14 @@
         </property>
 -->
 
-        <property name="publicationDate">
-            <column name="pub_date"/>
-        </property>
-
-        <property name="volume" lazy="true">
-            <column name="pub_volume"/>
-        </property>
-
-        <property name="pages" lazy="true">
-            <column name="pub_pages"/>
-        </property>
-
-        <property name="type">
-            <column name="jtype"/>
-        </property>
-
-        <property name="accessionNumber" lazy="true">
-            <column name="accession_no"/>
-        </property>
-
-        <property name="fileName" lazy="true">
-            <column name="pub_file"/>
-        </property>
-
-        <property name="doi" lazy="true">
-            <column name="pub_doi"/>
-        </property>
+        <property name="publicationDate" column="pub_date"/>
+        <property name="closeDate" column="pub_completion_date"/>
+        <property name="volume" column="pub_volume" lazy="true"/>
+        <property name="pages" column="pub_pages" lazy="true"/>
+        <property name="type" column="jtype"/>
+        <property name="accessionNumber" column="accession_no" lazy="true"/>
+        <property name="fileName" column="pub_file" lazy="true"/>
+        <property name="doi" column="pub_doi" lazy="true"/>
 
         <many-to-one name="journal" class="org.zfin.publication.Journal" column="pub_jrnl_zdb_id" insert="false"
                      update="false"/>

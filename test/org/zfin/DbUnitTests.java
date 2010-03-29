@@ -29,6 +29,7 @@ import org.zfin.sequence.reno.OrthologyTest;
 import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.presentation.RedundancyCandidateControllerTest;
 import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
+import org.zfin.util.BODtoConversionServiceTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite)
@@ -40,6 +41,7 @@ import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
         AlignmentsControllerTest.class,
         AnatomyRepositoryTest.class,
         AntibodyRepositoryTest.class,
+        BODtoConversionServiceTest.class,
         CurationRPCTest.class,
         InfrastructureRepositoryTest.class,
         MarkerRepositoryTest.class,

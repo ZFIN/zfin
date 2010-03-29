@@ -192,6 +192,7 @@ EFFECTS
 <script type="text/javascript">
     var curationProperties = {
         zdbID : "<?MIVAR>$OID<?/MIVAR>",
+        moduleType: "FX_CURATION",
 	debug: "<?MIVAR>$debug<?/MIVAR>"
     } ;
 </script>

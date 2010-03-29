@@ -6,8 +6,8 @@ package org.zfin.ontology;
 public class TermRelationship {
 
     private String ID;
-    private GenericTerm termOne;
-    private GenericTerm termTwo;
+    private Term termOne;
+    private Term termTwo;
     private String type;
     private RelationshipType relationshipType;
 
@@ -19,19 +19,19 @@ public class TermRelationship {
         this.ID = ID;
     }
 
-    public GenericTerm getTermOne() {
+    public Term getTermOne() {
         return termOne;
     }
 
-    public void setTermOne(GenericTerm termOne) {
+    public void setTermOne(Term termOne) {
         this.termOne = termOne;
     }
 
-    public GenericTerm getTermTwo() {
+    public Term getTermTwo() {
         return termTwo;
     }
 
-    public void setTermTwo(GenericTerm termTwo) {
+    public void setTermTwo(Term termTwo) {
         this.termTwo = termTwo;
     }
 
@@ -59,7 +59,7 @@ public class TermRelationship {
      * @param term Generic Term
      * @return GenericTerm
      */
-    public GenericTerm getRelatedTerm(GenericTerm term) {
+    public Term getRelatedTerm(Term term) {
         if (term == null)
             return null;
         if (!(term.equals(termOne) || term.equals(termTwo)))

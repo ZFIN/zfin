@@ -93,13 +93,13 @@ public class AnatomyTermDetailController extends AbstractCommandController {
 
         // check for wild type MOs
         PaginationResult<GenotypeExperiment> morphs =
-                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(anatomyTerm, true, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+                mutantRepository.getGenotypeExperimentMorpholinos(anatomyTerm, true, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         if (morphs != null && morphs.getTotalCount() > 0)
             return true;
 
         // check for non-wild-type MOs
         morphs =
-                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(anatomyTerm, false, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+                mutantRepository.getGenotypeExperimentMorpholinos(anatomyTerm, false, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         return morphs != null && morphs.getTotalCount() > 0;
     }
 

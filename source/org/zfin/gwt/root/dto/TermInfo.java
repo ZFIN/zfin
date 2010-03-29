@@ -18,8 +18,9 @@ public class TermInfo implements IsSerializable {
     private String definition;
     private String startStage;
     private String endStage;
-    private Ontology ontology;
+    private OntologyDTO ontology;
     private String comment;
+    private boolean obsolete;
     private Map<String, List<TermInfo>> relatedTermInfos = new HashMap<String, List<TermInfo>>();
 
     public String getID() {
@@ -87,11 +88,11 @@ public class TermInfo implements IsSerializable {
         terms.add(termInfo);
     }
 
-    public Ontology getOntology() {
+    public OntologyDTO getOntology() {
         return ontology;
     }
 
-    public void setOntology(Ontology ontology) {
+    public void setOntology(OntologyDTO ontology) {
         this.ontology = ontology;
     }
 
@@ -101,5 +102,13 @@ public class TermInfo implements IsSerializable {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean isObsolete() {
+        return obsolete;
+    }
+
+    public void setObsolete(boolean obsolete) {
+        this.obsolete = obsolete;
     }
 }

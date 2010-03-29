@@ -35,6 +35,16 @@ public class ActiveData implements ZdbID {
         return type;
     }
 
+    public static Type getTypeForId(String ID) {
+        Type type = null;
+        try {
+            type = Type.getType(ID);
+        } catch (Exception e) {
+            //ignore
+        }
+        return type;
+    }
+
     public enum Type {
         ALT,
         ANAT,

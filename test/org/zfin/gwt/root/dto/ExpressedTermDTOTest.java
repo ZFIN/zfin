@@ -16,20 +16,26 @@ public class ExpressedTermDTOTest {
     @Test
     public void sortSingleItemList() {
         ExpressedTermDTO one = new ExpressedTermDTO();
-        one.setSupertermName("secondary motor neuron");
+        TermDTO dtoOne = new TermDTO();
+        dtoOne.setTermName("secondary motor neuron");
+        one.setSuperterm(dtoOne);
 
         List<ExpressedTermDTO> terms = new ArrayList<ExpressedTermDTO>(1);
         terms.add(one);
 
-        assertEquals("secondary motor neuron", terms.get(0).getSupertermName());
+        assertEquals("secondary motor neuron", terms.get(0).getSuperterm().getTermName());
     }
 
     @Test
     public void sortWithoutSubtermsList() {
         ExpressedTermDTO two = new ExpressedTermDTO();
-        two.setSupertermName("primary motor neuron");
+        TermDTO dtoTwo = new TermDTO();
+        dtoTwo.setTermName("primary motor neuron");
+        two.setSuperterm(dtoTwo);
         ExpressedTermDTO one = new ExpressedTermDTO();
-        one.setSupertermName("secondary motor neuron");
+        TermDTO dtoOne = new TermDTO();
+        dtoOne.setTermName("secondary motor neuron");
+        one.setSuperterm(dtoOne);
 
         List<ExpressedTermDTO> terms = new ArrayList<ExpressedTermDTO>(2);
         terms.add(one);
@@ -37,17 +43,23 @@ public class ExpressedTermDTOTest {
 
         Collections.sort(terms);
 
-        assertEquals("primary motor neuron", terms.get(0).getSupertermName());
-        assertEquals("secondary motor neuron", terms.get(1).getSupertermName());
+        assertEquals("primary motor neuron", terms.get(0).getSuperterm().getTermName());
+        assertEquals("secondary motor neuron", terms.get(1).getSuperterm().getTermName());
     }
 
     @Test
     public void sortWithOneSubterm() {
         ExpressedTermDTO two = new ExpressedTermDTO();
-        two.setSupertermName("primary motor neuron");
-        two.setSubtermName("cell some memberane");
+        TermDTO dtoTwo = new TermDTO();
+        dtoTwo.setTermName("primary motor neuron");
+        two.setSuperterm(dtoTwo);
+        TermDTO dtoTwoSub = new TermDTO();
+        dtoTwoSub.setTermName("cell some memberane");
+        two.setSubterm(dtoTwoSub);
         ExpressedTermDTO one = new ExpressedTermDTO();
-        one.setSupertermName("secondary motor neuron");
+        TermDTO dtoOneSuper = new TermDTO();
+        dtoOneSuper.setTermName("secondary motor neuron");
+        one.setSuperterm(dtoOneSuper);
 
         List<ExpressedTermDTO> terms = new ArrayList<ExpressedTermDTO>(2);
         terms.add(one);
@@ -55,17 +67,23 @@ public class ExpressedTermDTOTest {
 
         Collections.sort(terms);
 
-        assertEquals("primary motor neuron", terms.get(0).getSupertermName());
-        assertEquals("secondary motor neuron", terms.get(1).getSupertermName());
+        assertEquals("primary motor neuron", terms.get(0).getSuperterm().getTermName());
+        assertEquals("secondary motor neuron", terms.get(1).getSuperterm().getTermName());
     }
 
     @Test
     public void sortWithOneSubtermSameSuperterms() {
         ExpressedTermDTO two = new ExpressedTermDTO();
-        two.setSupertermName("primary motor neuron");
-        two.setSubtermName("cell some membrane");
+        TermDTO dtoTwo = new TermDTO();
+        dtoTwo.setTermName("primary motor neuron");
+        two.setSuperterm(dtoTwo);
+        TermDTO dtoTwoSub = new TermDTO();
+        dtoTwoSub.setTermName("cell some memberane");
+        two.setSubterm(dtoTwoSub);
         ExpressedTermDTO one = new ExpressedTermDTO();
-        one.setSupertermName("primary motor neuron");
+        TermDTO dtoOneSuper = new TermDTO();
+        dtoOneSuper.setTermName("primary motor neuron");
+        one.setSuperterm(dtoOneSuper);
 
         List<ExpressedTermDTO> terms = new ArrayList<ExpressedTermDTO>(2);
         terms.add(one);
@@ -73,19 +91,27 @@ public class ExpressedTermDTOTest {
 
         Collections.sort(terms);
 
-        assertEquals("primary motor neuron", terms.get(0).getSupertermName());
-        assertEquals("cell some membrane", terms.get(1).getSubtermName());
-        assertEquals("primary motor neuron", terms.get(1).getSupertermName());
+        assertEquals("primary motor neuron", terms.get(0).getSuperterm().getTermName());
+        assertEquals("cell some membrane", terms.get(1).getSubterm().getTermName());
+        assertEquals("primary motor neuron", terms.get(1).getSuperterm().getTermName());
     }
 
     @Test
     public void sortWithTwoSubtermSameSuperterms() {
         ExpressedTermDTO two = new ExpressedTermDTO();
-        two.setSupertermName("primary motor neuron");
-        two.setSubtermName("cell some membrane");
+        TermDTO dtoTwo = new TermDTO();
+        dtoTwo.setTermName("primary motor neuron");
+        two.setSuperterm(dtoTwo);
+        TermDTO dtoTwoSub = new TermDTO();
+        dtoTwoSub.setTermName("cell some memberane");
+        two.setSubterm(dtoTwoSub);
         ExpressedTermDTO one = new ExpressedTermDTO();
-        one.setSupertermName("primary motor neuron");
-        one.setSubtermName("axon");
+        TermDTO dtoOneSuper = new TermDTO();
+        dtoOneSuper.setTermName("primary motor neuron");
+        one.setSuperterm(dtoOneSuper);
+        TermDTO dtoOneSub = new TermDTO();
+        dtoOneSub.setTermName("axon");
+        one.setSubterm(dtoOneSub);
 
         List<ExpressedTermDTO> terms = new ArrayList<ExpressedTermDTO>(2);
         terms.add(one);
@@ -93,9 +119,9 @@ public class ExpressedTermDTOTest {
 
         Collections.sort(terms);
 
-        assertEquals("primary motor neuron", terms.get(0).getSupertermName());
-        assertEquals("cell some membrane", terms.get(1).getSubtermName());
-        assertEquals("axon", terms.get(0).getSubtermName());
-        assertEquals("primary motor neuron", terms.get(1).getSupertermName());
+        assertEquals("primary motor neuron", terms.get(0).getSuperterm().getTermName());
+        assertEquals("cell some membrane", terms.get(1).getSubterm().getTermName());
+        assertEquals("axon", terms.get(0).getSubterm().getTermName());
+        assertEquals("primary motor neuron", terms.get(1).getSuperterm().getTermName());
     }
 }

@@ -1,5 +1,7 @@
 package org.zfin.gwt.root.util;
 
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -7,13 +9,20 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public final class WidgetUtil {
 
+    // css classes
     public static final String BOLD = "bold";
     public static final String RED = "red";
     public static final String ERROR = "error";
     public static final String RED_MODIFIER = "red-modifier";
     public static final String GREEN = "green";
+    public static final String PHENOTYPE_NORMAL = "phenotype-normal";
     public static final String CSS_CLASS_DELIMITER = " ";
     public static final String RED_HYPERLINK = "red-modifier-hyperlink";
+    public static final String CSS_CURATION_BOX_CONTROL_TEXT = "curation-box-control-text";
+    public static final String RIGHT_ALIGN_BOX = "right-align-box";
+
+    public static final String NO_WRAP = "nowrap";
+    public static final String AJAX_LOADER_GIF = "/images/ajax-loader.gif";
 
     /**
      * Adds or removes a css class name to the class attribute of the given widget.
@@ -50,6 +59,19 @@ public final class WidgetUtil {
             cssNames.deleteCharAt(cssNames.length() - 1);
         }
         return cssNames.toString();
+    }
+
+    public static HTML getNbsp() {
+        return new HTML("&nbsp;");
+    }
+
+    public static void selectListBox(ListBox listBox, String value) {
+        int totalEnvironments = listBox.getItemCount();
+        for (int index = 0; index < totalEnvironments; index++) {
+            String boxValue = listBox.getValue(index);
+            if (boxValue.equals(value))
+                listBox.setSelectedIndex(index);
+        }
     }
 
 }

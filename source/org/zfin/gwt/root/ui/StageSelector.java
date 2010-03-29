@@ -5,7 +5,10 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.root.ui.SessionSaveService;
+import org.zfin.gwt.root.ui.SessionSaveServiceAsync;
 import org.zfin.gwt.root.dto.StageDTO;
+import org.zfin.gwt.root.util.WidgetUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +32,6 @@ public class StageSelector extends VerticalPanel {
     private static final String START = "Start:";
     private static final String END = "End:";
 
-    private static final HTML HTML_NBSP = new HTML("&nbsp");
-
     private HorizontalPanel startStage = new HorizontalPanel();
     private HorizontalPanel endStage = new HorizontalPanel();
     private ListBox startStageList = new ListBox();
@@ -40,20 +41,25 @@ public class StageSelector extends VerticalPanel {
     private Label panelTitle;
     private HorizontalPanel toggleRow = new HorizontalPanel();
 
+    private String publicationID;
+    private SessionSaveServiceAsync sessionRPC = SessionSaveService.App.getInstance();
+
+
     public StageSelector() {
         initGui();
     }
 
-    void initGui() {
+    public final void initGui() {
 
         multiStartStageList.setVisibleItemCount(6);
         panelTitle = new Label(STAGE_RANGE);
+        panelTitle.setStyleName(WidgetUtil.BOLD);
         add(panelTitle);
         startStage.add(new Label(START));
-        startStage.add(HTML_NBSP);
+        startStage.add(WidgetUtil.getNbsp());
         startStage.add(startStageList);
         endStage.add(new Label(END));
-        endStage.add(HTML_NBSP);
+        endStage.add(WidgetUtil.getNbsp());
         endStage.add(endStageList);
         add(startStage);
         add(endStage);
@@ -65,6 +71,10 @@ public class StageSelector extends VerticalPanel {
         multiStageButton.addClickHandler(new MultiStageButtonClickHandler());
         setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
         setGuiToDefault();
+    }
+
+    public void setPublicationID(String publicationID) {
+        this.publicationID = publicationID;
     }
 
     /**
@@ -229,6 +239,10 @@ public class StageSelector extends VerticalPanel {
         multiStartStageList.setSelectedIndex(-1);
     }
 
+    public enum Mode {
+        SINGLE_MODE, MULTI_MODE
+    }
+
 // ************  Event Handlers ***********************************************************
 
     private class StartStageChangeHandler implements ChangeHandler {
@@ -245,10 +259,10 @@ public class StageSelector extends VerticalPanel {
         public void onClick(ClickEvent event) {
             if (startStage.isVisible()) {
                 setMultiStageMode();
-                //curationRPCAsync.saveSessionVisibility(SessionVariable.STAGE_RANGE_IN_EXPRESSION_MULTI);
+                sessionRPC.setStageSelectorSingleMode(false, publicationID, new ZfinAsyncCallback<Void>(null, null));
             } else {
                 setSingleStageMode();
-                //curationRPCAsync.saveSessionVisibility(SessionVariable.STAGE_RANGE_IN_EXPRESSION_SINGLE);
+                sessionRPC.setStageSelectorSingleMode(true, publicationID, new ZfinAsyncCallback<Void>(null, null));
             }
         }
 

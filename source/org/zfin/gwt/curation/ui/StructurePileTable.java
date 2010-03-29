@@ -7,8 +7,10 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ListItem;
 import org.zfin.gwt.root.ui.UnorderedList;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.StageRangeIntersection;
 import org.zfin.gwt.root.util.StageRangeUnion;
 import org.zfin.gwt.root.util.WidgetUtil;
@@ -26,7 +28,7 @@ class StructurePileTable extends ZfinFlexTable {
     private StructureAlternateComposite suggestionBox;
     private static final String ACTION = "action";
     private static final String STRUCTURE_CONSTRUCTION_ZONE = "structure-construction-zone";
-    protected Label errorLabel;
+    protected ErrorHandler errorElement;
 
     private ExpressionSection expressionModule;
     private ConstructionZone pileStructureClickListener;
@@ -34,20 +36,25 @@ class StructurePileTable extends ZfinFlexTable {
     private HeaderName[] headerNames;
     // This maps the display table and contains the full object that each
     // row is made up from
-    private Map<Integer, PileStructureDTO> displayTableMap = new HashMap<Integer, PileStructureDTO>();
+    private Map<Integer, ExpressionPileStructureDTO> displayTableMap = new HashMap<Integer, ExpressionPileStructureDTO>();
     // RPC class being used for this section.
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
-    private List<PileStructureDTO> displayedStructures;
+    private List<ExpressionPileStructureDTO> displayedStructures;
     private AsyncCallback removeStructureCallBack;
     private AsyncCallback createStructureCallback;
     private String publicationID;
+    private Enum headerEnumeration;
 
-    StructurePileTable(List<PileStructureDTO> displayedStructures, StructureAlternateComposite suggestionDiv, Label errorLabel) {
+    StructurePileTable(List<ExpressionPileStructureDTO> displayedStructures, StructureAlternateComposite suggestionDiv, ErrorHandler errorLabel) {
         super(HeaderName.values().length, -1);
         this.displayedStructures = displayedStructures;
         this.suggestionBox = suggestionDiv;
         this.headerNames = HeaderName.values();
-        this.errorLabel = errorLabel;
+        this.errorElement = errorLabel;
+    }
+
+    public void setHeaderNames(Enum enumeration){
+        headerEnumeration = enumeration;
     }
 
     public void setExpressionSection(ExpressionSection expressionModule){
@@ -76,7 +83,7 @@ class StructurePileTable extends ZfinFlexTable {
         //Window.alert("Experiment List Size: " + experiments.size());
         // first element is an odd group element
         int groupIndex = 1;
-        for (PileStructureDTO structure : displayedStructures) {
+        for (ExpressionPileStructureDTO structure : displayedStructures) {
             // put the object in the map for later retrieval
             displayTableMap.put(rowIndex, structure);
             //Window.alert("Experiment: " + experiment.getGeneName());
@@ -107,7 +114,7 @@ class StructurePileTable extends ZfinFlexTable {
             Button delete = new Button("X");
             String title = createDeleteButtonTitle(structure);
             delete.setTitle(title);
-            delete.addClickHandler(new RemovePileStructureClickHandler(structure, errorLabel, expressionModule, removeStructureCallBack));
+            delete.addClickHandler(new RemoveExpressionPileStructureClickHandler(structure, errorElement, expressionModule, removeStructureCallBack));
             setWidget(rowIndex, HeaderName.REMOVE.getIndex(), delete);
             setRowStyle(rowIndex, groupIndex);
             rowIndex++;
@@ -118,7 +125,7 @@ class StructurePileTable extends ZfinFlexTable {
         setWidget(rowIndex, 0, html);
     }
 
-    protected Map<Integer, PileStructureDTO> getDisplayTableMap() {
+    protected Map<Integer, ExpressionPileStructureDTO> getDisplayTableMap() {
         return displayTableMap;
     }
 
@@ -155,7 +162,7 @@ class StructurePileTable extends ZfinFlexTable {
         } else {
             nothing.setValue(true);
         }
-        PileStructureDTO selectedPileStructure = displayTableMap.get(row);
+        ExpressionPileStructureDTO selectedPileStructure = displayTableMap.get(row);
         checkNeedForAlternativeStructures(selectedPileStructure, row);
 
     }
@@ -176,7 +183,7 @@ class StructurePileTable extends ZfinFlexTable {
         return (CheckBox) getWidget(row, HeaderName.MODIFIER.getIndex());
     }
 
-    private String createDeleteButtonTitle(PileStructureDTO structure) {
+    private String createDeleteButtonTitle(ExpressionPileStructureDTO structure) {
         String title = structure.getZdbID();
         title += ":";
         title += structure.getCreator();
@@ -189,7 +196,7 @@ class StructurePileTable extends ZfinFlexTable {
         return expressionModule.getSelectedExpressions();
     }
 
-    protected void checkNeedForAlternativeStructures(PileStructureDTO selectedPileStructure, int row) {
+    protected void checkNeedForAlternativeStructures(ExpressionPileStructureDTO selectedPileStructure, int row) {
         // check if there is at least one figure annotation selected.
         // if structure is not available, i.e. out of the stage range check if there is an ancestor (develops_from)
         // or a descendant (develops_to) structure that could be used instead.
@@ -213,14 +220,14 @@ class StructurePileTable extends ZfinFlexTable {
     }
 
     private void createStructureElement(HorizontalPanel postcomposedTerm, ExpressedTermDTO expressedTerm) {
-        Hyperlink superterm = new Hyperlink(expressedTerm.getSupertermName(), STRUCTURE_CONSTRUCTION_ZONE);
+        Hyperlink superterm = new Hyperlink(expressedTerm.getSuperterm().getTermName(), STRUCTURE_CONSTRUCTION_ZONE);
         superterm.addClickHandler(new InternalPileStructureClickHandler(expressedTerm, PostComposedPart.SUPERTERM));
         postcomposedTerm.add(superterm);
         Hyperlink subTerm;
-        if (expressedTerm.getSubtermID() != null) {
+        if (expressedTerm.getSubterm() != null) {
             Label colon = new Label(" : ");
             postcomposedTerm.add(colon);
-            subTerm = new Hyperlink(expressedTerm.getSubtermName(), STRUCTURE_CONSTRUCTION_ZONE);
+            subTerm = new Hyperlink(expressedTerm.getSubterm().getTermName(), STRUCTURE_CONSTRUCTION_ZONE);
             subTerm.addClickHandler(new InternalPileStructureClickHandler(expressedTerm, PostComposedPart.SUBTERM));
             postcomposedTerm.add(subTerm);
         }
@@ -249,8 +256,10 @@ class StructurePileTable extends ZfinFlexTable {
             } else if (name.getIndex() == 3) {
                 setText(rowIndex, name.index, name.getName());
                 getCellFormatter().setStyleName(rowIndex, name.index, WidgetUtil.RED_MODIFIER);
-            } else
+            } else{
                 setText(rowIndex, name.index, name.getName());
+                getCellFormatter().setStyleName(rowIndex, name.index, WidgetUtil.BOLD);
+            }
         }
     }
 
@@ -405,7 +414,7 @@ class StructurePileTable extends ZfinFlexTable {
     public void markOverlappingStructures(StageRangeIntersection stageIntersection) {
         int numOfRows = getRowCount();
         for (int row = 1; row < numOfRows - 1; row++) {
-            PileStructureDTO structure = displayTableMap.get(row);
+            ExpressionPileStructureDTO structure = displayTableMap.get(row);
             if (structure == null)
                 continue;
             if (stageIntersection.isFullOverlap(structure.getStart(), structure.getEnd()))
@@ -456,10 +465,10 @@ class StructurePileTable extends ZfinFlexTable {
 
         private RadioButton add;
         private RadioButton nothing;
-        private PileStructureDTO pileStructure;
+        private ExpressionPileStructureDTO pileStructure;
         private int row;
 
-        private NotClickHandler(int row, PileStructureDTO pileStructure) {
+        private NotClickHandler(int row, ExpressionPileStructureDTO pileStructure) {
             super();
             this.row = row;
             this.pileStructure = pileStructure;
@@ -478,10 +487,10 @@ class StructurePileTable extends ZfinFlexTable {
 
     private class AddActionButtonListener implements ClickHandler {
 
-        private PileStructureDTO pileStructure;
+        private ExpressionPileStructureDTO pileStructure;
         private int row;
 
-        private AddActionButtonListener(int row, PileStructureDTO pileStructure) {
+        private AddActionButtonListener(int row, ExpressionPileStructureDTO pileStructure) {
             super();
             this.row = row;
             this.pileStructure = pileStructure;
@@ -494,10 +503,10 @@ class StructurePileTable extends ZfinFlexTable {
 
     private class StageOverlapTermsCallback extends ZfinAsyncCallback<List<RelatedPileStructureDTO>> {
 
-        private PileStructureDTO selectedPileStructure;
+        private ExpressionPileStructureDTO selectedPileStructure;
 
-        StageOverlapTermsCallback(PileStructureDTO selectedPileStructure) {
-            super("Error while trying to find terms that have an overlap with a given stage", errorLabel);
+        StageOverlapTermsCallback(ExpressionPileStructureDTO selectedPileStructure) {
+            super("Error while trying to find terms that have an overlap with a given stage", errorElement);
             this.selectedPileStructure = selectedPileStructure;
         }
 
@@ -549,9 +558,9 @@ class StructurePileTable extends ZfinFlexTable {
         }
 
         private void setSubterm(RelatedPileStructureDTO structure) {
-            structure.getExpressedTerm().setSubtermID(selectedPileStructure.getExpressedTerm().getSubtermID());
-            structure.getExpressedTerm().setSubtermName(selectedPileStructure.getExpressedTerm().getSubtermName());
-            structure.getExpressedTerm().setSubtermOntology(selectedPileStructure.getExpressedTerm().getSubtermOntology());
+            structure.getExpressedTerm().getSubterm().setTermID(selectedPileStructure.getExpressedTerm().getSubterm().getTermID());
+            structure.getExpressedTerm().getSubterm().setTermName(selectedPileStructure.getExpressedTerm().getSubterm().getTermName());
+            structure.getExpressedTerm().getSubterm().setOntology(selectedPileStructure.getExpressedTerm().getSubterm().getOntology());
         }
 
         private void createListItems(UnorderedList ul, List<RelatedPileStructureDTO> existingStructures) {
@@ -589,12 +598,12 @@ class StructurePileTable extends ZfinFlexTable {
             return structures;
         }
 
-        private boolean structureExistsInPile(PileStructureDTO structure) {
+        private boolean structureExistsInPile(ExpressionPileStructureDTO structure) {
             if (structure == null)
                 return false;
 
-            for (PileStructureDTO term : getDisplayTableMap().values()) {
-                if (term.getExpressedTerm().getSupertermName().equals(structure.getExpressedTerm().getSupertermName()))
+            for (ExpressionPileStructureDTO term : getDisplayTableMap().values()) {
+                if (term.getExpressedTerm().getSuperterm().getTermName().equals(structure.getExpressedTerm().getSuperterm().getTermName()))
                     return true;
             }
             return false;

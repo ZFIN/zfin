@@ -2,6 +2,7 @@ package org.zfin.infrastructure;
 
 import org.zfin.publication.Publication;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,7 +10,7 @@ import java.util.Set;
  * Base class for alias records. You need to extend this class
  * to make use of the real function, e.g. MarkerAlias or AnatomySynonym.
  */
-public class DataAlias implements Comparable, EntityAttribution {
+public class DataAlias implements Comparable, EntityAttribution, Serializable {
 
     protected String zdbID;
     protected String alias;

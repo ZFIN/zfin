@@ -54,14 +54,13 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         super.addInternalListeners(this);
 
         inferenceListBox.addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>(){
-            @Override
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
                 fireGoTermChanged(dataChangedEvent);
             }
         });
         inferenceListBox.addHandlesErrorListener(this) ;
         inferenceListBox.addRelatedEnityChangeListener(new RelatedEntityChangeListener<GoEvidenceDTO>(){
-            @Override
+
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
                 handleDirty();
             }
@@ -87,14 +86,12 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         });
 
         noteBox.addKeyPressHandler(new KeyPressHandler() {
-            @Override
             public void onKeyPress(KeyPressEvent event) {
                 DeferredCommand.addCommand(new CompareCommand());
             }
         });
 
         goTermBox.setAction(new SubmitAction(){
-            @Override
             public void doSubmit(String value) {
                 if(value.isEmpty()){
                     setError("Go term is invalid ["+value+"].  Please add a valid go term.");
@@ -125,7 +122,8 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         table.setWidget(rowCount, 1, evidenceFlagBox);
 
         ++rowCount;
-        goTermBox.setType(LookupComposite.TYPE_GENE_ONTOLOGY);
+        goTermBox.setType(LookupComposite.GDAG_TERM_LOOKUP);
+        goTermBox.setOntology(OntologyDTO.GO);
         goTermBox.setWildCard(false);
         goTermBox.setSuggestBoxWidth(60);
         goTermBox.initGui();

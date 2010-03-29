@@ -459,10 +459,6 @@ update obo_file
   set (obofile_text, obofile_load_date, obofile_load_process) = (filetoblob("<!--|ROOT_PATH|-->/server_apps/data_transfer/PATO/quality.obo","server"),CURRENT YEAR TO SECOND, "Automated PATO Load")
   where obofile_name = "quality.obo" ;
 
-select lotofile(obofile_text, "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/quality.obo!","server")
-  from obo_file
-  where obofile_name = 'quality.obo' ;
-
 --rollback work;
 commit work;
 

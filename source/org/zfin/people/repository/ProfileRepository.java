@@ -163,4 +163,13 @@ public interface ProfileRepository {
      * @param session element
      */
     void deleteCuratorSession(CuratorSession session);
+
+    /**
+     * Retrieve curator session.
+     * @param publicationID publication
+     * @param boxDivID                 div element
+     * @param mutantDisplayBox                    attribute
+     * @return curator session
+     */
+    CuratorSession getCuratorSession(String publicationID, String boxDivID, CuratorSession.Attribute mutantDisplayBox);
 }

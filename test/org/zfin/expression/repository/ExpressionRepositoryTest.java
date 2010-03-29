@@ -10,13 +10,15 @@ import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.DirectlySubmittedExpression;
 import org.zfin.expression.presentation.MarkerExpressionInstance;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
+import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
@@ -125,8 +127,12 @@ public class ExpressionRepositoryTest {
 
         ExperimentDTO dto = new ExperimentDTO();
         dto.setAssay(assay);
-        dto.setAntibodyID(antibodyID);
-        dto.setEnvironmentID(experimentID);
+        MarkerDTO abDto = new MarkerDTO();
+        abDto.setZdbID(antibodyID);
+        dto.setAntibodyMarker(abDto);
+        EnvironmentDTO envDto = new EnvironmentDTO();
+        envDto.setZdbID(experimentID);
+        dto.setEnvironment(envDto);
         dto.setFishID(genotypeID);
         dto.setPublicationID(pubID);
 
@@ -221,43 +227,48 @@ public class ExpressionRepositoryTest {
     }
 
 
-
     @Test
     public void testExpressionPubs() {
         Session session = HibernateUtil.currentSession();
 //        Marker marker = (Marker) session.get(Marker.class, "ZDB-GENE-990415-72" ) ;
-        Marker marker = (Marker) session.get(Marker.class, "ZDB-EST-010914-90" ) ;
+        Marker marker = (Marker) session.get(Marker.class, "ZDB-EST-010914-90");
 
-        int numPubs = expRep.getExpressionPubCount(marker) ;
-        assertTrue(numPubs > 0 );
+        int numPubs = expRep.getExpressionPubCount(marker);
+        assertTrue(numPubs > 0);
     }
 
     @Test
     public void testExpressionFigures() {
         Session session = HibernateUtil.currentSession();
-        Marker marker = (Marker) session.get(Marker.class, "ZDB-EST-010914-90" ) ;
+        Marker marker = (Marker) session.get(Marker.class, "ZDB-EST-010914-90");
 
-        int numFigs = expRep.getExpressionFigureCount(marker) ;
-        assertTrue( numFigs > 0 );
+        int numFigs = expRep.getExpressionFigureCount(marker);
+        assertTrue(numFigs > 0);
     }
 
     @Test
-    public void testDirectlySubmittedExpression(){
+    public void testDirectlySubmittedExpression() {
         Session session = HibernateUtil.currentSession();
-        Marker marker = (Marker) session.get(Marker.class, "ZDB-CDNA-040425-873" ) ;
+        Marker marker = (Marker) session.get(Marker.class, "ZDB-CDNA-040425-873");
 
-        DirectlySubmittedExpression directlySubmittedExpression = ExpressionService.getDirectlySubmittedExpressionSummaries(marker) ;
+        DirectlySubmittedExpression directlySubmittedExpression = ExpressionService.getDirectlySubmittedExpressionSummaries(marker);
 //        assertEquals(117, numFigs);
         assertNotNull(directlySubmittedExpression);
-        List<MarkerExpressionInstance> markerExpressionInstances = directlySubmittedExpression.getExpressionSummaryInstances() ;
-        assertEquals(1, markerExpressionInstances.size()) ;
-        MarkerExpressionInstance markerExpressionInstance = markerExpressionInstances.get(0  ) ;
+        List<MarkerExpressionInstance> markerExpressionInstances = directlySubmittedExpression.getExpressionSummaryInstances();
+        assertEquals(1, markerExpressionInstances.size());
+        MarkerExpressionInstance markerExpressionInstance = markerExpressionInstances.get(0);
         assertEquals(6, markerExpressionInstance.getFigureCount());
         assertEquals(10, markerExpressionInstance.getImageCount());
         assertEquals("ZDB-PUB-040907-1", markerExpressionInstance.getSinglePublication().getZdbID());
     }
 
+    @Test
+    public void getGenoxFromGenotype() {
 
-    
+        String genotypeID = "ZDB-GENO-030530-1";
+        GenotypeExperiment genox = expRep.getGenotypeExperimentByGenotypeID(genotypeID);
+        assertNotNull(genox);
+    }
+
 
 }

@@ -1,11 +1,13 @@
 package org.zfin.infrastructure;
 
+import java.io.Serializable;
+
 /**
  * This class is only used for validation of the correct
  * group enumeration items.
  * Use DataAlias.Group enum if needed.
  */
-public class DataAliasGroup {
+public class DataAliasGroup implements Serializable {
 
     private int id;
     private String name;
@@ -31,7 +33,7 @@ public class DataAliasGroup {
         this.significance = significance;
     }
 
-    public enum Group {
+    public enum Group implements Serializable{
         ALIAS("alias"),
         EXACT_ALIAS("exact alias"),
         EXACT_PLURAL("exact plural"),

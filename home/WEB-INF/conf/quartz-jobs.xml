@@ -7,7 +7,7 @@
     <!-- register them in the scheduler -->
     <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <!-- name used to publish applicationContext to Quartz Job instances, so they can call business services -->
-        <property name="autoStartup" value="@RUN_QUARTZ_JOBS@"/>
+        <property name="autoStartup" value="false"/>
         <property name="triggers">
             <list>
                 <ref bean="regenerateWebHostDatabasesDaily"/>
@@ -17,6 +17,7 @@
                 <ref bean="updateDOIDailyTrigger"/>
                 <ref bean="updateDOIMonthlyTrigger"/>
                 <ref bean="microarrayTrigger"/>
+                <ref bean="reloadOntologyTrigger"/>
                 <ref bean="sandboxCleanerTrigger"/>
                 <ref bean="validateZebrafishBookPermissionsTrigger"/>
             </list>
@@ -148,7 +149,6 @@
         <property name="cronExpression" value="0 50 03 21 * ?"/>
     </bean>
 
-
     <bean id="microarrayTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
@@ -159,6 +159,19 @@
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
         <!--goes off every Monday at 12.30 am-->
         <property name="cronExpression" value="0 30 0 ? * Mon"/>
+    </bean>
+
+
+    <bean id="reloadOntologyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="name" value="Reload Ontologies"/>
+                <property name="jobClass" value="org.zfin.ontology.quartz.ReloadOntologiesJob"/>
+            </bean>
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
+        <!--goes off every day at 2.30 am-->
+        <property name="cronExpression" value="0 10 * ? * *"/>
     </bean>
 
 </beans>

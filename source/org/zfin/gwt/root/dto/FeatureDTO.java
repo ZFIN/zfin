@@ -6,6 +6,8 @@ package org.zfin.gwt.root.dto;
 public class FeatureDTO extends RelatedEntityDTO {
 
 
+    private String abbreviation;
+
     public FeatureDTO() { }
 
     public FeatureDTO(RelatedEntityDTO relatedEntityDTO) {
@@ -40,4 +42,13 @@ public class FeatureDTO extends RelatedEntityDTO {
         sb.append('}');
         return sb.toString();
     }
+
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
+    
 }

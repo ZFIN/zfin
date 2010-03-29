@@ -303,6 +303,26 @@ public class HibernateProfileRepository implements ProfileRepository {
         session.delete(curatorSession);
     }
 
+    /**
+     * Retrieve curator session.
+     * @param publicationID publication
+     * @param boxDivID                 div element
+     * @param mutantDisplayBox                    attribute
+     * @return curator session
+     */
+    @SuppressWarnings("unchecked")
+    public CuratorSession getCuratorSession(String publicationID, String boxDivID, CuratorSession.Attribute mutantDisplayBox) {
+        Session session = HibernateUtil.currentSession();
+        Person curator = Person.getCurrentSecurityUser();
+        String hql = "from CuratorSession where publication.zdbID = :publicationID " +
+                "AND field = :fieldName AND curator = :person";
+        Query query = session.createQuery(hql);
+        query.setParameter("publicationID", publicationID);
+        query.setParameter("fieldName", boxDivID);
+        query.setParameter("person", curator);
+        return (CuratorSession) query.uniqueResult();
+    }
+
     @SuppressWarnings("unchecked")
     public List<Organization> getOrganizationsByName(String name) {
         Session session = HibernateUtil.currentSession();

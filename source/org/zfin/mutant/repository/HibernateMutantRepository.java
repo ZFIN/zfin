@@ -7,21 +7,20 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Experiment;
-import org.zfin.expression.Figure;
-import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
-import org.zfin.gwt.root.dto.Ontology;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.GoTerm;
 import org.zfin.publication.Publication;
+import org.zfin.ontology.Ontology;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 
@@ -39,9 +38,9 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct genox.genotype from GenotypeExperiment genox, Phenotype pheno " +
+                "select distinct genox.genotype from GenotypeExperiment genox, AnatomyPhenotype pheno " +
                         "WHERE pheno.genotypeExperiment = genox " +
-                        "AND (pheno.patoSubTermzdbID = :zdbID or pheno.patoSuperTermzdbID = :zdbID ) " +
+                        "AND (pheno.anatomySuperTerm = :aoTerm or pheno.anatomySubTerm = :aoTerm ) " +
                         "AND pheno.tag != :tag " +
                         "AND genox.experiment.name in (:condition) " +
                         "AND not exists (select 1 from ExperimentCondition cond where" +
@@ -54,7 +53,7 @@ public class HibernateMutantRepository implements MutantRepository {
         hql += "ORDER BY genox.genotype.nameOrder asc";
 
         Query query = session.createQuery(hql);
-        query.setString("zdbID", item.getZdbID());
+        query.setParameter("aoTerm", item);
         query.setParameter("tag", Phenotype.Tag.NORMAL.toString());
         query.setParameterList("condition", Experiment.STANDARD_CONDITIONS);
 
@@ -131,7 +130,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param numberOfRecords number
      * @return list of statistics
      */
-    public List<Morpholino> getPhenotypeMorhpolinosByAnatomy(AnatomyItem item, int numberOfRecords) {
+    public List<Morpholino> getPhenotypeMorpholinos(AnatomyItem item, int numberOfRecords) {
         Session session = HibernateUtil.currentSession();
 
         // This returns morpholinos by phenote annotations
@@ -142,7 +141,7 @@ public class HibernateMutantRepository implements MutantRepository {
         // ToDo: MOs are not yet linked to an overview page where all all them are listed.
         //. Thus, we need to list them all here.
 //        query.setMaxResults(numberOfRecords);
-        query.setString("aoZdbID", item.getZdbID());
+        query.setParameter("aoTerm", item);
         query.setBoolean("isWildtype", true);
 
         @SuppressWarnings("unchecked")
@@ -166,7 +165,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     /**
-     * Retrieve the genotype objects that are assoicated to a morpholino.
+     * Retrieve the genotype objects that are associated to a morpholino.
      * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
      * attached.
      *
@@ -174,26 +173,25 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, Boolean isWildtype, int numberOfRecords) {
+    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, Boolean isWildtype, int numberOfRecords) {
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(numberOfRecords);
-        return getGenotypeExperimentMorhpolinosByAnatomy(item, isWildtype, bean);
+        return getGenotypeExperimentMorpholinos(item, isWildtype, bean);
+    }
+
+    public List<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, boolean isWildtype) {
+        return getGenotypeExperimentMorpholinos(item, isWildtype, null).getPopulatedResults();
     }
 
     @SuppressWarnings("unchecked")
-    public List<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype) {
-        return getGenotypeExperimentMorhpolinosByAnatomy(item, isWildtype, null).getPopulatedResults();
-    }
-
-    @SuppressWarnings("unchecked")
-    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, Boolean isWildtype, PaginationBean bean) {
+    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, Boolean isWildtype, PaginationBean bean) {
         Session session = HibernateUtil.currentSession();
         String hql = "SELECT distinct genotypeExperiment " +
                 "FROM  GenotypeExperiment genotypeExperiment, Experiment exp, Genotype geno, " +
-                "      Phenotype pheno, ExperimentCondition con, Marker marker " +
+                "      AnatomyPhenotype pheno, ExperimentCondition con, Marker marker " +
                 "WHERE   " +
                 "      genotypeExperiment.experiment = exp AND " +
-                "       (pheno.patoSubTermzdbID = :aoZdbID or pheno.patoSuperTermzdbID = :aoZdbID) AND " +
+                "       (pheno.anatomySuperTerm = :aoTerm or pheno.anatomySubTerm = :aoTerm) AND " +
                 "       pheno.genotypeExperiment = genotypeExperiment AND " +
                 "       pheno.tag != :tag AND " +
                 "       con.experiment = exp AND " +
@@ -203,7 +201,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
                 "                             expCon.morpholino is null ) ";
         Query query = session.createQuery(hql);
-        query.setString("aoZdbID", item.getZdbID());
+        query.setParameter("aoTerm", item);
         query.setParameter("tag", Phenotype.Tag.NORMAL.toString());
         query.setBoolean("isWildtype", isWildtype);
 
@@ -260,11 +258,11 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<GoTerm> getGoTermsByNameAndSubtree(String name, Ontology ontology) {
+    public List<GoTerm> getGoTermsByNameAndSubtree(String name, OntologyDTO ontology) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(GoTerm.class);
         criteria.add(Restrictions.like("name", "%" + name + "%"));
-        if (ontology != null && ontology != Ontology.GO)
+        if (ontology != null && ontology != OntologyDTO.GO)
             criteria.add(Restrictions.eq("subOntology", ontology.getOntologyName()));
         criteria.add(Restrictions.eq("obsolete", false));
         return criteria.list();
@@ -288,15 +286,16 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param name go term name
      * @return A unique GoTerm.
      */
-    public List<Term> getQualityTermsByName(String name) {
+    public List<GenericTerm> getQualityTermsByName(String name) {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(Term.class);
-        criteria.add(Restrictions.like("name", "%" + name + "%"));
+        Criteria criteria = session.createCriteria(GenericTerm.class);
+        criteria.add(Restrictions.like("termName", "%" + name + "%"));
+        criteria.add(Restrictions.eq("ontology", Ontology.QUALITY));
         return criteria.list();
     }
 
     private List<Morpholino> getMorpholinoRecords(List<Marker> markers) {
-        List<Morpholino> morphs = new ArrayList<Morpholino>();
+        List<Morpholino> morphs = new ArrayList<Morpholino>(5);
         if (markers != null) {
             // ToDo: Integrate Morpholinos better in the Marker: Inherit from it an map it better in Hibernate.
             for (Marker marker : markers) {
@@ -337,7 +336,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "      Phenotype pheno, ExperimentCondition con, GenotypeExperiment geno " +
                 "WHERE   " +
                 "       geno.experiment = exp AND " +
-                "       pheno.patoSuperTermzdbID = :aoZdbID AND " +
+                "       pheno.anatomySuperTerm = :aoTerm AND " +
                 "       pheno.genotypeExperiment = geno AND " +
                 "       con.experiment = exp AND " +
                 "       geno.genotype = genotype AND" +
@@ -484,7 +483,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql = "select distinct geno from Genotype geno" +
                 "     where geno.wildtype = :isWildtype" +
-                "           and geno.nickname != :wt " +
+                "           and geno.handle != :wt " +
                 "    order by geno.nameOrder ";
         Query query = session.createQuery(hql);
         query.setBoolean("isWildtype", true);
@@ -523,61 +522,101 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     /**
-     * Create a default phenotype record.
-     * Default:
-     * AO term: unspecified
-     * Quality term: quality
-     * Tag: normal
-     *
-     * @param pheno Phenotype
-     */
-    public void createDefaultPhenotype(Phenotype pheno) {
-        if (pheno.getStartStage() == null)
-            throw new NullPointerException("Cannot create Phenotype. No start stage provided.");
-        if (pheno.getEndStage() == null)
-            throw new NullPointerException("Cannot create Phenotype. No end stage provided.");
-        if (pheno.getGenotypeExperiment() == null)
-            throw new NullPointerException("Cannot create Phenotype. No genotype experiment provided.");
-
-
-        // check if such a phenotype record already exists.
-        ExpressionRepository expRepository = RepositoryFactory.getExpressionRepository();
-        Phenotype existingPhenotype = expRepository.getUnspecifiedPhenotypeFromGenoxStagePub(pheno);
-        //  if the phenotype exists then only add new figure to it
-        if (existingPhenotype != null) {
-            for (Figure figure : pheno.getFigures())
-                existingPhenotype.addFigure(figure);
-            return;
-        }
-
-        AnatomyRepository anatRep = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem unspecified = anatRep.getAnatomyItem(AnatomyItem.UNSPECIFIED);
-        Term quality = getQualityTermByName(Term.QUALITY);
-        pheno.setAnatomyTerm(unspecified);
-        pheno.setTerm(quality);
-        pheno.setTag(Phenotype.Tag.NORMAL.toString());
-        Session session = HibernateUtil.currentSession();
-        session.save(pheno);
-    }
-
-    /**
      * Lookup a term by name. Term must not be obsolete.
      *
      * @param termName term name
      * @return Term object
      */
     @SuppressWarnings("unchecked")
-    public Term getQualityTermByName
-            (String
-                    termName) {
+    public GenericTerm getQualityTermByName(String termName) {
         Session session = HibernateUtil.currentSession();
-        Criteria crit = session.createCriteria(Term.class);
-        crit.add(Restrictions.eq("name", termName));
+        Criteria crit = session.createCriteria(GenericTerm.class);
+        crit.add(Restrictions.eq("termName", termName));
         crit.add(Restrictions.eq("obsolete", false));
-        return (Term) crit.uniqueResult();
+        return (GenericTerm) crit.uniqueResult();
     }
 
-    @Override
+    /**
+     * Retrieve the default phenotype (AO:unspecified - quality [abnormal]) for a given figure and genotype experiment.
+     * If it does not exist, it return null.
+     *
+     * @param genotypeExperiment genotype Experiment
+     * @param figureID           figure id
+     * @return phenotype
+     */
+    public Phenotype getDefaultPhenotype(GenotypeExperiment genotypeExperiment, String figureID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select pheno from Phenotype pheno, Figure figure " +
+                "     where pheno.genotypeExperiment = :genox" +
+                "           and pheno.anatomySuperTerm = :unspecified " +
+                "           and pheno.term.ID= :qualityZdbID " +
+                "           and pheno.tag = :tag " +
+                "           and figure member of pheno.figures " +
+                "           and figure.zdbID = :figureID";
+        AnatomyItem unspecified = RepositoryFactory.getAnatomyRepository().getAnatomyItem(AnatomyItem.UNSPECIFIED);
+        GenericTerm quality = RepositoryFactory.getInfrastructureRepository().getTermByName("quality", Ontology.QUALITY);
+        Query query = session.createQuery(hql);
+        query.setParameter("genox", genotypeExperiment);
+        query.setString("figureID", figureID);
+        query.setParameter("unspecified", unspecified);
+        query.setString("qualityZdbID", quality.getID());
+        query.setString("tag", Phenotype.Tag.ABNORMAL.name());
+        return (Phenotype) query.uniqueResult();
+    }
+
+    /**
+     * Retrieve a genotype experiment by PK.
+     *
+     * @param genotypeExperimentID pk
+     * @return genotype experiment
+     */
+    public GenotypeExperiment getGenotypeExperiment(String genotypeExperimentID) {
+        Session session = HibernateUtil.currentSession();
+        return (GenotypeExperiment) session.get(GenotypeExperiment.class, genotypeExperimentID);
+    }
+
+    /**
+     * Remove a mutant figure stage record:
+     * 1) All matching phenotypes and their association to figures.
+     * 2) The genotype experiment if left unused after removing phenotypes.
+     *
+     * @param mutant Mutants
+     */
+    public void deleteMutantFigureStage(MutantFigureStage mutant) {
+        if (mutant == null)
+            throw new NullPointerException("No Mutant Figure Annotation provided");
+        GenotypeExperiment genotypeExperiment = mutant.getGenotypeExperiment();
+        if (genotypeExperiment == null || genotypeExperiment.getZdbID() == null)
+            throw new NullPointerException("No genotype experiment provided");
+
+        Set<Phenotype> phenotypes = mutant.getMatchingMutantPhenotypes();
+        if (phenotypes == null || phenotypes.isEmpty())
+            return;
+
+        boolean allPhenotypesAffected = genotypeExperiment.getPhenotypes().size() == phenotypes.size();
+
+        // delete all phenotype records.
+        Session session = HibernateUtil.currentSession();
+        for (Phenotype phenotype : phenotypes) {
+            // remove only when there is exactly one figure associated.
+            if (phenotype.getFigures().size() == 1)
+                session.delete(phenotype);
+                // otherwise remove association to figures
+            else {
+                phenotype.getFigures().remove(mutant.getFigure());
+                allPhenotypesAffected = false;
+            }
+        }
+
+        // delete genotype experiment if it has no more phenotypes associated
+        // and if it is not used in FX (expression_experiment)
+        if (allPhenotypesAffected && genotypeExperiment.getExpressionExperiments() == null)
+            session.delete(genotypeExperiment);
+
+
+    }
+
     public List<Feature> getFeaturesForStandardAttribution(Publication publication) {
         String hql = "select f from PublicationAttribution pa , Feature f " +
                 " where pa.dataZdbID=f.zdbID and pa.publication.zdbID= :pubZdbID  " +
@@ -588,7 +627,23 @@ public class HibernateMutantRepository implements MutantRepository {
         return query.list();
     }
 
-    @Override
+    /**
+     * Retrieve a Goterm by obo id from the GO term table.
+     *
+     * @param oboID obo id
+     * @return GoTerm
+     */
+    public GoTerm getGoTermByOboID(String oboID) {
+        if (oboID == null)
+            return null;
+        // strip off GO: string
+        oboID = oboID.substring(3);
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(GoTerm.class);
+        criteria.add(Restrictions.eq("oboID", oboID));
+        return (GoTerm) criteria.uniqueResult();
+    }
+
     public List<Genotype> getGenotypesForStandardAttribution(Publication publication) {
         String hql = "select distinct g from PublicationAttribution pa , Genotype g " +
                 " where pa.dataZdbID=g.zdbID and pa.publication.zdbID= :pubZdbID  " +
@@ -597,7 +652,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("pubZdbID",publication.getZdbID());
         query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
         return query.list();
-    }
+        }
 
     /**
      * Go terms attributed as evidence to this marker by this pub.
@@ -606,7 +661,6 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param publication
      * @return
      */
-    @Override
     public List<GoTerm> getGoTermsByMarkerAndPublication(Marker marker, Publication publication) {
         String hql = "select distinct g from PublicationAttribution pa , GoTerm g , MarkerGoTermEvidence ev " +
                 " where pa.dataZdbID=ev.zdbID " +
@@ -623,9 +677,6 @@ public class HibernateMutantRepository implements MutantRepository {
         return query.list();
     }
 
-
-
-    @Override
     public List<GoTerm> getGoTermsByPhenotypeAndPublication(Publication publication) {
         String hql = "select distinct g from Phenotype p , GoTerm g  " +
                 " where p.publication.zdbID= :pubZdbID  " +
@@ -636,7 +687,6 @@ public class HibernateMutantRepository implements MutantRepository {
         return query.list();
     }
 
-    @Override
     public InferenceGroupMember addInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inferenceToAdd) {
         InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
         inferenceGroupMember.setMarkerGoTermEvidenceZdbID(markerGoTermEvidence.getZdbID());
@@ -650,7 +700,6 @@ public class HibernateMutantRepository implements MutantRepository {
         return inferenceGroupMember ;
     }
 
-    @Override
     public void removeInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inference) {
         for(Iterator<InferenceGroupMember> iterator = markerGoTermEvidence.getInferredFrom().iterator(); iterator.hasNext() ; ){
             if(iterator.next().getInferredFrom().equals(inference)){

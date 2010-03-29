@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  * This holds a single expression structure, consisting of a superterm (AO), a subterm, a stage in which
- * the superterm is defined and a boolen
+ * the superterm is defined and a boolean
  */
 public class ExpressionStructure {
 

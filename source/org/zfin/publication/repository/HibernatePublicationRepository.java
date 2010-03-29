@@ -17,6 +17,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
@@ -602,7 +603,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     private void getBaseQueryForMorpholinoFigureData(StringBuilder hql) {
-        hql.append("from Figure figure, Phenotype pheno, ");
+        hql.append("from Figure figure, AnatomyPhenotype pheno, ");
         hql.append("GenotypeExperiment geno, Marker marker, Experiment exp, ExperimentCondition con ");
         hql.append("where marker.zdbID = :markerID AND ");
         hql.append("      geno.experiment = exp AND ");
@@ -610,24 +611,24 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         hql.append("      marker = con.morpholino AND  ");
         hql.append("      pheno.genotypeExperiment = geno AND  ");
         hql.append("      figure member of pheno.figures AND ");
-        hql.append("      ( pheno.patoSubTermzdbID = :aoZdbID OR pheno.patoSuperTermzdbID = :aoZdbID ) ");
+        hql.append("      ( pheno.anatomySuperTerm = :aoZdbID OR pheno.anatomySubTerm = :aoZdbID ) ");
     }
 
-
+    @SuppressWarnings("unchecked")
     public PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct figure from Figure figure, Phenotype pheno, " +
+        String hql = "select distinct figure from Figure figure, AnatomyPhenotype pheno, " +
                 "GenotypeExperiment exp, Genotype geno " +
                 "where geno.zdbID = :genoID AND " +
                 "      exp.genotype = geno AND " +
                 "      pheno.genotypeExperiment = exp  AND " +
                 "      figure member of pheno.figures AND " +
-                "      ( pheno.patoSubTermzdbID = :aoZdbID OR pheno.patoSuperTermzdbID = :aoZdbID ) " +
+                "      ( pheno.anatomySuperTerm = :aoTerm OR pheno.anatomySubTerm = :aoTerm ) " +
                 "order by figure.orderingLabel    ";
         Query query = session.createQuery(hql);
         query.setString("genoID", geno.getZdbID());
-        query.setString("aoZdbID", term.getZdbID());
+        query.setParameter("aoTerm", term);
         PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
         return paginationResult;
     }
@@ -705,22 +706,23 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, AnatomyItem aoTerm) {
         Session session = HibernateUtil.currentSession();
-        Criteria pubs = session.createCriteria(Publication.class);
-        Criteria phenotype = pubs.createCriteria("phenotypes");
-        phenotype.add(Restrictions.or(
-                Restrictions.eq("patoSubTermzdbID", aoTerm.getZdbID()),
-                Restrictions.eq("patoSuperTermzdbID", aoTerm.getZdbID())));
-        phenotype.add(Restrictions.isNotEmpty("figures"));
-        Criteria genox = phenotype.createCriteria("genotypeExperiment");
-        genox.add(Restrictions.eq("genotype", genotype));
-        Criteria geno = genox.createCriteria("genotype");
-        geno.add(Restrictions.eq("wildtype", false));
+        String hql = "select publication from Publication as publication, AnatomyPhenotype as anatomyPheno where " +
+                " anatomyPheno member of publication.phenotypes and " +
+                "(anatomyPheno.anatomySuperTerm = :aoTerm OR anatomyPheno.anatomySubTerm = :aoTerm) " +
+                " AND publication.figures is not empty AND anatomyPheno.genotypeExperiment.genotype = :genotype" +
+                " AND anatomyPheno.genotypeExperiment.genotype.wildtype = :wildtype";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("aoTerm", aoTerm);
+        query.setParameter("genotype", genotype);
+        query.setBoolean("wildtype", false);
+
 /*
         Criteria experiment = genox.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
 */
-        pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return new PaginationResult<Publication>((List<Publication>) pubs.list());
+        query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return new PaginationResult<Publication>((List<Publication>) query.list());
     }
 
     public PaginationResult<Publication> getPublicationsWithFiguresbyGeno(Genotype genotype) {
@@ -773,15 +775,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         String hql = " select count(distinct figure.publication.zdbID ) from " +
-                " Figure figure, Phenotype phenotype " +
+                " Figure figure, AnatomyPhenotype phenotype " +
                 "where " +
-                "      ( phenotype.patoSubTermzdbID = :aoZdbID OR phenotype.patoSuperTermzdbID = :aoZdbID ) AND " +
+                "      ( phenotype.anatomySuperTerm = :aoTerm OR phenotype.anatomySubTerm = :aoTerm ) AND " +
                 "      phenotype.genotypeExperiment.genotype.zdbID = :genoID AND " +
                 "      figure member of phenotype.figures " +
                 "";
         Query query = session.createQuery(hql);
         query.setString("genoID", genotype.getZdbID());
-        query.setString("aoZdbID", aoTerm.getZdbID());
+        query.setParameter("aoTerm", aoTerm);
 
         return ((Number) (query.uniqueResult())).intValue();
     }
@@ -1245,6 +1247,28 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Genotype>) query.list();
     }
 
+    /**
+     * Retrieve list of Genotypes being used in a publication
+     *
+     * @param publicationID publication ID
+     * @return list of genotype
+     */
+    @SuppressWarnings("unchecked")
+    public List<Genotype> getGenotypesInPublication(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct fish from Genotype fish, PublicationAttribution record" +
+                "     where record.publication.zdbID = :pubID " +
+                "           and record.dataZdbID = fish.zdbID" +
+                "           and record.sourceType = :sourceType" +
+                "    order by fish.handle ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+        query.setParameter("sourceType", RecordAttribution.SourceType.STANDARD);
+
+        return (List<Genotype>) query.list();
+    }
+
     @SuppressWarnings("unchecked")
     public List<Experiment> getExperimentsByPublication(String publicationID) {
         Session session = HibernateUtil.currentSession();
@@ -1266,11 +1290,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @SuppressWarnings("unchecked")
-    public Genotype getGenotypeByNickname(String nickname) {
+    public Genotype getGenotypeByHandle(String handle) {
         Session session = HibernateUtil.currentSession();
 
         Criteria crit = session.createCriteria(Genotype.class);
-        crit.add(Restrictions.eq("nickname", nickname));
+        crit.add(Restrictions.eq("handle", handle));
         return (Genotype) crit.uniqueResult();
     }
 

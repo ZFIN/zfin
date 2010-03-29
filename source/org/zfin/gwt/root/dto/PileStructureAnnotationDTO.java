@@ -4,7 +4,7 @@ package org.zfin.gwt.root.dto;
  * This subclass is used to add a structure from the pile to one or more
  * figure annotations. It
  */
-public class PileStructureAnnotationDTO extends PileStructureDTO {
+public class PileStructureAnnotationDTO extends ExpressionPileStructureDTO {
 
     private boolean expressed;
     private Action action;
@@ -25,6 +25,7 @@ public class PileStructureAnnotationDTO extends PileStructureDTO {
         this.action = action;
     }
 
+    @Override
     public PileStructureAnnotationDTO copy() {
         PileStructureAnnotationDTO dto = new PileStructureAnnotationDTO();
         dto.setZdbID(zdbID);

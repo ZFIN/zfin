@@ -1,22 +1,13 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
+import org.zfin.gwt.root.ui.ErrorHandler;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 public class VoidAsyncCallback extends ZfinAsyncCallback<Void> {
 
-    private Widget loadingImage;
-
-    VoidAsyncCallback(Label errorMessage, Widget loadingImage) {
-        super("Error", errorMessage);
-        this.loadingImage = loadingImage;
+    VoidAsyncCallback(String errorMessage, ErrorHandler errorHandler, String loadingImageDivName) {
+        super(errorMessage, errorHandler, loadingImageDivName);
     }
 
-    public void onSuccess(Void aVoid) {
-    }
-
-    public void onFailureCleanup() {
-        loadingImage.setVisible(true);
-    }
 }
 

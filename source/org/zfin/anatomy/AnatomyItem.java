@@ -3,9 +3,12 @@ package org.zfin.anatomy;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.ontology.OntologyTerm;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.ontology.*;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -15,7 +18,7 @@ import java.util.Set;
  * <p/>
  * ToDo: This class needs to be refactored to allow for a common interface for a term in any ontology.
  */
-public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
+public class AnatomyItem implements Term, Comparable<AnatomyItem> {
 
     public static final String UNSPECIFIED = "unspecified";
     private long itemID;
@@ -33,6 +36,8 @@ public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
     private String nameOrder;
     private List<AnatomyRelationship> relatedItems;
     private Set<AnatomySynonym> synonyms;
+
+    private List<TermRelationship> relationships;
 
     public String getZdbID() {
         return zdbID;
@@ -64,6 +69,22 @@ public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
 
     public String getOboID() {
         return oboID;
+    }
+
+    public void setOntology(Ontology ontology) {
+        //ignore for now
+    }
+
+    public Ontology getOntology() {
+        return Ontology.ANATOMY;
+    }
+
+    public String getComment() {
+        return null;
+    }
+
+    public void setComment(String comment) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setOboID(String oboID) {
@@ -114,6 +135,22 @@ public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
         return obsolete;
     }
 
+    public boolean isRoot() {
+        return false;
+    }
+
+    public void setRoot(boolean root) {
+        // Todo when Ao goes into term table
+    }
+
+    public boolean isSecondary() {
+        return false;
+    }
+
+    public void setSecondary(boolean secondary) {
+        // Todo when Ao goes into term table
+    }
+
     public void setObsolete(boolean obsolete) {
         this.obsolete = obsolete;
     }
@@ -132,6 +169,14 @@ public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
 
     public Set<AnatomySynonym> getSynonyms() {
         return (synonyms == null || synonyms.size() == 0) ? null : synonyms;
+    }
+
+    public Set<TermAlias> getAliases() {
+        return null;
+    }
+
+    public void setAliases(Set<TermAlias> aliases) {
+        // Todo when Ao goes into term table
     }
 
     public void setSynonyms(Set<AnatomySynonym> synonyms) {
@@ -161,8 +206,16 @@ public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
         return zdbID;
     }
 
+    public void setID(String id) {
+        // Todo when Ao goes into term table
+    }
+
     public String getTermName() {
         return name;
+    }
+
+    public void setTermName(String termName) {
+        // Todo when Ao goes into term table
     }
 
     private static final String NEWLINE = System.getProperty("line.separator");
@@ -197,6 +250,16 @@ public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
 
     public void setCellTerm(boolean cellTerm) {
         this.cellTerm = cellTerm;
+    }
+
+    public List<TermRelationship> getRelatedTerms() {
+        if (relationships != null)
+            return relationships;
+
+        relationships = new ArrayList<TermRelationship>();
+        OntologyRepository ontologyOntologyRepository = RepositoryFactory.getOntologyRepository();
+        relationships.addAll(ontologyOntologyRepository.getTermRelationships(this));
+        return relationships;
     }
 
     public int compareTo(AnatomyItem term) {
@@ -247,5 +310,14 @@ public class AnatomyItem implements OntologyTerm, Comparable<AnatomyItem> {
         if(end != null)
             hash += hash * end.hashCode();
         return hash;
+    }
+
+    /**
+     * Retrieves all terms that are immediate children of this term.
+     * @return list of children terms
+     */
+    public List<Term> getChildrenTerms(){
+        // ToDo: To be implemented
+        throw new RuntimeException("Not yet implemented");
     }
 }

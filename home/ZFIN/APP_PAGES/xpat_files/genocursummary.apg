@@ -30,7 +30,7 @@ PREFIX:   genocursum_
     <td>
 
 
-      <b>Genotype Nickname</b>
+      <b>Genotype Handle</b>
       
     </td>
     <td>
@@ -63,12 +63,12 @@ PREFIX:   genocursum_
 
   
   <?MISQL SQL="
-        select geno_zdb_id, geno_name_order, get_geno_name_html_link(geno_zdb_id), geno_nickname
+        select geno_zdb_id, geno_name_order, get_geno_name_html_link(geno_zdb_id), geno_handle
         from genotype, record_attribution
         where recattrib_source_zdb_id = '$OID'
 	  and recattrib_source_type = 'standard'
           and geno_zdb_id = recattrib_data_zdb_id
-        order by geno_nickname;">
+        order by geno_handle;">
 
       <?MIVAR NAME=genocursum_geno_zdb_id>$1<?/MIVAR> 
       <?MIVAR NAME=genocursum_geno_display>$3<?/MIVAR> 

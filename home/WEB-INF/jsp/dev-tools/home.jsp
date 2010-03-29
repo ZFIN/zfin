@@ -230,4 +230,10 @@
             <a href="/action/dev-tools/test-error-page">Test Error Page</a>
         </td>
     </tr>
+    <tr>
+        <td>Ontology Caching:</td>
+        <td colspan="2">
+            <a href="/action/dev-tools/ontology-caching">Check Ontology Status</a>
+        </td>
+    </tr>
 </table>

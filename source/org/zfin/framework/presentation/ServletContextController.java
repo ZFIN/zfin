@@ -20,6 +20,6 @@ public class ServletContextController extends AbstractCommandController {
 
         ServletInfoBean form = (ServletInfoBean) command;
         form.setContext(request.getSession().getServletContext());
-        return new ModelAndView("serlvet-context-info", LookupStrings.FORM_BEAN, form);
+        return new ModelAndView("servlet-context-info", LookupStrings.FORM_BEAN, form);
     }
 }

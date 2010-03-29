@@ -2,7 +2,7 @@ package org.zfin.expression;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.ontology.OntologyTerm;
+import org.zfin.ontology.Term;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +21,7 @@ public class ExpressionResult {
     private ExpressionExperiment expressionExperiment;
     private Set<ExpressionResult> expressionResults;
     private Set<Figure> figures;
-    protected OntologyTerm subterm;
+    protected Term subterm;
 
     public String getZdbID() {
         return zdbID;
@@ -100,7 +100,7 @@ public class ExpressionResult {
     public void setSecondaryAnatomyTerm(AnatomyItem secondaryAnatomyTerm) {
         this.secondaryAnatomyTerm = secondaryAnatomyTerm;
     }
-    public OntologyTerm getSubTerm() {
+    public Term getSubTerm() {
         return subterm;
     }
 

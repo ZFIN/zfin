@@ -1,6 +1,8 @@
 <%@ page import="java.util.Date" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.framework.presentation.ZfinSessionBean" scope="request" />
+
 <table cellpadding="2" cellspacing="1" border="0" width="50%">
 
     <tr><td colspan="3" class="sectionTitle">Request/Session Information</td></tr>
@@ -18,8 +20,8 @@
             </td>
         </tr>
     </c:forEach>
-    <tr>
-        <td width="100" colspan="2" class="sectionTitle">Indiviudal Session Info</td>
+    <tr class="bold">
+        <td width="100" colspan="2" class="sectionTitle">Individual Session Info</td>
     </tr>
     <tr>
         <td valign=top class="listContentBold">

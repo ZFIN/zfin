@@ -63,54 +63,6 @@
            overflowToDisk="true"
             />
 
-    <cache name="org.zfin.anatomy.AnatomyItem"
-           maxElementsInMemory="2000"
-           eternal="true"
-           timeToIdleSeconds="0"
-           timeToLiveSeconds="0"
-           overflowToDisk="true"
-            />
-
-    <cache name="org.zfin.anatomy.AnatomyRelationshipOne"
-           maxElementsInMemory="2000"
-           eternal="true"
-           timeToIdleSeconds="0"
-           timeToLiveSeconds="0"
-           overflowToDisk="true"
-            />
-
-    <cache name="org.zfin.anatomy.AnatomyRelationshipTwo"
-           maxElementsInMemory="2000"
-           eternal="true"
-           timeToIdleSeconds="0"
-           timeToLiveSeconds="0"
-           overflowToDisk="true"
-            />
-
-    <cache name="org.zfin.anatomy.repository.AnatomyRelationshipTypePersistence"
-           maxElementsInMemory="20"
-           eternal="true"
-           timeToIdleSeconds="0"
-           timeToLiveSeconds="0"
-           overflowToDisk="true"
-            />
-
-    <cache name="org.zfin.infrastructure.DataAlias"
-           maxElementsInMemory="1000"
-           eternal="true"
-           timeToIdleSeconds="0"
-           timeToLiveSeconds="0"
-           overflowToDisk="true"
-            />
-
-    <cache name="org.zfin.anatomy.AnatomySynonym"
-           maxElementsInMemory="1000"
-           eternal="true"
-           timeToIdleSeconds="0"
-           timeToLiveSeconds="0"
-           overflowToDisk="true"
-            />
-
     <cache name="org.zfin.expression.ExpressionAssay"
            maxElementsInMemory="20"
            eternal="true"

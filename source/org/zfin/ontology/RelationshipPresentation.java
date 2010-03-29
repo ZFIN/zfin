@@ -8,7 +8,7 @@ import java.util.List;
 public class RelationshipPresentation {
 
     String type;
-    List<GenericTerm> items;
+    List<Term> items;
 
     public String getType() {
         return type;
@@ -18,11 +18,11 @@ public class RelationshipPresentation {
         this.type = type;
     }
 
-    public List<GenericTerm> getItems() {
+    public List<Term> getItems() {
         return items;
     }
 
-    public void setItems(List<GenericTerm> items) {
+    public void setItems(List<Term> items) {
         this.items = items;
     }
 }

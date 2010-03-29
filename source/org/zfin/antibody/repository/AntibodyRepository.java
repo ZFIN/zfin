@@ -129,7 +129,7 @@ public interface AntibodyRepository {
     PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, AnatomyItem aoTerm);
 
     /**
-     * Lookup all distinct antibodies that are referenced in a given publciation.
+     * Lookup all distinct antibodies that are referenced in a given publication.
      *
      * @param publication Publication
      * @return list of antibodies

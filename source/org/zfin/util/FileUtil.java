@@ -23,8 +23,11 @@ public final class FileUtil {
     public static final String DASH = "-";
     public static final String UNDERSCORE = "_";
     public static final String DOT = ".";
+    // folder for data transfer files, including serialized files.
+    public static final String DATA_TRANSFER = "data-transfer";
 
     public static final Logger LOG = Logger.getLogger(FileUtil.class);
+    private static final String WEB_INF = "WEB-INF";
 
     /**
      * Create an absolute path for a given directory and a file within in.
@@ -32,13 +35,28 @@ public final class FileUtil {
      * separator is being used. This is done automatically via the File
      * object.
      *
-     * @param dir
-     * @param fileName
+     * @param dir      folder
+     * @param fileName file name
+     * @return full file path name
      */
     public static String createAbsolutePath(String dir, String fileName) {
         File file = new File(dir);
-        File confFile = new File(file, fileName);
-        return confFile.getAbsolutePath();
+        File configFile = new File(file, fileName);
+        return configFile.getAbsolutePath();
+    }
+
+    /**
+     * Assumes that the serialized ontology file lives in:
+     * webRoot/data-exchange/fileName
+     *
+     * @param fileName file Name
+     * @return boolean
+     */
+    public static boolean isOntologyFileExist(String fileName) {
+        File directory = new File(ZfinProperties.getWebRootDirectory(), WEB_INF);
+        File file = new File(directory, DATA_TRANSFER);
+        File fullFile = new File(file, fileName);
+        return fullFile.isFile();
     }
 
     /**
@@ -47,9 +65,10 @@ public final class FileUtil {
      * separator is being used. This is done automatically via the File
      * object.
      *
-     * @param dir1
-     * @param dir2
-     * @param fileName
+     * @param dir1     first folder
+     * @param dir2     second folder
+     * @param fileName file name
+     * @return absolute path of file.
      */
     public static String createAbsolutePath(String dir1, String dir2, String fileName) {
         File file1 = new File(dir1);
@@ -248,7 +267,7 @@ public final class FileUtil {
 
     public static List<File> countClassFiles() {
         File web = new File(ZfinProperties.getWebRootDirectory());
-        File webInf = new File(web, "WEB-INF");
+        File webInf = new File(web, WEB_INF);
         File classesDir = new File(webInf, "classes");
         File org = new File(classesDir, "org");
         File zfin = new File(org, "zfin");
@@ -295,5 +314,47 @@ public final class FileUtil {
             LOG.error(e);
         }
         return file;
+    }
+
+    public static File createOntologySerializationFile(String serializedFileName) {
+        File directory = new File(ZfinProperties.getWebRootDirectory(), WEB_INF);
+        File file = new File(directory, DATA_TRANSFER);
+        if (!file.exists()) {
+            if (!file.mkdir())
+                LOG.error("Could not create the directory: " + file.getAbsolutePath());
+        }
+        return new File(file, serializedFileName);
+
+    }
+
+    public static void serializeObject(Object object, File file) {
+        try {
+            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
+            out.writeObject(object);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public static Object deserializeOntologies(String serializedFileName) throws Exception {
+        Object object = null;
+        ObjectInputStream in = null;
+        try {
+            File file = createOntologySerializationFile(serializedFileName);
+            LOG.info("Read ontologies from " + file.getAbsolutePath());
+            in = new ObjectInputStream(new FileInputStream(file));
+            object = in.readObject();
+        } finally {
+            try {
+                if (in != null)
+                    in.close();
+            } catch (IOException e) {
+                LOG.error(e);
+            }
+        }
+        return object;
     }
 }

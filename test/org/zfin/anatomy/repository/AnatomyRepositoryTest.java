@@ -47,10 +47,10 @@ public class AnatomyRepositoryTest {
     }
 
     /**
-     * Check that synonyms are not of group 'seconday id'
+     * Check that synonyms are not of group 'secondary id'
      */
     @Test
-    public void getAnatomyTermWithSynomyms() {
+    public void getAnatomyTermWithSynonyms() {
         // optic primordium
         String termName = "optic primordium";
 
@@ -74,7 +74,7 @@ public class AnatomyRepositoryTest {
         PaginationResult<HighQualityProbe> probeResults = pr.getHighQualityProbeNames(item);
         List<HighQualityProbe> probes = probeResults.getPopulatedResults();
         assertTrue(probes != null);
-        assertTrue(probes.size() > 0);
+        assertTrue(!probes.isEmpty());
 
         int numberOHQProbes = probeResults.getTotalCount();
         assertTrue(numberOHQProbes > 0);
@@ -113,14 +113,14 @@ public class AnatomyRepositoryTest {
     }
 
     @Test
-    public void compareWildTypeSelectionToFullForMorpholinos() {
+    public void compareWildTypeSelectionToFullForMorphs() {
         AnatomyItem item = aoRepository.getAnatomyItem("neural plate");
-        PaginationResult<GenotypeExperiment> genosWildtype = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true, null);
-        PaginationResult<GenotypeExperiment> genosNonWildtype = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, false, null);
+        PaginationResult<GenotypeExperiment> genotypeWildtype = mutantRepository.getGenotypeExperimentMorpholinos(item, true, null);
+        PaginationResult<GenotypeExperiment> genotypeNonWildtype = mutantRepository.getGenotypeExperimentMorpholinos(item, false, null);
 
-        assertNotNull(genosWildtype.getPopulatedResults());
-        assertNotNull(genosNonWildtype.getPopulatedResults());
-        assertNotSame("It is feasible, but unlikely that these will ever be the same", genosWildtype.getTotalCount(), genosNonWildtype.getTotalCount()); // its feasible, but not likely
+        assertNotNull(genotypeWildtype.getPopulatedResults());
+        assertNotNull(genotypeNonWildtype.getPopulatedResults());
+        assertNotSame("It is feasible, but unlikely that these will ever be the same", genotypeWildtype.getTotalCount(), genotypeNonWildtype.getTotalCount()); // its feasible, but not likely
 
 
     }
@@ -129,13 +129,13 @@ public class AnatomyRepositoryTest {
     public void getWildtypeMorpholinos() {
         // String neuralPlateZdbID = "ZDB-ANAT-010921-560";
         AnatomyItem item = aoRepository.getAnatomyItem("neural plate");
-        PaginationResult<GenotypeExperiment> genos = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true, null);
+        PaginationResult<GenotypeExperiment> genos = mutantRepository.getGenotypeExperimentMorpholinos(item, true, null);
         assertNotNull(genos.getPopulatedResults());
         assertTrue(genos.getPopulatedResults().size() > 1);
 
-        List<GenotypeExperiment> genosList = mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(item, true);
-        assertNotNull(genosList);
-        assertTrue(genosList.size() > 1);
+        List<GenotypeExperiment> genotypeList = mutantRepository.getGenotypeExperimentMorpholinos(item, true);
+        assertNotNull(genotypeList);
+        assertTrue(genotypeList.size() > 1);
 
     }
 
@@ -165,7 +165,7 @@ public class AnatomyRepositoryTest {
         // 3- get by data alias
         terms = aoRepository.getAnatomyItemsByName("413", false);
         assertNotNull(terms);
-        assertTrue("Should be no terms for '413'", terms.size() == 0);
+        assertTrue("Should be no terms for '413'", terms.isEmpty());
     }
 
     @Test

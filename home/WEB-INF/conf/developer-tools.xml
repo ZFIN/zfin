@@ -33,6 +33,7 @@
                 <prop key="/dev-tools/zfin-statistics">zfinStatistics</prop>
                 <prop key="/dev-tools/gwt/modules">gwtModules</prop>
                 <prop key="/dev-tools/gwt/fx-curation">fxCuration</prop>
+                <prop key="/dev-tools/gwt/phenotype-curation">phenotypeCuration</prop>
                 <prop key="/dev-tools/gwt/lookup">lookup</prop>
                 <prop key="/dev-tools/gwt/lookup-table">lookupTable</prop>
                 <prop key="/dev-tools/gwt/transcript-edit">transcriptEdit</prop>
@@ -52,6 +53,7 @@
                 <prop key="/dev-tools/quartz-jobs">quartzJobs</prop>
                 <prop key="/dev-tools/blast-jobs">blastQueue</prop>
                 <prop key="/dev-tools/test-error-page">errorPageHandler</prop>
+                <prop key="/dev-tools/ontology-caching">ontologyCaching</prop>
             </props>
         </property>
     </bean>
@@ -62,8 +64,16 @@
         <property name="viewName" value="gwt-modules"/>
     </bean>
 
-    <bean name="fxCuration" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+    <bean name="fxCuration" class="org.zfin.framework.presentation.CurationTestController" scope="prototype">
         <property name="viewName" value="fx-curation"/>
+    </bean>
+
+    <bean name="phenotypeCuration" class="org.zfin.framework.presentation.CurationTestController" scope="prototype">
+        <property name="viewName" value="phenotype-curation"/>
+    </bean>
+
+    <bean name="ontologyCaching" class="org.zfin.ontology.presentation.OntologyManagerController" scope="prototype">
+        <property name="viewName" value="ontology-manager"/>
     </bean>
 
     <bean name="lookup" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
@@ -181,7 +191,6 @@
                 <prop key="/dev-tools/view-global-session-info">viewGlobalSessionInfoHandler</prop>
                 <prop key="/dev-tools/view-hibernate-info">viewHibernateInfoHandler</prop>
                 <prop key="/dev-tools/svn-version">svnVersionHandler</prop>
-                <prop key="/dev-tools/gwt/fx-curation">fxCurationHandler</prop>
             </props>
         </property>
     </bean>

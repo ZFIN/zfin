@@ -6,24 +6,15 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.util.StageRangeIntersection;
-import org.zfin.gwt.root.util.TermNotFoundException;
 
 import java.util.List;
 
 /**
- * ToDo: ADD DOCUMENTATION!
+ * GWT class to facilitate curation of FX
  */
 public interface CurationExperimentRPC extends RemoteService {
 
     public List<ExperimentDTO> getExperimentsByFilter(ExperimentDTO experimentFilter);
-
-    /**
-     * Retrieve a list of all fish, figures and genes that are used in the experiment section.
-     *
-     * @param publicationID Publication
-     * @return list of fish
-     */
-    public FilterValuesDTO getPossibleFilterValues(String publicationID) throws PublicationNotFoundException;
 
     public List<String> getAssays();
 
@@ -193,14 +184,6 @@ public interface CurationExperimentRPC extends RemoteService {
     void setExpressionVisibilitySession(String publicationID, boolean visible);
 
     /**
-     * Save the filter element zdb ID
-     *
-     * @param publicationID publication
-     * @param zdbID         zdbID
-     */
-    void setFilterType(String publicationID, String zdbID, String type);
-
-    /**
      * Retrieve the figure for the filter on the fx page.
      *
      * @param publicationID publication
@@ -214,14 +197,6 @@ public interface CurationExperimentRPC extends RemoteService {
      * @return marker DTO
      */
     MarkerDTO getGeneFilter(String publicationID);
-
-    /**
-     * Retrieve the fish if for the fx filter bar
-     *
-     * @param publicationID publication
-     * @return Fish dto
-     */
-    FilterValuesDTO getFilterValues(String publicationID);
 
     /**
      * Create a new Pato record
@@ -267,14 +242,7 @@ public interface CurationExperimentRPC extends RemoteService {
      * @param publicationID Publication ID
      * @return list fo structure objects
      */
-    List<PileStructureDTO> getStructures(String publicationID);
-
-    /**
-     * Remove a structure from the structure pile.
-     *
-     * @param structure Structure DTO
-     */
-    PileStructureDTO deleteStructure(PileStructureDTO structure);
+    List<ExpressionPileStructureDTO> getStructures(String publicationID);
 
     /**
      * Update individual figure annotations with structures from the pile.
@@ -292,17 +260,9 @@ public interface CurationExperimentRPC extends RemoteService {
      * @param intersection          intersection
      * @return list of PileStructureDTO,
      */
-    List<RelatedPileStructureDTO> getTermsWithStageOverlap(PileStructureDTO selectedPileStructure,
+    List<RelatedPileStructureDTO> getTermsWithStageOverlap(ExpressionPileStructureDTO selectedPileStructure,
                                                            StageRangeIntersection intersection);
 
-    /**
-     * Create a new structure for the pile.
-     *
-     * @param expressedTerm Expressed Term dto
-     * @param publicationID pub id
-     */
-    PileStructureDTO createPileStructure(ExpressedTermDTO expressedTerm, String publicationID)
-            throws PileStructureExistsException, TermNotFoundException;
 
 
     /**

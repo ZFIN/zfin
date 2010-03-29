@@ -1,4 +1,4 @@
-#!/private/bin/perl 
+d#!/private/bin/perl 
 
 use MIME::Lite;
 
@@ -19,21 +19,9 @@ my $fileName = $ARGV[1];
 #-------------------SubRoutines-------------#
 
 sub downloadOntologyTermFiles () { # download the obo file from passed in fileUrl
+
+
     system("/local/bin/curl -s $fileUrl -o $fileName") and die "can not download $fileName";
-
-    #if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName.old") {
-
-	#system("/bin/rm <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName.old") and die "can not rm $fileName.old" ;
-
-	#print "rm'd $fileName.old\n" ;
-    #}
-
-    #if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName") {
-	
-	#system("/bin/mv <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/$fileName.old") and die "can not mv $fileName.old" ;
-    
-	#print "mv'd $fileName.old to $fileName.old\n" ;
-    #}
 }
 
 sub sendLoadReport ($) { # send email on error or completion
@@ -210,7 +198,7 @@ if ($fileName eq "quality.obo"){
 }
 
 if ($fileName eq "sequence_ontology.obo"){
-    system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> fixPatoAnnotations.sql >out 2> report.txt") and die "fixSoAnnotations.sql failed";
+    system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> fixSoAnnotations.sql >out 2> report.txt") and die "fixSoAnnotations.sql failed";
 }
 
 

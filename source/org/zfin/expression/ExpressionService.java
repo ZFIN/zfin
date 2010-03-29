@@ -30,7 +30,7 @@ import java.util.Set;
  */
 public class ExpressionService {
 
-    static Logger logger = Logger.getLogger(ExpressionService.class);
+    private static Logger logger = Logger.getLogger(ExpressionService.class);
 
 
     public static Set<String> getThissePublicationZdbIDs() {

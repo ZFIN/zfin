@@ -1,9 +1,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.framework.presentation.ServletInfoBean" scope="request" />
+
 <table cellpadding="2" cellspacing="1" border="0" width="50%">
 
     <tr><td colspan="3" class="sectionTitle">Servlet Context Information</td></tr>
-    <tr>
+    <tr class="bold">
         <td width="100" class="sectionTitle">Key</td>
         <td class="sectionTitle">Value</td>
     </tr>

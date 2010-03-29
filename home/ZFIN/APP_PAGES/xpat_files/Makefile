@@ -24,7 +24,7 @@ GENERICS = xpatview.apg xpatselect.apg \
         anatomy_captures.apg xpatselect_note.apg \
 	xpatselectquery.apg xpatselectrowdisplay.apg xpatcuration.apg \
 	xpatexdisplayname.apg xpatselectanatverify.apg \
-	xpatcurexpssdisplayname.apg xpatcurupdate.apg xpatcurimage.apg \
+	xpatcurupdate.apg xpatcurimage.apg \
 	xpatcurexperiment.apg xpatcurcondition.apg xpatcurfigure.apg \
 	fxpubdisplay.apg fxfigureview.apg  fxfiggenelist.apg \
 	fxfiganatlist.apg  fxfigstgrng.apg fxallfigures.apg \
@@ -35,11 +35,11 @@ GENERICS = xpatview.apg xpatselect.apg \
 	fxfigprobelist.apg fxgenestgrng.apg record_web_update.apg do-addcanmrkr.apg \
 	curation.apg genotypecuration.apg genocursearch.apg attribupdate.apg \
 	genosearchresulttable.apg genocurbuilder.apg genocursummary.apg genoupdate.apg \
-	patocuration.apg patocursummary.apg patocurbuilder.apg patoupdate.apg \
+	patocuration.apg \
 	fxphenoinfo.apg fxfiggenolist.apg fxfigphenoanatlist.apg fxfigphenostgrng.apg \
 	figurecuration.apg experimentcuration.apg xpatcurreset.apg fxfigphenogenolist.apg \
 	fxfigphenogolist.apg pheno_summary.apg pheno_summary_sql.apg wordcompletion.apg \
-	curation_filters.apg patoupdate_addmutant.apg xpatcurupdatecondition.apg gocuration.apg \
+	xpatcurupdatecondition.apg gocuration.apg \
 	xpatselect_resultsasimages.apg fxlabelinfo.apg  xpatfeatexpcondn.apg  xpatexpcdnlist.apg
 
 # Use default rules for app page directories. 

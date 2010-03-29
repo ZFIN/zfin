@@ -5,6 +5,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 import org.hibernate.util.ReflectHelper;
+import org.zfin.ontology.Ontology;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
@@ -24,7 +25,8 @@ public class StringEnumUserType implements UserType, ParameterizedType {
 
     /**
      * This is called from Hibernate and uses the enumeration class specified
-     * in the configuration file. 
+     * in the configuration file.
+     *
      * @param parameters enumeration class name
      */
     public void setParameterValues(Properties parameters) {
@@ -67,17 +69,15 @@ public class StringEnumUserType implements UserType, ParameterizedType {
             return null;
         // convert enumeration name into upper case as the names are always all upper case.
         // this needs to be done if the enumeration string is not all caps.
-        return Enum.valueOf(enumClass,mapName(name)) ; 
-    }
-
-    public static String mapName(String name){
         name = name.replace('-', '_');
         name = name.replace('+', '_');
         name = name.replace(' ', '_');
         name = name.replace('(', '_');
         name = name.replace(')', '_');
+        if (enumClass.getName().equals(Ontology.class.getName()))
+            return Ontology.getOntology(name);
         name = name.toUpperCase();
-        return name ;
+        return Enum.valueOf(enumClass, name);
     }
 
     public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {

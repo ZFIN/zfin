@@ -63,7 +63,7 @@ public class QuartzJobsController extends AbstractCommandController {
                 if (group == null) {
                     group = "DEFAULT";
                 }
-                logger.info("action :" + action + " for job: " + job);
+                logger.info("Action :" + action + " job: " + job);
 
                 if (action == QuartzJobsBean.Action.RUN) {
                     scheduler.triggerJob(job, group);

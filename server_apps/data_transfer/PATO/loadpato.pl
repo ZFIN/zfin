@@ -33,20 +33,6 @@ sub downloadPATOtermFiles () { # download the obo file from PATO
 
     print "download done.\n" ;
 
-    if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/quality_old.obo") {
-
-	system("/bin/rm <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/quality_old.obo") and die "can not rm quality_old.obo" ;
-
-	print "rm'd quality_old.obo\n" ;
-    }
-
-    if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/quality.obo") {
-	
-	system("/bin/mv <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/quality.obo <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/quality_old.obo") and die "can not mv quality_old.obo" ;
-    
-	print "mv'd quality.obo to quality_old.obo\n" ;
-    }
-
 }
 
 

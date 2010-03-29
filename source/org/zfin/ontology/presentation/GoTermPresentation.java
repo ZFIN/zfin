@@ -17,7 +17,7 @@ public class GoTermPresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(GoTerm term) {
-        return getGeneralHyperLink(uri + term.getGoID(), term.getName());
+        return getGeneralHyperLink(uri + term.getOboID(), term.getName());
     }
 
     /**

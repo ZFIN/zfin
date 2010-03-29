@@ -66,13 +66,13 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         initTable();
 
 //        table.setBorderWidth(1);
-        RootPanel.get(getDivName()).add(table);
+        RootPanel.get(divName).add(table);
 
-        HorizontalPanel horizPanel = new HorizontalPanel();
-        horizPanel.add(lookup);
-        horizPanel.add(testLabel);
+        HorizontalPanel horizontalPanel = new HorizontalPanel();
+        horizontalPanel.add(lookup);
+        horizontalPanel.add(testLabel);
 //        horizPanel.add(hiddenList) ;
-        RootPanel.get(getDivName()).add(horizPanel);
+        RootPanel.get(divName).add(horizontalPanel);
 
         exposeMethodToJavascript(this);
     }
@@ -91,6 +91,9 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         }
         if (keySet.contains(JSREF_TYPE)) {
             lookup.setType(lookupProperties.get(JSREF_TYPE));
+        }
+        if (keySet.contains(JSREF_ONTOLOGY_NAME)) {
+            lookup.setOntologyName(lookupProperties.get(JSREF_ONTOLOGY_NAME));
         }
         if (keySet.contains(JSREF_BUTTONTEXT)) {
             lookup.setButtonText(lookupProperties.get(JSREF_BUTTONTEXT));
@@ -154,7 +157,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
             });
 
             table.setWidget(currentRow, 1, link);
-            Image removeImage = new Image(getImageURL() + "action_delete.png");
+            Image removeImage = new Image(imageURL + "action_delete.png");
             table.setWidget(currentRow, 0, new RemoveButton(removeImage, this, term.getTerm()));
             //Window.alert("Term added: "+term.getZdbID());
             DOM.setElementProperty(hiddenIDList, "value", generateIDList());
@@ -251,7 +254,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
 
         DOM.setElementAttribute(hiddenIDList, "value", generateIDList());
         DOM.setElementAttribute(hiddenNameList, "value", generateNameList());
-        if (termsList.size() == 0) {
+        if (termsList.isEmpty()) {
             initTable();
         }
     }
@@ -270,7 +273,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
 
     public String generateIDList() {
 
-        StringBuffer returnList = new StringBuffer();
+        StringBuffer returnList = new StringBuffer(25);
 
         for (TermStatus value : termsList) {
             returnList.append(value.getZdbID());
@@ -282,7 +285,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
 
     public String generateNameList() {
 
-        StringBuffer returnList = new StringBuffer();
+        StringBuffer returnList = new StringBuffer(50);
 
         for (TermStatus value : termsList) {
             returnList.append(value.getTerm());
@@ -350,8 +353,8 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
      */
     private void prepopulateTable(String termList) {
         String[] terms = termList.split(NAME_SEPARATOR_SPLIT);
-        final Set<String> termsNotFound = new HashSet<String>();
-        final Set<String> termsFoundMany = new HashSet<String>();
+        final Set<String> termsNotFound = new HashSet<String>(5);
+        final Set<String> termsFoundMany = new HashSet<String>(5);
 
         for (String tokenizedTerm : terms) {
             LookupRPCService.App.getInstance().validateAnatomyTerm(tokenizedTerm, new AsyncCallback<TermStatus>() {
@@ -379,7 +382,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
 
             String errorString = "Error adding terms<br>";
             String specialTerm = "";
-            if (termsFoundMany.size() > 0) {
+            if (!termsFoundMany.isEmpty()) {
                 errorString += "Found too many: ";
                 for (Iterator iter = termsNotFound.iterator();
                      iter.hasNext();
@@ -390,7 +393,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
             }
 
 
-            if (termsNotFound.size() > 0) {
+            if (!termsNotFound.isEmpty()) {
                 errorString += "Not found: ";
                 for (Iterator iter = termsNotFound.iterator();
                      iter.hasNext();
@@ -400,7 +403,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
                 errorString += "<br>";
             }
 
-            if (termsFoundMany.size() > 0 || termsNotFound.size() > 0) {
+            if (!termsFoundMany.isEmpty() || !termsNotFound.isEmpty()) {
                 lookup.setErrorString(errorString);
             }
         }

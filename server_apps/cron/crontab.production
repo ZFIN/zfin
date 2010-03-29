@@ -141,7 +141,7 @@
 #
 # SMTWT    11:20pm   load and update pato terms
 #
-20 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/PATO/loadpato.pl
+20 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/LoadOntology/loadOntology.pl "http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo" "quality.obo"
 #
 # F        10:10pm   weekly update of chromosome position and orthology for
 #                    mouse, human, fly

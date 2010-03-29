@@ -2,7 +2,7 @@ package org.zfin.gwt.root.util;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import org.zfin.gwt.root.dto.Ontology;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.TermInfo;
 import org.zfin.gwt.root.dto.TermStatus;
@@ -13,12 +13,6 @@ import java.util.List;
  */
 public interface LookupRPCServiceAsync {
 
-
-    void getAnatomySuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
-
-    void getGOSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
-
-    void getQualitySuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
     void getMarkerSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
@@ -35,7 +29,7 @@ public interface LookupRPCServiceAsync {
      * @param termID   term ID
      * @param async    callback
      */
-    void getTermInfo(Ontology ontology, String termID, AsyncCallback<TermInfo> async);
+    void getTermInfo(OntologyDTO ontology, String termID, AsyncCallback<TermInfo> async);
 
     // validation methods
 
@@ -51,7 +45,7 @@ public interface LookupRPCServiceAsync {
      * @param goOntology ontology name
      * @param async      callback
      */
-    void getOntologySuggestions(SuggestOracle.Request request, boolean wildCard, Ontology goOntology, AsyncCallback<SuggestOracle.Response> async);
+    void getOntologySuggestions(SuggestOracle.Request request, boolean wildCard, OntologyDTO goOntology, AsyncCallback<SuggestOracle.Response> async);
 
     /**
      * Retrieve the term info for a given ontology and term name.
@@ -60,7 +54,7 @@ public interface LookupRPCServiceAsync {
      * @param termName         term Name
      * @param termInfoCallback callback
      */
-    void getTermInfoByName(Ontology ontology, String termName, AsyncCallback<TermInfo> termInfoCallback);
+    void getTermInfoByName(OntologyDTO ontology, String termName, AsyncCallback<TermInfo> termInfoCallback);
 
     void getRecentPublications(String key,AsyncCallback<List<PublicationDTO>> asyncCallback);
 

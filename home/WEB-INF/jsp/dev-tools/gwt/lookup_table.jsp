@@ -15,7 +15,8 @@
         inputName: "searchTerm",
         showError: true,
         buttonText: "search",
-        type: "ANATOMY_ONTOLOGY",
+        ontologyName: "zebrafish_anatomy",
+        type: "GDAG_TERM_LOOKUP",
         useTermTable: true,
         wildcard: false
     };

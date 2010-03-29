@@ -14,14 +14,6 @@ public interface CurationExperimentRPCAsync {
 
     void getExperimentsByFilter(ExperimentDTO experimentFilter, AsyncCallback<List<ExperimentDTO>> async);
 
-    /**
-     * Retrieve a list of all fish that are used in the experiment section.
-     *
-     * @param publicationID Publication
-     * @param async         callback
-     */
-    void getPossibleFilterValues(String publicationID, AsyncCallback<FilterValuesDTO> async);
-
     void getAssays(AsyncCallback<List<String>> async);
 
     void getEnvironments(String publicationID, AsyncCallback<List<EnvironmentDTO>> async);
@@ -141,13 +133,9 @@ public interface CurationExperimentRPCAsync {
 
     void setExpressionVisibilitySession(String publicationID, boolean b, AsyncCallback callback);
 
-    void setFilterType(String publicationID, String value, String type, AsyncCallback callback);
-
     void getFigureFilter(String publicationID, AsyncCallback<FigureDTO> callback);
 
     void getGeneFilter(String publicationID, AsyncCallback<MarkerDTO> callback);
-
-    void getFilterValues(String publicationID, AsyncCallback<FilterValuesDTO> callback);
 
     void createPatoRecord(ExpressionFigureStageDTO efs, AsyncCallback<Void> callback);
 
@@ -161,14 +149,11 @@ public interface CurationExperimentRPCAsync {
 
     void getStructures(String publicationID, AsyncCallback retrieveStructuresCallback);
 
-    void deleteStructure(PileStructureDTO structure, AsyncCallback<PileStructureDTO> callback);
-
     void updateStructuresForExpression(UpdateExpressionDTO updateEntity, AsyncCallback<List<ExpressionFigureStageDTO>> callback);
 
-    void getTermsWithStageOverlap(PileStructureDTO selectedPileStructure, StageRangeIntersection intersection, AsyncCallback<List<RelatedPileStructureDTO>> callback);
-
-    void createPileStructure(ExpressedTermDTO expressedTerm, String publicationID, AsyncCallback<PileStructureDTO> callback);
+    void getTermsWithStageOverlap(ExpressionPileStructureDTO selectedPileStructure, StageRangeIntersection intersection, AsyncCallback<List<RelatedPileStructureDTO>> callback);
 
     void saveSessionVisibility(SessionVariable sessionVariable, AsyncCallback<Void> callback);
+
 }
 

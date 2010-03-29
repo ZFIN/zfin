@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyPhenotype;
-import org.zfin.ontology.GoPhenotype;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.GoTerm;
 
 import java.util.HashSet;
@@ -27,6 +27,9 @@ public class PhenotypeServiceTest {
     private static String GOZdbID = "ZDB-GO-050915-158";
     private String muscleCell = "muscle cell";
     private static final String CILIUM = "cilium";
+    private static final String qualityName = "white";
+    private static final String qualityID = "ZDB-TERM-070117-324";
+
 
     @Before
     public void setUp() {
@@ -63,13 +66,12 @@ public class PhenotypeServiceTest {
     public void singleAOPhenotype() {
         GenotypeExperiment genox = new GenotypeExperiment();
         AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setPatoSuperTermzdbID(aoTermZdbID);
-        pheno.setAnatomyTerm(anatomyTerm);
-        Term term = new Term();
+        pheno.setAnatomySuperTerm(anatomyTerm);
+        GenericTerm term = new GenericTerm();
         String brightOrange = "bright orange";
-        term.setName(brightOrange);
+        term.setTermName(brightOrange);
         pheno.setTerm(term);
-        Set<Phenotype> phenotypes = new HashSet<Phenotype>();
+        Set<Phenotype> phenotypes = new HashSet<Phenotype>(1);
         phenotypes.add(pheno);
         genox.setPhenotypes(phenotypes);
 
@@ -91,30 +93,27 @@ public class PhenotypeServiceTest {
     public void ThreeAOPhenotype() {
         GenotypeExperiment genox = new GenotypeExperiment();
         AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setPatoSuperTermzdbID(aoTermZdbID);
-        pheno.setAnatomyTerm(anatomyTerm);
-        Term term = new Term();
+        pheno.setAnatomySuperTerm(anatomyTerm);
+        GenericTerm term = new GenericTerm();
         String brightOrange = "bright orange";
-        term.setName(brightOrange);
+        term.setTermName(brightOrange);
         pheno.setTerm(term);
 
         AnatomyPhenotype phenoTwo = new AnatomyPhenotype();
-        phenoTwo.setPatoSuperTermzdbID(aoTermZdbID);
-        phenoTwo.setAnatomyTerm(anatomyTerm);
-        Term termTwo = new Term();
+        phenoTwo.setAnatomySuperTerm(anatomyTerm);
+        GenericTerm termTwo = new GenericTerm();
         String pink = "pink";
-        termTwo.setName(pink);
+        termTwo.setTermName(pink);
         phenoTwo.setTerm(termTwo);
 
         AnatomyPhenotype phenoThree = new AnatomyPhenotype();
-        phenoThree.setPatoSuperTermzdbID(aoTermZdbID);
-        phenoThree.setAnatomyTerm(anatomyTerm);
-        Term termThree = new Term();
+        phenoThree.setAnatomySuperTerm(anatomyTerm);
+        GenericTerm termThree = new GenericTerm();
         String angry = "angry";
-        termThree.setName(angry);
+        termThree.setTermName(angry);
         phenoThree.setTerm(termThree);
 
-        Set<Phenotype> phenotypes = new HashSet<Phenotype>();
+        Set<Phenotype> phenotypes = new HashSet<Phenotype>(3);
         phenotypes.add(pheno);
         phenotypes.add(phenoTwo);
         phenotypes.add(phenoThree);
@@ -204,35 +203,32 @@ public class PhenotypeServiceTest {
 
     private Phenotype getAOPhenotype(String phenotypeName) {
         AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setPatoSuperTermzdbID(aoTermZdbID);
-        pheno.setAnatomyTerm(anatomyTerm);
-        Term term = new Term();
-        term.setName(phenotypeName);
+        pheno.setAnatomySuperTerm(anatomyTerm);
+        GenericTerm term = new GenericTerm();
+        term.setTermName(phenotypeName);
         pheno.setTerm(term);
         return pheno;
     }
 
     private Phenotype getCellAOPhenotype(String cellPhenotypeName) {
         AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setPatoSuperTermzdbID(aoTermZdbID);
-        pheno.setPatoSubTermzdbID(cellAOZdbID);
-        pheno.setAnatomyTerm(cellAnatomyTerm);
-        Term term = new Term();
-        term.setName(cellPhenotypeName);
+        pheno.setAnatomySubTerm(anatomyTerm);
+        pheno.setAnatomySuperTerm(cellAnatomyTerm);
+        GenericTerm term = new GenericTerm();
+        term.setTermName(cellPhenotypeName);
         pheno.setTerm(term);
         return pheno;
     }
 
     private Phenotype getGOPhenotype(String goPhenotypeName) {
-        GoPhenotype pheno = new GoPhenotype();
-        pheno.setPatoSuperTermzdbID(aoTermZdbID);
-        pheno.setPatoSubTermzdbID(cellAOZdbID);
+        ComposedPhenotype pheno = new ComposedPhenotype();
         GoTerm goterm = new GoTerm();
         goterm.setName(CILIUM);
-        pheno.setGoTerm(goterm);
-        Term term = new Term();
-        term.setName(goPhenotypeName);
+        pheno.setGoSubTerm(goterm);
+        GenericTerm term = new GenericTerm();
+        term.setTermName(goPhenotypeName);
         pheno.setTerm(term);
+        pheno.setAnatomySuperTerm(anatomyTerm);
         return pheno;
     }
 }

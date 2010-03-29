@@ -37,7 +37,7 @@ public class AllMorpholinoExperimentController extends AbstractCommandController
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
         AnatomyItem anatomyItem = form.getAnatomyItem();
         List<GenotypeExperiment> morphResult =
-                mutantRepository.getGenotypeExperimentMorhpolinosByAnatomy(anatomyItem, form.isWildtype());
+                mutantRepository.getGenotypeExperimentMorpholinos(anatomyItem, form.isWildtype());
         form.setWildtypeMorpholinoCount(morphResult.size());
         List<MorpholinoStatistics> morpholinoStats = AnatomyAjaxController.createMorpholinoStats(morphResult, anatomyItem);
         Collections.sort(morpholinoStats, new Comparator<MorpholinoStatistics>() {

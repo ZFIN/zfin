@@ -146,10 +146,21 @@ unload to 'new_terms.unl'
 			   from term
 			   where term.term_ont_id = tmp_term.term_id);
 
+
+select * from tmp_term_onto_with_dups
+ where term_id = 'GO:0000758' ;
+
+select * from tmp_term_onto_no_dups
+ where term_id = 'GO:0000758' ;
+
+select * from term
+ where term_ont_id = 'GO:0000758' ;
+
+
 unload to 'updated_terms.unl'
-  select n.term_name, g.term_name, g.term_id 
-    from tmp_term_onto_no_dups n, tmp_term g 
-    where n.term_id = g.term_id 
+  select n.term_name, g.term_name, g.term_ont_id 
+    from tmp_term_onto_no_dups n, term g 
+    where n.term_id = g.term_ont_id 
     and n.term_name not like g.term_name;
 
 !echo "update the term table with new names where the term id is the same term id in the obo file" ;
@@ -159,14 +170,13 @@ update statistics high for table tmp_term;
 update term
   set term_name = (select a.term_name 
 			from tmp_term_onto_no_dups a
-			where term_ont_id = term_id
-			and a.term_name != term_name
-			and a.term_onto = term_ontology)
+			where term_ont_id = term_id)
   where exists (select 'x'
 			from tmp_term_onto_no_dups a
-			where term_ont_id = term_id
-			and a.term_name != term_name
-			and a.term_onto = term_ontology);
+			where term_ont_id = term_id)
+  and term_is_obsolete = 'f'
+ and term_is_Secondary = 'f';
+
 
 --select count(*) from term 
 -- where exists (select a.term_definition 
@@ -182,7 +192,9 @@ update term
 			)
   where exists (select 'x'
 			from tmp_term_onto_no_dups a
-			where term_ont_id = term_id);
+			where term_ont_id = term_id)
+  and term_is_obsolete = 'f'
+ and term_is_secondary = 'f';
 
 
 !echo "insert the new term_ids into zdb_active_data" ;

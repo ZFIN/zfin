@@ -3,7 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Window;
-import org.zfin.gwt.root.dto.Ontology;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.PostComposedPart;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class PatoCurationEntryPoint implements EntryPoint {
     public static final String CURATION_PROPERTIES = "curationProperties";
     public static final String DEBUG = "debug";
 
-    private FxFilterModule filterModule;
+    private CurationFilterModule filterModule;
     private FxExperimentModule experimentModule;
     private FxExpressionModule expressionModule;
     private FxStructureModule structureModule;
@@ -39,19 +39,19 @@ public class PatoCurationEntryPoint implements EntryPoint {
 */
 
 
-        Map<PostComposedPart, List<Ontology>> termEntryMap = new TreeMap<PostComposedPart, List<Ontology>>();
-        List<Ontology> superterm = new ArrayList<Ontology>();
-        superterm.add(Ontology.ANATOMY);
-        superterm.add(Ontology.GO);
+        Map<PostComposedPart, List<OntologyDTO>> termEntryMap = new TreeMap<PostComposedPart, List<OntologyDTO>>();
+        List<OntologyDTO> superterm = new ArrayList<OntologyDTO>();
+        superterm.add(OntologyDTO.ANATOMY);
+        superterm.add(OntologyDTO.GO);
         termEntryMap.put(PostComposedPart.SUPERTERM, superterm);
 
-        List<Ontology> subterm = new ArrayList<Ontology>();
-        subterm.add(Ontology.ANATOMY);
-        subterm.add(Ontology.GO);
+        List<OntologyDTO> subterm = new ArrayList<OntologyDTO>();
+        subterm.add(OntologyDTO.ANATOMY);
+        subterm.add(OntologyDTO.GO);
         termEntryMap.put(PostComposedPart.SUBTERM, subterm);
 
-        List<Ontology> quality = new ArrayList<Ontology>();
-        quality.add(Ontology.QUALITY);
+        List<OntologyDTO> quality = new ArrayList<OntologyDTO>();
+        quality.add(OntologyDTO.QUALITY);
         termEntryMap.put(PostComposedPart.QUALITY, quality);
 
         constructioneZoneModule = new PileConstructionZoneModule(publicationID, termEntryMap);
@@ -77,7 +77,7 @@ public class PatoCurationEntryPoint implements EntryPoint {
         return structureModule;
     }
 
-    public FxFilterModule getFilterModule() {
+    public CurationFilterModule getFilterModule() {
         return filterModule;
     }
 

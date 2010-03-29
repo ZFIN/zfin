@@ -7,15 +7,19 @@ import org.zfin.mutant.Phenotype;
  */
 public class GoPhenotype extends Phenotype {
 
-    private GoTerm goTerm;
+    private GoTerm goSubTerm;
 
 
-    public GoTerm getGoTerm() {
-        return goTerm;
+    public GoTerm getGoSubTerm() {
+        return goSubTerm;
     }
 
-    public void setGoTerm(GoTerm goTerm) {
-        this.goTerm = goTerm;
+    public void setGoSubTerm(GoTerm goSubTerm) {
+        this.goSubTerm = goSubTerm;
     }
 
+    @Override
+    public Term getSubTerm() {
+        return goSubTerm;
+    }
 }

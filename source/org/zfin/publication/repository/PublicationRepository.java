@@ -400,6 +400,14 @@ public interface PublicationRepository extends PaginationParameter {
     List<Genotype> getFishUsedInExperiment(String publicationID);
 
     /**
+     * Retrieve list of Genotypes being used in a publication
+     *
+     * @param publicationID publication ID
+     * @return list of genotype
+     */
+    List<Genotype> getGenotypesInPublication(String publicationID);
+
+    /**
      * Retrieve all experiments that pertain to a given publication.
      * It adds the Standard and Generic-control
      *
@@ -409,12 +417,12 @@ public interface PublicationRepository extends PaginationParameter {
     List<Experiment> getExperimentsByPublication(String publicationID);
 
     /**
-     * Retrieve a genotype for a given nickname.
+     * Retrieve a genotype for a given handle.
      *
      * @param nickname string
      * @return genotype
      */
-    Genotype getGenotypeByNickname(String nickname);
+    Genotype getGenotypeByHandle(String nickname);
 
     /**
      * Retrieve all Genotypes attributed to a given publication.

@@ -170,6 +170,16 @@
         <load-on-startup>2</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>ZFIN Ontology Manager</servlet-name>
+        <servlet-class>org.zfin.framework.OntologyManagerServlet</servlet-class>
+<!--
+        <description>Load ontologies in memory (used to be Phenote) from a serialized file or the database..</description>
+-->
+        <!-- Is being handled after the main servlet initialization and the Session handling servlet. -->
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
 
     <servlet>
         <servlet-name>AnatomyLookupService</servlet-name>
@@ -183,12 +193,17 @@
 
     <servlet>
         <servlet-name>SessionSaveService</servlet-name>
-        <servlet-class>org.zfin.gwt.curation.server.SessionSaveServiceImpl</servlet-class>
+        <servlet-class>org.zfin.gwt.root.server.SessionSaveServiceImpl</servlet-class>
     </servlet>
 
     <servlet>
         <servlet-name>CurationService</servlet-name>
         <servlet-class>org.zfin.gwt.curation.server.CurationExperimentRPCImpl</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CurationFilterService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.CurationFilterRPCImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -221,6 +236,16 @@
         <servlet-class>org.zfin.gwt.marker.server.MarkerRPCServiceImpl</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>CurationStructureService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.StructureRPCImpl</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CurationPhenotypeService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.CurationPhenotypeRPCImpl</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>MarkerService</servlet-name>
         <url-pattern>/ajax/markerservice</url-pattern>
@@ -249,6 +274,21 @@
     <servlet-mapping>
         <servlet-name>CurationService</servlet-name>
         <url-pattern>/ajax/curation</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CurationStructureService</servlet-name>
+        <url-pattern>/ajax/curation-structures</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CurationPhenotypeService</servlet-name>
+        <url-pattern>/ajax/curation-phenotype</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CurationFilterService</servlet-name>
+        <url-pattern>/ajax/curation-filter</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

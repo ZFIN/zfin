@@ -8,6 +8,7 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.PhenotypeStructure;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -221,4 +222,11 @@ public interface ExpressionRepository {
      * @return boolean
      */
     boolean pileStructureExists(ExpressedTermDTO expressedTerm, String publicationID);
+
+    /**
+     * Retrieve a genotype experiment for a given genotype ID.
+     * @param zdbID genotype id
+     * @return GenotypeExperiment
+     */
+    GenotypeExperiment getGenotypeExperimentByGenotypeID(String zdbID);
 }

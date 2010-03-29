@@ -103,7 +103,7 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/view_global_session_info.jsp"/>
     </definition>
 
-    <definition name="serlvet-context-info" extends="dev_layout">
+    <definition name="servlet-context-info" extends="dev_layout">
         <put name="staticTitle" value="Servlet Context Info"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/servlet_context_info.jsp"/>
     </definition>
@@ -141,6 +141,11 @@
     <definition name="fx-curation" extends="dev_layout">
         <put name="staticTitle" value="GWT FX Curation"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/fx_curation.jsp"/>
+    </definition>
+
+    <definition name="phenotype-curation" extends="dev_layout">
+        <put name="staticTitle" value="GWT Phenotype Curation"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/phenotype_curation.jsp"/>
     </definition>
 
     <definition name="transcript-edit" extends="dev_layout">
@@ -236,6 +241,11 @@
     <definition name="create-error.page" extends="dev_layout">
         <put name="staticTitle" value="Create Error Page"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/create-error.jsp"/>
+    </definition>
+
+    <definition name="ontology-manager" extends="dev_layout">
+        <put name="staticTitle" value="Ontology Manager"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/ontology_manager.jsp"/>
     </definition>
 
     <definition name="no-error.page" path="/WEB-INF/jsp/dev-tools/no-error-page.jsp"/>

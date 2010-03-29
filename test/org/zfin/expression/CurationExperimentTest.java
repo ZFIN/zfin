@@ -62,7 +62,7 @@ public class CurationExperimentTest {
         dto.setUniqueID(uniqueID);
         assertTrue(dto.getExperiment() != null);
         assertEquals("ZDB-EXP-091009-1", dto.getExperiment().getExperimentZdbID());
-        assertEquals("ZDB-FIG-071009-1", dto.getFigureID());
+        assertEquals("ZDB-FIG-071009-1", dto.getFigure().getZdbID());
         assertEquals("ZDB-STAGE-091009-25", dto.getStart().getZdbID());
         assertEquals("ZDB-STAGE-091009-443", dto.getEnd().getZdbID());
     }

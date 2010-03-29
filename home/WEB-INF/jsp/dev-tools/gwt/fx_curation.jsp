@@ -1,13 +1,26 @@
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <script type="text/javascript" language="javascript"
         src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
-<h1>Curation Application</h1>
+<h1> Expression (FX) Curation Application</h1>
 
 <div id="show-hide-all-sections"></div>
 
 <div class="error"> Please use only for developmental purposes as this will make changes to the database!!!
 </div>
 <p/>
+<div title="Hello">
+    <jsp:useBean id="publication" class="org.zfin.publication.Publication" scope="request"/>
+    Publication: <zfin:link entity="${publication}"/> &nbsp; ${publication.zdbID}
+    <br>
+    Title: ${publication.title}<br>
+</div>
+<form method="GET">
+    Publication ID: <label>
+    <input name="publicationID" value=""/>
+</label>
+    &nbsp;<input type="submit" value="Submit"/>
+</form>
 <span id="show-hide-experiments"></span>
 
 <div id="display-experiment"></div>
@@ -58,7 +71,8 @@
 
 <script type="text/javascript">
     var curationProperties = {
-        zdbID : "ZDB-PUB-990507-16",
+        zdbID : "${publication.zdbID}",
+        moduleType: "FX_CURATION",
         debug: "false"
     } ;
     var g = "ZDB-PUB-060105-3,ZDB-PUB-090616-53,ZDB-PUB-990507-16"

@@ -7,27 +7,29 @@ import java.util.Collections;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Unit test class
  */
+@SuppressWarnings({"FeatureEnvy"})
 public class ExperimentDTOTest {
 
     /**
      * null gene and alcam
      */
     @Test
-    public void  sortExperimentDTOsGenes(){
+    public void sortExperimentDTOsGenes() {
         ExperimentDTO one = new ExperimentDTO();
-        one.setGeneName("alcam");
+        one.setGene(getMarkerDTO("alcam"));
         ExperimentDTO two = new ExperimentDTO();
         List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>(2);
         experiments.add(one);
         experiments.add(two);
 
         Collections.sort(experiments);
-        assertEquals(null, experiments.get(0).getGeneName());
-        assertEquals("alcam", experiments.get(1).getGeneName());
+        assertNull(experiments.get(0).getGene());
+        assertEquals("alcam", experiments.get(1).getGene().getAbbreviation());
 
     }
 
@@ -35,21 +37,21 @@ public class ExperimentDTOTest {
      * same gene, different fish
      */
     @Test
-    public void  sortExperimentDTOsFish(){
+    public void sortExperimentDTOsFish() {
         ExperimentDTO one = new ExperimentDTO();
-        one.setGeneName("alcam");
+        one.setGene(getMarkerDTO("alcam"));
         one.setFishName("AB");
         ExperimentDTO two = new ExperimentDTO();
-        two.setGeneName(null);
+        two.setGene(null);
         two.setFishName("WT");
         List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>(2);
         experiments.add(one);
         experiments.add(two);
         Collections.sort(experiments);
-        assertEquals(null, experiments.get(0).getGeneName());
-        assertEquals("alcam", experiments.get(1).getGeneName());
+        assertNull(experiments.get(0).getGene());
+        assertEquals("alcam", experiments.get(1).getGene().getAbbreviation());
 
-        two.setGeneName("alcam");
+        two.setGene(getMarkerDTO("alcam"));
         Collections.sort(experiments);
         assertEquals("AB", experiments.get(0).getFishName());
         assertEquals("WT", experiments.get(1).getFishName());
@@ -59,21 +61,25 @@ public class ExperimentDTOTest {
      * same gene and fish different environment
      */
     @Test
-    public void  sortExperimentDTOsEnv(){
+    public void sortExperimentDTOsEnv() {
         ExperimentDTO one = new ExperimentDTO();
-        one.setGeneName("alcam");
+        one.setGene(getMarkerDTO("alcam"));
         one.setFishName("AB");
-        one.setEnvironment("Standard");
+        EnvironmentDTO envDto = new EnvironmentDTO();
+        envDto.setName(EnvironmentDTO.STANDARD);
+        one.setEnvironment(envDto);
         ExperimentDTO two = new ExperimentDTO();
-        two.setGeneName(null);
+        two.setGene(null);
         two.setFishName("AB");
-        two.setEnvironment("Generic-control");
+        EnvironmentDTO envDtoTwo = new EnvironmentDTO();
+        envDtoTwo.setName(EnvironmentDTO.GENERIC_CONTROL);
+        two.setEnvironment(envDtoTwo);
         List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>(2);
         experiments.add(one);
         experiments.add(two);
         Collections.sort(experiments);
-        assertEquals("Generic-control", experiments.get(0).getEnvironment());
-        assertEquals("Standard", experiments.get(1).getEnvironment());
+        assertEquals(EnvironmentDTO.GENERIC_CONTROL, experiments.get(0).getEnvironment().getName());
+        assertEquals(EnvironmentDTO.STANDARD, experiments.get(1).getEnvironment().getName());
 
     }
 
@@ -81,16 +87,20 @@ public class ExperimentDTOTest {
      * same gene and fish, environment different assay
      */
     @Test
-    public void  sortExperimentDTOsAssay(){
+    public void sortExperimentDTOsAssay() {
         ExperimentDTO one = new ExperimentDTO();
-        one.setGeneName("alcam");
+        one.setGene(getMarkerDTO("alcam"));
         one.setFishName("AB");
-        one.setEnvironment("Standard");
+        EnvironmentDTO envDto = new EnvironmentDTO();
+        envDto.setName(EnvironmentDTO.STANDARD);
+        one.setEnvironment(envDto);
         one.setAssay("Immunohisto");
         ExperimentDTO two = new ExperimentDTO();
-        two.setGeneName("alcam");
+        two.setGene(getMarkerDTO("alcam"));
         two.setFishName("AB");
-        two.setEnvironment("Standard");
+        EnvironmentDTO envDtoTwo = new EnvironmentDTO();
+        envDtoTwo.setName(EnvironmentDTO.STANDARD);
+        two.setEnvironment(envDtoTwo);
         two.setAssay("other");
         List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>(2);
         experiments.add(one);
@@ -100,4 +110,12 @@ public class ExperimentDTOTest {
         assertEquals("other", experiments.get(1).getAssay());
 
     }
+
+    private MarkerDTO getMarkerDTO(String name) {
+
+        MarkerDTO markerDTO = new MarkerDTO();
+        markerDTO.setAbbreviation(name);
+        return markerDTO;
+    }
+
 }

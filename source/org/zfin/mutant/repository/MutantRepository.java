@@ -1,12 +1,12 @@
 package org.zfin.mutant.repository;
 
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.framework.CachedRepository;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.gwt.root.dto.Ontology;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.GoTerm;
 import org.zfin.publication.Publication;
 
@@ -20,7 +20,7 @@ import java.util.Set;
  * Methods that allow to retrieve, save and update objects that pertain
  * to the Anatomy domain.
  */
-public interface MutantRepository extends CachedRepository {
+public interface MutantRepository {
 
     /**
      * This returns a list genotypes (mutants) that are annotated
@@ -56,7 +56,7 @@ public interface MutantRepository extends CachedRepository {
      * @param numberOfRecords number
      * @return list of statistics
      */
-    List<Morpholino> getPhenotypeMorhpolinosByAnatomy(AnatomyItem item, int numberOfRecords);
+    List<Morpholino> getPhenotypeMorpholinos(AnatomyItem item, int numberOfRecords);
 
     /**
      * Retrieve number of morpholinos that show a gene expression in a given structure.
@@ -106,7 +106,7 @@ public interface MutantRepository extends CachedRepository {
      * @param numberOfRecords defines the first n records to retrieve
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, Boolean isWildtype, int numberOfRecords);
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, Boolean isWildtype, int numberOfRecords);
 
     /**
      * Retrieve all genotype objects that are assoicated to a morpholino.
@@ -117,7 +117,7 @@ public interface MutantRepository extends CachedRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    List<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, boolean isWildtype);
+    List<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, boolean isWildtype);
 
     /**
      * Retrieve genotype objects that are assoicated to a morpholino within the range specified
@@ -130,7 +130,7 @@ public interface MutantRepository extends CachedRepository {
      * @param bean       PaginationBean
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorhpolinosByAnatomy(AnatomyItem item, Boolean isWildtype, PaginationBean bean);
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, Boolean isWildtype, PaginationBean bean);
 
     /**
      * Retrieve the list of morpholinos for a given genotype.
@@ -154,7 +154,7 @@ public interface MutantRepository extends CachedRepository {
      * @param ontology subset of GO ontology
      * @return A list of GoTerms that contain the parameter handed in.
      */
-    List<GoTerm> getGoTermsByNameAndSubtree(String name, Ontology ontology);
+    List<GoTerm> getGoTermsByNameAndSubtree(String name, OntologyDTO ontology);
 
     /**
      * @param name go term name
@@ -166,7 +166,7 @@ public interface MutantRepository extends CachedRepository {
      * @param name name of quality term
      * @return A list of GoTerms that contain the parameter handed in.
      */
-    List<Term> getQualityTermsByName(String name);
+    List<GenericTerm> getQualityTermsByName(String name);
 
 
     /**
@@ -194,23 +194,44 @@ public interface MutantRepository extends CachedRepository {
     boolean isPatoExists(String genotypeExperimentID, String figureID, String startID, String endID);
 
     /**
-     * Create a default phenotype record.
-     * Default:
-     * AO term: unspecified
-     * Quality term: quality
-     * Tag: normal
-     *
-     * @param pheno AnatomyPhenotype
-     */
-    void createDefaultPhenotype(Phenotype pheno);
-
-    /**
      * Lookup a term by name. Term must not be obsolete.
      *
      * @param termName term name
      * @return Term object
      */
-    Term getQualityTermByName(String termName);
+    GenericTerm getQualityTermByName(String termName);
+
+    /**
+     * Retrieve the default phenotype for a given figure and genotype experiment.
+     * If it does not exist, it return null.
+     *  
+     * @param genotypeExperiment genotype Experiment
+     * @param figureID figure id
+     * @return phenotype
+     */
+    Phenotype getDefaultPhenotype(GenotypeExperiment genotypeExperiment, String figureID);
+
+    /**
+     * Retrieve a genotype experiment by PK.
+     * @param genotypeExperimentID pk
+     * @return genotype experiment
+     */
+    GenotypeExperiment getGenotypeExperiment(String genotypeExperimentID);
+
+    /**
+     * Remove a mutant figure stage record:
+     * 1) All phenotypes and their association to figures.
+     * 2) the genotype experiment if unused any more
+     * @param mutant Mutants
+     */
+    void deleteMutantFigureStage(MutantFigureStage mutant);
+
+    /**
+     * Retrieve a Goterm by obo id from the GO term table.
+     * @param oboID obo id
+     * @return GoTerm
+     */
+    GoTerm getGoTermByOboID(String oboID);
 
     List<Feature> getFeaturesForStandardAttribution(Publication publication);
 

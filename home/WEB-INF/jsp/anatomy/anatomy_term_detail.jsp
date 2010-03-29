@@ -4,6 +4,9 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
 <%@ page import="org.zfin.framework.presentation.SectionVisibility" %>
+<%@ page import="org.zfin.ontology.Ontology" %>
+<%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
+
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <zfin2:dataManager zdbID="${formBean.anatomyItem.zdbID}"
@@ -32,7 +35,8 @@
                 Search:
             </td>
             <td rowspan="3" valign="top" align="right" width="5%">
-                <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_lookup.jsp" flush="false"/>
+                <zfin2:lookup ontologyName="<%= Ontology.ANATOMY.getOntologyName()%>"
+                              action="<%= LookupComposite.ACTION_ANATOMY_SEARCH %>"/>
             </td>
         </tr>
         <c:if test="${formBean.anatomyItem.synonyms != null  }">

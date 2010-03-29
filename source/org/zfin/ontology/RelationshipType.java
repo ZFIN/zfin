@@ -1,20 +1,47 @@
 package org.zfin.ontology;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public enum RelationshipType {
-    DEVELOPS_FROM("develops_from", "develops from"),
-    DEVELOPS_INTO("develops_into", "develops into"),
-    IS_A("is_a", "is a type of"),
-    HAS_SUBTYPE("has_subtype", "has subtype"),
-    PART_OF("part_of", "is part of"),
-    HAS_PARTS("has_parts", "has parts");
+public class RelationshipType {
+
+    private static final RelationshipType DEVELOPS_FROM = new RelationshipType("develops_from", "develops from");
+    private static final RelationshipType DEVELOPS_INTO = new RelationshipType("develops_into", "develops into");
+    private static final RelationshipType IS_A = new RelationshipType("is_a", "is a type of");
+    private static final RelationshipType HAS_SUBTYPE = new RelationshipType("has_subtype", "has subtype");
+    private static final RelationshipType PART_OF = new RelationshipType("part_of", "is part of");
+    private static final RelationshipType HAS_PARTS = new RelationshipType("has_parts", "has parts");
+
+    private static List<RelationshipType> predefinedTypes = new ArrayList<RelationshipType>(8);
+
+    static {
+        predefinedTypes.add(DEVELOPS_FROM);
+        predefinedTypes.add(DEVELOPS_INTO);
+        predefinedTypes.add(IS_A);
+        predefinedTypes.add(HAS_SUBTYPE);
+        predefinedTypes.add(PART_OF);
+        predefinedTypes.add(HAS_PARTS);
+    }
+
+    private static Map<RelationshipType,RelationshipType> inverseTypes = new HashMap<RelationshipType, RelationshipType>(8);
+    static{
+        inverseTypes.put(DEVELOPS_FROM, DEVELOPS_INTO);
+        inverseTypes.put(DEVELOPS_INTO,DEVELOPS_FROM);
+        inverseTypes.put(IS_A,HAS_SUBTYPE);
+        inverseTypes.put(HAS_SUBTYPE,IS_A);
+        inverseTypes.put(PART_OF,HAS_PARTS);
+        inverseTypes.put(HAS_PARTS,PART_OF);
+    }
 
     private String name;
     private String relType;
 
-    RelationshipType(String name, String relType) {
+    public RelationshipType(String name, String relType) {
         this.name = name;
         this.relType = relType;
     }
@@ -28,12 +55,14 @@ public enum RelationshipType {
     }
 
     public static RelationshipType getRelationshipTypeByRelName(String relName) {
-        for (RelationshipType t : values()) {
-            if (t.toString().equals(relName))
-                return t;
-        }
-        throw new RuntimeException("No relationship type of string " + relName + " found.");
+        if (relName == null)
+            return null;
 
+        for (RelationshipType type : predefinedTypes) {
+            if (type.getName().equals(relName))
+                return type;
+        }
+        return new RelationshipType(relName, relName);
     }
 
     public static RelationshipType getInverseRelationshipByName(String relName) {
@@ -42,21 +71,12 @@ public enum RelationshipType {
     }
 
     public static RelationshipType getInverseRelationship(RelationshipType type) {
-        switch (type) {
-            case DEVELOPS_FROM:
-                return DEVELOPS_INTO;
-            case DEVELOPS_INTO:
-                return DEVELOPS_FROM;
-            case IS_A:
-                return HAS_SUBTYPE;
-            case HAS_SUBTYPE:
-                return IS_A;
-            case PART_OF:
-                return HAS_PARTS;
-            case HAS_PARTS:
-                return PART_OF;
-        }
-        throw new IllegalStateException("This RelationshipType has not been mapped to an inverse type: " + type.getName());
+        if (type == null)
+            return null;
+        RelationshipType inverseRelationshipType = inverseTypes.get(type);
+        if(inverseRelationshipType != null)
+            return inverseRelationshipType;
+        return new RelationshipType("inverse "+type.getName(), "inverse "+type.getTypeName());
     }
 
     public String getTypeName() {

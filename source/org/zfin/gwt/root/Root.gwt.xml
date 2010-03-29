@@ -6,4 +6,5 @@
     <source path='util'/>
 
     <servlet path="/ajax/anatomylookup" class="org.zfin.gwt.root.server.LookupRPCServiceImpl"/>
+    <servlet path="/ajax/session-save" class='org.zfin.gwt.root.server.SessionSaveServiceImpl'/>
 </module>

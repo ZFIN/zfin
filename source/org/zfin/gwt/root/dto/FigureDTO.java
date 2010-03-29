@@ -9,6 +9,7 @@ public class FigureDTO implements IsSerializable {
 
     private String zdbID;
     private String label;
+    private String orderingLabel;
 
     public String getZdbID() {
         return zdbID;
@@ -24,5 +25,13 @@ public class FigureDTO implements IsSerializable {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getOrderingLabel() {
+        return orderingLabel;
+    }
+
+    public void setOrderingLabel(String orderingLabel) {
+        this.orderingLabel = orderingLabel;
     }
 }

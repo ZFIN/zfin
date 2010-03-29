@@ -11,6 +11,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.PhenotypeService;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.*;
@@ -67,14 +68,16 @@ public class MorpholinoStatistics extends EntityStatistics {
         return PhenotypeService.getPhenotypesGroupedByOntology(genoExperiment, anatomyItem);
     }
 
+    @Override
     public int getNumberOfFigures() {
         if (figures == null) {
             for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
-                if (StringUtils.equals(phenotype.getPatoSubTermzdbID(), anatomyItem.getZdbID()) ||
-                        StringUtils.equals(phenotype.getPatoSuperTermzdbID(), anatomyItem.getZdbID()) &&
+                Term subTerm = phenotype.getSubTerm();
+                if ((subTerm != null && StringUtils.equals(subTerm.getID(), anatomyItem.getZdbID())) ||
+                        StringUtils.equals(phenotype.getSuperterm().getID(), anatomyItem.getZdbID()) &&
                                 !phenotype.getTag().equals(Phenotype.Tag.NORMAL.toString())) {
                     if (figures == null)
-                        figures = new HashSet<Figure>();
+                        figures = new HashSet<Figure>(5);
                     figures.addAll(phenotype.getFigures());
                 }
             }
@@ -84,17 +87,20 @@ public class MorpholinoStatistics extends EntityStatistics {
         return figures.size();
     }
 
+    @Override
     public Figure getFigure() {
         if (figures == null || figures.size() != 1)
             throw new RuntimeException("Can call this method only when there is exactly one figure");
         return figures.iterator().next();
     }
 
+    @Override
     protected PaginationResult<Publication> getPublicationPaginationResult() {
-        Set<Publication> pubs = new HashSet<Publication>();
+        Set<Publication> pubs = new HashSet<Publication>(5);
         for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
-            if (StringUtils.equals(phenotype.getPatoSubTermzdbID(), anatomyItem.getZdbID()) ||
-                    StringUtils.equals(phenotype.getPatoSuperTermzdbID(), anatomyItem.getZdbID()) &&
+            Term subterm = phenotype.getSubTerm();
+            if ( (subterm != null &&StringUtils.equals(subterm.getID(), anatomyItem.getZdbID())) ||
+                    StringUtils.equals(phenotype.getSuperterm().getID(), anatomyItem.getZdbID()) &&
                             !phenotype.getTag().equals(Phenotype.Tag.NORMAL.toString())) {
                 pubs.add(phenotype.getPublication());
             }

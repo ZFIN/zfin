@@ -8,13 +8,16 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.EnvironmentDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressionAssayDTO;
+import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.ui.ErrorHandler;
+import org.zfin.gwt.root.ui.SimpleErrorElement;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Experiment section of the FX curation page.
@@ -27,7 +30,7 @@ import java.util.Set;
  * A) The experiment section can be hidden by clicking on 'hide' which then hides the display
  * part, i.e. the construction zone will still be displayed and the link will change to 'show'.
  * If a new experiment is added a note is displayed about the success which otherwise would be invisible.
- * B) The state of the visiblity is saved in the database and remembered for this publication for future.
+ * B) The state of the visibility is saved in the database and remembered for this publication for future.
  * <p/>
  * Ad 2)
  * A) Displayed are all experiments (unless the experiment filter, aka banana bar when it was yellow instead of
@@ -51,7 +54,7 @@ import java.util.Set;
  * Ad 3)
  * A) The Add-button is always enabled. Clicking it will try to create a new experiment. If the experiment is not
  * unique (compound PK: gene,fish,environment,assay, antibody and GenBank) an error message is displayed below
- * the display table and the row of the experiment that it equals to changes the background color to pruple.
+ * the display table and the row of the experiment that it equals to changes the background color to purple.
  * B) Gene-Selection-Box: By default the gene selection box does not select a gene. Genes that are attributed to
  * this publication are listed.
  * I) Antibody-Selection-Box: Selecting a specific gene updates the list of antibodies if an antibody assay
@@ -68,15 +71,15 @@ import java.util.Set;
  * I) Antibody-Selection-Box: If an antibody assay is selected (currently: IHC, WB or OTHER) the
  * Antibody-Selection-Box is enabled. If a different assay is selected then this selection box is disabled.
  * F) Antibody-Selection-Box: This box is only enabled if an antibody assay is selected.
- * G) Update-Button: The update buttton is disabled by default and will only be enabled when an existing experiment
+ * G) Update-Button: The update button is disabled by default and will only be enabled when an existing experiment
  * is selected (and copied into the construction zone).
  * H) Add an experiment:
  * I)   Adding an experiment requires to either selecting a gene or an antibody or both and all other
  * attributes except the GenBank accession number which is optional.
- * II) Experiments have to be unqiue according to the combination
+ * II) Experiments have to be unique according to the combination
  * Gene/Fish/Environment/Assay/Antibody/GenBank, i.e. you cannot create two experiments with the same
  * values for these attributes. An error message is displayed below the construction zone if a new
- * experiment equals an existing one while hightlighting the existing experiment in the list purple that
+ * experiment equals an existing one while highlighting the existing experiment in the list purple that
  * that the new experiment is conflicting with.
  * III) Updating an existing experiment is validated against the uniqueness constraint of II). An error
  * message is displayed when the update matches another existing experiment. Before an experiment is
@@ -97,8 +100,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
     private HorizontalPanel panel = new HorizontalPanel();
     private Hyperlink showExperimentSection = new Hyperlink();
     private ExperimentFlexTable displayTable;
-    private Image loadingImage = new Image();
-    private Label errorMessage = new Label();
+    private ErrorHandler errorElement = new SimpleErrorElement(EXPERIMENTS_DISPLAY_ERRORS);
 
 
     // construction zone
@@ -112,8 +114,8 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
     private Button updateButton = new Button("update");
 
     private ExperimentDTO lastSelectedExperiment;
-    private Set<ExperimentDTO> selectedExperiments = new HashSet<ExperimentDTO>();
-    private List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>();
+    private Set<ExperimentDTO> selectedExperiments = new HashSet<ExperimentDTO>(5);
+    private List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>(15);
     private boolean showSelectedExperimentsOnly;
 
     // attributes for duplicate row
@@ -155,16 +157,11 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         // add click listener to update the record
         updateButton.addClickHandler(new UpdateExperimentClickListener());
         addChangeHandler();
-
-        RootPanel.get(EXPERIMENTS_DISPLAY_ERRORS).add(errorMessage);
-        RootPanel.get(IMAGE_LOADING).add(loadingImage);
-        errorMessage.setStyleName("error");
-        loadingImage.setUrl("/images/ajax-loader.gif");
     }
 
     private void initShowHideGUI() {
         RootPanel.get(SHOW_HIDE_EXPERIMENTS).add(panel);
-        Label experimentLabel = new Label("Experiment: ");
+        Widget experimentLabel = new Label("Experiment: ");
         experimentLabel.setStyleName("bold");
         panel.add(experimentLabel);
         showExperimentSection.setStyleName("small");
@@ -172,6 +169,10 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         showExperimentSection.setTargetHistoryToken(SHOW);
         showExperimentSection.addClickHandler(new ShowExperimentSectionListener());
         panel.add(showExperimentSection);
+    }
+
+    public void setExpressionSection(ExpressionSection expressionSection) {
+        this.expressionSection = expressionSection;
     }
 
     /**
@@ -183,11 +184,6 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
                 new RetrieveSectionVisibilityCallback(message));
     }
 
-    private void setInitialValues() {
-        retrieveExperiments();
-        retrieveConstructionZoneValues();
-    }
-
     private void retrieveConstructionZoneValues() {
         // gene list
         curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(null));
@@ -195,12 +191,12 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         // fish (genotype) list
         String message = "Error while reading Genotypes";
         curationExperimentRPCAsync.getGenotypes(publicationID,
-                new RetrieveGenotypeListCallback(message));
+                new RetrieveGenotypeListCallBack(fishList, message, errorElement));
 
         // environment list
         message = "Error while reading the environment";
         curationExperimentRPCAsync.getEnvironments(publicationID,
-                new RetrieveEnvironmentListCallback(message));
+                new RetrieveEnvironmentListCallBack(environmentList, message, errorElement));
 
         // assay list
         message = "Error while reading the assay list";
@@ -213,7 +209,6 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
     // Retrieve experiments from the server
 
     protected void retrieveExperiments() {
-        loadingImage.setVisible(true);
         curationExperimentRPCAsync.getExperimentsByFilter(experimentFilter, new RetrieveExperimentsCallback(experiments));
     }
 
@@ -286,8 +281,8 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         displayTable.uncheckAllRecords();
     }
 
-    public void showExperiments(boolean showSelectedExperimentsOnly) {
-        this.showSelectedExperimentsOnly = showSelectedExperimentsOnly;
+    public void showExperiments(boolean selectedExperimentsOnly) {
+        this.showSelectedExperimentsOnly = selectedExperimentsOnly;
         displayTable.createExperimentTable();
     }
 
@@ -301,7 +296,8 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         selectedExperiments.clear();
         selectedExperiments.add(experiment);
         showSelectedExperimentsOnly = false;
-        displayTable.createExperimentTable();
+        if (sectionVisible)
+            displayTable.createExperimentTable();
     }
 
     /**
@@ -310,17 +306,17 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
      * @return set of selected experiments
      */
     public Set<ExperimentDTO> getSelectedExperiment() {
-        return selectedExperiments;
+        return Collections.unmodifiableSet(selectedExperiments);
     }
 
     /**
      * Apply the provided filter elements, re-read the experiments and show the
      * new list of experiments according to the filters.
      *
-     * @param experimentFilter Experiment filter
+     * @param filter Experiment filter
      */
-    public void applyFilterElements(ExperimentDTO experimentFilter) {
-        setExperimentFilter(experimentFilter);
+    public void applyFilterElements(ExperimentDTO filter) {
+        experimentFilter = filter;
         unselectAllExperiments();
         retrieveExperiments();
     }
@@ -332,7 +328,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
      * This Click Handler is activated upon clicking the selection check box in the
      * Experiment display section. It should do two things:
      * 1) copy the values for the experiment into the construction zone
-     * 2) select the experiment in the textarea of the expression section
+     * 2) select the experiment in the text area of the expression section
      */
     private class ExperimentSelectClickHandler implements ClickHandler {
 
@@ -399,7 +395,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             int numberOfEntries = environmentList.getItemCount();
             for (int row = 0; row < numberOfEntries; row++) {
                 String environment = environmentList.getItemText(row);
-                if (environment.equals(selectedExperiment.getEnvironment())) {
+                if (environment.equals(selectedExperiment.getEnvironment().getName())) {
                     environmentList.setSelectedIndex(row);
                     break;
                 }
@@ -425,9 +421,11 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
          * Copy the value of the assay into the construction zone field
          */
         private void selectGenBank() {
-            String geneID = selectedExperiment.getGeneZdbID();
-            String genBankID = selectedExperiment.getGenbankID();
-            curationExperimentRPCAsync.readGenbankAccessions(publicationID, geneID, new GenbankSelectionListAsyncCallback(genBankID));
+            if (selectedExperiment.getGene() != null) {
+                String geneID = selectedExperiment.getGene().getZdbID();
+                String genBankID = selectedExperiment.getGenbankID();
+                curationExperimentRPCAsync.readGenbankAccessions(publicationID, geneID, new GenbankSelectionListAsyncCallback(genBankID));
+            }
         }
 
         // create gene list and select the gene of the experiment
@@ -435,7 +433,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         private void selectGene() {
             // first retrieve the full list of genes and then
             // select the gene in question.
-            curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(selectedExperiment.getGeneZdbID()));
+            curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(selectedExperiment.getGene()));
         }
 
         // create antibody list and select the antibody of the experiment
@@ -445,7 +443,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             // select the gene in question.
             // only get antibody list if assay is compatible
             if (ExpressionAssayDTO.isAntibodyAssay(selectedExperiment.getAssay()))
-                curationExperimentRPCAsync.getAntibodies(publicationID, new AntibodySelectionListAsyncCallback(selectedExperiment.getAntibodyID()));
+                curationExperimentRPCAsync.getAntibodies(publicationID, new AntibodySelectionListAsyncCallback(selectedExperiment.getAntibodyMarker().getZdbID()));
             else
                 antibodyList.setEnabled(false);
         }
@@ -468,32 +466,33 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
                 updatedExperiment.setGenbankNumber(genbankList.getItemText(index));
             }
         }
+        EnvironmentDTO env = new EnvironmentDTO();
         String environmentID = environmentList.getValue(environmentList.getSelectedIndex());
-        updatedExperiment.setEnvironmentID(environmentID);
-        String environment = environmentList.getItemText(environmentList.getSelectedIndex());
-        updatedExperiment.setEnvironment(environment);
+        String environmentName = environmentList.getItemText(environmentList.getSelectedIndex());
+        env.setZdbID(environmentID);
+        env.setName(environmentName);
+        updatedExperiment.setEnvironment(env);
         // only use the antibody if the selection box is enabled.
         if (antibodyList.isEnabled()) {
             String antibodyID = antibodyList.getValue(antibodyList.getSelectedIndex());
             String antibodyName = antibodyList.getItemText(antibodyList.getSelectedIndex());
-            if (StringUtils.isEmpty(antibodyID) || antibodyID.equals(StringUtils.NULL)) {
-                antibodyID = null;
+            if (StringUtils.isNotEmpty(antibodyID) && !antibodyID.equals(StringUtils.NULL)) {
+                MarkerDTO antibody = new MarkerDTO();
+                antibody.setZdbID(antibodyID);
+                antibody.setAbbreviation(antibodyName);
+                updatedExperiment.setAntibodyMarker(antibody);
             }
-            updatedExperiment.setAntibodyID(antibodyID);
-            updatedExperiment.setAntibody(antibodyName);
         }
         String fishID = fishList.getValue(fishList.getSelectedIndex());
         updatedExperiment.setFishID(fishID);
         String fishName = fishList.getItemText(fishList.getSelectedIndex());
         updatedExperiment.setFishName(fishName);
         String geneID = geneList.getValue(geneList.getSelectedIndex());
-        if (StringUtils.isEmpty(geneID) || geneID.equals(StringUtils.NULL))
-            geneID = null;
-        updatedExperiment.setGeneZdbID(geneID);
-        String geneName = geneList.getItemText(geneList.getSelectedIndex());
-        if (StringUtils.isEmpty(geneName) || geneName.equals(StringUtils.NULL))
-            geneName = null;
-        updatedExperiment.setGeneName(geneName);
+        if (StringUtils.isNotEmpty(geneID) && !geneID.equals(StringUtils.NULL)) {
+            MarkerDTO gene = new MarkerDTO();
+            gene.setZdbID(geneID);
+            updatedExperiment.setGene(gene);
+        }
         updatedExperiment.setPublicationID(publicationID);
         return updatedExperiment;
     }
@@ -517,39 +516,37 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             deleteExperiment(experiment);
         }
 
-    }
+        private void deleteExperiment(final ExperimentDTO experiment) {
+            curationExperimentRPCAsync.deleteExperiment(experiment.getExperimentZdbID(), new DeleteExperimentCallback(experiment));
+        }
 
-    private void deleteExperiment(final ExperimentDTO experiment) {
-        curationExperimentRPCAsync.deleteExperiment(experiment.getExperimentZdbID(), new DeleteExperimentCallback(experiment));
     }
 
     private class RetrieveExperimentsCallback extends ZfinAsyncCallback<List<ExperimentDTO>> {
 
-        List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>();
+        private List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>(10);
 
         public RetrieveExperimentsCallback(List<ExperimentDTO> experiments) {
-            super("Error while reading Experiment Filters", errorMessage);
+            super("Error while reading Experiment Filters", errorElement, IMAGE_LOADING);
             this.experiments = experiments;
         }
 
+        @Override
         public void onSuccess(List<ExperimentDTO> list) {
-
+            super.onSuccess(list);
             experiments.clear();
             for (ExperimentDTO id : list) {
-                if (id.getEnvironment().startsWith("_"))
-                    id.setEnvironment(id.getEnvironment().substring(1));
+                if (id.getEnvironment().getName().startsWith("_"))
+                    id.getEnvironment().setName(id.getEnvironment().getName().substring(1));
                 experiments.add(id);
             }
+            Collections.sort(experiments);
             //Window.alert("SIZE: " + experiments.size());
             if (sectionVisible)
                 displayTable.createExperimentTable();
             // populate expression section
-            loadingImage.setVisible(false);
         }
 
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
     }
 
     private class DeleteExperimentCallback extends ZfinAsyncCallback<Void> {
@@ -557,10 +554,11 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         private ExperimentDTO experiment;
 
         DeleteExperimentCallback(ExperimentDTO experiment) {
-            super("Error while deleting Experiment", errorMessage);
+            super("Error while deleting Experiment", errorElement);
             this.experiment = experiment;
         }
 
+        @Override
         public void onSuccess(Void exp) {
             //Window.alert("Success");
             experiments.remove(experiment);
@@ -569,17 +567,15 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             expressionSection.removeFigureAnnotations(experiment);
         }
 
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
     }
 
     private class RetrieveAntibodyList extends ZfinAsyncCallback<List<MarkerDTO>> {
 
         public RetrieveAntibodyList() {
-            super("Error retrieving Antibody list", errorMessage);
+            super("Error retrieving Antibody list", errorElement);
         }
 
+        @Override
         public void onSuccess(List<MarkerDTO> genes) {
 //                Window.alert("brought back: " + genes.size() );
             String selectedAntibodyID = antibodyList.getValue(antibodyList.getSelectedIndex());
@@ -596,9 +592,6 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             }
         }
 
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
     }
 
     /**
@@ -610,13 +603,14 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
      */
     private class GeneSelectionListAsyncCallback extends ZfinAsyncCallback<List<MarkerDTO>> {
 
-        private String selectedGeneID;
+        private MarkerDTO selectedGene;
 
-        private GeneSelectionListAsyncCallback(String selectedGeneID) {
-            super("Error retrieving gene selection list", errorMessage);
-            this.selectedGeneID = selectedGeneID;
+        private GeneSelectionListAsyncCallback(MarkerDTO selectedGene) {
+            super("Error retrieving gene selection list", errorElement);
+            this.selectedGene = selectedGene;
         }
 
+        @Override
         public void onSuccess(List<MarkerDTO> genes) {
             //Window.alert("brought back: " + experiments.size());
             geneList.clear();
@@ -624,14 +618,11 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             int rowIndex = 1;
             for (MarkerDTO gene : genes) {
                 geneList.addItem(gene.getAbbreviation(), gene.getZdbID());
-                if (selectedGeneID != null && gene.getZdbID().equals(selectedGeneID))
-                    geneList.setSelectedIndex(rowIndex);
+                if (selectedGene != null)
+                    if (selectedGene.getZdbID() != null && gene.getZdbID().equals(selectedGene.getZdbID()))
+                        geneList.setSelectedIndex(rowIndex);
                 rowIndex++;
             }
-        }
-
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
         }
     }
 
@@ -647,10 +638,11 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         private String selectedAntibodyID;
 
         private AntibodySelectionListAsyncCallback(String selectedAntibodyID) {
-            super("Error reading antibody list", errorMessage);
+            super("Error reading antibody list", errorElement);
             this.selectedAntibodyID = selectedAntibodyID;
         }
 
+        @Override
         public void onSuccess(List<MarkerDTO> antibodies) {
             //Window.alert("brought back: " + experiments.size() );
             antibodyList.clear();
@@ -675,10 +667,6 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             else
                 antibodyList.setEnabled(false);
         }
-
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
     }
 
     private class GenbankSelectionListAsyncCallback extends ZfinAsyncCallback<List<ExperimentDTO>> {
@@ -686,10 +674,11 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         private String selectedGenBankID;
 
         public GenbankSelectionListAsyncCallback(String genBankID) {
-            super("Error retrieving GenBank list", errorMessage);
+            super("Error retrieving GenBank list", errorElement);
             this.selectedGenBankID = genBankID;
         }
 
+        @Override
         public void onSuccess(List<ExperimentDTO> accessions) {
             genbankList.clear();
             genbankList.addItem("");
@@ -704,9 +693,6 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             }
         }
 
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
     }
 
     private class ShowExperimentSectionListener implements ClickHandler {
@@ -720,7 +706,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
                 showExperimentSection.setText(SHOW);
                 sectionVisible = false;
                 curationExperimentRPCAsync.setExperimentVisibilitySession(publicationID, false,
-                        new VoidAsyncCallback(new Label(errorMessage), loadingImage));
+                        new VoidAsyncCallback(errorMessage, errorElement, IMAGE_LOADING));
             } else {
                 // display experiments
                 // check if we need to re-read the construction zone values again from the server
@@ -731,7 +717,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
                 showExperimentSection.setText(HIDE);
                 sectionVisible = true;
                 curationExperimentRPCAsync.setExperimentVisibilitySession(publicationID, true,
-                        new VoidAsyncCallback(new Label(errorMessage), loadingImage));
+                        new VoidAsyncCallback(errorMessage, errorElement, IMAGE_LOADING));
             }
             clearErrorMessages();
         }
@@ -757,18 +743,16 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             }
             if (experimentExists(zoneExperiment, true)) {
                 //Window.alert("experiment exists: ");
-                errorMessage.setText("Experiment already exists. Experiments have to be unique!");
+                errorElement.setError("Experiment already exists. Experiments have to be unique!");
                 cleanupOnExit();
                 return;
             }
 
-            loadingImage.setVisible(true);
             curationExperimentRPCAsync.createExpressionExperiment(zoneExperiment, new AddExperimentCallback());
         }
 
         private void cleanupOnExit() {
             addButtonInProgress = false;
-            loadingImage.setVisible(false);
         }
 
     }
@@ -818,21 +802,20 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
      */
     private boolean isValidExperiment(ExperimentDTO experiment) {
         boolean isValid = true;
-        if (StringUtils.isEmpty(experiment.getAntibodyID()) &&
-                StringUtils.isEmpty(experiment.getGeneZdbID())) {
-            errorMessage.setText("You need to select at least a gene or an antibody");
+        if (experiment.getAntibodyMarker() == null && experiment.getGene() == null) {
+            errorElement.setError("You need to select at least a gene or an antibody");
             return false;
         }
         if (StringUtils.isEmpty(experiment.getFishID()) || experiment.getFishID().equals("null")) {
-            errorMessage.setText("You need to select a fish (genotype).");
+            errorElement.setError("You need to select a fish (genotype).");
             return false;
         }
-        if (StringUtils.isEmpty(experiment.getEnvironment())) {
-            errorMessage.setText("You need to select an environment (experiment).");
+        if (experiment.getEnvironment() == null || StringUtils.isEmpty(experiment.getEnvironment().getZdbID())) {
+            errorElement.setError("You need to select an environment (experiment).");
             return false;
         }
         if (StringUtils.isEmpty(experiment.getAssay())) {
-            errorMessage.setText("You need to select an assay.");
+            errorElement.setError("You need to select an assay.");
             return false;
         }
         return isValid;
@@ -843,7 +826,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
      * un-mark duplicate experiments
      */
     public void clearErrorMessages() {
-        errorMessage.setText(null);
+        errorElement.clearAllErrors();
         if (duplicateRowIndex > 0)
             displayTable.getRowFormatter().setStyleName(duplicateRowIndex, duplicateRowOriginalStyle);
     }
@@ -882,7 +865,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             }
             //Window.alert("createExperimentTable.selectedExperiments: "+selectedExperiments.size());
             for (ExperimentDTO experiment : experimentDTOs) {
-                // rowindex minus the header row
+                // row index minus the header row
                 CheckBox checkBox = new CheckBox("");
                 checkBox.setTitle(experiment.getExperimentZdbID());
                 checkBox.addClickHandler(new ExperimentSelectClickHandler(experiment, checkBox));
@@ -894,11 +877,18 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
 
                 //Window.alert("Experiment: " + experiment.getGeneName());
                 setWidget(rowIndex, HeaderName.SELECT.getIndex(), checkBox);
-                setText(rowIndex, HeaderName.GENE.getIndex(), experiment.getGeneName());
+                MarkerDTO gene = experiment.getGene();
+                if (gene != null)
+                    setText(rowIndex, HeaderName.GENE.getIndex(), gene.getAbbreviation());
                 setText(rowIndex, HeaderName.FISH.getIndex(), experiment.getFishName());
-                setText(rowIndex, HeaderName.ENVIRONMENT.getIndex(), experiment.getEnvironmentDisplayValue());
+
+                Widget environment = new Label(experiment.getEnvironment().getName());
+                environment.setTitle(experiment.getEnvironment().getZdbID());
+                setWidget(rowIndex, HeaderName.ENVIRONMENT.getIndex(), environment);
                 setText(rowIndex, HeaderName.ASSAY.getIndex(), experiment.getAssay());
-                setText(rowIndex, HeaderName.ANTIBODY.getIndex(), experiment.getAntibody());
+                MarkerDTO antibody = experiment.getAntibodyMarker();
+                if (antibody != null)
+                    setText(rowIndex, HeaderName.ANTIBODY.getIndex(), antibody.getAbbreviation());
                 if (!StringUtils.isEmpty(experiment.getCloneID())) {
                     Label genBankLabel = new Label(experiment.getGenbankNumber());
                     genBankLabel.setTitle(experiment.getCloneName());
@@ -916,9 +906,16 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
                 delete.addClickHandler(new ExperimentDeleteClickListener(experiment));
                 setWidget(rowIndex, HeaderName.DELETE.getIndex(), delete);
                 String previousID = null;
-                if (previousExperiment != null)
-                    previousID = previousExperiment.getGeneZdbID();
-                groupIndex = setRowStyle(rowIndex, experiment.getGeneZdbID(), previousID, groupIndex);
+                if (previousExperiment != null) {
+                    MarkerDTO previousGene = previousExperiment.getGene();
+                    if (previousGene != null)
+                        previousID = previousGene.getZdbID();
+                }
+                MarkerDTO currentGene = experiment.getGene();
+                if (currentGene != null)
+                    groupIndex = setRowStyle(rowIndex, currentGene.getZdbID(), previousID, groupIndex);
+                else
+                    groupIndex = setRowStyle(rowIndex, null, previousID, groupIndex);
                 rowIndex++;
                 previousExperiment = experiment;
             }
@@ -956,6 +953,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             showSelectedRecords.hideHyperlink(isAllUnchecked());
         }
 
+        @Override
         protected void createTableHeader() {
             super.createTableHeader();
             for (HeaderName name : headerNames) {
@@ -964,6 +962,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             }
         }
 
+        @Override
         protected void clearTable() {
             int rowCount = getRowCount();
             // Note: make sure to remove rows in reverse order
@@ -1031,20 +1030,17 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
 
     private class AddExperimentCallback extends ZfinAsyncCallback<ExperimentDTO> {
         public AddExperimentCallback() {
-            super("Error while creating experiment", errorMessage);
+            super("Error while creating experiment", errorElement);
         }
 
+        @Override
         public void onSuccess(ExperimentDTO newExperiment) {
+            super.onSuccess(newExperiment);
             addButtonInProgress = false;
             retrieveExperiments();
             if (!sectionVisible)
-                errorMessage.setText("Added new Experiment: " + newExperiment.toString());
+                errorElement.setError("Added new Experiment: " + newExperiment.toString());
             // add this experiment to the expression section
-            loadingImage.setVisible(false);
-        }
-
-        public void onFailureCleanup() {
-            loadingImage.setVisible(false);
         }
 
     }
@@ -1077,7 +1073,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
 
             // check if the experiment already exists
             if (experimentExists(updatedExperiment, false)) {
-                errorMessage.setText("Another experiment with these attributes exists. " +
+                errorElement.setError("Another experiment with these attributes exists. " +
                         "Experiments have to be unique!");
                 cleanupOnExit();
                 return;
@@ -1100,18 +1096,19 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
     private class UpdateExperimentAsyncCallback extends ZfinAsyncCallback<ExperimentDTO> {
 
         private UpdateExperimentAsyncCallback() {
-            super("Error while updating experiment", errorMessage);
+            super("Error while updating experiment", errorElement);
         }
 
+        @Override
         public void onFailure(Throwable throwable) {
             super.onFailure(throwable);
             updateButton.setEnabled(true);
             updateButtonInProgress = false;
         }
 
-        // Refresh the experiment list
-
+        @Override
         public void onSuccess(ExperimentDTO updatedExperiment) {
+            super.onSuccess(updatedExperiment);
             // update inline without reading all experiments again
             //retrieveExperiments();
             int rowCount = displayTable.getRowCount();
@@ -1136,9 +1133,6 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             expressionSection.retrieveExpressions();
         }
 
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
     }
 
     /**
@@ -1149,11 +1143,14 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
      * @param experiment experiment
      */
     private void updateTextInUpdatedRow(int row, ExperimentDTO experiment) {
-        displayTable.setText(row, HeaderName.GENE.getIndex(), experiment.getGeneName());
+        if (experiment.getGene() != null)
+            displayTable.setText(row, HeaderName.GENE.getIndex(), experiment.getGene().getAbbreviation());
         displayTable.setText(row, HeaderName.FISH.getIndex(), experiment.getFishName());
-        displayTable.setText(row, HeaderName.ENVIRONMENT.getIndex(), experiment.getEnvironmentDisplayValue());
+        Widget environment = new Label(experiment.getEnvironment().getName());
+        environment.setTitle(experiment.getEnvironment().getZdbID());
+        displayTable.setWidget(row, HeaderName.ENVIRONMENT.getIndex(), environment);
         displayTable.setText(row, HeaderName.ASSAY.getIndex(), experiment.getAssay());
-        displayTable.setText(row, HeaderName.ANTIBODY.getIndex(), experiment.getAntibody());
+        displayTable.setText(row, HeaderName.ANTIBODY.getIndex(), experiment.getAntibodyMarker().getAbbreviation());
         displayTable.setText(row, HeaderName.GENBANK.getIndex(), experiment.getGenbankNumber());
         // update experiment in list
         int index = 0;
@@ -1167,9 +1164,10 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
 
     private class RetrieveGeneListByAntibodyCallBack extends ZfinAsyncCallback<List<MarkerDTO>> {
         public RetrieveGeneListByAntibodyCallBack() {
-            super("Error while reading genes by antibodies", FxExperimentModule.this.errorMessage);
+            super("Error while reading genes by antibodies", FxExperimentModule.this.errorElement);
         }
 
+        @Override
         public void onSuccess(List<MarkerDTO> genes) {
             //                Window.alert("brought back: " + genes.size() );
             String selectedGeneID = geneList.getValue(geneList.getSelectedIndex());
@@ -1186,9 +1184,6 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             }
         }
 
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
     }
 
     private class AntibodyListChangeListener implements ChangeHandler {
@@ -1200,6 +1195,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
     }
 
     private class GeneListChangeListener implements ChangeHandler {
+
         public void onChange(ChangeEvent event) {
             String geneID = geneList.getValue(geneList.getSelectedIndex());
             //Window.alert(geneID);
@@ -1214,13 +1210,14 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
     }
 
     private class AssayListChangeListener implements ChangeHandler {
+
         public void onChange(ChangeEvent event) {
             String itemText = assayList.getItemText(assayList.getSelectedIndex());
             //Window.alert(itemText);
             if (ExpressionAssayDTO.isAntibodyAssay(itemText)) {
                 antibodyList.setEnabled(true);
                 String geneID = geneList.getValue(geneList.getSelectedIndex());
-                // TODO: call gene on change listener: change from anaonymous to real inner class
+                // TODO: call gene on change listener: change from anonymous to real inner class
                 curationExperimentRPCAsync.readAntibodiesByGene(publicationID, geneID, new RetrieveAntibodyList());
             } else
                 antibodyList.setEnabled(false);
@@ -1229,9 +1226,10 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
 
     private class RetrieveAssayListCallback extends ZfinAsyncCallback<List<String>> {
         public RetrieveAssayListCallback(String message) {
-            super(message, FxExperimentModule.this.errorMessage);
+            super(message, FxExperimentModule.this.errorElement);
         }
 
+        @Override
         public void onSuccess(List<String> assays) {
             //Window.alert("brought back: " + experiments.size() );
             for (String assay : assays) {
@@ -1239,37 +1237,16 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             }
         }
 
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
-    }
-
-    private class RetrieveEnvironmentListCallback extends ZfinAsyncCallback<List<EnvironmentDTO>> {
-        public RetrieveEnvironmentListCallback(String message) {
-            super(message, FxExperimentModule.this.errorMessage);
-        }
-
-        public void onSuccess(List<EnvironmentDTO> environments) {
-            //Window.alert("brought back: " + experiments.size() );
-            for (EnvironmentDTO environmentDTO : environments) {
-                String name = environmentDTO.getName();
-                if (name.startsWith("_"))
-                    name = name.substring(1);
-                environmentList.addItem(name, environmentDTO.getZdbID());
-            }
-        }
-
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
     }
 
     private class RetrieveSectionVisibilityCallback extends ZfinAsyncCallback<Boolean> {
         public RetrieveSectionVisibilityCallback(String message) {
-            super(message, FxExperimentModule.this.errorMessage);
+            super(message, FxExperimentModule.this.errorElement, IMAGE_LOADING);
         }
 
+        @Override
         public void onSuccess(Boolean visible) {
+            super.onSuccess(visible);
             sectionVisible = visible;
             //Window.alert("Show: " + sectionVisible);
             if (sectionVisible) {
@@ -1279,30 +1256,14 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
                 setInitialValues();
                 displayTable.createConstructionZone();
                 showExperimentSection.setText(SHOW);
-                loadingImage.setVisible(false);
             }
         }
 
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
-    }
-
-    private class RetrieveGenotypeListCallback extends ZfinAsyncCallback<List<FishDTO>> {
-        public RetrieveGenotypeListCallback(String message) {
-            super(message, FxExperimentModule.this.errorMessage);
+        private void setInitialValues() {
+            retrieveExperiments();
+            retrieveConstructionZoneValues();
         }
 
-        public void onSuccess(List<FishDTO> genotypes) {
-            //Window.alert("brought back: " + genotypes.size() );
-            for (FishDTO genotypeHandle : genotypes) {
-                fishList.addItem(genotypeHandle.getName(), genotypeHandle.getZdbID());
-            }
-        }
-
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
-        }
     }
 
     private enum HeaderName {

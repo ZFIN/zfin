@@ -4,6 +4,8 @@ package org.zfin.gwt.root.dto;
  */
 public class GenotypeDTO extends RelatedEntityDTO{
 
+    private String handle;
+
     public GenotypeDTO() { }
 
     public GenotypeDTO(RelatedEntityDTO relatedEntityDTO) {
@@ -37,4 +39,13 @@ public class GenotypeDTO extends RelatedEntityDTO{
         sb.append('}');
         return sb.toString();
     }
+
+    public String getHandle() {
+        return handle;
+    }
+
+    public void setHandle(String handle) {
+        this.handle = handle;
+    }
+
 }

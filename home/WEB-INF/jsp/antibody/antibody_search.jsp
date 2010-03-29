@@ -2,6 +2,8 @@
 <%@ page import="org.zfin.antibody.presentation.AntibodySearchFormBean" %>
 <%@ page import="org.zfin.util.FilterType" %>
 <%@ page import="org.zfin.framework.presentation.PaginationBean" %>
+<%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
+<%@ page import="org.zfin.ontology.Ontology" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <script type="text/javascript">
@@ -218,7 +220,8 @@ function start_tips() {
                     </c:if>
                     hiddenNames: "antibodyCriteria.anatomyTermNames",
                     hiddenIds: "antibodyCriteria.anatomyTermIDs",
-                    type: "ANATOMY_ONTOLOGY",
+                    type: "<%= LookupComposite.GDAG_TERM_LOOKUP %>",
+                    ontologyName: "<%= Ontology.ANATOMY %>",
                     width: 40,
                     wildcard: false,
                     useTermTable: true

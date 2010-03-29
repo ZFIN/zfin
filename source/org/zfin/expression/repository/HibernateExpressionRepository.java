@@ -13,7 +13,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.*;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.dto.Ontology;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -23,6 +23,7 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.PhenotypeStructure;
 import org.zfin.ontology.GoTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -348,7 +349,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * Create a new figure annotation, i.e. expression_result record.
      * First check if such an annotation already exists. If so just add the figures to the
      * existing expression result.
-     * Second check if the first result is 'unspeficied'. If so then update the record with
+     * Second check if the first result is 'unspecified'. If so then update the record with
      * the new info.
      * <p/>
      * Ignore 'unspecified' term additions unless this is a first-time creation.
@@ -404,7 +405,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             if (unspecifiedResult != null) {
                 Set<Figure> figures = unspecifiedResult.getFigures();
                 // has no figures associated
-                if (figures == null || figures.size() == 0) {
+                if (figures == null || figures.isEmpty()) {
                     session.delete(unspecifiedResult);
                     session.save(result);
                     result.getExpressionExperiment().addExpressionResult(result);
@@ -714,19 +715,19 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         AnatomyRepository anatRep = RepositoryFactory.getAnatomyRepository();
         AnatomyItem unspecified = anatRep.getAnatomyItem(AnatomyItem.UNSPECIFIED);
 
-        String hql = "select pheno from Phenotype pheno " +
+        String hql = "select pheno from AnatomyPhenotype pheno " +
                 "     where pheno.genotypeExperiment = :genox" +
                 "           and pheno.startStage = :start " +
                 "           and pheno.endStage = :end " +
-                "           and pheno.patoSuperTermzdbID = :anatomyTermID " +
-                "           and pheno.patoSubTermzdbID is null " +
+                "           and pheno.anatomySuperTerm = :anatomyTermID " +
+                "           and pheno.anatomySubTerm is null " +
                 "           and pheno.publication = :publication";
 
         Query query = session.createQuery(hql);
         query.setEntity("genox", pheno.getGenotypeExperiment());
         query.setEntity("start", pheno.getStartStage());
         query.setEntity("end", pheno.getEndStage());
-        query.setString("anatomyTermID", unspecified.getZdbID());
+        query.setParameter("anatomyTermID", unspecified);
         query.setEntity("publication", pheno.getPublication());
 
         @SuppressWarnings("unchecked")
@@ -751,24 +752,24 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public boolean pileStructureExists(ExpressedTermDTO expressedTerm, String publicationID) {
         if (publicationID == null)
             throw new NullPointerException("No Publication provided.");
-        String supertermName = expressedTerm.getSupertermName();
+        String supertermName = expressedTerm.getSuperterm().getTermName();
         if (supertermName == null)
             throw new NullPointerException("No superterm provided.");
 
-        String subtermName = expressedTerm.getSubtermName();
         Session session = HibernateUtil.currentSession();
         Criteria crit;
-        if (!StringUtils.isEmpty(subtermName)) {
-            Ontology subtermOntoloy = expressedTerm.getSubtermOntology();
-            if (subtermOntoloy == null)
+
+        if (expressedTerm.getSubterm() != null) {
+            OntologyDTO subtermOntology = expressedTerm.getSubterm().getOntology();
+            if (subtermOntology == null)
                 throw new NullPointerException("No subterm ontology provided.");
-            if (subtermOntoloy == Ontology.ANATOMY) {
+            if (subtermOntology == OntologyDTO.ANATOMY) {
                 crit = session.createCriteria(AnatomyExpressionStructure.class);
             } else {
                 crit = session.createCriteria(GOExpressionStructure.class);
             }
             Criteria subterm = crit.createCriteria("subterm");
-            subterm.add(Restrictions.eq("name", subtermName));
+            subterm.add(Restrictions.eq("name", expressedTerm.getSubterm().getTermName()));
         } else {
             crit = session.createCriteria(AnatomyExpressionStructure.class);
             crit.add(Restrictions.isNull("subterm"));
@@ -779,12 +780,38 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         superterm.add(Restrictions.eq("name", supertermName));
 
         List list = crit.list();
-        return list != null && list.size() > 0;
+        return list != null && !list.isEmpty();
+    }
+
+    /**
+     * Retrieve a genotype experiment for a given genotype ID.
+     *
+     * @param genotypeID genotype id
+     * @return GenotypeExperiment
+     */
+    @SuppressWarnings("unchecked")
+    public GenotypeExperiment getGenotypeExperimentByGenotypeID(String genotypeID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "from GenotypeExperiment as genox where " +
+                " genox.genotype.zdbID = :genotypeID";
+        Query query = session.createQuery(hql);
+        query.setParameter("genotypeID", genotypeID);
+        return (GenotypeExperiment) query.uniqueResult();
+    }
+
+    /**
+     * Retrieve a pile phenotype structure
+     * @param pileStructureID   primary key
+     * @return PhenotypeStructure
+     */
+    public PhenotypeStructure getPhenotypePileStructure(String pileStructureID) {
+        return null;  
     }
 
     private void validateFigureAnnotationKey(String experimentZdbID, String figureID, String startStageID, String endStageID) {
         ActiveData data = new ActiveData();
-        // these callse validate the keys according to zdb id syntax.
+        // these calls validate the keys according to zdb id syntax.
+        // ToDo: Change the validate method static to be able to call it directly.
         data.setZdbID(experimentZdbID);
         data.setZdbID(figureID);
         data.setZdbID(startStageID);

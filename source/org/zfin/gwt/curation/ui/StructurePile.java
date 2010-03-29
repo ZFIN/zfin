@@ -1,14 +1,18 @@
 package org.zfin.gwt.curation.ui;
 
+import org.zfin.gwt.root.dto.AbstractFigureStageDTO;
+import org.zfin.gwt.root.dto.AbstractPileStructureDTO;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
-import org.zfin.gwt.root.dto.ExpressionFigureStageDTO;
 
 import java.util.List;
 
 /**
  * This class defines a structure pile.
  */
-public interface StructurePile extends PileStructureListener {
+public interface StructurePile<T extends ExpressedTermDTO, W extends AbstractFigureStageDTO, Q extends AbstractPileStructureDTO> 
+        extends PileStructureListener<Q> {
+
+    public static final String UNSPECIFIED = "unspecified";
 
     /**
      * Check to see if the current structure pile holds a given structure.
@@ -16,7 +20,7 @@ public interface StructurePile extends PileStructureListener {
      * @param expressedTerm expressedTermDTO.
      * @return true or false
      */
-    boolean hasStructureOnPile(ExpressedTermDTO expressedTerm);
+    boolean hasStructureOnPile(T expressedTerm);
 
     /**
      * This notifies the structure pile about selected expressions. The structure pile will
@@ -26,13 +30,13 @@ public interface StructurePile extends PileStructureListener {
      *
      * @param selectedExpressions all selected expression records
      */
-    void updateFigureAnnotations(List<ExpressionFigureStageDTO> selectedExpressions);
+    void updateFigureAnnotations(List<W> selectedExpressions);
 
     /**
      * Set a pile construction zone module.
-     * @param constructioneZoneModule pile construction zone module.
+     * @param constructionZoneModule pile construction zone module.
      */
-    void setPileStructureClickListener(ConstructionZone constructioneZoneModule);
+    void setPileStructureClickListener(ConstructionZone constructionZoneModule);
 
     /**
      * Inject an Expression Section module.

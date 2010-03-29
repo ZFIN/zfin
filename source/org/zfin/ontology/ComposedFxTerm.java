@@ -11,7 +11,7 @@ import org.zfin.anatomy.AnatomyItem;
 public class ComposedFxTerm implements Comparable<ComposedFxTerm> {
 
     private AnatomyItem superTerm;
-    private OntologyTerm subterm;
+    private Term subterm;
     private boolean expressionFound;
 
     public AnatomyItem getSuperTerm() {
@@ -22,11 +22,11 @@ public class ComposedFxTerm implements Comparable<ComposedFxTerm> {
         this.superTerm = superTerm;
     }
 
-    public OntologyTerm getSubterm() {
+    public Term getSubterm() {
         return subterm;
     }
 
-    public void setSubterm(OntologyTerm subterm) {
+    public void setSubterm(Term subterm) {
         this.subterm = subterm;
     }
 

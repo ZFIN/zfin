@@ -1,8 +1,10 @@
 package org.zfin.ontology;
 
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -10,12 +12,15 @@ import java.util.Set;
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public class GenericTerm implements Term {
+public class GenericTerm implements Term, Serializable {
 
+    public static final String QUALITY = "quality";
+    
     private String ID;
     private String termName;
     private String oboID;
     private String ontologyName;
+    private Ontology ontology;
     private boolean obsolete;
     private boolean root;
     private boolean secondary;
@@ -25,6 +30,7 @@ public class GenericTerm implements Term {
 
     // attribute that is populated lazily
     private List<TermRelationship> relationships;
+    private List<Term> children;
 
     public String getID() {
         return ID;
@@ -50,12 +56,12 @@ public class GenericTerm implements Term {
         this.oboID = oboID;
     }
 
-    public String getOntologyName() {
-        return ontologyName;
+    public void setOntology(Ontology ontology) {
+        this.ontology = ontology;
     }
 
-    public void setOntologyName(String ontologyName) {
-        this.ontologyName = ontologyName;
+    public Ontology getOntology() {
+        return ontology;
     }
 
     public boolean isObsolete() {
@@ -90,11 +96,11 @@ public class GenericTerm implements Term {
         this.comment = comment;
     }
 
-    public Set<TermAlias> getSynonyms() {
+    public Set<TermAlias> getAliases() {
         return synonyms;
     }
 
-    public void setSynonyms(Set<TermAlias> synonyms) {
+    public void setAliases(Set<TermAlias> synonyms) {
         this.synonyms = synonyms;
     }
 
@@ -111,8 +117,35 @@ public class GenericTerm implements Term {
             return relationships;
 
         relationships = new ArrayList<TermRelationship>();
-        InfrastructureRepository infrasturctureRepository = RepositoryFactory.getInfrastructureRepository();
-        relationships.addAll(infrasturctureRepository.getTermRelationships(this));
+        OntologyRepository ontolgoyOntologyRepository = RepositoryFactory.getOntologyRepository();
+        relationships.addAll(ontolgoyOntologyRepository.getTermRelationships(this));
         return relationships;
+    }
+
+    public List<Term> getChildrenTerms() {
+        if (children != null)
+            return children;
+
+        children = new ArrayList<Term>();
+        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+        children.addAll(ontologyRepository.getChildren(ID));
+        return children;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GenericTerm genericTerm = (GenericTerm) o;
+
+        if (termName != null ? !termName.equals(genericTerm.termName) : genericTerm.termName != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return termName != null ? termName.hashCode() : 0;
     }
 }

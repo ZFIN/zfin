@@ -973,7 +973,8 @@ return false ; "
         <?MIVAR COND=$(XST,$xpatsel_processed_selected_structures_names)>previousTableValues: "$xpatsel_processed_selected_structures_names",<?/MIVAR>
         hiddenNames: "xpatsel_processed_selected_structures_names",
         hiddenIds: "xpatsel_processed_selected_structures",
-        type: "ANATOMY_ONTOLOGY",
+        ontologyName: "zebrafish_anatomy",
+        type: "GDAG_TERM_LOOKUP",
         width: 40,
         limit: 20,
         wildcard: false,

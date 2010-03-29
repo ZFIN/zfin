@@ -787,7 +787,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     /**
      * This executes the regen_names_marker() procedure.
-     * Since InformixDialect does not support stored procedures
+     * Since Informix Dialect does not support stored procedures
      * we create our own callable statement and then execute it
      * via straight JDBC.
      *
