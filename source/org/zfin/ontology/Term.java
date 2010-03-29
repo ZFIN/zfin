@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * Basic interface definition for a term in an ontology.
  */
-public interface Term extends OntologyTerm{
+public interface Term {
 
     String getID();
 
