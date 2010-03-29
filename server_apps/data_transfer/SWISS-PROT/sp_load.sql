@@ -23,6 +23,7 @@ begin work;
 
 ------------------ loading db_link --------------------------
 
+--!echo 'Create temp table db_link_with_dups'
 	create temp table db_link_with_dups (
                linked_recid varchar(50),
                db_name varchar(50),
@@ -30,8 +31,9 @@ begin work;
                length integer
               ) with no log;
 
---!echo 'Load dr_dblink.unl'
+--!echo 'Load from dr_dblink.unl'
 	load from dr_dblink.unl insert into db_link_with_dups;
+--!echo '		from dr_dblink.unl'
 
 --!echo 'Update merged gene ids'
 	update db_link_with_dups
@@ -41,6 +43,7 @@ begin work;
          where linked_recid in (select zrepld_old_zdb_id 
                                   from zdb_replaced_data); 
 
+--!echo 'Create temp table pre_db_link'
 	create temp table pre_db_link (
                linked_recid varchar(50),
                db_name varchar(50),
@@ -51,11 +54,14 @@ begin work;
                dblink_fdbcont_zdb_id varchar(50),
                length integer
               ) with no log;
+              
+--!echo 'Create pre_db_link_acc_index on pre_db_link (acc_num)'              
 	create index pre_db_link_acc_index on pre_db_link (acc_num);
 
 	insert into pre_db_link (linked_recid,db_name,acc_num,length,info,acc_num_disp)     
 	       		select distinct *, today ||" Swiss-Prot",acc_num 
 			      from db_link_with_dups;
+--!echo '		into pre_db_link'
         
 -- per curator's request, GenBank and GenPept accession are no longer loaded from SP file
 -- due to additional entries for certain database, we need to specify the db types
@@ -80,6 +86,7 @@ begin work;
            and pre_db_link.acc_num=d.dblink_acc_num
 		   and pre_db_link.dblink_fdbcont_zdb_id = d.dblink_fdbcont_zdb_id
 		);
+--!echo '		from pre_db_link'
 
 	update pre_db_link set dblink_zdb_id = get_id("DBLINK"); 
 
@@ -87,6 +94,7 @@ begin work;
 --!echo 'Insert into zdb_active_data'
 	insert into zdb_active_data (zactvd_zdb_id)
                   select dblink_zdb_id from pre_db_link p;
+--!echo '		into zdb_active_data'
 
 			 
 --!echo 'Insert DBLINK into db_link'
@@ -95,58 +103,70 @@ begin work;
 		select linked_recid,acc_num,info,dblink_zdb_id,
 			   acc_num_disp,dblink_fdbcont_zdb_id,length 
 		  from pre_db_link p;
+--!echo '		into db_link'
 
 --!echo 'Attribute db links to the internal pub record'
 	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 		select dblink_zdb_id, "ZDB-PUB-020723-2"
 		  from pre_db_link;
+--!echo '		into record_attribution'
 
 
 ------------------- loading ac alias ------------------------
-
+--!echo 'Create temp table temp_ac_alias'
 	create temp table temp_ac_alias(
 		prm_acc_num varchar(50),	
 		alias_acc_num varchar(50)
 		) with no log; 
 
---!echo 'Load ac_dalias.unl'
+--!echo 'Load from ac_dalias.unl'
 	load from ac_dalias.unl insert into temp_ac_alias;
+--!echo '		from ac_dalias.unl'
+	
+--!echo 'Create temp table pre_ac_alias'
 	create temp table pre_ac_alias(
-		dalias_zdb_id		varchar(50),
-    		dalias_data_zdb_id	varchar(50),
-    		dalias_alias		varchar(120),
-   	 	dalias_group		varchar(30),
-		dalias_alias_lower	varchar(255)
+		pre_dalias_zdb_id		varchar(50),
+    		pre_dalias_data_zdb_id	varchar(50),
+    		pre_dalias_alias		varchar(120),
+		pre_dalias_alias_lower	varchar(255)
               ) with no log;
-	insert into pre_ac_alias (dalias_data_zdb_id, dalias_alias, 
-		dalias_group, dalias_alias_lower)
-	    select distinct dblink_zdb_id, alias_acc_num, (select aliasgrp_pk_id from alias_group where aliasgrp_name = "alias"), 
-		lower(alias_acc_num)
+              
+	insert into pre_ac_alias (pre_dalias_data_zdb_id, pre_dalias_alias, pre_dalias_alias_lower)
+	    select distinct dblink_zdb_id, alias_acc_num, lower(alias_acc_num)
 	    from pre_db_link db, temp_ac_alias al
  	    where db.acc_num = al.prm_acc_num;
-
+ 	    
+--!echo '		into pre_ac_alias'
+        
 	delete from pre_ac_alias
 	       where exists 	
-			( select d.dalias_zdb_id
-		 	    from data_alias d
-			   where d.dalias_data_zdb_id = pre_ac_alias.dalias_data_zdb_id
-		  	     and d.dalias_alias = pre_ac_alias.dalias_alias );	
+			( select dalias_zdb_id
+		 	    from data_alias
+			   where dalias_data_zdb_id = pre_dalias_data_zdb_id
+		  	     and dalias_alias = pre_dalias_alias );	
+		  	     
+--!echo '		from pre_ac_alias'	  	     
     
         update pre_ac_alias
-                set dalias_zdb_id = get_id("DALIAS");
+                set pre_dalias_zdb_id = get_id("DALIAS");
 
 --!echo 'Insert DALIAS into zdb_active_data'
 	insert into zdb_active_data (zactvd_zdb_id)
-                    select dalias_zdb_id from pre_ac_alias;
+                    select pre_dalias_zdb_id from pre_ac_alias;
+--!echo '		into zdb_active_data'                    
 
 --!echo 'Insert second AC into data_alias'
-	insert into data_alias select * from pre_ac_alias;
+	insert into data_alias (dalias_zdb_id,dalias_data_zdb_id,dalias_alias,dalias_group_id,dalias_alias_lower) 
+	  select pre_dalias_zdb_id, pre_dalias_data_zdb_id, pre_dalias_alias, 
+	         (select aliasgrp_pk_id from alias_group where aliasgrp_name = "alias"), pre_dalias_alias_lower
+	    from pre_ac_alias;
+--!echo '		into data_alias'  
 
 --!echo 'Attribute second AC to the internal pub record'
 	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-               select dalias_zdb_id, "ZDB-PUB-020723-2"
+               select pre_dalias_zdb_id, "ZDB-PUB-020723-2"
 	       from pre_ac_alias;
-
+--!echo '		into record_attribution' 
 
 --!echo 'per curator's request, no longer load gn alias -----------------
 
@@ -311,6 +331,7 @@ begin work;
 --!echo 'Insert MRKRGOEV into zdb_active_data'
 	insert into zdb_active_data
 		select pre_mrkrgoev_zdb_id from pre_marker_go_evidence;
+--!echo '		into zdb_active_data'
 
 --!echo 'Insert into marker_go_term_evidence'
 	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_go_term_zdb_id,
@@ -324,13 +345,13 @@ begin work;
 		  where not exists (Select 'x' from marker a
 		       	   	  	      where a.mrkr_zdb_id = p.mrkr_zdb_id
 					      and a.mrkr_abbrev like 'WITHDRAWN%');
-
+--!echo '		into marker_go_term_evidence'
 	
 --	db trigger attributes MRKRGOEV to the internal pub record
 --	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 --	  	               select mrkrgoev_zdb_id,mrkrgoev_source from pre_marker_go_evidence;
 
-
+--!echo 'db trigger attributes MRKRGOEV to the internal pub record'
 
 
 -- load inference_group_member
@@ -339,6 +360,7 @@ begin work;
 			  from pre_marker_go_evidence
 			 where exists (select * from marker_go_term_evidence where pre_mrkrgoev_zdb_id = mrkrgoev_zdb_id);
 		
+--!echo '		into inference_group_member'
 
 ---------------- loading cc field -----------------------------
 
@@ -378,15 +400,18 @@ begin work;
 --!echo 'Insert EXTNOTE into zdb_active_data'
         insert into zdb_active_data (zactvd_zdb_id)
                 select p_extnote_zdb_id from pre_external_note;
+--!echo '		into zdb_active_data'
+
+--!echo 'Insert into external_note'
+        insert into external_note (extnote_zdb_id, extnote_data_zdb_id, extnote_note)
+                   select * from pre_external_note;
+--!echo '		into external_note'
 
 --!echo 'Attribute EXTNOTE to the internal pub record'
         insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
                 select p_extnote_zdb_id, "ZDB-PUB-020723-2"
                 from pre_external_note;
-
---!echo 'Insert into external_note'
-        insert into external_note (extnote_zdb_id, extnote_data_zdb_id, extnote_note)
-                   select * from pre_external_note;
+--!echo '		into record_attribution'
 
 --!echo 'unload accession# with no attribution'
 -- accession from EC, Pfam, POSITE, InterPro, SwissProt
