@@ -192,7 +192,6 @@ update term
 -- where exists (select a.term_definition 
 --			from tmp_term_onto_no_dups a
 --			where term_ont_id = term_id);
-
 --select first 5* from tmp_term_onto_no_dups;
 
 update term
@@ -574,6 +573,10 @@ update tmp_syns
 update tmp_syns
   set scoper = 'related alias'
   where scoper = 'RELATED';
+
+update tmp_syns
+  set scoper = 'plural'
+  where scoper = 'PLURAL';
 
 update tmp_syns
   set type = scoper
