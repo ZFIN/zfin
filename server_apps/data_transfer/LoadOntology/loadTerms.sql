@@ -582,6 +582,10 @@ update tmp_syns
   set type = scoper
   where type is null ;
 
+update tmp_syns
+  set type = 'plural'
+ where type = 'PLURAL';
+
 create index tmp_syn_synonym_index
   on tmp_syns(synonym)
   using btree in idxdbs3;
