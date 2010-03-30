@@ -1,16 +1,13 @@
 package org.zfin.util;
 
 import org.apache.commons.lang.StringUtils;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.anatomy.presentation.AnatomyPresentation;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.repository.ExpressionRepository;
-import org.zfin.gwt.root.dto.CuratorSessionDTO;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
@@ -364,6 +361,8 @@ public class BODtoConversionService implements Serializable {
                 return OntologyDTO.GO_CC;
             case GO_BP:
                 return OntologyDTO.GO_BP;
+            case GO:
+                return OntologyDTO.GO;
         }
         return null;
     }

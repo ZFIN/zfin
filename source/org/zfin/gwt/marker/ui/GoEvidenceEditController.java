@@ -9,6 +9,10 @@ import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.IsDirty;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
+import org.zfin.gwt.root.ui.TermInfoCallBack;
+import org.zfin.gwt.root.ui.TermInfoComposite;
+import org.zfin.gwt.root.util.LookupRPCService;
+import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
 /**
  * A GWT class for adding proteins to genes on the markerview.apg page.
@@ -18,8 +22,10 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
     private DockPanel mainPanel = new DockPanel();
     private final PublicationLookupBox publicationLookupBox = new PublicationLookupBox(null);
     private final AbstractGoEvidenceHeader headerEdit;
-    private final GoDetailsBox goTextArea = new GoDetailsBox(null);
+    private final TermInfoComposite termInfoComposite = new TermInfoComposite();
     private final Dictionary dictionary = Dictionary.getDictionary("MarkerProperties");
+
+    private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
     public static enum Action {
         EDIT, CLONE, ADD
@@ -57,7 +63,7 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
                 "<strong><font color=red>Please select a valid pub to display available inferences</font></strong>");
         // center panel
         mainPanel.add(headerEdit, DockPanel.CENTER);
-        mainPanel.add(goTextArea, DockPanel.SOUTH);
+        mainPanel.add(termInfoComposite, DockPanel.SOUTH);
         RootPanel.get(StandardDivNames.viewDiv).add(mainPanel);
     }
 
@@ -87,7 +93,8 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
         headerEdit.addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
             @Override
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
-                goTextArea.setDTO(dataChangedEvent.getDTO());
+                String termID = "GO:" + dataChangedEvent.getDTO().getGoTerm().getDataZdbID();
+                lookupRPC.getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
             }
         });
 
@@ -103,7 +110,7 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
 
 
     protected void loadDTO() {
-        String markerGoEvidenceZdbID ;
+        String markerGoEvidenceZdbID;
 // load properties
         switch (action) {
             case EDIT:
@@ -111,7 +118,7 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
                 TermRPCService.App.getInstance().getMarkerGoTermEvidenceDTO(markerGoEvidenceZdbID,
                         new MarkerEditCallBack<GoEvidenceDTO>("failed to find markergoevidence: ") {
                             public void onSuccess(GoEvidenceDTO returnDTO) {
-                                if(action==Action.CLONE){
+                                if (action == Action.CLONE) {
                                     publicationZdbID = dictionary.get(PUB_ZDBID);
                                     returnDTO.setPublicationZdbID(publicationZdbID);
                                     returnDTO.setZdbID(null);
@@ -142,10 +149,9 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
                 String geneZdbID = dictionary.get(GENE_ZDBID);
                 publicationZdbID = dictionary.get(PUB_ZDBID);
                 // if adding where pub is not given, then must be null
-                if(publicationZdbID.equals("null")){
+                if (publicationZdbID.equals("null")) {
                     publicationLookupBox.setVisible(true);
-                }
-                else{
+                } else {
                     publicationLookupBox.setVisible(false);
                 }
                 MarkerRPCService.App.getInstance().getGeneForZdbID(geneZdbID,
@@ -171,7 +177,8 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
         if (dto == null) return;
         super.setDTO(dto);
         headerEdit.setDTO(dto);
-        goTextArea.setDTO(dto);
+        String termID = "GO:" + dto.getGoTerm().getDataZdbID();
+        lookupRPC.getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
         validateGoEvidence();
     }
 }

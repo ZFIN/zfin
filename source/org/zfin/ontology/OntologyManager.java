@@ -213,13 +213,17 @@ public class OntologyManager implements Serializable {
         Date dateStarted = new Date();
         Collection<Ontology> ontologies = ontology.getIndividualOntologies();
         Map<String, Term> termMap = new TreeMap<String, Term>(new OntologyComparator());
+        Map<String, Term> obsoleteNameMap = new TreeMap<String, Term>(new OntologyComparator());
 
         Iterator<Ontology> ontologyIterator = ontologies.iterator();
         while (ontologyIterator.hasNext()) {
-            termMap.putAll(ontologyTermMap.get(ontologyIterator.next()));
+            final Ontology ontologyKey = ontologyIterator.next();
+            termMap.putAll(ontologyTermMap.get(ontologyKey));
+            obsoleteNameMap.putAll(ontologyObsoleteTermMap.get(ontologyKey));
         }
 
         ontologyTermMap.put(ontology, termMap);
+        ontologyObsoleteTermMap.put(ontology, obsoleteNameMap);
         Map<String, TermAlias> aliasMap = new TreeMap<String, TermAlias>(new OntologyComparator());
         ontologyIterator = ontologies.iterator();
         while (ontologyIterator.hasNext())
