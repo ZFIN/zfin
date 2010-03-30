@@ -111,7 +111,9 @@ public class SupplierNameList extends AbstractStackComposite<MarkerDTO>{
         // since all we handle is the inferreds, we will assume that we have the correct DTO.
         if(dto==null) return null ;
         MarkerDTO relatedEntityDTO = new MarkerDTO();
-        relatedEntityDTO.setName(supplierListBox.getSelected());
+        if(supplierListBox.getItemCount()>0){
+            relatedEntityDTO.setName(supplierListBox.getSelected());
+        }
         relatedEntityDTO.setZdbID(dto.getZdbID());
         relatedEntityDTO.setDataZdbID(dto.getDataZdbID());
         return relatedEntityDTO;
@@ -125,13 +127,13 @@ public class SupplierNameList extends AbstractStackComposite<MarkerDTO>{
             public void removeRelatedEntity(final RelatedEntityEvent<MarkerDTO> event) {
 
                 final String value = event.getDTO().getName();
-                    MarkerRPCService.App.getInstance().removeMarkerSupplier(value, event.getDTO().getZdbID(),
-                            new MarkerEditCallBack<Void>("failed to remove supplier to marker: ") {
-                                public void onSuccess(Void o) {
-                                    removeFromGUI(value);
-                                }
-                            });
-                }
+                MarkerRPCService.App.getInstance().removeMarkerSupplier(value, event.getDTO().getZdbID(),
+                        new MarkerEditCallBack<Void>("failed to remove supplier to marker: ") {
+                            public void onSuccess(Void o) {
+                                removeFromGUI(value);
+                            }
+                        });
+            }
         });
         stackTable.setWidget(stackTable.getRowCount(), 0, stackComposite);
         resetInput();

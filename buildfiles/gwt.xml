@@ -2,15 +2,19 @@
 <project name="gwt" basedir=".">
 
     <target name="dirty-gwt" description="Compiles all gwt targets">
-        <antcall target="dirty-lookup-gwt"/>
-        <antcall target="dirty-marker-gwt"/>
-        <antcall target="dirty-curation-gwt"/>
+        <parallel>
+            <antcall target="dirty-lookup-gwt"/>
+            <antcall target="dirty-marker-gwt"/>
+            <antcall target="dirty-curation-gwt"/>
+        </parallel>
     </target>
 
     <target name="gwt" description="Compiles all gwt targets">
-        <antcall target="lookup-gwt"/>
-        <antcall target="marker-gwt"/>
-        <antcall target="curation-gwt"/>
+        <parallel>
+            <antcall target="lookup-gwt"/>
+            <antcall target="marker-gwt"/>
+            <antcall target="curation-gwt"/>
+        </parallel>
     </target>
 
     <target name="dirty-lookup-gwt" description="Compiles lookup gwt">
