@@ -25,6 +25,7 @@ sub initiateVar  {
     $default_namespace="";
     $remark="";
     @defs=();
+    @sdefs=();
     $subset="";
     @typedefs=();
     $type="";
@@ -55,7 +56,7 @@ sub stringTrim ($) {
 use strict;
 
 # declare variables 
-my ($format_version,$data_version,$date,$saved_by,$auto_generated_by,@subset_def,@synonym_type_def,$default_namespace,$remark,@defs,$subset,@typedefs,$type,$def,$typedef,$scope);
+my ($format_version,$data_version,$date,$saved_by,$auto_generated_by,@subset_def,@synonym_type_def,$default_namespace,$remark,@defs,@sdefs,$subset,@typedefs,$type,$def,$typedef,$scope);
 
 my $pipe_newline = "|\n" ;
 
@@ -106,7 +107,8 @@ while (<>) {
     }
     if (@headerLine[0] eq "synonymtypedef"){
 
-	push @synonym_type_def, stringTrim(@headerLine[1]); 
+	push @synonym_type_def, stringTrim(@headerLine[1]);
+        print "synonym_type_def: ".@headerLine[1];
 
     }
     if (@headerLine[0] eq "default-namespace"){
@@ -130,16 +132,21 @@ foreach (@subset_def) {
     @defs=();
 }
 foreach (@synonym_type_def) {
-    @defs = split /"/ ;
-    foreach (@defs){
-	$subset = stringTrim(@defs[0]);
-	$def = stringTrim(@defs[1]);
-	$scope = stringTrim(@defs[2]);	
+    @sdefs = split /"/ ;
+    foreach (@sdefs){
+	$subset = stringTrim(@sdefs[0]);
+	$def = stringTrim(@sdefs[1]);
+	$scope = stringTrim(@sdefs[2]);
+
     }
-    print SYNTYPEDEFS join("|", $default_namespace, $subset, $def, $scope, "syntypedefs")."|\n";
+    print SYNTYPEDEFS join("|", $default_namespace, $subset, $def, $scope, "syntypedefs")."|\n"; 
     $type="";
     $typedef="";
     @typedefs=();
+    @sdefs=();
+    $scope="";
+    $def="";
+    $subset="";
 }
 
 print HEADER join("|",$format_version,$data_version,$date,$saved_by,$auto_generated_by,$default_namespace,$remark).$pipe_newline;

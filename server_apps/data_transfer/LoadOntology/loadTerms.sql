@@ -13,6 +13,13 @@ load from syntypedefs_header.unl
   insert into tmp_syndef;
 
 update tmp_syndef
+  set scoper = trim(scoper);
+
+update tmp_syndef
+  set scoper = type
+  where scoper is null;
+
+update tmp_syndef
   set scoper = 'exact alias'
  where scoper = 'EXACT';
 
@@ -21,8 +28,10 @@ update tmp_syndef
   where scoper = 'PLURAL';
 
 update tmp_syndef
-  set scoper = type
-  where scoper is null;
+  set type = 'plural'
+  where type = 'PLURAL';
+
+select * from tmp_syndef;
 
 delete from tmp_syndef
   where exists (select 'x' from alias_group
@@ -36,7 +45,8 @@ delete from tmp_syndef
 insert into alias_scope (aliasscope_scope)
   select distinct scoper from tmp_syndef
   where not exists (Select 'x' from alias_scope
-  	    	   	   where aliasscope_scope = scoper);
+  	    	   	   where aliasscope_scope = scoper)
+  and scoper is not null;
 
 update alias_group
   set aliasgrp_definition  = (select def from tmp_syndef
