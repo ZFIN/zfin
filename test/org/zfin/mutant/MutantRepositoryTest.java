@@ -211,7 +211,7 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void goTermsByPhemotypeAndPublication(){
+    public void goTermsByPhenotypeAndPublication(){
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-080501-11") ;
         List<GoTerm> goTerms = getMutantRepository().getGoTermsByPhenotypeAndPublication(publication);
         System.out.println(goTerms.size());

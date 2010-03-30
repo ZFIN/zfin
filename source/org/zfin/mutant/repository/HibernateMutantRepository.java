@@ -678,10 +678,10 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public List<GoTerm> getGoTermsByPhenotypeAndPublication(Publication publication) {
-        String hql = "select distinct g from Phenotype p , GoTerm g  " +
+        String hql = "select distinct g from GoPhenotype p , GoTerm g  " +
                 " where p.publication.zdbID= :pubZdbID  " +
-                " and ( p.patoSuperTermzdbID = g.id " +
-                " or p.patoSubTermzdbID = g.id )" ;
+                " and ( p.goSubTerm = g " +
+                " or p.goSuperTerm = g )" ;
         Query query = HibernateUtil.currentSession().createQuery(hql) ;
         query.setString("pubZdbID",publication.getZdbID());
         return query.list();
