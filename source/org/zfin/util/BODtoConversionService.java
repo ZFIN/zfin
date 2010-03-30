@@ -336,6 +336,8 @@ public class BODtoConversionService implements Serializable {
                 return Ontology.GO_BP;
             case GO_BP_MF:
                 return Ontology.GO_BP_MF;
+            case GO:
+                return Ontology.GO;
         }
         return null;
     }

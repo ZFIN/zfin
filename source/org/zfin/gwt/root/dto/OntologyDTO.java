@@ -12,7 +12,7 @@ public enum OntologyDTO {
         }
     },
     // full GO ontology
-    GO(1, "GO", "Gene Ontology"){
+    GO(1, "GO", "cellular_component,molecular_function,biological_process"){
         @Override
         public OntologyDTO getAssociatedQualityOntology(){
             return QUALITY;

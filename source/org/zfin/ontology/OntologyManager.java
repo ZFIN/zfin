@@ -157,6 +157,7 @@ public class OntologyManager implements Serializable {
         initSingleOntologyMap(Ontology.GO_CC);
         initSingleOntologyMap(Ontology.GO_BP);
         initComposedOntologyMap(Ontology.GO_BP_MF);
+        initComposedOntologyMap(Ontology.GO);
     }
 
     private void initRootOntologyMapWithExclusion(Ontology qualityProcesses, Ontology rootOntology, String rootOboIDs, String excludeOboIDs) {

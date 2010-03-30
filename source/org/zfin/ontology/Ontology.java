@@ -10,7 +10,7 @@ public enum Ontology implements Serializable {
 
     ANATOMY("zebrafish_anatomy", "Anatomy Ontology", false),
     // full GO ontology
-    GO("cellular_component,molecular_function,biological_process", "Gene Ontology", false),
+    GO("cellular_component,molecular_function,biological_process", "Gene Ontology", true),
     // Subset of GO: Cellular Components
     GO_CC("cellular_component",  "Gene Ontology: Cellular Components",false),
     // Subset of GO: Molecular Function
