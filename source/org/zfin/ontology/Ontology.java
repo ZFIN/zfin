@@ -18,13 +18,13 @@ public enum Ontology implements Serializable {
     // Subset of GO: Biological Process
     GO_BP("biological_process",  "Gene Ontology: Biological Processes",false),
     // PATO
-    QUALITY("pato.quality",  "Phenotype and Trait Ontology",false),
+    QUALITY("quality",  "Phenotype and Trait Ontology",false),
     // PATO: Processes
-    QUALITY_PROCESSES("pato.quality.process",  "Phenotype and Trait Ontology: Quality of Processes",false),
+    QUALITY_PROCESSES("quality.process",  "Phenotype and Trait Ontology: Quality of Processes",false),
     // PATO: Processes
     QUALITY_PROCESSES_RELATIONAL("pato.eq.quality.process.relational",  "Phenotype and Trait Ontology: Relation of Processes",false),
     // PATO: Qualities
-    QUALITY_QUALITIES("pato.quality.quality",  "Phenotype and Trait Ontology: Quality of Qualities",false),
+    QUALITY_QUALITIES("quality.quality",  "Phenotype and Trait Ontology: Quality of Qualities",false),
     // PATO: Qualitative
     QUALITY_QUALITATIVE("pato.eq.quality.qualitative",  "Phenotype and Trait Ontology: Quality of Qualities",false),
     // BP and MF

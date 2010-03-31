@@ -40,37 +40,37 @@ public enum OntologyDTO {
         }
     },
     // PATO
-    QUALITY(5, "Quality - ALL", "pato.quality"){
+    QUALITY(5, "Quality - ALL", "quality"){
         @Override
         public OntologyDTO getAssociatedQualityOntology(){
             return null;
         }
     },
-    QUALITY_PROCESSES(6, "Quality - Processes", "pato.quality.process"){
+    QUALITY_PROCESSES(6, "Quality - Processes", "quality.process"){
         @Override
         public OntologyDTO getAssociatedQualityOntology(){
             return null;
         }
     },
-    QUALITY_QUALITIES(7, "Quality - Objects", "pato.quality.quality"){
+    QUALITY_QUALITIES(7, "Quality - Objects", "quality.quality"){
         @Override
         public OntologyDTO getAssociatedQualityOntology(){
             return null;
         }
     },
-    QUALITY_QUALITIES_RELATIONAL(8, "Quality - Relational Objects", "pato.quality.object.relational"){
+    QUALITY_QUALITIES_RELATIONAL(8, "Quality - Relational Objects", "quality.object.relational"){
         @Override
         public OntologyDTO getAssociatedQualityOntology(){
             return null;
         }
     },
-    QUALITY_PROCESSES_RELATIONAL(9, "Quality - Relational Processes", "pato.quality.process.relational"){
+    QUALITY_PROCESSES_RELATIONAL(9, "Quality - Relational Processes", "quality.process.relational"){
         @Override
         public OntologyDTO getAssociatedQualityOntology(){
             return null;
         }
     },
-    QUALITY_QUALITATIVE(10, "Quality - Qualitative", "pato.quality.qualitative"){
+    QUALITY_QUALITATIVE(10, "Quality - Qualitative", "quality.qualitative"){
         @Override
         public OntologyDTO getAssociatedQualityOntology(){
             return null;
