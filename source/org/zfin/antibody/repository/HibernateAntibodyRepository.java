@@ -363,7 +363,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     public Antibody getAntibodyByName(String antibodyName) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Antibody.class);
-        criteria.add(Restrictions.eq("name", antibodyName));
+        criteria.add(Restrictions.eq("name", antibodyName).ignoreCase());
         return (Antibody) criteria.uniqueResult();
     }
 

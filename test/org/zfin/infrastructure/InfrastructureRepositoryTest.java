@@ -7,8 +7,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.ExternalNote;
 import org.zfin.TestConfiguration;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.framework.HibernateSessionCreator;
@@ -18,6 +20,7 @@ import org.zfin.marker.MarkerType;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermRelationship;
+import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -225,6 +228,38 @@ public class InfrastructureRepositoryTest {
     public void getQualityRootTerm() {
         GenericTerm rootTerm = getInfrastructureRepository().getRootTerm(Ontology.QUALITY.getOntologyName());
         assertNotNull(rootTerm);
+    }
+
+    @Test
+    public void externalNoteRecordAttribution() {
+
+        String externalNoteZdbID = "ZDB-EXTNOTE-080424-1";
+        ActiveData data = new ActiveData();
+        data.setZdbID(externalNoteZdbID);
+
+        String pubID = "ZDB-PUB-070210-20";
+        ActiveSource source = new ActiveSource();
+        source.setZdbID(pubID);
+
+        RecordAttribution rec = getInfrastructureRepository().getRecordAttribution(data, source, RecordAttribution.SourceType.STANDARD);
+        Assert.assertTrue(rec == null);
+
+        PublicationAttribution record = new PublicationAttribution();
+        record.setDataZdbID("externalNoteZdbID");
+        Publication pub = new Publication();
+        pub.setZdbID(pubID);
+        record.setPublication(pub);
+        rec = getInfrastructureRepository().getPublicationAttribution(record);
+        Assert.assertTrue(rec == null);
+
+    }
+
+    @Test
+    public void getExternalNote() {
+        String externalNoteZdbID = "ZDB-EXTNOTE-080424-1";
+
+        ExternalNote note = getInfrastructureRepository().getExternalNoteByID(externalNoteZdbID);
+
     }
 
 }
