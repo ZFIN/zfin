@@ -59,6 +59,15 @@
         </set>
     </class>
 
+    <class name="org.zfin.publication.DOIAttempt" table="doi_attempts">
+        <id name="id" type="long">
+            <column name="doia_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+        <property name="numAttempts" column="doia_num_attempts" not-null="true"/>
+        <many-to-one name="publication" column="doia_pub_zdb_id" not-null="true"/>
+    </class>
+
     <class name="org.zfin.publication.Journal" table="journal">
         <id name="zdbID" type="string">
             <column name="jrnl_zdb_id" not-null="true"/>

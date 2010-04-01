@@ -12,11 +12,14 @@ import java.util.Date;
  */
 public class UpdateDOIJob extends QuartzJobBean {
 
-    private boolean reportAll = false;
+    // defaults are for monthly scheduling
+    private boolean reportAll = true;
+    private int maxToProcess = DOIProcessor.ALL ;
+    private int maxAttempts = DOIProcessor.ALL ;
 
     public void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
-            DOIProcessor driver = new DOIProcessor(reportAll);
+            DOIProcessor driver = new DOIProcessor(reportAll,maxAttempts,maxToProcess);
             driver.findAndUpdateDOIs();
 
             if (reportAll == true || driver.isDoisUpdated()) {
@@ -37,4 +40,19 @@ public class UpdateDOIJob extends QuartzJobBean {
         this.reportAll = reportAll;
     }
 
+    public int getMaxAttempts() {
+        return maxAttempts;
+    }
+
+    public void setMaxAttempts(int maxAttempts) {
+        this.maxAttempts = maxAttempts;
+    }
+
+    public int getMaxToProcess() {
+        return maxToProcess;
+    }
+
+    public void setMaxToProcess(int maxToProcess) {
+        this.maxToProcess = maxToProcess;
+    }
 }

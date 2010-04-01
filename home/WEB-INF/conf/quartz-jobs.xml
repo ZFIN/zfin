@@ -122,6 +122,8 @@
                 <property name="jobDataAsMap">
                     <map>
                         <entry key="reportAll" value="false"/>
+                        <entry key="maxAttempts" value="20"/>
+                        <!--<entry key="maxToProcess" value="10"/>-->
                     </map>
                 </property>
             </bean>
@@ -137,11 +139,7 @@
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Update DOIs Monthly"/>
                 <property name="jobClass" value="org.zfin.datatransfer.doi.UpdateDOIJob"/>
-                <property name="jobDataAsMap">
-                    <map>
-                        <entry key="reportAll" value="true"/>
-                    </map>
-                </property>
+                <!--just use defaults-->
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>

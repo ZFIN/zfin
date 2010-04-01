@@ -1,6 +1,7 @@
 package org.zfin.datatransfer.doi;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
@@ -11,14 +12,12 @@ import org.zfin.datatransfer.webservice.Citexplore;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.publication.Publication;
-import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  */
@@ -70,4 +69,54 @@ public class DOITest {
         HibernateUtil.rollbackTransaction();
 
     }
+
+
+    @Test
+    public void getPublicationswithAccessionsButNoDOIAndFewAttempts(){
+
+        try {
+            HibernateUtil.createTransaction();
+
+            List<Publication> publications ;
+            int maxResults = 1 ;
+            int maxAttempts = 3 ;
+            publications = RepositoryFactory.getPublicationRepository().getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts,maxResults);
+            assertNotNull(publications);
+            assertEquals(maxResults,publications.size());
+            String pubZdbID1 = publications.get(0).getZdbID() ;
+            publications = RepositoryFactory.getPublicationRepository().getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts,maxResults);
+            assertNotNull(publications);
+            assertEquals(maxResults,publications.size());
+            String pubZdbID2 = publications.get(0).getZdbID() ;
+            assertEquals(pubZdbID1,pubZdbID2);
+
+            RepositoryFactory.getPublicationRepository().addDOIAttempts(publications) ;
+            publications = RepositoryFactory.getPublicationRepository(). getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts,maxResults);
+            assertNotNull(publications);
+            assertEquals(maxResults,publications.size());
+            pubZdbID2 = publications.get(0).getZdbID() ;
+            assertEquals(pubZdbID1,pubZdbID2);
+
+
+            RepositoryFactory.getPublicationRepository().addDOIAttempts(publications) ;
+            publications = RepositoryFactory.getPublicationRepository(). getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts,maxResults);
+            assertNotNull(publications);
+            assertEquals(maxResults,publications.size());
+            pubZdbID2 = publications.get(0).getZdbID() ;
+            assertEquals(pubZdbID1,pubZdbID2);
+
+            RepositoryFactory.getPublicationRepository().addDOIAttempts(publications) ;
+            HibernateUtil.currentSession().flush();
+            publications = RepositoryFactory.getPublicationRepository(). getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts,maxResults);
+            assertNotNull(publications);
+            assertEquals(maxResults,publications.size());
+            pubZdbID2 = publications.get(0).getZdbID() ;
+            assertFalse(pubZdbID1.equals(pubZdbID2));
+        } catch (Exception e) {
+            fail(e.toString()) ;
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
+    }
+
 }

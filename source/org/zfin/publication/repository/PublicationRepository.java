@@ -14,6 +14,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
+import org.zfin.publication.DOIAttempt;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationParameter;
@@ -484,4 +485,8 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of figures
      */
     List<Figure> getFiguresByPublication(String pubID);
+
+    List<Publication> getPublicationsWithAccessionButNoDOIAndLessAttempts(int maxAttempts, int maxProcesses);
+
+    List<Publication> addDOIAttempts(List<Publication> publicationList);
 }

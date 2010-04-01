@@ -17,7 +17,10 @@ import java.util.List;
  */
 public class DOIProcessor {
 
-    private int maxProcesses = -1 ;
+    public static final int ALL = -1 ;
+
+    private int maxToProcess = ALL ;
+    private int maxAttempts = 50 ;
     private PublicationRepository publicationRepository = null ;
     private Logger logger = Logger.getLogger(DOIProcessor.class);
 
@@ -27,7 +30,25 @@ public class DOIProcessor {
     private StringBuilder message ;
 
     public DOIProcessor(boolean reportAll) {
+        this(reportAll,Integer.MAX_VALUE);
+    }
+
+    public DOIProcessor(boolean reportAll,int maxAttempts) {
         this.reportAll = reportAll ;
+        if(maxAttempts==ALL){
+            this.maxAttempts = Integer.MAX_VALUE;
+        }
+        else{
+            this.maxAttempts = maxAttempts ;
+        }
+        message = new StringBuilder() ;
+        publicationRepository = new HibernatePublicationRepository() ;
+    }
+
+    public DOIProcessor(boolean reportAll,int maxAttempts,int maxToProcess) {
+        this.reportAll = reportAll ;
+        this.maxToProcess = (maxToProcess==ALL ? Integer.MAX_VALUE : maxToProcess );
+        this.maxAttempts = (maxAttempts==ALL ? Integer.MAX_VALUE : maxAttempts );
         message = new StringBuilder() ;
         publicationRepository = new HibernatePublicationRepository() ;
     }
@@ -37,7 +58,8 @@ public class DOIProcessor {
      * @return List<Publication> Returns list of publications without a DOI.
      */
     private List<Publication> getPubmedIdsWithNoDOIs(){
-        List<Publication> publicationList =  publicationRepository.getPublicationsWithAccessionButNoDOI(maxProcesses) ;
+//        List<Publication> publicationList =  publicationRepository.getPublicationsWithAccessionButNoDOI(maxProcesses) ;
+        List<Publication> publicationList =  publicationRepository.getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts, maxToProcess) ;
         if(reportAll || CollectionUtils.isNotEmpty(publicationList)){
             message.append("number of dois to populate:  ").append(publicationList.size() ).append("\n") ;
         }
@@ -52,6 +74,8 @@ public class DOIProcessor {
     public void findAndUpdateDOIs(){
         try{
             List<Publication> publicationList = getPubmedIdsWithNoDOIs() ;
+            publicationRepository.addDOIAttempts(publicationList) ;
+            HibernateUtil.currentSession().flush();
             Citexplore wsdlConnect = new Citexplore() ;
             publicationList = wsdlConnect.getDoisForPubmedID(publicationList) ;
             DOIHTTPTester httpTester = new DOIHTTPTester() ;

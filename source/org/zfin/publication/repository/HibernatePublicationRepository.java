@@ -1,5 +1,6 @@
 package org.zfin.publication.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
@@ -24,6 +25,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
+import org.zfin.publication.DOIAttempt;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -558,21 +560,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("aoZdbID", aoTerm.getZdbID());
         query.setBoolean("expressionFound", true);
         return (List<Publication>) query.list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Publication> getPublicationsWithAccessionButNoDOI(int maxResults) {
-        Session session = HibernateUtil.currentSession();
-        Criteria query = session.createCriteria(Publication.class);
-        query.add(Restrictions.isNull("doi"));
-        query.add(Restrictions.isNotNull("accessionNumber"));
-        query.add(Restrictions.ne("accessionNumber", "none"));
-        query.addOrder(Order.desc("publicationDate"));
-        if (maxResults >= 0) {
-            query.setMaxResults(maxResults);
-        }
-        List<Publication> list = query.list();
-        return list;
     }
 
 
@@ -1432,6 +1419,106 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         return (List<Figure>) query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Publication> getPublicationsWithAccessionButNoDOI(int maxResults) {
+        Session session = HibernateUtil.currentSession();
+        Criteria query = session.createCriteria(Publication.class);
+        query.add(Restrictions.isNull("doi"));
+        query.add(Restrictions.isNotNull("accessionNumber"));
+        query.add(Restrictions.ne("accessionNumber", "none"));
+        query.addOrder(Order.desc("publicationDate"));
+        if (maxResults >= 0) {
+            query.setMaxResults(maxResults);
+        }
+        return  query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    /**
+     * Get N publication if not attempts have been registered, or the number of attempts is less than allowed amount.
+     */
+    public List<Publication> getPublicationsWithAccessionButNoDOIAndLessAttempts(int maxAttempts, int maxResults) {
+        Session session = HibernateUtil.currentSession();
+        String hql = " select p from Publication p" +
+                " where p.doi is null  " +
+                " and p.accessionNumber is not null  " +
+                " and p.accessionNumber <> 'none' " +
+                " and ( not exists ( " +
+                "   select 'x' from DOIAttempt da where da.publication.zdbID = p.zdbID " +
+                " ) OR exists ( " +
+                "   select 'x' from DOIAttempt da where da.publication.zdbID = p.zdbID " +
+                "   and da.numAttempts < :attempts " +
+                " )  )" +
+                " order by p.publicationDate desc " +
+                "";
+        Query query = session.createQuery(hql);
+        query.setInteger("attempts",maxAttempts) ;
+        if (maxResults >= 0) {
+            query.setMaxResults(maxResults);
+        }
+        return query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<DOIAttempt> getDOIAttemptsFromPubs(List<Publication> publicationList){
+        if(CollectionUtils.isEmpty(publicationList)){
+            return new ArrayList<DOIAttempt>();
+        }
+        Session session = HibernateUtil.currentSession();
+        String hql = " select da from DOIAttempt da   " +
+                " where da.publication in (:publicationList) " +
+                "" ;
+        Query query = session.createQuery(hql) ;
+        query.setParameterList("publicationList",publicationList) ;
+        return query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    /**
+     * This class creates DOI attempts for pubs without previous DOI attempt entries.
+     */
+    public List<DOIAttempt> createDOIAttemptsForPubs(List<Publication> publicationList){
+        if(CollectionUtils.isEmpty(publicationList)){
+            return new ArrayList<DOIAttempt>();
+        }
+        Session session = HibernateUtil.currentSession();
+        String hql = " select p from Publication p " +
+                " where not exists ( select 'x' from DOIAttempt da where da.publication = p ) " +
+                " and p in (:publicationList) " +
+                "" ;
+        Query query = session.createQuery(hql) ;
+        query.setParameterList("publicationList",publicationList) ;
+        List<Publication> publications = query.list();
+        List<DOIAttempt> doiAttempts = new ArrayList<DOIAttempt>();
+        for(Publication publication: publications){
+            DOIAttempt doiAttempt = new DOIAttempt();
+            doiAttempt.setNumAttempts(1); // probably will be null, though
+            doiAttempt.setPublication(publication); // probably will be null, though
+            HibernateUtil.currentSession().save(doiAttempt) ;
+            doiAttempts.add(doiAttempt) ;
+        }
+        return doiAttempts ;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    /**
+     * If DOIAttempt not there, then it will add one.
+     * Do in two sets, one with and one without.
+     * We only want 2 SQL update passes (one for insert and one for update) at most.
+     */
+    public List<Publication> addDOIAttempts(List<Publication> publicationList) {
+        List<DOIAttempt> doiAttempts = getDOIAttemptsFromPubs(publicationList) ;
+        for(DOIAttempt doiAttempt: doiAttempts){
+            doiAttempt.addAttempt();
+        }
+
+        createDOIAttemptsForPubs(publicationList) ;
+
+        return publicationList ;
     }
 
 
