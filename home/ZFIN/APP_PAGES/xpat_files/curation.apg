@@ -269,22 +269,22 @@ background: #AAE;
          
     } 
     
-    
-    function deleteZDB(item,anchor) {
-        if (anchor == 'experiment')
-           {
-            var msg="Are you sure you want to delete this experiment?";
-            if (confirm(msg))
+    function doDeleteZDB(item,anchor) {
              <?MIVAR>
               replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&delete_item="+item+"#"+anchor);
              <?/MIVAR>
+    }
+    
+    function deleteZDB(item,anchor) {
+        if (anchor == 'experiment' || anchor == 'figure') {
+            var msg="Are you sure you want to delete this "+anchor+" ?";
+            if (confirm(msg)){
+                doDeleteZDB(item,anchor);
             }
-        else 
-           {
-            <?MIVAR>
-          replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&delete_item="+item+"#"+anchor);
-            <?/MIVAR>
-           }
+        }
+        else {
+            doDeleteZDB(item,anchor);
+       }
     }
 
     function updateZDB(zdbid,comments) {
