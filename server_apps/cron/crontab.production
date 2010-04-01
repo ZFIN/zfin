@@ -146,8 +146,7 @@
 # SMTWT    11:40pm   load and update AO terms: fairly redundant loader since the
 # AO loads so infrequently.
 #
-40 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/LoadOntology/loadOntology.pl"http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebr
-afish_anatomy.obo" "zebrafish_anatomy.obo"
+40 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/LoadOntology/loadOntology.pl "http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo" "zebrafish_anatomy.obo"
 #
 # F        10:10pm   weekly update of chromosome position and orthology for
 #                    mouse, human, fly
