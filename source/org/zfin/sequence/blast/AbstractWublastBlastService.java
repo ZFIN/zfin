@@ -15,6 +15,7 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
+import org.zfin.sequence.blast.repository.BlastRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.io.*;
@@ -33,6 +34,8 @@ public abstract class AbstractWublastBlastService implements BlastService {
     public final static String BAD_QUERY_SEARCH = "There are no valid contexts in the requested search.";
 
     protected List<String> prefixCommands = new ArrayList<String>();
+
+    protected final BlastRepository blastRepository = RepositoryFactory.getBlastRepository();
 
     // timeout constant
     private static final int LOCK_TIMEOUT_MS = 3000;
@@ -294,7 +297,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
     public void regenerateCuratedDatabases() throws BlastDatabaseException {
         try {
-            List<Database> databases = RepositoryFactory.getBlastRepository().getDatabaseByOrigination(
+            List<Database> databases = blastRepository.getDatabaseByOrigination(
                     Origination.Type.CURATED);
             for (Database database : databases) {
                 regenerateDatabaseFromValidAccessions(database);
@@ -387,7 +390,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
     }
 
     public boolean validateCuratedDatabases() throws BlastDatabaseException {
-        List<Database> databases = RepositoryFactory.getBlastRepository().getDatabaseByOrigination(Origination.Type.CURATED);
+        List<Database> databases = blastRepository.getDatabaseByOrigination(Origination.Type.CURATED);
         for (Database database : databases) {
             logger.info("validating: " + database.getName());
             validateDatabase(database);
@@ -397,7 +400,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
 
     public List<String> validateAllPhysicalDatabasesReadable() {
-        List<Database> databases = RepositoryFactory.getBlastRepository().getDatabaseByOrigination(Origination.Type.CURATED, Origination.Type.LOADED, Origination.Type.MARKERSEQUENCE);
+        List<Database> databases = blastRepository.getDatabaseByOrigination(Origination.Type.CURATED, Origination.Type.LOADED, Origination.Type.MARKERSEQUENCE);
         int numDatabases = getDatabaseStaticsCache().clearCache();
         logger.info("cleared cache of " + numDatabases + " databases");
         List<String> failures = new ArrayList<String>();
@@ -433,7 +436,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
      */
     protected void validateDatabase(Database database) throws BlastDatabaseException {
         // do check 1
-        int numAccessions = RepositoryFactory.getBlastRepository().getNumberValidAccessionNumbers(database);
+        int numAccessions = blastRepository.getNumberValidAccessionNumbers(database);
         int numSequences = getDatabaseStatistics(database).getNumSequences();
         if (numAccessions > numSequences) {
             findMissingAccessions(database);
@@ -456,7 +459,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
         try {
             // 1. get the accessions
-            Set<String> validAccessions = RepositoryFactory.getBlastRepository().getAllValidAccessionNumbers(database);
+            Set<String> validAccessions = blastRepository.getAllValidAccessionNumbers(database);
             Set<String> blastAccessions = new HashSet<String>();
             // 2. dump accessions
             File accessionFile = createAccessionDump(validAccessions, database);
@@ -499,16 +502,21 @@ public abstract class AbstractWublastBlastService implements BlastService {
         }
     }
 
+
     /**
      * Regenerates databases to make sure that they only include valid and the most accessions
      *
      * @param database Database to regenerate.
-     * @return Operation success
      * @throws BlastDatabaseException Operation failed.
      */
     protected void regenerateDatabaseFromValidAccessions(Database database) throws BlastDatabaseException {
-        Set<String> validAccessions = RepositoryFactory.getBlastRepository().getAllValidAccessionNumbers(database);
-        logger.info("# of valid accessions: " + validAccessions.size() + " for[" + database.getAbbrev() + "]");
+        Set<String> validAccessions = blastRepository.getAllValidAccessionNumbers(database);
+        List<String> previousAccession = blastRepository.getPreviousAccessionsForDatabase(database);
+        if(CollectionUtils.isEqualCollection(validAccessions,previousAccession)){
+            logger.debug("collections have identical accessions for size " + validAccessions.size() + " for[" + database.getAbbrev() + "]");
+            return ;
+        }
+        logger.info("need to regenerate, # of valid accessions: " + validAccessions.size() + " for[" + database.getAbbrev() + "] vs previous: "+ previousAccession.size());
         if (validAccessions.size() == 0) {
             logger.warn("No valid accessions dump from database[" + database.getName() + "]");
             return;
@@ -524,6 +532,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
             createDatabaseFromFasta(database, fastaFile);
 
             validateDatabase(database);
+            updatePreviousAccessions(database,validAccessions,previousAccession);
         }
         catch (Exception e) {
             try {
@@ -533,6 +542,17 @@ public abstract class AbstractWublastBlastService implements BlastService {
             }
             throw new BlastDatabaseException("Failed to regenerate blast database from valid accessions: " + database, e);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void updatePreviousAccessions(Database database, Collection<String> validAccessions,
+                                            Collection<String> previousAccession) {
+        // nothing to update, just drop the old and add the new
+        Collection<String> accessionToAdd = CollectionUtils.subtract(validAccessions,previousAccession) ;
+        blastRepository.addPreviousAccessions(database,accessionToAdd) ;
+
+        Collection<String> accessionToRemove = CollectionUtils.subtract(previousAccession,validAccessions) ;
+        blastRepository.removePreviousAccessions(database,accessionToRemove) ;
     }
 
 
@@ -877,7 +897,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
         logger.debug("# lines: "+ lines.length);
         if(lines.length==1){
             if(sequenceType==XMLBlastBean.SequenceType.NUCLEOTIDE){
-				lines = fixDeflineNucleotideSequence(lines[0]) ;
+                lines = fixDeflineNucleotideSequence(lines[0]) ;
             }
             else{
                 lines = fixDeflineProteinSequence(lines[0]) ;

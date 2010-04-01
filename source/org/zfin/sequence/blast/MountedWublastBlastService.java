@@ -269,5 +269,4 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
         logger.debug("error stream: " + execProcess.getStandardError().trim());
     }
 
-
 }

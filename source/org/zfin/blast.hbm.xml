@@ -103,6 +103,14 @@
         <property name="definition" column="bdot_definition"/>
     </class>
 
+    <class name="org.zfin.sequence.blast.BlastRegenerationCache" table="blastdb_regen_content">
+        <id name="id" type="long">
+            <column name="brc_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+        <property name="accession" column="brc_acc_num" type="string" not-null="true" />
+        <many-to-one name="blastDatabase" column="brc_blastdb_zdb_id" class="org.zfin.sequence.blast.Database" not-null="true" />
+    </class>
 
 </hibernate-mapping>
 

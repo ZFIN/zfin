@@ -1,5 +1,6 @@
 package org.zfin.sequence.blast.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
@@ -7,10 +8,12 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.sequence.blast.BlastRegenerationCache;
 import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.blast.DatabaseRelationship;
 import org.zfin.sequence.blast.Origination;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -90,6 +93,18 @@ public class HibernateBlastRepository implements BlastRepository {
         return returnAccessions;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getPreviousAccessionsForDatabase(Database database) {
+        String hql = " select brc.accession from BlastRegenerationCache brc" +
+                " where brc.blastDatabase = :database " +
+                " ";
+        Query query = HibernateUtil.currentSession().createQuery(hql) ;
+        query.setParameter("database",database) ;
+        return query.list();
+    }
+
+
     /**
      * Number of valid accessions.  The other method is too memory intensive.
      * Must implement in SQL to get a proper union.
@@ -124,4 +139,30 @@ public class HibernateBlastRepository implements BlastRepository {
         query.setBoolean("locked", isLocked);
         return query.executeUpdate();
     }
+
+    @Override
+    public void addPreviousAccessions(Database database, Collection<String> accessionsToAdd) {
+        if(CollectionUtils.isEmpty(accessionsToAdd)){
+            return ;
+        }
+        for(String accessionToAdd: accessionsToAdd){
+            BlastRegenerationCache blastRegenerationCache = new BlastRegenerationCache();
+            blastRegenerationCache.setAccession(accessionToAdd);
+            blastRegenerationCache.setBlastDatabase(database);
+            HibernateUtil.currentSession().save(blastRegenerationCache) ;
+        }
+        HibernateUtil.currentSession().flush();
+    }
+
+    @Override
+    public void removePreviousAccessions(Database database, Collection<String> accessionToRemove) {
+        if(CollectionUtils.isEmpty(accessionToRemove)){
+            return ;
+        }
+        String hql = "delete BlastRegenerationCache brc where brc.accession in (:accessions) " ;
+        HibernateUtil.currentSession().createQuery(hql)
+                .setParameterList("accessions",accessionToRemove)
+                .executeUpdate() ;
+    }
+
 }
