@@ -195,7 +195,10 @@ EFFECTS
           where img_fig_zdb_id = '$xpcurfig_fig_zdb_id'
           order by img_label;">
           <?MIVAR COND=$(NC,$1,NULL)>
-            <img src="<!--|IMAGE_LOAD|-->/$1">$2 
+            <img src="<!--|IMAGE_LOAD|-->/$1">
+          <?/MIVAR>
+          <?MIVAR COND=$(NC,$2,NULL)>
+            $2 
           <?/MIVAR>
       <?/MISQL>
     </td>
