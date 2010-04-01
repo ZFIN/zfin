@@ -380,7 +380,7 @@ function hdrSetTabs() {
     <div id="hdr-motto" class="hdr-linkbar" 
          style="<?MIBLOCK COND="$(XST,$hdr_showmotto)"> display: block;
                 <?MIELSE> display: none; <?/MIBLOCK> ">     
-      The Zebrafish Model Organism Database
+      The <a href="http://en.wikipedia.org/wiki/Zebra_Finch" style="text-decoration: none">Zebrafinch</a> Model Organism Database
     </div>
 
     
