@@ -6,10 +6,7 @@ import org.apache.log4j.Logger;
 import org.zfin.marker.*;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.Accession;
-import org.zfin.sequence.DBLink;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.*;
 import org.zfin.sequence.blast.BlastDatabaseException;
 import org.zfin.sequence.blast.BlastService;
 import org.zfin.sequence.blast.Database;
@@ -281,7 +278,7 @@ public class BlastResultMapper {
                     hitMarker = RepositoryFactory.getMarkerRepository().getMarkerByID(cloneDBLink.getDataZdbID());
                     genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
                     hitViewBean.setHitDBLink(cloneDBLink);
-                } else if (transcriptDBLink != null) {
+                } else if (transcriptDBLink != null && false==TranscriptService.isSupportingSequence((TranscriptDBLink) transcriptDBLink)) {
                     hitMarker = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(transcriptDBLink.getDataZdbID());
                     genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
                     hitViewBean.setHitDBLink(transcriptDBLink);
@@ -340,6 +337,8 @@ public class BlastResultMapper {
 
         return blastResultBean;
     }
+
+
 
     public static Map<String, HitViewBean> getBeanMapForHits(List<Hit> hits) {
         Map<String, HitViewBean> hitViewBeans = new HashMap<String, HitViewBean>();

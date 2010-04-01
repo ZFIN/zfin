@@ -345,4 +345,7 @@ public class TranscriptService {
         return markerRepository.getAllTranscriptTypes();
     }
 
+    public static boolean isSupportingSequence(TranscriptDBLink transcriptDBLink){
+        return transcriptDBLink.isInDisplayGroup(DisplayGroup.GroupName.TRANSCRIPT_LINKED_SEQUENCE);
+    }
 }
