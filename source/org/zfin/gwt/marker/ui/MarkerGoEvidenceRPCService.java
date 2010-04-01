@@ -14,15 +14,15 @@ import java.util.Set;
 
 /**
  */
-@RemoteServiceRelativePath("TermRPCService")
-public interface TermRPCService extends RemoteService {
+@RemoteServiceRelativePath("MarkerGoEvidenceRPCService")
+public interface MarkerGoEvidenceRPCService extends RemoteService {
 
     public static class App {
-        private static TermRPCServiceAsync ourInstance = null;
+        private static MarkerGoEvidenceRPCServiceAsync ourInstance = null;
 
-        public static synchronized TermRPCServiceAsync getInstance() {
+        public static synchronized MarkerGoEvidenceRPCServiceAsync getInstance() {
             if (ourInstance == null) {
-                ourInstance = (TermRPCServiceAsync) GWT.create(TermRPCService.class);
+                ourInstance = (MarkerGoEvidenceRPCServiceAsync) GWT.create(MarkerGoEvidenceRPCService.class);
                 ((ServiceDefTarget) ourInstance).setServiceEntryPoint("/ajax/termservice");
             }
             return ourInstance;
@@ -32,17 +32,11 @@ public interface TermRPCService extends RemoteService {
 
     GoEvidenceDTO getMarkerGoTermEvidenceDTO(String zdbID) ;
 
-    GoEvidenceDTO editMarkerHeaderGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO);
-
     GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO);
 
     List<MarkerDTO> getGenesForGOAttributions(GoEvidenceDTO dto);
 
-    List<RelatedEntityDTO> getGenoTypesAndMorpholinosForGOAttributions(GoEvidenceDTO dto);
-
-    GoEvidenceDTO addInference(GoEvidenceDTO dto, String value,String inferenceCategory);
-
-    GoEvidenceDTO removeInference(RelatedEntityDTO dto);
+    List<RelatedEntityDTO> getGenotypesAndMorpholinosForGOAttributions(GoEvidenceDTO dto);
 
     List<GoEvidenceDTO> getGOTermsForPubAndMarker(GoEvidenceDTO dto);
 

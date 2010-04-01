@@ -11,7 +11,7 @@ public class GoEvidenceDTO extends RelatedEntityDTO{
     private MarkerDTO markerDTO;
     private GoTermDTO goTermDTO;
     private GoEvidenceCodeEnum evidenceCode;
-    private GoFlagEnum flag;
+    private GoEvidenceQualifier flag;
     private String note;
 
     private String createdPersonName;
@@ -19,7 +19,7 @@ public class GoEvidenceDTO extends RelatedEntityDTO{
     private Date createdDate;
     private Date modifiedDate ;
 
-    Set<String> inferredFrom ;
+    private Set<String> inferredFrom ;
 
     public MarkerDTO getMarkerDTO() {
         return markerDTO;
@@ -45,12 +45,12 @@ public class GoEvidenceDTO extends RelatedEntityDTO{
         this.evidenceCode = evidenceCodeEnum;
     }
 
-    public GoFlagEnum getFlag() {
+    public GoEvidenceQualifier getFlag() {
         return flag;
     }
 
-    public void setFlag(GoFlagEnum flagEnum) {
-        this.flag = flagEnum;
+    public void setFlag(GoEvidenceQualifier evidenceQualifier) {
+        this.flag = evidenceQualifier;
     }
 
     public String getNote() {

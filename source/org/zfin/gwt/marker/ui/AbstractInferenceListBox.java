@@ -57,7 +57,6 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
     }
 
 
-    @Override
     protected void initGUI() {
         addPanel.add(inferenceCategoryList);
         addPanel.add(lookupBox);
@@ -87,7 +86,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
             availableList.setVisible(true);
             lookupBox.setVisible(false);
             working();
-            TermRPCService.App.getInstance().getGenesForGOAttributions(dto,
+            MarkerGoEvidenceRPCService.App.getInstance().getGenesForGOAttributions(dto,
                     new MarkerEditCallBack< List<MarkerDTO> >("Failed to get ZFIN Attributions"){
 
                         @Override
@@ -121,7 +120,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
 //                setError("Please select a valid pub to display available options.");
                 return ;
             }
-            TermRPCService.App.getInstance().getGenoTypesAndMorpholinosForGOAttributions(dto,
+            MarkerGoEvidenceRPCService.App.getInstance().getGenotypesAndMorpholinosForGOAttributions(dto,
                     new MarkerEditCallBack< List<RelatedEntityDTO> >("Failed to get ZFIN Attributions"){
                         @Override
                         public void onSuccess(List<RelatedEntityDTO> results) {
@@ -148,7 +147,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
             availableList.setVisible(true);
             lookupBox.setVisible(false);
             working();
-            TermRPCService.App.getInstance().getGOTermsForPubAndMarker(dto,
+            MarkerGoEvidenceRPCService.App.getInstance().getGOTermsForPubAndMarker(dto,
                     new MarkerEditCallBack< List<GoEvidenceDTO> >("Failed to get GO Attributions"){
                         @Override
                         public void onSuccess(List<GoEvidenceDTO> results) {
@@ -183,7 +182,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
             lookupBox.setVisible(true);
             working();
             final InferenceCategory inferenceCategory = InferenceCategory.getInferenceCategoryByName(inferenceCategoryList.getSelected());
-            TermRPCService.App.getInstance().getInferencesByMarkerAndType(dto,inferenceCategory.prefix(),
+            MarkerGoEvidenceRPCService.App.getInstance().getInferencesByMarkerAndType(dto,inferenceCategory.prefix(),
                     new MarkerEditCallBack< Set<String> >("Failed to get Inferred values for: "+ inferenceCategoryList.getSelected()){
                         @Override
                         public void onSuccess(Set<String> results) {
@@ -349,7 +348,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
         }
         prefixToSend = inferenceCategory.prefix();
 
-        TermRPCService.App.getInstance().validateAccession(valueToSend,inferenceCategoryList.getSelected(),
+        MarkerGoEvidenceRPCService.App.getInstance().validateAccession(valueToSend,inferenceCategoryList.getSelected(),
                 new MarkerEditCallBack<Boolean>("Failed to validate accession ["+valueToSend+ "] " +
                         "for inference ["+inferenceCategoryList.getSelected()+"]"){
                     @Override

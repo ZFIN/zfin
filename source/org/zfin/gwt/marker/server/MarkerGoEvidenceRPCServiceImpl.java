@@ -8,9 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.datatransfer.webservice.EBIFetch;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.marker.ui.GoEvidenceEditController;
-import org.zfin.gwt.marker.ui.ModularGoEvidenceEditController;
-import org.zfin.gwt.marker.ui.TermRPCService;
+import org.zfin.gwt.marker.ui.MarkerGoEvidenceRPCService;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -37,13 +35,13 @@ import java.util.*;
 
 /**
  */
-public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCService {
+public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet implements MarkerGoEvidenceRPCService {
 
     private transient PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private transient MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private transient MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private transient InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-    private transient Logger logger = Logger.getLogger(TermRPCServiceImpl.class);
+    private final static transient Logger logger = Logger.getLogger(MarkerGoEvidenceRPCServiceImpl.class);
 
 
     @Override
@@ -75,52 +73,11 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
 
 
         returnDTO.setPublicationZdbID(markerGoTermEvidence.getSource().getZdbID());
-//        returnDTO.setCreatedDate(markerGoTermEvidence.getCreatedWhen());
-//        returnDTO.setModifiedDate(markerGoTermEvidence.getCreatedWhen());
-//        returnDTO.setCreatedPersonName(markerGoTermEvidence.getCreatedBy());
-//        returnDTO.setModifiedPersonName(markerGoTermEvidence.getModifiedBy());
-
+        // date modified and created not used here, as not needed
 
         return returnDTO;
     }
 
-    @Override
-    public GoEvidenceDTO editMarkerHeaderGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) {
-
-        // retrieve
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class) ;
-        criteria.add(Restrictions.eq("zdbID",goEvidenceDTO.getZdbID()));
-        criteria.setMaxResults(1);
-        MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) criteria.uniqueResult();
-
-        HibernateUtil.createTransaction();
-        // set modified by
-        Person person = Person.getCurrentSecurityUser();
-
-
-
-        // set source
-        Publication publication = RepositoryFactory.getPublicationRepository().getPublication(goEvidenceDTO.getPublicationZdbID());
-        markerGoTermEvidence.setSource(publication);
-
-        PublicationService.addRecentPublications(getServletContext(),publication, ModularGoEvidenceEditController.PUB_KEY) ;
-
-        GoEvidenceCode goEvidenceCode = (GoEvidenceCode) HibernateUtil.currentSession().createCriteria(GoEvidenceCode.class).add(Restrictions.eq("code",goEvidenceDTO.getEvidenceCode().name())).uniqueResult();
-        markerGoTermEvidence.setEvidenceCode(goEvidenceCode);
-        markerGoTermEvidence.setFlag(goEvidenceDTO.getFlag());
-
-        markerGoTermEvidence.setNote(goEvidenceDTO.getNote());
-
-        if(person!=null){
-            infrastructureRepository.insertUpdatesTable(markerGoTermEvidence.getZdbID(),"MarkerGoTermEvidence",markerGoTermEvidence.toString(),"Updated MarkerGoTermEvidence record",person);
-            markerGoTermEvidence.setModifiedBy(person.getName());
-        }
-        markerGoTermEvidence.setModifiedWhen(goEvidenceDTO.getModifiedDate());
-
-        HibernateUtil.flushAndCommitCurrentSession();
-
-        return goEvidenceDTO ;
-    }
 
     @Override
     public GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) {
@@ -185,6 +142,7 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
         return getMarkerGoTermEvidenceDTO(goEvidenceDTO.getZdbID());
     }
 
+    @Override
     public List<MarkerDTO> getGenesForGOAttributions(GoEvidenceDTO dto) {
         Publication publication = publicationRepository.getPublication(dto.getPublicationZdbID());
         List<MarkerDTO> relatedEntityDTOs = new ArrayList<MarkerDTO>() ;
@@ -202,7 +160,7 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
     }
 
     @Override
-    public List<RelatedEntityDTO> getGenoTypesAndMorpholinosForGOAttributions(GoEvidenceDTO dto) {
+    public List<RelatedEntityDTO> getGenotypesAndMorpholinosForGOAttributions(GoEvidenceDTO dto) {
         Publication publication = publicationRepository.getPublication(dto.getPublicationZdbID());
         List<RelatedEntityDTO> relatedEntityDTOs = new ArrayList<RelatedEntityDTO>() ;
 
@@ -216,17 +174,6 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
                     relatedEntityDTOs.add(DTOService.createMarkerDTOFromMarker(gene));
                 }
             }
-//
-//            // get features
-//            List<Feature> features = RepositoryFactory.getMutantRepository().getFeaturesForStandardAttribution(publication);
-//            if(CollectionUtils.isNotEmpty(features)){
-//                RelatedEntityDTO featureLabelDTO = new RelatedEntityDTO();
-//                featureLabelDTO.setName("Features:");
-//                relatedEntityDTOs.add(featureLabelDTO);
-//                for(Feature feature: features){
-//                    relatedEntityDTOs.add(DTOService.createFeatureDTOFromFeature(feature));
-//                }
-//            }
 
             // get genotypes
             List<Genotype> genotypes = mutantRepository.getGenotypesForStandardAttribution(publication);
@@ -243,33 +190,6 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
         return relatedEntityDTOs ;
     }
 
-
-    /**
-     *
-     * @param dto Thing to add to.
-     * @param accession The inference String value.
-     * @param inferenceCategory The Inference Category.
-     * @return Returns false if invalid accession and nothing done.
-     */
-    @Override
-    public GoEvidenceDTO addInference(GoEvidenceDTO dto, String accession,String inferenceCategory) {
-
-        if(false==validateAccession(accession,inferenceCategory)){
-            return null ;
-        }
-
-        String fullAccession = inferenceCategory + accession;
-        HibernateUtil.createTransaction();
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class) ;
-        criteria.add(Restrictions.eq("zdbID",dto.getZdbID()));
-        criteria.setMaxResults(1);
-        MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) criteria.uniqueResult();
-
-        mutantRepository.addInferenceToGoMarkerTermEvidence(markerGoTermEvidence,fullAccession) ;
-
-        HibernateUtil.flushAndCommitCurrentSession();
-        return getMarkerGoTermEvidenceDTO(dto.getDataZdbID());
-    }
 
     @Override
     public boolean validateAccession(String accession, String inferenceCategory) {
@@ -290,20 +210,6 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
         return true;  //To change body of created methods use File | Settings | File Templates.
     }
 
-    @Override
-    public GoEvidenceDTO removeInference(RelatedEntityDTO dto) {
-        HibernateUtil.createTransaction();
-
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class) ;
-        criteria.add(Restrictions.eq("zdbID",dto.getDataZdbID()));
-        criteria.setMaxResults(1);
-        MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) criteria.uniqueResult();
-
-        mutantRepository.removeInferenceToGoMarkerTermEvidence(markerGoTermEvidence,dto.getName());
-
-        HibernateUtil.flushAndCommitCurrentSession();
-        return getMarkerGoTermEvidenceDTO(dto.getDataZdbID());
-    }
 
     @Override
     public List<GoEvidenceDTO> getGOTermsForPubAndMarker(GoEvidenceDTO dto) {
@@ -323,32 +229,23 @@ public class TermRPCServiceImpl extends RemoteServiceServlet implements TermRPCS
                 relatedEntityDTO.setPublicationZdbID(dto.getPublicationZdbID());
                 goEvidenceDTOs.add(relatedEntityDTO) ;
             }
-//
-//            GoEvidenceDTO dividerDTO = new GoEvidenceDTO();
-//            dividerDTO.setName("----");
-//            dividerDTO.setDataZdbID("----");
-//            goEvidenceDTOs.add(dividerDTO) ;
-//
-//            goTerms = RepositoryFactory.getMutantRepository().getGoTermsByPhenotypeAndPublication(publication) ;
-//            for(GoTerm goTerm: goTerms){
-//                GoEvidenceDTO relatedEntityDTO = new GoEvidenceDTO();
-//                relatedEntityDTO.setName(goTerm.getName());
-//                relatedEntityDTO.setZdbID(goTerm.getZdbID());
-//                relatedEntityDTO.setDataZdbID(goTerm.getZdbID());
-//                relatedEntityDTO.setGoTermID(goTerm.getGoID());
-//                relatedEntityDTO.setPublicationZdbID(dto.getPublicationZdbID());
-//                goEvidenceDTOs.add(relatedEntityDTO) ;
-//            }
         }
 
         return goEvidenceDTOs ;
     }
 
 
+    /**
+     * Returns inferences already inferred from a marker.
+     * @param zdbID Marker zdbID.
+     * @param inferenceCategory Category of inferences.  All inferences must start with this category.
+     * @return Set of inferences.
+     */
+    @SuppressWarnings("unchecked")
     protected Set<String> getInferencesFromPreviousInferences(String zdbID,String inferenceCategory){
         Set<String> inferredFromSet = new TreeSet<String>() ;
-        // for interpro and EC, these should come form db_links and for SP_KW, from previous inferences
 
+        // for interpro and EC, these should come form db_links and for SP_KW, from previous inferences
         Criteria criteria = HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class) ;
         criteria.add(Restrictions.eq("marker.zdbID",zdbID));
         List<MarkerGoTermEvidence> markerGoTermEvidenceList = criteria.list();

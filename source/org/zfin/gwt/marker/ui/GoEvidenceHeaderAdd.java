@@ -9,7 +9,8 @@ import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 
 /**
- * This code header houses 4 things
+ * This class creates a MarkerGoEntry instance, but then refers to the Edit instance for editing.
+ * This code header houses 4 things:
  * 1 - qualifier widget
  * 2 - lookup name box
  * 4 - pubs
@@ -55,7 +56,7 @@ public class GoEvidenceHeaderAdd extends AbstractGoEvidenceHeader{
                 return ;
             }
             working();
-            TermRPCService.App.getInstance().createMarkerGoTermEvidenceDTO(goEvidenceDTO,new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:"){
+            MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidenceDTO(goEvidenceDTO,new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:"){
                 @Override
                 public void onFailure(Throwable throwable) {
                     super.onFailure(throwable);
@@ -85,6 +86,7 @@ public class GoEvidenceHeaderAdd extends AbstractGoEvidenceHeader{
         }
     }
 
+    @Override
     public boolean isDirty() {
         return true ;
     }

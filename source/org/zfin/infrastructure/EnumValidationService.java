@@ -8,8 +8,8 @@ import org.hibernate.Session;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
+import org.zfin.gwt.root.dto.GoEvidenceQualifier;
 import org.zfin.gwt.root.dto.InferenceCategory;
-import org.zfin.gwt.root.dto.GoFlagEnum;
 import org.zfin.marker.*;
 import org.zfin.mutant.Feature;
 import org.zfin.mutant.FeatureAssay;
@@ -296,7 +296,7 @@ public class EnumValidationService {
     public void validateGoFlags(){
         String hql = "select f.name from GoFlag f  order by f.displayOrder ";
         List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list();
-        checkEnumValuesPresentInDatabase(typeList, GoFlagEnum.values());
+        checkEnumValuesPresentInDatabase(typeList, GoEvidenceQualifier.values());
     }
 
 

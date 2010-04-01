@@ -11,17 +11,11 @@ import java.util.Set;
 
 /**
  */
-public interface TermRPCServiceAsync {
+public interface MarkerGoEvidenceRPCServiceAsync {
 
     void getMarkerGoTermEvidenceDTO(String zdbID,AsyncCallback<GoEvidenceDTO> async);
 
-    void editMarkerHeaderGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO, AsyncCallback<GoEvidenceDTO> async);
-
-    void getGenoTypesAndMorpholinosForGOAttributions(GoEvidenceDTO dto, AsyncCallback<List<RelatedEntityDTO>> async);
-
-    void addInference(GoEvidenceDTO dto, String zdbID, String inferenceCategory,AsyncCallback<GoEvidenceDTO> asyncCallback);
-
-    void removeInference(RelatedEntityDTO dto, AsyncCallback<GoEvidenceDTO> asyncCallback);
+    void getGenotypesAndMorpholinosForGOAttributions(GoEvidenceDTO dto, AsyncCallback<List<RelatedEntityDTO>> async);
 
     void getGOTermsForPubAndMarker(GoEvidenceDTO dto, AsyncCallback<List<GoEvidenceDTO>> asyncCallback);
 

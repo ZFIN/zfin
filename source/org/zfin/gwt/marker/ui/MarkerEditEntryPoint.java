@@ -38,12 +38,7 @@ public class MarkerEditEntryPoint implements EntryPoint {
         }
         else
         if(zdbID.indexOf("MRKRGOEV")>=0 ){
-            if(zdbID.startsWith("Alternate")){
-                (new ModularGoEvidenceEditController()).initGUI();
-            }
-            else{
-                (new GoEvidenceEditController()).initGUI();
-            }
+            (new GoEvidenceEditController()).initGUI();
         }
         else
         if(zdbID.equals("test")){

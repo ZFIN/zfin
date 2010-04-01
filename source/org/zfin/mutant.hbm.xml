@@ -27,7 +27,7 @@
     </typedef>
 
     <typedef class="org.zfin.database.StringEnumUserType" name="goFlag">
-        <param name="enumClassname">org.zfin.gwt.root.dto.GoFlagEnum</param>
+        <param name="enumClassname">org.zfin.gwt.root.dto.GoEvidenceQualifier</param>
     </typedef>
     <!-- <typedef class="org.zfin.database.StringEnumUserType" name="featureType">
         <param name="enumClassname">org.zfin.mutant.Feature$Type</param>

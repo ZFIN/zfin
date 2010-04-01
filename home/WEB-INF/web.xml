@@ -223,7 +223,7 @@
 
     <servlet>
         <servlet-name>TermService</servlet-name>
-        <servlet-class>org.zfin.gwt.marker.server.TermRPCServiceImpl</servlet-class>
+        <servlet-class>org.zfin.gwt.marker.server.MarkerGoEvidenceRPCServiceImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>

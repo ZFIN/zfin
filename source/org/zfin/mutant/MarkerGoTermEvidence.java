@@ -1,7 +1,6 @@
 package org.zfin.mutant;
 
-import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.dto.GoFlagEnum;
+import org.zfin.gwt.root.dto.GoEvidenceQualifier;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GoTerm;
 import org.zfin.publication.Publication;
@@ -17,7 +16,7 @@ public class MarkerGoTermEvidence {
 
     // this may need to be moved to its own
     private GoEvidenceCode evidenceCode ;
-    private GoFlagEnum flag;
+    private GoEvidenceQualifier flag;
     private Publication source ;
     private GoTerm goTerm ;
     private String note ;
@@ -55,11 +54,11 @@ public class MarkerGoTermEvidence {
         this.evidenceCode = evidenceCode;
     }
 
-    public GoFlagEnum getFlag() {
+    public GoEvidenceQualifier getFlag() {
         return flag;
     }
 
-    public void setFlag(GoFlagEnum flag) {
+    public void setFlag(GoEvidenceQualifier flag) {
         this.flag = flag;
     }
 

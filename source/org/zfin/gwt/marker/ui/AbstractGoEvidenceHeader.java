@@ -97,7 +97,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
                     setError("Go term is invalid ["+value+"].  Please add a valid go term.");
                     return ;
                 }
-                TermRPCService.App.getInstance().getGOTermByName(value, new MarkerEditCallBack<GoTermDTO>("Failed to retrieve GO value"){
+                MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(value, new MarkerEditCallBack<GoTermDTO>("Failed to retrieve GO value"){
                     @Override
                     public void onSuccess(GoTermDTO result) {
                         temporaryGoTermDTO = result;
@@ -192,10 +192,10 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         // contributes to only for molecular function
         if(dto.getGoTerm()!=null){
             if(dto.getGoTerm().getSubOntology().equals(GoTermDTO.MOLECULAR_FUNCTION)){
-                evidenceFlagBox.addItem(GoFlagEnum.CONTRIBUTES_TO.toString());
+                evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
             }
         }
-        evidenceFlagBox.addItem(GoFlagEnum.NOT.toString());
+        evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());
 
         if(dto.getFlag()==null){
             evidenceFlagBox.setItemSelected(0,true);
@@ -221,7 +221,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         else{
             goEvidenceDTO = new GoEvidenceDTO();
         }
-        goEvidenceDTO.setFlag(evidenceFlagBox.getItemCount()==0 || evidenceFlagBox.getSelected()==null  ? null : GoFlagEnum.getType(evidenceFlagBox.getSelected()));
+        goEvidenceDTO.setFlag(evidenceFlagBox.getItemCount()==0 || evidenceFlagBox.getSelected()==null  ? null : GoEvidenceQualifier.getType(evidenceFlagBox.getSelected()));
         goEvidenceDTO.setPublicationZdbID(pubLabel.getBoxValue());
         goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.valueOf(evidenceCodeBox.getSelected()));
         goEvidenceDTO.setNote(noteBox.getText());

@@ -7,17 +7,13 @@ import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.marker.server.DTOService;
-import org.zfin.gwt.marker.server.TermRPCServiceImpl;
-import org.zfin.gwt.root.dto.InferenceCategory;
-import org.zfin.gwt.marker.ui.TermRPCService;
+import org.zfin.gwt.marker.server.MarkerGoEvidenceRPCServiceImpl;
+import org.zfin.gwt.marker.ui.MarkerGoEvidenceRPCService;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Set;
-import java.util.TreeSet;
 
 import static org.junit.Assert.*;
 
@@ -50,7 +46,7 @@ public class GoEvidenceTest {
     @Test
     public void getGoEvidenceDTO(){
         String zdbID = "ZDB-MRKRGOEV-031121-22" ;
-        TermRPCService markerRPCService = new TermRPCServiceImpl();
+        MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
         GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID) ;
         assertNotNull(goEvidenceDTO);
         assertEquals(zdbID,goEvidenceDTO.getZdbID());
@@ -66,7 +62,7 @@ public class GoEvidenceTest {
         assertEquals("ZDB-GENE-010606-1",goEvidenceDTO.getMarkerDTO().getZdbID());
         assertEquals(0,goEvidenceDTO.getInferredFrom().size());
         assertNotNull(goEvidenceDTO.getFlag());
-        assertEquals(GoFlagEnum.NOT.name(),goEvidenceDTO.getFlag().name());
+        assertEquals(GoEvidenceQualifier.NOT.name(),goEvidenceDTO.getFlag().name());
 
         String zdbID2 = "ZDB-MRKRGOEV-031125-8";
         goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID2) ;
@@ -84,7 +80,7 @@ public class GoEvidenceTest {
     @Test
     public void editGoEvidenceHeader(){
         String zdbID = "ZDB-MRKRGOEV-031121-22" ;
-        TermRPCService markerRPCService = new TermRPCServiceImpl();
+        MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
         GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID) ;
         assertNotNull(goEvidenceDTO);
         assertEquals(zdbID,goEvidenceDTO.getZdbID());
@@ -103,7 +99,7 @@ public class GoEvidenceTest {
         Publication publication = (Publication) HibernateUtil.currentSession().createCriteria(Publication.class).setMaxResults(1).uniqueResult();
         assertNotSame(goEvidenceDTO.getPublicationZdbID(),publication.getZdbID());
         goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.IC);
-        goEvidenceDTO.setFlag(GoFlagEnum.CONTRIBUTES_TO);
+        goEvidenceDTO.setFlag(GoEvidenceQualifier.CONTRIBUTES_TO);
         goEvidenceDTO.setPublicationZdbID(publication.getZdbID());
 
         Set<String> inferredFromSet = goEvidenceDTO.getInferredFrom();
@@ -116,7 +112,7 @@ public class GoEvidenceTest {
         assertEquals(GoEvidenceCodeEnum.IC,goEvidenceDTO2.getEvidenceCode());
         assertEquals(2,goEvidenceDTO2.getInferredFrom().size());
         assertTrue(goEvidenceDTO2.getInferredFrom().contains(inferenceTestString));
-        assertEquals(GoFlagEnum.CONTRIBUTES_TO,goEvidenceDTO2.getFlag());
+        assertEquals(GoEvidenceQualifier.CONTRIBUTES_TO,goEvidenceDTO2.getFlag());
         assertEquals(publication.getZdbID(),goEvidenceDTO2.getPublicationZdbID());
 
         // lets set the evidence flag to null
@@ -137,36 +133,6 @@ public class GoEvidenceTest {
     }
 
 
-    @Test
-    public void inferenceTests(){
-        String zdbID = "ZDB-MRKRGOEV-031121-22" ;
-        String testString = "something";
-        
-        TermRPCService markerRPCService = new TermRPCServiceImpl();
-        GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID) ;
-        assertNotNull(goEvidenceDTO);
-        assertEquals(zdbID,goEvidenceDTO.getZdbID());
-        assertEquals("ZDB-GENE-980526-501",goEvidenceDTO.getMarkerDTO().getZdbID());
-        assertNull(goEvidenceDTO.getFlag());
-        assertNotNull(goEvidenceDTO.getInferredFrom());
-        assertEquals(1,goEvidenceDTO.getInferredFrom().size());
-
-        markerRPCService.addInference(goEvidenceDTO,testString, InferenceCategory.EC.name()+":");
-        goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID) ;
-        assertEquals(2,goEvidenceDTO.getInferredFrom().size());
-        String testData = InferenceCategory.EC.name() + ":" + testString;
-        assertTrue(goEvidenceDTO.getInferredFrom().contains(testData)) ;
-
-        RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
-        relatedEntityDTO.setName(testData);
-        relatedEntityDTO.setDataZdbID(goEvidenceDTO.getDataZdbID());
-        relatedEntityDTO.setZdbID(goEvidenceDTO.getZdbID());
-        markerRPCService.removeInference(relatedEntityDTO);
-        goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID) ;
-        assertEquals(1,goEvidenceDTO.getInferredFrom().size());
-        assertFalse(goEvidenceDTO.getInferredFrom().contains(testString)) ;
-
-    }
 
     /**
      * Will only be changing the qualifier, evidence code and pub.  The qualifier can be null and not-null.
@@ -174,7 +140,7 @@ public class GoEvidenceTest {
     @Test
     public void createGoEvidenceHeader(){
         String zdbID = "ZDB-MRKRGOEV-031121-22" ;
-        TermRPCService markerRPCService = new TermRPCServiceImpl();
+        MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
         GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID) ;
         assertNotNull(goEvidenceDTO);
         assertEquals(zdbID,goEvidenceDTO.getZdbID());

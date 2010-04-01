@@ -115,7 +115,7 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
         switch (action) {
             case EDIT:
                 markerGoEvidenceZdbID = dictionary.get(LOOKUP_ZDBID);
-                TermRPCService.App.getInstance().getMarkerGoTermEvidenceDTO(markerGoEvidenceZdbID,
+                MarkerGoEvidenceRPCService.App.getInstance().getMarkerGoTermEvidenceDTO(markerGoEvidenceZdbID,
                         new MarkerEditCallBack<GoEvidenceDTO>("failed to find markergoevidence: ") {
                             public void onSuccess(GoEvidenceDTO returnDTO) {
                                 if (action == Action.CLONE) {
@@ -126,20 +126,17 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
                                 setDTO(returnDTO);
                                 publicationZdbID = dto.getPublicationZdbID();
                                 publicationLookupBox.publicationChanged(new PublicationChangeEvent(publicationZdbID));
-//                                publicationLookupBox.set
                             }
                         });
                 break;
             case CLONE:
                 markerGoEvidenceZdbID = dictionary.get(LOOKUP_ZDBID);
-                TermRPCService.App.getInstance().getMarkerGoTermEvidenceDTO(markerGoEvidenceZdbID,
+                MarkerGoEvidenceRPCService.App.getInstance().getMarkerGoTermEvidenceDTO(markerGoEvidenceZdbID,
                         new MarkerEditCallBack<GoEvidenceDTO>("failed to find markergoevidence: ") {
                             public void onSuccess(GoEvidenceDTO returnDTO) {
-                                if (action == Action.CLONE) {
-                                    publicationZdbID = dictionary.get(PUB_ZDBID);
-                                    returnDTO.setPublicationZdbID(publicationZdbID);
-                                    returnDTO.setZdbID(null);
-                                }
+                                publicationZdbID = dictionary.get(PUB_ZDBID);
+                                returnDTO.setPublicationZdbID(publicationZdbID);
+                                returnDTO.setZdbID(null);
                                 setDTO(returnDTO);
                             }
                         });
@@ -158,7 +155,11 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
                         new MarkerEditCallBack<MarkerDTO>("failed to find marker: ") {
                             public void onSuccess(MarkerDTO returnDTO) {
                                 GoEvidenceDTO goEvidenceDTO = new GoEvidenceDTO();
-                                if (false == publicationZdbID.isEmpty() && false == publicationZdbID.equals(IsDirty.NULL_STRING)) {
+                                if (    publicationZdbID!=null
+                                        &&
+                                        false == publicationZdbID.isEmpty()
+                                        && false == publicationZdbID.equals(IsDirty.NULL_STRING)
+                                        ) {
                                     goEvidenceDTO.setPublicationZdbID(publicationZdbID);
                                 }
                                 goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.IMP);
