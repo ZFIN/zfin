@@ -517,6 +517,27 @@ public class OntologyManager implements Serializable {
         LOG.info("Time to serialize ontologies: " + time + " seconds");
     }
 
+    /**
+     * Retrieve a term by term name and a list of ontologies.
+     * The logic loops over all ontologies and returns the term from the ontology
+     * in which it is found first. If no term is found a null is returned.
+     * 
+     * @param ontologies collection of ontologies
+     * @param termName term name
+     * @return term object
+     */
+    public Term getTermByName(List<Ontology> ontologies, String termName) {
+        if (ontologies == null)
+            return null;
+
+        for (Ontology ontology : ontologies) {
+            Term term = getTermByName(ontology, termName);
+            if (term != null)
+                return term;
+        }
+        return null;
+    }
+
     public enum LoadingMode {
         DATABASE, SERIALIZED_FILE
     }

@@ -17,9 +17,7 @@ import org.zfin.gwt.curation.ui.PileStructuresRPC;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.PhenotypeStructure;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.GoTerm;
-import org.zfin.ontology.Ontology;
+import org.zfin.ontology.*;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -224,24 +222,24 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
             throw new org.zfin.gwt.root.util.TermNotFoundException("No tagName name provided.");
 
         List<Ontology> zfinOntology = Ontology.getOntologies(phenotypeTerm.getSuperterm().getOntology().getOntologyName());
-        GenericTerm superterm = getInfrastructureRepository().getTermByName(superTermName, zfinOntology);
+        Term superterm = OntologyManager.getInstance().getTermByName(zfinOntology, superTermName);
         if (superterm == null)
-            throw new org.zfin.gwt.root.util.TermNotFoundException("No Superterm term [" + superTermName + " found.");
+            throw new org.zfin.gwt.root.util.TermNotFoundException("No Superterm named [" + superTermName + "] found.");
 
         PhenotypeStructure structure = new PhenotypeStructure();
         structure.setSuperterm(superterm);
         if (phenotypeTerm.getSubterm() != null) {
             zfinOntology = Ontology.getOntologies(phenotypeTerm.getSubterm().getOntology().getOntologyName());
-            GenericTerm subterm = getInfrastructureRepository().getTermByName(phenotypeTerm.getSubterm().getTermName(), zfinOntology);
+            Term subterm = OntologyManager.getInstance().getTermByName(zfinOntology, phenotypeTerm.getSubterm().getTermName());
             if (subterm == null)
-                throw new org.zfin.gwt.root.util.TermNotFoundException("No Subterm term [" + phenotypeTerm.getSubterm().getTermName() + " found.");
+                throw new org.zfin.gwt.root.util.TermNotFoundException("No Subterm named [" + phenotypeTerm.getSubterm().getTermName() + "] found.");
             structure.setSubterm(subterm);
         }
         zfinOntology = Ontology.getOntologies(phenotypeTerm.getQuality().getOntology().getOntologyName());
-        GenericTerm subterm = getInfrastructureRepository().getTermByName(qualityTermName, zfinOntology);
-        if (subterm == null)
-            throw new org.zfin.gwt.root.util.TermNotFoundException("No Subterm term [" + qualityTermName + " found.");
-        structure.setQuality(subterm);
+        Term qualityTerm = OntologyManager.getInstance().getTermByName(zfinOntology, qualityTermName);
+        if (qualityTerm == null)
+            throw new org.zfin.gwt.root.util.TermNotFoundException("No quality term named [" + qualityTermName + "] found.");
+        structure.setQuality(qualityTerm);
         structure.setTag(Phenotype.Tag.getTagFromName(tagName));
         structure.setPerson(Person.getCurrentSecurityUser());
         getPhenotypeRepository().createPhenotypeStructure(structure, publicationID);
