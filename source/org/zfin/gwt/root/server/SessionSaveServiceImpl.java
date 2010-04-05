@@ -78,10 +78,8 @@ public class SessionSaveServiceImpl extends RemoteServiceServlet implements Sess
 
         //if the repository method doesn't come back with a curator_session object, one doesn't exist
         //yet, so just make one
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
+            HibernateUtil.createTransaction();
             if (realCS != null) {
                 log.debug("found cs object with id: " + realCS.getID() + " and value: " + realCS.getValue()
                         + " updating value to: " + value);
@@ -91,9 +89,9 @@ public class SessionSaveServiceImpl extends RemoteServiceServlet implements Sess
                 log.debug("wasn't an existing curator session object, saving it...");
                 profileRepository.createCuratorSession(personZdbID, publicationZdbID, field, value);
             }
-            tx.commit();
+            HibernateUtil.flushAndCommitCurrentSession();
         } catch (HibernateException e) {
-            tx.rollback();
+            HibernateUtil.rollbackTransaction();
             e.printStackTrace();
         }
 
