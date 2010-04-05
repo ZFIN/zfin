@@ -29,7 +29,7 @@ public class ExperimentDTOTest {
 
         Collections.sort(experiments);
         assertNull(experiments.get(0).getGene());
-        assertEquals("alcam", experiments.get(1).getGene().getAbbreviation());
+        assertEquals("alcam", experiments.get(1).getGene().getName());
 
     }
 
@@ -49,7 +49,7 @@ public class ExperimentDTOTest {
         experiments.add(two);
         Collections.sort(experiments);
         assertNull(experiments.get(0).getGene());
-        assertEquals("alcam", experiments.get(1).getGene().getAbbreviation());
+        assertEquals("alcam", experiments.get(1).getGene().getName());
 
         two.setGene(getMarkerDTO("alcam"));
         Collections.sort(experiments);
@@ -114,7 +114,7 @@ public class ExperimentDTOTest {
     private MarkerDTO getMarkerDTO(String name) {
 
         MarkerDTO markerDTO = new MarkerDTO();
-        markerDTO.setAbbreviation(name);
+        markerDTO.setName(name);
         return markerDTO;
     }
 

@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.gwt.ExpressionJWebUnitTest;
 import org.zfin.gwt.GeneralSecureJWebUnitTest;
+import org.zfin.gwt.marker.AntibodyGWTEditTest;
 import org.zfin.httpunittest.SmokeTest;
 
 /**
@@ -14,6 +15,7 @@ import org.zfin.httpunittest.SmokeTest;
 @Suite.SuiteClasses({
         SmokeTest.class,
         GeneralSecureJWebUnitTest.class,
+        AntibodyGWTEditTest.class,
         ExpressionJWebUnitTest.class
 //        GOEvidenceUnitTest.class
 })
