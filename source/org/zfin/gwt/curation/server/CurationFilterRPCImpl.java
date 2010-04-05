@@ -117,7 +117,7 @@ public class CurationFilterRPCImpl extends RemoteServiceServlet implements Curat
 
         for (Marker marker : markers) {
             MarkerDTO gene = new MarkerDTO();
-            gene.setAbbreviation(marker.getAbbreviation());
+            gene.setName(marker.getAbbreviation());
             gene.setZdbID(marker.getZdbID());
             genes.add(gene);
         }
