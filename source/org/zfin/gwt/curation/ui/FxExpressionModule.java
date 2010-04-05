@@ -870,7 +870,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
                 setWidgetWithNameAndIdLabel(rowIndex, HeaderName.FISH.getIndex(), experiment.getFishName(), experiment.getFishID());
                 MarkerDTO gene = experiment.getGene();
                 if (gene != null)
-                    setWidgetWithNameAndIdLabel(rowIndex, HeaderName.GENE.getIndex(), experiment.getGene().getAbbreviation(), gene.getZdbID());
+                    setWidgetWithNameAndIdLabel(rowIndex, HeaderName.GENE.getIndex(), experiment.getGene().getName(), gene.getZdbID());
                 setWidgetWithNameAndIdLabel(rowIndex, HeaderName.ENVIRONMENT.getIndex(), experiment.getEnvironment().getName(), experiment.getEnvironment().getZdbID());
 
                 String assay = experiment.getAssayAbbreviation();
@@ -879,7 +879,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
                 setText(rowIndex, HeaderName.ASSAY.getIndex(), assay);
                 MarkerDTO antibody = experiment.getAntibodyMarker();
                 if (antibody != null)
-                    setText(rowIndex, HeaderName.ANTIBODY.getIndex(), antibody.getAbbreviation());
+                    setText(rowIndex, HeaderName.ANTIBODY.getIndex(), antibody.getName());
                 setText(rowIndex, HeaderName.STAGE_RANGE.getIndex(), expression.getStageRange());
 
                 Widget terms = createTermList(expression);

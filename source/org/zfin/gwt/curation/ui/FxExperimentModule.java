@@ -479,7 +479,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             if (StringUtils.isNotEmpty(antibodyID) && !antibodyID.equals(StringUtils.NULL)) {
                 MarkerDTO antibody = new MarkerDTO();
                 antibody.setZdbID(antibodyID);
-                antibody.setAbbreviation(antibodyName);
+                antibody.setName(antibodyName);
                 updatedExperiment.setAntibodyMarker(antibody);
             }
         }
@@ -584,7 +584,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             antibodyList.addItem("");
             int rowIndex = 1;
             for (MarkerDTO gene : genes) {
-                antibodyList.addItem(gene.getAbbreviation(), gene.getZdbID());
+                antibodyList.addItem(gene.getName(), gene.getZdbID());
                 // make sure the selected antibody is still selected
                 if (gene.getZdbID().equals(selectedAntibodyID))
                     antibodyList.setItemSelected(rowIndex, true);
@@ -617,7 +617,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             geneList.addItem("");
             int rowIndex = 1;
             for (MarkerDTO gene : genes) {
-                geneList.addItem(gene.getAbbreviation(), gene.getZdbID());
+                geneList.addItem(gene.getName(), gene.getZdbID());
                 if (selectedGene != null)
                     if (selectedGene.getZdbID() != null && gene.getZdbID().equals(selectedGene.getZdbID()))
                         geneList.setSelectedIndex(rowIndex);
@@ -649,7 +649,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             antibodyList.addItem("");
             int rowIndex = 1;
             for (MarkerDTO antibody : antibodies) {
-                antibodyList.addItem(antibody.getAbbreviation(), antibody.getZdbID());
+                antibodyList.addItem(antibody.getName(), antibody.getZdbID());
                 if (selectedAntibodyID != null && antibody.getZdbID().equals(selectedAntibodyID))
                     antibodyList.setSelectedIndex(rowIndex);
                 rowIndex++;
@@ -879,7 +879,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
                 setWidget(rowIndex, HeaderName.SELECT.getIndex(), checkBox);
                 MarkerDTO gene = experiment.getGene();
                 if (gene != null)
-                    setText(rowIndex, HeaderName.GENE.getIndex(), gene.getAbbreviation());
+                    setText(rowIndex, HeaderName.GENE.getIndex(), gene.getName());
                 setText(rowIndex, HeaderName.FISH.getIndex(), experiment.getFishName());
 
                 Widget environment = new Label(experiment.getEnvironment().getName());
@@ -888,7 +888,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
                 setText(rowIndex, HeaderName.ASSAY.getIndex(), experiment.getAssay());
                 MarkerDTO antibody = experiment.getAntibodyMarker();
                 if (antibody != null)
-                    setText(rowIndex, HeaderName.ANTIBODY.getIndex(), antibody.getAbbreviation());
+                    setText(rowIndex, HeaderName.ANTIBODY.getIndex(), antibody.getName());
                 if (!StringUtils.isEmpty(experiment.getCloneID())) {
                     Label genBankLabel = new Label(experiment.getGenbankNumber());
                     genBankLabel.setTitle(experiment.getCloneName());
@@ -1144,13 +1144,13 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
      */
     private void updateTextInUpdatedRow(int row, ExperimentDTO experiment) {
         if (experiment.getGene() != null)
-            displayTable.setText(row, HeaderName.GENE.getIndex(), experiment.getGene().getAbbreviation());
+            displayTable.setText(row, HeaderName.GENE.getIndex(), experiment.getGene().getName());
         displayTable.setText(row, HeaderName.FISH.getIndex(), experiment.getFishName());
         Widget environment = new Label(experiment.getEnvironment().getName());
         environment.setTitle(experiment.getEnvironment().getZdbID());
         displayTable.setWidget(row, HeaderName.ENVIRONMENT.getIndex(), environment);
         displayTable.setText(row, HeaderName.ASSAY.getIndex(), experiment.getAssay());
-        displayTable.setText(row, HeaderName.ANTIBODY.getIndex(), experiment.getAntibodyMarker().getAbbreviation());
+        displayTable.setText(row, HeaderName.ANTIBODY.getIndex(), experiment.getAntibodyMarker().getName());
         displayTable.setText(row, HeaderName.GENBANK.getIndex(), experiment.getGenbankNumber());
         // update experiment in list
         int index = 0;
@@ -1176,7 +1176,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             geneList.addItem("");
             int rowIndex = 1;
             for (MarkerDTO gene : genes) {
-                geneList.addItem(gene.getAbbreviation(), gene.getZdbID());
+                geneList.addItem(gene.getName(), gene.getZdbID());
                 // make sure the selected gene is still selected
                 if (gene.getZdbID().equals(selectedGeneID))
                     geneList.setItemSelected(rowIndex, true);

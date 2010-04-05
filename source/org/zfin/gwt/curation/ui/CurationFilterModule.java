@@ -211,7 +211,7 @@ public class CurationFilterModule extends Composite {
             geneList.clear();
             geneList.addItem(ALL, "");
             for (MarkerDTO gene : valuesDTO.getMarkers()) {
-                geneList.addItem(gene.getAbbreviation(), gene.getZdbID());
+                geneList.addItem(gene.getName(), gene.getZdbID());
             }
 
             if (useFeatureFilter) {
