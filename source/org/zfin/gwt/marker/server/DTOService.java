@@ -301,8 +301,8 @@ public class DTOService {
     public static MarkerDTO createMarkerDTOFromMarker(Marker marker) {
         MarkerDTO markerDTO = new MarkerDTO();
         markerDTO.setName(marker.getName());
-        markerDTO.setAbbreviation(marker.getAbbreviation());
-        markerDTO.setAbbreviationOrder(marker.getAbbreviationOrder());
+        markerDTO.setName(marker.getAbbreviation());
+        markerDTO.setCompareString(marker.getAbbreviationOrder());
         markerDTO.setZdbID(marker.getZdbID());
         markerDTO.setLink(MarkerPresentation.getLink(marker));
         return markerDTO;

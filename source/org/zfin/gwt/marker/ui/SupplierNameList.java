@@ -121,6 +121,7 @@ public class SupplierNameList extends AbstractStackComposite<MarkerDTO>{
 
     protected void addToGUI(String name) {
         MarkerDTO relatedEntityDTO = createDTOFromGUI();
+        relatedEntityDTO.setName(name);
         StackComposite<MarkerDTO> stackComposite = new StackComposite<MarkerDTO>(relatedEntityDTO) ;
         stackComposite.addRelatedEntityListener(new RelatedEntityAdapter<MarkerDTO>(){
             @Override

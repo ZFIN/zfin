@@ -30,7 +30,7 @@ public class CloneDTO extends MarkerDTO {
         cloneDTO.supportingSequenceLinks = supportingSequenceLinks;
         cloneDTO.zdbID = zdbID;
         cloneDTO.name = name;
-        cloneDTO.abbreviationOrder = abbreviationOrder;
+        cloneDTO.compareString = compareString;
         cloneDTO.markerType = markerType;
         cloneDTO.setLink(link);
         cloneDTO.setPublicationZdbID(publicationZdbID);

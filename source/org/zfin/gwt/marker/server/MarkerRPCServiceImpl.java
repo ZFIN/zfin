@@ -661,7 +661,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         // get simple attributes
         geneDTO.setZdbID(marker.getZdbID());
-        geneDTO.setAbbreviation(marker.getAbbreviation());
+        geneDTO.setName(marker.getAbbreviation());
         geneDTO.setName(marker.getName());
         geneDTO.setMarkerType(marker.getMarkerType().getType().name());
 

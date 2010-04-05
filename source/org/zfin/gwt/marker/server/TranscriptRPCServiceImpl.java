@@ -138,7 +138,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
         // get simple attributes
         transcriptDTO.setZdbID(transcript.getZdbID());
         transcriptDTO.setName(transcript.getName());
-        transcriptDTO.setAbbreviationOrder(transcript.getAbbreviationOrder());
+        transcriptDTO.setCompareString(transcript.getAbbreviationOrder());
         transcriptDTO.setMarkerType(transcript.getMarkerType().getType().name());
         transcriptDTO.setTranscriptType(transcript.getTranscriptType().getType().toString());
 

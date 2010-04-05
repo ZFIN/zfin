@@ -1,9 +1,7 @@
 package org.zfin.gwt.root.dto;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.marker.Marker;
 
 /**
  * Data Transfer Object corresponding to {@link org.zfin.expression.ExpressionExperiment}.
@@ -156,7 +154,7 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (gene != null) {
-            sb.append(gene.getAbbreviation());
+            sb.append(gene.getName());
         } else {
             sb.append("----");
         }
@@ -168,7 +166,7 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
         sb.append(assay);
         if (antibodyMarker != null) {
             sb.append("              ");
-            sb.append(antibodyMarker.getAbbreviation());
+            sb.append(antibodyMarker.getName());
         }
         if (StringUtils.isNotEmpty(genbankNumber)) {
             sb.append("              ");
@@ -182,7 +180,7 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
         //Window.alert("this experiment: "+this);
         int code = 43;
         if (gene != null)
-            code += gene.getAbbreviation().hashCode();
+            code += gene.getName().hashCode();
         if (fishName != null)
             code += fishName.hashCode();
         if (environment != null)
@@ -190,7 +188,7 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
         if (assay != null)
             code += assay.hashCode();
         if (antibodyMarker != null)
-            code += antibodyMarker.getAbbreviation().hashCode();
+            code += antibodyMarker.getName().hashCode();
         if (genbankNumber != null)
             code += genbankNumber.hashCode();
         return code;
@@ -218,7 +216,7 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
                 (gene != null && experiment.getGene() == null))
             return false;
         if ((gene != null && experiment.getGene() != null) &&
-                !StringUtils.equals(gene.getAbbreviation(), experiment.getGene().getAbbreviation()))
+                !StringUtils.equals(gene.getName(), experiment.getGene().getName()))
             return false;
         if (!StringUtils.equals(fishName, experiment.fishName))
             return false;
@@ -231,7 +229,7 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
                 (antibodyMarker != null && experiment.getAntibodyMarker() == null))
             return false;
         if ((antibodyMarker != null && experiment.getAntibodyMarker() != null) &&
-                !StringUtils.equalsWithNullString(antibodyMarker.getAbbreviation(), experiment.getAntibodyMarker().getAbbreviation()))
+                !StringUtils.equalsWithNullString(antibodyMarker.getName(), experiment.getAntibodyMarker().getName()))
             return false;
         if (!StringUtils.equalsWithNullString(genbankNumber, experiment.genbankNumber))
             return false;
@@ -246,8 +244,8 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
         if (gene != null && compExperiment.getGene() == null)
             return 1;
         if (gene != null && compExperiment.getGene() != null)
-            if (!gene.getAbbreviation().equals(compExperiment.getGene().getAbbreviation()))
-                return gene.getAbbreviation().compareTo(compExperiment.getGene().getAbbreviation());
+            if (!gene.getName().equals(compExperiment.getGene().getName()))
+                return gene.getName().compareTo(compExperiment.getGene().getName());
         if (!fishName.equals(compExperiment.getFishName()))
             return fishName.compareTo(compExperiment.getFishName());
         if (!environment.equals(compExperiment.getEnvironment()))
@@ -259,7 +257,7 @@ public class ExperimentDTO implements IsSerializable, Comparable<ExperimentDTO> 
         if (compExperiment.getAntibodyMarker() == null)
             return 1;
         if (!antibodyMarker.equals(compExperiment.getAntibodyMarker()))
-            return antibodyMarker.getAbbreviation().compareTo(compExperiment.getAntibodyMarker().getAbbreviation());
+            return antibodyMarker.getName().compareTo(compExperiment.getAntibodyMarker().getName());
         return 0;
     }
 

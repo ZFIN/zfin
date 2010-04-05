@@ -97,10 +97,10 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
                                 availableList.addItem("Genes:");
                                 for(MarkerDTO markerDTO: results){
                                     if(markerDTO.getZdbID()==null){
-                                        availableList.addItem( markerDTO.getAbbreviation() , "null");
+                                        availableList.addItem( markerDTO.getName() , "null");
                                     }
                                     else{
-                                        availableList.addItem( markerDTO.getAbbreviation() + " (" +markerDTO.getZdbID() +")", markerDTO.getZdbID());
+                                        availableList.addItem( markerDTO.getName() + " (" +markerDTO.getZdbID() +")", markerDTO.getZdbID());
                                     }
                                 }
                             }

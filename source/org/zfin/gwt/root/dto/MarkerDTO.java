@@ -8,8 +8,10 @@ import java.util.List;
 public class MarkerDTO extends RelatedEntityDTO {
 
     protected List<DBLinkDTO> supportingSequenceLinks;
-    private String abbreviation;
-    protected String abbreviationOrder;
+    /**
+     * This is the string to compare results by.
+     */
+    protected String compareString;
     protected String markerType;
     protected List<String> recordAttributions;
     protected NoteDTO publicNote;
@@ -37,21 +39,12 @@ public class MarkerDTO extends RelatedEntityDTO {
         }
     }
 
-
-    public String getName() {
-        return name;
+    public String getCompareString() {
+        return compareString;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAbbreviationOrder() {
-        return abbreviationOrder;
-    }
-
-    public void setAbbreviationOrder(String abbreviationOrder) {
-        this.abbreviationOrder = abbreviationOrder;
+    public void setCompareString(String compareString) {
+        this.compareString = compareString;
     }
 
     public String getMarkerType() {
@@ -160,7 +153,7 @@ public class MarkerDTO extends RelatedEntityDTO {
     }
 
     public String getOrderingValue() {
-        return abbreviationOrder;
+        return compareString;
     }
 
     public String getMarkerRelationshipType() {
@@ -179,14 +172,6 @@ public class MarkerDTO extends RelatedEntityDTO {
         this.zdbIDThenAbbrev = zdbIDThenAbbrev;
     }
 
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
     /**
      * Only returning the shallow values.
      *
@@ -197,7 +182,7 @@ public class MarkerDTO extends RelatedEntityDTO {
         markerDTO.supportingSequenceLinks = supportingSequenceLinks;
         markerDTO.zdbID = zdbID;
         markerDTO.name = name;
-        markerDTO.abbreviationOrder = abbreviationOrder;
+        markerDTO.compareString = compareString;
         markerDTO.markerType = markerType;
         markerDTO.setLink(link);
         markerDTO.setPublicationZdbID(publicationZdbID);
@@ -211,7 +196,7 @@ public class MarkerDTO extends RelatedEntityDTO {
         final StringBuilder sb = new StringBuilder("MarkerDTO");
         sb.append("{zdbID='").append(zdbID).append('\'');
         sb.append(", name='").append(name).append('\'');
-        sb.append(", abbreviationOrder='").append(abbreviationOrder).append('\'');
+        sb.append(", abbreviationOrder='").append(compareString).append('\'');
         sb.append(", markerType='").append(markerType).append('\'');
         sb.append(", recordAttributions=").append(recordAttributions);
         sb.append(", publicNote=").append(publicNote);

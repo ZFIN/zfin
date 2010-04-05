@@ -172,7 +172,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
 
     protected void revertGUI() {
         geneHTML.setHTML("<a class='external' href='/cgi-bin/webdriver?MIval=aa-markerview.apg&OID="+dto.getMarkerDTO().getZdbID()+"'>"+
-                dto.getMarkerDTO().getAbbreviation()+"</a>");
+                dto.getMarkerDTO().getName()+"</a>");
         if(dto.getZdbID()==null || dto.getZdbID().equals("null")){
             zdbIDHTML.setHTML("<font color=red>Not Created</font>");
         }else{
