@@ -77,7 +77,7 @@ create index goterm_name_index
   using btree 
   in idxdbs1 ;
 
-update statistics high for table goterm_onto ;
+--update statistics high for table goterm_onto ;
 
 insert into goterm_onto (goterm_id, goterm_name, goterm_onto, goterm_definition,
 	goterm_comment, goterm_is_obsolete)
@@ -115,7 +115,7 @@ create index goterm_id_index
 update goterm_onto
   set goterm_id = substr(goterm_id, -7) ;
 
-update statistics high for table goterm_onto ;
+--update statistics high for table goterm_onto ;
 
 insert into new_goterm (goterm_id,
 			goterm_name,
@@ -146,10 +146,10 @@ unload to 'updatedterms.unl'
     where n.goterm_id = g.goterm_go_id 
     and n.goterm_name not like g.goterm_name;
 
-update statistics high for table goterm_onto ;
-update statistics high for table go_Term ;
+--update statistics high for table goterm_onto ;
+--update statistics high for table go_Term ;
 
-update statistics high for table goterm_onto ;
+--update statistics high for table goterm_onto ;
 
 !echo "here is the update of name" ;
 
@@ -211,16 +211,16 @@ create temp table tmp_new_obsoletes (counter integer,
 				     comment lvarchar
 ) with no log ;
 
-update statistics high for table go_term;
-update statistics high for table marker_go_term_evidence;
+--update statistics high for table go_term;
+--update statistics high for table marker_go_term_evidence;
 
 
 create index id_index 
  on tmp_obs_no_dups (goterm_id) 
  using btree in idxdbs3 ;
 
-update statistics high for table tmp_obs_no_dups;
-update statistics high for table marker ;
+--update statistics high for table tmp_obs_no_dups;
+--update statistics high for table marker ;
 
 insert into tmp_new_obsoletes (counter,
 				mrkr_name,
@@ -259,9 +259,9 @@ create temp table tmp_reinstate (id  varchar(30),
 ) with no log ;
 
 
-update statistics high for table go_term ;
+--update statistics high for table go_term ;
 
-update statistics high for table goterm_onto ;
+--update statistics high for table goterm_onto ;
 
 !echo "this is how many are being reinstated" ;
 
@@ -280,7 +280,7 @@ create index tmpreinstate_index
   on tmp_reinstate(id)
   using btree in idxdbs3 ;
 
-update statistics high for table tmp_reinstate ;
+--update statistics high for table tmp_reinstate ;
 
 create temp table tmp_reinstate_no_dups (
 			   id    varchar(30),

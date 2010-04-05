@@ -115,7 +115,7 @@ create index rterm_id_index
   on tmp_term_onto_no_dups (term_id)
   using btree in idxdbs2 ;
 
-update statistics high for table tmp_term_onto_no_dups ;
+--update statistics high for table tmp_term_onto_no_dups ;
 
 
 unload to 'terms_missing_obo_id.txt'
@@ -175,7 +175,7 @@ unload to 'updated_terms.unl'
 
 !echo "update the term table with new names where the term id is the same term id in the obo file" ;
 
-update statistics high for table tmp_term; 
+--update statistics high for table tmp_term; 
 
 update term
   set term_name = (select a.term_name 
@@ -283,7 +283,7 @@ insert into term (term_zdb_id,
 	term_definition
     from tmp_term ;
 
-update statistics high for table term ;
+--update statistics high for table term ;
 
 create temp table tmp_obsoletes (term_id varchar(50))
 with no log ;
@@ -418,8 +418,8 @@ update tmp_rels_zdb
   set ttermrel_term_2_zdb_id = (Select term_Zdb_id from term
       			      	      where term_ont_id = ttermrel_ont_id_2);
 
-update statistics high for table tmp_rels ;
-update statistics high for table term ;
+--update statistics high for table tmp_rels ;
+--update statistics high for table term ;
 
 delete from tmp_rels_zdb 
  where exists (Select 'x' from term_relationship a
@@ -476,10 +476,10 @@ create index tmp_reltype_index_rels
   using btree in idxdbs3;
 
 
-update statistics high for table zdb_active_data;
-update statistics high for table tmp_zfin_rels ;
-update statistics high for table tmp_rels_zdb;
-update statistics high for table tmp_rels;
+--update statistics high for table zdb_active_data;
+--update statistics high for table tmp_zfin_rels ;
+--update statistics high for table tmp_rels_zdb;
+--update statistics high for table tmp_rels;
 
 !echo "add any new term relationship types" ;
 
@@ -514,7 +514,7 @@ insert into term_relationship (termrel_zdb_id,
 	termrel_type
     from tmp_zfin_rels ;
 
-update statistics high for table term_relationship ;
+--update statistics high for table term_relationship ;
 
 --!!! NOT OBVIOUS logic: if the second term in the relationship belongs to this ontology load, then it is
 --!!! safe to check for deletions. Don't want to delete other load relationships.
@@ -590,10 +590,10 @@ create index tmp_syn_synonym_index
   on tmp_syns(synonym)
   using btree in idxdbs3;
 
-update statistics high for table tmp_syns;
-update statistics high for table data_alias;
-update statistics high for table term;
-update statistics high for table tmp_term_onto_no_dups;
+--update statistics high for table tmp_syns;
+--update statistics high for table data_alias;
+--update statistics high for table term;
+--update statistics high for table tmp_term_onto_no_dups;
 
 insert into alias_scope (aliasscope_scope)
   select distinct scoper 
