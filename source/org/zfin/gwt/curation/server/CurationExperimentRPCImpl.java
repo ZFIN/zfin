@@ -79,7 +79,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
 
         for (Marker marker : markers) {
             MarkerDTO gene = new MarkerDTO();
-            gene.setAbbreviation(marker.getAbbreviation());
+            gene.setName(marker.getAbbreviation());
             gene.setZdbID(marker.getZdbID());
             genes.add(gene);
         }
@@ -225,7 +225,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         List<MarkerDTO> markers = new ArrayList<MarkerDTO>();
         for (Antibody antibody : antibodies) {
             MarkerDTO env = new MarkerDTO();
-            env.setAbbreviation(antibody.getName());
+            env.setName(antibody.getName());
             env.setZdbID(antibody.getZdbID());
             markers.add(env);
         }
@@ -240,7 +240,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         List<MarkerDTO> markers = new ArrayList<MarkerDTO>();
         for (Antibody antibody : antibodies) {
             MarkerDTO env = new MarkerDTO();
-            env.setAbbreviation(antibody.getName());
+            env.setName(antibody.getName());
             env.setZdbID(antibody.getZdbID());
             markers.add(env);
         }
@@ -261,7 +261,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         List<MarkerDTO> markers = new ArrayList<MarkerDTO>();
         for (Marker gene : antibodies) {
             MarkerDTO env = new MarkerDTO();
-            env.setAbbreviation(gene.getAbbreviation());
+            env.setName(gene.getAbbreviation());
             env.setZdbID(gene.getZdbID());
             markers.add(env);
         }
