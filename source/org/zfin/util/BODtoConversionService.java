@@ -266,7 +266,7 @@ public class BODtoConversionService implements Serializable {
         MarkerDTO gene = new MarkerDTO();
         gene.setZdbID(marker.getZdbID());
         gene.setName(marker.getName());
-        gene.setAbbreviation(marker.getAbbreviation());
+        gene.setName(marker.getAbbreviation());
         return gene;
     }
 
