@@ -32,26 +32,12 @@ public class SessionSaveServiceImpl extends RemoteServiceServlet implements Sess
             log.debug("trying to save empty list");
             return;
         }
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-            Iterator<CuratorSessionDTO> iterator = curatorSessionUpdateList.iterator();
-            log.debug("updating " + curatorSessionUpdateList.size() + " session objects");
-            while (iterator.hasNext()) {
-                updateCuratorSession(iterator.next());
-            }
-            log.debug("updated " + curatorSessionUpdateList.size() + " session objects");
-            tx.commit();
-        } catch (Exception e) {
-            try {
-                tx.rollback();
-            } catch (HibernateException he) {
-                log.error("Error during roll back of transaction", he);
-            }
-            log.error("Error in Transaction", e);
-            throw new RuntimeException("Error during transaction. Rolled back.", e);
+        Iterator<CuratorSessionDTO> iterator = curatorSessionUpdateList.iterator();
+        log.debug("updating " + curatorSessionUpdateList.size() + " session objects");
+        while (iterator.hasNext()) {
+            updateCuratorSession(iterator.next());
         }
+        log.debug("updated " + curatorSessionUpdateList.size() + " session objects");
     }
 
     /**
@@ -117,9 +103,9 @@ public class SessionSaveServiceImpl extends RemoteServiceServlet implements Sess
      */
     public boolean isStageSelectorSingleMode(String publicationID) {
 
-        String key = createSessionKey(STAGE_SELECTOR_MODE, publicationID );
+        String key = createSessionKey(STAGE_SELECTOR_MODE, publicationID);
         Object value = getServletContext().getAttribute(key);
-        return value == null ? true: (Boolean) value;
+        return value == null ? true : (Boolean) value;
     }
 
     /**
@@ -129,15 +115,15 @@ public class SessionSaveServiceImpl extends RemoteServiceServlet implements Sess
      * @param publicationID publication
      */
     public void setStageSelectorSingleMode(boolean isSingleMode, String publicationID) {
-        String key = createSessionKey(STAGE_SELECTOR_MODE, publicationID );
+        String key = createSessionKey(STAGE_SELECTOR_MODE, publicationID);
         getServletContext().setAttribute(key, isSingleMode);
     }
 
     private String createSessionKey(String prefix, String publicationID) {
         Person person = Person.getCurrentSecurityUser();
-        if(person == null)
+        if (person == null)
             throw new RuntimeException("Not logged in. No authenticated user found in session.");
-        return prefix + ": " + person.getZdbID()+ ": " + publicationID;
+        return prefix + ": " + person.getZdbID() + ": " + publicationID;
     }
 
 
