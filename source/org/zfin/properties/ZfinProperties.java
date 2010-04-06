@@ -25,8 +25,8 @@ public final class ZfinProperties {
     private static boolean secureServer;
     private static String indexDirectory;
 
-    private static final String NON_SECURE_HTTP = "http://";
-    private static final String SECURE_HTTP = "https://";
+    public static final String NON_SECURE_HTTP = "http://";
+    public static final String SECURE_HTTP = "https://";
 
 
     private static final Logger logger = Logger.getLogger(ZfinProperties.class);

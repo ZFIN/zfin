@@ -42,14 +42,13 @@ public class AbstractSecureJWebUnitTest extends WebTestCase{
     public void setUp() {
         TestConfiguration.configure();
         setTestingEngineKey(TestingEngineRegistry.TESTING_ENGINE_HTMLUNIT);
-        HibernateUtil.createTransaction();
         createPerson();
     }
 
     @Override
     protected void tearDown() throws Exception {
         webClient.closeAllWindows();
-        HibernateUtil.rollbackTransaction();
+        deletePerson() ;
     }
 
 
@@ -73,6 +72,7 @@ public class AbstractSecureJWebUnitTest extends WebTestCase{
     }
 
     protected void createPerson() {
+        HibernateUtil.createTransaction();
         person = getTestPerson();
         HibernateUtil.currentSession().save(person);
         HibernateUtil.currentSession().flush();
@@ -84,6 +84,13 @@ public class AbstractSecureJWebUnitTest extends WebTestCase{
         ActiveSource activeSource = RepositoryFactory.getInfrastructureRepository().getActiveSource(person.getZdbID()) ;
         assertNotNull(activeSource);
         HibernateUtil.currentSession().evict(activeSource);
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    protected void deletePerson(){
+        HibernateUtil.createTransaction();
+        HibernateUtil.currentSession().delete(person);
+        HibernateUtil.flushAndCommitCurrentSession();
     }
 
     public void login() throws Exception{

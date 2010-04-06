@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.html.*;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 
 /**
@@ -16,7 +17,7 @@ public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
     public void testSimpleComposite(){
         try {
             login();
-            HtmlPage page = webClient.getPage("https://"+domain +"/action/dev-tools/gwt/modules");
+            HtmlPage page = webClient.getPage(ZfinProperties.NON_SECURE_HTTP+domain +"/action/dev-tools/gwt/modules");
             webClient.setJavaScriptEnabled(true);
             webClient.waitForBackgroundJavaScriptStartingBefore(2000);
             assertEquals("GWT Modules",page.getTitleText());
@@ -64,7 +65,7 @@ public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
             }
 
 //            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
-            HtmlPage page = webClient.getPage("https://"+domain +"/action/dev-tools/gwt/alternate-gene-edit");
+            HtmlPage page = webClient.getPage(ZfinProperties.NON_SECURE_HTTP+domain +"/action/dev-tools/gwt/alternate-gene-edit");
             webClient.setJavaScriptEnabled(true);
             webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
             assertEquals("GWT Gene Edit",page.getTitleText());
@@ -137,7 +138,7 @@ public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
         try {
             login();
             webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-            HtmlPage page = webClient.getPage("http://"+domain +"/action/dev-tools/gwt/lookup-table");
+            HtmlPage page = webClient.getPage(ZfinProperties.NON_SECURE_HTTP+domain +"/action/dev-tools/gwt/lookup-table");
             assertEquals("GWT Lookup Table",page.getTitleText());
             assertNotNull(page.getByXPath("//button[. = 'search']").get(0));
             assertNotNull(page.getByXPath("//td[. = 'Enter search terms']").get(0));
@@ -156,7 +157,7 @@ public class GeneralSecureJWebUnitTest extends AbstractSecureJWebUnitTest {
         try {
             login();
             webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
-            HtmlPage page = webClient.getPage("http://"+domain +"/action/dev-tools/gwt/lookup-table");
+            HtmlPage page = webClient.getPage(ZfinProperties.NON_SECURE_HTTP+domain +"/action/dev-tools/gwt/lookup-table");
             webClient.waitForBackgroundJavaScriptStartingBefore(2000) ;
             assertEquals("GWT Lookup Table",page.getTitleText());
             final HtmlForm form = page.getFormByName("lookupTable");
