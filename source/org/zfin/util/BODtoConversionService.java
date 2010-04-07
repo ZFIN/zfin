@@ -167,14 +167,15 @@ public class BODtoConversionService implements Serializable {
         dto.setName(stage.getAbbreviation() + " " + stage.getTimeString());
         dto.setStartHours(stage.getHoursStart());
         dto.setEndHours(stage.getHoursEnd());
+        dto.setAbbreviation(stage.getAbbreviation());
         return dto;
     }
 
     /**
      * Remove underscores in the environment name.
      *
-     * @param experiment
-     * @return
+     * @param experiment Experiment
+     * @return environmentDTO
      */
     public static EnvironmentDTO getEnvironmentDto(Experiment experiment) {
         EnvironmentDTO environment = new EnvironmentDTO();

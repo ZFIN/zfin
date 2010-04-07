@@ -53,11 +53,11 @@ class StructurePileTable extends ZfinFlexTable {
         this.errorElement = errorLabel;
     }
 
-    public void setHeaderNames(Enum enumeration){
+    public void setHeaderNames(Enum enumeration) {
         headerEnumeration = enumeration;
     }
 
-    public void setExpressionSection(ExpressionSection expressionModule){
+    public void setExpressionSection(ExpressionSection expressionModule) {
         this.expressionModule = expressionModule;
         createStructureTable();
     }
@@ -256,7 +256,7 @@ class StructurePileTable extends ZfinFlexTable {
             } else if (name.getIndex() == 3) {
                 setText(rowIndex, name.index, name.getName());
                 getCellFormatter().setStyleName(rowIndex, name.index, WidgetUtil.RED_MODIFIER);
-            } else{
+            } else {
                 setText(rowIndex, name.index, name.getName());
                 getCellFormatter().setStyleName(rowIndex, name.index, WidgetUtil.BOLD);
             }
@@ -461,6 +461,7 @@ class StructurePileTable extends ZfinFlexTable {
     }
 
     // ********* Click Handler, etc
+
     private class NotClickHandler implements ClickHandler {
 
         private RadioButton add;
@@ -558,9 +559,11 @@ class StructurePileTable extends ZfinFlexTable {
         }
 
         private void setSubterm(RelatedPileStructureDTO structure) {
-            structure.getExpressedTerm().getSubterm().setTermID(selectedPileStructure.getExpressedTerm().getSubterm().getTermID());
-            structure.getExpressedTerm().getSubterm().setTermName(selectedPileStructure.getExpressedTerm().getSubterm().getTermName());
-            structure.getExpressedTerm().getSubterm().setOntology(selectedPileStructure.getExpressedTerm().getSubterm().getOntology());
+            if (structure.getExpressedTerm().getSubterm() != null && selectedPileStructure.getExpressedTerm().getSubterm() != null) {
+                structure.getExpressedTerm().getSubterm().setTermID(selectedPileStructure.getExpressedTerm().getSubterm().getTermID());
+                structure.getExpressedTerm().getSubterm().setTermName(selectedPileStructure.getExpressedTerm().getSubterm().getTermName());
+                structure.getExpressedTerm().getSubterm().setOntology(selectedPileStructure.getExpressedTerm().getSubterm().getOntology());
+            }
         }
 
         private void createListItems(UnorderedList ul, List<RelatedPileStructureDTO> existingStructures) {

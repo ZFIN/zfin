@@ -968,7 +968,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
      * Retrieve a list of structures that could be used instead of the selected
      * structure with a stage overlap given by start and end.
      *
-     * @param selectedPileStructure pilse structure
+     * @param selectedPileStructure pile structure
      * @param intersection          StageIntersection
      * @return list of PileStructureDTO,
      */

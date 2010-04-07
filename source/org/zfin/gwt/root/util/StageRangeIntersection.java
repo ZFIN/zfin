@@ -150,7 +150,7 @@ public class StageRangeIntersection implements IsSerializable {
     public boolean isFullOverlap(StageDTO startStage, StageDTO endStage) {
         float start = startStage.getStartHours();
         float end = endStage.getStartHours();
-        if (endStage.getName().equals(StageRangeUnion.UNKNOWN_ABBREVIATION))
+        if (endStage.getAbbreviation().equals(StageRangeUnion.UNKNOWN_ABBREVIATION))
             end = StageRangeUnion.UNKNOWN_END_HOURS;
 
         if (start < 0.0F || end < 0.0F)
@@ -160,10 +160,7 @@ public class StageRangeIntersection implements IsSerializable {
             return false;
 
             // start and end encompasses the existing range
-        else if (start <= startHours && end >= endHours)
-            return true;
-        else
-            return false;
+        else return start <= startHours && end >= endHours;
     }
 
     public boolean hasOverlap() {

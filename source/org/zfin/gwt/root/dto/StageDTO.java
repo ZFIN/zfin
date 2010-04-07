@@ -9,6 +9,7 @@ public class StageDTO implements IsSerializable {
 
     private String zdbID;
     private String name;
+    private String abbreviation;
     private float startHours = -1.0f;
     private float endHours = -1.0f;
 
@@ -42,5 +43,13 @@ public class StageDTO implements IsSerializable {
 
     public void setEndHours(float endHours) {
         this.endHours = endHours;
+    }
+
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
     }
 }
