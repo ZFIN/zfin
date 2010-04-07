@@ -61,8 +61,8 @@
 <zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.anatomyItem}"
                                        recordsExist="${formBean.antibodiesExist}"
                                        anatomyStatistics="${formBean.anatomyStatisticsAntibodies}"
-                                       structureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=false&antibodyCriteria.anatomyTermsString=${formBean.anatomyItem.name}&action=SEARCH"
-                                       substructureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=true&antibodyCriteria.anatomyTermsString=${formBean.anatomyItem.name}&action=SEARCH"
+                                       structureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=false&antibodyCriteria.anatomyTermNames=${formBean.anatomyItem.name}&antibodyCriteria.anatomyTermIDs=${formBean.anatomyItem.zdbID}&action=SEARCH"
+                                       substructureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=true&antibodyCriteria.anatomyTermNames=${formBean.anatomyItem.name}&antibodyCriteria.anatomyTermIDs=${formBean.anatomyItem.zdbID}&action=SEARCH"
                                        choicePattern="0# antibodies| 1# antibody| 2# antibodies"
                                        allRecordsAreDisplayed="${formBean.allAntibodiesAreDisplayed}"
                                        totalRecordCount="${formBean.antibodyCount}"/>
