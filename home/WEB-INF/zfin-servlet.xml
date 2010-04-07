@@ -4,24 +4,6 @@
 
 <beans>
 
-    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="order" value="0"/>
-        <property name="mappings">
-            <props>
-                <prop key="/login">login</prop>
-                <prop key="/login-redirect">login</prop>
-                <prop key="/audit-log/details">auditLogDetails</prop>
-                <prop key="/people/view-person-detail">peopleViewDetail</prop>
-                <!--
-                                <prop key="/people/update-address">peopleUpdateAddress</prop>
-                -->
-                <prop key="/publication/view-publication-detail">publicationViewDetail</prop>
-                <prop key="/publication/publication-search-result">publicationSearchResult</prop>
-                <prop key="/category_search.jsp">viewSearchDetail</prop>
-            </props>
-        </property>
-    </bean>
-    <!-- This needs to go into the developer-tools.xml -->
     <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles.TilesConfigurer">
         <property name="definitions">
             <list>

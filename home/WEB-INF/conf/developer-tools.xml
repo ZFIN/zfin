@@ -126,8 +126,6 @@
 
     <bean name="log4jConfiguration" class="org.zfin.framework.presentation.Log4jConfigurationController"/>
 
-    <bean name="login" class="org.zfin.framework.presentation.LoginController"/>
-
     <bean name="classpathInfo" class="org.zfin.framework.presentation.ClasspathInfoController"/>
 
     <bean name="devToolsHomePage" class="org.zfin.framework.presentation.HomeController"/>

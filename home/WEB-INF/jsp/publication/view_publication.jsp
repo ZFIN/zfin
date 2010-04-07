@@ -1,11 +1,12 @@
+<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <table bgcolor="#eeeeee" border="0" width="100%">
     <tbody>
-        <tr align="center">
-            <td><font size="-1"><b>ZFIN ID:</b> <c:out value="${formBean.publication.zdbID}"/></font>
-            </td>
-        </tr>
+    <tr align="center">
+        <td><font size="-1"><b>ZFIN ID:</b> <c:out value="${formBean.publication.zdbID}"/></font>
+        </td>
+    </tr>
     </tbody>
 </table>
 
@@ -42,12 +43,12 @@
     <TR>
         <TD>
             <B>REGISTERED AUTHORS:</B>
-            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$2">$1</A>
-            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</A>,
+            <A HREF="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-labview.apg&OID=$2">$1</A>
+            <A HREF="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-persview.apg&OID=$2">$1</A>,
         </TD>
 
         <TD align=right>
-            <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+            <form method=post action="/<%=ZfinProperties.getWebDriver()%>">
                 <input type=hidden name=MIval value=aa-pubprintable.apg>
                 <input type=hidden name=constraint value="where zdb_id='$OID'">
                 <input type=submit name=printable value="Generate reference">
@@ -66,11 +67,11 @@ Create Publication accession
     Create Publication File name from publication pdf file
 
     Upload a PDF from the
-    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Curation</a>
+    <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-pubcuration.apg&OID=$OID">Curation</a>
 
 <P>
 
-    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$OID">
+    <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-fxallfigures.apg&OID=$OID">
         <b>FIGURES</b>
     </a> &nbsp;
     <font size=-1>(<a href="javascript:start_note();">current status</a>)</font>
@@ -95,7 +96,7 @@ Create Publication accession
     -->
     <B>ADDITIONAL INFORMATION: </B>
 
-    <br><br><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID">FX Curation</a>
+    <br><br><a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-xpatcuration.apg&OID=$OID">FX Curation</a>
 
 
 

@@ -21,9 +21,9 @@ public class WikiScriptRunner {
 
     /**
      * Adds a web page for a single antibody.
-     * @param antibodyName
+     * @param antibodyName antibody name
      */
-    public void syncrhonizeWebPage(String antibodyName) {
+    public void synchronizeWebPage(String antibodyName) {
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByName(antibodyName);
         if (antibody != null) {
 //            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
@@ -67,7 +67,7 @@ public class WikiScriptRunner {
 //            wikiScriptRunner.addWebPage("zn-5");
 //            wikiScriptRunner.addWebPage("Ab-10E4");
 //            wikiScriptRunner.addWebPage("Ab-3A10");
-            wikiScriptRunner.syncrhonizeWebPage("Ab1-tuba");
+            wikiScriptRunner.synchronizeWebPage("Ab1-tuba");
 //            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
 
 //            AntibodyWikiWebService.login();

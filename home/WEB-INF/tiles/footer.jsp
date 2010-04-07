@@ -1,10 +1,10 @@
-<%@ page import="org.zfin.framework.presentation.LoginController" %>
+<%@ page import="org.zfin.properties.ZfinProperties" %>
 </div> <!-- allcontent -->
 
 <div id="footer">
 
-  <div id="footerlinks">
-    <a href="/@WEBDRIVER_LOC@/webdriver?MIval=aa-ZDB_home.apg">Home</a>
+    <div id="footerlinks">
+        <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-ZDB_home.apg">Home</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider">
 
     <a href="/zf_info/dbase/db.html">About ZFIN</A>

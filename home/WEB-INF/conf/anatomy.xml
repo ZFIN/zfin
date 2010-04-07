@@ -47,8 +47,6 @@
 
     <bean name="highQualityProbes" class="org.zfin.anatomy.presentation.HighQualityProbesController" autowire="byName"/>
 
-    <bean name="auditLogDetails" class="org.zfin.audit.presentation.DetailsController" autowire="byName"/>
-
     <bean name="requestNewAnatomyTerm" class="org.zfin.anatomy.presentation.RequestNewAnatomyTermController"
           autowire="byName">
         <property name="successView" value="request-term-feedback.page"/>

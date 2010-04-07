@@ -1,10 +1,12 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.uniquery.presentation.SearchBean" scope="request"/>
+
 <!---
 The SearchBean Java Bean should be used in session mode, so user cookies must be
 enabled. ZfinSession mode allows the bean to cache search queries and thereby
-speed up performance dramatically while browsing categories. The tradeoff is
+speed up performance dramatically while browsing categories. The trade-off is
 that Tomcat will require significant memory allocation to store these Beans
 in memory.
 
@@ -17,62 +19,7 @@ CATALINA_OPTS= -XX:NewSize=128m -XX:MaxNewSize=128m -XX:SurvivorRatio=8 -Xms256M
 By default, the JVM is allocated only about 60 Megabytes which is very (too) small.
 --->
 <style type="text/css">
-    .category_header {
-        font-size: 100%;
-        font-weight: bold;
-        font-family: arial, sans-serif;
-    }
-
-    .category_label {
-        font-size: 100%;
-        font-weight: bold;
-        font-family: arial, sans-serif;
-    }
-
-    .category_box {
-        padding-top: 10px;
-    }
-
-    .category_table {
-        font-size: 90%;
-        font-family: arial, sans-serif;
-        border: 1px solid #006666;
-        padding: 2px;
-    }
-
-    .category_item {
-        font-size: 90%;
-        font-family: arial, sans-serif;
-        padding-top: 2px;
-        padding-right: 5px;
-        padding-bottom: 2px;
-        padding-left: 5px;
-    }
-
-    .alias_list {
-    }
-
-    .alias_list_header {
-        Color: #cc0000;
-    }
-
     .ignored_words {
-        font-size: 90%;
-        font-family: arial, sans-serif;
-        padding-top: 10px;
-    }
-
-    .related_terms {
-        font-size: 90%;
-        font-family: arial, sans-serif;
-        padding-top: 10px;
-    }
-
-    .related_terms_match {
-        color: #999999;
-    }
-
-    .specific_search {
         font-size: 90%;
         font-family: arial, sans-serif;
         padding-top: 10px;
@@ -91,22 +38,10 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
         font-family: arial, sans-serif;
         padding-top: 10px;
     }
-
-    .best_match {
-        font-size: 100%;
-        font-family: arial, sans-serif;
-        padding: 0px;
-        margin: 0px;
-    }
 </style>
 
 <script type="text/javascript">
     document.getElementById("qsearch").value = "${formBean.queryTerm}";
-    function call_reset() {
-        document.uniquery_search.category.selectedIndex = 0;
-        document.uniquery_search.query.value = "";
-    }
-
 </script>
 
 
@@ -138,13 +73,10 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
                             </span>
                         </td>
                         <td width=15% align=right>
-                            <form method=post
-                                  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
-                                  target=comments>
-                                <input type=hidden name=page_name value="Site search">
-                                <input type=hidden name=MIval value="aa-input_welcome_generic.apg">
-                                <input type=submit value="Your Input Welcome">
-                            </form>
+                            <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+                                <tiles:put name="subjectName" value="Site search"/>
+                                <tiles:put name="subjectID" value=""/>
+                            </tiles:insert>
                         </td>
                     </tr>
                 </table>

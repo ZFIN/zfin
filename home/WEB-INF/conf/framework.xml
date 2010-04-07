@@ -10,25 +10,25 @@
     <bean id="frameworkUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
+                <prop key="/login">login</prop>
+                <prop key="/login-redirect">login</prop>
                 <prop key="/autocomplete/gene-family">autoComplete</prop>
                 <prop key="/autocomplete/anatomy-term">autoComplete</prop>
                 <prop key="/http-redirect/">httpRedirect</prop>
                 <prop key="/pagination">pagination</prop>
                 <prop key="/def-pub">defPub</prop>
                 <prop key="/ajax/login-required">ajaxLoginRequired</prop>
+                <prop key="/audit-log/details">auditLogDetails</prop>
             </props>
         </property>
 
     </bean>
 
+    <bean name="login" class="org.zfin.framework.presentation.LoginController"/>
     <bean name="pagination" class="org.zfin.framework.presentation.PaginationController"/>
-
     <bean name="defPub" class="org.zfin.framework.presentation.DefPubController"/>
-
     <bean name="httpRedirect" class="org.zfin.framework.presentation.RedirectController"/>
-
     <bean name="ajaxLoginRequired" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
-
     <bean name="autoComplete" class="org.zfin.framework.presentation.AutoCompleteController">
         <property name="methodNameResolver" ref="autoCompleteResolver"/>
     </bean>
@@ -42,5 +42,6 @@
          </property>
     </bean>
 
-
+    <bean name="auditLogDetails" class="org.zfin.audit.presentation.DetailsController" autowire="byName"/>
+     
 </beans>

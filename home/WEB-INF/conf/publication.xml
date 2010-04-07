@@ -18,6 +18,8 @@
                 <prop key="/antibody/disassociate-publication">showPublicationList</prop>
                 <prop key="/antibody/add-publication">showPublicationList</prop>
                 <prop key="/publication/image-popup">imageViewPopup</prop>
+                <prop key="/publication/view-publication-detail">publicationViewDetail</prop>
+                <prop key="/publication/publication-search-result">publicationSearchResult</prop>
             </props>
         </property>
     </bean>

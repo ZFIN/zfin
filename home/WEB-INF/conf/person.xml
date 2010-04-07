@@ -11,8 +11,12 @@
     <bean id="peopleUrls" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
+                <prop key="/people/view-person-detail">peopleViewDetail</prop>
                 <prop key="/people/edit-user">editUserBean</prop>
                 <prop key="/people/edit-user-confirmation">editUserConfirmationBean</prop>
+                <!--
+                                <prop key="/people/update-address">peopleUpdateAddress</prop>
+                -->
             </props>
         </property>
     </bean>
