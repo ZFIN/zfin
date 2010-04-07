@@ -1,19 +1,28 @@
 package org.zfin.marker;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zfin.antibody.Antibody;
+import org.zfin.antibody.AntibodyExternalNote;
+import org.zfin.expression.ExpressionExperiment;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.AttributionService;
+import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.MappedMarker;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.people.MarkerSupplier;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
+import org.zfin.wiki.AntibodyWikiWebService;
 
 import java.util.*;
 
@@ -473,6 +482,7 @@ public class MarkerService {
         typeList.add(Marker.Type.BAC.toString());
         typeList.add(Marker.Type.PAC.toString());
         typeList.add(Marker.Type.FOSMID.toString());
+
         typeList.add(Marker.Type.EST.toString());
         typeList.add(Marker.Type.CDNA.toString());
         return typeList;
@@ -487,5 +497,6 @@ public class MarkerService {
 
         return sp;
     }
+
 
 }

@@ -82,7 +82,7 @@ public interface MarkerRepository {
      * @param alias       alias string
      * @param publication publication object
      */
-    void addMarkerAlias(Marker marker, String alias, Publication publication);
+    MarkerAlias addMarkerAlias(Marker marker, String alias, Publication publication);
 
     /**
      * Delete an existing alias that belongs to a given marker.
@@ -119,7 +119,7 @@ public interface MarkerRepository {
 
     MarkerHistory getLastMarkerHistory(Marker marker, MarkerHistory.Event event);
 
-    MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason resason);
+    MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason resason,MarkerAlias markerAlias);
 
     MarkerType getMarkerTypeByName(String name);
 

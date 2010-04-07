@@ -138,6 +138,14 @@ public interface AntibodyRepository {
 
 
     /**
+     * Retrieve antibody by abbrev
+     *
+     * @param antibodyAbbrev Antibody abbreviation.
+     * @return antibody Returned antibody.  Null if not found.
+     */
+    Antibody getAntibodyByAbbrev(String antibodyAbbrev);
+
+    /**
      * Retrieve antibody by name (same
      *
      * @param antibodyName antibody name
@@ -172,4 +180,6 @@ public interface AntibodyRepository {
      * @return All antibodies
      */
     List<Antibody> getAllAntibodies();
+
+    List<Antibody> getAntibodiesByName(String query);
 }

@@ -542,6 +542,16 @@ public class AntibodyWikiWebService extends WikiWebService {
         return wikiSynchronizationReport;
     }
 
+    public void dropPageIndividually(String antibodyAbbreviation) throws Exception{
+        RemoteSearchResult[] searchResults = service.search(token,antibodyAbbreviation,2);
+        if(searchResults.length!=1){
+            logger.error("wrong number of search results for["+antibodyAbbreviation+"]: "+ searchResults.length);
+            return ; 
+        }
+        service.removePage(token,searchResults[1].getId()) ;
+
+    }
+
     private WikiSynchronizationReport dropPage(RemoteSearchResult remoteSearchResult, WikiSynchronizationReport wikiSynchronizationReport) throws Exception {
         logger.warn("zfin_antibody wiki page not a ZFIN Antibody, DROPPING: " + remoteSearchResult.getTitle());
         // if page has comments, create error

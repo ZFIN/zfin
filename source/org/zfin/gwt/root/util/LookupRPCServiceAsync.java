@@ -16,6 +16,8 @@ public interface LookupRPCServiceAsync {
 
     void getMarkerSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
+    void getAntibodySuggestions(SuggestOracle.Request request, AsyncCallback<SuggestOracle.Response>  async);
+
     void getGenedomAndEFGSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
     void getSupplierSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);

@@ -274,7 +274,13 @@ public class AntibodyBean extends PublicationListBean {
 
     public String getDeleteURL() {
         String zdbID = antibody.getZdbID();
-        return "/" + ZfinProperties.getWebDriver() + "?MIval=aa-delete_record.apg&rtype=marker&OID=" + zdbID;
+//        return "/" + ZfinProperties.getWebDriver() + "?MIval=aa-delete_record.apg&rtype=marker&OID=" + zdbID;
+        return "/action/marker/delete?zdbIDToDelete=" + zdbID;
+    }
+
+    public String getMergeURL() {
+        String zdbID = antibody.getZdbID();
+        return "/action/marker/merge?zdbIDToDelete=" + zdbID;
     }
 
     /*

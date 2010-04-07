@@ -99,6 +99,13 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable {
         this.publications = publications;
     }
 
+    public void addPublication(PublicationAttribution publicationAttribution) {
+        if(this.publications==null){
+            this.publications = new HashSet<PublicationAttribution>() ;
+        }
+        this.publications.add(publicationAttribution) ;
+    }
+
     public int getPublicationCount() {
         if (publications == null)
             return 0;
@@ -116,5 +123,15 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable {
 
     public int compareTo(Object otherAlias) {
         return aliasLowerCase.compareTo(((DataAlias) otherAlias).getAliasLowerCase());
+    }
+
+
+    public boolean hasPublication(PublicationAttribution publicationAttribution) {
+        for(PublicationAttribution aPublicationAttribution: getPublications()){
+            if(publicationAttribution.getPublication().equals(aPublicationAttribution.getPublication())){
+                return true ;
+            }
+        }
+        return false ;
     }
 }

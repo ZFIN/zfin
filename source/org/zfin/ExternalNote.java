@@ -15,6 +15,15 @@ public abstract class ExternalNote {
     private String type;
     protected Set<PublicationAttribution> pubAttributions;
     protected Set<PersonAttribution> personAttributions;
+    private String externalDataZdbID;
+
+    public String getExternalDataZdbID() {
+        return externalDataZdbID;
+    }
+
+    public void setExternalDataZdbID(String externalDataZdbID) {
+        this.externalDataZdbID = externalDataZdbID;
+    }
 
     public String getNote() {
         return note;
@@ -55,6 +64,7 @@ public abstract class ExternalNote {
     public void setPersonAttributions(Set<PersonAttribution> personAttributions) {
         this.personAttributions = personAttributions;
     }
+
 
     public enum Type {
         ORTHOLOGY("orthology"),

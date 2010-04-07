@@ -1,6 +1,7 @@
 package org.zfin.marker;
 
 import org.zfin.infrastructure.DataAlias;
+import org.zfin.infrastructure.PublicationAttribution;
 
 public class MarkerAlias extends DataAlias {
     private Marker marker;
@@ -12,5 +13,6 @@ public class MarkerAlias extends DataAlias {
     public void setMarker(Marker marker) {
         this.marker = marker;
     }
+
 }
 

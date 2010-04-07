@@ -73,4 +73,13 @@ public class Antibody extends Marker {
     public void setLightChainIsotype(String lightChainIsotype) {
         this.lightChainIsotype = lightChainIsotype;
     }
+
+    public boolean hasAntibodyLabeling(ExpressionExperiment expressionExperiment) {
+        for(ExpressionExperiment anExpressionExperiment : getAntibodyLabelings()){
+            if(anExpressionExperiment.getPublication().getZdbID().equals(expressionExperiment.getPublication().getZdbID())){
+                return true ;
+            }
+        }
+        return false ;
+    }
 }

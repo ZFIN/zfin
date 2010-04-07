@@ -456,11 +456,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param marker      valid marker object.
      * @param alias       alias string
      * @param publication publication
+     * @return The created markerAlias 
      */
-    public void addMarkerAlias(Marker marker, String alias, Publication publication) {
+    public MarkerAlias addMarkerAlias(Marker marker, String alias, Publication publication) {
         //first handle the alias..
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        Person currentUser = Person.getCurrentSecurityUser();
         MarkerAlias markerAlias = new MarkerAlias();
         markerAlias.setMarker(marker);
         String groupName = DataAliasGroup.Group.ALIAS.toString();
@@ -497,9 +496,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
             updateComment = "Added alias: '" + markerAlias.getAlias() + " with no attribution";
         }
 
-
         InfrastructureService.insertUpdate(marker, updateComment);
         runMarkerNameFastSearchUpdate(marker);
+        return markerAlias ;
     }
 
     public void deleteMarkerAlias(Marker marker, MarkerAlias alias) {
@@ -729,21 +728,18 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (MarkerHistory) criteria.uniqueResult();
     }
 
-    public MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason resason) {
-        if (event == MarkerHistory.Event.RENAMED) {
-            MarkerHistory history = new MarkerHistory();
-            history.setDate(new Date());
-            history.setName(newMarker.getName());
-            history.setAbbreviation(newMarker.getAbbreviation());
-            history.setMarker(newMarker);
-            history.setEvent(event.name());
-            history.setOldMarkerName(oldMarker.getName());
-            // The reason should be passed
-            history.setReason(resason);
-            currentSession().save(history);
-            return history;
-        }
-        return null;
+    public MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason reason,MarkerAlias alias) {
+        MarkerHistory history = new MarkerHistory();
+        history.setDate(new Date());
+        history.setName(newMarker.getName());
+        history.setAbbreviation(newMarker.getAbbreviation());
+        history.setMarker(newMarker);
+        history.setEvent(event.toString());
+        history.setOldMarkerName(oldMarker.getName());
+        // The reason should be passed
+        history.setReason(reason);
+        history.setMarkerAlias(alias);
+        return history;
     }
 
     @SuppressWarnings("unchecked")

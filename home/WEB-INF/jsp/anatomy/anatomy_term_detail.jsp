@@ -1,9 +1,4 @@
-<%@ page import="org.zfin.anatomy.AnatomyItem,
-                 org.zfin.anatomy.DevelopmentStage" %>
-<%@ page import="org.zfin.anatomy.presentation.StagePresentation" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
-<%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
-<%@ page import="org.zfin.framework.presentation.SectionVisibility" %>
 <%@ page import="org.zfin.ontology.Ontology" %>
 <%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
 
@@ -12,6 +7,8 @@
 <zfin2:dataManager zdbID="${formBean.anatomyItem.zdbID}"
                    oboID="${formBean.anatomyItem.oboID}"
                    latestUpdate="${formBean.latestUpdate}"
+                   deleteURL="${formBean.deleteURL}"
+                   mergeURL="${formBean.mergeURL}"
                    rtype="anatomy_item"/>
 
 <div style="float: right;">

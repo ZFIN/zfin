@@ -360,6 +360,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     }
 
+    public Antibody getAntibodyByAbbrev(String antibodyAbbrev) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(Antibody.class);
+        criteria.add(Restrictions.eq("abbreviation", antibodyAbbrev));
+        return (Antibody) criteria.uniqueResult();
+    }
+
     public Antibody getAntibodyByName(String antibodyName) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Antibody.class);
@@ -573,6 +580,24 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     public List<Antibody> getAllAntibodies() {
         Query query = HibernateUtil.currentSession().createQuery("from Antibody a order by a.name asc");
         return query.list();
+    }
+
+    @Override
+    public List<Antibody> getAntibodiesByName(String query) {
+        List<Antibody> antibodies = new ArrayList<Antibody>();
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria1 = session.createCriteria(Antibody.class);
+        criteria1.add(Restrictions.ilike("abbreviation", query, MatchMode.START));
+        criteria1.addOrder(Order.asc("abbreviationOrder"));
+        antibodies.addAll(criteria1.list());
+
+        Criteria criteria2 = session.createCriteria(Antibody.class);
+        criteria2.add(Restrictions.ilike("abbreviation", query, MatchMode.ANYWHERE));
+        criteria2.add(Restrictions.not(Restrictions.ilike("abbreviation", query, MatchMode.START)));
+        criteria2.addOrder(Order.asc("abbreviationOrder"));
+        antibodies.addAll(criteria2.list());
+        return antibodies;
     }
 
     /**

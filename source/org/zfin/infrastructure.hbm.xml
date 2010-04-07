@@ -180,6 +180,7 @@
 
         <property name="note" column="extnote_note"/>
         <property name="type" column="extnote_note_type"/>
+        <property name="externalDataZdbID" column="extnote_data_zdb_id" insert="false" update="false"/>
 
         <set name="pubAttributions">
             <key>

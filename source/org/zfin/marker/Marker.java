@@ -332,6 +332,51 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         this.directPanelMappings = directPanelMappings;
     }
 
+    public boolean hasFirstMarkerRelationships(Marker markerToMergeInto) {
+        for(MarkerRelationship markerRelationship: getSecondMarkerRelationships()){
+            if(markerRelationship.getFirstMarker().equals(markerToMergeInto)){
+                return true ;
+            }
+        }
+        return false ;
+    }
+
+    public boolean hasSecondMarkerRelationships(Marker markerToMergeInto) {
+        for(MarkerRelationship markerRelationship: getFirstMarkerRelationships()){
+            if(markerRelationship.getSecondMarker().equals(markerToMergeInto)){
+                return true ;
+            }
+        }
+        return false ;
+    }
+
+    public boolean hasSupplier(MarkerSupplier markerSupplier) {
+        for(MarkerSupplier aMarkerSupplier: getSuppliers()){
+           if(aMarkerSupplier.getOrganization().getZdbID().equals(markerSupplier.getOrganization().getZdbID())) {
+               return true ; 
+           }
+        }
+        return false;
+    }
+
+    public boolean hasPublicationAttribution(PublicationAttribution publicationAttribution) {
+        for(PublicationAttribution aPublicationAttribution: getPublications()){
+            if(aPublicationAttribution.getPublication().getZdbID().equals(publicationAttribution.getPublication().getZdbID())) {
+                return true ;
+            }
+        }
+        return false;
+    }
+
+    public MarkerAlias getAlias(String aliasString) {
+        for(MarkerAlias aMarkerAlias: getAliases()){
+            if(aMarkerAlias.getAlias().equalsIgnoreCase(aliasString)){
+                return aMarkerAlias ;
+            }
+        }
+        return null ;
+    }
+
     public static enum Type {
         ATB("ATB"),
         BAC("BAC"),

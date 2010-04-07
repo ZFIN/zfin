@@ -14,7 +14,6 @@ public class CloneAddValidator implements Validator {
     private static Logger logger = Logger.getLogger(CloneAddValidator.class);
 
     public boolean supports(Class aClass) {
-        logger.info("clss should be supported: " + CloneAddBean.class.equals(aClass));
         return CloneAddBean.class.equals(aClass);
     }
 

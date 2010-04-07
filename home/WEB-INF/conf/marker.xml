@@ -13,13 +13,15 @@
                 <prop key="/marker/related-transcripts">relatedTranscripts</prop>
                 <prop key="/marker/transcript-definitions">transcriptDefinitions</prop>
                 <prop key="/marker/clone-add">cloneAdd</prop>
-				<prop key="/marker/clone-view">cloneView</prop>
+                <prop key="/marker/clone-view">cloneView</prop>
                 <prop key="/marker/gene-view">geneView</prop>
                 <prop key="/marker/sequence-view">sequenceView</prop>
                 <prop key="/marker/mini-gene">miniGeneBean</prop>
-				<prop key="/marker/marker-edit">markerEdit</prop>
+                <prop key="/marker/marker-edit">markerEdit</prop>
                 <prop key="/marker/go-edit">goMarkerEdit</prop>
                 <prop key="/marker/stemloop-sequence">stemLoopSequence</prop>
+                <prop key="/marker/delete">deleteMarker</prop>
+                <prop key="/marker/merge">mergeMarker</prop>
             </props>
         </property>
     </bean>
@@ -30,7 +32,7 @@
 
     <bean name="transcriptView" class="org.zfin.marker.presentation.TranscriptViewController"/>
     <bean name="relatedTranscripts" class="org.zfin.marker.presentation.RelatedTranscriptsController"/>
-    
+
     <bean name="transcriptDefinitions" class="org.zfin.marker.presentation.TranscriptDefinitionsController"/>
 
     <bean name="transcriptAdd" class="org.zfin.marker.presentation.TranscriptAddController">
@@ -49,6 +51,24 @@
     </bean>
 
     <bean name="cloneView" class="org.zfin.marker.presentation.CloneViewController"/>
+
+    <bean name="deleteMarker" class="org.zfin.marker.presentation.DeleteMarkerController">
+        <property name="commandName" value="formBean"/>
+        <property name="commandClass" value="org.zfin.marker.presentation.DeleteBean"/>
+    </bean>
+
+    <bean name="mergeMarker" class="org.zfin.marker.presentation.MergeMarkerController">
+        <property name="formView" value="marker-merge.page"/>
+        <property name="successView" value="marker-merge-finish.page"/>
+        <property name="validateOnBinding" value="true"/>
+        <property name="bindOnNewForm" value="true"/>
+        <property name="commandName" value="formBean"/>
+        <property name="commandClass" value="org.zfin.marker.presentation.MergeBean"/>
+        <property name="validator">
+            <bean class="org.zfin.marker.presentation.MergeMarkerValidator"/>
+        </property>
+    </bean>
+
 
     <bean name="geneView" class="org.zfin.marker.presentation.GeneViewController"/>
 

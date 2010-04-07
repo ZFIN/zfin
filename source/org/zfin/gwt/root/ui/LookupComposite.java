@@ -44,6 +44,7 @@ public class LookupComposite extends Composite {
     // lookup types
     public final static String GENEDOM_AND_EFG = "GENEDOM_AND_EFG_LOOKUP";
     public final static String MARKER_LOOKUP = "MARKER_LOOKUP";
+    public final static String ANTIBODY_LOOKUP = "ANTIBODY_LOOKUP";
     public final static String TYPE_SUPPLIER = "SUPPLIER";
     public final static String FEATURE_LOOKUP = "FEATURE_LOOKUP";
     public final static String GDAG_TERM_LOOKUP = "GDAG_TERM_LOOKUP";
@@ -80,6 +81,7 @@ public class LookupComposite extends Composite {
     public LookupComposite() {
         types.add(TYPE_SUPPLIER);
         types.add(MARKER_LOOKUP);
+        types.add(ANTIBODY_LOOKUP);
         types.add(GENEDOM_AND_EFG);
         types.add(FEATURE_LOOKUP);
         types.add(GDAG_TERM_LOOKUP);

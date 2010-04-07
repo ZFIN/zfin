@@ -68,6 +68,21 @@
         <put name="body" value="/WEB-INF/jsp/marker/transcript_edit.jsp"/>
     </definition>
 
+    <definition name="marker-delete.page" extends="main_layout">
+        <put name="staticTitle" value="Delete Marker" />
+        <put name="body" value="/WEB-INF/jsp/marker/delete_marker.jsp"/>
+    </definition>
+
+    <definition name="marker-merge.page" extends="main_layout">
+        <put name="staticTitle" value="Merge Marker" />
+        <put name="body" value="/WEB-INF/jsp/marker/merge_marker.jsp"/>
+    </definition>
+
+    <definition name="marker-merge-finish.page" extends="main_layout">
+        <put name="staticTitle" value="Merge Marker" />
+        <put name="body" value="/WEB-INF/jsp/marker/merge_marker_finish.jsp"/>
+    </definition>
+
     <definition name="go-edit.page" page="/WEB-INF/jsp/marker/go_edit.jsp">
     </definition>
 

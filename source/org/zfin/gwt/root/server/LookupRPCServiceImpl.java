@@ -8,7 +8,11 @@ import org.apache.log4j.Logger;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyService;
 import org.zfin.anatomy.presentation.RelationshipPresentation;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.antibody.Antibody;
+import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.PublicationDTO;
+import org.zfin.gwt.root.dto.TermInfo;
+import org.zfin.gwt.root.dto.TermStatus;
 import org.zfin.gwt.root.ui.ItemSuggestOracle;
 import org.zfin.gwt.root.ui.ItemSuggestion;
 import org.zfin.gwt.root.util.LookupRPCService;
@@ -36,7 +40,7 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 public class LookupRPCServiceImpl extends RemoteServiceServlet implements LookupRPCService {
 
-    private static final Logger LOG = Logger.getLogger(LookupRPCServiceImpl.class);
+    private static final Logger logger = Logger.getLogger(LookupRPCServiceImpl.class);
 
     private static final int NUMBER_OF_SUGGESTIONS = ItemSuggestOracle.DEFAULT_LIMIT;
 
@@ -72,7 +76,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         }
 
         resp.setSuggestions(suggestions);
-        LOG.info("found " +suggestions.size() + " suggestions for " + req);
+        logger.info("found " +suggestions.size() + " suggestions for " + req);
         return resp;
     }
 
@@ -145,7 +149,25 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             }
         }
         resp.setSuggestions(suggestions);
-        LOG.info("found " + suggestions.size() + " suggestions for " + request);
+        logger.info("found " + suggestions.size() + " suggestions for " + request);
+        return resp;
+    }
+
+
+    @Override
+    public SuggestOracle.Response getAntibodySuggestions(SuggestOracle.Request req) {
+        SuggestOracle.Response resp = new SuggestOracle.Response();
+        String query = req.getQuery();
+
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
+        if (query.length() > 0) {
+            for (Antibody antibody: RepositoryFactory.getAntibodyRepository().getAntibodiesByName(query)) {
+                suggestions.add(new ItemSuggestion(
+                        antibody.getAbbreviation().replaceAll(query.replace("(", "\\(").replace(")", "\\)"), "<strong>" + query + "</strong>"), antibody.getAbbreviation()));
+            }
+        }
+        resp.setSuggestions(suggestions);
+        logger.info("found " +suggestions.size() + " suggestions for " + req);
         return resp;
     }
 
@@ -161,7 +183,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             }
         }
         resp.setSuggestions(suggestions);
-        LOG.info("found " +suggestions.size() + " suggestions for " + req);
+        logger.info("found " +suggestions.size() + " suggestions for " + req);
         return resp;
     }
 
@@ -178,7 +200,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             }
         }
         resp.setSuggestions(suggestions);
-        LOG.info("found " +suggestions.size() + " suggestions for " + req);
+        logger.info("found " +suggestions.size() + " suggestions for " + req);
         return resp;
     }
 
@@ -194,7 +216,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             }
         }
         resp.setSuggestions(suggestions);
-        LOG.info("found " +suggestions.size() + " suggestions for " + req);
+        logger.info("found " +suggestions.size() + " suggestions for " + req);
         return resp;
     }
 
@@ -208,11 +230,11 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      */
     public TermInfo getTermInfo(OntologyDTO ontology, String termID) {
         if (ontology == null) {
-            LOG.warn("No ontology provided");
+            logger.warn("No ontology provided");
             return null;
         }
         if (StringUtils.isEmpty(termID)) {
-            LOG.warn("No termID provided");
+            logger.warn("No termID provided");
             return null;
         }
         return getGenericTermInfo(termID, ontology);
@@ -226,11 +248,11 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      */
     public TermInfo getTermInfoByName(OntologyDTO ontology, String termName) {
         if (ontology == null) {
-            LOG.warn("No ontology provided");
+            logger.warn("No ontology provided");
             return null;
         }
         if (StringUtils.isEmpty(termName)) {
-            LOG.warn("No termID provided");
+            logger.warn("No termID provided");
             return null;
         }
         switch (ontology) {
@@ -248,7 +270,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 
         AnatomyItem term = getAnatomyRepository().getAnatomyItem(termName);
         if (term == null) {
-            LOG.warn("No term " + termName + " found!");
+            logger.warn("No term " + termName + " found!");
             return null;
         }
         TermInfo rootTermInfo = convertAnatomyToTermInfo(term);
@@ -278,7 +300,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         }
 
         if (term == null) {
-            LOG.warn("No term " + termID + " found!");
+            logger.warn("No term " + termID + " found!");
             return null;
         }
         TermInfo rootTermInfo = BODtoConversionService.getTermInfo(term, ontology, true);
@@ -291,7 +313,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         Ontology ontology = OntologyService.convertOntology(ontologyDTO);
         GenericTerm term = getInfrastructureRepository().getTermByName(termName, ontology);
         if (term == null) {
-            LOG.warn("No term " + termName + " found!");
+            logger.warn("No term " + termName + " found!");
             return null;
         }
         TermInfo rootTermInfo = BODtoConversionService.getTermInfo(term, ontologyDTO, true);

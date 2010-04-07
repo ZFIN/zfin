@@ -37,6 +37,8 @@ class CallbackTimer extends Timer {
             lookupServiceAsync.getSupplierSuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.MARKER_LOOKUP)) {
             lookupServiceAsync.getMarkerSuggestions(request, callback);
+        } else if (lookup.getType().equals(LookupComposite.ANTIBODY_LOOKUP)) {
+            LookupRPCService.App.getInstance().getAntibodySuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.GENEDOM_AND_EFG)) {
             lookupServiceAsync.getGenedomAndEFGSuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.FEATURE_LOOKUP)) {

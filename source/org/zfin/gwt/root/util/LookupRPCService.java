@@ -33,6 +33,8 @@ public interface LookupRPCService extends RemoteService {
 
     SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req);
 
+    SuggestOracle.Response getAntibodySuggestions(SuggestOracle.Request request);
+
     SuggestOracle.Response getGenedomAndEFGSuggestions(SuggestOracle.Request req);
 
     SuggestOracle.Response getSupplierSuggestions(SuggestOracle.Request req);

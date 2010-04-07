@@ -12,6 +12,7 @@ import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.infrastructure.EnumValidationTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
+import org.zfin.marker.MergeMarkerTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.MutantRepositoryTest;
@@ -45,6 +46,7 @@ import org.zfin.util.BODtoConversionServiceTest;
         CurationRPCTest.class,
         InfrastructureRepositoryTest.class,
         MarkerRepositoryTest.class,
+        MergeMarkerTest.class,
         TranscriptServiceTest.class,
         OrthologyTest.class,
         MutantRepositoryTest.class,

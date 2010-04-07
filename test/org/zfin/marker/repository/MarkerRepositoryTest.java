@@ -39,16 +39,12 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 public class MarkerRepositoryTest {
 
     private Logger logger = Logger.getLogger(MarkerRepositoryTest.class) ;
-    private static MarkerRepository markerRepository;
+    private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
     static {
-        if (markerRepository == null) {
-            markerRepository = new HibernateMarkerRepository();
-        }
-
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
         if (sessionFactory == null) {
@@ -60,8 +56,6 @@ public class MarkerRepositoryTest {
     public void setUp() {
         TestConfiguration.configure();
         TestConfiguration.setAuthenticatedUser();
-        // TODO: this should load a specific database instance for testing purposes
-
     }
 
     @After

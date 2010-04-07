@@ -20,7 +20,7 @@ public abstract class EntityPresentation {
      *
      * @return first bit of webdriver links
      */
-    private static StringBuilder getWebdriverHyperLinkStart() {
+    protected static StringBuilder getWebdriverHyperLinkStart() {
         StringBuilder sb = new StringBuilder();
         sb.append("<a href=\"/");
         sb.append(ZfinProperties.getWebDriver());

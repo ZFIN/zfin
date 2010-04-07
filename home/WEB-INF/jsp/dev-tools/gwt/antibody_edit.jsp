@@ -70,6 +70,8 @@
     </tr>
     <tr>
         <td colspan="2">
+            <b>Suppliers:</b>
+            <br>
             <div id="<%=StandardDivNames.supplierDiv%>"></div>
         </td>
     </tr>
