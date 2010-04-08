@@ -451,7 +451,7 @@ public class SearchBean extends PaginationBean {
             }
             int numberOfResults = getSearchResultsCount(currentCategoryId);
             if (currentCategoryId.equalsIgnoreCase("All") || numberOfResults > 1) {
-                categoryHtml = "<a href='category_search.jsp?pageSize=" + pageSize + "&query=" + URLEncoder.encode(getQueryTerm(), "UTF-8") + "&categoryID=" + currentCategoryId + "'><b>" + category.getDisplayName() + "</b></a>";
+                categoryHtml = "<a href='?pageSize=" + pageSize + "&query=" + URLEncoder.encode(getQueryTerm(), "UTF-8") + "&categoryID=" + currentCategoryId + "'><b>" + category.getDisplayName() + "</b></a>";
             } else if (numberOfResults == 1) {
                 String searchResultURL = "";
                 for (CategoryHits catHit : allCategoryHitsList) {
@@ -520,7 +520,7 @@ public class SearchBean extends PaginationBean {
                     if (separator) {
                         returnResults += " or ";
                     }
-                    returnResults += "<a title='" + matchedText + "' href=\"category_search.jsp?query=" + newTermFiltered + "\"><em>" + newTermFiltered + "</em></a> <span class='related_terms_match'>(" + matchedText + ")</span>";
+                    returnResults += "<a title='" + matchedText + "' href=\"?query=" + newTermFiltered + "\"><em>" + newTermFiltered + "</em></a> <span class='related_terms_match'>(" + matchedText + ")</span>";
                     separator = true;
                 }
                 returnResults += "</span>";
