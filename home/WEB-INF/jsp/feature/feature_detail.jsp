@@ -2,8 +2,8 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 
 <zfin2:dataManager zdbID="${formBean.feature.zdbID}"
-                   editURL="${formBean.editURL}"
-                   deleteURL="${formBean.deleteURL}"
+                   <%--editURL="${formBean.editURL}"--%>
+                   <%--deleteURL="${formBean.deleteURL}"--%>
                    latestUpdate="${formBean.latestUpdate}"
         rtype="feature"/>
 

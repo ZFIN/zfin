@@ -3,8 +3,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
-                   editURL="${formBean.editURL}"
-                   deleteURL="${formBean.deleteURL}"
+                   <%--editURL="${formBean.editURL}"--%>
+                   <%--deleteURL="${formBean.deleteURL}"--%>
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="marker" />
 

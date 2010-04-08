@@ -7,8 +7,6 @@
 <zfin2:dataManager zdbID="${formBean.anatomyItem.zdbID}"
                    oboID="${formBean.anatomyItem.oboID}"
                    latestUpdate="${formBean.latestUpdate}"
-                   deleteURL="${formBean.deleteURL}"
-                   mergeURL="${formBean.mergeURL}"
                    rtype="anatomy_item"/>
 
 <div style="float: right;">
