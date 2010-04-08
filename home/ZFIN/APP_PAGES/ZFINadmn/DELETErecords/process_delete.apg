@@ -197,6 +197,15 @@
                   where mrkrgoev_mrkr_zdb_id = '$OID'">
            <?/MISQL>  
 
+	   <?MICOMMENT> --- update expression_condition --- <?/MICOMMENT>
+	   <?MISQL SQL="
+               update experiment_condition
+                set expcond_mrkr_zdb_id = '$merge_oid'
+                where expcond_mrkr_zdb_id = '$OID'
+                  ;">
+           <?/MISQL>  
+
+
 	   <?MICOMMENT> --- update expression_experiment--- <?/MICOMMENT>
 	   <?MISQL SQL="
                  UPDATE expression_experiment
