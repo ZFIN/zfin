@@ -44,7 +44,6 @@
                 <prop key="/dev-tools/gwt/go-edit">goEdit</prop>
                 <prop key="/dev-tools/gwt/go-add">goAdd</prop>
                 <prop key="/dev-tools/gwt/go-clone">goClone</prop>
-                <prop key="/dev-tools/gwt/alternate-go-edit">alternateGoEdit</prop>
                 <prop key="/dev-tools/gwt/test-composite">testComposite</prop>
                 <prop key="/dev-tools/svn-version">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/display-groups">displayGroups</prop>
@@ -102,10 +101,6 @@
 
     <bean name="goClone" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
         <property name="viewName" value="go-clone"/>
-    </bean>
-
-    <bean name="alternateGoEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
-        <property name="viewName" value="alternate-go-edit"/>
     </bean>
 
     <bean name="antibodyEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">

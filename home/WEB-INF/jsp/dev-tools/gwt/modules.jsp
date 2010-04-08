@@ -70,10 +70,4 @@
             <a href="/action/dev-tools/gwt/go-edit">GO: GO Edit</a>
         </td>
     </tr>
-    <tr>
-        <td class="sectionTitle">GO/Alternate Go Edit</td>
-        <td width="120" colspan="2" class="sectionTitle">
-            <a href="/action/dev-tools/gwt/alternate-go-edit">GO: Alternate GO Edit</a>
-        </td>
-    </tr>
 </table>
