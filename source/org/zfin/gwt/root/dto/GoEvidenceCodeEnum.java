@@ -22,7 +22,7 @@ public enum GoEvidenceCodeEnum implements IsSerializable  {
             case IEP:
                 return new InferenceCategory[]{};
             case IGI:
-                return new InferenceCategory[]{InferenceCategory.ZFIN_GENE, InferenceCategory.ZFIN_MRPH_GENO, InferenceCategory.REFSEQ,
+                return new InferenceCategory[]{ InferenceCategory.ZFIN_MRPH_GENO, InferenceCategory.ZFIN_GENE, InferenceCategory.REFSEQ,
                         InferenceCategory.GENBANK};
             case IPI:
                 return new InferenceCategory[]{InferenceCategory.ZFIN_GENE, InferenceCategory.REFSEQ,
