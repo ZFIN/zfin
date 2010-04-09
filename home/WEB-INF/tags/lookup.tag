@@ -12,7 +12,7 @@
 <script type="text/javascript">
     var LookupProperties${id} = {
         divName: "term-${id}",
-        inputName: "searchTerm-${id}",
+        inputName: "searchTerm",
         showError: true,
         showButton: false,
         <c:if test="${not empty action}">
