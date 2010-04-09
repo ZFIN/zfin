@@ -1,9 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 
-<zfin2:dataManager zdbID="${formBean.feature.zdbID}"
-                   <%--editURL="${formBean.editURL}"--%>
-                   <%--deleteURL="${formBean.deleteURL}"--%>
+<zfin2:dataManager zdbID="${formBean.feature.zdbID}"             
                    latestUpdate="${formBean.latestUpdate}"
         rtype="feature"/>
 
