@@ -5,6 +5,7 @@
 <%@attribute name="ontologyName" type="java.lang.String" %>
 <%@attribute name="id" type="java.lang.String" %>
 <%@attribute name="action" type="java.lang.String" required="false" %>
+<%@attribute name="wildcard" type="java.lang.Boolean" required="true" description="allow using a wildcard search opposed to exact searches" %>
 
 <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
@@ -20,7 +21,7 @@
         </c:if>
         type: "<%= LookupComposite.GDAG_TERM_LOOKUP%>",
         ontologyName: "${ontologyName}",
-        wildcard: false,
+        wildcard: ${wildcard},
         limit: 25
     };
 

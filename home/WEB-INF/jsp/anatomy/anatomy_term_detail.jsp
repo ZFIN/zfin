@@ -4,16 +4,18 @@
 
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+
 <zfin2:dataManager zdbID="${formBean.anatomyItem.zdbID}"
                    oboID="${formBean.anatomyItem.oboID}"
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="anatomy_item"/>
 
 <div style="float: right;">
-<tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-    <tiles:put name="subjectName" value="${formBean.anatomyItem.name}"/>
-    <tiles:put name="subjectID" value="${formBean.anatomyItem.zdbID}"/>
-</tiles:insert>
+    <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+        <tiles:put name="subjectName" value="${formBean.anatomyItem.name}"/>
+        <tiles:put name="subjectID" value="${formBean.anatomyItem.zdbID}"/>
+    </tiles:insert>
 </div>
 <div class="summary">
     <table width="100%">
@@ -31,7 +33,8 @@
             </td>
             <td rowspan="3" valign="top" align="right" width="5%">
                 <zfin2:lookup ontologyName="<%= Ontology.ANATOMY.getOntologyName()%>"
-                              action="<%= LookupComposite.ACTION_ANATOMY_SEARCH %>"/>
+                              action="<%= LookupComposite.ACTION_ANATOMY_SEARCH %>"
+                              wildcard="true"/>
             </td>
         </tr>
         <c:if test="${formBean.anatomyItem.synonyms != null  }">

@@ -50,7 +50,8 @@
                         <c:out value='${dataMap.value.numberOfTerms}'/>
                     </td>
                     <td>
-                        <zfin2:lookup ontologyName="${dataMap.value.ontology.ontologyName}" id="${loop.count}"/>
+                        <zfin2:lookup ontologyName="${dataMap.value.ontology.ontologyName}" id="${loop.count}"
+                                      wildcard="false"/>
                     </td>
                 </tr>
             </c:forEach>
@@ -71,18 +72,20 @@
                 <td>
                     <p/>
                     <a href="?action=<%= OntologyBean.ActionType.LOAD_FROM_DATABASE%>">
-                    Re-load </a> from database again.<br/>
+                        Re-load </a> from database again.<br/>
                 </td>
             </tr>
         </c:when>
         <c:otherwise>
-            <tr><td>
-                Ontologies are not loaded yet.<br/>
-                <a href="?action=<%= OntologyBean.ActionType.LOAD_FROM_SERIALIZED_FILE%>">
-                Load </a> from a serialized file.<br/>
-                <a href="?action=<%= OntologyBean.ActionType.LOAD_FROM_DATABASE%>">
-                Load </a> from a the database.<br/>
-            </td></tr>
+            <tr>
+                <td>
+                    Ontologies are not loaded yet.<br/>
+                    <a href="?action=<%= OntologyBean.ActionType.LOAD_FROM_SERIALIZED_FILE%>">
+                        Load </a> from a serialized file.<br/>
+                    <a href="?action=<%= OntologyBean.ActionType.LOAD_FROM_DATABASE%>">
+                        Load </a> from a the database.<br/>
+                </td>
+            </tr>
         </c:otherwise>
     </c:choose>
 </table>
