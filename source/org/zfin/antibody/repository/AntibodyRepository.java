@@ -171,8 +171,10 @@ public interface AntibodyRepository {
      * @param includeSubstructures boolean
      * @return pagination result
      */
-    PaginationResult<AntibodyStatistics> getAntibodyStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures);
+    List<AntibodyStatistics> getAntibodyStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures);
 
+
+    int getAntibodyCount(AnatomyItem anatomyItem,boolean includeSubstructure) ;
 
     /**
      * Retrieve all antibodies sorted by name.

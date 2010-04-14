@@ -1,9 +1,14 @@
 package org.zfin.anatomy;
 
+import org.hibernate.Query;
 import org.zfin.anatomy.presentation.AnatomyPresentation;
 import org.zfin.anatomy.presentation.RelationshipPresentation;
 import org.zfin.anatomy.presentation.RelationshipSorting;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -31,6 +36,24 @@ public class AnatomyService {
         Collections.sort(uniqueTypes, new RelationshipSorting());
         return AnatomyPresentation.createRelationshipPresentation(uniqueTypes, term);
 
+    }
+
+
+    public static PaginationResult<AntibodyStatistics> getAntibodyStatistics(AnatomyItem aoTerm,
+                                                                             PaginationBean pagination,
+                                                                             boolean includeSubstructures){
+        int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm,includeSubstructures) ;
+        // if no antibodies found return here
+        if (totalCount == 0)
+            return new PaginationResult<AntibodyStatistics>(0, null);
+
+        if (includeSubstructures)
+            return new PaginationResult<AntibodyStatistics>(totalCount, null);
+
+
+        List<AntibodyStatistics> list = RepositoryFactory.getAntibodyRepository().getAntibodyStatistics(aoTerm,pagination,includeSubstructures) ;
+
+        return new PaginationResult<AntibodyStatistics>(totalCount, list);
     }
 
 }

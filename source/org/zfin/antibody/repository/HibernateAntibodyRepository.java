@@ -1,10 +1,7 @@
 package org.zfin.antibody.repository;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.*;
 import org.hibernate.criterion.*;
 import org.zfin.Species;
 import org.zfin.anatomy.AnatomyItem;
@@ -522,8 +519,45 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     }
 
-    public PaginationResult<AntibodyStatistics> getAntibodyStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures) {
-        Session session = HibernateUtil.currentSession();
+    public List<AntibodyStatistics> getAntibodyStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures) {
+
+        String hql ;
+        // loop over all antibodyAOStatistic records until the given number of distinct antibodies from the pagination
+        // bean is reached.
+        if (includeSubstructures)
+            hql = "  from AntibodyAOStatistics stat fetch all properties" +
+                    "     where stat.superterm = :aoterm";
+        else
+            hql = " select stat from AntibodyAOStatistics stat fetch all properties" +
+                    "     where stat.superterm = :aoterm " +
+                    "           and stat.subterm = :aoterm ";
+
+        ScrollableResults scrollableResults = HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("aoterm", aoTerm).scroll();
+        List<AntibodyStatistics> list = new ArrayList<AntibodyStatistics>();
+
+        while (scrollableResults.next() && list.size() < pagination.getMaxDisplayRecords() + 1) {
+            //Object[] record = scrollableResults.get(0);
+            //AntibodyAOStatistics antibodyStat = (AntibodyAOStatistics) record[0];
+            AntibodyAOStatistics antibodyStat = (AntibodyAOStatistics) scrollableResults.get(0);
+            populateAntibodyStatisticsRecord(antibodyStat, list, aoTerm);
+        }
+        // remove the last entity as it is beyond the display limit.
+        if (list.size() > pagination.getMaxDisplayRecords()){
+            list.remove(list.size() - 1);
+        }
+        scrollableResults.close();
+
+        // Since the number of entities that manifest a single record are comprised of
+        // multiple single records (differ by figures, genes, pubs) from the database we have to aggregate
+        // them into single entities. Need to populate one more entity than requested to collect
+        // all information pertaining to that record. Have to remove that last entity.
+
+        return list ;
+    }
+
+    @Override
+    public int getAntibodyCount(AnatomyItem aoTerm, boolean includeSubstructures) {
         String hql;
         if (includeSubstructures) {
             hql = "select count(distinct stat.antibody) " +
@@ -535,45 +569,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                     "     where stat.superterm = :aoterm and " +
                     "           stat.subterm = :aoterm";
         }
-        Query query = session.createQuery(hql);
+        Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("aoterm", aoTerm);
-        int totalCount = ((Number) query.uniqueResult()).intValue();
-        // if no antibodies found return here
-        if (totalCount == 0)
-            return new PaginationResult<AntibodyStatistics>(0, null);
-
-        if (includeSubstructures)
-            return new PaginationResult<AntibodyStatistics>(totalCount, null);
-
-        // loop over all antibodyAOStatistic records until the given number of distinct antibodies from the pagination
-        // bean is reached.
-        if (includeSubstructures)
-            hql = "  from AntibodyAOStatistics stat fetch all properties" +
-                    "     where stat.superterm = :aoterm";
-        else
-            hql = " select stat from AntibodyAOStatistics stat fetch all properties" +
-                    "     where stat.superterm = :aoterm " +
-                    "           and stat.subterm = :aoterm ";
-
-        query = session.createQuery(hql);
-        query.setParameter("aoterm", aoTerm);
-        Iterator scrollableResults = query.iterate();
-        List<AntibodyStatistics> list = new ArrayList<AntibodyStatistics>();
-        // Since the number of entities that manifest a single record are comprised of
-        // multiple single records (differ by figures, genes, pubs) from the database we have to aggregate
-        // them into single entities. Need to populate one more entity than requested to collect
-        // all information pertaining to that record. Have to remove that last entity.
-        while (scrollableResults.hasNext() && list.size() < pagination.getMaxDisplayRecords()) {
-            //Object[] record = scrollableResults.get(0);
-            //AntibodyAOStatistics antibodyStat = (AntibodyAOStatistics) record[0];
-            AntibodyAOStatistics antibodyStat = (AntibodyAOStatistics) scrollableResults.next();
-            populateAntibodyStatisticsRecord(antibodyStat, list, aoTerm);
-        }
-        // remove the last entity as it is beyond the display limit.
-        if (list.size() > pagination.getMaxDisplayRecords())
-            list.remove(list.size() - 1);
-        //scrollableResults.close();
-        return new PaginationResult<AntibodyStatistics>(totalCount, list);
+        return ((Number) query.uniqueResult()).intValue();
     }
 
     @SuppressWarnings("unchecked")

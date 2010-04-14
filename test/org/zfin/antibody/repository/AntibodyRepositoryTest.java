@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.zfin.Species;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.AnatomyService;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
@@ -897,12 +898,12 @@ public class AntibodyRepositoryTest {
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(5);
         // without substructures
-        PaginationResult<AntibodyStatistics> result = getAntibodyRepository().getAntibodyStatistics(aoTerm, pagination, false);
+        PaginationResult<AntibodyStatistics> result = AnatomyService.getAntibodyStatistics(aoTerm, pagination, false);
         assertTrue(result != null);
         assertTrue(result.getTotalCount() > 0);
         assertTrue(result.getPopulatedResults().size() > 1);
         // including substructures
-        result = getAntibodyRepository().getAntibodyStatistics(aoTerm, pagination, true);
+        result = AnatomyService.getAntibodyStatistics(aoTerm, pagination, true);
         assertTrue(result != null);
         assertTrue(result.getTotalCount() > 0);
 

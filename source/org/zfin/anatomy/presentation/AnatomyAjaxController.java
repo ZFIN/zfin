@@ -3,6 +3,7 @@ package org.zfin.anatomy.presentation;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.AnatomyService;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.repository.AntibodyRepository;
@@ -21,6 +22,7 @@ import org.zfin.mutant.presentation.MorpholinoStatistics;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.framework.HibernateUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -127,11 +129,13 @@ public class AnatomyAjaxController extends MultiActionController {
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-        PaginationResult<AntibodyStatistics> antibodies = antibodyRepository.getAntibodyStatistics(aoTerm, pagination, false);
+        PaginationResult<AntibodyStatistics> antibodies = AnatomyService.getAntibodyStatistics(aoTerm, pagination, false);
         form.setAntibodyStatistics(antibodies.getPopulatedResults());
         form.setAntibodyCount(antibodies.getTotalCount());
 
-        PaginationResult<AntibodyStatistics> antibodiesIncludingSubstructures = antibodyRepository.getAntibodyStatistics(aoTerm, pagination, true);
+        HibernateUtil.currentSession().flush() ; 
+
+        PaginationResult<AntibodyStatistics> antibodiesIncludingSubstructures = AnatomyService.getAntibodyStatistics(aoTerm, pagination, true);
         AnatomyStatistics statistics = new AnatomyStatistics();
         statistics.setNumberOfTotalDistinctObjects(antibodiesIncludingSubstructures.getTotalCount());
         statistics.setNumberOfObjects(antibodies.getTotalCount());
