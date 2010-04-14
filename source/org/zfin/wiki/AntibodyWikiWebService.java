@@ -166,7 +166,7 @@ public class AntibodyWikiWebService extends WikiWebService {
      * @return The page content as a String
      */
     public String createWikiPageContentForAntibodyFromTemplate(Antibody antibody) throws IOException {
-        String content = null;
+        String content ;
         content = getAntibodyTemplate();
 
         AntibodyService antibodyService = new AntibodyService(antibody);
@@ -282,9 +282,8 @@ public class AntibodyWikiWebService extends WikiWebService {
         publicCommentsStringBuilder.append("Imported from ZFIN Antibody page " + AntibodyPresentation.getWikiLink(antibody));
         publicCommentsStringBuilder.append(FileUtil.LINE_SEPARATOR);
         // create a sorted list of these
-        Set<AntibodyExternalNote> antibodyExternalNotes = new TreeSet<AntibodyExternalNote>(antibody.getExternalNotes());
-        if (antibodyExternalNotes != null && antibodyExternalNotes.size() > 0) {
-            for (AntibodyExternalNote externalNote : antibodyExternalNotes) {
+        if(CollectionUtils.isNotEmpty(antibody.getExternalNotes())){
+            for (AntibodyExternalNote externalNote : antibody.getExternalNotes()) {
                 publicCommentsStringBuilder.append(" * ");
                 publicCommentsStringBuilder.append(externalNote.getNote());
                 publicCommentsStringBuilder.append(" (");
@@ -292,7 +291,8 @@ public class AntibodyWikiWebService extends WikiWebService {
                 publicCommentsStringBuilder.append(")");
                 publicCommentsStringBuilder.append(FileUtil.LINE_SEPARATOR);
             }
-        } else {
+        }
+        else {
             publicCommentsStringBuilder.append("No notes imported.").append(FileUtil.LINE_SEPARATOR);
         }
         publicCommentsStringBuilder.append(" * ") ;
@@ -467,7 +467,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         return page;
     }
 
-    private RemotePage createPageForAntibody(Antibody antibody) throws Exception {
+    public RemotePage createPageForAntibody(Antibody antibody) throws Exception {
         String pageTitle = getWikiTitleFromAntibody(antibody);
 
         RemotePage page = new RemotePage();
@@ -546,7 +546,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         RemoteSearchResult[] searchResults = service.search(token,antibodyAbbreviation,2);
         if(searchResults.length!=1){
             logger.error("wrong number of search results for["+antibodyAbbreviation+"]: "+ searchResults.length);
-            return ; 
+            return ;
         }
         service.removePage(token,searchResults[1].getId()) ;
 

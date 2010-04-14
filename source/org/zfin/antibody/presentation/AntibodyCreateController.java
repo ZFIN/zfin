@@ -92,15 +92,12 @@ public class AntibodyCreateController extends SimpleFormController {
             throw new RuntimeException("Error during transaction. Rolled back.", e);
         }
 
-
-        //   return new ModelAndView("antibody-detail-update.page", LookupStrings.FORM_BEAN, formBean);
-
         return new ModelAndView(new RedirectView("/action/marker/marker-edit?zdbID=" + newAntibody.getZdbID() + "&antibodyDefPubZdbID=" + antibodyPub.getZdbID()));
     }
 
     private void createAntibodyWiki(Antibody antibody) {
         try {
-            AntibodyWikiWebService.getInstance().createWikiPageContentForAntibodyFromTemplate(antibody);
+            AntibodyWikiWebService.getInstance().createPageForAntibody(antibody);
         } catch (Exception e) {
             logger.error("Unable to create antibody wiki: "+antibody,e);
         }
