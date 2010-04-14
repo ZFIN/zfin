@@ -5,13 +5,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%-- Ajax includes --%>
-<%-- todo: get these locally, not from phenote.. --%>
 
-
-<script src="/phenote/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
-<script src="/phenote/javascript/ajax-lib/effects.js" type="text/javascript"></script>
-<script src="/phenote/javascript/ajax-lib/dragdrop.js" type="text/javascript"></script>
-<script src="/phenote/javascript/ajax-lib/controls.js" type="text/javascript"></script>
+<script src="/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
+<script src="/javascript/ajax-lib/effects.js" type="text/javascript"></script>
+<script src="/javascript/ajax-lib/dragdrop.js" type="text/javascript"></script>
+<script src="/javascript/ajax-lib/controls.js" type="text/javascript"></script>
 
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
