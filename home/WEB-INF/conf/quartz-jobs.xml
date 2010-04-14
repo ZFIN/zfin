@@ -7,7 +7,7 @@
     <!-- register them in the scheduler -->
     <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <!-- name used to publish applicationContext to Quartz Job instances, so they can call business services -->
-        <property name="autoStartup" value="false"/>
+        <property name="autoStartup" value="@RUN_QUARTZ_JOBS@"/>
         <property name="triggers">
             <list>
                 <ref bean="regenerateWebHostDatabasesDaily"/>
