@@ -63,7 +63,7 @@ $(TARGETDIR)/mtgs.rss : $(TARGETDIR)/mtgs.html
 
 jobs_test : jobs.html
 	echo "Scan for funny chars 'Error 1' if none"
-	egrep -n "[^ -~	]" jobs.html
+	egrep -n "[^ -~	]" jobs.html | less
 
 jobs_tidy : jobs.html
 	tidy -eq -ascii jobs.html
@@ -71,7 +71,7 @@ jobs_tidy : jobs.html
 
 meetings_test : mtgs.html
 	echo "Scan for funny chars 'Error 1' if none"
-	egrep -n "[^ -~	]" mtgs.html
+	egrep -n "[^ -~	]" mtgs.html | less
 
 meetings_tidy : mtgs.html
 	tidy -eq -ascii  mtgs.html
@@ -79,7 +79,7 @@ meetings_tidy : mtgs.html
 
 news_test : siteNews.html
 	echo "Scan for funny chars 'Error 1' if none"
-	egrep -n "[^ -~	]" siteNews.html
+	egrep -n "[^ -~	]" siteNews.html | less
 
 news_tidy : siteNews.html
 	tidy -eq -ascii  siteNews.html
