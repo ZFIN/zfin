@@ -3,6 +3,8 @@
 <%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+
 <script src="/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
 <script src="/javascript/ajax-lib/effects.js" type="text/javascript"></script>
 <script src="/javascript/ajax-lib/dragdrop.js" type="text/javascript"></script>
@@ -47,13 +49,13 @@
                     </TR>
                     <TR bgcolor="">
                         <TD width=45%>
-                            <label for="anatomySearchTerm" class="indented-label">Anatomical Term</label><br>
-                            <zfin2:lookup ontologyName="<%= Ontology.ANATOMY.getOntologyName()%>"
-                                          action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>"
-                                          wildcard="true"/>
+                            <label class="indented-label">Anatomical Term</label><br>
+                            <zfin2:lookup ontology="<%=Ontology.ANATOMY%>"
+                                          action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>" showTermDetail="false"
+                                    wildcard="true"/>
                         </TD>
                         <TD width=10%>
-                            <b>or</b>
+                            <span class="bold">or</span>
                         </TD>
                         <TD width=45%>
                             <label class="namesearchLabel">
@@ -85,7 +87,7 @@
 
     <c:if test="${formBean.termSearch}">
         <CENTER>
-            <TABLE width="98%">
+            <TABLE width="98%" class="">
                 <TR>
                     <TD>
                         <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_list.jsp" flush="false">

@@ -64,11 +64,11 @@ public interface LookupRPCService extends RemoteService {
      * Retrieve terms from a given ontology (via the gDAG ontology table)
      *
      * @param request    request
-     * @param wildCard   true or false
+     * @param showTermDetail   true or false
      * @param goOntology ontology name
      * @return suggestions
      */
-    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean wildCard, OntologyDTO goOntology);
+    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO goOntology);
 
     // validation methods
 

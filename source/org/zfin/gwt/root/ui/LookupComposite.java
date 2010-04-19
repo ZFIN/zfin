@@ -68,6 +68,7 @@ public class LookupComposite extends Composite {
     protected String buttonText = null;
     protected String type = GDAG_TERM_LOOKUP;
     protected boolean wildCard = true;
+    protected boolean showTermDetail = true;
     protected int suggestBoxWidth = 30;
     protected String oId = null;
     protected int limit = ItemSuggestOracle.NO_LIMIT;
@@ -308,6 +309,14 @@ public class LookupComposite extends Composite {
 
     public void setWildCard(boolean wildCard) {
         this.wildCard = wildCard;
+    }
+
+    public boolean isShowTermDetail() {
+        return showTermDetail;
+    }
+
+    public void setShowTermDetail(boolean showTermDetail) {
+        this.showTermDetail = showTermDetail;
     }
 
     public int getMinLookupLength() {

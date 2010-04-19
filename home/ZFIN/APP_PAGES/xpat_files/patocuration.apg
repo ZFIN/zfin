@@ -42,10 +42,6 @@ function getCookie(name) {
   </script>
 
 
-  <script type="text/javascript" src="/javascript/patocuration.js"></script>
-  <script type="text/javascript"> var patoCuration = new PatoCuration(); </script>
-
-
   <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
   

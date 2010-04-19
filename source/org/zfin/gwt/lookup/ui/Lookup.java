@@ -27,6 +27,7 @@ public class Lookup implements EntryPoint {
     public static final String JSREF_ONCLICK = "onclick";
     public static final String JSREF_OID = "OID";
     public static final String JSREF_ONTOLOGY_NAME = "ontologyName";
+    public static final String JSREF_SHOW_TERM_DETAIL = "showTermDetail";
 
     public void onModuleLoad() {
 
@@ -65,6 +66,9 @@ public class Lookup implements EntryPoint {
             }
             if (keySet.contains(JSREF_ONTOLOGY_NAME)) {
                 lookup.setOntologyName(lookupProperties.get(JSREF_ONTOLOGY_NAME));
+            }
+            if (keySet.contains(JSREF_SHOW_TERM_DETAIL)) {
+                lookup.setShowTermDetail(Boolean.valueOf(lookupProperties.get(JSREF_SHOW_TERM_DETAIL)));
             }
 
             if (keySet.contains(JSREF_ACTION)) {

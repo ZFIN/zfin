@@ -2,6 +2,11 @@ package org.zfin.ontology.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.Term;
+import org.zfin.ontology.TermAlias;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * ToDo: ADD DOCUMENTATION!
@@ -11,6 +16,11 @@ public class OntologyBean {
     private String action;
     private boolean ontologiesLoaded = true;
     private OntologyManager ontologyManager;
+    private String ontologyName;
+    private Map<String, List<TermAlias>> aliasTermMap;
+    private Map<String, Term> termMap;
+    private String termID;
+    private Term term;
 
     public String getAction() {
         return action;
@@ -18,6 +28,14 @@ public class OntologyBean {
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public String getOntologyName() {
+        return ontologyName;
+    }
+
+    public void setOntologyName(String ontologyName) {
+        this.ontologyName = ontologyName;
     }
 
     public boolean isSerializeOntologies() {
@@ -30,6 +48,22 @@ public class OntologyBean {
 
     public boolean isLoadOntologiesFromDatabase() {
         return action != null && ActionType.LOAD_FROM_DATABASE.toString().equals(action);
+    }
+
+    public String getTermID() {
+        return termID;
+    }
+
+    public void setTermID(String termID) {
+        this.termID = termID;
+    }
+
+    public Term getTerm() {
+        return term;
+    }
+
+    public void setTerm(Term term) {
+        this.term = term;
     }
 
     public ActionType getActionType() {
@@ -54,9 +88,30 @@ public class OntologyBean {
         this.ontologyManager = ontologyManager;
     }
 
+    public void setAliasTermMap(Map<String, List<TermAlias>> aliasOntologyMap) {
+        aliasTermMap = aliasOntologyMap;
+    }
+
+    public Map<String, List<TermAlias>> getAliasTermMap() {
+        return aliasTermMap;
+    }
+
+    public Map<String, Term> getTermMap() {
+        return termMap;
+    }
+
+    public void setTermMap(Map<String, Term> termMap) {
+        this.termMap = termMap;
+    }
+
     public enum ActionType {
         SERIALIZE_ONTOLOGIES,
-        LOAD_FROM_DATABASE, LOAD_FROM_SERIALIZED_FILE;
+        LOAD_FROM_DATABASE,
+        LOAD_FROM_SERIALIZED_FILE,
+        SHOW_ALIASES,
+        SHOW_OBSOLETE_TERMS,
+        SHOW_ALL_TERMS,
+        SHOW_TERM;
 
         public static ActionType getActionType(String type) {
             for (ActionType t : values()) {
@@ -66,5 +121,8 @@ public class OntologyBean {
             throw new RuntimeException("No action type of string " + type + " found.");
         }
 
+        public String getName(){
+            return name();
+        }
     }
 }

@@ -75,6 +75,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return (List<TermAlias>) query.list();
     }
 
+    @SuppressWarnings({"unchecked"})
     public List<TermRelationship> getAllRelationships(Ontology ontology) {
         Session session = HibernateUtil.currentSession();
         String hql = " from TermRelationship where " +
@@ -145,6 +146,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
      * @param termID ID
      * @return list of terms
      */
+    @SuppressWarnings({"unchecked"})
     public List<? extends Term> getChildren(String termID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(TermRelationship.class);

@@ -168,8 +168,8 @@
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
-        <!--goes off every day at 2.30 am-->
-        <property name="cronExpression" value="0 10 * ? * *"/>
+        <!--goes off every day at 4.10 am-->
+        <property name="cronExpression" value="0 10 04 ? * *"/>
     </bean>
 
 </beans>

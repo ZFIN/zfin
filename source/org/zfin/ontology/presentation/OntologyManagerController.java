@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * ToDo: ADD DOCUMENTATION!
+ * Controller that serves the overview page of all loaded ontologies.
  */
 public class OntologyManagerController extends AbstractCommandController {
 
@@ -30,7 +30,7 @@ public class OntologyManagerController extends AbstractCommandController {
         if (actionType != null) {
             switch (actionType) {
                 case SERIALIZE_ONTOLOGIES:
-                    OntologyManager.serializeOntology();
+                    OntologyManager.getInstance().serializeOntology();
                 case LOAD_FROM_DATABASE:
                     OntologyManager.getInstance(OntologyManager.LoadingMode.DATABASE);
                 case LOAD_FROM_SERIALIZED_FILE:

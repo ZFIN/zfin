@@ -8,6 +8,7 @@
     <import file="${buildfiles.dir}/test.xml"/>
     <import file="${buildfiles.dir}/tomcat.xml"/>
     <import file="${buildfiles.dir}/usage.xml"/>
+    <import file="${buildfiles.dir}/serialization.xml"/>
 
 
     <!-- ====================================================================== -->

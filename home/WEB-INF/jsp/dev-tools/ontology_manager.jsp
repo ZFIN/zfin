@@ -1,5 +1,7 @@
-<%@ page import="org.zfin.ontology.presentation.OntologyBean" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ page import="org.zfin.ontology.presentation.OntologyBean" %>
+<%@ page import="org.zfin.util.FileUtil" %>
+<%@ page import="org.zfin.ontology.OntologyManager" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
@@ -20,22 +22,27 @@
     </tr>
     <c:choose>
         <c:when test="${formBean.ontologiesLoaded}">
-            <tr class="search-result-table-header">
+            <tr class="search-result-table-header left-top-aligned">
                 <td width="200" class="sectionTitle">Ontology Name</td>
                 <td width="200" class="sectionTitle">Internal Name</td>
                 <td width="100" class="sectionTitle">Date of Last Load</td>
                 <td class="sectionTitle">Time of Last Load</td>
                 <td class="sectionTitle">Loading Duration [s]</td>
-                <td class="sectionTitle">Number of Terms</td>
+                <td class="sectionTitle">Total Number of Terms</td>
+                <td class="sectionTitle">Number of Active Terms</td>
+                <td class="sectionTitle">Number of Obsoleted Terms</td>
+                <td class="sectionTitle">Number of distinct Aliases</td>
                 <td class="sectionTitle">Auto-complete</td>
             </tr>
             <c:forEach var="dataMap" items="${formBean.ontologyManager.loadingData}" varStatus="loop">
-                <tr class="search-result-table-entries">
+                <tr class="search-result-table-entries left-top-aligned">
                     <td class="listContentBold">
-                        <c:out value='${dataMap.value.ontology.commonName}'/>
+                            ${dataMap.value.ontology.commonName}
                     </td>
                     <td class="listContentBold">
-                        <c:out value='${dataMap.value.ontology.ontologyName}'/>
+                        <c:forEach var="individualOntologyName" items="${dataMap.value.ontology.individualOntologies}">
+                            ${individualOntologyName.ontologyName}<br/>
+                        </c:forEach>
                     </td>
                     <td class="listContentBold">
                         <fmt:formatDate value="${dataMap.value.dateLastLoaded}" pattern="MM/dd/yyyy"/>
@@ -44,14 +51,26 @@
                         <fmt:formatDate value="${dataMap.value.dateLastLoaded}" pattern="hh:mm:ss"/>
                     </td>
                     <td class="listContentBold">
-                        <c:out value='${dataMap.value.timeLastLoaded}'/>
+                            ${dataMap.value.timeLastLoaded}
                     </td>
                     <td class="listContentBold">
-                        <c:out value='${dataMap.value.numberOfTerms}'/>
+                            ${dataMap.value.lastLoad.totalNumberOfTerms}
+                    </td>
+                    <td class="listContentBold">
+                        <a href="ontology-terms?action=<%= OntologyBean.ActionType.SHOW_ALL_TERMS%>&ontologyName=${dataMap.value.ontology.ontologyName}"
+                           target="term-window">${dataMap.value.lastLoad.numberOfTerms}</a>
+                    </td>
+                    <td class="listContentBold">
+                        <a href="ontology-terms?action=<%= OntologyBean.ActionType.SHOW_OBSOLETE_TERMS%>&ontologyName=${dataMap.value.ontology.ontologyName}"
+                           target="term-window">${dataMap.value.lastLoad.numberOfObsoletedTerms}</a>
+                    </td>
+                    <td class="listContentBold">
+                            <a href="ontology-terms?action=<%= OntologyBean.ActionType.SHOW_ALIASES%>&ontologyName=${dataMap.value.ontology.ontologyName}"
+                               target="term-window">${dataMap.value.lastLoad.numberOfAliases}</a>
                     </td>
                     <td>
-                        <zfin2:lookup ontologyName="${dataMap.value.ontology.ontologyName}" id="${loop.count}"
-                                      wildcard="false"/>
+                        <zfin2:lookup ontology="${dataMap.value.ontology}" id="${loop.count}" showTermDetail="true"
+                                 wildcard="false"/>
                     </td>
                 </tr>
             </c:forEach>
@@ -70,7 +89,7 @@
             </tr>
             <tr>
                 <td>
-                    <p/>
+                    <p></p>
                     <a href="?action=<%= OntologyBean.ActionType.LOAD_FROM_DATABASE%>">
                         Re-load </a> from database again.<br/>
                 </td>
@@ -89,5 +108,6 @@
         </c:otherwise>
     </c:choose>
 </table>
-<p/>
-<a href="?action=<%= OntologyBean.ActionType.SERIALIZE_ONTOLOGIES%>">Serialize Ontologies</a> (create file)
+<p></p>
+<a href="?action=<%= OntologyBean.ActionType.SERIALIZE_ONTOLOGIES%>">Serialize Ontologies</a> (create file
+<%=FileUtil.createOntologySerializationFile(OntologyManager.SERIALIZED_FILE_NAME)%>)

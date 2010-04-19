@@ -42,8 +42,7 @@ public class OntologyManagerServlet extends HttpServlet {
 
     private void reLoadFormDatabase() {
         try {
-            OntologyManager.getInstance(OntologyManager.LoadingMode.DATABASE);
-            OntologyManager.serializeOntology();
+            OntologyManager.getInstance(OntologyManager.LoadingMode.DATABASE).serializeOntology();
         } catch (Exception e) {
             LOG.error("Problem during re-loading ontologies from database", e);
         }

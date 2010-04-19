@@ -33,8 +33,7 @@ TARGETDIR = $(TARGETROOT)/home/javascript
 
 SUBDIRS  = ajax-lib
 
-STATICS = patocuration.js term_completer.js \
-	dichty-term-info.js json.js sessionstate.js prototype.js \
+STATICS = dichty-term-info.js json.js sessionstate.js prototype.js \
 	awstats_misc_tracker.js control.modal.js control.modal.2.2.3.js \
 	sequenceview.js blast.js
 

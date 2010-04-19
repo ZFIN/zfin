@@ -6,8 +6,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyService;
-import org.zfin.anatomy.presentation.RelationshipPresentation;
 import org.zfin.antibody.Antibody;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
@@ -82,7 +80,13 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         return resp;
     }
 
-
+    /**
+     * Checks if a given term is a valid anatomy term.
+     * //Todo: Should check the OntologyManager class not the database.
+     *
+     * @param term term name
+     * @return TermStatus
+     */
     public TermStatus validateAnatomyTerm(String term) {
 
         List<AnatomyItem> anatomyItems = RepositoryFactory.getAnatomyRepository().getAnatomyItemsByName(term, false);
@@ -101,52 +105,61 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         return new TermStatus(TermStatus.Status.FOUND_NONE, term);
     }
 
-    public TermStatus validateMarkerTerm(String term) {
+    /**
+     * Checks if a given marker exists in ZFIN>
+     *
+     * @param markerAbbreviation abbreviation
+     * @return term status
+     */
+    public TermStatus validateMarkerTerm(String markerAbbreviation) {
 
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(term);
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(markerAbbreviation);
         if (marker != null) {
-            return new TermStatus(TermStatus.Status.FOUND_EXACT, term, marker.getZdbID());
+            return new TermStatus(TermStatus.Status.FOUND_EXACT, markerAbbreviation, marker.getZdbID());
         }
 
-        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(term);
+        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(markerAbbreviation);
         if (markers.size() == 1) {
-            return new TermStatus(TermStatus.Status.FOUND_EXACT, term, markers.get(0).getZdbID());
+            return new TermStatus(TermStatus.Status.FOUND_EXACT, markerAbbreviation, markers.get(0).getZdbID());
         } else if (markers.size() == 0) {
-            return new TermStatus(TermStatus.Status.FOUND_NONE, term);
+            return new TermStatus(TermStatus.Status.FOUND_NONE, markerAbbreviation);
         } else {
-            return new TermStatus(TermStatus.Status.FOUND_MANY, term);
+            return new TermStatus(TermStatus.Status.FOUND_MANY, markerAbbreviation);
         }
     }
 
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)
      *
-     * @param request  request
-     * @param wildCard true or false
-     * @param ontology ontology name
+     * @param request        request
+     * @param showTermDetail true or false
+     * @param ontology       ontology name
      * @return suggestions
      */
-    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean wildCard, OntologyDTO ontology) {
-        return getOntologySuggestions(request, BODtoConversionService.getOntology(ontology));
+    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO ontology) {
+        return getOntologySuggestions(request, showTermDetail, BODtoConversionService.getOntology(ontology));
     }
 
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)
      *
      * @param request  request
+     * @param showTermDetail create mouseOver JS script to show term detail
      * @param ontology ontology name
      * @return suggestions
      */
-    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, Ontology ontology) {
+    private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, Ontology ontology) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = request.getQuery().trim();
 
         Collection<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 2) {
-            for (MatchingTerm term : OntologyManager.getInstance().getMatchingTerms(ontology, query)) {
+            MatchingTermService matcher = new MatchingTermService(query);
+            for (MatchingTerm term : matcher.getMatchingTerms(ontology, query)) {
                 String suggestion = term.getMatchingTermDisplay();
                 String displayName = suggestion.replace(query, "<strong>" + query + "</strong>");
-                displayName = createListItem(displayName, term.getTerm());
+                if (showTermDetail)
+                    displayName = createListItem(displayName, term.getTerm());
                 suggestions.add(new ItemSuggestion(displayName, term.getTerm().getTermName()));
             }
         }
@@ -154,7 +167,6 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         logger.info("found " + suggestions.size() + " suggestions for " + request);
         return resp;
     }
-
 
     @Override
     public SuggestOracle.Response getAntibodySuggestions(SuggestOracle.Request req) {
@@ -173,6 +185,12 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         return resp;
     }
 
+    /**
+     * Retrieve a list of marker entities whose marker abbreviation matches a given query string.
+     *
+     * @param req request that holds the query string.
+     * @return response
+     */
     public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
@@ -189,6 +207,12 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         return resp;
     }
 
+    /**
+     * Retrieve a list of genes or EFGs whose abbreviations match a given query string.
+     *
+     * @param req request that holds the query string.
+     * @return response
+     */
     public SuggestOracle.Response getGenedomAndEFGSuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
@@ -206,6 +230,12 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         return resp;
     }
 
+    /**
+     * Retrieve a list of features whose feature abbreviations match a given query string.
+     *
+     * @param req request that holds the query string.
+     * @return response
+     */
     public SuggestOracle.Response getFeatureSuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
@@ -249,37 +279,8 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @param termName term Name
      */
     public TermInfo getTermInfoByName(OntologyDTO ontology, String termName) {
-        if (ontology == null) {
-            logger.warn("No ontology provided");
-            return null;
-        }
-        if (StringUtils.isEmpty(termName)) {
-            logger.warn("No termID provided");
-            return null;
-        }
-        switch (ontology) {
-            case ANATOMY:
-                return getAnatomyTerminfoByName(termName);
-            case GO_CC:
-                return getGenericTermInfoByName(termName, ontology);
-            case GO:
-                return getGenericTermInfoByName(termName, ontology);
-        }
-        return null;
+        return getGenericTermInfoByName(termName, ontology);
     }
-
-    private TermInfo getAnatomyTerminfoByName(String termName) {
-
-        AnatomyItem term = getAnatomyRepository().getAnatomyItem(termName);
-        if (term == null) {
-            logger.warn("No term " + termName + " found!");
-            return null;
-        }
-        TermInfo rootTermInfo = convertAnatomyToTermInfo(term);
-        addRelatedAnatomyTerms(term, rootTermInfo);
-        return rootTermInfo;
-    }
-
 
     /**
      * Retrieve the Term Info of a given term.
@@ -312,8 +313,17 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
     }
 
     private TermInfo getGenericTermInfoByName(String termName, OntologyDTO ontologyDTO) {
-        Ontology ontology = OntologyService.convertOntology(ontologyDTO);
-        GenericTerm term = getInfrastructureRepository().getTermByName(termName, ontology);
+        Ontology ontology = BODtoConversionService.getOntology(ontologyDTO);
+        if (ontology == null) {
+            logger.warn("No Ontology [" + ontologyDTO.getOntologyName() + "] found!");
+            return null;
+        }
+        Term ontologyTerm = OntologyManager.getInstance().getTermByName(ontology, termName);
+        if (ontologyTerm == null) {
+            logger.warn("No term " + termName + " in ontology [" + ontology.getOntologyName() + " in Ontology Manager found!");
+            return null;
+        }
+        GenericTerm term = getInfrastructureRepository().getTermByID(ontologyTerm.getID());
         if (term == null) {
             logger.warn("No term " + termName + " found!");
             return null;
@@ -337,46 +347,25 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         }
     }
 
-    private void addRelatedAnatomyTerms(AnatomyItem term, TermInfo rootTermInfo) {
-        List<RelationshipPresentation> rels = AnatomyService.getRelations(term);
-        if (rels != null) {
-            for (RelationshipPresentation relationship : rels) {
-                List<AnatomyItem> terms = relationship.getItems();
-                for (AnatomyItem item : terms) {
-                    TermInfo info = convertAnatomyToTermInfo(item);
-                    rootTermInfo.addRelatedTermInfo(relationship.getType(), info);
-                }
-            }
-        }
-    }
-
-    private TermInfo convertAnatomyToTermInfo(AnatomyItem term) {
-        TermInfo info = BODtoConversionService.getTermInfo(term, OntologyDTO.ANATOMY, true);
-        info.setStartStage(term.getStart().getAbbreviation());
-        info.setEndStage(term.getEnd().getAbbreviation());
-        return info;
-    }
-
-
     public List<PublicationDTO> getRecentPublications(String key) {
-        List<Publication> mostRecentsPubs = PublicationService.getRecentPublications(getServletContext(),key);
+        List<Publication> mostRecentPubs = PublicationService.getRecentPublications(getServletContext(), key);
         List<PublicationDTO> publicationDTOs = new ArrayList<PublicationDTO>();
 
-        if (CollectionUtils.isNotEmpty(mostRecentsPubs)){
-            for(Publication publication: mostRecentsPubs){
+        if (CollectionUtils.isNotEmpty(mostRecentPubs)) {
+            for (Publication publication : mostRecentPubs) {
                 PublicationDTO publicationDTO = new PublicationDTO();
                 publicationDTO.setZdbID(publication.getZdbID());
                 publicationDTO.setTitle(publication.getTitle());
                 publicationDTOs.add(publicationDTO);
             }
         }
-        return publicationDTOs ;
+        return publicationDTOs;
     }
 
-    public PublicationDTO addRecentPublication(String zdbID,String key) {
+    public PublicationDTO addRecentPublication(String zdbID, String key) {
         if (StringUtils.isNotEmpty(zdbID)) {
             Publication publication = RepositoryFactory.getPublicationRepository().getPublication(zdbID);
-            PublicationService.addRecentPublications(getServletContext(),publication,key);
+            PublicationService.addRecentPublications(getServletContext(), publication, key);
 
             PublicationDTO publicationDTO = new PublicationDTO();
             publicationDTO.setZdbID(publication.getZdbID());
@@ -384,9 +373,8 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             publicationDTO.setAuthors(publication.getAuthors());
             publicationDTO.setMiniRef(publication.getShortAuthorList());
             return publicationDTO;
-        }
-        else{
-            return null ;
+        } else {
+            return null;
         }
     }
 }

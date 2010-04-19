@@ -1,9 +1,11 @@
 package org.zfin.gwt.root.dto;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * Ontology-related namings.
  */
-public enum OntologyDTO {
+public enum OntologyDTO implements IsSerializable {
 
     ANATOMY(0, "AO", "zebrafish_anatomy"){
         @Override

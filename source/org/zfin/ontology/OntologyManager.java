@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.zfin.ontology.presentation.OntologyLoadingEntity;
 import org.zfin.util.FileUtil;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.*;
 
@@ -28,23 +29,22 @@ public class OntologyManager implements Serializable {
     private Map<Ontology, Map<String, Term>> ontologyObsoleteTermMap = new HashMap<Ontology, Map<String, Term>>(NUMBER_OF_ONTOLOGIES);
     // This holds the collection of terms that are known under aliases
     // (ontology, (termID, term alias))
-    private Map<Ontology, Map<String, TermAlias>> ontologyAliasTermMap = new HashMap<Ontology, Map<String, TermAlias>>(NUMBER_OF_ONTOLOGIES);
+    private Map<Ontology, Map<String, List<TermAlias>>> ontologyAliasTermMap = new HashMap<Ontology, Map<String, List<TermAlias>>>(NUMBER_OF_ONTOLOGIES);
 
     // This holds all ontologies with the ontology as a key
     // (Ontology, (term ID, term name))
     private Map<Ontology, Map<String, String>> ontologyTermNameIDMapping = new HashMap<Ontology, Map<String, String>>(NUMBER_OF_ONTOLOGIES);
 
-    private Map<Ontology, OntologyLoadingEntity> loadingData = new HashMap<Ontology, OntologyLoadingEntity>(NUMBER_OF_ONTOLOGIES);
+    private Map<Ontology, OntologyLoadingEntity> loadingData = new TreeMap<Ontology, OntologyLoadingEntity>(new OntologyNameComparator());
     // sole singleton instance
     private static OntologyManager ontologyManager = null;
-    private static final Logger LOG = Logger.getLogger(OntologyManager.class);
+    transient private static final Logger LOG = Logger.getLogger(OntologyManager.class);
 
-    private static final int MAXIMUM_NUMBER_OF_MATCHES = 25;
-    private static final double MILLISECONDS = 1000.0;
+    private static final double MILLI_SECONDS_PER_SECOND = 1000.0;
 
     private static Map<Ontology, Double> loadingTimeMap = new HashMap<Ontology, Double>(10);
     private static final Object LOADING_FLAG = new Object();
-
+    public static final long serialVersionUID = 382860401967900179L;
     public static final String SERIALIZED_FILE_NAME = "serialized-ontologies.ser";
 
     /**
@@ -74,16 +74,26 @@ public class OntologyManager implements Serializable {
 
     private static OntologyManager getInstanceFromFile() throws Exception {
         if (FileUtil.isOntologyFileExist(SERIALIZED_FILE_NAME)) {
-            loadOntologiesFromFile();
+            loadOntologiesFromFile(null);
         }
         return ontologyManager;
     }
 
-    private static void loadOntologiesFromFile() throws Exception {
+    public static OntologyManager getInstanceFromFile(File file) throws Exception {
+        if (file.exists()) {
+            loadOntologiesFromFile(file);
+        }
+        return ontologyManager;
+    }
+
+    private static void loadOntologiesFromFile(File file) throws Exception {
         long start = System.currentTimeMillis();
-        ontologyManager = (OntologyManager) FileUtil.deserializeOntologies(SERIALIZED_FILE_NAME);
+        if (file == null)
+            ontologyManager = (OntologyManager) FileUtil.deserializeOntologies(SERIALIZED_FILE_NAME);
+        else
+            ontologyManager = (OntologyManager) FileUtil.deserializeOntologies(file);
         long end = System.currentTimeMillis();
-        double time = (double) (end - start) / 1000.0;
+        double time = (double) (end - start) / MILLI_SECONDS_PER_SECOND;
 
         LOG.info("Time to load ontologies from serialized File: " + time + " seconds");
         LOG.info(ontologyManager);
@@ -122,21 +132,13 @@ public class OntologyManager implements Serializable {
             ontologyManager.loadOntologiesFromDatabase();
         }
         long endTime = System.currentTimeMillis();
-        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLISECONDS;
+        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLI_SECONDS_PER_SECOND;
         LOG.info("Finished loading all ontologies: took " + loadingTimeInSeconds + " seconds.");
     }
 
     private void loadOntologiesFromDatabase() {
         if (singleOntology != null) {
             initSingleOntologyMap(singleOntology);
-            initSingleOntologyMap(Ontology.ANATOMY);
-            initRootOntologyMap(Ontology.QUALITY_PROCESSES, Ontology.QUALITY, "PATO:0001236");
-            initRootOntologyMap(Ontology.QUALITY_QUALITIES, Ontology.QUALITY, "PATO:0001241");
-/*
-            initRootOntologyMap(Ontology.QUALITY_QUALITATIVE, Ontology.QUALITY, "PATO:0000068");
-            initRootOntologyMap(Ontology.QUALITY_OBJECT_RELATIONAL, Ontology.QUALITY, "PATO:0001238");
-            initRootOntologyMap(Ontology.QUALITY_PROCESSES_RELATIONAL, Ontology.QUALITY, "PATO:0001240");
-*/
         } else
             loadDefaultOntologies();
     }
@@ -160,32 +162,40 @@ public class OntologyManager implements Serializable {
         initComposedOntologyMap(Ontology.GO);
     }
 
-    private void initRootOntologyMapWithExclusion(Ontology qualityProcesses, Ontology rootOntology, String rootOboIDs, String excludeOboIDs) {
-
-    }
-
-    private void initRootOntologyMap(Ontology qualityProcesses, Ontology rootOntology, String... rootOboIDs) {
+    private void initRootOntologyMap(Ontology subOntology, Ontology rootOntology, String... rootOboIDs) {
         long startTime = System.currentTimeMillis();
         Date dateStarted = new Date();
 
         int averageMaximumNumOfChildren = 30;
+        List<TermRelationship> relationships = getOntologyRepository().getAllRelationships(rootOntology);
+        // termID, collection of children terms
+        Map<String, List<Term>> childrenMap = new TreeMap<String, List<Term>>();
+        for (TermRelationship relationship : relationships) {
+            String termID = relationship.getTermOne().getID();
+            List<Term> children = childrenMap.get(termID);
+            if (children == null)
+                children = new ArrayList<Term>(10);
+            children.add(relationship.getTermTwo());
+            childrenMap.put(termID, children);
+        }
+
         List<Term> children = new ArrayList<Term>(averageMaximumNumOfChildren);
         for (String rootOboID : rootOboIDs) {
             Term rootTerm = getOntologyRepository().getTermByOboID(rootOboID);
-            children.addAll(rootTerm.getChildrenTerms());
+            children.addAll(childrenMap.get(rootTerm.getID()));
         }
-        Map<String, Term> qualityTermMap = ontologyTermMap.get(rootOntology);
-        Map<String, TermAlias> qualityTermAliasMap = ontologyAliasTermMap.get(rootOntology);
         Map<String, String> qualityIdNameMap = ontologyTermNameIDMapping.get(rootOntology);
         Map<String, Term> termMap = new TreeMap<String, Term>(new OntologyComparator());
-        Map<String, TermAlias> termAliasMap = new TreeMap<String, TermAlias>(new OntologyComparator());
         Map<String, Term> obsoleteNameMap = new TreeMap<String, Term>(new OntologyComparator());
+        Set<Term> allTerms = new HashSet<Term>(500);
+        allTerms.addAll(children);
         while (!children.isEmpty()) {
             Term currentTerm = children.get(0);
             children.remove(0);
-            List<Term> newChildren = currentTerm.getChildrenTerms();
+            List<Term> newChildren = childrenMap.get(currentTerm.getID());
             if (newChildren != null && !newChildren.isEmpty()) {
                 children.addAll(newChildren);
+                allTerms.addAll(newChildren);
             }
             String termName = qualityIdNameMap.get(currentTerm.getID());
             if (termName == null)
@@ -196,16 +206,43 @@ public class OntologyManager implements Serializable {
                 else
                     termMap.put(termName, currentTerm);
             }
-            //termAliasMap.put()
         }
-        ontologyTermMap.put(qualityProcesses, termMap);
-        ontologyObsoleteTermMap.put(qualityProcesses, obsoleteNameMap);
-        ontologyTermNameIDMapping.put(qualityProcesses, qualityIdNameMap);
-        ontologyAliasTermMap.put(qualityProcesses, termAliasMap);
+        ontologyTermMap.put(subOntology, termMap);
+        ontologyObsoleteTermMap.put(subOntology, obsoleteNameMap);
+        ontologyTermNameIDMapping.put(subOntology, qualityIdNameMap);
+
+        // create alias map
+        List<TermAlias> anatomyTermsAlias = getOntologyRepository().getAllAliases(rootOntology);
+        Map<String, List<TermAlias>> aliases = new HashMap<String, List<TermAlias>>(1);
+        if (anatomyTermsAlias != null) {
+            aliases = createAliasMap(anatomyTermsAlias, allTerms);
+            ontologyAliasTermMap.put(subOntology, aliases);
+        }
         long endTime = System.currentTimeMillis();
-        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLISECONDS;
-        logLoading(qualityProcesses, startTime, endTime, dateStarted, termMap.size());
-        loadingTimeMap.put(qualityProcesses, loadingTimeInSeconds);
+        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLI_SECONDS_PER_SECOND;
+        logLoading(subOntology, startTime, endTime, dateStarted, termMap.size(), obsoleteNameMap.size(), aliases.size());
+        loadingTimeMap.put(subOntology, loadingTimeInSeconds);
+    }
+
+    /**
+     * Creates a map of aliases as a key and a collection of terms that each alias is synonymous.
+     * The provided term map contains all terms in a sub ontology of a given root ontology.
+     * It loops over all terms of the sub ontology and checks which aliases are associated to it.
+     * It's a bit of a hack for cases where we do not have a separate term_ontology identifier for
+     * some of the slims, e.g. quality.objects  and quality.process.
+     *
+     * @param termMap  term map
+     * @param ontology ontology
+     * @return term map
+     */
+    private Map<String, List<TermAlias>> createAliasMapFromTermMap(Map<String, Term> termMap, Ontology ontology) {
+        Map<String, List<TermAlias>> termAliasMap = new TreeMap<String, List<TermAlias>>(new OntologyComparator());
+        Map<String, List<TermAlias>> aliasMapRootOntology = getAliasOntologyMap(ontology);
+        for (String termName : termMap.keySet()) {
+            Term term = termMap.get(termName);
+
+        }
+        return null;
     }
 
     private void initComposedOntologyMap(Ontology ontology) {
@@ -224,15 +261,17 @@ public class OntologyManager implements Serializable {
 
         ontologyTermMap.put(ontology, termMap);
         ontologyObsoleteTermMap.put(ontology, obsoleteNameMap);
-        Map<String, TermAlias> aliasMap = new TreeMap<String, TermAlias>(new OntologyComparator());
+
+        // create alias map
+        Map<String, List<TermAlias>> aliasMap = new TreeMap<String, List<TermAlias>>(new OntologyComparator());
         ontologyIterator = ontologies.iterator();
         while (ontologyIterator.hasNext())
             aliasMap.putAll(ontologyAliasTermMap.get(ontologyIterator.next()));
 
         ontologyAliasTermMap.put(ontology, aliasMap);
         long endTime = System.currentTimeMillis();
-        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLISECONDS;
-        logLoading(ontology, startTime, endTime, dateStarted, termMap.size());
+        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLI_SECONDS_PER_SECOND;
+        logLoading(ontology, startTime, endTime, dateStarted, termMap.size(), obsoleteNameMap.size(), aliasMap.size());
         loadingTimeMap.put(ontology, loadingTimeInSeconds);
     }
 
@@ -266,29 +305,55 @@ public class OntologyManager implements Serializable {
         ontologyObsoleteTermMap.put(ontology, obsoleteNameMap);
         ontologyTermNameIDMapping.put(ontology, termNameIDMap);
 
-        // load aliases
+        // load all aliases
         List<TermAlias> anatomyTermsAlias = getOntologyRepository().getAllAliases(ontology);
-        Map<String, TermAlias> aliases = new TreeMap<String, TermAlias>(new OntologyComparator());
-        if (anatomyTermsAlias == null)
-            return;
-
-        for (TermAlias term : anatomyTermsAlias) {
-            aliases.put(term.getAliasLowerCase(), term);
+        Map<String, List<TermAlias>> aliases = null;
+        if (anatomyTermsAlias != null) {
+            aliases = createAliasMap(anatomyTermsAlias);
+            ontologyAliasTermMap.put(ontology, aliases);
         }
-        ontologyAliasTermMap.put(ontology, aliases);
         long endTime = System.currentTimeMillis();
-        logLoading(ontology, startTime, endTime, dateStarted, termMap.size());
+        logLoading(ontology, startTime, endTime, dateStarted, termMap.size(), obsoleteNameMap.size(), aliases.size());
     }
 
-    private void logLoading(Ontology ontology, long startTime, long endTime, Date dateOfStart, int numOfTerms) {
+    private Map<String, List<TermAlias>> createAliasMap(Iterable<TermAlias> termAliasList) {
+        return createAliasMap(termAliasList, null);
+    }
+
+    /**
+     * Iterates through the list of TermAlias objects and creates a map with unique alias names (key)
+     * that have a collection of TermAliases associated (value). The alias name is made lower case for
+     * case insensitive searching.
+     * If an ontology id provided this method checks if the Term and TermAlias is part of the ontology.
+     * If not then the alias is discarded.
+     *
+     * @param termAliasList map of TermAliases
+     * @param allTerms      ontology: not required. the full ontology
+     * @return map of alias names with list of TermAlias objects.
+     */
+    private Map<String, List<TermAlias>> createAliasMap(Iterable<TermAlias> termAliasList, Collection<Term> allTerms) {
+        Map<String, List<TermAlias>> aliasMap = new TreeMap<String, List<TermAlias>>(new OntologyComparator());
+        for (TermAlias termAlias : termAliasList) {
+            List<TermAlias> existingAliases = aliasMap.get(termAlias.getAliasLowerCase());
+            if (existingAliases == null)
+                existingAliases = new ArrayList<TermAlias>(3);
+            if (allTerms == null || allTerms.contains(termAlias.getTerm())) {
+                existingAliases.add(termAlias);
+                aliasMap.put(termAlias.getAliasLowerCase(), existingAliases);
+            }
+        }
+        return aliasMap;
+    }
+
+    private void logLoading(Ontology ontology, long startTime, long endTime, Date dateOfStart, int numOfTerms, int numOfObsoleteTerms, int numOfAliases) {
         long loadingTime = endTime - startTime;
-        double loadingTimeSeconds = (double) loadingTime / MILLISECONDS;
+        double loadingTimeSeconds = (double) loadingTime / MILLI_SECONDS_PER_SECOND;
         LOG.info("Loading <" + ontology.getOntologyName() + "> ontology took " + loadingTimeSeconds + " seconds.");
         OntologyLoadingEntity loadingEntity = loadingData.get(ontology);
         if (loadingEntity == null) {
             loadingEntity = new OntologyLoadingEntity(ontology);
         }
-        loadingEntity.addLoadingEvent(dateOfStart, loadingTime, numOfTerms);
+        loadingEntity.addLoadingEvent(dateOfStart, loadingTime, numOfTerms, numOfObsoleteTerms, numOfAliases);
         loadingData.put(ontology, loadingEntity);
     }
 
@@ -298,7 +363,7 @@ public class OntologyManager implements Serializable {
      * @param ontology Ontology
      * @return map
      */
-    private Map<String, Term> getTermOntologyMap(Ontology ontology) {
+    public Map<String, Term> getTermOntologyMap(Ontology ontology) {
         if (ontology == null)
             throw new NullPointerException("No ontology provided for lookup");
         Map<String, Term> map = ontologyTermMap.get(ontology);
@@ -307,8 +372,8 @@ public class OntologyManager implements Serializable {
             map = ontologyTermMap.get(ontology);
         }
         if (map == null || map.isEmpty())
-            throw new RuntimeException("Cannot find ontology with name: " + ontology.getOntologyName());
-        return map;
+            throw new RuntimeException("Cannot find term map for ontology with name: " + ontology.getOntologyName());
+        return Collections.unmodifiableMap(map);
     }
 
     /**
@@ -322,7 +387,7 @@ public class OntologyManager implements Serializable {
             throw new NullPointerException("No ontology provided for lookup");
         Map<String, String> map = ontologyTermNameIDMapping.get(ontology);
         if (map == null)
-            throw new RuntimeException("Cannot find ontology with name: " + ontology.getOntologyName());
+            throw new RuntimeException("Cannot find term ID map for ontology with name: " + ontology.getOntologyName());
         return map;
     }
 
@@ -332,13 +397,13 @@ public class OntologyManager implements Serializable {
      * @param ontology Ontology
      * @return map
      */
-    private Map<String, TermAlias> getAliasOntologyMap(Ontology ontology) {
+    public Map<String, List<TermAlias>> getAliasOntologyMap(Ontology ontology) {
         if (ontology == null)
             throw new NullPointerException("No ontology provided for lookup");
-        Map<String, TermAlias> map = ontologyAliasTermMap.get(ontology);
+        Map<String, List<TermAlias>> map = ontologyAliasTermMap.get(ontology);
         if (map == null)
-            throw new RuntimeException("Cannot find ontology with name: " + ontology.getOntologyName());
-        return ontologyAliasTermMap.get(ontology);
+            throw new RuntimeException("Cannot find alias map for ontology with name: " + ontology.getOntologyName());
+        return Collections.unmodifiableMap(ontologyAliasTermMap.get(ontology));
     }
 
     /**
@@ -347,70 +412,16 @@ public class OntologyManager implements Serializable {
      * @param ontology Ontology
      * @return map
      */
-    private Map<String, Term> getObsoleteTermMap(Ontology ontology) {
+    public Map<String, Term> getObsoleteTermMap(Ontology ontology) {
         if (ontology == null)
             throw new NullPointerException("No ontology provided for lookup");
         Map<String, Term> map = ontologyObsoleteTermMap.get(ontology);
         if (map == null)
             throw new RuntimeException("Cannot find ontology with name: " + ontology.getOntologyName());
-        return ontologyObsoleteTermMap.get(ontology);
+        return Collections.unmodifiableMap(ontologyObsoleteTermMap.get(ontology));
     }
 
     private OntologyManager() {
-    }
-
-    /**
-     * Retrieve a list of terms that match a given query in a given ontology.<br/>
-     * If the ontology is composed of more than one individual ontologies
-     * the matching is performed on the combined, sorted ontology.
-     * <p/>
-     * First all Start_With matches are retrieved, then Contains matches as that is the default order of the return
-     * collection.
-     * There is an internal maximum number of returned terms which will truncate the search when this number is exceeded.
-     * This may avoid looping over the Contains matches (including the alias matches) which are much slower.
-     * <p/>
-     * The list is sorted by: <br/>
-     * 1) Starts with         <br/>
-     * 2) Contains
-     *
-     * @param ontology Ontology
-     * @param query    query string
-     * @return list of terms
-     */
-    public List<MatchingTerm> getMatchingTerms(Ontology ontology, String query) {
-        if (query == null)
-            return null;
-
-        boolean isMaxNumOfTermsFound = false;
-        MatchingTermService service = new MatchingTermService(query, MAXIMUM_NUMBER_OF_MATCHES);
-        // check all terms for matches
-        for (String termName : getTermOntologyMap(ontology).keySet()) {
-            Term term = getTermOntologyMap(ontology).get(termName);
-            service.compareWithTerm(term);
-            isMaxNumOfTermsFound = service.hasMaximumNumberOfTerms();
-        }
-        // if max number is reached by starts_with matches stop here and return the list
-        // as the list always puts the starts_with matches before the contains matches. 
-        if (isMaxNumOfTermsFound)
-            return service.getTermsMatchingStart();
-
-        // search alias map if it exists for matches
-        Map<String, TermAlias> aliasMap = getAliasOntologyMap(ontology);
-        if (aliasMap != null) {
-            for (String termName : aliasMap.keySet()) {
-                TermAlias termAlias = getAliasOntologyMap(ontology).get(termName);
-                service.compareWithAlias(termAlias);
-            }
-        }
-        // search obsolete map
-        Map<String, Term> obsoleteMap = getObsoleteTermMap(ontology);
-        if (obsoleteMap != null) {
-            for (String termName : obsoleteMap.keySet()) {
-                Term obosleteTerm = getObsoleteTermMap(ontology).get(termName);
-                service.compareWithObsoleteTerm(obosleteTerm);
-            }
-        }
-        return service.getCompleteMatchingList();
     }
 
     /**
@@ -506,13 +517,22 @@ public class OntologyManager implements Serializable {
         return builder.toString();
     }
 
-    public static void serializeOntology() {
-        if (ontologyManager == null)
-            getInstance();
+    public void serializeOntology() {
         long start = System.currentTimeMillis();
         FileUtil.serializeObject(ontologyManager, FileUtil.createOntologySerializationFile(SERIALIZED_FILE_NAME));
         long end = System.currentTimeMillis();
-        double time = (double) (end - start) / 1000.0;
+        double time = (double) (end - start) / MILLI_SECONDS_PER_SECOND;
+
+        LOG.info("Time to serialize ontologies: " + time + " seconds");
+    }
+
+    public void serializeOntology(File serializeFile) {
+        if (ontologyManager == null)
+            getInstance();
+        long start = System.currentTimeMillis();
+        FileUtil.serializeObject(ontologyManager, serializeFile);
+        long end = System.currentTimeMillis();
+        double time = (double) (end - start) / MILLI_SECONDS_PER_SECOND;
 
         LOG.info("Time to serialize ontologies: " + time + " seconds");
     }
@@ -521,9 +541,9 @@ public class OntologyManager implements Serializable {
      * Retrieve a term by term name and a list of ontologies.
      * The logic loops over all ontologies and returns the term from the ontology
      * in which it is found first. If no term is found a null is returned.
-     * 
+     *
      * @param ontologies collection of ontologies
-     * @param termName term name
+     * @param termName   term name
      * @return term object
      */
     public Term getTermByName(List<Ontology> ontologies, String termName) {

@@ -4,17 +4,20 @@ import org.zfin.ontology.Ontology;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 /**
- * ToDo: ADD DOCUMENTATION!
+ * This convenience class holds the information about loading an ontology.
+ * It contains the last loaded data as an attribute, LoadingData, and previous
+ * loads in a collection.  
  */
-public class OntologyLoadingEntity implements Serializable{
+public class OntologyLoadingEntity implements Serializable {
 
     private Ontology ontology;
     private LoadingData lastLoad;
-    private List<LoadingData> allLoadingEvents = new ArrayList<LoadingData>(20);
+    private static final int MAXIMUM_NUMBER_OF_HISTORIC_LOADS = 10;
+    private Collection<LoadingData> allLoadingEvents = new ArrayList<LoadingData>(MAXIMUM_NUMBER_OF_HISTORIC_LOADS);
 
     public OntologyLoadingEntity(Ontology ontology) {
         this.ontology = ontology;
@@ -26,11 +29,13 @@ public class OntologyLoadingEntity implements Serializable{
      * @param dateOfLoad  date of the load
      * @param loadingTime time it took to load the ontology
      * @param numOfTerms  number of terms in the ontology
+     * @param numOfObsoletedTerms number of terms that are marked obsolete
+     * @param numOfAliases  number of aliases
      */
-    public void addLoadingEvent(Date dateOfLoad, long loadingTime, int numOfTerms) {
+    public void addLoadingEvent(Date dateOfLoad, long loadingTime, int numOfTerms, int numOfObsoletedTerms, int numOfAliases) {
         allLoadingEvents.add(lastLoad);
-        lastLoad = new LoadingData(dateOfLoad, loadingTime, numOfTerms);
-        if (allLoadingEvents.size() > 10)
+        lastLoad = new LoadingData(dateOfLoad, loadingTime, numOfTerms, numOfObsoletedTerms, numOfAliases);
+        if (allLoadingEvents.size() > MAXIMUM_NUMBER_OF_HISTORIC_LOADS)
             allLoadingEvents.remove(0);
     }
 
@@ -42,45 +47,20 @@ public class OntologyLoadingEntity implements Serializable{
         return lastLoad.getNumberOfTerms();
     }
 
-    public Date getDateLastLoaded(){
+    public Date getDateLastLoaded() {
         return lastLoad.getDateLastLoaded();
     }
 
-    public double getTimeLastLoaded(){
-        return (double) lastLoad.getLoadingTime()/ 1000.0;
+    public double getTimeLastLoaded() {
+        return (double) lastLoad.getLoadingTime() / 1000.0;
     }
 
     public LoadingData getLastLoad() {
         return lastLoad;
     }
 
-    public List<LoadingData> getAllLoadingEvents() {
+    public Collection<LoadingData> getAllLoadingEvents() {
         return allLoadingEvents;
-    }
-
-    private class LoadingData implements Serializable{
-
-        private Date dateLastLoaded;
-        private long loadingTime;
-        private int numberOfTerms;
-
-        private LoadingData(Date dateLastLoaded, long loadingTime, int numberOfTerms) {
-            this.dateLastLoaded = dateLastLoaded;
-            this.loadingTime = loadingTime;
-            this.numberOfTerms = numberOfTerms;
-        }
-
-        public Date getDateLastLoaded() {
-            return dateLastLoaded;
-        }
-
-        public long getLoadingTime() {
-            return loadingTime;
-        }
-
-        public int getNumberOfTerms() {
-            return numberOfTerms;
-        }
     }
 
 }

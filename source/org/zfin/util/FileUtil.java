@@ -53,8 +53,8 @@ public final class FileUtil {
      * @return boolean
      */
     public static boolean isOntologyFileExist(String fileName) {
-        File directory = new File(ZfinProperties.getWebRootDirectory(), WEB_INF);
-        File file = new File(directory, DATA_TRANSFER);
+        String tempDir = System.getProperty("java.io.tmpdir");
+        File file = new File(tempDir, DATA_TRANSFER);
         File fullFile = new File(file, fileName);
         return fullFile.isFile();
     }
@@ -317,8 +317,8 @@ public final class FileUtil {
     }
 
     public static File createOntologySerializationFile(String serializedFileName) {
-        File directory = new File(ZfinProperties.getWebRootDirectory(), WEB_INF);
-        File file = new File(directory, DATA_TRANSFER);
+        String tempDir = System.getProperty("java.io.tmpdir");
+        File file = new File(tempDir, DATA_TRANSFER);
         if (!file.exists()) {
             if (!file.mkdir())
                 LOG.error("Could not create the directory: " + file.getAbsolutePath());
@@ -334,16 +334,21 @@ public final class FileUtil {
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
+            LOG.error("Error during serialization of file " + file.getAbsolutePath(), e);
         }
 
     }
 
 
     public static Object deserializeOntologies(String serializedFileName) throws Exception {
+        File file = createOntologySerializationFile(serializedFileName);
+        return deserializeOntologies(file);
+    }
+
+    public static Object deserializeOntologies(File file) throws Exception {
         Object object = null;
         ObjectInputStream in = null;
         try {
-            File file = createOntologySerializationFile(serializedFileName);
             LOG.info("Read ontologies from " + file.getAbsolutePath());
             in = new ObjectInputStream(new FileInputStream(file));
             object = in.readObject();

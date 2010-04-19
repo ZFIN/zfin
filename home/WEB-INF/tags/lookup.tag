@@ -1,29 +1,31 @@
 <%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
+<%@ tag import="org.zfin.gwt.lookup.ui.Lookup" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
-<%@attribute name="ontologyName" type="java.lang.String" %>
+<%@attribute name="ontology" type="org.zfin.ontology.Ontology" %>
 <%@attribute name="id" type="java.lang.String" %>
 <%@attribute name="action" type="java.lang.String" required="false" %>
-<%@attribute name="wildcard" type="java.lang.Boolean" required="true" description="allow using a wildcard search opposed to exact searches" %>
+<%@attribute name="showTermDetail" type="java.lang.Boolean" required="true" description="True means a mouseOver is generated on the suggestion list that would show the term detail" %>
+<%@attribute name="wildcard" type="java.lang.Boolean" required="true" description="Allow to enter a query string with a wildcard added." %>
 
 <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 
 <script type="text/javascript">
     var LookupProperties${id} = {
-        divName: "term-${id}",
-        inputName: "searchTerm",
-        showError: true,
-        showButton: false,
+        <%= Lookup.JSREF_DIV_NAME%>: "term-${id}",
+        <%= Lookup.JSREF_INPUT_NAME%>: "searchTerm-${id}",
+        <%= Lookup.JSREF_SHOWERROR%>: true,
         <c:if test="${not empty action}">
-        action: "${action}",
+        <%= Lookup.JSREF_ACTION%>: "${action}",
         </c:if>
-        type: "<%= LookupComposite.GDAG_TERM_LOOKUP%>",
-        ontologyName: "${ontologyName}",
-        wildcard: ${wildcard},
-        limit: 25
-    };
+        <%= Lookup.JSREF_TYPE%>: "<%= LookupComposite.GDAG_TERM_LOOKUP%>",
+        <%= Lookup.JSREF_ONTOLOGY_NAME%>: "${ontology}",
+        <%= Lookup.JSREF_WILDCARD%>: ${wildcard},
+        <%= Lookup.JSREF_LIMIT%>: 25,
+        <%= Lookup.JSREF_SHOW_TERM_DETAIL%>: ${showTermDetail},
+    }
 
 </script>
 

@@ -17,7 +17,9 @@ import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.GoTermPresentation;
+import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
 import org.zfin.people.Organization;
@@ -99,6 +101,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = DevelopmentStagePresentation.getLink((DevelopmentStage) o, longVersion);
         else if (o instanceof Organization)
             link = SourcePresentation.getLink((Organization) o);
+        else if (o instanceof Term)
+            link = TermPresentation.getLink((Term) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return link;

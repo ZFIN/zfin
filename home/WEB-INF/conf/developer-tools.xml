@@ -53,6 +53,8 @@
                 <prop key="/dev-tools/blast-jobs">blastQueue</prop>
                 <prop key="/dev-tools/test-error-page">errorPageHandler</prop>
                 <prop key="/dev-tools/ontology-caching">ontologyCaching</prop>
+                <prop key="/dev-tools/ontology-terms">ontologyTerms</prop>
+                <prop key="/dev-tools/ontology-term-detail">ontologyTerm</prop>
             </props>
         </property>
     </bean>
@@ -73,6 +75,14 @@
 
     <bean name="ontologyCaching" class="org.zfin.ontology.presentation.OntologyManagerController" scope="prototype">
         <property name="viewName" value="ontology-manager"/>
+    </bean>
+
+    <bean name="ontologyTerms" class="org.zfin.ontology.presentation.OntologyTermController" scope="prototype">
+        <property name="viewName" value="ontology-terms"/>
+    </bean>
+
+    <bean name="ontologyTerm" class="org.zfin.ontology.presentation.OntologyTermController" scope="prototype">
+        <property name="viewName" value="ontology-term"/>
     </bean>
 
     <bean name="lookup" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">

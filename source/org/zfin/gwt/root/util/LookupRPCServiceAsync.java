@@ -43,11 +43,11 @@ public interface LookupRPCServiceAsync {
      * Retrieve terms from a given ontology (via the gDAG ontology table).
      *
      * @param request    request
-     * @param wildCard   true or false
-     * @param goOntology ontology name
+     * @param showTermDetail   true or false
+     * @param ontologyDTO ontology name
      * @param async      callback
      */
-    void getOntologySuggestions(SuggestOracle.Request request, boolean wildCard, OntologyDTO goOntology, AsyncCallback<SuggestOracle.Response> async);
+    void getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO ontologyDTO, AsyncCallback<SuggestOracle.Response> async);
 
     /**
      * Retrieve the term info for a given ontology and term name.

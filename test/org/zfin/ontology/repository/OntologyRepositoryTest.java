@@ -8,16 +8,13 @@ import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.*;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.util.FileUtil;
 
-import static org.zfin.repository.RepositoryFactory.*;
-
-import java.io.File;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 /**
  * Repository for Ontology-related actions: mostly lookup.
@@ -39,15 +36,18 @@ public class OntologyRepositoryTest {
     @Test
     public void getMatchingQualityTerms() {
         String query = "red";
-        List<MatchingTerm> qualities = OntologyManager.getInstance().getMatchingTerms(Ontology.QUALITY, query);
+        MatchingTermService matcher = new MatchingTermService(query);
+        List<MatchingTerm> qualities = matcher.getMatchingTerms(Ontology.QUALITY, query);
         assertNotNull(qualities);
         assertEquals(23, qualities.size());
     }
 
     //@Test
+
     public void getMatchingAnatomyTerms() {
         String query = "mel";
-        List<MatchingTerm> anatomyList = OntologyManager.getInstance().getMatchingTerms(Ontology.ANATOMY, query);
+        MatchingTermService matcher = new MatchingTermService(query);
+        List<MatchingTerm> anatomyList = matcher.getMatchingTerms(Ontology.ANATOMY, query);
         assertNotNull(anatomyList);
         assertEquals(21, anatomyList.size());
     }
