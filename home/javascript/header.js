@@ -285,7 +285,7 @@ document.write("      </script>");
 
 document.write("   </div>");
 document.write("   <div id=\"hdr-navlinks\">");
-document.write("     <div id=\"hdr-zirclinks\" class=\"hdr-linkbar\"> ");
+document.write("     <div id=\"hdr-zirclinks\" style=\"display: none;\" class=\"hdr-linkbar\"> ");
 document.write("       <a href=\"/zirc/\">ZIRC Home</a>");
  document.write("      <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <strong> Request: </strong> &nbsp; <a href=\"/zirc/fish/lineAll.php\">Fish</a>,");
@@ -322,7 +322,7 @@ document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pub
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi\" title=\"View genetic, radiation hybrid or consolidated maps\">Maps</a>");
 document.write("     </div>");
-document.write("     <div id=\"hdr-generallinks\" class=\"hdr-linkbar\">");
+document.write("     <div id=\"hdr-generallinks\" style=\"display: none;\" class=\"hdr-linkbar\">");
 document.write("     <a href=\"/\"></a> ");
 
 
@@ -350,7 +350,7 @@ document.write("     <a href=\"/zf_info/contact_us.html\" title=\"ZFIN contact i
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("     <a href=\"/zf_info/dbase/db.html\" title=\"About ZFIN and citing ZFIN resources in publications\">About</A>");
 document.write("    </div>");
-document.write("    <div id=\"hdr-motto\" class=\"hdr-linkbar\">   ");  
+document.write("    <div id=\"hdr-motto\" style=\"display:none;\"  class=\"hdr-linkbar\">   ");  
 document.write("      The Zebrafish Model Organism Database");
 document.write("    </div>");
 document.write("  </div> <!-- navlinks -->");
