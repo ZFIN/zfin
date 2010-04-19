@@ -56,7 +56,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
           and feature_type = ftrtype_name
        order by 1
 
-        if (featAbbrev like "un\_%") then
+        if (featAbbrev like "unspecified%") then
           let featAbbrev = "unspecified";    
         end if
         if (featAbbrev like "unrec\_%") then

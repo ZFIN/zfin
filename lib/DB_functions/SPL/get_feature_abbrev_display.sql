@@ -41,7 +41,7 @@ foreach
     let featAbbrevHtml = null;
   else
   
-    if (featName like "%un\_%") then
+    if (featName like "%unspecified\_%") then
       let featName = "unspecified";    
     end if
     
