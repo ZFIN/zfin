@@ -85,12 +85,6 @@ a:hover{
     min-width: 100px ;
 }
 
-.gwt-SuggestBoxPopup .item {
-    padding: 2px;
-    font-size:0.9em;
-    margin:0pt;
-}
-
 .gwt-SuggestBoxPopup .item-selected {
     background-color: #FFFFBB;
     padding: 2px;
