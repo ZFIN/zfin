@@ -182,8 +182,14 @@ public final class MicroarrayProcessor {
             dbLinksToRemove.addAll(dbLinksToRemoveForAccession) ;
             numDeleted += dbLinksToRemoveForAccession.size() ;
         }
+
+        // add to report
+        int i = 0 ;
+        for(DBLink dbLink: dbLinksToRemove){
+            microarrayBean.addMessage("accession "+ (++i)+ "/" + dbLinksToRemove.size() +" TO REMOVE: " + dbLink.getAccessionNumber());
+        }
         sequenceRepository.removeDBLinks(dbLinksToRemove) ;
-        microarrayBean.addMessage("accessions REMOVED: " + numDeleted);
+        microarrayBean.addMessage("accessions actually REMOVED: " + numDeleted);
         return microarrayBean ;
     }
 
