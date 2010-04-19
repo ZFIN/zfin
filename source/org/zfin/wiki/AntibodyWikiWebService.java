@@ -223,10 +223,21 @@ public class AntibodyWikiWebService extends WikiWebService {
         content = content.replace("{text-data:HostOrganism}{text-data}", (antibody.getHostSpecies() != null ? antibody.getHostSpecies() : ""));
 
         // antibody isotope
+        String isotypeReplaceString = ""  ;
         if (antibody.getHeavyChainIsotype() != null) {
-            content = content.replace("{text-data:AntibodyIsotype}{text-data}", antibody.getHeavyChainIsotype());
-        } else if (antibody.getLightChainIsotype() != null) {
-            content = content.replace("{text-data:AntibodyIsotype}{text-data}", antibody.getLightChainIsotype());
+            isotypeReplaceString += antibody.getHeavyChainIsotype() ;
+        }
+        if (antibody.getLightChainIsotype() != null) {
+            if( antibody.getHeavyChainIsotype() != null) {
+                isotypeReplaceString += " , " ;
+            }
+            isotypeReplaceString += antibody.getLightChainIsotype() ;
+        }
+        content = content.replace("{text-data:AntibodyIsotype}{text-data}",isotypeReplaceString );
+
+        // antibody type
+        if(StringUtils.isNotEmpty(antibody.getClonalType())){
+            content = content.replace("{text-data:AntibodyType}{text-data}",antibody.getClonalType());
         }
 
         // anatomical structures 

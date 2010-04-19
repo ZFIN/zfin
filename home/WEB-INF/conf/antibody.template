@@ -6,6 +6,7 @@
 || Does it work on zebrafish\? | {list-data:WorksOnZebrafish}{list-option}yes{list-option}{list-option}no{list-option}{list-data} ||
 || Host organism | {text-data:HostOrganism}{text-data} ||
 || Antibody isotype | {text-data:AntibodyIsotype}{text-data} ||
+|| Antibody type | {text-data:AntibodyType}{text-data} ||
 || Anatomical structures recognized \\
 (use terms from the [ZFIN Anatomical Ontology|http://zfin.org/action/anatomy/search]) | {text-data:AnatomicalStructuresRecognized}{text-data} ||
 || Recognized target molecules (gene names, domains, epitopes ...)  | {text-data:RecognizedTargetMolecules}{text-data} ||
