@@ -4,6 +4,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.marker.*;
+import org.zfin.marker.Transcript;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -15,6 +17,7 @@ import org.zfin.sequence.blast.presentation.BlastPresentationService;
 import org.zfin.sequence.blast.presentation.DatabaseNameComparator;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 import org.zfin.sequence.blast.results.*;
+import org.zfin.gbrowse.GBrowseService;
 
 import java.util.*;
 
@@ -330,6 +333,23 @@ public class BlastResultMapper {
             }
 
             hitViewBean.setHitMarker(hitMarker);
+            //only show gbrowse images in a very special case for now, basically just for OTTDARTS
+            if (hitMarker != null
+                    && hitMarker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)
+                    && hitViewBean.getHitDBLink() != null
+                    && hitViewBean.getHitDBLink().getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.VEGA_TRANS)) {
+                //todo: eventually handle multiple genes, just incase...
+                Transcript transcript = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(hitMarker.getZdbID());
+                Marker gene = TranscriptService.getRelatedGenes(transcript).iterator().next().getMarker();
+
+                //get gbrowse images
+                try {
+                    logger.debug("attempting to get GBrowseImage list for blast hit");
+                    hitViewBean.setGbrowseImages(GBrowseService.getGBrowseTranscriptImages(gene, transcript));
+                } catch (Exception e) {
+                    logger.error("Couldn't get GBrowse Feature " + e.getMessage());
+                }
+            }
 
         }
 

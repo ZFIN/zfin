@@ -1110,6 +1110,7 @@ Only need to update clones, etc., which should be the only things that will have
 	     and exists (select 'x' from clone where clone_mrkr_zdb_id = '$OID');">
 	<hr width=80%>
         <b>CLONE DATA: </b> $1
+        <?MIVAR NAME="$mrkrview_mrkr_is_clone">1<?/MIVAR>
 <?/MISQL>
 
 
@@ -2431,6 +2432,46 @@ union
         execute function get_time()">
         <br>$1 End GO/Protein, Start Mrel section
 <?/MISQL>
+
+<?MICOMMENT>=========================================================
+            ==    CLONE GBROWSE IMAGE
+            =========================================================
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(XST,$mrkrview_mrkr_is_clone)">
+
+<div class="summary">
+<div id="clone_gbrowse_thumbnail_box"  style="display: none;" >
+  <table class="summary solidblock" id="clone_gbrowse_thumbnail_box">
+    <caption>GBrowse:</caption>
+    <?MIVAR>
+    <tr>
+      <td style="text-align: center">
+        <div style="margin: .5em; border: 1px solid black; background: white">
+
+        <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->?name=$abbrev">
+        <img
+             onload="document.getElementById('clone_gbrowse_thumbnail_box').style.display = 'block';"
+             style="padding-bottom:10px; border: 0 "
+             src="/<!--|GBROWSE_IMG_PATH_FROM_ROOT|-->?grid=0&width=600&options=fullclone+0+mRNA+0+genes+0&type=fullclone&type=genes&type=mRNA&name=$OID&h_feat=$abbrev">
+
+        </a>
+
+        </div>
+      </td>
+     </tr>
+    <?/MIVAR>
+  </table>
+
+</div>
+</div>
+<?/MIBLOCK>
+
+
+
+
+
+
 
 <?MICOMMENT>=========================================================
             ==    MARKER RELATIONSHIP

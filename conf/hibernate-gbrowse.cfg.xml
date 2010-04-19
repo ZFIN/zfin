@@ -1,0 +1,22 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.isolation">1</property>
+
+
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.datasource">java:comp/env/jdbc/gbrowse</property>
+        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.format_sql">true</property>
+
+
+
+        <!-- Mappings -->
+        <mapping resource="org/zfin/gbrowse.hbm.xml"/>
+
+
+    </session-factory>
+</hibernate-configuration>

@@ -1,0 +1,44 @@
+=head2 Tue Jan 12 16:41:46 2010: C<Module> L<HTML::Tagset|HTML::Tagset>
+
+=over 4
+
+=item *
+
+C<installed into: /home/gbrowse/additional_perl/lib/perl5/site_perl/5.10.0>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 3.20>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Tue Jan 12 16:42:27 2010: C<Module> L<HTML::Parser|HTML::Parser>
+
+=over 4
+
+=item *
+
+C<installed into: /home/gbrowse/additional_perl/lib/perl5/site_perl/5.10.0>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 3.64>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+

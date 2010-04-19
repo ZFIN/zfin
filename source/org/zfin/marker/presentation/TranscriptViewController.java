@@ -8,13 +8,20 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.TranscriptService;
+import org.zfin.sequence.Sequence;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.MountedWublastBlastService;
+import org.zfin.gbrowse.GBrowseFeature;
+import org.zfin.gbrowse.GBrowseService;
+import org.apache.commons.collections.map.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  */
@@ -71,7 +78,7 @@ public class TranscriptViewController extends AbstractCommandController {
 
             for (RelatedMarker relatedGene : transcriptBean.getRelatedGenes()) {
                 Marker gene = relatedGene.getMarker();
-                relatedTranscriptDisplayList.add(TranscriptService.getRelatedTranscriptsForGene(gene));
+                relatedTranscriptDisplayList.add(TranscriptService.getRelatedTranscriptsForGene(gene, transcript));
             }
             transcriptBean.setRelatedTranscriptDisplayList(relatedTranscriptDisplayList);
         }
@@ -127,7 +134,6 @@ public class TranscriptViewController extends AbstractCommandController {
 
         logger.info("transcriptviewcontroller # of seq: " + sequences.size());
         transcriptBean.setNucleotideSequences(sequences);
-
 
         ModelAndView modelAndView = new ModelAndView("transcript-view.page") ;
         modelAndView.addObject(LookupStrings.FORM_BEAN,transcriptBean) ;

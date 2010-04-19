@@ -17,7 +17,11 @@
       <li><a href="/action/blast/blast" 
             title="Search for sequence alignment against ZFIN datasets and zebrafish datasets">
            <strong>BLAST</strong> at ZFIN</a> </li>
+     <li><a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->"><strong>GBrowse</strong> genome browser</a>
+         <sup><img src="/images/new1.gif" border="0"></sup>
+     </li>      
     </ul>
+
    
     <ul>
       <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg" 

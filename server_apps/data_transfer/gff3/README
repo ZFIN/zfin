@@ -6,8 +6,23 @@ The initial script comes very close to producing gff3
 that gbrowse is happy with, but a little extra processing 
 is done to handle the rest.
 
-Here's how I've used these scripts so far:
+There are two prerequisite steps. 
 
-./gtf2gff3 --cfg gtf2gff3.cfg vega.gtf > vega.unprocessed.gff3 && ./gffTypeFix.pl vega vega_chromosome_lengths.txt vega.unprocessed.gff3 vega.gff3
-./gtf2gff3 --cfg gtf2gff3.cfg ensembl.gtf > ensembl.unprocessed.gff3 && ./gffTypeFix.pl ensembl ensembl_chromosome_lengths.txt ensembl.unprocessed.gff3 ensembl.gff3 
+1) Build the chromosome length files, so far 
+this has just been done by hand with a text editor.
+
+2) Unload everything from ZFIN needed to build the files:
+
+% dbaccess <dbname> unload_clone_lengths.sql
+% dbaccess <dbname> unload_marker_names.sql
+% dbaccess <dbname> unload_zdb_ids.sql
+
+
+Finally, here's how I've used these scripts so far:
+
+% ./gtf2gff3 --cfg gtf2gff3.cfg vega.gtf > vega.unprocessed.gff3 && ./gffTypeFix.pl vega vega_chromosome_lengths.txt vega.unprocessed.gff3 vega.gff3
+
+% ./convertAssemblyToGff.pl vega assembly_for_tom.tab vega_assembly.gff3 full_length_clones.gff3
+
+% ./gtf2gff3 --cfg gtf2gff3.cfg ensembl.gtf > ensembl.unprocessed.gff3 && ./gffTypeFix.pl ensembl ensembl_chromosome_lengths.txt ensembl.unprocessed.gff3 ensembl.gff3 
 

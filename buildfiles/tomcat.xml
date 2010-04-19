@@ -106,6 +106,8 @@
                 <filter token="INFORMIXSERVER" value="${informixserver}"/>
                 <filter token="INFORMIXPORT" value="${informixport}"/>
                 <filter token="DOMAIN-NAME" value="${domain-name}"/>
+                <filter token="GBROWSE_DB" value="${env.GBROWSE_DB}"/>
+                <filter token="GBROWSE_DB_HOST" value="${env.GBROWSE_DB_HOST}"/>
             </filterset>
         </copy>
         <antcall target="set-catalina-base-perms"/>

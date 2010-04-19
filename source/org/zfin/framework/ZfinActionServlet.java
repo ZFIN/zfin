@@ -109,7 +109,7 @@ public class ZfinActionServlet extends DispatcherServlet {
 */
         // initialize Hibernate
         HibernateUtil.init();
-
+        GBrowseHibernateUtil.init();
         Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
         stats.setStatisticsEnabled(true);
     }

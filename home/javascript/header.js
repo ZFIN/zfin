@@ -307,11 +307,14 @@ document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("        <a href=\"/action/blast/blast\" title=\"Search for sequence alignment against ZFIN datasets and zebrafish datasets\">BLAST</a> ");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
+document.write("        <a href=\"/<!--|GBROWSE_PATH_FROM_ROOT|-->\">GBrowse</a> ");
+document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg\" title=\"Search by gene, developmental stage, anatomy and other attributes\">Expression</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/action/antibody/search\" title=\"Search for antibodies by gene, labeled anatomy and other attributes\">Antibodies</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant\" title=\"Search by allele, mutant/morphant gene, affected anatomy and other attributes\">Mutants / Morphants / Tg</a>");
+
+document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant\">Mutants / Morphants / Tg</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("      <a href=\"/action/anatomy/search\" title=\"Search the zebrafish anatomical ontology\">Anatomy</a>");
 document.write("      <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
@@ -352,4 +355,4 @@ document.write("      The Zebrafish Model Organism Database");
 document.write("    </div>");
 document.write("  </div> <!-- navlinks -->");
 document.write("</div>  ");
-document.write("<div class=\"allcontent staticcontent\">  ");
+document.write("<div class=\"allcontent\">  ");

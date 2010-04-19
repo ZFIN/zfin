@@ -333,10 +333,29 @@
         </res-auth>
     </resource-ref>
 
+
+    <resource-ref>
+        <description>
+            Resource reference to a factory for java.sql.Connection
+            instances that may be used for talking to a particular
+            database that is configured in the server.xml file.
+        </description>
+        <res-ref-name>
+            jdbc/gbrowse
+        </res-ref-name>
+        <res-type>
+            javax.sql.DataSource
+        </res-type>
+        <res-auth>
+            Container
+        </res-auth>
+    </resource-ref>
+
     <error-page>
         <error-code>404</error-code>
         <location>/WEB-INF/jsp/page-not-found.jsp</location>
     </error-page>
+
 
 
 </web-app>

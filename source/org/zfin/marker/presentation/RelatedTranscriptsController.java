@@ -6,9 +6,12 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.TranscriptService;
+import org.zfin.gbrowse.GBrowseFeature;
+import org.zfin.gbrowse.GBrowseService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Set;
 
 public class RelatedTranscriptsController extends AbstractController {
 
@@ -18,15 +21,14 @@ public class RelatedTranscriptsController extends AbstractController {
         TranscriptBean transcriptBean = new TranscriptBean();
 
         String zdbID = httpServletRequest.getParameter(LookupStrings.ZDB_ID);
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
-        transcriptBean.setMarker(marker);
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        transcriptBean.setMarker(gene);
 
-
-        transcriptBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(marker));
+        transcriptBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
 
         ModelAndView modelAndView = new ModelAndView("related-transcripts.page");
         modelAndView.addObject(LookupStrings.FORM_BEAN, transcriptBean);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, marker.getAbbreviation());
+        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, gene.getAbbreviation());
 
         return modelAndView;
     }

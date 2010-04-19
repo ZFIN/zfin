@@ -19,6 +19,7 @@ END
 <br><b>Navigation:</b> Click one of the rulers to center on a location, or click and drag to
 select a region. Use the Scroll/Zoom buttons to change magnification
 and position.
+<br><br><b>Tutorial:</b> New to GBrowse? <a href="http://www.openhelix.com/gbrowse">view the OpenHelix tutorial.</a>
 END
 
    EDIT_INSTRUCTIONS => <<END,

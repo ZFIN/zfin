@@ -40,6 +40,8 @@ import org.zfin.sequence.repository.HibernateSequenceRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.uniquery.repository.HibernateQuicksearchRepository;
 import org.zfin.uniquery.repository.QuicksearchRepository;
+import org.zfin.gbrowse.repository.GBrowseRepository;
+import org.zfin.gbrowse.repository.HibernateGBrowseRepository;
 
 /**
  * Please provide JavaDoc info!!!
@@ -65,8 +67,10 @@ public class RepositoryFactory {
     private static BlastRepository blastRepository;
     private static DisplayGroupRepository displayGroupRepository;
     private static ExpressionRepository expressionRep;
+    private static GBrowseRepository gbrowseRepository;
     private static PhenotypeRepository phenotypeRep = new HibernatePhenotypeRepository();
     private static OntologyRepository ontologyRepository = new HibernateOntologyRepository();
+
 
     public static ExpressionRepository getExpressionSummaryRepository() {
         if (xpatsumRep == null) {
@@ -254,6 +258,16 @@ public class RepositoryFactory {
 
     public static void setExpressionRepository(ExpressionRepository expressionRepository) {
         expressionRep = expressionRepository;
+    }
+
+    public static GBrowseRepository getGBrowseRepository() {
+        if (gbrowseRepository == null)
+            gbrowseRepository = new HibernateGBrowseRepository();
+        return gbrowseRepository;
+    }
+
+    public static void setGBrowseRepository(GBrowseRepository gbrowseRepository) {
+        RepositoryFactory.gbrowseRepository = gbrowseRepository;
     }
 
     public static PhenotypeRepository getPhenotypeRepository() {

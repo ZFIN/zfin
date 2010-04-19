@@ -2,7 +2,8 @@ package org.zfin.database;
 
 import org.apache.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
-
+import org.zfin.framework.GBrowseHibernateUtil;
+import org.apache.log4j.Logger;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class HibernateSessionRequestFilter implements Filter {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
             // the current threadLocal
             HibernateUtil.closeSession();
+	        GBrowseHibernateUtil.closeSession();
         }
     }
 

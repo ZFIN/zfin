@@ -3,6 +3,7 @@ package org.zfin.sequence.blast.results.view;
 import org.zfin.marker.Marker;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.DBLink;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,7 @@ public class HitViewBean extends ExpressionMapBean{
     private Set<Marker> genes ;
     private String definition ;
     private List<HighScoringPair> highScoringPairs ;
+    private List<GBrowseImage> gbrowseImages;
 
 
     public String getAccessionNumber() {
@@ -154,6 +156,16 @@ public class HitViewBean extends ExpressionMapBean{
     public void setHighScoringPairs(List<HighScoringPair> highScoringPairs) {
         this.highScoringPairs = highScoringPairs;
     }
+
+
+    public List<GBrowseImage> getGbrowseImages() {
+        return gbrowseImages;
+    }
+
+    public void setGbrowseImages(List<GBrowseImage> gbrowseImages) {
+        this.gbrowseImages = gbrowseImages;
+    }
+
 
     public boolean isWithdrawn() {
         return withdrawn;

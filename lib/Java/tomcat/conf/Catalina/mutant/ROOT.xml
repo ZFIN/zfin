@@ -13,6 +13,12 @@
                 url="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@"
                 maxActive="40" maxIdle="10"/>
 
+  <Resource name="jdbc/gbrowse" auth="Container"
+            type="javax.sql.DataSource" username="nobody"
+            driverClassName="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://@GBROWSE_DB_HOST@:3306/@GBROWSE_DB@"  	 
+            maxActive="8" maxIdle="4"/>
+
  <Parameter name="quicksearch-index-directory" value="/research/zcentral/www_homes/almost/server_apps/quicksearch/indexes" override="true"/>
 
 <Valve className="org.apache.catalina.valves.AccessLogValve"

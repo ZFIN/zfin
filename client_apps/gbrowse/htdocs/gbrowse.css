@@ -20,10 +20,14 @@ A.bred            { color: #FFFFFF;
                     font-size : small;
                     text-align: center;
                   }
-BODY              { background-color: white; 
+/* BODY              { background-color: white; 
                     font-family: sans-serif;
 	            font-size: small;
-                  }
+                  } */
+span.tctl         { text-decoration: none }
+
+                  
+
 H1                { color: #3366FF; 
                     font-family: sans-serif; 
                   }
@@ -37,11 +41,11 @@ H4                { color: #3366FF;
                     font-family: sans-serif; 
                   }
 INPUT             { background-color: white; }
-P                 { font-family: sans-serif; }
+/* P                 { font-family: sans-serif; } */
 SELECT            { background-color: white; }
-TABLE             { padding: 0;
+TABLE             { padding: 0; 
                     spacing: 0;
-                    width: 100%;
+                    width: 100%; margin-bottom: 1em; padding-top: .3em;
                   }
 TD                { font-family: sans-serif; 
                     padding: 0; 
@@ -59,25 +63,25 @@ TH.linkmenu       {
 .reset_button     {background-color: red;
 	            color: yellow;           
                   }
-.datatitle        { background-color: khaki; }
-.databody         { background-color: lightgoldenrodyellow; }
-.searchtitle      { background-color: khaki;
-	            font-size: small;
+.datatitle        { background-color: #eee; border: 1px solid #ddd;  }
+.databody         { background-color: #eee;  border: 1px solid #ddd; }
+.searchtitle      { background-color: #eee;  border: 1px solid #ddd; 
+	            font-size: small; 
 }
-.searchbody       { background-color: lightgoldenrodyellow;
-	            font-size: small;
+.searchbody       { background-color:  #eee; border: 1px solid #ddd;
+	            font-size: small; 
 }
-.settingstitle    { background-color: DarkKhaki;
-	            font-size: small;
+.settingstitle    { background-color: #eee; border: 1px solid #ddd;
+	            font-size: small; 
 }
-.settingsbody     { background-color: khaki;
-	            font-size: small;
+.settingsbody     { background-color: #eee; border: 1px solid #ddd;
+	            font-size: small;  
 }
-.uploadtitle      { background-color: DarkKhaki;
-	            font-size: small;
+.uploadtitle      { background-color: #eee; border: 1px solid #ddd;
+	            font-size: small; 
 }
-.uploadbody       { background-color: khaki;
-	            font-size: small;
+.uploadbody       { background-color:  #eee; border: 1px solid #ddd;
+	            font-size: small;  
 }
 .technicalinfo    { background-color: #FFFFFF; }
 .toggle           { color: #3366FF; }

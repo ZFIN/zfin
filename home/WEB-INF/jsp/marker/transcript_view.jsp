@@ -39,11 +39,6 @@
     </div>
 </c:if>
 
-<%--
-<zfin2:markerGbrowse marker="${formBean.marker}"/>
---%>
-
-
 
 <zfin2:subsection title="Associated with Genes"
                   inlineTitle="true"
@@ -79,11 +74,31 @@
      but not both.  --%>
 
 <c:forEach var="relatedTranscriptDisplay" items="${formBean.relatedTranscriptDisplayList}">
-    <c:if test="${fn:length(relatedTranscriptDisplay) > 1}">
-        <zfin2:markerTranscriptSummary transcripts="${relatedTranscriptDisplay}"
+
+    <c:if test="${fn:length(relatedTranscriptDisplay.transcripts) > 1}">
+        <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${relatedTranscriptDisplay}"
                                        unlinkedTranscript="${formBean.marker}"
                                        showAllTranscripts="true"/>
     </c:if>
+
+
+    <%--"no siblings" gbrowse image --%>
+    <c:if test="${(fn:length(relatedTranscriptDisplay.transcripts) == 1) && (!empty relatedTranscriptDisplay.gbrowseImages) }">
+
+        <div class="summary">
+            <table class="summary solidblock">
+                <caption>GBrowse:</caption>
+                <tr><td style="text-align: center"> 
+                  <zfin2:gbrowseImageStack gbrowseImages="${relatedTranscriptDisplay.gbrowseImages}"
+                          width="600"/>
+                </td></tr>
+            </table>
+        </div>
+
+
+    </c:if>
+
+
 </c:forEach>
 
 <zfin2:transcriptTargets transcriptTargets="${formBean.transcriptTargets}"/>

@@ -7,6 +7,7 @@
                 <xs:element ref="Web" />
                 <xs:element ref="Wiki" />
                 <xs:element ref="Path" />
+                <xs:element ref="GBrowse" />
                 <xs:element ref="Blast" />
                 <xs:element ref="Email" />
                 <xs:element ref="Logging" />
@@ -52,6 +53,17 @@
                 <xs:element name="loadUpFull" type="xs:string"/>
                 <xs:element name="PdfPath" type="xs:string"/>
                 <xs:element name="IndexPath" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GBrowse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="gbrowse" type="xs:string"/>
+                <xs:element name="gbrowseImg" type="xs:string"/>
+                <xs:element name="gbrowseDB" type="xs:string"/>
+                <xs:element name="gbrowseDBHost" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

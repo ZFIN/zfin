@@ -194,6 +194,26 @@ public final class ZfinProperties {
         return props.getLogging().getLogFileName();
     }
 
+    public static String getGBrowse() {
+        checkValidProperties();
+        return props.getGBrowse().getGbrowse();
+    }
+
+    public static String getGBrowseImg() {
+        checkValidProperties();
+        return props.getGBrowse().getGbrowseImg();
+    }
+
+    public static String getGBrowseDB() {
+        checkValidProperties();
+        return props.getGBrowse().getGbrowseDB();
+    }
+
+    public static String getGBrowseDBHost() {
+        checkValidProperties();
+        return props.getGBrowse().getGbrowseDBHost();
+    }
+
     //ToDo: include in zfin-properties file
 
     public static String getSessionLogName() {

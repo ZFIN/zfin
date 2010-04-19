@@ -19,6 +19,7 @@
         <mkdir dir="${classbin.dir}"/>
         <mkdir dir="${classbin.dir}/resources"/>
         <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}"/>
+        <copy file="${conf.dir}/hibernate-gbrowse.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/ehcache.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/log4j.xml" todir="${classbin.dir}" failonerror="false"/>
         <copy todir="${classbin.dir}/org/zfin">
@@ -414,6 +415,10 @@
                 <filter token="WEBHOST_HOSTNAME" value="${env.WEBHOST_HOSTNAME}"/>
                 <filter token="WEBHOST_BINARY_PATH" value="${env.WEBHOST_BINARY_PATH}"/>
                 <filter token="WEBHOST_KEY_PATH" value="${env.WEBHOST_KEY_PATH}"/>
+
+                <!--gbrowse variables -->
+                <filter token="GBROWSE_DB" value="${env.GBROWSE_DB}"/>
+                <filter token="GBROWSE_DB_HOST" value="${env.GBROWSE_DB_HOST}"/>
 
                 <!--blast server variables-->
                 <filter token="BLASTSERVER_BLAST_DATABASE_PATH" value="${env.BLASTSERVER_BLAST_DATABASE_PATH}"/>

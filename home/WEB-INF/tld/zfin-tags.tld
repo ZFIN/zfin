@@ -417,4 +417,16 @@
         <info>Simple tag, to avoid using ZfinProperties.getWebDriver scripting</info>
     </tag>
 
+    <tag>
+        <name>gbrowse</name>
+        <tagclass>org.zfin.framework.presentation.tags.GBrowseTag</tagclass>
+        <info>Simple tag, to avoid using ZfinProperties.getGBrowse scripting</info>
+    </tag>
+
+    <tag>
+        <name>gbrowseImg</name>
+        <tagclass>org.zfin.framework.presentation.tags.GBrowseImgTag</tagclass>
+        <info>Simple tag, to avoid using ZfinProperties.getGBrowseImg scripting</info>
+    </tag>
+
 </taglib>

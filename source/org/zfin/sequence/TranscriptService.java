@@ -10,6 +10,10 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.Species;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.gbrowse.GBrowseService;
+import org.apache.log4j.Logger;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -71,16 +75,29 @@ public class TranscriptService {
 
 
     public static RelatedTranscriptDisplay getRelatedTranscriptsForGene(Marker gene) {
-        RelatedTranscriptDisplay rtd = new RelatedTranscriptDisplay();
+        return getRelatedTranscriptsForGene(gene, null);
+    }
 
+    public static RelatedTranscriptDisplay getRelatedTranscriptsForGene(Marker gene, Transcript highlightedTranscript) {
+        RelatedTranscriptDisplay rtd = new RelatedTranscriptDisplay();
+        rtd.setGene(gene);
         Set<RelatedMarker> relatedTranscripts = getRelatedTranscripts(gene);
+
         for (RelatedMarker rm : relatedTranscripts) {
-            //later on, we'll need this to be a Transcript object, rather than just a marker
             Transcript transcript = convertMarkerToTranscript(rm.getMarker());
             rm.setMarker(transcript);
             rm.setDisplayedSequenceDBLinks(TranscriptService.getDBLinksForDisplayGroup(transcript, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE));
             rtd.add(rm);
         }
+
+
+        try {
+            logger.debug("attempting to get GBrowseImage list");
+            rtd.setGbrowseImages(GBrowseService.getGBrowseTranscriptImages(gene, highlightedTranscript));
+        } catch (Exception e) {
+            logger.error("Couldn't get GBrowse Feature " + e.getMessage());
+        }
+
         return rtd;
     }
 

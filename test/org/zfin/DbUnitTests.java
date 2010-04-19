@@ -17,6 +17,7 @@ import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.MutantRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
+import org.zfin.gbrowse.GBrowseRepositoryTest;
 import org.zfin.people.repository.PeopleRepositoryTest;
 import org.zfin.publication.repository.PublicationRepositoryTest;
 import org.zfin.sequence.DisplayGroupRepositoryTest;
@@ -31,6 +32,7 @@ import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.presentation.RedundancyCandidateControllerTest;
 import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
 import org.zfin.util.BODtoConversionServiceTest;
+
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite)
@@ -67,7 +69,8 @@ import org.zfin.util.BODtoConversionServiceTest;
         TranscriptRepositoryTest.class,
         DisplayGroupRepositoryTest.class,
         GoEvidenceTest.class,
-        BlastRepositoryTest.class
+        BlastRepositoryTest.class,
+		GBrowseRepositoryTest.class
 //         MicroArrayTest.class     // Takes 1.5 min to run, but works.
 })
 

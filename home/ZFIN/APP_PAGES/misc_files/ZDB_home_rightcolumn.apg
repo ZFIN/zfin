@@ -132,10 +132,9 @@
  <h3>Genomics</h3>
   <ul>
     <li>Browse genome:
-      <?MICOMMENT> <!-- todo: this link should be real or go away before we merge! --><?/MICOMMENT>
-     <?MICOMMENT> <a href="/cgi-bin/gbrowse/Zv8/"><strong>ZFIN</strong></a>, <?/MICOMMENT>
+      <a href="<!--|GBROWSE_PATH_FROM_ROOT|-->">ZFIN</a>, 
       <a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a>,
-      <a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a>,
+      <a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a>,<br>
       <a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</a>,
       <a href="http://www.ncbi.nlm.nih.gov/projects/mapview/map_search.cgi?taxid=7955">NCBI</a>
     </li>

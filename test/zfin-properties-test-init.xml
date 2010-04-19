@@ -27,6 +27,12 @@
         <PdfPath>/pdf/</PdfPath>
         <IndexPath>/werter</IndexPath>
     </Path>
+  <GBrowse>
+        <gbrowse><!--|GBROWSE_PATH_FROM_ROOT|--></gbrowse>
+        <gbrowseImg><!--|GBROWSE_IMG_PATH_FROM_ROOT|--></gbrowseImg>
+        <gbrowseDB>@GBROWSE_DB@</gbrowseDB>
+        <gbrowseDBHost>@GBROWSE_DB_HOST@</gbrowseDBHost>
+    </GBrowse>
     <Blast>
         <WebHost>
             <DatabasePath>@WEBHOST_BLAST_DATABASE_PATH@</DatabasePath>

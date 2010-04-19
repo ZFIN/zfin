@@ -51,7 +51,7 @@ gbrowse: $(GBROWSE)
 		     HTDOCS=$(TARGETROOT)/home \
 		     GBROWSE_ROOT=gbrowse \
 		     CGIBIN=$(TARGETROOT)/cgi-bin \
-			 CONF=$(TARGETROOT)/home/conf/gbrowse.conf \
+			 CONF=$(TARGETROOT)/home/conf \
 		     INSTALLSITEMAN1DIR=0 \
 		     INSTALLSITEMAN3DIR=0 \
 	         INFORMIXDIR=$(INFORMIXDIR)  \
@@ -62,9 +62,7 @@ gbrowse: $(GBROWSE)
 
 	-cd gbrowse && gmake
 	-cd gbrowse && gmake install
-	-chmod 644 $(TARGETROOT)/home/conf/gbrowse.conf/Zv?.conf 
-	-$(MAKESPECIFIC) gbrowse/conf/Zv7.conf $(TRANSLATETABLE) $(TARGETROOT)/home/conf/gbrowse.conf/Zv7.conf
-	-$(MAKESPECIFIC) gbrowse/conf/Zv8.conf $(TRANSLATETABLE) $(TARGETROOT)/home/conf/gbrowse.conf/Zv8.conf
+
 
 
 # ---------------  Production Rules  ------------------------------------

@@ -39,6 +39,12 @@ table.summary th.analysis {
   width: 20%;
 }
 
+table.summary th.gbrowseimage {
+    text-align: center;
+    vertical-align: middle;
+    min-width:20%;
+}
+
 table.summary td {
   /* background: #eee; */
   padding: .2em;

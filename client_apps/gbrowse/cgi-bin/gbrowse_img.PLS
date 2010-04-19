@@ -42,6 +42,9 @@ $startperl -w
 #
 ###################################################################
 \$VERSION   = $OPTIONS{VERSION};
+\$BIOGRAPHICS_VERSION   = $OPTIONS{BIOGRAPHICS_VERSION};
+
+use lib '$OPTIONS{PREFIX}/lib/Perl/bioperl';
 
 !GROK!THIS!
 print OUT "use lib '$OPTIONS{LIB}';\n" if defined $OPTIONS{LIB};
