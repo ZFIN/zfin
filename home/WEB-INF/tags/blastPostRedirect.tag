@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ tag import="org.zfin.properties.ZfinProperties" %>
+<%@ tag import="org.zfin.sequence.blast.Database" %>
 
 <%-- Display of marker relationships for the transcript page --%>
 
@@ -11,8 +12,10 @@
     function jump(){
         var thisForm =  document.getElementById("externalBlast") ;
 
-        // todo: this is wrong it should take the value  from the input variable!!!
-        thisForm.action='${blastBean.database.location}' ;
+        // added a hack for ensembl to prevent it to send the post to its mirror.  We only want this
+        // for the post as using the mirror behavior is correct
+        thisForm.action='${blastBean.database.location}${ (blastBean.database.abbrev
+        eq "ENSEMBL" ? "&redirect=mirror" : "" )}' ;
 //        alert(thisForm) ;
         //            handles internal blast here
         if(thisForm.action == '' ){
