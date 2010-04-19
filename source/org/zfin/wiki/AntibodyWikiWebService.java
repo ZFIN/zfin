@@ -285,6 +285,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         if(CollectionUtils.isNotEmpty(antibody.getExternalNotes())){
             List<AntibodyExternalNote> externalNotes = new ArrayList<AntibodyExternalNote>() ;
             externalNotes.addAll(antibody.getExternalNotes()) ;
+            Collections.sort(externalNotes);
             for (AntibodyExternalNote externalNote : externalNotes) {
                 publicCommentsStringBuilder.append(" * ");
                 publicCommentsStringBuilder.append(externalNote.getNote());
