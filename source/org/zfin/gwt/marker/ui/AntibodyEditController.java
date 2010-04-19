@@ -19,7 +19,7 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
     private final AntibodyHeaderEdit antibodyHeaderEdit = new AntibodyHeaderEdit();
     private final AntibodyBox antibodyBox = new AntibodyBox();
     private final RelatedMarkerBox relatedGenesBox = new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY, true, geneDiv);
-    private final SupplierNameList supplierNameList = new SupplierNameList();
+    private final SupplierNameLookup supplierNameLookup = new SupplierNameLookup();
 
     public void initGUI() {
 
@@ -140,7 +140,7 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
                 previousNamesBox.setRelatedEntities(dto.getZdbID(), dto.getAliasAttributes());
                 antibodyBox.setDTO(dto);
                 markerNoteBox.setDTO(dto);
-                supplierNameList.setDTO(dto);
+                supplierNameLookup.setDTO(dto);
                 relatedGenesBox.setRelatedEntities(dto.getZdbID(), dto.getRelatedGeneAttributes());
             }
         });

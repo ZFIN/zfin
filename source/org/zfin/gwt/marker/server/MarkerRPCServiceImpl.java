@@ -1,6 +1,7 @@
 package org.zfin.gwt.marker.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -707,11 +708,27 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
             String hqlLab = " select ms.organization.name from MarkerSupplier ms group by ms.organization.name order by ms.organization.name ";
             Query queryLab = session.createQuery(hqlLab);
-
             suppliers = (List<String>) queryLab.list();
+            return suppliers ;
         }
-        return suppliers;
+        else{
+            List<String> returnList = Arrays.asList(new String[suppliers.size()]) ;
+            java.util.Collections.copy(returnList,suppliers);
+            new SupplierCacheThread().start();
+            return returnList ;
+        }
     }
+
+    private class SupplierCacheThread extends Thread{
+
+        @Override
+        public void run() {
+            suppliers = null ; 
+            getAllSupplierNames() ;
+        }
+    }
+
+    // re-cache on the back-end
 
     public void addMarkerSupplier(String name, String markerZdbID) {
         Session session = HibernateUtil.currentSession();

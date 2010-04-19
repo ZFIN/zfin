@@ -71,8 +71,10 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         for (Organization organization : organizations) {
-            String term = organization.getName();
-            suggestions.add(new ItemSuggestion(term.replaceAll("(?i)" + query, "<strong>$0</strong>"), term));
+            String suggestion = organization.getName();
+            String displayName = suggestion.replace(query, "<strong>" + query + "</strong>");
+            ItemSuggestion itemSuggestion = new ItemSuggestion(displayName,suggestion) ;
+            suggestions.add(itemSuggestion);
         }
 
         resp.setSuggestions(suggestions);
