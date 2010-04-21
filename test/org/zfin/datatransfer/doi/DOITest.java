@@ -80,6 +80,9 @@ public class DOITest {
             List<Publication> publications ;
             int maxResults = 1 ;
             int maxAttempts = 3 ;
+            HibernateUtil.currentSession().createQuery(" " +
+            " update DOIAttempt da set da.numAttempts = 0 " +
+            "").executeUpdate() ;
             publications = RepositoryFactory.getPublicationRepository().getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts,maxResults);
             assertNotNull(publications);
             assertEquals(maxResults,publications.size());
