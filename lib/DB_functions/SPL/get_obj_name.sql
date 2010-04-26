@@ -289,7 +289,7 @@ get_obj_name(zdbId varchar(50))
       from genotype_experiment
       where genox_zdb_id = zdbId;
   elif (objType = "TERM") then
-    select term_zdb_id		-- don't have names, use ZDB ID
+    select term_name		
       into objName
       from term
       where term_zdb_id = zdbId;

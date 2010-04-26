@@ -1,17 +1,18 @@
 package org.zfin.uniquery.presentation;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Searcher;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.uniquery.SearchCategory;
-import org.zfin.uniquery.UrlPattern;
+import org.zfin.uniquery.SiteSearchService;
 import org.zfin.uniquery.ZfinAnalyzer;
 import org.zfin.uniquery.categories.SiteSearchCategories;
 import org.zfin.uniquery.search.CategoryHits;
@@ -47,6 +48,7 @@ public class SearchBean extends PaginationBean {
     private List<CategoryHits> allCategoryHitsList;
     private String queryString;
     private List<Hit> allResultsList;
+    private static ZfinAnalyzer analyzer = new ZfinAnalyzer();
 
     // parameters set by web page query
     private String query;
@@ -55,7 +57,7 @@ public class SearchBean extends PaginationBean {
 
     // ***********************************
 
-    private String indexDirectory = ZfinProperties.getIndexDirectory();
+    private static String indexDirectory = ZfinProperties.getIndexDirectory();
     private ReplacementZdbID replacementZdbID;
     private SearchResults searchResult;
     public static final String WEBDRIVER_LOCATION = System.getenv("WEBDRIVER_LOC");
@@ -69,16 +71,14 @@ public class SearchBean extends PaginationBean {
      * a check to only perform a new search/categorization if a new query has been submitted.
      * Therefore, we store the query along with the categorized results until a new query is issued.
      *
-     * @param indexPath   path
      * @param queryString query
      */
-    private void categorizeSearchResults(String indexPath, String queryString) {
+    private void categorizeSearchResults(String queryString) {
         try {
-            IndexReader reader = IndexReader.open(indexPath);
+            IndexReader reader = IndexReader.open(indexDirectory);
             Searcher searcher = new IndexSearcher(reader);
-            ZfinAnalyzer analyzer = new ZfinAnalyzer();
 
-            Query query = parseQuery(queryString, BODY, analyzer);
+            Query query = SiteSearchService.parseQuery(queryString, BODY, analyzer);
 
             if ((allCategoryHitsList != null) && (allResultsList != null) && (this.queryString != null) && (this.queryString.equals(queryString))) {
                 // do not repeat search, same query is being repeated and we have it saved already
@@ -95,7 +95,7 @@ public class SearchBean extends PaginationBean {
 
                     if (category != null) {
                         // reformulate query into the category-specific query, and rewrite the original query
-                        Query fullQuery = addCategoryPrefixToQuery(category, query, analyzer);
+                        Query fullQuery = SiteSearchService.addCategoryPrefixToQuery(category, query, analyzer);
                         query = query.rewrite(reader);
 
                         // search the indexes and get all the hits
@@ -118,25 +118,23 @@ public class SearchBean extends PaginationBean {
         }
     }
 
-
     /**
-     * In the past, results were not cached.  Every query was re-evaluated and searched, everytime.
+     * In the past, results were not cached.  Every query was re-evaluated and searched, every time.
      * Sometimes, it was on a per-category basis, sometimes for all categories.
      * <p/>
      * Now, however, because navigation based on category browsing has been found to be more useful,
-     * we need to always perform a full (all-categories) search so we can faciliate a browse-by-category
+     * we need to always perform a full (all-categories) search so we can facilitate a browse-by-category
      * approach.
      *
-     * @param indexPath       index
      * @param queryString     query
      * @param resultsPageSize int
      * @param startIndex      int
      * @return SearchResult object
      */
-    public SearchResults doFullSearch(String indexPath, String queryString, int resultsPageSize, int startIndex) {
+    public SearchResults doFullSearch(String queryString, int resultsPageSize, int startIndex) {
 
         // first search for and categorize all results into the category-results structure
-        categorizeSearchResults(indexPath, queryString);  // caching should ensure adequate performance
+        categorizeSearchResults(queryString);  // caching should ensure adequate performance
 
         // from all results, get the relevant results subset based on the pageSize (from x to y out of a total of z)
         List relevantResults = getResultsSubset(allResultsList, resultsPageSize, startIndex);
@@ -146,7 +144,7 @@ public class SearchBean extends PaginationBean {
     }
 
     /**
-     * So that a user can browse-by-category, we first peform a full search, getting all results
+     * So that a user can browse-by-category, we first perform a full search, getting all results
      * in all categories, and cache the results.
      * <p/>
      * Then, we selectively display the results based on category selected and pageSize.
@@ -161,12 +159,12 @@ public class SearchBean extends PaginationBean {
         SearchResults resultPage = null;
 
         // first search for and categorize all results into the category-results structure
-        categorizeSearchResults(indexDirectory, queryString);  // caching should ensure adequate performance
+        categorizeSearchResults(queryString);  // caching should ensure adequate performance
 
         // category could be "All"
         int startIndex = getFirstRecord() - 1;
         if (categoryId.equalsIgnoreCase("All")) {
-            return doFullSearch(indexDirectory, queryString, pageSize, startIndex);
+            return doFullSearch(queryString, pageSize, startIndex);
         }
 
         // now use the categoryId to filter all the results to only those in that category
@@ -190,7 +188,7 @@ public class SearchBean extends PaginationBean {
 
         // if all else fails, use a full search without category
         if (resultPage == null) {
-            resultPage = doFullSearch(indexDirectory, queryString, pageSize, startIndex);
+            resultPage = doFullSearch(queryString, pageSize, startIndex);
         }
 
         return resultPage;
@@ -201,7 +199,7 @@ public class SearchBean extends PaginationBean {
      * In the past, this was highly inefficient because it had to perform a search in order
      * to determine the number of results.  In other words, it had to perform a search TWICE:
      * once to get results, and once to get total counts.  This is an artifact of using a
-     * REQUEST-based (as opposed to SESSION-based) bean.  The tradeoff is performance versus
+     * REQUEST-based (as opposed to SESSION-based) bean.  The trade-off is performance versus
      * memory usage.
      * <p/>
      * This function returns the number (count) of results found per category by doing a
@@ -214,10 +212,10 @@ public class SearchBean extends PaginationBean {
         int searchResultsCount = 0;
 
         // first search for and categorize all results into the category-results structure
-        categorizeSearchResults(indexDirectory, queryString);  // caching should ensure adequate performance
+        categorizeSearchResults(queryString);  // caching should ensure adequate performance
 
         // category could be "All"
-        if (categoryId != null && categoryId.equalsIgnoreCase("All")) {
+        if (categoryId != null && categoryId.equalsIgnoreCase("ALL")) {
             return allResultsList.size();
         }
 
@@ -245,7 +243,7 @@ public class SearchBean extends PaginationBean {
      * @return List
      */
     public List<String> getIgnoredWords(String queryString) {
-        return findStopWords(queryString, new ZfinAnalyzer());
+        return findStopWords(queryString, analyzer);
     }
 
 
@@ -258,74 +256,6 @@ public class SearchBean extends PaginationBean {
     public List<String> getIgnoredWords() {
         return getIgnoredWords(getQueryTerm());
     }
-
-    /**
-     * This function takes a user's query string and transforms it into a Lucene Query object.
-     *
-     * @param queryString query
-     * @param field       field
-     * @param analyzer    Analyzer
-     * @return query
-     * @throws java.io.IOException exception
-     */
-    private Query parseQuery(String queryString, String field, Analyzer analyzer) throws IOException {
-        BooleanQuery query = new BooleanQuery();
-        TokenStream tokenStream = analyzer.tokenStream(field, new StringReader(queryString));
-        Token tok;
-        while ((tok = tokenStream.next()) != null) {
-            query.add(new PrefixQuery(new Term(field, new String(tok.termBuffer(), 0, tok.termLength()))), BooleanClause.Occur.MUST);
-        }
-        return query;
-    }
-
-
-    /**
-     * This function takes a user's query string  and category and transforms it into
-     * category-specific Lucene Query object.  It does this by adding boost values to the query.
-     *
-     * @param category category
-     * @param query    Query
-     * @param analyzer analyzer
-     * @return Query
-     */
-    private Query addCategoryPrefixToQuery(SearchCategory category, Query query, Analyzer analyzer) {
-
-        BooleanQuery prefixQuery = new BooleanQuery();
-        List<UrlPattern> urlPattern = category.getUrlPatterns();
-        if (analyzer == null) {
-            throw new RuntimeException("Analyzer is null");
-        }
-        if (query == null) {
-            throw new RuntimeException("query is null");
-        }
-
-        for (UrlPattern pattern : urlPattern) {
-            TokenStream tokenStream = analyzer.tokenStream("type", new StringReader(pattern.getType()));
-
-            if (tokenStream == null)
-                throw new RuntimeException("tokenStream is null");
-            Token token;
-            try {
-                token = tokenStream.next();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            if (token != null) {
-                TermQuery termQuery = new TermQuery(new Term("type", new String(token.termBuffer(), 0, token.termLength())));
-
-                // add Boost value to get terms to sort properly
-                if (pattern.getBoostValue() != 0)
-                    termQuery.setBoost(pattern.getBoostValue());
-                prefixQuery.add(termQuery, BooleanClause.Occur.SHOULD);
-            }
-        }
-        BooleanQuery fullQuery = new BooleanQuery();
-        fullQuery.add(prefixQuery, BooleanClause.Occur.MUST);
-        fullQuery.add(query, BooleanClause.Occur.MUST);
-
-        return fullQuery;
-    }
-
 
     /**
      * This function supports the ignored words functions.
@@ -403,18 +333,6 @@ public class SearchBean extends PaginationBean {
 
 
     /**
-     * Returns the entire list of search results.
-     * Results are formatted in HTML (though this function
-     * breaks naming convention, it should be called getAllResultsListHTML.)
-     *
-     * @return List
-     */
-    public List getAllResultsList() {
-        return allResultsList;
-    }
-
-
-    /**
      * This function formats the category list (and counts) as an HTML table.
      * It encapsulates categories in HTML formatting for use by the JSP.
      * <p/>
@@ -476,7 +394,7 @@ public class SearchBean extends PaginationBean {
             returnResults += "<TD nowrap class='category_item'>";
             returnResults += cellSelected;
             returnResults += categoryHtml;
-            if (!currentCategoryId.equalsIgnoreCase("All")) {
+            if (! (currentCategoryId.equalsIgnoreCase("All") && numberOfResults >= MAX_RESULTS_PER_CATEGORY)) {
                 returnResults += " (" + numberOfResults + ")";
             }
             returnResults += "</TD> \n";
@@ -490,7 +408,7 @@ public class SearchBean extends PaginationBean {
 
     /**
      * This function formats the Google-like "Alternative search" feature for
-     * alias and anotomy term suggestions.
+     * alias and anatomy term suggestions.
      * It encapsulates this feature in HTML formatting for use by the JSP.
      * <p/>
      * Relies on the "related_terms", "alias_list_header", "related_terms_match",
@@ -502,15 +420,15 @@ public class SearchBean extends PaginationBean {
         RelatedTerms terms = new RelatedTerms();
         Map<String, List<String[]>> aliasHits = terms.getAllAliasHits(getQueryTerm());
         String returnResults = "";
-        if (aliasHits.size() > 0) {
+        if (aliasHits != null && !aliasHits.isEmpty()) {
             returnResults += "<div class='related_terms'>";
             returnResults += "<span class='alias_list_header'>Alternative search: </span>";
             Vector<String> keys = new Vector<String>(aliasHits.keySet());
             Collections.sort(keys);
-            Iterator aliaskeys = keys.iterator();
+            Iterator aliasKeys = keys.iterator();
             boolean separator = false;
-            while (aliaskeys.hasNext()) {
-                String oldTerm = (String) aliaskeys.next();
+            while (aliasKeys.hasNext()) {
+                String oldTerm = (String) aliasKeys.next();
                 returnResults += "<span class='alias_list'>";
                 List<String[]> matchingTerms = aliasHits.get(oldTerm);
                 for (String[] alias_hit : matchingTerms) {
@@ -538,23 +456,22 @@ public class SearchBean extends PaginationBean {
      * @return string
      */
     public String getBestMatchHTML() {
-        RelatedTerms term = new RelatedTerms();
         String queryTerm = getQueryTerm();
-        String theMatchId = term.getBestMatchId(queryTerm);
+        String theMatchId = RelatedTerms.getBestMatchId(queryTerm);
         String returnResults = "";
-        String envWebdriverLoc = WEBDRIVER_LOCATION;
+        String webdriverLocation = WEBDRIVER_LOCATION;
 
         if (theMatchId.length() > 0) {
             String viewPageUrl;
             if (theMatchId.startsWith("ZDB-GENO")) {
 
-                viewPageUrl = "/" + envWebdriverLoc + "/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
+                viewPageUrl = "/" + webdriverLocation + "/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
             } else if (theMatchId.startsWith("ZDB-ANAT")) {
                 viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + theMatchId;
             } else if (theMatchId.startsWith("ZDB-ATB")) {
                 viewPageUrl = "/action/antibody/detail?antibody.zdbID=" + theMatchId;
             } else {
-                viewPageUrl = "/" + envWebdriverLoc + "/webdriver?MIval=aa-markerview.apg&OID=" + theMatchId;
+                viewPageUrl = "/" + webdriverLocation + "/webdriver?MIval=aa-markerview.apg&OID=" + theMatchId;
             }
             returnResults += "<br><span class='best_match'>Exact Match: ";
             returnResults += "<a href='" + viewPageUrl + "'><b>" + queryTerm + "</b></a> ";
@@ -577,7 +494,7 @@ public class SearchBean extends PaginationBean {
      *
      * @return string
      * @throws java.io.UnsupportedEncodingException
-     *          exception forn encoding
+     *          exception from encoding
      */
     public String getRelatedSearchPageHTML() throws UnsupportedEncodingException {
         String specificSearchURL;
@@ -591,8 +508,8 @@ public class SearchBean extends PaginationBean {
         } else if (categoryDisplayName.toLowerCase().equals("genes/markers/clones")) {
             specificSearchURL = "aa-newmrkrselect.apg&input_name=" + queryTerm;
         } else if (categoryDisplayName.toLowerCase().equals("expression/phenotype")) {
-            /* expression/phenotyp info are currently all on figureview page, and we
-  only have expression search page, no phenotype search page now. */
+            /* expression/phenotyp info are currently all on figure view page, and we
+               only have expression search page, no phenotype search page now. */
             specificSearchURL = "aa-xpatselect.apg";
             categoryDisplayName = "Expression";
             if (anatomyHits.size() > 0) {
@@ -672,11 +589,11 @@ public class SearchBean extends PaginationBean {
     }
 
     public String getCategorySearch() {
-        String categoryDesc = SiteSearchCategories.getDisplayName(getCategoryID());
-        if (categoryDesc.equals("All")) {
+        String categoryDescription = SiteSearchCategories.getDisplayName(getCategoryID());
+        if (categoryDescription.equals("All")) {
             return "Search";
         } else {
-            return categoryDesc + " search";
+            return categoryDescription + " search";
         }
     }
 

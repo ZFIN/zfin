@@ -6,6 +6,7 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.uniquery.SiteSearchService;
 import org.zfin.uniquery.ZfinAnalyzer;
 
 import java.io.IOException;
@@ -19,9 +20,6 @@ public class RelatedTerms {
 
     private static final Logger LOG = Logger.getLogger(RelatedTerms.class);
 
-    private long timeToGetAnatomyHits;
-    private long timeToGetAliasHits;
-
     /**
      * Searches anatomy tokens for a match of a given query string.
      * Returns results {token=hits} as a Hashtable,
@@ -32,17 +30,15 @@ public class RelatedTerms {
      */
     public Map<String, List<String>> getAllAnatomyHits(String queryString) {
         Map<String, List<String>> results = new HashMap<String, List<String>>();
-        long start = System.currentTimeMillis();
 
         List<String> tokens = getTokens(queryString);
         for (String token : tokens) {
-            List<String> anatomyhits = getAnatomyHits(token);
-            if (!anatomyhits.isEmpty()) {
+            List<String> anatomyHits = getAnatomyHits(token);
+            if (!anatomyHits.isEmpty()) {
                 token = token.replace("''", "'");
-                results.put(token, anatomyhits);
+                results.put(token, anatomyHits);
             }
         }
-        timeToGetAnatomyHits = System.currentTimeMillis() - start;
         return results;
     }
 
@@ -88,25 +84,36 @@ public class RelatedTerms {
      * @return map
      */
     public HashMap<String, List<String[]>> getAllAliasHits(String queryString) {
-        HashMap<String, List<String[]>> results = new HashMap<String, List<String[]>>();
-        long start = System.currentTimeMillis();
 
         InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
         List<String> aliases = infrastructureRepository.getDataAliasesWithAbbreviation(queryString);
-        if (aliases == null)
+        List<String> validAliases = new ArrayList<String>(2);
+
+        for (String alias : aliases) {
+            // do not add aliases that are zdb Ids, they would not lead to a proper alternative search
+            if (!alias.startsWith("ZDB-")) {
+                // do not add alias if it is the same string ignoring the case
+                if (!queryString.toLowerCase().equals(alias)) {
+                    // check if the new alias has actual hits to offer...
+                    if (SiteSearchService.hasHits(alias))
+                        validAliases.add(alias);
+                }
+            }
+
+        }
+        if (validAliases.size() == 0)
             return null;
 
         List<String[]> abbrevHits = new ArrayList<String[]>();
-        for (String alias : aliases) {
+        for (String alias : validAliases) {
             String[] hit = {alias, queryString.toLowerCase()};
             abbrevHits.add(hit);
         }
 
+        HashMap<String, List<String[]>> results = new HashMap<String, List<String[]>>();
         if (!abbrevHits.isEmpty()) {
             results.put(queryString, abbrevHits);
         }
-
-        timeToGetAliasHits = System.currentTimeMillis() - start;
 
         return results;
     }
@@ -156,16 +163,6 @@ public class RelatedTerms {
         text = text.replaceAll("<sup>", " ");
         text = text.replaceAll("</sup>", " ");
         return text;
-    }
-
-    public long getTimeToGetAnatomyHits() {
-        return timeToGetAnatomyHits;
-
-    }
-
-    public long getTimeToGetAliasHits() {
-        return timeToGetAliasHits;
-
     }
 
 }
