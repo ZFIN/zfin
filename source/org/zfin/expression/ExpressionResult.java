@@ -1,5 +1,6 @@
 package org.zfin.expression;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.ontology.Term;
@@ -107,5 +108,21 @@ public class ExpressionResult {
     public void removeFigure(Figure figure) {
         if(figures != null)
             figures.remove(figure);
+    }
+
+    /**
+     * Not sure if this is significantly better than a figure, here.
+     * @param figure Figure to match
+     * @return Matched figure or null if not found.
+     */
+    public Figure getMatchingFigure(Figure figure) {
+        if(CollectionUtils.isNotEmpty(getFigures())){
+            for(Figure aFigure:getFigures()){
+                if(aFigure.equals(figure)){
+                    return aFigure ;
+                }
+            }
+        }
+        return null;
     }
 }

@@ -74,12 +74,53 @@ public class Antibody extends Marker {
         this.lightChainIsotype = lightChainIsotype;
     }
 
-    public boolean hasAntibodyLabeling(ExpressionExperiment expressionExperiment) {
+    /**
+     *
+     * @param expressionExperiment Antibody label to compare.
+     * @return Returns an antibody that prevents merging.
+     */
+    public ExpressionExperiment getMatchingAntibodyLabeling(ExpressionExperiment expressionExperiment) {
         for(ExpressionExperiment anExpressionExperiment : getAntibodyLabelings()){
-            if(anExpressionExperiment.getPublication().getZdbID().equals(expressionExperiment.getPublication().getZdbID())){
-                return true ;
+            if(false==canMergeAntibodyLabel(anExpressionExperiment,expressionExperiment)){
+                return anExpressionExperiment ;
             }
         }
+        return null ;
+    }
+
+    /**
+     * If any of the following is true, can merge:
+     * publication, genotypeexperiment, assay are different
+     * probe, gene, markerDBLink are different or one or more is null
+     *
+     * // we don't consider antibody
+     *
+     * @param eea First expression experiment.
+     * @param eeb Second expression experiment.
+     * @return Whether or not an antibody label can be merged.
+     */
+    private boolean canMergeAntibodyLabel(ExpressionExperiment eea,ExpressionExperiment eeb){
+        if(!eea.getPublication().equals(eeb.getPublication())) return true ;
+        if(!eea.getGenotypeExperiment().equals(eeb.getGenotypeExperiment())) return true ;
+        if(!eea.getAssay().equals(eeb.getAssay())) return true ;
+
+        if( eea.getProbe()==null && eeb.getProbe()!=null ) return true ;
+        if( eea.getProbe()!=null && eeb.getProbe()==null ) return true ;
+        if(eea.getProbe()!=null && eeb.getProbe()!=null &&
+                false==eea.getProbe().equals(eeb.getProbe())) return true ;
+
+        if(eea.getGene()==null && eeb.getGene()!=null) return true ;
+        if(eea.getGene()!=null && eeb.getGene()==null) return true ;
+        if(eea.getGene()!=null && eeb.getGene()!=null &&
+                false==eea.getGene().equals(eeb.getGene())) return true ;
+
+        if(eea.getMarkerDBLink()==null && eeb.getMarkerDBLink()!=null) return true ;
+        if(eea.getMarkerDBLink()!=null && eeb.getMarkerDBLink()==null) return true ;
+        if(eea.getMarkerDBLink()!=null && eeb.getMarkerDBLink()!=null
+                && false==eea.getMarkerDBLink().equals(eeb.getMarkerDBLink())) return true ;
+
+        // we don't handle antibody
+
         return false ;
     }
 }

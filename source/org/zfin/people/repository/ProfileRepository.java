@@ -90,23 +90,6 @@ public interface ProfileRepository {
      */
     MarkerSupplier getSpecificSupplier(Marker marker, Organization organization);
 
-    int removeSource(String supplierZdbID, String dataZdbID);
-
-    /**
-     * Retrieve an organization by ID
-     *
-     * @param zdbID zdbID (PK)
-     * @return Organization
-     */
-    Organization getOrganizationByID(String zdbID);
-
-    /**
-     * Delete a supplier fomr the records. Does not delete the lab or company.
-     *
-     * @param supplier Supplier
-     */
-    void deleteSupplier(MarkerSupplier supplier);
-
 
     /**
      * Delete account Info of person, but not the person record.

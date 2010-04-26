@@ -6,6 +6,8 @@ import org.apache.log4j.Logger;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -18,6 +20,7 @@ import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.AntibodyWikiWebService;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -50,11 +53,6 @@ public class MergeService {
         mergeLinkageData(markerToDelete,markerToMergeInto) ;
         mergeDataNotes(markerToDelete,markerToMergeInto) ;
 
-        // gene only methods
-//        mergeMarkerGoTermEvidence(markerToDelete,markerToMergeInto) ;
-//        mergeExpressionExperiments(markerToDelete,markerToMergeInto) ;
-//        mergeFeatureRelationships(markerToDelete,markerToMergeInto) ;
-
         MarkerAlias newMarkerAlias = mergeAliases(markerToDelete,markerToMergeInto) ;
         createMarkerHistory(markerToDelete,markerToMergeInto,newMarkerAlias) ;
         mergeReplacedData(markerToDelete,markerToMergeInto) ;
@@ -65,11 +63,24 @@ public class MergeService {
         if(markerToDelete.isInTypeGroup(Marker.TypeGroup.ATB)
                 &&
                 markerToMergeInto.isInTypeGroup(Marker.TypeGroup.ATB)){
-            // merge antibody external notes
             Antibody antibodyToDelete = (Antibody) markerToDelete ;
             Antibody antibodyToMergeInto = (Antibody) markerToMergeInto;
             mergeAntibody(antibodyToDelete,antibodyToMergeInto) ;
         }
+//        else
+//        if(markerToDelete.isInTypeGroup(Marker.TypeGroup.GENEDOM)
+//                &&
+//                markerToMergeInto.isInTypeGroup(Marker.TypeGroup.GENEDOM)){
+//            // expression experiments, marker go term evidence, feature relationships, etc.
+////            mergeGene(antibodyToDelete,antibodyToMergeInto) ;
+//        }
+//        else
+//        if(markerToDelete.isInTypeGroup(Marker.TypeGroup.CLONEDOM)
+//                &&
+//                markerToMergeInto.isInTypeGroup(Marker.TypeGroup.CLONEDOM)){
+//            // expression experiments, clone data, etc.
+////            mergeClone(antibodyToDelete,antibodyToMergeInto) ;
+//        }
 
 
         infrastructureRepository.insertUpdatesTable(markerToMergeInto,"all"
@@ -115,13 +126,9 @@ public class MergeService {
             }
 
         // merge assays/labeling
-        if(CollectionUtils.isNotEmpty(antibodyToDelete.getAntibodyLabelings()))
-            for(ExpressionExperiment expressionExperiment : antibodyToDelete.getAntibodyLabelings()){
-                if(false==antibodyToMergeInto.hasAntibodyLabeling(expressionExperiment)){
-                    expressionExperiment.setAntibody(antibodyToMergeInto);
-                }
-            }
-
+        if(CollectionUtils.isNotEmpty(antibodyToDelete.getAntibodyLabelings())){
+            mergeAntibodyLabeling(antibodyToDelete,antibodyToMergeInto) ;
+        }
 
         // merge actual antibody data
         // if the antibody to merge into is null then copy over the data
@@ -150,6 +157,123 @@ public class MergeService {
             logger.error("Failed to update antibody: "+antibodyToMergeInto.getAbbreviation(),e);
         }
 
+    }
+
+    /**
+     * Given antibodies A and B, where A will be merged into B and then deleted
+
+     for all expression experiments on A:  EEa
+     if EEa not contained in antibody B: then
+     update the antibody on EEa to point to antibody B
+     else
+     for all expression_results in EEa: ERa
+     if ERa not contained in expresion_results on EEb (ERb): then
+     update ERa to point to EEb
+     else
+     for all expresion_result_figures in ERa: ERFa
+     if ERFa not contained in expression_results_figure on ERb (ERFb): then
+     update ERFa to point to ERb
+     else
+     nada
+
+     delete A
+     * @param antibodyA, Antibody antibodyB) { Antibody to merge expression away from (and then delete).
+     * @param antibodyB Antibody to merge expression on to.
+     */
+    @SuppressWarnings("unchecked")
+    protected static void mergeAntibodyLabeling(Antibody antibodyA, Antibody antibodyB) {
+
+        if(CollectionUtils.isEmpty(antibodyA.getAntibodyLabelings())) return ;
+
+        Set<ExpressionExperiment> antibodyLabelingsARemoveSet = new HashSet<ExpressionExperiment>() ;
+
+//        for all expression experiments on A:  EEa
+        for(ExpressionExperiment expressionExperimentA : antibodyA.getAntibodyLabelings()){
+//          if EEa not contained in antibody B: then
+//            update the antibody on EEa to point to antibody B
+            ExpressionExperiment expressionExperimentB = antibodyB.getMatchingAntibodyLabeling(expressionExperimentA) ;
+            if(expressionExperimentB==null){
+                // move out of the way both ways
+                expressionExperimentA.setAntibody(antibodyB);
+                antibodyB.getAntibodyLabelings().add(expressionExperimentA);
+                antibodyLabelingsARemoveSet.add(expressionExperimentA) ;
+            }
+            //else
+            // there is a match, then we move the expression results
+            else
+            if(CollectionUtils.isNotEmpty(expressionExperimentA.getExpressionResults())) {
+                Set<ExpressionResult> expressionResultRemoveSet = moveExpressionResults(expressionExperimentA,expressionExperimentB) ;
+                expressionExperimentA.getExpressionResults().removeAll(expressionResultRemoveSet) ;
+            }
+        }
+
+        // cleanup things to remove:
+        antibodyA.getAntibodyLabelings().removeAll(antibodyLabelingsARemoveSet) ;
+
+    }
+
+    private static Set<ExpressionResult> moveExpressionResults(ExpressionExperiment expressionExperimentA, ExpressionExperiment expressionExperimentB) {
+        Set<ExpressionResult> expressionResultRemoveSet= new HashSet<ExpressionResult>() ;
+        for(ExpressionResult expressionResultA : expressionExperimentA.getExpressionResults()){
+            ExpressionResult expressionResultB = expressionExperimentB.getMatchingExpressionResult(expressionResultA) ;
+            if(expressionResultB==null){
+                expressionResultA.setExpressionExperiment(expressionExperimentB);
+                expressionExperimentB.getExpressionResults().add(expressionResultA) ;
+                expressionResultRemoveSet.add(expressionResultA) ;
+//                        expressionExperimentA.getExpressionResults().remove(expressionResultA) ;
+            }
+            // if there is a match then we move the expression result figures
+            else{
+                HibernateUtil.currentSession().evict(expressionResultA);
+                expressionResultA = (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class,expressionResultA.getZdbID()) ;
+                HibernateUtil.currentSession().evict(expressionResultB);
+                expressionResultB = (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class,expressionResultB.getZdbID()) ;
+
+                moveFigures(expressionResultA,expressionResultB) ;
+            }
+        }
+        return expressionResultRemoveSet ;
+    }
+
+    private static void moveFigures(ExpressionResult expressionResultA, ExpressionResult expressionResultB) {
+        if(CollectionUtils.isNotEmpty(expressionResultA.getFigures())){
+            for(Figure figureA: expressionResultA.getFigures()){
+                Figure figureB = expressionResultB.getMatchingFigure(figureA) ;
+                if(figureB==null){
+                    // have to do this via SQL
+//                                figureA.setExpressionResult(expressionResultB) ;
+                    // move figure A to to expression result B if not already there
+
+                    Object[] existingXpatfig = (Object[]) HibernateUtil.currentSession().createSQLQuery(
+                            "select * " +
+                                    " from expression_pattern_figure epf " +
+                                    " where xpatfig_fig_zdb_id= :figureZdbID " +
+                                    " and xpatfig_xpatres_zdb_id= :resultZdbID "
+                    )
+                            .setString("resultZdbID",expressionResultB.getZdbID())
+                            .setString("figureZdbID",figureA.getZdbID())
+                            .uniqueResult();
+
+                    if(existingXpatfig==null){
+                        HibernateUtil.currentSession().createSQLQuery(
+                                " update expression_pattern_figure  " +
+                                        " set xpatfig_xpatres_zdb_id= :resultBZdbID " +
+                                        " where xpatfig_fig_zdb_id= :figureZdbID" +
+                                        " and xpatfig_xpatres_zdb_id= :resultAZdbID "
+                        )
+                                .setString("resultBZdbID",expressionResultB.getZdbID())
+                                .setString("figureZdbID",figureA.getZdbID())
+                                .setString("resultAZdbID",expressionResultA.getZdbID())
+                                .executeUpdate();
+                        HibernateUtil.currentSession().refresh(figureA) ;
+                        HibernateUtil.currentSession().refresh(expressionResultB);
+                        HibernateUtil.currentSession().refresh(expressionResultA);
+                        HibernateUtil.currentSession().flush();
+                    }
+
+                }
+            }
+        }
     }
 
     private static void mergePublicNote(Marker markerToDelete, Marker markerToMergeInto) {
@@ -218,23 +342,12 @@ public class MergeService {
         return newMarkerAlias ;
     }
 
-    private static void mergeFeatureRelationships(Marker markerToDelete, Marker markerToMergeInto) {
-        // feature marker relationship
-        HibernateUtil.currentSession().createSQLQuery("update feature_marker_relationship \n" +
-                "                    set fmrel_mrkr_zdb_id = :markerToMergeIntoZdbID \n" +
-                "                  where fmrel_mrkr_zdb_id = :markerToDeleteZdbID ;")
-                .setString("markerToMergeIntoZdbID",markerToMergeInto.getZdbID())
-                .setString("markerToDeleteZdbID",markerToDelete.getZdbID())
-                .executeUpdate() ;
-    }
 
-    private static void mergeExpressionExperiments(Marker markerToDelete, Marker markerToMergeInto) {
-        // expression experiments
-//        if(CollectionUtils.isNotEmpty(markerToDelete.getExpressionExperiments()))
-//            for(ExpressionExperiment expressionExperiment: markerToDelete.getExpressionExperiments())
-//                expressionExperiment.setMarker(markerToMergeInto);
-    }
-
+    /**
+     * TODO: check for potiential key conflicts
+     * @param markerToDelete
+     * @param markerToMergeInto
+     */
     private static void mergeMarkerGoTermEvidence(Marker markerToDelete, Marker markerToMergeInto) {
         // marker go term evidence
         HibernateUtil.currentSession().createSQLQuery("update marker_go_term_evidence \n" +

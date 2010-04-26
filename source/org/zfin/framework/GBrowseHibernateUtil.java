@@ -69,7 +69,7 @@ public class GBrowseHibernateUtil {
             String mysqlDB = ZfinProperties.getGBrowseDB();
             String connectionString = "jdbc:mysql://" + mysqlServer + ":" + mysqlPort + "/" + mysqlDB;
             log.debug(connectionString);
-            config.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
+            config.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
             config.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
 
             config.setProperty("hibernate.connection.url", connectionString);
@@ -77,8 +77,8 @@ public class GBrowseHibernateUtil {
             config.setProperty("hibernate.connection.username", "nobody");
             config.setProperty("hibernate.connection.pool_size", "1");
 
-            config.setProperty("hibernate.show_sql", "false");
-            config.setProperty("hibernate.format_sql", "false");
+            config.setProperty("hibernate.show_sql", "true");
+            config.setProperty("hibernate.format_sql", "true");
             config.addFile(configDirectory + FILE_SEP + "gbrowse.hbm.xml");
 
 

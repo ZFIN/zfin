@@ -38,8 +38,6 @@ import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.HibernateDisplayGroupRepository;
 import org.zfin.sequence.repository.HibernateSequenceRepository;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.uniquery.repository.HibernateQuicksearchRepository;
-import org.zfin.uniquery.repository.QuicksearchRepository;
 import org.zfin.gbrowse.repository.GBrowseRepository;
 import org.zfin.gbrowse.repository.HibernateGBrowseRepository;
 
@@ -63,7 +61,6 @@ public class RepositoryFactory {
     private static SequenceRepository seqRep;
     private static OrthologyRepository orthoRep;
     private static LinkageRepository linkageRep;
-    private static QuicksearchRepository quicksearchRep;
     private static BlastRepository blastRepository;
     private static DisplayGroupRepository displayGroupRepository;
     private static ExpressionRepository expressionRep;
@@ -238,16 +235,6 @@ public class RepositoryFactory {
         if (displayGroupRepository == null)
             displayGroupRepository = new HibernateDisplayGroupRepository();
         return displayGroupRepository;
-    }
-
-    public static QuicksearchRepository getQuicksearchRepository() {
-        if (quicksearchRep == null)
-            quicksearchRep = new HibernateQuicksearchRepository();
-        return quicksearchRep;
-    }
-
-    public static void setQuicksearchRepository(QuicksearchRepository quicksearchRep) {
-        RepositoryFactory.quicksearchRep = quicksearchRep;
     }
 
     public static ExpressionRepository getExpressionRepository() {

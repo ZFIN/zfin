@@ -6,7 +6,7 @@
 <hibernate-mapping package="org.zfin.expression">
 
     <class name="org.zfin.expression.Figure" table="figure">
-        <cache usage="read-only"/>
+        <!--<cache usage="read-only"/>-->
         <id name="zdbID" type="string">
             <column name="fig_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
@@ -99,33 +99,21 @@
             </generator>
         </id>
 
-        <property name="cloneID">
-            <column name="xpatex_probe_feature_zdb_id" not-null="false"/>
-        </property>
+        <many-to-one name="publication" class="org.zfin.publication.Publication" column="xpatex_source_zdb_id" />
+        <many-to-one name="assay" column="xpatex_assay_name" class="org.zfin.expression.ExpressionAssay"/>
+        <many-to-one name="genotypeExperiment" column="xpatex_genox_zdb_id" class="org.zfin.mutant.GenotypeExperiment"/>
 
-        <many-to-one name="publication" class="org.zfin.publication.Publication" column="xpatex_source_zdb_id"
-                     update="false"/>
-
-        <many-to-one name="marker" class="org.zfin.marker.Marker" column="xpatex_gene_zdb_id"/>
-
-        <many-to-one name="probe" class="org.zfin.marker.Marker" column="xpatex_probe_feature_zdb_id" insert="false"
-                     update="false"/>
-
-        <many-to-one name="clone" class="org.zfin.marker.Clone" column="xpatex_probe_feature_zdb_id" insert="false"
-                     update="false"/>
+        <many-to-one name="gene" class="org.zfin.marker.Marker" column="xpatex_gene_zdb_id"/>
+        <many-to-one name="probe" class="org.zfin.marker.Clone" column="xpatex_probe_feature_zdb_id"/>
+        <many-to-one name="antibody" column="xpatex_atb_zdb_id" class="org.zfin.antibody.Antibody"/>
+        <many-to-one name="markerDBLink" column="xpatex_dblink_zdb_id" class="org.zfin.sequence.MarkerDBLink"/>
 
         <set name="expressionResults" lazy="true" inverse="true">
             <key column="xpatres_xpatex_zdb_id"/>
             <one-to-many class="org.zfin.expression.ExpressionResult"/>
         </set>
 
-        <many-to-one name="genotypeExperiment" column="xpatex_genox_zdb_id"
-                     class="org.zfin.mutant.GenotypeExperiment"/>
 
-        <many-to-one name="assay" column="xpatex_assay_name" class="org.zfin.expression.ExpressionAssay"/>
-
-        <many-to-one name="antibody" column="xpatex_atb_zdb_id" class="org.zfin.antibody.Antibody"/>
-        <many-to-one name="markerDBLink" column="xpatex_dblink_zdb_id" class="org.zfin.sequence.MarkerDBLink"/>
     </class>
 
     <class name="org.zfin.expression.ExpressionResult" table="expression_result">
@@ -155,7 +143,7 @@
         <many-to-one name="endStage" class="org.zfin.anatomy.DevelopmentStage"
                      column="xpatres_end_stg_zdb_id"/>
 
-        <set name="figures" table="expression_pattern_figure">
+        <set name="figures" table="expression_pattern_figure" >
             <key column="xpatfig_xpatres_zdb_id"/>
             <many-to-many class="org.zfin.expression.Figure"
                           column="xpatfig_fig_zdb_id"/>
@@ -248,7 +236,7 @@
         from org.zfin.anatomy.DevelopmentStage stage,
              org.zfin.expression.ExpressionResult xpatres,
              org.zfin.expression.ExpressionExperiment xpatex
-        where xpatex.marker.zdbID = :geneZdbID
+        where xpatex.gene.zdbID = :geneZdbID
           and xpatres member of xpatex.expressionResults
           and xpatex.genotypeExperiment.experiment.name in ('_Standard','_Generic-control')
           and xpatex.genotypeExperiment.genotype.wildtype = true

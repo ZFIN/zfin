@@ -67,24 +67,22 @@ public class AntibodyCreateController extends SimpleFormController {
 
         MarkerType mt = mr.getMarkerTypeByName(Marker.Type.ATB.toString());
         newAntibody.setMarkerType(mt);
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
+            HibernateUtil.createTransaction();
 
             mr.createMarker(newAntibody, antibodyPub);
             ir.insertUpdatesTable(newAntibody, "new Antibody", "", currentUser);
             PublicationService.addRecentPublications(getServletContext(),antibodyPub, PublicationSessionKey.ANTIBODY) ;
 
-            tx.commit();
 
+            HibernateUtil.flushAndCommitCurrentSession();
 
-            session.merge(newAntibody);
+            HibernateUtil.currentSession().merge(newAntibody);
             createAntibodyWiki(newAntibody) ;
 
         } catch (Exception e) {
             try {
-                tx.rollback();
+                HibernateUtil.rollbackTransaction();
             } catch (HibernateException he) {
                 LOG.error("Error during roll back of transaction", he);
             }

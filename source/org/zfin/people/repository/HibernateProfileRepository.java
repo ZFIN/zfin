@@ -31,31 +31,6 @@ public class HibernateProfileRepository implements ProfileRepository {
         return person;
     }
 
-    public MarkerSupplier getSupplier(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-        MarkerSupplier supplier = (MarkerSupplier) session.get(MarkerSupplier.class, zdbID);
-        return supplier;
-    }
-
-    public int removeSource(String supplierZdbID, String dataZdbID) {
-        Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery("delete from MarkerSupplier sup where sup.org =:supplierZdbID and sup.dataZdbID=:dataZdbID");
-        query.setParameter("supplierZdbID", supplierZdbID);
-        query.setParameter("dataZdbID", dataZdbID);
-        return query.executeUpdate();
-    }
-
-    public Organization getOrganizationByID(String zdbID) {
-        Session session = currentSession();
-        return (Organization) session.get(Organization.class, zdbID);
-    }
-
-    public void deleteSupplier(MarkerSupplier supplier) {
-        Session session = currentSession();
-        session.delete(supplier);
-
-
-    }
 
     public Organization getOrganizationByName(String name) {
         Session session = currentSession();

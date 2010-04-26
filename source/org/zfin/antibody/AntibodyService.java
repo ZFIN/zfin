@@ -532,7 +532,7 @@ public class AntibodyService {
 
             if (geno.isWildtype() && experiment.isStandard()) {
                 ExpressionAssay assay = exp.getAssay();
-                Marker gene = exp.getMarker();
+                Marker gene = exp.getGene();
 
                 // get a set of ExpressionResult objects
                 Set<ExpressionResult> results = exp.getExpressionResults();

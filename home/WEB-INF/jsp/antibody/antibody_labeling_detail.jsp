@@ -177,7 +177,7 @@
                     <br/>&nbsp;&nbsp;
                     <a href="javascript:collapse()">
                         <img src="/images/up.gif" alt="expand" title="Show first 5 structures" border="0">
-                        Show first</a> 5 lines                      
+                        Show first</a> 5 labeled structures
                 </td>
             </tr>
         </table>

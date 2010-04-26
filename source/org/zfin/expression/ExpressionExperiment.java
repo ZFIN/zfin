@@ -17,16 +17,14 @@ import java.util.Set;
 public class ExpressionExperiment {
 
     private String zdbID;
-    private String cloneID;
-    private String geneID;
     private Publication publication;
-    private Clone clone;
     private Set<ExpressionResult> expressionResults;
     private GenotypeExperiment genotypeExperiment;
-    private Marker marker;
-    private Marker probe;
+    private Marker gene;
+    private Clone probe;
     private ExpressionAssay assay;
     private Antibody antibody;
+    // this markerdblink refers to either the probe or the gene as far as I can tell.  Mostly the gene, though.
     private MarkerDBLink markerDBLink;
 
     public String getZdbID() {
@@ -37,12 +35,20 @@ public class ExpressionExperiment {
         this.zdbID = zdbID;
     }
 
-    public String getGeneID() {
-        return geneID;
-    }
 
-    public void setGeneID(String geneID) {
-        this.geneID = geneID;
+    public int getAlternateKey(){
+        int hash = 1;
+        hash = hash * 31 + publication.hashCode();  // uses zdbID
+        hash = hash * 31 + genotypeExperiment.getZdbID().hashCode();
+        hash = hash * 31 + assay.getName().hashCode();
+        hash = hash * 31 + (probe== null ? 0 : probe.hashCode()); // uses zdbID
+        hash = hash * 31 + (gene== null ? 0 : gene.hashCode());// uses zdbID
+        // dblink
+        hash = hash * 31 + (markerDBLink== null ? 0 : markerDBLink.hashCode());// uses zdbID
+        // atb
+        hash = hash * 31 + (antibody== null ? 0 : antibody.hashCode());// uses zdbID
+
+        return hash;
     }
 
     public Publication getPublication() {
@@ -61,35 +67,19 @@ public class ExpressionExperiment {
         this.expressionResults = expressionResults;
     }
 
-    public Clone getClone() {
-        return clone;
+    public Marker getGene() {
+        return gene;
     }
 
-    public void setClone(Clone clone) {
-        this.clone = clone;
+    public void setGene(Marker gene) {
+        this.gene = gene;
     }
 
-    public String getCloneID() {
-        return cloneID;
-    }
-
-    public void setCloneID(String cloneID) {
-        this.cloneID = cloneID;
-    }
-
-    public Marker getMarker() {
-        return marker;
-    }
-
-    public void setMarker(Marker marker) {
-        this.marker = marker;
-    }
-
-    public Marker getProbe() {
+    public Clone getProbe() {
         return probe;
     }
 
-    public void setProbe(Marker probe) {
+    public void setProbe(Clone probe) {
         this.probe = probe;
     }
 
@@ -155,5 +145,36 @@ public class ExpressionExperiment {
         if (expressionResults == null)
             expressionResults = new HashSet<ExpressionResult>();
         expressionResults.add(newResult);
+    }
+
+    public ExpressionResult getMatchingExpressionResult(ExpressionResult expressionResult) {
+        for(ExpressionResult aExpressionResult:getExpressionResults()){
+            if(false==canMergeExpressionResult(aExpressionResult,expressionResult)){
+                return aExpressionResult ;
+            }
+        }
+        return null ; 
+    }
+
+    /**
+     * Uses alternate key:
+     * experiment, anatomy item, start stage, end stage, expression found, and term
+     * Only term can be null.  Expression found is a boolean.
+     * Since experiment is going ot be moved, we don't really care about that.
+     * @param era First expresion result.
+     * @param erb Second expression result.
+     * @return Indicates if these records are too similar (false) or not (true).
+     */
+    private boolean canMergeExpressionResult(ExpressionResult era,ExpressionResult erb){
+        if(!era.getAnatomyTerm().equals(erb.getAnatomyTerm())) return true ;
+        if(!era.getStartStage().equals(erb.getStartStage())) return true ;
+        if(!era.getEndStage().equals(erb.getEndStage())) return true ;
+        if(!era.isExpressionFound()==erb.isExpressionFound()) return true ;
+        if(era.getSecondaryAnatomyTerm()==null && erb.getSecondaryAnatomyTerm()!=null) return true ;
+        if(era.getSecondaryAnatomyTerm()!=null && erb.getSecondaryAnatomyTerm()==null) return true ;
+        if(era.getSecondaryAnatomyTerm()!=null && erb.getSecondaryAnatomyTerm()!=null &&
+                false==era.getSecondaryAnatomyTerm().equals(erb.getSecondaryAnatomyTerm())) return true ;
+
+        return false ;
     }
 }

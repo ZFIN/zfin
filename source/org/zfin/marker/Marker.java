@@ -1,5 +1,6 @@
 package org.zfin.marker;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
@@ -369,6 +370,8 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
     }
 
     public MarkerAlias getAlias(String aliasString) {
+        if(CollectionUtils.isEmpty(getAliases())) return null ;
+        
         for(MarkerAlias aMarkerAlias: getAliases()){
             if(aMarkerAlias.getAlias().equalsIgnoreCase(aliasString)){
                 return aMarkerAlias ;

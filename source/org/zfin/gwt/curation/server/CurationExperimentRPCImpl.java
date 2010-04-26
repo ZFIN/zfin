@@ -25,6 +25,7 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.util.StageRangeIntersection;
 import org.zfin.gwt.root.util.TermNotFoundException;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
@@ -120,7 +121,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         for (ExpressionExperiment experiment : experiments) {
             ExperimentDTO experimentDTO = new ExperimentDTO();
             experimentDTO.setExperimentZdbID(experiment.getZdbID());
-            Marker gene = experiment.getMarker();
+            Marker gene = experiment.getGene();
             if (gene != null) {
                 experimentDTO.setGene(BODtoConversionService.getMarkerDto(gene));
                 if (experiment.getMarkerDBLink() != null && experiment.getMarkerDBLink().getAccessionNumber() != null) {
@@ -325,7 +326,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         // check which attributes have changed when updating an experiment
         String comment = "updated Experiment";
         // gene
-        Marker oldGene = expressionExperiment.getMarker();
+        Marker oldGene = expressionExperiment.getGene();
         String oldGeneID = null;
         if (oldGene != null)
             oldGeneID = oldGene.getZdbID();
@@ -430,7 +431,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
             if (marker.getType().equals(Marker.Type.EST) ||
                     marker.getType().equals(Marker.Type.CDNA)) {
                 // TOdo: Change to setClone(clone) when clone is subclassed from Marker
-                expressionExperiment.setCloneID(marker.getZdbID());
+                expressionExperiment.setProbe((Clone) marker);
             }
         } else {
             expressionExperiment.setMarkerDBLink(null);
@@ -458,10 +459,10 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         if (geneDto != null && geneDto.getZdbID() != null) {
             MarkerRepository antibodyRep = RepositoryFactory.getMarkerRepository();
             Marker gene = antibodyRep.getMarkerByID(geneDto.getZdbID());
-            expressionExperiment.setMarker(gene);
+            expressionExperiment.setGene(gene);
             experimentDTO.setGene(BODtoConversionService.getMarkerDto(gene));
         } else {
-            expressionExperiment.setMarker(null);
+            expressionExperiment.setGene(null);
         }
 
         Publication pub = pubRepository.getPublication(experimentDTO.getPublicationID());

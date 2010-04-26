@@ -24,6 +24,7 @@ import org.zfin.gwt.root.util.WidgetUtilTest;
 import org.zfin.infrastructure.ActiveDataTest;
 import org.zfin.infrastructure.ActiveSourceTest;
 import org.zfin.marker.MarkerServiceTest;
+import org.zfin.marker.MergeMarkerUnitTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
 import org.zfin.mutant.PhenotypeStructureTest;
@@ -70,6 +71,7 @@ import org.zfin.util.*;
         MatchingTermServiceTest.class,
         Md5PasswordEncoderTest.class,
         MicroarrayParseTest.class,
+        MergeMarkerUnitTest.class,
         MorpholinoStatisticsTest.class,
         OrganizationUrlTest.class,
         OrthologyEvidenceFastSearchTest.class,

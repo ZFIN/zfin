@@ -23,12 +23,12 @@ public class FigureService {
         List<Marker> genes = new ArrayList<Marker>();
         for (ExpressionResult er : figure.getExpressionResults()) {
             ExpressionExperiment ee = er.getExpressionExperiment();
-            Marker marker = ee.getMarker();
+            Marker marker = ee.getGene();
 
             if ((marker != null)
                     && (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM))
                     && !genes.contains(marker)) {
-                genes.add(ee.getMarker());
+                genes.add(ee.getGene());
             }
         }
         Collections.sort(genes);

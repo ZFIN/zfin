@@ -9,6 +9,7 @@ import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.*;
@@ -231,7 +232,7 @@ public class BODtoConversionService implements Serializable {
     public static ExperimentDTO getExperimentDto(ExpressionExperiment experiment) {
         ExperimentDTO experimentDTO = new ExperimentDTO();
         experimentDTO.setExperimentZdbID(experiment.getZdbID());
-        Marker gene = experiment.getMarker();
+        Marker gene = experiment.getGene();
         if (gene != null) {
             experimentDTO.setGene(getMarkerDto(gene));
             if (experiment.getMarkerDBLink() != null && experiment.getMarkerDBLink().getAccessionNumber() != null) {
@@ -255,8 +256,8 @@ public class BODtoConversionService implements Serializable {
         if (expressionResults != null)
             experimentDTO.setNumberOfExpressions(experiment.getDistinctExpressions());
         // check if a clone is available
-        if (StringUtils.isNotEmpty(experiment.getCloneID())) {
-            Marker clone = getMarkerRepository().getMarkerByID(experiment.getCloneID());
+        if (experiment.getProbe()!=null) {
+            Clone clone = getMarkerRepository().getCloneById(experiment.getProbe().getZdbID());
             experimentDTO.setCloneID(clone.getZdbID());
             experimentDTO.setCloneName(clone.getAbbreviation() + " [" + clone.getType().toString() + "]");
         }

@@ -61,7 +61,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "SELECT distinct exp.publication FROM ExpressionExperiment exp, ExpressionResult res, Clone clone   " +
                 "WHERE res.anatomyTerm = :aoTerm " +
                 "AND res.expressionExperiment = exp " +
-                "AND exp.clone = clone " +
+                "AND exp.probe = clone " +
                 "AND clone.rating = 4 " +
                 "AND clone.problem is null";
         Query query = session.createQuery(hql);
@@ -130,7 +130,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "WHERE res.anatomyTerm.zdbID = :aoZdbID " +
                 "AND pub.zdbID = exp.publication.zdbID " +
                 "AND res.expressionExperiment = exp " +
-                "AND marker.zdbID = exp.marker.zdbID " +
+                "AND marker.zdbID = exp.gene.zdbID " +
                 "AND marker.zdbID = :zdbID ";
         Query query = session.createQuery(hql);
         query.setString("zdbID", geneID);
@@ -145,7 +145,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "WHERE res.anatomyTerm.zdbID = :aoZdbID " +
                 "AND res.expressionExperiment = exp " +
                 "AND res.figures is not empty " +
-                "AND exp.marker.zdbID = :zdbID ";
+                "AND exp.gene.zdbID = :zdbID ";
         Query query = session.createQuery(hql);
         query.setString("zdbID", geneID);
         query.setString("aoZdbID", anatomyItemID);
@@ -188,13 +188,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public PaginationResult<HighQualityProbe> getHighQualityProbeNames(AnatomyItem term, int maxRow) {
 
         String hql = "select distinct probe, marker " +
-                "FROM ExpressionExperiment exp, ExpressionResult res, Clone clone, Marker probe, Marker marker " +
+                "FROM ExpressionExperiment exp, ExpressionResult res, Clone probe, Marker marker " +
                 "WHERE  res.anatomyTerm.zdbID = :zdbID " +
                 "AND res.expressionExperiment = exp " +
-                "AND exp.clone = clone " +
                 "AND exp.probe = probe " +
-                "AND exp.marker = marker " +
-                "AND clone.rating = 4 " +
+                "AND exp.gene = marker " +
+                "AND probe.rating = 4 " +
                 "ORDER by marker.abbreviationOrder  ";
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery(hql);
@@ -229,7 +228,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         String hql = "SELECT distinct marker FROM Marker marker, ExpressionResult res  " +
                 "WHERE res.anatomyTerm.zdbID = :zdbID " +
-                "AND res.expressionExperiment.marker.zdbID = marker.zdbID " +
+                "AND res.expressionExperiment.gene.zdbID = marker.zdbID " +
                 "ORDER BY marker.abbreviationOrder";
 
         Query query = session.createQuery(hql);
@@ -343,10 +342,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "AND fig member of res.figures " +
                 "AND res.expressionFound = :expressionFound " +
                 "AND res.expressionExperiment.genotypeExperiment.experiment.name = :condition " +
-                "AND res.expressionExperiment.marker.abbreviation not like :withdrawn " +
+                "AND res.expressionExperiment.gene.abbreviation not like :withdrawn " +
                 "AND not exists ( " +
                 "select 1 from Clone clone where " +
-                "           clone.zdbID = res.expressionExperiment.clone.zdbID AND " +
+                "           clone.zdbID = res.expressionExperiment.probe.zdbID AND " +
                 "           clone.problem  <> :chimeric " +
                 ")";
         Query query = session.createQuery(hql);
@@ -460,7 +459,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         String hql = "select figure from Figure figure, ExpressionExperiment exp, ExpressionResult res " +
                 "where exp.publication.zdbID = :pubID AND " +
-                "      exp.clone.zdbID = :cloneID AND " +
+                "      exp.probe.zdbID = :cloneID AND " +
                 "      res member of exp.expressionResults AND " +
                 "      figure member of res.figures " +
                 "order by figure.orderingLabel   ";
@@ -525,9 +524,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         StringBuilder hql = new StringBuilder("select figure from Figure figure, ExpressionExperiment exp, ");
         hql.append("ExpressionResult res ");
-        hql.append("where exp.marker.zdbID = :geneID AND ");
+        hql.append("where exp.gene.zdbID = :geneID AND ");
         if (clone != null)
-            hql.append("      exp.clone.zdbID = :cloneID AND ");
+            hql.append("      exp.probe.zdbID = :cloneID AND ");
         hql.append("      res member of exp.expressionResults AND ");
         hql.append("      res.expressionFound = :expressionFound  AND ");
         hql.append("      res.anatomyTerm.zdbID = :aoZdbID AND ");
@@ -548,8 +547,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct figure.publication from Figure figure, ExpressionExperiment exp, ExpressionResult res " +
-                "where exp.marker.zdbID = :geneID AND " +
-                "      exp.clone.zdbID = :cloneID AND " +
+                "where exp.gene.zdbID = :geneID AND " +
+                "      exp.probe.zdbID = :cloneID AND " +
                 "      res member of exp.expressionResults AND " +
                 "      res.expressionFound = :expressionFound  AND " +
                 "      res.anatomyTerm.zdbID = :aoZdbID AND " +
@@ -809,7 +808,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "     Genotype geno, GenotypeExperiment genox, Experiment experiment " +
                 "where " +
                 "   marker = :marker AND " +
-                "   exp.marker = marker AND " +
+                "   exp.gene = marker AND " +
                 "   res.expressionExperiment = exp AND " +
                 "   res.anatomyTerm = :aoTerm AND " +
                 "   fig member of res.figures AND " +
@@ -1091,7 +1090,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         Criteria pubs = session.createCriteria(Publication.class);
         Criteria expresssion = pubs.createCriteria("expressionExperiments");
-        expresssion.add(Restrictions.eq("marker", marker));
+        expresssion.add(Restrictions.eq("gene", marker));
         Criteria result = expresssion.createCriteria("expressionResults");
         result.add(Restrictions.isNotEmpty("figures"));
         result.add(Restrictions.eq("anatomyTerm", anatomyTerm));
@@ -1115,7 +1114,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         String hql = "select experiment from ExpressionExperiment experiment" +
-                "       left join experiment.marker as gene " +
+                "       left join experiment.gene as gene " +
                 "     where experiment.publication.zdbID = :pubID " +
                 "    order by gene.abbreviationOrder, " +
                 "             experiment.genotypeExperiment.genotype.nickname, " +
@@ -1174,7 +1173,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         String hql = "select distinct marker from Marker marker, ExpressionExperiment experiment" +
                 "     where experiment.publication.zdbID = :pubID" +
-                "            and experiment.marker = marker " +
+                "            and experiment.gene = marker " +
                 "           and marker.markerType.name = :type  " +
                 "    order by marker.abbreviationOrder ";
         Query query = session.createQuery(hql);
@@ -1189,7 +1188,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         String hql = "select experiment from ExpressionExperiment experiment";
-        hql += "       left join fetch experiment.marker as gene ";
+        hql += "       left join fetch experiment.gene as gene ";
         hql += "       left join fetch experiment.antibody ";
         hql += "       left join fetch experiment.genotypeExperiment ";
         hql += "       left join fetch experiment.genotypeExperiment.experiment ";
@@ -1199,7 +1198,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         hql += "       join fetch experiment.genotypeExperiment.genotype geno";
         hql += "     where experiment.publication.zdbID = :pubID ";
         if (geneZdbID != null)
-            hql += "           and experiment.marker.zdbID = :geneID ";
+            hql += "           and experiment.gene.zdbID = :geneID ";
         if (fishID != null) {
             hql += "           and geno.zdbID = :fishID ";
         }

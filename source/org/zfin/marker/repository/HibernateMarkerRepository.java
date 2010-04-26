@@ -996,7 +996,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 " join ee.expressionResults er " +
                 " join er.figures figs " +
                 " join figs.images ims " +
-                " where ee.marker.zdbID = :geneZdbID ";
+                " where ee.gene.zdbID = :geneZdbID ";
         Query query = currentSession().createQuery(hql);
         query.setString("geneZdbID", gene.getZdbID());
         return (((Number) query.uniqueResult()).longValue() > 0);
@@ -1012,7 +1012,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 " select count( er) from ExpressionExperiment ee " +
                 " join ee.expressionResults er " +
                 " join er.figures figs " +
-                " where ee.marker.zdbID = :geneZdbID ";
+                " where ee.gene.zdbID = :geneZdbID ";
         Query query = currentSession().createQuery(hql);
         query.setString("geneZdbID", gene.getZdbID());
         return (((Number) query.uniqueResult()).longValue() > 0);

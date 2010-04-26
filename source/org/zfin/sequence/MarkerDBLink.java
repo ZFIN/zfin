@@ -46,7 +46,7 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
 //        result += (getZdbID() != null ? getZdbID().hashCode() : 0) * 29;
         result += (getMarker() != null ? getMarker().hashCode() : 0) * 13;
         result += (getAccessionNumber() != null ? getAccessionNumber().hashCode() : 0) * 19;
-        result += (getReferenceDatabase() != null ? getReferenceDatabase().hashCode() : 0) * 17;
+        result += (getReferenceDatabase() != null ? getReferenceDatabase().getZdbID().hashCode() : 0) * 17;
         return result;
     }
 

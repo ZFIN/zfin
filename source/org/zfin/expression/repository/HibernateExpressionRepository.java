@@ -113,7 +113,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String hql = "" +
                 " select count( distinct i) " +
                 " from Image i join i.figure f" +
-                " join f.expressionResults er join er.expressionExperiment ee join ee.clone c join ee.publication p where " +
+                " join f.expressionResults er join er.expressionExperiment ee join ee.probe c join ee.publication p where " +
                 " c.zdbID = :markerZdbID and " +
                 " p.zdbID  = :publicationZdbID ";
         Session session = currentSession();
@@ -127,14 +127,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         String hql1 = "" +
                 "	 select count(distinct figure )," +
-                "		publication.zdbID , clone.zdbID " +
+                "		publication.zdbID , probe.zdbID " +
                 "           from Figure figure join figure.expressionResults  er " +
                 "                join er.expressionExperiment ee " +
                 "                join ee.publication publication " +
-                "                join ee.clone clone " +
-                "           where clone.zdbID = :markerZdbID " +
+                "                join ee.probe probe" +
+                "           where probe.zdbID = :markerZdbID " +
                 "           and publication.type  = :unpublished " +
-                "            group by clone.zdbID , publication.zdbID  ";
+                "            group by probe.zdbID , publication.zdbID  ";
 
         Session session = currentSession();
         Query query1 = session.createQuery(hql1);
@@ -313,13 +313,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         hql += "       left join fetch result.figures ";
         hql += "       left join fetch result.expressionExperiment.genotypeExperiment ";
         hql += "       left join fetch result.expressionExperiment.genotypeExperiment.genotype ";
-        hql += "       left join result.expressionExperiment.marker as gene ";
+        hql += "       left join result.expressionExperiment.gene as gene ";
         if (fishID != null) {
             hql += "       join result.expressionExperiment.genotypeExperiment.genotype geno";
         }
         hql += "     where result.expressionExperiment.publication.zdbID = :pubID ";
         if (geneZdbID != null)
-            hql += "           and result.expressionExperiment.marker.zdbID = :geneID ";
+            hql += "           and result.expressionExperiment.gene.zdbID = :geneID ";
         if (fishID != null)
             hql += "           and geno.zdbID = :fishID ";
         if (figureID != null)

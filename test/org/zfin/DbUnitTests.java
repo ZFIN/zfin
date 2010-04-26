@@ -5,14 +5,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
-import org.zfin.datatransfer.doi.DOITest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.gwt.curation.ui.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.infrastructure.EnumValidationTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
-import org.zfin.marker.MergeMarkerTest;
+import org.zfin.marker.MergeMarkerDBTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.MutantRepositoryTest;
@@ -48,7 +47,7 @@ import org.zfin.util.BODtoConversionServiceTest;
         CurationRPCTest.class,
         InfrastructureRepositoryTest.class,
         MarkerRepositoryTest.class,
-        MergeMarkerTest.class,
+        MergeMarkerDBTest.class,
         TranscriptServiceTest.class,
         OrthologyTest.class,
         MutantRepositoryTest.class,
