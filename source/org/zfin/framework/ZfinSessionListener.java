@@ -107,6 +107,7 @@ public class ZfinSessionListener implements HttpSessionListener, HttpSessionAttr
         ur.createSession(zfinS);
         tx.commit();
         HibernateUtil.closeSession();
+        GBrowseHibernateUtil.closeSession();
     }
 
     // todo: catch exception form hibernate
@@ -127,6 +128,8 @@ public class ZfinSessionListener implements HttpSessionListener, HttpSessionAttr
         ur.updateSession(zfinSession);
         tx.commit();
         HibernateUtil.closeSession();
+        GBrowseHibernateUtil.closeSession();
+
     }
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {

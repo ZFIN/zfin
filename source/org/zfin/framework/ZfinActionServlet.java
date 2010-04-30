@@ -61,6 +61,7 @@ public class ZfinActionServlet extends DispatcherServlet {
             public void run() {
                 WebHostDatabaseStatisticsCache.getInstance().cacheAll();
                 HibernateUtil.closeSession();
+                GBrowseHibernateUtil.closeSession();
             }
         };
         t.start();

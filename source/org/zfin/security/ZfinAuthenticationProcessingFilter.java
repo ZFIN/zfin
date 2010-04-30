@@ -5,6 +5,7 @@ import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.zfin.framework.GBrowseHibernateUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.ZfinSession;
 import org.zfin.people.AccountInfo;
@@ -117,6 +118,8 @@ public class ZfinAuthenticationProcessingFilter extends AuthenticationProcessing
 */
         tx.commit();
         HibernateUtil.closeSession();
+        GBrowseHibernateUtil.closeSession();
+        
 
     }
 
