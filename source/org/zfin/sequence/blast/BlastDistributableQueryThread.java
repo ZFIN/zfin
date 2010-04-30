@@ -1,6 +1,7 @@
 package org.zfin.sequence.blast;
 
 import org.apache.log4j.Logger;
+import org.zfin.framework.GBrowseHibernateUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 import org.zfin.sequence.blast.results.BlastOutput;
@@ -106,6 +107,7 @@ public class BlastDistributableQueryThread extends AbstractQueryThread implement
 
             // the thread is done with the database so close the databse connection
             HibernateUtil.closeSession();
+            GBrowseHibernateUtil.closeSession();
 
 
             try {
