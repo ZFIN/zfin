@@ -367,7 +367,10 @@ update term
   where not exists (Select 'x'
 		  from sec_oks
 		  where term_ont_id = sec_id) 
-  and term_is_secondary = 't';
+  and term_is_secondary = 't'
+  and exists (Select 'x' from tmp_term_onto_with_dups
+    	       	       where term_id = term_ont_id
+		       and term_ontology = term_onto);
 
 !echo "now deal with relationships" ;
 
