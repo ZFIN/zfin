@@ -355,22 +355,17 @@ unload to term_no_longer_secondary.txt
     where term_is_secondary = 't'
     and not exists (Select 'x'
 		  from sec_oks
-		  where term_ont_id = sec_id) 
-    and exists (Select 'x' from tmp_term_onto_with_dups
-    	       	       where term_id = term_ont_id
-		       and term_ontology = term_onto);
-
+		  where term_ont_id = sec_id);
+ 
 --set these back to primary for now
 
-update term
-  set term_is_secondary = 'f'
-  where not exists (Select 'x'
-		  from sec_oks
-		  where term_ont_id = sec_id) 
-  and term_is_secondary = 't'
-  and exists (Select 'x' from tmp_term_onto_with_dups
-    	       	       where term_id = term_ont_id
-		       and term_ontology = term_onto);
+--update term
+--  set term_is_secondary = 'f'
+--  where not exists (Select 'x'
+--		  from sec_oks
+--		  where term_ont_id = sec_id) 
+--  and term_is_secondary = 't' 
+
 
 !echo "now deal with relationships" ;
 
