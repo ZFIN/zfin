@@ -223,6 +223,25 @@ EFFECTS
                  <?/MISQL>
             </select>
             </td>
+          <?MIELSE>
+             <?MIBLOCK COND="$(XST,$featcur_reln_add_relation)">
+                 <?MISQL SQL="
+                        select distinct mrkr_zdb_id,mrkr_abbrev, mrkr_abbrev_order 
+                        from marker, feature_marker_relationship_type,
+                        marker_relationship_type, marker_type_group_member,
+                        record_attribution
+                        where mrkr_zdb_id = recattrib_data_zdb_id
+                        and recattrib_source_zdb_id='$OID'
+                        and mrkr_type=mtgrpmem_mrkr_type
+                        and  ((mtgrpmem_mrkr_type_group=mreltype_mrkr_type_group_2 and  mreltype_name='$featcur_reln_add_relation') or (mtgrpmem_mrkr_type_group=fmreltype_mrkr_type_group
+                        and fmreltype_name = '$featcur_reln_add_relation'))
+                        order by 3;">
+                        <option value="$1"
+                            $(IF,$(AND,$(XST,$featcur_reln_add_marker),$(EC,$featcur_reln_add_marker,$1)),SELECTED)>$2</option>
+                 <?/MISQL>
+            </select>
+            </td>
+           <?/MIBLOCK>
             <?/MIBLOCK>
             <tr>
             <td>
