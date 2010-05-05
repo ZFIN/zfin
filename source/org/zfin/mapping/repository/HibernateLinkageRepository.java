@@ -134,11 +134,11 @@ public class HibernateLinkageRepository implements LinkageRepository {
                 "select l.lg" +
                         "  from Linkage l join l.linkageMemberFeatures as lf, FeatureMarkerRelationship fmr " +
                         " where fmr.marker.zdbID = :zdbId " +
-                        "   and fmr.featureZdbId = lf.zdbID " +
+                        "   and fmr.feature.zdbID = lf.zdbID " +
                         "   and fmr.type = :relationship ");
 
         query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("relationship", FeatureMarkerRelationship.IS_ALLELE_OF);
+        query.setParameter("relationship", FeatureMarkerRelationship.Type.IS_ALLELE_OF);
         lgList.addAll(query.list());
 
         return lgList;
