@@ -56,15 +56,7 @@
 
     </class>
 
-    <class name="MappedDeletion" table="mapped_deletion">
-        <id name="zdbID" type="string" column="mapdel_zdb_id"/>
-        <many-to-one name="marker" column="marker_id" class="org.zfin.marker.Marker" not-null="true"/>
-        <property name="allele" column="allele" type="string"/>
-        <property name="present" column="present_t" type="boolean"/>
-        <many-to-one name="submitter" column="submitter" class="org.zfin.people.Person"/>
-        <many-to-one name="owner" column="owner" class="org.zfin.people.Person"/>
-        <property name="lg" column="or_lg" type="string"/>
-    </class>
+    
 
 </hibernate-mapping>
 
