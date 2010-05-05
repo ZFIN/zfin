@@ -44,7 +44,7 @@ public class FeatureDetailController extends AbstractCommandController {
         form.setFeature(feature);
         retrieveGenoData(feature, form);
         retrievePubData(feature, form);
-        retrieveMarkerData(feature, form);
+    //    retrieveMarkerData(feature, form);
 
         ModelAndView modelAndView;
         modelAndView = new ModelAndView("feature-detail.page", LookupStrings.FORM_BEAN, form);
@@ -68,12 +68,18 @@ public class FeatureDetailController extends AbstractCommandController {
     }
 
     //this is to get the affected marker (markers that have 'is allele of relationships' with features. We need this to get Map locations
-    private void retrieveMarkerData(Feature fr, FeatureBean form) {
+   /* private void retrieveMarkerData(Feature fr, FeatureBean form) {
         Marker marker = RepositoryFactory.getMutantRepository().getMarkerbyFeature(fr);
         if (marker != null) {
             form.setMappedMarkerBean(MarkerService.getMappedMarkers(marker));
         }
     }
+    private void retrieveMarkerPresent(Feature fr, FeatureBean form) {
+        Marker marker = RepositoryFactory.getMutantRepository().getMarkerPresent(fr);
+        if (marker != null) {
+            form.setMappedMarkerBean(MarkerService.getMappedMarkers(marker));
+        }
+    }*/
 
     private List<FeatGenoStatistics> createGenotypeStats(List<Genotype> genotypes, Feature fr) {
         if (genotypes == null || fr == null)
