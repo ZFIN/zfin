@@ -132,7 +132,7 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
             throw new org.zfin.gwt.root.util.TermNotFoundException("No Term or publication provided");
 
         LOG.info("Request: Create Composed term: " + expressedTerm.getDisplayName());
-        if (getPhenotypeRepository().isPhenotypePileStructureExists(expressedTerm, publicationID)) {
+        if (getPhenotypeRepository().isPhenotypeOnPile(expressedTerm, publicationID)) {
             PileStructureExistsException exception = new PileStructureExistsException(expressedTerm);
             LOG.info(exception.getMessage());
             throw exception;

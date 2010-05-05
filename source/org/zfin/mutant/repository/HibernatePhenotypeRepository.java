@@ -58,20 +58,22 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Publication pub = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
         structure.setPublication(pub);
         structure.setDate(new Date());
-        if (isPhenotypeStructureOnPile(structure))
+        if (isPhenotypeOnPile(structure))
             return;
         structure.setPerson(Person.getCurrentSecurityUser());
         Session session = HibernateUtil.currentSession();
         session.save(structure);
     }
 
-    public boolean isPhenotypeStructureOnPile(PhenotypeStructure structure) {
+    public boolean isPhenotypeOnPile(PhenotypeStructure structure) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select structure from PhenotypeStructure as structure where " +
                 "       structure.superterm.ID = :supertermID";
         if (structure.getSubterm() != null)
             hql += " AND structure.subterm.ID = :subtermID ";
+        else
+            hql += " AND structure.subterm.ID is null ";
         hql += " AND structure.quality.ID = :qualityID ";
         hql += " AND structure.tag = :tag ";
         hql += " AND structure.publication.zdbID = :publicationID ";
@@ -95,12 +97,14 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @param publicationID Publication
      * @return boolean
      */
-    public boolean isPhenotypePileStructureExists(PhenotypeTermDTO phenotypeTerm, String publicationID) {
+    public boolean isPhenotypeOnPile(PhenotypeTermDTO phenotypeTerm, String publicationID) {
         Session session = HibernateUtil.currentSession();
         String hql = "select structure from PhenotypeStructure as structure where " +
                 "       structure.superterm.termName = :supertermName";
         if (phenotypeTerm.getSubterm() != null)
             hql += " AND structure.subterm.termName = :subtermName ";
+        else
+            hql += " AND structure.subterm.ID is null ";
         hql += " AND structure.quality.termName = :qualityName ";
         hql += " AND structure.publication.zdbID = :publicationID ";
         hql += " AND structure.tag = :tag ";

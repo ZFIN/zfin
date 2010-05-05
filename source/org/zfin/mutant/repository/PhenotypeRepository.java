@@ -39,7 +39,7 @@ public interface PhenotypeRepository {
      * @param publicationID Publication
      * @return boolean
      */
-    boolean isPhenotypePileStructureExists(PhenotypeTermDTO phenotypeTerm, String publicationID);
+    boolean isPhenotypeOnPile(PhenotypeTermDTO phenotypeTerm, String publicationID);
 
     /**
      * Check if a given Phenotype Structure already exists on the pile
@@ -47,7 +47,7 @@ public interface PhenotypeRepository {
      * @param structure Phenotype structure
      * @return boolean
      */
-    public boolean isPhenotypeStructureOnPile(PhenotypeStructure structure);
+    public boolean isPhenotypeOnPile(PhenotypeStructure structure);
 
     /**
      * Retrieve a phenotype structure by given primary key.

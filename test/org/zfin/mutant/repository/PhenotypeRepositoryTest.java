@@ -82,7 +82,8 @@ public class PhenotypeRepositoryTest {
         PhenotypeTermDTO term = new PhenotypeTermDTO();
         term.setSuperterm(superterm);
         term.setQuality(quality);
-        boolean exists = phenotypeRep.isPhenotypePileStructureExists(term, publicationID);
+        term.setTag(Phenotype.Tag.ABNORMAL.toString());
+        boolean exists = phenotypeRep.isPhenotypeOnPile(term, publicationID);
         assertTrue(exists);
     }
 
@@ -155,7 +156,7 @@ public class PhenotypeRepositoryTest {
     public void checkIfPhenotypeStructureExists() {
         PhenotypeStructure structure = new PhenotypeStructure();
         structure.setTag(Phenotype.Tag.ABNORMAL);
-        boolean exists = getPhenotypeRepository().isPhenotypeStructureOnPile(structure);
+        boolean exists = getPhenotypeRepository().isPhenotypeOnPile(structure);
         assertTrue(exists);
     }
 
