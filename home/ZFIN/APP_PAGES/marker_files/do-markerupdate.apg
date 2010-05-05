@@ -84,12 +84,6 @@ marker.<?/MIVAR>
      when delete a marker missing or marker present record
   <?/MICOMMENT>
 
-  <?MIBLOCK COND="$(EC,$attr_type,marker-deletion)">
-      <?MISQL SQL="
-	delete from mapped_deletion where mapdel_zdb_id = '$old_value';">
-      <?/MISQL>
-  <?/MIBLOCK>
-
   <?MIBLOCK COND="$(EC,$attr_type,special-updateseqnum)">
     <?MISQL SQL="select fdb_db_name, dblink_acc_num, dblink_length, fdbdt_data_type
                  from db_link, foreign_db_contains, foreign_db, foreign_db_data_type
@@ -609,24 +603,6 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
       <?/MISQL>	
       <?/MIBLOCK>
    
-      <?MIBLOCK COND="$(EC,$info,deletionmarker)">
-         <?MISQL SQL="
-	    select mapdel_zdb_id, mrkr_zdb_id
- 	      from marker, mapped_deletion, feature
-	     where mrkr_abbrev = '$old_value'
-	       and mrkr_zdb_id = marker_id
-	       and feature_zdb_id = '$OID'
-               and feature_abbrev = allele	
-	     ;">
-	    <?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
-  	    <!--save the real OID, and tempararily set OID to be
-	          the mapdel zdb id for attribution -->
-            <?MIVAR NAME=saveOID>$OID<?/MIVAR>
-	    <?MIVAR>$(SETVAR,$OID,$2)<?/MIVAR>
-
-         <?/MISQL>	
-      <?/MIBLOCK>
-
       <!-- add attribution-->
       <?MIBLOCK COND="$(AND,$(EC,$attr,recattrib),$(NE,$info,mrel),$(NE,$info,seqacc))">
 

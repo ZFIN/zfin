@@ -232,18 +232,6 @@ function make_correction(mrkr_id,old_v,attr) {
       <?MIVAR NAME=$info>related<?/MIVAR>
       <?MIVAR NAME=$selector>aa-pubselect2.apg<?/MIVAR>
     <?/MIBLOCK>
-
-    <?MIBLOCK COND="$(EC,$attr,map_del)">
-      <?MIVAR NAME=$select_from>marker<?/MIVAR>
-      <?MIVAR NAME=$action>insert_marker<?/MIVAR>
-      <?MIVAR NAME=$fill_field>marker_id<?/MIVAR>
-      <?MIVAR NAME=$fill_table>mapped_deletion<?/MIVAR>
-      <?MIVAR NAME=$jump_to>markers_missing<?/MIVAR>
-      <?MIVAR NAME=$info COND="$(EC,$print_name,missing)">f<?/MIVAR>
-      <?MIVAR NAME=$info COND="$(EC,$print_name,present)">t<?/MIVAR>
-      <?MIVAR NAME=$selector>aa-markerselect.apg<?/MIVAR>
-    <?/MIBLOCK>
-
     <!-- NOW CREATE THE NEW RETURN RECORD -->
     <?MISQL SQL="
       insert into return_recs 
