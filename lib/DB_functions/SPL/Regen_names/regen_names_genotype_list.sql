@@ -118,9 +118,11 @@ create procedure regen_names_genotype_list()
 
   insert into regen_geno_related_gene_zdb_id_temp
        select fmrel_mrkr_zdb_id, rgnz_zdb_id
-         from regen_zdb_id_temp, feature_marker_relationship, genotype_feature
+         from regen_zdb_id_temp, feature_marker_relationship, genotype_feature, feature_marker_relationship_type
         where genofeat_geno_zdb_id = rgnz_zdb_id
           and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+          and fmrel_type=fmreltype_name
+          and fmreltype_produces_affected_marker='t'
           and fmrel_type = "is allele of";
 
   insert into regen_geno_related_gene_zdb_id_temp
@@ -132,13 +134,6 @@ create procedure regen_names_genotype_list()
           and fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id
           and mrel_type in ("promoter of", "coding sequence of");
 
-  insert into regen_geno_related_gene_zdb_id_temp
-       select marker_id, rgnz_zdb_id
-         from regen_zdb_id_temp, feature, genotype_feature,mapped_deletion         
-        where genofeat_geno_zdb_id = rgnz_zdb_id
-          and genofeat_feature_zdb_id = feature_zdb_id
-          and feature_name = allele
-          and present_t = "f";
 
 --  create temp table regen_geno_related_gene_zdb_id_distinct_temp
 --    (

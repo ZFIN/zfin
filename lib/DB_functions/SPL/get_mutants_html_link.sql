@@ -29,19 +29,15 @@ create function get_mutants_html_link
 
 	select count(distinct fmrel_ftr_zdb_id) :: integer 
 	  into ftrCount
-     	  from feature_marker_relationship, feature
+     	  from feature_marker_relationship, feature, feature_marker_relationship_type
          where fmrel_mrkr_zdb_id = geneZdbId
            and fmrel_ftr_zdb_id = feature_zdb_id
-           and fmrel_type = 'is allele of';
+           and fmrel_type=fmreltype_name
+           and fmreltype_produces_affected_marker='t';
 
 	-- count in allele that knock out the gene
-	select count(distinct allele) :: integer
-	  into ftrCount_2
-	  from mapped_deletion
-	 where present_t = 'f'
-           and marker_id = geneZdbId;
 
-	let ftrCount = ftrCount + ftrCount_2;
+	let ftrCount = ftrCount; 
 
         select count(distinct genofeat_geno_zdb_id) :: integer 
 	   into genoCount
@@ -59,28 +55,8 @@ create function get_mutants_html_link
             	   and fmrel_type = 'is allele of';
 	end if 
 
-	select count(distinct genofeat_geno_zdb_id) :: integer 
-	   into genoCount_2
-           from mapped_deletion, feature, genotype_feature
-          where present_t = 'f'
-            and marker_id = geneZdbId
-            and allele = feature_name
-            and feature_zdb_id = genofeat_feature_zdb_id;
 
- 	-- is_allele_of relationship and missing gene relation is
-        -- mutually exclusive, so we won't be overwritten the value here.
-	if ( genoCount_2 == 1 ) then 
-
-	 	select genofeat_geno_zdb_id
-	   	  into genoZdbId
-          	  from mapped_deletion, feature, genotype_feature
-          	 where present_t = 'f'
-            	   and marker_id = geneZdbId
-           	   and allele = feature_name
-           	    and feature_zdb_id = genofeat_feature_zdb_id;
-	end if
-
-	let genoCount = genoCount + genoCount_2;
+	let genoCount = genoCount;
 
  
 	if (ftrCount > 1) then

@@ -35,6 +35,7 @@ foreach
      and fmrel_ftr_zdb_id = feature_zdb_id
      and fmrel_mrkr_zdb_id = mrkr_zdb_id
      and fmrel_type not like "contains%"
+     and fmrel_type not like "markers%"
      
 
   if (featName is null) then

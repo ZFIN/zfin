@@ -175,11 +175,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from linkage_pair
       where lnkgpair_zdb_id = zdbId;
-  elif (objType = "MAPDEL") then
-    select allele
-      into objName
-      from mapped_deletion
-      where mapdel_zdb_id = zdbId;
   elif (objType = "MM") then
     select zdb_id		-- don't have names, use ZDB ID
       into objName

@@ -14,8 +14,7 @@ create procedure p_update_fmrel_genotype_names (vNewZDBid varchar(50),
 	then 
   	  let vDataType = 'feature' ;
 
-	elif get_obj_type(vOldZDBid) != 'ALT'
-        then
+	else
 	  let vDataType = 'marker' ;
 
 	end if ; -- end if get_obj_type = 'ALT'
@@ -44,9 +43,11 @@ create procedure p_update_fmrel_genotype_names (vNewZDBid varchar(50),
 					vNewFtrAbbrev),
 			replace(geno_handle,vOldFtrAbbrev,vNewFtrAbbrev))
 		  where exists (Select 'x'
-				  from genotype_feature
+				  from genotype_feature,feature_marker_relationship
 				  where genofeat_geno_zdb_id = geno_zdb_id
-				  and genofeat_feature_zdb_id = vNewZDBid);
+				  and genofeat_feature_zdb_id = vNewZDBid
+				  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id)
+                 ;
 
 	  end if ; -- end if vGenotypeFtrCount > 0
 

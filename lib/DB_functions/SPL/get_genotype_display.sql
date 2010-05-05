@@ -48,7 +48,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
               zyg_allele_display, 
               feature_abbrev,
               ftrtype_significance              
-         into featAbbrevHtml, zygPrefix, zygAllele, featAbbrev, featSig
+          into featAbbrevHtml, zygPrefix, zygAllele, featAbbrev, featSig
          from feature, genotype_feature, zygocity, feature_type
         where genofeat_geno_zdb_id = genoZdbId
           and genofeat_feature_zdb_id = feature_zdb_id
