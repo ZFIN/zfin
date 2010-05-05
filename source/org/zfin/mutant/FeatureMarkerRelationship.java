@@ -2,6 +2,7 @@ package org.zfin.mutant;
 
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationshipType;
 import org.zfin.publication.Publication;
 
 import java.util.HashSet;
@@ -12,19 +13,67 @@ import java.util.Set;
  * map as string for now
  */
 
-public class FeatureMarkerRelationship {
+public class FeatureMarkerRelationship implements Comparable {
 
     private String zdbID;
-    private String type;
-    private String featureZdbId;
-    private Marker marker;
-    private Set<PublicationAttribution> publications;
+    private Type type;
+    private Feature feature;
+     private Marker marker;
+     private Set<PublicationAttribution> publications;
+    private FeatureMarkerRelationshipType featureMarkerRelationshipType;
 
 
-    public static final String IS_ALLELE_OF = "is allele of";
-    public static final String CONTAINS_SEQUENCE_FEATURE = "contains phenotypic sequence feature";
-    public static final String CONTAINS_INNOCSEQUENCE_FEATURE = "contains innocuous sequence feature";
+    public Feature getFeature() {
+        return feature;
+    }
 
+    public void setFeature(Feature feature) {
+        this.feature = feature;
+    }
+
+      public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+       public enum Type {
+
+        IS_ALLELE_OF("is allele of"),
+    CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE("contains phenotypic sequence feature"),
+     CONTAINS_INNOCUOUS_SEQUENCE_FEATURE("contains innocuous sequence feature"),
+     MARKERS_MISSING("markers missing"),
+           MARKERS_MOVED("markers moved"),
+           MARKERS_PRESENT("markers present");
+
+        private final String value;
+
+        Type(String value) {
+            this.value = value;
+        }
+
+        public String toString() {
+            return value;
+        }
+
+        public static Type getType(String type) {
+            for (Type t : values()) {
+                if (t.toString().equals(type))
+                    return t;
+            }
+            throw new RuntimeException("No MarkerRelationship type of string " + type + " found.");
+        }
+    }
+
+    public FeatureMarkerRelationshipType getFeatureMarkerRelationshipType() {
+        return featureMarkerRelationshipType;
+    }
+
+    public void setFeatureMarkerRelationshipType(FeatureMarkerRelationshipType featureMarkerRelationshipType) {
+        this.featureMarkerRelationshipType = featureMarkerRelationshipType;
+    }
 
     public String getZdbID() {
         return zdbID;
@@ -34,21 +83,9 @@ public class FeatureMarkerRelationship {
         this.zdbID = zdbID;
     }
 
-    public String getType() {
-        return type;
-    }
+   
 
-    public void setType(String type) {
-        this.type = type;
-    }
 
-    public String getFeatureZdbId() {
-        return featureZdbId;
-    }
-
-    public void setFeatureZdbId(String featureZdbId) {
-        this.featureZdbId = featureZdbId;
-    }
 
     public Marker getMarker() {
         return marker;
@@ -63,7 +100,7 @@ public class FeatureMarkerRelationship {
         return "FeatureMarkerRelationship{" +
                 "zdbID='" + zdbID + '\'' +
                 ", type='" + type + '\'' +
-                ", featureZdbId='" + featureZdbId + '\'' +
+                ", feature='" + feature + '\'' +
                 ", marker=" + marker +
 //                ", feature=" + feature +
                 '}';
@@ -92,6 +129,9 @@ public class FeatureMarkerRelationship {
                 return pubAttr.getPublication();
         }
         return null;
+    }
+   public int compareTo(Object anotherMarkerRelationship) {
+        return marker.compareTo(((FeatureMarkerRelationship) anotherMarkerRelationship).getMarker());
     }
 }
 

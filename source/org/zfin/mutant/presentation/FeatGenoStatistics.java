@@ -12,10 +12,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class FeatGenoStatistics {
 
@@ -168,17 +165,21 @@ public class FeatGenoStatistics {
         for (GenotypeFeature feat : features) {
             Feature feature = feat.getFeature();
             Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
-            for (FeatureMarkerRelationship rel : rels) {
-                Marker marker = rel.getMarker();
+            SortedSet<FeatureMarkerRelationship> affectedGenes = new TreeSet<FeatureMarkerRelationship>();
+        for (FeatureMarkerRelationship ftrmrkrRelation : rels) {
+            if (ftrmrkrRelation != null)
+                if (ftrmrkrRelation.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
+                    affectedGenes.add(ftrmrkrRelation);
+                }
+        }
+            for (FeatureMarkerRelationship rel : affectedGenes) {
+                 Marker marker = rel.getMarker();
                 // Only add true genes
                 if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                     markers.add(marker);
                 }
             }
-            List<Marker> mkr = RepositoryFactory.getMutantRepository().getDeletedMarker(feature);
-            if (mkr != null)
-                for (Marker mark : mkr)
-                    markers.add(mark);
+  
         }
         return markers;
     }
