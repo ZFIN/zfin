@@ -31,11 +31,12 @@ FILE: mappingdetail.apg
   $OID unexpectedly when doing webexplode of mini mode within the same page.
 <?/MICOMMENT>  
 
-<?MIBLOCK COND="$(OR,$(EC,$mapdetails_mode,mini),$(EC,$mapdetails_mode,mini_slim))">
+<?MIBLOCK COND="$(OR,$(EC,$mapdetails_mode,mini),$(EC,$mapdetails_mode,mini_slim),$(EC,$mapdetails_mode,nodetail))">
 
 <?MIVAR COND="$(NXST,$split)" NAME=$split>&nbsp;<?/MIVAR>
 <?MIVAR COND="$(NXST,$hide_empty)" NAME=$hide_empty>f<?/MIVAR>
 
+<?MIVAR NAME=detail>t<?/MIVAR>
 <?MIVAR COND="$(EC,$split,space)" NAME=$split>&nbsp;<?/MIVAR>
 <?MIVAR COND="$(EC,$split,break)" NAME=$split><br><?/MIVAR>
 
@@ -79,7 +80,7 @@ FILE: mappingdetail.apg
 	select fmrel_mrkr_zdb_id
 	  from feature_marker_relationship
 	 where fmrel_ftr_zdb_id = '$oID'
-	   and fmrel_type = 'is allele of'; ">
+	   and fmrel_type in ('is allele of', 'markers present', 'markers missing'); ">
 	<?MIVAR>$(SETVAR,$GNID,$1)<?/MIVAR>
    <?/MISQL>
 
@@ -133,19 +134,6 @@ FILE: mappingdetail.apg
 			    'clone contains small segment')
 	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
 
-       UNION 
-	SELECT or_lg
-	  FROM mapped_deletion, feature
-	 WHERE feature_name = allele
-           AND feature_zdb_id = '$FID'
-         
-       UNION
- 	SELECT or_lg
-          FROM mapped_deletion, feature, feature_marker_relationship
-	 WHERE feature_name = allele
- 	   AND feature_zdb_id = fmrel_ftr_zdb_id
-	   AND fmrel_type = 'is allele of' 
-           AND fmrel_mrkr_zdb_id = '$GNID'
 
 	order by 1
       ;">
@@ -155,7 +143,7 @@ FILE: mappingdetail.apg
        but more in mapping detail page.
      <?/MICOMMENT>
 
-     <?MIVAR COND="$(AND,$(EC,$MI_CURRENTROW,1),$(NC,$mapdetails_mode,mini_slim))">
+     <?MIVAR COND="$(AND,$(EC,$MI_CURRENTROW,1),$(NC,$mapdetails_mode,mini_slim),$(NC,$mapdetails_mode,nodetail))">
 	LG:
      <?/MIVAR>
      <?MIVAR COND="$(AND,$(>,$MI_CURRENTROW,1),$(NC,$last,0),$(NC,$1,$last))">,<?/MIVAR>
@@ -167,7 +155,6 @@ FILE: mappingdetail.apg
   <?/MISQL>
   <?MIVAR NAME=$the_lg>$1<?/MIVAR>
   <?MIVAR NAME=$map_count>$MI_ROWCOUNT<?/MIVAR>
-
 
   <?MIVAR COND="$(EC,$last,0)">&nbsp;<font size=-1>Unknown</font><?/MIVAR>
 
@@ -186,14 +173,22 @@ FILE: mappingdetail.apg
 
 <?/MIBLOCK>
 
+<?MIVAR COND="$(EC,$mapdetails_mode,nodetail)">
+	$(SETVAR,$detail,f)
+<?/MIVAR>
 <?MIBLOCK COND="$(OR,$(XST,$lg_list),$(>,$map_count,0))">
  <?MICOMMENT>added code for SNP<?/MICOMMENT>
  <?MIBLOCK COND="$(XST,$snpID)">
     <?MIVAR>&nbsp;<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$snpID">Details</A><?/MIVAR>
  <?MIELSE COND="$(NXST,$snpID)">
+   <?MIBLOCK COND="$(EC,$detail,t)">
     <?MIVAR>&nbsp;<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$oID">Details</A><?/MIVAR>
+    <?/MIBLOCK>
  <?/MIBLOCK>
 <?MIVAR COND="$(EC,$mapdetails_mode,mini_slim)">
+	$(SETVAR,$viewmap,f)
+<?/MIVAR>
+<?MIVAR COND="$(EC,$mapdetails_mode,nodetail)">
 	$(SETVAR,$viewmap,f)
 <?/MIVAR>
 <?MICOMMENT>
@@ -314,7 +309,6 @@ marker = '';
   <?MICOMMENT>------------Convert to gene Id, if exist -----------<?/MICOMMENT>
 
   <?MIVAR NAME=$MID>$OID<?/MIVAR>
-
   <?MISQL COND="$(>,$(POSITION,$OID,ALT),0)" SQL="
 	select fmrel_mrkr_zdb_id
 	  from feature_marker_relationship
@@ -385,8 +379,6 @@ marker = '';
 
   <?MIVAR COND="$(XST,$reserved_mrkr_abbrev)">$(SETVAR,$mrkr_abbrev,$reserved_mrkr_abbrev)<?/MIVAR>
 
-
-  <?MICOMMENT>------------ Name titles ---------------------------<?/MICOMMENT>
  <TR><TD colspan=2>
  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
       <?MIVAR>
@@ -413,14 +405,11 @@ marker = '';
 			  (select lnkgmem_member_zdb_id 
 			     from linkage_member, linkage
 			    where lnkg_zdb_id = lnkgmem_linkage_zdb_id)
-		    or feature_abbrev in 
-			  (select allele
-			     from mapped_deletion  )			    	
                        ) ;">
         <?MIVAR NAME=$allele_id>$1<?/MIVAR>
 	<?MIVAR NAME=$allele_name>$2<?/MIVAR>
         <?MIVAR NAME=$allele_abbrev>$3<?/MIVAR>
-	<TR><TD><b>Allele <i>$allele_abbrev</i> corresponding to gene <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_abbrev</A></i> </b> 
+	<TR><TD><b>Genomic Feature <i>$allele_abbrev</i> corresponding to gene <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_abbrev</A></i> </b> 
         </TD></TR>
 
 	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$allele_id&name=$allele_name&abbrev=$allele_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
@@ -430,8 +419,7 @@ marker = '';
   <?/MIBLOCK>
 
 
-
-  <?MIBLOCK COND="$(>,$(POSITION,$OID,ALT),0)">
+  <?MIBLOCK COND="$(!=,$(POSITION,$OID,ALT),0)">
 	<?MISQL SQL="
 		select feature_name, feature_abbrev
 		  from feature
@@ -441,7 +429,7 @@ marker = '';
         <?/MISQL>
 
 	<?MIVAR>
-	  <b> Allele Name: &nbsp; <b> $allele_name </b><br>
+	  <b> Genomic Feature Name: &nbsp; <i><a href=/action/feature/detail?feature.zdbID=$OID>$allele_name </b><i></a><br>
           
 	<?/MIVAR>
 
@@ -550,109 +538,175 @@ marker = '';
 		  from feature 
                  where feature_zdb_id='$detOID';"><?/MISQL>
 	 <?MIVAR NAME=mpdl_ftr_type>$1<?/MIVAR>
-
+<?MISQL SQL="select a.mrkr_abbrev
+		from  marker a, feature_marker_relationship b, feature c 
+		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
+                and b.fmrel_type in ('markers present', 'markers missing', 'markers moved')
+                and b.fmrel_ftr_zdb_id=c.feature_zdb_id
+		and c.feature_name='$name'"> 
+<?/MISQL>
+<?MIVAR NAME=delcount>$MI_ROWCOUNT<?/MIVAR>
 	 <?MIBLOCK COND="$(OR,$(EC,$mpdl_ftr_type,DEFICIENCY),$(EC,$mpdl_ftr_type,TRANSLOC),$(EC,$mpdl_ftr_type,SEQUENCE_VARIANT))">
+<?MIBLOCK COND="$(!=,0,$delcount)">
 	   <A NAME="markers-missing"></a>
 	
 	   <?MIVAR NAME=$last><?/MIVAR>
 	   <?MIVAR name=marker_present>0<?/MIVAR>
 	   <?MIVAR name=marker_missing>0<?/MIVAR>
 
-	   <?MIBLOCK COND="$(XST,$UPDATE)">
 	      <TR><TD colspan=3> <?MIVAR>
 	      <TABLE width=100%  bgcolor = "$highlight" cellpadding=2>
                                  <?/MIVAR>
+<?MIBLOCK COND="$(EC,$mpdl_ftr_type,TRANSLOC)">
+	      <TR><TD><b> Markers: 
+<?MIELSE>
 	      <TR><TD><b>Deletion Markers: 
-	      <table>
-	      <tr><td>
-		<?MIVAR COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE))">
-		  <form name=mpdt_update>
-    		  <br><b>Add Reference:</b> 
-    		  Symbol:<input type=text name=attrib_delmarker>	
-                  Reference:<input type=text name=attrib_delmarker_pubid>
-    		  <input type=button value="Add" onClick=new_attrib_delmarker(this.form,"$detOID");> 
-		  </form>
-		<?/MIVAR>
-               </td></tr><tr><td>
-
-           <?/MIBLOCK>	
+<?/MIBLOCK>
 
 	   <?MISQL SQL="
-		select b.mrkr_abbrev,a.marker_id,a.present_t,b.mrkr_type, a.mapdel_zdb_id
-		from mapped_deletion a, marker b 
-		where a.marker_id=b.mrkr_zdb_id 
-		and allele='$name' 
-		order by 3,4 ;">
-		
-		<?MIVAR NAME=mrkrZdbId>$2<?/MIVAR>
-		<?MIVAR NAME=mapdelZdbId>$5<?/MIVAR>
-	    <?MIBLOCK COND="$(AND,$(=,$MI_CURRENTROW,1),$(NXST,$UPDATE))">
-	      <TR><TD colspan=3><?MIVAR>
-	      <TABLE width=100%  bgcolor = "$highlight" cellpadding=2>
-                                <?/MIVAR>
-	      <TR><TD><b>Deletion Markers: 
+		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
+		from  marker a, feature_marker_relationship b, feature c 
+		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
+                and b.fmrel_type = 'markers present'
+                and b.fmrel_ftr_zdb_id=c.feature_zdb_id
+		and c.feature_name='$name' 
+		order by 2,3 ;">
+           <?/MISQL>
+<?MIBLOCK COND="$(!=,0,$MI_ROWCOUNT)">
 	      <table>
 	      <tr><td>
+	       <b>Present: &nbsp;</b>
+	     </td>
 
-             <?/MIBLOCK>
+             <td align=left>
+	   <?MISQL SQL="
+		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
+		from  marker a, feature_marker_relationship b, feature c 
+		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
+                and b.fmrel_type = 'markers present'
+                and b.fmrel_ftr_zdb_id=c.feature_zdb_id
+		and c.feature_name='$name' 
+		order by 2,3 ;">
+		
+		<?MIVAR NAME=mrkrZdbId>$2<?/MIVAR>
+		<?MIVAR NAME=fmrelID>$4<?/MIVAR>
 
-	   <?MIBLOCK COND="$(AND,$(NC,$last,$3),$(EC,$3,F))">
-	      <?MIVAR COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE))">
-	       <INPUT TYPE=button value="Add" onClick=doit_marker('missing')> 	   
-	      <?/MIVAR>
+<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">	  
+<?MIVAR>	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+<?MIELSE>
+,
+<?MIVAR>	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+<?/MIBLOCK>
 
-	       <b>Missing:</b>
-	       <?MIVAR name=marker_missing>1<?/MIVAR>
-	    <?/MIBLOCK>
-
-	   <?MIBLOCK COND="$(AND,$(NC,$last,$3),$(EC,$3,t))">
-	     <?MIVAR name=marker_present>1<?/MIVAR>
-	     </td></tr>
-             <tr><td align=left>
-             <?MIVAR>$(SETVAR,$last,)<?/MIVAR><?MICOMMENT>reset $last to control ";" display<?/MICOMMENT>    
-	     <?MIVAR COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE))">	    
-	       <INPUT TYPE=button value="Add" onClick=doit_marker('present')> 
-	     <?/MIVAR>	
-	     <b>Present:</b>
-	   <?/MIBLOCK>
-
-	  $(IF,$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$mapdelZdbId"')>")
-
-	  $(IF, $(AND,$(NXST,$UPDATE),$(NE,$last,)),;)
-	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> 
           <?MICOMMENT>
             we need to save the OID, and set it to the detOID when calling 
             the miniref_display.apg which calls showpubs.apg
           <?/MICOMMENT> 
           <?MIVAR NAME=savedOID>$OID<?/MIVAR>
-	  <?MISQL SQL="select WebExplode(object,'OID=$detOID&dataId=$mapdelZdbId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	  <?MISQL SQL="select WebExplode(object,'OID=$detOID&dataId=$fmrelID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	  <?MIVAR>$(SETVAR,$OID,$savedOID)<?/MIVAR>
+	  <?/MISQL>
+<?/MIBLOCK>
+<tr>
+	   <?MISQL SQL="
+		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
+		from  marker a, feature_marker_relationship b, feature c 
+		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
+                and b.fmrel_type = 'markers missing'
+                and b.fmrel_ftr_zdb_id=c.feature_zdb_id
+		and c.feature_name='$name' 
+		order by 2,3 ;">
+            <?/MISQL>
+<?MIBLOCK COND="$(!=,0,$MI_ROWCOUNT)">
+	      <table>
+	      <tr><td>
+	       <b>Missing: &nbsp;</b>
+	     </td>
+             <td align=left>
+	   <?MISQL SQL="
+		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
+		from  marker a, feature_marker_relationship b, feature c 
+		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
+                and b.fmrel_type = 'markers missing'
+                and b.fmrel_ftr_zdb_id=c.feature_zdb_id
+		and c.feature_name='$name' 
+		order by 2,3 ;">
+		
+		<?MIVAR NAME=mrkrZdbId>$2<?/MIVAR>
+		<?MIVAR NAME=fmrelID>$4<?/MIVAR>
+<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">	  
+	<?MIVAR>  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+<?MIELSE>
+,
+	  <?MIVAR><A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+          <?MICOMMENT>
+            we need to save the OID, and set it to the detOID when calling 
+            the miniref_display.apg which calls showpubs.apg
+          <?/MICOMMENT> 
+          <?MIVAR NAME=savedOID>$OID<?/MIVAR>
+	  <?MISQL SQL="select WebExplode(object,'OID=$detOID&dataId=$fmrelID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	  <?MIVAR>$(SETVAR,$OID,$savedOID)<?/MIVAR>
+	  <?/MISQL>
+<?/MIBLOCK>
+<tr>
+	   <?MISQL SQL="
+		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
+		from  marker a, feature_marker_relationship b, feature c 
+		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
+                and b.fmrel_type = 'markers moved'
+                and b.fmrel_ftr_zdb_id=c.feature_zdb_id
+		and c.feature_name='$name' 
+		order by 2,3 ;">
+<?/MISQL>
+<?MIVAR name=rowcount>$MI_ROWCOUNT<?/MIVAR>
+<?MIBLOCK COND="$(!=,0,$rowcount)">
 
-	  $(SETVAR,$last,$3)
+	      <table>
+	      <tr><td>
+	       <b>Moved: &nbsp;</b>
+	     </td>
+
+             <td align=left>
+	   <?MISQL SQL="
+		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
+		from  marker a, feature_marker_relationship b, feature c 
+		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
+                and b.fmrel_type = 'markers moved'
+                and b.fmrel_ftr_zdb_id=c.feature_zdb_id
+		and c.feature_name='$name' 
+		order by 2,3 ;">
+		
+		<?MIVAR NAME=mrkrZdbId>$2<?/MIVAR>
+		<?MIVAR NAME=fmrelID>$4<?/MIVAR>
+<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">	  
+<?MIVAR><A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+<?MIELSE>
+,
+<?MIVAR><A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+          <?MICOMMENT>
+            we need to save the OID, and set it to the detOID when calling 
+            the miniref_display.apg which calls showpubs.apg
+          <?/MICOMMENT> 
+          <?MIVAR NAME=savedOID>$OID<?/MIVAR>
+	  <?MISQL SQL="select WebExplode(object,'OID=$detOID&dataId=$fmrelID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	  <?MIVAR>$(SETVAR,$OID,$savedOID)<?/MIVAR>
 	  <?/MISQL>
 
 
-	  <?MIBLOCK COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE),$(EC,$marker_missing,0))">
-	    </TD></TR><TR><TD align=left>
-	    <INPUT TYPE=button value="Add" onClick=doit_marker('missing')> 
-	    <b>Missing:</b><br>
-	  <?/MIBLOCK>
-
-	  <?MIBLOCK COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE),$(EC,$marker_present,0))">
-	    </TD></TR><TR><TD align=left>
-	    <INPUT TYPE=button value="Add" onClick=doit_marker('present')> 
-	    <b>Present:</b><br>
-	  <?/MIBLOCK>
-
-	  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-	    $(SETVAR,$mapped,t) 
-	  <?/MIVAR>
-          <?MIVAR COND="$(OR,$(>,$MI_ROWCOUNT,0),$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)))">
-	   </td></tr></table>
  	   </TD></TR></TABLE>
-	  </TD></TR>
-	  <?/MIVAR>           
+<?/MIBLOCK>
+
+ 	   </TD></TR></TABLE>
 	<?/MIBLOCK> <?MICOMMENT> ends deficiency <?/MICOMMENT>
+<?/MIBLOCK>
      <?/MIBLOCK>   
   <?MICOMMENT>-------------------------------------------------<?/MICOMMENT>
 
