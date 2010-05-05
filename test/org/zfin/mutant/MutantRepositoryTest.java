@@ -89,15 +89,6 @@ public class MutantRepositoryTest {
 
     }
 
-    @Test
-    public void getLG() {
-        String name = "ZDB-ALT-991130-131";
-        FeatureRepository mr = RepositoryFactory.getFeatureRepository();
-        Feature ftr = mr.getFeatureByID(name);
-        List<String> lg = getMutantRepository().getDeletedMarkerLG(ftr);
-        assertNotNull("lg exist", lg);
-
-    }
 
 
     @Test
