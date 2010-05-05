@@ -51,7 +51,7 @@ public interface MarkerRepository {
 
     MarkerAlias getSpecificDataAlias(Marker marker, String alias);
 
-    TreeSet<String> getLG(Marker marker);
+  TreeSet<String> getLG(Marker marker);
 
     MarkerRelationship addMarkerRelationship(MarkerRelationship mrel, String attributionZdbID);
 

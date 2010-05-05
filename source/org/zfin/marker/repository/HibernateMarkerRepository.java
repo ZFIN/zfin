@@ -198,11 +198,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "select mm.lg" +
                         "  from MappedMarker mm, FeatureMarkerRelationship fmr " +
                         " where fmr.marker.zdbID = :zdbId " +
-                        "   and fmr.featureZdbId = mm.marker.zdbID " +
+                        "   and fmr.feature.zdbID = mm.marker.zdbID " +
                         "   and fmr.type = :relationship ");
 
         query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("relationship", FeatureMarkerRelationship.IS_ALLELE_OF);
+        query.setParameter("relationship", FeatureMarkerRelationship.Type.IS_ALLELE_OF);
         lgList.addAll(query.list());
 
         // e) add self linkage mapping
@@ -249,11 +249,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "select l.lg" +
                         "  from Linkage l join l.linkageMemberFeatures as lf, FeatureMarkerRelationship fmr " +
                         " where fmr.marker.zdbID = :zdbId " +
-                        "   and fmr.featureZdbId = lf.zdbID " +
-                        "   and fmr.type = :relationship ");
+                        "   and fmr.feature.zdbID = lf.zdbID " +
+                        "   and fmr.type in (:firstRelationship, :secondRelationship, :thirdRelationship) ");
 
         query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("relationship", FeatureMarkerRelationship.IS_ALLELE_OF);
+        query.setParameter("firstRelationship", FeatureMarkerRelationship.Type.IS_ALLELE_OF);
+        query.setParameter("secondRelationship", FeatureMarkerRelationship.Type.MARKERS_PRESENT);
+        query.setParameter("thirdRelationship", FeatureMarkerRelationship.Type.MARKERS_MISSING);
         lgList.addAll(query.list());
 
         return lgList;
@@ -1240,7 +1242,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-    @Override
+    
     public List<Marker> getMarkersForStandardAttributionAndType(Publication publication,String type) {
         String hql = "select m from PublicationAttribution pa , Marker m " +
                 " where pa.dataZdbID=m.zdbID and pa.publication.zdbID= :pubZdbID  " +
