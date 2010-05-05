@@ -462,7 +462,8 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         SSLP("SSLP"),
         STS("STS"),
         TGCONSTRUCT("TGCONSTRUCT"),
-        TRANSCRIPT("TRANSCRIPT");
+        TRANSCRIPT("TRANSCRIPT"),
+        DEFICIENCY_TLOC_MARK("DEFICIENCY_TLOC_MARK");
 
         private final String value;
 
