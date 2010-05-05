@@ -429,39 +429,6 @@ $1
      marker for a deletion mutant.  A 't' in the info field indicates that 
      a marker is present, an 'f' that a marker is missing.  Records are 
      inserted into the mapped_deletion table. -->
-<?MIBLOCK COND="$(EC,$action,insert_marker)">
-
-  <!-- first get the allele and linkage group  -->
-  <?MISQL SQL="
-    select feature_name, lnkg_or_lg
-      from linkage_member, linkage, feature
-     where lnkgmem_member_zdb_id = '$return_recid'
-       and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-       and lnkgmem_member_zdb_id = feature_zdb_id;"> 
-
-    <?MIVAR name=$allele_name>$1<?/MIVAR>
-    <?MIVAR name=$lg>$2<?/MIVAR>
-  <?/MISQL>
-
-  <?MISQL SQL="
-    execute function get_id('MAPDEL');">
-  <?/MISQL>
-  <?MIVAR NAME=$doselect_mapdel_zdb_id>$1<?/MIVAR>
-  <?MISQL SQL="
-    insert into zdb_active_data (zactvd_zdb_id)
-      values
-        ('$doselect_mapdel_zdb_id');">
-    <?/MISQL>
-  <?MISQL SQL="
-    insert into mapped_deletion 
-	(marker_id, present_t, submitter,  OR_lg, allele, mapdel_zdb_id)
-      values 
-	('$new_oid', '$info', '$ZDB_ident', '$lg', '$allele_name',
-	 '$doselect_mapdel_zdb_id');">
-  <?/MISQL>
-
-<?/MIBLOCK>  
-
 
 <!-- Check for errors and report -->
 <?MIBLOCK COND="$(OR,$(EQ,$action,NULL),$(EQ,$action,NoValue))">
