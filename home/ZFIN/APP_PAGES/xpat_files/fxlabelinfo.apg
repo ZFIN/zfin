@@ -188,17 +188,43 @@ EFFECTS
 <?MIELSE>
                         <?MIVAR NAME=$fxinfo_aoname><?/MIVAR>
 <?/MIBLOCK>                        <?MIBLOCK COND=$(NE,$fxinfo_samefish,f)>
-                           <?MIBLOCK COND=$(NE,$fxinfo_laststage,$fxinfo_stage)> 
-                              <td><?MIVAR>$fxinfo_anat_link$fxinfo_goterm<?/MIVAR></td>
+                           <?MIBLOCK COND=$(NE,$fxinfo_laststage,$fxinfo_stage)>
+
+                           <td><?MIVAR>$fxinfo_anat_link<?/MIVAR>
+                           <?MIBLOCK COND="$(NE,$fxinfo_goterm,)"> 
+
+                              <?MIVAR>$fxinfo_goterm<?/MIVAR></td>
+                           <?MIELSE>
+                            <?MIBLOCK COND="$(NE,$fxinfo_aoname,)">
+                              <?MIVAR>$fxinfo_aoname<?/MIVAR></td>
+                          <?/MIBLOCK>
+
+                          <?/MIBLOCK>
+
+
                            <?MIELSE>
                              <?MIBLOCK COND=$(NE,$fxinfo_lastterm,$fxinfo_anat_item)>
-                                <td><?MIVAR>$fxinfo_anat_link$fxinfo_goterm<?/MIVAR></td>
+                           <td><?MIVAR>$fxinfo_anat_link<?/MIVAR>
+                            <?MIBLOCK COND="$(NE,$fxinfo_goterm,)">
+                              <?MIVAR>$fxinfo_goterm<?/MIVAR></td>
+                           <?MIELSE>
+                            <?MIBLOCK COND="$(NE,$fxinfo_aoname,)">
+                              <?MIVAR>$fxinfo_aoname<?/MIVAR></td>
+                           <?/MIBLOCK>
+                          <?/MIBLOCK>
                              <?MIELSE>
                                 <td></td>
                              <?/MIBLOCK>     
                           <?/MIBLOCK>
                        <?MIELSE>
-                           <td><?MIVAR>$fxinfo_anat_link$fxinfo_goterm<?/MIVAR></td>
+                           <td><?MIVAR>$fxinfo_anat_link<?/MIVAR>
+                            <?MIBLOCK COND="$(NE,$fxinfo_goterm,)">
+                           <?MIVAR>$fxinfo_goterm<?/MIVAR></td>
+                           <?MIELSE>
+                            <?MIBLOCK COND="$(NE,$fxinfo_aoname,)">
+                              <?MIVAR>$fxinfo_aoname<?/MIVAR></td>
+                           <?/MIBLOCK>
+                          <?/MIBLOCK>
                        <?/MIBLOCK>
                     <?/MIBLOCK>
                     
