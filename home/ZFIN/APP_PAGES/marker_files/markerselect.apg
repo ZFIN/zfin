@@ -930,7 +930,14 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
   <?/MIVAR>
 
   <?MIBLOCK COND=$(EC,$type_of_genedom,f)>
+     <?MIBLOCK COND="$(EC,$mtype_display,Mutant)">
+      <?MISQL SQL="select feature_abbrev from feature where feature_zdb_id='$OID'">
+     <?MIVAR NAME=$ftrname>$1<?/MIVAR>
+     <?/MISQL>
+      <?MIVAR><a href=/action/feature/detail?feature.zdbID=$OID>$ftrname</a><?/MIVAR>
+     <?MIELSE>
       <?MIVAR>$mrkrsel_mrkr_link<?/MIVAR>
+      <?/MIBLOCK>
 	  <?MIELSE> <?MICOMMENT> ** IS A GENE ** <?/MICOMMENT>
 	     <?MIVAR>
                  <A HREF="$curviewer$OID"> <i>$marker_abbrev</i></A>-$marker_name</TD>
@@ -1022,14 +1029,6 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 		      select fmrel_ftr_zdb_id
                         from feature_marker_relationship
 		       where fmrel_mrkr_zdb_id='$OID';">
-              <?/MISQL>
-	      <?MISQL SQL="
-		 insert into $mrkrselect_temp_allele (mta_ftr_zdb_id)
-		      select feature_zdb_id
-                        from mapped_deletion, feature
-		       where marker_id = '$OID'
-                         and allele = feature_name
-			 and present_t = 'f';">
               <?/MISQL>
 
               <?MIVAR NAME=mrkrsel_pheno_img_count>0<?/MIVAR>
