@@ -4,6 +4,8 @@ create trigger feature_marker_relationship_ftr_update_trigger
 	old as old_ftr_rel
     for each row
         (
+	
+        execute procedure p_markers_present_absent_exclusive(new_ftr_rel.fmrel_mrkr_zdb_id, new_ftr_rel.fmrel_ftr_zdb_id, new_ftr_rel.fmrel_type),
         execute procedure p_update_fmrel_genotype_names(
 		new_ftr_rel.fmrel_ftr_zdb_id,
 		old_ftr_rel.fmrel_ftr_zdb_id),
