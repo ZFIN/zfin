@@ -962,7 +962,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         hql = "select p.publication " +
                 " from PublicationAttribution p , FeatureMarkerRelationship fmr " +
-                " where fmr.featureZdbId  = p.dataZdbID " +
+                " where fmr.feature.zdbID  = p.dataZdbID " +
                 "  and fmr.marker.zdbID = :markerZdbID ";
         query = session.createQuery(hql);
         query.setString("markerZdbID", marker.getZdbID());
@@ -972,7 +972,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         hql = "select p.publication " +
                 " from PublicationAttribution p , GenotypeFeature gtf, FeatureMarkerRelationship fmr " +
                 "  where gtf.genotype.zdbID  = p.dataZdbID " +
-                "  and fmr.featureZdbId = gtf.feature.zdbID" +
+                "  and fmr.feature.zdbID = gtf.feature.zdbID" +
                 "  and fmr.marker.zdbID = :markerZdbID  ";
         query = session.createQuery(hql);
         query.setString("markerZdbID", marker.getZdbID());
@@ -1040,8 +1040,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         hql = "select p.publication " +
                 " from PublicationAttribution p , FeatureMarkerRelationship fmr " +
-                " where fmr.featureZdbId  = :featureZdbID " +
-                " and fmr.featureZdbId  = p.dataZdbID ";
+                " where fmr.feature.zdbID  = :featureZdbID " +
+                " and fmr.feature.zdbID  = p.dataZdbID ";
 
         query = session.createQuery(hql);
         query.setString("featureZdbID", feature.getZdbID());
