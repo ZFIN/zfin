@@ -13,6 +13,7 @@ import org.zfin.publication.Publication;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -77,7 +78,8 @@ public interface MutantRepository {
 
     Feature getFeatureByID(String featureZdbID);
 
-    Marker getMarkerbyFeature(Feature feature);
+    List<Marker> getMarkerbyFeature(Feature feature);
+    List<Marker> getMarkerPresent(Feature feature);
 
     /**
      * Retrieve a genotype object by handle
@@ -88,12 +90,12 @@ public interface MutantRepository {
     Genotype getGenotypeByHandle(String genotypeHandle);
 
 
-    List<Marker> getDeletedMarker(Feature feat);
+    /*List<Marker> getDeletedMarker(Feature feat);
 
-    List<String> getDeletedMarkerLG(Feature feat);
-
-    List<String> getMappedFeatureLG(Feature feat);
-    List<String> getLinkageFeatureLG(Feature feat);
+    List<String> getDeletedMarkerLG(Feature feat);*/
+  TreeSet<String> getFeatureLG(Feature feat);
+    /*List<String> getMappedFeatureLG(Feature feat);
+    List<String> getLinkageFeatureLG(Feature feat);*/
 
 
     /**
