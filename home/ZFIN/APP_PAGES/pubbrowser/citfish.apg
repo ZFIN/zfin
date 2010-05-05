@@ -75,15 +75,7 @@ EFFECTS
       and recattrib_data_zdb_id  = genofeat_feature_zdb_id
       and recattrib_source_zdb_id = p.zdb_id
       and pub_jrnl_zdb_id = jrnl_zdb_id")   
-  
-  $(VECAPPEND,$citfish_fromwhere,"
-      from genotype_feature,feature,mapped_deletion m,record_attribution,publication p,journal
-      where genofeat_geno_zdb_id = '"$OID"'
-      and genofeat_feature_zdb_id = feature_zdb_id
-      and feature_name = m.allele
-      and recattrib_data_zdb_id  = m.mapdel_zdb_id
-      and recattrib_source_zdb_id = p.zdb_id
-      and pub_jrnl_zdb_id = jrnl_zdb_id")
+ 
 
   $(VECAPPEND,$citfish_fromwhere,"
       from genotype_feature, data_alias, record_attribution, publication p, journal 
