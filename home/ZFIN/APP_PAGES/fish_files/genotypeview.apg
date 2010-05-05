@@ -355,20 +355,13 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
   <?MICOMMENT> =====  Affected Genes (0-n)  ===== <?/MICOMMENT>
   <?MISQL SQL="
 	select get_mrkr_abbrev_html_link(fmrel_mrkr_zdb_id), mrkr_name_order 
-          from genotype_feature, feature_marker_relationship, marker
+          from genotype_feature, feature_marker_relationship, marker, feature_marker_relationship_type
          where genofeat_geno_zdb_id = '$OID'
            and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
-           and fmrel_type = 'is allele of'
+           and fmrel_type = fmreltype_name
+           and fmreltype_produces_affected_marker='t'
 	   and fmrel_mrkr_zdb_id = mrkr_zdb_id 
-         UNION
-         select get_mrkr_abbrev_html_link(marker_id), mrkr_name_order 
-       	   from genotype_feature, feature, mapped_deletion, marker
-          where genofeat_geno_zdb_id = '$OID'
-            and genofeat_feature_zdb_id =  feature_zdb_id
-	    and feature_name = allele
-	    and marker_id[1,8] = 'ZDB-GENE' 
-	    and present_t = 'f'
-	    and marker_id = mrkr_zdb_id
+           and mrkr_type='GENE'
          order by 2; ">
 
      <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
@@ -1098,15 +1091,11 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
 
           <?MISQL SQL="
 	       select fmrel_mrkr_zdb_id, get_mrkr_abbrev_html_link(fmrel_mrkr_zdb_id)
-                 from feature_marker_relationship
+                 from feature_marker_relationship, feature_marker_relationship_type
                 where fmrel_ftr_zdb_id = '$genovw_ftr_zdb_id'
-                  and fmrel_type = 'is allele of'
-            UNION
-               select marker_id, get_mrkr_abbrev_html_link(marker_id)
-          	 from mapped_deletion
-         	where allele = '$genovw_ftr_name'
-		  and marker_id[1,8] = 'ZDB-GENE'
-                  and present_t = 'f';">
+                  and fmrel_type = fmreltype_name
+                  and fmreltype_produces_affected_marker='t'
+                  and fmrel_mrkr_zdb_id[1,8] = 'ZDB-GENE';">
 
  	      <?MIVAR NAME=genovw_gene_zdb_id>$1<?/MIVAR>
               
@@ -1265,13 +1254,14 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
           <?/MIVAR>
 <?/MISQL>
           <?MICOMMENT> ---------  Mapping data ------------<?/MICOMMENT>
+<?MIBLOCK COND="$(NE,$genovw_ftr_type,DEFICIENCY)">
            <tr> 
              <td><b>Map: </td>
              <td><?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$genovw_ftr_zdb_id') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
              </td>
            </tr>
            <?MICOMMENT> --- end Map --- <?/MICOMMENT>
-
+<?/MIBLOCK>
 
            <?MICOMMENT> ----------  Note  ------------------<?/MICOMMENT> 
            <?MIVAR COND="$(NC,$genovw_ftr_comments,)">

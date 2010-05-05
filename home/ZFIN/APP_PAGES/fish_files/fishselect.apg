@@ -738,45 +738,6 @@ function doValidateAndSubmit(currentTime ){
            and lnkg_or_lg='$lg';">    
   <?/MISQL> 
   
-
-  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
-	select genofeat_geno_zdb_id  
-          from genotype_feature,feature,mapped_deletion
-	  where not exists (select 'x' from $fishselect_temp_on_lg
-                                      where g_zdb_id = genofeat_geno_zdb_id)
-	    and genofeat_feature_zdb_id=feature_zdb_id
-	    and feature_abbrev=allele
-	    and or_lg='$lg';">
-  <?/MISQL>
-  
-  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
-	select genofeat_geno_zdb_id  
-          from genotype_feature,feature,mapped_deletion,marker_relationship,linkage_member,linkage
-	  where not exists (select 'x' from $fishselect_temp_on_lg
-                                      where g_zdb_id = genofeat_geno_zdb_id)
-	    and genofeat_feature_zdb_id=feature_zdb_id
-	    and feature_abbrev=allele
-	    and marker_id=mrel_mrkr_2_zdb_id
-	    and mrel_mrkr_1_zdb_id=lnkgmem_member_zdb_id
-	    and mrel_type in ('clone contains gene','clone contains small segment')
-            and lnkgmem_linkage_zdb_id=lnkg_zdb_id
-            and lnkg_or_lg='$lg';"> 
-  <?/MISQL>  
-  
-  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
-	select genofeat_geno_zdb_id  
-          from genotype_feature,feature,mapped_deletion,marker_relationship,linkage_member,linkage
-	  where not exists (select 'x' from $fishselect_temp_on_lg
-                                      where g_zdb_id = genofeat_geno_zdb_id)
-	    and genofeat_feature_zdb_id=feature_zdb_id
-	    and feature_abbrev=allele
-	    and marker_id=mrel_mrkr_1_zdb_id
-	    and mrel_mrkr_2_zdb_id=lnkgmem_member_zdb_id
-	    and mrel_type in ('clone contains gene','clone contains small segment','gene encodes small segment')
-            and lnkgmem_linkage_zdb_id=lnkg_zdb_id
-            and lnkg_or_lg='$lg';"> 
-  <?/MISQL>  
-
   <?MIBLOCK  COND="$(XST,$moreConstraint)">
     <?MIVAR NAME=$moreConstraint> and exists (select 'x' from $fishselect_temp_on_lg where geno_zdb_id = g_zdb_id) <?/MIVAR>
   <?MIELSE>
@@ -1098,23 +1059,13 @@ function doValidateAndSubmit(currentTime ){
   <?MIVAR NAME=$sqlStr1>insert into $fishselect_temp_result 
                        (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype)
                      select $target_cols
-                         from genotype,genotype_feature,feature_marker_relationship 
+                         from genotype,genotype_feature,feature_marker_relationship, feature_marker_relationship_type 
                         where geno_zdb_id = genofeat_geno_zdb_id
                           and genofeat_feature_zdb_id = fmrel_ftr_zdb_id 
+                          and fmrel_type=fmreltype_name
+                          and fmreltype_produces_affected_marker='t'
                           and fmrel_mrkr_zdb_id = '$fsel_marker_id';
   <?/MIVAR>
-  
-  <?MIVAR NAME=$sqlStr2>insert into $fishselect_temp_result 
-                       (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype)
-                       select $target_cols
-                         from genotype,genotype_feature,feature,mapped_deletion
-                        where not exists (select 'x' from $fishselect_temp_result where geno_zdb_id = fmatch_zdb_id)
-                          and geno_zdb_id = genofeat_geno_zdb_id
-                          and genofeat_feature_zdb_id = feature_zdb_id
-                          and feature_name = allele
-                          and present_t = 'f'
-                          and marker_id = '$fsel_marker_id';
-  <?/MIVAR>  
 <?/MIBLOCK>
 
 
@@ -1574,9 +1525,11 @@ function doValidateAndSubmit(currentTime ){
               <?MIVAR NAME=fsel_is_allele_of>is allele of<?/MIVAR>
               <?MIVAR NAME=fsel_is_allele_of_flag>f<?/MIVAR>
               <?MISQL SQL="select fmrel_type  
-                             from feature, feature_marker_relationship
+                             from feature, feature_marker_relationship, feature_marker_relationship_type
 	                    where feature_zdb_id = fmrel_ftr_zdb_id
-	                      and feature_name = '$fsel_rec_feature_name';">
+	                      and feature_name = '$fsel_rec_feature_name'
+                              and fmrel_type=fmreltype_name
+                              and fmreltype_produces_affected_marker='t';">
 	         <?MIVAR>$(SETVAR,$fsel_rec_fmrel,$1)<?/MIVAR>
 	         <?MIBLOCK COND="$(EC,$fsel_rec_fmrel,$fsel_is_allele_of)">
 	           <?MIVAR>$(SETVAR,$fsel_is_allele_of_flag,t)<?/MIVAR>
@@ -1610,15 +1563,11 @@ function doValidateAndSubmit(currentTime ){
               <?MIVAR NAME=fsel_affectedGenes><?/MIVAR>
               <?MISQL SQL="
 	        select get_mrkr_abbrev_html_link(fmrel_mrkr_zdb_id)
-                  from feature_marker_relationship
+                  from feature_marker_relationship, feature_marker_relationship_type
      	         where fmrel_ftr_zdb_id = '$fsel_rec_feature_id'
-                   and fmrel_type = 'is allele of'
-                UNION
-                select get_mrkr_abbrev_html_link(marker_id)
-          	  from mapped_deletion
-         	 where allele = '$fsel_rec_feature_name'
-		   and marker_id[1,8] = 'ZDB-GENE'
-		   and present_t = 'f';">  
+                   and fmrel_type = fmreltype_name
+                   and fmreltype_produces_affected_marker='t'
+                   and fmrel_mrkr_zdb_id like 'ZDB-GENE%' ;">
 		<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 	          <?MIVAR>$(SETVAR,$fsel_affectedGenes,$1)<?/MIVAR>
 	        <?MIELSE>
@@ -1632,6 +1581,7 @@ function doValidateAndSubmit(currentTime ){
    
               <?MICOMMENT> ============== LG ============= <?/MICOMMENT>
               <?MIVAR><TD align=left width=$widthLG class="anatomy"><?/MIVAR>
+<?MIBLOCK COND="$(AND,$(NE,$fsel_rec_feature_type,deficiency),$(NE,$fsel_rec_feature_type,translocation))">
               <?MISQL NAME=$slimChrString 
                 SQL="select WebExplode(object,'&mapdetails_mode=mini_slim&oID=$fsel_rec_feature_id') 
                        from webPages where ID='aa-mappingdetail.apg';">
@@ -1642,9 +1592,9 @@ function doValidateAndSubmit(currentTime ){
               <?MIVAR>$(IF,$(=,$posOfNone,0),$slimChrString,&nbsp;)<?/MIVAR> 
 
               </TD>
+ <?/MIBLOCK>         
             <tr>
           <?/MISQL>
-          
         </table></TD>
            
            <?MICOMMENT> ======== display Matching Text if there is input in Name textfield ====== <?/MICOMMENT>

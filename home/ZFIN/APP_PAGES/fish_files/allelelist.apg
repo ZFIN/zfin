@@ -35,15 +35,11 @@
   <?MIVAR NAME=allele_short_list_cap>5<?/MIVAR>
 
     <?MIVAR NAME=allele_list_sql>
-	     select feature_abbrev,feature_zdb_id from feature, feature_marker_relationship
+	     select feature_abbrev,feature_zdb_id from feature, feature_marker_relationship, feature_marker_relationship_type
               where fmrel_ftr_zdb_id=feature_zdb_id
               and fmrel_mrkr_zdb_id='$OID'
-              and fmrel_type='is allele of'
-	     UNION
-              select allele,feature_zdb_id from mapped_deletion, feature
-              where present_t='f'
-              and marker_id='$OID'
-              and allele=feature_name
+              and fmrel_type=fmreltype_name
+              and  fmreltype_produces_affected_marker='t'	     
     <?/MIVAR>
 
     
