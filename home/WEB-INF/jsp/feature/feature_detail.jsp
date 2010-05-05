@@ -1,9 +1,12 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 
-<zfin2:dataManager zdbID="${formBean.feature.zdbID}"             
-                   latestUpdate="${formBean.latestUpdate}"
+<zfin2:dataManager zdbID="${formBean.feature.zdbID}"
+                  latestUpdate="${formBean.latestUpdate}"
         rtype="feature"/>
+
 
 
 
@@ -80,28 +83,10 @@
                         ,&nbsp;
                     </c:if>
                 </c:forEach>
-                <c:if test="${fn:length(formBean.featureStat.mappedDeletions) > 0 }">
-               <c:forEach var="mapDel" items="${formBean.featureStat.mappedDeletions}" varStatus="loop">
-                    , <zfin:link entity="${mapDel}"/>
-                    <c:if test="${!loop.last}">
-                        ,&nbsp;
-                    </c:if>
-                </c:forEach>
-                </c:if>
+               
             </td>
         </c:when>
-        <c:when test="${fn:length(formBean.featureStat.mappedDeletions) > 0 }">
 
-            <td>
-                <c:forEach var="mapDel" items="${formBean.featureStat.mappedDeletions}" varStatus="loop">
-                    <zfin:link entity="${mapDel}"/>
-                    <c:if test="${!loop.last}">
-                        ,&nbsp;
-                    </c:if>
-                </c:forEach>
-
-            </td>
-        </c:when>
         <c:otherwise>
             <c:if test="${formBean.feature.featureType.dispName == 'Transgenic Insertion'}">
                 <td>
@@ -127,7 +112,7 @@ This feature is representative of one or more unknown insertion sites.
         <c:forEach var="mRel" items="${formBean.featureStat.sortedConstructRelationships}" varStatus="loop">
             <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&OID=${mRel.marker.zdbID}">${mRel.marker.name}</a>
             <%--//<zfin:name entity="${mRel.marker}"/>--%>
-
+                                               
             <c:if test="${mRel.publicationCount > 0}">
                 <c:choose>
                     <c:when test="${mRel.publicationCount == 1}">
@@ -173,9 +158,15 @@ This feature is representative of one or more unknown insertion sites.
             <c:when test="${formBean.feature.featureAssay.mutagen eq null}" >
                 Not Specified
             </c:when>
-            <c:when test="${formBean.feature.featureAssay.mutagen=='Not Specified'}" >
+            <c:when test="${formBean.feature.featureAssay.mutagen=='not specified'}" >
                 Not Specified
             </c:when>
+            <c:when test="${formBean.feature.featureAssay.mutagee=='not Specified'}" >
+               
+                <c:if test ="${formBean.feature.featureAssay.mutagen =='not Specified'}">
+                    Not Specified
+                </c:if>
+             </c:when>
             <c:when test="${formBean.feature.featureAssay.mutagee=='Not Specified'}" >
                <c:if test ="${formBean.feature.featureAssay.mutagen ne 'spontaneous'}">
                 treated with     ${formBean.feature.featureAssay.mutagen}
@@ -189,7 +180,7 @@ This feature is representative of one or more unknown insertion sites.
             </c:when>
 
             <c:otherwise>
-                ${formBean.feature.featureAssay.mutagee}    treated with     ${formBean.feature.featureAssay.mutagen}
+                ${formBean.feature.featureAssay.mutagee}  treated with     ${formBean.feature.featureAssay.mutagen}
             </c:otherwise>
         </c:choose>
 
@@ -226,32 +217,39 @@ This feature is representative of one or more unknown insertion sites.
 
     
 
-    <c:choose>
+  <c:choose>
+
+      <c:when test="${!empty formBean.featureStat.ftrMap}">
+                          <td>
+                              LG:
+                              <c:forEach var="lg" items="${formBean.featureStat.ftrMap}" varStatus="index">
+
+                                  <c:if test="${lg != 0}">
+
+                                      ${lg}
+                                  </c:if>
+                                   <c:if test="${!index.last}">
+                                       <c:if test="${lg != 0}">
+                            ,&nbsp;
+                                           </c:if>
+                          </c:if>
+                              </c:forEach>
+                              &nbsp;<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
+
+                          </td>
 
 
-        <c:when test="${!empty formBean.mappedMarkerBean.unMappedMarkers}">
-            <td>
-                LG:
-                <c:forEach var="lg" items="${formBean.mappedMarkerBean.unMappedMarkers}" varStatus="index">
-                   <c:if test="${lg != 0}">
-                        ${lg}
-                      </c:if>
-                     <c:if test="${!index.last && lg !=0 }">
-                ,&nbsp;
-            </c:if>
-                </c:forEach>
-                &nbsp;<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
+                     </c:when>
+            
 
-            </td>
-
-        </c:when>
-        <c:when test="${!empty formBean.featureStat.ftrLocations}">
+     
+      <c:when test="${!empty formBean.featureStat.ftrLocations}">
             <td>
                 LG:
                 <c:forEach var="lg" items="${formBean.featureStat.ftrLocations}" varStatus="index">
                     <c:if test="${lg != 0}">
 
-                        ${lg}
+                      ${lg}
                     </c:if>
                      <c:if test="${!index.last}">
                 ,&nbsp;
@@ -263,44 +261,8 @@ This feature is representative of one or more unknown insertion sites.
 
 
         </c:when>
-        <c:when test="${!empty formBean.featureStat.ftrMap}">
-                    <td>
-                        LG:
-                        <c:forEach var="lg" items="${formBean.featureStat.ftrMap}" varStatus="index">
+       
 
-                            <c:if test="${lg != 0}">
-
-                                ${lg}
-                            </c:if>
-                             <c:if test="${!index.last}">
-                        ,&nbsp;
-                    </c:if>
-                        </c:forEach>
-                        &nbsp;<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
-
-                    </td>
-
-
-                </c:when>
-         <c:when test="${!empty formBean.featureStat.ftrLinkage}">
-                    <td>
-                        LG:
-                        <c:forEach var="lg" items="${formBean.featureStat.ftrLinkage}" varStatus="index">
-
-                            <c:if test="${lg != 0}">
-
-                                ${lg}
-                            </c:if>
-                             <c:if test="${!index.last}">
-                        ,&nbsp;
-                    </c:if>
-                        </c:forEach>
-                        &nbsp;<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
-
-                    </td>
-
-
-                </c:when>
 
 
         <c:otherwise>
@@ -317,7 +279,10 @@ This feature is representative of one or more unknown insertion sites.
 <tr>
     <td width="180">
         <b>Notes:</b>
-    </td>
+
+
+
+
     <td>  ${formBean.feature.comments}
 
     </td>
