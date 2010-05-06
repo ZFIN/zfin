@@ -3,6 +3,7 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
+
 <!-- Alwyas include the full package in each class.name attribute. This allows refactoring to identify
      the class and include them. Otherwise a refactoring of a class reference here is not recognized and
      the class and include them. Otherwise a refactoring of a class reference here is not recognized and
