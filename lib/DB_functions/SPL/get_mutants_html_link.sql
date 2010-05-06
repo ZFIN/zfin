@@ -44,7 +44,7 @@ create function get_mutants_html_link
            from feature_marker_relationship, genotype_feature
           where fmrel_mrkr_zdb_id = geneZdbId
             and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-            and fmrel_type = 'is allele of';
+            and fmrel_type in ('is allele of', 'markers missing', 'markers present');
 
 	if ( genoCount == 1 ) then 
 		select genofeat_geno_zdb_id
@@ -52,7 +52,7 @@ create function get_mutants_html_link
            	  from feature_marker_relationship, genotype_feature
           	 where fmrel_mrkr_zdb_id = geneZdbId
             	   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-            	   and fmrel_type = 'is allele of';
+            	   and fmrel_type in ('is allele of', 'markers missing', 'markers present');
 	end if 
 
 
