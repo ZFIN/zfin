@@ -1077,7 +1077,6 @@ function doValidateAndSubmit(currentTime ){
   <?/MIBLOCK>
 <?MIELSE>
   <?MISQL SQL=$sqlStr1><?/MISQL>
-  <?MISQL SQL=$sqlStr2><?/MISQL>  
 <?/MIBLOCK>
 
 <?MISQL COND=$(EC,$debug_timing,t) SQL="

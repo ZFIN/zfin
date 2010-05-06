@@ -1255,12 +1255,14 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
 <?/MISQL>
           <?MICOMMENT> ---------  Mapping data ------------<?/MICOMMENT>
 <?MIBLOCK COND="$(NE,$genovw_ftr_type,DEFICIENCY)">
+<?MIBLOCK COND="$(NE,$genovw_ftr_type,TRANSLOC)">
            <tr> 
              <td><b>Map: </td>
              <td><?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$genovw_ftr_zdb_id') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
              </td>
            </tr>
            <?MICOMMENT> --- end Map --- <?/MICOMMENT>
+<?/MIBLOCK>
 <?/MIBLOCK>
 
            <?MICOMMENT> ----------  Note  ------------------<?/MICOMMENT> 
