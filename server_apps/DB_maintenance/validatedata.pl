@@ -770,33 +770,8 @@ sub morpholinoAbbrevContainsGeneAbbrev($) {
 #
 # Parameter
 # $ Email Address for recipients
+# as of 5/10 after MapRevamp, we no longer need this routine since we have a trigger in place to prevent curators from entering both markers present/missing and is allele of relationships
 
-sub featureIsAlleleOfOrMrkrAbsent($) {
-  my $routineName = "featureAssociatedWithGenotype";
-	
-  my $sql = 'select feature_name, feature_zdb_id
-               from feature, feature_marker_relationship, mapped_deletion
-               where fmrel_ftr_zdb_id = feature_zdb_id
-               and fmrel_mrkr_zdb_id = marker_id
-               and feature_name = allele
-               and present_t = "f"';
-
-  my @colDesc = ("Feature name         ",
-		 "Feature zdb id       ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Feature are both alleles of a gene and are missing that gene";
-    my $errMsg = "There are $nRecords feature record(s) that are both alleles of a gene and are missing that gene. ";
-    
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-
-}
 
 #---------------------------------------------------------------
 # genotypesHaveNoNames
