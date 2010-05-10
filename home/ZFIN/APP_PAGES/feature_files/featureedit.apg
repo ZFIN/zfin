@@ -271,7 +271,12 @@ EFFECTS: Edits a feature/marker
      <?/MIBLOCK> <?MICOMMENT> end of if feature block <?/MICOMMENT>
 
      <tr><td><B>Public Note:</b>
-     <td><input name=featedit_feature_public_note type=text size=110 value=<?MIVAR>"$featcur_feat_publicnote"<?/MIVAR>>
+<?MIVAR NAME=$featcur_feat_publicnote>$(URLDECODE,$featcur_feat_publicnote)<?/MIVAR>
+<?MICOMMENT><?MIVAR>$featcur_feat_publicnote<?/MIVAR>
+<?MIVAR NAME=$featcur_feat_publicnote>$(REPLACE,$featcur_feat_publicnote,%0a,<BR>)<?/MIVAR>
+          <?MIVAR NAME=$featcur_feat_publicnote>$(REPLACE,$featcur_feat_publicnote,++,&nbsp;&nbsp;)<?/MIVAR>
+<?/MICOMMENT>
+     <td><input name=featedit_feature_public_note type=text size=110 value=<?MIVAR>'$featcur_feat_publicnote'<?/MIVAR>>
      <tr><td><B>Private Note:</b>
      <td> <?MIVAR><input name="featedit_feature_private_note" type=button value="Add Note" onClick=window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=<?MIVAR>$featcur_feat_zdb_id'<?/MIVAR>)><?/MIVAR>
      <INPUT TYPE=HIDDEN NAME=featcur_featedit_feature_zdb_id VALUE="<?MIVAR>$featcur_feat_zdb_id<?/MIVAR>">
