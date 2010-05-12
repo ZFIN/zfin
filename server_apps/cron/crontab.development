@@ -63,9 +63,9 @@
 #
 #Blast cleanup scripts
 #  Every day at 1.30 am clean out fasta files older than one day.
-30 01 * * * /bin/find /research/zblastfiles/zmore/almdb/*.fa -mtime +1 -exec rm {} \; >> /research/zblastfiles/zmore/almdb/fasta-clean-error.txt
+30 01 * * * /bin/find /research/zblastfiles/zmore/almdb/*.fa -mtime +1 -exec rm -f {} \; >> /research/zblastfiles/zmore/almdb/fasta-clean-error.txt
 #  Every day at 1.40 am clean out fasta files older than seven days.
-#40 01 * * * /bin/find /research/zcentral/catalina_bases/almost/temp/*.xml -mtime +7 -exec rm {} \; >> /research/blastfiles/zmore/almdb/fasta-clean-error.txt
+#40 01 * * * /bin/find /research/zcentral/catalina_bases/almost/temp/*.xml -mtime +7 -exec rm -f {} \; >> /research/blastfiles/zmore/almdb/fasta-clean-error.txt
 #
 #
 #

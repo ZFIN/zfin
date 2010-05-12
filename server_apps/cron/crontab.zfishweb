@@ -44,7 +44,7 @@
 05 06 * * 1-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/remove_orphan_files.pl
 #Blast cleanup scripts
 #  Every day at 1.30 am clean out fasta files older than one day.
-30 01 * * * /bin/find /research/zprodmore/blastdb/*.fa -mtime +1 -exec rm {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt
+30 01 * * * /bin/find /research/zprodmore/blastdb/*.fa -mtime +1 -exec rm -f {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt
 #  Every day at 1.40 am clean out fasta files older than seven days.
-40 01 * * * /bin/find /private/etc/tomcat/zfin.org/temp/*.xml -mtime +7 -exec rm {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt
+40 01 * * * /bin/find /private/etc/tomcat/zfin.org/temp/*.xml -mtime +7 -exec rm -f {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt
 #
