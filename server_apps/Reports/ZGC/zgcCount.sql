@@ -299,3 +299,82 @@ select count(distinct xpatex_source_zdb_id)
  where jtype not in ("Unpublished", "Curation");
 
 
+!echo '----------------------------------------------------------------------------'
+!echo 'Number of publications with at least one expression records for an EFG'
+create temp table pub_count
+(
+  pub_id varchar(50)
+)with no log;
+
+insert into pub_count
+select distinct xpatex_source_zdb_id
+from expression_experiment, genotype_experiment, genotype_feature, feature_marker_relationship, marker_relationship
+where xpatex_genox_zdb_id = genox_zdb_id
+  and genox_geno_zdb_id = genofeat_geno_zdb_id
+  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+  and fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id
+  and mrel_mrkr_2_zdb_id like "ZDB-EFG%" ;
+
+insert into pub_count
+select distinct xpatex_source_zdb_id
+from expression_experiment
+     where xpatex_gene_zdb_id like 'ZDB-EFG%';
+
+
+select count(distinct pub_id) from pub_count; 
+
+!echo '----------------------------------------------------------------------------'
+!echo 'Number of figures with at least one expression records for an EFG'
+create temp table fig_count
+(
+  figure_id varchar(50)
+)with no log;
+
+insert into fig_count
+select distinct xpatfig_fig_zdb_id
+from expression_experiment, genotype_experiment, genotype_feature, feature_marker_relationship, marker_relationship, expression_pattern_figure,expression_result
+where xpatex_genox_zdb_id = genox_zdb_id
+  and genox_geno_zdb_id = genofeat_geno_zdb_id
+  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+  and fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id
+  and mrel_mrkr_2_zdb_id like "ZDB-EFG%" 
+  and xpatex_zdb_id=xpatres_xpatex_zdb_id
+  and xpatres_zdb_id=xpatfig_xpatres_zdb_id;
+
+insert into fig_count
+select distinct xpatfig_fig_zdb_id
+from expression_experiment, expression_pattern_figure,expression_result
+     where xpatex_gene_zdb_id like 'ZDB-EFG%'
+  and xpatex_zdb_id=xpatres_xpatex_zdb_id
+  and xpatres_zdb_id=xpatfig_xpatres_zdb_id;
+
+select count(distinct figure_id) from fig_count; 
+
+!echo '----------------------------------------------------------------------------'
+!echo 'Number of figures with images with  one expression records for an EFG'
+create temp table figimg_count
+(
+  figimg_id varchar(50)
+)with no log;
+
+insert into figimg_count
+select distinct xpatfig_fig_zdb_id
+from expression_experiment, genotype_experiment, genotype_feature, feature_marker_relationship, marker_relationship, expression_pattern_figure,expression_result,image
+where xpatex_genox_zdb_id = genox_zdb_id
+  and genox_geno_zdb_id = genofeat_geno_zdb_id
+  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+  and fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id
+  and mrel_mrkr_2_zdb_id like "ZDB-EFG%" 
+  and xpatex_zdb_id=xpatres_xpatex_zdb_id
+  and xpatres_zdb_id=xpatfig_xpatres_zdb_id
+  and xpatfig_fig_zdb_id=img_fig_zdb_id;
+
+insert into figimg_count
+select distinct xpatfig_fig_zdb_id
+from expression_experiment, expression_pattern_figure,expression_result, image
+     where xpatex_gene_zdb_id like 'ZDB-EFG%'
+  and xpatex_zdb_id=xpatres_xpatex_zdb_id
+  and xpatres_zdb_id=xpatfig_xpatres_zdb_id
+  and xpatfig_fig_zdb_id=img_fig_zdb_id;
+
+select count(distinct figimg_id) from figimg_count; 
