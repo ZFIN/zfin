@@ -19,7 +19,62 @@ CATALINA_OPTS= -XX:NewSize=128m -XX:MaxNewSize=128m -XX:SurvivorRatio=8 -Xms256M
 By default, the JVM is allocated only about 60 Megabytes which is very (too) small.
 --->
 <style type="text/css">
+    .category_header {
+        font-size: 100%;
+        font-weight: bold;
+        font-family: arial, sans-serif;
+    }
+
+    .category_label {
+        font-size: 100%;
+        font-weight: bold;
+        font-family: arial, sans-serif;
+    }
+
+    .category_box {
+        padding-top: 10px;
+    }
+
+    .category_table {
+        font-size: 90%;
+        font-family: arial, sans-serif;
+        border: 1px solid #006666;
+        padding: 2px;
+    }
+
+    .category_item {
+        font-size: 90%;
+        font-family: arial, sans-serif;
+        padding-top: 2px;
+        padding-right: 5px;
+        padding-bottom: 2px;
+        padding-left: 5px;
+    }
+
+    .alias_list {
+    }
+
+    .alias_list_header {
+        Color: #cc0000;
+    }
+
     .ignored_words {
+        font-size: 90%;
+        font-family: arial, sans-serif;
+        padding-top: 10px;
+    }
+
+    .related_terms {
+        font-size: 90%;
+        font-family: arial, sans-serif;
+        padding-top: 10px;
+    }
+
+    .related_terms_match {
+        color: #999999;
+    }
+
+    .specific_search {
         font-size: 90%;
         font-family: arial, sans-serif;
         padding-top: 10px;
@@ -37,6 +92,13 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
         font-size: 90%;
         font-family: arial, sans-serif;
         padding-top: 10px;
+    }
+
+    .best_match {
+        font-size: 100%;
+        font-family: arial, sans-serif;
+        padding: 0px;
+        margin: 0px;
     }
 </style>
 
