@@ -53,6 +53,7 @@ public class GoEvidenceTest {
         assertEquals(zdbID,goEvidenceDTO.getZdbID());
         assertEquals("ZDB-GENE-980526-501",goEvidenceDTO.getMarkerDTO().getZdbID());
         assertNull(goEvidenceDTO.getFlag());
+        assertEquals(GoEvidenceCodeEnum.IGI,goEvidenceDTO.getEvidenceCode());
         assertNotNull(goEvidenceDTO.getInferredFrom());
         assertEquals(1,goEvidenceDTO.getInferredFrom().size());
 
@@ -104,7 +105,7 @@ public class GoEvidenceTest {
         goEvidenceDTO.setPublicationZdbID(publication.getZdbID());
 
         Set<String> inferredFromSet = goEvidenceDTO.getInferredFrom();
-        String inferenceTestString = "TEST: inference" ;
+        String inferenceTestString = InferenceCategory.REFSEQ.prefix()+" test-inference" ;
         inferredFromSet.add(inferenceTestString) ;
 
         GoEvidenceDTO goEvidenceDTO2 = markerRPCService.editMarkerGoTermEvidenceDTO(goEvidenceDTO);
