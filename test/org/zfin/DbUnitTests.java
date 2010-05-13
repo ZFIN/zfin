@@ -6,7 +6,7 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
-import org.zfin.gwt.curation.ui.CurationRPCTest;
+import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.infrastructure.EnumValidationTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;

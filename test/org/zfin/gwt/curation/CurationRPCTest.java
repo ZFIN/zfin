@@ -1,4 +1,4 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.curation;
 
 import org.hibernate.SessionFactory;
 import org.junit.Before;
@@ -7,6 +7,7 @@ import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
+import org.zfin.gwt.curation.ui.CurationExperimentRPC;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class CurationRPCTest {
     @Before
     public void setUp() {
         TestConfiguration.configure();
+        TestConfiguration.initApplicationProperties();
     }
 
     @Test
