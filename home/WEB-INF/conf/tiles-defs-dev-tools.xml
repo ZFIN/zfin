@@ -148,6 +148,11 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/phenotype_curation.jsp"/>
     </definition>
 
+    <definition name="go-curation" extends="dev_layout">
+        <put name="staticTitle" value="GWT GO Curation"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_curation.jsp"/>
+    </definition>
+
     <definition name="transcript-edit" extends="dev_layout">
         <put name="staticTitle" value="GWT Transcript Edit"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/transcript_edit.jsp"/>
@@ -176,6 +181,11 @@
     <definition name="go-clone" extends="dev_layout">
         <put name="staticTitle" value="GWT GO Clone"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_clone.jsp"/>
+    </definition>
+
+    <definition name="curation-base" extends="dev_layout">
+        <put name="staticTitle" value=""/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/curation_base.jsp"/>
     </definition>
 
     <definition name="antibody-edit" extends="dev_layout">

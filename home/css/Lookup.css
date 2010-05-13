@@ -1,5 +1,5 @@
-.gwt-SuggestBox { 
-   border: 1x solid #666; 
+.gwt-SuggestBox {
+   border: 1x solid #666;
    text-align: left;
 }
 
@@ -7,10 +7,10 @@
   border: 1px solid black;
   background-color: white;
     /*see fogbugz 5183*/
-  /*overflow: auto; */ 
+  /*overflow: auto; */
   height: auto;
   max-height: 50em ;
-  min-width: 100px ; 
+  min-width: 100px ;
 }
 
 .gwt-SuggestBoxPopup .item {

@@ -183,7 +183,6 @@ EFFECTS
 
 <a name=experiment>
 
-<script type="text/javascript" language="javascript" src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 
 
 <p>
@@ -197,6 +196,11 @@ EFFECTS
     } ;
 </script>
 <p/>
+
+
+ <div id="directAttributionName"></div>
+
+ <br>
 
 <span id="show-hide-experiments"></span>
 

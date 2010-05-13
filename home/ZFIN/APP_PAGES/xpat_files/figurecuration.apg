@@ -23,13 +23,26 @@ PREFIX:   figcur_
 
   <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
-  <?MIBLOCK COND="$(EC,$AUTHORIZED,root)"> 
+  <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
   
 <?MICOMMENT> 
 	  =============
 	  =  FIGURES  =
 	  =============
 <?/MICOMMENT>
+
+        <?MIVAR>
+        <script type="text/javascript">
+        var curationProperties = {
+        zdbID : "$OID",
+        moduleType: "FIGURE_CURATION",
+        debug: "false"
+        }
+        </script>
+        <?/MIVAR>
+
+
+
 <a name=figure>
     <?MISQL COND=$(NXST,$xpcur_c_has_permission) SQL="
         select cs_field_name_value 

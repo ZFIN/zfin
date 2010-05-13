@@ -34,6 +34,7 @@
                 <prop key="/dev-tools/gwt/modules">gwtModules</prop>
                 <prop key="/dev-tools/gwt/fx-curation">fxCuration</prop>
                 <prop key="/dev-tools/gwt/phenotype-curation">phenotypeCuration</prop>
+                <prop key="/dev-tools/gwt/go-curation">goCuration</prop>
                 <prop key="/dev-tools/gwt/lookup">lookup</prop>
                 <prop key="/dev-tools/gwt/lookup-table">lookupTable</prop>
                 <prop key="/dev-tools/gwt/transcript-edit">transcriptEdit</prop>
@@ -44,6 +45,7 @@
                 <prop key="/dev-tools/gwt/go-edit">goEdit</prop>
                 <prop key="/dev-tools/gwt/go-add">goAdd</prop>
                 <prop key="/dev-tools/gwt/go-clone">goClone</prop>
+                <prop key="/dev-tools/gwt/curation-base">curationBase</prop>
                 <prop key="/dev-tools/gwt/test-composite">testComposite</prop>
                 <prop key="/dev-tools/svn-version">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/display-groups">displayGroups</prop>
@@ -71,6 +73,10 @@
 
     <bean name="phenotypeCuration" class="org.zfin.framework.presentation.CurationTestController" scope="prototype">
         <property name="viewName" value="phenotype-curation"/>
+    </bean>
+
+    <bean name="goCuration" class="org.zfin.framework.presentation.CurationTestController" scope="prototype">
+        <property name="viewName" value="go-curation"/>
     </bean>
 
     <bean name="ontologyCaching" class="org.zfin.ontology.presentation.OntologyManagerController" scope="prototype">
@@ -111,6 +117,10 @@
 
     <bean name="goClone" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
         <property name="viewName" value="go-clone"/>
+    </bean>
+
+    <bean name="curationBase" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="curation-base"/>
     </bean>
 
     <bean name="antibodyEdit" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">

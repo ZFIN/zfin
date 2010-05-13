@@ -32,6 +32,18 @@ PREFIX:   expcur_
 <?/MICOMMENT>
 
 
+        <?MIVAR>
+        <script type="text/javascript">
+        var curationProperties = {
+        zdbID : "$OID",
+        moduleType: "ENVIRONMENT_CURATION",
+        debug: "false"
+        }
+        </script>
+        <?/MIVAR>
+
+
+
     <?MISQL SQL="
         select cs_field_name_value 
         from curator_session 

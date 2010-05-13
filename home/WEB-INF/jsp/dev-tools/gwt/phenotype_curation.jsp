@@ -1,3 +1,4 @@
+<%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <script type="text/javascript" language="javascript"
         src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
@@ -21,6 +22,7 @@
 </label>
     &nbsp;<input type="submit" value="Submit"/>
 </form>
+<div id="<%=StandardDivNames.directAttributionDiv%>"></div>
 <span id="show-hide-experiments"></span>
 
 <div id="display-experiment"></div>

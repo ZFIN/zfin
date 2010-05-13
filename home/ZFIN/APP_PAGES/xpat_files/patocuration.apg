@@ -44,9 +44,18 @@ function getCookie(name) {
 
   <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
-  
-<script type="text/javascript" language="javascript"
-        src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
+
+<?MIVAR>
+<script type="text/javascript">
+var curationProperties = {
+zdbID : "$OID",
+moduleType: "PHENOTYPE_CURATION",
+debug: "false"
+};
+</script>
+<?/MIVAR>
+
+
 
 <table width="100%" bgcolor="#33cc99" border="0" cellpadding="0">
     <tbody>
@@ -115,15 +124,6 @@ function getCookie(name) {
 <div id="display-structure-errors"></div>
 <div id="construction-zone"></div>
 
-<?MIVAR>
-<script type="text/javascript">
-    var curationProperties = {
-        zdbID : "$OID",
-        moduleType: "PHENOTYPE_CURATION",
-        debug: "false"
-    };
-</script>
-<?/MIVAR>
 <a name="structure-construction-zone"/>
 
 <div id="structure-pile-construction-zone" style="display:inline;">

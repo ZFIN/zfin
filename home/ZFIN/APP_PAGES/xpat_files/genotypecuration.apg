@@ -73,6 +73,17 @@ PREFIX:   genocur_
 	  ============
 <?/MICOMMENT>
 
+        <?MIVAR>
+        <script type="text/javascript">
+        var curationProperties = {
+        zdbID : "$OID",
+        moduleType: "GENOTYPE_CURATION",
+        debug: "false"
+        }
+        </script>
+        <?/MIVAR>
+
+
   <br>
   <?MISQL COND=$(=,1,1) SQL="select WebExplode(object,'') from webPages where ID='aa-genocursearch.apg';">$1<?/MISQL>
 
