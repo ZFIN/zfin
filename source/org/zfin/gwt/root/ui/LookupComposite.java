@@ -1,6 +1,8 @@
 package org.zfin.gwt.root.ui;
 
 import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.logical.shared.HighlightEvent;
+import com.google.gwt.event.logical.shared.HighlightHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.DOM;
@@ -21,7 +23,7 @@ import java.util.Collection;
  * - show synonyms
  * - ontology the ontology used for lookup purposes
  */
-public class LookupComposite extends Composite {
+public class LookupComposite extends Composite implements Revertible {
 
     // gui components
     private HorizontalPanel lookupPanel = new HorizontalPanel();
@@ -60,6 +62,7 @@ public class LookupComposite extends Composite {
     public final static String ACTION_MARKER_ATTRIBUTE = "MARKER_ATTRIBUTE";
     public final static String ACTION_FEATURE_ATTRIBUTE = "FEATURE_ATTRIBUTE";
     private SubmitAction action = null;
+    private HighlightAction highlightAction = null;
     private String onclick;
 
     // options
@@ -118,6 +121,7 @@ public class LookupComposite extends Composite {
             termInfoTable.clear();
             panel.add(termInfoTable);
         }
+
     }
 
     void addSubmitButtonHandler() {
@@ -139,6 +143,15 @@ public class LookupComposite extends Composite {
                 } else if (suggestion.getReplacementString() != null) {
                     doSubmit(suggestion.getReplacementString());
                 }
+            }
+        });
+
+        suggestBox.addSuggestionHandler(new HighlightHandler<SuggestOracle.Suggestion>() {
+            @Override
+            public void onHighlight(HighlightEvent<SuggestOracle.Suggestion> suggestionHighlightEvent) {
+//                doHighlightAction(suggestionHighlightEvent.getHighlighted()) ;
+//                suggestionHighlightEvent.getHighlighted()
+                doOnHighlight(suggestionHighlightEvent.getHighlighted().getReplacementString());
             }
         });
 
@@ -193,6 +206,13 @@ public class LookupComposite extends Composite {
 
     public void setText(String newText) {
         textBox.setText(newText);
+    }
+
+    protected void doOnHighlight(String text) {
+        if (highlightAction != null) {
+            suggestBox.setFocus(false);
+            highlightAction.onHighlight(text);
+        }
     }
 
     protected void doSubmit(String text) {
@@ -392,7 +412,7 @@ public class LookupComposite extends Composite {
         oracle.setLimit(limit);
     }
 
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         textBox.setEnabled(enabled);
     }
 
@@ -400,7 +420,7 @@ public class LookupComposite extends Composite {
      * Display the term info for a given term ID in a given ontology.
      *
      * @param ontologyName Ontology Name
-     * @param termID   term ID: zdb ID or obo ID
+     * @param termID       term ID: zdb ID or obo ID
      */
     public void showTermInfo(String ontologyName, String termID) {
         //Window.alert("Show Term:: " + ontology + ":" + termID);
@@ -409,4 +429,29 @@ public class LookupComposite extends Composite {
     }
 
 
+    public void setHighlightAction(HighlightAction highlightAction) {
+        this.highlightAction = highlightAction;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return (textBox.getText() != null && textBox.getText().trim().length() > 0);
+    }
+
+    @Override
+    public boolean handleDirty() {
+        return false;
+    }
+
+    @Override
+    public void working() {
+        textBox.setEnabled(false);
+        submitButton.setEnabled(false);
+    }
+
+    @Override
+    public void notWorking() {
+        textBox.setEnabled(true);
+        submitButton.setEnabled(true);
+    }
 }

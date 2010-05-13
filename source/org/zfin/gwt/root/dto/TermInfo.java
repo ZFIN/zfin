@@ -14,7 +14,7 @@ public class TermInfo implements IsSerializable {
 
     private String ID;
     private String name;
-    private String synonyms;
+    private List<String> synonyms;
     private String definition;
     private String startStage;
     private String endStage;
@@ -39,11 +39,11 @@ public class TermInfo implements IsSerializable {
         this.name = name;
     }
 
-    public String getSynonyms() {
+    public List<String> getSynonyms() {
         return synonyms;
     }
 
-    public void setSynonyms(String synonyms) {
+    public void setSynonyms(List<String> synonyms) {
         this.synonyms = synonyms;
     }
 

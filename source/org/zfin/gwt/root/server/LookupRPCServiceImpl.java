@@ -7,10 +7,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
-import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.PublicationDTO;
-import org.zfin.gwt.root.dto.TermInfo;
-import org.zfin.gwt.root.dto.TermStatus;
+import org.zfin.gwt.curation.ui.AttributionModule;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ItemSuggestOracle;
 import org.zfin.gwt.root.ui.ItemSuggestion;
 import org.zfin.gwt.root.util.LookupRPCService;
@@ -18,13 +16,14 @@ import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Feature;
+import org.zfin.mutant.Genotype;
 import org.zfin.ontology.*;
 import org.zfin.people.Organization;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.BODtoConversionService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,11 +38,34 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class LookupRPCServiceImpl extends RemoteServiceServlet implements LookupRPCService {
 
     private static final Logger logger = Logger.getLogger(LookupRPCServiceImpl.class);
+    private transient PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 
     private static final int NUMBER_OF_SUGGESTIONS = ItemSuggestOracle.DEFAULT_LIMIT;
 
+    public PublicationDTO getPublicationAbstract(String zdbID) {
+
+        Publication publication = publicationRepository.getPublication(zdbID);
+        if (publication == null) {
+            return null;
+        }
+//
+        PublicationDTO publicationAbstractDTO = new PublicationDTO();
+        publicationAbstractDTO.setZdbID(publication.getZdbID());
+        publicationAbstractDTO.setTitle(publication.getTitle());
+        publicationAbstractDTO.setAuthors(publication.getAuthors());
+        publicationAbstractDTO.setDoi(publication.getDoi());
+        publicationAbstractDTO.setAbstractText(publication.getAbstractText());
+        publicationAbstractDTO.setAccession(publication.getAccessionNumber());
+        publicationAbstractDTO.setCitation(publication.getCitation());
+        publicationAbstractDTO.setMiniRef(publication.getShortAuthorList());
+
+
+        return publicationAbstractDTO;
+    }
+
+
     private String createListItem(String displayName, Term term) {
-        OntologyDTO ontologyDTO = BODtoConversionService.getOntologyDTO(term.getOntology());
+        OntologyDTO ontologyDTO = DTOConversionService.convertToOntologyDTO(term.getOntology());
         String termID = term.getID();
         StringBuilder builder = new StringBuilder(60);
         builder.append("<span onmouseover=showTermInfoString('");
@@ -71,12 +93,12 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         for (Organization organization : organizations) {
             String suggestion = organization.getName();
             String displayName = suggestion.replace(query, "<strong>" + query + "</strong>");
-            ItemSuggestion itemSuggestion = new ItemSuggestion(displayName,suggestion) ;
+            ItemSuggestion itemSuggestion = new ItemSuggestion(displayName, suggestion);
             suggestions.add(itemSuggestion);
         }
 
         resp.setSuggestions(suggestions);
-        logger.info("found " +suggestions.size() + " suggestions for " + req);
+        logger.info("found " + suggestions.size() + " suggestions for " + req);
         return resp;
     }
 
@@ -137,15 +159,15 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @return suggestions
      */
     public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO ontology) {
-        return getOntologySuggestions(request, showTermDetail, BODtoConversionService.getOntology(ontology));
+        return getOntologySuggestions(request, showTermDetail, DTOConversionService.convertToOntology(ontology));
     }
 
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)
      *
-     * @param request  request
+     * @param request        request
      * @param showTermDetail create mouseOver JS script to show term detail
-     * @param ontology ontology name
+     * @param ontology       ontology name
      * @return suggestions
      */
     private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, Ontology ontology) {
@@ -175,13 +197,13 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
         if (query.length() > 0) {
-            for (Antibody antibody: RepositoryFactory.getAntibodyRepository().getAntibodiesByName(query)) {
+            for (Antibody antibody : RepositoryFactory.getAntibodyRepository().getAntibodiesByName(query)) {
                 suggestions.add(new ItemSuggestion(
                         antibody.getAbbreviation().replaceAll(query.replace("(", "\\(").replace(")", "\\)"), "<strong>" + query + "</strong>"), antibody.getAbbreviation()));
             }
         }
         resp.setSuggestions(suggestions);
-        logger.info("found " +suggestions.size() + " suggestions for " + req);
+        logger.info("found " + suggestions.size() + " suggestions for " + req);
         return resp;
     }
 
@@ -203,7 +225,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             }
         }
         resp.setSuggestions(suggestions);
-        logger.info("found " +suggestions.size() + " suggestions for " + req);
+        logger.info("found " + suggestions.size() + " suggestions for " + req);
         return resp;
     }
 
@@ -226,7 +248,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             }
         }
         resp.setSuggestions(suggestions);
-        logger.info("found " +suggestions.size() + " suggestions for " + req);
+        logger.info("found " + suggestions.size() + " suggestions for " + req);
         return resp;
     }
 
@@ -248,7 +270,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             }
         }
         resp.setSuggestions(suggestions);
-        logger.info("found " +suggestions.size() + " suggestions for " + req);
+        logger.info("found " + suggestions.size() + " suggestions for " + req);
         return resp;
     }
 
@@ -306,14 +328,14 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             logger.warn("No term " + termID + " found!");
             return null;
         }
-        TermInfo rootTermInfo = BODtoConversionService.getTermInfo(term, ontology, true);
+        TermInfo rootTermInfo = DTOConversionService.getTermInfoFromOntologyDTO(term, ontology, true);
         addRelatedTerms(term, rootTermInfo, ontology);
         return rootTermInfo;
 
     }
 
     private TermInfo getGenericTermInfoByName(String termName, OntologyDTO ontologyDTO) {
-        Ontology ontology = BODtoConversionService.getOntology(ontologyDTO);
+        Ontology ontology = DTOConversionService.convertToOntology(ontologyDTO);
         if (ontology == null) {
             logger.warn("No Ontology [" + ontologyDTO.getOntologyName() + "] found!");
             return null;
@@ -328,7 +350,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             logger.warn("No term " + termName + " found!");
             return null;
         }
-        TermInfo rootTermInfo = BODtoConversionService.getTermInfo(term, ontologyDTO, true);
+        TermInfo rootTermInfo = DTOConversionService.getTermInfoFromOntologyDTO(term, ontologyDTO, true);
         addRelatedTerms(term, rootTermInfo, ontologyDTO);
         return rootTermInfo;
 
@@ -340,7 +362,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             for (org.zfin.ontology.RelationshipPresentation relationship : relationships) {
                 List<Term> terms = relationship.getItems();
                 for (Term item : terms) {
-                    TermInfo info = BODtoConversionService.getTermInfo(item, ontology, false);
+                    TermInfo info = DTOConversionService.getTermInfoFromOntologyDTO(item, ontology, false);
                     rootTermInfo.addRelatedTermInfo(relationship.getType(), info);
                 }
             }
@@ -376,6 +398,45 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         } else {
             return null;
         }
+    }
+
+    @Override
+    public List<RelatedEntityDTO> getAttributionsForPub(String publicationZdbID) {
+        List<RelatedEntityDTO> relatedEntityDTOs = new ArrayList<RelatedEntityDTO>();
+
+        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkerForAttribution(publicationZdbID);
+        if (CollectionUtils.isNotEmpty(markers)) {
+            RelatedEntityDTO spacer = new RelatedEntityDTO();
+            spacer.setName(AttributionModule.RemoveHeader.MARKER.toString());
+            relatedEntityDTOs.add(spacer);
+        }
+        for (Marker m : markers) {
+            relatedEntityDTOs.add(DTOConversionService.convertToMarkerDTO(m));
+        }
+
+
+        List<Feature> features = RepositoryFactory.getMutantRepository().getFeaturesForAttribution(publicationZdbID);
+        if (CollectionUtils.isNotEmpty(features)) {
+            RelatedEntityDTO spacer = new RelatedEntityDTO();
+            spacer.setName(AttributionModule.RemoveHeader.FEATURE.toString());
+            relatedEntityDTOs.add(spacer);
+        }
+        for (Feature f : features) {
+            relatedEntityDTOs.add(DTOConversionService.convertToFeatureDTO(f));
+        }
+
+        List<Genotype> genotypes = RepositoryFactory.getMutantRepository().getGenotypesForAttribution(publicationZdbID);
+        if (CollectionUtils.isNotEmpty(genotypes)) {
+            RelatedEntityDTO spacer = new RelatedEntityDTO();
+            spacer.setName(AttributionModule.RemoveHeader.GENOTYPE.toString());
+            relatedEntityDTOs.add(spacer);
+        }
+        for (Genotype g : genotypes) {
+            relatedEntityDTOs.add(DTOConversionService.convertToGenotypeDTO(g));
+        }
+
+
+        return relatedEntityDTOs;
     }
 }
 

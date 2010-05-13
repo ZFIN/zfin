@@ -4,8 +4,9 @@ import java.util.Date;
 import java.util.Set;
 
 /**
+ * This class loosely mirrors MarkerGoTermEvidence.
  */
-public class GoEvidenceDTO extends RelatedEntityDTO{
+public class GoEvidenceDTO extends RelatedEntityDTO {
 
 
     private MarkerDTO markerDTO;
@@ -17,9 +18,10 @@ public class GoEvidenceDTO extends RelatedEntityDTO{
     private String createdPersonName;
     private String modifiedPersonName;
     private Date createdDate;
-    private Date modifiedDate ;
+    private Date modifiedDate;
 
-    private Set<String> inferredFrom ;
+    private Set<String> inferredFrom;
+    private Set<String> inferredFromLinks;
 
     public MarkerDTO getMarkerDTO() {
         return markerDTO;
@@ -101,8 +103,16 @@ public class GoEvidenceDTO extends RelatedEntityDTO{
         this.inferredFrom = inferredFrom;
     }
 
+    public Set<String> getInferredFromLinks() {
+        return inferredFromLinks;
+    }
+
+    public void setInferredFromLinks(Set<String> inferredFromLinks) {
+        this.inferredFromLinks = inferredFromLinks;
+    }
+
     public GoEvidenceDTO deepCopy() {
-        GoEvidenceDTO goEvidenceDTO = new GoEvidenceDTO() ;
+        GoEvidenceDTO goEvidenceDTO = new GoEvidenceDTO();
         goEvidenceDTO.setDataZdbID(dataZdbID);
         goEvidenceDTO.setPublicationZdbID(publicationZdbID);
         goEvidenceDTO.setName(name);
@@ -118,6 +128,7 @@ public class GoEvidenceDTO extends RelatedEntityDTO{
         goEvidenceDTO.setMarkerDTO(markerDTO);
         goEvidenceDTO.setNote(note);
         goEvidenceDTO.setInferredFrom(inferredFrom);
+        goEvidenceDTO.setInferredFromLinks(inferredFromLinks);
         return goEvidenceDTO;
     }
 }

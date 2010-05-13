@@ -2,7 +2,7 @@ package org.zfin.gwt.root.ui;
 
 /**
  * Interface that defines an error handler.
- *
+ * <p/>
  * 1) it allows to set an error messages as well as clear the error message: clearError()  and setError()
  * 2) other error handler can be registered to this error handler that will
  * be clear out whenever appropriate: clearAllErrors()

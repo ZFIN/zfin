@@ -3,7 +3,7 @@ package org.zfin.gwt.root.ui;
 import org.zfin.gwt.root.dto.TermInfo;
 
 /**
- * Callback for term info box. 
+ * Callback for term info box.
  */
 public class TermInfoCallBack extends ZfinAsyncCallback<TermInfo> {
 
@@ -18,8 +18,9 @@ public class TermInfoCallBack extends ZfinAsyncCallback<TermInfo> {
 
     @Override
     public void onSuccess(TermInfo termInfo) {
-        if (termInfo == null)
+        if (termInfo == null) {
             return;
+        }
 
         termInfoComposite.updateTermInfo(termInfo, historyToken);
     }

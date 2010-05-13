@@ -3,7 +3,7 @@ package org.zfin.gwt.root.dto;
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public class PhenotypePileStructureDTO extends AbstractPileStructureDTO implements Comparable<PhenotypePileStructureDTO>{
+public class PhenotypePileStructureDTO extends AbstractPileStructureDTO implements Comparable<PhenotypePileStructureDTO> {
 
     private PhenotypeTermDTO phenotypeTerm;
 

@@ -4,10 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.PublicationDTO;
-import org.zfin.gwt.root.dto.TermInfo;
-import org.zfin.gwt.root.dto.TermStatus;
+import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
 
@@ -30,6 +27,10 @@ public interface LookupRPCService extends RemoteService {
             return ourInstance;
         }
     }
+
+    // publication access method
+
+    PublicationDTO getPublicationAbstract(String zdbID);
 
     SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req);
 
@@ -63,9 +64,9 @@ public interface LookupRPCService extends RemoteService {
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)
      *
-     * @param request    request
-     * @param showTermDetail   true or false
-     * @param goOntology ontology name
+     * @param request        request
+     * @param showTermDetail true or false
+     * @param goOntology     ontology name
      * @return suggestions
      */
     public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO goOntology);
@@ -78,5 +79,7 @@ public interface LookupRPCService extends RemoteService {
 
     List<PublicationDTO> getRecentPublications(String key);
 
-    PublicationDTO addRecentPublication(String zdbID,String key);
+    PublicationDTO addRecentPublication(String zdbID, String key);
+
+    List<RelatedEntityDTO> getAttributionsForPub(String publicationZdbID);
 }

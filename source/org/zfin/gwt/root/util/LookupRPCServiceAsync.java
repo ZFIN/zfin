@@ -2,10 +2,7 @@ package org.zfin.gwt.root.util;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.PublicationDTO;
-import org.zfin.gwt.root.dto.TermInfo;
-import org.zfin.gwt.root.dto.TermStatus;
+import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
 
@@ -13,10 +10,13 @@ import java.util.List;
  */
 public interface LookupRPCServiceAsync {
 
+    // publication access method
+
+    void getPublicationAbstract(String zdbID, AsyncCallback<PublicationDTO> async);
 
     void getMarkerSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
-    void getAntibodySuggestions(SuggestOracle.Request request, AsyncCallback<SuggestOracle.Response>  async);
+    void getAntibodySuggestions(SuggestOracle.Request request, AsyncCallback<SuggestOracle.Response> async);
 
     void getGenedomAndEFGSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
@@ -42,10 +42,10 @@ public interface LookupRPCServiceAsync {
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table).
      *
-     * @param request    request
-     * @param showTermDetail   true or false
-     * @param ontologyDTO ontology name
-     * @param async      callback
+     * @param request        request
+     * @param showTermDetail true or false
+     * @param ontologyDTO    ontology name
+     * @param async          callback
      */
     void getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO ontologyDTO, AsyncCallback<SuggestOracle.Response> async);
 
@@ -58,7 +58,9 @@ public interface LookupRPCServiceAsync {
      */
     void getTermInfoByName(OntologyDTO ontology, String termName, AsyncCallback<TermInfo> termInfoCallback);
 
-    void getRecentPublications(String key,AsyncCallback<List<PublicationDTO>> asyncCallback);
+    void getRecentPublications(String key, AsyncCallback<List<PublicationDTO>> asyncCallback);
 
-    void addRecentPublication(String zdbID, String key,AsyncCallback<PublicationDTO > async);
+    void addRecentPublication(String zdbID, String key, AsyncCallback<PublicationDTO> async);
+
+    void getAttributionsForPub(String publicationZdbID, AsyncCallback<List<RelatedEntityDTO>> markerEditCallBack);
 }

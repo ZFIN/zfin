@@ -27,6 +27,9 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
     private TermInfo currentTermInfo;
     private ErrorHandler errorElement = new SimpleErrorElement();
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
+    private final String DEFAULT_DIVIDER = "&nbsp;&nbsp;";
+    private String divider = DEFAULT_DIVIDER;
+    private boolean noWrap = true;
 
     public TermInfoComposite() {
         super();
@@ -39,6 +42,12 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         if (showDefaultRootOntologyTerm)
             setDefaultTermInfo();
         setHandler();
+    }
+
+    public TermInfoComposite(boolean showDefaultRootOntologyTerm, String divider, boolean noWrap) {
+        this(showDefaultRootOntologyTerm);
+        this.divider = divider;
+        this.noWrap = noWrap;
     }
 
     private void setHandler() {
@@ -72,9 +81,19 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         addHeaderEntry(TerminfoTableHeader.ID.getName(), rowIndex);
         setWidget(rowIndex++, dataColumn, new Label(termInfo.getID()));
 
-        if (StringUtils.isNotEmpty(termInfo.getSynonyms())) {
+        if (termInfo.getSynonyms() != null && termInfo.getSynonyms().size() > 0) {
             addHeaderEntry(TerminfoTableHeader.SYNONYMS.getName(), rowIndex);
-            setWidget(rowIndex++, 1, new Label(termInfo.getSynonyms()));
+            StringBuilder builder = new StringBuilder();
+            List<String> synonyms = termInfo.getSynonyms();
+            if (synonyms != null) {
+                for (int i = 0; i < synonyms.size(); i++) {
+                    builder.append(synonyms.get(i));
+                    if (i < synonyms.size() - 1) {
+                        builder.append(divider);
+                    }
+                }
+            }
+            setWidget(rowIndex++, 1, new HTML(builder.toString()));
         }
 
         if (StringUtils.isNotEmpty(termInfo.getDefinition())) {
@@ -83,27 +102,32 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         }
 
         Map<String, List<TermInfo>> relatedTermsMap = termInfo.getRelatedTermInfos();
-//            Window.alert("Related Terms: " + relatedTermsMap.size());
         if (relatedTermsMap != null) {
             for (String type : relatedTermsMap.keySet()) {
                 FlowPanel panel = new FlowPanel();
                 addHeaderEntry(type, rowIndex);
                 List<TermInfo> relatedTerms = relatedTermsMap.get(type);
-                for (TermInfo info : relatedTerms) {
-                    panel.add(createHyperlink(info));
-                    panel.add(new HTML("&nbsp;&nbsp;"));
+                for (int i = 0; i < relatedTerms.size(); i++) {
+                    panel.add(createHyperlink(relatedTerms.get(i)));
+                    if (i < relatedTerms.size() - 1) {
+                        panel.add(new HTML(divider));
+                    }
                 }
                 setWidget(rowIndex++, 1, panel);
             }
         }
         // comments
         addHeaderEntry(TerminfoTableHeader.COMMENT.getName(), rowIndex);
-        getCellFormatter().addStyleName(rowIndex, headerColumn, WidgetUtil.NO_WRAP);
+        if (noWrap) {
+            getCellFormatter().addStyleName(rowIndex, headerColumn, WidgetUtil.NO_WRAP);
+        }
         setWidget(rowIndex++, 1, new Label(termInfo.getComment()));
         // Obsolete
         if (termInfo.isObsolete()) {
             addHeaderEntry(TerminfoTableHeader.OBSOLETE.getName(), rowIndex);
-            getCellFormatter().addStyleName(rowIndex, headerColumn, WidgetUtil.NO_WRAP);
+            if (noWrap) {
+                getCellFormatter().addStyleName(rowIndex, headerColumn, WidgetUtil.NO_WRAP);
+            }
             Label label = new Label("True");
             label.setStyleName(WidgetUtil.RED);
             setWidget(rowIndex++, 1, label);
@@ -112,7 +136,9 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
 
     private Hyperlink createHyperlink(TermInfo info) {
         Hyperlink link = new Hyperlink(info.getName(), info.getID());
-        link.addStyleName(WidgetUtil.NO_WRAP);
+        if (noWrap) {
+            link.addStyleName(WidgetUtil.NO_WRAP);
+        }
         link.addClickHandler(new TermInfoClickListener(info, this));
         return link;
     }

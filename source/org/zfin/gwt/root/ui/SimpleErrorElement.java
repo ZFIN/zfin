@@ -22,7 +22,7 @@ public class SimpleErrorElement extends Label implements ErrorHandler {
      * Default constructor. Use if no visible error element is used but you
      * still want to manage other error handler that are dependent on it.
      */
-    public SimpleErrorElement(){
+    public SimpleErrorElement() {
 
     }
 

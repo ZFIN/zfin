@@ -2,7 +2,7 @@ package org.zfin.gwt.root.dto;
 
 /**
  */
-public class GoTermDTO extends RelatedEntityDTO{
+public class GoTermDTO extends RelatedEntityDTO {
 
     private String subOntology;
     public static final String MOLECULAR_FUNCTION = "Molecular Function";

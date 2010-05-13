@@ -2,11 +2,12 @@ package org.zfin.gwt.root.dto;
 
 /**
  */
-public class GenotypeDTO extends RelatedEntityDTO{
+public class GenotypeDTO extends RelatedEntityDTO {
 
     private String handle;
 
-    public GenotypeDTO() { }
+    public GenotypeDTO() {
+    }
 
     public GenotypeDTO(RelatedEntityDTO relatedEntityDTO) {
         this.dataZdbID = relatedEntityDTO.getDataZdbID();

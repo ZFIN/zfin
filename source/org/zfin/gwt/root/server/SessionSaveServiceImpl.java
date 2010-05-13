@@ -3,8 +3,6 @@ package org.zfin.gwt.root.server;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
 import org.zfin.gwt.root.ui.SessionSaveService;
@@ -12,7 +10,6 @@ import org.zfin.people.CuratorSession;
 import org.zfin.people.Person;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.BODtoConversionService;
 
 import java.util.Iterator;
 import java.util.List;
@@ -92,7 +89,7 @@ public class SessionSaveServiceImpl extends RemoteServiceServlet implements Sess
      */
     public CuratorSessionDTO readBoxSizeFromSession(String publicationID, String boxDivID) {
         CuratorSession session = profileRepository.getCuratorSession(publicationID, boxDivID, CuratorSession.Attribute.MUTANT_DISPLAY_BOX);
-        return BODtoConversionService.getCuratorSessionDTO(session);
+        return DTOConversionService.convertToCuratorSessionDTO(session);
     }
 
     /**

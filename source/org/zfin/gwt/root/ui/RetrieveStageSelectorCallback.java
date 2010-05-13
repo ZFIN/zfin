@@ -1,7 +1,5 @@
 package org.zfin.gwt.root.ui;
 
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
-
 /**
  * Call back class after checking which stage selector should be used.
  * The callback class sets the stage selector to the value set in session.

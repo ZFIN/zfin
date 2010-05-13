@@ -91,6 +91,7 @@ public class PhenotypeTermDTO extends ExpressedTermDTO {
     /**
      * Create a unique ID for a phenotype structure:
      * supertermID:subterm:quality:tag
+     *
      * @return unique key
      */
     @Override

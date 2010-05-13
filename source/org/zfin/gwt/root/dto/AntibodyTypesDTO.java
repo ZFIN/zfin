@@ -7,10 +7,10 @@ import java.util.List;
 /**
  */
 public class AntibodyTypesDTO implements IsSerializable {
-    private List<String> hostOrganisms ;
-    private List<String> immunogenOrganisms ;
-    private List<String> heavyChains ;
-    private List<String> lightChains ;
+    private List<String> hostOrganisms;
+    private List<String> immunogenOrganisms;
+    private List<String> heavyChains;
+    private List<String> lightChains;
     private List<String> types;
 
     public List<String> getHostOrganisms() {

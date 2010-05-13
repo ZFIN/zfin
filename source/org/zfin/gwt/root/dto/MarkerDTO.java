@@ -47,6 +47,22 @@ public class MarkerDTO extends RelatedEntityDTO {
         this.compareString = compareString;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof MarkerDTO) {
+            MarkerDTO dto = (MarkerDTO) obj;
+            if (compareString == null && dto.getCompareString() == null) {
+                return super.equals(obj);
+            } else {
+                if (compareString != null && dto.getCompareString() != null) {
+                    return compareString.equals(dto.getCompareString());
+                }
+                return false;
+            }
+        }
+        return false;
+    }
+
     public String getMarkerType() {
         return markerType;
     }
