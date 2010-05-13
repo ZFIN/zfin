@@ -66,8 +66,9 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         eastPanel.add(zdbIDPanel);
         ScrollPanel scrollPanel = new ScrollPanel(termInfoComposite);
         scrollPanel.setAlwaysShowScrollBars(false);
-        scrollPanel.setHeight("300px");
+        scrollPanel.setSize("700px","300px");
         eastPanel.add(scrollPanel);
+        eastPanel.setWidth("800px");
 
         mainPanel.add(table);
         mainPanel.add(eastPanel);
@@ -116,7 +117,9 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         goTermBox.setHighlightAction(new HighlightAction() {
             @Override
             public void onHighlight(String termName) {
-                LookupRPCService.App.getInstance().getTermInfoByName(OntologyDTO.GO, termName, new TermInfoCallBack(termInfoComposite, termName));
+                if(false==termName.startsWith(ItemSuggestCallback.END_ELLIPSE)){
+                    LookupRPCService.App.getInstance().getTermInfoByName(OntologyDTO.GO, termName, new TermInfoCallBack(termInfoComposite, termName));
+                }
             }
         });
 

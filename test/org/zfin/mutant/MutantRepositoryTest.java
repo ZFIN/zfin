@@ -14,6 +14,7 @@ import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
@@ -21,10 +22,13 @@ import org.zfin.ontology.GoTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 @SuppressWarnings({"NonBooleanMethodNameMayNotStartWithQuestion"})
@@ -209,5 +213,27 @@ public class MutantRepositoryTest {
         assertTrue(goTerms.size()>0);
     }
 
+
+    @Test
+    public void getZFINInferences(){
+        RepositoryFactory.getMutantRepository().getZFINInferences( "ZDB-MRPHLNO-041110-25" , "ZDB-PUB-090324-13") ;
+    }
+
+    @Test
+    public void markerGoTermEvidenceExists(){
+        MarkerGoTermEvidence markerGoTermEvidence= (MarkerGoTermEvidence)
+                HibernateUtil.currentSession().get(MarkerGoTermEvidence.class,"ZDB-MRKRGOEV-100423-84020");
+        assertTrue(RepositoryFactory.getMutantRepository().markerGoTermEvidenceExists( markerGoTermEvidence )) ;
+        GoEvidenceCode oldEvidenceCode = markerGoTermEvidence.getEvidenceCode() ;
+        GoEvidenceCode ndEvidenceCode = new GoEvidenceCode();
+        ndEvidenceCode.setCode(GoEvidenceCodeEnum.ND.toString());
+        markerGoTermEvidence.setEvidenceCode(ndEvidenceCode);
+        assertFalse(RepositoryFactory.getMutantRepository().markerGoTermEvidenceExists( markerGoTermEvidence )) ;
+        markerGoTermEvidence.setEvidenceCode(oldEvidenceCode);
+        assertTrue(RepositoryFactory.getMutantRepository().markerGoTermEvidenceExists( markerGoTermEvidence )); ;
+        Set<InferenceGroupMember> inferenceGroupMemberSet = markerGoTermEvidence.getInferredFrom() ;
+        markerGoTermEvidence.setInferredFrom(new HashSet<InferenceGroupMember>());
+        assertFalse(RepositoryFactory.getMutantRepository().markerGoTermEvidenceExists( markerGoTermEvidence )); ;
+    }
 
 }

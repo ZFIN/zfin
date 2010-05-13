@@ -8,6 +8,7 @@ import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl;
+import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
@@ -108,7 +109,12 @@ public class GoEvidenceTest {
         String inferenceTestString = InferenceCategory.REFSEQ.prefix()+" test-inference" ;
         inferredFromSet.add(inferenceTestString) ;
 
-        GoEvidenceDTO goEvidenceDTO2 = markerRPCService.editMarkerGoTermEvidenceDTO(goEvidenceDTO);
+        GoEvidenceDTO goEvidenceDTO2 = null;
+        try {
+            goEvidenceDTO2 = markerRPCService.editMarkerGoTermEvidenceDTO(goEvidenceDTO);
+        } catch (DuplicateEntryException e) {
+            fail(e.toString()) ;
+        }
 
         // validate
         assertEquals(GoEvidenceCodeEnum.IC,goEvidenceDTO2.getEvidenceCode());
@@ -123,7 +129,13 @@ public class GoEvidenceTest {
         inferredFromSet = goEvidenceDTO2.getInferredFrom();
         assertTrue(inferredFromSet.remove(inferenceTestString));
         goEvidenceDTO2.setPublicationZdbID(pub1);
-        GoEvidenceDTO goEvidenceDTO3 = markerRPCService.editMarkerGoTermEvidenceDTO(goEvidenceDTO2);
+        GoEvidenceDTO goEvidenceDTO3 = null ;
+
+        try {
+            goEvidenceDTO3 = markerRPCService.editMarkerGoTermEvidenceDTO(goEvidenceDTO2);
+        } catch (DuplicateEntryException e) {
+            fail(e.toString()) ;
+        }
 
         // validate same as before
         assertNull(goEvidenceDTO3.getFlag());
@@ -149,7 +161,12 @@ public class GoEvidenceTest {
 
         // now lets set it to null and create some stuff
         goEvidenceDTO.setZdbID(null);
-        GoEvidenceDTO goEvidenceDTOCreated = markerRPCService.createMarkerGoTermEvidenceDTO(goEvidenceDTO) ;
+        GoEvidenceDTO goEvidenceDTOCreated = null ;
+        try {
+            goEvidenceDTOCreated = markerRPCService.createMarkerGoTermEvidenceDTO(goEvidenceDTO) ;
+        } catch (DuplicateEntryException e) {
+            fail(e.toString()) ;
+        }
         assertEquals(1,goEvidenceDTOCreated.getInferredFrom().size());
 
         assertEquals("ZDB-GENE-980526-501",goEvidenceDTOCreated.getMarkerDTO().getZdbID());

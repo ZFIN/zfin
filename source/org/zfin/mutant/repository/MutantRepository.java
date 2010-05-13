@@ -255,5 +255,9 @@ public interface MutantRepository {
     List<Genotype> getGenotypesForAttribution(String publicationZdbID);
 
     Feature getFeatureByAbbreviation(String featureAbbrev);
+
+    int getZFINInferences(String zdbID, String zdbID1);
+
+    boolean markerGoTermEvidenceExists(MarkerGoTermEvidence markerGoTermEvidence);
 }
 

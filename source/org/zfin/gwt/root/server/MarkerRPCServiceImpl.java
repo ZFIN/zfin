@@ -23,6 +23,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerService;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Feature;
+import org.zfin.mutant.Genotype;
 import org.zfin.orthology.Species;
 import org.zfin.people.MarkerSupplier;
 import org.zfin.people.Organization;
@@ -156,6 +157,10 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         if (publication == null) {
             return "Invalid pub: " + pubZdbID;
         }
+
+        // if used in inference of markergoentry
+        // if there is a pub with a marker go entry on it that has inferences
+
         // if feature
         if (zdbID.startsWith("ZDB-ALT-")) {
             Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(zdbID);
@@ -182,6 +187,11 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             if (RepositoryFactory.getInfrastructureRepository().getDBLinkAttributions(zdbID, pubZdbID) > 0) {
                 return zdbID + " is has dblink attributed to this pub";
             }
+
+            if (zdbID.startsWith("ZDB-GENO") && RepositoryFactory.getMutantRepository().getZFINInferences(zdbID, pubZdbID) > 0) {
+                Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(zdbID) ;
+                return genotype.getHandle() + " is inferred as GO evidence ";
+            }
         }
 
         // if marker
@@ -190,6 +200,9 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
     private String createRemoveAttributionMessageForMarker(Marker marker, Publication publication) {
 
+        if (RepositoryFactory.getMutantRepository().getZFINInferences(marker.getZdbID(), publication.getZdbID()) > 0) {
+            return marker.getAbbreviation() + " is inferred as GO evidence ";
+        }
 
         if (RepositoryFactory.getInfrastructureRepository().getGoRecordAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
             return marker.getAbbreviation() + " attributed by go evidence.";

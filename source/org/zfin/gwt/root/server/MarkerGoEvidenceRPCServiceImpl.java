@@ -8,6 +8,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.datatransfer.webservice.EBIFetch;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
+import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
@@ -58,7 +59,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
 
 
     @Override
-    public GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) {
+    public GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException{
         // retrieve
         Criteria criteria = HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class);
         criteria.add(Restrictions.eq("zdbID", goEvidenceDTO.getZdbID()));
@@ -110,6 +111,10 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
 
         for (String inference : inferencesToRemove) {
             mutantRepository.removeInferenceToGoMarkerTermEvidence(markerGoTermEvidence, inference);
+        }
+
+        if(mutantRepository.markerGoTermEvidenceExists(markerGoTermEvidence)){
+            throw new DuplicateEntryException("Duplicate marker go evidence: \n" + markerGoTermEvidence.toString() ) ; 
         }
 
 //        markerGoTermEvidence.setInferredFrom(goEvidenceDTO.getInferredFrom());
@@ -276,7 +281,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
     }
 
     @Override
-    public GoEvidenceDTO createMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) {
+    public GoEvidenceDTO createMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException {
 
         HibernateUtil.createTransaction();
         // set modified by
@@ -327,6 +332,9 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
             infrastructureRepository.insertUpdatesTable(markerGoTermEvidence.getZdbID(), "MarkerGoTermEvidence", markerGoTermEvidence.toString(), "Created new MarkerGoTermEvidence record", person);
         }
         markerGoTermEvidence.setModifiedWhen(goEvidenceDTO.getModifiedDate());
+        if(mutantRepository.markerGoTermEvidenceExists(markerGoTermEvidence)){
+            throw new DuplicateEntryException("Duplicate marker go evidence: \n "+ markerGoTermEvidence) ;
+        }
 
         HibernateUtil.flushAndCommitCurrentSession();
         // do a safe return this way

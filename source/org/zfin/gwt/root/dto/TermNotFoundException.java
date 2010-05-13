@@ -10,9 +10,7 @@ public class TermNotFoundException extends Exception implements IsSerializable {
     private String term;
     private String type;
 
-    public TermNotFoundException() {
-    }
-
+    public TermNotFoundException() { }
 
     public TermNotFoundException(String message) {
         super(message);

@@ -1,5 +1,6 @@
 package org.zfin.mutant.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -12,6 +13,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
+import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
@@ -709,7 +711,6 @@ public class HibernateMutantRepository implements MutantRepository {
      * Go terms attributed as evidence to this marker by this pub.
      * todo: Don't include IEA, IC .
      *
-     * @param marker
      * @param publication
      * @return
      */
@@ -789,6 +790,53 @@ public class HibernateMutantRepository implements MutantRepository {
                 ;
     }
 
+    public int getZFINInferences(String zdbID, String publicationZdbID){
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery( "" +
+                " select count(*) from marker_go_term_evidence  ev  " +
+                " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
+                " where " +
+                " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
+                " and " +
+                " inf.infgrmem_inferred_from=:zdbID " +
+                " ")
+                .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix()+zdbID)
+                .setString("pubZdbID", publicationZdbID)
+                .uniqueResult().toString()
+        );
+    }
+
+    @Override
+    public boolean markerGoTermEvidenceExists(MarkerGoTermEvidence markerGoTermEvidence) {
+        return false ;
+//        String hql = " " +
+//                " select count(*) from MarkerGoTermEvidence ev " +
+//                " where ev.mrkrgoev_mrkr_zdb_id = :marker " +
+//                " and ev.mrkrgoev_zdb_id = inf.infgrmem_mrkrgoev_zdb_id " +
+//                " and ev.mrkrgoev_go_term_zdb_id = :goTerm " +
+//                " and ev.mrkrgoev_source_zdb_id = :publication " +
+//                " and ev.mrkrgoev_evidence_code = :evidenceCode " +
+//                " and ev.mrkrgoev_gflag_name = :flag "  ;
+////                " and ev.inferredFrom in (:inferences) " ;
+////                " " ;
+//        if(CollectionUtils.isNotEmpty(markerGoTermEvidence.getInferredFrom())){
+//            hql +=  " and inf.infgrmem_inferred_from in (:inferences) " ;
+//        }
+//        Query query = HibernateUtil.currentSession().createQuery(hql)
+//                .setParameter("marker",markerGoTermEvidence.getMarker())
+//                .setParameter("goTerm",markerGoTermEvidence.getGoTerm())
+//                .setParameter("publication",markerGoTermEvidence.getSource())
+//                .setString("evidenceCode",markerGoTermEvidence.getEvidenceCode().getCode())
+//                .setParameter("flag",markerGoTermEvidence.getFlag())
+//                ;
+//
+//        if(CollectionUtils.isNotEmpty(markerGoTermEvidence.getInferredFrom())){
+//            Set<String> inferenceStrings = new HashSet<String>() ;
+//
+//            query.setParameterList("inferences",markerGoTermEvidence.getInferredFrom()) ;
+//        }
+//
+//        return Integer.valueOf(query.uniqueResult().toString())>0;
+    }
 
     public void invalidateCachedObjects() {
     }

@@ -7,12 +7,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response> {
+public class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response> {
 
     private static final int MAXIMUM_NUMBER_OF_MATCHES = 25;
     private SuggestOracle.Request request;
     private SuggestOracle.Callback callback;
     private LookupComposite lookup;
+    public static final String END_ELLIPSE = "..." ;
 
     public ItemSuggestCallback(SuggestOracle.Request req, SuggestOracle.Callback call, LookupComposite lookup) {
         request = req;
@@ -53,9 +54,9 @@ class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response> {
                 iterator.remove();
             }
             if (lookup.isWildCard()) {
-                suggestions.add(new ItemSuggestion("...", request.getQuery()));
+                suggestions.add(new ItemSuggestion(END_ELLIPSE, request.getQuery()));
             } else {
-                suggestions.add(new ItemSuggestion("...", null));
+                suggestions.add(new ItemSuggestion(END_ELLIPSE, null));
             }
         }
 
