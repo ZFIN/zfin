@@ -10,7 +10,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.CurationFilterRPC;
 import org.zfin.gwt.curation.ui.PublicationNotFoundException;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.util.BODtoConversionService;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Feature;
@@ -100,7 +100,7 @@ public class CurationFilterRPCImpl extends RemoteServiceServlet implements Curat
         List<Feature> features = featureRep.getFeaturesByPublication(publicationID);
         List<FeatureDTO> dtos = new ArrayList<FeatureDTO>(10);
         for (Feature feature : features) {
-            dtos.add(BODtoConversionService.getFeatureDto(feature));
+            dtos.add(DTOConversionService.convertToFeatureDTO(feature));
         }
         return dtos;
     }
@@ -144,19 +144,19 @@ public class CurationFilterRPCImpl extends RemoteServiceServlet implements Curat
         List<FishDTO> fishDTOs = new ArrayList<FishDTO>();
 
         Genotype geno = pubRepository.getGenotypeByHandle(Genotype.WT);
-        fishDTOs.add(BODtoConversionService.getFishDTO(geno));
+        fishDTOs.add(DTOConversionService.convertToFishDTOFromGenotype(geno));
         FishDTO separator = new FishDTO();
         separator.setName("--------------");
         fishDTOs.add(separator);
 
         for (Genotype genotype : genotypes) {
-            fishDTOs.add(BODtoConversionService.getFishDTO(genotype));
+            fishDTOs.add(DTOConversionService.convertToFishDTOFromGenotype(genotype));
         }
 
         fishDTOs.add(separator);
         List<Genotype> wildtypes = mutantRep.getAllWildtypeGenotypes();
         for (Genotype genotype : wildtypes) {
-            fishDTOs.add(BODtoConversionService.getFishDTO(genotype));
+            fishDTOs.add(DTOConversionService.convertToFishDTOFromGenotype(genotype));
         }
         return fishDTOs;
     }

@@ -12,9 +12,12 @@ import org.zfin.gwt.marker.ui.AntibodyRPCService;
 import org.zfin.gwt.root.dto.AntibodyDTO;
 import org.zfin.gwt.root.dto.AntibodyTypesDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.MarkerService;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.AntibodyWikiWebService;
@@ -45,19 +48,19 @@ public class AntibodyRPCServiceImpl extends RemoteServiceServlet implements Anti
         antibodyDTO.setType(antibody.getClonalType());
 
 
-        antibodyDTO.setSuppliers(DTOService.getSuppliers(antibody));
+        antibodyDTO.setSuppliers(MarkerService.getSuppliers(antibody));
 
         // get direct attributions
-        antibodyDTO.setRecordAttributions(DTOService.getDirectAttributions(antibody));
+        antibodyDTO.setRecordAttributions(MarkerService.getDirectAttributions(antibody));
 
         // get notes
-        antibodyDTO.setCuratorNotes(DTOService.getCuratorNotes(antibody));
-        antibodyDTO.setPublicNote(DTOService.getPublicNote(antibody));
+        antibodyDTO.setCuratorNotes(DTOMarkerService.getCuratorNoteDTOs(antibody));
+        antibodyDTO.setPublicNote(DTOMarkerService.getPublicNoteDTO(antibody));
 
-        antibodyDTO.setExternalNotes(DTOService.getExternalNotes(antibody));
+        antibodyDTO.setExternalNotes(DTOMarkerService.getExternalNoteDTOs(antibody));
 
         // get alias's
-        antibodyDTO.setAliasAttributes(DTOService.getAliases(antibody));
+        antibodyDTO.setAliasAttributes(DTOMarkerService.getMarkerAliasDTOs(antibody));
 
         // get antigen genes
         Set<MarkerRelationship> markerRelationships = antibody.getSecondMarkerRelationships();
@@ -72,40 +75,40 @@ public class AntibodyRPCServiceImpl extends RemoteServiceServlet implements Anti
                     ) {
                 Marker gene = markerRelationship.getFirstMarker();
 //                relatedGenes.addAll(DTOHelper.createAttributesForPublication(gene.getAbbreviation(),markerRelationship.getPublications())) ;
-                relatedGenes.addAll(DTOService.createLinksForPublication(DTOService.createMarkerDTOFromMarker(gene), markerRelationship.getPublications()));
+                relatedGenes.addAll(DTOConversionService.createLinks(DTOConversionService.convertToMarkerDTO(gene), markerRelationship.getPublications()));
             }
         }
         logger.debug("# of related genes: " + relatedGenes.size());
 
         antibodyDTO.setRelatedGeneAttributes(relatedGenes);
 
-        return antibodyDTO ;
+        return antibodyDTO;
     }
 
     @Override
     public AntibodyTypesDTO getAntibodyTypes() {
         AntibodyTypesDTO antibodyTypesDTO = new AntibodyTypesDTO();
 
-        List<String> hostSpecies = new ArrayList<String>() ;
-        for(Species species : antibodyRepository.getHostSpeciesList()){
+        List<String> hostSpecies = new ArrayList<String>();
+        for (Species species : antibodyRepository.getHostSpeciesList()) {
             hostSpecies.add(species.getCommonName());
         }
         antibodyTypesDTO.setHostOrganisms(hostSpecies);
 
-        List<String> immunogenSpecies = new ArrayList<String>() ;
-        for(Species species : antibodyRepository.getImmunogenSpeciesList()){
+        List<String> immunogenSpecies = new ArrayList<String>();
+        for (Species species : antibodyRepository.getImmunogenSpeciesList()) {
             immunogenSpecies.add(species.getCommonName());
         }
         antibodyTypesDTO.setImmunogenOrganisms(immunogenSpecies);
 
         List<String> heavyChainList = new ArrayList<String>();
-        for (Isotype.HeavyChain iso : Isotype.HeavyChain.values()){
+        for (Isotype.HeavyChain iso : Isotype.HeavyChain.values()) {
             heavyChainList.add(iso.toString());
         }
         antibodyTypesDTO.setHeavyChains(heavyChainList);
 
         List<String> lightChainList = new ArrayList<String>();
-        for (Isotype.LightChain iso : Isotype.LightChain.values()){
+        for (Isotype.LightChain iso : Isotype.LightChain.values()) {
             lightChainList.add(iso.toString());
         }
         antibodyTypesDTO.setLightChains(lightChainList);
@@ -127,35 +130,35 @@ public class AntibodyRPCServiceImpl extends RemoteServiceServlet implements Anti
 
         HibernateUtil.createTransaction();
 
-        DTOService.handleUpdatesTable(antibody, "host species", antibody.getHostSpecies(), antibodyDTO.getHostOrganism());
+        DTOMarkerService.insertMarkerUpdate(antibody, "host species", antibody.getHostSpecies(), antibodyDTO.getHostOrganism());
         antibody.setHostSpecies(antibodyDTO.getHostOrganism());
 
-        DTOService.handleUpdatesTable(antibody, "immunogen species", antibody.getImmunogenSpecies(), antibodyDTO.getImmunogenOrganism());
+        DTOMarkerService.insertMarkerUpdate(antibody, "immunogen species", antibody.getImmunogenSpecies(), antibodyDTO.getImmunogenOrganism());
         antibody.setImmunogenSpecies(antibodyDTO.getImmunogenOrganism());
 
-        DTOService.handleUpdatesTable(antibody, "heavy chain", antibody.getHeavyChainIsotype(), antibodyDTO.getHeavyChain());
+        DTOMarkerService.insertMarkerUpdate(antibody, "heavy chain", antibody.getHeavyChainIsotype(), antibodyDTO.getHeavyChain());
         antibody.setHeavyChainIsotype(antibodyDTO.getHeavyChain());
 
-        DTOService.handleUpdatesTable(antibody, "light chain", antibody.getLightChainIsotype(), antibodyDTO.getLightChain());
+        DTOMarkerService.insertMarkerUpdate(antibody, "light chain", antibody.getLightChainIsotype(), antibodyDTO.getLightChain());
         antibody.setLightChainIsotype(antibodyDTO.getLightChain());
 
-        DTOService.handleUpdatesTable(antibody, "clonal type", antibody.getType().toString(), antibodyDTO.getType());
+        DTOMarkerService.insertMarkerUpdate(antibody, "clonal type", antibody.getType().toString(), antibodyDTO.getType());
         antibody.setClonalType(antibodyDTO.getType());
 
         HibernateUtil.currentSession().update(antibody);
         HibernateUtil.flushAndCommitCurrentSession();
         logger.info("updated clone: " + antibody);
 
-        updateAntibodyWiki(antibody) ;
+        updateAntibodyWiki(antibody);
 
         return getAntibodyForZdbID(antibody.getZdbID());
     }
 
     private void updateAntibodyWiki(Antibody antibody) {
         try {
-            AntibodyWikiWebService.getInstance().updatePageForAntibody(antibody,antibody.getName());
+            AntibodyWikiWebService.getInstance().updatePageForAntibody(antibody, antibody.getName());
         } catch (Exception e) {
-            logger.error("Unable to update antibody wiki: "+antibody,e);
+            logger.error("Unable to update antibody wiki: " + antibody, e);
         }
     }
 

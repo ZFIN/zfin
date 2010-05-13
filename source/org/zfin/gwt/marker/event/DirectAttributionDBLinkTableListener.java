@@ -2,6 +2,7 @@ package org.zfin.gwt.marker.event;
 
 import org.zfin.gwt.marker.ui.DirectAttributionTable;
 import org.zfin.gwt.root.dto.DBLinkDTO;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
 
 /**
  * Class DirectAttributionDBLinkTableListener.
@@ -23,7 +24,8 @@ public class DirectAttributionDBLinkTableListener extends DBLinkTableListener {
     }
 
     @Override
-    public void dataChanged(RelatedEntityEvent<DBLinkDTO> dataChangedEvent) { }
+    public void dataChanged(RelatedEntityEvent<DBLinkDTO> dataChangedEvent) {
+    }
 
 
 } 

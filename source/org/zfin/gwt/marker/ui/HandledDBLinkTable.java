@@ -3,9 +3,12 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.marker.event.DBLinkTableListener;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
-import org.zfin.gwt.marker.event.RelatedEntityListener;
 import org.zfin.gwt.root.dto.DBLinkDTO;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.event.RelatedEntityListener;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
+import org.zfin.gwt.root.ui.MarkerRPCService;
+import org.zfin.gwt.root.ui.StandardDivNames;
 
 
 /**
@@ -92,7 +95,8 @@ class HandledDBLinkTable extends DBLinkTable {
 
         addDBLinkTableListener(new DBLinkTableListener() {
             @Override
-            public void addAttribution(RelatedEntityEvent<DBLinkDTO> dbLinkDTORelatedEntityEvent) { }
+            public void addAttribution(RelatedEntityEvent<DBLinkDTO> dbLinkDTORelatedEntityEvent) {
+            }
 
             @Override
             public void dataChanged(RelatedEntityEvent<DBLinkDTO> dataChangedEvent) {

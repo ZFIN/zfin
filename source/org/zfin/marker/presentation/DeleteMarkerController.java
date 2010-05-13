@@ -21,62 +21,61 @@ import java.util.Set;
 
 /**
  * Attempts to delete a marker and lands on a splash page to indicate success/failure.
- *
- * 1. If there is a problem durint the 
- *
+ * <p/>
+ * 1. If there is a problem durint the
  */
-public class DeleteMarkerController extends AbstractCommandController{
+public class DeleteMarkerController extends AbstractCommandController {
 
     @Override
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        DeleteBean deleteBean = (DeleteBean) command ;
+        DeleteBean deleteBean = (DeleteBean) command;
 
-        ModelAndView modelAndView = new ModelAndView("marker-delete.page") ;
-        modelAndView.addObject(getCommandName(),deleteBean) ;
-        modelAndView.addObject("errors",errors) ;
+        ModelAndView modelAndView = new ModelAndView("marker-delete.page");
+        modelAndView.addObject(getCommandName(), deleteBean);
+        modelAndView.addObject("errors", errors);
 
 
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(deleteBean.getZdbIDToDelete()) ;
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(deleteBean.getZdbIDToDelete());
         deleteBean.setMarkerToDelete(marker);
 
         // a bit of validation, maybe put somewhere else
-        if(marker.isInTypeGroup(Marker.TypeGroup.ATB)){
-            Set<ExpressionExperiment> expressionExperiments = ((Antibody) marker).getAntibodyLabelings() ;
-            if(CollectionUtils.isNotEmpty(expressionExperiments)){
+        if (marker.isInTypeGroup(Marker.TypeGroup.ATB)) {
+            Set<ExpressionExperiment> expressionExperiments = ((Antibody) marker).getAntibodyLabelings();
+            if (CollectionUtils.isNotEmpty(expressionExperiments)) {
                 int numExpression = expressionExperiments.size();
-                Set<String> pubs = new HashSet<String>() ;
-                for(ExpressionExperiment expressionExperiment : expressionExperiments){
+                Set<String> pubs = new HashSet<String>();
+                for (ExpressionExperiment expressionExperiment : expressionExperiments) {
                     pubs.add(CurationPresentation.getLink(
                             expressionExperiment.getPublication(),
                             CurationPresentation.CurationTab.FX)
-                    ) ;
+                    );
                 }
-                String argString = "" ;
-                for(Iterator<String> iter = pubs.iterator() ; iter.hasNext() ;){
+                String argString = "";
+                for (Iterator<String> iter = pubs.iterator(); iter.hasNext();) {
                     argString += iter.next();
-                    argString += (iter.hasNext() ? "<br> ": "" ) ;
+                    argString += (iter.hasNext() ? "<br> " : "");
                 }
 
-                ObjectError error = new ObjectError(getCommandName(),new String[]{},new String[]{},
-                        "Antibody can not be deleted, being used in " + numExpression + " expression records in "+pubs.size() + " pubs: <br>"+argString ) ;
+                ObjectError error = new ObjectError(getCommandName(), new String[]{}, new String[]{},
+                        "Antibody can not be deleted, being used in " + numExpression + " expression records in " + pubs.size() + " pubs: <br>" + argString);
                 errors.addError(error);
-                return modelAndView ;
+                return modelAndView;
             }
         }
 
 
-        try{
+        try {
             HibernateUtil.createTransaction();
-            MergeService.deleteMarker(marker) ;
+            MergeService.deleteMarker(marker);
             HibernateUtil.flushAndCommitCurrentSession();
         }
-        catch(Exception e){
-            logger.error("Failed to delete marker: "+deleteBean,e);
+        catch (Exception e) {
+            logger.error("Failed to delete marker: " + deleteBean, e);
             HibernateUtil.rollbackTransaction();
-            ObjectError error = new ObjectError(getCommandName(),new String[]{},new String[]{},"Failed to delete marker: "+deleteBean+"<br>"+e.getMessage()) ;
+            ObjectError error = new ObjectError(getCommandName(), new String[]{}, new String[]{}, "Failed to delete marker: " + deleteBean + "<br>" + e.getMessage());
             errors.addError(error);
         }
 
-        return modelAndView ;
+        return modelAndView;
     }
 }

@@ -7,17 +7,16 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.TranscriptDTO;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.StringListBox;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.*;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
  */
-public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO>{
+public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO> {
 
     // GUI name/type elements
     private final HTMLTable table = new Grid(4, 2);
@@ -48,7 +47,6 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO>{
             }
         });
     }
-
 
 
     protected void initGUI() {
@@ -96,13 +94,12 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO>{
         newTranscriptDTO.setZdbID(dto.getZdbID());
 
 
-
         if (isDirty()) {
 
-            if(false == nameValidator.validate(nameBox.getText(),this)) return ;
+            if (false == nameValidator.validate(nameBox.getText(), this)) return;
 
-            if(false == newTranscriptDTO.getName().equals(dto.getName())){
-                if(false == publicationValidator.validate(publicationZdbID,this)) return ;
+            if (false == newTranscriptDTO.getName().equals(dto.getName())) {
+                if (false == publicationValidator.validate(publicationZdbID, this)) return;
             }
 
             working();
@@ -113,7 +110,7 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO>{
                             if (throwable instanceof TranscriptTypeStatusMismatchException) {
                                 TranscriptTypeStatusMismatchException e = (TranscriptTypeStatusMismatchException) throwable;
                                 setError("Bad status for type.  Allowable types: " + e.getAllowableStatuses());
-                                return ;
+                                return;
                             }
 
                             super.onFailure(throwable);
@@ -135,7 +132,7 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO>{
                             String oldName = dto.getName();
                             handleChangeSuccess(returnedTranscriptDTO);
                             fireEventSuccess();
-                            fireChangeEvent(new RelatedEntityEvent<TranscriptDTO>(dto,oldName));
+                            fireChangeEvent(new RelatedEntityEvent<TranscriptDTO>(dto, oldName));
                             notWorking();
                         }
 
@@ -150,9 +147,9 @@ public class TranscriptHeaderEdit extends AbstractHeaderEdit<TranscriptDTO>{
 
     public boolean isDirty() {
         boolean isDirty = false;
-        isDirty = nameBox.isDirty(dto.getName()) || isDirty ;
-        isDirty = typeListBox.isDirty(dto.getTranscriptType()) || isDirty ;
-        isDirty = statusListBox.isDirty(dto.getTranscriptStatus()) || isDirty ;
+        isDirty = nameBox.isDirty(dto.getName()) || isDirty;
+        isDirty = typeListBox.isDirty(dto.getTranscriptType()) || isDirty;
+        isDirty = statusListBox.isDirty(dto.getTranscriptStatus()) || isDirty;
         return isDirty;
     }
 

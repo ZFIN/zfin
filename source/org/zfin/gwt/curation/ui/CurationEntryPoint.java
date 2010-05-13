@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.i18n.client.Dictionary;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
 import org.zfin.gwt.root.ui.SessionSaveService;
@@ -49,7 +50,7 @@ public class CurationEntryPoint implements EntryPoint {
             //Window.alert("module Type: " + type.toString());
         } catch (Exception e) {
             // no properties means session save module.
-            //Window.alert(e.toString());
+            Window.alert(e.toString());
         }
     }
 

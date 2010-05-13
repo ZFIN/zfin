@@ -12,6 +12,8 @@
     <servlet path="/ajax/curation-structures" class="org.zfin.gwt.curation.server.StructureRPCImpl"/>
     <servlet path="/ajax/curation-phenotype" class='org.zfin.gwt.curation.server.CurationPhenotypeRPCImpl'/>
     <servlet path="/ajax/curation-filter" class='org.zfin.gwt.curation.server.CurationFilterRPCImpl'/>
+    <servlet path="/ajax/termservice" class='org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl'/>
+    <servlet path="/ajax/markerservice" class="org.zfin.gwt.root.server.MarkerRPCServiceImpl"/>
     <!--
         <define-property name="user.agent" values="gecko" />
     <define-property name="locale" values="en"/>

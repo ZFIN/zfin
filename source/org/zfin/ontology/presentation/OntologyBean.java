@@ -121,7 +121,7 @@ public class OntologyBean {
             throw new RuntimeException("No action type of string " + type + " found.");
         }
 
-        public String getName(){
+        public String getName() {
             return name();
         }
     }

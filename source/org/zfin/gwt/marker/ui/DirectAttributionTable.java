@@ -3,11 +3,12 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.DirectAttributionListener;
-import org.zfin.gwt.marker.event.PublicationChangeEvent;
-import org.zfin.gwt.marker.event.PublicationChangeListener;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.event.DirectAttributionListener;
+import org.zfin.gwt.root.event.PublicationChangeEvent;
+import org.zfin.gwt.root.event.PublicationChangeListener;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.PublicationValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,7 @@ public class DirectAttributionTable extends Composite
     }
 
     void refreshGUI() {
-        if(recordAttributions!=null){
+        if (recordAttributions != null) {
             for (String recordAttribution : recordAttributions) {
                 addPublicationToGUI(recordAttribution);
             }
@@ -79,8 +80,8 @@ public class DirectAttributionTable extends Composite
     }
 
     public boolean addPublication(final String publicationZdbID) {
-        if(false==publicationValidator.validate(publicationZdbID,this)){
-            return false ;
+        if (false == publicationValidator.validate(publicationZdbID, this)) {
+            return false;
         }
 
         if (containsPublication(publicationZdbID)) {

@@ -6,7 +6,7 @@ public class GoEvidenceCode {
 
     // enum is it root.dto, atleast for now
 
-    private String code ;
+    private String code;
     private String name;
     private Integer order;
 

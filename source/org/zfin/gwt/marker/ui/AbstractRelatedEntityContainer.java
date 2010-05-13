@@ -2,11 +2,11 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
-import org.zfin.gwt.marker.event.PublicationChangeEvent;
-import org.zfin.gwt.marker.event.PublicationChangeListener;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
-import org.zfin.gwt.marker.event.RelatedEntityListener;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.event.PublicationChangeEvent;
+import org.zfin.gwt.root.event.PublicationChangeListener;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.event.RelatedEntityListener;
 import org.zfin.gwt.root.ui.HandlesError;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
 
     public abstract void removeRelatedEntityFromGUI(U relatedEntityDTO);
 
-    public abstract boolean isDirty() ;
+    public abstract boolean isDirty();
 
     AbstractRelatedEntityContainer() {
     }
@@ -101,7 +101,7 @@ public abstract class AbstractRelatedEntityContainer<U extends RelatedEntityDTO>
 
     public void setRelatedEntities(String zdbID, List<U> relatedEntityList) {
         this.zdbID = zdbID;
-        if(relatedEntityList!=null){
+        if (relatedEntityList != null) {
             reset();
             for (U relatedEntityDTO : relatedEntityList) {
                 addRelatedEntityToGUI(relatedEntityDTO);

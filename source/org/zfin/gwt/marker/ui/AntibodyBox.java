@@ -11,16 +11,18 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.AntibodyDTO;
 import org.zfin.gwt.root.dto.AntibodyTypesDTO;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
+import org.zfin.gwt.root.ui.StandardDivNames;
 import org.zfin.gwt.root.ui.StringListBox;
 
 /**
  * Data box for antibody data.
  */
-public class AntibodyBox extends AbstractDataBox<AntibodyDTO>{
+public class AntibodyBox extends AbstractDataBox<AntibodyDTO> {
 
     // table
     private final Grid table = new Grid(3, 4);
-    private final StringListBox hostOrganismListBox= new StringListBox();
+    private final StringListBox hostOrganismListBox = new StringListBox();
     private final StringListBox heavyChainListBox = new StringListBox();
     private final StringListBox lightChainListBox = new StringListBox();
     private final StringListBox typeListBox = new StringListBox();
@@ -139,13 +141,13 @@ public class AntibodyBox extends AbstractDataBox<AntibodyDTO>{
     }
 
     public boolean isDirty() {
-        boolean isDirty = false ;
+        boolean isDirty = false;
         isDirty = (hostOrganismListBox.isDirty(dto.getHostOrganism()) || isDirty);
-        isDirty = (immunogenOrganismListBox.isDirty(dto.getImmunogenOrganism())|| isDirty) ;
-        isDirty = (heavyChainListBox.isDirty(dto.getHeavyChain())|| isDirty) ;
-        isDirty = (lightChainListBox.isDirty(dto.getLightChain())|| isDirty) ;
-        isDirty = (typeListBox.isDirty(dto.getType())|| isDirty) ;
-        return isDirty ;
+        isDirty = (immunogenOrganismListBox.isDirty(dto.getImmunogenOrganism()) || isDirty);
+        isDirty = (heavyChainListBox.isDirty(dto.getHeavyChain()) || isDirty);
+        isDirty = (lightChainListBox.isDirty(dto.getLightChain()) || isDirty);
+        isDirty = (typeListBox.isDirty(dto.getType()) || isDirty);
+        return isDirty;
     }
 
 
@@ -174,7 +176,7 @@ public class AntibodyBox extends AbstractDataBox<AntibodyDTO>{
         }
     }
 
-    public void revert(){
+    public void revert() {
         revertGUI();
     }
 

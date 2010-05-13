@@ -6,9 +6,9 @@ import java.util.Set;
 public class FeatureTypeGroup {
 
 
-    private String name ;
+    private String name;
     private String comment;
-     private Set<String> typeStrings ;
+    private Set<String> typeStrings;
 
     public Set<String> getTypeStrings() {
         return typeStrings;
@@ -34,7 +34,6 @@ public class FeatureTypeGroup {
     public void setComment(String comment) {
         this.comment = comment;
     }
-
 
 
 }

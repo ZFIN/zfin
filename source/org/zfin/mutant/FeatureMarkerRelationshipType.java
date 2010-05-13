@@ -5,11 +5,11 @@ import org.zfin.marker.MarkerTypeGroup;
 
 public class FeatureMarkerRelationshipType {
 
-        private String name;
-        private FeatureTypeGroup FeatureTypeGroup;
-        private MarkerTypeGroup MarkerTypeGroup;
-        private String firstToSecondLabel;
-        private String secondToFirstLabel;
+    private String name;
+    private FeatureTypeGroup FeatureTypeGroup;
+    private MarkerTypeGroup MarkerTypeGroup;
+    private String firstToSecondLabel;
+    private String secondToFirstLabel;
     private boolean affectedMarkerFlag;
 
     public boolean isAffectedMarkerFlag() {
@@ -62,16 +62,16 @@ public class FeatureMarkerRelationshipType {
     }
 
     public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-            FeatureMarkerRelationshipType that = (FeatureMarkerRelationshipType) o;
+        FeatureMarkerRelationshipType that = (FeatureMarkerRelationshipType) o;
 
-            return false==(name != null ? false==name.equals(that.name) : that.name != null);
+        return false == (name != null ? false == name.equals(that.name) : that.name != null);
 
-            }
-   
     }
+
+}
 
 
 

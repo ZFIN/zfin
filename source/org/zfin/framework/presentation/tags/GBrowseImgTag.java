@@ -2,9 +2,9 @@ package org.zfin.framework.presentation.tags;
 
 import org.zfin.properties.ZfinProperties;
 
-import javax.servlet.jsp.tagext.TagSupport;
-import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 

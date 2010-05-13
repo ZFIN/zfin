@@ -3,10 +3,10 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import org.zfin.gwt.marker.event.DBLinkTableListener;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.IntegerTextBox;
 import org.zfin.gwt.root.ui.StringListBox;
 

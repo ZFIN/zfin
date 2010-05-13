@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public class RetrieveEnvironmentListCallBack  extends ZfinAsyncCallback<List<EnvironmentDTO>> {
+public class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<EnvironmentDTO>> {
 
     private ListBox environmentList;
 
@@ -21,6 +21,7 @@ public class RetrieveEnvironmentListCallBack  extends ZfinAsyncCallback<List<Env
 
     public void onSuccess(List<EnvironmentDTO> environments) {
         //Window.alert("brought back: " + experiments.size() );
+        environmentList.clear();
         for (EnvironmentDTO environmentDTO : environments) {
             String name = environmentDTO.getName();
             if (name.startsWith("_"))

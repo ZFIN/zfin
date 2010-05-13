@@ -143,6 +143,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
     /**
      * Retrieve all Children terms from a given term.
      * Does not include obsolete terms.
+     *
      * @param termID ID
      * @return list of terms
      */

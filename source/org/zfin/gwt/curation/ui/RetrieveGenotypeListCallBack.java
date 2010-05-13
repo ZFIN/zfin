@@ -22,6 +22,7 @@ public class RetrieveGenotypeListCallBack extends ZfinAsyncCallback<List<FishDTO
     @Override
     public void onSuccess(List<FishDTO> genotypes) {
         //Window.alert("brought back: " + genotypes.size() );
+        fishList.clear();
         for (FishDTO genotypeHandle : genotypes) {
             fishList.addItem(genotypeHandle.getName(), genotypeHandle.getZdbID());
         }

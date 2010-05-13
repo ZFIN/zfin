@@ -1,17 +1,14 @@
 package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestOracle;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.MarkerDTO;
-import org.zfin.gwt.root.ui.ItemSuggestion;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.LookupCallback;
+import org.zfin.gwt.root.ui.LookupOracle;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.util.LookupRPCService;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * This class is the complete implementation, but it also positions itself and contains all of its handlers.
@@ -79,43 +76,14 @@ public class RelatedGeneLookupBox extends RelatedMarkerBox {
         }
     }
 
-    private class RelatedGeneOracle extends SuggestOracle {
+    /**
+     */
+    public static class RelatedGeneOracle extends LookupOracle {
 
         @Override
-        public boolean isDisplayStringHTML() {
-            return true;
-        }
-
-        public void requestSuggestions(final Request request, final Callback callback) {
-            String query = request.getQuery();
-            if (query.length() >= 3) {
-                LookupRPCService.App.getInstance().getGenedomAndEFGSuggestions(request, new AsyncCallback<Response>() {
-                    public void onFailure(Throwable throwable) {
-                        callback.onSuggestionsReady(request, new Response());
-                    }
-
-                    public void onSuccess(Response response) {
-                        Collection collection = response.getSuggestions();
-                        int limit = 15 ;
-                        if(collection.size()>limit){
-                            Iterator iterator = collection.iterator();
-                            int i = 0 ;
-                            while(iterator.hasNext()){
-                                iterator.next();
-                                ++i ;
-                                if(i > limit){
-                                    iterator.remove();
-                                }
-                            }
-                            collection.add(new ItemSuggestion("...",null));
-                        }
-
-
-                        callback.onSuggestionsReady(request, response);
-                    }
-                });
-            }
+        public void doLookup(final Request request, final Callback callback) {
+            LookupRPCService.App.getInstance().getGenedomAndEFGSuggestions(request,
+                    new LookupCallback(request, callback));
         }
     }
-
 }

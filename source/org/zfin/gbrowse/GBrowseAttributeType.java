@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 /**
  * This class is a direct mapping of a table in the Bio::Seqfeature::Store schema
- *
+ * <p/>
  * It acts as a controlled vocabulary - the one value that we use within this
  * vocabulary is zdb_id.
- *
+ * <p/>
  * When we build gff3 files, we populate the Alias field, but that isn't
  * accessed from the java side.
  */

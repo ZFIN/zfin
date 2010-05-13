@@ -3,11 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import org.zfin.gwt.root.dto.ExpressedTermDTO;
-import org.zfin.gwt.root.dto.ExpressionPileStructureDTO;
-import org.zfin.gwt.root.dto.PhenotypePileStructureDTO;
-import org.zfin.gwt.root.dto.PhenotypeTermDTO;
-import org.zfin.gwt.root.util.TermNotFoundException;
+import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
 
@@ -44,7 +40,7 @@ public interface PileStructuresRPC extends RemoteService {
      * Create a new phenotype structure for the pile.
      *
      * @param phenotypeTermDTO Phenotype Term dto
-     * @param publicationID pub id
+     * @param publicationID    pub id
      */
     PhenotypePileStructureDTO createPhenotypePileStructure(PhenotypeTermDTO phenotypeTermDTO, String publicationID)
             throws PileStructureExistsException, TermNotFoundException;

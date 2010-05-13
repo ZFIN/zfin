@@ -22,8 +22,8 @@ import org.zfin.gwt.curation.ui.CurationExperimentRPC;
 import org.zfin.gwt.curation.ui.PublicationNotFoundException;
 import org.zfin.gwt.curation.ui.SessionVariable;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.util.StageRangeIntersection;
-import org.zfin.gwt.root.util.TermNotFoundException;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -45,11 +45,10 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
-import org.zfin.util.BODtoConversionService;
-
-import static org.zfin.repository.RepositoryFactory.*;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 
 /**
  * Implementation of RPC calls from the client.
@@ -123,7 +122,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
             experimentDTO.setExperimentZdbID(experiment.getZdbID());
             Marker gene = experiment.getGene();
             if (gene != null) {
-                experimentDTO.setGene(BODtoConversionService.getMarkerDto(gene));
+                experimentDTO.setGene(DTOConversionService.convertToMarkerDTO(gene));
                 if (experiment.getMarkerDBLink() != null && experiment.getMarkerDBLink().getAccessionNumber() != null) {
                     String dblink = experiment.getMarkerDBLink().getAccessionNumber();
                     experimentDTO.setGenbankNumber(dblink);
@@ -131,11 +130,11 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
                 }
             }
             if (experiment.getAntibody() != null) {
-                experimentDTO.setAntibodyMarker(BODtoConversionService.getMarkerDto(experiment.getAntibody()));
+                experimentDTO.setAntibodyMarker(DTOConversionService.convertToMarkerDTO(experiment.getAntibody()));
             }
             experimentDTO.setFishName(experiment.getGenotypeExperiment().getGenotype().getHandle());
             experimentDTO.setFishID(experiment.getGenotypeExperiment().getGenotype().getZdbID());
-            experimentDTO.setEnvironment(BODtoConversionService.getEnvironmentDto(experiment.getGenotypeExperiment().getExperiment()));
+            experimentDTO.setEnvironment(DTOConversionService.convertToEnvironmentDTO(experiment.getGenotypeExperiment().getExperiment()));
             experimentDTO.setAssay(experiment.getAssay().getName());
             // check if there are expressions associated
             Set<ExpressionResult> expressionResults = experiment.getExpressionResults();
@@ -161,7 +160,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
     public static List<ExperimentDTO> convertExperimentsToDTO(List<ExpressionExperiment> experiments) {
         List<ExperimentDTO> dtos = new ArrayList<ExperimentDTO>();
         for (ExpressionExperiment experiment : experiments) {
-            ExperimentDTO dto = BODtoConversionService.getExperimentDto(experiment);
+            ExperimentDTO dto = DTOConversionService.convertToExperimentDTO(experiment);
             dtos.add(dto);
         }
         return dtos;
@@ -460,7 +459,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
             MarkerRepository antibodyRep = RepositoryFactory.getMarkerRepository();
             Marker gene = antibodyRep.getMarkerByID(geneDto.getZdbID());
             expressionExperiment.setGene(gene);
-            experimentDTO.setGene(BODtoConversionService.getMarkerDto(gene));
+            experimentDTO.setGene(DTOConversionService.convertToMarkerDTO(gene));
         } else {
             expressionExperiment.setGene(null);
         }
@@ -501,10 +500,10 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         List<ExpressionFigureStageDTO> dtos = new ArrayList<ExpressionFigureStageDTO>();
         for (ExperimentFigureStage efs : experiments) {
             ExpressionFigureStageDTO dto = new ExpressionFigureStageDTO();
-            dto.setExperiment(BODtoConversionService.getExperimentDto(efs.getExpressionExperiment()));
-            dto.setFigure(BODtoConversionService.getFigureDto(efs.getFigure()));
-            dto.setStart(BODtoConversionService.getStageDto(efs.getStart()));
-            dto.setEnd((BODtoConversionService.getStageDto(efs.getEnd())));
+            dto.setExperiment(DTOConversionService.convertToExperimentDTO(efs.getExpressionExperiment()));
+            dto.setFigure(DTOConversionService.convertToFigureDTO(efs.getFigure()));
+            dto.setStart(DTOConversionService.convertToStageDTO(efs.getStart()));
+            dto.setEnd((DTOConversionService.convertToStageDTO(efs.getEnd())));
             List<ComposedFxTerm> terms = efs.getComposedTerms();
             Collections.sort(terms);
             List<ExpressedTermDTO> termStrings = new ArrayList<ExpressedTermDTO>(terms.size());
@@ -564,7 +563,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         List<DevelopmentStage> stages = anatomyRep.getAllStagesWithoutUnknown();
         List<StageDTO> dtos = new ArrayList<StageDTO>(stages.size());
         for (DevelopmentStage stage : stages) {
-            dtos.add(BODtoConversionService.getStageDto(stage));
+            dtos.add(DTOConversionService.convertToStageDTO(stage));
         }
         return dtos;
     }
@@ -624,10 +623,10 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
     }
 
     private void populateFigureAnnotation(ExpressionFigureStageDTO figureAnnotation, ExperimentFigureStage expressionExperiment) {
-        figureAnnotation.setStart(BODtoConversionService.getStageDto(expressionExperiment.getStart()));
-        figureAnnotation.setEnd(BODtoConversionService.getStageDto(expressionExperiment.getEnd()));
-        figureAnnotation.setFigure(BODtoConversionService.getFigureDto(expressionExperiment.getFigure()));
-        figureAnnotation.setExperiment(BODtoConversionService.getExperimentDto(expressionExperiment.getExpressionExperiment()));
+        figureAnnotation.setStart(DTOConversionService.convertToStageDTO(expressionExperiment.getStart()));
+        figureAnnotation.setEnd(DTOConversionService.convertToStageDTO(expressionExperiment.getEnd()));
+        figureAnnotation.setFigure(DTOConversionService.convertToFigureDTO(expressionExperiment.getFigure()));
+        figureAnnotation.setExperiment(DTOConversionService.convertToExperimentDTO(expressionExperiment.getExpressionExperiment()));
     }
 
     /**
@@ -868,7 +867,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
             dto.setDate(es.getDate());
             ExpressedTermDTO expressionTerm = new ExpressedTermDTO();
             AnatomyItem superterm = es.getSuperterm();
-            TermDTO supertermDTO = BODtoConversionService.getTermDto(superterm);
+            TermDTO supertermDTO = DTOConversionService.convertToTermDTO(superterm);
             expressionTerm.setSuperterm(supertermDTO);
 
             // if subterm available
@@ -887,20 +886,20 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
                 } else {
                     subtermDTO.setOntology(OntologyDTO.ANATOMY);
                 }
-                StageRangeIntersection sri = new StageRangeIntersection(BODtoConversionService.getStageDto(superterm.getStart()),
-                        BODtoConversionService.getStageDto(superterm.getEnd()));
+                StageRangeIntersection sri = new StageRangeIntersection(DTOConversionService.convertToStageDTO(superterm.getStart()),
+                        DTOConversionService.convertToStageDTO(superterm.getEnd()));
                 if (es instanceof AnatomyExpressionStructure) {
                     AnatomyExpressionStructure aes = (AnatomyExpressionStructure) es;
                     if (aes.getSubterm() != null) {
                         subtermDTO.setTermOboID(aes.getSubterm().getOboID());
-                        sri.addNewRange(BODtoConversionService.getStageDto(aes.getSuperterm().getStart()),
-                                BODtoConversionService.getStageDto(aes.getSuperterm().getEnd()));
+                        sri.addNewRange(DTOConversionService.convertToStageDTO(aes.getSuperterm().getStart()),
+                                DTOConversionService.convertToStageDTO(aes.getSuperterm().getEnd()));
                     }
                 }
             }
             dto.setExpressedTerm(expressionTerm);
-            StageDTO start = BODtoConversionService.getStageDto(superterm.getStart());
-            StageDTO end = BODtoConversionService.getStageDto(superterm.getEnd());
+            StageDTO start = DTOConversionService.convertToStageDTO(superterm.getStart());
+            StageDTO end = DTOConversionService.convertToStageDTO(superterm.getEnd());
             dto.setStart(start);
             dto.setEnd(end);
             dtos.add(dto);
@@ -980,8 +979,8 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         List<AnatomyRelationship> relationships = antRepository.getAnatomyRelationships(term);
         List<RelatedPileStructureDTO> structures = new ArrayList<RelatedPileStructureDTO>(relationships.size());
         for (AnatomyRelationship rel : relationships) {
-            StageDTO start = BODtoConversionService.getStageDto(rel.getAnatomyItem().getStart());
-            StageDTO end = BODtoConversionService.getStageDto(rel.getAnatomyItem().getEnd());
+            StageDTO start = DTOConversionService.convertToStageDTO(rel.getAnatomyItem().getStart());
+            StageDTO end = DTOConversionService.convertToStageDTO(rel.getAnatomyItem().getEnd());
             if (intersection.isFullOverlap(start, end)) {
                 RelatedPileStructureDTO relatedStructure = populatePileStructureDTO(rel.getAnatomyItem());
                 relatedStructure.setRelatedStructure(selectedPileStructure);

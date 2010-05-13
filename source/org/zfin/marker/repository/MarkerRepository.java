@@ -51,7 +51,7 @@ public interface MarkerRepository {
 
     MarkerAlias getSpecificDataAlias(Marker marker, String alias);
 
-  TreeSet<String> getLG(Marker marker);
+    TreeSet<String> getLG(Marker marker);
 
     MarkerRelationship addMarkerRelationship(MarkerRelationship mrel, String attributionZdbID);
 
@@ -119,7 +119,7 @@ public interface MarkerRepository {
 
     MarkerHistory getLastMarkerHistory(Marker marker, MarkerHistory.Event event);
 
-    MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason resason,MarkerAlias markerAlias);
+    MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason resason, MarkerAlias markerAlias);
 
     MarkerType getMarkerTypeByName(String name);
 
@@ -250,5 +250,7 @@ public interface MarkerRepository {
     List<MarkerType> getMarkerTypesByGroup(Marker.TypeGroup typeGroup);
 
 
-    List<Marker> getMarkersForStandardAttributionAndType(Publication publication,String type);
+    List<Marker> getMarkersForStandardAttributionAndType(Publication publication, String type);
+
+    List<Marker> getMarkerForAttribution(String publicationZdbID);
 }

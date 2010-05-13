@@ -1,6 +1,9 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.ExpressedTermDTO;
+import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.PhenotypeTermDTO;
+import org.zfin.gwt.root.dto.PostComposedPart;
 
 /**
  * Defines a Construction zone, such as for FX and PATO.
@@ -65,5 +68,5 @@ public interface ConstructionZone {
      * @param ontology ontology
      * @param termID   term ID
      */
-    public void showTermInfoString(String ontology, String termID);
+    void showTermInfoString(String ontology, String termID);
 }

@@ -11,13 +11,16 @@ import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.ui.AbstractListBox;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
+import org.zfin.gwt.root.ui.MarkerRPCService;
+import org.zfin.gwt.root.ui.PublicationLookupBox;
 
 import java.util.List;
 
 /**
  * A GWT class for adding proteins to genes on the markerview.apg page.
  */
-public final class GeneEditController extends AbstractMarkerEditController<MarkerDTO>{
+public final class GeneEditController extends AbstractMarkerEditController<MarkerDTO> {
 
     private final String newProteinSequenceDiv = "newProteinSequence";
     private final String newStemLoopSequenceDiv = "newStemLoopSequence";
@@ -265,7 +268,7 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
                 });
     }
 
-    protected void setDTO(MarkerDTO dto){
+    protected void setDTO(MarkerDTO dto) {
         this.dto = dto;
         nucleotideSequenceArea.setMarkerDTO(this.dto);
     }

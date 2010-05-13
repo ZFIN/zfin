@@ -3,14 +3,11 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.PublicationChangeEvent;
-import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.ui.IsDirty;
-import org.zfin.gwt.root.ui.PublicationSessionKey;
-import org.zfin.gwt.root.ui.TermInfoCallBack;
-import org.zfin.gwt.root.ui.TermInfoComposite;
+import org.zfin.gwt.root.event.PublicationChangeEvent;
+import org.zfin.gwt.root.event.RelatedEntityChangeListener;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
@@ -155,7 +152,7 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
                         new MarkerEditCallBack<MarkerDTO>("failed to find marker: ") {
                             public void onSuccess(MarkerDTO returnDTO) {
                                 GoEvidenceDTO goEvidenceDTO = new GoEvidenceDTO();
-                                if (    publicationZdbID!=null
+                                if (publicationZdbID != null
                                         &&
                                         false == publicationZdbID.isEmpty()
                                         && false == publicationZdbID.equals(IsDirty.NULL_STRING)

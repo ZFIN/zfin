@@ -17,8 +17,6 @@ import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import static org.zfin.repository.RepositoryFactory.*;
-
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Class defines methods to retrieve phenotypic data for annotation purposes
@@ -252,8 +250,9 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     /**
      * Retrieve a mutant figure stage record from the unique key
+     *
      * @param mutantFigureStage mutant figure stage unique key
-     * @param figureID figure
+     * @param figureID          figure
      * @return full mutant figure stage record
      */
     @SuppressWarnings("unchecked")

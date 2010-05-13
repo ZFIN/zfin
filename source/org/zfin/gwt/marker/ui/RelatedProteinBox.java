@@ -2,10 +2,11 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.marker.event.MarkerLoadEvent;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
-import org.zfin.gwt.marker.event.RelatedEntityListener;
 import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.event.RelatedEntityListener;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
 
 /**
  */

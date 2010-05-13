@@ -210,7 +210,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         boxCheckAndSize.initializeSessionVariables();
     }
 
-    private void retrieveConstructionZoneValues() {
+    public void retrieveConstructionZoneValues() {
         // figure list
         curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
 
@@ -230,6 +230,13 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         sessionRPC.isStageSelectorSingleMode(publicationID, new RetrieveStageSelectorCallback(errorElement, stageSelector));
 
     }
+
+    public void updateFish() {
+        String message = "Error while reading Genotypes";
+        fishList.clear();
+        curationRPCAsync.getGenotypes(publicationID, new RetrieveGenotypeListCallBack(fishList, message, errorElement));
+    }
+
 
     // Retrieve experiments from the server
 

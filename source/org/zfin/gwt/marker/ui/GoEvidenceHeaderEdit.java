@@ -2,8 +2,9 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.*;
 
 /**
  * Edits an existing MarkerGoEntry instance, validating before saving.
@@ -13,31 +14,31 @@ import org.zfin.gwt.root.dto.GoEvidenceDTO;
  * 4 - pubs
  * 3 - evidence codes
  */
-public class GoEvidenceHeaderEdit extends AbstractGoEvidenceHeader{
+public class GoEvidenceHeaderEdit extends AbstractGoEvidenceHeader {
 
     public GoEvidenceHeaderEdit() {
-        this(StandardDivNames.headerDiv) ;
+        this(StandardDivNames.headerDiv);
     }
 
     public GoEvidenceHeaderEdit(String div) {
 
         initGUI();
-        setValues() ;
+        setValues();
         addInternalListeners(this);
         initWidget(panel);
-        if(div!=null){
+        if (div != null) {
             RootPanel.get(div).add(this);
         }
     }
 
     protected void sendUpdates() {
         if (isDirty()) {
-            GoEvidenceDTO goEvidenceDTO = createDTOFromGUI() ;
-            if(false==GoEvidenceValidator.validate(this,createDTOFromGUI())){
-                return ;
+            GoEvidenceDTO goEvidenceDTO = createDTOFromGUI();
+            if (false == GoEvidenceValidator.validate(this, createDTOFromGUI())) {
+                return;
             }
             working();
-            MarkerGoEvidenceRPCService.App.getInstance().editMarkerGoTermEvidenceDTO(goEvidenceDTO,new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:"){
+            MarkerGoEvidenceRPCService.App.getInstance().editMarkerGoTermEvidenceDTO(goEvidenceDTO, new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:") {
                 @Override
                 public void onFailure(Throwable throwable) {
                     super.onFailure(throwable);

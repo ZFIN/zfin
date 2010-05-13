@@ -12,11 +12,10 @@ import org.zfin.gwt.marker.ui.CloneRPCService;
 import org.zfin.gwt.root.dto.CloneDTO;
 import org.zfin.gwt.root.dto.CloneTypesDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.InfrastructureService;
-import org.zfin.marker.Clone;
-import org.zfin.marker.Marker;
-import org.zfin.marker.ProbeLibrary;
-import org.zfin.marker.Vector;
+import org.zfin.marker.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
@@ -71,24 +70,24 @@ public class CloneRPCServiceImpl extends RemoteServiceServlet implements CloneRP
             cloneDTO.setProbeLibraryName(probeLibrary.getName());
         }
 
-        cloneDTO.setSuppliers(DTOService.getSuppliers(clone));
+        cloneDTO.setSuppliers(MarkerService.getSuppliers(clone));
 
         // get direct attributions
-        cloneDTO.setRecordAttributions(DTOService.getDirectAttributions(clone));
+        cloneDTO.setRecordAttributions(MarkerService.getDirectAttributions(clone));
 
         // get notes
-        cloneDTO.setCuratorNotes(DTOService.getCuratorNotes(clone));
+        cloneDTO.setCuratorNotes(DTOMarkerService.getCuratorNoteDTOs(clone));
 
-        cloneDTO.setPublicNote(DTOService.getPublicNote(clone));
+        cloneDTO.setPublicNote(DTOMarkerService.getPublicNoteDTO(clone));
 
         // get alias's
-        cloneDTO.setAliasAttributes(DTOService.getAliases(clone));
+        cloneDTO.setAliasAttributes(DTOMarkerService.getMarkerAliasDTOs(clone));
 
         // get related genes
-        cloneDTO.setRelatedGeneAttributes(DTOService.getRelatedGenes(clone));
+        cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getRelatedGenesMarkerDTOs(clone));
 
         // get sequences
-        cloneDTO.setSupportingSequenceLinks(DTOService.getSupportingSequences(clone));
+        cloneDTO.setSupportingSequenceLinks(DTOMarkerService.getSupportingSequenceDTOs(clone));
 
         Clone.ProblemType[] problemTypeEnums = Clone.ProblemType.values();
         List<String> problemTypes = new ArrayList<String>();
@@ -108,30 +107,30 @@ public class CloneRPCServiceImpl extends RemoteServiceServlet implements CloneRP
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
         try {
-            DTOService.handleUpdatesTable(clone, "digest", clone.getDigest(), cloneDTO.getDigest());
+            DTOMarkerService.insertMarkerUpdate(clone, "digest", clone.getDigest(), cloneDTO.getDigest());
             clone.setDigest(cloneDTO.getDigest());
 
-            DTOService.handleUpdatesTable(clone, "PCR Amplification", clone.getPcrAmplification(), cloneDTO.getPcrAmplification());
+            DTOMarkerService.insertMarkerUpdate(clone, "PCR Amplification", clone.getPcrAmplification(), cloneDTO.getPcrAmplification());
             clone.setPcrAmplification(cloneDTO.getPcrAmplification());
 
-            DTOService.handleUpdatesTable(clone, "Polymerase Name", clone.getPolymeraseName(), cloneDTO.getPolymerase());
+            DTOMarkerService.insertMarkerUpdate(clone, "Polymerase Name", clone.getPolymeraseName(), cloneDTO.getPolymerase());
             clone.setPolymeraseName(cloneDTO.getPolymerase());
 
-            DTOService.handleUpdatesTable(clone, "Insert Size", clone.getInsertSize(), cloneDTO.getInsertSize());
+            DTOMarkerService.insertMarkerUpdate(clone, "Insert Size", clone.getInsertSize(), cloneDTO.getInsertSize());
             clone.setInsertSize(cloneDTO.getInsertSize());
 
-            DTOService.handleUpdatesTable(clone, "Clone Comments", clone.getCloneComments(), cloneDTO.getCloneComments());
+            DTOMarkerService.insertMarkerUpdate(clone, "Clone Comments", clone.getCloneComments(), cloneDTO.getCloneComments());
             clone.setCloneComments(cloneDTO.getCloneComments());
 
-            DTOService.handleUpdatesTable(clone, "Rating", clone.getRating(), cloneDTO.getRating());
+            DTOMarkerService.insertMarkerUpdate(clone, "Rating", clone.getRating(), cloneDTO.getRating());
             clone.setRating(cloneDTO.getRating());
 
-            DTOService.handleUpdatesTable(clone, "Cloning Site", clone.getCloningSite(), cloneDTO.getCloningSite());
+            DTOMarkerService.insertMarkerUpdate(clone, "Cloning Site", clone.getCloningSite(), cloneDTO.getCloningSite());
             clone.setCloningSite(cloneDTO.getCloningSite());
 
             // set vector
             String cloneVectorName = (clone.getVector() == null ? null : clone.getVector().getName());
-            DTOService.handleUpdatesTable(clone, "Vector Name", cloneVectorName, cloneDTO.getVectorName());
+            DTOMarkerService.insertMarkerUpdate(clone, "Vector Name", cloneVectorName, cloneDTO.getVectorName());
             if (cloneDTO.getVectorName() != null) {
                 Vector vector = (Vector) session.get(Vector.class, cloneDTO.getVectorName());
                 clone.setVector(vector);
@@ -140,7 +139,7 @@ public class CloneRPCServiceImpl extends RemoteServiceServlet implements CloneRP
             }
 
             String cloneProbeLibraryName = (clone.getProbeLibrary() == null ? null : clone.getProbeLibrary().getName());
-            DTOService.handleUpdatesTable(clone, "Probe Library", cloneProbeLibraryName, cloneDTO.getProbeLibraryName());
+            DTOMarkerService.insertMarkerUpdate(clone, "Probe Library", cloneProbeLibraryName, cloneDTO.getProbeLibraryName());
             Criteria criteria = session.createCriteria(ProbeLibrary.class);
             criteria.add(Restrictions.eq("name", cloneDTO.getProbeLibraryName()));
             ProbeLibrary probeLibrary = (ProbeLibrary) criteria.uniqueResult();
@@ -210,13 +209,14 @@ public class CloneRPCServiceImpl extends RemoteServiceServlet implements CloneRP
         }
 
         if (referenceDatabase != null) {
-            dblinkCloneAddReferenceDatabases.add(DTOService.convertReferenceDTO(referenceDatabase));
+            dblinkCloneAddReferenceDatabases.add(DTOConversionService.convertToReferenceDatabaseDTO(referenceDatabase));
         }
 
         return dblinkCloneAddReferenceDatabases;
     }
 
     // clone update
+
     public void updateCloneHeaders(CloneDTO cloneDTO) {
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
@@ -238,8 +238,8 @@ public class CloneRPCServiceImpl extends RemoteServiceServlet implements CloneRP
 
 
         String cloneProblemTypeString = (clone.getProblem() == null ? null : clone.getProblem().toString());
-        if(false==StringUtils.equals(cloneProblemTypeString,cloneDTO.getProblemType())){
-            DTOService.handleUpdatesTable(clone, "Problem Type", cloneProblemTypeString, cloneDTO.getProblemType());
+        if (false == StringUtils.equals(cloneProblemTypeString, cloneDTO.getProblemType())) {
+            DTOMarkerService.insertMarkerUpdate(clone, "Problem Type", cloneProblemTypeString, cloneDTO.getProblemType());
             if (cloneDTO.getProblemType() == null) {
                 clone.setProblem(null);
             } else {
@@ -255,7 +255,6 @@ public class CloneRPCServiceImpl extends RemoteServiceServlet implements CloneRP
         transaction.commit();
 
     }
-
 
 
 }

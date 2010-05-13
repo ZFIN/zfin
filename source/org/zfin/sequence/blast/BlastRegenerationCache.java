@@ -4,9 +4,9 @@ package org.zfin.sequence.blast;
  *
  */
 public class BlastRegenerationCache {
-    private long id ;
-    private String accession ;
-    private Database blastDatabase ;
+    private long id;
+    private String accession;
+    private Database blastDatabase;
 
     public long getId() {
         return id;

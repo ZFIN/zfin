@@ -5,12 +5,14 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import org.zfin.gwt.marker.event.NoteEvent;
 import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
+import org.zfin.gwt.root.ui.MarkerRPCService;
 
 /**
  */
 public class PublicNoteEntry extends AbstractNoteEntry {
     public PublicNoteEntry(NoteDTO noteDTO, HandlesError handlesError) {
-        super(noteDTO,handlesError);
+        super(noteDTO, handlesError);
         noteDTO.setEditMode(MarkerNoteBox.EditMode.PUBLIC.name());
     }
 
@@ -22,7 +24,7 @@ public class PublicNoteEntry extends AbstractNoteEntry {
             public void onClick(ClickEvent event) {
                 NoteDTO updatedNoteDTO = noteDTO.clone();
                 updatedNoteDTO.setNoteData("");
-                MarkerRPCService.App.getInstance().editPublicNote(updatedNoteDTO, new MarkerEditCallBack<Void>("Failed to remove public note: "){
+                MarkerRPCService.App.getInstance().editPublicNote(updatedNoteDTO, new MarkerEditCallBack<Void>("Failed to remove public note: ") {
                     @Override
                     public void onSuccess(Void result) {
                         noteDTO.setNoteData("");
@@ -33,12 +35,12 @@ public class PublicNoteEntry extends AbstractNoteEntry {
         });
 
 
-        saveButton.addClickHandler(new ClickHandler(){
+        saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final NoteDTO noteDTO = getNoteDTO().clone();
                 noteDTO.setNoteData(noteText.getText());
-                MarkerRPCService.App.getInstance().editPublicNote(noteDTO, new MarkerEditCallBack<Void>("Failed to update note: "){
+                MarkerRPCService.App.getInstance().editPublicNote(noteDTO, new MarkerEditCallBack<Void>("Failed to update note: ") {
                     @Override
                     public void onSuccess(Void result) {
                         getNoteDTO().setNoteData(noteText.getText());

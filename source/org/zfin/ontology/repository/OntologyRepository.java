@@ -2,9 +2,7 @@ package org.zfin.ontology.repository;
 
 import org.zfin.ontology.*;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Repository for Ontology-related actions: mostly lookup.
@@ -14,6 +12,7 @@ public interface OntologyRepository {
     /**
      * Retrieve a list of terms from the Quality ontology that match a given
      * string.
+     *
      * @param queryString query string
      * @return list of quality terms
      */
@@ -21,12 +20,14 @@ public interface OntologyRepository {
 
     /**
      * Retrieve all terms from the quality ontology that are not obsoleted.
+     *
      * @return list of quality terms
      */
     List<Term> getAllQualityTerms();
 
     /**
      * Retrieve all terms from a given ontology that are not obsoleted.
+     *
      * @return list of terms
      */
     List<Term> getAllTermsFromOntology(Ontology ontology);
@@ -36,7 +37,7 @@ public interface OntologyRepository {
      * An alias has to be unique within an ontology.
      * Aliases to be considered:
      * 1) alias of terms that are not obsoleted
-     * 2) alias is not of type 'secondary id' 
+     * 2) alias is not of type 'secondary id'
      *
      * @param ontology Ontology
      * @return list of term aliases
@@ -45,6 +46,7 @@ public interface OntologyRepository {
 
     /**
      * Retrieve all Relationships for a given ontology.
+     *
      * @param ontology ontology
      * @return list of relationships
      */
@@ -68,6 +70,7 @@ public interface OntologyRepository {
 
     /**
      * Retrieve all Children terms from a given term
+     *
      * @param termID ID
      * @return list of terms
      */

@@ -4,11 +4,17 @@ import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
-import org.zfin.gwt.marker.event.*;
+import org.zfin.gwt.marker.event.DirectAttributionDBLinkTableListener;
+import org.zfin.gwt.marker.event.MarkerLoadEvent;
+import org.zfin.gwt.marker.event.MarkerLoadListener;
 import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
+import org.zfin.gwt.root.event.RelatedEntityChangeListener;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
+import org.zfin.gwt.root.ui.MarkerRPCService;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
 
 import java.util.List;
@@ -16,10 +22,10 @@ import java.util.List;
 
 /**
  */
-public final class AlternateGeneEditController extends AbstractFullMarkerEditController<MarkerDTO>{
+public final class AlternateGeneEditController extends AbstractFullMarkerEditController<MarkerDTO> {
 
     // gui elements
-    private ViewClickLabel<MarkerDTO> geneViewClickLabel = new ViewClickLabel<MarkerDTO>("[View Gene]", "/action/marker/gene-view?zdbID=","Discard");
+    private ViewClickLabel<MarkerDTO> geneViewClickLabel = new ViewClickLabel<MarkerDTO>("[View Gene]", "/action/marker/gene-view?zdbID=", "Discard");
     private GeneHeaderEdit geneHeaderEdit = new GeneHeaderEdit(headerDiv);
     private DBLinkTable dbLinkTable = new HandledDBLinkTable();
 
@@ -40,7 +46,7 @@ public final class AlternateGeneEditController extends AbstractFullMarkerEditCon
         publicationLookupBox.clearPublications();
         publicationLookupBox.addPublication(new PublicationDTO("VEGA Database Links", "ZDB-PUB-030703-1"));
         publicationLookupBox.setKey(PublicationSessionKey.GENE);
-        publicationLookupBox.getRecentPubs() ;
+        publicationLookupBox.getRecentPubs();
 
         markerNoteBox.removeEditMode(MarkerNoteBox.EditMode.EXTERNAL);
     }
@@ -104,33 +110,26 @@ public final class AlternateGeneEditController extends AbstractFullMarkerEditCon
             }
         });
 
-        geneViewClickLabel.addViewClickedListeners(new ViewClickedListener(){
+        geneViewClickLabel.addViewClickedListeners(new ViewClickedListener() {
             @Override
             public void finishedView() {
-                if(geneHeaderEdit.isDirty()){
+                if (geneHeaderEdit.isDirty()) {
                     String error = "Name / type has unsaved change.";
                     geneHeaderEdit.setError(error);
                     geneViewClickLabel.setError(error);
-                }
-                else
-                if(markerNoteBox.isDirty() || markerNoteBox.hasDirtyNotes()){
+                } else if (markerNoteBox.isDirty() || markerNoteBox.hasDirtyNotes()) {
                     String error = "A note not saved.";
                     markerNoteBox.setError(error);
                     geneViewClickLabel.setError(error);
-                }
-                else
-                if(previousNamesBox.isDirty()){
+                } else if (previousNamesBox.isDirty()) {
                     String error = "Alias entry not added.";
                     geneViewClickLabel.setError(error);
                     previousNamesBox.setError(error);
-                }
-                else
-                if(dbLinkTable.isDirty()){
+                } else if (dbLinkTable.isDirty()) {
                     String error = "Sequence not added.";
                     geneViewClickLabel.setError(error);
                     dbLinkTable.setError(error);
-                }
-                else {
+                } else {
                     geneViewClickLabel.continueToViewTranscript();
                 }
 

@@ -4,17 +4,17 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.RelatedEntityAdapter;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.MarkerDTO;
-import org.zfin.gwt.root.ui.StringListBox;
+import org.zfin.gwt.root.event.RelatedEntityAdapter;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.*;
 
 import java.util.List;
 
 /**
  * A list of supplier names.
  */
-public class SupplierNameList extends AbstractStackComposite<MarkerDTO>{
+public class SupplierNameList extends AbstractStackComposite<MarkerDTO> {
 
 
     // GUI suppliers panel
@@ -52,8 +52,8 @@ public class SupplierNameList extends AbstractStackComposite<MarkerDTO>{
     @Override
     public void sendUpdates() {
         final String valueToAdd = supplierListBox.getSelected();
-        if(containsName(valueToAdd)){
-            setError("Supplied already added: "+valueToAdd);
+        if (containsName(valueToAdd)) {
+            setError("Supplied already added: " + valueToAdd);
             notWorking();
             return;
         }
@@ -109,9 +109,9 @@ public class SupplierNameList extends AbstractStackComposite<MarkerDTO>{
 
     public MarkerDTO createDTOFromGUI() {
         // since all we handle is the inferreds, we will assume that we have the correct DTO.
-        if(dto==null) return null ;
+        if (dto == null) return null;
         MarkerDTO relatedEntityDTO = new MarkerDTO();
-        if(supplierListBox.getItemCount()>0){
+        if (supplierListBox.getItemCount() > 0) {
             relatedEntityDTO.setName(supplierListBox.getSelected());
         }
         relatedEntityDTO.setZdbID(dto.getZdbID());
@@ -122,8 +122,8 @@ public class SupplierNameList extends AbstractStackComposite<MarkerDTO>{
     protected void addToGUI(String name) {
         MarkerDTO relatedEntityDTO = createDTOFromGUI();
         relatedEntityDTO.setName(name);
-        StackComposite<MarkerDTO> stackComposite = new StackComposite<MarkerDTO>(relatedEntityDTO) ;
-        stackComposite.addRelatedEntityListener(new RelatedEntityAdapter<MarkerDTO>(){
+        StackComposite<MarkerDTO> stackComposite = new StackComposite<MarkerDTO>(relatedEntityDTO);
+        stackComposite.addRelatedEntityListener(new RelatedEntityAdapter<MarkerDTO>() {
             @Override
             public void removeRelatedEntity(final RelatedEntityEvent<MarkerDTO> event) {
 
@@ -139,7 +139,6 @@ public class SupplierNameList extends AbstractStackComposite<MarkerDTO>{
         stackTable.setWidget(stackTable.getRowCount(), 0, stackComposite);
         resetInput();
     }
-
 
 
     @Override

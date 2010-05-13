@@ -28,6 +28,7 @@ public class SiteSearchService {
     /**
      * Check if a given query string produces at least one hit, i.e. at least one page
      * has a reference.
+     *
      * @param queryString query string
      * @return true or false
      */
@@ -40,6 +41,7 @@ public class SiteSearchService {
         }
         return false;
     }
+
     /**
      * Retrieve hits for a given category and a given query string.
      * Any error while reading the indexer file will return null and log the exception.

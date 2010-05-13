@@ -10,14 +10,17 @@ import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.dto.TranscriptDTO;
+import org.zfin.gwt.root.event.RelatedEntityChangeListener;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.AbstractListBox;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
 
 import java.util.List;
 
 /**
  */
-public final class TranscriptEditController extends AbstractFullMarkerEditController<TranscriptDTO>{
+public final class TranscriptEditController extends AbstractFullMarkerEditController<TranscriptDTO> {
 
     public static final String targetedGenesTitle = "targetedGeneTitle";
     public static final String proteinTitle = "proteinTitle";
@@ -29,7 +32,7 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
 
 
     // gui elements
-    private final ViewClickLabel transcriptViewClickLabel = new ViewClickLabel("[View Transcript]","/action/marker/transcript-view?zdbID=","Ignore");
+    private final ViewClickLabel transcriptViewClickLabel = new ViewClickLabel("[View Transcript]", "/action/marker/transcript-view?zdbID=", "Ignore");
     private final TranscriptHeaderEdit transcriptHeaderEdit = new TranscriptHeaderEdit();
     private final RelatedMarkerBox relatedGenesBox =
             new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCES_TRANSCRIPT, false, geneDiv);
@@ -126,54 +129,37 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
                 if (directAttributionTable.getNumberOfPublications() == 0) {
                     transcriptViewClickLabel.setError("Transcript requires attribution");
                     directAttributionTable.setError("Transcript requires attribution");
-                }
-                else
-                if (nucleotideSequenceArea.getNumberOfSequences() == 0) {
+                } else if (nucleotideSequenceArea.getNumberOfSequences() == 0) {
                     transcriptViewClickLabel.setError("Transcript requires sequence");
                     nucleotideSequenceArea.setError("Transcript requires sequence");
-                }
-                else
-                if (nucleotideSequenceArea.getNumberOfAttributions() == 0) {
+                } else if (nucleotideSequenceArea.getNumberOfAttributions() == 0) {
                     transcriptViewClickLabel.setError("Transcript sequence requires attribution");
                     nucleotideSequenceArea.setError("Transcript sequence requires attribution");
-                }
-                else
-                if(transcriptHeaderEdit.isDirty()){
+                } else if (transcriptHeaderEdit.isDirty()) {
                     String error = "Name/type/status has unsaved changes.";
                     transcriptViewClickLabel.setError(error);
                     transcriptHeaderEdit.setError(error);
-                }
-                else
-                if(markerNoteBox.isDirty() || markerNoteBox.hasDirtyNotes()){
+                } else if (markerNoteBox.isDirty() || markerNoteBox.hasDirtyNotes()) {
                     String error = "Note changes not saved.";
                     transcriptViewClickLabel.setError(error);
                     markerNoteBox.setError(error);
-                }
-                else
-                if(relatedGenesBox.isDirty()){
+                } else if (relatedGenesBox.isDirty()) {
                     String error = "Gene entry not added.";
                     transcriptViewClickLabel.setError(error);
                     relatedGenesBox.setError(error);
-                }
-                else
-                if(relatedClonesBox.isDirty()){
+                } else if (relatedClonesBox.isDirty()) {
                     String error = "Clone entry not added.";
                     transcriptViewClickLabel.setError(error);
                     relatedClonesBox.setError(error);
-                }
-                else
-                if(previousNamesBox.isDirty()){
+                } else if (previousNamesBox.isDirty()) {
                     String error = "Alias entry not added.";
                     transcriptViewClickLabel.setError(error);
                     previousNamesBox.setError(error);
-                }
-                else
-                if(dbLinkTable.isDirty()){
+                } else if (dbLinkTable.isDirty()) {
                     String error = "Supporting sequence not added.";
                     transcriptViewClickLabel.setError(error);
                     dbLinkTable.setError(error);
-                }
-                else {
+                } else {
                     transcriptViewClickLabel.continueToViewTranscript();
                 }
 
@@ -243,7 +229,7 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
         publicationLookupBox.addPublication(new PublicationDTO("miRBase", "ZDB-PUB-081217-13"));
         publicationLookupBox.addPublication(new PublicationDTO("Manual Annotation of Genome", "ZDB-PUB-091007-1"));
         publicationLookupBox.setKey(PublicationSessionKey.TRANSCRIPT);
-        publicationLookupBox.getRecentPubs() ;
+        publicationLookupBox.getRecentPubs();
 
         markerNoteBox.removeEditMode(MarkerNoteBox.EditMode.EXTERNAL);
 
@@ -316,7 +302,6 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
             Window.alert(e.toString());
         }
     }
-
 
 
 }

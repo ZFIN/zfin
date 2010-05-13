@@ -13,6 +13,7 @@ import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionAssayDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
+import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.StringUtils;
@@ -85,7 +86,7 @@ import java.util.*;
  * message is displayed when the update matches another existing experiment. Before an experiment is
  * updated a JavaScript alert box pops up to ask for confirmation.
  */
-public class FxExperimentModule extends Composite implements ExperimentSection {
+public class FxExperimentModule extends Composite implements ExperimentSection, HandlesError {
 
     // div-elements
     public static final String SHOW_HIDE_EXPERIMENTS = "show-hide-experiments";
@@ -105,7 +106,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
 
     // construction zone
     private Button addButton = new Button("Add");
-    private ListBox geneList = new ListBox();
+    private ListBoxWrapper geneList = new ListBoxWrapper();
     private ListBox fishList = new ListBox();
     private ListBox environmentList = new ListBox();
     private ListBox assayList = new ListBox();
@@ -133,6 +134,9 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
     private ExpressionSection expressionSection;
     // filter set by the banana bar
     private ExperimentDTO experimentFilter;
+
+    // listener
+    private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
 
 
     public FxExperimentModule(String publicationID) {
@@ -319,6 +323,10 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         experimentFilter = filter;
         unselectAllExperiments();
         retrieveExperiments();
+    }
+
+    public void updateGenes() {
+        curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(null));
     }
 
 
@@ -565,6 +573,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             displayTable.createExperimentTable();
             // also remove the figure annotations that were used with this experiments
             expressionSection.removeFigureAnnotations(experiment);
+            fireEventSuccess();
         }
 
     }
@@ -613,6 +622,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         @Override
         public void onSuccess(List<MarkerDTO> genes) {
             //Window.alert("brought back: " + experiments.size());
+            String selectedValue = geneList.getSelectedText();
             geneList.clear();
             geneList.addItem("");
             int rowIndex = 1;
@@ -623,6 +633,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
                         geneList.setSelectedIndex(rowIndex);
                 rowIndex++;
             }
+            geneList.setIndexForValue(selectedValue);
         }
     }
 
@@ -827,8 +838,10 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
      */
     public void clearErrorMessages() {
         errorElement.clearAllErrors();
-        if (duplicateRowIndex > 0)
+        if (duplicateRowIndex > 0) {
             displayTable.getRowFormatter().setStyleName(duplicateRowIndex, duplicateRowOriginalStyle);
+        }
+
     }
 
     class ExperimentFlexTable extends ZfinFlexTable {
@@ -1038,9 +1051,11 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
             super.onSuccess(newExperiment);
             addButtonInProgress = false;
             retrieveExperiments();
-            if (!sectionVisible)
+            if (!sectionVisible) {
                 errorElement.setError("Added new Experiment: " + newExperiment.toString());
+            }
             // add this experiment to the expression section
+            fireEventSuccess();
         }
 
     }
@@ -1109,6 +1124,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         @Override
         public void onSuccess(ExperimentDTO updatedExperiment) {
             super.onSuccess(updatedExperiment);
+            fireEventSuccess();
             // update inline without reading all experiments again
             //retrieveExperiments();
             int rowCount = displayTable.getRowCount();
@@ -1232,6 +1248,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         @Override
         public void onSuccess(List<String> assays) {
             //Window.alert("brought back: " + experiments.size() );
+            assayList.clear();
             for (String assay : assays) {
                 assayList.addItem(assay);
             }
@@ -1311,5 +1328,27 @@ public class FxExperimentModule extends Composite implements ExperimentSection {
         public String getText() {
             return text;
         }
+    }
+
+    @Override
+    public void setError(String message) {
+        errorElement.setError(message);
+    }
+
+    @Override
+    public void clearError() {
+        errorElement.clearError();
+    }
+
+    @Override
+    public void fireEventSuccess() {
+        for (HandlesError handlesError : handlesErrorListeners) {
+            handlesError.clearError();
+        }
+    }
+
+    @Override
+    public void addHandlesErrorListener(HandlesError handlesError) {
+        handlesErrorListeners.add(handlesError);
     }
 }

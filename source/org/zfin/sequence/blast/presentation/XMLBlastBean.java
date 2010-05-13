@@ -61,7 +61,7 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
     private File resultFile;
     private BlastOutput blastOutput;
     private BlastResultBean blastResultBean;
-    private String errorString;
+    private String errorString = "";
 
     public String getQueryType() {
         return queryType;

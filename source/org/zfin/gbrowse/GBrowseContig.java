@@ -2,7 +2,7 @@ package org.zfin.gbrowse;
 
 /**
  * A direct mapping of the Bio::Seqfeature::Store schema contig table
- *
+ * <p/>
  * For zfin,these are chromosomes.
  */
 public class GBrowseContig implements Comparable {
@@ -36,7 +36,7 @@ public class GBrowseContig implements Comparable {
 
     public int compareTo(Object o) {
         //todo: this seems like it should do some zeropadding... do we have that built in?
-        GBrowseContig other = (GBrowseContig)o;
+        GBrowseContig other = (GBrowseContig) o;
         if (other == null) return 1;
         return getName().compareTo(other.getName());
     }

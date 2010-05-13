@@ -6,14 +6,14 @@ import org.zfin.marker.Marker;
 /**
  *
  */
-public class MergeBean extends DeleteBean{
+public class MergeBean extends DeleteBean {
 
     private String markerToMergeIntoViewString;
     private Marker markerToMergeInto;
 
 
     public String getMarkerToMergeIntoViewString() {
-        if(StringUtils.isEmpty(markerToMergeIntoViewString) && markerToMergeInto!=null){
+        if (StringUtils.isEmpty(markerToMergeIntoViewString) && markerToMergeInto != null) {
             markerToMergeIntoViewString = markerToMergeInto.getAbbreviation();
         }
         return markerToMergeIntoViewString;

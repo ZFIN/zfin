@@ -5,16 +5,15 @@ import java.util.Set;
 
 /**
  * This class is a direct mapping of the Seqfeature::Store database
- *
+ * <p/>
  * The feature is the central object in that schema, somewhat like
  * how we use marker.
- *
+ * <p/>
  * DNA Clones, genes and transcripts are all features, but things
  * that we don't represent as markers are also features, like
  * chromosomes, exons and UTRs.
- * 
  */
-public class GBrowseFeature implements Serializable,  Comparable {
+public class GBrowseFeature implements Serializable, Comparable {
     private int id;
     private long start;
     private long end;
@@ -88,7 +87,7 @@ public class GBrowseFeature implements Serializable,  Comparable {
 
 
     public int compareTo(Object o) {
-        GBrowseFeature other = (GBrowseFeature)o;
+        GBrowseFeature other = (GBrowseFeature) o;
         if (other == null)
             return 1;
         return getStart().compareTo(other.getStart());

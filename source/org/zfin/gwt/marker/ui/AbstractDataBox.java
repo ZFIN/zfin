@@ -2,6 +2,7 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.ui.Label;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.ui.AbstractRevertibleComposite;
 import org.zfin.gwt.root.ui.HandlesError;
 
 import java.util.ArrayList;
@@ -19,8 +20,7 @@ public abstract class AbstractDataBox<T extends MarkerDTO> extends AbstractRever
     private List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
 
 
-
-    protected abstract T createDTOFromGUI() ;
+    protected abstract T createDTOFromGUI();
 
 
     protected void initGUI() {

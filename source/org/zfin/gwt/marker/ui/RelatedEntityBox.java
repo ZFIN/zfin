@@ -1,7 +1,7 @@
 package org.zfin.gwt.marker.ui;
 
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
 
 /**
  * This is a composite for related entities.
@@ -9,12 +9,12 @@ import org.zfin.gwt.root.dto.RelatedEntityDTO;
 public class RelatedEntityBox extends AbstractRelatedEntityBox<RelatedEntityDTO> {
 
 
-    public void addRelatedEntity(final String name,final String pubZdbID)  {
+    public void addRelatedEntity(final String name, final String pubZdbID) {
         // do client check
         String validationError = validateNewRelatedEntity(name);
-        if(validationError!=null){
+        if (validationError != null) {
             setError(validationError);
-            return ;
+            return;
         }
         RelatedEntityDTO dto = new RelatedEntityDTO();
         dto.setDataZdbID(getZdbID());
@@ -28,6 +28,6 @@ public class RelatedEntityBox extends AbstractRelatedEntityBox<RelatedEntityDTO>
     }
 
     public boolean isEditable(RelatedEntityDTO relatedEntityDTO) {
-        return true ; 
+        return true;
     }
 }

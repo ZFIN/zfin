@@ -10,9 +10,9 @@ public class OntologyNameComparator implements Comparator<Ontology>, Serializabl
 
     @Override
     public int compare(Ontology o1, Ontology o2) {
-        if(o1 == null)
+        if (o1 == null)
             return -1;
-        if(o2 == null)
+        if (o2 == null)
             return 1;
 
         return o1.getOntologyName().compareTo(o2.getOntologyName());

@@ -10,6 +10,7 @@ import org.zfin.gwt.marker.event.NoteEvent;
 import org.zfin.gwt.marker.event.RemovableNoteListener;
 import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.ui.AbstractRevertibleComposite;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.IsDirty;
 import org.zfin.gwt.root.ui.StringListBox;
@@ -23,7 +24,7 @@ import java.util.Set;
  */
 public abstract class AbstractNoteBox<T extends RelatedEntityDTO> extends AbstractRevertibleComposite<T> implements RemovableNoteListener {
 
-    public enum EditMode implements IsSerializable{
+    public enum EditMode implements IsSerializable {
         PUBLIC,
         PRIVATE,
         EXTERNAL,;
@@ -42,7 +43,7 @@ public abstract class AbstractNoteBox<T extends RelatedEntityDTO> extends Abstra
 
     // internal data
     Set<EditMode> editModes = new HashSet<EditMode>();
-    protected EditMode defaultEditMode = null ;
+    protected EditMode defaultEditMode = null;
 
 
     protected void initGUI() {
@@ -65,17 +66,17 @@ public abstract class AbstractNoteBox<T extends RelatedEntityDTO> extends Abstra
 
     protected void addInternalListeners(final HandlesError handlesError) {
 
-        newNoteTextArea.addChangeHandler(new ChangeHandler(){
+        newNoteTextArea.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
                 handleDirty();
             }
         });
 
-        cancelButton.addClickHandler(new ClickHandler(){
+        cancelButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                resetAddNote() ;
+                resetAddNote();
             }
         });
     }
@@ -88,18 +89,17 @@ public abstract class AbstractNoteBox<T extends RelatedEntityDTO> extends Abstra
     }
 
 
-
     @Override
     public boolean isDirty() {
-        if (false == newNoteTextArea.getText().equals("")) return true ;
+        if (false == newNoteTextArea.getText().equals("")) return true;
 //        if (typeListBox.getSelected()!=null) return true ;
 
-        return false ;
+        return false;
     }
 
 
-    public void addEditMode(EditMode editMode){
-        editModes.add(editMode) ;
+    public void addEditMode(EditMode editMode) {
+        editModes.add(editMode);
     }
 
     public boolean handleDirty() {
@@ -108,18 +108,17 @@ public abstract class AbstractNoteBox<T extends RelatedEntityDTO> extends Abstra
         revertButton.setEnabled(dirty);
         if (dirty) {
             newNoteTextArea.setStyleName(IsDirty.DIRTY_STYLE);
-        }
-        else{
+        } else {
             newNoteTextArea.setStyleName(IsDirty.CLEAN_STYLE);
             fireEventSuccess();
         }
-        return dirty ;
+        return dirty;
     }
 
     public boolean hasDirtyNotes() {
         int numRows = table.getRowCount();
-        for(int i = 0 ; i < numRows ; i++){
-            if( ((AbstractNoteEntry) table.getWidget(i,1)).isDirty() ) return true ;
+        for (int i = 0; i < numRows; i++) {
+            if (((AbstractNoteEntry) table.getWidget(i, 1)).isDirty()) return true;
         }
         return false;
     }
@@ -133,22 +132,22 @@ public abstract class AbstractNoteBox<T extends RelatedEntityDTO> extends Abstra
     }
 
     private int getRowForNote(NoteDTO noteDTO) {
-        for(int i = 0 ; i < table.getRowCount() ; i++){
-            if(((AbstractNoteEntry) table.getWidget(i,1)).getNoteDTO().equals(noteDTO)){
-                return i ;
+        for (int i = 0; i < table.getRowCount(); i++) {
+            if (((AbstractNoteEntry) table.getWidget(i, 1)).getNoteDTO().equals(noteDTO)) {
+                return i;
             }
         }
-        return -1 ;
+        return -1;
     }
 
 
-    public void removeEditMode(EditMode editMode){
-        if(editModes.contains(editMode)){
+    public void removeEditMode(EditMode editMode) {
+        if (editModes.contains(editMode)) {
             editModes.remove(editMode);
         }
     }
 
-    public void setDefaultEditMode(EditMode editMode){
+    public void setDefaultEditMode(EditMode editMode) {
         this.defaultEditMode = editMode;
     }
 

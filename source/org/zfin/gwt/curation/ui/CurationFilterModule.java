@@ -88,7 +88,7 @@ public class CurationFilterModule extends Composite {
         setInitialValues();
     }
 
-    private void setInitialValues() {
+    public void setInitialValues() {
         curationFilterRPCAsync.getPossibleFilterValues(publicationID, new RetrieveFishCallback());
     }
 

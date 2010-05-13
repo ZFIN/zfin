@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import org.zfin.gwt.marker.event.NoteEvent;
 import org.zfin.gwt.marker.event.RemovableNoteListener;
 import org.zfin.gwt.root.dto.NoteDTO;
+import org.zfin.gwt.root.ui.AbstractRevertibleComposite;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.IsDirty;
 
@@ -29,10 +30,10 @@ public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
     final HandlesError parent;
 
     // listeners
-    private final List<RemovableNoteListener> removableNoteListeners = new ArrayList<RemovableNoteListener>() ;
+    private final List<RemovableNoteListener> removableNoteListeners = new ArrayList<RemovableNoteListener>();
 
-    AbstractNoteEntry(NoteDTO noteDTO,HandlesError parent) {
-        this.noteDTO  = noteDTO;
+    AbstractNoteEntry(NoteDTO noteDTO, HandlesError parent) {
+        this.noteDTO = noteDTO;
         this.parent = parent;
         noteText.setText(noteDTO.getNoteData());
         initGUI();
@@ -60,26 +61,27 @@ public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
     }
 
     @Override
-    protected void setValues() { }
+    protected void setValues() {
+    }
 
     @Override
     protected void addInternalListeners(HandlesError handlesError) {
 
-        noteText.addChangeHandler(new ChangeHandler(){
+        noteText.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
                 handleDirty();
             }
         });
 
-        noteText.addClickHandler(new ClickHandler(){
+        noteText.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 handleDirty();
             }
         });
 
-        noteText.addKeyPressHandler(new KeyPressHandler(){
+        noteText.addKeyPressHandler(new KeyPressHandler() {
             @Override
             public void onKeyPress(KeyPressEvent event) {
                 boolean dirty = isDirty();
@@ -90,7 +92,7 @@ public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
             }
         });
 
-        revertButton.addClickHandler(new ClickHandler(){
+        revertButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 revertGUI();
@@ -99,7 +101,7 @@ public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
 
     }
 
-    public NoteDTO getNoteDTO(){
+    public NoteDTO getNoteDTO() {
         return noteDTO;
     }
 
@@ -108,21 +110,19 @@ public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
         boolean dirty = isDirty();
         saveButton.setEnabled(dirty);
         revertButton.setEnabled(dirty);
-        if(dirty){
+        if (dirty) {
             noteText.setStyleName(IsDirty.DIRTY_STYLE);
-        }
-        else{
+        } else {
             noteText.setStyleName(IsDirty.CLEAN_STYLE);
             fireEventSuccess();
         }
-        return dirty ; 
+        return dirty;
     }
-
 
 
     @Override
     public boolean isDirty() {
-        return (false==noteText.getText().equals(noteDTO.getNoteData())) ;
+        return (false == noteText.getText().equals(noteDTO.getNoteData()));
     }
 
     @Override
@@ -131,13 +131,13 @@ public abstract class AbstractNoteEntry extends AbstractRevertibleComposite {
         handleDirty();
     }
 
-    public void addNoteListener(RemovableNoteListener removableNoteListener){
+    public void addNoteListener(RemovableNoteListener removableNoteListener) {
         removableNoteListeners.add(removableNoteListener);
     }
 
 
     void fireRemoveNote(NoteEvent noteEvent) {
-        for(RemovableNoteListener removableNoteListener : removableNoteListeners){
+        for (RemovableNoteListener removableNoteListener : removableNoteListeners) {
             removableNoteListener.removeNote(noteEvent);
         }
     }

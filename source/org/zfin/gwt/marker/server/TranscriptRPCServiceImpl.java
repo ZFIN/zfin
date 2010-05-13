@@ -6,10 +6,12 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.marker.ui.BlastDatabaseAccessException;
 import org.zfin.gwt.marker.ui.TranscriptRPCService;
 import org.zfin.gwt.marker.ui.TranscriptTypeStatusMismatchException;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.gwt.root.server.DTOMarkerService;
+import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
 import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
@@ -124,7 +126,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
         catch (Exception e) {
             transaction.rollback();
             logger.error("Failed to update transcript: " + e);
-            throw new RuntimeException(e); 
+            throw new RuntimeException(e);
         }
 
         return transcriptDTO;
@@ -151,7 +153,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
             throw new BlastDatabaseAccessException("Failed to retrieve RNA sequences", e);
         }
         for (Sequence sequence : rnaSequences) {
-            rnaInternalSequenceDTOs.addAll(DTOService.createSequenceDTOsForPublications(sequence, transcript.getName()));
+            rnaInternalSequenceDTOs.addAll(DTOConversionService.convertToSequenceDTOs(sequence, transcript.getName()));
         }
         transcriptDTO.setRnaSequences(rnaInternalSequenceDTOs);
 
@@ -162,14 +164,14 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
 
 
         // get direct attributions
-        transcriptDTO.setRecordAttributions(DTOService.getDirectAttributions(transcript));
+        transcriptDTO.setRecordAttributions(MarkerService.getDirectAttributions(transcript));
 
         // get notes
-        transcriptDTO.setCuratorNotes(DTOService.getCuratorNotes(transcript));
-        transcriptDTO.setPublicNote(DTOService.getPublicNote(transcript));
+        transcriptDTO.setCuratorNotes(DTOMarkerService.getCuratorNoteDTOs(transcript));
+        transcriptDTO.setPublicNote(DTOMarkerService.getPublicNoteDTO(transcript));
 
         // get alias's
-        transcriptDTO.setAliasAttributes(DTOService.getAliases(transcript));
+        transcriptDTO.setAliasAttributes(DTOMarkerService.getMarkerAliasDTOs(transcript));
 
         // get related genes
         // get related clones
@@ -187,7 +189,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
                 Marker gene = markerRelationship.getFirstMarker();
                 logger.info("genes found: " + gene.getAbbreviation());
 //                relatedGenes.addAll(DTOHelper.createAttributesForPublication(gene.getAbbreviation(),markerRelationship.getPublications())) ;
-                relatedGenes.addAll(DTOService.createLinksForPublication(DTOService.createMarkerDTOFromMarker(gene), markerRelationship.getPublications()));
+                relatedGenes.addAll(DTOConversionService.createLinks(DTOConversionService.convertToMarkerDTO(gene), markerRelationship.getPublications()));
             } else if (
                     markerRelationship.getFirstMarker().isInTypeGroup(Marker.TypeGroup.CLONE)
                             &&
@@ -195,13 +197,13 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
                     ) {
                 Marker clone = markerRelationship.getFirstMarker();
 //                relatedClones.addAll(DTOHelper.createAttributesForPublication(clone.getAbbreviation(),markerRelationship.getPublications())) ;
-                relatedClones.addAll(DTOService.createLinksForPublication(DTOService.createMarkerDTOFromMarker(clone), markerRelationship.getPublications()));
+                relatedClones.addAll(DTOConversionService.createLinks(DTOConversionService.convertToMarkerDTO(clone), markerRelationship.getPublications()));
             }
         }
         for (MarkerRelationship mrel : transcript.getFirstMarkerRelationships()) {
             if (mrel.getType().equals(MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE)) {
                 Marker gene = mrel.getSecondMarker();
-                targetedGenes.addAll(DTOService.createLinksForPublication(DTOService.createMarkerDTOFromMarker(gene), mrel.getPublications()));
+                targetedGenes.addAll(DTOConversionService.createLinks(DTOConversionService.convertToMarkerDTO(gene), mrel.getPublications()));
             }
 
         }
@@ -230,9 +232,9 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
         for (TranscriptDBLink transcriptDBLink : RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForTranscript(transcript,
                 referenceDatabases.toArray(new ReferenceDatabase[referenceDatabases.size()]))) {
 //            for(TranscriptDBLink transcriptDBLink : RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForTranscript(transcript, TranscriptService.getPolypeptideProductsReferenceDatabases())){
-            List<DBLinkDTO> dbLinkDTOs = DTOService.createDBLinkDTOsFromDBLink(transcriptDBLink, transcript.getName(), transcript.getZdbID());
+            List<DBLinkDTO> dbLinkDTOs = DTOConversionService.convertToDBLinkDTOs(transcriptDBLink, transcript.getName(), transcript.getZdbID());
             for (DBLinkDTO dbLinkDTO : dbLinkDTOs) {
-                relatedProteins.addAll(DTOService.<DBLinkDTO>createLinksForPublication(dbLinkDTO, transcriptDBLink.getPublications()));
+                relatedProteins.addAll(DTOConversionService.<DBLinkDTO>createLinks(dbLinkDTO, transcriptDBLink.getPublications()));
             }
 //                    relatedProteins.addAll(DTOHelper.createAttributesForPublication(transcriptDBLink.getAccessionNumber(), transcriptDBLink.getPublications())) ;
         }
@@ -244,7 +246,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
         // get supporting sequences
         List<DBLink> dbLinks = TranscriptService.getSupportingDBLinks(transcript);
         ArrayList<DBLinkDTO> dbLinkDTOList = new ArrayList<DBLinkDTO>();
-        dbLinkDTOList.addAll(DTOService.createDBLinkDTOsFromDBLink(dbLinks, transcript.getZdbID(), transcript.getAbbreviation()));
+        dbLinkDTOList.addAll(DTOConversionService.convertToDBLinkDTOs(dbLinks, transcript.getZdbID(), transcript.getAbbreviation()));
 
         transcriptDTO.setSupportingSequenceLinks(dbLinkDTOList);
 
@@ -360,7 +362,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
             }
 
 
-            List<DBLinkDTO> dbLinkDTOs = DTOService.createDBLinkDTOsFromTranscriptDBLink(transcriptDBLink);
+            List<DBLinkDTO> dbLinkDTOs = DTOConversionService.convertToDBLinkDTOs(transcriptDBLink);
             DBLinkDTO dbLinkDTO = dbLinkDTOs.get(0);
             dbLinkDTO.setPublicationZdbID(pubZdbID);
 
@@ -380,6 +382,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
     }
 
     // todo: get types for the supergroup transcript
+
     public List<String> getTranscriptTypes() {
 
         TranscriptType.Type[] transcriptTypes = TranscriptType.Type.values();
@@ -464,6 +467,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
      * @param relatedEntityDTO DBLinkDTO
      * @return Attribution returned from adding protein accession.
      * @throws org.zfin.gwt.root.dto.TermNotFoundException
+     *
      */
     public DBLinkDTO addProteinRelatedEntity(RelatedEntityDTO relatedEntityDTO) throws TermNotFoundException {
 
@@ -486,7 +490,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
                 DBLink dbLink = markerRepository.addDBLink(transcript, transcriptDBLink.getAccessionNumber(), transcriptDBLink.getReferenceDatabase(), relatedEntityDTO.getPublicationZdbID());
                 HibernateUtil.flushAndCommitCurrentSession();
                 logger.info("accession is found in: " + transcriptDBLink.getReferenceDatabase());
-                return DTOService.createDBLinkDTOFromDBLinkForPub(dbLink, transcript.getZdbID(), transcript.getAbbreviation());
+                return DTOConversionService.convertToDBLinkDTO(dbLink, transcript.getZdbID(), transcript.getAbbreviation());
             } else {
                 logger.info("accession is null");
                 throw new TermNotFoundException(relatedEntityDTO.getName(), "accession/dblink");
@@ -495,7 +499,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
             DBLink dbLink = markerRepository.addDBLink(transcript, accession.getNumber(), accession.getReferenceDatabase(), relatedEntityDTO.getPublicationZdbID());
             HibernateUtil.flushAndCommitCurrentSession();
             logger.info("accession is found in: " + dbLink.getReferenceDatabase());
-            return DTOService.createDBLinkDTOFromDBLinkForPub(dbLink, transcript.getZdbID(), transcript.getAbbreviation(), relatedEntityDTO.getPublicationZdbID());
+            return DTOConversionService.convertToDBLinkDTO(dbLink, transcript.getZdbID(), transcript.getAbbreviation(), relatedEntityDTO.getPublicationZdbID());
         }
     }
 
@@ -508,7 +512,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
         if (transcriptDBLinks.size() == 1) {
             RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(transcriptDBLinks.get(0).getZdbID(), dbLinkDTO.getPublicationZdbID());
             HibernateUtil.flushAndCommitCurrentSession();
-            return DTOService.createDBLinkDTOFromDBLinkForPub(transcriptDBLinks.get(0), transcript.getZdbID(), transcript.getAbbreviation(), dbLinkDTO.getPublicationZdbID());
+            return DTOConversionService.convertToDBLinkDTO(transcriptDBLinks.get(0), transcript.getZdbID(), transcript.getAbbreviation(), dbLinkDTO.getPublicationZdbID());
         } else {
             logger.error("found wrong # of transcripts for accession [" + dbLinkDTO.getName() + "] and transcript [" + transcript + "]: " + transcriptDBLinks.size());
             HibernateUtil.currentSession().getTransaction().rollback();
@@ -569,7 +573,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
     public List<ReferenceDatabaseDTO> getTranscriptSupportingSequencesReferenceDatabases() {
         if (transcriptEditDBLinkReferenceDatabases == null) {
             transcriptEditDBLinkReferenceDatabases =
-                    DTOService.convertReferenceDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
+                    DTOConversionService.convertToReferenceDatabaseDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
                             DisplayGroup.GroupName.DBLINK_ADDING_ON_TRANSCRIPT_EDIT));
 //            zebrafishSequenceDatabases =  DTOHelper.convertReferenceDTOs(TranscriptService.getSequenceReferenceDatabases()) ;
         }
@@ -581,11 +585,11 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
         if (transcriptDTO.getTranscriptType().equals(TranscriptType.Type.MIRNA.toString())) {
             // todo: this should use curatedMatureMiRNA or something like that (see 3564)
             transcriptEditAddableNucleotideSequenceReferenceDatabases =
-                    DTOService.convertReferenceDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
+                    DTOConversionService.convertToReferenceDatabaseDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
                             DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_MIRNA_NUCLEOTIDE_SEQUENCE));
         } else {
             transcriptEditAddableNucleotideSequenceReferenceDatabases =
-                    DTOService.convertReferenceDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
+                    DTOConversionService.convertToReferenceDatabaseDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
                             DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE));
         }
 //        }
@@ -601,7 +605,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
             refdbs = RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
 
             for (ReferenceDatabase refdb : refdbs) {
-                geneEditAddableNucleotideReferenceDatabases.add(DTOService.convertReferenceDTO(refdb));
+                geneEditAddableNucleotideReferenceDatabases.add(DTOConversionService.convertToReferenceDatabaseDTO(refdb));
             }
 
         }
@@ -612,7 +616,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
     public List<ReferenceDatabaseDTO> getTranscriptEditAddProteinSequenceReferenceDatabases() {
         if (transcriptEditAddableProteinReferenceDatabases == null) {
             transcriptEditAddableProteinReferenceDatabases =
-                    DTOService.convertReferenceDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
+                    DTOConversionService.convertToReferenceDatabaseDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
                             DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_PROTEIN_SEQUENCE));
         }
         return transcriptEditAddableProteinReferenceDatabases;
@@ -622,7 +626,7 @@ public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements Tr
     public List<ReferenceDatabaseDTO> getGeneEditAddProteinSequenceReferenceDatabases() {
         if (geneEditAddableProteinReferenceDatabases == null) {
             geneEditAddableProteinReferenceDatabases =
-                    DTOService.convertReferenceDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
+                    DTOConversionService.convertToReferenceDatabaseDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
                             DisplayGroup.GroupName.GENE_EDIT_ADDABLE_PROTEIN_SEQUENCE));
         }
         return geneEditAddableProteinReferenceDatabases;

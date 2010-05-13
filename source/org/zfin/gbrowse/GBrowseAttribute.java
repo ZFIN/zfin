@@ -4,15 +4,14 @@ import java.io.Serializable;
 
 /**
  * This class is a direct mapping of the Bio::Seqfeature::Store attribute table
- * 
+ * <p/>
  * This comes from the 9th column of the gff3 file, and can be arbitrarily
  * defined with field="value"; statements.
- *
+ * <p/>
  * GBrowseAttributeType is a controlled vocabulary of the field values.
- *
+ * <p/>
  * GBrowse uses Alias as a field for alternate names to search, so we populate that.
- * zfin ids are stored as gene_id or zdb_id.  
- *
+ * zfin ids are stored as gene_id or zdb_id.
  */
 
 public class GBrowseAttribute implements Serializable {

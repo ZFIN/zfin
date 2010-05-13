@@ -1,15 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.RadioButton;
-import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
-import org.zfin.gwt.root.dto.PhenotypeFigureStageDTO;
-import org.zfin.gwt.root.dto.PhenotypePileStructureDTO;
-import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * ToDo: ADD DOCUMENTATION!

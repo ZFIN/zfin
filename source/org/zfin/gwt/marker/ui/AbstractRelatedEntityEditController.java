@@ -1,9 +1,10 @@
 package org.zfin.gwt.marker.ui;
 
-import org.zfin.gwt.marker.event.PublicationChangeEvent;
-import org.zfin.gwt.marker.event.PublicationChangeListener;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.event.PublicationChangeEvent;
+import org.zfin.gwt.root.event.PublicationChangeListener;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.StandardDivNames;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +12,12 @@ import java.util.List;
 /**
  * Base class for editing markers.
  */
-public abstract class AbstractRelatedEntityEditController<T extends RelatedEntityDTO>  implements PublicationChangeListener, HandlesError, StandardDivNames {
+public abstract class AbstractRelatedEntityEditController<T extends RelatedEntityDTO> implements PublicationChangeListener, HandlesError, StandardDivNames {
 
 
     // internal data
     String publicationZdbID;
-    T dto ;
+    T dto;
 
     // listeners
     private final List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
@@ -46,10 +47,11 @@ public abstract class AbstractRelatedEntityEditController<T extends RelatedEntit
 
     /**
      * Set DTO in the interface.
+     *
      * @param dto DTO to set.
      */
     void setDTO(T dto) {
-        this.dto = dto ;
+        this.dto = dto;
     }
 
     @Override

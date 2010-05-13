@@ -2,16 +2,16 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.SequenceDTO;
+import org.zfin.gwt.root.event.RelatedEntityChangeListener;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  */
-class SequenceBox extends Composite implements RelatedEntityChangeListener<SequenceDTO>{
+class SequenceBox extends Composite implements RelatedEntityChangeListener<SequenceDTO> {
 
     // gui components
     private final VerticalPanel panel = new VerticalPanel();

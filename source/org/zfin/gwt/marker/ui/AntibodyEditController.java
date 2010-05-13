@@ -4,9 +4,15 @@ import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
-import org.zfin.gwt.marker.event.*;
+import org.zfin.gwt.marker.event.DirectAttributionAddsRelatedEntityListener;
+import org.zfin.gwt.marker.event.MarkerLoadEvent;
+import org.zfin.gwt.marker.event.MarkerLoadListener;
 import org.zfin.gwt.root.dto.AntibodyDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
+import org.zfin.gwt.root.event.PublicationChangeEvent;
+import org.zfin.gwt.root.event.RelatedEntityChangeListener;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
 
 /**
@@ -15,7 +21,7 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
 
 
     // gui elements
-    private final ViewClickLabel antibodyViewClickLabel = new ViewClickLabel("[View Antibody]","/action/antibody/detail?antibody.zdbID=","Discard");
+    private final ViewClickLabel antibodyViewClickLabel = new ViewClickLabel("[View Antibody]", "/action/antibody/detail?antibody.zdbID=", "Discard");
     private final AntibodyHeaderEdit antibodyHeaderEdit = new AntibodyHeaderEdit();
     private final AntibodyBox antibodyBox = new AntibodyBox();
     private final RelatedMarkerBox relatedGenesBox = new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY, true, geneDiv);
@@ -38,11 +44,11 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
         markerNoteBox.setDefaultEditMode(MarkerNoteBox.EditMode.EXTERNAL);
 
         publicationLookupBox.clearPublications();
-        publicationLookupBox.addPublication(new PublicationDTO("Antibody Data Submissions","ZDB-PUB-080117-1" ));
-        publicationLookupBox.addPublication(new PublicationDTO("Manually Curated Data","ZDB-PUB-020723-5" ));
-        publicationLookupBox.addPublication(new PublicationDTO("Antibody information from supplier","ZDB-PUB-081107-1"));
+        publicationLookupBox.addPublication(new PublicationDTO("Antibody Data Submissions", "ZDB-PUB-080117-1"));
+        publicationLookupBox.addPublication(new PublicationDTO("Manually Curated Data", "ZDB-PUB-020723-5"));
+        publicationLookupBox.addPublication(new PublicationDTO("Antibody information from supplier", "ZDB-PUB-081107-1"));
         publicationLookupBox.setKey(PublicationSessionKey.ANTIBODY);
-        publicationLookupBox.getRecentPubs() ;
+        publicationLookupBox.getRecentPubs();
 
     }
 
@@ -53,7 +59,7 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
             String zdbID = transcriptDictionary.get(LOOKUP_ZDBID);
             try {
                 String defaultPubzdbID = transcriptDictionary.get("antibodyDefPubZdbID");
-                if(defaultPubzdbID!=null){
+                if (defaultPubzdbID != null) {
                     publicationLookupBox.publicationChanged(new PublicationChangeEvent(defaultPubzdbID));
                 }
             } catch (Exception e) {
@@ -74,39 +80,30 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
     protected void addListeners() {
         super.addListeners();
 
-        antibodyViewClickLabel.addViewClickedListeners(new ViewClickedListener(){
+        antibodyViewClickLabel.addViewClickedListeners(new ViewClickedListener() {
             @Override
             public void finishedView() {
-                if(antibodyBox.isDirty()){
+                if (antibodyBox.isDirty()) {
                     String error = "Antibody has unsaved data change(s).";
                     antibodyViewClickLabel.setError(error);
                     antibodyBox.setError(error);
-                }
-                else
-                if(antibodyHeaderEdit.isDirty()){
+                } else if (antibodyHeaderEdit.isDirty()) {
                     String error = "Antibody has unsaved name change.";
                     antibodyViewClickLabel.setError(error);
                     antibodyHeaderEdit.setError(error);
-                }
-                else
-                if(markerNoteBox.isDirty() || markerNoteBox.hasDirtyNotes()){
+                } else if (markerNoteBox.isDirty() || markerNoteBox.hasDirtyNotes()) {
                     String error = "Antibody has unsaved note change(s).";
                     antibodyViewClickLabel.setError(error);
                     markerNoteBox.setError(error);
-                }
-                else
-                if(previousNamesBox.isDirty()){
+                } else if (previousNamesBox.isDirty()) {
                     String error = "Alias entry not added.";
                     antibodyViewClickLabel.setError(error);
                     previousNamesBox.setError(error);
-                }
-                else
-                if(relatedGenesBox.isDirty()){
+                } else if (relatedGenesBox.isDirty()) {
                     String error = "Gene entry not added.";
                     antibodyViewClickLabel.setError(error);
                     relatedGenesBox.setError(error);
-                }
-                else{
+                } else {
                     antibodyViewClickLabel.continueToViewTranscript();
                 }
 
@@ -124,7 +121,6 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
                 dto.copyFrom(changeEvent.getDTO());
             }
         });
-
 
 
         // direct attribution listeners

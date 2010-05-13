@@ -5,14 +5,17 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.RelatedEntityChangeListener;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.AntibodyDTO;
+import org.zfin.gwt.root.event.RelatedEntityChangeListener;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.AbstractHeaderEdit;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
+import org.zfin.gwt.root.ui.StandardDivNames;
 
 /**
  */
-public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO>{
+public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
 
     // GUI name/type elements
     private final HTMLTable table = new Grid(2, 2);
@@ -28,11 +31,11 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO>{
     protected void addInternalListeners(final HandlesError handlesError) {
         super.addInternalListeners(handlesError);
 
-        addChangeListener(new RelatedEntityChangeListener<AntibodyDTO>(){
+        addChangeListener(new RelatedEntityChangeListener<AntibodyDTO>() {
             @Override
             public void dataChanged(RelatedEntityEvent<AntibodyDTO> antibodyDTODataChangedEvent) {
             }
-        } );
+        });
     }
 
     protected void revertGUI() {
@@ -75,15 +78,15 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO>{
             antibodyDTO.setZdbID(this.dto.getZdbID());
             antibodyDTO.setName(nameBox.getText());
 
-            if(false == nameValidator.validate(nameBox.getText(),this)) return ;
+            if (false == nameValidator.validate(nameBox.getText(), this)) return;
 
-            if(false == antibodyDTO.getName().equals(dto.getName())){
-                if(false == publicationValidator.validate(publicationZdbID,this)) return ;
+            if (false == antibodyDTO.getName().equals(dto.getName())) {
+                if (false == publicationValidator.validate(publicationZdbID, this)) return;
             }
 
             working();
             AntibodyRPCService.App.getInstance().updateAntibodyHeaders(antibodyDTO,
-                    new MarkerEditCallBack<Void>("failed to change clone name and type: ",this) {
+                    new MarkerEditCallBack<Void>("failed to change clone name and type: ", this) {
                         public void onFailure(Throwable throwable) {
                             super.onFailure(throwable);
                             notWorking();
@@ -94,7 +97,7 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO>{
                             DeferredCommand.addCommand(new CompareCommand());
                             fireEventSuccess();
                             notWorking();
-                            fireChangeEvent(new RelatedEntityEvent<AntibodyDTO>(antibodyDTO,dto.getName()));
+                            fireChangeEvent(new RelatedEntityEvent<AntibodyDTO>(antibodyDTO, dto.getName()));
                         }
                     });
         }

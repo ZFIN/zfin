@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
+import org.zfin.gwt.root.ui.*;
 
 /**
  * This class creates a MarkerGoEntry instance, but then refers to the Edit instance for editing.
@@ -16,18 +17,18 @@ import org.zfin.gwt.root.dto.GoEvidenceDTO;
  * 4 - pubs
  * 3 - evidence codes
  */
-public class GoEvidenceHeaderAdd extends AbstractGoEvidenceHeader{
+public class GoEvidenceHeaderAdd extends AbstractGoEvidenceHeader {
 
     public GoEvidenceHeaderAdd() {
-        this(StandardDivNames.headerDiv) ;
+        this(StandardDivNames.headerDiv);
     }
 
     public GoEvidenceHeaderAdd(String div) {
         initGUI();
-        setValues() ;
+        setValues();
         addInternalListeners(this);
         initWidget(panel);
-        if(div!=null){
+        if (div != null) {
             RootPanel.get(div).add(this);
         }
     }
@@ -42,7 +43,7 @@ public class GoEvidenceHeaderAdd extends AbstractGoEvidenceHeader{
     @Override
     protected void setValues() {
         super.setValues();
-        if(dto!=null){
+        if (dto != null) {
             evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.IMP.name());
             dto.setEvidenceCode(GoEvidenceCodeEnum.IMP);
             inferenceListBox.setDTO(dto);
@@ -51,12 +52,12 @@ public class GoEvidenceHeaderAdd extends AbstractGoEvidenceHeader{
 
     protected void sendUpdates() {
         if (isDirty()) {
-            GoEvidenceDTO goEvidenceDTO = createDTOFromGUI() ;
-            if(false==GoEvidenceValidator.validate(this,goEvidenceDTO)){
-                return ;
+            GoEvidenceDTO goEvidenceDTO = createDTOFromGUI();
+            if (false == GoEvidenceValidator.validate(this, goEvidenceDTO)) {
+                return;
             }
             working();
-            MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidenceDTO(goEvidenceDTO,new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:"){
+            MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidenceDTO(goEvidenceDTO, new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:") {
                 @Override
                 public void onFailure(Throwable throwable) {
                     super.onFailure(throwable);
@@ -74,10 +75,10 @@ public class GoEvidenceHeaderAdd extends AbstractGoEvidenceHeader{
                     goTermBox.setEnabled(false);
                     inferenceListBox.setStackToDirty(false);
                     Window.alert("Please close this record when finished viewing.");
-                    Button button = new Button("Edit", new ClickHandler(){
+                    Button button = new Button("Edit", new ClickHandler() {
                         @Override
                         public void onClick(ClickEvent event) {
-                            Window.open("/action/marker/go-edit?zdbID="+result.getZdbID(),"_self","");
+                            Window.open("/action/marker/go-edit?zdbID=" + result.getZdbID(), "_self", "");
                         }
                     });
                     panel.add(button);
@@ -88,7 +89,7 @@ public class GoEvidenceHeaderAdd extends AbstractGoEvidenceHeader{
 
     @Override
     public boolean isDirty() {
-        return true ;
+        return true;
     }
 
 }

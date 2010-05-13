@@ -39,7 +39,7 @@ public class LoadingData implements Serializable {
         return numberOfObsoletedTerms;
     }
 
-    public int getTotalNumberOfTerms(){
+    public int getTotalNumberOfTerms() {
         return numberOfTerms + numberOfObsoletedTerms;
     }
 

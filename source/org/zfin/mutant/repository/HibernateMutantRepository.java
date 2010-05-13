@@ -14,13 +14,14 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.GoTerm;
-import org.zfin.publication.Publication;
 import org.zfin.ontology.Ontology;
+import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 
@@ -246,7 +247,7 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<GoTerm> getGoTermsByName(String name) {
         String hql = "select distinct term from GoTerm term  " +
                 "where lower(term.name) like :name " +
-                " AND term.obsolete = :obsolete " ;
+                " AND term.obsolete = :obsolete ";
         // we don't order, let client take care of it
 //                " order by term.name";
 
@@ -385,11 +386,10 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql = "select distinct fmrel.marker from  FeatureMarkerRelationship fmrel, Marker m" +
                 "     where fmrel.feature.zdbID = :feat" +
-                 " and fmrel.type in (:relation, :relationship1, :relationship2) " +
+                " and fmrel.type in (:relation, :relationship1, :relationship2) " +
                 " and fmrel.marker=m ";
 
 
-           
         Query query = session.createQuery(hql);
 
         query.setString("feat", feature.getZdbID());
@@ -399,16 +399,16 @@ public class HibernateMutantRepository implements MutantRepository {
         //query.setParameter("type", Marker.Type.GENE);
         //query.setString("type", Marker.Type.GENE.toString());
 
-       return (List<Marker>) query.list();
+        return (List<Marker>) query.list();
     }
 
-     public List<Marker> getMarkerPresent(Feature feature) {
+    public List<Marker> getMarkerPresent(Feature feature) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct fmrel.marker from  FeatureMarkerRelationship fmrel, Marker m" +
                 "     where fmrel.feature.zdbID = :feat" +
-                 " and fmrel.type=:relationship "+
-                " and fmrel.marker=m "+
+                " and fmrel.type=:relationship " +
+                " and fmrel.marker=m " +
                 " and m.type=:type";
 
 
@@ -422,7 +422,7 @@ public class HibernateMutantRepository implements MutantRepository {
         return (List<Marker>) query.list();
     }
 
-   /* public List<Marker> getDeletedMarker(Feature feat) {
+    /* public List<Marker> getDeletedMarker(Feature feat) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select  mapdel.marker from MappedDeletion mapdel, Marker m, Feature f" +
@@ -469,7 +469,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("ftr", feat.getZdbID());
         lgList.addAll(query.list());
 
-         query = session.createQuery(
+        query = session.createQuery(
                 "select l.lg " +
                         "from Linkage l join l.linkageMemberFeatures as m " +
                         " where m.zdbID = :zdbId ");
@@ -646,8 +646,8 @@ public class HibernateMutantRepository implements MutantRepository {
         String hql = "select f from PublicationAttribution pa , Feature f " +
                 " where pa.dataZdbID=f.zdbID and pa.publication.zdbID= :pubZdbID  " +
                 " and pa.sourceType= :sourceType  ";
-        Query query = HibernateUtil.currentSession().createQuery(hql) ;
-        query.setString("pubZdbID",publication.getZdbID());
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("pubZdbID", publication.getZdbID());
         query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
         return query.list();
     }
@@ -674,6 +674,7 @@ public class HibernateMutantRepository implements MutantRepository {
     /**
      * Go terms attributed as evidence to this marker by this pub.
      * todo: Don't include IEA, IC .
+     *
      * @param marker
      * @param publication
      * @return
@@ -686,40 +687,39 @@ public class HibernateMutantRepository implements MutantRepository {
                 " and ev.evidenceCode.code not in (:excludedEvidenceCodes) " +
                 " and g.zdbID= ev.goTerm.id " +
                 " and pa.sourceType= :sourceType  ";
-        Query query = HibernateUtil.currentSession().createQuery(hql) ;
-        query.setString("pubZdbID",publication.getZdbID());
-        query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()} );
-        query.setString("markerZdbID",marker.getZdbID());
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("pubZdbID", publication.getZdbID());
+        query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()});
+        query.setString("markerZdbID", marker.getZdbID());
         query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
         return query.list();
-}
-    
-public List<Genotype> getGenotypesForStandardAttribution(Publication publication) {
+    }
+
+    public List<Genotype> getGenotypesForStandardAttribution(Publication publication) {
         String hql = "select distinct g from PublicationAttribution pa , Genotype g " +
                 " where pa.dataZdbID=g.zdbID and pa.publication.zdbID= :pubZdbID  " +
                 " and pa.sourceType= :sourceType  ";
-        Query query = HibernateUtil.currentSession().createQuery(hql) ;
-        query.setString("pubZdbID",publication.getZdbID());
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("pubZdbID", publication.getZdbID());
         query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
         return query.list();
-        }
+    }
 
     /**
      * Go terms attributed as evidence to this marker by this pub.
      * todo: Don't include IEA, IC .
+     *
      * @param marker
      * @param publication
      * @return
      */
-
-
     public List<GoTerm> getGoTermsByPhenotypeAndPublication(Publication publication) {
         String hql = "select distinct g from GoPhenotype p , GoTerm g  " +
                 " where p.publication.zdbID= :pubZdbID  " +
                 " and ( p.goSubTerm = g " +
-                " or p.goSuperTerm = g )" ;
-        Query query = HibernateUtil.currentSession().createQuery(hql) ;
-        query.setString("pubZdbID",publication.getZdbID());
+                " or p.goSuperTerm = g )";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("pubZdbID", publication.getZdbID());
         return query.list();
     }
 
@@ -727,38 +727,71 @@ public List<Genotype> getGenotypesForStandardAttribution(Publication publication
         InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
         inferenceGroupMember.setMarkerGoTermEvidenceZdbID(markerGoTermEvidence.getZdbID());
         inferenceGroupMember.setInferredFrom(inferenceToAdd);
-        if(markerGoTermEvidence.getInferredFrom()==null){
+        if (markerGoTermEvidence.getInferredFrom() == null) {
             markerGoTermEvidence.setInferredFrom(new HashSet<InferenceGroupMember>());
         }
-        markerGoTermEvidence.getInferredFrom().add(inferenceGroupMember) ;
+        markerGoTermEvidence.getInferredFrom().add(inferenceGroupMember);
 
         HibernateUtil.currentSession().save(inferenceGroupMember);
-        return inferenceGroupMember ;
+        return inferenceGroupMember;
     }
 
     public void removeInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inference) {
-        for(Iterator<InferenceGroupMember> iterator = markerGoTermEvidence.getInferredFrom().iterator(); iterator.hasNext() ; ){
-            if(iterator.next().getInferredFrom().equals(inference)){
+        for (Iterator<InferenceGroupMember> iterator = markerGoTermEvidence.getInferredFrom().iterator(); iterator.hasNext();) {
+            if (iterator.next().getInferredFrom().equals(inference)) {
                 iterator.remove();
-                Criteria criteria2 = HibernateUtil.currentSession().createCriteria(InferenceGroupMember.class) ;
-                criteria2.add(Restrictions.eq("inferredFrom",inference)) ;
-                criteria2.add(Restrictions.eq("markerGoTermEvidenceZdbID",markerGoTermEvidence.getZdbID())) ;
+                Criteria criteria2 = HibernateUtil.currentSession().createCriteria(InferenceGroupMember.class);
+                criteria2.add(Restrictions.eq("inferredFrom", inference));
+                criteria2.add(Restrictions.eq("markerGoTermEvidenceZdbID", markerGoTermEvidence.getZdbID()));
                 InferenceGroupMember inferenceGroupMember = (InferenceGroupMember) criteria2.uniqueResult();
                 HibernateUtil.currentSession().delete(inferenceGroupMember);
-                return ;
+                return;
             }
         }
 
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Feature> getFeaturesForAttribution(String publicationZdbID) {
+        String hql = "" +
+                " select distinct f from Feature f , RecordAttribution ra " +
+                " where ra.dataZdbID=f.zdbID and ra.sourceType = :standard and ra.sourceZdbID = :pubZdbID " +
+                " order by f.abbreviationOrder " +
+                " ";
 
-    public void invalidateCachedObjects() { }
+        return (List<Feature>) HibernateUtil.currentSession().createQuery(hql)
+                .setString("pubZdbID", publicationZdbID)
+                .setString("standard", RecordAttribution.SourceType.STANDARD.toString())
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Genotype> getGenotypesForAttribution(String publicationZdbID) {
+        String hql = "" +
+                " select distinct g from Genotype g, RecordAttribution ra " +
+                " where ra.dataZdbID=g.zdbID and ra.sourceType = :standard and ra.sourceZdbID = :pubZdbID " +
+                " order by g.nameOrder " +
+                " ";
+
+        return (List<Genotype>) HibernateUtil.currentSession().createQuery(hql)
+                .setString("pubZdbID", publicationZdbID)
+                .setString("standard", RecordAttribution.SourceType.STANDARD.toString())
+                .list();
+    }
+
+    @Override
+    public Feature getFeatureByAbbreviation(String name) {
+        return (Feature) currentSession().createCriteria(Feature.class)
+                .add(Restrictions.eq("abbreviation", name))
+                .uniqueResult()
+                ;
+    }
 
 
-
-
-
-
+    public void invalidateCachedObjects() {
+    }
 
 
 }

@@ -7,14 +7,16 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.CloneDTO;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.AbstractHeaderEdit;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.StringListBox;
 
 /**
  */
-public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO>{
+public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO> {
 
     // GUI name/type elements
     private HTMLTable table = new Grid(4, 2);
@@ -33,7 +35,7 @@ public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO>{
 
         super.addInternalListeners(handlesError);
 
-        problemTypeListBox.addChangeHandler(new ChangeHandler(){
+        problemTypeListBox.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
                 DeferredCommand.addCommand(new CompareCommand());
@@ -46,7 +48,7 @@ public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO>{
         zdbIDHTML.setHTML("<div class=\"attributionDefaultPub\">" + dto.getZdbID() + "</font>");
         nameBox.setText(dto.getName());
         typeLabel.setHTML("<div class=\"attributionDefaultPub\">" + dto.getMarkerType() + "</font>");
-        problemTypeListBox.addNullAndItems(dto.getProblemTypes()) ;
+        problemTypeListBox.addNullAndItems(dto.getProblemTypes());
         problemTypeListBox.setIndexForText(dto.getProblemType());
         handleDirty();
     }
@@ -97,15 +99,15 @@ public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO>{
                 return;
             }
 
-            if(false == nameValidator.validate(nameBox.getText(),this)) return ;
+            if (false == nameValidator.validate(nameBox.getText(), this)) return;
 
-            if(false == newCloneDTO.getName().equals(dto.getName())){
-                if(false == publicationValidator.validate(publicationZdbID,this)) return ;
+            if (false == newCloneDTO.getName().equals(dto.getName())) {
+                if (false == publicationValidator.validate(publicationZdbID, this)) return;
             }
 
             working();
             CloneRPCService.App.getInstance().updateCloneHeaders(newCloneDTO,
-                    new MarkerEditCallBack<Void>("failed to change clone name and type: ",this) {
+                    new MarkerEditCallBack<Void>("failed to change clone name and type: ", this) {
                         public void onFailure(Throwable throwable) {
                             super.onFailure(throwable);
                             revertGUI();
@@ -116,7 +118,7 @@ public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO>{
                         public void onSuccess(Void o) {
                             handleChangeSuccess(newCloneDTO);
                             fireEventSuccess();
-                            fireChangeEvent(new RelatedEntityEvent<CloneDTO>(newCloneDTO,dto.getName()));
+                            fireChangeEvent(new RelatedEntityEvent<CloneDTO>(newCloneDTO, dto.getName()));
                             notWorking();
                         }
                     });
@@ -126,14 +128,14 @@ public class CloneHeaderEdit extends AbstractHeaderEdit<CloneDTO>{
     // the only thing that we chan change, I think.
 
     public void handleChangeSuccess(CloneDTO cloneDTO) {
-        this.dto= cloneDTO;
+        this.dto = cloneDTO;
 //        cloneDTO.setName(dto.getName());
 //        cloneDTO.setProblemType(dto.getProblemType());
         DeferredCommand.addCommand(new CompareCommand());
     }
 
     public boolean isDirty() {
-        if (nameBox.isDirty(dto.getName())) return true ;
+        if (nameBox.isDirty(dto.getName())) return true;
         if (problemTypeListBox.isDirty(dto.getProblemType())) return true;
 
         return false;

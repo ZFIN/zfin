@@ -3,13 +3,14 @@ package org.zfin.gwt.marker.ui;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.PublicationChangeEvent;
-import org.zfin.gwt.marker.event.PublicationChangeListener;
 import org.zfin.gwt.marker.event.SequenceAddEvent;
 import org.zfin.gwt.marker.event.SequenceAddListener;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
+import org.zfin.gwt.root.event.PublicationChangeEvent;
+import org.zfin.gwt.root.event.PublicationChangeListener;
 import org.zfin.gwt.root.ui.AbstractListBox;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.PublicationValidator;
 import org.zfin.gwt.root.ui.StringListBox;
 
 import java.util.ArrayList;
@@ -51,7 +52,6 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
     }
 
 
-
     void initGUI() {
 //        link.setTargetHistoryToken("proteinLookup");
         link.setHTML(RIGHT_ARROW);
@@ -72,10 +72,9 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
         panel.add(newSequenceBox);
 
 
-
     }
 
-    private void addInternalListeners(final HandlesError handlesError){
+    private void addInternalListeners(final HandlesError handlesError) {
 
         link.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -96,7 +95,7 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
 
         newSequenceBox.addSequenceAddListener(new SequenceAddListener() {
             public void add(final SequenceAddEvent sequenceAddEvent) {
-                if(false==publicationValidator.validate(publicationZdbID,handlesError)) return ;
+                if (false == publicationValidator.validate(publicationZdbID, handlesError)) return;
                 if (databaseListBoxWrapper.getSelected() == null
                         ||
                         AbstractListBox.NULL_STRING.equals(databaseListBoxWrapper.getSelected())) {

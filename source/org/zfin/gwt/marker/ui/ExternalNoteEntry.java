@@ -5,12 +5,14 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import org.zfin.gwt.marker.event.NoteEvent;
 import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
+import org.zfin.gwt.root.ui.MarkerRPCService;
 
 /**
  */
 public class ExternalNoteEntry extends AbstractNoteEntry {
     public ExternalNoteEntry(NoteDTO noteDTO, HandlesError handlesError) {
-        super(noteDTO,handlesError);
+        super(noteDTO, handlesError);
         noteDTO.setEditMode(MarkerNoteBox.EditMode.EXTERNAL.name());
     }
 
@@ -20,7 +22,7 @@ public class ExternalNoteEntry extends AbstractNoteEntry {
 
         removeNoteButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                MarkerRPCService.App.getInstance().removeExternalNote(noteDTO, new MarkerEditCallBack<Void>("Failed to remove external note: "){
+                MarkerRPCService.App.getInstance().removeExternalNote(noteDTO, new MarkerEditCallBack<Void>("Failed to remove external note: ") {
                     @Override
                     public void onSuccess(Void result) {
                         fireRemoveNote(new NoteEvent(noteDTO));
@@ -30,12 +32,12 @@ public class ExternalNoteEntry extends AbstractNoteEntry {
         });
 
 
-        saveButton.addClickHandler(new ClickHandler(){
+        saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final NoteDTO noteDTO = getNoteDTO().clone();
                 noteDTO.setNoteData(noteText.getText());
-                MarkerRPCService.App.getInstance().editExternalNote(noteDTO, new MarkerEditCallBack<Void>("Failed to update note: "){
+                MarkerRPCService.App.getInstance().editExternalNote(noteDTO, new MarkerEditCallBack<Void>("Failed to update note: ") {
                     @Override
                     public void onSuccess(Void result) {
                         getNoteDTO().setNoteData(noteText.getText());

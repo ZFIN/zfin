@@ -6,7 +6,10 @@ package org.zfin.infrastructure.repository;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.*;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -17,7 +20,10 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
-import org.zfin.ontology.*;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.TermAlias;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 
@@ -129,7 +135,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, Person person) {
-        insertUpdatesTable(recID,fieldName,new_value,comments,person.getZdbID(),person.getFullName());
+        insertUpdatesTable(recID, fieldName, new_value, comments, person.getZdbID(), person.getFullName());
     }
 
     //retrieve a dataNote by its zdb_id
@@ -331,17 +337,17 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * Retrieve a single term by name and a list of ontologies. Checks for all ontologies and picks the first one.
      * Hopefully, there term is only found in a single ontology. Match has to be exact.
      *
-     * @param termName name
+     * @param termName   name
      * @param ontologies list of ontologies
      * @return Term
      */
     public GenericTerm getTermByName(String termName, List<Ontology> ontologies) {
-        if(ontologies == null)
+        if (ontologies == null)
             return null;
-        for(Ontology ontology: ontologies){
+        for (Ontology ontology : ontologies) {
             GenericTerm term = getTermByName(termName, ontology);
-            if(term != null)
-                return term; 
+            if (term != null)
+                return term;
         }
         return null;
     }
@@ -389,6 +395,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     /**
      * Retrieve Root of given ontology.
+     *
      * @param ontologyName ontology name
      * @return Term
      */
@@ -620,6 +627,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     /**
      * Retrieve a list of names of entities that match a given alias name.
+     *
      * @param aliasName alias
      * @return list of strings
      */
@@ -668,6 +676,225 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (List<ExpressionAssay>) crit.list();
     }
 
+
+    public int getDataAliasesAttributions(String zdbID, String pubZdbID) {
+        return Integer.parseInt(
+                HibernateUtil.currentSession().createSQLQuery(" " +
+                        " select count(*) from record_attribution, data_alias" +
+                        "      where recattrib_data_zdb_id = dalias_zdb_id" +
+                        "      and dalias_data_zdb_id = :zdbID" +
+                        "      and recattrib_source_zdb_id = :pubZdbID" +
+                        " ")
+                        .setString("zdbID", zdbID)
+                        .setString("pubZdbID", pubZdbID)
+                        .uniqueResult().toString()
+        );
+    }
+
+    public int getOrthologueRecordAttributions(String zdbID, String pubZdbID) {
+        return Integer.parseInt(
+                HibernateUtil.currentSession().createSQLQuery(" " +
+                        " select count(*) from record_attribution, orthologue_evidence_display " +
+                        "      where recattrib_data_zdb_id = oevdisp_zdb_id" +
+                        "      and oevdisp_gene_zdb_id = :zdbID" +
+                        "      and recattrib_source_zdb_id = :pubZdbID" +
+                        " ")
+                        .setString("zdbID", zdbID)
+                        .setString("pubZdbID", pubZdbID)
+                        .uniqueResult().toString()
+        );
+    }
+
+    public int getMarkerFeatureRelationshipAttributions(String zdbID, String pubZdbID) {
+        return Integer.parseInt(
+                HibernateUtil.currentSession().createSQLQuery(" " +
+                        " select count(*) from record_attribution, feature_marker_relationship " +
+                        "      where recattrib_data_zdb_id = fmrel_ftr_zdb_id" +
+                        "      and fmrel_mrkr_zdb_id = :zdbID" +
+                        "      and recattrib_source_zdb_id = :pubZdbID" +
+                        " ")
+                        .setString("zdbID", zdbID)
+                        .setString("pubZdbID", pubZdbID)
+                        .uniqueResult().toString()
+        );
+    }
+
+
+    public int getMarkerGenotypeFeatureRelationshipAttributions(String zdbID, String pubZdbID) {
+        return Integer.parseInt(
+                HibernateUtil.currentSession().createSQLQuery(" " +
+                        " select count(*) from record_attribution, feature_marker_relationship, genotype_feature " +
+                        "      where recattrib_data_zdb_id = genofeat_geno_zdb_id" +
+                        "      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id " +
+                        "      and fmrel_mrkr_zdb_id = :zdbID" +
+                        "      and recattrib_source_zdb_id = :pubZdbID" +
+                        " ")
+                        .setString("zdbID", zdbID)
+                        .setString("pubZdbID", pubZdbID)
+                        .uniqueResult().toString()
+        );
+    }
+
+    public int getFeatureGenotypeAttributions(String zdbID, String pubZdbID) {
+        return Integer.parseInt(
+                HibernateUtil.currentSession().createSQLQuery(" " +
+                        " select count(*) from record_attribution, genotype_feature " +
+                        "      where recattrib_data_zdb_id = genofeat_geno_zdb_id" +
+                        "      and genofeat_feature_zdb_id = :zdbID" +
+                        "      and recattrib_source_zdb_id = :pubZdbID" +
+                        " ")
+                        .setString("zdbID", zdbID)
+                        .setString("pubZdbID", pubZdbID)
+                        .uniqueResult().toString()
+        );
+    }
+
+    @Override
+    public int getGoRecordAttributions(String zdbID, String pubZdbID) {
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                "select count(*)" +
+                " from record_attribution, marker_go_term_evidence " +
+                "      where recattrib_data_zdb_id = mrkrgoev_zdb_id " +
+                "      and mrkrgoev_mrkr_zdb_id = :zdbID" +
+                "      and recattrib_source_zdb_id = :pubZdbID  " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
+        );
+    }
+
+    public int getDBLinkAttributions(String zdbID, String pubZdbID) {
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                "select count(*)" +
+                " from record_attribution, db_link " +
+                "      where recattrib_data_zdb_id = dblink_zdb_id " +
+                "      and dblink_linked_recid = :zdbID" +
+                "      and recattrib_source_zdb_id = :pubZdbID  " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
+        );
+    }
+
+    public int getDBLinkAssociatedToGeneAttributions(String zdbID, String pubZdbID) {
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                "select count(*)" +
+                " from record_attribution, db_link, marker_relationship " +
+                "      where recattrib_data_zdb_id = dblink_zdb_id " +
+                "      and dblink_linked_recid = mrel_mrkr_2_zdb_id" +
+                "      and mrel_mrkr_1_zdb_id = :zdbID" +
+                "     and mrel_type = 'gene encodes small segment' " +
+                "      and recattrib_source_zdb_id = :pubZdbID  " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
+        );
+    }
+
+    public int getFirstMarkerRelationshipAttributions(String zdbID, String pubZdbID) {
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                "select count(*)" +
+                " from record_attribution, db_link, marker_relationship " +
+                "      where recattrib_data_zdb_id = mrel_zdb_id " +
+                "      and mrel_mrkr_1_zdb_id = :zdbID" +
+                "      and recattrib_source_zdb_id = :pubZdbID  " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
+        );
+    }
+
+    public int getSecondMarkerRelationshipAttributions(String zdbID, String pubZdbID) {
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                "select count(*)" +
+                " from record_attribution, db_link, marker_relationship " +
+                "      where recattrib_data_zdb_id = mrel_zdb_id " +
+                "      and mrel_mrkr_2_zdb_id = :zdbID" +
+                "      and recattrib_source_zdb_id = :pubZdbID  " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
+        );
+    }
+
+
+    public int getMorpholinoRelatedMarkerAttributions(String zdbID, String pubZdbID) {
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                "select count(*)" +
+                " from record_attribution, db_link, marker_relationship " +
+                "      where recattrib_data_zdb_id = mrel_zdb_id " +
+                "      and mrel_mrkr_1_zdb_id = :zdbID" +
+                "      and recattrib_source_zdb_id = :pubZdbID  " +
+                "       and mrel_mrkr_1_zdb_id[1,8] = 'ZDB-MRPH' " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
+        );
+    }
+
+    public int getExpressionExperimentMarkerAttributions(Marker m, String pubZdbID) {
+        if (m.isInTypeGroup(Marker.TypeGroup.ATB)) {
+            return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                    "select count(*)" +
+                    " from record_attribution ra , expression_experiment ee " +
+                    " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
+                    " and ee.xpatex_atb_zdb_id = :zdbID " +
+                    " and ee.xpatex_source_zdb_id = :pubZdbID " +
+                    "")
+                    .setString("zdbID", m.getZdbID())
+                    .setString("pubZdbID", pubZdbID)
+                    .uniqueResult().toString()
+            );
+        }
+        // assume its a gene
+        else if (m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+            return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                    "select count(*)" +
+                    " from record_attribution ra , expression_experiment ee " +
+                    " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
+                    " and ee.xpatex_gene_zdb_id = :zdbID " +
+                    " and ee.xpatex_source_zdb_id = :pubZdbID " +
+                    "")
+                    .setString("zdbID", m.getZdbID())
+                    .setString("pubZdbID", pubZdbID)
+                    .uniqueResult().toString()
+            );
+        } else if (m.isInTypeGroup(Marker.TypeGroup.CDNA_AND_EST)) {
+            return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                    "select count(*)" +
+                    " from record_attribution ra , expression_experiment ee " +
+                    " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
+                    " and ee.xpatex_probe_feature_zdb_id = :zdbID " +
+                    " and ee.xpatex_source_zdb_id = :pubZdbID " +
+                    "")
+                    .setString("zdbID", m.getZdbID())
+                    .setString("pubZdbID", pubZdbID)
+                    .uniqueResult().toString()
+            );
+        } else {
+            return 0;
+        }
+    }
+
+    public int getMorpholinoEnvironmentAttributions(String zdbID, String pubZdbID) {
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                "  select count(*)  " +
+                " from record_attribution ra, experiment_condition ec " +
+                " where ra.recattrib_data_zdb_id = ec.expcond_exp_zdb_id " +
+                " and ec.expcond_mrkr_zdb_id = :zdbID " +
+                " and  ra.recattrib_source_zdb_id = :pubZdbID " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
+        );
+    }
 }
 
 

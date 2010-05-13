@@ -15,10 +15,10 @@ public class TableColumns {
 
     Map<Integer, String> columns = new HashMap<Integer, String>(10);
 
-    public void addColumn(String columnName){
+    public void addColumn(String columnName) {
         columns.put(currentIndex, name);
         currentIndex++;
     }
 
-    
+
 }

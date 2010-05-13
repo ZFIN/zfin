@@ -5,13 +5,16 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.AbstractHeaderEdit;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
+import org.zfin.gwt.root.ui.MarkerRPCService;
 
 /**
  */
-public class GeneHeaderEdit extends AbstractHeaderEdit<MarkerDTO>{
+public class GeneHeaderEdit extends AbstractHeaderEdit<MarkerDTO> {
 
     // GUI name/type elements
     private HTMLTable table = new Grid(4, 2);
@@ -72,12 +75,12 @@ public class GeneHeaderEdit extends AbstractHeaderEdit<MarkerDTO>{
             final MarkerDTO markerDTO = dto.deepCopy();
             markerDTO.setName(nameBox.getText());
 
-            if(false == nameValidator.validate(nameBox.getText(),this)) return ;
-            if(false==publicationValidator.validate(publicationZdbID,this)) return ;
+            if (false == nameValidator.validate(nameBox.getText(), this)) return;
+            if (false == publicationValidator.validate(publicationZdbID, this)) return;
 
             working();
             MarkerRPCService.App.getInstance().updateMarkerHeaders(markerDTO,
-                    new MarkerEditCallBack<Void>("failed to change clone name and type: ",this) {
+                    new MarkerEditCallBack<Void>("failed to change clone name and type: ", this) {
                         public void onFailure(Throwable throwable) {
                             super.onFailure(throwable);
                             revertGUI();
@@ -87,7 +90,7 @@ public class GeneHeaderEdit extends AbstractHeaderEdit<MarkerDTO>{
                         public void onSuccess(Void o) {
                             handleChangeSuccess(markerDTO);
                             fireEventSuccess();
-                            fireChangeEvent(new RelatedEntityEvent<MarkerDTO>(markerDTO,dto.getName()));
+                            fireChangeEvent(new RelatedEntityEvent<MarkerDTO>(markerDTO, dto.getName()));
                             notWorking();
                         }
                     });
@@ -98,14 +101,14 @@ public class GeneHeaderEdit extends AbstractHeaderEdit<MarkerDTO>{
     // the only thing that we chan change, I think.
 
     public void handleChangeSuccess(MarkerDTO markerDTO) {
-        dto = markerDTO ;
+        dto = markerDTO;
 //        dto.setName(dto.getName());
 //        dto.setProblemType(dto.getProblemType());
         DeferredCommand.addCommand(new CompareCommand());
     }
 
     public boolean isDirty() {
-        if (nameBox.isDirty(dto.getName())) return true ;
+        if (nameBox.isDirty(dto.getName())) return true;
         return false;
     }
 

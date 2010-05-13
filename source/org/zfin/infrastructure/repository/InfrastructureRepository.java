@@ -9,12 +9,12 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
-import org.zfin.ontology.*;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.Ontology;
 import org.zfin.people.Person;
-import org.zfin.publication.Publication;
 
 import java.util.List;
-import java.util.Set;
 
 public interface InfrastructureRepository {
 
@@ -24,7 +24,7 @@ public interface InfrastructureRepository {
 
     ActiveData getActiveData(String zdbID);
 
-    public ActiveSource getActiveSource(String zdbID) ;
+    public ActiveSource getActiveSource(String zdbID);
 
     void deleteActiveData(ActiveData activeData);
 
@@ -36,6 +36,7 @@ public interface InfrastructureRepository {
 
     int deleteRecordAttribution(String dataZdbID, String sourceZdbId);
 
+    int getGoRecordAttributions(String dataZdbID, String sourceZdbId);
 
     RecordAttribution getRecordAttribution(String dataZdbID,
                                            String sourceZdbId,
@@ -80,7 +81,7 @@ public interface InfrastructureRepository {
 
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 
-    void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, Person person );
+    void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, Person person);
 
     void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, String submitterID, String submitterName);
 
@@ -208,7 +209,7 @@ public interface InfrastructureRepository {
      * Retrieve terms by name (contains) and ontology.
      * No obsolete terms are included.
      *
-     * @param termName term name (contains)
+     * @param termName   term name (contains)
      * @param ontologies Ontology
      * @return list of GenericTerm
      */
@@ -237,7 +238,7 @@ public interface InfrastructureRepository {
      * Retrieve a single term by name and a list of ontologies. Checks for all ontologies and picks the first one.
      * Hopefully, there term is only found in a single ontology. Match has to be exact.
      *
-     * @param termName name
+     * @param termName   name
      * @param ontologies Ontology
      * @return Term
      */
@@ -261,17 +262,43 @@ public interface InfrastructureRepository {
 
     /**
      * Retrieve a goterm by PK
+     *
      * @param termID term pk
      * @return goterm
      */
-    public GoTerm getGoTermById(String termID);
+    GoTerm getGoTermById(String termID);
 
     /**
      * Retrieve Root of given ontology.
+     *
      * @param ontologyName ontology name
      * @return Term
      */
     GenericTerm getRootTerm(String ontologyName);
+
+    int getDataAliasesAttributions(String zdbID, String pubZdbID);
+
+    int getOrthologueRecordAttributions(String zdbID, String pubZdbID);
+
+    int getMarkerFeatureRelationshipAttributions(String zdbID, String pubZdbID);
+
+    int getMarkerGenotypeFeatureRelationshipAttributions(String zdbID, String pubZdbID);
+
+    int getFeatureGenotypeAttributions(String zdbID, String pubZdbID);
+
+    int getDBLinkAttributions(String zdbID, String pubZdbID);
+
+    int getDBLinkAssociatedToGeneAttributions(String zdbID, String pubZdbID);
+
+    int getFirstMarkerRelationshipAttributions(String zdbID, String pubZdbID);
+
+    int getSecondMarkerRelationshipAttributions(String zdbID, String pubZdbID);
+
+    int getMorpholinoRelatedMarkerAttributions(String zdbID, String pubZdbID);
+
+    int getExpressionExperimentMarkerAttributions(Marker marker, String pubZdbID);
+
+    int getMorpholinoEnvironmentAttributions(String zdbID, String pubZdbID);
 }
 
 

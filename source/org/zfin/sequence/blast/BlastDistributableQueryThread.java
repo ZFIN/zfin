@@ -105,7 +105,7 @@ public class BlastDistributableQueryThread extends AbstractQueryThread implement
             xmlBlastBean.setBlastOutput(blastOutput);
             xmlBlastBean.setBlastResultBean(BlastResultMapper.createBlastResultBean(blastOutput));
 
-            // the thread is done with the database so close the databse connection
+            // the thread is done with the database so close the database connection
             HibernateUtil.closeSession();
             GBrowseHibernateUtil.closeSession();
 

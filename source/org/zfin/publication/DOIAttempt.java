@@ -3,10 +3,10 @@ package org.zfin.publication;
 /**
  */
 public class DOIAttempt {
-    private Long id ;
-    private String doi ;
-    private Publication publication ;
-    private int numAttempts ;
+    private Long id;
+    private String doi;
+    private Publication publication;
+    private int numAttempts;
 
 
     public Long getId() {
@@ -33,7 +33,7 @@ public class DOIAttempt {
         this.numAttempts = numAttempts;
     }
 
-    public int addAttempt(){
-        return ++numAttempts ;
+    public int addAttempt() {
+        return ++numAttempts;
     }
 }

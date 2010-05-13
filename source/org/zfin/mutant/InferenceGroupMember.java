@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 /**
  */
-public class InferenceGroupMember implements Serializable{
+public class InferenceGroupMember implements Serializable {
 
     private String markerGoTermEvidenceZdbID;
-    private String inferredFrom ;
+    private String inferredFrom;
 
     public String getMarkerGoTermEvidenceZdbID() {
         return markerGoTermEvidenceZdbID;

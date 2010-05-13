@@ -1,24 +1,20 @@
 package org.zfin.framework;
 
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.zfin.properties.ZfinProperties;
 
-
-import java.sql.SQLException;
-
-/** Based on HibernateUtil, but greatly simplified since our GBrowse
+/**
+ * Based on HibernateUtil, but greatly simplified since our GBrowse
  * database needs aren't on the same scale.
- *
  */
 
 public class GBrowseHibernateUtil {
 
     private static final String INPUT_CONFIGURATION_DIRECTORY = "CONFIGURATION_DIRECTORY";
     private static String FILE_SEP = System.getProperty("file.separator");
-
 
 
     public static Logger log = Logger.getLogger(GBrowseHibernateUtil.class);

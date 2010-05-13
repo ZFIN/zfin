@@ -375,7 +375,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         HibernateUtil.currentSession().save(dnote);
         LOG.debug("dnote zdb_id: " + dnote.getZdbID());
-        return dnote ;
+        return dnote;
     }
 
     public AntibodyExternalNote addAntibodyExternalNote(Antibody antibody, String note, String sourceZdbID) {
@@ -409,7 +409,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             addMarkerPub(antibody, publication);
         }
         ir.insertUpdatesTable(antibody, "notes", "", currentUser, note, "");
-        return externalNote ;
+        return externalNote;
     }
 
     public void createOrUpdateOrthologyExternalNote(Marker gene, String note) {
@@ -458,7 +458,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param marker      valid marker object.
      * @param alias       alias string
      * @param publication publication
-     * @return The created markerAlias 
+     * @return The created markerAlias
      */
     public MarkerAlias addMarkerAlias(Marker marker, String alias, Publication publication) {
         //first handle the alias..
@@ -500,7 +500,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         InfrastructureService.insertUpdate(marker, updateComment);
         runMarkerNameFastSearchUpdate(marker);
-        return markerAlias ;
+        return markerAlias;
     }
 
     public void deleteMarkerAlias(Marker marker, MarkerAlias alias) {
@@ -730,7 +730,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (MarkerHistory) criteria.uniqueResult();
     }
 
-    public MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason reason,MarkerAlias alias) {
+    public MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason reason, MarkerAlias alias) {
         MarkerHistory history = new MarkerHistory();
         history.setDate(new Date());
         history.setName(newMarker.getName());
@@ -1242,17 +1242,33 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-    
-    public List<Marker> getMarkersForStandardAttributionAndType(Publication publication,String type) {
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Marker> getMarkersForStandardAttributionAndType(Publication publication, String type) {
         String hql = "select m from PublicationAttribution pa , Marker m " +
                 " where pa.dataZdbID=m.zdbID and pa.publication.zdbID= :pubZdbID  " +
                 " and pa.sourceType= :sourceType and m.zdbID like :markerType ";
-        Query query = HibernateUtil.currentSession().createQuery(hql) ;
-        query.setString("pubZdbID",publication.getZdbID());
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("pubZdbID", publication.getZdbID());
         query.setString("sourceType", RecordAttribution.SourceType.STANDARD.toString());
         // yes, this is a hack, should use typeGroup, I guess
-        query.setParameter("markerType", "ZDB-"+type+"%");
+        query.setParameter("markerType", "ZDB-" + type + "%");
         return query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Marker> getMarkerForAttribution(String publicationZdbID) {
+        String hql = "" +
+                " select distinct m from Marker m , RecordAttribution ra " +
+                " where ra.dataZdbID=m.zdbID and ra.sourceType = :standard and ra.sourceZdbID = :pubZdbID " +
+                " order by m.abbreviationOrder " +
+                " ";
+
+        return (List<Marker>) HibernateUtil.currentSession().createQuery(hql)
+                .setString("pubZdbID", publicationZdbID)
+                .setString("standard", RecordAttribution.SourceType.STANDARD.toString())
+                .list();
     }
 
     @SuppressWarnings("unchecked")

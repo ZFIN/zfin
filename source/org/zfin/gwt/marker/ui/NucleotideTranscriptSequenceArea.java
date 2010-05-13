@@ -5,6 +5,7 @@ import org.zfin.gwt.marker.event.SequenceAddEvent;
 import org.zfin.gwt.marker.event.SequenceAddListener;
 import org.zfin.gwt.root.dto.SequenceDTO;
 import org.zfin.gwt.root.dto.TranscriptDTO;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
 
 public class NucleotideTranscriptSequenceArea extends NucleotideSequenceArea {
 

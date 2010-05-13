@@ -1,6 +1,8 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.PhenotypeFigureStageDTO;
+import org.zfin.gwt.root.dto.PhenotypePileStructureDTO;
+import org.zfin.gwt.root.dto.PhenotypeTermDTO;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.CollectionUtils;
 

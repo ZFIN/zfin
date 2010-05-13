@@ -1,12 +1,12 @@
 package org.zfin.gbrowse;
 
 import org.apache.log4j.Logger;
+import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.zfin.gbrowse.repository.GBrowseRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.gbrowse.repository.GBrowseRepository;
-import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -21,15 +21,16 @@ public class GBrowseService {
      * In a normal case, they'll all be on the same chromosome, but because the
      * data isn't that clean yet, features can be spread around and the code
      * that uses this method wants to handle it on a per chromosome basis.
+     *
      * @param marker marker to get features for, only used for genes so far
      * @return A Map that maps from a Contig to a collection of gbrowse features on that Contig
      */
-    public static Map<GBrowseContig,Set<GBrowseFeature>> getGBrowseFeaturesGroupedByContig(Marker marker) {
-        Map<GBrowseContig,Set<GBrowseFeature>> featureMap = new TreeMap<GBrowseContig,Set<GBrowseFeature>>();
+    public static Map<GBrowseContig, Set<GBrowseFeature>> getGBrowseFeaturesGroupedByContig(Marker marker) {
+        Map<GBrowseContig, Set<GBrowseFeature>> featureMap = new TreeMap<GBrowseContig, Set<GBrowseFeature>>();
 
         Set<GBrowseFeature> featureSet = gbrowseRepository.getGBrowseFeaturesForMarker(marker);
         for (GBrowseFeature feature : featureSet) {
-            if(! featureMap.keySet().contains(feature.getContig())) {
+            if (!featureMap.keySet().contains(feature.getContig())) {
                 featureMap.put(feature.getContig(), new TreeSet<GBrowseFeature>());
             }
             featureMap.get(feature.getContig()).add(feature);
@@ -37,17 +38,17 @@ public class GBrowseService {
         return featureMap;
     }
 
-    /** 
+    /**
      * This method is intended to produce GBrowseImage objects (basically the img & href urls)
      * showing all transcripts of a gene, with an image per chromosome (as necessary).
      *
-     * @param gene the gene that we're creating images for
+     * @param gene                  the gene that we're creating images for
      * @param highlightedTranscript a transcript to highlight in the image(s) (optional, can be null)
      * @return A collection of GBrowseImage objects
      */
     public static List<GBrowseImage> getGBrowseTranscriptImages(Marker gene, Transcript highlightedTranscript) {
         List<GBrowseImage> images = new ArrayList<GBrowseImage>();
-        Map<GBrowseContig,Set<GBrowseFeature>> featureMap = getGBrowseFeaturesGroupedByContig(gene);
+        Map<GBrowseContig, Set<GBrowseFeature>> featureMap = getGBrowseFeaturesGroupedByContig(gene);
 
         logger.debug("got GBrowse FeatureMap:" + featureMap.toString());
 
@@ -64,15 +65,15 @@ public class GBrowseService {
 
     /**
      * Converts a collection of GBrowseFeatures into a GBrowseImage object.
-     *
+     * <p/>
      * Images placed on the fake chromosomes AB & U will show as a link rather than
      * an image, because they're substandard data.
      *
-     * @param features GBrowseFeature objects, should all be on the same chromosome
+     * @param features              GBrowseFeature objects, should all be on the same chromosome
      * @param highlightedTranscript a transcript to highlight in the image (optional, can be null)
      * @return
      */
-    public static GBrowseImage buildTranscriptGBrowseImage(Set<GBrowseFeature> features, 
+    public static GBrowseImage buildTranscriptGBrowseImage(Set<GBrowseFeature> features,
                                                            Transcript highlightedTranscript) {
         if (features == null || features.size() == 0)
             return null;
@@ -96,7 +97,7 @@ public class GBrowseService {
         String region = getRegion(features, contig);
 
         StringBuffer linkText = new StringBuffer();
-        
+
         if (GBrowseContig.AB.equals(contig.getName())
                 || GBrowseContig.U.equals(contig.getName())) {
             image.setLinkWithoutImage(true);
@@ -106,7 +107,7 @@ public class GBrowseService {
             if (GBrowseContig.AB.equals(contig.getName())) {
                 image.setNote(GBrowseContig.AB_NOTE);
             } else {
-                image.setNote(GBrowseContig.U_NOTE);            
+                image.setNote(GBrowseContig.U_NOTE);
             }
 
         } else {
@@ -123,7 +124,6 @@ public class GBrowseService {
         linkURL.append(region);
 
 
-
         image.setLinkText(linkText.toString());
         image.setImageURL(imageURL.toString());
         image.setLinkURL(linkURL.toString());
@@ -137,10 +137,10 @@ public class GBrowseService {
     /**
      * Creates a string in the format: "1:1..10000" for a set of features,
      * To get a sensible value, they should all be on the same contig
-     *
+     * <p/>
      * (otherwise it'll use the contig value of the first one and
-     *  the the lowest and highest values could come from another
-     *  chromosome)
+     * the the lowest and highest values could come from another
+     * chromosome)
      *
      * @param features
      * @return
@@ -164,6 +164,7 @@ public class GBrowseService {
      * Returns the lowest location for a set of features, probably
      * only sensible to use if you know all of the features are on
      * the same contig
+     *
      * @param features GBrowseFeature objects, should be on the same contig
      * @return lowest numbered location from the feature set
      */
@@ -180,6 +181,7 @@ public class GBrowseService {
      * Returns the highest location for a set of features, probably
      * only sensible to use if you know all of the features are on
      * the same contig
+     *
      * @param features GBrowseFeature objects, should be on the same contig
      * @return highest numbered location from the feature set
      */

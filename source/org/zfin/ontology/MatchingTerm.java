@@ -41,7 +41,7 @@ public class MatchingTerm {
             sb.append(alias.getAlias());
             sb.append("]");
         }
-        if(term.isObsolete()){
+        if (term.isObsolete()) {
             sb.append(" -- OBSOLETED TERM");
         }
         return sb.toString();

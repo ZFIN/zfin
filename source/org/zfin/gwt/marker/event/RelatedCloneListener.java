@@ -2,10 +2,11 @@ package org.zfin.gwt.marker.event;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.zfin.gwt.marker.ui.MarkerRPCService;
 import org.zfin.gwt.marker.ui.RelatedMarkerBox;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.TermNotFoundException;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.MarkerRPCService;
 
 /**
  * Extends RelatedMarkerBoxListener so that it can give the option to create a clone

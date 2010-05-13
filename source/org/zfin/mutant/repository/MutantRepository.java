@@ -10,9 +10,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.GoTerm;
 import org.zfin.publication.Publication;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 
@@ -79,6 +77,7 @@ public interface MutantRepository {
     Feature getFeatureByID(String featureZdbID);
 
     List<Marker> getMarkerbyFeature(Feature feature);
+
     List<Marker> getMarkerPresent(Feature feature);
 
     /**
@@ -93,7 +92,8 @@ public interface MutantRepository {
     /*List<Marker> getDeletedMarker(Feature feat);
 
     List<String> getDeletedMarkerLG(Feature feat);*/
-  TreeSet<String> getFeatureLG(Feature feat);
+
+    TreeSet<String> getFeatureLG(Feature feat);
     /*List<String> getMappedFeatureLG(Feature feat);
     List<String> getLinkageFeatureLG(Feature feat);*/
 
@@ -206,15 +206,16 @@ public interface MutantRepository {
     /**
      * Retrieve the default phenotype for a given figure and genotype experiment.
      * If it does not exist, it return null.
-     *  
+     *
      * @param genotypeExperiment genotype Experiment
-     * @param figureID figure id
+     * @param figureID           figure id
      * @return phenotype
      */
     Phenotype getDefaultPhenotype(GenotypeExperiment genotypeExperiment, String figureID);
 
     /**
      * Retrieve a genotype experiment by PK.
+     *
      * @param genotypeExperimentID pk
      * @return genotype experiment
      */
@@ -224,12 +225,14 @@ public interface MutantRepository {
      * Remove a mutant figure stage record:
      * 1) All phenotypes and their association to figures.
      * 2) the genotype experiment if unused any more
+     *
      * @param mutant Mutants
      */
     void deleteMutantFigureStage(MutantFigureStage mutant);
 
     /**
      * Retrieve a Goterm by obo id from the GO term table.
+     *
      * @param oboID obo id
      * @return GoTerm
      */
@@ -246,5 +249,11 @@ public interface MutantRepository {
     InferenceGroupMember addInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inferenceToAdd);
 
     void removeInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inference);
+
+    List<Feature> getFeaturesForAttribution(String publicationZdbID);
+
+    List<Genotype> getGenotypesForAttribution(String publicationZdbID);
+
+    Feature getFeatureByAbbreviation(String featureAbbrev);
 }
 

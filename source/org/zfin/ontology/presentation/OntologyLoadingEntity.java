@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * This convenience class holds the information about loading an ontology.
  * It contains the last loaded data as an attribute, LoadingData, and previous
- * loads in a collection.  
+ * loads in a collection.
  */
 public class OntologyLoadingEntity implements Serializable {
 
@@ -26,11 +26,11 @@ public class OntologyLoadingEntity implements Serializable {
     /**
      * Only keep the last 10 records.
      *
-     * @param dateOfLoad  date of the load
-     * @param loadingTime time it took to load the ontology
-     * @param numOfTerms  number of terms in the ontology
+     * @param dateOfLoad          date of the load
+     * @param loadingTime         time it took to load the ontology
+     * @param numOfTerms          number of terms in the ontology
      * @param numOfObsoletedTerms number of terms that are marked obsolete
-     * @param numOfAliases  number of aliases
+     * @param numOfAliases        number of aliases
      */
     public void addLoadingEvent(Date dateOfLoad, long loadingTime, int numOfTerms, int numOfObsoletedTerms, int numOfAliases) {
         allLoadingEvents.add(lastLoad);

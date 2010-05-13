@@ -4,12 +4,14 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
-import org.zfin.gwt.marker.event.RelatedEntityListener;
 import org.zfin.gwt.marker.event.SequenceAddEvent;
 import org.zfin.gwt.marker.event.SequenceAddListener;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.event.RelatedEntityListener;
 import org.zfin.gwt.root.ui.AbstractListBox;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
+import org.zfin.gwt.root.ui.MarkerRPCService;
 import org.zfin.gwt.root.ui.StringListBox;
 
 import java.util.ArrayList;

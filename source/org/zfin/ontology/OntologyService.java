@@ -33,6 +33,19 @@ public final class OntologyService {
         return list.getFormattedString();
     }
 
+    public static List<String> createSortedSynonymsFromTerm(Term term) {
+        Set<TermAlias> synonyms = sortSynonyms(term);
+        if (synonyms == null) {
+            return null;
+        }
+        List<String> list = new ArrayList<String>();
+        for (TermAlias synonym : synonyms) {
+            list.add(synonym.getAlias());
+        }
+        return list;
+    }
+
+
     /**
      * Create a formatted string list, comma-delimited (no spaces) and each entry
      * escaped with single quotes.

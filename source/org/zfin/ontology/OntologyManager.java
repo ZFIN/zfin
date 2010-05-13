@@ -424,6 +424,7 @@ public class OntologyManager implements Serializable {
     private OntologyManager() {
     }
 
+
     /**
      * Retrieve a term by ID from a given ontology.
      *

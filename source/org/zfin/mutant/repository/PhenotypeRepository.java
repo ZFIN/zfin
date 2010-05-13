@@ -8,7 +8,6 @@ import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.PhenotypeStructure;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Class defines methods to retrieve phenotypic data for annotation purposes
@@ -89,8 +88,9 @@ public interface PhenotypeRepository {
 
     /**
      * Retrieve a mutant figure stage record from the unique key
+     *
      * @param mutantFigureStage mutant figure stage unique key
-     * @param figureID figure
+     * @param figureID          figure
      * @return full mutant figure stage record
      */
     MutantFigureStage getMutant(MutantFigureStage mutantFigureStage, String figureID);

@@ -4,7 +4,7 @@ package org.zfin.mutant;
  */
 public class GoFlag {
 
-    private String name ;
+    private String name;
     private Integer displayOrder;
 
     public String getName() {

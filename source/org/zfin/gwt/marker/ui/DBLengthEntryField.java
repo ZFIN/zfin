@@ -8,8 +8,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
 import org.zfin.gwt.root.dto.DBLinkDTO;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.AbstractComposite;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.IntegerTextBox;
 import org.zfin.gwt.root.ui.Revertible;
@@ -134,13 +135,13 @@ public class DBLengthEntryField extends AbstractComposite implements Revertible 
     }
 
     public boolean handleDirty() {
-        boolean dirty = lengthField.isDirty(dbLinkDTO.getLength()) ;
+        boolean dirty = lengthField.isDirty(dbLinkDTO.getLength());
         updateButton.setEnabled(dirty);
         revertButton.setEnabled(dirty);
-        if(false==dirty){
+        if (false == dirty) {
             fireEventSuccess();
         }
-        return dirty ;
+        return dirty;
     }
 
 }

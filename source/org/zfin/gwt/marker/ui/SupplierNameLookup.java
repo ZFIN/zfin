@@ -1,26 +1,25 @@
 package org.zfin.gwt.marker.ui;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.marker.event.RelatedEntityAdapter;
-import org.zfin.gwt.marker.event.RelatedEntityEvent;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextBox;
 import org.zfin.gwt.root.dto.MarkerDTO;
-import org.zfin.gwt.root.ui.ItemSuggestion;
+import org.zfin.gwt.root.event.RelatedEntityAdapter;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.LookupRPCService;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * A list of supplier names.
  */
-public class SupplierNameLookup extends AbstractStackComposite<MarkerDTO>{
+public class SupplierNameLookup extends AbstractStackComposite<MarkerDTO> {
 
 
     // GUI suppliers panel
-    private SupplierOracle oracle = new SupplierOracle() ;
+    private SupplierOracle oracle = new SupplierOracle();
     private TextBox supplierTextBox = new TextBox();
-    private SuggestBox supplierSuggestBox ;
+    private SuggestBox supplierSuggestBox;
 
 
     public SupplierNameLookup() {
@@ -42,7 +41,7 @@ public class SupplierNameLookup extends AbstractStackComposite<MarkerDTO>{
         addPanel.add(addButton);
         addPanel.add(supplierTextBox);
         supplierSuggestBox = new SuggestBox(oracle, supplierTextBox);
-        addPanel.add(supplierSuggestBox) ;
+        addPanel.add(supplierSuggestBox);
         panel.add(stackTable);
         panel.add(addPanel);
         panel.add(errorLabel);
@@ -56,8 +55,8 @@ public class SupplierNameLookup extends AbstractStackComposite<MarkerDTO>{
     @Override
     public void sendUpdates() {
         final String valueToAdd = supplierTextBox.getText().trim();
-        if(containsName(valueToAdd)){
-            setError("Supplied already added: "+valueToAdd);
+        if (containsName(valueToAdd)) {
+            setError("Supplied already added: " + valueToAdd);
             notWorking();
             return;
         }
@@ -104,10 +103,10 @@ public class SupplierNameLookup extends AbstractStackComposite<MarkerDTO>{
 
     public MarkerDTO createDTOFromGUI() {
         // since all we handle is the inferreds, we will assume that we have the correct DTO.
-        if(dto==null) return null ;
+        if (dto == null) return null;
         MarkerDTO relatedEntityDTO = new MarkerDTO();
         String selectedSupplier = supplierTextBox.getText().trim();
-        if(false==selectedSupplier.isEmpty()){
+        if (false == selectedSupplier.isEmpty()) {
             relatedEntityDTO.setName(selectedSupplier);
         }
         relatedEntityDTO.setZdbID(dto.getZdbID());
@@ -118,8 +117,8 @@ public class SupplierNameLookup extends AbstractStackComposite<MarkerDTO>{
     protected void addToGUI(String name) {
         MarkerDTO relatedEntityDTO = createDTOFromGUI();
         relatedEntityDTO.setName(name);
-        StackComposite<MarkerDTO> stackComposite = new StackComposite<MarkerDTO>(relatedEntityDTO) ;
-        stackComposite.addRelatedEntityListener(new RelatedEntityAdapter<MarkerDTO>(){
+        StackComposite<MarkerDTO> stackComposite = new StackComposite<MarkerDTO>(relatedEntityDTO);
+        stackComposite.addRelatedEntityListener(new RelatedEntityAdapter<MarkerDTO>() {
             @Override
             public void removeRelatedEntity(final RelatedEntityEvent<MarkerDTO> event) {
 
@@ -137,50 +136,17 @@ public class SupplierNameLookup extends AbstractStackComposite<MarkerDTO>{
     }
 
 
-
     @Override
     public void resetInput() {
         supplierTextBox.setText("");
     }
 
 
-    private class SupplierOracle extends SuggestOracle{
-
+    private class SupplierOracle extends LookupOracle {
         @Override
-        public boolean isDisplayStringHTML() {
-            return true;
-        }
-
-        @Override
-        public void requestSuggestions(final Request request, final Callback callback) {
-            String query = request.getQuery();
-            if (query.length() >= 3) {
-                LookupRPCService.App.getInstance().getSupplierSuggestions(request, new AsyncCallback<Response>() {
-                    public void onFailure(Throwable throwable) {
-                        callback.onSuggestionsReady(request, new Response());
-                    }
-
-                    public void onSuccess(Response response) {
-                        Collection collection = response.getSuggestions();
-                        int limit = 15 ;
-                        if(collection.size()>limit){
-                            Iterator iterator = collection.iterator();
-                            int i = 0 ;
-                            while(iterator.hasNext()){
-                                iterator.next();
-                                ++i ;
-                                if(i > limit){
-                                    iterator.remove();
-                                }
-                            }
-                            collection.add(new ItemSuggestion("...",null));
-                        }
-
-
-                        callback.onSuggestionsReady(request, response);
-                    }
-                });
-            }
+        public void doLookup(Request request, Callback callback) {
+            LookupRPCService.App.getInstance().getSupplierSuggestions(request,
+                    new LookupCallback(request, callback));
         }
     }
 }

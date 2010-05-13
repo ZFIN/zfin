@@ -8,7 +8,9 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.ui.AbstractComposite;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.StandardDivNames;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +19,13 @@ import java.util.List;
  * This is the "view" link at the top of the page.
  * This composite provides additional validation and provides a place for "page"
  * level errors.
- *
+ * <p/>
  * The ignore button proceeds to where you are planning to go without revalidating.
  */
 public class ViewClickLabel<T extends RelatedEntityDTO> extends AbstractComposite<T> {
 
-    private final String viewText ;
-    private final String linkPrefix ;
+    private final String viewText;
+    private final String linkPrefix;
 
     // listeners
     private final List<ViewClickedListener> viewClickedListeners = new ArrayList<ViewClickedListener>();
@@ -33,20 +35,20 @@ public class ViewClickLabel<T extends RelatedEntityDTO> extends AbstractComposit
     private final Button ignoreButton = new Button("Ignore");
     protected final HTML messageLabel = new HTML("");
 
-    public ViewClickLabel(String viewText, String linkPrefix, String ignoreButtonText,String div) {
-        this.viewText = viewText ;
-        this.linkPrefix = linkPrefix ;
+    public ViewClickLabel(String viewText, String linkPrefix, String ignoreButtonText, String div) {
+        this.viewText = viewText;
+        this.linkPrefix = linkPrefix;
         ignoreButton.setText(ignoreButtonText);
         initGUI();
         initWidget(panel);
         addInternalListeners(this);
-        if(div!=null){
+        if (div != null) {
             RootPanel.get(div).add(this);
         }
     }
 
     public ViewClickLabel(String viewText, String linkPrefix, String ignoreButtonText) {
-        this(viewText,linkPrefix,ignoreButtonText,StandardDivNames.viewDiv) ;
+        this(viewText, linkPrefix, ignoreButtonText, StandardDivNames.viewDiv);
     }
 
     protected void initGUI() {
@@ -65,7 +67,7 @@ public class ViewClickLabel<T extends RelatedEntityDTO> extends AbstractComposit
 
 
     public void continueToViewTranscript() {
-        if(false==linkPrefix.isEmpty()){
+        if (false == linkPrefix.isEmpty()) {
             String url = linkPrefix + dto.getZdbID();
             Window.open(url,
                     "_self", "");
@@ -73,10 +75,12 @@ public class ViewClickLabel<T extends RelatedEntityDTO> extends AbstractComposit
     }
 
     @Override
-    protected void revertGUI() { }
+    protected void revertGUI() {
+    }
 
     @Override
-    protected void setValues() { }
+    protected void setValues() {
+    }
 
 
     public void clearError() {

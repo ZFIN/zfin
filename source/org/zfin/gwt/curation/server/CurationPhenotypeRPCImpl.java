@@ -11,12 +11,12 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.curation.ui.CurationPhenotypeRPC;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GoPhenotype;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
-import org.zfin.util.BODtoConversionService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,17 +41,17 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
         List<PhenotypeFigureStageDTO> dtos = new ArrayList<PhenotypeFigureStageDTO>(30);
         for (MutantFigureStage efs : phenotypes) {
             PhenotypeFigureStageDTO dto = new PhenotypeFigureStageDTO();
-            dto.setFigure(BODtoConversionService.getFigureDto(efs.getFigure()));
-            dto.setStart(BODtoConversionService.getStageDto(efs.getStart()));
-            dto.setEnd((BODtoConversionService.getStageDto(efs.getEnd())));
+            dto.setFigure(DTOConversionService.convertToFigureDTO(efs.getFigure()));
+            dto.setStart(DTOConversionService.convertToStageDTO(efs.getStart()));
+            dto.setEnd((DTOConversionService.convertToStageDTO(efs.getEnd())));
             List<PhenotypeTermDTO> termStrings = new ArrayList<PhenotypeTermDTO>(5);
             for (Phenotype phenotype : efs.getPhenotypes()) {
                 PhenotypeTermDTO termDto = new PhenotypeTermDTO();
-                termDto.setSuperterm(BODtoConversionService.getTermDto(phenotype.getSuperterm()));
+                termDto.setSuperterm(DTOConversionService.convertToTermDTO(phenotype.getSuperterm()));
                 if (phenotype.getSubTerm() != null) {
-                    termDto.setSubterm(BODtoConversionService.getTermDto(phenotype.getSubTerm()));
+                    termDto.setSubterm(DTOConversionService.convertToTermDTO(phenotype.getSubTerm()));
                 }
-                termDto.setQuality(BODtoConversionService.getTermDto(phenotype.getTerm()));
+                termDto.setQuality(DTOConversionService.convertToTermDTO(phenotype.getTerm()));
                 termDto.setTag(phenotype.getTag());
                 termDto.setZdbID(phenotype.getZdbID());
                 termStrings.add(termDto);
@@ -60,9 +60,9 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
             //dto.setExpressedIn(formatter.getFormattedString());
             Collections.sort(termStrings);
             dto.setExpressedTerms(termStrings);
-            GenotypeDTO genotype = BODtoConversionService.getGenotypeDTO(efs.getGenotypeExperiment().getGenotype());
+            GenotypeDTO genotype = DTOConversionService.convertToGenotypeDTO(efs.getGenotypeExperiment().getGenotype());
             dto.setGenotype(genotype);
-            dto.setEnvironment(BODtoConversionService.getEnvironmentDto(efs.getGenotypeExperiment().getExperiment()));
+            dto.setEnvironment(DTOConversionService.convertToEnvironmentDTO(efs.getGenotypeExperiment().getExperiment()));
             dto.setPublicationID(experimentFilter.getPublicationID());
             dtos.add(dto);
         }
@@ -81,7 +81,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
             tx = session.beginTransaction();
             for (PhenotypeFigureStageDTO pfs : newFigureAnnotations) {
                 MutantFigureStage mfs = createMutantFigureStageWithDefaultPhenotype(pfs);
-                returnRecords.add(BODtoConversionService.getMutantFigureStage(mfs));
+                returnRecords.add(DTOConversionService.convertToPhenotypeFigureStageDTO(mfs));
             }
             tx.commit();
         } catch (HibernateException e) {
@@ -98,7 +98,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
      * @param mutantFigureStage Mutant Figure Stage
      */
     private MutantFigureStage createMutantFigureStageWithDefaultPhenotype(PhenotypeFigureStageDTO mutantFigureStage) {
-        MutantFigureStage mfs = BODtoConversionService.getMutantFigureStage(mutantFigureStage);
+        MutantFigureStage mfs = DTOConversionService.convertToMutantFigureStageFromDTO(mutantFigureStage);
         // create a new genotype experiment if needed
         GenotypeExperiment genotypeExperiment = mfs.getGenotypeExperiment();
         if (genotypeExperiment == null) {
@@ -126,7 +126,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
                 figureAnnotation.getStart().getZdbID() == null ||
                 figureAnnotation.getEnd().getZdbID() == null)
             return;
-        MutantFigureStage mutantFromDto = BODtoConversionService.getMutantFigureStage(figureAnnotation);
+        MutantFigureStage mutantFromDto = DTOConversionService.convertToMutantFigureStageFromDTO(figureAnnotation);
         if (mutantFromDto == null) {
             LOG.info("No mutant figure stage record found: " + figureAnnotation);
             return;
@@ -156,7 +156,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
         try {
             // for each figure annotation check which structures need to be added or removed
             for (PhenotypeFigureStageDTO dto : mutantsToBeAnnotated) {
-                MutantFigureStage filterMutantFigureStage = BODtoConversionService.getMutantFigureStageFilter(dto);
+                MutantFigureStage filterMutantFigureStage = DTOConversionService.convertToMutantFigureStageFilter(dto);
                 MutantFigureStage mutant = getPhenotypeRepository().getMutant(filterMutantFigureStage, dto.getFigure().getZdbID());
                 // ToDo: handle case mutant is not found: throw exception (make sure a finally clause is added!
                 for (PileStructureAnnotationDTO pileStructure : pileStructures) {
@@ -309,7 +309,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
                 getPhenotypeRepository().createPhenotype(aoPhenotype, mutant.getFigure());
             }
             if (subterm != null) {
-                TermDTO subtermDto = BODtoConversionService.getTermDto(phenotypeStructure.getSubterm());
+                TermDTO subtermDto = DTOConversionService.convertToTermDTO(phenotypeStructure.getSubterm());
                 expressedTerm.setSubterm(subtermDto);
             }
         } else if (Ontology.isGoOntology(superterm.getOntology())) {
@@ -327,12 +327,12 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
                 getPhenotypeRepository().createPhenotype(goPhenotype, mutant.getFigure());
             }
             if (subterm != null) {
-                TermDTO subtermDto = BODtoConversionService.getTermDto(phenotypeStructure.getSubterm());
+                TermDTO subtermDto = DTOConversionService.convertToTermDTO(phenotypeStructure.getSubterm());
                 expressedTerm.setSubterm(subtermDto);
             }
         }
 
-        TermDTO supertermDto = BODtoConversionService.getTermDto(phenotypeStructure.getSuperterm());
+        TermDTO supertermDto = DTOConversionService.convertToTermDTO(phenotypeStructure.getSuperterm());
         expressedTerm.setSuperterm(supertermDto);
         return expressedTerm;
     }

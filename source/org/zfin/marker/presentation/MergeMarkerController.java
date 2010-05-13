@@ -19,48 +19,48 @@ import java.util.Map;
 /**
  * Note that this is only for merging markers and does not handle genotypes or features.
  */
-public class MergeMarkerController extends SimpleFormController{
+public class MergeMarkerController extends SimpleFormController {
 
     @Override
     protected void onBind(HttpServletRequest request, Object command, BindException errors) throws Exception {
-        MergeBean mergeBean = (MergeBean) command ;
+        MergeBean mergeBean = (MergeBean) command;
         Marker markerToDelete = RepositoryFactory.getMarkerRepository().getMarkerByID(mergeBean.getZdbIDToDelete());
         mergeBean.setMarkerToDelete(markerToDelete);
 
-        Marker markerToMergeInto = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(mergeBean.getMarkerToMergeIntoViewString()) ;
-        mergeBean.setMarkerToMergeInto(markerToMergeInto) ;
+        Marker markerToMergeInto = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(mergeBean.getMarkerToMergeIntoViewString());
+        mergeBean.setMarkerToMergeInto(markerToMergeInto);
 
-        if(markerToMergeInto==null){
-            Antibody antibodyToMergeInto = RepositoryFactory.getAntibodyRepository().getAntibodyByName(mergeBean.getMarkerToMergeIntoViewString()) ;
-            if(antibodyToMergeInto==null){
-                errors.rejectValue(null,"nocode",new String[]{mergeBean.getMarkerToMergeIntoViewString()},"Bad antibody name [{0}]");
+        if (markerToMergeInto == null) {
+            Antibody antibodyToMergeInto = RepositoryFactory.getAntibodyRepository().getAntibodyByName(mergeBean.getMarkerToMergeIntoViewString());
+            if (antibodyToMergeInto == null) {
+                errors.rejectValue(null, "nocode", new String[]{mergeBean.getMarkerToMergeIntoViewString()}, "Bad antibody name [{0}]");
             }
         }
     }
 
     @Override
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
-        MergeBean mergeBean = (MergeBean) command ;
+        MergeBean mergeBean = (MergeBean) command;
         Marker markerToDelete = RepositoryFactory.getMarkerRepository().getMarkerByID(mergeBean.getZdbIDToDelete());
         mergeBean.setMarkerToDelete(markerToDelete);
-        Map modelMap = new ModelMap(getCommandName(),mergeBean) ;
+        Map modelMap = new ModelMap(getCommandName(), mergeBean);
         modelMap.put(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
-        return  modelMap ;
+        return modelMap;
     }
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        MergeBean mergeBean = (MergeBean) command ;
+        MergeBean mergeBean = (MergeBean) command;
 
         Marker markerToDelete = mergeBean.getMarkerToDelete();
         Marker markerToMergeInto = mergeBean.getMarkerToMergeInto();
 
         try {
             HibernateUtil.createTransaction();
-            MergeService.mergeMarker(markerToDelete,markerToMergeInto) ;
+            MergeService.mergeMarker(markerToDelete, markerToMergeInto);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
-            logger.error("Error merging marker ["+markerToDelete+"] into ["+markerToMergeInto+"]",e);
+            logger.error("Error merging marker [" + markerToDelete + "] into [" + markerToMergeInto + "]", e);
             HibernateUtil.rollbackTransaction();
             throw e;
         }
@@ -68,8 +68,8 @@ public class MergeMarkerController extends SimpleFormController{
 //            HibernateUtil.rollbackTransaction();
 //        }
 
-        ModelAndView modelAndView = new ModelAndView(getSuccessView()) ;
-        modelAndView.addObject(getCommandName(),mergeBean) ;
+        ModelAndView modelAndView = new ModelAndView(getSuccessView());
+        modelAndView.addObject(getCommandName(), mergeBean);
         modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
         return modelAndView;
     }

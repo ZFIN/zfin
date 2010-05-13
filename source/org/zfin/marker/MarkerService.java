@@ -1,18 +1,13 @@
 package org.zfin.marker;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zfin.antibody.Antibody;
-import org.zfin.antibody.AntibodyExternalNote;
-import org.zfin.expression.ExpressionExperiment;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.AttributionService;
-import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.ReplacementZdbID;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.mapping.MappedMarker;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.presentation.*;
@@ -22,7 +17,6 @@ import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
-import org.zfin.wiki.AntibodyWikiWebService;
 
 import java.util.*;
 
@@ -499,4 +493,24 @@ public class MarkerService {
     }
 
 
+    public static List<String> getSuppliers(Marker marker) {
+        Set<MarkerSupplier> markerSuppliers = marker.getSuppliers();
+        List<String> supplierList = new ArrayList<String>();
+        for (MarkerSupplier markerSupplier : markerSuppliers) {
+            supplierList.add(markerSupplier.getOrganization().getName());
+        }
+        return supplierList;
+    }
+
+    public static List<String> getDirectAttributions(Marker marker) {
+        // get direct attributions
+        ActiveData activeData = new ActiveData();
+        activeData.setZdbID(marker.getZdbID());
+        List<RecordAttribution> recordAttributions = RepositoryFactory.getInfrastructureRepository().getRecordAttributions(activeData);
+        List<String> attributions = new ArrayList<String>();
+        for (RecordAttribution recordAttribution : recordAttributions) {
+            attributions.add(recordAttribution.getSourceZdbID());
+        }
+        return attributions;
+    }
 }
