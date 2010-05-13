@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.marker.server.DTOService;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
 import org.zfin.marker.presentation.TranscriptAddBean;
@@ -58,7 +58,7 @@ public class TranscriptRepositoryTest {
     public void testDTOReferenceDatabaseMapping() {
         List<ReferenceDatabase> referenceDatabases =  RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
                 DisplayGroup.GroupName.ADDABLE_NUCLEOTIDE_SEQUENCE) ;
-        List<ReferenceDatabaseDTO> referenceDatabaseDTOs = DTOService.convertReferenceDTOs(referenceDatabases) ;
+        List<ReferenceDatabaseDTO> referenceDatabaseDTOs = DTOConversionService.convertToReferenceDatabaseDTOs(referenceDatabases) ;
 
         ReferenceDatabase referenceDatabase ;
         ReferenceDatabaseDTO referenceDatabaseDTO ;

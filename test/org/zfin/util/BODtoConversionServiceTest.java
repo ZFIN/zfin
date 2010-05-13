@@ -8,6 +8,7 @@ import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.MutantFigureStage;
 
 import static junit.framework.Assert.assertNotNull;
@@ -65,7 +66,7 @@ public class BODtoConversionServiceTest {
         envDto.setZdbID(envID);
         pfs.setEnvironment(envDto);
         pfs.setPublicationID(pubID);
-        MutantFigureStage mfs = BODtoConversionService.getMutantFigureStage(pfs);
+        MutantFigureStage mfs = DTOConversionService.convertToMutantFigureStageFromDTO(pfs);
         assertNotNull(mfs);
         assertNotNull(mfs.getEnd());
         assertNotNull(mfs.getStart());

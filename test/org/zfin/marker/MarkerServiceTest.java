@@ -1,6 +1,8 @@
 package org.zfin.marker;
 
 import org.junit.Test;
+import org.zfin.antibody.Antibody;
+import org.zfin.marker.presentation.MergeMarkerValidator;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.marker.presentation.RelatedMarkerDisplay;
 
@@ -9,6 +11,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -93,5 +96,23 @@ public class MarkerServiceTest {
 
     }
 
+    @Test
+    public void mergeMarkerTest(){
+        MergeMarkerValidator validator = new MergeMarkerValidator();
+//        Antibody a = new Antibody();
+//        a.setHeavyChainIsotype("a");
+//
+//        Antibody b = new Antibody();
+//        b.setHeavyChainIsotype("b");
+
+        assertFalse(validator.isEqualOrUnspecified("a","b"));
+        assertTrue(validator.isEqualOrUnspecified("a","a"));
+        assertTrue(validator.isEqualOrUnspecified("a",null));
+        assertTrue(validator.isEqualOrUnspecified("a",""));
+        assertTrue(validator.isEqualOrUnspecified(null,null));
+        assertTrue(validator.isEqualOrUnspecified("",""));
+        assertTrue(validator.isEqualOrUnspecified(null,"b"));
+        assertTrue(validator.isEqualOrUnspecified("","b"));
+    }
 
 }

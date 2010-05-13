@@ -7,9 +7,10 @@ import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.marker.server.MarkerGoEvidenceRPCServiceImpl;
-import org.zfin.gwt.marker.ui.MarkerGoEvidenceRPCService;
+import org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl;
+import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -163,4 +164,15 @@ public class GoEvidenceTest {
 
     }
 
+    @Test
+    public void validateReferenceDatabases(){
+        assertNotNull(MarkerGoEvidencePresentation.getGenbankReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getEcReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getGenpeptReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getGoReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getInterproReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getRefseqReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getSpkwReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getUniprotReferenceDatabase()) ;
+    }
 }
