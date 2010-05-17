@@ -741,6 +741,7 @@ select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'
  DELIMITER "	"
   select stg_zdb_id,
+           stg_obo_id,
            stg_name,
            stg_hours_start,
            stg_hours_end
