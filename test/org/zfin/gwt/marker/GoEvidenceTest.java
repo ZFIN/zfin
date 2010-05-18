@@ -162,12 +162,19 @@ public class GoEvidenceTest {
         // now lets set it to null and create some stuff
         goEvidenceDTO.setZdbID(null);
         GoEvidenceDTO goEvidenceDTOCreated = null ;
+        int numInferences = goEvidenceDTO.getInferredFrom().size();
         try {
+            // need to add an inference so that its not a duplicate anymore
+            Set<String> inferences = goEvidenceDTO.getInferredFrom();
+            inferences.add("SP_KW: somenewinferenceaccession") ;
+            goEvidenceDTO.setInferredFrom(inferences);
+
+            
             goEvidenceDTOCreated = markerRPCService.createMarkerGoTermEvidenceDTO(goEvidenceDTO) ;
         } catch (DuplicateEntryException e) {
             fail(e.toString()) ;
         }
-        assertEquals(1,goEvidenceDTOCreated.getInferredFrom().size());
+        assertEquals(numInferences+1,goEvidenceDTOCreated.getInferredFrom().size());
 
         assertEquals("ZDB-GENE-980526-501",goEvidenceDTOCreated.getMarkerDTO().getZdbID());
         assertNull(goEvidenceDTOCreated.getFlag());
