@@ -37,7 +37,8 @@
 
     <definition name="blast-setup.page" extends="main_layout">
         <put name="staticTitle" value="ZFIN: BLAST Query" />
-        <put name="body" value="/WEB-INF/jsp/blast/blast_setup.jsp"/>
+        <!--<put name="body" value="/WEB-INF/jsp/blast/blast_setup.jsp"/>-->
+        <put name="body" value="/WEB-INF/jsp/blast/blast_is_down.jsp"/>
     </definition>
 
     <definition name="blast-result.page" extends="main_layout">
