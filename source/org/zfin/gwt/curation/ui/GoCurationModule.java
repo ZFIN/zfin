@@ -21,10 +21,10 @@ import java.util.TreeMap;
 /**
  * Entry Point for GO curation tab module.
  */
-public class GOCurationModule extends ConstructionZoneAdapater {
+public class GoCurationModule extends ConstructionZoneAdapater {
 
     private AttributionModule attributionModule = new AttributionModule();
-    private GOViewTable goViewTable = new GOViewTable();
+    private GoViewTable goViewTable = new GoViewTable();
     public static final String GO_EVIDENCE_DISPLAY = "go-evidence-display";
     private GoAddBox goAddBox = new GoAddBox(goViewTable);
     public static final String GO_EVIDENCE_ADD = "go-evidence-add";
@@ -43,7 +43,7 @@ public class GOCurationModule extends ConstructionZoneAdapater {
     List<HandlesError> handlesErrorList = new ArrayList<HandlesError>();
 
 
-    public GOCurationModule(String publicationID) {
+    public GoCurationModule(String publicationID) {
         this.publicationID = publicationID;
         initGUI();
         addInternalListeners(this);

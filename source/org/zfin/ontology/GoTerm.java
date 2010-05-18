@@ -131,6 +131,31 @@ public class GoTerm implements Term, Comparable<GoTerm> {
         this.subOntology = subOntology;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GoTerm)) return false;
+
+        GoTerm goTerm = (GoTerm) o;
+
+        if (zdbID != null &&  goTerm.zdbID != null) {
+            return zdbID.equals(goTerm.zdbID) ;
+        }
+
+        if (name != null ? !name.equals(goTerm.name) : goTerm.name != null) return false;
+        if (oboID != null ? !oboID.equals(goTerm.oboID) : goTerm.oboID != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = zdbID != null ? zdbID.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (oboID != null ? oboID.hashCode() : 0);
+        return result;
+    }
+
     public int compareTo(GoTerm goTerm) {
         if (goTerm == null)
             return 1;
@@ -156,4 +181,22 @@ public class GoTerm implements Term, Comparable<GoTerm> {
         throw new RuntimeException("Not yet implemented");
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("GoTerm");
+        sb.append("{zdbID='").append(zdbID).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", oboID='").append(oboID).append('\'');
+        sb.append(", subOntology='").append(subOntology).append('\'');
+        sb.append(", obsolete=").append(obsolete);
+        sb.append(", relationships=");
+        if(relationships!=null){
+            for(TermRelationship termRelationship : relationships){
+                sb.append(termRelationship.getID()) ;
+            }
+        }
+        sb.append('}');
+        return sb.toString();
+    }
 }

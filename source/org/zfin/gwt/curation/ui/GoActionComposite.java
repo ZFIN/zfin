@@ -25,10 +25,10 @@ public class GoActionComposite extends Composite implements Revertible {
 
     // data
     protected GoEvidenceDTO dto;
-    private GOViewTable goViewTable;
+    private GoViewTable goViewTable;
     private int rowNumber;
 
-    public GoActionComposite(GOViewTable goViewTable, GoEvidenceDTO goEvidenceDTO, int rowNumber) {
+    public GoActionComposite(GoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO, int rowNumber) {
         this.goViewTable = goViewTable;
         this.dto = goEvidenceDTO;
         this.rowNumber = rowNumber;

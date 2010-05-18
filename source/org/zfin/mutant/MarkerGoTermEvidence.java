@@ -1,5 +1,6 @@
 package org.zfin.mutant;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.gwt.root.dto.GoEvidenceQualifier;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GoTerm;
@@ -124,5 +125,92 @@ public class MarkerGoTermEvidence {
 
     public void setInferredFrom(Set<InferenceGroupMember> inferredFrom) {
         this.inferredFrom = inferredFrom;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+//        if (this == o) return true;
+        if (!(o instanceof MarkerGoTermEvidence)) return false;
+
+        MarkerGoTermEvidence that = (MarkerGoTermEvidence) o;
+
+        // check the zdbID
+        if(zdbID!=null && that.zdbID!=null){
+            return zdbID.equals(that.zdbID) ;
+        }
+
+        if (evidenceCode != null ? !evidenceCode.equals(that.evidenceCode) : that.evidenceCode != null) return false;
+        if (flag != that.flag) return false;
+        if (goTerm != null ? !goTerm.equals(that.goTerm) : that.goTerm != null) return false;
+        if (marker != null ? !marker.equals(that.marker) : that.marker != null) return false;
+        if (source != null ? !source.equals(that.source) : that.source != null) return false;
+        if (inferredFrom != null ? !sameInferences(that.inferredFrom) : that.inferredFrom != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = zdbID != null ? zdbID.hashCode() : 0;
+        result = 31 * result + (marker != null ? marker.hashCode() : 0);
+        result = 31 * result + (evidenceCode != null ? evidenceCode.hashCode() : 0);
+        result = 31 * result + (flag != null ? flag.hashCode() : 0);
+        result = 31 * result + (source != null ? source.hashCode() : 0);
+        result = 31 * result + (goTerm != null ? goTerm.hashCode() : 0);
+        result = 31 * result + (inferredFrom != null ? inferredFrom.hashCode() : 0);
+        return result;
+    }
+
+    public boolean sameInferences(Set<InferenceGroupMember> inferredFrom1) {
+        if(CollectionUtils.isEmpty(inferredFrom)  &&
+                CollectionUtils.isEmpty(inferredFrom1)){
+            return true ;
+        }
+        if( (inferredFrom!=null && inferredFrom1==null)
+                || (inferredFrom==null && inferredFrom1!=null)){
+            return false ;
+        }
+
+        if(inferredFrom.size()==inferredFrom1.size()){
+            for(InferenceGroupMember inferenceGroupMember : inferredFrom){
+                boolean hasMatchingInference = false ;
+                for(InferenceGroupMember inferenceGroupMember1: inferredFrom1){
+                    if(inferenceGroupMember.getInferredFrom().equals(inferenceGroupMember1.getInferredFrom())){
+                        hasMatchingInference = true ;
+                    }
+                }
+                if(false==hasMatchingInference){
+                    return false ;
+                }
+            }
+            return true ;
+        }
+        return false ;
+    }
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("MarkerGoTermEvidence");
+        sb.append("{zdbID='").append(zdbID).append('\'');
+        sb.append(", marker=").append(marker);
+        sb.append(", evidenceCode=").append(evidenceCode);
+        sb.append(", flag=").append(flag);
+        sb.append(", source=").append(source);
+        sb.append(", goTerm=").append(goTerm);
+        sb.append(", note='").append(note).append('\'');
+        sb.append(", createdBy='").append(createdBy).append('\'');
+        sb.append(", createdWhen=").append(createdWhen);
+        sb.append(", modifiedBy='").append(modifiedBy).append('\'');
+        sb.append(", modifiedWhen=").append(modifiedWhen);
+        sb.append(", inferredFrom=");
+        if(inferredFrom!=null){
+            for(InferenceGroupMember inferenceGroupMember: inferredFrom){
+                sb.append(inferredFrom).append("\n");
+            }
+        }
+        sb.append('}');
+        return sb.toString();
     }
 }

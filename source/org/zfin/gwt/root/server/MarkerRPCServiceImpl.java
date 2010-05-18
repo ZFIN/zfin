@@ -14,6 +14,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
 import org.zfin.gwt.root.ui.DBLinkNotFoundException;
+import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.MarkerRPCService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -158,6 +159,12 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             return "Invalid pub: " + pubZdbID;
         }
 
+
+        // always check db-links first
+        if (RepositoryFactory.getInfrastructureRepository().getDBLinkAttributions(zdbID, pubZdbID) > 0) {
+            return createMessage(zdbID,"is associated via a dblink that is") ;
+        }
+
         // if used in inference of markergoentry
         // if there is a pub with a marker go entry on it that has inferences
 
@@ -167,6 +174,11 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             return createRemoveAttributionMessageForFeature(feature, publication);
         }
 
+        // if feature
+        if (zdbID.startsWith("ZDB-GENO-")) {
+            Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(zdbID);
+            return createRemoveAttributionMessageForGenotype(genotype, publication);
+        }
 
         // if a marker
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
@@ -174,74 +186,86 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             // handle marker case
             return createRemoveAttributionMessageForMarker(marker, publication);
         }
+
         // if anything else
-        else {
-            if (false == zdbID.startsWith("ZDB-GENO") && RepositoryFactory.getInfrastructureRepository().getRecordAttribution(zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) != null) {
-                return zdbID + " is directly attributed to this pub";
-            }
-
-            if (RepositoryFactory.getInfrastructureRepository().getDataAliasesAttributions(zdbID, pubZdbID) > 0) {
-                return zdbID + " is has data aliases attributed to this pub";
-            }
-
-            if (RepositoryFactory.getInfrastructureRepository().getDBLinkAttributions(zdbID, pubZdbID) > 0) {
-                return zdbID + " is has dblink attributed to this pub";
-            }
-
-            if (zdbID.startsWith("ZDB-GENO") && RepositoryFactory.getMutantRepository().getZFINInferences(zdbID, pubZdbID) > 0) {
-                Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(zdbID) ;
-                return genotype.getHandle() + " is inferred as GO evidence ";
-            }
+        // direct association
+        if (false == zdbID.startsWith("ZDB-GENO") && RepositoryFactory.getInfrastructureRepository().
+                getRecordAttribution(zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) != null) {
+            return createMessage(zdbID,"is directly ") ;
         }
+//            if (RepositoryFactory.getInfrastructureRepository().getDataAliasesAttributions(zdbID, pubZdbID) > 0) {
+//                return createMessage(zdbID,"has data aliases") ;
+//            }
 
         // if marker
         return null;
     }
 
+    private String createRemoveAttributionMessageForGenotype(Genotype genotype, Publication publication) {
+        if (RepositoryFactory.getMutantRepository().getZFINInferences(genotype.getZdbID(), publication.getZdbID()) > 0) {
+            return createMessage(genotype.getHandle(),"is inferred as GO evidence that is") ;
+        }
+
+        if (RepositoryFactory.getInfrastructureRepository().getGenotypeExperimentRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {
+            return createMessage(genotype.getHandle(),"is used in an experiment that is") ;
+        }
+
+        if (RepositoryFactory.getInfrastructureRepository().getGenotypePhenotypeRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {
+            return createMessage(genotype.getHandle(),"is used in phenotype that is") ;
+        }
+
+        return null;
+    }
+
+    private String createMessage(String name,String message){
+        return "Can't remove " + name + ": It " + message +" attributed to this pub." ;
+    }
+
     private String createRemoveAttributionMessageForMarker(Marker marker, Publication publication) {
 
         if (RepositoryFactory.getMutantRepository().getZFINInferences(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return marker.getAbbreviation() + " is inferred as GO evidence ";
+            return createMessage(marker.getAbbreviation(), "is inferred as GO evidence that is ");
         }
 
         if (RepositoryFactory.getInfrastructureRepository().getGoRecordAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return marker.getAbbreviation() + " attributed by go evidence.";
+            return createMessage(marker.getAbbreviation(), "has GO annotations ");
         }
 
         if (RepositoryFactory.getInfrastructureRepository().getOrthologueRecordAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return marker.getAbbreviation() + " attributed by orthologue evidence.";
+            return createMessage(marker.getAbbreviation(), "has been annotated with orthologs ");
         }
 
         if (RepositoryFactory.getInfrastructureRepository().getMarkerFeatureRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return marker.getAbbreviation() + " attributed through feature relationship.";
+            return createMessage(marker.getAbbreviation(), "has a related feature ");
         }
 
         if (RepositoryFactory.getInfrastructureRepository().getMarkerGenotypeFeatureRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return marker.getAbbreviation() + " attributed through genotype feature relationship.";
+            return createMessage(marker.getAbbreviation(), "its relationship to a feature and genotype is ");
         }
 
         if (RepositoryFactory.getInfrastructureRepository().getDBLinkAssociatedToGeneAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return marker.getAbbreviation() + " attributed through dblink where gene encodes a small segment.";
+            return createMessage(marker.getAbbreviation(), "it is related to a dblink that is ");
         }
 
         if (RepositoryFactory.getInfrastructureRepository().getFirstMarkerRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return marker.getAbbreviation() + " attributed marker relationship (in first position).";
+            return createMessage(marker.getAbbreviation(), "its relation to another marker (first position) is ");
         }
 
         if (RepositoryFactory.getInfrastructureRepository().getSecondMarkerRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return marker.getAbbreviation() + " attributed marker relationship (in second position).";
+            return createMessage(marker.getAbbreviation(), "its relation to another marker (second position) is ");
         }
 
-        if (RepositoryFactory.getInfrastructureRepository().getMorpholinoRelatedMarkerAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return marker.getAbbreviation() + " attributed by marker relationship where knocked down by morpholino.";
-        }
+//        if (RepositoryFactory.getInfrastructureRepository().getMorpholinoRelatedMarkerAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+//            return createMessage(marker.getAbbreviation(), "its relation to another marker (second position) is attibuted in this pub");
+//            return marker.getAbbreviation() + " attributed by marker relationship where knocked down by morpholino.";
+//        }
 
         if (RepositoryFactory.getInfrastructureRepository().getExpressionExperimentMarkerAttributions(marker, publication.getZdbID()) > 0) {
-            return marker.getAbbreviation() + " attributed via expression experiment.";
+            return createMessage(marker.getAbbreviation(), "has expression data ");
         }
 
         if (RepositoryFactory.getInfrastructureRepository().getMorpholinoEnvironmentAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return marker.getAbbreviation() + " attributed via defined environment.";
+            return createMessage(marker.getAbbreviation(), "is present in an environment");
         }
 
         return null;
@@ -250,7 +274,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
     private String createRemoveAttributionMessageForFeature(Feature feature, Publication publication) {
 
         if (RepositoryFactory.getInfrastructureRepository().getFeatureGenotypeAttributions(feature.getZdbID(), publication.getZdbID()) > 0) {
-            return feature.getAbbreviation() + " attributed through genotype feature relationship.";
+            return createMessage(feature.getAbbreviation(), "used in a genotype");
         }
 
         return null;
@@ -1007,12 +1031,15 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
     }
 
     @Override
-    public void addAttributionForMarkerName(String markerAbbrev, String pubZdbID) throws TermNotFoundException {
+    public void addAttributionForMarkerName(String markerAbbrev, String pubZdbID) throws TermNotFoundException, DuplicateEntryException {
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(markerAbbrev);
         if (m == null) {
             throw new TermNotFoundException(markerAbbrev, "Marker");
         }
         String markerZdbID = m.getZdbID();
+        if(RepositoryFactory.getInfrastructureRepository().getRecordAttribution(markerZdbID,pubZdbID, RecordAttribution.SourceType.STANDARD)!=null){
+            throw new DuplicateEntryException(m.getAbbreviation()+ " is already attributed.") ;
+        }
         HibernateUtil.createTransaction();
         RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(markerZdbID, pubZdbID);
         if (Person.getCurrentSecurityUser() == null) {
@@ -1024,18 +1051,21 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
     }
 
     @Override
-    public void addAttributionForFeatureName(String featureAbbrev, String pubZdbID) throws TermNotFoundException {
+    public void addAttributionForFeatureName(String featureAbbrev, String pubZdbID) throws TermNotFoundException , DuplicateEntryException{
         Feature f = RepositoryFactory.getMutantRepository().getFeatureByAbbreviation(featureAbbrev);
         if (f == null) {
             throw new TermNotFoundException(featureAbbrev, "Feature");
         }
-        String markerZdbID = f.getZdbID();
+        String featureZdbID = f.getZdbID();
+        if(RepositoryFactory.getInfrastructureRepository().getRecordAttribution(featureZdbID,pubZdbID, RecordAttribution.SourceType.STANDARD)!=null){
+            throw new DuplicateEntryException(f.getAbbreviation()+ " is already attributed as "+f.getName()) ;
+        }
         HibernateUtil.createTransaction();
-        RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(markerZdbID, pubZdbID);
+        RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(featureZdbID, pubZdbID);
         if (Person.getCurrentSecurityUser() == null) {
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "attribution", "", pubZdbID, "Added direct attribution");
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(featureZdbID, "attribution", "", pubZdbID, "Added direct attribution");
         } else {
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "attribution", "removed", "Removed direct attribution", Person.getCurrentSecurityUser());
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(featureZdbID, "attribution", "removed", "Removed direct attribution", Person.getCurrentSecurityUser());
         }
         HibernateUtil.flushAndCommitCurrentSession();
     }

@@ -16,7 +16,7 @@ import java.util.Set;
 
 /**
  */
-public class GOViewTable extends ZfinFlexTable {
+public class GoViewTable extends ZfinFlexTable {
 
     // data
     private String publicationZdbID;
@@ -26,10 +26,10 @@ public class GOViewTable extends ZfinFlexTable {
     private FlexCellFormatter formatter = new FlexCellFormatter();
     private int newGoRow = -1;
 
-    public GOViewTable() {
+    public GoViewTable() {
         super(HeaderName.values().length, -1);
         initGUI();
-        RootPanel.get(GOCurationModule.GO_EVIDENCE_DISPLAY).add(this);
+        RootPanel.get(GoCurationModule.GO_EVIDENCE_DISPLAY).add(this);
     }
 
 
@@ -219,7 +219,7 @@ public class GOViewTable extends ZfinFlexTable {
         // get row
         insertRow(row);
         formatter.setColSpan(row, 0, getCellCount(0));
-        Widget newGoFromMarkerWidget = new GoInlineAddBox(this, goEvidenceDTO);
+        Widget newGoFromMarkerWidget = new GoInlineCloneBox(this, goEvidenceDTO);
         setWidget(row, 0, newGoFromMarkerWidget);
         newGoRow = row;
     }
@@ -276,7 +276,7 @@ public class GOViewTable extends ZfinFlexTable {
     }
 
     void hideNewGoRow() {
-        if (newGoRow >= 0) {
+        if (newGoRow >= 0 && newGoRow < getRowCount()) {
             removeRow(newGoRow);
         }
         newGoRow = -1;

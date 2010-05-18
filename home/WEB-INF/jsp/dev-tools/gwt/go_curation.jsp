@@ -1,6 +1,6 @@
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
 <%@ page import="org.zfin.framework.presentation.CurationTestController" %>
-<%@ page import="org.zfin.gwt.curation.ui.GOCurationModule" %>
+<%@ page import="org.zfin.gwt.curation.ui.GoCurationModule" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
@@ -29,17 +29,17 @@
 
 <br>
 
-<div id="<%=GOCurationModule.GO_ADD_LINK%>"></div>
+<div id="<%=GoCurationModule.GO_ADD_LINK%>"></div>
 
 <br>
 <br>
 
-<div id="<%=GOCurationModule.GO_EVIDENCE_ADD%>"></div>
+<div id="<%=GoCurationModule.GO_EVIDENCE_ADD%>"></div>
 
 <br>
 <br>
 
-<div id="<%=GOCurationModule.GO_EVIDENCE_DISPLAY%>"></div>
+<div id="<%=GoCurationModule.GO_EVIDENCE_DISPLAY%>"></div>
 
 <%--</authz:authorize>--%>
 

@@ -299,6 +299,10 @@ public interface InfrastructureRepository {
     int getExpressionExperimentMarkerAttributions(Marker marker, String pubZdbID);
 
     int getMorpholinoEnvironmentAttributions(String zdbID, String pubZdbID);
+
+    int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID);
+
+    int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID);
 }
 
 

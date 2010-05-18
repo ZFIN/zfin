@@ -2,10 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
@@ -28,12 +25,13 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
     // http://tntluoma.com/sidebars/codes/
     protected final TermInfoComposite termInfoComposite = new TermInfoComposite(false, "&nbsp;&bull;&nbsp;", false);
     protected HorizontalPanel buttonPanel = new HorizontalPanel();
+    protected Button goTermButton = new Button("<<--Use&nbsp;GO&nbsp;Term");
     protected HorizontalPanel mainPanel = new HorizontalPanel();
     protected HorizontalPanel zdbIDPanel = new HorizontalPanel();
     protected VerticalPanel eastPanel = new VerticalPanel();
 
     // data
-    protected GOViewTable parent;
+    protected GoViewTable parent;
 
     protected void initGUI() {
 
@@ -49,6 +47,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         ((GoEditTable) table).setInference(inferenceListBox);
         ((GoEditTable) table).setButtonPanel(buttonPanel);
         ((GoEditTable) table).setErrorLabel(errorLabel);
+        ((GoEditTable) table).setGoTermButton(goTermButton);
 
         goTermBox.setType(LookupComposite.GDAG_TERM_LOOKUP);
         goTermBox.setOntology(OntologyDTO.GO);
@@ -138,7 +137,29 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
             public void onClick(ClickEvent event) {
                 parent.hideNewGoRow();
             }
+        });
 
+        goTermButton.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent event) {
+                TermInfo termInfo = termInfoComposite.getCurrentTermInfo() ;
+                if(termInfo!=null){
+                    MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(termInfo.getName(), new MarkerEditCallBack<GoTermDTO>("Failed to retrieve GO value") {
+                        @Override
+                        public void onSuccess(GoTermDTO result) {
+                            temporaryGoTermDTO = result;
+                            GoEvidenceDTO goEvidenceDTO = dto.deepCopy();
+                            goEvidenceDTO.setGoTerm(temporaryGoTermDTO);
+                            fireGoTermChanged(new RelatedEntityEvent<GoEvidenceDTO>(goEvidenceDTO));
+                            goTermBox.setText(result.getName());
+                            handleDirty();
+                        }
+                    });
+                }
+                else{
+                   setError("Term details box must be empty."); 
+                }
+            }
         });
     }
 
@@ -148,6 +169,9 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
             evidenceCodeBox.clear();
             for (GoEvidenceCodeEnum evidenceCodeEnum : GoEvidenceCodeEnum.getCodeEnumForPub(dto.getPublicationZdbID())) {
                 evidenceCodeBox.addItem(evidenceCodeEnum.name());
+            }
+            if(dto.getEvidenceCode()==GoEvidenceCodeEnum.NAS){
+                evidenceCodeBox.addItem(dto.getEvidenceCode().name());
             }
 
             evidenceCodeBox.setIndexForText(dto.getEvidenceCode().name());
@@ -198,6 +222,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
     public GoEvidenceDTO createDTOFromGUI() {
         GoEvidenceDTO goEvidenceDTO = super.createDTOFromGUI();
         MarkerDTO markerDTO = new MarkerDTO();
+        goEvidenceDTO.setPublicationZdbID(dto.getPublicationZdbID());
         markerDTO.setZdbID(geneBox.getSelectedStringValue());
         goEvidenceDTO.setMarkerDTO(markerDTO);
         return goEvidenceDTO;
@@ -206,6 +231,6 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
 
     @Override
     public boolean isDirty() {
-        return true;
+        return true ;
     }
 }

@@ -450,10 +450,13 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
             // first retrieve the full list of genes and then
             // select the gene in question.
             // only get antibody list if assay is compatible
-            if (ExpressionAssayDTO.isAntibodyAssay(selectedExperiment.getAssay()))
-                curationExperimentRPCAsync.getAntibodies(publicationID, new AntibodySelectionListAsyncCallback(selectedExperiment.getAntibodyMarker().getZdbID()));
-            else
+            if (ExpressionAssayDTO.isAntibodyAssay(selectedExperiment.getAssay()) && selectedExperiment.getAntibodyMarker()!=null){
+                curationExperimentRPCAsync.getAntibodies(publicationID,
+                        new AntibodySelectionListAsyncCallback(selectedExperiment.getAntibodyMarker().getZdbID()));
+            }
+            else{
                 antibodyList.setEnabled(false);
+            }
         }
 
     }
@@ -628,12 +631,14 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
             int rowIndex = 1;
             for (MarkerDTO gene : genes) {
                 geneList.addItem(gene.getName(), gene.getZdbID());
-                if (selectedGene != null)
-                    if (selectedGene.getZdbID() != null && gene.getZdbID().equals(selectedGene.getZdbID()))
-                        geneList.setSelectedIndex(rowIndex);
+                if (selectedGene!=null && selectedGene.getZdbID() != null && gene.getZdbID().equals(selectedGene.getZdbID())){
+                    geneList.setSelectedIndex(rowIndex);
+                }
                 rowIndex++;
             }
-            geneList.setIndexForValue(selectedValue);
+//            if(!selectedValue.isEmpty()){
+//                geneList.setIndexForValue(selectedValue);
+//            }
         }
     }
 
@@ -698,8 +703,9 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
                 Window.alert("Selected GeneBank ID: " + selectedGenBankID);
             for (ExperimentDTO accession : accessions) {
                 genbankList.addItem(accession.getGenbankNumber(), accession.getGenbankID());
-                if (selectedGenBankID != null && accession.getGenbankID().equals(selectedGenBankID))
+                if (selectedGenBankID != null && accession.getGenbankID().equals(selectedGenBankID)){
                     genbankList.setSelectedIndex(rowIndex);
+                }
                 rowIndex++;
             }
         }
@@ -1166,7 +1172,9 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
         environment.setTitle(experiment.getEnvironment().getZdbID());
         displayTable.setWidget(row, HeaderName.ENVIRONMENT.getIndex(), environment);
         displayTable.setText(row, HeaderName.ASSAY.getIndex(), experiment.getAssay());
-        displayTable.setText(row, HeaderName.ANTIBODY.getIndex(), experiment.getAntibodyMarker().getName());
+        if(experiment.getAntibodyMarker()!=null){
+            displayTable.setText(row, HeaderName.ANTIBODY.getIndex(), experiment.getAntibodyMarker().getName());
+        }
         displayTable.setText(row, HeaderName.GENBANK.getIndex(), experiment.getGenbankNumber());
         // update experiment in list
         int index = 0;

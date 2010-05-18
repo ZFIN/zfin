@@ -115,7 +115,7 @@ public interface MarkerRPCService extends RemoteService {
 
     List<ReferenceDatabaseDTO> getGeneDBLinkAddReferenceDatabases(String markerZdbID);
 
-    void addAttributionForMarkerName(String markerAbbrev, String pubZdbID) throws TermNotFoundException;
+    void addAttributionForMarkerName(String markerAbbrev, String pubZdbID) throws TermNotFoundException, DuplicateEntryException;
 
-    void addAttributionForFeatureName(String value, String publicationZdbID) throws TermNotFoundException;
+    void addAttributionForFeatureName(String value, String publicationZdbID) throws TermNotFoundException, DuplicateEntryException;
 }

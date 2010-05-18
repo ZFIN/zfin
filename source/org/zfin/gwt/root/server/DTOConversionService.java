@@ -663,7 +663,7 @@ public class DTOConversionService {
         }
         info.setDefinition(term.getDefinition());
         info.setComment(term.getComment());
-        info.setOntology(ontology);
+        info.setOntology(DTOConversionService.convertToOntologyDTO(term.getOntology()));
         info.setObsolete(term.isObsolete());
         return info;
     }

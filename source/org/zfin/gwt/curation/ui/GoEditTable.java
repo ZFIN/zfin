@@ -1,9 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.ui.AbstractInferenceListBox;
 import org.zfin.gwt.root.ui.LookupComposite;
 import org.zfin.gwt.root.ui.RevertibleTextArea;
@@ -66,7 +63,11 @@ public class GoEditTable extends FlexTable {
 
     public void setErrorLabel(Label errorLabel) {
         setWidget(Rows.ERROR.row, Rows.ERROR.columnLabel, errorLabel);
-        formatter.setColSpan(Rows.ERROR.row, Rows.ERROR.columnLabel, 3);
+        formatter.setColSpan(Rows.ERROR.row, Rows.ERROR.columnLabel, 2);
+    }
+
+    public void setGoTermButton(Button goTermButton) {
+        setWidget(Rows.GO_TERM_BUTTON.row, Rows.GO_TERM_BUTTON.columnLabel, goTermButton);
     }
 
     private enum Rows {
@@ -77,6 +78,7 @@ public class GoEditTable extends FlexTable {
         INFERENCES(2, 0),
         GO_LOOKUP(3, 0),
         BUTTONS(4, 0),
+        GO_TERM_BUTTON(4, 3),
         ERROR(4, 1);
 
         private final int row;

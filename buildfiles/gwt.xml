@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="gwt" basedir=".">
 
+
     <target name="dirty-gwt" description="Compiles all gwt targets">
         <parallel>
             <antcall target="dirty-lookup-gwt"/>
@@ -45,13 +46,6 @@
         </antcall>
     </target>
 
-    <target name="dirty-pato-curation-gwt" description="Compiles curation gwt">
-        <antcall target="gwt-compile">
-            <param name="gwt.module.target" value="${gwt.target}"/>
-            <param name="gwt.module" value="org.zfin.gwt.curation.PatoCuration"/>
-        </antcall>
-    </target>
-
     <target name="marker-gwt" description="Compiles transcript edit gwt">
         <antcall target="gwt-compile">
             <param name="gwt.module.target" value="${gwt.pre-target}"/>
@@ -93,6 +87,7 @@
 
 
     <target name="gwt-compile" description="Compile gwt classes to javascript" depends="compile">
+        <delete dir="${gwt.module.target}/${gwt.module}"/>
         <java fork="true" className="com.google.gwt.dev.Compiler" classpathref="extended.classpath">
             <classpath>
                 <dirset dir="${source.dir}" defaultexcludes="true">

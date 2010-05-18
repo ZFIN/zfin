@@ -18,6 +18,20 @@ PREFIX:   featcurup_
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
+<?MICOMMENT>
+  Script added to avoid popup error as gwt still expects properties.  (case 5666). 
+<?/MICOMMENT>
+        <?MIVAR>
+        <script type="text/javascript">
+        var curationProperties = {
+        zdbID : "$OID",
+        moduleType: "FEATURE_CURATION",
+        debug: "false"
+        }
+        </script>
+        <?/MIVAR>
+
+
   <?MICOMMENT> set variables <?/MICOMMENT>  
   <?MIVAR NAME=$featcurup_feature_zdb_id><?/MIVAR>
   <?MIVAR NAME=$featcurup_feature_lab_zdb_id><?/MIVAR>

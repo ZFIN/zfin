@@ -23,7 +23,7 @@ import java.util.List;
 public class GoAddBox extends AbstractGoInlineBox {
 
 
-    public GoAddBox(GOViewTable goViewTable) {
+    public GoAddBox(GoViewTable goViewTable) {
         this.parent = goViewTable;
 
         initGUI();
@@ -54,8 +54,10 @@ public class GoAddBox extends AbstractGoInlineBox {
                             }
                             GoEvidenceDTO goEvidenceDTO = dto.deepCopy();
                             goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.IMP);
-                            MarkerDTO markerDTO = results.iterator().next();
-                            goEvidenceDTO.setMarkerDTO(markerDTO);
+                            if(results.iterator().hasNext()){
+                                MarkerDTO markerDTO = results.iterator().next();
+                                goEvidenceDTO.setMarkerDTO(markerDTO);
+                            }
                             setDTO(goEvidenceDTO);
                             setValues();
                         }
@@ -116,7 +118,8 @@ public class GoAddBox extends AbstractGoInlineBox {
                 return;
             }
             working();
-            MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidenceDTO(goEvidenceDTO, new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:") {
+            MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidenceDTO(goEvidenceDTO, 
+                    new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:",this) {
                 @Override
                 public void onFailure(Throwable throwable) {
                     super.onFailure(throwable);

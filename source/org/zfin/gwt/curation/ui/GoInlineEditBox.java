@@ -15,7 +15,7 @@ import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
  */
 public class GoInlineEditBox extends AbstractGoInlineBox {
 
-    public GoInlineEditBox(GOViewTable goViewTable, GoEvidenceDTO goEvidenceDTO) {
+    public GoInlineEditBox(GoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO) {
         this.parent = goViewTable;
 
         initGUI();
@@ -58,12 +58,13 @@ public class GoInlineEditBox extends AbstractGoInlineBox {
                 return;
             }
             working();
-            MarkerGoEvidenceRPCService.App.getInstance().editMarkerGoTermEvidenceDTO(goEvidenceDTO, new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:") {
+            MarkerGoEvidenceRPCService.App.getInstance().editMarkerGoTermEvidenceDTO(goEvidenceDTO,
+                    new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:",this) {
                 @Override
                 public void onFailure(Throwable throwable) {
                     super.onFailure(throwable);
                     notWorking();
-                    revertGUI();
+                    handleDirty();
                 }
 
                 @Override

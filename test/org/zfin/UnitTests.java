@@ -15,7 +15,7 @@ import org.zfin.framework.presentation.FunctionsTest;
 import org.zfin.framework.presentation.PaginationBeanTest;
 import org.zfin.framework.presentation.SectionVisibilityTest;
 import org.zfin.framework.presentation.UIFieldTransformerTest;
-import org.zfin.gwt.InferenceCategoryUnitTest;
+import org.zfin.gwt.InferenceUnitTest;
 import org.zfin.gwt.root.dto.EnvironmentDTOTest;
 import org.zfin.gwt.root.dto.ExperimentDTOTest;
 import org.zfin.gwt.root.util.StageRangeIntersectionTest;
@@ -63,7 +63,7 @@ import org.zfin.util.*;
         ExperimentDTOTest.class,
         FileUtilTest.class,
         FunctionsTest.class,
-        InferenceCategoryUnitTest.class,
+        InferenceUnitTest.class,
         HighlightUtilTest.class,
         ListFormatterTest.class,
         MarkerPresentationTest.class,

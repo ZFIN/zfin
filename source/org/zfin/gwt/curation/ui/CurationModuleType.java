@@ -23,7 +23,7 @@ public enum CurationModuleType {
     GO_CURATION {
         @Override
         public ConstructionZone initializeModule(String publicationID) {
-            GOCurationModule module = new GOCurationModule(publicationID);
+            GoCurationModule module = new GoCurationModule(publicationID);
             return module.getPileConstructionZoneModule();
         }
     },

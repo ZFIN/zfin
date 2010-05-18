@@ -14,7 +14,7 @@ import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MergeMarkerDBTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
-import org.zfin.mutant.MutantRepositoryTest;
+import org.zfin.mutant.repository.MutantRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.gbrowse.GBrowseRepositoryTest;
 import org.zfin.people.repository.PeopleRepositoryTest;

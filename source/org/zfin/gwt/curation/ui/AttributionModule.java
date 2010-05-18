@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -157,6 +158,11 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                     return;
                 }
 
+                if(false==Window.confirm("Are you sure you want to delete: "+ attributionToRemoveLabel)){
+                    return ;
+                }
+
+
                 working();
                 MarkerRPCService.App.getInstance().removeAttribution(attributionToRemoveID, dto.getPublicationZdbID(),
                         new MarkerEditCallBack<String>("Failed to remove attribution: " + attributionToRemoveLabel, handlesError) {
@@ -173,13 +179,11 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                                 if (message == null) {
                                     fireEventSuccess();
                                     clearError();
+                                    setMessage("Removed attribution: " + attributionToRemoveLabel);
+                                    resetInput();
                                 } else if (message != null && false == message.isEmpty()) {
                                     setError(message);
                                     clearMessage();
-                                } else {
-                                    clearError();
-                                    setMessage("Removed attribution: " + attributionToRemoveLabel);
-                                    resetInput();
                                 }
                             }
                         });

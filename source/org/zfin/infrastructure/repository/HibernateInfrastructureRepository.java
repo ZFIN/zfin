@@ -895,6 +895,43 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 .uniqueResult().toString()
         );
     }
+
+
+    public int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID){
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                "  select count(*)  " +
+                " from record_attribution ra, genotype_experiment ge " +
+                " where ra.recattrib_data_zdb_id = ge.genox_exp_zdb_id " +
+                " and ge.genox_geno_zdb_id = :zdbID " +
+                " and  ra.recattrib_source_zdb_id = :pubZdbID " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
+        );
+    }
+
+    public int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID){
+//select * from record_attribution ra, atomic_phenotype ph, genotype_experiment ge
+//where
+//ra.recattrib_data_zdb_id=ph.apato_zdb_id
+//and
+//ph.apato_genox_zdb_id=ge.genox_zdb_id
+//and
+//ge.genox_geno_zdb_id = 'ZDB-GENO-000405-1'
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                "  select count(*)  " +
+                " from record_attribution ra, atomic_phenotype ph, genotype_experiment ge " +
+                " where ra.recattrib_data_zdb_id = ph.apato_zdb_id " +
+                " and ph.apato_genox_zdb_id = ge.genox_zdb_id " +
+                " and ge.genox_geno_zdb_id = :zdbID " +
+                " and  ra.recattrib_source_zdb_id = :pubZdbID " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
+        );
+    }
 }
 
 

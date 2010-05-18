@@ -14,11 +14,10 @@ import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
  * 4 - pubs
  * 3 - evidence codes
  */
-public class GoInlineAddBox extends AbstractGoInlineBox {
+public class GoInlineCloneBox extends GoInlineAddBox{
 
-    public GoInlineAddBox(){}
-
-    public GoInlineAddBox(GoViewTable goViewTable) {
+    public GoInlineCloneBox(GoViewTable goViewTable) {
+        super();
         this.parent = goViewTable;
 
         initGUI();
@@ -26,7 +25,7 @@ public class GoInlineAddBox extends AbstractGoInlineBox {
         initWidget(panel);
     }
 
-    public GoInlineAddBox(GoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO) {
+    public GoInlineCloneBox(GoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO) {
         this(goViewTable);
         setDTO(goEvidenceDTO);
         dto.setZdbID(null);
@@ -34,26 +33,15 @@ public class GoInlineAddBox extends AbstractGoInlineBox {
     }
 
 
-    protected void initGUI() {
-        super.initGUI();
-        saveButton.setText("Create");
-        revertButton.setText("Cancel");
-        zdbIDHTML.setHTML("<font color=red>Not Saved</font>");
-    }
-
-
     @Override
-    protected void revertGUI() {
-        super.revertGUI();
-        goTermBox.setText("");
-        geneBox.setSelectedIndex(0);
-        evidenceFlagBox.setSelectedIndex(0);
-        evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.IMP.name());
+    public void notWorking() {
+        super.notWorking();
+        saveButton.setEnabled(true);
+        revertButton.setEnabled(true);
         saveButton.setText("Create");
         revertButton.setText("Cancel");
         zdbIDHTML.setHTML("<font color=red>Not Saved</font>");
     }
-
 
     protected void sendUpdates() {
         if (isDirty()) {
@@ -68,7 +56,6 @@ public class GoInlineAddBox extends AbstractGoInlineBox {
                 public void onFailure(Throwable throwable) {
                     super.onFailure(throwable);
                     notWorking();
-                    revertGUI();
                 }
 
                 @Override

@@ -1,0 +1,104 @@
+package org.zfin.gwt;
+
+import org.junit.Test;
+import org.zfin.gwt.root.dto.InferenceCategory;
+import org.zfin.mutant.InferenceGroupMember;
+import org.zfin.mutant.MarkerGoTermEvidence;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+/**
+ */
+public class InferenceUnitTest {
+
+    @Test
+    public void simpleMatch(){
+        String testString1 = "GenBank:12345" ;
+        assertTrue(testString1.matches("GenBank:.*")) ;
+        String testString2 = "ZFIN:ZDB-MRPHLNO-12345" ;
+        assertTrue(testString2.matches("ZFIN:ZDB-MRPHLNO-.*|asdf")) ;
+        assertEquals("GenBank:.*",InferenceCategory.GENBANK.match());
+        assertEquals("ZFIN:ZDB-MRPHLNO-.*|ZFIN:ZDB-GENO-.*",InferenceCategory.ZFIN_MRPH_GENO.match());
+        assertEquals("ZFIN:ZDB-GENE-.*",InferenceCategory.ZFIN_GENE.match());
+//        assertEquals("GenBank:.*",InferenceCategory.GENBANK.match());
+//        "GenBank.*".
+        assertEquals(InferenceCategory.GENBANK,InferenceCategory.getInferenceCategoryByValue(testString1)) ;
+        assertEquals(InferenceCategory.ZFIN_MRPH_GENO,InferenceCategory.getInferenceCategoryByValue(testString2)) ;
+        assertEquals(InferenceCategory.ZFIN_GENE,InferenceCategory.getInferenceCategoryByValue("ZFIN:ZDB-GENE-123213")) ;
+        assertEquals(InferenceCategory.ZFIN_MRPH_GENO,InferenceCategory.getInferenceCategoryByValue("ZFIN:ZDB-GENO-1234")) ;
+    }
+
+    @Test
+    public void testInferenceComparator(){
+        Set<InferenceGroupMember> inferenceGroupMembers1 = null ;
+        MarkerGoTermEvidence markerGoTermEvidence = new MarkerGoTermEvidence();
+        markerGoTermEvidence.setInferredFrom(inferenceGroupMembers1);
+
+        Set<InferenceGroupMember> inferenceGroupMembers2 = null ;
+        assertTrue(markerGoTermEvidence.sameInferences(inferenceGroupMembers2));
+
+        inferenceGroupMembers2 = new HashSet<InferenceGroupMember>() ;
+        assertTrue(markerGoTermEvidence.sameInferences(inferenceGroupMembers2));
+
+        inferenceGroupMembers1 = new HashSet<InferenceGroupMember>() ;
+        assertTrue(markerGoTermEvidence.sameInferences(inferenceGroupMembers2));
+
+        InferenceGroupMember inferenceGroupMemberA = new InferenceGroupMember();
+        inferenceGroupMemberA.setInferredFrom("dog");
+        inferenceGroupMembers1.add(inferenceGroupMemberA);
+        markerGoTermEvidence.setInferredFrom(inferenceGroupMembers1);
+        assertFalse(markerGoTermEvidence.sameInferences(inferenceGroupMembers2));
+
+
+        InferenceGroupMember inferenceGroupMemberB = new InferenceGroupMember();
+        inferenceGroupMemberB.setInferredFrom("cat");
+        inferenceGroupMembers2.add(inferenceGroupMemberB);
+        assertFalse(markerGoTermEvidence.sameInferences(inferenceGroupMembers2));
+
+        inferenceGroupMemberB.setInferredFrom("dog");
+        assertTrue(markerGoTermEvidence.sameInferences(inferenceGroupMembers2));
+    }
+
+
+    @Test
+    public void testMarkerGoEvidenceEquals(){
+        Set<InferenceGroupMember> inferenceGroupMembers1 = null ;
+        MarkerGoTermEvidence markerGoTermEvidence1 = new MarkerGoTermEvidence();
+        markerGoTermEvidence1.setInferredFrom(inferenceGroupMembers1);
+
+
+        MarkerGoTermEvidence markerGoTermEvidence2 = new MarkerGoTermEvidence();
+        Set<InferenceGroupMember> inferenceGroupMembers2 = null ;
+        assertTrue(markerGoTermEvidence1.sameInferences(inferenceGroupMembers2));
+        markerGoTermEvidence2.setInferredFrom(inferenceGroupMembers2);
+        assertTrue(markerGoTermEvidence1.equals(markerGoTermEvidence2));
+
+
+        inferenceGroupMembers2 = new HashSet<InferenceGroupMember>() ;
+        assertTrue(markerGoTermEvidence1.sameInferences(inferenceGroupMembers2));
+
+        inferenceGroupMembers1 = new HashSet<InferenceGroupMember>() ;
+        assertTrue(markerGoTermEvidence1.sameInferences(inferenceGroupMembers2));
+
+        InferenceGroupMember inferenceGroupMemberA = new InferenceGroupMember();
+        inferenceGroupMemberA.setInferredFrom("dog");
+        inferenceGroupMembers1.add(inferenceGroupMemberA);
+        markerGoTermEvidence1.setInferredFrom(inferenceGroupMembers1);
+        assertFalse(markerGoTermEvidence1.sameInferences(inferenceGroupMembers2));
+
+
+        InferenceGroupMember inferenceGroupMemberB = new InferenceGroupMember();
+        inferenceGroupMemberB.setInferredFrom("cat");
+        inferenceGroupMembers2.add(inferenceGroupMemberB);
+        assertFalse(markerGoTermEvidence1.sameInferences(inferenceGroupMembers2));
+
+        inferenceGroupMemberB.setInferredFrom("dog");
+        assertTrue(markerGoTermEvidence1.sameInferences(inferenceGroupMembers2));
+    }
+
+}

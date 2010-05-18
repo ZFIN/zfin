@@ -340,8 +340,13 @@ public class InfrastructureRepositoryTest {
     }
 
     @Test
-    public void getMorpholinoEnvironmentAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getMorpholinoEnvironmentAttributions( "ZDB-MRPHLNO-041110-25" , "ZDB-PUB-090324-13") ;
+    public void getGenotypeExperimentRecordAttributions(){
+        RepositoryFactory.getInfrastructureRepository().getGenotypeExperimentRecordAttributions( "ZDB-GENO-000405-1" , "ZDB-PUB-090324-13") ;
+    }
+
+    @Test
+    public void getGenotypePhenotypeRecordAttributions(){
+        RepositoryFactory.getInfrastructureRepository().getGenotypePhenotypeRecordAttributions( "ZDB-GENO-000405-1" , "ZDB-PUB-090324-13") ;
     }
 }
 

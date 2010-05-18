@@ -258,6 +258,6 @@ public interface MutantRepository {
 
     int getZFINInferences(String zdbID, String zdbID1);
 
-    boolean markerGoTermEvidenceExists(MarkerGoTermEvidence markerGoTermEvidence);
+    int getNumberMarkerGoTermEvidences(MarkerGoTermEvidence markerGoTermEvidence);
 }
 

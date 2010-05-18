@@ -1,4 +1,4 @@
-package org.zfin.mutant;
+package org.zfin.mutant.repository;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,6 +16,8 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.*;
+import org.zfin.mutant.repository.HibernateMutantRepository;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.GoTerm;
@@ -26,13 +28,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.* ;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 @SuppressWarnings({"NonBooleanMethodNameMayNotStartWithQuestion"})
 public class MutantRepositoryTest {
+
+    private final static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
 
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -191,7 +193,7 @@ public class MutantRepositoryTest {
 
     @Test
     public void retrieveAllWildtypeGenotypes() {
-        MutantRepository mr = RepositoryFactory.getMutantRepository();
+        MutantRepository mr = mutantRepository;
         List<Genotype> terms = mr.getAllWildtypeGenotypes();
         assertNotNull(terms);
     }
@@ -216,24 +218,54 @@ public class MutantRepositoryTest {
 
     @Test
     public void getZFINInferences(){
-        RepositoryFactory.getMutantRepository().getZFINInferences( "ZDB-MRPHLNO-041110-25" , "ZDB-PUB-090324-13") ;
+        mutantRepository.getZFINInferences( "ZDB-MRPHLNO-041110-25" , "ZDB-PUB-090324-13") ;
     }
 
     @Test
     public void markerGoTermEvidenceExists(){
-        MarkerGoTermEvidence markerGoTermEvidence= (MarkerGoTermEvidence)
-                HibernateUtil.currentSession().get(MarkerGoTermEvidence.class,"ZDB-MRKRGOEV-100423-84020");
-        assertTrue(RepositoryFactory.getMutantRepository().markerGoTermEvidenceExists( markerGoTermEvidence )) ;
-        GoEvidenceCode oldEvidenceCode = markerGoTermEvidence.getEvidenceCode() ;
-        GoEvidenceCode ndEvidenceCode = new GoEvidenceCode();
-        ndEvidenceCode.setCode(GoEvidenceCodeEnum.ND.toString());
-        markerGoTermEvidence.setEvidenceCode(ndEvidenceCode);
-        assertFalse(RepositoryFactory.getMutantRepository().markerGoTermEvidenceExists( markerGoTermEvidence )) ;
-        markerGoTermEvidence.setEvidenceCode(oldEvidenceCode);
-        assertTrue(RepositoryFactory.getMutantRepository().markerGoTermEvidenceExists( markerGoTermEvidence )); ;
-        Set<InferenceGroupMember> inferenceGroupMemberSet = markerGoTermEvidence.getInferredFrom() ;
-        markerGoTermEvidence.setInferredFrom(new HashSet<InferenceGroupMember>());
-        assertFalse(RepositoryFactory.getMutantRepository().markerGoTermEvidenceExists( markerGoTermEvidence )); ;
+
+        try{
+            HibernateUtil.createTransaction();
+            MarkerGoTermEvidence markerGoTermEvidence= (MarkerGoTermEvidence)
+                    HibernateUtil.currentSession().get(MarkerGoTermEvidence.class,"ZDB-MRKRGOEV-100423-84020");
+            assertEquals(1,mutantRepository.getNumberMarkerGoTermEvidences( markerGoTermEvidence )); ;
+
+            MarkerGoTermEvidence newMarkerGoTermEvidence = new MarkerGoTermEvidence();
+            newMarkerGoTermEvidence.setEvidenceCode(markerGoTermEvidence.getEvidenceCode());
+            newMarkerGoTermEvidence.setFlag(markerGoTermEvidence.getFlag());
+            newMarkerGoTermEvidence.setSource(markerGoTermEvidence.getSource());
+            newMarkerGoTermEvidence.setMarker(markerGoTermEvidence.getMarker());
+            newMarkerGoTermEvidence.setGoTerm(markerGoTermEvidence.getGoTerm());
+            newMarkerGoTermEvidence.setInferredFrom(markerGoTermEvidence.getInferredFrom());
+
+            assertEquals(1,mutantRepository.getNumberMarkerGoTermEvidences( newMarkerGoTermEvidence)); ;
+
+            GoEvidenceCode ndEvidenceCode = new GoEvidenceCode();
+            ndEvidenceCode.setCode(GoEvidenceCodeEnum.ND.toString());
+            newMarkerGoTermEvidence.setEvidenceCode(ndEvidenceCode);
+            assertEquals(0,mutantRepository.getNumberMarkerGoTermEvidences( newMarkerGoTermEvidence)) ;
+
+            newMarkerGoTermEvidence.setEvidenceCode(markerGoTermEvidence.getEvidenceCode());
+            assertEquals(1,mutantRepository.getNumberMarkerGoTermEvidences( newMarkerGoTermEvidence));
+
+            // copy and change inferences to test
+            Set<InferenceGroupMember> newInferenceGroupMemberSet = new HashSet<InferenceGroupMember>() ;
+
+            newMarkerGoTermEvidence.setInferredFrom(newInferenceGroupMemberSet);
+            assertEquals(0,mutantRepository.getNumberMarkerGoTermEvidences( newMarkerGoTermEvidence ));
+
+            InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
+            inferenceGroupMember.setInferredFrom("some inference");
+            newInferenceGroupMemberSet.add(inferenceGroupMember);
+            newMarkerGoTermEvidence.setInferredFrom(newInferenceGroupMemberSet);
+            assertEquals(0,mutantRepository.getNumberMarkerGoTermEvidences( newMarkerGoTermEvidence ));
+
+            newMarkerGoTermEvidence.setInferredFrom(markerGoTermEvidence.getInferredFrom());
+            assertEquals(1,mutantRepository.getNumberMarkerGoTermEvidences( newMarkerGoTermEvidence ));
+        }
+        finally{
+            HibernateUtil.rollbackTransaction();
+        }
     }
 
 }

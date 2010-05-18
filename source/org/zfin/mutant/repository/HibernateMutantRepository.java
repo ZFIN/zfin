@@ -805,38 +805,58 @@ public class HibernateMutantRepository implements MutantRepository {
         );
     }
 
+    /**
+     * Uses an alternate key that also includes the "inferrence" field, as well, which makes things kind
+     * of tricky.
+     * @param markerGoTermEvidence Evidence to check against.
+     * @return True if the exact version exists for this alternate key.
+     */
+    @SuppressWarnings("unchecked")
     @Override
-    public boolean markerGoTermEvidenceExists(MarkerGoTermEvidence markerGoTermEvidence) {
-        return false ;
-//        String hql = " " +
-//                " select count(*) from MarkerGoTermEvidence ev " +
-//                " where ev.mrkrgoev_mrkr_zdb_id = :marker " +
-//                " and ev.mrkrgoev_zdb_id = inf.infgrmem_mrkrgoev_zdb_id " +
-//                " and ev.mrkrgoev_go_term_zdb_id = :goTerm " +
-//                " and ev.mrkrgoev_source_zdb_id = :publication " +
-//                " and ev.mrkrgoev_evidence_code = :evidenceCode " +
-//                " and ev.mrkrgoev_gflag_name = :flag "  ;
-////                " and ev.inferredFrom in (:inferences) " ;
-////                " " ;
-//        if(CollectionUtils.isNotEmpty(markerGoTermEvidence.getInferredFrom())){
-//            hql +=  " and inf.infgrmem_inferred_from in (:inferences) " ;
-//        }
-//        Query query = HibernateUtil.currentSession().createQuery(hql)
-//                .setParameter("marker",markerGoTermEvidence.getMarker())
-//                .setParameter("goTerm",markerGoTermEvidence.getGoTerm())
-//                .setParameter("publication",markerGoTermEvidence.getSource())
-//                .setString("evidenceCode",markerGoTermEvidence.getEvidenceCode().getCode())
-//                .setParameter("flag",markerGoTermEvidence.getFlag())
-//                ;
-//
-//        if(CollectionUtils.isNotEmpty(markerGoTermEvidence.getInferredFrom())){
-//            Set<String> inferenceStrings = new HashSet<String>() ;
-//
-//            query.setParameterList("inferences",markerGoTermEvidence.getInferredFrom()) ;
-//        }
-//
-//        return Integer.valueOf(query.uniqueResult().toString())>0;
+    public int getNumberMarkerGoTermEvidences(MarkerGoTermEvidence markerGoTermEvidence) {
+        String hql = " " +
+                " select ev from MarkerGoTermEvidence ev " +
+                " where ev.marker = :marker " +
+                " and ev.goTerm = :goTerm " +
+                " and ev.source = :publication " +
+                " and ev.evidenceCode = :evidenceCode " ;
+
+        if(markerGoTermEvidence.getFlag()!=null){
+            hql +=  " and ev.flag = :flag "  ;
+        }else{
+            hql +=  " and ev.flag is null "  ;
+        }
+
+        Query query = HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("marker",markerGoTermEvidence.getMarker())
+                .setParameter("goTerm",markerGoTermEvidence.getGoTerm())
+                .setParameter("publication",markerGoTermEvidence.getSource())
+                .setString("evidenceCode",markerGoTermEvidence.getEvidenceCode().getCode())
+                ;
+
+        if(markerGoTermEvidence.getFlag()!=null){
+            query.setParameter("flag",markerGoTermEvidence.getFlag());
+        }
+        List<MarkerGoTermEvidence> evidences = (List<MarkerGoTermEvidence>) query.list();
+
+        if(evidences==null || evidences.size()==0){
+            return 0 ;
+        }
+
+        int returnCount = 0 ;
+
+        // compare the inferences
+        // could use equals, but if an update has been flushed, the zdbIDs will be set, so can't use
+        // that comparison anymore.
+        for(MarkerGoTermEvidence evidence : evidences){
+            if(markerGoTermEvidence.sameInferences(evidence.getInferredFrom())) {
+                ++returnCount ;
+            }
+        }
+
+        return returnCount ;
     }
+
 
     public void invalidateCachedObjects() {
     }

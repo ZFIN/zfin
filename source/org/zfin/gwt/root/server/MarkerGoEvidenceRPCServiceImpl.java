@@ -113,11 +113,13 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
             mutantRepository.removeInferenceToGoMarkerTermEvidence(markerGoTermEvidence, inference);
         }
 
-        if(mutantRepository.markerGoTermEvidenceExists(markerGoTermEvidence)){
-            throw new DuplicateEntryException("Duplicate marker go evidence: \n" + markerGoTermEvidence.toString() ) ; 
-        }
 
-//        markerGoTermEvidence.setInferredFrom(goEvidenceDTO.getInferredFrom());
+        // already saved, sadly, so we just check to see that there is more than one.
+        // fogbugz 5656
+        if(mutantRepository.getNumberMarkerGoTermEvidences(markerGoTermEvidence)>1 ){
+            logger.warn("Duplicate marker go evidence attempted: "+ markerGoTermEvidence);
+            throw new DuplicateEntryException("Your edit will create a duplicate marker go evidence.") ;
+        }
 
         HibernateUtil.flushAndCommitCurrentSession();
         // do a safe return this way
@@ -332,9 +334,14 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
             infrastructureRepository.insertUpdatesTable(markerGoTermEvidence.getZdbID(), "MarkerGoTermEvidence", markerGoTermEvidence.toString(), "Created new MarkerGoTermEvidence record", person);
         }
         markerGoTermEvidence.setModifiedWhen(goEvidenceDTO.getModifiedDate());
-        if(mutantRepository.markerGoTermEvidenceExists(markerGoTermEvidence)){
-            throw new DuplicateEntryException("Duplicate marker go evidence: \n "+ markerGoTermEvidence) ;
+
+        // already saved, sadly, so we just check to see that there is more than one.
+        // fogbugz 5656
+        if(mutantRepository.getNumberMarkerGoTermEvidences(markerGoTermEvidence) >1){
+            logger.warn("Duplicate marker go evidence attempted: "+ markerGoTermEvidence);
+            throw new DuplicateEntryException("Duplicate marker go evidence attempted.") ;
         }
+
 
         HibernateUtil.flushAndCommitCurrentSession();
         // do a safe return this way

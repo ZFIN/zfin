@@ -2,16 +2,18 @@ package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-/**
+/** Note that NAS is only for display of existing evidence (case 5664).  
  */
 public enum GoEvidenceCodeEnum implements IsSerializable {
-    IDA, IPI, IGI, IMP, IEP, IC, ISS, IEA, ND;
+    IDA, IPI, IGI, IMP, IEP, IC, ISS, IEA, ND, NAS;
 
     public static final int CARDINALITY_ANY = -1;
 
 
     public InferenceCategory[] getInferenceCategories() {
         switch (this) {
+            case NAS: // has no inferences
+                return new InferenceCategory[]{};
             case IC:
                 return new InferenceCategory[]{InferenceCategory.GO};
             case IDA:
@@ -61,6 +63,8 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
 
     public int getInferenceCategoryCardinality() {
         switch (this) {
+            case NAS:
+                return 0;
             case IC:
                 return 1;
             case IDA:
@@ -95,13 +99,14 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
         } else if (pubZdbID.equals(GoCurationDefaultPublications.ROOT.zdbID())) {
             return new GoEvidenceCodeEnum[]{GoEvidenceCodeEnum.ND};
         } else {
-            GoEvidenceCodeEnum[] returnEvidences = new GoEvidenceCodeEnum[GoEvidenceCodeEnum.values().length - 2];
+            GoEvidenceCodeEnum[] returnEvidences = new GoEvidenceCodeEnum[GoEvidenceCodeEnum.values().length - 3];
             int counter = 0;
             // add all but the other two
             for (GoEvidenceCodeEnum goEvidenceCodeEnum : GoEvidenceCodeEnum.values()) {
                 switch (goEvidenceCodeEnum) {
                     case IEA:
                     case ND:
+                    case NAS:
                         break;
                     default:
                         returnEvidences[counter++] = goEvidenceCodeEnum;
