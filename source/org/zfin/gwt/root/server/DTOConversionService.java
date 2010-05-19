@@ -654,7 +654,7 @@ public class DTOConversionService {
         return null;
     }
 
-    public static TermInfo getTermInfoFromOntologyDTO(Term term, OntologyDTO ontology, boolean includeSynonyms) {
+    public static TermInfo getTermInfoFromOntologyDTO(Term term, OntologyDTO ontologyDTO, boolean includeSynonyms) {
         TermInfo info = new TermInfo();
         info.setID(term.getOboID());
         info.setName(term.getTermName());
@@ -663,7 +663,14 @@ public class DTOConversionService {
         }
         info.setDefinition(term.getDefinition());
         info.setComment(term.getComment());
-        info.setOntology(DTOConversionService.convertToOntologyDTO(term.getOntology()));
+
+        // try to use the terms ontology unless not provided
+        if(term.getOntology()==null){
+            info.setOntology(ontologyDTO) ; 
+        }
+        else{
+            info.setOntology(DTOConversionService.convertToOntologyDTO(term.getOntology()));
+        }
         info.setObsolete(term.isObsolete());
         return info;
     }
