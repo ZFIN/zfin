@@ -683,8 +683,9 @@ function openChild(childWinUrl,childWinName) {
       <?MIVAR name=$UserInput COND=$(XST,$structure_bool)>$UserInput&structure_bool=$structure_bool<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$include_substructures)>$UserInput&include_substructures=$include_substructures<?/MIVAR>
-      <?MIVAR name=UserInput COND=$(XST,$xpatsel_processed_selected_structures)>$UserInput&xpatsel_processed_selected_structures=$(URLENCODE,$xpatsel_processed_selected_structures)<?/MIVAR>
-      
+      <?MIVAR name=$UserInput COND=$(XST,$xpatsel_processed_selected_structures)>$UserInput&xpatsel_processed_selected_structures=$(URLENCODE,$xpatsel_processed_selected_structures)<?/MIVAR>
+      <?MIVAR name=$UserInput COND=$(XST,$xpatsel_processed_selected_structures_names)>$UserInput&xpatsel_processed_selected_structures_names=$(URLENCODE,$xpatsel_processed_selected_structures_names)<?/MIVAR>
+
     <?/MIBLOCK>
         
 	<script src="/javascript/ajax-lib/effects.js"   type="text/javascript"></script>
