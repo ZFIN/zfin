@@ -132,7 +132,7 @@
  <h3>Genomics</h3>
   <ul>
     <li>Browse genome:
-      <a href="<!--|GBROWSE_PATH_FROM_ROOT|-->">ZFIN</a>, 
+      <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->">ZFIN</a>, 
       <a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a>,
       <a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a>,<br>
       <a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</a>,
