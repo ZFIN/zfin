@@ -3365,7 +3365,6 @@ if($daily) {
 	$curatorFirstName =~ s/^\s+//;
 	featureAssociatedWithGenotype ($curatorEmail, $curatorId, $curatorFirstName);
     }
-    featureIsAlleleOfOrMrkrAbsent($mutantEmail);
     genotypesHaveNoNames($genoEmail);
     pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     linkageHasMembers($linkageEmail);
