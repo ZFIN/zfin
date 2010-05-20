@@ -100,7 +100,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         private void updateQualifiers(TermInfo result) {
             evidenceFlagBox.clear();
             evidenceFlagBox.addItem("NONE", "null");
-            if (result.getOntology() == OntologyDTO.GO_BP) {
+            if (result.getOntology() == OntologyDTO.GO_MF) {
                 evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
             }
             evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());
