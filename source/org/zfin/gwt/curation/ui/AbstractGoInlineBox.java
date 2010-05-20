@@ -179,7 +179,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
 
             evidenceFlagBox.clear();
             evidenceFlagBox.addItem("NONE", "null");
-            if (dto.getGoTerm() != null && dto.getGoTerm().getSubOntology().equals(GoTermDTO.BIOLOGICAL_PROCESS)) {
+            if (dto.getGoTerm() != null && dto.getGoTerm().getSubOntology().equals(GoTermDTO.MOLECULAR_FUNCTION)) {
                 evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
             }
             evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());

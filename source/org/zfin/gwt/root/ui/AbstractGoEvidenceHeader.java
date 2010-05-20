@@ -193,7 +193,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         evidenceFlagBox.addItem("NONE", "null");
         // contributes to only for molecular function
         if (dto.getGoTerm() != null) {
-            if (dto.getGoTerm().getSubOntology().equals(GoTermDTO.BIOLOGICAL_PROCESS)) {
+            if (dto.getGoTerm().getSubOntology().equals(GoTermDTO.MOLECULAR_FUNCTION)) {
                 evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
             }
         }
