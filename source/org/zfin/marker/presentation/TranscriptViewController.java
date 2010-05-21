@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
@@ -13,15 +14,13 @@ import org.zfin.sequence.TranscriptService;
 import org.zfin.sequence.Sequence;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.MountedWublastBlastService;
-import org.zfin.gbrowse.GBrowseFeature;
-import org.zfin.gbrowse.GBrowseService;
-import org.apache.commons.collections.map.MultiValueMap;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+
 
 /**
  */
@@ -74,13 +73,24 @@ public class TranscriptViewController extends AbstractCommandController {
             transcriptBean.setMicroRNARelatedTranscripts(TranscriptService.getRelatedTranscriptsForTranscript(transcript));
         } else {
             //build the collection of relatedTranscripts for each gene
+
+            String userAgent = request.getHeader("User-Agent");
+            boolean showGBrowse = true;
+            logger.debug("User-Agent: " + userAgent);
+            if (StringUtils.contains(userAgent,"Java") || StringUtils.contains(userAgent,"Indexer")) {
+                logger.debug("getting viewed by indexer, load less data");
+                showGBrowse = false;
+            }
+
             List<RelatedTranscriptDisplay> relatedTranscriptDisplayList = new ArrayList<RelatedTranscriptDisplay>();
 
             for (RelatedMarker relatedGene : transcriptBean.getRelatedGenes()) {
                 Marker gene = relatedGene.getMarker();
-                relatedTranscriptDisplayList.add(TranscriptService.getRelatedTranscriptsForGene(gene, transcript));
+                relatedTranscriptDisplayList.add(TranscriptService.getRelatedTranscriptsForGene(gene, transcript, showGBrowse));
             }
             transcriptBean.setRelatedTranscriptDisplayList(relatedTranscriptDisplayList);
+
+
         }
 
 

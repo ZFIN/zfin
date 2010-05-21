@@ -79,6 +79,10 @@ public class TranscriptService {
     }
 
     public static RelatedTranscriptDisplay getRelatedTranscriptsForGene(Marker gene, Transcript highlightedTranscript) {
+        return getRelatedTranscriptsForGene(gene, highlightedTranscript, true);
+    }
+
+    public static RelatedTranscriptDisplay getRelatedTranscriptsForGene(Marker gene, Transcript highlightedTranscript, boolean displayGBrowseImage) {
         RelatedTranscriptDisplay rtd = new RelatedTranscriptDisplay();
         rtd.setGene(gene);
         Set<RelatedMarker> relatedTranscripts = getRelatedTranscripts(gene);
@@ -90,14 +94,16 @@ public class TranscriptService {
             rtd.add(rm);
         }
 
-
-        try {
-            logger.debug("attempting to get GBrowseImage list");
-            rtd.setGbrowseImages(GBrowseService.getGBrowseTranscriptImages(gene, highlightedTranscript));
-        } catch (Exception e) {
-            logger.error("Couldn't get GBrowse Feature " + e.getMessage());
+        if (displayGBrowseImage ) {
+            try {
+                logger.debug("attempting to get GBrowseImage list");
+                rtd.setGbrowseImages(GBrowseService.getGBrowseTranscriptImages(gene, highlightedTranscript));
+            } catch (Exception e) {
+                logger.error("Couldn't get GBrowse Feature " + e.getMessage());
+            }
+        } else {
+            logger.debug("not even trying showing GBrowse image, probably because the indexer is asking for the page");
         }
-
         return rtd;
     }
 
