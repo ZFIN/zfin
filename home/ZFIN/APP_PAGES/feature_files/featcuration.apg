@@ -185,10 +185,11 @@ FILTER  section
     <?/MIVAR>
       <option value="">ALL</option>
       <?MISQL SQL="
-        select feature_zdb_id, feature_name
+        select distinct feature_zdb_id, feature_name, feature_abbrev_order
         from feature, record_attribution 
         where recattrib_data_zdb_id=feature_zdb_id
         and recattrib_source_zdb_id='$OID'
+        order by feature_abbrev_order
         ;">
         <option value="$1"
         $(IF,$(AND,$(XST,$featcur_feature_only),$(EC,$featcur_feature_only,$1)),SELECTED)>$2</option>
