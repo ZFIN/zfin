@@ -144,7 +144,7 @@ function new_GO(mrkrzdbid){
 
 
 <?MISQL SQL="
-       select term_ontology,term_name,mrkrgoev_evidence_code,gont_order,goterm_go_id,mrkrgoev_term_zdb_id,
+       select term_ontology,term_name,mrkrgoev_evidence_code,gont_order,term_ont_id,mrkrgoev_term_zdb_id,
 	      mrkrgoev_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_notes,mrkrgoev_gflag_name
 	 from term g, marker_go_term_evidence e, go_ontology o
 	where mrkrgoev_mrkr_zdb_id='$OID' 

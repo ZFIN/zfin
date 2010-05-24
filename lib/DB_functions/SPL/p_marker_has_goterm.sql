@@ -26,7 +26,7 @@ create procedure p_marker_has_goterm (vMrkrZdbId varchar(50),
 				where mrkrgoev_mrkr_zdb_id = vMrkrZdbId
 				and mrkrgoev_term_zdb_id = term_zdb_id
 				and term_ontology = vOntology
-				and goterm_go_id <> 'GO:0003674' 
+				and term_ont_id <> 'GO:0003674' 
 				) ;
 	
  		  if vCount > 0 then

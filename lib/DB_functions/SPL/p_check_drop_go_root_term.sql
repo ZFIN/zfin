@@ -19,20 +19,20 @@
 
 create procedure p_check_drop_go_root_term (
 		mrkrZdbId	like marker.mrkr_zdb_id,
-		gotermZdbId	like go_term.goterm_zdb_id
+		gotermZdbId	like term.term_zdb_id
 		)
 
 	define goRootTermZdbId	like go_term.goterm_zdb_id;
 
-	if (gotermZdbId not in ('ZDB-GOTERM-031121-2395','ZDB-GOTERM-031121-846','ZDB-GOTERM-031121-4370')) then
+	if (gotermZdbId not in ('ZDB-TERM-091209-6070','ZDB-TERM-091209-2432','ZDB-TERM-091209-4029')) then
 
 	    -- find out the root term's zdb id, which is in the same category
 	    select u.goterm_zdb_id
 	      into goRootTermZdbId
-	      from go_term u, go_term n
-	     where n.goterm_zdb_id = gotermZdbId
-               and u.goterm_ontology = n.goterm_ontology
-	       and u.goterm_go_id in ("0005575", "0003674", "0008150");
+	      from term u, term n
+	     where n.term_zdb_id = gotermZdbId
+               and u.term_ontology = n.term_ontology
+	       and u.term_ont_id in ("GO:0005575", "GO:0003674", "GO:0008150");
 
 	
 	    -- delete the root term annotation
