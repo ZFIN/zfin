@@ -9,7 +9,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.ExternalNote;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.expression.Figure;
@@ -26,6 +25,7 @@ import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
 import org.zfin.mutant.FeatureMarkerRelationship;
+import org.zfin.ontology.Term;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
 import org.zfin.people.Person;
@@ -1082,22 +1082,22 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures) {
+    public PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(Term aoTerm, PaginationBean pagination, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
         String hql = null;
         String hqlCount;
         if (includeSubstructures) {
             hqlCount = "select count(distinct stat.probe) " +
                     "     from HighQualityProbeAOStatistics stat " +
-                    "     where stat.superterm.zdbID = :aoterm ";
+                    "     where stat.superterm.ID = :aoterm ";
         } else {
             hqlCount = "select count(distinct stat.probe) " +
                     "     from HighQualityProbeAOStatistics stat " +
-                    "     where stat.superterm.zdbID = :aoterm and " +
-                    "           stat.subterm.zdbID = :aoterm ";
+                    "     where stat.superterm.ID = :aoterm and " +
+                    "           stat.subterm.ID = :aoterm ";
         }
         Query query = session.createQuery(hqlCount);
-        query.setParameter("aoterm", aoTerm.getZdbID());
+        query.setParameter("aoterm", aoTerm.getID());
         int totalCount = ((Number) query.uniqueResult()).intValue();
 
 
@@ -1118,7 +1118,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "           and fstat_type = :type" +
                 "     order by gene.mrkr_abbrev_order ";
         SQLQuery sqlQquery = session.createSQLQuery(sqlQueryStr);
-        sqlQquery.setString("aoterm", aoTerm.getZdbID());
+        sqlQquery.setString("aoterm", aoTerm.getID());
         sqlQquery.setString("type", "High-Quality-Probe");
         sqlQquery.setFirstResult(pagination.getFirstRecord() - 1);
         sqlQquery.setMaxResults(pagination.getMaxDisplayRecords());
@@ -1161,7 +1161,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "           and fstat_img_zdb_id = img.img_zdb_id " +
                 "     order by gene.mrkr_abbrev_order ";
         SQLQuery sqlAllQquery = session.createSQLQuery(sqlQueryAllStr);
-        sqlAllQquery.setString("aoterm", aoTerm.getZdbID());
+        sqlAllQquery.setString("aoterm", aoTerm.getID());
         sqlAllQquery.setString("type", "High-Quality-Probe");
         ScrollableResults scrollableResults = sqlAllQquery.scroll();
         if (pagination.getFirstRecord() == 1) {
@@ -1272,7 +1272,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Publication> getHighQualityProbePublications(AnatomyItem anatomyTerm) {
+    public List<Publication> getHighQualityProbePublications(Term anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql;
         hql = "select distinct stat.publication" +
@@ -1293,7 +1293,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param aoTerm anatom term
      * @param list   antibodyStatistics objects to be manipulated.
      */
-    private void populateProbeStatisticsRecord(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, AnatomyItem aoTerm) {
+    private void populateProbeStatisticsRecord(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, Term aoTerm) {
 
         if (record == null || record.getProbe() == null)
             return;
@@ -1341,7 +1341,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param aoTerm anatom term
      * @param list   antibodyStatistics objects to be manipulated.
      */
-    private void populateProbeStatisticsRecordOld(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, AnatomyItem aoTerm) {
+    private void populateProbeStatisticsRecordOld(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, Term aoTerm) {
 
         if (record == null || record.getProbe() == null)
             return;

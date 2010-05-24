@@ -3,9 +3,8 @@ create function get_entity_name_html ( entityZdbId varchar(50) )
   returning lvarchar;
 
   -- --------------------------------------------------------------------- 
-  -- Given the ZDB ID of an entity from anatomy_item or go_term, 
-  -- this returns the name of the entity and for anatomy, a link
-  -- to the anatomy page.
+  -- Given the ZDB ID of term, 
+  -- this returns the name of the entity and a link
 
   --
   -- INPUT VARS: 
@@ -16,7 +15,7 @@ create function get_entity_name_html ( entityZdbId varchar(50) )
   -- 
   -- RETURNS: 
   --   Name of entity with proper HTML formatting.
-  --   NULL if entityZdbId does not exist in anatomy_item or go_term tables.
+  --   NULL if entityZdbId does not exist the term table.
   --
   -- EFFECTS:
   --   None
@@ -24,29 +23,44 @@ create function get_entity_name_html ( entityZdbId varchar(50) )
 
   define entityNameHtml lvarchar;
   define entityName lvarchar; 
-  define objType like zdb_object_type.zobjtype_name;
-  define objUrl like foreign_db.fdb_db_query;
-  define goId like go_term.goterm_go_id;
+  define entityOntologyId lvarchar;
+  define entityOntologyName lvarchar;
+  define goUrl lvarchar;
 
-  let entityName = get_obj_name(entityZdbId);
   let entityNameHtml = NULL;
-  let objType = get_obj_type(entityZdbId);
 
-  let entityNameHtml = entityName;
+  select term_name into entityName
+  from term
+  where term_zdb_id = entityZdbId;
 
-  if (objType = "ANAT") then
-    let entityNameHtml = '<a href="/action/anatomy/term-detail?anatomyItem.zdbID=' || entityZdbId || '">' || entityName || '</a>';
+  select term_ont_id into entityOntologyId
+  from term
+  where term_zdb_id = entityZdbId;
 
-  elif (objType = "GOTERM") then
-    
-    select fdb_db_query into objUrl 
-    from foreign_db 
-    where fdb_db_name = 'QuickGO';
+  select term_ontology into entityOntologyName
+  from term
+  where term_zdb_id = entityZdbId;
 
-    select goterm_go_id into goId from go_term where goterm_zdb_id = entityZdbId;
+  if (entityOntologyName = "zebrafish_anatomy") then
 
-    let entityNameHtml = '<a href="' || objUrl || goId || '">' || entityName || '</a>';
+     let entityNameHtml = '<a href=/action/anatomy/term-detail?id=' || entityOntologyId || '>' || entityName || '</a>';
 
+  elif (   (entityOntologyName = "biological_process")
+        or (entityOntologyName = "cellular_component")
+        or (entityOntologyName = "molecular_function") ) then
+
+--    select fdb_db_query into goUrl 
+--    from foreign_db 
+--    where fdb_db_name = 'QuickGO';
+
+--  selecting from the database gives urls like GO:GO:0000  hardcode for now..
+
+    let goUrl = "http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=";
+
+    let entityNameHtml = '<a href=' || goUrl || entityOntologyId || '>' || entityName || '</a>';
+
+  else
+     let entityNameHtml = entityName;
   end if
 
   return entityNameHtml;

@@ -10,6 +10,9 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,17 +34,17 @@ public class HighQualityProbesController extends AbstractCommandController {
         AnatomySearchBean anatomyForm = (AnatomySearchBean) command;
 
         HighQualityProbesController.LOG.info("Start High Quality Probes Controller");
-        AnatomyItem anatomyTerm = ar.getAnatomyTermByID(anatomyForm.getAnatomyItem().getZdbID());
-        if (anatomyTerm == null)
+        Term term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, anatomyForm.getAnatomyItem().getZdbID());
+        if (term == null)
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, anatomyForm.getAnatomyItem().getZdbID());
 
-        anatomyForm.setAnatomyItem(anatomyTerm);
+        anatomyForm.setAoTerm(term);
 
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         anatomyForm.setQueryString(request.getQueryString());
         anatomyForm.setRequestUrl(request.getRequestURL());
 
-        PaginationResult<HighQualityProbe> hqp = markerRepository.getHighQualityProbeStatistics(anatomyTerm, anatomyForm, false);
+        PaginationResult<HighQualityProbe> hqp = markerRepository.getHighQualityProbeStatistics(term, anatomyForm, false);
         anatomyForm.setHighQualityProbeGenes(hqp.getPopulatedResults());
         anatomyForm.setNumberOfHighQualityProbes(hqp.getTotalCount());
         anatomyForm.setTotalRecords(hqp.getTotalCount());

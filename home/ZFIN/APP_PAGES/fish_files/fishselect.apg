@@ -113,9 +113,9 @@ function doValidateAndSubmit(currentTime ){
   <?MIBLOCK COND="$(OR,$(XST,$fsel_cnstrct_id),$(XST,$fsel_allele_id),$(XST,$fsel_marker_id))">
     <?MIVAR NAME=query_results>f<?/MIVAR>
   <?MIELSE COND="$(XST,$fsel_anatomy_item_id)">  
-    <?MISQL SQL="select anatitem_name from anatomy_item 
-       	          where anatitem_zdb_id = '$fsel_anatomy_item_id';">
-      <?MIVAR NAME=TA_selected_structures>$1<?/MIVAR>        
+    <?MISQL SQL="select term_name, lower(term_name) from term
+       	          where term_zdb_id = '$fsel_anatomy_item_id';">
+      <?MIVAR NAME=TA_selected_structures>$1<?/MIVAR>
       <?MIVAR NAME=fsel_processed_selected_structures>$1<?/MIVAR>        
     <?/MISQL>  
     <?MIBLOCK COND="$(XST,$fsel_anatomy_include)">
@@ -428,37 +428,37 @@ function doValidateAndSubmit(currentTime ){
        <?MIBLOCK COND="$(EC,$fselFilterValue,moExcluded)">
          <?MISQL SQL="
 	insert into $fishselect_temp_on_anat_junior(junior_g_zdb_id, junior_anat_zdb_id)
-	     select gffs_geno_zdb_id, allanatcon_container_zdb_id
-	       from genotype_figure_fast_search, all_anatomy_contains
+	     select gffs_geno_zdb_id, alltermcon_container_zdb_id
+	       from genotype_figure_fast_search, all_term_contains
               where gffs_morph_zdb_id is null
-                and gffs_superterm_zdb_id = allanatcon_contained_zdb_id
-                and allanatcon_container_zdb_id in ($anatIDs);">
+                and gffs_superterm_zdb_id = alltermcon_contained_zdb_id
+                and alltermcon_container_zdb_id in ($anatIDs);">
          <?/MISQL>
        
          <?MISQL SQL="
 	insert into $fishselect_temp_on_anat_junior(junior_g_zdb_id, junior_anat_zdb_id)
-	     select gffs_geno_zdb_id, allanatcon_container_zdb_id
-	       from genotype_figure_fast_search, all_anatomy_contains
+	     select gffs_geno_zdb_id, alltermcon_container_zdb_id
+	       from genotype_figure_fast_search, all_term_contains
               where gffs_morph_zdb_id is null
-                and gffs_subterm_zdb_id = allanatcon_contained_zdb_id
-                and allanatcon_container_zdb_id in ($anatIDs);">
+                and gffs_subterm_zdb_id = alltermcon_contained_zdb_id
+                and alltermcon_container_zdb_id in ($anatIDs);">
          <?/MISQL>    
          
       <?MIELSE>
          <?MISQL SQL="
 	insert into $fishselect_temp_on_anat_junior(junior_g_zdb_id, junior_anat_zdb_id)
-	     select gffs_geno_zdb_id, allanatcon_container_zdb_id
-	       from genotype_figure_fast_search, all_anatomy_contains
-              where gffs_superterm_zdb_id = allanatcon_contained_zdb_id
-                and allanatcon_container_zdb_id in ($anatIDs);">
+	     select gffs_geno_zdb_id, alltermcon_container_zdb_id
+	       from genotype_figure_fast_search, all_term_contains
+              where gffs_superterm_zdb_id = alltermcon_contained_zdb_id
+                and alltermcon_container_zdb_id in ($anatIDs);">
          <?/MISQL>
        
          <?MISQL SQL="
 	insert into $fishselect_temp_on_anat_junior(junior_g_zdb_id, junior_anat_zdb_id)
-	     select gffs_geno_zdb_id, allanatcon_container_zdb_id
-	       from genotype_figure_fast_search, all_anatomy_contains
-              where gffs_subterm_zdb_id = allanatcon_contained_zdb_id
-                and allanatcon_container_zdb_id in ($anatIDs);">
+	     select gffs_geno_zdb_id, alltermcon_container_zdb_id
+	       from genotype_figure_fast_search, all_term_contains
+              where gffs_subterm_zdb_id = alltermcon_contained_zdb_id
+                and alltermcon_container_zdb_id in ($anatIDs);">
          <?/MISQL> 
       <?/MIBLOCK>
     
@@ -1366,76 +1366,44 @@ function doValidateAndSubmit(currentTime ){
         <?MIVAR NAME=fsel_anat_list><?/MIVAR>
 
         <?MIBLOCK COND="$(EQ,$isWT,t)">
-          <?MIVAR NAME=fsel_pheno_entity_sql1>select distinct anatitem_name, anatitem_name_order 
-				                from anatomy_item, genotype_figure_fast_search, marker_relationship
+          <?MIVAR NAME=fsel_pheno_entity_sql1>select distinct term_name, lower(term_name)
+				                from term, genotype_figure_fast_search, marker_relationship
 				               where gffs_geno_zdb_id = '$genotypeid'
-				                 and anatitem_zdb_id = gffs_superterm_zdb_id 
+				                 and term_zdb_id = gffs_superterm_zdb_id
 				                 and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
                                                  and mrel_mrkr_2_zdb_id = '$matchedTargetGene'
           <?/MIVAR>
           
-          <?MIVAR NAME=fsel_pheno_entity_sql2>select distinct anatitem_name, anatitem_name_order 
-				                from anatomy_item, genotype_figure_fast_search, marker_relationship
+          <?MIVAR NAME=fsel_pheno_entity_sql2>select distinct term_name, lower(term_name)
+				                from term, genotype_figure_fast_search, marker_relationship
 				               where gffs_geno_zdb_id = '$genotypeid'
-				                 and anatitem_zdb_id = gffs_subterm_zdb_id 
+				                 and term_zdb_id = gffs_subterm_zdb_id
 				                 and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
                                                  and mrel_mrkr_2_zdb_id = '$matchedTargetGene'
           <?/MIVAR>
-          
-          <?MIVAR NAME=fsel_pheno_entity_sql3>select distinct goterm_name, lower(goterm_name) 
-				                from go_term, genotype_figure_fast_search, marker_relationship
-				               where gffs_geno_zdb_id = '$genotypeid'
-				                 and goterm_zdb_id = gffs_superterm_zdb_id 
-				                 and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
-                                                 and mrel_mrkr_2_zdb_id = '$matchedTargetGene'
-          <?/MIVAR>    
-
-          <?MIVAR NAME=fsel_pheno_entity_sql4>select distinct goterm_name, lower(goterm_name) 
-				                from go_term, genotype_figure_fast_search, marker_relationship
-				               where gffs_geno_zdb_id = '$genotypeid'
-				                 and goterm_zdb_id = gffs_subterm_zdb_id 
-				                 and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
-                                                 and mrel_mrkr_2_zdb_id = '$matchedTargetGene'
-          <?/MIVAR>            
           
         <?MIELSE>
-          <?MIVAR NAME=fsel_pheno_entity_sql1>select distinct anatitem_name, anatitem_name_order 
-                                                from anatomy_item, genotype_figure_fast_search 
+          <?MIVAR NAME=fsel_pheno_entity_sql1>select distinct term_name, lower(term_name)
+                                                from term, genotype_figure_fast_search
                                                where gffs_geno_zdb_id = '$genotypeid'
-                                                 and anatitem_zdb_id = gffs_superterm_zdb_id 
+                                                 and term_zdb_id = gffs_superterm_zdb_id
           <?/MIVAR>
 
-          <?MIVAR NAME=fsel_pheno_entity_sql2>select distinct anatitem_name, anatitem_name_order 
-                                                from anatomy_item, genotype_figure_fast_search 
+          <?MIVAR NAME=fsel_pheno_entity_sql2>select distinct term_name, lower(term_name)
+                                                from term, genotype_figure_fast_search
                                                where gffs_geno_zdb_id = '$genotypeid'
-                                                 and anatitem_zdb_id = gffs_subterm_zdb_id 
+                                                 and term_zdb_id = gffs_subterm_zdb_id
           <?/MIVAR>
 
-          <?MIVAR NAME=fsel_pheno_entity_sql3>select distinct goterm_name, lower(goterm_name) 
-				                from go_term, genotype_figure_fast_search
-				               where gffs_geno_zdb_id = '$genotypeid'
-				                 and goterm_zdb_id = gffs_superterm_zdb_id
-          <?/MIVAR>   
-          
-          <?MIVAR NAME=fsel_pheno_entity_sql4>select distinct goterm_name, lower(goterm_name) 
-				                from go_term, genotype_figure_fast_search
-				               where gffs_geno_zdb_id = '$genotypeid'
-				                 and goterm_zdb_id = gffs_subterm_zdb_id
-          <?/MIVAR>           
-          
           <?MIBLOCK COND="$(OR,$(EC,$fselFilterValue,moOnly),$(EC,$fselFilterValue,moWTandReporterOnly))">
             <?MIVAR>$(SETVAR,$fsel_pheno_entity_sql1,$(CONCAT,$fsel_pheno_entity_sql1,and gffs_morph_zdb_id is not null))<?/MIVAR>          
             <?MIVAR>$(SETVAR,$fsel_pheno_entity_sql2,$(CONCAT,$fsel_pheno_entity_sql2,and gffs_morph_zdb_id is not null))<?/MIVAR>
-            <?MIVAR>$(SETVAR,$fsel_pheno_entity_sql3,$(CONCAT,$fsel_pheno_entity_sql3,and gffs_morph_zdb_id is not null))<?/MIVAR>          
-            <?MIVAR>$(SETVAR,$fsel_pheno_entity_sql4,$(CONCAT,$fsel_pheno_entity_sql4,and gffs_morph_zdb_id is not null))<?/MIVAR>
-          <?/MIBLOCK> 
+          <?/MIBLOCK>
         <?/MIBLOCK>       
 
         <?MISQL SQL="$fsel_pheno_entity_sql1 
                       UNION $fsel_pheno_entity_sql2
-                      UNION $fsel_pheno_entity_sql3
-                      UNION $fsel_pheno_entity_sql4
-                      order by 2;">  
+                      order by lower(term_name);">
           <?MIVAR>$(SETVAR,$fsel_anat_list[$MI_CURRENTROW],$1)<?/MIVAR>
         <?/MISQL> 
         <?MIVAR NAME=fsel_separate_anat_list SEPARATE=", ">$fsel_anat_list<?/MIVAR>
@@ -1924,7 +1892,8 @@ return false ; ">
         type: "GDAG_TERM_LOOKUP",
         width: 40, 
         wildcard: false,
-        useTermTable: true
+        useTermTable: true,
+        showTermDetail: false
     };
 </script>
 

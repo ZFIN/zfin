@@ -144,9 +144,9 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
             public void onClick(ClickEvent event) {
                 TermInfo termInfo = termInfoComposite.getCurrentTermInfo() ;
                 if(termInfo!=null){
-                    MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(termInfo.getName(), new MarkerEditCallBack<GoTermDTO>("Failed to retrieve GO value") {
+                    MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(termInfo.getName(), new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value") {
                         @Override
-                        public void onSuccess(GoTermDTO result) {
+                        public void onSuccess(TermDTO result) {
                             temporaryGoTermDTO = result;
                             GoEvidenceDTO goEvidenceDTO = dto.deepCopy();
                             goEvidenceDTO.setGoTerm(temporaryGoTermDTO);
@@ -179,7 +179,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
 
             evidenceFlagBox.clear();
             evidenceFlagBox.addItem("NONE", "null");
-            if (dto.getGoTerm() != null && dto.getGoTerm().getSubOntology().equals(GoTermDTO.MOLECULAR_FUNCTION)) {
+            if (dto.getGoTerm() != null && dto.getGoTerm().getOntology().equals(OntologyDTO.GO_MF)) {
                 evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
             }
             evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());

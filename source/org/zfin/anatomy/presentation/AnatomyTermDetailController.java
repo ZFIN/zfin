@@ -1,5 +1,6 @@
 package org.zfin.anatomy.presentation;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,9 +14,13 @@ import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.Term;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -51,7 +56,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
             form.getSectionVisibility().setSectionData(AnatomySearchBean.Section.ANATOMY_EXPRESSION, true);
         } else {
             // check if there are any data in this section.
-            boolean hasData = hasExpressionData(term);
+            boolean hasData = hasExpressionData(form.getAoTerm());
             form.getSectionVisibility().setSectionData(AnatomySearchBean.Section.ANATOMY_EXPRESSION, hasData);
         }
         if (form.getSectionVisibility().isVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE)) {
@@ -67,8 +72,8 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         return modelAndView;
     }
 
-    private boolean hasExpressionData(AnatomyItem anatomyTerm) {
-        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getZdbID());
+    private boolean hasExpressionData(Term anatomyTerm) {
+        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getID());
         if (statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0)
             return true;
         // check for antibody records including substructures
@@ -86,9 +91,9 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         return false;
     }
 
-    private boolean hasPhenotypeData(AnatomyItem anatomyTerm) {
-        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(anatomyTerm.getZdbID());
-        if (statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0)
+    private boolean hasPhenotypeData(Term anatomyTerm) {
+        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(anatomyTerm.getID());
+        if (statistics != null && (statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0))
             return true;
 
         // check for wild type MOs
@@ -103,12 +108,37 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         return morphs != null && morphs.getTotalCount() > 0;
     }
 
-    private AnatomyItem retrieveAnatomyTermData(AnatomySearchBean form) {
-        AnatomyItem ai;
+    protected AnatomyItem retrieveAnatomyTermData(AnatomySearchBean form) {
+        AnatomyItem ai = null;
         try {
-            ai = anatomyRepository.getAnatomyTermByID(form.getAnatomyItem().getZdbID());
+            String aoTermID = form.getAnatomyItem().getZdbID();
+            Term term = null;
+            if (aoTermID != null) {
+                if (aoTermID.contains(ActiveData.Type.TERM.name())){
+                    term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, aoTermID);
+                    ai = anatomyRepository.getAnatomyTermByOboID(term.getOboID());
+                }else
+                    ai = anatomyRepository.getAnatomyTermByID(aoTermID);
+                form.setAnatomyItem(ai);
+                // ToDo: This should make the above retrieval of the term from the anatomy_item table superfluous.
+                // For now we still use it to serve this page.
+                term = RepositoryFactory.getOntologyRepository().getTermByOboID(ai.getOboID());
+            } else {
+                String id = form.getId();
+                if (StringUtils.isEmpty(id))
+                    return null;
+                if (id.contains(ActiveData.Type.TERM.name())) {
+                    term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, id);
+                } else if (id.startsWith("ZFA")) {
+                    term = RepositoryFactory.getOntologyRepository().getTermByOboID(id);
+                }
+                if (term != null)
+                    ai = anatomyRepository.getAnatomyTermByOboID(term.getOboID());
+            }
+            form.setAoTerm(term);
         }
-        catch (Exception e) {
+        catch (Exception
+                e) {
             LOG.error("failed to get anatomy term from form[" + form + "]");
             LOG.error("anatomyItem[" + form.getAnatomyItem() + "]");
             LOG.error("zdbID[" + form.getAnatomyItem().getZdbID() + "]");

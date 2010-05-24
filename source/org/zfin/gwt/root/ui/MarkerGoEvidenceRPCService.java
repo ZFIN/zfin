@@ -5,9 +5,9 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.dto.GoTermDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.dto.TermDTO;
 
 import java.util.List;
 import java.util.Set;
@@ -48,7 +48,7 @@ public interface MarkerGoEvidenceRPCService extends RemoteService {
 
     void deleteMarkerGoTermEvidence(String zdbID);
 
-    GoTermDTO getGOTermByName(String value);
+    TermDTO getGOTermByName(String value);
 
     List<GoEvidenceDTO> getMarkerGoTermEvidencesForPub(String publicationID);
 

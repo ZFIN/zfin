@@ -41,9 +41,9 @@ used URLENCODE
       <?MIVAR NAME=return_info>&evidence_code=$evidence_code&pub_id=$pub_id&inf_db=$inf_db&inf_mem=$inf_mem&notes=$notes<?/MIVAR>
       <?MIVAR NAME=goterm_id>$(SUBSTR,$value,4)<?/MIVAR>
 
-      <?MISQL SQL="select goterm_name, goterm_is_obsolete, goterm_is_secondary
-		     from go_term
-		    where goterm_go_id = '$goterm_id' ">
+      <?MISQL SQL="select term_name, term_is_obsolete, term_is_secondary
+		     from term
+		    where term_ont_id = '$goterm_id' ">
       <?/MISQL>
       <?MIVAR NAME=$goterm_name>$1<?/MIVAR>
       <?MIVAR NAME=$is_obsolete>$2<?/MIVAR>    	
@@ -84,17 +84,17 @@ used URLENCODE
 		  -----------------------------------------------------------------------
       <?/MICOMMENT> 
       <?MIBLOCK COND="$(OR,$(EC,$goterm_id,0005575),$(EC,$goterm_id,0003674),$(EC,$goterm_id,0008150))">
-        <?MIVAR COND="$(EC,$goterm_id,0003674)" NAME=$ontology>Molecular Function<?/MIVAR>
-        <?MIVAR COND="$(EC,$goterm_id,0008150)" NAME=$ontology>Biological Process<?/MIVAR>
-        <?MIVAR COND="$(EC,$goterm_id,0005575)" NAME=$ontology>Cellular Component<?/MIVAR>
+        <?MIVAR COND="$(EC,$goterm_id,0003674)" NAME=$ontology>molecular_function<?/MIVAR>
+        <?MIVAR COND="$(EC,$goterm_id,0008150)" NAME=$ontology>biological_process<?/MIVAR>
+        <?MIVAR COND="$(EC,$goterm_id,0005575)" NAME=$ontology>cellular_component<?/MIVAR>
      
         <?MISQL SQL="
 		select mrkrgoev_zdb_id
-                  from marker_go_term_evidence, go_term
+                  from marker_go_term_evidence, term
                  where mrkrgoev_mrkr_zdb_id = '$return_id'
-                   and mrkrgoev_go_term_zdb_id = goterm_zdb_id
-		   and goterm_go_id <>'$goterm_id'
- 		   and goterm_ontology = '$ontology' ;">
+                   and mrkrgoev_term_zdb_id = term_zdb_id
+		   and term_ont_id <>'$goterm_id'
+ 		   and term_ontology = '$ontology' ;">
         <?/MISQL>
         <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 	    <script>
@@ -174,17 +174,17 @@ used URLENCODE
      	     <?MIVAR NAME=$go_num>$(SUBSTR,$inferred,4)<?/MIVAR>
 	     <?MIBLOCK COND="$(NC,$go_num,)">
      	       <?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="
-		  select * from marker_go_term_evidence, go_term 
+		  select * from marker_go_term_evidence, term
 			 where mrkrgoev_mrkr_zdb_id='$OID'
-			   and mrkrgoev_go_term_zdb_id = goterm_zdb_id 
-			   and goterm_go_id  = '$go_num' ">
+			   and mrkrgoev_term_zdb_id = term_zdb_id
+			   and term_go_id  = '$go_num' ">
     	       <?/MISQL>
     	       <?MISQL COND="$(>,$(POSITION,$OID,MRKRGOEV),0)" SQL="
-		  select * from marker_go_term_evidence a, marker_go_term_evidence b, go_term 
+		  select * from marker_go_term_evidence a, marker_go_term_evidence b, term
 			 where a.mrkrgoev_zdb_id='$OID'
 			   and a.mrkrgoev_mrkr_zdb_id = b.mrkrgoev_mrkr_zdb_id
-			   and b.mrkrgoev_go_term_zdb_id = goterm_zdb_id
-			   and goterm_go_id  = '$go_num' ">
+			   and b.mrkrgoev_term_zdb_id = term_zdb_id
+			   and term_ont_id  = '$go_num' ">
     	       <?/MISQL>
 
      	       <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">

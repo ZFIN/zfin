@@ -16,6 +16,8 @@ import org.zfin.expression.*;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -387,10 +389,10 @@ public class MergeMarkerDBTest {
      else
      if EEa matches as expression_experiment B on antibody B (EEb): then
      for all expression_results in EEa: ERa
-     if ERa not contained in expresion_results on EEb (ERb): then
+     if ERa not contained in expression_results on EEb (ERb): then
      update ERa to point to EEb
      else
-     for all expresion_result_figures in ERa: ERFa
+     for all expression_result_figures in ERa: ERFa
      if ERFa not contained in expression_results_figure on ERb (ERFb): then
      update ERFa to point to ERb
      else
@@ -436,8 +438,12 @@ public class MergeMarkerDBTest {
 
             AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository() ;
 
-            AnatomyItem anatomy1 = anatomyRepository.getAnatomyItem("pelvic fin") ;
-            AnatomyItem anatomy2 = anatomyRepository.getAnatomyItem("retina") ;
+            Term anatomy1 = new GenericTerm();
+            anatomy1.setID("ZDB-TERM-100331-1144");
+            anatomy1.setTermName("pelvic fin");
+            Term anatomy2 = new GenericTerm();
+            anatomy2.setID("ZDB-TERM-100331-141");
+            anatomy2.setTermName("pelvic fin");
 
             DevelopmentStage stage1 = anatomyRepository.getStageByID("ZDB-STAGE-010723-11") ;
             DevelopmentStage stage2 = anatomyRepository.getStageByID("ZDB-STAGE-010723-39") ;
@@ -473,7 +479,7 @@ public class MergeMarkerDBTest {
             ExpressionResult era1 = new ExpressionResult() ;
 //            era1.setZdbID("era1");
             era1.setExpressionExperiment(eea2);
-            era1.setAnatomyTerm(anatomy1);
+            era1.setSuperterm(anatomy1);
             era1.setEndStage(stage1);
             era1.setStartStage(stage1);
             era1.setExpressionFound(false);
@@ -483,7 +489,7 @@ public class MergeMarkerDBTest {
             ExpressionResult era2 = new ExpressionResult() ;
 //            era2.setZdbID("ermatchesZdbID");
             era2.setExpressionExperiment(eea2);
-            era2.setAnatomyTerm(anatomy2);
+            era2.setSuperterm(anatomy2);
             era2.setEndStage(stage2);
             era2.setStartStage(stage2);
             era2.setExpressionFound(true);
@@ -533,7 +539,7 @@ public class MergeMarkerDBTest {
             ExpressionResult erb1 = new ExpressionResult() ;
 //            erb1.setZdbID("erb1");
             erb1.setExpressionExperiment(eeb2);
-            erb1.setAnatomyTerm(anatomy1); // THIS IS NOW DIFFERENT
+            erb1.setSuperterm(anatomy1); // THIS IS NOW DIFFERENT
             erb1.setEndStage(stage2);
             erb1.setStartStage(stage2);
             erb1.setExpressionFound(true);
@@ -543,7 +549,7 @@ public class MergeMarkerDBTest {
             ExpressionResult erb2 = new ExpressionResult() ;
 //            erb2.setZdbID("ermatchesZdbID");
             erb2.setExpressionExperiment(eeb2);
-            erb2.setAnatomyTerm(anatomy2);
+            erb2.setSuperterm(anatomy2);
             erb2.setEndStage(stage2);
             erb2.setStartStage(stage2);
             erb2.setExpressionFound(true);

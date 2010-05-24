@@ -1,8 +1,9 @@
 package org.zfin.ontology;
 
-import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.NumberAwareStringComparator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,16 +11,13 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * ToDo: ADD DOCUMENTATION!
+ * Basic implementation of the Term interface.
  */
 public class GenericTerm implements Term, Serializable {
 
-    public static final String QUALITY = "quality";
-    
     private String ID;
     private String termName;
     private String oboID;
-    private String ontologyName;
     private Ontology ontology;
     private boolean obsolete;
     private boolean root;
@@ -31,6 +29,10 @@ public class GenericTerm implements Term, Serializable {
     // attribute that is populated lazily
     private List<TermRelationship> relationships;
     private List<Term> children;
+    // These attributes are set during object creation through a service.
+    // they are currently not mapped.
+    private DevelopmentStage start;
+    private DevelopmentStage end;
 
     public String getID() {
         return ID;
@@ -133,19 +135,57 @@ public class GenericTerm implements Term, Serializable {
     }
 
     @Override
+    public DevelopmentStage getStart() {
+        return start;
+    }
+
+    @Override
+    public void setStart(DevelopmentStage stage) {
+        this.start = stage;
+    }
+
+    @Override
+    public DevelopmentStage getEnd() {
+        return end;
+    }
+
+    @Override
+    public void setEnd(DevelopmentStage stage) {
+        this.end = stage;
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
 
         GenericTerm genericTerm = (GenericTerm) o;
 
-        if (termName != null ? !termName.equals(genericTerm.termName) : genericTerm.termName != null) return false;
+        if (ID != null &&  genericTerm.ID != null) {
+            return ID.equals(genericTerm.ID) ;
+        }
+        if (termName != null ? !termName.equals(genericTerm.getTermName()) : genericTerm.getTermName() != null)
+            return false;
+        if (oboID != null ? !oboID.equals(genericTerm.oboID) : genericTerm.oboID != null) 
+            return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return termName != null ? termName.hashCode() : 0;
+        int result = ID != null ? ID.hashCode() : 0;
+        result = 31 * result + (termName != null ? termName.hashCode() : 0);
+        result = 31 * result + (oboID != null ? oboID.hashCode() : 0);
+        return result;
+    }
+
+    public int compareTo(Term compTerm) {
+        if (compTerm == null)
+            return -1;
+        NumberAwareStringComparator comparator = new NumberAwareStringComparator();
+        return comparator.compare(termName, compTerm.getTermName());
     }
 }

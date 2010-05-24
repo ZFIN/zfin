@@ -95,7 +95,14 @@ public enum OntologyDTO implements IsSerializable {
         public OntologyDTO getAssociatedQualityOntology(){
             return null;
         }
-    };
+    },
+    STAGE(14, "stages", "zebrafish_stages"){
+        @Override
+        public OntologyDTO getAssociatedQualityOntology(){
+            return null;
+        }
+    }
+    ;
 
     private int index;
     private String displayName;
@@ -149,25 +156,6 @@ public enum OntologyDTO implements IsSerializable {
         if (name.equals(GO_MF))
             return true;
         return false;
-    }
-
-    /**
-     * Convenience method to convert the GO_TERM table ontology name into TERM table ontology
-     *
-     * @param subOntologyName sub ontology name
-     * @return Ontology 
-     */
-    public static OntologyDTO getOntologyByGoDescriptor(String subOntologyName) {
-        if (subOntologyName == null)
-            return null;
-
-        if (subOntologyName.equals("Molecular Function"))
-            return GO_MF;
-        if (subOntologyName.equals("Cellular Component"))
-            return GO_CC;
-        if (subOntologyName.equals("Biological Process"))
-            return GO_BP;
-        return null;
     }
 
     public abstract OntologyDTO getAssociatedQualityOntology();

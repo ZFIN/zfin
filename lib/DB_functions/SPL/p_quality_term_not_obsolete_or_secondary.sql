@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------
 --This procedure checks on insert or update of pato_terms in atomic_phenotype
---that the pato_term in the go_term table is not obsolete.
+--that the pato_term in the term table is not obsolete.
 --Obsolete pato terms should not be assigned to valid markers.
 --Terms are declared 'obsolete' by the pato_ontology consortium.
 -------------------------------------------------------------------------

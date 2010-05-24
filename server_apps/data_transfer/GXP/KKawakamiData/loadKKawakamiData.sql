@@ -359,7 +359,7 @@ select  prexpatex_zdb_id,
 
 create table pre_xpatres (
         pre_xpatres_xpatex_zdb_id varchar(50) not null,
-        pre_xpatres_anat_item_zdb_id varchar(50) not null,
+        pre_xpatres_superterm_zdb_id varchar(50) not null,
         pre_xpatres_start_stg_zdb_id varchar(50) not null,
         pre_xpatres_end_stg_zdb_id varchar(50) not null,
         pre_xpatres_expression_found boolean not null        
@@ -369,7 +369,7 @@ create table pre_xpatres (
 -- load pre_xpatres table
 insert into pre_xpatres (
     pre_xpatres_xpatex_zdb_id,
-    pre_xpatres_anat_item_zdb_id,
+    pre_xpatres_superterm_zdb_id,
     pre_xpatres_start_stg_zdb_id,
     pre_xpatres_end_stg_zdb_id,
     pre_xpatres_expression_found
@@ -399,14 +399,14 @@ insert into zdb_active_data select pre_xpatres_zdb_id from pre_xpatres;
 insert into expression_result (
     xpatres_zdb_id,
     xpatres_xpatex_zdb_id,
-    xpatres_anat_item_zdb_id,
+    xpatres_superterm_zdb_id,
     xpatres_start_stg_zdb_id,
     xpatres_end_stg_zdb_id,
     xpatres_expression_found
 )
 select  pre_xpatres_zdb_id,
     pre_xpatres_xpatex_zdb_id,
-    pre_xpatres_anat_item_zdb_id,
+    pre_xpatres_superterm_zdb_id,
     pre_xpatres_start_stg_zdb_id,
     pre_xpatres_end_stg_zdb_id,
     pre_xpatres_expression_found

@@ -47,11 +47,17 @@ EFFECTS
 <?MISQL SQL="
                select distinct geno_display_name, 
                        st1.stg_abbrev s1, st2.stg_abbrev s2,
-                       apato_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , st1.stg_hours_start sh1, st1.stg_hours_end sh2, apato_tag, apato_quality_zdb_id, apato_subterm_zdb_id,term_name, get_geno_name_html_link('$OID') as geno_link, apato_superterm_zdb_id
+                       apato_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, 
+                       get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , 
+                       st1.stg_hours_start sh1, st1.stg_hours_end sh2, 
+                       apato_tag, apato_quality_zdb_id, 
+                       quality.term_name, get_geno_name_html_link('$OID') as geno_link,
+                       get_postcomposed_term_html(apato_superterm_zdb_id, apato_subterm_zdb_id),
+                       apato_subterm_zdb_id
               from
                      figure,atomic_phenotype,
                      apato_figure,genotype_experiment,
-                     genotype, stage st1, stage st2, term 
+                     genotype, stage st1, stage st2, term quality
               where
                      genox_geno_zdb_id = '$OID'
                      and genox_zdb_id = apato_genox_zdb_id
@@ -61,7 +67,7 @@ EFFECTS
                      and genox_geno_zdb_id=geno_zdb_id
                      and apato_start_stg_zdb_id=st1.stg_zdb_id
                      and apato_end_stg_zdb_id=st2.stg_zdb_id
-                     and apato_quality_zdb_id=term_zdb_id
+                     and apato_quality_zdb_id=quality.term_zdb_id
                order by 
                      apato_genox_zdb_id, geno_display_name,apato_subterm_zdb_id,sh1">
 
@@ -72,10 +78,11 @@ EFFECTS
                     <?MIVAR NAME=$fxphenoinfo_stage1>$5<?/MIVAR>
                     <?MIVAR NAME=$fxphenoinfo_stage2>$6<?/MIVAR>
                     <?MIVAR NAME=$fxphenoinfo_tag>$9<?/MIVAR>
-                    <?MIVAR NAME=$fxphenoinfo_subterm>$11<?/MIVAR>
-                    <?MIVAR NAME=$fxphenoinfo_term_name>$12<?/MIVAR>
-                    <?MIVAR NAME=$fxphenoinfo_genolink>$13<?/MIVAR>
-                    <?MIVAR NAME=$fxphenoinfo_superterm>$14<?/MIVAR>
+                    <?MIVAR NAME=$fxphenoinfo_quality_name>$11<?/MIVAR>
+                    <?MIVAR NAME=$fxphenoinfo_genolink>$12<?/MIVAR>
+                    <?MIVAR NAME=$fxphenoinfo_link>$13<?/MIVAR>
+
+
                     <?MIBLOCK COND=$(EQ,$fxphenoinfo_start_stage,$fxphenoinfo_end_stage)>
                       <?MIVAR NAME=$fxphenoinfo_stage>$fxphenoinfo_stage1<?/MIVAR>
                     <?MIELSE>
@@ -104,26 +111,13 @@ EFFECTS
                        <?MIELSE>
                            <td></td>
                        <?/MIBLOCK>
-                      <?MISQL SQL="execute function get_entity_name_html('$fxphenoinfo_subterm')">
-                       <?MIVAR NAME=fxphenoinfo_link>$1<?/MIVAR>
-                      <?/MISQL>
-<?MIBLOCK COND="$(NE,$fxphenoinfo_superterm,)">
-                <?MIBLOCK COND="$(NE,$fxphenoinfo_subterm,)">
-                      <?MISQL SQL="execute function get_entity_name_html('$fxphenoinfo_superterm')">
-                       <?MIVAR NAME=fxphenoinfo_link>$1 : $fxphenoinfo_link<?/MIVAR>
-                      <?/MISQL>
-                <?MIELSE>
-                      <?MISQL SQL="execute function get_entity_name_html('$fxphenoinfo_superterm')">
-                       <?MIVAR NAME=fxphenoinfo_link>$1 <?/MIVAR>
-                      <?/MISQL>
-                <?/MIBLOCK>
-<?/MIBLOCK>
-                                <td><?MIVAR>$fxphenoinfo_link<?/MIVAR></td>
-<?MIBLOCK COND="$(OR,$(EC,$fxphenoinfo_term_name,quantitative),$(EC,$fxphenoinfo_term_name,quality))">
+
+                       <td><?MIVAR>$fxphenoinfo_link<?/MIVAR></td>
+<?MIBLOCK COND="$(OR,$(EC,$fxphenoinfo_quality_name,quantitative),$(EC,$fxphenoinfo_quality_name,quality))">
                    <td><?MIVAR>$fxphenoinfo_tag<?/MIVAR></td> 
 <?MIELSE>
 
-                   <td><?MIVAR>$fxphenoinfo_term_name, $fxphenoinfo_tag<?/MIVAR></td> 
+                   <td><?MIVAR>$fxphenoinfo_quality_name, $fxphenoinfo_tag<?/MIVAR></td> 
 <?/MIBLOCK>
                <!--set variables-->     
                     <?MIBLOCK COND=$(EQ,$3,$4)>

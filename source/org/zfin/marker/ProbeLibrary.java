@@ -1,7 +1,7 @@
 package org.zfin.marker;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.mutant.Genotype;
+import org.zfin.ontology.Term;
 
 /**
  */
@@ -14,7 +14,7 @@ public class ProbeLibrary {
     private Genotype strain;
     private String sex;
     private String nonZfinTissue;
-    private AnatomyItem tissue;
+    private Term tissue;
     private String host;
     private String restrictionSites;
 
@@ -83,11 +83,11 @@ public class ProbeLibrary {
         this.nonZfinTissue = nonZfinTissue;
     }
 
-    public AnatomyItem getTissue() {
+    public Term getTissue() {
         return tissue;
     }
 
-    public void setTissue(AnatomyItem tissue) {
+    public void setTissue(Term tissue) {
         this.tissue = tissue;
     }
 

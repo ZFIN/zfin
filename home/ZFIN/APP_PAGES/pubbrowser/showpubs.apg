@@ -880,7 +880,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
      	 where mrkrgoev_source_zdb_id = p.zdb_id
 	   and mrkrgoev_mrkr_zdb_id = '$OID'
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
-	   and mrkrgoev_go_term_zdb_id ='$goterm'
+	   and mrkrgoev_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
 	   and p.jtype not in ('Curation','Unpublished')
        and mrkrgoev_gflag_name is null
@@ -917,7 +917,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
    	  from publication p, marker_go_term_evidence, journal
      	 where mrkrgoev_source_zdb_id = p.zdb_id
 	   and mrkrgoev_mrkr_zdb_id = '$OID'
-	   and mrkrgoev_go_term_zdb_id ='$goterm'
+	   and mrkrgoev_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
 	   and p.jtype in ('Curation','Unpublished')
@@ -955,7 +955,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
      	 where mrkrgoev_source_zdb_id = p.zdb_id
 	   and mrkrgoev_mrkr_zdb_id = '$OID'
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
-	   and mrkrgoev_go_term_zdb_id ='$goterm'
+	   and mrkrgoev_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
 	   and p.jtype not in ('Curation','Unpublished')
        and mrkrgoev_gflag_name is null
@@ -992,7 +992,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
      	 where mrkrgoev_source_zdb_id = p.zdb_id
 	   and mrkrgoev_mrkr_zdb_id = '$OID'
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
-	   and mrkrgoev_go_term_zdb_id ='$goterm'
+	   and mrkrgoev_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
 	   and p.jtype  in ('Curation','Unpublished')
         and mrkrgoev_gflag_name is null

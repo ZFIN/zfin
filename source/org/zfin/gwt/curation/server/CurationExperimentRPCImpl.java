@@ -1,15 +1,13 @@
 package org.zfin.gwt.curation.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.RootLogger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyPhenotype;
-import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
@@ -31,24 +29,20 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
-import org.zfin.mutant.PhenotypeStructure;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
-import org.zfin.ontology.ComposedFxTerm;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.*;
 import org.zfin.people.CuratorSession;
-import org.zfin.people.Person;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
+
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Implementation of RPC calls from the client.
@@ -60,7 +54,6 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
 
     private static PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
     private static ExpressionRepository expRepository = RepositoryFactory.getExpressionRepository();
-    private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static ProfileRepository profileRep = RepositoryFactory.getProfileRepository();
     private static InfrastructureRepository infraRep = RepositoryFactory.getInfrastructureRepository();
     private static AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
@@ -409,6 +402,22 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
     }
 
     /**
+     * Check if for a given publication there is no structure pile available.
+     * It's been used to decide if a link to re-create the structure pile should be displayed.
+     *
+     * @param publicationID publication ID
+     * @return boolean
+     */
+    public boolean isReCreatePhenotypePileLinkNeeded(String publicationID) {
+        Publication publication = getPublicationRepository().getPublication(publicationID);
+        if (publication.getCloseDate() != null)
+            return false;
+        List<ExperimentFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish(publicationID,null, null, null);
+        Collection<ExpressionStructure> structures = expRepository.retrieveExpressionStructures(publicationID);
+        return CollectionUtils.isNotEmpty(experiments) && CollectionUtils.isEmpty(structures);
+    }
+
+    /**
      * Pass in an experiment DTO and an ExpressionExperiment, either an existing one to update
      * or a new instance.
      *
@@ -508,21 +517,9 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
             Collections.sort(terms);
             List<ExpressedTermDTO> termStrings = new ArrayList<ExpressedTermDTO>(terms.size());
             for (ComposedFxTerm term : terms) {
-                ExpressedTermDTO termDto = new ExpressedTermDTO();
-                termDto.setExpressionFound(term.isExpressionFound());
-                if (term.getSubterm() != null) {
-                    TermDTO subterm = new TermDTO();
-                    subterm.setTermName(term.getSubterm().getTermName());
-                    subterm.setTermID(term.getSubterm().getID());
-                    termDto.setSubterm(subterm);
-                }
-                TermDTO superterm = new TermDTO();
-                superterm.setTermName(term.getSuperTerm().getName());
-                superterm.setTermID(term.getSuperTerm().getID());
-                termDto.setSuperterm(superterm);
+                ExpressedTermDTO termDto = DTOConversionService.convertToExpressedTermDTO(term);
                 termStrings.add(termDto);
             }
-            //dto.setExpressedIn(formatter.getFormattedString());
             Collections.sort(termStrings);
             dto.setExpressedTerms(termStrings);
             dto.setPatoExists(mutantRep.isPatoExists(efs.getExpressionExperiment().getGenotypeExperiment().getZdbID(),
@@ -588,7 +585,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
             return;
 
         ExperimentFigureStage expressionExperiment = populateExpression(figureAnnotation);
-        GoTermExpressionResult result = new GoTermExpressionResult();
+        ExpressionResult result = new ExpressionResult();
         result.setEndStage(expressionExperiment.getEnd());
         result.setStartStage(expressionExperiment.getStart());
         result.setExpressionExperiment(expressionExperiment.getExpressionExperiment());
@@ -598,13 +595,14 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         figures.add(expressionExperiment.getFigure());
         result.setFigures(figures);
 
-        AnatomyItem unspecified = getAnatomyRepository().getAnatomyItem(AnatomyItem.UNSPECIFIED);
-        result.setAnatomyTerm(unspecified);
+        Term unspecified = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED);
+
+        result.setSuperterm(unspecified);
         result.setExpressionFound(true);
         ExpressedTermDTO unspecifiedTerm = new ExpressedTermDTO();
         TermDTO unspecifiedTermDTO = new TermDTO();
-        unspecifiedTermDTO.setTermName(AnatomyItem.UNSPECIFIED);
-        unspecifiedTermDTO.setTermID(unspecified.getZdbID());
+        unspecifiedTermDTO.setTermName(Term.UNSPECIFIED);
+        unspecifiedTermDTO.setTermID(unspecified.getID());
         unspecifiedTerm.setSuperterm(unspecifiedTermDTO);
         unspecifiedTerm.setExpressionFound(true);
         figureAnnotation.addExpressedTerm(unspecifiedTerm);
@@ -739,7 +737,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         Figure figure = pubRepository.getFigureByID(efs.getFigure().getZdbID());
         DevelopmentStage start = anatomyRep.getStageByID(efs.getStart().getZdbID());
         DevelopmentStage end = anatomyRep.getStageByID(efs.getEnd().getZdbID());
-        Phenotype phenotype = new AnatomyPhenotype();
+        Phenotype phenotype = new Phenotype();
         phenotype.setPublication(expressionExperiment.getPublication());
         phenotype.setEndStage(end);
         phenotype.setStartStage(start);
@@ -859,49 +857,9 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         List<ExpressionPileStructureDTO> dtos = new ArrayList<ExpressionPileStructureDTO>(structures.size());
         for (ExpressionStructure es : structures) {
             // do not return 'unspecified'
-            if (es.getSuperterm().getName().equals(AnatomyItem.UNSPECIFIED))
+            if (es.getSuperterm().getTermName().equals(Term.UNSPECIFIED))
                 continue;
-            ExpressionPileStructureDTO dto = new ExpressionPileStructureDTO();
-            dto.setZdbID(es.getZdbID());
-            dto.setCreator(es.getPerson().getName());
-            dto.setDate(es.getDate());
-            ExpressedTermDTO expressionTerm = new ExpressedTermDTO();
-            AnatomyItem superterm = es.getSuperterm();
-            TermDTO supertermDTO = DTOConversionService.convertToTermDTO(superterm);
-            expressionTerm.setSuperterm(supertermDTO);
-
-            // if subterm available
-            if (es.getSubtermID() != null) {
-                TermDTO subtermDTO = new TermDTO();
-                subtermDTO.setTermID(es.getSubtermID());
-                subtermDTO.setTermName(es.getSubtermName());
-                expressionTerm.setSubterm(subtermDTO);
-                if (es instanceof GOExpressionStructure) {
-                    GOExpressionStructure aes = (GOExpressionStructure) es;
-                    if (aes.getSubterm() != null) {
-                        subtermDTO.setTermOboID("GO:" + ((GOExpressionStructure) es).getSubterm().getOboID());
-                        OntologyDTO goOntology = OntologyDTO.getOntologyByGoDescriptor(aes.getSubterm().getSubOntology());
-                        subtermDTO.setOntology(goOntology);
-                    }
-                } else {
-                    subtermDTO.setOntology(OntologyDTO.ANATOMY);
-                }
-                StageRangeIntersection sri = new StageRangeIntersection(DTOConversionService.convertToStageDTO(superterm.getStart()),
-                        DTOConversionService.convertToStageDTO(superterm.getEnd()));
-                if (es instanceof AnatomyExpressionStructure) {
-                    AnatomyExpressionStructure aes = (AnatomyExpressionStructure) es;
-                    if (aes.getSubterm() != null) {
-                        subtermDTO.setTermOboID(aes.getSubterm().getOboID());
-                        sri.addNewRange(DTOConversionService.convertToStageDTO(aes.getSuperterm().getStart()),
-                                DTOConversionService.convertToStageDTO(aes.getSuperterm().getEnd()));
-                    }
-                }
-            }
-            dto.setExpressedTerm(expressionTerm);
-            StageDTO start = DTOConversionService.convertToStageDTO(superterm.getStart());
-            StageDTO end = DTOConversionService.convertToStageDTO(superterm.getEnd());
-            dto.setStart(start);
-            dto.setEnd(end);
+            ExpressionPileStructureDTO dto = DTOConversionService.convertToExpressionPileStructureDTO(es);
             dtos.add(dto);
         }
         Collections.sort(dtos);
@@ -974,44 +932,40 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
      */
     public List<RelatedPileStructureDTO> getTermsWithStageOverlap(ExpressionPileStructureDTO selectedPileStructure,
                                                                   StageRangeIntersection intersection) {
-        AnatomyRepository antRepository = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem term = antRepository.getAnatomyTermByID(selectedPileStructure.getExpressedTerm().getSuperterm().getTermID());
-        List<AnatomyRelationship> relationships = antRepository.getAnatomyRelationships(term);
-        List<RelatedPileStructureDTO> structures = new ArrayList<RelatedPileStructureDTO>(relationships.size());
-        for (AnatomyRelationship rel : relationships) {
-            StageDTO start = DTOConversionService.convertToStageDTO(rel.getAnatomyItem().getStart());
-            StageDTO end = DTOConversionService.convertToStageDTO(rel.getAnatomyItem().getEnd());
+        Term term = OntologyManager.getInstance().getTermByID(selectedPileStructure.getExpressedTerm().getSuperterm().getTermID());
+        List<TermRelationship> terms = term.getRelatedTerms();
+        List<RelatedPileStructureDTO> structures = new ArrayList<RelatedPileStructureDTO>(terms.size());
+        for (TermRelationship rel : terms) {
+            Term relatedTerm = rel.getRelatedTerm(term);
+            // some terms may be stage terms and should be ignored.
+            if (relatedTerm == null)
+                throw new RuntimeException("No related term found for term: " + term.getID());
+            if (!relatedTerm.getOntology().equals(Ontology.ANATOMY))
+                continue;
+
+            relatedTerm = OntologyManager.getInstance().getTermByID(relatedTerm.getID());
+            StageDTO start = DTOConversionService.convertToStageDTO(relatedTerm.getStart());
+            StageDTO end = DTOConversionService.convertToStageDTO(relatedTerm.getEnd());
             if (intersection.isFullOverlap(start, end)) {
-                RelatedPileStructureDTO relatedStructure = populatePileStructureDTO(rel.getAnatomyItem());
+                RelatedPileStructureDTO relatedStructure = populatePileStructureDTO(rel.getRelatedTerm(term));
                 relatedStructure.setRelatedStructure(selectedPileStructure);
-                relatedStructure.setRelationship(rel.getRelationship());
+                relatedStructure.setRelationship(rel.getRelationshipType().getName());
                 relatedStructure.setStart(start);
                 relatedStructure.setEnd(end);
                 structures.add(relatedStructure);
             }
         }
         return structures;
-/*
-        if (getStructuresSelectedTermDevelopsInto) {
-            List<AnatomyItem> terms = antRepository.getTermsDevelopingFromWithOverlap(
-                    selectedPileStructure.getExpressedTerm().getSupertermID(), startHours, endHours);
-            return populatePileStructureDTOs(terms);
-        } else {
-            List<AnatomyItem> terms = antRepository.getTermsDevelopingIntoWithOverlap(
-                    selectedPileStructure.getExpressedTerm().getSupertermID(), startHours, endHours);
-            return populatePileStructureDTOs(terms);
-        }
-*/
     }
 
-    private RelatedPileStructureDTO populatePileStructureDTO(AnatomyItem term) {
+    private RelatedPileStructureDTO populatePileStructureDTO(Term term) {
         if (term == null)
             return null;
 
         RelatedPileStructureDTO dto = new RelatedPileStructureDTO();
         ExpressedTermDTO expDto = new ExpressedTermDTO();
         TermDTO superterm = new TermDTO();
-        superterm.setTermName(term.getName());
+        superterm.setTermName(term.getTermName());
         superterm.setTermID(term.getID());
         superterm.setTermOboID(term.getOboID());
         expDto.setSuperterm(superterm);
@@ -1026,59 +980,6 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
      */
     public void saveSessionVisibility(SessionVariable sessionVariable) {
         getServletContext().setAttribute(sessionVariable.getAttributeName(), sessionVariable);
-    }
-
-    private PhenotypeStructure createPostComposedPhenotypeTerm(PhenotypeTermDTO phenotypeTerm, String publicationID)
-            throws TermNotFoundException {
-
-        String superTermName = phenotypeTerm.getSuperterm().getTermName();
-        if (StringUtils.isEmpty(superTermName))
-            throw new TermNotFoundException("No superterm name provided.");
-
-        String qualityTermName = phenotypeTerm.getQuality().getTermName();
-        if (StringUtils.isEmpty(qualityTermName))
-            throw new TermNotFoundException("No quality term name provided.");
-
-        String tagName = phenotypeTerm.getTag();
-        if (StringUtils.isEmpty(tagName))
-            throw new TermNotFoundException("No tagName name provided.");
-
-        Ontology zfinOntology = Ontology.getOntology(phenotypeTerm.getSuperterm().getOntology().getOntologyName());
-        GenericTerm superterm = infraRep.getTermByName(superTermName, zfinOntology);
-        if (superterm == null)
-            throw new TermNotFoundException("No Superterm term [" + superTermName + " found.");
-
-        PhenotypeStructure structure = new PhenotypeStructure();
-        structure.setSuperterm(superterm);
-        if (phenotypeTerm.getSubterm() != null) {
-            zfinOntology = Ontology.getOntology(phenotypeTerm.getSubterm().getOntology().getOntologyName());
-            GenericTerm subterm = infraRep.getTermByName(phenotypeTerm.getSubterm().getTermName(), zfinOntology);
-            if (subterm == null)
-                throw new TermNotFoundException("No Subterm term [" + phenotypeTerm.getSubterm().getTermName() + " found.");
-            structure.setSubterm(subterm);
-        }
-        zfinOntology = Ontology.getOntology(phenotypeTerm.getQuality().getOntology().getOntologyName());
-        GenericTerm subterm = infraRep.getTermByName(qualityTermName, zfinOntology);
-        if (subterm == null)
-            throw new TermNotFoundException("No Subterm term [" + qualityTermName + " found.");
-        structure.setQuality(subterm);
-        structure.setTag(Phenotype.Tag.getTagFromName(tagName));
-        structure.setPerson(Person.getCurrentSecurityUser());
-        phenotypeRep.createPhenotypeStructure(structure, publicationID);
-
-        LOG.info("Issued post-composed creation " + phenotypeTerm.getDisplayName());
-        return structure;
-    }
-
-    private List<ExpressionPileStructureDTO> populatePileStructureDTOs(List<AnatomyItem> terms) {
-        if (terms == null)
-            return null;
-
-        List<ExpressionPileStructureDTO> dtos = new ArrayList<ExpressionPileStructureDTO>(terms.size());
-        for (AnatomyItem term : terms) {
-            dtos.add(populatePileStructureDTO(term));
-        }
-        return dtos;
     }
 
     /**
@@ -1097,18 +998,18 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
                                                        boolean expressed) {
         boolean termBeingUsed = false;
         for (ExpressionResult result : experiment.getExpressionResults()) {
-            if (result.getAnatomyTerm().equals(expressionStructure.getSuperterm())) {
+            if (result.getSuperterm().equals(expressionStructure.getSuperterm())) {
                 String subtermID = null;
-                Term term = result.getSubTerm();
+                Term term = result.getSubterm();
                 if (term != null)
                     subtermID = term.getID();
                 // check if subterms are equal or both null
-                if (subtermID == null && expressionStructure.getSubtermID() == null && expressed == result.isExpressionFound()) {
+                if (subtermID == null && expressionStructure.getSubterm() == null && expressed == result.isExpressionFound()) {
                     termBeingUsed = true;
                     break;
                 }
-                if (subtermID != null && expressionStructure.getSubtermID() != null &&
-                        subtermID.equals(expressionStructure.getSubtermID()) &&
+                if (subtermID != null && expressionStructure.getSubterm() != null &&
+                        subtermID.equals(expressionStructure.getSubterm().getID()) &&
                         expressed == result.isExpressionFound()) {
                     termBeingUsed = true;
                     break;
@@ -1122,29 +1023,16 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         // create a new ExpressionResult record
         // create a new ExpressedTermDTO object that is passed back to the RPC caller
         ExpressedTermDTO expressedTerm = new ExpressedTermDTO();
-        if (expressionStructure.getSubtermID() != null) {
-            if (expressionStructure instanceof GOExpressionStructure) {
-                GoTermExpressionResult newExpression = new GoTermExpressionResult();
-                GOExpressionStructure goExpressionStructure = (GOExpressionStructure) expressionStructure;
-                newExpression.setSubterm(goExpressionStructure.getSubterm());
-                setMainAttributes(experiment, expressionStructure, expressed, newExpression);
-                expRepository.createExpressionResult(newExpression, experiment.getFigure());
-            } else {
-                AnatomyExpressionResult newExpression = new AnatomyExpressionResult();
-                AnatomyExpressionStructure anatomyExpression = (AnatomyExpressionStructure) expressionStructure;
-                newExpression.setSubterm(anatomyExpression.getSubterm());
-                setMainAttributes(experiment, expressionStructure, expressed, newExpression);
-                expRepository.createExpressionResult(newExpression, experiment.getFigure());
-            }
+        ExpressionResult newExpression = new ExpressionResult();
+        newExpression.setSubterm(expressionStructure.getSubterm());
+        setMainAttributes(experiment, expressionStructure, expressed, newExpression);
+        if (expressionStructure.getSubterm() != null) {
             TermDTO subtermDto = new TermDTO();
-            subtermDto.setTermID(expressionStructure.getSubtermID());
-            subtermDto.setTermName(expressionStructure.getSubtermName());
+            subtermDto.setTermID(expressionStructure.getSubterm().getID());
+            subtermDto.setTermName(expressionStructure.getSubterm().getTermName());
             expressedTerm.setSubterm(subtermDto);
-        } else {
-            AnatomyExpressionResult newExpression = new AnatomyExpressionResult();
-            setMainAttributes(experiment, expressionStructure, expressed, newExpression);
-            expRepository.createExpressionResult(newExpression, experiment.getFigure());
         }
+        expRepository.createExpressionResult(newExpression, experiment.getFigure());
         TermDTO subtermDto = new TermDTO();
         subtermDto.setTermID(expressionStructure.getSuperterm().getID());
         subtermDto.setTermName(expressionStructure.getSuperterm().getID());
@@ -1154,7 +1042,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
 
     private void setMainAttributes(ExperimentFigureStage experiment, ExpressionStructure expressionStructure, boolean expressed, ExpressionResult newExpression) {
         newExpression.setExpressionExperiment(experiment.getExpressionExperiment());
-        newExpression.setAnatomyTerm(expressionStructure.getSuperterm());
+        newExpression.setSuperterm(expressionStructure.getSuperterm());
         newExpression.setExpressionFound(expressed);
         newExpression.setStartStage(experiment.getStart());
         newExpression.setEndStage(experiment.getEnd());
@@ -1163,26 +1051,26 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
 
     private void removeExpressionToAnnotation(ExperimentFigureStage experiment, boolean expressed, ExpressionStructure expressionStructure) {
         for (ExpressionResult result : experiment.getExpressionResults()) {
-            if (result.getAnatomyTerm().equals(expressionStructure.getSuperterm())) {
+            if (result.getSuperterm().equals(expressionStructure.getSuperterm())) {
                 String subtermID = null;
-                Term term = result.getSubTerm();
+                Term term = result.getSubterm();
                 if (term != null)
                     subtermID = term.getID();
                 // check if subterms are equal or both null
-                if (subtermID == null && expressionStructure.getSubtermID() == null && expressed == result.isExpressionFound()) {
+                if (subtermID == null && expressionStructure.getSubterm() == null && expressed == result.isExpressionFound()) {
                     expRepository.deleteExpressionResultPerFigure(result, experiment.getFigure());
-                    LOG.info("Removed Expression_Result:  " + result.getAnatomyTerm().getName());
+                    LOG.info("Removed Expression_Result:  " + result.getSuperterm().getTermName());
                     break;
                 }
-                if (subtermID != null && expressionStructure.getSubtermID() != null &&
-                        subtermID.equals(expressionStructure.getSubtermID()) &&
+                if (subtermID != null && expressionStructure.getSubterm().getID() != null &&
+                        subtermID.equals(expressionStructure.getSubterm().getID()) &&
                         expressed == result.isExpressionFound()) {
                     expRepository.deleteExpressionResultPerFigure(result, experiment.getFigure());
-                    Term subterm = result.getSubTerm();
+                    Term subterm = result.getSubterm();
                     if (subterm != null)
-                        LOG.info("Removed Expression_Result:  " + result.getAnatomyTerm().getName() + " : " + subterm.getTermName());
+                        LOG.info("Removed Expression_Result:  " + result.getSuperterm().getTermName() + " : " + subterm.getTermName());
                     else
-                        LOG.info("Removed Expression_Result:  " + result.getAnatomyTerm().getName());
+                        LOG.info("Removed Expression_Result:  " + result.getSuperterm().getTermName());
                     break;
                 }
             }
@@ -1202,7 +1090,6 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
     }
 
     private static final String FX_GENE_FILTER = "fx-gene-filter: ";
-    private static final String FX_FISH_FILTER = "fx-fish-filter: ";
     private static final String FX_FIGURE_ANNOTATION_CHECKBOX = "fx-figure-annotation-checkbox: ";
 
 }

@@ -1,14 +1,13 @@
 package org.zfin.anatomy;
 
-import org.hibernate.Query;
 import org.zfin.anatomy.presentation.AnatomyPresentation;
 import org.zfin.anatomy.presentation.RelationshipPresentation;
 import org.zfin.anatomy.presentation.RelationshipSorting;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.presentation.AntibodyStatistics;
+import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -39,7 +38,7 @@ public class AnatomyService {
     }
 
 
-    public static PaginationResult<AntibodyStatistics> getAntibodyStatistics(AnatomyItem aoTerm,
+    public static PaginationResult<AntibodyStatistics> getAntibodyStatistics(Term aoTerm,
                                                                              PaginationBean pagination,
                                                                              boolean includeSubstructures){
         int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm,includeSubstructures) ;

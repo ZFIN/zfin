@@ -5,8 +5,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.AttributionModule;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ItemSuggestOracle;
@@ -103,20 +103,24 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
     }
 
     /**
-     * Checks if a given term is a valid anatomy term.
-     * //Todo: Should check the OntologyManager class not the database.
+     * Checks if a given term is a valid anatomy term or is part of a matching term.
+     * 1) Exact match
+     * 2) No matching term found
+     * 3) match on more than one term. 
      *
      * @param term term name
      * @return TermStatus
      */
     public TermStatus validateAnatomyTerm(String term) {
 
-        List<AnatomyItem> anatomyItems = RepositoryFactory.getAnatomyRepository().getAnatomyItemsByName(term, false);
+        MatchingTermService service = new MatchingTermService(term);
+        List<MatchingTerm> terms = service.getMatchingTerms(Ontology.ANATOMY, term);
+
         int foundInexactMatch = 0;
-        for (AnatomyItem anatomyItem : anatomyItems) {
-            String name = anatomyItem.getName();
+        for (MatchingTerm anatomyItem : terms) {
+            String name = anatomyItem.getTerm().getTermName();
             if (name.equals(term)) {
-                return new TermStatus(TermStatus.Status.FOUND_EXACT, term, anatomyItem.getZdbID());
+                return new TermStatus(TermStatus.Status.FOUND_EXACT, term, anatomyItem.getTerm().getID());
             } else if (foundInexactMatch < 1 || name.contains(term)) {
                 ++foundInexactMatch;
             }
@@ -171,6 +175,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @return suggestions
      */
     private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, Ontology ontology) {
+        HibernateUtil.currentSession();
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = request.getQuery().trim();
 
@@ -328,7 +333,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             logger.warn("No term " + termID + " found!");
             return null;
         }
-        TermInfo rootTermInfo = DTOConversionService.getTermInfoFromOntologyDTO(term, ontology, true);
+        TermInfo rootTermInfo = DTOConversionService.convertToTermInfo(term, ontology, true);
         addRelatedTerms(term, rootTermInfo, ontology);
         return rootTermInfo;
 
@@ -350,7 +355,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             logger.warn("No term " + termName + " found!");
             return null;
         }
-        TermInfo rootTermInfo = DTOConversionService.getTermInfoFromOntologyDTO(term, ontologyDTO, true);
+        TermInfo rootTermInfo = DTOConversionService.convertToTermInfo(term, ontologyDTO, true);
         addRelatedTerms(term, rootTermInfo, ontologyDTO);
         return rootTermInfo;
 
@@ -362,7 +367,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             for (org.zfin.ontology.RelationshipPresentation relationship : relationships) {
                 List<Term> terms = relationship.getItems();
                 for (Term item : terms) {
-                    TermInfo info = DTOConversionService.getTermInfoFromOntologyDTO(item, ontology, false);
+                    TermInfo info = DTOConversionService.convertToTermInfo(item, ontology, false);
                     rootTermInfo.addRelatedTermInfo(relationship.getType(), info);
                 }
             }

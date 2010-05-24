@@ -91,14 +91,15 @@ stage range, experiment, or expression_found in the same figure.
 <?/MIBLOCK>
 
 <?MISQL SQL="
-	SELECT distinct anatitem_name, anatitem_zdb_id, anatitem_name_order
+	SELECT distinct term_name, term_zdb_id, anatitem_name_order
 	FROM 
-	expression_result , expression_experiment, anatomy_item, genotype_experiment, experiment , genotype
+	expression_result , expression_experiment, term , genotype_experiment, experiment , genotype, anatomy_item
 	WHERE
 	xpatex_gene_zdb_id = '$wtanatlst_gene_zdb_id'
 	AND  xpatres_xpatex_zdb_id = xpatex_zdb_id 
 	AND xpatres_expression_found='t'
-	AND xpatres_anat_item_zdb_id = anatitem_zdb_id 
+	AND xpatres_superterm_zdb_id = term_zdb_id
+	AND term_ont_id = anatitem_obo_id
 	AND xpatex_genox_zdb_id = genox_zdb_id 
 	AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  
 	AND geno_zdb_id  = genox_geno_zdb_id 

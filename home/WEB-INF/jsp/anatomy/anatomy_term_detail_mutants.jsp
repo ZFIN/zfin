@@ -1,7 +1,9 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<b>Mutant and Transgenic Lines</b>
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+
+<span class="bold">Mutant and Transgenic Lines</span>
 
 <c:if test="${formBean.mutantsExist}">
     <table width="100%">
@@ -42,7 +44,7 @@
                     <div style="margin-left:20px">
                         </c:if>
                         <c:if test="${phenotypes.key == 'ANATOMY'}">
-                        <div style="margin-left:0px">
+                        <div style="margin-left:0">
                             </c:if>
                             <c:forEach var="phenotype" items="${phenotypes.value}" varStatus="loop">
                                 ${phenotype}<c:if test="${!loop.last}">, </c:if>
@@ -55,7 +57,7 @@
                 <td>
                     <c:if test="${genoStat.numberOfFigures > 0}">
                         <c:if test="${genoStat.numberOfFigures > 1}">
-                            <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pheno_summary.apg&OID=${genoStat.genotype.zdbID}&anatID=${formBean.anatomyItem.zdbID}'>
+                            <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pheno_summary.apg&OID=${genoStat.genotype.zdbID}&anatID=${formBean.aoTerm.ID}'>
                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                              integerEntity="${genoStat.numberOfFigures}" includeNumber="true"/></a>
                         </c:if>
@@ -87,10 +89,10 @@
         </tbody>
     </table>
 </c:if>
-<zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.anatomyItem}"
+<zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.aoTerm}"
                                        recordsExist="${formBean.mutantsExist}"
                                        anatomyStatistics="${formBean.anatomyStatisticsMutant}"
-                                       structureSearchLink="?MIval=aa-fishselect.apg&compare=contains&fsel_inputname=&lg=0&mutagen=any&chrom_change=any&START=1&query_results=exist&fsel_processed_selected_structures_names=${formBean.anatomyItem.name}&fsel_processed_selected_structures=${formBean.anatomyItem.zdbID}&structure_bool=and&fselFilterValue=moExcluded&WINSIZE=20&fishsel_calledBySelf=true"
+                                       structureSearchLink="?MIval=aa-fishselect.apg&compare=contains&fsel_inputname=&lg=0&mutagen=any&chrom_change=any&START=1&query_results=exist&fsel_processed_selected_structures_names=${formBean.aoTerm.termName}&fsel_processed_selected_structures=${formBean.aoTerm.ID}&structure_bool=and&fselFilterValue=moExcluded&WINSIZE=20&fishsel_calledBySelf=true"
                                        substructureSearchLink="/${formBean.mutantSearchLinkSubstructures}"
                                        choicePattern="0# genotypes| 1# genotype| 2# genotypes"
                                        allRecordsAreDisplayed="${formBean.allGenotypesAreDisplayed}"

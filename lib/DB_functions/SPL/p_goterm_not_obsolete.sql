@@ -9,9 +9,9 @@ create procedure p_goterm_not_obsolete (vGoTerm varchar(50))
 
 define ok boolean;
 
-let ok = (select goterm_is_obsolete 
-           from go_term 
-           where vGoTerm = goterm_zdb_id);
+let ok = (select term_is_obsolete
+           from term
+           where vGoTerm = term_zdb_id);
 
 if ok then
 
@@ -19,9 +19,9 @@ if ok then
 
 elif not ok then 
 
-  let ok = (select goterm_is_secondary
-             from go_term 
-             where vGoTerm = goterm_zdb_id);
+  let ok = (select term_is_secondary
+             from term
+             where vGoTerm = term_zdb_id);
   if ok then 
 
     raise exception -746,0,'FAIL!: GO Term is SECONDARY!';

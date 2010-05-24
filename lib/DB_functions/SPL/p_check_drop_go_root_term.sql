@@ -41,7 +41,7 @@ create procedure p_check_drop_go_root_term (
 		       	(select mrkrgoev_zdb_id 
 			   from marker_go_term_evidence
 			  where mrkrgoev_mrkr_zdb_id = mrkrZdbId
-			    and mrkrgoev_go_term_zdb_id = goRootTermZdbId
+			    and mrkrgoev_term_zdb_id = goRootTermZdbId
 			);
 
 	      execute procedure p_drop_go_root_term_attribution (mrkrZdbId);

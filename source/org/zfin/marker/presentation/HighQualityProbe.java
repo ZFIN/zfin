@@ -1,9 +1,9 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 /**
@@ -12,9 +12,9 @@ import org.zfin.publication.Publication;
 public class HighQualityProbe extends EntityStatistics {
 
     private Marker probe;
-    private AnatomyItem aoTerm;
+    private Term aoTerm;
 
-    public HighQualityProbe(Marker probe, AnatomyItem aoTerm) {
+    public HighQualityProbe(Marker probe, Term aoTerm) {
         this.probe = probe;
         this.aoTerm = aoTerm;
     }
@@ -27,7 +27,7 @@ public class HighQualityProbe extends EntityStatistics {
         return null;
     }
 
-    public AnatomyItem getAnatomyTerm() {
+    public Term getAnatomyTerm() {
         return aoTerm;
     }
 }

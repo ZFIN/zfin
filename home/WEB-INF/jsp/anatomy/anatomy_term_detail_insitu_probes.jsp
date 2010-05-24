@@ -1,6 +1,8 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+
 <c:if test="${formBean.inSituProbesExist}">
     <b>In Situ Probes</b>: <a href="/zf_info/stars.html"> Recommended </a> by
     <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
@@ -31,7 +33,7 @@
                         <c:if test="${probeStats.numberOfFigures > 0}">
                             <!-- link to figure search page if more than one figure available-->
                             <c:if test="${probeStats.numberOfFigures > 1}">
-                                <zfin:createFiguresLink marker="${probeStats.probe}" anatomyItem="${formBean.anatomyItem}"
+                                <zfin:createFiguresLink marker="${probeStats.probe}" term="${formBean.aoTerm}"
                                                         numberOfFigures="${probeStats.numberOfFigures}" author="Thisse"
                                                         useGeneZdbID="false"/>
                             </c:if>
@@ -57,10 +59,10 @@
             </c:forEach>
         </tbody>
     </TABLE>
-    <zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.anatomyItem}"
+    <zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.aoTerm}"
                                            recordsExist="${formBean.inSituProbesExist}"
                                            anatomyStatistics="${formBean.anatomyStatisticsProbe}"
-                                           structureSearchLink="/action/anatomy/high-quality-probes?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}"
+                                           structureSearchLink="/action/anatomy/high-quality-probes?anatomyItem.zdbID=${formBean.aoTerm.ID}"
                                            choicePattern="0# Probes| 1# probe| 2# probes"
                                            allRecordsAreDisplayed="${formBean.allProbesAreDisplayed}"
                                            totalRecordCount="${formBean.numberOfHighQualityProbes}"/>

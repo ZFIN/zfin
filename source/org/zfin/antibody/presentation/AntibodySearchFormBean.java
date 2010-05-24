@@ -73,7 +73,7 @@ public class AntibodySearchFormBean extends BasicAnatomyFormBean {
             antibodyStats = new ArrayList<AntibodyService>();
             for (Antibody ab : antibodies) {
                 AntibodyService service = new AntibodyService(ab);
-                service.setAntibodySerachCriteria(antibodySearchCriteria);
+                service.setAntibodySearchCriteria(antibodySearchCriteria);
                 antibodyStats.add(service);
             }
         }

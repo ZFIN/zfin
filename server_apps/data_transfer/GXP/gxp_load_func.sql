@@ -566,7 +566,7 @@ create table tmp_gxp_expression_result(
     t_xpatres_xpatex_zdb_id 	varchar(50)not null,
     t_xpatres_start_stg_zdb_id 	varchar(50)not null,
     t_xpatres_end_stg_zdb_id 	varchar(50)not null,
-    t_xpatres_anat_item_zdb_id  varchar(50),
+    t_xpatres_superterm_zdb_id  varchar(50),
     t_xpatres_expression_found	boolean not null
     --t_xpatres_comments		lvarchar
   )in tbldbs2
@@ -588,7 +588,7 @@ insert into zdb_active_data (zactvd_zdb_id)
 insert into expression_result (
 		xpatres_zdb_id, xpatres_xpatex_zdb_id, 
 		xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id,
-		xpatres_anat_item_zdb_id, xpatres_expression_found) 
+		xpatres_superterm_zdb_id, xpatres_expression_found) 
      	select * from tmp_gxp_expression_result;
 
 

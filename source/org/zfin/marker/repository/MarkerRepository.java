@@ -1,6 +1,5 @@
 package org.zfin.marker.repository;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.framework.presentation.PaginationBean;
@@ -9,6 +8,7 @@ import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.ontology.Term;
 import org.zfin.orthology.Orthologue;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
@@ -62,7 +62,7 @@ public interface MarkerRepository {
     AntibodyExternalNote addAntibodyExternalNote(Antibody antibody, String note, String sourcezdbid);
 
     /**
-     * Creates a new note in regards to the orthololgy to a gene.
+     * Creates a new note in regards to the orthology to a gene.
      * Only a single note allowed per gene, i.e. if no note exists then
      * create a new one, if there is already one available then it gets replaced
      * with this one (updated) as we typically display the old note in the updates field.
@@ -76,7 +76,7 @@ public interface MarkerRepository {
     void editAntibodyExternalNote(String notezdbid, String note);
 
     /**
-     * Create a new alias for a given marker. IF no alias is found no alias is crerated.
+     * Create a new alias for a given marker. IF no alias is found no alias is created.
      *
      * @param marker      valid marker object.
      * @param alias       alias string
@@ -119,7 +119,7 @@ public interface MarkerRepository {
 
     MarkerHistory getLastMarkerHistory(Marker marker, MarkerHistory.Event event);
 
-    MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason resason, MarkerAlias markerAlias);
+    MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason resason,MarkerAlias markerAlias);
 
     MarkerType getMarkerTypeByName(String name);
 
@@ -230,7 +230,7 @@ public interface MarkerRepository {
      * @param includeSubstructures boolean
      * @return pagination result
      */
-    PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures);
+    PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(Term aoTerm, PaginationBean pagination, boolean includeSubstructures);
 
     /**
      * Retrieve all distinct publications that contain a high quality probe
@@ -239,7 +239,7 @@ public interface MarkerRepository {
      * @param anatomyTerm Anatomy Term
      * @return list of publications
      */
-    List<Publication> getHighQualityProbePublications(AnatomyItem anatomyTerm);
+    List<Publication> getHighQualityProbePublications(Term anatomyTerm);
 
     /**
      * Retrieve marker types by marker type groups

@@ -1,7 +1,7 @@
 <?MICOMMENT>
 
 FILE:     fxinfogene.apg
-PREFIX:   fxinfo__
+PREFIX:   fxinfo_
 
 This displays a list of expression pattern results for a gene. The results include genotype background, stage and structure and assay.
 
@@ -54,13 +54,22 @@ EFFECTS
 <?MISQL SQL="
                select distinct geno_display_name, 
                       xpatassay_abbrev,
-                      a.anatitem_name, st1.stg_abbrev s1, st2.stg_abbrev s2, exp_name,
-                      xpatres_expression_found, get_mrkr_abbrev_html_link('$OID') as mrkr_abbrev, a.anatitem_zdb_id, xpatex_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , st1.stg_hours_start sh1, st1.stg_hours_end sh2, goterm_name, goterm_go_id,mrkr_name, anatomy.anatitem_zdb_id, anatomy.anatitem_name
+                      superterm.term_name, st1.stg_abbrev s1, st2.stg_abbrev s2, exp_name,
+                      xpatres_expression_found, 
+                      get_mrkr_abbrev_html_link('$OID') as mrkr_abbrev, 
+                       xpatex_genox_zdb_id,
+                      get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, 
+                      get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , 
+                      st1.stg_hours_start sh1, st1.stg_hours_end sh2, 
+                      subterm.term_name, subterm.term_ont_id, mrkr_name, 
+                      subterm.term_zdb_id, subterm.term_name,
+                      get_postcomposed_term_html(superterm.term_zdb_id,
+                                                 subterm.term_zdb_id)
               from
-                     figure,expression_experiment, anatomy_item a, OUTER anatomy_item anatomy,
+                     figure,expression_experiment, term superterm, OUTER term subterm,
                      experiment, expression_result,
                      expression_pattern_figure,marker,genotype_experiment,
-                     genotype, stage st1, stage st2, expression_pattern_assay, OUTER(go_term)
+                     genotype, stage st1, stage st2, expression_pattern_assay
               where
                      xpatex_atb_zdb_id='$OID' 
                      and fig_zdb_id='$fxinfo_fig_zdb_id'
@@ -72,29 +81,29 @@ EFFECTS
                      and genox_exp_zdb_id=exp_zdb_id
                      and xpatres_start_stg_zdb_id=st1.stg_zdb_id
                      and xpatres_end_stg_zdb_id=st2.stg_zdb_id
-                     and xpatres_anat_item_zdb_id=a.anatitem_zdb_id
-                     and xpatres_term_zdb_id=goterm_zdb_id
-		     and xpatres_term_zdb_id = anatomy.anatitem_zdb_id
+                     and xpatres_superterm_zdb_id=superterm.term_zdb_id
+                     and xpatres_subterm_zdb_id=subterm.term_zdb_id
+		     and xpatres_subterm_zdb_id = subterm.term_zdb_id
                      and xpatex_assay_name = xpatassay_name 
                      and xpatex_atb_zdb_id=mrkr_zdb_id
                      and xpatex_gene_zdb_id is null
                order by 
-                     geno_display_name,exp_name,sh1,sh2,a.anatitem_name">
+                     geno_display_name,exp_name,sh1,sh2,superterm.term_name">
   
                     <?MIVAR NAME=$fxinfo_fish_abbrev>$1<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_assay>$2<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_anat_item>$3<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_start_stage>$4<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_end_stage>$5<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_anatzdbid>$9<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_genox>$10<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_stage1>$11<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_stage2>$12<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_goterm>$15<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_goid>$16<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_absymbol>$17<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_aoid>$18<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_aoname>$19<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_genox>$9<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_stage1>$10<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_stage2>$11<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_goterm>$14<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_goid>$15<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_absymbol>$16<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_aoid>$17<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_aoname>$18<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_anat_link>$19<?/MIVAR>
                     
                     <?MIBLOCK COND=$(EQ,$fxinfo_start_stage,$fxinfo_end_stage)>
                       <?MIVAR NAME=$fxinfo_stage>$fxinfo_stage1<?/MIVAR>
@@ -176,55 +185,20 @@ EFFECTS
                           <td nowrap><?MIVAR>$fxinfo_expressed<?/MIVAR></td>
                         <?/MIBLOCK>
                     <?/MIBLOCK> 
-                    <?MIBLOCK COND="$(EQ,$fxinfo_is_geli,)"> 
-                        <?MIVAR NAME=$fxinfo_anat_link><a href="/action/anatomy/term-detail?anatomyItem.zdbID=$fxinfo_anatzdbid">$fxinfo_anat_item</a><?/MIVAR>
-<?MIBLOCK COND="$(NE,$fxinfo_goterm,)">
-                        <?MIVAR NAME=$fxinfo_goterm>:<a href=$dbquery$fxinfo_goid>$fxinfo_goterm</a><?/MIVAR>
-<?MIELSE>
-                        <?MIVAR NAME=$fxinfo_goterm><?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(NE,$fxinfo_aoname,)">
-                        <?MIVAR NAME=$fxinfo_aoname>:<a href=$dbquery$fxinfo_aoid>$fxinfo_aoname</a><?/MIVAR>
-<?MIELSE>
-                        <?MIVAR NAME=$fxinfo_aoname><?/MIVAR>
-<?/MIBLOCK>                        <?MIBLOCK COND=$(NE,$fxinfo_samefish,f)>
-                           <?MIBLOCK COND=$(NE,$fxinfo_laststage,$fxinfo_stage)>
+                    <?MIBLOCK COND="$(EQ,$fxinfo_is_geli,)">
 
-                           <td><?MIVAR>$fxinfo_anat_link<?/MIVAR>
-                           <?MIBLOCK COND="$(NE,$fxinfo_goterm,)"> 
-
-                              <?MIVAR>$fxinfo_goterm<?/MIVAR></td>
-                           <?MIELSE>
-                            <?MIBLOCK COND="$(NE,$fxinfo_aoname,)">
-                              <?MIVAR>$fxinfo_aoname<?/MIVAR></td>
-                          <?/MIBLOCK>
-
-                          <?/MIBLOCK>
-
-
+                      <?MIBLOCK COND=$(NE,$fxinfo_samefish,f)>
+                           <?MIBLOCK COND=$(NE,$fxinfo_laststage,$fxinfo_stage)> 
+                              <td><?MIVAR>$fxinfo_anat_link<?/MIVAR></td>
                            <?MIELSE>
                              <?MIBLOCK COND=$(NE,$fxinfo_lastterm,$fxinfo_anat_item)>
-                           <td><?MIVAR>$fxinfo_anat_link<?/MIVAR>
-                            <?MIBLOCK COND="$(NE,$fxinfo_goterm,)">
-                              <?MIVAR>$fxinfo_goterm<?/MIVAR></td>
-                           <?MIELSE>
-                            <?MIBLOCK COND="$(NE,$fxinfo_aoname,)">
-                              <?MIVAR>$fxinfo_aoname<?/MIVAR></td>
-                           <?/MIBLOCK>
-                          <?/MIBLOCK>
+                                <td><?MIVAR>$fxinfo_anat_link<?/MIVAR></td>
                              <?MIELSE>
                                 <td></td>
                              <?/MIBLOCK>     
                           <?/MIBLOCK>
                        <?MIELSE>
-                           <td><?MIVAR>$fxinfo_anat_link<?/MIVAR>
-                            <?MIBLOCK COND="$(NE,$fxinfo_goterm,)">
-                           <?MIVAR>$fxinfo_goterm<?/MIVAR></td>
-                           <?MIELSE>
-                            <?MIBLOCK COND="$(NE,$fxinfo_aoname,)">
-                              <?MIVAR>$fxinfo_aoname<?/MIVAR></td>
-                           <?/MIBLOCK>
-                          <?/MIBLOCK>
+                           <td><?MIVAR>$fxinfo_anat_link<?/MIVAR></td>
                        <?/MIBLOCK>
                     <?/MIBLOCK>
                     

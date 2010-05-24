@@ -148,6 +148,16 @@ public class MockAnatomyRepository implements AnatomyRepository {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    public DevelopmentStage getStartStage(String oboID) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public DevelopmentStage getEndStage(String oboID) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void invalidateCachedObjects() {
         throw new RuntimeException("Not implemented yet");
     }

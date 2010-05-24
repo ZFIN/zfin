@@ -20,10 +20,7 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.GoTerm;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.TermAlias;
+import org.zfin.ontology.*;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 
@@ -366,31 +363,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
         Session session = HibernateUtil.currentSession();
         GenericTerm term = null;
-        if (termID.indexOf("GOTERM") > -1)
-            term = getTermFromGotermId(termID);
-        else
-            term = (GenericTerm) session.get(GenericTerm.class, termID);
+        term = (GenericTerm) session.get(GenericTerm.class, termID);
         if (term == null)
             return null;
         return term;
-    }
-
-    @SuppressWarnings("unchecked")
-    private GenericTerm getTermFromGotermId(String termID) {
-        Session session = HibernateUtil.currentSession();
-        GoTerm goTerm = (GoTerm) session.get(GoTerm.class, termID);
-        if (goTerm == null)
-            return null;
-
-        Criteria criteria = session.createCriteria(GenericTerm.class);
-        criteria.add(Restrictions.eq("termName", goTerm.getName()));
-        return (GenericTerm) criteria.uniqueResult();
-    }
-
-    @SuppressWarnings("unchecked")
-    public GoTerm getGoTermById(String termID) {
-        Session session = HibernateUtil.currentSession();
-        return (GoTerm) session.get(GoTerm.class, termID);
     }
 
     /**
@@ -632,15 +608,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @return list of strings
      */
     @SuppressWarnings("unchecked")
-    public List<String> getDataAliasesWithAbbreviation(String aliasName) {
+    public List<String> getDataAliasesWithAbbreviation(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        SQLQuery sqlQuery = session.createSQLQuery("select distinct get_obj_abbrev(dalias_data_zdb_id) as abbreviation " +
-                "from data_alias, alias_group " +
-                "where dalias_alias_lower = :id and dalias_group_id = aliasgrp_pk_id " +
-                "                and aliasgrp_name != :aliasGroup ");
+        SQLQuery sqlQuery = session.createSQLQuery("select get_obj_abbrev(dalias_data_zdb_id) as abbreviation " +
+                "from data_alias where dalias_alias_lower = :id ");
         sqlQuery.addScalar("abbreviation");
-        sqlQuery.setParameter("id", aliasName);
-        sqlQuery.setParameter("aliasGroup", DataAliasGroup.Group.SEQUENCE_SIMILARITY.toString());
+        sqlQuery.setParameter("id", zdbID);
         return (List<String>) sqlQuery.list();
     }
 
@@ -661,10 +634,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "where allmapnm_name_lower = :name and " +
                 "allmapnm_precedence in ('Current symbol', 'Current name', 'Genotype name') " +
                 "UNION " +
-                "select anatitem_zdb_id as zdb_id from anatomy_item " +
-                "where anatitem_name_lower = :name ");
+                "select term_zdb_id as zdb_id from term " +
+                "where lower(term_name) = :name and term_ontology = :ontology");
         sqlQuery.addScalar("zdbID");
         sqlQuery.setParameter("name", name.toLowerCase());
+        sqlQuery.setParameter("ontology", Ontology.ANATOMY.getOntologyName());
         return (List<String>) sqlQuery.list();
     }
 

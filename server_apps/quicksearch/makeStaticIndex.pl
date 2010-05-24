@@ -94,8 +94,8 @@ FROM feature
 
 UNION
 -- anatomy_item
-SELECT "anatomy_item" AS app_file, anatitem_zdb_id AS oid, "" as url
-FROM anatomy_item
+SELECT "anatomy_item" AS app_file, term_zdb_id AS oid, "" as url
+FROM term where term_ontology = 'zebrafish_anatomy'
 
 UNION
 

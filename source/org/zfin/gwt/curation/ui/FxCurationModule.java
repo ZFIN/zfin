@@ -82,7 +82,6 @@ public class FxCurationModule implements HandlesError {
 
     private void revertGUI() {
         experimentModule.updateGenes();
-        experimentFilterModule.setInitialValues();
         attributionModule.revertGUI();
     }
 

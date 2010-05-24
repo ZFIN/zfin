@@ -2,26 +2,29 @@ create procedure p_check_pato_entities (vPatoZdbId varchar(50),
 					vEntityAZdbId varchar(50),
 					vEntityBZdbId varchar(50))
 
-	define vATermType like go_term.goterm_ontology ;
-	define vBTermType like go_term.goterm_ontology ;
+	define vATermType like term.term_ontology ;
+	define vBTermType like term.term_ontology ;
 
 	if (get_obj_type(vEntityAZdbId) = 'GOTERM')
 
 	  then
 
-		  let vATermType = (select goterm_ontology
-				      from go_term
-				      where goterm_Zdb_id = vEntityAZdbId);
+		  let vATermType = (select term_ontology
+				      from term
+				      where term_Zdb_id = vEntityAZdbId);
 
+         	  let vBTermType = (select term_ontology
+				   from term
+				   where term_Zdb_id = vEntityBZdbId);
 
-	          if (vATermType = 'Biological Process' 
+	          if (vATermType = 'biological_process' 
 		                     and vEntityBZdbID is not null)
 		        then
 		           raise exception -746,0,"FAIL!: no post-coordination with Biological Process terms";
 
 		  end if ;
 
-	          if (vATermType = 'Cellular Component' and (get_obj_type(vEntityBZdbId) != 'ANAT' 
+	          if (vATermType = 'cellular_component' and (vBTermType != 'zebrafish_anatomy' 
 		   				     	          or vEntityBZdbId is null))
 		      then
 		         raise exception -746,0,"FAIL!: AO post-coordination with GO CC terms required";
@@ -30,21 +33,17 @@ create procedure p_check_pato_entities (vPatoZdbId varchar(50),
 		
 	end if ;
 
-	if (get_obj_type(vEntityAZdbId) = 'ANAT' and get_obj_type(vEntityBZdbId) = 'GOTERM')
+	if (vATermType = 'zebrafish_anatomy' and (vBTermType = 'biological_process' or vBTermType = 'cellular_component' or vBTermType = 'molecular_function'))
 
            then 
-		let vBTermType = (select goterm_ontology
-				   from go_term
-				   where goterm_Zdb_id = vEntityBZdbId);
 
-
-		if (vBtermType = 'Cellular Component')
+		if (vBtermType = 'cellular_component')
 		  then 
 		    raise exception -746,0,"FAIL!: GO CC term must be entity A in post-coordination";
 		end if ;
 
  
-		if (vBtermType = 'Biological Process')
+		if (vBtermType = 'biological_process')
 		  then 
 		    raise exception -746,0,"FAIL!: no post-coordination with GO BP terms";
 

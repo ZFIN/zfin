@@ -1,10 +1,7 @@
 package org.zfin.gwt.root.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.dto.GoTermDTO;
-import org.zfin.gwt.root.dto.MarkerDTO;
-import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
 import java.util.Set;
@@ -27,7 +24,7 @@ public interface MarkerGoEvidenceRPCServiceAsync {
 
     void createMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO, AsyncCallback<GoEvidenceDTO> async);
 
-    void getGOTermByName(String value, AsyncCallback<GoTermDTO> asyncCallback);
+    void getGOTermByName(String value, AsyncCallback<TermDTO> asyncCallback);
 
     void validateAccession(String accession, String inferenceCategory, AsyncCallback<Boolean> async);
 

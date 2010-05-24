@@ -113,16 +113,16 @@ Requires:  $CLONE_MARKER_ID, $highlight
         probelib_sex,  --4
         case when probelib_tissue_zdb_id is not null
         then 
-             '<a href=/action/anatomy/term-detail?anatomyItem.zdbID=' || probelib_tissue_zdb_id ||'>' ||
-            (select anatitem_name from anatomy_item where anatitem_zdb_id = probelib_tissue_zdb_id) 
+             '<a href=/action/ontology/term-detail?termID=' || probelib_term_zdb_id ||'>' ||
+            (select term_name from term where term_zdb_id = probelib_term_zdb_id)
         else
             probelib_non_zfin_tissue_name
         end, --5
         probelib_host,  --6
         probelib_restriction_sites  --7
-      FROM probe_library, outer anatomy_item
+      FROM probe_library, outer term
       WHERE probelib_zdb_id = '$probelib_zdb_id'
-        and anatitem_zdb_id = probelib_tissue_zdb_id ;">
+        and term_zdb_id = probelib_tissue_zdb_id ;">
          <?MIVAR NAME=probelib_species>$1<?/MIVAR>
          <?MIVAR NAME=probelib_name>$2<?/MIVAR>
          <?MIVAR NAME=probelib_strain>$3<?/MIVAR>

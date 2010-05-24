@@ -11,22 +11,18 @@ unload to "annotationViolates.err"
 		   anatitem_name, 
 		   s3.stg_abbrev, 
 		   s4.stg_abbrev
-	      from expression_result 
-		   join expression_experiment
-			on xpatres_xpatex_zdb_id = xpatex_zdb_id
-                   join anatomy_item
-                        on xpatres_anat_item_zdb_id = anatitem_zdb_id
-                   join stage s1
-                        on xpatres_start_stg_zdb_id = s1.stg_zdb_id
-                   join stage s2
-                        on xpatres_end_stg_zdb_id = s2.stg_zdb_id
-                   join stage s3
-                        on anatitem_start_stg_zdb_id = s3.stg_zdb_id
-                   join stage s4
-                        on anatitem_end_stg_zdb_id = s4.stg_zdb_id
-             where anatitem_overlaps_stg_window(
-                                     xpatres_anat_item_zdb_id,
+	      from expression_result, term, anatomy_item, stage s3, stage s4, stage s1, stage s2, expression_experiment
+			             where aoterm_overlaps_stg_window(
+                                     xpatres_superterm_zdb_id,
                                      xpatres_start_stg_zdb_id,
                                      xpatres_end_stg_zdb_id
-                                     ) = "f";
+                                     ) = "f"
+                    and term_zdb_id = xpatres_xpatex_zdb_id
+                    and term_ont_id = anatitem_obo_id
+                    and anatitem_start_stg_zdb_id = s3.stg_zdb_id
+                    and anatitem_end_stg_zdb_id = s4.stg_zdb_id
+                    and xpatres_start_stg_zdb_id = s1.stg_zdb_id
+                    and xpatres_end_stg_zdb_id = s2.stg_zdb_id
+                    and xpatres_xpatex_zdb_id = xpatex_zdb_id
+                    ;
 

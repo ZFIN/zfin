@@ -1,8 +1,6 @@
 package org.zfin.antibody.presentation;
 
-import org.apache.log4j.Logger;
 import org.zfin.ExternalNote;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.Antibody;
@@ -12,7 +10,8 @@ import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerService;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.repository.RepositoryFactory;
@@ -21,19 +20,17 @@ import java.util.*;
 
 public class AntibodyBean extends PublicationListBean {
 
-    private final Logger logger = Logger.getLogger(AntibodyBean.class);
-
     protected Antibody antibody;
 
-    protected AnatomyItem anatomyItem;
-
+    protected Term superTerm;
+    protected Term subTerm;
     protected DevelopmentStage startStage;
 
     protected DevelopmentStage endStage;
 
     protected AntibodyService antibodyStat;
 
-    private boolean onlyFiguesWithImg;
+    private boolean onlyFiguresWithImg;
 
     private boolean update = false;
     private boolean addPublication = false;
@@ -53,15 +50,26 @@ public class AntibodyBean extends PublicationListBean {
         this.antibody = antibody;
     }
 
-    public AnatomyItem getAnatomyItem() {
-        if (anatomyItem == null) {
-            anatomyItem = new AnatomyItem();
+    public Term getSuperTerm() {
+        if (superTerm == null) {
+            superTerm = new GenericTerm();
         }
-        return anatomyItem;
+        return superTerm;
     }
 
-    public void setAnatomyItem(AnatomyItem anatomyItem) {
-        this.anatomyItem = anatomyItem;
+    public void setSuperTerm(Term superTerm) {
+        this.superTerm = superTerm;
+    }
+
+    public Term getSubTerm() {
+        if (subTerm == null) {
+            subTerm = new GenericTerm();
+        }
+        return subTerm;
+    }
+
+    public void setSubTerm(Term subTerm) {
+        this.subTerm = subTerm;
     }
 
     public DevelopmentStage getStartStage() {
@@ -148,7 +156,7 @@ public class AntibodyBean extends PublicationListBean {
         if (antibody == null)
             return publications;
 
-        // add alias associated publictions
+        // add alias associated publications
         for (Publication pub : MarkerService.getAliasAttributions(antibody)) {
             publications.add(pub);
         }
@@ -235,12 +243,12 @@ public class AntibodyBean extends PublicationListBean {
         return unpublishedPublications;
     }
 
-    public boolean isOnlyFiguesWithImg() {
-        return onlyFiguesWithImg;
+    public boolean isOnlyFiguresWithImg() {
+        return onlyFiguresWithImg;
     }
 
-    public void setOnlyFiguesWithImg(boolean onlyFiguesWithImg) {
-        this.onlyFiguesWithImg = onlyFiguesWithImg;
+    public void setOnlyFiguresWithImg(boolean onlyFiguresWithImg) {
+        this.onlyFiguresWithImg = onlyFiguresWithImg;
     }
 
     public boolean isAddPublication() {

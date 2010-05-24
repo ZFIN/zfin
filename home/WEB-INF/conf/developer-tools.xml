@@ -55,8 +55,8 @@
                 <prop key="/dev-tools/blast-jobs">blastQueue</prop>
                 <prop key="/dev-tools/test-error-page">errorPageHandler</prop>
                 <prop key="/dev-tools/ontology-caching">ontologyCaching</prop>
-                <prop key="/dev-tools/ontology-terms">ontologyTerms</prop>
-                <prop key="/dev-tools/ontology-term-detail">ontologyTerm</prop>
+                <prop key="/ontology/terms">ontologyTerms</prop>
+                <prop key="/ontology/term-detail">ontologyTerm</prop>
             </props>
         </property>
     </bean>

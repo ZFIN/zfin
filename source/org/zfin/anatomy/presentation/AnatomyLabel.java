@@ -1,12 +1,11 @@
 package org.zfin.anatomy.presentation;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
-import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.text.ChoiceFormat;
@@ -14,9 +13,8 @@ import java.util.*;
 
 public class AnatomyLabel implements Comparable<AnatomyLabel> {
 
-    private AnatomyItem anatomyItem;
-    private AnatomyItem secondaryAnatomyItem;
-    private GoTerm cellularComponent;
+    private Term superterm;
+    private Term subterm;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
     private Set<Publication> publications;
@@ -27,24 +25,11 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
     private boolean figureWithImage;
     private boolean notAllFiguresTextOnly;
 
-    public AnatomyLabel(AnatomyItem anatomyItem, GoTerm goTerm, DevelopmentStage startStage, DevelopmentStage endStage) {
-        if (anatomyItem == null)
+    public AnatomyLabel(Term superterm, Term subterm, DevelopmentStage startStage, DevelopmentStage endStage) {
+        if (superterm == null)
             throw new NullPointerException("No Anatomy Term provided.");
-        this.anatomyItem = anatomyItem;
-        cellularComponent = goTerm;
-        this.startStage = startStage;
-        this.endStage = endStage;
-        publications = new HashSet<Publication>();
-        figures = new HashSet<Figure>();
-        assays = new TreeSet<ExpressionAssay>();
-        genes = new TreeSet<Marker>();
-    }
-
-    public AnatomyLabel(AnatomyItem anatomyItem, AnatomyItem secondaryAoTerm, DevelopmentStage startStage, DevelopmentStage endStage) {
-        if (anatomyItem == null)
-            throw new NullPointerException("No Anatomy Term provided.");
-        this.anatomyItem = anatomyItem;
-        this.secondaryAnatomyItem = secondaryAoTerm;
+        this.superterm = superterm;
+        this.subterm = subterm;
         this.startStage = startStage;
         this.endStage = endStage;
         publications = new HashSet<Publication>();
@@ -56,8 +41,20 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
     static public ChoiceFormat figureChoice = new ChoiceFormat("0#figures|1#figure|2#figures");
     static public ChoiceFormat publicationChoice = new ChoiceFormat("0#publications|1#publication|2#publications");
 
-    public AnatomyItem getAnatomyItem() {
-        return anatomyItem;
+    public Term getSuperterm() {
+        return superterm;
+    }
+
+    public void setSuperterm(Term superterm) {
+        this.superterm = superterm;
+    }
+
+    public Term getSubterm() {
+        return subterm;
+    }
+
+    public void setSubterm(Term subterm) {
+        this.subterm = subterm;
     }
 
     public DevelopmentStage getStartStage() {
@@ -114,19 +111,12 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
     public int compareTo(AnatomyLabel anotherDisplay) {
         if (anotherDisplay == null)
             return 1;
-        int result = anatomyItem.compareTo(anotherDisplay.getAnatomyItem());
-        if (result == 0) {
-            if (cellularComponent == null && anotherDisplay.getCellularComponent() == null)
-                return 0;
-            else if (cellularComponent == null)
-                return -1;
-            else if (anotherDisplay.getCellularComponent() == null)
-                return 1;
-            else
-                return cellularComponent.compareTo(anotherDisplay.getCellularComponent());
-        } else {
-            return result;
-        }
+        int result = superterm.compareTo(anotherDisplay.getSuperterm());
+        if (result != 0)
+            return 0;
+        if (subterm == null)
+            return subterm.compareTo(anotherDisplay.getSubterm());
+        return 0;
     }
 
     public Figure getSingleFigure() {
@@ -178,16 +168,10 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
         this.figureWithImage = figureWithImage;
     }
 
-    public GoTerm getCellularComponent() {
-        return cellularComponent;
-    }
-
     public String getAoAndPostCompostTerm() {
-        if (secondaryAnatomyItem == null && cellularComponent == null)
-            return anatomyItem.getName();
-        else if (cellularComponent != null)
-            return anatomyItem.getName() + cellularComponent.getName();
-        return anatomyItem.getName() + secondaryAnatomyItem.getName();
+        if (subterm == null)
+            return superterm.getTermName();
+        return superterm.getTermName() + subterm.getTermName();
     }
 
     public boolean isNotAllFiguresTextOnly() {
@@ -196,9 +180,5 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
 
     public void setNotAllFiguresTextOnly(boolean notAllFiguresTextOnly) {
         this.notAllFiguresTextOnly = notAllFiguresTextOnly;
-    }
-
-    public AnatomyItem getSecondaryAnatomyItem() {
-        return secondaryAnatomyItem;
     }
 }

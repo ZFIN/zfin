@@ -5,7 +5,6 @@ import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.anatomy.AnatomyPhenotype;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.ExpressionExperiment;
@@ -82,8 +81,7 @@ public class PhenotypeRepositoryTest {
         PhenotypeTermDTO term = new PhenotypeTermDTO();
         term.setSuperterm(superterm);
         term.setQuality(quality);
-        term.setTag(Phenotype.Tag.ABNORMAL.toString());
-        boolean exists = phenotypeRep.isPhenotypeOnPile(term, publicationID);
+        boolean exists = phenotypeRep.isPhenotypePileStructureExists(term, publicationID);
         assertTrue(exists);
     }
 
@@ -156,7 +154,7 @@ public class PhenotypeRepositoryTest {
     public void checkIfPhenotypeStructureExists() {
         PhenotypeStructure structure = new PhenotypeStructure();
         structure.setTag(Phenotype.Tag.ABNORMAL);
-        boolean exists = getPhenotypeRepository().isPhenotypeOnPile(structure);
+        boolean exists = getPhenotypeRepository().isPhenotypeStructureOnPile(structure);
         assertTrue(exists);
     }
 
@@ -198,7 +196,7 @@ public class PhenotypeRepositoryTest {
             DevelopmentStage start = anatomyRepository.getStageByID(startID);
             DevelopmentStage end = anatomyRepository.getStageByID(endID);
             Publication pub = pubRepository.getPublication(pubZdbId);
-            Phenotype phenotype = new AnatomyPhenotype();
+            Phenotype phenotype = new Phenotype();
             phenotype.setPublication(pub);
             phenotype.setEndStage(end);
             phenotype.setStartStage(start);

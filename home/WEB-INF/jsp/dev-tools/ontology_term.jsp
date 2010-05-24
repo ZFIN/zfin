@@ -6,7 +6,7 @@
 
 <table class="searchresults">
     <tr class="odd">
-        <td class="bold" width="150">Term Name</td>
+        <td class="bold" width="200">Term Name</td>
         <td>${formBean.term.termName}</td>
     </tr>
     <tr>
@@ -62,9 +62,9 @@
     <tr>
         <td class="bold">Synonyms</td>
         <td>
-<%--
-            <zfin:createDelimitedList collectionEntity="${formBean.term.aliases}" delimiter=","/>
---%>
+            <%--
+                        <zfin:createDelimitedList collectionEntity="${formBean.term.aliases}" delimiter=","/>
+            --%>
             <c:forEach var="alias" items="${formBean.term.aliases}">
                 ${alias.alias},
             </c:forEach>
@@ -79,21 +79,26 @@
 </table>
 <p></p>
 
-<h2>Relationships:</h2>
+<h2 class="sectionTitle search-result-table-entries">Relationships:</h2>
 <table>
     <tr>
-        <td class="bold" width="150" style="text-align:left">Parents</td>
+        <td class="bold" width="200" style="text-align:left">Parents
+        </td>
     </tr>
     <c:forEach var="relationship" items="${formBean.term.relatedTerms}">
         <c:if test="${relationship.termTwo eq formBean.term}">
             <tr>
-                <td style="text-align:right">${relationship.relationshipType}&nbsp; </td>
+                <td style="text-align:right">
+                    <fn${relationship.relationshipType}&nbsp;
+                </td>
                 <td><zfin:link entity="${relationship.termOne}"/></td>
             </tr>
         </c:if>
     </c:forEach>
     <tr>
-        <td class="bold" style="text-align:left">Children</td>
+        <td class="bold" style="text-align:left">Immediate Children
+            (${fn:length(formBean.term.relatedTerms)})
+        </td>
     </tr>
     <c:forEach var="relationship" items="${formBean.term.relatedTerms}">
         <c:if test="${relationship.termOne eq formBean.term}">
@@ -102,5 +107,21 @@
                 <td><zfin:link entity="${relationship.termTwo}"/></td>
             </tr>
         </c:if>
+    </c:forEach>
+</table>
+
+<h3>All Children (${fn:length(formBean.allChildren)}):</h3>
+<table>
+    <tr>
+        <td class="bold" width="150" style="text-align:left">Children</td>
+        <td class="bold" width="300" style="text-align:left">Term</td>
+        <td class="bold" style="text-align:left">Distance</td>
+    </tr>
+    <c:forEach var="childTermTransitiveClosure" items="${formBean.allChildren}">
+        <tr>
+            <td>&nbsp;</td>
+            <td><zfin:link entity="${childTermTransitiveClosure.child}"/></td>
+            <td>${childTermTransitiveClosure.distance}</td>
+        </tr>
     </c:forEach>
 </table>

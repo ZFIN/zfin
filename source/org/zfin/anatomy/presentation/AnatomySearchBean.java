@@ -15,6 +15,8 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -35,6 +37,7 @@ public class AnatomySearchBean extends PaginationBean {
     private List stages;
     private List<AnatomyItem> anatomyItems;
     private AnatomyItem anatomyItem;
+    private String id;
     private List<AnatomyStatistics> statisticItems;
     private DevelopmentStage stage;
     private String action;
@@ -67,6 +70,7 @@ public class AnatomySearchBean extends PaginationBean {
     private List<AntibodyStatistics> antibodyStatistics;
     private List<MorpholinoStatistics> nonWildtypeMorpholinos;
     private boolean wildtype;
+    private Term aoTerm;
 
     public List getStages() {
         return stages;
@@ -91,6 +95,16 @@ public class AnatomySearchBean extends PaginationBean {
             stage = new DevelopmentStage();
         }
         return stage;
+    }
+
+    public Term getAoTerm() {
+        if (aoTerm == null)
+            aoTerm = new GenericTerm();
+        return aoTerm;
+    }
+
+    public void setAoTerm(Term aoTerm) {
+        this.aoTerm = aoTerm;
     }
 
     public void setStage(DevelopmentStage stage) {
@@ -134,8 +148,9 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     // remove wild-card term
+
     public String getSearchTerm() {
-        return (isWildCard() ?  searchTerm.substring(0,searchTerm.length()-1): searchTerm) ;
+        return (isWildCard() ? searchTerm.substring(0, searchTerm.length() - 1) : searchTerm);
     }
 
     public void setSearchTerm(String searchTerm) {
@@ -368,11 +383,11 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public String getWelcomeInputSubject() {
-        return anatomyItem.getName();
+        return aoTerm.getTermName();
     }
 
     public String getWelcomeInputID() {
-        return anatomyItem.getZdbID();
+        return aoTerm.getID();
     }
 
     public int getGenotypeCount() {
@@ -399,6 +414,14 @@ public class AnatomySearchBean extends PaginationBean {
         this.antibodyCount = antibodyCount;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public int getMutantMorpholinoCount() {
         return mutantMorpholinoCount;
     }
@@ -420,9 +443,9 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("MIval", "aa-xpatselect.apg");
         url.addNamevaluePair("query_results", "exist");
         url.addNamevaluePair("START", "0");
-        url.addNamevaluePair("TA_selected_structures", getAnatomyItem().getName());
-        url.addNamevaluePair("xpatsel_processed_selected_structures", getAnatomyItem().getZdbID());
-        url.addNamevaluePair("xpatsel_processed_selected_structures_names", getAnatomyItem().getName());
+        url.addNamevaluePair("TA_selected_structures", getAoTerm().getTermName());
+        url.addNamevaluePair("xpatsel_processed_selected_structures", getAoTerm().getID());
+        url.addNamevaluePair("xpatsel_processed_selected_structures_names", getAoTerm().getTermName());
         if (includeSubstructures)
             url.addNamevaluePair("include_substructures", "checked");
         url.addNamevaluePair("structure_bool", "and");
@@ -439,9 +462,9 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("MIval", "aa-fishselect.apg");
         url.addNamevaluePair("query_results", "exist");
         url.addNamevaluePair("START", "1");
-        url.addNamevaluePair("TA_selected_structures", getAnatomyItem().getName());
-        url.addNamevaluePair("fsel_processed_selected_structures", getAnatomyItem().getZdbID());
-        url.addNamevaluePair("fsel_processed_selected_structures_names", getAnatomyItem().getName());
+        url.addNamevaluePair("TA_selected_structures", getAoTerm().getID());
+        url.addNamevaluePair("fsel_processed_selected_structures", getAoTerm().getID());
+        url.addNamevaluePair("fsel_processed_selected_structures_names", getAoTerm().getTermName());
         if (includeSubstructures)
             url.addNamevaluePair("include_substructures", "checked");
         url.addNamevaluePair("structure_bool", "and");

@@ -3,7 +3,7 @@ package org.zfin.mutant;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.gwt.root.dto.GoEvidenceQualifier;
 import org.zfin.marker.Marker;
-import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.Date;
@@ -12,23 +12,23 @@ import java.util.Set;
 /**
  */
 public class MarkerGoTermEvidence {
-    private String zdbID ;
-    private Marker marker ;
+    private String zdbID;
+    private Marker marker;
 
     // this may need to be moved to its own
-    private GoEvidenceCode evidenceCode ;
+    private GoEvidenceCode evidenceCode;
     private GoEvidenceQualifier flag;
-    private Publication source ;
-    private GoTerm goTerm ;
-    private String note ;
+    private Publication source;
+    private Term goTerm;
+    private String note;
 
     // editing data
-    private String createdBy ;
-    private Date createdWhen ;
-    private String modifiedBy ;
-    private Date modifiedWhen ;
+    private String createdBy;
+    private Date createdWhen;
+    private String modifiedBy;
+    private Date modifiedWhen;
 
-    private Set<InferenceGroupMember> inferredFrom ;
+    private Set<InferenceGroupMember> inferredFrom;
 
 
     public String getZdbID() {
@@ -71,11 +71,11 @@ public class MarkerGoTermEvidence {
         this.source = source;
     }
 
-    public GoTerm getGoTerm() {
+    public Term getGoTerm() {
         return goTerm;
     }
 
-    public void setGoTerm(GoTerm goTerm) {
+    public void setGoTerm(Term goTerm) {
         this.goTerm = goTerm;
     }
 

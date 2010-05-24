@@ -1,5 +1,7 @@
 package org.zfin.gwt.root.dto;
 
+import org.zfin.gwt.root.util.NumberAwareStringComparatorDTO;
+
 /**
  * Data Transfer Object corresponding to a unique combination of
  * Experiment, Figure and Stage range.
@@ -64,8 +66,18 @@ public class PhenotypeFigureStageDTO extends AbstractFigureStageDTO<PhenotypeTer
     public int compareTo(PhenotypeFigureStageDTO efs) {
         if (efs == null)
             return -1;
-        if (!figure.getLabel().equals(efs.getFigure().getLabel()))
-            return figure.getLabel().compareTo(efs.getFigure().getLabel());
+        if (figure.getLabel() == null && efs.getFigure().getLabel() != null)
+            return -1;
+        if (figure.getLabel() != null && efs.getFigure().getLabel() == null)
+            return 1;
+
+        if ((figure.getLabel() != null && efs.getFigure().getLabel() != null)) {
+            if (!figure.getLabel().equals(efs.getFigure().getLabel()) &&
+                    (figure.getLabel() != null && efs.getFigure().getLabel() != null)){
+                NumberAwareStringComparatorDTO comparator = new NumberAwareStringComparatorDTO();
+                return comparator.compare(figure.getLabel(),efs.getFigure().getLabel());
+            }
+        }
         if (!genotype.equals(efs.getGenotype()))
             return genotype.compareTo(efs.getGenotype());
         if (!environment.equals(efs.getEnvironment()))

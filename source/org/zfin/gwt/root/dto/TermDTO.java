@@ -6,29 +6,27 @@ import org.zfin.gwt.root.util.StringUtils;
 /**
  * Data Transfer Object for a composed term with expressed-in boolean.
  */
-public class TermDTO implements IsSerializable, Comparable<TermDTO> {
+public class TermDTO extends RelatedEntityDTO implements IsSerializable {
 
-    private String termID;
-    protected String termName;
     private String termOboID;
     private String definition;
     private String comment;
     private OntologyDTO ontology;
 
     public String getTermName() {
-        return termName;
+        return name;
     }
 
     public void setTermName(String termName) {
-        this.termName = termName;
+        this.name = termName;
     }
 
     public String getTermID() {
-        return termID;
+        return zdbID;
     }
 
     public void setTermID(String termID) {
-        this.termID = termID;
+        zdbID = termID;
     }
 
     public String getTermOboID() {
@@ -70,7 +68,7 @@ public class TermDTO implements IsSerializable, Comparable<TermDTO> {
 
         TermDTO termDTO = (TermDTO) o;
 
-        if (termID != null ? !termID.equals(termDTO.termID) : termDTO.termID != null)
+        if (zdbID != null ? !zdbID.equals(termDTO.zdbID) : termDTO.zdbID != null)
             return false;
 
         return true;
@@ -79,13 +77,16 @@ public class TermDTO implements IsSerializable, Comparable<TermDTO> {
     @Override
     @SuppressWarnings({"NonFinalFieldReferencedInHashCode", "SuppressionAnnotation"})
     public int hashCode() {
-        return 31 + (termID != null ? termID.hashCode() : 0);
+        return 31 + (zdbID != null ? zdbID.hashCode() : 0);
     }
 
-    public int compareTo(TermDTO o) {
+    public int compareTo(Object o) {
         if (o == null)
             return 1;
-        return termName.compareTo(o.getTermName());
+        if (!(o instanceof TermDTO))
+            return 1;
+        TermDTO term = (TermDTO) o;
+        return term.compareTo(term.getName());
 
     }
 
@@ -98,7 +99,7 @@ public class TermDTO implements IsSerializable, Comparable<TermDTO> {
      * @return true or false
      */
     public boolean equalsByNameOnlyAndOntology(TermDTO expressedTerm) {
-        if (!StringUtils.equals(termName, expressedTerm.getTermName()))
+        if (!StringUtils.equals(name, expressedTerm.getTermName()))
             return false;
         if (ontology != expressedTerm.getOntology())
             return false;

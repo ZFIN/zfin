@@ -88,7 +88,7 @@
 
     <class name="org.zfin.anatomy.AnatomyStatistics" table="anatomy_stats">
         <composite-id>
-            <key-property name="zdbID" column="anatstat_anatitem_zdb_id"/>
+            <key-property name="zdbID" column="anatstat_term_zdb_id"/>
             <key-property name="type" column="anatstat_object_type" type="statisticsType" access="field"/>
         </composite-id>
 
@@ -105,8 +105,8 @@
         </property>
 
         <!-- do not do fetch="join" -->
-        <many-to-one name="anatomyItem" class="org.zfin.anatomy.AnatomyItem"
-                     column="anatstat_anatitem_zdb_id" insert="false" update="false" fetch="join" lazy="false"/>
+        <many-to-one name="term" class="org.zfin.ontology.Term"
+                     column="anatstat_term_zdb_id" insert="false" update="false" fetch="join" lazy="false"/>
 
     </class>
 

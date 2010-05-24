@@ -13,7 +13,6 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 /**
@@ -57,6 +56,20 @@ public class OntologyRepositoryTest {
         List<TermAlias> anatomyList = getOntologyRepository().getAllAliases(Ontology.ANATOMY);
         assertNotNull(anatomyList);
     }
+
+    @Test
+    public void getTermByName() {
+        String anatomyTermName = "forerunner cell group";
+        Term term = getOntologyRepository().getTermByName(anatomyTermName, Ontology.ANATOMY);
+        Assert.assertNotNull(term);
+    }
+
+    @Test
+    public void getTransitiveClosure() {
+        List<TransitiveClosure> tcs = getOntologyRepository().getTransitiveClosure();
+        Assert.assertNotNull(tcs);
+    }
+
 
     @Test
     public void getAnatomyRootTermInfo() {

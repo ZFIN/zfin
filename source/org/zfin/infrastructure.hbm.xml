@@ -271,21 +271,6 @@
 
     </class>
 
-    <class name="org.zfin.ontology.TermDefinition" table="TERM_DEFINITION">
-
-        <id name="ID" type="string">
-            <column name="termdef_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">TERM</param>
-            </generator>
-        </id>
-
-        <property name="definition" column="termdef_definition"/>
-
-        <many-to-one name="term" class="org.zfin.ontology.GenericTerm" column="termdef_term_zdb_id"
-                     insert="false" update="false"/>
-    </class>
-
     <class name="org.zfin.ontology.TermRelationship" table="TERM_RELATIONSHIP">
         <id name="ID">
             <column name="termrel_zdb_id" not-null="true"/>
@@ -299,5 +284,15 @@
         <many-to-one name="termTwo" class="org.zfin.ontology.GenericTerm" column="termrel_term_2_zdb_id" />
 
     </class>
+
+    <class name="org.zfin.ontology.TransitiveClosure" table="all_term_contains">
+        <composite-id>
+            <key-many-to-one name="child" column="alltermcon_contained_zdb_id"/>
+            <key-many-to-one name="root" column="alltermcon_container_zdb_id"/>
+        </composite-id>
+
+        <property name="distance" column="alltermcon_min_contain_distance" />
+    </class>
+
 
 </hibernate-mapping>

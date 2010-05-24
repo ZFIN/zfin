@@ -1,6 +1,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
 
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+
 <!-- Phenotype section -->
 <c:set var="phenotypeSection" value="<%=AnatomySearchBean.Section.ANATOMY_PHENOTYPE.toString()%>" scope="page"/>
 <div class="summary">
@@ -12,12 +14,12 @@
                              showAllUsed="false"
                              displaySectionName="PHENOTYPE"/>
 
-    <p/>
+    <p></p>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
-            new Ajax.Updater('${phenotypeSection}-mutants', '/action/anatomy/show-phenotype-mutants?zdbID=${formBean.anatomyItem.zdbID}', {Method: 'get' });
-            new Ajax.Updater('${phenotypeSection}-morpholinos', '/action/anatomy/show-phenotype-morpholinos?zdbID=${formBean.anatomyItem.zdbID}', {Method: 'get' });
-            new Ajax.Updater('${phenotypeSection}-non-wildtype-morpholinos', '/action/anatomy/show-phenotype-non-wildtype-morpholinos?zdbID=${formBean.anatomyItem.zdbID}', {Method: 'get' });
+            new Ajax.Updater('${phenotypeSection}-mutants', '/action/anatomy/show-phenotype-mutants?zdbID=${formBean.aoTerm.ID}', {Method: 'get' });
+            new Ajax.Updater('${phenotypeSection}-morpholinos', '/action/anatomy/show-phenotype-morpholinos?zdbID=${formBean.aoTerm.ID}', {Method: 'get' });
+            new Ajax.Updater('${phenotypeSection}-non-wildtype-morpholinos', '/action/anatomy/show-phenotype-non-wildtype-morpholinos?zdbID=${formBean.aoTerm.ID}', {Method: 'get' });
             showSection('${phenotypeSection}', true);
         }
     </script>

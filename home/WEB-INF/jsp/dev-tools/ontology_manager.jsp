@@ -57,15 +57,15 @@
                             ${dataMap.value.lastLoad.totalNumberOfTerms}
                     </td>
                     <td class="listContentBold">
-                        <a href="ontology-terms?action=<%= OntologyBean.ActionType.SHOW_ALL_TERMS%>&ontologyName=${dataMap.value.ontology.ontologyName}"
+                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALL_TERMS%>&ontologyName=${dataMap.value.ontology.ontologyName}"
                            target="term-window">${dataMap.value.lastLoad.numberOfTerms}</a>
                     </td>
                     <td class="listContentBold">
-                        <a href="ontology-terms?action=<%= OntologyBean.ActionType.SHOW_OBSOLETE_TERMS%>&ontologyName=${dataMap.value.ontology.ontologyName}"
+                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_OBSOLETE_TERMS%>&ontologyName=${dataMap.value.ontology.ontologyName}"
                            target="term-window">${dataMap.value.lastLoad.numberOfObsoletedTerms}</a>
                     </td>
                     <td class="listContentBold">
-                            <a href="ontology-terms?action=<%= OntologyBean.ActionType.SHOW_ALIASES%>&ontologyName=${dataMap.value.ontology.ontologyName}"
+                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALIASES%>&ontologyName=${dataMap.value.ontology.ontologyName}"
                                target="term-window">${dataMap.value.lastLoad.numberOfAliases}</a>
                     </td>
                     <td>

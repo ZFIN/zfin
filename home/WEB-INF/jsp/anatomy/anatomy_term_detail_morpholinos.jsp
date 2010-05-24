@@ -1,6 +1,8 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+
 <b>Morpholino Experiments in Wild-type Fish</b>
 
 <c:if test="${!formBean.morpholinoExist}">
@@ -58,7 +60,7 @@
                     <td>
                         <c:if test="${morpholinoStat.numberOfFigures > 0}">
                             <c:if test="${morpholinoStat.numberOfFigures > 1}">
-                                <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pheno_summary.apg&OID=${morpholinoStat.genoExperiment.genotype.zdbID}&anatID=${formBean.anatomyItem.zdbID}&envID=${morpholinoStat.genoExperiment.experiment.zdbID}'>
+                                <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pheno_summary.apg&OID=${morpholinoStat.genoExperiment.genotype.zdbID}&anatID=${formBean.aoTerm.ID}&envID=${morpholinoStat.genoExperiment.experiment.zdbID}'>
                                     <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                                  integerEntity="${morpholinoStat.numberOfFigures}"
                                                  includeNumber="true"/>
@@ -96,7 +98,7 @@
                 <tr align="left">
                     <td>
                         Show all
-                        <a href="show-all-morpholino-experiments?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}&wildtype=true">
+                        <a href="show-all-morpholino-experiments?aoTerm.ID=${formBean.aoTerm.ID}&wildtype=true">
                                 ${formBean.wildtypeMorpholinoCount}
                             <zfin:choice choicePattern="0# experiments| 1# experiment| 2# experiments"
                                          integerEntity="${formBean.wildtypeMorpholinoCount}"/>

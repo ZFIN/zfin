@@ -372,7 +372,7 @@ sub phenotypeAnnotationUnspecified ($$) {
         on cur_curator_zdb_id = zdb_id
       where cur_topic='Phenotype'
         and cur_closed_date is not null
-        and apato_superterm_zdb_id = 'ZDB-ANAT-041102-1'
+        and apato_superterm_zdb_id = 'ZDB-TERM-100331-1055'
         and email = '$_[0]'
       order by apato_pub_zdb_id ";
 
@@ -453,24 +453,20 @@ sub expressionResultStageWindowOverlapsAnatomyItem ($) {
   my $sql = '
             select xpatres_zdb_id,
                    s1.stg_name_long, s2.stg_name_long,
-                   xpatres_anat_item_zdb_id, anatitem_name,
+                   xpatres_superterm_zdb_id, anatitem_name,
                    s3.stg_name_long, s4.stg_name_long
-	      from expression_result 
-                   join anatomy_item
-                        on xpatres_anat_item_zdb_id = anatitem_zdb_id
-                   join stage s1
-                        on xpatres_start_stg_zdb_id = s1.stg_zdb_id
-                   join stage s2
-                        on xpatres_end_stg_zdb_id = s2.stg_zdb_id
-                   join stage s3
-                        on anatitem_start_stg_zdb_id = s3.stg_zdb_id
-                   join stage s4
-                        on anatitem_end_stg_zdb_id = s4.stg_zdb_id
-             where anatitem_overlaps_stg_window(
-                                     xpatres_anat_item_zdb_id,
+	      from expression_result, anatomy_item, stage s1, stage s2,stage s3, stage s4, term
+             where aoterm_overlaps_stg_window(
+                                     xpatres_superterm_zdb_id,
                                      xpatres_start_stg_zdb_id,
                                      xpatres_end_stg_zdb_id
-                                     ) = "f"';
+                                     ) = "f"
+                        and anatitem_start_stg_zdb_id = s3.stg_zdb_id
+                        and anatitem_end_stg_zdb_id = s4.stg_zdb_id
+                        and term_ont_id = anatitem_obo_id
+                        and xpatres_superterm_zdb_id = term_zdb_id
+                        and xpatres_start_stg_zdb_id = s1.stg_zdb_id
+                        and xpatres_end_stg_zdb_id = s2.stg_zdb_id';
 
    my @colDesc = ( "Xpatres ZDB ID      ",
 		   "Xpatres start stage ",
@@ -2585,15 +2581,15 @@ sub foreigndbNotInFdbcontains ($) {
 
 #---------------------------------------------------------------
 # An 'unique' annotation for go consists of a specific pub, evidence code,
-# marker/feature, go_term, any inference data and any evidence_flags such as 
+# marker/feature, term, any inference data and any evidence_flags such as
 # 'not' or 'contributes to'.
-# The marker_go_term_evidence table keeps track of pub, evidence code, go_term,
+# The marker_go_term_evidence table keeps track of pub, evidence code, term,
 # and marker but does not enforce that the combination of these 4 is unique 
-# (no AK on the four columns).  Instead, duplicate values of these 4 colums
+# (no AK on the four columns).  Instead, duplicate values of these 4 columns
 # can exist in this table if and only if the 2 duplicate records also contain
 # references to a unique combination of inference data (in the table
 # inference_group_member).  However, we can not enforce this relationship via a 
-# table constraint as some marker, go_term, evidence_code, pub records will
+# table constraint as some marker, term, evidence_code, pub records will
 # have no inference data or flags.  Therefore, on entering data into 
 # the marker_go_term_evidence table, it is impossible to know if a user
 # is trying to add a duplicate record, or if they are trying to add either
@@ -2609,7 +2605,7 @@ sub mrkrgoevDuplicatesFound ($) {
 
   my $sql = 'select count(*),  
                     mrkrgoev_mrkr_zdb_id, 
-                    mrkrgoev_go_term_zdb_id, 
+                    mrkrgoev_term_zdb_id,
                     mrkrgoev_source_zdb_id, 
                     mrkrgoev_evidence_code
                from marker_go_term_evidence
@@ -2619,14 +2615,14 @@ sub mrkrgoevDuplicatesFound ($) {
                                             infgrmem_mrkrgoev_zdb_id)
                and mrkrgoev_gflag_name is null
                group by mrkrgoev_mrkr_zdb_id,
-                        mrkrgoev_go_term_zdb_id,
+                        mrkrgoev_term_zdb_id,
                         mrkrgoev_source_zdb_id,
                         mrkrgoev_evidence_code
                having count(*) > 1 ';
 
   my @colDesc = ("count", 
 		 "mrkrgoev_mrkr_zdb_id" ,
-		 "mrkrgoev_go_term_zdb_id",
+		 "mrkrgoev_term_zdb_id",
 		 "mrkrgoev_source_zdb_id", 
 		 "mrkrgoev_evidence_code");
 
@@ -2649,7 +2645,7 @@ sub mrkrgoevDuplicatesFound ($) {
 # 
 # The first query uses 2 copies of the marker_go_term_evidence table
 # each joining with inference_group_member table to find pairs of
-# mrkrgoev records that have identical mrkr, go_term, source,
+# mrkrgoev records that have identical mrkr, term, source,
 # and evidence_code. And it counts how many same inference members each of
 # the found MRKRGOEV pair has. (we can't put an AK on this table and still avoid
 # a join table between inference_group_member and mrkrgoev--in May 2004 we
@@ -2677,7 +2673,7 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
 	       from marker_go_term_evidence a, inference_group_member ia,
 		    marker_go_Term_evidence b, inference_group_member ib
 	      where a.mrkrgoev_mrkr_zdb_id =  b.mrkrgoev_mrkr_zdb_id
-	        and a.mrkrgoev_go_Term_zdb_id = b.mrkrgoev_go_term_zdb_id
+	        and a.mrkrgoev_term_zdb_id = b.mrkrgoev_term_zdb_id
 		and a.mrkrgoev_source_zdb_id = b.mrkrgoev_sourcE_zdb_id
 		and a.mrkrgoev_evidence_code = b.mrkrgoev_evidence_code 
                 and a.mrkrgoev_zdb_id = ia.infgrmem_mrkrgoev_zdb_id
@@ -2712,11 +2708,11 @@ sub removeGOTermsFromWithdrawnMarkers ($) {
 
   my $routineName = "removeGOTermsFromWithdrawnMarkers";
   
- my $sql = "select mrkrgoev_mrkr_zdb_id, mrkrgoev_source_Zdb_id,goterm_name, mrkrgoev_evidence_code
-              from marker_go_term_evidence, marker,go_term
+ my $sql = "select mrkrgoev_mrkr_zdb_id, mrkrgoev_source_Zdb_id,term_name, mrkrgoev_evidence_code
+              from marker_go_term_evidence, marker,term
               where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
               and mrkr_abbrev like 'WITHDRAWN%'
-              and goterm_zdb_id = mrkrgoev_go_term_zdb_id
+              and term_zdb_id = mrkrgoev_term_zdb_id
               order by mrkrgoev_mrkr_Zdb_id;";
 
   my @colDesc = ("marker zdb id      ",
@@ -2787,7 +2783,7 @@ sub mrkrgoevGoevflagDuplicatesFound ($) {
 
   my $sql = 'select count(*),  
                     mrkrgoev_mrkr_zdb_id, 
-                    mrkrgoev_go_term_zdb_id, 
+                    mrkrgoev_term_zdb_id, 
                     mrkrgoev_source_zdb_id, 
                     mrkrgoev_evidence_code, 
                     mrkrgoev_gflag_name
@@ -2798,7 +2794,7 @@ sub mrkrgoevGoevflagDuplicatesFound ($) {
                                             infgrmem_mrkrgoev_zdb_id)
                and mrkrgoev_gflag_name is not null
                group by mrkrgoev_mrkr_zdb_id,
-                        mrkrgoev_go_term_zdb_id,
+                        mrkrgoev_term_zdb_id,
                         mrkrgoev_source_zdb_id,
                         mrkrgoev_evidence_code,
                         mrkrgoev_gflag_name
@@ -2806,7 +2802,7 @@ sub mrkrgoevGoevflagDuplicatesFound ($) {
 
   my @colDesc = ("count", 
 		 "mrkrgoev_mrkr_zdb_id" ,
-		 "mrkrgoev_go_term_zdb_id",
+		 "mrkrgoev_term_zdb_id",
 		 "mrkrgoev_source_zdb_id",
 		 "mrkrgoev_evidence_code",
          "mrkrgoev_gflag_name");
@@ -2832,10 +2828,10 @@ sub mrkrgoevObsoleteAnnotationsFound ($) {
 
   my $routineName = "mrkrgoevObsoleteAnnotationsFound";
 
-  my $sql = 'select mrkrgoev_zdb_id, mrkr_abbrev, goterm_name, mrkrgoev_source_zdb_id
-               from marker_go_term_evidence, go_term, marker
-               where mrkrgoev_go_term_zdb_id = goterm_zdb_id
-               and goterm_is_obsolete = "t" 
+  my $sql = 'select mrkrgoev_zdb_id, mrkr_abbrev, term_name, mrkrgoev_source_zdb_id
+               from marker_go_term_evidence, term, marker
+               where mrkrgoev_term_zdb_id = term_zdb_id
+               and term_is_obsolete = "t"
                and mrkrgoev_mrkr_Zdb_id = mrkr_zdb_id'
               ;
 
@@ -2863,10 +2859,10 @@ sub mrkrgoevSecondaryAnnotationsFound ($) {
 
   my $routineName = "mrkrgoevSecondaryAnnotationsFound";
 
-  my $sql = 'select mrkrgoev_zdb_id, mrkr_abbrev, goterm_name, mrkrgoev_source_zdb_id
-               from marker_go_term_evidence, go_term, marker
-               where mrkrgoev_go_term_zdb_id = goterm_zdb_id
-               and goterm_is_secondary = "t"
+  my $sql = 'select mrkrgoev_zdb_id, mrkr_abbrev, term_name, mrkrgoev_source_zdb_id
+               from marker_go_term_evidence, term, marker
+               where mrkrgoev_term_zdb_id = term_zdb_id
+               and term_is_secondary = "t"
                and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id'
               ;
 
@@ -3156,13 +3152,13 @@ sub printTop40PostcomposedTerms($) {
 
     my $routineName = "printTop40PostcomposedTerms";
     my $sql = "
-     select first 40 termOne.anatitem_name, termTwo.anatitem_name, count(*) as frequency from expression_result, anatomy_item termOne, anatomy_item termTwo
-    where xpatres_anat_item_zdb_id is not null 
-      and xpatres_term_zdb_id is not null
-      and termOne.anatitem_zdb_id = xpatres_anat_Item_zdb_id
-      and termTwo.anatitem_zdb_id = xpatres_term_zdb_id
-    group by termOne.anatitem_name, termTwo.anatitem_name
-    order by frequency desc, termOne.anatitem_name
+     select first 40 termOne.term_name, termTwo.term_name, count(*) as frequency from expression_result, term termOne, term termTwo
+    where xpatres_superterm_zdb_id is not null
+      and xpatres_subterm_zdb_id is not null
+      and termOne.term_zdb_id = xpatres_superterm_zdb_id
+      and termTwo.term_zdb_id = xpatres_subterm_zdb_id
+    group by termOne.term_name, termTwo.term_name
+    order by frequency desc, termOne.term_name
       ";
 
     my @colDesc = ("Anatomy Term", "Anatomy Term","Frequency");

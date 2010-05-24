@@ -41,7 +41,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
     }
 
     /**
-     * Retrieve all terms from a given ontology that are not obsoleted.
+     * Retrieve all terms from a given ontology that are not obsoleted
+     * and are not marked as secondary (which means the term has been merged with
+     * another term and can be found in the alias table now. 
      *
      * @return list of terms
      */
@@ -51,7 +53,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
         Criteria criteria = session.createCriteria(GenericTerm.class);
         //criteria.add(Restrictions.ne("obsolete", true));
         criteria.add(Restrictions.eq("ontology", ontology));
+        criteria.add(Restrictions.eq("secondary", false));
         criteria.addOrder(Order.asc("termName"));
+        criteria.setFetchMode("aliases", FetchMode.JOIN);
         return (List<Term>) criteria.list();
     }
 
@@ -143,7 +147,6 @@ public class HibernateOntologyRepository implements OntologyRepository {
     /**
      * Retrieve all Children terms from a given term.
      * Does not include obsolete terms.
-     *
      * @param termID ID
      * @return list of terms
      */
@@ -164,6 +167,33 @@ public class HibernateOntologyRepository implements OntologyRepository {
             }
         }
         return terms;
+    }
+
+    /**
+     * Retrieve a term by name and ontology.
+     * @param termName term name
+     * @param ontology Ontology
+     * @return term
+     */
+    @Override
+    public Term getTermByName(String termName, Ontology ontology) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(GenericTerm.class);
+        criteria.add(Restrictions.eq("termName", termName));
+        criteria.add(Restrictions.eq("ontology", ontology));
+        return (Term) criteria.uniqueResult();
+    }
+
+    /**
+     * Retrieve all parent/child relationships.
+     * @return List of transitive closure
+     */
+    @SuppressWarnings({"unchecked"})
+    @Override
+    public List<TransitiveClosure> getTransitiveClosure() {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(TransitiveClosure.class);
+        return (List<TransitiveClosure>) criteria.list();
     }
 
 

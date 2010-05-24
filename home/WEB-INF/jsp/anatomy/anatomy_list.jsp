@@ -27,7 +27,7 @@
             <!-- This creates the visual level in the graph -->
                 <span style="margin-left: <c:out value="${ao.indentationLevel}" />pt">
             </c:if>
-            <a href='/action/anatomy/term-detail?anatomyItem.zdbID=<c:out value="${ao.zdbID}"/>'>
+            <a href='/action/anatomy/term-detail?id=<c:out value="${ao.zdbID}"/>'>
                 <!-- Highlight the search term or the highlight term if provided -->
                 <c:choose>
                     <c:when test="${formBean.stageSearch || formBean.termSearch}">

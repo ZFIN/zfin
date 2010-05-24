@@ -60,6 +60,15 @@ public interface PileStructuresRPC extends RemoteService {
      */
     List<PhenotypePileStructureDTO> recreatePhenotypeStructurePile(String publicationID);
 
+    /**
+     * Re-create the complete structure pile. This is needed in case none of the structures being used
+     * in expression records are on the pile.
+     *
+     * @param publicationID Publication id
+     * @return complete structure pile.
+     */
+    List<ExpressionPileStructureDTO> recreateExpressionStructurePile(String publicationID);
+
 
     public static class App {
         private static final PileStructuresRPCAsync INSTANCE;

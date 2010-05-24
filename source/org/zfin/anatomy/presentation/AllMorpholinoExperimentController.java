@@ -9,6 +9,8 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,13 +31,15 @@ public class AllMorpholinoExperimentController extends AbstractCommandController
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         AnatomySearchBean form = (AnatomySearchBean) command;
 
-        AnatomyItem term = retrieveAnatomyTerm(form.getAnatomyItem());
+        if (form.getAoTerm() == null)
+            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, "");
+        Term term = OntologyManager.getInstance().getTermByID(form.getAoTerm().getID());
         if (term == null)
-            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, form.getAnatomyItem().getZdbID());
-        form.setAnatomyItem(term);
+            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, form.getAoTerm().getID());
+        form.setAoTerm(term);
 
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-        AnatomyItem anatomyItem = form.getAnatomyItem();
+        Term anatomyItem = OntologyManager.getInstance().getTermByID(form.getAoTerm().getID());
         List<GenotypeExperiment> morphResult =
                 mutantRepository.getGenotypeExperimentMorpholinos(anatomyItem, form.isWildtype());
         form.setWildtypeMorpholinoCount(morphResult.size());
@@ -49,8 +53,4 @@ public class AllMorpholinoExperimentController extends AbstractCommandController
         return new ModelAndView("all-morpholino-experiments.page", LookupStrings.FORM_BEAN, form);
     }
 
-    public static AnatomyItem retrieveAnatomyTerm(AnatomyItem anatomyItem) {
-        AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
-        return anatomyRepository.getAnatomyTermByID(anatomyItem.getZdbID());
-    }
 }

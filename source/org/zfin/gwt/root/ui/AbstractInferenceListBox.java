@@ -238,7 +238,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
                         &&
                         availableList.getSelected() != null
                         ) {
-                    GoTermDTO goTermDTO = new GoTermDTO();
+                    TermDTO goTermDTO = new TermDTO();
                     goTermDTO.setDataZdbID(availableList.getSelected());
                     relatedEntityDTO.setGoTerm(goTermDTO);
                 } else {
@@ -254,7 +254,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
                 GoEvidenceDTO relatedEntityDTO = new GoEvidenceDTO();
                 if (inferenceCategoryList.getSelected().equals(InferenceCategory.GO.name())) {
                     String goTermString = availableList.getSelectedText();
-                    GoTermDTO goTermDTO = new GoTermDTO();
+                    TermDTO goTermDTO = new TermDTO();
                     goTermDTO.setName(goTermString);
                     goTermDTO.setDataZdbID(availableList.getSelected());
                     relatedEntityDTO.setGoTerm(goTermDTO);

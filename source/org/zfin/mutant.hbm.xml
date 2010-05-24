@@ -33,10 +33,9 @@
         <param name="enumClassname">org.zfin.mutant.Feature$Type</param>
     </typedef>-->
 
-     <typedef class="org.zfin.database.StringEnumUserType" name="featureMarkerRelationshipType">
+    <typedef class="org.zfin.database.StringEnumUserType" name="featureMarkerRelationshipType">
         <param name="enumClassname">org.zfin.mutant.FeatureMarkerRelationship$Type</param>
     </typedef>
-
 
 
     <class name="org.zfin.mutant.Genotype" table="genotype">
@@ -91,9 +90,10 @@
         </id>
         <many-to-one name="marker" column="mrkrgoev_mrkr_zdb_id" not-null="true"/>
         <many-to-one name="source" column="mrkrgoev_source_zdb_id" not-null="true"/>
-        <many-to-one name="goTerm" column="mrkrgoev_go_term_zdb_id" not-null="true"/>
+        <many-to-one name="goTerm" column="mrkrgoev_term_zdb_id" not-null="true"/>
         <property name="note" column="mrkrgoev_notes" not-null="false"/>
-        <many-to-one name="evidenceCode" column="mrkrgoev_evidence_code" class="org.zfin.mutant.GoEvidenceCode" not-null="false"/>
+        <many-to-one name="evidenceCode" column="mrkrgoev_evidence_code" class="org.zfin.mutant.GoEvidenceCode"
+                     not-null="false"/>
 
         <property name="createdBy" column="mrkrgoev_contributed_by" not-null="false"/>
         <property name="createdWhen" column="mrkrgoev_date_entered" not-null="false"/>
@@ -109,13 +109,12 @@
 
     </class>
 
-    <class name="InferenceGroupMember" table="inference_group_member"  >
+    <class name="InferenceGroupMember" table="inference_group_member">
         <composite-id>
-            <key-property name="markerGoTermEvidenceZdbID" column="infgrmem_mrkrgoev_zdb_id" />
+            <key-property name="markerGoTermEvidenceZdbID" column="infgrmem_mrkrgoev_zdb_id"/>
             <key-property name="inferredFrom" column="infgrmem_inferred_from"/>
         </composite-id>
     </class>
-
 
 
     <class name="org.zfin.mutant.GenotypeFeature" table="genotype_feature">
@@ -164,38 +163,6 @@
         </set>
     </class>
 
-    <class name="PhenotypeAnnotation" table="atomic_phenotype">
-        <id name="zdbID" type="string">
-            <column name="apato_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">APATO</param>
-                <param name="insertActiveData">true</param>
-            </generator>
-        </id>
-
-        <many-to-one name="genotypeExperiment" class="org.zfin.mutant.GenotypeExperiment">
-            <column name="apato_genox_zdb_id"/>
-        </many-to-one>
-
-        <many-to-one name="superTerm" column="apato_superterm_zdb_id"/>
-        <many-to-one name="subTerm" column="apato_subterm_zdb_id"/>
-        <many-to-one name="qualityTerm" column="apato_quality_zdb_id"/>
-        <many-to-one name="publication" column="apato_pub_zdb_id"/>
-        <many-to-one name="startStage" column="apato_start_stg_zdb_id"/>
-        <many-to-one name="endStage" column="apato_end_stg_zdb_id"/>
-        <!--
-        ToDo: mark tag as phenotypeTag type when this col is cleaned up
-        -->
-        <property name="tag" column="apato_tag"/>
-
-        <set name="figures" lazy="true" table="apato_figure">
-            <key column="apatofig_apato_zdb_id"/>
-            <many-to-many class="org.zfin.expression.Figure" column="apatofig_fig_zdb_id"/>
-        </set>
-
-
-    </class>
-
     <class name="org.zfin.mutant.Phenotype" table="atomic_phenotype">
         <id name="zdbID" type="string">
             <column name="apato_zdb_id" not-null="true"/>
@@ -205,20 +172,6 @@
             </generator>
         </id>
 
-        <discriminator type="string"
-                       formula="(
-                        CASE
-                            WHEN (get_obj_type(apato_superterm_zdb_id) =  'ANAT' AND
-                                get_obj_type(apato_subterm_zdb_id) =  'GOTERM') THEN 'AnatomyGo-term'
-                            WHEN (get_obj_type(apato_superterm_zdb_id) =  'ANAT' AND
-                                get_obj_type(apato_subterm_zdb_id) =  'ANAT') THEN 'AnatomyAnatomy'
-                            WHEN (get_obj_type(apato_superterm_zdb_id) =  'ANAT' AND
-                                apato_subterm_zdb_id is null) THEN 'AnatomyAnatomy'
-                            WHEN (get_obj_type(apato_superterm_zdb_id) =  'GOTERM' AND
-                                apato_subterm_zdb_id is null) THEN 'Go-termGo-term'
-                            else  'Go-termGo-term'
-                        END)"/>
-
         <many-to-one name="genotypeExperiment" class="org.zfin.mutant.GenotypeExperiment">
             <column name="apato_genox_zdb_id"/>
         </many-to-one>
@@ -226,6 +179,8 @@
         <!--
                 <property name="patoSuperTermzdbID" column="apato_superterm_zdb_id"/>
         -->
+        <many-to-one name="superterm" column="apato_superterm_zdb_id"/>
+        <many-to-one name="subterm" column="apato_subterm_zdb_id"/>
         <many-to-one name="term" column="apato_quality_zdb_id"/>
         <many-to-one name="publication" column="apato_pub_zdb_id"/>
         <many-to-one name="startStage" column="apato_start_stg_zdb_id"/>
@@ -239,21 +194,6 @@
             <key column="apatofig_apato_zdb_id"/>
             <many-to-many class="org.zfin.expression.Figure" column="apatofig_fig_zdb_id"/>
         </set>
-
-        <subclass name="org.zfin.anatomy.AnatomyPhenotype" discriminator-value="AnatomyAnatomy">
-            <many-to-one name="anatomySuperTerm" column="apato_superterm_zdb_id" class="org.zfin.anatomy.AnatomyItem"/>
-            <many-to-one name="anatomySubTerm" column="apato_subterm_zdb_id" class="org.zfin.anatomy.AnatomyItem"/>
-        </subclass>
-
-        <subclass name="org.zfin.mutant.ComposedPhenotype" discriminator-value="AnatomyGo-term">
-            <many-to-one name="anatomySuperTerm" column="apato_superterm_zdb_id" class="org.zfin.anatomy.AnatomyItem"/>
-            <many-to-one name="goSubTerm" column="apato_subterm_zdb_id" class="org.zfin.ontology.GoTerm"/>
-        </subclass>
-
-        <subclass name="org.zfin.ontology.GoPhenotype" discriminator-value="Go-termGo-term">
-            <many-to-one name="goSuperTerm" column="apato_superterm_zdb_id" class="org.zfin.ontology.GoTerm"/>
-            <many-to-one name="goSubTerm" column="apato_subterm_zdb_id" class="org.zfin.ontology.GoTerm"/>
-        </subclass>
 
     </class>
 
@@ -278,9 +218,9 @@
                      foreign-key="feature_type" not-null="true"
                      class="org.zfin.mutant.FeatureType"/>
 
-        <set name="aliases" lazy="true" table="data_alias"  order-by="dalias_alias_lower" inverse="false">
-            <key column="dalias_data_zdb_id" />
-            <one-to-many class="org.zfin.mutant.FeatureAlias" />
+        <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" inverse="false">
+            <key column="dalias_data_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.FeatureAlias"/>
         </set>
 
         <set name="dataNote" lazy="true">
@@ -310,12 +250,13 @@
 
 
         <many-to-one name="featureMarkerRelationshipType" column="fmrel_type" insert="false" update="false"
-                            foreign-key="fmrel_type" class="FeatureMarkerRelationshipType"/>
-        <many-to-one name="feature" class="org.zfin.mutant.Feature" column="fmrel_ftr_zdb_id" lazy="no-proxy" insert="false" update="false" />
-        <many-to-one name="marker" class="org.zfin.marker.Marker" column="fmrel_mrkr_zdb_id" lazy="no-proxy" insert="false" update="false"/>
+                     foreign-key="fmrel_type" class="FeatureMarkerRelationshipType"/>
+        <many-to-one name="feature" class="org.zfin.mutant.Feature" column="fmrel_ftr_zdb_id" lazy="no-proxy"
+                     insert="false" update="false"/>
+        <many-to-one name="marker" class="org.zfin.marker.Marker" column="fmrel_mrkr_zdb_id" lazy="no-proxy"
+                     insert="false" update="false"/>
 
 
-        
         <set name="publications" lazy="true" cascade="all">
             <key column="recattrib_data_zdb_id"/>
             <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
@@ -360,22 +301,6 @@
 
         <property name="name" column="expunit_name"/>
         <property name="group" column="expunit_condition_group"/>
-    </class>
-
-    <class name="org.zfin.ontology.GoTerm" table="go_term">
-
-        <id name="zdbID" type="string">
-            <column name="goterm_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">GOTERM</param>
-            </generator>
-        </id>
-
-        <property name="name" column="goterm_name"/>
-        <property name="oboID" column="goterm_go_id"/>
-        <property name="subOntology" column="goterm_ontology"/>
-        <property name="obsolete" column="goterm_is_obsolete"/>
-
     </class>
 
     <class name="org.zfin.mutant.FeatureHistory" table="feature_history">
@@ -424,7 +349,7 @@
     </class>
 
 
-    <class name="org.zfin.mutant.FeatureType" table="feature_type" >
+    <class name="org.zfin.mutant.FeatureType" table="feature_type">
         <id name="name">
             <column name="ftrtype_name"/>
         </id>
@@ -449,21 +374,20 @@
         </set>
 
     </class>
-    <class name="org.zfin.mutant.FeatureMarkerRelationshipType" table="feature_marker_relationship_type" >
-            <id name="name">
-                <column name="fmreltype_name"/>
-            </id>
-          <many-to-one name="featureTypeGroup" column="fmreltype_ftr_type_group"
-                foreign-key="fmreltype_ftr_type_group" class="org.zfin.mutant.FeatureTypeGroup"/>
-            <many-to-one name="markerTypeGroup" column="fmreltype_mrkr_type_group"
-                foreign-key="fmreltype_mrkr_type_group" class="org.zfin.marker.MarkerTypeGroup"/>
+    <class name="org.zfin.mutant.FeatureMarkerRelationshipType" table="feature_marker_relationship_type">
+        <id name="name">
+            <column name="fmreltype_name"/>
+        </id>
+        <many-to-one name="featureTypeGroup" column="fmreltype_ftr_type_group"
+                     foreign-key="fmreltype_ftr_type_group" class="org.zfin.mutant.FeatureTypeGroup"/>
+        <many-to-one name="markerTypeGroup" column="fmreltype_mrkr_type_group"
+                     foreign-key="fmreltype_mrkr_type_group" class="org.zfin.marker.MarkerTypeGroup"/>
         <property name="affectedMarkerFlag" type="boolean">
-                    <column name="fmreltype_produces_affected_marker"/>
-                </property>
+            <column name="fmreltype_produces_affected_marker"/>
+        </property>
         <property name="firstToSecondLabel" column="fmreltype_1_to_2_comments"/>
         <property name="secondToFirstLabel" column="fmreltype_2_to_1_comments"/>
-        </class>
-
+    </class>
 
 
     <class name="org.zfin.mutant.GenotypeFigure" table="genotype_figure_fast_search">
@@ -494,5 +418,8 @@
 
     </class>
 
+    <sql-query name="regenGenofigGenotype" callable="true">
+        { execute procedure regen_genofig_genotype(?) }
+    </sql-query>
 </hibernate-mapping>
 

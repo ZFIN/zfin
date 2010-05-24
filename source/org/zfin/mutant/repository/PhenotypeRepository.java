@@ -1,6 +1,5 @@
 package org.zfin.mutant.repository;
 
-import org.zfin.anatomy.AnatomyPhenotype;
 import org.zfin.expression.Figure;
 import org.zfin.gwt.root.dto.PhenotypeTermDTO;
 import org.zfin.mutant.MutantFigureStage;
@@ -38,7 +37,7 @@ public interface PhenotypeRepository {
      * @param publicationID Publication
      * @return boolean
      */
-    boolean isPhenotypeOnPile(PhenotypeTermDTO phenotypeTerm, String publicationID);
+    boolean isPhenotypePileStructureExists(PhenotypeTermDTO phenotypeTerm, String publicationID);
 
     /**
      * Check if a given Phenotype Structure already exists on the pile
@@ -46,7 +45,7 @@ public interface PhenotypeRepository {
      * @param structure Phenotype structure
      * @return boolean
      */
-    public boolean isPhenotypeOnPile(PhenotypeStructure structure);
+    public boolean isPhenotypeStructureOnPile(PhenotypeStructure structure);
 
     /**
      * Retrieve a phenotype structure by given primary key.
@@ -88,9 +87,8 @@ public interface PhenotypeRepository {
 
     /**
      * Retrieve a mutant figure stage record from the unique key
-     *
      * @param mutantFigureStage mutant figure stage unique key
-     * @param figureID          figure
+     * @param figureID figure
      * @return full mutant figure stage record
      */
     MutantFigureStage getMutant(MutantFigureStage mutantFigureStage, String figureID);
@@ -134,7 +132,7 @@ public interface PhenotypeRepository {
      * @param mfs MutantFigureStage
      * @return Phenotype
      */
-    AnatomyPhenotype createDefaultPhenotype(MutantFigureStage mfs);
+    Phenotype createDefaultPhenotype(MutantFigureStage mfs);
 
     /**
      * Create a default phenotype record.

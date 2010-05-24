@@ -3,24 +3,18 @@ package org.zfin.anatomy.presentation;
 import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyRelationship;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.presentation.LookupStrings;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * Controller class that serves the anatomy term detail page.
  */
-public class AnatomyTermInfoController extends AbstractCommandController {
+public class AnatomyTermInfoController extends AnatomyTermDetailController {
 
-    private static final Logger LOG = Logger.getLogger(AnatomyTermDetailController.class);
-
-    private AnatomyRepository anatomyRepository;
+    private static final Logger LOG = Logger.getLogger(AnatomyTermInfoController.class);
 
     public AnatomyTermInfoController() {
         setCommandClass(AnatomySearchBean.class);
@@ -38,22 +32,6 @@ public class AnatomyTermInfoController extends AbstractCommandController {
         modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, term.getName());
 
         return modelAndView;
-    }
-
-
-    private AnatomyItem retrieveAnatomyTermData(AnatomySearchBean form) {
-        AnatomyItem ai = anatomyRepository.getAnatomyTermByID(form.getAnatomyItem().getZdbID());
-        if (ai == null)
-            return null;
-        List<AnatomyRelationship> relationships = anatomyRepository.getAnatomyRelationships(ai);
-        ai.setRelatedItems(relationships);
-        form.setAnatomyItem(ai);
-        return ai;
-    }
-
-
-    public void setAnatomyRepository(AnatomyRepository anatomyRepository) {
-        this.anatomyRepository = anatomyRepository;
     }
 
 }

@@ -21,8 +21,8 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.GoTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
@@ -30,6 +30,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 
 /**
@@ -37,13 +38,13 @@ import static org.zfin.framework.HibernateUtil.currentSession;
  */
 public class HibernateMutantRepository implements MutantRepository {
 
-    public PaginationResult<Genotype> getGenotypesByAnatomyTerm(AnatomyItem item, boolean wildtype, int numberOfRecords) {
+    public PaginationResult<Genotype> getGenotypesByAnatomyTerm(Term item, boolean wildtype, int numberOfRecords) {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct genox.genotype from GenotypeExperiment genox, AnatomyPhenotype pheno " +
+                "select distinct genox.genotype from GenotypeExperiment genox, Phenotype pheno " +
                         "WHERE pheno.genotypeExperiment = genox " +
-                        "AND (pheno.anatomySuperTerm = :aoTerm or pheno.anatomySubTerm = :aoTerm ) " +
+                        "AND (pheno.superterm = :aoTerm or pheno.subterm = :aoTerm ) " +
                         "AND pheno.tag != :tag " +
                         "AND genox.experiment.name in (:condition) " +
                         "AND not exists (select 1 from ExperimentCondition cond where" +
@@ -63,6 +64,7 @@ public class HibernateMutantRepository implements MutantRepository {
         return PaginationResultFactory.createResultFromScrollableResultAndClose(numberOfRecords, query.scroll());
     }
 
+    @SuppressWarnings({"unchecked"})
     public List<Genotype> getGenotypesByFeature(Feature feature) {
         Session session = HibernateUtil.currentSession();
 
@@ -77,47 +79,44 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query query = session.createQuery(hql);
         query.setString("zdbID", feature.getZdbID());
-        List<Genotype> genotypes = query.list();
-        return genotypes;
-
-
+        return (List<Genotype>) query.list();
     }
 
 
-    public int getNumberOfImagesPerAnatomyAndMutant(AnatomyItem item, Genotype genotype) {
+    public int getNumberOfImagesPerAnatomyAndMutant(Term term, Genotype genotype) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select count(distinct image) from Image image, Figure fig, ExpressionResult res, " +
                 "                                  ExpressionExperiment exp " +
                 "where " +
                 "res member of exp.expressionResults AND " +
-                "res.anatomyTerm.zdbID = :aoZdbID AND " +
+                "res.superterm = :term AND " +
                 "fig member of res.figures AND " +
                 "image member of fig.images AND " +
                 "res.expressionFound = :expressionFound AND " +
                 "exp.genotypeExperiment.genotype.zdbID = :genoZdbID ";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
-        query.setString("aoZdbID", item.getZdbID());
+        query.setParameter("term", term);
         query.setString("genoZdbID", genotype.getZdbID());
 
         return ((Number) query.uniqueResult()).intValue();
     }
 
-    public int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(AnatomyItem item, Genotype genotype) {
+    public int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(Term item, Genotype genotype) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select count(distinct figure.publication) from Figure figure, ExpressionResult res, " +
                 "                                               ExpressionExperiment exp " +
                 "where " +
                 "res member of exp.expressionResults AND " +
-                "res.anatomyTerm.zdbID = :aoZdbID AND " +
+                "res.superterm = :term AND " +
                 "figure member of res.figures AND " +
                 "res.expressionFound = :expressionFound AND " +
                 "exp.genotypeExperiment.genotype.zdbID = :genoZdbID ";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
-        query.setString("aoZdbID", item.getZdbID());
+        query.setParameter("term", item);
         query.setString("genoZdbID", genotype.getZdbID());
 
         return ((Number) query.uniqueResult()).intValue();
@@ -133,7 +132,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param numberOfRecords number
      * @return list of statistics
      */
-    public List<Morpholino> getPhenotypeMorpholinos(AnatomyItem item, int numberOfRecords) {
+    public List<Morpholino> getPhenotypeMorpholinos(Term item, int numberOfRecords) {
         Session session = HibernateUtil.currentSession();
 
         // This returns morpholinos by phenote annotations
@@ -176,25 +175,25 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, Boolean isWildtype, int numberOfRecords) {
+    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, Boolean isWildtype, int numberOfRecords) {
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(numberOfRecords);
         return getGenotypeExperimentMorpholinos(item, isWildtype, bean);
     }
 
-    public List<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, boolean isWildtype) {
+    public List<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, boolean isWildtype) {
         return getGenotypeExperimentMorpholinos(item, isWildtype, null).getPopulatedResults();
     }
 
     @SuppressWarnings("unchecked")
-    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, Boolean isWildtype, PaginationBean bean) {
+    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, Boolean isWildtype, PaginationBean bean) {
         Session session = HibernateUtil.currentSession();
         String hql = "SELECT distinct genotypeExperiment " +
                 "FROM  GenotypeExperiment genotypeExperiment, Experiment exp, Genotype geno, " +
-                "      AnatomyPhenotype pheno, ExperimentCondition con, Marker marker " +
+                "      Phenotype pheno, ExperimentCondition con, Marker marker " +
                 "WHERE   " +
                 "      genotypeExperiment.experiment = exp AND " +
-                "       (pheno.anatomySuperTerm = :aoTerm or pheno.anatomySubTerm = :aoTerm) AND " +
+                "       (pheno.superterm = :aoTerm or pheno.subterm = :aoTerm) AND " +
                 "       pheno.genotypeExperiment = genotypeExperiment AND " +
                 "       pheno.tag != :tag AND " +
                 "       con.experiment = exp AND " +
@@ -246,48 +245,9 @@ public class HibernateMutantRepository implements MutantRepository {
 
 
     @SuppressWarnings("unchecked")
-    public List<GoTerm> getGoTermsByName(String name) {
-        String hql = "select distinct term from GoTerm term  " +
-                "where lower(term.name) like :name " +
-                " AND term.obsolete = :obsolete ";
-        // we don't order, let client take care of it
-//                " order by term.name";
-
-        Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery(hql);
-        query.setString("name", "%" + name.toLowerCase() + "%");
-        query.setBoolean("obsolete", false);
-        return query.list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<GoTerm> getGoTermsByNameAndSubtree(String name, OntologyDTO ontology) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(GoTerm.class);
-        criteria.add(Restrictions.like("name", "%" + name + "%"));
-        if (ontology != null && ontology != OntologyDTO.GO)
-            criteria.add(Restrictions.eq("subOntology", ontology.getOntologyName()));
-        criteria.add(Restrictions.eq("obsolete", false));
-        return criteria.list();
-    }
-
-
     /**
      * @param name go term name
-     * @return A unique GoTerm.
-     */
-    @SuppressWarnings("unchecked")
-    public GoTerm getGoTermByName(String name) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(GoTerm.class);
-        criteria.add(Restrictions.eq("name", name));
-        return (GoTerm) criteria.uniqueResult();
-    }
-
-    @SuppressWarnings("unchecked")
-    /**
-     * @param name go term name
-     * @return A unique GoTerm.
+     * @return A unique Go Term.
      */
     public List<GenericTerm> getQualityTermsByName(String name) {
         Session session = HibernateUtil.currentSession();
@@ -339,7 +299,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "      Phenotype pheno, ExperimentCondition con, GenotypeExperiment geno " +
                 "WHERE   " +
                 "       geno.experiment = exp AND " +
-                "       pheno.anatomySuperTerm = :aoTerm AND " +
+                "       (pheno.superterm = :aoTerm OR pheno.subterm = :aoTerm )AND " +
                 "       pheno.genotypeExperiment = geno AND " +
                 "       con.experiment = exp AND " +
                 "       geno.genotype = genotype AND" +
@@ -575,12 +535,12 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql = "select pheno from Phenotype pheno, Figure figure " +
                 "     where pheno.genotypeExperiment = :genox" +
-                "           and pheno.anatomySuperTerm = :unspecified " +
+                "           and pheno.superterm = :unspecified " +
                 "           and pheno.term.ID= :qualityZdbID " +
                 "           and pheno.tag = :tag " +
                 "           and figure member of pheno.figures " +
                 "           and figure.zdbID = :figureID";
-        AnatomyItem unspecified = RepositoryFactory.getAnatomyRepository().getAnatomyItem(AnatomyItem.UNSPECIFIED);
+        Term unspecified = getOntologyRepository().getTermByName(Term.UNSPECIFIED, Ontology.ANATOMY);
         GenericTerm quality = RepositoryFactory.getInfrastructureRepository().getTermByName("quality", Ontology.QUALITY);
         Query query = session.createQuery(hql);
         query.setParameter("genox", genotypeExperiment);
@@ -643,60 +603,18 @@ public class HibernateMutantRepository implements MutantRepository {
 
     }
 
-
+    @SuppressWarnings({"unchecked"})
     public List<Feature> getFeaturesForStandardAttribution(Publication publication) {
         String hql = "select f from PublicationAttribution pa , Feature f " +
                 " where pa.dataZdbID=f.zdbID and pa.publication.zdbID= :pubZdbID  " +
                 " and pa.sourceType= :sourceType  ";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("pubZdbID", publication.getZdbID());
+        Query query = HibernateUtil.currentSession().createQuery(hql) ;
+        query.setString("pubZdbID",publication.getZdbID());
         query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
         return query.list();
     }
 
-
-    /**
-     * Retrieve a Goterm by obo id from the GO term table.
-     *
-     * @param oboID obo id
-     * @return GoTerm
-     */
-    public GoTerm getGoTermByOboID(String oboID) {
-        if (oboID == null)
-            return null;
-        // strip off GO: string
-        oboID = oboID.substring(3);
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(GoTerm.class);
-        criteria.add(Restrictions.eq("oboID", oboID));
-        return (GoTerm) criteria.uniqueResult();
-    }
-
-
-    /**
-     * Go terms attributed as evidence to this marker by this pub.
-     * todo: Don't include IEA, IC .
-     *
-     * @param marker
-     * @param publication
-     * @return
-     */
-    public List<GoTerm> getGoTermsByMarkerAndPublication(Marker marker, Publication publication) {
-        String hql = "select distinct g from PublicationAttribution pa , GoTerm g , MarkerGoTermEvidence ev " +
-                " where pa.dataZdbID=ev.zdbID " +
-                " and pa.publication.zdbID= :pubZdbID  " +
-                " and ev.marker.zdbID = :markerZdbID " +
-                " and ev.evidenceCode.code not in (:excludedEvidenceCodes) " +
-                " and g.zdbID= ev.goTerm.id " +
-                " and pa.sourceType= :sourceType  ";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("pubZdbID", publication.getZdbID());
-        query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()});
-        query.setString("markerZdbID", marker.getZdbID());
-        query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
-        return query.list();
-    }
-
+    @SuppressWarnings({"unchecked"})
     public List<Genotype> getGenotypesForStandardAttribution(Publication publication) {
         String hql = "select distinct g from PublicationAttribution pa , Genotype g " +
                 " where pa.dataZdbID=g.zdbID and pa.publication.zdbID= :pubZdbID  " +
@@ -710,17 +628,43 @@ public class HibernateMutantRepository implements MutantRepository {
     /**
      * Go terms attributed as evidence to this marker by this pub.
      * todo: Don't include IEA, IC .
+     * @param marker marker
+     * @param publication publication
+     * @return collection of terms
+     */
+    @SuppressWarnings({"unchecked"})
+    public List<Term> getGoTermsByMarkerAndPublication(Marker marker, Publication publication) {
+        String hql = "select distinct g from PublicationAttribution pa , GenericTerm g , MarkerGoTermEvidence ev " +
+                " where pa.dataZdbID=ev.zdbID " +
+                " and pa.publication.zdbID= :pubZdbID  " +
+                " and ev.marker.zdbID = :markerZdbID " +
+                " and ev.evidenceCode.code not in (:excludedEvidenceCodes) " +
+                " and g.ID= ev.goTerm.ID " +
+                " and pa.sourceType= :sourceType  ";
+        Query query = HibernateUtil.currentSession().createQuery(hql) ;
+        query.setString("pubZdbID",publication.getZdbID());
+        query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()} );
+        query.setString("markerZdbID",marker.getZdbID());
+        query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
+        return query.list();
+    }
+
+    /**
+     * Go terms attributed as evidence to this marker by this pub.
+     * todo: Don't include IEA, IC .
      *
      * @param publication
      * @return
      */
-    public List<GoTerm> getGoTermsByPhenotypeAndPublication(Publication publication) {
-        String hql = "select distinct g from GoPhenotype p , GoTerm g  " +
-                " where p.publication.zdbID= :pubZdbID  " +
-                " and ( p.goSubTerm = g " +
-                " or p.goSuperTerm = g )";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("pubZdbID", publication.getZdbID());
+    @SuppressWarnings({"unchecked"})
+    public List<Term> getGoTermsByPhenotypeAndPublication(Publication publication) {
+        String hql = "select distinct phenotype from Phenotype phenotype , GenericTerm g  " +
+                " where phenotype.publication.zdbID= :pubZdbID  " +
+                " and ( phenotype.subterm = g and g.oboID like :oboIDLike" +
+                " or phenotype.superterm = g )" ;
+        Query query = HibernateUtil.currentSession().createQuery(hql) ;
+        query.setString("pubZdbID",publication.getZdbID());
+        query.setString("oboIDLike", "GO:%");
         return query.list();
     }
 

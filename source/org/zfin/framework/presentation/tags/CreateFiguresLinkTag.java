@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.Term;
 import org.zfin.properties.ZfinProperties;
 
 import javax.servlet.jsp.JspException;
@@ -21,7 +21,7 @@ import java.util.Collection;
 public class CreateFiguresLinkTag extends TagSupport {
 
     private Marker marker;
-    private AnatomyItem anatomyItem;
+    private Term term;
     private long numberOfFigures = -1;
     private Collection numberOfFiguresCollection;
     private String author;
@@ -43,7 +43,7 @@ public class CreateFiguresLinkTag extends TagSupport {
         }
 
         hyperLink.append("&TA_selected_structures=");
-        String aoName = anatomyItem.getName();
+        String aoName = term.getTermName();
         String aoTermUrlEncoded;
         try {
             aoTermUrlEncoded = URLEncoder.encode(aoName, "UTF-8");
@@ -55,7 +55,7 @@ public class CreateFiguresLinkTag extends TagSupport {
         hyperLink.append("&xpatsel_processed_selected_structures_names=");
         hyperLink.append(aoTermUrlEncoded);
         hyperLink.append("&xpatsel_processed_selected_structures=");
-        hyperLink.append(anatomyItem.getZdbID());
+        hyperLink.append(term.getID());
 
         if (author != null) {
             hyperLink.append("&authsearchtype=contains&author=");
@@ -109,7 +109,7 @@ public class CreateFiguresLinkTag extends TagSupport {
     public void release() {
         super.release();
         marker = null;
-        anatomyItem = null;
+        term = null;
         numberOfFigures = 0;
         wildtypeOnly = true;
     }
@@ -131,12 +131,12 @@ public class CreateFiguresLinkTag extends TagSupport {
         this.marker = marker;
     }
 
-    public AnatomyItem getAnatomyItem() {
-        return anatomyItem;
+    public Term getTerm() {
+        return term;
     }
 
-    public void setAnatomyItem(AnatomyItem anatomyItem) {
-        this.anatomyItem = anatomyItem;
+    public void setTerm(Term term) {
+        this.term = term;
     }
 
     public long getNumberOfFigures() {

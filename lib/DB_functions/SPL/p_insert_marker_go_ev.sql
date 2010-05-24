@@ -18,7 +18,7 @@ create procedure p_insert_marker_go_ev (mrkrZdbId	varchar(50),
 
 	insert into marker_go_term_evidence (
 			  mrkrgoev_zdb_id, mrkrgoev_mrkr_zdb_id,
-			  mrkrgoev_go_term_zdb_id, mrkrgoev_source_zdb_id,
+			  mrkrgoev_term_zdb_id, mrkrgoev_source_zdb_id,
 			  mrkrgoev_evidence_code, 
 			  mrkrgoev_date_entered, mrkrgoev_date_modified,
                           mrkrgoev_contributed_by, mrkrgoev_modified_by)

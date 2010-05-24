@@ -1,7 +1,6 @@
 package org.zfin.mutant.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.EntityStatistics;
@@ -22,11 +21,11 @@ import java.util.*;
 public class MorpholinoStatistics extends EntityStatistics {
 
     private GenotypeExperiment genoExperiment;
-    private AnatomyItem anatomyItem;
+    private Term anatomyItem;
     private Set<Figure> figures;
     private String targetGeneOrder;
 
-    public MorpholinoStatistics(GenotypeExperiment genoExperiment, AnatomyItem anatomyItem) {
+    public MorpholinoStatistics(GenotypeExperiment genoExperiment, Term anatomyItem) {
         this.anatomyItem = anatomyItem;
         this.genoExperiment = genoExperiment;
         targetGeneOrder = "";
@@ -72,9 +71,9 @@ public class MorpholinoStatistics extends EntityStatistics {
     public int getNumberOfFigures() {
         if (figures == null) {
             for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
-                Term subTerm = phenotype.getSubTerm();
-                if ((subTerm != null && StringUtils.equals(subTerm.getID(), anatomyItem.getZdbID())) ||
-                        StringUtils.equals(phenotype.getSuperterm().getID(), anatomyItem.getZdbID()) &&
+                Term subTerm = phenotype.getSubterm();
+                if ((subTerm != null && StringUtils.equals(subTerm.getID(), anatomyItem.getID())) ||
+                        StringUtils.equals(phenotype.getSuperterm().getID(), anatomyItem.getID()) &&
                                 !phenotype.getTag().equals(Phenotype.Tag.NORMAL.toString())) {
                     if (figures == null)
                         figures = new HashSet<Figure>(5);
@@ -98,9 +97,9 @@ public class MorpholinoStatistics extends EntityStatistics {
     protected PaginationResult<Publication> getPublicationPaginationResult() {
         Set<Publication> pubs = new HashSet<Publication>(5);
         for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
-            Term subterm = phenotype.getSubTerm();
-            if ( (subterm != null &&StringUtils.equals(subterm.getID(), anatomyItem.getZdbID())) ||
-                    StringUtils.equals(phenotype.getSuperterm().getID(), anatomyItem.getZdbID()) &&
+            Term subterm = phenotype.getSubterm();
+            if ( (subterm != null &&StringUtils.equals(subterm.getID(), anatomyItem.getID())) ||
+                    StringUtils.equals(phenotype.getSuperterm().getID(), anatomyItem.getID()) &&
                             !phenotype.getTag().equals(Phenotype.Tag.NORMAL.toString())) {
                 pubs.add(phenotype.getPublication());
             }

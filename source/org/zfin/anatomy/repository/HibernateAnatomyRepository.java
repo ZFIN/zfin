@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is an implementaion that provides access to the database storage layer.
+ * This is an implementation that provides access to the database storage layer.
  * Methods that allow to retrieve, save and update objects that pertain
  * to the Anatomy domain.
  */
@@ -25,7 +25,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
 
     private static Logger LOG = Logger.getLogger(HibernateAnatomyRepository.class);
 
-    // Chached variables
+    // Cached variables
     // The stages do not change very often, only through an import
     private List<DevelopmentStage> allStagesWithoutUnknown;
     private DevelopmentStage unknown;
@@ -146,18 +146,24 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
             return null;
 
         Session session = HibernateUtil.currentSession();
-        String hql = "select stats from AnatomyStatistics stats join stats.anatomyItem as anatItem " +
+        String hql = "select stats from AnatomyStatistics stats join stats.term as term, AnatomyItem anatItem " +
                 "where  " +
                 "   (anatItem.lowerCaseName like :name or exists (from AnatomySynonym syn where anatItem = syn.item " +
                 "                                           and syn.aliasLowerCase like :name )) " +
                 "   AND stats.type = :type " +
+                "   AND term.oboID = anatItem.oboID " +
                 "order by anatItem.name";
         Query query = session.createQuery(hql);
         query.setString("name", "%" + searchTerm.toLowerCase() + "%");
         query.setParameter("type", AnatomyStatistics.Type.GENE);
 //        query.setParameter("group", DataAlias.Group.ALIAS);
 
+        // TODO: Temporarily until we obsolete the anatomy_item table
         List<AnatomyStatistics> items = query.list();
+        for (AnatomyStatistics stat : items) {
+            AnatomyItem item = getAnatomyTermByOboID(stat.getTerm().getOboID());
+            stat.setAnatomyItem(item);
+        }
 
         if (items != null) {
             LOG.debug(items);
@@ -321,11 +327,12 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         java.lang.String zdbID = stage.getZdbID();
 
         Session session = HibernateUtil.currentSession();
-        String hql = "SELECT stats, info FROM AnatomyStatistics stats, AnatomyTreeInfo info   " +
-                "WHERE stats.anatomyItem.zdbID = info.item.zdbID " +
+        String hql = "SELECT stats, info FROM AnatomyStatistics stats, AnatomyTreeInfo info, AnatomyItem aoTerm   " +
+                "WHERE stats.term.oboID = aoTerm.oboID " +
+                "AND  aoTerm.zdbID = info.item.zdbID " +
                 "AND info.zdbID = :zdbID " +
-                "AND stats.anatomyItem.obsolete != :obsolete " +
-                "AND stats.anatomyItem.name != :aoName " +
+                "AND stats.term.obsolete != :obsolete " +
+                "AND stats.term.termName != :aoName " +
                 "AND stats.type = :type " +
                 "ORDER BY info.sequenceNumber ";
         Query query = session.createQuery(hql);
@@ -533,6 +540,38 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         return (AnatomyItem) criteria.uniqueResult();
     }
 
+    /**
+     * Retrieve the start stage for a given anatomy term, identified by its obo id.
+     *
+     * @param oboID obo id
+     * @return stage
+     */
+    public DevelopmentStage getStartStage(String oboID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select stage from DevelopmentStage stage, AnatomyItem term " +
+                "     where term.start = stage AND term.oboID = :oboID";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("oboID", oboID);
+        return (DevelopmentStage) query.uniqueResult();
+    }
+
+    /**
+     * Retrieve the end stage for a given anatomy term, identified by its obo id.
+     *
+     * @param oboID obo id
+     * @return stage
+     */
+    public DevelopmentStage getEndStage(String oboID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select stage from DevelopmentStage stage, AnatomyItem term " +
+                "     where term.end = stage AND term.oboID = :oboID";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("oboID", oboID);
+        return (DevelopmentStage) query.uniqueResult();
+    }
+
     /*
      * ToDO: Convenience method as long as anatomy_display contains multiple records for a single stage.
      */
@@ -547,6 +586,8 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
             AnatomyTreeInfo treeInfo = (AnatomyTreeInfo) object[1];
             stat.setTreeInfo(treeInfo);
             stats.add(stat);
+            AnatomyItem item = getAnatomyTermByOboID(stat.getTerm().getOboID());
+            stat.setAnatomyItem(item);
         }
         return stats;
     }

@@ -1,9 +1,8 @@
 package org.zfin.antibody;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyLabel;
-import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.Term;
 
 import java.util.Comparator;
 
@@ -20,10 +19,10 @@ public class AntibodyLabelingDetailComparator implements Comparator<AnatomyLabel
         else if (labeling2 == null)
             return 1;
 
-        AnatomyItem ao1 = labeling1.getAnatomyItem();
-        AnatomyItem ao2 = labeling2.getAnatomyItem();
-        GoTerm cc1 = labeling1.getCellularComponent();
-        GoTerm cc2 = labeling2.getCellularComponent();
+        Term ao1 = labeling1.getSuperterm();
+        Term ao2 = labeling2.getSuperterm();
+        Term cc1 = labeling1.getSubterm();
+        Term cc2 = labeling2.getSubterm();
         DevelopmentStage stage1 = labeling1.getStartStage();
         DevelopmentStage stage2 = labeling2.getStartStage();
 

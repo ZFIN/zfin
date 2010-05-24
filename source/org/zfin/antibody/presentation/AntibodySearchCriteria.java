@@ -1,11 +1,11 @@
 package org.zfin.antibody.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.UIFieldTransformer;
+import org.zfin.ontology.Term;
 import org.zfin.util.FilterType;
 
 /**
@@ -20,7 +20,7 @@ public class AntibodySearchCriteria extends Antibody {
     private int resultsPerPage;
     private boolean zircOnly;
     private PaginationBean paginationBean;
-    private AnatomyItem anatomyTerm;
+    private Term term;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
     private String anatomyTermNames;
@@ -190,6 +190,14 @@ public class AntibodySearchCriteria extends Antibody {
         return includeSubstructures;
     }
 
+    public Term getTerm() {
+        return term;
+    }
+
+    public void setTerm(Term term) {
+        this.term = term;
+    }
+
     public void setIncludeSubstructures(boolean includeSubstructures) {
         this.includeSubstructures = includeSubstructures;
     }
@@ -200,14 +208,6 @@ public class AntibodySearchCriteria extends Antibody {
 
     public void setAnatomyEveryTerm(boolean anatomyEveryTerm) {
         this.anatomyEveryTerm = anatomyEveryTerm;
-    }
-
-    public AnatomyItem getAnatomyTerm() {
-        return anatomyTerm;
-    }
-
-    public void setAnatomyTerm(AnatomyItem anatomyTerm) {
-        this.anatomyTerm = anatomyTerm;
     }
 
     /**

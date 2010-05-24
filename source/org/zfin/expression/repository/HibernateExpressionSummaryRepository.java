@@ -8,6 +8,7 @@ import org.zfin.expression.ExpressionStageAnatomyContainer;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Gene;
+import org.zfin.ontology.Term;
 
 import java.util.Iterator;
 
@@ -22,7 +23,7 @@ public class HibernateExpressionSummaryRepository implements ExpressionSummaryRe
         //query in expressions.hbm.xml
         Query query = session.getNamedQuery("stageanatomyfigure");
         query.setParameter("geneZdbID",gene.getZdbID());
-        query.setParameter("unknown",AnatomyItem.UNSPECIFIED);
+        query.setParameter("unknown", Term.UNSPECIFIED);
         query.setParameter("unspecified",DevelopmentStage.UNKNOWN);
 
         Iterator stagesAndAnatomy = query.list().iterator();
@@ -33,7 +34,7 @@ public class HibernateExpressionSummaryRepository implements ExpressionSummaryRe
             Object[] tuple = (Object[]) stagesAndAnatomy.next();
 
             DevelopmentStage stage = (DevelopmentStage) tuple[0];
-            AnatomyItem anat = (AnatomyItem) tuple[1];
+            Term anat = (Term) tuple[1];
             Figure fig = (Figure) tuple[2];
 
             xsac.add(stage,anat,fig);

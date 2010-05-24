@@ -1,6 +1,5 @@
 package org.zfin.publication.repository;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.CanonicalMarker;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
@@ -14,7 +13,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
-import org.zfin.publication.DOIAttempt;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationParameter;
@@ -32,7 +31,8 @@ public interface PublicationRepository extends PaginationParameter {
      * a term 'abstractText' in its abstract. This count is
      * done case insensitive.
      *
-     * @param abstractText
+     * @param abstractText  text
+     * @return number of publications
      */
     int getNumberOfPublications(String abstractText);
 
@@ -43,13 +43,13 @@ public interface PublicationRepository extends PaginationParameter {
      * @param anatomyTerm Anatomy Term
      * @return list of publications
      */
-    List<Publication> getHighQualityProbePublications(AnatomyItem anatomyTerm);
+    List<Publication> getHighQualityProbePublications(Term anatomyTerm);
 
     /**
      * Retrieve all publication for a given geneID and anatomical structure.
      *
-     * @param geneID
-     * @param anatomyItemID
+     * @param geneID gene ID
+     * @param anatomyItemID term ID
      */
     List<Publication> getExpressedGenePublications(String geneID, String anatomyItemID);
 
@@ -89,7 +89,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param term anatomy term
      * @return list of High quality probes.
      */
-    PaginationResult<HighQualityProbe> getHighQualityProbeNames(AnatomyItem term);
+    PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term);
 
     /**
      * Retrieve the genes and CDNA/EST for the high-quality probes with
@@ -100,7 +100,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param maxRow max number of records
      * @return list of HighqQualityProbes
      */
-    PaginationResult<HighQualityProbe> getHighQualityProbeNames(AnatomyItem term, int maxRow);
+    PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow);
 
     /**
      * Retrieve marker records that have a gene expression in the
@@ -108,37 +108,38 @@ public interface PublicationRepository extends PaginationParameter {
      * limits the result set.
      *
      * @param zdbID  of the anatomy term.
-     * @param maxRow
+     * @param maxRow  max number of records
+     * @return list of markers
      */
     List<Marker> getAllExpressedMarkers(String zdbID, int maxRow);
 
     /**
      * Returns the appropriate # of records, as well as statistics on the total # of records.
      *
-     * @param anatomyTerm
-     * @param firstRow
-     * @param maxRow
-     * @return
+     * @param anatomyTerm term
+     * @param firstRow  first   record
+     * @param maxRow          last record
+     * @return   marker statistics
      */
-    PaginationResult<MarkerStatistic> getAllExpressedMarkers(AnatomyItem anatomyTerm, int firstRow, int maxRow);
+    PaginationResult<MarkerStatistic> getAllExpressedMarkers(Term anatomyTerm, int firstRow, int maxRow);
 
     /**
      * Returns the appropriate # of records, as well as statistics on the total # of records.
      *
-     * @param anatomyTerm
-     * @return
+     * @param anatomyTerm term
+     * @return  marker statistics
      */
-    PaginationResult<MarkerStatistic> getAllExpressedMarkers(AnatomyItem anatomyTerm);
+    PaginationResult<MarkerStatistic> getAllExpressedMarkers(Term anatomyTerm);
 
 
     /**
      * Count the number of figures from all publications that have a gene
      * expression in a given anatomy structure.
      *
-     * @param anatomyTerm
+     * @param anatomyTerm term
      * @return number
      */
-    int getTotalNumberOfFiguresPerAnatomyItem(AnatomyItem anatomyTerm);
+    int getTotalNumberOfFiguresPerAnatomyItem(Term anatomyTerm);
 
     /**
      * Count the number of images from all publications that have a gene
@@ -147,7 +148,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param anatomyTerm Anatomy Term
      * @return number
      */
-    int getTotalNumberOfImagesPerAnatomyItem(AnatomyItem anatomyTerm);
+    int getTotalNumberOfImagesPerAnatomyItem(Term anatomyTerm);
 
     /**
      * Retrieve a publication by its primary key.
@@ -208,7 +209,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param aoTerm anatomical structure
      * @return list of figures
      */
-    List<Figure> getFiguresPerProbeAndAnatomy(Marker gene, Marker clone, AnatomyItem aoTerm);
+    List<Figure> getFiguresPerProbeAndAnatomy(Marker gene, Marker clone, Term aoTerm);
 
     /**
      * Return all Publications for a specified gene, probe and anatommical structure with figures associated.
@@ -218,7 +219,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param aoTerm  anatomical structure
      * @return list of figures
      */
-    List<Publication> getPublicationsWithFiguresPerProbeAndAnatomy(Marker gene, Marker subGene, AnatomyItem aoTerm);
+    List<Publication> getPublicationsWithFiguresPerProbeAndAnatomy(Marker gene, Marker subGene, Term aoTerm);
 
     /**
      * Retrieve the figures that can be found for a given publication and probe.
@@ -263,7 +264,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param term       anatomy term
      * @return list of figures.
      */
-    List<Figure> getFiguresByMorpholinoAndAnatomy(Morpholino morpholino, AnatomyItem term);
+    List<Figure> getFiguresByMorpholinoAndAnatomy(Morpholino morpholino, Term term);
 
     /**
      * Retrieve list of figures for a given genotype and anatomy term
@@ -272,7 +273,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param term anatomy term
      * @return list of figures.
      */
-    PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, AnatomyItem term);
+    PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, Term term);
 
     PaginationResult<Figure> getFiguresByGeno(Genotype geno);
 
@@ -290,14 +291,14 @@ public interface PublicationRepository extends PaginationParameter {
      * @param aoTerm   ao term
      * @return Number of publications with figures per genotype and anatomy
      */
-    PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, AnatomyItem aoTerm);
+    PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, Term aoTerm);
 
     /**
      * @param genotype Genotype
      * @param aoTerm   ao term
      * @return Number of publications with figures per genotype and anatomy
      */
-    int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, AnatomyItem aoTerm);
+    int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, Term aoTerm);
 
     /**
      * Retrieve the publications for the figures for a given morpholino and anatomy term
@@ -306,7 +307,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param aoTerm     anatomy Term
      * @return List of publications
      */
-    List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(Morpholino morpholino, AnatomyItem aoTerm);
+    List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(Morpholino morpholino, Term aoTerm);
 
     /**
      * Retrieve figures for a given gene and anatomy term.
@@ -315,7 +316,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param anatomyTerm anatomy
      * @return a set of figures
      */
-    List<Figure> getFiguresByGeneAndAnatomy(Marker gene, AnatomyItem anatomyTerm);
+    List<Figure> getFiguresByGeneAndAnatomy(Marker gene, Term anatomyTerm);
 
 
     Journal getJournalByTitle(String journalTitle);
@@ -342,7 +343,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param anatomyTerm ao term
      * @return pagination result
      */
-    PaginationResult<Publication> getPublicationsWithFigures(Marker marker, AnatomyItem anatomyTerm);
+    PaginationResult<Publication> getPublicationsWithFigures(Marker marker, Term anatomyTerm);
 
     /**
      * Retrieve all experiments for a given publication.

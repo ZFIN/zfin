@@ -4,10 +4,7 @@ import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyRelationship;
-import org.zfin.anatomy.AnatomySynonym;
-import org.zfin.antibody.Antibody;
+import org.zfin.anatomy.*;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
@@ -15,19 +12,18 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.Term;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.*;
 
 public class AnatomyRepositoryTest {
-
-    private static AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
-    private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
 
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -41,11 +37,6 @@ public class AnatomyRepositoryTest {
         TestConfiguration.configure();
     }
 
-    @Test
-    public void getAllAnatomyTerms(){
-        List<AnatomyItem> terms = aoRepository.getAllAnatomyItems();
-    }
-
     /**
      * Check that synonyms are not of group 'secondary id'
      */
@@ -54,42 +45,23 @@ public class AnatomyRepositoryTest {
         // optic primordium
         String termName = "optic primordium";
 
-        AnatomyItem item = aoRepository.getAnatomyItem(termName);
+        AnatomyItem item = getAnatomyRepository().getAnatomyItem(termName);
         assertTrue(item != null);
-        Set<AnatomySynonym> syns = item.getSynonyms();
-        assertTrue(syns != null);
+        Set<AnatomySynonym> synonyms = item.getSynonyms();
+        assertTrue(synonyms != null);
         // check that none of the synonyms are secondary ids
-        for (AnatomySynonym syn : syns) {
+        for (AnatomySynonym syn : synonyms) {
             assertEquals(" Not a secondary id", true, syn.getGroup() != DataAliasGroup.Group.SECONDARY_ID);
         }
-    }
-
-    @Test
-    public void getThisseProbesForBrain() {
-        // brain
-        String termName = "brain";
-        AnatomyItem item = aoRepository.getAnatomyItem(termName);
-
-        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        PaginationResult<HighQualityProbe> probeResults = pr.getHighQualityProbeNames(item);
-        List<HighQualityProbe> probes = probeResults.getPopulatedResults();
-        assertTrue(probes != null);
-        assertTrue(!probes.isEmpty());
-
-        int numberOHQProbes = probeResults.getTotalCount();
-        assertTrue(numberOHQProbes > 0);
-        assertTrue(probes.size() == numberOHQProbes);
-
     }
 
     @Test
     public void getTotalNumberOfFiguresPerAnatomy() {
         // brain
         String termName = "brain";
-        AnatomyItem item = aoRepository.getAnatomyItem(termName);
+        Term item = getOntologyRepository().getTermByName(termName, Ontology.ANATOMY);
 
-        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        int numOfFigures = pr.getTotalNumberOfFiguresPerAnatomyItem(item);
+        getPublicationRepository().getTotalNumberOfFiguresPerAnatomyItem(item);
         //assertEquals(1036, numOfFigures);
 
     }
@@ -97,7 +69,7 @@ public class AnatomyRepositoryTest {
     @Test
     public void getAnatomyRelationships() {
         String termName = "neural rod";
-        AnatomyItem item = aoRepository.getAnatomyItem(termName);
+        AnatomyItem item = getAnatomyRepository().getAnatomyItem(termName);
 
         List<AnatomyRelationship> relatedTerms = item.getAnatomyRelations();
         assertTrue(relatedTerms != null);
@@ -108,15 +80,15 @@ public class AnatomyRepositoryTest {
     public void getAnatomyTermsSearchResult() {
         String searchTerm = "bra";
 
-        List<AnatomyItem> terms = aoRepository.getAnatomyItemsByName(searchTerm, true);
+        List<AnatomyItem> terms = getAnatomyRepository().getAnatomyItemsByName(searchTerm, true);
         assertNotNull(terms);
     }
 
     @Test
     public void compareWildTypeSelectionToFullForMorphs() {
-        AnatomyItem item = aoRepository.getAnatomyItem("neural plate");
-        PaginationResult<GenotypeExperiment> genotypeWildtype = mutantRepository.getGenotypeExperimentMorpholinos(item, true, null);
-        PaginationResult<GenotypeExperiment> genotypeNonWildtype = mutantRepository.getGenotypeExperimentMorpholinos(item, false, null);
+        Term item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
+        PaginationResult<GenotypeExperiment> genotypeWildtype = getMutantRepository().getGenotypeExperimentMorpholinos(item, true, null);
+        PaginationResult<GenotypeExperiment> genotypeNonWildtype = getMutantRepository().getGenotypeExperimentMorpholinos(item, false, null);
 
         assertNotNull(genotypeWildtype.getPopulatedResults());
         assertNotNull(genotypeNonWildtype.getPopulatedResults());
@@ -128,12 +100,12 @@ public class AnatomyRepositoryTest {
     @Test
     public void getWildtypeMorpholinos() {
         // String neuralPlateZdbID = "ZDB-ANAT-010921-560";
-        AnatomyItem item = aoRepository.getAnatomyItem("neural plate");
-        PaginationResult<GenotypeExperiment> genos = mutantRepository.getGenotypeExperimentMorpholinos(item, true, null);
+        Term item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
+        PaginationResult<GenotypeExperiment> genos = getMutantRepository().getGenotypeExperimentMorpholinos(item, true, null);
         assertNotNull(genos.getPopulatedResults());
         assertTrue(genos.getPopulatedResults().size() > 1);
 
-        List<GenotypeExperiment> genotypeList = mutantRepository.getGenotypeExperimentMorpholinos(item, true);
+        List<GenotypeExperiment> genotypeList = getMutantRepository().getGenotypeExperimentMorpholinos(item, true);
         assertNotNull(genotypeList);
         assertTrue(genotypeList.size() > 1);
 
@@ -151,19 +123,19 @@ public class AnatomyRepositoryTest {
         // extrascapula
         String zdbID = "ZDB-ANAT-011113-588";
         List<AnatomyItem> terms;
-        AnatomyItem term = aoRepository.getAnatomyTermByID(zdbID);
+        AnatomyItem term = getAnatomyRepository().getAnatomyTermByID(zdbID);
         assertNotNull(term);
 
         Set<AnatomySynonym> synonyms = term.getSynonyms();
         assertTrue("Should be 1 or more synonym because filtered secondary", synonyms.size() >= 1);
 
         // 2- get by synonym
-        terms = aoRepository.getAnatomyItemsByName("supratemporal", false);
+        terms = getAnatomyRepository().getAnatomyItemsByName("supratemporal", false);
         assertNotNull(terms);
         assertTrue(terms.size() == 2);
 
         // 3- get by data alias
-        terms = aoRepository.getAnatomyItemsByName("413", false);
+        terms = getAnatomyRepository().getAnatomyItemsByName("413", false);
         assertNotNull(terms);
         assertTrue("Should be no terms for '413'", terms.isEmpty());
     }
@@ -174,7 +146,7 @@ public class AnatomyRepositoryTest {
         String zdbID = "ZDB-ANAT-010921-408";
         double startHours = 36;
         double endHours = 144;
-        List<AnatomyItem> terms = aoRepository.getTermsDevelopingFromWithOverlap(zdbID, startHours, endHours);
+        List<AnatomyItem> terms = getAnatomyRepository().getTermsDevelopingFromWithOverlap(zdbID, startHours, endHours);
         assertTrue(terms != null);
         assertEquals(1, terms.size());
         // adaxial cell develops from
@@ -188,7 +160,7 @@ public class AnatomyRepositoryTest {
         String zdbID = "ZDB-ANAT-031211-15";
         double startHours = 0;
         double endHours = 10.5;
-        List<AnatomyItem> terms = aoRepository.getTermsDevelopingIntoWithOverlap(zdbID, startHours, endHours);
+        List<AnatomyItem> terms = getAnatomyRepository().getTermsDevelopingIntoWithOverlap(zdbID, startHours, endHours);
         assertTrue(terms != null);
         assertEquals(3, terms.size());
         // adaxial cell develops from
@@ -197,22 +169,50 @@ public class AnatomyRepositoryTest {
         assertEquals("slow muscle myoblast", terms.get(2).getName());
     }
 
+    @Test
+    public void getStartStageByOboId() {
+        // brain
+        String aoOboID = "ZFA:0000008";
+        DevelopmentStage stage = getAnatomyRepository().getStartStage(aoOboID);
+        assertNotNull(stage);
+        assertEquals("ZDB-STAGE-020626-1", stage.getZdbID());
+    }
+
+    @Test
+    public void getEndStageByOboId() {
+        // brain
+        String aoOboID = "ZFA:0000008";
+        DevelopmentStage stage = getAnatomyRepository().getEndStage(aoOboID);
+        assertNotNull(stage);
+        assertEquals("ZDB-STAGE-010723-39", stage.getZdbID());
+    }
 
     @Test
     public void getSubstructureAntibodies() {
-        // zdbID = ZDB-ANAT-060816-27
         String aoTermName = "cranium";
-        AnatomyItem item = aoRepository.getAnatomyItem(aoTermName);
-        assertNotNull(item);
+        Term term = new GenericTerm();
+        term.setID("ZDB-TERM-100331-706");
+        term.setTermName(aoTermName);
+        assertNotNull(term);
 
         // only primary ao term
-        PaginationResult<Antibody> antibodies = RepositoryFactory.getAntibodyRepository().getAntibodiesByAOTerm(item, new PaginationBean(), false);
+        getAntibodyRepository().getAntibodiesByAOTerm(term, new PaginationBean(), false);
 //        assertEquals("no antibodies annotated against cranium", 0, antibodies.getPopulatedResults().size());
 
         // include annotation to substructures
-        antibodies = RepositoryFactory.getAntibodyRepository().getAntibodiesByAOTerm(item, new PaginationBean(), true);
+        getAntibodyRepository().getAntibodiesByAOTerm(term, new PaginationBean(), true);
 //        assertTrue("no antibodies annotated against cranium", antibodies.getPopulatedResults().size() > 0);
 
+
+    }
+
+    @Test
+    public void getAnatomyItemStatisticsByStage(){
+        // zygote
+        String stageID = "ZDB-STAGE-010723-4";
+        DevelopmentStage stage = getAnatomyRepository().getStageByID(stageID);
+        List<AnatomyStatistics> stats = getAnatomyRepository().getAnatomyItemStatisticsByStage(stage);
+        assertNotNull(stats);
 
     }
 }

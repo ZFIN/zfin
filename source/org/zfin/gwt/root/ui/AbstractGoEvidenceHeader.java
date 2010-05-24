@@ -34,7 +34,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
     protected final RevertibleTextArea noteBox = new RevertibleTextArea();
     protected AbstractInferenceListBox inferenceListBox = new InferenceListBox(null);
     protected LookupComposite goTermBox = new LookupComposite();
-    protected GoTermDTO temporaryGoTermDTO = null;
+    protected TermDTO temporaryGoTermDTO = null;
 
     // listeners
     protected List<RelatedEntityChangeListener<GoEvidenceDTO>> goTermChangeListeners = new ArrayList<RelatedEntityChangeListener<GoEvidenceDTO>>();
@@ -95,9 +95,9 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
                     setError("Go term is invalid [" + value + "].  Please add a valid go term.");
                     return;
                 }
-                MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(value, new MarkerEditCallBack<GoTermDTO>("Failed to retrieve GO value") {
+                MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(value, new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value") {
                     @Override
-                    public void onSuccess(GoTermDTO result) {
+                    public void onSuccess(TermDTO result) {
                         temporaryGoTermDTO = result;
                         GoEvidenceDTO goEvidenceDTO = dto.deepCopy();
                         goEvidenceDTO.setGoTerm(temporaryGoTermDTO);
@@ -193,7 +193,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         evidenceFlagBox.addItem("NONE", "null");
         // contributes to only for molecular function
         if (dto.getGoTerm() != null) {
-            if (dto.getGoTerm().getSubOntology().equals(GoTermDTO.MOLECULAR_FUNCTION)) {
+            if (dto.getGoTerm().getOntology().equals(OntologyDTO.GO_MF)) {
                 evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
             }
         }

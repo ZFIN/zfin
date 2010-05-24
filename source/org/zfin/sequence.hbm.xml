@@ -194,7 +194,7 @@
             <many-to-one name="orthologue" column="dblink_linked_recid" class="org.zfin.orthology.Orthologue" not-null="true"/>
         </subclass>
         <subclass name="org.zfin.anatomy.AnatomyDBLink" discriminator-value="ANAT">
-            <many-to-one name="anatomyItem" column="dblink_linked_recid" class="org.zfin.anatomy.AnatomyItem" not-null="true"/>
+            <many-to-one name="anatomyItem" column="dblink_linked_recid" class="org.zfin.ontology.Term" not-null="true"/>
         </subclass>
     </class>
 

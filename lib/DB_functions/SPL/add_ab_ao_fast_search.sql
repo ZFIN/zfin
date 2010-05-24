@@ -28,12 +28,12 @@ CREATE procedure add_ab_ao_fast_search(xpatresZdbId varchar(50))
 
 
 begin
-    -- insert records for xpatres_anat_item_zdb_id
+    -- insert records for xpatres_superterm_zdb_id
     foreach
-		select atb_zdb_id, allanatcon_container_zdb_id, xpatres_anat_item_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id
+		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id
 			into atbZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId
 		from antibody, genotype_experiment, expression_experiment, expression_result, 
-			 experiment, figure, expression_pattern_figure, genotype, all_anatomy_contains
+			 experiment, figure, expression_pattern_figure, genotype, all_term_contains
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
@@ -44,9 +44,9 @@ begin
 		and exp_name in ('_Standard', '_Generic-control')
 		and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
-		and allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
+		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
 		and xpatres_zdb_id = xpatresZdbId
-		and xpatres_anat_item_zdb_id !='ZDB-ANAT-041102-1'
+		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055'
 
 		insert into feature_stats ( fstat_feat_zdb_id,
 		       fstat_superterm_zdb_id,
@@ -60,13 +60,13 @@ begin
 	
      end foreach
 
-     -- insert records for xpatres_term_zdb_id
+     -- insert records for xpatres_subterm_zdb_id
      foreach
 	
-		select atb_zdb_id, allanatcon_container_zdb_id, xpatres_term_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id
+		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id
 			into atbZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId
 		from antibody, genotype_experiment, expression_experiment, expression_result, 
-			 experiment, figure, expression_pattern_figure, genotype, all_anatomy_contains
+			 experiment, figure, expression_pattern_figure, genotype, all_term_contains
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
@@ -77,7 +77,7 @@ begin
 		and exp_name in ('_Standard', '_Generic-control')
 		and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
-		and allanatcon_contained_zdb_id = xpatres_term_zdb_id
+		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
 		and xpatres_zdb_id = xpatresZdbId
 
 		insert into feature_stats ( fstat_feat_zdb_id,

@@ -29,6 +29,7 @@ import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
 import org.zfin.mutant.PhenotypeStructureTest;
 import org.zfin.mutant.presentation.MorpholinoStatisticsTest;
+import org.zfin.ontology.GenericTermTest;
 import org.zfin.ontology.MatchingTermServiceTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.people.OrganizationUrlTest;
@@ -64,6 +65,7 @@ import org.zfin.util.*;
         FileUtilTest.class,
         FunctionsTest.class,
         InferenceUnitTest.class,
+        GenericTermTest.class,
         HighlightUtilTest.class,
         ListFormatterTest.class,
         MarkerPresentationTest.class,

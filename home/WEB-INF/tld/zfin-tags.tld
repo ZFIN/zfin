@@ -101,7 +101,7 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>anatomyItem</name>
+            <name>term</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>

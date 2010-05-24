@@ -2,10 +2,7 @@ package org.zfin.gwt.root.server;
 
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.Figure;
+import org.zfin.expression.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -309,21 +306,12 @@ public class DTOConversionService {
         return genotypeDTO;
     }
 
-    public static GoTermDTO convertToGoTermDTO(GoTerm goTerm) {
-        GoTermDTO goTermDTO = new GoTermDTO();
-        goTermDTO.setZdbID(goTerm.getZdbID());
-        goTermDTO.setName(goTerm.getName());
-        goTermDTO.setDataZdbID(goTerm.getOboID());
-        goTermDTO.setSubOntology(goTerm.getSubOntology());
-        return goTermDTO;
-    }
-
     public static GoEvidenceDTO convertToGoEvidenceDTO(MarkerGoTermEvidence markerGoTermEvidence) {
 
         GoEvidenceDTO returnDTO = new GoEvidenceDTO();
         returnDTO.setZdbID(markerGoTermEvidence.getZdbID());
         returnDTO.setDataZdbID(markerGoTermEvidence.getZdbID());
-        returnDTO.setGoTerm(DTOConversionService.convertToGoTermDTO(markerGoTermEvidence.getGoTerm()));
+        returnDTO.setGoTerm(DTOConversionService.convertToTermDTO(markerGoTermEvidence.getGoTerm()));
 
         returnDTO.setEvidenceCode(GoEvidenceCodeEnum.valueOf(markerGoTermEvidence.getEvidenceCode().getCode()));
         returnDTO.setFlag(markerGoTermEvidence.getFlag() == null ? null : markerGoTermEvidence.getFlag());
@@ -333,7 +321,7 @@ public class DTOConversionService {
         returnDTO.setPublicationZdbID(markerGoTermEvidence.getSource().getZdbID());
         // date modified and created not used here, as not needed
         // set name to the go term name
-        returnDTO.setName(markerGoTermEvidence.getGoTerm().getName());
+        returnDTO.setName(markerGoTermEvidence.getGoTerm().getTermName());
 
         // create inferences
         Set<String> inferredFromSet = new HashSet<String>();
@@ -427,7 +415,7 @@ public class DTOConversionService {
         dto.setTag(phenotype.getTag());
         dto.setQuality(convertToTermDTO(phenotype.getTerm()));
         dto.setSuperterm(convertToTermDTO(phenotype.getSuperterm()));
-        dto.setSubterm(convertToTermDTO(phenotype.getSubTerm()));
+        dto.setSubterm(convertToTermDTO(phenotype.getSubterm()));
         dto.setZdbID(phenotype.getZdbID());
         return dto;
     }
@@ -452,12 +440,7 @@ public class DTOConversionService {
             ontology = OntologyManager.getInstance().getSubOntology(term.getOntology(), term.getID());
         OntologyDTO ontologyDTO = convertToOntologyDTO(ontology);
         dto.setOntology(ontologyDTO);
-        // ToDO: This hack is needed as in the GO_TERM table the oboID is lacking the GO: string!!!!!!
-        // whereas in the TERM table it does include it.
-        if (OntologyDTO.isGoOntology(ontologyDTO) && !term.getOboID().startsWith("GO:"))
-            dto.setTermOboID("GO:" + term.getOboID());
-        else
-            dto.setTermOboID(term.getOboID());
+        dto.setTermOboID(term.getOboID());
         return dto;
     }
 
@@ -596,6 +579,45 @@ public class DTOConversionService {
         return stage;
     }
 
+    public static ExpressedTermDTO convertToExpressedTermDTO(ComposedFxTerm term) {
+        ExpressedTermDTO termDto = new ExpressedTermDTO();
+        termDto.setSuperterm(convertToTermDTO(term.getSuperTerm()));
+        if (term.getSubterm() != null)
+            termDto.setSubterm(convertToTermDTO(term.getSubterm()));
+        termDto.setExpressionFound(term.isExpressionFound());
+        termDto.setZdbID(term.getZdbID());
+        return termDto;
+    }
+
+    public static ExpressionPileStructureDTO convertToExpressionPileStructureDTO(ExpressionStructure es) {
+        ExpressionPileStructureDTO dto = new ExpressionPileStructureDTO();
+        dto.setZdbID(es.getZdbID());
+        dto.setCreator(es.getPerson().getName());
+        dto.setDate(es.getDate());
+        ExpressedTermDTO expressionTerm = new ExpressedTermDTO();
+        Term superterm = es.getSuperterm();
+        TermDTO supertermDTO = convertToTermDTO(superterm);
+        expressionTerm.setSuperterm(supertermDTO);
+
+        // if subterm available
+        if (es.getSubterm() != null) {
+            TermDTO subtermDTO = convertToTermDTO(es.getSubterm());
+            expressionTerm.setSubterm(subtermDTO);
+            Term term = OntologyManager.getInstance().getTermByID(es.getSubterm().getID());
+        }
+        dto.setExpressedTerm(expressionTerm);
+        if (superterm.getOntology().equals(Ontology.ANATOMY)) {
+            // awkward but needs to be done until we have a better way to join in the stage info for a term.
+            Term term = OntologyManager.getInstance().getTermByID(superterm.getID());
+            StageDTO start = convertToStageDTO(term.getStart());
+            StageDTO end = convertToStageDTO(term.getEnd());
+            dto.setStart(start);
+            dto.setEnd(end);
+        }
+        return dto;
+    }
+
+
     public static OntologyDTO convertToOntologyDTO(Ontology ontology) {
         switch (ontology) {
             case QUALITY:
@@ -654,7 +676,7 @@ public class DTOConversionService {
         return null;
     }
 
-    public static TermInfo getTermInfoFromOntologyDTO(Term term, OntologyDTO ontologyDTO, boolean includeSynonyms) {
+    public static TermInfo convertToTermInfo(Term term, OntologyDTO ontologyDTO, boolean includeSynonyms) {
         TermInfo info = new TermInfo();
         info.setID(term.getOboID());
         info.setName(term.getTermName());

@@ -108,16 +108,21 @@ unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_stage.unl'
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_anatomy_item.unl'
 select 
-    anatitem_zdb_id,
-    anatitem_name,
+    term_zdb_id,
+    term_name,
     anatitem_start_stg_zdb_id,
     anatitem_end_stg_zdb_id
-from anatomy_item
+from anatomy_item, term
+where term_ont_id = anatitem_obo_id
 ;
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_anatomy_relationship.unl'
-select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id 
-  from anatomy_relationship;
+select termrel_term_1_zdb_id, termrel_term_2_zdb_id, termrel_type
+  from term_relationship, term as term1, term as term2
+  where term1.term_ontology = 'zebrafish_anatomy'
+  and term2.term_ontology = 'zebrafish_anatomy'
+  and term1.term_zdb_id = termrel_term_1_zdb_id
+  and term2.term_zdb_id = termrel_term_2_zdb_id;
 
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_stage_anatomy.unl'
@@ -125,6 +130,6 @@ select
     xpatres_xpatex_zdb_id,
     xpatres_start_stg_zdb_id,
     xpatres_end_stg_zdb_id,
-    xpatres_anat_item_zdb_id   
+    xpatres_superterm_zdb_id   
 from expression_result;
 

@@ -57,7 +57,7 @@ stage range, experiment, or expression_found in the same figure.
 
 <?MIVAR NAME="$fxfiganat_unspecified_constraint"><?/MIVAR>
 <?MIBLOCK COND="$(AND,$(XST,$fxfiganat_hide_unspecified),$(EC,$fxfiganat_hide_unspecified,t))">
-  <?MIVAR NAME="$fxfiganat_unspecified_constraint">and anatitem_name <> 'unspecified'<?/MIVAR>
+  <?MIVAR NAME="$fxfiganat_unspecified_constraint">and term_name <> 'unspecified'<?/MIVAR>
 <?/MIBLOCK>
 
 
@@ -102,29 +102,30 @@ stage range, experiment, or expression_found in the same figure.
 <?/MIBLOCK>
 
 <?MISQL SQL="
-    SELECT distinct anatitem_name, anatitem_zdb_id, anatitem_name_order
-      FROM expression_pattern_figure, expression_result, anatomy_item $fxfiganat_result_constraint_table
+    SELECT distinct term_name, get_entity_name_html(term_zdb_id), 
+                    term_ont_id, lower(term_name) as term_name_order,
+                    get_postcomposed_term_html(xpatres_superterm_zdb_id, xpatres_subterm_zdb_id)
+      FROM expression_pattern_figure, expression_result, term $fxfiganat_result_constraint_table
      WHERE xpatfig_fig_zdb_id = '$fxfiganat_fig_zdb_id'
        AND xpatfig_xpatres_zdb_id = xpatres_zdb_id
-       AND (   xpatres_anat_item_zdb_id = anatitem_zdb_id
-            OR xpatres_term_zdb_id = anatitem_zdb_id )
+       AND xpatres_superterm_zdb_id = term_zdb_id           
        AND xpatres_expression_found = 't'
        $fxfiganat_unspecified_constraint
        $fxfiganat_gene_constraint
        $fxfiganat_result_constraint_where
-     ORDER BY anatitem_name_order asc;">
-    <?MIVAR NAME="$fxfiganat_anatitem_html"><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$2>$1</a></span><?/MIVAR>
+     ORDER BY term_name_order asc;">
+    <?MIVAR NAME="$fxfiganat_term_html">$5<?/MIVAR>
 
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-      <?MIVAR NAME=fxfiganat_short_list>$fxfiganat_Label $fxfiganat_anatitem_html<?/MIVAR>
-      <?MIVAR NAME=fxfiganat_long_list>$fxfiganat_Label $fxfiganat_anatitem_html<?/MIVAR>
+      <?MIVAR NAME=fxfiganat_short_list>$fxfiganat_Label $fxfiganat_term_html<?/MIVAR>
+      <?MIVAR NAME=fxfiganat_long_list>$fxfiganat_Label $fxfiganat_term_html<?/MIVAR>
     <?MIELSE COND=$(<,$MI_CURRENTROW,$fxfiganat_condensed_count)>
-      <?MIVAR>$(VECAPPEND,fxfiganat_long_list,$fxfiganat_anatitem_html)
+      <?MIVAR>$(VECAPPEND,fxfiganat_long_list,$fxfiganat_term_html)
       <?/MIVAR>
-      <?MIVAR>$(VECAPPEND,fxfiganat_short_list,$fxfiganat_anatitem_html)
+      <?MIVAR>$(VECAPPEND,fxfiganat_short_list,$fxfiganat_term_html)
       <?/MIVAR>
     <?MIELSE>
-      <?MIVAR>$(VECAPPEND,fxfiganat_long_list,$fxfiganat_anatitem_html)
+      <?MIVAR>$(VECAPPEND,fxfiganat_long_list,$fxfiganat_term_html)
       <?/MIVAR>
     <?/MIBLOCK>
 <?/MISQL>
@@ -138,15 +139,15 @@ stage range, experiment, or expression_found in the same figure.
   
   <?MIVAR NAME=fxfiganat_zdb_minus>$(REPLACE,$fxfiganat_fig_zdb_id,"-","")<?/MIVAR>
 
-<?MIVAR NAME=$fxfiganat_left_arrow><img border=0 onClick=updateAnatomyList$fxfiganat_zdb_minus('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
-<?MIVAR NAME=$fxfiganat_right_arrow><img onClick=updateAnatomyList$fxfiganat_zdb_minus('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$fxfiganat_left_arrow><img border=0 onClick=updateAnatomyList$fxfiganat_zdb_minus(\'short\') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$fxfiganat_right_arrow><img onClick=updateAnatomyList$fxfiganat_zdb_minus(\'long\') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
 
   
 <script>
   <?MIVAR>
 function updateAnatomyList$fxfiganat_zdb_minus(display_option) {
-    var long_display = "$fxfiganat_escape_long_list  <a href=\"javascript:updateAnatomyList$fxfiganat_zdb_minus('short');\">$fxfiganat_left_arrow</a>";
-    var short_display = "$fxfiganat_escape_short_list ... <a href=javascript:onClick=updateAnatomyList$fxfiganat_zdb_minus('long')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow";
+    var long_display = '$fxfiganat_escape_long_list  <a href=\"javascript:updateAnatomyList$fxfiganat_zdb_minus(\'short\');\">$fxfiganat_left_arrow</a>';
+    var short_display = '$fxfiganat_escape_short_list ... <a href=javascript:onClick=updateAnatomyList$fxfiganat_zdb_minus(\'long\')>(all $(VECSIZE,$fxfiganat_long_list))</a> $fxfiganat_right_arrow';
 
     if (display_option == "long") {
         updateInnerHTML('anatomyList$fxfiganat_zdb_minus',long_display)

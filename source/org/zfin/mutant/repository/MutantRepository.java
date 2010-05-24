@@ -3,11 +3,10 @@ package org.zfin.mutant.repository;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -30,7 +29,7 @@ public interface MutantRepository {
      * @param numberOfRecords @return A list of Genotype objects.
      * @return list of genotypes
      */
-    PaginationResult<Genotype> getGenotypesByAnatomyTerm(AnatomyItem item, boolean wildtype, int numberOfRecords);
+    PaginationResult<Genotype> getGenotypesByAnatomyTerm(Term item, boolean wildtype, int numberOfRecords);
 
     List<Genotype> getGenotypesByFeature(Feature feature);
 
@@ -39,13 +38,13 @@ public interface MutantRepository {
      * Retrieve the number of images associated to a mutant marker and a given
      * anatomy structure.
      *
-     * @param item     Anatomy Item
+     * @param item     Anatomy Term
      * @param genotype Genotype
      * @return number
      */
-    int getNumberOfImagesPerAnatomyAndMutant(AnatomyItem item, Genotype genotype);
+    int getNumberOfImagesPerAnatomyAndMutant(Term item, Genotype genotype);
 
-    int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(AnatomyItem item, Genotype genotype);
+    int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(Term item, Genotype genotype);
 
     /**
      * Retrieve all genotypes that have a phenotype annotation for a given
@@ -55,7 +54,7 @@ public interface MutantRepository {
      * @param numberOfRecords number
      * @return list of statistics
      */
-    List<Morpholino> getPhenotypeMorpholinos(AnatomyItem item, int numberOfRecords);
+    List<Morpholino> getPhenotypeMorpholinos(Term item, int numberOfRecords);
 
     /**
      * Retrieve number of morpholinos that show a gene expression in a given structure.
@@ -99,7 +98,7 @@ public interface MutantRepository {
 
 
     /**
-     * Retrieve the genotype objects that are assoicated to a morpholino.
+     * Retrieve the genotype objects that are associated to a morpholino.
      * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
      * attached.
      *
@@ -108,10 +107,10 @@ public interface MutantRepository {
      * @param numberOfRecords defines the first n records to retrieve
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, Boolean isWildtype, int numberOfRecords);
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, Boolean isWildtype, int numberOfRecords);
 
     /**
-     * Retrieve all genotype objects that are assoicated to a morpholino.
+     * Retrieve all genotype objects that are associated to a morpholino.
      * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
      * attached.
      *
@@ -119,10 +118,10 @@ public interface MutantRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    List<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, boolean isWildtype);
+    List<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, boolean isWildtype);
 
     /**
-     * Retrieve genotype objects that are assoicated to a morpholino within the range specified
+     * Retrieve genotype objects that are associated to a morpholino within the range specified
      * in the pagination bean object.
      * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
      * attached.
@@ -132,7 +131,7 @@ public interface MutantRepository {
      * @param bean       PaginationBean
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(AnatomyItem item, Boolean isWildtype, PaginationBean bean);
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, Boolean isWildtype, PaginationBean bean);
 
     /**
      * Retrieve the list of morpholinos for a given genotype.
@@ -144,25 +143,6 @@ public interface MutantRepository {
      */
     List<Morpholino> getMorpholinosByGenotype(Genotype genotype, AnatomyItem item, boolean isWildtype);
 
-
-    /**
-     * @param name go term name
-     * @return A list of GoTerms that contain the parameter handed in.
-     */
-    List<GoTerm> getGoTermsByName(String name);
-
-    /**
-     * @param name     go term name
-     * @param ontology subset of GO ontology
-     * @return A list of GoTerms that contain the parameter handed in.
-     */
-    List<GoTerm> getGoTermsByNameAndSubtree(String name, OntologyDTO ontology);
-
-    /**
-     * @param name go term name
-     * @return A unique GoTerm.
-     */
-    GoTerm getGoTermByName(String name);
 
     /**
      * @param name name of quality term
@@ -215,7 +195,6 @@ public interface MutantRepository {
 
     /**
      * Retrieve a genotype experiment by PK.
-     *
      * @param genotypeExperimentID pk
      * @return genotype experiment
      */
@@ -225,26 +204,17 @@ public interface MutantRepository {
      * Remove a mutant figure stage record:
      * 1) All phenotypes and their association to figures.
      * 2) the genotype experiment if unused any more
-     *
      * @param mutant Mutants
      */
     void deleteMutantFigureStage(MutantFigureStage mutant);
-
-    /**
-     * Retrieve a Goterm by obo id from the GO term table.
-     *
-     * @param oboID obo id
-     * @return GoTerm
-     */
-    GoTerm getGoTermByOboID(String oboID);
 
     List<Feature> getFeaturesForStandardAttribution(Publication publication);
 
     List<Genotype> getGenotypesForStandardAttribution(Publication publication);
 
-    List<GoTerm> getGoTermsByMarkerAndPublication(Marker marker, Publication publication);
+    List<Term> getGoTermsByMarkerAndPublication(Marker marker, Publication publication);
 
-    List<GoTerm> getGoTermsByPhenotypeAndPublication(Publication publication);
+    List<Term> getGoTermsByPhenotypeAndPublication(Publication publication);
 
     InferenceGroupMember addInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inferenceToAdd);
 

@@ -55,30 +55,16 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies.txt'
 -- create antibody expression download file
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibody_expressions.txt'
   DELIMITER "	"
-  select distinct mrkr_zdb_id, xpatres_anat_item_zdb_id, anatitem_name, xpatres_term_zdb_id,
-case
-                                  when
-                                  get_obj_type(xpatres_term_zdb_id) = 'ANAT'
-                                  then
-                                        (select anatitem_name
-                                          from anatomy_item
-                                          where anatitem_zdb_id =
-                                                xpatres_term_zdb_id)
-                                  when
-                                  get_obj_type(xpatres_term_zdb_id)='GOTERM'
-                                  then
-                                        (select goterm_name
-                                           from go_term
-                                           where goterm_zdb_id = xpatres_term_zdb_id)
-                                  end
-
-    from marker, expression_experiment, expression_result,  anatomy_item, genotype_experiment, experiment, genotype
+  select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id, sub.term_name
+    from marker, expression_experiment, expression_result, term as super,
+         outer term as sub, genotype_experiment, experiment, genotype
   where 
 	xpatres_xpatex_zdb_id = xpatex_zdb_id
 	AND xpatex_atb_zdb_id = mrkr_zdb_id
 	AND mrkr_type = 'ATB'
-	AND anatitem_zdb_id = xpatres_anat_item_zdb_id
-	AND xpatex_genox_zdb_id = genox_zdb_id 
+	AND super.term_zdb_id = xpatres_superterm_zdb_id
+	AND sub.term_zdb_id = xpatres_subterm_zdb_id
+	AND xpatex_genox_zdb_id = genox_zdb_id
 	AND genox_exp_zdb_id = exp_zdb_id
 	AND (exp_name = '_Standard' OR exp_name = '_Generic-control')
 	AND xpatres_expression_found = 't'
@@ -316,48 +302,27 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
 			(select stg_name
 				from stage
 				where stg_zdb_id = apato_end_stg_zdb_id),
-			apato_superterm_zdb_id,
-				case
-				  when
-				  get_obj_type(apato_superterm_zdb_id) = 'ANAT'
-				  then
-					(select anatitem_name
-					  from anatomy_item
-					  where anatitem_zdb_id =
-						apato_superterm_zdb_id)
-				  when
-				  get_obj_type(apato_superterm_zdb_id)='GOTERM'
-				  then
-					(select goterm_name
-					   from go_term
-					   where goterm_zdb_id = apato_superterm_zdb_id)
-				  end,
-			apato_quality_zdb_id,
+			super.term_ont_id,
+			  (select term_name
+			      from term
+			      where term_zdb_id = apato_superterm_zdb_id),
+			quality.term_ont_id,
 				(select term_name
 					from term
 					where term_Zdb_id = apato_quality_zdb_id),
-			apato_subterm_zdb_id,
-				case
-				  when
-				  get_obj_type(apato_subterm_zdb_id) = 'ANAT'
-				  then
-					(select anatitem_name
-					  from anatomy_item
-					  where anatitem_zdb_id =
-						apato_subterm_zdb_id)
-				  when
-				  get_obj_type(apato_subterm_zdb_id)='GOTERM'
-				  then
-					(select goterm_name
-					   from go_term
-					   where goterm_zdb_id = apato_subterm_zdb_id)
-				  end,
+			sub.term_ont_id,
+			  (select term_name
+			      from term
+			      where term_zdb_id = apato_subterm_zdb_id),
 			apato_tag,
 			apato_pub_zdb_id,
 			genox_exp_zdb_id
- from atomic_phenotype, genotype, genotype_experiment
+ from atomic_phenotype, genotype, genotype_experiment, term as super, term as sub, term as quality
       where apato_genox_zdb_id = genox_zdb_id
 	and genox_geno_zdb_id = geno_zdb_id
+	and apato_subterm_zdb_id = sub.term_zdb_id
+	and apato_superterm_zdb_id = super.term_zdb_id
+	and apato_quality_zdb_id = quality.term_zdb_id
  order by geno_zdb_id, apato_pub_zdb_id;
 
 ! echo "Inserted data into file phenotype.txt"
@@ -394,40 +359,17 @@ select "ZFIN:"||geno_zdb_id, geno_display_name,
 			   where stg_zdb_id = apato_Start_stg_zdb_id),
 			(select stg_obo_id from stage
                            where stg_zdb_id = apato_end_Stg_zdb_id),
-				case
-				  when
-				  get_obj_type(apato_superterm_zdb_id) = 'ANAT'
-				  then
-					(select anatitem_obo_id
-					  from anatomy_item
-					  where anatitem_zdb_id =
-						apato_superterm_zdb_id)
-				  when
-				  get_obj_type(apato_superterm_zdb_id)='GOTERM'
-				  then
-					(select "GO:"||goterm_go_id
-					   from go_term
-					   where goterm_zdb_id = apato_superterm_zdb_id)
-				  end,
-				case
-				  when
-				  get_obj_type(apato_subterm_zdb_id) = 'ANAT'
-				  then
-					(select anatitem_obo_id
-					  from anatomy_item
-					  where anatitem_zdb_id =
-						apato_subterm_zdb_id)
-				  when
-				  get_obj_type(apato_subterm_zdb_id)='GOTERM'
-				  then
-					(select "GO:"||goterm_go_id
-					   from go_term
-					   where goterm_zdb_id = apato_subterm_zdb_id)
-				  end,
-                                (select term_ont_id
-                                        from term
-                                        where term_Zdb_id = apato_quality_zdb_id),
-
+                (select term_ont_id
+                    from term
+                    where term_zdb_id = apato_superterm_zdb_id
+                ),
+                (select term_ont_id
+                    from term
+                    where term_zdb_id = apato_subterm_zdb_id
+                ),
+                (select term_ont_id
+                    from term
+                    where term_Zdb_id = apato_quality_zdb_id),
 			apato_tag,
 			"ZFIN:"||apato_pub_zdb_id,
 			"ZFIN:"||genox_exp_zdb_id
@@ -470,16 +412,18 @@ order by t_exp_zdb_id, t_cdt_group;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_ontology_translation.txt'
  DELIMITER "	"
- select goterm_zdb_id, "GO:"||goterm_go_id
-   from go_term
-   where goterm_is_obsolete = 'f'
-   and goterm_is_secondary = 'f';
+ select term_zdb_id, term_ont_id
+   from term
+   where term_is_obsolete = 'f'
+   and term_is_secondary = 'f'
+   and term_ontology in ('biological_process','cellular_component','molecular_function');
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_ontology_translation.txt'
  DELIMITER "	"
- select anatitem_zdb_id, anatitem_obo_id
-   from anatomy_item
-   where anatitem_is_obsolete = 'f';
+ select term_zdb_id, term_ont_id
+   from term
+   where term_is_obsolete = 'f'
+   and term_ontology = 'zebrafish_anatomy';
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype_quality_ontology_translation.txt'
  DELIMITER "	"
@@ -673,14 +617,14 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features.txt
 			from geno_data order by genotype_id, geno_display_name;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features_missing_markers.txt'
- DELIMITER "	" select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, mrkr_zdb_id
-              from feature_marker_relationship, feature, genotype, genotype_feature, marker
-             where fmrel_ftr_zdb_id=feature_zdb_id
-             and fmrel_mrkr_zdb_id=mrkr_zdb_id
-             and fmrel_type in ('markers missing', 'markers moved')
-               and mrkr_zdb_id like 'ZDB-GENE%'
+ DELIMITER "	" select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, marker_id  
+              from mapped_deletion, feature, genotype, genotype_feature, marker
+             where allele = feature_name
+               and present_t = 'f'
+               and marker_id like 'ZDB-GENE%'
                and feature_zdb_id = genofeat_feature_zdb_id
-    	       and geno_zdb_id = genofeat_geno_zdb_id;
+    	       and geno_zdb_id = genofeat_geno_zdb_id
+	       and marker_id = mrkr_zdb_id;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_backgrounds.txt'
  DELIMITER "	" select distinct geno_zdb_id,
@@ -752,17 +696,22 @@ unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_item.txt'
  DELIMITER "	"
 select
-    anatitem_zdb_id,
-    anatitem_name,
+    term_ont_id,
+    term_name,
     anatitem_start_stg_zdb_id,
     anatitem_end_stg_zdb_id
-from anatomy_item
+from term, anatomy_item
+where term_ont_id = anatitem_obo_id
 ;
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_relationship.txt'
 DELIMITER "	"
-select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id, anatrel_dagedit_id
-  from anatomy_relationship;
+select termrel_term_1_zdb_id, termrel_term_2_zdb_id, termrel_type
+  from term_relationship, term as term1, term as term2
+  where term1.term_ontology = 'zebrafish_anatomy'
+  and term2.term_ontology = 'zebrafish_anatomy'
+  and term1.term_zdb_id = termrel_term_1_zdb_id
+  and term2.term_zdb_id = termrel_term_2_zdb_id;
 
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_stage_anatomy.txt'
@@ -771,9 +720,10 @@ select  xpatres_zdb_id,
        xpatres_xpatex_zdb_id,
        xpatres_start_stg_zdb_id,
        xpatres_end_stg_zdb_id,
-       xpatres_anat_item_zdb_id,
+       term_ont_id,
        xpatres_expression_found
-  from expression_result
+  from expression_result, term
+  where term_zdb_id = xpatres_superterm_zdb_id
  order by xpatres_xpatex_zdb_id; 
 
 
@@ -865,8 +815,8 @@ select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_
 
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/wildtype-expression.txt'
  DELIMITER "	"
-select mrkr_zdb_id, mrkr_abbrev, geno_display_name, anatitem_zdb_id, anatitem_name, start.stg_name, end.stg_name, xpatex_assay_name
-from anatomy_item, stage as start, stage as end, expression_result, marker
+select mrkr_zdb_id, mrkr_abbrev, geno_display_name, term_ont_id, term_name, start.stg_name, end.stg_name, xpatex_assay_name
+from term, stage as start, stage as end, expression_result, marker
 join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
 join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
 join genotype on geno_zdb_id = genox_geno_zdb_id
@@ -875,12 +825,12 @@ where     geno_is_wildtype = 't'
       and exp_zdb_id = 'ZDB-EXP-041102-1'
       and xpatres_xpatex_zdb_id = xpatex_zdb_id
       and xpatres_expression_found = 't'
-      and xpatres_anat_item_zdb_id = anatitem_zdb_id
+      and xpatres_superterm_zdb_id = term_zdb_id
       and xpatres_start_stg_zdb_id = start.stg_zdb_id
       and xpatres_end_stg_zdb_id = end.stg_zdb_id
 UNION
-select mrkr_zdb_id, mrkr_abbrev, geno_display_name, anatitem_zdb_id, anatitem_name, start.stg_name, end.stg_name, xpatex_assay_name
-from anatomy_item, stage as start, stage as end, expression_result, marker
+select mrkr_zdb_id, mrkr_abbrev, geno_display_name, term_ont_id, term_name, start.stg_name, end.stg_name, xpatex_assay_name
+from term, stage as start, stage as end, expression_result, marker
 join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
 join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
 join genotype on geno_zdb_id = genox_geno_zdb_id
@@ -889,9 +839,10 @@ where     geno_is_wildtype = 't'
       and exp_zdb_id = 'ZDB-EXP-041102-1'
       and xpatres_xpatex_zdb_id = xpatex_zdb_id
       and xpatres_expression_found = 't'
-      and xpatres_term_zdb_id = anatitem_zdb_id
+      and xpatres_subterm_zdb_id = term_zdb_id
       and xpatres_start_stg_zdb_id = start.stg_zdb_id
       and xpatres_end_stg_zdb_id = end.stg_zdb_id
+      and term_ontology = 'zebrafish_anatomy'
 order by mrkr_zdb_id;
 
 

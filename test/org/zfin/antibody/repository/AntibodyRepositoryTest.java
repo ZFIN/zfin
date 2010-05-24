@@ -30,6 +30,9 @@ import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.AntibodyStatistics;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.Term;
 import org.zfin.people.MarkerSupplier;
 import org.zfin.people.Organization;
 import org.zfin.people.SourceUrl;
@@ -43,8 +46,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
-import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
-import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 @SuppressWarnings({"FeatureEnvy"})
 public class AntibodyRepositoryTest {
@@ -583,10 +585,12 @@ public class AntibodyRepositoryTest {
     @Test
     public void getAllAntibodiesByAOTerm() {
         String aoTermName = "forerunner cell group";
-        AnatomyItem term = getAnatomyRepository().getAnatomyItem(aoTermName);
+        Term term = new GenericTerm();
+        term.setID("ZDB-TERM-100331-22");
+        term.setTermName(aoTermName);
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
-        searchCriteria.setAnatomyTerm(term);
+        searchCriteria.setTerm(term);
 
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(5);
@@ -600,13 +604,13 @@ public class AntibodyRepositoryTest {
 
     @Test
     public void getAllAntibodiesByAOTermSecondaryMotorNeuron() {
-        //  pectoral fin
-        String aoTermZdbID = "ZDB-ANAT-011113-511";
-        AnatomyItem term = new AnatomyItem();
-        term.setZdbID(aoTermZdbID);
+        //  secondary motor neuron
+        String aoTermZdbID = "ZDB-TERM-100331-2304";
+        Term term = new GenericTerm();
+        term.setID(aoTermZdbID);
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
-        searchCriteria.setAnatomyTerm(term);
+        searchCriteria.setTerm(term);
 
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(5);
@@ -623,9 +627,7 @@ public class AntibodyRepositoryTest {
         String abZdbID = "ZDB-ATB-081003-2";
         Antibody antibody = getAntibodyRepository().getAntibodyByID(abZdbID);
         // spinal cord
-        String aoID = "ZDB-ANAT-010921-494";
-        AnatomyItem aoTerm = new AnatomyItem();
-        aoTerm.setZdbID(aoID);
+        Term aoTerm = getOntologyRepository().getTermByName("spinal cord", Ontology.ANATOMY);
 
         int numOfFigures = getAntibodyRepository().getNumberOfFiguresPerAoTerm(antibody, aoTerm, Figure.Type.FIGURE);
         assertTrue(numOfFigures > 0);
@@ -645,8 +647,7 @@ public class AntibodyRepositoryTest {
 
         // cerebellum
         String aoID = "ZDB-ANAT-010921-522";
-        AnatomyItem aoTerm = new AnatomyItem();
-        aoTerm.setZdbID(aoID);
+        Term aoTerm = getOntologyRepository().getTermByName("cerebellum",Ontology.ANATOMY);
 
         PaginationResult<Publication> pubs = getAntibodyRepository().getPublicationsWithFigures(antibody, aoTerm);
         assertNotNull(pubs);
@@ -853,7 +854,9 @@ public class AntibodyRepositoryTest {
     @SuppressWarnings("unchecked")
     public void getAntibodiesForAoTerm() {
         String aoTermName = "pancreas";
-        AnatomyItem aoTerm = getAnatomyRepository().getAnatomyItem(aoTermName);
+        Term term = new GenericTerm();
+        term.setID("ZDB-TERM-100331-130");
+        term.setTermName(aoTermName);
 
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct stat.antibody " +
@@ -861,7 +864,7 @@ public class AntibodyRepositoryTest {
                 "     where stat.superterm = :aoterm " +
                 "           and stat.subterm = :aoterm";
         Query query = session.createQuery(hql);
-        query.setParameter("aoterm", aoTerm);
+        query.setParameter("aoterm", term);
 
         List<AntibodyAOStatistics> list = query.list();
         assertNotNull(list);
@@ -872,7 +875,7 @@ public class AntibodyRepositoryTest {
                 "     where stat.superterm = :aoterm " +
                 "           and stat.subterm = :aoterm";
         query = session.createQuery(hql);
-        query.setParameter("aoterm", aoTerm);
+        query.setParameter("aoterm", term);
         List<AntibodyAOStatistics> listStat = query.list();
         assertNotNull(listStat);
         assertTrue(list.size() > 0);
@@ -893,17 +896,19 @@ public class AntibodyRepositoryTest {
     @Test
     public void getAntibodyStatistics() {
         String aoTermName = "eye";
-        AnatomyItem aoTerm = getAnatomyRepository().getAnatomyItem(aoTermName);
+        Term term = new GenericTerm();
+        term.setID("ZDB-TERM-100331-100");
+        term.setTermName(aoTermName);
 
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(5);
         // without substructures
-        PaginationResult<AntibodyStatistics> result = AnatomyService.getAntibodyStatistics(aoTerm, pagination, false);
+        PaginationResult<AntibodyStatistics> result = AnatomyService.getAntibodyStatistics(term, pagination, false);
         assertTrue(result != null);
         assertTrue(result.getTotalCount() > 0);
         assertTrue(result.getPopulatedResults().size() > 1);
         // including substructures
-        result = AnatomyService.getAntibodyStatistics(aoTerm, pagination, true);
+        result = AnatomyService.getAntibodyStatistics(term, pagination, true);
         assertTrue(result != null);
         assertTrue(result.getTotalCount() > 0);
 

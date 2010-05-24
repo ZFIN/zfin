@@ -144,12 +144,12 @@ function new_GO(mrkrzdbid){
 
 
 <?MISQL SQL="
-       select goterm_ontology,goterm_name,mrkrgoev_evidence_code,gont_order,goterm_go_id,mrkrgoev_go_term_zdb_id,
+       select term_ontology,term_name,mrkrgoev_evidence_code,gont_order,goterm_go_id,mrkrgoev_term_zdb_id,
 	      mrkrgoev_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_notes,mrkrgoev_gflag_name
-	 from go_term g, marker_go_term_evidence e, go_ontology o
+	 from term g, marker_go_term_evidence e, go_ontology o
 	where mrkrgoev_mrkr_zdb_id='$OID' 
-	  and mrkrgoev_go_term_zdb_id=goterm_zdb_id 
-	  and g.goterm_ontology=o.gont_ontology_name 
+	  and mrkrgoev_term_zdb_id=term_zdb_id
+	  and g.term_ontology=o.gont_ontology_name 
         order by 4,2,3 ">
 
    <?MIVAR NAME=$ontology>$1<?/MIVAR>

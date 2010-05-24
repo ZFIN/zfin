@@ -206,26 +206,6 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
 
     }
 
-    private static void highQualityProbe() {
-        PublicationRepository ar = RepositoryFactory.getPublicationRepository();
-        String publictationID = "ZDB-PUB-040907-1";
-        String expID = "ZDB-XPAT-011001-1";
-        String anatomId = "ZDB-ANAT-010921-561";
-        AnatomyItem item = new AnatomyItem();
-        item.setZdbID(anatomId);
-
-/*
-        List<Publication> list = ar.getHighQualityProbePublications(anatomId);
-        if (list != null && list.size() < 20)
-            System.out.println(list);
-        else if (list != null)
-            System.out.println("Number of publication: " + list.size());
-*/
-
-//        List markers = ar.getHighQualityProbeNames(item).getResults();
-        System.out.println("Probes Number : " + ar.getHighQualityProbeNames(item).getPopulatedResults().size()); // this is only the # populated
-    }
-
     protected String[] getMappings() {
         return new String[]{"anatomy.hbm.xml", "people.hbm.xml"};
     }

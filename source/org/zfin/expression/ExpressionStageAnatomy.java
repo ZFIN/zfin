@@ -1,7 +1,7 @@
 package org.zfin.expression;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.ontology.Term;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,15 +9,15 @@ import java.util.List;
 
 public class ExpressionStageAnatomy {
     private DevelopmentStage stage;
-    private List<AnatomyItem> anatomyTerms;
+    private List<Term> anatomyTerms;
     private HashSet<Figure> figures;
 
-    public void addAnatomyTerm(AnatomyItem anat) {
+    public void addAnatomyTerm(Term term) {
         if (anatomyTerms == null)
-            anatomyTerms = new ArrayList<AnatomyItem>();
+            anatomyTerms = new ArrayList<Term>();
         //don't add duplicates, this is kind of an expensive way, but oh well.
-        if (anatomyTerms.contains(anat) == false)
-            anatomyTerms.add(anat);
+        if (!anatomyTerms.contains(term))
+            anatomyTerms.add(term);
     }
 
 
@@ -46,11 +46,11 @@ public class ExpressionStageAnatomy {
         this.stage = stage;
     }
 
-    public List<AnatomyItem> getAnatomyTerms() {
+    public List<Term> getAnatomyTerms() {
         return anatomyTerms;
     }
 
-    public void setAnatomyTerms(List<AnatomyItem> anatomyTerms) {
+    public void setAnatomyTerms(List<Term> anatomyTerms) {
         this.anatomyTerms = anatomyTerms;
     }
 

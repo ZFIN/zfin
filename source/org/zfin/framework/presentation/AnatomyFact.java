@@ -1,10 +1,10 @@
 package org.zfin.framework.presentation;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.io.Serializable;
@@ -16,8 +16,8 @@ public class AnatomyFact implements Serializable {
 
     private long zdbID;
     ExpressionResult expressionResult;
-    AnatomyItem superterm;
-    AnatomyItem subterm;
+    Term superterm;
+    Term subterm;
     Marker gene;
     Figure figure;
     Image image;
@@ -33,19 +33,19 @@ public class AnatomyFact implements Serializable {
         this.zdbID = zdbID;
     }
 
-    public AnatomyItem getSuperterm() {
+    public Term getSuperterm() {
         return superterm;
     }
 
-    public void setSuperterm(AnatomyItem superterm) {
+    public void setSuperterm(Term superterm) {
         this.superterm = superterm;
     }
 
-    public AnatomyItem getSubterm() {
+    public Term getSubterm() {
         return subterm;
     }
 
-    public void setSubterm(AnatomyItem subterm) {
+    public void setSubterm(Term subterm) {
         this.subterm = subterm;
     }
 

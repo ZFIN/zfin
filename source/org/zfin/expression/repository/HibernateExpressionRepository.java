@@ -8,13 +8,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.*;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
@@ -23,8 +21,10 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
-import org.zfin.mutant.PhenotypeStructure;
-import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.Term;
+import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
@@ -32,12 +32,10 @@ import org.zfin.sequence.MarkerDBLink;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  * Repository that is used for curation actions, such as dealing with expression experiments.
@@ -49,12 +47,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public ExpressionStageAnatomyContainer getExpressionStages(Gene gene) {
         Session session = HibernateUtil.currentSession();
 
-        //List<ExpressionStageAnatomy> myXSAresults = new ArrayList<ExpressionStageAnatomy>();
-
         //query in expressions.hbm.xml
         Query query = session.getNamedQuery("stageanatomyfigure");
         query.setParameter("geneZdbID", gene.getZdbID());
-        query.setParameter("unknown", AnatomyItem.UNSPECIFIED);
+        query.setParameter("unknown", Term.UNSPECIFIED);
         query.setParameter("unspecified", DevelopmentStage.UNKNOWN);
 
         Iterator stagesAndAnatomy = query.list().iterator();
@@ -65,7 +61,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             Object[] tuple = (Object[]) stagesAndAnatomy.next();
 
             DevelopmentStage stage = (DevelopmentStage) tuple[0];
-            AnatomyItem anat = (AnatomyItem) tuple[1];
+            Term anat = (Term) tuple[1];
             Figure fig = (Figure) tuple[2];
 
             xsac.add(stage, anat, fig);
@@ -127,14 +123,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         String hql1 = "" +
                 "	 select count(distinct figure )," +
-                "		publication.zdbID , probe.zdbID " +
+                "		publication.zdbID , clone.zdbID " +
                 "           from Figure figure join figure.expressionResults  er " +
                 "                join er.expressionExperiment ee " +
                 "                join ee.publication publication " +
-                "                join ee.probe probe" +
-                "           where probe.zdbID = :markerZdbID " +
+                "                join ee.probe clone " +
+                "           where clone.zdbID = :markerZdbID " +
                 "           and publication.type  = :unpublished " +
-                "            group by probe.zdbID , publication.zdbID  ";
+                "            group by clone.zdbID , publication.zdbID  ";
 
         Session session = currentSession();
         Query query1 = session.createQuery(hql1);
@@ -319,7 +315,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         }
         hql += "     where result.expressionExperiment.publication.zdbID = :pubID ";
         if (geneZdbID != null)
-            hql += "           and result.expressionExperiment.gene.zdbID = :geneID ";
+            hql += "           and result.expressionExperiment.marker.zdbID = :geneID ";
         if (fishID != null)
             hql += "           and geno.zdbID = :fishID ";
         if (figureID != null)
@@ -366,7 +362,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         ExpressionResult unspecifiedResult = getUnspecifiedExpressResult(result);
 
         // ignore unspecified addition if not the first creation.
-        if (result.getAnatomyTerm().getName().equals(AnatomyItem.UNSPECIFIED))
+        if (result.getSuperterm().getTermName().equals(Term.UNSPECIFIED))
             if (result.getZdbID() != null)
                 return;
             else {
@@ -435,14 +431,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     @SuppressWarnings("unchecked")
     private ExpressionResult getUnspecifiedExpressResult(ExpressionResult result) {
-        AnatomyRepository anatRep = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem unspecified = anatRep.getAnatomyItem(AnatomyItem.UNSPECIFIED);
+        Term unspecified = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED);
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(ExpressionResult.class);
         criteria.add(Restrictions.eq("expressionExperiment", result.getExpressionExperiment()));
         criteria.add(Restrictions.eq("startStage", result.getStartStage()));
         criteria.add(Restrictions.eq("endStage", result.getEndStage()));
-        criteria.add(Restrictions.eq("anatomyTerm", unspecified));
+        criteria.add(Restrictions.eq("superterm", unspecified));
         criteria.add(Restrictions.eq("expressionFound", true));
         return (ExpressionResult) criteria.uniqueResult();
     }
@@ -452,27 +447,16 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         // first check if an expression result record already exists
         Session session = HibernateUtil.currentSession();
         Criteria criteria;
-        if (result instanceof AnatomyExpressionResult) {
-            criteria = session.createCriteria(AnatomyExpressionResult.class);
-            AnatomyExpressionResult aoResult = (AnatomyExpressionResult) result;
-            AnatomyItem subterm = aoResult.getSubterm();
-            if (subterm == null)
-                criteria.add(Restrictions.isNull("subterm"));
-            else
-                criteria.add(Restrictions.eq("subterm", aoResult.getSubterm()));
-        } else {
-            criteria = session.createCriteria(GoTermExpressionResult.class);
-            GoTermExpressionResult goResult = (GoTermExpressionResult) result;
-            GoTerm subterm = goResult.getSubterm();
-            if (subterm == null)
-                criteria.add(Restrictions.isNull("subterm"));
-            else
-                criteria.add(Restrictions.eq("subterm", subterm));
-        }
+        criteria = session.createCriteria(ExpressionResult.class);
+        Term subterm = result.getSubterm();
+        if (subterm == null)
+            criteria.add(Restrictions.isNull("subterm"));
+        else
+            criteria.add(Restrictions.eq("subterm", result.getSubterm()));
         criteria.add(Restrictions.eq("expressionExperiment", result.getExpressionExperiment()));
         criteria.add(Restrictions.eq("startStage", result.getStartStage()));
         criteria.add(Restrictions.eq("endStage", result.getEndStage()));
-        criteria.add(Restrictions.eq("anatomyTerm", result.getAnatomyTerm()));
+        criteria.add(Restrictions.eq("superterm", result.getSuperterm()));
         criteria.add(Restrictions.eq("expressionFound", result.isExpressionFound()));
         return (List<ExpressionResult>) criteria.list();
     }
@@ -588,7 +572,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Criteria crit = session.createCriteria(ExpressionStructure.class);
         crit.add(Restrictions.eq("publication.zdbID", publicationID));
         Criteria superterm = crit.createCriteria("superterm");
-        superterm.addOrder(Order.asc("nameOrder"));
+        superterm.addOrder(Order.asc("termName"));
         crit.setFetchMode("superterm", FetchMode.JOIN);
         crit.setFetchMode("superterm.start", FetchMode.JOIN);
         crit.setFetchMode("superterm.end", FetchMode.JOIN);
@@ -683,23 +667,16 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     private void createUnspecifiedExpressionResult(ExpressionResult result, Figure figure) {
         Session session = HibernateUtil.currentSession();
-        AnatomyRepository anatRep = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem unspecifiedTerm = anatRep.getAnatomyItem(AnatomyItem.UNSPECIFIED);
+        Term unspecifiedTerm = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED);
 
         ExpressionResult unspecifiedResult = new ExpressionResult();
         unspecifiedResult.setExpressionExperiment(result.getExpressionExperiment());
-        unspecifiedResult.setAnatomyTerm(unspecifiedTerm);
+        unspecifiedResult.setSuperterm(unspecifiedTerm);
         unspecifiedResult.setStartStage(result.getStartStage());
         unspecifiedResult.setEndStage(result.getEndStage());
         unspecifiedResult.setExpressionFound(true);
         unspecifiedResult.addFigure(figure);
         session.save(unspecifiedResult);
-    }
-
-    public void createGOExpressionResult(GoTermExpressionResult newExpression, Figure figure) {
-    }
-
-    public void createAnatomyExpressionResult(AnatomyExpressionResult newExpression, Figure figure) {
     }
 
     /**
@@ -712,15 +689,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public Phenotype getUnspecifiedPhenotypeFromGenoxStagePub(Phenotype pheno) {
         Session session = HibernateUtil.currentSession();
 
-        AnatomyRepository anatRep = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem unspecified = anatRep.getAnatomyItem(AnatomyItem.UNSPECIFIED);
+        Term unspecified = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED);
 
-        String hql = "select pheno from AnatomyPhenotype pheno " +
+        String hql = "select pheno from Phenotype pheno " +
                 "     where pheno.genotypeExperiment = :genox" +
                 "           and pheno.startStage = :start " +
                 "           and pheno.endStage = :end " +
-                "           and pheno.anatomySuperTerm = :anatomyTermID " +
-                "           and pheno.anatomySubTerm is null " +
+                "           and pheno.superterm = :anatomyTermID " +
+                "           and pheno.subterm is null " +
                 "           and pheno.publication = :publication";
 
         Query query = session.createQuery(hql);
@@ -763,21 +739,17 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             OntologyDTO subtermOntology = expressedTerm.getSubterm().getOntology();
             if (subtermOntology == null)
                 throw new NullPointerException("No subterm ontology provided.");
-            if (subtermOntology == OntologyDTO.ANATOMY) {
-                crit = session.createCriteria(AnatomyExpressionStructure.class);
-            } else {
-                crit = session.createCriteria(GOExpressionStructure.class);
-            }
+            crit = session.createCriteria(ExpressionStructure.class);
             Criteria subterm = crit.createCriteria("subterm");
-            subterm.add(Restrictions.eq("name", expressedTerm.getSubterm().getTermName()));
+            subterm.add(Restrictions.eq("termName", expressedTerm.getSubterm().getTermName()));
         } else {
-            crit = session.createCriteria(AnatomyExpressionStructure.class);
+            crit = session.createCriteria(ExpressionStructure.class);
             crit.add(Restrictions.isNull("subterm"));
         }
         Criteria publication = crit.createCriteria("publication");
         publication.add(Restrictions.eq("zdbID", publicationID));
         Criteria superterm = crit.createCriteria("superterm");
-        superterm.add(Restrictions.eq("name", supertermName));
+        superterm.add(Restrictions.eq("termName", supertermName));
 
         List list = crit.list();
         return list != null && !list.isEmpty();
@@ -800,12 +772,57 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     /**
-     * Retrieve a pile phenotype structure
-     * @param pileStructureID   primary key
-     * @return PhenotypeStructure
+     * Create all expression structures being used in a given publication.
+     *
+     * @param publicationID publication id
      */
-    public PhenotypeStructure getPhenotypePileStructure(String pileStructureID) {
-        return null;  
+    @Override
+    public void createExpressionPile(String publicationID) {
+        List<ExpressionResult> expressionResults = getAllExpressionResults(publicationID);
+        if (expressionResults == null || expressionResults.isEmpty())
+            return;
+        Publication publication = getPublicationRepository().getPublication(publicationID);
+        Set<ExpressionStructure> distinctStructures = new HashSet<ExpressionStructure>();
+        for (ExpressionResult expressionResult : expressionResults) {
+            ExpressionStructure expressionStructure = instantiateExpressionStructure(expressionResult, publication);
+            // only create structures that are not already on the pile. 
+            if (distinctStructures.add(expressionStructure))
+                createPileStructure(expressionStructure);
+        }
+
+    }
+
+    private ExpressionStructure instantiateExpressionStructure(ExpressionResult expressionResult, Publication publication) {
+        ExpressionStructure structure = new ExpressionStructure();
+        structure.setDate(new Date());
+        structure.setPerson(Person.getCurrentSecurityUser());
+        structure.setPublication(publication);
+        structure.setSuperterm(expressionResult.getSuperterm());
+        Term subTerm = expressionResult.getSubterm();
+        if (subTerm != null) {
+            structure.setSubterm(subTerm);
+        }
+        return structure;
+    }
+
+    private List<ExpressionResult> getAllExpressionResults(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct expression from ExpressionResult expression where" +
+                "          expression.expressionExperiment.publication.id= :publicationID";
+        Query query = session.createQuery(hql);
+        query.setParameter("publicationID", publicationID);
+        return (List<ExpressionResult>) query.list();
+
+    }
+
+    /**
+     * Create a new structure - post-composed - for the structure pile.
+     *
+     * @param structure structure
+     */
+    public void createPileStructure(ExpressionStructure structure) {
+        Session session = HibernateUtil.currentSession();
+        session.save(structure);
     }
 
     private void validateFigureAnnotationKey(String experimentZdbID, String figureID, String startStageID, String endStageID) {

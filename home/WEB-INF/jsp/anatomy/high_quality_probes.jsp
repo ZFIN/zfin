@@ -1,6 +1,8 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+
 <table bgcolor="#eeeeee" border="0" width="100%">
     <tbody>
     <tr align="center">
@@ -15,7 +17,7 @@
         <TD bgcolor="#CCCCCC" colspan="3">
             <STRONG>
                 In-Situ Probes for <i>
-                <zfin:link entity="${formBean.anatomyItem}"/>
+                <zfin:link entity="${formBean.aoTerm}"/>
             </i></STRONG>: &nbsp; <a
                 href="/zf_info/stars.html">Recommended</a>
             by
@@ -52,7 +54,7 @@
             <c:if test="${probeStats.numberOfFigures > 0}">
                 <!-- link to figure search page if more than one figure available-->
                 <c:if test="${probeStats.numberOfFigures > 1}">
-                    <zfin:createFiguresLink marker="${probeStats.probe}" anatomyItem="${formBean.anatomyItem}"
+                    <zfin:createFiguresLink marker="${probeStats.probe}" term="${formBean.aoTerm}"
                                             numberOfFigures="${probeStats.numberOfFigures}" author="Thisse"
                                             useGeneZdbID="false"/>
                     (<zfin:choice choicePattern="0#images| 1#image| 2#images"

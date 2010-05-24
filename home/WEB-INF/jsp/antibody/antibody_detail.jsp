@@ -1,6 +1,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 
+<jsp:useBean id="formBean" class="org.zfin.antibody.presentation.AntibodyBean" scope="request"/>
+
 <zfin2:dataManager zdbID="${formBean.antibody.zdbID}"
                    editURL="${formBean.editURL}"
                    deleteURL="${formBean.deleteURL}"
@@ -12,7 +14,7 @@
 <zfin2:antibodyHead antibody="${formBean.antibody}"  antibodyStat="${formBean.antibodyStat}"/>
 
 
-<p/>
+<p></p>
 <b>NOTES:</b>
 <c:if test="${formBean.numOfUsageNotes eq null || formBean.numOfUsageNotes ==0 }">
     None Submitted
@@ -36,12 +38,12 @@
         </c:forEach>
     </table>
 </c:if>
-<p/>
+<p></p>
 
 <b>ANATOMICAL LABELING</b>&nbsp;
 <c:import url="/WEB-INF/jsp/antibody/antibody_labeling_detail.jsp"/>
 
-<p/>
+<p></p>
 <b>SOURCE:</b>
 <br/>
 <c:choose>

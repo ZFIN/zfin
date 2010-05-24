@@ -18,6 +18,8 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.orthology.Species;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.Publication;
@@ -528,8 +530,9 @@ public class MarkerRepositoryTest {
     @Test
     public void thisseProbesForAoTerm() {
         String aoTermName = "pancreas";
-        AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);
+        Term term = new GenericTerm();
+        term.setID("ZDB-TERM-100331-130");
+        term.setTermName(aoTermName);
 
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct stat.probe " +
@@ -537,7 +540,7 @@ public class MarkerRepositoryTest {
                 "     where stat.superterm = :aoterm " +
                 "           and stat.subterm = :aoterm";
         Query query = session.createQuery(hql);
-        query.setParameter("aoterm", aoTerm);
+        query.setParameter("aoterm", term);
 
         List<AntibodyAOStatistics> list = query.list();
         assertTrue(list != null);
@@ -548,7 +551,7 @@ public class MarkerRepositoryTest {
                 "     where stat.superterm = :aoterm " +
                 "           and stat.subterm = :aoterm";
         query = session.createQuery(hql);
-        query.setParameter("aoterm", aoTerm);
+        query.setParameter("aoterm", term);
         List<AntibodyAOStatistics> listStat = query.list();
         assertTrue(list != null);
         assertTrue(list.size() > 0);
@@ -558,19 +561,20 @@ public class MarkerRepositoryTest {
     @Test
     public void ProbesStatistics() {
         String aoTermName = "brain";
-        AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);
+        Term term = new GenericTerm();
+        term.setID("ZDB-TERM-100331-8");
+        term.setTermName(aoTermName);
 
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(5);
         pagination.setFirstPageRecord(0);
         // without substructures
-        PaginationResult<HighQualityProbe> result = markerRepository.getHighQualityProbeStatistics(aoTerm, pagination, false);
+        PaginationResult<HighQualityProbe> result = markerRepository.getHighQualityProbeStatistics(term, pagination, false);
         assertTrue(result != null);
         assertTrue(result.getTotalCount() > 0);
 
         // including substructures
-        result = markerRepository.getHighQualityProbeStatistics(aoTerm, pagination, true);
+        result = markerRepository.getHighQualityProbeStatistics(term, pagination, true);
         assertTrue(result != null);
         assertTrue(result.getTotalCount() > 0);
 

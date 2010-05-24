@@ -3,10 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
-import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.dto.GoTermDTO;
-import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 
@@ -136,7 +133,7 @@ public class GoViewTable extends ZfinFlexTable {
 
     private class GoLink extends HTML {
 
-        public GoLink(GoTermDTO goTerm) {
+        public GoLink(TermDTO goTerm) {
             String htmlString = "";
             htmlString += "<a href='";
             htmlString += "http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:";

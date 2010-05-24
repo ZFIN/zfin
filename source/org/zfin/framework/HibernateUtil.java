@@ -1,11 +1,9 @@
 package org.zfin.framework;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.proxy.HibernateProxy;
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.repository.SessionCreator;
 
@@ -140,7 +138,21 @@ public class HibernateUtil {
         return sessionFactory;
     }
 
-    public static void setSesssionFactory(SessionFactory newSessionFactory) {
+    public static void setSessionFactory(SessionFactory newSessionFactory) {
         sessionFactory = newSessionFactory;
     }
+
+    @SuppressWarnings({"unchecked"})
+    public static <T> T initializeAndUnproxy(T entity) {
+        if (entity == null) {
+                return null;
+            }
+            Hibernate.initialize(entity);
+            if (entity instanceof HibernateProxy) {
+                entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer()
+                        .getImplementation();
+            }
+            return entity;
+    }
+
 }

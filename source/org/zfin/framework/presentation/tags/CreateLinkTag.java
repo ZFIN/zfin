@@ -16,9 +16,7 @@ import org.zfin.marker.presentation.GenotypePresentation;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.mutant.Genotype;
-import org.zfin.ontology.GoTerm;
 import org.zfin.ontology.Term;
-import org.zfin.ontology.presentation.GoTermPresentation;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
@@ -95,8 +93,6 @@ public class CreateLinkTag extends BodyTagSupport {
             link = GenotypePresentation.getLink((Genotype) o);
         else if (o instanceof ExperimentCondition)
             link = ExperimentConditionPresentation.getLink((ExperimentCondition) o);
-        else if (o instanceof GoTerm)
-            link = GoTermPresentation.getLink((GoTerm) o);
         else if (o instanceof DevelopmentStage)
             link = DevelopmentStagePresentation.getLink((DevelopmentStage) o, longVersion);
         else if (o instanceof Organization)

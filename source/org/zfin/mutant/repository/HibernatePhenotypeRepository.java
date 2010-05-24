@@ -3,10 +3,10 @@ package org.zfin.mutant.repository;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyPhenotype;
+import org.hibernate.id.IdentifierGenerationException;
 import org.zfin.expression.Figure;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
@@ -17,16 +17,15 @@ import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  * Class defines methods to retrieve phenotypic data for annotation purposes
@@ -56,22 +55,20 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Publication pub = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
         structure.setPublication(pub);
         structure.setDate(new Date());
-        if (isPhenotypeOnPile(structure))
+        if (isPhenotypeStructureOnPile(structure))
             return;
         structure.setPerson(Person.getCurrentSecurityUser());
         Session session = HibernateUtil.currentSession();
         session.save(structure);
     }
 
-    public boolean isPhenotypeOnPile(PhenotypeStructure structure) {
+    public boolean isPhenotypeStructureOnPile(PhenotypeStructure structure) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select structure from PhenotypeStructure as structure where " +
                 "       structure.superterm.ID = :supertermID";
         if (structure.getSubterm() != null)
             hql += " AND structure.subterm.ID = :subtermID ";
-        else
-            hql += " AND structure.subterm.ID is null ";
         hql += " AND structure.quality.ID = :qualityID ";
         hql += " AND structure.tag = :tag ";
         hql += " AND structure.publication.zdbID = :publicationID ";
@@ -95,14 +92,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @param publicationID Publication
      * @return boolean
      */
-    public boolean isPhenotypeOnPile(PhenotypeTermDTO phenotypeTerm, String publicationID) {
+    public boolean isPhenotypePileStructureExists(PhenotypeTermDTO phenotypeTerm, String publicationID) {
         Session session = HibernateUtil.currentSession();
         String hql = "select structure from PhenotypeStructure as structure where " +
                 "       structure.superterm.termName = :supertermName";
         if (phenotypeTerm.getSubterm() != null)
             hql += " AND structure.subterm.termName = :subtermName ";
-        else
-            hql += " AND structure.subterm.ID is null ";
         hql += " AND structure.quality.termName = :qualityName ";
         hql += " AND structure.publication.zdbID = :publicationID ";
         hql += " AND structure.tag = :tag ";
@@ -349,8 +344,8 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
         // ignore unspecified addition if not the first creation.
         //String ontologyName = phenotype.getSuperterm().getOntology();
-        AnatomyItem aoSuperTerm = phenotype.getAnatomySuperTerm();
-        if (aoSuperTerm != null && aoSuperTerm.getName().equals(AnatomyItem.UNSPECIFIED)) {
+        Term aoSuperTerm = phenotype.getSuperterm();
+        if (aoSuperTerm != null && aoSuperTerm.getTermName().equals(Term.UNSPECIFIED)) {
             if (phenotype.getZdbID() == null)
                 // new unspecified record
                 // if there is an 'unspecified' add figure to it.
@@ -416,16 +411,17 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             String genotypeID = phenotype.getGenotypeExperiment().getGenotype().getZdbID();
             statement.setString(1, genotypeID);
             statement.execute();
-            LOG.info("Execute stored procedure: " + sql + " with the argument " + genotypeID);
-        } catch (SQLException e) {
-            LOG.error("Could not run: " + sql, e);
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    LOG.error(e);
-                }
+        }
+        catch (SQLException sqle) {
+            LOG.error("could not run regen_genofig_genotype()", sqle);
+            throw new RuntimeException(sqle);
+        }
+        finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                LOG.error("could not run regen_genofig_genotype", e);
+            }
         }
     }
 
@@ -497,60 +493,35 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     @SuppressWarnings("unchecked")
     private Phenotype getUnspecifiedPhenotype(Phenotype phenotype) {
-        AnatomyItem unspecified = getAnatomyRepository().getAnatomyItem(AnatomyItem.UNSPECIFIED);
+        Term unspecified = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED);
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(AnatomyPhenotype.class);
+        Criteria criteria = session.createCriteria(Phenotype.class);
         criteria.add(Restrictions.eq("genotypeExperiment", phenotype.getGenotypeExperiment()));
         criteria.add(Restrictions.eq("publication", phenotype.getPublication()));
         criteria.add(Restrictions.eq("startStage", phenotype.getStartStage()));
         criteria.add(Restrictions.eq("endStage", phenotype.getEndStage()));
-        criteria.add(Restrictions.eq("anatomySuperTerm", unspecified));
+        criteria.add(Restrictions.eq("superterm", unspecified));
         return (Phenotype) criteria.uniqueResult();
     }
 
 
     /**
      * Retrieves all mutant phenotypes that match a given phenotype.
-     * It basiaclly means, a mutant phenotype is used in a different figure.
+     * It basically means, a mutant phenotype is used in a different figure.
      *
      * @param phenotype Phenotype
      * @return list of mutant phenotypes in which the given phenotype is used
      */
     @SuppressWarnings("unchecked")
-    private Phenotype getMutantPhenotypes
-            (Phenotype
-                    phenotype) {
+    private Phenotype getMutantPhenotypes(Phenotype phenotype) {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = null;
-        if (phenotype instanceof AnatomyPhenotype) {
-            criteria = session.createCriteria(AnatomyPhenotype.class);
-            AnatomyPhenotype aoResult = (AnatomyPhenotype) phenotype;
-            AnatomyItem subterm = aoResult.getAnatomySubTerm();
-            if (subterm == null)
-                criteria.add(Restrictions.isNull("anatomySubTerm"));
-            else
-                criteria.add(Restrictions.eq("anatomySubTerm", subterm));
-            criteria.add(Restrictions.eq("anatomySuperTerm", aoResult.getAnatomySuperTerm()));
-        } else if (phenotype instanceof GoPhenotype) {
-            criteria = session.createCriteria(GoPhenotype.class);
-            GoPhenotype goResult = (GoPhenotype) phenotype;
-            GoTerm subterm = goResult.getGoSubTerm();
-            if (subterm == null)
-                criteria.add(Restrictions.isNull("goSubTerm"));
-            else
-                criteria.add(Restrictions.eq("goSubTerm", subterm));
-            criteria.add(Restrictions.eq("goSuperTerm", goResult.getGoSuperTerm()));
-        } else if (phenotype instanceof ComposedPhenotype) {
-            criteria = session.createCriteria(ComposedPhenotype.class);
-            ComposedPhenotype mixedPhenotype = (ComposedPhenotype) phenotype;
-            GoTerm subterm = mixedPhenotype.getGoSubTerm();
-            if (subterm == null)
-                criteria.add(Restrictions.isNull("goSubTerm"));
-            else
-                criteria.add(Restrictions.eq("goSubTerm", subterm));
-            criteria.add(Restrictions.eq("anatomySuperTerm", mixedPhenotype.getAnatomySuperTerm()));
-        } else
-            throw new RuntimeException("No Class found for phenotype " + phenotype.getClass().getCanonicalName());
+        Criteria criteria = session.createCriteria(Phenotype.class);
+        Term subterm = phenotype.getSubterm();
+        if (subterm == null)
+            criteria.add(Restrictions.isNull("subterm"));
+        else
+            criteria.add(Restrictions.eq("subterm", subterm));
+        criteria.add(Restrictions.eq("superterm", phenotype.getSuperterm()));
         criteria.add(Restrictions.eq("term", phenotype.getTerm()));
         criteria.add(Restrictions.eq("tag", phenotype.getTag()));
         criteria.add(Restrictions.eq("startStage", phenotype.getStartStage()));
@@ -588,15 +559,14 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             return existingPhenotype;
         }
 
-        AnatomyItem unspecified = getAnatomyRepository().getAnatomyItem(AnatomyItem.UNSPECIFIED);
-        //GenericTerm quality = infrastructureRepository.getRootTerm(Ontology.QUALITY.getOntologyName());
-        GenericTerm quality = getInfrastructureRepository().getTermByName(GenericTerm.QUALITY, Ontology.QUALITY);
+        Term unspecified = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED);
+        Term quality = OntologyManager.getInstance().getTermByName(Ontology.QUALITY, GenericTerm.QUALITY);
 
         Session session = HibernateUtil.currentSession();
         // if this phenotype is a persistent record create a new one.
         if (pheno.getZdbID() != null) {
-            Phenotype defaultPhenotype = new AnatomyPhenotype();
-            defaultPhenotype.setAnatomySuperTerm(unspecified);
+            Phenotype defaultPhenotype = new Phenotype();
+            defaultPhenotype.setSuperterm(unspecified);
             defaultPhenotype.setTerm(quality);
             defaultPhenotype.setTag(Phenotype.Tag.ABNORMAL.toString());
             defaultPhenotype.setStartStage(pheno.getStartStage());
@@ -606,7 +576,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             session.save(defaultPhenotype);
             return defaultPhenotype;
         } else {
-            pheno.setAnatomySuperTerm(unspecified);
+            pheno.setSuperterm(unspecified);
             pheno.setTerm(quality);
             pheno.setTag(Phenotype.Tag.ABNORMAL.toString());
             session.save(pheno);
@@ -656,7 +626,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Term supertermForm = phenotype.getSuperterm();
         Term superterm = getInfrastructureRepository().getTermByName(supertermForm.getTermName(), phenotype.getSuperterm().getOntology());
         structure.setSuperterm(superterm);
-        Term subTerm = phenotype.getSubTerm();
+        Term subTerm = phenotype.getSubterm();
         if (subTerm != null) {
             Term subterm = getInfrastructureRepository().getTermByName(subTerm.getTermName(), subTerm.getOntology());
             structure.setSubterm(subterm);
@@ -672,13 +642,13 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @param mfs MutantFigureStage
      * @return Phenotype
      */
-    public AnatomyPhenotype createDefaultPhenotype(MutantFigureStage mfs) {
+    public Phenotype createDefaultPhenotype(MutantFigureStage mfs) {
         GenotypeExperiment genotypeExperiment = mfs.getGenotypeExperiment();
-        AnatomyItem unspecified = RepositoryFactory.getAnatomyRepository().getAnatomyItem(AnatomyItem.UNSPECIFIED);
-        GenericTerm quality = getMutantRepository().getQualityTermByName(GenericTerm.QUALITY);
-        AnatomyPhenotype phenotype = new AnatomyPhenotype();
+        Term unspecified = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED);
+        Term quality = OntologyManager.getInstance().getTermByName(Ontology.QUALITY, GenericTerm.QUALITY);
+        Phenotype phenotype = new Phenotype();
         phenotype.setGenotypeExperiment(genotypeExperiment);
-        phenotype.setAnatomySuperTerm(unspecified);
+        phenotype.setSuperterm(unspecified);
         phenotype.setTerm(quality);
         phenotype.setTag(Phenotype.Tag.ABNORMAL.toString());
         phenotype.setStartStage(mfs.getStart());

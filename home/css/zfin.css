@@ -179,6 +179,16 @@ table.data_manager a.root {
     font-style: normal;
 }
 
+/** Postcomposition of two ontology terms.
+    An underline to link them together, but
+    colored so that it looks like a break
+    between distinct terms              **/
+.postcomposedtermlink {
+    text-decoration: underline;
+    color: #bbf;
+}
+
+
 /*** for pure text, to put it in a column that doesn't stretch
      across the entire display - since that's a pain to read ***/
 

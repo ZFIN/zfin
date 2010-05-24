@@ -5,7 +5,7 @@
 <%@ attribute name="substructureSearchLink" type="java.lang.String" required="false" %>
 <%@ attribute name="structureSearchLink" type="java.lang.String" required="true" %>
 <%@ attribute name="choicePattern" type="java.lang.String" required="true" %>
-<%@ attribute name="anatomyItem" type="org.zfin.anatomy.AnatomyItem" required="true" %>
+<%@ attribute name="anatomyItem" type="org.zfin.ontology.Term" required="true" %>
 
 <%@ attribute name="recordsExist" type="java.lang.Boolean" required="true" %>
 <%@ attribute name="allRecordsAreDisplayed" type="java.lang.Boolean" required="true" %>
@@ -103,7 +103,7 @@
     <c:otherwise> <!-- no record exists -->
         <c:choose>
             <c:when test="${anatomyStatistics.numberOfTotalDistinctObjects > 0}">
-                </br>No data for '${anatomyItem.name}'.
+                </br>No data for '${anatomyItem.termName}'.
                 Show all <a
                     href='${substructureSearchLink}'>
                 <zfin:choice choicePattern="${choicePattern}"

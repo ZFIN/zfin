@@ -22,6 +22,7 @@ import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.ontology.Term;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
@@ -212,8 +213,8 @@ public class ExpressionRepositoryTest {
             result.setStartStage(start);
             DevelopmentStage end = anatomyRep.getStageByID("ZDB-STAGE-010723-36");
             result.setEndStage(end);
-            AnatomyItem term = anatomyRep.getAnatomyItem(AnatomyItem.UNSPECIFIED);
-            result.setAnatomyTerm(term);
+            AnatomyItem term = anatomyRep.getAnatomyItem(Term.UNSPECIFIED);
+            result.setSuperterm(term);
 
             Figure figure = pubRep.getFigureByID("ZDB-FIG-041119-3");
             result.addFigure(figure);

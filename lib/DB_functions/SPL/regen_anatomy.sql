@@ -479,7 +479,7 @@ create dba function "informix".regen_anatomy()
 
       create table anatomy_stats_new 
 	(
-	  anatstat_anatitem_zdb_id          varchar(50),
+	  anatstat_term_zdb_id          varchar(50),
 	  anatstat_object_type              varchar(32)
              not null,
 	  anatstat_synonym_count	    integer
@@ -679,9 +679,10 @@ create dba function "informix".regen_anatomy()
 	);
 
       foreach
-	select anatitem_zdb_id
+	select term_zdb_id
 	  into anatomyId
-	  from anatomy_item
+	  from anatomy_item, term
+	  where anatitem_obo_id = term_ont_id
 
 	-- get # of synonyms the anatomy item has.
 
@@ -698,10 +699,10 @@ create dba function "informix".regen_anatomy()
 	insert into genes_with_xpats
 	  select distinct xpatex_gene_zdb_id
 	    from expression_experiment, outer marker probe, marker gene, expression_result,
-	    	 genotype_experiment, genotype	    	 
+	    	 genotype_experiment, genotype 	    	 
 	    where xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id
               and xpatex_gene_zdb_id = gene.mrkr_zdb_id
-              and xpatres_anat_item_zdb_id = anatomyId 
+              and xpatres_superterm_zdb_id = anatomyId
 	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	      and xpatres_expression_found = 't'
               and xpatex_genox_zdb_id = genox_zdb_id
@@ -722,13 +723,13 @@ create dba function "informix".regen_anatomy()
 
 	insert into genes_with_xpats
 	  select distinct xpatex_gene_zdb_id
-	    from all_anatomy_contains_new,
+	    from all_term_contains,
 		 expression_experiment, outer marker probe, marker gene, expression_result,
 		 genotype_experiment, genotype			
 	    where xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id
               and xpatex_gene_zdb_id = gene.mrkr_zdb_id
-              and allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
-	      and allanatcon_container_zdb_id = anatomyId
+              and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
+	      and alltermcon_container_zdb_id = anatomyId
 	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	      and xpatres_expression_found = 't'
               and xpatex_genox_zdb_id = genox_zdb_id
@@ -750,7 +751,7 @@ create dba function "informix".regen_anatomy()
 	  from genes_with_xpats;
 
 	insert into anatomy_stats_new
-	    ( anatstat_anatitem_zdb_id, anatstat_object_type, 
+	    ( anatstat_term_zdb_id, anatstat_object_type, 
 	      anatstat_synonym_count,
 	      anatstat_object_count, anatstat_contains_object_count, 
 	      anatstat_total_distinct_count )
@@ -773,9 +774,10 @@ create dba function "informix".regen_anatomy()
 	);
 
       foreach
-	select anatitem_zdb_id
+	select term_zdb_id
 	  into anatomyId
-	  from anatomy_item
+	  from anatomy_item, term
+	  where anatitem_obo_id = term_ont_id
 
 	-- get # of synonyms the anatomy item has.
 
@@ -803,11 +805,11 @@ create dba function "informix".regen_anatomy()
 
 	insert into genos_with_phenos
 	  select distinct gffs_geno_zdb_id
-	    from all_anatomy_contains_new,
+	    from all_term_contains,
 		 genotype_figure_fast_search
-	    where (allanatcon_contained_zdb_id = gffs_subterm_zdb_id or
-			allanatcon_contained_zdb_id = gffs_superterm_zdb_id)
-	      and allanatcon_container_zdb_id = anatomyId
+	    where (alltermcon_contained_zdb_id = gffs_subterm_zdb_id or
+			alltermcon_contained_zdb_id = gffs_superterm_zdb_id)
+	      and alltermcon_container_zdb_id = anatomyId
 	      and gffs_morph_zdb_id is null;
 
 	let nGenosForChildItems = DBINFO('sqlca.sqlerrd2');
@@ -817,7 +819,7 @@ create dba function "informix".regen_anatomy()
 	  from genos_with_phenos;
 
 	insert into anatomy_stats_new
-	    ( anatstat_anatitem_zdb_id, anatstat_object_type,
+	    ( anatstat_term_zdb_id, anatstat_object_type,
 	      anatstat_synonym_count,
 	      anatstat_object_count, anatstat_contains_object_count,
 	      anatstat_total_distinct_count )
@@ -1002,27 +1004,27 @@ create dba function "informix".regen_anatomy()
 
       let errorHint = "anatomy_stats_primary_key_index";
       create unique index anatomy_stats_primary_key_index
-        on anatomy_stats (anatstat_anatitem_zdb_id,
+        on anatomy_stats (anatstat_term_zdb_id,
 			  anatstat_object_type)
 	fillfactor 100
 	in idxdbs1;
       alter table anatomy_stats add constraint
-        primary key (anatstat_anatitem_zdb_id,
+        primary key (anatstat_term_zdb_id,
 		     anatstat_object_type)
 	constraint anatomy_stats_primary_key;
 
       -- foreign keys
 
-      let errorHint = "anatstat_anatitem_zdb_id_index";
-      create index anatstat_anatitem_zdb_id_index
-        on anatomy_stats (anatstat_anatitem_zdb_id)
+      let errorHint = "anatstat_term_zdb_id_index";
+      create index anatstat_term_zdb_id_index
+        on anatomy_stats (anatstat_term_zdb_id)
 	fillfactor 100
 	in idxdbs1;
       alter table anatomy_stats add constraint
-        foreign key (anatstat_anatitem_zdb_id)
-	references anatomy_item
+        foreign key (anatstat_term_zdb_id)
+	references term
 	  on delete cascade
-	constraint anatstat_anatitem_zdb_id_foreign_key;
+	constraint anatstat_term_zdb_id_foreign_key;
 
       
       

@@ -1,7 +1,5 @@
 package org.zfin.ontology;
 
-import org.zfin.anatomy.AnatomyItem;
-
 /**
  * A convenience class to hold a composed term for FX curation,
  * which means:
@@ -10,15 +8,16 @@ import org.zfin.anatomy.AnatomyItem;
  */
 public class ComposedFxTerm implements Comparable<ComposedFxTerm> {
 
-    private AnatomyItem superTerm;
+    private String zdbID;
+    private Term superTerm;
     private Term subterm;
     private boolean expressionFound;
 
-    public AnatomyItem getSuperTerm() {
+    public Term getSuperTerm() {
         return superTerm;
     }
 
-    public void setSuperTerm(AnatomyItem superTerm) {
+    public void setSuperTerm(Term superTerm) {
         this.superTerm = superTerm;
     }
 
@@ -31,12 +30,20 @@ public class ComposedFxTerm implements Comparable<ComposedFxTerm> {
     }
 
     public String getComposedTermName() {
-        String name = superTerm.getName();
+        String name = superTerm.getTermName();
         if (getSubterm() != null) {
             name += ":";
             name += getSubterm().getTermName();
         }
         return name;
+    }
+
+    public String getZdbID() {
+        return zdbID;
+    }
+
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
     }
 
     public boolean isExpressionFound() {
@@ -47,18 +54,19 @@ public class ComposedFxTerm implements Comparable<ComposedFxTerm> {
         this.expressionFound = expressionFound;
     }
 
+
     public int compareTo(ComposedFxTerm term) {
         if (term == null)
             return 1;
-        String supertermName = superTerm.getName();
+        String supertermName = superTerm.getTermName();
         if (subterm == null && term.getSubterm() != null)
             return -1;
         if (term.getSubterm() == null)
             return +1;
         if (subterm == null && term.getSubterm() == null)
-             return supertermName.compareTo(term.getSuperTerm().getName());
-        if (!supertermName.equals(term.getSuperTerm().getName()))
-            return supertermName.compareTo(term.getSuperTerm().getName());
+             return supertermName.compareTo(term.getSuperTerm().getTermName());
+        if (!supertermName.equals(term.getSuperTerm().getTermName()))
+            return supertermName.compareTo(term.getSuperTerm().getTermName());
         else
             return subterm.getTermName().compareTo(term.getSubterm().getTermName());
     }

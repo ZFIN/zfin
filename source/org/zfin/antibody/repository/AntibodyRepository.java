@@ -1,7 +1,6 @@
 package org.zfin.antibody.repository;
 
 import org.zfin.Species;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Figure;
@@ -9,6 +8,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.AllMarkerNamesFastSearch;
 import org.zfin.mutant.presentation.AntibodyStatistics;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -81,7 +81,7 @@ public interface AntibodyRepository {
      * @param aoTerm Anatomy Term
      * @return number of antibodies
      */
-    int getAntibodiesByAOTermCount(AnatomyItem aoTerm);
+    int getAntibodiesByAOTermCount(Term aoTerm);
 
     /**
      * Retrieve antibodies for a given ao term.
@@ -89,12 +89,12 @@ public interface AntibodyRepository {
      *
      * If no pagination info is provided then return the complete list.
      *
-     * @param aoTerm         Anatomy Term
+     * @param aoTerm         Term
      * @param paginationBean Pagination Bean
      * @param includeSubstructures boolean
      * @return number of antibodies
      */
-    PaginationResult<Antibody> getAntibodiesByAOTerm(AnatomyItem aoTerm, PaginationBean paginationBean, boolean includeSubstructures);
+    PaginationResult<Antibody> getAntibodiesByAOTerm(Term aoTerm, PaginationBean paginationBean, boolean includeSubstructures);
 
     /**
      * Counts distinct figures that are associated to an expression result with a given
@@ -107,7 +107,7 @@ public interface AntibodyRepository {
      *               all figures (if null)
      * @return number
      */
-    int getNumberOfFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm, Figure.Type type);
+    int getNumberOfFiguresPerAoTerm(Antibody antibody, Term aoTerm, Figure.Type type);
 
     /**
      * Get all figures for a given antibody and ao term.
@@ -116,7 +116,7 @@ public interface AntibodyRepository {
      * @param aoTerm   ao term
      * @return list of figures
      */
-    public List<Figure> getFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm);
+    public List<Figure> getFiguresPerAoTerm(Antibody antibody, Term aoTerm);
 
     /**
      * Retrieve distinct publications for given antibody and ao term that have
@@ -126,7 +126,7 @@ public interface AntibodyRepository {
      * @param aoTerm   ao term
      * @return Pagination Result object
      */
-    PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, AnatomyItem aoTerm);
+    PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, Term aoTerm);
 
     /**
      * Lookup all distinct antibodies that are referenced in a given publication.
@@ -171,10 +171,10 @@ public interface AntibodyRepository {
      * @param includeSubstructures boolean
      * @return pagination result
      */
-    List<AntibodyStatistics> getAntibodyStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures);
+    List<AntibodyStatistics> getAntibodyStatistics(Term aoTerm, PaginationBean pagination, boolean includeSubstructures);
 
 
-    int getAntibodyCount(AnatomyItem anatomyItem,boolean includeSubstructure) ;
+    int getAntibodyCount(Term anatomyItem,boolean includeSubstructure) ;
 
     /**
      * Retrieve all antibodies sorted by name.

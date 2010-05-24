@@ -38,7 +38,7 @@ GENERICS = xpatview.apg xpatselect.apg \
 	patocuration.apg \
 	fxphenoinfo.apg fxfiggenolist.apg fxfigphenoanatlist.apg fxfigphenostgrng.apg \
 	figurecuration.apg experimentcuration.apg xpatcurreset.apg fxfigphenogenolist.apg \
-	fxfigphenogolist.apg pheno_summary.apg pheno_summary_sql.apg wordcompletion.apg \
+	pheno_summary.apg wordcompletion.apg \
 	xpatcurupdatecondition.apg gocuration.apg \
 	xpatselect_resultsasimages.apg fxlabelinfo.apg  xpatfeatexpcondn.apg  xpatexpcdnlist.apg
 

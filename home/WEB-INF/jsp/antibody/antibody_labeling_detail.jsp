@@ -1,7 +1,11 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<c:if test="${fn:length(formBean.antibodyStat.antibodyDetailedLabelings) ne null && fn:length(formBean.antibodyStat.antibodyDetailedLabelings) > 0}">
+<jsp:useBean id="formBean" class="org.zfin.antibody.presentation.AntibodyBean" scope="request"/>
+
+<c:set var="abDetailLabeling" value="${formBean.antibodyStat.antibodyDetailedLabelings}" />
+
+<c:if test="${fn:length(abDetailLabeling) ne null && fn:length(abDetailLabeling) > 0}">
     <div id="short-version" class="summary">
         <table cellpadding="0" cellspacing="0" border="0" width="100%" class="searchresults groupstripes">
             <tr bgcolor="#ccccc0">
@@ -12,21 +16,18 @@
                 <th>Data</th>
             </tr>
 
-            <c:forEach var="detailedLabeling" items="${formBean.antibodyStat.antibodyDetailedLabelings}"
+            <c:forEach var="detailedLabeling" items="${abDetailLabeling}"
                        varStatus="loop" end="4">
                 <zfin:alternating-tr loopName="loop"
-                                     groupBeanCollection="${formBean.antibodyStat.antibodyDetailedLabelings}"
+                                     groupBeanCollection="${abDetailLabeling}"
                                      groupByBean="aoAndPostCompostTerm">
                     <td>
                         <zfin:groupByDisplay loopName="loop"
-                                             groupBeanCollection="${formBean.antibodyStat.antibodyDetailedLabelings}"
+                                             groupBeanCollection="${abDetailLabeling}"
                                              groupByBean="aoAndPostCompostTerm">
-                            <zfin:link entity="${detailedLabeling.anatomyItem}"/>
-                            <c:if test="${detailedLabeling.cellularComponent != null}"> :
-                                <zfin:link entity="${detailedLabeling.cellularComponent}"/>
-                            </c:if>
-                            <c:if test="${detailedLabeling.secondaryAnatomyItem != null}"> :
-                                <zfin:link entity="${detailedLabeling.secondaryAnatomyItem}"/>
+                            <zfin:link entity="${detailedLabeling.superterm}"/>
+                            <c:if test="${detailedLabeling.subterm != null}"> :
+                                <zfin:link entity="${detailedLabeling.subterm}"/>
                             </c:if>
                         </zfin:groupByDisplay>
                     </td>
@@ -58,7 +59,7 @@
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:when>
                                 <c:otherwise>
-                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&anatomyItem.zdbID=${detailedLabeling.anatomyItem.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguesWithImg=false">
+                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.ID=${detailedLabeling.superterm.ID}&subTerm.ID=${detailedLabeling.subterm.ID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguesWithImg=false">
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:otherwise>
                             </c:choose>
@@ -81,12 +82,12 @@
             </c:forEach>
             <tr>
                 <td>
-                    <c:if test="${fn:length(formBean.antibodyStat.antibodyDetailedLabelings) > 5}">
+                    <c:if test="${fn:length(abDetailLabeling) > 5}">
                         <br/>&nbsp;&nbsp;
                         <a href="javascript:expand()">
                             <img src="/images/darrow.gif" alt="expand" border="0">
                             Show all</a>
-                        ${fn:length(formBean.antibodyStat.distinctAnatomyTerms)} labeled structures
+                        ${formBean.antibodyStat.numberOfDistinctComposedTerms} labeled structures
                     </c:if>
                 </td>
             </tr>
@@ -103,21 +104,18 @@
                 <th>Data</th>
             </tr>
 
-            <c:forEach var="detailedLabeling" items="${formBean.antibodyStat.antibodyDetailedLabelings}"
+            <c:forEach var="detailedLabeling" items="${abDetailLabeling}"
                        varStatus="loop">
                 <zfin:alternating-tr loopName="loop"
-                                     groupBeanCollection="${formBean.antibodyStat.antibodyDetailedLabelings}"
+                                     groupBeanCollection="${abDetailLabeling}"
                                      groupByBean="aoAndPostCompostTerm">
                     <td>
                         <zfin:groupByDisplay loopName="loop"
-                                             groupBeanCollection="${formBean.antibodyStat.antibodyDetailedLabelings}"
+                                             groupBeanCollection="${abDetailLabeling}"
                                              groupByBean="aoAndPostCompostTerm">
-                            <zfin:link entity="${detailedLabeling.anatomyItem}"/>
-                            <c:if test="${detailedLabeling.cellularComponent != null}"> :
-                                <zfin:link entity="${detailedLabeling.cellularComponent}"/>
-                            </c:if>
-                            <c:if test="${detailedLabeling.secondaryAnatomyItem != null}"> :
-                                <zfin:link entity="${detailedLabeling.secondaryAnatomyItem}"/>
+                            <zfin:link entity="${detailedLabeling.superterm}"/>
+                            <c:if test="${detailedLabeling.subterm != null}"> :
+                                <zfin:link entity="${detailedLabeling.subterm}"/>
                             </c:if>
                         </zfin:groupByDisplay>
                     </td>
@@ -151,13 +149,13 @@
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:when>
                                 <c:otherwise>
-                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&anatomyItem.zdbID=${detailedLabeling.anatomyItem.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguesWithImg=false">
+                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.ID=${detailedLabeling.superterm.ID}&subTerm.ID=${detailedLabeling.subterm.ID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguesWithImg=false">
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:otherwise>
                             </c:choose>
                             <c:choose>
                                 <c:when test="${detailedLabeling.figureWithImage}">
-                                    <img src="/images/camera_icon.gif" alt="with image" image="" border="0"></a>
+                                    <img src="/images/camera_icon.gif" alt="with image" border="0"></a>
                                 </c:when>
                                 <c:otherwise>
                                     </a>

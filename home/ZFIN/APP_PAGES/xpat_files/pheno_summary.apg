@@ -9,7 +9,7 @@ Display phenotype summary by publication and figure, for a gene, MO, or genotype
 INPUT VARS:  
 	$OID:    ZDB ID of a gene, MO, or genotype
 	$envID:  ZDB ID of an experiment.
-	$anatID: ZDB ID of an anatomy_item. 
+	$anatID: ZDB ID of a term. 
 	
 	&phenosum_concted_AO_IDs
 	$phenosum_include_substructures
@@ -193,7 +193,7 @@ DEBUGGING:
 <?MICOMMENT> ** if linked from AO page ** <?/MICOMMENT>
 <?MIBLOCK COND=$(XST,$anatID)>
 
-  <?MISQL SQL="select anatitem_name from anatomy_item where anatitem_zdb_id = '$anatID';">
+  <?MISQL SQL="select term_name from term where term_zdb_id = '$anatID';">
     <?MIVAR NAME=phenosum_anat_link><a href="/action/anatomy/term-detail?anatomyItem.zdbID=$anatID">$1</a><?/MIVAR>
   <?/MISQL>
 
@@ -242,7 +242,7 @@ DEBUGGING:
     <?MICOMMENT> ** get the anatomy structure list displayed in the page header ** <?/MICOMMENT>
     <?MIBLOCK COND="$(AND,$(XST,$phenosum_concted_AO_IDs),$(NE,$phenosum_concted_AO_IDs,))">
  
-      <?MIVAR NAME=phenosum_position>$(POSITION,$phenosum_concted_AO_IDs,ZDB-ANAT-,10)<?/MIVAR>
+      <?MIVAR NAME=phenosum_position>$(POSITION,$phenosum_concted_AO_IDs,ZDB-TERM-,10)<?/MIVAR>
    
       <?MIVAR NAME=phenosum_anatIDs_presep><?/MIVAR>   
       <?MIVAR NAME=phenosum_item_count>1<?/MIVAR>
@@ -252,7 +252,7 @@ DEBUGGING:
         <?MIVAR>$(SETVAR,$phenosum_anatIDs_presep[$phenosum_item_count],$(SUBSTR,$phenosum_restStr,1,$(-,$phenosum_position,1)))<?/MIVAR>
         <?MIVAR>$(SETVAR,$phenosum_restStr,$(SUBSTR,$phenosum_restStr,$phenosum_position))<?/MIVAR>
      
-        <?MIVAR NAME=phenosum_position>$(POSITION,$phenosum_restStr,ZDB-ANAT-,10)<?/MIVAR>
+        <?MIVAR NAME=phenosum_position>$(POSITION,$phenosum_restStr,ZDB-TERM-,10)<?/MIVAR>
    
         <?MIVAR>$(SETVAR,$phenosum_item_count,$(+,$phenosum_item_count,1))<?/MIVAR>
       <?/MIBLOCK>
@@ -375,45 +375,25 @@ DEBUGGING:
 
     <?MIBLOCK COND="$(EC,$phenosum_split_morphant_flag,t)">    
       <?MIVAR NAME=phenosum_sql_split_nonmo_entities1>
-            select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-              from anatomy_item, genotype_figure_fast_search 
+            select distinct term_zdb_id, term_name
+              from term, genotype_figure_fast_search
              where gffs_geno_zdb_id = '$OID'
                and gffs_fig_zdb_id = '$phenosum_fig_zdb'
-               and anatitem_zdb_id = gffs_superterm_zdb_id 
+               and term_zdb_id = gffs_superterm_zdb_id 
                and gffs_morph_zdb_id is null
       <?/MIVAR>
           
       <?MIVAR NAME=phenosum_sql_split_nonmo_entities2>
-            select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-              from anatomy_item, genotype_figure_fast_search 
+            select distinct term_zdb_id, term_name
+              from term, genotype_figure_fast_search
              where gffs_geno_zdb_id = '$OID'
                and gffs_fig_zdb_id = '$phenosum_fig_zdb'
-               and anatitem_zdb_id = gffs_subterm_zdb_id 
+               and term_zdb_id = gffs_subterm_zdb_id
                and gffs_morph_zdb_id is null
       <?/MIVAR>
           
-      <?MIVAR NAME=phenosum_sql_split_nonmo_entities3>
-            select distinct goterm_go_id, goterm_name, lower(goterm_name), 'go'
- 	      from go_term, genotype_figure_fast_search
- 	     where gffs_geno_zdb_id = '$OID'
- 	       and gffs_fig_zdb_id = '$phenosum_fig_zdb'
- 	       and goterm_zdb_id = gffs_superterm_zdb_id
- 	       and gffs_morph_zdb_id is null
-      <?/MIVAR>   
-
-      <?MIVAR NAME=phenosum_sql_split_nonmo_entities4>
-            select distinct goterm_go_id, goterm_name, lower(goterm_name), 'go'
- 	      from go_term, genotype_figure_fast_search
- 	     where gffs_geno_zdb_id = '$OID'
- 	       and gffs_fig_zdb_id = '$phenosum_fig_zdb'
- 	       and goterm_zdb_id = gffs_subterm_zdb_id
- 	       and gffs_morph_zdb_id is null
-      <?/MIVAR>  
-
       <?MISQL SQL="$phenosum_sql_split_nonmo_entities1 UNION
-                   $phenosum_sql_split_nonmo_entities2 UNION
-                   $phenosum_sql_split_nonmo_entities3 UNION
-                   $phenosum_sql_split_nonmo_entities4; ">
+                   $phenosum_sql_split_nonmo_entities2; ">
       <?/MISQL>
       <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">$(SETVAR,$phenosum_split,t)<?/MIVAR>
     <?/MIBLOCK>
@@ -566,165 +546,96 @@ DEBUGGING:
       <?MICOMMENT> *** entity list for gene / MO <?/MICOMMENT>
       <?MIBLOCK COND="$(OR,$(EC,$(SUBSTR,$OID,1,8),ZDB-GENE),$(EC,$(SUBSTR,$OID,1,8),ZDB-MRPH))">
         <?MIVAR NAME=phenosum_sql_entities>
-          select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-            from atomic_phenotype, apato_figure, genotype_experiment, mutant_fast_search, anatomy_item
+          select distinct term_zdb_id, term_name, lower(term_name)
+            from atomic_phenotype, apato_figure, genotype_experiment, mutant_fast_search, term
            where mfs_mrkr_zdb_id = '$OID'
              and mfs_genox_zdb_id = genox_zdb_id
              and genox_geno_zdb_id = '$phenosum_geno_zdb'
              and apato_genox_zdb_id = mfs_genox_zdb_id
              and apatofig_apato_zdb_id = apato_zdb_id
              and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
-             and apato_subterm_zdb_id = anatitem_zdb_id
+             and apato_subterm_zdb_id = term_zdb_id
  	     and apato_tag != 'normal'
  	     
  	  UNION
  	  
-          select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-            from atomic_phenotype, apato_figure, genotype_experiment, mutant_fast_search, anatomy_item
+          select distinct term_zdb_id, term_name, lower(term_name)
+            from atomic_phenotype, apato_figure, genotype_experiment, mutant_fast_search, term
            where mfs_mrkr_zdb_id = '$OID'
              and mfs_genox_zdb_id = genox_zdb_id
              and genox_geno_zdb_id = '$phenosum_geno_zdb'
              and apato_genox_zdb_id = mfs_genox_zdb_id
              and apatofig_apato_zdb_id = apato_zdb_id
              and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
-             and apato_superterm_zdb_id = anatitem_zdb_id
+             and apato_superterm_zdb_id = term_zdb_id
  	     and apato_tag != 'normal'
  	     
- 	  UNION		
- 	  
-           select distinct goterm_go_id, goterm_name, zero_pad(goterm_name), 'go'
-             from atomic_phenotype, apato_figure, genotype_experiment, mutant_fast_search, go_term
-            where mfs_mrkr_zdb_id = '$OID'
-              and mfs_genox_zdb_id = genox_zdb_id
-              and genox_geno_zdb_id = '$phenosum_geno_zdb'
-              and apato_genox_zdb_id = mfs_genox_zdb_id
-              and apatofig_apato_zdb_id = apato_zdb_id
-              and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
-              and apato_subterm_zdb_id = goterm_zdb_id
- 	     and apato_tag != 'normal'
- 	  
- 
- 	  UNION		
- 	  
-          select distinct goterm_go_id, goterm_name, zero_pad(goterm_name), 'go'
-            from atomic_phenotype, apato_figure, genotype_experiment, mutant_fast_search, go_term
-           where mfs_mrkr_zdb_id = '$OID'
-             and mfs_genox_zdb_id = genox_zdb_id
-             and genox_geno_zdb_id = '$phenosum_geno_zdb'
-             and apato_genox_zdb_id = mfs_genox_zdb_id
-             and apatofig_apato_zdb_id = apato_zdb_id
-             and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
-             and apato_superterm_zdb_id = goterm_zdb_id
- 	     and apato_tag != 'normal'
-        <?/MIVAR> 
+        <?/MIVAR>
        
       <?MIELSE>  <?MICOMMENT> *** entity list for genotype <?/MICOMMENT>
  
         <?MICOMMENT> *** entity list for morphant of WT genotype/Tg, with regard to a target gene <?/MICOMMENT>
         <?MIBLOCK COND="$(AND,$(XST,$moTargetGeneID),$(NE,$moTargetGeneID,))">
           <?MIVAR NAME=phenosum_sql_entities1>
-            select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-              from anatomy_item, genotype_figure_fast_search, marker_relationship
+            select distinct term_zdb_id,term_name, lower(term_name)
+              from term, genotype_figure_fast_search, marker_relationship
              where gffs_geno_zdb_id = '$OID'
  	       and gffs_fig_zdb_id = '$phenosum_fig_zdb'
- 	       and anatitem_zdb_id = gffs_superterm_zdb_id 
+ 	       and term_zdb_id = gffs_superterm_zdb_id
  	       and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
                and mrel_mrkr_2_zdb_id = '$moTargetGeneID'
           <?/MIVAR>
           
           <?MIVAR NAME=phenosum_sql_entities2>
-            select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-              from anatomy_item, genotype_figure_fast_search, marker_relationship
+            select distinct term_zdb_id, term_name, lower(term_name)
+              from term, genotype_figure_fast_search, marker_relationship
              where gffs_geno_zdb_id = '$OID'
  	       and gffs_fig_zdb_id = '$phenosum_fig_zdb'
- 	       and anatitem_zdb_id = gffs_subterm_zdb_id 
+ 	       and term_zdb_id = gffs_subterm_zdb_id
  	       and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
                and mrel_mrkr_2_zdb_id = '$moTargetGeneID'
           <?/MIVAR>          
            
-          <?MIVAR NAME=phenosum_sql_entities3>
-            select distinct goterm_go_id, goterm_name, lower(goterm_name), 'go' 
- 	      from go_term, genotype_figure_fast_search, marker_relationship
- 	     where gffs_geno_zdb_id = '$OID'
- 	       and gffs_fig_zdb_id = '$phenosum_fig_zdb'
- 	       and goterm_zdb_id = gffs_superterm_zdb_id 
- 	       and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
-               and mrel_mrkr_2_zdb_id = '$moTargetGeneID'
-          <?/MIVAR> 
-
-          <?MIVAR NAME=phenosum_sql_entities4>
-            select distinct goterm_go_id, goterm_name, lower(goterm_name), 'go' 
- 	      from go_term, genotype_figure_fast_search, marker_relationship
- 	     where gffs_geno_zdb_id = '$OID'
- 	       and gffs_fig_zdb_id = '$phenosum_fig_zdb'
- 	       and goterm_zdb_id = gffs_subterm_zdb_id 
- 	       and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
-               and mrel_mrkr_2_zdb_id = '$moTargetGeneID'
-          <?/MIVAR> 
-           
         <?MIELSE> <?MICOMMENT> *** entity list for genotypes linked from genotype page or mutant search result page <?/MICOMMENT>
           <?MIVAR NAME=phenosum_sql_entities1>
-            select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-              from anatomy_item, genotype_figure_fast_search 
+            select distinct term_zdb_id, term_name, lower(term_name)
+              from term, genotype_figure_fast_search
              where gffs_geno_zdb_id = '$OID'
                and gffs_fig_zdb_id = '$phenosum_fig_zdb'
-               and anatitem_zdb_id = gffs_superterm_zdb_id 
+               and term_zdb_id = gffs_superterm_zdb_id
           <?/MIVAR>
           
           <?MIVAR NAME=phenosum_sql_entities2>
-            select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-              from anatomy_item, genotype_figure_fast_search 
+            select distinct term_zdb_id, term_name, lower(term_name)
+              from term, genotype_figure_fast_search
              where gffs_geno_zdb_id = '$OID'
                and gffs_fig_zdb_id = '$phenosum_fig_zdb'
-               and anatitem_zdb_id = gffs_subterm_zdb_id 
+               and term_zdb_id = gffs_subterm_zdb_id
           <?/MIVAR>
           
-          <?MIVAR NAME=phenosum_sql_entities3>
-            select distinct goterm_go_id, goterm_name, lower(goterm_name), 'go'
- 	      from go_term, genotype_figure_fast_search
- 	     where gffs_geno_zdb_id = '$OID'
- 	       and gffs_fig_zdb_id = '$phenosum_fig_zdb'
- 	       and goterm_zdb_id = gffs_superterm_zdb_id
-          <?/MIVAR>   
-
-          <?MIVAR NAME=phenosum_sql_entities4>
-            select distinct goterm_go_id, goterm_name, lower(goterm_name), 'go'
- 	      from go_term, genotype_figure_fast_search
- 	     where gffs_geno_zdb_id = '$OID'
- 	       and gffs_fig_zdb_id = '$phenosum_fig_zdb'
- 	       and goterm_zdb_id = gffs_subterm_zdb_id
-          <?/MIVAR>  
-  
           <?MIBLOCK COND="$(AND,$(XST,$morphantsOnly),$(EC,$morphantsOnly,yes))">
             <?MIVAR>$(SETVAR,$phenosum_sql_entities1,$(CONCAT,$phenosum_sql_entities1,and gffs_morph_zdb_id is not null))<?/MIVAR>          
             <?MIVAR>$(SETVAR,$phenosum_sql_entities2,$(CONCAT,$phenosum_sql_entities2,and gffs_morph_zdb_id is not null))<?/MIVAR>
-            <?MIVAR>$(SETVAR,$phenosum_sql_entities3,$(CONCAT,$phenosum_sql_entities3,and gffs_morph_zdb_id is not null))<?/MIVAR>
-            <?MIVAR>$(SETVAR,$phenosum_sql_entities4,$(CONCAT,$phenosum_sql_entities4,and gffs_morph_zdb_id is not null))<?/MIVAR>
           <?MIELSE COND="$(OR,$(NXST,$includingMO),$(NE,$includingMO,yes))">
             <?MIVAR>$(SETVAR,$phenosum_sql_entities1,$(CONCAT,$phenosum_sql_entities1,and gffs_morph_zdb_id is null))<?/MIVAR>          
             <?MIVAR>$(SETVAR,$phenosum_sql_entities2,$(CONCAT,$phenosum_sql_entities2,and gffs_morph_zdb_id is null))<?/MIVAR>
-            <?MIVAR>$(SETVAR,$phenosum_sql_entities3,$(CONCAT,$phenosum_sql_entities3,and gffs_morph_zdb_id is null))<?/MIVAR>
-            <?MIVAR>$(SETVAR,$phenosum_sql_entities4,$(CONCAT,$phenosum_sql_entities4,and gffs_morph_zdb_id is null))<?/MIVAR>
           <?/MIBLOCK>
         <?/MIBLOCK> 
 
         <?MIBLOCK COND="$(AND,$(XST,$phenosum_morphant_pheno_flag),$(>,$phenosum_morphant_pheno_flag,0))">
           <?MIVAR NAME=phenosum_sql_entities_nonMO>$phenosum_sql_entities1 and gffs_morph_zdb_id is null
                                            UNION $phenosum_sql_entities2 and gffs_morph_zdb_id is null
-                                           UNION $phenosum_sql_entities3 and gffs_morph_zdb_id is null
-                                           UNION $phenosum_sql_entities4 and gffs_morph_zdb_id is null
           <?/MIVAR>
 
-          <?MISQL SQL="$phenosum_sql_entities_nonMO order by 3; ">
+          <?MISQL SQL="$phenosum_sql_entities_nonMO order by lower(term_name); ">
            
-            <?MIBLOCK COND=$(EC,$4,anatomy)>
-              <?MIVAR NAME=phenosum_anatitem_html_nonMO><span><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$1>$2</a></span><?/MIVAR>
-            <?MIELSE>
-              <?MIVAR NAME=phenosum_anatitem_html_nonMO><span><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:$1>$2</a></span><?/MIVAR>          
-            <?/MIBLOCK>     
+	   <?MIVAR name=currentIndex>$MI_CURRENTROW<?/MIVAR>
+        <?MISQL SQL="execute function get_entity_name_html('$1')">
+                 <?MIVAR NAME=phenosum_anatitem_html_nonMO><span nowrap>$1</span><?/MIVAR>
+         <?/MISQL>
 
             $(SETVAR,$phenosum_anat_counter_nonMO,$(+,$phenosum_anat_counter_nonMO,1))
-  	    <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+  	    <?MIBLOCK COND=$(=,$currentIndex,1)>
      	      <?MIVAR NAME=phenosum_anat_short_list_nonMO>$phenosum_anatitem_html_nonMO<?/MIVAR>
       	      <?MIVAR NAME=phenosum_anat_long_list_nonMO>$phenosum_anatitem_html_nonMO<?/MIVAR>         
 	    <?MIELSE>
@@ -755,12 +666,12 @@ DEBUGGING:
             <?MIVAR>
    	      function expandAnatomyList$phenosum_anat_elem_id_nonMO() {
      	        var elem = document.getElementById('$phenosum_anat_elem_id_nonMO');
-                elem.innerHTML = "$phenosum_anat_long_list_escp_nonMO <a href=javascript:onClick=shrinkAnatomyList$phenosum_anat_elem_id_nonMO()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+                elem.innerHTML = '$phenosum_anat_long_list_escp_nonMO <a href=javascript:onClick=shrinkAnatomyList$phenosum_anat_elem_id_nonMO()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>';	
 	      }
 
    	      function shrinkAnatomyList$phenosum_anat_elem_id_nonMO() {
                 var elem = document.getElementById('$phenosum_anat_elem_id_nonMO');
-                elem.innerHTML = "$phenosum_anat_short_list_escp_nonMO ... <a href=javascript:onClick=expandAnatomyList$phenosum_anat_elem_id_nonMO()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+                elem.innerHTML = '$phenosum_anat_short_list_escp_nonMO ... <a href=javascript:onClick=expandAnatomyList$phenosum_anat_elem_id_nonMO()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>';	
 	      }
 
             <?/MIVAR>
@@ -768,29 +679,24 @@ DEBUGGING:
 
           <?MIVAR NAME=phenosum_sql_entities>$phenosum_sql_entities1 and gffs_morph_zdb_id is not null
                                            UNION $phenosum_sql_entities2 and gffs_morph_zdb_id is not null
-                                           UNION $phenosum_sql_entities3 and gffs_morph_zdb_id is not null
-                                           UNION $phenosum_sql_entities4 and gffs_morph_zdb_id is not null
           <?/MIVAR>
           <?MIBLOCK COND="$(AND,$(XST,$phenosum_split),$(EC,$phenosum_split,t))"><br/><?/MIBLOCK>
         <?MIELSE>         
           <?MIVAR NAME=phenosum_sql_entities>$phenosum_sql_entities1 
                                            UNION $phenosum_sql_entities2
-                                           UNION $phenosum_sql_entities3
-                                           UNION $phenosum_sql_entities4
           <?/MIVAR>
         <?/MIBLOCK>
       <?/MIBLOCK>
   
       <?MISQL SQL="$phenosum_sql_entities order by 3; ">
            
-          <?MIBLOCK COND=$(EC,$4,anatomy)>
-              <?MIVAR NAME=phenosum_anatitem_html><span><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$1>$2</a></span><?/MIVAR>
-          <?MIELSE>
-              <?MIVAR NAME=phenosum_anatitem_html><span><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:$1>$2</a></span><?/MIVAR>          
-          <?/MIBLOCK>     
+	   <?MIVAR name=currentIndex>$MI_CURRENTROW<?/MIVAR>
+         <?MISQL SQL="execute function get_entity_name_html('$1')">
+	 	 <?MIVAR NAME=phenosum_anatitem_html><span nowrap>$1</span><?/MIVAR>
+         <?/MISQL>
 
           $(SETVAR,$phenosum_anat_counter,$(+,$phenosum_anat_counter,1))
-  	  <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+  	  <?MIBLOCK COND=$(=,$currentIndex,1)>
      	    <?MIVAR NAME=phenosum_anat_short_list>$phenosum_anatitem_html<?/MIVAR>
       	    <?MIVAR NAME=phenosum_anat_long_list>$phenosum_anatitem_html<?/MIVAR>         
 	  <?MIELSE>
@@ -822,12 +728,12 @@ DEBUGGING:
         <?MIVAR>
    	  function expandAnatomyList$phenosum_anat_elem_id() {
      	    var elem = document.getElementById('$phenosum_anat_elem_id');
-            elem.innerHTML = "$phenosum_anat_long_list_escp <a href=javascript:onClick=shrinkAnatomyList$phenosum_anat_elem_id()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+            elem.innerHTML = '$phenosum_anat_long_list_escp <a href=javascript:onClick=shrinkAnatomyList$phenosum_anat_elem_id()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>';	
 	  }
 
    	  function shrinkAnatomyList$phenosum_anat_elem_id() {
             var elem = document.getElementById('$phenosum_anat_elem_id');
-            elem.innerHTML = "$phenosum_anat_short_list_escp ... <a href=javascript:onClick=expandAnatomyList$phenosum_anat_elem_id()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+            elem.innerHTML = '$phenosum_anat_short_list_escp ... <a href=javascript:onClick=expandAnatomyList$phenosum_anat_elem_id()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>';	
 	  }
 
         <?/MIVAR>

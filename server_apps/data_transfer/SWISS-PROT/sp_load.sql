@@ -334,7 +334,7 @@ begin work;
 --!echo '		into zdb_active_data'
 
 --!echo 'Insert into marker_go_term_evidence'
-	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_go_term_zdb_id,
+	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_term_zdb_id,
 				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,
 				mrkrgoev_date_entered,mrkrgoev_date_modified,mrkrgoev_contributed_by,
 				mrkrgoev_modified_by)

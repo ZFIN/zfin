@@ -42,9 +42,10 @@ public interface PileStructuresRPCAsync {
 
     /**
      * Re-create the phenotype structure pile.
-     *
      * @param publicationID publication
-     * @param callback      callback
+     * @param callback callback
      */
     void recreatePhenotypeStructurePile(String publicationID, AsyncCallback<List<PhenotypePileStructureDTO>> callback);
+
+    void recreateExpressionStructurePile(String publicationID, AsyncCallback<List<ExpressionPileStructureDTO>> callback);
 }

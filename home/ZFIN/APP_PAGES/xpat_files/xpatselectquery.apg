@@ -566,10 +566,10 @@ DEBUGGING:
     <?MICOMMENT> -- add all result records that match against anat_zdb_id --<?/MICOMMENT>
     <?MISQL SQL="
        insert into $xselqry_tmp_anat_all
-	    select xpatex_gene_zdb_id, xpatex_genox_zdb_id, xpatres_anat_item_zdb_id, xpatres_zdb_id
+	    select xpatex_gene_zdb_id, xpatex_genox_zdb_id, xpatres_superterm_zdb_id, xpatres_zdb_id
               from expression_experiment, expression_result 
                    $xpatselqry_gene_tbl_join $xpatselqry_stage_overlap_tbl $xpatselqry_wt_tbl_join
-             where xpatres_anat_item_zdb_id in ('$xpatselqry_anatitem_zdb_id_list')  
+             where xpatres_superterm_zdb_id in ('$xpatselqry_anatitem_zdb_id_list')  
                and xpatres_expression_found = 't'
                and xpatex_zdb_id = xpatres_xpatex_zdb_id 
 	       $xpatselqry_wt_tbl_cnd
@@ -582,10 +582,10 @@ DEBUGGING:
     <?MICOMMENT> -- add all result records that match against term_zdb_id --<?/MICOMMENT>
     <?MISQL SQL="
        insert into $xselqry_tmp_anat_all
-	    select xpatex_gene_zdb_id, xpatex_genox_zdb_id, xpatres_term_zdb_id, xpatres_zdb_id
+	    select xpatex_gene_zdb_id, xpatex_genox_zdb_id, xpatres_subterm_zdb_id, xpatres_zdb_id
               from expression_experiment, expression_result 
                    $xpatselqry_gene_tbl_join $xpatselqry_stage_overlap_tbl $xpatselqry_wt_tbl_join
-             where xpatres_term_zdb_id in ('$xpatselqry_anatitem_zdb_id_list')  
+             where xpatres_subterm_zdb_id in ('$xpatselqry_anatitem_zdb_id_list')  
                and xpatres_expression_found = 't'
                and xpatex_zdb_id = xpatres_xpatex_zdb_id 
 	       $xpatselqry_wt_tbl_cnd
@@ -596,12 +596,12 @@ DEBUGGING:
 
     <?MISQL COND="$(AND,$(XST,$xpatselqry_includeSubstructures),$(NE,$xpatselqry_includeSubstructures,),$(NE,$xpatselqry_includeSubstructures,unchecked))" SQL="
        insert into $xselqry_tmp_anat_all
-	    select xpatex_gene_zdb_id, xpatex_genox_zdb_id, allanatcon_container_zdb_id, xpatres_zdb_id
-              from expression_experiment, expression_result, all_anatomy_contains 
+	    select xpatex_gene_zdb_id, xpatex_genox_zdb_id, alltermcon_container_zdb_id, xpatres_zdb_id
+              from expression_experiment, expression_result, all_term_contains 
                    $xpatselqry_gene_tbl_join $xpatselqry_stage_overlap_tbl $xpatselqry_wt_tbl_join
-             where allanatcon_container_zdb_id in ('$xpatselqry_anatitem_zdb_id_list')
+             where alltermcon_container_zdb_id in ('$xpatselqry_anatitem_zdb_id_list')
                and xpatres_expression_found = 't' 
-               and xpatres_anat_item_zdb_id = allanatcon_contained_zdb_id
+               and xpatres_superterm_zdb_id = alltermcon_contained_zdb_id
                and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	       $xpatselqry_wt_tbl_cnd
 	       $xpatselqry_gene_tbl_cnd
@@ -610,12 +610,12 @@ DEBUGGING:
 
     <?MISQL COND="$(AND,$(XST,$xpatselqry_includeSubstructures),$(NE,$xpatselqry_includeSubstructures,),$(NE,$xpatselqry_includeSubstructures,unchecked))" SQL="
        insert into $xselqry_tmp_anat_all
-	    select xpatex_gene_zdb_id, xpatex_genox_zdb_id, allanatcon_container_zdb_id, xpatres_zdb_id
-              from expression_experiment, expression_result, all_anatomy_contains 
+	    select xpatex_gene_zdb_id, xpatex_genox_zdb_id, alltermcon_container_zdb_id, xpatres_zdb_id
+              from expression_experiment, expression_result, all_term_contains 
                    $xpatselqry_gene_tbl_join $xpatselqry_stage_overlap_tbl $xpatselqry_wt_tbl_join
-             where allanatcon_container_zdb_id in ('$xpatselqry_anatitem_zdb_id_list')
+             where alltermcon_container_zdb_id in ('$xpatselqry_anatitem_zdb_id_list')
                and xpatres_expression_found = 't' 
-               and xpatres_term_zdb_id = allanatcon_contained_zdb_id
+               and xpatres_subterm_zdb_id = alltermcon_contained_zdb_id
                and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	       $xpatselqry_wt_tbl_cnd
 	       $xpatselqry_gene_tbl_cnd

@@ -7,10 +7,7 @@ import org.apache.log4j.spi.RootLogger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.expression.AnatomyExpressionStructure;
 import org.zfin.expression.ExpressionStructure;
-import org.zfin.expression.GOExpressionStructure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.PileStructureExistsException;
 import org.zfin.gwt.curation.ui.PileStructuresRPC;
@@ -18,18 +15,13 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.PhenotypeStructure;
-import org.zfin.ontology.GoTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -99,19 +91,19 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
             LOG.info(exception.getMessage());
             throw exception;
         }
-        ExpressionPileStructureDTO pileStructure = null;
+        ExpressionPileStructureDTO pileStructure;
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             if (expressedTerm.getSubterm() == null) {
                 ExpressionStructure structure = createSuperterm(expressedTerm, publicationID);
-                pileStructure = populatePileStructureDTOObject(structure, expressedTerm);
+                pileStructure = populatePileStructureDTOObject(structure);
             } else {
                 OntologyDTO ontology = expressedTerm.getSubterm().getOntology();
                 if (ontology == null)
                     throw new RuntimeException("No ontology provided:");
 
-                ExpressionStructure structure = createPostcomposedTerm(expressedTerm, publicationID);
-                pileStructure = populatePileStructureDTOObject(structure, expressedTerm);
+                ExpressionStructure structure = createPostComposedTerm(expressedTerm, publicationID);
+                pileStructure = populatePileStructureDTOObject(structure);
             }
             tx.commit();
         } catch (HibernateException e) {
@@ -135,16 +127,16 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
             throw new TermNotFoundException("No Term or publication provided");
 
         LOG.info("Request: Create Composed term: " + expressedTerm.getDisplayName());
-        if (getPhenotypeRepository().isPhenotypeOnPile(expressedTerm, publicationID)) {
+        if (getPhenotypeRepository().isPhenotypePileStructureExists(expressedTerm, publicationID)) {
             PileStructureExistsException exception = new PileStructureExistsException(expressedTerm);
             LOG.info(exception.getMessage());
             throw exception;
         }
-        PhenotypePileStructureDTO pileStructure = null;
+        PhenotypePileStructureDTO pileStructure;
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             PhenotypeStructure structure = createPostComposedPhenotypeTerm(expressedTerm, publicationID);
-            pileStructure = populatePileStructureDTOObject(structure, expressedTerm);
+            pileStructure = populatePileStructureDTOObject(structure);
             tx.commit();
         } catch (HibernateException e) {
             LOG.error("Could not Add or Delete terms", e);
@@ -174,6 +166,41 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
 
     }
 
+    /**
+     * Re-create the complete structure pile. This is needed in case none of the structures being used
+     * in expression records are on the pile.
+     *
+     * @param publicationID Publication id
+     * @return complete structure pile.
+     */
+    @Override
+    public List<ExpressionPileStructureDTO> recreateExpressionStructurePile(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            getExpressionRepository().createExpressionPile(publicationID);
+            tx.commit();
+        } catch (HibernateException e) {
+            tx.rollback();
+            e.printStackTrace();
+        }
+        return getExpressionPileStructures(publicationID);
+    }
+
+    private List<ExpressionPileStructureDTO> getExpressionPileStructures(String publicationID) {
+        Collection<ExpressionStructure> structures = getExpressionRepository().retrieveExpressionStructures(publicationID);
+        if (structures == null)
+            return null;
+
+        List<ExpressionPileStructureDTO> expressionPileStructures = new ArrayList<ExpressionPileStructureDTO>(structures.size());
+        for (ExpressionStructure structure : structures) {
+            ExpressionPileStructureDTO dto = DTOConversionService.convertToExpressionPileStructureDTO(structure);
+            expressionPileStructures.add(dto);
+        }
+        Collections.sort(expressionPileStructures);
+        return expressionPileStructures;
+    }
 
     /**
      * Remove a structure from the structure pile.
@@ -194,11 +221,12 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
         return structureDto;
     }
 
-    private ExpressionStructure createSuperterm(ExpressedTermDTO expressedTerm, String publicationID) throws TermNotFoundException {
-        AnatomyItem superterm = getAnatomyRepository().getAnatomyItem(expressedTerm.getSuperterm().getTermName());
+    private ExpressionStructure createSuperterm(ExpressedTermDTO expressedTerm, String publicationID)
+            throws TermNotFoundException {
+        Term superterm = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, expressedTerm.getSuperterm().getTermName());
         if (superterm == null)
             throw new TermNotFoundException("No superterm [" + expressedTerm.getSuperterm().getTermName() + "] found.");
-        ExpressionStructure structure = new AnatomyExpressionStructure();
+        ExpressionStructure structure = new ExpressionStructure();
         structure.setSuperterm(superterm);
         structure.setPerson(Person.getCurrentSecurityUser());
         Publication pub = getPublicationRepository().getPublication(publicationID);
@@ -251,7 +279,7 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
         return structure;
     }
 
-    private ExpressionPileStructureDTO populatePileStructureDTOObject(ExpressionStructure structure, ExpressedTermDTO expressedTerm) {
+    private ExpressionPileStructureDTO populatePileStructureDTOObject(ExpressionStructure structure) {
         if (structure == null)
             return null;
 
@@ -265,62 +293,38 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
             throw new IllegalStateException("No Security Person found (not logged in)");
         dto.setCreator(person.getName());
         dto.setDate(structure.getDate());
-        if (!org.apache.commons.lang.StringUtils.isEmpty(structure.getSubtermID())) {
-            if (structure instanceof AnatomyExpressionStructure) {
-                AnatomyExpressionStructure aoStructure = (AnatomyExpressionStructure) structure;
-                expDto.setSubterm(DTOConversionService.convertToTermDTO(aoStructure.getSubterm()));
-            } else {
-                GOExpressionStructure goStructure = (GOExpressionStructure) structure;
-                expDto.setSubterm(DTOConversionService.convertToTermDTO(goStructure.getSubterm()));
-            }
-        }
+        expDto.setSubterm(DTOConversionService.convertToTermDTO(structure.getSubterm()));
         dto.setStart(DTOConversionService.convertToStageDTO(structure.getSuperterm().getStart()));
         dto.setEnd(DTOConversionService.convertToStageDTO(structure.getSuperterm().getEnd()));
         return dto;
 
     }
 
-    private ExpressionStructure createPostcomposedTerm(ExpressedTermDTO expressedTerm, String publicationID)
+    private ExpressionStructure createPostComposedTerm(ExpressedTermDTO expressedTerm, String publicationID)
             throws TermNotFoundException {
-        AnatomyItem superterm = getAnatomyRepository().getAnatomyItem(expressedTerm.getSuperterm().getTermName());
+        Ontology supertermOntology = DTOConversionService.convertToOntology(expressedTerm.getSuperterm().getOntology());
+        Term superterm = OntologyManager.getInstance().getTermByName(supertermOntology, expressedTerm.getSuperterm().getTermName());
         if (superterm == null)
             throw new TermNotFoundException("No Superterm term [" + expressedTerm.getSuperterm().getTermName() + " found.");
-        ExpressionStructure structure = null;
-        OntologyDTO ontology = expressedTerm.getSubterm().getOntology();
-        if (ontology == OntologyDTO.ANATOMY) {
-            AnatomyItem subterm = getAnatomyRepository().getAnatomyItem(expressedTerm.getSubterm().getTermName());
-            if (subterm == null)
-                throw new TermNotFoundException(expressedTerm.getSubterm().getTermName(), OntologyDTO.ANATOMY);
-            AnatomyExpressionStructure aoStructure = new AnatomyExpressionStructure();
-            aoStructure.setSuperterm(superterm);
-            aoStructure.setSubterm(subterm);
-            aoStructure.setPerson(Person.getCurrentSecurityUser());
-            Publication pub = getPublicationRepository().getPublication(publicationID);
-            aoStructure.setPublication(pub);
-            aoStructure.setDate(new Date());
-            getAnatomyRepository().createPileStructure(aoStructure);
-            structure = aoStructure;
-        } else {
-            GOExpressionStructure goStructure = new GOExpressionStructure();
-            goStructure.setSuperterm(superterm);
-            goStructure.setPerson(Person.getCurrentSecurityUser());
-            Publication pub = getPublicationRepository().getPublication(publicationID);
-            goStructure.setPublication(pub);
-            goStructure.setDate(new Date());
-            if (!org.apache.commons.lang.StringUtils.isEmpty(expressedTerm.getSubterm().getTermName())) {
-                GoTerm subterm = RepositoryFactory.getMutantRepository().getGoTermByName(expressedTerm.getSubterm().getTermName());
-                if (subterm == null)
-                    throw new TermNotFoundException(expressedTerm.getSubterm().getTermName(), OntologyDTO.GO);
-                goStructure.setSubterm(subterm);
-            }
-            getAnatomyRepository().createPileStructure(goStructure);
-            structure = goStructure;
-        }
+        ExpressionStructure structure;
+        Ontology subtermOntology = DTOConversionService.convertToOntology(expressedTerm.getSubterm().getOntology());
+        Term subterm = OntologyManager.getInstance().getTermByName(subtermOntology, expressedTerm.getSubterm().getTermName());
+        if (subterm == null)
+            throw new TermNotFoundException(expressedTerm.getSubterm().getTermName(), OntologyDTO.ANATOMY);
+        ExpressionStructure aoStructure = new ExpressionStructure();
+        aoStructure.setSuperterm(superterm);
+        aoStructure.setSubterm(subterm);
+        aoStructure.setPerson(Person.getCurrentSecurityUser());
+        Publication pub = getPublicationRepository().getPublication(publicationID);
+        aoStructure.setPublication(pub);
+        aoStructure.setDate(new Date());
+        getAnatomyRepository().createPileStructure(aoStructure);
+        structure = aoStructure;
         LOG.info("Issued post-composed creation " + expressedTerm.getDisplayName());
         return structure;
     }
 
-    private PhenotypePileStructureDTO populatePileStructureDTOObject(PhenotypeStructure structure, PhenotypeTermDTO expressedTerm) {
+    private PhenotypePileStructureDTO populatePileStructureDTOObject(PhenotypeStructure structure) {
         if (structure == null)
             return null;
 

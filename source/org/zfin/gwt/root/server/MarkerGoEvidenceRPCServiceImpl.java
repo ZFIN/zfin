@@ -22,7 +22,8 @@ import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.orthology.Species;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
@@ -70,7 +71,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         // set modified by
         Person person = Person.getCurrentSecurityUser();
 
-        GoTerm goTerm = (GoTerm) HibernateUtil.currentSession().get(GoTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
+        Term goTerm = (Term) HibernateUtil.currentSession().get(GenericTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
         markerGoTermEvidence.setGoTerm(goTerm);
 //
 //        if(person==null){
@@ -199,13 +200,13 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         if (publication != null) {
             // get genes
             Marker marker = markerRepository.getMarkerByID(dto.getMarkerDTO().getZdbID());
-            List<GoTerm> goTerms = mutantRepository.getGoTermsByMarkerAndPublication(marker, publication);
-            for (GoTerm goTerm : goTerms) {
+            List<Term> goTerms = mutantRepository.getGoTermsByMarkerAndPublication(marker, publication);
+            for (Term goTerm : goTerms) {
                 GoEvidenceDTO relatedEntityDTO = new GoEvidenceDTO();
-                relatedEntityDTO.setName(goTerm.getName());
-                relatedEntityDTO.setZdbID(goTerm.getZdbID());
-                relatedEntityDTO.setDataZdbID(goTerm.getZdbID());
-                relatedEntityDTO.setGoTerm(DTOConversionService.convertToGoTermDTO(goTerm));
+                relatedEntityDTO.setName(goTerm.getTermName());
+                relatedEntityDTO.setZdbID(goTerm.getID());
+                relatedEntityDTO.setDataZdbID(goTerm.getID());
+                relatedEntityDTO.setGoTerm(DTOConversionService.convertToTermDTO(goTerm));
                 relatedEntityDTO.setPublicationZdbID(dto.getPublicationZdbID());
                 goEvidenceDTOs.add(relatedEntityDTO);
             }
@@ -300,7 +301,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         }
 
         markerGoTermEvidence.setMarker(marker);
-        GoTerm goTerm = (GoTerm) HibernateUtil.currentSession().get(GoTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
+        Term goTerm = (Term) HibernateUtil.currentSession().get(GenericTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
         markerGoTermEvidence.setGoTerm(goTerm);
 
 //
@@ -370,13 +371,13 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
     }
 
     @Override
-    public GoTermDTO getGOTermByName(String value) {
-        GoTerm goTerm = (GoTerm) HibernateUtil.currentSession().createCriteria(GoTerm.class).
-                add(Restrictions.eq("name", value)).uniqueResult();
+    public TermDTO getGOTermByName(String value) {
+        Term goTerm = (Term) HibernateUtil.currentSession().createCriteria(GenericTerm.class).
+                add(Restrictions.eq("termName", value)).uniqueResult();
         if (goTerm == null) {
             throw new RuntimeException("Failed to find termp" + value + "]");
         } else {
-            return DTOConversionService.convertToGoTermDTO(goTerm);
+            return DTOConversionService.convertToTermDTO(goTerm);
         }
     }
 
@@ -387,7 +388,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         List<MarkerGoTermEvidence> evidences = (List<MarkerGoTermEvidence>)
                 HibernateUtil.currentSession().createQuery(" " +
                         " from MarkerGoTermEvidence ev where ev.source = :pubZdbID " +
-                        " order by ev.marker.abbreviation , ev.goTerm.name " +
+                        " order by ev.marker.abbreviation , ev.goTerm.termName " +
                         "")
                         .setString("pubZdbID", publicationID)
                         .list();

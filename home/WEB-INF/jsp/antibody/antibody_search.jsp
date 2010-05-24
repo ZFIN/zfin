@@ -4,7 +4,10 @@
 <%@ page import="org.zfin.framework.presentation.PaginationBean" %>
 <%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ page import="org.zfin.ontology.Ontology" %>
+<%@ page import="org.zfin.gwt.lookup.ui.Lookup" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<jsp:useBean id="formBean" class="org.zfin.antibody.presentation.AntibodySearchFormBean" scope="request"/>
 
 <script type="text/javascript">
 function start_tips() {
@@ -38,7 +41,7 @@ function start_tips() {
                 <td colspan="6" align="right"><a href="#modify-search">Modify Search</a></td>
             </tr>
             <tr>
-                <td col="">
+                <td>
                     <c:if test="${formBean.searchResults == true}">
                         <div align="center">
                             <c:choose>
@@ -147,12 +150,12 @@ function start_tips() {
 </c:if>
 
 <c:if test="${formBean.searchResults == true}">
-    <p/>
+    <p></p>
     <table width="100%">
         <tr>
             <td class="titlebar">
                 <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
-                        <a name="modify-search"/>Modify your search
+                        <a name="modify-search">Modify your search </a>
             </span>
                 &nbsp;&nbsp; <a href="javascript:start_tips();">Search Tips</a>
             </td>
@@ -188,7 +191,7 @@ function start_tips() {
                         onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		                        if (k == 13 ) { submitForm(1);}  "/>
         </td>
-        <td/>
+        <td></td>
     </tr>
     <tr valign="top">
         <td align="top">
@@ -201,7 +204,7 @@ function start_tips() {
                         onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		                        if (k == 13 ) { submitForm(1);}  "/>
         </td>
-        <td/>
+        <td></td>
     </tr>
     <tr valign="top" bgcolor="#eeeeee">
         <td align="top" colspan="2">
@@ -224,8 +227,9 @@ function start_tips() {
                     ontologyName: "<%= Ontology.ANATOMY %>",
                     width: 40,
                     wildcard: false,
-                    useTermTable: true
-                };
+                    useTermTable: true,
+                    <%= Lookup.JSREF_SHOW_TERM_DETAIL%>: false,
+                }
             </script>
             <style type="text/css">
                 .accessoryLabel {
@@ -235,7 +239,7 @@ function start_tips() {
 
             <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
             <script language="javascript"
-                    src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
+                    src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js" type=""></script>
 
             <div id="anatomyTerm"></div>
             <table>

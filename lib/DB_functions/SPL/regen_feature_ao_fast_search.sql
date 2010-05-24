@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
 -- This function populates feature_stats table
 -- Need to store the xpates_zdb_id in the table as well in order to be able
--- to remove specific records. It could be that two xpatres_zdb_id recoreds refer to
+-- to remove specific records. It could be that two xpatres_zdb_id records refer to
 -- the same structure and fig.
 -- Do not include
 --
@@ -297,14 +297,14 @@ Create dba function regen_feature_ao_fast_search()
 
     	  alter table feature_stats_new 
 	    add constraint (foreign key (fstat_superterm_zdb_id)
-	    references anatomy_item on delete cascade constraint 
+	    references term on delete cascade constraint 
 	    fstat_superterm_fk_constraint_odc);
  
          let errorHint = " fstat_subterm_fk_constraint_odc";
 
     	 alter table feature_stats_new 
            add constraint (foreign key (fstat_subterm_zdb_id)
-	   references anatomy_item on delete cascade constraint 
+	   references term on delete cascade constraint 
 	   fstat_subterm_fk_constraint_odc);
 
          let errorHint = "fstat_figure_fk_constraint_odc";
@@ -341,9 +341,9 @@ Create dba function regen_feature_ao_fast_search()
 	   add constraint primary key (fstat_pk_id)
 	   constraint fstat_primary_key_constraint;
 
-      -- Antibodies: insert records for xpatres_anat_item_zdb_id
+      -- Antibodies: insert records for xpatres_superterm_zdb_id
 
-      let errorHint = "insert records for xpatres_anat_item_zdb_id";		
+      let errorHint = "insert records for xpatres_superterm_zdb_id";		
       insert into feature_stats_new( fstat_feat_zdb_id,
 		       fstat_superterm_zdb_id,
 		       fstat_subterm_zdb_id,
@@ -353,11 +353,11 @@ Create dba function regen_feature_ao_fast_search()
 		       fstat_xpatres_zdb_id,
 		       fstat_type)
 
-		select atb_zdb_id, allanatcon_container_zdb_id, xpatres_anat_item_zdb_id, 
+		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, 
 		       xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id,
 		       'Antibody' 
 		from antibody, genotype_experiment, expression_experiment, expression_result, 
-			 experiment, figure, expression_pattern_figure, genotype, all_anatomy_contains
+			 experiment, figure, expression_pattern_figure, genotype, all_term_contains
 		where  xpatres_expression_found = 't'
 		and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
@@ -368,12 +368,12 @@ Create dba function regen_feature_ao_fast_search()
 		and exp_name in ('_Standard', '_Generic-control')
 		and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
-		and allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
-		and xpatres_anat_item_zdb_id !='ZDB-ANAT-041102-1' ;
+		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
+		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055' ;
 
 
-      let errorHint = "Antibodies: insert records for xpatres_term_zdb_id";
-	-- Antibodies: insert records for xpatres_term_zdb_id
+      let errorHint = "Antibodies: insert records for xpatres_subterm_zdb_id";
+	-- Antibodies: insert records for xpatres_subterm_zdb_id
 
 	insert into feature_stats_new( fstat_feat_zdb_id,
 		       fstat_superterm_zdb_id,
@@ -383,9 +383,9 @@ Create dba function regen_feature_ao_fast_search()
 		       fstat_pub_zdb_id,
 		       fstat_xpatres_zdb_id,
 		       fstat_type)
-		select atb_zdb_id, allanatcon_container_zdb_id, xpatres_term_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, 'Antibody' 
+		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, 'Antibody' 
 		from antibody, genotype_experiment, expression_experiment, expression_result, 
-			 experiment, figure, expression_pattern_figure, genotype, all_anatomy_contains
+			 experiment, figure, expression_pattern_figure, genotype, all_term_contains
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
@@ -396,12 +396,12 @@ Create dba function regen_feature_ao_fast_search()
 		and exp_name in ('_Standard', '_Generic-control')
 		and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
-		and allanatcon_contained_zdb_id = xpatres_term_zdb_id
-                and xpatres_term_zdb_id is not null ;
+		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
+                and xpatres_subterm_zdb_id is not null ;
 
-	let errorHint = "High-Quality-Probes: insert records for xpatres_anat_item_zdb_id";
+	let errorHint = "High-Quality-Probes: insert records for xpatres_superterm_zdb_id";
 
-	-- High-Quality-Probes: insert records for xpatres_anat_item_zdb_id
+	-- High-Quality-Probes: insert records for xpatres_superterm_zdb_id
 	insert into feature_stats_new (fstat_feat_zdb_id,
 		       fstat_superterm_zdb_id,
 		       fstat_subterm_zdb_id,
@@ -411,10 +411,10 @@ Create dba function regen_feature_ao_fast_search()
 		       fstat_xpatres_zdb_id,
 		       fstat_img_zdb_id,
 		       fstat_type) 
-		select clone_mrkr_zdb_id, allanatcon_container_zdb_id, xpatres_anat_item_zdb_id, xpatex_gene_zdb_id, 
+		select clone_mrkr_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, xpatex_gene_zdb_id, 
 		       fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, img_zdb_id, 'High-Quality-Probe'
 		  from clone, genotype_experiment, expression_experiment, expression_result, image, 
-			 experiment, figure, expression_pattern_figure, genotype, all_anatomy_contains
+			 experiment, figure, expression_pattern_figure, genotype, all_term_contains
 		   where  xpatres_expression_found = 't'
 	           and genox_zdb_id = xpatex_genox_zdb_id
 		   and  xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -424,14 +424,14 @@ Create dba function regen_feature_ao_fast_search()
 		   and exp_name in ('_Standard', '_Generic-control')
 		   and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
-		and allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
-		and xpatres_anat_item_zdb_id !='ZDB-ANAT-041102-1'
+		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
+		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055'
 		and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
 		and clone_rating = '4' 
 		and img_fig_zdb_id = fig_zdb_id;
 
-	let errorHint = "High-Quality-Probes: insert records for xpatres_term_zdb_id";
-	-- High-Quality-Probes: insert records for xpatres_term_zdb_id
+	let errorHint = "High-Quality-Probes: insert records for xpatres_subterm_zdb_id";
+	-- High-Quality-Probes: insert records for xpatres_subterm_zdb_id
 	insert into feature_stats_new (fstat_feat_zdb_id,
 		       fstat_superterm_zdb_id,
 		       fstat_subterm_zdb_id,
@@ -441,10 +441,10 @@ Create dba function regen_feature_ao_fast_search()
 		       fstat_xpatres_zdb_id,
 		       fstat_img_zdb_id,
 		       fstat_type)	
-		select clone_mrkr_zdb_id, allanatcon_container_zdb_id, xpatres_term_zdb_id, xpatex_gene_zdb_id, 
+		select clone_mrkr_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, 
 		       fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, img_zdb_id, 'High-Quality-Probe'
 		from clone, genotype_experiment, expression_experiment, expression_result, image,
-			 experiment, figure, expression_pattern_figure, genotype, all_anatomy_contains
+			 experiment, figure, expression_pattern_figure, genotype, all_term_contains
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -454,12 +454,12 @@ Create dba function regen_feature_ao_fast_search()
 		and exp_name in ('_Standard', '_Generic-control')
 		and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
-		and allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
-		and xpatres_anat_item_zdb_id !='ZDB-ANAT-041102-1'
+		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
+		and xpatres_subterm_zdb_id !='ZDB-TERM-100331-1055'
 		and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
 		and clone_rating = '4' 
 		and img_fig_zdb_id = fig_zdb_id
-                and xpatres_term_zdb_id is not null;
+                and xpatres_subterm_zdb_id is not null;
 
 
          let errorHint = "drop feature_stats second time";

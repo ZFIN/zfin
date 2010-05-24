@@ -5,6 +5,8 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
 
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+
 <html>
 <head>
     <!--css in zfin.css, but want don't want to apply all of the zfin styles-->
@@ -31,17 +33,17 @@
 
 </head>
 
-<p/>
+<p></p>
 
 <!-- Relationships -->
 <TABLE width="100%">
-    <tr height=30 valign=top>
+    <tr valign=top>
         <td colspan=2 align="right" valign="center">
             <%--<a onclick="window.parent.useTerm('${formBean.anatomyItem.nameEscaped}'); " href="javascript:;">[Add To Search]</a>--%>
             <input type="button"  alt="Add To Search" value="Add To Search" onclick="window.parent.useTerm('${formBean.anatomyItem.nameEscaped}'); " >
             &nbsp;
             &nbsp;
-            <a title="Close widnow" class="close_link" onclick="window.parent.hideTerm(); " href="javascript:;">x</a>
+            <a title="Close window" class="close_link" onclick="window.parent.hideTerm(); " href="javascript:">x</a>
         </td>
     </tr>
     <tr>
@@ -114,12 +116,9 @@
     </TR>
     <TR>
         <%
-            AnatomySearchBean formBean = (AnatomySearchBean) request.getAttribute("formBean");
             AnatomyItem ai = formBean.getAnatomyItem();
             String startStage = StagePresentation.createDisplayEntry(ai.getStart());
             String endStage = StagePresentation.createDisplayEntry(ai.getEnd());
-            String startAnchor = ai.getStart().abbreviation();
-            String endAnchor = ai.getEnd().abbreviation();
         %>
         <TD bgcolor="#EEEEEE">
             <%= startStage %>
@@ -129,8 +128,6 @@
         </TD>
     </TR>
 </TABLE>
-
-</p>
 
 
 </html>

@@ -22,10 +22,10 @@ create procedure p_drop_go_root_term_attribution (
 		and mrkrZdbId not in (
 			select mrkrgoev_mrkr_zdb_id
 	  		  from marker_go_term_evidence
- 	 		 where mrkrgoev_go_term_zdb_id in 
-					('ZDB-GOTERM-031121-2395',
-					 'ZDB-GOTERM-031121-846', 
-					 'ZDB-GOTERM-031121-4370')
+ 	 		 where mrkrgoev_term_zdb_id in 
+					('ZDB-TERM-091209-4029',
+					 'ZDB-TERM-091209-2432',
+					 'ZDB-TERM-091209-6070')
 			);	
 
 end procedure;

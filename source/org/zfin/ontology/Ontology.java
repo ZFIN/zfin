@@ -9,6 +9,8 @@ import java.util.*;
 public enum Ontology implements Serializable {
 
     ANATOMY("zebrafish_anatomy", "Anatomy Ontology", false),
+    // stages
+    STAGE("zebrafish_stages", "Zebrafish Stage Ontology", false),
     // full GO ontology
     GO("cellular_component,molecular_function,biological_process", "Gene Ontology", true),
     // Subset of GO: Cellular Components

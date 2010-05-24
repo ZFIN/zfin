@@ -29,12 +29,17 @@ get_obj_name(zdbId varchar(50))
      where geno_zdb_id = zdbId;
   elif (objType = "MRKRGOEV") then
     select get_obj_abbrev(mrkrgoev_mrkr_zdb_id) || ", " ||
-           get_obj_name(mrkrgoev_go_term_zdb_id) || ", " || 
+           get_obj_name(mrkrgoev_term_zdb_id) || ", " || 
 	   mrkrgoev_evidence_code || ", " ||
 	   get_obj_name(mrkrgoev_source_zdb_id)
       into objName
       from marker_go_term_evidence
       where mrkrgoev_zdb_id = zdbId;
+  elif (objType = "TERM") then
+    select term_name
+      into objName
+      from term
+      where term_zdb_id = zdbId;  
   elif (objType = "EXP") then
     select exp_name 
       into objName
@@ -47,7 +52,7 @@ get_obj_name(zdbId varchar(50))
       where fig_zdb_id = zdbId ;
   elif (objType = "XPATRES") then
     select get_obj_name(xpatres_xpatex_zdb_id) || ", " || 
-           get_obj_name(xpatres_anat_item_zdb_id) || ", " ||
+           get_obj_name(xpatres_superterm_zdb_id) || ", " ||
            get_obj_name(xpatres_start_stg_zdb_id) || ", " ||
            get_obj_name(xpatres_end_stg_zdb_id)
       into objName
@@ -283,11 +288,7 @@ get_obj_name(zdbId varchar(50))
       into objName
       from genotype_experiment
       where genox_zdb_id = zdbId;
-  elif (objType = "TERM") then
-    select term_name		
-      into objName
-      from term
-      where term_zdb_id = zdbId;
+
   elif (objType = "TERMDEF") then
     select termdef_zdb_id		-- don't have names, use ZDB ID
       into objName

@@ -2,11 +2,11 @@ package org.zfin.anatomy.presentation;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyService;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.repository.AntibodyRepository;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -20,9 +20,12 @@ import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.Term;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.framework.HibernateUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,17 +42,18 @@ public class AnatomyAjaxController extends MultiActionController {
     private AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
     public ModelAndView showExpressionGenes(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
 
         String termID = request.getParameter(LookupStrings.ZDB_ID);
-        AnatomyItem term = anatomyRepository.getAnatomyTermByID(termID);
+        Term term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, termID);
         if (term == null)
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
 
         AnatomySearchBean form = new AnatomySearchBean();
-        form.setAnatomyItem(term);
+        form.setAoTerm(term);
         retrieveExpressedGenesData(term, form);
         return new ModelAndView("anatomy-show-expression-genes.ajax", LookupStrings.FORM_BEAN, form);
     }
@@ -58,12 +62,12 @@ public class AnatomyAjaxController extends MultiActionController {
             throws ServletException {
 
         String termID = request.getParameter(LookupStrings.ZDB_ID);
-        AnatomyItem term = anatomyRepository.getAnatomyTermByID(termID);
+        Term term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, termID);
         if (term == null)
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
 
         AnatomySearchBean form = new AnatomySearchBean();
-        form.setAnatomyItem(term);
+        form.setAoTerm(term);
         retrieveHighQualityProbeData(term, form);
         return new ModelAndView("anatomy-show-expression-insitu-probes.ajax", LookupStrings.FORM_BEAN, form);
     }
@@ -72,12 +76,12 @@ public class AnatomyAjaxController extends MultiActionController {
             throws ServletException {
 
         String termID = request.getParameter(LookupStrings.ZDB_ID);
-        AnatomyItem term = anatomyRepository.getAnatomyTermByID(termID);
+        Term term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, termID);
         if (term == null)
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
 
         AnatomySearchBean form = new AnatomySearchBean();
-        form.setAnatomyItem(term);
+        form.setAoTerm(term);
         retrieveAntibodyData(term, form);
         return new ModelAndView("anatomy-show-expression-antibodies.ajax", LookupStrings.FORM_BEAN, form);
     }
@@ -86,12 +90,12 @@ public class AnatomyAjaxController extends MultiActionController {
             throws ServletException {
 
         String termID = request.getParameter(LookupStrings.ZDB_ID);
-        AnatomyItem term = anatomyRepository.getAnatomyTermByID(termID);
+        Term term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, termID);
         if (term == null)
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
 
         AnatomySearchBean form = new AnatomySearchBean();
-        form.setAnatomyItem(term);
+        form.setAoTerm(term);
         retrieveMutantData(term, form);
         return new ModelAndView("anatomy-show-phenotype-mutant.ajax", LookupStrings.FORM_BEAN, form);
     }
@@ -100,12 +104,12 @@ public class AnatomyAjaxController extends MultiActionController {
             throws ServletException {
 
         String termID = request.getParameter(LookupStrings.ZDB_ID);
-        AnatomyItem term = anatomyRepository.getAnatomyTermByID(termID);
+        Term term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, termID);
         if (term == null)
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
 
         AnatomySearchBean form = new AnatomySearchBean();
-        form.setAnatomyItem(term);
+        form.setAoTerm(term);
         retrieveMorpholinoData(term, form, true);
         return new ModelAndView("anatomy-show-phenotype-morpholinos.ajax", LookupStrings.FORM_BEAN, form);
     }
@@ -114,17 +118,17 @@ public class AnatomyAjaxController extends MultiActionController {
             throws ServletException {
 
         String termID = request.getParameter(LookupStrings.ZDB_ID);
-        AnatomyItem term = anatomyRepository.getAnatomyTermByID(termID);
+        Term term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, termID);
         if (term == null)
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
 
         AnatomySearchBean form = new AnatomySearchBean();
-        form.setAnatomyItem(term);
+        form.setAoTerm(term);
         retrieveMorpholinoData(term, form, false);
         return new ModelAndView("anatomy-show-phenotype-non-wildtype-morpholinos.ajax", LookupStrings.FORM_BEAN, form);
     }
 
-    private void retrieveAntibodyData(AnatomyItem aoTerm, AnatomySearchBean form) {
+    private void retrieveAntibodyData(Term aoTerm, AnatomySearchBean form) {
 
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
@@ -142,7 +146,7 @@ public class AnatomyAjaxController extends MultiActionController {
         form.setAnatomyStatisticsAntibodies(statistics);
     }
 
-    private void retrieveHighQualityProbeData(AnatomyItem anatomyTerm, AnatomySearchBean form) {
+    private void retrieveHighQualityProbeData(Term anatomyTerm, AnatomySearchBean form) {
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
@@ -157,7 +161,7 @@ public class AnatomyAjaxController extends MultiActionController {
         form.setAnatomyStatisticsProbe(statistics);
     }
 
-    private void retrieveExpressedGenesData(AnatomyItem anatomyTerm, AnatomySearchBean form) {
+    private void retrieveExpressedGenesData(Term anatomyTerm, AnatomySearchBean form) {
 
         PaginationResult<MarkerStatistic> expressionMarkersResult =
                 publicationRepository.getAllExpressedMarkers(anatomyTerm, 0, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
@@ -180,11 +184,11 @@ public class AnatomyAjaxController extends MultiActionController {
         // maybe used later?
         form.setTotalNumberOfExpressedGenes(expressionMarkersResult.getTotalCount());
 
-        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getZdbID());
+        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getID());
         form.setAnatomyStatistics(statistics);
     }
 
-    private void retrieveMutantData(AnatomyItem ai, AnatomySearchBean form) {
+    private void retrieveMutantData(Term ai, AnatomySearchBean form) {
         PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(ai, false,
                 AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         form.setGenotypeCount(genotypeResult.getTotalCount());
@@ -194,11 +198,11 @@ public class AnatomyAjaxController extends MultiActionController {
         List<GenotypeStatistics> genoStats = createGenotypeStats(genotypes, ai);
         form.setGenotypeStatistics(genoStats);
 
-        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(ai.getZdbID());
+        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(ai.getID());
         form.setAnatomyStatisticsMutant(statistics);
     }
 
-    private List<GenotypeStatistics> createGenotypeStats(List<Genotype> genotypes, AnatomyItem ai) {
+    private List<GenotypeStatistics> createGenotypeStats(List<Genotype> genotypes, Term ai) {
         if (genotypes == null || ai == null)
             return null;
 
@@ -219,7 +223,7 @@ public class AnatomyAjaxController extends MultiActionController {
      * @param form     form bean
      * @param wildtype wild type or not
      */
-    protected void retrieveMorpholinoData(AnatomyItem ai, AnatomySearchBean form, boolean wildtype) {
+    protected void retrieveMorpholinoData(Term ai, AnatomySearchBean form, boolean wildtype) {
 
         PaginationResult<GenotypeExperiment> wildtypeMorphResults =
                 mutantRepository.getGenotypeExperimentMorpholinos(ai, wildtype, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
@@ -236,7 +240,7 @@ public class AnatomyAjaxController extends MultiActionController {
         }
     }
 
-    protected static List<MorpholinoStatistics> createMorpholinoStats(List<GenotypeExperiment> morpholinos, AnatomyItem ai) {
+    protected static List<MorpholinoStatistics> createMorpholinoStats(List<GenotypeExperiment> morpholinos, Term ai) {
         if (morpholinos == null || ai == null)
             return null;
 

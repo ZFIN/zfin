@@ -8,7 +8,9 @@ import org.zfin.framework.presentation.MatchingText;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.Term;
 import org.zfin.util.FilterType;
 
 import java.util.ArrayList;
@@ -37,19 +39,19 @@ public class AntibodyServiceTest {
         termThree.setNameOrder("Engel");
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setAnatomyTerm(termOne);
+        resultOne.setSuperterm(termOne);
         resultOne.setExpressionFound(true);
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setAnatomyTerm(termTwo);
+        resultTwo.setSuperterm(termTwo);
         resultTwo.setExpressionFound(true);
 
         ExpressionResult resultThree = new ExpressionResult();
-        resultThree.setAnatomyTerm(termThree);
+        resultThree.setSuperterm(termThree);
         resultThree.setExpressionFound(true);
 
         ExpressionResult resultFour = new ExpressionResult();
-        resultFour.setAnatomyTerm(termThree);
+        resultFour.setSuperterm(termThree);
         resultFour.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -67,7 +69,7 @@ public class AntibodyServiceTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<AnatomyItem> aoTerms = as.getDistinctAoTerms();
+        Set<Term> aoTerms = as.getDistinctAoTerms();
         assertTrue(aoTerms != null);
         assertEquals(3, aoTerms.size());
     }
@@ -85,19 +87,19 @@ public class AntibodyServiceTest {
         termThree.setNameOrder("Halle");
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setAnatomyTerm(termOne);
+        resultOne.setSuperterm(termOne);
         resultOne.setExpressionFound(true);
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setAnatomyTerm(termTwo);
+        resultTwo.setSuperterm(termTwo);
         resultTwo.setExpressionFound(true);
 
         ExpressionResult resultThree = new ExpressionResult();
-        resultThree.setAnatomyTerm(termThree);
+        resultThree.setSuperterm(termThree);
         resultThree.setExpressionFound(true);
 
         ExpressionResult resultFour = new ExpressionResult();
-        resultFour.setAnatomyTerm(termThree);
+        resultFour.setSuperterm(termThree);
         resultFour.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -116,7 +118,7 @@ public class AntibodyServiceTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<AnatomyItem> aoTerms = as.getDistinctAoTerms();
+        Set<Term> aoTerms = as.getDistinctAoTerms();
         assertTrue(aoTerms != null);
         assertEquals(2, aoTerms.size());
     }
@@ -133,13 +135,13 @@ public class AntibodyServiceTest {
         termThree.setZdbID("ZDB-ANAT-011113-514");
         termThree.setNameOrder("Margor");
 
-        AnatomyExpressionResult resultOne = new AnatomyExpressionResult();
-        resultOne.setAnatomyTerm(termOne);
+        ExpressionResult resultOne = new ExpressionResult();
+        resultOne.setSuperterm(termOne);
         resultOne.setExpressionFound(true);
         resultOne.setSubterm(termThree);
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setAnatomyTerm(termTwo);
+        resultTwo.setSuperterm(termTwo);
         resultTwo.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -156,7 +158,7 @@ public class AntibodyServiceTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<AnatomyItem> aoTerms = as.getDistinctAoTerms();
+        Set<Term> aoTerms = as.getDistinctAoTerms();
         assertTrue(aoTerms != null);
         assertEquals(3, aoTerms.size());
     }
@@ -177,11 +179,9 @@ public class AntibodyServiceTest {
 
     @Test
     public void singleGoTermList(){
-        GoTerm termOne = new GoTerm();
-        termOne.setZdbID("ZDB-GOTERM-030325-149");
-        termOne.setName("nucleus");
+        Term termOne = getNucleusTerm();
 
-        GoTermExpressionResult resultOne = new GoTermExpressionResult();
+        ExpressionResult resultOne = new ExpressionResult();
         resultOne.setSubterm(termOne);
         resultOne.setExpressionFound(true);
 
@@ -197,7 +197,7 @@ public class AntibodyServiceTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<GoTerm> goTerms = as.getDistinctGoTermsWTAndStandard();
+        Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
         assertTrue(goTerms != null);
         assertEquals(1, goTerms.size());
     }
@@ -220,26 +220,22 @@ public class AntibodyServiceTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<GoTerm> goTerms = as.getDistinctGoTermsWTAndStandard();
+        Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
         assertTrue(goTerms != null);
         assertEquals(0, goTerms.size());
     }
 
     @Test
     public void multipleDistinctGoTermList(){
-        GoTerm termOne = new GoTerm();
-        termOne.setZdbID("ZDB-GOTERM-030325-149");
-        termOne.setName("nucleus");
+        Term termOne = getNucleusTerm();
 
-        GoTerm termTwo = new GoTerm();
-        termTwo.setZdbID("ZDB-GOTERM-030325-108");
-        termTwo.setName("cytokine activity");
+        Term termTwo = getCyokineTerm();
 
-        GoTermExpressionResult resultOne = new GoTermExpressionResult();
+        ExpressionResult resultOne = new ExpressionResult();
         resultOne.setSubterm(termOne);
         resultOne.setExpressionFound(true);
 
-        GoTermExpressionResult resultTwo = new GoTermExpressionResult();
+        ExpressionResult resultTwo = new ExpressionResult();
         resultTwo.setSubterm(termTwo);
         resultTwo.setExpressionFound(true);
 
@@ -257,29 +253,40 @@ public class AntibodyServiceTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<GoTerm> goTerms = as.getDistinctGoTermsWTAndStandard();
+        Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
         assertTrue(goTerms != null);
         assertEquals(2, goTerms.size());
     }
 
+    private Term getCyokineTerm() {
+        Term termTwo = new GenericTerm();
+        termTwo.setID("ZDB-TERM-091209-3709");
+        termTwo.setTermName("cytokine activity");
+        termTwo.setOntology(Ontology.GO_MF);
+        return termTwo;
+    }
+
+    private Term getNucleusTerm() {
+        Term termOne = new GenericTerm();
+        termOne.setID("ZDB-TERM-091209-4086");
+        termOne.setTermName("nucleus");
+        termOne.setOntology(Ontology.GO_CC);
+        return termOne;
+    }
+
     @Test
     public void multipleRepeatingGoTermList(){
-        GoTerm termOne = new GoTerm();
-        termOne.setZdbID("ZDB-GOTERM-030325-149");
-        termOne.setName("nucleus");
+        Term termOne = getNucleusTerm();
+        Term termTwo = getCyokineTerm();
 
-        GoTerm termTwo = new GoTerm();
-        termTwo.setZdbID("ZDB-GOTERM-030325-108");
-        termTwo.setName("cytokine activity");
-
-        GoTermExpressionResult resultOne = new GoTermExpressionResult();
+        ExpressionResult resultOne = new ExpressionResult();
         resultOne.setSubterm(termOne);
         resultOne.setExpressionFound(true);
-        GoTermExpressionResult resultTwo = new GoTermExpressionResult();
+        ExpressionResult resultTwo = new ExpressionResult();
         resultTwo.setSubterm(termTwo);
         resultTwo.setExpressionFound(true);
 
-        GoTermExpressionResult resultThree = new GoTermExpressionResult();
+        ExpressionResult resultThree = new ExpressionResult();
         resultThree.setSubterm(termOne);
         resultThree.setExpressionFound(true);
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -296,25 +303,23 @@ public class AntibodyServiceTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<GoTerm> goTerms = as.getDistinctGoTermsWTAndStandard();
+        Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
         assertTrue(goTerms != null);
         assertEquals(2, goTerms.size());
     }
 
     @Test
     public void multipleRepeatingGoTermListWithNull(){
-        GoTerm termOne = new GoTerm();
-        termOne.setZdbID("ZDB-GOTERM-030325-149");
-        termOne.setName("nucleus");
+        Term termOne = getNucleusTerm();
 
-        GoTermExpressionResult resultOne = new GoTermExpressionResult();
+        ExpressionResult resultOne = new ExpressionResult();
         resultOne.setSubterm(termOne);
         resultOne.setExpressionFound(true);
 
         ExpressionResult resultTwo = new ExpressionResult();
         resultTwo.setExpressionFound(true);
 
-        GoTermExpressionResult resultThree = new GoTermExpressionResult();
+        ExpressionResult resultThree = new ExpressionResult();
         resultThree.setSubterm(termOne);
         resultThree.setExpressionFound(true);
 
@@ -335,7 +340,7 @@ public class AntibodyServiceTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<GoTerm> goTerms = as.getDistinctGoTermsWTAndStandard();
+        Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
         assertTrue(goTerms != null);
         assertEquals(1, goTerms.size());
     }
@@ -362,7 +367,7 @@ public class AntibodyServiceTest {
         antibody.setAliases(aliases);
 
         AntibodyService service = new AntibodyService(antibody);
-        service.setAntibodySerachCriteria(searchCriteria);
+        service.setAntibodySearchCriteria(searchCriteria);
 
         List<MatchingText> matchingTexts = new ArrayList<MatchingText>();
         service.addMatchingAntibodyName(matchingTexts);
@@ -391,7 +396,7 @@ public class AntibodyServiceTest {
         antibody.setAliases(aliases);
 
         AntibodyService service = new AntibodyService(antibody);
-        service.setAntibodySerachCriteria(searchCriteria);
+        service.setAntibodySearchCriteria(searchCriteria);
 
         List<MatchingText> matchingTexts = new ArrayList<MatchingText>();
         service.addMatchingAntibodyName(matchingTexts);

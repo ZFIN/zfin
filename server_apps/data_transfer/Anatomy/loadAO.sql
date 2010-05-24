@@ -176,20 +176,24 @@ create temp table obsolete_anatomy_item(
 !echo '== load anatitem_obsolete.unl =='
 load from "anatitem_obsolete.unl" insert into obsolete_anatomy_item;
 
+-- please add p_anatitem_obo_id to the temp table to identify the matching term records
 unload to "obsolete_anat_with_xpat.err" 
    select o_anatitem_zdb_id
-     from obsolete_anatomy_item
+     from obsolete_anatomy_item, term
     where exists (select * 
                     from expression_result
-                   where xpatres_anat_item_zdb_id = o_anatitem_zdb_id) ;
+                   where xpatres_superterm_zdb_id = term_zdb_id)
+                   and o_anatitem_obo_id = term_ont_id;
 
 unload to "obsolete_anat_with_pato.err" 
    select o_anatitem_zdb_id
      from obsolete_anatomy_item
     where exists (select * 
-                    from atomic_phenotype
-                   where apato_subterm_zdb_id = o_anatitem_zdb_id
-                      or apato_superterm_zdb_id = o_anatitem_zdb_id) ;
+                    from atomic_phenotype, term
+                   where (apato_subterm_zdb_id = term_zdb_id
+                      or apato_superterm_zdb_id = o_anatitem_zdb_id)
+                      and o_anatitem_obo_id = term_ont_id
+                      ) ;
 
 -------------------------------------------------------------------
 -- Anatomy term synonyms/alias 

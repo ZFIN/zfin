@@ -249,12 +249,9 @@ public class AntibodyWikiWebService extends WikiWebService {
             }
         });
         for (AnatomyLabel anatomyLabel : antibodyService.getAntibodyLabelings()) {
-            antibodyLinks.add(AnatomyItemPresentation.getWikiLink(anatomyLabel.getAnatomyItem()));
-            if(anatomyLabel.getSecondaryAnatomyItem()!=null){
-                antibodyLinks.add(AnatomyItemPresentation.getWikiLink(anatomyLabel.getSecondaryAnatomyItem()));
-            }
-            if(anatomyLabel.getCellularComponent()!=null){
-                antibodyLinks.add(AnatomyItemPresentation.getWikiLink(anatomyLabel.getCellularComponent()));
+            antibodyLinks.add(AnatomyItemPresentation.getWikiLink(anatomyLabel.getSuperterm()));
+            if(anatomyLabel.getSuperterm()!=null){
+                antibodyLinks.add(AnatomyItemPresentation.getWikiLink(anatomyLabel.getSuperterm()));
             }
         }
         for(String antibodyLink : antibodyLinks){

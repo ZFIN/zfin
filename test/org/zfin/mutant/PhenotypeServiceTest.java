@@ -3,9 +3,8 @@ package org.zfin.mutant;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyPhenotype;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.GoTerm;
+import org.zfin.ontology.Term;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,8 +19,8 @@ import static org.junit.Assert.assertTrue;
  */
 public class PhenotypeServiceTest {
 
-    private AnatomyItem cellAnatomyTerm;
-    private AnatomyItem anatomyTerm;
+    private Term cellAnatomyTerm;
+    private Term anatomyTerm;
     private static String aoTermZdbID = "ZDB-ANAT-010921-586";
     private static String cellAOZdbID = "ZDB-ANAT-050915-158";
     private static String GOZdbID = "ZDB-GO-050915-158";
@@ -33,15 +32,16 @@ public class PhenotypeServiceTest {
 
     @Before
     public void setUp() {
-        anatomyTerm = new AnatomyItem();
-        anatomyTerm.setZdbID(aoTermZdbID);
-        anatomyTerm.setName("pronephros");
-        anatomyTerm.setCellTerm(false);
+        anatomyTerm = new GenericTerm();
+        anatomyTerm.setID(aoTermZdbID);
+        anatomyTerm.setTermName("pronephros");
+        ////TODO
+        //anatomyTerm.setCellTerm(false);
 
-        cellAnatomyTerm = new AnatomyItem();
-        cellAnatomyTerm.setZdbID(cellAOZdbID);
-        cellAnatomyTerm.setName("muscle cell");
-        cellAnatomyTerm.setCellTerm(true);
+        cellAnatomyTerm = new GenericTerm();
+        cellAnatomyTerm.setID(cellAOZdbID);
+        cellAnatomyTerm.setTermName("muscle cell");
+        //cellAnatomyTerm.setCellTerm(true);
     }
 
     @Test
@@ -65,8 +65,8 @@ public class PhenotypeServiceTest {
     @Test
     public void singleAOPhenotype() {
         GenotypeExperiment genox = new GenotypeExperiment();
-        AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setAnatomySuperTerm(anatomyTerm);
+        Phenotype pheno = new Phenotype();
+        pheno.setSuperterm(anatomyTerm);
         GenericTerm term = new GenericTerm();
         String brightOrange = "bright orange";
         term.setTermName(brightOrange);
@@ -92,22 +92,22 @@ public class PhenotypeServiceTest {
     @Test
     public void ThreeAOPhenotype() {
         GenotypeExperiment genox = new GenotypeExperiment();
-        AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setAnatomySuperTerm(anatomyTerm);
+        Phenotype pheno = new Phenotype();
+        pheno.setSuperterm(anatomyTerm);
         GenericTerm term = new GenericTerm();
         String brightOrange = "bright orange";
         term.setTermName(brightOrange);
         pheno.setTerm(term);
 
-        AnatomyPhenotype phenoTwo = new AnatomyPhenotype();
-        phenoTwo.setAnatomySuperTerm(anatomyTerm);
+        Phenotype phenoTwo = new Phenotype();
+        phenoTwo.setSuperterm(anatomyTerm);
         GenericTerm termTwo = new GenericTerm();
         String pink = "pink";
         termTwo.setTermName(pink);
         phenoTwo.setTerm(termTwo);
 
-        AnatomyPhenotype phenoThree = new AnatomyPhenotype();
-        phenoThree.setAnatomySuperTerm(anatomyTerm);
+        Phenotype phenoThree = new Phenotype();
+        phenoThree.setSuperterm(anatomyTerm);
         GenericTerm termThree = new GenericTerm();
         String angry = "angry";
         termThree.setTermName(angry);
@@ -183,18 +183,19 @@ public class PhenotypeServiceTest {
         assertEquals(pink, iterator.next());
 
         terms = termIterator.next();
-        assertEquals(CILIUM, terms);
-        assertTrue(map.get(CILIUM).size() == 3);
-        desc = map.get(CILIUM);
+        assertEquals("cilium:pronephros", terms);
+        assertTrue(map.get("cilium:pronephros").size() == 3);
+        desc = map.get("cilium:pronephros");
         iterator = desc.iterator();
         assertEquals(cystic, iterator.next());
         assertEquals(disorganized, iterator.next());
         assertEquals(lightPurple, iterator.next());
 
         terms = termIterator.next();
-        assertEquals(muscleCell, terms);
-        assertTrue(map.get(muscleCell).size() == 3);
-        desc = map.get(muscleCell);
+        final String name = "pronephros:" + muscleCell;
+        assertEquals(name, terms);
+        assertTrue(map.get(name).size() == 3);
+        desc = map.get(name);
         iterator = desc.iterator();
         assertEquals(diastatic, iterator.next());
         assertEquals(increasedSize, iterator.next());
@@ -202,8 +203,8 @@ public class PhenotypeServiceTest {
     }
 
     private Phenotype getAOPhenotype(String phenotypeName) {
-        AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setAnatomySuperTerm(anatomyTerm);
+        Phenotype pheno = new Phenotype();
+        pheno.setSuperterm(anatomyTerm);
         GenericTerm term = new GenericTerm();
         term.setTermName(phenotypeName);
         pheno.setTerm(term);
@@ -211,9 +212,9 @@ public class PhenotypeServiceTest {
     }
 
     private Phenotype getCellAOPhenotype(String cellPhenotypeName) {
-        AnatomyPhenotype pheno = new AnatomyPhenotype();
-        pheno.setAnatomySubTerm(anatomyTerm);
-        pheno.setAnatomySuperTerm(cellAnatomyTerm);
+        Phenotype pheno = new Phenotype();
+        pheno.setSubterm(anatomyTerm);
+        pheno.setSuperterm(cellAnatomyTerm);
         GenericTerm term = new GenericTerm();
         term.setTermName(cellPhenotypeName);
         pheno.setTerm(term);
@@ -221,14 +222,14 @@ public class PhenotypeServiceTest {
     }
 
     private Phenotype getGOPhenotype(String goPhenotypeName) {
-        ComposedPhenotype pheno = new ComposedPhenotype();
-        GoTerm goterm = new GoTerm();
-        goterm.setName(CILIUM);
-        pheno.setGoSubTerm(goterm);
+        Phenotype pheno = new Phenotype();
+        Term goterm = new GenericTerm();
+        goterm.setTermName(CILIUM);
+        pheno.setSubterm(goterm);
         GenericTerm term = new GenericTerm();
         term.setTermName(goPhenotypeName);
         pheno.setTerm(term);
-        pheno.setAnatomySuperTerm(anatomyTerm);
+        pheno.setSuperterm(anatomyTerm);
         return pheno;
     }
 }

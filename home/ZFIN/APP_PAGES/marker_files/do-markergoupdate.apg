@@ -63,8 +63,8 @@ PREFIX: mkrgoupdate_
 
   <?MIVAR NAME=mkrgoupdate_annexist>f<?/MIVAR>
 
-   <?MISQL SQL="select goterm_zdb_id, goterm_name, goterm_ontology from go_term 
-				where goterm_go_id like '$go_num';">
+   <?MISQL SQL="select term_zdb_id, term_name, term_ontology from term
+				where term_ont_id = '$go_num';">
    <?/MISQL>
    <?MIVAR NAME=$go_zdb_id>$1<?/MIVAR>
    <?MIVAR NAME=$go_term>$(URLENCODE,$2)<?/MIVAR>
@@ -77,7 +77,7 @@ PREFIX: mkrgoupdate_
 	<?MISQL SQL="select mrkrgoev_zdb_id 
 		       from marker_go_term_evidence 
 		      where mrkrgoev_mrkr_zdb_id   = '$OID'
-			and mrkrgoev_go_term_zdb_id ='$go_zdb_id'
+			and mrkrgoev_term_zdb_id ='$go_zdb_id'
 			and mrkrgoev_source_zdb_id ='$pub_id' 
 			and mrkrgoev_evidence_code ='$evidence_code'
 			and mrkrgoev_zdb_id not in (select infgrmem_mrkrgoev_zdb_id 
@@ -128,11 +128,11 @@ PREFIX: mkrgoupdate_
    <?MIVAR COND="$(EC,$is_not,true)" NAME="flag">not<?/MIVAR> 
    <?MIVAR COND="$(EC,$contributes,true)" NAME="flag">contributes to<?/MIVAR> 
    <?MISQL COND="$(NE,$flag,)" SQL="
-	insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id,mrkrgoev_go_term_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_evidence_code, mrkrgoev_notes, mrkrgoev_date_entered, mrkrgoev_date_modified, mrkrgoev_contributed_by, mrkrgoev_modified_by,mrkrgoev_gflag_name)
+	insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id,mrkrgoev_term_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_evidence_code, mrkrgoev_notes, mrkrgoev_date_entered, mrkrgoev_date_modified, mrkrgoev_contributed_by, mrkrgoev_modified_by,mrkrgoev_gflag_name)
         		values ('$evnew_id','$OID','$go_zdb_id','$pub_id', '$evidence_code', '$notes', CURRENT, CURRENT, '$ZDB_name', '$ZDB_name','$flag');">
    <?/MISQL>
    <?MISQL COND="$(EC,$flag,)" SQL="
-	insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id,mrkrgoev_go_term_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_evidence_code, mrkrgoev_notes, mrkrgoev_date_entered, mrkrgoev_date_modified, mrkrgoev_contributed_by, mrkrgoev_modified_by)
+	insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id,mrkrgoev_term_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_evidence_code, mrkrgoev_notes, mrkrgoev_date_entered, mrkrgoev_date_modified, mrkrgoev_contributed_by, mrkrgoev_modified_by)
         		values ('$evnew_id','$OID','$go_zdb_id','$pub_id', '$evidence_code', '$notes', CURRENT, CURRENT, '$ZDB_name', '$ZDB_name');">
    <?/MISQL>
 

@@ -121,62 +121,41 @@
 
   <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENO)">
     <?MIVAR NAME=phmview_entity_sql>
-	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-               from $phmview_input_figentity_table, anatomy_item
-              where t_superterm_zdb_id = anatitem_zdb_id 
+	     select term_zdb_id, term_name, lower(term_name)
+               from $phmview_input_figentity_table, term
+              where t_superterm_zdb_id = term_zdb_id
 	  UNION
-	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-               from $phmview_input_figentity_table, anatomy_item
-              where t_subterm_zdb_id = anatitem_zdb_id
-          UNION
-            select goterm_go_id, goterm_name, lower(goterm_name), 'go'
-                from $phmview_input_figentity_table, go_term
-               where t_superterm_zdb_id = goterm_zdb_id 
-          UNION
-            select goterm_go_id, goterm_name, lower(goterm_name), 'go'
-                from $phmview_input_figentity_table, atomic_phenotype, go_term
-               where t_subterm_zdb_id = goterm_zdb_id 
+	     select term_zdb_id, term_name, lower(term_name)
+               from $phmview_input_figentity_table, term
+              where t_subterm_zdb_id = term_zdb_id
     <?/MIVAR>
   <?MIELSE>
     <?MIVAR NAME=phmview_entity_sql>
-	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-               from $phmview_input_table, atomic_phenotype, anatomy_item
+	     select term_zdb_id, term_name, lower(term_name)
+               from $phmview_input_table, atomic_phenotype, term
               where t_pato_zdb_id = apato_zdb_id
-	        and apato_subterm_zdb_id = anatitem_zdb_id 
+	        and apato_subterm_zdb_id = term_zdb_id
 	        and apato_tag != 'normal'
 	  UNION
-	     select anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
-               from $phmview_input_table, atomic_phenotype, anatomy_item
+	     select term_zdb_id, term_name, lower(term_name)
+               from $phmview_input_table, atomic_phenotype, term
               where t_pato_zdb_id = apato_zdb_id
-	        and apato_superterm_zdb_id = anatitem_zdb_id
+	        and apato_superterm_zdb_id = term_zdb_id
 	        and apato_tag != 'normal'
-          UNION
-            select goterm_go_id, goterm_name, lower(goterm_name), 'go'
-                from $phmview_input_table, atomic_phenotype, go_term
-               where t_pato_zdb_id = apato_zdb_id
-               and apato_subterm_zdb_id = goterm_zdb_id 
-               and apato_tag != 'normal'
-          UNION
-            select goterm_go_id, goterm_name, lower(goterm_name), 'go'
-                from $phmview_input_table, atomic_phenotype, go_term
-               where t_pato_zdb_id = apato_zdb_id
-               and apato_superterm_zdb_id = goterm_zdb_id 
-               and apato_tag != 'normal'
     <?/MIVAR>
   <?/MIBLOCK>
 
   <?MICOMMENT> *** display the phenotype block for gene or MO page <?/MICOMMENT>
   <?MIBLOCK COND="$(NE,$(SUBSTR,$OID,1,8),ZDB-GENO)">
     
-    <?MISQL SQL="$phmview_entity_sql order by 3;">     
-      <?MIBLOCK COND=$(EC,$4,anatomy)>
-         <?MIVAR NAME=phmview_anatitem_html><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$1>$2</a></span><?/MIVAR>
-      <?MIELSE>
-         <?MIVAR NAME=phmview_anatitem_html><span nowrap><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:$1>$2</a></span><?/MIVAR>          
-      <?/MIBLOCK>
+    <?MIVAR name="indexCount">$MI_CURRENTROW<?/MIVAR>
+    <?MISQL SQL="$phmview_entity_sql order by lower(term_name);">
+        <?MISQL SQL="execute function get_entity_name_html('$1')">
+                 <?MIVAR NAME=phmview_anatitem_html><span nowrap>$1</span><?/MIVAR>
+         <?/MISQL>
 
       $(SETVAR,$phmview_entity_counter,$(+,$phmview_entity_counter,1))
-        <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+        <?MIBLOCK COND=$(=,$indexCount,1)>
      	  <?MIVAR NAME=phmview_entity_short_list>$phmview_anatitem_html<?/MIVAR>
       	  <?MIVAR NAME=phmview_entity_long_list>$phmview_anatitem_html<?/MIVAR>         
 	<?MIELSE>

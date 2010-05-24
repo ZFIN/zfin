@@ -16,11 +16,13 @@ import java.util.Set;
  * This business object defines an anatomical structure, aka anatomy item or anatomy term.
  * <p/>
  * <p/>
- * ToDo: This class needs to be refactored to allow for a common interface for a term in any ontology.
+ * ToDo: This class is replaced by the Term / GenericTerm class. Do not use it unless you need the
+ * information about start and end stage info to join in a table. The stage info on the GenericTerm class
+ * is not populated through a Hibernate Mapping since the stages are terms on the ao term (TERM table) but
+ * do not contain all the info that the STAGE table contains.
  */
-public class AnatomyItem implements Term, Comparable<AnatomyItem> {
+public class AnatomyItem implements Term {
 
-    public static final String UNSPECIFIED = "unspecified";
     private long itemID;
     private String zdbID;
     private String name;
@@ -262,10 +264,12 @@ public class AnatomyItem implements Term, Comparable<AnatomyItem> {
         return relationships;
     }
 
-    public int compareTo(AnatomyItem term) {
+    public int compareTo(Term term) {
         if (term == null)
             return +1;
-        return nameOrder.compareTo(term.getNameOrder());
+        if (term instanceof AnatomyItem)
+            return nameOrder.compareTo(((AnatomyItem)term).getNameOrder());
+        return +1;
     }
 
     public boolean equals(AnatomyItem anotherAO) {
@@ -291,32 +295,33 @@ public class AnatomyItem implements Term, Comparable<AnatomyItem> {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         int hash = 37;
         if (definition != null)
             hash = hash * definition.hashCode();
-        if(description != null)
+        if (description != null)
             hash += hash * description.hashCode();
-        if(name != null)
+        if (name != null)
             hash += hash * name.hashCode();
-        if(nameOrder != null)
+        if (nameOrder != null)
             hash += hash * nameOrder.hashCode();
-        if(oboID != null)
+        if (oboID != null)
             hash += hash * oboID.hashCode();
-        if(zdbID != null)
+        if (zdbID != null)
             hash += hash * zdbID.hashCode();
-        if(start != null)
+        if (start != null)
             hash += hash * start.hashCode();
-        if(end != null)
+        if (end != null)
             hash += hash * end.hashCode();
         return hash;
     }
 
     /**
      * Retrieves all terms that are immediate children of this term.
+     *
      * @return list of children terms
      */
-    public List<Term> getChildrenTerms(){
+    public List<Term> getChildrenTerms() {
         // ToDo: To be implemented
         throw new RuntimeException("Not yet implemented");
     }

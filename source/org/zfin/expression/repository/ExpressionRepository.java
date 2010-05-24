@@ -197,10 +197,6 @@ public interface ExpressionRepository {
      */
     void deleteExpressionResultPerFigure(ExpressionResult result, Figure figure);
 
-    void createGOExpressionResult(GoTermExpressionResult newExpression, Figure figure);
-
-    void createAnatomyExpressionResult(AnatomyExpressionResult newExpression, Figure figure);
-
     /**
      * Retrieve a phenotype based on a given phenotype with
      * genox, start, end, pub, superterm = 'unspecified'
@@ -229,4 +225,13 @@ public interface ExpressionRepository {
      * @return GenotypeExperiment
      */
     GenotypeExperiment getGenotypeExperimentByGenotypeID(String zdbID);
+
+    /**
+     * Create all expression structures being used in a given publication.
+     *
+     * @param publicationID publication id
+     */
+    void createExpressionPile(String publicationID);
+
+    void createPileStructure(ExpressionStructure structure);
 }

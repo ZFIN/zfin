@@ -174,15 +174,15 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
   <?MIVAR NAME=infername><?/MIVAR>
 
 <?MISQL SQL="
-       select  distinct goterm_ontology,goterm_name,mrkrgoev_evidence_code,gont_order,goterm_go_id,
-	      mrkrgoev_go_term_zdb_id,mrkrgoev_zdb_id, mrkrgoev_source_zdb_id,
+       select  distinct gont_ontology_name,term_name,mrkrgoev_evidence_code,gont_order,term_ont_id,
+	      mrkrgoev_term_zdb_id,mrkrgoev_zdb_id, mrkrgoev_source_zdb_id,
 	      mrkrgoev_notes, mrkrgoev_gflag_name, infgrmem_inferred_from 
-	 from go_term, marker_go_term_evidence, go_ontology, outer inference_group_member
+	 from term, marker_go_term_evidence, go_ontology, outer inference_group_member
 	where mrkrgoev_mrkr_zdb_id='$OID' 
-	  and mrkrgoev_go_term_zdb_id=goterm_zdb_id 
-	  and goterm_ontology=gont_ontology_name 
+	  and mrkrgoev_term_zdb_id=term_zdb_id
+	  and term_ontology=gont_ontology_internal_name
         and mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id
-        order by gont_order,mrkrgoev_evidence_code,goterm_name, infgrmem_inferred_from, mrkrgoev_gflag_name">
+        order by gont_order,mrkrgoev_evidence_code,term_name, infgrmem_inferred_from, mrkrgoev_gflag_name">
 
    <?MIVAR NAME=$ontology>$1<?/MIVAR>
    <?MIVAR NAME=$goterm>$2<?/MIVAR>
@@ -288,7 +288,7 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
 		   from marker_go_term_evidence
      		  where mrkrgoev_evidence_code='$evidence' 
 		    and mrkrgoev_mrkr_zdb_id='$OID'
-		    and mrkrgoev_go_term_zdb_id ='$gozdbid'
+		    and mrkrgoev_term_zdb_id ='$gozdbid'
 		    and mrkrgoev_zdb_id <> '$markergoevid'
             and exists (
                 select 'x' from inference_group_member
@@ -302,7 +302,7 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
 		   from marker_go_term_evidence
 		  where mrkrgoev_evidence_code='$evidence' 
 		    and mrkrgoev_mrkr_zdb_id='$OID'
-		    and mrkrgoev_go_term_zdb_id ='$gozdbid'
+		    and mrkrgoev_term_zdb_id ='$gozdbid'
             and mrkrgoev_zdb_id not in (
                    select infgrmem_mrkrgoev_zdb_id 
                    from inference_group_member 
@@ -330,7 +330,7 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
 		   from marker_go_term_evidence
 		  where mrkrgoev_evidence_code='$evidence' 
 		    and mrkrgoev_mrkr_zdb_id='$OID'
-		    and mrkrgoev_go_term_zdb_id ='$gozdbid'
+		    and mrkrgoev_term_zdb_id ='$gozdbid'
              and mrkrgoev_Zdb_id not in 
              (
               select infgrmem_mrkrgoev_zdb_id 
@@ -346,7 +346,7 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
 		   from marker_go_term_evidence
 		  where mrkrgoev_evidence_code='$evidence' 
 		    and mrkrgoev_mrkr_zdb_id='$OID'
-		    and mrkrgoev_go_term_zdb_id ='$gozdbid'
+		    and mrkrgoev_term_zdb_id ='$gozdbid'
             and mrkrgoev_zdb_id in 
             (
              select distinct infgrmem_mrkrgoev_zdb_id 

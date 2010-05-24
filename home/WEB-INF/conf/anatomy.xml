@@ -25,6 +25,7 @@
                 <prop key="/anatomy/show-phenotype-mutants">ajaxAnatomy</prop>
                 <prop key="/anatomy/show-phenotype-morpholinos">ajaxAnatomy</prop>
                 <prop key="/anatomy/show-phenotype-non-wildtype-morpholinos">ajaxAnatomy</prop>
+                <prop key="/ontology/term-detail">showTermDetail</prop>
             </props>
         </property>
     </bean>
@@ -33,6 +34,8 @@
     <bean name="anatomyTermInfo" class="org.zfin.anatomy.presentation.AnatomyTermInfoController" autowire="byName"/>
 
     <bean name="antibodySummary" class="org.zfin.anatomy.presentation.AntibodySummaryController" autowire="byName"/>
+
+    <bean name="showTermDetail" class="org.zfin.ontology.presentation.OntologyTermDetailController" autowire="byName"/>
 
     <bean name="anatomySearch" class="org.zfin.anatomy.presentation.AnatomySearchController" autowire="byName">
         <property name="redirectUrlIfSingleResult">

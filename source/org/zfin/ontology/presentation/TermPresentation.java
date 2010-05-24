@@ -8,7 +8,7 @@ import org.zfin.ontology.Term;
  */
 public class TermPresentation extends EntityPresentation {
 
-    private static final String uri = "dev-tools/ontology-term-detail?action=" + OntologyBean.ActionType.SHOW_TERM + "&termID=";
+    private static final String uri = "ontology/term-detail?termID=";
 
     /**
      * Create hyperlink to term detail page.
@@ -28,7 +28,7 @@ public class TermPresentation extends EntityPresentation {
      * @return html for term link
      */
     public static String getLink(Term term, String name) {
-        return getTomcatLink(uri, term.getID(), term.getTermName(), name);
+        return getTomcatLinkWithTitle(uri, term.getID(), term.getTermName(), name, term.getOntology().getCommonName());
     }
 
 }

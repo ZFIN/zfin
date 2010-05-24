@@ -90,7 +90,7 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
         headerEdit.addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
             @Override
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
-                String termID = "GO:" + dataChangedEvent.getDTO().getGoTerm().getDataZdbID();
+                String termID = dataChangedEvent.getDTO().getGoTerm().getTermID();
                 lookupRPC.getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
             }
         });
@@ -175,7 +175,7 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
         if (dto == null) return;
         super.setDTO(dto);
         headerEdit.setDTO(dto);
-        String termID = "GO:" + dto.getGoTerm().getDataZdbID();
+        String termID = dto.getGoTerm().getTermID();
         lookupRPC.getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
         validateGoEvidence();
     }

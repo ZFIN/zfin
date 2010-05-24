@@ -19,7 +19,7 @@
 
 
 -- ---------------------------------------------------------------------
--- Regenerate the antibody_stats table that contains all zdb IDs needed to
+-- Regenerate the feature_stats table that contains all zdb IDs needed to
 -- create a antibody section on the AO detail page:
 -- 1) antibody ID or probe ID or ...
 -- 2) gene ID
@@ -70,13 +70,13 @@ begin
 
 end
 
-	-- Antibodies: insert records for xpatres_anat_item_zdb_id
+	-- Antibodies: insert records for xpatres_superterm_zdb_id
 	foreach
 	
-		select atb_zdb_id, allanatcon_container_zdb_id, xpatres_anat_item_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id 
+		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id 
 			into featureZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId, xpatresZdbId
 		from antibody, genotype_experiment, expression_experiment, expression_result, 
-			 experiment, figure, expression_pattern_figure, genotype, all_anatomy_contains
+			 experiment, figure, expression_pattern_figure, genotype, all_terms_contains
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
@@ -87,21 +87,21 @@ end
 		and exp_name in ('_Standard', '_Generic-control')
 		and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
-		and allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
-		and xpatres_anat_item_zdb_id !='ZDB-ANAT-041102-1'
+		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
+		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055'
 
 		insert into feature_stats_temp 
 			values (featureZdbId, supertermZdbId,subtermZdbId, geneZdbId, figureZdbId, pubZdbId, xpatresZdbId,'Antibody');
 	
 	end foreach
 
-	-- Antibodies: insert records for xpatres_term_zdb_id
+	-- Antibodies: insert records for xpatres_subterm_zdb_id
 	foreach
 	
-		select atb_zdb_id, allanatcon_container_zdb_id, xpatres_term_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id 
-			into atbZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId, xpatresZdbId
+		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id 
+			into featureZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId, xpatresZdbId
 		from antibody, genotype_experiment, expression_experiment, expression_result, 
-			 experiment, figure, expression_pattern_figure, genotype, all_anatomy_contains
+			 experiment, figure, expression_pattern_figure, genotype, all_terms_contains
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
@@ -112,20 +112,20 @@ end
 		and exp_name in ('_Standard', '_Generic-control')
 		and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
-		and allanatcon_contained_zdb_id = xpatres_term_zdb_id
+		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
 
 		insert into feature_stats_temp 
 			values (featureZdbId, supertermZdbId,subtermZdbId, geneZdbId, figureZdbId, pubZdbId, xpatresZdbId,'Antibody');
 	
 	end foreach
 	
-	-- High-Quality-Probes: insert records for xpatres_anat_item_zdb_id
+	-- High-Quality-Probes: insert records for xpatres_superterm_zdb_id
 	foreach
 	
-		select clone_mrkr_zdb_id, allanatcon_container_zdb_id, xpatres_anat_item_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id 
-			into cloneZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId, xpatresZdbId
+		select clone_mrkr_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id 
+			into featureZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId, xpatresZdbId
 		from clone, genotype_experiment, expression_experiment, expression_result, 
-			 experiment, figure, expression_pattern_figure, genotype, all_anatomy_contains
+			 experiment, figure, expression_pattern_figure, genotype, all_terms_contains
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -135,8 +135,8 @@ end
 		and exp_name in ('_Standard', '_Generic-control')
 		and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
-		and allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
-		and xpatres_anat_item_zdb_id !='ZDB-ANAT-041102-1'
+		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
+		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055'
 		and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
 		and clone_rating = '4' 
 
@@ -145,13 +145,13 @@ end
 	
 	end foreach
 
-	-- High-Quality-Probes: insert records for xpatres_term_zdb_id
+	-- High-Quality-Probes: insert records for xpatres_subterm_zdb_id
 	foreach
 	
-		select clone_mrkr_zdb_id, allanatcon_container_zdb_id, xpatres_term_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id 
-			into cloneZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId, xpatresZdbId
+		select clone_mrkr_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id 
+			into featureZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId, xpatresZdbId
 		from clone, genotype_experiment, expression_experiment, expression_result, 
-			 experiment, figure, expression_pattern_figure, genotype, all_anatomy_contains
+			 experiment, figure, expression_pattern_figure, genotype, all_terms_contains
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -161,8 +161,8 @@ end
 		and exp_name in ('_Standard', '_Generic-control')
 		and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
-		and allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
-		and xpatres_anat_item_zdb_id !='ZDB-ANAT-041102-1'
+		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
+		and xpatres_subterm_zdb_id !='ZDB-TERM-100331-1055'
 		and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
 		and clone_rating = '4' 
 

@@ -10,7 +10,7 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
 
 
     private MarkerDTO markerDTO;
-    private GoTermDTO goTermDTO;
+    private TermDTO goTermDTO;
     private GoEvidenceCodeEnum evidenceCode;
     private GoEvidenceQualifier flag;
     private String note;
@@ -31,11 +31,11 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
         this.markerDTO = markerDTO;
     }
 
-    public GoTermDTO getGoTerm() {
+    public TermDTO getGoTerm() {
         return goTermDTO;
     }
 
-    public void setGoTerm(GoTermDTO goTermZdbID) {
+    public void setGoTerm(TermDTO goTermZdbID) {
         this.goTermDTO = goTermZdbID;
     }
 

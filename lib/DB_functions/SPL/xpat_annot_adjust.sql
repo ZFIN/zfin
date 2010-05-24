@@ -80,10 +80,10 @@ create function xpat_annot_adjust (
     -- -------------------------------------------------------------------
      let errorHint = "validate inputs";
     -- oldAnaitemZdbId
-     select anatitem_name
+     select term_name
        into oldAnatName
-       from anatomy_item
-      where anatitem_zdb_id = oldAnatitemZdbId;
+       from term
+      where term_zdb_id = oldAnatitemZdbId;
  
      if (oldAnatName is null) then
        raise exception -746, 0,		-- !!! ERROR EXIT
@@ -92,10 +92,10 @@ create function xpat_annot_adjust (
      end if
 
     -- newAnaitemZdbId
-     select anatitem_name
+     select term_name
        into newAnatName
-       from anatomy_item
-      where anatitem_zdb_id = newAnatitemZdbId;
+       from term
+      where term_zdb_id = newAnatitemZdbId;
  
      if (newAnatName is null) then
        raise exception -746, 0,		-- !!! ERROR EXIT
@@ -139,7 +139,7 @@ create function xpat_annot_adjust (
 	  xrtb_xpatex_zdb_id		varchar(50) not null,
           xrtb_start_stg_zdb_id		varchar(50) not null,
 	  xrtb_end_stg_zdb_id		varchar(50) not null,
-          xrtb_anat_item_zdb_id		varchar(50) not null,
+          xrtb_superterm_zdb_id		varchar(50) not null,
 	  xrtb_expression_found		boolean not null,
           xrtb_comments			varchar(255)	  
 	)with no log;
@@ -154,14 +154,14 @@ create function xpat_annot_adjust (
 
      insert into xpatres_to_be_temp (xrtb_old_xpatres_zdb_id,
 				     xrtb_xpatex_zdb_id,xrtb_start_stg_zdb_id,
-				     xrtb_end_stg_zdb_id,xrtb_anat_item_zdb_id,
+				     xrtb_end_stg_zdb_id,xrtb_superterm_zdb_id,
 				     xrtb_expression_found,xrtb_comments)
 	     select xpatres_zdb_id, xpatres_xpatex_zdb_id, xpatres_start_stg_zdb_id, 
 		    xpatres_end_stg_zdb_id, newAnatitemZdbId,
 		    xpatres_expression_found, 
 		    "Translated from "||oldAnatName||", "||startStgAbbrev||"-"||endStgAbbrev
                from expression_result
-	      where xpatres_anat_item_zdb_id = oldAnatitemZdbId
+	      where xpatres_superterm_zdb_id = oldAnatitemZdbId
                 and stg_windows_overlap(startStgZdbId, endStgZdbId, 
 		          xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id) = "t";
 
@@ -182,7 +182,7 @@ create function xpat_annot_adjust (
 		  where xpatres_xpatex_zdb_id = xrtb_xpatex_zdb_id
                     and xpatres_start_stg_zdb_id = xrtb_start_stg_zdb_id
 		    and xpatres_end_stg_zdb_id = xrtb_end_stg_zdb_id
-	            and xpatres_anat_item_zdb_id = xrtb_anat_item_zdb_id
+	            and xpatres_superterm_zdb_id = xrtb_superterm_zdb_id
 		    and xpatres_expression_found = xrtb_expression_found);
 
      -- records updated here would be add into zdb_active_data and expression_result
@@ -267,11 +267,11 @@ create function xpat_annot_adjust (
 	
      insert into expression_result (xpatres_zdb_id, xpatres_xpatex_zdb_id,
 				    xpatres_start_stg_zdb_id,
-				    xpatres_end_stg_zdb_id,xpatres_anat_item_zdb_id,
+				    xpatres_end_stg_zdb_id,xpatres_superterm_zdb_id,
 			            xpatres_expression_found,xpatres_comments)
 	   select xrtb_xpatres_zdb_id, xrtb_xpatex_zdb_id,
 		  xrtb_start_stg_zdb_id, xrtb_end_stg_zdb_id,
-		  xrtb_anat_item_zdb_id, xrtb_expression_found,
+		  xrtb_superterm_zdb_id, xrtb_expression_found,
 		  xrtb_comments
              from xpatres_to_be_temp;
      

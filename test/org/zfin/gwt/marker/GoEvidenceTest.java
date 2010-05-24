@@ -115,7 +115,7 @@ public class GoEvidenceTest {
 
 
 
-        // set it to some random pub and add infereence group
+        // set it to some random pub and add inference group
         Publication publication = (Publication) HibernateUtil.currentSession().createCriteria(Publication.class).setMaxResults(1).uniqueResult();
         assertNotSame(goEvidenceDTO.getPublicationZdbID(),publication.getZdbID());
         goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.IC);

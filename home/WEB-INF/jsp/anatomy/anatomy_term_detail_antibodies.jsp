@@ -1,6 +1,8 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+
 <b>Antibodies</b>
 
 <c:if test="${formBean.antibodiesExist}">
@@ -29,7 +31,7 @@
                     <c:if test="${antibodyStats.numberOfFigures > 0}">
                         <!-- link to figure search page if more than one figure available-->
                         <c:if test="${antibodyStats.numberOfFigures > 1}">
-                            <a href='/action/antibody/figure-summary?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}&antibody.zdbID=${antibodyStats.antibody.zdbID}'>
+                            <a href='/action/antibody/figure-summary?anatomyItem.zdbID=${formBean.aoTerm.ID}&antibody.zdbID=${antibodyStats.antibody.zdbID}'>
                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                              integerEntity="${antibodyStats.numberOfFigures}"
                                              includeNumber="true"/>
@@ -58,11 +60,11 @@
         </tbody>
     </TABLE>
 </c:if>
-<zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.anatomyItem}"
+<zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.aoTerm}"
                                        recordsExist="${formBean.antibodiesExist}"
                                        anatomyStatistics="${formBean.anatomyStatisticsAntibodies}"
-                                       structureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=false&antibodyCriteria.anatomyTermNames=${formBean.anatomyItem.name}&antibodyCriteria.anatomyTermIDs=${formBean.anatomyItem.zdbID}&action=SEARCH"
-                                       substructureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=true&antibodyCriteria.anatomyTermNames=${formBean.anatomyItem.name}&antibodyCriteria.anatomyTermIDs=${formBean.anatomyItem.zdbID}&action=SEARCH"
+                                       structureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=false&antibodyCriteria.anatomyTermNames=${formBean.aoTerm.termName}&antibodyCriteria.anatomyTermIDs=${formBean.aoTerm.ID}&action=SEARCH"
+                                       substructureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=true&antibodyCriteria.anatomyTermNames=${formBean.aoTerm.termName}&antibodyCriteria.anatomyTermIDs=${formBean.aoTerm.ID}&action=SEARCH"
                                        choicePattern="0# antibodies| 1# antibody| 2# antibodies"
                                        allRecordsAreDisplayed="${formBean.allAntibodiesAreDisplayed}"
                                        totalRecordCount="${formBean.antibodyCount}"/>

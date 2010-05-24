@@ -1,7 +1,6 @@
 package org.zfin.mutant;
 
 import org.apache.commons.lang.StringUtils;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 
@@ -22,7 +21,7 @@ public class PhenotypeService {
      * @param anatomyItem        Anatomy Term
      * @return HashMap
      */
-    public static Map<String, Set<String>> getPhenotypesGroupedByOntology(GenotypeExperiment genotypeExperiment, AnatomyItem anatomyItem) {
+    public static Map<String, Set<String>> getPhenotypesGroupedByOntology(GenotypeExperiment genotypeExperiment, Term anatomyItem) {
         if (genotypeExperiment == null)
             return null;
         if (anatomyItem == null)
@@ -33,21 +32,23 @@ public class PhenotypeService {
         Map<String, Set<String>> map = new TreeMap<String, Set<String>>(new PhenotypeComparator());
 
         for (Phenotype phenotype : genotypeExperiment.getPhenotypes()) {
-            Term subTerm = phenotype.getSubTerm();
-            if (StringUtils.equals(phenotype.getSuperterm().getID(), anatomyItem.getZdbID()) ||
-                    (subTerm != null && StringUtils.equals(subTerm.getID(), anatomyItem.getZdbID()))) {
+            Term subTerm = phenotype.getSubterm();
+            if (StringUtils.equals(phenotype.getSuperterm().getID(), anatomyItem.getID()) ||
+                    (subTerm != null && StringUtils.equals(subTerm.getID(), anatomyItem.getID()))) {
                 StringBuilder keyBuilder = new StringBuilder(50);
                 if (subTerm != null) {
-                    if (phenotype instanceof ComposedPhenotype) {
-                        keyBuilder.append(phenotype.getSubTerm().getTermName());
+                    keyBuilder.append(phenotype.getSubterm().getTermName());
+                    Term anatomyTerm = phenotype.getSuperterm();
+                    keyBuilder.append(":");
+                    keyBuilder.append(anatomyTerm.getTermName());
+                    ////TODO
+/*
+                    if (anatomyTerm.isCellTerm()) {
+                        keyBuilder.append(anatomyTerm.getName());
                     } else {
-                        AnatomyItem anatomyTerm = phenotype.getAnatomySuperTerm();
-                        if (anatomyTerm.isCellTerm()) {
-                            keyBuilder.append(anatomyTerm.getName());
-                        } else {
-                            keyBuilder.append(ANATOMY);
-                        }
+                        keyBuilder.append(ANATOMY);
                     }
+*/
                 } else {
                     keyBuilder.append(ANATOMY);
                 }
@@ -105,8 +106,8 @@ public class PhenotypeService {
         Phenotype defaultPhenotype = null;
         if (genotypeExperiment.getPhenotypes() != null) {
             for (Phenotype phenotype : genotypeExperiment.getPhenotypes()) {
-                if (phenotype.getAnatomySuperTerm() != null && phenotype.getAnatomySuperTerm().getName().equals(AnatomyItem.UNSPECIFIED))
-                    if (phenotype.getSubTerm() == null)
+                if (phenotype.getSuperterm() != null && phenotype.getSuperterm().getTermName().equals(Term.UNSPECIFIED))
+                    if (phenotype.getSubterm() == null)
                         if (phenotype.getTerm().getTermName().equals("quality"))
                             if (phenotype.getTag().equals(Phenotype.Tag.ABNORMAL.toString())) {
                                 if (phenotype.getStartStage().equals(mfs.getStart()) && phenotype.getEndStage().equals(mfs.getEnd()))

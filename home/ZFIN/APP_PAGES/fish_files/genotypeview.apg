@@ -534,14 +534,14 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
 
       <?MIVAR NAME=genovw_entity_counter>0<?/MIVAR>
       <?MISQL SQL="$genovw_entity_sql1 order by 3;">     
-        <?MIBLOCK COND=$(EC,$4,anatomy)>
-          <?MIVAR NAME=genovw_anatitem_html><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$1>$2</a></span><?/MIVAR>
-        <?MIELSE>
-          <?MIVAR NAME=genovw_anatitem_html><span nowrap><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:$1>$2</a></span><?/MIVAR>          
-        <?/MIBLOCK>
 
+      <?MIVAR name=currentIndex>$MI_CURRENTROW<?/MIVAR>
+        <?MISQL SQL="execute function get_entity_name_html('$1')">
+                 <?MIVAR NAME=genovw_anatitem_html><span nowrap>$1</span><?/MIVAR>
+         <?/MISQL>
+      	      
         $(SETVAR,$genovw_entity_counter,$(+,$genovw_entity_counter,1))
-        <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+        <?MIBLOCK COND=$(=,$currentIndex,1)>
      	  <?MIVAR NAME=genovw_entity_short_list1>$genovw_anatitem_html<?/MIVAR>
       	  <?MIVAR NAME=genovw_entity_long_list1>$genovw_anatitem_html<?/MIVAR>         
 	<?MIELSE>
@@ -567,12 +567,12 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
             <?MIVAR>
    	    function expandAnatomyList1() {
      	       var elem = document.getElementById("anatomyList1");
-               elem.innerHTML = "$genovw_entity_long_list_escp1 <a href=javascript:onClick=shrinkAnatomyList1()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+               elem.innerHTML = '$genovw_entity_long_list_escp1 <a href=javascript:onClick=shrinkAnatomyList1()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>';	
 	    }
 
    	    function shrinkAnatomyList1() {
      	       var elem = document.getElementById("anatomyList1");
-               elem.innerHTML = "$genovw_entity_short_list_escp1 ... <a href=javascript:onClick=expandAnatomyList1()>(all $genovw_entity_totalnum1) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+               elem.innerHTML = '$genovw_entity_short_list_escp1 ... <a href=javascript:onClick=expandAnatomyList1()>(all $genovw_entity_totalnum1) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>';	
 	    }
 	    <?/MIVAR>
           </script> 

@@ -2,6 +2,7 @@ package org.zfin.expression.presentation;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     private Figure figure;
     private int imgCount;
     private String thumbnail;
-    private List<AnatomyItem> anatomyItems;
+    private List<Term> terms;
 
     private boolean publicationDisplayed;
 
@@ -39,12 +40,12 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
         this.thumbnail = thumbnail;
     }
 
-    public List<AnatomyItem> getAnatomyItems() {
-        return anatomyItems;
+    public List<Term> getTerms() {
+        return terms;
     }
 
-    public void setAnatomyItems(List<AnatomyItem> anatomyItems) {
-        this.anatomyItems = anatomyItems;
+    public void setTerms(List<Term> terms) {
+        this.terms = terms;
     }
 
     public boolean isPublicationDisplayed() {

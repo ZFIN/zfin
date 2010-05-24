@@ -108,10 +108,10 @@ function call_done() {
 
     <h1 align=center>GO Annotation Editor</h1>
     <?MISQL SQL="
-        select goterm_go_id,mrkrgoev_evidence_code,mrkrgoev_notes,mrkrgoev_source_zdb_id, goterm_name,mrkrgoev_zdb_id,mrkrgoev_gflag_name
-	from marker_go_term_evidence,go_term
+        select term_ont_id,mrkrgoev_evidence_code,mrkrgoev_notes,mrkrgoev_source_zdb_id, term_name,mrkrgoev_zdb_id,mrkrgoev_gflag_name
+	from marker_go_term_evidence,term
 	where mrkrgoev_zdb_id='$OID'  
-	  and mrkrgoev_go_term_zdb_id=goterm_zdb_id;">
+	  and mrkrgoev_term_zdb_id=term_zdb_id;">
 
       <?MIVAR NAME=$go_id>$1<?/MIVAR>  
       <?MIVAR NAME=$evidence_code>$(TRIM,$2)<?/MIVAR>

@@ -2069,18 +2069,18 @@ union
 
 <!-- use vector storing the three ontology and loop through -->
 <?MIVAR NAME=ontologies><?/MIVAR>
-<?MISQL SQL="select gont_ontology_name from go_ontology order by gont_order">
+<?MISQL SQL="select distinct term_ontology from term where term_ont_id like 'GO:%' order by term_ontology">
 	$(SETVAR,$ontologies[$MI_CURRENTROW],$1)
 <?/MISQL>
 <?MIBLOCK INDEX=$ontology FOREACH=$ontologies>
     <?MISQL SQL="
-      select first 1 mrkrgoev_zdb_id, go_term, mrkrgoev_gflag_name
-        from go_term,go_evidence_code, marker_go_term_evidence
+      select first 1 mrkrgoev_zdb_id, term_name, mrkrgoev_gflag_name
+        from term,go_evidence_code, marker_go_term_evidence
         where mrkrgoev_mrkr_zdb_id = '$OID'
-          and mrkrgoev_go_term_zdb_id = goterm_zdb_id
+          and mrkrgoev_term_zdb_id = term_zdb_id
           and mrkrgoev_evidence_code = goev_code
-          and goterm_ontology = '$ontology'
-        order by goev_display_order, goterm_name">
+          and term_ontology = '$ontology'
+        order by goev_display_order, term_name">
     <?/MISQL>
    <?MIVAR NAME=$evid>$1<?/MIVAR>
    <?MIBLOCK COND="$(NE,$3,)">
@@ -2090,7 +2090,7 @@ union
 <?/MIBLOCK>
 
   <?MISQL SQL="
-        select count(distinct mrkrgoev_go_term_zdb_id) :: integer
+        select count(distinct mrkrgoev_term_zdb_id) :: integer
           from marker_go_term_evidence
          where mrkrgoev_mrkr_zdb_id = '$OID'  ;">
   <?/MISQL>
@@ -2139,13 +2139,14 @@ union
     <?MIVAR NAME=contribs>f<?/MIVAR>
 
     <?MISQL SQL="
-      select first 1 goterm_go_id, goev_display_order, goterm_name, mrkrgoev_zdb_id,mrkrgoev_gflag_name
-        from go_term, go_evidence_code, marker_go_term_evidence
+      select first 1 term_zdb_id, goev_display_order, term_name, mrkrgoev_zdb_id,mrkrgoev_gflag_name,gont_ontology_name
+        from term, go_evidence_code, marker_go_term_evidence, go_ontology
         where mrkrgoev_mrkr_zdb_id = '$OID'
-          and mrkrgoev_go_term_zdb_id = goterm_zdb_id
+          and mrkrgoev_term_zdb_id = term_zdb_id
           and mrkrgoev_evidence_code = goev_code
-          and goterm_ontology = '$ontology'
-        order by goev_display_order, goterm_name">
+          and term_ontology = '$ontology'
+	  and gont_ontology_internal_name = '$ontology'
+        order by goev_display_order, term_name">
     <?/MISQL>
 
     <?MIVAR NAME=$molgoid>$1<?/MIVAR>
@@ -2153,9 +2154,11 @@ union
     <?MIVAR NAME=$molterm>$3<?/MIVAR>
     <?MIVAR NAME=$molmrkrgoevid>$4<?/MIVAR>
     <?MIVAR NAME=flag>$5<?/MIVAR>
+    <?MIVAR NAME=ontology_name>$6<?/MIVAR>
+
 
     <?MICOMMENT>??? donot know what "'f' as mrkrgo_is_false_ref" is for ???<?/MICOMMENT>
-    <?MISQL SQL="select distinct goterm_go_id,goev_display_order,goterm_name,'f' as mrkrgo_is_false_ref from go_term,go_evidence_code,marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID' and mrkrgoev_go_term_zdb_id=goterm_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='$ontology' order by goev_display_order"><?/MISQL>
+    <?MISQL SQL="select distinct term_zdb_id,goev_display_order,term_name,'f' as mrkrgo_is_false_ref from term,go_evidence_code,marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID' and mrkrgoev_term_zdb_id=term_zdb_id and mrkrgoev_evidence_code=goev_code and term_ontology='$ontology' order by goev_display_order"><?/MISQL>
     <?MIVAR NAME=$anncount>$MI_ROWCOUNT<?/MIVAR>
 
     <?MIBLOCK COND="$(>,$flgct,0)">
@@ -2177,7 +2180,7 @@ union
   	<?MIVAR NAME=not><?/MIVAR>
    <?/MIBLOCK>
    <?MIBLOCK COND="$(>,$anncount,0)">
-	<TR><TD nowrap><?MIVAR>$ontology<?/MIVAR></TD>
+	<TR><TD nowrap><?MIVAR>$ontology_name<?/MIVAR></TD>
    <?/MIBLOCK>
    <?MIBLOCK COND="$(OR,$(EC,$contribs,t),$(EC,$isnot,t))">
      <?MIBLOCK COND="$(EC,$contribs,t)">

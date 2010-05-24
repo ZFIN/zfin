@@ -13,7 +13,6 @@
                 <prop key="/login">login</prop>
                 <prop key="/login-redirect">login</prop>
                 <prop key="/autocomplete/gene-family">autoComplete</prop>
-                <prop key="/autocomplete/anatomy-term">autoComplete</prop>
                 <prop key="/http-redirect/">httpRedirect</prop>
                 <prop key="/pagination">pagination</prop>
                 <prop key="/def-pub">defPub</prop>

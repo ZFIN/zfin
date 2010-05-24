@@ -10,7 +10,6 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.GoTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.people.Person;
 
@@ -259,14 +258,6 @@ public interface InfrastructureRepository {
      * @return DataAliasGroup entity
      */
     DataAliasGroup getDataAliasGroupByName(String name);
-
-    /**
-     * Retrieve a goterm by PK
-     *
-     * @param termID term pk
-     * @return goterm
-     */
-    GoTerm getGoTermById(String termID);
 
     /**
      * Retrieve Root of given ontology.

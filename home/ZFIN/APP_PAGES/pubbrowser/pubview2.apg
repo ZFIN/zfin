@@ -283,8 +283,8 @@ Number exists
     <b>DETAILS:</b>
   <p>
   <?MIVAR NAME=first>1<?/MIVAR>	
-  <?MISQL SQL="select goterm_name from go_term
-	       where goterm_go_id = '$goid';">		
+  <?MISQL SQL="select term_name from term
+	       where term_obo_id = '$goid';">		
   The GO term <?MIVAR><i><b>$1</b></i><?/MIVAR> associated with <?MIVAR><i><b>$abbrev</b></i><?/MIVAR> was derived from <?MIVAR>$fdbname<?/MIVAR> record (
   <?/MISQL>
   <?MISQL SQL="select conc(conc(fdb_DB_query,dblink_acc_num),fdb_url_suffix), dblink_acc_num 

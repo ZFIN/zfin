@@ -1,7 +1,6 @@
 package org.zfin.expression;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.ontology.Term;
 
@@ -14,8 +13,7 @@ import java.util.Set;
 public class ExpressionResult {
 
     private String zdbID;
-    private AnatomyItem anatomyTerm;
-    private AnatomyItem secondaryAnatomyTerm;
+    private Term superterm;
     private boolean expressionFound;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
@@ -70,14 +68,6 @@ public class ExpressionResult {
         figures.add(figure);
     }
 
-    public AnatomyItem getAnatomyTerm() {
-        return anatomyTerm;
-    }
-
-    public void setAnatomyTerm(AnatomyItem anatomyTerm) {
-        this.anatomyTerm = anatomyTerm;
-    }
-
     public DevelopmentStage getStartStage() {
         return startStage;
     }
@@ -93,16 +83,20 @@ public class ExpressionResult {
     public void setEndStage(DevelopmentStage endStage) {
         this.endStage = endStage;
     }
-
-    public AnatomyItem getSecondaryAnatomyTerm() {
-        return secondaryAnatomyTerm;
-    }
-
-    public void setSecondaryAnatomyTerm(AnatomyItem secondaryAnatomyTerm) {
-        this.secondaryAnatomyTerm = secondaryAnatomyTerm;
-    }
-    public Term getSubTerm() {
+    public Term getSubterm() {
         return subterm;
+    }
+
+    public Term getSuperterm() {
+        return superterm;
+    }
+
+    public void setSuperterm(Term superterm) {
+        this.superterm = superterm;
+    }
+
+    public void setSubterm(Term subterm) {
+        this.subterm = subterm;
     }
 
     public void removeFigure(Figure figure) {

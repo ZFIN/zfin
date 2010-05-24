@@ -235,4 +235,18 @@ public interface AnatomyRepository extends CachedRepository {
      * @return anatomical structure
      */
     AnatomyItem getAnatomyTermByOboID(String termID);
+
+    /**
+     * Retrieve the start stage for a given anatomy term, identified by its obo id.
+     * @param oboID obo id
+     * @return stage
+     */
+    DevelopmentStage getStartStage(String oboID);
+
+    /**
+     * Retrieve the end stage for a given anatomy term, identified by its obo id.
+     * @param oboID obo id
+     * @return stage
+     */
+    DevelopmentStage getEndStage(String oboID);
 }

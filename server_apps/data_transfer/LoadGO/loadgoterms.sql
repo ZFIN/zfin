@@ -235,7 +235,7 @@ insert into tmp_new_obsoletes (counter,
 	marker, 
 	tmp_obs_no_dups
   where goterm_go_id = tmp_obs_no_dups.goterm_id
-  and goterm_zdb_id = mrkrgoev_go_term_zdb_id
+  and goterm_zdb_id = mrkrgoev_term_zdb_id
   and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id 
   and goterm_is_obsolete = 'f'
    group by mrkr_name, go_term.goterm_name, goterm_comment ;
@@ -405,7 +405,7 @@ insert into sec_unload_report
 	'Pub: '||mrkrgoev_source_zdb_id
     from sec_unload, go_term, marker_go_term_Evidence
     where sec_id = "GO:"||goterm_go_id
-    and mrkrgoev_go_term_zdb_id = goterm_zdb_id ;
+    and mrkrgoev_term_zdb_id = goterm_zdb_id ;
 
 !echo "count the number of records in sec_unload_report" ;
 

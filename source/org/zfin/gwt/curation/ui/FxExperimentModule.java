@@ -115,6 +115,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
     private Button updateButton = new Button("update");
 
     private ExperimentDTO lastSelectedExperiment;
+    private ExperimentDTO lastAddedExperiment = new ExperimentDTO();
     private Set<ExperimentDTO> selectedExperiments = new HashSet<ExperimentDTO>(5);
     private List<ExperimentDTO> experiments = new ArrayList<ExperimentDTO>(15);
     private boolean showSelectedExperimentsOnly;
@@ -326,7 +327,8 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
     }
 
     public void updateGenes() {
-        curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(null));
+        MarkerDTO lastAddedMarker = lastAddedExperiment.getGene();
+        curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(lastAddedMarker));
     }
 
 
@@ -625,7 +627,6 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
         @Override
         public void onSuccess(List<MarkerDTO> genes) {
             //Window.alert("brought back: " + experiments.size());
-            String selectedValue = geneList.getSelectedText();
             geneList.clear();
             geneList.addItem("");
             int rowIndex = 1;
@@ -636,9 +637,6 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
                 }
                 rowIndex++;
             }
-//            if(!selectedValue.isEmpty()){
-//                geneList.setIndexForValue(selectedValue);
-//            }
         }
     }
 
@@ -647,7 +645,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
      * This class is called when:
      * 1) initializing the construction zone values
      * 2) copying an existing experiment into the construction zone and
-     * selecting the antibody of the selected epxeriment
+     * selecting the antibody of the selected experiment
      */
     private class AntibodySelectionListAsyncCallback extends ZfinAsyncCallback<List<MarkerDTO>> {
 
@@ -1061,6 +1059,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
                 errorElement.setError("Added new Experiment: " + newExperiment.toString());
             }
             // add this experiment to the expression section
+            lastAddedExperiment = newExperiment;
             fireEventSuccess();
         }
 

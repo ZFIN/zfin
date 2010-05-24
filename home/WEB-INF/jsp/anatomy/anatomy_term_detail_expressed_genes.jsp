@@ -1,8 +1,10 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+
 <b>
-    <span title="Genes with Most Figures, annotated to ${formBean.anatomyItem.name}, substructures excluded">
+    <span title="Genes with Most Figures, annotated to ${formBean.aoTerm.termName}, substructures excluded">
         Genes with Most Figures
     </span>
 </b>
@@ -26,7 +28,7 @@
                     <c:if test="${expressedGene.markerStat.numberOfFigures > 0}">
                         <c:if test="${expressedGene.markerStat.numberOfFigures > 1}">
                             <zfin:createFiguresLink marker="${expressedGene.markerStat.gene}"
-                                                    anatomyItem="${formBean.anatomyItem}"
+                                                    term="${formBean.aoTerm}"
                                                     numberOfFigures="${expressedGene.markerStat.numberOfFigures}"
                                                     wildtypeOnly="true"
                                                     useGeneZdbID="true"/>
@@ -53,7 +55,7 @@
         </tbody>
     </TABLE>
 </c:if>
-<zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.anatomyItem}"
+<zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.aoTerm}"
                                        recordsExist="${formBean.expressedGenesExist}"
                                        anatomyStatistics="${formBean.anatomyStatistics}"
                                        structureSearchLink="/${formBean.expressionSearchLink}"

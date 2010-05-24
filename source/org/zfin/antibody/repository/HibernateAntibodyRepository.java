@@ -1,10 +1,12 @@
 package org.zfin.antibody.repository;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.*;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 import org.hibernate.criterion.*;
 import org.zfin.Species;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
@@ -24,13 +26,13 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.AntibodyStatistics;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.hibernate.criterion.Restrictions.eq;
@@ -203,7 +205,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
 
-    public int getAntibodiesByAOTermCount(AnatomyItem aoTerm) {
+    public int getAntibodiesByAOTermCount(Term aoTerm) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Antibody.class);
         criteria.setProjection(Projections.countDistinct("zdbID"));
@@ -214,8 +216,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria results = labeling.createCriteria("expressionResults");
         // check AO1 and AO2 
         results.add(Restrictions.or(
-                Restrictions.eq("anatomyTerm", aoTerm),
-                Restrictions.eq("secondaryAnatomyTerm", aoTerm)));
+                Restrictions.eq("superterm", aoTerm),
+                Restrictions.eq("subterm", aoTerm)));
         results.add(eq("expressionFound", true));
         Criteria experiment = genotypeExperiment.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
@@ -224,7 +226,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public PaginationResult<Antibody> getAntibodiesByAOTerm(AnatomyItem aoTerm, PaginationBean paginationBean, boolean includeSubstructures) {
+    public PaginationResult<Antibody> getAntibodiesByAOTerm(Term aoTerm, PaginationBean paginationBean, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
         StringBuffer hql = new StringBuffer();
         hql.append("select distinct antibody from Antibody antibody, ExpressionExperiment expExp,  ");
@@ -237,14 +239,14 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         hql.append("       and geno = genox.genotype ");
         hql.append("       and geno.wildtype = :wildType ");
         if (includeSubstructures) {
-            hql.append("   and ( res.anatomyTerm = :aoTerm  OR res.secondaryAnatomyTerm = :aoTerm" +
-                    "                                       OR exists ( select 1 from AnatomyChildren child " +
-                    "                  where res.anatomyTerm = child.child AND child.root = :aoTerm ) " +
-                    "                                       OR exists ( select 1 from AnatomyChildren child " +
-                    "                  where res.secondaryAnatomyTerm = child.child AND child.root = :aoTerm ) " +
+            hql.append("   and ( res.superterm = :aoTerm  OR res.subterm = :aoTerm" +
+                    "                                       OR exists ( select 1 from TransitiveClosure child " +
+                    "                  where res.superterm = child.child AND child.root = :aoTerm ) " +
+                    "                                       OR exists ( select 1 from TransitiveClosure child " +
+                    "                  where res.subterm = child.child AND child.root = :aoTerm ) " +
                     ") ");
         } else
-            hql.append("       and (res.anatomyTerm = :aoTerm OR res.secondaryAnatomyTerm = :aoTerm) ");
+            hql.append("       and (res.superterm = :aoTerm OR res.subterm = :aoTerm) ");
         hql.append("       and res.expressionFound = :expressionFound ");
         hql.append("       and exp = genox.experiment ");
         hql.append("       and exp.name in (:standard , :generic ) ");
@@ -258,7 +260,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, query.scroll());
     }
 
-    public int getNumberOfFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm, Figure.Type figureType) {
+    public int getNumberOfFiguresPerAoTerm(Antibody antibody, Term aoTerm, Figure.Type figureType) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria;
         if (figureType != null && figureType == Figure.Type.TOD)
@@ -269,8 +271,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria results = criteria.createCriteria("expressionResults");
         // check AO1 and AO2
         results.add(Restrictions.or(
-                Restrictions.eq("anatomyTerm", aoTerm),
-                Restrictions.eq("secondaryAnatomyTerm", aoTerm)));
+                Restrictions.eq("superterm", aoTerm),
+                Restrictions.eq("subterm", aoTerm)));
         results.add(eq("expressionFound", true));
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
@@ -283,15 +285,15 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm) {
+    public List<Figure> getFiguresPerAoTerm(Antibody antibody, Term aoTerm) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Figure.class);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         Criteria results = criteria.createCriteria("expressionResults");
         // check AO1 and AO2
         results.add(Restrictions.or(
-                Restrictions.eq("anatomyTerm", aoTerm),
-                Restrictions.eq("secondaryAnatomyTerm", aoTerm)));
+                Restrictions.eq("superterm", aoTerm),
+                Restrictions.eq("subterm", aoTerm)));
         results.add(eq("expressionFound", true));
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
@@ -304,25 +306,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return (List<Figure>) labeling.list();
     }
 
-    private Criteria QueryBlockPublicationsWithFiguresPerAoTerm(Antibody antibody, AnatomyItem aoTerm) {
-        Session session = HibernateUtil.currentSession();
-        Criteria pubs = session.createCriteria(Publication.class);
-        Criteria labeling = pubs.createCriteria("expressionExperiments");
-        labeling.add(eq("antibody", antibody));
-        Criteria results = labeling.createCriteria("expressionResults");
-        results.add(eq("anatomyTerm", aoTerm));
-        results.add(isNotEmpty("figures"));
-        results.add(eq("expressionFound", true));
-        Criteria genotypeExperiment = labeling.createCriteria("genotypeExperiment");
-        Criteria genotype = genotypeExperiment.createCriteria("genotype");
-        genotype.add(Restrictions.eq("wildtype", true));
-        Criteria experiment = genotypeExperiment.createCriteria("experiment");
-        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
-        return pubs;
-    }
-
     @SuppressWarnings("unchecked")
-    public PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, AnatomyItem aoTerm) {
+    public PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, Term aoTerm) {
         Session session = HibernateUtil.currentSession();
         Criteria pubs = session.createCriteria(Publication.class);
         Criteria labeling = pubs.createCriteria("expressionExperiments");
@@ -330,8 +315,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria results = labeling.createCriteria("expressionResults");
         // check AO1 and AO2
         results.add(Restrictions.or(
-                Restrictions.eq("anatomyTerm", aoTerm),
-                Restrictions.eq("secondaryAnatomyTerm", aoTerm)));
+                Restrictions.eq("superterm", aoTerm),
+                Restrictions.eq("subterm", aoTerm)));
         results.add(isNotEmpty("figures"));
         results.add(eq("expressionFound", true));
         Criteria genotypeExperiment = labeling.createCriteria("genotypeExperiment");
@@ -397,7 +382,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
      * 2) host Species if not 'ANY" is set
      * 3) immunogen species if not 'ANY" is set
      *
-     * @param searchCriteria     antibody criteria
+     * @param searchCriteria antibody criteria
      * @return string
      */
     private String getAntibodiesByNameAndLabelingQueryBlock(AntibodySearchCriteria searchCriteria) {
@@ -471,15 +456,16 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             int numberOfTerms = searchCriteria.getTermIDs().length;
             for (int i = 0; i < numberOfTerms; i++) {
                 hql.append("    ( exists ( select result from ExpressionResult result " +
-                        "                  where (   result.anatomyTerm.zdbID = :aoTermID_" + i +
-                        "                         OR result.secondaryAnatomyTerm.zdbID = :aoTermID_" + i + ")" +
+                        "                  where (   (result.superterm.ID = :aoTermID_" + i + ")"+
+                        "                         OR result.subterm.ID = :aoTermID_" + i + ")" +
                         "                     AND result.expressionExperiment = experiment" +
                         "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
                         "                     AND result.expressionExperiment.genotypeExperiment.experiment.name in (:standard , :generic )" +
                         "                     AND result.expressionFound = 't' ) ");
                 if (searchCriteria.isIncludeSubstructures())
-                    hql.append("     OR exists ( select result from ExpressionResult result, AnatomyChildren child " +
-                            "                  where (result.anatomyTerm = child.child OR result.secondaryAnatomyTerm = child.child) " +
+                    hql.append("     OR exists ( select result from ExpressionResult result, TransitiveClosure child " +
+                            "                  where (result.superterm = child.child OR " +
+                            "                         result.subterm = child.child) " +
                             "                       AND child.root = :aoTermID_" + i +
                             "                     AND result.expressionExperiment = experiment" +
                             "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
@@ -519,16 +505,16 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     }
 
-    public List<AntibodyStatistics> getAntibodyStatistics(AnatomyItem aoTerm, PaginationBean pagination, boolean includeSubstructures) {
+    public List<AntibodyStatistics> getAntibodyStatistics(Term aoTerm, PaginationBean pagination, boolean includeSubstructures) {
 
-        String hql ;
+        String hql;
         // loop over all antibodyAOStatistic records until the given number of distinct antibodies from the pagination
         // bean is reached.
         if (includeSubstructures)
             hql = "  from AntibodyAOStatistics stat fetch all properties" +
                     "     where stat.superterm = :aoterm";
         else
-            hql = " select stat from AntibodyAOStatistics stat fetch all properties" +
+            hql = " select distinct stat from AntibodyAOStatistics stat fetch all properties" +
                     "     where stat.superterm = :aoterm " +
                     "           and stat.subterm = :aoterm ";
 
@@ -543,7 +529,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             populateAntibodyStatisticsRecord(antibodyStat, list, aoTerm);
         }
         // remove the last entity as it is beyond the display limit.
-        if (list.size() > pagination.getMaxDisplayRecords()){
+        if (list.size() > pagination.getMaxDisplayRecords()) {
             list.remove(list.size() - 1);
         }
         scrollableResults.close();
@@ -553,11 +539,11 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         // them into single entities. Need to populate one more entity than requested to collect
         // all information pertaining to that record. Have to remove that last entity.
 
-        return list ;
+        return list;
     }
 
     @Override
-    public int getAntibodyCount(AnatomyItem aoTerm, boolean includeSubstructures) {
+    public int getAntibodyCount(Term aoTerm, boolean includeSubstructures) {
         String hql;
         if (includeSubstructures) {
             hql = "select count(distinct stat.antibody) " +
@@ -606,7 +592,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
      * @param aoTerm anatomy term
      * @param list   antibodyStatistics objects to be manipulated.
      */
-    private void populateAntibodyStatisticsRecord(AntibodyAOStatistics record, List<AntibodyStatistics> list, AnatomyItem aoTerm) {
+    private void populateAntibodyStatisticsRecord(AntibodyAOStatistics record, List<AntibodyStatistics> list, Term aoTerm) {
 
         if (record == null || record.getAntibody() == null)
             return;

@@ -1,10 +1,10 @@
 package org.zfin.marker;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.FigureStatistics;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -22,7 +22,7 @@ public class MarkerStatistic extends EntityStatistics {
     private int numberOfFigures;
     private FigureStatistics figureStatistics;
     private Marker gene;
-    private AnatomyItem anatomyTerm;
+    private Term anatomyTerm;
     private Set<Figure> figures;
 
     // Do not use!
@@ -31,7 +31,7 @@ public class MarkerStatistic extends EntityStatistics {
     public MarkerStatistic() {
     }
 
-    public MarkerStatistic(AnatomyItem anatomyTerm, Marker gene) {
+    public MarkerStatistic(Term anatomyTerm, Marker gene) {
         this.anatomyTerm = anatomyTerm;
         this.gene = gene;
     }
@@ -61,7 +61,7 @@ public class MarkerStatistic extends EntityStatistics {
         this.numberOfFigures = numberOfFigures;
     }
 
-    public AnatomyItem getAnatomyTerm() {
+    public Term getAnatomyTerm() {
         return anatomyTerm;
     }
 
@@ -76,10 +76,6 @@ public class MarkerStatistic extends EntityStatistics {
 
     public void setGene(Marker gene) {
         this.gene = gene;
-    }
-
-    public void setAnatomyTerm(AnatomyItem anatomyTerm) {
-        this.anatomyTerm = anatomyTerm;
     }
 
     public Figure getFigure() {

@@ -4,23 +4,26 @@ import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyService;
-import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.repository.RepositoryFactory;
+import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.Term;
+import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Controller class that serves the antibody details page.
+ * Controller class that serves a figure summary page for a given antibody and labeling structure,
+ * i.e. for a given antibody, superterm:subterm, start and end stage it lists all figures and publications.
+ * Optionally it serves figures with images only or all.
  */
 public class AntibodyFigureSummaryController extends AbstractCommandController {
-    private static final Logger LOG = Logger.getLogger(AntibodyDetailController.class);
+
+    private static final Logger LOG = Logger.getLogger(AntibodyFigureSummaryController.class);
 
     public AntibodyFigureSummaryController() {
         setCommandClass(AntibodyBean.class);
@@ -30,25 +33,24 @@ public class AntibodyFigureSummaryController extends AbstractCommandController {
         LOG.info("Start Antibody Figure Summary Controller");
         AntibodyBean form = (AntibodyBean) command;
 
-        AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-
-        Antibody ab = antibodyRepository.getAntibodyByID(form.getAntibody().getZdbID());
+        Antibody ab = getAntibodyRepository().getAntibodyByID(form.getAntibody().getZdbID());
         if (ab == null)
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAntibody().getZdbID());
 
-        AnatomyRepository anatomyItemRepository = RepositoryFactory.getAnatomyRepository();
+        Term superterm = OntologyManager.getInstance().getTermByID(form.getSuperTerm().getID());
+        form.setSuperTerm(superterm);
 
-        AnatomyItem anatomy = anatomyItemRepository.getAnatomyTermByID(form.getAnatomyItem().getZdbID());
-        form.setAnatomyItem(anatomy);
+        Term subterm = OntologyManager.getInstance().getTermByID(form.getSubTerm().getID());
+        form.setSubTerm(subterm);
 
-        DevelopmentStage startStage = anatomyItemRepository.getStage(form.getStartStage());
+        DevelopmentStage startStage = getAnatomyRepository().getStage(form.getStartStage());
         form.setStartStage(startStage);
 
-        DevelopmentStage endStage = anatomyItemRepository.getStage(form.getEndStage());
+        DevelopmentStage endStage = getAnatomyRepository().getStage(form.getEndStage());
         form.setEndStage(endStage);        
 
         AntibodyService abStat = new AntibodyService(ab);
-        abStat.createFigureSummary(form.getAnatomyItem(), form.getStartStage(), form.getEndStage(), form.isOnlyFiguesWithImg());
+        abStat.createFigureSummary(superterm, subterm, form.getStartStage(), form.getEndStage(), form.isOnlyFiguresWithImg());
         form.setAntibodyStat(abStat);
         form.setAntibody(ab);
 

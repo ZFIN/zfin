@@ -21,6 +21,10 @@ import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.Term;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -37,6 +41,7 @@ public class PublicationRepositoryTest {
 
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+    private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -103,9 +108,10 @@ public class PublicationRepositoryTest {
      */
     @Test
     public void runGetAllExpressedGenes() {
-        String zdbID = "ZDB-ANAT-010921-591";
-        AnatomyItem term = new AnatomyItem();
-        term.setZdbID(zdbID);
+        // somite
+        String zdbID = "ZDB-TERM-100331-144";
+        Term term = new GenericTerm();
+        term.setID(zdbID);
         PaginationResult<MarkerStatistic> paginationResult = publicationRepository.getAllExpressedMarkers(term, 0, 5);
         List<MarkerStatistic> list = paginationResult.getPopulatedResults();
         assertEquals("5 genes", 5, paginationResult.getPopulatedResults().size());
@@ -118,8 +124,7 @@ public class PublicationRepositoryTest {
     @Test
     public void getAllExpressedMarkersCount() {
         String termName = "somite";
-        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem term = aoRepository.getAnatomyItem(termName);
+        Term term = ontologyRepository.getTermByName(termName, Ontology.ANATOMY);
         int number1 = publicationRepository.getAllExpressedMarkers(term, 0, 5).getTotalCount();
         int number2 = publicationRepository.getAllExpressedMarkers(term, 12, 20).getTotalCount();
         assertTrue(number1 > 0);
@@ -130,9 +135,9 @@ public class PublicationRepositoryTest {
     public void getAllExpressedGenesWithMutant() {
         // lateral floor plate
         // no olig2 gene as it is expressed only in a mutant fish
-        String zdbID = "ZDB-ANAT-050711-66 ";
-        AnatomyItem term = new AnatomyItem();
-        term.setZdbID(zdbID);
+        String zdbID = "ZDB-TERM-100331-1214";
+        Term term = new GenericTerm();
+        term.setID(zdbID);
         List<MarkerStatistic> list = publicationRepository.getAllExpressedMarkers(term, 0, 10).getPopulatedResults();
 //        assertEquals("10 genes", 10, list.size());
         assertNotNull(list);
@@ -140,7 +145,8 @@ public class PublicationRepositoryTest {
 
     @Test
     public void getNumberOfPubWithFigures() {
-        String aoZdbID = "ZDB-ANAT-010921-561";
+        //  neural rod
+        String aoZdbID = "ZDB-TERM-100331-125";
         String zdbID = "ZDB-GENE-980526-36";
         int number = publicationRepository.getNumberOfExpressedGenePublicationsWithFigures(zdbID, aoZdbID);
 //        assertEquals("2 publications", 2, number);
@@ -150,8 +156,7 @@ public class PublicationRepositoryTest {
     @Test
     public void getNumberOfFiguresPerAnatomyStructure() {
         String termName = "neural rod";
-        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem term = aoRepository.getAnatomyItem(termName);
+        Term term = ontologyRepository.getTermByName(termName, Ontology.ANATOMY);
         assertNotNull(term);
 
         int number = publicationRepository.getTotalNumberOfFiguresPerAnatomyItem(term);
@@ -162,8 +167,7 @@ public class PublicationRepositoryTest {
     @Test
     public void getNumberOfFiguresPerAOFloorPlate() {
         String termName = "floor plate";
-        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem term = aoRepository.getAnatomyItem(termName);
+        Term term = ontologyRepository.getTermByName(termName, Ontology.ANATOMY);
         assertNotNull(term);
         int number = publicationRepository.getTotalNumberOfFiguresPerAnatomyItem(term);
 //        assertEquals("13 images", 14, number);
@@ -173,8 +177,7 @@ public class PublicationRepositoryTest {
     @Test
     public void getNumberOfImagesPerAnatomyStructure() {
         String termName = "neural rod";
-        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem term = aoRepository.getAnatomyItem(termName);
+        Term term = ontologyRepository.getTermByName(termName, Ontology.ANATOMY);
         int number = publicationRepository.getTotalNumberOfImagesPerAnatomyItem(term);
 //        assertEquals("518 images", 518, number);
         assertTrue(number > 0);
@@ -183,9 +186,9 @@ public class PublicationRepositoryTest {
     @Test
     public void getAllExpressedMutants() {
         // lateral floor plate
-        String aoZdbID = "ZDB-ANAT-050711-66 ";
-        AnatomyItem item = new AnatomyItem();
-        item.setZdbID(aoZdbID);
+        String aoZdbID = "ZDB-TERM-100331-1214";
+        Term item = new GenericTerm();
+        item.setID(aoZdbID);
         PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, 4);
 //        assertEquals("8 genes", 4, list.size());
         assertNotNull(genotypeResult.getPopulatedResults());
@@ -195,11 +198,11 @@ public class PublicationRepositoryTest {
 
     @Test
     public void getNumOfPublicationsPerAOAndGli1Mutant() {
-        // Anatomical Structure: lateral floor plate
-        String aoZdbID = "ZDB-ANAT-050711-66";
-        AnatomyItem item = new AnatomyItem();
-        item.setZdbID(aoZdbID);
-        // Genotype: gli1^te370a/+ 
+        // lateral floor plate
+        String aoZdbID = "ZDB-TERM-100331-1214";
+        Term item = new GenericTerm();
+        item.setID(aoZdbID);
+        // Genotype: gli1^te370a/+
         String genotypeZdbID = "ZDB-GENO-070307-4";
         Genotype genotype = new Genotype();
         genotype.setZdbID(genotypeZdbID);
@@ -277,15 +280,15 @@ public class PublicationRepositoryTest {
      */
     @Test
     public void getMutantByAnatomyExpression() {
-        //  somite 8
-        String aoZdbID = "ZDB-ANAT-010921-555";
-        AnatomyItem item = new AnatomyItem();
-        item.setZdbID(aoZdbID);
+        //  midbrain
+        String aoZdbID = "ZDB-TERM-100331-121";
+        Term item = new GenericTerm();
+        item.setID(aoZdbID);
         PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, 5);
 
         assertNotNull(genotypeResult);
         assertNotNull(genotypeResult.getPopulatedResults());
-        assertEquals(genotypeResult.getPopulatedResults().size(), 5);
+        assertEquals(5, genotypeResult.getPopulatedResults().size());
         assertTrue(genotypeResult.getTotalCount() > 5);
 
     }
@@ -355,9 +358,9 @@ public class PublicationRepositoryTest {
         Morpholino morpholino = new Morpholino();
         morpholino.setZdbID(morpholinoZdbID);
         //  lateral floor plate
-        String aoZdbID = "ZDB-ANAT-050711-66";
-        AnatomyItem item = new AnatomyItem();
-        item.setZdbID(aoZdbID);
+        String aoZdbID = "ZDB-TERM-100331-1214";
+        Term item = new GenericTerm();
+        item.setID(aoZdbID);
         List<Figure> figs = publicationRepository.getFiguresByMorpholinoAndAnatomy(morpholino, item);
         assertTrue(figs != null);
 //        assertEquals("1 figure", 1, figs.size());
@@ -371,9 +374,9 @@ public class PublicationRepositoryTest {
         Genotype geno = new Genotype();
         geno.setZdbID(genoZdbID);
         // brain
-        String aoZdbID = "ZDB-ANAT-010921-415";
-        AnatomyItem item = new AnatomyItem();
-        item.setZdbID(aoZdbID);
+        String aoZdbID = "ZDB-TERM-100331-8";
+        Term item = new GenericTerm();
+        item.setID(aoZdbID);
         int publicationCount = publicationRepository.getNumPublicationsWithFiguresPerGenotypeAndAnatomy(geno, item);
         assertTrue(publicationCount > 0);
 //        assertEquals("1 publication", 1, publications.size());

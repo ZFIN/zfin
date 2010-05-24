@@ -1,11 +1,11 @@
 package org.zfin.mutant.presentation;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -13,15 +13,15 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.*;
 
 /**
- * ToDo: Please add documentation for this class.
+ * Convenient class to show statistics about phenotypes related to a given AO term..
  */
 public class GenotypeStatistics extends EntityStatistics {
 
     private Genotype genotype;
-    private AnatomyItem anatomyItem;
+    private Term anatomyItem;
     private PaginationResult<Figure> figureResults = null; // null indicates that this has not been populated yet
 
-    public GenotypeStatistics(Genotype genotype, AnatomyItem anatomyItem) {
+    public GenotypeStatistics(Genotype genotype, Term anatomyItem) {
         this.genotype = genotype;
         this.anatomyItem = anatomyItem;
     }

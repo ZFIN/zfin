@@ -54,7 +54,7 @@ public class MatchingTerm {
 
         MatchingTerm matchingTerm = (MatchingTerm) o;
 
-        if (term != null ? !term.equals(matchingTerm.term) : matchingTerm.term != null) return false;
+        if (getTerm() != null ? !getTerm().equals(matchingTerm.getTerm()) : matchingTerm.getTerm() != null) return false;
 
         return true;
     }

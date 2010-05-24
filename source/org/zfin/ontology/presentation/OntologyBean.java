@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.TermAlias;
+import org.zfin.ontology.TransitiveClosure;
 
 import java.util.List;
 import java.util.Map;
@@ -104,6 +105,10 @@ public class OntologyBean {
         this.termMap = termMap;
     }
 
+    public List<TransitiveClosure> getAllChildren(){
+        return OntologyManager.getInstance().getAllChildren(term);
+    }
+
     public enum ActionType {
         SERIALIZE_ONTOLOGIES,
         LOAD_FROM_DATABASE,
@@ -121,7 +126,7 @@ public class OntologyBean {
             throw new RuntimeException("No action type of string " + type + " found.");
         }
 
-        public String getName() {
+        public String getName(){
             return name();
         }
     }

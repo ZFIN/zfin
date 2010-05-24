@@ -1,12 +1,17 @@
 package org.zfin.ontology;
 
+import org.zfin.anatomy.DevelopmentStage;
+
 import java.util.List;
 import java.util.Set;
 
 /**
  * Basic interface definition for a term in an ontology.
  */
-public interface Term {
+public interface Term extends Comparable<Term>{
+
+    public static final String UNSPECIFIED = "unspecified";
+    public static final String QUALITY = "quality";
 
     String getID();
 
@@ -55,4 +60,14 @@ public interface Term {
      * @return list of children terms
      */
     List<Term> getChildrenTerms();
+
+    DevelopmentStage getStart();
+
+    void setStart(DevelopmentStage stage);
+
+    DevelopmentStage getEnd();
+
+    void setEnd(DevelopmentStage stage);
+
+
 }
