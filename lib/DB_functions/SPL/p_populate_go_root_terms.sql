@@ -12,11 +12,11 @@ create procedure p_populate_go_root_terms (mrkrZdbId  varchar(50),
 	if (mrkrType = "GENE" AND 
 	    (mrkrName like "zgc:%" OR mrkrName like "im:%")) then 
  
-		execute procedure p_insert_marker_go_ev(mrkrZdbId,"ZDB-GOTERM-031121-2395","ZDB-PUB-031118-1","ND");
+		execute procedure p_insert_marker_go_ev(mrkrZdbId,"ZDB-TERM-091209-4029","ZDB-PUB-031118-1","ND");
 
-		execute procedure p_insert_marker_go_ev(mrkrZdbId,"ZDB-GOTERM-031121-846","ZDB-PUB-031118-1","ND");
+		execute procedure p_insert_marker_go_ev(mrkrZdbId,"ZDB-TERM-091209-2432","ZDB-PUB-031118-1","ND");
 
-		execute procedure p_insert_marker_go_ev(mrkrZdbId,"ZDB-GOTERM-031121-4370","ZDB-PUB-031118-1","ND");
+		execute procedure p_insert_marker_go_ev(mrkrZdbId,"ZDB-TERM-091209-6070","ZDB-PUB-031118-1","ND");
 
 
     end if; 
