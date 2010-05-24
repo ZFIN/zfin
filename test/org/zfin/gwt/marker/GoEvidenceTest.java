@@ -7,11 +7,16 @@ import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
+import org.zfin.gwt.root.dto.GoEvidenceDTO;
+import org.zfin.gwt.root.dto.GoEvidenceQualifier;
+import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
+import org.zfin.mutant.repository.MutantRepositoryTest;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -45,16 +50,24 @@ public class GoEvidenceTest {
         HibernateUtil.closeSession();
     }
 
+
+
     @Test
     public void getGoEvidenceDTO(){
-        String zdbID = "ZDB-MRKRGOEV-031121-22" ;
+//        String zdbID = "ZDB-MRKRGOEV-031121-22" ;
+        MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
-        GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID) ;
+        GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(markerGoTermEvidence.getZdbID()) ;
         assertNotNull(goEvidenceDTO);
-        assertEquals(zdbID,goEvidenceDTO.getZdbID());
-        assertEquals("ZDB-GENE-980526-501",goEvidenceDTO.getMarkerDTO().getZdbID());
-        assertNull(goEvidenceDTO.getFlag());
-        assertEquals(GoEvidenceCodeEnum.IGI,goEvidenceDTO.getEvidenceCode());
+        assertEquals(markerGoTermEvidence.getZdbID(),goEvidenceDTO.getZdbID());
+        assertEquals(markerGoTermEvidence.getMarker().getZdbID(),goEvidenceDTO.getMarkerDTO().getZdbID());
+        if(markerGoTermEvidence.getFlag()==null){
+            assertNull(goEvidenceDTO.getFlag());
+        }else{
+            assertNotNull(goEvidenceDTO.getFlag());
+            assertEquals(markerGoTermEvidence.getFlag(),goEvidenceDTO.getFlag());
+        }
+        assertEquals(GoEvidenceCodeEnum.getType(markerGoTermEvidence.getEvidenceCode().getCode()),goEvidenceDTO.getEvidenceCode());
         assertNotNull(goEvidenceDTO.getInferredFrom());
         assertEquals(1,goEvidenceDTO.getInferredFrom().size());
 
@@ -82,19 +95,23 @@ public class GoEvidenceTest {
      */
     @Test
     public void editGoEvidenceHeader(){
-        String zdbID = "ZDB-MRKRGOEV-031121-22" ;
+        MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
-        GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID) ;
+        GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(markerGoTermEvidence.getZdbID()) ;
         assertNotNull(goEvidenceDTO);
-        assertEquals(zdbID,goEvidenceDTO.getZdbID());
+        assertEquals(markerGoTermEvidence.getZdbID(),goEvidenceDTO.getZdbID());
         assertEquals(1,goEvidenceDTO.getInferredFrom().size());
 
-        assertEquals("ZDB-GENE-980526-501",goEvidenceDTO.getMarkerDTO().getZdbID());
-        assertNull(goEvidenceDTO.getFlag());
-        assertNotNull(goEvidenceDTO.getEvidenceCode());
-        assertEquals(GoEvidenceCodeEnum.IGI,goEvidenceDTO.getEvidenceCode());
-        String pub1 = goEvidenceDTO.getPublicationZdbID();
-        assertNotNull(pub1);
+        assertEquals(markerGoTermEvidence.getMarker().getZdbID(),goEvidenceDTO.getMarkerDTO().getZdbID());
+        if(markerGoTermEvidence.getFlag()==null){
+            assertNull(goEvidenceDTO.getFlag());
+        }else{
+            assertNotNull(goEvidenceDTO.getFlag());
+            assertEquals(markerGoTermEvidence.getFlag(),goEvidenceDTO.getFlag());
+        }
+        assertEquals(GoEvidenceCodeEnum.getType(markerGoTermEvidence.getEvidenceCode().getCode()),goEvidenceDTO.getEvidenceCode());
+        assertNotNull(goEvidenceDTO.getPublicationZdbID());
+        assertEquals(markerGoTermEvidence.getSource().getZdbID(),goEvidenceDTO.getPublicationZdbID());
 
 
 
@@ -128,7 +145,7 @@ public class GoEvidenceTest {
         goEvidenceDTO2.setEvidenceCode(GoEvidenceCodeEnum.IGI);
         inferredFromSet = goEvidenceDTO2.getInferredFrom();
         assertTrue(inferredFromSet.remove(inferenceTestString));
-        goEvidenceDTO2.setPublicationZdbID(pub1);
+        goEvidenceDTO2.setPublicationZdbID(goEvidenceDTO.getPublicationZdbID());
         GoEvidenceDTO goEvidenceDTO3 = null ;
 
         try {
@@ -143,7 +160,7 @@ public class GoEvidenceTest {
         assertFalse(goEvidenceDTO3.getInferredFrom().contains(inferenceTestString));
         assertNotNull(goEvidenceDTO3.getEvidenceCode());
         assertEquals(GoEvidenceCodeEnum.IGI,goEvidenceDTO3.getEvidenceCode());
-        assertEquals(pub1,goEvidenceDTO3.getPublicationZdbID());
+        assertEquals(goEvidenceDTO.getPublicationZdbID(),goEvidenceDTO3.getPublicationZdbID());
     }
 
 
@@ -153,39 +170,57 @@ public class GoEvidenceTest {
      */
     @Test
     public void createGoEvidenceHeader(){
-        String zdbID = "ZDB-MRKRGOEV-031121-22" ;
+        MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
-        GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID) ;
+        GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(markerGoTermEvidence.getZdbID()) ;
         assertNotNull(goEvidenceDTO);
-        assertEquals(zdbID,goEvidenceDTO.getZdbID());
+        assertEquals(markerGoTermEvidence.getZdbID(),goEvidenceDTO.getZdbID());
 
         // now lets set it to null and create some stuff
         goEvidenceDTO.setZdbID(null);
         GoEvidenceDTO goEvidenceDTOCreated = null ;
-        int numInferences = goEvidenceDTO.getInferredFrom().size();
+
+        // make non-duplicate
+        goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.IC);
+
         try {
-            // need to add an inference so that its not a duplicate anymore
-            Set<String> inferences = goEvidenceDTO.getInferredFrom();
-            inferences.add("SP_KW: somenewinferenceaccession") ;
-            goEvidenceDTO.setInferredFrom(inferences);
-
-            
             goEvidenceDTOCreated = markerRPCService.createMarkerGoTermEvidenceDTO(goEvidenceDTO) ;
+            System.out.println("added!: "+ goEvidenceDTOCreated.getZdbID()) ;
         } catch (DuplicateEntryException e) {
-            fail(e.toString()) ;
+            fail("Should have allowed this as it was not duplicate: " + e.toString());
         }
-        assertEquals(numInferences+1,goEvidenceDTOCreated.getInferredFrom().size());
+        assertEquals(1,goEvidenceDTOCreated.getInferredFrom().size());
 
-        assertEquals("ZDB-GENE-980526-501",goEvidenceDTOCreated.getMarkerDTO().getZdbID());
+        assertEquals(markerGoTermEvidence.getMarker().getZdbID(),goEvidenceDTOCreated.getMarkerDTO().getZdbID());
         assertNull(goEvidenceDTOCreated.getFlag());
         assertNotNull(goEvidenceDTOCreated.getEvidenceCode());
-        assertEquals(GoEvidenceCodeEnum.IGI,goEvidenceDTOCreated.getEvidenceCode());
+        assertEquals(GoEvidenceCodeEnum.IC,goEvidenceDTOCreated.getEvidenceCode());
         String pub1 = goEvidenceDTOCreated.getPublicationZdbID();
         assertNotNull(pub1);
 
         HibernateUtil.createTransaction();
+        System.out.println("deleting: " + goEvidenceDTOCreated.getZdbID()) ;
         RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(goEvidenceDTOCreated.getZdbID());
         HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    @Test
+    public void testDuplicateEntry(){
+        MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
+        MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
+        GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(markerGoTermEvidence.getZdbID()) ;
+        assertNotNull(goEvidenceDTO);
+        assertEquals(markerGoTermEvidence.getZdbID(),goEvidenceDTO.getZdbID());
+
+        // now lets set it to null and create some stuff
+        goEvidenceDTO.setZdbID(null);
+        try {
+            markerRPCService.createMarkerGoTermEvidenceDTO(goEvidenceDTO) ;
+            fail("Should not allow a duplicate alternate key entry") ;
+        } catch (DuplicateEntryException e) {
+            HibernateUtil.rollbackTransaction();
+            // caught error, so that is correect
+        }
 
     }
 

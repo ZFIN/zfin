@@ -116,4 +116,12 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
             return returnEvidences;
         }
     }
+
+    public static GoEvidenceCodeEnum getType(String type) {
+        for (GoEvidenceCodeEnum t : values()) {
+            if (t.toString().equals(type.trim()))
+                return t;
+        }
+        throw new RuntimeException("No GoEvidenceCodeEnum named " + type + " found.");
+    }
 }

@@ -17,8 +17,6 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
-import org.zfin.mutant.repository.HibernateMutantRepository;
-import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.GoTerm;
 import org.zfin.publication.Publication;
@@ -28,7 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.* ;
+import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 @SuppressWarnings({"NonBooleanMethodNameMayNotStartWithQuestion"})
@@ -221,15 +219,22 @@ public class MutantRepositoryTest {
         mutantRepository.getZFINInferences( "ZDB-MRPHLNO-041110-25" , "ZDB-PUB-090324-13") ;
     }
 
+    public static MarkerGoTermEvidence findSingleMarkerGoTermEvidenceWithOneInference(){
+        HibernateUtil.createTransaction();
+        MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery("" +
+                " from MarkerGoTermEvidence ev where ev.inferredFrom is not empty and size(ev.inferredFrom) = 1 " +
+                "").setMaxResults(1).uniqueResult() ;
+
+        assertNotNull(markerGoTermEvidence);
+        assertEquals(1,mutantRepository.getNumberMarkerGoTermEvidences( markerGoTermEvidence ));
+        return markerGoTermEvidence ;
+    }
+
     @Test
     public void markerGoTermEvidenceExists(){
 
         try{
-            HibernateUtil.createTransaction();
-            MarkerGoTermEvidence markerGoTermEvidence= (MarkerGoTermEvidence)
-                    HibernateUtil.currentSession().get(MarkerGoTermEvidence.class,"ZDB-MRKRGOEV-100423-84020");
-            assertEquals(1,mutantRepository.getNumberMarkerGoTermEvidences( markerGoTermEvidence )); ;
-
+            MarkerGoTermEvidence markerGoTermEvidence = findSingleMarkerGoTermEvidenceWithOneInference() ;
             MarkerGoTermEvidence newMarkerGoTermEvidence = new MarkerGoTermEvidence();
             newMarkerGoTermEvidence.setEvidenceCode(markerGoTermEvidence.getEvidenceCode());
             newMarkerGoTermEvidence.setFlag(markerGoTermEvidence.getFlag());
@@ -238,7 +243,7 @@ public class MutantRepositoryTest {
             newMarkerGoTermEvidence.setGoTerm(markerGoTermEvidence.getGoTerm());
             newMarkerGoTermEvidence.setInferredFrom(markerGoTermEvidence.getInferredFrom());
 
-            assertEquals(1,mutantRepository.getNumberMarkerGoTermEvidences( newMarkerGoTermEvidence)); ;
+            assertEquals(1,mutantRepository.getNumberMarkerGoTermEvidences( newMarkerGoTermEvidence)); 
 
             GoEvidenceCode ndEvidenceCode = new GoEvidenceCode();
             ndEvidenceCode.setCode(GoEvidenceCodeEnum.ND.toString());
