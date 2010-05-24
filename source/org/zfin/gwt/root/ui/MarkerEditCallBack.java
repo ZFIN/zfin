@@ -22,7 +22,17 @@ public abstract class MarkerEditCallBack<T> extends HandlesErrorCallBack<T> {
         if (handleTermNotFound(throwable)) return;
         // only new one here
         if (handleDBLinkNotFound(throwable)) return;
+        if (handleDuplicateEntry(throwable)) return;
         displayMessage(message + throwable);
+    }
+
+    private boolean handleDuplicateEntry(Throwable t) {
+        if (t instanceof DuplicateEntryException) {
+            DuplicateEntryException duplicateEntryException = (DuplicateEntryException) t;
+            displayMessage(duplicateEntryException.getMessage());
+            return true;
+        }
+        return false;
     }
 
 

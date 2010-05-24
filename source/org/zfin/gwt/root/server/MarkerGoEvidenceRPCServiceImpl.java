@@ -118,7 +118,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         // fogbugz 5656
         if(mutantRepository.getNumberMarkerGoTermEvidences(markerGoTermEvidence)>1 ){
             logger.warn("Duplicate marker go evidence attempted: "+ markerGoTermEvidence);
-            throw new DuplicateEntryException("Your edit will create a duplicate marker go evidence.") ;
+            throw new DuplicateEntryException("GO annotation not saved because it is identical to an existing annotation.") ;
         }
 
         HibernateUtil.flushAndCommitCurrentSession();
@@ -339,7 +339,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         // fogbugz 5656
         if(mutantRepository.getNumberMarkerGoTermEvidences(markerGoTermEvidence) >1){
             logger.warn("Duplicate marker go evidence attempted: "+ markerGoTermEvidence);
-            throw new DuplicateEntryException("Duplicate marker go evidence attempted.") ;
+            throw new DuplicateEntryException("GO annotation not saved because it is identical to an existing annotation.") ;
         }
 
 
