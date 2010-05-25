@@ -219,7 +219,7 @@ public class GoEvidenceTest {
             fail("Should not allow a duplicate alternate key entry") ;
         } catch (DuplicateEntryException e) {
             HibernateUtil.rollbackTransaction();
-            // caught error, so that is correect
+            // caught error, so that is correct
         }
 
     }
