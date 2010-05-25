@@ -11,7 +11,7 @@ import org.zfin.ontology.Term;
 public class AnatomyItemPresentation extends EntityPresentation {
 
     private static final String uri = "anatomy/term-detail?anatomyItem.zdbID=";
-    public static final String GO_URI = "http://www.ebi.ac.uk/ego/GTerm?id=GO:";
+    public static final String GO_URI = "http://www.ebi.ac.uk/ego/GTerm?id=";
 
     /**
      * Generates a link using the anatomy items name.

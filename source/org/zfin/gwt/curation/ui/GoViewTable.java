@@ -136,8 +136,8 @@ public class GoViewTable extends ZfinFlexTable {
         public GoLink(TermDTO goTerm) {
             String htmlString = "";
             htmlString += "<a href='";
-            htmlString += "http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:";
-            htmlString += goTerm.getDataZdbID();
+            htmlString += "http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=";
+            htmlString += goTerm.getTermOboID();
             htmlString += "'>";
             htmlString += goTerm.getName();
             htmlString += "</a>";

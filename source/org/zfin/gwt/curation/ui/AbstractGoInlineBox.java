@@ -125,7 +125,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
             @Override
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
-                String termID = "GO:" + dataChangedEvent.getDTO().getGoTerm().getDataZdbID();
+                String termID =dataChangedEvent.getDTO().getGoTerm().getDataZdbID();
                 LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new GoTermInfoCallBack(termInfoComposite, termID));
             }
         });
