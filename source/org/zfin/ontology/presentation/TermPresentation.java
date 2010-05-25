@@ -17,6 +17,8 @@ public class TermPresentation extends EntityPresentation {
      * @return hyperlink
      */
     public static String getLink(Term term) {
+        if (term == null)
+            return null;
         return getLink(term, term.getTermName());
     }
 
@@ -28,6 +30,8 @@ public class TermPresentation extends EntityPresentation {
      * @return html for term link
      */
     public static String getLink(Term term, String name) {
+        if (term == null || name == null)
+            return null;
         return getTomcatLinkWithTitle(uri, term.getID(), term.getTermName(), name, term.getOntology().getCommonName());
     }
 

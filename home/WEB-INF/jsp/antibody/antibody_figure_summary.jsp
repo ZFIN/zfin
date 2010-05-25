@@ -33,12 +33,12 @@
         <c:choose>
             <c:when test="${formBean.onlyFiguresWithImg}">
                 [ <a
-                    href="javascript:document.location.replace('figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.ID=${formBean.superTerm.ID}&subTerm.ID=${formBean.subTerm.ID}<c:if test="${formBean.startStage.zdbID != null}">&startStage.zdbID=${formBean.startStage.zdbID}&endStage.zdbID=${formBean.endStage.zdbID}</c:if>&onlyFiguesWithImg=false')">
+                    href="javascript:document.location.replace('figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.ID=${formBean.superTerm.ID}&subTerm.ID=${formBean.subTerm.ID}<c:if test="${formBean.startStage.zdbID != null}">&startStage.zdbID=${formBean.startStage.zdbID}&endStage.zdbID=${formBean.endStage.zdbID}</c:if>&onlyFiguresWithImg=false')">
                 Show all figures</a> ]
             </c:when>
             <c:otherwise>
                 [ <a
-                    href="javascript:document.location.replace('figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.ID=${formBean.superTerm.ID}&subTerm.ID=${formBean.subTerm.ID}<c:if test="${formBean.startStage.zdbID != null}">&startStage.zdbID=${formBean.startStage.zdbID}&endStage.zdbID=${formBean.endStage.zdbID}</c:if>&onlyFiguesWithImg=true')">
+                    href="javascript:document.location.replace('figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.ID=${formBean.superTerm.ID}&subTerm.ID=${formBean.subTerm.ID}<c:if test="${formBean.startStage.zdbID != null}">&startStage.zdbID=${formBean.startStage.zdbID}&endStage.zdbID=${formBean.endStage.zdbID}</c:if>&onlyFiguresWithImg=true')">
                 Show only figures with images</a> ]
             </c:otherwise>
         </c:choose>
