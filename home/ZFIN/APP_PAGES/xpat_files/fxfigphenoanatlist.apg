@@ -147,8 +147,8 @@ stage range, experiment, or expression_found in the same figure.
   <?MIVAR>
 function updatePhenoAnatomyList$fxfigphenoanat_zdb_minus(display_option) {
     
-    var long_display = "$fxfigphenoanat_escape_long_list  <a href=\"javascript:updatePhenoAnatomyList$fxfigphenoanat_zdb_minus('short');\">$fxfigphenoanat_left_arrow</a>";
-    var short_display = "$fxfigphenoanat_escape_short_list ... <a href=javascript:onClick=updatePhenoAnatomyList$fxfigphenoanat_zdb_minus('long')>(all $(VECSIZE,$fxfigphenoanat_long_list))</a> $fxfigphenoanat_right_arrow";
+    var long_display = "$fxfigphenoanat_escape_long_list  <a href=\"javascript:updatePhenoAnatomyList$fxfigphenoanat_zdb_minus(\'short\');\">$fxfigphenoanat_left_arrow</a>";
+    var short_display = "$fxfigphenoanat_escape_short_list ... <a href=javascript:onClick=updatePhenoAnatomyList$fxfigphenoanat_zdb_minus(\'long\')>(all $(VECSIZE,$fxfigphenoanat_long_list))</a> $fxfigphenoanat_right_arrow";
 
     if (display_option == "long") {
         updateInnerHTMLAnat('phenoanatomyList$fxfigphenoanat_zdb_minus',long_display)

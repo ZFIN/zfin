@@ -30,7 +30,7 @@ create function get_postcomposed_term_html ( supertermZdbId varchar(50),
   let subtermHtml = get_entity_name_html(subtermZdbId);
 
   if (subtermHtml is not null) then
-    let resultHtml = '<span class="postcomposedtermlink">' || supertermHtml || '&nbsp;' || subtermHtml || '</span>' ;
+    let resultHtml = '<span class=postcomposedtermlink>' || supertermHtml || '&nbsp;' || subtermHtml || '</span>' ;
   else 
     let resultHtml = supertermHtml;
   end if
