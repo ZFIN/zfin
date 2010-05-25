@@ -163,8 +163,8 @@ public class GenericTerm implements Term, Serializable {
 
         GenericTerm genericTerm = (GenericTerm) o;
 
-        if (ID != null &&  genericTerm.ID != null) {
-            return ID.equals(genericTerm.ID) ;
+        if (ID != null &&  genericTerm.getID() != null) {
+            return ID.equals(genericTerm.getID()) ;
         }
         if (termName != null ? !termName.equals(genericTerm.getTermName()) : genericTerm.getTermName() != null)
             return false;
