@@ -22,12 +22,12 @@ create procedure p_check_drop_go_root_term (
 		gotermZdbId	like term.term_zdb_id
 		)
 
-	define goRootTermZdbId	like go_term.goterm_zdb_id;
+	define goRootTermZdbId	like term.term_zdb_id;
 
 	if (gotermZdbId not in ('ZDB-TERM-091209-6070','ZDB-TERM-091209-2432','ZDB-TERM-091209-4029')) then
 
 	    -- find out the root term's zdb id, which is in the same category
-	    select u.goterm_zdb_id
+	    select u.term_zdb_id
 	      into goRootTermZdbId
 	      from term u, term n
 	     where n.term_zdb_id = gotermZdbId
