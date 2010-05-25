@@ -322,10 +322,10 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         selectedExpressions.clear();
         showSelectedMutantsOnly = false;
         displayTable.uncheckAllRecords();
-        stageSelector.resetGui();
-        fishList.setItemSelected(0, true);
-        figureList.setItemSelected(0, true);
-        environmentList.setItemSelected(0, true);
+        //stageSelector.resetGui();
+        //fishList.setItemSelected(0, true);
+        //figureList.setItemSelected(0, true);
+        //environmentList.setItemSelected(0, true);
         retrieveExpressions();
     }
 
