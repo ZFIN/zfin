@@ -86,6 +86,15 @@ public interface CurationExperimentRPC extends RemoteService {
     void setExperimentVisibilitySession(String pubID, boolean experimentVisibility);
 
     /**
+     * Check if for a given publication there is no structure pile available.
+     * It's been used to decide if a link to re-create the structure pile should be displayed.
+     *
+     * @param publicationID publication ID
+     * @return boolean
+     */
+    boolean isReCreatePhenotypePileLinkNeeded(String publicationID);
+
+    /**
      * Utility/Convenience class.
      * Use CurationExperimentRPC.App.getInstance() to access static instance of CurationExperimentRPCAsync
      */

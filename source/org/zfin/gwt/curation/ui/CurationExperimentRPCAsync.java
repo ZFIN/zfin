@@ -143,11 +143,11 @@ public interface CurationExperimentRPCAsync {
 
     void getFigureAnnotationCheckmarkStatus(String publicationID, AsyncCallback<CheckMarkStatusDTO> callback);
 
-    void readStructureSectionVisibility(String publicationID, AsyncCallback callback);
+    void readStructureSectionVisibility(String publicationID, AsyncCallback<Boolean> callback);
 
     void setStructureVisibilitySession(String publicationID, boolean b, AsyncCallback<Void> async);
 
-    void getStructures(String publicationID, AsyncCallback retrieveStructuresCallback);
+    void getStructures(String publicationID, AsyncCallback<List<ExpressionPileStructureDTO>> retrieveStructuresCallback);
 
     void updateStructuresForExpression(UpdateExpressionDTO updateEntity, AsyncCallback<List<ExpressionFigureStageDTO>> callback);
 
@@ -155,5 +155,6 @@ public interface CurationExperimentRPCAsync {
 
     void saveSessionVisibility(SessionVariable sessionVariable, AsyncCallback<Void> callback);
 
+    void isReCreatePhenotypePileLinkNeeded(String publicationID, AsyncCallback callback);
 }
 

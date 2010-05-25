@@ -39,6 +39,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
     private Button updateButtonAbove = new Button("Update Structures for Expressions");
     private Button updateButtonBelow = new Button("Update Structures for Expressions");
     private StructureAlternateComposite structureSuggestionBox;
+    private Hyperlink reCreateStructurePileLink = new Hyperlink("Re-Create Expression Pile", "re-create-pile");
 
     // all expressions displayed on the page (all or a subset defined by the filter elements)
     private List<ExpressionPileStructureDTO> displayedStructures = new ArrayList<ExpressionPileStructureDTO>(10);
@@ -50,6 +51,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
 
     // RPC class being used for this section.
     private CurationExperimentRPCAsync curationRPCAsync = CurationExperimentRPC.App.getInstance();
+    private PileStructuresRPCAsync pileStructureRPCAsync = PileStructuresRPC.App.getInstance();
 
     public static final String HIDE = "hide";
     public static final String SHOW = "show";
@@ -78,6 +80,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
         initUpdateButton(updateButtonAbove);
         panel.add(updateButtonAbove);
         panel.add(new HTML("&nbsp"));
+        panel.add(reCreateStructurePileLink);
         RootPanel.get(UPDATE_EXPERIMENTS_TOP).add(panel);
 
         structureSuggestionBox = new StructureAlternateComposite();
@@ -90,6 +93,8 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
 
         initUpdateButton(updateButtonBelow);
         RootPanel.get(UPDATE_EXPERIMENTS_BOTTOM).add(updateButtonBelow);
+        reCreateStructurePileLink.addClickHandler(new CreateExpressionPileHandler(reCreateStructurePileLink));
+        reCreateStructurePileLink.setVisible(false);
     }
 
     private void initUpdateButton(Button button) {
@@ -126,6 +131,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
     private void loadSectionVisibility() {
         String message = "Error while reading Section Visibility";
         curationRPCAsync.readStructureSectionVisibility(publicationID, new SectionVisibilityCallback(message));
+        curationRPCAsync.isReCreatePhenotypePileLinkNeeded(publicationID, new PileReCreationNeedCallback("Error while reading pile-recreation need"));
     }
 
     // Retrieve pile structures from the server
@@ -465,5 +471,70 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
         }
     }
 
+    private class CreateExpressionPileHandler implements ClickHandler {
+
+        private Hyperlink phenotypePile;
+
+        public CreateExpressionPileHandler(Hyperlink createPhenotypePile) {
+            phenotypePile = createPhenotypePile;
+        }
+
+        public void onClick(ClickEvent clickEvent) {
+            loadingImage.setVisible(true);
+            pileStructureRPCAsync.recreateExpressionStructurePile(publicationID, new RetrieveExpressionPileCallback());
+        }
+    }
+
+    private class RetrieveExpressionPileCallback extends ZfinAsyncCallback<List<ExpressionPileStructureDTO>> {
+
+        public RetrieveExpressionPileCallback() {
+            super("Error while reading Structures", errorElement);
+        }
+
+        @Override
+        public void onSuccess(List<ExpressionPileStructureDTO> list) {
+            //Window.alert("List: " + list.size());
+            displayedStructures.clear();
+            if (list == null)
+                return;
+
+            for (ExpressionPileStructureDTO structure : list) {
+                // do not add 'unspecified'
+                if (!structure.getExpressedTerm().getSuperterm().getTermName().equals(UNSPECIFIED))
+                    displayedStructures.add(structure);
+            }
+            reCreateStructurePileLink.setVisible(false);
+            //Window.alert("SIZE: " + list.size());
+            displayTable.createStructureTable();
+            updateFigureAnnotations(expressionSection.getSelectedExpressions());
+            loadingImage.setVisible(false);
+        }
+
+        @Override
+        public void onFailureCleanup() {
+            loadingImage.setVisible(true);
+        }
+    }
+
+    private class PileReCreationNeedCallback extends ZfinAsyncCallback<Boolean> {
+
+        public PileReCreationNeedCallback(String message) {
+            super(message, errorElement);
+        }
+
+        @Override
+        public void onSuccess(Boolean isReCreatePileNeed) {
+            //Window.alert("Show: " + sectionVisible);
+            if (isReCreatePileNeed)
+                reCreateStructurePileLink.setVisible(true);
+            else
+                reCreateStructurePileLink.setVisible(false);
+        }
+
+        @Override
+        public void onFailureCleanup() {
+
+        }
+    }
 
 }
