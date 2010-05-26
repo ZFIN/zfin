@@ -198,7 +198,7 @@ function new_GO(mrkrzdbid){
      <?/MIBLOCK>
      <?MIVAR><td><A HREF=$dbquery$goid>$goterm</A></TD><?/MIVAR>
 
-     <TD><A HREF="http://www.geneontology.org/doc/GO.evidence.html#$(LOWER,$evidence)">$evidence</A></TD>
+     <TD><A HREF="http://www.geneontology.org/GO.evidence.shtml#$(LOWER,$evidence)">$evidence</A></TD>
      <?MIVAR NAME=currinfs><?/MIVAR>
      <?MIVAR NAME=inferid><?/MIVAR>
 
