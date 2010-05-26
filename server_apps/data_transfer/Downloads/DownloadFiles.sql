@@ -617,15 +617,15 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features.txt
 			from geno_data order by genotype_id, geno_display_name;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features_missing_markers.txt'
- DELIMITER "	" select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, marker_id  
-              from mapped_deletion, feature, genotype, genotype_feature, marker
-             where allele = feature_name
-               and present_t = 'f'
-               and marker_id like 'ZDB-GENE%'
+ DELIMITER "	" select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, mrkr_zdb_id
+              from feature_marker_relationship, feature, genotype, genotype_feature, marker
+             where fmrel_ftr_zdb_id=feature_zdb_id
+             and fmrel_mrkr_zdb_id=mrkr_zdb_id
+             and fmrel_type in ('markers missing', 'markers moved')
+               and mrkr_zdb_id like 'ZDB-GENE%'
                and feature_zdb_id = genofeat_feature_zdb_id
-    	       and geno_zdb_id = genofeat_geno_zdb_id
-	       and marker_id = mrkr_zdb_id;
-
+    	       and geno_zdb_id = genofeat_geno_zdb_id;
+    	       
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_backgrounds.txt'
  DELIMITER "	" select distinct geno_zdb_id,
 			geno_display_name,
