@@ -149,7 +149,7 @@ function new_GO(mrkrzdbid){
 	 from term g, marker_go_term_evidence e, go_ontology o
 	where mrkrgoev_mrkr_zdb_id='$OID' 
 	  and mrkrgoev_term_zdb_id=term_zdb_id
-	  and g.term_ontology=o.gont_ontology_name 
+	  and g.term_ontology=o.gont_ontology_internal_name 
         order by 4,2,3 ">
 
    <?MIVAR NAME=$ontology>$1<?/MIVAR>
