@@ -2139,7 +2139,7 @@ union
     <?MIVAR NAME=contribs>f<?/MIVAR>
 
     <?MISQL SQL="
-      select first 1 term_zdb_id, goev_display_order, term_name, mrkrgoev_zdb_id,mrkrgoev_gflag_name,gont_ontology_name
+      select first 1 term_ont_id, goev_display_order, term_name, mrkrgoev_zdb_id,mrkrgoev_gflag_name,gont_ontology_name
         from term, go_evidence_code, marker_go_term_evidence, go_ontology
         where mrkrgoev_mrkr_zdb_id = '$OID'
           and mrkrgoev_term_zdb_id = term_zdb_id
