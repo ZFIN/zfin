@@ -25,7 +25,7 @@ public class GoAddBox extends AbstractGoInlineBox {
 
     public GoAddBox(GoViewTable goViewTable) {
         this.parent = goViewTable;
-
+        tabIndex = 10 ; 
         initGUI();
         addInternalListeners(this);
         initWidget(panel);

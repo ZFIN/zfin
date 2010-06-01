@@ -2,18 +2,21 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 /**
  */
-public class GoViewTable extends ZfinFlexTable {
+public class GoViewTable extends ZfinFlexTable implements HandlesError{
 
     // data
     private String publicationZdbID;
@@ -22,6 +25,10 @@ public class GoViewTable extends ZfinFlexTable {
     // gui
     private FlexCellFormatter formatter = new FlexCellFormatter();
     private int newGoRow = -1;
+    private String geneFilter = GoCurationModule.GENE_FILTER_ALL ;
+
+    // listeners
+    private final List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
 
     public GoViewTable() {
         super(HeaderName.values().length, -1);
@@ -61,23 +68,26 @@ public class GoViewTable extends ZfinFlexTable {
         String lastZdbID = "";
         if (goEvidences != null) {
             for (GoEvidenceDTO goEvidenceDTO : goEvidences) {
-                int columnCount = 0;
-                if (false == lastZdbID.equals(goEvidenceDTO.getMarkerDTO().getZdbID())) {
-                    lastZdbID = goEvidenceDTO.getMarkerDTO().getZdbID();
-                    setWidget(rowNumber, columnCount, new GeneComposite(goEvidenceDTO, rowNumber));
+                MarkerDTO markerDTO = goEvidenceDTO.getMarkerDTO();
+                if(geneFilter.equals(GoCurationModule.GENE_FILTER_ALL) || markerDTO.getName().equals(geneFilter)){
+                    int columnCount = 0;
+                    if (false == lastZdbID.equals(markerDTO.getZdbID())) {
+                        lastZdbID = markerDTO.getZdbID();
+                        setWidget(rowNumber, columnCount, new GeneComposite(goEvidenceDTO, rowNumber));
+                    }
+                    ++columnCount;
+                    if (goEvidenceDTO.getFlag() != null) {
+                        setWidget(rowNumber, columnCount, new Label(goEvidenceDTO.getFlag().name()));
+                    }
+                    ++columnCount;
+                    setWidget(rowNumber, columnCount++, new GoLink(goEvidenceDTO.getGoTerm()));
+                    setWidget(rowNumber, columnCount++, new EvidenceLink(goEvidenceDTO.getEvidenceCode()));
+                    setWidget(rowNumber, columnCount++, new InferredFromComposite(goEvidenceDTO.getInferredFromLinks()));
+                    setWidget(rowNumber, columnCount++, new NoteHTML(goEvidenceDTO.getNote()));
+                    setWidget(rowNumber, columnCount++, new GoActionComposite(this, goEvidenceDTO, rowNumber));
+                    setRowStyle(rowNumber, 0);
+                    ++rowNumber;
                 }
-                ++columnCount;
-                if (goEvidenceDTO.getFlag() != null) {
-                    setWidget(rowNumber, columnCount, new Label(goEvidenceDTO.getFlag().name()));
-                }
-                ++columnCount;
-                setWidget(rowNumber, columnCount++, new GoLink(goEvidenceDTO.getGoTerm()));
-                setWidget(rowNumber, columnCount++, new EvidenceLink(goEvidenceDTO.getEvidenceCode()));
-                setWidget(rowNumber, columnCount++, new InferredFromComposite(goEvidenceDTO.getInferredFromLinks()));
-                setWidget(rowNumber, columnCount++, new NoteHTML(goEvidenceDTO.getNote()));
-                setWidget(rowNumber, columnCount++, new GoActionComposite(this, goEvidenceDTO, rowNumber));
-                setRowStyle(rowNumber, 0);
-                ++rowNumber;
             }
         }
 
@@ -102,6 +112,13 @@ public class GoViewTable extends ZfinFlexTable {
     public void setPublicationZdbID(String publicationZdbID) {
         this.publicationZdbID = publicationZdbID;
         setValues();
+    }
+
+    public void doGeneFilter(String selectedText) {
+        if(false==selectedText.equals(geneFilter)){
+            geneFilter = selectedText;
+            refreshGUI();
+        }
     }
 
     private enum HeaderName {
@@ -339,5 +356,27 @@ public class GoViewTable extends ZfinFlexTable {
         }
     }
 
+    @Override
+    public void setError(String message) {
+        Window.alert(message);
+    }
 
+    @Override
+    public void clearError() {
+        hideNewGoRow();
+        setValues();
+        fireEventSuccess();
+    }
+
+    @Override
+    public void fireEventSuccess() {
+        for (HandlesError handlesError : handlesErrorListeners) {
+            handlesError.clearError();
+        }
+    }
+
+    @Override
+    public void addHandlesErrorListener(HandlesError handlesError) {
+        handlesErrorListeners.add(handlesError);
+    }
 }

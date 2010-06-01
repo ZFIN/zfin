@@ -19,7 +19,7 @@ public class GoInlineCloneBox extends GoInlineAddBox{
     public GoInlineCloneBox(GoViewTable goViewTable) {
         super();
         this.parent = goViewTable;
-
+        tabIndex = 50 ;
         initGUI();
         addInternalListeners(this);
         initWidget(panel);
@@ -62,8 +62,7 @@ public class GoInlineCloneBox extends GoInlineAddBox{
                 public void onSuccess(final GoEvidenceDTO result) {
                     notWorking();
                     revertGUI();
-                    parent.hideNewGoRow();
-                    parent.setValues();
+                    parent.clearError();
                 }
             });
         }

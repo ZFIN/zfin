@@ -618,7 +618,8 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<Genotype> getGenotypesForStandardAttribution(Publication publication) {
         String hql = "select distinct g from PublicationAttribution pa , Genotype g " +
                 " where pa.dataZdbID=g.zdbID and pa.publication.zdbID= :pubZdbID  " +
-                " and pa.sourceType= :sourceType  ";
+                " and pa.sourceType= :sourceType  "+
+                " order by g.handle ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("pubZdbID", publication.getZdbID());
         query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
@@ -640,7 +641,8 @@ public class HibernateMutantRepository implements MutantRepository {
                 " and ev.marker.zdbID = :markerZdbID " +
                 " and ev.evidenceCode.code not in (:excludedEvidenceCodes) " +
                 " and g.ID= ev.goTerm.ID " +
-                " and pa.sourceType= :sourceType  ";
+                " and pa.sourceType= :sourceType  " +
+                " order by g.termName  ";
         Query query = HibernateUtil.currentSession().createQuery(hql) ;
         query.setString("pubZdbID",publication.getZdbID());
         query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()} );
@@ -717,7 +719,7 @@ public class HibernateMutantRepository implements MutantRepository {
         String hql = "" +
                 " select distinct g from Genotype g, RecordAttribution ra " +
                 " where ra.dataZdbID=g.zdbID and ra.sourceType = :standard and ra.sourceZdbID = :pubZdbID " +
-                " order by g.nameOrder " +
+                " order by g.handle" +
                 " ";
 
         return (List<Genotype>) HibernateUtil.currentSession().createQuery(hql)

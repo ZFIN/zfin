@@ -17,6 +17,7 @@ public class GoInlineEditBox extends AbstractGoInlineBox {
 
     public GoInlineEditBox(GoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO) {
         this.parent = goViewTable;
+        tabIndex = 50 ;
 
         initGUI();
         addInternalListeners(this);
@@ -71,8 +72,7 @@ public class GoInlineEditBox extends AbstractGoInlineBox {
                 public void onSuccess(final GoEvidenceDTO result) {
                     notWorking();
                     revertGUI();
-                    parent.hideNewGoRow();
-                    parent.setValues();
+                    parent.clearError();
                 }
             });
         }

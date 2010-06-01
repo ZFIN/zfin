@@ -50,6 +50,7 @@ public class LookupComposite extends Composite implements Revertible {
     public final static String TYPE_SUPPLIER = "SUPPLIER";
     public final static String FEATURE_LOOKUP = "FEATURE_LOOKUP";
     public final static String GDAG_TERM_LOOKUP = "GDAG_TERM_LOOKUP";
+    public static final String MARKER_LOOKUP_AND_TYPE = "MARKER_LOOKUP_AND_TYPE";
     private Collection<String> types = new ArrayList<String>(10);
     private OntologyDTO ontology;
 
@@ -81,10 +82,12 @@ public class LookupComposite extends Composite implements Revertible {
     private static final String TERM_INFO = "term-info";
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
+    public static final String SHOW_TYPE = "SHOW_TYPE";    
 
     public LookupComposite() {
         types.add(TYPE_SUPPLIER);
         types.add(MARKER_LOOKUP);
+        types.add(MARKER_LOOKUP_AND_TYPE);
         types.add(ANTIBODY_LOOKUP);
         types.add(GENEDOM_AND_EFG);
         types.add(FEATURE_LOOKUP);
@@ -454,4 +457,8 @@ public class LookupComposite extends Composite implements Revertible {
         textBox.setEnabled(true);
         submitButton.setEnabled(true);
     }
+
+    public void setTabIndex(int tabIndex) {
+        textBox.setTabIndex(tabIndex);
+    }    
 }

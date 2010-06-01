@@ -1247,7 +1247,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<Marker> getMarkersForStandardAttributionAndType(Publication publication, String type) {
         String hql = "select m from PublicationAttribution pa , Marker m " +
                 " where pa.dataZdbID=m.zdbID and pa.publication.zdbID= :pubZdbID  " +
-                " and pa.sourceType= :sourceType and m.zdbID like :markerType ";
+                " and pa.sourceType= :sourceType and m.zdbID like :markerType " +
+                " order by m.abbreviationOrder ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("pubZdbID", publication.getZdbID());
         query.setString("sourceType", RecordAttribution.SourceType.STANDARD.toString());

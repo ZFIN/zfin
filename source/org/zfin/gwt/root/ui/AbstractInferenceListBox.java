@@ -36,6 +36,8 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
     // internal GUI data
     protected String valueToSend;
     protected String prefixToSend;
+    protected int startTabIndex ;
+    protected int endTabIndex ;
 
     public AbstractInferenceListBox(String div) {
         super();
@@ -450,5 +452,25 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
         addButton.setStyleName((dirty ? DIRTY_STYLE : CLEAN_STYLE));
         inferenceCategoryList.setStyleName((dirty ? DIRTY_STYLE : CLEAN_STYLE));
         return dirty;
+    }
+
+
+    public int setTabIndex(int tabIndex){
+        this.startTabIndex = tabIndex ;
+        int thisIndex = this.startTabIndex ;
+        inferenceCategoryList.setTabIndex(thisIndex++);
+        availableList.setTabIndex(thisIndex);
+        lookupBox.setTabIndex(thisIndex);
+        ++thisIndex ;
+        addButton.setTabIndex(thisIndex);
+        return this.endTabIndex;
+    }
+
+    public int getStartTabIndex() {
+        return startTabIndex;
+    }
+
+    public int getEndTabIndex() {
+        return endTabIndex;
     }
 }

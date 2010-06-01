@@ -3,8 +3,10 @@ package org.zfin.gwt.root.util;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.ItemSuggestCallback;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  */
@@ -14,7 +16,7 @@ public interface LookupRPCServiceAsync {
 
     void getPublicationAbstract(String zdbID, AsyncCallback<PublicationDTO> async);
 
-    void getMarkerSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
+    void getMarkerSuggestions(SuggestOracle.Request req, Map<String,String> options, AsyncCallback<SuggestOracle.Response> async);
 
     void getAntibodySuggestions(SuggestOracle.Request request, AsyncCallback<SuggestOracle.Response> async);
 

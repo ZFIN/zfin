@@ -20,7 +20,7 @@ public class GoInlineAddBox extends AbstractGoInlineBox {
 
     public GoInlineAddBox(GoViewTable goViewTable) {
         this.parent = goViewTable;
-
+        tabIndex = 50 ;
         initGUI();
         addInternalListeners(this);
         initWidget(panel);
@@ -75,8 +75,7 @@ public class GoInlineAddBox extends AbstractGoInlineBox {
                 public void onSuccess(final GoEvidenceDTO result) {
                     notWorking();
                     revertGUI();
-                    parent.hideNewGoRow();
-                    parent.setValues();
+                    parent.clearError();
                 }
             });
         }

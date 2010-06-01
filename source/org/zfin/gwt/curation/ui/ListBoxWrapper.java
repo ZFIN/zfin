@@ -156,4 +156,12 @@ public class ListBoxWrapper extends ListBox {
     }
 
 
+    public boolean containsItemText(String name) {
+        for (int i = 0 ; i < getItemCount() ; i++){
+            if(getItemText(i).equals(name)){
+                return true ;
+            }
+        }
+        return false ;
+    }
 }

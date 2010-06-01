@@ -1,17 +1,19 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.PostComposedPart;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.MarkerEditCallBack;
+import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +28,23 @@ public class GoCurationModule extends ConstructionZoneAdapater {
     private AttributionModule attributionModule = new AttributionModule();
     private GoViewTable goViewTable = new GoViewTable();
     public static final String GO_EVIDENCE_DISPLAY = "go-evidence-display";
+    public static final String GO_EVIDENCE_DISPLAY_FILTER = "go-evidence-display-filter";
     private GoAddBox goAddBox = new GoAddBox(goViewTable);
     public static final String GO_EVIDENCE_ADD = "go-evidence-add";
     public static final String GO_ADD_LINK = "go-add-link";
 
+    // new go link stuff
     private final static String ADD_NEW_GO_TEXT = "[Add New GO]";
     private final static String RIGHT_ARROW = "<img align=\"top\" src=\"/images/right.gif\" >" + ADD_NEW_GO_TEXT;
     private final static String DOWN_ARROW = "<img align=\"top\" src=\"/images/down.gif\" >" + ADD_NEW_GO_TEXT;
     private HTML addNewGoLink = new HTML(RIGHT_ARROW);
     private VerticalPanel addPanel = new VerticalPanel();
+
+    // get filter bar
+    private HorizontalPanel filterPanel = new HorizontalPanel();
+    private ListBoxWrapper geneFilterListBox = new ListBoxWrapper() ;
+    public static final String GENE_FILTER_ALL = "ALL" ;
+
 
     // data
     private String publicationID;
@@ -48,7 +58,6 @@ public class GoCurationModule extends ConstructionZoneAdapater {
         initGUI();
         addInternalListeners(this);
         loadDTO();
-
         openBox(false);
     }
 
@@ -68,18 +77,28 @@ public class GoCurationModule extends ConstructionZoneAdapater {
 
         });
 
+        geneFilterListBox.addChangeHandler(new ChangeHandler(){
+            @Override
+            public void onChange(ChangeEvent event) {
+                goViewTable.doGeneFilter(geneFilterListBox.getSelectedText()) ;
+            }
+        });
 
         attributionModule.addHandlesErrorListener(this);
         goAddBox.addHandlesErrorListener(this);
+        goViewTable.addHandlesErrorListener(this);
     }
 
     private void initGUI() {
-
         addNewGoLink.setStyleName("relatedEntityPubLink");
         addPanel.add(addNewGoLink);
 
         RootPanel.get(GO_ADD_LINK).add(addPanel);
         RootPanel.get(GO_EVIDENCE_ADD).add(goAddBox);
+
+        filterPanel.add(new HTML("<b valign=\"top\">Filter Gene:</b>"));
+        filterPanel.add(geneFilterListBox);
+        RootPanel.get(GO_EVIDENCE_DISPLAY_FILTER).add(filterPanel);
 
         openBox(false);
     }
@@ -91,14 +110,23 @@ public class GoCurationModule extends ConstructionZoneAdapater {
         goAddBox.setDTO(goEvidenceDTO);
         attributionModule.setDTO(goEvidenceDTO);
         goViewTable.setPublicationZdbID(publicationID);
+        updateGeneFilter() ;
     }
 
-    private Map<PostComposedPart, List<OntologyDTO>> getTermEntryMap() {
-        Map<PostComposedPart, List<OntologyDTO>> termEntryMap = new TreeMap<PostComposedPart, List<OntologyDTO>>();
-        List<OntologyDTO> superterm = new ArrayList<OntologyDTO>(1);
-        superterm.add(OntologyDTO.GO);
-        termEntryMap.put(PostComposedPart.SUPERTERM, superterm);
-        return termEntryMap;
+    private void updateGeneFilter() {
+        MarkerGoEvidenceRPCService.App.getInstance().getMarkerGoTermEvidencesForPub(publicationID,
+                new MarkerEditCallBack<List<GoEvidenceDTO>>("Failed to find pub: " + publicationID+ " ") {
+                    @Override
+                    public void onSuccess(List<GoEvidenceDTO> result) {
+                        geneFilterListBox.clear();
+                        geneFilterListBox.addItem(GENE_FILTER_ALL);
+                        for(GoEvidenceDTO goEvidenceDTO: result){
+                            if(false==geneFilterListBox.containsItemText(goEvidenceDTO.getMarkerDTO().getName())){
+                                geneFilterListBox.addItem(goEvidenceDTO.getMarkerDTO().getName());
+                            }
+                        }
+                    }
+                });
     }
 
     public ConstructionZone getPileConstructionZoneModule() {
@@ -107,7 +135,7 @@ public class GoCurationModule extends ConstructionZoneAdapater {
 
     @Override
     public void setError(String message) {
-        Window.alert("error: " + message);
+        Window.alert("Error: " + message);
     }
 
     @Override
@@ -115,6 +143,7 @@ public class GoCurationModule extends ConstructionZoneAdapater {
         attributionModule.revertGUI();
         goAddBox.updateGenes();
         goViewTable.refreshGUI();
+        updateGeneFilter();
         openBox(false);
     }
 

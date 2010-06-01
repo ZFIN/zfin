@@ -90,7 +90,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
     @Override
     protected void initGUI() {
-        markerLookupComposite.setType(LookupComposite.MARKER_LOOKUP);
+        markerLookupComposite.setType(LookupComposite.MARKER_LOOKUP_AND_TYPE);
         markerLookupComposite.setButtonText("Attr Marker");
         markerLookupComposite.setWildCard(false);
         markerLookupComposite.setAction(new SubmitAction() {

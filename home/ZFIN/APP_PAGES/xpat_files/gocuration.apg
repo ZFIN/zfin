@@ -34,6 +34,11 @@
         <div id="go-evidence-add"></div>
 
         <br>
+        <table width="100%" bgcolor="#33cc99" border="0" cellpadding="0">
+        <tr><td>
+        <div id="go-evidence-display-filter"></div>
+        </td></tr></table>
+        <br>
 
         <div id="go-evidence-display"></div>
 

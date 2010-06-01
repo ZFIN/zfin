@@ -5,6 +5,9 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  */
 class CallbackTimer extends Timer {
@@ -36,7 +39,11 @@ class CallbackTimer extends Timer {
         if (lookup.getType().equals(LookupComposite.TYPE_SUPPLIER)) {
             lookupServiceAsync.getSupplierSuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.MARKER_LOOKUP)) {
-            lookupServiceAsync.getMarkerSuggestions(request, callback);
+            lookupServiceAsync.getMarkerSuggestions(request,null, callback);
+        } else if (lookup.getType().equals(LookupComposite.MARKER_LOOKUP_AND_TYPE)) {
+            Map<String,String> options = new HashMap<String,String>() ;
+            options.put(LookupComposite.SHOW_TYPE,"true") ;
+            lookupServiceAsync.getMarkerSuggestions(request, options, callback);
         } else if (lookup.getType().equals(LookupComposite.ANTIBODY_LOOKUP)) {
             LookupRPCService.App.getInstance().getAntibodySuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.GENEDOM_AND_EFG)) {

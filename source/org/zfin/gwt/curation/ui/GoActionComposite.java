@@ -25,11 +25,11 @@ public class GoActionComposite extends Composite implements Revertible {
 
     // data
     protected GoEvidenceDTO dto;
-    private GoViewTable goViewTable;
+    private GoViewTable parent;
     private int rowNumber;
 
-    public GoActionComposite(GoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO, int rowNumber) {
-        this.goViewTable = goViewTable;
+    public GoActionComposite(GoViewTable parent, GoEvidenceDTO goEvidenceDTO, int rowNumber) {
+        this.parent = parent;
         this.dto = goEvidenceDTO;
         this.rowNumber = rowNumber;
         initGUI();
@@ -69,7 +69,7 @@ public class GoActionComposite extends Composite implements Revertible {
                             @Override
                             public void onSuccess(Void result) {
                                 // this should remove the buttons anyway
-                                goViewTable.setValues();
+                                parent.clearError();
                             }
                         });
             }
@@ -78,14 +78,14 @@ public class GoActionComposite extends Composite implements Revertible {
         cloneButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                goViewTable.cloneGO(getDto(), rowNumber);
+                parent.cloneGO(getDto(), rowNumber);
             }
         });
 
         editButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                goViewTable.editGO(getDto(), rowNumber);
+                parent.editGO(getDto(), rowNumber);
             }
         });
 

@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  */
@@ -32,7 +33,7 @@ public interface LookupRPCService extends RemoteService {
 
     PublicationDTO getPublicationAbstract(String zdbID);
 
-    SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req);
+    SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req, Map<String,String> options);
 
     SuggestOracle.Response getAntibodySuggestions(SuggestOracle.Request request);
 

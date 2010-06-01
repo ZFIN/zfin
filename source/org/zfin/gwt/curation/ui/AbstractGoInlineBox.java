@@ -29,16 +29,18 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
     protected HorizontalPanel mainPanel = new HorizontalPanel();
     protected HorizontalPanel zdbIDPanel = new HorizontalPanel();
     protected VerticalPanel eastPanel = new VerticalPanel();
+    protected HorizontalPanel northEastPanel = new HorizontalPanel();
 
     // data
     protected GoViewTable parent;
+    protected int tabIndex ;
 
     protected void initGUI() {
 
         inferenceListBox = null;
         inferenceListBox = new GoCurationInferenceListBox();
 
-        table = new GoEditTable();
+        table = new GoEditTable(getTabIndex());
         ((GoEditTable) table).setGeneBox(geneBox);
 
         ((GoEditTable) table).setQualifiers(evidenceFlagBox);
@@ -47,7 +49,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         ((GoEditTable) table).setInference(inferenceListBox);
         ((GoEditTable) table).setButtonPanel(buttonPanel);
         ((GoEditTable) table).setErrorLabel(errorLabel);
-        ((GoEditTable) table).setGoTermButton(goTermButton);
+//        ((GoEditTable) table).setGoTermButton(goTermButton);
 
         goTermBox.setType(LookupComposite.GDAG_TERM_LOOKUP);
         goTermBox.setOntology(OntologyDTO.GO);
@@ -60,14 +62,16 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
 
         pubLabel.setEnabled(false);
 
+        northEastPanel.add(goTermButton);
         zdbIDPanel.add(new HTML("<b style=\"font-size: small;\">ZdbID: </b>"));
         zdbIDPanel.add(zdbIDHTML);
-        eastPanel.add(zdbIDPanel);
+        northEastPanel.add(zdbIDPanel);
+        eastPanel.add(northEastPanel);
         ScrollPanel scrollPanel = new ScrollPanel(termInfoComposite);
         scrollPanel.setAlwaysShowScrollBars(false);
-        scrollPanel.setSize("700px","300px");
+        scrollPanel.setSize("500px","300px");
         eastPanel.add(scrollPanel);
-        eastPanel.setWidth("800px");
+        eastPanel.setWidth("500px");
 
         mainPanel.add(table);
         mainPanel.add(eastPanel);
@@ -83,7 +87,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         saveButton.setText("Save");
         revertButton.setText("Cancel");
         zdbIDHTML.setHTML("");
-        termInfoComposite.setWidth("600px");
+        termInfoComposite.setWidth("400px");
     }
 
     protected class GoTermInfoCallBack extends TermInfoCallBack {
@@ -98,12 +102,14 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         }
 
         private void updateQualifiers(TermInfo result) {
-            evidenceFlagBox.clear();
-            evidenceFlagBox.addItem("NONE", "null");
-            if (result.getOntology() == OntologyDTO.GO_MF) {
-                evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
+            if(result!=null){
+                evidenceFlagBox.clear();
+                evidenceFlagBox.addItem("NONE", "null");
+                if (result.getOntology() == OntologyDTO.GO_MF) {
+                    evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
+                }
+                evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());
             }
-            evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());
         }
     }
 
@@ -157,7 +163,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
                     });
                 }
                 else{
-                   setError("Term details box must be empty."); 
+                    setError("Term details box must be empty.");
                 }
             }
         });
@@ -232,5 +238,9 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
     @Override
     public boolean isDirty() {
         return true ;
+    }
+
+    public int getTabIndex() {
+        return tabIndex;
     }
 }

@@ -71,6 +71,16 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         // set modified by
         Person person = Person.getCurrentSecurityUser();
 
+        Marker marker;
+        if (StringUtils.isNotEmpty(goEvidenceDTO.getMarkerDTO().getZdbID())) {
+            marker = markerRepository.getMarkerByID(goEvidenceDTO.getMarkerDTO().getZdbID());
+        } else if (StringUtils.isNotEmpty(goEvidenceDTO.getMarkerDTO().getName())) {
+            marker = markerRepository.getMarkerByAbbreviation(goEvidenceDTO.getMarkerDTO().getName());
+        } else {
+            throw new RuntimeException("Failed to create marker go term.  Bad MarkerDTO passed in.");
+        }
+        markerGoTermEvidence.setMarker(marker);
+
         Term goTerm = (Term) HibernateUtil.currentSession().get(GenericTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
         markerGoTermEvidence.setGoTerm(goTerm);
 //

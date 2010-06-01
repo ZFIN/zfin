@@ -11,6 +11,7 @@ import org.zfin.gwt.curation.ui.AttributionModule;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ItemSuggestOracle;
 import org.zfin.gwt.root.ui.ItemSuggestion;
+import org.zfin.gwt.root.ui.LookupComposite;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
@@ -28,6 +29,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -218,15 +220,19 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @param req request that holds the query string.
      * @return response
      */
-    public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req) {
+    public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req, Map<String,String> options) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
+            String markerView ;
             for (Marker marker : RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(query)) {
-                suggestions.add(new ItemSuggestion(
-                        marker.getAbbreviation().replaceAll(query.replace("(", "\\(").replace(")", "\\)"), "<strong>" + query + "</strong>"), marker.getAbbreviation()));
+                markerView = marker.getAbbreviation().replaceAll(query.replace("(", "\\(").replace(")", "\\)"), "<strong>" + query + "</strong>") ;
+                if(options!=null && Boolean.valueOf(options.get(LookupComposite.SHOW_TYPE))){
+                    markerView += " ["+marker.getType() + "]" ;
+                }
+                suggestions.add(new ItemSuggestion(markerView , marker.getAbbreviation()));
             }
         }
         resp.setSuggestions(suggestions);
@@ -416,7 +422,9 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             relatedEntityDTOs.add(spacer);
         }
         for (Marker m : markers) {
-            relatedEntityDTOs.add(DTOConversionService.convertToMarkerDTO(m));
+            MarkerDTO markerDTO = DTOConversionService.convertToMarkerDTO(m) ;
+            markerDTO.setName(m.getAbbreviation() + "["+m.getType() +"]");
+            relatedEntityDTOs.add(markerDTO);
         }
 
 
