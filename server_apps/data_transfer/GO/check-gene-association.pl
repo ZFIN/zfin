@@ -5,7 +5,8 @@
 # date: $Date$
 #
 # specification of the gene_association format is defined at:
-#   http://www.geneontology.org/GO.annotation.html#file
+#
+#  http://www.geneontology.org/GO.format.gaf-2_0.shtml
 #
 # Usage:  check-gene-association.pl [-d]
 #         the -d option causes a line by line report of errors identified
@@ -51,7 +52,7 @@ use constant MINYEAR => 1985;
 my @column = ();
 
 #
-# Column positions 
+# Column positions
 #
 use constant DB => 0;
 use constant DB_OBJECT_ID => 1;
@@ -68,9 +69,11 @@ use constant DB_OBJECT_TYPE => 11;
 use constant TAXON => 12;
 use constant DATE => 13;
 use constant ASSIGNED_BY => 14;
+use constant ANNOTATION_EXTENSION  => 15;
+use constant GENE_PRODUCT_FORM_ID => 16;
 
 # Number of TAB delimited columns in file
-use constant COLNUM => 15;
+use constant COLNUM => 17;
 
 #
 # Definition of positions in column array
@@ -97,6 +100,8 @@ $column[DB_OBJECT_TYPE] = ["DB_Object_Type", 1, 1];
 $column[TAXON] = ["Taxon", 1, 1];
 $column[DATE] = ["Date", 1, 1];
 $column[ASSIGNED_BY] = ["Assigned_by", 1, 0];
+$column[ANNOTATION_EXTENSION] = ["Annotation_Extension", 0, 0];
+$column[GENE_PRODUCT_FORM_ID] = ["Gene_Product_Form_ID", 0, 0];
 
 #
 # Evidence Codes
@@ -108,7 +113,7 @@ my %evicodes = ( IC => 1,  IDA => 1, IEA => 1, IEP => 1, IGI => 1,
 #
 # Object Types
 #
-my %objtypes = ( gene => 1, transcript => 1, protein => 1,
+my %objtypes = ( gene_product => 1, transcript => 1, protein => 1,
 		 protein_structure => 1, complex => 1 );
 
 #
@@ -119,14 +124,14 @@ my %dbnames = (  cgen => 1, ddb => 1, ensembl => 1, fb => 1, gr => 1, genedb_gmo
 		 genedb_tbrucei => 1, mgi => 1, pdb => 1, refseq => 1, rgd => 1, sgd => 1,
 		 tair => 1, tigr_ath1 => 1, tigr_cmr => 1, tigr_tgi => 1, tigr_tba1 => 1,
 		 uniprot => 1, vida => 1, wb => 1, zfin => 1, cgd => 1, silkdb => 1,
-	         hinv => 1 ); 
+	         hinv => 1 );
 
 #
 # Qualifier Types
 #
 my %qualtypes = ( not => 1, contributes_to => 1, colocalizes_with => 1 );
 
-# begin input loop
+# begin input loop over lines
 while ( defined($line = <>) ) {
     $linenum++;
 
@@ -135,7 +140,7 @@ while ( defined($line = <>) ) {
 	$lineerr++;
 	$totalerr++;
     }
-	
+
     chomp $line;
 
 # skip comment lines
@@ -150,7 +155,8 @@ while ( defined($line = <>) ) {
     }
 
 # split TAB delimited columns
-    my @cols = split(/\t/, $line);
+# (By default empty trailing fields are deleted, unless 3rd arg is present and non 0)
+    my @cols = split(/\t/, $line, COLNUM);
 
     if ( @cols ne COLNUM) {
 	&checkwarn ("$linenum: Too few or too many columns on this line, found " . @cols . ". There should be " . COLNUM . ". Line skipped.\n");
@@ -160,8 +166,9 @@ while ( defined($line = <>) ) {
 	next;
     }
 
+# we do not have data for the last two columns yet "Annotation_Extension" & "Gene_Product_Form_ID"
 # loop through all the columns on this line of input
-    for (my $cnum=0; $cnum < @column; $cnum++) {
+    for (my $cnum=0; $cnum < @column ; $cnum++) {
 
 # Any leading or trailing spaces?
 	my $value = $cols[$cnum];
@@ -280,7 +287,7 @@ while ( defined($line = <>) ) {
 
 # Check Date in proper format, YYYYMMDD
 # arbitarily define the MINYEAR that makes sense
-	    if ($cnum == DATE) {
+	   if ($cnum == DATE) {
 		if ($cols[DATE] =~ m/(\d\d\d\d)(\d\d)(\d\d)/) {
 		    if ( ($1 > $currentyear) || ($1 < MINYEAR) || ($2 > 12) || ($3 > 31) ) {
 			&checkwarn ("$linenum: " . $column[DATE][LABEL] . " column=" . (DATE + 1) . " bad date format \"" . $cols[DATE] . "\"\n");
@@ -293,11 +300,11 @@ while ( defined($line = <>) ) {
 			&checkwarn ("$linenum: " . $column[DATE][LABEL] . " column=" . (DATE + 1) . " bad date format \"" . $cols[DATE] . "\"\n");
 			$errors[DATE]++;
 			$totalerr++;
-		}
 	    }
+	   }
 	}
-    }
-}
+    }# end loop over columns
+}# end loop over lines
 
 # output summary of errors
 

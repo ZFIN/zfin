@@ -3,12 +3,21 @@
 #  goparser.pl
 #
 
+# fetch previous revision
+use lib './';
+use FetchCVSRevision;
+
+my $url = "http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/submission/gene_association.zfin.gz?rev=";
+
+my $rev = FetchCVSRevision->fcvsr_get($url);
+if (! $rev) {$rev = "unknown";} else {$rev += 0.001;}
 
 open (INDEXFILE, "go.zfin") or die "open failed";
 open (UNL, ">gene_association.zfin") or die "Cannot open exppat.unl";
 
-print UNL "!Version: \$"."Revision\$ \n";
-print UNL "!Date: \$"."Date\$ \n";
+print UNL "!gaf-version: 2.0\n";
+print UNL "!Version: " . $rev. "\n";
+print UNL "!Date: ".`/usr/bin/date +%Y/%m/%d`;
 print UNL "!From: ZFIN (zfin.org) \n";
 print UNL "! \n";
 
@@ -23,9 +32,10 @@ while ($line = <INDEXFILE>) {
       $mrkrgoev=$fields[0];
       if ($lastmrkrgoev ne '' && $mrkrgoev ne $lastmrkrgoev) {
 
-	  print UNL "$db\t$mrkrid\t$mrkrabb\t$qualifier\tGO:$goid\tZFIN:$pubid\t$evidence\t".join('|',@inf_array)."\t$go_o\t$mrkrname\t\tgene\ttaxon:7955\t$ev_date\t$mod_by\n";
-	  
-	  @inf_array = (); 
+	  print UNL "$db\t$mrkrid\t$mrkrabb\t$qualifier\tGO:$goid\tZFIN:$pubid\t$evidence\t".
+        join('|',@inf_array)."\t$go_o\t$mrkrname\t\tgene_product\ttaxon:7955\t$ev_date\t$mod_by\t\t\n";
+
+	  @inf_array = ();
       }
       $lastmrkrgoev = $mrkrgoev;
       $mrkrid=$fields[1];
@@ -46,21 +56,21 @@ while ($line = <INDEXFILE>) {
 close (UNL);
 close (INDEXFILE);
 
-sub goQlf() 
+sub goQlf()
  {
      $qualf = $_[0];
      $qualf = 'NOT' if $qualf eq 'not';
      $qualf = 'contributes_to' if $qualf eq 'contributes to';
      return $qualf;
- }              
+ }
 
-sub goDate() 
+sub goDate()
   {
     ($date, $time) = split(/ /, $_[0]);
     $date =~ s/-//g;
     return $date;
   }
-    
+
 sub goAspect()
   {
     $aspect = $_[0];
@@ -101,4 +111,3 @@ sub goInf()
      }
     return $inf;
   }
-

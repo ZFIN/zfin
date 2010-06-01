@@ -1,10 +1,19 @@
-#!/private/bin/perl 
-#  This script creates a file that ZFIN sends to Stanford. The file is tab 
+#!/private/bin/perl
+#  This script creates a file that ZFIN sends to Stanford. The file is tab
 #  delimitted with 2 columns, each gene that has a GO annotations and its corresponding UniProt#  ID.
 #  We must send the file via email to GO after running the script. A reminder
-#  email, containing the path to the file, is sent to a member of ZFIN. 
+#  email, containing the path to the file, is sent to a member of ZFIN.
 
 use DBI;
+
+# fetch previous revision
+
+use lib './';
+use FetchCVSRevision;
+
+my $url = "http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gp2protein/gp2protein.zfin.gz?rev=";
+my $rev = FetchCVSRevision->fcvsr_get($url);
+if (! $rev) {$rev = "unknown";} else {$rev += 0.001;}
 
 #set environment variables
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
@@ -14,11 +23,11 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 ### open a handle on the db
 my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-                       '', 
-                       '',                     
+                       '',
+                       '',
 		       {AutoCommit => 1,RaiseError => 1}
 		      )
-  || emailError("Failed while connecting to <!--|DB_NAME|-->"); 
+  || emailError("Failed while connecting to <!--|DB_NAME|-->");
 
 $dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/";
 chdir "$dir";
@@ -28,7 +37,7 @@ $outFile = "gp2protein.zfin";
 &gp2proteinReport();
 
 $dbh->disconnect();
-      
+
 ###undef %validPids;
 exit;
 
@@ -37,7 +46,7 @@ exit;
 sub gp2proteinReport()
 {
     system("/bin/rm -f $outFile");
-    
+
     system("wget -q ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat -O zfin.dat");
     open (INP, "zfin.dat") || die "Can't open zfin.dat : $!\n";
     @lines=<INP>;
@@ -51,22 +60,22 @@ sub gp2proteinReport()
         $id = $1;
         $len = $2;
         $lengths{$id};
-      } 
-     } 
-    
+      }
+     }
+
     open (REPORT, ">$outFile") or die "cannot open report";
     ###open (ERRREPORT, ">invalid_id_gp2protein.zfin") or die "cannot open invalid_id_gp2protein.zfin";
-    print REPORT "!Version: \$"."Revision\$ \n";
-    print REPORT "!Date: \$"."Date\$ \n";
+    print REPORT "!Version: " .$rev ."\n";
+    print REPORT "!Date: ".`/usr/bin/date +%Y/%m/%d`;
     print REPORT "!From: ZFIN (zfin.org) \n";
     print REPORT "! \n";
 
 #    FB: 2675
 #    Show all gene marker ZdbIDs.
-#    For the Gene marker with UniProt associations show the 
+#    For the Gene marker with UniProt associations show the
 #    uniprot id with the longest sequence. (union 1)
 #    For Genes without a UniProt  (union 2)
-#    or with no association (union3) 
+#    or with no association (union3)
 #    only show the ZdbID.
 #
     my $cur = $dbh->prepare('
@@ -114,21 +123,21 @@ order by m.mrkr_zdb_id
     $cur->execute;
     my($mrkr_id,$db_name,$acc_num,$db_length);
     $cur->bind_columns(\$mrkr_id,\$db_name,\$acc_num,\$db_length);
-    
+
     my %zdbIDs = ();
     my %zdbPids = ();
-    my %dbLengths = () ; 
+    my %dbLengths = () ;
     while ($cur->fetch) {
       $zdbIDs{$mrkr_id} = 1;
       if($db_name eq "UniProtKB") {
           if (!exists $zdbPids{$mrkr_id}) {
             $zdbPids{$mrkr_id} = $acc_num;
-            $dbLengths{$acc_num} = $db_length; 
+            $dbLengths{$acc_num} = $db_length;
           } else {
             $uniprotId = $zdbPids{$mrkr_id};
             if ($dbLengths{$uniprotId} <= $db_length){
-             $zdbPids{$mrkr_id} = $acc_num    ; 
-             $dbLengths{$acc_num} = $db_length ; 
+             $zdbPids{$mrkr_id} = $acc_num    ;
+             $dbLengths{$acc_num} = $db_length ;
             };
           }
       }
@@ -136,7 +145,7 @@ order by m.mrkr_zdb_id
             $zdbPids{$mrkr_id} = "NONE";
       }
     }
-    
+
     foreach $k (sort keys %zdbIDs) {
       if($zdbPids{$k} eq "NONE"){
           $v1 = "";
@@ -144,8 +153,8 @@ order by m.mrkr_zdb_id
       else{
           $v1 = "UniProtKB:" . $zdbPids{$k} if exists $zdbPids{$k};
       }
-      print REPORT "ZFIN:$k\t$v1\n";     
+      print REPORT "ZFIN:$k\t$v1\n";
     }
-    
     close(REPORT);
 }
+
