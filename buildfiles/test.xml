@@ -21,6 +21,22 @@
         <echo message=":UNIT TESTS SUCCESSFUL:"/>
     </target>
 
+    <target name="unittests-quiet" depends="compile,build-tests" description="Runs database and unit tests quietly">
+
+        <junit fork="yes"
+               printsummary="yes"
+               haltonfailure="yes"
+               haltonerror="yes"
+               showoutput="false"
+                >
+            <classpath refid="extended.classpath"/>
+            <test name="org.zfin.UnitTests" outfile="unit-result">
+                <formatter type="plain"/>
+            </test>
+        </junit>
+    </target>
+
+
     <target name="runDBtests" depends="compile,build-tests"
             description="Tests that involve access to the informix database.">
         <antcall target="runatest">
