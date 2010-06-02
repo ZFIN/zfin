@@ -53,6 +53,7 @@ public class AnatomySearchBean extends PaginationBean {
     private AnatomyStatistics anatomyStatisticsProbe;
     private AnatomyStatistics anatomyStatisticsAntibodies;
     private static final String NEWLINE = System.getProperty("line.separator");
+    private static final String TAB = "\t" ;
     private int numberOfHighQualityProbes;
     private int markerCount;
     private SectionVisibility visibility = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
@@ -378,6 +379,22 @@ public class AnatomySearchBean extends PaginationBean {
         sb.append("AnatomySearchBean:");
         sb.append(NEWLINE);
         sb.append(statisticItems);
+        sb.append(NEWLINE);
+        sb.append("id: ");
+        sb.append(TAB);
+        sb.append(id);
+        sb.append(NEWLINE);
+        sb.append("Anatomy Item: ");
+        sb.append(TAB);
+        if(anatomyItem==null){
+            sb.append("No Anatomy item");
+        }
+        else{
+            sb.append(anatomyItem.getZdbID());
+            sb.append(TAB);
+            sb.append(anatomyItem.getOboID());
+        }
+
 
         return sb.toString();
     }
