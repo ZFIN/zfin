@@ -325,10 +325,10 @@
     </target>
 
 
-    <target name="deploy" depends="has-tomcat-symlink,unittests-quiet,pre-deploy,build-properties,advance-build,restart,smokeTests,test"
+    <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,advance-build,restart,smokeTests,test"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
-    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release"
+    <target name="pre-deploy" depends="do,unittests-quiet,prepareDeploy,gwt,copy-to-pre-release"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <antcall target="copyZfinPropertiesWithEnv">
             <param name="from-zfin-properties-file" value="${web-inf.dir}/zfin-properties.xml"/>
