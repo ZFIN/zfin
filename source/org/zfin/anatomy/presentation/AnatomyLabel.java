@@ -1,5 +1,6 @@
 package org.zfin.anatomy.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.Figure;
@@ -102,20 +103,31 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
     }
 
     public Publication getSinglePublication() {
-        for (Publication pub : publications) {
-            return pub;
+        if (CollectionUtils.isNotEmpty(publications)) {
+            return publications.iterator().next();
+        } else {
+            return null;
         }
-        return null;
     }
 
+    /**
+     * TODO: Someone needs to add doc to this.  I fixed the NPE in the code (fogbugz 5732), but I'm unclear as to
+     * what the function of it should be.
+     *
+     * @param anotherDisplay
+     * @return
+     */
     public int compareTo(AnatomyLabel anotherDisplay) {
-        if (anotherDisplay == null)
+        if (anotherDisplay == null) {
             return 1;
+        }
         int result = superterm.compareTo(anotherDisplay.getSuperterm());
-        if (result != 0)
+        if (result != 0) {
             return 0;
-        if (subterm == null)
+        }
+        if (subterm != null) {
             return subterm.compareTo(anotherDisplay.getSubterm());
+        }
         return 0;
     }
 
