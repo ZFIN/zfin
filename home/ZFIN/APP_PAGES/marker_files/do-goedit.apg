@@ -197,9 +197,13 @@ optional:
 	<?MIVAR NAME=mrkrzdbid>$1<?/MIVAR>
 	<?MIVAR NAME=pubid>$2<?/MIVAR>
   <?/MISQL>
-  <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$OID'; 
-	       execute procedure p_drop_go_unknown_attribution('$mrkrzdbid');">
+  <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$OID';  ">
   <?/MISQL>
+        <?MICOMMENT>
+        <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$OID';
+        execute procedure p_drop_go_unknown_attribution('$mrkrzdbid'); ">
+        <?/MISQL>
+        <?/MICOMMENT>
   <?MICOMMENT> call attrib_check.apg to check and pop-up alert in the case 
 	that the old pub now has no more specific referencial data.
   <?/MICOMMENT>
