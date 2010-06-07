@@ -6,6 +6,7 @@ import com.google.gwt.event.logical.shared.HighlightHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.util.LookupRPCService;
@@ -76,13 +77,14 @@ public class LookupComposite extends Composite implements Revertible {
     protected int suggestBoxWidth = 30;
     protected String oId = null;
     protected int limit = ItemSuggestOracle.NO_LIMIT;
+    protected boolean submitOnEnter = false ;
 
     // later option
     private int minLookupLength = 3;
     private static final String TERM_INFO = "term-info";
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
-    public static final String SHOW_TYPE = "SHOW_TYPE";    
+    public static final String SHOW_TYPE = "SHOW_TYPE";
 
     public LookupComposite() {
         types.add(TYPE_SUPPLIER);
@@ -168,11 +170,18 @@ public class LookupComposite extends Composite implements Revertible {
         });
 
         suggestBox.addKeyUpHandler(new KeyUpHandler() {
-            public void onKeyUp(KeyUpEvent keyDownEvent) {
-                if (keyDownEvent.isDownArrow())
+            public void onKeyUp(KeyUpEvent keyUpEvent) {
+                if (keyUpEvent.isDownArrow()){
                     if (textBox.getText() != null && textBox.getText().length() > 0) {
                         currentText = textBox.getText();
                     }
+                }
+                else
+                if (submitOnEnter && keyUpEvent.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER){
+                    if(suggestBox.getText() != null && suggestBox.getText().trim().length()>2){
+                        doSubmit(suggestBox.getText().trim());
+                    }
+                }
             }
         });
 
@@ -446,6 +455,14 @@ public class LookupComposite extends Composite implements Revertible {
         return false;
     }
 
+    public boolean isSubmitOnEnter() {
+        return submitOnEnter;
+    }
+
+    public void setSubmitOnEnter(boolean submitOnEnter) {
+        this.submitOnEnter = submitOnEnter;
+    }
+
     @Override
     public void working() {
         textBox.setEnabled(false);
@@ -460,5 +477,5 @@ public class LookupComposite extends Composite implements Revertible {
 
     public void setTabIndex(int tabIndex) {
         textBox.setTabIndex(tabIndex);
-    }    
+    }
 }

@@ -6,6 +6,10 @@ package org.zfin.gwt.root.ui;
 public abstract class MarkerEditCallBack<T> extends HandlesErrorCallBack<T> {
 
 
+    public MarkerEditCallBack(String message, HandlesError handlesError,boolean showTrace) {
+        super(message, handlesError,showTrace);
+    }
+
     public MarkerEditCallBack(String message, HandlesError handlesError) {
         super(message, handlesError);
     }
@@ -23,7 +27,7 @@ public abstract class MarkerEditCallBack<T> extends HandlesErrorCallBack<T> {
         // only new one here
         if (handleDBLinkNotFound(throwable)) return;
         if (handleDuplicateEntry(throwable)) return;
-        displayMessage(message + throwable);
+        displayMessage(message + (showTrace ? throwable : "") );
     }
 
     private boolean handleDuplicateEntry(Throwable t) {

@@ -13,6 +13,13 @@ public abstract class HandlesErrorCallBack<T> implements AsyncCallback<T> {
 
     protected String message = "";
     protected HandlesError handlesError = null;
+    protected boolean showTrace = true ;
+
+    public HandlesErrorCallBack(String message, HandlesError handlesError,boolean showTrace) {
+        this(message);
+        this.handlesError = handlesError;
+        this.showTrace = showTrace ;
+    }
 
     public HandlesErrorCallBack(String message, HandlesError handlesError) {
         this(message);
@@ -38,7 +45,7 @@ public abstract class HandlesErrorCallBack<T> implements AsyncCallback<T> {
         if (checkLogin(throwable)) return;
         if (handleOutOfDateError(throwable)) return;
         if (handleTermNotFound(throwable)) return;
-        displayMessage(message + throwable);
+        displayMessage(message + (showTrace ? throwable : "") );
     }
 
     protected boolean handleConnectionError(Throwable t) {

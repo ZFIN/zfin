@@ -53,6 +53,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
     public void onModuleLoad() {
 
         lookup = new LookupInTableComposite(this);
+        lookup.setSubmitOnEnter(true);
         handleProperties();
         if(!useTermTable){
             super.onModuleLoad();

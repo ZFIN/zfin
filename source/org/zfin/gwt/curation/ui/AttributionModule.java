@@ -93,6 +93,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         markerLookupComposite.setType(LookupComposite.MARKER_LOOKUP_AND_TYPE);
         markerLookupComposite.setButtonText("Attr Marker");
         markerLookupComposite.setWildCard(false);
+        markerLookupComposite.setSubmitOnEnter(true);
         markerLookupComposite.setAction(new SubmitAction() {
             @Override
             public void doSubmit(String value) {
@@ -106,6 +107,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         featureLookupComposite.setType(LookupComposite.FEATURE_LOOKUP);
         featureLookupComposite.setButtonText("Attr Feature");
         featureLookupComposite.setWildCard(false);
+        featureLookupComposite.setSubmitOnEnter(true);
         featureLookupComposite.setAction(new SubmitAction() {
             @Override
             public void doSubmit(String value) {
