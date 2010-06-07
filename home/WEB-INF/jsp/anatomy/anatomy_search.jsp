@@ -37,9 +37,9 @@
                 <TABLE border=0 width=100% cellspacing=0 cellpadding=5>
                     <TR bgcolor="">
                         <TD>
-                            <%--<A HREF="/action/anatomy/search?action=<%= AnatomySearchBean.Action.COMPLETE_SEARCH.toString() %>">--%>
-                                <%--All Anatomical Terms--%>
-                            <%--</A>--%>
+                            <A HREF="/action/anatomy/search?action=<%= AnatomySearchBean.Action.COMPLETE_SEARCH.toString() %>">
+                                All Anatomical Terms
+                            </A>
                         </TD>
                         <TD colspan=2>
                             <A HREF="/action/anatomy/request-new-term" target="_new">

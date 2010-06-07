@@ -2,6 +2,7 @@ package org.zfin.anatomy;
 
 import org.zfin.anatomy.presentation.AnatomyPresentation;
 import org.zfin.ontology.Term;
+import org.zfin.repository.RepositoryFactory;
 
 import java.io.Serializable;
 import java.text.ChoiceFormat;
@@ -37,6 +38,9 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     }
 
     public AnatomyItem getAnatomyItem() {
+        if(anatomyItem == null){
+            anatomyItem = RepositoryFactory.getAnatomyRepository().getAnatomyTermByOboID(term.getOboID()) ;
+        }
         return anatomyItem;
     }
 
@@ -107,7 +111,7 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     //ToDo: Move comma delimited list into utility class.
 
     public String getFormattedSynonymList() {
-        return AnatomyPresentation.createFormattedSynonymList(anatomyItem);
+        return AnatomyPresentation.createFormattedSynonymList(getAnatomyItem());
     }
 
     public String getIndentationLevel() {
@@ -126,7 +130,7 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
      */
     public int compareTo(AnatomyStatistics anatCompare) {
         String compName = anatCompare.getAnatomyItem().getName();
-        String name = anatomyItem.getName();
+        String name = getAnatomyItem().getName();
         return name.compareToIgnoreCase(compName);
     }
 
@@ -148,7 +152,7 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
         sb.append(TAB);
         sb.append(zdbID);
         sb.append(NEWLINE);
-        sb.append(anatomyItem);
+        sb.append(getAnatomyItem());
         sb.append(NEWLINE);
         sb.append("type");
         sb.append(TAB);
@@ -172,11 +176,11 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     public boolean equals(Object o) {
         if (!(o instanceof AnatomyStatistics))
             return false;
-        return anatomyItem.equals(o);
+        return getAnatomyItem().equals(o);
     }
 
     public int hashCode() {
-        return anatomyItem.hashCode();
+        return getAnatomyItem().hashCode();
     }
 
 }
