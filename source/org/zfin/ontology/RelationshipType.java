@@ -1,5 +1,6 @@
 package org.zfin.ontology;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Map;
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public class RelationshipType {
+public class RelationshipType implements Serializable{
 
     private static final RelationshipType DEVELOPS_FROM = new RelationshipType("develops_from", "develops from");
     private static final RelationshipType DEVELOPS_INTO = new RelationshipType("develops_into", "develops into");

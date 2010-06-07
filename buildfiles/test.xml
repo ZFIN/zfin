@@ -291,6 +291,22 @@ test(s) need to be run before committing changes or pushing files to production 
         </java>
     </target>
 
+    <target name="orthologyPerformance" depends="compile,build-tests" description="Tests to make sure that the system is alive."  >
+        <junit fork="yes"
+               printsummary="yes"
+               haltonfailure="false"
+               haltonerror="false"
+               showoutput="true">
+            <jvmarg line="${junit.jvmargs}"/>
+            <classpath refid="extended.classpath"/>
+            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <test name="org.zfin.ontology.OntologyPerformanceTest"  >
+                <formatter type="plain"/>
+            </test>
+        </junit>
+    </target>
+
+
 
     <target name="smokeTests" if="notproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive."  >
 

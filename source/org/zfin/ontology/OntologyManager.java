@@ -47,7 +47,7 @@ public class OntologyManager implements Serializable {
     private static OntologyManager ontologyManager = null;
     transient private static final Logger LOG = Logger.getLogger(OntologyManager.class);
 
-    private static final double MILLI_SECONDS_PER_SECOND = 1000.0;
+    private static final double MILLISECONDS_PER_SECOND = 1000.0;
 
     private static Map<Ontology, Double> loadingTimeMap = new HashMap<Ontology, Double>(10);
     private static final Object LOADING_FLAG = new Object();
@@ -100,7 +100,7 @@ public class OntologyManager implements Serializable {
         else
             ontologyManager = (OntologyManager) FileUtil.deserializeOntologies(file);
         long end = System.currentTimeMillis();
-        double time = (double) (end - start) / MILLI_SECONDS_PER_SECOND;
+        double time = (double) (end - start) / MILLISECONDS_PER_SECOND;
 
         LOG.info("Time to load ontologies from serialized File: " + time + " seconds");
         LOG.info(ontologyManager);
@@ -139,16 +139,20 @@ public class OntologyManager implements Serializable {
             ontologyManager.loadOntologiesFromDatabase();
         }
         long endTime = System.currentTimeMillis();
-        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLI_SECONDS_PER_SECOND;
+        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLISECONDS_PER_SECOND;
         LOG.info("Finished loading all ontologies: took " + loadingTimeInSeconds + " seconds.");
     }
 
     private void loadOntologiesFromDatabase() {
         if (singleOntology != null) {
             initSingleOntologyMap(singleOntology);
-        } else
+            if(singleOntology==Ontology.ANATOMY){
+                loadTransitiveClosure();
+            }
+        } else{
             loadDefaultOntologies();
-        loadTransitiveClosure();
+            loadTransitiveClosure();
+        }
     }
 
     /**
@@ -254,7 +258,7 @@ public class OntologyManager implements Serializable {
             ontologyAliasTermMap.put(subOntology, aliases);
         }
         long endTime = System.currentTimeMillis();
-        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLI_SECONDS_PER_SECOND;
+        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLISECONDS_PER_SECOND;
         logLoading(subOntology, startTime, endTime, dateStarted, termMap.size(), obsoleteNameMap.size(), aliases.size());
         loadingTimeMap.put(subOntology, loadingTimeInSeconds);
     }
@@ -305,7 +309,7 @@ public class OntologyManager implements Serializable {
 
         ontologyAliasTermMap.put(ontology, aliasMap);
         long endTime = System.currentTimeMillis();
-        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLI_SECONDS_PER_SECOND;
+        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLISECONDS_PER_SECOND;
         logLoading(ontology, startTime, endTime, dateStarted, termMap.size(), obsoleteNameMap.size(), aliasMap.size());
         loadingTimeMap.put(ontology, loadingTimeInSeconds);
     }
@@ -321,6 +325,9 @@ public class OntologyManager implements Serializable {
         long startTime = System.currentTimeMillis();
         Date dateStarted = new Date();
         List<Term> terms = getOntologyRepository().getAllTermsFromOntology(ontology);
+        long nextTime = System.currentTimeMillis() ;
+        LOG.debug("time to load from DB: "+ (nextTime - startTime) );
+
         Map<String, Term> termMap = new TreeMap<String, Term>(new NumberAwareStringComparator());
         Map<String, String> termNameIDMap = new TreeMap<String, String>(new NumberAwareStringComparator());
         Map<String, Term> obsoleteNameMap = new TreeMap<String, Term>(new NumberAwareStringComparator());
@@ -341,11 +348,21 @@ public class OntologyManager implements Serializable {
             }
             termNameIDMap.put(term.getID(), term.getTermName());
         }
+        LOG.debug("to put in hashmap: "+ (System.currentTimeMillis() - nextTime) );
+        nextTime = System.currentTimeMillis() ;
+
         ontologyTermMap.put(ontology, termMap);
         ontologyObsoleteTermMap.put(ontology, obsoleteNameMap);
         ontologyTermNameIDMapping.put(ontology, termNameIDMap);
         ontologyAliasTermMap.put(ontology, aliasMap);
+
+        LOG.debug("to have loaded ontologies : "+ (System.currentTimeMillis() - nextTime) );
+        nextTime = System.currentTimeMillis() ;
+
         int numberOfAliases = getNumberOfAliases(aliasMap);
+
+        LOG.debug("calculate aliases: "+ (System.currentTimeMillis() - nextTime) );
+        nextTime = System.currentTimeMillis() ;
         // load all aliases
 /*
         List<TermAlias> anatomyTermsAlias = getOntologyRepository().getAllAliases(ontology);
@@ -356,6 +373,10 @@ public class OntologyManager implements Serializable {
         }
 */
         populateStageInformation(ontology);
+
+        LOG.info("populate stage info: "+ (System.currentTimeMillis() - nextTime) );
+        nextTime = System.currentTimeMillis() ;
+
         long endTime = System.currentTimeMillis();
         logLoading(ontology, startTime, endTime, dateStarted, termMap.size(), obsoleteNameMap.size(), numberOfAliases);
     }
@@ -452,7 +473,7 @@ public class OntologyManager implements Serializable {
 
     private void logLoading(Ontology ontology, long startTime, long endTime, Date dateOfStart, int numOfTerms, int numOfObsoleteTerms, int numOfAliases) {
         long loadingTime = endTime - startTime;
-        double loadingTimeSeconds = (double) loadingTime / MILLI_SECONDS_PER_SECOND;
+        double loadingTimeSeconds = (double) loadingTime / MILLISECONDS_PER_SECOND;
         LOG.info("Loading <" + ontology.getOntologyName() + "> ontology took " + loadingTimeSeconds + " seconds.");
         OntologyLoadingEntity loadingEntity = loadingData.get(ontology);
         if (loadingEntity == null) {
@@ -677,7 +698,7 @@ public class OntologyManager implements Serializable {
         long start = System.currentTimeMillis();
         FileUtil.serializeObject(ontologyManager, FileUtil.createOntologySerializationFile(SERIALIZED_FILE_NAME));
         long end = System.currentTimeMillis();
-        double time = (double) (end - start) / MILLI_SECONDS_PER_SECOND;
+        double time = (double) (end - start) / MILLISECONDS_PER_SECOND;
 
         LOG.info("Time to serialize ontologies: " + time + " seconds");
     }
@@ -688,7 +709,7 @@ public class OntologyManager implements Serializable {
         long start = System.currentTimeMillis();
         FileUtil.serializeObject(ontologyManager, serializeFile);
         long end = System.currentTimeMillis();
-        double time = (double) (end - start) / MILLI_SECONDS_PER_SECOND;
+        double time = (double) (end - start) / MILLISECONDS_PER_SECOND;
 
         LOG.info("Time to serialize ontologies: " + time + " seconds");
     }

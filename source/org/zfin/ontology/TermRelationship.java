@@ -1,9 +1,11 @@
 package org.zfin.ontology;
 
+import java.io.Serializable;
+
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public class TermRelationship {
+public class TermRelationship implements Serializable {
 
     private String ID;
     private Term termOne;
