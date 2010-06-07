@@ -240,8 +240,11 @@ function new_GO(mrkrzdbid){
          <?MIELSE COND="$(EC,$dbase,GO)">
               <?MISQL SQL="select fdb_db_query from foreign_db  where fdb_db_name ='QuickGO';"><?/MISQL>
               <?MIVAR NAME=query>$1<?/MIVAR>
-              <?MIVAR NAME=$link>$query$accID<?/MIVAR>
-              <?MIVAR NAME=$currinflink><a href=$link>GO:$accID</a><?/MIVAR>
+              <?MIVAR NAME=GO_Prefix>GO:<?/MIVAR>
+              <?MIVAR NAME=$link>$query$GO_Prefix$accID<?/MIVAR>
+              <?MISQL SQL="select t.term_name from term t where t.term_ont_id = '$GO_Prefix$accID';"><?/MISQL>
+              <?MIVAR NAME=linkDisplay>$1<?/MIVAR>
+              <?MIVAR NAME=$currinflink><a href=$link>$linkDisplay</a><?/MIVAR>
           <?MIELSE>
 	      <?MISQL SQL="select a.fdb_db_query from foreign_db a where a.fdb_db_name='$dbase'"><?/MISQL>
               <?MIVAR NAME=query>$1<?/MIVAR>

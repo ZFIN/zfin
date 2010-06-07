@@ -56,6 +56,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         goTermBox.setWildCard(false);
         goTermBox.setSuggestBoxWidth(60);
         goTermBox.setShowTermDetail(false);
+        goTermBox.setSubmitOnEnter(true);
         goTermBox.initGui();
 
         ((GoEditTable) table).setGoLookup(goTermBox);
@@ -115,7 +116,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
 
 
     @Override
-    protected void addInternalListeners(HandlesError handlesError) {
+    protected void addInternalListeners(final HandlesError handlesError) {
         super.addInternalListeners(handlesError);
 
 
@@ -131,7 +132,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
             @Override
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
-                String termID =dataChangedEvent.getDTO().getGoTerm().getDataZdbID();
+                String termID =dataChangedEvent.getDTO().getGoTerm().getTermOboID();
                 LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new GoTermInfoCallBack(termInfoComposite, termID));
             }
         });
@@ -150,7 +151,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
             public void onClick(ClickEvent event) {
                 TermInfo termInfo = termInfoComposite.getCurrentTermInfo() ;
                 if(termInfo!=null){
-                    MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(termInfo.getName(), new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value") {
+                    MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(termInfo.getName(),new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value",handlesError) {
                         @Override
                         public void onSuccess(TermDTO result) {
                             temporaryGoTermDTO = result;

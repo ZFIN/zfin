@@ -95,7 +95,8 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
                     setError("Go term is invalid [" + value + "].  Please add a valid go term.");
                     return;
                 }
-                MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(value, new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value") {
+                MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(value,
+                        new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value ["+value+"]",handlesError,false) {
                     @Override
                     public void onSuccess(TermDTO result) {
                         temporaryGoTermDTO = result;
@@ -126,6 +127,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         goTermBox.setOntology(OntologyDTO.GO);
         goTermBox.setWildCard(false);
         goTermBox.setSuggestBoxWidth(60);
+        goTermBox.setSubmitOnEnter(true);
         goTermBox.initGui();
         table.setHTML(rowCount, 0, "<b>GO Term:</b>");
         table.setWidget(rowCount, 1, goTermBox);

@@ -161,7 +161,8 @@ public class MarkerGoEvidencePresentation {
         sb.append("<a href=\"");
 
         sb.append(foreignDB.getDbUrlPrefix());
-        sb.append(accession);
+        sb.append(inferenceCategory.prefix()) ;
+        sb.append(accession) ;
         if (foreignDB.getDbUrlSuffix() != null) {
             sb.append(foreignDB.getDbUrlSuffix());
         }

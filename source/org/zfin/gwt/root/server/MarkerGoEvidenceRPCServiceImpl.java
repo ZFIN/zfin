@@ -23,6 +23,8 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Species;
 import org.zfin.people.Person;
@@ -382,8 +384,9 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
 
     @Override
     public TermDTO getGOTermByName(String value) {
-        Term goTerm = (Term) HibernateUtil.currentSession().createCriteria(GenericTerm.class).
-                add(Restrictions.eq("termName", value)).uniqueResult();
+        Term goTerm = OntologyManager.getInstance().getTermByName(Ontology.GO,value) ;
+//        Term goTerm = (Term) HibernateUtil.currentSession().createCriteria(GenericTerm.class).
+//                add(Restrictions.eq("termName", value)).uniqueResult();
         if (goTerm == null) {
             throw new RuntimeException("Failed to find termp" + value + "]");
         } else {
