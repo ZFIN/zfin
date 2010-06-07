@@ -108,16 +108,15 @@ public class DOIProcessor {
         else{
             doisUpdated=true;
         }
-        Session session = HibernateUtil.currentSession() ;
-        session.beginTransaction() ;
+        HibernateUtil.createTransaction();
         try{
             publicationRepository.updatePublications( publicationList) ;
-            session.getTransaction().commit();
+            HibernateUtil.flushAndCommitCurrentSession();
         }
         catch(Exception e){
             logger.error(e) ;
             message.append(e);
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
 
     }
