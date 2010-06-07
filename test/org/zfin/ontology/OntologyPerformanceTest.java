@@ -39,7 +39,7 @@ public class OntologyPerformanceTest {
 
     @Test
     public void serializationTiming() throws Exception{
-        Ontology ontology = Ontology.ANATOMY ;
+        Ontology ontology = Ontology.GO_CC;
         OntologyManager ontologyManagerInstance = OntologyManager.getInstance(ontology) ;
 
         File serializationFile = getSerializedFile(ontology);
