@@ -1,5 +1,6 @@
 package org.zfin.util;
 
+import com.thoughtworks.xstream.XStream;
 import org.apache.log4j.Logger;
 import org.zfin.framework.presentation.ZfinFilenameFilter;
 import org.zfin.properties.ZfinProperties;
@@ -7,10 +8,7 @@ import org.zfin.properties.ZfinProperties;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 /**
  * Utility class for creating file path names and other things.
@@ -28,6 +26,8 @@ public final class FileUtil {
 
     public static final Logger LOG = Logger.getLogger(FileUtil.class);
     private static final String WEB_INF = "WEB-INF";
+
+    private static final XStream xStream = new XStream() ;
 
     /**
      * Create an absolute path for a given directory and a file within in.
@@ -329,9 +329,12 @@ public final class FileUtil {
 
     public static void serializeObject(Object object, File file) {
         try {
-            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
-            out.writeObject(object);
-            out.close();
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file)) ;
+            writer.write(xStream.toXML(object));
+            writer.close();
+//            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
+//            out.writeObject(object);
+//            out.close();
         } catch (IOException e) {
             e.printStackTrace();
             LOG.error("Error during serialization of file " + file.getAbsolutePath(), e);
@@ -346,20 +349,21 @@ public final class FileUtil {
     }
 
     public static Object deserializeOntologies(File file) throws Exception {
-        Object object = null;
-        ObjectInputStream in = null;
+//        Object object = null;
+//        ObjectInputStream in = null;
+        LOG.info("Read ontologies from " + file.getAbsolutePath());
+        StringBuilder text = new StringBuilder() ;
+        String NL = System.getProperty("line.separator");
+        Scanner scanner= new Scanner(file);
         try {
-            LOG.info("Read ontologies from " + file.getAbsolutePath());
-            in = new ObjectInputStream(new FileInputStream(file));
-            object = in.readObject();
-        } finally {
-            try {
-                if (in != null)
-                    in.close();
-            } catch (IOException e) {
-                LOG.error(e);
+            while(scanner.hasNextLine()){
+                text.append(scanner.nextLine()).append(NL) ;
             }
         }
-        return object;
+        // no error to catch, but we have to make sure to close it
+        finally {
+            scanner.close();
+        }
+        return (Object) xStream.fromXML(text.toString()) ;
     }
 }
