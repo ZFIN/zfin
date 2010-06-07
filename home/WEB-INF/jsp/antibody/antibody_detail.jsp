@@ -3,6 +3,8 @@
 
 <jsp:useBean id="formBean" class="org.zfin.antibody.presentation.AntibodyBean" scope="request"/>
 
+<script type="text/javascript" src="/javascript/prototype.js"></script>
+
 <zfin2:dataManager zdbID="${formBean.antibody.zdbID}"
                    editURL="${formBean.editURL}"
                    deleteURL="${formBean.deleteURL}"
