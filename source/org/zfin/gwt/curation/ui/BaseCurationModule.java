@@ -49,7 +49,11 @@ public class BaseCurationModule extends ConstructionZoneAdapater {
     @Override
     public void clearError() {
         // to propagate stuff
-        String url = Window.Location.getPath() + Window.Location.getQueryString();
+        String queryString = Window.Location.getQueryString();
+        if(queryString ==null || queryString.trim().length()==0){
+            queryString = "?MIval=aa-curation.apg&OID="+publicationID+"&randomNum="+Math.random();
+        }
+        String url = Window.Location.getPath() + queryString ;
         Window.open(url, "_self", "");
     }
 
