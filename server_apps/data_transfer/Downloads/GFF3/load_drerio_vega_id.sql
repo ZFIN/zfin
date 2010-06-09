@@ -37,17 +37,26 @@ create index gff3_feature_idx on  gff3(feature) in idxdbs3;
 --create index gff3_start_idx on  gff3(start) in idxdbs1;
 --create index gff3_end_idx on  gff3(end) in idxdbs3;
 
-! echo "update transcript names to zfin names"
+! echo "update transcript names (ottdarT) to zfin transcript names"
 update gff3 set name = (
 	select mrkr_name from marker, transcript
 	 where tscript_load_id = ID
 	   and tscript_mrkr_zdb_id = mrkr_zdb_id
-)where exists (
+)where feature = 'transcript' and exists (
 	select 't' from transcript where ID = tscript_load_id
 );
 
-create index gff3_name_idx on gff3(name) in idxdbs3; -- after renaming
+! echo "update Vega gene names (ottdarG) to zfin names"
+update gff3 set name = (
+	select distinct mrkr_abbrev from marker, db_link
+	 where dblink_acc_num = ID
+	   and dblink_linked_recid = mrkr_zdb_id
+)
+where feature = 'gene' and exists (
+   select 't' from db_link where ID = dblink_acc_num
+);
 
+create index gff3_name_idx on gff3(name) in idxdbs3; -- after renaming
 update statistics medium for table gff3;
 
 ! echo " In <!--|ROOT_PATH|-->/home/data_transfer/Downloads/"
@@ -83,4 +92,3 @@ order by 1::integer,4,3
 ;
 
 -- In production, rollback/commit are supplied externally.
-
