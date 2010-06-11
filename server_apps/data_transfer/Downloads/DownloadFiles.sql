@@ -293,36 +293,25 @@ delete from tmp_env;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
  DELIMITER "	"
- select geno_zdb_id, geno_display_name,
-			apato_Start_stg_zdb_id,
-			(select stg_name
-				from stage
-				where stg_zdb_id = apato_start_Stg_zdb_id),
-			apato_end_Stg_zdb_id,
-			(select stg_name
-				from stage
-				where stg_zdb_id = apato_end_stg_zdb_id),
-			super.term_ont_id,
-			  (select term_name
-			      from term
-			      where term_zdb_id = apato_superterm_zdb_id),
-			quality.term_ont_id,
-				(select term_name
-					from term
-					where term_Zdb_id = apato_quality_zdb_id),
-			sub.term_ont_id,
-			  (select term_name
-			      from term
-			      where term_zdb_id = apato_subterm_zdb_id),
-			apato_tag,
-			apato_pub_zdb_id,
-			genox_exp_zdb_id
- from atomic_phenotype, genotype, genotype_experiment, term as super, term as sub, term as quality
-      where apato_genox_zdb_id = genox_zdb_id
-	and genox_geno_zdb_id = geno_zdb_id
-	and apato_subterm_zdb_id = sub.term_zdb_id
-	and apato_superterm_zdb_id = super.term_zdb_id
-	and apato_quality_zdb_id = quality.term_zdb_id
+ select g.geno_zdb_id, g.geno_display_name,
+            apato_Start_stg_zdb_id,
+            (select stg_name
+                from stage
+                where stg_zdb_id = ph.apato_start_Stg_zdb_id),
+            ph.apato_end_Stg_zdb_id,
+            (select stg_name from stage where stg_zdb_id = ph.apato_end_stg_zdb_id),
+              (select term_ont_id from term where term_zdb_id = ph.apato_superterm_zdb_id),
+            (select term_name from term where term_zdb_id = ph.apato_superterm_zdb_id),
+              (select term_ont_id from term where term_zdb_id = ph.apato_quality_zdb_id),
+            (select term_name from term where term_zdb_id = ph.apato_quality_zdb_id),
+              (select term_ont_id from term where term_zdb_id = ph.apato_subterm_zdb_id),
+            (select term_name from term where term_zdb_id = ph.apato_subterm_zdb_id),
+            ph.apato_tag,
+            ph.apato_pub_zdb_id,
+            gx.genox_exp_zdb_id
+ from atomic_phenotype ph, genotype g, genotype_experiment gx
+      where ph.apato_genox_zdb_id = gx.genox_zdb_id
+    and gx.genox_geno_zdb_id = g.geno_zdb_id
  order by geno_zdb_id, apato_pub_zdb_id;
 
 ! echo "Inserted data into file phenotype.txt"
