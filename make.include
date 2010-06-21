@@ -147,7 +147,21 @@ MAKESPECIFIC = /private/ZfinLinks/Commons/bin/makespecific.pl
 SPECIFICCHECK = $(foreach GNRC,$(GENERICS),echo 'Informix weblint $(GNRC)'; $(WEBLINTIFMX) $(GNRC);)
 
 DBACCESS = $(INFORMIXDIR)/bin/dbaccess
-WEBLINTIFMX = $(INFORMIXDIR)/extend/web.4.13.FC2/utils/weblint 2 <
+WEBLINTIFMXBASE := $(INFORMIXDIR)/extend/web.4.13.FC3/utils/weblint
+# to be used in 'loadapppage.pl'
+export WEBLINTIFMXBASE
+
+# weblint level 0  pass/error stop on first error
+# weblint level 1  pass/error stop on first error and describe
+# weblint level 2  pass/error don't stop and decsribe all
+# weblint level 3  pass/error like level 2 but more verbose
+# ':' is noop
+
+ifeq (0,${MAKELEVEL})
+WEBLINTIFMX = $(WEBLINTIFMXBASE) 2 <
+else
+WEBLINTIFMX = :
+endif
 
 # --- Java
 
