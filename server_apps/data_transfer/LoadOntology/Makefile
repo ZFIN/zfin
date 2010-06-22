@@ -10,7 +10,7 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# See the README file. 
+# See the README file.
 
 
 # ---------------  Variable Definitions  --------------------------------
@@ -20,9 +20,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/LoadOntology
 
-GENERICS = parseObo.pl loadOntology.pl loadTerms.sql fixPatoAnnotations.sql fixSoAnnotations.sql parseHeader.pl\
+GENERICS = parseObo.pl loadOntology.pl  fixPatoAnnotations.sql  parseHeader.pl
 
-STATICS = paths.txt
+STATICS = paths.txt loadTerms.sql fixSoAnnotations.sql
 
 # Define targets that require special handling.
 

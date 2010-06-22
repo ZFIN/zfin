@@ -14,14 +14,14 @@
 # directories and ~ files, but would copy and makespecific everything else.
 #
 # The problem with that approach is that it would copy test files, alternate
-# versions of pages and any other flotsam that was in the directories.  This 
+# versions of pages and any other flotsam that was in the directories.  This
 # would tend to pollute the production directories over time.  It also doesn't
 # deal with the SEARCH_SITE directory very well.
 #
 # So instead we have the rather tedious job of maintaining a nearly identical
 # makefile in each directory.  However, this will tend to keep the production
 # directory clean.
-# 
+#
 
 
 # ---------------  Variable Definitions  --------------------------------
@@ -31,7 +31,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/css
 
-GENERICS = header.css zdbhome.css zfin.css figure_gallery.css pagination.css \
+GENERICS = header.css zdbhome.css
+
+STATICS = zfin.css figure_gallery.css pagination.css \
 	summary.css searchresults.css spiffycorners.css footer.css Lookup.css Marker.css
 
 

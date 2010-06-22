@@ -45,9 +45,10 @@ NETSCAPESYMLINK = $(STAGINGDIR)/netscape
 
 STATICS    = mapimage.java cgi_lib.java
 GENERICS   = SQLQuery.java
-ZMGENERICS = zmapper/MarkerBuilder.java 
+ZMGENERICS =
 ZMSTATICS  = zmapper/BackBone.java zmapper/Bin.java zmapper/BinGroup.java \
-	     zmapper/LayoutManager.java zmapper/MapViewer.java zmapper/Marker.java
+	zmapper/LayoutManager.java zmapper/MapViewer.java zmapper/Marker.java \
+	zmapper/MarkerBuilder.java
 ZMSTAGINGSPECIFICS = $(foreach ZMG, $(ZMGENERICS), $(STAGINGDIR)/$(ZMG))
 ZMSTAGINGSTATICS   = $(foreach ZMS, $(ZMSTATICS), $(STAGINGDIR)/$(ZMS))
 

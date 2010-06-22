@@ -33,3 +33,10 @@ all :
 	rsync -r --delete -C --exclude=Makefile ./bioperl $(TARGETDIR)/ && cp -fr  ./cpan/Bio/* $(TARGETDIR)/bioperl/Bio/
 
 # ---------------  Special Targets  -------------------------------------
+
+# do nothing for clean and clobber
+clean :	
+	:
+
+clobber:	
+	:

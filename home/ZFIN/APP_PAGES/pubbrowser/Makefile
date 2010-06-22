@@ -20,18 +20,15 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
 SUBDIRS = EDITpubs
 
-GENERICS = enterpubs.apg link_authors.apg link_authors_update.apg \
-	pubselect2.apg pubview2.apg \
-	showpubs.apg miniref_display.apg curate_ortho_select.apg pubcuration.apg \
-	pnote_editor.apg notif_frame.apg \
-	notif_content.apg journalselect.apg journalview.apg journalupdate.apg \
-	pubacknowledgement.apg citlink.apg \
-	js-delete_attrib.apg pub_rowdisplay.apg \
-	showsnppubs.apg
+GENERICS = citlink.apg curate_ortho_select.apg enterpubs.apg journalselect.apg \
+	journalupdate.apg journalview.apg js-delete_attrib.apg link_authors.apg \
+	miniref_display.apg notif_content.apg notif_frame.apg pnote_editor.apg \
+	pub_rowdisplay.apg pubacknowledgement.apg pubcuration.apg pubselect2.apg \
+	pubview2.apg showpubs.apg showsnppubs.apg
 
 STATICS= REFERinfo.apg pubprintable.apg pubtopic_close.apg \
 	pubtopic_open.apg pubtopic_unclaim.apg pubtopic_found.apg \
-	pubtopic_reassign.apg pnote_new.apg \
+	pubtopic_reassign.apg pnote_new.apg link_authors_update.apg \
 	citselectlist.apg citfish.apg externallink.apg pubmedlink.apg \
 	citjtypeoption.apg citgeneric.apg cittotalcount.apg \
 

@@ -14,14 +14,14 @@
 # directories and ~ files, but would copy and makespecific everything else.
 #
 # The problem with that approach is that it would copy test files, alternate
-# versions of pages and any other flotsam that was in the directories.  This 
+# versions of pages and any other flotsam that was in the directories.  This
 # would tend to pollute the production directories over time.  It also doesn't
 # deal with the SEARCH_SITE directory very well.
 #
 # So instead we have the rather tedious job of maintaining a nearly identical
 # makefile in each directory.  However, this will tend to keep the production
 # directory clean.
-# 
+#
 
 
 # ---------------  Variable Definitions  --------------------------------
@@ -34,16 +34,15 @@ TARGETDIR = $(TARGETROOT)/home/zf_info
 SUBDIRS = anatomy catch dbase images monitor movies news \
 	zfbook sequence 2006_tutorial
 
-GENERICS = defs.html nomen_comm.html nomen.html \
-	zfprbs.html \
-	downloads.html nomen_tutorial.html \
-	stars.html new_gene.html new_line.html syntax_help.html
-
+GENERICS = defs.html  nomen.html zfprbs.html downloads.html \
+	nomen_tutorial.html stars.html new_gene.html new_line.html \
+	syntax_help.html
 
 STATICS = 227.gif fish.gif logo.jpeg genome.html updates.html  citation.html \
 	translocation.jpeg zfin.gif anatomy.html submissions.html zebrafish2009.pdf contact_us.html \
-	glossary.html GO.html oev.html \
-	blast_info.html ontology_relationship_info.html author_guidelines.html author_guide_checklist.html zfin_stats.html zfin_statistics.jpg
+	glossary.html GO.html oev.html nomen_comm.html blast_info.html \
+	ontology_relationship_info.html author_guidelines.html author_guide_checklist.html \
+	zfin_stats.html zfin_statistics.jpg
 
 
 # ---------------  Production Rules  ------------------------------------

@@ -8,7 +8,7 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# 
+#
 
 
 # ---------------  Variable Definitions  --------------------------------
@@ -26,12 +26,11 @@ SUBDIRS  = ZFIN zf_info javascript css images unavailable util
 MIRROR_SUBDIRS = zf_info images
 POSTLOADDB_SUBDIRS = ZFIN
 
-GENERICS = robots.txt redirect.html \
-	 index.asis sitemap.xml
+GENERICS =  redirect.html index.asis
 
-STATICS  = favicon.ico warranty.html zfin_is_down.html
+STATICS  = favicon.ico warranty.html zfin_is_down.html robots.txt sitemap.xml
 
-# This also creates a symbolic link to to an FTP directory to provide an 
+# This also creates a symbolic link to to an FTP directory to provide an
 # http interface to the FTP directory.
 
 FTPTARGET = $(TARGETDIR)/transfer
@@ -43,7 +42,7 @@ CLIENTAPPSTARGET = $(TARGETDIR)/client_apps
 
 GENERATE_VERSION = gmake-deploy-version.html
 
-ENDEMICTARGETS_POSTTARGETS = $(FTPTARGET) $(CLIENTAPPSTARGET) $(GENERATE_VERSION) 
+ENDEMICTARGETS_POSTTARGETS = $(FTPTARGET) $(CLIENTAPPSTARGET) $(GENERATE_VERSION)
 
 # If we are building a mirror then disable calling gmake with no target.
 
@@ -62,7 +61,7 @@ include $(TOP)/make.default.rules
 
 # Rules that are endemic to this makefile
 
-$(FTPTARGET) : 
+$(FTPTARGET) :
 	if [ ! -h $(FTPTARGET) ] ; then ln -s $(TARGETFTPROOT)/pub/transfer $(FTPTARGET); fi
 
 
@@ -77,12 +76,12 @@ $(GENERATE_VERSION) :
 
 # Special target to create only the directories and files used in mirror sites.
 # In this case, that's all the files in this directory, plus a subset of the
-# subdirectories.  Note that this is the lowest level "mirror" target in the 
+# subdirectories.  Note that this is the lowest level "mirror" target in the
 # hierarchy.  Below here, the regular targets are used.
 #
-# After all the files have been made, replace the local index.html with 
-# a modified copy of ZDB_home.apg.  The original index.html redirects 
-# to ZDB_home.apg, which is the frameless ZFIN home page.  However, mirrors 
+# After all the files have been made, replace the local index.html with
+# a modified copy of ZDB_home.apg.  The original index.html redirects
+# to ZDB_home.apg, which is the frameless ZFIN home page.  However, mirrors
 # can't use that directly as it requires an underlying database, and mirrors
 # don't have that.
 #

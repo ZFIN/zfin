@@ -20,29 +20,25 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 
-GENERICS = xpatview.apg xpatselect.apg \
-        anatomy_captures.apg xpatselect_note.apg \
-	xpatselectquery.apg xpatselectrowdisplay.apg xpatcuration.apg \
-	xpatexdisplayname.apg xpatselectanatverify.apg \
-	xpatcurupdate.apg xpatcurimage.apg \
-	xpatcurexperiment.apg xpatcurcondition.apg xpatcurfigure.apg \
-	fxpubdisplay.apg fxfigureview.apg  fxfiggenelist.apg \
-	fxfiganatlist.apg  fxfigstgrng.apg fxallfigures.apg \
-	fxassayabbrev.apg xpatselect_summaryresults.apg xpatselect_detailedresults.apg \
-	fxfigassaylist.apg fxfigfishlist.apg fxinfo.apg \
-	xpatexpcdnsummary.apg \
-	xpatexpcdndisplay.apg xpatfeatexp.apg fxprobefig.apg xpatcurpermission.apg \
-	fxfigprobelist.apg fxgenestgrng.apg record_web_update.apg do-addcanmrkr.apg \
-	curation.apg genotypecuration.apg genocursearch.apg attribupdate.apg \
-	genosearchresulttable.apg genocurbuilder.apg genocursummary.apg genoupdate.apg \
-	patocuration.apg \
-	fxphenoinfo.apg fxfiggenolist.apg fxfigphenoanatlist.apg fxfigphenostgrng.apg \
-	figurecuration.apg experimentcuration.apg xpatcurreset.apg fxfigphenogenolist.apg \
-	pheno_summary.apg wordcompletion.apg \
-	xpatcurupdatecondition.apg gocuration.apg \
-	xpatselect_resultsasimages.apg fxlabelinfo.apg  xpatfeatexpcondn.apg  xpatexpcdnlist.apg
+GENERICS = anatomy_captures.apg curation.apg experimentcuration.apg \
+figurecuration.apg fxallfigures.apg fxfiganatlist.apg fxfiggenelist.apg \
+fxfigphenoanatlist.apg fxfigphenogenolist.apg fxfigphenogolist.apg \
+fxfigprobelist.apg fxfigureview.apg fxinfo.apg fxlabelinfo.apg fxphenoinfo.apg \
+fxprobefig.apg fxpubdisplay.apg genocurbuilder.apg genocursearch.apg \
+genocursummary.apg genosearchresulttable.apg pheno_summary.apg xpatcurcondition.apg \
+xpatcurexperiment.apg xpatcurfigure.apg xpatcurimage.apg xpatcurpermission.apg \
+xpatexpcdndisplay.apg xpatexpcdnlist.apg xpatexpcdnsummary.apg xpatselect.apg \
+xpatselect_detailedresults.apg xpatselect_note.apg xpatselect_summaryresults.apg \
+xpatselectanatverify.apg xpatselectrowdisplay.apg
 
-# Use default rules for app page directories. 
+STATICS = xpatselectquery.apg xpatcuration.apg xpatexdisplayname.apg xpatcurupdate.apg \
+fxfigstgrng.apg fxassayabbrev.apg fxfigassaylist.apg fxfigfishlist.apg xpatfeatexp.apg \
+fxgenestgrng.apg record_web_update.apg do-addcanmrkr.apg genotypecuration.apg attribupdate.apg \
+genoupdate.apg patocuration.apg fxfiggenolist.apg fxfigphenostgrng.apg xpatcurreset.apg \
+wordcompletion.apg xpatcurupdatecondition.apg gocuration.apg xpatselect_resultsasimages.apg \
+xpatfeatexpcondn.apg
+
+# Use default rules for app page directories.
 
 include $(TOP)/make.default.apg.rules
 

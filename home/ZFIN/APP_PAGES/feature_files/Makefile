@@ -18,7 +18,13 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/feature_files
 
-GENERICS = new_feature.apg  featcuration.apg featcurupdate.apg featureedit.apg featrelationships.apg record_web_update.apg new_constrct.apg  constrctcuration.apg constrctrelationships.apg
+GENERICS = constrctcuration.apg constrctrelationships.apg featcuration.apg \
+featcurupdate.apg featrelationships.apg featureedit.apg new_constrct.apg \
+new_feature.apg
+
+STATICS = record_web_update.apg
+
+
 # use default rules for app page directories
 
 include $(TOP)/make.default.apg.rules

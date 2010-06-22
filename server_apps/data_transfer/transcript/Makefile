@@ -10,7 +10,7 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# See the README file. 
+# See the README file.
 
 
 # ---------------  Variable Definitions  --------------------------------
@@ -20,7 +20,15 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/transcript
 
-GENERICS = loadVegaTscripts.pl parseVega.pl parseMicroRNA.pl loadVegaTscripts.sql loadMicroRNA.sql parseVegaProt.pl loadVegaProt.sql Danio_rerio.VEGA.sep.pep.tot.fa loadMIRANDALinks.sql loadMIRANDALinks.pl parseMIRANDA.pl parseStar.pl miRNA.csv makeCuratedFasta.pl makeCuratedStemFasta.pl makeNUCLsMatureMicroRNA.sql loadSupport.pl parseSuppt.pl makeLoadedFastaStem.pl makeLoadedFastaMature.pl parseAssembly.pl \
+GENERICS = loadMIRANDALinks.pl loadSupport.pl loadVegaTscripts.pl \
+parseAssembly.pl parseMIRANDA.pl parseMicroRNA.pl parseStar.pl \
+parseSuppt.pl parseVega.pl parseVegaProt.pl
+
+
+STATICS = loadVegaTscripts.sql loadMicroRNA.sql loadVegaProt.sql Danio_rerio.VEGA.sep.pep.tot.fa \
+loadMIRANDALinks.sql miRNA.csv makeCuratedFasta.pl makeCuratedStemFasta.pl makeLoadedFastaMature.pl \
+makeNUCLsMatureMicroRNA.sql makeLoadedFastaStem.pl
+
 
 # ---------------  Production Rules  ------------------------------------
 

@@ -23,8 +23,8 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/company_files
 
 GENERICS = companyselect.apg \
 	companyupdate.apg companyview.apg do-companyupdate.apg \
-	new_company.apg process-company.apg setup-new-company.apg 
-STATICS = companyprintable.apg update-company.apg
+	new_company.apg process-company.apg 
+STATICS = companyprintable.apg update-company.apg setup-new-company.apg 
 
 # Use default rules for app page directories.
 
