@@ -5,17 +5,14 @@ import org.zfin.ontology.OntologyTokenizer;
 import java.util.regex.Pattern;
 
 /**
-* Created by IntelliJ IDEA.
-* User: nathandunn
-* Date: Jun 22, 2010
-* Time: 11:21:49 AM
-* To change this template use File | Settings | File Templates.
-*/
+ */
 public class Highlighter {
 
     private String prefix = "<strong>" ;
     private String suffix= "</strong>" ;
     private String match ;
+    private String[] matches ;
+    private String matchPattern = "";
     private Pattern contiguousPattern;
 
     private OntologyTokenizer tokenizer = new OntologyTokenizer();
@@ -28,7 +25,19 @@ public class Highlighter {
 
     public void setMatch(String match){
         this.match = match ;
-        contiguousPattern = Pattern.compile("("+match+")",Pattern.CASE_INSENSITIVE);
+        if(match.trim().contains(" ")){
+            matches = match.split("\\s+") ;
+            for(int i = 0 ; i < matches.length ; i++){
+                matchPattern += matches[i] ;
+                if(i!=matches.length-1){
+                    matchPattern += "|" ;
+                }
+            }
+            contiguousPattern = Pattern.compile("("+matchPattern+")",Pattern.CASE_INSENSITIVE);
+        }
+        else{
+            contiguousPattern = Pattern.compile("("+match+")",Pattern.CASE_INSENSITIVE);
+        }
     }
 
 
