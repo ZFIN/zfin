@@ -32,9 +32,9 @@ public class OntologyLoadingEntity implements Serializable {
      * @param numOfObsoletedTerms number of terms that are marked obsolete
      * @param numOfAliases        number of aliases
      */
-    public void addLoadingEvent(Date dateOfLoad, long loadingTime, int numOfTerms, int numOfObsoletedTerms, int numOfAliases,int numKeys,int numValues) {
+    public void addLoadingEvent(Date dateOfLoad, long loadingTime, int numOfTerms, int numOfObsoletedTerms, int numOfAliases) {
         allLoadingEvents.add(lastLoad);
-        lastLoad = new LoadingData(dateOfLoad, loadingTime, numOfTerms, numOfObsoletedTerms, numOfAliases,numKeys,numValues);
+        lastLoad = new LoadingData(dateOfLoad, loadingTime, numOfTerms, numOfObsoletedTerms, numOfAliases);
         if (allLoadingEvents.size() > MAXIMUM_NUMBER_OF_HISTORIC_LOADS)
             allLoadingEvents.remove(0);
     }
@@ -45,14 +45,6 @@ public class OntologyLoadingEntity implements Serializable {
 
     public int getNumberOfTerms() {
         return lastLoad.getNumberOfTerms();
-    }
-
-    public int getNumberOfObsoleteTerms() {
-        return lastLoad.getNumberOfObsoletedTerms();
-    }
-
-    public int getNumberOfAliases() {
-        return lastLoad.getNumberOfAliases();
     }
 
     public Date getDateLastLoaded() {
@@ -70,7 +62,5 @@ public class OntologyLoadingEntity implements Serializable {
     public Collection<LoadingData> getAllLoadingEvents() {
         return allLoadingEvents;
     }
-
-
 
 }

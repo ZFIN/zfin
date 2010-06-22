@@ -789,11 +789,11 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         if (checked) {
             boolean success = currentState.add(uniqueID);
             if (!success)
-                LOG.debug("trying to check figure annotation  " + uniqueID + " that is already checked!");
+                LOG.error("trying to check figure annotation  " + uniqueID + " that is already checked!");
         } else {
             boolean success = currentState.remove(uniqueID);
             if (!success)
-                LOG.debug("trying to un-check figure annotation |" + uniqueID + "| that is not checked!");
+                LOG.error("trying to un-check figure annotation |" + uniqueID + "| that is not checked!");
         }
     }
 

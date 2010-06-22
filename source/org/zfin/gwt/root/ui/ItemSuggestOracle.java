@@ -26,7 +26,7 @@ public class ItemSuggestOracle extends SuggestOracle {
     @Override
     public void requestSuggestions(SuggestOracle.Request req, SuggestOracle.Callback callback) {
         String query = req.getQuery() ;
-        if(limit!=DEFAULT_LIMIT){
+        if(limit!=NO_LIMIT){
             req.setLimit(limit);
         }
         if(query.length()>=lookup.getMinLookupLength()){

@@ -10,7 +10,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.*;
 
 import java.util.List;
-import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -36,8 +35,8 @@ public class OntologyRepositoryTest {
     @Test
     public void getMatchingQualityTerms() {
         String query = "red";
-        MatchingTermService matcher = new MatchingTermService();
-        Set<MatchingTerm> qualities = matcher.getMatchingTerms(Ontology.QUALITY, query);
+        MatchingTermService matcher = new MatchingTermService(query);
+        List<MatchingTerm> qualities = matcher.getMatchingTerms(Ontology.QUALITY, query);
         assertNotNull(qualities);
         assertEquals(23, qualities.size());
     }
@@ -46,8 +45,8 @@ public class OntologyRepositoryTest {
 
     public void getMatchingAnatomyTerms() {
         String query = "mel";
-        MatchingTermService matcher = new MatchingTermService();
-        Set<MatchingTerm> anatomyList = matcher.getMatchingTerms(Ontology.ANATOMY, query);
+        MatchingTermService matcher = new MatchingTermService(query);
+        List<MatchingTerm> anatomyList = matcher.getMatchingTerms(Ontology.ANATOMY, query);
         assertNotNull(anatomyList);
         assertEquals(21, anatomyList.size());
     }

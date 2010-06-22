@@ -56,10 +56,7 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         goTermBox.setWildCard(false);
         goTermBox.setSuggestBoxWidth(60);
         goTermBox.setShowTermDetail(false);
-        goTermBox.setTermInfoTable(termInfoComposite);
         goTermBox.setSubmitOnEnter(true);
-        goTermBox.setUseIdAsValue(true);
-        goTermBox.setLimit(30);
         goTermBox.initGui();
 
         ((GoEditTable) table).setGoLookup(goTermBox);
@@ -125,10 +122,9 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
 
         goTermBox.setHighlightAction(new HighlightAction() {
             @Override
-            public void onHighlight(String termID) {
-                if(false== termID.startsWith(ItemSuggestCallback.END_ELLIPSE)){
-//                    LookupRPCService.App.getInstance().getTermInfoByName(OntologyDTO.GO, termName, new TermInfoCallBack(termInfoComposite, termName));
-                    LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
+            public void onHighlight(String termName) {
+                if(false==termName.startsWith(ItemSuggestCallback.END_ELLIPSE)){
+                    LookupRPCService.App.getInstance().getTermInfoByName(OntologyDTO.GO, termName, new TermInfoCallBack(termInfoComposite, termName));
                 }
             }
         });

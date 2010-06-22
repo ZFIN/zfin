@@ -181,10 +181,6 @@ public class AnatomyItem implements Term {
         // Todo when Ao goes into term table
     }
 
-    public boolean isAliasesExist(){
-        return false ; 
-    }
-
     public void setSynonyms(Set<AnatomySynonym> synonyms) {
         this.synonyms = synonyms;
     }

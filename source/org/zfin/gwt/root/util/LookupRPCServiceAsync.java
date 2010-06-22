@@ -49,7 +49,7 @@ public interface LookupRPCServiceAsync {
      * @param ontologyDTO    ontology name
      * @param async          callback
      */
-    void getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO ontologyDTO, boolean useIdAsValue, AsyncCallback<SuggestOracle.Response> async);
+    void getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO ontologyDTO, AsyncCallback<SuggestOracle.Response> async);
 
     /**
      * Retrieve the term info for a given ontology and term name.

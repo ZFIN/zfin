@@ -1,12 +1,13 @@
 package org.zfin.ontology.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.zfin.infrastructure.TrieMultiMap;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
+import org.zfin.ontology.TermAlias;
 import org.zfin.ontology.TransitiveClosure;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * ToDo: ADD DOCUMENTATION!
@@ -17,11 +18,10 @@ public class OntologyBean {
     private boolean ontologiesLoaded = true;
     private OntologyManager ontologyManager;
     private String ontologyName;
-    private Set<Term> terms;
+    private Map<String, List<TermAlias>> aliasTermMap;
+    private Map<String, Term> termMap;
     private String termID;
     private Term term;
-    private Map<Term, List<String>> valueMap ;
-    private TreeMap<String,Set<Term>> keys ;
 
     public String getAction() {
         return action;
@@ -89,43 +89,34 @@ public class OntologyBean {
         this.ontologyManager = ontologyManager;
     }
 
-    public Set<Term> getTerms() {
-        return terms;
+    public void setAliasTermMap(Map<String, List<TermAlias>> aliasOntologyMap) {
+        aliasTermMap = aliasOntologyMap;
     }
 
-    public void setTerms(Set<Term> terms) {
-        this.terms = terms;
+    public Map<String, List<TermAlias>> getAliasTermMap() {
+        return aliasTermMap;
     }
 
-    public TreeMap<String, Set<Term>> getKeys() {
-        return keys;
+    public Map<String, Term> getTermMap() {
+        return termMap;
     }
 
-    public void setKeys(TreeMap<String, Set<Term>> keys) {
-        this.keys = keys;
+    public void setTermMap(Map<String, Term> termMap) {
+        this.termMap = termMap;
     }
 
     public List<TransitiveClosure> getAllChildren(){
         return OntologyManager.getInstance().getAllChildren(term);
     }
 
-    public Map<Term, List<String>> getValueMap() {
-        return valueMap;
-    }
-
-    public void setValueMap(Map<Term, List<String>> valueMap) {
-        this.valueMap = valueMap ;
-    }
-
-    public static enum ActionType {
+    public enum ActionType {
         SERIALIZE_ONTOLOGIES,
         LOAD_FROM_DATABASE,
         LOAD_FROM_SERIALIZED_FILE,
         SHOW_ALIASES,
-        SHOW_EXACT,
         SHOW_OBSOLETE_TERMS,
         SHOW_ALL_TERMS,
-        SHOW_TERM, SHOW_KEYS, SHOW_VALUES;
+        SHOW_TERM;
 
         public static ActionType getActionType(String type) {
             for (ActionType t : values()) {

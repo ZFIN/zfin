@@ -26,8 +26,10 @@ import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -39,7 +41,6 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 
     private static final Logger logger = Logger.getLogger(LookupRPCServiceImpl.class);
     private transient PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-    private transient Highlighter highlighter = new Highlighter();
 
     private static final int NUMBER_OF_SUGGESTIONS = ItemSuggestOracle.DEFAULT_LIMIT;
 
@@ -114,8 +115,8 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      */
     public TermStatus validateAnatomyTerm(String term) {
 
-        MatchingTermService service = new MatchingTermService();
-        Set<MatchingTerm> terms = service.getMatchingTerms(Ontology.ANATOMY, term);
+        MatchingTermService service = new MatchingTermService(term);
+        List<MatchingTerm> terms = service.getMatchingTerms(Ontology.ANATOMY, term);
 
         int foundInexactMatch = 0;
         for (MatchingTerm anatomyItem : terms) {
@@ -163,8 +164,8 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @param ontology       ontology name
      * @return suggestions
      */
-    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO ontology,boolean useIDAsValue) {
-        return getOntologySuggestions(request, showTermDetail, DTOConversionService.convertToOntology(ontology),useIDAsValue);
+    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO ontology) {
+        return getOntologySuggestions(request, showTermDetail, DTOConversionService.convertToOntology(ontology));
     }
 
     /**
@@ -175,26 +176,20 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @param ontology       ontology name
      * @return suggestions
      */
-    private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, Ontology ontology,boolean useIDAsValue) {
+    private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, Ontology ontology) {
         HibernateUtil.currentSession();
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = request.getQuery().trim();
 
         Collection<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 2) {
-            MatchingTermService matcher = new MatchingTermService(request.getLimit());
-            highlighter.setMatch(query);
-//            Pattern p = Pattern.compile("("+query+")",Pattern.CASE_INSENSITIVE);
+            MatchingTermService matcher = new MatchingTermService(query);
             for (MatchingTerm term : matcher.getMatchingTerms(ontology, query)) {
                 String suggestion = term.getMatchingTermDisplay();
-                String displayName = highlighter.highlight(suggestion) ;
-//                String displayName = p.matcher(suggestion).replaceAll("<strong>$1</strong>") ;
-                String termValue = (useIDAsValue ?  term.getTerm().getID() : term.getTerm().getTermName()) ;
-                if (showTermDetail){
+                String displayName = suggestion.replace(query, "<strong>" + query + "</strong>");
+                if (showTermDetail)
                     displayName = createListItem(displayName, term.getTerm());
-                }
-
-                suggestions.add(new ItemSuggestion(displayName, termValue));
+                suggestions.add(new ItemSuggestion(displayName, term.getTerm().getTermName()));
             }
         }
         resp.setSuggestions(suggestions);

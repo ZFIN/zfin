@@ -51,7 +51,7 @@ class CallbackTimer extends Timer {
         } else if (lookup.getType().equals(LookupComposite.FEATURE_LOOKUP)) {
             lookupServiceAsync.getFeatureSuggestions(request, callback);
         } else if (lookup.getType().equals(LookupComposite.GDAG_TERM_LOOKUP)) {
-            lookupServiceAsync.getOntologySuggestions(request, lookup.isShowTermDetail(), lookup.getOntology(), lookup.getUseIdAsValue(),callback);
+            lookupServiceAsync.getOntologySuggestions(request, lookup.isShowTermDetail(), lookup.getOntology(), callback);
         }
 
         this.callback = null;

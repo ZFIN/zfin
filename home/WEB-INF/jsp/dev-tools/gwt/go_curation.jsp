@@ -1,8 +1,10 @@
-<%@ page import="org.zfin.gwt.curation.ui.GoCurationModule" %>
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
+<%@ page import="org.zfin.framework.presentation.CurationTestController" %>
+<%@ page import="org.zfin.gwt.curation.ui.GoCurationModule" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
+<%--Adds the GOEditController.--%>
 <%
     String pubID = request.getParameter("zdbID");
     if(pubID ==null){

@@ -43,8 +43,7 @@ public class OntologyManagerUtil extends AbstractDbUnitTest {
 
     protected static File getSerializedFile(Ontology anatomy) {
         String serializedFileName = anatomy.getOntologyName();
-//        serializedFileName += "-ontology.ser";
-        serializedFileName += "-ontology.xml";
+        serializedFileName += "-ontology.ser";
         return new File("test", serializedFileName);
     }
 

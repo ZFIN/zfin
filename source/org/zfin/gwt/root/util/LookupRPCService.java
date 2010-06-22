@@ -70,7 +70,7 @@ public interface LookupRPCService extends RemoteService {
      * @param goOntology     ontology name
      * @return suggestions
      */
-    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO goOntology,boolean useIdAsValue);
+    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO goOntology);
 
     // validation methods
 

@@ -3,7 +3,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
-<%@attribute name="ontologyName" type="java.lang.String" %>
 <%@attribute name="ontology" type="org.zfin.ontology.Ontology" %>
 <%@attribute name="id" type="java.lang.String" %>
 <%@attribute name="action" type="java.lang.String" required="false" %>
@@ -16,26 +15,19 @@
 <script type="text/javascript">
     var LookupProperties${id} = {
         <%= Lookup.JSREF_DIV_NAME%>: "term-${id}",
-    <%= Lookup.JSREF_INPUT_NAME%>: "searchTerm",
-    <%= Lookup.JSREF_SHOWERROR%>: true,
-    <c:if test="${not empty action}">
-    <%= Lookup.JSREF_ACTION%>: "${action}",
-    </c:if>
-    <%= Lookup.JSREF_TYPE%>: "<%= LookupComposite.GDAG_TERM_LOOKUP%>",
-    <c:choose>
-    <c:when test="${!empty ontology}">
-    <%= Lookup.JSREF_ONTOLOGY_NAME%>: "${ontology}",
-    </c:when>
-    <c:when test="${!empty ontologyName}">
-    <%= Lookup.JSREF_ONTOLOGY_NAME%>: "${ontologyName}",
-    </c:when>
-    </c:choose>
-    <%= Lookup.JSREF_WILDCARD%>: ${wildcard},
-    <%= Lookup.JSREF_LIMIT%>: 25,
-    <%= Lookup.JSREF_SHOW_TERM_DETAIL%>: ${showTermDetail},
+        <%= Lookup.JSREF_INPUT_NAME%>: "searchTerm",
+        <%= Lookup.JSREF_SHOWERROR%>: true,
+        <c:if test="${not empty action}">
+        <%= Lookup.JSREF_ACTION%>: "${action}",
+        </c:if>
+        <%= Lookup.JSREF_TYPE%>: "<%= LookupComposite.GDAG_TERM_LOOKUP%>",
+        <%= Lookup.JSREF_ONTOLOGY_NAME%>: "${ontology}",
+        <%= Lookup.JSREF_WILDCARD%>: ${wildcard},
+        <%= Lookup.JSREF_LIMIT%>: 25,
+        <%= Lookup.JSREF_SHOW_TERM_DETAIL%>: ${showTermDetail},
     }
 
 </script>
 
-<div id="term-${id}"></div>
+<span id="term-${id}"></span>
 
