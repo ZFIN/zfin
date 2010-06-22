@@ -1,6 +1,6 @@
 package org.zfin.infrastructure;
 
-import org.zfin.ontology.GenericTerm;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -10,11 +10,28 @@ import java.util.*;
  * http://whiteboxcomputing.com/java/prefix_tree/
  * Applied AbstractMap<V> to Trie class, adding a <Node>
  */
-public class TrieMap<V> extends AbstractMap<String, V> implements Serializable {
-    private Node<V> root;
-    private int size;
+public class TrieMap<V>
+//        extends AbstractMap<String, V>
+        implements Serializable
+        ,Map<String,V> // unable to define methods as String even though paramterized as such
+{
     private int maxDepth; // Not exact, but bounding for the maximum
-    private boolean ignoreCase;
+    private boolean ignoreCase = true ;
+
+//    private transient Set<Entry<String,V>> entrySet = null;
+//    private transient KeySet<String> navigableKeySet = null;
+    /**
+     * The root
+     */
+    private Node<V> root;
+    /**
+     * the number of entries in a tree
+     */
+    private int size;
+    /**
+     * The number of structural modifications to the tree.
+     */
+    private transient int modCount = 0;
 
     /**
      * The delimiter used in this word to tell where words end. Without a proper delimiter either A.
@@ -109,16 +126,32 @@ public class TrieMap<V> extends AbstractMap<String, V> implements Serializable {
         return true;
     }
 
+    @Override
+    public V remove(Object key) {
+        V value = get(key) ;
+        if(value!=null){
+            if(remove(key.toString())){
+                return value ;
+            }
+            else{
+                return null ;
+            }
+        }
+        return null ;
+    }
+
     /**
      * Removes a word from the list.
      *
-     * @param word The word to remove.
+     * @param key The word to remove.
      * @return True if the word was found and removed.
+     *
+     * // this method roughly shadows remove(Object), which returns the value removd. 
      */
-    public boolean remove(String word) {
-        if (word.length() == 0)
+    public boolean remove(String key) {
+        if (key.length() == 0)
             throw new IllegalArgumentException("Word can't be empty");
-        String w = (ignoreCase) ? word.toLowerCase() : word;
+        String w = (ignoreCase) ? key.toLowerCase() : key;
         if (remove(root, w + DELIMITER, 0, null, null, null)) {
             size--;
             return true;
@@ -165,9 +198,12 @@ public class TrieMap<V> extends AbstractMap<String, V> implements Serializable {
         return false;
     }
 
-
     @Override
     public V get(Object key) {
+        return get(key.toString()) ;
+    }
+
+    public V get(String key) {
         if (key == null || false == isEntry(key.toString())) {
             return null;
         }
@@ -244,25 +280,49 @@ public class TrieMap<V> extends AbstractMap<String, V> implements Serializable {
      *
      * @return A String array of all words in the list
      */
-    public String[] getAll() {
-        ArrayList<String> words = new ArrayList<String>(size);
+    public Set<String> keySet() {
+        Set<String> words = new HashSet<String>(size);
         char[] chars = new char[maxDepth];
-        getAll(root, words, chars, 0);
-        return words.toArray(new String[size]);
+        keySet(root, words, chars, 0);
+        return words;
     }
+
+
+    public Collection<V> values(){
+        Set<V> values = new HashSet<V>(size);
+//        char[] chars = new char[maxDepth];
+        values(root, values, null, 0);
+        return values;
+    }
+
 
     /*
      * Adds any words found in this branch to the array
      */
-
-    private void getAll(Node<V> root, ArrayList<String> words, char[] chars, int pointer) {
+    private void keySet(Node<V> root, Set<String> words, char[] chars, int pointer) {
         Node<V> n = root.firstChild;
         while (n != null) {
             if (n.firstChild == null) {
                 words.add(new String(chars, 0, pointer));
             } else {
                 chars[pointer] = (char) n.value;
-                getAll(n, words, chars, pointer + 1);
+                keySet(n, words, chars, pointer + 1);
+            }
+            n = n.nextSibling;
+        }
+    }
+
+    /*
+    * Adds any words found in this branch to the array
+    */
+    private void values(Node<V> root, Set<V> values, V value, int pointer) {
+        Node<V> n = root.firstChild;
+        while (n != null) {
+            if (n.firstChild == null) {
+                values.add(value);
+            } else {
+                V thisValue =  n.payload;
+                values(n, values, thisValue, pointer + 1);
             }
             n = n.nextSibling;
         }
@@ -271,17 +331,17 @@ public class TrieMap<V> extends AbstractMap<String, V> implements Serializable {
     /**
      * Returns the size of this list;
      */
-    @Override
+//    @Override
     public int size() {
         return size;
     }
 
-
-    @Override
-    public Set<Entry<String, V>> entrySet() {
-        return null;
-//        return new EntryView();
+    // convenience method for accessors
+    public int getSize(){
+        return size() ;
     }
+
+
 
     /**
      * Returns all words in this list starting with the given prefix
@@ -301,11 +361,12 @@ public class TrieMap<V> extends AbstractMap<String, V> implements Serializable {
     private String[] suggest(Node<V> root, String word, int offset) {
         // this is the end condition
         if (offset == word.length()) {
-            ArrayList<String> words = new ArrayList<String>(size);
+            Set<String> words = new HashSet<String>(size);
             char[] chars = new char[maxDepth];
-            for (int i = 0; i < offset; i++)
+            for (int i = 0; i < offset; i++){
                 chars[i] = word.charAt(i);
-            getAll(root, words, chars, offset);
+            }
+            keySet(root, words, chars, offset);
             return words.toArray(new String[words.size()]);
         }
         int c = word.charAt(offset);
@@ -368,12 +429,100 @@ public class TrieMap<V> extends AbstractMap<String, V> implements Serializable {
         return maxFound;
     }
 
+    public boolean isEmpty() {
+        return size==0 ;
+    }
+
+    public void putAll(TrieMap<V> map) {
+        for(String key: map.keySet()){
+            put(key.toString(),map.get(key)) ;
+        }
+    }
+
+    @Override
+    public void putAll(Map<? extends String,? extends V> map) {
+        for(Object key: map.keySet()){
+            put(key.toString(),map.get(key)) ;
+        }
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return containsKey(key.toString()) ;
+    }
+
+    public boolean containsKey(String key1) {
+        return get(key1)!=null ;
+    }
+
+
+    // bad O(N)
+    @Override
+    public boolean containsValue(Object value) {
+        Collection<V> values = values() ;
+        for(V v : values){
+            if(v.equals(value)){
+                return true ;
+            }
+        }
+        return false ;
+    }
+
+    // doe this create memory leaks?
+    public void clear() {
+        root = new Node<V>('r');
+        size = 0;
+    }
+
+
+
+//    @Override
+
+    /**
+     * TODO: make the entrySet implementation work properly
+     * @deprecated This does not work like a Map entrySet, as it does not support functions on the map.
+     * @return
+     */
+    public Set<Map.Entry<String,V>> entrySet() {
+        Set<Map.Entry<String,V>> entries = new HashSet<Map.Entry<String,V>>() ;
+        for(String key: keySet()){
+            entries.add(new Entry<V>(key,get(key))) ;
+        }
+        return entries;
+    }
+
+    static final class Entry<V> implements Map.Entry<String,V>{
+
+        String key;
+        V value ;
+
+        Entry(String key, V value){
+            this.key = key ;
+            this.value = value ;
+        }
+
+        @Override
+        public String getKey() {
+            return key ;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public V getValue() {
+            return value ;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public V setValue(V value) {
+            return this.value = value ;
+        }
+    }
+
     /*
      * Represents a node in the trie. Because a node's children are stored in a linked list this
      * data structure takes the odd structure of node with a firstChild and a nextSibling.
      */
 
-    private class Node<V> {
+    private class Node<V> implements Serializable {
         public int value;
         public V payload;
         public Node<V> firstChild;
@@ -397,73 +546,35 @@ public class TrieMap<V> extends AbstractMap<String, V> implements Serializable {
         }
     }
 
-    final static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TrieMap)) return false;
 
-    public static String generateRandomWord() {
-        int length = (int) (Math.random() * 20f) + 12;
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            int character = (int) (Math.random() * 26);
-            sb.append(alphabet.substring(character, character + 1));
-        }
-        return sb.toString();
+        TrieMap trieMap = (TrieMap) o;
+
+        if (ignoreCase != trieMap.ignoreCase) return false;
+        if (maxDepth != trieMap.maxDepth) return false;
+        if (size != trieMap.size) return false;
+        if (root != null ? !root.equals(trieMap.root) : trieMap.root != null) return false;
+
+        if(!CollectionUtils.isEqualCollection(entrySet(),trieMap.entrySet())) return false ;
+
+        return true;
     }
 
+    @Override
+    public int hashCode() {
+        int result = maxDepth;
+        result = 31 * result + (ignoreCase ? 1 : 0);
+        result = 31 * result + (root != null ? root.hashCode() : 0);
+        result = 31 * result + size;
 
-    public static void main(String args[]) {
-        TrieMap<GenericTerm> trieMap = new TrieMap<GenericTerm>();
-        HashMap<String, GenericTerm> hashTest = new HashMap<String, GenericTerm>();
-        int length = 10000;
-        for (int i = 0; i < length; i++) {
-            String word = TrieMap.generateRandomWord();
-            GenericTerm genericTerm = new GenericTerm();
-            genericTerm.setTermName(word);
-            trieMap.put(word, genericTerm);
-            hashTest.put(word, genericTerm);
+        for(Map.Entry<String,V> entry : entrySet()){
+            result = 31 * result + entry.getKey().hashCode() ;
+            result = 31 * result + entry.getValue().hashCode() ;
         }
 
-        System.out.println("total length: " + trieMap.getAll().length);
-
-        double totalTrieTime = 0f;
-        double totalHashSetTime = 0f;
-
-        String[] results = null;
-        List<String> hits = null;
-        for (int i = 0; i < 100; i++) {
-            String testWord = trieMap.getAll()[(int) (Math.random() * length)];
-            testWord = testWord.substring(0, 2);
-            double startTime = System.currentTimeMillis();
-            results = trieMap.suggest(testWord);
-            for (String result : results) {
-                String termName = hashTest.get(result).getTermName();
-            }
-            double finishTime = System.currentTimeMillis();
-            totalTrieTime += finishTime - startTime;
-
-            hits = new ArrayList<String>();
-            startTime = System.currentTimeMillis();
-            for (String s : hashTest.keySet()) {
-                if (s.equals(testWord)) {
-                    hits.add(s);
-                } else if (s.startsWith(testWord)) {
-                    hits.add(s);
-                }
-            }
-
-            for (String result : hits) {
-                String termName = hashTest.get(result).getTermName();
-            }
-
-            finishTime = System.currentTimeMillis();
-            totalHashSetTime += finishTime - startTime;
-            if (hits.size() != results.length) {
-                System.out.println("results don't match");
-                return;
-            }
-            assert (hits.size() == results.length);
-        }
-
-        System.out.println("\ntrieTime " + totalTrieTime + "(ms) vs hashTime: " + totalHashSetTime + " (ms)");
+        return result;
     }
-
 }

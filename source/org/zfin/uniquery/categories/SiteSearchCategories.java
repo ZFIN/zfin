@@ -57,7 +57,7 @@ public final class SiteSearchCategories {
     public static void init(String dir, String propFile) {
         propertyFile = FileUtil.createFileFromDirAndName(dir, propFile);
         if (!propertyFile.exists()) {
-            LOG.info("Site Search Category file " + propertyFile.getAbsolutePath() + " not found. Use default file.");
+            LOG.warn("Site Search Category file " + propertyFile.getAbsolutePath() + " not found. Use default file.");
             propertyFile = FileUtil.createFileFromDirAndName(dir, ZFIN_DEFAULT_CATEGORIES_XML);
             if (!propertyFile.exists()) {
                 String message = "No default Site Search Category file " + propertyFile.getAbsolutePath() + " found!";
@@ -74,7 +74,7 @@ public final class SiteSearchCategories {
             Unmarshaller u = jc.createUnmarshaller();
             u.setValidating(true);
             if (props != null) {
-                LOG.info("Called more than once");
+                LOG.warn("Called more than once");
                 //ToDO: find out why on the server (embryonix this is called twice)
                 //throw new RuntimeException("ZfinProperties class already initialized! This can only be done once ");
             } else {
@@ -183,7 +183,7 @@ public final class SiteSearchCategories {
                         if (StringUtils.isEmpty(environmentVariable))
                             environmentVariable = System.getenv(matchedString);
 
-                        LOG.info("Environment variable for " + matchedString + " found: " + environmentVariable);
+                        LOG.debug("Environment variable for " + matchedString + " found: " + environmentVariable);
                         if (StringUtils.isEmpty(environmentVariable))
                             LOG.error("No environment variable for " + matchedString + " found");
                         else

@@ -1,23 +1,26 @@
 package org.zfin.ontology;
 
+import org.zfin.ontology.presentation.MatchingTermComparator;
+
 /**
  * COnvenience class to hold matching terms, the match type and the term alias if the match
  * was on an alias.
  */
 public class MatchingTerm {
 
-    private Term term;
-    private boolean matchingStart;
-    private TermAlias alias;
+    public final static String OBSOLETE_SUFFIX =" -- OBSOLETED TERM" ;
 
-    public MatchingTerm(Term term, boolean isMatchingStart) {
-        this.term = term;
-        this.matchingStart = isMatchingStart;
+    private Term term;
+    private TermAlias alias; // gives alias, if hit is on alias
+    private String query ;
+
+    public MatchingTerm(Term term, String query) {
+        this(term,query,null) ;
     }
 
-    public MatchingTerm(Term term, boolean isMatchingStart, TermAlias alias) {
+    public MatchingTerm(Term term, String query , TermAlias alias) {
         this.term = term;
-        this.matchingStart = isMatchingStart;
+        this.query = query;
         this.alias = alias;
     }
 
@@ -25,12 +28,17 @@ public class MatchingTerm {
         return term;
     }
 
-    public TermAlias getAlias() {
-        return alias;
+    public boolean isHitAlias() {
+        return (alias!=null && !term.getTermName().toLowerCase().contains(query)) ;
     }
 
-    public boolean isMatchingStart() {
-        return matchingStart;
+
+    public boolean startsWithQuery() {
+        return (term.getTermName().toLowerCase().startsWith(query)) ;
+    }
+
+    public TermAlias getAlias() {
+        return alias;
     }
 
     public String getMatchingTermDisplay() {
@@ -42,7 +50,7 @@ public class MatchingTerm {
             sb.append("]");
         }
         if (term.isObsolete()) {
-            sb.append(" -- OBSOLETED TERM");
+            sb.append(OBSOLETE_SUFFIX);
         }
         return sb.toString();
     }
@@ -53,10 +61,8 @@ public class MatchingTerm {
         if (o == null || getClass() != o.getClass()) return false;
 
         MatchingTerm matchingTerm = (MatchingTerm) o;
-
-        if (getTerm() != null ? !getTerm().equals(matchingTerm.getTerm()) : matchingTerm.getTerm() != null) return false;
-
-        return true;
+        return matchingTerm.getTerm().equals(getTerm()) ;
+//        return (new MatchingTermComparator(query)).compare(this,matchingTerm)==0 ;
     }
 
     @Override

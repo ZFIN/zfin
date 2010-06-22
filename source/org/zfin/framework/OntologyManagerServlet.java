@@ -42,7 +42,7 @@ public class OntologyManagerServlet extends HttpServlet {
 
     private void reLoadFormDatabase() {
         try {
-            OntologyManager.getInstance(OntologyManager.LoadingMode.DATABASE).serializeOntology();
+            OntologyManager.getInstance(OntologyManager.LoadingMode.DATABASE).serializeOntologies();
         } catch (Exception e) {
             LOG.error("Problem during re-loading ontologies from database", e);
         }
@@ -64,17 +64,10 @@ public class OntologyManagerServlet extends HttpServlet {
         @Override
         public void run() {
             // check if serialized file exists.
-            File serializedFile = FileUtil.createOntologySerializationFile(OntologyManager.SERIALIZED_FILE_NAME);
-            if (serializedFile.exists()) {
-                LOG.info("Found serialized file [" + serializedFile.getAbsolutePath() + "]. Start re-loading ontologies into memory...");
-                try {
-                    OntologyManager.getInstance(OntologyManager.LoadingMode.SERIALIZED_FILE);
-                } catch (Exception e) {
-                    LOG.error("Could not read from serialized file! Try to load from database.", e);
-                    reLoadFormDatabase();
-                }
-            } else {
-                LOG.warn("No serialized file [" + serializedFile.getAbsolutePath() + "] found. Loading ontologies from database...");
+            try {
+                OntologyManager.getInstance(OntologyManager.LoadingMode.SERIALIZED_FILE);
+            } catch (Exception e) {
+                LOG.warn("Problem loading serialized file. Loading ontologies from database...",e);
                 reLoadFormDatabase();
             }
         }

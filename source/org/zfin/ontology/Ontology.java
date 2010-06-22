@@ -70,6 +70,21 @@ public enum Ontology implements Serializable {
         return null;
     }
 
+    public static Ontology[] getSerializableOntologies(){
+        Ontology[] ontologies = new Ontology[8];
+        int i = 0 ;
+        ontologies[i++] = Ontology.STAGE ;
+        ontologies[i++] = Ontology.ANATOMY;
+        ontologies[i++] = Ontology.QUALITY;
+        ontologies[i++] = Ontology.QUALITY_PROCESSES;
+        ontologies[i++] = Ontology.QUALITY_QUALITIES;
+        ontologies[i++] = Ontology.GO_CC;
+        ontologies[i++] = Ontology.GO_MF;
+        ontologies[i++] = Ontology.GO_BP;
+
+        return ontologies ;
+    }
+
     public static List<Ontology> getOntologies(String name) {
         if (name == null)
             return null;

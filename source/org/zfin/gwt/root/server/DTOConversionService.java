@@ -642,6 +642,8 @@ public class DTOConversionService {
                 return OntologyDTO.GO_BP;
             case GO:
                 return OntologyDTO.GO;
+            case STAGE:
+                return OntologyDTO.STAGE;
         }
         return null;
     }
@@ -672,6 +674,8 @@ public class DTOConversionService {
                 return Ontology.GO_BP_MF;
             case GO:
                 return Ontology.GO;
+            case STAGE:
+                return Ontology.STAGE;
         }
         return null;
     }

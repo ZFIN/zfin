@@ -14,22 +14,22 @@ Total of: ${fn:length(formBean.aliasTermMap)}
         <td class="sectionTitle">Alias Type</td>
     </tr>
 
-    <c:forEach var="dataMap" items="${formBean.aliasTermMap}" varStatus="loop">
+    <c:forEach var="value" items="${formBean.aliasTermMap}" varStatus="loop">
         <tr class="search-result-table-entries left-top-aligned">
             <td>
                 ${loop.index}
             </td>
             <td class="listContentBold">
-                    <c:out value="${dataMap.key}" escapeXml="true" />
+                    <c:out value="${value.key}" escapeXml="true" />
             </td>
             <td>
-                <c:forEach var="term" items="${dataMap.value}" >
-                    <zfin:link entity="${term.term}"/>
+                <c:forEach var="value" items="${value.value}" >
+                    <zfin:link entity="${value.term}"/>
                     <br/>
                 </c:forEach>
             </td>
             <td>
-                <c:forEach var="termTwo" items="${dataMap.value}" >
+                <c:forEach var="termTwo" items="${value.value}" >
                     ${termTwo.group} <br/>
                 </c:forEach>
             </td>

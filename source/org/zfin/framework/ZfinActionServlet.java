@@ -5,6 +5,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.infrastructure.EnumValidationException;
 import org.zfin.infrastructure.EnumValidationService;
+import org.zfin.ontology.OntologyManager;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.sequence.blast.WebHostDatabaseStatisticsCache;
 import org.zfin.uniquery.categories.SiteSearchCategories;
@@ -52,7 +53,29 @@ public class ZfinActionServlet extends DispatcherServlet {
         config.getServletContext().setAttribute("webdriverURL", ZfinProperties.getWebDriver());
         initDatabase();
         startupTests();
+        initOntologies() ;
         initBlast();
+    }
+
+    private void initOntologies() {
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    OntologyManager.getInstance(OntologyManager.LoadingMode.SERIALIZED_FILE)  ;
+                } catch (Exception e) {
+                    logger.error("Failed to load ontologies from serial file, loading from database",e);
+                }
+                
+                try {
+                    OntologyManager.getInstance().reLoadOntologies();
+//                    OntologyManager.getInstance(OntologyManager.LoadingMode.DATABASE).serializeOntologies();  ;
+                } catch (Exception e1) {
+                    logger.fatal("Failed to load ontologies from the database",e1);
+                }
+            }
+        };
+        t.start();
     }
 
     private void initBlast() {

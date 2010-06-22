@@ -30,9 +30,9 @@ public class OntologyManagerController extends AbstractCommandController {
         if (actionType != null) {
             switch (actionType) {
                 case SERIALIZE_ONTOLOGIES:
-                    OntologyManager.getInstance().serializeOntology();
+                    OntologyManager.getInstance().serializeOntologies();
                 case LOAD_FROM_DATABASE:
-                    OntologyManager.getInstance(OntologyManager.LoadingMode.DATABASE);
+                    OntologyManager.getInstance(OntologyManager.LoadingMode.DATABASE).serializeOntologies();
                 case LOAD_FROM_SERIALIZED_FILE:
                     OntologyManager.getInstance(OntologyManager.LoadingMode.SERIALIZED_FILE);
             }

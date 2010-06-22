@@ -9,6 +9,29 @@
 <span style="width:300px">
 </span>
 
+<table width="100%">
+<tr>
+        <td colspan="2">
+		Ontologies available within the VM. (${fn:length(formBean.ontologyManager.ontologyMap)} of <%=OntologyManager.NUMBER_OF_SERIALIZABLE_ONTOLOGIES%>)
+        </td>
+		</tr>
+    <tr class="search-result-table-header left-top-aligned">
+        <td class="sectionTitle">Ontology Name </td>
+        <td class="sectionTitle">Availability</td>
+        </tr>
+    <c:forEach var="availableMap" items="${formBean.ontologyManager.ontologyMap}" varStatus="index">
+    <tr class="search-result-table-entries left-top-aligned">
+        <td class="listContentBold">
+                ${availableMap.key}
+        </td>
+        <td>
+				${fn:length(availableMap.value)}
+        </td>
+        </c:forEach>
+</table>
+
+<br><br>
+
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 
 <table width="100%">
@@ -18,6 +41,8 @@
             fast lookup purposes. There is a <a href="quartz-jobs">quartz job</a> that is configured to reload the
             ontologies nightly to
             ensure that the cache is synchronized with the TERM table.
+
+            Has ontology manager: ${empty formBean.ontologyManager}
         </td>
     </tr>
     <c:choose>
@@ -31,46 +56,57 @@
                 <td class="sectionTitle">Total Number of Terms</td>
                 <td class="sectionTitle">Number of Active Terms</td>
                 <td class="sectionTitle">Number of Obsoleted Terms</td>
-                <td class="sectionTitle">Number of distinct Aliases</td>
+                <td class="sectionTitle">Number of Distinct Aliases</td>
+                <td class="sectionTitle">Number of Lookup Keys</td>
+                <td class="sectionTitle">Number of Unique Values</td>
                 <td class="sectionTitle">Auto-complete</td>
             </tr>
-            <c:forEach var="dataMap" items="${formBean.ontologyManager.loadingData}" varStatus="loop">
+
+            <c:forEach var="value" items="${formBean.ontologyManager.loadingData}" varStatus="loop">
                 <tr class="search-result-table-entries left-top-aligned">
                     <td class="listContentBold">
-                            ${dataMap.value.ontology.commonName}
+                            ${value.value.ontology.commonName}
                     </td>
                     <td class="listContentBold">
-                        <c:forEach var="individualOntologyName" items="${dataMap.value.ontology.individualOntologies}">
+                        <c:forEach var="individualOntologyName" items="${value.value.ontology.individualOntologies}">
                             ${individualOntologyName.ontologyName}<br/>
                         </c:forEach>
                     </td>
                     <td class="listContentBold">
-                        <fmt:formatDate value="${dataMap.value.dateLastLoaded}" pattern="MM/dd/yyyy"/>
+                        <fmt:formatDate value="${value.value.dateLastLoaded}" pattern="MM/dd/yyyy"/>
                     </td>
                     <td class="listContentBold">
-                        <fmt:formatDate value="${dataMap.value.dateLastLoaded}" pattern="hh:mm:ss"/>
+                        <fmt:formatDate value="${value.value.dateLastLoaded}" pattern="hh:mm:ss"/>
                     </td>
                     <td class="listContentBold">
-                            ${dataMap.value.timeLastLoaded}
+                            ${value.value.timeLastLoaded}
                     </td>
                     <td class="listContentBold">
-                            ${dataMap.value.lastLoad.totalNumberOfTerms}
+                            ${value.value.lastLoad.totalNumberOfTerms}
                     </td>
                     <td class="listContentBold">
-                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALL_TERMS%>&ontologyName=${dataMap.value.ontology.ontologyName}"
-                           target="term-window">${dataMap.value.lastLoad.numberOfTerms}</a>
+                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALL_TERMS%>&ontologyName=${value.value.ontology.ontologyName}"
+                           target="term-window">${value.value.lastLoad.numberOfTerms}</a>
                     </td>
                     <td class="listContentBold">
-                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_OBSOLETE_TERMS%>&ontologyName=${dataMap.value.ontology.ontologyName}"
-                           target="term-window">${dataMap.value.lastLoad.numberOfObsoletedTerms}</a>
+                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_OBSOLETE_TERMS%>&ontologyName=${value.value.ontology.ontologyName}"
+                           target="term-window">${value.value.lastLoad.numberOfObsoletedTerms}</a>
                     </td>
                     <td class="listContentBold">
-                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALIASES%>&ontologyName=${dataMap.value.ontology.ontologyName}"
-                               target="term-window">${dataMap.value.lastLoad.numberOfAliases}</a>
+                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALIASES%>&ontologyName=${value.value.ontology.ontologyName}"
+                           target="term-window">${value.value.lastLoad.numberOfAliases}</a>
+                    </td>
+                    <td class="listContentBold">
+                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_KEYS%>&ontologyName=${value.value.ontology.ontologyName}"
+                           target="term-window">${value.value.lastLoad.numberOfKeys}</a>
+                    </td>
+                    <td class="listContentBold">
+                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_VALUES%>&ontologyName=${value.value.ontology.ontologyName}"
+                           target="term-window">${value.value.lastLoad.numberOfValues}</a>
                     </td>
                     <td>
-                        <zfin2:lookup ontology="${dataMap.value.ontology}" id="${loop.count}" showTermDetail="true"
-                                 wildcard="false"/>
+                        <zfin2:lookup ontology="${value.value.ontology}" id="${loop.count}" showTermDetail="true"
+                                      wildcard="false"/>
                     </td>
                 </tr>
             </c:forEach>
@@ -109,5 +145,4 @@
     </c:choose>
 </table>
 <p></p>
-<a href="?action=<%= OntologyBean.ActionType.SERIALIZE_ONTOLOGIES%>">Serialize Ontologies</a> (create file
-<%=FileUtil.createOntologySerializationFile(OntologyManager.SERIALIZED_FILE_NAME)%>)
+<a href="?action=<%= OntologyBean.ActionType.SERIALIZE_ONTOLOGIES%>">Serialize Ontologies</a>

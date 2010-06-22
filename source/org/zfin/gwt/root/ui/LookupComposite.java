@@ -9,6 +9,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.TermInfo;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
@@ -85,6 +86,7 @@ public class LookupComposite extends Composite implements Revertible {
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
     public static final String SHOW_TYPE = "SHOW_TYPE";
+    private boolean useIdAsValue = false ;
 
     public LookupComposite() {
         types.add(TYPE_SUPPLIER);
@@ -121,7 +123,7 @@ public class LookupComposite extends Composite implements Revertible {
         textBox.setFocus(true);
         initWidget(rootPanel);
         RootPanel panel = RootPanel.get(TERM_INFO);
-        if (panel != null) {
+        if (panel != null && termInfoTable==null) {
             termInfoTable = new TermInfoComposite(false);
             termInfoTable.clear();
             panel.add(termInfoTable);
@@ -146,7 +148,20 @@ public class LookupComposite extends Composite implements Revertible {
                     suggestBox.setText(currentText);
                     doSubmit(currentText);
                 } else if (suggestion.getReplacementString() != null) {
-                    doSubmit(suggestion.getReplacementString());
+                    if(useIdAsValue){
+                        lookupRPC.getTermInfo(ontology,suggestion.getReplacementString(),
+                                new TermInfoCallBack(termInfoTable,suggestion.getReplacementString()){
+                                    @Override
+                                    public void onSuccess(TermInfo termInfo) {
+                                        super.onSuccess(termInfo);
+                                        doSubmit(termInfo.getName());
+                                    }
+                                }
+                        );
+                    }
+                    else{
+                        doSubmit(suggestion.getReplacementString());
+                    }
                 }
             }
         });
@@ -154,8 +169,6 @@ public class LookupComposite extends Composite implements Revertible {
         suggestBox.addSuggestionHandler(new HighlightHandler<SuggestOracle.Suggestion>() {
             @Override
             public void onHighlight(HighlightEvent<SuggestOracle.Suggestion> suggestionHighlightEvent) {
-//                doHighlightAction(suggestionHighlightEvent.getHighlighted()) ;
-//                suggestionHighlightEvent.getHighlighted()
                 doOnHighlight(suggestionHighlightEvent.getHighlighted().getReplacementString());
             }
         });
@@ -222,7 +235,7 @@ public class LookupComposite extends Composite implements Revertible {
 
     protected void doOnHighlight(String text) {
         if (highlightAction != null) {
-            suggestBox.setFocus(false);
+            suggestBox.setFocus(true);
             highlightAction.onHighlight(text);
         }
     }
@@ -420,8 +433,8 @@ public class LookupComposite extends Composite implements Revertible {
         suggestBox.getTextBox().addFocusHandler(autocompleteFocusHandler);
     }
 
-    public void setLimit(int limit) {
-        oracle.setLimit(limit);
+    public void setLimit(int thisLimit) {
+        oracle.setLimit(thisLimit);
     }
 
     public void setEnabled(boolean enabled) {
@@ -477,5 +490,21 @@ public class LookupComposite extends Composite implements Revertible {
 
     public void setTabIndex(int tabIndex) {
         textBox.setTabIndex(tabIndex);
+    }
+
+    public void setUseIdAsValue(boolean useIdAsValue) {
+        this.useIdAsValue = useIdAsValue;
+    }
+
+    public boolean getUseIdAsValue() {
+        return useIdAsValue;
+    }
+
+    public TermInfoComposite getTermInfoTable() {
+        return termInfoTable;
+    }
+
+    public void setTermInfoTable(TermInfoComposite termInfoTable) {
+        this.termInfoTable = termInfoTable;
     }
 }

@@ -13,14 +13,18 @@ public class LoadingData implements Serializable {
     private int numberOfTerms;
     private int numberOfObsoletedTerms;
     private int numberOfAliases;
+    private int numberOfKeys;
+    private int numberOfValues;
 
-    public LoadingData(Date dateLastLoaded, long loadingTime, int numOfTerms, int numOfObsoletedTerms, int numOfAliases) {
+    public LoadingData(Date dateLastLoaded, long loadingTime, int numOfTerms, int numOfObsoletedTerms, int numOfAliases,int numOfKeys,int numOfValues) {
         super();
         this.dateLastLoaded = dateLastLoaded;
         this.loadingTime = loadingTime;
         this.numberOfTerms = numOfTerms;
         this.numberOfObsoletedTerms = numOfObsoletedTerms;
         this.numberOfAliases = numOfAliases;
+        this.numberOfKeys = numOfKeys ;
+        this.numberOfValues = numOfValues ;
     }
 
     public Date getDateLastLoaded() {
@@ -49,5 +53,13 @@ public class LoadingData implements Serializable {
 
     public void setNumberOfAliases(int numberOfAliases) {
         this.numberOfAliases = numberOfAliases;
+    }
+
+    public int getNumberOfKeys() {
+        return numberOfKeys;
+    }
+
+    public int getNumberOfValues() {
+        return numberOfValues;
     }
 }

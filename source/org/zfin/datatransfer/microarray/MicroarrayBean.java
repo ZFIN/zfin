@@ -32,13 +32,13 @@ public class MicroarrayBean {
         if(writer==null){
             writer = new BufferedWriter(new FileWriter(file)) ;
         }
-        logger.info(s);
+        logger.debug(s);
         writer.write(s+"\n");
         writer.flush();
     }
 
     public void addNotFound(String newMicroArrayAccession) throws IOException {
-        logger.info("not found: " + newMicroArrayAccession);
+        logger.debug("not found: " + newMicroArrayAccession);
         addMessage("not found[" + newMicroArrayAccession+"]");
     }
 
