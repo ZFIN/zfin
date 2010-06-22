@@ -1,5 +1,6 @@
 package org.zfin.mutant.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -108,8 +109,25 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         query.setParameter("tag", Phenotype.Tag.getTagFromName(phenotypeTerm.getTag()));
         if (phenotypeTerm.getSubterm() != null)
             query.setParameter("subtermName", phenotypeTerm.getSubterm().getTermName());
-        PhenotypeStructure structure = (PhenotypeStructure) query.uniqueResult();
-        return structure != null;
+        List<PhenotypeStructure> structures = (List<PhenotypeStructure>) query.list();
+
+
+
+        if(CollectionUtils.isNotEmpty(structures)){
+            // this is most cases
+            for(PhenotypeStructure structure : structures){
+                // for fogbugz case 5722
+                // if your hit has a substructure, but you do not, then
+                if( (phenotypeTerm.getSubterm()==null && structure.getSubterm()==null)
+                        || (phenotypeTerm.getSubterm()!=null && structure.getSubterm()!=null) ) {
+                    return true ;
+                }
+            }
+            return false ;
+        }
+        else{
+            return false ;
+        }
     }
 
     /**
