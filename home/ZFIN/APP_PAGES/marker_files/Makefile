@@ -19,7 +19,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/marker_files
 
 GENERICS = chromoscripts.apg clonebox.apg cloneorderlink.apg crossview.apg \
-crossview_busted.apg curatornote.apg dnote_editor.apg do-goedit.apg \
+curatornote.apg dnote_editor.apg do-goedit.apg \
 do-markergoupdate.apg do-markerupdate.apg geneprddescription.apg gomodify.apg \
 gonotes.apg make_map.apg mapframe.apg mappingdetail.apg markergoentry.apg \
 markergovalidate.apg markergoview.apg markerselect.apg markerupdate.apg \
