@@ -163,7 +163,7 @@ public class OntologyManagerTest extends AbstractOntologyTest{
 
 
 
-    @Test
+//    @Test
     public void getMatchingTermsPerformance() {
 //        String[] queries = {"pel","plac","retin","glutam"};
         long startTime , endTime, wordTimeToSearch ,totalTimeToSearch ;
