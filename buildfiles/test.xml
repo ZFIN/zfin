@@ -236,6 +236,7 @@ test(s) need to be run before committing changes or pushing files to production 
             <arg value="${junit.test.class.name}"/>
             <classpath refid="extended.classpath"/>
 
+            <jvmarg value="-Xmx1024m"/>
             <jvmarg value="-DDBNAME=${dbname}"/>
             <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
             <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
