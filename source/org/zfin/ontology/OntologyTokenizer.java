@@ -51,7 +51,6 @@ public class OntologyTokenizer {
 
         tokenizeTerm(exactTerm,term,termMap) ;
 
-
         // handle aliases
         if(term.getAliases()!=null){
             // handle alias tokens
@@ -74,6 +73,12 @@ public class OntologyTokenizer {
             } catch (Exception e) {
                 logger.error("failed to add tokenized word: ["+termName+"] from ["+exactTerm+"]",e);
             }
+        }
+
+        try {
+            termMap.put(exactTerm,term) ;
+        } catch (Exception e) {
+            logger.error("failed to add word: ["+exactTerm+"] from term["+term+"]",e);
         }
     }
 
