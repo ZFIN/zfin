@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------
---called on insert/update of marker_go_term table
---takes mrkrgo_mrkr_zdb_id, mrkrgo_goterm_zdb_id as input
+--called on insert/update of marker_go_term_evidence table
+--takes mrkrgoev_mrkr_zdb_id, mrkrgoev_term_zdb_id as input
 --returns trigger failure if trying to associate a root go term
 --to a marker that already has non-root go terms in this 
 --table.

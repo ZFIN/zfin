@@ -6,7 +6,7 @@
 --
 -- INPUT:
 --       marker zdb id
---       go term zdb id 
+--       term zdb id
 -- OUTPUT:
 --       none
 -- EFFECT:

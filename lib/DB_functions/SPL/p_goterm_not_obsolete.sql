@@ -1,9 +1,9 @@
--------------------------------------------------------------------------
---This procedure checks on insert or update of go_terms in marker_go_term
---that the go_term in the go_term table is not obsolete.
+-----------------------------------------------------------------------------------
+--This procedure checks on insert or update of go terms in marker_go_term_evidence
+--that the go terms in the term table is not obsolete.
 --Obsolete go terms should not be assigned to valid markers.
 --Terms are declared 'obsolete' by the gene_ontology consortium.
--------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
 
 create procedure p_goterm_not_obsolete (vGoTerm varchar(50))
 
