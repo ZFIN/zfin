@@ -113,59 +113,62 @@ begin work;
 
 
 ------------------- loading ac alias ------------------------
+-- from June, 2010, no longer load dblink ids into data_alias table (see FB case 5770) -----------------
+
 --!echo 'Create temp table temp_ac_alias'
-	create temp table temp_ac_alias(
-		prm_acc_num varchar(50),	
-		alias_acc_num varchar(50)
-		) with no log; 
+--	create temp table temp_ac_alias(
+--		prm_acc_num varchar(50),	
+--		alias_acc_num varchar(50)
+--		) with no log; 
 
 --!echo 'Load from ac_dalias.unl'
-	load from ac_dalias.unl insert into temp_ac_alias;
+--	load from ac_dalias.unl insert into temp_ac_alias;
 --!echo '		from ac_dalias.unl'
 	
 --!echo 'Create temp table pre_ac_alias'
-	create temp table pre_ac_alias(
-		pre_dalias_zdb_id		varchar(50),
-    		pre_dalias_data_zdb_id	varchar(50),
-    		pre_dalias_alias		varchar(120),
-		pre_dalias_alias_lower	varchar(255)
-              ) with no log;
+--	create temp table pre_ac_alias(
+--		pre_dalias_zdb_id		varchar(50),
+--    		pre_dalias_data_zdb_id	varchar(50),
+--    		pre_dalias_alias		varchar(120),
+--		pre_dalias_alias_lower	varchar(255)
+--              ) with no log;
               
-	insert into pre_ac_alias (pre_dalias_data_zdb_id, pre_dalias_alias, pre_dalias_alias_lower)
-	    select distinct dblink_zdb_id, alias_acc_num, lower(alias_acc_num)
-	    from pre_db_link db, temp_ac_alias al
- 	    where db.acc_num = al.prm_acc_num;
+--	insert into pre_ac_alias (pre_dalias_data_zdb_id, pre_dalias_alias, pre_dalias_alias_lower)
+--	    select distinct dblink_zdb_id, alias_acc_num, lower(alias_acc_num)
+--	    from pre_db_link db, temp_ac_alias al
+-- 	    where db.acc_num = al.prm_acc_num;
  	    
 --!echo '		into pre_ac_alias'
         
-	delete from pre_ac_alias
-	       where exists 	
-			( select dalias_zdb_id
-		 	    from data_alias
-			   where dalias_data_zdb_id = pre_dalias_data_zdb_id
-		  	     and dalias_alias = pre_dalias_alias );	
+--	delete from pre_ac_alias
+--	       where exists 	
+--			( select dalias_zdb_id
+--		 	    from data_alias
+--			   where dalias_data_zdb_id = pre_dalias_data_zdb_id
+--		  	     and dalias_alias = pre_dalias_alias );	
 		  	     
 --!echo '		from pre_ac_alias'	  	     
     
-        update pre_ac_alias
-                set pre_dalias_zdb_id = get_id("DALIAS");
+--        update pre_ac_alias
+--                set pre_dalias_zdb_id = get_id("DALIAS");
 
+--!echo 'no longer load dblink ids into data_alias table (see FB case 5770) -----------------
 --!echo 'Insert DALIAS into zdb_active_data'
-	insert into zdb_active_data (zactvd_zdb_id)
-                    select pre_dalias_zdb_id from pre_ac_alias;
+--	insert into zdb_active_data (zactvd_zdb_id)
+--                    select pre_dalias_zdb_id from pre_ac_alias;
 --!echo '		into zdb_active_data'                    
 
 --!echo 'Insert second AC into data_alias'
-	insert into data_alias (dalias_zdb_id,dalias_data_zdb_id,dalias_alias,dalias_group_id,dalias_alias_lower) 
-	  select pre_dalias_zdb_id, pre_dalias_data_zdb_id, pre_dalias_alias, 
-	         (select aliasgrp_pk_id from alias_group where aliasgrp_name = "alias"), pre_dalias_alias_lower
-	    from pre_ac_alias;
+--	insert into data_alias (dalias_zdb_id,dalias_data_zdb_id,dalias_alias,dalias_group_id,dalias_alias_lower) 
+--	  select pre_dalias_zdb_id, pre_dalias_data_zdb_id, pre_dalias_alias, 
+--	         (select aliasgrp_pk_id from alias_group where aliasgrp_name = "alias"), pre_dalias_alias_lower
+--	    from pre_ac_alias;
 --!echo '		into data_alias'  
 
 --!echo 'Attribute second AC to the internal pub record'
-	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-               select pre_dalias_zdb_id, "ZDB-PUB-020723-2"
-	       from pre_ac_alias;
+--	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+--               select pre_dalias_zdb_id, "ZDB-PUB-020723-2"
+--	       from pre_ac_alias;
 --!echo '		into record_attribution' 
 
 --!echo 'per curator's request, no longer load gn alias -----------------
@@ -195,17 +198,17 @@ begin work;
 -- secondary(t) comes second, if obsolete&secondary(?) comes last. 
 	unload to "spkw2go_obsl_secd.unl" 
 		select distinct "SP_KW:"||sp_kwd_id, s.goterm_name, s.goterm_id,
-			g.goterm_is_obsolete, g.goterm_is_secondary 
-		  from spkw_goterm_with_dups s, go_term g
-		 where s.goterm_id = g.goterm_go_id
-	 	   and (g.goterm_is_obsolete = "t"
-		       or g.goterm_is_secondary = "t")
-		  order by g.goterm_is_secondary, g.goterm_is_obsolete;	
+			t.term_is_obsolete, t.term_is_secondary 
+		  from spkw_goterm_with_dups s, term t
+		 where "GO:"||s.goterm_id = t.term_ont_id
+	 	   and (t.term_is_obsolete = "t"
+		       or t.term_is_secondary = "t")
+		  order by t.term_is_secondary, t.term_is_obsolete;	
 	delete from spkw_goterm_with_dups
-		where goterm_id in (select goterm_go_id
-				       from go_term
-			              where goterm_is_obsolete = "t"
-		                        or  goterm_is_secondary = "t"
+		where "GO:"||goterm_id in (select term_ont_id
+				       from term
+			              where term_is_obsolete = "t"
+		                        or  term_is_secondary = "t"
 				     );		
 
 	create temp table ip_goterm_with_dups (
@@ -219,17 +222,17 @@ begin work;
 --!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
 	unload to "ip2go_obsl_secd.unl" 
 		select distinct "InterPro:"||ip_acc, i.goterm_name, i.goterm_id, 
-			g.goterm_is_obsolete, g.goterm_is_secondary 
-		  from ip_goterm_with_dups i,  go_term g
-	         where i.goterm_id = g.goterm_go_id
-	           and (g.goterm_is_obsolete = "t"
-	             or g.goterm_is_secondary = "t")
-		order by g.goterm_is_secondary, g.goterm_is_obsolete;	
+			t.term_is_obsolete, t.term_is_secondary 
+		  from ip_goterm_with_dups i,  term t
+	         where "GO:"||i.goterm_id = t.term_ont_id
+	           and (t.term_is_obsolete = "t"
+	             or t.term_is_secondary = "t")
+		order by t.term_is_secondary, t.term_is_obsolete;	
 	delete from ip_goterm_with_dups
-		where goterm_id in (select goterm_go_id
-				       from go_term
-			              where goterm_is_obsolete = "t"
-		                        or  goterm_is_secondary = "t"
+		where "GO:"||goterm_id in (select term_ont_id
+				       from term
+			              where term_is_obsolete = "t"
+		                        or  term_is_secondary = "t"
 				     );		
 --!echo 'Load ec_mrkrgoterm.unl: ectogo translation table'
 
@@ -243,17 +246,17 @@ begin work;
 --!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
 	unload to "ec2go_obsl_secd.unl" 
 		select distinct "EC:"||ec_acc, e.goterm_name, e.goterm_id,
-			g.goterm_is_obsolete, g.goterm_is_secondary 
-		  from ec_goterm_with_dups e, go_term g
-	         where e.goterm_id = g.goterm_go_id
-	           and (g.goterm_is_obsolete = "t"
-		       or g.goterm_is_secondary = "t")
-		order by g.goterm_is_secondary, g.goterm_is_obsolete;	
+			t.term_is_obsolete, t.term_is_secondary 
+		  from ec_goterm_with_dups e, term t
+	         where "GO:"||e.goterm_id = t.term_ont_id
+	           and (t.term_is_obsolete = "t"
+		       or t.term_is_secondary = "t")
+		order by t.term_is_secondary, t.term_is_obsolete;	
 	delete from ec_goterm_with_dups
-		where goterm_id in (select goterm_go_id
-				       from go_term
-			              where goterm_is_obsolete = "t"
-		                        or  goterm_is_secondary = "t"
+		where "GO:"goterm_id in (select term_ont_id
+				       from term
+			              where term_is_obsolete = "t"
+		                        or  term_is_secondary = "t"
 				     );		
 
 
@@ -286,29 +289,29 @@ begin work;
 --!echo 'Load spkw'
 	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
 					    mrkrgoev_inference, mrkrgoev_contributed_by)
-		select distinct sk.mrkr_zdb_id, goterm_zdb_id, "ZDB-PUB-020723-1", 
+		select distinct sk.mrkr_zdb_id, term_zdb_id, "ZDB-PUB-020723-1", 
 		       "SP_KW:"||sg.sp_kwd_id, "ZFIN SP keyword 2 GO"
-		  from sp_kwd sk,  spkw_goterm_with_dups sg, go_term
+		  from sp_kwd sk,  spkw_goterm_with_dups sg, term
 		 where sk.sp_kwd = sg.sp_kwd_name
-		   and goterm_go_id = sg.goterm_id;
+		   and term_ont_id = "GO:"||sg.goterm_id;
 
 --!echo 'Load intepro'
 	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
 					    mrkrgoev_inference, mrkrgoev_contributed_by)
-		select distinct db.linked_recid, goterm_zdb_id, "ZDB-PUB-020724-1",
+		select distinct db.linked_recid, term_zdb_id, "ZDB-PUB-020724-1",
 		       "InterPro:"||ip.ip_acc,	"ZFIN InterPro 2 GO"
-		  from pre_db_link db, ip_goterm_with_dups ip, go_term
+		  from pre_db_link db, ip_goterm_with_dups ip, term
 	 	 where db.acc_num = ip.ip_acc
-		   and goterm_go_id = ip.goterm_id;
+		   and term_ont_id = "GO:"||ip.goterm_id;
 	
 --!echo 'Load ec'
         insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source,  
 					    mrkrgoev_inference, mrkrgoev_contributed_by)
-		select distinct db.linked_recid, goterm_zdb_id, "ZDB-PUB-031118-3", 
+		select distinct db.linked_recid, term_zdb_id, "ZDB-PUB-031118-3", 
 		       "EC:"||ec.ec_acc, "ZFIN EC acc 2 GO"
-		from pre_db_link db, ec_goterm_with_dups ec, go_term
+		from pre_db_link db, ec_goterm_with_dups ec, term
 		where db.acc_num = ec.ec_acc
-		  and goterm_go_id = ec.goterm_id;
+		  and term_ont_id = "GO:"||ec.goterm_id;
 
 
                
@@ -317,10 +320,10 @@ begin work;
 
 --!echo 'do not include "unknown" terms and root terms if any'
         delete from pre_marker_go_evidence where go_zdb_id in 
-		(select goterm_zdb_id 
-		   from go_term 
-		  where goterm_go_id in ("0005554", "0000004", "0008372",
-					 "0005575", "0003674", "0008150"));
+		(select term_zdb_id 
+		   from term 
+		  where term_ont_id in ("GO:0005554", "GO:0000004", "GO:0008372",
+					 "GO:0005575", "GO:0003674", "GO:0008150"));
 
 -- if a known go term is assigned to the same marker that has an unknown go term, delete the unknown one
 -- db trigger is added for this purpose. 
