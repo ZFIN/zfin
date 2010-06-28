@@ -221,8 +221,8 @@ function setAssayDisplay(featureValue) {
             <tr><td><b>Lab of Origin</b>
             <td> <select name=featcur_feature_add_lab disabled=disabled>
                  <option value=''>
-                 <?MISQL SQL="select distinct name from lab">
-                    <OPTION value='$1'>$1
+                 <?MISQL SQL="select distinct zdb_id, name from lab">
+                    <OPTION value='$1'>$2
                  <?/MISQL>
                  </select>
              <tr><td><b>Mutagenesis Protocol</b>: 
