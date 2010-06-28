@@ -2,12 +2,34 @@
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
+    <zfin2:lookup ontologyName="${formBean.ontologyName}" showTermDetail="true" wildcard="false"/>
+
+<iframe src="javascript:''" id='__gwt_historyFrame'
+        style='position:absolute;width:0;height:0;border:0'></iframe>
+<table style="width:550px; overflow: auto; border: 0.1px; border-style:solid">
+    <tr>
+        <td>
+            <div id="term-info"></div>
+        </td>
+    </tr>
+</table>
+
 <%-- display aliases --%>
 <c:if test="${formBean.actionType.name eq 'SHOW_ALIASES'}" >
-    <zfin-ontology:showAllAliases formBean="${formBean}"/>
+    <zfin-ontology:showTerms formBean="${formBean}"  action="${formBean.actionType.name}"/>
 </c:if>
 
-<%-- display obsolete terms --%>
+<%-- display keys--%>
+<c:if test="${formBean.actionType.name eq 'SHOW_KEYS'}" >
+    <zfin-ontology:showKeys formBean="${formBean}" action="${formBean.actionType.name}"/>
+</c:if>
+
+<%-- display values --%>
+<c:if test="${formBean.actionType.name eq 'SHOW_VALUES'}" >
+    <zfin-ontology:showValues formBean="${formBean}" action="${formBean.actionType.name}"/>
+</c:if>
+
+<%-- display values --%>
 <c:if test="${formBean.actionType.name eq 'SHOW_OBSOLETE_TERMS'}" >
     <zfin-ontology:showTerms formBean="${formBean}" action="${formBean.actionType.name}"/>
 </c:if>
