@@ -49,6 +49,8 @@ public interface Term extends Comparable<Term>{
 
     void setAliases(Set<TermAlias> aliases);
 
+    boolean isAliasesExist() ;
+
     String getDefinition();
 
     void setDefinition(String definition);

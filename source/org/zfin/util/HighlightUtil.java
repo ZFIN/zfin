@@ -1,11 +1,6 @@
 package org.zfin.util;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Christian Pich
- * Date: Mar 29, 2008
- * Time: 1:56:03 PM
- * To change this template use File | Settings | File Templates.
  */
 public class HighlightUtil {
 

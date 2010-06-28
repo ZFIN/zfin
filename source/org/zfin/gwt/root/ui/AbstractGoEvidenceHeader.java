@@ -104,6 +104,8 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
                         goEvidenceDTO.setGoTerm(temporaryGoTermDTO);
                         fireGoTermChanged(new RelatedEntityEvent<GoEvidenceDTO>(goEvidenceDTO));
                         handleDirty();
+                        goTermBox.setText(temporaryGoTermDTO.getTermName());
+                        clearError();
                     }
                 });
             }
@@ -128,6 +130,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         goTermBox.setWildCard(false);
         goTermBox.setSuggestBoxWidth(60);
         goTermBox.setSubmitOnEnter(true);
+        goTermBox.setUseIdAsValue(true);
         goTermBox.initGui();
         table.setHTML(rowCount, 0, "<b>GO Term:</b>");
         table.setWidget(rowCount, 1, goTermBox);

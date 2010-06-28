@@ -305,7 +305,7 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
         Ontology supertermOntology = DTOConversionService.convertToOntology(expressedTerm.getSuperterm().getOntology());
         Term superterm = OntologyManager.getInstance().getTermByName(supertermOntology, expressedTerm.getSuperterm().getTermName());
         if (superterm == null)
-            throw new TermNotFoundException("No Superterm term [" + expressedTerm.getSuperterm().getTermName() + " found.");
+            throw new TermNotFoundException("No Superterm term [" + expressedTerm.getSuperterm().getTermName() + "] found.");
         ExpressionStructure structure;
         Ontology subtermOntology = DTOConversionService.convertToOntology(expressedTerm.getSubterm().getOntology());
         Term subterm = OntologyManager.getInstance().getTermByName(subtermOntology, expressedTerm.getSubterm().getTermName());

@@ -15,6 +15,7 @@ import org.zfin.marker.MergeMarkerDBTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.repository.MutantRepositoryTest;
+import org.zfin.ontology.OntologyManagerTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.gbrowse.GBrowseRepositoryTest;
 import org.zfin.people.repository.PeopleRepositoryTest;
@@ -65,6 +66,7 @@ import org.zfin.util.BODtoConversionServiceTest;
         OrthologyRepositoryTest.class,
         LinkageRepositoryTest.class,
         SingleCandidateRepositoryTest.class,
+        OntologyManagerTest.class,
         TranscriptRepositoryTest.class,
         DisplayGroupRepositoryTest.class,
         GoEvidenceTest.class,

@@ -7,10 +7,7 @@ import org.zfin.properties.ZfinProperties;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 /**
  * Utility class for creating file path names and other things.
@@ -327,16 +324,17 @@ public final class FileUtil {
 
     }
 
-    public static void serializeObject(Object object, File file) {
+    public static File serializeObject(Object object, File file) {
         try {
-            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
-            out.writeObject(object);
-            out.close();
+            FileOutputStream fileOutputStream = new FileOutputStream(file) ;
+            ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream);
+            outputStream.writeObject(object);
+            outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
             LOG.error("Error during serialization of file " + file.getAbsolutePath(), e);
         }
-
+        return file ;
     }
 
 
@@ -346,20 +344,11 @@ public final class FileUtil {
     }
 
     public static Object deserializeOntologies(File file) throws Exception {
-        Object object = null;
-        ObjectInputStream in = null;
-        try {
-            LOG.info("Read ontologies from " + file.getAbsolutePath());
-            in = new ObjectInputStream(new FileInputStream(file));
-            object = in.readObject();
-        } finally {
-            try {
-                if (in != null)
-                    in.close();
-            } catch (IOException e) {
-                LOG.error(e);
-            }
-        }
-        return object;
+        FileInputStream fileInputStream = new FileInputStream(file) ;
+        ObjectInputStream inputStream = new ObjectInputStream(fileInputStream) ;
+//        BufferedReader reader = new BufferedReader(new FileReader(file)) ;
+//        xStream.setMode(XStream.ID_REFERENCES) ;
+//        ObjectInputStream inputStream = xStream.createObjectInputStream(reader) ;
+        return inputStream.readObject() ;
     }
 }

@@ -18,11 +18,14 @@ import org.zfin.framework.presentation.UIFieldTransformerTest;
 import org.zfin.gwt.InferenceUnitTest;
 import org.zfin.gwt.root.dto.EnvironmentDTOTest;
 import org.zfin.gwt.root.dto.ExperimentDTOTest;
+import org.zfin.gwt.root.server.HighlighterTest;
 import org.zfin.gwt.root.util.StageRangeIntersectionTest;
 import org.zfin.gwt.root.util.StageRangeUnionTest;
 import org.zfin.gwt.root.util.WidgetUtilTest;
 import org.zfin.infrastructure.ActiveDataTest;
 import org.zfin.infrastructure.ActiveSourceTest;
+import org.zfin.infrastructure.SerializationTests;
+import org.zfin.infrastructure.TrieMapTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerUnitTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
@@ -31,6 +34,7 @@ import org.zfin.mutant.PhenotypeStructureTest;
 import org.zfin.mutant.presentation.MorpholinoStatisticsTest;
 import org.zfin.ontology.GenericTermTest;
 import org.zfin.ontology.MatchingTermServiceTest;
+import org.zfin.ontology.OntologyTokenizationTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.people.OrganizationUrlTest;
 import org.zfin.properties.ZfinPropertiesTest;
@@ -67,6 +71,7 @@ import org.zfin.util.*;
         InferenceUnitTest.class,
         GenericTermTest.class,
         HighlightUtilTest.class,
+        HighlighterTest.class,
         ListFormatterTest.class,
         MarkerPresentationTest.class,
         MarkerServiceTest.class,
@@ -75,6 +80,7 @@ import org.zfin.util.*;
         MicroarrayParseTest.class,
         MergeMarkerUnitTest.class,
         MorpholinoStatisticsTest.class,
+        OntologyTokenizationTest.class,
         OrganizationUrlTest.class,
         OrthologyEvidenceFastSearchTest.class,
         OrthologyValidationTest.class,
@@ -85,6 +91,7 @@ import org.zfin.util.*;
         RunCandidatePresentationTest.class,
         RunPresentationTest.class,
         SectionVisibilityTest.class,
+        SerializationTests.class,
         SequenceTest.class,
         SingleAssociatedGenesFromQueryTest.class,
         SiteSearchTest.class,
@@ -92,6 +99,7 @@ import org.zfin.util.*;
         StagePresentationTest.class,
         StageRangeIntersectionTest.class,
         StageRangeUnionTest.class,
+        TrieMapTest.class,
         UIFieldTransformerTest.class,
         UrlCreatorTest.class,
         WidgetUtilTest.class,

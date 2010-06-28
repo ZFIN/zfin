@@ -106,6 +106,10 @@ public class GenericTerm implements Term, Serializable {
         this.synonyms = synonyms;
     }
 
+    public boolean isAliasesExist(){
+        return (synonyms!=null && !synonyms.isEmpty()) ;
+    }
+
     public String getDefinition() {
         return definition;
     }

@@ -1,5 +1,6 @@
 package org.zfin.infrastructure;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
  * From here:
  * http://whiteboxcomputing.com/java/prefix_tree/
  */
-public class Trie {
+public class Trie implements Serializable {
     private Node root;
     private int size;
     private int maxDepth; // Not exact, but bounding for the maximum
@@ -21,7 +22,7 @@ public class Trie {
      * <p/>
      * The delimiter should never occur in a word added to the trie.
      */
-    public final static char DELIMITER = '\u0001';
+    public final transient static char DELIMITER = '\u0001';
 
     /**
      * Creates a new case sensitive Trie
@@ -104,7 +105,7 @@ public class Trie {
             node = node.firstChild;
         }
         return true;
-    }
+      }
 
     /**
      * Removes a word from the list.
@@ -320,7 +321,7 @@ public class Trie {
      * data structure takes the odd structure of node with a firstChild and a nextSibling.
      */
 
-    private class Node {
+    private class Node implements Serializable{
         public int value;
         public Node firstChild;
         public Node nextSibling;
@@ -332,7 +333,7 @@ public class Trie {
         }
     }
 
-    final static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    transient final static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     public static String generateRandomWord() {
         int length = (int) (Math.random() * 20f) + 12;

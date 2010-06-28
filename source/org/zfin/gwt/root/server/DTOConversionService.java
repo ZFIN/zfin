@@ -434,10 +434,12 @@ public class DTOConversionService {
         TermDTO dto = new TermDTO();
         dto.setTermName(term.getTermName());
         dto.setTermID(term.getID());
+        dto.setObsolete(term.isObsolete());
         Ontology ontology = term.getOntology();
         // ToDo: generalize this better...
-        if (ontology == Ontology.QUALITY)
+        if (ontology == Ontology.QUALITY){
             ontology = OntologyManager.getInstance().getSubOntology(term.getOntology(), term.getID());
+        }
         OntologyDTO ontologyDTO = convertToOntologyDTO(ontology);
         dto.setOntology(ontologyDTO);
         dto.setTermOboID(term.getOboID());
@@ -642,6 +644,8 @@ public class DTOConversionService {
                 return OntologyDTO.GO_BP;
             case GO:
                 return OntologyDTO.GO;
+            case STAGE:
+                return OntologyDTO.STAGE;
         }
         return null;
     }
@@ -672,6 +676,8 @@ public class DTOConversionService {
                 return Ontology.GO_BP_MF;
             case GO:
                 return Ontology.GO;
+            case STAGE:
+                return Ontology.STAGE;
         }
         return null;
     }

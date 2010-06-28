@@ -14,10 +14,10 @@ public class UserRequestTrackController extends AbstractCommandController {
 
     public UserRequestTrackController() {
         setCommandClass(UserRequestTrackBean.class);
+        setCommandName(LookupStrings.FORM_BEAN);
     }
 
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-
         UserRequestTrackBean form = (UserRequestTrackBean) command;
         return new ModelAndView("user-request-tracking", LookupStrings.FORM_BEAN, form);
     }

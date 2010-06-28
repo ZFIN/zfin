@@ -69,6 +69,10 @@ public class GoEvidenceValidator {
             viewClickLabel.setError("GO Term must be valid.");
             return false;
         }
+        if (dto.getGoTerm().isObsolete()) {
+            viewClickLabel.setError("GO Term must not be obsolete.");
+            return false;
+        }
         if (false == validateInferenceCardinality(viewClickLabel, dto)) {
             return false;
         }

@@ -11,6 +11,7 @@ public class TermDTO extends RelatedEntityDTO implements IsSerializable {
     private String termOboID;
     private String definition;
     private String comment;
+    private boolean obsolete ;
     private OntologyDTO ontology;
 
     public String getTermName() {
@@ -59,6 +60,14 @@ public class TermDTO extends RelatedEntityDTO implements IsSerializable {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean isObsolete() {
+        return obsolete;
+    }
+
+    public void setObsolete(boolean obsolete) {
+        this.obsolete = obsolete;
     }
 
     @Override

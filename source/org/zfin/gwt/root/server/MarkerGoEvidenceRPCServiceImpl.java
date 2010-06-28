@@ -384,7 +384,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
 
     @Override
     public TermDTO getGOTermByName(String value) {
-        Term goTerm = OntologyManager.getInstance().getTermByName(Ontology.GO,value) ;
+        Term goTerm = OntologyManager.getInstance().getTermByName(Ontology.GO,value,true) ;
 //        Term goTerm = (Term) HibernateUtil.currentSession().createCriteria(GenericTerm.class).
 //                add(Restrictions.eq("termName", value)).uniqueResult();
         if (goTerm == null) {

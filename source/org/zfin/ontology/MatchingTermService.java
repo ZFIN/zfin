@@ -1,6 +1,11 @@
 package org.zfin.ontology;
 
+import org.apache.commons.lang.StringUtils;
+import org.zfin.infrastructure.PatriciaTrieMultiMap;
+import org.zfin.ontology.presentation.MatchingTermComparator;
+
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Service class to obtain a list of matching terms for a given search string and
@@ -10,77 +15,84 @@ public class MatchingTermService {
 
     public static final int MAXIMUM_NUMBER_OF_MATCHES = 25;
 
-    private List<MatchingTerm> termsMatchingStart = new ArrayList<MatchingTerm>(10);
-    private Collection<MatchingTerm> termsMatchingContains = new ArrayList<MatchingTerm>(10);
-    private Collection<MatchingTerm> termsMatchingAlias = new ArrayList<MatchingTerm>(10);
-    private Collection<MatchingTerm> termsMatchingObsolete = new ArrayList<MatchingTerm>(10);
+    private int maximumNumberOfMatches = MAXIMUM_NUMBER_OF_MATCHES ;
+    private OntologyTokenizer tokenizer = new OntologyTokenizer();
 
-    private String queryString;
-    private String queryStringLowerCase;
-    private int maximumNumberOfMatches;
+    public MatchingTermService() { }
 
-    public MatchingTermService(String queryString) {
-        this.queryString = queryString;
-        queryStringLowerCase = queryString.toLowerCase();
+    public MatchingTermService(int maxLimit) {
+        maximumNumberOfMatches = maxLimit ;
+    }
+
+
+    protected Set<MatchingTerm> getMatchingTerms(PatriciaTrieMultiMap<Term> termMap,String query){
+        Set<MatchingTerm> matchingTermSet = new TreeSet<MatchingTerm>(new MatchingTermComparator(query)) ;
+        String[] termsToMatch = query.toLowerCase().trim().split("\\s+") ;
+        for(String termToMatch : termsToMatch){
+            for(Term term : termMap.getSuggestedValues(termToMatch)){
+
+                // if term contains query
+                if(containsAllTokens(term.getTermName(),termsToMatch)
+//                        ||
+//                        !term.isAliasesExist()
+                        ){
+                    matchingTermSet.add( new MatchingTerm(term,query) ) ;
+                }
+                else
+                if(term.isAliasesExist()){
+                    // only add the first matching hit
+                    //
+                    // if no hits are found?!?? , then just add the last one I guess.
+
+
+                    TermAlias aliasToView = null ;
+                    for(Iterator<TermAlias> termAliasIterator = term.getAliases().iterator() ;
+                        termAliasIterator.hasNext() && aliasToView==null ; ){
+
+                        TermAlias alias = termAliasIterator.next();
+                        if(containsAllTokens(alias.getAlias().toLowerCase(),termsToMatch)){
+                            aliasToView = alias ;
+                        }
+
+                    }
+                    // if no hit found
+                    if(aliasToView==null ){
+                        aliasToView = term.getAliases().iterator().next();
+                    }
+
+                    if(containsAllTokens(aliasToView.getAlias(),termsToMatch)){
+                        matchingTermSet.add( new MatchingTerm(term,query, aliasToView) ) ;
+                    }
+                }
+//                else{
+//                    throw new RuntimeException("should never get to this state["+query+"]") ;
+//                }
+            }
+        }
+        return matchingTermSet ;
     }
 
     /**
-     * Provide a query string and the number of maximum matches that this search
-     * should be limited to. The number is taken on 'starts with' matches.
-     *
-     * @param queryString            query string
-     * @param maximumNumberOfMatches maximum number of results per search .
+     * Each hit must match a starting token in the matchTerm.
+     * @param matchTerm This is typically one or 2 when split.
+     * @param hits  This is typically one or 2.
+     * @return
      */
-    public MatchingTermService(String queryString, int maximumNumberOfMatches) {
-        this.queryString = queryString;
-        queryStringLowerCase = queryString.toLowerCase();
-        this.maximumNumberOfMatches = maximumNumberOfMatches;
-    }
+    protected boolean containsAllTokens(String matchTerm, String[] hits) {
 
-    public void compareWithTerm(Term comparisonTerm) {
-        if (comparisonTerm == null)
-            return;
-
-        String comparisonTermName = comparisonTerm.getTermName().toLowerCase();
-        if (comparisonTermName.startsWith(queryStringLowerCase)) {
-            MatchingTerm matchTerm = new MatchingTerm(comparisonTerm, true);
-            termsMatchingStart.add(matchTerm);
-        } else if (comparisonTermName.contains(queryStringLowerCase)) {
-            MatchingTerm matchTerm = new MatchingTerm(comparisonTerm, false);
-            if (!termsMatchingAlias.contains(matchTerm))
-                termsMatchingContains.add(matchTerm);
+        Set<String> matchTokens = tokenizer.tokenize(matchTerm.toLowerCase().trim());
+        for(String hit:hits){
+            boolean matches = false ;
+            for(Iterator<String> iter = matchTokens.iterator() ; iter.hasNext() && false==matches ; ){
+                if(iter.next().toLowerCase().startsWith(hit.toLowerCase())){
+                    matches = true ;
+                }
+            }
+            if(matches==false){
+                return false ;
+            }
         }
-    }
-
-    public void compareWithAlias(TermAlias comparisonTerm) {
-        if (comparisonTerm == null)
-            return;
-
-        String comparisonTermName = comparisonTerm.getAlias().toLowerCase();
-        if (comparisonTermName.startsWith(queryStringLowerCase)) {
-            MatchingTerm matchTerm = new MatchingTerm(comparisonTerm.getTerm(), true, comparisonTerm);
-            if (!(termsMatchingContains.contains(matchTerm)) && !(termsMatchingStart.contains(matchTerm)))
-                termsMatchingAlias.add(matchTerm);
-        } else if (comparisonTermName.contains(queryStringLowerCase)) {
-            MatchingTerm matchTerm = new MatchingTerm(comparisonTerm.getTerm(), false, comparisonTerm);
-            if (!(termsMatchingContains.contains(matchTerm)) && !(termsMatchingStart.contains(matchTerm)))
-                termsMatchingAlias.add(matchTerm);
-        }
-    }
-
-    public void compareWithObsoleteTerm(Term comparisonTerm) {
-        if (comparisonTerm == null)
-            return;
-
-        String comparisonTermName = comparisonTerm.getTermName().toLowerCase();
-        if (comparisonTermName.startsWith(queryStringLowerCase)) {
-            MatchingTerm matchTerm = new MatchingTerm(comparisonTerm, true);
-            termsMatchingObsolete.add(matchTerm);
-        } else if (comparisonTermName.contains(queryStringLowerCase)) {
-            MatchingTerm matchTerm = new MatchingTerm(comparisonTerm, false);
-            if (!termsMatchingObsolete.contains(matchTerm))
-                termsMatchingObsolete.add(matchTerm);
-        }
+        return true ;
     }
 
     /**
@@ -102,84 +114,42 @@ public class MatchingTermService {
      * @param query    query string
      * @return list of terms
      */
-    public List<MatchingTerm> getMatchingTerms(Ontology ontology, String query) {
-        if (query == null)
-            return null;
-
-        boolean isMaxNumOfTermsFound = false;
-        MatchingTermService service = new MatchingTermService(query, MAXIMUM_NUMBER_OF_MATCHES);
-        // check all terms for matches
-        Map<String, Term> termMap = OntologyManager.getInstance().getTermOntologyMap(ontology);
-        for (String termName : termMap.keySet()) {
-            Term term = termMap.get(termName);
-            service.compareWithTerm(term);
-            isMaxNumOfTermsFound = service.hasMaximumNumberOfTerms();
+    public Set<MatchingTerm> getMatchingTerms(Ontology ontology, String query) {
+        Set<MatchingTerm> matchingTermsForSet = new TreeSet<MatchingTerm>(new MatchingTermComparator(query)) ;
+        if (StringUtils.isEmpty(query.trim())){
+            return matchingTermsForSet ;
         }
-        // if max number is reached by starts_with matches stop here and return the list
-        // as the list always puts the starts_with matches before the contains matches.
-        if (isMaxNumOfTermsFound)
-            return service.getTermsMatchingStart();
 
-        // search alias map if it exists for matches
-        Map<String, List<TermAlias>> aliasMap = OntologyManager.getInstance().getAliasOntologyMap(ontology);
-        if (aliasMap != null) {
-            for (String termName : aliasMap.keySet()) {
-                List<TermAlias> termAliases = aliasMap.get(termName);
-                for (TermAlias termAlias : termAliases) {
-                    service.compareWithAlias(termAlias);
-                }
+        if(ontology.isComposedOntologies()){
+            for(Ontology subOntology : ontology.getIndividualOntologies()){
+                matchingTermsForSet.addAll(getMatchingTerms(subOntology,query)) ;
             }
+            return matchingTermsForSet ;
         }
-        // search obsolete map
-        Map<String, Term> obsoleteMap = OntologyManager.getInstance().getObsoleteTermMap(ontology);
-        if (obsoleteMap != null) {
-            for (String termName : obsoleteMap.keySet()) {
-                Term obsoleteTerm = obsoleteMap.get(termName);
-                service.compareWithObsoleteTerm(obsoleteTerm);
+
+        PatriciaTrieMultiMap<Term> termMap = OntologyManager.getInstance().getTermOntologyMap(ontology);
+        matchingTermsForSet.addAll(getMatchingTerms(termMap,query)) ;
+
+        if(maximumNumberOfMatches>0 && matchingTermsForSet.size()>maximumNumberOfMatches){
+            Set<MatchingTerm> matchingTerms = new TreeSet<MatchingTerm>(new MatchingTermComparator(query)) ;
+            int i = 0 ;
+            for(Iterator<MatchingTerm> iterator = matchingTermsForSet.iterator()   ;
+                iterator.hasNext() && i < maximumNumberOfMatches ; ){
+                matchingTerms.add(iterator.next()) ;
+                ++i ;
             }
+            return matchingTerms ;
         }
-        return service.getCompleteMatchingList();
-    }
-
-    /**
-     * The number of currently found matches on the beginning of the query string.
-     * This number could be used to stop the search before the whole ontology is search through.
-     *
-     * @return number of matches
-     */
-    public int numberOfStartingMatches() {
-        return termsMatchingStart.size();
-    }
-
-    public boolean hasMaximumNumberOfTerms() {
-        return termsMatchingStart.size() >= maximumNumberOfMatches;
-    }
-
-    public List<MatchingTerm> getTermsMatchingStart() {
-        return termsMatchingStart;
-    }
-
-    public List<MatchingTerm> getTermsMatchingContains() {
-        List<MatchingTerm> matches = new ArrayList<MatchingTerm>(termsMatchingContains.size() + termsMatchingAlias.size());
-        matches.addAll(termsMatchingContains);
-        matches.addAll(termsMatchingAlias);
-        Collections.sort(matches, new TermNameComparator());
-        return matches;
-    }
-
-    public List<MatchingTerm> getCompleteMatchingList() {
-        List<MatchingTerm> matches = new ArrayList<MatchingTerm>(termsMatchingStart.size() + termsMatchingContains.size() + termsMatchingAlias.size());
-        matches.addAll(termsMatchingStart);
-        matches.addAll(getTermsMatchingContains());
-        matches.addAll(termsMatchingObsolete);
-        return matches;
-    }
-
-    private class TermNameComparator implements Comparator<MatchingTerm> {
-
-        public int compare(MatchingTerm o1, MatchingTerm o2) {
-            return o1.getTerm().getTermName().compareToIgnoreCase(o2.getTerm().getTermName());
+        else{
+            return matchingTermsForSet ;
         }
     }
 
+    public int getMaximumNumberOfMatches() {
+        return maximumNumberOfMatches;
+    }
+
+    public void setMaximumNumberOfMatches(int maximumNumberOfMatches) {
+        this.maximumNumberOfMatches = maximumNumberOfMatches;
+    }
 }
