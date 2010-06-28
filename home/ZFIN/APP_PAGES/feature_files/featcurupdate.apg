@@ -115,11 +115,17 @@ PREFIX:   featcurup_
           <?/MIBLOCK>
           <?MICOMMENT> ==| Add New Data Alias ZDB-ID |== <?/MICOMMENT>  
           <?MISQL SQL="execute function get_id('DALIAS');">$(SETVAR,$featcurup_feature_dalias_zdb_id,$1)<?/MISQL>
-
+<?MICOMMENT>
           <?MIBLOCK COND="$(NC,$featcur_feature_add_lab,)">
             <?MISQL SQL="SELECT zdb_id from lab where name = '$featcur_feature_add_lab'">
               <?MIVAR NAME=$featcurup_feature_lab_zdb_id>$1<?/MIVAR>
             <?/MISQL>
+          <?MIELSE>
+            <?MIVAR NAME=$featcurup_feature_lab_zdb_id><?/MIVAR>
+          <?/MIBLOCK>
+<?/MICOMMENT>
+          <?MIBLOCK COND="$(NC,$featcur_feature_add_lab,)">
+              <?MIVAR NAME=$featcurup_feature_lab_zdb_id>$featcur_feature_add_lab<?/MIVAR>
           <?MIELSE>
             <?MIVAR NAME=$featcurup_feature_lab_zdb_id><?/MIVAR>
           <?/MIBLOCK>
@@ -418,11 +424,14 @@ PREFIX:   featcurup_
 
 
    <?MIBLOCK COND=$(NE,$featedit_feature_lab,)>
+<?MICOMMENT>
     <?MISQL SQL="select zdb_id 
                  from lab 
                  where name like '$featedit_feature_lab'">
       <?MIVAR NAME=$featedit_feature_lab_zdb_id>$1<?/MIVAR>
     <?/MISQL>
+<?/MICOMMENT>
+      <?MIVAR NAME=$featedit_feature_lab_zdb_id>$featedit_feature_lab<?/MIVAR>
     <?MISQL SQL="select * 
                  from int_data_source 
                  where ids_data_zdb_id = '$featcur_featedit_feature_zdb_id'">
