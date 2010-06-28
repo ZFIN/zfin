@@ -249,8 +249,8 @@ EFFECTS: Edits a feature/marker
       <tr><td><b>Lab of Origin</b>
       <td> <select name=featedit_feature_lab>
              <?MIVAR COND="$(XST,$featcur_feat_lab)"><option select value='$featcur_feat_lab'>$featcur_feat_lab<?/MIVAR>
-             <?MISQL SQL="select distinct name from lab">
-               <OPTION value='$1'>$1
+             <?MISQL SQL="select distinct zdb_id, name from lab">
+               <OPTION value='$1'>$2
              <?/MISQL>
           </select>
       <?MIBLOCK COND="$(EC,$featcur_feat_isfeature,yes)">
