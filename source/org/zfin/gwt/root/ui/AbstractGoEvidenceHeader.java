@@ -95,19 +95,33 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
                     setError("Go term is invalid [" + value + "].  Please add a valid go term.");
                     return;
                 }
+                goTermBox.setEnabled(false);
+                goTermBox.setNoteString("Validating ["+value+"]...");
+
                 MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(value,
                         new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value ["+value+"]",handlesError,false) {
-                    @Override
-                    public void onSuccess(TermDTO result) {
-                        temporaryGoTermDTO = result;
-                        GoEvidenceDTO goEvidenceDTO = dto.deepCopy();
-                        goEvidenceDTO.setGoTerm(temporaryGoTermDTO);
-                        fireGoTermChanged(new RelatedEntityEvent<GoEvidenceDTO>(goEvidenceDTO));
-                        handleDirty();
-                        goTermBox.setText(temporaryGoTermDTO.getTermName());
-                        clearError();
-                    }
-                });
+
+                            @Override
+                            public void onFailure(Throwable throwable) {
+                                super.onFailure(throwable);
+                                goTermBox.setEnabled(true);
+                                goTermBox.clearNote();
+                            }
+
+                            @Override
+                            public void onSuccess(TermDTO result) {
+                                goTermBox.setEnabled(true);
+                                goTermBox.clearError();
+                                goTermBox.clearNote();
+                                temporaryGoTermDTO = result;
+                                GoEvidenceDTO goEvidenceDTO = dto.deepCopy();
+                                goEvidenceDTO.setGoTerm(temporaryGoTermDTO);
+                                fireGoTermChanged(new RelatedEntityEvent<GoEvidenceDTO>(goEvidenceDTO));
+                                handleDirty();
+                                goTermBox.setText(temporaryGoTermDTO.getTermName());
+                                clearError();
+                            }
+                        });
             }
         });
     }
