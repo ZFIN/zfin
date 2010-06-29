@@ -142,8 +142,8 @@ CHMOD_775 = @/usr/bin/chmod -R ug+rwX,o+rX
 LOADAPPPAGE = /private/ZfinLinks/Commons/bin/loadapppage.pl
 UNLOADAPPPAGE = /private/ZfinLinks/Commons/bin/unloadapppage.pl
 
-#MAKESPECIFIC = /private/ZfinLinks/Commons/bin/makespecific.pl
-MAKESPECIFIC =  /research/zsharks/tomc/Projects/Commons/bin/make-specific.r
+MAKESPECIFIC = /private/ZfinLinks/Commons/bin/makespecific.pl
+#MAKESPECIFIC =  /research/zsharks/tomc/Projects/Commons/bin/make-specific.r
 
 SPECIFICCHECK = $(foreach GNRC,$(GENERICS),echo 'Informix weblint $(GNRC)'; $(WEBLINTIFMX) $(GNRC);)
 
