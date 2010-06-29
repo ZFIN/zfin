@@ -860,7 +860,7 @@ return false ; "
 		  <OPTION $(IF,$(EC,$stage_end,$3), SELECTED) VALUE="$3")> $1 
 		<?/MISQL>
 	      </SELECT>
-	    <br><a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
+	    <br><a href="/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
 	    <!-- end stage -->
 	  </td>
 	</tr>

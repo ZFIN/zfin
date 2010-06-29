@@ -146,7 +146,7 @@ $nc_jrnl_abbrev $nc_pub_vol_page
 <p>
 
 ZFIN publication page: <br>
-<a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$OID">http://zfin.org/cgi-bin/ZFIN_jump?record=$OID</a>
+<a href="/cgi-bin/ZFIN_jump?record=$OID">http://zfin.org/cgi-bin/ZFIN_jump?record=$OID</a>
 <p>
 <?/MIVAR>
 
@@ -183,7 +183,7 @@ Zebrafish Information Network <br>
 Eugene, Oregon, USA
 97403-5291
 <p>
-ZFIN website: <a href="http://zfin.org">http://zfin.org</a> <br>
+ZFIN website: <a href="/">http://zfin.org</a> <br>
 e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 <p></p>
 
@@ -331,7 +331,7 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 
 	        <?MICOMMENT>== we want to link to production page ==<?/MICOMMENT>
 
-                <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a>
+                <a href="/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a>
 	       <?/MIVAR>
                <br>
 	     <?/MIBLOCK>
@@ -362,7 +362,7 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 
           <?MIVAR COND="$(EC,$gene_expression_checked,f)">
                <span style="border: thin solid white; margin-left: 4em;">
-                 <a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$OID">Curated gene expression</a> for:</span>
+                 <a href="/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$OID">Curated gene expression</a> for:</span>
                  $(SETVAR,gene_expression_checked,t)
               <?/MIVAR>
               <?MIVAR>
@@ -381,7 +381,7 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
                 <?/MIBLOCK>
 
            	<br>
-                <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a>
+                <a href="/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a>
                 <br>
 	      <?/MIVAR>
 

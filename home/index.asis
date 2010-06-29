@@ -1,5 +1,5 @@
 Status: 301 Now where did I leave that URL
-Location: http://<!--|DOMAIN_NAME|-->/webdriver?MIval=aa-ZDB_home.apg
+Location: http://<!--|DOMAIN_NAME|-->/cgi-bin/webdriver?MIval=aa-ZDB_home.apg
 Content-type: text/html
 
 <HTML>
