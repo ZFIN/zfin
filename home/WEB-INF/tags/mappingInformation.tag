@@ -27,9 +27,9 @@
                 <c:if test="${mappedMarker.hasMappedMarkers}">
                     <td align="right">
                         View Map:
-                        <a href="http://zfin.org/cgi-bin/view_zmapplet.cgi?&userid=GUEST&OID=${mappedMarker.marker.zdbID}&view_map=view_map&ZMAP=1&LN54=1&T51=1&MGH=1&HS=1&MOP=1&GAT=1">Merged</a>
+                        <a href="/cgi-bin/view_zmapplet.cgi?&userid=GUEST&OID=${mappedMarker.marker.zdbID}&view_map=view_map&ZMAP=1&LN54=1&T51=1&MGH=1&HS=1&MOP=1&GAT=1">Merged</a>
                         &nbsp;
-                        <a href="http://zfin.org/cgi-bin/view_mapplet.cgi?&userid=GUEST&OID=${mappedMarker.marker.zdbID}&view_map=view_map&ZMAP=1&LN54=1&T51=1&MGH=1&HS=1&MOP=1&GAT=1">Individual Panels</a>
+                        <a href="/cgi-bin/view_mapplet.cgi?&userid=GUEST&OID=${mappedMarker.marker.zdbID}&view_map=view_map&ZMAP=1&LN54=1&T51=1&MGH=1&HS=1&MOP=1&GAT=1">Individual Panels</a>
                     </td>
                 </c:if>
             </c:otherwise>
