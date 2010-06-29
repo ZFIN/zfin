@@ -6,5 +6,5 @@
 
 # WINSIZE should be tuned for indexing performance.
 
-http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg
+http://<!--|DOMAIN_NAME|-->//cgi-bin/webdriver?MIval=aa-ZDB_home.apg
 

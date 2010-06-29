@@ -34,15 +34,14 @@ TARGETDIR = $(TARGETROOT)/home/zf_info
 SUBDIRS = anatomy catch dbase images monitor movies news \
 	zfbook sequence 2006_tutorial
 
-GENERICS = defs.html  nomen.html zfprbs.html downloads.html \
-	nomen_tutorial.html stars.html new_gene.html new_line.html \
-	syntax_help.html
+GENERICS = zfprbs.html downloads.html stars.html
 
 STATICS = 227.gif fish.gif logo.jpeg genome.html updates.html  citation.html \
-	translocation.jpeg zfin.gif anatomy.html submissions.html zebrafish2009.pdf contact_us.html \
-	glossary.html GO.html oev.html nomen_comm.html blast_info.html \
+	translocation.jpeg zfin.gif anatomy.html submissions.html zebrafish2009.pdf  \
+	glossary.html GO.html oev.html nomen_comm.html blast_info.html new_gene.html \
 	ontology_relationship_info.html author_guidelines.html author_guide_checklist.html \
-	zfin_stats.html zfin_statistics.jpg
+	zfin_stats.html zfin_statistics.jpg syntax_help.html new_line.html nomen.html \
+	contact_us.html nomen_tutorial.html defs.html
 
 
 # ---------------  Production Rules  ------------------------------------

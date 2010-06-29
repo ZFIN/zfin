@@ -64,7 +64,7 @@ $uniqueryDir = "<!--|ROOT_PATH|-->/server_apps/quicksearch";
 $filename    = "$uniqueryDir/etc/allAPPPagesList.txt";
 
 # single quotes on purpose (ignores special characters such as '?')
-$urlHead     = 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-'; 
+$urlHead     = 'http://<!--|DOMAIN_NAME|-->//cgi-bin/webdriver?MIval=aa-'; 
 $urlTail     = '.apg';
 
 

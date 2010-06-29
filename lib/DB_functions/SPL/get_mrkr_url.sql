@@ -57,7 +57,7 @@ create function get_mrkr_url( mrkrZdbId varchar(50) )
 --          '">' || get_mrkr_abbrev_html(mrkrZdbId) || '</a>';
     else 
       let mrkrUrl = 
-             '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=' ||
+             '//cgi-bin/webdriver?MIval=aa-markerview.apg&OID=' ||
       	     mrkrZdbId ;
     end if
   end if  -- marker exists

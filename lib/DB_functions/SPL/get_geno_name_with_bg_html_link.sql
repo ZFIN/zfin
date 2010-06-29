@@ -52,7 +52,7 @@ create function get_geno_name_with_bg_html_link( genoZdbId varchar(50) )
   end if
 
   return 
-    '<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=' ||
+    '<a href="//cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=' ||
       genoZdbId || '">' ||genoNameHtml || '</a>';
 
 end function;
