@@ -102,7 +102,7 @@ EFFECTS: updates the journal table according to the parameters
 <?MIVAR>
   <SCRIPT>
 
-    window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalview.apg&OID=$OID&UPDATE=1");
+    window.location.replace("/cgi-bin/webdriver?MIval=aa-journalview.apg&OID=$OID&UPDATE=1");
 
   </SCRIPT>
 <?/MIVAR>

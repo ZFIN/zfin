@@ -285,7 +285,7 @@
       <TR>
         <?MIVAR>
         <TD colspan=$codeNum align="left">
-          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoviewdetailed.apg&OID=$OIDLIST&abbrev=$abbrevList&userid=$userid">
+          <A HREF="/cgi-bin/webdriver?MIval=aa-orthoviewdetailed.apg&OID=$OIDLIST&abbrev=$abbrevList&userid=$userid">
             <b>Orthology Details</b>
           </A>
         </TD>
@@ -312,4 +312,3 @@
 
 </BODY>
 
-</HTML>

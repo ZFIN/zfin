@@ -43,9 +43,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/unavailable
 
-GENERICS =  zircUnavailable.html
-
 STATICS = main_comingUp.html main_downNoBackup.html unsupportedLink.html \
+zircUnavailable.html
           
 
 

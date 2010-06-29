@@ -292,8 +292,7 @@ OUTPUT:
 
 <SCRIPT>
   <?MIVAR>
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$returnVariables');
+    window.location.replace('/cgi-bin/webdriver?$returnVariables');
   <?/MIVAR>
 </SCRIPT>
 
-<?/MIBLOCK> <?MICOMMENT>-- end $AUTHORIZED check --<?/MICOMMENT>

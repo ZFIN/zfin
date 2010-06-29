@@ -39,7 +39,7 @@ Possible vars:  update
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 
-<form name=linkage method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" onSubmit="return check_marker(document.linkage.marker1.selectedIndex, document.linkage.marker2.selectedIndex );">
+<form name=linkage method=post action="/cgi-bin/webdriver" onSubmit="return check_marker(document.linkage.marker1.selectedIndex, document.linkage.marker2.selectedIndex );">
 
 <input type=hidden name=MIval value=aa-insert_linkage.apg> 
 <input type=hidden name=calling_form value="distance">
@@ -210,7 +210,7 @@ Linkage Distance:&nbsp;&nbsp;  Select two markers for distance <br>
   
 
     <input type=submit value="Add Distance" >
-    <input type=button value="Entry Complete" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'">
+    <input type=button value="Entry Complete" onClick="window.location.href='/cgi-bin/webdriver?MIval=aa-ZDB_home.apg'">
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 

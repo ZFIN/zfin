@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/gene_files
 
-GENERICS = new_marker.apg 
+STATICS = new_marker.apg 
 
 # use default rules for app page directories
 

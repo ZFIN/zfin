@@ -76,7 +76,7 @@ if (document.mapplet.marker.value == '') {
 
 function call_zmapplet() {
 
-   document.mapplet.action= '/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';
+   document.mapplet.action= '/cgi-bin/view_zmapplet.cgi';
     if (  ((document.mapplet.loc_lg.selectedIndex !==0) || (document.mapplet.loc.value != '') )  && (document.mapplet.loc_panel.selectedIndex == 0)){
     document.mapplet.loc_panel.selectedIndex = 4;
     }
@@ -102,7 +102,7 @@ document.mapplet.LN54.checked = true;
 
 
 function start_help(anchor) {
-   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=mapperselecthelp.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+   top.zfinhelp=open("/cgi-bin/webdriver?MIval=aa-helpframes.html&calling_page=mapperselecthelp.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
 
 var MGH=0;
@@ -121,7 +121,7 @@ ENDJS
 
   print "<TABLE width=700 border=0><TR><TD>\n";
 
-  print $Q->start_form(-name=>'mapplet', -action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi',-method=>'post',-onSubmit=>'return call_mapplet();');
+  print $Q->start_form(-name=>'mapplet', -action=>'/cgi-bin/view_mapplet.cgi',-method=>'post',-onSubmit=>'return call_mapplet();');
    print "\n";
 
    print "<input type=hidden name='view_map' value=1>";
@@ -184,7 +184,7 @@ ENDJS
  print $Q->checkbox(-name=>'MOP',-value=>'1',-label=>'MOP',-checked=>'checked');
  print $Q->checkbox(-name=>'GAT',-value=>'1',-label=>'GAT',-checked=>'checked');
 
- print "<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg\" style=\"margin-left:4em;\"><B>Mapping panels summary</B></A>";
+ print "<A HREF=\"/cgi-bin/webdriver?MIval=aa-refcrosslist.apg\" style=\"margin-left:4em;\"><B>Mapping panels summary</B></A>";
  print "\n</font></TD></TR></TABLE>\n";
 
  print $Q->hidden(-name=>'refresh_map',-value=>'1');

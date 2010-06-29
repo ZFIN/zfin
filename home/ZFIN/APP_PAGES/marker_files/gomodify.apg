@@ -30,13 +30,13 @@ function goeditevi(goevid,attr){
     var evind = document.newdata.evidence.selectedIndex;
     var value=document.newdata.evidence[evind].value;
 
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&new_value='+value);
+    window.location.replace('/cgi-bin/webdriver?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&new_value='+value);
 }
 
 function goeditnote(goevid,attr){
     var note = document.newdata.comments.value;
 
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&new_value='+note);
+    window.location.replace('/cgi-bin/webdriver?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&new_value='+note);
 }
 
 function goeditflag(goevid,attr,oldnot,oldcon){
@@ -56,7 +56,7 @@ function goeditflag(goevid,attr,oldnot,oldcon){
      {
          var contribs='f';
      }
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&oldisnot='+oldnot+'&oldcontribs='+oldcon+'&isnot='+isnot+'&contribs='+contribs);
+    window.location.replace('/cgi-bin/webdriver?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&oldisnot='+oldnot+'&oldcontribs='+oldcon+'&isnot='+isnot+'&contribs='+contribs);
 }
 
 function goaddinf(goevid,attr){
@@ -64,7 +64,7 @@ function goaddinf(goevid,attr){
     var valuedb=document.newdata.infdb[infind].value;
     var value=document.newdata.inference.value;
 
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&new_value='+value+'&valuedb='+valuedb)
+    window.location.replace('/cgi-bin/webdriver?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&new_value='+value+'&valuedb='+valuedb)
 }
 
 function goeditpub(goevid,attr,pubid){
@@ -76,14 +76,14 @@ function goeditpub(goevid,attr,pubid){
         window.alert("Publication cannot be null");
     }
     else {
-        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&new_value='+value+'&old_value='+pubid);
+        window.location.replace('/cgi-bin/webdriver?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&new_value='+value+'&old_value='+pubid);
     }
 }
 
 function godelinf(goevid,attr,infer){
     var evind = document.newdata.evidence.selectedIndex;
     var evidence=document.newdata.evidence[evind].value;
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&old_value='+infer)
+    window.location.replace('/cgi-bin/webdriver?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&old_value='+infer)
 }
 
 function call_done() {
@@ -141,7 +141,7 @@ function call_done() {
 
 <!--building edit form-->
 
-   <form name=newdata method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+   <form name=newdata method=post action="/cgi-bin/webdriver">
    <?MIVAR>
 	<input type=hidden name=MIval value=aa-do-goedit.apg>
 	<input type=hidden name=OID value=$OID>

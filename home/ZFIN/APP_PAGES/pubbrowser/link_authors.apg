@@ -156,11 +156,11 @@ function updateAuthor(strURL) {
                    if (this.checked == true) { 
                      document.getElementById('$linkauth_labelID').style.fontWeight = 'bold'; 
                      document.getElementById('$linkauth_labelID').style.marginLeft = '250px';
-                     updateAuthor('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors_update.apg&authupdate_pers_zdb_id=$linkauth_pers_zdb_id&authupdate_pub_zdb_id=$OID&authupdate_action=add');
+                     updateAuthor('/cgi-bin/webdriver?MIval=aa-link_authors_update.apg&authupdate_pers_zdb_id=$linkauth_pers_zdb_id&authupdate_pub_zdb_id=$OID&authupdate_action=add');
                    } else {
                      document.getElementById('$linkauth_labelID').style.fontWeight = 'normal'; 
                      document.getElementById('$linkauth_labelID').style.marginLeft = '0px';
-                     updateAuthor('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors_update.apg&authupdate_pers_zdb_id=$linkauth_pers_zdb_id&authupdate_pub_zdb_id=$OID&authupdate_action=remove');
+                     updateAuthor('/cgi-bin/webdriver?MIval=aa-link_authors_update.apg&authupdate_pers_zdb_id=$linkauth_pers_zdb_id&authupdate_pub_zdb_id=$OID&authupdate_action=remove');
                    } "  >
 
           <label for="$linkauth_checkboxID" id="$linkauth_labelID" 
@@ -178,7 +178,7 @@ function updateAuthor(strURL) {
     </div>
 
 
-    <FORM METHOD=post ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" ENCTYPE="multipart/form-data">
+    <FORM METHOD=post ACTION="/cgi-bin/webdriver" ENCTYPE="multipart/form-data">
 
     <table border=2 width=100% cols=2>
 
@@ -335,7 +335,7 @@ function updateAuthor(strURL) {
 
     <!-- location.go(-1) does not seem to work consistently on all platforms - all browsers -->
     <?MIVAR>
-    <input type=button value="CANCEL" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$returnVariables')">
+    <input type=button value="CANCEL" onClick="window.location.replace('/cgi-bin/webdriver?$returnVariables')">
     <input type=submit value="SUBMIT">
 
     <?/MIVAR>

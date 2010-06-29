@@ -39,7 +39,7 @@ displays a publication record, or many publication records if > 1 returned.
 
 <script language="javascript">
    function start_note() {
-  	top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+  	top.zfinhelp=open("/cgi-bin/webdriver?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 	}
 </script>
 
@@ -183,11 +183,11 @@ displays a publication record, or many publication records if > 1 returned.
      <B>REGISTERED AUTHORS:</B>
        <?MIBLOCK COND="$(EC,$authors,ZFIN Staff)">
 	<?MISQL SQL=" select name, zdb_id from lab where name = 'ZFIN Database Team'">
-		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$2">$1</A>
+		<A HREF="/cgi-bin/webdriver?MIval=aa-labview.apg&OID=$2">$1</A>
 	<?/MISQL>
        <?MIELSE>
 	<?MISQL SQL="select a.full_name,a.zdb_id from person a, int_person_pub b where source_id=a.zdb_id and target_id='$OID' order by a.full_name;">
-          <?MIVAR NAME=registered_author_html><span nowrap><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</A><?/MIVAR>
+          <?MIVAR NAME=registered_author_html><span nowrap><A HREF="/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$2">$1</A><?/MIVAR>
           $(VECAPPEND,$registered_author_list,$registered_author_html)
 	<?/MISQL>
       <?MIVAR NAME=registered_author_list_sepa SEPARATE=", ">$registered_author_list<?/MIVAR> 
@@ -198,7 +198,7 @@ displays a publication record, or many publication records if > 1 returned.
 
    <?MIVAR>
    <TD align=right>
-	<form method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+	<form method=post  action="/cgi-bin/webdriver">
 	<input type=hidden name=MIval value=aa-pubprintable.apg>
 	<input type=hidden name=constraint value="where zdb_id='$OID'">
 	<input type=submit name=printable value="Generate reference">
@@ -246,7 +246,7 @@ Number exists
   <?/MIVAR>
   <?MIVAR COND="$(EC,$pub_file,)">
     Upload a PDF from the 
-    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Curation</a> 
+    <a href="/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID">Curation</a> 
     page.
   <?/MIVAR>
   <P>
@@ -266,7 +266,7 @@ Number exists
 <?MIVAR NAME=$pbv_fig_nongeli_count>$1<?/MIVAR>
 
 <?MIVAR COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation),$(!=,$pbv_fig_nongeli_count,0))">
-  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$OID">
+  <a href="/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$OID">
 	  <b>FIGURES</b>
   </a> &nbsp;
   <font size=-1>(<a href="javascript:start_note();">current status</a>)</font> 
@@ -314,7 +314,7 @@ Number exists
   <B>ADDITIONAL INFORMATION: </B>
 
   <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-    <br><br><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate</a>
+    <br><br><a href="/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID">Curate</a>
   <?/MIVAR>
 
   <ul>
@@ -354,7 +354,7 @@ and mrkr_type = 'MRPHLNO'
   <?/MISQL>
   
   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mrkr">Genes / Markers</a> &nbsp; ($MI_ROWCOUNT)
+      <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mrkr">Genes / Markers</a> &nbsp; ($MI_ROWCOUNT)
 
   <?/MIVAR> 
 
@@ -369,7 +369,7 @@ and mrkr_type = 'MRPHLNO'
       ; ">
   <?/MISQL> 
   <?MIVAR COND="$(>,$1,0)">
-  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mo">Morpholino</a> &nbsp; ($1)
+  <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mo">Morpholino</a> &nbsp; ($1)
   <?/MIVAR> 
 
   <?MICOMMENT> ======== Antibodies  ============ <?/MICOMMENT>
@@ -395,7 +395,7 @@ and mrkr_type = 'MRPHLNO'
        ; ">
    <?/MISQL> 
    <?MIVAR COND="$(>,$1,0)">
-   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_efg">Engineered Foreign Genes</a> &nbsp; ($1)
+   <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=$OID&type=pub_efg">Engineered Foreign Genes</a> &nbsp; ($1)
    <?/MIVAR> 
 
   <?MICOMMENT> ======== Clones / Probes  ============ <?/MICOMMENT>
@@ -410,7 +410,7 @@ and mrkr_type = 'MRPHLNO'
 	">
   <?/MISQL> 
   <?MIVAR COND="$(>,$1,0)">
-  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg&pubId=$OID">Clones and Probes</a> &nbsp; ($1)
+  <li><a href="/cgi-bin/webdriver?MIval=aa-msegselect.apg&pubId=$OID">Clones and Probes</a> &nbsp; ($1)
   <?/MIVAR>
 
   <?MICOMMENT> *** Expression section *** <?/MICOMMENT>
@@ -474,7 +474,7 @@ and mrkr_type = 'MRPHLNO'
 
   <?MIBLOCK COND="$(OR,$(!=,$pbv_fig_count,0),$(!=,$pbv_fig_count2,0))">
     <?MIVAR>
-       <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$pbv_fig_page&OID=$pbv_fig_page_link_id">
+       <li><a href="/cgi-bin/webdriver?MIval=aa-$pbv_fig_page&OID=$pbv_fig_page_link_id">
 	   $pbv_fig_link_text
            </a> 
     <?/MIVAR>
@@ -492,7 +492,7 @@ and mrkr_type = 'MRPHLNO'
   <?/MISQL>
 
   <?MIVAR COND="$(>,$1,0)">
-  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mapped">Mapping Data</a> &nbsp; ($(FIX,$1))
+  <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mapped">Mapping Data</a> &nbsp; ($(FIX,$1))
   <?/MIVAR>
 
 
@@ -507,7 +507,7 @@ and mrkr_type = 'MRPHLNO'
   <?/MISQL>
   
   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-    <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&pubId=$OID">Mutants / Transgenic Lines</a> &nbsp; ($MI_ROWCOUNT)
+    <li><a href="/cgi-bin/webdriver?MIval=aa-fishselect.apg&pubId=$OID">Mutants / Transgenic Lines</a> &nbsp; ($MI_ROWCOUNT)
 
   <?/MIVAR>
 
@@ -520,7 +520,7 @@ and mrkr_type = 'MRPHLNO'
 	">
   <?/MISQL> 
   <?MIVAR COND="$(>,$1,0)">
-  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ortholist.apg&pubId=$OID">Orthology</a> &nbsp;
+  <li><a href="/cgi-bin/webdriver?MIval=aa-ortholist.apg&pubId=$OID">Orthology</a> &nbsp;
   <?/MIVAR>
 
   </ul>

@@ -42,7 +42,7 @@ Java Script Functions
 <SCRIPT>
 
    function doit(attr,attr_type,print_name,OID) {
-   	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalupdate.apg&OID='+OID+'&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name)
+   	window.location.replace('/cgi-bin/webdriver?MIval=aa-journalupdate.apg&OID='+OID+'&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name)
    }
 
 </SCRIPT>
@@ -154,7 +154,7 @@ Check permissions, set MINULL, MINOVALUE
        <a 
        style="font-size: large;"
        href="javascript:" 
-        onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalview.apg&OID=$OID')"
+        onClick="document.location.replace('/cgi-bin/webdriver?MIval=aa-journalview.apg&OID=$OID')"
         >View Journal</a>
 		</center>
 	<?/MIVAR>

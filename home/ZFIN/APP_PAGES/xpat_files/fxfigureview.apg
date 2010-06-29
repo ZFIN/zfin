@@ -122,7 +122,7 @@ get source zdb id, comments, label and caption of figure to determine type of FX
 <?MIVAR>
   <div class="yourinputwelcome">
      <form method="post"
-           action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+           action="/cgi-bin/webdriver"
            target="comments">
         <input type=hidden name=subject value=" ">
         <input type=hidden name=marker_id value="$OID">
@@ -317,7 +317,7 @@ and display them one after the other horizontally
           <?MICOMMENT> begin multiple images condition <?/MICOMMENT>
           <?MIBLOCK COND="$(EQ,$fxfigview_hasmultimg,t)">
               <?MIVAR>
-              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=image">
+              <a href="/cgi-bin/webdriver?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=image">
               <Img src="<!--|IMAGE_LOAD|-->/$fxfigview_thumbnail" alt title="$fxfigview_image_view, $fxfigview_image_direction"></a>
               <?/MIVAR>
           <?MIELSE> 
@@ -330,12 +330,12 @@ and display them one after the other horizontally
                  <tr><td> 
 <?MIBLOCK COND="$(NE,$fxfigview_jtype,Unpublished)">
 <?MIVAR>
-                 <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=image">
+                 <a href="/cgi-bin/webdriver?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=image">
                  <Img src="<!--|IMAGE_LOAD|-->/medium/$fxfigview_image" align="left" border=2></a>
 <?/MIVAR>
 <?MIELSE>
 <?MIVAR>
-                 <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=image">
+                 <a href="/cgi-bin/webdriver?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=image">
               <Img src="<!--|IMAGE_LOAD|-->/$fxfigview_thumbnail" alt title="$fxfigview_image_view, $fxfigview_image_direction"></a>
 <?/MIVAR>
 <?/MIBLOCK>
@@ -423,7 +423,7 @@ and display them one after the other horizontally
         <?MIBLOCK COND="$(EQ,$fxfigview_is_geli,)">
           <th>Anatomy</th>
         <?/MIBLOCK>
-        <th><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxassayabbrev.apg">Assay</a></th>
+        <th><a href="/cgi-bin/webdriver?MIval=aa-fxassayabbrev.apg">Assay</a></th>
         <p>
       <?MISQL SQL="
            select distinct xpatex_gene_zdb_id, mrkr_abbrev
@@ -478,7 +478,7 @@ and display them one after the other horizontally
       <tr>
         <th>Antibody</th>
         <th></th>
-        <th><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxassayabbrev.apg">Assay</a></th>
+        <th><a href="/cgi-bin/webdriver?MIval=aa-fxassayabbrev.apg">Assay</a></th>
         <th title="Genotype + Environment">Fish</th>
         <th>Stage</th>
         <?MICOMMENT>Display qualifier column only if it exists for atleast one structure the gene is expressed in<?/MICOMMENT>

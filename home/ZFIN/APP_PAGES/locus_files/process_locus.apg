@@ -71,7 +71,7 @@ warnings:  warnings to include in email to nomenclature
 
 <!-- Okay, now package all info up as a form and send it on to the script that sends out the notification email.  Kind of roundabout, but seems only way to do this without resorting to MIEXEC
 -->
-<form name=paramform method=post action="/<!--|CGI_BIN_DIR_NAME|-->/send_request.perl">
+<form name=paramform method=post action="/cgi-bin/send_request.perl">
 <?MIVAR COND="$(NXST,$warnings)" NAME=$warnings>None.<?/MIVAR>
 <?MIVAR>
 <input type=hidden name=sender value="$sender">
@@ -95,7 +95,7 @@ document.paramform.submit();
 <center>
 <b>ERROR! Duplicated submission.  Ignored...</b>
 <p>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">Back to ZFIN Home Page</A>
+<A HREF="/cgi-bin/webdriver?MIval=aa-ZDB_home.apg">Back to ZFIN Home Page</A>
 </center>
 <?/MIVAR>
 

@@ -21,7 +21,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/image_files/UPDATING
 
-GENERICS = do-imageupdate.apg imageupdate.apg
+GENERICS = imageupdate.apg
+
+STATICS = do-imageupdate.apg 
 
 
 # Use default rules for app page directories.

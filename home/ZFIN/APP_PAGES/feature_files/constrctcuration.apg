@@ -131,10 +131,10 @@ FILTERs section
 <p><b><font size=3>Construct Builder:</font></b>
 <p><b><font size=3>Create New Construct:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$featcur_featcreation),$(EC,$featcur_featcreation,hide))>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','show','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide</a><?/MIVAR>
   <br>
 <?MIELSE>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','hide','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide</a><?/MIVAR>
   <p>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-new_constrct.apg';">$1<?/MISQL>
 <?/MIBLOCK>
@@ -154,10 +154,10 @@ FILTERs section
 <a name=featediting>
 <p><b><font size=3>Edit Feature:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$featcur_featediting),$(EC,$featcur_featediting,hide))>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#featediting');">$unhide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','show','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#featediting');">$unhide</a><?/MIVAR>
   <br>
 <?MIELSE>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#featediting');">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','hide','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#featediting');">$hide</a><?/MIVAR>
   <p>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featureedit.apg';">$1<?/MISQL>
 <?/MIBLOCK>
@@ -183,7 +183,7 @@ FILTER  section
   <td>
     <b>Construct Name:</b>
     <?MIVAR>
-    <select onChange="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_feature_only',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#feature_only');">
+    <select onChange="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_feature_only',this.value,'/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#feature_only');">
     <?/MIVAR>
       <option value="">ALL</option>
       <?MISQL SQL="
@@ -202,7 +202,7 @@ FILTER  section
 
   <b>Construct Type:</b>
   <?MIVAR>
-  <select onChange="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_feature_type_only',this.value,'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#feature_type_only');">
+  <select onChange="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_feature_type_only',this.value,'/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#feature_type_only');">
   <?/MIVAR>
       <option value="">ALL</option>
         <?MISQL SQL="
@@ -231,10 +231,10 @@ construct Relationship section
 <a name=featrelation>
 <br><b><font size=3>Add Relationships:</font> </b>
 <?MIBLOCK COND=$(OR,$(NXST,$featcur_featrel),$(EC,$featcur_featrel,hide))>
-     <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featrel','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#featrelationship');">$unhide<a><?/MIVAR>
+     <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featrel','show','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#featrelationship');">$unhide<a><?/MIVAR>
      <br>
 <?MIELSE>
-     <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featrel','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random());">$hide</a><?/MIVAR>
+     <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featrel','hide','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random());">$hide</a><?/MIVAR>
      <br>
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-constrctrelationships.apg';">$1<?/MISQL>
 <?/MIBLOCK> 

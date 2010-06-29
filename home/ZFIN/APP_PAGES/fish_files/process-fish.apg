@@ -303,17 +303,17 @@
     <BIG><FONT COLOR="#ff0000">PLEASE RECALL</FONT></BIG> that you were 
     in the middle of creating or modifying some other record when you 
     took time out to enter this new FISH record.<br>
-    Click <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id">here</A> 
+    Click <A HREF="/cgi-bin/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id">here</A> 
     to return to your work in progress!
     <p>
   <?/MIVAR>
 
   <?MIVAR>
-    Click <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id">here</A> 
+    Click <A HREF="/cgi-bin/webdriver?MIval=aa-fishview.apg&OID=$fish_id">here</A> 
     to view the new FISH record.
   <?/MIVAR>
   <p>
-  Click <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">here</A> 
+  Click <A HREF="/cgi-bin/webdriver?MIval=aa-ZDB_home.apg">here</A> 
   to return to the ZDB home page.
 
   </HTML>

@@ -14,7 +14,7 @@
  $JSCRIPT=<<ENDJS;
 
 function do_reload() {
-  document.forms[0].action="/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl";
+  document.forms[0].action="/cgi-bin/map-options.pl";
   document.forms[0].target="";
   document.forms[0].submit();
 }
@@ -22,7 +22,7 @@ function do_reload() {
 function edit(panel) {
   document.options.edit_panel=panel; 
   document.options.target=""; 
-  document.options.action="/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl"; 
+  document.options.action="/cgi-bin/map-options.pl"; 
   document.options.submit();
 }
 
@@ -99,9 +99,9 @@ ENDCSS
  print "<script language='JavaScript1.2' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>";
 
  if  (  $query->param ('ZMAP')   ) {
-   print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi',-name=>'options');
+   print $query->startform(-method=>'get',-action=>'/cgi-bin/view_zmapplet.cgi',-name=>'options');
  } else {
-   print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi', -name=>'options'); 
+   print $query->startform(-method=>'get',-action=>'/cgi-bin/view_mapplet.cgi', -name=>'options'); 
  }
 
 
@@ -238,7 +238,7 @@ my $buf ='';
 
      print $query->submit(-name=>'refresh_map',-value=>'Submit Changes' ) . ' ';
      print $query->button(-name=>'cancel', -value=>'Cancel', -onClick=>'document.options.submit();');
-#"self.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mapperselect.apg';") . ' ';
+#"self.location='/cgi-bin/webdriver?MIval=aa-mapperselect.apg';") . ' ';
 
    #}
    print "</td></tr></table><br>";
@@ -262,7 +262,7 @@ my $buf ='';
 	print "</td>";
       }
       print "</tr></table><br>"; 
-	  print $query->button(-name=>'ZMAP_opts', -value=>'Adjust ZMAP', -onClick=>"document.options.edit_panel.value='" . 'ZMAP' . "'; document.options.target=''; document.options.action='/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl'; document.options.submit();   ");   
+	  print $query->button(-name=>'ZMAP_opts', -value=>'Adjust ZMAP', -onClick=>"document.options.edit_panel.value='" . 'ZMAP' . "'; document.options.target=''; document.options.action='/cgi-bin/map-options.pl'; document.options.submit();   ");   
     }
     else { # NOT ZMAP
       for ($i = 1 ; $query->param('panel'.$i) ne "" ; $i++) {
@@ -276,7 +276,7 @@ my $buf ='';
 	   
 	 }
 	 print "<br>".  
-	   $query->button(-name=>'ZMAP' . '_opts', -value=>'Adjust ' . $panel, -onClick=>"document.options.edit_panel.value='" . $panel . "'; document.options.action='/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl'; document.options.target=''; document.options.submit();   ") . "</td>";
+	   $query->button(-name=>'ZMAP' . '_opts', -value=>'Adjust ' . $panel, -onClick=>"document.options.edit_panel.value='" . $panel . "'; document.options.action='/cgi-bin/map-options.pl'; document.options.target=''; document.options.submit();   ") . "</td>";
        }
   }
     print "</tr></table>";

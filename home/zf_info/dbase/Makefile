@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/dbase
 
 SUBDIRS = PAPERS
 
-GENERICS = db.html
+STATICS = db.html
 
 
 

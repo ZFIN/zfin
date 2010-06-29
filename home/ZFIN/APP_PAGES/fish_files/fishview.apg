@@ -31,7 +31,7 @@ this page before, redirect to genotypeview.apg.
   <?/MISQL>
   <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
     <script>
-      <?MIVAR>location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=$1')
+      <?MIVAR>location.replace('/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=$1')
       <?/MIVAR>
     </script>
  

@@ -108,13 +108,13 @@ $xpdetres_imagesOnlyConstraint
 <table class="searchresults" style=" "> <!-- open detailed results table -->
   <caption class="searchresults"> 
     <?MIVAR> Expression Pattern Search Results for 
-       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpdetres_geneZdbId">$xpdetres_geneAbbrev</a> 
+       <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$xpdetres_geneZdbId">$xpdetres_geneAbbrev</a> 
        <br> <small>($xpdetres_figCount figure(s) with expression from $xpdetres_pubCount publication(s) )</small>
        <?MIBLOCK COND="$(NXST,$xpdetres_imagesOnly)">        
         <?MIVAR>
           <br> 
           <small>[
-            <font size="-1"><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&xpatsel_calledBySelf=true&query_results=true&gene_name=$xpdetres_geneAbbrevNotHtml&xpatsel_geneZdbId=$xpdetres_geneZdbId&xpatsel_imagesOnly=checked&$xpdetres_baseUrl">Show only figures with images</a></font>
+            <font size="-1"><a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg&xpatsel_calledBySelf=true&query_results=true&gene_name=$xpdetres_geneAbbrevNotHtml&xpatsel_geneZdbId=$xpdetres_geneZdbId&xpatsel_imagesOnly=checked&$xpdetres_baseUrl">Show only figures with images</a></font>
           ]</small>
         <?/MIVAR>
       <?/MIBLOCK>  
@@ -128,7 +128,7 @@ $xpdetres_imagesOnlyConstraint
     <th>Genotype or Background </th>
     <th>Stage Range</th>
     <th>Anatomy</th>
-    <?MICOMMENT> **** commenting out assay column ** <th><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxassayabbrev.apg">Assay</a></th> *** <?/MICOMMENT>
+    <?MICOMMENT> **** commenting out assay column ** <th><a href="/cgi-bin/webdriver?MIval=aa-fxassayabbrev.apg">Assay</a></th> *** <?/MICOMMENT>
   </tr>
   </thead>
   <tbody class="searchresults">
@@ -194,11 +194,11 @@ order by date desc, pub_mini_ref, publication.zdb_id, probe_abbrev_order, fig_fu
       <?MICOMMENT>  *** pub column *** <?/MICOMMENT>
       <td>
         <?MIBLOCK COND="$(NE,$xpdetres_lastPubProbeCombo,$xpdetres_pubZdbId $xpdetres_probeZdbId)">
-          <?MIVAR> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$xpdetres_pubZdbId">$xpdetres_pubMiniRef</a> <?/MIVAR>
+          <?MIVAR> <a href="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$xpdetres_pubZdbId">$xpdetres_pubMiniRef</a> <?/MIVAR>
           <?MIBLOCK COND="$(EC,$xpdetres_isDirectSubmission,t)">
            <?MIBLOCK COND="$(NE,NULL,$xpdetres_probeZdbId)">
             <?MIVAR>
-              [<a HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpdetres_probeZdbId">$xpdetres_probeAbbrev</a>]
+              [<a HREF="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$xpdetres_probeZdbId">$xpdetres_probeAbbrev</a>]
             <?/MIVAR>
            <?/MIBLOCK>
           <?/MIBLOCK>
@@ -208,7 +208,7 @@ order by date desc, pub_mini_ref, publication.zdb_id, probe_abbrev_order, fig_fu
       <?MICOMMENT>  *** figure column *** <?/MICOMMENT>
       <td nowrap> 
         <?MIVAR>  
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$xpdetres_figZdbId">$xpdetres_figLabel</a>
+          <a href="/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=$xpdetres_figZdbId">$xpdetres_figLabel</a>
         <?/MIVAR>
     </td>
 
@@ -224,7 +224,7 @@ order by date desc, pub_mini_ref, publication.zdb_id, probe_abbrev_order, fig_fu
       <td nowrap> 
       <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
          <?MIVAR>
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$xpdetres_figZdbId">
+          <a href="/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=$xpdetres_figZdbId">
             <img border=1 src="<!--|IMAGE_LOAD|-->/$xpdetres_fthmnlName" height="50" title="$MI_ROWCOUNT image$(IF,$(>,$MI_ROWCOUNT,1),s)">$(IF,$(>,$MI_ROWCOUNT,1),<img border=0 src=http://<!--|DOMAIN_NAME|-->/images/multibars.gif>)
           </a>
          <?/MIVAR>

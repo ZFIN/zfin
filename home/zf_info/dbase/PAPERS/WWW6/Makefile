@@ -21,11 +21,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/dbase/PAPERS/WWW6
 
-GENERICS = WWW6-97.html
-
 STATICS = Fig1.gif Fig2.gif Fig3.gif Fig4a.gif Fig4b.gif Fig5a.gif Fig5b.gif \
 	Fig6a.gif Fig6b.gif Fig7a.gif Fig7b.gif Fig7c.gif Fig8a.gif Fig8b.gif \
-	Fig9.gif
+	Fig9.gif WWW6-97.html
 
 
 # ---------------  Production Rules  ------------------------------------

@@ -90,13 +90,13 @@ c.clone_mrkr_zdb_id='$OID';
 
 <?MIELSE>
 <?MIVAR>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)$(IF,$(XST,$add_cit_count),&add_cit_count=$add_cit_count)$(IF,$(XST,$recattrsrctype),&recattrsrctype=$recattrsrctype)"><font size=-1 color=red> Add/Update this Record </font></A>
+  <A HREF="/cgi-bin/webdriver?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)$(IF,$(XST,$add_cit_count),&add_cit_count=$add_cit_count)$(IF,$(XST,$recattrsrctype),&recattrsrctype=$recattrsrctype)"><font size=-1 color=red> Add/Update this Record </font></A>
   <?/MIVAR>
 <?/MIBLOCK>
 <?/MIVAR>
 
 <?MIVAR COND="$(AND,$(NC,$rtype,person),$(XST,$attribtype),$(NC,$rtype,go))">
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID&rtype=$rtype&attribtype=$attribtype&info=$info$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)$(IF,$(XST,$add_cit_count),&add_cit_count=$add_cit_count)$(IF,$(XST,$recattrsrctype),&recattrsrctype=$recattrsrctype)"><font size=-1 color=red> Add/Update this Record </font></A>
+  <A HREF="/cgi-bin/webdriver?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID&rtype=$rtype&attribtype=$attribtype&info=$info$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)$(IF,$(XST,$add_cit_count),&add_cit_count=$add_cit_count)$(IF,$(XST,$recattrsrctype),&recattrsrctype=$recattrsrctype)"><font size=-1 color=red> Add/Update this Record </font></A>
 <?/MIVAR>
 
 <!-- For PERSON records, allow only owner and root. Also allow root access to
@@ -104,7 +104,7 @@ c.clone_mrkr_zdb_id='$OID';
 <?MIBLOCK COND="$(EC,$rtype,person)">
 
 <?MIVAR COND="$(OR,$(EC,$AUTHORIZED,owner),$(EC,$AUTHORIZED,root))">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID"><font size=-1 color=red> Update this Record</font></A> 
+<A HREF="/cgi-bin/webdriver?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID"><font size=-1 color=red> Update this Record</font></A> 
 <?/MIVAR>
 </TD>
 
@@ -127,13 +127,13 @@ c.clone_mrkr_zdb_id='$OID';
   <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,genotype))">
     <TD>
       <?MIVAR>
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font size=-1 color=red> Delete or Merge this record </font></A> 
+        <A HREF="/cgi-bin/webdriver?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font size=-1 color=red> Delete or Merge this record </font></A> 
       <?/MIVAR>
     </TD>
   <?MIELSE>
     <TD>
       <?MIVAR>
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font size=-1 color=red> Delete this record </font></A>
+        <A HREF="/cgi-bin/webdriver?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font size=-1 color=red> Delete this record </font></A>
       <?/MIVAR>
     </TD>
   <?/MIBLOCK>
@@ -141,7 +141,7 @@ c.clone_mrkr_zdb_id='$OID';
 
 <?MIVAR>
 <TD> <font size=-1>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-vframeset.apg&OID=$OID&rtype=$rtype">
+<A HREF="/cgi-bin/webdriver?MIval=aa-update-vframeset.apg&OID=$OID&rtype=$rtype">
 <b>Updated:</b> $mod_date </A> </font>
 </TD>
 <?/MIVAR>
@@ -157,7 +157,7 @@ c.clone_mrkr_zdb_id='$OID';
   <?MIELSE> <!--GO records-->
 
 <TD>
-    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$OID"><font color=red size=-1>Add/Update GO annotations</a><?/MIVAR>
+    <?MIVAR><a href="/cgi-bin/webdriver?MIval=aa-markergoentry.apg&OID=$OID"><font color=red size=-1>Add/Update GO annotations</a><?/MIVAR>
 </TD>
 <?/MIBLOCK>
 
@@ -165,7 +165,7 @@ c.clone_mrkr_zdb_id='$OID';
 
 
   <TD>
-    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Track Curation</a><?/MIVAR>
+    <?MIVAR><a href="/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID">Track Curation</a><?/MIVAR>
   </TD>
   <TD>
     Status: <?MIVAR>$(IF,$(EC,$pub_completion_date,),Open,Closed $pub_completion_date)<?/MIVAR>

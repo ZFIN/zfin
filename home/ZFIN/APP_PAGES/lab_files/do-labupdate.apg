@@ -78,7 +78,7 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <!-- okay, now just bail back to the labupdate to view results -->
 <?MIVAR>
 <SCRIPT>
-location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$OID&UPDATE=1")
+location.replace("/cgi-bin/webdriver?MIval=aa-labview.apg&OID=$OID&UPDATE=1")
 </SCRIPT>
 <?/MIVAR>
 

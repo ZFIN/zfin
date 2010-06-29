@@ -55,7 +55,7 @@ INPUT VARS:
                  <?MIVAR NAME=fxprbfig_image_view>$5<?/MIVAR>
                  <?MIVAR NAME=fxprbfig_image_direction>$6<?/MIVAR>
                  <?MIBLOCK COND="$(NE,$fxprbfig_image_zdb_id,)">
-                    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=<?MIVAR>$fxprbfig_image_zdb_id<?/MIVAR>&image_table=image">
+                    <a href="/cgi-bin/webdriver?MIval=aa-imageview.apg&OID=<?MIVAR>$fxprbfig_image_zdb_id<?/MIVAR>&image_table=image">
                     <?MIVAR> <Img src="<!--|IMAGE_LOAD|-->/$fxprbfig_thumbnail" alt title="$fxprbfig_image_view, $fxprbfig_image_direction"><?/MIVAR></a>
                   <?MIELSE>
                     <?MICOMMENT><?MIVAR><b>$fxprbfig_label</b><?/MIVAR><?/MICOMMENT>
@@ -77,7 +77,7 @@ INPUT VARS:
 
                <tr><td>
                <tr><td>
-               <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxprbfig_fig_zdb_id<?/MIVAR>">Gene expression details</a>
+               <tr><td><a href="/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxprbfig_fig_zdb_id<?/MIVAR>">Gene expression details</a>
            </table>
 <p>
 <?/MISQL>

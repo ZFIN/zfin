@@ -39,7 +39,7 @@
     $1
   <?/MISQL>
 
-  <FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+  <FORM METHOD=POST ACTION="/cgi-bin/webdriver">
     <?MIVAR>
       <INPUT type=hidden NAME=temp_oid VALUE=$temp_oid>
       <INPUT type=hidden NAME=MIval VALUE="aa-process-lab.apg">

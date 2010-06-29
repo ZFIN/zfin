@@ -66,7 +66,7 @@ entered into person_address.
          <FORM NAME="process_address" 
                      method=post 
      		     encrypt="multipart/form-data
-     		     action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+     		     action="/cgi-bin/webdriver">
 
   	<p>
   	<?MIVAR>
@@ -145,7 +145,7 @@ entered into person_address.
      	  <p><br>
      	  <b>Current Name (old table): </b>$ua_pers_full_name<br>
 
-	  <b>Current Lab: $(IF,$(OR,$(EC,$ua_lab_zdb_id,$MI_NOVALUE),$(EC,$ua_lab_zdb_id,$MI_NULL)),Not in a Lab,</b><a href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->/?MIval=aa-labview.apg&OID=$ua_lab_zdb_id'>$ua_lab_name</a>)
+	  <b>Current Lab: $(IF,$(OR,$(EC,$ua_lab_zdb_id,$MI_NOVALUE),$(EC,$ua_lab_zdb_id,$MI_NULL)),Not in a Lab,</b><a href='/cgi-bin/webdriver/?MIval=aa-labview.apg&OID=$ua_lab_zdb_id'>$ua_lab_name</a>)
 
  	  <p><align=center><b>First Name:</b>
      	      <INPUT TYPE=text name=ua_pers_first_name 
@@ -262,7 +262,7 @@ entered into person_address.
 		      <?/MIVAR>  
                <label for="uaUpdateAllAddresses" id="uaUpdateAllAddressesLabel">
 			 <b>Update All</b> Addresses for people in the
-			  <a href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->/?MIval=aa-labview.apg&OID=$ua_lab_zdb_id'>
+			  <a href='/cgi-bin/webdriver/?MIval=aa-labview.apg&OID=$ua_lab_zdb_id'>
 				$ua_lab_name
 			  </a>
 	       </label>
@@ -279,7 +279,7 @@ entered into person_address.
         <input type=button 
 	  	name=cancel 
 	  	value="CANCEL" 
- 	  	onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID')">
+ 	  	onClick="window.location.replace('/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$OID')">
         </td>
         </tr>
       </table>

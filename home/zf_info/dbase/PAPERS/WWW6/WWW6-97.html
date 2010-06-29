@@ -17,9 +17,9 @@ Database <BR>
 </FONT></B></CENTER>
 <P>
 <CENTER><B>
-<A HREF="http://www.cet.nau.edu/~edo/">Eckehard Doerry</A><sup><FONT SIZE=1>1</FONT></sup>, 
+<A HREF="http://www.cet.nau.edu/~edo/">Eckehard Doerry</A><sup><FONT SIZE=1>1</FONT></sup>,
 <A HREF="http://www.cs.uoregon.edu/~douglas/">Sarah Douglas</A><sup><FONT SIZE=1>1</FONT></SUP>,
-<A HREF="http://www.cs.sfu.ca/~ted/">Ted Kirkpatrick</A><SUP><FONT SIZE=1>1</FONT></SUP>, 
+<A HREF="http://www.cs.sfu.ca/~ted/">Ted Kirkpatrick</A><SUP><FONT SIZE=1>1</FONT></SUP>,
 <A HREF="http://www.neuro.uoregon.edu/ionmain/htdocs/faculty/westerf.html">
 Monte Westerfield</A><SUP><FONT SIZE=1>2</FONT></SUP>
 </B></CENTER>
@@ -58,7 +58,7 @@ to four months.
 <P>
 The biologists and computer scientists constructing these web
 sites presume that these web-accessible resources will aid scientific
-discovery through more timely, widespread access to better integrated 
+discovery through more timely, widespread access to better integrated
 research information. Although the WWW has made this information
 <I>physically</I> accessible to scientists, it is unclear whether
 it will be <I>cognitively</I> accessible. Busy scientists want
@@ -68,7 +68,7 @@ able to find answers to their questions without resorting to powerful
 but complex query languages like SQL? Will they be able to get
 their answers quickly without working through endless hierarchies
 of useless pages? Accessibility depends upon <I>usability</I>,
-and usability is critically related to productivity [<A HREF="#r9">9</A>]. 
+and usability is critically related to productivity [<A HREF="#r9">9</A>].
 
 <P>
 Designing a usable interface is challenging. First, the interface
@@ -142,7 +142,7 @@ team [<A HREF="#r4">4</A>, <A HREF="#r15">15</A>] which includes both biologists
 We believe that this collaboration is key to the success of our
 project, not only because it provides domain and task knowledge,
 but also because direct involvement of biologists gives them a
-stake in the success of the project. 
+stake in the success of the project.
 
 <P>
 During Step 1 (<A HREF="#fig1">Figure 1</A>) we used primarily ethnographic methods
@@ -173,7 +173,7 @@ models at these other sites. In this respect, we have found the
 WWW to be an easily accessible means of drawing on the design
 experience of others, a critical resource in an area where design
 improvements are typically incremental and based on real-world
-experience. 
+experience.
 
 <P>
 These domain and task analyses produced specifications for the
@@ -241,7 +241,7 @@ commonly asked questions within a 10 minute session.
 <li>Must provide enough feedback that
 most searches will find results with three rounds of querying.
 <P>
-<li>Must keep the user apprised of progress during the data submission 
+<li>Must keep the user apprised of progress during the data submission
 process, allowing the user to &quot;undo&quot;
 a submission during any step.
 </UL>
@@ -273,7 +273,7 @@ in Hypertext Transfer Protocol (HTTP), the communication protocol
 used to implement client-server interaction. By limiting the interface
 primitives available to the designer and the ways in which client
 and server can interact, HTML and HTTP impose a number of unusual
-constraints on interface design: 
+constraints on interface design:
 <OL>
 <B>Inconsistent Look and Feel.</B> A basic premise of HTML is
 that the language should <I>logically</I>&nbsp;describe the appearance
@@ -282,13 +282,13 @@ decisions associated with physically displaying the page. Despite
 recent improvements, control over the layout and appearance of
 interface elements remains relatively weak. Consequently, appearance
 of the interface may vary widely depending upon the client hardware
-platform and browser software used to access the interface. 
+platform and browser software used to access the interface.
 <P>
 <B>Discrete Transaction Model.</B> The HTTP protocol supports
 only discrete transactions between client and server. Each transaction
 retrieves a single HTML document. Transactions may be initiated
 only from the client side; the server cannot spontaneously send
-information to the client. 
+information to the client.
 <P>
 <B>Anonymous, Stateless Transactions. </B>Both HTTP server and
 client treat each transaction as completely independent of preceding
@@ -297,7 +297,7 @@ access, this record plays no role in shaping the retrieval or
 appearance of future documents. Moreover, the HTTP protocol does
 not provide integrated mechanisms for distinguishing between transactions
 at the user (client) level, meaning that transactions are essentially
-anonymous. 
+anonymous.
 </ol>
 
 These constraints interfere with some basic principles and techniques
@@ -316,7 +316,7 @@ and powerful interaction techniques like direct manipulation.
 <P>
 The functional requirements and performance requirements combine
 with the constraints imposed by HTML and HTTP to drive the interface
-design. 
+design.
 <H3> Step 2: Iterate detailed design process</H3>
 
 <P>
@@ -327,7 +327,7 @@ design process to design and implement the user interface. In
 contrast to the waterfall approach used by traditional software
 engineers, this technique relies on rapid cycles of design, prototype
 implementation, and evaluation with real users to generate the
-final product. 
+final product.
 
 <P>
 Rather than implementing the entire database at once, we initially
@@ -338,7 +338,7 @@ priority to the research community or more mature and complete;
 staggering development of various data classes allowed us to make
 useful information rapidly available. In addition, focusing attention
 on just a few types of information at a time proved to be an effective
-means of managing the complexity of the design. 
+means of managing the complexity of the design.
 
 <P>
 Each prototype was immediately evaluated by selecting pairs of
@@ -467,19 +467,19 @@ some tasks, there was simply no way to meet the usability criteria
 developed Step 1 (<A HREF="#fig1">Figure 1</A>) of our design process without access
 to these more advanced interaction techniques. Thus, the architecture
 also allows the integration of special purpose Java applets<A HREF="#f1"><SUP><FONT SIZE=2>1</FONT></SUP></A> to
-implement advanced interface functionality. 
+implement advanced interface functionality.
 
 <P>
 The only cost incurred by this architecture is a slight decrease
 in accessibility; the integration of client-side technologies
 like Java and Javascript means that, to access the interface,
-users must have browsers that support these technologies. 
+users must have browsers that support these technologies.
 
 <H3>4.2 User Interaction: The ZFIN Interface</H3>
 
 <A NAME="fig3"></a>
 <P>
-The interface supports four primary interaction modes 
+The interface supports four primary interaction modes
 (<A HREF="#fig3">Figure 3</A>): surveying
 database contents and activities, querying to retrieve information,
 submitting and updating data, and using specialized data manipulation
@@ -496,7 +496,7 @@ within the context of an interaction.</FONT></CENTER>
 <P>
 Our analysis of usability requirements during Step 1 of the design
 process showed an overwhelming demand for immediately productive,
-efficient access to information for untrained users. 
+efficient access to information for untrained users.
 <p>
 The ZFIN &quot;home page&quot; (<A HREF="#fig4a">Figure 4a</A>) meets this requirement
 by immediately presenting users with an overview of available
@@ -505,7 +505,7 @@ a simple conceptual model of the data space and streamlines the
 most common access scenario, namely, performing a basic search
 for information. The &quot;status&quot; of the data in each category
 is indicated, priming users' expectations about data integrity
-and completeness. 
+and completeness.
 
 <P>
 <A HREF="#fig4a">Figure 4</A> also illustrates how the concept of personalized interaction
@@ -527,7 +527,7 @@ to a set of activities centered around data submission which are
 unavailable to guest users (<A HREF="#fig4a">Figure 4a</A>). Note, however, that Ted
 is unable to add new persons or publications to the database;
 these activities are reserved for the unrestricted &quot;database
-administrator&quot; group, of which Ted is not a member. 
+administrator&quot; group, of which Ted is not a member.
 
 <P>
 We implemented identification of individual users by using the
@@ -549,7 +549,7 @@ The ZFIN home page (<A HREF="#fig4a">Figure 4a</A>) also establishes the overall
 of the interface, with navigation tools, help, and lab notebook
 available at the top of each screen, and a &quot;content&quot;
 area below. This structure is consistently maintained throughout
-subsequent screens. 
+subsequent screens.
 
 <H4>4.2.2 Querying to Retrieve Information</H4>
 
@@ -560,7 +560,7 @@ a well-defined set of target criteria in mind when they initiate
 the search. A successful interface must allow efficient expression
 of these criteria using domain terminology, must summarize search
 results, and must maintain the connection between search criteria
-and matching records. 
+and matching records.
 <P>
 <A HREF="#fig5a">Figure 5</A> presents the search interface implemented in ZFIN. The
 simple layout and limited number of search criteria reflect our
@@ -569,7 +569,7 @@ power. Although the underlying database query language (SQL) allows
 formulation of arbitrarily complex queries, the interface limits
 constraints to conjunctions of a handful of criteria identified
 by our domain analysis as most useful (i.e. most discriminating,
-most likely to be known at time of search). 
+most likely to be known at time of search).
 
 <P>
 The interface maintains the conceptual connection between search
@@ -580,13 +580,13 @@ relationship between criteria and results visually relates the
 user's goals and actions to the responses produced by the system.
 This arrangement also makes iterative refinement of the search
 very easy, applying new constraints while observing the effect
-on the set of matching records. 
+on the set of matching records.
 
 <P>
 The two screens shown in <A HREF="#fig5b">Figure 5</A> also illustrate the consistency
 of the search interface between data classes. Although the criteria
 are different for each class, the basic screen layout and search
-process are identical. 
+process are identical.
 
 <H4>4.2.3 Data Submission and Updating. </H4>
 
@@ -596,7 +596,7 @@ is one of the most important and unique features of the ZFIN interface.
 We encountered four primary challenges during our design of the
 data submission interface: supporting naive users, enforcing data
 security, supporting multi-step submissions, and providing context-sensitive
-navigation and help. 
+navigation and help.
 
 <P>
 <I><B>Supporting naive users.</B></I>
@@ -607,7 +607,7 @@ for correct format and enforcing semantic constraints between
 fields. For example, error dialogs appear when values are out
 of range, incorrectly formatted, or incompatible with previously
 specified values. We implemented this feature by embedding context-specific
-Javascript instructions in each data submission screen. 
+Javascript instructions in each data submission screen.
 <P>
 Another important ease of use heuristic employed in the interface
 is the preference for popup menus over text entry (<A HREF="#fig6a">Figure 6a</A>).
@@ -628,7 +628,7 @@ enforces security not only at the page level, but on a feature
 by feature basis within each page. For example, the interface
 allows the user to update his or her personal record (<A HREF="#fig6b">Figure 6b</A>),
 <I>except</I> name and publications; these options appear only
-to the database administrator. 
+to the database administrator.
 
 <P>
 <I><B>Supporting a nested, multi-page submission process.</B></I>
@@ -641,13 +641,13 @@ the database. The need to establish connections between a new
 record and related records results in a complex, nested data submission
 process in which the submitter must digress repeatedly from the
 main submission task to search for and create links to related
-information. 
+information.
 <P>
 For example, a submitter must digress from the primary task of
 submitting a new mutation (<A HREF="#fig7">Figure 7a</A>) to search for the publication
 (<A HREF="#fig7">Figure 7b</A>) in which the mutation was first described (i.e. primary
 publication). After finding the publication, the user selects
-it and automatically returns to the mutant submission form (<A HREF="#fig7">Figure 7c</A>). 
+it and automatically returns to the mutant submission form (<A HREF="#fig7">Figure 7c</A>).
 
 <P>
 The basic HTTP/HTML environment cannot accommodate this complex,
@@ -655,7 +655,7 @@ nested sequence of task and digressions (subtasks) because it
 supports no notion of interface state. The central difficulty
 lies in managing the automatic &quot;return&quot; from a subtask
 to the task from which it was initiated, bringing the information
-specified in the subtask back to the primary task. 
+specified in the subtask back to the primary task.
 
 <P>
 We implemented this functionality by saving interface state<A HREF="#f2"><SUP><FONT SIZE=2>2</FONT></SUP></A> in
@@ -686,7 +686,7 @@ challenge: during &quot;deep&quot; digressions, users easily become
 confused about the relevance of the current screen to the task
 solution process as a whole. In other words, users tend to &quot;get
 lost&quot; in the task space. Left unsupported, their only remedy
-is to return to the home page and start over. 
+is to return to the home page and start over.
 
 <P>
 Initially, we assumed that the history mechanisms built into most
@@ -706,7 +706,7 @@ from (not realizing that each new search generated a new page)
 and how to get back to the preceding step in the task. What is
 needed is a <I>task-sensitive</I> mechanism that maintains a user's
 orientation within the task space by tracking his or her progress
-through the <I>conceptual</I> steps within each task. 
+through the <I>conceptual</I> steps within each task.
 
 <P>
 The ZFIN navigation tool provides users with a dynamically-updated
@@ -717,7 +717,7 @@ strip&quot; found at the top of each page (see Figures 4-7) as
 the user embarks on that step. At any point within a digression,
 a click on the tile representing some earlier, enclosing step
 aborts the digression, instantly returning the user to the earlier
-step. 
+step.
 
 <P>
 The explicit representation of the user's current task also supports
@@ -733,7 +733,7 @@ Although the interface features described in the preceding sections
 on searching and data submission are adequate for describing,
 retrieving, and displaying text data, they do not efficiently<A HREF="#f3"><SUP><FONT SIZE=2>3</FONT></SUP></A>
 support manipulation of complex, domain-specific data types like
-annotated images and genetic maps. 
+annotated images and genetic maps.
 <P>
 We developed two Java applets to support these data types. The
 image annotator (<A HREF="#fig8a">Figure 8a</A>) allows the user to place annotations
@@ -756,7 +756,7 @@ a much broader range of data than printed media, including multimedia
 data types and information that, although useful, might never
 be formally published; new findings can be made available almost
 instantly, rather than being delayed for months by a lengthy editorial
-and printing process. 
+and printing process.
 
 <P>
 There are a number of challenging obstacles to such universal
@@ -793,7 +793,7 @@ these features, in turn, support specific functional and performance
 requirements established in Step 1 (<A HREF="#fig1">Figure 1</A>) of our user-centered
 design process (upper level).</FONT></CENTER>
 <P>
-<A HREF="#fig9">Figure 9</A> summarizes our observations on the relationships among 
+<A HREF="#fig9">Figure 9</A> summarizes our observations on the relationships among
 these underlying interface concepts, the specific interface features
 they give rise to, and the ways in which these features support
 the usability criteria generated by our user-centered analysis.
@@ -820,7 +820,7 @@ for collaborative shared access to the database, interactive discussion
 forums, and viewer commentary appended to specific data records.
 We envision ZFIN as the cornerstone of a virtual community of research
 scientists linked via the WWW, working together, and sharing a
-common set of data. 
+common set of data.
 
 <H4>Acknowledgments</H4>
 
@@ -829,9 +829,9 @@ Mike McHorse and Paul Bloch provided essential system administration
 support for our computers and network. The base code for the genetic
 mapping applet was written by Gregg Helt and provided by the bioWidgets
 Consortium. We would also like to thank our numerous informants
-within the zebrafish research community, who patiently took 
+within the zebrafish research community, who patiently took
 time to explain their research methods to us. The zebrafish database
-project is sponsored by NSF grant BIR-9507401. 
+project is sponsored by NSF grant BIR-9507401.
 
 <H3>References</H3>
 <FONT SIZE=-1>
@@ -851,7 +851,7 @@ Press, 1995, pp.184-203.
 <P>
 <A NAME="r3"></a>
 <li> Genome Informatics Group. (1996). ACEDB (World Wide Web URL
-http://probe.nalusda.gov:8300/cgi-bin/query?dbname=acedb). 
+http://probe.nalusda.gov:8300/cgi-bin/query?dbname=acedb).
 Beltsville, MD: US Department of Agriculture.
 <P>
 <A NAME="r4"></a>
@@ -911,7 +911,7 @@ Assoc.
 <P>
 <A NAME="r16"></a>
 <li> University of Oregon Neuroscience Institute (1996). The FISH
-Net. (World Wide Web URL <A HREF="/">http://<!--|DOMAIN_NAME|--></A>). Eugene,OR.
+Net. (World Wide Web URL <A HREF="/">http://zfin.org</A>). Eugene,OR.
 <p>
 <A NAME="r17"></a>
 <li> Yang, J. Y. &amp; Kaiser, G. E. (1996). An Architecture for
@@ -986,24 +986,24 @@ a new image to ZFIN. </FONT></CENTER>
 <HR size=4 noshade><p>
 <A NAME="fig6b"></a>
 <CENTER><IMG SRC="Fig6b.gif"></CENTER>
-<CENTER><FONT SIZE=2><B>Figure 6b:</B> The updating interface seen by a user 
+<CENTER><FONT SIZE=2><B>Figure 6b:</B> The updating interface seen by a user
 when updating his own record. </FONT></CENTER>
 <p>
 
 <HR size=4 noshade><p>
 <A NAME="fig7"></a>
-<CENTER><IMG SRC="Fig7a.gif"><br> 
-<CENTER><FONT SIZE=2><b>Figure 7a:</B> A typical 
-digression sequence. To submit a new mutation, the user must specify the 
+<CENTER><IMG SRC="Fig7a.gif"><br>
+<CENTER><FONT SIZE=2><b>Figure 7a:</B> A typical
+digression sequence. To submit a new mutation, the user must specify the
 publication in which the mutation was first described.</FONT></CENTER>
 
 <HR width=50%><p>
-<CENTER><IMG SRC="Fig7b.gif"><br> 
+<CENTER><IMG SRC="Fig7b.gif"><br>
 <CENTER><FONT SIZE=2><b>Figure 7b:</B> This brings up the constraint-based
 search interface, which is used to locate the publication record.</FONT></CENTER>
 
 <HR width=50%><p>
-<CENTER><IMG SRC="Fig7c.gif"><br> 
+<CENTER><IMG SRC="Fig7c.gif"><br>
 <CENTER><FONT SIZE=2><b>Figure 7c:</B> The user is returned to the
 mutant submission, with the specified publication filled in. </FONT></CENTER>
 <p>

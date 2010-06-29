@@ -17,7 +17,7 @@ $(IF,$(AND,$(NC,$marker_abbrev,undefined),$(NC,$marker_abbrev,None)),$marker_abb
 
 <?MIVAR>
 
-<FRAME NAME="label" scrolling=no SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-scoresview.apg&panel_id=$panel&OR_LG=$lg&marker=$marker_id&marker_abbrev=$marker_abbrev" MARGINWIDTH=1 MARGINHEIGHT=1>
+<FRAME NAME="label" scrolling=no SRC="/cgi-bin/webdriver?MIval=aa-scoresview.apg&panel_id=$panel&OR_LG=$lg&marker=$marker_id&marker_abbrev=$marker_abbrev" MARGINWIDTH=1 MARGINHEIGHT=1>
 
 <FRAME NAME="helpcontent" SRC="/ZFIN/misc_html/saycomposing.html">
 <?/MIVAR>

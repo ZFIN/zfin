@@ -117,11 +117,11 @@ EFFECTS
 <SCRIPT>
 
 function start_help() {
-   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_help.apg","helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=555,height=350");
+   top.zfinhelp=open("/cgi-bin/webdriver?MIval=aa-xpatselect_help.apg","helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=555,height=350");
 }
 
 function start_note() {
-  top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500");
+  top.zfinhelp=open("/cgi-bin/webdriver?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500");
 }
 
 function start_tips() {
@@ -805,7 +805,7 @@ function openChild(childWinUrl,childWinName) {
     <?/MICOMMENT>
   <form name=critform 
         method=get
-        action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+        action="/cgi-bin/webdriver" 
 onSubmit="
 // we need to cancel submit, as Safari wants to go ahead and submit this form any type return is pressed
 // we only want input to go forward when going through call_submit

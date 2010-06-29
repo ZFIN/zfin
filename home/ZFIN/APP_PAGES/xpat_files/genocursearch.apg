@@ -23,7 +23,7 @@ PREFIX:   genocursrch_
 
 
 <div id="headertwo">Search for Existing Genotypes Containing:</div>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=POST name="existingGenoSearch">
+<form action="/cgi-bin/webdriver" method=POST name="existingGenoSearch">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 <table>
@@ -115,7 +115,7 @@ from the 'Existing Genotype' Search. Order by display name.
     
 <div id="headerthree">Search Results:</div>
 
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=POST name="selectExistingGeno">
+<form action="/cgi-bin/webdriver" method=POST name="selectExistingGeno">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 

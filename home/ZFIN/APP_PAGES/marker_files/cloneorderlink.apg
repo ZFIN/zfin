@@ -57,9 +57,8 @@ OUTPUT
       <?MIVAR COND="$(>,$(POSITION,$clorlk_supplier_zdb_id,COMPANY),0)" NAME=clorlk_viewpage>companyview.apg<?/MIVAR>
       <?MIVAR>
             &nbsp;&nbsp;
-			(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$clorlk_viewpage&OID=$clorlk_supplier_zdb_id">order this</A>)
+			(<A HREF="/cgi-bin/webdriver?MIval=aa-$clorlk_viewpage&OID=$clorlk_supplier_zdb_id">order this</A>)
       <?/MIVAR>
 
     <?/MIBLOCK>
     </font>
-<?/MISQL>

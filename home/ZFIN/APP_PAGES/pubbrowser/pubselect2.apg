@@ -121,7 +121,7 @@ if (user_access != 'root') {document.critform.anon1.selectedIndex = 0;}
 }
 
 function start_help(anchor) {
-   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+   top.zfinhelp=open("/cgi-bin/webdriver?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
 
 function list_all(user_access) {
@@ -330,7 +330,7 @@ function list_all(user_access) {
 
 
 
-<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+<form method=post action="/cgi-bin/webdriver">
 
 <!-- to be used by walking windows  -->
 <!-- want GET string as short as possible - append only when variable exists, buffer overflow may cause segmentation fault -->
@@ -384,11 +384,11 @@ function list_all(user_access) {
 		<TD align=center>
 			<input type=submit name=printable value="Format into a printable listing">  
 			<input type=submit name=refer value="Output as REFER format file">  
-			<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-REFERinfo.apg">REFER&nbsp;Instructions</A>
+			<A HREF="/cgi-bin/webdriver?MIval=aa-REFERinfo.apg">REFER&nbsp;Instructions</A>
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
 
-  <input type=button name=printable value="Add new Pub" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&rtype=publication$UserInput');">  
+  <input type=button name=printable value="Add new Pub" onClick="window.location.replace('/cgi-bin/webdriver?MIval=aa-edit_pub.apg&rtype=publication$UserInput');">  
 <?/MIVAR>
 		</TD> 
 	</TR>
@@ -469,15 +469,15 @@ function list_all(user_access) {
 <?MIVAR NAME=$pubsel2_pcompletion_date>$9<?/MIVAR>
 <?MIVAR NAME=$pubsel2_pstatus>$10<?/MIVAR>
 
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3$UserInput&START=$START">EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3$UserInput&START=$START"><br>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$3"><br>TRACK</A>&nbsp;&nbsp;&nbsp;")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$3"><br>CURATE</A>&nbsp;&nbsp;&nbsp;")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/cgi-bin/webdriver?MIval=aa-edit_pub.apg&OID=$3$UserInput&START=$START">EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=$3$UserInput&START=$START"><br>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$3"><br>TRACK</A>&nbsp;&nbsp;&nbsp;")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$3"><br>CURATE</A>&nbsp;&nbsp;&nbsp;")
 
-$(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3">SELECT</A>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</FONT>")
+$(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/cgi-bin/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3">SELECT</A>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</FONT>")
 </TD></DIV>
 
-<TD colspan=1 align=left><font size=3><DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pubsel2_authors ($pubsel2_year) $pubsel2_title. $pubsel2_jrnlabbrev$(IF,$(NC,$pubsel2_pvolume,), $pubsel2_pvolume:,)$(IF,$(NC,$pubsel2_ppages,), $pubsel2_ppages.,)$(IF,$(OR,$(EC,$pubsel2_pstatus,Epub ahead of print), $(EC,$pubsel2_pstatus,in press)), $pubsel2_pstatus,)</DIV></A> 
+<TD colspan=1 align=left><font size=3><DIV class="show_pubs"><A HREF="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$3">$pubsel2_authors ($pubsel2_year) $pubsel2_title. $pubsel2_jrnlabbrev$(IF,$(NC,$pubsel2_pvolume,), $pubsel2_pvolume:,)$(IF,$(NC,$pubsel2_ppages,), $pubsel2_ppages.,)$(IF,$(OR,$(EC,$pubsel2_pstatus,Epub ahead of print), $(EC,$pubsel2_pstatus,in press)), $pubsel2_pstatus,)</DIV></A> 
 </TD>
 <?MIVAR COND="$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root))">
   <TD>$(IF,$(NE,$PUB_COMPLETION,),CLOSED&nbsp;&nbsp;,OPEN&nbsp;&nbsp;)</TD>
@@ -501,10 +501,10 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 <?MIBLOCK COND="$(>,$BEGIN,1)">
 	
 <?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+	<A HREF="/cgi-bin/webdriver?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
 
 <!-- If current not First Page, create link to first page. -->
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
+	<A HREF="/cgi-bin/webdriver?START=1&BEGIN=1&$selector$UserInput">First Page</A>
 <?/MIVAR>
 
 <?/MIBLOCK>
@@ -556,7 +556,7 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 
   <form name="critform"
 	method="get" 
-	action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+	action="/cgi-bin/webdriver">
   <input type=hidden name=MIval value=aa-pubselect2.apg>
 
     <TR>

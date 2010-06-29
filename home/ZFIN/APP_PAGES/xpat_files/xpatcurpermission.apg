@@ -66,7 +66,7 @@ EFFECTS
       <?MIVAR NAME=xpcurperm_cur_note>$(IF,$(EC,$2,NULL),,$2)<?/MIVAR>
   <?/MISQL>
   
-  <form name=permission action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#permission" method=post>
+  <form name=permission action="/cgi-bin/webdriver#permission" method=post>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update"> 
@@ -88,7 +88,7 @@ EFFECTS
 	 Please 
 	</font>
 	<?MIVAR>
-	<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$OID">enter the DOI</a>. 
+	<a href="/cgi-bin/webdriver?MIval=aa-edit_pub.apg&OID=$OID">enter the DOI</a>. 
 	<?/MIVAR>
 	<br/>
 	<p>

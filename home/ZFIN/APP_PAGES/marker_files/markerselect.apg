@@ -659,7 +659,7 @@ DEBUGGING:
 	<SCRIPT>
           <?MICOMMENT> when this page is called by pubview2.apg with parameter $pub_mapped, mutant record could be retrieved.<?/MICOMMENT>
           <?MIVAR>	
-            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_allele_id=$the_marker")
+            replaceLocation("/cgi-bin/webdriver?MIval=aa-fishselect.apg&fsel_allele_id=$the_marker")
           <?/MIVAR>
 	</SCRIPT>
      <?MIELSE>
@@ -712,7 +712,7 @@ DEBUGGING:
    <?MICOMMENT> Stuff to control retrieval volume <?/MICOMMENT>
     <FORM method=post 
           name=markerlister 
-          action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+          action="/cgi-bin/webdriver">
       <?MIVAR>
         <input type=hidden name=MIval value=aa-markerselect.apg> 
         <input type=hidden name=userid value="$userid">
@@ -819,12 +819,12 @@ DEBUGGING:
 
           <?MIBLOCK COND="$(NXST,$knownmutant)"> 
 	    <?MIVAR><input type=button 
-            value="Show genes with mutant(s)" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=GENE&knownmutant=t$mrkr_param_list')">
+            value="Show genes with mutant(s)" onClick="document.location.replace('/cgi-bin/webdriver?MIval=aa-markerselect.apg&marker_type=GENE&knownmutant=t$mrkr_param_list')">
 	     <?/MIVAR>
 	  <?MIELSE>
 
 	    <?MIVAR><input type=button 
-            value="Show all matching genes" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=GENE$mrkr_param_list')">
+            value="Show all matching genes" onClick="document.location.replace('/cgi-bin/webdriver?MIval=aa-markerselect.apg&marker_type=GENE$mrkr_param_list')">
 	    <?/MIVAR>
           <?/MIBLOCK>   
         <?/MIBLOCK>
@@ -877,7 +877,7 @@ DEBUGGING:
 <?MIVAR>$(SETVAR,$displayTitle,t)<?/MIVAR>
 
 <?MICOMMENT>when this page is called from pubview2.apg with parameter pub_mapped, mutant data could be retrieved and displayed. <?/MICOMMENT>
-$(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_allele_id="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
+$(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/cgi-bin/webdriver?MIval=aa-fishselect.apg&fsel_allele_id="), $(SETVAR,$curviewer,"/cgi-bin/webdriver?MIval=aa-markerview.apg&OID="))
 
        
 <?MICOMMENT> == In case of MO search, list the gene symbol first,
@@ -891,7 +891,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 
  <?MICOMMENT>== when starts MOs on a new gene ==<?/MICOMMENT>
  <?MIBLOCK COND="$(OR,$(NXST,$target_gene_zdb_id),$(AND,$(XST,$target_gene_zdb_id),$(NC,$mrkrsel_mo_gene_zdb_id,$target_gene_zdb_id)))">
-     <?MIVAR NAME=$display_target_gene><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrsel_mo_gene_zdb_id> $mrkrsel_mo_gene_sym </A><?/MIVAR>
+     <?MIVAR NAME=$display_target_gene><A HREF=/webdriver?MIval=aa-markerview.apg&OID=$mrkrsel_mo_gene_zdb_id> $mrkrsel_mo_gene_sym </A><?/MIVAR>
 	   
      <?MIBLOCK COND="$(NC,$rowNUM,1)">
 	 <?MIBLOCK COND="$(EC,$row_color,$highlight)">   
@@ -924,7 +924,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 <?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
 <TD valign=top>
   <?MIVAR>	
-    $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
+    $(IF,$(XST,$return_rec),<A HREF=/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
 
     $(IF,$(OR,$(XST,$accession),$(XST,$pubId)),$mtype_display:)
   <?/MIVAR>
@@ -979,11 +979,11 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
               <TD nowrap>
 
               <?MIVAR COND="$(=,$mrkrsel_xpat_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_xpat_fig_zdb_id>1 figure </A>
+                  <A HREF=/webdriver?MIval=aa-fxfigureview.apg&OID=$mrkrsel_xpat_fig_zdb_id>1 figure </A>
               <?/MIVAR>
 
               <?MIVAR COND="$(>,$mrkrsel_xpat_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>$mrkrsel_xpat_fig_count figures </A>
+                  <A HREF=/webdriver?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>$mrkrsel_xpat_fig_count figures </A>
 	      <?/MIVAR>
           
           <?MICOMMENT>
@@ -1073,11 +1073,11 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
               <TD nowrap>
 
               <?MIVAR COND="$(=,$mrkrsel_pheno_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_pheno_fig_zdb_id>1 figure </A>
+                  <A HREF=/webdriver?MIval=aa-fxfigureview.apg&OID=$mrkrsel_pheno_fig_zdb_id>1 figure </A>
               <?/MIVAR>
 
               <?MIVAR COND="$(>,$mrkrsel_pheno_fig_count,1)">	
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figures </A>
+                  <A HREF=/webdriver?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figures </A>
               <?/MIVAR>
               
               <?MIBLOCK COND="$(>,$mrkrsel_pheno_fig_count,0)">

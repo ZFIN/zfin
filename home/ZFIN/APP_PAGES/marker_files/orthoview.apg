@@ -167,10 +167,10 @@
 	select recattrib_source_zdb_id 
 	  from record_attribution
 	 where recattrib_data_zdb_id = '$oevdispId' ; ">
-	(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$1">$count</A>)
+	(<A HREF="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$1">$count</A>)
      <?/MISQL>
      <?MIVAR COND="$(>,$count,1)"> 
-        (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$oevdispId&rtype=marker&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev">$count</A>)<?/MIVAR>
+        (<A HREF="/cgi-bin/webdriver?MIval=aa-showpubs.apg&OID=$oevdispId&rtype=marker&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev">$count</A>)<?/MIVAR>
      </TD>
    <?/MISQL>
    </TR>

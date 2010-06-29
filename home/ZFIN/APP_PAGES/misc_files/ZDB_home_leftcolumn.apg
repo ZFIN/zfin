@@ -1,13 +1,13 @@
 
 
   <ul>	
-     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg" 
+     <li><a href="/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg" 
                    title="Search by name, accession number, LG, vector or sequence type">
          <strong>Genes / Markers / Clones</strong></a></li>
      <ul>
             <li><a href="/zf_info/nomen.html" 
             title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li>   
-            <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_gene.apg" 
+            <li><a href="/cgi-bin/webdriver?MIval=aa-new_gene.apg" 
             title="Contact the Nomenclature Committee">Obtain approval for gene names</a>
      </ul>  
   </ul>  
@@ -24,7 +24,7 @@
 
    
     <ul>
-      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg" 
+      <li><a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg" 
                    title="Search by gene, developmental stage, anatomy and other attributes">
          <strong>Gene Expression</strong></a></li>
 
@@ -33,14 +33,14 @@
     </ul>
               
     <ul>
-     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg"
+     <li><a href="/cgi-bin/webdriver?MIval=aa-fishselect.apg"
                    title="Search by allele, mutant/morphant gene, affected anatomy and other attributes">
          <strong>Mutants / Morphants / Transgenics</strong></a></li>
      <ul>
-       <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-wtlist.apg" 
+       <li><a href="/cgi-bin/webdriver?MIval=aa-wtlist.apg" 
             title="Zebrafish wild-type lines">Wild-Type Lines</a></li>
        <li><a href="/zf_info/zfbook/lab_desig.html" title ="Line designation nomenclature and requests">Line Designations</a></li>
-       <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_line.apg" title="Guidelines for proposing and reserving line names">
+       <li><a href="/cgi-bin/webdriver?MIval=aa-new_line.apg" title="Guidelines for proposing and reserving line names">
            Submit mutant/transgenic line names</a>
      </ul>
   </ul>
@@ -54,7 +54,7 @@
   </ul>
    
    <ul>
-      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&select_from=PUBLICATION" 
+      <li><a href="/cgi-bin/webdriver?MIval=aa-pubselect2.apg&select_from=PUBLICATION" 
                     title="Search for zebrafish research publications by author, title or citation">
                    <strong>Publications</strong></a></li>
       <ul>
@@ -71,21 +71,21 @@
            <li><a href="/zf_info/news/jobs.html" title="Zebrafish-related job announcements">Jobs</a>,
             <a href="/zf_info/news/mtgs.html" title="Zebrafish-related meeting announcements">Meetings</a>, 
             <a href="/zf_info/news/newsgroup.html" title="Moderated, online discussion group for anyone intested in zebrafish research">Newsgroup</a>       
-            <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75" 
+            <li><a href="/cgi-bin/webdriver?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75" 
                  title="Search for zebrafish researchers by name or address">
                  People,</a>
 
-                 <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg&select_from=LAB" 
+                 <a href="/cgi-bin/webdriver?MIval=aa-labselect.apg&select_from=LAB" 
                  title="Search for laboratories by name, address or research interests">
                  Labs,</a>
 
-                  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230" 
+                  <a href="/cgi-bin/webdriver?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230" 
                  title="Search for companies supplying zebrafish reagents">
                  Companies</a> </li>
 
             <?MIBLOCK COND="$(NC,$AUTHORIZED,GUEST)">
               <?MIVAR>
-              <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$ZDB_ident"><em>Update Your ZFIN Record</em></a> 
+              <li><a href="/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$ZDB_ident"><em>Update Your ZFIN Record</em></a> 
               <?/MIVAR>
               <?MICOMMENT> ** According to the database, it appears that it's possible 
                      for a person to belong to more than one lab.  For the sake
@@ -103,9 +103,9 @@
               <?MIVAR NAME="zdbhome_lab_zdb_id">$1<?/MIVAR>
               <?MIVAR NAME="zdbhome_is_lab_owner">$2<?/MIVAR>
               <?MIBLOCK COND="$(EC,$zdbhome_is_lab_owner,t)">         
-               <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>Update Lab Record</em></a> 
+               <li><a href="/cgi-bin/webdriver?MIval=aa-labview.apg&OID=<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>Update Lab Record</em></a> 
               <?MIELSE>  
-                <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>View Lab Record</em></a> 
+                <li><a href="/cgi-bin/webdriver?MIval=aa-labview.apg&OID=<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>View Lab Record</em></a> 
               <?/MIBLOCK>
 
             <?/MISQL>

@@ -242,7 +242,7 @@ background: #AAE;
     
     function replaceLocationAnchor(name) {
       <?MIVAR>
-    	replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum="+Math.random()+"#"+name);
+    	replaceLocation("/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&randomNum="+Math.random()+"#"+name);
       <?/MIVAR>       
 
     }    
@@ -259,7 +259,7 @@ background: #AAE;
     function urlSetCookie(name,value,prefix) {
       setCookie(name,value,prefix);
       <?MIVAR>
-    	replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&cookie="+name+value+"&randomNum="+Math.random()+"#"+name);
+    	replaceLocation("/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&cookie="+name+value+"&randomNum="+Math.random()+"#"+name);
       <?/MIVAR>
     }
 
@@ -273,7 +273,7 @@ background: #AAE;
     
     function doDeleteZDB(item,anchor) {
              <?MIVAR>
-              replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&delete_item="+item+"#"+anchor);
+              replaceLocation("/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&delete_item="+item+"#"+anchor);
              <?/MIVAR>
     }
     
@@ -307,7 +307,7 @@ background: #AAE;
      <?MIVAR>
     var ftrind = document.new_relation.featcur_reln_add_ftr.selectedIndex;
     var feature_name = document.new_relation.featcur_reln_add_ftr[ftrind].value;
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&&featcur_reln_add_ftr='+featzdbid+'&featrel_feature_zdb_id='+featzdbid+"#"+anchor);
+    window.location.replace('/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&&featcur_reln_add_ftr='+featzdbid+'&featrel_feature_zdb_id='+featzdbid+"#"+anchor);
      <?/MIVAR> 
 }
 function setMarkerTarget(featreli,anchor){
@@ -316,13 +316,13 @@ function setMarkerTarget(featreli,anchor){
     var feature_name = document.new_relation.featcur_reln_add_ftr[ftrind].value;
     var ftrrelind = document.new_relation.featcur_reln_add_relation.selectedIndex;
     var feature_relation = document.new_relation.featcur_reln_add_relation[ftrrelind].value;
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&featrel_feature_relation='+featreli+'&featcur_reln_add_ftr='+feature_name+'&featcur_reln_add_relation='+feature_relation+"#"+anchor);     
+    window.location.replace('/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&featrel_feature_relation='+featreli+'&featcur_reln_add_ftr='+feature_name+'&featcur_reln_add_relation='+feature_relation+"#"+anchor);     
     <?/MIVAR> 
 }
 
 <?MIVAR>
      function DeleteFeature(featzdbid,anchor){
-     window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&rtype=feature&OID='+featzdbid+"#"+anchor);
+     window.open('/cgi-bin/webdriver?MIval=aa-delete_record.apg&rtype=feature&OID='+featzdbid+"#"+anchor);
 }
 <?/MIVAR>
 
@@ -812,8 +812,8 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
     <ul id="datamngr">
         <li id="pub_id">ZFIN ID: <?MIVAR>$OID<?/MIVAR></li>
         <?MIVAR>
-        <li id="mod_date"><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-vframeset.apg&OID=$OID&rtype=fish">Updated: $mod_date</a></li>
-        <li id="track_curation"><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Track Curation</a></li>
+        <li id="mod_date"><a href="/cgi-bin/webdriver?MIval=aa-update-vframeset.apg&OID=$OID&rtype=fish">Updated: $mod_date</a></li>
+        <li id="track_curation"><a href="/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID">Track Curation</a></li>
         <?/MIVAR>
     </ul>
 </div>
@@ -840,7 +840,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <div id="subDataManager">
   <ul id="subdatamngr">
   <?MIVAR>
-    <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">$pubcur_authors ($pubcur_year)
+    <li><a href="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$OID">$pubcur_authors ($pubcur_year)
           $pubcur_title $pubcur_jrnl_abbrev</a></li>
           
   <?/MIVAR>
@@ -856,13 +856,13 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <p>
 
  <?MIVAR>
-  <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE&newmrkrSource=\'$OID\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Gene</a> 
+  <a class="small-new-link" href="javascript:;" onClick=open("/cgi-bin/webdriver?MIval=aa-new_marker.apg&marker_type=GENE&newmrkrSource=\'$OID\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Gene</a> 
   &nbsp;
-  <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=MRPHLNO&newmrkrSource='$OID'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Morpholino</a> 
+  <a class="small-new-link" href="javascript:;" onClick=open("/cgi-bin/webdriver?MIval=aa-new_marker.apg&marker_type=MRPHLNO&newmrkrSource='$OID'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Morpholino</a> 
    &nbsp;
   <a class="small-new-link" href="javascript:;" onClick=open("/action/antibody/create?antibodyPublicationZdbID=$OID","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Antibody</a> 
   &nbsp;
-  <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg&calling_form=linkage&pub_source=$OID&source_specified=true","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add Linkages</a> 
+  <a class="small-new-link" href="javascript:;" onClick=open("/cgi-bin/webdriver?MIval=aa-add_linkage.apg&calling_form=linkage&pub_source=$OID&source_specified=true","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add Linkages</a> 
  <?/MIVAR>
 
   <br/>

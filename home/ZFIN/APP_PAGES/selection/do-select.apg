@@ -446,7 +446,7 @@ $1
 
 <?MIVAR>
   <SCRIPT>
-    location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_form&temp_oid=$return_recid#$jump_to')
+    location.replace('/cgi-bin/webdriver?MIval=$return_form&temp_oid=$return_recid#$jump_to')
   </SCRIPT>
 <?/MIVAR>
 

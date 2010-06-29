@@ -17,7 +17,7 @@ This page allows you to create a brand new PERSON record in the database.<p>
 <p>
 The following information is <B>REQUIRED</B> to create the new PERSON record. Please enter the requested information in the boxes below, and then  click on the "SUBMIT" button.
 
-<FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+<FORM METHOD=POST ACTION="/cgi-bin/webdriver" >
 <p>
 <b>Full Name:</b><br>
 This field should hold the full name of the person, with the last name first. For instance, John Pat Dole would be "Dole, John Pat". 

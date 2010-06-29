@@ -14,7 +14,7 @@
  A good solution might be to refactor this into a singleton starting with
  something like:
 
- var imageBox = new function() { ...  
+ var imageBox = new function() { ...
 
 
  **/
@@ -27,8 +27,8 @@ function ImageBox() {
 
     this.IMG_URL = "/imageLoadUp/";
     this.POPUP_URL = "/action/publication/image-popup?image.zdbID=";
-    this.FIG_URL = "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=";
-    this.IMG_PAGE_URL = "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&image_table=image&OID=";
+    this.FIG_URL = "/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=";
+    this.IMG_PAGE_URL = "/cgi-bin/webdriver?MIval=aa-imageview.apg&image_table=image&OID=";
 
     this.max_images = 100; //a default that should get set by the page
 
@@ -39,7 +39,7 @@ function ImageBox() {
     this.hiddenInput = "";
 
     this.firstVisibleImage = this.FIRST;
-	
+
 	//"private" methods
 
     this.generateImageAnchor = function(image) {
@@ -93,10 +93,10 @@ function ImageBox() {
 
             countField = document.createElement('input');
             countField.size = 3 ;
-        
+
 
             countField.value = (this.firstVisibleImage + (this.MAX_VISIBLE))/this.MAX_VISIBLE;
-        
+
             if (this.getHiddenCountInput() != null) {
                 this.getHiddenCountInput().value = countField.value;
             }
@@ -108,7 +108,7 @@ function ImageBox() {
                 if (countField.value > imageBox.getLastPageIndex()) {
                     countField.value = imageBox.getLastPageIndex();
                 }
-            
+
                 document.getElementById('xpatsel_thumbnail_page_hidden_field').value = countField.value;
                 imageBox.jumpToPage(countField.value);
             };
@@ -186,7 +186,7 @@ function ImageBox() {
             j++;
         }
 
-        
+
     };
 
     this.getLastVisibleImageIndex = function() {
@@ -206,7 +206,7 @@ function ImageBox() {
     this.getHiddenCountInput = function() {
 	return document.getElementById(this.hiddenInput);
     };
-  
+
     this.setHiddenCountFieldById = function(hiddenInputId) {
 	this.hiddenInput = hiddenInputId;
     };
@@ -250,7 +250,7 @@ function ImageBox() {
         var newIndex = this.firstVisibleImage + this.MAX_VISIBLE;
         if (newIndex <= this.getLastImageIndex()) {
             this.jumpToImage(this.firstVisibleImage + this.MAX_VISIBLE);
-            countField.value = this.firstVisibleImage  / this.MAX_VISIBLE + 1 ; 
+            countField.value = this.firstVisibleImage  / this.MAX_VISIBLE + 1 ;
         }
     };
 
@@ -258,7 +258,7 @@ function ImageBox() {
     this.displayPrev = function () {
         if (this.firstVisibleImage > this.MAX_VISIBLE-1) {
             this.jumpToImage(this.firstVisibleImage - this.MAX_VISIBLE);
-            countField.value = this.firstVisibleImage  / this.MAX_VISIBLE + 1 ; 
+            countField.value = this.firstVisibleImage  / this.MAX_VISIBLE + 1 ;
         }
     };
 

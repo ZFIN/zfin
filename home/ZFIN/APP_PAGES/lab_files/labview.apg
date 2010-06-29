@@ -31,19 +31,19 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR>
 <SCRIPT>
 function doit(attr,attr_type,print_name) {
-window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name)
+window.location.replace('/cgi-bin/webdriver?MIval=aa-labupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name)
 }
 
 function doStatus(pers_id,new_status,old_status) {
-window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdate.apg&OID=$OID&attr=status&attr_type=special-status&pers_id='+pers_id+'&old_value='+old_status+'&new_value='+new_status)
+window.location.replace('/cgi-bin/webdriver?MIval=aa-do-labupdate.apg&OID=$OID&attr=status&attr_type=special-status&pers_id='+pers_id+'&old_value='+old_status+'&new_value='+new_status)
 }
 
 function doContact(new_contact_id,old_contact_id) {
-window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdate.apg&OID=$OID&attr=contact_person&attr_type=text&old_value='+old_contact_id+'&new_value='+new_contact_id)
+window.location.replace('/cgi-bin/webdriver?MIval=aa-do-labupdate.apg&OID=$OID&attr=contact_person&attr_type=text&old_value='+old_contact_id+'&new_value='+new_contact_id)
 }
 
 function doDelete(pers_id) {
-window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdate.apg&OID=$OID&attr=membership&attr_type=special-delete&old_value=Lab_member&new_value=NON_member&pers_id='+pers_id)
+window.location.replace('/cgi-bin/webdriver?MIval=aa-do-labupdate.apg&OID=$OID&attr=membership&attr_type=special-delete&old_value=Lab_member&new_value=NON_member&pers_id='+pers_id)
 }
 </SCRIPT>
 <?/MIVAR>
@@ -109,7 +109,7 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdat
 <form>
 <?MIVAR COND="$(XST,$UPDATE)">
 <center>
-       <a style="font-size: large;" href="javascript:" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$OID')">[View Lab]</a>
+       <a style="font-size: large;" href="javascript:" onClick="document.location.replace('/cgi-bin/webdriver?MIval=aa-labview.apg&OID=$OID')">[View Lab]</a>
 <?/MIVAR>
 
 
@@ -138,7 +138,7 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdat
 <TABLE border=6 cellpadding=0 cellspacing=0>
 <TR>
 <?MIVAR COND="$(NC,$snapshot,NULL)">
-<TD><IMG align=center SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$snapshot&type=image/gif"></TD>
+<TD><IMG align=center SRC="/cgi-bin/webdriver?LO=$snapshot&type=image/gif"></TD>
 <?/MIVAR>
 <?MIVAR COND="$(EC,$snapshot,NULL)">
 <TD><IMG align=center SRC="/images/LOCAL/smallogo.gif"></TD>
@@ -175,7 +175,7 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdat
 <?/MIBLOCK>
 
 <?MISQL COND="$(AND,$(NC,$contact_person,NULL),$(OR,$(NXST,$UPDATE),$(NC,$AUTHORIZED,root)))" SQL="select full_name from person where zdb_id='$contact_person';">
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$contact_person" >
+  <A HREF="/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$contact_person" >
 $1</A>
 <?/MISQL>
 
@@ -249,7 +249,7 @@ $1</A>
     $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=doDelete('"$persid"')></font>") 
 
      $(IF,$(>,$pos_order,1),<font size=-1>)
-     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$persid" > 
+     <A HREF="/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$persid" > 
        $(IF,$(<,$pos_order,3),"<b>"$1"</b>",$1) 
     </A>
 
@@ -287,7 +287,7 @@ $1</A>
     <?/MIBLOCK>
     $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=doDelete('"$persid"')></font>") 
     $(IF,$(>,$pos_order,1),<font size=-1>)
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$persid"  >
+    <A HREF="/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$persid"  >
       $(IF,$(<,$pos_order,4),"<b>"$1"</b>",$1) 
     </A>
 
@@ -371,7 +371,7 @@ $1</A>
   <TR>
      <TD align=left>
        <DIV class="show_pubs">
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$lv_pub_zdb_id">$lv_pub_authors ($lv_pub_year) $(CONCAT,$lv_pub_title,.) $(CONCAT,$lv_jrnl_abbrev,.) $lv_pub_volume$lv_pub_pages</A>
+        <A HREF="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$lv_pub_zdb_id">$lv_pub_authors ($lv_pub_year) $(CONCAT,$lv_pub_title,.) $(CONCAT,$lv_jrnl_abbrev,.) $lv_pub_volume$lv_pub_pages</A>
        </DIV>
      </TD>
  </TR>

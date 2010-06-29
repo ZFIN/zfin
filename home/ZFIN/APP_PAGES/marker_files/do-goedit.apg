@@ -220,7 +220,7 @@ optional:
 
 
   <SCRIPT><?MIVAR>
-     window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$mrkrzdbid");
+     window.location.replace("/cgi-bin/webdriver?MIval=aa-markergoentry.apg&OID=$mrkrzdbid");
 
      if(closeafterload=='true'){
         window.close() ; 
@@ -231,6 +231,6 @@ optional:
 <?/MIBLOCK> 
 
 <SCRIPT><?MIVAR>
-     window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-gomodify.apg&OID=$OID");
+     window.location.replace("/cgi-bin/webdriver?MIval=aa-gomodify.apg&OID=$OID");
         <?/MIVAR>
 </SCRIPT>

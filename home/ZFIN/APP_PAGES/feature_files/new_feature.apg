@@ -177,7 +177,7 @@ function setAssayDisplay(featureValue) {
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
     <?MIVAR>
-      <form name=feature_new action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featcreation"  method=post >
+      <form name=feature_new action="/cgi-bin/webdriver#featcreation"  method=post >
         <input type=hidden name=MIval value="aa-curation.apg">
         <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">
         <INPUT TYPE=HIDDEN NAME=featcur_feature_add VALUE="Add">

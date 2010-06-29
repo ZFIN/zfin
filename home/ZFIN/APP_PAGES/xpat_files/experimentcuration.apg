@@ -56,11 +56,11 @@ PREFIX:   expcur_
 <a name=environment>
 <p><b><font size=3>Environment:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_environment),$(EC,$xpcur_c_environment,hide))>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_environment','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$unhide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_environment','show','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID');">$unhide</a><?/MIVAR>
   <br>  
   
 <?MIELSE>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_environment','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_environment','hide','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
   <br>
    
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurexperiment.apg';">$1<?/MISQL>
@@ -87,11 +87,11 @@ PREFIX:   expcur_
     
 <p><b><font size=3>Define Environments:</font> </b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_condition),$(EC,$xpcur_c_condition,hide))>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_condition','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&filler=#condition');">$unhide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_condition','show','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID&filler=#condition');">$unhide</a><?/MIVAR>
   <br>
   
 <?MIELSE>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_condition','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_condition','hide','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID');">$hide</a><?/MIVAR>
   <br>
   
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurcondition.apg';">$1<?/MISQL>

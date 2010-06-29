@@ -121,7 +121,7 @@ OPTIONAL VARS:
         <?MIBLOCK COND="$(XST,$OPEN_TOPICS)">
           if (confirm('Warning: Open topics exist and will be closed.')) {
             <?MIVAR>
-            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
+            replaceLocation("/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
             <?/MIVAR>
           }
         <?MIELSE>
@@ -157,7 +157,7 @@ OPTIONAL VARS:
             <?MIVAR>
             var answer = confirm('Close if these features have no genotypes?\n  $featureswogenotypes') ; 
             if(answer){
-                replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
+                replaceLocation("/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
             }
             else{
                 alert("Not closing") ; 
@@ -165,7 +165,7 @@ OPTIONAL VARS:
             <?/MIVAR>
           <?MIELSE>
             <?MIVAR>
-                replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
+                replaceLocation("/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
             <?/MIVAR>
           <?/MIBLOCK>
         <?/MIBLOCK>
@@ -174,36 +174,36 @@ OPTIONAL VARS:
       function openPaper(){
         var pnote = 'Reopen Paper';
         <?MIVAR>
-        replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=open&pnote="+pnote);
+        replaceLocation("/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID&paper_status=open&pnote="+pnote);
         <?/MIVAR>
       }
       
       function reassignTopic(topic,list){
         var curatorID = escape(list.value);
         <?MIVAR>
-        replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&reassignTopic="+topic+"&reassignCurator="+curatorID);
+        replaceLocation("/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID&reassignTopic="+topic+"&reassignCurator="+curatorID);
         <?/MIVAR>
       }
       
       function curate(topic,action){
         <?MIVAR>
-        replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&"+action+"="+topic+"#topics");
+        replaceLocation("/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID&"+action+"="+topic+"#topics");
         <?/MIVAR>
       }
       
       function editNote(pnote_zdb_id) {
-        helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pnote_editor.apg&OID="+pnote_zdb_id,"helpwindow","scrollbars=yes,width=800,height=500");
-        <?MIVAR>replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID#notes");<?/MIVAR>
+        helpwin=open("/cgi-bin/webdriver?MIval=aa-pnote_editor.apg&OID="+pnote_zdb_id,"helpwindow","scrollbars=yes,width=800,height=500");
+        <?MIVAR>replaceLocation("/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID#notes");<?/MIVAR>
       }
       
       function deleteNote(pnote_zdb_id) {
-        <?MIVAR>replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&delete_pnote="+pnote_zdb_id+"#notes");<?/MIVAR>
+        <?MIVAR>replaceLocation("/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID&delete_pnote="+pnote_zdb_id+"#notes");<?/MIVAR>
       }
       
       function noData() {
         var pnote = 'Upon Review, this publication contains no information currently curated by ZFIN.';
         <?MIVAR>
-            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
+            replaceLocation("/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
         <?/MIVAR>
       }
       function isEmpty(string) {
@@ -262,7 +262,7 @@ OPTIONAL VARS:
 	}
   
         <?MIVAR>
-	window.open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-notif_frame.apg&status=edit&OID=$OID"+contact_list_param+additional_eaddr_param+"&sender_id=$ZDB_ident","editwindow","resizable=yes,toolbar=yes,scrollbars=yes,width=700,height=900");
+	window.open("/cgi-bin/webdriver?MIval=aa-notif_frame.apg&status=edit&OID=$OID"+contact_list_param+additional_eaddr_param+"&sender_id=$ZDB_ident","editwindow","resizable=yes,toolbar=yes,scrollbars=yes,width=700,height=900");
 	<?/MIVAR>
  	return true;		       
      }  	
@@ -298,13 +298,13 @@ OPTIONAL VARS:
   <?MIVAR NAME=$pub_completion_date>$1<?/MIVAR>
   
     
-  <FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/upload.cgi" METHOD=post NAME=upload  
+  <FORM ACTION="/cgi-bin/upload.cgi" METHOD=post NAME=upload  
         ENCTYPE="multipart/form-data">
     <?MIVAR>
-      <INPUT TYPE=HIDDEN NAME=redirect_url VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">
+      <INPUT TYPE=HIDDEN NAME=redirect_url VALUE="/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID">
       <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
       <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
-      <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">
+      <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID">
     <?/MIVAR>
  
   
@@ -327,7 +327,7 @@ OPTIONAL VARS:
       </td>
       <td align=right>
         <?MIVAR>
-          $(IF,$(EC,$ZDB_access,root),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate</A>")
+          $(IF,$(EC,$ZDB_access,root),"<A HREF="/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID">Curate</A>")
         <?/MIVAR>
       </td>
     </tr>
@@ -335,7 +335,7 @@ OPTIONAL VARS:
       <td colspan=3>
         <?MIVAR>
           <b>Title:</b>
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">$title</a>
+          <a href="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$OID">$title</a>
         <?/MIVAR>
       </td>
     </tr>
@@ -410,7 +410,7 @@ OPTIONAL VARS:
 <?/MICOMMENT>
 
 <P>
-  <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=status>
+  <form action="/cgi-bin/webdriver" method=post name=status>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 <!--  
@@ -577,11 +577,11 @@ OPTIONAL VARS:
 
 
 <P>
-  <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=new_notes>
+  <form action="/cgi-bin/webdriver" method=post name=new_notes>
     <?MIVAR>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
-    <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">
+    <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID">
     <?/MIVAR>
     
   <font color="black"><b> Notes </b></font><a name=notes></a>  
@@ -636,7 +636,7 @@ OPTIONAL VARS:
   $(TRIM,$(SEPARATE,$contact,",")) 
 <?/MIVAR>
 
-<FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post NAME=contact_author 
+<FORM ACTION="/cgi-bin/webdriver" METHOD=post NAME=contact_author 
       ONSUBMIT="return validateCheckbox()">
 
     <?MIVAR>

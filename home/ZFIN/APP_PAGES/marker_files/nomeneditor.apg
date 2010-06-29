@@ -111,7 +111,7 @@ delattrib,delpub -- to delete an attribution, delpub holds the accession of the 
     <?MIVAR NAME=mhReason>$1<?/MIVAR>
     <?MIVAR NAME=mhComments>$2<?/MIVAR>
 
-    <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+    <form method=post action="/cgi-bin/webdriver">
       <?MIVAR>
 	<input type=hidden name=MIval value=aa-nomeneditor.apg>
 	<input type=hidden name=OID value=$OID>

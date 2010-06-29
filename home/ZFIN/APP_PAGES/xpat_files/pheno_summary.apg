@@ -231,7 +231,7 @@ DEBUGGING:
       <?MIBLOCK COND="$(AND,$(XST,$moTargetGeneID),$(NE,$moTargetGeneID,))">
         and 
         <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id = '$moTargetGeneID';">
-          <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$moTargetGeneID">$1</a><?/MIVAR>
+          <?MIVAR><a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$moTargetGeneID">$1</a><?/MIVAR>
         <?/MISQL>
         targeting morpholinos
       <?MIELSE COND="$(NXST,$anatID)">
@@ -288,7 +288,7 @@ DEBUGGING:
      <?MIVAR>
 	  <table width = 15% align=right><tr>	
            <form method=post 
-                 action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+                 action="/cgi-bin/webdriver" 
                  target=comments>
            <input type=hidden name=subject value="$page_name">
            <input type=hidden name=marker_id value="$OID">
@@ -407,7 +407,7 @@ DEBUGGING:
     <?MICOMMENT> *** Publication <?/MICOMMENT>
     <td valign=top>
       <?MIVAR COND="$(NC,$phenosum_pub_zdb,$phenosum_prev_pub)">
-        <a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$phenosum_pub_zdb>$phenosum_pub_mini_ref
+        <a href=/webdriver?MIval=aa-pubview2.apg&OID=$phenosum_pub_zdb>$phenosum_pub_mini_ref
         </a>
       <?/MIVAR>
     </td>
@@ -416,7 +416,7 @@ DEBUGGING:
     <td nowrap valign=bottom>
       <?MIBLOCK COND=$(NC,$phenosum_fig_zdb,$phenosum_prev_fig)> 
         <?MIVAR>
-          <a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$phenosum_fig_zdb>$phenosum_fig_label</a>
+          <a href=/webdriver?MIval=aa-fxfigureview.apg&OID=$phenosum_fig_zdb>$phenosum_fig_label</a>
         <?/MIVAR>
            
         <?MISQL SQL="select img_thumbnail from image
@@ -426,7 +426,7 @@ DEBUGGING:
  
         <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
           <?MIVAR>
-            <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$phenosum_fig_zdb">
+            <a href="/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=$phenosum_fig_zdb">
               <img border=1 src="<!--|IMAGE_LOAD|-->/$phenosum_fthmnlName" height="50" title="$MI_ROWCOUNT image$(IF,$(>,$MI_ROWCOUNT,1),s)">$(IF,$(>,$MI_ROWCOUNT,1),<img border=0 src=http://<!--|DOMAIN_NAME|-->/images/multibars.gif>)
             </a>
           <?/MIVAR>
@@ -481,7 +481,7 @@ DEBUGGING:
       <?MIVAR NAME=phenosum_mo_counter>0<?/MIVAR>
       <?MIVAR NAME=phenosum_mo_short_list_cap>3<?/MIVAR>
       <?MISQL SQL="$phenosum_sql_MO">
-        <?MIVAR NAME=phenosum_mo_html><span><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$3>$1</a></span><?/MIVAR>
+        <?MIVAR NAME=phenosum_mo_html><span><a href=/webdriver?MIval=aa-markerview.apg&OID=$3>$1</a></span><?/MIVAR>
         $(SETVAR,$phenosum_mo_counter,$(+,$phenosum_mo_counter,1))
         
         <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">

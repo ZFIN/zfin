@@ -214,7 +214,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
       <?MIVAR COND="$(XST,$UPDATE)">
 	<form name=doUpdate 
 	      method=post 
-	      action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+	      action="/cgi-bin/webdriver">
 	  <input type=hidden name=MIval value="">
 	  <input type=hidden name=OID value="$OID">
 	  <input type=hidden name=attr value="">
@@ -225,7 +225,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	  <input type=hidden name=new_value value="">
 	  <input type=hidden name=print_name value="">
 	  <input type=hidden name=annotations value="NULL">
-	  <input type=hidden name=redirect_url value=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval="aa-imageview.apg">
+	  <input type=hidden name=redirect_url value=/webdriver?MIval="aa-imageview.apg">
 
 
 	</form>
@@ -352,11 +352,11 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 
             <?MIBLOCK COND="$(XST,$fimgview_probe_zdb_id)">
               <?MIVAR NAME=imgv_all_figure_link> 
-                <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$fimgview_fig_source_zdb_id&fxallfig_probe_zdb_id=$fimgview_probe_zdb_id">Figures for <?MIVAR>$fimgview_pub_mini_ref<?/MIVAR> <?MIVAR>[$fimgview_probe_name]<?/MIVAR></a>
+                <a href="/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$fimgview_fig_source_zdb_id&fxallfig_probe_zdb_id=$fimgview_probe_zdb_id">Figures for <?MIVAR>$fimgview_pub_mini_ref<?/MIVAR> <?MIVAR>[$fimgview_probe_name]<?/MIVAR></a>
               <?/MIVAR>
             <?MIELSE>      
               <?MIVAR NAME=imgv_all_figure_link> 
-                <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$fimgview_fig_source_zdb_id">All Figures for <?MIVAR>$fimgview_pub_mini_ref<?/MIVAR></a>
+                <a href="/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$fimgview_fig_source_zdb_id">All Figures for <?MIVAR>$fimgview_pub_mini_ref<?/MIVAR></a>
               <?/MIVAR>
             <?/MIBLOCK> 
           <?/MIBLOCK>
@@ -377,14 +377,14 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 
             <?MIBLOCK COND="$(XST,$fimgview_expression_exists)">
               <?MIVAR NAME=imgv_figure_display>$imgv_figure_display
-              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$fimgview_fig_zdb_id#xpat">Gene expression data</a>
+              <a href="/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=$fimgview_fig_zdb_id#xpat">Gene expression data</a>
               <br>          
               <?/MIVAR>
             <?/MIBLOCK>
             
             <?MIBLOCK COND="$(XST,$fimgview_phenotype_exists)">
               <?MIVAR NAME=imgv_figure_display>$imgv_figure_display
-              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$fimgview_fig_zdb_id#phenotype">Phenotype data</a>
+              <a href="/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=$fimgview_fig_zdb_id#phenotype">Phenotype data</a>
               <br>          
               <?/MIVAR>
             <?/MIBLOCK>

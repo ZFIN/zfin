@@ -129,20 +129,21 @@ WAR_UNZIP = /bin/unzip -o -d
 # confuses gmake into thinking it needs to remake the file the next
 # time around.
 
-TOUCH = /bin/touch
+TOUCH = @/bin/touch
 
 # Any created dirs should be created with 775 perms.
 
-TARGET_MKDIR = /bin/mkdir -pm 2775
+TARGET_MKDIR = @/bin/mkdir -pm 2775
 
-CHGRP_FISHADMIN = /usr/bin/chgrp -R fishadmin
+CHGRP_FISHADMIN = @/usr/bin/chgrp -R fishadmin
 
-CHMOD_775 = /usr/bin/chmod -R ug+rwX,o+rX
+CHMOD_775 = @/usr/bin/chmod -R ug+rwX,o+rX
 
 LOADAPPPAGE = /private/ZfinLinks/Commons/bin/loadapppage.pl
 UNLOADAPPPAGE = /private/ZfinLinks/Commons/bin/unloadapppage.pl
 
-MAKESPECIFIC = /private/ZfinLinks/Commons/bin/makespecific.pl
+#MAKESPECIFIC = /private/ZfinLinks/Commons/bin/makespecific.pl
+MAKESPECIFIC =  /research/zsharks/tomc/Projects/Commons/bin/make-specific.r
 
 SPECIFICCHECK = $(foreach GNRC,$(GENERICS),echo 'Informix weblint $(GNRC)'; $(WEBLINTIFMX) $(GNRC);)
 

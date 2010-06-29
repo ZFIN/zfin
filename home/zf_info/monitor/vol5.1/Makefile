@@ -20,9 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/monitor/vol5.1
 
-GENERICS = vol5.1.html
-
-STATICS = COLEPS.GIF vol5.1.pdf
+STATICS = COLEPS.GIF vol5.1.pdf vol5.1.html
 
 
 # ---------------  Production Rules  ------------------------------------

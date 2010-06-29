@@ -82,7 +82,7 @@ function updateInnerHTMLAnat(element_id,html_to_display) {
 <?MIVAR>
    <div class="yourinputwelcome">
       <form method=post
-            action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+            action="/cgi-bin/webdriver"
             target="comments">
          <input type=hidden name=subject value=" ">
          <input type=hidden name=marker_id value="$OID">
@@ -132,7 +132,7 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
              and xpatex_zdb_id=ids_data_zdb_id 
              and ids_source_zdb_id = zdb_id
              ORDER by 1;">
-             <?MIVAR NAME=AUTH_LINK><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</a><?/MIVAR>
+             <?MIVAR NAME=AUTH_LINK><a href="/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$2">$1</a><?/MIVAR>
              <?MIVAR>
                $(IF,$(=,$MI_CURRENTROW,1),$AUTH_LINK,", "$AUTH_LINK)
              <?/MIVAR>
@@ -164,7 +164,7 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
  <?MIVAR COND="$(=,$fxallfig_probe_rating,4)" NAME=$fxallfig_probe_key>Simple to use intense expression pattern restricted to a few structures<?/MIVAR>
  <?MIVAR NAME=$fxallfig_probe_best><img src=http://<!--|DOMAIN_NAME|-->/images/50stars.gif>= intense staining in a restricted group of structures<?/MIVAR>        
 <?/MIBLOCK>
-   &nbsp;<b>Probe : </b><?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$fxallfig_probe_zdb_id">$fxallfig_probe_name<?/MIVAR></a> 
+   &nbsp;<b>Probe : </b><?MIVAR><a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$fxallfig_probe_zdb_id">$fxallfig_probe_name<?/MIVAR></a> 
  <?MISQL SQL="select WebExplode(object,'clorlk_mrkr_zdb_id=$fxallfig_probe_zdb_id') from webPages where ID='aa-cloneorderlink.apg';">$1<?/MISQL>
 &nbsp;&nbsp;
 
@@ -226,7 +226,7 @@ and clone_problem_type is not null
        <?/MIBLOCK>
           <?MIVAR>
               <tr><td>
-              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=<?MIVAR>$fxallfig_image_zdb_id<?/MIVAR>&image_table=image">
+              <a href="/cgi-bin/webdriver?MIval=aa-imageview.apg&OID=<?MIVAR>$fxallfig_image_zdb_id<?/MIVAR>&image_table=image">
 
                   <Img src="<!--|IMAGE_LOAD|-->/medium/$fxallfig_image" align="left"   border="2"></a>
 
@@ -234,7 +234,7 @@ and clone_problem_type is not null
               <p class="fig"><?MIVAR COND="$(EQ,$fxallfig_is_text,no)"><b>$fxallfig_label </b> <?/MIVAR> <?MIVAR>$fxallfig_caption <?/MIVAR>
 <?MICOMMENT>
              <?MIBLOCK COND="$(EQ,yes,$fxallfig_has_results)">
-                  &nbsp;&nbsp;&nbsp;&nbsp&nbsp;<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>"><i>All expression for this figure</b></a><td>
+                  &nbsp;&nbsp;&nbsp;&nbsp&nbsp;<a href="/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>"><i>All expression for this figure</b></a><td>
                  </tr>
              <?/MIBLOCK>
 <?/MICOMMENT>
@@ -250,7 +250,7 @@ and clone_problem_type is not null
             <p class="fig"><?MIVAR COND="$(EQ,$fxallfig_is_text,no)"><b>$fxallfig_label</b><?/MIVAR> $fxallfig_caption</p>
 <?MICOMMENT>
              <?MIBLOCK COND="$(EQ,yes,$fxallfig_has_results)">
-                  &nbsp;&nbsp;&nbsp;&nbsp&nbsp;<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>"><b>All expression for this figure</b></a><td>
+                  &nbsp;&nbsp;&nbsp;&nbsp&nbsp;<a href="/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>"><b>All expression for this figure</b></a><td>
                   </tr>
                   </tr>
             <?/MIBLOCK>
@@ -278,7 +278,7 @@ and clone_problem_type is not null
     <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigfi_is_displayed=t') from webPages where ID='aa-fxfigfishlist.apg';">$1<?/MISQL>
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfiganat_fig_zdb_id=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfiganatlist.apg';">$1<?/MISQL>
     <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigst_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigst_is_displayed=t') from webPages where ID='aa-fxfigstgrng.apg';">$1<?/MISQL>
-                  <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Expression / Labeling details</a></td>
+                  <tr><td><a href="/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Expression / Labeling details</a></td>
 </table>
     <?/MIBLOCK>
     <?MIBLOCK COND="$(EC,$fxallfig_has_patoresults,yes)">
@@ -296,7 +296,7 @@ and clone_problem_type is not null
 <?/MISQL>
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfigphenoanat_fig_zdb_id=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfigphenoanatlist.apg';">$1<?/MISQL>
     <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigst_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigst_is_displayed=t') from webPages where ID='aa-fxfigphenostgrng.apg';">$1<?/MISQL>
-                  <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Phenotype details</a></td>
+                  <tr><td><a href="/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Phenotype details</a></td>
 </table>
     <?/MIBLOCK>
     </table> 
@@ -326,7 +326,7 @@ and clone_problem_type is not null
 <br>
 You have reached this page because of an incorrect link to directly-submitted ZFIN figure data. <br>
 <br>
-Please use the the <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Mutants/Transgenics</a> search page or <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Gene Expression</a> search page.
+Please use the the <A href="/cgi-bin/webdriver?MIval=aa-fishselect.apg&line_type=mutant">Mutants/Transgenics</a> search page or <A href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg">Gene Expression</a> search page.
 <br>
 <?/MIBLOCK>
 <?/MIBLOCK>

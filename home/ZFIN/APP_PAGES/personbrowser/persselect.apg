@@ -51,7 +51,7 @@
   }
 
 function start_help(anchor) {
-   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+   top.zfinhelp=open("/cgi-bin/webdriver?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
 
 </SCRIPT>
@@ -134,14 +134,14 @@ function start_help(anchor) {
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES -->
 
-<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+<form method=post action="/cgi-bin/webdriver">
   <TABLE width=100%>
 	<!-- Provide a way to crack out a mail merge list for DBadmin only and create new person record -->
 	<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
           <TR>
             <TD align=center>
 	      <input type=button name=mailmerge value="Create Mail merge file" 
-		 onClick="parent.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkmailmerge.apg&constraint=$(URLENCODE,$constraint)'">  
+		 onClick="parent.location='/cgi-bin/webdriver?MIval=aa-mkmailmerge.apg&constraint=$(URLENCODE,$constraint)'">  
             </TD>
           </TR>
         <?/MIBLOCK>
@@ -219,9 +219,9 @@ to the left of each item.
       order by 7;">
     <TR> 
       <TD valign=top>&nbsp;</TD>
-      $(IF,$(XST,$return_rec),"<TD valign=top><FONT ><!--SIZE=-1--> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3">SELECT</A> </FONT> </TD>")
+      $(IF,$(XST,$return_rec),"<TD valign=top><FONT ><!--SIZE=-1--> <A HREF="/cgi-bin/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3">SELECT</A> </FONT> </TD>")
       <TD valign=top> <FONT ><!--SIZE=-1--> 
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$3">$1</A> 
+	<A HREF="/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$3">$1</A> 
 	</FONT> 
       </TD>  
       <TD> <FONT ><!--SIZE=-1-->
@@ -290,7 +290,7 @@ to the left of each item.
 
   <form name="critform" 
 	method="get"  
-	action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+	action="/cgi-bin/webdriver">
     <input type=hidden name=MIval value=aa-persselect.apg>
 
     <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>

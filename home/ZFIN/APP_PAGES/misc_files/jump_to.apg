@@ -120,7 +120,7 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
   <?/MIBLOCK>
   <?MIBLOCK COND="$(=,$(POSITION,$start_page,action),0)">
   <?MIVAR>
-    window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$start_page")
+    window.location.replace("/cgi-bin/webdriver?$start_page")
   <?/MIVAR>
   <?/MIBLOCK>
 </SCRIPT>

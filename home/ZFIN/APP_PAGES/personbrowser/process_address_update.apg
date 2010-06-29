@@ -328,10 +328,9 @@ an updated person record
 
    <?MIVAR>
        <SCRIPT>
-          window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID");
+          window.location.replace("/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$OID");
        </SCRIPT>
      <?/MIVAR> 
 
    <?/MIBLOCK> <?MICOMMENT> ends authorization as root check <?/MICOMMENT>
 
-<?/MIBLOCK>  <?MICOMMENT> ends OID exists and is not empty <?/MICOMMENT>

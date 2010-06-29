@@ -4,7 +4,7 @@
 <SCRIPT>
 <?MIVAR>
 function redisplay () {     
-top.helpcontent.location="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showdetails.apg&link_id=$link_id&marker_id=$marker_id&marker_abbrev=$marker_abbrev";
+top.helpcontent.location="/cgi-bin/webdriver?MIval=aa-showdetails.apg&link_id=$link_id&marker_id=$marker_id&marker_abbrev=$marker_abbrev";
 
 }
 <?/MIVAR>

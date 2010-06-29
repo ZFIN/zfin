@@ -3,7 +3,7 @@
   <table leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"
          border="0" cellspacing="0" cellpadding="0">
     <form method=post 
-          action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+          action="/cgi-bin/webdriver" 
           target=comments>
       <input type=hidden name=MIval value="aa-input_welcome_generic.apg">
       <input type=hidden name=page_name value="$page_name">
@@ -16,4 +16,3 @@
 
     </form>
   </table>
-<?/MIVAR>

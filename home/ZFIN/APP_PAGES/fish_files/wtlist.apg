@@ -50,10 +50,10 @@
 
     <TR valign=top> 
       <TD> 
-        $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$geno_zdb_id" >SELECT</A>")
+        $(IF,$(XST,$return_rec),"<A HREF="/cgi-bin/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$geno_zdb_id" >SELECT</A>")
       </TD>
       <TD>
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=$geno_zdb_id">$geno_name</A> ($geno_handle)  
+        <A HREF="/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=$geno_zdb_id">$geno_name</A> ($geno_handle)  
       </TD>
       <TD valign="top">
         <?MISQL SQL="
@@ -63,7 +63,7 @@
             order by 2;">
           <?MIVAR NAME=$supplier_zdb_id>$1<?/MIVAR>
           <?MIVAR NAME=$supplier_name>$2<?/MIVAR>
-          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A>
+          <A HREF="/cgi-bin/webdriver?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A>
 	  <?MIVAR COND=$(EC,$supplier_zdb_id,ZDB-LAB-991005-53)>
 	     &nbsp;&nbsp;(<A HREF="/zirc/index.php?OID=$geno_zdb_id">order this</A>)
 	  <?/MIVAR>

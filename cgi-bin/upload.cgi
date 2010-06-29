@@ -940,7 +940,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 				# then something is wrong
 				
 				if ((!($OID_in_DB))||
-				    ($redirect_url eq "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new-image.apg")){
+				    ($redirect_url eq "/cgi-bin/webdriver?MIval=aa-new-image.apg")){
 				    &filename_error('!OID_in_DB');
 				    
 				}  # end OID_in_DB 
@@ -1037,7 +1037,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 		
 		# returns $OID_in_DB if OID exists in the database
 
-		if (($OID_in_DB ne "") && ($redirect_url ne "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_image.apg")) {
+		if (($OID_in_DB ne "") && ($redirect_url ne "/cgi-bin/webdriver?MIval=aa-new_image.apg")) {
 		 
 		    # image_file_exists in filesystem and db already, so move
 		    # the one that exists to make room for the new one.

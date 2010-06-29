@@ -41,7 +41,7 @@ the genotype is finalized and committed, the staging area is reset.
                    
 
 <?MIBLOCK COND=$(NXST,$genocur_staging_zdb)>
-<form name=newGenotype action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post>
+<form name=newGenotype action="/cgi-bin/webdriver" method=post>
 
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
@@ -52,7 +52,7 @@ the genotype is finalized and committed, the staging area is reset.
 </form>
 
 <?MIELSE>
-<form name=newGenotypeFeature action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post>
+<form name=newGenotypeFeature action="/cgi-bin/webdriver" method=post>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=genocur_staging_zdb VALUE="<?MIVAR>$genocur_staging_zdb<?/MIVAR>"> 
@@ -157,7 +157,7 @@ the genotype is finalized and committed, the staging area is reset.
     </table>
 </form>
 
-<form name=newGenotypeBackground action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post>
+<form name=newGenotypeBackground action="/cgi-bin/webdriver" method=post>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=genocur_staging_zdb VALUE="<?MIVAR>$genocur_staging_zdb<?/MIVAR>"> 
@@ -203,7 +203,7 @@ the genotype is finalized and committed, the staging area is reset.
 
 </form>
 
-<form name=finalizeGenotype action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post>
+<form name=finalizeGenotype action="/cgi-bin/webdriver" method=post>
     <p>
     <?MISQL SQL="
        execute function get_genotype_display('$genocur_staging_zdb');">

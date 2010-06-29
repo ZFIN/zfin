@@ -19,7 +19,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/updating
 
-GENERICS = update-lister.apg update-select.apg update-vframeset.apg update-ids.apg remove-ids.apg
+GENERICS = update-ids.apg 
+
+STATICS = update-lister.apg update-select.apg update-vframeset.apg \
+	remove-ids.apg
 
 
 # ---------------  Production Rules  ------------------------------------

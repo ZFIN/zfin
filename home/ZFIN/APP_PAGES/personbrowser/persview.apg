@@ -29,11 +29,11 @@ ERROR -- something bad happened -- no OID passed in!
 <SCRIPT>
 
 function doit(attr,attr_type) {
-window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persupdate.apg&OID=$OID&attr="+attr+"&attr_type="+attr_type)
+window.location.replace("/cgi-bin/webdriver?MIval=aa-persupdate.apg&OID=$OID&attr="+attr+"&attr_type="+attr_type)
 }
 
 function subscribe(curr_value) {
-window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-person.apg&OID=$OID&attr=on_dist_list&attr_type=subscription&old_value="+curr_value)
+window.location.replace("/cgi-bin/webdriver?MIval=aa-update-person.apg&OID=$OID&attr=on_dist_list&attr_type=subscription&old_value="+curr_value)
 }
 </SCRIPT>
 <?/MIVAR>
@@ -114,7 +114,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-pers
     <a 
     style="font-size: large;"
     href="javascript:" 
-    onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID')"
+    onClick="document.location.replace('/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$OID')"
     >[View Person]</a>
 </center>
 <P>
@@ -187,7 +187,7 @@ $(IF,$(EC,$on_dist_list,t),"Is on","Is <b>not</b> on") email distribution list<b
 
 $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$2" >$1</a><br>
+<A HREF="/cgi-bin/webdriver?MIval=aa-labview.apg&OID=$2" >$1</a><br>
 
 <?/MISQL>
 
@@ -215,7 +215,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 	<?MIVAR NAME=$persv_comp_compos_order>$4<?/MIVAR>
 
 <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyview.apg&OID=$2" >$1</a> (<font size=-1> $3 </font>)<br>
+<A HREF="/cgi-bin/webdriver?MIval=aa-companyview.apg&OID=$2" >$1</a> (<font size=-1> $3 </font>)<br>
 <?/MIVAR>
 
 <?MIVAR>$address <?/MIVAR>
@@ -231,11 +231,11 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <?MIVAR NAME=$pers_old_address>$1<?/MIVAR>
 <br>
 <?MIVAR COND="$(AND,$(EC,$AUTHORIZED,root),$(OR,$(EC,$pers_old_address,),$(EC,$pers_old_address,)))">
-	<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-updateaddress.apg&OID=$OID"><font color=red>Address Change Required</font></a>
+	<a href="/cgi-bin/webdriver?MIval=aa-updateaddress.apg&OID=$OID"><font color=red>Address Change Required</font></a>
 <?/MIVAR>
 
 <?MIVAR COND="$(AND,$(EC,$AUTHORIZED,root),$(NC,$pers_old_address,))">
-	<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-updateaddress.apg&OID=$OID">Update Address</a>
+	<a href="/cgi-bin/webdriver?MIval=aa-updateaddress.apg&OID=$OID">Update Address</a>
 <?/MIVAR>
 
 </TD> 
@@ -245,7 +245,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
   <IMG SRC="/images/LOCAL/smallogo.gif">
 <?MIELSE>
   <?MIVAR>
-    <IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$snapshot&type=image/gif">
+    <IMG SRC="/cgi-bin/webdriver?LO=$snapshot&type=image/gif">
   <?/MIVAR>
 <?/MIBLOCK>
 
@@ -359,7 +359,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <?MIVAR NAME=$pv_pub_pages>$7<?/MIVAR>
 <?MIVAR NAME=$pv_pub_lwr_authors>$8<?/MIVAR>
 
-<TR><TD colspan=1 align=left><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pv_pub_authors ($pv_pub_year) $(CONCAT,$pv_pub_title,.) $(CONCAT,$pv_jrnl_abbrev,.) $pv_pub_volume$pv_pub_pages</A></DIV></TD></TR>
+<TR><TD colspan=1 align=left><DIV class="show_pubs"> <A HREF="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$3">$pv_pub_authors ($pv_pub_year) $(CONCAT,$pv_pub_title,.) $(CONCAT,$pv_jrnl_abbrev,.) $pv_pub_volume$pv_pub_pages</A></DIV></TD></TR>
 <?/MISQL>
 </TABLE>
 

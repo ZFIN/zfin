@@ -11,7 +11,7 @@ Possible vars: update
 <HEAD>
   <SCRIPT>
      function pick_me(link_id,mark_id,source,lg,usercomments,ZDB_ident) {
-       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-insert_linkage.apg&link_id="+link_id+"&calling_form=members&member="+mark_id+"&source="+source+"&lg="+lg+"&usercomments="+usercomments+"&ZDB_ident="+ZDB_ident;
+       window.location.href="/cgi-bin/webdriver?MIval=aa-insert_linkage.apg&link_id="+link_id+"&calling_form=members&member="+mark_id+"&source="+source+"&lg="+lg+"&usercomments="+usercomments+"&ZDB_ident="+ZDB_ident;
      }
 
 
@@ -20,7 +20,7 @@ Possible vars: update
 	   window.alert("Two markers must be specified before a distance may be added.");
 	   return false;
           } else {
-           window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage_distance.apg&link_id="+link_id;
+           window.location.href="/cgi-bin/webdriver?MIval=aa-add_linkage_distance.apg&link_id="+link_id;
            return true;
           }
 	}
@@ -31,7 +31,7 @@ Possible vars: update
 	   window.alert("A linkage member must be specified.");
 	   return false;
           } else {
-	   window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg";
+	   window.location.href="/cgi-bin/webdriver?MIval=aa-ZDB_home.apg";
            return true;
           }
 	}
@@ -48,7 +48,7 @@ Possible vars: update
 
 <!-- new linkage has been inserted - begin getting linkage members -->
 
-<form name=linkage method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+<form name=linkage method=post action="/cgi-bin/webdriver" >
 
 <input type=hidden name=MIval value=aa-add_linkage_members.apg>
 <input type=hidden name=calling_form value="members">
@@ -228,8 +228,8 @@ Linkage Members:   (At least one member must be specified) <br>
 
     <?MIBLOCK COND="$(XST,$update)">
       <?MIVAR>
-	<input type=button value="Cancel" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id&update=true'">   
-	<input type=button value="Submit" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id&update=true'">  
+	<input type=button value="Cancel" onClick="window.location.href='/cgi-bin/webdriver?MIval=aa-edit_linkage.apg&link_id=$link_id&update=true'">   
+	<input type=button value="Submit" onClick="window.location.href='/cgi-bin/webdriver?MIval=aa-edit_linkage.apg&link_id=$link_id&update=true'">  
       <?/MIVAR>
     <?/MIBLOCK>
 

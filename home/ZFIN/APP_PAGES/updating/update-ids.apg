@@ -51,7 +51,7 @@ $sourceType -- the table name containing the source
     <FORM NAME=delete_source
         METHOD=post
        ENCTYPE="multipart/form-data" 
-        ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_source.apg">
+        ACTION="/cgi-bin/webdriver?MIval=aa-delete_source.apg">
 
       <?MIVAR>
 	<INPUT TYPE=hidden name="DATA_ID" Value="$DATA_ID">
@@ -171,7 +171,7 @@ $sourceType -- the table name containing the source
   <?MIVAR>
     <SCRIPT>
     alert('Required variables are missing.')
-    location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$(IF,$(XST,$returnTo),$returnTo,aa-ZDB_home.apg)")
+    location.replace("/cgi-bin/webdriver?MIval=$(IF,$(XST,$returnTo),$returnTo,aa-ZDB_home.apg)")
     </SCRIPT>
   <?/MIVAR>
 
@@ -182,7 +182,7 @@ $sourceType -- the table name containing the source
   <?MIVAR>
     <SCRIPT>
     alert('You are not authorized to view the page you requested.')
-    location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$(IF,$(XST,$returnTo),$returnTo,aa-ZDB_home.apg)")
+    location.replace("/cgi-bin/webdriver?MIval=$(IF,$(XST,$returnTo),$returnTo,aa-ZDB_home.apg)")
     </SCRIPT>
   <?/MIVAR>
 

@@ -57,12 +57,12 @@ $UPDATE: if the viewer is in update mode, this is set to 1.
 <?MIVAR>
 <SCRIPT>
   function edit_nomen(zdb_id) {
-    helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomeneditor.apg&OID="+zdb_id,"helpwindow","scrollbars=yes,width=600,height=500");
+    helpwin=open("/cgi-bin/webdriver?MIval=aa-nomeneditor.apg&OID="+zdb_id,"helpwindow","scrollbars=yes,width=600,height=500");
   }
   
   function toggle_date(toggle,abbrev)
   {
-    var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&chronology='+toggle+'&abbrev='+abbrev;
+    var url = '/cgi-bin/webdriver?MIval=aa-nomenview.apg&OID=$OID&chronology='+toggle+'&abbrev='+abbrev;
     $(IF,$(XST,$UPDATE),url += '&UPDATE=1';)
     $(IF,$(XST,$naming_events),url += '&naming_events=$naming_events';)
 
@@ -71,7 +71,7 @@ $UPDATE: if the viewer is in update mode, this is set to 1.
   
   function toggle_naming_events(abbrev)
   {
-    var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&chronology=$chronology&abbrev='+abbrev;
+    var url = '/cgi-bin/webdriver?MIval=aa-nomenview.apg&OID=$OID&chronology=$chronology&abbrev='+abbrev;
     $(IF,$(XST,$UPDATE),url += '&UPDATE=1';)
     $(IF,$(NXST,$naming_events),url += '&naming_events=1';)
     
@@ -95,7 +95,7 @@ $UPDATE: if the viewer is in update mode, this is set to 1.
        <a 
        style="font-size: large;"
        href="javascript:" 
-        onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID')"
+        onClick="document.location.replace('/cgi-bin/webdriver?MIval=aa-nomenview.apg&OID=$OID')"
        >[View Nomenclature]</a>
     </center>
        </form>
@@ -107,7 +107,7 @@ $UPDATE: if the viewer is in update mode, this is set to 1.
      <tr> 
      <?MIVAR>
           <form method=post 
-              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+              action="/cgi-bin/webdriver" 
               target=comments>
            <input type=hidden name=subject value="$abbrev">
            <input type=hidden name=marker_id value="$OID">
@@ -123,7 +123,7 @@ $UPDATE: if the viewer is in update mode, this is set to 1.
 
 
 <br>
-<form name=updater method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+<form name=updater method=post action="/cgi-bin/webdriver">
 <TABLE WIDTH=100%><TR BGCOLOR=#CCCCCC><TD>
   <font size=+2><b>NOMENCLATURE</b></font>
   <?MIVAR COND="$(EC,$AUTHORIZED,root)">

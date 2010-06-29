@@ -39,7 +39,7 @@ EFFECTS:
 <SCRIPT>
 
 function show_doc(title,docpath) {
-   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-docframes.apg&title="+title+"&docpath="+docpath,"helpwindow","scrollbars=yes,width=600,height=600");
+   helpwin=open("/cgi-bin/webdriver?MIval=aa-docframes.apg&title="+title+"&docpath="+docpath,"helpwindow","scrollbars=yes,width=600,height=600");
 }
 </SCRIPT>
 
@@ -352,7 +352,7 @@ $warnings
 <!-- Now, if you are clear to register, throw up the form -->
 <?MIBLOCK COND="$(XST,$action)">
 
-  <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+  <form method=post action="/cgi-bin/webdriver">
   <input type=hidden name=MIval value=aa-process_locus.apg>
 
   <big><B>Summary of proposed registration:</B></big>
@@ -415,4 +415,3 @@ $warnings
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
-</HTML>

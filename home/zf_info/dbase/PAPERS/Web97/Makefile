@@ -21,9 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/dbase/PAPERS/Web97
 
-GENERICS = web97-final.html
-
-STATICS = Fig1-trans.gif
+STATICS = Fig1-trans.gif web97-final.html
 
 
 # ---------------  Production Rules  ------------------------------------

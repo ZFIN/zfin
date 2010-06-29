@@ -35,10 +35,7 @@ SUBDIRS  = ajax-lib
 
 STATICS = dichty-term-info.js json.js sessionstate.js prototype.js \
 	awstats_misc_tracker.js control.modal.js control.modal.2.2.3.js \
-	sequenceview.js blast.js
-
-
-GENERICS = header.js footer.js imagebox.js
+	sequenceview.js blast.js header.js footer.js imagebox.js
 
 
 # ---------------  Production Rules  ------------------------------------

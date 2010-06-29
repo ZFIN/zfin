@@ -122,7 +122,7 @@ a new or updated existing pub
     <big>The following nine pieces of information are <B>REQUIRED</B> to create the a new PUBLICATION record:</big>
   <?/MIBLOCK>
 
-  <FORM NAME="process_form" METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+  <FORM NAME="process_form" METHOD=POST ACTION="/cgi-bin/webdriver"
 	onSubmit="return validate(this);">
 
   <p>
@@ -135,7 +135,7 @@ a new or updated existing pub
   <?/MIVAR>
   <TD colspan=2 align=center>
   <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-    <font size=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=publication">Permanently delete this publication</A> </font> <br>
+    <font size=-1> <A HREF="/cgi-bin/webdriver?MIval=aa-delete_record.apg&OID=$OID&rtype=publication">Permanently delete this publication</A> </font> <br>
   <?/MIVAR>
   </TD></TR>
   </TABLE>
@@ -184,7 +184,7 @@ a new or updated existing pub
     <INPUT TYPE=text name=q_pub_date size=10 value="$q_pub_date">
 
     <p>    <b>Journal Abbrev:</b> The journal abbreviation<br>
-    <INPUT TYPE=text name="editpub_jrnl_abbrev" size=40 value="$editpub_jrnl_abbrev"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalselect.apg">Find journal abbrev.</A>
+    <INPUT TYPE=text name="editpub_jrnl_abbrev" size=40 value="$editpub_jrnl_abbrev"> <A HREF="/cgi-bin/webdriver?MIval=aa-journalselect.apg">Find journal abbrev.</A>
     <br>
 
     <p>    <b>Journal Volume: </b>journal volume that article appeared in.<br>
@@ -309,7 +309,7 @@ a new or updated existing pub
 
     <?MICOMMENT> *** location.go(-1) does not seem to work consistently on all platforms - all browsers *** <?/MICOMMENT>
 
-    <input type=button value="CANCEL" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$returnVariables')">
+    <input type=button value="CANCEL" onClick="window.location.replace('/cgi-bin/webdriver?$returnVariables')">
     <input type=submit value="SUBMIT">
     
 <?/MIBLOCK>  <?MICOMMENT> *** ends cond authorization *** <?/MICOMMENT>

@@ -6,11 +6,11 @@
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 <script>
 function start_note(ref_page) {
-    top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-"+ref_page+".apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
+    top.zfinhelp=open("/cgi-bin/webdriver?MIval=aa-"+ref_page+".apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
 }
 
 function popUp(cloneID) {
-  open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-snpids.apg&markerID="+cloneID,"","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500");
+  open("/cgi-bin/webdriver?MIval=aa-snpids.apg&markerID="+cloneID,"","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500");
 }
 </script>
 <?MICOMMENT>
@@ -68,7 +68,7 @@ function popUp(cloneID) {
         </TD>
       </TR>
     </TABLE>
-<?MIVAR NAME=link_backto_OID><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID"><i>$gene</i></a><?/MIVAR>
+<?MIVAR NAME=link_backto_OID><a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$OID"><i>$gene</i></a><?/MIVAR>
 <!------------- Title display------------>
     <table border=0 width=100%>
       <tr>
@@ -86,7 +86,7 @@ function popUp(cloneID) {
              <tr>
 <?MIVAR>
                   <form method=post
-                        action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+                        action="/cgi-bin/webdriver"
                         target=comments>
                      <input type=hidden name=subject value="$gene">
                      <input type=hidden name=marker_id value="$OID">

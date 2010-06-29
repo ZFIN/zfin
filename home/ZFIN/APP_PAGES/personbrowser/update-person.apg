@@ -111,6 +111,6 @@ modified to support I.E.  call to location.replace replaced with location.href
 <?/MICOMMENT>
 <?MIVAR>
   <SCRIPT>
-    window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID&UPDATE=1")
+    window.location.replace("/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$OID&UPDATE=1")
   </SCRIPT>
 <?/MIVAR>

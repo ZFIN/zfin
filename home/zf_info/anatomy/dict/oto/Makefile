@@ -21,8 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict/oto
 
-GENERICS = otolith.html
-STATICS  = icon9.jpg
+STATICS  = icon9.jpg otolith.html
 
 
 

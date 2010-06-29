@@ -156,7 +156,7 @@
      <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
 
      <SCRIPT>
-	window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg")
+	window.location.replace("/cgi-bin/webdriver?MIval=aa-ZDB_home.apg")
      </SCRIPT>
 
   <?MIELSE> 

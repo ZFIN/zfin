@@ -204,7 +204,7 @@
     <?/MIBLOCK>
     <?MIBLOCK COND="$(=,$(POSITION,$start_page,action),0)">
     <script>
-      <?MIVAR>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page&OID=$OID")<?/MIVAR>
+      <?MIVAR>location.replace("/cgi-bin/webdriver?MIval=$start_page&OID=$OID")<?/MIVAR>
     </script>
     <?/MIBLOCK>
   <!-- ends if valid start page, not null  -->
@@ -239,7 +239,7 @@
         </td>
       </tr>
 
-<form name="critform" method="get" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+<form name="critform" method="get" action="/cgi-bin/webdriver" >
 
   <TR>
    <TD class="fullwidth">

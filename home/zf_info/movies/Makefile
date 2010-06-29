@@ -20,9 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/movies
 
-GENERICS = movies.html
-
-STATICS = Zebrafish.mov
+STATICS = Zebrafish.mov movies.html
 
 
 # ---------------  Production Rules  ------------------------------------

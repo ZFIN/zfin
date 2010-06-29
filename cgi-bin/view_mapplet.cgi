@@ -222,7 +222,7 @@
 	if( $unique > 1) {	#defined @$rowref[1] ){ # # not unique shunt off to search result page
 	 ### $note = $note . $unique . " ->Too Many Choices  <p>\n";
 	  my $bot = LWP::UserAgent->new();
-	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
+	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/webdriver',
 	  [   compare=> 'contains',
 	      marker_type=> 'all',
 	      lg=> 0,
@@ -731,7 +731,7 @@
     ### emit an options button
     print "<td> ".$Q->start_form (
 				  -method=>'POST',
-				  -action=>'/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl',
+				  -action=>'/cgi-bin/map-options.pl',
 				  -encoding=>'application/x-www-form-urlencoded',
 				  -name=>'optform'
 				 )."\n".
@@ -749,7 +749,7 @@
 
     print "</td><td>" . $Q->start_form (
 				  -method=>'GET',
-				  -action=>'/<!--|CGI_BIN_DIR_NAME|-->/print_map.cgi',
+				  -action=>'/cgi-bin/print_map.cgi',
 				  -encoding=>'application/x-www-form-urlencoded',
 				  -name=>'print_map',
 				  -target=>'print'
@@ -818,7 +818,7 @@
     " document.optform.submit();\">";
 
 	print "<br><font size=-1><b>&nbsp;&nbsp;".
-    "<a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&".
+    "<a href=\"/cgi-bin/webdriver?MIval=aa-crossview.apg&".
     "OID=" . $allpanels_id[$order_increment]."\"".
     ">". $panel . "</a>".
     " panel, LG: " . $lg . ", units: " . $allpanels_metric[$order_increment] .
@@ -855,14 +855,14 @@
       print "<param name = \"" . $edit_panel . "_ztotal\"\t value = ". $Q->param($edit_panel.'_ztotal').">\n";
     }
     if (! defined  $Q->param('OID')){$Q->param('OID', ''); }
-    print   "<param name = \"marker_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=\">\n".
+    print   "<param name = \"marker_url\"\t value = \"/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=\">\n".
 
-      "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=\">\n".
+      "<param name = \"panel_url\"\t value = \"/cgi-bin/webdriver?MIval=aa-crossview.apg&OID=\">\n".
 
         "<param name = \"target_frame\"\t value = \"$frame\">\n".
           "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n".
-		"<param name = \"geno_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=\">\n".
-		     "<param name = \"zoom_url\" value = \"/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi\">\n".
+		"<param name = \"geno_url\" value = \"/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=\">\n".
+		     "<param name = \"zoom_url\" value = \"/cgi-bin/view_mapplet.cgi\">\n".
 		    "<param name = \"data\"\t\t value = \"$g_data\">\n".
 		      "</APPLET><p>\n";
   }
@@ -879,7 +879,7 @@
 #  if( defined $sm_refresh && $sm_refresh > 0 ) {
 #    print $Q->start_form (
 #			  -method=>'POST',
-#			  -action=>'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
+#			  -action=>'/cgi-bin/webdriver',
 #			  -encoding=>'application/x-www-form-urlencoded',
 #			  -name=>'selectform',
 #			  -target=>'criteria'

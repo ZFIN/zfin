@@ -23,7 +23,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/locus_files
 # locusselect.html is loaded in the DB with the app pages.  Treat it like
 # an app page.
 
-GENERICS = do-locusupdate.apg locuslister.apg locusselect.html \
+STATICS = do-locusupdate.apg locuslister.apg locusselect.html \
 	locusupdate.apg locusview.apg process_locus.apg
 
 

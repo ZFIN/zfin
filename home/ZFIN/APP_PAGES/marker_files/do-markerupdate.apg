@@ -373,7 +373,7 @@ marker.<?/MIVAR>
                 var msg="The GenBank accession is already associated with\n"+
                          "[$markerlist] in another database. Do you want to proceed?";
 	        	if (confirm(msg))
-		   			location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table&fdbcont_super=$fdbcont_super&fdbcont_data=$fdbcont_data');
+		   			location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table&fdbcont_super=$fdbcont_super&fdbcont_data=$fdbcont_data');
 		
 	      	   </SCRIPT>
              <?/MIVAR> 
@@ -1191,14 +1191,14 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
 <?MIBLOCK COND="$(NXST,$species_update)">
 
    <SCRIPT><?MIVAR>
-      location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$caller&OID=$OID&UPDATE=1#$anchor")
+      location.replace("/cgi-bin/webdriver?MIval=aa-$caller&OID=$OID&UPDATE=1#$anchor")
            <?/MIVAR>
    </SCRIPT> 
  
  <?MIELSE>
  
    <SCRIPT><?MIVAR>
-      location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$caller&OID=$OID&UPDATE=1&species_selected=$species_update#$anchor")
+      location.replace("/cgi-bin/webdriver?MIval=aa-$caller&OID=$OID&UPDATE=1&species_selected=$species_update#$anchor")
            <?/MIVAR>
    </SCRIPT> 
 

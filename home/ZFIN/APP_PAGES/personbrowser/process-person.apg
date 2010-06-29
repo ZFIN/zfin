@@ -53,7 +53,7 @@ Inserted one new person record with the following attributes:<br>
 
 
 <p>
-You may now want to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$new_id">view the new PERSON record.</A> From there you can use the standard record updating mechanism to flesh out the remaining fields.
+You may now want to <A HREF="/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$new_id">view the new PERSON record.</A> From there you can use the standard record updating mechanism to flesh out the remaining fields.
 <?/MIVAR>
 
 <?/MIBLOCK> <!-- ends cond name,address,etc exists -->

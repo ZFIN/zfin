@@ -74,7 +74,7 @@ EFFECTS
 
     <?MIBLOCK COND="$(XST,$xpatselrow_showGene)">
       <?MIVAR>
-	<i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpatselrow_geneZdbId">$xpatselrow_geneAbbrev</a>&nbsp;&nbsp;- $xpatselrow_geneName</i>
+	<i><a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$xpatselrow_geneZdbId">$xpatselrow_geneAbbrev</a>&nbsp;&nbsp;- $xpatselrow_geneName</i>
       <?/MIVAR>
     <?MIELSE>
       &nbsp;
@@ -89,7 +89,7 @@ EFFECTS
     <?MIBLOCK COND=$(NXST,$xpatselrow_noImagesXpats)>
       <?MIBLOCK COND=$(XST,$xpatselrow_showXpat)>
 	<?MIVAR>
-	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$xpatselrow_xpatZdbId">$xpatselrow_xpatLinkText</a>
+	  <a href="/cgi-bin/webdriver?MIval=aa-xpatview.apg&OID=$xpatselrow_xpatZdbId">$xpatselrow_xpatLinkText</a>
 	  <?MIVAR COND="$(<,$xpatselrow_imageCount,2)"> <font size="-1">($xpatselrow_imageCount&nbsp;image)</font><?/MIVAR>
 	  <?MIVAR COND="$(>,$xpatselrow_imageCount,2)"> <font size="-1">($xpatselrow_imageCount&nbsp;images)</font><?/MIVAR>
 	<?/MIVAR>
@@ -123,7 +123,7 @@ EFFECTS
 	<?MIVAR NAME=$xpatselrow_pub_zdb_id>$1<?/MIVAR>
 	<?MIVAR NAME=$xpatselrow_pub_mini_ref>$2<?/MIVAR>
 	<?MIVAR>
-          <a href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$xpatselrow_pub_zdb_id'>$xpatselrow_pub_mini_ref</a>
+          <a href='/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$xpatselrow_pub_zdb_id'>$xpatselrow_pub_mini_ref</a>
 	<?/MIVAR>
       <?/MISQL>
       <?MIVAR COND=$(XST,$xpatselrow_directSubmissionDate)>
@@ -139,7 +139,7 @@ EFFECTS
       <?/MISQL>
       <?MIVAR>
         <A HREF="javascript:document.$xpatselrow_form.justpubs.value=true; document.$xpatselrow_form.submit();">($xpatselrow_pubCount)</A>
-        <FORM name="$xpatselrow_form" method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+        <FORM name="$xpatselrow_form" method=post action="/cgi-bin/webdriver">
           <INPUT type=hidden name=MIval value=aa-showpubs.apg>
           <INPUT type=hidden name=OID value=$xpatselrow_geneZdbId>
           <INPUT type=hidden name=title value="Expression of">

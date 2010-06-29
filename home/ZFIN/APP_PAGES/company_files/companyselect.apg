@@ -111,7 +111,7 @@ $constraint $previous lower($anon1) like lower('%$anon1text%')
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES -->
 
-<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+<form method=post action="/cgi-bin/webdriver">
 <TABLE width=100%>
 <TR>
 <td width=90% align=center>
@@ -170,11 +170,11 @@ Company Search Results
     <TR> 
       <TD valign=top>
 	<?MIVAR COND=$(XST,$return_rec)>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> 
+	  <A HREF="/cgi-bin/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> 
 	<?/MIVAR>
       </TD>
       <TD valign=top> 
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyview.apg&OID=$3">$1</A>
+	<A HREF="/cgi-bin/webdriver?MIval=aa-companyview.apg&OID=$3">$1</A>
       </TD>  
       <TD> 
         <font size=-1><pre>$2</pre></font> 
@@ -226,7 +226,7 @@ Company Search Results
                     <!-- COMPANY SELECT CODE -->
 
 
-<form name="critform" method="get" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+<form name="critform" method="get" action="/cgi-bin/webdriver" >
 <input type=hidden name=MIval value=aa-companyselect.apg>
 
 <?MIBLOCK COND="$(NXST,$query_results)">

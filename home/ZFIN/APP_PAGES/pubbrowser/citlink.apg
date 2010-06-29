@@ -15,7 +15,7 @@
 	
 	<?MIBLOCK COND="$(OR,$(>,$citlink_total_count,0),$(XST,$UPDATE))">
   	  <?MIVAR>
-  	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$citlink_total_count"><b>CITATIONS</b></A>
+  	  <A HREF="/cgi-bin/webdriver?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$citlink_total_count"><b>CITATIONS</b></A>
   	  <?/MIVAR>
 	<?MIELSE>
   	  <b>CITATIONS</b>

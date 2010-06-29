@@ -18,8 +18,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict/caud_fin
 
-GENERICS = ha.html hyp.html phy.html hs.html pu.html
-STATICS  = ha1.jpg ha2.jpg ha3.jpg
+STATICS  = ha1.jpg ha2.jpg ha3.jpg \
+	ha.html hyp.html phy.html hs.html pu.html
+
 
 
 

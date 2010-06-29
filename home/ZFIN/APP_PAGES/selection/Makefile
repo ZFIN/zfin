@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/selection
 
-GENERICS = do-select.apg
+STATICS = do-select.apg
 
 
 # ---------------  Production Rules  ------------------------------------

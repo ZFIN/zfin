@@ -9,10 +9,10 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 # The routines defined in this directory are written in SPL, the Informix
-# Stored Procedure language.  Files must have the same name as the routine 
+# Stored Procedure language.  Files must have the same name as the routine
 # they define.  Each file defines only one routine (except for a few cases,
 # see below).
-# See the routines themselves for comments on their parameters and what 
+# See the routines themselves for comments on their parameters and what
 # they do.
 
 # ---------------  Variable Definitions  --------------------------------
@@ -73,9 +73,10 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
 	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql\
-	       add_ab_ao_fast_search.sql create_all_terms_contains.sql 
-REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
-ZDB_GNRCS    = table_exists.sql  
+
+REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql add_ab_ao_fast_search.sql \
+           create_all_terms_contains.sql
+ZDB_GNRCS    = table_exists.sql
 ZDB_AGGR    = concatenate.sql
 ZDB_STATS    = get_obj_name.sql get_obj_abbrev.sql get_date_from_id.sql \
 	       p_check_zdb_object_table.sql syscall.sql zdb_date.sql \
@@ -95,23 +96,23 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 ANAT_STATS = create_anatomy_relationship_list.sql xpat_annot_adjust.sql \
 	get_entity_name_html.sql get_postcomposed_term_html.sql
 # insert_clone, regen_anatomy.sql and get_genofeat_zgy_html_display.sql
-# are special cases.  They contain 
-# multiple procedures/functions in a single file.  We thought about splitting 
+# are special cases.  They contain
+# multiple procedures/functions in a single file.  We thought about splitting
 # these into a single file per function, but the functions are tightly
 # coupled with the function the file is name after.  There was more to gain by
 # leaving them all in one file, then by splitting them up.
-MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql clone_2_sanger.sql \
-		 get_genofeat_mp_zyg_html_display.sql
+MULTIPLE_PROCS =  regen_anatomy.sql \
+		clone_2_sanger.sql insert_clone.sql get_genofeat_mp_zyg_html_display.sql
 
-GENERIC_AGGR = $(ZDB_AGGR) 
+GENERIC_AGGR = $(ZDB_AGGR)
 GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) \
-		get_mrkr_name_html_link.sql get_mrkr_url.sql get_mutants_html_link.sql \
-	        get_mrkr_abbrev_html_link.sql get_geno_name_html_link.sql \
+		get_mrkr_url.sql get_mutants_html_link.sql \
+	    get_geno_name_html_link.sql \
 		get_geno_name_with_bg_html_link.sql \
-		get_genotype_backgrounds_html_link.sql  
+		get_genotype_backgrounds_html_link.sql
 STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
-		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS) $(ANAT_STATS) \
-		$(LOAD_STATS) $(XPAT_STATS) \
+		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS) $(ANAT_STATS) $(LOAD_STATS) \
+		$(XPAT_STATS) get_mrkr_name_html_link.sql get_mrkr_abbrev_html_link.sql\
 		concat_init.sql concat_iter.sql concat_combine.sql concat_final.sql
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
@@ -120,7 +121,7 @@ MULTIPLE_PROC_TARGETS = $(foreach SPEC, $(MULTIPLE_PROCS), $(TARGETDIR)/$(SPEC))
 SPECIFIC_AGGR_TARGETS = $(foreach SPEC, $(GENERIC_AGGR), $(TARGETDIR)/$(SPEC))
 
 ENDEMICTARGETS_POSTTARGETS = $(SPECIFIC_PROC_TARGETS) $(STATIC_PROC_TARGETS) \
-			     $(MULTIPLE_PROC_TARGETS) $(SPECIFIC_AGGR_TARGETS) 
+			     $(MULTIPLE_PROC_TARGETS) $(SPECIFIC_AGGR_TARGETS)
 
 # ---------------  Production Rules  ------------------------------------
 

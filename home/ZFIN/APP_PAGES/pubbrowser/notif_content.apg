@@ -121,7 +121,7 @@ OUTPUT VARS:
 
 <?MIVAR NAME=nc_pub_vol_page>$(IF,$(XST,$nc_pub_volume),$nc_pub_volume)$(IF,$(XST,$nc_pub_pages),: $nc_pub_pages)<?/MIVAR>
 
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=letter>
+<form action="/cgi-bin/webdriver" method=post name=letter>
     <?MIVAR>
     <input type=hidden name=MIval value="aa-notif_frame.apg">
     <?/MIVAR>

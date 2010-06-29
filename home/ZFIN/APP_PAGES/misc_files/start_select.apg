@@ -30,7 +30,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 
 <?MIVAR>
   <SCRIPT>
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$selector$constraint');
+    window.location.replace('/cgi-bin/webdriver?MIval=$selector$constraint');
   </SCRIPT>
 <?/MIVAR>
 

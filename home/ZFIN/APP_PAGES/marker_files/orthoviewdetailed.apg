@@ -74,12 +74,12 @@ display detailed orthology data.
     <TD>
     <?MIVAR>
       <b>$marker_type_display Name: &nbsp;<i>$mrkr_name</i> </b><br>
-      <b>$marker_type_display Symbol: &nbsp; <i><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID'>$mrkr_abbrev</A></i></b><br>
+      <b>$marker_type_display Symbol: &nbsp; <i><A HREF='/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$OID'>$mrkr_abbrev</A></i></b><br>
     <?/MIVAR>
     </TD>
     <TD align="right">
     <?MIVAR>
-      <FORM method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" target="comments">
+      <FORM method="post" action="/cgi-bin/webdriver" target="comments">
         <input type=hidden name="subject" value="$abbrev">
         <input type=hidden name="marker_id" value="$OID">
         <input type=hidden name="MIval" value="aa-your_input_welcome.apg">
@@ -336,7 +336,7 @@ display detailed orthology data.
         
             <?MIVAR>
             <TD>
-              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$pubIDs[$indx3]">$item3</A>
+              <A HREF="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$pubIDs[$indx3]">$item3</A>
             </TD>
             <?/MIVAR>
           </TR>
@@ -430,7 +430,7 @@ display detailed orthology data.
           <?MIBLOCK COND="$(=,$indx2,1)">
             <?MIVAR>
             <TD>
-              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$item">$allPubs[$indx]</A>
+              <A HREF="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$item">$allPubs[$indx]</A>
             </TD>
             <?/MIVAR>
           <?MIELSE>

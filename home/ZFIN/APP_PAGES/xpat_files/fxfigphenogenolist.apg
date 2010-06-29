@@ -67,10 +67,10 @@ EFFECTS
 <?MISQL SQL="$fxfigfl_sql">
 <?MIBLOCK COND=$(EC,$fxfiggeno_display_option,anchor)>
       <?MIVAR NAME=$fxfiggeno_down_arrow>&nbsp;<a href="#phenodetails"><img src=http://<!--|DOMAIN_NAME|-->/images/darrow.gif border = 0 title= "Jump to GENOTYPE data."></a><?/MIVAR>
- <?MIVAR NAME=fxfiggeno_geno_href><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=$3"><?/MIVAR>
+ <?MIVAR NAME=fxfiggeno_geno_href><a href="/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=$3"><?/MIVAR>
 <?MIELSE>
 <?MIVAR NAME=$fxfiggeno_down_arrow><?/MIVAR>
- <?MIVAR NAME=fxfiggeno_geno_href><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=$3"><?/MIVAR>
+ <?MIVAR NAME=fxfiggeno_geno_href><a href="/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=$3"><?/MIVAR>
 <?/MIBLOCK>
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
       <?MIVAR NAME=fxfigfish_list_items>$fxfiggeno_geno_href$1</a>$fxfiggeno_down_arrow<?/MIVAR>

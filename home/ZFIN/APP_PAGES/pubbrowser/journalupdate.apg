@@ -99,7 +99,7 @@ EFFECTS:
     <?/MIVAR>
     <p>
 
-    <FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post ENCTYPE="multipart/form-data">
+    <FORM ACTION="/cgi-bin/webdriver" METHOD=post ENCTYPE="multipart/form-data">
 
     <?MIVAR>
       <INPUT TYPE=hidden name=MIval Value=aa-do-jrnlupdate.apg>
