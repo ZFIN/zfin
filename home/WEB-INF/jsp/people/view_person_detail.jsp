@@ -6,11 +6,11 @@
 <SCRIPT type="text/javascript">
 
     function doit(attr, attr_type) {
-        window.location.replace("/<%= ZfinProperties.getWebDriver()%>/webdriver?MIval=aa-persupdate.apg&OID=ZDB-PERS-000914-2&attr=" + attr + "&attr_type=" + attr_type)
+        window.location.replace("/<%= ZfinProperties.getWebDriver()%>?MIval=aa-persupdate.apg&OID=ZDB-PERS-000914-2&attr=" + attr + "&attr_type=" + attr_type)
     }
 
     function subscribe(curr_value) {
-        window.location.replace("/<%= ZfinProperties.getWebDriver()%>/webdriver?MIval=aa-update-person.apg&OID=ZDB-PERS-000914-2&attr=on_dist_list&attr_type=subscription&old_value=" + curr_value)
+        window.location.replace("/<%= ZfinProperties.getWebDriver()%>?MIval=aa-update-person.apg&OID=ZDB-PERS-000914-2&attr=on_dist_list&attr_type=subscription&old_value=" + curr_value)
     }
 </SCRIPT>
 

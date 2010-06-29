@@ -45,7 +45,7 @@ use LWP::UserAgent;
 
 my $q = new CGI();
 my $bot = LWP::UserAgent->new(); 
-my $req = POST 'http://<!--|DOMAIN_NAME|-->/webdriver',
+my $req = POST 'http://<!--|DOMAIN_NAME|-->/cgi-bin/webdriver',
 	  [   MIval=> 'aa-jump_to.apg', record=>$q->param('record') ];
 print "Content-Type: text/html; charset=ISO-8859-1 \r\n\r\n".
     $bot->request($req)->content;

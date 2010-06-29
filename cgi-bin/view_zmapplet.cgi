@@ -214,7 +214,7 @@
                 ### not unique shunt off to search result page
                 #$note = $note . $unique . " ->Too Many Choices  <p>\n";
                 my $bot = LWP::UserAgent->new();
-                my $req = POST 'http://<!--|DOMAIN_NAME|-->/webdriver',
+                my $req = POST 'http://<!--|DOMAIN_NAME|-->/cgi-bin/webdriver',
                 [
                 compare=> 'contains',
                 marker_type=> 'all',
