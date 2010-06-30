@@ -1,24 +1,24 @@
 create function get_geno_name_html_link( genoZdbId varchar(50) )
- 
+
   returning lvarchar;
 
-  -- --------------------------------------------------------------------- 
+  -- ---------------------------------------------------------------------
   -- Given the ZDB ID of a genotype, this returns the genotype name
   -- properly formatted and embedded in an HTML link to the geno view page.
   --
-  -- INPUT VARS: 
-  --   genoZdbId   
-  -- 
-  -- OUTPUT VARS: 
+  -- INPUT VARS:
+  --   genoZdbId
+  --
+  -- OUTPUT VARS:
   --   none
-  -- 
-  -- RETURNS: 
+  --
+  -- RETURNS:
   --   genotype name with proper HTML formatting, embedded in an HTML link
   --   NULL if genoZdbId does not exist in genotype table
   --
   -- EFFECTS:
   --   None
-  -- --------------------------------------------------------------------- 
+  -- ---------------------------------------------------------------------
 
   define genoName	like genotype.geno_display_name;
   define genoNameHTML	lvarchar;
@@ -30,15 +30,15 @@ create function get_geno_name_html_link( genoZdbId varchar(50) )
    where geno_zdb_id = genoZdbId;
 
   if (genoIsWildType = "f") then
-      let genoNameHtml = 
+      let genoNameHtml =
 	'<span class="mutant">' || genoName || '</span>';
   else
-      let genoNameHtml = 
+      let genoNameHtml =
 	'<span class="wildtype">' || genoName || '</span>';
   end if
 
-  return 
-    '<a href="//cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=' ||
+  return
+    '<a href="/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=' ||
       genoZdbId || '">' ||genoNameHtml || '</a>';
 
 end function;

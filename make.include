@@ -161,7 +161,7 @@ export WEBLINTIFMXBASE
 ifeq (0,${MAKELEVEL})
 WEBLINTIFMX = $(WEBLINTIFMXBASE) 2 <
 else
-WEBLINTIFMX = :
+WEBLINTIFMX = @:
 endif
 
 # --- Java
